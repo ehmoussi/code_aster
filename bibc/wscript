@@ -6,6 +6,7 @@ from waflib import Configure, Logs, Utils
 
 def options(self):
     self.load('compiler_c')
+    # for the link stage
     group = self.get_option_group("Code_Aster options")
     group.add_option('-e', '--build-executable', dest='embed_aster',
                     default=False, action='store_true',
@@ -18,10 +19,12 @@ def options(self):
                     help='build each aster component as a shared python module')
 
 def configure(self):
+    self.load('compiler_c')
     opts = self.options
     # preserve symbols in the dyn table for stdcalls
     self.env.append_unique('LINKFLAGS', ['-Wl,--export-dynamic'])
 
+    #XXX remove this add
     self.env.append_unique('INCLUDES', ['include/'])
     if opts.embed_all or opts.embed_aster:
         self.env.append_value('ASTER_EMBEDS', ['bibc'])
@@ -33,6 +36,7 @@ def configure(self):
                 self.env.append_value('LINKFLAGS', ['-static_mpi'])
     self.check_cflags()
     self.check_bibc_depends()
+    self.check_swig_headers()
 
 @Configure.conf
 def check_bibc_depends(self):
@@ -40,27 +44,25 @@ def check_bibc_depends(self):
     # never in static
     self.check_cc(uselib_store='SYS', lib='dl')
 
+PYMAIN = 'supervis/python.c'
+
 def build(self):
-    # We split Code_Aster byte code:
-    #
-    # - libaster.so: a shared library that store symbols
-    # - *aster*.so: python C-extension that contains python bindings
-    #
-    # Some functions are called from C, Fortran or Python
-    # (cross-language communication). Some of them are coded within
-    # python C-extension files while the corresponding byte-codes and
-    # symbols shall be stored in libaster.so. To do so, we define
-    # _WITHOUT_PYMOD_.
+    # The build is splitted in 3 stages:
+    # - compilation of C source files
+    # - link of the executable (embedded) or several shared libs (shared)
+    # - build and link the swig wrapper
     #
     get_srcs = self.path.get_src().ant_glob
-
     env = self.all_envs[self.variant]
-    buildenv = env.derive()
+    excl = [] if env.BUILD_MED else ['**/med_aster_module.c']
+    is_embedded = env.ASTER_EMBEDS and 'bibc' in env.ASTER_EMBEDS
 
-    if env.ASTER_EMBEDS and 'bibc' in env.ASTER_EMBEDS:
-        build_as_embeded(self, env)
+    build_c_source(self, env, excl, is_embedded)
+    if is_embedded:
+        build_as_embedded(self, env, excl)
     else:
         build_as_shared(self, env)
+    build_module(self, env)
 
     self.add_group()
     # install headers
@@ -76,23 +78,45 @@ def build(self):
         config_includes
     )
 
+def build_c_source(self, env, excl, is_embedded):
+    get_srcs = self.path.get_src().ant_glob
+    uses = env['all_dependencies']
+    # compile *.c
+    self(
+        features = 'c',
+            name = 'asterbibc',
+          source = get_srcs('**/*.c', excl=excl + [PYMAIN]),
+         defines = '' if is_embedded else '_WITHOUT_PYMOD_',
+             env = env.derive(),
+             use = ['PYEMBED', 'NUMPY'] + uses,
+    )
+
 def build_as_shared(self, shenv):
+    # We split Code_Aster byte code:
+    # - libaster.so: a shared library that store symbols
+    # - *aster*.so: python C-extensions that contains python bindings
+    #
+    # Some functions are called from C, Fortran or Python
+    # (cross-language communication). Some of them are coded within
+    # python C-extension files while the corresponding byte-codes and
+    # symbols shall be stored in libaster.so. To do so, we define
+    # _WITHOUT_PYMOD_.
+    #
     get_srcs = self.path.get_src().ant_glob
     uses = shenv['all_dependencies']
-
+    # {bibfor, bibc, bibcxx}/*.o -> libaster.so
     self(
         features = 'c cshlib',
             name = 'asterlib',
           target = 'aster',
-          source = get_srcs('**/*.c', excl=['supervis/python.c']),
          defines = '_WITHOUT_PYMOD_',
              env = shenv.derive(),
-             use = ['PYEMBED', 'NUMPY', 'asterbibfor', 'astercxx'] + uses,
+             use = ['PYEMBED', 'NUMPY', 'asterbibfor', 'asterbibc', 'asterbibcxx'] + uses,
     install_path = shenv.ASTERLIBDIR,
     )
 
     self.add_group()
-
+    # _aster_core.so
     self(
         features = 'c cshlib pyext',
           target = '../bibpyt/_aster_core',
@@ -102,7 +126,7 @@ def build_as_shared(self, shenv):
              use = ['asterlib'] + uses,
     install_path = shenv.ASTERLIBDIR,
     )
-
+    # aster.so
     self(
         features = 'c cshlib pyext',
           target = '../bibpyt/aster',
@@ -112,7 +136,7 @@ def build_as_shared(self, shenv):
              use = ['asterlib'] + uses,
     install_path = shenv.ASTERLIBDIR,
     )
-
+    # aster_fonctions.so
     self(
         features = 'c cshlib pyext',
           target = '../bibpyt/aster_fonctions',
@@ -122,7 +146,7 @@ def build_as_shared(self, shenv):
              use = ['NUMPY', 'asterlib'] + uses,
     install_path = shenv.ASTERLIBDIR,
     )
-
+    # med_aster.so
     if shenv.BUILD_MED:
         self(
             features = 'c cshlib pyext',
@@ -134,26 +158,38 @@ def build_as_shared(self, shenv):
         install_path = shenv.ASTERLIBDIR,
         )
 
-def build_as_embeded(self, stenv):
+def build_as_embedded(self, stenv, excl):
     get_srcs = self.path.get_src().ant_glob
     uses = stenv['all_dependencies']
-
-    excl = ['**/med_aster_module.c'] if not stenv.BUILD_MED else []
-
     # required for Intel compiler
     main = 'main' if stenv.FC_MAIN == -1 or 'ifort' in stenv.LINK_FC else stenv.FC_MAIN
 
-    tgt = (self.variant == 'release' and stenv.ASTERBINOPT) or stenv.ASTERBINDBG
+    tgt = stenv.ASTERBINOPT if self.variant == 'release' else stenv.ASTERBINDBG
     self(
         features = 'c fcprogram pyembed',
           target = tgt,
             name = 'asterexec',
-          source = get_srcs(['**/*.c'], excl=excl),
+          source = PYMAIN,
          defines = ['_MAIN_=%s' % main],
              env = stenv.derive(),
-             use = ['NUMPY', 'asterbibfor', 'astercxx'] + uses,
+             use = ['NUMPY', 'asterbibfor', 'asterbibcxx', 'asterbibc'] + uses + ['CXX'],
         )
 
+def build_module(self, env):
+    self(
+        features = 'cxx cxxshlib pyext',
+            name = 'asterswig',
+          source = '../bibcxx/include/libAster.i',
+          target = '_libAster',
+      swig_flags = '-c++ -python -Wall',
+             env = env,
+             use = ['asterlib'] + env['all_dependencies'],
+    install_path = env.ASTERLIBDIR,
+    )
+    #XXX may cause a problem if `waf install` is without running `waf build` before...
+    self.install_files(env.ASTERLIBDIR, '../bibcxx/include/libAster.py')
+
+###############################################################################
 @Configure.conf
 def check_cflags(self):
     self.start_msg('Getting C compiler flags')
@@ -169,7 +205,6 @@ def check_cflags(self):
         safe_remove('CXXFLAGS_PYEMBED', '-fwrapv')
     self.end_msg(self.env['CFLAGS'])
 
-
 @Configure.conf
 def check_optimization_cflags(self):
     self.setenv('debug')
@@ -183,3 +218,8 @@ def check_optimization_cflags(self):
     self.start_msg('Setting C optimization flags')
     self.env.append_unique('CFLAGS', flags)
     self.end_msg(flags)
+
+@Configure.conf
+def check_swig_headers(self):
+    #/usr/share/swig2.0/python
+    pass
