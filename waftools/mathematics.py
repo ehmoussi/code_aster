@@ -14,6 +14,7 @@ SCALAPACK = ('scalapack', )
 OPTIONAL_DEPS = ('cblas', )
 
 def options(self):
+    self.load('python')
     group = self.add_option_group("Mathematics  libraries options")
     group.add_option('--maths-libs', type='string',
                     dest='maths_libs', default=None,

@@ -52,7 +52,6 @@ def build(self):
     # symbols shall be stored in libaster.so. To do so, we define
     # _WITHOUT_PYMOD_.
     #
-    from waflib.Tools.c_config import DEFKEYS
     get_srcs = self.path.get_src().ant_glob
 
     env = self.all_envs[self.variant]

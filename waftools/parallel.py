@@ -37,7 +37,7 @@ def load_compilers(self):
     self.load_compilers_mpi()           #   |
     if not self.get_define('HAVE_MPI'): #   |
         self.env.revert()               # <-'
-        self.load('compiler_cc')
+        self.load('compiler_c')
         self.load('compiler_cxx')
         self.load('compiler_fc')
 
@@ -58,7 +58,7 @@ def load_compilers_mpi(self):
 
 @Configure.conf
 def check_mpi(self):
-    self.load('compiler_cc')
+    self.load('compiler_c')
     self.load('compiler_cxx')
     self.load('compiler_fc')
     self.check_cc(header_name='mpi.h', use='MPI', define_name='_USE_MPI')
