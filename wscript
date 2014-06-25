@@ -85,6 +85,7 @@ def options(self):
         'subdirectories (example: X.Y will use aster/X.Y/...), '
         "[Default: '']")
     self.recurse('bibfor')
+    self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('i18n')
     self.recurse('data')
@@ -165,7 +166,7 @@ def build(self):
     # the order may be important
     self.env['all_dependencies'] = [
         'MED', 'HDF5', 'MUMPS', 'METIS', 'SCOTCH',
-        'PETSC', 'MATH', 'MPI', 'OPENMP', 'CLIB', 'SYS']
+        'PETSC', 'MATH', 'MPI', 'OPENMP', 'BOOST', 'CLIB', 'SYS']
     get_srcs = self.path.get_src().ant_glob
     if not self.variant:
         self.fatal('Call "waf build_debug" or "waf build_release", and read ' \

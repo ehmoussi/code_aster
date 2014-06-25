@@ -4,10 +4,15 @@ import os.path as osp
 
 from waflib import Configure, Logs, Utils
 
+def options(self):
+    self.load('boost')
+
 def configure(self):
     self.load('swig')
     if self.check_swig_version() < (2, 0, 0):
         self.fatal('this swig version is too old')
+    self.load('boost')
+    self.check_boost() # lib='shared_ptr'... ?
 
 def build(self):
     buildenv = self.all_envs[self.variant]
