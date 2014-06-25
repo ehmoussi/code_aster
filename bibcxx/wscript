@@ -35,4 +35,6 @@ def build(self):
       swig_flags = '-c++ -python -Wall',
              env = buildenv,
              use = ['astercxx'] + self.env['all_dependencies'],
+    install_path = buildenv.ASTERLIBDIR,
     )
+    self.install_files(buildenv.ASTERLIBDIR, 'include/libAster.py')
