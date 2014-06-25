@@ -4,11 +4,11 @@ from functools import partial
 
 from waflib import Configure, Utils, Logs, Errors
 
-
 def options(self):
     self.load('compiler_fc')
 
 def configure(self):
+    self.load('compiler_fc')
     for incpath in ('bibfor/include', ):
         paths = self.srcnode.ant_glob(incpath, src=True, dir=True)
         paths = [d.abspath() for d in paths]

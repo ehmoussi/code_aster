@@ -5,9 +5,12 @@ import os.path as osp
 from waflib import Configure, Logs, Utils
 
 def options(self):
+    self.load('compiler_cxx')
     self.load('boost')
 
 def configure(self):
+    self.load('compiler_cxx')
+    self.check_bibcxx_depends()
     self.load('swig')
     if self.check_swig_version() < (2, 0, 0):
         self.fatal('this swig version is too old')
@@ -20,21 +23,15 @@ def build(self):
 
     self(
         features = 'cxx',
-            name = 'astercxx',
+            name = 'asterbibcxx',
           source = get_srcs('**/*.cpp'),
-          target = 'astercxx',
-        includes = 'include',
              env = buildenv,
              use = self.env['all_dependencies'],
     )
-    self(
-        features = 'cxx cxxshlib pyext',
-            name = 'asterswig',
-          source = 'include/libAster.i',
-          target = '_libAster',
-      swig_flags = '-c++ -python -Wall',
-             env = buildenv,
-             use = ['astercxx'] + self.env['all_dependencies'],
-    install_path = buildenv.ASTERLIBDIR,
-    )
-    self.install_files(buildenv.ASTERLIBDIR, 'include/libAster.py')
+
+###############################################################################
+@Configure.conf
+def check_bibcxx_depends(self):
+    """check dependencies of bibc"""
+    self.check_cc(uselib_store='CXX', lib='stdc++')
+
