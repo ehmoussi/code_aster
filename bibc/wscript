@@ -87,7 +87,7 @@ def build_as_shared(self, shenv):
           source = get_srcs('**/*.c', excl=['supervis/python.c']),
          defines = '_WITHOUT_PYMOD_',
              env = shenv.derive(),
-             use = ['PYEMBED', 'NUMPY', 'asterbibfor'] + uses,
+             use = ['PYEMBED', 'NUMPY', 'asterbibfor', 'astercxx'] + uses,
     install_path = shenv.ASTERLIBDIR,
     )
 
@@ -151,7 +151,7 @@ def build_as_embeded(self, stenv):
           source = get_srcs(['**/*.c'], excl=excl),
          defines = ['_MAIN_=%s' % main],
              env = stenv.derive(),
-             use = ['NUMPY', 'asterbibfor'] + uses,
+             use = ['NUMPY', 'asterbibfor', 'astercxx'] + uses,
         )
 
 @Configure.conf

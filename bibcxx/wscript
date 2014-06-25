@@ -1,0 +1,33 @@
+# coding=utf-8
+
+import os.path as osp
+
+from waflib import Configure, Logs, Utils
+
+def configure(self):
+    self.load('swig')
+    if self.check_swig_version() < (2, 0, 0):
+        self.fatal('this swig version is too old')
+
+def build(self):
+    buildenv = self.all_envs[self.variant]
+    get_srcs = self.path.get_src().ant_glob
+
+    self(
+        features = 'cxx',
+            name = 'astercxx',
+          source = get_srcs('**/*.cpp'),
+          target = 'astercxx',
+        includes = 'include',
+             env = buildenv,
+             use = self.env['all_dependencies'],
+    )
+    self(
+        features = 'cxx cxxshlib pyext',
+            name = 'asterswig',
+          source = 'include/libAster.i',
+          target = '_libAster',
+      swig_flags = '-c++ -python -Wall',
+             env = buildenv,
+             use = ['astercxx'] + self.env['all_dependencies'],
+    )

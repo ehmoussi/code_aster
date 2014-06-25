@@ -56,7 +56,11 @@
 
 /* http://gcc.gnu.org/onlinedocs/cpp/Stringification.html */
 #define xstr(s)                 str(s)
-#define str(s)                  #s
+/* not with c++ */
+#ifndef __cplusplus
+#   define str(s)               #s
+#endif
+
 #define S_FUNC(UN,LN)           xstr(F_FUNC(UN,LN))
 
 /* STDCALL for "old" windows version */

@@ -143,6 +143,10 @@ void DEFPSPSPPPP(UEXCEP,uexcep, _IN INTEGER *exc_type,
     /*
      * Fortran/Python interface to raise an exception from the fortran subroutines
      */
+    INTEGER ier=SIGABRT;
+    CALL_ASABRT( &ier );
+    /* TODO */
+
     PyObject *tup_valk, *tup_vali, *tup_valr;
     char *kvar;
     int i;

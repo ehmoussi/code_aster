@@ -37,6 +37,8 @@
 #include "aster_fort.h"
 #include "aster_utils.h"
 
+#include "JeveuxTools.hpp"
+
 /*! aster_core C module */
 static PyObject* aster_core = (PyObject*)0;
 
@@ -76,6 +78,10 @@ INTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
     /*
      * Permet de récupérer la valeur entière d'un attribut du jdc.
      */
+    printf("JDCGET\n");
+    return 1;
+    /* TODO */
+
     PyObject *val;
     INTEGER value;
 
@@ -98,6 +104,10 @@ void DEFSP(JDCSET,jdcset,char *attr, STRING_SIZE l_attr, INTEGER *value)
     /*
      * Permet de positionner la valeur entière d'un attribut du jdc à `value`.
      */
+    printf("JDCSET\n");
+    return;
+    /* TODO */
+
     PyObject *res;
 
     res = PyObject_CallMethod(get_sh_jdc(), "set_jdc_attr", "s#l", attr, l_attr, (long)*value);
@@ -141,14 +151,7 @@ void DEFP(RDTMAX, rdtmax, _IN DOUBLE *tsub)
     /*
      * Réduit le temps maximum de l'exécution : tpmax = tpmax - tsub
      */
-    PyObject *res;
-
-    res = PyObject_CallMethod(get_sh_coreopts(), "sub_tpmax", "d", (double)(*tsub));
-    if (res == NULL)
-        MYABORT("erreur dans RDTMAX");
-    // reset du cache
-    _cache_tpmax = -1;
-    return;
+    printf("RDTMAX\n");
 }
 
 /*
@@ -248,15 +251,9 @@ void DEFSPP(GTOPTI,gtopti, _IN char *option, STRING_SIZE lopt,
      *  iret = 0 : tout est ok
      *  iret = 4 : option inexistante, type incorrect.
      */
-    long value;
-    int ret = 0;
-    char *sopt;
-    sopt = MakeCStrFromFStr(option, lopt);
-    value = asterc_getopt_long(sopt, &ret);
-
-    *vali = (INTEGER)value;
-    *iret = (INTEGER)ret;
-    FreeStr(sopt);
+    printf("GTOPTI %s\n", option);
+    *vali = getIntLDC(option);
+    *iret = 0;
 }
 
 void DEFSPP(GTOPTR,gtoptr, _IN char *option, STRING_SIZE lopt,
@@ -269,15 +266,9 @@ void DEFSPP(GTOPTR,gtoptr, _IN char *option, STRING_SIZE lopt,
      *  iret = 0 : tout est ok
      *  iret = 4 : option inexistante, type incorrect.
      */
-    double value;
-    int ret = 0;
-    char *sopt;
-    sopt = MakeCStrFromFStr(option, lopt);
-    value = asterc_getopt_double(sopt, &ret);
-
-    *valr = (DOUBLE)value;
-    *iret = (INTEGER)ret;
-    FreeStr(sopt);
+    printf("GTOPTR %s\n", option);
+    *valr = getDoubleLDC(option);
+    *iret = 0;
 }
 
 void DEFSSP(GTOPTK,gtoptk, _IN char *option, STRING_SIZE lopt,
@@ -291,19 +282,18 @@ void DEFSSP(GTOPTK,gtoptk, _IN char *option, STRING_SIZE lopt,
      *  iret = 1 : longueur de valk insuffisante, valeur tronquée
      *  iret = 4 : option inexistante, type incorrect.
      */
-    char *value;
-    int ret = 0;
-    char *sopt;
-    sopt = MakeCStrFromFStr(option, lopt);
-    value = asterc_getopt_string(sopt, &ret);
-
-    if ( ret == 0 ) {
-        if ( strlen(value) > lvalk ) ret = 1;
-        CopyCStrToFStr(valk, value, lvalk);
+    printf("GTOPTK %s\n", option);
+    char* valk2 = getChaineLDC(option);
+    if ( valk2 == NULL )
+    {
+        lvalk = 0;
+        *iret = 4;
     }
-    *iret = (INTEGER)ret;
-    FreeStr(sopt);
-    FreeStr(value);
+    else
+    {
+        *iret = 0;
+        CopyCStrToFStr(valk, valk2, lvalk);
+    }
 }
 
 static char get_mem_stat_doc[] =
@@ -484,6 +474,11 @@ void DEFPP(CHKMSG,chkmsg, _IN INTEGER *info_alarm, _OUT INTEGER *iret)
      *    iret = 0 : tout est ok
      *    iret > 0   erreur
      */
+    printf("CHKMSG\n");
+    INTEGER ier=SIGABRT;
+    CALL_ASABRT( &ier );
+    /* TODO */
+
     PyObject *res;
 
     res = PyObject_CallMethod(get_sh_msglog(), "check_counter", "i", (int)*info_alarm);
@@ -501,6 +496,11 @@ void DEFSS(UTALRM,utalrm, _IN char *bool, _IN STRING_SIZE lbool,
      * call utalrm('OFF', 'CALCULEL5_7') == MasquerAlarme('CALCULEL5_7')
      * call utalrm('ON', 'CALCULEL5_7') == RetablirAlarme('CALCULEL5_7')
      */
+    printf("UTALRM\n");
+    INTEGER ier=SIGABRT;
+    CALL_ASABRT( &ier );
+    /* TODO */
+
     char *onoff, *s_id;
     PyObject *res;
 
@@ -522,6 +522,11 @@ void DEFP(GTALRM,gtalrm, _OUT INTEGER *nb)
 {
     /* Interface Fortran/Python pour obtenir si des alarmes ont été émises.
      */
+    printf("GTALRM\n");
+    INTEGER ier=SIGABRT;
+    CALL_ASABRT( &ier );
+    /* TODO */
+
     PyObject *res;
     res = PyObject_CallMethod(get_sh_msglog(), "get_info_alarm_nb", "");
     if (!res) MYABORT("erreur lors de l'appel a la methode 'get_info_alarm'");
@@ -539,6 +544,11 @@ void DEFP(PRHEAD,prhead, _IN INTEGER *part)
      * en début d'exécution
      * Voir help(aster_core.print_header)
      */
+    printf("PRHEAD a ajouter ?\n");
+    /*INTEGER ier=SIGABRT;
+    CALL_ASABRT( &ier );*/
+    /* TODO */
+
     PyObject *res;
     res = PyObject_CallMethod(get_sh_pymod(), "print_header", "i", (int)(*part));
     if (!res) MYABORT("erreur lors de l'appel a la fonction E_Global.print_header");
@@ -556,6 +566,11 @@ void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,
       Exemple d'appel :
          call cheksd('MA', 'sd_maillage', iret)
    */
+    printf("CHEKSD\n");
+    INTEGER ier=SIGABRT;
+    CALL_ASABRT( &ier );
+    /* TODO */
+
    PyObject *res;
 
    res = PyObject_CallMethod(get_sh_pymod(), "checksd", "s#s#", nomsd, lnom, typsd, ltyp);
@@ -582,6 +597,11 @@ void DEFSSPPPPPPPPPPPP(TESTRESU_PRINT,testresu_print,
         def testresu_print(type_ref, legend, label, skip, relative,
                            tole, ref, val, compare=1.):
     */
+    printf("TESTRESU_PRINT\n");
+    INTEGER ier=SIGABRT;
+    CALL_ASABRT( &ier );
+    /* TODO */
+
     PyObject *res, *func, *args, *kwargs, *ref, *val, *comp=NULL;
     int ityp;
 

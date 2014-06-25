@@ -140,8 +140,12 @@ def configure(self):
     paths = self.srcnode.ant_glob('bibc/include', src=True, dir=True)
     paths = [d.abspath() for d in paths]
     self.env.append_value('INCLUDES', paths)
+    paths = self.srcnode.ant_glob('bibcxx/include', src=True, dir=True)
+    paths = [d.abspath() for d in paths]
+    self.env.append_value('INCLUDES', paths)
 
     self.recurse('bibfor')
+    self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('i18n')
     self.recurse('data')
@@ -178,6 +182,7 @@ def build(self):
 
     self.load('ext_aster', tooldir='waftools')
     self.recurse('bibfor')
+    self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('bibpyt')
     self.recurse('i18n')
