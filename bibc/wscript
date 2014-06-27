@@ -180,6 +180,7 @@ def build_as_embedded(self, stenv, excl):
         )
 
 def build_module(self, env):
+    uses = env['all_dependencies']
     self(
         features = 'cxx cxxshlib pyext',
             name = 'asterswig',
@@ -187,7 +188,7 @@ def build_module(self, env):
           target = '_libAster',
       swig_flags = '-c++ -python -Wall',
              env = env,
-             use = ['asterlib'] + env['all_dependencies'],
+             use = ['asterbibfor', 'asterbibc', 'asterbibcxx'] + uses,
     install_path = env.ASTERLIBDIR,
     )
     #XXX may cause a problem if `waf install` is without running `waf build` before...
