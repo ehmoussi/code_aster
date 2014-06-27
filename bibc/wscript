@@ -2,7 +2,7 @@
 
 import os.path as osp
 
-from waflib import Configure, Logs, Utils
+from waflib import Configure, Logs, Utils, Errors
 
 def options(self):
     self.load('compiler_c')
@@ -24,6 +24,11 @@ def configure(self):
     # preserve symbols in the dyn table for stdcalls
     self.env.append_unique('LINKFLAGS', ['-Wl,--export-dynamic'])
 
+    self.load('swig')
+    if self.check_swig_version() < (2, 0, 0):
+        self.fatal('this swig version is too old')
+    self.check_swig_headers()
+
     #XXX remove this add
     self.env.append_unique('INCLUDES', ['include/'])
     if opts.embed_all or opts.embed_aster:
@@ -36,7 +41,6 @@ def configure(self):
                 self.env.append_value('LINKFLAGS', ['-static_mpi'])
     self.check_cflags()
     self.check_bibc_depends()
-    self.check_swig_headers()
 
 @Configure.conf
 def check_bibc_depends(self):
@@ -219,7 +223,43 @@ def check_optimization_cflags(self):
     self.env.append_unique('CFLAGS', flags)
     self.end_msg(flags)
 
+SWIG_FRAGMENT = """
+%%module testswig
+%%{
+%%}
+
+%%include "%s"
+"""
+
+@Configure.conf
+def check_swig(self, *k, **kw):
+    """Override :py:func:`waflib.Tools.c_config.check_cxx` using features for swig"""
+    def error(*k, **kw):
+        Logs.error(*k, **kw)
+        raise Errors.ConfigurationError(*k, **kw)
+    kw['features'] = 'cxx cxxshlib pyext'
+    kw['swig_flags'] = ('-c++', '-python', '-Wall')
+    kw['compile_filename'] = 'testswig.i'
+    if not 'fragment' in kw and 'header_name' in kw:
+        kw['fragment'] = SWIG_FRAGMENT % kw['header_name']
+    # force swig to fail if an include is not found
+    _warn = Logs.warn
+    Logs.warn = error
+    ret = self.check(*k, **kw)
+    Logs.warn = _warn
+    return ret
+
 @Configure.conf
 def check_swig_headers(self):
-    #/usr/share/swig2.0/python
-    pass
+    """Check for required swig headers"""
+    self.start_msg('Checking for swig includes path')
+    swig_out = self.cmd_and_log('%s -swiglib' % self.env['SWIG'])
+    if swig_out:
+        incpath = osp.join(swig_out.strip(), 'python')
+        self.env.append_value('INCLUDES_SWIG', incpath)
+    else:
+        incpath = '-'
+    self.end_msg(incpath)
+    
+    self.check_swig(header_name='exception.i',
+                    uselib_store='SWIG', use='SWIG CXX', mandatory=True)

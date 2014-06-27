@@ -2,7 +2,7 @@
 
 import os.path as osp
 
-from waflib import Configure, Logs, Utils
+from waflib import Configure
 
 def options(self):
     self.load('compiler_cxx')
@@ -11,9 +11,6 @@ def options(self):
 def configure(self):
     self.load('compiler_cxx')
     self.check_bibcxx_depends()
-    self.load('swig')
-    if self.check_swig_version() < (2, 0, 0):
-        self.fatal('this swig version is too old')
     self.load('boost')
     self.check_boost() # lib='shared_ptr'... ?
 
