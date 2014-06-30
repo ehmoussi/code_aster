@@ -118,11 +118,7 @@ def exec_pyaster(self, pyfile, args, **kwargs):
     env = self.all_envs[self.variant]
     environ = os.environ.copy()
     cmdenv = []
-    if env.ASTER_EMBEDS and 'bibc' in env.ASTER_EMBEDS:
-        exec_task = self.get_tgen_by_name('asterexec')
-        python = osp.join(exec_task.install_task.dest, exec_task.target)
-    else:
-        python = list(env.PYTHON)[0]
+    python = list(env.PYTHON)[0]
 
     ld_paths = get_ld_paths(self)
     if ld_paths:
