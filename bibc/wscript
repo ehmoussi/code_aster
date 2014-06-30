@@ -1,22 +1,24 @@
 # coding=utf-8
 
 import os.path as osp
+import optparse
+from functools import partial
 
 from waflib import Configure, Logs, Utils, Errors
 
+def _deprecated(option, *args, **kwargs):
+    """Deprecated option"""
+    Logs.warn("The option '{}' is not supported anymore.".format(option))
+
 def options(self):
     self.load('compiler_c')
-    # for the link stage
+    # for backward compatibility
     group = self.get_option_group("Code_Aster options")
-    group.add_option('-e', '--build-executable', dest='embed_aster',
-                    default=False, action='store_true',
-                    help='build aster as an executable: it is an alias for --embed-aster')
-    group.add_option('--embed-aster', dest='embed_aster',
-                    default=True, action='store_true',
-                    help='embed all aster components within a python interpreter')
-    group.add_option('--shared-aster', dest='embed_aster',
-                    default=True, action='store_false',
-                    help='build each aster component as a shared python module')
+    deprecate = partial(group.add_option, action='callback',
+                        callback=_deprecated, help=optparse.SUPPRESS_HELP)
+    deprecate('-e', '--build-executable')
+    deprecate('--embed-aster')
+    deprecate('--shared-aster')
 
 def configure(self):
     self.load('compiler_c')
@@ -31,14 +33,8 @@ def configure(self):
 
     #XXX remove this add
     self.env.append_unique('INCLUDES', ['include/'])
-    if opts.embed_all or opts.embed_aster:
-        self.env.append_value('ASTER_EMBEDS', ['bibc'])
     if 'ifort' in self.env.get_flat('LINK_FC'):
         self.env.append_value('LINKFLAGS', ['-nofor_main'])
-        if opts.embed_all or opts.embed_aster:
-            self.env.append_value('LINKFLAGS', ['-static-intel'])
-            if self.get_define('HAVE_MPI'):
-                self.env.append_value('LINKFLAGS', ['-static_mpi'])
     self.check_cflags()
     self.check_bibc_depends()
 
@@ -59,13 +55,9 @@ def build(self):
     get_srcs = self.path.get_src().ant_glob
     env = self.all_envs[self.variant]
     excl = [] if env.BUILD_MED else ['**/med_aster_module.c']
-    is_embedded = env.ASTER_EMBEDS and 'bibc' in env.ASTER_EMBEDS
 
-    build_c_source(self, env, excl, is_embedded)
-    if is_embedded:
-        build_as_embedded(self, env, excl)
-    else:
-        build_as_shared(self, env)
+    build_c_source(self, env, excl)
+    build_as_shared(self, env)
     build_module(self, env)
 
     self.add_group()
@@ -82,7 +74,7 @@ def build(self):
         config_includes
     )
 
-def build_c_source(self, env, excl, is_embedded):
+def build_c_source(self, env, excl):
     get_srcs = self.path.get_src().ant_glob
     uses = env['all_dependencies']
     # compile *.c
@@ -90,7 +82,7 @@ def build_c_source(self, env, excl, is_embedded):
         features = 'c',
             name = 'asterbibc',
           source = get_srcs('**/*.c', excl=excl + [PYMAIN]),
-         defines = '' if is_embedded else '_WITHOUT_PYMOD_',
+         defines = '_WITHOUT_PYMOD_',
              env = env.derive(),
              use = ['PYEMBED', 'NUMPY'] + uses,
     )
@@ -191,7 +183,7 @@ def build_module(self, env):
              use = ['asterbibfor', 'asterbibc', 'asterbibcxx'] + uses,
     install_path = env.ASTERLIBDIR,
     )
-    #XXX may cause a problem if `waf install` is without running `waf build` before...
+    #XXX may cause a problem if `waf install` is run without running `waf build` before...
     self.install_files(env.ASTERLIBDIR, '../bibcxx/include/libAster.py')
 
 ###############################################################################
@@ -261,6 +253,6 @@ def check_swig_headers(self):
     else:
         incpath = '-'
     self.end_msg(incpath)
-    
+
     self.check_swig(header_name='exception.i',
                     uselib_store='SWIG', use='SWIG CXX', mandatory=True)
