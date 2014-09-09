@@ -31,8 +31,6 @@ def configure(self):
         self.fatal('this swig version is too old')
     self.check_swig_headers()
 
-    #XXX remove this add
-    self.env.append_unique('INCLUDES', ['include/'])
     if 'ifort' in self.env.get_flat('LINK_FC'):
         self.env.append_value('LINKFLAGS', ['-nofor_main'])
     self.check_cflags()
