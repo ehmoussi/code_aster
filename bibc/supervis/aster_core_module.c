@@ -266,8 +266,9 @@ void DEFSPP(GTOPTR,gtoptr, _IN char *option, STRING_SIZE lopt,
      *  iret = 0 : tout est ok
      *  iret = 4 : option inexistante, type incorrect.
      */
-    printf("GTOPTR %s\n", option);
+    char *opt = MakeCStrFromFStr(option, lopt);
     *valr = getDoubleLDC(option);
+    printf("GTOPTR %s returns %f\n", opt, *valr);
     *iret = 0;
 }
 
@@ -407,55 +408,57 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
      * WARNING: In the case that the error indicator has already been set, we must
      * restore it after PyObject_CallMethod.
      */
+    char test = ' ';
     char *kvar;
-    int i, iexc=0, iret;
-    PyObject *tup_valk, *tup_vali, *tup_valr, *res;
-    PyObject *method, *args, *kwargs, *pyfname;
-    PyObject *etype, *eval, *etb;
+    int i;
+    PyObject *pName, *pModule, *args, *kwargs, *pFunc, *res;
+    PyObject *tup_valk, *tup_vali, *tup_valr;
 
-    if ( PyErr_Occurred() ) {
-        iexc = 1;
-        PyErr_Fetch(&etype, &eval, &etb);
+    pName = PyString_FromString("OutputAster");
+
+    pModule = PyImport_Import(pName);
+    if ( pModule == NULL )
+    {
+        INTEGER ier=SIGABRT;
+        CALL_ASABRT( &ier );
     }
+    Py_DECREF(pName);
+
+    pFunc = PyObject_GetAttrString(pModule, "print_message");
 
     tup_valk = PyTuple_New( (Py_ssize_t)*nbk ) ;
-    for(i=0;i<*nbk;i++){
+    for( i = 0; i < *nbk; i++ )
+    {
        kvar = valk + i*lvk;
-       PyTuple_SetItem( tup_valk, i, PyString_FromStringAndSize(kvar,(Py_ssize_t)lvk) ) ;
+       char* copyChaine = MakeCStrFromFStr(kvar, lvk);
+       PyTuple_SetItem( tup_valk, i, PyString_FromString(copyChaine));
+       FreeStr(copyChaine);
     }
 
     tup_vali = PyTuple_New( (Py_ssize_t)*nbi ) ;
-    for(i=0;i<*nbi;i++){
+    for( i = 0; i < *nbi; i++ )
+    {
        PyTuple_SetItem( tup_vali, i, PyLong_FromLong((long)vali[i]) ) ;
     }
 
     tup_valr = PyTuple_New( (Py_ssize_t)*nbr ) ;
-    for(i=0;i<*nbr;i++){
+    for( i = 0; i < *nbr; i++ )
+    {
        PyTuple_SetItem( tup_valr, i, PyFloat_FromDouble((double)valr[i]) ) ;
     }
 
-    method = PyObject_GetAttrString(get_sh_msglog(), "print_message");
-    args = Py_BuildValue("s#s#OOOi", typmess, ltype, idmess, lidmess,
-                         tup_valk, tup_vali, tup_valr, (int)*exc_typ),
+    args = Py_BuildValue("s#s#OOO", typmess, ltype, idmess, lidmess, tup_valk, tup_vali, tup_valr);
     kwargs = PyDict_New();
-    pyfname = PyString_FromStringAndSize(fname, lfn);
-    iret = PyDict_SetItemString(kwargs, "files", pyfname);
-    if (iret != 0) {
-       MYABORT("error the given filename in utprin");
-    }
 
-    res = PyObject_Call(method, args, kwargs);
-    if (!res) {
+    res = PyObject_Call(pFunc, args, NULL);
+    if (!res)
+    {
        MYABORT("erreur lors de l'appel a MessageLog");
     }
-    if ( iexc == 1 ) {
-        PyErr_Restore(etype, eval, etb);
-    }
 
-    Py_DECREF(pyfname);
     Py_DECREF(args);
     Py_XDECREF(kwargs);
-    Py_DECREF(method);
+    Py_DECREF(pFunc);
     Py_DECREF(tup_valk);
     Py_DECREF(tup_vali);
     Py_DECREF(tup_valr);
@@ -714,7 +717,6 @@ static PyObject* aster_mpi_barrier(self, args)
 PyObject *self; /* Not used */
 PyObject *args;
 {
-    int iret;
     /* Set a MPI barrier */
     if ( aster_set_mpi_barrier(aster_get_current_comm()) ) {
         return NULL;
