@@ -182,8 +182,8 @@ void DEFSP(GETFAC,getfac,_IN char *nomfac, _IN STRING_SIZE lfac, _OUT INTEGER *o
             le nombre d occurence de ce mot cle dans les args : occu (entier)
             dans l'etape (ou la commande) courante
         */
-    printf("GETFAC %s\n", nomfac);
     char* tmp = MakeCStrFromFStr(nomfac, lfac);
+    printf("GETFAC %s\n", tmp);
     *occu = nombreOccurencesMotCleFacteur(tmp);
     FreeStr(tmp);
 }
@@ -589,9 +589,9 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si plus de valeur que mxval nbval <0 et valeur abs = nbre valeurs
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
         */
-    printf("GETVR8_WRAP %s %s %d %d\n", motfac, motcle, (int)*iocc, (int)*mxval);
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
+    printf("GETVR8_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
     if ( presenceMotCle(tmp, tmp2) == 0 )
     {
         *nbval = 0;
@@ -715,9 +715,9 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si plus de valeur que mxval nbval <0 et valeur abs = nbre valeurs
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
         */
-    printf("GETVIS_WRAP %s %s %d %d\n", motfac, motcle, (int)*iocc, (int)*mxval);
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
+    printf("GETVIS_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
     if ( presenceMotCle(tmp, tmp2) == 0 )
     {
         *nbval = 0;
@@ -772,9 +772,9 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
 
         */
-    printf("GETVTX_WRAP %s %s %d %d\n", motfac, motcle, (int)*iocc, (int)*mxval);
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
+    printf("GETVTX_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
     if ( presenceMotCle(tmp, tmp2) == 0 )
     {
         *nbval = 0;
@@ -825,9 +825,9 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si plus de valeur que mxval nbval <0 et valeur abs = nbre valeurs
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
         */
-    printf("GETVID_WRAP %s %s %d %d\n", motfac, motcle, (int)*iocc, (int)*mxval);
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
+    printf("GETVID_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
     if ( presenceMotCle(tmp, tmp2) == 0 )
     {
         *nbval = 0;

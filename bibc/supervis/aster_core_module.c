@@ -135,10 +135,12 @@ double get_tpmax()
      * (on met la valeur en cache pour éviter le passage au Python à chaque appel de
      *  uttrst/uttcp0/uttcpu)
      */
-    int iret;
+    int iret = 0;
     double tpmax;
     if ( _cache_tpmax < 0 ) {
-        tpmax =  asterc_getopt_double("tpmax", &iret);
+        // tpmax =  asterc_getopt_double("tpmax", &iret);
+        tpmax = 1000.;
+        printf("get_tpmax: valeur fixe = %f\n", tpmax);
         if ( iret == 0 ) {
             _cache_tpmax = tpmax;
         }
@@ -251,8 +253,10 @@ void DEFSPP(GTOPTI,gtopti, _IN char *option, STRING_SIZE lopt,
      *  iret = 0 : tout est ok
      *  iret = 4 : option inexistante, type incorrect.
      */
-    printf("GTOPTI %s\n", option);
-    *vali = getIntLDC(option);
+    char *opt = MakeCStrFromFStr(option, lopt);
+    printf("GTOPTI %s\n", opt);
+    *vali = getIntLDC(opt);
+    FreeStr(opt);
     *iret = 0;
 }
 
@@ -267,8 +271,9 @@ void DEFSPP(GTOPTR,gtoptr, _IN char *option, STRING_SIZE lopt,
      *  iret = 4 : option inexistante, type incorrect.
      */
     char *opt = MakeCStrFromFStr(option, lopt);
-    *valr = getDoubleLDC(option);
+    *valr = getDoubleLDC(opt);
     printf("GTOPTR %s returns %f\n", opt, *valr);
+    FreeStr(opt);
     *iret = 0;
 }
 
@@ -283,8 +288,9 @@ void DEFSSP(GTOPTK,gtoptk, _IN char *option, STRING_SIZE lopt,
      *  iret = 1 : longueur de valk insuffisante, valeur tronquée
      *  iret = 4 : option inexistante, type incorrect.
      */
-    printf("GTOPTK %s\n", option);
-    char* valk2 = getChaineLDC(option);
+    char *opt = MakeCStrFromFStr(option, lopt);
+    printf("GTOPTK %s\n", opt);
+    char* valk2 = getChaineLDC(opt);
     if ( valk2 == NULL )
     {
         lvalk = 0;
@@ -295,6 +301,7 @@ void DEFSSP(GTOPTK,gtoptk, _IN char *option, STRING_SIZE lopt,
         *iret = 0;
         CopyCStrToFStr(valk, valk2, lvalk);
     }
+    FreeStr(opt);
 }
 
 static char get_mem_stat_doc[] =
@@ -552,10 +559,10 @@ void DEFP(PRHEAD,prhead, _IN INTEGER *part)
     CALL_ASABRT( &ier );*/
     /* TODO */
 
-    PyObject *res;
-    res = PyObject_CallMethod(get_sh_pymod(), "print_header", "i", (int)(*part));
-    if (!res) MYABORT("erreur lors de l'appel a la fonction E_Global.print_header");
-    Py_DECREF(res);
+    // PyObject *res;
+    // res = PyObject_CallMethod(get_sh_pymod(), "print_header", "i", (int)(*part));
+    // if (!res) MYABORT("erreur lors de l'appel a la fonction E_Global.print_header");
+    // Py_DECREF(res);
 }
 
 void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,
