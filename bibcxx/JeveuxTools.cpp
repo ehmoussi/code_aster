@@ -81,6 +81,7 @@ void StarterJeveux::startJeveux()
 
 void startJeveux()
 {
+    initAsterModules();
     initAster = new StarterJeveux();
     initAster->startJeveux();
 }

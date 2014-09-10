@@ -132,6 +132,9 @@ double getDoubleLDC(char*);
 
 char* getChaineLDC(char*);
 
+/* defined in python.c, should be in a 'python.h' */
+void initAsterModules();
+
 #ifdef __cplusplus
 }
 #endif

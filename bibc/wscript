@@ -55,7 +55,7 @@ def build(self):
     excl = [] if env.BUILD_MED else ['**/med_aster_module.c']
 
     build_c_source(self, env, excl)
-    build_as_shared(self, env)
+    build_all_objects(self, env)
     build_module(self, env)
 
     self.add_group()
@@ -80,94 +80,25 @@ def build_c_source(self, env, excl):
         features = 'c',
             name = 'asterbibc',
           source = get_srcs('**/*.c', excl=excl + [PYMAIN]),
-         defines = '_WITHOUT_PYMOD_',
+         defines = '',
              env = env.derive(),
              use = ['PYEMBED', 'NUMPY'] + uses,
     )
 
-def build_as_shared(self, shenv):
-    # We split Code_Aster byte code:
-    # - libaster.so: a shared library that store symbols
-    # - *aster*.so: python C-extensions that contains python bindings
-    #
-    # Some functions are called from C, Fortran or Python
-    # (cross-language communication). Some of them are coded within
-    # python C-extension files while the corresponding byte-codes and
-    # symbols shall be stored in libaster.so. To do so, we define
-    # _WITHOUT_PYMOD_.
-    #
+def build_all_objects(self, shenv):
     get_srcs = self.path.get_src().ant_glob
     uses = shenv['all_dependencies']
-    # {bibfor, bibc, bibcxx}/*.o -> libaster.so
+    # {bibfor, bibc, bibcxx}/*.o
     self(
-        features = 'c cshlib',
+        features = 'c',
             name = 'asterlib',
           target = 'aster',
-         defines = '_WITHOUT_PYMOD_',
+          source = PYMAIN,
+         defines = '_MAIN_=_unused_main_', #'_WITHOUT_PYMOD_',
              env = shenv.derive(),
              use = ['PYEMBED', 'NUMPY', 'asterbibfor', 'asterbibc', 'asterbibcxx'] + uses,
     install_path = shenv.ASTERLIBDIR,
     )
-
-    self.add_group()
-    # _aster_core.so
-    self(
-        features = 'c cshlib pyext',
-          target = '../bibpyt/_aster_core',
-            name = 'aster_core_module',
-          source = get_srcs('**/aster_core_module.c'),
-             env = shenv.derive(),
-             use = ['asterlib'] + uses,
-    install_path = shenv.ASTERLIBDIR,
-    )
-    # aster.so
-    self(
-        features = 'c cshlib pyext',
-          target = '../bibpyt/aster',
-            name = 'aster_module',
-          source = get_srcs('**/aster_module.c'),
-             env = shenv.derive(),
-             use = ['asterlib'] + uses,
-    install_path = shenv.ASTERLIBDIR,
-    )
-    # aster_fonctions.so
-    self(
-        features = 'c cshlib pyext',
-          target = '../bibpyt/aster_fonctions',
-            name = 'aster_fonctions',
-          source = get_srcs('**/aster_fonctions_module.c'),
-             env = shenv.derive(),
-             use = ['NUMPY', 'asterlib'] + uses,
-    install_path = shenv.ASTERLIBDIR,
-    )
-    # med_aster.so
-    if shenv.BUILD_MED:
-        self(
-            features = 'c cshlib pyext',
-              target = '../bibpyt/med_aster',
-                name = 'med_aster',
-              source = get_srcs('**/med_aster_module.c'),
-                 env = shenv.derive(),
-                 use = ['asterlib'] + uses,
-        install_path = shenv.ASTERLIBDIR,
-        )
-
-def build_as_embedded(self, stenv, excl):
-    get_srcs = self.path.get_src().ant_glob
-    uses = stenv['all_dependencies']
-    # required for Intel compiler
-    main = 'main' if stenv.FC_MAIN == -1 or 'ifort' in stenv.LINK_FC else stenv.FC_MAIN
-
-    tgt = stenv.ASTERBINOPT if self.variant == 'release' else stenv.ASTERBINDBG
-    self(
-        features = 'c fcprogram pyembed',
-          target = tgt,
-            name = 'asterexec',
-          source = PYMAIN,
-         defines = ['_MAIN_=%s' % main],
-             env = stenv.derive(),
-             use = ['NUMPY', 'asterbibfor', 'asterbibcxx', 'asterbibc'] + uses + ['CXX'],
-        )
 
 def build_module(self, env):
     uses = env['all_dependencies']
@@ -178,10 +109,11 @@ def build_module(self, env):
           target = '_libAster',
       swig_flags = '-c++ -python -Wall',
              env = env,
-             use = ['asterbibfor', 'asterbibc', 'asterbibcxx'] + uses,
+            use = ['asterlib'] + uses,
     install_path = env.ASTERLIBDIR,
     )
     #XXX may cause a problem if `waf install` is run without running `waf build` before...
+    # create a node ?
     self.install_files(env.ASTERLIBDIR, '../bibcxx/include/libAster.py')
 
 ###############################################################################

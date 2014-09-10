@@ -30,12 +30,12 @@
  * etc...
  */
 
-/* NOTE: 
+/* NOTE:
  *  Since Python may define some pre-processor definitions which affect the
  *  standard headers on some systems, you must include "Python.h" before any
  *  standard headers are included.
  *  The warning on _POSIX_C_SOURCE redefinition must not occur.
- * 
+ *
  *  source: http://docs.python.org/c-api/intro.html
  */
 #include "Python.h"
@@ -45,19 +45,17 @@
 #include "aster_fonctions_module.h"
 #include "med_aster_module.h"
 
+#include <stdio.h>
+
 extern DL_EXPORT(int) Py_Main();
 
 #ifndef _MAIN_
 #define _MAIN_ main
 #endif
 
-int
-_MAIN_(argc, argv)
-    int argc;
-    char **argv;
+void initAsterModules()
 {
-    int ierr;
-
+    printf("initialization of aster modules...\n");
     PyImport_AppendInittab("_aster_core", init_aster_core);
     PyImport_AppendInittab("aster", initaster);
 
@@ -66,6 +64,15 @@ _MAIN_(argc, argv)
 #ifndef _DISABLE_MED
     PyImport_AppendInittab("med_aster", initmed_aster);
 #endif
+}
+
+int
+_MAIN_(argc, argv)
+    int argc;
+    char **argv;
+{
+    int ierr;
+    initAsterModules();
     ierr = Py_Main(argc, argv);
     return ierr;
 }
