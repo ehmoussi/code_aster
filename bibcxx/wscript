@@ -13,6 +13,8 @@ def configure(self):
     self.check_bibcxx_depends()
     self.load('boost')
     self.check_boost() # lib='shared_ptr'... ?
+    cxxpath = self.path.get_src().abspath()
+    self.env.append_value('INCLUDES', cxxpath)
 
 def build(self):
     buildenv = self.all_envs[self.variant]
@@ -31,4 +33,3 @@ def build(self):
 def check_bibcxx_depends(self):
     """check dependencies of bibc"""
     self.check_cc(uselib_store='CXX', lib='stdc++')
-

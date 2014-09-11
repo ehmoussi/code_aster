@@ -1,7 +1,7 @@
 #ifndef ASTERMODEL_HPP_
 #define ASTERMODEL_HPP_
 
-#include "AsterMesh.hpp"
+#include "userobject/AsterMesh.hpp"
 #include <map>
 
 class AsterElementaryModel

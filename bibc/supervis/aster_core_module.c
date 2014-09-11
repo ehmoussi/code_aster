@@ -37,7 +37,7 @@
 #include "aster_fort.h"
 #include "aster_utils.h"
 
-#include "JeveuxTools.hpp"
+#include "baseobject/JeveuxTools.hpp"
 
 /*! aster_core C module */
 static PyObject* aster_core = (PyObject*)0;

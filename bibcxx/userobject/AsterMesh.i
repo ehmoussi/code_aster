@@ -1,10 +1,10 @@
 %module libAster
 %{
-#include "AsterMesh.hpp"
+#include "userobject/AsterMesh.hpp"
 %}
 
-%include "JeveuxCollection.i"
-%include "FieldOnNodes.i"
+%include "baseobject/JeveuxCollection.i"
+%include "userobject/FieldOnNodes.i"
 
 class AsterGroupOfNodes
 {

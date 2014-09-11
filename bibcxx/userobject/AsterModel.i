@@ -1,9 +1,9 @@
 %module libAster
 %{
-#include "AsterModel.hpp"
+#include "userobject/AsterModel.hpp"
 %}
 
-%include "AsterMesh.i"
+%include "userobject/AsterMesh.i"
 
 class AsterModel
 {

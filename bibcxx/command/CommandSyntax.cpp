@@ -1,5 +1,5 @@
 
-#include "CommandSyntax.hpp"
+#include "command/CommandSyntax.hpp"
 #include <stdlib.h>
 
 CommandSyntax* commandeCourante = NULL;
@@ -33,7 +33,7 @@ char** valeursMotCleChaine(char* motCleFacteur, int occurence, char* motCleSimpl
     ListString::iterator iter;
     int compteur = 0;
     for ( iter = retour.begin();
-          iter != retour.end(); 
+          iter != retour.end();
           ++iter )
     {
         tabRetour[compteur] = const_cast< char* >(iter->c_str());
@@ -55,7 +55,7 @@ double* valeursMotCleDouble(char* motCleFacteur, int occurence, char* motCleSimp
     ListDouble::iterator iter;
     int compteur = 0;
     for ( iter = retour.begin();
-          iter != retour.end(); 
+          iter != retour.end();
           ++iter )
     {
         tabRetour[compteur] = *iter;
@@ -77,7 +77,7 @@ int* valeursMotCleInt(char* motCleFacteur, int occurence, char* motCleSimple, in
     ListInt::iterator iter;
     int compteur = 0;
     for ( iter = retour.begin();
-          iter != retour.end(); 
+          iter != retour.end();
           ++iter )
     {
         tabRetour[compteur] = *iter;

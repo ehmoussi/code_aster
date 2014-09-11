@@ -1,5 +1,5 @@
 
-#include "JeveuxBidirectionalMap.hpp"
+#include "baseobject/JeveuxBidirectionalMap.hpp"
 
 string JeveuxBidirectionalMapInstance::findStringOfElement(long elementNumber)
 {
