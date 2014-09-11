@@ -2,7 +2,7 @@
 #define JEVEUXVECTOR_HPP_
 
 #include "definition.h"
-#include "JeveuxTools.hpp"
+#include "baseobject/JeveuxTools.hpp"
 
 #include <string>
 

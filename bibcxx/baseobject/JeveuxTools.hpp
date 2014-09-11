@@ -5,7 +5,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "CommandSyntax.hpp"
+#include "command/CommandSyntax.hpp"
 
 #include "definition.h"
 

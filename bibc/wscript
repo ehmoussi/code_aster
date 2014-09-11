@@ -105,7 +105,7 @@ def build_module(self, env):
     self(
         features = 'cxx cxxshlib pyext',
             name = 'asterswig',
-          source = '../bibcxx/include/libAster.i',
+          source = '../bibcxx/libAster.i',
           target = '_libAster',
       swig_flags = '-c++ -python -Wall',
              env = env,
@@ -114,7 +114,7 @@ def build_module(self, env):
     )
     #XXX may cause a problem if `waf install` is run without running `waf build` before...
     # create a node ?
-    self.install_files(env.ASTERLIBDIR, '../bibcxx/include/libAster.py')
+    self.install_files(env.ASTERLIBDIR, '../bibcxx/libAster.py')
 
 ###############################################################################
 @Configure.conf
