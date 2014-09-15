@@ -1,2 +1,0 @@
-
-#include "baseobject/JeveuxCollection.hpp"

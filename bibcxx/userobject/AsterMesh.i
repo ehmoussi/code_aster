@@ -1,6 +1,6 @@
 %module libAster
 %{
-#include "userobject/AsterMesh.hpp"
+#include "userobject/AsterMesh.h"
 %}
 
 %include "baseobject/JeveuxCollection.i"

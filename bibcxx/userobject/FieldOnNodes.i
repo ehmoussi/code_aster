@@ -1,6 +1,6 @@
 %module libAster
 %{
-#include "userobject/FieldOnNodes.hpp"
+#include "userobject/FieldOnNodes.h"
 %}
 
 template<class ValueType>

@@ -1,7 +1,7 @@
 %module libAster
 %{
-#include "baseobject/JeveuxTools.hpp"
-#include "baseobject/JeveuxCollection.hpp"
+#include "baseobject/JeveuxTools.h"
+#include "baseobject/JeveuxCollection.h"
 %}
 
 template<class ValueType>

@@ -1,6 +1,6 @@
 %module libAster
 %{
-#include "userobject/AsterModel.hpp"
+#include "userobject/AsterModel.h"
 %}
 
 %include "userobject/AsterMesh.i"

@@ -23,7 +23,7 @@ def build(self):
     self(
         features = 'cxx',
             name = 'asterbibcxx',
-          source = get_srcs('**/*.cpp'),
+          source = get_srcs('**/*.cxx'),
              env = buildenv,
              use = self.env['all_dependencies'],
     )
