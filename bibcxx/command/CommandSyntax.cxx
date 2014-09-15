@@ -1,5 +1,5 @@
 
-#include "command/CommandSyntax.hpp"
+#include "command/CommandSyntax.h"
 #include <stdlib.h>
 
 CommandSyntax* commandeCourante = NULL;

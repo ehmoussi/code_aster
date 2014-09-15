@@ -1,5 +1,5 @@
 
-#include "userobject/AsterModel.hpp"
+#include "userobject/AsterModel.h"
 
 #define CALL_OP0018() CALL0(OP0018, op0018)
 extern "C"

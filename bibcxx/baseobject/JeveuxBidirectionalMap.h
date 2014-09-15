@@ -1,7 +1,7 @@
 #ifndef JEVEUXBIDIRECTIONALMAP_HPP_
 #define JEVEUXBIDIRECTIONALMAP_HPP_
 
-#include "baseobject/JeveuxTools.hpp"
+#include "baseobject/JeveuxTools.h"
 
 using namespace std;
 

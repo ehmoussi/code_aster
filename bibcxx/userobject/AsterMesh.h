@@ -2,10 +2,10 @@
 #define ASTERMESH_HPP_
 
 #include "definition.h"
-#include "baseobject/JeveuxTools.hpp"
-#include "baseobject/JeveuxCollection.hpp"
-#include "baseobject/JeveuxBidirectionalMap.hpp"
-#include "userobject/FieldOnNodes.hpp"
+#include "baseobject/JeveuxTools.h"
+#include "baseobject/JeveuxCollection.h"
+#include "baseobject/JeveuxBidirectionalMap.h"
+#include "userobject/FieldOnNodes.h"
 #include <assert.h>
 
 class AsterMeshEntity

@@ -4,7 +4,7 @@
 #include <string>
 #include <assert.h>
 
-#include "baseobject/JeveuxVector.hpp"
+#include "baseobject/JeveuxVector.h"
 
 template<class ValueType>
 class FieldOnNodesInstance
