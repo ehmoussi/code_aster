@@ -1,4 +1,14 @@
+/*
 
+    Initializer object of a Code_Aster execution
+
+    It allows to set global parameters for the execution (as time and memory limits).
+    Its main method `run()` initialize the memory manager (Jeveux).
+
+    Its interface is not available in the Python namespace (no `.i`) because only a
+    singleton instance is created (and must be callable from the fortran operators).
+
+ */
 #include "command/Initializer.h"
 
 int jeveux_status = 0;
@@ -40,6 +50,21 @@ Initializer::Initializer(): syntaxeDebut(CommandSyntax("DEBUT", false, "")), _nu
     commandeCourante = &syntaxeDebut;
 }
 
+void Initializer::initForCataBuilder()
+{
+    FactorKeyword factCata = FactorKeyword("CATALOGUE", false);
+    FactorKeywordOccurence occurCata = FactorKeywordOccurence();
+    SimpleKeyWordStr kwFichier = SimpleKeyWordStr("FICHIER");
+    kwFichier.addValues("CATAELEM");
+    occurCata.addSimpleKeywordStr(kwFichier);
+    SimpleKeyWordInt kwUnite = SimpleKeyWordInt("UNITE");
+    kwUnite.addValues(4);
+    occurCata.addSimpleKeywordInteger(kwUnite);
+    factCata.addOccurence(occurCata);
+
+    syntaxeDebut.addFactorKeyword(factCata);
+}
+
 int Initializer::getIntLDC(char* chaineQuestion)
 {
     mapLDCEntierIterator curIter = argsLDCEntiers.find(string(chaineQuestion));
@@ -73,11 +98,14 @@ void Initializer::run()
     CALL_DEBUT();
 }
 
-// We define a `init` function to keep a global `Initializer` object
-void init()
+// We define a `_init` function to keep a global `Initializer` object
+void init(int imode)
 {
     initAsterModules();
     initAster = new Initializer();
+    if ( imode == 1 ) {
+        initAster->initForCataBuilder();
+    }
     initAster->run();
 }
 

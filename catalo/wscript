@@ -86,13 +86,15 @@ def build_cata_ele(self, ojb, install_path):
     Logs.info('+ build the elements catalog %s using installed aster (from %s)'
               % ('elem.1', ojb))
 
-    # generate the command file
+    # generate the options and command files
+    opts = bldnode.make_node('aster_init_options.py')
+    opts.write("options = ['CATAELEM', ]\n", 'w')
+
     comm = bldnode.make_node('fort.1')
     content = os.linesep.join([
-        "DEBUT(CATALOGUE=_F(FICHIER='CATAELEM', UNITE=4), ",
-        "      ERREUR=_F(ERREUR_F='ABORT'), PAR_LOT='NON')",
-        "MAJ_CATA(ELEMENT=_F())",
-        "FIN()", ""
+        "from libAster import CataBuilder",
+        "bld = CataBuilder()",
+        "bld.run()", ""
     ])
     comm.write(content, 'w')
 
@@ -103,10 +105,7 @@ def build_cata_ele(self, ojb, install_path):
 
     try:
         #  generate the command line
-        exec_pyaster(self, 'Execution/E_SUPERV.py', cwd=bldnode.abspath(),
-                     args=['-commandes', comm.abspath(),
-                           '-memjeveux', '500',
-                           '-tpmax', '120'])
+        exec_pyaster(self, comm.abspath(), cwd=bldnode.abspath(), args=[])
     finally: # fort.4 -> .ojb
         os.rename(after, before)
 
@@ -154,6 +153,7 @@ def exec_pyaster(self, pyfile, args, **kwargs):
         Logs.info('LIBDIR="%s"' % environ['LIBDIR'])
         Logs.info('PYTHONDIR="%s"' % environ['PYTHONDIR'])
         Logs.info('export LD_LIBRARY_PATH="%s"' % environ['LD_LIBRARY_PATH'])
+        Logs.info('export PYTHONPATH="%s"' % environ['PYTHONPATH'])
         Logs.info(' '.join(cmdexe))
         raise
 

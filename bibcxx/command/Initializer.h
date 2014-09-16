@@ -109,6 +109,8 @@ class Initializer
 
         char* getChaineLDC(char* chaineQuestion);
 
+        void initForCataBuilder();
+
         void run();
 };
 
@@ -124,7 +126,9 @@ extern void* initAster;
 extern "C" {
 #endif
 
-void init();
+void init(int);
+
+void initForCataBuilder();
 
 int getIntLDC(char*);
 
