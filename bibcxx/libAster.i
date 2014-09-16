@@ -25,4 +25,8 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
 %include "userobject/AsterMesh.i"
 %include "userobject/AsterModel.i"
 
-void startJeveux();
+void init();
+// Automatically call `init()` at import
+%pythoncode %{
+    _libAster.init()
+%}

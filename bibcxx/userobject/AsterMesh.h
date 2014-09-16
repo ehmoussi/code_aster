@@ -2,7 +2,7 @@
 #define ASTERMESH_H_
 
 #include "definition.h"
-#include "command/JeveuxTools.h"
+#include "command/Initializer.h"
 #include "baseobject/JeveuxCollection.h"
 #include "baseobject/JeveuxBidirectionalMap.h"
 #include "userobject/FieldOnNodes.h"

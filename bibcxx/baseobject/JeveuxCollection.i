@@ -1,6 +1,6 @@
 %module libAster
 %{
-#include "command/JeveuxTools.h"
+#include "command/Initializer.h"
 #include "baseobject/JeveuxCollection.h"
 %}
 

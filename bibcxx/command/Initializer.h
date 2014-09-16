@@ -1,5 +1,5 @@
-#ifndef JEVEUXTOOLS_H_
-#define JEVEUXTOOLS_H_
+#ifndef INIT_H_
+#define INIT_H_
 
 #include <stdio.h>
 #include <string.h>
@@ -55,7 +55,7 @@ extern "C"
     void FreeStr( char * );
 }
 
-class StarterJeveux
+class Initializer
 {
     private:
         typedef map< string, int > mapLDCEntier;
@@ -80,11 +80,11 @@ class StarterJeveux
         static const unsigned long int _maxNumberOfAsterObjects = 4294967295;
 
     public:
-        StarterJeveux();
+        Initializer();
 
-        ~StarterJeveux()
+        ~Initializer()
         {
-            cout << "~StarterJeveux";
+            cout << "~Initializer";
         }
 
         string getNewResultObjectName()
@@ -109,10 +109,10 @@ class StarterJeveux
 
         char* getChaineLDC(char* chaineQuestion);
 
-        void startJeveux();
+        void run();
 };
 
-extern StarterJeveux* initAster;
+extern Initializer* initAster;
 
 #else
 
@@ -124,7 +124,7 @@ extern void* initAster;
 extern "C" {
 #endif
 
-void startJeveux();
+void init();
 
 int getIntLDC(char*);
 
@@ -139,4 +139,4 @@ void initAsterModules();
 }
 #endif
 
-#endif /* JEVEUXTOOLS_H_ */
+#endif /* INIT_H_ */

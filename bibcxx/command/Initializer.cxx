@@ -1,18 +1,12 @@
 
-#include "command/JeveuxTools.h"
+#include "command/Initializer.h"
 
 int jeveux_status = 0;
 
-StarterJeveux* initAster = NULL;
+Initializer* initAster = NULL;
 
-StarterJeveux::StarterJeveux(): syntaxeDebut(CommandSyntax("DEBUT", false, "")), _numberOfAsterObjects(-1)
+Initializer::Initializer(): syntaxeDebut(CommandSyntax("DEBUT", false, "")), _numberOfAsterObjects(-1)
 {
-//     bool a = true;
-//     int b = 5;
-//     while ( a )
-//     {
-//         b = 6;
-//     }
     argsLDCEntiers.insert(mapLDCEntierValue(string("suivi_batch"), 0));
     argsLDCEntiers.insert(mapLDCEntierValue(string("dbgjeveux"), 0));
 
@@ -46,7 +40,7 @@ StarterJeveux::StarterJeveux(): syntaxeDebut(CommandSyntax("DEBUT", false, "")),
     commandeCourante = &syntaxeDebut;
 }
 
-int StarterJeveux::getIntLDC(char* chaineQuestion)
+int Initializer::getIntLDC(char* chaineQuestion)
 {
     mapLDCEntierIterator curIter = argsLDCEntiers.find(string(chaineQuestion));
     if ( curIter == argsLDCEntiers.end() ) return 0;
@@ -54,7 +48,7 @@ int StarterJeveux::getIntLDC(char* chaineQuestion)
     return curIter->second;
 };
 
-double StarterJeveux::getDoubleLDC(char* chaineQuestion)
+double Initializer::getDoubleLDC(char* chaineQuestion)
 {
     mapLDCDoubleIterator curIter = argsLDCDoubles.find(string(chaineQuestion));
     if ( curIter == argsLDCDoubles.end() ) return 0.;
@@ -62,7 +56,7 @@ double StarterJeveux::getDoubleLDC(char* chaineQuestion)
     return curIter->second;
 };
 
-char* StarterJeveux::getChaineLDC(char* chaineQuestion)
+char* Initializer::getChaineLDC(char* chaineQuestion)
 {
     mapLDCStringIterator curIter = argsLDCStrings.find(string(chaineQuestion));
     if ( curIter == argsLDCStrings.end() ) return NULL;
@@ -71,7 +65,7 @@ char* StarterJeveux::getChaineLDC(char* chaineQuestion)
     return const_cast< char* >(curIter->second.c_str());
 };
 
-void StarterJeveux::startJeveux()
+void Initializer::run()
 {
     INTEGER dbg = 0;
     CALL_IBMAIN(&dbg);
@@ -79,11 +73,12 @@ void StarterJeveux::startJeveux()
     CALL_DEBUT();
 }
 
-void startJeveux()
+// We define a `init` function to keep a global `Initializer` object
+void init()
 {
     initAsterModules();
-    initAster = new StarterJeveux();
-    initAster->startJeveux();
+    initAster = new Initializer();
+    initAster->run();
 }
 
 int getIntLDC(char* chaineQuestion)
