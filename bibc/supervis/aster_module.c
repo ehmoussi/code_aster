@@ -33,7 +33,7 @@
 #include "aster_utils.h"
 #include "aster_exceptions.h"
 
-#include "baseobject/JeveuxTools.h"
+#include "command/JeveuxTools.h"
 
 /*
  *   PRIVATE FUNCTIONS

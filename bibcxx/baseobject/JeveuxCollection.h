@@ -2,7 +2,7 @@
 #define JEVEUXCOLLECTION_H_
 
 #include "definition.h"
-#include "baseobject/JeveuxTools.h"
+#include "command/JeveuxTools.h"
 
 #include <string>
 #include <list>

@@ -1,5 +1,5 @@
 
-#include "baseobject/JeveuxTools.h"
+#include "command/JeveuxTools.h"
 
 int jeveux_status = 0;
 
