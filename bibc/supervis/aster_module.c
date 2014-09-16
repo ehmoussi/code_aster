@@ -46,7 +46,6 @@ void TraiteMessageErreur( _IN char* ) ;
 INTEGER DEF0(ISJVUP, isjvup)
 {
    /* "is jeveux up ?" : retourne 1 si jeveux est démarré/initialisé, sinon 0. */
-   printf("ISJVUP\n");
    return (INTEGER)get_sh_jeveux_status();
 }
 
@@ -183,8 +182,8 @@ void DEFSP(GETFAC,getfac,_IN char *nomfac, _IN STRING_SIZE lfac, _OUT INTEGER *o
             dans l'etape (ou la commande) courante
         */
     char* tmp = MakeCStrFromFStr(nomfac, lfac);
-    printf("GETFAC %s\n", tmp);
     *occu = nombreOccurencesMotCleFacteur(tmp);
+    printf("GETFAC %s => %ld\n", tmp, *occu);
     FreeStr(tmp);
 }
 
@@ -435,7 +434,6 @@ void DEFSSS( GETRES ,getres, _OUT char *nomres, _IN STRING_SIZE lres,
             le nom du concept resultat     : concep (string)
             le nom de la commande          : nomcmd (string)
         */
-    printf("GETRES\n");
     char* nomCmdCp = getNomCommande();
     CopyCStrToFStr(nomcmd, nomCmdCp, 16);
     int tmp = isCommandeOperateur();
