@@ -1,7 +1,7 @@
 #ifndef JEVEUXBIDIRECTIONALMAP_H_
 #define JEVEUXBIDIRECTIONALMAP_H_
 
-#include "command/JeveuxTools.h"
+#include "command/Initializer.h"
 
 using namespace std;
 
