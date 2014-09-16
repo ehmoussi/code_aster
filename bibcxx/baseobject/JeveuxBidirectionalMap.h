@@ -1,5 +1,5 @@
-#ifndef JEVEUXBIDIRECTIONALMAP_HPP_
-#define JEVEUXBIDIRECTIONALMAP_HPP_
+#ifndef JEVEUXBIDIRECTIONALMAP_H_
+#define JEVEUXBIDIRECTIONALMAP_H_
 
 #include "baseobject/JeveuxTools.h"
 
@@ -52,4 +52,4 @@ class JeveuxBidirectionalMap
         };
 };
 
-#endif /* JEVEUXBIDIRECTIONALMAP_HPP_ */
+#endif /* JEVEUXBIDIRECTIONALMAP_H_ */

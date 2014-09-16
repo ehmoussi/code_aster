@@ -1,5 +1,5 @@
-#ifndef ASTERMESH_HPP_
-#define ASTERMESH_HPP_
+#ifndef ASTERMESH_H_
+#define ASTERMESH_H_
 
 #include "definition.h"
 #include "baseobject/JeveuxTools.h"
@@ -128,4 +128,4 @@ class AsterMesh
         };
 };
 
-#endif /* ASTERMESH_HPP_ */
+#endif /* ASTERMESH_H_ */

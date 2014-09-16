@@ -1,5 +1,5 @@
-#ifndef FIELDONNODES_HPP_
-#define FIELDONNODES_HPP_
+#ifndef FIELDONNODES_H_
+#define FIELDONNODES_H_
 
 #include <string>
 #include <assert.h>
@@ -72,4 +72,4 @@ class FieldOnNodes
 
 typedef FieldOnNodes<double> FieldOnNodesDouble;
 
-#endif /* FIELDONNODES_HPP_ */
+#endif /* FIELDONNODES_H_ */

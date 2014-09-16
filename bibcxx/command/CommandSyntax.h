@@ -1,5 +1,5 @@
-#ifndef COMMANDSYNTAX_HPP_
-#define COMMANDSYNTAX_HPP_
+#ifndef COMMANDSYNTAX_H_
+#define COMMANDSYNTAX_H_
 
 #ifdef __cplusplus
 
@@ -321,4 +321,4 @@ char* getNomObjetJeveux();
 }
 #endif
 
-#endif /* COMMANDSYNTAX_HPP_ */
+#endif /* COMMANDSYNTAX_H_ */

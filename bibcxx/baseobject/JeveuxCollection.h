@@ -1,5 +1,5 @@
-#ifndef JEVEUXCOLLECTION_HPP_
-#define JEVEUXCOLLECTION_HPP_
+#ifndef JEVEUXCOLLECTION_H_
+#define JEVEUXCOLLECTION_H_
 
 #include "definition.h"
 #include "baseobject/JeveuxTools.h"
@@ -140,4 +140,4 @@ class JeveuxCollection
 
 typedef JeveuxCollection<long> JeveuxCollectionLong;
 
-#endif /* JEVEUXCOLLECTION_HPP_ */
+#endif /* JEVEUXCOLLECTION_H_ */

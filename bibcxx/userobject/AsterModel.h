@@ -1,5 +1,5 @@
-#ifndef ASTERMODEL_HPP_
-#define ASTERMODEL_HPP_
+#ifndef ASTERMODEL_H_
+#define ASTERMODEL_H_
 
 #include "userobject/AsterMesh.h"
 #include <map>
@@ -106,4 +106,4 @@ class AsterModel
         };
 };
 
-#endif /* ASTERMODEL_HPP_ */
+#endif /* ASTERMODEL_H_ */

@@ -1,5 +1,5 @@
-#ifndef JEVEUXVECTOR_HPP_
-#define JEVEUXVECTOR_HPP_
+#ifndef JEVEUXVECTOR_H_
+#define JEVEUXVECTOR_H_
 
 #include "definition.h"
 #include "baseobject/JeveuxTools.h"
@@ -78,4 +78,4 @@ typedef JeveuxVector<double> JeveuxVectorDouble;
 typedef JeveuxVector<char[8]> JeveuxVectorChar8;
 typedef JeveuxVector<char[24]> JeveuxVectorChar24;
 
-#endif /* JEVEUXVECTOR_HPP_ */
+#endif /* JEVEUXVECTOR_H_ */

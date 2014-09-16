@@ -1,5 +1,5 @@
-#ifndef JEVEUXTOOLS_HPP_
-#define JEVEUXTOOLS_HPP_
+#ifndef JEVEUXTOOLS_H_
+#define JEVEUXTOOLS_H_
 
 #include <stdio.h>
 #include <string.h>
@@ -139,4 +139,4 @@ void initAsterModules();
 }
 #endif
 
-#endif /* JEVEUXTOOLS_HPP_ */
+#endif /* JEVEUXTOOLS_H_ */

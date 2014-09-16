@@ -21,6 +21,8 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
     }
 }
 
+%include "userobject/FieldOnNodes.i"
+%include "userobject/AsterMesh.i"
 %include "userobject/AsterModel.i"
 
 void startJeveux();
