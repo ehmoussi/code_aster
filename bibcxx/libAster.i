@@ -27,8 +27,16 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
 
 %include "command/CataBuilder.i"
 
-void init();
+void init(int imode);
+
 // Automatically call `init()` at import
 %pythoncode %{
-    _libAster.init()
+    mode = 0
+    try:
+        from aster_init_options import options
+    except ImportError:
+        options = ['']
+    if 'CATAELEM' in options:
+        mode = 1
+    _libAster.init(mode)
 %}
