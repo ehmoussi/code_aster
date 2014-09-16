@@ -1,4 +1,4 @@
-%module libAster
+%module code_aster
 %{
 #include "userobject/AsterMesh.h"
 %}
