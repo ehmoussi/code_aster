@@ -417,21 +417,25 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
      */
     char test = ' ';
     char *kvar;
-    int i;
-    PyObject *pName, *pModule, *args, *kwargs, *pFunc, *res;
+    int i, iret, iexc=0;
+    PyObject *pModule, *args, *kwargs, *pyfname, *pFunc, *res;
     PyObject *tup_valk, *tup_vali, *tup_valr;
+    PyObject *etype, *eval, *etb;
 
-    pName = PyString_FromString("OutputAster");
-
-    pModule = PyImport_Import(pName);
+    pModule = PyImport_ImportModule("Utilitai.Utmess");
     if ( pModule == NULL )
     {
+        printf("No module named 'Utilitai.Utmess'\n");
         INTEGER ier=SIGABRT;
         CALL_ASABRT( &ier );
     }
-    Py_DECREF(pName);
 
-    pFunc = PyObject_GetAttrString(pModule, "print_message");
+    pFunc = PyObject_GetAttrString(pModule, "UTMESS");
+
+    if ( PyErr_Occurred() ) {
+        iexc = 1;
+        PyErr_Fetch(&etype, &eval, &etb);
+    }
 
     tup_valk = PyTuple_New( (Py_ssize_t)*nbk ) ;
     for( i = 0; i < *nbk; i++ )
@@ -454,15 +458,24 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
        PyTuple_SetItem( tup_valr, i, PyFloat_FromDouble((double)valr[i]) ) ;
     }
 
-    args = Py_BuildValue("s#s#OOO", typmess, ltype, idmess, lidmess, tup_valk, tup_vali, tup_valr);
+    args = Py_BuildValue("s#s#OOO", typmess, ltype, idmess, lidmess, tup_valk, tup_vali, tup_valr, (int)*exc_typ);
     kwargs = PyDict_New();
+    pyfname = PyString_FromStringAndSize(fname, lfn);
+    iret = PyDict_SetItemString(kwargs, "files", pyfname);
+    if (iret != 0) {
+       MYABORT("error the given filename in utprin");
+    }
 
-    res = PyObject_Call(pFunc, args, NULL);
+    res = PyObject_Call(pFunc, args, kwargs);
     if (!res)
     {
        MYABORT("erreur lors de l'appel a MessageLog");
     }
+    if ( iexc == 1 ) {
+        PyErr_Restore(etype, eval, etb);
+    }
 
+    Py_DECREF(pyfname);
     Py_DECREF(args);
     Py_XDECREF(kwargs);
     Py_DECREF(pFunc);
