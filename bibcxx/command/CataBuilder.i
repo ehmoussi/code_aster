@@ -1,4 +1,4 @@
-%module libAster
+%module code_aster
 %{
 #include "command/CataBuilder.h"
 %}

@@ -1,4 +1,4 @@
-%module libAster
+%module code_aster
 %{
 %}
 
@@ -38,5 +38,5 @@ void init(int imode);
         options = ['']
     if 'CATAELEM' in options:
         mode = 1
-    _libAster.init(mode)
+    _code_aster.init(mode)
 %}
