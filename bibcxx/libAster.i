@@ -25,6 +25,8 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
 %include "userobject/AsterMesh.i"
 %include "userobject/AsterModel.i"
 
+%include "command/CataBuilder.i"
+
 void init();
 // Automatically call `init()` at import
 %pythoncode %{
