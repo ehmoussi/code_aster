@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2014  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,11 +16,12 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine writdr(dfname, buf, nbytes, irec, ierr)
-        character(len=*) :: dfname
-        integer :: buf
-        integer :: nbytes
-        integer :: irec
-        integer :: ierr
-    end subroutine writdr
+    subroutine jeveuoc(nomlu, cel, pc)
+        use iso_c_binding, only:  c_loc, c_ptr, c_f_pointer
+        implicit none
+
+        character(len=*), intent(in) :: nomlu
+        character(len=*), intent(in) :: cel
+        type(c_ptr) :: pc
+    end subroutine jeveuoc
 end interface
