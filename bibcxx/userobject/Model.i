@@ -1,20 +1,20 @@
 %module code_aster
 %{
-#include "userobject/AsterModel.h"
+#include "userobject/Model.h"
 %}
 
-%include "userobject/AsterMesh.i"
+%include "userobject/Mesh.i"
 
-class AsterModel
+class Model
 {
     public:
-        AsterModel();
-        ~AsterModel();
+        Model();
+        ~Model();
 };
 
-%extend AsterModel
+%extend Model
 {
-    bool setSupportMesh(AsterMesh& currentMesh)
+    bool setSupportMesh(Mesh& currentMesh)
     {
         return (*$self)->setSupportMesh(currentMesh);
     }
@@ -24,7 +24,7 @@ class AsterModel
         return (*$self)->addModelisation(physics, modelisation);
     }
 
-    void addModelisation(char* physics, char* modelisation, AsterMeshEntity& entity)
+    void addModelisation(char* physics, char* modelisation, MeshEntity& entity)
     {
         return (*$self)->addModelisation(physics, modelisation, entity);
     }

@@ -1,5 +1,5 @@
 
-#include "userobject/AsterMesh.h"
+#include "userobject/Mesh.h"
 
 #define CALL_OP0001() CALL0(OP0001, op0001)
 extern "C"
@@ -7,7 +7,7 @@ extern "C"
     void DEF0(OP0001, op0001);
 }
 
-AsterMeshInstance::AsterMeshInstance(): _jeveuxName( initAster->getNewResultObjectName() ),
+MeshInstance::MeshInstance(): _jeveuxName( initAster->getNewResultObjectName() ),
                         _dimensionInformations( JeveuxVectorLong( string(_jeveuxName + ".DIME      ") ) ),
                         _nameOfNodes( JeveuxBidirectionalMap( string(_jeveuxName + ".NOMNOE    ") ) ),
                         _coordinates( FieldOnNodesDouble( string(_jeveuxName + ".COORDO    ") ) ),
@@ -21,7 +21,7 @@ AsterMeshInstance::AsterMeshInstance(): _jeveuxName( initAster->getNewResultObje
     assert(_jeveuxName.size() == 8);
 };
 
-bool AsterMeshInstance::readMEDFile(char* pathFichier)
+bool MeshInstance::readMEDFile(char* pathFichier)
 {
     CommandSyntax syntaxeLireMaillage("LIRE_MAILLAGE", true, initAster->getResultObjectName());
     commandeCourante = &syntaxeLireMaillage;

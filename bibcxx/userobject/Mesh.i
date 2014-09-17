@@ -1,6 +1,6 @@
 %module code_aster
 %{
-#include "userobject/AsterMesh.h"
+#include "userobject/Mesh.h"
 %}
 
 %include "baseobject/JeveuxCollection.i"
@@ -18,23 +18,23 @@ class AsterGroupOfElements
         AsterGroupOfElements(char* name, JeveuxCollectionLong& grpOfElements);
 };
 
-class AsterMeshInstance
+class MeshInstance
 {
     public:
-        AsterMeshInstance();
+        MeshInstance();
 
         const FieldOnNodesDouble &getCoordinates() const;
         bool readMEDFile(char*);
 };
 
-class AsterMesh
+class Mesh
 {
     public:
-        AsterMesh();
-        ~AsterMesh();
+        Mesh();
+        ~Mesh();
 };
 
-%extend AsterMesh
+%extend Mesh
 {
     const FieldOnNodes< double > &getCoordinates()
     {
