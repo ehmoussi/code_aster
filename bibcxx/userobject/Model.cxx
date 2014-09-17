@@ -1,5 +1,5 @@
 
-#include "userobject/AsterModel.h"
+#include "userobject/Model.h"
 
 #define CALL_OP0018() CALL0(OP0018, op0018)
 extern "C"
@@ -7,15 +7,15 @@ extern "C"
     void DEF0(OP0018, op0018);
 }
 
-AsterModelInstance::AsterModelInstance():
+ModelInstance::ModelInstance():
                                 _jeveuxName( initAster->getNewResultObjectName() ),
                                 _typeOfElements( JeveuxVectorLong( string(_jeveuxName + ".MAILLE    ") ) ),
                                 _typeOfNodes( JeveuxVectorLong( string(_jeveuxName + ".NOEUD     ") ) ),
                                 _partition( JeveuxVectorChar8( string(_jeveuxName + ".PARTIT    ") ) ),
-                                _supportMesh( AsterMesh(false) )
+                                _supportMesh( Mesh(false) )
 {};
 
-bool AsterModelInstance::build()
+bool ModelInstance::build()
 {
     CommandSyntax syntaxeLireMaillage("AFFE_MODELE", true, initAster->getResultObjectName());
     commandeCourante = &syntaxeLireMaillage;

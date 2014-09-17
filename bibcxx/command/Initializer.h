@@ -1,5 +1,5 @@
-#ifndef INIT_H_
-#define INIT_H_
+#ifndef INITIALIZER_H_
+#define INITIALIZER_H_
 
 #include <stdio.h>
 #include <string.h>
@@ -143,4 +143,4 @@ void initAsterModules();
 }
 #endif
 
-#endif /* INIT_H_ */
+#endif /* INITIALIZER_H_ */

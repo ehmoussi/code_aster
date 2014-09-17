@@ -1,7 +1,7 @@
-#ifndef ASTERMODEL_H_
-#define ASTERMODEL_H_
+#ifndef MODEL_H_
+#define MODEL_H_
 
-#include "userobject/AsterMesh.h"
+#include "userobject/Mesh.h"
 #include <map>
 
 class AsterElementaryModel
@@ -26,7 +26,7 @@ class AsterElementaryModel
         };
 };
 
-class AsterModelInstance
+class ModelInstance
 {
     private:
         typedef list< pair< AsterElementaryModel, string > > listOfModsAndGrps;
@@ -36,10 +36,10 @@ class AsterModelInstance
         JeveuxVectorLong  _typeOfNodes;
         JeveuxVectorChar8 _partition;
         listOfModsAndGrps _modelisations;
-        AsterMesh         _supportMesh;
+        Mesh         _supportMesh;
 
     public:
-        AsterModelInstance();
+        ModelInstance();
 
         void addModelisation(string physics, string modelisation)
         {
@@ -48,7 +48,7 @@ class AsterModelInstance
                                                                     "TOUT") );
         };
 
-        void addModelisation(string physics, string modelisation, AsterMeshEntity& entity)
+        void addModelisation(string physics, string modelisation, MeshEntity& entity)
         {
             _modelisations.push_back( listOfModsAndGrps::value_type(AsterElementaryModel(physics,
                                                                                          modelisation),
@@ -62,7 +62,7 @@ class AsterModelInstance
             throw "Not yet implemented";
         };
 
-        bool setSupportMesh(AsterMesh& currentMesh)
+        bool setSupportMesh(Mesh& currentMesh)
         {
             if ( currentMesh->isEmpty() )
                 throw string("Mesh is empty");
@@ -71,39 +71,39 @@ class AsterModelInstance
         };
 };
 
-class AsterModel
+class Model
 {
     public:
-        typedef boost::shared_ptr< AsterModelInstance > AsterModelPtr;
+        typedef boost::shared_ptr< ModelInstance > ModelPtr;
 
     private:
-        AsterModelPtr _asterModelPtr;
+        ModelPtr _ModelPtr;
 
     public:
-        AsterModel(bool initilisation = true): _asterModelPtr()
+        Model(bool initilisation = true): _ModelPtr()
         {
             if ( initilisation == true )
-                _asterModelPtr = AsterModelPtr( new AsterModelInstance() );
+                _ModelPtr = ModelPtr( new ModelInstance() );
         };
 
-        ~AsterModel()
+        ~Model()
         {};
 
-        AsterModel& operator=(const AsterModel& tmp)
+        Model& operator=(const Model& tmp)
         {
-            _asterModelPtr = tmp._asterModelPtr;
+            _ModelPtr = tmp._ModelPtr;
         };
 
-        const AsterModelPtr& operator->() const
+        const ModelPtr& operator->() const
         {
-            return _asterModelPtr;
+            return _ModelPtr;
         };
 
         bool isEmpty() const
         {
-            if ( _asterModelPtr.use_count() == 0 ) return true;
+            if ( _ModelPtr.use_count() == 0 ) return true;
             return false;
         };
 };
 
-#endif /* ASTERMODEL_H_ */
+#endif /* MODEL_H_ */

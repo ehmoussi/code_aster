@@ -1,5 +1,5 @@
-#ifndef ASTERMESH_H_
-#define ASTERMESH_H_
+#ifndef MESH_H_
+#define MESH_H_
 
 #include "definition.h"
 #include "command/Initializer.h"
@@ -8,15 +8,15 @@
 #include "userobject/FieldOnNodes.h"
 #include <assert.h>
 
-class AsterMeshEntity
+class MeshEntity
 {
     private:
         const string            _name;
         JeveuxCollectionLong    _groupsOfEntities;
 
     public:
-        AsterMeshEntity(string name, JeveuxCollectionLong& grpOfEntities): _name(name),
-                                                                           _groupsOfEntities(grpOfEntities)
+        MeshEntity(string name, JeveuxCollectionLong& grpOfEntities): _name(name),
+                                                                      _groupsOfEntities(grpOfEntities)
         {
             if ( ! _groupsOfEntities->existsObject(name) )
                 throw string("Group " + name + " not in mesh");
@@ -28,26 +28,26 @@ class AsterMeshEntity
         };
 };
 
-class AsterGroupOfNodes: AsterMeshEntity
+class AsterGroupOfNodes: MeshEntity
 {
     public:
         AsterGroupOfNodes(string name, JeveuxCollectionLong& grpOfNodes):
-            AsterMeshEntity(name, grpOfNodes)
+            MeshEntity(name, grpOfNodes)
         {};
 };
 
-class AsterGroupOfElements: AsterMeshEntity
+class AsterGroupOfElements: MeshEntity
 {
     public:
         AsterGroupOfElements(string name, JeveuxCollectionLong& grpOfElements):
-            AsterMeshEntity(name, grpOfElements)
+            MeshEntity(name, grpOfElements)
         {};
 };
 
-class AsterMeshInstance
+class MeshInstance
 {
     private:
-        friend class AsterMeshEntity;
+        friend class MeshEntity;
         const string           _jeveuxName;
         JeveuxVectorLong       _dimensionInformations;
         JeveuxBidirectionalMap _nameOfNodes;
@@ -60,9 +60,9 @@ class AsterMeshInstance
         bool                   _isEmpty;
 
     public:
-        AsterMeshInstance();
+        MeshInstance();
 
-        ~AsterMeshInstance()
+        ~MeshInstance()
         {};
 
         const string& getJeveuxName() const
@@ -93,39 +93,39 @@ class AsterMeshInstance
         bool readMEDFile(char*);
 };
 
-class AsterMesh
+class Mesh
 {
     public:
-        typedef boost::shared_ptr< AsterMeshInstance > AsterMeshPtr;
+        typedef boost::shared_ptr< MeshInstance > MeshPtr;
 
     private:
-        AsterMeshPtr _asterMeshPtr;
+        MeshPtr _MeshPtr;
 
     public:
-        AsterMesh(bool initilisation = true): _asterMeshPtr()
+        Mesh(bool initilisation = true): _MeshPtr()
         {
             if ( initilisation == true )
-                _asterMeshPtr = AsterMeshPtr( new AsterMeshInstance() );
+                _MeshPtr = MeshPtr( new MeshInstance() );
         };
 
-        ~AsterMesh()
+        ~Mesh()
         {};
 
-        AsterMesh& operator=(const AsterMesh& tmp)
+        Mesh& operator=(const Mesh& tmp)
         {
-            _asterMeshPtr = tmp._asterMeshPtr;
+            _MeshPtr = tmp._MeshPtr;
         };
 
-        const AsterMeshPtr& operator->() const
+        const MeshPtr& operator->() const
         {
-            return _asterMeshPtr;
+            return _MeshPtr;
         };
 
         bool isEmpty() const
         {
-            if ( _asterMeshPtr.use_count() == 0 ) return true;
+            if ( _MeshPtr.use_count() == 0 ) return true;
             return false;
         };
 };
 
-#endif /* ASTERMESH_H_ */
+#endif /* MESH_H_ */
