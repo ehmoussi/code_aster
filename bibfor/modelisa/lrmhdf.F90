@@ -46,6 +46,7 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
 #include "asterfort/as_mfiope.h"
 #include "asterfort/as_mlbnuv.h"
 #include "asterfort/codent.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetc.h"
 #include "asterfort/jemarq.h"
@@ -94,7 +95,7 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
     integer :: nbnoma
     integer :: nbltit, nbgrno, nbgrma
     integer :: vlib(3), vfic(3), iret
-    integer :: vali(3), hdfok, medok
+    integer :: vali(3), hdfok, medok, lrep, lxlgut
 !
     character(len=1) :: saux01
     character(len=6) :: saux06
@@ -103,6 +104,7 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
     character(len=24) :: cooval, coodsc, cooref, grpnoe, grpmai, connex
     character(len=24) :: titre, nommai, nomnoe, typmai, adapma, gpptnn, gpptnm
     character(len=64) :: valk(2)
+    character(len=128) :: rep
     character(len=200) :: nofimd
     character(len=255) :: kfic
     character(len=200) :: descfi
@@ -130,13 +132,17 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
 !
 ! 1.1. ==> NOM DU FICHIER MED
 !
-    call ulisog(nrofic, kfic, saux01)
-    if (kfic(1:1) .eq. ' ') then
+!    call ulisog(nrofic, kfic, saux01)
+!    if (kfic(1:1) .eq. ' ') then
         call codent(nrofic, 'G', saux08)
-        nofimd = 'fort.'//saux08
-    else
-        nofimd = kfic(1:200)
-    endif
+!        call gtoptk ('repdex', rep, iret)
+        call getvtx(' ', 'PATHFICHIER', scal = rep, nbret = iaux)
+        lrep = lxlgut(rep)
+        nofimd = rep(1:lrep)//'/fort.'//saux08
+        write(6,*) '@@ jpl NOFIMD=',nofimd
+!    else
+!        nofimd = kfic(1:200)
+!    endif
 !
     if (nivinf .gt. 1) then
         write (ifm,*) '<',nompro,'> NOM DU FICHIER MED : ',nofimd

@@ -20,6 +20,7 @@
 
 #include "Python.h"
 #include <stdio.h>
+#include <signal.h>
 
 #include "asterc_debug.h"
 #include "aster_depend.h"

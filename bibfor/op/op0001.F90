@@ -32,6 +32,8 @@ subroutine op0001()
 !
     implicit none
 !
+#include "asterf_config.h"
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
@@ -53,6 +55,7 @@ subroutine op0001()
 #include "asterfort/mavegr.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/asmpi_info.h"
 
 !
 ! ----- DECLARATIONS
@@ -68,6 +71,8 @@ subroutine op0001()
     integer :: ilng
     character(len=80), pointer :: tgrm(:) => null()
     integer, pointer :: dime(:) => null()
+    integer :: rang, nbproc
+    mpi_int :: mrank, msize
 
 !---------------------------------------------------------------------------------------
     call jemarq()
@@ -82,6 +87,10 @@ subroutine op0001()
     call getres(nomu, concep, cmd)
 !
     call getvis(' ', 'UNITE', scal=ifl, nbret=iaux)
+    call asmpi_info(rank = mrank, size = msize)
+    rang = to_aster_int(mrank)
+    nbproc = to_aster_int(msize)
+    ifl = rang + 1
 !
     call getvtx(' ', 'FORMAT', scal=fmt, nbret=iaux)
 !
@@ -91,6 +100,7 @@ subroutine op0001()
 !                   12345678901234567890123456789012
             nomamd = ' '
         endif
+        infmed = 0
         call getvis(' ', 'INFO_MED', scal=infmed, nbret=iaux)
 !
 !   --- LECTURE DES CORRESPONDANCES NOM MED - NOM ASTER
