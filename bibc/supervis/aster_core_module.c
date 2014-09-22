@@ -28,6 +28,8 @@
  */
 
 #include "Python.h"
+#include <signal.h>
+
 #include "aster.h"
 #include "aster_core_module.h"
 #include "shared_vars.h"
