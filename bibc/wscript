@@ -27,7 +27,7 @@ def configure(self):
     self.env.append_unique('LINKFLAGS', ['-Wl,--export-dynamic'])
 
     self.load('swig')
-    if self.check_swig_version() < (2, 0, 0):
+    if self.check_swig_version() < (1, 3, 0):
         self.fatal('this swig version is too old')
     self.check_swig_headers()
 
