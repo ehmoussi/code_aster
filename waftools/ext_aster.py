@@ -23,6 +23,10 @@ class cxxprogram(cxx.cxxprogram):
     """Link object files into a C program, add optional OPTLIB_FLAGS at the end"""
     run_str = cxx.cxxprogram.hcode + ' ${OPTLIB_FLAGS}'
 
+class cxxshlib(cxxprogram):
+    """Link object files into a c++ shared library"""
+    inst_to = '${LIBDIR}'
+
 ###############################################################################
 def customize_configure_output():
     """Customize the output of configure"""
