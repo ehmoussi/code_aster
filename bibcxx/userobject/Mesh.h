@@ -28,18 +28,18 @@ class MeshEntity
         };
 };
 
-class AsterGroupOfNodes: MeshEntity
+class GroupOfNodes: MeshEntity
 {
     public:
-        AsterGroupOfNodes(string name, JeveuxCollectionLong& grpOfNodes):
+        GroupOfNodes(string name, JeveuxCollectionLong& grpOfNodes):
             MeshEntity(name, grpOfNodes)
         {};
 };
 
-class AsterGroupOfElements: MeshEntity
+class GroupOfElements: MeshEntity
 {
     public:
-        AsterGroupOfElements(string name, JeveuxCollectionLong& grpOfElements):
+        GroupOfElements(string name, JeveuxCollectionLong& grpOfElements):
             MeshEntity(name, grpOfElements)
         {};
 };
@@ -75,14 +75,14 @@ class MeshInstance
             return _coordinates;
         };
 
-        const AsterGroupOfElements getGroupOfElements(string name)
+        const GroupOfElements getGroupOfElements(string name)
         {
-            return AsterGroupOfElements(name, this->_groupsOfElements);
+            return GroupOfElements(name, this->_groupsOfElements);
         };
 
-        const AsterGroupOfNodes getGroupOfNodes(string name)
+        const GroupOfNodes getGroupOfNodes(string name)
         {
-            return AsterGroupOfNodes(name, this->_groupsOfNodes);
+            return GroupOfNodes(name, this->_groupsOfNodes);
         };
 
         bool isEmpty() const
@@ -99,13 +99,13 @@ class Mesh
         typedef boost::shared_ptr< MeshInstance > MeshPtr;
 
     private:
-        MeshPtr _MeshPtr;
+        MeshPtr _meshPtr;
 
     public:
-        Mesh(bool initilisation = true): _MeshPtr()
+        Mesh(bool initilisation = true): _meshPtr()
         {
             if ( initilisation == true )
-                _MeshPtr = MeshPtr( new MeshInstance() );
+                _meshPtr = MeshPtr( new MeshInstance() );
         };
 
         ~Mesh()
@@ -113,17 +113,18 @@ class Mesh
 
         Mesh& operator=(const Mesh& tmp)
         {
-            _MeshPtr = tmp._MeshPtr;
+            _meshPtr = tmp._meshPtr;
+            return *this;
         };
 
         const MeshPtr& operator->() const
         {
-            return _MeshPtr;
+            return _meshPtr;
         };
 
         bool isEmpty() const
         {
-            if ( _MeshPtr.use_count() == 0 ) return true;
+            if ( _meshPtr.use_count() == 0 ) return true;
             return false;
         };
 };

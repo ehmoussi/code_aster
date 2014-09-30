@@ -34,6 +34,7 @@ class FieldOnNodesInstance
             _descriptor->updateValuePointer();
             _reference->updateValuePointer();
             _valuesList->updateValuePointer();
+            return true;
         };
 };
 
@@ -56,6 +57,7 @@ class FieldOnNodes
         FieldOnNodes& operator=(const FieldOnNodes< ValueType >& tmp)
         {
             _fieldOnNodesPtr = tmp._fieldOnNodesPtr;
+            return *this;
         };
 
         const FieldOnNodesTypePtr& operator->(void) const
