@@ -292,6 +292,7 @@ def check_optimization_options(self):
     self.setenv('release', env=self.all_envs['default'])
     # these functions must switch between each environment
     self.check_optimization_cflags()
+    self.check_optimization_cxxflags()
     self.check_optimization_fcflags()
     self.check_optimization_python()
 
