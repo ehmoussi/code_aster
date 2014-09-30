@@ -15,7 +15,7 @@ int jeveux_status = 0;
 
 Initializer* initAster = NULL;
 
-Initializer::Initializer(): syntaxeDebut(CommandSyntax("DEBUT", false, "")), _numberOfAsterObjects(-1)
+Initializer::Initializer(): syntaxeDebut(CommandSyntax("DEBUT", false, "")), _numberOfAsterObjects(0)
 {
     argsLDCEntiers.insert(mapLDCEntierValue(string("suivi_batch"), 0));
     argsLDCEntiers.insert(mapLDCEntierValue(string("dbgjeveux"), 0));

@@ -38,6 +38,7 @@ class JeveuxBidirectionalMap
         JeveuxBidirectionalMap& operator=(const JeveuxBidirectionalMap& tmp)
         {
             _jeveuxBidirectionalMapPtr = tmp._jeveuxBidirectionalMapPtr;
+            return *this;
         };
 
         const JeveuxBidirectionalMapPtr& operator->(void) const

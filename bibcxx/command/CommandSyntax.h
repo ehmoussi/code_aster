@@ -13,6 +13,11 @@
 
 using namespace std;
 
+/**
+* class template SimpleKeyWord
+*   Classe permettant d'emuler un mot cle simple dans une commande
+* @author Nicolas Sellenet
+*/
 template<class ValueType>
 class SimpleKeyWord
 {
@@ -26,9 +31,20 @@ class SimpleKeyWord
         listValue _valuesList;
 
     public:
+        /**
+        * Constructeur
+        * @param nom Chaine contenant le nom du mot-cle simple
+        *   ex : pour le mot-cle simple MAILLAGE, nom sera egale a
+        *        'MAILLAGE'
+        */
         SimpleKeyWord(string nom): _simpleKeyWordName(nom)
         {};
 
+        /**
+        * Ajout d'une valeur au mot-cle simple
+        * @param valeurAAjouter Valeur a ajouter
+        *   ex : MAILLE = ('M1', 'M2')
+        */
         void addValues(ValueType valeurAAjouter)
         {
             _valuesList.push_back(valeurAAjouter);
@@ -53,6 +69,11 @@ typedef SimpleKeyWord< string > SimpleKeyWordStr;
 typedef SimpleKeyWord< double > SimpleKeyWordDbl;
 typedef SimpleKeyWord< int > SimpleKeyWordInt;
 
+/**
+* class FactorKeywordOccurence
+*   Classe permettant d'emuler une occurence d'un mot cle facteur dans une commande
+* @author Nicolas Sellenet
+*/
 class FactorKeywordOccurence
 {
     private:
@@ -62,21 +83,39 @@ class FactorKeywordOccurence
         set< string > _setKeywordNames;
 
     public:
+        /**
+        * Constructeur
+        */
         FactorKeywordOccurence()
         {};
 
+        /**
+        * Ajout d'un mot cle simple ayant comme valeur une chaine a la commande en cours
+        *   ex : GROUP_MA = 'TOTO'
+        * @param motCle mot cle simple
+        */
         void addSimpleKeywordStr(SimpleKeyWordStr motCleAAjouter)
         {
             _listSimpleKeywordsStr.push_back(motCleAAjouter);
             _setKeywordNames.insert(motCleAAjouter.keywordName());
         };
 
+        /**
+        * Ajout d'un mot cle simple ayant comme valeur un double a la commande en cours
+        *   ex : NU = 0.4
+        * @param motCle mot cle simple
+        */
         void addSimpleKeywordDouble(SimpleKeyWordDbl motCleAAjouter)
         {
             _listSimpleKeywordsDbl.push_back(motCleAAjouter);
             _setKeywordNames.insert(motCleAAjouter.keywordName());
         };
 
+        /**
+        * Ajout d'un mot cle simple ayant comme valeur un entier a la commande en cours
+        *   ex : REAC_PRECOND = 3
+        * @param motCle mot cle simple
+        */
         void addSimpleKeywordInteger(SimpleKeyWordInt motCleAAjouter)
         {
             _listSimpleKeywordsInt.push_back(motCleAAjouter);
@@ -127,6 +166,11 @@ class FactorKeywordOccurence
         };
 };
 
+/**
+* class FactorKeyword
+*   Classe permettant d'emuler un mot cle facteur dans une commande
+* @author Nicolas Sellenet
+*/
 class FactorKeyword
 {
     private:
@@ -135,9 +179,18 @@ class FactorKeyword
         bool _repetition;
 
     public:
+        /**
+        * Constructeur
+        * @param nom Chaine de caractere contenant le nom du mot cle facteur
+        * @param repet booleen precisant si le mot cle facteur est repetable
+        */
         FactorKeyword(string nom, bool repet = true): _factorKeywordName(nom), _repetition(repet)
         {};
 
+        /**
+        * Ajout d'une occurence du mot cle facteur
+        * @param motCle mot cle facteur a ajouter
+        */
         bool addOccurence(const FactorKeywordOccurence occur)
         {
             if ( _vectorOccurences.size() > 0 and _repetition == false ) return false;
@@ -193,6 +246,13 @@ class FactorKeyword
         };
 };
 
+/**
+* class CommandSyntax
+*   Classe permettant d'emuler des "bouts" de fichier de commande
+*   afin de pouvoir appeler depuis le code fortran de Code_Aster
+*   les routines GET*
+* @author Nicolas Sellenet
+*/
 class CommandSyntax
 {
     private:
@@ -201,17 +261,26 @@ class CommandSyntax
         typedef mapStrMCF::value_type mapStrMCFValue;
 
         const string _commandName;
-        mapStrMCF _FactorKeywordsMap;
+        mapStrMCF _factorKeywordsMap;
         bool _isOperateur;
         const string _nomObjetJeveux;
 
     public:
+        /**
+        * Constructeur
+        * @param nom Chaine correspondant au nom de la commande a emuler (ex : AFFE_MATERIAU)
+        * @param operateur booleen indiquant sur la commande renvoit un objet
+        *                  ex : LIRE_MAILLAGE : operateur = true
+        *                  ex : IMPR_RESU     : operateur = false
+        * @param nomObjet Chaine precisant le nom Jeveux de la sd produite
+        *                 ex : MA = LIRE_MAILAGE : nomObjet = "MA      "
+        */
         CommandSyntax(string nom, bool operateur, string nomObjet): _commandName(nom),
                                                                     _isOperateur(operateur),
                                                                     _nomObjetJeveux(nomObjet)
         {
-            _FactorKeywordsMap.insert( mapStrMCFValue( string(""), FactorKeyword(" ", false) ) );
-            mapStrMCFIterator curIter = _FactorKeywordsMap.find(string(""));
+            _factorKeywordsMap.insert( mapStrMCFValue( string(""), FactorKeyword(" ", false) ) );
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
             (*curIter).second.addOccurence(FactorKeywordOccurence());
         };
 
@@ -222,52 +291,61 @@ class CommandSyntax
 
         bool isFactorKeywordPresent(string keywordName)
         {
-            mapStrMCFIterator curIter = _FactorKeywordsMap.find(keywordName);
-            if ( curIter != _FactorKeywordsMap.end() ) return true;
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(keywordName);
+            if ( curIter != _factorKeywordsMap.end() ) return true;
             return false;
         };
 
         bool isFactorKeywordPresentSimpleKeyWord(string mCFac, string mcSim)
         {
-            mapStrMCFIterator curIter = _FactorKeywordsMap.find(mCFac);
-            if ( curIter == _FactorKeywordsMap.end() ) return false;
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
+            if ( curIter == _factorKeywordsMap.end() ) return false;
             return (*curIter).second.isKeywordPresent(mcSim);
         };
 
         const FactorKeyword& getFactorKeyword(string keywordName)
         {
-            mapStrMCFIterator curIter = _FactorKeywordsMap.find(keywordName);
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(keywordName);
             return curIter->second;
         };
 
+        /**
+        * Ajout d'un mot cle facteur a la commande en cours
+        * @param motCle mot cle facteur a ajouter
+        */
         bool addFactorKeyword(const FactorKeyword motCle)
         {
-            _FactorKeywordsMap.insert( mapStrMCFValue(motCle.nom(), motCle) );
+            _factorKeywordsMap.insert( mapStrMCFValue(motCle.nom(), motCle) );
             return true;
         };
 
+        /**
+        * Ajout d'un mot cle simple ayant comme valeur une chaine a la commande en cours
+        *   ex : GROUP_MA = 'TOTO'
+        * @param motCle mot cle simple a ajouter
+        */
         bool addSimpleKeywordStr(const SimpleKeyWordStr motCle)
         {
-            mapStrMCFIterator curIter = _FactorKeywordsMap.find(string(""));
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
             (*curIter).second.getOccurence(0).addSimpleKeywordStr(motCle);
             return true;
         };
 
         ListString& stringValuesOfKeyword(string mCFac, int occurence, string mcSim)
         {
-            mapStrMCFIterator curIter = _FactorKeywordsMap.find(mCFac);
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             return (*curIter).second.stringValuesInKeyword(occurence, mcSim);
         };
 
         ListDouble& doubleValuesOfKeyword(string mCFac, int occurence, string mcSim)
         {
-            mapStrMCFIterator curIter = _FactorKeywordsMap.find(mCFac);
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             return (*curIter).second.doubleValuesInKeyword(occurence, mcSim);
         };
 
         ListInt& intValuesOfKeyword(string mCFac, int occurence, string mcSim)
         {
-            mapStrMCFIterator curIter = _FactorKeywordsMap.find(mCFac);
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             return (*curIter).second.intValuesInKeyword(occurence, mcSim);
         };
 

@@ -6,16 +6,16 @@
 %include "baseobject/JeveuxCollection.i"
 %include "userobject/FieldOnNodes.i"
 
-class AsterGroupOfNodes
+class GroupOfNodes
 {
     public:
-        AsterGroupOfNodes(char* name, JeveuxCollectionLong& grpOfNodes);
+        GroupOfNodes(char* name, JeveuxCollectionLong& grpOfNodes);
 };
 
-class AsterGroupOfElements
+class GroupOfElements
 {
     public:
-        AsterGroupOfElements(char* name, JeveuxCollectionLong& grpOfElements);
+        GroupOfElements(char* name, JeveuxCollectionLong& grpOfElements);
 };
 
 class MeshInstance
@@ -41,7 +41,7 @@ class Mesh
         return (*$self)->getCoordinates();
     }
 
-    const AsterGroupOfNodes getGroupOfNodes(char* name)
+    const GroupOfNodes getGroupOfNodes(char* name)
     {
         return (*$self)->getGroupOfNodes(name);
     }
