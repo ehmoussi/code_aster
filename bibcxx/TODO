@@ -11,3 +11,5 @@ Utiliser des smart pointers pour mieux gérer les références et la libération mém
 ... L'utilisation des smart pointers peut ne pas être systématique ?
 
 Ajouter des JEDETR dans les destructeurs des Instances
+
+Pour les modelisations et la physique de Model, il vaudrait mieux utiliser des enum C
