@@ -59,6 +59,13 @@ extern "C"
     void FreeStr( char * );
 }
 
+/**
+* class Initializer
+*   Cette classe initialise le gestionnaire memoire de Code_Aster : Jeveux
+*   C'est aussi elle qui attribue les noms Jeveux aux objets crees en python
+*   Elle gere aussi les arguments de la ligne de commande
+* @author Nicolas Sellenet
+*/
 class Initializer
 {
     private:
@@ -84,13 +91,26 @@ class Initializer
         static const unsigned long int _maxNumberOfAsterObjects = 4294967295;
 
     public:
+        /**
+        * Constructeur
+        */
         Initializer();
 
+        /**
+        * Destructeur
+        */
         ~Initializer()
         {
             cout << "~Initializer";
+            commandeCourante = NULL;
         }
 
+        /**
+        * Recuperation d'un nouveau nom de concept Jeveux
+        *   Au premier appel, la chaine "0       " est renvoyee
+        *   Au deuxieme, "1       ", etc.
+        * @return Une chaine de caractere contenant le nom
+        */
         string getNewResultObjectName()
         {
             ostringstream oss;
@@ -100,6 +120,10 @@ class Initializer
             return string(oss.str() + "        ", 0, 8);
         };
 
+        /**
+        * Recuperation d'un nom du concept Jeveux en cours de creation
+        * @return Une chaine de caractere contenant le nom
+        */
         string getResultObjectName()
         {
             ostringstream oss;
@@ -107,14 +131,36 @@ class Initializer
             return string(oss.str() + "        ", 0, 8);
         };
 
+        /**
+        * Recuperation d'un argument entier de la ligne de commande
+        * @param chaineQuestion Argument de la ligne de commande demande
+        * @return Entier relu
+        */
         int getIntLDC(char* chaineQuestion);
 
+        /**
+        * Recuperation d'un argument double de la ligne de commande
+        * @param chaineQuestion Argument de la ligne de commande demande
+        * @return Double relu
+        */
         double getDoubleLDC(char* chaineQuestion);
 
+        /**
+        * Recuperation d'une chaine de caractere venant de la ligne de commande
+        * @param chaineQuestion Argument de la ligne de commande demande
+        * @return Chaine
+        */
         char* getChaineLDC(char* chaineQuestion);
 
+        /**
+        * Fonction permettant de generer les catalogues de Code_Aster
+        */
         void initForCataBuilder();
 
+        /**
+        * Demarrage de Code_Aster
+        *   Appel a ibmain et a debut
+        */
         void run();
 };
 

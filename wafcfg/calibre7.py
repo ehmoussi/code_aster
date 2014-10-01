@@ -46,15 +46,7 @@ def configure(self):
         YAMMROOT + '/prerequisites/Metis_40/Lib',
         YAMMROOT + '/prerequisites/Scotch_5111/include'])
 
-    #self.env.append_value('OPTLIB_FLAGS_MATH', [
-        #'-Wl,--start-group', '/home/aster/intel/composerxe-2011.3.174/mkl/lib/intel64/libmkl_intel_lp64.a',
-        #'/home/aster/intel/composerxe-2011.3.174/mkl/lib/intel64/libmkl_core.a',
-        #'libmkl_sequential.a', '-Wl,--end-group', '-lpthread', '-lm'])
     self.env['OPTLIB_FLAGS_MATH'] = [
-        #'/home/aster/intel/composerxe-2011.3.174/mkl/lib/intel64/libmkl_mc3.a',
-        #'/home/aster/intel/composerxe-2011.3.174/mkl/lib/intel64/libmkl_def.a',
-        #'libmkl_mc3.a',
-        #'libmkl_def.a',
         '-Wl,--start-group', '-lmkl_mc3', '-lmkl_def',
         '-lmkl_intel_lp64', '-lmkl_core', '-Wl,--end-group']
 

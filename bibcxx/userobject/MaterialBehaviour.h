@@ -7,7 +7,6 @@
 #include <string>
 
 #include "baseobject/JeveuxVector.h"
-//#include "aster_utils.h"
 #include "aster.h"
 
 extern "C"
@@ -17,7 +16,7 @@ extern "C"
 
 /**
 * struct template AllowedMaterialPropertyType
-*   structure permettant de limiter le type instanciable de ElementaryMaterialPropertyInstance
+*   structure permettant de limiter le type instanciable de MaterialPropertyInstance
 *   on autorise 2 types pour le moment : double et complex
 * @author Nicolas Sellenet
 */
@@ -31,13 +30,13 @@ template<> struct AllowedMaterialPropertyType< double complex >
 {};
 
 /**
-* class template ElementaryMaterialPropertyInstance
+* class template MaterialPropertyInstance
 *   Cette classe permet de definir un type elementaire de propriete materielle
 *   ex : le module d'Young
 * @author Nicolas Sellenet
 */
 template< class ValueType >
-class ElementaryMaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
+class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
 {
     private:
         // Nom Aster du type elementaire de propriete materielle,
@@ -54,12 +53,13 @@ class ElementaryMaterialPropertyInstance: private AllowedMaterialPropertyType< V
         * @param name Nom Aster du parametre materiau (ex : "NU")
         * @param description Description libre
         */
-        ElementaryMaterialPropertyInstance(string name, string description = ""): _name( name ),
-                                                                                  _description( description )
+        MaterialPropertyInstance(string name, string description = ""): _name( name ),
+                                                                        _description( description )
         {};
 
         /**
         * Recuperation de la valeur du parametre
+        * @return le nom Aster du parametre
         */
         const string& getName() const
         {
@@ -68,6 +68,7 @@ class ElementaryMaterialPropertyInstance: private AllowedMaterialPropertyType< V
 
         /**
         * Recuperation de la valeur du parametre
+        * @return renvoit la valeur du parametre
         */
         const ValueType& getValue() const
         {
@@ -76,7 +77,7 @@ class ElementaryMaterialPropertyInstance: private AllowedMaterialPropertyType< V
 
         /**
         * Fonction servant a fixer la valeur du parametre
-        * @param currentValue Valeur donnee par l'utilisateur
+        * @param currentValue valeur donnee par l'utilisateur
         */
         void setValue(ValueType& currentValue)
         {
@@ -84,8 +85,8 @@ class ElementaryMaterialPropertyInstance: private AllowedMaterialPropertyType< V
         };
 };
 
-typedef ElementaryMaterialPropertyInstance< double > ElementaryMaterialPropertyDouble;
-typedef ElementaryMaterialPropertyInstance< double complex > ElementaryMaterialPropertyComplex;
+typedef MaterialPropertyInstance< double > ElementaryMaterialPropertyDouble;
+typedef MaterialPropertyInstance< double complex > ElementaryMaterialPropertyComplex;
 
 /**
 * class GeneralMaterialBehaviourInstance
@@ -115,10 +116,10 @@ class GeneralMaterialBehaviourInstance
         // Vector Jeveux 'CPT.XXXXXX.VALK'
         JeveuxVectorChar16  _char16Values;
         // Map contenant les noms des proprietes double ainsi que les
-        // ElementaryMaterialPropertyInstance correspondant
+        // MaterialPropertyInstance correspondant
         mapStrEMPD          _mapOfDoubleMaterialProperties;
         // Map contenant les noms des proprietes complex ainsi que les
-        // ElementaryMaterialPropertyInstance correspondant
+        // MaterialPropertyInstance correspondant
         mapStrEMPC          _mapOfComplexMaterialProperties;
         // Liste contenant tous les noms des parametres materiau
         list< string >      _listOfNameOfMaterialProperties;
@@ -206,11 +207,6 @@ class ElasticMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         */
         ElasticMaterialBehaviourInstance()
         {
-            bool a = true;
-            while ( a )
-            {
-                int b = 5;
-            }
             // Mot cle "ELAS" dans Aster
             _asterName = "ELAS";
 
@@ -226,7 +222,7 @@ class ElasticMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /**
-* class template MaterialBehaviourInstance
+* class template MaterialBehaviour
 *   Enveloppe d'un pointeur intelligent vers un MaterialBehaviourInstance
 * @author Nicolas Sellenet
 */

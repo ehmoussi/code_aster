@@ -17,6 +17,7 @@ Initializer* initAster = NULL;
 
 Initializer::Initializer(): syntaxeDebut(CommandSyntax("DEBUT", false, "")), _numberOfAsterObjects(0)
 {
+    // Definition en "dur" de quelques arguments de la ligne de commande
     argsLDCEntiers.insert(mapLDCEntierValue(string("suivi_batch"), 0));
     argsLDCEntiers.insert(mapLDCEntierValue(string("dbgjeveux"), 0));
 
@@ -25,6 +26,7 @@ Initializer::Initializer(): syntaxeDebut(CommandSyntax("DEBUT", false, "")), _nu
 
     argsLDCStrings.insert(mapLDCStringValue(string("repdex"), "."));
 
+    // Definition de la syntaxe de la commande DEBUT qui va initialiser le code
     FactorKeyword motCleCODE = FactorKeyword("CODE", false);
     FactorKeywordOccurence occurCODE = FactorKeywordOccurence();
     SimpleKeyWordStr mCSNivPubWeb = SimpleKeyWordStr("NIV_PUB_WEB");
@@ -92,6 +94,7 @@ char* Initializer::getChaineLDC(char* chaineQuestion)
 
 void Initializer::run()
 {
+    // Appel a ibmain et a debut
     INTEGER dbg = 0;
     CALL_IBMAIN(&dbg);
     jeveux_status = 1;
@@ -103,9 +106,8 @@ void init(int imode)
 {
     initAsterModules();
     initAster = new Initializer();
-    if ( imode == 1 ) {
-        initAster->initForCataBuilder();
-    }
+    if ( imode == 1 ) initAster->initForCataBuilder();
+
     initAster->run();
 }
 
