@@ -170,33 +170,24 @@ subroutine nifism(ndim, nno1, nno2, nno3, npg,&
 !
 ! - LONGUEUR CARACTERISTIQUE -> PARAMETRE C
         c(1)=0.d0
-        call rcvala(mate, ' ', 'NON_LOCAL', 0, ' ',&
-                    [0.d0], 1, 'C_GONF', c(1), k2ret(1),&
-                    0)
+        call rcvala(mate, ' ', 'NON_LOCAL', 0, ' ', [0.d0], 1, 'C_GONF', c(1), k2ret(1), 0)
         nonloc = k2ret(1).eq.0 .and. c(1).ne.0.d0
 !
 ! - CALCUL DES DEFORMATIONS
-        call dfdmip(ndim, nno1, axi, geomi, g,&
-                    iw, vff1(1, g), idff1, r, w,&
-                    dff1)
-        call nmepsi(ndim, nno1, axi, grand, vff1(1, g),&
-                    r, dff1, deplm, fm, epsm)
-        call dfdmip(ndim, nno1, axi, geomm, g,&
-                    iw, vff1(1, g), idff1, r, wm,&
-                    dff1)
-        call nmepsi(ndim, nno1, axi, grand, vff1(1, g),&
-                    r, dff1, depld, fd, epsd)
-        call dfdmip(ndim, nno1, axi, geomp, g,&
-                    iw, vff1(1, g), idff1, r, wp,&
-                    dff1)
+        call dfdmip(ndim, nno1, axi, geomi, g, iw, vff1(1, g), idff1, r, w, dff1)
+        call nmepsi(ndim, nno1, axi, grand, vff1(1, g), r, dff1, deplm, fm, epsm)
+        call dfdmip(ndim, nno1, axi, geomm, g, iw, vff1(1, g), idff1, r, wm, dff1)
+        call nmepsi(ndim, nno1, axi, grand, vff1(1, g), r, dff1, depld, fd, epsd)
+        call dfdmip(ndim, nno1, axi, geomp, g, iw, vff1(1, g), idff1, r, wp, dff1)
 !
-        call nmmalu(nno1, axi, r, vff1(1, g), dff1,&
-                    lij)
+        call nmmalu(nno1, axi, r, vff1(1, g), dff1, lij)
 !
-        jm = fm(1,1)*(fm(2,2)*fm(3,3)-fm(2,3)*fm(3,2)) - fm(2,1)*(fm(1,2)*fm(3,3)-fm(1,3)*fm(3,2)&
-             &) + fm(3,1)*(fm(1,2)*fm(2,3)-fm(1,3)*fm(2,2))
-        jd = fd(1,1)*(fd(2,2)*fd(3,3)-fd(2,3)*fd(3,2)) - fd(2,1)*(fd(1,2)*fd(3,3)-fd(1,3)*fd(3,2)&
-             &) + fd(3,1)*(fd(1,2)*fd(2,3)-fd(1,3)*fd(2,2))
+        jm = fm(1,1)*(fm(2,2)*fm(3,3)-fm(2,3)*fm(3,2))&
+           - fm(2,1)*(fm(1,2)*fm(3,3)-fm(1,3)*fm(3,2))&
+           + fm(3,1)*(fm(1,2)*fm(2,3)-fm(1,3)*fm(2,2))
+        jd = fd(1,1)*(fd(2,2)*fd(3,3)-fd(2,3)*fd(3,2))&
+           - fd(2,1)*(fd(1,2)*fd(3,3)-fd(1,3)*fd(3,2))&
+           + fd(3,1)*(fd(1,2)*fd(2,3)-fd(1,3)*fd(2,2))
         jp = jm*jd
 !
 ! - CALCUL DE LA PRESSION ET DU GONFLEMENT AU POINT DE GAUSS
@@ -209,9 +200,7 @@ subroutine nifism(ndim, nno1, nno2, nno3, npg,&
         pp = pm+pd
 !
 ! - CALCUL DES FONCTIONS A, B,... DETERMINANT LA RELATION LIANT G ET J
-        call nirela(1, jp, gm, gp, am,&
-                    ap, bp, boa, aa, bb,&
-                    daa, dbb, dboa, d2boa)
+        call nirela(1, jp, gm, gp, am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa)
 !
 ! - PERTINENCE DES GRANDEURS
         if (jd .le. 1.d-2 .or. jd .gt. 1.d2) then
@@ -225,9 +214,7 @@ subroutine nifism(ndim, nno1, nno2, nno3, npg,&
 !
 ! - CALCUL DU GRADIENT DU GONFLEMENT POUR LA REGULARISATION
         if (nonloc) then
-            call dfdmip(ndim, nno2, axi, geomi, g,&
-                        iw, vff2(1, g), idff2, r, w,&
-                        dff2)
+            call dfdmip(ndim, nno2, axi, geomi, g, iw, vff2(1, g), idff2, r, w, dff2)
             do ia = 1, ndim
                 gradgp(ia) = ddot(&
                              nno2, dff2(1,ia), 1, gonfm, 1) + ddot(nno2, dff2(1,ia), 1, gonfd, 1)
@@ -245,9 +232,6 @@ subroutine nifism(ndim, nno1, nno2, nno3, npg,&
 !
 ! - APPEL A LA LOI DE COMPORTEMENT
         cod(g) = 0
-!
-! - POUR LES LOIS QUI NE RESPECTENT PAS ENCORE LA NOUVELLE INTERFACE
-! - ET QUI UTILISENT ENCORE LA CONTRAINTE EN T-
 !
         do ia = 1, 3
             sigm_ldc(ia) = sigm(ia,g) + sigm(2*ndim+1,g)
@@ -336,8 +320,12 @@ subroutine nifism(ndim, nno1, nno2, nno3, npg,&
 ! - MATRICE TANGENTE
         if (rigi) then
             if (.not. resi) then
-                call dcopy(2*ndim, sigm_ldc, 1, taup, 1)
-                call dscal(2*ndim, jm, taup, 1)
+                do ia = 1, 3
+                    taup(ia) = (sigm(ia,g) + sigm(2*ndim+1,g))*jm
+                end do
+                do ia = 4, 2*ndim
+                    taup(ia) = sigm(ia,g)*jm
+                end do
             endif
 !
 ! - CALCUL DU TENSEUR DE CONTRAINTE : TRACE ET PARTIE DEVIATORIQUE

@@ -150,7 +150,7 @@ ELEM = AFFE_CARA_ELEM(MODELE = MO,
 # ------------------- Conditions aux limites
 
 CH_PI=AFFE_CHAR_MECA(MODELE=MO,
-                     PRES_REP=(_F(PRES = 0.01,GROUP_MA = 'DALLE',),),
+                     FORCE_COQUE=(_F(PRES = 0.01,GROUP_MA = 'DALLE',),),
                     );
 
 #
@@ -209,8 +209,6 @@ U = CALC_EUROPLEXUS(
 #                     NFAR = NFAR,
                     ),
    EXCIT=(_F(CHARGE=CH_PI,FONC_MULT=FONCCB,),),
-   DIME = _F(UNITE_DIME = 40,
-             TABLE = (5,6000),),
    CALCUL = _F(TYPE_DISCRETISATION  ='UTIL',
                INST_INIT = 0,
                INST_FIN  = 2e-3,

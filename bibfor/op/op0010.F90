@@ -73,12 +73,14 @@ subroutine op0010()
 #include "asterfort/xprreo.h"
 #include "asterfort/xprtor.h"
 #include "asterfort/xprupw.h"
+#include "asterfort/xprupw_fmm.h"
 #include "asterfort/xprvit.h"
-    integer :: ifm, niv, ibid, ndim, iret, jcaraf, clsm, jma, jconx1, jconx2, nbma, i, ima
-    integer :: j
+    integer :: ifm, niv, ibid, ndim, iret, jcaraf, clsm, jma, jconx1, jconx2, nbma, i , ima
+    integer :: j, nbrinit
     integer :: iadrma
     real(kind=8) :: lcmin, deltat
     character(len=8) :: k8bid, noma, nomo, fiss, fispre, method, fisini, ncrack
+    character(len=8) :: ma_grill_pre
     character(len=16) :: k16bid, typdis
     character(len=19) :: cnsvt, cnsvn, grlt, grln, cnslt, cnsln, cnsen, cnsenr
     character(len=19) :: noesom, isozro, noresi, cnxinv, cnsbl, cnsdis, cnslj
@@ -185,15 +187,14 @@ subroutine op0010()
 ! --- RETRIEVE THE NAME OF THE MODEL THAT SHOULD BE USED AS AN AUXILIARY
 !     GRID FOR THE EVALUATION OF THE LEVELSETS.
 !
-    call jeexin(fispre//'.GRI.MODELE', ibid)
+    call jeexin(fispre//'.GRI.MAILLA', ibid)
     if (ibid .eq. 0) then
 !        NO AUXILIARY GRID USED
         griaux=' '
         grille=.false.
     else
 !        AUXILIARY GRID USED
-        call jeveuo(fispre//'.GRI.MODELE', 'L', ibid)
-        griaux=zk8(ibid-1+1)
+        call getvid(' ', 'MODELE_GRILLE', scal=griaux, nbret=ibid)
         grille=.true.
     endif
 !
@@ -316,11 +317,11 @@ subroutine op0010()
     call jedupo(fispre//'.GROUP_MA_ENRI', 'G', lismae, .false._1)
     call jedupo(fispre//'.GROUP_NO_ENRI', 'G', lisnoe, .false._1)
 !
-! --- DUPLICATION DE INFO ET MODELE (LA NOUVELLE FISSURE RESTE
-!     ATTACHE AU MODELE SAIN INITIAL
+! --- DUPLICATION DE INFO ET MAILLAGE (LA NOUVELLE FISSURE RESTE
+!     ATTACHE AU MAILLAGE INITIAL
 !
     call jedupo(fispre//'.INFO', 'G', fiss//'.INFO', .false._1)
-    call jedupo(fispre//'.MODELE', 'G', fiss//'.MODELE', .false._1)
+    call jedupo(fispre//'.MAILLAGE', 'G', fiss//'.MAILLAGE', .false._1)
 !
 ! --- RECUPERATION DES CARACTERISTIQUES DU FOND DE FISSURE
 !
@@ -372,7 +373,7 @@ subroutine op0010()
             write(ifm,*)'UNE GRILLE AUXILIAIRE EST UTILISEE POUR LA'//&
             ' PROPAGATION:'
             write(ifm,*)'   MODELE PHYSIQUE  : ',nomo
-            write(ifm,*)'   MODELE GRILLE AUXILIAIRE: ',unomo
+            write(ifm,*)'   MAILLAGE GRILLE AUXILIAIRE: ',unoma
         endif
 !
     else
@@ -433,8 +434,10 @@ subroutine op0010()
 !     IF AN AUXILIARY GRID IS USED IN THIS STEP, STORE ITS NAME FOR THE
 !     NEW CRACK
     if (grille) then
-        call wkvect(fiss//'.GRI.MODELE', 'G V K8', 1, ibid)
-        zk8(ibid) = griaux
+        call jeveuo(fispre//'.GRI.MAILLA', 'L', ibid)
+        ma_grill_pre = zk8(ibid)
+        call wkvect(fiss//'.GRI.MAILLA', 'G V K8', 1, ibid)
+        zk8(ibid) = ma_grill_pre
     endif
 !
 !-----------------------------------------------------------------------
@@ -470,9 +473,9 @@ subroutine op0010()
 !-----------------------------------------------------------------------
 !     INITIALISE THE SIMPLEXE OR THE UPWIND SCHEME
 !-----------------------------------------------------------------------
-!
     noesom = '&&OP0010.NOESOM'
     noresi = '&&OP0010.NORESI'
+
     if (.not.grille) then
         vcn = '&&OP0010.VCN'
         grlr = '&&OP0010.GRLR'
@@ -510,7 +513,7 @@ subroutine op0010()
         cnsljg = '&&OP0010.CNSLJG'
         cnseg='&&OP0010.CNSEG'
         cnseng='&&OP0010.CNSENG'
-        call xenrch(dnomo, dnoma, dcnslt, dcnsln, cnsljg,&
+        call xenrch(dnoma, dcnslt, dcnsln, cnsljg,&
                     cnseg, cnseng, ndim, fispre, goinop,&
                     lismag, lisnog)
 !
@@ -522,6 +525,9 @@ subroutine op0010()
 !-----------------------------------------------------------------------
 !     CALCUL DES CHAM_NO_S DES VITESSES DE PROPAGATION
 !-----------------------------------------------------------------------
+!
+! si locfom = false, on iniatilise la valeur de radtor à 0
+    radtor =  0.d0
 !
     if (locdom) then
         if (radimp .le. 0.d0) then
@@ -638,8 +644,8 @@ subroutine op0010()
             write(ifm,*)'   LE DOMAINE DE CALCUL COINCIDE AVEC LE'//&
      &                  ' MODELE PHYSIQUE ',nomo
         else
-            write(ifm,*)'   LE DOMAINE DE CALCUL COINCIDE AVEC LE'//&
-     &                  ' MODELE GRILLE AUXILIAIRE ',griaux
+            write(ifm,*)'   LE DOMAINE DE CALCUL COINCIDE AVEC LA'//&
+     &                  ' GRILLE AUXILIAIRE ',unoma
         endif
     endif
 !
@@ -744,6 +750,14 @@ subroutine op0010()
                     eletor, liggrd)
     endif
 !
+    if (method.eq.'UPW_FMM') then
+            nbrinit = 1
+            call xprupw_fmm('REINITLN', dnoma, fispre, vcnt, grlrt,&
+                             noesom, lcmin, dcnsln, dgrln, dcnslt, &
+                             dgrlt, isozro, nodtor, eletor, liggrd,&
+                             vpoint ,cnsbl ,dttot ,cnsbet ,listp,nbrinit)
+    endif
+
 !-----------------------------------------------------------------------
 !     REORTHOGONALISATION DE LST
 !-----------------------------------------------------------------------
@@ -795,11 +809,25 @@ subroutine op0010()
     endif
 !
     call jedetr(isozro)
+! on réinitialise deux fois pour redresser l'iso zéro
+    if (method.eq.'UPW_FMM') then
+        do nbrinit = 1 , 2
+           call xprupw_fmm('REINITLT', dnoma, fispre, vcnt, grlrt,&
+                           noesom, lcmin, dcnsln, dgrln, dcnslt, &
+                           dgrlt, isozro, nodtor,eletor, liggrd, &
+                           vpoint ,cnsbl ,dttot ,cnsbet ,listp,nbrinit)
+           call jedetr(isozro)
+        enddo
+    endif
+
+!------------------------------------------------------------------!
+
+
 1000 continue
     call jedetr(vvit)
     call jedetr(vbeta)
     call jedetr(noesom)
-    if (method(1:6) .eq. 'UPWIND') then
+    if (method(1:6) .eq. 'UPWIND' .or. method(1:7) .eq. 'UPW_FMM') then
         if (.not.grille) then
             call jedetr(vcn)
             call jedetr(grlr)
@@ -979,7 +1007,7 @@ subroutine op0010()
     cnsen='&&OP0010.CNSEN'
     cnsenr='&&OP0010.CNSENR'
     goinop=.false.
-    call xenrch(nomo, noma, cnslt, cnsln, cnslj,&
+    call xenrch(noma, cnslt, cnsln, cnslj,&
                 cnsen, cnsenr, ndim, fiss, goinop,&
                 lismae, lisnoe)
 !

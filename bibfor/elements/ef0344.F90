@@ -42,8 +42,8 @@ subroutine ef0344(nomte)
     integer :: lorien, jdepl, lforcr, lforcf
     real(kind=8) :: valres(nbres)
     integer :: codres(nbres)
-    character(len=8) :: nompar, nomres(nbres)
-    character(len=16) :: messk(2)
+    character(len=8) :: nompar
+    character(len=16) :: messk(2), nomres(nbres)
     real(kind=8) :: valpar, zero, angs2, rad, e, g, a, rbid
     real(kind=8) :: xl, epsith
     real(kind=8) :: nu, fe(12), fi(12), flr(14), klv(105)
@@ -70,8 +70,8 @@ subroutine ef0344(nomte)
     imat=jmat+zi(jmat+nbmat+1)
 !     SEUL ELAS EST AUTORISE
     do icomp = 1, zi(imat+1)
-        if (zk16(zi(imat)+icomp-1)(1:4) .ne. 'ELAS') then
-            messk(2)=zk16(zi(imat)+icomp-1)(1:10)
+        if (zk32(zi(imat)+icomp-1) .ne. 'ELAS') then
+            messk(2)=zk32(zi(imat)+icomp-1)
             call utmess('F', 'ELEMENTS4_64', nk=2, valk=messk)
         endif
     end do

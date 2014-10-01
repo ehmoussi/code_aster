@@ -35,8 +35,8 @@ ENTETE__ ELEMENT__ MECPQU4_XTC      MAILLE__ QUAD4
 
 MODE_LOCAL__
     EGGEOP_R = GEOM_R   ELGA__ RIGI    (X        Y        W        )
-    ENORME   = NEUT_R   ELEM__         (X1       )
-    EMNEUT_R = NEUT_R   ELEM__         (X[30]     )
+   
+   
     ZVARCPG  = VARI_R   ELGA__ MATER   (VARI     )
     CCAMASS  = CAMASS   ELEM__         (C        ALPHA    )
     CCARCRI  = CARCRI   ELEM__         (ITECREL  MACOMP   RESCREL  THETA    ITEDEC   INTLOC   PERTURB
@@ -69,16 +69,16 @@ MODE_LOCAL__
     E06NEUR  = N132_R   ELEM__         (X[6])
     E12NEUTR = N120_R   ELEM__         (X[12])
     E15NEUTR = N120_R   ELEM__         (X[15])
-    E20NEUTR = NEUT_R   ELEM__         (X[20])
+   
     E22NEUTR = N480_R   ELEM__         (X[22]    )
     E36NEUI  = N512_I   ELEM__         (X[36])
     ECODRET  = CODE_I   ELEM__         (IRET     )
     ECONTPG  = SIEF_R   ELGA__ XFEM    (SIXX     SIYY     SIZZ     SIXY     )
     ECONTPC  = SIEF_C   ELGA__ XFEM    (SIXX     SIYY     SIZZ     SIXY     )
-    ECONTNO  = SIEF_R   ELNO__ IDEN__  (SIXX     SIYY     SIZZ     SIXY     )
-    ECONTNC  = SIEF_C   ELNO__ IDEN__  (SIXX     SIYY     SIZZ     SIXY     )
+   
+   
     EDCEL_I  = DCEL_I   ELEM__         (NPG_DYN  NCMP_DYN )
-    EDEFONO  = EPSI_R   ELNO__ IDEN__  (EPXX     EPYY     EPZZ     EPXY     )
+   
     EDOMGGA  = DOMA_R   ELGA__ RIGI    (DOMA     )
     EGGEOM_R = GEOM_R   ELGA__ XFEM    (X        Y        )
     EGINST_R = INST_R   ELGA__ RIGI    (INST     )
@@ -95,7 +95,7 @@ MODE_LOCAL__
     CGEOMER  = GEOM_R   ELEM__         (X        Y        )
     CFORCEF  = FORC_F   ELEM__         (FX       FY       )
     NFORCER  = FORC_R   ELNO__ IDEN__  (FX       FY       )
-    EFORCER  = FORC_R   ELGA__ XFEM    (FX       FY       )
+   
     STANO_I  = N120_I   ELNO__ IDEN__  (X1       )
     XFGEOM_R = GEOM_R   ELGA__ XFEM    (X        Y        )
     ZVARIPG  = VARI_R   ELGA__ XFEM    (VARI     )
@@ -222,6 +222,7 @@ OPTION__
                                 N1NEUT_R PLSN     N1NEUT_R PLST     E06NEUR  PPINTTO  STANO_I  PSTANO   
                                 ZVARCPG  PVARCPR  
                               OUT__  MVECTUR  PVECTUR
+    INI_XFEM_ELNO    99   IN__    OUT__  N6NEUT_R PBASLOR  STANO_I  PSTANO   N1NEUT_R PLSN     N1NEUT_R PLST  
     FULL_MECA        539  IN__  N6NEUT_R PBASLOR  CCAMASS  PCAMASS  CCARCRI  PCARCRI  E36NEUI  PCNSETO  
                                 CCOMPOR  PCOMPOR  ECONTPG  PCONTMR  DDL_MECA PDEPLMR  DDL_MECA PDEPLPR  
                                 NGEOMER  PGEOMER  E6NEUTI  PHEAVTO  CTEMPSR  PINSTMR  CTEMPSR  PINSTPR  
@@ -231,7 +232,7 @@ OPTION__
                               OUT__  ECODRET  PCODRET  ECONTPG  PCONTPR  MMATUNS  PMATUNS  MMATUUR  PMATUUR
                                      ZVARIPG  PVARIPR  MVECTUR  PVECTUR
     GEOM_FAC         519  IN__  E1NEUTK  NOMFIS   DDL_MECA PDEPLA   E6NEUTR  PGESCLO  E3NEUTI  PLONGCO  
-                                N1NEUT_R PLST     E6NEUTR  PPINTER  
+                                N1NEUT_R PLST     E6NEUTR  PPINTER
                           OUT__ E08NEUR  PBASESC  E08NEUR  PBASMAI  E4NEUTR  PNEWGEM  E4NEUTR  PNEWGES  
     GRAD_NEUT_R         24    IN__   NGEOMER  PGEOMER  N1NEUT_R PNEUTER
                               OUT__  N2NEUT_R PGNEUTR

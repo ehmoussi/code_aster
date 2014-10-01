@@ -53,7 +53,8 @@ subroutine te0149(option, nomte)
     integer :: codres(nbres), codref(nbref)
     integer :: nbfib, inbf, isief, ino, i
     real(kind=8) :: sixx, simin, simax
-    character(len=8) :: nompar, nomres(nbres), nomref(nbref)
+    character(len=8) :: nompar
+    character(len=16) :: nomres(nbres), nomref(nbref)
     character(len=24) :: suropt, messk(2)
     real(kind=8) :: zero, e, nu, rho, valpar, r1, ep1, absmoy, rhos, rhofi
     real(kind=8) :: rhofe, cm, phie, phii
@@ -61,8 +62,8 @@ subroutine te0149(option, nomte)
     aster_logical :: okopt
 !     ------------------------------------------------------------------
     data nomres / 'E', 'NU', 'RHO'/
-    data nomref / 'E', 'NU' , 'RHO' , 'RHO_F_IN' , 'RHO_F_EX' ,&
-     &             'CM'/
+    data nomref / 'E', 'NU' , 'RHO' , 'PROF_RHO_F_INT' , 'PROF_RHO_F_EXT' ,&
+     &             'COEF_MASS_AJOU'/
 ! --- ------------------------------------------------------------------
     okopt = (option.eq.'SIPM_ELNO') .or. (option.eq.'SIPO_ELNO')
     ASSERT(okopt)
@@ -108,9 +109,9 @@ subroutine te0149(option, nomte)
     imat = jmat+zi(jmat+nbmat+1)
 !     SEUL ELAS EST AUTORISE
     do icomp = 1, zi(imat+1)
-        if (zk16(zi(imat)+icomp-1)(1:4) .ne. 'ELAS') then
+        if (zk32(zi(imat)+icomp-1)(1:4) .ne. 'ELAS') then
             messk(1) = option
-            messk(2) = zk16(zi(imat)+icomp-1)(1:10)
+            messk(2) = zk32(zi(imat)+icomp-1)(1:24)
             call utmess('F', 'ELEMENTS4_64', nk=2, valk=messk)
         endif
     end do

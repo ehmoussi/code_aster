@@ -84,10 +84,10 @@ subroutine op0151()
 !       ---------------------------------------------------------------
     integer :: icodre, icodwo, icodba, icodhs, icodma
     character(len=8) :: nomu, nomres, nommai, nommat
-    character(len=8) :: nomfon, nomnap, cara, nommod, grdvie, inscri
-    character(len=16) :: concep, cmd, pheno, phenom, typcal, nomcri, nommet
+    character(len=8) :: nomfon, nomnap, nommod, inscri
+    character(len=16) :: concep, cmd, pheno, typcal, nomcri, nommet, cara
     character(len=16) :: proaxe, nomsym, typcha, nomopt, nomgde, nomfor, forcri
-    character(len=16) :: forvie
+    character(len=16) :: forvie, grdvie
     character(len=16) :: mexpic, mcompt, mdomag, typeq, typoi, typdg, option
     character(len=19) :: nomsd, chelem, chelrs, ligrel, nomsd2
     character(len=24) :: valk(6)
@@ -304,13 +304,13 @@ subroutine op0151()
                 call utmess('F', 'FATIGUE1_29', sk=nomopt)
             endif
             pheno = 'FATIGUE'
-            call rccome(nommat, pheno, phenom, icodre)
+            call rccome(nommat, pheno, icodre)
             if (icodre .eq. 1) then
                 call utmess('F', 'FATIGUE1_24')
             endif
             cara = 'WOHLER'
             call rcpare(nommat, pheno, cara, icodwo)
-            cara = 'A_BASQUI'
+            cara = 'A_BASQUIN'
             call rcpare(nommat, pheno, cara, icodba)
             cara = 'A0'
             call rcpare(nommat, pheno, cara, icodhs)
@@ -323,11 +323,11 @@ subroutine op0151()
                 call utmess('F', 'FATIGUE1_31', sk=nomopt)
             endif
             pheno = 'FATIGUE'
-            call rccome(nommat, pheno, phenom, icodre)
+            call rccome(nommat, pheno, icodre)
             if (icodre .eq. 1) then
                 call utmess('F', 'FATIGUE1_24')
             endif
-            cara = 'MANSON_C'
+            cara = 'MANSON_COFFIN'
             call rcpare(nommat, pheno, cara, icodma)
             if (icodma .ne. 0) then
                 call utmess('F', 'FATIGUE1_32')
@@ -338,11 +338,11 @@ subroutine op0151()
                 call utmess('F', 'FATIGUE1_25', sk=nomopt)
             endif
             pheno = 'FATIGUE'
-            call rccome(nommat, pheno, phenom, icodre)
+            call rccome(nommat, pheno, icodre)
             if (icodre .eq. 1) then
                 call utmess('F', 'FATIGUE1_24')
             endif
-            cara = 'MANSON_C'
+            cara = 'MANSON_COFFIN'
             call rcpare(nommat, pheno, cara, icodma)
             if (icodma .ne. 0) then
                 call utmess('F', 'FATIGUE1_32')
@@ -361,18 +361,18 @@ subroutine op0151()
                 call utmess('F', 'FATIGUE1_28', sk=nomopt)
             endif
             pheno = 'FATIGUE'
-            call rccome(nommat, pheno, phenom, icodre)
+            call rccome(nommat, pheno, icodre)
             if (icodre .eq. 1) then
                 call utmess('F', 'FATIGUE1_24')
             endif
-            cara = 'MANSON_C'
+            cara = 'MANSON_COFFIN'
             call rcpare(nommat, pheno, cara, icodma)
             if (icodma .ne. 0) then
                 call utmess('F', 'FATIGUE1_32')
             endif
             cara = 'WOHLER'
             call rcpare(nommat, pheno, cara, icodwo)
-            cara = 'A_BASQUI'
+            cara = 'A_BASQUIN'
             call rcpare(nommat, pheno, cara, icodba)
             cara = 'A0'
             call rcpare(nommat, pheno, cara, icodhs)
@@ -469,7 +469,7 @@ subroutine op0151()
                 call utmess('F', 'FATIGUE1_29', sk=nomopt)
             endif
             pheno = 'FATIGUE'
-            call rccome(nommat, pheno, phenom, icodre)
+            call rccome(nommat, pheno, icodre)
             if (icodre .eq. 1) then
                 call utmess('F', 'FATIGUE1_88', sk='WOHLER')
             endif

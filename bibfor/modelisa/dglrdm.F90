@@ -67,6 +67,7 @@ subroutine dglrdm()
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
+#include "asterfort/codent.h"
 #include "asterfort/dgelas.h"
 #include "asterfort/dgendo.h"
 #include "asterfort/dgplas.h"
@@ -102,7 +103,9 @@ subroutine dglrdm()
     real(kind=8) :: valres(6), r8b
 !
     integer :: icodr2(6)
-    character(len=8) :: mater, k8b, compr, nomres(6)
+    character(len=6) :: k6
+    character(len=8) :: mater, k8b, compr
+    character(len=16) :: nomres(6)
     character(len=19) :: mendom
     character(len=19) :: cisail, pente
     character(len=16) :: type, nomcmd, fichie
@@ -138,9 +141,9 @@ subroutine dglrdm()
     nomres(1) = 'E'
     nomres(2) = 'NU'
     nomres(3) = 'RHO'
-    nomres(4) = 'AMOR_ALP'
-    nomres(5) = 'AMOR_BET'
-    nomres(6) = 'AMOR_HYS'
+    nomres(4) = 'AMOR_ALPHA'
+    nomres(5) = 'AMOR_BETA'
+    nomres(6) = 'AMOR_HYST'
     k8b = ' '
     r8b = 0.d0
 !
@@ -318,62 +321,64 @@ subroutine dglrdm()
     call dgendo(em, ef, h, nyt, nyc, num, nuf, pendt, pelast, pendf,&
                 pelasf, iendo, icisai, icompr, gt, gf, gc, ipente, np, dxp)
 !-----REMPLISSAGE DU MATERIAU
-    call wkvect(mater//'.MATERIAU.NOMRC ', 'G V K16', 2, jlm)
-    zk16(jlm ) = 'GLRC_DM         '
-    zk16(jlm+1) = 'ELAS_GLRC       '
+    call wkvect(mater//'.MATERIAU.NOMRC ', 'G V K32', 2, jlm)
+    zk32(jlm ) = 'GLRC_DM         '
+    zk32(jlm+1) = 'ELAS_GLRC       '
 !---------ELASTIQUE---------------
     lonobj = 8
-    call wkvect(mater//'.ELAS_GLRC .VALK', 'G V K8', 2*lonobj, jmelk)
-    call jeecra(mater//'.ELAS_GLRC .VALK', 'LONUTI',   lonobj)
-    call wkvect(mater//'.ELAS_GLRC .VALR', 'G V R',    lonobj, jmelr)
-    call jeecra(mater//'.ELAS_GLRC .VALR', 'LONUTI',   lonobj)
-    call wkvect(mater//'.ELAS_GLRC .VALC', 'G V C',    lonobj, jmelc)
-    call jeecra(mater//'.ELAS_GLRC .VALC', 'LONUTI',   0)
-    zk8(jmelk ) = 'E_M     '
+    call codent(2,'D0',K6)
+    call wkvect(mater//'.CPT.'//K6//'.VALK', 'G V K16', 2*lonobj, jmelk)
+    call jeecra(mater//'.CPT.'//K6//'.VALK', 'LONUTI',   lonobj)
+    call wkvect(mater//'.CPT.'//K6//'.VALR', 'G V R',    lonobj, jmelr)
+    call jeecra(mater//'.CPT.'//K6//'.VALR', 'LONUTI',   lonobj)
+    call wkvect(mater//'.CPT.'//K6//'.VALC', 'G V C',    lonobj, jmelc)
+    call jeecra(mater//'.CPT.'//K6//'.VALC', 'LONUTI',   0)
+    zk16(jmelk ) = 'E_M     '
     zr(jmelr ) = em
-    zk8(jmelk+1) = 'NU_M    '
+    zk16(jmelk+1) = 'NU_M    '
     zr(jmelr+1 ) = num
-    zk8(jmelk+2 ) = 'E_F     '
+    zk16(jmelk+2 ) = 'E_F     '
     zr(jmelr+2 ) = ef
-    zk8(jmelk+3) = 'NU_F    '
+    zk16(jmelk+3) = 'NU_F    '
     zr(jmelr+3 ) = nuf
-    zk8(jmelk+4) = 'RHO     '
+    zk16(jmelk+4) = 'RHO     '
     zr(jmelr+4 ) = rho
     if (alpha .gt. 0.0d0) then
-        zk8(jmelk+5) = 'AMOR_ALP'
+        zk16(jmelk+5) = 'AMOR_ALPHA'
         zr(jmelr+5 ) = alpha
     endif
     if (beta .gt. 0.0d0) then
-        zk8(jmelk+6) = 'AMOR_BET'
+        zk16(jmelk+6) = 'AMOR_BETA'
         zr(jmelr+6 ) = beta
     endif
     if (hyst .gt. 0.0d0) then
-        zk8(jmelk+7) = 'AMOR_HYS'
+        zk16(jmelk+7) = 'AMOR_HYST'
         zr(jmelr+7 ) = hyst
     endif
 !---------GLRC_DM---------------
     lonobj = 8
-    call wkvect(mater//'.GLRC_DM   .VALK', 'G V K8', 2*lonobj, jmelk)
-    call jeecra(mater//'.GLRC_DM   .VALK', 'LONUTI',   lonobj, ' ')
-    call wkvect(mater//'.GLRC_DM   .VALR', 'G V R',    lonobj, jmelr)
-    call jeecra(mater//'.GLRC_DM   .VALR', 'LONUTI',   lonobj, ' ')
-    call wkvect(mater//'.GLRC_DM   .VALC', 'G V C',    lonobj, jmelc)
-    call jeecra(mater//'.GLRC_DM   .VALC', 'LONUTI',   0,      ' ')
-    zk8(jmelk)   = 'GAMMA_T '
+    call codent(1,'D0',K6)    
+    call wkvect(mater//'.CPT.'//K6//'.VALK', 'G V K16', 2*lonobj, jmelk)
+    call jeecra(mater//'.CPT.'//K6//'.VALK', 'LONUTI',   lonobj)
+    call wkvect(mater//'.CPT.'//K6//'.VALR', 'G V R',    lonobj, jmelr)
+    call jeecra(mater//'.CPT.'//K6//'.VALR', 'LONUTI',   lonobj)
+    call wkvect(mater//'.CPT.'//K6//'.VALC', 'G V C',    lonobj, jmelc)
+    call jeecra(mater//'.CPT.'//K6//'.VALC', 'LONUTI',   0)
+    zk16(jmelk)   = 'GAMMA_T '
     zr(jmelr )   = gt
-    zk8(jmelk+1) = 'GAMMA_F '
+    zk16(jmelk+1) = 'GAMMA_F '
     zr(jmelr+1 ) = gf
-    zk8(jmelk+2) = 'GAMMA_C '
+    zk16(jmelk+2) = 'GAMMA_C '
     zr(jmelr+2 ) = gc
-    zk8(jmelk+3) = 'NYT     '
+    zk16(jmelk+3) = 'NYT     '
     zr(jmelr+3 ) = nyt
-    zk8(jmelk+4) = 'MYF     '
+    zk16(jmelk+4) = 'MYF     '
     zr(jmelr+4 ) = myf
-    zk8(jmelk+5) = 'NYC     '
+    zk16(jmelk+5) = 'NYC     '
     zr(jmelr+5 ) = nyc
-    zk8(jmelk+6) = 'ALPHA_C '
+    zk16(jmelk+6) = 'ALPHA_C '
     zr(jmelr+6 ) = 1.d0
-    zk8(jmelk+7) = 'EPAIS   '
+    zk16(jmelk+7) = 'EPAIS   '
     zr(jmelr+7 ) = h
 !---------IMPRESSION-------------
     if (nimpr .gt. 0) then

@@ -39,7 +39,7 @@ avance = 25.
 
 Fiss = [None]*2
 
-Fiss[0] = DEFI_FISS_XFEM(MODELE=plate,
+Fiss[0] = DEFI_FISS_XFEM(MAILLAGE=MaiPlate,
                          DEFI_FISS=_F(FORM_FISS      = 'ELLIPSE',
                                       DEMI_GRAND_AXE = rayon,
                                       DEMI_PETIT_AXE = rayon,
@@ -96,9 +96,8 @@ dist = 500.*sqrt(2.) - (rayon+nbcalc*avance)
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='NON_DEFINI',
-           TOLE_MACHINE=0.02,      #TODO variabilite
            PRECISION=0.050000000000000003,
-           VALE_CALC=382.182226707,
+           VALE_CALC=377.851802342,
            VALE_REFE=dist,
            NOM_PARA='X1',
            TYPE_TEST='MAX',
@@ -107,9 +106,8 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='NON_DEFINI',
-           TOLE_MACHINE=0.02,      #TODO variabilite
            PRECISION=0.050000000000000003,
-           VALE_CALC=382.182217425,
+           VALE_CALC=377.851802338,
            VALE_REFE=dist,
            NOM_PARA='X1',
            TYPE_TEST='MIN',

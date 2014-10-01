@@ -45,17 +45,7 @@ MOD2D=AFFE_MODELE(MAILLAGE=box2D,
 
 grille=DEFI_GRILLE(MAILLAGE=box)
 
-GriAux=AFFE_MODELE(GRILLE=grille,
-                   AFFE=_F(GROUP_MA=('VOL',),
-                           PHENOMENE='MECANIQUE',
-                           MODELISATION='3D',)),
-
 grille2D=DEFI_GRILLE(MAILLAGE=box2D)
-
-GriAux2D=AFFE_MODELE(GRILLE=grille2D,
-                     AFFE=_F(GROUP_MA=('VOL',),
-                             PHENOMENE='MECANIQUE',
-                             MODELISATION='D_PLAN',)),
 
 #----------------------------------------------
 # DEFINITION DES FISSURES
@@ -89,8 +79,8 @@ MODmai=AFFE_MODELE(MAILLAGE=MA,
 
 FISS[1]=DEFI_FISS_XFEM(DEFI_FISS=_F(GROUP_MA_FISS='FISS_0',
                                     GROUP_MA_FOND='FOND_0'),
-                       MODELE_GRILLE=GriAux,
-                       MODELE=MODmai,);
+                       MAILLAGE_GRILLE=grille,
+                       MAILLAGE=MA,);
 
 #--------
 # FISS[2]: DEFINITION PAR FONCTIONS
@@ -103,8 +93,8 @@ fLST=FORMULE(NOM_PARA='Y',
 
 FISS[2]=DEFI_FISS_XFEM(DEFI_FISS=_F(FONC_LN=fLSN,
                                     FONC_LT=fLST),
-                       MODELE_GRILLE=GriAux,
-                       MODELE=MODmai,);
+                       MAILLAGE_GRILLE=grille,
+                       MAILLAGE=MA,);
 
 #--------
 # FISS[3]: DEFINITION PAR CATALOGUE DE FORMES
@@ -114,8 +104,8 @@ FISS[3]=DEFI_FISS_XFEM(DEFI_FISS=_F(FORM_FISS='DEMI_PLAN',
                                     NORMALE = (0., 0., 1.),
                                     PFON =  (4., 1., 0.),
                                     DTAN = (0., 1., 0.),),
-                       MODELE_GRILLE=GriAux,
-                       MODELE=MODmai,);
+                       MAILLAGE_GRILLE=grille,
+                       MAILLAGE=MA,);
 
 LSN=CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
                OPERATION='EXTR',
@@ -133,8 +123,8 @@ LST=CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
 
 FISS[4]=DEFI_FISS_XFEM(DEFI_FISS=_F(CHAM_NO_LSN=LSN,
                                   CHAM_NO_LST=LST),
-                     MODELE_GRILLE=GriAux,
-                     MODELE=MODmai,);
+                     MAILLAGE_GRILLE=grille,
+                     MAILLAGE=MA,);
 
 #--------
 # FISS[5]: DEFINITION D'UNE INTERFACE PAR GROUPES DES MAILLES
@@ -142,8 +132,8 @@ FISS[4]=DEFI_FISS_XFEM(DEFI_FISS=_F(CHAM_NO_LSN=LSN,
 
 FISS[5]=DEFI_FISS_XFEM(TYPE_DISCONTINUITE='INTERFACE',
                        DEFI_FISS=_F(GROUP_MA_FISS='FISS_0',),
-                       MODELE_GRILLE=GriAux,
-                       MODELE=MODmai,);
+                       MAILLAGE_GRILLE=grille,
+                       MAILLAGE=MA,);
 
 #--------
 # FISS[6]: DEFINITION D'UNE INTERFACE PAR UNE FONCTION
@@ -151,8 +141,8 @@ FISS[5]=DEFI_FISS_XFEM(TYPE_DISCONTINUITE='INTERFACE',
 
 FISS[6]=DEFI_FISS_XFEM(TYPE_DISCONTINUITE='INTERFACE',
                        DEFI_FISS=_F(FONC_LN=fLSN,),
-                       MODELE_GRILLE=GriAux,
-                       MODELE=MODmai,);
+                       MAILLAGE_GRILLE=grille,
+                       MAILLAGE=MA,);
 
 #--------
 # FISS[7]: DEFINITION D'UNE INTERFACE PAR CATALOGUE DE FORMES
@@ -162,8 +152,8 @@ FISS[7]=DEFI_FISS_XFEM(TYPE_DISCONTINUITE='INTERFACE',
                        DEFI_FISS=_F(FORM_FISS='DROITE',
                                     POINT =  (4., 1., 0.),
                                     DTAN = (1., 0., 0.),),
-                       MODELE_GRILLE=GriAux2D,
-                       MODELE=MOD2D,);
+                       MAILLAGE_GRILLE=grille2D,
+                       MAILLAGE=box2D,);
 
 LSNint=CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
                   OPERATION='EXTR',
@@ -176,8 +166,8 @@ LSNint=CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
 
 FISS[8]=DEFI_FISS_XFEM(TYPE_DISCONTINUITE='INTERFACE',
                        DEFI_FISS=_F(CHAM_NO_LSN=LSNint,),
-                       MODELE_GRILLE=GriAux2D,
-                       MODELE=MOD2D,);
+                       MAILLAGE_GRILLE=grille2D,
+                       MAILLAGE=box2D,);
 
 #----------------------------------------------
 # VERIFICATION LEVEL SETS ET LEUR GRADIENTS

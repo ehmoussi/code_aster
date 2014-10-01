@@ -1074,16 +1074,19 @@ def get_depl_sup(FOND_FISS,tabsupi,ndim,Lnofon,d_coor,ino,TYPE_MAILLAGE) :
          E1 = getattr(tabsupi,'E1X').values()
          E1 = complete(E1)
          dxs = 2*(H1 + NP.sqrt(abscs)*E1)
+#         dxs = xcoef_he()*H1 + 2*NP.sqrt(abscs)*E1
          H1 = getattr(tabsupi,'H1Y').values()
          E1 = getattr(tabsupi,'E1Y').values()
          H1 = complete(H1)
          E1 = complete(E1)
          dys = 2*(H1 + NP.sqrt(abscs)*E1)
+#         dys = xcoef_he()*H1 + 2*NP.sqrt(abscs)*E1
          H1 = getattr(tabsupi,'H1Z').values()
          E1 = getattr(tabsupi,'E1Z').values()
          H1 = complete(H1)
          E1 = complete(E1)
          dzs = 2*(H1 + NP.sqrt(abscs)*E1)
+#         dzs = xcoef_he()*H1 + 2*NP.sqrt(abscs)*E1
          abscs=NP.array(abscs[:nbval])
 
       ds = NP.asarray([dxs,dys,dzs])
@@ -1581,14 +1584,18 @@ def post_k1_k2_k3_ops(self,MODELISATION,FOND_FISS,FISSURE,MATER,RESULTAT,
 #   ------------------------------------------------------------------
    matph = MATER.sdj.NOMRC.get()
    phenom=None
+   ind=0   
    for cmpt in matph :
+       ind=ind+1           
        if cmpt[:4]=='ELAS' :
           phenom=cmpt
           break
    if phenom==None : UTMESS('F','RUPTURE0_5')
+   ns = '{:06d}'.format(ind)
 
 #  RECHERCHE SI LE MATERIAU DEPEND DE LA TEMPERATURE:
-   compor = sd_compor1('%-8s.%s' % (MATER.nom, phenom))
+   
+   compor = sd_compor1('%-8s.CPT.%s' % (MATER.nom, ns))
    valk = [s.strip() for s in compor.VALK.get()]
    valr = compor.VALR.get()
    dicmat=dict(zip(valk,valr))
@@ -1611,11 +1618,11 @@ def post_k1_k2_k3_ops(self,MODELISATION,FOND_FISS,FISSURE,MATER,RESULTAT,
       except ValueError : pass
       try:list_oper.remove("RHO")
       except ValueError : pass
-      try:list_oper.remove("PRECISIO")
+      try:list_oper.remove("PRECISION")
       except ValueError : pass
       try:list_oper.remove("K_DESSIC")
       except ValueError  : pass
-      try:list_oper.remove("TEMP_DEF")
+      try:list_oper.remove("TEMP_DEF_ALPHA")
       except ValueError : pass
 
       nom_fonc_e = self.get_concept(list_fonc[list_oper.index("E")])
@@ -1628,13 +1635,12 @@ def post_k1_k2_k3_ops(self,MODELISATION,FOND_FISS,FISSURE,MATER,RESULTAT,
           (nom_fonc_nu.Parametres() ['NOM_PARA']!='TEMP' and nom_fonc_nu_prol!='CONSTANT')):
          UTMESS('F','RUPTURE1_67')
 
-      if dicmat.has_key('TEMP_DEF') and not EVOL_THER :
+      if dicmat.has_key('TEMP_DEF_ALPHA') and not EVOL_THER :
          nompar = ('TEMP',)
-         valpar = (dicmat['TEMP_DEF'],)
+         valpar = (dicmat['TEMP_DEF_ALPHA'],)
          UTMESS('A','RUPTURE0_6',valr=valpar)
          nomres=['E','NU']
          valres,codret = MATER.RCVALE('ELAS',nompar,valpar,nomres,2)
-
          if (nom_fonc_e_prol=='CONSTANT'):
             e  = nom_fonc_e.Ordo()[0]
          else:
@@ -1646,7 +1652,7 @@ def post_k1_k2_k3_ops(self,MODELISATION,FOND_FISS,FISSURE,MATER,RESULTAT,
             nu = valres[1]
 
 
-      if not dicmat.has_key('TEMP_DEF') and not EVOL_THER :
+      if not dicmat.has_key('TEMP_DEF_ALPHA') and not EVOL_THER :
          UTMESS('F','RUPTURE0_52')
 
 

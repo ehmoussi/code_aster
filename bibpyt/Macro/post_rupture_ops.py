@@ -127,14 +127,16 @@ def caract_mater(self,mater):
    """ recupere le module d'Young et le coefficient de poisson du materiau"""
    matph = mater.sdj.NOMRC.get()
    phenom=None
+   ind=0
    for cmpt in matph :
+      ind=ind+1 
       if cmpt[:4]=='ELAS' :
          phenom=cmpt
          break
    if phenom==None :
      UTMESS('F','RUPTURE0_5')      
-
-   compor = sd_compor1('%-8s.%s' % (mater.nom, phenom))
+   ns = '{:06d}'.format(ind)
+   compor = sd_compor1('%-8s.CPT.%s' % (mater.nom, ns))
    valk = [s.strip() for s in compor.VALK.get()]
    valr = compor.VALR.get()
    dicmat = dict(zip(valk,valr))
@@ -155,6 +157,7 @@ def caract_mater(self,mater):
      if young==0.0 and poisson==0.0:    
        list_oper=valk[: len(valk)/2]
        list_fonc=valk[len(valk)/2 :]    
+           
 #    valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et
 #    et les noms des concepts de type [fonction] (ecrits derriere les operandes) dans une 
 #    une seconde partie  
@@ -162,14 +165,14 @@ def caract_mater(self,mater):
        except ValueError: pass
        try:list_oper.remove("RHO")     
        except ValueError: pass
-       try:list_oper.remove("PRECISIO")
+       try:list_oper.remove("PRECISION")
        except ValueError: pass
        try:list_oper.remove("K_DESSIC")
        except ValueError: pass      
    
        nom_fonc_e = self.get_concept(list_fonc[list_oper.index("E")])
        nom_fonc_nu = self.get_concept(list_fonc[list_oper.index("NU")])
-    
+
        if (nom_fonc_e.sdj.PROL.get()[0].strip()=='CONSTANT' and
            nom_fonc_nu.sdj.PROL.get()[0].strip()=='CONSTANT'):
          young  = nom_fonc_e.Ordo()[0]

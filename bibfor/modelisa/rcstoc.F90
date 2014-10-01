@@ -34,8 +34,9 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
     integer :: nbr, nbc, nbk, nbobj
     real(kind=8) :: valr(*)
     complex(kind=8) :: valc(*)
-    character(len=8) :: nommat, valk(*)
-    character(len=16) :: nomrc
+    character(len=8) :: nommat
+    character(len=16) :: valk(*)
+    character(len=32) :: nomrc
 ! ----------------------------------------------------------------------
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -74,7 +75,7 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
     real(kind=8) :: valr8, e1, ei, precma, valrr(4)
     character(len=8) :: valtx
     character(len=8) :: valch, nomcle(5)
-    character(len=8) :: mcle8, table
+    character(len=8) :: table
     character(len=19) :: rdep, nomfct, nomint
     character(len=24) :: prol1, prol2, valkk(2)
     character(len=16) :: typeco
@@ -82,43 +83,16 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
     integer ::   ibk, nbmax, vali
     integer :: i, k, ii,  jrpv, jvale, nbcoup, n
     integer :: iret, nbfct, nbpts, jprol, nbptm, lpro1, lpro2
-    character(len=16), pointer :: nomobj(:) => null()
+    character(len=32), pointer :: nomobj(:) => null()
     character(len=8), pointer :: typobj(:) => null()
     character(len=24), pointer :: prol(:) => null()
 ! ----------------------------------------------------------------------
 !
     call jemarq()
     AS_ALLOCATE(vk8=typobj, size=nbobj)
-    AS_ALLOCATE(vk16=nomobj, size=nbobj)
-    call getmjm(nomrc, 1, nbobj, nomobj, typobj,&
-                n)
+    AS_ALLOCATE(vk32=nomobj, size=nbobj)
+    call getmjm(nomrc, 1, nbobj, nomobj, typobj, n)
 !
-!     ON VERIFIE QUE 2 MOTS CLES DIFFERENTS N'ONT PAS LES MEMES
-!     8 PREMIERS CARACTERES :
-!     -----------------------------------------------------------
-    call jecreo('&&RCSTOC.TEMPOR', 'V N K8')
-    call jeecra('&&RCSTOC.TEMPOR', 'NOMMAX', nbobj)
-    do 777,i=1,nbobj
-!
-!        ON EST OBLIGE DE RECOPIER LA GLUTE ELAS_FLUI :
-    if (nomobj(i) .eq. 'PROF_RHO_F_INT') then
-        mcle8 = 'RHO_F_IN'
-    else if (nomobj(i) .eq. 'PROF_RHO_F_EXT') then
-        mcle8 = 'RHO_F_EX'
-    else if (nomobj(i) .eq. 'COEF_MASS_AJOU') then
-        mcle8 = 'CM'
-    else
-        mcle8= nomobj(i)(1:8)
-    endif
-!
-    call jeexin(jexnom('&&RCSTOC.TEMPOR', mcle8), iret)
-    if (iret .gt. 0) then
-        call utmess('F', 'MODELISA6_69', sk=nomobj(i))
-    else
-        call jecroc(jexnom('&&RCSTOC.TEMPOR', mcle8))
-    endif
-    777 end do
-    call jedetr('&&RCSTOC.TEMPOR')
 !
     nbr = 0
     nbc = 0
@@ -127,7 +101,7 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
 ! --- 0- GLUT META_MECA*, BETON_DOUBLE_DP, RUPT_FRAG ET CZM_LAB_MIX :
 ! --- ON TRAITE LES TX QU ON CONVERTIT EN REELS
 !
-    do 50 i = 1, nbobj
+    do i = 1, nbobj
         if (typobj(i)(1:2) .eq. 'TX') then
             if (nomrc(1:9) .eq. 'ELAS_META') then
                 call getvtx(nomrc, nomobj(i), iocc=1, scal=valtx, nbret=n)
@@ -135,12 +109,12 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
                     if (nomobj(i) .eq. 'PHASE_REFE' .and. valtx .eq. 'CHAUD') then
                         nbr = nbr + 1
                         valr(nbr) = 1.d0
-                        valk(nbr) = nomobj(i)
+                        valk(nbr) = nomobj(i)(1:16)
                         elseif( nomobj(i).eq.'PHASE_REFE' .and.&
                     valtx.eq.'FROID') then
                         nbr = nbr + 1
                         valr(nbr) = 0.d0
-                        valk(nbr) = nomobj(i)
+                        valk(nbr) = nomobj(i)(1:16)
                     endif
                 endif
             else if (nomrc .eq. 'BETON_DOUBLE_DP') then
@@ -149,7 +123,7 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
                     if (nomobj(i) .eq. 'ECRO_COMP_P_PIC' .or. nomobj(i) .eq.&
                         'ECRO_TRAC_P_PIC') then
                         nbr = nbr + 1
-                        valk(nbr) = nomobj(i)
+                        valk(nbr) = nomobj(i)(1:16)
                         if (valtx .eq. 'LINEAIRE') then
                             valr(nbr) = 0.d0
                         else
@@ -163,7 +137,7 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
                 if (n .eq. 1) then
                     if (nomobj(i) .eq. 'CINEMATIQUE') then
                         nbr = nbr + 1
-                        valk(nbr) = nomobj(i)
+                        valk(nbr) = nomobj(i)(1:16)
                         if (valtx .eq. 'UNILATER') then
                             valr(nbr) = 0.d0
                         else if (valtx.eq.'GLIS_1D') then
@@ -179,58 +153,53 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
                 endif
             endif
         endif
-50  end do
+    end do
 !
 ! --- 1- ON TRAITE LES REELS
 !
-    do 100 i = 1, nbobj
+    do i = 1, nbobj
         if (typobj(i)(1:3) .eq. 'R8 ') then
             call getvr8(nomrc, nomobj(i), iocc=1, scal=valr8, nbret=n)
             if (n .eq. 1) then
                 nbr = nbr + 1
                 valr(nbr) = valr8
-                valk(nbr) = nomobj(i)
+                valk(nbr) = nomobj(i)(1:16)
             endif
         endif
-100  end do
+    end do
 !
 !
 ! --- 2- ON TRAITE LES COMPLEXES
 !
-    do 115 i = 1, nbobj
+    do i = 1, nbobj
         if (typobj(i)(1:3) .eq. 'C8 ') then
             call getvc8(nomrc, nomobj(i), iocc=1, scal=valc8, nbret=n)
             if (n .eq. 1) then
                 nbc = nbc + 1
                 valc(nbr+nbc) = valc8
-                valk(nbr+nbc) = nomobj(i)
+                valk(nbr+nbc) = nomobj(i)(1:16)
             endif
         endif
-115  end do
+    end do
 !
 !
 ! --- 3- ON TRAITE ENSUITE LES CONCEPTS
 !
-    do 110 i = 1, nbobj
+    do i = 1, nbobj
         if (typobj(i)(1:3) .eq. 'CO ') then
             call getvid(nomrc, nomobj(i), iocc=1, scal=valch, nbret=n)
             if (n .eq. 1) then
                 nbk = nbk + 1
-                if (nomobj(i) .eq. 'PROF_RHO_F_INT') then
-                    valk(nbr+nbc+nbk) = 'RHO_F_IN'
-                else if (nomobj(i) .eq. 'PROF_RHO_F_EXT') then
-                    valk(nbr+nbc+nbk) = 'RHO_F_EX'
-                else if (nomobj(i) .eq. 'COEF_MASS_AJOU') then
-                    valk(nbr+nbc+nbk) = 'CM'
-                else
-                    valk(nbr+nbc+nbk) = nomobj(i)
-                endif
+                if (lxlgut(nomobj(i)) .gt. 16) then
+                    call utmess('A','MODELISA9_84', sk=nomobj(i))
+                endif   
+                valk(nbr+nbc+nbk) = nomobj(i)(1:16)
             endif
         endif
-110  end do
+    end do
 !
     ibk = 0
-    do 120 i = 1, nbobj
+    do i = 1, nbobj
         if (typobj(i)(1:3) .eq. 'CO ') then
             call getvid(nomrc, nomobj(i), iocc=1, scal=valch, nbret=n)
             if (n .eq. 1) then
@@ -239,7 +208,7 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
                 valk(nbr+nbc+nbk+ibk) = valch
             endif
         endif
-120  end do
+   end do
 !
 ! --- 4- CREATION D'UNE FONCTION POUR STOCKER R(P)
 !
@@ -437,11 +406,11 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
 !
         do 670 i = nbk, 1, -1
             valk(nbr+nbc+nbk+i+1) = valk(nbr+nbc+nbk+i)
-670      continue
+670     continue
         nbk = nbk + 1
         valk(nbr+nbc+ nbk) = 'BETA    '
-        valk(nbr+nbc+2*nbk) = nomint
-651      continue
+        valk(nbr+nbc+2*nbk) = nomint(1:16)
+651     continue
     endif
 !
 ! --- 7 VERIFICATION DES NOMS DES PARAMETRES DES TABLES
@@ -473,7 +442,7 @@ subroutine rcstoc(nommat, nomrc, nbobj, valr, valc,&
     endif
 !
     AS_DEALLOCATE(vk8=typobj)
-    AS_DEALLOCATE(vk16=nomobj)
+    AS_DEALLOCATE(vk32=nomobj)
 ! FIN ------------------------------------------------------------------
     call jedema()
 end subroutine

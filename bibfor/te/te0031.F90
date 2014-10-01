@@ -25,6 +25,7 @@ subroutine te0031(option, nomte)
 #include "asterfort/pmavec.h"
 #include "asterfort/q4gmas.h"
 #include "asterfort/q4grig.h"
+#include "asterfort/r8inir.h"
 #include "asterfort/rccoma.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/t3grig.h"
@@ -100,8 +101,9 @@ subroutine te0031(option, nomte)
 !
     character(len=2) :: val
     character(len=3) :: num
-    character(len=8) :: nomres, fami, poum
-    character(len=10) :: phenom
+    character(len=16) :: nomres
+    character(len=8) :: fami, poum
+    character(len=32) :: phenom
 !
     aster_logical :: lcqhom
 !
@@ -119,6 +121,7 @@ subroutine te0031(option, nomte)
     call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
                      jpoids=ipoids, jvf=ivf, jdfde=idfdx, jgano=jgano)
 !
+    call r8inir(32, 0.d0, effgt, 1)
     if (option .ne. 'REFE_FORC_NODA') then
 ! --- PASSAGE DES CONTRAINTES DANS LE REPERE INTRINSEQUE :
         call cosiro(nomte, 'PCONTMR', 'L', 'UI', 'G',&

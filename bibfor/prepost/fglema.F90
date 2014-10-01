@@ -48,8 +48,9 @@ subroutine fglema(nbf, nbpoin, sig, defpla, temp,&
 !
 !
     integer :: icodre(3)
-    character(len=8) :: nomres(3), nompar
-    character(len=16) :: pheno, phenom
+    character(len=8) :: nompar
+    character(len=16) :: nomres(3)
+    character(len=32) :: pheno
     real(kind=8) :: valmoi(3), valplu(3), temmoi, templu, pmoi, pplu
     real(kind=8) :: sihmoi, sihplu, seqmoi, seqplu, vmoi, vplu, vale
     real(kind=8) :: vseuil(1), exps(1), expo
@@ -69,12 +70,12 @@ subroutine fglema(nbf, nbpoin, sig, defpla, temp,&
     trois = 3.d0
 !
     pheno = 'DOMMA_LEMAITRE'
-    call rccome(nommat, pheno, phenom, icodre(1))
+    call rccome(nommat, pheno, icodre(1))
     if (icodre(1) .eq. 1) then
         call utmess('F', 'FATIGUE1_6')
     endif
     pheno = 'ELAS'
-    call rccome(nommat, pheno, phenom, icodre(1))
+    call rccome(nommat, pheno, icodre(1))
     if (icodre(1) .eq. 1) then
         call utmess('F', 'FATIGUE1_7')
     endif
@@ -100,7 +101,7 @@ subroutine fglema(nbf, nbpoin, sig, defpla, temp,&
         nompar = 'TEMP'
         temmoi = temp(i)
         templu = temp(i+1)
-        nomres(1) = 'EPSP_SEU'
+        nomres(1) = 'EPSP_SEUIL'
         call rcvale(nommat, 'DOMMA_LEMAITRE', nbpar, nompar, [templu],&
                     1, nomres(1), vseuil(1), icodre(1), 2)
 !

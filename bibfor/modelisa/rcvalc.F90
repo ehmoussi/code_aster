@@ -46,7 +46,7 @@ subroutine rcvalc(jmat, phenom, nbres, nomres, valres,&
 !
 !
 !
-    character(len=10) :: nomphe
+    character(len=32) :: nomphe
 ! ----------------------------------------------------------------------
 ! PARAMETER ASSOCIE AU MATERIAU CODE
 ! DEB ------------------------------------------------------------------
@@ -65,7 +65,7 @@ subroutine rcvalc(jmat, phenom, nbres, nomres, valres,&
 130  end do
     nomphe = phenom
     do 10 icomp = 1, zi(imat+1)
-        if (nomphe .eq. zk16(zi(imat)+icomp-1)(1:10)) then
+        if (nomphe .eq. zk32(zi(imat)+icomp-1)) then
             ipi = zi(imat+2+icomp-1)
             goto 11
         endif
@@ -82,7 +82,7 @@ subroutine rcvalc(jmat, phenom, nbres, nomres, valres,&
     nbt = nbr + nbc
     do 150 ir = 1, nbt
         do 140 ires = 1, nbres
-            if (nomres(ires) .eq. zk8(ivalk+ir-1)) then
+            if (nomres(ires) .eq. zk16(ivalk+ir-1)) then
                 valres(ires) = zc(ivalc-1+ir)
                 icodre(ires) = 0
                 nbobj = nbobj + 1
@@ -94,7 +94,7 @@ subroutine rcvalc(jmat, phenom, nbres, nomres, valres,&
         nbf = zi(ipi+2)
         do 170 ires = 1, nbres
             do 160 ik = 1, nbf
-                if (nomres(ires) .eq. zk8(ivalk+idf+ik-1)) then
+                if (nomres(ires) .eq. zk16(ivalk+idf+ik-1)) then
                     call utmess('F', 'MODELISA6_93')
 !              CALL FOINTA (IFON,NBPAR,NOMPAR,VALPAR,VALRES(IRES))
                     icodre(ires) = 0
