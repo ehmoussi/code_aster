@@ -9,3 +9,5 @@ tmp.setDoubleValue("Nu", 0.3)
 
 acier.addMaterialBehaviour(tmp)
 acier.build()
+
+code_aster.jeveuxDebugPrint("0", 8)

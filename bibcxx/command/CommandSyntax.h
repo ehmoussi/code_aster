@@ -285,9 +285,7 @@ class CommandSyntax
         };
 
         ~CommandSyntax()
-        {
-            cout << "Dtor CommandSyntax" << endl;
-        };
+        {};
 
         bool isFactorKeywordPresent(string keywordName)
         {
@@ -328,6 +326,18 @@ class CommandSyntax
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
             (*curIter).second.getOccurence(0).addSimpleKeywordStr(motCle);
+            return true;
+        };
+
+        /**
+        * Ajout d'un mot cle simple ayant comme valeur une chaine a la commande en cours
+        *   ex : GROUP_MA = 'TOTO'
+        * @param motCle mot cle simple a ajouter
+        */
+        bool addSimpleKeywordInteger(const SimpleKeyWordInt motCle)
+        {
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
+            (*curIter).second.getOccurence(0).addSimpleKeywordInteger(motCle);
             return true;
         };
 

@@ -18,9 +18,7 @@ class CataBuilder
         CataBuilder();
 
         ~CataBuilder()
-        {
-            cout << "Dtor CataBuilder" << endl;
-        }
+        {}
 
         void run();
 };
