@@ -103,7 +103,7 @@ class Initializer
         string getResultObjectName()
         {
             ostringstream oss;
-            oss << hex << _numberOfAsterObjects;
+            oss << hex << _numberOfAsterObjects - 1;
             return string(oss.str() + "        ", 0, 8);
         };
 
