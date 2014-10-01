@@ -6,6 +6,7 @@ subroutine coplas(tempa, k1a, k1b, k1c, matrev, &
     implicit none
 #include "jeveux.h"
 #include "asterc/r8pi.h"
+#include "asterfort/codent.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
@@ -72,6 +73,7 @@ subroutine coplas(tempa, k1a, k1b, k1c, matrev, &
     real(kind=8) :: sigma, temp1, temp2, sigma1, sigma2, rest, pent
     real(kind=8) :: tempdi, lamb1, lamb2, tempd, coef1, coef2, rya, pi
     real(kind=8) :: betaa, betab, ca, cb, val1, val2
+    character(len=6) :: k6
     character(len=8) :: proln
     character(len=16) :: phenom, prolg
     character(len=19) :: valnom, romnom, tranom, fonct
@@ -85,9 +87,10 @@ subroutine coplas(tempa, k1a, k1b, k1c, matrev, &
     call jeveuo(nomcmp, 'L', iadr)
     call jelira(nomcmp, 'LONUTI', long)
     do 3 i = 0, long-1
-        phenom = zk16(iadr+i)
+        phenom = zk32(iadr+i)
+        call codent(i+1,'D0',k6) 
         if (phenom .eq. 'ECRO_LINE') then
-            valnom = matrev//'.'//phenom
+            valnom = matrev//'.CPT.'//k6
             typnom = valnom//'.VALR'
             ty2nom = valnom//'.VALK'
             call jelira(typnom, 'LONUTI', lreel)
@@ -95,7 +98,7 @@ subroutine coplas(tempa, k1a, k1b, k1c, matrev, &
                 call jeveuo(typnom, 'L', ineut1)
                 call jeveuo(ty2nom, 'L', ineut2)
                 do 5 j = 0, lreel-1
-                    if (zk8(ineut2+j) .eq. 'SY') then
+                    if (zk16(ineut2+j) .eq. 'SY') then
                         sigma = zr(ineut1+j)
                         goto 30
                     endif
@@ -103,8 +106,8 @@ subroutine coplas(tempa, k1a, k1b, k1c, matrev, &
             else
                 call jeveuo(ty2nom, 'L', ineut2)
                 do 110 j = 0, long-1
-                    if (zk8(ineut2+j) .eq. 'SY') then
-                        fonct = zk8(ineut2+j+long)
+                    if (zk16(ineut2+j) .eq. 'SY') then
+                        fonct = zk16(ineut2+j+long)
                         autnom = fonct//'.PROL'
                         vaenom = fonct//'.VALE'
                         call jeveuo(autnom, 'L', ineut4)
@@ -161,10 +164,10 @@ subroutine coplas(tempa, k1a, k1b, k1c, matrev, &
                 goto 30
             endif
         else if (phenom.eq.'TRACTION') then
-            romnom = matrev//'.'//phenom
+            romnom = matrev//'.CPT.'//k6
             cocnom = romnom//'.VALK'
             call jeveuo(cocnom, 'L', ineut6)
-            tranom = zk8(ineut6+1)
+            tranom = zk16(ineut6+1)
             parnom = tranom//'.PARA'
             call jelira(parnom, 'LONUTI', npara)
             call jeveuo(parnom, 'L', ineut5)

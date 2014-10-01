@@ -33,8 +33,8 @@ from SD.sd_l_table import sd_l_table
 class sd_fiss_xfem(AsBase):
     nomj = SDNom(fin=8)
 
-    INFO   = AsVK16(lonmax=3,)   # info discontinuite et type de fissure
-    MODELE = AsVK8(lonmax=1,)
+    INFO     = AsVK16(lonmax=3,)   # info discontinuite et type de fissure
+    MAILLAGE = AsVK8(lonmax=1,)
 
 # I.1) objets relatifs aux level sets
 
@@ -52,7 +52,7 @@ class sd_fiss_xfem(AsBase):
     JONCOEF = Facultatif(AsVI())
     CHAMPS_LVS = Facultatif(AsVL(SDNom(nomj='.CHAMPS.LVS'),lonmax=1))
 #   objets relatifs a la grille auxiliaire
-    GRILLE_MODELE  = Facultatif(AsVK8(SDNom(nomj='.GRI.MODELE'),lonmax=1,))
+    GRILLE_MAILLAGE= Facultatif(AsVK8(SDNom(nomj='.GRI.MAILLA'),lonmax=1,))
     GRILLE_LNNO    = Facultatif(sd_cham_no(SDNom(nomj='.GRI.LNNO')))
     GRILLE_LTNO    = Facultatif(sd_cham_no(SDNom(nomj='.GRI.LTNO')))
     GRILLE_GRLNNO  = Facultatif(sd_cham_no(SDNom(nomj='.GRI.GRLNNO')))
@@ -74,8 +74,6 @@ class sd_fiss_xfem(AsBase):
 
 # I.3) objets relatifs a la propagation
 
-    PRO_MES_EL  = Facultatif(sd_cham_elem(SDNom(nomj='.PRO.MES_EL')))
-    PRO_NORMAL  = Facultatif(sd_cham_elem(SDNom(nomj='.PRO.NORMAL')))
 #   objets relatifs a la localisation du domaine de calcul
     PRO_RAYON_TORE  = Facultatif(AsVR(SDNom(nomj='.PRO.RAYON_TORE'),lonmax=1,))
     PRO_NOEUD_TORE  = Facultatif(AsVL(SDNom(nomj='.PRO.NOEUD_TORE')))
@@ -100,9 +98,8 @@ class sd_fiss_xfem(AsBase):
         sdu_ensemble((self.FONDFISS, self.FONDMULT, self.BASEFOND))
 
         # si ....
-        sdu_ensemble((self.PRO_MES_EL.CELD, self.PRO_NORMAL.CELD))
         sdu_ensemble((self.PRO_RAYON_TORE, self.PRO_NOEUD_TORE))
-        sdu_ensemble((self.GRILLE_MODELE, self.GRILLE_LNNO.DESC, self.GRILLE_GRLNNO.DESC))
+        sdu_ensemble((self.GRILLE_MAILLAGE, self.GRILLE_LNNO.DESC, self.GRILLE_GRLNNO.DESC))
         sdu_ensemble((self.GRILLE_LTNO.DESC, self.GRILLE_GRLTNO.DESC))
 
 #-------------------------------
@@ -111,6 +108,9 @@ class sd_fiss_xfem(AsBase):
 
 class sd_modele_xfem(AsBase):
     nomj = SDNom(fin=8)
+
+#   nom du modele sain 
+    MODELE_SAIN = AsVK8(lonmax=1,)
 
 # II.1) objets relatifs aux sous-elements
 

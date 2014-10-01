@@ -14,6 +14,7 @@ subroutine dmgmod(nomsym, nomsd, nomsd2, nommat, nbordr,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
+#include "asterfort/rccome.h"
 #include "asterfort/rcvale.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
@@ -59,8 +60,10 @@ subroutine dmgmod(nomsym, nomsd, nomsd2, nommat, nbordr,&
 !       OUT    VDOMAG    VECTEUR DOMMAGE AUX POINTS
 !       ----------------------------------------------------------------
 !       ---------------------------------------------------------------
-    character(len=8) :: nomrm(1), nompar, kcorre, nomfon
-    character(len=10) :: nomphe
+    character(len=11) :: k11
+    character(len=8) :: nompar, kcorre, nomfon
+    character(len=16) :: nomrm(1)
+    character(len=32) :: nomphe
     character(len=19) :: chequi, chequ2(nbordr)
     character(len=24) :: nomdmg
     character(len=24) :: valk(3)
@@ -120,14 +123,15 @@ subroutine dmgmod(nomsym, nomsd, nomsd2, nommat, nbordr,&
     su = val(1)
 !
     nomphe = 'FATIGUE   '
-    call jelira(nommat//'.'//nomphe//'.VALR', 'LONUTI', nbr)
-    call jelira(nommat//'.'//nomphe//'.VALC', 'LONUTI', nbc)
-    call jeveuo(nommat//'.'//nomphe//'.VALK', 'L', ivalk)
-    call jelira(nommat//'.'//nomphe//'.VALK', 'LONUTI', nbk)
+    call rccome(nommat, nomphe, icodre(1), k11_ind_nomrc=k11)
+    call jelira(nommat//k11//'.VALR', 'LONUTI', nbr)
+    call jelira(nommat//k11//'.VALC', 'LONUTI', nbc)
+    call jeveuo(nommat//k11//'.VALK', 'L', ivalk)
+    call jelira(nommat//k11//'.VALK', 'LONUTI', nbk)
     nbf = (nbk-nbr-nbc)/2
     do 50 ik = 1, nbf
-        if (zk8(ivalk-1+nbr+nbc+ik) .eq. 'WOHLER') then
-            nomfon = zk8(ivalk-1+nbr+nbc+nbf+ik)
+        if (zk16(ivalk-1+nbr+nbc+ik) .eq. 'WOHLER') then
+            nomfon = zk16(ivalk-1+nbr+nbc+nbf+ik)
             call jeveuo(nomfon//'           .VALE', 'L', vr=vale)
             salt0=vale(1)
         endif

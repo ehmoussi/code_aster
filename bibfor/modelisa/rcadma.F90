@@ -1,5 +1,4 @@
-subroutine rcadma(jmat, phenom, nomres, valres, icodre,&
-                  iarret)
+subroutine rcadma(jmat, phenom, nomres, valres, icodre, iarret)
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -47,7 +46,7 @@ subroutine rcadma(jmat, phenom, nomres, valres, icodre,&
     parameter        ( lmat = 7 , lfct = 9)
     character(len=24) :: valk
     character(len=8) :: nomail
-    character(len=10) :: nomphe
+    character(len=32) :: nomphe
 ! DEB ------------------------------------------------------------------
 !
     icodre = 1
@@ -58,7 +57,7 @@ subroutine rcadma(jmat, phenom, nomres, valres, icodre,&
     imate = jmat+zi(jmat+nbmat+1)
 !
     do 10 icomp = 1, zi(imate+1)
-        if (nomphe .eq. zk16(zi(imate)+icomp-1)(1:10)) then
+        if (nomphe .eq. zk32(zi(imate)+icomp-1)) then
             ipi = zi(imate+2+icomp-1)
             goto 11
         endif
@@ -85,7 +84,7 @@ subroutine rcadma(jmat, phenom, nomres, valres, icodre,&
     nbk = zi(ipi+2)
     ivalk = zi(ipi+3)
     do 150 ik = 1, nbk
-        if (nomres .eq. zk8(ivalk+nbr+nbc+ik-1)) then
+        if (nomres .eq. zk16(ivalk+nbr+nbc+ik-1)) then
             icodre = 0
             ipif = ipi + lmat + (ik-1)*lfct -1
             valres = zi(ipif )

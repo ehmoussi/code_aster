@@ -1,4 +1,4 @@
-subroutine rccome(nommat, pheno, phenom, icodre)
+subroutine rccome(nommat, pheno, icodre, k11_ind_nomrc)
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -17,45 +17,45 @@ subroutine rccome(nommat, pheno, phenom, icodre)
 ! ======================================================================
     implicit none
 #include "jeveux.h"
+#include "asterfort/codent.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
     character(len=*), intent(in) :: nommat, pheno
-    character(len=*), intent(out) :: phenom
     integer, intent(out) :: icodre
+    character(len=11), intent(out), optional :: k11_ind_nomrc
 ! ----------------------------------------------------------------------
 !     OBTENTION DU COMPORTEMENT COMPLET D'UN MATERIAU DONNE A PARTIR
-!     D'UN PREMISSE
+!     D'UN PREMISSE (C'EST L'INDICE DU PREMIER NOM QUI CONTIENT LA CHAINE 
+!     CHERCHEE EST RETOURNE) 
 !
 !     ARGUMENTS D'ENTREE:
 !        NOMMAT : NOM DU MATERIAU
-!        PHENO  : NOM DU PHENOMENE INCOMPLET
+!        PHENO  : NOM DU PHENOMENE EVENTUELLEMENT INCOMPLET 
 !     ARGUMENTS DE SORTIE:
-!        PHENOM: NOM DU PHENOMENE COMPLET
-!     ICODRE : POUR CHAQUE RESULTAT, 0 SI ON A TROUVE, 1 SINON
-!
-!
-!
-! ----------------------------------------------------------------------
+!        ICODRE : 0 SI ON A TROUVE, 1 SINON
+!        INDI   : INDICE DE PHENO DANS nommat//'.MATERIAU.NOMRC
+!  
 ! DEB ------------------------------------------------------------------
     character(len=32) :: ncomp
-!-----------------------------------------------------------------------
+    character(len=6) :: k6
     integer :: i, icomp, nbcomp
 !-----------------------------------------------------------------------
-    icodre = 0
+    icodre = 1
     ncomp = nommat//'.MATERIAU.NOMRC         '
     call jelira(ncomp, 'LONUTI', nbcomp)
     call jeveuo(ncomp, 'L', icomp)
-    do 10 i = 1, nbcomp
-        if (pheno .eq. zk16(icomp+i-1)(1:len(pheno))) then
-            phenom=zk16(icomp+i-1)
-            goto 999
+    do i = 1, nbcomp 
+        if (pheno .eq. zk32(icomp+i-1)(1:len(pheno))) then
+            if (present(k11_ind_nomrc)) then
+               call codent(i,'D0',k6)  
+               k11_ind_nomrc='.CPT.'//k6
+            endif   
+            icodre = 0
         endif
-10  end do
-    icodre = 1
-    call utmess('A', 'ELEMENTS2_63')
-    goto 999
-!
-999  continue
+    end do
+    if (icodre .eq. 1) then 
+        call utmess('A', 'ELEMENTS2_63')
+    endif
 ! FIN ------------------------------------------------------------------
 end subroutine

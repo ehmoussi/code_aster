@@ -1,4 +1,3 @@
-!
 ! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -35,7 +34,7 @@ interface
         real(kind=8) :: sigm(6)
         real(kind=8) :: vim(*)
         character(len=16) :: option
-        real(kind=8) :: angmas(3)
+        real(kind=8) :: angmas(*)
         real(kind=8) :: sigp(6)
         real(kind=8) :: vip(*)
         real(kind=8) :: tampon(*)

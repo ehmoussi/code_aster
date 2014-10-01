@@ -24,7 +24,7 @@ subroutine rcvada(jmat, phenom, temp, nbres, nomres,&
 #include "asterfort/utmess.h"
     integer :: imat, nbres, jmat
     integer :: icodre(nbres)
-    character(len=8) :: nomres(nbres)
+    character(len=16) :: nomres(nbres)
     character(len=*) :: phenom
     real(kind=8) :: temp, valres(nbres), devres(nbres)
 ! ......................................................................
@@ -69,7 +69,7 @@ subroutine rcvada(jmat, phenom, temp, nbres, nomres,&
 30  end do
 !
     do 40 icomp = 1, zi(imat+1)
-        if (phen .eq. zk16(zi(imat)+icomp-1)(1:10)) then
+        if (phen .eq. zk32(zi(imat)+icomp-1)(1:10)) then
             ipi = zi(imat+2+icomp-1)
             goto 888
         endif
@@ -84,7 +84,7 @@ subroutine rcvada(jmat, phenom, temp, nbres, nomres,&
     ivalr = zi(ipi+4)
     do 150 ir = 1, nbr
         do 140 ires = 1, nbres
-            if (nomres(ires) .eq. zk8(ivalk+ir-1)) then
+            if (nomres(ires) .eq. zk16(ivalk+ir-1)) then
                 valres(ires) = zr(ivalr-1+ir)
                 devres(ires) = 0.d0
                 icodre(ires) = 0
@@ -98,7 +98,7 @@ subroutine rcvada(jmat, phenom, temp, nbres, nomres,&
         nbf = zi(ipi+2)
         do 170 ires = 1, nbres
             do 160 ik = 1, nbf
-                if (nomres(ires) .eq. zk8(ivalk+idf+ik-1)) then
+                if (nomres(ires) .eq. zk16(ivalk+idf+ik-1)) then
                     ifon = ipi+lmat-1+lfct*(ik-1)
                     call rcfode(ifon, temp, valres(ires), devres(ires))
                     icodre(ires) = 0

@@ -64,6 +64,7 @@ subroutine xvetth(ndim, elrefp, nnop, imate, itps,&
 #include "asterfort/vecini.h"
 #include "asterfort/xcalf2.h"
 #include "asterfort/xcalfe.h"
+#include "asterfort/xcalf_he.h"
 !-----------------------------------------------------------------------
 !
     character(len=8) :: elrefp
@@ -74,8 +75,9 @@ subroutine xvetth(ndim, elrefp, nnop, imate, itps,&
 !
 !-----------------------------------------------------------------------
 !
-    character(len=8) :: nomres(2), elrese(3), fami(3), poum
-    character(len=16) :: phenom
+    character(len=16) :: nomres(2)
+    character(len=8) :: elrese(3), fami(3), poum
+    character(len=32) :: phenom
     aster_logical :: axi
     real(kind=8) :: baslog(3*ndim), tem, lsng, lstg, coorse(81), xg(ndim)
     real(kind=8) :: xe(ndim)
@@ -245,9 +247,9 @@ subroutine xvetth(ndim, elrefp, nnop, imate, itps,&
                 end do
 !           DDL HEAVISIDE (H1)
                 if (nfh .eq. 1) then
-                    ffenr(inp,1+nfh) = he*ff(inp)
+                    ffenr(inp,1+nfh) = xcalf_he(he,lsn(inp))*ff(inp)
                     do j = 1, ndim
-                        dffenr(inp,1+nfh,j) = he*dfdi(inp,j)
+                        dffenr(inp,1+nfh,j) = xcalf_he(he,lsn(inp))*dfdi(inp,j)
                     end do
                 endif
 !           DDL CRACK-TIP (E1)

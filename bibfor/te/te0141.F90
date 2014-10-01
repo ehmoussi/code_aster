@@ -60,8 +60,8 @@ subroutine te0141(option, nomte)
     parameter (nbres=6)
     real(kind=8) :: valres(nbres), valpar
     integer :: codres(nbres)
-    character(len=8) :: nompar, nomres(nbres), nomail, fami, poum
-    character(len=16) :: ch16
+    character(len=8) :: nompar, nomail, fami, poum
+    character(len=16) :: ch16, nomres(nbres)
     character(len=24) :: mator
     integer :: i, lmater, iret, nbpar, lcage, labsc
     integer :: lorien, iacce, ivect, lrcou, lmat
@@ -74,7 +74,7 @@ subroutine te0141(option, nomte)
     real(kind=8) :: pgl(3, 3), pgl1(3, 3), pgl2(3, 3), mlv(105)
     real(kind=8) :: matv(105), matp(14, 14)
 !     ------------------------------------------------------------------
-    data nomres/'E','NU','RHO','RHO_F_IN','RHO_F_EX','CM'/
+    data nomres/'E','NU','RHO','PROF_RHO_F_INT','PROF_RHO_F_EXT','COEF_MASS_AJOU'/
 !     ------------------------------------------------------------------
     zero = 0.d0
     un = 1.d0

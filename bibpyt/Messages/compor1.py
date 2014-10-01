@@ -402,6 +402,16 @@ L'identification numérique des paramètres SIG0 et TAU à partir de FT et FC a 
 Comportement  %(k1)s : avec ELAS_ORTH, il faut renseigner le mot clé MU_MOY.
 """),
 
+89 : _(u"""
+Loi d'endommagement de Sellier utilise une régularisation en énergie de fissuration qui n'est valide ici que sur des éléments cubiques à 8 points de gauss.
+Les résultats obtenus ne sont pas exactes avec un autre type d'élément.
+"""),
 
+90 : _(u"""
+La loi d'endommagement de Sellier est mal utilisée ou bien il y a un problème
+d'intégration local d'un phénomène.
+
+Vérifiez les propriétés matériaux et que la modélisation est 3D.
+"""),
 
 }

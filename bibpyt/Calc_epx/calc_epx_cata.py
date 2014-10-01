@@ -318,6 +318,10 @@ cata_ordre_para = {
                   .repère
 """
 
+# Lors de l'ajout d'un type d'élément dont le champ SIEF_ELGA est formulé en
+# effort, il est nécessaire de développer la transformation dans la methode
+# LireEPX.prep_cont2effo de lire_europlexus_ops.py.
+
 cata_modelisa = {
     'Q4GG' : {
         'MODE_EPX': {
@@ -489,10 +493,9 @@ cata_cara_elem = {
 cata_charge = {
     'INFO'   : False,
     'MODELE' : False,
-    'PRES_REP' : {
-        # EC : voir pour passer à FORCE_COQUE/PRES
+    'FORCE_COQUE' : {
         'DIRECTIVE'  : 'CHARGE',
-        'MOT_CLE_EPX': ['1 FACTO 2', 'PRESS COQU'],
+        'MOT_CLE_EPX': ['1 FACTO 2', 'PRES COQU'],
         'FONC_MULT'  : 'TABLE',
         'ASTER'      : ['PRES'],
         'EPX'        : None,
@@ -562,8 +565,8 @@ cata_compo['SIEF_ELGA'] = {
     'SIYY' : 2,
     'SIZZ' : 3,
     'SIXY' : 4,
-    'SIXZ' : 5,
-    'SIYZ' : 6,
+    'SIXZ' : 6,
+    'SIYZ' : 5,
     'NXX'  : 1,
     'NYY'  : 2,
     'NXY'  : 3,
@@ -579,8 +582,8 @@ cata_compo['EPSI_ELGA'] = {
     'EPYY' : 2,
     'EPZZ' : 3,
     'EPXY' : 4,
-    'EPXZ' : 5,
-    'EPYZ' : 6,
+    'EPXZ' : 6,
+    'EPYZ' : 5,
     'EXX'  : 1,
     'EYY'  : 2,
     'EXY'  : 3,
@@ -594,3 +597,26 @@ cata_compo['EPSI_ELGA'] = {
 cata_compo['VARI_ELGA'] = {}
 for ii in range(1, 25):
     cata_compo['VARI_ELGA']['V%i'%ii] = ii
+
+    
+# Format med des champs depl, vite et acce
+format_med = [
+    {
+    'NOM_CHAM_MED' : 'DEPL_001',
+    'NOM_CMP' : ('DX', 'DY', 'DZ', 'DRX', 'DRY', 'DRZ'),
+    'NOM_CMP_MED' : ('UX', 'UY', 'UZ', 'RX', 'RY', 'RZ'),
+    'NOM_CHAM' :'DEPL'
+     },
+    {
+    'NOM_CHAM_MED' : 'VITE_001',
+    'NOM_CMP' : ('DX', 'DY', 'DZ', 'DRX', 'DRY', 'DRZ'),
+    'NOM_CMP_MED' : ('VX', 'VY', 'VZ', 'RX', 'RY', 'RZ'),
+    'NOM_CHAM' : 'VITE'
+     },
+    {
+    'NOM_CHAM_MED' : 'ACCE_001',
+    'NOM_CMP' : ('DX', 'DY', 'DZ', 'DRX', 'DRY', 'DRZ'),
+    'NOM_CMP_MED' : ('GX', 'GY', 'GZ', 'RX', 'RY', 'RZ'),
+    'NOM_CHAM' : 'ACCE'
+     },
+             ]
