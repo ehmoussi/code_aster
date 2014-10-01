@@ -2,79 +2,11 @@
 #define JEVEUXVECTOR_H_
 
 #include "definition.h"
-#include "command/Initializer.h"
+#include "baseobject/JeveuxAllowedTypes.h"
 
 #include <string>
-#include <complex.h>
 
 using namespace std;
-
-/**
-* enumeration JeveuxTypes
-*   fournit tous les types existant dans le gestionnaire memoire Jeveux
-* @author Nicolas Sellenet
-*/
-enum JeveuxTypes { Integer, Integer4, Double, Complex, Char8, Char16, Char24, Char32, Char80 };
-/**
-* liste JeveuxTypesNames
-*   fournit sous forme de chaine les types Jeveux existant
-* @author Nicolas Sellenet
-*/
-static const char* JeveuxTypesNames[9] = { "I", "I4", "R", "C", "K8", "K16", "K24", "K32", "K80" };
-
-/**
-* struct template AllowedJeveuxType
-*   structure permettant de limiter le type instanciable de JeveuxVectorInstance
-*   on se limite aux type de JeveuxTypes
-* @author Nicolas Sellenet
-*/
-template<typename T>
-struct AllowedJeveuxType; // undefined for bad types!
-
-template<> struct AllowedJeveuxType< long >
-{
-     static const unsigned short numTypeJeveux = Integer;
-};
-
-template<> struct AllowedJeveuxType< short int >
-{
-     static const unsigned short numTypeJeveux = Integer4;
-};
-
-template<> struct AllowedJeveuxType< double >
-{
-     static const unsigned short numTypeJeveux = Double;
-};
-
-template<> struct AllowedJeveuxType< double complex >
-{
-     static const unsigned short numTypeJeveux = Complex;
-};
-
-template<> struct AllowedJeveuxType< char[8] >
-{
-     static const unsigned short numTypeJeveux = Char8;
-};
-
-template<> struct AllowedJeveuxType< char[16] >
-{
-     static const unsigned short numTypeJeveux = Char16;
-};
-
-template<> struct AllowedJeveuxType< char[24] >
-{
-     static const unsigned short numTypeJeveux = Char24;
-};
-
-template<> struct AllowedJeveuxType< char[32] >
-{
-     static const unsigned short numTypeJeveux = Char32;
-};
-
-template<> struct AllowedJeveuxType< char[80] >
-{
-     static const unsigned short numTypeJeveux = Char80;
-};
 
 /**
 * class template JeveuxVectorInstance
@@ -114,7 +46,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         /**
         * Surcharge de l'operateur [] avec des const
         * @param i Indice dans le tableau Jeveux
-        * @return renvoit la valeur du tableau Jeveux a la position i
+        * @return la valeur du tableau Jeveux a la position i
         */
         const ValueType &operator[](int i) const
         {
@@ -124,7 +56,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         /**
         * Surcharge de l'operateur [] sans const (pour les lvalue)
         * @param i Indice dans le tableau Jeveux
-        * @return renvoit la valeur du tableau Jeveux a la position i
+        * @return la valeur du tableau Jeveux a la position i
         */
         ValueType &operator[](int i)
         {
@@ -133,7 +65,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
 
         /**
         * Mise a jour du pointeur Jeveux
-        * @return renvoit true si la mise a jour s'est bien passee
+        * @return true si la mise a jour s'est bien passee
         */
         bool updateValuePointer()
         {
@@ -156,11 +88,11 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         * Fonction d'allocation d'un vecteur Jeveux
         * @param jeveuxBase Base sur laquelle doit etre allouee le vecteur : 'G' ou 'V'
         * @param length Longueur du vecteur Jeveux a allouer
-        * @return renvoit true si l'allocation s'est bien passee
+        * @return true si l'allocation s'est bien passee
         */
         bool allocate(string jeveuxBase, unsigned long length)
         {
-            if ( _name != "" )
+            if ( _name != "" && length > 0 )
             {
                 assert( jeveuxBase == "V" || jeveuxBase == "G" );
                 long taille = length;

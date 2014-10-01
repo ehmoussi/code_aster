@@ -28,6 +28,8 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
 
 %include "command/CataBuilder.i"
 
+%include "debug/DebugPrint.i"
+
 void init(int imode);
 
 // Automatically call `init()` at import

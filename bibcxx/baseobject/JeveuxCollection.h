@@ -2,7 +2,7 @@
 #define JEVEUXCOLLECTION_H_
 
 #include "definition.h"
-#include "command/Initializer.h"
+#include "baseobject/JeveuxAllowedTypes.h"
 
 #include <string>
 #include <list>
@@ -16,7 +16,7 @@ using namespace std;
 * @author Nicolas Sellenet
 */
 template<class ValueType>
-class JeveuxCollectionObject
+class JeveuxCollectionObject: private AllowedJeveuxType< ValueType >
 {
     private:
         // Nom Jeveux de la collection
@@ -185,6 +185,14 @@ class JeveuxCollection
         };
 };
 
-typedef JeveuxCollection<long> JeveuxCollectionLong;
+typedef JeveuxCollection< long > JeveuxCollectionLong;
+typedef JeveuxCollection< short int > JeveuxCollectionShort;
+typedef JeveuxCollection< double > JeveuxCollectionDouble;
+typedef JeveuxCollection< double complex > JeveuxCollectionComplex;
+typedef JeveuxCollection< char[8] > JeveuxCollectionChar8;
+typedef JeveuxCollection< char[16] > JeveuxCollectionChar16;
+typedef JeveuxCollection< char[24] > JeveuxCollectionChar24;
+typedef JeveuxCollection< char[32] > JeveuxCollectionChar32;
+typedef JeveuxCollection< char[80] > JeveuxCollectionChar80;
 
 #endif /* JEVEUXCOLLECTION_H_ */
