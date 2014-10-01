@@ -9,9 +9,25 @@
 
 using namespace std;
 
+/**
+* enumeration JeveuxTypes
+*   fournit tous les types existant dans le gestionnaire memoire Jeveux
+* @author Nicolas Sellenet
+*/
 enum JeveuxTypes { Integer, Integer4, Double, Complex, Char8, Char16, Char24, Char32, Char80 };
+/**
+* liste JeveuxTypesNames
+*   fournit sous forme de chaine les types Jeveux existant
+* @author Nicolas Sellenet
+*/
 static const char* JeveuxTypesNames[9] = { "I", "I4", "R", "C", "K8", "K16", "K24", "K32", "K80" };
 
+/**
+* struct template AllowedJeveuxType
+*   structure permettant de limiter le type instanciable de JeveuxVectorInstance
+*   on se limite aux type de JeveuxTypes
+* @author Nicolas Sellenet
+*/
 template<typename T>
 struct AllowedJeveuxType; // undefined for bad types!
 
@@ -60,42 +76,73 @@ template<> struct AllowedJeveuxType< char[80] >
      static const unsigned short numTypeJeveux = Char80;
 };
 
+/**
+* class template JeveuxVectorInstance
+*   Cette classe permet de definir un vecteur Jeveux
+* @author Nicolas Sellenet
+*/
 template< typename ValueType >
 class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
 {
     private:
+        // Nom du vecteur Jeveux
         string     _name;
+        // Pointeur vers la premiere position du vecteur Jeveux
         ValueType* _valuePtr;
 
     public:
+        /**
+        * Constructeur
+        * @param name Nom jeveux du vecteur
+        *   Attention, le pointeur est mis a zero. Avant d'utiliser ce vecteur,
+        *   il faut donc faire appel a JeveuxVectorInstance::updateValuePointer
+        */
         JeveuxVectorInstance(string nom): _name(nom), _valuePtr(NULL)
         {};
 
+        /**
+        * Destructeur
+        */
         ~JeveuxVectorInstance()
         {
-            cout << "Dtor JeveuxVectorInstance " << _name << endl;
             if ( _name != "" )
             {
                 CALL_JEDETR( const_cast< char* >( _name.c_str() ) );
             }
         };
 
+        /**
+        * Surcharge de l'operateur [] avec des const
+        * @param i Indice dans le tableau Jeveux
+        * @return renvoit la valeur du tableau Jeveux a la position i
+        */
         const ValueType &operator[](int i) const
         {
             return _valuePtr[i];
         };
 
+        /**
+        * Surcharge de l'operateur [] sans const (pour les lvalue)
+        * @param i Indice dans le tableau Jeveux
+        * @return renvoit la valeur du tableau Jeveux a la position i
+        */
         ValueType &operator[](int i)
         {
             return _valuePtr[i];
         };
 
+        /**
+        * Mise a jour du pointeur Jeveux
+        * @return renvoit true si la mise a jour s'est bien passee
+        */
         bool updateValuePointer()
         {
-            if ( _name == "" ) return false;
             _valuePtr = NULL;
+            // Si on n'a pas de nom, on sort
+            if ( _name == "" ) return false;
 
             long boolRetour;
+            // Appel a jeexin pour verifier que le vecteur existe
             CALL_JEEXIN(_name.c_str(), &boolRetour);
             if ( boolRetour == 0 ) return false;
 
@@ -105,6 +152,12 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
             return true;
         };
 
+        /**
+        * Fonction d'allocation d'un vecteur Jeveux
+        * @param jeveuxBase Base sur laquelle doit etre allouee le vecteur : 'G' ou 'V'
+        * @param length Longueur du vecteur Jeveux a allouer
+        * @return renvoit true si l'allocation s'est bien passee
+        */
         bool allocate(string jeveuxBase, unsigned long length)
         {
             if ( _name != "" )
@@ -121,6 +174,11 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         };
 };
 
+/**
+* class template JeveuxVector
+*   Enveloppe d'un pointeur intelligent vers un JeveuxVectorInstance
+* @author Nicolas Sellenet
+*/
 template<class ValueType>
 class JeveuxVector
 {

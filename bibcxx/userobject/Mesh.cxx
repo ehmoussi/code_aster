@@ -23,17 +23,22 @@ MeshInstance::MeshInstance(): _jeveuxName( initAster->getNewResultObjectName() )
 
 bool MeshInstance::readMEDFile(char* pathFichier)
 {
+    // Creation d'un bout de fichier commande correspondant a LIRE_MAILLAGE
     CommandSyntax syntaxeLireMaillage("LIRE_MAILLAGE", true, initAster->getResultObjectName());
+    // Ligne indispensable pour que les commandes GET* fonctionnent
     commandeCourante = &syntaxeLireMaillage;
 
+    // Remplissage des mots cles simples FORMAT et PATHFICHIER
     SimpleKeyWordStr mCSFormat = SimpleKeyWordStr("FORMAT");
     mCSFormat.addValues("MED");
+    // Ajout du premier mot cle simple
     syntaxeLireMaillage.addSimpleKeywordStr(mCSFormat);
 
     SimpleKeyWordStr mCSPath = SimpleKeyWordStr("PATHFICHIER");
     mCSPath.addValues(pathFichier);
     syntaxeLireMaillage.addSimpleKeywordStr(mCSPath);
 
+    // Appel a l'operateur de LIRE_MAILLAGE
     CALL_OP0001();
     commandeCourante = NULL;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire

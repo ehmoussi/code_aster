@@ -10,17 +10,31 @@
 
 using namespace std;
 
+/**
+* class template JeveuxCollectionObject
+*   Cette classe permet de definir un objet de collection Jeveux
+* @author Nicolas Sellenet
+*/
 template<class ValueType>
 class JeveuxCollectionObject
 {
     private:
-        //template<class ValueType> friend class JeveuxCollection;
+        // Nom Jeveux de la collection
         string     _collectionName;
+        // Position dans la collection
         int        _numberInCollection;
+        // Nom de l'objet de collection
         string     _nameOfObject;
+        // Pointeur vers le vecteur Jeveux
         ValueType* _valuePtr;
 
     public:
+        /**
+        * Constructeur
+        * @param collectionName Nom de collection
+        * @param number Numero de l'objet dans la collection
+        * @param ptr Pointeur vers le vecteur Jeveux
+        */
         JeveuxCollectionObject(string collectionName, int number,
                                ValueType* ptr = NULL): _collectionName(collectionName),
                                                        _numberInCollection(number),
@@ -28,6 +42,13 @@ class JeveuxCollectionObject
                                                        _valuePtr(ptr)
         {};
 
+        /**
+        * Constructeur
+        * @param collectionName Nom de collection
+        * @param number Numero de l'objet dans la collection
+        * @param objectName Nom de l'objet de collection
+        * @param ptr Pointeur vers le vecteur Jeveux
+        */
         JeveuxCollectionObject(string collectionName, int number, string objectName,
                                ValueType* ptr = NULL): _collectionName(collectionName),
                                                        _numberInCollection(number),
@@ -36,20 +57,41 @@ class JeveuxCollectionObject
         {};
 };
 
+/**
+* class template JeveuxCollectionInstance
+*   Cette classe permet de definir une collection Jeveux
+* @author Nicolas Sellenet
+*/
 template<class ValueType>
 class JeveuxCollectionInstance
 {
     private:
+        // Nom de la collection
         string _name;
+        // Listes de objets de collection
         list< JeveuxCollectionObject<ValueType> > listObjects;
         typedef map< string, JeveuxCollectionObject<ValueType> > mapStrCollectionObject;
 
     public:
+        /**
+        * Constructeur
+        * @param name Chaine representant le nom de la collection
+        */
         JeveuxCollectionInstance(string name): _name(name)
         {};
 
+        /**
+        * Methode permettant de construire une collection a partir d'une collection
+        *   existante en memoire Jeveux
+        * @return Renvoit true si la construction s'est bien deroulee
+        */
         bool buildFromJeveux();
 
+        /**
+        * Methode verifiant l'existance d'un objet de collection dans la collection
+        * @param name Chaine contenant le nom de l'objet
+        * @return Renvoit true si l'objet existe dans la collection
+        */
         bool existsObject(string name);
 };
 
@@ -105,6 +147,11 @@ bool JeveuxCollectionInstance<ValueType>::existsObject(string name)
     return true;
 };
 
+/**
+* class template JeveuxCollection
+*   Enveloppe d'un pointeur intelligent vers un JeveuxCollectionInstance
+* @author Nicolas Sellenet
+*/
 template<class ValueType>
 class JeveuxCollection
 {

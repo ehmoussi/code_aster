@@ -5,20 +5,47 @@
 
 using namespace std;
 
+/**
+* class JeveuxBidirectionalMapInstance
+*   Equivalent du pointeur de nom dans Jeveux
+*   Un pointeur de nom permet de creer une correspondance entre
+*   une chaine de caractere et un entier (et inversement)
+* @author Nicolas Sellenet
+*/
 class JeveuxBidirectionalMapInstance
 {
     private:
+        // Nom Jeveux de l'objet
         string _jeveuxName;
 
     public:
+        /**
+        * Constructeur
+        * @param name Nom Jeveux de l'objet
+        */
         JeveuxBidirectionalMapInstance(string name): _jeveuxName(name)
         {};
 
+        /**
+        * Recuperation de la chaine correspondante a l'entier
+        * @param elementNumber Numero de l'element demande
+        * @return Chaine de caractere correspondante
+        */
         string findStringOfElement(long elementNumber);
 
+        /**
+        * Recuperation de l'entier correspondant a une chaine
+        * @param elementName Chaine recherchee
+        * @return Entier correspondant
+        */
         long findIntegerOfElement(string elementName);
 };
 
+/**
+* class JeveuxBidirectionalMap
+*   Enveloppe d'un pointeur intelligent vers un JeveuxBidirectionalMapInstance
+* @author Nicolas Sellenet
+*/
 class JeveuxBidirectionalMap
 {
     public:
