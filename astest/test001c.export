@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist R
 
 F comm test001c.py D 1
-F repe test001a D 0
+R repe test001a D 0
