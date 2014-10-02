@@ -3,7 +3,7 @@ P memory_limit 512
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist R 
+P testlist R
 
 F comm test001c.py D 1
-F repe test001a.repe D 0
+F repe test001a D 0
