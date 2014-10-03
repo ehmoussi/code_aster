@@ -40,6 +40,8 @@
 
 #include "command/Initializer.h"
 
+FILE* fileOut = NULL;
+
 /*! aster_core C module */
 static PyObject* aster_core = (PyObject*)0;
 
@@ -79,7 +81,7 @@ INTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
     /*
      * Permet de récupérer la valeur entière d'un attribut du jdc.
      */
-    printf("JDCGET\n");
+    fprintf(fileOut, "JDCGET\n");
     return 1;
     /* TODO */
 
@@ -88,7 +90,7 @@ INTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
 
     val = PyObject_CallMethod(get_sh_jdc(), "get_jdc_attr", "s#", attr, l_attr);
     if (val == NULL){
-        printf("attribut inexistant dans le jdc : '%s'\n\n", attr);
+        fprintf(fileOut, "attribut inexistant dans le jdc : '%s'\n\n", attr);
         MYABORT("erreur dans JDCGET");
     }
     if (! (PyInt_Check(val) || PyLong_Check(val)) )
@@ -105,7 +107,7 @@ void DEFSP(JDCSET,jdcset,char *attr, STRING_SIZE l_attr, INTEGER *value)
     /*
      * Permet de positionner la valeur entière d'un attribut du jdc à `value`.
      */
-    printf("JDCSET\n");
+    fprintf(fileOut, "JDCSET\n");
     return;
     /* TODO */
 
@@ -141,7 +143,7 @@ double get_tpmax()
     if ( _cache_tpmax < 0 ) {
         // tpmax =  asterc_getopt_double("tpmax", &iret);
         tpmax = 1000.;
-        printf("get_tpmax: valeur fixe = %f\n", tpmax);
+        fprintf(fileOut, "get_tpmax: valeur fixe = %f\n", tpmax);
         if ( iret == 0 ) {
             _cache_tpmax = tpmax;
         }
@@ -154,7 +156,7 @@ void DEFP(RDTMAX, rdtmax, _IN DOUBLE *tsub)
     /*
      * Réduit le temps maximum de l'exécution : tpmax = tpmax - tsub
      */
-    printf("RDTMAX\n");
+    fprintf(fileOut, "RDTMAX\n");
 }
 
 /*
@@ -254,8 +256,12 @@ void DEFSPP(GTOPTI,gtopti, _IN char *option, STRING_SIZE lopt,
      *  iret = 0 : tout est ok
      *  iret = 4 : option inexistante, type incorrect.
      */
+    if ( fileOut == NULL )
+    {
+        fileOut = fopen("fichierOut.txt", "w");
+    }
     char *opt = MakeCStrFromFStr(option, lopt);
-    printf("GTOPTI %s\n", opt);
+    fprintf(fileOut, "GTOPTI %s\n", opt);
     *vali = getIntLDC(opt);
     FreeStr(opt);
     *iret = 0;
@@ -273,7 +279,7 @@ void DEFSPP(GTOPTR,gtoptr, _IN char *option, STRING_SIZE lopt,
      */
     char *opt = MakeCStrFromFStr(option, lopt);
     *valr = getDoubleLDC(opt);
-    printf("GTOPTR %s returns %f\n", opt, *valr);
+    fprintf(fileOut, "GTOPTR %s returns %f\n", opt, *valr);
     FreeStr(opt);
     *iret = 0;
 }
@@ -290,7 +296,7 @@ void DEFSSP(GTOPTK,gtoptk, _IN char *option, STRING_SIZE lopt,
      *  iret = 4 : option inexistante, type incorrect.
      */
     char *opt = MakeCStrFromFStr(option, lopt);
-    printf("GTOPTK %s\n", opt);
+    fprintf(fileOut, "GTOPTK %s\n", opt);
     char* valk2 = getChaineLDC(opt);
     if ( valk2 == NULL )
     {
@@ -426,7 +432,7 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     pModule = PyImport_ImportModule("Utilitai.Utmess");
     if ( pModule == NULL )
     {
-        printf("No module named 'Utilitai.Utmess'\n");
+        fprintf(fileOut, "No module named 'Utilitai.Utmess'\n");
         INTEGER ier=SIGABRT;
         CALL_ASABRT( &ier );
     }
@@ -498,7 +504,7 @@ void DEFPP(CHKMSG,chkmsg, _IN INTEGER *info_alarm, _OUT INTEGER *iret)
      *    iret = 0 : tout est ok
      *    iret > 0   erreur
      */
-    printf("CHKMSG ne fait rien ?\n");
+    fprintf(fileOut, "CHKMSG ne fait rien ?\n");
     /* INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
        TODO
@@ -520,7 +526,7 @@ void DEFSS(UTALRM,utalrm, _IN char *bool, _IN STRING_SIZE lbool,
      * call utalrm('OFF', 'CALCULEL5_7') == MasquerAlarme('CALCULEL5_7')
      * call utalrm('ON', 'CALCULEL5_7') == RetablirAlarme('CALCULEL5_7')
      */
-    printf("UTALRM\n");
+    fprintf(fileOut, "UTALRM\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -546,7 +552,7 @@ void DEFP(GTALRM,gtalrm, _OUT INTEGER *nb)
 {
     /* Interface Fortran/Python pour obtenir si des alarmes ont été émises.
      */
-    printf("GTALRM\n");
+    fprintf(fileOut, "GTALRM\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -568,7 +574,7 @@ void DEFP(PRHEAD,prhead, _IN INTEGER *part)
      * en début d'exécution
      * Voir help(aster_core.print_header)
      */
-    printf("PRHEAD a ajouter ?\n");
+    fprintf(fileOut, "PRHEAD a ajouter ?\n");
     /*INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );*/
     /* TODO */
@@ -590,7 +596,7 @@ void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,
       Exemple d'appel :
          call cheksd('MA', 'sd_maillage', iret)
    */
-    printf("CHEKSD\n");
+    fprintf(fileOut, "CHEKSD\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -621,7 +627,7 @@ void DEFSSPPPPPPPPPPPP(TESTRESU_PRINT,testresu_print,
         def testresu_print(type_ref, legend, label, skip, relative,
                            tole, ref, val, compare=1.):
     */
-    printf("TESTRESU_PRINT\n");
+    fprintf(fileOut, "TESTRESU_PRINT\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */

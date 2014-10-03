@@ -84,7 +84,7 @@ void DEFP(XFINI,xfini, _IN INTEGER *code)
 void TraiteMessageErreur( _IN char * message )
 {
     INTEGER ier=SIGABRT;
-    printf("%s\n",message);
+    fprintf(fileOut, "%s\n",message);
     if ( PyErr_Occurred() ) PyErr_Print();
     CALL_ASABRT( &ier );
 }
@@ -131,7 +131,7 @@ void DEFSSPPPPP(GETLTX,getltx,_IN char *motfac,_IN STRING_SIZE lfac,
         /*
         Procedure : getltx_ (appelee par le fortran sous le nom GETLTX)
         */
-    printf("GETLTX\n");
+    fprintf(fileOut, "GETLTX\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -184,7 +184,7 @@ void DEFSP(GETFAC,getfac,_IN char *nomfac, _IN STRING_SIZE lfac, _OUT INTEGER *o
         */
     char* tmp = MakeCStrFromFStr(nomfac, lfac);
     *occu = nombreOccurencesMotCleFacteur(tmp);
-    printf("GETFAC %s => %ld\n", tmp, *occu);
+    fprintf(fileOut, "GETFAC %s => %ld\n", tmp, *occu);
     FreeStr(tmp);
 }
 
@@ -200,7 +200,7 @@ void DEFP(GETRAN,getran, _OUT DOUBLE *rval)
       Retourne :
         un reel tiré au hasard
     */
-    printf("GETRAN\n");
+    fprintf(fileOut, "GETRAN\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -231,7 +231,7 @@ void DEFP(INIRAN,iniran,_IN INTEGER *jump)
           du module python Random
           avec un shift eventuel de jump termes
         */
-    printf("INIRAN\n");
+    fprintf(fileOut, "INIRAN\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -250,7 +250,7 @@ void DEFSS(GETTCO,gettco,_IN char *nomobj, _IN STRING_SIZE lnom,
         /*
           retrouver le type "superviseur" du concept nomobj.
         */
-    printf("GETTCO\n");
+    fprintf(fileOut, "GETTCO\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -287,7 +287,7 @@ void DEFPS(GETMAT,getmat,_INOUT INTEGER *nbarg,_OUT char *motcle,_IN STRING_SIZE
             le nombre de mots cles facteur sous la commande, y compris en eliminant les blocs
             la liste de leur noms
         */
-    printf("GETMAT\n");
+    fprintf(fileOut, "GETMAT\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -340,7 +340,7 @@ void DEFSPPSSP(GETMJM,getmjm,_IN char *nomfac,_IN STRING_SIZE lfac,
                     CO , COL : un concept ou une liste de concepts.
            nbarg  : nombre d arguments des mots cles du mot cle facteur
         */
-    printf("GETMJM\n");
+    fprintf(fileOut, "GETMJM\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -414,7 +414,7 @@ INTEGER DEFSS( GETEXM, getexm, _IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    printf("GETEXM %s %s\n", tmp, tmp2);
+    fprintf(fileOut, "GETEXM %s %s\n", tmp, tmp2);
     const int retour = presenceMotCle(tmp, tmp2);
     FreeStr(tmp);
     FreeStr(tmp2);
@@ -448,7 +448,7 @@ void DEFSSS( GETRES ,getres, _OUT char *nomres, _IN STRING_SIZE lres,
         char* nomObj = getNomObjetJeveux();
         CopyCStrToFStr(nomres, nomObj, 8);
     }
-    printf("GETRES %s %d\n", nomcmd, tmp);
+    fprintf(fileOut, "GETRES %s %d\n", nomcmd, tmp);
 }
 
 void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
@@ -458,7 +458,7 @@ void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
     /* Interface GETTYP
      * voir B_ETAPE.gettyp
      */
-    printf("GETTYP\n");
+    fprintf(fileOut, "GETTYP\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -510,7 +510,7 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si plus de valeur que mxval nbval <0 et valeur abs = nbre valeurs
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
         */
-    printf("GETVC8_WRAP\n");
+    fprintf(fileOut, "GETVC8_WRAP\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -590,7 +590,7 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    printf("GETVR8_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
+    fprintf(fileOut, "GETVR8_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
     if ( presenceMotCle(tmp, tmp2) == 0 )
     {
         *nbval = 0;
@@ -630,7 +630,7 @@ void DEFSPSPPSP(FIINTF,fiintf,_IN char *nomfon,_IN STRING_SIZE lfon,
                               _IN char *coderr, _INOUT STRING_SIZE lcod,
                              _OUT DOUBLE *resu)
 {
-    printf("FIINTF\n");
+    fprintf(fileOut, "FIINTF\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -684,7 +684,7 @@ void DEFSPSPPSP(FIINTFC,fiintfc,_IN char *nomfon,_IN STRING_SIZE lfon,
                                 _IN char *coderr, _INOUT STRING_SIZE lcod,
                                _OUT DOUBLE *resuc)
 {
-    printf("FIINTFC\n");
+    fprintf(fileOut, "FIINTFC\n");
     return DEFSPSPPSP(FIINTF,fiintf, nomfon, lfon, nbpu, param, lpara, val, iret,
                                      coderr, lcod, resuc);
 }
@@ -716,7 +716,7 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    printf("GETVIS_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
+    fprintf(fileOut, "GETVIS_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
     if ( presenceMotCle(tmp, tmp2) == 0 )
     {
         *nbval = 0;
@@ -773,7 +773,7 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    printf("GETVTX_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
+    fprintf(fileOut, "GETVTX_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
     BlankStr(txval, ltx);
     if ( presenceMotCle(tmp, tmp2) == 0 )
     {
@@ -827,7 +827,7 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    printf("GETVID_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
+    fprintf(fileOut, "GETVID_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
     if ( presenceMotCle(tmp, tmp2) == 0 )
     {
         *nbval = 0;
@@ -869,7 +869,7 @@ void DEFP(PUTVIR,putvir, _IN INTEGER *ival)
          cet attribut est ensuite évalué par la méthode traite_value
          de B_ETAPE.py
    */
-    printf("PUTVIR\n");
+    fprintf(fileOut, "PUTVIR\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -894,7 +894,7 @@ void DEFP(PUTVRR,putvrr, _IN DOUBLE *rval)
          cet attribut est ensuite évalué par la méthode traite_value
          de B_ETAPE.py
    */
-    printf("PUTVRR\n");
+    fprintf(fileOut, "PUTVRR\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -925,7 +925,7 @@ void DEFSSP(GCUCON,gcucon, _IN char *resul, STRING_SIZE lresul,
                Verification de l existence du couple (resul,concep) dans les
                resultats produits par les etapes precedentes
    */
-    printf("GCUCON\n");
+    fprintf(fileOut, "GCUCON\n");
     INTEGER ier2=SIGABRT;
     CALL_ASABRT( &ier2 );
     /* TODO */
@@ -2231,7 +2231,7 @@ void DEFPSS(LCCREE, lccree, _IN INTEGER *nbkit,
       CALL LCCREE(NBKIT, LKIT, COMPOR)
       ==> comport = catalc.create(*list_kit)
 */
-    printf("LCCREE\n");
+    fprintf(fileOut, "LCCREE\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -2267,7 +2267,7 @@ void DEFSS(LCALGO, lcalgo, _IN char *compor, STRING_SIZE lcompor,
       CALL LCALGO(COMPOR, ALGO)
       ==> algo_inte = catalc.get_algo(COMPOR)
 */
-    printf("LCALGO\n");
+    fprintf(fileOut, "LCALGO\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -2298,7 +2298,7 @@ void DEFSPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
       CALL LCINFO(COMPOR, NUMLC, NBVARI)
       ==> num_lc, nb_vari = catalc.get_info(COMPOR)
 */
-    printf("LCINFO\n");
+    fprintf(fileOut, "LCINFO\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -2330,7 +2330,7 @@ void DEFSPS(LCVARI, lcvari, _IN char *compor, STRING_SIZE lcompor,
       CALL LCVARI(COMPOR, NBVARI, LVARI)
       ==> nom_vari = catalc.get_vari(COMPOR)
 */
-    printf("LCVARI\n");
+    fprintf(fileOut, "LCVARI\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -2361,7 +2361,7 @@ void DEFSSSP(LCTEST, lctest, _IN char *compor, STRING_SIZE lcompor,
          CALL LCTEST(COMPOR, PROPRIETE, VALEUR, IRET)
          ==> iret = catalc.query(COMPOR, PROPRIETE, VALEUR)
 */
-    printf("LCTEST\n");
+    fprintf(fileOut, "LCTEST\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -2387,7 +2387,7 @@ void DEFSSSP(LCTEST, lctest, _IN char *compor, STRING_SIZE lcompor,
 /* ------------------------------------------------------------------ */
 static PyObject *aster_argv( _UNUSED  PyObject *self, _IN PyObject *args )
 {
-    printf("aster_argv\n");
+    fprintf(fileOut, "aster_argv\n");
     INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */

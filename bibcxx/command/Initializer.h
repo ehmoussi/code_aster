@@ -19,6 +19,8 @@
 */
 extern int jeveux_status;
 
+extern FILE* fileOut;
+
 extern int numOP;
 
 #ifdef __cplusplus

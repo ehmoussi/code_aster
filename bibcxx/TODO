@@ -3,13 +3,11 @@ Changer la gestion de la ligne de commande
 
 Attention aux entiers passés à Aster qui peuvent être longs ou courts
 
-Ajouter des JEEXIN pour prevoir le cas ou un objet n'est pas la
-
 Utiliser des smart pointers pour mieux gérer les références et la libération mémoire JEVEUX...
 ... On utilise des classes enveloppes pour pouvoir templatiser les objets contenus dans les smart pointers...
 ... Apres beaucoup d'essais, le fait de dupliquer le wrapper dans chaque header est la meilleure solution
 ... L'utilisation des smart pointers peut ne pas être systématique ?
 
-Ajouter des JEDETR dans les destructeurs des Instances
+Ajouter des JEDETR dans les destructeurs des Instances (fait pour les vecteurs pas pour les collections)
 
 Pour les modelisations et la physique de Model, il vaudrait mieux utiliser des enum C
