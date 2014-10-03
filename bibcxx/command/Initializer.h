@@ -1,6 +1,8 @@
 #ifndef INITIALIZER_H_
 #define INITIALIZER_H_
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -17,7 +19,7 @@
 */
 extern int jeveux_status;
 
-extern FILE* fileOut;
+extern int numOP;
 
 #ifdef __cplusplus
 
@@ -29,6 +31,7 @@ extern FILE* fileOut;
 #define DEFSBSS(UN,LN,a,la,b,c,lb,lc)               STDCALL(UN,LN)(a,la,b,c,lb,lc)
 #define CALLSBSS(UN,LN,a,b,c)                    F_FUNC(UN,LN)(a,strlen(a),b,c,strlen(b),strlen(c))
 
+#define CALL_EXECOP(a) numOP = a; CALL0(EXECOP, execop); numOP = 0;
 #define CALL_IBMAIN(a) CALLP(IBMAIN,ibmain,a)
 #define CALL_DEBUT() CALL0(DEBUT,debut)
 #define CALL_JELIRA(a, b, c, d)  CALLSSPS(JELIRA, jelira, a, b, c, d)
@@ -42,6 +45,7 @@ extern FILE* fileOut;
 #define CALL_JEDETR(a) CALLS(JEDETR, jedetr, a)
 extern "C"
 {
+    void DEF0(EXECOP, execop);
     void DEFP(IBMAIN,ibmain, INTEGER*);
     void DEF0(DEBUT,debut);
     void DEFSSPS(JELIRA, jelira, const char*, STRING_SIZE, char*, STRING_SIZE, INTEGER*,

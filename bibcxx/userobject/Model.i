@@ -3,6 +3,8 @@
 #include "userobject/Model.h"
 %}
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 %include "userobject/Mesh.i"
 
 class Model

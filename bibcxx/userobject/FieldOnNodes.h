@@ -1,6 +1,8 @@
 #ifndef FIELDONNODES_H_
 #define FIELDONNODES_H_
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include <string>
 #include <assert.h>
 

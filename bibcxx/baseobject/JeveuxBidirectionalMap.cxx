@@ -1,6 +1,8 @@
 
 #include "baseobject/JeveuxBidirectionalMap.h"
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 string JeveuxBidirectionalMapInstance::findStringOfElement(long elementNumber)
 {
     char* charJeveuxObjName = MakeBlankFStr(32);

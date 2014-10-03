@@ -1,4 +1,6 @@
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include "userobject/Material.h"
 
 MaterialInstance::MaterialInstance(): _jeveuxName( initAster->getNewResultObjectName() ),

@@ -1,6 +1,8 @@
 #ifndef JEVEUXVECTOR_H_
 #define JEVEUXVECTOR_H_
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include "definition.h"
 #include "baseobject/JeveuxAllowedTypes.h"
 

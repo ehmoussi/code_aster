@@ -1,6 +1,8 @@
 #ifndef JEVEUXBIDIRECTIONALMAP_H_
 #define JEVEUXBIDIRECTIONALMAP_H_
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include "command/Initializer.h"
 
 using namespace std;

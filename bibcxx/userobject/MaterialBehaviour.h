@@ -1,6 +1,8 @@
 #ifndef MATERIALBEHAVIOUR_H_
 #define MATERIALBEHAVIOUR_H_
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include <iomanip>
 #include <map>
 #include <sstream>

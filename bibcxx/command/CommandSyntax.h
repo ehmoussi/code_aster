@@ -1,6 +1,8 @@
 #ifndef COMMANDSYNTAX_H_
 #define COMMANDSYNTAX_H_
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #ifdef __cplusplus
 
 #include <list>

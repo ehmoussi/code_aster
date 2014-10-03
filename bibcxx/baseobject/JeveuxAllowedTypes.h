@@ -1,6 +1,8 @@
 #ifndef JEVEUXALLOWEDTYPES_H_
 #define JEVEUXALLOWEDTYPES_H_
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include "command/Initializer.h"
 #include <complex.h>
 

@@ -3,6 +3,8 @@
 #include "userobject/Material.h"
 %}
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 class GeneralMaterialBehaviour
 {
     public:
