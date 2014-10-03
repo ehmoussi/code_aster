@@ -106,13 +106,19 @@ void Initializer::run()
 }
 
 // We define a `_init` function to keep a global `Initializer` object
-void init(int imode)
+void asterInitialization(int imode)
 {
     initAsterModules();
     initAster = new Initializer();
     if ( imode == 1 ) initAster->initForCataBuilder();
 
     initAster->run();
+}
+
+void asterFinalization()
+{
+    printf("FIN\n");
+    CALL_EXECOP(9999);
 }
 
 int getIntLDC(char* chaineQuestion)

@@ -4,6 +4,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <string>
+#include "command/Initializer.h"
 
 using namespace std;
 

@@ -9,6 +9,7 @@
 
 #include "definition.h"
 #include "command/CommandSyntax.h"
+#include "command/Initializer.h"
 
 
 class CataBuilder

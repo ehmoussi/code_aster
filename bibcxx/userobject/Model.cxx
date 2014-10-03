@@ -3,12 +3,6 @@
 
 #include "userobject/Model.h"
 
-#define CALL_OP0018() CALL0(OP0018, op0018)
-extern "C"
-{
-    void DEF0(OP0018, op0018);
-}
-
 ModelInstance::ModelInstance(): _jeveuxName( initAster->getNewResultObjectName() ),
                                 _typeOfElements( JeveuxVectorLong( string(_jeveuxName + ".MAILLE    ") ) ),
                                 _typeOfNodes( JeveuxVectorLong( string(_jeveuxName + ".NOEUD     ") ) ),
@@ -72,7 +66,7 @@ bool ModelInstance::build()
     syntaxeAffeModele.addFactorKeyword(motCleAFFE);
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
-    CALL_OP0018();
+    CALL_EXECOP(18);
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _typeOfElements->updateValuePointer();
 

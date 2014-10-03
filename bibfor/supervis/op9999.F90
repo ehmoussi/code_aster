@@ -96,7 +96,7 @@ subroutine op9999()
 !
 ! --- IMPRESSION DE LA TAILLE DES CONCEPTS DE LA BASE GLOBALE
 !
-    call uimpba('G', iunmes)
+!    call uimpba('G', iunmes)
 !
 ! --- RETASSAGE EVENTUEL DE LA GLOBALE
 !

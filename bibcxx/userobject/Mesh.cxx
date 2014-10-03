@@ -3,12 +3,6 @@
 
 #include "userobject/Mesh.h"
 
-#define CALL_OP0001() CALL0(OP0001, op0001)
-extern "C"
-{
-    void DEF0(OP0001, op0001);
-}
-
 MeshInstance::MeshInstance(): _jeveuxName( initAster->getNewResultObjectName() ),
                         _dimensionInformations( JeveuxVectorLong( string(_jeveuxName + ".DIME      ") ) ),
                         _nameOfNodes( JeveuxBidirectionalMap( string(_jeveuxName + ".NOMNOE    ") ) ),

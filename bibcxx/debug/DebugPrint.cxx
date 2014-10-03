@@ -5,12 +5,6 @@
 #include "debug/DebugPrint.h"
 #include "command/CommandSyntax.h"
 
-#define CALL_OP0017() CALL0(OP0017, op0017)
-extern "C"
-{
-    void DEF0(OP0017, op0017);
-}
-
 void jeveuxDebugPrint(string nomJeveux, int logicalUnit)
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
@@ -49,6 +43,6 @@ void jeveuxDebugPrint(string nomJeveux, int logicalUnit)
     mCSAttr.addValues( "NON" );
     syntaxeImprCo.addSimpleKeywordStr( mCSAttr );
 
-    CALL_OP0017();
+    CALL_EXECOP(17);
     commandeCourante = NULL;
 };
