@@ -498,10 +498,10 @@ void DEFPP(CHKMSG,chkmsg, _IN INTEGER *info_alarm, _OUT INTEGER *iret)
      *    iret = 0 : tout est ok
      *    iret > 0   erreur
      */
-    printf("CHKMSG\n");
-    INTEGER ier=SIGABRT;
+    printf("CHKMSG ne fait rien ?\n");
+    /* INTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
-    /* TODO */
+       TODO
 
     PyObject *res;
 
@@ -509,7 +509,7 @@ void DEFPP(CHKMSG,chkmsg, _IN INTEGER *info_alarm, _OUT INTEGER *iret)
     if ( !res ) MYABORT("erreur lors de l'appel a la methode MessageLog.check_counter");
     *iret = (INTEGER)PyLong_AsLong(res);
 
-    Py_DECREF(res);
+    Py_DECREF(res); */
 }
 
 void DEFSS(UTALRM,utalrm, _IN char *bool, _IN STRING_SIZE lbool,

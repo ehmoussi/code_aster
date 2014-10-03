@@ -53,9 +53,10 @@ void DEFP(XFINI,xfini, _IN INTEGER *code)
 {
    /* XFINI est n'appelé que par JEFINI avec code=19 (=EOFError) */
    /* jeveux est fermé */
-   printf("XFINI\n");
    register_sh_jeveux_status(0);
-   interruptTry(*code);
+   // TODO NS : J'ai commente cette ligne car elle fait planter le code
+   // et que je ne l'a comprend pas
+   //interruptTry(*code);
 }
 
 /*
@@ -773,6 +774,7 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
     printf("GETVTX_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
+    BlankStr(txval, ltx);
     if ( presenceMotCle(tmp, tmp2) == 0 )
     {
         *nbval = 0;
@@ -954,23 +956,7 @@ void DEFP(GCECDU,gcecdu, INTEGER *numint)
           Fonction:
              Recuperation du numero de l operateur
         */
-    printf("GCECDU\n");
-    INTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
-        PyObject * res = (PyObject*)0 ;
-        res = PyObject_CallMethod(get_sh_etape(),"getoper","");
-        /*
-                    Si le retour est NULL : une exception a ete levee dans le code Python appele
-                    Cette exception est a transferer normalement a l appelant mais FORTRAN ???
-                    On produit donc un abort en ecrivant des messages sur la stdout
-        */
-        if (res == NULL)
-                MYABORT("erreur a l appel de gcecdu dans la partie Python");
-
-        *numint = (INTEGER)PyInt_AsLong(res);
-        Py_DECREF(res);
+    *numint = numOP;
 }
 
 

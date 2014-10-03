@@ -32,9 +32,11 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
 
 %include "debug/DebugPrint.i"
 
-void init(int imode);
+void asterInitialization(int imode);
 
-// Automatically call `init()` at import
+void asterFinalization();
+
+// Automatically call `asterInitialization()` at import
 %pythoncode %{
     mode = 0
     try:
@@ -43,5 +45,7 @@ void init(int imode);
         options = ['']
     if 'CATAELEM' in options:
         mode = 1
-    _code_aster.init(mode)
+    _code_aster.asterInitialization(mode)
+    import atexit
+    atexit.register( _code_aster.asterFinalization)
 %}

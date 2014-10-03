@@ -60,6 +60,7 @@ subroutine execop()
 !
     if (nuoper .eq. 9999) then
         call op9999()
+        return
     endif
 !
 !     -- ON NOTE LA MARQUE AVANT D'APPELER LA PROCHAINE COMMANDE :

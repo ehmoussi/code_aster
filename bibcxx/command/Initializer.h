@@ -180,7 +180,9 @@ extern void* initAster;
 extern "C" {
 #endif
 
-void init(int);
+void asterInitialization(int);
+
+void asterFinalization();
 
 void initForCataBuilder();
 
