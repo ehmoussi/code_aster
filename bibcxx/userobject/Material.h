@@ -1,6 +1,8 @@
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include "userobject/MaterialBehaviour.h"
 
 /**

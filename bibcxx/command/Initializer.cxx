@@ -9,9 +9,13 @@
     singleton instance is created (and must be callable from the fortran operators).
 
  */
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include "command/Initializer.h"
 
 int jeveux_status = 0;
+
+int numOP = 0;
 
 Initializer* initAster = NULL;
 

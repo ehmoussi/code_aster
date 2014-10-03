@@ -1,4 +1,6 @@
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include "definition.h"
 #include "debug/DebugPrint.h"
 #include "command/CommandSyntax.h"

@@ -1,6 +1,8 @@
 #ifndef CATABUILDER_H_
 #define CATABUILDER_H_
 
+/* person_in_charge: mathieu.courtois at edf.fr */
+
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>

@@ -3,6 +3,8 @@
 #include "userobject/Mesh.h"
 %}
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 %include "baseobject/JeveuxCollection.i"
 %include "userobject/FieldOnNodes.i"
 

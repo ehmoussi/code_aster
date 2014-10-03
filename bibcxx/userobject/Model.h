@@ -1,6 +1,8 @@
 #ifndef MODEL_H_
 #define MODEL_H_
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include "userobject/Mesh.h"
 #include <map>
 

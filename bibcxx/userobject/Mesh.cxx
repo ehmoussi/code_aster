@@ -1,4 +1,6 @@
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include "userobject/Mesh.h"
 
 #define CALL_OP0001() CALL0(OP0001, op0001)
@@ -39,7 +41,7 @@ bool MeshInstance::readMEDFile(char* pathFichier)
     syntaxeLireMaillage.addSimpleKeywordStr(mCSPath);
 
     // Appel a l'operateur de LIRE_MAILLAGE
-    CALL_OP0001();
+    CALL_EXECOP(1);
     commandeCourante = NULL;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _dimensionInformations->updateValuePointer();

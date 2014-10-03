@@ -1,4 +1,6 @@
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
 #include "userobject/Model.h"
 
 #define CALL_OP0018() CALL0(OP0018, op0018)

@@ -1,6 +1,8 @@
 
 #include "command/CataBuilder.h"
 
+/* person_in_charge: mathieu.courtois at edf.fr */
+
 //TODO call execop(20)
 #define CALL_OP0020() CALL0(OP0020, op0020)
 extern "C"
