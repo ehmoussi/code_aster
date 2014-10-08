@@ -42,12 +42,12 @@ bool ModelInstance::build()
         // Definition du mot-cle simple PHENOMENE
         SimpleKeyWordStr mCSPhenomene = SimpleKeyWordStr("PHENOMENE");
         // Ajout de la valeur donnee par l'utilisateur
-        mCSPhenomene.addValues((*curIter).first.physics());
+        mCSPhenomene.addValues((*curIter).first.getPhysic());
         // Ajout du mot-cle simple a l'occurence du mot-cle facteur
         occurAFFE.addSimpleKeywordStr(mCSPhenomene);
 
         SimpleKeyWordStr mCSModelisation = SimpleKeyWordStr("MODELISATION");
-        mCSModelisation.addValues((*curIter).first.modelisation());
+        mCSModelisation.addValues((*curIter).first.getModelisation());
         occurAFFE.addSimpleKeywordStr(mCSModelisation);
 
         if ( (*curIter).second == "TOUT" )

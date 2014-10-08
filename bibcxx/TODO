@@ -1,13 +1,13 @@
 
 Changer la gestion de la ligne de commande
 
-Attention aux entiers passés à Aster qui peuvent être longs ou courts
+Attention aux entiers passÃ©s Ã  Aster qui peuvent Ãªtre longs ou courts
 
-Utiliser des smart pointers pour mieux gérer les références et la libération mémoire JEVEUX...
+Utiliser des smart pointers pour mieux gÃ©rer les rÃ©fÃ©rences et la libÃ©ration mÃ©moire JEVEUX...
 ... On utilise des classes enveloppes pour pouvoir templatiser les objets contenus dans les smart pointers...
 ... Apres beaucoup d'essais, le fait de dupliquer le wrapper dans chaque header est la meilleure solution
-... L'utilisation des smart pointers peut ne pas être systématique ?
+... L'utilisation des smart pointers peut ne pas Ãªtre systÃ©matique ?
 
 Ajouter des JEDETR dans les destructeurs des Instances (fait pour les vecteurs pas pour les collections)
 
-Pour les modelisations et la physique de Model, il vaudrait mieux utiliser des enum C
+Ajouter des verifs pour les paires Physics, Modelisations dans ElementaryModelisation
