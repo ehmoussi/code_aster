@@ -34,7 +34,7 @@ except Exception as e:
 # Definition du modele Aster
 monModel = code_aster.Model()
 monModel.setSupportMesh(monMaillage)
-monModel.addModelisation("MECANIQUE", "3D")
+monModel.addElementaryModelisation(code_aster.Mechanics, code_aster.Tridimensional)
 
 print "Ecrasement de monMaillage !! L'objet C++ ne doit pas etre supprime"
 del monMaillage
