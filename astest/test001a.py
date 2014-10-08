@@ -34,6 +34,14 @@ except Exception as e:
 # Definition du modele Aster
 monModel = code_aster.Model()
 monModel.setSupportMesh(monMaillage)
-monModel.addModelisation("MECANIQUE", "3D")
+monModel.addElementaryModelisation(code_aster.Mechanics, code_aster.Tridimensional)
 
 monModel.build()
+
+# Definition du modele Aster
+monModel2 = code_aster.Model()
+monModel2.setSupportMesh(monMaillage)
+try:
+    monModel2.addElementaryModelisation(code_aster.Thermal, code_aster.DKT)
+except Exception as e:
+    print e
