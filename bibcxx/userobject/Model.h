@@ -4,47 +4,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "userobject/Mesh.h"
+#include "userobject/ElementaryModelisation.h"
 #include <map>
-
-/**
-* class ElementaryModel
-*   Element de base d'un modele, c'est une pair PHYSIQUE, MODELISATION
-* @author Nicolas Sellenet
-*/
-class ElementaryModel
-{
-    private:
-        string _physics;
-        string _modelisation;
-
-    public:
-        /**
-        * Constructeur
-        * @param physics Chaine representant la physique modelisee
-        * @param modelisation Chaine representant la modelisation (3D, AXIS, ...)
-        */
-        ElementaryModel(string physics, string modelisation): _physics(physics),
-                                                              _modelisation(modelisation)
-        {};
-
-        /**
-        * Recuperation de la chaine modelisation
-        * @return chaine de caracteres
-        */
-        const string& modelisation()
-        {
-            return _modelisation;
-        };
-
-        /**
-        * Recuperation de la chaine physics
-        * @return chaine de caracteres
-        */
-        const string& physics()
-        {
-            return _physics;
-        };
-};
 
 /**
 * class ModelInstance
@@ -54,7 +15,7 @@ class ElementaryModel
 class ModelInstance
 {
     private:
-        typedef list< pair< ElementaryModel, string > > listOfModsAndGrps;
+        typedef list< pair< ElementaryModelisation, string > > listOfModsAndGrps;
 
         // Nom Jeveux de la sd produite
         const string      _jeveuxName;
@@ -77,26 +38,25 @@ class ModelInstance
 
         /**
         * Ajout d'une nouvelle modelisation sur tout le maillage
-        * @param physics Chaine representant la physique modelisee
-        * @param modelisation Chaine representant la modelisation (3D, AXIS, ...)
+        * @param phys Physique a ajouter
+        * @param mod Modelisation a ajouter
         */
-        void addModelisation(string physics, string modelisation)
+        void addElementaryModelisation( Physics phys, Modelisations mod )
         {
-            _modelisations.push_back( listOfModsAndGrps::value_type(ElementaryModel(physics,
-                                                                                    modelisation),
-                                                                    "TOUT") );
+            _modelisations.push_back( listOfModsAndGrps::value_type( ElementaryModelisation(phys, mod),
+                                                                     "TOUT" ) );
         };
 
         /**
         * Ajout d'une nouvelle modelisation sur une entite du maillage
-        * @param physics Chaine representant la physique modelisee
-        * @param modelisation Chaine representant la modelisation (3D, AXIS, ...)
+        * @param phys Physique a ajouter
+        * @param mod Modelisation a ajouter
+        * @param MeshEntity Entite du maillage a affecter
         */
-        void addModelisation(string physics, string modelisation, MeshEntity& entity)
+        void addElementaryModelisation( Physics phys, Modelisations mod, MeshEntity& entity)
         {
-            _modelisations.push_back( listOfModsAndGrps::value_type(ElementaryModel(physics,
-                                                                                    modelisation),
-                                                                    entity.getEntityName()) );
+            _modelisations.push_back( listOfModsAndGrps::value_type( ElementaryModelisation(phys, mod),
+                                                                     entity.getEntityName() ) );
         };
 
         /**

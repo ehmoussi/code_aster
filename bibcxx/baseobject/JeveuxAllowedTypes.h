@@ -30,47 +30,47 @@ struct AllowedJeveuxType; // undefined for bad types!
 
 template<> struct AllowedJeveuxType< long >
 {
-     static const unsigned short numTypeJeveux = Integer;
+    static const unsigned short numTypeJeveux = Integer;
 };
 
 template<> struct AllowedJeveuxType< short int >
 {
-     static const unsigned short numTypeJeveux = Integer4;
+    static const unsigned short numTypeJeveux = Integer4;
 };
 
 template<> struct AllowedJeveuxType< double >
 {
-     static const unsigned short numTypeJeveux = Double;
+    static const unsigned short numTypeJeveux = Double;
 };
 
 template<> struct AllowedJeveuxType< double complex >
 {
-     static const unsigned short numTypeJeveux = Complex;
+    static const unsigned short numTypeJeveux = Complex;
 };
 
 template<> struct AllowedJeveuxType< char[8] >
 {
-     static const unsigned short numTypeJeveux = Char8;
+    static const unsigned short numTypeJeveux = Char8;
 };
 
 template<> struct AllowedJeveuxType< char[16] >
 {
-     static const unsigned short numTypeJeveux = Char16;
+    static const unsigned short numTypeJeveux = Char16;
 };
 
 template<> struct AllowedJeveuxType< char[24] >
 {
-     static const unsigned short numTypeJeveux = Char24;
+    static const unsigned short numTypeJeveux = Char24;
 };
 
 template<> struct AllowedJeveuxType< char[32] >
 {
-     static const unsigned short numTypeJeveux = Char32;
+    static const unsigned short numTypeJeveux = Char32;
 };
 
 template<> struct AllowedJeveuxType< char[80] >
 {
-     static const unsigned short numTypeJeveux = Char80;
+    static const unsigned short numTypeJeveux = Char80;
 };
 
 #endif /* JEVEUXALLOWEDTYPES_H_ */
