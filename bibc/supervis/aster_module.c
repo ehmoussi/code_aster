@@ -341,61 +341,35 @@ void DEFSPPSSP(GETMJM,getmjm,_IN char *nomfac,_IN STRING_SIZE lfac,
            nbarg  : nombre d arguments des mots cles du mot cle facteur
         */
     fprintf(fileOut, "GETMJM\n");
-    INTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
 
-        PyObject *res   = (PyObject*)0 ;
-        PyObject *lnom  = (PyObject*)0 ;
-        PyObject *lty   = (PyObject*)0 ; /* liste python des noms */
-        int       nval = 0 ;
-        int          k = 0 ;
-        int        ioc = 0 ;
-        char *mfc;
-                                                                 DEBUG_ASSERT(ltyp>0);
-        for ( k=0 ;k<ltyp ; k++ ) type[k]=' ' ;
-        ioc=(int)*iocc ;
-        ioc=ioc-1 ;
-        mfc = MakeCStrFromFStr(nomfac, lfac);
-        res=PyObject_CallMethod(get_sh_etape(),"getmjm","sii",mfc,ioc,(int)*nbval);
-        /*  si le retour est NULL : exception Python a transferer
-            normalement a l appelant mais FORTRAN ??? */
-        if (res == NULL)MYABORT("erreur dans la partie Python");
-        /*  si non impression du retour */
-
-        if(!PyArg_ParseTuple(res,"OO",&lnom,&lty)) MYABORT("erreur dans la partie Python");
-        nval=(int)PyList_Size(lnom);
-        *nbarg = (INTEGER)( (nval > *nbval) ? -nval : nval );
-                                 DEBUG_ASSERT(((nval<=*nbval)&&(*nbarg==nval))||(*nbarg==-nval)) ;
-        if(*nbarg < 0)nval=(int)*nbval;
-
-        if ( nval > 0 ){
-                converltx(nval,lnom,motcle,lcle); /* conversion  */
-                converltx(nval,lty,type,ltyp);
-       }
-
-        /*
-        A la demande des developpeurs (J. Pellet), le nom des concepts retourne par
-        la methode EXECUTION.getmjm (par exemple grma) est ici remplace par
-        la chaine CO (pour COncept).
-        les types retournes sont donc parmi les valeurs : R8 , C8 , IS , TX et CO.
-        */
-        for( k=0 ; k<nval*ltyp ; k+=ltyp ){
-                char     *mot = (char*)0 ;
-                mot           = type+k ;
-                if ( strncmp( mot , "R8" , 2 )!=0 && strncmp( mot , "IS" , 2 )!=0 &&
-                     strncmp( mot , "TX" , 2 )!=0 && strncmp( mot , "C8" , 2 )!=0 ){
-                        int j=0 ;
-
-                     DEBUG_ASSERT(ltyp>2);
-                        mot[0]='C' ;
-                        mot[1]='O' ;
-                        for ( j=2 ; j<ltyp ; j++ ) mot[j]=' ' ;
-                }
+    char* tmp = MakeCStrFromFStr(nomfac, lfac);
+    char **retour, **retour2;
+    int nbMC;
+    int cret = listeMotCleSimpleFromMotCleFacteur( tmp, 0, lcle, ltyp, &retour, &retour2, &nbMC );
+    FreeStr(tmp);
+    if ( cret == 0 )
+    {
+        if ( nbval <= 0 )
+            (*nbarg) = -nbMC;
+        else
+        {
+            *nbarg = nbMC;
+            if ( *nbval < nbMC ) *nbarg = *nbval;
+            int i;
+            for ( i = 0; i < *nbarg; ++i )
+            {
+                SetTabFStr(motcle, i, retour[i], lcle);
+                free(retour[i]);
+                SetTabFStr(type, i, retour2[i], ltyp);
+                free(retour2[i]);
+            }
+            free(retour);
+            free(retour2);
         }
-        Py_DECREF(res);                /*  decrement sur le refcount du retour */
-        FreeStr(mfc);
-        return ;
+    }
+    else
+        *nbarg = 0;
+    return;
 }
 
 

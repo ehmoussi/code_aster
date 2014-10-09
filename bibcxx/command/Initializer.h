@@ -3,13 +3,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include <stdio.h>
-#include <string.h>
 #include <assert.h>
+#include <stdio.h>
 
 #include "command/CommandSyntax.h"
-
-#include "definition.h"
 
 /* jeveux_status vaut :
       0 avant aster_init,
@@ -61,8 +58,6 @@ extern "C"
     void DEFSS(JENUNO, jenuno, const char *, STRING_SIZE, char *, STRING_SIZE);
     void DEFSP(JENONU, jenonu, const char *, STRING_SIZE, INTEGER*);
     void DEFS(JEDETR, jedetr, const char *, STRING_SIZE);
-    char* MakeBlankFStr( STRING_SIZE );
-    void FreeStr( char * );
 }
 
 /**
