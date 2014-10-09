@@ -6,18 +6,132 @@
 
 CommandSyntax* commandeCourante = NULL;
 
-int presenceMotCleFacteur(char* motCle)
+char* getNomCommande()
+{
+    if ( commandeCourante == NULL ) return NULL;
+    return const_cast< char* >( commandeCourante->commandName().c_str() );
+};
+
+char* getNomObjetJeveux()
+{
+    if ( commandeCourante == NULL ) return NULL;
+    return const_cast< char* >( commandeCourante->getObjectName().c_str() );
+};
+
+int isCommandeOperateur()
+{
+    if ( commandeCourante == NULL ) return 0;
+    if ( commandeCourante->isOperateur() ) return 1;
+    return 0;
+};
+
+int listeMotCleSimpleFromMotCleFacteur(char* motCleFacteur, int occurence,
+                                        int sizeKeywordName, int sizeTypeName,
+                                        char*** motsClesSimples, char*** typeMotsCles,
+                                        int* nbMotsCles)
+{
+    if ( ! commandeCourante->isFactorKeywordPresent( motCleFacteur, occurence ) )
+        return 1;
+
+    FactorKeyword curFK = commandeCourante->getFactorKeyword( motCleFacteur );
+    FactorKeywordOccurence curOccur = curFK.getOccurence( occurence );
+
+    list< SimpleKeyWordStr > listeMCChaines = curOccur.getStringKeywordList();
+    list< SimpleKeyWordDbl > listeMCDoubles = curOccur.getDoubleKeywordList();
+    list< SimpleKeyWordInt > listeMCEntiers = curOccur.getIntegerKeywordList();
+
+    *nbMotsCles = listeMCChaines.size() + listeMCDoubles.size() + listeMCEntiers.size();
+    *motsClesSimples = (char**)malloc( sizeof(char*)*(*nbMotsCles) );
+    *typeMotsCles = (char**)malloc( sizeof(char*)*(*nbMotsCles) );
+
+    int compteur = 0;
+    for ( list< SimpleKeyWordStr >::iterator curIter = listeMCChaines.begin();
+          curIter != listeMCChaines.end();
+          ++curIter )
+    {
+        (*motsClesSimples)[compteur] = MakeBlankFStr( sizeKeywordName );
+        strncpy((*motsClesSimples)[compteur], curIter->keywordName().c_str(), curIter->keywordName().size());
+
+        (*typeMotsCles)[compteur] = MakeBlankFStr( sizeTypeName );
+        if ( curIter->isValueObject() )
+        {
+            (*typeMotsCles)[compteur][0] = 'C';
+            (*typeMotsCles)[compteur][1] = 'O';
+        }
+        else
+        {
+            (*typeMotsCles)[compteur][0] = 'T';
+            (*typeMotsCles)[compteur][1] = 'X';
+        }
+        ++compteur;
+    }
+
+    for ( list< SimpleKeyWordDbl >::iterator curIter = listeMCDoubles.begin();
+          curIter != listeMCDoubles.end();
+          ++curIter )
+    {
+        (*motsClesSimples)[compteur] = MakeBlankFStr( sizeKeywordName );
+        strncpy((*motsClesSimples)[compteur], curIter->keywordName().c_str(), curIter->keywordName().size());
+
+        (*typeMotsCles)[compteur] = MakeBlankFStr( sizeTypeName );
+        if ( curIter->isValueObject() )
+        {
+            (*typeMotsCles)[compteur][0] = 'C';
+            (*typeMotsCles)[compteur][1] = 'O';
+        }
+        else
+        {
+            (*typeMotsCles)[compteur][0] = 'R';
+            (*typeMotsCles)[compteur][1] = '8';
+        }
+        ++compteur;
+    }
+
+    for ( list< SimpleKeyWordInt >::iterator curIter = listeMCEntiers.begin();
+          curIter != listeMCEntiers.end();
+          ++curIter )
+    {
+        (*motsClesSimples)[compteur] = MakeBlankFStr( sizeKeywordName );
+        strncpy((*motsClesSimples)[compteur], curIter->keywordName().c_str(), curIter->keywordName().size());
+
+        (*typeMotsCles)[compteur] = MakeBlankFStr( sizeTypeName );
+        if ( curIter->isValueObject() )
+        {
+            (*typeMotsCles)[compteur][0] = 'C';
+            (*typeMotsCles)[compteur][1] = 'O';
+        }
+        else
+        {
+            (*typeMotsCles)[compteur][0] = 'I';
+            (*typeMotsCles)[compteur][1] = 'S';
+        }
+        ++compteur;
+    }
+    return 0;
+}
+
+int nombreOccurencesMotCleFacteur(char* motCle)
 {
     if ( commandeCourante == NULL ) return false;
     bool retour = commandeCourante->isFactorKeywordPresent( string(motCle) );
-    if ( retour ) return 1;
-    return 0;
+    if ( not retour ) return 0;
+    FactorKeyword retour2 = commandeCourante->getFactorKeyword( string(motCle) );
+    int nbOccur = retour2.numberOfOccurences();
+    return nbOccur;
 };
 
 int presenceMotCle(char* motCleFacteur, char* motCleSimple)
 {
     if ( commandeCourante == NULL ) return false;
     bool retour = commandeCourante->isFactorKeywordPresentSimpleKeyWord( string(motCleFacteur), string(motCleSimple) );
+    if ( retour ) return 1;
+    return 0;
+};
+
+int presenceMotCleFacteur(char* motCle)
+{
+    if ( commandeCourante == NULL ) return false;
+    bool retour = commandeCourante->isFactorKeywordPresent( string(motCle) );
     if ( retour ) return 1;
     return 0;
 };
@@ -86,33 +200,4 @@ int* valeursMotCleInt(char* motCleFacteur, int occurence, char* motCleSimple, in
         ++compteur;
     }
     return tabRetour;
-};
-
-int nombreOccurencesMotCleFacteur(char* motCle)
-{
-    if ( commandeCourante == NULL ) return false;
-    bool retour = commandeCourante->isFactorKeywordPresent( string(motCle) );
-    if ( not retour ) return 0;
-    FactorKeyword retour2 = commandeCourante->getFactorKeyword( string(motCle) );
-    int nbOccur = retour2.numberOfOccurences();
-    return nbOccur;
-};
-
-char* getNomCommande()
-{
-    if ( commandeCourante == NULL ) return NULL;
-    return const_cast< char* >( commandeCourante->commandName().c_str() );
-};
-
-int isCommandeOperateur()
-{
-    if ( commandeCourante == NULL ) return 0;
-    if ( commandeCourante->isOperateur() ) return 1;
-    return 0;
-};
-
-char* getNomObjetJeveux()
-{
-    if ( commandeCourante == NULL ) return NULL;
-    return const_cast< char* >( commandeCourante->getObjectName().c_str() );
 };

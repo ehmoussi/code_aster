@@ -12,6 +12,15 @@
 #include <iostream>
 #include <sstream>
 #include <set>
+#include <string.h>
+
+#include "definition.h"
+
+extern "C"
+{
+    char* MakeBlankFStr( STRING_SIZE );
+    void FreeStr( char * );
+}
 
 using namespace std;
 
@@ -29,7 +38,8 @@ class SimpleKeyWord
         typename list< ValueType >::value_type listValueValue;
 
     private:
-        string _simpleKeyWordName;
+        string    _simpleKeyWordName;
+        bool      _isValueObject;
         listValue _valuesList;
 
     public:
@@ -39,7 +49,8 @@ class SimpleKeyWord
         *   ex : pour le mot-cle simple MAILLAGE, nom sera egale a
         *        'MAILLAGE'
         */
-        SimpleKeyWord(string nom): _simpleKeyWordName(nom)
+        SimpleKeyWord(string nom, bool concept = false): _simpleKeyWordName(nom),
+                                                         _isValueObject(concept)
         {};
 
         /**
@@ -50,6 +61,11 @@ class SimpleKeyWord
         void addValues(ValueType valeurAAjouter)
         {
             _valuesList.push_back(valeurAAjouter);
+        };
+
+        bool isValueObject()
+        {
+            return _isValueObject;
         };
 
         string& keywordName()
@@ -122,6 +138,21 @@ class FactorKeywordOccurence
         {
             _listSimpleKeywordsInt.push_back(motCleAAjouter);
             _setKeywordNames.insert(motCleAAjouter.keywordName());
+        };
+
+        list< SimpleKeyWordStr >& getStringKeywordList()
+        {
+            return _listSimpleKeywordsStr;
+        };
+
+        list< SimpleKeyWordDbl >& getDoubleKeywordList()
+        {
+            return _listSimpleKeywordsDbl;
+        };
+
+        list< SimpleKeyWordInt >& getIntegerKeywordList()
+        {
+            return _listSimpleKeywordsInt;
         };
 
         bool isKeywordPresent(string motCle)
@@ -222,6 +253,12 @@ class FactorKeyword
             return trouve;
         };
 
+        bool isOccurencePresent(int num)
+        {
+            if ( num < _vectorOccurences.size() ) return true;
+            return false;
+        };
+
         int numberOfOccurences() const
         {
             return _vectorOccurences.size();
@@ -293,6 +330,16 @@ class CommandSyntax
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(keywordName);
             if ( curIter != _factorKeywordsMap.end() ) return true;
+            return false;
+        };
+
+        bool isFactorKeywordPresent(string keywordName, int num)
+        {
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(keywordName);
+            if ( curIter != _factorKeywordsMap.end() )
+            {
+                return (*curIter).second.isOccurencePresent(num);
+            }
             return false;
         };
 
@@ -389,23 +436,25 @@ extern void* commandeCourante;
 extern "C" {
 #endif
 
-int presenceMotCleFacteur(char *);
+char* getNomCommande();
+
+char* getNomObjetJeveux();
+
+int isCommandeOperateur();
+
+int listeMotCleSimpleFromMotCleFacteur(char *, int, int, int, char***, char***, int*);
+
+int nombreOccurencesMotCleFacteur(char *);
 
 int presenceMotCle(char *, char *);
+
+int presenceMotCleFacteur(char *);
 
 char** valeursMotCleChaine(char *, int, char *, int*);
 
 double* valeursMotCleDouble(char*, int, char*, int*);
 
 int* valeursMotCleInt(char*, int, char*, int*);
-
-int nombreOccurencesMotCleFacteur(char *);
-
-char* getNomCommande();
-
-int isCommandeOperateur();
-
-char* getNomObjetJeveux();
 
 #ifdef __cplusplus
 }

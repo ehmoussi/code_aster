@@ -74,7 +74,7 @@ class Enum
 template < class T >
 inline Enum<T>::Enum( int Value ): m_value( Value )
 {
-  s_instances.insert( this );
+    s_instances.insert( this );
 }
 
 #endif /* ENUMCLASS_H_ */
