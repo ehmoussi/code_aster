@@ -36,24 +36,15 @@ class PCFieldOnMeshInstance
         * @param name Nom Jeveux de la carte
         */
         PCFieldOnMeshInstance( string name ): _name( name ),
-                                              _descriptor( JeveuxVectorLong( string( _jeveuxName+".DESC" ) ) ),
-                                              _nameOfLigrels( JeveuxVectorChar24( string( _jeveuxName+".NOLI") ) ),
-                                              _listOfMeshElements( JeveuxCollectionLong( string( _jeveuxName+".LIMA") ) ),
-                                              _valuesList( JeveuxVector<ValueType>( string(_jeveuxName+".VALE") ) ), 
+                                              _descriptor( JeveuxVectorLong( string( name+".DESC" ) ) ),
+                                              _nameOfLigrels( JeveuxVectorChar24( string( name+".NOLI") ) ),
+                                              _listOfMeshElements( JeveuxCollectionLong( string( name+".LIMA") ) ),
+                                              _valuesList( JeveuxVector<ValueType>( string( name+".VALE") ) ), 
                                               _supportMesh( Mesh(false)) 
         {
             assert(name.size() == 19);
         };
 
-        /**
-        * Surcharge de l'operateur []
-        * @param i Indice dans le tableau Jeveux
-        * @return renvoie la valeur du tableau Jeveux a la position i
-        */
-        const ValueType &operator[](int i) const
-        {
-            return _valuesList->operator[](i);
-        };
 
         /**
         * Mise a jour des pointeurs Jeveux
