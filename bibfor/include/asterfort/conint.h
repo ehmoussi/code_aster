@@ -16,16 +16,15 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine conint(nume, raide, coint, sizeco, connec,&
-                      noddli, nnoint, nume91, raiint, ssami)
+    subroutine conint(nume, raide, coint, connec,&
+                      noddli, nnoint, nume_gene, raiint, ssami)
         character(len=14) :: nume
         character(len=19) :: raide
         character(len=24) :: coint
-        integer :: sizeco
         integer :: connec
         character(len=24) :: noddli
         integer :: nnoint
-        character(len=14) :: nume91
+        character(len=14) :: nume_gene
         character(len=19) :: raiint
         character(len=19) :: ssami
     end subroutine conint

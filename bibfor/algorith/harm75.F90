@@ -1,4 +1,4 @@
-subroutine harm75(nomres, typres, nomin, nomcmd, basemo)
+subroutine harm75(nomres, typres, nomin, basemo)
     implicit none
 !     ------------------------------------------------------------------
 ! ======================================================================
@@ -62,6 +62,7 @@ subroutine harm75(nomres, typres, nomin, nomcmd, basemo)
 #include "asterfort/vtcrec.h"
 #include "asterfort/vtdefs.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/nueq_chck.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
@@ -74,7 +75,7 @@ subroutine harm75(nomres, typres, nomin, nomcmd, basemo)
     character(len=8) :: touch, mailla, matgen
     character(len=8) :: nomgd, basem2, blanc
     character(len=14) :: numddl
-    character(len=16) :: nomcmd, typres, typbas(8), typcha, type(3)
+    character(len=16) :: typres, typbas(8), typcha, type(3)
     character(len=19) :: knume, kfreq, hrange, prchno, prof, typref(8)
     character(len=24) :: matric, chamno, crefe(2), chmod, nomcha, objve1, objve2
     character(len=24) :: objve3, objve4
@@ -194,7 +195,9 @@ subroutine harm75(nomres, typres, nomin, nomcmd, basemo)
         mailla = zk24(llcha)(1:8)
         crefe(1) = zk24(llcha)
         crefe(2) = zk24(llcha+1)
-        if (tousno) call jelira(crefe(2)(1:19)//'.NUEQ', 'LONMAX', neq)
+        if (tousno) then
+            call nueq_chck(prchno, nb_equaz = neq)
+        endif
         basem2 = ' '
     endif
 !
@@ -320,7 +323,9 @@ subroutine harm75(nomres, typres, nomin, nomcmd, basemo)
                         if (leffor) then
                             call vtdefs(chamno, typref(ich), 'G', 'C')
                         else
-                            call vtcreb(chamno, numddl, 'G', 'C', neq)
+                            call vtcreb(chamno, 'G', 'C',&
+                                        nume_ddlz = numddl,&
+                                        nb_equa_outz = neq)
                         endif
                     else
                         call vtcrec(chamno, chmod, 'G', 'C', neq)

@@ -20,6 +20,8 @@ subroutine get_jvbasename(bas_, numext, path)
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
+! aslint: disable=W1303
+! for the path name
 ! person_in_charge: j-pierre.lefebvre at edf.fr
 !
 ! Return the path name to the file of the base of class `bas_`
@@ -40,7 +42,7 @@ subroutine get_jvbasename(bas_, numext, path)
     integer :: nchar
     character(len=4) :: base
     character(len=8) :: fname
-    character(len=512) :: dir, nom512, valk(2)
+    character(len=512) :: dir, nom512
 !
     base = bas_
     call lxmins(base)

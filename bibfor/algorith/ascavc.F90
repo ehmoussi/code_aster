@@ -59,9 +59,10 @@ subroutine ascavc(lchar, infcha, fomult, numedd, inst, vci)
 !----------------------------------------------------------------------
     integer :: idchar, jinfc, idfomu, nchtot, nchci, ichar, icine, ilchno
     integer :: ichci, ibid, ifm, niv, neq, ieq, jdlci2,  ieqmul
-    character(len=8) :: newnom, nomno, nomcmp, tyddl
-    character(len=19) :: charci, chamno, vci2, ligrel
-    character(len=24) :: vachci, valk(2), infobl
+    character(len=8) :: newnom
+    character(len=1) :: tyddl
+    character(len=19) :: charci, chamno, vci2
+    character(len=24) :: vachci
     character(len=8) :: charge
     integer, pointer :: dlci(:) => null()
     data chamno/'&&ASCAVC.???????'/
@@ -104,7 +105,9 @@ subroutine ascavc(lchar, infcha, fomult, numedd, inst, vci)
         call gcnco2(newnom)
         chamno(10:16) = newnom(2:8)
         call corich('E', chamno, -2, ibid)
-        call vtcreb(chamno, numedd, 'V', 'R', neq)
+        call vtcreb(chamno, 'V', 'R',&
+                    nume_ddlz = numedd,&
+                    nb_equa_outz = neq)
         zk24(ilchno-1+1) = chamno
 !
 !
@@ -142,12 +145,10 @@ subroutine ascavc(lchar, infcha, fomult, numedd, inst, vci)
 !
 !     -- SI UN DDL A ETE ELIMINE PLUSIEURS FOIS :
     if (ieqmul .gt. 0) then
-        call rgndas(numedd, ieqmul, nomno, nomcmp, tyddl,&
-                    ligrel, infobl)
+        call utmess('A', 'CALCULEL3_37')
+        call rgndas(numedd, ieqmul, l_print = .true.,&
+                    type_equaz = tyddl)
         ASSERT(tyddl.eq.'A')
-        valk(1)=nomno
-        valk(2)=nomcmp
-        call utmess('A', 'CALCULEL3_37', nk=2, valk=valk)
     endif
 !
 !

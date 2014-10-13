@@ -150,7 +150,9 @@ subroutine phi199(model, mate, ma, nu, num,&
         nocham = nocham(1:19)//'.REFE'
         call jeveuo(nocham, 'L', jref)
         nume = zk24(jref+1)(1:14)
-        call vtcreb(nomcha, nume, 'V', 'R', neq)
+        call vtcreb(nomcha, 'V', 'R',&
+                    nume_ddlz = nume,&
+                    nb_equa_outz = neq)
 !
 ! --- QUELLE EST LA DIRECTION ?
 !
@@ -174,7 +176,7 @@ subroutine phi199(model, mate, ma, nu, num,&
         call jeveuo(nomcha(1:19)//'.VALE', 'E', jvec)
         AS_ALLOCATE(vi=ddl, size=neq*nbdir)
         call pteddl('NUME_DDL', nume, nbdir, tabcmp, neq,&
-ddl)
+                    tabl_equa = ddl)
 !
         do in = 0, neq-1
             zr(jvec+in) = 0.d0

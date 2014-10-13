@@ -26,12 +26,13 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
 #include "asterfort/assert.h"
 #include "asterfort/cmpcha.h"
 #include "asterfort/codent.h"
-#include "asterfort/crprn2.h"
+#include "asterfort/profchno_crsd.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/gcncon.h"
 #include "asterfort/gnomsd.h"
 #include "asterfort/idensd.h"
+#include "asterfort/jecroc.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeecra.h"
@@ -45,6 +46,7 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
 #include "asterfort/jexnum.h"
 #include "asterfort/pteequ.h"
 #include "asterfort/utmess.h"
+#include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
@@ -89,16 +91,16 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
     character(len=24) :: noojb
     character(len=24) :: valk(3)
 !     -----------------------------------------------------------------
-    integer :: icmp, nec, jcnsv, jcnsl, gd, iexi, ncmp, jcorr2
+    integer :: icmp, nec,   jcnsv, jcnsl, gd, iexi, ncmp
     integer :: reste, iec, code, nbno
-    integer :: ncmpmx, jrefe, ncmp1, neq2, jcmpgd, icmp1, k, ieq2, iexi2, nbec
-    integer :: jprn2, ino, idg2, ico, jdesc, jvale, iret, n1
+    integer :: ncmpmx, jrefe, ncmp1, nb_equa, jcmpgd, icmp1, k, ieq2, iexi2, nbec
+    integer :: jprn2, ino, idg2, ico, jvale, iret, prno_length
     integer :: lshift, nuprf
     character(len=1) :: base
     character(len=8) :: ma, nomgd, nomno, nomcmp
-    aster_logical :: lpchno
+    aster_logical :: l_crea_prchno, l_chck_prchno
     character(len=3) :: tsca
-    character(len=19) :: cns, cno, prchno, messag, prnoav
+    character(len=19) :: cns, cno, prchno, messag, prnoav, nume_equa
     integer, pointer :: deeq(:) => null()
     integer, pointer :: cnsd(:) => null()
     character(len=8), pointer :: cnsc(:) => null()
@@ -106,6 +108,10 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
     character(len=8), pointer :: cnsk(:) => null()
     integer, pointer :: tmp_nucm1(:) => null()
     integer, pointer :: tmp_nucmp(:) => null()
+    integer, pointer :: cata_to_field(:) => null()
+    integer, pointer :: field_to_cata(:) => null()
+    character(len=8), pointer :: cmp_name(:) => null()
+    integer, pointer :: v_nequ(:) => null()
 !     -----------------------------------------------------------------
     call jemarq()
 !
@@ -114,6 +120,9 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
     ASSERT((base.eq.'G') .or. (base.eq.'V'))
     cns=cnsz
     cno=cnoz
+!
+    l_chck_prchno = .false.
+    l_crea_prchno = .false.
 !     CALL UTIMSD(6,2,.TRUE.,.TRUE.,CNS,1,' ')
 !
     call jeveuo(cns//'.CNSK', 'L', vk8=cnsk)
@@ -137,6 +146,30 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
 !     -- SI CNO EXISTE DEJA, ON LE DETRUIT :
     call detrsd('CHAM_NO', cno)
 !
+! - PROF_CHNO name
+!
+    if (prchnz .eq. ' ') then
+        if (base .eq. 'G') then
+            noojb='12345678.PRCHN00000.PRNO'
+            call gnomsd(' ', noojb, 15, 19)
+            prchno=noojb(1:19)
+        else
+            call gcncon('.', prchno)
+        endif
+        l_chck_prchno = .false.
+    else
+        prchno = prchnz
+        l_chck_prchno = .true.
+    endif
+!
+! - Create PROF_CHNO ?
+!
+    call jeexin(prchno//'.PRNO', iexi)
+    l_crea_prchno = (iexi.eq.0)
+    if (l_crea_prchno) then
+        l_chck_prchno = .false.
+    endif
+!
 !
 !     1- REMPLISSAGE DE .TMP_NUCMP ET .TMP_NUCM1 :
 !     --------------------------------------------
@@ -152,56 +185,42 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
         tmp_nucm1(icmp1)=icmp
     end do
 !
+! - Check PROF_CHNO
 !
-    if (prchnz .eq. ' ') then
-        if (base .eq. 'G') then
-            noojb='12345678.PRCHN00000.PRNO'
-            call gnomsd(' ', noojb, 15, 19)
-            prchno=noojb(1:19)
-        else
-            call gcncon('.', prchno)
-        endif
-    else
-        prchno=prchnz
-!       -- ON VEUT VERIFIER QUE PRCHNO EST COHERENT AVEC MA ET NOMGD :
-        call jeexin(prchno//'.PRNO', iexi)
-        if (iexi .gt. 0) then
-            valk(1)=cno
-            valk(2)=prchno
-            call jeexin(prchno//'.REFN', iexi2)
-            if (iexi2 .gt. 0) then
-!         -- SI PRCHNO VIENT D'UN NUME_EQUA, ON PEUT VERIFIER :
-                call jeveuo(prchno//'.REFN', 'L', vk24=refn)
-                if ((refn(1).ne.ma) .or. (refn(2) .ne.nomgd)) then
+    if (l_chck_prchno) then
+        valk(1)=cno
+        valk(2)=prchno
+        call jeexin(prchno//'.REFN', iexi2)
+        if (iexi2 .gt. 0) then
+            nume_equa = prchno
+!         -- SI PRCHNO VIENT D'UN NUME_EQUA, ON PEUT VERIFIER maillage et grandeur
+            call jeveuo(nume_equa(1:19)//'.REFN', 'L', vk24=refn)
+            if ((refn(1).ne.ma) .or. (refn(2) .ne.nomgd)) then
 !             -- ON ACCEPTE : DEPL_R / DEPL_C
-                    if ((nomgd(1:5).eq.'DEPL_') .and. (refn(2) (1:5).eq.'DEPL_')) then
-                    else
-                        call utmess('F', 'CALCULEL4_6', nk=2, valk=valk)
-                    endif
-                endif
-            else
-!         -- SINON ON NE PEUT VERIFIER QUE LA LONGUEUR DE .PRNO :
-                call jelira(jexnum(prchno//'.PRNO', 1), 'LONMAX', n1)
-                if (n1 .ne. nbno*(nbec+2)) then
+                if ((nomgd(1:5).eq.'DEPL_') .and. (refn(2) (1:5).eq.'DEPL_')) then
+                else
                     call utmess('F', 'CALCULEL4_6', nk=2, valk=valk)
                 endif
             endif
+        else
+            call jelira(jexnum(prchno//'.PRNO', 1), 'LONMAX', prno_length)
+            ASSERT(prno_length .eq. nbno*(nbec+2))
         endif
     endif
 !
 !
 !     2- ON CREE (SI NECESSAIRE) LE PROF_CHNO  :
 !     ------------------------------------------
-    call jeexin(prchno//'.PRNO', iexi)
-    lpchno=(iexi.eq.0)
-    if (lpchno) then
+    if (l_crea_prchno) then
 !
 !       2.1 ON COMPTE LES CMPS PORTEES PAR CNS :
-        neq2=0
+        nb_equa=0
         do k = 1, nbno*ncmp1
-            if (zl(jcnsl-1+k)) neq2=neq2+1
+            if (zl(jcnsl-1+k)) then
+                nb_equa=nb_equa+1
+            endif
         end do
-        if (neq2 .eq. 0) then
+        if (nb_equa .eq. 0) then
             valk(1)=cns
             valk(2)=cno
             messag='CALCULEL2_12'
@@ -210,7 +229,9 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
         endif
 !
 !       2.2 ALLOCATION DES OBJETS :
-        call crprn2(prchno, base, nbno, neq2, nec)
+        call profchno_crsd(prchno, base, nb_equa, meshz = ma,&
+                           gran_namez = nomgd, l_coll_const=.true.)
+        call jecroc(jexnum(prchno//'.PRNO', 1))
 !
 !       2.3 REMPLISSAGE DE .PRNO :
         call jeveuo(jexnum(prchno//'.PRNO', 1), 'E', jprn2)
@@ -241,52 +262,52 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
 !       FAIRE PLUTARD.
     endif
 !
+! - Get number of equations
 !
-!     4- ON CREE LE .REFE :
-!     ------------------------
-    call wkvect(cno//'.REFE', base//' V K24', 4, jrefe)
-    zk24(jrefe-1+1)=ma
-    zk24(jrefe-1+2)=prchno
-    zk24(jrefe-1+3)=' '
-    zk24(jrefe-1+4)=' '
+    call jeexin(prchno//'.NEQU', iexi)
+    if (iexi.eq.0) then
+        call jelira(prchno//'.NUEQ', 'LONMAX', nb_equa)
+    else
+        call jeveuo(prchno//'.NEQU', 'L', vi = v_nequ)
+        nb_equa = v_nequ(1)
+    endif
 !
+! - Create node field
 !
-!     5- ON CREE LE .DESC :
-!     ------------------------
-    call wkvect(cno//'.DESC', base//' V I', 2, jdesc)
-    call jeecra(cno//'.DESC', 'DOCU', cval='CHNO')
-    zi(jdesc-1+1)=gd
-    zi(jdesc-1+2)=1
+    call vtcreb(cno, base, tsca,&
+                meshz = ma, prof_chnoz = prchno, idx_gdz = gd, nb_equa_inz = nb_equa)
+    call jeveuo(cno//'.REFE','E',jrefe)
+    call jeveuo(cno//'.VALE','E',jvale)
 !
 !
 !     5-BIS ON CREE SI NECESSAIRE LE .DEEQ DU PROF_CHNO
 !     ----------------------------------------------------
-    if (lpchno) then
-        call cmpcha(cno, '&&CNSCNO.NOMCMP', '&&CNSCNO.CORR1', '&&CNSCNO.CORR2', ncmp,&
-                    ncmpmx)
-        call jeveuo('&&CNSCNO.CORR2', 'L', jcorr2)
+    if (l_crea_prchno) then
+!
+! ----- Create object local components (field) => global components (catalog)
+!
+        call cmpcha(cno, cmp_name, cata_to_field, field_to_cata, nb_cmpz = ncmp)
 !       -- POUR ECONOMISER LA MEMOIRE (PENDANT PTEEQU)
 !          ON LIBERE TEMPORAIREMENT .CNSV ET .CNSL :
         call jelibe(cns//'.CNSV')
         call jelibe(cns//'.CNSL')
-        call pteequ(prchno, base, neq2, gd, ncmp,&
-                    zi(jcorr2))
+        call pteequ(prchno, base, nb_equa, gd, ncmp,&
+                    field_to_cata)
 !
-        call jedetr('&&CNSCNO.NOMCMP')
-        call jedetr('&&CNSCNO.CORR1')
-        call jedetr('&&CNSCNO.CORR2')
+        AS_DEALLOCATE(vi = cata_to_field)
+        AS_DEALLOCATE(vi = field_to_cata)
+        AS_DEALLOCATE(vk8 = cmp_name)
         call jeveuo(cns//'.CNSV', 'L', jcnsv)
         call jeveuo(cns//'.CNSL', 'L', jcnsl)
     endif
 !
 !
-!     6- ON CREE ET ON REMPLIT LE .VALE :
+!     6- ON REMPLIT LE .VALE :
 !     -----------------------------------
-    call jelira(prchno//'.NUEQ', 'LONMAX', neq2)
+
     call jeveuo(prchno//'.DEEQ', 'L', vi=deeq)
-    call wkvect(cno//'.VALE', base//' V '//tsca, neq2, jvale)
 !
-    do ieq2 = 1, neq2
+    do ieq2 = 1, nb_equa
         ino=deeq(2*(ieq2-1)+1)
         icmp=deeq(2*(ieq2-1)+2)
         if (ino*icmp .gt. 0) then
@@ -329,18 +350,58 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
 !
             if (zl(jcnsl-1+(ino-1)*ncmp1+icmp1)) then
                 if (tsca .eq. 'R') then
+!
+! ----------------- Test for protect when nb_equa.ne.nb_dof
+!
+                    if (zr(jvale-1+ieq2).ne.0.d0) then
+                        if (zr(jcnsv-1+(ino-1)*ncmp1+icmp1).ne.zr(jvale-1+ieq2)) then
+                            ASSERT(.false.)
+                        endif
+                    endif
                     zr(jvale-1+ieq2)=zr(jcnsv-1+(ino-1)*ncmp1+icmp1)
 !
                 else if (tsca.eq.'C') then
+!
+! ----------------- Test for protect when nb_equa.ne.nb_dof
+!
+                    if (zc(jvale-1+ieq2).ne.(0.d0,0.d0)) then
+                        if (zc(jvale-1+ieq2).ne.zc(jcnsv-1+(ino-1)*ncmp1+icmp1)) then
+                            ASSERT(.false.)
+                        endif
+                    endif
                     zc(jvale-1+ieq2)=zc(jcnsv-1+(ino-1)*ncmp1+icmp1)
 !
                 else if (tsca.eq.'I') then
+!
+! ----------------- Test for protect when nb_equa.ne.nb_dof
+!
+                    if (zi(jvale-1+ieq2).ne.0) then
+                        if (zi(jvale-1+ieq2).ne.zi(jcnsv-1+(ino-1)*ncmp1+icmp1)) then
+                            ASSERT(.false.)
+                        endif
+                    endif
                     zi(jvale-1+ieq2)=zi(jcnsv-1+(ino-1)*ncmp1+icmp1)
 !
                 else if (tsca.eq.'L') then
+!
+! ----------------- Test for protect when nb_equa.ne.nb_dof
+!
+                    if (.not.zl(jvale-1+ieq2)) then
+                        if (zl(jvale-1+ieq2).neqv.zl(jcnsv-1+(ino-1)*ncmp1+icmp1)) then
+                            ASSERT(.false.)
+                        endif
+                    endif
                     zl(jvale-1+ieq2)=zl(jcnsv-1+(ino-1)*ncmp1+icmp1)
 !
                 else if (tsca.eq.'K8') then
+!
+! ----------------- Test for protect when nb_equa.ne.nb_dof
+!
+                    if (zk8(jvale-1+ieq2).ne.' ') then
+                        if (zk8(jvale-1+ieq2).ne.zk8(jcnsv-1+(ino-1)*ncmp1+icmp1)) then
+                            ASSERT(.false.)
+                        endif
+                    endif
                     zk8(jvale-1+ieq2)=zk8(jcnsv-1+(ino-1)*ncmp1+icmp1)
 !
                 else
@@ -429,3 +490,4 @@ subroutine cnscno(cnsz, prchnz, prol0, basez, cnoz,&
     call jedema()
 !     CALL UTIMSD(6,2,.TRUE.,.TRUE.,CNO,1,' ')
 end subroutine
+

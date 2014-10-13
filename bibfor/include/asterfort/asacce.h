@@ -18,7 +18,7 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine asacce(nomsy, monoap, muapde, nbsup, neq,&
+    subroutine asacce(nomsy, monoap, nbsup, neq,&
                       nbmode, id, moncha, vecmod, parmod,&
                       gamma0, recmor, recmod, nbdis)
         integer :: nbmode
@@ -26,7 +26,6 @@ interface
         integer :: nbsup
         character(len=16) :: nomsy
         aster_logical :: monoap
-        aster_logical :: muapde
         integer :: id
         character(len=*) :: moncha
         real(kind=8) :: vecmod(neq, *)

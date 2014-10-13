@@ -77,7 +77,7 @@ subroutine mestat(modelz, fomulz, lischz, mate, caraz,&
 !
     character(len=6) :: nompro
     parameter    (nompro = 'MESTAT')
-    integer :: nbval, ibid, itps, itps0, iret, ninstc, neq
+    integer :: nbval, ibid, itps, itps0, iret, ninstc
     integer :: vali
     real(kind=8) :: time, instf, tps1(4), tps2(4), tps3(4), tcpu, partps(3)
     real(kind=8) :: valr(3)
@@ -149,10 +149,12 @@ subroutine mestat(modelz, fomulz, lischz, mate, caraz,&
 !
     call rsnume(result, 'DEPL', nuposs)
 !
-    call numero(nuposs, modele, lischa, solveu, 'VG',&
-                numedd)
+    call numero(numedd, solveu, 'VG',&
+                old_nume_ddlz = nuposs,&
+                modelz = modele , list_loadz = lischa)
 !
-    call vtcreb(vecass, numedd, 'V', 'R', neq)
+    call vtcreb(vecass, 'V', 'R',&
+                nume_ddlz = numedd)
 !
 !     ??? IL SERAIT PEUT ETRE BON DE VERIFIER QUE QUELQUE CHOSE BOUGE
 !     AVEC LE TEMPS. POUR L'INSTANT ON RECALCULE LE 2EME MEMBRE A CHA

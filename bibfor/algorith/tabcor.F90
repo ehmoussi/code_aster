@@ -3,7 +3,7 @@ subroutine tabcor(model, mate, ma1, ma2, moint,&
     implicit none
 #include "jeveux.h"
 #include "asterfort/calflu.h"
-#include "asterfort/crchno.h"
+#include "asterfort/vtcreb.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvr8.h"
@@ -50,9 +50,9 @@ subroutine tabcor(model, mate, ma1, ma2, moint,&
 !
 !
 !---------------------------------------------------------------------
-    integer :: nbvale, nbrefe, nbdesc, ibid, neq, nbno1
+    integer :: nbvale, nbrefe, nbdesc, ibid, nbno1
     integer :: ino1, ino2, icor(2), itb1, itb2, ncmp2, nbno2, ichnul
-    integer :: nec2,   iprn2, inueq2, nbid
+    integer :: nec2, iprn2
     integer :: ndble, nbptr
     real(kind=8) :: epsi, x1, y1, z1, x2, y2, z2
     real(kind=8) :: tailmi, dista2, tailm2
@@ -60,7 +60,6 @@ subroutine tabcor(model, mate, ma1, ma2, moint,&
     character(len=8) :: gd2, ma1, ma2
     character(len=14) :: num
     character(len=19) :: chnul, cn2, pchno2
-    character(len=24) :: prchno
     real(kind=8), pointer :: geom1(:) => null()
     real(kind=8), pointer :: geom2(:) => null()
 ! -----------------------------------------------------------------
@@ -69,16 +68,14 @@ subroutine tabcor(model, mate, ma1, ma2, moint,&
 !
 ! RECUPERATION DE LA TAILLE DE REFERENCE
 !
-    call getvr8(' ', 'DIST_REFE', scal=tailmi, nbret=nbid)
+    call getvr8(' ', 'DIST_REFE', scal=tailmi)
     call dismoi('NB_NO_MAILLA', ma2, 'MAILLAGE', repi=nbno2)
     tailm2=(epsi*tailmi)**2
 ! ON CREE UN CHAMNO BIDON SUR L INTERFACE THERMIQUE
 !
     chnul='&&TABCOR.CHNUL'
-    call dismoi('NB_EQUA', num, 'NUME_DDL', repi=neq)
-    prchno = num//'.NUME'
-    call crchno(chnul, prchno, 'TEMP_R', ma2, 'V',&
-                'R', nbno2, neq)
+    call vtcreb(chnul, 'V', 'R',&
+                nume_ddlz = num)
     call jeveuo(chnul//'.VALE', 'E', ichnul)
 !
 !
@@ -128,7 +125,6 @@ subroutine tabcor(model, mate, ma1, ma2, moint,&
     call jenonu(jexnom(pchno2//'.LILI', '&MAILLA'), ibid)
     call jeveuo(jexnum(pchno2//'.PRNO', ibid), 'L', iprn2)
     call dismoi('NB_EC', gd2, 'GRANDEUR', repi=nec2)
-    call jeveuo(pchno2//'.NUEQ', 'L', inueq2)
 !
 ! RECUPERATION DES COORDONNEES DU MAILLAGE
 !
@@ -191,17 +187,6 @@ subroutine tabcor(model, mate, ma1, ma2, moint,&
 !
  10     continue
     end do
-!
-!
-!      IF (NDBLE.EQ.1) THEN
-!        DO 30 I=1,NBNO1
-!
-!30      CONTINUE
-!      ELSE
-!        DO 40 I=1,NBNO1
-!
-!40      CONTINUE
-!      ENDIF
 !
 ! --- MENAGE
     call detrsd('CHAM_NO', chnul)

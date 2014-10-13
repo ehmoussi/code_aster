@@ -173,7 +173,9 @@ subroutine tran77(nomres, typres, nomin, basemo)
 !
         crefe(1) = zk24(llcha)
         crefe(2) = zk24(llcha+1)
-        if (tousno) call jelira(crefe(2)(1:19)//'.NUEQ', 'LONMAX', neq)
+        if (tousno) then
+            call dismoi('NB_EQUA', nomcha, 'CHAM_NO', repi=neq)
+        endif
         basem2 = ' '
         call jeveuo(nomcha, 'L', iadrif)
         matric=zk24(iadrif+1)
@@ -314,7 +316,9 @@ subroutine tran77(nomres, typres, nomin, basemo)
                         if (leffor) then
                             call vtdefs(chamno, typref(ich), 'G', 'R')
                         else
-                            call vtcreb(chamno, numddl, 'G', 'R', neq)
+                            call vtcreb(chamno, 'G', 'R',&
+                                        nume_ddlz = numddl,&
+                                        nb_equa_outz = neq)
                         endif
                     else
                         call vtcrec(chamno, nomcha, 'G', 'R', neq)

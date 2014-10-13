@@ -1,5 +1,20 @@
-subroutine numer2(nuposs, nbligr, vligr, moloc, solveu,&
-                  base, nu, nequa)
+subroutine numer2(nb_ligr      , list_ligr, solverz      , base, nume_ddlz,&
+                  nume_ddl_oldz, modelocz , sd_iden_relaz)
+!
+implicit none
+!
+#include "asterfort/detrsd.h"
+#include "asterfort/idensd.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jedetr.h"
+#include "asterfort/jedupo.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/nueffe.h"
+#include "asterfort/nugllo.h"
+#include "asterfort/promor.h"
+#include "asterfort/wkvect.h"
+!
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -17,117 +32,117 @@ subroutine numer2(nuposs, nbligr, vligr, moloc, solveu,&
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: jacques.pellet at edf.fr
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/detrsd.h"
-#include "asterfort/idenob.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jedupo.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/nueffe.h"
-#include "asterfort/nugllo.h"
-#include "asterfort/promor.h"
-#include "asterfort/wkvect.h"
-    character(len=*) :: moloc, vligr(*), solveu, base, nu, nuposs
-    integer :: nbligr
-    integer :: nequa
-! ----------------------------------------------------------------------
-! BUT CREER UN NUME_DDL POUR UNE LISTE DE LIGRELS ET UNE GRANDEUR DONNEE
-! ----------------------------------------------------------------------
-! IN  K14  NUPOSS  : NOM D'UN NUME_DDL CANDIDAT (OU ' ')
-!                    SI NUPOSS != ' ', ON  REGARDE SI LE PROF_CHNO
-!                    DE NUPOSS EST CONVENABLE.
-! IN      I    NBLIGR: NOMBRE DE LIGRELS DANS VLIGR
-! IN/JXIN V(K19) VLIGR : LISTE DES NOMS DES LIGRELS
-! IN      K8   MOLOC : MODE_LOCAL PERMETTANT DE CHOISIR LES DDLS
-!                      A NUMEROTER.
-!              SI MOLOC=' ', ON DEDUIT MOLOC DU PHENOMENE
-!                      ATTACHE AUX LIGRELS (USAGE D'UN DISMOI TORDU)
-!              SINON ON UTILISE LE MOLOC DONNE EN ARGUMENT
-! IN/JXIN K19  SOLVEU: SOLVEUR
-! IN      K2   BASE  : BASE(1:1) : BASE POUR CREER LE NUME_DDL
-!                    (SAUF LE PROF_CHNO)
-!                  : BASE(2:2) : BASE POUR CREER LE PROF_CHNO
-! VAR/JXOUT K14 NU : NOM DU NUME_DDL.
-!                    SI NUPOSS !=' ', NU PEUT ETRE MODIFIE (NU=NUPOSS)
-! OUT  I NEQUA: NOMBRE D'EQUATIONS DU SOUS-DOMAINE (EXPLOITE QU'EN DD)
-!   -------------------------------------------------------------------
-!     ASTER INFORMATIONS:
-!----------------------------------------------------------------------
 !
+    integer, intent(in) :: nb_ligr
+    character(len=24), pointer, intent(in) :: list_ligr(:)
+    character(len=*), intent(in) :: solverz
+    character(len=2), intent(in) :: base
+    character(len=*), intent(inout) :: nume_ddlz
+    character(len=*), intent(in) :: nume_ddl_oldz
+    character(len=*), intent(in) :: modelocz
+    character(len=*), optional, intent(in) :: sd_iden_relaz
 !
-    integer :: i, jlligr, jnslv
+! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l1, l2, l3, l4
-    character(len=19) :: solve2
-    character(len=2) :: bas2
-    character(len=14) :: nu1, nu2
-    character(len=24) :: lligr, method
+! Factor
+!
+! Numbering - Create objects
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  nb_ligr        : number of LIGREL in list
+! In  list_ligr      : pointer to list of LIGREL
+! In  base           : JEVEUX base to create objects
+!                      base(1:1) => PROF_CHNO objects
+!                      base(2:2) => NUME_DDL objects
+! In  solver         : name of solver datastructure
+! IO  nume_ddl       : name of numbering object (NUME_DDL)
+! In  modeloc        : local mode for GRANDEUR numbering
+! In  nume_ddl_old   : name of previous nume_ddl object
+! In  sd_iden_rela   : name of object for identity relations between dof
+!
+! If nume_ddl_old is present
+!   -> try to know if PROF_CHNO in nume_ddl_old can be reuse
+!      In this case nume_ddl = nume_ddl_old
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=19) :: prof_chno, prof_chno_old
+    character(len=19) :: solver
+    character(len=14) :: nume_ddl , nume_ddl_old, moloc
+    character(len=24) :: renum, sd_iden_rela
+    logical :: l_matr_dist
     character(len=24), pointer :: slvk(:) => null()
+    character(len=24), pointer :: nslv(:) => null()
 !
-! DEB ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    solve2 = solveu
-    bas2 = base
-    nu1=nu
-    nu2=nuposs
 !
-    call detrsd('NUME_DDL', nu1)
+    solver        = solverz
+    nume_ddl      = nume_ddlz
+    moloc         = modelocz
+    nume_ddl_old  = nume_ddl_oldz
+    prof_chno     = nume_ddl//'.NUME'
+    prof_chno_old = nume_ddl_old//'.NUME'
 !
-    call jeveuo(solve2//'.SLVK', 'L', vk24=slvk)
-    method = slvk(4)
+    call detrsd('NUME_DDL', nume_ddl)
 !
+! - Identity relations between dof
 !
-    lligr = '&&NUMER2.LISTE_LIGREL'
-    call wkvect(lligr, 'V V K24', nbligr, jlligr)
-    do i = 1, nbligr
-        zk24(jlligr-1+i) = vligr(i)
-    end do
-!
-    call nueffe(lligr, bas2, nu1, method, moloc,&
-                solve2, nequa)
-!
-    if (slvk(10)(1:3) .eq. 'OUI') then
-        call nugllo(nu1, bas2, solve2)
+    sd_iden_rela = ' '
+    if (present(sd_iden_relaz)) then
+        sd_iden_rela = sd_iden_relaz
     endif
 !
-!     -- ON ESSAYE D'ECONOMISER LE PROF_CHNO :
-    if (nu2 .ne. ' ') then
+! - Method for renumbering equation
 !
-        l1=idenob(nu1//'.NUME.DEEQ',nu2//'.NUME.DEEQ')
-        l2=idenob(nu1//'.NUME.LILI',nu2//'.NUME.LILI')
-        l3=idenob(nu1//'.NUME.NUEQ',nu2//'.NUME.NUEQ')
-        l4=idenob(nu1//'.NUME.PRNO',nu2//'.NUME.PRNO')
+    call jeveuo(solver//'.SLVK', 'L', vk24=slvk)
+    renum       = slvk(4)
+    l_matr_dist = slvk(10) .eq. 'OUI'
 !
-        if (l1 .and. l2 .and. l3 .and. l4) then
-            call detrsd('NUME_DDL', nu1)
-            call jedupo(nu1//'     .ADNE', 'V', nu2//'     .ADNE', .false._1)
-            call jedupo(nu1//'     .ADLI', 'V', nu2//'     .ADLI', .false._1)
-            call jedetr(nu1//'     .ADLI')
-            call jedetr(nu1//'     .ADNE')
-            nu1=nu2
+! - Create NUME_EQUA objects
+!
+    call nueffe(nb_ligr, list_ligr, base, nume_ddl, renum,&
+                solver , modelocz = moloc, sd_iden_relaz = sd_iden_rela)
+!
+! - Create NUML_EQUA objects
+!
+    if (l_matr_dist) then
+        call nugllo(nume_ddlz, base, solver)
+    endif
+!
+! - Trying to reuse old nume_ddl
+!
+    if (nume_ddl_old.ne.' ') then
+        if (idensd('PROF_CHNO', prof_chno, prof_chno_old)) then
+            call detrsd('NUME_DDL', nume_ddl)
+            call jedupo(nume_ddl//'     .ADNE', 'V', nume_ddl_old//'     .ADNE', .false._1)
+            call jedupo(nume_ddl//'     .ADLI', 'V', nume_ddl_old//'     .ADLI', .false._1)
+            call jedetr(nume_ddl//'     .ADLI')
+            call jedetr(nume_ddl//'     .ADNE')
+            nume_ddl = nume_ddl_old
         endif
     endif
 !
-    call promor(nu1, bas2(1:1))
-    call jedetr(nu1//'     .ADLI')
-    call jedetr(nu1//'     .ADNE')
+! - Create matrix topology
 !
-    call jedetr(lligr)
+    call promor(nume_ddl, base(1:1))
 !
+! - Create NSLV object
 !
-! --- CREATION DE L'OBJET .NSLV :
-!     -------------------------------------
-    call jedetr(nu1//'.NSLV')
-    call wkvect(nu1//'.NSLV', bas2(1:1)//' V K24', 1, jnslv)
-    zk24(jnslv-1+1)=solve2
+    call jedetr(nume_ddl//'.NSLV')
+    call wkvect(nume_ddl//'.NSLV', base(1:1)//' V K24', 1, vk24 = nslv)
+    nslv(1)=solver
 !
-!     CALL CHEKSD('sd_nume_ddl',NU1,IRET)
+! - Cleaning
 !
-    nu=nu1
+    call jedetr(nume_ddl//'     .ADLI')
+    call jedetr(nume_ddl//'     .ADNE')
+!
+    nume_ddlz = nume_ddl
+!
+!     CALL CHEKSD('sd_nume_ddl',nume_ddlz,IRET)
+!
     call jedema()
 end subroutine
