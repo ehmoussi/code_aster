@@ -45,6 +45,13 @@ class SimpleKeyWord
     public:
         /**
         * Constructeur
+        */
+        SimpleKeyWord(): _simpleKeyWordName(""),
+                         _isValueObject(false)
+        {};
+
+        /**
+        * Constructeur
         * @param nom Chaine contenant le nom du mot-cle simple
         *   ex : pour le mot-cle simple MAILLAGE, nom sera egale a
         *        'MAILLAGE'

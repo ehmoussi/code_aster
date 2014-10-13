@@ -258,6 +258,11 @@ class MaterialBehaviour
             return _materialBehaviourPtr;
         };
 
+        MaterialBehaviourInstance& operator*(void) const
+        {
+            return *_materialBehaviourPtr;
+        };
+
         bool isEmpty() const
         {
             if ( _materialBehaviourPtr.use_count() == 0 ) return true;

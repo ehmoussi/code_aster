@@ -39,6 +39,9 @@ class FieldOnNodesInstance
             assert(name.size() == 19);
         };
 
+        ~FieldOnNodesInstance()
+        {}
+
         /**
         * Surcharge de l'operateur []
         * @param i Indice dans le tableau Jeveux
@@ -77,6 +80,9 @@ class FieldOnNodes
         FieldOnNodesTypePtr _fieldOnNodesPtr;
 
     public:
+        FieldOnNodes()
+        {};
+
         FieldOnNodes(string nom): _fieldOnNodesPtr( new FieldOnNodesInstance< ValueType > (nom) )
         {};
 

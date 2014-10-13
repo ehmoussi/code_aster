@@ -8,13 +8,13 @@
 %include "baseobject/JeveuxCollection.i"
 %include "userobject/FieldOnNodes.i"
 
-class GroupOfNodes
+class GroupOfNodes: public MeshEntity
 {
     public:
         GroupOfNodes(char* name, JeveuxCollectionLong& grpOfNodes);
 };
 
-class GroupOfElements
+class GroupOfElements: public MeshEntity
 {
     public:
         GroupOfElements(char* name, JeveuxCollectionLong& grpOfElements);
@@ -25,7 +25,7 @@ class MeshInstance
     public:
         MeshInstance();
 
-        const FieldOnNodesDouble &getCoordinates() const;
+        const FieldOnNodesDouble getCoordinates() const;
         bool readMEDFile(char*);
 };
 
@@ -38,7 +38,7 @@ class Mesh
 
 %extend Mesh
 {
-    const FieldOnNodes< double > &getCoordinates()
+    const FieldOnNodes< double > getCoordinates()
     {
         return (*$self)->getCoordinates();
     }

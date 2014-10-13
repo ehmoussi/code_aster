@@ -15,7 +15,12 @@
 class ModelInstance
 {
     private:
-        typedef list< pair< ElementaryModelisation, string > > listOfModsAndGrps;
+        // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
+        // dans la list
+        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+        typedef list< pair< ElementaryModelisation, MeshEntityPtr > > listOfModsAndGrps;
+        typedef listOfModsAndGrps::value_type listOfModsAndGrpsValue;
+        typedef listOfModsAndGrps::iterator listOfModsAndGrpsIter;
 
         // Nom Jeveux de la sd produite
         const string      _jeveuxName;
@@ -43,8 +48,8 @@ class ModelInstance
         */
         void addElementaryModelisation( Physics phys, Modelisations mod )
         {
-            _modelisations.push_back( listOfModsAndGrps::value_type( ElementaryModelisation(phys, mod),
-                                                                     "TOUT" ) );
+            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation(phys, mod),
+                                                              AllMeshEntities().getPointer() ) );
         };
 
         /**
@@ -55,8 +60,8 @@ class ModelInstance
         */
         void addElementaryModelisation( Physics phys, Modelisations mod, MeshEntity& entity)
         {
-            _modelisations.push_back( listOfModsAndGrps::value_type( ElementaryModelisation(phys, mod),
-                                                                     entity.getEntityName() ) );
+            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation(phys, mod),
+                                                              entity.getPointer() ) );
         };
 
         /**
