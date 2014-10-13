@@ -218,7 +218,9 @@ subroutine tran75(nomres, typres, nomin, basemo)
         mailla = zk24(llcha)(1:8)
         crefe(1) = zk24(llcha)
         crefe(2) = zk24(llcha+1)
-        if (tousno) call jelira(crefe(2)(1:19)//'.NUEQ', 'LONMAX', neq)
+        if (tousno) then
+            call dismoi('NB_EQUA', prchno, 'PROF_CHNO', repi=neq)
+        endif
         basem2 = ' '
     endif
 !
@@ -264,7 +266,9 @@ subroutine tran75(nomres, typres, nomin, basemo)
         call jelira(trange//'.FDEP', 'LONMAX', nbexci)
         nbexci = nbexci/2
         if (tousno) then
-            call vtcreb(chamn2, numddl, 'V', 'R', neq)
+            call vtcreb(chamn2, 'V', 'R',&
+                        nume_ddlz = numddl,&
+                        nb_equa_outz = neq)
             chamn2(20:24) = '.VALE'
             call jeveuo(chamn2, 'E', lval2)
             lpsdel = ipsdel
@@ -407,7 +411,9 @@ subroutine tran75(nomres, typres, nomin, basemo)
                         if (leffor) then
                             call vtdefs(chamno, typref(ich), 'G', 'R')
                         else
-                            call vtcreb(chamno, numddl, 'G', 'R', neq)
+                            call vtcreb(chamno, 'G', 'R',&
+                                        nume_ddlz = numddl,&
+                                        nb_equa_outz = neq)
                         endif
                     else
                         call vtcrec(chamno, chmod, 'G', 'R', neq)
@@ -463,7 +469,7 @@ subroutine tran75(nomres, typres, nomin, basemo)
                 call wkvect('&&TRAN75.VECTEUR', 'V V R', neq, jvec)
                 AS_ALLOCATE(vi=ddl, size=neq*nbdir)
                 call pteddl('NUME_DDL', numddl, nbdir, nomcmp, neq,&
-                            ddl)
+                            tabl_equa = ddl)
                 do id = 1, nbdir
                     do ie = 0, neq-1
                         zr(jvec+ie) = zr(jvec+ie) + ddl(1+neq*(id-1) +ie)*alpha*depl(id)

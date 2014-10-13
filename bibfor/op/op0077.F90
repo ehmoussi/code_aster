@@ -74,7 +74,6 @@ subroutine op0077()
     integer ::  n1, n2, nbcham, numsec
     integer, pointer :: ordr(:) => null()
     character(len=8), pointer :: refm(:) => null()
-    character(len=24), pointer :: nlnume(:) => null()
 !-----------------------------------------------------------------------
     data k8b/'        '/
     data param/'MODELE','CHAMPMAT','CARAELEM'/
@@ -111,7 +110,7 @@ subroutine op0077()
 !     --- SI RESTITUTION SUR UNE SQUELETTE, ALORS ATTACHER UN PROF_CHNO
 !         AU RESULTAT
     if (ir .eq. 0) then
-        profno = '&&OP0077'//'.PROFC.NUME'
+        profno = '&&OP0077.PROFC.NUME'
     else
         profno = nomres//'.PROFC.NUME'
     endif
@@ -281,7 +280,7 @@ subroutine op0077()
             if (ibid .eq. 0) then
                 call utmess('F', 'ALGORITH9_48')
             endif
-            call harm75(nomres, typres, resin, nomcmd, mode)
+            call harm75(nomres, typres, resin, mode)
         endif
 !
     endif

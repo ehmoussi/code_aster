@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2014  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,17 +16,18 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine projkm(nmabet, nbmabe, mailla, x3dca, noebe,&
-                      lnuma, licnx, numail, nbcnx, cxma,&
-                      xyzma, normal, itria, xbar, iproj,&
-                      excent)
+    subroutine projkm(nmabet, nbmabe, nbnobe, mailla, caelem,&
+                  nnoeca, x3dca, noebe, numail, nbcnx,&
+                  cxma, xyzma, normal, itria, xbar,&
+                  iproj, excent)
         character(len=24) :: nmabet
         integer :: nbmabe
+        integer :: nbnobe
         character(len=8) :: mailla
+        character(len=8) :: caelem
+        character(len=8) :: nnoeca
         real(kind=8) :: x3dca(*)
         integer :: noebe
-        character(len=19) :: lnuma
-        character(len=19) :: licnx
         integer :: numail
         integer :: nbcnx
         integer :: cxma(*)

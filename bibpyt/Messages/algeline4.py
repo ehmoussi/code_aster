@@ -162,9 +162,7 @@ Risques & conseils :
     ce qui peut induire des perturbations numériques.
 """),
 
-24 : _(u"""
- %(k1)s   pour le mot clé :  %(k2)s    noeud :  %(k3)s composante :  %(k4)s
-"""),
+
 
 25 : _(u"""
  combinaison non prévue   type résultat :  %(k1)s    type matrice  :  %(k2)s
@@ -223,7 +221,9 @@ Risques & conseils :
 """),
 
 43 : _(u"""
- la maille de nom  %(k1)s  existe déjà %(k2)s
+Erreur utilisateur dans CREA_MAILLAGE / CREA_POI1 :
+ On cherche à créer une maille de type POI1 de nom %(k1)s.
+ Mais il existe déjà dans le maillage une maille de même nom.
 """),
 
 55 : _(u"""

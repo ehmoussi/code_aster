@@ -1,5 +1,5 @@
 subroutine copis2(typesd, base, sd1, sd2)
-    implicit none
+implicit none
 #include "asterfort/copisd.h"
     character(len=*) :: typesd, base, sd1, sd2
 ! ======================================================================

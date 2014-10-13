@@ -67,7 +67,7 @@ subroutine regene(nomres, resgen, profno)
 !
 !
     integer :: i, j, iarefe, ibid, idbase, ier, iord, iret, iret1, itresu
-    integer :: jbid, ldnew, llchol, llinsk, llnueq, nbmod, nbnot, neq
+    integer :: jbid, ldnew, llchol, llinsk, nbmod, nbnot, neq
     integer :: nno, iadpar(13), iadpas(13), nbmo2, tmod(1)
     real(kind=8) :: rbid
     complex(kind=8) :: cbid
@@ -165,7 +165,7 @@ subroutine regene(nomres, resgen, profno)
         call jelibe(raid//'.REFA')
 !
         call jeveuo(numgen//'.REFN', 'L', vk24=nllref3)
-        respro=nllref3(1)
+        respro=nllref3(1)(1:8)
         call jelibe(numgen//'.REFN')
 !
         call dismoi('REF_RIGI_PREM', respro, 'RESU_DYNA', repk=raid)
@@ -176,13 +176,13 @@ subroutine regene(nomres, resgen, profno)
         call jelibe(raid//'.REFA')
 !
         call jeveuo(numgen//'.REFN', 'L', vk24=nllref5)
-        modgen=nllref5(1)
+        modgen=nllref5(1)(1:8)
         call jelibe(numgen//'.REFN')
 !
 ! ------ CREATION DU PROF-CHAMNO
 !
         call genugl(profno, indirf, modgen, mailsk)
-        call jelira(profno//'.NUEQ', 'LONMAX', neq)
+        call dismoi('NB_EQUA', profno, 'PROF_CHNO', repi=neq)
 !
 ! ------ RECUPERATION DU NOMBRE DE NOEUDS
 !
@@ -197,7 +197,6 @@ subroutine regene(nomres, resgen, profno)
 !CC ---- RESTITUTION PROPREMENT DITE
 !C
 !
-        call jeveuo(numgen//'.NUEQ', 'L', llnueq)
         call getvid(' ', 'MODE_MECA', scal=modmec, nbret=ibid)
         if (ibid .ne. 0) basmod=modmec
         call rsorac(basmod, 'LONUTI', 0, rbid, kbid,&
@@ -285,9 +284,13 @@ subroutine regene(nomres, resgen, profno)
             call rsexch(' ', nomres, depl, i, chamno,&
                         ier)
             if (zcmplx) then
-                call vtcreb(chamno, numedd, 'G', 'C', neq)
+                call vtcreb(chamno, 'G', 'C',&
+                            nume_ddlz = numedd,&
+                            nb_equa_outz = neq)
             else
-                call vtcreb(chamno, numedd, 'G', 'R', neq)
+                call vtcreb(chamno, 'G', 'R',&
+                            nume_ddlz = numedd,&
+                            nb_equa_outz = neq)
             endif
             call jeveuo(chamno//'.VALE', 'E', ldnew)
 !

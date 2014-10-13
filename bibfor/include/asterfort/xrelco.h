@@ -16,10 +16,13 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine xrelco(noma, nliseq, lisrel, nrel)
-        character(len=8) :: noma
-        character(len=19) :: nliseq
-        character(len=19) :: lisrel
-        integer :: nrel
+    subroutine xrelco(mesh   , nb_dim, sdline_crack, nb_rela_line, list_rela_line,&
+                      nb_edge)
+        character(len=8), intent(in) :: mesh
+        integer, intent(in) :: nb_dim
+        character(len=14), intent(in) :: sdline_crack
+        character(len=19), intent(in) :: list_rela_line
+        integer, intent(out) :: nb_rela_line
+        integer, intent(out) :: nb_edge
     end subroutine xrelco
 end interface

@@ -1,4 +1,24 @@
-subroutine nudeeq(base, nu14, neq, gds, iddlag)
+subroutine nudeeq(mesh, nb_node_mesh, nb_node_subs, nume_ddl, nb_equa,&
+                  igds, iddlag)
+!
+implicit none
+!
+#include "jeveux.h"
+#include "asterfort/assert.h"
+#include "asterfort/exisdg.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jedetr.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jenuno.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/nbec.h"
+#include "asterfort/utmess.h"
+#include "asterfort/wkvect.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/as_allocate.h"
+!
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -15,191 +35,174 @@ subroutine nudeeq(base, nu14, neq, gds, iddlag)
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-    implicit none
 !
-!     ARGUMENTS:
-!     ----------
-#include "jeveux.h"
-#include "asterfort/assert.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/exisdg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jenuno.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/nbec.h"
-#include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
+    character(len=8), intent(in) :: mesh
+    integer, intent(in) :: nb_node_mesh
+    integer, intent(in) :: nb_node_subs
+    character(len=14), intent(in) :: nume_ddl
+    integer, intent(in) :: nb_equa
+    integer, intent(in) :: igds
+    integer, intent(in) :: iddlag
 !
-    character(len=14) :: nu14
-    character(len=2) :: base
-    integer :: neq, gds, iddlag
-! ----------------------------------------------------------------------
-!     BUT : CREER LES OBJETS .DEEQ ET .DELG DANS UN PROF_CHNO.
+! --------------------------------------------------------------------------------------------------
 !
-!     IN:
-!     BASE    : BASE(1:1) : BASE POUR CREER LE NUME_DDL
-!                    (SAUF LE PROF_CHNO)
-!             : BASE(2:2) : BASE POUR CREER LE PROF_CHNO
-!     NU14 : NOM D'UN NUME_DDL
-!     NEQ    : NOMBRE D'EQUATIONS (OU DE DDL) DU PROF_CHNO
-!     GDS    : NUMERO DE LA GRANDEUR SIMPLE ASSOCIEE AU CHAMP.
-!     IDDLAG : ADRESSE DE L'OBJET DSCLAG (VOIR NUEFFE)
+! Numbering 
 !
-!     OUT:
-!     NU14 EST COMPLETE DE L'OBJET ".NUME.DEEQ" V(I) DIM=2*NEQ
-!         (CET OBJET EST DETRUIT S'IL EXISTE DEJA).
-!     V((IDDL-1)*2+1)--> SI LE NOEUD SUPPORT DE L'EQUA. IDDL EST PHYS.:
-!                           +NUMERO DU NOEUD
-!                        SI LE NOEUD SUPPORT DE L'EQUA. IDDL EST UN
-!                        LAGRANGE DE BLOCAGE :
-!                           +NUMERO DU NOEUD PHYS. BLOQUE
-!                        SI LE NOEUD SUPPORT DE L'EQUA. IDDL EST UN
-!                        LAGRANGE DE LIAISON :
-!                            0
-!     V((IDDL-1)*2+2)--> SI LE NOEUD SUPPORT DE L'EQUA. IDDL EST PHYS.:
-!                           + NUM. DANS L'ORDRE DU CATAL. DES GRAND.
-!                           DE LA CMP CORRESPONDANT A L'EQUATION IDDL.
-!                        SI LE NOEUD SUPPORT DE L'EQUA. IDDL EST UN
-!                        LAGRANGE DE BLOCAGE :
-!                           - NUM. DANS L'ORDRE DU CATAL. DES GRAND.
-!                           DE LA CMP CORRESPONDANT AU BLOCAGE.
-!                        SI LE NOEUD SUPPORT DE L'EQUA. IDDL EST UN
-!                        LAGRANGE DE LIAISON :
-!                            0
-!     NU14 EST COMPLETE DE L'OBJET ".NUME.DELG" V(I) DIM=NEQ
-!         (CET OBJET EST DETRUIT S'IL EXISTE DEJA).
-!     V( IDDL ) --> 0  SI LE NOEUD SUPPORT DE L'EQUATION IDDL N'EST PAS
-!                         UN NOEUD DE LAGRANGE
-!                   -1 SI LE NOEUD SUPPORT DE L'EQUATION IDDL EST UN
-!                         "1ER" NOEUD DE LAGRANGE
-!                   -2 SI LE NOEUD SUPPORT DE L'EQUATION IDDL EST UN
-!                         "2EME" NOEUD DE LAGRANGE
-! ----------------------------------------------------------------------
+! Set DEEQ object (with non-physical nodes)
+! Set DELG object
 !
-!     FONCTIONS EXTERNES:
-!     -------------------
+! --------------------------------------------------------------------------------------------------
 !
-!     VARIABLES LOCALES:
-!     ------------------
+! In  mesh           : name of mesh
+! In  nb_node_mesh   : number of (physical) nodes in mesh
+! In  nb_node_subs   : number of (non-physical) nodes in mesh for substructuring
+! In  nume_ddl       : name of nume_ddl object
+! In  nb_equa        : number of equations
+! In  igds           : index of GRANDEUR used to numbering
+! In  iddlag         : adresse of DSCLAG object (see nueffe)
 !
-    character(len=8) :: ma, nono, nocmp
-    character(len=19) :: numeqa
+! Object   : PROF_CHNO.DEEQ 
+! Dimension: vector of size (2*nb_equa)
+! Contains : for i_equa = 1,nb_equa
+!
+!   DEEQ((i_equa-1)*2+1)
+!       SI LE NOEUD SUPPORT DE L'EQUA. i_equa EST PHYS.:
+!           +NUMERO DU NOEUD
+!       SI LE NOEUD SUPPORT DE L'EQUA. i_equa EST UN LAGRANGE DE BLOCAGE :
+!           +NUMERO DU NOEUD PHYS. BLOQUE
+!       SI LE NOEUD SUPPORT DE L'EQUA. i_equa EST UN LAGRANGE DE LIAISON :
+!           0
+!   DEEQ((i_equa-1)*2+2)
+!       SI LE NOEUD SUPPORT DE L'EQUA. i_equa EST PHYS.:
+!           + NUM. DANS L'ORDRE DU CATAL. DES GRAND. DE LA CMP CORRESPONDANT A L'EQUATION IDDL.
+!       SI LE NOEUD SUPPORT DE L'EQUA. i_equa EST UN LAGRANGE DE BLOCAGE :
+!           - NUM. DANS L'ORDRE DU CATAL. DES GRAND. DE LA CMP CORRESPONDANT AU BLOCAGE.
+!       SI LE NOEUD SUPPORT DE L'EQUA. i_equa EST UN LAGRANGE DE LIAISON :
+!           0
+!
+! Object   : NUME_EQUA.DELG 
+! Dimension: vector of size (nb_equa)
+! Contains : for i_equa = 1,nb_equa
+!
+!   DELG(i_equa)
+!        0 SI LE NOEUD SUPPORT DE L'EQUATION i_equa N'EST PAS UN NOEUD DE LAGRANGE
+!       -1 SI LE NOEUD SUPPORT DE L'EQUATION i_equa EST UN "1ER" NOEUD DE LAGRANGE
+!       -2 SI LE NOEUD SUPPORT DE L'EQUATION i_equa EST UN "2EME" NOEUD DE LAGRANGE
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: nb_cmp_chck
+    parameter (nb_cmp_chck=10)
+!
+    character(len=8) :: nono, nocmp
+    character(len=19) :: prof_chno
+    character(len=24) :: prno, nueq, deeq
+    character(len=19) :: nume_equa
+    character(len=24) :: delg
     character(len=24) :: valk(2)
-!
-!
-!
-!-----------------------------------------------------------------------
-    integer :: i, iadg, iddl, ieq, ier
-    integer :: ilag, j, jdeeq, jdelg,  jncmp
-    integer :: jprno, jtypl, k, l, nblag, nbligr, nbnl
-    integer :: nbnm, nbno, ncmpmx, nddlb, nec, nob, nucmp
-    integer :: nuno
+    integer :: i_ligr, iadg, i_dof, ier, i_equ
+    integer :: ilag, jncmp
+    integer :: jprno, jtypl, length_prno, nb_lagr, nb_ligr
+    integer :: nb_node, ncmpmx, nddlb, nec, nob
+    integer :: i_node, i_cmp_glob, i_cmp_chck
     integer, pointer :: lnobloq(:) => null()
-    integer, pointer :: nueq(:) => null()
-!-----------------------------------------------------------------------
+    integer, pointer :: p_nueq(:) => null()
+    integer, pointer :: p_deeq(:) => null()
+    integer, pointer :: p_delg(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
-    numeqa=nu14//'.NUME'
-    call dismoi('NOM_MAILLA', numeqa, 'NUME_EQUA', repk=ma)
-    call dismoi('NB_NO_MAILLA', ma, 'MAILLAGE', repi=nbnm)
-    call dismoi('NB_NL_MAILLA', ma, 'MAILLAGE', repi=nbnl)
-    if (nbnl .gt. 0) call jeveuo(ma//'.TYPL', 'L', jtypl)
 !
-!
-!     - ALLOCATION DE ".DEEQ":
-    call jedetr(numeqa//'.DEEQ')
-    call wkvect(numeqa//'.DEEQ', base(2:2)//' V I', 2*neq, jdeeq)
-!
-!     - ALLOCATION DE ".DELG":
-    call jedetr(numeqa//'.DELG')
-    call wkvect(numeqa//'.DELG', base(1:1)//' V I', neq, jdelg)
-!
-!
-!     - ADRESSE DE ".NUEQ":
-    call jeveuo(numeqa//'.NUEQ', 'L', vi=nueq)
-!
-    call jelira(jexnum('&CATA.GD.NOMCMP', gds), 'LONMAX', ncmpmx)
-    nec = nbec(gds)
-    if (ncmpmx .eq. 0) then
-        call utmess('F', 'ASSEMBLA_24')
+    nume_equa = nume_ddl//'.NUME'
+    delg      = nume_equa(1:19)//'.DELG'
+    prof_chno = nume_ddl//'.NUME'
+    prno      = prof_chno(1:19)//'.PRNO'
+    nueq      = prof_chno(1:19)//'.NUEQ'
+    deeq      = prof_chno(1:19)//'.DEEQ'
+    if (nb_node_subs .gt. 0) then
+        call jeveuo(mesh//'.TYPL', 'L', jtypl)
     endif
-    if (nec .eq. 0) then
-        call utmess('F', 'ASSEMBLA_25')
-    endif
-    nblag = 0
 !
+! - Information about GRANDEUR
 !
-    call jelira(numeqa//'.PRNO', 'NMAXOC', nbligr)
-    do i = 1, nbligr
-        call jelira(jexnum(numeqa//'.PRNO', i), 'LONMAX', l)
-        if (l .gt. 0) then
-            call jeveuo(jexnum(numeqa//'.PRNO', i), 'L', jprno)
-!---- NBNO : SI I=1 --> NOMBRE DE NOEUDS DU MAILLAGE
-!            SI I>1 --> NOMBRE DE NOEUDS SUPPLEMENTAIRES DU LIGREL I
-            nbno = l/ (nec+2)
-            if ((i.eq.1) .and. (nbno.ne. (nbnm+nbnl))) then
-                call utmess('F', 'CALCULEL_2')
+    call jelira(jexnum('&CATA.GD.NOMCMP', igds), 'LONMAX', ncmpmx)
+    nec     = nbec(igds)
+    ASSERT(ncmpmx .ne. 0)
+    ASSERT(nec .ne. 0)
+!
+! - Access to NUEQ/DEEQ/DELG objects
+!
+    call jeveuo(delg, 'E', vi = p_delg)
+    call jeveuo(nueq, 'L', vi = p_nueq)
+    call jeveuo(deeq, 'E', vi = p_deeq)
+    nb_lagr = 0
+!
+    call jelira(prno, 'NMAXOC', nb_ligr)
+    do i_ligr = 1, nb_ligr
+        call jelira(jexnum(prno, i_ligr), 'LONMAX', length_prno)
+        if (length_prno .gt. 0) then
+            call jeveuo(jexnum(prno, i_ligr), 'L', jprno)
+!
+! --------- Nb_node: number of nodes
+! ---------  i_ligr = 1 => from mesh
+! ---------  i_ligr > 1 => from other LIGREL (loads)
+!
+            nb_node = length_prno/(nec+2)
+            if ((i_ligr.eq.1) .and. (nb_node.ne.(nb_node_mesh+nb_node_subs))) then
+                ASSERT(.false.)
             endif
-!
-            do j = 1, nbno
-!--- J : SI I=1 --> NUMERO DU NOEUD DU MAILLAGE
-!        SI I>1 --> NUMERO DU NOEUD SUPPLEMENTAIRE DU
-!                   LIGREL I (CHANGE DE SIGNE).
-                iddl = zi(jprno-1+ (j-1)* (nec+2)+1) - 1
-                iadg = jprno - 1 + (j-1)* (nec+2) + 3
-                do k = 1, ncmpmx
-                    if (exisdg(zi(iadg),k)) then
-                        iddl = iddl + 1
-                        ieq = nueq(iddl)
-!
-                        if (i .eq. 1) then
-                            ASSERT((nbnl.le.0) .or. (ieq.eq.iddl))
-                            zi(jdeeq-1+2* (ieq-1)+1) = j
-                            zi(jdeeq-1+2* (ieq-1)+2) = k
-                            zi(jdelg-1+ieq) = 0
+            do i_node = 1, nb_node
+                i_dof = zi(jprno-1+ (i_node-1)*(nec+2)+1) - 1
+                iadg  = jprno - 1 + (i_node-1)*(nec+2) + 3
+                do i_cmp_glob = 1, ncmpmx
+                    if (exisdg(zi(iadg),i_cmp_glob)) then
+                        i_dof  = i_dof + 1
+                        i_equ  = p_nueq(i_dof)
+                        if (i_ligr .eq. 1) then
+                            if (p_deeq(2*(i_equ-1)+1).eq.0) then
+                                p_deeq(2*(i_equ-1)+1) = i_node
+                                p_deeq(2*(i_equ-1)+2) = i_cmp_glob
+                            endif
+                            p_delg(i_equ) = 0
                         else
-                            ilag = nblag + j
-                            nob = zi(iddlag+ (ilag-1)*3)
+                            ilag  = nb_lagr + i_node
+                            nob   = zi(iddlag+ (ilag-1)*3)
                             nddlb = zi(iddlag+ (ilag-1)*3+1)
-                            zi(jdeeq-1+2* (ieq-1)+1) = nob
-                            zi(jdeeq-1+2* (ieq-1)+2) = nddlb
-                            zi(jdelg-1+ieq) = -zi(iddlag+ (ilag-1)*3+ 2)
+                            p_deeq(2*(i_equ-1)+1) = nob
+                            p_deeq(2*(i_equ-1)+2) = nddlb
+                            p_delg(i_equ) = -zi(iddlag+ (ilag-1)*3+ 2)
                         endif
-!
                     endif
                 end do
             end do
-            if (i .gt. 1) nblag = nblag + nbno
+            if (i_ligr .gt. 1) then
+                nb_lagr = nb_lagr + nb_node
+            endif
         endif
     end do
 !
+! - Check if dof are only once 'blocked'
 !
-!     -- ON VERIFIE QUE LES DDLS BLOQUES NE SONT PAS BLOQUES
-!        PLUSIEURS FOIS (ON NE REGARDE QUE LES 10 1ERES CMPS):
-!     -------------------------------------------------------
-    AS_ALLOCATE(vi=lnobloq, size=nbnm*10)
-    do ieq = 1, neq
-        nuno = zi(jdeeq-1+2* (ieq-1)+1)
-        nucmp = zi(jdeeq-1+2* (ieq-1)+2)
-        if ((nuno.gt.0) .and. (nucmp.lt.0) .and. (nucmp.ge.-10)) then
-            nucmp = -nucmp
-            lnobloq((nuno-1)*10+nucmp) = lnobloq((nuno-1)*10+ nucmp) + 1
+    AS_ALLOCATE(vi=lnobloq, size=nb_node_mesh*nb_cmp_chck)
+    do i_equ = 1, nb_equa
+        i_node     = p_deeq(2*(i_equ-1)+1)
+        i_cmp_glob = p_deeq(2*(i_equ-1)+2)
+        if ((i_node.gt.0) .and. (i_cmp_glob.lt.0) .and. (i_cmp_glob.ge.-nb_cmp_chck)) then
+            i_cmp_glob = -i_cmp_glob
+            lnobloq((i_node-1)*nb_cmp_chck+i_cmp_glob) = &
+                lnobloq((i_node-1)*nb_cmp_chck+i_cmp_glob) + 1
         endif
     end do
 !
     ier = 0
-    do nuno = 1, nbnm
-        do nucmp = 1, 10
-            if (lnobloq((nuno-1)*10+nucmp) .gt. 2) then
+    do i_node = 1, nb_node_mesh
+        do i_cmp_chck = 1, nb_cmp_chck
+            if (lnobloq((i_node-1)*nb_cmp_chck+i_cmp_chck) .gt. 2) then
                 ier = ier + 1
-                call jenuno(jexnum(ma//'.NOMNOE', nuno), nono)
-                call jeveuo(jexnum('&CATA.GD.NOMCMP', gds), 'L', jncmp)
-                nocmp = zk8(jncmp-1+nucmp)
+                call jenuno(jexnum(mesh//'.NOMNOE', i_node), nono)
+                call jeveuo(jexnum('&CATA.GD.NOMCMP', igds), 'L', jncmp)
+                nocmp = zk8(jncmp-1+i_cmp_chck)
                 valk(1) = nono
                 valk(2) = nocmp
                 call utmess('E', 'ASSEMBLA_26', nk=2, valk=valk)
@@ -208,7 +211,6 @@ subroutine nudeeq(base, nu14, neq, gds, iddlag)
     end do
     ASSERT(ier.le.0)
     AS_DEALLOCATE(vi=lnobloq)
-!
 !
     call jedema()
 end subroutine

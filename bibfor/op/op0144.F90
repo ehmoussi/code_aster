@@ -28,6 +28,7 @@ subroutine op0144()
 #include "asterc/getres.h"
 #include "asterc/indik8.h"
 #include "asterfort/assert.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/cmpcha.h"
 #include "asterfort/crprno.h"
 #include "asterfort/dismoi.h"
@@ -65,7 +66,7 @@ subroutine op0144()
     common  / kop144 / typflu
 !
     integer :: ibid, nbconn, iconn
-    integer :: ncmp, ncmpmx, jcorr2
+    integer :: ncmp
     real(kind=8) :: r8b
     complex(kind=8) :: c16b
     aster_logical :: tmode, calcul(2)
@@ -76,6 +77,9 @@ subroutine op0144()
     character(len=24) :: numoi, fsic, nomcha, matria, chrefe, chdesc
     character(len=24) :: chvale
     character(len=32) :: nomvar
+    integer, pointer :: cata_to_field(:) => null()
+    integer, pointer :: field_to_cata(:) => null()
+    character(len=8), pointer :: cmp_name(:) => null()
 !
 !-----------------------------------------------------------------------
     integer :: i, iacmp, iamor, iav, icmp, idec, idesc
@@ -94,33 +98,6 @@ subroutine op0144()
      &                     'DRX     ','DRY     ','DRZ     '/
 !
 !-----------------------------------------------------------------------
-!     OBJETS CREES SUR LA BASE GLOBALE
-!
-!     NOMU//'.DESC'
-!     NOMU//'.REMF'
-!     NOMU//'.NUMO'
-!     NOMU//'.VITE'
-!     NOMU//'.FREQ'
-!     NOMU//'.MASG'
-!     NOMU//'.FACT'
-!
-!     TABLE DES NOMS DES CHAMPS DE DEPLACEMENTS AUX NOEUDS
-!
-!     OBJETS ASSOCIES AU PROF_CHNO COMMUN A TOUS LES CHAMPS DE
-!     DEPLACEMENTS AUX NOEUDS
-!     NOMU(1:8)//'.C01.YY1XX1.LILI'
-!     NOMU(1:8)//'.C01.YY1XX1.LPRN'
-!     NOMU(1:8)//'.C01.YY1XX1.PRNO'
-!     NOMU(1:8)//'.C01.YY1XX1.NUEQ'
-!     NOMU(1:8)//'.C01.YY1XX1.DEEQ'
-!     CES OBJETS SONT CREES PAR LA ROUTINE CRPRNO
-!
-!     OBJETS ASSOCIES AUX CHAMPS DE DEPLACEMENTS AUX NOEUDS
-!     NOMU(1:8)//'.C01.YYYXXX.DESC'
-!     NOMU(1:8)//'.C01.YYYXXX.REFE'
-!     NOMU(1:8)//'.C01.YYYXXX.VALE'
-!
-!-----------------------------------------------------------------------
 !
     call jemarq()
     c16b=(0.d0,0.d0)
@@ -133,7 +110,6 @@ subroutine op0144()
     call getvr8('BASE_MODALE', 'AMOR_REDUIT_CONN', iocc=1, nbval=0, nbret=nbconn)
     ifr = iunifi('RESULTAT')
     ifm = iunifi('MESSAGE')
-    write(ifr,1000)
 !
 !
 ! --- 0.VERIFICATIONS AVANT EXECUTION ---
@@ -359,7 +335,7 @@ subroutine op0144()
 ! --------AU PREMIER PASSAGE CREATION DU PROF_CHNO
             if (io .eq. 1 .and. ipar .eq. 1) then
                 zk24(jcrefe+1) = cham19
-                call crprno(cham19, 'G', nbnoeu, long)
+                call crprno(cham19, 'G', mailla, gran, long)
                 call jeveuo(cham19//'.PRNO', 'E', vi=prno)
                 idec = 1
                 ii = 0
@@ -374,15 +350,17 @@ subroutine op0144()
                 end do
                 prchno = cham19
 !
-!           -- CALCUL DE L'OBJET .DEEQ :
-                call cmpcha(cham19, '&&OP0144.NOMCMP', '&&OP0144.CORR1', '&&OP0144.CORR2', ncmp,&
-                            ncmpmx)
-                call jeveuo('&&OP0144.CORR2', 'L', jcorr2)
+! ------------- Create object local components (field) => global components (catalog)
+!
+                call cmpcha(cham19, cmp_name, cata_to_field, field_to_cata, nb_cmpz = ncmp)
+!
+! ------------- Compute .DEEQ object
+!
                 call pteequ(prchno, 'G', long, numgd, ncmp,&
-                            zi(jcorr2))
-                call jedetr('&&OP0144.NOMCMP')
-                call jedetr('&&OP0144.CORR1')
-                call jedetr('&&OP0144.CORR2')
+                            field_to_cata)
+                AS_DEALLOCATE(vi = cata_to_field)
+                AS_DEALLOCATE(vi = field_to_cata)
+                AS_DEALLOCATE(vk8 = cmp_name)
 !
             else
                 zk24(jcrefe+1) = prchno
@@ -425,5 +403,5 @@ subroutine op0144()
 !
     call jedema()
     call jedetc('G', '&&MEFCEN', 1)
-    1000 format(/,80('-'))
+
 end subroutine
