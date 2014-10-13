@@ -1,5 +1,4 @@
 
 #include "userobject/PCFieldOnMesh.h"
 
-// Piecewise Constant (PC) Field on Mesh : <=> "carte"  
-
+/* person_in_charge: natacha.bereux at edf.fr */

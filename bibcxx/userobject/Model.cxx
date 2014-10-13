@@ -52,7 +52,7 @@ bool ModelInstance::build()
         occurAFFE.addSimpleKeywordStr(mCSModelisation);
 
         SimpleKeyWordStr mCSGroup;
-        if ( typeid( *(curIter->second) ) == typeid( AllMeshEntities ) )
+        if ( typeid( *(curIter->second) ) == typeid( AllMeshEntitiesInstance ) )
         {
             mCSGroup = SimpleKeyWordStr("TOUT");
             mCSGroup.addValues("OUI");
