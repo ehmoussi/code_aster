@@ -4,7 +4,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "definition.h"
-#include "baseobject/JeveuxAllowedTypes.h"
+#include "MemoryManager/JeveuxAllowedTypes.h"
 
 #include <string>
 #include <list>

@@ -3,7 +3,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "baseobject/EnumClass.h"
+#include "ToolClasses/EnumClass.h"
 #include "checkerobject/PhysicsAndModelisations.h"
 
 /**

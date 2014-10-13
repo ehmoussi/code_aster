@@ -49,7 +49,7 @@ class ModelInstance
         void addElementaryModelisation( Physics phys, Modelisations mod )
         {
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation(phys, mod),
-                                                              AllMeshEntities().getPointer() ) );
+                                                              MeshEntityPtr( new AllMeshEntitiesInstance() ) ) );
         };
 
         /**
