@@ -1,6 +1,10 @@
 
 #include "checkerobject/AuthorizedModelisations.h"
 
+/**
+* Initialisation des modelisations autorisees pour chaque physique
+*/
+
 Enum<AuthorizedMechnicsModelisation>::instances_list Enum<AuthorizedMechnicsModelisation>::s_instances;
 
 const AuthorizedMechnicsModelisation AuthorizedMechnicsModelisation::ModelAxis(Axisymmetrical);

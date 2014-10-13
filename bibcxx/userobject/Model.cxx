@@ -2,6 +2,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "userobject/Model.h"
+#include <typeinfo>
 
 ModelInstance::ModelInstance(): _jeveuxName( initAster->getNewResultObjectName() ),
                                 _typeOfElements( JeveuxVectorLong( string(_jeveuxName + ".MAILLE    ") ) ),
@@ -32,7 +33,7 @@ bool ModelInstance::build()
     FactorKeyword motCleAFFE = FactorKeyword("AFFE", true);
 
     // Boucle sur les couples (physique / modelisation) ajoutes par l'utilisateur
-    for ( listOfModsAndGrps::iterator curIter = _modelisations.begin();
+    for ( listOfModsAndGrpsIter curIter = _modelisations.begin();
           curIter != _modelisations.end();
           ++curIter )
     {
@@ -50,16 +51,24 @@ bool ModelInstance::build()
         mCSModelisation.addValues((*curIter).first.getModelisation());
         occurAFFE.addSimpleKeywordStr(mCSModelisation);
 
-        if ( (*curIter).second == "TOUT" )
+        SimpleKeyWordStr mCSGroup;
+        if ( typeid( *(curIter->second) ) == typeid( AllMeshEntities ) )
         {
-            SimpleKeyWordStr mCSGroup = SimpleKeyWordStr("TOUT");
+            mCSGroup = SimpleKeyWordStr("TOUT");
             mCSGroup.addValues("OUI");
-            occurAFFE.addSimpleKeywordStr(mCSGroup);
-            // Ajout de l'occurence au mot-cle facteur AFFE
-            motCleAFFE.addOccurence(occurAFFE);
         }
         else
-            throw "Not yet implemented";
+        {
+            if ( typeid( *(curIter->second) ) == typeid( GroupOfNodes ) )
+                mCSGroup = SimpleKeyWordStr("GROUP_NO");
+            else if ( typeid( *(curIter->second) ) == typeid( GroupOfElements ) )
+                mCSGroup = SimpleKeyWordStr("GROUP_MA");
+
+            mCSGroup.addValues( (curIter->second)->getEntityName() );
+        }
+        occurAFFE.addSimpleKeywordStr(mCSGroup);
+        // Ajout de l'occurence au mot-cle facteur AFFE
+        motCleAFFE.addOccurence(occurAFFE);
     }
 
     // Ajout du mot-cle facteur AFFE a la commande AFFE_MODELE

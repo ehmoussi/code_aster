@@ -5,88 +5,15 @@
 
 #include "definition.h"
 #include "command/Initializer.h"
-#include "baseobject/JeveuxCollection.h"
 #include "baseobject/JeveuxBidirectionalMap.h"
 #include "userobject/FieldOnNodes.h"
+#include "userobject/MeshEntities.h"
 #include <assert.h>
-
-/**
-* class MeshEntity
-*   Cette classe permet de definir des entites de maillage :
-*   groupe de mailles ou groupe de noeuds
-* @author Nicolas Sellenet
-*/
-class MeshEntity
-{
-    private:
-        // Nom de l'entite
-        const string            _name;
-        // Collection .GROUPEMA ou .GROUPENO
-        JeveuxCollectionLong    _groupsOfEntities;
-
-    public:
-        /**
-        * Constructeur
-        * @param name nom de l'entite
-        * @param grpOfEntities Collection Jeveux contenant les "entites"
-        */
-        MeshEntity(string name, JeveuxCollectionLong& grpOfEntities): _name(name),
-                                                                      _groupsOfEntities(grpOfEntities)
-        {
-            if ( ! _groupsOfEntities->existsObject(name) )
-                throw string("Group " + name + " not in mesh");
-        };
-
-        /**
-        * Obtenir le nom de l'entite
-        * @return renvoit le nom de l'entite
-        */
-        const string& getEntityName()
-        {
-            return _name;
-        };
-};
-
-/**
-* class GroupOfNodes
-*   Cette classe permet de definir des groupes de noeuds
-* @author Nicolas Sellenet
-*/
-class GroupOfNodes: MeshEntity
-{
-    public:
-        /**
-        * Constructeur
-        * @param name nom de l'entite
-        * @param grpOfEntities Collection Jeveux contenant les "entites"
-        */
-        GroupOfNodes(string name, JeveuxCollectionLong& grpOfNodes):
-            MeshEntity(name, grpOfNodes)
-        {};
-};
-
-/**
-* class GroupOfElements
-*   Cette classe permet de definir des groupes de mailles
-* @author Nicolas Sellenet
-*/
-class GroupOfElements: MeshEntity
-{
-    public:
-        /**
-        * Constructeur
-        * @param name nom de l'entite
-        * @param grpOfEntities Collection Jeveux contenant les "entites"
-        */
-        GroupOfElements(string name, JeveuxCollectionLong& grpOfElements):
-            MeshEntity(name, grpOfElements)
-        {};
-};
 
 class MeshInstance
 {
     private:
-        friend class MeshEntity;
+        friend class VirtualMeshEntity;
         // Nom Jeveux du maillage
         const string           _jeveuxName;
         // Objet Jeveux '.DIME'
@@ -118,7 +45,9 @@ class MeshInstance
         * Destructeur
         */
         ~MeshInstance()
-        {};
+        {
+            cout << "~MeshInstance" << endl;
+        };
 
         /**
         * Recuperation du nom Jeveux
@@ -133,7 +62,7 @@ class MeshInstance
         * Recuperation des coordonnees du maillage
         * @return champ aux noeuds contenant les coordonnees des noeuds du maillage
         */
-        const FieldOnNodesDouble &getCoordinates() const
+        const FieldOnNodesDouble getCoordinates() const
         {
             return _coordinates;
         };

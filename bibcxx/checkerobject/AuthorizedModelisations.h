@@ -26,7 +26,7 @@ class AuthorizedMechnicsModelisation: public Enum<AuthorizedMechnicsModelisation
 };
 
 /**
-* class AuthorizedMechnicsModelisation
+* class AuthorizedThermalModelisation
 *   Modelisations autorisees pour la thermique
 * @author Nicolas Sellenet
 */

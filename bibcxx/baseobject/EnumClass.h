@@ -7,6 +7,13 @@
 #include <set>
 #include <algorithm>
 
+/**
+* class Enum
+*   Cette classe permet de definir des enum d'entier plus complexes
+*   disposant d'une methode Is_Valid_Value permettant de savoir si
+*   une valeur est dans l'enum
+* @author Nicolas Sellenet
+*/
 template < class T >
 class Enum
 {
@@ -38,7 +45,10 @@ class Enum
         };
 
     public:
-        // Constructors
+        /**
+        * Constructeur
+        * @param Value Valeur contenue dans l'enum
+        */
         explicit Enum( int Value );
 
         // Compiler-generated copy constructor and operator= are OK.
@@ -66,6 +76,7 @@ class Enum
         // Iteration
         static const_iterator begin( void ) { return s_instances.begin(); }
         static const_iterator end( void ) { return s_instances.end(); }
+
     private:
         int m_value;
         static instances_list s_instances;
