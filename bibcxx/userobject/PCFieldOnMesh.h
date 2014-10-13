@@ -1,6 +1,8 @@
 #ifndef PCFIELDONMESH_H_
 #define PCFIELDONMESH_H_
 
+/* person_in_charge: natacha.bereux at edf.fr */
+
 #include <string>
 #include <assert.h>
 
@@ -18,7 +20,9 @@ class PCFieldOnMeshInstance
 {
     private:
         // Nom Jeveux de la carte
-        string                  _name; 
+        string                  _name;
+        // Vecteur Jeveux '.NOMA'
+        JeveuxVectorChar8       _meshName;
         // Vecteur Jeveux '.DESC'
         JeveuxVectorLong        _descriptor;
         // Vecteur Jeveux '.NOLI'
@@ -36,6 +40,7 @@ class PCFieldOnMeshInstance
         * @param name Nom Jeveux de la carte
         */
         PCFieldOnMeshInstance( string name ): _name( name ),
+                                              _meshName( JeveuxVectorK8( name+".NOMA" ) ),
                                               _descriptor( JeveuxVectorLong( string( name+".DESC" ) ) ),
                                               _nameOfLigrels( JeveuxVectorChar24( string( name+".NOLI") ) ),
                                               _listOfMeshElements( JeveuxCollectionLong( string( name+".LIMA") ) ),
@@ -48,16 +53,19 @@ class PCFieldOnMeshInstance
 
         /**
         * Mise a jour des pointeurs Jeveux
-        * @return renvoit true si la mise a jour s'est bien deroulee, false sinon
+        * @return true si la mise a jour s'est bien deroulee, false sinon
         */
         bool updateValuePointers()
         {
-           bool retour = _descriptor->updateValuePointer();
-           retour = (retour && _nameOfLigrels->updateValuePointer()) ;
-           retour = (retour &&  _listOfMeshElements->updateValuePointer());
-           retour = (retour && _valuesList->updateValuePointer());
-           return retour;
+            bool retour = _meshName->updateValuePointer();
+            retour = ( retour && _descriptor->updateValuePointer() );
+            retour = ( retour && _valuesList->updateValuePointer() );
+            // Les deux elements suivants sont facultatifs
+            _listOfMeshElements->updateValuePointer();
+            _nameOfLigrels->updateValuePointer();
+            return retour;
         };
+
         /**
         * Définition du maillage sous-jacent 
         * @param currentMesh objet Mesh sur lequel le modele reposera
