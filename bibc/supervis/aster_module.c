@@ -33,7 +33,7 @@
 #include "aster_utils.h"
 #include "aster_exceptions.h"
 
-#include "command/Initializer.h"
+#include "RunManager/Initializer.h"
 
 /*
  *   PRIVATE FUNCTIONS

@@ -23,15 +23,15 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
     }
 }
 
-%include "userobject/FieldOnNodes.i"
-%include "userobject/Mesh.i"
-%include "userobject/Model.i"
-%include "userobject/Material.i"
-%include "userobject/ResultsContainer.i"
+%include "DataFields/FieldOnNodes.i"
+%include "Mesh/Mesh.i"
+%include "Modelisations/Model.i"
+%include "Materials/Material.i"
+%include "Results/ResultsContainer.i"
 
-%include "command/CataBuilder.i"
+%include "RunManager/CataBuilder.i"
 
-%include "debug/DebugPrint.i"
+%include "Debug/DebugPrint.i"
 
 void asterInitialization(int imode);
 

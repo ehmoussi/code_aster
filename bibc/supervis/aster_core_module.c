@@ -38,7 +38,7 @@
 #include "aster_fort.h"
 #include "aster_utils.h"
 
-#include "command/Initializer.h"
+#include "RunManager/Initializer.h"
 
 FILE* fileOut = NULL;
 

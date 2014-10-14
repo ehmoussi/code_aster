@@ -3,7 +3,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "command/Initializer.h"
+#include "RunManager/Initializer.h"
 #include <complex.h>
 
 /**
