@@ -59,9 +59,9 @@ bool ModelInstance::build()
         }
         else
         {
-            if ( typeid( *(curIter->second) ) == typeid( GroupOfNodes ) )
+            if ( typeid( *(curIter->second) ) == typeid( GroupOfNodesInstance ) )
                 mCSGroup = SimpleKeyWordStr("GROUP_NO");
-            else if ( typeid( *(curIter->second) ) == typeid( GroupOfElements ) )
+            else if ( typeid( *(curIter->second) ) == typeid( GroupOfElementsInstance ) )
                 mCSGroup = SimpleKeyWordStr("GROUP_MA");
 
             mCSGroup.addValues( (curIter->second)->getEntityName() );
