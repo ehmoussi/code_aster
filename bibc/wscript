@@ -112,11 +112,9 @@ def build_module(self, env):
             use = ['asterlib'] + uses,
     install_path = env.ASTERLIBDIR,
     )
-    #XXX cause a problem if `waf install` is run without running `waf build` before...
-    # bldnode = self.path.get_bld()
-    # tgt = bldnode.make_node(osp.join(bldnode.abspath(), '../bibcxx/code_aster.py'))
-    tgt = '../bibcxx/code_aster.py'
-    self.install_files(env.ASTERLIBDIR, tgt)
+    # because .py must exist before installing
+    self.add_group()
+    self.install_files(env.ASTERLIBDIR, '../bibcxx/code_aster.py')
 
 ###############################################################################
 @Configure.conf
