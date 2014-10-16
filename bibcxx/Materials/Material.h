@@ -3,6 +3,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "DataStructure/DataStructure.h"
 #include "Materials/MaterialBehaviour.h"
 
 /**
@@ -10,7 +11,7 @@
 *   produit une sd identique a celle produite par DEFI_MATERIAU
 * @author Nicolas Sellenet
 */
-class MaterialInstance
+class MaterialInstance: public DataStructure
 {
     private:
         // Nom Jeveux de la SD

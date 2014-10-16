@@ -18,6 +18,14 @@ char* getNomObjetJeveux()
     return const_cast< char* >( commandeCourante->getObjectName().c_str() );
 };
 
+char* getSDType(char* nom)
+{
+    mapStrSDIterator curIter = mapNameDataStructure.find( string( nom ) );
+    if ( curIter == mapNameDataStructure.end() )
+        throw "Problem !!!";
+    return const_cast< char* >( curIter->second->getType().c_str() );
+};
+
 int isCommandeOperateur()
 {
     if ( commandeCourante == NULL ) return 0;

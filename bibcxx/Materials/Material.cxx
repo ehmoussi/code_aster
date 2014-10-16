@@ -3,7 +3,8 @@
 
 #include "Materials/Material.h"
 
-MaterialInstance::MaterialInstance(): _jeveuxName( initAster->getNewResultObjectName() ),
+MaterialInstance::MaterialInstance(): DataStructure( initAster->getNewResultObjectName(), "MATER" ),
+                    _jeveuxName( initAster->getResultObjectName() ),
                     _materialBehaviourNames( JeveuxVectorChar32( _jeveuxName + ".MATERIAU.NOMRC " ) ),
                     _nbMaterialBehaviour( 0 )
 {};

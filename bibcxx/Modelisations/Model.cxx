@@ -4,7 +4,8 @@
 #include "Modelisations/Model.h"
 #include <typeinfo>
 
-ModelInstance::ModelInstance(): _jeveuxName( initAster->getNewResultObjectName() ),
+ModelInstance::ModelInstance(): DataStructure( initAster->getNewResultObjectName(), "MODELE" ),
+                                _jeveuxName( getName() ),
                                 _typeOfElements( JeveuxVectorLong( string(_jeveuxName + ".MAILLE    ") ) ),
                                 _typeOfNodes( JeveuxVectorLong( string(_jeveuxName + ".NOEUD     ") ) ),
                                 _partition( JeveuxVectorChar8( string(_jeveuxName + ".PARTIT    ") ) ),

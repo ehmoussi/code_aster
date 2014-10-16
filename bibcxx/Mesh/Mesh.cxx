@@ -3,7 +3,8 @@
 
 #include "Mesh/Mesh.h"
 
-MeshInstance::MeshInstance(): _jeveuxName( initAster->getNewResultObjectName() ),
+MeshInstance::MeshInstance(): DataStructure( initAster->getNewResultObjectName(), "MAILLAGE" ),
+                        _jeveuxName( getName() ),
                         _dimensionInformations( JeveuxVectorLong( string(_jeveuxName + ".DIME      ") ) ),
                         _nameOfNodes( JeveuxBidirectionalMap( string(_jeveuxName + ".NOMNOE    ") ) ),
                         _coordinates( FieldOnNodesDouble( string(_jeveuxName + ".COORDO    ") ) ),

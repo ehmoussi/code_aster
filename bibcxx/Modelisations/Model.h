@@ -3,6 +3,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "DataStructure/DataStructure.h"
 #include "Mesh/Mesh.h"
 #include "Modelisations/ElementaryModelisation.h"
 #include <map>
@@ -12,7 +13,7 @@
 *   produit une sd identique a celle produite par AFFE_MODELE
 * @author Nicolas Sellenet
 */
-class ModelInstance
+class ModelInstance: public DataStructure
 {
     private:
         // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
