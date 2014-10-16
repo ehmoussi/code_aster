@@ -250,30 +250,9 @@ void DEFSS(GETTCO,gettco,_IN char *nomobj, _IN STRING_SIZE lnom,
         /*
           retrouver le type "superviseur" du concept nomobj.
         */
-    fprintf(fileOut, "GETTCO\n");
-    INTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
-        char *mcs      = (char*)0 ;
-        PyObject *res  = (PyObject*)0 ;
-        char *nomType  = (char*)0 ;
-                                                           DEBUG_ASSERT(lnom>0) ;
-        mcs = MakeCStrFromFStr(nomobj,lnom);
-
-        /*
-        recherche dans le jeu de commandes python du nom du type de
-         du concept Aster de nom nomobj
-        */
-        res=PyObject_CallMethod(get_sh_etape(),"gettco","s",mcs);
-        if (res == (PyObject*)0)MYABORT("erreur dans la partie Python (gettco)");
-                                                           DEBUG_ASSERT( PyString_Check(res) );
-        nomType=PyString_AsString(res);
-                                                           DEBUG_ASSERT(nomType!=(char*)0) ;
-        CopyCStrToFStr(typobj, nomType, ltyp);
-        Py_DECREF(res);                /*  decrement sur le refcount du retour */
-        FreeStr(mcs);
-        return ;
+    char* nomCmdCp = getSDType(nomobj);
+    CopyCStrToFStr(typobj, nomCmdCp, ltyp);
+    fprintf(fileOut, "GETTCO %s\n", typobj);
 }
 
 

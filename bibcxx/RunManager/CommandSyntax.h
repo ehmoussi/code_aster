@@ -14,6 +14,8 @@
 #include <set>
 #include <string.h>
 
+#include "DataStructure/DataStructure.h"
+
 #include "definition.h"
 
 extern "C"
@@ -307,8 +309,8 @@ class CommandSyntax
         typedef mapStrMCF::value_type mapStrMCFValue;
 
         const string _commandName;
-        mapStrMCF _factorKeywordsMap;
-        bool _isOperateur;
+        mapStrMCF    _factorKeywordsMap;
+        bool         _isOperateur;
         const string _nomObjetJeveux;
 
     public:
@@ -321,9 +323,9 @@ class CommandSyntax
         * @param nomObjet Chaine precisant le nom Jeveux de la sd produite
         *                 ex : MA = LIRE_MAILAGE : nomObjet = "MA      "
         */
-        CommandSyntax(string nom, bool operateur, string nomObjet): _commandName(nom),
-                                                                    _isOperateur(operateur),
-                                                                    _nomObjetJeveux(nomObjet)
+        CommandSyntax(string nom, bool operateur, string nomObjet): _commandName( nom ),
+                                                                    _isOperateur( operateur ),
+                                                                    _nomObjetJeveux( nomObjet )
         {
             _factorKeywordsMap.insert( mapStrMCFValue( string(""), FactorKeyword(" ", false) ) );
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
@@ -446,6 +448,8 @@ extern "C" {
 char* getNomCommande();
 
 char* getNomObjetJeveux();
+
+char* getSDType(char*);
 
 int isCommandeOperateur();
 

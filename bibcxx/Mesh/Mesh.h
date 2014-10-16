@@ -4,13 +4,14 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "definition.h"
+#include "DataStructure/DataStructure.h"
 #include "RunManager/Initializer.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 #include "DataFields/FieldOnNodes.h"
 #include "Mesh/MeshEntities.h"
 #include <assert.h>
 
-class MeshInstance
+class MeshInstance: public DataStructure
 {
     private:
         friend class VirtualMeshEntity;
@@ -134,6 +135,11 @@ class Mesh
         const MeshPtr& operator->() const
         {
             return _meshPtr;
+        };
+
+        MeshInstance& operator*(void) const
+        {
+            return *_meshPtr;
         };
 
         bool isEmpty() const

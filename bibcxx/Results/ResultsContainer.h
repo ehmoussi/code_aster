@@ -3,6 +3,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
@@ -13,7 +14,7 @@
 *   Elle permet de stocker les champs issus d'une resolution numerique
 * @author Nicolas Sellenet
 */
-class ResultsContainerInstance
+class ResultsContainerInstance: public DataStructure
 {
     private:
         string                 _jeveuxName;
@@ -27,8 +28,8 @@ class ResultsContainerInstance
         /**
         * Constructeur
         */
-        ResultsContainerInstance():
-                            _jeveuxName( initAster->getNewResultObjectName() ),
+        ResultsContainerInstance(): DataStructure( initAster->getNewResultObjectName(), "???" ),
+                            _jeveuxName( getName() ),
                             _symbolicNamesOfFields( JeveuxBidirectionalMap( _jeveuxName + "           .DESC" ) ),
                             _namesOfFields( JeveuxCollectionChar24( _jeveuxName + "           .TACH" ) ),
                             _accessVariables( JeveuxBidirectionalMap( _jeveuxName + "           .NOVA" ) ),
