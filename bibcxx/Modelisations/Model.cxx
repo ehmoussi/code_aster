@@ -27,7 +27,7 @@ bool ModelInstance::build()
     // Si _supportMesh->getJeveuxName() = 'MA      ' alors
     // cela correspondra dans le fichier de commande emule a :
     // MAILLAGE = MA
-    mCSMaillage.addValues( _supportMesh->getJeveuxName() );
+    mCSMaillage.addValues( _supportMesh->getName() );
     syntaxeAffeModele.addSimpleKeywordStr(mCSMaillage);
 
     // Definition de mot cle facteur AFFE

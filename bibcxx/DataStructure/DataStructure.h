@@ -35,6 +35,6 @@ typedef map< string, DataStructure* > mapStrSD;
 typedef mapStrSD::iterator mapStrSDIterator;
 typedef mapStrSD::value_type mapStrSDValue;
 
-static mapStrSD mapNameDataStructure;
+extern mapStrSD* mapNameDataStructure;
 
 #endif /* DATASTRUCTURE_H_ */

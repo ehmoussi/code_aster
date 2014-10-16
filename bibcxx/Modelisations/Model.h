@@ -42,6 +42,15 @@ class ModelInstance: public DataStructure
         */
         ModelInstance();
 
+        
+        /**
+        * Récupération du nom Jeveux du modèle 
+        * @return name nom jeveux du modele
+        */
+        const string getJeveuxName()
+        {
+        return _jeveuxName;
+        };
         /**
         * Ajout d'une nouvelle modelisation sur tout le maillage
         * @param phys Physique a ajouter
@@ -91,6 +100,14 @@ class ModelInstance: public DataStructure
             _supportMesh = currentMesh;
             return true;
         };
+        
+        Mesh& getSupportMesh()
+        {
+        if ( _supportMesh->isEmpty() )
+        {
+          throw string("support mesh of current model is empty");}
+         return _supportMesh;
+        }; 
 };
 
 /**

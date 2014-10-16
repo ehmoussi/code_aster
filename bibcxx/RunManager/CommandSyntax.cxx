@@ -20,8 +20,8 @@ char* getNomObjetJeveux()
 
 char* getSDType(char* nom)
 {
-    mapStrSDIterator curIter = mapNameDataStructure.find( string( nom ) );
-    if ( curIter == mapNameDataStructure.end() )
+    mapStrSDIterator curIter = mapNameDataStructure->find( string( nom ) );
+    if ( curIter == mapNameDataStructure->end() )
         throw "Problem !!!";
     return const_cast< char* >( curIter->second->getType().c_str() );
 };
