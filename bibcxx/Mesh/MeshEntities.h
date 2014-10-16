@@ -137,22 +137,22 @@ class WrapperMeshEntity
         MeshEntityPtr _meshEntityPtr;
 
     public:
-        WrapperMeshEntity(bool initilisation = true): _meshEntityPtr()
+        WrapperMeshEntity(bool initialisation = true): _meshEntityPtr()
         {
-            if ( initilisation == true )
+            if ( initialisation == true )
                 _meshEntityPtr = MeshEntityPtr( new MeshEntityInstance() );
         };
 
         WrapperMeshEntity(string name, JeveuxCollectionLong& grpOfEntities,
-                          bool initilisation = true): _meshEntityPtr()
+                          bool initialisation = true): _meshEntityPtr()
         {
-            if ( initilisation == true )
+            if ( initialisation == true )
                 _meshEntityPtr = MeshEntityPtr( new MeshEntityInstance(name, grpOfEntities) );
         };
 
-        WrapperMeshEntity(string name, bool initilisation = true): _meshEntityPtr()
+        WrapperMeshEntity(string name, bool initialisation = true): _meshEntityPtr()
         {
-            if ( initilisation == true )
+            if ( initialisation == true )
                 _meshEntityPtr = MeshEntityPtr( new MeshEntityInstance(name) );
         };
 

@@ -43,10 +43,12 @@ print "Initialisation de CharMeca"
 monCharMeca = code_aster.MechanicalLoad()
 print "Définition du modèle support"
 monCharMeca.setSupportModel(monModel)
-print "Définition du déplacement imposé sur BOTTOM"
-monCharMeca.addDisplacementLoad("DX",0.0, "BOTTOM")
+print "Définition du déplacement imposé sur le groupe de noeuds A"
+monCharMeca.setDisplacementOnNodes("DX",0.0, "A")
+print "Définition du déplacement imposé sur le groupe de mailles  BOTTOM"
+monCharMeca.setDisplacementOnElements("DX",0.0, "BOTTOM")
 print "Définition de la pression imposée sur UP"
-monCharMeca.addPressure(1000.,"UP")
+monCharMeca.setPressureOnElements(1000.,"UP")
 print "Appel de la construction (build) du chargement mécanique (affe_char_meca)"
 monCharMeca.build()
 

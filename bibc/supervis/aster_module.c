@@ -250,9 +250,13 @@ void DEFSS(GETTCO,gettco,_IN char *nomobj, _IN STRING_SIZE lnom,
         /*
           retrouver le type "superviseur" du concept nomobj.
         */
-    char* nomCmdCp = getSDType(nomobj);
+    char* tmp = (char*)malloc(lnom + 1);
+    strncpy(tmp, nomobj, lnom);
+    tmp[lnom] = '\0';
+    char* nomCmdCp = getSDType(tmp);
     CopyCStrToFStr(typobj, nomCmdCp, ltyp);
     fprintf(fileOut, "GETTCO %s\n", typobj);
+    FreeStr(tmp);
 }
 
 

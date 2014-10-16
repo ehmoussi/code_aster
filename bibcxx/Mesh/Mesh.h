@@ -51,15 +51,6 @@ class MeshInstance: public DataStructure
         };
 
         /**
-        * Recuperation du nom Jeveux
-        * @return le nom Jeveux du maillage
-        */
-        const string& getJeveuxName() const
-        {
-            return _jeveuxName;
-        };
-
-        /**
         * Recuperation des coordonnees du maillage
         * @return champ aux noeuds contenant les coordonnees des noeuds du maillage
         */
@@ -68,6 +59,24 @@ class MeshInstance: public DataStructure
             return _coordinates;
         };
 
+        /**
+        * Teste l'existence d'un groupe de mailles dans le maillage
+        * @return true si le groupe existe 
+        */
+        bool hasGroupOfElements( string name )
+        {
+          return _groupsOfElements->existsObject(name) ;
+        };
+        
+        /**
+        * Teste l'existence d'un groupe de noeuds dans le maillage
+        * @return true si le groupe existe 
+        */
+        bool hasGroupOfNodes( string name )
+        {
+          return _groupsOfNodes->existsObject(name) ;
+        };
+        
         /**
         * Recuperation d'un groupe de mailles
         * @return class GroupOfElements
@@ -117,9 +126,9 @@ class Mesh
         MeshPtr _meshPtr;
 
     public:
-        Mesh(bool initilisation = true): _meshPtr()
+        Mesh(bool initialisation = true): _meshPtr()
         {
-            if ( initilisation == true )
+            if ( initialisation == true )
                 _meshPtr = MeshPtr( new MeshInstance() );
         };
 
