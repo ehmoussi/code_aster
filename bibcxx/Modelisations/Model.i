@@ -22,14 +22,19 @@ class Model
         return (*$self)->setSupportMesh(currentMesh);
     }
 
-    void addElementaryModelisation(Physics phys, Modelisations mod)
+    void addModelisationOnAllMesh(Physics phys, Modelisations mod)
     {
-        return (*$self)->addElementaryModelisation(phys, mod);
-    };
+        return (*$self)->addModelisationOnAllMesh(phys, mod);
+    }
 
-    void addElementaryModelisation(Physics phys, Modelisations mod, MeshEntity& entity)
+    void addModelisationOnGroupOfElements(Physics phys, Modelisations mod, char* nameOfGroup)
     {
-        return (*$self)->addElementaryModelisation(phys, mod, entity);
+        return (*$self)->addModelisationOnGroupOfElements(phys, mod, nameOfGroup);
+    }
+
+    void addModelisationOnGroupOfNodes(Physics phys, Modelisations mod, char* nameOfGroup)
+    {
+        return (*$self)->addModelisationOnGroupOfNodes(phys, mod, nameOfGroup);
     }
 
     bool build()

@@ -63,36 +63,18 @@ class MeshInstance: public DataStructure
         * Teste l'existence d'un groupe de mailles dans le maillage
         * @return true si le groupe existe 
         */
-        bool hasGroupOfElements( string name )
+        bool hasGroupOfElements( string name ) const
         {
-          return _groupsOfElements->existsObject(name) ;
+            return _groupsOfElements->existsObject(name) ;
         };
-        
+
         /**
         * Teste l'existence d'un groupe de noeuds dans le maillage
         * @return true si le groupe existe 
         */
-        bool hasGroupOfNodes( string name )
+        bool hasGroupOfNodes( string name ) const
         {
-          return _groupsOfNodes->existsObject(name) ;
-        };
-        
-        /**
-        * Recuperation d'un groupe de mailles
-        * @return class GroupOfElements
-        */
-        const GroupOfElements getGroupOfElements(string name)
-        {
-            return GroupOfElements(name, this->_groupsOfElements);
-        };
-
-        /**
-        * Recuperation d'un groupe de noeuds
-        * @return class GroupOfNodes
-        */
-        const GroupOfNodes getGroupOfNodes(string name)
-        {
-            return GroupOfNodes(name, this->_groupsOfNodes);
+            return _groupsOfNodes->existsObject(name) ;
         };
 
         /**

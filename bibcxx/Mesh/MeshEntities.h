@@ -17,29 +17,13 @@ class VirtualMeshEntity
     private:
         // Nom de l'entite
         const string            _name;
-        // Collection .GROUPEMA ou .GROUPENO
-        JeveuxCollectionLong    _groupsOfEntities;
 
     public:
         /**
         * Constructeur
         * @param name nom de l'entite
-        * @param grpOfEntities Collection Jeveux contenant les "entites"
         */
-        VirtualMeshEntity(string name, JeveuxCollectionLong& grpOfEntities):
-                                                                _name(name),
-                                                                _groupsOfEntities(grpOfEntities)
-        {
-            if ( ! _groupsOfEntities->existsObject(name) )
-                throw string("Group " + name + " not in mesh");
-        };
-
-        /**
-        * Constructeur
-        * @param name nom de l'entite
-        */
-        VirtualMeshEntity(string name): _name(name),
-                                 _groupsOfEntities( JeveuxCollectionLong( "" ) )
+        VirtualMeshEntity(string name): _name(name)
         {};
 
         /**
@@ -65,10 +49,8 @@ class GroupOfNodesInstance: public VirtualMeshEntity
         /**
         * Constructeur
         * @param name nom de l'entite
-        * @param grpOfEntities Collection Jeveux contenant les "entites"
         */
-        GroupOfNodesInstance(string name, JeveuxCollectionLong& grpOfNodes):
-            VirtualMeshEntity(name, grpOfNodes)
+        GroupOfNodesInstance(string name): VirtualMeshEntity(name)
         {};
 
         string getType()
@@ -88,10 +70,8 @@ class GroupOfElementsInstance: public VirtualMeshEntity
         /**
         * Constructeur
         * @param name nom de l'entite
-        * @param grpOfEntities Collection Jeveux contenant les "entites"
         */
-        GroupOfElementsInstance(string name, JeveuxCollectionLong& grpOfElements):
-            VirtualMeshEntity(name, grpOfElements)
+        GroupOfElementsInstance(string name): VirtualMeshEntity(name)
         {};
 
         string getType()
