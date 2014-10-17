@@ -16,10 +16,20 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine utfk16(lk16, nbk16, k16, ipos)
-        character(len=16) :: lk16(*)
-        integer :: nbk16
-        character(len=16) :: k16
-        integer :: ipos
-    end subroutine utfk16
+    subroutine xmvco4(ino, ndim, nnol, sigma, lamb, pla,&
+                      lact, jac, ffc, p, raug, vtmp)
+        integer :: ino
+        integer :: ndim
+        integer :: nnol
+        real(kind=8) :: sigma(6)
+        real(kind=8) :: lamb(3)
+        integer :: pla(27)
+        integer :: lact(8)
+        real(kind=8) :: jac
+        real(kind=8) :: ffc(8)
+        real(kind=8) :: ffp(27)
+        real(kind=8) :: p(3,3)
+        real(kind=8) :: raug
+        real(kind=8) :: vtmp(400)
+    end subroutine xmvco4
 end interface

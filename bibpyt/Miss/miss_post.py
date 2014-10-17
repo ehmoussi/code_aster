@@ -46,6 +46,7 @@ from Cata.cata import (
     DYNA_LINE_HARM, REST_SPEC_TEMP,
     DEFI_LIST_REEL, CALC_FONCTION, RECU_FONCTION, DEFI_FONCTION,
     FORMULE, CALC_FONC_INTERP, CREA_TABLE, LIRE_FONCTION,
+    AFFE_CHAR_MECA_F
 )
 
 from Utilitai.Table import Table
@@ -768,6 +769,8 @@ class PostMissFichierTemps(PostMissFichier):
         self.rho = eps**(1./(2.*N_inst))
         self.nrows = self.param['NB_MODE']
         self.ncols = self.param['NB_MODE']
+        self.reducFactor = self.param['FACTEUR_INTERPOL']
+        self.cutOffValue = self.param['PCENT_FREQ_CALCUL']/100.0
         self.Mg = 0
         self.Kg = 0
         self.Cg = 0
@@ -789,11 +792,18 @@ class PostMissFichierTemps(PostMissFichier):
     def calc_impe_temps(self):
         """Calcul de l'impédance dans le domaine temporel"""
         fid = open(self.fname("impe_Laplace"), 'r')
-
+        reduc_factor = self.reducFactor
+        angle_seuil = self.cutOffValue
+        if angle_seuil == 1:
+            fc = self.cutOffValue*self.nbr_freq/float(reduc_factor) % self.nbr_freq
+        else:
+            fc = NP.int_(NP.ceil(self.cutOffValue*self.nbr_freq/float(reduc_factor)))
+        freq_list1 = NP.arange(0,fc*reduc_factor)
+        freq_list2 = NP.arange(fc*reduc_factor, self.nbr_freq, reduc_factor)
+        real_size = len(freq_list1.tolist() + freq_list2.tolist())
         impe_Laplace = NP.zeros((self.nrows, self.ncols, self.nbr_freq), complex)
-        k = -1
 
-        while (k < self.nbr_freq - 1):
+        for k in range(0,real_size):
             for n in range(0,self.nrows):
                 for m in range(0,self.ncols):
                     txt = fid.readline()
@@ -801,13 +811,48 @@ class PostMissFichierTemps(PostMissFichier):
                         tmp = fid.readline()
                         k = k + 1
                     data = fid.readline().split()
-                    impe_Laplace[n,m,k] = float(data[1]) + 1j*float(data[2])
+                    impe_Laplace[n,m,k-1] = float(data[1]) + 1j*float(data[2])
 
         fid.close()
 
-        Z_Laplace = NP.zeros((self.nrows, self.ncols, self.L_points), complex)
-        Z_Laplace[:,:,0:self.nbr_freq] = NP.conj(impe_Laplace[:,:,0:self.nbr_freq])
-        Z_Laplace[:,:,self.nbr_freq:] = impe_Laplace[:,:,self.nbr_freq-2:0:-1]
+        freq_vect  = NP.arange(0,self.L_points)
+        Z_Laplace    = NP.zeros((self.nrows, self.ncols, self.L_points), complex)
+        Z_Laplace_re = NP.zeros((self.nrows, self.ncols, self.L_points), complex)
+        Z_Laplace_im = NP.zeros((self.nrows, self.ncols, self.L_points), complex)
+
+        # Ce ne sont pas des vecteurs de fréquences mais des vecteurs d'indices
+        freq_list1 = list(NP.arange(0,reduc_factor*fc))
+        freq_list2 = list(NP.arange(reduc_factor*fc,self.L_points - fc*reduc_factor,reduc_factor))
+        if reduc_factor is not 1 and angle_seuil < 1:
+            freq_list3 = list(NP.arange(self.L_points - fc*reduc_factor,self.L_points)) 
+        else: 
+            freq_list3 = []
+        freq_reduc = freq_list1 + freq_list2 + freq_list3
+        
+        if len(freq_list2) % 2 == 0: 
+            length = len(freq_list1) + len(freq_list2)/2
+        else:
+            length = len(freq_list1) + (len(freq_list2)-1)/2 + 1
+        print "fc=", fc
+        print "len(freq_list1)=", len(freq_list1)
+        print "len(freq_list2)=", len(freq_list2)
+        print "len(freq_list3)=", len(freq_list3)
+        print "fin list2 = ", self.L_points - fc*reduc_factor
+        print "length=", length
+        Z_reduced = NP.zeros((self.nrows, self.ncols, len(freq_reduc)), complex)
+        Z_reduced[:,:,0:length+1] = NP.conj(impe_Laplace[:,:,0:length+1])
+        Z_reduced[:,:,length+1:] = impe_Laplace[:,:,length-1:0:-1]
+
+        Z_redu_r = NP.real(Z_reduced)
+        Z_redu_i = NP.imag(Z_reduced)
+
+        for n in range(0,self.nrows):
+            for m in range(0,self.ncols):
+                Z_Laplace_re[n,m,:] = NP.interp(freq_vect, freq_reduc, Z_redu_r[n,m,:]);
+                Z_Laplace_im[n,m,:] = NP.interp(freq_vect, freq_reduc, Z_redu_i[n,m,:]);
+
+        for k in range(0,self.L_points):
+            Z_Laplace[:,:,k] = Z_Laplace_re[:,:,k] + 1j*Z_Laplace_im[:,:,k];
 
         MATR_GENE = self.param['MATR_GENE']
         if MATR_GENE:
@@ -1062,6 +1107,131 @@ class PostMissFichierTemps(PostMissFichier):
         """
         fich = '%s.%s' % (self.param['PROJET'], ext)
         return osp.join(self.param['_WRKDIR'], fich)
+class PostMissChar(PostMiss):
+    """Post-traitement avec sortie charge"""
+        
+    def argument(self):
+        """Initialisations"""
+
+        self.MODELE = self.param['MODELE']
+        self.fonc_depl  =  self.param['FONC_SIGNAL']
+        self.List_Noeu_Fictif = self.param['NOEUD_AFFE']
+        self.nbno=len(self.List_Noeu_Fictif)
+        self.ncols = 6*self.nbno
+        self.dt = self.param['PAS_INST']
+        fonc_signal = self.param['FONC_SIGNAL']
+        tt, vale_s=fonc_signal.Valeurs()
+        self.dt=tt[1]-tt[0]
+        NBTIME= len(vale_s)
+        self.tmax=tt[NBTIME-1]
+        self.df =1.0/(self.tmax+self.dt)
+        self.fmax =1.0/(2.0*self.dt)
+        self.Force_Nodale =[]
+
+    def execute(self):
+        """Lance le post-traitement"""
+        self.calc_forc_temps()
+
+    def sortie(self):
+        """Prépare et produit les concepts de sortie."""
+        self.parent.DeclareOut('Force_no', self.parent.sd)
+        Force_no = AFFE_CHAR_MECA_F(MODELE=self.MODELE,FORCE_NODALE=self.Force_Nodale,);
+
+    def calc_forc_temps(self):
+        """Calcul de l'effort sismique dans le domaine temporel"""
+
+        __linst = DEFI_LIST_REEL(DEBUT=0.,
+                    INTERVALLE=_F(JUSQU_A= self.tmax,PAS=self.dt),)
+        # Rq. Même UL que le fichier effort sismique de MISS
+        unit = self.param['UNITE_RESU_FORC']
+        nbmod = self.ncols
+        __fdep = CALC_FONCTION( FFT=_F(FONCTION= self.fonc_depl,METHODE='COMPLET'))
+
+        if self.param['NOM_CMP']=='DX':
+           ndeca = 0
+        elif self.param['NOM_CMP']=='DY':
+           ndeca = nbmod
+        elif self.param['NOM_CMP']=='DZ':
+           ndeca = 2*nbmod
+                                                
+        for ino in range(0, self.nbno):
+          no = self.List_Noeu_Fictif[ino]
+          fx = self.calc_forc_comp_temps(unit, __linst, __fdep, ndeca+6*ino+1)
+          fy = self.calc_forc_comp_temps(unit, __linst, __fdep, ndeca+6*ino+2)
+          fz = self.calc_forc_comp_temps(unit, __linst, __fdep, ndeca+6*ino+3)
+          frx = self.calc_forc_comp_temps(unit, __linst, __fdep, ndeca+6*ino+4)
+          fry = self.calc_forc_comp_temps(unit, __linst, __fdep, ndeca+6*ino+5)
+          frz = self.calc_forc_comp_temps(unit, __linst, __fdep, ndeca+6*ino+6)
+          
+          self.Force_Nodale.append(_F(NOEUD=no,
+                                FX= fx,
+                                FY= fy,
+                                FZ= fz,
+                                MX= frx,
+                                MY= fry,
+                                MZ= frz,),);
+
+        DETRUIRE(CONCEPT=_F(NOM=__fdep))
+
+    def calc_forc_comp_temps(self, unit, linst, fdepl, indice):
+        """???"""
+        
+        __lfreq = DEFI_LIST_REEL(DEBUT=0.0,
+                       INTERVALLE=_F(JUSQU_A=self.fmax, PAS=self.df,),)
+                       
+        if self.param['FREQ_MAX'] is None :
+          __FILTRE = DEFI_FONCTION(NOM_PARA='FREQ',
+                     VALE_C=(0.,1.,0.,self.fmax,1.,0.),
+                     INTERPOL='LIN',PROL_DROITE = 'CONSTANT',PROL_GAUCHE = 'CONSTANT',);
+                     
+        else:
+          fcoup = self.param['FREQ_MAX']
+          fcou2 = fcoup + self.df
+          __FILTRE = DEFI_FONCTION(NOM_PARA='FREQ',
+                     VALE_C=(0.,1.,0.,fcoup,1.,0.,fcou2,0.,0.),
+                     INTERPOL='LIN',PROL_DROITE = 'CONSTANT',PROL_GAUCHE = 'CONSTANT',);
+
+        __fHr = LIRE_FONCTION(UNITE=unit,NOM_PARA='FREQ',
+                       INDIC_PARA=[1,1],INDIC_RESU=[indice,2],
+                         )
+
+        __fHi = LIRE_FONCTION(UNITE=unit,NOM_PARA='FREQ',
+                       INDIC_PARA=[1,1],INDIC_RESU=[indice,3],
+                         )
+
+        __fH = CALC_FONCTION(COMB_C=(
+                       _F(FONCTION=__fHr,COEF_C=1+0j),
+                       _F(FONCTION=__fHi,COEF_C=0-1j),
+                             ),
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                         )
+
+        self.parent.update_const_context({ '__fH' : __fH, '__fdepl' : fdepl })
+        self.parent.update_const_context({'FILTRE': __FILTRE }) 
+        __fF = FORMULE(NOM_PARA='FREQ',
+                       VALE_C='__fdepl(FREQ)*__fH(FREQ)*FILTRE(FREQ)')
+
+        __fT0 = CALC_FONC_INTERP(FONCTION=__fF, NOM_PARA = 'FREQ',
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        LIST_PARA=__lfreq)
+
+
+        __fTT = CALC_FONCTION( FFT=_F(FONCTION=__fT0,METHODE='COMPLET',
+                            SYME='NON'))
+
+        self.parent.update_const_context({'__fTT' : __fTT})
+        __fTTF = FORMULE(NOM_PARA='INST',VALE='__fTT(INST) - __fTT(0)')
+
+        __fT1 = CALC_FONC_INTERP(FONCTION=__fTTF, NOM_PARA = 'INST',
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        LIST_PARA=linst)
+
+        DETRUIRE(CONCEPT=_F(NOM=(__fHr,__fHi,__fH,__fF,__fT0,__fTT,__fTTF,__lfreq)))
+        return __fT1
+
 
 class ListPost(list):
     """Définit une liste de post-traitement à enchainer"""
@@ -1089,6 +1259,8 @@ def PostMissFactory(type_post, parent, param):
         post.append(PostMissFichier(parent, param))
     elif type_post == 'FICHIER_TEMPS':
         post.append(PostMissFichierTemps(parent, param))
+    elif type_post == 'CHARGE':
+        post.append(PostMissChar(parent, param))
     else:
         raise NotImplementedError(type_post)
     if type_post == 'TABLE_CONTROL':

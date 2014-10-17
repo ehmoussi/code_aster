@@ -591,5 +591,13 @@ Utilisez ELIM_ARETE='DUAL'.
   -> Risque & Conseil:
      Veuillez utiliser un maillage linéaire.
 """),
-
+93: _(u"""
+     --> La loi cohésive CZM_LIN_MIX est utilisable uniquement avec un contact de type mortier
+         dans le modèle %(k1)s. En revanche, les autres lois cohésives et de contact-frottement
+         doivent être définies avec un contact STANDARD.
+"""),
+94: _(u"""
+     --> L algorithme de détection a détecté un front qui va au delà de
+         la zone de fissuration potentielle. Il faut agrandir celle-ci.
+"""),
 }
