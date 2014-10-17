@@ -20,7 +20,7 @@
 interface
     subroutine xenrch(noma, cnslt, cnsln, cnslj,&
                       cnsen, cnsenr, ndim, fiss, goinop,&
-                      lismae, lisnoe)
+                      lismae, lisnoe, operation_opt)
         character(len=8) :: noma
         character(len=19) :: cnslt
         character(len=19) :: cnsln
@@ -32,5 +32,6 @@ interface
         aster_logical :: goinop
         character(len=24) :: lismae
         character(len=24) :: lisnoe
+        character(len=16), intent(in), optional :: operation_opt
     end subroutine xenrch
 end interface

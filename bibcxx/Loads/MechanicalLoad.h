@@ -1,23 +1,18 @@
 #ifndef MECHANICALLOAD_H_
 #define MECHANICALLOAD_H_
 
-
 #include "DataStructure/DataStructure.h"
 #include "Loads/ElementaryLoad.h"
 #include "Modelisations/Model.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "aster.h"
 
-
-
-/*
+/**
 * class MechanicalLoadInstance 
 *   Cette classe contient le wrapper vers la sd_affe_char_meca
 *   ainsi que la liste des contraintes (i.e des paires (contrainte élémentaire, groupe))
 *   définies par l'utilisateur 
 */
-
-
 class MechanicalLoadInstance : public DataStructure 
 {
     private:
@@ -40,55 +35,58 @@ class MechanicalLoadInstance : public DataStructure
         * Constructeur
         */
         MechanicalLoadInstance();
+
 // Imposer un déplacement (e.g. DX = 0 ) sur un groupe de noeuds (défini par son nom) 
-        void setDisplacementOnNodes(string doFName, double doFValue, string nameOfGroup)  
+        void setDisplacementOnNodes(string doFName, double doFValue, string nameOfGroup)
         {
 // Vérifier que le nom de groupe est licite (i.e. le nom définit bien un groupe de noeuds qui 
 // existe dans le maillage sous-jacent au modèle.
-        Mesh & currentMesh= _supportModel->getSupportMesh();        
-        if ( !currentMesh->hasGroupOfNodes( nameOfGroup )) 
-        {
-          throw "The group does not exist in the mesh you provided";
-        }
-        DisplacementLoad<double> currentDispl( doFName );
-        currentDispl.setValue( doFValue );
-         _listOfLoadsDouble.push_back( listOfLoadsAndGrpsDouble:: value_type(currentDispl,
-         (currentMesh->getGroupOfNodes( nameOfGroup )).getPointer() ) );
+            Mesh & currentMesh= _supportModel->getSupportMesh();
+            if ( !currentMesh->hasGroupOfNodes( nameOfGroup )) 
+            {
+                throw "The group does not exist in the mesh you provided";
+            }
+            DisplacementLoad<double> currentDispl( doFName );
+            currentDispl.setValue( doFValue );
+            _listOfLoadsDouble.push_back( listOfLoadsAndGrpsDouble:: value_type(currentDispl,
+                                          MeshEntityPtr( new GroupOfNodesInstance( nameOfGroup ) ) ) );
         };
+
 // Imposer un déplacement (e.g. DX = 0 ) sur un groupe de mailles (défini par son nom) 
         void setDisplacementOnElements(string doFName, double doFValue, string nameOfGroup)  
         {
 // Vérifier que le nom de groupe est licite (i.e. le nom définit bien un groupe de mailles qui 
 // existe dans le maillage sous-jacent au modèle.
-        Mesh & currentMesh= _supportModel->getSupportMesh();        
-        if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
-        {
-          throw "The group does not exist in the mesh you provided";
-        }
-        const GroupOfElements& entity = currentMesh->getGroupOfElements( nameOfGroup );
-        DisplacementLoad<double> currentDispl( doFName );
-        currentDispl.setValue( doFValue );
-         _listOfLoadsDouble.push_back( listOfLoadsAndGrpsDouble:: value_type(currentDispl,
-         (currentMesh->getGroupOfElements( nameOfGroup )).getPointer() ) );
+            Mesh & currentMesh= _supportModel->getSupportMesh();
+            if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
+            {
+                throw "The group does not exist in the mesh you provided";
+            }
+            DisplacementLoad<double> currentDispl( doFName );
+            currentDispl.setValue( doFValue );
+            _listOfLoadsDouble.push_back( listOfLoadsAndGrpsDouble:: value_type(currentDispl,
+                                          MeshEntityPtr( new GroupOfElementsInstance( nameOfGroup ) ) ) );
         };
-// Imposer une pression sur un groupe de mailles        
+
+// Imposer une pression sur un groupe de mailles
         void setPressureOnElements(double pressure_value, string nameOfGroup)
         {
 // Vérifier que le nom de groupe est licite (i.e. le nom définit bien un groupe de mailles qui 
 // existe dans le maillage sous-jacent au modèle.
-        Mesh & currentMesh= _supportModel->getSupportMesh();        
-        if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
-        {
-          throw "The group does not exist in the mesh you provided";
-        }
-          PressureLoad<double> currentPres;
-          currentPres.setValue( pressure_value);
-         _listOfLoadsDouble.push_back( listOfLoadsAndGrpsDouble:: value_type( currentPres,
-         (currentMesh->getGroupOfElements( nameOfGroup )).getPointer() ) );
+            Mesh & currentMesh= _supportModel->getSupportMesh();
+            if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
+            {
+                throw "The group does not exist in the mesh you provided";
+            }
+            PressureLoad<double> currentPres;
+            currentPres.setValue( pressure_value);
+            _listOfLoadsDouble.push_back( listOfLoadsAndGrpsDouble:: value_type( currentPres,
+                                          MeshEntityPtr( new GroupOfElementsInstance( nameOfGroup ) ) ) );
         };
 
         bool build();
-// Définir le modèle support 
+
+// Définir le modèle support
         bool setSupportModel(Model& currentModel)
         {
             if ( currentModel.isEmpty() )
@@ -97,6 +95,7 @@ class MechanicalLoadInstance : public DataStructure
             return true;
         };
 };
+
 class MechanicalLoad 
 {
     public:
