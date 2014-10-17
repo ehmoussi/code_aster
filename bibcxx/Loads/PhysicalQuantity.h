@@ -2,12 +2,11 @@
 #define PHYSICALQUANTITY_H_
 
 #include <boost/type_traits/is_enum.hpp>
-#include <boost/type_traits/is_floating_point.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <list>
 #include <set>
 #include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -19,18 +18,18 @@ using namespace std;
 * @author Nicolas Sellenet
 */
 enum DisplacementCoordinates { Dx, Dy, Dz, Drx, Dry, Drz };
-static const int nbDisplacementCoordinates = 6;
-static const char* const DisplacementCoordinatesNames[] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ" };
+const int nbDisplacementCoordinates = 6;
+extern const char* DisplacementCoordinatesNames[];
 
 enum ThermalCoordinates { Temperature, MiddleTemperature };
-static const int nbThermalCoordinates = 2;
-static const char* const ThermalCoordinatesNames[] = { "TEMP", "TEMP_MIL" };
+const int nbThermalCoordinates = 2;
+extern const char* ThermalCoordinatesNames[];
 
-template< class ValueType, class Enum, typename Allowed = void >
+template< class ValueType, class Enum, int NbCoord, const char **CoordNames, typename Allowed = void >
 class ElementaryCoordinate;
 
-template< class ValueType, class Enum >
-class ElementaryCoordinate< ValueType, Enum,
+template< class ValueType, class Enum, int NbCoord, const char **CoordNames >
+class ElementaryCoordinate< ValueType, Enum, NbCoord, CoordNames,
                             typename boost::enable_if< boost::is_enum< Enum >, void >::type >
 {
     private:
@@ -45,22 +44,23 @@ class ElementaryCoordinate< ValueType, Enum,
         {};
 };
 
-template< class ValueType, class Enum >
+template< class ValueType, class Enum, int NbCoord, const char **CoordNames >
 class PhysicalQuantity
 {
     private:
-        typedef ElementaryCoordinate< ValueType, Enum > CurrentCoordinate;
+        typedef ElementaryCoordinate< ValueType, Enum, NbCoord, CoordNames > CurrentCoordinate;
+        typedef ValueType valueType;
 
         string                    _name;
         list< CurrentCoordinate > _listOfCoordinates;
         set< Enum >               _mapOfEnum;
 
     public:
-        PhysicalQuantity( string name, const int nbCoord, const char* const names[] ): _name( name )
+        PhysicalQuantity( string name ): _name( name )
         {
-            for( int i = 0; i < nbCoord; ++i )
+            for( int i = 0; i < NbCoord; ++i )
             {
-                _listOfCoordinates.push_back( CurrentCoordinate( names[i], (Enum) i ) );
+                _listOfCoordinates.push_back( CurrentCoordinate( CoordNames[i], (Enum) i ) );
                 _mapOfEnum.insert( ( Enum ) i );
             }
         };
@@ -72,6 +72,7 @@ class PhysicalQuantity
         };
 };
 
-extern PhysicalQuantity< double, DisplacementCoordinates > Displacement;
+extern PhysicalQuantity< double, DisplacementCoordinates, nbDisplacementCoordinates,
+                         DisplacementCoordinatesNames > DoubleDisplacement;
 
 #endif /* PHYSICALQUANTITY_H_ */

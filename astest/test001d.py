@@ -23,19 +23,10 @@ try:
 except:
     print "coord is read-only"
 
-# Manipulation sur les entites du maillage
-monMaillage.getGroupOfNodes("A")
-
-# Exception si le groupe n'existe pas
-try:
-    monMaillage.getGroupOfNodes("RIEN")
-except Exception as e:
-    print e
-
 # Definition du modele Aster
 monModel = code_aster.Model()
 monModel.setSupportMesh(monMaillage)
-monModel.addElementaryModelisation(code_aster.Mechanics, code_aster.Tridimensional)
+monModel.addModelisationOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
 monModel.build()
 
 # Definition des chargements

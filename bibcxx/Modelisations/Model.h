@@ -8,6 +8,8 @@
 #include "Modelisations/ElementaryModelisation.h"
 #include <map>
 
+#include "Loads/PhysicalQuantity.h"
+
 /**
 * class ModelInstance
 *   produit une sd identique a celle produite par AFFE_MODELE
@@ -56,7 +58,7 @@ class ModelInstance: public DataStructure
         * @param phys Physique a ajouter
         * @param mod Modelisation a ajouter
         */
-        void addElementaryModelisation( Physics phys, Modelisations mod )
+        void addModelisationOnAllMesh( Physics phys, Modelisations mod )
         {
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation(phys, mod),
                                                               MeshEntityPtr( new AllMeshEntitiesInstance() ) ) );
@@ -66,12 +68,32 @@ class ModelInstance: public DataStructure
         * Ajout d'une nouvelle modelisation sur une entite du maillage
         * @param phys Physique a ajouter
         * @param mod Modelisation a ajouter
-        * @param MeshEntity Entite du maillage a affecter
+        * @param nameOfGroup Nom du groupe de mailles
         */
-        void addElementaryModelisation( Physics phys, Modelisations mod, MeshEntity& entity)
+        void addModelisationOnGroupOfElements( Physics phys, Modelisations mod, string nameOfGroup )
         {
+            if ( _supportMesh.isEmpty() ) throw "Support mesh is not defined";
+            if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
+                throw nameOfGroup + "not in support mesh";
+
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation(phys, mod),
-                                                              entity.getPointer() ) );
+                                            MeshEntityPtr( new GroupOfElementsInstance(nameOfGroup) ) ) );
+        };
+
+        /**
+        * Ajout d'une nouvelle modelisation sur une entite du maillage
+        * @param phys Physique a ajouter
+        * @param mod Modelisation a ajouter
+        * @param nameOfGroup Nom du groupe de noeuds
+        */
+        void addModelisationOnGroupOfNodes( Physics phys, Modelisations mod, string nameOfGroup )
+        {
+            if ( _supportMesh.isEmpty() ) throw "Support mesh is not defined";
+            if ( ! _supportMesh->hasGroupOfNodes( nameOfGroup ) )
+                throw nameOfGroup + "not in support mesh";
+
+            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation(phys, mod),
+                                            MeshEntityPtr( new GroupOfNodesInstance(nameOfGroup) ) ) );
         };
 
         /**

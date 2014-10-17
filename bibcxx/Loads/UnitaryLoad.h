@@ -5,11 +5,13 @@ template< class PhysicalQuantityType >
 class UnitaryLoadInstance: private AllowedUnitaryLoadType< PhysicalQuantityType >
 {
     private:
-        string    _name;
-        PhysicalQuantityType::valueType
+        typedef PhysicalQuantityType::valueType valueType;
+
+        string     _name;
+        MeshEntity _supportMeshEntity;
 
     public:
-        UnitaryLoad(string name): _name( name )
+        UnitaryLoad( string name ): _name( name )
         {}
 
         void setValue(ValueType valeur)
@@ -18,8 +20,7 @@ class UnitaryLoadInstance: private AllowedUnitaryLoadType< PhysicalQuantityType 
         }
 }
 
-typedef UnitaryLoadInstance< double > DoubleLoadInstance;
+typedef UnitaryLoadInstance< DoubleDisplacement > DoubleLoadInstance;
 
-class LoadInstance
 
 #endif /* UNITARYLOAD_H_ */

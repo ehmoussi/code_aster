@@ -8,18 +8,6 @@
 %include "MemoryManager/JeveuxCollection.i"
 %include "DataFields/FieldOnNodes.i"
 
-class GroupOfNodes: public MeshEntity
-{
-    public:
-        GroupOfNodes(char* name, JeveuxCollectionLong& grpOfNodes);
-};
-
-class GroupOfElements: public MeshEntity
-{
-    public:
-        GroupOfElements(char* name, JeveuxCollectionLong& grpOfElements);
-};
-
 class MeshInstance
 {
     public:
@@ -41,11 +29,6 @@ class Mesh
     const FieldOnNodes< double > getCoordinates()
     {
         return (*$self)->getCoordinates();
-    }
-
-    const GroupOfNodes getGroupOfNodes(char* name)
-    {
-        return (*$self)->getGroupOfNodes(name);
     }
 
     bool readMEDFile(char* name)

@@ -3,6 +3,8 @@
 
 #include "Loads/PhysicalQuantity.h"
 
-PhysicalQuantity< double, DisplacementCoordinates > Displacement("DEPL", \
-                                                                 nbDisplacementCoordinates, \
-                                                                 DisplacementCoordinatesNames);
+const char* DisplacementCoordinatesNames[] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ" };
+const char* ThermalCoordinatesNames[] = { "TEMP", "TEMP_MIL" };
+
+PhysicalQuantity< double, DisplacementCoordinates, nbDisplacementCoordinates,
+                  DisplacementCoordinatesNames > DoubleDisplacement( "DEPL" );
