@@ -125,6 +125,11 @@ class MechanicalLoad
             return _MechanicalLoadPtr;
         };
 
+        MechanicalLoadInstance& operator*(void) const
+        {
+            return *_MechanicalLoadPtr;
+        };
+
         bool isEmpty() const
         {
             if ( _MechanicalLoadPtr.use_count() == 0 ) return true;

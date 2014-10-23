@@ -5,7 +5,7 @@
 #include "Debug/DebugPrint.h"
 #include "RunManager/CommandSyntax.h"
 
-void jeveuxDebugPrint(string nomJeveux, int logicalUnit)
+void jeveuxDebugPrint( const DataStructure& dataSt, const int logicalUnit )
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeImprCo( "IMPR_CO", false, "" );
@@ -14,6 +14,7 @@ void jeveuxDebugPrint(string nomJeveux, int logicalUnit)
 
     FactorKeyword motCleCONCEPT = FactorKeyword( "CONCEPT", false );
 
+    const string nomJeveux = dataSt.getName();
     SimpleKeyWordStr mCSNom( "NOM" );
     mCSNom.addValues( nomJeveux.c_str() );
 

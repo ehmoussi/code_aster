@@ -16,6 +16,11 @@ class AllocatedMaterial
 
 %extend AllocatedMaterial
 {
+    void debugPrint( const int logicalUnit )
+    {
+        return (*$self)->debugPrint( logicalUnit );
+    }
+
     bool setSupportMesh(Mesh& currentMesh)
     {
         return (*$self)->setSupportMesh(currentMesh);

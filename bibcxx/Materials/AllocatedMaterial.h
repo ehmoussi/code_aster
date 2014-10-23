@@ -123,6 +123,11 @@ class AllocatedMaterial
             return _materAllocPtr;
         };
 
+        AllocatedMaterialInstance& operator*(void) const
+        {
+            return *_materAllocPtr;
+        };
+
         bool isEmpty() const
         {
             if ( _materAllocPtr.use_count() == 0 ) return true;

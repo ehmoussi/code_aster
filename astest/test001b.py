@@ -4,10 +4,24 @@ import code_aster
 
 acier = code_aster.Material()
 tmp = code_aster.ElasticMaterialBehaviour()
-tmp.setDoubleValue("E", 2.e11)
-tmp.setDoubleValue("Nu", 0.3)
+tmp.setDoubleValue( "E", 2.e11 )
+tmp.setDoubleValue( "Nu", 0.3 )
 
-acier.addMaterialBehaviour(tmp)
+acier.addMaterialBehaviour( tmp )
 acier.build()
+acier.debugPrint( 8 )
 
-code_aster.jeveuxDebugPrint("0", 8)
+# Creation du maillage
+monMaillage = code_aster.Mesh()
+
+# Relecture du fichier MED
+monMaillage.readMEDFile( "test001b" )
+monMaillage.debugPrint( 8 )
+
+affectMat = code_aster.AllocatedMaterial()
+affectMat.setSupportMesh( monMaillage )
+
+affectMat.addMaterialOnAllMesh( acier )
+affectMat.addMaterialOnGroupOfElements( acier, "Tout" )
+affectMat.build()
+affectMat.debugPrint( 8 )

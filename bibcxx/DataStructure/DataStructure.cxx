@@ -1,5 +1,6 @@
 
 #include "DataStructure/DataStructure.h"
+#include "Debug/DebugPrint.h"
 
 mapStrSD* mapNameDataStructure = new mapStrSD();
 
@@ -16,4 +17,9 @@ DataStructure::~DataStructure()
     if ( curIter == mapNameDataStructure->end() )
         throw "Problem !!!";
     mapNameDataStructure->erase( curIter );
+};
+
+void DataStructure::debugPrint(int logicalUnit) const
+{
+    jeveuxDebugPrint( *this, logicalUnit );
 };

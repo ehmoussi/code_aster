@@ -87,6 +87,11 @@ class Material
             return _materialPtr;
         };
 
+        MaterialInstance& operator*(void) const
+        {
+            return *_materialPtr;
+        };
+
         bool isEmpty() const
         {
             if ( _materialPtr.use_count() == 0 ) return true;

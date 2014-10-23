@@ -192,6 +192,11 @@ class KinematicsLoad
             return _kinematicsLoadPtr;
         };
 
+        KinematicsLoadInstance& operator*(void) const
+        {
+            return *_kinematicsLoadPtr;
+        };
+
         bool isEmpty() const
         {
             if ( _kinematicsLoadPtr.use_count() == 0 ) return true;

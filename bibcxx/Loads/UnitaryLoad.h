@@ -22,8 +22,6 @@ class UnitaryLoad
         AsterCoordinates     _loadCoordinate;
         // Valeur a imposer
         ValueType            _value;
-        // Grandeur sur laquelle repose
-//         const PhysicalQuantityType _physicalQuantity;
 
     public:
 
@@ -31,7 +29,6 @@ class UnitaryLoad
             _supportMeshEntity( supportMeshEntity ),
             _loadCoordinate( curCoord ),
             _value( value )
-//             _physicalQuantity( PhysicalQuantityType() )
         {
             if ( ! PhysicalQuantityType::hasCoordinate( curCoord ) )
                 throw string( AsterCoordinatesNames[ (int) curCoord ] ) + " not allowed";

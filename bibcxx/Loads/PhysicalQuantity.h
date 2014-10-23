@@ -45,67 +45,6 @@ struct WrapTemp
     static const set< AsterCoordinates > setOfCoordinates;
 };
 
-// /**
-// * class ElementaryCoordinate
-// *   Classes qui sert a definir une composante elementaire d'une grandeur
-// * @author Nicolas Sellenet
-// */
-// template< class ValueType, const AsterCoordinates *AsterCoords, int NbCoord >
-// class ElementaryCoordinate
-// {
-//     private:
-//         typedef ValueType CoordinateType;
-//         typedef AsterCoordinates CoordinateEnum;
-// 
-//         string         _name;
-//         CoordinateEnum _coordEnum;
-// 
-//     public:
-//         /**
-//         * Constructeur
-//         * @param name Nom Aster de la composante 
-//         * @param curEnum Numero de la composante dans AsterCoordinates
-//         */
-//         ElementaryCoordinate(string name, AsterCoordinates curEnum): _name( name ),
-//                                                                      _coordEnum( curEnum )
-//         {};
-// };
-// 
-// template< class ValueType, const AsterCoordinates *AsterCoords, int NbCoord >
-// class PhysicalQuantity
-// {
-//     private:
-//         set< AsterCoordinates >   _mapOfEnum;
-// 
-//     public:
-//         typedef ValueType QuantityType;
-// 
-//         /**
-//         * Constructeur
-//         */
-//         PhysicalQuantity()
-//         {
-//             for( int i = 0; i < NbCoord; ++i )
-//             {
-//                 const int num = (int) AsterCoords[i];
-//                 _mapOfEnum.insert( AsterCoords[i] );
-//             }
-//         };
-// 
-//         /**
-//         * Construction du MaterialInstance
-//         *   A partir des GeneralMaterialBehaviour ajoutes par l'utilisateur :
-//         *   creation de objets Jeveux
-//         * @param testValue AsterCoordinates a tester
-//         * @return Booleen indiquant si la composante appartient a la grandeur physique
-//         */
-//         bool hasCoordinate( AsterCoordinates testValue ) const
-//         {
-//             if ( _mapOfEnum.find( testValue ) == _mapOfEnum.end() ) return false;
-//             return true;
-//         };
-// };
-
 /**
 * class PhysicalQuantity
 *   Classe definissant un grandeur physique (DEPL_R, TEMP_R, etc.)

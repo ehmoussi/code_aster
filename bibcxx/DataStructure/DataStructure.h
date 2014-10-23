@@ -20,15 +20,17 @@ class DataStructure
 
         ~DataStructure();
 
-        const string& getName()
+        const string& getName() const
         {
             return _name;
         };
 
-        const string& getType()
+        const string& getType() const
         {
             return _type;
         };
+
+        void debugPrint(const int logicalUnit) const;
 };
 
 typedef map< string, DataStructure* > mapStrSD;
