@@ -41,6 +41,11 @@ class Material
         (*$self)->addMaterialBehaviour(curMaterBehav);
     }
 
+    void debugPrint(const int logicalUnit)
+    {
+        return (*$self)->debugPrint( logicalUnit );
+    }
+
     bool build()
     {
         return (*$self)->build();

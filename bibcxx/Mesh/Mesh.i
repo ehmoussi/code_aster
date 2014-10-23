@@ -26,6 +26,11 @@ class Mesh
 
 %extend Mesh
 {
+    void debugPrint(const int logicalUnit)
+    {
+        return (*$self)->debugPrint( logicalUnit );
+    }
+
     const FieldOnNodes< double > getCoordinates()
     {
         return (*$self)->getCoordinates();

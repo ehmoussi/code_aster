@@ -5,9 +5,10 @@
 
 #include <string>
 #include "RunManager/Initializer.h"
+#include "DataStructure/DataStructure.h"
 
 using namespace std;
 
-void jeveuxDebugPrint(string nomJeveux, int logicalUnit);
+void jeveuxDebugPrint( const DataStructure& dataSt, const int logicalUnit );
 
 #endif /* DEBUGPRINT_H_ */

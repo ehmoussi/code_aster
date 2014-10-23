@@ -164,6 +164,11 @@ class Model
             return _modelPtr;
         };
 
+        ModelInstance& operator*(void) const
+        {
+            return *_modelPtr;
+        };
+
         bool isEmpty() const
         {
             if ( _modelPtr.use_count() == 0 ) return true;

@@ -34,8 +34,6 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
 
 %include "RunManager/CataBuilder.i"
 
-%include "Debug/DebugPrint.i"
-
 void asterInitialization(int imode);
 
 void asterFinalization();
