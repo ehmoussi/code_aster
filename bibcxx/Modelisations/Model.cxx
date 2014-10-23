@@ -5,17 +5,18 @@
 #include <typeinfo>
 
 ModelInstance::ModelInstance(): DataStructure( initAster->getNewResultObjectName(), "MODELE" ),
-                                _jeveuxName( getName() ),
-                                _typeOfElements( JeveuxVectorLong( string(_jeveuxName + ".MAILLE    ") ) ),
-                                _typeOfNodes( JeveuxVectorLong( string(_jeveuxName + ".NOEUD     ") ) ),
-                                _partition( JeveuxVectorChar8( string(_jeveuxName + ".PARTIT    ") ) ),
-                                _supportMesh( Mesh(false) )
+                                _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
+                                _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
+                                _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
+                                _supportMesh( Mesh( false ) ),
+                                _isEmpty( true )
 {};
 
 bool ModelInstance::build()
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
-    CommandSyntax syntaxeAffeModele("AFFE_MODELE", true, initAster->getResultObjectName());
+    CommandSyntax syntaxeAffeModele( "AFFE_MODELE", true,
+                                     initAster->getResultObjectName(), getType() );
     // Ligne indispensable pour que les commandes GET* fonctionnent
     commandeCourante = &syntaxeAffeModele;
 
@@ -77,6 +78,7 @@ bool ModelInstance::build()
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
     CALL_EXECOP(18);
+    _isEmpty = false;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _typeOfElements->updateValuePointer();
 

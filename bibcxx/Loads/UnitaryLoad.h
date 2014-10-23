@@ -1,26 +1,59 @@
 #ifndef UNITARYLOAD_H_
 #define UNITARYLOAD_H_
 
+#include "Loads/PhysicalQuantity.h"
+
+/**
+* class UnitaryLoad
+*   Classe template definissant une paire d'un MeshEntity et d'une valeur imposee sur une composante
+* @author Nicolas Sellenet
+*/
 template< class PhysicalQuantityType >
-class UnitaryLoadInstance: private AllowedUnitaryLoadType< PhysicalQuantityType >
+class UnitaryLoad
 {
     private:
-        typedef PhysicalQuantityType::valueType valueType;
+        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
-        string     _name;
-        MeshEntity _supportMeshEntity;
+        typedef typename PhysicalQuantityType::QuantityType ValueType;
+
+        // MeshEntity sur laquelle repose le "blocage"
+        MeshEntityPtr        _supportMeshEntity;
+        // "Numero" de la composante à imposer
+        AsterCoordinates     _loadCoordinate;
+        // Valeur a imposer
+        ValueType            _value;
+        // Grandeur sur laquelle repose
+//         const PhysicalQuantityType _physicalQuantity;
 
     public:
-        UnitaryLoad( string name ): _name( name )
-        {}
 
-        void setValue(ValueType valeur)
+        UnitaryLoad( MeshEntityPtr supportMeshEntity, AsterCoordinates curCoord, ValueType value ):
+            _supportMeshEntity( supportMeshEntity ),
+            _loadCoordinate( curCoord ),
+            _value( value )
+//             _physicalQuantity( PhysicalQuantityType() )
         {
-            _value = valeur;
-        }
-}
+            if ( ! PhysicalQuantityType::hasCoordinate( curCoord ) )
+                throw string( AsterCoordinatesNames[ (int) curCoord ] ) + " not allowed";
+        };
 
-typedef UnitaryLoadInstance< DoubleDisplacement > DoubleLoadInstance;
+        const string getAsterCoordinateName() const
+        {
+            return string( AsterCoordinatesNames[ (int) _loadCoordinate ] );
+        };
 
+        const MeshEntityPtr& getMeshEntityPtr() const
+        {
+            return _supportMeshEntity;
+        };
+
+        const ValueType getValue() const
+        {
+            return _value;
+        };
+};
+
+typedef UnitaryLoad< DoubleDisplacementType > DoubleLoadDisplacement;
+typedef UnitaryLoad< DoubleTemperatureType > DoubleLoadTemperature;
 
 #endif /* UNITARYLOAD_H_ */

@@ -21,7 +21,8 @@ MeshInstance::MeshInstance(): DataStructure( initAster->getNewResultObjectName()
 bool MeshInstance::readMEDFile(char* pathFichier)
 {
     // Creation d'un bout de fichier commande correspondant a LIRE_MAILLAGE
-    CommandSyntax syntaxeLireMaillage("LIRE_MAILLAGE", true, initAster->getResultObjectName());
+    CommandSyntax syntaxeLireMaillage( "LIRE_MAILLAGE", true,
+                                       initAster->getResultObjectName(), getType() );
     // Ligne indispensable pour que les commandes GET* fonctionnent
     commandeCourante = &syntaxeLireMaillage;
 

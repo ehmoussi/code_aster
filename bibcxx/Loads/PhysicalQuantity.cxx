@@ -3,8 +3,13 @@
 
 #include "Loads/PhysicalQuantity.h"
 
-const char* DisplacementCoordinatesNames[] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ" };
-const char* ThermalCoordinatesNames[] = { "TEMP", "TEMP_MIL" };
+const char* AsterCoordinatesNames[8] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP", "TEMP_MIL" };
 
-PhysicalQuantity< double, DisplacementCoordinates, nbDisplacementCoordinates,
-                  DisplacementCoordinatesNames > DoubleDisplacement( "DEPL" );
+const AsterCoordinates DeplCoordinates[nbDisplacementCoordinates] = { Dx, Dy, Dz, Drx, Dry, Drz };
+
+const AsterCoordinates TempCoordinates[nbThermalCoordinates] = { Temperature, MiddleTemperature };
+
+
+const set< AsterCoordinates >WrapDepl::setOfCoordinates( DeplCoordinates, DeplCoordinates + nbDisplacementCoordinates );
+
+const set< AsterCoordinates >WrapTemp::setOfCoordinates( TempCoordinates, TempCoordinates + nbThermalCoordinates );

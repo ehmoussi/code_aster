@@ -32,7 +32,6 @@ class MechanicalLoad
         return (*$self)->setPressureOnElements(doFValue, nameOfGroup);
     }
 
-
     bool build()
     {
         return (*$self)->build();

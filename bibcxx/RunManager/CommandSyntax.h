@@ -113,7 +113,9 @@ class FactorKeywordOccurence
         /**
         * Constructeur
         */
-        FactorKeywordOccurence()
+        FactorKeywordOccurence(): _listSimpleKeywordsStr( list< SimpleKeyWordStr >() ),
+                                  _listSimpleKeywordsDbl( list< SimpleKeyWordDbl >() ),
+                                  _listSimpleKeywordsInt( list< SimpleKeyWordInt >() )
         {};
 
         /**
@@ -171,6 +173,42 @@ class FactorKeywordOccurence
             return false;
         };
 
+        bool isKeywordPresentDbl(string motCle)
+        {
+            list< SimpleKeyWordDbl >::iterator curIter;
+            for ( curIter = _listSimpleKeywordsDbl.begin();
+                  curIter != _listSimpleKeywordsDbl.end();
+                  ++curIter )
+            {
+                if ( curIter->keywordName() == motCle ) return true;
+            }
+            return false;
+        };
+
+        bool isKeywordPresentInt(string motCle)
+        {
+            list< SimpleKeyWordInt >::iterator curIter;
+            for ( curIter = _listSimpleKeywordsInt.begin();
+                  curIter != _listSimpleKeywordsInt.end();
+                  ++curIter )
+            {
+                if ( curIter->keywordName() == motCle ) return true;
+            }
+            return false;
+        };
+
+        bool isKeywordPresentStr(string motCle)
+        {
+            list< SimpleKeyWordStr >::iterator curIter;
+            for ( curIter = _listSimpleKeywordsStr.begin();
+                  curIter != _listSimpleKeywordsStr.end();
+                  ++curIter )
+            {
+                if ( curIter->keywordName() == motCle ) return true;
+            }
+            return false;
+        };
+
         ListString& stringValuesInKeyword(string motCle)
         {
             list< SimpleKeyWordStr >::iterator curIter;
@@ -180,6 +218,8 @@ class FactorKeywordOccurence
             {
                 if ( curIter->keywordName() == motCle ) break;
             }
+            if ( curIter == _listSimpleKeywordsStr.end() )
+                throw "Problem in CommandSyntax. " + motCle + "not found";
             return curIter->getListOfValues();
         };
 
@@ -192,6 +232,8 @@ class FactorKeywordOccurence
             {
                 if ( curIter->keywordName() == motCle ) break;
             }
+            if ( curIter == _listSimpleKeywordsDbl.end() )
+                throw "Problem in CommandSyntax. " + motCle + "not found";
             return curIter->getListOfValues();
         };
 
@@ -204,6 +246,8 @@ class FactorKeywordOccurence
             {
                 if ( curIter->keywordName() == motCle ) break;
             }
+            if ( curIter == _listSimpleKeywordsInt.end() )
+                throw "Problem in CommandSyntax. " + motCle + "not found";
             return curIter->getListOfValues();
         };
 };
@@ -262,6 +306,24 @@ class FactorKeyword
             return trouve;
         };
 
+        bool isDoubleKeywordPresentInOccurence( string motCle, int num )
+        {
+            if ( num >= _vectorOccurences.size() ) return false;
+            return _vectorOccurences[num].isKeywordPresentDbl( motCle );
+        };
+
+        bool isIntegerKeywordPresentInOccurence( string motCle, int num )
+        {
+            if ( num >= _vectorOccurences.size() ) return false;
+            return _vectorOccurences[num].isKeywordPresentInt( motCle );
+        };
+
+        bool isStringKeywordPresentInOccurence( string motCle, int num )
+        {
+            if ( num >= _vectorOccurences.size() ) return false;
+            return _vectorOccurences[num].isKeywordPresentStr( motCle );
+        };
+
         bool isOccurencePresent(int num)
         {
             if ( num < _vectorOccurences.size() ) return true;
@@ -312,6 +374,7 @@ class CommandSyntax
         mapStrMCF    _factorKeywordsMap;
         bool         _isOperateur;
         const string _nomObjetJeveux;
+        const string _typeSDAster;
 
     public:
         /**
@@ -323,9 +386,11 @@ class CommandSyntax
         * @param nomObjet Chaine precisant le nom Jeveux de la sd produite
         *                 ex : MA = LIRE_MAILAGE : nomObjet = "MA      "
         */
-        CommandSyntax(string nom, bool operateur, string nomObjet): _commandName( nom ),
-                                                                    _isOperateur( operateur ),
-                                                                    _nomObjetJeveux( nomObjet )
+        CommandSyntax(string nom, bool operateur,
+                      string nomObjet, string typeObjet = ""): _commandName( nom ),
+                                                               _isOperateur( operateur ),
+                                                               _nomObjetJeveux( nomObjet ),
+                                                               _typeSDAster( typeObjet )
         {
             _factorKeywordsMap.insert( mapStrMCFValue( string(""), FactorKeyword(" ", false) ) );
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
@@ -359,6 +424,24 @@ class CommandSyntax
             return (*curIter).second.isKeywordPresent(mcSim);
         };
 
+        bool isDoubleKeywordPresentInOccurence( string mCFac, string motCle, int num )
+        {
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
+            return (*curIter).second.isDoubleKeywordPresentInOccurence(motCle, num);
+        };
+
+        bool isIntegerKeywordPresentInOccurence( string mCFac, string motCle, int num )
+        {
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
+            return (*curIter).second.isIntegerKeywordPresentInOccurence(motCle, num);
+        };
+
+        bool isStringKeywordPresentInOccurence( string mCFac, string motCle, int num )
+        {
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
+            return (*curIter).second.isStringKeywordPresentInOccurence(motCle, num);
+        };
+
         const FactorKeyword& getFactorKeyword(string keywordName)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(keywordName);
@@ -376,14 +459,25 @@ class CommandSyntax
         };
 
         /**
-        * Ajout d'un mot cle simple ayant comme valeur une chaine a la commande en cours
-        *   ex : GROUP_MA = 'TOTO'
+        * Ajout d'un mot cle simple ayant comme valeur un double a la commande en cours
+        *   ex : DX = 0.
         * @param motCle mot cle simple a ajouter
         */
-        bool addSimpleKeywordStr(const SimpleKeyWordStr motCle)
+        bool addSimpleKeywordDouble(const SimpleKeyWordDbl motCle)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
-            (*curIter).second.getOccurence(0).addSimpleKeywordStr(motCle);
+            (*curIter).second.getOccurence(0).addSimpleKeywordDouble(motCle);
+            return true;
+        };
+
+        /**
+        * Ajout d'un mot cle simple ayant comme valeur un entier a la commande en cours
+        * @param motCle mot cle simple a ajouter
+        */
+        bool addSimpleKeywordInteger(const SimpleKeyWordInt motCle)
+        {
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
+            (*curIter).second.getOccurence(0).addSimpleKeywordInteger(motCle);
             return true;
         };
 
@@ -392,10 +486,10 @@ class CommandSyntax
         *   ex : GROUP_MA = 'TOTO'
         * @param motCle mot cle simple a ajouter
         */
-        bool addSimpleKeywordInteger(const SimpleKeyWordInt motCle)
+        bool addSimpleKeywordStr(const SimpleKeyWordStr motCle)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
-            (*curIter).second.getOccurence(0).addSimpleKeywordInteger(motCle);
+            (*curIter).second.getOccurence(0).addSimpleKeywordStr(motCle);
             return true;
         };
 
@@ -431,6 +525,11 @@ class CommandSyntax
         {
             return _nomObjetJeveux;
         };
+
+        const string& getTypeObjetResu()
+        {
+            return _typeSDAster;
+        };
 };
 
 extern CommandSyntax* commandeCourante;
@@ -448,6 +547,8 @@ extern "C" {
 char* getNomCommande();
 
 char* getNomObjetJeveux();
+
+char* getTypeObjetResu();
 
 char* getSDType(char*);
 
