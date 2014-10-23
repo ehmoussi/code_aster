@@ -25,9 +25,11 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
 
 %include "DataFields/FieldOnNodes.i"
 %include "Loads/MechanicalLoad.i"
+%include "Loads/KinematicsLoad.i"
 %include "Mesh/Mesh.i"
 %include "Modelisations/Model.i"
 %include "Materials/Material.i"
+%include "Materials/AllocatedMaterial.i"
 %include "Results/ResultsContainer.i"
 
 %include "RunManager/CataBuilder.i"

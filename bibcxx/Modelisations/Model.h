@@ -25,8 +25,6 @@ class ModelInstance: public DataStructure
         typedef listOfModsAndGrps::value_type listOfModsAndGrpsValue;
         typedef listOfModsAndGrps::iterator listOfModsAndGrpsIter;
 
-        // Nom Jeveux de la sd produite
-        const string      _jeveuxName;
         // Vecteur Jeveux '.MAILLE'
         JeveuxVectorLong  _typeOfElements;
         // Vecteur Jeveux '.NOEUD'
@@ -37,6 +35,7 @@ class ModelInstance: public DataStructure
         listOfModsAndGrps _modelisations;
         // Maillage sur lequel repose la modelisation
         Mesh              _supportMesh;
+        bool              _isEmpty;
 
     public:
         /**
@@ -44,15 +43,6 @@ class ModelInstance: public DataStructure
         */
         ModelInstance();
 
-        
-        /**
-        * Récupération du nom Jeveux du modèle 
-        * @return name nom jeveux du modele
-        */
-        const string getJeveuxName()
-        {
-        return _jeveuxName;
-        };
         /**
         * Ajout d'une nouvelle modelisation sur tout le maillage
         * @param phys Physique a ajouter
@@ -103,6 +93,15 @@ class ModelInstance: public DataStructure
         bool build();
 
         /**
+        * Methode permettant de savoir si le modele est vide
+        * @return true si le modele est vide
+        */
+        bool isEmpty()
+        {
+            return _isEmpty;
+        };
+
+        /**
         * Definition de la methode de partition
         *   pas encore codee
         */
@@ -122,13 +121,12 @@ class ModelInstance: public DataStructure
             _supportMesh = currentMesh;
             return true;
         };
-        
+
         Mesh& getSupportMesh()
         {
-        if ( _supportMesh->isEmpty() )
-        {
-          throw string("support mesh of current model is empty");}
-         return _supportMesh;
+            if ( _supportMesh->isEmpty() )
+                throw string("support mesh of current model is empty");
+            return _supportMesh;
         }; 
 };
 

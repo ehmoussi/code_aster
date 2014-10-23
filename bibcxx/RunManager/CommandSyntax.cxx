@@ -18,6 +18,12 @@ char* getNomObjetJeveux()
     return const_cast< char* >( commandeCourante->getObjectName().c_str() );
 };
 
+char* getTypeObjetResu()
+{
+    if ( commandeCourante == NULL ) return NULL;
+    return const_cast< char* >( commandeCourante->getTypeObjetResu().c_str() );
+};
+
 char* getSDType(char* nom)
 {
     mapStrSDIterator curIter = mapNameDataStructure->find( string( nom ) );
@@ -149,7 +155,14 @@ char** valeursMotCleChaine(char* motCleFacteur, int occurence, char* motCleSimpl
     if ( commandeCourante == NULL ) return NULL;
     int occBis = occurence - 1;
     if ( occurence == 0 ) occBis = occurence;
-    ListString retour = commandeCourante->stringValuesOfKeyword(string(motCleFacteur), occBis, string(motCleSimple));
+
+    if ( ! commandeCourante->isStringKeywordPresentInOccurence(motCleFacteur, motCleSimple, occBis) )
+    {
+        *taille = 0;
+        return NULL;
+    }
+
+    ListString& retour = commandeCourante->stringValuesOfKeyword(string(motCleFacteur), occBis, string(motCleSimple));
     *taille = retour.size();
     if ( *taille == 0 ) return NULL;
 
@@ -171,7 +184,14 @@ double* valeursMotCleDouble(char* motCleFacteur, int occurence, char* motCleSimp
     if ( commandeCourante == NULL ) return NULL;
     int occBis = occurence - 1;
     if ( occurence == 0 ) occBis = occurence;
-    ListDouble retour = commandeCourante->doubleValuesOfKeyword(string(motCleFacteur), occBis, string(motCleSimple));
+
+    if ( ! commandeCourante->isDoubleKeywordPresentInOccurence(motCleFacteur, motCleSimple, occBis) )
+    {
+        *taille = 0;
+        return NULL;
+    }
+
+    ListDouble& retour = commandeCourante->doubleValuesOfKeyword( motCleFacteur, occBis, motCleSimple );
     *taille = retour.size();
     if ( *taille == 0 ) return NULL;
 
@@ -193,7 +213,14 @@ int* valeursMotCleInt(char* motCleFacteur, int occurence, char* motCleSimple, in
     if ( commandeCourante == NULL ) return NULL;
     int occBis = occurence - 1;
     if ( occurence == 0 ) occBis = occurence;
-    ListInt retour = commandeCourante->intValuesOfKeyword(string(motCleFacteur), occBis, string(motCleSimple));
+
+    if ( ! commandeCourante->isIntegerKeywordPresentInOccurence(motCleFacteur, motCleSimple, occBis) )
+    {
+        *taille = 0;
+        return NULL;
+    }
+
+    ListInt& retour = commandeCourante->intValuesOfKeyword(string(motCleFacteur), occBis, string(motCleSimple));
     *taille = retour.size();
     if ( *taille == 0 ) return NULL;
 

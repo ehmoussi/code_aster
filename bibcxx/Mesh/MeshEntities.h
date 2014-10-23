@@ -16,7 +16,7 @@ class VirtualMeshEntity
 {
     private:
         // Nom de l'entite
-        const string            _name;
+        const string _name;
 
     public:
         /**

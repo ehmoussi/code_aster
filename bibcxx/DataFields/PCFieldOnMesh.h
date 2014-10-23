@@ -61,7 +61,7 @@ class PCFieldOnMeshInstance
             retour = ( retour && _descriptor->updateValuePointer() );
             retour = ( retour && _valuesList->updateValuePointer() );
             // Les deux elements suivants sont facultatifs
-            _listOfMeshElements->updateValuePointer();
+            _listOfMeshElements->buildFromJeveux();
             _nameOfLigrels->updateValuePointer();
             return retour;
         };
@@ -117,6 +117,7 @@ class PCFieldOnMesh
         };
 };
 
-typedef PCFieldOnMesh<double> PCFieldOnMeshDouble;
+typedef PCFieldOnMesh< double > PCFieldOnMeshDouble;
+typedef PCFieldOnMesh< char[8] > PCFieldOnMeshChar8;
 
 #endif /* PCFIELDONMESH_H_ */

@@ -5,7 +5,6 @@
 #include "DataFields/PCFieldOnMesh.h"
 #include "aster.h"
 
-
 /**
 * class Elementary Load 
 * Charge élémentaire constituée de
@@ -18,11 +17,11 @@ template<class ValueType>
 class ElementaryLoad
 {
     private:
-        // Nom du type de charge (DDL_IMPO, PRES_REP) 
+        // Nom du type de charge (DDL_IMPO, PRES_REP)
         string  _type;
-        // Nom de la composante de la grandeur dont 
+        // Nom de la composante de la grandeur dont
         // la valeur est imposée,
-        // ex : "DX", "PRES" 
+        // ex : "DX", "PRES"
         string   _name;
         // Description de parametre, ex : "Pressure"
         string   _description;
@@ -35,12 +34,12 @@ class ElementaryLoad
         * @param name Nom de la composante fixée  (ex : "DX")
         * @param description Description libre
         */
-        ElementaryLoad(string type, string name, string description = ""):_type( type ), 
+        ElementaryLoad(string type, string name, string description = ""):_type( type ),
                                                                           _name( name ),
                                                                           _description( description )
         {};
-        /** Récupération du type de contrainte 
-        * @return le nom Aster du mot-clé facteur 
+        /** Récupération du type de contrainte
+        * @return le nom Aster du mot-clé facteur
         * définissant le type de contrainte 
         */
         const string& getType() const
@@ -77,7 +76,7 @@ class ElementaryLoad
         };
 };
 
-typedef class ElementaryLoad<double> ElementaryLoadDouble; 
+typedef class ElementaryLoad<double> ElementaryLoadDouble;
 
 template<class ValueType>
 class DisplacementLoad: public ElementaryLoad<ValueType>
@@ -86,7 +85,7 @@ class DisplacementLoad: public ElementaryLoad<ValueType>
         /**
         * Constructeur
         */
-        DisplacementLoad<ValueType>(string name): ElementaryLoad<ValueType>( "DDL_IMPO", name, "Imposed displacement") 
+        DisplacementLoad<ValueType>(string name): ElementaryLoad<ValueType>( "DDL_IMPO", name, "Imposed displacement" )
         {};
 };
 
@@ -97,7 +96,7 @@ class PressureLoad: public ElementaryLoad<ValueType>
         /**
         * Constructeur
         */
-        PressureLoad<ValueType>(): ElementaryLoad<ValueType>( "PRES_REP", "PRES", "Pressure") 
+        PressureLoad<ValueType>(): ElementaryLoad<ValueType>( "PRES_REP", "PRES", "Pressure" )
         {};
 };
 

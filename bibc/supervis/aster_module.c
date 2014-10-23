@@ -393,7 +393,7 @@ void DEFSSS( GETRES ,getres, _OUT char *nomres, _IN STRING_SIZE lres,
             le nom de la commande          : nomcmd (string)
         */
     char* nomCmdCp = getNomCommande();
-    CopyCStrToFStr(nomcmd, nomCmdCp, 16);
+    CopyCStrToFStr(nomcmd, nomCmdCp, lcmd);
     int tmp = isCommandeOperateur();
     if ( tmp == 0 )
     {
@@ -403,7 +403,9 @@ void DEFSSS( GETRES ,getres, _OUT char *nomres, _IN STRING_SIZE lres,
     else
     {
         char* nomObj = getNomObjetJeveux();
-        CopyCStrToFStr(nomres, nomObj, 8);
+        CopyCStrToFStr(nomres, nomObj, lres);
+        char* typObj = getTypeObjetResu();
+        CopyCStrToFStr(concep, typObj, lconc);
     }
     fprintf(fileOut, "GETRES %s %d\n", nomcmd, tmp);
 }
