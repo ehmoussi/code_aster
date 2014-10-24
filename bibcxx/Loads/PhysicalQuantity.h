@@ -11,7 +11,7 @@ using namespace std;
 
 /**
 * enum AsterCoordinates
-*   Toutes les coordonnes des grandeurs de Code_Aster
+*   Toutes les coordonnees des grandeurs de Code_Aster
 * @author Nicolas Sellenet
 */
 enum AsterCoordinates { Dx, Dy, Dz, Drx, Dry, Drz, Temperature, MiddleTemperature };
@@ -50,8 +50,7 @@ struct WrapTemp
 *   Classe definissant un grandeur physique (DEPL_R, TEMP_R, etc.)
 *   Classe template prenant en arguments :
 *    - le type (double, complex, ...)
-*    - la liste des AsterCoordinates correspondant a la grandeur
-*    - le nombre de composantes
+*    - la classe correspondant a la grandeur (DEPL, TEMP, ...)
 * @author Nicolas Sellenet
 */
 template< class ValueType, class Wrapping >

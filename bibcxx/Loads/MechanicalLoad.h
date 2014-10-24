@@ -39,6 +39,8 @@ class MechanicalLoadInstance : public DataStructure
 // Imposer un déplacement (e.g. DX = 0 ) sur un groupe de noeuds (défini par son nom) 
         void setDisplacementOnNodes(string doFName, double doFValue, string nameOfGroup)
         {
+            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+                throw string("Model is empty");
 // Vérifier que le nom de groupe est licite (i.e. le nom définit bien un groupe de noeuds qui 
 // existe dans le maillage sous-jacent au modèle.
             Mesh & currentMesh= _supportModel->getSupportMesh();
@@ -55,6 +57,8 @@ class MechanicalLoadInstance : public DataStructure
 // Imposer un déplacement (e.g. DX = 0 ) sur un groupe de mailles (défini par son nom) 
         void setDisplacementOnElements(string doFName, double doFValue, string nameOfGroup)  
         {
+            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+                throw string("Model is empty");
 // Vérifier que le nom de groupe est licite (i.e. le nom définit bien un groupe de mailles qui 
 // existe dans le maillage sous-jacent au modèle.
             Mesh & currentMesh= _supportModel->getSupportMesh();
@@ -71,6 +75,8 @@ class MechanicalLoadInstance : public DataStructure
 // Imposer une pression sur un groupe de mailles
         void setPressureOnElements(double pressure_value, string nameOfGroup)
         {
+            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+                throw string("Model is empty");
 // Vérifier que le nom de groupe est licite (i.e. le nom définit bien un groupe de mailles qui 
 // existe dans le maillage sous-jacent au modèle.
             Mesh & currentMesh= _supportModel->getSupportMesh();

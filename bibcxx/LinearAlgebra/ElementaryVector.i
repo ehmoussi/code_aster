@@ -1,25 +1,30 @@
 %module code_aster
 %{
-#include "LinearAlgebra/ElementaryMatrix.h"
+#include "LinearAlgebra/ElementaryVector.h"
 %}
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Modelisations/Model.h"
+#include "Loads/MechanicalLoad.h"
 #include "Materials/AllocatedMaterial.h"
 
-class ElementaryMatrix
+class ElementaryVector
 {
     public:
-        ElementaryMatrix();
-        ~ElementaryMatrix();
+        ElementaryVector();
+        ~ElementaryVector();
 };
 
-%extend ElementaryMatrix
+%extend ElementaryVector
 {
-    bool computeMechanicalRigidity()
+    void addMechanicalLoad( MechanicalLoad& currentLoad )
     {
-        return (*$self)->computeMechanicalRigidity();
+        return (*$self)->addMechanicalLoad( currentLoad );
+    }
+
+    bool computeMechanicalLoads()
+    {
+        return (*$self)->computeMechanicalLoads();
     }
 
     void debugPrint( const int logicalUnit )
@@ -30,10 +35,5 @@ class ElementaryMatrix
     void setAllocatedMaterial( const AllocatedMaterial& currentMaterial )
     {
         return (*$self)->setAllocatedMaterial( currentMaterial );
-    }
-
-    void setSupportModel( const Model& currentModel )
-    {
-        return (*$self)->setSupportModel( currentModel );
     }
 }

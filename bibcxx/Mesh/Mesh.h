@@ -45,9 +45,7 @@ class MeshInstance: public DataStructure
         * Destructeur
         */
         ~MeshInstance()
-        {
-            cout << "~MeshInstance" << endl;
-        };
+        {};
 
         /**
         * Recuperation des coordonnees du maillage
