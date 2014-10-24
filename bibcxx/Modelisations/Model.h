@@ -124,8 +124,8 @@ class ModelInstance: public DataStructure
 
         Mesh& getSupportMesh()
         {
-            if ( _supportMesh->isEmpty() )
-                throw string("support mesh of current model is empty");
+            if ( _supportMesh.isEmpty() || _supportMesh->isEmpty() )
+                throw string("Support mesh of current model is empty");
             return _supportMesh;
         }; 
 };

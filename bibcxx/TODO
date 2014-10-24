@@ -10,6 +10,9 @@ Utiliser des smart pointers pour mieux gérer les références et la libération
 
 Ajouter des JEDETR dans les destructeurs des Instances (fait pour les vecteurs pas pour les collections)
 
-Remarque : Renvoyer par valeur entre le C++ et le python plutôt que par reference pour forcer la recopie du smart-pointer
+Remarque : Renvoyer par valeur entre le C++ et le python plutôt que par reference pour forcer la recopie
+    du smart-pointer
 
 Modifier "extern mapStrSD* mapNameDataStructure;" pour éviter d'utiliser un pointeur
+
+debugPrint ne devrait pas etre une methode de DataStructure mais plutot des objets Jeveux de base

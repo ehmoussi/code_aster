@@ -13,7 +13,7 @@ class DataStructure
 {
     private:
         const string _name;
-        const string _type;
+        string _type;
 
     public:
         DataStructure(string name, string type);
@@ -31,6 +31,12 @@ class DataStructure
         };
 
         void debugPrint(const int logicalUnit) const;
+
+    protected:
+        void setType(const string newType)
+        {
+            _type = newType;
+        };
 };
 
 typedef map< string, DataStructure* > mapStrSD;

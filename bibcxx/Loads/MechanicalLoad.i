@@ -14,6 +14,11 @@ class MechanicalLoad
 
 %extend MechanicalLoad
 {
+    void debugPrint( const int logicalUnit )
+    {
+        return (*$self)->debugPrint( logicalUnit );
+    }
+
     bool setSupportModel(Model& currentModel)
     {
         return (*$self)->setSupportModel(currentModel);

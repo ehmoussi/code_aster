@@ -8,6 +8,11 @@
 #include "Modelisations/Model.h"
 #include "Materials/AllocatedMaterial.h"
 
+/**
+* class ElementaryMatrixInstance
+*   Class definissant une sd_matr_elem
+* @author Nicolas Sellenet
+*/
 class ElementaryMatrixInstance: public DataStructure
 {
     private:
@@ -34,13 +39,33 @@ class ElementaryMatrixInstance: public DataStructure
         ~ElementaryMatrixInstance()
         {};
 
+        /**
+        * Calcul des matrices elementaires pour l'option RIGI_MECA
+        */
         bool computeMechanicalRigidity();
 
+        /**
+        * Methode permettant de savoir si les matrices elementaires sont vides
+        * @return true si les matrices elementaires sont vides
+        */
+        bool isEmpty()
+        {
+            return _isEmpty;
+        };
+
+        /**
+        * Methode permettant de definir le champ de materiau
+        * @param currentMaterial objet AllocatedMaterial
+        */
         void setAllocatedMaterial( const AllocatedMaterial& currentMaterial )
         {
             _material = currentMaterial;
         };
 
+        /**
+        * Methode permettant de definir le modele support
+        * @param currentModel Model support des matrices elementaires
+        */
         void setSupportModel( const Model& currentModel )
         {
             _supportModel = currentModel;
