@@ -31,6 +31,7 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
 %include "Materials/Material.i"
 %include "Materials/AllocatedMaterial.i"
 %include "Results/ResultsContainer.i"
+%include "LinearAlgebra/ElementaryMatrix.i"
 
 %include "RunManager/CataBuilder.i"
 
