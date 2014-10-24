@@ -14,7 +14,6 @@
 class MeshInstance: public DataStructure
 {
     private:
-        friend class VirtualMeshEntity;
         // Nom Jeveux du maillage
         const string           _jeveuxName;
         // Objet Jeveux '.DIME'
