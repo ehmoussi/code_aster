@@ -30,7 +30,6 @@ bool MechanicalLoadInstance::build()
           curIter != _listOfLoadsDouble.end();
           ++curIter )
     {
-        FactorKeyword motCleLoad = FactorKeyword((*curIter).first.getType(), true);
         cout <<  " Type de mot-clé facteur: " <<  (*curIter).first.getType() << endl;
         FactorKeywordOccurence occurLoad = FactorKeywordOccurence();
 
@@ -57,8 +56,18 @@ bool MechanicalLoadInstance::build()
         }
         occurLoad.addSimpleKeywordStr(mCSGroup);
 
-        motCleLoad.addOccurence(occurLoad);
-        syntaxeAffeCharMeca.addFactorKeyword(motCleLoad);
+        string nomFKW = (*curIter).first.getType();
+        if ( syntaxeAffeCharMeca.isFactorKeywordPresent( nomFKW ) )
+        {
+            FactorKeyword& motCleLoad = syntaxeAffeCharMeca.getFactorKeyword( nomFKW );
+            motCleLoad.addOccurence( occurLoad );
+        }
+        else
+        {
+            FactorKeyword motCleLoad = FactorKeyword( nomFKW, true );
+            motCleLoad.addOccurence( occurLoad );
+            syntaxeAffeCharMeca.addFactorKeyword( motCleLoad );
+        }
     } 
 
    // Maintenant que le fichier de commande est pret, on appelle OP0007

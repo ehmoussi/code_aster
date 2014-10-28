@@ -4,7 +4,7 @@
 
 mapStrSD* mapNameDataStructure = new mapStrSD();
 
-DataStructure::DataStructure(string name, string type): _name( name ), _type( type )
+DataStructure::DataStructure( string name, string type ): _name( name ), _type( type )
 {
     mapNameDataStructure->insert( mapStrSDValue( _name, this ) );
 };

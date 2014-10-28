@@ -34,7 +34,7 @@ bool DOFNumerotationInstance::computeNumerotation()
         mCSMatrRigi.addValues( _supportMatrix->getName() );
         syntaxeNumeDdl.addSimpleKeywordStr(mCSMatrRigi);
 
-        SimpleKeyWordStr mCSSolveur = SimpleKeyWordStr( "SOLVEUR" );
+        SimpleKeyWordStr mCSSolveur = SimpleKeyWordStr( "METHODE" );
         mCSSolveur.addValues( _linearSolver->getSolverName() );
         syntaxeNumeDdl.addSimpleKeywordStr(mCSSolveur);
 

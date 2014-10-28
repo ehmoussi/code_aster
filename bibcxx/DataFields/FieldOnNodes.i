@@ -21,4 +21,9 @@ class FieldOnNodes
     {
         return (*self)->operator[](i);
     }
+
+    void debugPrint( const int logicalUnit )
+    {
+        return (*$self)->debugPrint( logicalUnit );
+    }
 }

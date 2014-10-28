@@ -1,7 +1,7 @@
 
 #include "LinearAlgebra/AllowedLinearSolver.h"
 
-const char* LinearSolverNames[nbSolvers] = { "MUMPS", "MULT_FRONT", "LDLT", "PETSC", "GCPC" };
+const char* LinearSolverNames[nbSolvers] = { "MULT_FRONT", "LDLT", "MUMPS", "PETSC", "GCPC" };
 const char* RenumberingNames[nbRenumberings] = { "MD", "MDA", "METIS", "RCMK", "AMD",
                                                  "AMF", "PORD", "QAMD", "SCOTCH", "AUTO", "SANS" };
 
