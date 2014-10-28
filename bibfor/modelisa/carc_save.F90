@@ -6,11 +6,14 @@ subroutine carc_save(model, mesh, carcri, nb_cmp, info_carc_valk,&
 #include "asterf_types.h"
 #include "asterc/getexm.h"
 #include "asterc/getfac.h"
+#include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_meca_mod.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exicp.h"
+#include "asterfort/mfront_get_libname.h"
+#include "asterfort/mfront_get_function.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jenonu.h"
 #include "asterfort/jeveuo.h"
@@ -63,6 +66,7 @@ subroutine carc_save(model, mesh, carcri, nb_cmp, info_carc_valk,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer, parameter :: carsiz=20
     character(len=24) :: list_elem_affe
     aster_logical :: l_affe_all
     integer :: nb_elem_affe, ndim
@@ -73,12 +77,12 @@ subroutine carc_save(model, mesh, carcri, nb_cmp, info_carc_valk,&
     character(len=16) :: motcle(2)
     integer :: nt
     real(kind=8), pointer :: p_carc_valv(:) => null()
-    character(len=16) :: algo_inte, rela_comp, subr_name, nom_mod_mfront
-    character(len=128) :: libr_name
+    character(len=16) :: algo_inte, rela_comp, nom_mod_mfront
+    character(len=255) :: libr_name, subr_name
     real(kind=8) :: iter_inte_maxi, resi_inte_rela, parm_theta, vale_pert_rela, algo_inte_r
     real(kind=8) :: resi_deborst_max, seuil, amplitude, taux_retour, parm_alpha, post_iter
     integer :: type_matr_t, iter_inte_pas, iter_deborst_max
-    aster_logical :: plane_stress
+    aster_logical :: plane_stress, l_mfront, l_mfront_offi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -101,18 +105,18 @@ subroutine carc_save(model, mesh, carcri, nb_cmp, info_carc_valk,&
 !
 ! ----- Get infos
 !
-        type_matr_t = int(info_carc_valr(18*(iocc-1) + 2))
-        parm_theta = info_carc_valr(18*(iocc-1) + 4)
-        iter_inte_pas = int(info_carc_valr(18*(iocc-1) + 5))
-        algo_inte_r = info_carc_valr(18*(iocc-1) + 6)
-        vale_pert_rela = info_carc_valr(18*(iocc-1) + 7)
-        resi_deborst_max = info_carc_valr(18*(iocc-1) + 8)
-        iter_deborst_max = int(info_carc_valr(18*(iocc-1) + 9))
-        seuil = info_carc_valr(18*(iocc-1) + 10)
-        amplitude = info_carc_valr(18*(iocc-1) + 11)
-        taux_retour = info_carc_valr(18*(iocc-1) + 12)
-        post_iter  = info_carc_valr(18*(iocc-1) + 13)
-        parm_alpha = info_carc_valr(18*(iocc-1) + 18)
+        type_matr_t = int(info_carc_valr(carsiz*(iocc-1) + 2))
+        parm_theta = info_carc_valr(carsiz*(iocc-1) + 4)
+        iter_inte_pas = int(info_carc_valr(carsiz*(iocc-1) + 5))
+        algo_inte_r = info_carc_valr(carsiz*(iocc-1) + 6)
+        vale_pert_rela = info_carc_valr(carsiz*(iocc-1) + 7)
+        resi_deborst_max = info_carc_valr(carsiz*(iocc-1) + 8)
+        iter_deborst_max = int(info_carc_valr(carsiz*(iocc-1) + 9))
+        seuil = info_carc_valr(carsiz*(iocc-1) + 10)
+        amplitude = info_carc_valr(carsiz*(iocc-1) + 11)
+        taux_retour = info_carc_valr(carsiz*(iocc-1) + 12)
+        post_iter  = info_carc_valr(carsiz*(iocc-1) + 13)
+        parm_alpha = info_carc_valr(carsiz*(iocc-1) + 18)
         rela_comp = info_carc_valk(2*(iocc-1) + 1)
         algo_inte = info_carc_valk(2*(iocc-1) + 2)
 !
@@ -142,17 +146,28 @@ subroutine carc_save(model, mesh, carcri, nb_cmp, info_carc_valk,&
 ! ----- Get RESI_INTE_RELA/ITER_INTE_MAXI
 !
         call nmdocv(keywordfact, iocc, algo_inte, 'ITER_INTE_MAXI', iter_inte_maxi)
-        if (rela_comp.eq.'MFRONT') then
-            call nmdocv(keywordfact, iocc, algo_inte, 'RESI_INTE_MAXI', resi_inte_rela)
-            call getvtx(keywordfact, 'LIBRAIRIE', iocc = iocc, scal = libr_name)
-            call getvtx(keywordfact, 'NOM_ROUTINE', iocc = iocc, scal = subr_name)
+        call comp_meca_l(rela_comp, 'MFRONT_OFFI', l_mfront_offi)
+        l_mfront = l_mfront_offi
+        if (.not. l_mfront) then
+            call comp_meca_l(rela_comp, 'MFRONT', l_mfront)
+        endif
+        if (l_mfront) then
+            if (l_mfront_offi) then
+                call mfront_get_libname(libr_name)
+                call mfront_get_function(rela_comp, subr_name)
+                call nmdocv(keywordfact, iocc, algo_inte, 'RESI_INTE_RELA', resi_inte_rela)
+            else
+                call getvtx(keywordfact, 'LIBRAIRIE', iocc = iocc, scal = libr_name)
+                call getvtx(keywordfact, 'NOM_ROUTINE', iocc = iocc, scal = subr_name)
+                call nmdocv(keywordfact, iocc, algo_inte, 'RESI_INTE_MAXI', resi_inte_rela)
+            endif
             call dismoi('DIM_GEOM', model, 'MODELE', repi = ndim)
             call comp_meca_mod(keywordfact, iocc, model, ndim, nom_mod_mfront)
             call mfront_set_double_parameter(libr_name, subr_name, nom_mod_mfront,&
                                              "epsilon", resi_inte_rela)
             call mfront_set_integer_parameter(libr_name, subr_name, nom_mod_mfront,&
                                               "iterMax", int(iter_inte_maxi))
-        else 
+        else
             call nmdocv(keywordfact, iocc, algo_inte, 'RESI_INTE_RELA', resi_inte_rela)
         endif
 !
@@ -170,14 +185,17 @@ subroutine carc_save(model, mesh, carcri, nb_cmp, info_carc_valk,&
         p_carc_valv(10) = seuil
         p_carc_valv(11) = amplitude
         p_carc_valv(12) = taux_retour
-        p_carc_valv(13) = post_iter        
-!       exte_comp UMAT / MFRONT        
-        p_carc_valv(14) = info_carc_valr(18*(iocc-1) + 14)
-        p_carc_valv(15) = info_carc_valr(18*(iocc-1) + 15)
-        p_carc_valv(16) = info_carc_valr(18*(iocc-1) + 16)
-!       cf. CALC_POINT_MAT / PMDORC        
+        p_carc_valv(13) = post_iter
+!       exte_comp UMAT / MFRONT
+        p_carc_valv(14) = info_carc_valr(carsiz*(iocc-1) + 14)
+        p_carc_valv(15) = info_carc_valr(carsiz*(iocc-1) + 15)
+        p_carc_valv(16) = info_carc_valr(carsiz*(iocc-1) + 16)
+!       cf. CALC_POINT_MAT / PMDORC
         p_carc_valv(17) = 0
         p_carc_valv(18) = parm_alpha
+!       exte_comp UMAT / MFRONT
+        p_carc_valv(19) = info_carc_valr(carsiz*(iocc-1) + 19)
+        p_carc_valv(20) = info_carc_valr(carsiz*(iocc-1) + 20)
 
 !
 ! ----- Affect in <CARTE>
