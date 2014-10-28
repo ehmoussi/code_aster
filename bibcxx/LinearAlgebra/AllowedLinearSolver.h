@@ -1,3 +1,5 @@
+#ifndef ALLOWEDLINEARSOLVER_H_
+#define ALLOWEDLINEARSOLVER_H_
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -32,3 +34,5 @@ extern const Renumbering PetscRenumbering[nbRenumberingPetsc];
 
 const int nbRenumberingGcpc = 2;
 extern const Renumbering GcpcRenumbering[nbRenumberingGcpc];
+
+#endif /* ALLOWEDLINEARSOLVER_H_ */

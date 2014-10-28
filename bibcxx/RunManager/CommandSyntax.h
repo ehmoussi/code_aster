@@ -387,10 +387,10 @@ class CommandSyntax
         *                 ex : MA = LIRE_MAILAGE : nomObjet = "MA      "
         */
         CommandSyntax(string nom, bool operateur,
-                      string nomObjet, string typeObjet = ""): _commandName( nom ),
-                                                               _isOperateur( operateur ),
-                                                               _nomObjetJeveux( nomObjet ),
-                                                               _typeSDAster( typeObjet )
+                      string nomObjet = "", string typeObjet = ""): _commandName( nom ),
+                                                                    _isOperateur( operateur ),
+                                                                    _nomObjetJeveux( nomObjet ),
+                                                                    _typeSDAster( typeObjet )
         {
             _factorKeywordsMap.insert( mapStrMCFValue( string(""), FactorKeyword(" ", false) ) );
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));

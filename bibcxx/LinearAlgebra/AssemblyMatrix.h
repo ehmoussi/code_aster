@@ -146,6 +146,26 @@ bool AssemblyMatrixInstance< ValueType >::factorization()
     mCSMemoire.addValues( "IN_CORE" );
     syntaxeFactoriser.addSimpleKeywordStr( mCSMemoire );
 
+    SimpleKeyWordDbl mCSRempl = SimpleKeyWordDbl( "REMPLISSAGE" );
+    mCSRempl.addValues( 1.0 );
+    syntaxeFactoriser.addSimpleKeywordDouble( mCSRempl );
+
+    SimpleKeyWordInt mCSNiveRempl = SimpleKeyWordInt( "NIVE_REMPLISSAGE" );
+    mCSNiveRempl.addValues( 0 );
+    syntaxeFactoriser.addSimpleKeywordInteger( mCSNiveRempl );
+
+    SimpleKeyWordStr mCSSing = SimpleKeyWordStr( "STOP_SINGULIER" );
+    mCSSing.addValues( "OUI" );
+    syntaxeFactoriser.addSimpleKeywordStr( mCSSing );
+
+    SimpleKeyWordStr mCSPrecond = SimpleKeyWordStr( "PRE_COND" );
+    mCSPrecond.addValues( "LDLT_INC" );
+    syntaxeFactoriser.addSimpleKeywordStr( mCSPrecond );
+
+    SimpleKeyWordInt mCSNprec = SimpleKeyWordInt( "NPREC" );
+    mCSNprec.addValues( 8 );
+    syntaxeFactoriser.addSimpleKeywordInteger( mCSNprec );
+
     CALL_EXECOP( 14 );
     _isEmpty = false;
 
