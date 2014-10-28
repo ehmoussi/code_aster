@@ -9,7 +9,8 @@
 * @author Nicolas Sellenet
 */
 enum Physics { Mechanics, Thermal, Acoustics };
-static const char* const PhysicNames[] = { "MECANIQUE", "THERMIQUE", "ACOUSTIQUE" };
+const int nbPhysics = 3;
+extern const char* const PhysicNames[nbPhysics];
 
 /**
 * enum Modelisations
@@ -17,6 +18,14 @@ static const char* const PhysicNames[] = { "MECANIQUE", "THERMIQUE", "ACOUSTIQUE
 * @author Nicolas Sellenet
 */
 enum Modelisations { Axisymmetrical, Tridimensional, Planar, DKT };
-static const char* const ModelisationNames[] = { "AXIS", "3D", "PLAN", "DKT" };
+const int nbModelisations = 4;
+extern const char* const ModelisationNames[nbModelisations];
+
+
+const int nbModelisationsMechanics = 4;
+extern const Modelisations MechanicsModelisations[nbModelisationsMechanics];
+
+const int nbModelisationsThermal = 3;
+extern const Modelisations ThermalModelisations[nbModelisationsThermal];
 
 #endif /* PHYSICSANDMODELISATIONS_H_ */
