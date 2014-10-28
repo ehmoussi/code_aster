@@ -6,6 +6,7 @@
 #include <set>
 #include <string>
 
+#include "DataFields/FieldOnNodes.h"
 #include "LinearAlgebra/AllowedLinearSolver.h"
 
 using namespace std;
@@ -84,6 +85,9 @@ class SolverChecker
         };
 };
 
+template< class tmp > class AssemblyMatrix;
+typedef AssemblyMatrix< double > AssemblyMatrixDouble;
+
 class LinearSolverInstance
 {
     private:
@@ -98,15 +102,18 @@ class LinearSolverInstance
             SolverChecker::isAllowedRenumberingForSolver( currentLinearSolver, currentRenumber );
         };
 
-        string getSolverName()
+        const string getSolverName() const
         {
             return LinearSolverNames[ (int)_linearSolver ];
         };
 
-        string getRenumburingName()
+        const string getRenumburingName() const
         {
             return RenumberingNames[ (int)_renumber ];
         };
+
+        FieldOnNodesDouble solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
+                                                    const FieldOnNodesDouble& currentRHS ) const;
 };
 
 /**

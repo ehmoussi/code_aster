@@ -6,6 +6,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 %include "LinearAlgebra/AllowedLinearSolver.h"
+#include "LinearAlgebra/AssemblyMatrix.h"
+#include "DataFields/FieldOnNodes.h"
 
 class LinearSolver
 {
@@ -15,25 +17,11 @@ class LinearSolver
         ~LinearSolver();
 };
 
-/*%extend LinearSolver
+%extend LinearSolver
 {
-    bool computeNumerotation()
+    FieldOnNodes< double > solveDoubleLinearSystem( const AssemblyMatrix< double >& currentMatrix,
+                                                    const FieldOnNodes< double >& currentRHS )
     {
-        return (*$self)->computeNumerotation();
+        return (*$self)->solveDoubleLinearSystem( currentMatrix, currentRHS );
     }
-
-    void setElementaryMatrix( const ElementaryMatrix& currentMatrix )
-    {
-        return (*$self)->setElementaryMatrix( currentMatrix );
-    }
-
-    void setLinearSolver( const LinearSolverEnum currentEnumSolver, const Renumbering currentRenumbering )
-    {
-        return (*$self)->setLinearSolver( currentEnumSolver, currentRenumbering );
-    }
-
-    void setSupportModel( const Model& currentModel )
-    {
-        return (*$self)->setSupportModel( currentModel );
-    }
-}*/
+}

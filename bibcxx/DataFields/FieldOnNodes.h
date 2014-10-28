@@ -8,13 +8,14 @@
 
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructure/DataStructure.h"
+#include "RunManager/CommandSyntax.h"
 
 /**
 * class template FieldOnNodesInstance
 *   Cette classe permet de definir un champ aux noeuds Aster
 * @author Nicolas Sellenet
 */
-template<class ValueType>
+template< class ValueType >
 class FieldOnNodesInstance: public DataStructure
 {
     private:
@@ -52,6 +53,8 @@ class FieldOnNodesInstance: public DataStructure
             return _valuesList->operator[](i);
         };
 
+        bool printMEDFormat( string pathFichier );
+
         /**
         * Mise a jour des pointeurs Jeveux
         * @return renvoit true si la mise a jour s'est bien deroulee, false sinon
@@ -63,6 +66,46 @@ class FieldOnNodesInstance: public DataStructure
             retour = ( retour && _valuesList->updateValuePointer() );
             return retour;
         };
+};
+
+template< class ValueType >
+bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
+{
+    CommandSyntax syntaxeLireResu( "IMPR_RESU", false );
+    // Ligne indispensable pour que les commandes GET* fonctionnent
+    commandeCourante = &syntaxeLireResu;
+
+    SimpleKeyWordStr mCSChamNo = SimpleKeyWordStr( "FORMAT" );
+    mCSChamNo.addValues( "MED" );
+    syntaxeLireResu.addSimpleKeywordStr( mCSChamNo );
+
+    FactorKeyword motCleResu = FactorKeyword( "RESU", false );
+    FactorKeywordOccurence occurResu = FactorKeywordOccurence();
+
+    SimpleKeyWordStr mCSChamGd( "CHAM_GD" );
+    mCSChamGd.addValues( getName() );
+    occurResu.addSimpleKeywordStr( mCSChamGd );
+
+    SimpleKeyWordInt mCSUnite( "UNITE" );
+    mCSUnite.addValues( 80 );
+    occurResu.addSimpleKeywordInteger( mCSUnite );
+
+    SimpleKeyWordStr mCSInfo( "INFO_MAILLAGE" );
+    mCSInfo.addValues( "NON" );
+    occurResu.addSimpleKeywordStr( mCSInfo );
+
+    SimpleKeyWordStr mCSNomVari( "IMPR_NOM_VARI" );
+    mCSNomVari.addValues( "NON" );
+    occurResu.addSimpleKeywordStr( mCSNomVari );
+
+    motCleResu.addOccurence( occurResu );
+    syntaxeLireResu.addFactorKeyword( motCleResu );
+
+    CALL_EXECOP( 39 );
+
+    // Mise a zero indispensable de commandeCourante
+    commandeCourante = NULL;
+    return true;
 };
 
 /**
