@@ -25,17 +25,7 @@ class ElementaryModelisation
         */
         ElementaryModelisation( Physics phys, Modelisations mod ): _physic(phys), _modelisation(mod)
         {
-            bool retour = false;
-            if ( phys == Mechanics )
-            {
-                retour = AuthorizedMechnicsModelisation::Is_Valid_Value(mod);
-            }
-            else if ( phys == Thermal )
-            {
-                retour = AuthorizedThermalModelisation::Is_Valid_Value(mod);
-            }
-            else
-                throw "Acoustic not yet implemented";
+            bool retour = PhysicsChecker::isAllowedModelisationForPhysics( phys, mod );
             if ( ! retour )
                 throw string( PhysicNames[_physic] ) + " with " + ModelisationNames[_modelisation] + " not allowed";
         };

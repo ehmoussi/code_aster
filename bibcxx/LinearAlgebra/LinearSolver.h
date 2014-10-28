@@ -40,7 +40,7 @@ struct WrapGcpc
 };
 
 /**
-* class PhysicalQuantity
+* class template RenumberingChecker
 * @author Nicolas Sellenet
 */
 template< class Wrapping >

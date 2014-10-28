@@ -3,44 +3,57 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "ToolClasses/EnumClass.h"
 #include "Modelisations/PhysicsAndModelisations.h"
+#include <set>
 
-/**
-* class AuthorizedMechnicsModelisation
-*   Modelisations autorisees pour la mecanique
-* @author Nicolas Sellenet
-*/
-class AuthorizedMechnicsModelisation: public Enum<AuthorizedMechnicsModelisation>
+using namespace std;
+
+// Ces wrappers sont la pour autoriser que les set soitent const
+// Sinon, on aurait pas pu passer directement des const set<> en parametre template
+struct WrapMechanics
 {
-    private:
-        explicit AuthorizedMechnicsModelisation( int Value ):
-            Enum<AuthorizedMechnicsModelisation>( Value )
-        {}
+    static const set< Modelisations > setOfModelisations;
+};
 
-    public:
-        static const AuthorizedMechnicsModelisation ModelAxis;
-        static const AuthorizedMechnicsModelisation Model3D;
-        static const AuthorizedMechnicsModelisation ModelPlanar;
-        static const AuthorizedMechnicsModelisation ModelDKT;
+struct WrapThermal
+{
+    static const set< Modelisations > setOfModelisations;
 };
 
 /**
-* class AuthorizedThermalModelisation
-*   Modelisations autorisees pour la thermique
+* class template ModelisationsChecker
 * @author Nicolas Sellenet
 */
-class AuthorizedThermalModelisation: public Enum<AuthorizedThermalModelisation>
+template< class Wrapping >
+class ModelisationsChecker
 {
-    private:
-        explicit AuthorizedThermalModelisation( int Value ):
-            Enum<AuthorizedThermalModelisation>( Value )
-        {}
-
     public:
-        static const AuthorizedThermalModelisation ModelAxis;
-        static const AuthorizedThermalModelisation Model3D;
-        static const AuthorizedThermalModelisation ModelPlanar;
+        static bool isAllowedModelisation( Modelisations test )
+        {
+            if ( Wrapping::setOfModelisations.find( test ) == Wrapping::setOfModelisations.end() )
+                return false;
+            return true;
+        }
+};
+
+typedef ModelisationsChecker< WrapMechanics > MechanicsModelisationsChecker;
+typedef ModelisationsChecker< WrapThermal > ThermalModelisationsChecker;
+
+class PhysicsChecker
+{
+    public:
+        static bool isAllowedModelisationForPhysics( Physics phys, Modelisations model )
+        {
+            switch ( phys )
+            {
+                case Mechanics:
+                    return MechanicsModelisationsChecker::isAllowedModelisation( model );
+                case Thermal:
+                    return ThermalModelisationsChecker::isAllowedModelisation( model );
+                default:
+                    throw "Not a valid physics";
+            }
+        };
 };
 
 #endif /* AUTHORIZEDMODELISATION_H_ */

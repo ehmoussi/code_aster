@@ -20,6 +20,10 @@ bool ModelInstance::build()
     // Ligne indispensable pour que les commandes GET* fonctionnent
     commandeCourante = &syntaxeAffeModele;
 
+    SimpleKeyWordStr mCSVeriJacobien = SimpleKeyWordStr( "VERI_JACOBIEN" );
+    mCSVeriJacobien.addValues( "OUI" );
+    syntaxeAffeModele.addSimpleKeywordStr( mCSVeriJacobien );
+
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSMaillage = SimpleKeyWordStr("MAILLAGE");
     if ( _supportMesh.isEmpty() )
