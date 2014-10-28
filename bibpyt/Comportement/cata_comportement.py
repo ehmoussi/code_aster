@@ -68,9 +68,6 @@ from Noyau.N_utils import Singleton
 from Execution.strfunc import convert, ufmt
 from cata_vari import DICT_NOM_VARI
 
-__properties__ = ('deformation', 'mc_mater', 'modelisation', 'nb_vari',
-                  'nom_varc', 'nom_vari', 'proprietes', 'algo_inte',
-                  'type_matr_tang')
 
 class CataComportementError(Exception):
    """Error"""
@@ -129,6 +126,11 @@ def first(args):
 
 class Base(object):
    """Classe de base : partie commune loi de comportement/kit."""
+
+   __properties__ = ('deformation', 'mc_mater', 'modelisation', 'nb_vari',
+                     'nom_varc', 'nom_vari', 'proprietes', 'algo_inte',
+                     'type_matr_tang')
+
    def copy(self):
       """Copie d'un objet LoiComportement"""
       import copy
@@ -163,7 +165,7 @@ class Base(object):
          'num_lc' : self.num_lc,
          'doc'    : self.doc,
       }
-      for attr in __properties__:
+      for attr in self.__properties__:
          dico[attr] = getattr(self, attr)
       return dico
 
@@ -190,6 +192,15 @@ class Base(object):
       """Représentation par défaut"""
       return self.long_repr()
 
+   @property
+   def ldctype(self):
+       """Return the class type"""
+       return self._ldctype
+
+   def getPropertiesNames(self):
+       """Return the names of the properties"""
+       return self.__properties__
+
 
 class LoiComportement(Base):
    """Définition d'une loi de comportement.
@@ -198,15 +209,17 @@ class LoiComportement(Base):
    mc_mater : besoin de regles ENSEMBLE, AU_MOINS_UN, UN_PARMI
    modelisation, deformation, nom_varc, algo_inte, type_matr_tang : listes des
    valeurs acceptees"""
+   _ldctype = 'std'
+
    def __init__(self, nom, num_lc, doc='', **kwargs):
       """Initialisations"""
       self.nom    = nom
       self.num_lc = num_lc
       self.doc    = doc
-      for prop in __properties__:
+      for prop in self.__properties__:
          setattr(self, '_' + prop, None)
       # propriétés fournies
-      for prop in [k for k in kwargs.keys() if k in __properties__]:
+      for prop in [k for k in kwargs.keys() if k in self.__properties__]:
          setattr(self, prop, kwargs.get(prop))
 
    def get_nb_vari(self):
@@ -261,9 +274,50 @@ class LoiComportement(Base):
                          u"autorisés : %s", self.nom, strerr)
               raise CataComportementError(msg)
 
+class LoiComportementMFront(LoiComportement):
+   """Définition d'une loi de comportement MFront.
+
+   symbol_mfront : nom de la fonction dans la bibliothèque MFront
+   modelisation, deformation, algo_inte : listes des valeurs acceptees
+   """
+   _ldctype = 'mfront'
+   __properties__ = tuple(list(LoiComportement.__properties__) + \
+                          ['symbol_mfront'])
+
+   def __init__(self, nom, symbol_mfront, doc='', **kwargs):
+      """Initialisations"""
+      # fixes les valeurs sans objet pour MFront (elles ne peuvent donc
+      # pas être fournies dans kwargs)
+      super(LoiComportementMFront, self).__init__(
+         nom,
+         symbol_mfront=symbol_mfront,
+         num_lc=58,
+         mc_mater=nom,
+         nb_vari=0,
+         nom_vari=None,
+         nom_varc=None,
+         type_matr_tang=None,
+         doc=doc,
+         **kwargs)
+
+   symbol_mfront = Base.gen_property('symbol_mfront', (str, unicode), "Fonction MFront")
+
+   def long_repr(self):
+      template = """Loi de comportement : %(nom)s
+'''%(doc)s'''
+   routine                    : %(num_lc)r
+   modélisations disponibles  : %(modelisation)r
+   types de déformations      : %(deformation)r
+   schémas d'intégration      : %(algo_inte)r
+   nom du symbole             : %(symbol_mfront)r
+"""
+      return template % self.dict_info()
+
 class KIT(Base):
    """Définit un assemblage de loi de comportement par KIT par un 'nom' et une
    liste de comportements"""
+   _ldctype = 'kit'
+
    def __init__(self, nom, *list_comport):
       """Initialisations"""
       if not type(nom) in (str, unicode):
@@ -288,6 +342,15 @@ class KIT(Base):
    algo_inte      = property(Base.gen_getfunc(intersection, 'algo_inte'))
    type_matr_tang = property(Base.gen_getfunc(intersection, 'type_matr_tang'))
    proprietes     = property(Base.gen_getfunc(intersection, 'proprietes'))
+   symbol_mfront  = property(Base.gen_getfunc(first,        'symbol_mfront'))
+
+   @property
+   def ldctype(self):
+      """Return the class type"""
+      typs = [i.ldctype for i in self.list_comport]
+      if 'mfront' in typs:
+          return 'mfront'
+      return self._ldctype
 
 
 class KIT_META(KIT):
@@ -417,7 +480,7 @@ class CataLoiComportement(Singleton):
          print 'catalc.query - args =', loi, ':', attr, ':', valeur.strip(),':'
       attr = attr.lower()
       comport = self.get(loi)
-      if not attr in __properties__:
+      if not attr in comport.getPropertiesNames():
          raise CataComportementError(ufmt(u"Propriete invalide : %s", attr))
       # retourner 1 si (valeur est dans comport.attr), 0 sinon.
       return int(valeur.strip() in getattr(comport, attr))
@@ -431,6 +494,26 @@ class CataLoiComportement(Singleton):
          print 'catalc.get_algo - args =', loi
       comport = self.get(loi)
       return comport.algo_inte
+
+   def get_type(self, loi):
+      """Retourne le type de Comportement (std, mfront ou kit)
+
+      CALL LCTYPE(COMPOR, TYPE)
+      ==> ldctype = catalc.get_type(COMPOR)"""
+      if self.debug:
+         print 'catalc.get_type - args =', loi
+      comport = self.get(loi)
+      return comport.ldctype
+
+   def get_symbol(self, loi):
+      """Retourne le nom de la fonction dans la bibliothèque MFront
+
+      CALL LCSYMB(COMPOR, NAME)
+      ==> name = catalc.get_symbol(COMPOR)"""
+      if self.debug:
+         print 'catalc.get_symbol - args =', loi
+      comport = self.get(loi)
+      return comport.symbol_mfront
 
    def __repr__(self):
       """Représentation du catalogue"""

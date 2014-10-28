@@ -4,7 +4,7 @@ import os.path as osp
 import optparse
 from functools import partial
 
-from waflib import Configure, Logs, Utils, Errors
+from waflib import TaskGen, Configure, Logs, Utils, Errors
 
 def _deprecated(option, *args, **kwargs):
     """Deprecated option"""
@@ -71,6 +71,10 @@ def build(self):
         env.ASTERINCLUDEDIR,
         config_includes
     )
+
+@TaskGen.extension('.h')
+def process_h(self, node):
+    pass
 
 def build_c_source(self, env, excl):
     get_srcs = self.path.get_src().ant_glob

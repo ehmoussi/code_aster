@@ -16,6 +16,8 @@ subroutine comp_meca_read(l_etat_init, info_comp_valk, info_comp_vali, &
 #include "asterfort/comp_meca_mod.h"
 #include "asterfort/comp_meca_rkit.h"
 #include "asterfort/comp_meca_l.h"
+#include "asterfort/mfront_get_libname.h"
+#include "asterfort/mfront_get_function.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
@@ -61,12 +63,12 @@ subroutine comp_meca_read(l_etat_init, info_comp_valk, info_comp_vali, &
     character(len=16) :: keywordfact
     integer :: iocc, ikit, nbocc, ndim
     integer :: nb_vari_all
-    character(len=16) :: defo_comp, rela_comp, type_cpla, mult_comp, subr_name, type_comp
+    character(len=16) :: defo_comp, rela_comp, type_cpla, mult_comp, type_comp
     character(len=16) :: type_matg, post_iter, nom_mod_mfront
     character(len=16) :: kit_comp(9)
-    character(len=128) :: libr_name
+    character(len=255) :: libr_name, subr_name
     integer :: unit_comp, nb_vari_exte
-    aster_logical :: l_cristal, l_zmat, l_umat, l_mfront
+    aster_logical :: l_cristal, l_zmat, l_umat, l_mfront, l_mfront_offi
     aster_logical :: l_kit
     aster_logical :: l_matr_tgsc, l_crit_rupt
 !
@@ -115,13 +117,17 @@ subroutine comp_meca_read(l_etat_init, info_comp_valk, info_comp_vali, &
 !
 ! ----- Detection of specific cases
 !
-        call comp_meca_l(rela_comp, 'MATR_TGSC', l_matr_tgsc, type_matg = type_matg)
-        call comp_meca_l(rela_comp, 'CRIT_RUPT', l_crit_rupt, post_iter = post_iter)
-        call comp_meca_l(rela_comp, 'CRISTAL'  , l_cristal)
-        call comp_meca_l(rela_comp, 'KIT'      , l_kit)
-        call comp_meca_l(rela_comp, 'ZMAT'     , l_zmat)
-        call comp_meca_l(rela_comp, 'UMAT'     , l_umat)
-        call comp_meca_l(rela_comp, 'MFRONT'   , l_mfront)
+        call comp_meca_l(rela_comp, 'MATR_TGSC'  , l_matr_tgsc, type_matg = type_matg)
+        call comp_meca_l(rela_comp, 'CRIT_RUPT'  , l_crit_rupt, post_iter = post_iter)
+        call comp_meca_l(rela_comp, 'CRISTAL'    , l_cristal)
+        call comp_meca_l(rela_comp, 'KIT'        , l_kit)
+        call comp_meca_l(rela_comp, 'ZMAT'       , l_zmat)
+        call comp_meca_l(rela_comp, 'UMAT'       , l_umat)
+        call comp_meca_l(rela_comp, 'MFRONT_OFFI', l_mfront_offi)
+        l_mfront = l_mfront_offi
+        if (.not. l_mfront) then
+            call comp_meca_l(rela_comp, 'MFRONT'     , l_mfront)
+        endif
 !
 ! ----- Get multi-comportment *CRISTAL
 !
@@ -151,8 +157,13 @@ subroutine comp_meca_read(l_etat_init, info_comp_valk, info_comp_vali, &
             call getvtx(keywordfact, 'NOM_ROUTINE', iocc = iocc, scal = subr_name)
         endif
         if (l_mfront) then
-            call getvtx(keywordfact, 'LIBRAIRIE', iocc = iocc, scal = libr_name)
-            call getvtx(keywordfact, 'NOM_ROUTINE', iocc = iocc, scal = subr_name)
+            if (l_mfront_offi) then
+                call mfront_get_libname(libr_name)
+                call mfront_get_function(rela_comp, subr_name)
+            else
+                call getvtx(keywordfact, 'LIBRAIRIE', iocc = iocc, scal = libr_name)
+                call getvtx(keywordfact, 'NOM_ROUTINE', iocc = iocc, scal = subr_name)
+            endif
             if ( .not. present(model) ) then
 ! ------------- CALC_POINT_MAT case
                 ndim = 3

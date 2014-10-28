@@ -1,6 +1,6 @@
 subroutine xcalme(option, meca, imate, ndim, dimenr,&
                   dimcon, addeme, adcome, congep,&
-                  yaenrm, adenme, dsde, deps, t,&
+                  dsde, deps, t,&
                   idecpg, kpi, ang2, aniso, phenom)
 ! ----------------------------------------------------------------------
 ! ======================================================================
@@ -19,7 +19,7 @@ subroutine xcalme(option, meca, imate, ndim, dimenr,&
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! person_in_charge: sylvie.granet at edf.fr
+! person_in_charge: daniele.colombo at ifpen.fr
 ! **********************************************************************
 ! ROUTINE CALC_MECA
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE MECANIQUES
@@ -29,7 +29,7 @@ subroutine xcalme(option, meca, imate, ndim, dimenr,&
 #   include "asterfort/calela.h"
 #   include "asterfort/tecael.h"
     integer :: ndim, dimenr, dimcon, addeme
-    integer :: adcome, imate, yaenrm, adenme, idecpg, kpi
+    integer :: adcome, imate, idecpg, kpi
     real(kind=8) :: congep(dimcon)
     real(kind=8) :: dsde(dimcon, dimenr), rac2
     character(len=16) :: option, meca, phenom
@@ -45,20 +45,20 @@ subroutine xcalme(option, meca, imate, ndim, dimenr,&
     real(kind=8) :: d(6, 6), mdal(6), dalal
     character(len=8) :: ncra1(nelas), fami, poum
     integer :: icodre(nresma)
-    integer :: spt, ipi
+    integer :: spt, ipi, kpg
 !
     data ncra1 / 'E','NU','ALPHA','RHO' /
 ! ======================================================================
 ! --- RECUPERATION DES DONNEES MATERIAU DANS DEFI_MATERIAU -------------
 ! ======================================================================
     fami='XFEM'
-    ipi=idecpg+kpi
+    kpg=1
     spt=1
     poum='+'
 !
     rac2 = sqrt(2.0d0)
 !
-    call rcvalb(fami, ipi, spt, poum, imate,&
+    call rcvalb(fami, kpg, spt, poum, imate,&
                 ' ', 'ELAS', 1, 'TEMP', [t],&
                 3, ncra1(1), elas(1), icodre, 0)
     young = elas(1)
@@ -94,7 +94,7 @@ subroutine xcalme(option, meca, imate, ndim, dimenr,&
                 end do
                 do j = 4, 6
                     dsde(adcome-1+i,addeme+ndim-1+j)= dsde(adcome-1+i,&
-                    addeme+ndim-1+j)+d(i,j)/(0.5*rac2)
+                    addeme+ndim-1+j)+d(i,j)*rac2
                end do
             end do
 !
@@ -126,37 +126,6 @@ subroutine xcalme(option, meca, imate, ndim, dimenr,&
             congep(adcome+i-1)= congep(adcome+i-1)*rac2
          end do
 !
-!
-! ======================================================================
-! --- CALCUL DES TERMES POUR XFEM --------------------------------------
-! ======================================================================
-        if (yaenrm .eq. 1) then
-            if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-            do i = 1, 3
-                do j = 1, 3
-                    dsde(adcome-1+i,adenme+ndim-1+j)= dsde(adcome-1+i,&
-                    adenme+ndim-1+j) +d(i,j)
-                end do
-                do j = 4, 6
-                    dsde(adcome-1+i,adenme+ndim-1+j)= dsde(adcome-1+i,&
-                    adenme+ndim-1+j)+d(i,j)/(0.5*rac2)
-               end do
-            end do
-!
-            do i = 4, 6
-                do j = 1, 3
-                    dsde(adcome-1+i,adenme+ndim-1+j)= dsde(adcome-1+i,&
-                    adenme+ndim-1+j)+d(i,j)*rac2
-                 end do
-                do j = 4, 6
-                    dsde(adcome-1+i,adenme+ndim-1+j)= dsde(adcome-1+i,&
-                    adenme+ndim-1+j)+d(i,j)*2.d0
-                 end do
-            end do
-            endif
-
-
-       endif
     endif
 ! ======================================================================
 end subroutine

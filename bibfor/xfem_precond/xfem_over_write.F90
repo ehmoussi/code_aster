@@ -69,7 +69,7 @@ subroutine xfem_over_write(matas1, bas1, nbnomax, ino_xfem, neq,&
     character(len=14) :: nonu, nonu2
     character(len=1) :: kbid
     integer :: jcoll, iligl, nuno, nunoj, jdeeq, jsmhc, nblig, decaj, jadr, ipos
-    integer :: nblig2, iadr, iadr2, ij, jvale, jsmde, jsmdi, jsmhc2, jval2
+    integer :: nblig2, iadr, iadr2, ij, jvale_1, jsmde, jsmdi, jsmhc2, jvalm_1
     integer :: incr, nbnox, nnz, nunos
     integer, pointer :: smdi(:) => null(), smdi2(:) => null()
     integer, pointer :: count_raw(:) => null(), nblig_mat(:) => null(), list_no(:) => null()
@@ -219,7 +219,7 @@ subroutine xfem_over_write(matas1, bas1, nbnomax, ino_xfem, neq,&
     call gcncon('_', nonu2)
     call copisd('NUME_DDL', bas1, nonu, nonu2)
 !
-    call jeveuo(jexnum(matas2//'.VALM', 1), 'E', jval2)
+    call jeveuo(jexnum(matas2//'.VALM', 1), 'E', jvalm_1)
 !
 !   ALLOCATIONS DE LA NOUVELLE DIMENSION (NNZ) 
 !   - ALLOCATION DU .VALM
@@ -228,7 +228,7 @@ subroutine xfem_over_write(matas1, bas1, nbnomax, ino_xfem, neq,&
                 1)
     call jecroc(jexnum(matas1//'.VALM', 1))
     call jeecra(matas1//'.VALM', 'LONMAX', nnz, kbid)
-    call jeveuo(jexnum(matas1//'.VALM', 1), 'E', jvale)
+    call jeveuo(jexnum(matas1//'.VALM', 1), 'E', jvale_1)
 !    call jeveuo(matas1//'.REFA', 'E', vk24=refa)
 !    nonu=refa(2)    
 !   - ALLOCATION DU .SMOS.SMDI
@@ -275,7 +275,7 @@ subroutine xfem_over_write(matas1, bas1, nbnomax, ino_xfem, neq,&
             endif
             do ipos = 1, nblig2
                 zi4(jsmhc-1+iadr+ipos)=zi4(jsmhc2-1+iadr2+ipos)
-                zr(jvale-1+iadr+ipos)=zr(jval2-1+iadr2+ipos)
+                zr(jvale_1-1+iadr+ipos)=zr(jvalm_1-1+iadr2+ipos)
             enddo
             incr=nblig2
 !
@@ -292,24 +292,24 @@ subroutine xfem_over_write(matas1, bas1, nbnomax, ino_xfem, neq,&
             do 92 ipos = 1, nblig2
                 if (abs(vect_col(decaj+neq_mloc(nunoj)*(ipos-1)+ieq_loc(jcoll))) .gt. seuil) then
                     incr=incr+1
-                    zi4(jsmhc-1+iadr+incr)=smhc_pc(smhc_adr(nunoj)+ipos)
-                    zr(jvale-1+iadr+incr)=vect_col(decaj+neq_mloc(nunoj)*(ipos-1)+ieq_loc(jcoll))
+                    zi4(jsmhc-1+iadr+incr)=int(smhc_pc(smhc_adr(nunoj)+ipos),4)
+                    zr(jvale_1-1+iadr+incr)=vect_col(decaj+neq_mloc(nunoj)*(ipos-1)+ieq_loc(jcoll))
                 endif
  92         enddo
 ! LE COEFFICIENT DIAGONAL
             if (filtrage) then
                 incr=incr+1
-                zi4(jsmhc-1+iadr+incr)=jcoll
-                zr(jvale-1+iadr+incr)=coef
+                zi4(jsmhc-1+iadr+incr)=int(jcoll,4)
+                zr(jvale_1-1+iadr+incr)=coef
             else
                 do ij = 1, (ieq_loc(jcoll)-1)
                     incr=incr+1
-                    zi4(jsmhc-1+iadr+incr)=iglob_ddl(maxi_ddl*(nunoj-1)+ij)
-                    zr(jvale-1+iadr+incr)=0.d0
+                    zi4(jsmhc-1+iadr+incr)=int(iglob_ddl(maxi_ddl*(nunoj-1)+ij),4)
+                    zr(jvale_1-1+iadr+incr)=0.d0
                 enddo
                 incr=incr+1
-                zi4(jsmhc-1+iadr+incr)=jcoll
-                zr(jvale-1+iadr+incr)=coef
+                zi4(jsmhc-1+iadr+incr)=int(jcoll,4)
+                zr(jvale_1-1+iadr+incr)=coef
             endif 
 !
         else if (is_connec(jcoll) .and. ieq_loc(jcoll) .eq. 0) then
@@ -329,7 +329,7 @@ subroutine xfem_over_write(matas1, bas1, nbnomax, ino_xfem, neq,&
                 if (ieq_loc(iligl) .eq. 0) then
                     incr=incr+1
                     zi4(jsmhc-1+iadr+incr)=zi4(jsmhc2-1+iadr2+ipos)
-                    zr(jvale-1+iadr+incr)=zr(jval2-1+iadr2+ipos)
+                    zr(jvale_1-1+iadr+incr)=zr(jvalm_1-1+iadr2+ipos)
                 else
                     nuno=ino_xfem(zi(jdeeq-1+2*(iligl-1)+1))      
                     if (.not. is_counted(nuno)) then
@@ -341,8 +341,8 @@ subroutine xfem_over_write(matas1, bas1, nbnomax, ino_xfem, neq,&
                         do ij = 1, neq_mloc(nuno)
                             if (abs(vect_raw(jadr+ij)) .gt. seuil) then
                                 incr=incr+1
-                                zi4(jsmhc-1+iadr+incr)=iglob_ddl(maxi_ddl*(nuno-1)+ij)
-                                zr(jvale-1+iadr+incr)=vect_raw(jadr+ij)
+                                zi4(jsmhc-1+iadr+incr)=int(iglob_ddl(maxi_ddl*(nuno-1)+ij),4)
+                                zr(jvale_1-1+iadr+incr)=vect_raw(jadr+ij)
                             endif
                         enddo
                     endif
@@ -369,8 +369,8 @@ subroutine xfem_over_write(matas1, bas1, nbnomax, ino_xfem, neq,&
                     if (abs(vect_col(decaj+neq_mloc(nunoj)*(ipos-1)+ieq_loc(jcoll))) .gt.&
                         seuil) then
                         incr=incr+1
-                        zi4(jsmhc-1+iadr+incr)=smhc_pc(smhc_adr(nunoj)+ipos)
-                        zr(jvale-1+iadr+incr)=vect_col(decaj+neq_mloc(nunoj)*(ipos-1) &
+                        zi4(jsmhc-1+iadr+incr)=int(smhc_pc(smhc_adr(nunoj)+ipos),4)
+                        zr(jvale_1-1+iadr+incr)=vect_col(decaj+neq_mloc(nunoj)*(ipos-1) &
                         &    +ieq_loc(jcoll)) 
                     endif
                 else
@@ -384,8 +384,8 @@ subroutine xfem_over_write(matas1, bas1, nbnomax, ino_xfem, neq,&
                         do ij = 1, neq_mloc(nuno)
                             if (abs(vect_raw(jadr+ij)) .gt. seuil) then
                                 incr=incr+1
-                                zi4(jsmhc-1+iadr+incr)=iglob_ddl(maxi_ddl*(nuno-1)+ij)
-                                zr(jvale-1+iadr+incr)=vect_raw(jadr+ij)
+                                zi4(jsmhc-1+iadr+incr)=int(iglob_ddl(maxi_ddl*(nuno-1)+ij),4)
+                                zr(jvale_1-1+iadr+incr)=vect_raw(jadr+ij)
                             endif 
                         enddo
                     endif
@@ -394,17 +394,17 @@ subroutine xfem_over_write(matas1, bas1, nbnomax, ino_xfem, neq,&
 ! NE PAS OUBLIER LE COEFFICIENT DIAGONAL
             if (filtrage) then
                 incr=incr+1
-                zi4(jsmhc-1+iadr+incr)=jcoll
-                zr(jvale-1+iadr+incr)=coef
+                zi4(jsmhc-1+iadr+incr)=int(jcoll,4)
+                zr(jvale_1-1+iadr+incr)=coef
             else
                 do ij = 1, (ieq_loc(jcoll)-1)
                     incr=incr+1
-                    zi4(jsmhc-1+iadr+incr)=iglob_ddl(maxi_ddl*(nunoj-1)+ij)
-                    zr(jvale-1+iadr+incr)=0.d0
+                    zi4(jsmhc-1+iadr+incr)=int(iglob_ddl(maxi_ddl*(nunoj-1)+ij),4)
+                    zr(jvale_1-1+iadr+incr)=0.d0
                 enddo
                 incr=incr+1
-                zi4(jsmhc-1+iadr+incr)=jcoll
-                zr(jvale-1+iadr+incr)=coef
+                zi4(jsmhc-1+iadr+incr)=int(jcoll,4)
+                zr(jvale_1-1+iadr+incr)=coef
             endif 
 ! REINITIALISATION DE L IDENTIFIFCATEUR DES NOEUDS
             do nuno = 1, nbnox

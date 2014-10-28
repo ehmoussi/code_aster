@@ -29,21 +29,10 @@ import os
 from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
 from Calc_epx.calc_epx_cata import cata_modelisa, cata_compor
 
-def get_unite_libre():
-    """
-        Retoune une unité de fichier libre.
-    """
-    from Cata.cata import INFO_EXEC_ASTER, DETRUIRE
-    _UL = INFO_EXEC_ASTER(LISTE_INFO='UNITE_LIBRE')
-    unite = _UL['UNITE_LIBRE', 1]
-    DETRUIRE(CONCEPT=(_F(NOM=_UL),), INFO=1)
-    return unite
-
-def lire_europlexus_ops(self, FICHIER_MED, MAILLAGE, MODELE,
-                        COMPORTEMENT, CONT_2_EFF, ARCHIVAGE,
+def lire_europlexus_ops(self, UNITE_MED, MODELE, COMPORTEMENT,
                         INFO=1, CHAM_MATER=None, CARA_ELEM=None, EXCIT=None,
                         **args):
-    """Fonction d'appel de la macro CALC_MAC3COEUR"""
+    """Fonction d'appel de la macro LIRE_EUROPLEXUS"""
     self.set_icmd(1)
 
     # Le concept sortant (de type evol_noli) est nomme 'resu'
@@ -51,8 +40,8 @@ def lire_europlexus_ops(self, FICHIER_MED, MAILLAGE, MODELE,
     resu = None
     #global resu
 
-    analysis = LireEPX(FICHIER_MED, MAILLAGE, MODELE, CARA_ELEM,
-                       CHAM_MATER, COMPORTEMENT, EXCIT, CONT_2_EFF, ARCHIVAGE,
+    analysis = LireEPX(UNITE_MED, MODELE, CARA_ELEM,
+                       CHAM_MATER, COMPORTEMENT, EXCIT,
                        INFO)
     analysis.read_compor()
     analysis.info_mode_epx, analysis.dic_mc_cara = build_info_mode_epx()
@@ -66,22 +55,30 @@ class LireEPX():
         Classe pour la lecture d'un ficher résultat EPX en MED
         et sa transformation en objet evol_noli
     """
-    def __init__(self, FICHIER_MED, MAILLAGE, MODELE, CARA_ELEM,
-                       CHAM_MATER, COMPORTEMENT, EXCIT, CONT_2_EFF, ARCHIVAGE,
+    def __init__(self, UNITE_MED, MODELE, CARA_ELEM,
+                       CHAM_MATER, COMPORTEMENT, EXCIT,
                        INFO):
         """
             Initialisation
         """
-        self.FICHIER_MED = FICHIER_MED
-        self.MAILLAGE = MAILLAGE
+        self.UNITE_MED = UNITE_MED
         self.MODELE = MODELE
         self.CARA_ELEM = CARA_ELEM
         self.CHAM_MATER = CHAM_MATER
         self.COMPORTEMENT = COMPORTEMENT
         self.EXCIT = EXCIT
-        self.CONT_2_EFF = CONT_2_EFF
-        self.ARCHIVAGE = ARCHIVAGE
         self.INFO = INFO
+        self.fichier_med = 'fort.%s'%UNITE_MED
+        
+        # Récuperation des concepts de la base
+        macro = CONTEXT.get_current_step()
+        
+        # récuperation du maillage
+        nom_MODELE = self.MODELE.get_name()
+        iret, ibid, nomsd = aster.dismoi('NOM_MAILLA', nom_MODELE, 'MODELE',
+                                         'F')
+        nomsd = nomsd.strip()
+        self.MAILLAGE = macro.get_concept(nomsd)
     # -------------------------------------------------------------------------
     def read_compor(self):
         """
@@ -112,29 +109,36 @@ class LireEPX():
         """
 
         from Cata.cata import FORMULE, CREA_CHAMP
+        from Calc_epx.calc_epx_utils import recupere_structure, tolist
+        from Calc_epx.calc_epx_utils import get_group_ma
+        from Calc_epx.calc_epx_cara import export_cara
+        from Calc_epx.calc_epx_struc import DIRECTIVE
         #  1- RECUPERATION DES INFOS
-        cont_2_eff = self.CONT_2_EFF.List_F()
         dic_mc_cara = self.dic_mc_cara
-        for instance in cont_2_eff:
-            gr = instance['GROUP_MA']
-            mc_cara = instance['MC_CARA']
-            if dic_mc_cara.has_key(mc_cara):
-                dic_mc_cara[mc_cara]['GROUP_MA'].extend(gr)
-            else:
+        
+        
+        if self.CARA_ELEM is  None: return
+        cara_elem_struc = recupere_structure(self.CARA_ELEM)
+        
+        for mc_cara in dic_mc_cara.keys():
+            if not cara_elem_struc.has_key(mc_cara):
                 continue
-            val_cle = instance['VAL_CLE']
-            if instance.has_key('L_VALE'):
-                l_vale = instance['L_VALE']
+            donnees_cara = tolist(cara_elem_struc[mc_cara])
+
+            epx = {}
+            epx['COMPLEMENT'] = DIRECTIVE('COMPLEMENT', ' ', 2)
+            mode_from_cara = {}
+            dic_gr_cara_supp = {}
+            # analyse du cara_elem
+            [epx, mode_from_cara] = export_cara(mc_cara, epx,
+                                          cara_elem_struc[mc_cara],
+                                          None, None,
+                                          dic_gr_cara_supp, mode_from_cara)
+        
             # COQUE -------------------------------------------------------
             if mc_cara == 'COQUE':
-                epais = val_cle
-                dic_mc_cara[mc_cara]['INSTANCE'].append({'VALE' : epais,
-                                                         'GROUP_MA' : gr,
-                                                         'NOM_CMP' : 'X1'})
-                dic_mc_cara[mc_cara]['INSTANCE'].append({'VALE' : epais**2/6.,
-                                                         'GROUP_MA' : gr,
-                                                         'NOM_CMP' : 'X2'})
-                if not dic_mc_cara[mc_cara]['CH_FONC']:
+                                              
+                if len(dic_mc_cara[mc_cara]['INSTANCE']) == 0:
                     nbcomp = len(dic_mc_cara[mc_cara]['NOM_CMP'])
                     __FO_CO = [None]*nbcomp
                     nume_X = [1, 1, 1, 2, 2, 2, 1, 1]
@@ -150,13 +154,21 @@ class LireEPX():
                         nom_cmp_f.append(xi)
                     dic_mc_cara[mc_cara]['VALE_F'] = vale_f
                     dic_mc_cara[mc_cara]['NOM_CMP_F'] = nom_cmp_f
+
+                for instance in donnees_cara:
+                    epais = instance['EPAIS']
+                    gr = get_group_ma(instance)
+                    dic_mc_cara[mc_cara]['GROUP_MA'].extend(gr)
+                    dic_mc_cara[mc_cara]['INSTANCE'].append({'VALE' : epais,
+                                                             'GROUP_MA' : gr,
+                                                             'NOM_CMP' : 'X1'})
+                    dic_mc_cara[mc_cara]['INSTANCE'].append({'VALE' : epais**2/6.,
+                                                         'GROUP_MA' : gr,
+                                                         'NOM_CMP' : 'X2'})
             # BARRE -------------------------------------------------------
             elif mc_cara == 'BARRE':
-                aire_sect = val_cle
-                dic_mc_cara[mc_cara]['INSTANCE'].append({'VALE' : aire_sect,
-                                                         'GROUP_MA' : gr,
-                                                         'NOM_CMP' : 'X1'})
-                if not dic_mc_cara[mc_cara]['CH_FONC']:
+                
+                if len(dic_mc_cara[mc_cara]['INSTANCE']) == 0:
                     nbcomp = len(dic_mc_cara[mc_cara]['NOM_CMP'])
                     __FO_BA = [None]*nbcomp
                     nume_X = [1,]
@@ -173,73 +185,87 @@ class LireEPX():
                     # creation du champ de fonction
                     dic_mc_cara[mc_cara]['VALE_F'] = vale_f
                     dic_mc_cara[mc_cara]['NOM_CMP_F'] = nom_cmp_f
+                
+                for instance in donnees_cara:
+                    cara = instance['CARA']
+                    cara = tolist(cara)
+                    if len(cara) != 1 or cara[0]!='A':
+                        raise Exception("""si on tombe la on utilise LIRE_EPX
+                        en dehors de CALC_EPX.
+                        Il faut ajouter une analyse du CARA_ELEM.
+                        """)
+                    aire_sect = tolist(instance['VALE'])[0]
+                    gr = get_group_ma(instance)
+                    dic_mc_cara[mc_cara]['GROUP_MA'].extend(gr)
+                    
+                    dic_mc_cara[mc_cara]['INSTANCE'].append({'VALE' : aire_sect,
+                                                         'GROUP_MA' : gr,
+                                                         'NOM_CMP' : 'X1'})
+                
             # CAS NON DEVELOPPES ------------------------------------------
             elif mc_cara in dic_mc_cara.keys():
                 raise Exception("""
 Le passage des contraintes aux efforts n'est pas programmé pour 
 le mot-clé %s"""%mc_cara)
 
-            # 2- CREATION DES CHAMPS DE CARACTERISTIQUES ET DE FONCTIONS
-            # POUR CONTRAINTES
-            nb_cara = len(dic_mc_cara.keys())
-            __CH_CAR = [None]*nb_cara
-            __CH_FON = [None]*nb_cara
-            for icar, mc_cara in enumerate(dic_mc_cara.keys()):
-                if len(dic_mc_cara[mc_cara]['INSTANCE']) > 0:
+        # 2- CREATION DES CHAMPS DE CARACTERISTIQUES ET DE FONCTIONS
+        # POUR CONTRAINTES
+        nb_cara = len(dic_mc_cara.keys())
+        __CH_CAR = [None]*nb_cara
+        __CH_FON = [None]*nb_cara
+        for icar, mc_cara in enumerate(dic_mc_cara.keys()):
+            if len(dic_mc_cara[mc_cara]['INSTANCE']) > 0:
 
-                    __CH_CAR[icar] = CREA_CHAMP(
-                                        INFO=self.INFO,
-                                        TYPE_CHAM='ELGA_NEUT_R',
-                                        OPERATION='AFFE',
-                                        MODELE=self.MODELE,
-                                        PROL_ZERO='OUI',
-                                        AFFE=dic_mc_cara[mc_cara]['INSTANCE'],
+                __CH_CAR[icar] = CREA_CHAMP(
+                                    INFO=self.INFO,
+                                    TYPE_CHAM='ELGA_NEUT_R',
+                                    OPERATION='AFFE',
+                                    MODELE=self.MODELE,
+                                    PROL_ZERO='OUI',
+                                    AFFE=dic_mc_cara[mc_cara]['INSTANCE'],
+                                            )
+                dic_mc_cara[mc_cara]['CH_CARA'] = __CH_CAR[icar]
+                nom_cmp_f = dic_mc_cara[mc_cara]['NOM_CMP_F']
+                vale_f = dic_mc_cara[mc_cara]['VALE_F']
+                gr = dic_mc_cara[mc_cara]['GROUP_MA']
+                __CH_FON[icar] = CREA_CHAMP(
+                                            INFO=self.INFO,
+                                            TYPE_CHAM='ELGA_NEUT_F',
+                                            OPERATION='AFFE',
+                                            MODELE=self.MODELE,
+                                            PROL_ZERO='OUI',
+                                            AFFE=_F(
+                                                    GROUP_MA=gr,
+                                                    NOM_CMP=nom_cmp_f,
+                                                    VALE_F=vale_f),
                                                 )
-                    dic_mc_cara[mc_cara]['CH_CARA'] = __CH_CAR[icar]
-                    nom_cmp_f = dic_mc_cara[mc_cara]['NOM_CMP_F']
-                    vale_f = dic_mc_cara[mc_cara]['VALE_F']
-                    gr = dic_mc_cara[mc_cara]['GROUP_MA']
-                    __CH_FON[icar] = CREA_CHAMP(
-                                                INFO=self.INFO,
-                                                TYPE_CHAM='ELGA_NEUT_F',
-                                                OPERATION='AFFE',
-                                                MODELE=self.MODELE,
-                                                PROL_ZERO='OUI',
-                                                AFFE=_F(
-                                                        GROUP_MA=gr,
-                                                        NOM_CMP=nom_cmp_f,
-                                                        VALE_F=vale_f),
-                                                    )
-                    dic_mc_cara[mc_cara]['CH_FONC'] = __CH_FON[icar]
-        print 'dic_mc_cara', dic_mc_cara
-        print 'self.dic_mc_cara', self.dic_mc_cara
-        
+                dic_mc_cara[mc_cara]['CH_FONC'] = __CH_FON[icar]
     # -------------------------------------------------------------------------
     def lire_champs_noeud(self, resu):
         """
             Lecture des champs aux noeuds dans le fichier MED.
             Création d'un résultat ASTER avec ces champs.
         """
-        from Cata.cata import DEFI_FICHIER, LIRE_RESU
-        from Calc_epx.calc_epx_cata import format_med
+        from Cata.cata import LIRE_RESU
+        from Calc_epx.calc_epx_cata import format_med_6ddl, format_med_3ddl
+        import med_aster
         
         # RECUPERATION DES DEPL, VITE et ACCE DANS LE FICHIER MED
-        self.unite = get_unite_libre()
-        #DEFI_FICHIER(UNITE=unite, ACTION='LIBERER')
-        fort = 'fort.%i' %self.unite
-        if os.path.isfile(fort):
-            print 'remove fort ',fort
-            os.remove(fort)
-
-        os.symlink(self.FICHIER_MED, fort)
-        self.fort = fort
+        dic_champ_med = med_aster.get_nom_champ_med(self.fichier_med)
+        nb_ddl = len(dic_champ_med['DEPL_001'])
+        if nb_ddl == 3:
+            format_med = format_med_3ddl
+        elif nb_ddl == 6:
+            format_med = format_med_6ddl
+        else:
+            raise Exception('%s ddls pour les noeuds du fichier med EPX non prévu')
         
         lire_resu = {
                      'TYPE_RESU' : 'EVOL_NOLI',
                      'FORMAT'    : 'MED',
                      'MODELE'    :  self.MODELE,
                      'FORMAT_MED': format_med,
-                     'UNITE'     : self.unite,
+                     'UNITE'     : self.UNITE_MED,
                      'TOUT_ORDRE':'OUI',
                      'INFO'      : self.INFO,
                     }
@@ -274,7 +300,7 @@ le mot-clé %s"""%mc_cara)
         """
         
         import med_aster
-        dic_champ_med = med_aster.get_nom_champ_med(self.FICHIER_MED)
+        dic_champ_med = med_aster.get_nom_champ_med(self.fichier_med)
         info_mode_epx = self.info_mode_epx
         info_comp_epx = self.info_comp_epx
         
@@ -384,7 +410,7 @@ présentes%s"""%compo)
             Transformation et assemblage des champs aux points de Gauss. 
         """
         from Cata.cata import LIRE_CHAMP, CREA_CHAMP, DETRUIRE
-        from Cata.cata import CREA_RESU, MODI_REPERE, DEFI_FICHIER
+        from Cata.cata import CREA_RESU, MODI_REPERE
         
         info_mode_epx = self.info_mode_epx
         info_comp_epx = self.info_comp_epx
@@ -404,7 +430,7 @@ présentes%s"""%compo)
         
         lc = {
              'INFO'      : self.INFO,
-             'UNITE'     : 99,
+             'UNITE'     : self.UNITE_MED,
              'MODELE'    : self.MODELE,
              'MAILLAGE'  : self.MAILLAGE,
              'PROL_ZERO' : 'OUI',
@@ -415,12 +441,11 @@ présentes%s"""%compo)
             'PROL_ZERO' : 'OUI',
             'OPERATION' : 'ASSE',
              }
-
+        MasquerAlarme('MED_4')
         for i in xrange(itot):
             
             lc['NUME_PT'] = resu.LIST_PARA()['NUME_ORDRE'][i]
 
-            pas = self.ARCHIVAGE['PAS_NBRE']
             dicAsse = []
             dicAsse3 = []
             dicDetr = []
@@ -606,7 +631,9 @@ présentes%s"""%compo)
             dicAffe3.append(dic2)
 
             DETRUIRE(CONCEPT=dicDetr, INFO=1)
-
+        RetablirAlarme('MED_4')
+        
+        
         MasquerAlarme('COMPOR2_26')
         MasquerAlarme('COMPOR2_23')
         resu = CREA_RESU(reuse=resu,
@@ -635,9 +662,6 @@ présentes%s"""%compo)
                                                 'MXX', 'MYY', 'MXY',
                                                 'QX', 'QY')))
 
-        DEFI_FICHIER(UNITE=self.unite, ACTION='LIBERER')
-
-        os.remove(self.fort)
     # -------------------------------------------------------------------------
 ### fin classe LireEPX
 
@@ -672,12 +696,14 @@ def build_info_mode_epx():
             type_modi = dic_mode['MODI_REPERE']
         else:
             type_modi = None
+
         for typ_ma in dic_mode['MODE_EPX']:
             for mode_epx in dic_mode['MODE_EPX'][typ_ma]:
                 info_mode_epx[mode_epx] = {'NOM_CMP' : nom_cmp,
                                          'NOM_CMP_MED' : nom_cmp_med,
                                          'MC_CARA':mc_cara,
-                                         'MODI_REPERE':type_modi}
+                                         'MODI_REPERE':type_modi,
+                                         }
     return info_mode_epx, dic_mc_cara
     
 def build_info_comp_epx():
