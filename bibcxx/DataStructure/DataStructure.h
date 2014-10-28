@@ -16,7 +16,7 @@ class DataStructure
         string _type;
 
     public:
-        DataStructure(string name, string type);
+        DataStructure( string name, string type );
 
         ~DataStructure();
 
@@ -30,10 +30,10 @@ class DataStructure
             return _type;
         };
 
-        void debugPrint(const int logicalUnit) const;
+        void debugPrint( const int logicalUnit ) const;
 
     protected:
-        void setType(const string newType)
+        void setType( const string newType )
         {
             _type = newType;
         };

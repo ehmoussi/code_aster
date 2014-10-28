@@ -7,6 +7,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Modelisations/Model.h"
 #include "Materials/AllocatedMaterial.h"
+#include "Loads/MechanicalLoad.h"
 
 /**
 * class ElementaryMatrixInstance
@@ -16,6 +17,9 @@
 class ElementaryMatrixInstance: public DataStructure
 {
     private:
+        typedef list< MechanicalLoad > ListMecaLoad;
+        typedef ListMecaLoad::iterator ListMecaLoadIter;
+
         // Objet Jeveux '.RERR'
         JeveuxVectorChar24 _description;
         // Objet Jeveux '.RELR'
@@ -26,6 +30,8 @@ class ElementaryMatrixInstance: public DataStructure
         Model              _supportModel;
         // Champ de materiau a utiliser
         AllocatedMaterial  _material;
+        // Chargement Mecanique
+        ListMecaLoad       _listOfMechanicalLoads;
 
     public:
         /**
@@ -38,6 +44,11 @@ class ElementaryMatrixInstance: public DataStructure
         */
         ~ElementaryMatrixInstance()
         {};
+
+        void addMechanicalLoad( const MechanicalLoad& currentLoad )
+        {
+            _listOfMechanicalLoads.push_back( currentLoad );
+        };
 
         /**
         * Calcul des matrices elementaires pour l'option RIGI_MECA

@@ -36,6 +36,17 @@ bool MeshInstance::readMEDFile(char* pathFichier)
     mCSPath.addValues(pathFichier);
     syntaxeLireMaillage.addSimpleKeywordStr(mCSPath);
 
+    FactorKeyword motCleVeriMail = FactorKeyword( "VERI_MAIL", true );
+    FactorKeywordOccurence occurVeriMail = FactorKeywordOccurence();
+    SimpleKeyWordStr mCSVerif( "VERIF" );
+    mCSVerif.addValues( "OUI" );
+    occurVeriMail.addSimpleKeywordStr( mCSVerif );
+    SimpleKeyWordDbl mCSAplat( "APLAT" );
+    mCSAplat.addValues( 1e-3 );
+    occurVeriMail.addSimpleKeywordDouble( mCSAplat );
+    motCleVeriMail.addOccurence( occurVeriMail );
+    syntaxeLireMaillage.addFactorKeyword( motCleVeriMail );
+
     // Appel a l'operateur de LIRE_MAILLAGE
     CALL_EXECOP(1);
     commandeCourante = NULL;

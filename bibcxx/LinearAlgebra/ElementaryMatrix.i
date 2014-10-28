@@ -7,6 +7,7 @@
 
 #include "Modelisations/Model.h"
 #include "Materials/AllocatedMaterial.h"
+#include "Loads/MechanicalLoad.h"
 
 class ElementaryMatrix
 {
@@ -17,6 +18,11 @@ class ElementaryMatrix
 
 %extend ElementaryMatrix
 {
+    void addMechanicalLoad( const MechanicalLoad& currentLoad )
+    {
+        return (*$self)->addMechanicalLoad( currentLoad );
+    }
+
     bool computeMechanicalRigidity()
     {
         return (*$self)->computeMechanicalRigidity();

@@ -442,7 +442,7 @@ class CommandSyntax
             return (*curIter).second.isStringKeywordPresentInOccurence(motCle, num);
         };
 
-        const FactorKeyword& getFactorKeyword(string keywordName)
+        FactorKeyword& getFactorKeyword(string keywordName)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(keywordName);
             return curIter->second;

@@ -17,11 +17,6 @@ class Model
 
 %extend Model
 {
-    bool setSupportMesh(Mesh& currentMesh)
-    {
-        return (*$self)->setSupportMesh(currentMesh);
-    }
-
     void addModelisationOnAllMesh(Physics phys, Modelisations mod)
     {
         return (*$self)->addModelisationOnAllMesh(phys, mod);
@@ -40,5 +35,15 @@ class Model
     bool build()
     {
         return (*$self)->build();
+    }
+
+    void debugPrint( const int logicalUnit )
+    {
+        return (*$self)->debugPrint( logicalUnit );
+    }
+
+    bool setSupportMesh(Mesh& currentMesh)
+    {
+        return (*$self)->setSupportMesh(currentMesh);
     }
 }

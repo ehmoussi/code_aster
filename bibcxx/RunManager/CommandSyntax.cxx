@@ -26,7 +26,7 @@ char* getTypeObjetResu()
 
 char* getSDType(char* nom)
 {
-    mapStrSDIterator curIter = mapNameDataStructure->find( string( nom ) );
+    mapStrSDIterator curIter = mapNameDataStructure->find( string( nom, 0, 8 ) );
     if ( curIter == mapNameDataStructure->end() )
         throw "Problem !!!";
     return const_cast< char* >( curIter->second->getType().c_str() );

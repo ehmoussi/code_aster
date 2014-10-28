@@ -17,13 +17,13 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
     // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
     setType( getType() + "_DEPL_R" );
 
-    // Definition du bout de fichier de commande correspondant a AFFE_MODELE
+    // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
     CommandSyntax syntaxeCalcMatrElem( "CALC_MATR_ELEM", true,
                                        initAster->getResultObjectName(), getType() );
     // Ligne indispensable pour que les commandes GET* fonctionnent
     commandeCourante = &syntaxeCalcMatrElem;
 
-    // Definition du mot cle simple MAILLAGE
+    // Definition du mot cle simple OPTION
     SimpleKeyWordStr mCSOption = SimpleKeyWordStr( "OPTION" );
     mCSOption.addValues( "RIGI_MECA" );
     syntaxeCalcMatrElem.addSimpleKeywordStr( mCSOption );
@@ -42,6 +42,18 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
         throw string("Material is empty");
     mCSChamMater.addValues( _material->getName() );
     syntaxeCalcMatrElem.addSimpleKeywordStr( mCSChamMater );
+
+    if ( _listOfMechanicalLoads.size() != 0 )
+    {
+        SimpleKeyWordStr mCSCharge( "CHARGE" );
+        for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
+              curIter != _listOfMechanicalLoads.end();
+              ++curIter )
+        {
+            mCSCharge.addValues( (*curIter)->getName() );
+        }
+        syntaxeCalcMatrElem.addSimpleKeywordStr( mCSCharge );
+    }
 
     CALL_EXECOP( 9 );
     _isEmpty = false;

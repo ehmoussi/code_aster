@@ -7,6 +7,8 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Materials/AllocatedMaterial.h"
 #include "Loads/MechanicalLoad.h"
+#include "DataFields/FieldOnNodes.h"
+#include "LinearAlgebra/DOFNumerotation.h"
 
 /**
 * class ElementaryVectorInstance
@@ -42,10 +44,12 @@ class ElementaryVectorInstance: public DataStructure
         ~ElementaryVectorInstance()
         {};
 
-        void addMechanicalLoad( MechanicalLoad& currentLoad )
+        void addMechanicalLoad( const MechanicalLoad& currentLoad )
         {
             _listOfMechanicalLoad.push_back( currentLoad );
         };
+
+        FieldOnNodesDouble assembleVector( const DOFNumerotation& currentNumerotation );
 
         /**
         * Calcul des matrices elementaires pour l'option CHAR_MECA

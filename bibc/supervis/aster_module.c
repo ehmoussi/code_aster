@@ -328,11 +328,11 @@ void DEFSPPSSP(GETMJM,getmjm,_IN char *nomfac,_IN STRING_SIZE lfac,
     char* tmp = MakeCStrFromFStr(nomfac, lfac);
     char **retour, **retour2;
     int nbMC;
-    int cret = listeMotCleSimpleFromMotCleFacteur( tmp, 0, lcle, ltyp, &retour, &retour2, &nbMC );
+    int cret = listeMotCleSimpleFromMotCleFacteur( tmp, (*iocc)-1, lcle, ltyp, &retour, &retour2, &nbMC );
     FreeStr(tmp);
     if ( cret == 0 )
     {
-        if ( nbval <= 0 )
+        if ( (*nbval) <= 0 )
             (*nbarg) = -nbMC;
         else
         {

@@ -59,6 +59,15 @@ class DOFNumerotationInstance: public DataStructure
         bool computeNumerotation();
 
         /**
+        * Methode permettant de savoir si la numerotation est vide
+        * @return true si la numerotation est vide
+        */
+        bool isEmpty()
+        {
+            return _isEmpty;
+        };
+
+        /**
         * Methode permettant de definir les matrices elementaires
         * @param currentMatrix objet ElementaryMatrix
         */

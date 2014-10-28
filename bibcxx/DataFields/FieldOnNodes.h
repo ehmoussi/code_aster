@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #include "MemoryManager/JeveuxVector.h"
+#include "DataStructure/DataStructure.h"
 
 /**
 * class template FieldOnNodesInstance
@@ -14,11 +15,9 @@
 * @author Nicolas Sellenet
 */
 template<class ValueType>
-class FieldOnNodesInstance
+class FieldOnNodesInstance: public DataStructure
 {
     private:
-        // Nom Jeveux du champ
-        string                  _name;
         // Vecteur Jeveux '.DESC'
         JeveuxVectorLong        _descriptor;
         // Vecteur Jeveux '.REFE'
@@ -31,10 +30,11 @@ class FieldOnNodesInstance
         * Constructeur
         * @param name Nom Jeveux du champ aux noeuds
         */
-        FieldOnNodesInstance(string name): _name(name),
-                                           _descriptor( JeveuxVectorLong(string(name+".DESC")) ),
-                                           _reference( JeveuxVectorChar24(string(name+".REFE")) ),
-                                           _valuesList( JeveuxVector<ValueType>(string(name+".VALE")) )
+        FieldOnNodesInstance( string name ):
+                        DataStructure( name, "CHAM_NO" ),
+                        _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+                        _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
+                        _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
         {
             assert(name.size() == 19);
         };
