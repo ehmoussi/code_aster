@@ -16,22 +16,9 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine nmarc0(result, modele, mate, carele, fonact,&
-                      sdcrit, sddyna, sdpost, carcri, sdcriq,&
-                      sdpilo, lisch2, numarc, time_curr)
-        character(len=8) :: result
-        character(len=24) :: modele
-        character(len=24) :: mate
-        character(len=24) :: carele
-        integer :: fonact(*)
-        character(len=19) :: sdcrit
-        character(len=19) :: sddyna
-        character(len=19) :: sdpost
-        character(len=24) :: carcri
-        character(len=24) :: sdcriq
-        character(len=19) :: sdpilo
-        character(len=19) :: lisch2
-        integer :: numarc
-        real(kind=8) :: time_curr
-    end subroutine nmarc0
+    subroutine rs_getfirst(result_, nume_first, inst_first)
+        character(len=*), intent(in) :: result_
+        integer, intent(out) :: nume_first
+        real(kind=8), optional, intent(out) :: inst_first
+    end subroutine rs_getfirst
 end interface
