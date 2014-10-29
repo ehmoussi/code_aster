@@ -356,6 +356,10 @@ class FactorKeyword
         };
 };
 
+class CommandSyntax;
+
+extern CommandSyntax* commandeCourante;
+
 /**
 * class CommandSyntax
 *   Classe permettant d'emuler des "bouts" de fichier de commande
@@ -392,13 +396,18 @@ class CommandSyntax
                                                                     _nomObjetJeveux( nomObjet ),
                                                                     _typeSDAster( typeObjet )
         {
+            if ( commandeCourante != NULL )
+                throw "Two objects CommandSyntax are not allowed in the same time";
             _factorKeywordsMap.insert( mapStrMCFValue( string(""), FactorKeyword(" ", false) ) );
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
             (*curIter).second.addOccurence(FactorKeywordOccurence());
+            commandeCourante = this;
         };
 
         ~CommandSyntax()
-        {};
+        {
+            commandeCourante = NULL;
+        };
 
         bool isFactorKeywordPresent(string keywordName)
         {
@@ -531,8 +540,6 @@ class CommandSyntax
             return _typeSDAster;
         };
 };
-
-extern CommandSyntax* commandeCourante;
 
 #else
 

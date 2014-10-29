@@ -19,7 +19,7 @@ int numOP = 0;
 
 Initializer* initAster = NULL;
 
-Initializer::Initializer(): syntaxeDebut(CommandSyntax("DEBUT", false, "")), _numberOfAsterObjects(0)
+Initializer::Initializer(): _numberOfAsterObjects(0)
 {
     // Definition en "dur" de quelques arguments de la ligne de commande
     argsLDCEntiers.insert(mapLDCEntierValue(string("suivi_batch"), 0));
@@ -29,34 +29,9 @@ Initializer::Initializer(): syntaxeDebut(CommandSyntax("DEBUT", false, "")), _nu
     argsLDCDoubles.insert(mapLDCDoubleValue(string("maxbase"), 1000.));
 
     argsLDCStrings.insert(mapLDCStringValue(string("repdex"), "."));
-
-    // Definition de la syntaxe de la commande DEBUT qui va initialiser le code
-    FactorKeyword motCleCODE = FactorKeyword("CODE", false);
-    FactorKeywordOccurence occurCODE = FactorKeywordOccurence();
-    SimpleKeyWordStr mCSNivPubWeb = SimpleKeyWordStr("NIV_PUB_WEB");
-    mCSNivPubWeb.addValues("NON");
-    occurCODE.addSimpleKeywordStr(mCSNivPubWeb);
-    motCleCODE.addOccurence(occurCODE);
-
-    syntaxeDebut.addFactorKeyword(motCleCODE);
-
-    FactorKeyword motCleMEMOIRE = FactorKeyword("MEMOIRE", false);
-    FactorKeywordOccurence occurMEMOIRE = FactorKeywordOccurence();
-
-    SimpleKeyWordDbl mCSTailleBloc = SimpleKeyWordDbl("TAILLE_BLOC");
-    mCSTailleBloc.addValues(800.);
-    occurMEMOIRE.addSimpleKeywordDouble(mCSTailleBloc);
-    SimpleKeyWordInt mCSGrpElem = SimpleKeyWordInt("TAILLE_GROUP_ELEM");
-    mCSGrpElem.addValues(1000);
-    occurMEMOIRE.addSimpleKeywordInteger(mCSGrpElem);
-
-    motCleMEMOIRE.addOccurence(occurMEMOIRE);
-    syntaxeDebut.addFactorKeyword(motCleMEMOIRE);
-
-    commandeCourante = &syntaxeDebut;
 }
 
-void Initializer::initForCataBuilder()
+void Initializer::initForCataBuilder( CommandSyntax& syntaxeDebut )
 {
     FactorKeyword factCata = FactorKeyword("CATALOGUE", false);
     FactorKeywordOccurence occurCata = FactorKeywordOccurence();
@@ -96,8 +71,34 @@ char* Initializer::getChaineLDC(char* chaineQuestion)
     return const_cast< char* >(curIter->second.c_str());
 };
 
-void Initializer::run()
+void Initializer::run( int imode )
 {
+    // Definition de la syntaxe de la commande DEBUT qui va initialiser le code
+    CommandSyntax syntaxeDebut( "DEBUT", false, "" );
+    FactorKeyword motCleCODE = FactorKeyword("CODE", false);
+    FactorKeywordOccurence occurCODE = FactorKeywordOccurence();
+    SimpleKeyWordStr mCSNivPubWeb = SimpleKeyWordStr("NIV_PUB_WEB");
+    mCSNivPubWeb.addValues("NON");
+    occurCODE.addSimpleKeywordStr(mCSNivPubWeb);
+    motCleCODE.addOccurence(occurCODE);
+
+    syntaxeDebut.addFactorKeyword(motCleCODE);
+
+    FactorKeyword motCleMEMOIRE = FactorKeyword("MEMOIRE", false);
+    FactorKeywordOccurence occurMEMOIRE = FactorKeywordOccurence();
+
+    SimpleKeyWordDbl mCSTailleBloc = SimpleKeyWordDbl("TAILLE_BLOC");
+    mCSTailleBloc.addValues(800.);
+    occurMEMOIRE.addSimpleKeywordDouble(mCSTailleBloc);
+    SimpleKeyWordInt mCSGrpElem = SimpleKeyWordInt("TAILLE_GROUP_ELEM");
+    mCSGrpElem.addValues(1000);
+    occurMEMOIRE.addSimpleKeywordInteger(mCSGrpElem);
+
+    motCleMEMOIRE.addOccurence(occurMEMOIRE);
+    syntaxeDebut.addFactorKeyword(motCleMEMOIRE);
+
+    if ( imode == 1 ) initForCataBuilder( syntaxeDebut );
+
     // Appel a ibmain et a debut
     INTEGER dbg = 0;
     CALL_IBMAIN(&dbg);
@@ -106,13 +107,12 @@ void Initializer::run()
 }
 
 // We define a `_init` function to keep a global `Initializer` object
-void asterInitialization(int imode)
+void asterInitialization( int imode )
 {
     initAsterModules();
     initAster = new Initializer();
-    if ( imode == 1 ) initAster->initForCataBuilder();
 
-    initAster->run();
+    initAster->run( imode );
 }
 
 void asterFinalization()

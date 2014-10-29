@@ -23,8 +23,6 @@ bool MeshInstance::readMEDFile(char* pathFichier)
     // Creation d'un bout de fichier commande correspondant a LIRE_MAILLAGE
     CommandSyntax syntaxeLireMaillage( "LIRE_MAILLAGE", true,
                                        initAster->getResultObjectName(), getType() );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeLireMaillage;
 
     // Remplissage des mots cles simples FORMAT et PATHFICHIER
     SimpleKeyWordStr mCSFormat = SimpleKeyWordStr("FORMAT");
@@ -49,7 +47,7 @@ bool MeshInstance::readMEDFile(char* pathFichier)
 
     // Appel a l'operateur de LIRE_MAILLAGE
     CALL_EXECOP(1);
-    commandeCourante = NULL;
+
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _dimensionInformations->updateValuePointer();
     _coordinates->updateValuePointers();
@@ -58,7 +56,6 @@ bool MeshInstance::readMEDFile(char* pathFichier)
     _elementsType->updateValuePointer();
     _groupsOfElements->buildFromJeveux();
     _isEmpty = false;
-    /*cout << _nameOfNodes.findStringOfElement(1) << endl;
-    cout << _nameOfNodes.findIntegerOfElement("N1") << endl;*/
+
     return true;
 };

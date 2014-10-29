@@ -25,8 +25,6 @@ FieldOnNodesDouble ElementaryVectorInstance::assembleVector( const DOFNumerotati
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
     CommandSyntax syntaxeAsseVecteur( "ASSE_VECTEUR", true, newName, "CHAM_NO" );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeAsseVecteur;
 
     // Definition du mot cle simple MATR_ELEM
     SimpleKeyWordStr mCSVectElem = SimpleKeyWordStr( "VECT_ELEM" );
@@ -41,9 +39,6 @@ FieldOnNodesDouble ElementaryVectorInstance::assembleVector( const DOFNumerotati
     CALL_EXECOP( 13 );
     _isEmpty = false;
 
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
-
     return vectTmp;
 }
 
@@ -57,8 +52,6 @@ bool ElementaryVectorInstance::computeMechanicalLoads()
 
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeCalcVectElem( "CALC_VECT_ELEM", true, getName(), getType() );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeCalcVectElem;
 
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSOption = SimpleKeyWordStr( "OPTION" );
@@ -86,9 +79,6 @@ bool ElementaryVectorInstance::computeMechanicalLoads()
 
     CALL_EXECOP( 8 );
     _isEmpty = false;
-
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
 
     return true;
 };

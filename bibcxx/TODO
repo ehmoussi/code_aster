@@ -13,10 +13,6 @@ Ajouter des JEDETR dans les destructeurs des Instances (fait pour les vecteurs p
 Remarque : Renvoyer par valeur entre le C++ et le python plutôt que par reference pour forcer la recopie
     du smart-pointer
 
-Modifier "extern mapStrSD* mapNameDataStructure;" pour éviter d'utiliser un pointeur
-
 debugPrint ne devrait pas etre une methode de DataStructure mais plutot des objets Jeveux de base
 
 Utiliser la programmation generique pour la manipulation des matrices et des vecteurs
-
-On pourrait pointer vers la bonne CommandSyntax lorsqu'on cree l'objet
