@@ -1,7 +1,6 @@
 # coding=utf-8
-# person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2002  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -15,24 +14,14 @@
 # YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-#
-#
 # ======================================================================
+# person_in_charge: josselin.delmas at edf.fr
 
-""" 
-   Ce module contient la classe AsException
-"""
+cata_msg = {
 
-# Modules EFICAS
-from strfunc import get_encoding
+1 : _(u"""
+On ne trouve aucun numéro d'ordre dans la structure de données résultat de nom <%(k1)s> 
+"""),
 
-class AsException(Exception):
-  def __unicode__(self):
-    return " ".join([unicode(x) for x in self.args])
 
-  def __str__(self):
-    return unicode(self).encode(get_encoding())
-
-class InterruptParsingError(Exception):
-    """Exception used to interrupt the parsing of the command file
-    without raising an error (see N_JDC.exec_compile for usage)"""
+}
