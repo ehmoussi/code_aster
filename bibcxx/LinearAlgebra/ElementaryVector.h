@@ -44,11 +44,19 @@ class ElementaryVectorInstance: public DataStructure
         ~ElementaryVectorInstance()
         {};
 
+        /**
+        * Ajouter une charge mecanique
+        * @param currentLoad objet MechanicalLoad
+        */
         void addMechanicalLoad( const MechanicalLoad& currentLoad )
         {
             _listOfMechanicalLoad.push_back( currentLoad );
         };
 
+        /**
+        * Assembler les vecteurs elementaires en se fondant sur currentNumerotation
+        * @param currentNumerotation objet DOFNumerotation
+        */
         FieldOnNodesDouble assembleVector( const DOFNumerotation& currentNumerotation );
 
         /**

@@ -85,7 +85,6 @@ class Initializer
         typedef mapLDCString::value_type mapLDCStringValue;
         mapLDCString argsLDCStrings;
 
-        CommandSyntax syntaxeDebut;
         unsigned long int _numberOfAsterObjects;
         // Maximum 16^8 Aster sd because of the base name of a sd aster (8 characters)
         // and because the hexadecimal system is used to give a name to a given sd
@@ -101,10 +100,7 @@ class Initializer
         * Destructeur
         */
         ~Initializer()
-        {
-            cout << "~Initializer";
-            commandeCourante = NULL;
-        }
+        {};
 
         /**
         * Recuperation d'un nouveau nom de concept Jeveux
@@ -156,13 +152,13 @@ class Initializer
         /**
         * Fonction permettant de generer les catalogues de Code_Aster
         */
-        void initForCataBuilder();
+        void initForCataBuilder( CommandSyntax& syntaxeDebut );
 
         /**
         * Demarrage de Code_Aster
         *   Appel a ibmain et a debut
         */
-        void run();
+        void run( int imode );
 };
 
 extern Initializer* initAster;

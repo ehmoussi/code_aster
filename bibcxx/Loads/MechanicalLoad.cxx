@@ -15,8 +15,6 @@ bool MechanicalLoadInstance::build()
 // la commande AFFE_CHAR_MECA 
     CommandSyntax syntaxeAffeCharMeca( "AFFE_CHAR_MECA", true,
                                        initAster->getResultObjectName(), getType() );
-// Il n'y a qu'un seul objet (global) commandeCourante (référence à l'objet construit ici syntaxeAffeCharMeca)
-    commandeCourante = &syntaxeAffeCharMeca;
 
 // MODELE=
     SimpleKeyWordStr mCSModel = SimpleKeyWordStr("MODELE");
@@ -73,7 +71,5 @@ bool MechanicalLoadInstance::build()
    // Maintenant que le fichier de commande est pret, on appelle OP0007
     cout << " Appel de execop" << endl;
     CALL_EXECOP(7);
-    // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
-    commandeCourante = NULL;
     return true;
 };

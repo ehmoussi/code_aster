@@ -14,11 +14,9 @@
 
 class CataBuilder
 {
-    private:
-        CommandSyntax syntaxeMajCata;
-
     public:
-        CataBuilder();
+        CataBuilder()
+        {};
 
         ~CataBuilder()
         {}

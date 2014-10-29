@@ -116,8 +116,6 @@ bool AssemblyMatrixInstance< ValueType >::factorization()
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
     CommandSyntax syntaxeFactoriser( "FACTORISER", true, getName(), getType() );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeFactoriser;
 
     // Definition du mot cle simple MATR_ASSE
     SimpleKeyWordStr mCSMatrAsse = SimpleKeyWordStr( "MATR_ASSE" );
@@ -169,9 +167,6 @@ bool AssemblyMatrixInstance< ValueType >::factorization()
     CALL_EXECOP( 14 );
     _isEmpty = false;
 
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
-
     return true;
 };
 
@@ -191,8 +186,6 @@ bool AssemblyMatrixInstance< ValueType >::build()
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
     CommandSyntax syntaxeAsseMatrice( "ASSE_MATRICE", true,
                                        initAster->getResultObjectName(), getType() );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeAsseMatrice;
 
     // Definition du mot cle simple MATR_ELEM
     SimpleKeyWordStr mCSMatrElem = SimpleKeyWordStr( "MATR_ELEM" );
@@ -218,9 +211,6 @@ bool AssemblyMatrixInstance< ValueType >::build()
 
     CALL_EXECOP( 12 );
     _isEmpty = false;
-
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
 
     return true;
 };

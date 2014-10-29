@@ -27,8 +27,6 @@ FieldOnNodesDouble LinearSolverInstance::solveDoubleLinearSystem( const Assembly
 
     // Definition du bout de fichier de commande correspondant a RESOUDRE
     CommandSyntax syntaxeResoudre( "RESOUDRE", true, newName, "CHAM_NO" );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeResoudre;
 
     // Definition du mot cle simple MATR
     SimpleKeyWordStr mCSMatr = SimpleKeyWordStr( "MATR" );
@@ -56,9 +54,6 @@ FieldOnNodesDouble LinearSolverInstance::solveDoubleLinearSystem( const Assembly
     syntaxeResoudre.addSimpleKeywordStr( mCSPost );
 
     CALL_EXECOP( 15 );
-
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
 
     return returnField;
 };

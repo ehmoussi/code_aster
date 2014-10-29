@@ -46,13 +46,18 @@ class FieldOnNodesInstance: public DataStructure
         /**
         * Surcharge de l'operateur []
         * @param i Indice dans le tableau Jeveux
-        * @return renvoit la valeur du tableau Jeveux a la position i
+        * @return la valeur du tableau Jeveux a la position i
         */
         const ValueType &operator[](int i) const
         {
             return _valuesList->operator[](i);
         };
 
+        /**
+        * Impression du champ au format MED
+        * @param pathFichier path ne servant pour le moment a rien
+        * @return true
+        */
         bool printMEDFormat( string pathFichier );
 
         /**
@@ -71,13 +76,11 @@ class FieldOnNodesInstance: public DataStructure
 template< class ValueType >
 bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
 {
-    CommandSyntax syntaxeLireResu( "IMPR_RESU", false );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeLireResu;
+    CommandSyntax syntaxeImprResu( "IMPR_RESU", false );
 
     SimpleKeyWordStr mCSChamNo = SimpleKeyWordStr( "FORMAT" );
     mCSChamNo.addValues( "MED" );
-    syntaxeLireResu.addSimpleKeywordStr( mCSChamNo );
+    syntaxeImprResu.addSimpleKeywordStr( mCSChamNo );
 
     FactorKeyword motCleResu = FactorKeyword( "RESU", false );
     FactorKeywordOccurence occurResu = FactorKeywordOccurence();
@@ -99,12 +102,10 @@ bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
     occurResu.addSimpleKeywordStr( mCSNomVari );
 
     motCleResu.addOccurence( occurResu );
-    syntaxeLireResu.addFactorKeyword( motCleResu );
+    syntaxeImprResu.addFactorKeyword( motCleResu );
 
     CALL_EXECOP( 39 );
 
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
     return true;
 };
 
