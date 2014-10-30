@@ -7,7 +7,7 @@ import code_aster
 monMaillage = code_aster.Mesh()
 
 # Relecture du fichier MED
-monMaillage.readMEDFile("test001d")
+monMaillage.readMEDFile("test001d/fort.1")
 
 #help(monMaillage)
 

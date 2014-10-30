@@ -132,17 +132,13 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
 !
 ! 1.1. ==> NOM DU FICHIER MED
 !
-!    call ulisog(nrofic, kfic, saux01)
-!    if (kfic(1:1) .eq. ' ') then
+    call ulisog(nrofic, kfic, saux01)
+    if (kfic(1:1) .eq. ' ') then
         call codent(nrofic, 'G', saux08)
-!        call gtoptk ('repdex', rep, iret)
-        call getvtx(' ', 'PATHFICHIER', scal = rep, nbret = iaux)
-        lrep = lxlgut(rep)
-        nofimd = rep(1:lrep)//'/fort.'//saux08
-        write(6,*) '@@ jpl NOFIMD=',nofimd
-!    else
-!        nofimd = kfic(1:200)
-!    endif
+        nofimd = 'fort.'//saux08
+    else
+        nofimd = kfic(1:200)
+    endif
 !
     if (nivinf .gt. 1) then
         write (ifm,*) '<',nompro,'> NOM DU FICHIER MED : ',nofimd

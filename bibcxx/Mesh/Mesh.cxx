@@ -18,7 +18,7 @@ MeshInstance::MeshInstance(): DataStructure( initAster->getNewResultObjectName()
     assert(_jeveuxName.size() == 8);
 };
 
-bool MeshInstance::readMEDFile(char* pathFichier)
+bool MeshInstance::readMEDFile( string pathFichier )
 {
     // Creation d'un bout de fichier commande correspondant a LIRE_MAILLAGE
     CommandSyntax syntaxeLireMaillage( "LIRE_MAILLAGE", true,
@@ -30,9 +30,10 @@ bool MeshInstance::readMEDFile(char* pathFichier)
     // Ajout du premier mot cle simple
     syntaxeLireMaillage.addSimpleKeywordStr(mCSFormat);
 
-    SimpleKeyWordStr mCSPath = SimpleKeyWordStr("PATHFICHIER");
-    mCSPath.addValues(pathFichier);
-    syntaxeLireMaillage.addSimpleKeywordStr(mCSPath);
+    LogicalUnitFile currentFile( pathFichier, Binary, Old );
+    SimpleKeyWordInt mCSPath = SimpleKeyWordInt( "UNITE" );
+    mCSPath.addValues( currentFile.getLogicalUnit() );
+    syntaxeLireMaillage.addSimpleKeywordInteger( mCSPath );
 
     FactorKeyword motCleVeriMail = FactorKeyword( "VERI_MAIL", true );
     FactorKeywordOccurence occurVeriMail = FactorKeywordOccurence();
