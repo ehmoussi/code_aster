@@ -3,10 +3,10 @@
 import code_aster
 
 monMaillage = code_aster.Mesh()
-monMaillage.readMEDFile("test001e")
+monMaillage.readMEDFile( "test001e/fort.1" )
 
 monModel = code_aster.Model()
-monModel.setSupportMesh(monMaillage)
+monModel.setSupportMesh( monMaillage )
 monModel.addModelisationOnAllMesh( code_aster.Mechanics, code_aster.Tridimensional )
 monModel.build()
 
@@ -64,4 +64,4 @@ matrAsse.factorization()
 
 resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
 
-resu.printMEDFormat( "" )
+resu.printMEDFormat( "test.med" )

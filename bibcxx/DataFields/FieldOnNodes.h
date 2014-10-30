@@ -9,6 +9,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructure/DataStructure.h"
 #include "RunManager/CommandSyntax.h"
+#include "RunManager/LogicalUnitManager.h"
 
 /**
 * class template FieldOnNodesInstance
@@ -76,11 +77,18 @@ class FieldOnNodesInstance: public DataStructure
 template< class ValueType >
 bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
 {
+    LogicalUnitFile currentFile( pathFichier, Binary, New );
+    int currentUL = currentFile.getLogicalUnit();
+
     CommandSyntax syntaxeImprResu( "IMPR_RESU", false );
 
     SimpleKeyWordStr mCSChamNo = SimpleKeyWordStr( "FORMAT" );
     mCSChamNo.addValues( "MED" );
     syntaxeImprResu.addSimpleKeywordStr( mCSChamNo );
+
+    SimpleKeyWordInt mCSUnite( "UNITE" );
+    mCSUnite.addValues( currentUL );
+    syntaxeImprResu.addSimpleKeywordInteger( mCSUnite );
 
     FactorKeyword motCleResu = FactorKeyword( "RESU", false );
     FactorKeywordOccurence occurResu = FactorKeywordOccurence();
@@ -88,10 +96,6 @@ bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
     SimpleKeyWordStr mCSChamGd( "CHAM_GD" );
     mCSChamGd.addValues( getName() );
     occurResu.addSimpleKeywordStr( mCSChamGd );
-
-    SimpleKeyWordInt mCSUnite( "UNITE" );
-    mCSUnite.addValues( 80 );
-    occurResu.addSimpleKeywordInteger( mCSUnite );
 
     SimpleKeyWordStr mCSInfo( "INFO_MAILLAGE" );
     mCSInfo.addValues( "NON" );

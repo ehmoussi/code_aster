@@ -88,7 +88,7 @@ class MeshInstance: public DataStructure
         * @param pathFichier path contenant le fichier fort.1 correspondant au fichier MED
         * @return retourne true si le maillage a correctement ete relu
         */
-        bool readMEDFile(char* pathFichier);
+        bool readMEDFile( string pathFichier );
 };
 
 /**

@@ -15,7 +15,7 @@ acier.debugPrint( 8 )
 monMaillage = code_aster.Mesh()
 
 # Relecture du fichier MED
-monMaillage.readMEDFile( "test001b" )
+monMaillage.readMEDFile( "test001a/fort.1" )
 monMaillage.debugPrint( 8 )
 
 affectMat = code_aster.AllocatedMaterial()

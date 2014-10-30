@@ -66,6 +66,7 @@ class AssemblyMatrixInstance: public DataStructure
 
         /**
         * Factorisation de la matrice
+        * @return true
         */
         bool factorization();
 
