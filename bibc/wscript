@@ -113,8 +113,8 @@ def build_module(self, env):
           source = '../bibcxx/code_aster.i',
           target = '_code_aster',
       swig_flags = '-c++ -python -Wall',
-             env = env,
-            use = ['asterlib'] + uses,
+             env = env.derive(),
+             use = ['asterlib'] + uses,
     install_path = env.ASTERLIBDIR,
     )
     # because .py must exist before installing
