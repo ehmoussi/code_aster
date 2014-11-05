@@ -29,12 +29,12 @@ FieldOnNodesDouble ElementaryVectorInstance::assembleVector( const DOFNumerotati
     // Definition du mot cle simple MATR_ELEM
     SimpleKeyWordStr mCSVectElem = SimpleKeyWordStr( "VECT_ELEM" );
     mCSVectElem.addValues( this->getName() );
-    syntaxeAsseVecteur.addSimpleKeywordStr( mCSVectElem );
+    syntaxeAsseVecteur.addSimpleKeywordString( mCSVectElem );
 
     // Definition du mot cle simple NUME_DDL
     SimpleKeyWordStr mCSNumeDdl = SimpleKeyWordStr( "NUME_DDL" );
     mCSNumeDdl.addValues( currentNumerotation->getName() );
-    syntaxeAsseVecteur.addSimpleKeywordStr( mCSNumeDdl );
+    syntaxeAsseVecteur.addSimpleKeywordString( mCSNumeDdl );
 
     CALL_EXECOP( 13 );
     _isEmpty = false;
@@ -56,13 +56,13 @@ bool ElementaryVectorInstance::computeMechanicalLoads()
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSOption = SimpleKeyWordStr( "OPTION" );
     mCSOption.addValues( "CHAR_MECA" );
-    syntaxeCalcVectElem.addSimpleKeywordStr( mCSOption );
+    syntaxeCalcVectElem.addSimpleKeywordString( mCSOption );
 
     if ( ! _material.isEmpty() )
     {
         SimpleKeyWordStr mCSChamMater = SimpleKeyWordStr( "CHAM_MATER" );
         mCSChamMater.addValues( _material->getName() );
-        syntaxeCalcVectElem.addSimpleKeywordStr( mCSChamMater );
+        syntaxeCalcVectElem.addSimpleKeywordString( mCSChamMater );
     }
 
     if ( _listOfMechanicalLoad.size() != 0 )
@@ -74,7 +74,7 @@ bool ElementaryVectorInstance::computeMechanicalLoads()
         {
             mCSCharge.addValues( (*curIter)->getName() );
         }
-        syntaxeCalcVectElem.addSimpleKeywordStr( mCSCharge );
+        syntaxeCalcVectElem.addSimpleKeywordString( mCSCharge );
     }
 
     CALL_EXECOP( 8 );

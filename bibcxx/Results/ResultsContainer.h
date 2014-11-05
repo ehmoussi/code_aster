@@ -17,7 +17,6 @@
 class ResultsContainerInstance: public DataStructure
 {
     private:
-        string                 _jeveuxName;
         JeveuxBidirectionalMap _symbolicNamesOfFields;
         JeveuxCollectionChar24 _namesOfFields;
         JeveuxBidirectionalMap _accessVariables;
@@ -29,12 +28,11 @@ class ResultsContainerInstance: public DataStructure
         * Constructeur
         */
         ResultsContainerInstance(): DataStructure( initAster->getNewResultObjectName(), "???" ),
-                            _jeveuxName( getName() ),
-                            _symbolicNamesOfFields( JeveuxBidirectionalMap( _jeveuxName + "           .DESC" ) ),
-                            _namesOfFields( JeveuxCollectionChar24( _jeveuxName + "           .TACH" ) ),
-                            _accessVariables( JeveuxBidirectionalMap( _jeveuxName + "           .NOVA" ) ),
-                            _calculationParameter( JeveuxCollectionChar8( _jeveuxName + "           .TAVA" ) ),
-                            _serialNumber( JeveuxVectorLong( _jeveuxName + "           .ORDR" ) )
+                            _symbolicNamesOfFields( JeveuxBidirectionalMap( getName() + "           .DESC" ) ),
+                            _namesOfFields( JeveuxCollectionChar24( getName() + "           .TACH" ) ),
+                            _accessVariables( JeveuxBidirectionalMap( getName() + "           .NOVA" ) ),
+                            _calculationParameter( JeveuxCollectionChar8( getName() + "           .TAVA" ) ),
+                            _serialNumber( JeveuxVectorLong( getName() + "           .ORDR" ) )
         {};
 };
 

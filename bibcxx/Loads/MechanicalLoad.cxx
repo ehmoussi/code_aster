@@ -22,7 +22,7 @@ bool MechanicalLoadInstance::build()
         throw string("Support model is undefined");
     mCSModel.addValues(_supportModel->getName());
     cout <<  "Nom du modele support: " << _supportModel->getName() << " . " << endl;
-    syntaxeAffeCharMeca.addSimpleKeywordStr(mCSModel);
+    syntaxeAffeCharMeca.addSimpleKeywordString(mCSModel);
 
     for (  listOfLoadsAndGrpsDouble::iterator curIter = _listOfLoadsDouble.begin();
           curIter != _listOfLoadsDouble.end();
@@ -52,7 +52,7 @@ bool MechanicalLoadInstance::build()
 
             mCSGroup.addValues( (curIter->second)->getEntityName() );
         }
-        occurLoad.addSimpleKeywordStr(mCSGroup);
+        occurLoad.addSimpleKeywordString(mCSGroup);
 
         string nomFKW = (*curIter).first.getType();
         if ( syntaxeAffeCharMeca.isFactorKeywordPresent( nomFKW ) )

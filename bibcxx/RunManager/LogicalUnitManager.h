@@ -98,7 +98,7 @@ class LogicalUnitFile
     public:
         /**
         * Constructeur
-        *   Ce constructeur se charge de l'appel a DEFI_FICHIER et de reserver l'unite logique
+        *   Ce constructeur se charge d'appeler DEFI_FICHIER et de reserver l'unite logique
         * @param pathFichier Path vers le fichier a associer a une unite logique
         * @param FileType Type du fichier, a choisir dans l'enum FileType
         * @param FileAccess Acces au fichier, a choisir dans l'enum FileAccess
@@ -120,7 +120,7 @@ class LogicalUnitFile
 
             SimpleKeyWordStr mCSAction( "ACTION" );
             mCSAction.addValues( "ASSOCIER" );
-            syntaxeDefiFichier->addSimpleKeywordStr( mCSAction );
+            syntaxeDefiFichier->addSimpleKeywordString( mCSAction );
 
             SimpleKeyWordInt mCSUnite = SimpleKeyWordInt( "UNITE" );
             mCSUnite.addValues( _logicalUnit );
@@ -128,15 +128,15 @@ class LogicalUnitFile
 
             SimpleKeyWordStr mCSFichier( "FICHIER" );
             mCSFichier.addValues( _nomFichier );
-            syntaxeDefiFichier->addSimpleKeywordStr( mCSFichier );
+            syntaxeDefiFichier->addSimpleKeywordString( mCSFichier );
 
             SimpleKeyWordStr mCSType( "TYPE" );
             mCSType.addValues( string( NameFileType[(int) type] ) );
-            syntaxeDefiFichier->addSimpleKeywordStr( mCSType );
+            syntaxeDefiFichier->addSimpleKeywordString( mCSType );
 
             SimpleKeyWordStr mCSAcces( "ACCES" );
             mCSAcces.addValues( NameFileAccess[(int) access] );
-            syntaxeDefiFichier->addSimpleKeywordStr( mCSAcces );
+            syntaxeDefiFichier->addSimpleKeywordString( mCSAcces );
 
             CALL_OPSEXE( &_numOp26 );
 
@@ -146,7 +146,7 @@ class LogicalUnitFile
 
         /**
         * Destructeur
-        *   Ce destructeur se charge de l'appel a DEFI_FICHIER et de liberer l'unite logique
+        *   Ce destructeur se charge d'appeler DEFI_FICHIER et de liberer l'unite logique
         */
         ~LogicalUnitFile()
         {
@@ -159,7 +159,7 @@ class LogicalUnitFile
 
             SimpleKeyWordStr mCSAction( "ACTION" );
             mCSAction.addValues( "LIBERER" );
-            syntaxeDefiFichier->addSimpleKeywordStr( mCSAction );
+            syntaxeDefiFichier->addSimpleKeywordString( mCSAction );
 
             SimpleKeyWordInt mCSUnite( "UNITE" );
             mCSUnite.addValues( _logicalUnit );
@@ -167,7 +167,7 @@ class LogicalUnitFile
 
             SimpleKeyWordStr mCSFichier( "FICHIER" );
             mCSFichier.addValues( _nomFichier );
-            syntaxeDefiFichier->addSimpleKeywordStr( mCSFichier );
+            syntaxeDefiFichier->addSimpleKeywordString( mCSFichier );
 
             CALL_OPSEXE( &_numOp26 );
 
@@ -182,7 +182,7 @@ class LogicalUnitFile
         int getLogicalUnit() const
         {
             return _logicalUnit;
-        }
+        };
 };
 
 #endif /* LOGICALUNITMANAGER_H_ */

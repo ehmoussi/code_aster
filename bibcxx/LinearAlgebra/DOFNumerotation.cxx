@@ -30,15 +30,15 @@ bool DOFNumerotationInstance::computeNumerotation()
 
         SimpleKeyWordStr mCSMatrRigi = SimpleKeyWordStr( "MATR_RIGI" );
         mCSMatrRigi.addValues( _supportMatrix->getName() );
-        syntaxeNumeDdl.addSimpleKeywordStr(mCSMatrRigi);
+        syntaxeNumeDdl.addSimpleKeywordString(mCSMatrRigi);
 
         SimpleKeyWordStr mCSSolveur = SimpleKeyWordStr( "METHODE" );
         mCSSolveur.addValues( _linearSolver->getSolverName() );
-        syntaxeNumeDdl.addSimpleKeywordStr(mCSSolveur);
+        syntaxeNumeDdl.addSimpleKeywordString(mCSSolveur);
 
         SimpleKeyWordStr mCSRenum = SimpleKeyWordStr( "RENUM" );
         mCSRenum.addValues( _linearSolver->getRenumburingName() );
-        syntaxeNumeDdl.addSimpleKeywordStr(mCSRenum);
+        syntaxeNumeDdl.addSimpleKeywordString(mCSRenum);
     }
     else
         throw "No support matrix and support model defined";

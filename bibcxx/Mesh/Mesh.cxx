@@ -28,7 +28,7 @@ bool MeshInstance::readMEDFile( string pathFichier )
     SimpleKeyWordStr mCSFormat = SimpleKeyWordStr("FORMAT");
     mCSFormat.addValues("MED");
     // Ajout du premier mot cle simple
-    syntaxeLireMaillage.addSimpleKeywordStr(mCSFormat);
+    syntaxeLireMaillage.addSimpleKeywordString(mCSFormat);
 
     LogicalUnitFile currentFile( pathFichier, Binary, Old );
     SimpleKeyWordInt mCSPath = SimpleKeyWordInt( "UNITE" );
@@ -39,7 +39,7 @@ bool MeshInstance::readMEDFile( string pathFichier )
     FactorKeywordOccurence occurVeriMail = FactorKeywordOccurence();
     SimpleKeyWordStr mCSVerif( "VERIF" );
     mCSVerif.addValues( "OUI" );
-    occurVeriMail.addSimpleKeywordStr( mCSVerif );
+    occurVeriMail.addSimpleKeywordString( mCSVerif );
     SimpleKeyWordDbl mCSAplat( "APLAT" );
     mCSAplat.addValues( 1e-3 );
     occurVeriMail.addSimpleKeywordDouble( mCSAplat );

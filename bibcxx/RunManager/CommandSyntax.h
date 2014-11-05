@@ -123,7 +123,7 @@ class FactorKeywordOccurence
         *   ex : GROUP_MA = 'TOTO'
         * @param motCle mot cle simple
         */
-        void addSimpleKeywordStr(SimpleKeyWordStr motCleAAjouter)
+        void addSimpleKeywordString(SimpleKeyWordStr motCleAAjouter)
         {
             _listSimpleKeywordsStr.push_back(motCleAAjouter);
             _setKeywordNames.insert(motCleAAjouter.keywordName());
@@ -495,10 +495,10 @@ class CommandSyntax
         *   ex : GROUP_MA = 'TOTO'
         * @param motCle mot cle simple a ajouter
         */
-        bool addSimpleKeywordStr(const SimpleKeyWordStr motCle)
+        bool addSimpleKeywordString(const SimpleKeyWordStr motCle)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
-            (*curIter).second.getOccurence(0).addSimpleKeywordStr(motCle);
+            (*curIter).second.getOccurence(0).addSimpleKeywordString(motCle);
             return true;
         };
 

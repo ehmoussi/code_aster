@@ -31,11 +31,11 @@ FieldOnNodesDouble LinearSolverInstance::solveDoubleLinearSystem( const Assembly
     // Definition du mot cle simple MATR
     SimpleKeyWordStr mCSMatr = SimpleKeyWordStr( "MATR" );
     mCSMatr.addValues( currentMatrix->getName() );
-    syntaxeResoudre.addSimpleKeywordStr( mCSMatr );
+    syntaxeResoudre.addSimpleKeywordString( mCSMatr );
 
     SimpleKeyWordStr mCSChamNo = SimpleKeyWordStr( "CHAM_NO" );
     mCSChamNo.addValues( currentRHS->getName() );
-    syntaxeResoudre.addSimpleKeywordStr( mCSChamNo );
+    syntaxeResoudre.addSimpleKeywordString( mCSChamNo );
 
     SimpleKeyWordInt mCSMaxIter = SimpleKeyWordInt( "NMAX_ITER" );
     mCSMaxIter.addValues( 0 );
@@ -43,7 +43,7 @@ FieldOnNodesDouble LinearSolverInstance::solveDoubleLinearSystem( const Assembly
 
     SimpleKeyWordStr mCSAlgo = SimpleKeyWordStr( "ALGORITHME" );
     mCSAlgo.addValues( "GMRES" );
-    syntaxeResoudre.addSimpleKeywordStr( mCSAlgo );
+    syntaxeResoudre.addSimpleKeywordString( mCSAlgo );
 
     SimpleKeyWordDbl mCSResiRela = SimpleKeyWordDbl( "RESI_RELA" );
     mCSResiRela.addValues( 1e-6 );
@@ -51,7 +51,7 @@ FieldOnNodesDouble LinearSolverInstance::solveDoubleLinearSystem( const Assembly
 
     SimpleKeyWordStr mCSPost = SimpleKeyWordStr( "POSTTRAITEMENTS" );
     mCSPost.addValues( "AUTO" );
-    syntaxeResoudre.addSimpleKeywordStr( mCSPost );
+    syntaxeResoudre.addSimpleKeywordString( mCSPost );
 
     CALL_EXECOP( 15 );
 
