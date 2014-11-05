@@ -26,4 +26,9 @@ class FieldOnNodes
     {
         return (*$self)->debugPrint( logicalUnit );
     }
+
+    bool printMEDFormat( char* pathFichier )
+    {
+        return (*$self)->printMEDFormat( pathFichier );
+    }
 }

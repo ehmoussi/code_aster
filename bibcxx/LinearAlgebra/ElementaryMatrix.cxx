@@ -20,8 +20,6 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
     CommandSyntax syntaxeCalcMatrElem( "CALC_MATR_ELEM", true,
                                        initAster->getResultObjectName(), getType() );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeCalcMatrElem;
 
     // Definition du mot cle simple OPTION
     SimpleKeyWordStr mCSOption = SimpleKeyWordStr( "OPTION" );
@@ -57,9 +55,6 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
 
     CALL_EXECOP( 9 );
     _isEmpty = false;
-
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
 
     return true;
 };

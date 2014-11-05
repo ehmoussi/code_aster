@@ -16,8 +16,6 @@ bool DOFNumerotationInstance::computeNumerotation()
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeNumeDdl( "NUME_DDL", true,
                                      initAster->getResultObjectName(), getType() );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeNumeDdl;
 
     if ( ! _supportModel.isEmpty() )
     {
@@ -49,7 +47,5 @@ bool DOFNumerotationInstance::computeNumerotation()
     CALL_EXECOP( 11 );
     _isEmpty = false;
 
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
     return true;
 };

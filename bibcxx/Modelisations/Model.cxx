@@ -17,8 +17,6 @@ bool ModelInstance::build()
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeAffeModele( "AFFE_MODELE", true,
                                      initAster->getResultObjectName(), getType() );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeAffeModele;
 
     SimpleKeyWordStr mCSVeriJacobien = SimpleKeyWordStr( "VERI_JACOBIEN" );
     mCSVeriJacobien.addValues( "OUI" );
@@ -86,7 +84,5 @@ bool ModelInstance::build()
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _typeOfElements->updateValuePointer();
 
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
     return true;
 };

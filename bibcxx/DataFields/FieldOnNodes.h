@@ -8,13 +8,15 @@
 
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructure/DataStructure.h"
+#include "RunManager/CommandSyntax.h"
+#include "RunManager/LogicalUnitManager.h"
 
 /**
 * class template FieldOnNodesInstance
 *   Cette classe permet de definir un champ aux noeuds Aster
 * @author Nicolas Sellenet
 */
-template<class ValueType>
+template< class ValueType >
 class FieldOnNodesInstance: public DataStructure
 {
     private:
@@ -45,12 +47,19 @@ class FieldOnNodesInstance: public DataStructure
         /**
         * Surcharge de l'operateur []
         * @param i Indice dans le tableau Jeveux
-        * @return renvoit la valeur du tableau Jeveux a la position i
+        * @return la valeur du tableau Jeveux a la position i
         */
         const ValueType &operator[](int i) const
         {
             return _valuesList->operator[](i);
         };
+
+        /**
+        * Impression du champ au format MED
+        * @param pathFichier path ne servant pour le moment a rien
+        * @return true
+        */
+        bool printMEDFormat( string pathFichier );
 
         /**
         * Mise a jour des pointeurs Jeveux
@@ -63,6 +72,45 @@ class FieldOnNodesInstance: public DataStructure
             retour = ( retour && _valuesList->updateValuePointer() );
             return retour;
         };
+};
+
+template< class ValueType >
+bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
+{
+    LogicalUnitFile currentFile( pathFichier, Binary, New );
+    int currentUL = currentFile.getLogicalUnit();
+
+    CommandSyntax syntaxeImprResu( "IMPR_RESU", false );
+
+    SimpleKeyWordStr mCSChamNo = SimpleKeyWordStr( "FORMAT" );
+    mCSChamNo.addValues( "MED" );
+    syntaxeImprResu.addSimpleKeywordStr( mCSChamNo );
+
+    SimpleKeyWordInt mCSUnite( "UNITE" );
+    mCSUnite.addValues( currentUL );
+    syntaxeImprResu.addSimpleKeywordInteger( mCSUnite );
+
+    FactorKeyword motCleResu = FactorKeyword( "RESU", false );
+    FactorKeywordOccurence occurResu = FactorKeywordOccurence();
+
+    SimpleKeyWordStr mCSChamGd( "CHAM_GD" );
+    mCSChamGd.addValues( getName() );
+    occurResu.addSimpleKeywordStr( mCSChamGd );
+
+    SimpleKeyWordStr mCSInfo( "INFO_MAILLAGE" );
+    mCSInfo.addValues( "NON" );
+    occurResu.addSimpleKeywordStr( mCSInfo );
+
+    SimpleKeyWordStr mCSNomVari( "IMPR_NOM_VARI" );
+    mCSNomVari.addValues( "NON" );
+    occurResu.addSimpleKeywordStr( mCSNomVari );
+
+    motCleResu.addOccurence( occurResu );
+    syntaxeImprResu.addFactorKeyword( motCleResu );
+
+    CALL_EXECOP( 39 );
+
+    return true;
 };
 
 /**

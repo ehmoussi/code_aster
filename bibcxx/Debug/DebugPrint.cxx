@@ -9,8 +9,6 @@ void jeveuxDebugPrint( const DataStructure& dataSt, const int logicalUnit )
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeImprCo( "IMPR_CO", false, "" );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeImprCo;
 
     FactorKeyword motCleCONCEPT = FactorKeyword( "CONCEPT", false );
 
@@ -45,5 +43,4 @@ void jeveuxDebugPrint( const DataStructure& dataSt, const int logicalUnit )
     syntaxeImprCo.addSimpleKeywordStr( mCSAttr );
 
     CALL_EXECOP(17);
-    commandeCourante = NULL;
 };
