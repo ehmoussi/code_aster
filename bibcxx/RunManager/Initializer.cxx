@@ -37,7 +37,7 @@ void Initializer::initForCataBuilder( CommandSyntax& syntaxeDebut )
     FactorKeywordOccurence occurCata = FactorKeywordOccurence();
     SimpleKeyWordStr kwFichier = SimpleKeyWordStr("FICHIER");
     kwFichier.addValues("CATAELEM");
-    occurCata.addSimpleKeywordStr(kwFichier);
+    occurCata.addSimpleKeywordString(kwFichier);
     SimpleKeyWordInt kwUnite = SimpleKeyWordInt("UNITE");
     kwUnite.addValues(4);
     occurCata.addSimpleKeywordInteger(kwUnite);
@@ -79,7 +79,7 @@ void Initializer::run( int imode )
     FactorKeywordOccurence occurCODE = FactorKeywordOccurence();
     SimpleKeyWordStr mCSNivPubWeb = SimpleKeyWordStr("NIV_PUB_WEB");
     mCSNivPubWeb.addValues("NON");
-    occurCODE.addSimpleKeywordStr(mCSNivPubWeb);
+    occurCODE.addSimpleKeywordString(mCSNivPubWeb);
     motCleCODE.addOccurence(occurCODE);
 
     syntaxeDebut.addFactorKeyword(motCleCODE);
@@ -117,7 +117,6 @@ void asterInitialization( int imode )
 
 void asterFinalization()
 {
-    printf("FIN\n");
     CALL_EXECOP(9999);
 }
 

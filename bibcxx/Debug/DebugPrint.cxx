@@ -17,7 +17,7 @@ void jeveuxDebugPrint( const DataStructure& dataSt, const int logicalUnit )
     mCSNom.addValues( nomJeveux.c_str() );
 
     FactorKeywordOccurence occurCONCEPT = FactorKeywordOccurence();
-    occurCONCEPT.addSimpleKeywordStr( mCSNom );
+    occurCONCEPT.addSimpleKeywordString( mCSNom );
     motCleCONCEPT.addOccurence( occurCONCEPT );
 
     syntaxeImprCo.addFactorKeyword( motCleCONCEPT );
@@ -28,7 +28,7 @@ void jeveuxDebugPrint( const DataStructure& dataSt, const int logicalUnit )
 
     SimpleKeyWordStr mCSBase( "BASE" );
     mCSBase.addValues( "G" );
-    syntaxeImprCo.addSimpleKeywordStr( mCSBase );
+    syntaxeImprCo.addSimpleKeywordString( mCSBase );
 
     SimpleKeyWordInt mCSNiveau( "NIVEAU" );
     mCSNiveau.addValues( 2 );
@@ -36,11 +36,11 @@ void jeveuxDebugPrint( const DataStructure& dataSt, const int logicalUnit )
 
     SimpleKeyWordStr mCSContenu( "CONTENU" );
     mCSContenu.addValues( "OUI" );
-    syntaxeImprCo.addSimpleKeywordStr( mCSContenu );
+    syntaxeImprCo.addSimpleKeywordString( mCSContenu );
 
     SimpleKeyWordStr mCSAttr( "ATTRIBUT" );
     mCSAttr.addValues( "NON" );
-    syntaxeImprCo.addSimpleKeywordStr( mCSAttr );
+    syntaxeImprCo.addSimpleKeywordString( mCSAttr );
 
     CALL_EXECOP(17);
 };

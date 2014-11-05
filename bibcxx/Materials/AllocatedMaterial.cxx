@@ -26,7 +26,7 @@ bool AllocatedMaterialInstance::build()
     // cela correspondra dans le fichier de commande emule a :
     // MAILLAGE = MA
     mCSMaillage.addValues( _supportMesh->getName() );
-    syntaxeAffeMater.addSimpleKeywordStr(mCSMaillage);
+    syntaxeAffeMater.addSimpleKeywordString(mCSMaillage);
 
     // Definition de mot cle facteur AFFE
     FactorKeyword motCleAFFE = FactorKeyword("AFFE", true);
@@ -44,7 +44,7 @@ bool AllocatedMaterialInstance::build()
         // Ajout de la valeur donnee par l'utilisateur
         mCSMater.addValues( (*curIter).first->getName() );
         // Ajout du mot-cle simple a l'occurence du mot-cle facteur
-        occurAFFE.addSimpleKeywordStr(mCSMater);
+        occurAFFE.addSimpleKeywordString(mCSMater);
 
         SimpleKeyWordStr mCSGroup;
         if ( typeid( *(curIter->second) ) == typeid( AllMeshEntitiesInstance ) )
@@ -60,7 +60,7 @@ bool AllocatedMaterialInstance::build()
 
             mCSGroup.addValues( (curIter->second)->getEntityName() );
         }
-        occurAFFE.addSimpleKeywordStr(mCSGroup);
+        occurAFFE.addSimpleKeywordString(mCSGroup);
         // Ajout de l'occurence au mot-cle facteur AFFE
         motCleAFFE.addOccurence(occurAFFE);
     }
@@ -71,13 +71,13 @@ bool AllocatedMaterialInstance::build()
     // Definition du mot cle simple LIST_NOM_VARC
     SimpleKeyWordStr mCSLNomVarc = SimpleKeyWordStr("LIST_NOM_VARC");
     mCSLNomVarc.addValues( "TEMP" );
-    syntaxeAffeMater.addSimpleKeywordStr(mCSLNomVarc);
+    syntaxeAffeMater.addSimpleKeywordString(mCSLNomVarc);
 
     FactorKeyword motCleVarcTemp = FactorKeyword("VARC_TEMP", false);
     FactorKeywordOccurence occurVarcTemp = FactorKeywordOccurence();
     SimpleKeyWordStr mCSNomVarc = SimpleKeyWordStr("NOM_VARC");
     mCSNomVarc.addValues( "TEMP" );
-    occurVarcTemp.addSimpleKeywordStr(mCSNomVarc);
+    occurVarcTemp.addSimpleKeywordString(mCSNomVarc);
     motCleVarcTemp.addOccurence(occurVarcTemp);
     syntaxeAffeMater.addFactorKeyword(motCleVarcTemp);
 

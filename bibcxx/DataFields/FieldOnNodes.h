@@ -84,7 +84,7 @@ bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
 
     SimpleKeyWordStr mCSChamNo = SimpleKeyWordStr( "FORMAT" );
     mCSChamNo.addValues( "MED" );
-    syntaxeImprResu.addSimpleKeywordStr( mCSChamNo );
+    syntaxeImprResu.addSimpleKeywordString( mCSChamNo );
 
     SimpleKeyWordInt mCSUnite( "UNITE" );
     mCSUnite.addValues( currentUL );
@@ -95,15 +95,15 @@ bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
 
     SimpleKeyWordStr mCSChamGd( "CHAM_GD" );
     mCSChamGd.addValues( getName() );
-    occurResu.addSimpleKeywordStr( mCSChamGd );
+    occurResu.addSimpleKeywordString( mCSChamGd );
 
     SimpleKeyWordStr mCSInfo( "INFO_MAILLAGE" );
     mCSInfo.addValues( "NON" );
-    occurResu.addSimpleKeywordStr( mCSInfo );
+    occurResu.addSimpleKeywordString( mCSInfo );
 
     SimpleKeyWordStr mCSNomVari( "IMPR_NOM_VARI" );
     mCSNomVari.addValues( "NON" );
-    occurResu.addSimpleKeywordStr( mCSNomVari );
+    occurResu.addSimpleKeywordString( mCSNomVari );
 
     motCleResu.addOccurence( occurResu );
     syntaxeImprResu.addFactorKeyword( motCleResu );

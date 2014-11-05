@@ -121,21 +121,21 @@ bool AssemblyMatrixInstance< ValueType >::factorization()
     // Definition du mot cle simple MATR_ASSE
     SimpleKeyWordStr mCSMatrAsse = SimpleKeyWordStr( "MATR_ASSE" );
     mCSMatrAsse.addValues( getName() );
-    syntaxeFactoriser.addSimpleKeywordStr( mCSMatrAsse );
+    syntaxeFactoriser.addSimpleKeywordString( mCSMatrAsse );
 
     // !!! Rajouter un if MUMPS !!!
     // Definition du mot cle simple ELIM_LAGR
     SimpleKeyWordStr mCSElimLagr = SimpleKeyWordStr( "ELIM_LAGR" );
     mCSElimLagr.addValues( "LAGR2" );
-    syntaxeFactoriser.addSimpleKeywordStr( mCSElimLagr );
+    syntaxeFactoriser.addSimpleKeywordString( mCSElimLagr );
 
     SimpleKeyWordStr mCSTypeResol = SimpleKeyWordStr( "TYPE_RESOL" );
     mCSTypeResol.addValues( "AUTO" );
-    syntaxeFactoriser.addSimpleKeywordStr( mCSTypeResol );
+    syntaxeFactoriser.addSimpleKeywordString( mCSTypeResol );
 
     SimpleKeyWordStr mCSPretr = SimpleKeyWordStr( "PRETRAITEMENTS" );
     mCSPretr.addValues( "AUTO" );
-    syntaxeFactoriser.addSimpleKeywordStr( mCSPretr );
+    syntaxeFactoriser.addSimpleKeywordString( mCSPretr );
 
     SimpleKeyWordInt mCSPcentPivot = SimpleKeyWordInt( "PCENT_PIVOT" );
     mCSPcentPivot.addValues( 20 );
@@ -143,7 +143,7 @@ bool AssemblyMatrixInstance< ValueType >::factorization()
 
     SimpleKeyWordStr mCSMemoire = SimpleKeyWordStr( "GESTION_MEMOIRE" );
     mCSMemoire.addValues( "IN_CORE" );
-    syntaxeFactoriser.addSimpleKeywordStr( mCSMemoire );
+    syntaxeFactoriser.addSimpleKeywordString( mCSMemoire );
 
     SimpleKeyWordDbl mCSRempl = SimpleKeyWordDbl( "REMPLISSAGE" );
     mCSRempl.addValues( 1.0 );
@@ -155,11 +155,11 @@ bool AssemblyMatrixInstance< ValueType >::factorization()
 
     SimpleKeyWordStr mCSSing = SimpleKeyWordStr( "STOP_SINGULIER" );
     mCSSing.addValues( "OUI" );
-    syntaxeFactoriser.addSimpleKeywordStr( mCSSing );
+    syntaxeFactoriser.addSimpleKeywordString( mCSSing );
 
     SimpleKeyWordStr mCSPrecond = SimpleKeyWordStr( "PRE_COND" );
     mCSPrecond.addValues( "LDLT_INC" );
-    syntaxeFactoriser.addSimpleKeywordStr( mCSPrecond );
+    syntaxeFactoriser.addSimpleKeywordString( mCSPrecond );
 
     SimpleKeyWordInt mCSNprec = SimpleKeyWordInt( "NPREC" );
     mCSNprec.addValues( 8 );
@@ -191,12 +191,12 @@ bool AssemblyMatrixInstance< ValueType >::build()
     // Definition du mot cle simple MATR_ELEM
     SimpleKeyWordStr mCSMatrElem = SimpleKeyWordStr( "MATR_ELEM" );
     mCSMatrElem.addValues( _elemMatrix->getName() );
-    syntaxeAsseMatrice.addSimpleKeywordStr( mCSMatrElem );
+    syntaxeAsseMatrice.addSimpleKeywordString( mCSMatrElem );
 
     // Definition du mot cle simple NUME_DDL
     SimpleKeyWordStr mCSNumeDdl = SimpleKeyWordStr( "NUME_DDL" );
     mCSNumeDdl.addValues( _dofNum->getName() );
-    syntaxeAsseMatrice.addSimpleKeywordStr( mCSNumeDdl );
+    syntaxeAsseMatrice.addSimpleKeywordString( mCSNumeDdl );
 
     if ( _listOfLoads.size() != 0 )
     {
@@ -207,7 +207,7 @@ bool AssemblyMatrixInstance< ValueType >::build()
         {
             mCSCharge.addValues( (*curIter)->getName() );
         }
-        syntaxeAsseMatrice.addSimpleKeywordStr( mCSCharge );
+        syntaxeAsseMatrice.addSimpleKeywordString( mCSCharge );
     }
 
     CALL_EXECOP( 12 );

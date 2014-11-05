@@ -24,7 +24,7 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
     // Definition du mot cle simple OPTION
     SimpleKeyWordStr mCSOption = SimpleKeyWordStr( "OPTION" );
     mCSOption.addValues( "RIGI_MECA" );
-    syntaxeCalcMatrElem.addSimpleKeywordStr( mCSOption );
+    syntaxeCalcMatrElem.addSimpleKeywordString( mCSOption );
 
     // Definition du mot cle simple MODELE
     // ??? Ajouter des verifs pour savoir si l'interieur du modele est vide ???
@@ -32,14 +32,14 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
     if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
         throw string("Support model is undefined");
     mCSModele.addValues( _supportModel->getName() );
-    syntaxeCalcMatrElem.addSimpleKeywordStr( mCSModele );
+    syntaxeCalcMatrElem.addSimpleKeywordString( mCSModele );
 
     // Definition du mot cle simple CHAM_MATER
     SimpleKeyWordStr mCSChamMater = SimpleKeyWordStr( "CHAM_MATER" );
     if ( _material.isEmpty() )
         throw string("Material is empty");
     mCSChamMater.addValues( _material->getName() );
-    syntaxeCalcMatrElem.addSimpleKeywordStr( mCSChamMater );
+    syntaxeCalcMatrElem.addSimpleKeywordString( mCSChamMater );
 
     if ( _listOfMechanicalLoads.size() != 0 )
     {
@@ -50,7 +50,7 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
         {
             mCSCharge.addValues( (*curIter)->getName() );
         }
-        syntaxeCalcMatrElem.addSimpleKeywordStr( mCSCharge );
+        syntaxeCalcMatrElem.addSimpleKeywordString( mCSCharge );
     }
 
     CALL_EXECOP( 9 );

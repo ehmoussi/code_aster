@@ -25,7 +25,7 @@ bool KinematicsLoadInstance::build()
     if ( _supportModel.isEmpty() )
         throw string("Support model is undefined");
     mCSModel.addValues( _supportModel->getName() );
-    syntaxeAffeCharCine.addSimpleKeywordStr(mCSModel);
+    syntaxeAffeCharCine.addSimpleKeywordString(mCSModel);
 
     // Definition de mot cle facteur MECA_IMPO
     if ( _listOfDoubleImposedDisplacement.size() != 0 )
@@ -55,7 +55,7 @@ bool KinematicsLoadInstance::build()
 
                 mCSGroup.addValues( tmp->getEntityName() );
             }
-            occurMECA_IMPO.addSimpleKeywordStr(mCSGroup);
+            occurMECA_IMPO.addSimpleKeywordString(mCSGroup);
 
             const string nomComp = curIter->getAsterCoordinateName();
             SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );

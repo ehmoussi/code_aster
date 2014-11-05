@@ -20,7 +20,7 @@ bool ModelInstance::build()
 
     SimpleKeyWordStr mCSVeriJacobien = SimpleKeyWordStr( "VERI_JACOBIEN" );
     mCSVeriJacobien.addValues( "OUI" );
-    syntaxeAffeModele.addSimpleKeywordStr( mCSVeriJacobien );
+    syntaxeAffeModele.addSimpleKeywordString( mCSVeriJacobien );
 
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSMaillage = SimpleKeyWordStr("MAILLAGE");
@@ -31,7 +31,7 @@ bool ModelInstance::build()
     // cela correspondra dans le fichier de commande emule a :
     // MAILLAGE = MA
     mCSMaillage.addValues( _supportMesh->getName() );
-    syntaxeAffeModele.addSimpleKeywordStr(mCSMaillage);
+    syntaxeAffeModele.addSimpleKeywordString(mCSMaillage);
 
     // Definition de mot cle facteur AFFE
     FactorKeyword motCleAFFE = FactorKeyword("AFFE", true);
@@ -49,11 +49,11 @@ bool ModelInstance::build()
         // Ajout de la valeur donnee par l'utilisateur
         mCSPhenomene.addValues((*curIter).first.getPhysic());
         // Ajout du mot-cle simple a l'occurence du mot-cle facteur
-        occurAFFE.addSimpleKeywordStr(mCSPhenomene);
+        occurAFFE.addSimpleKeywordString(mCSPhenomene);
 
         SimpleKeyWordStr mCSModelisation = SimpleKeyWordStr("MODELISATION");
         mCSModelisation.addValues((*curIter).first.getModelisation());
-        occurAFFE.addSimpleKeywordStr(mCSModelisation);
+        occurAFFE.addSimpleKeywordString(mCSModelisation);
 
         SimpleKeyWordStr mCSGroup;
         if ( typeid( *(curIter->second) ) == typeid( AllMeshEntitiesInstance ) )
@@ -70,7 +70,7 @@ bool ModelInstance::build()
 
             mCSGroup.addValues( (curIter->second)->getEntityName() );
         }
-        occurAFFE.addSimpleKeywordStr(mCSGroup);
+        occurAFFE.addSimpleKeywordString(mCSGroup);
         // Ajout de l'occurence au mot-cle facteur AFFE
         motCleAFFE.addOccurence(occurAFFE);
     }
