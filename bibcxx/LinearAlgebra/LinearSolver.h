@@ -6,6 +6,7 @@
 #include <set>
 #include <string>
 
+#include "DataFields/FieldOnNodes.h"
 #include "LinearAlgebra/AllowedLinearSolver.h"
 
 using namespace std;
@@ -40,7 +41,8 @@ struct WrapGcpc
 };
 
 /**
-* class template RenumberingChecker
+* class template static RenumberingChecker
+*   permet de verifier si un renumeroteur est autorise pour un solveur donne
 * @author Nicolas Sellenet
 */
 template< class Wrapping >
@@ -61,6 +63,11 @@ typedef RenumberingChecker< WrapMumps > MumpsRenumberingChecker;
 typedef RenumberingChecker< WrapPetsc > PetscRenumberingChecker;
 typedef RenumberingChecker< WrapGcpc > GcpcRenumberingChecker;
 
+/**
+* class template static SolverChecker
+*   permet de verifier si un couple solveur, renumeroteur
+* @author Nicolas Sellenet
+*/
 class SolverChecker
 {
     public:
@@ -84,6 +91,14 @@ class SolverChecker
         };
 };
 
+template< class tmp > class AssemblyMatrix;
+typedef AssemblyMatrix< double > AssemblyMatrixDouble;
+
+/**
+* class LinearSolverInstance
+*   Cette classe permet de definir un solveur lineraire
+* @author Nicolas Sellenet
+*/
 class LinearSolverInstance
 {
     private:
@@ -91,6 +106,11 @@ class LinearSolverInstance
         Renumbering      _renumber;
 
     public:
+        /**
+        * Constructeur
+        * @param currentLinearSolver Type de solveur
+        * @param currentRenumber Type de renumeroteur
+        */
         LinearSolverInstance(const LinearSolverEnum currentLinearSolver, const Renumbering currentRenumber):
                     _linearSolver( currentLinearSolver ),
                     _renumber( currentRenumber )
@@ -98,15 +118,31 @@ class LinearSolverInstance
             SolverChecker::isAllowedRenumberingForSolver( currentLinearSolver, currentRenumber );
         };
 
-        string getSolverName()
+        /**
+        * Recuperer le nom du solveur
+        * @return chaine contenant le nom Aster du solveur
+        */
+        const string getSolverName() const
         {
             return LinearSolverNames[ (int)_linearSolver ];
         };
 
-        string getRenumburingName()
+        /**
+        * Recuperer le nom du renumeroteur
+        * @return chaine contenant le nom Aster du renumeroteur
+        */
+        const string getRenumburingName() const
         {
             return RenumberingNames[ (int)_renumber ];
         };
+
+        /**
+        * Impression du champ au format MED
+        * @param pathFichier path ne servant pour le moment a rien
+        * @return renvoit true
+        */
+        FieldOnNodesDouble solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
+                                                    const FieldOnNodesDouble& currentRHS ) const;
 };
 
 /**

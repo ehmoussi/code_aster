@@ -19,8 +19,6 @@ bool KinematicsLoadInstance::build()
     // Definition du bout de fichier de commande correspondant a AFFE_CHAR_CINE
     CommandSyntax syntaxeAffeCharCine( "AFFE_CHAR_CINE", true, initAster->getResultObjectName(),
                                        typSd );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeAffeCharCine;
 
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSModel = SimpleKeyWordStr("MODELE");
@@ -77,7 +75,5 @@ bool KinematicsLoadInstance::build()
     // Maintenant que le fichier de commande est pret, on appelle OP0018
     CALL_EXECOP(101);
 
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
     return true;
 };

@@ -66,6 +66,7 @@ class AssemblyMatrixInstance: public DataStructure
 
         /**
         * Factorisation de la matrice
+        * @return true
         */
         bool factorization();
 
@@ -116,8 +117,6 @@ bool AssemblyMatrixInstance< ValueType >::factorization()
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
     CommandSyntax syntaxeFactoriser( "FACTORISER", true, getName(), getType() );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeFactoriser;
 
     // Definition du mot cle simple MATR_ASSE
     SimpleKeyWordStr mCSMatrAsse = SimpleKeyWordStr( "MATR_ASSE" );
@@ -146,11 +145,28 @@ bool AssemblyMatrixInstance< ValueType >::factorization()
     mCSMemoire.addValues( "IN_CORE" );
     syntaxeFactoriser.addSimpleKeywordStr( mCSMemoire );
 
+    SimpleKeyWordDbl mCSRempl = SimpleKeyWordDbl( "REMPLISSAGE" );
+    mCSRempl.addValues( 1.0 );
+    syntaxeFactoriser.addSimpleKeywordDouble( mCSRempl );
+
+    SimpleKeyWordInt mCSNiveRempl = SimpleKeyWordInt( "NIVE_REMPLISSAGE" );
+    mCSNiveRempl.addValues( 0 );
+    syntaxeFactoriser.addSimpleKeywordInteger( mCSNiveRempl );
+
+    SimpleKeyWordStr mCSSing = SimpleKeyWordStr( "STOP_SINGULIER" );
+    mCSSing.addValues( "OUI" );
+    syntaxeFactoriser.addSimpleKeywordStr( mCSSing );
+
+    SimpleKeyWordStr mCSPrecond = SimpleKeyWordStr( "PRE_COND" );
+    mCSPrecond.addValues( "LDLT_INC" );
+    syntaxeFactoriser.addSimpleKeywordStr( mCSPrecond );
+
+    SimpleKeyWordInt mCSNprec = SimpleKeyWordInt( "NPREC" );
+    mCSNprec.addValues( 8 );
+    syntaxeFactoriser.addSimpleKeywordInteger( mCSNprec );
+
     CALL_EXECOP( 14 );
     _isEmpty = false;
-
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
 
     return true;
 };
@@ -171,8 +187,6 @@ bool AssemblyMatrixInstance< ValueType >::build()
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
     CommandSyntax syntaxeAsseMatrice( "ASSE_MATRICE", true,
                                        initAster->getResultObjectName(), getType() );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeAsseMatrice;
 
     // Definition du mot cle simple MATR_ELEM
     SimpleKeyWordStr mCSMatrElem = SimpleKeyWordStr( "MATR_ELEM" );
@@ -198,9 +212,6 @@ bool AssemblyMatrixInstance< ValueType >::build()
 
     CALL_EXECOP( 12 );
     _isEmpty = false;
-
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
 
     return true;
 };

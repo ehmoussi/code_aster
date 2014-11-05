@@ -16,8 +16,6 @@ bool AllocatedMaterialInstance::build()
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeAffeMater( "AFFE_MATERIAU", true,
                                     initAster->getResultObjectName(), getType() );
-    // Ligne indispensable pour que les commandes GET* fonctionnent
-    commandeCourante = &syntaxeAffeMater;
 
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSMaillage = SimpleKeyWordStr("MAILLAGE");
@@ -88,7 +86,5 @@ bool AllocatedMaterialInstance::build()
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _listOfMaterials->updateValuePointers();
 
-    // Mise a zero indispensable de commandeCourante
-    commandeCourante = NULL;
     return true;
 };

@@ -71,8 +71,8 @@ subroutine op0001()
     integer :: ilng
     character(len=80), pointer :: tgrm(:) => null()
     integer, pointer :: dime(:) => null()
-    integer :: rang, nbproc
-    mpi_int :: mrank, msize
+!    integer :: rang, nbproc
+!    mpi_int :: mrank, msize
 
 !---------------------------------------------------------------------------------------
     call jemarq()
@@ -87,10 +87,10 @@ subroutine op0001()
     call getres(nomu, concep, cmd)
 !
     call getvis(' ', 'UNITE', scal=ifl, nbret=iaux)
-    call asmpi_info(rank = mrank, size = msize)
-    rang = to_aster_int(mrank)
-    nbproc = to_aster_int(msize)
-    ifl = rang + 1
+!    call asmpi_info(rank = mrank, size = msize)
+!    rang = to_aster_int(mrank)
+!    nbproc = to_aster_int(msize)
+!    ifl = rang + 1
 !
     call getvtx(' ', 'FORMAT', scal=fmt, nbret=iaux)
 !
