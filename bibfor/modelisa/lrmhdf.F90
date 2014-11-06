@@ -46,7 +46,6 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
 #include "asterfort/as_mfiope.h"
 #include "asterfort/as_mlbnuv.h"
 #include "asterfort/codent.h"
-#include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetc.h"
 #include "asterfort/jemarq.h"
@@ -95,7 +94,7 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
     integer :: nbnoma
     integer :: nbltit, nbgrno, nbgrma
     integer :: vlib(3), vfic(3), iret
-    integer :: vali(3), hdfok, medok, lrep, lxlgut
+    integer :: vali(3), hdfok, medok
 !
     character(len=1) :: saux01
     character(len=6) :: saux06
@@ -104,7 +103,6 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
     character(len=24) :: cooval, coodsc, cooref, grpnoe, grpmai, connex
     character(len=24) :: titre, nommai, nomnoe, typmai, adapma, gpptnn, gpptnm
     character(len=64) :: valk(2)
-    character(len=128) :: rep
     character(len=200) :: nofimd
     character(len=255) :: kfic
     character(len=200) :: descfi
