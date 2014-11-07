@@ -117,9 +117,10 @@ def build_module(self, env):
              use = ['asterlib'] + uses,
     install_path = env.ASTERLIBDIR,
     )
+    node = self.path.get_bld().find_or_declare('../bibcxx/code_aster.py')
     # because .py must exist before installing
     self.add_group()
-    self.install_files(env.ASTERLIBDIR, '../bibcxx/code_aster.py')
+    self.install_files(env.ASTERLIBDIR, node)
 
 ###############################################################################
 @Configure.conf
