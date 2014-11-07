@@ -16,14 +16,15 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine nmvcfo(modelz, mate, carele, compor, comref,&
-                      comval, vecelz)
-        character(len=*) :: modelz
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=24) :: compor
-        character(len=24) :: comref
-        character(len=19) :: comval
-        character(len=*) :: vecelz
+    subroutine nmvcfo(type_comp, model    , mate     , cara_elem, compor,&
+                      varc_refe, hval_incr, vect_elem)
+        character(len=1), intent(in) :: type_comp
+        character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: varc_refe
+        character(len=24), intent(in) :: cara_elem
+        character(len=24), intent(in) :: compor
+        character(len=19), intent(in) :: hval_incr(*)
+        character(len=19), intent(in) :: vect_elem
     end subroutine nmvcfo
 end interface
