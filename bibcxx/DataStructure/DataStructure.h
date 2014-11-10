@@ -3,9 +3,7 @@
 
 #include <string>
 #include <map>
-#include <iostream>
 
-using namespace std;
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -16,8 +14,8 @@ using namespace std;
 class DataStructure
 {
     private:
-        const string _name;
-        string       _type;
+        const std::string _name;
+        std::string       _type;
 
     public:
         /**
@@ -25,7 +23,7 @@ class DataStructure
         * @param name Nom Jeveux de la sd
         * @param type Type Aster de la sd
         */
-        DataStructure( string name, string type );
+        DataStructure( std::string name, std::string type );
 
         /**
         * Destructeur
@@ -36,7 +34,7 @@ class DataStructure
         * Function membre getName
         * @return renvoit le nom de la sd
         */
-        const string& getName() const
+        const std::string& getName() const
         {
             return _name;
         };
@@ -45,7 +43,7 @@ class DataStructure
         * Function membre getType
         * @return renvoit le type de la sd
         */
-        const string& getType() const
+        const std::string& getType() const
         {
             return _type;
         };
@@ -60,21 +58,20 @@ class DataStructure
     protected:
         /**
         * Methode servant a fixer a posteriori le type d'une sd
-        *   appel IMPR_CO
         * @param newType chaine contenant le nouveau nom
         */
-        void setType( const string newType )
+        void setType( const std::string newType )
         {
             _type = newType;
         };
 };
 
-typedef map< string, DataStructure* > mapStrSD;
+typedef std::map< std::string, DataStructure* > mapStrSD;
 typedef mapStrSD::iterator mapStrSDIterator;
 typedef mapStrSD::value_type mapStrSDValue;
 
 /**
-* map< string, DataStructure* > mapNameDataStructure
+* std::map< std::string, DataStructure* > mapNameDataStructure
 *   Ce map contient toutes les DataStructures initialisees
 */
 extern mapStrSD mapNameDataStructure;
