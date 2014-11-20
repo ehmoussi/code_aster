@@ -1,6 +1,29 @@
 #ifndef MATERIALBEHAVIOUR_H_
 #define MATERIALBEHAVIOUR_H_
 
+/**
+ * @file MaterialBehaviour.h
+ * @brief Fichier entete de la classe MaterialBehaviour
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <iomanip>
@@ -17,11 +40,10 @@ extern "C"
 }
 
 /**
-* struct template AllowedMaterialPropertyType
-*   structure permettant de limiter le type instanciable de MaterialPropertyInstance
-*   on autorise 2 types pour le moment : double et complex
-* @author Nicolas Sellenet
-*/
+ * @struct template AllowedMaterialPropertyType
+ * @brief Structure permettant de limiter le type instanciable de MaterialPropertyInstance
+ * @author Nicolas Sellenet
+ */
 template<typename T>
 struct AllowedMaterialPropertyType;
 
@@ -32,104 +54,110 @@ template<> struct AllowedMaterialPropertyType< double complex >
 {};
 
 /**
-* class template MaterialPropertyInstance
-*   Cette classe permet de definir un type elementaire de propriete materielle
-*   ex : le module d'Young
-* @author Nicolas Sellenet
-*/
+ * @class MaterialPropertyInstance
+ * @brief Cette classe template permet de definir un type elementaire de propriete materielle
+ * @author Nicolas Sellenet
+ */
 template< class ValueType >
 class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
 {
     private:
-        // Nom Aster du type elementaire de propriete materielle,
+        /** @brief Nom Aster du type elementaire de propriete materielle */
         // ex : "NU" pour le coefficient de Poisson
         string    _name;
-        // Description de parametre, ex : "Young's modulus"
+        /** @brief Description de parametre, ex : "Young's modulus" */
         string    _description;
-        // Valeur du parametre (double, complex, ...)
+        /** @brief Valeur du parametre (double, complex, ...) */
         ValueType _value;
 
     public:
         /**
-        * Constructeur
-        * @param name Nom Aster du parametre materiau (ex : "NU")
-        * @param description Description libre
-        */
+         * @brief Constructeur
+         * @param name Nom Aster du parametre materiau (ex : "NU")
+         * @param description Description libre
+         */
         MaterialPropertyInstance(string name, string description = ""): _name( name ),
                                                                         _description( description )
         {};
 
         /**
-        * Recuperation de la valeur du parametre
-        * @return le nom Aster du parametre
-        */
+         * @brief Recuperation de la valeur du parametre
+         * @return le nom Aster du parametre
+         */
         const string& getName() const
         {
             return _name;
         };
 
         /**
-        * Recuperation de la valeur du parametre
-        * @return renvoit la valeur du parametre
-        */
+         * @brief Recuperation de la valeur du parametre
+         * @return renvoit la valeur du parametre
+         */
         const ValueType& getValue() const
         {
             return _value;
         };
 
         /**
-        * Fonction servant a fixer la valeur du parametre
-        * @param currentValue valeur donnee par l'utilisateur
-        */
+         * @brief Fonction servant a fixer la valeur du parametre
+         * @param currentValue valeur donnee par l'utilisateur
+         */
         void setValue(ValueType& currentValue)
         {
             _value = currentValue;
         };
 };
 
+/** @typedef Definition d'une propriete materiau de type double */
 typedef MaterialPropertyInstance< double > ElementaryMaterialPropertyDouble;
+/** @typedef Definition d'une propriete materiau de type complexe */
 typedef MaterialPropertyInstance< double complex > ElementaryMaterialPropertyComplex;
 
 /**
-* class GeneralMaterialBehaviourInstance
-*   Cette classe permet de definir un ensemble de type elementaire de propriete materielle
-*   ex : le module d'Young + le coefficient de Poisson, ...
-* @author Nicolas Sellenet
-*/
+ * @class GeneralMaterialBehaviourInstance
+ * @brief Cette classe permet de definir un ensemble de type elementaire de propriete materielle
+ * @author Nicolas Sellenet
+ */
 class GeneralMaterialBehaviourInstance
 {
     protected:
+        /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyDouble */
         typedef map< string, ElementaryMaterialPropertyDouble > mapStrEMPD;
-        typedef map< string, ElementaryMaterialPropertyDouble >::iterator mapStrEMPDIterator;
+        /** @typedef Iterateur sur mapStrEMPD */
+        typedef mapStrEMPD::iterator mapStrEMPDIterator;
+        /** @typedef Valeur contenue dans un mapStrEMPD */
         typedef mapStrEMPD::value_type mapStrEMPDValue;
 
+        /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyComplex */
         typedef map< string, ElementaryMaterialPropertyComplex > mapStrEMPC;
-        typedef map< string, ElementaryMaterialPropertyComplex >::iterator mapStrEMPCIterator;
+        /** @typedef Iterateur sur mapStrEMPC */
+        typedef mapStrEMPC::iterator mapStrEMPCIterator;
+        /** @typedef Valeur contenue dans un mapStrEMPC */
         typedef mapStrEMPC::value_type mapStrEMPCValue;
 
         friend class MaterialInstance;
-        // Chaine correspondant au nom Aster du MaterialBehaviourInstance
+        /** @brief Chaine correspondant au nom Aster du MaterialBehaviourInstance */
         // ex : ELAS ou ELAS_FO
         string              _asterName;
-        // Vector Jeveux 'CPT.XXXXXX.VALC'
+        /** @brief Vector Jeveux 'CPT.XXXXXX.VALC' */
         JeveuxVectorComplex _complexValues;
-        // Vector Jeveux 'CPT.XXXXXX.VALR'
+        /** @brief Vector Jeveux 'CPT.XXXXXX.VALR' */
         JeveuxVectorDouble  _doubleValues;
-        // Vector Jeveux 'CPT.XXXXXX.VALK'
+        /** @brief Vector Jeveux 'CPT.XXXXXX.VALK' */
         JeveuxVectorChar16  _char16Values;
-        // Map contenant les noms des proprietes double ainsi que les
-        // MaterialPropertyInstance correspondant
+        /** @brief Map contenant les noms des proprietes double ainsi que les
+                   MaterialPropertyInstance correspondant */
         mapStrEMPD          _mapOfDoubleMaterialProperties;
-        // Map contenant les noms des proprietes complex ainsi que les
-        // MaterialPropertyInstance correspondant
+        /** @brief Map contenant les noms des proprietes complex ainsi que les
+                   MaterialPropertyInstance correspondant */
         mapStrEMPC          _mapOfComplexMaterialProperties;
-        // Liste contenant tous les noms des parametres materiau
+        /** @brief Liste contenant tous les noms des parametres materiau */
         list< string >      _listOfNameOfMaterialProperties;
 
     public:
         /**
-        * Constructeur
-        */
+         * @brief Constructeur
+         */
         GeneralMaterialBehaviourInstance(): _asterName( string( " " ) ),
                                             _complexValues( JeveuxVectorComplex("") ),
                                             _doubleValues( JeveuxVectorDouble("") ),
@@ -137,22 +165,22 @@ class GeneralMaterialBehaviourInstance
         {};
 
         /**
-        * Recuperation du nom Aster du GeneralMaterialBehaviourInstance
-        *   ex : 'ELAS', 'ELAS_FO', ...
-        * @return Chaine contenant le nom Aster
-        */
+         * @brief Recuperation du nom Aster du GeneralMaterialBehaviourInstance
+         *        ex : 'ELAS', 'ELAS_FO', ...
+         * @return Chaine contenant le nom Aster
+         */
         const string getAsterName() const
         {
             return _asterName;
         };
 
         /**
-        * Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
-        * @param nameOfProperty Nom de la propriete
-        * @param value Double correspondant a la valeur donnee par l'utilisateur
-        * @return Booleen valant true si la tache s'est bien deroulee
-        */
-        bool setDoubleValue(string nameOfProperty, double value)
+         * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+         * @param nameOfProperty Nom de la propriete
+         * @param value Double correspondant a la valeur donnee par l'utilisateur
+         * @return Booleen valant true si la tache s'est bien deroulee
+         */
+        bool setDoubleValue( string nameOfProperty, double value )
         {
             // Recherche de la propriete materielle
             mapStrEMPDIterator curIter = _mapOfDoubleMaterialProperties.find(nameOfProperty);
@@ -163,12 +191,12 @@ class GeneralMaterialBehaviourInstance
         };
 
         /**
-        * Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
-        * @param nameOfProperty Nom de la propriete
-        * @param value Complex correspondant a la valeur donnee par l'utilisateur
-        * @return Booleen valant true si la tache s'est bien deroulee
-        */
-        bool setComplexValue(string nameOfProperty, double complex value)
+         * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+         * @param nameOfProperty Nom de la propriete
+         * @param value Complex correspondant a la valeur donnee par l'utilisateur
+         * @return Booleen valant true si la tache s'est bien deroulee
+         */
+        bool setComplexValue( string nameOfProperty, double complex value )
         {
             // Recherche de la propriete materielle
             mapStrEMPCIterator curIter = _mapOfComplexMaterialProperties.find(nameOfProperty);
@@ -179,16 +207,17 @@ class GeneralMaterialBehaviourInstance
         };
 
         /**
-        * Construction du GeneralMaterialBehaviourInstance
-        * @return Booleen valant true si la tache s'est bien deroulee
-        */
+         * @brief Construction du GeneralMaterialBehaviourInstance
+         * @return Booleen valant true si la tache s'est bien deroulee
+         */
         bool build();
 
     private:
         /**
-        * Modification a posteriori des objets Jeveux ".VALC", ...
-        */
-        void setJeveuxObjectNames(string name)
+         * @brief Modification a posteriori des objets Jeveux ".VALC", ...
+         * @param name Nom des objets Jeveux contenus dans la classe
+         */
+        void setJeveuxObjectNames( const string name )
         {
             _complexValues = JeveuxVectorComplex( name + ".VALC" );
             _doubleValues = JeveuxVectorDouble( name + ".VALR" );
@@ -197,16 +226,16 @@ class GeneralMaterialBehaviourInstance
 };
 
 /**
-* class ElasticMaterialBehaviourInstance
-*   Classe fille de GeneralMaterialBehaviourInstance definissant un materiau elastique
-* @author Nicolas Sellenet
-*/
+ * @class ElasticMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau elastique
+ * @author Nicolas Sellenet
+ */
 class ElasticMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-        * Constructeur
-        */
+         * @brief Constructeur
+         */
         ElasticMaterialBehaviourInstance()
         {
             // Mot cle "ELAS" dans Aster
@@ -224,10 +253,10 @@ class ElasticMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /**
-* class template MaterialBehaviour
-*   Enveloppe d'un pointeur intelligent vers un MaterialBehaviourInstance
-* @author Nicolas Sellenet
-*/
+ * class template MaterialBehaviour
+ * @brief Enveloppe d'un pointeur intelligent vers un MaterialBehaviourInstance
+ * @author Nicolas Sellenet
+ */
 template< class MaterialBehaviourInstance >
 class MaterialBehaviour
 {
@@ -270,7 +299,9 @@ class MaterialBehaviour
         };
 };
 
+/** @typedef Definition d'un comportement materiau elastique */
 typedef class MaterialBehaviour< ElasticMaterialBehaviourInstance > ElasticMaterialBehaviour;
+/** @typedef Definition d'un comportement materiau quelconque */
 typedef class MaterialBehaviour< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviour;
 
 #endif /* MATERIALBEHAVIOUR_H_ */

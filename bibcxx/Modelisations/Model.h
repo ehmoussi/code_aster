@@ -1,6 +1,29 @@
 #ifndef MODEL_H_
 #define MODEL_H_
 
+/**
+ * @file Model.h
+ * @brief Fichier entete de la classe Model
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "DataStructure/DataStructure.h"
@@ -11,110 +34,114 @@
 #include "Loads/PhysicalQuantity.h"
 
 /**
-* class ModelInstance
-*   produit une sd identique a celle produite par AFFE_MODELE
-* @author Nicolas Sellenet
-*/
+ * @class ModelInstance
+ * @brief Produit une sd identique a celle produite par AFFE_MODELE
+ * @author Nicolas Sellenet
+ */
 class ModelInstance: public DataStructure
 {
     private:
         // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
         // dans la list
+        /** @brief Pointeur intelligent vers un VirtualMeshEntity */
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+        /** @brief std::list de std::pair de ElementaryModelisation et MeshEntityPtr */
         typedef list< pair< ElementaryModelisation, MeshEntityPtr > > listOfModsAndGrps;
+        /** @brief Valeur contenue dans listOfModsAndGrps */
         typedef listOfModsAndGrps::value_type listOfModsAndGrpsValue;
+        /** @brief Iterateur sur un listOfModsAndGrps */
         typedef listOfModsAndGrps::iterator listOfModsAndGrpsIter;
 
-        // Vecteur Jeveux '.MAILLE'
+        /** @brief Vecteur Jeveux '.MAILLE' */
         JeveuxVectorLong  _typeOfElements;
-        // Vecteur Jeveux '.NOEUD'
+        /** @brief Vecteur Jeveux '.NOEUD' */
         JeveuxVectorLong  _typeOfNodes;
-        // Vecteur Jeveux '.PARTIT'
+        /** @brief Vecteur Jeveux '.PARTIT' */
         JeveuxVectorChar8 _partition;
-        // Liste contenant les modelisations ajoutees par l'utilisateur
+        /** @brief Liste contenant les modelisations ajoutees par l'utilisateur */
         listOfModsAndGrps _modelisations;
-        // Maillage sur lequel repose la modelisation
+        /** @brief Maillage sur lequel repose la modelisation */
         Mesh              _supportMesh;
+        /** @brief Booleen indiquant si la sd a deja ete remplie */
         bool              _isEmpty;
 
     public:
         /**
-        * Constructeur
-        */
+         * @brief Constructeur
+         */
         ModelInstance();
 
         /**
-        * Ajout d'une nouvelle modelisation sur tout le maillage
-        * @param phys Physique a ajouter
-        * @param mod Modelisation a ajouter
-        */
+         * @brief Ajout d'une nouvelle modelisation sur tout le maillage
+         * @param phys Physique a ajouter
+         * @param mod Modelisation a ajouter
+         */
         void addModelisationOnAllMesh( Physics phys, Modelisations mod )
         {
-            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation(phys, mod),
+            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation( phys, mod ),
                                                               MeshEntityPtr( new AllMeshEntitiesInstance() ) ) );
         };
 
         /**
-        * Ajout d'une nouvelle modelisation sur une entite du maillage
-        * @param phys Physique a ajouter
-        * @param mod Modelisation a ajouter
-        * @param nameOfGroup Nom du groupe de mailles
-        */
+         * @brief Ajout d'une nouvelle modelisation sur une entite du maillage
+         * @param phys Physique a ajouter
+         * @param mod Modelisation a ajouter
+         * @param nameOfGroup Nom du groupe de mailles
+         */
         void addModelisationOnGroupOfElements( Physics phys, Modelisations mod, string nameOfGroup )
         {
             if ( _supportMesh.isEmpty() ) throw "Support mesh is not defined";
             if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";
 
-            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation(phys, mod),
+            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation( phys, mod ),
                                             MeshEntityPtr( new GroupOfElementsInstance(nameOfGroup) ) ) );
         };
 
         /**
-        * Ajout d'une nouvelle modelisation sur une entite du maillage
-        * @param phys Physique a ajouter
-        * @param mod Modelisation a ajouter
-        * @param nameOfGroup Nom du groupe de noeuds
-        */
+         * @brief Ajout d'une nouvelle modelisation sur une entite du maillage
+         * @param phys Physique a ajouter
+         * @param mod Modelisation a ajouter
+         * @param nameOfGroup Nom du groupe de noeuds
+         */
         void addModelisationOnGroupOfNodes( Physics phys, Modelisations mod, string nameOfGroup )
         {
             if ( _supportMesh.isEmpty() ) throw "Support mesh is not defined";
             if ( ! _supportMesh->hasGroupOfNodes( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";
 
-            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation(phys, mod),
+            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation( phys, mod ),
                                             MeshEntityPtr( new GroupOfNodesInstance(nameOfGroup) ) ) );
         };
 
         /**
-        * Construction (au sens Jeveux fortran) de la sd_modele
-        * @return booleen indiquant que la construction s'est bien deroulee
-        */
+         * @brief Construction (au sens Jeveux fortran) de la sd_modele
+         * @return booleen indiquant que la construction s'est bien deroulee
+         */
         bool build();
 
         /**
-        * Methode permettant de savoir si le modele est vide
-        * @return true si le modele est vide
-        */
+         * @brief Methode permettant de savoir si le modele est vide
+         * @return true si le modele est vide
+         */
         bool isEmpty()
         {
             return _isEmpty;
         };
 
         /**
-        * Definition de la methode de partition
-        *   pas encore codee
-        */
+         * @brief Definition de la methode de partition
+         */
         void setSplittingMethod()
         {
             throw "Not yet implemented";
         };
 
         /**
-        * Definition du maillage support
-        * @param currentMesh objet Mesh sur lequel le modele reposera
-        */
-        bool setSupportMesh(Mesh& currentMesh)
+         * @brief Definition du maillage support
+         * @param currentMesh objet Mesh sur lequel le modele reposera
+         */
+        bool setSupportMesh( Mesh& currentMesh )
         {
             if ( currentMesh->isEmpty() )
                 throw string("Mesh is empty");
@@ -131,10 +158,10 @@ class ModelInstance: public DataStructure
 };
 
 /**
-* class Model
-*   Enveloppe d'un pointeur intelligent vers un ModelInstance
-* @author Nicolas Sellenet
-*/
+ * @class Model
+ * @brief Enveloppe d'un pointeur intelligent vers un ModelInstance
+ * @author Nicolas Sellenet
+ */
 class Model
 {
     public:

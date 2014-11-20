@@ -1,6 +1,29 @@
 #ifndef COMMANDSYNTAX_H_
 #define COMMANDSYNTAX_H_
 
+/**
+ * @file CommandSyntax.h
+ * @brief Fichier entete permettant de decrire un bout de fichier de commande Aster
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #ifdef __cplusplus
@@ -27,10 +50,10 @@ extern "C"
 using namespace std;
 
 /**
-* class template SimpleKeyWord
-*   Classe permettant d'emuler un mot cle simple dans une commande
-* @author Nicolas Sellenet
-*/
+ * @class template SimpleKeyWord
+ * @brief Classe permettant d'emuler un mot cle simple dans une commande
+ * @author Nicolas Sellenet
+ */
 template<class ValueType>
 class SimpleKeyWord
 {
@@ -46,27 +69,27 @@ class SimpleKeyWord
 
     public:
         /**
-        * Constructeur
-        */
+         * @brief Constructeur
+         */
         SimpleKeyWord(): _simpleKeyWordName(""),
                          _isValueObject(false)
         {};
 
         /**
-        * Constructeur
-        * @param nom Chaine contenant le nom du mot-cle simple
-        *   ex : pour le mot-cle simple MAILLAGE, nom sera egale a
-        *        'MAILLAGE'
-        */
+         * @brief Constructeur
+         * @param nom Chaine contenant le nom du mot-cle simple
+         *   ex : pour le mot-cle simple MAILLAGE, nom sera egale a
+         *        'MAILLAGE'
+         */
         SimpleKeyWord(string nom, bool concept = false): _simpleKeyWordName(nom),
                                                          _isValueObject(concept)
         {};
 
         /**
-        * Ajout d'une valeur au mot-cle simple
-        * @param valeurAAjouter Valeur a ajouter
-        *   ex : MAILLE = ('M1', 'M2')
-        */
+         * @brief Ajout d'une valeur au mot-cle simple
+         * @param valeurAAjouter Valeur a ajouter
+         *   ex : MAILLE = ('M1', 'M2')
+         */
         void addValues(ValueType valeurAAjouter)
         {
             _valuesList.push_back(valeurAAjouter);
@@ -97,10 +120,10 @@ typedef SimpleKeyWord< double > SimpleKeyWordDbl;
 typedef SimpleKeyWord< int > SimpleKeyWordInt;
 
 /**
-* class FactorKeywordOccurence
-*   Classe permettant d'emuler une occurence d'un mot cle facteur dans une commande
-* @author Nicolas Sellenet
-*/
+ * @class FactorKeywordOccurence
+ * @brief Classe permettant d'emuler une occurence d'un mot cle facteur dans une commande
+ * @author Nicolas Sellenet
+ */
 class FactorKeywordOccurence
 {
     private:
@@ -111,18 +134,18 @@ class FactorKeywordOccurence
 
     public:
         /**
-        * Constructeur
-        */
+         * @brief Constructeur
+         */
         FactorKeywordOccurence(): _listSimpleKeywordsStr( list< SimpleKeyWordStr >() ),
                                   _listSimpleKeywordsDbl( list< SimpleKeyWordDbl >() ),
                                   _listSimpleKeywordsInt( list< SimpleKeyWordInt >() )
         {};
 
         /**
-        * Ajout d'un mot cle simple ayant comme valeur une chaine a la commande en cours
-        *   ex : GROUP_MA = 'TOTO'
-        * @param motCle mot cle simple
-        */
+         * @brief Ajout d'un mot cle simple ayant comme valeur une chaine a la commande en cours
+         *   ex : GROUP_MA = 'TOTO'
+         * @param motCle mot cle simple
+         */
         void addSimpleKeywordString(SimpleKeyWordStr motCleAAjouter)
         {
             _listSimpleKeywordsStr.push_back(motCleAAjouter);
@@ -130,10 +153,10 @@ class FactorKeywordOccurence
         };
 
         /**
-        * Ajout d'un mot cle simple ayant comme valeur un double a la commande en cours
-        *   ex : NU = 0.4
-        * @param motCle mot cle simple
-        */
+         * @brief Ajout d'un mot cle simple ayant comme valeur un double a la commande en cours
+         *   ex : NU = 0.4
+         * @param motCle mot cle simple
+         */
         void addSimpleKeywordDouble(SimpleKeyWordDbl motCleAAjouter)
         {
             _listSimpleKeywordsDbl.push_back(motCleAAjouter);
@@ -141,10 +164,10 @@ class FactorKeywordOccurence
         };
 
         /**
-        * Ajout d'un mot cle simple ayant comme valeur un entier a la commande en cours
-        *   ex : REAC_PRECOND = 3
-        * @param motCle mot cle simple
-        */
+         * @brief Ajout d'un mot cle simple ayant comme valeur un entier a la commande en cours
+         *   ex : REAC_PRECOND = 3
+         * @param motCle mot cle simple
+         */
         void addSimpleKeywordInteger(SimpleKeyWordInt motCleAAjouter)
         {
             _listSimpleKeywordsInt.push_back(motCleAAjouter);
@@ -253,10 +276,10 @@ class FactorKeywordOccurence
 };
 
 /**
-* class FactorKeyword
-*   Classe permettant d'emuler un mot cle facteur dans une commande
-* @author Nicolas Sellenet
-*/
+ * @class FactorKeyword
+ * @brief Classe permettant d'emuler un mot cle facteur dans une commande
+ * @author Nicolas Sellenet
+ */
 class FactorKeyword
 {
     private:
@@ -266,17 +289,17 @@ class FactorKeyword
 
     public:
         /**
-        * Constructeur
-        * @param nom Chaine de caractere contenant le nom du mot cle facteur
-        * @param repet booleen precisant si le mot cle facteur est repetable
-        */
+         * @brief Constructeur
+         * @param nom Chaine de caractere contenant le nom du mot cle facteur
+         * @param repet booleen precisant si le mot cle facteur est repetable
+         */
         FactorKeyword(string nom, bool repet = true): _factorKeywordName(nom), _repetition(repet)
         {};
 
         /**
-        * Ajout d'une occurence du mot cle facteur
-        * @param motCle mot cle facteur a ajouter
-        */
+         * @brief Ajout d'une occurence du mot cle facteur
+         * @param motCle mot cle facteur a ajouter
+         */
         bool addOccurence(const FactorKeywordOccurence occur)
         {
             if ( _vectorOccurences.size() > 0 and _repetition == false ) return false;
@@ -361,12 +384,11 @@ class CommandSyntax;
 extern CommandSyntax* commandeCourante;
 
 /**
-* class CommandSyntax
-*   Classe permettant d'emuler des "bouts" de fichier de commande
-*   afin de pouvoir appeler depuis le code fortran de Code_Aster
-*   les routines GET*
-* @author Nicolas Sellenet
-*/
+ * @class CommandSyntax
+ * @brief Classe permettant d'emuler des "bouts" de fichier de commande.
+ *         Permet l'utilisation des fonction GET*
+ * @author Nicolas Sellenet
+ */
 class CommandSyntax
 {
     private:
@@ -382,14 +404,14 @@ class CommandSyntax
 
     public:
         /**
-        * Constructeur
-        * @param nom Chaine correspondant au nom de la commande a emuler (ex : AFFE_MATERIAU)
-        * @param operateur booleen indiquant sur la commande renvoit un objet
-        *                  ex : LIRE_MAILLAGE : operateur = true
-        *                  ex : IMPR_RESU     : operateur = false
-        * @param nomObjet Chaine precisant le nom Jeveux de la sd produite
-        *                 ex : MA = LIRE_MAILAGE : nomObjet = "MA      "
-        */
+         * @brief Constructeur
+         * @param nom Chaine correspondant au nom de la commande a emuler (ex : AFFE_MATERIAU)
+         * @param operateur booleen indiquant sur la commande renvoit un objet
+         *                  ex : LIRE_MAILLAGE : operateur = true
+         *                  ex : IMPR_RESU     : operateur = false
+         * @param nomObjet Chaine precisant le nom Jeveux de la sd produite
+         *                 ex : MA = LIRE_MAILAGE : nomObjet = "MA      "
+         */
         CommandSyntax(string nom, bool operateur,
                       string nomObjet = "", string typeObjet = ""): _commandName( nom ),
                                                                     _isOperateur( operateur ),
@@ -458,9 +480,9 @@ class CommandSyntax
         };
 
         /**
-        * Ajout d'un mot cle facteur a la commande en cours
-        * @param motCle mot cle facteur a ajouter
-        */
+         * @brief Ajout d'un mot cle facteur a la commande en cours
+         * @param motCle mot cle facteur a ajouter
+         */
         bool addFactorKeyword(const FactorKeyword motCle)
         {
             _factorKeywordsMap.insert( mapStrMCFValue(motCle.nom(), motCle) );
@@ -468,10 +490,10 @@ class CommandSyntax
         };
 
         /**
-        * Ajout d'un mot cle simple ayant comme valeur un double a la commande en cours
-        *   ex : DX = 0.
-        * @param motCle mot cle simple a ajouter
-        */
+         * @brief Ajout d'un mot cle simple ayant comme valeur un double a la commande en cours
+         *   ex : DX = 0.
+         * @param motCle mot cle simple a ajouter
+         */
         bool addSimpleKeywordDouble(const SimpleKeyWordDbl motCle)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
@@ -480,9 +502,9 @@ class CommandSyntax
         };
 
         /**
-        * Ajout d'un mot cle simple ayant comme valeur un entier a la commande en cours
-        * @param motCle mot cle simple a ajouter
-        */
+         * @brief Ajout d'un mot cle simple ayant comme valeur un entier a la commande en cours
+         * @param motCle mot cle simple a ajouter
+         */
         bool addSimpleKeywordInteger(const SimpleKeyWordInt motCle)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
@@ -491,10 +513,10 @@ class CommandSyntax
         };
 
         /**
-        * Ajout d'un mot cle simple ayant comme valeur une chaine a la commande en cours
-        *   ex : GROUP_MA = 'TOTO'
-        * @param motCle mot cle simple a ajouter
-        */
+         * @brief Ajout d'un mot cle simple ayant comme valeur une chaine a la commande en cours
+         *   ex : GROUP_MA = 'TOTO'
+         * @param motCle mot cle simple a ajouter
+         */
         bool addSimpleKeywordString(const SimpleKeyWordStr motCle)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
@@ -551,28 +573,69 @@ extern void* commandeCourante;
 extern "C" {
 #endif
 
+/**
+ * @fn getNomCommande
+ * @brief Obtention du nom de la commande courante
+ */
 char* getNomCommande();
 
+/**
+ * @fn getNomObjetJeveux
+ * @brief Obtention du nom Jeveux de l'objet produit par la commande
+ */
 char* getNomObjetJeveux();
 
+/**
+ * @fn getTypeObjetResu
+ * @brief Obtention de type de sd produite par la commande
+ */
 char* getTypeObjetResu();
 
+/**
+ * @fn getSDType
+ * @brief Obtention du type de la sd dont le nom est passe en argument
+ */
 char* getSDType(char*);
 
+/**
+ * @fn isCommandeOperateur
+ * @brief Fonction permettant de savoir si une commande est un operateur
+ */
 int isCommandeOperateur();
 
+/**
+ * @fn listeMotCleSimpleFromMotCleFacteur
+ */
 int listeMotCleSimpleFromMotCleFacteur(char *, int, int, int, char***, char***, int*);
 
+/**
+ * @fn nombreOccurencesMotCleFacteur
+ */
 int nombreOccurencesMotCleFacteur(char *);
 
+/**
+ * @fn presenceMotCle
+ */
 int presenceMotCle(char *, char *);
 
+/**
+ * @fn presenceMotCleFacteur
+ */
 int presenceMotCleFacteur(char *);
 
+/**
+ * @fn valeursMotCleChaine
+ */
 char** valeursMotCleChaine(char *, int, char *, int*);
 
+/**
+ * @fn valeursMotCleDouble
+ */
 double* valeursMotCleDouble(char*, int, char*, int*);
 
+/**
+ * @fn valeursMotCleInt
+ */
 int* valeursMotCleInt(char*, int, char*, int*);
 
 #ifdef __cplusplus

@@ -1,31 +1,51 @@
 #ifndef JEVEUXALLOWEDTYPES_H_
 #define JEVEUXALLOWEDTYPES_H_
 
+/**
+ * @file JeveuxAllowedTypes.h
+ * @brief Fichier entete de la classe MaterialBehaviour
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "RunManager/Initializer.h"
 #include <complex.h>
 
 /**
-* enumeration JeveuxTypes
-*   fournit tous les types existant dans le gestionnaire memoire Jeveux
-* @author Nicolas Sellenet
-*/
+ * @enum JeveuxTypes
+ * @brief Fournit tous les types autorises dans le gestionnaire memoire Jeveux
+ */
 enum JeveuxTypes { Integer, Integer4, Double, Complex, Char8, Char16, Char24, Char32, Char80 };
 /**
-* liste JeveuxTypesNames
-*   fournit sous forme de chaine les types Jeveux existant
-* @author Nicolas Sellenet
-*/
+ * @def JeveuxTypesNames
+ * @brief Fournit sous forme de chaine les types Jeveux existant
+ */
 static const char* JeveuxTypesNames[9] = { "I", "I4", "R", "C", "K8", "K16", "K24", "K32", "K80" };
 
 /**
-* struct template AllowedJeveuxType
-*   structure permettant de limiter le type instanciable de JeveuxVectorInstance
-*   on se limite aux type de JeveuxTypes
-* @author Nicolas Sellenet
-*/
-template<typename T>
+ * @struct AllowedJeveuxType
+ * @brief Structure template permettant de limiter le type instanciable de JeveuxVectorInstance
+ * @tparam T Type autorise
+ */
+template< typename T >
 struct AllowedJeveuxType; // undefined for bad types!
 
 template<> struct AllowedJeveuxType< long >

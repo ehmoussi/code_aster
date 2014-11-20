@@ -5,7 +5,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "LinearAlgebra/DOFNumerotation.h"
+#include "LinearAlgebra/DOFNumbering.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/KinematicsLoad.h"
 
@@ -41,9 +41,9 @@ class AssemblyMatrix
         return (*$self)->factorization();
     }
 
-    void setDOFNumerotation( const DOFNumerotation& currentDOF )
+    void setDOFNumbering( const DOFNumbering& currentDOF )
     {
-        return (*$self)->setDOFNumerotation( currentDOF );
+        return (*$self)->setDOFNumbering( currentDOF );
     }
 
     void setElementaryMatrix( const ElementaryMatrix& currentElemMatrix )

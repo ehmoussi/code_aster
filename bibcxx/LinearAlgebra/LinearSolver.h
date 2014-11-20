@@ -1,7 +1,29 @@
 #ifndef LINEARSOLVER_H_
 #define LINEARSOLVER_H_
 
-#include <boost/shared_ptr.hpp>
+/**
+ * @file LinearSolver.h
+ * @brief Fichier entete de la classe LinearSolver
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <list>
 #include <set>
 #include <string>
@@ -15,102 +37,135 @@ using namespace std;
 
 // Ces wrappers sont la pour autoriser que les set soitent const
 // Sinon, on aurait pas pu passer directement des const set<> en parametre template
+/**
+ * @struct WrapMultFront
+ * @brief Structure destinee a contenir les renumeroteurs autorises pour MultFront
+ */
 struct WrapMultFront
 {
     static const set< Renumbering > setOfAllowedRenumbering;
 };
 
+/**
+ * @struct WrapLdlt
+ * @brief Structure destinee a contenir les renumeroteurs autorises pour Ldlt
+ */
 struct WrapLdlt
 {
     static const set< Renumbering > setOfAllowedRenumbering;
 };
 
+/**
+ * @struct WrapMumps
+ * @brief Structure destinee a contenir les renumeroteurs autorises pour Mumps
+ */
 struct WrapMumps
 {
     static const set< Renumbering > setOfAllowedRenumbering;
 };
 
+/**
+ * @struct WrapPetsc
+ * @brief Structure destinee a contenir les renumeroteurs autorises pour Petsc
+ */
 struct WrapPetsc
 {
     static const set< Renumbering > setOfAllowedRenumbering;
 };
 
+/**
+ * @struct WrapGcpc
+ * @brief Structure destinee a contenir les renumeroteurs autorises pour Gcpc
+ */
 struct WrapGcpc
 {
     static const set< Renumbering > setOfAllowedRenumbering;
 };
 
 /**
-* class template static RenumberingChecker
-*   permet de verifier si un renumeroteur est autorise pour un solveur donne
-* @author Nicolas Sellenet
-*/
+ * @struct RenumberingChecker
+ * @brief Struct statiquepermetant de verifier si un renumeroteur est autorise
+         pour un solveur donne
+ * @author Nicolas Sellenet
+ */
 template< class Wrapping >
-class RenumberingChecker
+struct RenumberingChecker
 {
-    public:
-        static bool isAllowedRenumbering( Renumbering test )
-        {
-            if ( Wrapping::setOfAllowedRenumbering.find( test ) == Wrapping::setOfAllowedRenumbering.end() )
-                return false;
-            return true;
-        }
+    static bool isAllowedRenumbering( Renumbering test )
+    {
+        if ( Wrapping::setOfAllowedRenumbering.find( test ) == Wrapping::setOfAllowedRenumbering.end() )
+            return false;
+        return true;
+    }
 };
 
+/** @typedef Definition du verificateur de renumeroteur pour MultFront */
 typedef RenumberingChecker< WrapMultFront > MultFrontRenumberingChecker;
+/** @typedef Definition du verificateur de renumeroteur pour Ldlt */
 typedef RenumberingChecker< WrapLdlt > LdltRenumberingChecker;
+/** @typedef Definition du verificateur de renumeroteur pour Mumps */
 typedef RenumberingChecker< WrapMumps > MumpsRenumberingChecker;
+/** @typedef Definition du verificateur de renumeroteur pour Petsc */
 typedef RenumberingChecker< WrapPetsc > PetscRenumberingChecker;
+/** @typedef Definition du verificateur de renumeroteur pour Gcpc */
 typedef RenumberingChecker< WrapGcpc > GcpcRenumberingChecker;
 
 /**
-* class template static SolverChecker
-*   permet de verifier si un couple solveur, renumeroteur
-* @author Nicolas Sellenet
-*/
-class SolverChecker
+ * @struct SolverChecker
+ * @brief permet de verifier si un couple solveur, renumeroteur est autorise
+ * @author Nicolas Sellenet
+ */
+struct SolverChecker
 {
-    public:
-        static bool isAllowedRenumberingForSolver( LinearSolverEnum solver, Renumbering renumber )
+    /**
+     * @brief Fonction statique qui verifie un couple solveur, renumeroteur
+     * @param solver Type de solveur
+     * @param renumber Type de renumeroteur
+     * @return vrai si le couple est valide
+     */
+    static bool isAllowedRenumberingForSolver( LinearSolverEnum solver, Renumbering renumber )
+    {
+        switch ( solver )
         {
-            switch ( solver )
-            {
-                case MultFront:
-                    return MultFrontRenumberingChecker::isAllowedRenumbering( renumber );
-                case Ldlt:
-                    return LdltRenumberingChecker::isAllowedRenumbering( renumber );
-                case Mumps:
-                    return MumpsRenumberingChecker::isAllowedRenumbering( renumber );
-                case Petsc:
-                    return PetscRenumberingChecker::isAllowedRenumbering( renumber );
-                case Gcpc:
-                    return GcpcRenumberingChecker::isAllowedRenumbering( renumber );
-                default:
-                    throw "Not a valid linear solver";
-            }
-        };
+            case MultFront:
+                return MultFrontRenumberingChecker::isAllowedRenumbering( renumber );
+            case Ldlt:
+                return LdltRenumberingChecker::isAllowedRenumbering( renumber );
+            case Mumps:
+                return MumpsRenumberingChecker::isAllowedRenumbering( renumber );
+            case Petsc:
+                return PetscRenumberingChecker::isAllowedRenumbering( renumber );
+            case Gcpc:
+                return GcpcRenumberingChecker::isAllowedRenumbering( renumber );
+            default:
+                throw "Not a valid linear solver";
+        }
+    };
 };
 
 template< class tmp > class AssemblyMatrix;
 typedef AssemblyMatrix< double > AssemblyMatrixDouble;
 
 /**
-* class LinearSolverInstance
-*   Cette classe permet de definir un solveur lineraire
-* @author Nicolas Sellenet
-*/
+ * @class LinearSolverInstance
+ * @brief Cette classe permet de definir un solveur lineraire
+ * @author Nicolas Sellenet
+ */
 class LinearSolverInstance
 {
     private:
+        /** @brief Type du solveur lineaire */
         LinearSolverEnum _linearSolver;
+        /** @brief Type du renumeroteur */
         Renumbering      _renumber;
 
     public:
         /**
-        * Constructeur
-        * @param currentLinearSolver Type de solveur
-        * @param currentRenumber Type de renumeroteur
-        */
+         * @brief Constructeur
+         * @param currentLinearSolver Type de solveur
+         * @param currentRenumber Type de renumeroteur
+         * @todo recuperer le code retour de isAllowedRenumberingForSolver
+         */
         LinearSolverInstance(const LinearSolverEnum currentLinearSolver, const Renumbering currentRenumber):
                     _linearSolver( currentLinearSolver ),
                     _renumber( currentRenumber )
@@ -119,37 +174,37 @@ class LinearSolverInstance
         };
 
         /**
-        * Recuperer le nom du solveur
-        * @return chaine contenant le nom Aster du solveur
-        */
+         * @brief Recuperer le nom du solveur
+         * @return chaine contenant le nom Aster du solveur
+         */
         const string getSolverName() const
         {
             return LinearSolverNames[ (int)_linearSolver ];
         };
 
         /**
-        * Recuperer le nom du renumeroteur
-        * @return chaine contenant le nom Aster du renumeroteur
-        */
+         * @brief Recuperer le nom du renumeroteur
+         * @return chaine contenant le nom Aster du renumeroteur
+         */
         const string getRenumburingName() const
         {
             return RenumberingNames[ (int)_renumber ];
         };
 
         /**
-        * Impression du champ au format MED
-        * @param pathFichier path ne servant pour le moment a rien
-        * @return renvoit true
-        */
+         * @brief Impression du champ au format MED
+         * @param pathFichier path ne servant pour le moment a rien
+         * @return renvoit true
+         */
         FieldOnNodesDouble solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
                                                     const FieldOnNodesDouble& currentRHS ) const;
 };
 
 /**
-* class LinearSolver
-*   Enveloppe d'un pointeur intelligent vers un LinearSolverInstance
-* @author Nicolas Sellenet
-*/
+ * @class LinearSolver
+ * @brief Enveloppe d'un pointeur intelligent vers un LinearSolverInstance
+ * @author Nicolas Sellenet
+ */
 class LinearSolver
 {
     public:

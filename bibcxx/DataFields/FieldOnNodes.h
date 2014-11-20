@@ -1,6 +1,29 @@
 #ifndef FIELDONNODES_H_
 #define FIELDONNODES_H_
 
+/**
+ * @file FieldOnNodes.h
+ * @brief Fichier entete de la classe FieldOnNodes
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <string>
@@ -12,26 +35,26 @@
 #include "RunManager/LogicalUnitManager.h"
 
 /**
-* class template FieldOnNodesInstance
-*   Cette classe permet de definir un champ aux noeuds Aster
-* @author Nicolas Sellenet
-*/
+ * @class FieldOnNodesInstance
+ * @brief Cette classe template permet de definir un champ aux noeuds Aster
+ * @author Nicolas Sellenet
+ */
 template< class ValueType >
 class FieldOnNodesInstance: public DataStructure
 {
     private:
-        // Vecteur Jeveux '.DESC'
-        JeveuxVectorLong        _descriptor;
-        // Vecteur Jeveux '.REFE'
+        /** @brief Vecteur Jeveux '.DESC' */
+        JeveuxVectorLong        _descriptor; 
+        /** @brief Vecteur Jeveux '.REFE' */
         JeveuxVectorChar24      _reference;
-        // Vecteur Jeveux '.VALE'
+        /** @brief Vecteur Jeveux '.VALE' */
         JeveuxVector<ValueType> _valuesList;
 
     public:
         /**
-        * Constructeur
-        * @param name Nom Jeveux du champ aux noeuds
-        */
+         * @brief Constructeur
+         * @param name Nom Jeveux du champ aux noeuds
+         */
         FieldOnNodesInstance( string name ):
                         DataStructure( name, "CHAM_NO" ),
                         _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
@@ -45,26 +68,26 @@ class FieldOnNodesInstance: public DataStructure
         {}
 
         /**
-        * Surcharge de l'operateur []
-        * @param i Indice dans le tableau Jeveux
-        * @return la valeur du tableau Jeveux a la position i
-        */
+         * @brief Surcharge de l'operateur []
+         * @param i Indice dans le tableau Jeveux
+         * @return la valeur du tableau Jeveux a la position i
+         */
         const ValueType &operator[](int i) const
         {
             return _valuesList->operator[](i);
         };
 
         /**
-        * Impression du champ au format MED
-        * @param pathFichier path ne servant pour le moment a rien
-        * @return true
+         * @brief Impression du champ au format MED
+         * @param pathFichier path ne servant pour le moment a rien
+         * @return true
         */
         bool printMEDFormat( string pathFichier );
 
         /**
-        * Mise a jour des pointeurs Jeveux
-        * @return renvoit true si la mise a jour s'est bien deroulee, false sinon
-        */
+         * @brief Mise a jour des pointeurs Jeveux
+         * @return renvoit true si la mise a jour s'est bien deroulee, false sinon
+         */
         bool updateValuePointers()
         {
             bool retour = _descriptor->updateValuePointer();
@@ -114,10 +137,10 @@ bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
 };
 
 /**
-* class template FieldOnNodes
-*   Enveloppe d'un pointeur intelligent vers un FieldOnNodesInstance
-* @author Nicolas Sellenet
-*/
+ * @class FieldOnNodes template
+ * @brief Enveloppe d'un pointeur intelligent vers un FieldOnNodesInstance
+ * @author Nicolas Sellenet
+ */
 template<class ValueType>
 class FieldOnNodes
 {
@@ -155,6 +178,7 @@ class FieldOnNodes
         };
 };
 
+/** @typedef Definition d'un champ aux noeuds de double */
 typedef FieldOnNodes<double> FieldOnNodesDouble;
 
 #endif /* FIELDONNODES_H_ */
