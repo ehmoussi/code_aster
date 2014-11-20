@@ -1,97 +1,122 @@
 #ifndef ASSEMBLYMATRIX_H_
 #define ASSEMBLYMATRIX_H_
 
+/**
+ * @file AssemblyMatrix.h
+ * @brief Fichier entete de la classe AssemblyMatrix
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
-#include "LinearAlgebra/DOFNumerotation.h"
+#include "LinearAlgebra/DOFNumbering.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/KinematicsLoad.h"
 
 /**
-* class template AssemblyMatrixInstance
-*   Class definissant une sd_matr_asse
-*   Cette classe est volontairement succinte car on n'en connait pas encore l'usage
-* @author Nicolas Sellenet
-*/
+ * @class AssemblyMatrixInstance
+ * @brief Classe template definissant une sd_matr_asse.
+ *        Cette classe est volontairement succinte car on n'en connait pas encore l'usage
+ * @author Nicolas Sellenet
+ */
 template< class ValueType >
 class AssemblyMatrixInstance: public DataStructure
 {
     private:
+        /** @typedef std::list de KinematicsLoad */
         typedef list< KinematicsLoad > ListKinematicsLoad;
+        /** @typedef Iterateur sur une std::list de KinematicsLoad */
         typedef ListKinematicsLoad::iterator ListKinematicsLoadIter;
 
-        // Objet Jeveux '.REFA'
+        /** @brief Objet Jeveux '.REFA' */
         JeveuxVectorChar24            _description;
-        // Collection '.VALM'
+        /** @brief Collection '.VALM' */
         JeveuxCollection< ValueType > _matrixValues;
-        // Objet '.CONL'
+        /** @brief Objet '.CONL' */
         JeveuxVectorDouble            _scaleFactorLagrangian;
-        // ElementaryMatrix sur lesquelles sera construit la matrice
+        /** @brief ElementaryMatrix sur lesquelles sera construit la matrice */
         ElementaryMatrix              _elemMatrix;
-        // Objet nume_ddl
-        DOFNumerotation               _dofNum;
-        // La matrice est elle vide ?
+        /** @brief Objet nume_ddl */
+        DOFNumbering                  _dofNum;
+        /** @brief La matrice est elle vide ? */
         bool                          _isEmpty;
-        // Liste de charges cinematiques
+        /** @brief Liste de charges cinematiques */
         ListKinematicsLoad            _listOfLoads;
 
     public:
         /**
-        * Constructeur
-        */
+         * @brief Constructeur
+         */
         AssemblyMatrixInstance();
 
         /**
-        * Destructeur
-        */
+         * @brief Destructeur
+         */
         ~AssemblyMatrixInstance()
         {};
 
         /**
-        * Methode permettant d'ajouter un chargement
-        * @param currentLoad objet MechanicalLoad
-        */
+         * @brief Methode permettant d'ajouter un chargement
+         * @param currentLoad objet MechanicalLoad
+         */
         void addKinematicsLoad( const KinematicsLoad& currentLoad )
         {
             _listOfLoads.push_back( currentLoad );
         };
 
         /**
-        * Assemblage de la matrice
-        */
+         * @brief Assemblage de la matrice
+         */
         bool build();
 
         /**
-        * Factorisation de la matrice
-        * @return true
+         * @brief Factorisation de la matrice
+         * @return true
         */
         bool factorization();
 
         /**
-        * Methode permettant de savoir si les matrices elementaires sont vides
-        * @return true si les matrices elementaires sont vides
-        */
+         * @brief Methode permettant de savoir si les matrices elementaires sont vides
+         * @return true si les matrices elementaires sont vides
+         */
         bool isEmpty()
         {
             return _isEmpty;
         };
 
         /**
-        * Methode permettant de definir la numerotation
-        * @param currentElemMatrix objet ElementaryMatrix
-        */
-        void setDOFNumerotation( const DOFNumerotation& currentNum )
+         * @brief Methode permettant de definir la numerotation
+         * @param currentElemMatrix objet ElementaryMatrix
+         */
+        void setDOFNumbering( const DOFNumbering& currentNum )
         {
             _dofNum = currentNum;
         };
 
         /**
-        * Methode permettant de definir les matrices elementaires
-        * @param currentElemMatrix objet ElementaryMatrix
-        */
+         * @brief Methode permettant de definir les matrices elementaires
+         * @param currentElemMatrix objet ElementaryMatrix
+         */
         void setElementaryMatrix( const ElementaryMatrix& currentElemMatrix )
         {
             _elemMatrix = currentElemMatrix;
@@ -105,7 +130,7 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance():
                 _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
                 _elemMatrix( ElementaryMatrix( false ) ),
-                _dofNum( DOFNumerotation( false ) ),
+                _dofNum( DOFNumbering( false ) ),
                 _isEmpty( true )
 {};
 
@@ -217,10 +242,10 @@ bool AssemblyMatrixInstance< ValueType >::build()
 };
 
 /**
-* class AssemblyMatrix
-*   Enveloppe d'un pointeur intelligent vers un AssemblyMatrix
-* @author Nicolas Sellenet
-*/
+ * @class AssemblyMatrix
+ * @brief Enveloppe d'un pointeur intelligent vers un AssemblyMatrix
+ * @author Nicolas Sellenet
+ */
 template< class ValueType >
 class AssemblyMatrix
 {
@@ -263,7 +288,9 @@ class AssemblyMatrix
         };
 };
 
+/** @typedef Definition d'une matrice assemblee de double */
 typedef AssemblyMatrix< double > AssemblyMatrixDouble;
+/** @typedef Definition d'une matrice assemblee de complexe */
 typedef AssemblyMatrix< double complex > AssemblyMatrixComplex;
 
 #endif /* ASSEMBLYMATRIX_H_ */

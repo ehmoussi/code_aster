@@ -1,6 +1,29 @@
 #ifndef JEVEUXBIDIRECTIONALMAP_H_
 #define JEVEUXBIDIRECTIONALMAP_H_
 
+/**
+ * @file JeveuxBidirectionnalMap.h
+ * @brief Fichier entete de la classe JeveuxBidirectionnalMap
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "RunManager/Initializer.h"
@@ -8,46 +31,44 @@
 using namespace std;
 
 /**
-* class JeveuxBidirectionalMapInstance
-*   Equivalent du pointeur de nom dans Jeveux
-*   Un pointeur de nom permet de creer une correspondance entre
-*   une chaine de caractere et un entier (et inversement)
-* @author Nicolas Sellenet
-*/
+ * @class JeveuxBidirectionalMapInstance
+ * @brief Equivalent du pointeur de nom dans Jeveux
+ * @author Nicolas Sellenet
+ */
 class JeveuxBidirectionalMapInstance
 {
     private:
-        // Nom Jeveux de l'objet
+        /** @brief Nom Jeveux de l'objet */
         string _jeveuxName;
 
     public:
         /**
-        * Constructeur
-        * @param name Nom Jeveux de l'objet
-        */
+         * @brief Constructeur
+         * @param name Nom Jeveux de l'objet
+         */
         JeveuxBidirectionalMapInstance(string name): _jeveuxName(name)
         {};
 
         /**
-        * Recuperation de la chaine correspondante a l'entier
-        * @param elementNumber Numero de l'element demande
-        * @return Chaine de caractere correspondante
-        */
+         * @brief Recuperation de la chaine correspondante a l'entier
+         * @param elementNumber Numero de l'element demande
+         * @return Chaine de caractere correspondante
+         */
         string findStringOfElement(long elementNumber);
 
         /**
-        * Recuperation de l'entier correspondant a une chaine
-        * @param elementName Chaine recherchee
-        * @return Entier correspondant
-        */
+         * @brief Recuperation de l'entier correspondant a une chaine
+         * @param elementName Chaine recherchee
+         * @return Entier correspondant
+         */
         long findIntegerOfElement(string elementName);
 };
 
 /**
-* class JeveuxBidirectionalMap
-*   Enveloppe d'un pointeur intelligent vers un JeveuxBidirectionalMapInstance
-* @author Nicolas Sellenet
-*/
+ * class JeveuxBidirectionalMap
+ *   Enveloppe d'un pointeur intelligent vers un JeveuxBidirectionalMapInstance
+ * @author Nicolas Sellenet
+ */
 class JeveuxBidirectionalMap
 {
     public:

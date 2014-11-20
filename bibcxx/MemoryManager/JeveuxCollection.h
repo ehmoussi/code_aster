@@ -1,6 +1,29 @@
 #ifndef JEVEUXCOLLECTION_H_
 #define JEVEUXCOLLECTION_H_
 
+/**
+ * @file JeveuxCollection.h
+ * @brief Fichier entete de la classe JeveuxCollection
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "definition.h"
@@ -13,30 +36,30 @@
 using namespace std;
 
 /**
-* class template JeveuxCollectionObject
-*   Cette classe permet de definir un objet de collection Jeveux
-* @author Nicolas Sellenet
-*/
-template<class ValueType>
+ * @class JeveuxCollectionObject
+ * @brief Cette classe template permet de definir un objet de collection Jeveux
+ * @author Nicolas Sellenet
+ */
+template< class ValueType >
 class JeveuxCollectionObject: private AllowedJeveuxType< ValueType >
 {
     private:
-        // Nom Jeveux de la collection
+        /** @brief Nom Jeveux de la collection */
         string     _collectionName;
-        // Position dans la collection
+        /** @brief Position dans la collection */
         int        _numberInCollection;
-        // Nom de l'objet de collection
+        /** @brief Nom de l'objet de collection */
         string     _nameOfObject;
-        // Pointeur vers le vecteur Jeveux
+        /** @brief Pointeur vers le vecteur Jeveux */
         ValueType* _valuePtr;
 
     public:
         /**
-        * Constructeur
-        * @param collectionName Nom de collection
-        * @param number Numero de l'objet dans la collection
-        * @param ptr Pointeur vers le vecteur Jeveux
-        */
+         * @brief Constructeur
+         * @param collectionName Nom de collection
+         * @param number Numero de l'objet dans la collection
+         * @param ptr Pointeur vers le vecteur Jeveux
+         */
         JeveuxCollectionObject(string collectionName, int number,
                                ValueType* ptr = NULL): _collectionName(collectionName),
                                                        _numberInCollection(number),
@@ -45,12 +68,12 @@ class JeveuxCollectionObject: private AllowedJeveuxType< ValueType >
         {};
 
         /**
-        * Constructeur
-        * @param collectionName Nom de collection
-        * @param number Numero de l'objet dans la collection
-        * @param objectName Nom de l'objet de collection
-        * @param ptr Pointeur vers le vecteur Jeveux
-        */
+         * @brief Constructeur
+         * @param collectionName Nom de collection
+         * @param number Numero de l'objet dans la collection
+         * @param objectName Nom de l'objet de collection
+         * @param ptr Pointeur vers le vecteur Jeveux
+         */
         JeveuxCollectionObject(string collectionName, int number, string objectName,
                                ValueType* ptr = NULL): _collectionName(collectionName),
                                                        _numberInCollection(number),
@@ -60,59 +83,63 @@ class JeveuxCollectionObject: private AllowedJeveuxType< ValueType >
 };
 
 /**
-* class template JeveuxCollectionInstance
-*   Cette classe permet de definir une collection Jeveux
-* @author Nicolas Sellenet
-*/
-template<class ValueType>
+ * @class JeveuxCollectionInstance
+ * @brief Cette classe template permet de definir une collection Jeveux
+ * @author Nicolas Sellenet
+ */
+template< class ValueType >
 class JeveuxCollectionInstance
 {
     private:
-        // Nom de la collection
-        string _name;
-        // Listes de objets de collection
-        list< JeveuxCollectionObject<ValueType> > listObjects;
-        typedef map< string, JeveuxCollectionObject<ValueType> > mapStrCollectionObject;
+        /** @brief Definition d'un objet de collection du type ValueType */
+        typedef JeveuxCollectionObject< ValueType > JeveuxCollObjValType;
+        /** @brief std::map associant une chaine a un JeveuxCollObjValType */
+        typedef map< string, JeveuxCollObjValType > mapStrCollectionObject;
+
+        /** @brief Nom de la collection */
+        string                                    _name;
+        /** @brief Listes de objets de collection */
+        list< JeveuxCollectionObject<ValueType> > _listObjects;
 
     public:
         /**
-        * Constructeur
-        * @param name Chaine representant le nom de la collection
-        */
+         * @brief Constructeur
+         * @param name Chaine representant le nom de la collection
+         */
         JeveuxCollectionInstance(string name): _name(name)
         {};
 
         /**
-        * Methode permettant de construire une collection a partir d'une collection
-        *   existante en memoire Jeveux
-        * @return Renvoit true si la construction s'est bien deroulee
-        */
+         * @brief Methode permettant de construire une collection a partir d'une collection
+         *   existante en memoire Jeveux
+         * @return Renvoit true si la construction s'est bien deroulee
+         */
         bool buildFromJeveux();
 
         /**
-        * Methode verifiant l'existance d'un objet de collection dans la collection
-        * @param name Chaine contenant le nom de l'objet
-        * @return Renvoit true si l'objet existe dans la collection
-        */
+         * @brief Methode verifiant l'existance d'un objet de collection dans la collection
+         * @param name Chaine contenant le nom de l'objet
+         * @return Renvoit true si l'objet existe dans la collection
+         */
         bool existsObject(string name);
 };
 
-template<class ValueType>
-bool JeveuxCollectionInstance<ValueType>::buildFromJeveux()
+template< class ValueType >
+bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
 {
-    listObjects.clear();
+    _listObjects.clear();
     long nbColObj, valTmp;
     // Attention const_cast
     const char* charName = _name.c_str();
     char* param = "NMAXOC";
     char* charval = MakeBlankFStr(32);
     // Attention rajouter des verifications d'existance
-    CALL_JELIRA(charName, param, &nbColObj, charval);
+    CALL_JELIRA( charName, param, &nbColObj, charval );
 
     param = "ACCES ";
-    CALL_JELIRA(charName, param, &valTmp, charval);
-    string resu = string(charval,2);
-    FreeStr(charval);
+    CALL_JELIRA( charName, param, &valTmp, charval );
+    string resu = string( charval, 2 );
+    FreeStr( charval );
 
     bool named = false;
     if ( resu == "NO" ) named = true;
@@ -123,38 +150,39 @@ bool JeveuxCollectionInstance<ValueType>::buildFromJeveux()
     for ( long i = 1; i <= nbColObj; ++i )
     {
         ValueType* valuePtr;
-        CALL_JEXNUM(charval, charName, &i);
+        CALL_JEXNUM( charval, charName, &i );
         if ( named )
-            CALL_JENUNO(charval, collectionObjectName);
+            CALL_JENUNO( charval, collectionObjectName );
         CALL_JEVEUOC(charval, tmp, (void*)(&valuePtr));
         if ( named )
-            listObjects.push_back(JeveuxCollectionObject<ValueType>(charName, i, collectionObjectName, valuePtr));
+            _listObjects.push_back( JeveuxCollObjValType( charName, i, 
+                                                          collectionObjectName, valuePtr ) );
         else
-            listObjects.push_back(JeveuxCollectionObject<ValueType>(charName, i, valuePtr));
+            _listObjects.push_back( JeveuxCollObjValType( charName, i, valuePtr ) );
     }
-    FreeStr(charval);
-    FreeStr(collectionObjectName);
+    FreeStr( charval );
+    FreeStr( collectionObjectName );
     return true;
 };
 
-template<class ValueType>
-bool JeveuxCollectionInstance<ValueType>::existsObject(string name)
+template< class ValueType >
+bool JeveuxCollectionInstance< ValueType >::existsObject( string name )
 {
     const char* collName = _name.c_str();
     char* charJeveuxName = MakeBlankFStr(32);
     long returnBool;
-    CALL_JEXNOM(charJeveuxName, collName, name.c_str());
-    CALL_JEEXIN(charJeveuxName, &returnBool);
+    CALL_JEXNOM( charJeveuxName, collName, name.c_str() );
+    CALL_JEEXIN( charJeveuxName, &returnBool );
     if ( returnBool == 0 ) return false;
     return true;
 };
 
 /**
-* class template JeveuxCollection
-*   Enveloppe d'un pointeur intelligent vers un JeveuxCollectionInstance
-* @author Nicolas Sellenet
-*/
-template<class ValueType>
+ * @class JeveuxCollection
+ * @brief Enveloppe d'un pointeur intelligent vers un JeveuxCollectionInstance
+ * @author Nicolas Sellenet
+ */
+template< class ValueType >
 class JeveuxCollection
 {
     public:
@@ -164,18 +192,19 @@ class JeveuxCollection
         JeveuxCollectionTypePtr _jeveuxCollectionPtr;
 
     public:
-        JeveuxCollection(string nom): _jeveuxCollectionPtr( new JeveuxCollectionInstance< ValueType > (nom) )
+        JeveuxCollection( string nom ):
+                _jeveuxCollectionPtr( new JeveuxCollectionInstance< ValueType > (nom) )
         {};
 
         ~JeveuxCollection()
         {};
 
-        JeveuxCollection& operator=(const JeveuxCollection< ValueType >& tmp)
+        JeveuxCollection& operator=( const JeveuxCollection< ValueType >& tmp )
         {
             _jeveuxCollectionPtr = tmp._jeveuxCollectionPtr;
         };
 
-        const JeveuxCollectionTypePtr& operator->(void) const
+        const JeveuxCollectionTypePtr& operator->() const
         {
             return _jeveuxCollectionPtr;
         };
@@ -187,14 +216,23 @@ class JeveuxCollection
         };
 };
 
+/** @typedef Definition d'une collection de type long */
 typedef JeveuxCollection< long > JeveuxCollectionLong;
+/** @typedef Definition d'une collection de type short int */
 typedef JeveuxCollection< short int > JeveuxCollectionShort;
+/** @typedef Definition d'une collection de type double */
 typedef JeveuxCollection< double > JeveuxCollectionDouble;
+/** @typedef Definition d'une collection de type double complex */
 typedef JeveuxCollection< double complex > JeveuxCollectionComplex;
+/** @typedef Definition d'une collection de type char[8] */
 typedef JeveuxCollection< char[8] > JeveuxCollectionChar8;
+/** @typedef Definition d'une collection de type char[16] */
 typedef JeveuxCollection< char[16] > JeveuxCollectionChar16;
+/** @typedef Definition d'une collection de type char[24] */
 typedef JeveuxCollection< char[24] > JeveuxCollectionChar24;
+/** @typedef Definition d'une collection de type char[32] */
 typedef JeveuxCollection< char[32] > JeveuxCollectionChar32;
+/** @typedef Definition d'une collection de type char[80] */
 typedef JeveuxCollection< char[80] > JeveuxCollectionChar80;
 
 #endif /* JEVEUXCOLLECTION_H_ */

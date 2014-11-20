@@ -1,6 +1,29 @@
 #ifndef INITIALIZER_H_
 #define INITIALIZER_H_
 
+/**
+ * @file Initializer.h
+ * @brief Fichier entete de la classe Initializer
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <assert.h>
@@ -34,7 +57,15 @@ extern int numOP;
 #define CALL_IBMAIN(a) CALLP(IBMAIN,ibmain,a)
 #define CALL_DEBUT() CALL0(DEBUT,debut)
 #define CALL_JELIRA(a, b, c, d)  CALLSSPS(JELIRA, jelira, a, b, c, d)
+/**
+ * @def CALL_JEVEUOC
+ * @brief Appel au jeveuo particulier au C++
+ */
 #define CALL_JEVEUOC(a, b, c) CALLSSP(JEVEUOC, jeveuoc, a, b, c)
+/**
+ * @def CALL_WKVECTC
+ * @brief Appel au wkvect particulier au C++
+ */
 #define CALL_WKVECTC(a, b, c, d) CALLSSPP(wkvectc, wkvectc, a, b, c, d)
 #define CALL_JEEXIN(a, b) CALLSP(JEEXIN, jeexin, a, b)
 #define CALL_JEXNUM(a, b, c) CALLSBSP(JEXNUM, jexnum, a, b, c)
@@ -61,12 +92,12 @@ extern "C"
 }
 
 /**
-* class Initializer
-*   Cette classe initialise le gestionnaire memoire de Code_Aster : Jeveux
-*   C'est aussi elle qui attribue les noms Jeveux aux objets crees en python
-*   Elle gere aussi les arguments de la ligne de commande
-* @author Nicolas Sellenet
-*/
+ * @class Initializer
+ *   Cette classe initialise le gestionnaire memoire de Code_Aster : Jeveux
+ *   C'est aussi elle qui attribue les noms Jeveux aux objets crees en python
+ *   Elle gere aussi les arguments de la ligne de commande
+ * @author Nicolas Sellenet
+ */
 class Initializer
 {
     private:
@@ -92,22 +123,22 @@ class Initializer
 
     public:
         /**
-        * Constructeur
-        */
+         * @brief Constructeur
+         */
         Initializer();
 
         /**
-        * Destructeur
-        */
+         * @brief Destructeur
+         */
         ~Initializer()
         {};
 
         /**
-        * Recuperation d'un nouveau nom de concept Jeveux
-        *   Au premier appel, la chaine "0       " est renvoyee
-        *   Au deuxieme, "1       ", etc.
-        * @return Une chaine de caractere contenant le nom
-        */
+         * @brief Recuperation d'un nouveau nom de concept Jeveux
+         *   Au premier appel, la chaine "0       " est renvoyee
+         *   Au deuxieme, "1       ", etc.
+         * @return Une chaine de caractere contenant le nom
+         */
         string getNewResultObjectName()
         {
             ostringstream oss;
@@ -118,9 +149,9 @@ class Initializer
         };
 
         /**
-        * Recuperation d'un nom du concept Jeveux en cours de creation
-        * @return Une chaine de caractere contenant le nom
-        */
+         * @brief Recuperation d'un nom du concept Jeveux en cours de creation
+         * @return Une chaine de caractere contenant le nom
+         */
         string getResultObjectName()
         {
             ostringstream oss;
@@ -129,35 +160,35 @@ class Initializer
         };
 
         /**
-        * Recuperation d'un argument entier de la ligne de commande
-        * @param chaineQuestion Argument de la ligne de commande demande
-        * @return Entier relu
-        */
+         * @brief Recuperation d'un argument entier de la ligne de commande
+         * @param chaineQuestion Argument de la ligne de commande demande
+         * @return Entier relu
+         */
         int getIntLDC(char* chaineQuestion);
 
         /**
-        * Recuperation d'un argument double de la ligne de commande
-        * @param chaineQuestion Argument de la ligne de commande demande
-        * @return Double relu
-        */
+         * @brief Recuperation d'un argument double de la ligne de commande
+         * @param chaineQuestion Argument de la ligne de commande demande
+         * @return Double relu
+         */
         double getDoubleLDC(char* chaineQuestion);
 
         /**
-        * Recuperation d'une chaine de caractere venant de la ligne de commande
-        * @param chaineQuestion Argument de la ligne de commande demande
-        * @return Chaine
-        */
+         * @brief Recuperation d'une chaine de caractere venant de la ligne de commande
+         * @param chaineQuestion Argument de la ligne de commande demande
+         * @return Chaine
+         */
         char* getChaineLDC(char* chaineQuestion);
 
         /**
-        * Fonction permettant de generer les catalogues de Code_Aster
-        */
+         * @brief Fonction permettant de generer les catalogues de Code_Aster
+         */
         void initForCataBuilder( CommandSyntax& syntaxeDebut );
 
         /**
-        * Demarrage de Code_Aster
-        *   Appel a ibmain et a debut
-        */
+         * @brief Demarrage de Code_Aster
+         *        Appel a ibmain et a debut
+         */
         void run( int imode );
 };
 
@@ -173,17 +204,43 @@ extern void* initAster;
 extern "C" {
 #endif
 
+/**
+ * @brief Fonction permettant de demarrer Code_Aster
+ * @param imode permettant de preciser si le code doit generer les catalogues
+ * @return Chaine representant le nom Aster de la coordonnee
+ */
 void asterInitialization(int);
 
+/**
+ * @brief Fonction permettant d'arreter Code_Aster
+ */
 void asterFinalization();
 
+/**
+ * @brief Fonction permettant de faire du MAJ_CATA
+ */
 void initForCataBuilder();
 
-int getIntLDC(char*);
+/**
+ * @brief Fonction d'interrogation de la ligne de commande pour un entier
+ * @param chaineQuestion Mot-cle a relire sur la ligne de commande
+ * @return Entier correspondant a l'argument
+ */
+int getIntLDC( char* );
 
-double getDoubleLDC(char*);
+/**
+ * @brief Fonction d'interrogation de la ligne de commande pour un entier
+ * @param chaineQuestion Mot-cle a relire sur la ligne de commande
+ * @return Flottant correspondant a l'argument
+ */
+double getDoubleLDC( char* );
 
-char* getChaineLDC(char*);
+/**
+ * @brief Fonction d'interrogation de la ligne de commande pour un entier
+ * @param chaineQuestion Mot-cle a relire sur la ligne de commande
+ * @return Chaine correspondant a l'argument
+ */
+char* getChaineLDC( char* );
 
 /* defined in python.c, should be in a 'python.h' */
 void initAsterModules();

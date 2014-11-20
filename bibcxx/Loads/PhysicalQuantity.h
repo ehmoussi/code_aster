@@ -1,6 +1,29 @@
 #ifndef PHYSICALQUANTITY_H_
 #define PHYSICALQUANTITY_H_
 
+/**
+ * @file PhysicalQuantity.h
+ * @brief Fichier definissant les grandeurs physiques de Code_Aster
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <list>
 #include <set>
 #include <string>
@@ -10,64 +33,83 @@ using namespace std;
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 /**
-* enum AsterCoordinates
-*   Toutes les coordonnees des grandeurs de Code_Aster
-* @author Nicolas Sellenet
-*/
+ * @enum AsterCoordinates
+ * @brief Toutes les coordonnees des grandeurs de Code_Aster
+ */
 enum AsterCoordinates { Dx, Dy, Dz, Drx, Dry, Drz, Temperature, MiddleTemperature };
 extern const char* AsterCoordinatesNames[8];
 
 /**
-* Declaration des coordonnees du deplacement
-*   Coordonnees du deplacement
-* @author Nicolas Sellenet
-*/
+ * @def nbDisplacementCoordinates
+ * @brief Nombre de coordonnees du deplacement
+ */
 const int nbDisplacementCoordinates = 6;
+/**
+ * @def DeplCoordinates
+ * @brief Declaration des coordonnees du deplacement
+ */
 extern const AsterCoordinates DeplCoordinates[nbDisplacementCoordinates];
 
 /**
-* Declaration des coordonnees de la temperature
-*   Coordonnees du deplacement
-* @author Nicolas Sellenet
-*/
+ * @def nbThermalCoordinates
+ * @brief Nombre de coordonnees de la temperature
+ */
 const int nbThermalCoordinates = 2;
+/**
+ * @def TempCoordinates
+ * @brief Declaration des coordonnees de la temperature
+ */
 extern const AsterCoordinates TempCoordinates[nbThermalCoordinates];
 
 // Ces wrappers sont la pour autoriser que les set soitent const
 // Sinon, on aurait pas pu passer directement des const set<> en parametre template
+/**
+ * @struct WrapDepl
+ * @brief Structure destinee a definir les coordonnees autorisees pour DEPL
+ */
 struct WrapDepl
 {
-    static const set< AsterCoordinates > setOfCoordinates;
-};
-
-struct WrapTemp
-{
+    /** @brief Coordonnees autorisees pour DEPL */
     static const set< AsterCoordinates > setOfCoordinates;
 };
 
 /**
-* class PhysicalQuantity
-*   Classe definissant un grandeur physique (DEPL_R, TEMP_R, etc.)
-*   Classe template prenant en arguments :
-*    - le type (double, complex, ...)
-*    - la classe correspondant a la grandeur (DEPL, TEMP, ...)
-* @author Nicolas Sellenet
-*/
-template< class ValueType, class Wrapping >
-class PhysicalQuantity
+ * @struct WrapTemp
+ * @brief Structure destinee a definir les coordonnees autorisees pour TEMP
+ */
+struct WrapTemp
 {
-    public:
-        typedef ValueType QuantityType;
-
-        static bool hasCoordinate( AsterCoordinates test )
-        {
-            if ( Wrapping::setOfCoordinates.find( test ) == Wrapping::setOfCoordinates.end() ) return false;
-            return true;
-        }
+    /** @brief Coordonnees autorisees pour TEMP */
+    static const set< AsterCoordinates > setOfCoordinates;
 };
 
+/**
+ * @struct PhysicalQuantity
+ * @brief Classe definissant un grandeur physique (DEPL_R, TEMP_R, etc.)
+ * @author Nicolas Sellenet
+ */
+template< class ValueType, class Wrapping >
+struct PhysicalQuantity
+{
+    /** @typedef Definition du type informatique de la grandeur physique */
+    typedef ValueType QuantityType;
+
+    /**
+     * @brief Fonction statique hasCoordinate
+     * @param test coordonnee a tester
+     * @return vrai sur la coordonnee fait partie de la grandeur
+     */
+    static bool hasCoordinate( AsterCoordinates test )
+    {
+        if ( Wrapping::setOfCoordinates.find( test ) == Wrapping::setOfCoordinates.end() ) return false;
+        return true;
+    }
+};
+
+/** @typedef Definition de DEPL_R */
 typedef PhysicalQuantity< double, WrapDepl > DoubleDisplacementType;
 
+/** @typedef Definition de TEMP_R */
 typedef PhysicalQuantity< double, WrapTemp > DoubleTemperatureType;
 
 #endif /* PHYSICALQUANTITY_H_ */

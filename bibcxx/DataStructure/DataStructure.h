@@ -1,79 +1,107 @@
 #ifndef DATASTRUCTURE_H_
 #define DATASTRUCTURE_H_
 
+/**
+ * @file DataStructure.h
+ * @brief Fichier entete de la classe DataStructure
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <string>
 #include <map>
-
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 /**
-* class mere des classes representant de sd_aster
-* @author Nicolas Sellenet
-*/
+ * @class DataStructure
+ * @brief Classe mere des classes representant des sd_aster
+ * @author Nicolas Sellenet
+ */
 class DataStructure
 {
     private:
+        /** @brief Nom de la sd */
         const std::string _name;
+        /** @brief Type de la sd */
         std::string       _type;
 
     public:
         /**
-        * Constructeur
-        * @param name Nom Jeveux de la sd
-        * @param type Type Aster de la sd
-        */
+         * @brief Constructeur
+         * @param name Nom Jeveux de la sd
+         * @param type Type Aster de la sd
+         */
         DataStructure( std::string name, std::string type );
 
         /**
-        * Destructeur
-        */
+         * @brief Destructeur
+         */
         ~DataStructure();
 
         /**
-        * Function membre getName
-        * @return renvoit le nom de la sd
-        */
+         * @brief Function membre getName
+         * @return une chaine contenant le nom de la sd
+         */
         const std::string& getName() const
         {
             return _name;
         };
 
         /**
-        * Function membre getType
-        * @return renvoit le type de la sd
-        */
+         * @brief Function membre getType
+         * @return le type de la sd
+         */
         const std::string& getType() const
         {
             return _type;
         };
 
         /**
-        * Function membre debugPrint
-        *   appel IMPR_CO
-        * @param logicalUnit Unite logique d'impression
-        */
+         * @brief Function membre debugPrint
+         *        appel IMPR_CO
+         * @param logicalUnit Unite logique d'impression
+         */
         void debugPrint( const int logicalUnit ) const;
 
     protected:
         /**
-        * Methode servant a fixer a posteriori le type d'une sd
-        * @param newType chaine contenant le nouveau nom
-        */
+         * @brief Methode servant a fixer a posteriori le type d'une sd
+         * @param newType chaine contenant le nouveau nom
+         */
         void setType( const std::string newType )
         {
             _type = newType;
         };
 };
 
+/** @typedef std::map d'une chaine et des pointers vers toutes les DataStructure */
 typedef std::map< std::string, DataStructure* > mapStrSD;
+/** @typedef Iterateur sur le std::map */
 typedef mapStrSD::iterator mapStrSDIterator;
+/** @typedef Valeur contenue dans mapStrSD */
 typedef mapStrSD::value_type mapStrSDValue;
 
 /**
-* std::map< std::string, DataStructure* > mapNameDataStructure
-*   Ce map contient toutes les DataStructures initialisees
-*/
+ * @brief map< string, DataStructure* > mapNameDataStructure
+ *   Ce map contient toutes les DataStructures initialisees
+ */
 extern mapStrSD mapNameDataStructure;
 
 #endif /* DATASTRUCTURE_H_ */

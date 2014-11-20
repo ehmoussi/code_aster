@@ -1,6 +1,29 @@
 #ifndef PCFIELDONMESH_H_
 #define PCFIELDONMESH_H_
 
+/**
+ * @file PCFieldOnMesh.h
+ * @brief Fichier entete de la classe PCFieldOnMesh
+ * @author Natacha Bereux
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: natacha.bereux at edf.fr */
 
 #include <string>
@@ -11,34 +34,34 @@
 #include "Mesh/Mesh.h"
 
 /**
-* class template Piecewise Constant (PC) Field on Mesh
-*   Cette classe permet de definir une carte  (champ défini sur les mailles)
-*/
-
+ * @class Piecewise Constant (PC) Field on Mesh template
+ * @brief Cette classe permet de definir une carte (champ défini sur les mailles)
+ * @author Natacha Bereux
+ */
 template<class ValueType>
 class PCFieldOnMeshInstance
 {
     private:
-        // Nom Jeveux de la carte
+        /** @brief Nom Jeveux de la carte */
         string                  _name;
-        // Vecteur Jeveux '.NOMA'
+        /** @brief Vecteur Jeveux '.NOMA' */
         JeveuxVectorChar8       _meshName;
-        // Vecteur Jeveux '.DESC'
+        /** @brief Vecteur Jeveux '.DESC' */
         JeveuxVectorLong        _descriptor;
-        // Vecteur Jeveux '.NOLI'
+        /** @brief Vecteur Jeveux '.NOLI' */
         JeveuxVectorChar24      _nameOfLigrels;
-        // Collection  '.LIMA'
+        /** @brief Collection  '.LIMA' */
         JeveuxCollectionLong    _listOfMeshElements;
-        // Vecteur Jeveux '.VALE'
+        /** @brief Vecteur Jeveux '.VALE' */
         JeveuxVector<ValueType> _valuesList;
-        // Maillage sous-jacent
+        /** @brief Maillage sous-jacent */
         Mesh                    _supportMesh;
 
     public:
         /**
-        * Constructeur
-        * @param name Nom Jeveux de la carte
-        */
+         * @brief Constructeur
+         * @param name Nom Jeveux de la carte
+         */
         PCFieldOnMeshInstance( string name ): _name( name ),
                                               _meshName( JeveuxVectorChar8( name+".NOMA" ) ),
                                               _descriptor( JeveuxVectorLong( string( name+".DESC" ) ) ),
@@ -52,9 +75,9 @@ class PCFieldOnMeshInstance
 
 
         /**
-        * Mise a jour des pointeurs Jeveux
-        * @return true si la mise a jour s'est bien deroulee, false sinon
-        */
+         * @brief Mise a jour des pointeurs Jeveux
+         * @return true si la mise a jour s'est bien deroulee, false sinon
+         */
         bool updateValuePointers()
         {
             bool retour = _meshName->updateValuePointer();
@@ -67,10 +90,10 @@ class PCFieldOnMeshInstance
         };
 
         /**
-        * Définition du maillage sous-jacent
-        * @param currentMesh objet Mesh sur lequel le modele reposera
-        * @return renvoit true si la définition  s'est bien deroulee, false sinon
-        */
+         * @brief Définition du maillage sous-jacent
+         * @param currentMesh objet Mesh sur lequel le modele reposera
+         * @return renvoit true si la définition  s'est bien deroulee, false sinon
+         */
         bool setSupportMesh(Mesh& currentMesh)
         {
             if ( currentMesh->isEmpty() )
@@ -81,9 +104,10 @@ class PCFieldOnMeshInstance
 };
 
 /**
-* class template PCFieldOnMesh
-*   Enveloppe d'un pointeur intelligent vers un PCFieldOnMeshInstance
-*/
+ * @class PCFieldOnMesh template
+ * @brief Enveloppe d'un pointeur intelligent vers un PCFieldOnMeshInstance
+ * @author Natacha Bereux
+ */
 template<class ValueType>
 class PCFieldOnMesh
 {
@@ -117,7 +141,9 @@ class PCFieldOnMesh
         };
 };
 
+/** @typedef Definition d'une carte de double */
 typedef PCFieldOnMesh< double > PCFieldOnMeshDouble;
+/**  @typedef Definition d'une carte de char[8] */
 typedef PCFieldOnMesh< char[8] > PCFieldOnMeshChar8;
 
 #endif /* PCFIELDONMESH_H_ */

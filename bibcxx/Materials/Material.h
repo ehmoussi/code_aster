@@ -1,38 +1,61 @@
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
 
+/**
+ * @file Material.h
+ * @brief Fichier entete de la classe Material
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "DataStructure/DataStructure.h"
 #include "Materials/MaterialBehaviour.h"
 
 /**
-* class MaterialInstance
-*   produit une sd identique a celle produite par DEFI_MATERIAU
-* @author Nicolas Sellenet
-*/
+ * @class MaterialInstance
+ * @brief produit une sd identique a celle produite par DEFI_MATERIAU
+ * @author Nicolas Sellenet
+ */
 class MaterialInstance: public DataStructure
 {
     private:
-        // Nom Jeveux de la SD
+        /** @brief Nom Jeveux de la SD */
         const string                       _jeveuxName;
-        // Vecteur Jeveux '.MATERIAU.NOMRC'
+        /** @brief Vecteur Jeveux '.MATERIAU.NOMRC' */
         JeveuxVectorChar32                 _materialBehaviourNames;
-        // Nombre de MaterialBehaviour deja ajoutes
+        /** @brief Nombre de MaterialBehaviour deja ajoutes */
         int                                _nbMaterialBehaviour;
-        // Vecteur contenant les GeneralMaterialBehaviour ajoutes par l'utilisateur
+        /** @brief Vecteur contenant les GeneralMaterialBehaviour ajoutes par l'utilisateur */
         vector< GeneralMaterialBehaviour > _vecMatBehaviour;
 
     public:
         /**
-        * Constructeur
-        */
+         * @brief Constructeur
+         */
         MaterialInstance();
 
         /**
-        * Ajout d'un GeneralMaterialBehaviour
-        * @param curMaterBehav GeneralMaterialBehaviour a ajouter au MaterialInstance
-        */
+         * @brief Ajout d'un GeneralMaterialBehaviour
+         * @param curMaterBehav GeneralMaterialBehaviour a ajouter au MaterialInstance
+         */
         void addMaterialBehaviour(GeneralMaterialBehaviour& curMaterBehav)
         {
             ++_nbMaterialBehaviour;
@@ -45,19 +68,19 @@ class MaterialInstance: public DataStructure
         };
 
         /**
-        * Construction du MaterialInstance
-        *   A partir des GeneralMaterialBehaviour ajoutes par l'utilisateur :
-        *   creation de objets Jeveux
-        * @return Booleen indiquant que la construction s'est bien deroulee
-        */
+         * @brief Construction du MaterialInstance
+         *   A partir des GeneralMaterialBehaviour ajoutes par l'utilisateur :
+         *   creation de objets Jeveux
+         * @return Booleen indiquant que la construction s'est bien deroulee
+         */
         bool build();
 };
 
 /**
-* class Material
-*   Enveloppe d'un pointeur intelligent vers un MaterialInstance
-* @author Nicolas Sellenet
-*/
+ * class Material
+ * @brief Enveloppe d'un pointeur intelligent vers un MaterialInstance
+ * @author Nicolas Sellenet
+ */
 class Material
 {
     public:

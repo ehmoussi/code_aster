@@ -1,6 +1,6 @@
 %module code_aster
 %{
-#include "LinearAlgebra/DOFNumerotation.h"
+#include "LinearAlgebra/DOFNumbering.h"
 %}
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
@@ -9,14 +9,14 @@
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "LinearAlgebra/LinearSolver.h"
 
-class DOFNumerotation
+class DOFNumbering
 {
     public:
-        DOFNumerotation();
-        ~DOFNumerotation();
+        DOFNumbering();
+        ~DOFNumbering();
 };
 
-%extend DOFNumerotation
+%extend DOFNumbering
 {
     bool computeNumerotation()
     {

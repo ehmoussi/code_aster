@@ -8,7 +8,7 @@
 #include "Loads/MechanicalLoad.h"
 #include "Materials/AllocatedMaterial.h"
 #include "DataFields/FieldOnNodes.h"
-#include "LinearAlgebra/DOFNumerotation.h"
+#include "LinearAlgebra/DOFNumbering.h"
 
 class ElementaryVector
 {
@@ -24,7 +24,7 @@ class ElementaryVector
         return (*$self)->addMechanicalLoad( currentLoad );
     }
 
-    const FieldOnNodes< double > assembleVector( const DOFNumerotation& currentNumerotation )
+    const FieldOnNodes< double > assembleVector( const DOFNumbering& currentNumerotation )
     {
         return (*$self)->assembleVector( currentNumerotation );
     }
