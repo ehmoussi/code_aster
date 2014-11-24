@@ -1,4 +1,3 @@
-!
 ! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -15,11 +14,13 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine utroun(ch1, idec, ch2, isup)
-        character(len=24) :: ch1
-        integer :: idec
-        character(len=24) :: ch2
-        integer :: isup
-    end subroutine utroun
+    subroutine xfem_is_syme(tab_mat, jadr, nm, iret)
+        integer :: nm
+        integer :: jadr
+        real(kind=8) :: tab_mat(*)
+        integer :: iret
+    end subroutine xfem_is_syme
 end interface

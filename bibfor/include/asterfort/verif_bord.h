@@ -1,3 +1,4 @@
+!
 ! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -14,10 +15,9 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-interface 
-    subroutine j2d_i1_3d(sig6, xj2d, xi1)
-        real(kind=8) :: sig6(6)
-        real(kind=8) :: xj2d
-        real(kind=8) :: xi1
-    end subroutine j2d_i1_3d
-end interface 
+          interface 
+            subroutine verif_bord(modele,ligrel)
+              character(len=*), intent(in) :: modele
+              character(len=*), intent(in) :: ligrel
+            end subroutine verif_bord
+          end interface 
