@@ -144,6 +144,6 @@ class PCFieldOnMesh
 /** @typedef Definition d'une carte de double */
 typedef PCFieldOnMesh< double > PCFieldOnMeshDouble;
 /**  @typedef Definition d'une carte de char[8] */
-typedef PCFieldOnMesh< char[8] > PCFieldOnMeshChar8;
+typedef PCFieldOnMesh< JeveuxChar8 > PCFieldOnMeshChar8;
 
 #endif /* PCFIELDONMESH_H_ */

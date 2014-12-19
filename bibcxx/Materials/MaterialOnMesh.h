@@ -1,9 +1,9 @@
-#ifndef ALLOCATEDMATERIAL_H_
-#define ALLOCATEDMATERIAL_H_
+#ifndef MATERIALONMESH_H_
+#define MATERIALONMESH_H_
 
 /**
- * @file AllocatedMaterial.h
- * @brief Fichier entete de la classe AllocatedMaterial
+ * @file MaterialOnMesh.h
+ * @brief Fichier entete de la classe MaterialOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
@@ -32,11 +32,11 @@
 #include "DataFields/PCFieldOnMesh.h"
 
 /**
- * @class AllocatedMaterialInstance
+ * @class MaterialOnMeshInstance
  * @brief produit une sd identique a celle produite par AFFE_MATERIAU
  * @author Nicolas Sellenet
  */
-class AllocatedMaterialInstance: public DataStructure
+class MaterialOnMeshInstance: public DataStructure
 {
     private:
         // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
@@ -63,7 +63,7 @@ class AllocatedMaterialInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        AllocatedMaterialInstance();
+        MaterialOnMeshInstance();
 
         /**
          * @brief Ajout d'un materiau sur tout le maillage
@@ -100,7 +100,7 @@ class AllocatedMaterialInstance: public DataStructure
          * @brief Definition du maillage support
          * @param currentMesh objet Mesh sur lequel le modele reposera
          */
-        bool setSupportMesh(Mesh& currentMesh)
+        bool setSupportMesh( Mesh& currentMesh )
         {
             if ( currentMesh->isEmpty() )
                 throw string("Mesh is empty");
@@ -121,40 +121,40 @@ class AllocatedMaterialInstance: public DataStructure
 };
 
 /**
- * @class AllocatedMaterial
- * @brief Enveloppe d'un pointeur intelligent vers un AllocatedMaterialInstance
+ * @class MaterialOnMesh
+ * @brief Enveloppe d'un pointeur intelligent vers un MaterialOnMeshInstance
  * @author Nicolas Sellenet
  */
-class AllocatedMaterial
+class MaterialOnMesh
 {
     public:
-        typedef boost::shared_ptr< AllocatedMaterialInstance > AllocatedMaterialPtr;
+        typedef boost::shared_ptr< MaterialOnMeshInstance > MaterialOnMeshPtr;
 
     private:
-        AllocatedMaterialPtr _materAllocPtr;
+        MaterialOnMeshPtr _materAllocPtr;
 
     public:
-        AllocatedMaterial(bool initilisation = true): _materAllocPtr()
+        MaterialOnMesh(bool initilisation = true): _materAllocPtr()
         {
             if ( initilisation == true )
-                _materAllocPtr = AllocatedMaterialPtr( new AllocatedMaterialInstance() );
+                _materAllocPtr = MaterialOnMeshPtr( new MaterialOnMeshInstance() );
         };
 
-        ~AllocatedMaterial()
+        ~MaterialOnMesh()
         {};
 
-        AllocatedMaterial& operator=(const AllocatedMaterial& tmp)
+        MaterialOnMesh& operator=(const MaterialOnMesh& tmp)
         {
             _materAllocPtr = tmp._materAllocPtr;
             return *this;
         };
 
-        const AllocatedMaterialPtr& operator->() const
+        const MaterialOnMeshPtr& operator->() const
         {
             return _materAllocPtr;
         };
 
-        AllocatedMaterialInstance& operator*(void) const
+        MaterialOnMeshInstance& operator*(void) const
         {
             return *_materAllocPtr;
         };
@@ -166,4 +166,4 @@ class AllocatedMaterial
         };
 };
 
-#endif /* ALLOCATEDMATERIAL_H_ */
+#endif /* MATERIALONMESH_H_ */

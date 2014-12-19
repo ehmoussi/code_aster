@@ -16,3 +16,5 @@ Remarque : Renvoyer par valeur entre le C++ et le python plutôt que par referen
 debugPrint ne devrait pas etre une methode de DataStructure mais plutot des objets Jeveux de base
 
 Utiliser la programmation generique pour la manipulation des matrices et des vecteurs
+
+Peut-etre faire en sorte que KinematicsLoad et MechanicalLoad herite d'une meme classe mere

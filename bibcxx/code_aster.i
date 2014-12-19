@@ -48,7 +48,7 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
 %include "Mesh/Mesh.i"
 %include "Modelisations/Model.i"
 %include "Materials/Material.i"
-%include "Materials/AllocatedMaterial.i"
+%include "Materials/MaterialOnMesh.i"
 %include "Results/ResultsContainer.i"
 %include "LinearAlgebra/ElementaryMatrix.i"
 %include "LinearAlgebra/ElementaryVector.i"
@@ -56,6 +56,7 @@ le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldO
 %include "LinearAlgebra/LinearSolver.i"
 %include "LinearAlgebra/AssemblyMatrix.i"
 %include "Function/Function.i"
+%include "Solvers/StaticMechanicalSolver.i"
 
 %include "RunManager/CataBuilder.i"
 

@@ -140,10 +140,9 @@ void asterInitialization( int imode )
 void asterFinalization()
 {
     CommandSyntax syntaxeFin( "FIN", false, "" );
-    SimpleKeyWordInt mStatut = SimpleKeyWordInt("STATUT");
-    mStatut.addValues(0);
-    syntaxeFin.addSimpleKeywordInteger(mStatut);
-    printf("FIN\n");
+    SimpleKeyWordInt mCSStatut = SimpleKeyWordInt( "STATUT" );
+    mCSStatut.addValues( 0 );
+    syntaxeFin.addSimpleKeywordInteger( mCSStatut );
     CALL_EXECOP(9999);
 }
 

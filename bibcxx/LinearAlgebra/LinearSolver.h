@@ -166,7 +166,8 @@ class LinearSolverInstance
          * @param currentRenumber Type de renumeroteur
          * @todo recuperer le code retour de isAllowedRenumberingForSolver
          */
-        LinearSolverInstance(const LinearSolverEnum currentLinearSolver, const Renumbering currentRenumber):
+        LinearSolverInstance( const LinearSolverEnum currentLinearSolver,
+                              const Renumbering currentRenumber ):
                     _linearSolver( currentLinearSolver ),
                     _renumber( currentRenumber )
         {
@@ -192,9 +193,10 @@ class LinearSolverInstance
         };
 
         /**
-         * @brief Impression du champ au format MED
-         * @param pathFichier path ne servant pour le moment a rien
-         * @return renvoit true
+         * @brief Inversion du systeme lineaire
+         * @param currentMatrix Matrice assemblee
+         * @param currentRHS Second membre
+         * @return champ aux noeuds resultat
          */
         FieldOnNodesDouble solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
                                                     const FieldOnNodesDouble& currentRHS ) const;
@@ -214,6 +216,9 @@ class LinearSolver
         LinearSolverPtr _linearSolverPtr;
 
     public:
+        LinearSolver(): _linearSolverPtr()
+        {};
+
         LinearSolver( const LinearSolverEnum currentLinearSolver,
                       const Renumbering currentRenumber ): _linearSolverPtr()
         {

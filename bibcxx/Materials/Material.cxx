@@ -48,7 +48,7 @@ bool MaterialInstance::build()
         string curStr( (*curIter)->getAsterName().c_str() );
         curStr.resize( 32, ' ' );
         // Recopie dans le ".MATERIAU.NOMRC"
-        CopyCStrToFStr( (*_materialBehaviourNames)[num], const_cast< char* > (curStr.c_str()), 32 );
+        (*_materialBehaviourNames)[num] = curStr.c_str();
         ++num;
 
         // Construction des objets Jeveux .CPT.XXXXXX.VALR, .CPT.XXXXXX.VALK, ...

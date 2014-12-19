@@ -19,21 +19,21 @@
 
 %module code_aster
 %{
-#include "Materials/AllocatedMaterial.h"
+#include "Materials/MaterialOnMesh.h"
 %}
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 //%include "Materials/Material.i"
 
-class AllocatedMaterial
+class MaterialOnMesh
 {
     public:
-        AllocatedMaterial();
-        ~AllocatedMaterial();
+        MaterialOnMesh();
+        ~MaterialOnMesh();
 };
 
-%extend AllocatedMaterial
+%extend MaterialOnMesh
 {
     void debugPrint( const int logicalUnit )
     {

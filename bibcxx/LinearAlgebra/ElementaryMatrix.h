@@ -29,7 +29,7 @@
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modelisations/Model.h"
-#include "Materials/AllocatedMaterial.h"
+#include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
 
 /**
@@ -54,8 +54,8 @@ class ElementaryMatrixInstance: public DataStructure
         /** @brief Modele support */
         Model              _supportModel;
         /** @brief Champ de materiau a utiliser */
-        AllocatedMaterial  _material;
-        /** @brief Chargement Mecanique */
+        MaterialOnMesh     _material;
+        /** @brief Chargements Mecaniques */
         ListMecaLoad       _listOfMechanicalLoads;
 
     public:
@@ -95,9 +95,9 @@ class ElementaryMatrixInstance: public DataStructure
 
         /**
          * @brief Methode permettant de definir le champ de materiau
-         * @param currentMaterial objet AllocatedMaterial
+         * @param currentMaterial objet MaterialOnMesh
          */
-        void setAllocatedMaterial( const AllocatedMaterial& currentMaterial )
+        void setMaterialOnMesh( const MaterialOnMesh& currentMaterial )
         {
             _material = currentMaterial;
         };

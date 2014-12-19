@@ -58,7 +58,7 @@ bool KinematicsLoadInstance::build()
               curIter != _listOfDoubleImposedDisplacement.end();
               ++curIter )
         {
-            // Definition d'une accourence d'un mot-cle facteur
+            // Definition d'une occurence d'un mot-cle facteur
             FactorKeywordOccurence occurMECA_IMPO = FactorKeywordOccurence();
 
             SimpleKeyWordStr mCSGroup;

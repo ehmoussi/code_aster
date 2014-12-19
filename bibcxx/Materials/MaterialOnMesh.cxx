@@ -1,6 +1,6 @@
 /**
- * @file AllocatedMaterial.cxx
- * @brief Implementation de AllocatedMaterial
+ * @file MaterialOnMesh.cxx
+ * @brief Implementation de MaterialOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
@@ -23,17 +23,17 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Materials/AllocatedMaterial.h"
+#include "Materials/MaterialOnMesh.h"
 #include <typeinfo>
 
-AllocatedMaterialInstance::AllocatedMaterialInstance():
+MaterialOnMeshInstance::MaterialOnMeshInstance():
                                 DataStructure( initAster->getNewResultObjectName(), "CHAM_MATER" ),
                                 _listOfMaterials( PCFieldOnMeshChar8( getName() + ".CHAMP_MAT " ) ),
                                 _listOfTemperatures( PCFieldOnMeshDouble( getName() + ".TEMPE_REF " ) ),
                                 _supportMesh( Mesh(false) )
 {};
 
-bool AllocatedMaterialInstance::build()
+bool MaterialOnMeshInstance::build()
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeAffeMater( "AFFE_MATERIAU", true,

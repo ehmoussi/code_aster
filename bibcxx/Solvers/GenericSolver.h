@@ -3,7 +3,7 @@
 
 /**
  * @file GenericSolver.h
- * @brief 
+ * @brief Definition de ce qu'est un solveur generique
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
@@ -28,6 +28,11 @@
 
 #include "Results/ResultsContainer.h"
 
+/**
+ * @class GenericSolver
+ * @brief Classe virtuelle definissant un solveur generique
+ * @author Nicolas Sellenet
+ */
 class GenericSolver
 {
     private:
@@ -36,6 +41,10 @@ class GenericSolver
         GenericSolver()
         {};
 
+        /**
+         * @brief Methode permettant d'executer le solveur
+         * @return une sd_resultat Aster
+         */
         virtual ResultsContainer execute() = 0;
 };
 

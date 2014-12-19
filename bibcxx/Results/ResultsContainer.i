@@ -30,7 +30,11 @@ class ResultsContainer
         ResultsContainer();
         ~ResultsContainer();
 };
-/*
+
 %extend ResultsContainer
 {
-}*/
+    void debugPrint( const int logicalUnit )
+    {
+        return (*$self)->debugPrint( logicalUnit );
+    }
+}
