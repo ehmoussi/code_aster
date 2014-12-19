@@ -31,7 +31,7 @@ ElementaryMatrixInstance::ElementaryMatrixInstance():
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
                 _supportModel( Model( false ) ),
-                _material( AllocatedMaterial( false ) )
+                _material( MaterialOnMesh( false ) )
 {};
 
 bool ElementaryMatrixInstance::computeMechanicalRigidity()

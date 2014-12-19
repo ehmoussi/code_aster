@@ -73,7 +73,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          * @param i Indice dans le tableau Jeveux
          * @return la valeur du tableau Jeveux a la position i
          */
-        const ValueType &operator[]( int i ) const
+        inline const ValueType &operator[]( int i ) const
         {
             return _valuePtr[i];
         };
@@ -83,7 +83,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          * @param i Indice dans le tableau Jeveux
          * @return la valeur du tableau Jeveux a la position i
          */
-        ValueType &operator[]( int i )
+        inline ValueType &operator[]( int i )
         {
             return _valuePtr[i];
         };
@@ -183,15 +183,15 @@ typedef JeveuxVector< short int > JeveuxVectorShort;
 typedef JeveuxVector< double > JeveuxVectorDouble;
 /** @typedef Definition d'un vecteur Jeveux double complex */
 typedef JeveuxVector< double complex > JeveuxVectorComplex;
-/** @typedef Definition d'un vecteur Jeveux char[8] */
-typedef JeveuxVector< char[8] > JeveuxVectorChar8;
-/** @typedef Definition d'un vecteur Jeveux char[16] */
-typedef JeveuxVector< char[16] > JeveuxVectorChar16;
-/** @typedef Definition d'un vecteur Jeveux char[24] */
-typedef JeveuxVector< char[24] > JeveuxVectorChar24;
-/** @typedef Definition d'un vecteur Jeveux char[32] */
-typedef JeveuxVector< char[32] > JeveuxVectorChar32;
-/** @typedef Definition d'un vecteur Jeveux char[80] */
-typedef JeveuxVector< char[80] > JeveuxVectorChar80;
+/** @typedef Definition d'un vecteur de JeveuxChar8 */
+typedef JeveuxVector< JeveuxChar8 > JeveuxVectorChar8;
+/** @typedef Definition d'un vecteur JeveuxChar16 */
+typedef JeveuxVector< JeveuxChar16 > JeveuxVectorChar16;
+/** @typedef Definition d'un vecteur JeveuxChar24 */
+typedef JeveuxVector< JeveuxChar24 > JeveuxVectorChar24;
+/** @typedef Definition d'un vecteur JeveuxChar32 */
+typedef JeveuxVector< JeveuxChar32 > JeveuxVectorChar32;
+/** @typedef Definition d'un vecteur JeveuxChar80 */
+typedef JeveuxVector< JeveuxChar80 > JeveuxVectorChar80;
 
 #endif /* JEVEUXVECTOR_H_ */

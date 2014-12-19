@@ -54,7 +54,8 @@ class ResultsContainerInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        ResultsContainerInstance(): DataStructure( initAster->getNewResultObjectName(), "???" ),
+        ResultsContainerInstance( const string resuTyp = "???" ):
+                DataStructure( initAster->getNewResultObjectName(), resuTyp ),
                 _symbolicNamesOfFields( JeveuxBidirectionalMap( getName() + "           .DESC" ) ),
                 _namesOfFields( JeveuxCollectionChar24( getName() + "           .TACH" ) ),
                 _accessVariables( JeveuxBidirectionalMap( getName() + "           .NOVA" ) ),
@@ -77,10 +78,15 @@ class ResultsContainer
         ResultsContainerPtr _meshPtr;
 
     public:
-        ResultsContainer(bool initilisation = true): _meshPtr()
+        ResultsContainer( bool initilisation = true ): _meshPtr()
         {
             if ( initilisation == true )
                 _meshPtr = ResultsContainerPtr( new ResultsContainerInstance() );
+        };
+
+        ResultsContainer( const string resuTyp ): _meshPtr()
+        {
+            _meshPtr = ResultsContainerPtr( new ResultsContainerInstance( resuTyp ) );
         };
 
         ~ResultsContainer()

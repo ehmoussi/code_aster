@@ -28,7 +28,7 @@
 
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "Materials/AllocatedMaterial.h"
+#include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
 #include "DataFields/FieldOnNodes.h"
 #include "LinearAlgebra/DOFNumbering.h"
@@ -53,7 +53,7 @@ class ElementaryVectorInstance: public DataStructure
         /** @brief Booleen indiquant si la sd est vide */
         bool                   _isEmpty;
         /** @brief Champ de materiau a utiliser */
-        AllocatedMaterial      _material;
+        MaterialOnMesh         _material;
         /** @brief Charges ajoutees aux vecteurs elementaires */
         list< MechanicalLoad > _listOfMechanicalLoad;
 
@@ -100,9 +100,9 @@ class ElementaryVectorInstance: public DataStructure
 
         /**
          * @brief Methode permettant de definir le champ de materiau
-         * @param currentMaterial objet AllocatedMaterial
+         * @param currentMaterial objet MaterialOnMesh
          */
-        void setAllocatedMaterial( const AllocatedMaterial& currentMaterial )
+        void setMaterialOnMesh( const MaterialOnMesh& currentMaterial )
         {
             _material = currentMaterial;
         };

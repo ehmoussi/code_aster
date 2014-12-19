@@ -19,47 +19,54 @@
 
 %module code_aster
 %{
-#include "LinearAlgebra/ElementaryVector.h"
+#include "Solvers/StaticMechanicalSolver.h"
 %}
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "Loads/KinematicsLoad.h"
 #include "Loads/MechanicalLoad.h"
+#include "LinearAlgebra/LinearSolver.h"
 #include "Materials/MaterialOnMesh.h"
-#include "DataFields/FieldOnNodes.h"
-#include "LinearAlgebra/DOFNumbering.h"
+#include "Modelisations/Model.h"
+#include "Results/ResultsContainer.h"
 
-class ElementaryVector
+class StaticMechanicalSolver
 {
     public:
-        ElementaryVector();
-        ~ElementaryVector();
+        StaticMechanicalSolver();
+        ~StaticMechanicalSolver();
 };
 
-%extend ElementaryVector
+%extend StaticMechanicalSolver
 {
+    void addKinematicsLoad( const KinematicsLoad& currentLoad )
+    {
+        return (*$self)->addKinematicsLoad( currentLoad );
+    }
+
     void addMechanicalLoad( const MechanicalLoad& currentLoad )
     {
         return (*$self)->addMechanicalLoad( currentLoad );
     }
 
-    const FieldOnNodes< double > assembleVector( const DOFNumbering& currentNumerotation )
+    ResultsContainer execute()
     {
-        return (*$self)->assembleVector( currentNumerotation );
+        return (*$self)->execute();
     }
 
-    bool computeMechanicalLoads()
+    void setLinearSolver( const LinearSolver& currentSolver )
     {
-        return (*$self)->computeMechanicalLoads();
-    }
-
-    void debugPrint( const int logicalUnit )
-    {
-        return (*$self)->debugPrint( logicalUnit );
+        return (*$self)->setLinearSolver( currentSolver );
     }
 
     void setMaterialOnMesh( const MaterialOnMesh& currentMaterial )
     {
         return (*$self)->setMaterialOnMesh( currentMaterial );
+    }
+
+    void setSupportModel( const Model& currentModel )
+    {
+        return (*$self)->setSupportModel( currentModel );
     }
 }

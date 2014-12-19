@@ -30,7 +30,7 @@ ElementaryVectorInstance::ElementaryVectorInstance():
                 _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
-                _material( AllocatedMaterial( false ) )
+                _material( MaterialOnMesh( false ) )
 {};
 
 FieldOnNodesDouble ElementaryVectorInstance::assembleVector( const DOFNumbering& currentNumerotation )

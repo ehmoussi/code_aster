@@ -25,7 +25,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "Modelisations/Model.h"
-#include "Materials/AllocatedMaterial.h"
+#include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
 
 class ElementaryMatrix
@@ -52,9 +52,9 @@ class ElementaryMatrix
         return (*$self)->debugPrint( logicalUnit );
     }
 
-    void setAllocatedMaterial( const AllocatedMaterial& currentMaterial )
+    void setMaterialOnMesh( const MaterialOnMesh& currentMaterial )
     {
-        return (*$self)->setAllocatedMaterial( currentMaterial );
+        return (*$self)->setMaterialOnMesh( currentMaterial );
     }
 
     void setSupportModel( const Model& currentModel )

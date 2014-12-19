@@ -18,7 +18,7 @@ monMaillage = code_aster.Mesh()
 monMaillage.readMEDFile( "test001a.mmed" )
 monMaillage.debugPrint( 8 )
 
-affectMat = code_aster.AllocatedMaterial()
+affectMat = code_aster.MaterialOnMesh()
 affectMat.setSupportMesh( monMaillage )
 
 affectMat.addMaterialOnAllMesh( acier )

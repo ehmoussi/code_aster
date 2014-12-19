@@ -45,7 +45,7 @@ bool GeneralMaterialBehaviourInstance::build()
 
             string nameOfProperty = (*curIter2).second.getName();
             nameOfProperty.resize( 16, ' ' );
-            CopyCStrToFStr( (*_char16Values)[position], const_cast< char* > (nameOfProperty.c_str()), 16 );
+            (*_char16Values)[position] = nameOfProperty.c_str();
         }
         else if ( curIter3 != _mapOfComplexMaterialProperties.end() )
         {

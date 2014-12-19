@@ -27,6 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "RunManager/Initializer.h"
+#include "MemoryManager/JeveuxString.h"
 #include <complex.h>
 
 /**
@@ -68,27 +69,27 @@ template<> struct AllowedJeveuxType< double complex >
     static const unsigned short numTypeJeveux = Complex;
 };
 
-template<> struct AllowedJeveuxType< char[8] >
+template<> struct AllowedJeveuxType< JeveuxChar8 >
 {
     static const unsigned short numTypeJeveux = Char8;
 };
 
-template<> struct AllowedJeveuxType< char[16] >
+template<> struct AllowedJeveuxType< JeveuxChar16 >
 {
     static const unsigned short numTypeJeveux = Char16;
 };
 
-template<> struct AllowedJeveuxType< char[24] >
+template<> struct AllowedJeveuxType< JeveuxChar24 >
 {
     static const unsigned short numTypeJeveux = Char24;
 };
 
-template<> struct AllowedJeveuxType< char[32] >
+template<> struct AllowedJeveuxType< JeveuxChar32 >
 {
     static const unsigned short numTypeJeveux = Char32;
 };
 
-template<> struct AllowedJeveuxType< char[80] >
+template<> struct AllowedJeveuxType< JeveuxChar80 >
 {
     static const unsigned short numTypeJeveux = Char80;
 };
