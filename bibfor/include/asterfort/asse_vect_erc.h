@@ -15,11 +15,14 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-interface
-    subroutine char_soli_mat1(ab, ac, matr_inve_1, matr_2)
-        real(kind=8), intent(in) :: ab(3)
-        real(kind=8), intent(in) :: ac(3)
-        real(kind=8), intent(out) :: matr_inve_1(3, 3)
-        real(kind=8), intent(out) :: matr_2(3, 12)
-    end subroutine char_soli_mat1
-end interface
+interface 
+    subroutine asse_vect_erc(baseno,nom_vect_erc,nommes,matobs, obsdim, alpha,n_ordre_mes,omega)
+        
+    character(len=8),intent(in) :: nommes,baseno
+    character(len=19),intent(in) :: nom_vect_erc
+    integer,intent(in) :: obsdim(3),n_ordre_mes
+    real(kind=8),intent(in) :: alpha,omega
+    character(len=24),intent(in) :: matobs(3)
+        
+    end subroutine  asse_vect_erc
+end interface 

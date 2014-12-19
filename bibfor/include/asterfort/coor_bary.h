@@ -15,11 +15,12 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-interface
-    subroutine char_soli_mat3(am, coef, matr_6, matr_8)
-        real(kind=8), intent(in) :: am(3)
-        real(kind=8), intent(in) :: coef
-        real(kind=8), intent(in) :: matr_6(3, 9)
-        real(kind=8), intent(out) :: matr_8(3, 9)
-    end subroutine char_soli_mat3
-end interface
+          interface 
+            subroutine coor_bary(coor,xm,dim,lino,cobary)
+              real(kind=8), intent(in) :: coor(*)
+              real(kind=8), intent(in) :: xm(3)
+              integer, intent(in) :: dim
+              integer, intent(in) :: lino(*)
+              real(kind=8), intent(out) :: cobary(*)
+            end subroutine coor_bary
+          end interface 
