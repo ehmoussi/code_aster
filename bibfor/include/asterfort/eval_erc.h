@@ -15,20 +15,14 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-#include "asterf_types.h"
-!
-interface
-    subroutine drz03d_tria(dist_mini, nb_node, list_node, coor_node, numnoe_a, &
-                           numnoe_b, numnoe_c, ab, ac, l_trian)
-        real(kind=8), intent(in) :: dist_mini
-        integer, intent(in) :: nb_node
-        integer, intent(in) :: list_node(*)
-        real(kind=8), intent(in) :: coor_node(*)
-        integer, intent(in) :: numnoe_a
-        integer, intent(out) :: numnoe_b
-        integer, intent(out) :: numnoe_c
-        real(kind=8), intent(out) :: ab(3)
-        real(kind=8), intent(out) :: ac(3)
-        aster_logical, intent(out) :: l_trian
-    end subroutine drz03d_tria
-end interface
+interface 
+    subroutine eval_erc(baseno,dynam1,vecterc,nommes,matobs,obsdim,ifreq,omega,alpha, &
+                        cout_fon,terme_uv)
+        character(len=8),intent(in) :: baseno,nommes
+        character(len=19),intent(in) :: dynam1
+        integer,intent(in) :: ifreq,obsdim(3)
+        real(kind=8),intent(in) :: vecterc(*),omega,alpha
+        real(kind=8),intent(out) :: cout_fon,terme_uv
+        character(len=24),intent(in) :: matobs(3)
+    end subroutine eval_erc
+end interface 

@@ -15,8 +15,21 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+#include "asterf_types.h"
+
 interface
-    subroutine cmdgma(mailla)
-        character(len=*) :: mailla
-    end subroutine cmdgma
+    subroutine dgels(trans, m, n, nrhs, a, lda,&
+                      b, ldb, work, lwork, info)
+        character(len=1) ,intent(in) :: trans
+        integer, intent(in) :: ldb
+        integer, intent(in) :: lda
+        integer, intent(in) :: m
+        integer, intent(in) :: n
+        integer, intent(in) :: nrhs
+        real(kind=8) ,intent(inout) :: a(lda, *)
+        real(kind=8) ,intent(inout) :: b(ldb, *)
+        real(kind=8) ,intent(out) :: work(*)
+        integer, intent(in) :: lwork
+        blas_int, intent(out) :: info
+    end subroutine dgels
 end interface

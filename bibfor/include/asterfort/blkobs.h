@@ -15,14 +15,11 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-interface
-    subroutine char_soli_mat2(am, matr_inve_1, matr_2, matr_4, matr_3,&
-                              matr_5)
-        real(kind=8), intent(in) :: am(3)
-        real(kind=8), intent(in) :: matr_inve_1(3, 3)
-        real(kind=8), intent(in) :: matr_2(3, 12)
-        real(kind=8), intent(in) :: matr_4(3, 12)
-        real(kind=8), intent(inout) :: matr_3(3, 3)
-        real(kind=8), intent(inout) :: matr_5(3, 12)
-    end subroutine char_soli_mat2
-end interface
+interface 
+    subroutine blkobs(matobs, obsdim,alpha,matprod)
+        integer,intent(in) :: obsdim(3)
+        character(len=24),intent(in) :: matobs(3)
+        real(kind=8),intent(in) :: alpha
+        character(len=24),intent(out) :: matprod(4)
+    end subroutine blkobs
+end interface 

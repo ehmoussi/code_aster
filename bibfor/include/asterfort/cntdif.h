@@ -15,17 +15,12 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-interface
-    subroutine drz03d(noma, type_vale, dist_mini, nb_node, list_node, &
-                      type_lagr, lisrel, nom_noeuds, type_transf)
-        character(len=8), intent(in)  :: noma
-        character(len=4), intent(in) :: type_vale
-        real(kind=8), intent(in) :: dist_mini
-        integer, intent(in) :: nb_node
-        character(len=24), intent(in) :: list_node
-        character(len=2), intent(in) :: type_lagr
-        character(len=19), intent(in) :: lisrel
-        character(len=8), intent(out) :: nom_noeuds(:)
-        character(len=1), intent(out) :: type_transf
-    end subroutine drz03d
-end interface
+interface 
+    subroutine cntdif(ivect, dimen, diff, valdif, maxdim)
+        integer,intent(in) :: maxdim
+        integer,intent(in) :: dimen
+        integer,intent(in) :: ivect
+        integer,intent(out) :: diff
+        integer,intent(out) :: valdif(maxdim)
+    end subroutine cntdif
+end interface 

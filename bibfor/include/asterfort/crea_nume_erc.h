@@ -15,17 +15,11 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-interface
-    subroutine drz02d(noma, type_vale, dist_mini, nb_node, list_node,&
-                      type_lagr, lisrel, nom_noeuds, type_transf)
-        character(len=8), intent(in)  :: noma
-        character(len=4), intent(in) :: type_vale
-        real(kind=8), intent(in) :: dist_mini
-        integer, intent(in) :: nb_node
-        character(len=24), intent(in) :: list_node
-        character(len=2), intent(in) :: type_lagr
-        character(len=19), intent(in) :: lisrel
-        character(len=8), intent(out) :: nom_noeuds(:)
-        character(len=1), intent(out) :: type_transf
-    end subroutine drz02d
-end interface
+interface 
+    subroutine crea_nume_erc(baseno, numnu,matprod,nom_nume_erc,nom_matr_erc,nom_vect_erc,solveu)
+      character(len=8),intent(in) ::  numnu,baseno
+      character(len=24),intent(in) ::matprod(4)
+      character(len=14),intent(out) :: nom_nume_erc
+      character(len=19),intent(out) :: nom_matr_erc,nom_vect_erc,solveu
+    end subroutine crea_nume_erc
+end interface 
