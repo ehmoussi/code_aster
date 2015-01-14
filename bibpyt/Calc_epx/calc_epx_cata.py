@@ -113,6 +113,15 @@ cata_compor = {
         'NB_VAR_EPX': 5,
         'TRANSFO': True,
     },
+    'VMIS_JOHN_COOK': {
+        'LOI': ['ELAS', 'ECRO_COOK'],
+        'BESOIN': ['o', 'o', ],
+        'REPEAT': ['n', 'n'],
+        'NOM_EPX': 'VMJC',
+        'NB_VAR_ASTER': 5,
+        'NB_VAR_EPX': 8,
+        'TRANSFO': True,
+    },
     'GLRC_DAMAGE': {
         'LOI': ['RELATION', 'BETON', 'NAPPE', 'CABLE_PREC',
                 'CISAIL_NL', 'LINER'],
@@ -195,6 +204,18 @@ cata_lois = {
         'PARA_EPX': [['ELAS', 'TRAC'], ],
         'BESOIN': ['o', ],
         'TYPE': ['fonc', ],
+    },
+    'VMIS_JOHN_COOK/ELAS': {
+        'PARA': ['E', 'NU', 'RHO', ],
+        'PARA_EPX': ['YOUNG', 'NU', 'RO', ],
+        'BESOIN': ['o', 'o', 'o', ],
+        'TYPE': ['reel', 'reel', 'reel', ],
+    },
+    'VMIS_JOHN_COOK/ECRO_COOK': {
+        'PARA':     ['A', 'B', 'C', 'N_PUIS', 'EPSP0',],
+        'PARA_EPX': ['COA1', 'COA2', 'CLB1', 'CLB2', 'SRRF'],
+        'BESOIN': ['o', 'o', 'o', 'o', 'o',],
+        'TYPE': ['reel', 'reel', 'reel', 'reel', 'reel',],
     },
     # SPECIAL GLRC_DAMAGE
     'GLRC_DAMAGE/CISAIL_NL': {
@@ -403,6 +424,9 @@ cata_modelisa = {
         'MODE_EPX': {
             'TETRA4': ['TETR'],
             'HEXA8': ['CUB8'],
+             # pour chargement pression
+            'QUAD4'  : [],
+            'TRIA3'  : [],
         },
         'ETAT_INIT': True,
         'RESU_ELEM': True,
@@ -606,6 +630,14 @@ cata_charge = {
         'COEF_MULT': -1,
         'ENTITE': ['GROUP_MA'],
     },
+    'PRES_REP' : {
+        'TYPE_CHAR' : 'FACTO',
+        'MOT_CLE_EPX': ['PRES NODE'],
+        'ASTER'      : ['PRES'],
+        'EPX'        : None,
+        'COEF_MULT'  : -1,
+        'ENTITE'     : ['GROUP_MA'],
+                  },
 }
 
 
