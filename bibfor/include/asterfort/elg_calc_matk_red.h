@@ -17,11 +17,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine elg_calc_matk_red(mat1z, solv1z, mat2z, bas1, lqr)
+    subroutine elg_calc_matk_red(mat1z, solv1z, mat2z, bas1)
         character(len=*) :: mat1z
         character(len=*) :: solv1z
         character(len=*) :: mat2z
         character(len=1) :: bas1
-        aster_logical :: lqr
     end subroutine elg_calc_matk_red
 end interface
