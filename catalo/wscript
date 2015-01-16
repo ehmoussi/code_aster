@@ -92,7 +92,7 @@ def build_cata_ele(self, ojb, install_path):
 
     comm = bldnode.make_node('fort.1')
     content = os.linesep.join([
-        "from code_aster import CataBuilder",
+        "from code_aster.RunManager.CataBuilder import CataBuilder",
         "bld = CataBuilder()",
         "bld.run()", ""
     ])
