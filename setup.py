@@ -26,13 +26,13 @@ def makeExtension(extName):
         [extPath],
         language="c++",
         include_dirs=["."],   # adding the '.' to include_dirs is CRUCIAL!!
-        # extra_compile_args = ["-g", "-Wall"],
-        # extra_link_args = ['-g'],
+        extra_compile_args = ["-g", "-Wall"],
+        extra_link_args = ['-g'],
         libraries=["aster", ],
     )
 
 # get the list of extensions
-extNames = scandir("code_aster_cython")
+extNames = scandir("code_aster")
 
 # and build up the set of Extension objects
 extensions = [makeExtension(name) for name in extNames]
