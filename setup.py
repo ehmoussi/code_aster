@@ -26,9 +26,9 @@ def makeExtension(extName):
         [extPath],
         language="c++",
         include_dirs=["."],   # adding the '.' to include_dirs is CRUCIAL!!
-        # extra_compile_args = ["-O3", "-Wall"],
+        # extra_compile_args = ["-g", "-Wall"],
         # extra_link_args = ['-g'],
-        # libraries=["aster", ],
+        libraries=["aster", ],
     )
 
 # get the list of extensions

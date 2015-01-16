@@ -2,17 +2,17 @@
 
 from libcpp.string cimport string
 
-cimport cFunction
+cimport cMesh
 
-cdef class Function:
-    """Python wrapper on the C++ Function object"""
+cdef class Mesh:
+    """Python wrapper on the C++ Mesh object"""
 
-    cdef cFunction.Function* _cptr
-    cdef cFunction.FunctionInstance* _inst
+    cdef cMesh.Mesh* _cptr
+    cdef cMesh.MeshInstance* _inst
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores pointers to the C++ objects"""
-        self._cptr = new cFunction.Function( init )
+        self._cptr = new cMesh.Mesh( init )
         self._inst = self._cptr.getInstance()
 
     def __dealloc__( self ):
@@ -24,7 +24,11 @@ cdef class Function:
         """Tell if the object is empty"""
         return self._cptr.isEmpty()
 
-    def setParameterName( self, string name ):
-        """Set the name of the parameter"""
+    #def getCoordinates(self)
+    #def hasGroupOfElements( self, string name )
+    #def hasGroupOfNodes( self, string name )
+
+    def readMEDFile( self, string pathFichier ):
+        """Read a MED file"""
         assert self._inst, 'Pointer to C++ object not initialized'
-        self._inst.setParameterName( name )
+        return self._inst.readMEDFile( pathFichier )

@@ -77,7 +77,7 @@ def build(self):
     excl = [] if env.BUILD_MED else ['**/med_aster_module.c']
 
     build_c_source(self, env, excl)
-    build_all_objects(self, env)
+    build_libaster(self, env)
     build_module(self, env)
 
     self.add_group()
@@ -111,12 +111,12 @@ def build_c_source(self, env, excl):
              use = ['PYEMBED', 'NUMPY'] + uses,
     )
 
-def build_all_objects(self, shenv):
+def build_libaster(self, shenv):
     get_srcs = self.path.get_src().ant_glob
     uses = shenv['all_dependencies']    # XXX: required CYTHON_EXT ?
     # {bibfor, bibc, bibcxx}/*.o
     self(
-        features = 'c',
+        features = 'cxx cxxshlib',
             name = 'asterlib',
           target = 'aster',
           source = PYMAIN,
@@ -143,6 +143,7 @@ def build_module(self, env):
     # because .py must exist before installing
     self.add_group()
     self.install_files(env.ASTERLIBDIR, node)
+
 
 ###############################################################################
 @Configure.conf
