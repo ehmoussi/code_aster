@@ -26,20 +26,12 @@ def configure(self):
     # preserve symbols in the dyn table for stdcalls
     self.env.append_unique('LINKFLAGS', ['-Wl,--export-dynamic'])
 
-    self.check_swig_all()
     self.check_cython_includes()
 
     if 'ifort' in self.env.get_flat('LINK_FC'):
         self.env.append_value('LINKFLAGS_fcprogram', ['-nofor_main'])
     self.check_cflags()
     self.check_bibc_depends()
-
-@Configure.conf
-def check_swig_all(self):
-    self.load('swig')
-    if self.check_swig_version() < (1, 3, 0):
-        self.fatal('this swig version is too old')
-    self.check_swig_headers()
 
 @Configure.conf
 def check_cython_includes(self):
@@ -70,7 +62,7 @@ def build(self):
     # The build is splitted in 3 stages:
     # - compilation of C source files
     # - link of the executable (embedded) or several shared libs (shared)
-    # - build and link the swig wrapper
+    # - build and link the cython wrapper
     #
     get_srcs = self.path.get_src().ant_glob
     env = self.all_envs[self.variant]
@@ -128,21 +120,8 @@ def build_libaster(self, shenv):
     )
 
 def build_module(self, env):
-    uses = env['all_dependencies'] + ['CYTHON_EXT']    # XXX: required ?
-    self(
-        features = 'cxx cxxshlib pyext',
-            name = 'asterswig',
-          source = '../bibcxx/code_aster.i',
-          target = '_code_aster',
-      swig_flags = '-c++ -python -Wall',
-             env = env.derive(),
-             use = ['asterlib'] + uses,
-    install_path = env.ASTERLIBDIR,
-    )
-    node = self.path.get_bld().find_or_declare('../bibcxx/code_aster.py')
-    # because .py must exist before installing
-    self.add_group()
-    self.install_files(env.ASTERLIBDIR, node)
+    # will build & install cython modules
+    pass
 
 
 ###############################################################################
@@ -169,44 +148,3 @@ def check_optimization_cflags(self):
     self.start_msg('Setting C optimization flags')
     self.env.append_unique('CFLAGS', flags)
     self.end_msg(flags)
-
-SWIG_FRAGMENT = """
-%%module testswig
-%%{
-%%}
-
-%%include "%s"
-"""
-
-@Configure.conf
-def check_swig(self, *k, **kw):
-    """Override :py:func:`waflib.Tools.c_config.check_cxx` using features for swig"""
-    def error(*k, **kw):
-        Logs.error(*k, **kw)
-        raise Errors.ConfigurationError(*k, **kw)
-    kw['features'] = 'cxx cxxshlib pyext'
-    kw['swig_flags'] = ('-c++', '-python', '-Wall')
-    kw['compile_filename'] = 'testswig.i'
-    if not 'fragment' in kw and 'header_name' in kw:
-        kw['fragment'] = SWIG_FRAGMENT % kw['header_name']
-    # force swig to fail if an include is not found
-    _warn = Logs.warn
-    Logs.warn = error
-    ret = self.check(*k, **kw)
-    Logs.warn = _warn
-    return ret
-
-@Configure.conf
-def check_swig_headers(self):
-    """Check for required swig headers"""
-    self.start_msg('Checking for swig includes path')
-    swig_out = self.cmd_and_log('%s -swiglib' % self.env['SWIG'])
-    if swig_out:
-        incpath = osp.join(swig_out.strip(), 'python')
-        self.env.append_value('INCLUDES_SWIG', incpath)
-    else:
-        incpath = '-'
-    self.end_msg(incpath)
-
-    self.check_swig(header_name='exception.i',
-                    uselib_store='SWIG', use='SWIG CXX', mandatory=True)

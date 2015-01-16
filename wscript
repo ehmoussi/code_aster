@@ -199,7 +199,7 @@ def build(self):
     # the order may be important
     self.env['all_dependencies'] = [
         'MED', 'HDF5', 'MUMPS', 'METIS', 'SCOTCH', 'MFRONT',
-        'PETSC', 'MATH', 'MPI', 'OPENMP', 'BOOST', 'SWIG', 'CLIB', 'SYS']
+        'PETSC', 'MATH', 'MPI', 'OPENMP', 'BOOST', 'CLIB', 'SYS']
     get_srcs = self.path.get_src().ant_glob
     if not self.variant:
         self.fatal('Call "waf build_debug" or "waf build_release", and read ' \
