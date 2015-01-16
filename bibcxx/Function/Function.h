@@ -21,7 +21,7 @@ class FunctionInstance: public DataStructure
 {
     private:
         // Nom Jeveux de la SD
-        const string       _jeveuxName;
+        const std::string  _jeveuxName;
         // Vecteur Jeveux '.PROL'
         JeveuxVectorChar16 _property;
         // Vecteur Jeveux '.VALE'
@@ -111,6 +111,11 @@ class Function
         const FunctionPtr& operator->() const
         {
             return _functionPtr;
+        };
+
+        FunctionInstance* getInstance() const
+        {
+            return &(*_functionPtr);
         };
 
         FunctionInstance& operator*(void) const
