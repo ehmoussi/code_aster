@@ -331,25 +331,25 @@ class FactorKeyword
 
         bool isDoubleKeywordPresentInOccurence( string motCle, int num )
         {
-            if ( num >= _vectorOccurences.size() ) return false;
+            if ( (unsigned int)num >= _vectorOccurences.size() ) return false;
             return _vectorOccurences[num].isKeywordPresentDbl( motCle );
         };
 
         bool isIntegerKeywordPresentInOccurence( string motCle, int num )
         {
-            if ( num >= _vectorOccurences.size() ) return false;
+            if ( (unsigned int)num >= _vectorOccurences.size() ) return false;
             return _vectorOccurences[num].isKeywordPresentInt( motCle );
         };
 
         bool isStringKeywordPresentInOccurence( string motCle, int num )
         {
-            if ( num >= _vectorOccurences.size() ) return false;
+            if ( (unsigned int)num >= _vectorOccurences.size() ) return false;
             return _vectorOccurences[num].isKeywordPresentStr( motCle );
         };
 
         bool isOccurencePresent(int num)
         {
-            if ( num < _vectorOccurences.size() ) return true;
+            if ( (unsigned int)num < _vectorOccurences.size() ) return true;
             return false;
         };
 
