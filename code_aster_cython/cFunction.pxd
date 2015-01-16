@@ -1,7 +1,6 @@
-# distutils: language = c++
+# coding: utf-8
 
 from libcpp.string cimport string
-
 
 cdef extern from "Function/Function.h":
 

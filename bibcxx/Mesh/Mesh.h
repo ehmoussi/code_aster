@@ -86,7 +86,7 @@ class MeshInstance: public DataStructure
 
         /**
          * @brief Teste l'existence d'un groupe de mailles dans le maillage
-         * @return true si le groupe existe 
+         * @return true si le groupe existe
          */
         bool hasGroupOfElements( string name ) const
         {
@@ -95,7 +95,7 @@ class MeshInstance: public DataStructure
 
         /**
          * @brief Teste l'existence d'un groupe de noeuds dans le maillage
-         * @return true si le groupe existe 
+         * @return true si le groupe existe
          */
         bool hasGroupOfNodes( string name ) const
         {
@@ -135,6 +135,7 @@ class Mesh
     public:
         Mesh(bool initialisation = true): _meshPtr()
         {
+            
             if ( initialisation == true )
                 _meshPtr = MeshPtr( new MeshInstance() );
         };
@@ -157,6 +158,12 @@ class Mesh
         {
             return *_meshPtr;
         };
+
+        MeshInstance* getInstance() const
+        {
+            return &(*_meshPtr);
+        };
+
 
         bool isEmpty() const
         {
