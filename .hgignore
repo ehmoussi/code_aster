@@ -12,4 +12,7 @@ syntax: regexp
 ^waf_.*
 .*~$
 .*%$
+^code_aster_cython/.*\.cpp
+^code_aster_cython/.*\.h
+^code_aster_cython/.*\.so
 
