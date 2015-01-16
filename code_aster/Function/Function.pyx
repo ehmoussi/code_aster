@@ -7,9 +7,6 @@ cimport cFunction
 cdef class Function:
     """Python wrapper on the C++ Function object"""
 
-    cdef cFunction.Function* _cptr
-    cdef cFunction.FunctionInstance* _inst
-
     def __cinit__( self, bint init=True ):
         """Initialization: stores pointers to the C++ objects"""
         self._cptr = new cFunction.Function( init )
