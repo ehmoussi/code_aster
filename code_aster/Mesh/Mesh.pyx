@@ -2,6 +2,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble, cFieldOnNodesDouble
 cimport cMesh
 
 cdef class Mesh:
@@ -17,11 +18,14 @@ cdef class Mesh:
         if self._cptr:
             del self._cptr
 
-    def isEmpty(self):
+    def isEmpty( self ):
         """Tell if the object is empty"""
         return self._cptr.isEmpty()
 
-    #def getCoordinates(self)
+    def getCoordinates(self):
+        """Return the coordinates as a FieldOnNodesDouble object"""
+        cdef cFieldOnNodesDouble cptr = self._inst.getCoordinates()
+
     #def hasGroupOfElements( self, string name )
     #def hasGroupOfNodes( self, string name )
 

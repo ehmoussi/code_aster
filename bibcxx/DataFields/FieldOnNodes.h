@@ -44,7 +44,7 @@ class FieldOnNodesInstance: public DataStructure
 {
     private:
         /** @brief Vecteur Jeveux '.DESC' */
-        JeveuxVectorLong        _descriptor; 
+        JeveuxVectorLong        _descriptor;
         /** @brief Vecteur Jeveux '.REFE' */
         JeveuxVectorChar24      _reference;
         /** @brief Vecteur Jeveux '.VALE' */
@@ -169,6 +169,11 @@ class FieldOnNodes
         const FieldOnNodesTypePtr& operator->(void) const
         {
             return _fieldOnNodesPtr;
+        };
+
+        FieldOnNodesInstance<ValueType>* getInstance() const
+        {
+            return &(*_fieldOnNodesPtr);
         };
 
         bool isEmpty() const
