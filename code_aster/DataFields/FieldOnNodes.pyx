@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from libcpp.string cimport string
+from cython.operator cimport dereference as deref
 
 from cFieldOnNodes cimport cFieldOnNodesDouble
 
@@ -23,6 +24,11 @@ cdef class FieldOnNodesDouble:
         """Destructor"""
         if self._cptr:
             del self._cptr
+
+    def __getitem__( self, i ):
+        """Return the value at the given index"""
+        cdef double val = deref(self._inst)[i]
+        return val
 
     def isEmpty( self ):
         """Tell if the object is empty"""
