@@ -14,8 +14,8 @@ cdef extern from "Mesh/Mesh.h":
         bint hasGroupOfNodes( string name )
         bint readMEDFile( string pathFichier )
 
-    cdef cppclass Mesh:
+    cdef cppclass cMesh "Mesh":
 
-        Mesh(bint init)
+        cMesh(bint init)
         MeshInstance* getInstance()
         bint isEmpty()
