@@ -10,7 +10,6 @@ cdef class Function:
     def __cinit__( self, bint init=True ):
         """Initialization: stores pointers to the C++ objects"""
         self._cptr = new cFunction.Function( init )
-        self._inst = self._cptr.getInstance()
 
     def __dealloc__( self ):
         """Destructor"""
@@ -23,5 +22,4 @@ cdef class Function:
 
     def setParameterName( self, string name ):
         """Set the name of the parameter"""
-        assert self._inst, 'Pointer to C++ object not initialized'
-        self._inst.setParameterName( name )
+        self._cptr.getInstance().setParameterName( name )

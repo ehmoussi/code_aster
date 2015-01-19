@@ -14,7 +14,6 @@ cdef class Mesh:
     def __cinit__( self, bint init=True ):
         """Initialization: stores pointers to the C++ objects"""
         self._cptr = new cMesh.Mesh( init )
-        self._inst = self._cptr.getInstance()
 
     def __dealloc__( self ):
         """Destructor"""
@@ -27,7 +26,8 @@ cdef class Mesh:
 
     def getCoordinates(self):
         """Return the coordinates as a FieldOnNodesDouble object"""
-        cdef cFieldOnNodesDouble coord = self._inst.getCoordinates()
+        cdef cFieldOnNodesDouble coord
+        coord = self._cptr.getInstance().getCoordinates()
         coordinates = FieldOnNodesDouble( init=False )
         coordinates.assign( coord )
         return coordinates
@@ -37,5 +37,4 @@ cdef class Mesh:
 
     def readMEDFile( self, string pathFichier ):
         """Read a MED file"""
-        assert self._inst, 'Pointer to C++ object not initialized'
-        return self._inst.readMEDFile( pathFichier )
+        return self._cptr.getInstance().readMEDFile( pathFichier )
