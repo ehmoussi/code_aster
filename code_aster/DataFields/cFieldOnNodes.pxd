@@ -16,7 +16,7 @@ cdef extern from "DataFields/FieldOnNodes.h":
         FieldOnNodes()
         FieldOnNodes( string name )
         FieldOnNodesInstance[ValueType]* getInstance()
-        void setInstance( FieldOnNodesInstance[ValueType]* instance )
+        void copy( FieldOnNodes[ValueType]& other )
         bint isEmpty()
 
 ctypedef FieldOnNodes[double] cFieldOnNodesDouble

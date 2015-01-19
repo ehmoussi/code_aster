@@ -12,7 +12,7 @@ cdef class Mesh:
     """Python wrapper on the C++ Mesh object"""
 
     def __cinit__( self, bint init=True ):
-        """Initialization: stores pointers to the C++ objects"""
+        """Initialization: stores the pointer to the C++ object"""
         self._cptr = new cMesh.Mesh( init )
 
     def __dealloc__( self ):
@@ -28,8 +28,8 @@ cdef class Mesh:
         """Return the coordinates as a FieldOnNodesDouble object"""
         cdef cFieldOnNodesDouble coord
         coord = self._cptr.getInstance().getCoordinates()
-        coordinates = FieldOnNodesDouble( init=False )
-        coordinates.assign( coord )
+        coordinates = FieldOnNodesDouble()
+        coordinates.copy( coord )
         return coordinates
 
     #def hasGroupOfElements( self, string name )
