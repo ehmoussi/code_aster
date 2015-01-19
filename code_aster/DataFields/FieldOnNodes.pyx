@@ -2,21 +2,21 @@
 
 from libcpp.string cimport string
 
-cimport cFieldOnNodes
+from cFieldOnNodes cimport cFieldOnNodesDouble
 
 
 cdef class FieldOnNodesDouble:
     """Python wrapper on the C++ FieldOnNodes object"""
 
-    def __cinit__( self, init = True ):
+    def __cinit__( self, bint init=True ):
         """Initialization: stores pointers to the C++ objects"""
-        if init:
-            self._cptr = new cFieldOnNodesDouble( )
+        self._cptr = new cFieldOnNodesDouble( )
         self._inst = self._cptr.getInstance()
 
-    cdef assign( self, cFieldOnNodesDouble* cptr ):
+    cdef assign( self, cFieldOnNodesDouble other ):
         """Use an existing C++ object"""
-        self._cptr = cptr
+        # copy
+        self._cptr.setInstance( other.getInstance() )
         self._inst = self._cptr.getInstance()
 
     def __dealloc__( self ):

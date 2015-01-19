@@ -16,4 +16,8 @@ cdef extern from "DataFields/FieldOnNodes.h":
         FieldOnNodes()
         FieldOnNodes( string name )
         FieldOnNodesInstance[ValueType]* getInstance()
+        void setInstance( FieldOnNodesInstance[ValueType]* instance )
         bint isEmpty()
+
+ctypedef FieldOnNodesInstance[double] cFieldOnNodesInstanceDouble
+ctypedef FieldOnNodes[double] cFieldOnNodesDouble

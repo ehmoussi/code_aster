@@ -176,6 +176,11 @@ class FieldOnNodes
             return &(*_fieldOnNodesPtr);
         };
 
+        void setInstance( FieldOnNodesInstance< ValueType >* instance )
+        {
+            _fieldOnNodesPtr = FieldOnNodesTypePtr( instance );
+        };
+
         bool isEmpty() const
         {
             if ( _fieldOnNodesPtr.use_count() == 0 ) return true;
