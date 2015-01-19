@@ -2,7 +2,7 @@
 
 from libcpp.string cimport string
 
-cimport cMesh
+from cMesh cimport cMesh
 from code_aster.DataFields.cFieldOnNodes cimport cFieldOnNodesDouble
 
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
@@ -13,7 +13,7 @@ cdef class Mesh:
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new cMesh.Mesh( init )
+        self._cptr = new cMesh( init )
 
     def __dealloc__( self ):
         """Destructor"""

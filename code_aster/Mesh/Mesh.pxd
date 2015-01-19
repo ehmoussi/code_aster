@@ -2,9 +2,9 @@
 
 from libcpp.string cimport string
 
-cimport cMesh
+from cMesh cimport cMesh
 
 
 cdef class Mesh:
 
-    cdef cMesh.Mesh* _cptr
+    cdef cMesh* _cptr
