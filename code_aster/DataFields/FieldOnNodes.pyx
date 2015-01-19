@@ -12,13 +12,10 @@ cdef class FieldOnNodesDouble:
     def __cinit__( self, bint init=True ):
         """Initialization: stores pointers to the C++ objects"""
         self._cptr = new cFieldOnNodesDouble( )
-        self._inst = self._cptr.getInstance()
 
     cdef assign( self, cFieldOnNodesDouble other ):
         """Use an existing C++ object"""
-        # copy
         self._cptr.setInstance( other.getInstance() )
-        self._inst = self._cptr.getInstance()
 
     def __dealloc__( self ):
         """Destructor"""
@@ -27,7 +24,8 @@ cdef class FieldOnNodesDouble:
 
     def __getitem__( self, i ):
         """Return the value at the given index"""
-        cdef double val = deref(self._inst)[i]
+        inst = self._cptr.getInstance()
+        cdef double val = deref(inst)[i]
         return val
 
     def isEmpty( self ):
