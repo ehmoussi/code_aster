@@ -10,12 +10,12 @@ cdef class FieldOnNodesDouble:
     """Python wrapper on the C++ FieldOnNodes object"""
 
     def __cinit__( self, bint init=True ):
-        """Initialization: stores pointers to the C++ objects"""
+        """Initialization: stores the pointer to the C++ object"""
         self._cptr = new cFieldOnNodesDouble( )
 
-    cdef assign( self, cFieldOnNodesDouble other ):
-        """Use an existing C++ object"""
-        self._cptr.setInstance( other.getInstance() )
+    cdef copy( self, cFieldOnNodesDouble& other ):
+        """Refer to an existing C++ object"""
+        self._cptr.copy( other )
 
     def __dealloc__( self ):
         """Destructor"""

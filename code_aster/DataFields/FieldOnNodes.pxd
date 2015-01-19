@@ -7,4 +7,4 @@ cdef class FieldOnNodesDouble:
 
     cdef cFieldOnNodesDouble* _cptr
 
-    cdef assign( self, cFieldOnNodesDouble other )
+    cdef copy( self, cFieldOnNodesDouble& other )

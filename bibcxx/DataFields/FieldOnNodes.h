@@ -160,9 +160,9 @@ class FieldOnNodes
         ~FieldOnNodes()
         {};
 
-        FieldOnNodes& operator=(const FieldOnNodes< ValueType >& tmp)
+        FieldOnNodes& operator=( const FieldOnNodes< ValueType >& other )
         {
-            _fieldOnNodesPtr = tmp._fieldOnNodesPtr;
+            _fieldOnNodesPtr = other._fieldOnNodesPtr;
             return *this;
         };
 
@@ -171,14 +171,14 @@ class FieldOnNodes
             return _fieldOnNodesPtr;
         };
 
-        FieldOnNodesInstance<ValueType>* getInstance() const
+        FieldOnNodesInstance< ValueType >* getInstance() const
         {
             return &(*_fieldOnNodesPtr);
         };
 
-        void setInstance( FieldOnNodesInstance< ValueType >* instance )
+        void copy( FieldOnNodes< ValueType >& other )
         {
-            _fieldOnNodesPtr = FieldOnNodesTypePtr( instance );
+            _fieldOnNodesPtr = other._fieldOnNodesPtr;
         };
 
         bool isEmpty() const
