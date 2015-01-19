@@ -1,13 +1,11 @@
 # coding: utf-8
 
-cimport cFieldOnNodes
-
-ctypedef cFieldOnNodes.FieldOnNodes[double] cFieldOnNodesDouble
+from cFieldOnNodes cimport cFieldOnNodesInstanceDouble, cFieldOnNodesDouble
 
 
 cdef class FieldOnNodesDouble:
 
-    cdef cFieldOnNodes.FieldOnNodes[double]* _cptr
-    cdef cFieldOnNodes.FieldOnNodesInstance[double]* _inst
+    cdef cFieldOnNodesDouble* _cptr
+    cdef cFieldOnNodesInstanceDouble* _inst
 
-    cdef assign
+    cdef assign( self, cFieldOnNodesDouble other )

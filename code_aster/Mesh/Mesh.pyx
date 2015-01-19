@@ -2,8 +2,11 @@
 
 from libcpp.string cimport string
 
-from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble, cFieldOnNodesDouble
 cimport cMesh
+from code_aster.DataFields.cFieldOnNodes cimport cFieldOnNodesDouble
+
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
+
 
 cdef class Mesh:
     """Python wrapper on the C++ Mesh object"""
@@ -24,7 +27,10 @@ cdef class Mesh:
 
     def getCoordinates(self):
         """Return the coordinates as a FieldOnNodesDouble object"""
-        cdef cFieldOnNodesDouble cptr = self._inst.getCoordinates()
+        cdef cFieldOnNodesDouble coord = self._inst.getCoordinates()
+        coordinates = FieldOnNodesDouble( init=False )
+        coordinates.assign( coord )
+        return coordinates
 
     #def hasGroupOfElements( self, string name )
     #def hasGroupOfNodes( self, string name )

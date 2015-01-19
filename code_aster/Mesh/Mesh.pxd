@@ -3,7 +3,6 @@
 from libcpp.string cimport string
 
 cimport cMesh
-from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 
 
 cdef class Mesh:
