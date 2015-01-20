@@ -1,0 +1,45 @@
+# coding=utf-8
+
+import os.path as osp
+
+from waflib import TaskGen, Configure, Logs, Utils, Errors
+
+
+def options(self):
+    self.load('cython')
+
+def configure(self):
+    self.load('cython')
+    self.check_cython_includes()
+
+def build(self):
+    get_srcs = self.path.get_src().ant_glob
+    env = self.all_envs[self.variant]
+
+    self(
+        features = 'py',
+            name = 'code_aster_py',
+          source = get_srcs('**/*.py'),
+    install_from = '.',
+    install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
+    )
+
+    for cymodule in get_srcs('**/*.pyx'):
+        path = cymodule.abspath()
+        modname = osp.splitext(osp.basename(path))[0]
+        dirname = osp.basename(osp.dirname(path))
+
+        self(
+            features = 'cxx cxxshlib pyext',
+              source = cymodule,
+              target = osp.join(dirname, modname),
+                 use = 'asterlib',
+        install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
+        )
+
+
+###############################################################################
+@Configure.conf
+def check_cython_includes(self):
+    cypath = osp.join(self.path.get_src().parent.abspath(), 'code_aster')
+    self.env.append_unique('INCLUDES', cypath)
