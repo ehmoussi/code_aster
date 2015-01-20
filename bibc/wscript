@@ -22,39 +22,21 @@ def options(self):
 
 def configure(self):
     self.load('compiler_c')
-    opts = self.options
     # preserve symbols in the dyn table for stdcalls
     self.env.append_unique('LINKFLAGS', ['-Wl,--export-dynamic'])
-
-    self.check_cython_includes()
 
     if 'ifort' in self.env.get_flat('LINK_FC'):
         self.env.append_value('LINKFLAGS_fcprogram', ['-nofor_main'])
     self.check_cflags()
     self.check_bibc_depends()
 
-@Configure.conf
-def check_cython_includes(self):
-    cypath = osp.join(self.path.get_src().parent.abspath(), 'code_aster')
-    self.env.append_unique('INCLUDES', cypath)
 
 @Configure.conf
 def check_bibc_depends(self):
     """check dependencies of bibc"""
     # never in static
     self.check_cc(uselib_store='SYS', lib='dl')
-    self.check_code_aster_cython()
 
-@Configure.conf
-def check_code_aster_cython(self):
-    # FIXME used while we are building the code_aster cython package with `setup.py`
-    try:
-        self.check_cc(uselib_store='CYTHON_EXT', lib='DataStructure')
-        self.check_cc(uselib_store='CYTHON_EXT', lib='CommandSyntax')
-        self.check_cc(uselib_store='CYTHON_EXT', lib='Initializer')
-        self.define('HAVE_CYTHON', 1)
-    except Errors.ConfigurationError:
-        self.undefine('HAVE_CYTHON')
 
 PYMAIN = 'supervis/python.c'
 
@@ -70,7 +52,7 @@ def build(self):
 
     build_c_source(self, env, excl)
     build_libaster(self, env)
-    build_module(self, env)
+    # build_module(self, env)
 
     self.add_group()
     # install headers
@@ -92,7 +74,7 @@ def process_h(self, node):
 
 def build_c_source(self, env, excl):
     get_srcs = self.path.get_src().ant_glob
-    uses = env['all_dependencies'] + ['CYTHON_EXT']    # XXX: required ?
+    uses = env['all_dependencies']
     # compile *.c
     self(
         features = 'c',
@@ -105,7 +87,7 @@ def build_c_source(self, env, excl):
 
 def build_libaster(self, shenv):
     get_srcs = self.path.get_src().ant_glob
-    uses = shenv['all_dependencies']    # XXX: required CYTHON_EXT ?
+    uses = shenv['all_dependencies']
     # {bibfor, bibc, bibcxx}/*.o
     self(
         features = 'cxx cxxshlib',
@@ -118,10 +100,6 @@ def build_libaster(self, shenv):
                     'asterbibc', 'asterbibcxx'] + uses + ['CXX'],
     install_path = shenv.ASTERLIBDIR,
     )
-
-def build_module(self, env):
-    # will build & install cython modules
-    pass
 
 
 ###############################################################################

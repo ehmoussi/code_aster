@@ -12,6 +12,3 @@ syntax: regexp
 ^waf_.*
 .*~$
 .*%$
-^code_aster/.*\.cpp
-^code_aster/.*\.h
-^code_aster/.*\.so
