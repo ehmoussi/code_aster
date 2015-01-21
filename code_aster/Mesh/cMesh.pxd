@@ -18,4 +18,5 @@ cdef extern from "Mesh/Mesh.h":
 
         cMesh(bint init)
         MeshInstance* getInstance()
+        void copy( cMesh& other )
         bint isEmpty()

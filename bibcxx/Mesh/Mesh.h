@@ -135,7 +135,7 @@ class Mesh
     public:
         Mesh(bool initialisation = true): _meshPtr()
         {
-            
+
             if ( initialisation == true )
                 _meshPtr = MeshPtr( new MeshInstance() );
         };
@@ -164,6 +164,10 @@ class Mesh
             return &(*_meshPtr);
         };
 
+        void copy( Mesh& other )
+        {
+            _meshPtr = other._meshPtr;
+        };
 
         bool isEmpty() const
         {
