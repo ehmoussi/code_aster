@@ -6,6 +6,7 @@ from cython.operator cimport dereference as deref
 from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.Mesh.cMesh cimport cMesh
 
+from cPhysicsAndModeling cimport Physics, Modelings
 
 Mechanics, Thermal, Acoustics = cMechanics, cThermal, cAcoustics
 Axisymmetrical, Tridimensional, Planar, DKT = cAxisymmetrical, cTridimensional, cPlanar, cDKT
@@ -30,6 +31,22 @@ cdef class Model:
     def isEmpty( self ):
         """Tell if the object is empty"""
         return self._cptr.isEmpty()
+
+    def build( self ):
+        """Build the model"""
+        self._cptr.getInstance().build()
+
+    def addModelingOnAllMesh( self, phys, mod ):
+        """Add a modeling on all the mesh"""
+        self._cptr.getInstance().addModelisationOnAllMesh( phys, mod )
+
+    def addModelingOnGroupOfElements( self, phys, mod, nameOfGroup ):
+        """Add a modeling on a group of elements"""
+        self._cptr.getInstance().addModelisationOnGroupOfElements( phys, mod, nameOfGroup )
+
+    def addModelingOnGroupOfNodes( self, phys, mod, nameOfGroup ):
+        """Add a modeling on a group of nodes"""
+        self._cptr.getInstance().addModelisationOnGroupOfNodes( phys, mod, nameOfGroup )
 
     def setSupportMesh( self, Mesh mesh ):
         """Set the support mesh of the model"""
