@@ -5,7 +5,10 @@ from cython.operator cimport dereference as deref
 
 from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.Mesh.cMesh cimport cMesh
-from cModel cimport cModel
+
+
+Mechanics, Thermal, Acoustics = cMechanics, cThermal, cAcoustics
+Axisymmetrical, Tridimensional, Planar, DKT = cAxisymmetrical, cTridimensional, cPlanar, cDKT
 
 
 cdef class Model:
