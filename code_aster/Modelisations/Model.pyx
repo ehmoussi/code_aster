@@ -4,6 +4,7 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from code_aster.Mesh.Mesh cimport Mesh
+from code_aster.Mesh.cMesh cimport cMesh
 from cModel cimport cModel
 
 
@@ -31,3 +32,11 @@ cdef class Model:
         """Set the support mesh of the model"""
         ok = self._cptr.getInstance().setSupportMesh( deref(mesh._cptr) )
         return ok
+
+    def getSupportMesh( self ):
+        """Return the support mesh"""
+        cdef cMesh* cmesh
+        cmesh = &(self._cptr.getInstance().getSupportMesh())
+        mesh = Mesh()
+        mesh.copy( deref(cmesh) )
+        return mesh
