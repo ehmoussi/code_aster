@@ -154,7 +154,7 @@ class ModelInstance: public DataStructure
             if ( _supportMesh.isEmpty() || _supportMesh->isEmpty() )
                 throw string("Support mesh of current model is empty");
             return _supportMesh;
-        }; 
+        };
 };
 
 /**
@@ -194,6 +194,16 @@ class Model
         ModelInstance& operator*(void) const
         {
             return *_modelPtr;
+        };
+
+        ModelInstance* getInstance() const
+        {
+            return &(*_modelPtr);
+        };
+
+        void copy( Model& other )
+        {
+            _modelPtr = other._modelPtr;
         };
 
         bool isEmpty() const

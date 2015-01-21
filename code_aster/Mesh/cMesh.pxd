@@ -6,9 +6,9 @@ from code_aster.DataFields.cFieldOnNodes cimport FieldOnNodes
 
 cdef extern from "Mesh/Mesh.h":
 
-    cdef cppclass MeshInstance:
+    cdef cppclass cMeshInstance "MeshInstance":
 
-        MeshInstance()
+        cMeshInstance()
         FieldOnNodes[double] getCoordinates()
         bint hasGroupOfElements( string name )
         bint hasGroupOfNodes( string name )
@@ -17,6 +17,6 @@ cdef extern from "Mesh/Mesh.h":
     cdef cppclass cMesh "Mesh":
 
         cMesh(bint init)
-        MeshInstance* getInstance()
+        cMeshInstance* getInstance()
         void copy( cMesh& other )
         bint isEmpty()
