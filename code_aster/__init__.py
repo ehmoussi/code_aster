@@ -1,5 +1,8 @@
 # code_aster cython package
 
+# discourage import *
+__all__ = []
+
 from code_aster.RunManager import Initializer
 
 # Automatically call `asterInitialization()` at import
@@ -19,7 +22,12 @@ if 'MANUAL' not in options:
     import atexit
     atexit.register( Initializer.finalize )
 
+# import datastructures
 from code_aster.Mesh.Mesh import Mesh
 from code_aster.Modelisations.Model import Model
 from code_aster.DataFields.FieldOnNodes import FieldOnNodesDouble
 from code_aster.Function.Function import Function
+
+
+del mode
+del options
