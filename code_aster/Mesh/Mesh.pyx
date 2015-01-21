@@ -15,6 +15,10 @@ cdef class Mesh:
         """Initialization: stores the pointer to the C++ object"""
         self._cptr = new cMesh( init )
 
+    cdef copy( self, cMesh& other ):
+        """Refer to an existing C++ object"""
+        self._cptr.copy( other )
+
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr:
