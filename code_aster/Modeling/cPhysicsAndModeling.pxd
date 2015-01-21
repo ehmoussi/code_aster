@@ -8,7 +8,7 @@ cdef extern from "Modelisations/PhysicsAndModelisations.h":
         cThermal "Thermal"
         cAcoustics "Acoustics"
 
-    cdef enum Modeling:
+    cdef enum Modelings "Modelisations":
         cAxisymmetrical "Axisymmetrical"
         cTridimensional "Tridimensional"
         cPlanar "Planar"
