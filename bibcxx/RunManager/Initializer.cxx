@@ -103,8 +103,15 @@ void Initializer::run( int imode )
     mCSNivPubWeb.addValues("NON");
     occurCODE.addSimpleKeywordString(mCSNivPubWeb);
     motCleCODE.addOccurence(occurCODE);
-
     syntaxeDebut.addFactorKeyword(motCleCODE);
+
+    FactorKeyword motCleERREUR = FactorKeyword("ERREUR", false);
+    FactorKeywordOccurence occurERR = FactorKeywordOccurence();
+    SimpleKeyWordStr mCSErreurF = SimpleKeyWordStr("ERREUR_F");
+    mCSErreurF.addValues("EXCEPTION");
+    occurERR.addSimpleKeywordString(mCSErreurF);
+    motCleERREUR.addOccurence(occurERR);
+    syntaxeDebut.addFactorKeyword(motCleERREUR);
 
     FactorKeyword motCleMEMOIRE = FactorKeyword("MEMOIRE", false);
     FactorKeywordOccurence occurMEMOIRE = FactorKeywordOccurence();
