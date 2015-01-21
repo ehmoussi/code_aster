@@ -2,7 +2,7 @@
 #define JEVEUXBIDIRECTIONALMAP_H_
 
 /**
- * @file JeveuxBidirectionnalMap.h
+ * @file JeveuxBidirectionalMap.h
  * @brief Fichier entete de la classe JeveuxBidirectionnalMap
  * @author Nicolas Sellenet
  * @section LICENCE

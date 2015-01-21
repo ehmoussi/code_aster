@@ -2,7 +2,7 @@
 #define ELEMENTARYLOAD_H_
 
 /**
- * @file FieldOnNodes.h
+ * @file ElementaryLoad.h
  * @brief Fichier entete de la classe FieldOnNodes
  * @author Natacha Bereux
  * @section LICENCE

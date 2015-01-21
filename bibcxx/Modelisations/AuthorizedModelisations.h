@@ -2,7 +2,7 @@
 #define AUTHORIZEDMODELISATION_H_
 
 /**
- * @file AuthorizedModelizations.h
+ * @file AuthorizedModelisations.h
  * @brief Fichier definissant les modelisations autorisees
  * @author Nicolas Sellenet
  * @section LICENCE
