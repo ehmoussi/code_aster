@@ -26,7 +26,7 @@ except:
 # Definition du modele Aster
 monModel = code_aster.Model()
 monModel.setSupportMesh(monMaillage)
-monModel.addModelisationOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
+monModel.addModelingOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
 monModel.build()
 
 # Definition des chargements

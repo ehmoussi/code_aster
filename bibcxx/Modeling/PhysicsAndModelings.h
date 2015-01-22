@@ -2,7 +2,7 @@
 #define PHYSICSANDMODELISATIONS_H_
 
 /**
- * @file PhysicsAndModelisations.h
+ * @file PhysicsAndModelings.h
  * @brief Fichier definissant les physiques et les modelisations disponibles
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -40,23 +40,23 @@ const int nbPhysics = 3;
 extern const char* const PhysicNames[nbPhysics];
 
 /**
- * @enum Modelisations
+ * @enum Modelings
  * @brief Modelisations existantes dans Code_Aster
  * @author Nicolas Sellenet
  */
-enum Modelisations { Axisymmetrical, Tridimensional, Planar, DKT };
-const int nbModelisations = 4;
+enum Modelings { Axisymmetrical, Tridimensional, Planar, DKT };
+const int nbModelings = 4;
 /**
- * @var ModelisationNames
+ * @var ModelingNames
  * @brief Nom Aster des differentes modelisations disponibles
  */
-extern const char* const ModelisationNames[nbModelisations];
+extern const char* const ModelingNames[nbModelings];
 
 
-const int nbModelisationsMechanics = 4;
-extern const Modelisations MechanicsModelisations[nbModelisationsMechanics];
+const int nbModelingsMechanics = 4;
+extern const Modelings MechanicsModelings[nbModelingsMechanics];
 
-const int nbModelisationsThermal = 3;
-extern const Modelisations ThermalModelisations[nbModelisationsThermal];
+const int nbModelingsThermal = 3;
+extern const Modelings ThermalModelings[nbModelingsThermal];
 
 #endif /* PHYSICSANDMODELISATIONS_H_ */

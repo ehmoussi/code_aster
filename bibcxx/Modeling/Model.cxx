@@ -23,7 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Modelisations/Model.h"
+#include "Modeling/Model.h"
 #include <typeinfo>
 
 ModelInstance::ModelInstance(): DataStructure( initAster->getNewResultObjectName(), "MODELE" ),
@@ -73,9 +73,9 @@ bool ModelInstance::build()
         // Ajout du mot-cle simple a l'occurence du mot-cle facteur
         occurAFFE.addSimpleKeywordString(mCSPhenomene);
 
-        SimpleKeyWordStr mCSModelisation = SimpleKeyWordStr("MODELISATION");
-        mCSModelisation.addValues((*curIter).first.getModelisation());
-        occurAFFE.addSimpleKeywordString(mCSModelisation);
+        SimpleKeyWordStr mCSModeling = SimpleKeyWordStr("MODELISATION");
+        mCSModeling.addValues((*curIter).first.getModeling());
+        occurAFFE.addSimpleKeywordString(mCSModeling);
 
         SimpleKeyWordStr mCSGroup;
         if ( typeid( *(curIter->second) ) == typeid( AllMeshEntitiesInstance ) )

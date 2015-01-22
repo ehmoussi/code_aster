@@ -1,5 +1,5 @@
 /**
- * @file AuthorizedModelisations.cxx
+ * @file AuthorizedModelings.cxx
  * @brief Initialisation des modelisations autorisees pour chaque physique
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -20,14 +20,14 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Modelisations/AuthorizedModelisations.h"
+#include "Modeling/AuthorizedModelings.h"
 
 /**
  * Initialisation des modelisations autorisees pour chaque physique
  */
 
-const set< Modelisations > WrapMechanics::setOfModelisations( MechanicsModelisations,
-                                                              MechanicsModelisations + nbModelisationsMechanics );
+const set< Modelings > WrapMechanics::setOfModelings( MechanicsModelings,
+                                                      MechanicsModelings + nbModelingsMechanics );
 
-const set< Modelisations > WrapThermal::setOfModelisations( ThermalModelisations,
-                                                            ThermalModelisations + nbModelisationsThermal );
+const set< Modelings > WrapThermal::setOfModelings( ThermalModelings,
+                                                    ThermalModelings + nbModelingsThermal );

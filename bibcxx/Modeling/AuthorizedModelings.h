@@ -2,7 +2,7 @@
 #define AUTHORIZEDMODELISATION_H_
 
 /**
- * @file AuthorizedModelisations.h
+ * @file AuthorizedModelings.h
  * @brief Fichier definissant les modelisations autorisees
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -26,7 +26,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Modelisations/PhysicsAndModelisations.h"
+#include "Modeling/PhysicsAndModelings.h"
 #include <set>
 
 using namespace std;
@@ -39,7 +39,7 @@ using namespace std;
  */
 struct WrapMechanics
 {
-    static const set< Modelisations > setOfModelisations;
+    static const set< Modelings > setOfModelings;
 };
 
 /**
@@ -48,33 +48,33 @@ struct WrapMechanics
  */
 struct WrapThermal
 {
-    static const set< Modelisations > setOfModelisations;
+    static const set< Modelings > setOfModelings;
 };
 
 /**
- * @struct ModelisationsChecker
+ * @struct ModelingsChecker
  * @brief Structure template permettant de verifier qu'une modelisation est autoriser
           pour un physique donnee
  * @author Nicolas Sellenet
  */
 template< class Wrapping >
-struct ModelisationsChecker
+struct ModelingsChecker
 {
     /**
      * @brief Fonction statique verifiant qu'une modelisation est autorisee pour la physique
      */
-    static bool isAllowedModelisation( Modelisations test )
+    static bool isAllowedModeling( Modelings test )
     {
-        if ( Wrapping::setOfModelisations.find( test ) == Wrapping::setOfModelisations.end() )
+        if ( Wrapping::setOfModelings.find( test ) == Wrapping::setOfModelings.end() )
             return false;
         return true;
     }
 };
 
 /** @typedef Definition du verificateur pour la mecanique */
-typedef ModelisationsChecker< WrapMechanics > MechanicsModelisationsChecker;
+typedef ModelingsChecker< WrapMechanics > MechanicsModelingsChecker;
 /** @typedef Definition du verificateur pour la thermique */
-typedef ModelisationsChecker< WrapThermal > ThermalModelisationsChecker;
+typedef ModelingsChecker< WrapThermal > ThermalModelingsChecker;
 
 /**
  * @struct PhysicsChecker
@@ -86,14 +86,14 @@ struct PhysicsChecker
     /**
      * @brief Fonction statique verifiant qu'une paire physique modelisation est autorisee
      */
-    static bool isAllowedModelisationForPhysics( Physics phys, Modelisations model )
+    static bool isAllowedModelingForPhysics( Physics phys, Modelings model )
     {
         switch ( phys )
         {
             case Mechanics:
-                return MechanicsModelisationsChecker::isAllowedModelisation( model );
+                return MechanicsModelingsChecker::isAllowedModeling( model );
             case Thermal:
-                return ThermalModelisationsChecker::isAllowedModelisation( model );
+                return ThermalModelingsChecker::isAllowedModeling( model );
             default:
                 throw "Not a valid physics";
         }

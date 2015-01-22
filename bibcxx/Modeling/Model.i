@@ -19,13 +19,13 @@
 
 %module code_aster
 %{
-#include "Modelisations/Model.h"
+#include "Modeling/Model.h"
 %}
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 %include "Mesh/Mesh.i"
-%include "Modelisations/ElementaryModelisation.i"
+%include "Modeling/ElementaryModeling.i"
 
 class Model
 {
@@ -36,19 +36,19 @@ class Model
 
 %extend Model
 {
-    void addModelisationOnAllMesh(Physics phys, Modelisations mod)
+    void addModelingOnAllMesh(Physics phys, Modelings mod)
     {
-        return (*$self)->addModelisationOnAllMesh(phys, mod);
+        return (*$self)->addModelingOnAllMesh(phys, mod);
     }
 
-    void addModelisationOnGroupOfElements(Physics phys, Modelisations mod, char* nameOfGroup)
+    void addModelingOnGroupOfElements(Physics phys, Modelings mod, char* nameOfGroup)
     {
-        return (*$self)->addModelisationOnGroupOfElements(phys, mod, nameOfGroup);
+        return (*$self)->addModelingOnGroupOfElements(phys, mod, nameOfGroup);
     }
 
-    void addModelisationOnGroupOfNodes(Physics phys, Modelisations mod, char* nameOfGroup)
+    void addModelingOnGroupOfNodes(Physics phys, Modelings mod, char* nameOfGroup)
     {
-        return (*$self)->addModelisationOnGroupOfNodes(phys, mod, nameOfGroup);
+        return (*$self)->addModelingOnGroupOfNodes(phys, mod, nameOfGroup);
     }
 
     bool build()

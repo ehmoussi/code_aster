@@ -5,14 +5,14 @@ from libcpp.string cimport string
 from code_aster.Mesh.cMesh cimport cMesh
 from cPhysicsAndModeling cimport Physics, Modelings
 
-cdef extern from "Modelisations/Model.h":
+cdef extern from "Modeling/Model.h":
 
     cdef cppclass cModelInstance "ModelInstance":
 
         cModelInstance()
-        void addModelisationOnAllMesh( Physics phys, Modelings mod )
-        void addModelisationOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup )
-        void addModelisationOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
+        void addModelingOnAllMesh( Physics phys, Modelings mod )
+        void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup )
+        void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
         void setSplittingMethod()
         bint setSupportMesh( cMesh& currentMesh )
         cMesh& getSupportMesh()

@@ -1,8 +1,4 @@
-/**
- * @file PhysicsAndModelisations.cxx
- * @brief Initialisation des modelisations autorisees pour chaque physique
- * @author Nicolas Sellenet
- * @section LICENCE
+/*
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
@@ -21,14 +17,22 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PhysicsAndModelisations.h"
+%module code_aster
+%{
+#include "Modeling/ElementaryModeling.h"
+%}
 
-const char* const PhysicNames[nbPhysics] = { "MECANIQUE", "THERMIQUE", "ACOUSTIQUE" };
-const char* const ModelisationNames[nbModelisations] = { "AXIS", "3D", "PLAN", "DKT" };
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
+enum Modelings { Axisymmetrical, Tridimensional, Planar, DKT };
+enum Physics { Mechanics, Thermal, Acoustics };
 
-const Modelisations MechanicsModelisations[nbModelisationsMechanics] = { Axisymmetrical, Tridimensional,
-                                                                         Planar, DKT };
+class ElementaryModeling
+{
+    public:
+        ElementaryModeling( Physics phys, Modelings mod );
 
-const Modelisations ThermalModelisations[nbModelisationsThermal] = { Axisymmetrical, Tridimensional,
-                                                                     Planar };
+        const string getModeling();
+
+        const string getPhysic();
+};

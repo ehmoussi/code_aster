@@ -28,7 +28,7 @@
 
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "Modelisations/Model.h"
+#include "Modeling/Model.h"
 #include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
 

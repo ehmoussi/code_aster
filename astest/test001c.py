@@ -25,7 +25,7 @@ except:
 # Definition du modele Aster
 monModel = code_aster.Model()
 monModel.setSupportMesh(monMaillage)
-monModel.addModelisationOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
+monModel.addModelingOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
 
 print "Ecrasement de monMaillage !! L'objet C++ ne doit pas etre supprime"
 del monMaillage
