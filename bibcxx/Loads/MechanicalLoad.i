@@ -22,7 +22,7 @@
 #include "Loads/MechanicalLoad.h"
 %}
 
-%include "Modelisations/Model.i"
+%include "Modeling/Model.i"
 
 class MechanicalLoad
 {

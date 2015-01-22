@@ -26,7 +26,7 @@
 
 #include "DataStructure/DataStructure.h"
 #include "Loads/ElementaryLoad.h"
-#include "Modelisations/Model.h"
+#include "Modeling/Model.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "aster.h"
 

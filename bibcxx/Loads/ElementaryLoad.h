@@ -24,7 +24,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Modelisations/Model.h"
+#include "Modeling/Model.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "aster.h"
 

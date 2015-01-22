@@ -38,15 +38,15 @@ cdef class Model:
 
     def addModelingOnAllMesh( self, phys, mod ):
         """Add a modeling on all the mesh"""
-        self._cptr.getInstance().addModelisationOnAllMesh( phys, mod )
+        self._cptr.getInstance().addModelingOnAllMesh( phys, mod )
 
     def addModelingOnGroupOfElements( self, phys, mod, nameOfGroup ):
         """Add a modeling on a group of elements"""
-        self._cptr.getInstance().addModelisationOnGroupOfElements( phys, mod, nameOfGroup )
+        self._cptr.getInstance().addModelingOnGroupOfElements( phys, mod, nameOfGroup )
 
     def addModelingOnGroupOfNodes( self, phys, mod, nameOfGroup ):
         """Add a modeling on a group of nodes"""
-        self._cptr.getInstance().addModelisationOnGroupOfNodes( phys, mod, nameOfGroup )
+        self._cptr.getInstance().addModelingOnGroupOfNodes( phys, mod, nameOfGroup )
 
     def setSupportMesh( self, Mesh mesh ):
         """Set the support mesh of the model"""

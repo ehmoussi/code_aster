@@ -28,7 +28,7 @@
 
 #include "DataStructure/DataStructure.h"
 #include "Mesh/Mesh.h"
-#include "Modelisations/ElementaryModelisation.h"
+#include "Modeling/ElementaryModeling.h"
 #include <map>
 
 #include "Loads/PhysicalQuantity.h"
@@ -45,8 +45,8 @@ class ModelInstance: public DataStructure
         // dans la list
         /** @brief Pointeur intelligent vers un VirtualMeshEntity */
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
-        /** @brief std::list de std::pair de ElementaryModelisation et MeshEntityPtr */
-        typedef list< pair< ElementaryModelisation, MeshEntityPtr > > listOfModsAndGrps;
+        /** @brief std::list de std::pair de ElementaryModeling et MeshEntityPtr */
+        typedef list< pair< ElementaryModeling, MeshEntityPtr > > listOfModsAndGrps;
         /** @brief Valeur contenue dans listOfModsAndGrps */
         typedef listOfModsAndGrps::value_type listOfModsAndGrpsValue;
         /** @brief Iterateur sur un listOfModsAndGrps */
@@ -76,9 +76,9 @@ class ModelInstance: public DataStructure
          * @param phys Physique a ajouter
          * @param mod Modelisation a ajouter
          */
-        void addModelisationOnAllMesh( Physics phys, Modelisations mod )
+        void addModelingOnAllMesh( Physics phys, Modelings mod )
         {
-            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation( phys, mod ),
+            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
                                                               MeshEntityPtr( new AllMeshEntitiesInstance() ) ) );
         };
 
@@ -88,13 +88,13 @@ class ModelInstance: public DataStructure
          * @param mod Modelisation a ajouter
          * @param nameOfGroup Nom du groupe de mailles
          */
-        void addModelisationOnGroupOfElements( Physics phys, Modelisations mod, string nameOfGroup )
+        void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup )
         {
             if ( _supportMesh.isEmpty() ) throw "Support mesh is not defined";
             if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";
 
-            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation( phys, mod ),
+            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
                                             MeshEntityPtr( new GroupOfElementsInstance(nameOfGroup) ) ) );
         };
 
@@ -104,13 +104,13 @@ class ModelInstance: public DataStructure
          * @param mod Modelisation a ajouter
          * @param nameOfGroup Nom du groupe de noeuds
          */
-        void addModelisationOnGroupOfNodes( Physics phys, Modelisations mod, string nameOfGroup )
+        void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
         {
             if ( _supportMesh.isEmpty() ) throw "Support mesh is not defined";
             if ( ! _supportMesh->hasGroupOfNodes( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";
 
-            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModelisation( phys, mod ),
+            _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
                                             MeshEntityPtr( new GroupOfNodesInstance(nameOfGroup) ) ) );
         };
 

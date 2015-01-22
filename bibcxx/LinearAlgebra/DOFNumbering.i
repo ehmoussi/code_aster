@@ -24,7 +24,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Modelisations/Model.h"
+#include "Modeling/Model.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "LinearAlgebra/LinearSolver.h"
 

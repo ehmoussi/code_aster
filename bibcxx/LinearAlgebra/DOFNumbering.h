@@ -29,7 +29,7 @@
 #include "DataStructure/DataStructure.h"
 #include "LinearAlgebra/LinearSolver.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "Modelisations/Model.h"
+#include "Modeling/Model.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/MechanicalLoad.h"
 

@@ -27,7 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "DataStructure/DataStructure.h"
-#include "Modelisations/Model.h"
+#include "Modeling/Model.h"
 #include "Materials/Material.h"
 #include "DataFields/PCFieldOnMesh.h"
 

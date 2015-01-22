@@ -2,8 +2,8 @@
 #define ELEMENTARYMODELISATION_H_
 
 /**
- * @file ElementaryModelisation.h
- * @brief Fichier entete de la classe ElementaryModelisation
+ * @file ElementaryModeling.h
+ * @brief Fichier entete de la classe ElementaryModeling
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
@@ -26,7 +26,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Modelisations/AuthorizedModelisations.h"
+#include "Modeling/AuthorizedModelings.h"
 #include <string>
 
 using namespace std;
@@ -36,13 +36,13 @@ using namespace std;
  * @brief Element de base d'un modele, c'est une paire PHYSIQUE, MODELISATION
  * @author Nicolas Sellenet
  */
-class ElementaryModelisation
+class ElementaryModeling
 {
     private:
         /** @brief Physique de la modelisation elementaire */
         Physics       _physic;
         /** @brief Modelisation de la modelisation elementaire */
-        Modelisations _modelisation;
+        Modelings _modelisation;
 
     public:
         /**
@@ -50,21 +50,21 @@ class ElementaryModelisation
          * @param phys Physique
          * @param mod Modelisation
          */
-        ElementaryModelisation( const Physics phys, const Modelisations mod ): _physic(phys),
-                                                                               _modelisation(mod)
+        ElementaryModeling( const Physics phys, const Modelings mod ): _physic(phys),
+                                                                       _modelisation(mod)
         {
-            bool retour = PhysicsChecker::isAllowedModelisationForPhysics( phys, mod );
+            bool retour = PhysicsChecker::isAllowedModelingForPhysics( phys, mod );
             if ( ! retour )
-                throw string( PhysicNames[_physic] ) + " with " + ModelisationNames[_modelisation] + " not allowed";
+                throw string( PhysicNames[_physic] ) + " with " + ModelingNames[_modelisation] + " not allowed";
         };
 
         /**
          * @brief Recuperation de la chaine modelisation
          * @return chaine de caracteres
          */
-        const string getModelisation() const
+        const string getModeling() const
         {
-            return ModelisationNames[_modelisation];
+            return ModelingNames[_modelisation];
         };
 
         /**

@@ -28,7 +28,7 @@
 #include "Loads/MechanicalLoad.h"
 #include "LinearAlgebra/LinearSolver.h"
 #include "Materials/MaterialOnMesh.h"
-#include "Modelisations/Model.h"
+#include "Modeling/Model.h"
 #include "Results/ResultsContainer.h"
 
 class StaticMechanicalSolver

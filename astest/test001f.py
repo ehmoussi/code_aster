@@ -7,7 +7,7 @@ monMaillage.readMEDFile( "test001f.mmed" )
 
 monModel = code_aster.Model()
 monModel.setSupportMesh( monMaillage )
-monModel.addModelisationOnAllMesh( code_aster.Mechanics, code_aster.Tridimensional )
+monModel.addModelingOnAllMesh( code_aster.Mechanics, code_aster.Tridimensional )
 monModel.build()
 
 materElas = code_aster.ElasticMaterialBehaviour()

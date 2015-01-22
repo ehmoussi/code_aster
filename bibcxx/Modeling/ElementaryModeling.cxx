@@ -1,6 +1,6 @@
 /**
- * @file ElementaryModelisation.cxx
- * @brief Implementation de ElementaryModelisation
+ * @file ElementaryModeling.cxx
+ * @brief Implementation de ElementaryModeling
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
@@ -22,4 +22,4 @@
  */
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Modelisations/ElementaryModelisation.h"
+#include "Modeling/ElementaryModeling.h"
