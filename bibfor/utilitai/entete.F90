@@ -40,6 +40,7 @@ subroutine entete()
 ! ----------------------------------------------------------------------
 ! --- INFORMATIONS GLOBALES
     call prhead(1)
+    call utmess('I', 'SUPERVIS2_4', sk='asterxx')
 ! --- CONFIGURATION MPI
     call asmpi_info(rank=rank, size=size)
 #ifdef _USE_MPI
