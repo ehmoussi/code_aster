@@ -1,6 +1,8 @@
 subroutine tldlr8(nommat, hcol, adia, ablo, npivot,&
                   neq, nbbloc, ildeb, ilfin, eps)
     implicit none
+! multi-threading optimization for MULT_FRONT
+! aslint: disable=C1513
 !
 #include "jeveux.h"
 !
@@ -147,7 +149,6 @@ subroutine tldlr8(nommat, hcol, adia, ablo, npivot,&
         if (il2 .lt. ildeb) then
 !        --- C'EST TROP TOT : MAIS ON REMPLIT LA DIAGONALE -------------
             call jeveuo(jexnum(ualf, ibloc), 'L', iaa)
-!CDIR$ IVDEP
             do 10 il = il1, il2
                 zr(ldiag+il-1) = zr(iaa+adia(il)-1)
 10          continue
@@ -160,7 +161,6 @@ subroutine tldlr8(nommat, hcol, adia, ablo, npivot,&
             call jeveuo(jexnum(ualf, ibloc), 'E', iaa)
             if (il1 .lt. ildeb) then
                 kl1 = ildeb
-!CDIR$ IVDEP
                 do 20 il = il1, kl1 - 1
                     zr(ldiag+il-1) = zr(iaa+adia(il)-1)
 20              continue

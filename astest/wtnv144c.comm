@@ -181,17 +181,17 @@ MODELIN=AFFE_MODELE(MAILLAGE=MA_XFEM,
                            ),
                    );
       
-IMPR_RESU(FORMAT='MED',
-          UNITE=80,
-          RESU= (_F(MAILLAGE=MA_XFEM,
-                    RESULTAT = RESU1,
-                    NOM_CHAM = ('DEPL',),
-                    NOM_CMP  = ('DX','DY','DZ','PRE1',),
-                   ),
-                ),
-         )
+#IMPR_RESU(FORMAT='MED',
+#          UNITE=80,
+#          RESU= (_F(MAILLAGE=MA_XFEM,
+#                    RESULTAT = RESU1,
+#                    NOM_CHAM = ('DEPL',),
+#                    NOM_CMP  = ('DX','DY','DZ','PRE1',),
+#                   ),
+#                ),
+#         )
 
-IMPR_RESU(RESU=_F(MAILLAGE=MA_XFEM,));
+#IMPR_RESU(RESU=_F(MAILLAGE=MA_XFEM,));
 
 RESU1=CALC_CHAMP(reuse=RESU1,CRITERES=('SIEQ_ELNO'),CONTRAINTE=('SIGM_ELNO'),RESULTAT=RESU1)
 
