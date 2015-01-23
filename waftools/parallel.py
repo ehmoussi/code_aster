@@ -40,6 +40,14 @@ def load_compilers(self):
         self.load('compiler_c')
         self.load('compiler_cxx')
         self.load('compiler_fc')
+    # print compilers version
+    self.start_msg('Checking for C compiler version')
+    self.end_msg(self.env.CC_NAME.lower() + ' ' + \
+                 '.'.join(Utils.to_list(self.env.CC_VERSION)))
+    # CXX_VERSION does not exist, c++ == c
+    self.start_msg('Checking for Fortran compiler version')
+    self.end_msg(self.env.FC_NAME.lower() + ' ' + \
+                 '.'.join(Utils.to_list(self.env.FC_VERSION)))
 
 @Configure.conf
 def load_compilers_mpi(self):
@@ -49,9 +57,6 @@ def load_compilers_mpi(self):
     cxx = os.environ.get('CXX')
     fc = os.environ.get('FC')
     if (cc and check(path=cc)) and (fc and check(path=fc)):
-        self.env.append_unique('CCNAME', osp.basename(cc))
-        self.env.append_unique('CXXNAME', osp.basename(cxx))
-        self.env.append_unique('FCNAME', osp.basename(fc))
         self.check_mpi()
     elif self.options.parallel:
         self.fatal("Unable to configure the parallel environment")
