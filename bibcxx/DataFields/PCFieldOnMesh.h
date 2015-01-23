@@ -134,6 +134,16 @@ class PCFieldOnMesh
             return _PCFieldOnMeshPtr;
         };
 
+        PCFieldOnMeshInstance< ValueType >* getInstance() const
+        {
+            return &(*_PCFieldOnMeshPtr);
+        };
+
+        void copy( PCFieldOnMesh< ValueType >& other )
+        {
+            _PCFieldOnMeshPtr = other._PCFieldOnMeshPtr;
+        };
+
         bool isEmpty() const
         {
             if ( _PCFieldOnMeshPtr.use_count() == 0 ) return true;
