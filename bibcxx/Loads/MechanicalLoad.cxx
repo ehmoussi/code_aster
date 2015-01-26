@@ -136,13 +136,59 @@ bool MechanicalLoadInstance::build()
     {
     FactorKeyword motClePRES_REP = FactorKeyword("PRES_REP", true);
 
-// Boucle sur les déplacements imposés 
+// Boucle sur les pressions imposées 
     for ( ListDoublePresIter curIter = _listOfDoubleImposedDistributedPressure.begin();
               curIter != _listOfDoubleImposedDistributedPressure.end();
               ++curIter )
     {
       // Definition d'une occurence d'un mot-cle facteur
             FactorKeywordOccurence occurPRES_REP = FactorKeywordOccurence();
+
+            SimpleKeyWordStr mCSGroup;
+            const MeshEntityPtr& tmp = curIter->getMeshEntityPtr();
+            if ( typeid( *(tmp) ) == typeid( AllMeshEntitiesInstance ) )
+            {
+                mCSGroup = SimpleKeyWordStr("TOUT");
+                mCSGroup.addValues("OUI");
+            }
+            else
+            {
+                if (  typeid( *(tmp) ) == typeid( GroupOfElementsInstance ) )
+                    mCSGroup = SimpleKeyWordStr("GROUP_MA");
+// else error ? 
+                mCSGroup.addValues( tmp->getEntityName() );
+            }
+            occurPRES_REP.addSimpleKeywordString(mCSGroup);
+
+            const string nomComp = curIter->getAsterCoordinateName();
+            SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
+            // Ajout de la valeur donnee par l'utilisateur
+            mCSComp.addValues( curIter->getValue() );
+            // Ajout du mot-cle simple a l'occurence du mot-cle facteur
+            occurPRES_REP.addSimpleKeywordDouble(mCSComp);
+
+            // Ajout de l'occurence au mot-cle facteur PRES_REP
+            motClePRES_REP.addOccurence(occurPRES_REP);
+    }
+        // Ajout du mot-cle facteur PRES_REP a la commande AFFE_CHAR_MECA
+        syntaxeAffeCharMeca.addFactorKeyword(motClePRES_REP);
+//
+
+    }
+// 
+// Définition du mot clé facteur FORCE_TUYAU
+// Impose une pression sur un groupe de mailles décrivant un tuyau
+    if ( _listOfDoubleImposedPipePressure.size() != 0 )
+    {
+    FactorKeyword motCleFORCE_TUYAU = FactorKeyword("FORCE_TUYAU", true);
+
+// Boucle sur les pressions imposées 
+    for ( ListDoublePresIter curIter = _listOfDoubleImposedPipePressure.begin();
+              curIter != _listOfDoubleImposedPipePressure.end();
+              ++curIter )
+    {
+      // Definition d'une occurence d'un mot-cle facteur
+            FactorKeywordOccurence occurFORCE_TUYAU = FactorKeywordOccurence();
 
             SimpleKeyWordStr mCSGroup;
             const MeshEntityPtr& tmp = curIter->getMeshEntityPtr();
@@ -160,20 +206,20 @@ bool MechanicalLoadInstance::build()
 
                 mCSGroup.addValues( tmp->getEntityName() );
             }
-            occurPRES_REP.addSimpleKeywordString(mCSGroup);
+            occurFORCE_TUYAU.addSimpleKeywordString(mCSGroup);
 
             const string nomComp = curIter->getAsterCoordinateName();
             SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
             // Ajout de la valeur donnee par l'utilisateur
             mCSComp.addValues( curIter->getValue() );
             // Ajout du mot-cle simple a l'occurence du mot-cle facteur
-            occurPRES_REP.addSimpleKeywordDouble(mCSComp);
+            occurFORCE_TUYAU.addSimpleKeywordDouble(mCSComp);
 
-            // Ajout de l'occurence au mot-cle facteur PRES_REP
-            motClePRES_REP.addOccurence(occurPRES_REP);
+            // Ajout de l'occurence au mot-cle facteur FORCE_TUYAU
+            motCleFORCE_TUYAU.addOccurence(occurFORCE_TUYAU);
     }
-        // Ajout du mot-cle facteur PRES_REP a la commande AFFE_CHAR_MECA
-        syntaxeAffeCharMeca.addFactorKeyword(motClePRES_REP);
+        // Ajout du mot-cle facteur FORCE_TUYAU a la commande AFFE_CHAR_MECA
+        syntaxeAffeCharMeca.addFactorKeyword(motCleFORCE_TUYAU);
 //
 
     }

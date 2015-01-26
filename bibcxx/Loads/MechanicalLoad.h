@@ -53,6 +53,7 @@ class MechanicalLoadInstance : public DataStructure
         ListDoubleDisp      _listOfDoubleImposedDisplacement;
         ListDoublePres      _listOfDoubleImposedPressure;
         ListDoublePres      _listOfDoubleImposedDistributedPressure;
+        ListDoublePres      _listOfDoubleImposedPipePressure;
         
         /** @brief Structure de données Aster */ 
         const string           _jeveuxName;
@@ -177,12 +178,35 @@ class MechanicalLoadInstance : public DataStructure
             Mesh & currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
             {
-                throw nameOfGroup +" is not a group of nodes of the mesh you provided" ;
+                throw nameOfGroup +" is not a group of elements of the mesh you provided" ;
             }
             MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
             AsterCoordinates coordinate = Pressure;
             DoubleLoadPressure resu( meshEnt, coordinate, value );
             _listOfDoubleImposedDistributedPressure.push_back( resu );
+            return true;
+        };
+        /**
+        * @brief Set a pressure on a group of elements describing a pipe
+        * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
+        * @param value imposed value
+        * @return bool
+        */
+        bool setPipePressureOnElements( double value, string nameOfGroup )
+        {
+// Check that neither the pointer to the support model nor the model itself are empty
+            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+                throw string("Model is empty");
+// Check that nameOfGroup is the name of a group belonging to the support mesh
+            Mesh & currentMesh= _supportModel->getSupportMesh();
+            if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
+            {
+                throw nameOfGroup +" is not a group of elements of the mesh you provided" ;
+            }
+            MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
+            AsterCoordinates coordinate = Pressure;
+            DoubleLoadPressure resu( meshEnt, coordinate, value );
+            _listOfDoubleImposedPipePressure.push_back( resu );
             return true;
         };
         /**
