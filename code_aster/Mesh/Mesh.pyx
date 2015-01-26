@@ -18,8 +18,9 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+from cython.operator cimport dereference as deref
 
-from cMesh cimport cMesh
+from cMesh cimport cMeshInstance, cMesh
 from code_aster.DataFields.cFieldOnNodes cimport cFieldOnNodesDouble
 
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
@@ -30,7 +31,14 @@ cdef class Mesh:
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new cMesh( init )
+        cdef cMeshInstance* inst
+        inst = new cMeshInstance()
+        self._cptr = new cMesh( inst )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr:
+            del self._cptr
 
     cdef cMesh* get_pointer( self ):
         """Return the pointer on the c++ object"""
@@ -38,28 +46,25 @@ cdef class Mesh:
 
     cdef copy( self, cMesh& other ):
         """Refer to an existing C++ object"""
-        self._cptr.copy( other )
-
-    def __dealloc__( self ):
-        """Destructor"""
-        if self._cptr:
-            del self._cptr
-
-    def isEmpty( self ):
-        """Tell if the object is empty"""
-        return self._cptr.isEmpty()
+        self._cptr = new cMesh( other.get() )
 
     def getCoordinates(self):
         """Return the coordinates as a FieldOnNodesDouble object"""
         cdef cFieldOnNodesDouble coord
-        coord = self._cptr.getInstance().getCoordinates()
+        coord = self._cptr.get().getCoordinates()
         coordinates = FieldOnNodesDouble()
         coordinates.copy( coord )
         return coordinates
 
-    #def hasGroupOfElements( self, string name )
-    #def hasGroupOfNodes( self, string name )
+    def hasGroupOfElements( self, string name ):
+        """Tell if a group of elements exists in the mesh"""
+        return self._cptr.get().hasGroupOfElements( name )
+
+    def hasGroupOfNodes( self, string name ):
+        """Tell if a group of nodes exists in the mesh"""
+        return self._cptr.get().hasGroupOfNodes( name )
 
     def readMEDFile( self, string pathFichier ):
         """Read a MED file"""
-        return self._cptr.getInstance().readMEDFile( pathFichier )
+        return self._cptr.get().readMEDFile( pathFichier )
+        # return self._cptr.readMEDFile( pathFichier )

@@ -33,7 +33,5 @@ cdef extern from "Mesh/Mesh.h":
 
     cdef cppclass cMesh "Mesh":
 
-        cMesh(bint init)
-        cMeshInstance* getInstance()
-        void copy( cMesh& other )
-        bint isEmpty()
+        cMesh( cMeshInstance* )
+        cMeshInstance* get()

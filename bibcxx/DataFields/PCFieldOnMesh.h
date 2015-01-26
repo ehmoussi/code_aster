@@ -68,7 +68,7 @@ class PCFieldOnMeshInstance
                                               _nameOfLigrels( JeveuxVectorChar24( string( name+".NOLI") ) ),
                                               _listOfMeshElements( JeveuxCollectionLong( string( name+".LIMA") ) ),
                                               _valuesList( JeveuxVector<ValueType>( string( name+".VALE") ) ),
-                                              _supportMesh( Mesh(false))
+                                              _supportMesh( Mesh() )
         {
             assert(name.size() == 19);
         };

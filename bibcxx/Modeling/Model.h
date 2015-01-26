@@ -90,7 +90,7 @@ class ModelInstance: public DataStructure
          */
         void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup )
         {
-            if ( _supportMesh.isEmpty() ) throw "Support mesh is not defined";
+            if ( ! _supportMesh ) throw "Support mesh is not defined";
             if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";
 
@@ -106,7 +106,7 @@ class ModelInstance: public DataStructure
          */
         void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
         {
-            if ( _supportMesh.isEmpty() ) throw "Support mesh is not defined";
+            if ( ! _supportMesh ) throw "Support mesh is not defined";
             if ( ! _supportMesh->hasGroupOfNodes( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";
 
@@ -151,7 +151,7 @@ class ModelInstance: public DataStructure
 
         Mesh& getSupportMesh()
         {
-            if ( _supportMesh.isEmpty() || _supportMesh->isEmpty() )
+            if ( ( ! _supportMesh ) || _supportMesh->isEmpty() )
                 throw string("Support mesh of current model is empty");
             return _supportMesh;
         };

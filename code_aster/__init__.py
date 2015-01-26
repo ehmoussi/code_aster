@@ -42,11 +42,12 @@ if 'MANUAL' not in options:
 # import datastructures
 from code_aster.Mesh.Mesh import Mesh
 from code_aster.Modeling.Model import Model
-from code_aster.Modeling.Model import Mechanics, Thermal, Acoustics
-from code_aster.Modeling.Model import Axisymmetrical, Tridimensional, Planar, DKT
 from code_aster.DataFields.FieldOnNodes import FieldOnNodesDouble
 from code_aster.Function.Function import Function
 
+# replace by: from code_aster.Modeling import Physics and use Physics.Mechanics
+from code_aster.Modeling.Model import Mechanics, Thermal, Acoustics
+from code_aster.Modeling.Model import Axisymmetrical, Tridimensional, Planar, DKT
 
 del mode
 del options

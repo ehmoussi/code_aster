@@ -30,7 +30,7 @@ ModelInstance::ModelInstance(): DataStructure( initAster->getNewResultObjectName
                                 _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
                                 _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
                                 _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
-                                _supportMesh( Mesh( false ) ),
+                                _supportMesh( Mesh() ),
                                 _isEmpty( true )
 {};
 
@@ -46,7 +46,7 @@ bool ModelInstance::build()
 
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSMaillage = SimpleKeyWordStr("MAILLAGE");
-    if ( _supportMesh.isEmpty() )
+    if ( ! _supportMesh )
         throw string("Support mesh is undefined");
     // Affectation d'une valeur au mot cle simple MAILLAGE
     // Si _supportMesh->getJeveuxName() = 'MA      ' alors

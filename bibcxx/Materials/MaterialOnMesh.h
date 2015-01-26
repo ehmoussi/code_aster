@@ -82,7 +82,7 @@ class MaterialOnMeshInstance: public DataStructure
          */
         void addMaterialOnGroupOfElements( Material& curMater, string nameOfGroup )
         {
-            if ( _supportMesh.isEmpty() ) throw "Support mesh is not defined";
+            if ( ! _supportMesh ) throw "Support mesh is not defined";
             if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";
 
