@@ -36,8 +36,8 @@ using namespace std;
  * @enum AsterCoordinates
  * @brief Toutes les coordonnees des grandeurs de Code_Aster
  */
-enum AsterCoordinates { Dx, Dy, Dz, Drx, Dry, Drz, Temperature, MiddleTemperature };
-extern const char* AsterCoordinatesNames[8];
+enum AsterCoordinates { Dx, Dy, Dz, Drx, Dry, Drz, Temperature, MiddleTemperature, Pressure };
+extern const char* AsterCoordinatesNames[9];
 
 /**
  * @def nbDisplacementCoordinates
@@ -61,7 +61,18 @@ const int nbThermalCoordinates = 2;
  */
 extern const AsterCoordinates TempCoordinates[nbThermalCoordinates];
 
-// Ces wrappers sont la pour autoriser que les set soitent const
+/**
+ * @def nbPressureCoordinates
+ * @brief Number of of coordinates specifying a pressure 
+ */
+const int nbPressureCoordinates = 1;
+/**
+ * @def PresCoordinates
+ * @brief Declare pressure coodinates 
+ */
+extern const AsterCoordinates PresCoordinates[nbPressureCoordinates];
+
+// Ces wrappers sont la pour autoriser que les set soient const
 // Sinon, on aurait pas pu passer directement des const set<> en parametre template
 /**
  * @struct WrapDepl
@@ -80,6 +91,16 @@ struct WrapDepl
 struct WrapTemp
 {
     /** @brief Coordonnees autorisees pour TEMP */
+    static const set< AsterCoordinates > setOfCoordinates;
+};
+
+/**
+ * @struct WrapTemp
+ * @brief Structure destinee a definir les coordonnees autorisees pour TEMP
+ */
+struct WrapPres
+{
+    /** @brief Coordonnees autorisees pour PRESSION */
     static const set< AsterCoordinates > setOfCoordinates;
 };
 
@@ -111,5 +132,8 @@ typedef PhysicalQuantity< double, WrapDepl > DoubleDisplacementType;
 
 /** @typedef Definition de TEMP_R */
 typedef PhysicalQuantity< double, WrapTemp > DoubleTemperatureType;
+
+/** @typedef Pression */
+typedef PhysicalQuantity< double, WrapPres > DoublePressureType;
 
 #endif /* PHYSICALQUANTITY_H_ */

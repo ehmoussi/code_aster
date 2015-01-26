@@ -22,23 +22,24 @@
  */
 
 #include "Loads/MechanicalLoad.h"
+#include <typeinfo>
 
 MechanicalLoadInstance::MechanicalLoadInstance():
                                 DataStructure( initAster->getNewResultObjectName(), "CHAR_MECA" ),
                                 _jeveuxName( getName() ),
-                                _cinematicLoad( PCFieldOnMeshDouble( string(_jeveuxName+".CHME.CIMPO") ) ),
+                                _kinematicLoad( PCFieldOnMeshDouble( string(_jeveuxName+".CHME.CIMPO") ) ),
                                 _pressure( PCFieldOnMeshDouble( string(_jeveuxName+".CHME.PRESS") ) ),
                                 _supportModel( Model(false) )
 {};
 
 bool MechanicalLoadInstance::build()
 {
-// syntaxeAffeCharMeca correspond au tronçon de fichier de commande contenant l'appel de 
+// Definition du bout de fichier de commande correspondant à l'appel de  
 // la commande AFFE_CHAR_MECA 
     CommandSyntax syntaxeAffeCharMeca( "AFFE_CHAR_MECA", true,
                                        initAster->getResultObjectName(), getType() );
 
-// MODELE=
+// Définition du mot clé simple MODELE
     SimpleKeyWordStr mCSModel = SimpleKeyWordStr("MODELE");
     if ( _supportModel.isEmpty() )
         throw string("Support model is undefined");
@@ -46,50 +47,136 @@ bool MechanicalLoadInstance::build()
     cout <<  "Nom du modele support: " << _supportModel->getName() << " . " << endl;
     syntaxeAffeCharMeca.addSimpleKeywordString(mCSModel);
 
-    for (  listOfLoadsAndGrpsDouble::iterator curIter = _listOfLoadsDouble.begin();
-          curIter != _listOfLoadsDouble.end();
-          ++curIter )
+// Définition de mot clé facteur DDL_IMPO
+// Impose un déplacement ou une pression 
+    if (( _listOfDoubleImposedDisplacement.size() != 0 ) || ( _listOfDoubleImposedPressure.size() != 0 ))
     {
-        cout <<  " Type de mot-clé facteur: " <<  (*curIter).first.getType() << endl;
-        FactorKeywordOccurence occurLoad = FactorKeywordOccurence();
+    FactorKeyword motCleDDL_IMPO = FactorKeyword("DDL_IMPO", true);
 
-        SimpleKeyWordDbl mCSElemLoad = SimpleKeyWordDbl((*curIter).first.getName());
-        mCSElemLoad.addValues((*curIter).first.getValue());
-        cout <<  " Mot-clé simple: " <<  (*curIter).first.getName() << " = "<<  (*curIter).first.getValue()<< endl;
+// Boucle sur les déplacements imposés 
+    for ( ListDoubleDispIter curIter = _listOfDoubleImposedDisplacement.begin();
+              curIter != _listOfDoubleImposedDisplacement.end();
+              ++curIter )
+    {
+      // Definition d'une occurence d'un mot-cle facteur
+            FactorKeywordOccurence occurDDL_IMPO = FactorKeywordOccurence();
 
-        occurLoad.addSimpleKeywordDouble(mCSElemLoad);
+            SimpleKeyWordStr mCSGroup;
+            const MeshEntityPtr& tmp = curIter->getMeshEntityPtr();
+            if ( typeid( *(tmp) ) == typeid( AllMeshEntitiesInstance ) )
+            {
+                mCSGroup = SimpleKeyWordStr("TOUT");
+                mCSGroup.addValues("OUI");
+            }
+            else
+            {
+                if ( typeid( *(tmp) ) == typeid( GroupOfNodesInstance ) )
+                    mCSGroup = SimpleKeyWordStr("GROUP_NO");
+                else if ( typeid( *(tmp) ) == typeid( GroupOfElementsInstance ) )
+                    mCSGroup = SimpleKeyWordStr("GROUP_MA");
 
-        SimpleKeyWordStr mCSGroup;
-        if ( typeid( *(curIter->second) ) == typeid( AllMeshEntitiesInstance ) )
-        {
-            mCSGroup = SimpleKeyWordStr("TOUT");
-            mCSGroup.addValues("OUI");
-        }
-        else
-        {
-            if ( typeid( *(curIter->second) ) == typeid( GroupOfNodesInstance ) )
-                mCSGroup = SimpleKeyWordStr("GROUP_NO");
-            else if ( typeid( *(curIter->second) ) == typeid( GroupOfElementsInstance ) )
-                mCSGroup = SimpleKeyWordStr("GROUP_MA");
+                mCSGroup.addValues( tmp->getEntityName() );
+            }
+            occurDDL_IMPO.addSimpleKeywordString(mCSGroup);
 
-            mCSGroup.addValues( (curIter->second)->getEntityName() );
-        }
-        occurLoad.addSimpleKeywordString(mCSGroup);
+            const string nomComp = curIter->getAsterCoordinateName();
+            SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
+            // Ajout de la valeur donnee par l'utilisateur
+            mCSComp.addValues( curIter->getValue() );
+            // Ajout du mot-cle simple a l'occurence du mot-cle facteur
+            occurDDL_IMPO.addSimpleKeywordDouble(mCSComp);
 
-        string nomFKW = (*curIter).first.getType();
-        if ( syntaxeAffeCharMeca.isFactorKeywordPresent( nomFKW ) )
-        {
-            FactorKeyword& motCleLoad = syntaxeAffeCharMeca.getFactorKeyword( nomFKW );
-            motCleLoad.addOccurence( occurLoad );
-        }
-        else
-        {
-            FactorKeyword motCleLoad = FactorKeyword( nomFKW, true );
-            motCleLoad.addOccurence( occurLoad );
-            syntaxeAffeCharMeca.addFactorKeyword( motCleLoad );
-        }
-    } 
+            // Ajout de l'occurence au mot-cle facteur DDL_IMPO
+            motCleDDL_IMPO.addOccurence(occurDDL_IMPO);
+    }
+// Boucle sur les pressions imposées
+    for ( ListDoublePresIter curIter = _listOfDoubleImposedPressure.begin();
+              curIter != _listOfDoubleImposedPressure.end();
+              ++curIter )
+    {
+      // Definition d'une occurence d'un mot-cle facteur
+            FactorKeywordOccurence occurDDL_IMPO = FactorKeywordOccurence();
 
+            SimpleKeyWordStr mCSGroup;
+            const MeshEntityPtr& tmp = curIter->getMeshEntityPtr();
+            if ( typeid( *(tmp) ) == typeid( AllMeshEntitiesInstance ) )
+            {
+                mCSGroup = SimpleKeyWordStr("TOUT");
+                mCSGroup.addValues("OUI");
+            }
+            else
+            {
+                if ( typeid( *(tmp) ) == typeid( GroupOfNodesInstance ) )
+                    mCSGroup = SimpleKeyWordStr("GROUP_NO");
+                else if ( typeid( *(tmp) ) == typeid( GroupOfElementsInstance ) )
+                    mCSGroup = SimpleKeyWordStr("GROUP_MA");
+
+                mCSGroup.addValues( tmp->getEntityName() );
+            }
+            occurDDL_IMPO.addSimpleKeywordString(mCSGroup);
+
+            const string nomComp = curIter->getAsterCoordinateName();
+            SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
+            // Ajout de la valeur donnee par l'utilisateur
+            mCSComp.addValues( curIter->getValue() );
+            // Ajout du mot-cle simple a l'occurence du mot-cle facteur
+            occurDDL_IMPO.addSimpleKeywordDouble(mCSComp);
+
+            // Ajout de l'occurence au mot-cle facteur DDL_IMPO
+            motCleDDL_IMPO.addOccurence(occurDDL_IMPO);
+    }
+
+        // Ajout du mot-cle facteur DDL_IMPO a la commande AFFE_CHAR_MECA
+        syntaxeAffeCharMeca.addFactorKeyword(motCleDDL_IMPO);
+  }
+// 
+// Définition de mot clé facteur PRES_REP
+// Impose une pression répartie sur un groupe de mailles
+    if ( _listOfDoubleImposedDistributedPressure.size() != 0 )
+    {
+    FactorKeyword motClePRES_REP = FactorKeyword("PRES_REP", true);
+
+// Boucle sur les déplacements imposés 
+    for ( ListDoublePresIter curIter = _listOfDoubleImposedDistributedPressure.begin();
+              curIter != _listOfDoubleImposedDistributedPressure.end();
+              ++curIter )
+    {
+      // Definition d'une occurence d'un mot-cle facteur
+            FactorKeywordOccurence occurPRES_REP = FactorKeywordOccurence();
+
+            SimpleKeyWordStr mCSGroup;
+            const MeshEntityPtr& tmp = curIter->getMeshEntityPtr();
+            if ( typeid( *(tmp) ) == typeid( AllMeshEntitiesInstance ) )
+            {
+                mCSGroup = SimpleKeyWordStr("TOUT");
+                mCSGroup.addValues("OUI");
+            }
+            else
+            {
+                if ( typeid( *(tmp) ) == typeid( GroupOfNodesInstance ) )
+                    mCSGroup = SimpleKeyWordStr("GROUP_NO");
+                else if ( typeid( *(tmp) ) == typeid( GroupOfElementsInstance ) )
+                    mCSGroup = SimpleKeyWordStr("GROUP_MA");
+
+                mCSGroup.addValues( tmp->getEntityName() );
+            }
+            occurPRES_REP.addSimpleKeywordString(mCSGroup);
+
+            const string nomComp = curIter->getAsterCoordinateName();
+            SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
+            // Ajout de la valeur donnee par l'utilisateur
+            mCSComp.addValues( curIter->getValue() );
+            // Ajout du mot-cle simple a l'occurence du mot-cle facteur
+            occurPRES_REP.addSimpleKeywordDouble(mCSComp);
+
+            // Ajout de l'occurence au mot-cle facteur PRES_REP
+            motClePRES_REP.addOccurence(occurPRES_REP);
+    }
+        // Ajout du mot-cle facteur PRES_REP a la commande AFFE_CHAR_MECA
+        syntaxeAffeCharMeca.addFactorKeyword(motClePRES_REP);
+//
+
+    }
    // Maintenant que le fichier de commande est pret, on appelle OP0007
     cout << " Appel de execop" << endl;
     CALL_EXECOP(7);

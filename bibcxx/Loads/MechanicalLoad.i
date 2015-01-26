@@ -33,29 +33,30 @@ class MechanicalLoad
 
 %extend MechanicalLoad
 {
-    void debugPrint( const int logicalUnit )
-    {
-        return (*$self)->debugPrint( logicalUnit );
-    }
-
     bool setSupportModel(Model& currentModel)
     {
         return (*$self)->setSupportModel(currentModel);
     }
 
-    void setDisplacementOnNodes(char* doFName, double doFValue, char* nameOfGroup)
+    bool setDisplacementOnNodes(char* doFName, double doFValue, char* nameOfGroup)
     {
         return (*$self)->setDisplacementOnNodes(doFName, doFValue, nameOfGroup);
     }
-    void setDisplacementOnElements(char* doFName, double doFValue, char* nameOfGroup)
+    bool setDisplacementOnElements(char* doFName, double doFValue, char* nameOfGroup)
     {
         return (*$self)->setDisplacementOnElements(doFName, doFValue, nameOfGroup);
     }
-    void setPressureOnElements(double doFValue, char* nameOfGroup)
+    bool setPressureOnElements(double doFValue, char* nameOfGroup)
     {
         return (*$self)->setPressureOnElements(doFValue, nameOfGroup);
     }
-
+    bool setPressureOnNodes(double doFValue, char* nameOfGroup)
+    {
+        return (*$self)->setPressureOnNodes(doFValue, nameOfGroup);
+    }
+    bool setDistributedPressureOnElements(double doFValue, char* nameOfGroup)
+    {
+        return (*$self)->setDistributedPressureOnElements(doFValue, nameOfGroup);
     bool build()
     {
         return (*$self)->build();
