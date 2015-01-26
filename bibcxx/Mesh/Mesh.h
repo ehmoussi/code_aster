@@ -119,61 +119,13 @@ class MeshInstance: public DataStructure
         bool readMEDFile( string pathFichier );
 };
 
+
+
 /**
  * @class Mesh
- * @brief Enveloppe d'un pointeur intelligent vers un MeshInstance
+ * @brief Pointeur intelligent vers un MeshInstance
  * @author Nicolas Sellenet
  */
-class Mesh
-{
-    public:
-        typedef boost::shared_ptr< MeshInstance > MeshPtr;
-
-    private:
-        MeshPtr _meshPtr;
-
-    public:
-        Mesh(bool initialisation = true): _meshPtr()
-        {
-
-            if ( initialisation == true )
-                _meshPtr = MeshPtr( new MeshInstance() );
-        };
-
-        ~Mesh()
-        {};
-
-        Mesh& operator=(const Mesh& tmp)
-        {
-            _meshPtr = tmp._meshPtr;
-            return *this;
-        };
-
-        const MeshPtr& operator->() const
-        {
-            return _meshPtr;
-        };
-
-        MeshInstance& operator*(void) const
-        {
-            return *_meshPtr;
-        };
-
-        MeshInstance* getInstance() const
-        {
-            return &(*_meshPtr);
-        };
-
-        void copy( Mesh& other )
-        {
-            _meshPtr = other._meshPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _meshPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
+typedef boost::shared_ptr< MeshInstance > Mesh;
 
 #endif /* MESH_H_ */

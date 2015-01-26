@@ -30,7 +30,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance():
                                 DataStructure( initAster->getNewResultObjectName(), "CHAM_MATER" ),
                                 _listOfMaterials( PCFieldOnMeshChar8( getName() + ".CHAMP_MAT " ) ),
                                 _listOfTemperatures( PCFieldOnMeshDouble( getName() + ".TEMPE_REF " ) ),
-                                _supportMesh( Mesh(false) )
+                                _supportMesh( Mesh() )
 {};
 
 bool MaterialOnMeshInstance::build()
@@ -41,7 +41,7 @@ bool MaterialOnMeshInstance::build()
 
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSMaillage = SimpleKeyWordStr("MAILLAGE");
-    if ( _supportMesh.isEmpty() )
+    if ( ! _supportMesh )
         throw string("Support mesh is undefined");
     // Affectation d'une valeur au mot cle simple MAILLAGE
     // Si _supportMesh->getJeveuxName() = 'MA      ' alors
