@@ -24,97 +24,177 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DataStructure/DataStructure.h"
-#include "Loads/ElementaryLoad.h"
 #include "Modeling/Model.h"
+#include "Loads/UnitaryLoad.h"
 #include "DataFields/PCFieldOnMesh.h"
-#include "aster.h"
 
 /**
  * @class MechanicalLoadInstance 
- * @brief Cette classe contient le wrapper vers la sd_affe_char_meca
+ * @brief This class defines a mechanical load (resulting from AFFE_CHAR_MECA command)
  * @author Natacha Bereux
+ * @todo Mutualiser avec KinematicsLoad. Typedef et méthodes sont parfois des copies serviles 
  */
 class MechanicalLoadInstance : public DataStructure 
 {
     private:
-        // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
-        // dans la list
+        /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
-        typedef list< pair< ElementaryLoadDouble, MeshEntityPtr > > listOfLoadsAndGrpsDouble;
-        typedef listOfLoadsAndGrpsDouble::value_type listOfLoadsAndGrpsDoubleValue;
-        typedef listOfLoadsAndGrpsDouble::iterator listOfLoadsAndGrpsDoubleIter;
-// Accès à la sd_affe_char_meca 
-        const string          _jeveuxName;
-        PCFieldOnMeshDouble   _cinematicLoad;
-        PCFieldOnMeshDouble   _pressure;
-// Description utilisateur des charges imposées
-        listOfLoadsAndGrpsDouble    _listOfLoadsDouble;
-        Model                       _supportModel;
+        /** @typedef std::list de DoubleLoadDisplacement */
+        typedef list< DoubleLoadDisplacement > ListDoubleDisp;
+        /** @typedef ListDoubleDisp iterator*/
+        typedef ListDoubleDisp::iterator ListDoubleDispIter;
+
+        /** @typedef std::list of DoubleLoadPressure */
+        typedef list< DoubleLoadPressure > ListDoublePres;
+        /** @typedef ListDoubleTemp iterator*/
+        typedef ListDoublePres::iterator ListDoublePresIter;
+
+        /** @brief User description of imposed loads */
+        ListDoubleDisp      _listOfDoubleImposedDisplacement;
+        ListDoublePres      _listOfDoubleImposedPressure;
+        ListDoublePres      _listOfDoubleImposedDistributedPressure;
+        
+        /** @brief Structure de données Aster */ 
+        const string           _jeveuxName;
+        PCFieldOnMeshDouble    _kinematicLoad;
+        PCFieldOnMeshDouble    _pressure;
+        /** @brief Modele support */
+        Model          _supportModel;
 
     public:
         /**
-        * Constructeur
+        * @brief Constructeur
         */
         MechanicalLoadInstance();
 
-// Imposer un déplacement (e.g. DX = 0 ) sur un groupe de noeuds (défini par son nom) 
-        void setDisplacementOnNodes(string doFName, double doFValue, string nameOfGroup)
+        /**
+         * @brief Set displacement on a group of elements
+         * @param nameOfGroup name of the group of elements
+         * @param value imposed value
+         * @return bool
+         */
+
+        bool setDisplacementOnElements(AsterCoordinates coordinate,
+                                    string nameOfGroup, double value)
         {
+// Check that neither the pointer to the support model nor the model itself are empty
             if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
                 throw string("Model is empty");
-// Vérifier que le nom de groupe est licite (i.e. le nom définit bien un groupe de noeuds qui 
-// existe dans le maillage sous-jacent au modèle.
+// Check that nameOfGroup defines a group of nodes of the support mesh
+            Mesh & currentMesh= _supportModel->getSupportMesh();
+            if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
+            {
+                throw  nameOfGroup +" is not a group of elements of the mesh you provided";
+            }
+            MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
+            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
+            _listOfDoubleImposedDisplacement.push_back( resu );
+            return true;
+        };
+/**
+         * @brief Set displacement on a group of nodes
+         * @param nameOfGroup name of the group of nodes
+         * @param value imposed value
+         * @return bool
+         */
+
+        bool setDisplacementOnNodes(AsterCoordinates coordinate,
+                                    string nameOfGroup, double value)
+        {
+// Check that neither the pointer to the support model nor the model itself are empty
+            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+                throw string("Model is empty");
+// Check that nameOfGroup defines a group of nodes of the support mesh
             Mesh & currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfNodes( nameOfGroup )) 
             {
-                throw "The group does not exist in the mesh you provided";
+                throw nameOfGroup +" is not a group of nodes of the mesh you provided";
             }
-            DisplacementLoad<double> currentDispl( doFName );
-            currentDispl.setValue( doFValue );
-            _listOfLoadsDouble.push_back( listOfLoadsAndGrpsDouble:: value_type(currentDispl,
-                                          MeshEntityPtr( new GroupOfNodesInstance( nameOfGroup ) ) ) );
+            MeshEntityPtr meshEnt( new GroupOfNodesInstance( nameOfGroup ) );
+            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
+            _listOfDoubleImposedDisplacement.push_back( resu );
+            return true;
         };
 
-// Imposer un déplacement (e.g. DX = 0 ) sur un groupe de mailles (défini par son nom) 
-        void setDisplacementOnElements(string doFName, double doFValue, string nameOfGroup)  
+        /**
+         * @brief Set the pressure on a group of elements
+         * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
+         * @param value imposed value
+         * @return bool
+         */
+        bool setPressureOnElements(double value, string nameOfGroup)
         {
+// Check that neither the pointer to the support model nor the model itself are empty
             if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
                 throw string("Model is empty");
-// Vérifier que le nom de groupe est licite (i.e. le nom définit bien un groupe de mailles qui 
-// existe dans le maillage sous-jacent au modèle.
+// Check that nameOfGroup is the name of a group belonging to the support mesh
             Mesh & currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
             {
-                throw "The group does not exist in the mesh you provided";
+                throw nameOfGroup +" is not a group of nodes of the mesh you provided" ;
             }
-            DisplacementLoad<double> currentDispl( doFName );
-            currentDispl.setValue( doFValue );
-            _listOfLoadsDouble.push_back( listOfLoadsAndGrpsDouble:: value_type(currentDispl,
-                                          MeshEntityPtr( new GroupOfElementsInstance( nameOfGroup ) ) ) );
+            MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
+            AsterCoordinates coordinate = Pressure;
+            DoubleLoadPressure resu( meshEnt, coordinate, value );
+            _listOfDoubleImposedPressure.push_back( resu );
+            return true;
         };
-
-// Imposer une pression sur un groupe de mailles
-        void setPressureOnElements(double pressure_value, string nameOfGroup)
+        /**
+         * @brief Set the pressure on a group of nodes
+         * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
+         * @param value imposed value
+         * @return bool
+         */
+        bool setPressureOnNodes(double value, string nameOfGroup)
         {
+// Check that neither the pointer to the support model nor the model itself are empty
             if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
                 throw string("Model is empty");
-// Vérifier que le nom de groupe est licite (i.e. le nom définit bien un groupe de mailles qui 
-// existe dans le maillage sous-jacent au modèle.
+// Check that nameOfGroup is the name of a group belonging to the support mesh
+            Mesh & currentMesh= _supportModel->getSupportMesh();
+            if ( !currentMesh->hasGroupOfNodes( nameOfGroup )) 
+            {
+                throw nameOfGroup +" is not a group of nodes of the mesh you provided" ;
+            }
+            MeshEntityPtr meshEnt( new GroupOfNodesInstance( nameOfGroup ) );
+            AsterCoordinates coordinate = Pressure;
+            DoubleLoadPressure resu( meshEnt, coordinate, value );
+            _listOfDoubleImposedPressure.push_back( resu );
+            return true;
+        };
+        /**
+         * @brief Set a distributed pressure on a group of elements
+         * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
+         * @param value imposed value
+         * @return bool
+         */
+        bool setDistributedPressureOnElements(double value, string nameOfGroup)
+        {
+// Check that neither the pointer to the support model nor the model itself are empty
+            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+                throw string("Model is empty");
+// Check that nameOfGroup is the name of a group belonging to the support mesh
             Mesh & currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
             {
-                throw "The group does not exist in the mesh you provided";
+                throw nameOfGroup +" is not a group of nodes of the mesh you provided" ;
             }
-            PressureLoad<double> currentPres;
-            currentPres.setValue( pressure_value);
-            _listOfLoadsDouble.push_back( listOfLoadsAndGrpsDouble:: value_type( currentPres,
-                                          MeshEntityPtr( new GroupOfElementsInstance( nameOfGroup ) ) ) );
+            MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
+            AsterCoordinates coordinate = Pressure;
+            DoubleLoadPressure resu( meshEnt, coordinate, value );
+            _listOfDoubleImposedDistributedPressure.push_back( resu );
+            return true;
         };
-
+        /**
+         * @brief Construction de la charge (appel a OP007)
+         * @return Booleen indiquant que tout s'est bien passe
+         */
         bool build();
 
-// Définir le modèle support
+       /**
+         * @brief Definition du modele support
+         * @param currentMesh objet Model sur lequel la charge reposera
+         */
         bool setSupportModel(Model& currentModel)
         {
             if ( currentModel.isEmpty() )

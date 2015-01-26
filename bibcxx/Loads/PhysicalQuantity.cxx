@@ -25,13 +25,16 @@
 
 #include "Loads/PhysicalQuantity.h"
 
-const char* AsterCoordinatesNames[8] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP", "TEMP_MIL" };
+const char* AsterCoordinatesNames[9] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP", "TEMP_MIL", "PRES" };
 
 const AsterCoordinates DeplCoordinates[nbDisplacementCoordinates] = { Dx, Dy, Dz, Drx, Dry, Drz };
 
 const AsterCoordinates TempCoordinates[nbThermalCoordinates] = { Temperature, MiddleTemperature };
 
+const AsterCoordinates PresCoordinates[nbPressureCoordinates] = { Pressure };
 
 const set< AsterCoordinates >WrapDepl::setOfCoordinates( DeplCoordinates, DeplCoordinates + nbDisplacementCoordinates );
 
 const set< AsterCoordinates >WrapTemp::setOfCoordinates( TempCoordinates, TempCoordinates + nbThermalCoordinates );
+
+const set< AsterCoordinates >WrapPres::setOfCoordinates( PresCoordinates, PresCoordinates + nbPressureCoordinates );
