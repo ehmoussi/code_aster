@@ -50,10 +50,8 @@ cdef class Mesh:
 
     def getCoordinates(self):
         """Return the coordinates as a FieldOnNodesDouble object"""
-        cdef cFieldOnNodesDouble coord
-        coord = self._cptr.get().getCoordinates()
-        coordinates = FieldOnNodesDouble()
-        coordinates.copy( coord )
+        coordinates = FieldOnNodesDouble( '&&MeshInit' )
+        coordinates.set( self._cptr.get().getCoordinates() )
         return coordinates
 
     def hasGroupOfElements( self, string name ):

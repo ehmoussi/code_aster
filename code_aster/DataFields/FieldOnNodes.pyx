@@ -25,7 +25,10 @@ cdef class FieldOnNodesDouble:
     """Python wrapper on the C++ FieldOnNodes object"""
 
     def __cinit__( self, string name ):
-        """Initialization: stores the pointer to the C++ object"""
+        """Initialization: stores the pointer to the C++ object
+        :todo: add init=True/False instead of creating a dummy instance that
+               will be removed by a following `set()`.
+        """
         cdef FieldOnNodesInstance[ double ]* inst
         inst = new FieldOnNodesInstance[ double ]( name )
         self._cptr = new cFieldOnNodesDouble( inst )
@@ -38,6 +41,10 @@ cdef class FieldOnNodesDouble:
     cdef cFieldOnNodesDouble* get( self ):
         """Return the pointer on the c++ object"""
         return self._cptr
+
+    cdef set( self, cFieldOnNodesDouble other ):
+        """Assign"""
+        self._cptr = new cFieldOnNodesDouble( other.get() )
 
     cdef copy( self, cFieldOnNodesDouble& other ):
         """Point to another existing C++ object"""

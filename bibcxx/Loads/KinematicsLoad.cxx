@@ -26,7 +26,7 @@
 
 KinematicsLoadInstance::KinematicsLoadInstance():
                     DataStructure( initAster->getNewResultObjectName(), "CHAR_CINE" ),
-                    _supportModel( Model( false ) )
+                    _supportModel( Model() )
 {};
 
 bool KinematicsLoadInstance::build()
@@ -44,7 +44,7 @@ bool KinematicsLoadInstance::build()
 
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSModel = SimpleKeyWordStr("MODELE");
-    if ( _supportModel.isEmpty() )
+    if ( ! _supportModel )
         throw string("Support model is undefined");
     mCSModel.addValues( _supportModel->getName() );
     syntaxeAffeCharCine.addSimpleKeywordString(mCSModel);

@@ -158,59 +158,9 @@ class ModelInstance: public DataStructure
 };
 
 /**
- * @class Model
- * @brief Enveloppe d'un pointeur intelligent vers un ModelInstance
- * @author Nicolas Sellenet
+ * @typedef Model
+ * @brief Pointeur intelligent vers un ModelInstance
  */
-class Model
-{
-    public:
-        typedef boost::shared_ptr< ModelInstance > ModelPtr;
-
-    private:
-        ModelPtr _modelPtr;
-
-    public:
-        Model(bool initilisation = true): _modelPtr()
-        {
-            if ( initilisation == true )
-                _modelPtr = ModelPtr( new ModelInstance() );
-        };
-
-        ~Model()
-        {};
-
-        Model& operator=(const Model& tmp)
-        {
-            _modelPtr = tmp._modelPtr;
-            return *this;
-        };
-
-        const ModelPtr& operator->() const
-        {
-            return _modelPtr;
-        };
-
-        ModelInstance& operator*(void) const
-        {
-            return *_modelPtr;
-        };
-
-        ModelInstance* getInstance() const
-        {
-            return &(*_modelPtr);
-        };
-
-        void copy( Model& other )
-        {
-            _modelPtr = other._modelPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _modelPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
+typedef boost::shared_ptr< ModelInstance > Model;
 
 #endif /* MODEL_H_ */

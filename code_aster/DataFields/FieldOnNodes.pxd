@@ -25,4 +25,5 @@ cdef class FieldOnNodesDouble:
     cdef cFieldOnNodesDouble* _cptr
 
     cdef cFieldOnNodesDouble* get( self )
+    cdef set( self, cFieldOnNodesDouble other )
     cdef copy( self, cFieldOnNodesDouble& other )

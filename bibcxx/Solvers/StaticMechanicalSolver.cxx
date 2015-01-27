@@ -26,7 +26,7 @@
 #include "Solvers/StaticMechanicalSolver.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
-                _supportModel( Model( false ) ),
+                _supportModel( Model() ),
                 _materialOnMesh( MaterialOnMesh( false ) ),
                 _linearSolver( LinearSolver() )
 {};
@@ -41,7 +41,7 @@ ResultsContainer StaticMechanicalSolverInstance::execute()
 
     // Definition du mot cle simple MODELE
     SimpleKeyWordStr mCSModele = SimpleKeyWordStr( "MODELE" );
-    if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+    if ( ( ! _supportModel ) || _supportModel->isEmpty() )
         throw string("Support model is undefined");
     mCSModele.addValues( _supportModel->getName() );
     syntaxeMecaStat.addSimpleKeywordString( mCSModele );

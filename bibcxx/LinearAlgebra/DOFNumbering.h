@@ -97,7 +97,7 @@ class DOFNumberingInstance: public DataStructure
          */
         void setElementaryMatrix( const ElementaryMatrix& currentMatrix )
         {
-            if ( ! _supportModel.isEmpty() )
+            if ( _supportModel )
                 throw "It is not allowed to defined Model and ElementaryMatrix together";
             _supportMatrix = currentMatrix;
         };

@@ -26,7 +26,7 @@
 DOFNumberingInstance::DOFNumberingInstance():
             DataStructure( initAster->getNewResultObjectName(), "NUME_DDL" ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
-            _supportModel( Model( false ) ),
+            _supportModel( Model() ),
             _supportMatrix( ElementaryMatrix( false ) ),
             _load( MechanicalLoad( false ) ),
             _linearSolver( LinearSolver( MultFront, Metis ) ),
@@ -39,7 +39,7 @@ bool DOFNumberingInstance::computeNumerotation()
     CommandSyntax syntaxeNumeDdl( "NUME_DDL", true,
                                      initAster->getResultObjectName(), getType() );
 
-    if ( ! _supportModel.isEmpty() )
+    if ( _supportModel )
     {
         if ( _supportModel->isEmpty() )
             throw "Support Model is empty";
