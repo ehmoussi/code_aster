@@ -43,7 +43,7 @@ FieldOnNodesDouble ElementaryVectorInstance::assembleVector( const DOFNumbering&
         throw "Numerotation is empty";
 
     const string newName( initAster->getNewResultObjectName() );
-    FieldOnNodesDouble vectTmp( newName );
+    FieldOnNodesDouble vectTmp( new FieldOnNodesInstanceDouble( newName ) );
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
     CommandSyntax syntaxeAsseVecteur( "ASSE_VECTEUR", true, newName, "CHAM_NO" );

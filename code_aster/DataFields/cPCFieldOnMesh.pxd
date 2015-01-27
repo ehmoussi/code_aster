@@ -34,6 +34,3 @@ cdef extern from "DataFields/PCFieldOnMesh.h":
 
         cPCFieldOnMeshDouble( PCFieldOnMeshInstance[ double ]* )
         PCFieldOnMeshInstance[ double ]* get()
-
-# ctypedef PCFieldOnMesh[ double ] cPCFieldOnMeshDouble
-# ctypedef PCFieldOnMesh[ JeveuxChar8 ] cPCFieldOnMeshChar8

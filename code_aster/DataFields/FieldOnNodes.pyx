@@ -20,31 +20,30 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-from cFieldOnNodes cimport cFieldOnNodesDouble
-
 
 cdef class FieldOnNodesDouble:
     """Python wrapper on the C++ FieldOnNodes object"""
 
-    def __cinit__( self, bint init=True ):
+    def __cinit__( self, string name ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new cFieldOnNodesDouble( )
-
-    cdef copy( self, cFieldOnNodesDouble& other ):
-        """Refer to an existing C++ object"""
-        self._cptr.copy( other )
+        cdef FieldOnNodesInstance[ double ]* inst
+        inst = new FieldOnNodesInstance[ double ]( name )
+        self._cptr = new cFieldOnNodesDouble( inst )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr:
             del self._cptr
 
+    cdef cFieldOnNodesDouble* get( self ):
+        """Return the pointer on the c++ object"""
+        return self._cptr
+
+    cdef copy( self, cFieldOnNodesDouble& other ):
+        """Point to another existing C++ object"""
+        self._cptr = new cFieldOnNodesDouble( other.get() )
+
     def __getitem__( self, i ):
         """Return the value at the given index"""
-        inst = self._cptr.getInstance()
-        cdef double val = deref(inst)[i]
+        cdef double val = deref(self._cptr.get())[i]
         return val
-
-    def isEmpty( self ):
-        """Tell if the object is empty"""
-        return self._cptr.isEmpty()

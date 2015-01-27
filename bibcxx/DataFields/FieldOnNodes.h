@@ -136,59 +136,14 @@ bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
     return true;
 };
 
+
+/** @typedef FieldOnNodesInstanceDouble Instance d'une carte de double */
+typedef FieldOnNodesInstance< double > FieldOnNodesInstanceDouble;
+
 /**
- * @class FieldOnNodes template
- * @brief Enveloppe d'un pointeur intelligent vers un FieldOnNodesInstance
- * @author Nicolas Sellenet
+ * @typedef FieldOnNodesDouble
+ * @brief Definition d'un champ aux noeuds de double
  */
-template<class ValueType>
-class FieldOnNodes
-{
-    public:
-        typedef boost::shared_ptr< FieldOnNodesInstance< ValueType > > FieldOnNodesTypePtr;
-
-    private:
-        FieldOnNodesTypePtr _fieldOnNodesPtr;
-
-    public:
-        FieldOnNodes()
-        {};
-
-        FieldOnNodes(string nom): _fieldOnNodesPtr( new FieldOnNodesInstance< ValueType > (nom) )
-        {};
-
-        ~FieldOnNodes()
-        {};
-
-        FieldOnNodes& operator=( const FieldOnNodes< ValueType >& other )
-        {
-            _fieldOnNodesPtr = other._fieldOnNodesPtr;
-            return *this;
-        };
-
-        const FieldOnNodesTypePtr& operator->(void) const
-        {
-            return _fieldOnNodesPtr;
-        };
-
-        FieldOnNodesInstance< ValueType >* getInstance() const
-        {
-            return &(*_fieldOnNodesPtr);
-        };
-
-        void copy( FieldOnNodes< ValueType >& other )
-        {
-            _fieldOnNodesPtr = other._fieldOnNodesPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _fieldOnNodesPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
-
-/** @typedef Definition d'un champ aux noeuds de double */
-typedef FieldOnNodes<double> FieldOnNodesDouble;
+typedef boost::shared_ptr< FieldOnNodesInstanceDouble > FieldOnNodesDouble;
 
 #endif /* FIELDONNODES_H_ */

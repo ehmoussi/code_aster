@@ -28,12 +28,7 @@ cdef extern from "DataFields/FieldOnNodes.h":
         bint printMEDFormat( string pathFichier )
         bint updateValuePointers()
 
-    cdef cppclass FieldOnNodes[ ValueType ]:
+    cdef cppclass cFieldOnNodesDouble "FieldOnNodesDouble":
 
-        FieldOnNodes()
-        FieldOnNodes( string name )
-        FieldOnNodesInstance[ ValueType ]* getInstance()
-        void copy( FieldOnNodes[ ValueType ]& other )
-        bint isEmpty()
-
-ctypedef FieldOnNodes[ double ] cFieldOnNodesDouble
+        cFieldOnNodesDouble( FieldOnNodesInstance[ double ]* )
+        FieldOnNodesInstance[ double ]* get()
