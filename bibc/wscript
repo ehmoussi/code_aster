@@ -97,7 +97,7 @@ def build_libaster(self, shenv):
          defines = '_MAIN_=_unused_main_', #'_WITHOUT_PYMOD_',
              env = shenv.derive(),
              use = ['PYEMBED', 'NUMPY', 'asterbibfor',
-                    'asterbibc', 'asterbibcxx'] + uses + ['CXX'],
+                    'asterbibc', 'asterbibcxx', 'astermfront'] + uses + ['CXX'],
     install_path = shenv.ASTERLIBDIR,
     )
 
