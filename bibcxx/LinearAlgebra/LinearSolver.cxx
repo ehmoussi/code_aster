@@ -45,7 +45,7 @@ FieldOnNodesDouble LinearSolverInstance::solveDoubleLinearSystem( const Assembly
                                                                   const FieldOnNodesDouble& currentRHS ) const
 {
     const string newName( initAster->getNewResultObjectName() );
-    FieldOnNodesDouble returnField( newName );
+    FieldOnNodesDouble returnField( new FieldOnNodesInstanceDouble( newName ) );
 
     // Definition du bout de fichier de commande correspondant a RESOUDRE
     CommandSyntax syntaxeResoudre( "RESOUDRE", true, newName, "CHAM_NO" );
