@@ -71,7 +71,7 @@ cdef class Model:
 
     def setSupportMesh( self, Mesh mesh ):
         """Set the support mesh of the model"""
-        ok = self._cptr.getInstance().setSupportMesh( deref( mesh.get_pointer() ) )
+        ok = self._cptr.getInstance().setSupportMesh( deref( mesh.get() ) )
         return ok
 
     def getSupportMesh( self ):

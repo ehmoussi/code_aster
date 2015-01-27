@@ -28,8 +28,10 @@
 
 MaterialOnMeshInstance::MaterialOnMeshInstance():
                                 DataStructure( initAster->getNewResultObjectName(), "CHAM_MATER" ),
-                                _listOfMaterials( PCFieldOnMeshChar8( getName() + ".CHAMP_MAT " ) ),
-                                _listOfTemperatures( PCFieldOnMeshDouble( getName() + ".TEMPE_REF " ) ),
+                                _listOfMaterials( PCFieldOnMeshChar8(
+                                    new PCFieldOnMeshInstanceChar8( getName() + ".CHAMP_MAT " ) ) ),
+                                _listOfTemperatures( PCFieldOnMeshDouble(
+                                    new PCFieldOnMeshInstanceDouble( getName() + ".TEMPE_REF " ) ) ),
                                 _supportMesh( Mesh() )
 {};
 

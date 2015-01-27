@@ -28,22 +28,23 @@ cdef class PCFieldOnMeshDouble:
 
     def __cinit__( self, string name ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new cPCFieldOnMeshDouble( name )
-
-    cdef copy( self, cPCFieldOnMeshDouble& other ):
-        """Refer to an existing C++ object"""
-        self._cptr.copy( other )
+        cdef PCFieldOnMeshInstance[ double ]* inst
+        inst = new PCFieldOnMeshInstance[ double ]( name )
+        self._cptr = new cPCFieldOnMeshDouble( inst )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr:
             del self._cptr
 
-    def isEmpty( self ):
-        """Tell if the object is empty"""
-        return self._cptr.isEmpty()
+    cdef cPCFieldOnMeshDouble* get( self ):
+        """Return the pointer on the c++ object"""
+        return self._cptr
+
+    cdef copy( self, cPCFieldOnMeshDouble& other ):
+        """Point to another existing C++ object"""
+        self._cptr = new cPCFieldOnMeshDouble( other.get() )
 
     def setSupportMesh( self, Mesh mesh ):
         """Set the support mesh of the model"""
-        ok = self._cptr.getInstance().setSupportMesh( deref(mesh._cptr) )
-        return ok
+        return self._cptr.get().setSupportMesh( deref(mesh.get()) )
