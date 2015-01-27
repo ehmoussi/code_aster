@@ -19,14 +19,14 @@
 
 from libcpp.string cimport string
 
-from code_aster.DataFields.cFieldOnNodes cimport FieldOnNodes
+from code_aster.DataFields.cFieldOnNodes cimport cFieldOnNodesDouble
 
 cdef extern from "Mesh/Mesh.h":
 
     cdef cppclass cMeshInstance "MeshInstance":
 
         cMeshInstance()
-        FieldOnNodes[double] getCoordinates()
+        cFieldOnNodesDouble getCoordinates()
         bint hasGroupOfElements( string name )
         bint hasGroupOfNodes( string name )
         bint readMEDFile( string pathFichier )

@@ -93,7 +93,7 @@ class KinematicsLoadInstance: public DataStructure
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
-            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw "The support model is empty";
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";
@@ -115,7 +115,7 @@ class KinematicsLoadInstance: public DataStructure
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
-            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw "The support model is empty";
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";
@@ -137,7 +137,7 @@ class KinematicsLoadInstance: public DataStructure
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
-            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw "The support model is empty";
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";
@@ -159,7 +159,7 @@ class KinematicsLoadInstance: public DataStructure
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
-            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw "The support model is empty";
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
                 throw nameOfGroup + "not in support mesh";

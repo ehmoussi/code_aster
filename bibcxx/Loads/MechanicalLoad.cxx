@@ -31,7 +31,7 @@ MechanicalLoadInstance::MechanicalLoadInstance():
                                     new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.CIMPO") ) ) ),
                                 _pressure( PCFieldOnMeshDouble(
                                     new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.PRESS") ) ) ),
-                                _supportModel( Model(false) )
+                                _supportModel( Model() )
 {};
 
 bool MechanicalLoadInstance::build()
@@ -43,7 +43,7 @@ bool MechanicalLoadInstance::build()
 
 // Définition du mot clé simple MODELE
     SimpleKeyWordStr mCSModel = SimpleKeyWordStr("MODELE");
-    if ( _supportModel.isEmpty() )
+    if ( ! _supportModel )
         throw string("Support model is undefined");
     mCSModel.addValues(_supportModel->getName());
     cout <<  "Nom du modele support: " << _supportModel->getName() << " . " << endl;

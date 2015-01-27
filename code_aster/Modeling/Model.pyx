@@ -32,52 +32,49 @@ Axisymmetrical, Tridimensional, Planar, DKT = cAxisymmetrical, cTridimensional, 
 cdef class Model:
     """Python wrapper on the C++ Model object"""
 
-    def __cinit__( self, bint init=True ):
+    def __cinit__( self ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new cModel( init )
-
-    cdef cModel* get_pointer( self ):
-        """Return the pointer on the c++ object"""
-        return self._cptr
-
-    cdef copy( self, cModel& other ):
-        """Refer to an existing C++ object"""
-        self._cptr.copy( other )
+        cdef cModelInstance* inst
+        inst = new cModelInstance()
+        self._cptr = new cModel( inst )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr:
             del self._cptr
 
-    def isEmpty( self ):
-        """Tell if the object is empty"""
-        return self._cptr.isEmpty()
+    cdef cModel* get( self ):
+        """Return the pointer on the c++ object"""
+        return self._cptr
+
+    cdef copy( self, cModel& other ):
+        """Point to another existing C++ object"""
+        self._cptr = new cModel( other.get() )
 
     def build( self ):
         """Build the model"""
-        self._cptr.getInstance().build()
+        self._cptr.get().build()
 
     def addModelingOnAllMesh( self, phys, mod ):
         """Add a modeling on all the mesh"""
-        self._cptr.getInstance().addModelingOnAllMesh( phys, mod )
+        self._cptr.get().addModelingOnAllMesh( phys, mod )
 
     def addModelingOnGroupOfElements( self, phys, mod, nameOfGroup ):
         """Add a modeling on a group of elements"""
-        self._cptr.getInstance().addModelingOnGroupOfElements( phys, mod, nameOfGroup )
+        self._cptr.get().addModelingOnGroupOfElements( phys, mod, nameOfGroup )
 
     def addModelingOnGroupOfNodes( self, phys, mod, nameOfGroup ):
         """Add a modeling on a group of nodes"""
-        self._cptr.getInstance().addModelingOnGroupOfNodes( phys, mod, nameOfGroup )
+        self._cptr.get().addModelingOnGroupOfNodes( phys, mod, nameOfGroup )
 
     def setSupportMesh( self, Mesh mesh ):
         """Set the support mesh of the model"""
-        ok = self._cptr.getInstance().setSupportMesh( deref( mesh.get() ) )
-        return ok
+        return self._cptr.get().setSupportMesh( deref( mesh.get() ) )
 
     def getSupportMesh( self ):
         """Return the support mesh"""
         cdef cMesh* cmesh
-        cmesh = &(self._cptr.getInstance().getSupportMesh())
+        cmesh = &(self._cptr.get().getSupportMesh())
         mesh = Mesh()
         mesh.copy( deref(cmesh) )
         return mesh

@@ -29,12 +29,12 @@
 #include "DataFields/PCFieldOnMesh.h"
 
 /**
- * @class MechanicalLoadInstance 
+ * @class MechanicalLoadInstance
  * @brief This class defines a mechanical load (resulting from AFFE_CHAR_MECA command)
  * @author Natacha Bereux
- * @todo Mutualiser avec KinematicsLoad. Typedef et méthodes sont parfois des copies serviles 
+ * @todo Mutualiser avec KinematicsLoad. Typedef et méthodes sont parfois des copies serviles
  */
-class MechanicalLoadInstance : public DataStructure 
+class MechanicalLoadInstance : public DataStructure
 {
     private:
         /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
@@ -54,8 +54,8 @@ class MechanicalLoadInstance : public DataStructure
         ListDoublePres      _listOfDoubleImposedPressure;
         ListDoublePres      _listOfDoubleImposedDistributedPressure;
         ListDoublePres      _listOfDoubleImposedPipePressure;
-        
-        /** @brief Structure de données Aster */ 
+
+        /** @brief Structure de données Aster */
         const string           _jeveuxName;
         PCFieldOnMeshDouble    _kinematicLoad;
         PCFieldOnMeshDouble    _pressure;
@@ -79,11 +79,11 @@ class MechanicalLoadInstance : public DataStructure
                                     string nameOfGroup, double value)
         {
 // Check that neither the pointer to the support model nor the model itself are empty
-            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup defines a group of nodes of the support mesh
             Mesh & currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
+            if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
                 throw  nameOfGroup +" is not a group of elements of the mesh you provided";
             }
@@ -103,11 +103,11 @@ class MechanicalLoadInstance : public DataStructure
                                     string nameOfGroup, double value)
         {
 // Check that neither the pointer to the support model nor the model itself are empty
-            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup defines a group of nodes of the support mesh
             Mesh & currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfNodes( nameOfGroup )) 
+            if ( !currentMesh->hasGroupOfNodes( nameOfGroup ))
             {
                 throw nameOfGroup +" is not a group of nodes of the mesh you provided";
             }
@@ -126,11 +126,11 @@ class MechanicalLoadInstance : public DataStructure
         bool setPressureOnElements(double value, string nameOfGroup)
         {
 // Check that neither the pointer to the support model nor the model itself are empty
-            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup is the name of a group belonging to the support mesh
             Mesh & currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
+            if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
                 throw nameOfGroup +" is not a group of nodes of the mesh you provided" ;
             }
@@ -149,11 +149,11 @@ class MechanicalLoadInstance : public DataStructure
         bool setPressureOnNodes(double value, string nameOfGroup)
         {
 // Check that neither the pointer to the support model nor the model itself are empty
-            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup is the name of a group belonging to the support mesh
             Mesh & currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfNodes( nameOfGroup )) 
+            if ( !currentMesh->hasGroupOfNodes( nameOfGroup ))
             {
                 throw nameOfGroup +" is not a group of nodes of the mesh you provided" ;
             }
@@ -172,11 +172,11 @@ class MechanicalLoadInstance : public DataStructure
         bool setDistributedPressureOnElements(double value, string nameOfGroup)
         {
 // Check that neither the pointer to the support model nor the model itself are empty
-            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup is the name of a group belonging to the support mesh
             Mesh & currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
+            if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
                 throw nameOfGroup +" is not a group of elements of the mesh you provided" ;
             }
@@ -195,11 +195,11 @@ class MechanicalLoadInstance : public DataStructure
         bool setPipePressureOnElements( double value, string nameOfGroup )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
-            if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup is the name of a group belonging to the support mesh
             Mesh & currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfElements( nameOfGroup )) 
+            if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
                 throw nameOfGroup +" is not a group of elements of the mesh you provided" ;
             }
@@ -221,14 +221,14 @@ class MechanicalLoadInstance : public DataStructure
          */
         bool setSupportModel(Model& currentModel)
         {
-            if ( currentModel.isEmpty() )
+            if ( ! currentModel )
                 throw string("Model is empty");
             _supportModel = currentModel;
             return true;
         };
 };
 
-class MechanicalLoad 
+class MechanicalLoad
 {
     public:
         typedef boost::shared_ptr< MechanicalLoadInstance > MechanicalLoadPtr;

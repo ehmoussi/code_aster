@@ -30,7 +30,7 @@ ElementaryMatrixInstance::ElementaryMatrixInstance():
                 _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
-                _supportModel( Model( false ) ),
+                _supportModel( Model() ),
                 _material( MaterialOnMesh( false ) )
 {};
 
@@ -51,7 +51,7 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
     // Definition du mot cle simple MODELE
     // ??? Ajouter des verifs pour savoir si l'interieur du modele est vide ???
     SimpleKeyWordStr mCSModele = SimpleKeyWordStr( "MODELE" );
-    if ( _supportModel.isEmpty() || _supportModel->isEmpty() )
+    if ( ( ! _supportModel ) || _supportModel->isEmpty() )
         throw string("Support model is undefined");
     mCSModele.addValues( _supportModel->getName() );
     syntaxeCalcMatrElem.addSimpleKeywordString( mCSModele );

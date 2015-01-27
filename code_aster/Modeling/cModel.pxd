@@ -37,7 +37,6 @@ cdef extern from "Modeling/Model.h":
 
     cdef cppclass cModel "Model":
 
-        cModel( bint init )
-        cModelInstance* getInstance()
-        void copy( cModel& other )
-        bint isEmpty()
+        cModel( cModelInstance* )
+        cModelInstance* get()
+                
