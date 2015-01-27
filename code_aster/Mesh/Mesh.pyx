@@ -40,12 +40,12 @@ cdef class Mesh:
         if self._cptr:
             del self._cptr
 
-    cdef cMesh* get_pointer( self ):
+    cdef cMesh* get( self ):
         """Return the pointer on the c++ object"""
         return self._cptr
 
     cdef copy( self, cMesh& other ):
-        """Refer to an existing C++ object"""
+        """Point to another existing C++ object"""
         self._cptr = new cMesh( other.get() )
 
     def getCoordinates(self):

@@ -103,57 +103,20 @@ class PCFieldOnMeshInstance
         };
 };
 
+/** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de double */
+typedef PCFieldOnMeshInstance< double > PCFieldOnMeshInstanceDouble;
+/** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de double */
+typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshInstanceChar8;
+
 /**
- * @class PCFieldOnMesh template
- * @brief Enveloppe d'un pointeur intelligent vers un PCFieldOnMeshInstance
- * @author Natacha Bereux
+ * @typedef PCFieldOnMeshDouble
+ * @brief   Definition d'une carte de double
  */
-template<class ValueType>
-class PCFieldOnMesh
-{
-    public:
-        typedef boost::shared_ptr< PCFieldOnMeshInstance< ValueType > > PCFieldOnMeshTypePtr;
-
-    private:
-        PCFieldOnMeshTypePtr _PCFieldOnMeshPtr;
-
-    public:
-        PCFieldOnMesh(string nom): _PCFieldOnMeshPtr( new PCFieldOnMeshInstance< ValueType > (nom) )
-        {};
-
-        ~PCFieldOnMesh()
-        {};
-
-        PCFieldOnMesh& operator=(const PCFieldOnMesh< ValueType >& tmp)
-        {
-            _PCFieldOnMeshPtr = tmp._PCFieldOnMeshPtr;
-        };
-
-        const PCFieldOnMeshTypePtr& operator->(void) const
-        {
-            return _PCFieldOnMeshPtr;
-        };
-
-        PCFieldOnMeshInstance< ValueType >* getInstance() const
-        {
-            return &(*_PCFieldOnMeshPtr);
-        };
-
-        void copy( PCFieldOnMesh< ValueType >& other )
-        {
-            _PCFieldOnMeshPtr = other._PCFieldOnMeshPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _PCFieldOnMeshPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
-
-/** @typedef Definition d'une carte de double */
-typedef PCFieldOnMesh< double > PCFieldOnMeshDouble;
-/**  @typedef Definition d'une carte de char[8] */
-typedef PCFieldOnMesh< JeveuxChar8 > PCFieldOnMeshChar8;
+typedef boost::shared_ptr< PCFieldOnMeshInstanceDouble > PCFieldOnMeshDouble;
+/**
+ * @typedef PCFieldOnMeshChar8 Definition d'une carte de char[8]
+ * @brief Pointeur intelligent vers un PCFieldOnMeshInstance
+ */
+typedef boost::shared_ptr< PCFieldOnMeshInstanceChar8 > PCFieldOnMeshChar8;
 
 #endif /* PCFIELDONMESH_H_ */

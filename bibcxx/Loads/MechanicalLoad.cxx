@@ -27,15 +27,17 @@
 MechanicalLoadInstance::MechanicalLoadInstance():
                                 DataStructure( initAster->getNewResultObjectName(), "CHAR_MECA" ),
                                 _jeveuxName( getName() ),
-                                _kinematicLoad( PCFieldOnMeshDouble( string(_jeveuxName+".CHME.CIMPO") ) ),
-                                _pressure( PCFieldOnMeshDouble( string(_jeveuxName+".CHME.PRESS") ) ),
+                                _kinematicLoad( PCFieldOnMeshDouble(
+                                    new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.CIMPO") ) ) ),
+                                _pressure( PCFieldOnMeshDouble(
+                                    new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.PRESS") ) ) ),
                                 _supportModel( Model(false) )
 {};
 
 bool MechanicalLoadInstance::build()
 {
-// Definition du bout de fichier de commande correspondant à l'appel de  
-// la commande AFFE_CHAR_MECA 
+// Definition du bout de fichier de commande correspondant à l'appel de
+// la commande AFFE_CHAR_MECA
     CommandSyntax syntaxeAffeCharMeca( "AFFE_CHAR_MECA", true,
                                        initAster->getResultObjectName(), getType() );
 
@@ -48,12 +50,12 @@ bool MechanicalLoadInstance::build()
     syntaxeAffeCharMeca.addSimpleKeywordString(mCSModel);
 
 // Définition de mot clé facteur DDL_IMPO
-// Impose un déplacement ou une pression 
+// Impose un déplacement ou une pression
     if (( _listOfDoubleImposedDisplacement.size() != 0 ) || ( _listOfDoubleImposedPressure.size() != 0 ))
     {
     FactorKeyword motCleDDL_IMPO = FactorKeyword("DDL_IMPO", true);
 
-// Boucle sur les déplacements imposés 
+// Boucle sur les déplacements imposés
     for ( ListDoubleDispIter curIter = _listOfDoubleImposedDisplacement.begin();
               curIter != _listOfDoubleImposedDisplacement.end();
               ++curIter )
@@ -129,14 +131,14 @@ bool MechanicalLoadInstance::build()
         // Ajout du mot-cle facteur DDL_IMPO a la commande AFFE_CHAR_MECA
         syntaxeAffeCharMeca.addFactorKeyword(motCleDDL_IMPO);
   }
-// 
+//
 // Définition de mot clé facteur PRES_REP
 // Impose une pression répartie sur un groupe de mailles
     if ( _listOfDoubleImposedDistributedPressure.size() != 0 )
     {
     FactorKeyword motClePRES_REP = FactorKeyword("PRES_REP", true);
 
-// Boucle sur les pressions imposées 
+// Boucle sur les pressions imposées
     for ( ListDoublePresIter curIter = _listOfDoubleImposedDistributedPressure.begin();
               curIter != _listOfDoubleImposedDistributedPressure.end();
               ++curIter )
@@ -155,7 +157,7 @@ bool MechanicalLoadInstance::build()
             {
                 if (  typeid( *(tmp) ) == typeid( GroupOfElementsInstance ) )
                     mCSGroup = SimpleKeyWordStr("GROUP_MA");
-// else error ? 
+// else error ?
                 mCSGroup.addValues( tmp->getEntityName() );
             }
             occurPRES_REP.addSimpleKeywordString(mCSGroup);
@@ -175,14 +177,14 @@ bool MechanicalLoadInstance::build()
 //
 
     }
-// 
+//
 // Définition du mot clé facteur FORCE_TUYAU
 // Impose une pression sur un groupe de mailles décrivant un tuyau
     if ( _listOfDoubleImposedPipePressure.size() != 0 )
     {
     FactorKeyword motCleFORCE_TUYAU = FactorKeyword("FORCE_TUYAU", true);
 
-// Boucle sur les pressions imposées 
+// Boucle sur les pressions imposées
     for ( ListDoublePresIter curIter = _listOfDoubleImposedPipePressure.begin();
               curIter != _listOfDoubleImposedPipePressure.end();
               ++curIter )

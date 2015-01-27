@@ -26,5 +26,5 @@ cdef class Mesh:
 
     cdef cMesh* _cptr
 
-    cdef cMesh* get_pointer( self )
+    cdef cMesh* get( self )
     cdef copy( self, cMesh& other )
