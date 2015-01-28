@@ -27,7 +27,7 @@ cdef class FieldOnNodesDouble:
     def __cinit__( self, string name="" ):
         """Initialization: stores the pointer to the C++ object"""
         if len(name) > 0:
-            self._cptr = new FieldOnNodesPtrDouble( new FieldOnNodesInstance[ double ]( name ) )
+            self._cptr = new FieldOnNodesPtrDouble( new FieldOnNodesInstanceDouble( name ) )
 
     def __dealloc__( self ):
         """Destructor"""

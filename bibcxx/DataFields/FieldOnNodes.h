@@ -141,9 +141,9 @@ bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
 typedef FieldOnNodesInstance< double > FieldOnNodesInstanceDouble;
 
 /**
- * @typedef FieldOnNodesDouble
+ * @typedef FieldOnNodesPtrDouble
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef boost::shared_ptr< FieldOnNodesInstanceDouble > FieldOnNodesDouble;
+typedef boost::shared_ptr< FieldOnNodesInstanceDouble > FieldOnNodesPtrDouble;
 
 #endif /* FIELDONNODES_H_ */

@@ -26,7 +26,7 @@ cdef extern from "Mesh/Mesh.h":
     cdef cppclass cMeshInstance "MeshInstance":
 
         cMeshInstance()
-        FieldOnNodesPtrDouble getCoordinates()
+        const FieldOnNodesPtrDouble getCoordinates()
         bint hasGroupOfElements( string name )
         bint hasGroupOfNodes( string name )
         bint readMEDFile( string pathFichier )

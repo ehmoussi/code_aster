@@ -32,7 +32,7 @@ class MeshInstance
     public:
         MeshInstance();
 
-        const FieldOnNodesDouble getCoordinates() const;
+        const FieldOnNodesPtrDouble getCoordinates() const;
         bool readMEDFile(char*);
 };
 
@@ -50,7 +50,7 @@ class Mesh
         return (*$self)->debugPrint( logicalUnit );
     }
 
-    const FieldOnNodes< double > getCoordinates()
+    const FieldOnNodesPtrDouble getCoordinates()
     {
         return (*$self)->getCoordinates();
     }

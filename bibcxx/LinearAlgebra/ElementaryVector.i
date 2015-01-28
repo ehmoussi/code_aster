@@ -43,7 +43,7 @@ class ElementaryVector
         return (*$self)->addMechanicalLoad( currentLoad );
     }
 
-    const FieldOnNodes< double > assembleVector( const DOFNumbering& currentNumerotation )
+    const FieldOnNodesPtrDouble assembleVector( const DOFNumbering& currentNumerotation )
     {
         return (*$self)->assembleVector( currentNumerotation );
     }
