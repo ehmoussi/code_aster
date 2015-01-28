@@ -30,7 +30,9 @@ cdef extern from "DataFields/PCFieldOnMesh.h":
         bint updateValuePointers()
         bint setSupportMesh( MeshPtr& currentMesh )
 
-    cdef cppclass cPCFieldOnMeshDouble "PCFieldOnMeshDouble":
+    cdef cppclass PCFieldOnMeshPtrDouble:
 
-        cPCFieldOnMeshDouble( PCFieldOnMeshInstance[ double ]* )
+        PCFieldOnMeshPtrDouble( PCFieldOnMeshInstance[ double ]* )
         PCFieldOnMeshInstance[ double ]* get()
+
+ctypedef PCFieldOnMeshInstance[ double ] PCFieldOnMeshInstanceDouble

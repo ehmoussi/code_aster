@@ -51,9 +51,9 @@ class MaterialOnMeshInstance: public DataStructure
         typedef listOfMatsAndGrps::iterator listOfMatsAndGrpsIter;
 
         /** @brief Carte '.CHAMP_MAT' */
-        PCFieldOnMeshChar8  _listOfMaterials;
+        PCFieldOnMeshPtrChar8  _listOfMaterials;
         /** @brief Carte '.TEMPE_REF' */
-        PCFieldOnMeshDouble _listOfTemperatures;
+        PCFieldOnMeshPtrDouble _listOfTemperatures;
         /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
         listOfMatsAndGrps   _materialsOnMeshEntity;
         /** @brief Maillage sur lequel repose la sd_cham_mater */

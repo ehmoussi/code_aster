@@ -57,8 +57,8 @@ class MechanicalLoadInstance : public DataStructure
 
         /** @brief Structure de données Aster */
         const string           _jeveuxName;
-        PCFieldOnMeshDouble    _kinematicLoad;
-        PCFieldOnMeshDouble    _pressure;
+        PCFieldOnMeshPtrDouble    _kinematicLoad;
+        PCFieldOnMeshPtrDouble    _pressure;
         /** @brief Modele support */
         ModelPtr       _supportModel;
 

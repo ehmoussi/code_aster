@@ -28,9 +28,9 @@
 
 MaterialOnMeshInstance::MaterialOnMeshInstance():
                                 DataStructure( initAster->getNewResultObjectName(), "CHAM_MATER" ),
-                                _listOfMaterials( PCFieldOnMeshChar8(
+                                _listOfMaterials( PCFieldOnMeshPtrChar8(
                                     new PCFieldOnMeshInstanceChar8( getName() + ".CHAMP_MAT " ) ) ),
-                                _listOfTemperatures( PCFieldOnMeshDouble(
+                                _listOfTemperatures( PCFieldOnMeshPtrDouble(
                                     new PCFieldOnMeshInstanceDouble( getName() + ".TEMPE_REF " ) ) ),
                                 _supportMesh( MeshPtr() )
 {};

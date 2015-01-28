@@ -27,9 +27,9 @@ template<class ValueType>
 class PCFieldOnMesh
 {
     public:
-        PCFieldOnMesh(char* name);
-        ~PCFieldOnMesh();
+        PCFieldOnMeshPtr(char* name);
+        ~PCFieldOnMeshPtr();
 };
 
-%template(PCFieldOnMeshDouble) PCFieldOnMesh<double>;
+%template(PCFieldOnMeshPtrDouble) PCFieldOnMeshPtr<double>;
 

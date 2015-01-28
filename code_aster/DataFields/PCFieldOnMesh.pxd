@@ -17,12 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from cPCFieldOnMesh cimport cPCFieldOnMeshDouble, PCFieldOnMeshInstance
+from cPCFieldOnMesh cimport PCFieldOnMeshPtrDouble, PCFieldOnMeshInstanceDouble
 
 
 cdef class PCFieldOnMeshDouble:
 
-    cdef cPCFieldOnMeshDouble* _cptr
+    cdef PCFieldOnMeshPtrDouble* _cptr
 
-    cdef cPCFieldOnMeshDouble* get( self )
-    cdef copy( self, cPCFieldOnMeshDouble& other )
+    cdef PCFieldOnMeshPtrDouble* get( self )
+    cdef copy( self, PCFieldOnMeshPtrDouble& other )

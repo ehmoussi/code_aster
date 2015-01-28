@@ -27,9 +27,9 @@
 MechanicalLoadInstance::MechanicalLoadInstance():
                                 DataStructure( initAster->getNewResultObjectName(), "CHAR_MECA" ),
                                 _jeveuxName( getName() ),
-                                _kinematicLoad( PCFieldOnMeshDouble(
+                                _kinematicLoad( PCFieldOnMeshPtrDouble(
                                     new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.CIMPO") ) ) ),
-                                _pressure( PCFieldOnMeshDouble(
+                                _pressure( PCFieldOnMeshPtrDouble(
                                     new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.PRESS") ) ) ),
                                 _supportModel( ModelPtr() )
 {};
