@@ -19,24 +19,28 @@
 
 from libcpp.string cimport string
 
-cimport cFunction
 
 cdef class Function:
     """Python wrapper on the C++ Function object"""
 
     def __cinit__( self, bint init=True ):
-        """Initialization: stores pointers to the C++ objects"""
-        self._cptr = new cFunction.Function( init )
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = new FunctionPtr( new FunctionInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr:
             del self._cptr
 
-    def isEmpty(self):
-        """Tell if the object is empty"""
-        return self._cptr.isEmpty()
+    cdef set( self, FunctionPtr other ):
+        """Point to an existing object"""
+        self._cptr = new FunctionPtr( other.get() )
+
+    cdef FunctionPtr* get( self ):
+        """Return the pointer on the c++ object"""
+        return self._cptr
 
     def setParameterName( self, string name ):
         """Set the name of the parameter"""
-        self._cptr.getInstance().setParameterName( name )
+        self._cptr.get().setParameterName( name )

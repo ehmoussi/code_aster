@@ -80,53 +80,10 @@ class FunctionInstance: public DataStructure
 };
 
 /**
-* class Function
-*   Wrapper around a smart-pointer to a FunctionInstance
+* @typedef FunctionPtr
+* @brief  Pointer to a FunctionInstance
 * @author Mathieu Courtois
 */
-class Function
-{
-    public:
-        typedef boost::shared_ptr< FunctionInstance > FunctionPtr;
-
-    private:
-        FunctionPtr _functionPtr;
-
-    public:
-        Function(bool init = true): _functionPtr()
-        {
-            if ( init == true )
-                _functionPtr = FunctionPtr( new FunctionInstance() );
-        };
-
-        ~Function()
-        {};
-
-        Function& operator=(const Function& tmp)
-        {
-            _functionPtr = tmp._functionPtr;
-            return *this;
-        };
-
-        const FunctionPtr& operator->() const
-        {
-            return _functionPtr;
-        };
-
-        FunctionInstance* getInstance() const
-        {
-            return &(*_functionPtr);
-        };
-
-        FunctionInstance& operator*(void) const
-        {
-            return *_functionPtr;
-        };
-
-        bool isEmpty() const
-        {
-            return ( _functionPtr.use_count() == 0 );
-        };
-};
+typedef boost::shared_ptr< FunctionInstance > FunctionPtr;
 
 #endif /* FUNCTION_H_ */

@@ -22,7 +22,8 @@ cimport cCataBuilder
 
 cdef class CataBuilder:
 
-    def __cinit__( self ):
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
         self._cptr = new cCataBuilder.CataBuilder()
 
     def __dealloc__( self ):

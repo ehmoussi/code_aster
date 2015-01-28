@@ -17,9 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-cimport cFunction
+from cFunction cimport FunctionInstance, FunctionPtr
 
 
 cdef class Function:
 
-    cdef cFunction.Function* _cptr
+    cdef FunctionPtr* _cptr
+
+    cdef set( self, FunctionPtr other )
+    cdef FunctionPtr* get( self )

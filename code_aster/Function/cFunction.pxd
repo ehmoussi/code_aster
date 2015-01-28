@@ -26,8 +26,7 @@ cdef extern from "Function/Function.h":
         void setParameterName( string name )
         bint build()
 
-    cdef cppclass Function:
+    cdef cppclass FunctionPtr:
 
-        Function(bint init)
-        FunctionInstance* getInstance()
-        bint isEmpty()
+        FunctionPtr( FunctionInstance* )
+        FunctionInstance* get()
