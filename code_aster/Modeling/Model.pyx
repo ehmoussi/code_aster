@@ -32,9 +32,10 @@ Axisymmetrical, Tridimensional, Planar, DKT = cAxisymmetrical, cTridimensional, 
 cdef class Model:
     """Python wrapper on the C++ Model object"""
 
-    def __cinit__( self ):
+    def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new ModelPtr( new ModelInstance() )
+        if init:
+            self._cptr = new ModelPtr( new ModelInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
@@ -43,7 +44,7 @@ cdef class Model:
 
     cdef set( self, ModelPtr other ):
         """Point to an existing object"""
-        self._cptr = new ModelPtr( other.get() )
+        self._cptr = new ModelPtr( other )
 
     cdef ModelPtr* get( self ):
         """Return the pointer on the c++ object"""

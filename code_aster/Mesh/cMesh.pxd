@@ -33,5 +33,6 @@ cdef extern from "Mesh/Mesh.h":
 
     cdef cppclass MeshPtr:
 
+        MeshPtr( MeshPtr& )
         MeshPtr( MeshInstance* )
         MeshInstance* get()

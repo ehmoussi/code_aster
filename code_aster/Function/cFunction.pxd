@@ -28,5 +28,6 @@ cdef extern from "Function/Function.h":
 
     cdef cppclass FunctionPtr:
 
+        FunctionPtr( FunctionPtr& )
         FunctionPtr( FunctionInstance* )
         FunctionInstance* get()

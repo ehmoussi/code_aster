@@ -40,7 +40,7 @@ cdef class Mesh:
 
     cdef set( self, MeshPtr other ):
         """Point to an existing object"""
-        self._cptr = new MeshPtr( other.get() )
+        self._cptr = new MeshPtr( other )
 
     cdef MeshPtr* get( self ):
         """Return the pointer on the c++ object"""
