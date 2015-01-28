@@ -57,7 +57,7 @@ class MaterialOnMeshInstance: public DataStructure
         /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
         listOfMatsAndGrps   _materialsOnMeshEntity;
         /** @brief Maillage sur lequel repose la sd_cham_mater */
-        Mesh                _supportMesh;
+        MeshPtr             _supportMesh;
 
     public:
         /**
@@ -98,9 +98,9 @@ class MaterialOnMeshInstance: public DataStructure
 
         /**
          * @brief Definition du maillage support
-         * @param currentMesh objet Mesh sur lequel le modele reposera
+         * @param currentMesh objet MeshPtr sur lequel le modele reposera
          */
-        bool setSupportMesh( Mesh& currentMesh )
+        bool setSupportMesh( MeshPtr& currentMesh )
         {
             if ( currentMesh->isEmpty() )
                 throw string("Mesh is empty");
@@ -112,7 +112,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @brief Obtenir le maillage support
          * @return Maillage support du champ de materiau
          */
-        Mesh& getSupportMesh()
+        MeshPtr& getSupportMesh()
         {
             if ( _supportMesh->isEmpty() )
                 throw string("support mesh of current model is empty");

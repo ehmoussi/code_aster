@@ -23,15 +23,15 @@ from code_aster.DataFields.cFieldOnNodes cimport FieldOnNodesPtrDouble
 
 cdef extern from "Mesh/Mesh.h":
 
-    cdef cppclass cMeshInstance "MeshInstance":
+    cdef cppclass MeshInstance:
 
-        cMeshInstance()
+        MeshInstance()
         const FieldOnNodesPtrDouble getCoordinates()
         bint hasGroupOfElements( string name )
         bint hasGroupOfNodes( string name )
         bint readMEDFile( string pathFichier )
 
-    cdef cppclass cMesh "Mesh":
+    cdef cppclass MeshPtr:
 
-        cMesh( cMeshInstance* )
-        cMeshInstance* get()
+        MeshPtr( MeshInstance* )
+        MeshInstance* get()

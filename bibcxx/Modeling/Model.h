@@ -61,7 +61,7 @@ class ModelInstance: public DataStructure
         /** @brief Liste contenant les modelisations ajoutees par l'utilisateur */
         listOfModsAndGrps _modelisations;
         /** @brief Maillage sur lequel repose la modelisation */
-        Mesh              _supportMesh;
+        MeshPtr           _supportMesh;
         /** @brief Booleen indiquant si la sd a deja ete remplie */
         bool              _isEmpty;
 
@@ -139,9 +139,9 @@ class ModelInstance: public DataStructure
 
         /**
          * @brief Definition du maillage support
-         * @param currentMesh objet Mesh sur lequel le modele reposera
+         * @param currentMesh objet MeshPtr sur lequel le modele reposera
          */
-        bool setSupportMesh( Mesh& currentMesh )
+        bool setSupportMesh( MeshPtr& currentMesh )
         {
             if ( currentMesh->isEmpty() )
                 throw string("Mesh is empty");
@@ -149,7 +149,7 @@ class ModelInstance: public DataStructure
             return true;
         };
 
-        Mesh& getSupportMesh()
+        MeshPtr& getSupportMesh()
         {
             if ( ( ! _supportMesh ) || _supportMesh->isEmpty() )
                 throw string("Support mesh of current model is empty");

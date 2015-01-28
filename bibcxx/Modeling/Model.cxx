@@ -30,7 +30,7 @@ ModelInstance::ModelInstance(): DataStructure( initAster->getNewResultObjectName
                                 _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
                                 _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
                                 _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
-                                _supportMesh( Mesh() ),
+                                _supportMesh( MeshPtr() ),
                                 _isEmpty( true )
 {};
 

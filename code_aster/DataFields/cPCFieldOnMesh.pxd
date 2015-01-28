@@ -19,7 +19,7 @@
 
 from libcpp.string cimport string
 
-from code_aster.Mesh.cMesh cimport cMesh
+from code_aster.Mesh.cMesh cimport MeshPtr
 
 
 cdef extern from "DataFields/PCFieldOnMesh.h":
@@ -28,7 +28,7 @@ cdef extern from "DataFields/PCFieldOnMesh.h":
 
         PCFieldOnMeshInstance( string name )
         bint updateValuePointers()
-        bint setSupportMesh( cMesh& currentMesh )
+        bint setSupportMesh( MeshPtr& currentMesh )
 
     cdef cppclass cPCFieldOnMeshDouble "PCFieldOnMeshDouble":
 

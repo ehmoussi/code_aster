@@ -32,7 +32,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance():
                                     new PCFieldOnMeshInstanceChar8( getName() + ".CHAMP_MAT " ) ) ),
                                 _listOfTemperatures( PCFieldOnMeshDouble(
                                     new PCFieldOnMeshInstanceDouble( getName() + ".TEMPE_REF " ) ) ),
-                                _supportMesh( Mesh() )
+                                _supportMesh( MeshPtr() )
 {};
 
 bool MaterialOnMeshInstance::build()
