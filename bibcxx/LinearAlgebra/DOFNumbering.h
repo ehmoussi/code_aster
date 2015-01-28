@@ -66,7 +66,11 @@ class DOFNumberingInstance: public DataStructure
          * @brief Destructeur
          */
         ~DOFNumberingInstance()
-        {};
+        {
+#ifdef __DEBUG_GC__
+            std::cout << "DOFNumberingInstance.destr: " << this->getName() << std::endl;
+#endif
+        };
 
         /**
          * @brief Methode permettant d'ajouter un chargement

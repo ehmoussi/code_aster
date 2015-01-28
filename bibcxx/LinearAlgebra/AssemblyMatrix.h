@@ -73,7 +73,11 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Destructeur
          */
         ~AssemblyMatrixInstance()
-        {};
+        {
+#ifdef __DEBUG_GC__
+            std::cout << "AssemblyMatrixInstance.destr: " << this->getName() << std::endl;
+#endif
+        };
 
         /**
          * @brief Methode permettant d'ajouter un chargement

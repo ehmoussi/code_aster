@@ -33,6 +33,9 @@ DataStructure::DataStructure( string name, string type ): _name( name ), _type( 
 
 DataStructure::~DataStructure()
 {
+#ifdef __DEBUG_GC__
+    std::cout << "DataStructure.destr: " << this->getName() << std::endl;
+#endif
     mapStrSDIterator curIter = mapNameDataStructure.find( _name );
     if ( curIter == mapNameDataStructure.end() )
         throw "Problem !!!";

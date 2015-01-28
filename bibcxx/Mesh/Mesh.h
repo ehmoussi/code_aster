@@ -73,7 +73,11 @@ class MeshInstance: public DataStructure
          * @brief Destructeur
          */
         ~MeshInstance()
-        {};
+        {
+#ifdef __DEBUG_GC__
+            std::cout << "Mesh.destr: " << this->getName() << std::endl;
+#endif
+        };
 
         /**
          * @brief Recuperation des coordonnees du maillage
