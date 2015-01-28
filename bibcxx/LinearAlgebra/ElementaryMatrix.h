@@ -68,7 +68,11 @@ class ElementaryMatrixInstance: public DataStructure
          * @brief Destructeur
          */
         ~ElementaryMatrixInstance()
-        {};
+        {
+#ifdef __DEBUG_GC__
+            std::cout << "ElementaryMatrixInstance.destr: " << this->getName() << std::endl;
+#endif
+        };
 
         /**
          * @brief Function d'ajout d'une charge mecanique

@@ -67,7 +67,11 @@ class ElementaryVectorInstance: public DataStructure
          * @brief Destructeur
          */
         ~ElementaryVectorInstance()
-        {};
+        {
+#ifdef __DEBUG_GC__
+            std::cout << "ElementaryVectorInstance.destr: " << this->getName() << std::endl;
+#endif
+        };
 
         /**
          * @brief Ajouter une charge mecanique
