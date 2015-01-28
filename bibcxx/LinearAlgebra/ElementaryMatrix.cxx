@@ -30,7 +30,7 @@ ElementaryMatrixInstance::ElementaryMatrixInstance():
                 _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
-                _supportModel( Model() ),
+                _supportModel( ModelPtr() ),
                 _material( MaterialOnMesh( false ) )
 {};
 

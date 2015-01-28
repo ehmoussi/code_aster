@@ -46,7 +46,7 @@ class DOFNumberingInstance: public DataStructure
         /** @brief Objet Jeveux '.NSLV' */
         JeveuxVectorChar24 _nameOfSolverDataStructure;
         /** @brief Modele support */
-        Model              _supportModel;
+        ModelPtr           _supportModel;
         /** @brief Matrices elementaires */
         ElementaryMatrix   _supportMatrix;
         /** @brief Conditions aux limites */
@@ -117,7 +117,7 @@ class DOFNumberingInstance: public DataStructure
          * @brief Methode permettant de definir le modele support
          * @param currentModel Model support de la numerotation
          */
-        void setSupportModel( const Model& currentModel )
+        void setSupportModel( const ModelPtr& currentModel )
         {
             if ( ! _supportMatrix.isEmpty() )
                 throw "It is not allowed to defined Model and ElementaryMatrix together";

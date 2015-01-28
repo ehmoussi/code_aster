@@ -52,7 +52,7 @@ class ElementaryMatrixInstance: public DataStructure
         /** @brief Booleen indiquant si la sd est vide */
         bool               _isEmpty;
         /** @brief Modele support */
-        Model              _supportModel;
+        ModelPtr           _supportModel;
         /** @brief Champ de materiau a utiliser */
         MaterialOnMesh     _material;
         /** @brief Chargements Mecaniques */
@@ -106,7 +106,7 @@ class ElementaryMatrixInstance: public DataStructure
          * @brief Methode permettant de definir le modele support
          * @param currentModel Model support des matrices elementaires
          */
-        void setSupportModel( const Model& currentModel )
+        void setSupportModel( const ModelPtr& currentModel )
         {
             _supportModel = currentModel;
         };

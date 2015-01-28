@@ -30,8 +30,8 @@
 class Model
 {
     public:
-        Model();
-        ~Model();
+        ModelPtr();
+        ~ModelPtr();
 };
 
 %extend Model

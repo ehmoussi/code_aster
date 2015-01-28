@@ -65,7 +65,7 @@ class StaticMechanicalSolver
         return (*$self)->setMaterialOnMesh( currentMaterial );
     }
 
-    void setSupportModel( const Model& currentModel )
+    void setSupportModel( const ModelPtr& currentModel )
     {
         return (*$self)->setSupportModel( currentModel );
     }

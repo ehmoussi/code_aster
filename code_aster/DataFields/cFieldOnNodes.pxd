@@ -31,7 +31,6 @@ cdef extern from "DataFields/FieldOnNodes.h":
 
     cdef cppclass FieldOnNodesPtrDouble:
 
-        FieldOnNodesPtrDouble()
         FieldOnNodesPtrDouble( FieldOnNodesInstance[ double ]* )
         FieldOnNodesInstance[ double ]* get()
 

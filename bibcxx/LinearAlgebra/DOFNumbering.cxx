@@ -26,7 +26,7 @@
 DOFNumberingInstance::DOFNumberingInstance():
             DataStructure( initAster->getNewResultObjectName(), "NUME_DDL" ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
-            _supportModel( Model() ),
+            _supportModel( ModelPtr() ),
             _supportMatrix( ElementaryMatrix( false ) ),
             _load( MechanicalLoad( false ) ),
             _linearSolver( LinearSolver( MultFront, Metis ) ),

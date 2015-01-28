@@ -26,7 +26,7 @@
 #include "Solvers/StaticMechanicalSolver.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
-                _supportModel( Model() ),
+                _supportModel( ModelPtr() ),
                 _materialOnMesh( MaterialOnMesh( false ) ),
                 _linearSolver( LinearSolver() )
 {};

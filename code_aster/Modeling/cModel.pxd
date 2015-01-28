@@ -24,9 +24,9 @@ from cPhysicsAndModeling cimport Physics, Modelings
 
 cdef extern from "Modeling/Model.h":
 
-    cdef cppclass cModelInstance "ModelInstance":
+    cdef cppclass ModelInstance:
 
-        cModelInstance()
+        ModelInstance()
         void addModelingOnAllMesh( Physics phys, Modelings mod )
         void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup )
         void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
@@ -35,7 +35,7 @@ cdef extern from "Modeling/Model.h":
         MeshPtr& getSupportMesh()
         bint build()
 
-    cdef cppclass cModel "Model":
+    cdef cppclass ModelPtr:
 
-        cModel( cModelInstance* )
-        cModelInstance* get()
+        ModelPtr( ModelInstance* )
+        ModelInstance* get()

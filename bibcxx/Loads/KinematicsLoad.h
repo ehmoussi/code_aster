@@ -49,7 +49,7 @@ class KinematicsLoadInstance: public DataStructure
         typedef ListDoubleTemp::iterator ListDoubleTempIter;
 
         /** @brief Modele support */
-        Model          _supportModel;
+        ModelPtr       _supportModel;
         /** @brief Listes des valeurs imposees DEPL_R et TEMP_R */
         ListDoubleDisp _listOfDoubleImposedDisplacement;
         ListDoubleTemp _listOfDoubleImposedTemperature;
@@ -180,7 +180,7 @@ class KinematicsLoadInstance: public DataStructure
          * @brief Definition du modele support
          * @param currentMesh objet Model sur lequel la charge reposera
          */
-        void setSupportModel( Model& currentModel )
+        void setSupportModel( ModelPtr& currentModel )
         {
             _supportModel = currentModel;
         };
