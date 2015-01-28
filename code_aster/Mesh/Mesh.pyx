@@ -21,7 +21,6 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from cMesh cimport cMeshInstance, cMesh
-from code_aster.DataFields.cFieldOnNodes cimport cFieldOnNodesDouble
 
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 
@@ -50,7 +49,7 @@ cdef class Mesh:
 
     def getCoordinates(self):
         """Return the coordinates as a FieldOnNodesDouble object"""
-        coordinates = FieldOnNodesDouble( '&&MeshInit' )
+        coordinates = FieldOnNodesDouble()
         coordinates.set( self._cptr.get().getCoordinates() )
         return coordinates
 

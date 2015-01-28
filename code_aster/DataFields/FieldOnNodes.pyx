@@ -24,31 +24,27 @@ from cython.operator cimport dereference as deref
 cdef class FieldOnNodesDouble:
     """Python wrapper on the C++ FieldOnNodes object"""
 
-    def __cinit__( self, string name ):
-        """Initialization: stores the pointer to the C++ object
-        :todo: add init=True/False instead of creating a dummy instance that
-               will be removed by a following `set()`.
-        """
-        cdef FieldOnNodesInstance[ double ]* inst
-        inst = new FieldOnNodesInstance[ double ]( name )
-        self._cptr = new cFieldOnNodesDouble( inst )
+    def __cinit__( self, string name="" ):
+        """Initialization: stores the pointer to the C++ object"""
+        if len(name) > 0:
+            self._cptr = new FieldOnNodesPtrDouble( new FieldOnNodesInstance[ double ]( name ) )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr:
             del self._cptr
 
-    cdef cFieldOnNodesDouble* get( self ):
+    cdef FieldOnNodesPtrDouble* get( self ):
         """Return the pointer on the c++ object"""
         return self._cptr
 
-    cdef set( self, cFieldOnNodesDouble other ):
-        """Assign"""
-        self._cptr = new cFieldOnNodesDouble( other.get() )
+    cdef set( self, FieldOnNodesPtrDouble other ):
+        """Point to an existing object"""
+        self._cptr = new FieldOnNodesPtrDouble( other.get() )
 
-    cdef copy( self, cFieldOnNodesDouble& other ):
+    cdef copy( self, FieldOnNodesPtrDouble& other ):
         """Point to another existing C++ object"""
-        self._cptr = new cFieldOnNodesDouble( other.get() )
+        self._cptr = new FieldOnNodesPtrDouble( other.get() )
 
     def __getitem__( self, i ):
         """Return the value at the given index"""
