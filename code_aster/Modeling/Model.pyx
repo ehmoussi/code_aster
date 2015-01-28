@@ -39,7 +39,7 @@ cdef class Model:
 
     def __dealloc__( self ):
         """Destructor"""
-        if self._cptr:
+        if self._cptr is not NULL:
             del self._cptr
 
     cdef set( self, ModelPtr other ):
