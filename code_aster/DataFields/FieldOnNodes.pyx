@@ -34,17 +34,13 @@ cdef class FieldOnNodesDouble:
         if self._cptr:
             del self._cptr
 
-    cdef FieldOnNodesPtrDouble* get( self ):
-        """Return the pointer on the c++ object"""
-        return self._cptr
-
     cdef set( self, FieldOnNodesPtrDouble other ):
         """Point to an existing object"""
         self._cptr = new FieldOnNodesPtrDouble( other.get() )
 
-    cdef copy( self, FieldOnNodesPtrDouble& other ):
-        """Point to another existing C++ object"""
-        self._cptr = new FieldOnNodesPtrDouble( other.get() )
+    cdef FieldOnNodesPtrDouble* get( self ):
+        """Return the pointer on the c++ object"""
+        return self._cptr
 
     def __getitem__( self, i ):
         """Return the value at the given index"""

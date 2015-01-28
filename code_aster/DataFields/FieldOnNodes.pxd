@@ -17,13 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from cFieldOnNodes cimport FieldOnNodesPtrDouble, FieldOnNodesInstanceDouble
+from cFieldOnNodes cimport FieldOnNodesInstanceDouble, FieldOnNodesPtrDouble
 
 
 cdef class FieldOnNodesDouble:
 
     cdef FieldOnNodesPtrDouble* _cptr
 
-    cdef FieldOnNodesPtrDouble* get( self )
     cdef set( self, FieldOnNodesPtrDouble other )
-    cdef copy( self, FieldOnNodesPtrDouble& other )
+    cdef FieldOnNodesPtrDouble* get( self )

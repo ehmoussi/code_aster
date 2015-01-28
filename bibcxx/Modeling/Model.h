@@ -149,7 +149,7 @@ class ModelInstance: public DataStructure
             return true;
         };
 
-        MeshPtr& getSupportMesh()
+        MeshPtr getSupportMesh()
         {
             if ( ( ! _supportMesh ) || _supportMesh->isEmpty() )
                 throw string("Support mesh of current model is empty");
