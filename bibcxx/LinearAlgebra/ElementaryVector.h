@@ -82,7 +82,7 @@ class ElementaryVectorInstance: public DataStructure
          * @brief Assembler les vecteurs elementaires en se fondant sur currentNumerotation
          * @param currentNumerotation objet DOFNumbering
          */
-        FieldOnNodesDouble assembleVector( const DOFNumbering& currentNumerotation );
+        FieldOnNodesPtrDouble assembleVector( const DOFNumbering& currentNumerotation );
 
         /**
          * @brief Calcul des matrices elementaires pour l'option CHAR_MECA

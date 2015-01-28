@@ -38,8 +38,8 @@ class LinearSolver
 
 %extend LinearSolver
 {
-    FieldOnNodes< double > solveDoubleLinearSystem( const AssemblyMatrix< double >& currentMatrix,
-                                                    const FieldOnNodes< double >& currentRHS )
+    FieldOnNodesPtrDouble solveDoubleLinearSystem( const AssemblyMatrix< double >& currentMatrix,
+                                                    const FieldOnNodesPtrDouble& currentRHS )
     {
         return (*$self)->solveDoubleLinearSystem( currentMatrix, currentRHS );
     }

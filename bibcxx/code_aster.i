@@ -24,7 +24,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 /* ATTENTION Pour ne pas renvoyer un pointeur C++ opaque apres des &get**, il ne faut pas preciser
-le type du template : FieldOnNodes< double > &getCoordinates() au lieu de FieldOnNodesDouble &getCoordinates()*/
+le type du template : FieldOnNodesPtrDouble &getCoordinates() au lieu de FieldOnNodesPtrDouble &getCoordinates()*/
 
 %include "exception.i"
 %exception {

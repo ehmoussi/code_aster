@@ -49,7 +49,7 @@ class MeshInstance: public DataStructure
         /** @brief Pointeur de nom Jeveux '.NOMNOE' */
         JeveuxBidirectionalMap _nameOfNodes;
         /** @brief Champ aux noeuds '.COORDO' */
-        FieldOnNodesDouble     _coordinates;
+        FieldOnNodesPtrDouble     _coordinates;
         /** @brief Collection Jeveux '.GROUPENO' */
         JeveuxCollectionLong   _groupsOfNodes;
         /** @brief Collection Jeveux '.CONNEX' */
@@ -79,7 +79,7 @@ class MeshInstance: public DataStructure
          * @brief Recuperation des coordonnees du maillage
          * @return champ aux noeuds contenant les coordonnees des noeuds du maillage
          */
-        const FieldOnNodesDouble getCoordinates() const
+        const FieldOnNodesPtrDouble getCoordinates() const
         {
             return _coordinates;
         };

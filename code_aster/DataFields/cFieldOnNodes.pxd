@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+
 cdef extern from "DataFields/FieldOnNodes.h":
 
     cdef cppclass FieldOnNodesInstance[ ValueType ]:
@@ -28,8 +29,10 @@ cdef extern from "DataFields/FieldOnNodes.h":
         bint printMEDFormat( string pathFichier )
         bint updateValuePointers()
 
-    cdef cppclass FieldOnNodesPtrDouble "FieldOnNodesDouble":
+    cdef cppclass FieldOnNodesPtrDouble:
 
         FieldOnNodesPtrDouble()
         FieldOnNodesPtrDouble( FieldOnNodesInstance[ double ]* )
         FieldOnNodesInstance[ double ]* get()
+
+ctypedef FieldOnNodesInstance[ double ] FieldOnNodesInstanceDouble

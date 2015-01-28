@@ -32,9 +32,9 @@ class FieldOnNodes
         ~FieldOnNodes();
 };
 
-%template(FieldOnNodesDouble) FieldOnNodes<double>;
+%template(FieldOnNodesPtrDouble) FieldOnNodesPtrDouble;
 
-%extend FieldOnNodes<double>
+%extend FieldOnNodesPtrDouble
 {
     double __getitem__(int i) const
     {

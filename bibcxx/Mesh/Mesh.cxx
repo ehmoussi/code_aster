@@ -29,7 +29,7 @@ MeshInstance::MeshInstance(): DataStructure( initAster->getNewResultObjectName()
                         _jeveuxName( getName() ),
                         _dimensionInformations( JeveuxVectorLong( string(_jeveuxName + ".DIME      ") ) ),
                         _nameOfNodes( JeveuxBidirectionalMap( string(_jeveuxName + ".NOMNOE    ") ) ),
-                        _coordinates( FieldOnNodesDouble(
+                        _coordinates( FieldOnNodesPtrDouble(
                             new FieldOnNodesInstanceDouble( string(_jeveuxName + ".COORDO    ") ) ) ),
                         _groupsOfNodes( JeveuxCollectionLong( string(_jeveuxName + ".GROUPENO  ") ) ),
                         _connectivity( JeveuxCollectionLong( string(_jeveuxName + ".CONNEX    ") ) ),

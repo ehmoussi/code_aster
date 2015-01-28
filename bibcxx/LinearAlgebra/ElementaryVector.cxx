@@ -33,7 +33,7 @@ ElementaryVectorInstance::ElementaryVectorInstance():
                 _material( MaterialOnMesh( false ) )
 {};
 
-FieldOnNodesDouble ElementaryVectorInstance::assembleVector( const DOFNumbering& currentNumerotation )
+FieldOnNodesPtrDouble ElementaryVectorInstance::assembleVector( const DOFNumbering& currentNumerotation )
 {
 
     if ( _isEmpty )
@@ -43,7 +43,7 @@ FieldOnNodesDouble ElementaryVectorInstance::assembleVector( const DOFNumbering&
         throw "Numerotation is empty";
 
     const string newName( initAster->getNewResultObjectName() );
-    FieldOnNodesDouble vectTmp( new FieldOnNodesInstanceDouble( newName ) );
+    FieldOnNodesPtrDouble vectTmp( new FieldOnNodesInstanceDouble( newName ) );
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
     CommandSyntax syntaxeAsseVecteur( "ASSE_VECTEUR", true, newName, "CHAM_NO" );

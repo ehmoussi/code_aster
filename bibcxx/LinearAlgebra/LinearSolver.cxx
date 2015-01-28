@@ -41,11 +41,11 @@ const set< Renumbering > WrapPetsc::setOfAllowedRenumbering( PetscRenumbering,
 const set< Renumbering > WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering,
                                                             GcpcRenumbering + nbRenumberingGcpc );
 
-FieldOnNodesDouble LinearSolverInstance::solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
-                                                                  const FieldOnNodesDouble& currentRHS ) const
+FieldOnNodesPtrDouble LinearSolverInstance::solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
+                                                                  const FieldOnNodesPtrDouble& currentRHS ) const
 {
     const string newName( initAster->getNewResultObjectName() );
-    FieldOnNodesDouble returnField( new FieldOnNodesInstanceDouble( newName ) );
+    FieldOnNodesPtrDouble returnField( new FieldOnNodesInstanceDouble( newName ) );
 
     // Definition du bout de fichier de commande correspondant a RESOUDRE
     CommandSyntax syntaxeResoudre( "RESOUDRE", true, newName, "CHAM_NO" );
