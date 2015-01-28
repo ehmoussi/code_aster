@@ -37,5 +37,6 @@ cdef extern from "Modeling/Model.h":
 
     cdef cppclass ModelPtr:
 
+        ModelPtr( ModelPtr& )
         ModelPtr( ModelInstance* )
         ModelInstance* get()

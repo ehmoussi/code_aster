@@ -38,7 +38,7 @@ cdef class PCFieldOnMeshDouble:
 
     cdef set( self, PCFieldOnMeshPtrDouble other ):
         """Point to an existing object"""
-        self._cptr = new PCFieldOnMeshPtrDouble( other.get() )
+        self._cptr = new PCFieldOnMeshPtrDouble( other )
 
     cdef PCFieldOnMeshPtrDouble* get( self ):
         """Return the pointer on the c++ object"""

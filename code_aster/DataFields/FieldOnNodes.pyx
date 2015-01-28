@@ -36,7 +36,7 @@ cdef class FieldOnNodesDouble:
 
     cdef set( self, FieldOnNodesPtrDouble other ):
         """Point to an existing object"""
-        self._cptr = new FieldOnNodesPtrDouble( other.get() )
+        self._cptr = new FieldOnNodesPtrDouble( other )
 
     cdef FieldOnNodesPtrDouble* get( self ):
         """Return the pointer on the c++ object"""

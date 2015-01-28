@@ -32,6 +32,7 @@ cdef extern from "DataFields/PCFieldOnMesh.h":
 
     cdef cppclass PCFieldOnMeshPtrDouble:
 
+        PCFieldOnMeshPtrDouble( PCFieldOnMeshPtrDouble& )
         PCFieldOnMeshPtrDouble( PCFieldOnMeshInstance[ double ]* )
         PCFieldOnMeshInstance[ double ]* get()
 

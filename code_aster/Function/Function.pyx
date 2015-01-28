@@ -35,7 +35,7 @@ cdef class Function:
 
     cdef set( self, FunctionPtr other ):
         """Point to an existing object"""
-        self._cptr = new FunctionPtr( other.get() )
+        self._cptr = new FunctionPtr( other )
 
     cdef FunctionPtr* get( self ):
         """Return the pointer on the c++ object"""
