@@ -40,7 +40,7 @@ class MaterialOnMesh
         return (*$self)->debugPrint( logicalUnit );
     }
 
-    bool setSupportMesh(Mesh& currentMesh)
+    bool setSupportMesh(MeshPtr& currentMesh)
     {
         return (*$self)->setSupportMesh(currentMesh);
     }

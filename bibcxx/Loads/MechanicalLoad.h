@@ -82,7 +82,7 @@ class MechanicalLoadInstance : public DataStructure
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup defines a group of nodes of the support mesh
-            Mesh & currentMesh= _supportModel->getSupportMesh();
+            MeshPtr & currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
                 throw  nameOfGroup +" is not a group of elements of the mesh you provided";
@@ -106,7 +106,7 @@ class MechanicalLoadInstance : public DataStructure
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup defines a group of nodes of the support mesh
-            Mesh & currentMesh= _supportModel->getSupportMesh();
+            MeshPtr & currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfNodes( nameOfGroup ))
             {
                 throw nameOfGroup +" is not a group of nodes of the mesh you provided";
@@ -129,7 +129,7 @@ class MechanicalLoadInstance : public DataStructure
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup is the name of a group belonging to the support mesh
-            Mesh & currentMesh= _supportModel->getSupportMesh();
+            MeshPtr & currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
                 throw nameOfGroup +" is not a group of nodes of the mesh you provided" ;
@@ -152,7 +152,7 @@ class MechanicalLoadInstance : public DataStructure
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup is the name of a group belonging to the support mesh
-            Mesh & currentMesh= _supportModel->getSupportMesh();
+            MeshPtr & currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfNodes( nameOfGroup ))
             {
                 throw nameOfGroup +" is not a group of nodes of the mesh you provided" ;
@@ -175,7 +175,7 @@ class MechanicalLoadInstance : public DataStructure
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup is the name of a group belonging to the support mesh
-            Mesh & currentMesh= _supportModel->getSupportMesh();
+            MeshPtr & currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
                 throw nameOfGroup +" is not a group of elements of the mesh you provided" ;
@@ -198,7 +198,7 @@ class MechanicalLoadInstance : public DataStructure
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw string("Model is empty");
 // Check that nameOfGroup is the name of a group belonging to the support mesh
-            Mesh & currentMesh= _supportModel->getSupportMesh();
+            MeshPtr & currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
                 throw nameOfGroup +" is not a group of elements of the mesh you provided" ;

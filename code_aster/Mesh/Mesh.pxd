@@ -19,12 +19,12 @@
 
 from libcpp.string cimport string
 
-from cMesh cimport cMesh
+from cMesh cimport MeshPtr
 
 
 cdef class Mesh:
 
-    cdef cMesh* _cptr
+    cdef MeshPtr* _cptr
 
-    cdef cMesh* get( self )
-    cdef copy( self, cMesh& other )
+    cdef MeshPtr* get( self )
+    cdef copy( self, MeshPtr& other )

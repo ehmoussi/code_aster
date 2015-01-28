@@ -39,8 +39,8 @@ class MeshInstance
 class Mesh
 {
     public:
-        Mesh();
-        ~Mesh();
+        MeshPtr();
+        ~MeshPtr();
 };
 
 %extend Mesh

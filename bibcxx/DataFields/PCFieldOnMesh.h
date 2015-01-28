@@ -55,7 +55,7 @@ class PCFieldOnMeshInstance
         /** @brief Vecteur Jeveux '.VALE' */
         JeveuxVector<ValueType> _valuesList;
         /** @brief Maillage sous-jacent */
-        Mesh                    _supportMesh;
+        MeshPtr                 _supportMesh;
 
     public:
         /**
@@ -68,7 +68,7 @@ class PCFieldOnMeshInstance
                                               _nameOfLigrels( JeveuxVectorChar24( string( name+".NOLI") ) ),
                                               _listOfMeshElements( JeveuxCollectionLong( string( name+".LIMA") ) ),
                                               _valuesList( JeveuxVector<ValueType>( string( name+".VALE") ) ),
-                                              _supportMesh( Mesh() )
+                                              _supportMesh( MeshPtr() )
         {
             assert(name.size() == 19);
         };
@@ -94,7 +94,7 @@ class PCFieldOnMeshInstance
          * @param currentMesh objet Mesh sur lequel le modele reposera
          * @return renvoit true si la définition  s'est bien deroulee, false sinon
          */
-        bool setSupportMesh(Mesh& currentMesh)
+        bool setSupportMesh(MeshPtr& currentMesh)
         {
             if ( currentMesh->isEmpty() )
                 throw string("Mesh is empty");

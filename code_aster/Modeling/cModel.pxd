@@ -19,7 +19,7 @@
 
 from libcpp.string cimport string
 
-from code_aster.Mesh.cMesh cimport cMesh
+from code_aster.Mesh.cMesh cimport MeshPtr
 from cPhysicsAndModeling cimport Physics, Modelings
 
 cdef extern from "Modeling/Model.h":
@@ -31,12 +31,11 @@ cdef extern from "Modeling/Model.h":
         void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup )
         void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
         void setSplittingMethod()
-        bint setSupportMesh( cMesh& currentMesh )
-        cMesh& getSupportMesh()
+        bint setSupportMesh( MeshPtr& currentMesh )
+        MeshPtr& getSupportMesh()
         bint build()
 
     cdef cppclass cModel "Model":
 
         cModel( cModelInstance* )
         cModelInstance* get()
-                

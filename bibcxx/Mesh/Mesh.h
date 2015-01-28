@@ -122,9 +122,9 @@ class MeshInstance: public DataStructure
 
 
 /**
- * @typedef Mesh
+ * @typedef MeshPtr
  * @brief Pointeur intelligent vers un MeshInstance
  */
-typedef boost::shared_ptr< MeshInstance > Mesh;
+typedef boost::shared_ptr< MeshInstance > MeshPtr;
 
 #endif /* MESH_H_ */
