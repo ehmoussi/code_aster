@@ -41,13 +41,13 @@ cdef class Model:
         if self._cptr:
             del self._cptr
 
+    cdef set( self, ModelPtr other ):
+        """Point to an existing object"""
+        self._cptr = new ModelPtr( other.get() )
+
     cdef ModelPtr* get( self ):
         """Return the pointer on the c++ object"""
         return self._cptr
-
-    cdef copy( self, ModelPtr& other ):
-        """Point to another existing C++ object"""
-        self._cptr = new ModelPtr( other.get() )
 
     def build( self ):
         """Build the model"""
@@ -71,8 +71,6 @@ cdef class Model:
 
     def getSupportMesh( self ):
         """Return the support mesh"""
-        cdef MeshPtr* cmesh
-        cmesh = &(self._cptr.get().getSupportMesh())
         mesh = Mesh()
-        mesh.copy( deref(cmesh) )
+        mesh.set( self._cptr.get().getSupportMesh() )
         return mesh

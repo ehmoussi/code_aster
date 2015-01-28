@@ -17,14 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from libcpp.string cimport string
-
-from cMesh cimport MeshPtr
+from cMesh cimport MeshInstance, MeshPtr
 
 
 cdef class Mesh:
 
     cdef MeshPtr* _cptr
 
+    cdef set( self, MeshPtr other )
     cdef MeshPtr* get( self )
-    cdef copy( self, MeshPtr& other )

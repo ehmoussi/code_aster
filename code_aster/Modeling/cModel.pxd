@@ -32,7 +32,7 @@ cdef extern from "Modeling/Model.h":
         void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
         void setSplittingMethod()
         bint setSupportMesh( MeshPtr& currentMesh )
-        MeshPtr& getSupportMesh()
+        MeshPtr getSupportMesh()
         bint build()
 
     cdef cppclass ModelPtr:

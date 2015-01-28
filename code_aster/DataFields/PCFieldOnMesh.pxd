@@ -24,5 +24,5 @@ cdef class PCFieldOnMeshDouble:
 
     cdef PCFieldOnMeshPtrDouble* _cptr
 
+    cdef set( self, PCFieldOnMeshPtrDouble other )
     cdef PCFieldOnMeshPtrDouble* get( self )
-    cdef copy( self, PCFieldOnMeshPtrDouble& other )

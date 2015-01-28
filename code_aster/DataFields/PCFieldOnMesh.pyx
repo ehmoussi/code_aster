@@ -26,22 +26,23 @@ from code_aster.Mesh.Mesh cimport Mesh
 cdef class PCFieldOnMeshDouble:
     """Python wrapper on the C++ PCFieldOnMeshDouble object"""
 
-    def __cinit__( self, string name ):
+    def __cinit__( self, string name="" ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new PCFieldOnMeshPtrDouble( new PCFieldOnMeshInstanceDouble( name ) )
+        if len(name) > 0:
+            self._cptr = new PCFieldOnMeshPtrDouble( new PCFieldOnMeshInstanceDouble( name ) )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr:
             del self._cptr
 
+    cdef set( self, PCFieldOnMeshPtrDouble other ):
+        """Point to an existing object"""
+        self._cptr = new PCFieldOnMeshPtrDouble( other.get() )
+
     cdef PCFieldOnMeshPtrDouble* get( self ):
         """Return the pointer on the c++ object"""
         return self._cptr
-
-    cdef copy( self, PCFieldOnMeshPtrDouble& other ):
-        """Point to another existing C++ object"""
-        self._cptr = new PCFieldOnMeshPtrDouble( other.get() )
 
     def setSupportMesh( self, Mesh mesh ):
         """Set the support mesh of the model"""

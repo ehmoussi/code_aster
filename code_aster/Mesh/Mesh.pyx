@@ -30,20 +30,21 @@ cdef class Mesh:
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new MeshPtr( new MeshInstance() )
+        if init:
+            self._cptr = new MeshPtr( new MeshInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr:
             del self._cptr
 
+    cdef set( self, MeshPtr other ):
+        """Point to an existing object"""
+        self._cptr = new MeshPtr( other.get() )
+
     cdef MeshPtr* get( self ):
         """Return the pointer on the c++ object"""
         return self._cptr
-
-    cdef copy( self, MeshPtr& other ):
-        """Point to another existing C++ object"""
-        self._cptr = new MeshPtr( other.get() )
 
     def getCoordinates(self):
         """Return the coordinates as a FieldOnNodesDouble object"""

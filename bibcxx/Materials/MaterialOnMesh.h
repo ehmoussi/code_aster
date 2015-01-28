@@ -112,7 +112,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @brief Obtenir le maillage support
          * @return Maillage support du champ de materiau
          */
-        MeshPtr& getSupportMesh()
+        MeshPtr getSupportMesh()
         {
             if ( _supportMesh->isEmpty() )
                 throw string("support mesh of current model is empty");

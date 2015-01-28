@@ -21,12 +21,12 @@ from cPhysicsAndModeling cimport Physics, Modelings
 from cPhysicsAndModeling cimport cMechanics, cThermal, cAcoustics
 from cPhysicsAndModeling cimport cAxisymmetrical, cTridimensional, cPlanar, cDKT
 
-from cModel cimport ModelPtr, ModelInstance
+from cModel cimport ModelInstance, ModelPtr
 
 
 cdef class Model:
 
     cdef ModelPtr* _cptr
 
+    cdef set( self, ModelPtr other )
     cdef ModelPtr* get( self )
-    cdef copy( self, ModelPtr& other )
