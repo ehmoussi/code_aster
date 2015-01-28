@@ -109,14 +109,14 @@ typedef PCFieldOnMeshInstance< double > PCFieldOnMeshInstanceDouble;
 typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshInstanceChar8;
 
 /**
- * @typedef PCFieldOnMeshDouble
+ * @typedef PCFieldOnMeshPtrDouble
  * @brief   Definition d'une carte de double
  */
-typedef boost::shared_ptr< PCFieldOnMeshInstanceDouble > PCFieldOnMeshDouble;
+typedef boost::shared_ptr< PCFieldOnMeshInstanceDouble > PCFieldOnMeshPtrDouble;
 /**
- * @typedef PCFieldOnMeshChar8 Definition d'une carte de char[8]
+ * @typedef PCFieldOnMeshPtrChar8 Definition d'une carte de char[8]
  * @brief Pointeur intelligent vers un PCFieldOnMeshInstance
  */
-typedef boost::shared_ptr< PCFieldOnMeshInstanceChar8 > PCFieldOnMeshChar8;
+typedef boost::shared_ptr< PCFieldOnMeshInstanceChar8 > PCFieldOnMeshPtrChar8;
 
 #endif /* PCFIELDONMESH_H_ */
