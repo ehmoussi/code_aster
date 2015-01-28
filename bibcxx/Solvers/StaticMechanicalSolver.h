@@ -46,7 +46,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
         typedef ListKineLoad::iterator ListKineLoadIter;
 
         /** @brief Modele support */
-        Model          _supportModel;
+        ModelPtr       _supportModel;
         /** @brief Champ de materiau a utiliser */
         MaterialOnMesh _materialOnMesh;
         /** @brief Solveur lineaire */
@@ -107,7 +107,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
          * @brief Methode permettant de definir le modele support
          * @param currentModel Model support des matrices elementaires
          */
-        void setSupportModel( const Model& currentModel )
+        void setSupportModel( const ModelPtr& currentModel )
         {
             _supportModel = currentModel;
         };

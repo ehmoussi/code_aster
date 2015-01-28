@@ -57,7 +57,7 @@ class DOFNumbering
         return (*$self)->setLinearSolver( currentSolver );
     }
 
-    void setSupportModel( const Model& currentModel )
+    void setSupportModel( const ModelPtr& currentModel )
     {
         return (*$self)->setSupportModel( currentModel );
     }

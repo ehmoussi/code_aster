@@ -26,7 +26,7 @@
 
 KinematicsLoadInstance::KinematicsLoadInstance():
                     DataStructure( initAster->getNewResultObjectName(), "CHAR_CINE" ),
-                    _supportModel( Model() )
+                    _supportModel( ModelPtr() )
 {};
 
 bool KinematicsLoadInstance::build()

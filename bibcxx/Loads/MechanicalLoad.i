@@ -33,7 +33,7 @@ class MechanicalLoad
 
 %extend MechanicalLoad
 {
-    bool setSupportModel(Model& currentModel)
+    bool setSupportModel(ModelPtr& currentModel)
     {
         return (*$self)->setSupportModel(currentModel);
     }

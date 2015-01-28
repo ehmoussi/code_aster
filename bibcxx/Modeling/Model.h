@@ -161,6 +161,6 @@ class ModelInstance: public DataStructure
  * @typedef Model
  * @brief Pointeur intelligent vers un ModelInstance
  */
-typedef boost::shared_ptr< ModelInstance > Model;
+typedef boost::shared_ptr< ModelInstance > ModelPtr;
 
 #endif /* MODEL_H_ */

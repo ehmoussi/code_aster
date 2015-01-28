@@ -33,7 +33,7 @@ class KinematicsLoad
 
 %extend KinematicsLoad
 {
-    void setSupportModel( Model& currentModel )
+    void setSupportModel( ModelPtr& currentModel )
     {
         return (*$self)->setSupportModel( currentModel );
     }

@@ -34,22 +34,20 @@ cdef class Model:
 
     def __cinit__( self ):
         """Initialization: stores the pointer to the C++ object"""
-        cdef cModelInstance* inst
-        inst = new cModelInstance()
-        self._cptr = new cModel( inst )
+        self._cptr = new ModelPtr( new ModelInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr:
             del self._cptr
 
-    cdef cModel* get( self ):
+    cdef ModelPtr* get( self ):
         """Return the pointer on the c++ object"""
         return self._cptr
 
-    cdef copy( self, cModel& other ):
+    cdef copy( self, ModelPtr& other ):
         """Point to another existing C++ object"""
-        self._cptr = new cModel( other.get() )
+        self._cptr = new ModelPtr( other.get() )
 
     def build( self ):
         """Build the model"""

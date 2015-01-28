@@ -60,7 +60,7 @@ class MechanicalLoadInstance : public DataStructure
         PCFieldOnMeshDouble    _kinematicLoad;
         PCFieldOnMeshDouble    _pressure;
         /** @brief Modele support */
-        Model          _supportModel;
+        ModelPtr       _supportModel;
 
     public:
         /**
@@ -219,7 +219,7 @@ class MechanicalLoadInstance : public DataStructure
          * @brief Definition du modele support
          * @param currentMesh objet Model sur lequel la charge reposera
          */
-        bool setSupportModel(Model& currentModel)
+        bool setSupportModel(ModelPtr& currentModel)
         {
             if ( ! currentModel )
                 throw string("Model is empty");

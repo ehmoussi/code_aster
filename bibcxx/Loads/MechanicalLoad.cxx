@@ -31,7 +31,7 @@ MechanicalLoadInstance::MechanicalLoadInstance():
                                     new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.CIMPO") ) ) ),
                                 _pressure( PCFieldOnMeshDouble(
                                     new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.PRESS") ) ) ),
-                                _supportModel( Model() )
+                                _supportModel( ModelPtr() )
 {};
 
 bool MechanicalLoadInstance::build()
