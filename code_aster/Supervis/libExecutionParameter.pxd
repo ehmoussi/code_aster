@@ -17,15 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from code_aster.Supervis.libExecutionParameter cimport execParameter
-
-cimport cInitializer
+from libcpp.string cimport string
 
 
-def init( int mode ):
-    """Initialize Code_Aster & its memory manager"""
-    cInitializer.asterInitialization( mode )
+cdef class ExecutionParameter:
 
-def finalize():
-    """Finalize Code_Aster execution"""
-    cInitializer.asterFinalization()
+    cdef _args
+
+    cpdef getParameter( self, argName )
+
+cdef ExecutionParameter execParameter

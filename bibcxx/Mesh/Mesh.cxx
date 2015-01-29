@@ -23,6 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+// emulate_LIRE_MAILLAGE_MED.h is auto-generated, Python is required
+#include "Python.h"
+#include "code_aster/Core/emulate_LIRE_MAILLAGE_MED.h"
+
 #include "Mesh/Mesh.h"
 
 MeshInstance::MeshInstance(): DataStructure( initAster->getNewResultObjectName(), "MAILLAGE" ),

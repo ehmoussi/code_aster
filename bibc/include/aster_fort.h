@@ -27,6 +27,10 @@
  *
  * *********************************************************************/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* routines UTILITAIRES */
 #define CALL_R8VIDE() CALL0(R8VIDE,r8vide)
 extern DOUBLE DEF0(R8VIDE,r8vide);
@@ -62,6 +66,9 @@ extern void DEFP(UTTCSM, uttcsm, DOUBLE *);
 /* routines SUPERVISEUR */
 #define CALL_EXPASS(a)  CALLP(EXPASS,expass,a)
 extern void DEFP(EXPASS,expass, INTEGER*);
+
+#define CALL_EXECOP(a)  CALLP(EXECOP,execop,a)
+extern void DEFP(EXECOP,execop, INTEGER*);
 
 #define CALL_OPSEXE(a)  CALLP(OPSEXE,opsexe,a)
 extern void DEFP(OPSEXE,opsexe, INTEGER*) ;
@@ -114,6 +121,19 @@ extern void DEFSSPS(JELIRA,jelira, char*, STRING_SIZE, char*, STRING_SIZE, INTEG
 #define CALL_JEEXIN(a,b)  CALLSP(JEEXIN,jeexin,a,b)
 extern void DEFSP(JEEXIN,jeexin, char*, STRING_SIZE, INTEGER* );
 
+/* char functions: the first two arguments is the result */
+extern void F_FUNC(JEXNUM,jexnum)(char*, STRING_SIZE, char*, INTEGER*, STRING_SIZE );
+extern void F_FUNC(JEXNOM,jexnom)(char*, STRING_SIZE, char*, char*, STRING_SIZE, STRING_SIZE );
+
+extern void DEFSS(JENUNO,jenuno, char*, STRING_SIZE, char*, STRING_SIZE );
+extern void DEFSP(JENONU,jenonu, char*, STRING_SIZE, INTEGER* );
+
+void DEFSSP(JEVEUOC, jeveuoc, const char *, STRING_SIZE, const char *, STRING_SIZE, void*);
+
+void DEFSSPP(WKVECTC, wkvectc, const char *, STRING_SIZE, const char *, STRING_SIZE, INTEGER*, void*);
+
+void DEFPPPPSPSS(UTIMSD,utimsd, INTEGER*, INTEGER*, INTEGER*, INTEGER*, char*, STRING_SIZE,
+                                INTEGER*, char*, STRING_SIZE, char*, STRING_SIZE );
 
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
@@ -172,8 +192,8 @@ extern void DEF0(ABORTF,abortf);
 /* routines de manipulation de la SD MATERIAU */
 #define CALL_RCVALE_WRAP(a,b,c,d,e,f,g,h,i,j) \
         CALLSSPSPPSPPP(RCVALE_WRAP,rcvale_wrap,a,b,c,d,e,f,g,h,i,j)
-extern void DEFSSPSPPSPPP(RCVALE_WRAP, rcvale_wrap, char *,STRING_SIZE, char *,STRING_SIZE, 
-    INTEGER *, char *,STRING_SIZE, DOUBLE *, INTEGER *, char *,STRING_SIZE, DOUBLE *, INTEGER *, 
+extern void DEFSSPSPPSPPP(RCVALE_WRAP, rcvale_wrap, char *,STRING_SIZE, char *,STRING_SIZE,
+    INTEGER *, char *,STRING_SIZE, DOUBLE *, INTEGER *, char *,STRING_SIZE, DOUBLE *, INTEGER *,
     INTEGER *);
 
 
@@ -208,6 +228,9 @@ extern void DEFSPSP(MDNOMA,mdnoma,char *,STRING_SIZE,INTEGER *,char *,STRING_SIZ
 extern void DEFSPPSSSP(MDNOCH,mdnoch,char *,STRING_SIZE,INTEGER *,INTEGER *,char *,STRING_SIZE,
                        char *,STRING_SIZE,char *,STRING_SIZE,INTEGER *);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* FIN ASTER_FORT_H */
 #endif

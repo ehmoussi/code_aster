@@ -1,0 +1,10 @@
+
+The ``code_aster`` directory contains different Cython source files.
+
+- ``Supervis`` must not depend on ``libaster`` or other cython modules.
+
+- ``Core`` is included in ``libaster`` (no ``.so`` generated).
+
+- ``libaster``, through Core, depend on ``Supervis``.
+
+- Wrappers (other cython modules) depend on ``Supervis`` and ``libaster``.

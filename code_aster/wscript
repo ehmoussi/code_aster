@@ -27,21 +27,23 @@ def options(self):
 
 def configure(self):
     self.load('cython')
-    self.check_cython_includes()
 
 def build(self):
     get_srcs = self.path.get_src().ant_glob
     env = self.all_envs[self.variant]
+    uses = env['all_dependencies']
 
+    # pure Python files (just installed)
     self(
         features = 'py',
             name = 'code_aster_py',
-          source = get_srcs('**/*.py'),
+          source = get_srcs('**/*.py', excl=['Core/*.py']),
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
     )
 
-    for cymodule in get_srcs('**/*.pyx'):
+    # Modules that libaster depends on.
+    for cymodule in get_srcs('Supervis/**/*.pyx'):
         path = cymodule.abspath()
         modname = osp.splitext(osp.basename(path))[0]
         dirname = osp.basename(osp.dirname(path))
@@ -50,13 +52,30 @@ def build(self):
             features = 'cxx cxxshlib pyext',
               source = cymodule,
               target = osp.join(dirname, modname),
-                 use = 'asterlib',
         install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
         )
 
+    # Cython objects that will be linked within libaster.so
+    # bibcxx may use the generated includes
+    self(
+        features = 'cxx pyext',
+            name = 'astercyt',
+          source = get_srcs('Core/**/*.pyx'),
+            #  env = env.derive(),
+             use = uses,
+    )
 
-###############################################################################
-@Configure.conf
-def check_cython_includes(self):
-    cypath = osp.join(self.path.get_src().parent.abspath(), 'code_aster')
-    self.env.append_unique('INCLUDES', cypath)
+    # Wrappers on C++ objects (and other libaster modules)
+    wrapper = get_srcs('**/*.pyx', excl=['Core/**/*.pyx', 'Supervis/**/*.pyx'])
+    for cymodule in wrapper:
+        path = cymodule.abspath()
+        modname = osp.splitext(osp.basename(path))[0]
+        dirname = osp.basename(osp.dirname(path))
+
+        self(
+            features = 'cxx cxxshlib pyext',
+              source = cymodule,
+              target = osp.join(dirname, modname),
+                 use = ['asterlib'],
+        install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
+        )

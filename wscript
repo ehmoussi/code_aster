@@ -101,10 +101,10 @@ def options(self):
         'subdirectories (example: X.Y will use aster/X.Y/...), '
         "[Default: '']")
     self.recurse('bibfor')
+    self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('mfront')
-    self.recurse('code_aster')
     self.recurse('i18n')
     self.recurse('data')
 
@@ -179,10 +179,10 @@ def configure(self):
     self.env.append_value('INCLUDES', paths)
 
     self.recurse('bibfor')
+    self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('mfront')
-    self.recurse('code_aster')
     self.recurse('i18n')
     self.recurse('data')
     # keep compatibility for as_run
@@ -218,11 +218,11 @@ def build(self):
 
     self.load('ext_aster', tooldir='waftools')
     self.recurse('bibfor')
+    self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('bibpyt')
     self.recurse('mfront')
-    self.recurse('code_aster')
     self.recurse('i18n')
     lsub = ['materiau', 'datg', 'catapy', 'catalo']
     if self.env.install_tests:
