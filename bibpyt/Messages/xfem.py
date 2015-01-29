@@ -129,10 +129,6 @@ cata_msg = {
      ou bien les supprimer du maillage.
 """),
 
-    14: _(u"""
-     On ne peut pas appliquer un cisaillement 2d sur les lèvres d'une fissure X-FEM.
-"""),
-
     15: _(u"""
   -> Cette option n'a pas encore été programmée.
   -> Risque & Conseil:
@@ -170,7 +166,16 @@ cata_msg = {
      Veuillez définir chacun des fonds dans des DEFI_FISS_XFEM différents.
 """),
 
-
+    22: _(u"""
+     Une relation cinématique est imposée au niveau du noeud %(k1)s sur lequel une 
+     fissure passe et cette relation est imposée de part et d'autre de la fissure.
+     Deux relations sont donc imposées, bloquant ainsi le ddl Heaviside associé.
+     Si vous avez également imposé une relation cinématique sur le degré de liberté 
+     Heaviside associé du noeud  %(k1)s, la matrice sera non factorisable.
+     Conseil :
+     Vous pouvez exclure le noeud %(k1)s du groupe affecté par
+     cette deuxième relation en utilisant par exemple l'opérande DIFFE.
+"""),
 
     23: _(u"""
      Erreur dans le choix de la méthode de calcul des level-sets.
