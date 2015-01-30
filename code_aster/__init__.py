@@ -20,27 +20,39 @@
 # discourage import *
 __all__ = []
 
+import sys
+# required: this initializes Core modules for access from C++/F90
 import code_aster.Core
-from code_aster.RunManager import Initializer
 
-# Automatically call `asterInitialization()` at import
+from code_aster.Supervis import setExecutionParameter
+
+
+# The `aster_init_options` module allows a custom startup
 mode = 0
 try:
     from aster_init_options import options
 except ImportError:
     options = ['']
 
+# used to build the elements catalog
 if 'CATAELEM' in options:
     print "starting with mode = 1 (build CATAELEM)..."
     mode = 1
 
+# standard startup
 if 'MANUAL' not in options:
+    from code_aster.RunManager import Initializer
+    from code_aster.Supervis import executionParameter
+
+    executionParameter.parse_args( sys.argv )
     Initializer.init( mode )
 
     import atexit
     atexit.register( Initializer.finalize )
 
 # import datastructures
+# TODO: replace by 'from code_aster.Mesh import Mesh'
+#       and choose in Mesh/__init__.py what to export.
 from code_aster.Mesh.Mesh import Mesh
 from code_aster.Modeling.Model import Model
 from code_aster.DataFields.FieldOnNodes import FieldOnNodesDouble

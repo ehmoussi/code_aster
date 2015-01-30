@@ -16,14 +16,3 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
-
-from libcpp.string cimport string
-
-
-cdef class ExecutionParameter:
-
-    cdef _args
-
-    cpdef getParameter( self, argName )
-
-cdef ExecutionParameter execParameter

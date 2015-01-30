@@ -22,19 +22,16 @@ from libcpp.string cimport string
 # from libaster cimport MakeCStrFromFStr, CopyCStrToFStr, FreeStr
 
 
-cdef class ExecutionParameter:
+class ExecutionParameter:
 
     """This class stores and provides the execution parameters.
     The execution parameters are read from the command line or using
-    the method `setParameter()`.
+    the method `set()`.
     """
-
-    def __cinit__( self ):
-        """Declaration of attributes"""
-        self._args = {}
 
     def __init__( self ):
         """Initialization of attributes"""
+        self._args = {}
         self._args['suivi_batch'] = 0
         self._args['dbgjeveux'] = 0
 
@@ -43,42 +40,54 @@ cdef class ExecutionParameter:
 
         self._args['repdex'] = '.'
 
-    cpdef getParameter( self, argName ):
+    def set( self, argName, argValue ):
+        """Set the value of an execution parameter"""
+        self._args[argName] = argValue
+
+    def get( self, argName ):
         """Return the value of an execution parameter
         @param argName Argument de la ligne de commande demande
         @return Entier relu
         """
         return self._args.get( argName, None )
 
+    def parse_args( self, argv ):
+        """Parse the command line arguments to set the execution parameters"""
+        #TODO
+        print "TODO: parsing arguments:", argv
+
 
 # global instance
-execParameter = ExecutionParameter()
+executionParameter = ExecutionParameter()
+
+def setExecutionParameter( argName, argValue ):
+    """Static function to set parameters from the user command file"""
+    global executionParameter
+    executionParameter.set( argName, argValue)
 
 
 cdef public int Xgtopti_( string argName ):
     """Request the value of an execution parameter of type 'int'"""
-    global execParameter
-    value = execParameter.getParameter( argName ) or 0
+    global executionParameter
+    value = executionParameter.get( argName ) or 0
     print 'gtopti( {} ): {}'.format( argName, value )
     return value
 
-
 cdef public double Xgtoptr_( string argName ):
     """Request the value of an execution parameter of type 'double'"""
-    global execParameter
-    value = execParameter.getParameter( argName ) or 0.
+    global executionParameter
+    value = executionParameter.get( argName ) or 0.
     print 'gtoptr( {} ): {}'.format( argName, value )
     return value
-
 
 cdef public void Xgtoptk_( char* argName, char* valk, long* iret,
                           unsigned int larg, unsigned int lvalk ):
     """Request the value of an execution parameter of type 'string'"""
-    global execParameter
+    global executionParameter
     cdef char* arg
     # arg = MakeCStrFromFStr( argName, larg )
     arg = argName
-    value = execParameter.getParameter( arg )
+    value = executionParameter.get( arg )
     if value is None:
         iret[0] = 4
         print 'gtoptk( {} ): {}, iret {}'.format( argName, value, iret[0] )
