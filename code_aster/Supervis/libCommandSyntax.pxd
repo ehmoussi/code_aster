@@ -1,6 +1,6 @@
 # CommandSyntax
 
-cimport baseutils
+cimport libBaseUtils
 # from libaster cimport MakeCStrFromFStr, CopyCStrToFStr, FreeStr
 
 

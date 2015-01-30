@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-cdef extern from "RunManager/Initializer.h":
+from code_aster.Core cimport libaster
+from code_aster.Core.libaster cimport INTEGER
 
-    void asterInitialization( int mode )
-    void asterFinalization()
+from code_aster.Supervis.libCommandSyntax cimport CommandSyntax

@@ -41,9 +41,19 @@ def build(self):
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
     )
+    
+    build_libaster_dependencies(self)
+    build_wrappers_on_libaster(self)
 
-    # Modules that libaster depends on.
-    for cymodule in get_srcs('Supervis/**/*.pyx'):
+
+def build_libaster_dependencies(self):
+    get_srcs = self.path.get_src().ant_glob
+    env = self.all_envs[self.variant]
+    uses = env['all_dependencies']
+
+    # Core & Supervis are used by libaster (must be named 'lib*')
+    # bibcxx is using the generated includes
+    for cymodule in get_srcs('Core/**/*.pyx') + get_srcs('Supervis/**/*.pyx'):
         path = cymodule.abspath()
         modname = osp.splitext(osp.basename(path))[0]
         dirname = osp.basename(osp.dirname(path))
@@ -55,28 +65,18 @@ def build(self):
               target = osp.join(dirname, modname),
         install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
         )
-
-    # Cython objects that will be linked within libaster.so
-    # bibcxx may use the generated includes
-    for cymodule in get_srcs('Core/**/*.pyx'):
-        path = cymodule.abspath()
-        modname = osp.splitext(osp.basename(path))[0]
-        dirname = osp.basename(osp.dirname(path))
-
-        self(
-            features = 'cxx cxxshlib pyext',
-              source = cymodule,
-                name = modname,
-              target = osp.join(dirname, modname),
-        install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
-        )
+        # 'use' in bibc would add 'lib' to the target name (that already
+        # contains 'lib'), that's why we define another product CODE_ASTER_CORE
+        # to deal dependencies.
         env.append_value('LIB_CODE_ASTER_CORE', [modname.replace('lib', '')])
-    # 'use' in bibc would add 'lib' to the target name (that already
-    # contains 'lib'), that's why we define another product CODE_ASTER_CORE
-    # to deal dependencies.
-    env.append_value('LIBPATH_CODE_ASTER_CORE', ['code_aster/Core'])
+        env.append_unique('LIBPATH_CODE_ASTER_CORE', [osp.join('code_aster', dirname)])
 
-    # Wrappers on C++ objects (and other libaster modules)
+def build_wrappers_on_libaster(self):
+    get_srcs = self.path.get_src().ant_glob
+    env = self.all_envs[self.variant]
+    uses = env['all_dependencies']
+
+    # Wrappers on C++ objects uses libaster
     wrapper = get_srcs('**/*.pyx', excl=['Core/**/*.pyx', 'Supervis/**/*.pyx'])
     for cymodule in wrapper:
         path = cymodule.abspath()
