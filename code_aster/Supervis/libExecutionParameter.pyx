@@ -19,8 +19,6 @@
 
 from libcpp.string cimport string
 
-# from libaster cimport MakeCStrFromFStr, CopyCStrToFStr, FreeStr
-
 
 class ExecutionParameter:
 
@@ -37,6 +35,7 @@ class ExecutionParameter:
 
         self._args['memory'] = 1000.
         self._args['maxbase'] = 1000.
+        self._args['tpmax'] = 86400
 
         self._args['repdex'] = '.'
 
@@ -65,35 +64,30 @@ def setExecutionParameter( argName, argValue ):
     global executionParameter
     executionParameter.set( argName, argValue)
 
-
-cdef public int Xgtopti_( string argName ):
+cdef public long getParameterLong( char* argName ):
     """Request the value of an execution parameter of type 'int'"""
     global executionParameter
     value = executionParameter.get( argName ) or 0
     print 'gtopti( {} ): {}'.format( argName, value )
     return value
 
-cdef public double Xgtoptr_( string argName ):
+cdef public double getParameterDouble( char* argName ):
     """Request the value of an execution parameter of type 'double'"""
     global executionParameter
     value = executionParameter.get( argName ) or 0.
     print 'gtoptr( {} ): {}'.format( argName, value )
     return value
 
-cdef public void Xgtoptk_( char* argName, char* valk, long* iret,
+cdef public void gtoptk_( char* argName, char* valk, long* iret,
                           unsigned int larg, unsigned int lvalk ):
     """Request the value of an execution parameter of type 'string'"""
     global executionParameter
-    cdef char* arg
-    # arg = MakeCStrFromFStr( argName, larg )
-    arg = argName
+    arg = argName[:larg]
     value = executionParameter.get( arg )
     if value is None:
         iret[0] = 4
-        print 'gtoptk( {} ): {}, iret {}'.format( argName, value, iret[0] )
     else:
-        # CopyCStrToFStr( valk, value, lvalk )
+        value = value[:lvalk]
         valk = value
         iret[0] = 0
-        print 'gtoptk( {} ): {}, iret {}'.format( argName, value, iret[0] )
-        # FreeStr( arg )
+    print 'gtoptk( {} ): {}, iret {}'.format( arg, value, iret[0] )

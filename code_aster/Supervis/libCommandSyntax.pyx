@@ -1,6 +1,6 @@
 # CommandSyntax
 
-from baseutils import debug
+from libBaseUtils import debug
 
 
 cdef class CommandSyntax:
@@ -181,7 +181,7 @@ cdef public char** getCommandKeywordValueString(
     value = currentCommand.getValue( factName, occurrence, simpName )
     if len( value ) > 0 and type( value[0] ) not in ( str, unicode ):
         raise TypeError( "string expected for %r/%r, got %s" % ( factName, simpName, type(value[0]) ) )
-    cdef char** strArray = baseutils.to_cstring_array( value )
+    cdef char** strArray = libBaseUtils.to_cstring_array( value )
     size[0] = len( value )
     return strArray
 
@@ -198,7 +198,7 @@ cdef public double* getCommandKeywordValueDouble(
             float( value[0] )
         except TypeError:
             raise TypeError( "float expected, got %s" % type( value[0] ) )
-    cdef double* dbleArray = baseutils.to_cdouble_array( value )
+    cdef double* dbleArray = libBaseUtils.to_cdouble_array( value )
     size[0] = len( value )
     return dbleArray
 
@@ -212,6 +212,6 @@ cdef public long* getCommandKeywordValueInt(
     value = currentCommand.getValue( factName, occurrence, simpName )
     if len( value ) > 0 and type( value[0] ) not in ( int, long ):
         raise TypeError( "integer expected, got %s" % type( value[0] ) )
-    cdef long* longArray = baseutils.to_clong_array( value )
+    cdef long* longArray = libBaseUtils.to_clong_array( value )
     size[0] = len( value )
     return longArray

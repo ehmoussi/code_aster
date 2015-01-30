@@ -38,7 +38,7 @@
 #include "aster_fort.h"
 #include "aster_utils.h"
 
-#include "RunManager/Initializer.h"
+#include "code_aster/Supervis/libExecutionParameter.h"
 
 FILE* fileOut = NULL;
 
@@ -262,7 +262,7 @@ void DEFSPP(GTOPTI,gtopti, _IN char *option, STRING_SIZE lopt,
     }
     char *opt = MakeCStrFromFStr(option, lopt);
     fprintf(fileOut, "GTOPTI %s\n", opt);
-    *vali = getIntLDC(opt);
+    *vali = getParameterLong(opt);
     FreeStr(opt);
     *iret = 0;
 }
@@ -278,37 +278,10 @@ void DEFSPP(GTOPTR,gtoptr, _IN char *option, STRING_SIZE lopt,
      *  iret = 4 : option inexistante, type incorrect.
      */
     char *opt = MakeCStrFromFStr(option, lopt);
-    *valr = getDoubleLDC(opt);
+    *valr = getParameterDouble(opt);
     fprintf(fileOut, "GTOPTR %s returns %f\n", opt, *valr);
     FreeStr(opt);
     *iret = 0;
-}
-
-void DEFSSP(GTOPTK,gtoptk, _IN char *option, STRING_SIZE lopt,
-            _OUT char *valk, STRING_SIZE lvalk,
-            _OUT INTEGER *iret)
-{
-    /*
-     * Interface C/Python pour récupérer une option de la ligne de commande.
-     * Retourne la valeur et un code retour :
-     *  iret = 0 : tout est ok
-     *  iret = 1 : longueur de valk insuffisante, valeur tronquée
-     *  iret = 4 : option inexistante, type incorrect.
-     */
-    char *opt = MakeCStrFromFStr(option, lopt);
-    fprintf(fileOut, "GTOPTK %s\n", opt);
-    char* valk2 = getChaineLDC(opt);
-    if ( valk2 == NULL )
-    {
-        lvalk = 0;
-        *iret = 4;
-    }
-    else
-    {
-        *iret = 0;
-        CopyCStrToFStr(valk, valk2, lvalk);
-    }
-    FreeStr(opt);
 }
 
 static char get_mem_stat_doc[] =
