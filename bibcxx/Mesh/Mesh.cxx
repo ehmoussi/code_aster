@@ -23,11 +23,11 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-// emulate_LIRE_MAILLAGE_MED.h is auto-generated, Python is required
+// emulate_LIRE_MAILLAGE_MED.h is auto-generated and requires Mesh.h and Python.h
 #include "Python.h"
-#include "code_aster/Core/emulate_LIRE_MAILLAGE_MED.h"
-
 #include "Mesh/Mesh.h"
+#include "code_aster/Core/libEmulateForMesh.h"
+
 
 MeshInstance::MeshInstance(): DataStructure( initAster->getNewResultObjectName(), "MAILLAGE" ),
                         _jeveuxName( getName() ),
@@ -47,6 +47,7 @@ MeshInstance::MeshInstance(): DataStructure( initAster->getNewResultObjectName()
 
 bool MeshInstance::readMEDFile( string pathFichier )
 {
+    bool iret = emulateLIRE_MAILLAGE_MED( this );
     // Creation d'un bout de fichier commande correspondant a LIRE_MAILLAGE
     CommandSyntax syntaxeLireMaillage( "LIRE_MAILLAGE", true,
                                        initAster->getResultObjectName(), getType() );

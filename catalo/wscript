@@ -161,7 +161,7 @@ def get_ld_paths(self):
     # Add *LIBPATH paths to LD_LIBRARY_PATH
     env = self.all_envs[self.variant]
     ld_path = list(chain(*[Utils.to_list(env[name])
-                           for name in ('LIBPATH', 'LIBDIR') if env[name]]))
+                           for name in ('LIBPATH', 'LIBPATH_CODE_ASTER_CORE', 'LIBDIR') if env[name]]))
     # add path where built libs are installed
     try:
         ld_path.insert(0, env.ASTERLIBDIR)

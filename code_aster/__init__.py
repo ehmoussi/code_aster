@@ -20,6 +20,7 @@
 # discourage import *
 __all__ = []
 
+import code_aster.Core
 from code_aster.RunManager import Initializer
 
 # Automatically call `asterInitialization()` at import
