@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from code_aster.Supervis.libExecutionParameter cimport execParameter
+from code_aster.Supervis.libExecutionParameter import executionParameter
 
 cimport cInitializer
 
