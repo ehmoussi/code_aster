@@ -17,9 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# discourage import *
-__all__ = []
+from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
 
-# All the modules of this package must be imported in Python (=initialized)
-# before being usable.
-import code_aster.Core.libEmulateForMesh
+
+cdef extern from "Mesh/Mesh.h":
+
+    cdef cppclass MeshInstance:
+        pass

@@ -37,7 +37,7 @@ def build(self):
     self(
         features = 'py',
             name = 'code_aster_py',
-          source = get_srcs('**/*.py', excl=['Core/*.py']),
+          source = get_srcs('**/*.py'),
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
     )
@@ -51,19 +51,30 @@ def build(self):
         self(
             features = 'cxx cxxshlib pyext',
               source = cymodule,
+                name = modname,
               target = osp.join(dirname, modname),
         install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
         )
 
     # Cython objects that will be linked within libaster.so
     # bibcxx may use the generated includes
-    self(
-        features = 'cxx pyext',
-            name = 'astercyt',
-          source = get_srcs('Core/**/*.pyx'),
-            #  env = env.derive(),
-             use = uses,
-    )
+    for cymodule in get_srcs('Core/**/*.pyx'):
+        path = cymodule.abspath()
+        modname = osp.splitext(osp.basename(path))[0]
+        dirname = osp.basename(osp.dirname(path))
+
+        self(
+            features = 'cxx cxxshlib pyext',
+              source = cymodule,
+                name = modname,
+              target = osp.join(dirname, modname),
+        install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
+        )
+        env.append_value('LIB_CODE_ASTER_CORE', [modname.replace('lib', '')])
+    # 'use' in bibc would add 'lib' to the target name (that already
+    # contains 'lib'), that's why we define another product CODE_ASTER_CORE
+    # to deal dependencies.
+    env.append_value('LIBPATH_CODE_ASTER_CORE', ['code_aster/Core'])
 
     # Wrappers on C++ objects (and other libaster modules)
     wrapper = get_srcs('**/*.pyx', excl=['Core/**/*.pyx', 'Supervis/**/*.pyx'])

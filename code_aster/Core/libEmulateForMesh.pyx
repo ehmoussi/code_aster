@@ -1,16 +1,28 @@
-# emulate LIRE_MAILLAGE / FORMAT='MED'
+# coding: utf-8
+
+# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+#
+# This file is part of Code_Aster.
+#
+# Code_Aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# Code_Aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+
+# Emulate commands for Mesh object
 
 import os.path as osp
 
-# from code_aster.RunManager.libFile import (
-#     PyFileType as Type,
-#     PyFileAccess as Access
-# )
-# from CommandSyntax import CommandSyntax, _F
-from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
 
-
-cdef public emulate_LIRE_MAILLAGE_MED( ):
+cdef public bint emulateLIRE_MAILLAGE_MED( MeshInstance* inst ):
     """Read a MED file
     @param fileName path to the file to read
     @return true if it succeeds"""
@@ -20,7 +32,7 @@ cdef public emulate_LIRE_MAILLAGE_MED( ):
     #     return False
     # medFile = File( fileName, Type.Binary, Access.Old )
     #
-    # syntax = CommandSyntax( "LIRE_MAILLAGE" )
+    syntax = CommandSyntax( "LIRE_MAILLAGE" )
     # syntax.setResult( initAster.getResultObjectName(), self.getType() )
     #
     # syntax.define( _F ( FORMAT="MED",
@@ -32,7 +44,7 @@ cdef public emulate_LIRE_MAILLAGE_MED( ):
     #
     # cdef INTEGER numOp = 1
     # libaster.execop_( &numOp )
-    # syntax.free()
+    syntax.free()
     #
     # # Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     # self._dimensionInformations.updateValuePointer()
@@ -42,5 +54,7 @@ cdef public emulate_LIRE_MAILLAGE_MED( ):
     # self._elementsType.updateValuePointer()
     # self._groupsOfElements.buildFromJeveux()
     # self._isEmpty = False
+
+    print "Hello from emulateLIRE_MAILLAGE_MED"
 
     return True

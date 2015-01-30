@@ -139,7 +139,7 @@ def remove_duplicates(self, list_in):
     dset = set()
     # relies on the fact that dset.add() always returns None.
     return [ l for l in list_in if
-             l not in dset and not dset.add(l) ]
+             l and l not in dset and not dset.add(l) ]
 
 # Force static libs
 CHECK = '_check'
