@@ -4,6 +4,26 @@
 This module defines common utilities
 """
 
+def resizeStr( cstr, size ):
+    """Resized a string to be assigned to a char* for a fortran string
+    buffer = resizeStr(pystring, 32)
+    fstr = buff
+    """
+    return '{:{size}}'.format( cstr[:size], size=size )
+
+def to_cstr( pystring, size ):
+    """Convert a fortran string by removing the trailing spaces"""
+    return pystring[:size].rstrip()
+
+cdef void copyToFStr( char* dest, pystring, unsigned int str_size ):
+    """Copy a string into an existing Fortran string (already
+    allocated of at least `str_size` chars)
+    """
+    buffer = resizeStr( pystring, str_size )
+    cdef char* resized = buffer
+    memcpy( dest, resized, str_size )
+
+
 # utilities for arrays
 # http://stackoverflow.com/questions/17511309/fast-string-array-cython
 # The caller must free the returned array
@@ -39,8 +59,7 @@ cdef void to_fstring_array( list_str, int str_size, char*** ret ):
     # http://stackoverflow.com/questions/17511309/fast-string-array-cython
     cdef int i
     for i in range( len( list_str ) ):
-        resized = '{:{size}}'.format( list_str[i][:str_size], size=str_size )
-        ret[0][i] = PyString_AsString( resized )
+        ret[0][i] = PyString_AsString( resizeStr(list_str[i], str_size) )
 
 
 def debug(title, *obj):

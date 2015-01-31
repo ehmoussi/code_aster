@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from libcpp.string cimport string
+from code_aster.Supervis.libBaseUtils import to_cstr
 
 
 class ExecutionParameter:
@@ -82,12 +82,11 @@ cdef public void gtoptk_( char* argName, char* valk, long* iret,
                           unsigned int larg, unsigned int lvalk ):
     """Request the value of an execution parameter of type 'string'"""
     global executionParameter
-    arg = argName[:larg]
+    arg = to_cstr( argName, larg )
     value = executionParameter.get( arg )
     if value is None:
         iret[0] = 4
     else:
-        value = value[:lvalk]
-        valk = value
+        copyToFStr( valk, value, lvalk )
         iret[0] = 0
     print 'gtoptk( {} ): {}, iret {}'.format( arg, value, iret[0] )

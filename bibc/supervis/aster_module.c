@@ -380,36 +380,6 @@ INTEGER DEFSS( GETEXM, getexm, _IN char *motfac,_IN STRING_SIZE lfac,
 
 
 /* ------------------------------------------------------------------ */
-void DEFSSS( GETRES ,getres, _OUT char *nomres, _IN STRING_SIZE lres,
-                             _OUT char *concep, _IN STRING_SIZE lconc,
-                             _OUT char *nomcmd, _IN STRING_SIZE lcmd)
-{
-        /*
-          Procedure GETRES pour le FORTRAN : emule le fonctionnement
-          de la procedure equivalente ASTER
-          Retourne
-            le nom utilisateur du resultat : nomres (string)
-            le nom du concept resultat     : concep (string)
-            le nom de la commande          : nomcmd (string)
-        */
-    char* nomCmdCp = getNomCommande();
-    CopyCStrToFStr(nomcmd, nomCmdCp, lcmd);
-    int tmp = isCommandeOperateur();
-    if ( tmp == 0 )
-    {
-        nomres = "        ";
-        concep = "                ";
-    }
-    else
-    {
-        char* nomObj = getNomObjetJeveux();
-        CopyCStrToFStr(nomres, nomObj, lres);
-        char* typObj = getTypeObjetResu();
-        CopyCStrToFStr(concep, typObj, lconc);
-    }
-    fprintf(fileOut, "GETRES %s %d\n", nomcmd, tmp);
-}
-
 void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
                         _INOUT INTEGER *nbval,
                           _OUT char *txval,    _IN STRING_SIZE ltx)

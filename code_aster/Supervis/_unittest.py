@@ -17,4 +17,25 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from code_aster.Supervis.libBaseUtils cimport copyToFStr
+import unittest
+
+from code_aster.Supervis.libBaseUtils import to_fstr, to_cstr
+
+
+class TestBaseUtils( unittest.TestCase ):
+
+    def test01_to_fstr( self ):
+        """check to_fstr function"""
+        res = to_fstr("hello", 8)
+        assert len(res) == 8, repr(res)
+        assert res == "hello   ", repr(res)
+
+    def test02_to_cstr( self ):
+        """check to_cstr function"""
+        res = to_cstr(" hello     not a string", 8)
+        assert len(res) == 6, repr(res)
+        assert res == " hello", repr(res)
+
+
+if __name__ == '__main__':
+    unittest.main()

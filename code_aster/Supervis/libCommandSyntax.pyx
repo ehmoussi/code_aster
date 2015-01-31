@@ -1,6 +1,52 @@
-# CommandSyntax
+# coding: utf-8
 
-from libBaseUtils import debug
+# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+#
+# This file is part of Code_Aster.
+#
+# Code_Aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# Code_Aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+
+from code_aster.Supervis.libBaseUtils import debug, to_cstr
+
+
+cdef class ResultNaming:
+
+    """This class manages the names of the jeveux objects"""
+
+    def __init__( self ):
+        """Initialize the counter"""
+        self._numberOfAsterObjects = 0
+        # Maximum 16^8 Aster sd because of the base name of a sd aster (8 characters)
+        # and because the hexadecimal system is used to give a name to a given sd
+        self._maxNumberOfAsterObjects = 4294967295
+
+    cdef string getNewResultObjectName( self ):
+        """Return a new result name
+        The first one is "0       ", then "1       ", etc.
+        @return String of 8 characters containing the new name
+        """
+        self._numberOfAsterObjects += 1
+        return self.getResultObjectName()
+
+    cdef string getResultObjectName( self ):
+        """Return the name of the result created by the current command
+        @return String of 8 characters containing the name
+        """
+        return "{:<8}".format( self._numberOfAsterObjects )
+
+# global instance
+resultNaming = ResultNaming()
 
 
 cdef class CommandSyntax:
@@ -33,6 +79,12 @@ cdef class CommandSyntax:
         global currentCommand
         debug( "del command ", self._name )
         currentCommand = None
+
+    def __repr__( self ):
+        """Representation of the command"""
+        return "Command {!r}, returns {!r} <{!r}>\n` syntax: {}".format( \
+            self._name, self._resultName, self._resultType,
+            self._definition)
 
     cdef void setResult( self, sdName, sdType ):
         """Register the result of the command: name and type"""
@@ -127,24 +179,32 @@ def _F( **kwargs ):
     return kwargs
 
 
-#TODO: use JeveuxString
-cdef public void Xgetres_( char* resultName, char* resultType, char* commandName,
+cpdef public string getNewResultObjectName():
+    """Return a new result name
+    The first one is "0       ", then "1       ", etc.
+    @return String of 8 characters containing the new name
+    """
+    global resultNaming
+    return resultNaming.getNewResultObjectName()
+
+cpdef public string getResultObjectName():
+    """Return the name of the result created by the current command
+    @return String of 8 characters containing the name
+    """
+    global resultNaming
+    return resultNaming.getResultObjectName()
+
+
+cdef public void getres_( char* resultName, char* resultType, char* commandName,
                           unsigned int lres, unsigned int ltype,
                           unsigned int lcmd):
     """Wrapper for fortran calls to getName, getResultName and getResultType"""
     if currentCommand is None:
         raise ValueError( "there is no active command" )
-    name = currentCommand.getName()
-    # CopyCStrToFStr( commandName, name, lcmd )
-    commandName = name
-
-    name = currentCommand.getResultName()
-    # CopyCStrToFStr( resultName, name, lres )
-    resultName = name
-
-    name = currentCommand.getResultType()
-    # CopyCStrToFStr( resultType, name, ltype )
-    resultType = name
+    print currentCommand
+    copyToFStr( commandName, currentCommand.getName(), lcmd )
+    copyToFStr( resultName, currentCommand.getResultName(), lres )
+    copyToFStr( resultType, currentCommand.getResultType(), ltype )
     debug( "getres", ( commandName[:lcmd], resultName[:lres], resultType[:ltype] ) )
 
 
@@ -159,8 +219,7 @@ cdef public void Xgetfac_( char* factName, long* number, unsigned int lname ):
     if currentCommand is None:
         number[0] =  0
         return
-    # keyword = MakeCStrFromFStr( factName, lname )
-    keyword = factName
+    keyword = to_cstr( factName, lname )
     number[0] = currentCommand.getFactorKeywordNbOcc( keyword )
     # FreeStr( keyword )
 
