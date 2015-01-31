@@ -21,10 +21,12 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "astercxx.h"
+
 #include "LinearAlgebra/DOFNumbering.h"
 
 DOFNumberingInstance::DOFNumberingInstance():
-            DataStructure( initAster->getNewResultObjectName(), "NUME_DDL" ),
+            DataStructure( getNewResultObjectName(), "NUME_DDL" ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
             _supportModel( ModelPtr() ),
             _supportMatrix( ElementaryMatrix( false ) ),
@@ -37,7 +39,7 @@ bool DOFNumberingInstance::computeNumerotation()
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeNumeDdl( "NUME_DDL", true,
-                                     initAster->getResultObjectName(), getType() );
+                                     getResultObjectName(), getType() );
 
     if ( _supportModel )
     {

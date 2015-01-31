@@ -179,7 +179,7 @@ def _F( **kwargs ):
     return kwargs
 
 
-cpdef public string getNewResultObjectName():
+cdef public string getNewResultObjectName():
     """Return a new result name
     The first one is "0       ", then "1       ", etc.
     @return String of 8 characters containing the new name
@@ -187,7 +187,7 @@ cpdef public string getNewResultObjectName():
     global resultNaming
     return resultNaming.getNewResultObjectName()
 
-cpdef public string getResultObjectName():
+cdef public string getResultObjectName():
     """Return the name of the result created by the current command
     @return String of 8 characters containing the name
     """

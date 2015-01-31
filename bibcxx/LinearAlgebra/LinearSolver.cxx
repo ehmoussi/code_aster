@@ -23,6 +23,8 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "astercxx.h"
+
 #include "LinearAlgebra/LinearSolver.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 
@@ -44,7 +46,7 @@ const set< Renumbering > WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering,
 FieldOnNodesPtrDouble LinearSolverInstance::solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
                                                                   const FieldOnNodesPtrDouble& currentRHS ) const
 {
-    const string newName( initAster->getNewResultObjectName() );
+    const string newName( getNewResultObjectName() );
     FieldOnNodesPtrDouble returnField( new FieldOnNodesInstanceDouble( newName ) );
 
     // Definition du bout de fichier de commande correspondant a RESOUDRE

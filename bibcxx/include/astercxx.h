@@ -22,10 +22,14 @@
 
 /* person_in_charge: mathieu.courtois@edf.fr */
 
+#ifdef __cplusplus
+
+#include <string>
+
 extern "C"
 {
 
-// defintion of 'min' in aster.h conflicts with standard 'std::min' (algorithm)
+// definition of 'min' in aster.h conflicts with standard 'std::min' (algorithm)
 #ifndef min
 #define min
 #endif
@@ -33,9 +37,10 @@ extern "C"
 #undef min
 
 #include "aster_utils.h"
+#include "code_aster/Supervis/libCommandSyntax.h"
 
 #define CopyStringToFStr( dest, src, size)  CopyCStrToFStr( dest, const_cast< char* > (src), size)
-
 } // extern "C"
+#endif
 
 #endif // ASTERCXX_H_

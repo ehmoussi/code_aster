@@ -26,6 +26,8 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "astercxx.h"
+
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
@@ -129,7 +131,7 @@ class AssemblyMatrixInstance: public DataStructure
 
 template< class ValueType >
 AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance():
-                DataStructure( initAster->getNewResultObjectName(), "MATR_ASSE" ),
+                DataStructure( getNewResultObjectName(), "MATR_ASSE" ),
                 _description( JeveuxVectorChar24( getName() + "           .REFA" ) ),
                 _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
@@ -215,7 +217,7 @@ bool AssemblyMatrixInstance< ValueType >::build()
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
     CommandSyntax syntaxeAsseMatrice( "ASSE_MATRICE", true,
-                                       initAster->getResultObjectName(), getType() );
+                                       getResultObjectName(), getType() );
 
     // Definition du mot cle simple MATR_ELEM
     SimpleKeyWordStr mCSMatrElem = SimpleKeyWordStr( "MATR_ELEM" );

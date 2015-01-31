@@ -23,10 +23,12 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "astercxx.h"
+
 #include "Materials/Material.h"
 
-MaterialInstance::MaterialInstance(): DataStructure( initAster->getNewResultObjectName(), "MATER" ),
-                    _jeveuxName( initAster->getResultObjectName() ),
+MaterialInstance::MaterialInstance(): DataStructure( getNewResultObjectName(), "MATER" ),
+                    _jeveuxName( getResultObjectName() ),
                     _materialBehaviourNames( JeveuxVectorChar32( _jeveuxName + ".MATERIAU.NOMRC " ) ),
                     _nbMaterialBehaviour( 0 )
 {};

@@ -8,8 +8,8 @@
 
 
 FunctionInstance::FunctionInstance():
-    DataStructure( initAster->getNewResultObjectName(), "FONCTION" ),
-    _jeveuxName( initAster->getResultObjectName() ),
+    DataStructure( getNewResultObjectName(), "FONCTION" ),
+    _jeveuxName( getResultObjectName() ),
     _property( JeveuxVectorChar16( _jeveuxName + ".PROL           " ) ),
     _value( JeveuxVectorDouble( _jeveuxName + ".VALE           " ) )
 {}

@@ -23,11 +23,13 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "astercxx.h"
+
 #include "Materials/MaterialOnMesh.h"
 #include <typeinfo>
 
 MaterialOnMeshInstance::MaterialOnMeshInstance():
-                                DataStructure( initAster->getNewResultObjectName(), "CHAM_MATER" ),
+                                DataStructure( getNewResultObjectName(), "CHAM_MATER" ),
                                 _listOfMaterials( PCFieldOnMeshPtrChar8(
                                     new PCFieldOnMeshInstanceChar8( getName() + ".CHAMP_MAT " ) ) ),
                                 _listOfTemperatures( PCFieldOnMeshPtrDouble(
@@ -39,7 +41,7 @@ bool MaterialOnMeshInstance::build()
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeAffeMater( "AFFE_MATERIAU", true,
-                                    initAster->getResultObjectName(), getType() );
+                                    getResultObjectName(), getType() );
 
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSMaillage = SimpleKeyWordStr("MAILLAGE");

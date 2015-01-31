@@ -21,12 +21,14 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "astercxx.h"
+
 #include "RunManager/Initializer.h"
 #include "LinearAlgebra/ElementaryVector.h"
 #include "RunManager/CommandSyntax.h"
 
 ElementaryVectorInstance::ElementaryVectorInstance():
-                DataStructure( initAster->getNewResultObjectName(), "VECT_ELEM" ),
+                DataStructure( getNewResultObjectName(), "VECT_ELEM" ),
                 _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
@@ -42,7 +44,7 @@ FieldOnNodesPtrDouble ElementaryVectorInstance::assembleVector( const DOFNumberi
     if ( currentNumerotation.isEmpty() || currentNumerotation->isEmpty() )
         throw "Numerotation is empty";
 
-    const string newName( initAster->getNewResultObjectName() );
+    const string newName( getNewResultObjectName() );
     FieldOnNodesPtrDouble vectTmp( new FieldOnNodesInstanceDouble( newName ) );
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
