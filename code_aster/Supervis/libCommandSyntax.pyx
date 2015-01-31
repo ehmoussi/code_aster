@@ -54,12 +54,11 @@ cdef class CommandSyntax:
     """This class describes the syntax of command for compatibility
     with the fortran code that use the legacy supervisor."""
 
-    def __init__( self, name="", numOp=0 ):
+    def __init__( self, name="unNamed" ):
         """Create a new command"""
         global currentCommand
         self._name = name
         # FIXME: remove unused attributes
-        self._numOperator = numOp
         self._resultName = " "
         self._resultType = " "
         self._definition = None

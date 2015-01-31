@@ -17,10 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
+from libcpp.string cimport string
+
+cimport code_aster.Supervis.libCommandSyntax as libCmd
 
 
 cdef extern from "Mesh/Mesh.h":
 
     cdef cppclass MeshInstance:
-        pass
+        const string& getType()
+        void ExecOperator( const int operatorNumber )

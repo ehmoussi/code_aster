@@ -64,5 +64,6 @@ void jeveuxDebugPrint( const DataStructure& dataSt, const int logicalUnit )
     mCSAttr.addValues( "NON" );
     syntaxeImprCo.addSimpleKeywordString( mCSAttr );
 
-    CALL_EXECOP(17);
+    INTEGER op = 17;
+    CALL_EXECOP( &op );
 };

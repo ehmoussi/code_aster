@@ -24,22 +24,20 @@
 
 #ifdef __cplusplus
 
+#include <list>
+#include <vector>
 #include <string>
+#include <map>
+#include <iostream>
+#include <boost/shared_ptr.hpp>
 
 extern "C"
 {
 
-// definition of 'min' in aster.h conflicts with standard 'std::min' (algorithm)
-#ifndef min
-#define min
-#endif
-#include "aster.h"
-#undef min
+#include "Python.h"
 
-#include "aster_utils.h"
 #include "code_aster/Supervis/libCommandSyntax.h"
 
-#define CopyStringToFStr( dest, src, size)  CopyCStrToFStr( dest, const_cast< char* > (src), size)
 } // extern "C"
 #endif
 

@@ -29,6 +29,7 @@
 #include <string>
 #include <assert.h>
 
+#include "astercxx.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Mesh/Mesh.h"

@@ -31,8 +31,9 @@
 #include <sstream>
 #include <string>
 
+#include "astercxx.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "aster.h"
+#include "aster_utils.h"
 
 extern "C"
 {

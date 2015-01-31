@@ -19,7 +19,6 @@
 
 %module code_aster
 %{
-#include "RunManager/Initializer.h"
 #include "MemoryManager/JeveuxCollection.h"
 %}
 

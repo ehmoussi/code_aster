@@ -23,11 +23,14 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <string>
 #include <map>
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
+#include "astercxx.h"
+#include "aster_fort.h"
+
 
 /**
  * @class DataStructure
@@ -79,6 +82,17 @@ class DataStructure
          * @param logicalUnit Unite logique d'impression
          */
         void debugPrint( const int logicalUnit ) const;
+
+        /**
+         * @brief Member function ExecOp
+         *        Execute a fortran operator
+         * @param operator Number Operator number
+         */
+        void ExecOperator( const int operatorNumber ) const
+        {
+            INTEGER number = (INTEGER)operatorNumber;
+            CALL_EXECOP( &number );
+        };
 
     protected:
         /**

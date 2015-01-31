@@ -23,6 +23,8 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "astercxx.h"
+#include "aster_fort.h"
 
 #include "Modeling/Model.h"
 #include "Loads/UnitaryLoad.h"

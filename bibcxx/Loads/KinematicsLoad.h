@@ -24,6 +24,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "astercxx.h"
 #include "Modeling/Model.h"
 #include "Loads/UnitaryLoad.h"
 

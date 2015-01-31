@@ -37,6 +37,7 @@
 #include <set>
 #include <string.h>
 
+#include "astercxx.h"
 #include "DataStructure/DataStructure.h"
 
 #include "definition.h"

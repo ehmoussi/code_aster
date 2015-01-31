@@ -27,6 +27,8 @@
 #include <string.h>
 #include <string>
 
+#include "astercxx.h"
+
 #ifdef DEBUG
 #include "assert.h"
 #endif

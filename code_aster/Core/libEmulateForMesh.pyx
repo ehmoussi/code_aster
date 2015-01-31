@@ -20,6 +20,7 @@
 # Emulate commands for Mesh object
 
 import os.path as osp
+from code_aster.Supervis.libCommandSyntax import _F
 
 
 cdef public bint emulateLIRE_MAILLAGE_MED( MeshInstance* inst ):
@@ -32,29 +33,16 @@ cdef public bint emulateLIRE_MAILLAGE_MED( MeshInstance* inst ):
     #     return False
     # medFile = File( fileName, Type.Binary, Access.Old )
     #
-    syntax = CommandSyntax( "LIRE_MAILLAGE" )
-    # syntax.setResult( initAster.getResultObjectName(), self.getType() )
-    #
-    # syntax.define( _F ( FORMAT="MED",
-    #                     UNITE=medFile.getLogicalUnit(),
-    #                     VERI_MAIL=_F( VERIF="OUI",
-    #                                   APLAT=1.e-3 ),
-    #                   )
-    #              )
-    #
-    # cdef INTEGER numOp = 1
-    # libaster.execop_( &numOp )
+    syntax = libCmd.CommandSyntax( "LIRE_MAILLAGE" )
+    syntax.setResult( libCmd.getResultObjectName(), inst.getType() )
+
+    syntax.define( _F ( FORMAT="MED",
+                        UNITE=20, #medFile.getLogicalUnit(),
+                        VERI_MAIL=_F( VERIF="OUI",
+                                      APLAT=1.e-3 ),
+                      )
+                 )
+
+    # inst.ExecOperator( 1 )
     syntax.free()
-    #
-    # # Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
-    # self._dimensionInformations.updateValuePointer()
-    # self._coordinates.updateValuePointer()
-    # self._groupsOfNodes.buildFromJeveux()
-    # self._connectivity.buildFromJeveux()
-    # self._elementsType.updateValuePointer()
-    # self._groupsOfElements.buildFromJeveux()
-    # self._isEmpty = False
-
-    print "Hello from emulateLIRE_MAILLAGE_MED"
-
     return True

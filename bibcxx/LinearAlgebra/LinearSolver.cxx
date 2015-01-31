@@ -77,7 +77,8 @@ FieldOnNodesPtrDouble LinearSolverInstance::solveDoubleLinearSystem( const Assem
     mCSPost.addValues( "AUTO" );
     syntaxeResoudre.addSimpleKeywordString( mCSPost );
 
-    CALL_EXECOP( 15 );
+    INTEGER op = 15;
+    CALL_EXECOP( &op );
 
     return returnField;
 };

@@ -26,6 +26,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "astercxx.h"
 #include "DataStructure/DataStructure.h"
 #include "Mesh/Mesh.h"
 #include "Modeling/ElementaryModeling.h"

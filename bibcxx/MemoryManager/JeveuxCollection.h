@@ -26,7 +26,12 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "definition.h"
+#include "astercxx.h"
+#include "aster_fort.h"
+
+// @todo prefer use JeveuxString
+#include "aster_utils.h"
+
 #include "MemoryManager/JeveuxAllowedTypes.h"
 
 #include <string>
@@ -134,10 +139,10 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
     char* param = "NMAXOC";
     char* charval = MakeBlankFStr(32);
     // Attention rajouter des verifications d'existance
-    CALL_JELIRA( charName, param, &nbColObj, charval );
+    CALL_JELIRA( const_cast< char* >(charName), param, &nbColObj, charval );
 
     param = "ACCES ";
-    CALL_JELIRA( charName, param, &valTmp, charval );
+    CALL_JELIRA( const_cast< char* >(charName), param, &valTmp, charval );
     string resu = string( charval, 2 );
     FreeStr( charval );
 
@@ -150,12 +155,12 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
     for ( long i = 1; i <= nbColObj; ++i )
     {
         ValueType* valuePtr;
-        CALL_JEXNUM( charval, charName, &i );
+        CALL_JEXNUM( charval, const_cast< char* >(charName), &i );
         if ( named )
             CALL_JENUNO( charval, collectionObjectName );
-        CALL_JEVEUOC(charval, tmp, (void*)(&valuePtr));
+        CALL_JEVEUOC( charval, tmp, (void*)(&valuePtr) );
         if ( named )
-            _listObjects.push_back( JeveuxCollObjValType( charName, i, 
+            _listObjects.push_back( JeveuxCollObjValType( charName, i,
                                                           collectionObjectName, valuePtr ) );
         else
             _listObjects.push_back( JeveuxCollObjValType( charName, i, valuePtr ) );
@@ -171,7 +176,8 @@ bool JeveuxCollectionInstance< ValueType >::existsObject( string name )
     const char* collName = _name.c_str();
     char* charJeveuxName = MakeBlankFStr(32);
     long returnBool;
-    CALL_JEXNOM( charJeveuxName, collName, name.c_str() );
+    CALL_JEXNOM( charJeveuxName, const_cast< char* >(collName),
+                 const_cast< char* >(name.c_str()) );
     CALL_JEEXIN( charJeveuxName, &returnBool );
     if ( returnBool == 0 ) return false;
     return true;

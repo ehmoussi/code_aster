@@ -229,6 +229,7 @@ bool MechanicalLoadInstance::build()
     }
    // Maintenant que le fichier de commande est pret, on appelle OP0007
     cout << " Appel de execop" << endl;
-    CALL_EXECOP(7);
+    INTEGER op = 7;
+    CALL_EXECOP( &op );
     return true;
 };

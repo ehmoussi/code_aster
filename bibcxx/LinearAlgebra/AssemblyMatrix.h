@@ -27,6 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
+#include "aster_fort.h"
 
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
@@ -196,7 +197,8 @@ bool AssemblyMatrixInstance< ValueType >::factorization()
     mCSNprec.addValues( 8 );
     syntaxeFactoriser.addSimpleKeywordInteger( mCSNprec );
 
-    CALL_EXECOP( 14 );
+    INTEGER op = 14;
+    CALL_EXECOP( &op );
     _isEmpty = false;
 
     return true;
@@ -241,7 +243,8 @@ bool AssemblyMatrixInstance< ValueType >::build()
         syntaxeAsseMatrice.addSimpleKeywordString( mCSCharge );
     }
 
-    CALL_EXECOP( 12 );
+    INTEGER op = 12;
+    CALL_EXECOP( &op );
     _isEmpty = false;
 
     return true;

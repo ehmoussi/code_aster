@@ -103,7 +103,8 @@ bool ModelInstance::build()
     syntaxeAffeModele.addFactorKeyword(motCleAFFE);
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
-    CALL_EXECOP( 18 );
+    INTEGER op = 18;
+    CALL_EXECOP( &op );
     _isEmpty = false;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _typeOfElements->updateValuePointer();

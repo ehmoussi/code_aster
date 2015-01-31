@@ -23,7 +23,6 @@
 
 #include "astercxx.h"
 
-#include "RunManager/Initializer.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "RunManager/CommandSyntax.h"
 
@@ -77,7 +76,8 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
         syntaxeCalcMatrElem.addSimpleKeywordString( mCSCharge );
     }
 
-    CALL_EXECOP( 9 );
+    INTEGER op = 9;
+    CALL_EXECOP( &op );
     _isEmpty = false;
 
     return true;

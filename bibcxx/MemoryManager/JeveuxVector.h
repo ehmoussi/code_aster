@@ -26,7 +26,9 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "definition.h"
+#include "astercxx.h"
+#include "aster_fort.h"
+
 #include "MemoryManager/JeveuxAllowedTypes.h"
 
 #include <string>
@@ -100,11 +102,12 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
 
             long boolRetour;
             // Appel a jeexin pour verifier que le vecteur existe
-            CALL_JEEXIN(_name.c_str(), &boolRetour);
+            CALL_JEEXIN( const_cast< char* >(_name.c_str()), &boolRetour );
             if ( boolRetour == 0 ) return false;
 
             const char* tmp = "L";
-            CALL_JEVEUOC(_name.c_str(), tmp, (void*)(&_valuePtr));
+            CALL_JEVEUOC( const_cast< char* >(_name.c_str()), tmp,
+                          (void*)(&_valuePtr) );
             if ( _valuePtr == NULL ) return false;
             return true;
         };
@@ -123,7 +126,9 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
                 long taille = length;
                 const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
                 string carac = jeveuxBase + " V " + JeveuxTypesNames[intType];
-                CALL_WKVECTC(_name.c_str(), carac.c_str(), &taille, (void*)(&_valuePtr));
+                CALL_WKVECTC( const_cast< char* >(_name.c_str()),
+                              const_cast< char* >(carac.c_str()),
+                              &taille, (void*)(&_valuePtr));
                 if ( _valuePtr == NULL ) return false;
             }
             else return false;
