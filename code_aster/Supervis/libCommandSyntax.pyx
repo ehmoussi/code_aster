@@ -214,14 +214,13 @@ cdef public int XlisteMotCleSimpleFromMotCleFacteur(
     # TODO: getmjm
     pass
 
-cdef public void Xgetfac_( char* factName, long* number, unsigned int lname ):
+cdef public void getfac_( char* factName, long* number, unsigned int lname ):
     """Wrapper function to command.getFactorKeywordNbOcc()"""
     if currentCommand is None:
         number[0] =  0
         return
     keyword = to_cstr( factName, lname )
     number[0] = currentCommand.getFactorKeywordNbOcc( keyword )
-    # FreeStr( keyword )
 
 cdef public int existsCommandFactorAndSimpleKeyword(
         char* factName, int occurrence, char* simpName ):
