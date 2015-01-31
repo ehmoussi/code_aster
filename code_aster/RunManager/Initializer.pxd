@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from code_aster.Core cimport libaster
-from code_aster.Core.libaster cimport INTEGER
+from code_aster cimport libaster
+from code_aster.libaster cimport INTEGER
 
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax

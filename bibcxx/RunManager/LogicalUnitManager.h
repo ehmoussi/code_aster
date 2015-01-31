@@ -25,14 +25,10 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
+#include "astercxx.h"
 
+#include "aster_fort.h"
 #include "RunManager/CommandSyntax.h"
-
-#define CALL_OPSEXE(a) CALLP(OPSEXE, opsexe, a)
-extern "C"
-{
-    void DEFP(OPSEXE, opsexe, const INTEGER*);
-}
 
 const int nbOfLogicalUnit = 81;
 /**
@@ -160,7 +156,7 @@ class LogicalUnitFile
             mCSAcces.addValues( NameFileAccess[(int) access] );
             syntaxeDefiFichier->addSimpleKeywordString( mCSAcces );
 
-            CALL_OPSEXE( &_numOp26 );
+            CALL_OPSEXE( (INTEGER*)&_numOp26 );
 
             delete syntaxeDefiFichier;
             commandeCourante = pointerSave;
@@ -190,7 +186,7 @@ class LogicalUnitFile
             mCSFichier.addValues( _nomFichier );
             syntaxeDefiFichier->addSimpleKeywordString( mCSFichier );
 
-            CALL_OPSEXE( &_numOp26 );
+            CALL_OPSEXE( (INTEGER*)&_numOp26 );
 
             delete syntaxeDefiFichier;
             commandeCourante = pointerSave;

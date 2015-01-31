@@ -25,6 +25,7 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
+#include "astercxx.h"
 
 #include "Solvers/GenericSolver.h"
 #include "Modeling/Model.h"

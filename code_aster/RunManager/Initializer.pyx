@@ -23,7 +23,9 @@ from code_aster.Supervis.libCommandSyntax import _F
 
 def init( int mode ):
     """Initialize Code_Aster & its memory manager"""
-    # cInitializer.asterInitialization( mode )
+    # TODO: what future for aster modules?
+    # At least: aster_mpi_init, exceptions, med module...
+    libaster.initAsterModules()
     # Emulate the syntax of DEBUT (default values should be added)
     make_cata = {}
     if mode == 1:

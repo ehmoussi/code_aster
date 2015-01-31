@@ -30,9 +30,9 @@
 #include <string.h>
 #include <assert.h>
 
+#include "astercxx.h"
 #include "definition.h"
 #include "RunManager/CommandSyntax.h"
-#include "RunManager/Initializer.h"
 
 
 class CataBuilder

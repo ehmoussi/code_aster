@@ -23,7 +23,6 @@
 
 #include "astercxx.h"
 
-#include "RunManager/Initializer.h"
 #include "LinearAlgebra/ElementaryVector.h"
 #include "RunManager/CommandSyntax.h"
 
@@ -60,7 +59,8 @@ FieldOnNodesPtrDouble ElementaryVectorInstance::assembleVector( const DOFNumberi
     mCSNumeDdl.addValues( currentNumerotation->getName() );
     syntaxeAsseVecteur.addSimpleKeywordString( mCSNumeDdl );
 
-    CALL_EXECOP( 13 );
+    INTEGER op = 13;
+    CALL_EXECOP( &op );
     _isEmpty = false;
 
     return vectTmp;
@@ -101,7 +101,8 @@ bool ElementaryVectorInstance::computeMechanicalLoads()
         syntaxeCalcVectElem.addSimpleKeywordString( mCSCharge );
     }
 
-    CALL_EXECOP( 8 );
+    INTEGER op = 8;
+    CALL_EXECOP( &op );
     _isEmpty = false;
 
     return true;

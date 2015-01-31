@@ -27,7 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <string>
-#include "RunManager/Initializer.h"
+#include "astercxx.h"
 #include "DataStructure/DataStructure.h"
 
 using namespace std;

@@ -50,34 +50,6 @@ MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE
 bool MeshInstance::readMEDFile( string pathFichier )
 {
     bool iret = emulateLIRE_MAILLAGE_MED( this );
-    // Creation d'un bout de fichier commande correspondant a LIRE_MAILLAGE
-    CommandSyntax syntaxeLireMaillage( "LIRE_MAILLAGE", true,
-                                       getResultObjectName(), getType() );
-
-    // Remplissage des mots cles simples FORMAT et PATHFICHIER
-    SimpleKeyWordStr mCSFormat = SimpleKeyWordStr("FORMAT");
-    mCSFormat.addValues("MED");
-    // Ajout du premier mot cle simple
-    syntaxeLireMaillage.addSimpleKeywordString(mCSFormat);
-
-    LogicalUnitFile currentFile( pathFichier, Binary, Old );
-    SimpleKeyWordInt mCSPath = SimpleKeyWordInt( "UNITE" );
-    mCSPath.addValues( currentFile.getLogicalUnit() );
-    syntaxeLireMaillage.addSimpleKeywordInteger( mCSPath );
-
-    FactorKeyword motCleVeriMail = FactorKeyword( "VERI_MAIL", true );
-    FactorKeywordOccurence occurVeriMail = FactorKeywordOccurence();
-    SimpleKeyWordStr mCSVerif( "VERIF" );
-    mCSVerif.addValues( "OUI" );
-    occurVeriMail.addSimpleKeywordString( mCSVerif );
-    SimpleKeyWordDbl mCSAplat( "APLAT" );
-    mCSAplat.addValues( 1e-3 );
-    occurVeriMail.addSimpleKeywordDouble( mCSAplat );
-    motCleVeriMail.addOccurence( occurVeriMail );
-    syntaxeLireMaillage.addFactorKeyword( motCleVeriMail );
-
-    // Appel a l'operateur de LIRE_MAILLAGE
-    CALL_EXECOP(1);
 
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _dimensionInformations->updateValuePointer();

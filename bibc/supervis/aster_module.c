@@ -33,12 +33,13 @@
 #include "aster_utils.h"
 #include "aster_exceptions.h"
 
-#include "RunManager/Initializer.h"
+#include "RunManager/CommandSyntax.h"
 
 /*
  *   PRIVATE FUNCTIONS
  *
  */
+ FILE* fileOut;
 
 void TraiteMessageErreur( _IN char* ) ;
 

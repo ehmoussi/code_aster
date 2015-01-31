@@ -156,7 +156,8 @@ ResultsContainer StaticMechanicalSolverInstance::execute()
     mCSOption.addValues( "SIEF_ELGA" );
     syntaxeMecaStat.addSimpleKeywordString( mCSOption );
 
-    CALL_EXECOP( 46 );
+    INTEGER op = 46;
+    CALL_EXECOP( &op );
 
     return resultC;
 };

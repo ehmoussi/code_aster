@@ -29,6 +29,9 @@
 #include <string>
 #include <assert.h>
 
+#include "astercxx.h"
+#include "aster_fort.h"
+
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructure/DataStructure.h"
 #include "RunManager/CommandSyntax.h"
@@ -135,7 +138,8 @@ bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
     motCleResu.addOccurence( occurResu );
     syntaxeImprResu.addFactorKeyword( motCleResu );
 
-    CALL_EXECOP( 39 );
+    INTEGER op = 39;
+    CALL_EXECOP( &op );
 
     return true;
 };

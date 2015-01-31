@@ -28,6 +28,7 @@
 #include <set>
 #include <string>
 
+#include "astercxx.h"
 #include "DataFields/FieldOnNodes.h"
 #include "LinearAlgebra/AllowedLinearSolver.h"
 

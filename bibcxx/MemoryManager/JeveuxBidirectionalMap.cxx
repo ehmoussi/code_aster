@@ -21,6 +21,8 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "aster_fort.h"
+#include "aster_utils.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
@@ -29,7 +31,8 @@ string JeveuxBidirectionalMapInstance::findStringOfElement(long elementNumber)
 {
     char* charJeveuxObjName = MakeBlankFStr(32);
     char* charName = MakeBlankFStr(32);
-    CALL_JEXNUM(charJeveuxObjName, _jeveuxName.c_str(), &elementNumber);
+    CALL_JEXNUM(charJeveuxObjName, const_cast< char* >(_jeveuxName.c_str()),
+                &elementNumber);
     CALL_JENUNO(charJeveuxObjName, charName);
     return string(charName);
 };
@@ -37,7 +40,8 @@ string JeveuxBidirectionalMapInstance::findStringOfElement(long elementNumber)
 long JeveuxBidirectionalMapInstance::findIntegerOfElement(string elementName)
 {
     char* charJeveuxObjName = MakeBlankFStr(32);
-    CALL_JEXNOM(charJeveuxObjName, _jeveuxName.c_str(), elementName.c_str());
+    CALL_JEXNOM(charJeveuxObjName, const_cast< char* >(_jeveuxName.c_str()),
+                const_cast< char* >(elementName.c_str()) );
     long resu = -1;
     CALL_JENONU(charJeveuxObjName, &resu);
     return resu;

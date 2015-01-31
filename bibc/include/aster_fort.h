@@ -122,14 +122,22 @@ extern void DEFSSPS(JELIRA,jelira, char*, STRING_SIZE, char*, STRING_SIZE, INTEG
 extern void DEFSP(JEEXIN,jeexin, char*, STRING_SIZE, INTEGER* );
 
 /* char functions: the first two arguments is the result */
-extern void F_FUNC(JEXNUM,jexnum)(char*, STRING_SIZE, char*, INTEGER*, STRING_SIZE );
-extern void F_FUNC(JEXNOM,jexnom)(char*, STRING_SIZE, char*, char*, STRING_SIZE, STRING_SIZE );
+#define CALL_JEXNUM(a,b,c) CALLVSP(JEXNUM,jexnum,a,b,c)
+extern void DEFVSP(JEXNUM, jexnum, char*, STRING_SIZE, char*, STRING_SIZE, INTEGER* );
 
+#define CALL_JEXNOM(a,b,c) CALLVSS(JEXNOM,jexnom,a,b,c)
+extern void DEFVSS(JEXNOM,jexnom, char*, STRING_SIZE, char*, STRING_SIZE, char*, STRING_SIZE );
+
+#define CALL_JENUNO(a, b) CALLSS(JENUNO, jenuno, a, b)
 extern void DEFSS(JENUNO,jenuno, char*, STRING_SIZE, char*, STRING_SIZE );
+
+#define CALL_JENONU(a, b) CALLSP(JENONU, jenonu, a, b)
 extern void DEFSP(JENONU,jenonu, char*, STRING_SIZE, INTEGER* );
 
+#define CALL_JEVEUOC(a, b, c) CALLSSP(JEVEUOC, jeveuoc, a, b, c)
 void DEFSSP(JEVEUOC, jeveuoc, const char *, STRING_SIZE, const char *, STRING_SIZE, void*);
 
+#define CALL_WKVECTC(a, b, c, d) CALLSSPP(WKVECTC, wkvectc, a, b, c, d)
 void DEFSSPP(WKVECTC, wkvectc, const char *, STRING_SIZE, const char *, STRING_SIZE, INTEGER*, void*);
 
 void DEFPPPPSPSS(UTIMSD,utimsd, INTEGER*, INTEGER*, INTEGER*, INTEGER*, char*, STRING_SIZE,

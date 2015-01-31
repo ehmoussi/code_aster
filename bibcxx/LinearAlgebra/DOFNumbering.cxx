@@ -68,7 +68,8 @@ bool DOFNumberingInstance::computeNumerotation()
         throw "No support matrix and support model defined";
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
-    CALL_EXECOP( 11 );
+    INTEGER op = 11;
+    CALL_EXECOP( &op );
     _isEmpty = false;
 
     return true;

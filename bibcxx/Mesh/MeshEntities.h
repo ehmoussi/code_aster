@@ -26,7 +26,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "definition.h"
+#include "astercxx.h"
 #include "MemoryManager/JeveuxCollection.h"
 
 /**

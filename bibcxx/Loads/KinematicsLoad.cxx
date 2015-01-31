@@ -97,7 +97,8 @@ bool KinematicsLoadInstance::build()
     }
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
-    CALL_EXECOP(101);
+    INTEGER op = 101;
+    CALL_EXECOP( &op );
 
     return true;
 };

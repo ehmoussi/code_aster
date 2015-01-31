@@ -32,5 +32,6 @@ void CataBuilder::run()
     motCleELEMENT.addOccurence( occurELEMENT );
     syntaxeMajCata.addFactorKeyword( motCleELEMENT );
 
-    CALL_EXECOP(20);
+    INTEGER op = 20;
+    CALL_EXECOP( &op );
 }

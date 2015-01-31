@@ -208,6 +208,13 @@
 #define DEFPPPPPPPPPPPPPPPPPPPSPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,lt,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L,lt)
 #define CALLPPPPPPPPPPPPPPPPPPPSPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)                 F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L,strlen(t))
 
+/* V=value <type string> returned by the function, the two first argument are for V */
+#define DEFVSP(UN,LN,a,la,b,lb,c)               STDCALL(UN,LN)(a,la,b,c,lb)
+#define CALLVSP(UN,LN,a,b,c)                    F_FUNC(UN,LN)(a,strlen(a),b,c,strlen(b))
+
+#define DEFVSS(UN,LN,a,la,b,lb,c,lc)               STDCALL(UN,LN)(a,la,b,c,lb,lc)
+#define CALLVSS(UN,LN,a,b,c)                    F_FUNC(UN,LN)(a,strlen(a),b,c,strlen(b),strlen(c))
+
 /* Appels et signatures avec strlen juste après le pointeur de chaine */
 #else
 
