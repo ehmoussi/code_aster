@@ -171,25 +171,6 @@ void DEFSSPPPPP(GETLTX,getltx,_IN char *motfac,_IN STRING_SIZE lfac,
 
 
 /* ------------------------------------------------------------------ */
-void DEFSP(GETFAC,getfac,_IN char *nomfac, _IN STRING_SIZE lfac, _OUT INTEGER *occu)
-{
-        /*
-          Procedure GETFAC pour le FORTRAN : emule le fonctionnement
-          de la procedure equivalente ASTER
-          Entrees :
-            le nom d un mot cle facteur : nomfac (string)
-          Retourne :
-            le nombre d occurence de ce mot cle dans les args : occu (entier)
-            dans l'etape (ou la commande) courante
-        */
-    char* tmp = MakeCStrFromFStr(nomfac, lfac);
-    *occu = nombreOccurencesMotCleFacteur(tmp);
-    fprintf(fileOut, "GETFAC %s => %ld\n", tmp, *occu);
-    FreeStr(tmp);
-}
-
-
-/* ------------------------------------------------------------------ */
 void DEFP(GETRAN,getran, _OUT DOUBLE *rval)
 {
     /*
