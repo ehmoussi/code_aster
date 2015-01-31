@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+# install i18n function
+from Execution import i18n
+
 from code_aster.Supervis.libExecutionParameter import (
     executionParameter, setExecutionParameter,
 )

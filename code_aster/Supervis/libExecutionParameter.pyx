@@ -17,6 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+import platform
+
+import aster_pkginfo
+
 from code_aster.Supervis.libBaseUtils import to_cstr
 
 
@@ -38,6 +43,34 @@ class ExecutionParameter:
         self._args['tpmax'] = 86400
 
         self._args['repdex'] = '.'
+        self._computed()
+
+    def _computed( self ):
+        """Fill some "computed" values"""
+        # hostname
+        self._args['hostname'] = platform.node()
+        # ex. i686/x86_64
+        self._args['processor'] = platform.machine()
+        # ex. Linux
+        self._args['system'] = platform.system()
+        # ex. 32bit/64bit
+        self._args['architecture'] = platform.architecture()[0]
+        # ex. 2.6.32...
+        self._args['osrelease'] = platform.release()
+        self._args['osname'] = ' '.join(platform.linux_distribution())
+        version = aster_pkginfo.version_info.version
+        self._args['versionSTA'] = None
+        self._args['versLabel'] = None
+        keys = ('parentid', 'branch', 'date',
+                'from_branch', 'changes', 'uncommitted')
+        self._args.update(zip(keys, aster_pkginfo.version_info[1:]))
+        self._args['version'] = '.'.join(str(i) for i in version)
+        self._args['versMAJ'] = version[0]
+        self._args['versMIN'] = version[1]
+        self._args['versSUB'] = version[2]
+        self._args['exploit'] = aster_pkginfo.version_info.branch.startswith('v')
+        self._args['versionD0'] = '%d.%02d.%02d' % version
+        self._args['versLabel'] = aster_pkginfo.get_version_desc()
 
     def set( self, argName, argValue ):
         """Set the value of an execution parameter"""
