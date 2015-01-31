@@ -2,8 +2,11 @@
 
 from libc.stdio cimport printf, fflush, stdout
 from libc.stdlib cimport malloc
+from libc.string cimport memcpy
 from cpython.string cimport PyString_AsString
 
+
+cdef void copyToFStr( char* dest, pystring, unsigned int str_size )
 
 cdef char** to_cstring_array( list_str )
 
