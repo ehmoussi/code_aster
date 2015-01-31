@@ -21,11 +21,13 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "astercxx.h"
+
 #include "Loads/MechanicalLoad.h"
 #include <typeinfo>
 
 MechanicalLoadInstance::MechanicalLoadInstance():
-                                DataStructure( initAster->getNewResultObjectName(), "CHAR_MECA" ),
+                                DataStructure( getNewResultObjectName(), "CHAR_MECA" ),
                                 _jeveuxName( getName() ),
                                 _kinematicLoad( PCFieldOnMeshPtrDouble(
                                     new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.CIMPO") ) ) ),
@@ -39,7 +41,7 @@ bool MechanicalLoadInstance::build()
 // Definition du bout de fichier de commande correspondant à l'appel de
 // la commande AFFE_CHAR_MECA
     CommandSyntax syntaxeAffeCharMeca( "AFFE_CHAR_MECA", true,
-                                       initAster->getResultObjectName(), getType() );
+                                       getResultObjectName(), getType() );
 
 // Définition du mot clé simple MODELE
     SimpleKeyWordStr mCSModel = SimpleKeyWordStr("MODELE");

@@ -1,5 +1,6 @@
-subroutine execop()
+subroutine execop( nuoper )
     implicit none
+    integer, intent(in) :: nuoper
 !     ------------------------------------------------------------------
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -23,10 +24,8 @@ subroutine execop()
 #include "asterf_types.h"
 #include "asterc/asmpi_comm.h"
 #include "asterc/etausr.h"
-#include "asterc/gcecdu.h"
 #include "asterc/uttrst.h"
 #include "asterfort/assert.h"
-#include "asterfort/codent.h"
 #include "asterfort/ex0000.h"
 #include "asterfort/foint0.h"
 #include "asterfort/iunifi.h"
@@ -46,20 +45,15 @@ subroutine execop()
     integer :: nivuti, nivpgm, unite
     common /inf001/ nivuti,nivpgm,unite
 !
-    integer :: nuoper, nuop2, imaav, imaap
+    integer :: nuop2, imaav, imaap
     real(kind=8) :: tpres, rval(12), v0
-    character(len=6) :: nommar
     character(len=8) :: k8tab(7)
     integer :: iret, iret2
 !     ------------------------------------------------------------------
 !
-    call gcecdu(nuoper)
-!
-    nommar = 'OP'
-    call codent(nuoper, 'D0', nommar)
-!
     if (nuoper .eq. 9999) then
         call op9999()
+! FIXME: why the end of subroutine fails in jeveux ?
         return
     endif
 !
@@ -105,9 +99,9 @@ subroutine execop()
                 k8tab(1) = 'RLQ_MEM'
                 k8tab(2) = 'LIMIT_JV'
                 call utgtme(2, k8tab, rval, iret2)
-                if (abs(rval(2)-v0) .gt. v0*0.1d0) then 
+                if (abs(rval(2)-v0) .gt. v0*0.1d0) then
                    call utmess('I', 'JEVEUX1_73', nr=2, valr=rval)
-                endif   
+                endif
             endif
         endif
     endif

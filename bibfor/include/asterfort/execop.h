@@ -16,6 +16,7 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine execop()
+    subroutine execop( nuoper )
+        integer, intent(in) :: nuoper
     end subroutine execop
 end interface

@@ -858,19 +858,6 @@ void DEFSSP(GCUCON,gcucon, _IN char *resul, STRING_SIZE lresul,
 
 
 /* ------------------------------------------------------------------ */
-void DEFP(GCECDU,gcecdu, INTEGER *numint)
-{
-        /*
-          Sortie :
-            numint  numero de l operateur de la commande
-          Fonction:
-             Recuperation du numero de l operateur
-        */
-    *numint = numOP;
-}
-
-
-/* ------------------------------------------------------------------ */
 void gcncon2_(char *type,char *resul,STRING_SIZE ltype,int lresul)
 {
 /* CCAR : cette fonction devrait s appeler gcncon mais elle est utilisee par

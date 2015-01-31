@@ -36,7 +36,7 @@ subroutine expass(jxvrf)
 !
     call jemarq()
 !
-    call execop()
+    call execop(0)
     if (jxvrf .eq. 1) then
         call getres(nomres, concep, nomcmd)
         call jxveri()

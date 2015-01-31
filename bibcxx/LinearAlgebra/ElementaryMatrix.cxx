@@ -21,12 +21,14 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "astercxx.h"
+
 #include "RunManager/Initializer.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "RunManager/CommandSyntax.h"
 
 ElementaryMatrixInstance::ElementaryMatrixInstance():
-                DataStructure( initAster->getNewResultObjectName(), "MATR_ELEM" ),
+                DataStructure( getNewResultObjectName(), "MATR_ELEM" ),
                 _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
@@ -41,7 +43,7 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
     CommandSyntax syntaxeCalcMatrElem( "CALC_MATR_ELEM", true,
-                                       initAster->getResultObjectName(), getType() );
+                                       getResultObjectName(), getType() );
 
     // Definition du mot cle simple OPTION
     SimpleKeyWordStr mCSOption = SimpleKeyWordStr( "OPTION" );

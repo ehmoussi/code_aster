@@ -21,11 +21,13 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "astercxx.h"
+
 #include "Loads/KinematicsLoad.h"
 #include <typeinfo>
 
 KinematicsLoadInstance::KinematicsLoadInstance():
-                    DataStructure( initAster->getNewResultObjectName(), "CHAR_CINE" ),
+                    DataStructure( getNewResultObjectName(), "CHAR_CINE" ),
                     _supportModel( ModelPtr() )
 {};
 
@@ -39,7 +41,7 @@ bool KinematicsLoadInstance::build()
     if ( _listOfDoubleImposedDisplacement.size() == 0 && _listOfDoubleImposedTemperature.size() == 0 )
         throw "KinematicsLoad empty";
     // Definition du bout de fichier de commande correspondant a AFFE_CHAR_CINE
-    CommandSyntax syntaxeAffeCharCine( "AFFE_CHAR_CINE", true, initAster->getResultObjectName(),
+    CommandSyntax syntaxeAffeCharCine( "AFFE_CHAR_CINE", true, getResultObjectName(),
                                        typSd );
 
     // Definition du mot cle simple MAILLAGE

@@ -23,10 +23,12 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "astercxx.h"
+
 #include "Modeling/Model.h"
 #include <typeinfo>
 
-ModelInstance::ModelInstance(): DataStructure( initAster->getNewResultObjectName(), "MODELE" ),
+ModelInstance::ModelInstance(): DataStructure( getNewResultObjectName(), "MODELE" ),
                                 _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
                                 _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
                                 _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
@@ -38,7 +40,7 @@ bool ModelInstance::build()
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeAffeModele( "AFFE_MODELE", true,
-                                     initAster->getResultObjectName(), getType() );
+                                     getResultObjectName(), getType() );
 
     SimpleKeyWordStr mCSVeriJacobien = SimpleKeyWordStr( "VERI_JACOBIEN" );
     mCSVeriJacobien.addValues( "OUI" );

@@ -26,6 +26,8 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "astercxx.h"
+
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
@@ -55,7 +57,7 @@ class ResultsContainerInstance: public DataStructure
          * @brief Constructeur
          */
         ResultsContainerInstance( const string resuTyp = "???" ):
-                DataStructure( initAster->getNewResultObjectName(), resuTyp ),
+                DataStructure( getNewResultObjectName(), resuTyp ),
                 _symbolicNamesOfFields( JeveuxBidirectionalMap( getName() + "           .DESC" ) ),
                 _namesOfFields( JeveuxCollectionChar24( getName() + "           .TACH" ) ),
                 _accessVariables( JeveuxBidirectionalMap( getName() + "           .NOVA" ) ),
