@@ -23,6 +23,11 @@ import os.path as osp
 from code_aster.Supervis.libCommandSyntax import _F
 
 
+# Compat.__init__: MeshInstance.setCallback( idx, emulateLIRE_MAILLAGE_MED )
+# Mesh: MeshInstance.readMEDFile( ) { _callback( this ); }
+# _callback attribut statique/global de la classe MeshInstance
+# Tester avec une fonction et une variable static
+
 cdef public bint emulateLIRE_MAILLAGE_MED( MeshInstance* inst ):
     """Read a MED file
     @param fileName path to the file to read
