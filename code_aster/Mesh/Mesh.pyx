@@ -24,6 +24,9 @@ from cMesh cimport MeshInstance, MeshPtr
 
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 
+cimport code_aster.Supervis.libCommandSyntax as libCmd
+from code_aster.Supervis.libCommandSyntax import _F
+
 
 cdef class Mesh:
     """Python wrapper on the C++ Mesh object"""
@@ -62,5 +65,18 @@ cdef class Mesh:
 
     def readMEDFile( self, string pathFichier ):
         """Read a MED file"""
-        return self._cptr.get().readMEDFile( pathFichier )
-        # return self._cptr.readMEDFile( pathFichier )
+        syntax = libCmd.CommandSyntax( "LIRE_MAILLAGE" )
+        # self._cptr.get().getType()
+        syntax.setResult( libCmd.getResultObjectName(), "MAILLAGE" )
+
+        syntax.define( _F ( FORMAT="MED",
+                            UNITE=20, #medFile.getLogicalUnit(),
+                            VERI_MAIL=_F( VERIF="OUI",
+                                          APLAT=1.e-3 ),
+                          )
+                     )
+
+        # inst.ExecOperator( 1 )
+        ret = self._cptr.get().readMEDFile( pathFichier )
+        syntax.free()
+        return ret

@@ -21,8 +21,6 @@
 __all__ = []
 
 import sys
-# required: this initializes Core modules for access from C++/F90
-import code_aster.Core
 
 from code_aster.Supervis import setExecutionParameter
 
