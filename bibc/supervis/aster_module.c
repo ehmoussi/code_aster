@@ -33,13 +33,24 @@
 #include "aster_utils.h"
 #include "aster_exceptions.h"
 
-#include "RunManager/CommandSyntax.h"
+/*
+ * Only an extract of #include "code_aster/Supervis/libCommandSyntax.h"
+ * because it uses C++ std::string.
+ */
+#define __PYX_EXTERN_C extern
+__PYX_EXTERN_C DL_IMPORT(void) getres_(char *, char *, char *, unsigned int, unsigned int, unsigned int);
+__PYX_EXTERN_C DL_IMPORT(int) listeMotCleSimpleFromMotCleFacteur(char *, int, int, int, char ***, char ***, int *);
+__PYX_EXTERN_C DL_IMPORT(void) getfac_(char *, long *, unsigned int);
+__PYX_EXTERN_C DL_IMPORT(int) existsCommandFactorAndSimpleKeyword(char *, int, char *);
+__PYX_EXTERN_C DL_IMPORT(char) **getCommandKeywordValueString(char *, int, char *, int *);
+__PYX_EXTERN_C DL_IMPORT(double) *getCommandKeywordValueDouble(char *, int, char *, int *);
+__PYX_EXTERN_C DL_IMPORT(long) *getCommandKeywordValueInt(char *, int, char *, int *);
 
 /*
  *   PRIVATE FUNCTIONS
  *
  */
- FILE* fileOut;
+FILE* fileOut;
 
 void TraiteMessageErreur( _IN char* ) ;
 
@@ -57,7 +68,8 @@ void DEFP(XFINI,xfini, _IN INTEGER *code)
    register_sh_jeveux_status(0);
    // TODO NS : J'ai commente cette ligne car elle fait planter le code
    // et que je ne l'a comprend pas
-   //interruptTry(*code);
+   // TODO MC: ceci lève EOFError, appelé par FIN, à voir ce qu'il faut en faire
+   // interruptTry(*code);
 }
 
 /*
@@ -226,6 +238,7 @@ void DEFP(INIRAN,iniran,_IN INTEGER *jump)
 }
 
 /* ------------------------------------------------------------------ */
+/* TODO CommandSyntax */
 void DEFSS(GETTCO,gettco,_IN char *nomobj, _IN STRING_SIZE lnom,
                         _OUT char *typobj, _IN STRING_SIZE ltyp)
 {
@@ -235,7 +248,8 @@ void DEFSS(GETTCO,gettco,_IN char *nomobj, _IN STRING_SIZE lnom,
     char* tmp = (char*)malloc(lnom + 1);
     strncpy(tmp, nomobj, lnom);
     tmp[lnom] = '\0';
-    char* nomCmdCp = getSDType(tmp);
+    // char* nomCmdCp = getSDType(tmp);
+    char nomCmdCp[7] = "UNKNOWN";
     CopyCStrToFStr(typobj, nomCmdCp, ltyp);
     fprintf(fileOut, "GETTCO %s\n", typobj);
     FreeStr(tmp);
@@ -354,7 +368,7 @@ INTEGER DEFSS( GETEXM, getexm, _IN char *motfac,_IN STRING_SIZE lfac,
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
     fprintf(fileOut, "GETEXM %s %s\n", tmp, tmp2);
-    const int retour = presenceMotCle(tmp, tmp2);
+    const int retour = existsCommandFactorAndSimpleKeyword(tmp, 0, tmp2);
     FreeStr(tmp);
     FreeStr(tmp2);
     return retour;
@@ -501,16 +515,16 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    fprintf(fileOut, "GETVR8_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
-    if ( presenceMotCle(tmp, tmp2) == 0 )
-    {
+    fprintf(fileOut, "GETVR8_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
+    if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
+        {
         *nbval = 0;
-    }
+        }
     else
     {
         double* retour = NULL;
         int nbVal = 0;
-        retour = valeursMotCleDouble(tmp, *iocc, tmp2, &nbVal);
+        retour = getCommandKeywordValueDouble(tmp, (int)*iocc - 1, tmp2, &nbVal);
         *nbval = nbVal;
         if ( (*nbval) > (*mxval) )
         {
@@ -627,27 +641,27 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    fprintf(fileOut, "GETVIS_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
-    if ( presenceMotCle(tmp, tmp2) == 0 )
-    {
+    fprintf(fileOut, "GETVIS_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
+    if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
+        {
         *nbval = 0;
-    }
+        }
     else
     {
-        int* retour = NULL;
+        long* retour = NULL;
         int nbVal = 0;
-        retour = valeursMotCleInt(tmp, *iocc, tmp2, &nbVal);
+        retour = getCommandKeywordValueInt(tmp, (int)*iocc - 1, tmp2, &nbVal);
         *nbval = nbVal;
         if ( (*nbval) > (*mxval) )
         {
             *nbval = -(*nbval);
-        }
+}
         else
         {
             int i;
             for ( i = 0; i < *nbval; ++i )
             {
-                val[i] = retour[i];
+                val[i] = (INTEGER)retour[i];
             }
             free(retour);
         }
@@ -684,17 +698,17 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    fprintf(fileOut, "GETVTX_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
+    fprintf(fileOut, "GETVTX_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
     BlankStr(txval, ltx);
-    if ( presenceMotCle(tmp, tmp2) == 0 )
-    {
+    if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
+        {
         *nbval = 0;
-    }
+        }
     else
-    {
+        {
         char** retour = NULL;
         int nbVal = 0;
-        retour = valeursMotCleChaine(tmp, *iocc, tmp2, &nbVal);
+        retour = getCommandKeywordValueString(tmp, (int)*iocc - 1, tmp2, &nbVal);
         *nbval = nbVal;
         if ( (*nbval) > (*mxval) )
         {
@@ -738,16 +752,16 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    fprintf(fileOut, "GETVID_WRAP %s %s %d %d\n", tmp, tmp2, (int)*iocc, (int)*mxval);
-    if ( presenceMotCle(tmp, tmp2) == 0 )
-    {
+    fprintf(fileOut, "GETVID_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
+    if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
+        {
         *nbval = 0;
-    }
+        }
     else
     {
         char** retour = NULL;
         int nbVal = 0;
-        retour = valeursMotCleChaine(tmp, *iocc, tmp2, &nbVal);
+        retour = getCommandKeywordValueString(tmp, (int)*iocc - 1, tmp2, &nbVal);
         *nbval = nbVal;
         if ( (*nbval) > (*mxval) )
         {
