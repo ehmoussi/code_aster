@@ -51,3 +51,11 @@ def finalize():
     cdef INTEGER numOp = 9999
     libaster.execop_( &numOp )
     syntax.free()
+
+def cataBuilder():
+    """Build the elements catalog"""
+    syntax = CommandSyntax( "MAJ_CATA" )
+    syntax.define( _F( ELEMENT=_F() ) )
+    cdef INTEGER numOp = 20
+    libaster.execop_( &numOp )
+    syntax.free()
