@@ -92,9 +92,8 @@ def build_cata_ele(self, ojb, install_path):
 
     comm = bldnode.make_node('fort.1')
     content = os.linesep.join([
-        "from code_aster.RunManager.CataBuilder import CataBuilder",
-        "bld = CataBuilder()",
-        "bld.run()", ""
+        "from code_aster.RunManager.Initializer import cataBuilder",
+        "cataBuilder()",
     ])
     comm.write(content, 'w')
 
@@ -162,6 +161,7 @@ def get_ld_paths(self):
     env = self.all_envs[self.variant]
     ld_path = list(chain(*[Utils.to_list(env[name])
                            for name in ('LIBPATH', 'LIBPATH_CODE_ASTER_CORE', 'LIBDIR') if env[name]]))
+    ld_path = [osp.join(env.ASTERLIBDIR, i) for i in ld_path]
     # add path where built libs are installed
     try:
         ld_path.insert(0, env.ASTERLIBDIR)
