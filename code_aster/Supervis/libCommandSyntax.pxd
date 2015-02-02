@@ -43,7 +43,7 @@ cdef class CommandSyntax:
     cdef        _resultType
     cdef object _definition
 
-    cdef void setResult( self, sdName, sdType )
+    cpdef setResult( self, sdName, sdType )
 
     cpdef define( self, dictSyntax )
 

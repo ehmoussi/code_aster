@@ -23,9 +23,11 @@ from cython.operator cimport dereference as deref
 from cMesh cimport MeshInstance, MeshPtr
 
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
+from code_aster.RunManager.File cimport File
 
-cimport code_aster.Supervis.libCommandSyntax as libCmd
+from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 from code_aster.Supervis.libCommandSyntax import _F
+from code_aster.RunManager.File import FileType, FileAccess
 
 
 cdef class Mesh:
@@ -63,20 +65,22 @@ cdef class Mesh:
         """Tell if a group of nodes exists in the mesh"""
         return self._cptr.get().hasGroupOfNodes( name )
 
-    def readMEDFile( self, string pathFichier ):
+    def readMEDFile( self, string filename ):
         """Read a MED file"""
-        syntax = libCmd.CommandSyntax( "LIRE_MAILLAGE" )
+        medFile = File( filename, FileType.Binary, FileAccess.Old )
+
+        syntax = CommandSyntax( "LIRE_MAILLAGE" )
         # self._cptr.get().getType()
-        syntax.setResult( libCmd.getResultObjectName(), "MAILLAGE" )
+        syntax.setResult( resultNaming.getResultObjectName(), "MAILLAGE" )
 
         syntax.define( _F ( FORMAT="MED",
-                            UNITE=20, #medFile.getLogicalUnit(),
+                            UNITE=medFile.getLogicalUnit(),
                             VERI_MAIL=_F( VERIF="OUI",
                                           APLAT=1.e-3 ),
                           )
                      )
 
         # inst.ExecOperator( 1 )
-        ret = self._cptr.get().readMEDFile( pathFichier )
+        ret = self._cptr.get().readMEDFile( filename )
         syntax.free()
         return ret

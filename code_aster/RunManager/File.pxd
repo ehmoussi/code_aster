@@ -17,13 +17,28 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from libcpp.string cimport string
+from code_aster cimport libaster
+from code_aster.libaster cimport INTEGER
 
-cimport code_aster.Supervis.libCommandSyntax as libCmd
+
+cdef class LogicalUnitManager:
+
+    cdef object _freeLogicalUnit
+    cdef object _usedLogicalUnit
+
+    cdef int getFreeLogicalUnit( self )
+
+    cdef bint releaseLogicalUnit( self, const int unitToRelease )
+
+cdef LogicalUnitManager logicalUnitManager
 
 
-cdef extern from "Mesh/Mesh.h":
+cdef class File:
 
-    cdef cppclass MeshInstance:
-        const string& getType()
-        void ExecOperator( const int operatorNumber )
+    cdef                _fileName
+    cdef unsigned int   _type
+    cdef unsigned int   _access
+    cdef int            _logicalUnit
+    cdef INTEGER        _numOp26
+
+    cpdef int getLogicalUnit( self )

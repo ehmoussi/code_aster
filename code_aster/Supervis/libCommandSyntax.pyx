@@ -85,7 +85,7 @@ cdef class CommandSyntax:
             self._name, self._resultName, self._resultType,
             self._definition)
 
-    cdef void setResult( self, sdName, sdType ):
+    cpdef setResult( self, sdName, sdType ):
         """Register the result of the command: name and type"""
         self._resultName = sdName
         self._resultType = sdType
@@ -196,7 +196,7 @@ cdef public string getResultObjectName():
 
 cdef public void getres_( char* resultName, char* resultType, char* commandName,
                           unsigned int lres, unsigned int ltype,
-                          unsigned int lcmd):
+                          unsigned int lcmd) except *:
     """Wrapper for fortran calls to getName, getResultName and getResultType"""
     if currentCommand is None:
         raise ValueError( "there is no active command" )
@@ -207,7 +207,7 @@ cdef public void getres_( char* resultName, char* resultType, char* commandName,
     debug( "getres", ( commandName[:lcmd], resultName[:lres], resultType[:ltype] ) )
 
 
-cdef public int XlisteMotCleSimpleFromMotCleFacteur(
+cdef public int listeMotCleSimpleFromMotCleFacteur(
         char* factKeyword, int occurrence, int keywordSize, int typeSize,
         char*** arraySimpleKeyword, char*** arrayType, int* nbKeyword):
     # TODO: getmjm

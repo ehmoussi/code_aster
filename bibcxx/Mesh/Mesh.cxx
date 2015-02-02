@@ -28,7 +28,6 @@
 // emulate_LIRE_MAILLAGE_MED.h is auto-generated and requires Mesh.h and Python.h
 #include "Python.h"
 #include "Mesh/Mesh.h"
-// #include "code_aster/Core/libEmulateForMesh.h"
 
 
 MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE" ),
@@ -49,8 +48,6 @@ MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE
 
 bool MeshInstance::readMEDFile( string pathFichier )
 {
-    // bool iret = emulateLIRE_MAILLAGE_MED( this );
-    // bool iret = getCallback(0)( this );
     INTEGER op = 1;
     CALL_EXECOP( &op );
 
