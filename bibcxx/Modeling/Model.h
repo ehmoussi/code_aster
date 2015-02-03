@@ -116,6 +116,12 @@ class ModelInstance: public DataStructure
         };
 
         /**
+         * @brief Return a dict containing the keywords to call AFFE_MODELE
+         * @return PyDict object containing the keywords
+         */
+        PyObject* getCommandKeywords();
+
+        /**
          * @brief Construction (au sens Jeveux fortran) de la sd_modele
          * @return booleen indiquant que la construction s'est bien deroulee
          */

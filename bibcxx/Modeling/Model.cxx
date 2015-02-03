@@ -36,71 +36,53 @@ ModelInstance::ModelInstance(): DataStructure( getNewResultObjectName(), "MODELE
                                 _isEmpty( true )
 {};
 
-bool ModelInstance::build()
+
+PyObject* ModelInstance::getCommandKeywords()
 {
-    // Definition du bout de fichier de commande correspondant a AFFE_MODELE
-    CommandSyntax syntaxeAffeModele( "AFFE_MODELE", true,
-                                     getResultObjectName(), getType() );
-
-    SimpleKeyWordStr mCSVeriJacobien = SimpleKeyWordStr( "VERI_JACOBIEN" );
-    mCSVeriJacobien.addValues( "OUI" );
-    syntaxeAffeModele.addSimpleKeywordString( mCSVeriJacobien );
-
-    // Definition du mot cle simple MAILLAGE
-    SimpleKeyWordStr mCSMaillage = SimpleKeyWordStr("MAILLAGE");
+    PyObject* dict = PyDict_New();
+    // add simple keywords
+    addStringKeyword( dict, "VERI_JACOBIEN", "OUI" );
     if ( ! _supportMesh )
         throw string("Support mesh is undefined");
-    // Affectation d'une valeur au mot cle simple MAILLAGE
-    // Si _supportMesh->getJeveuxName() = 'MA      ' alors
-    // cela correspondra dans le fichier de commande emule a :
-    // MAILLAGE = MA
-    mCSMaillage.addValues( _supportMesh->getName() );
-    syntaxeAffeModele.addSimpleKeywordString(mCSMaillage);
+    addStringKeyword( dict, "MAILLAGE", _supportMesh->getName().c_str() );
 
-    // Definition de mot cle facteur AFFE
-    FactorKeyword motCleAFFE = FactorKeyword("AFFE", true);
+    // add AFFE factor keyword (list of 'dict')
+    PyObject* listAffe = PyList_New( _modelisations.size() );
+    PyDict_SetItemString( dict, "AFFE", listAffe );
 
-    // Boucle sur les couples (physique / modelisation) ajoutes par l'utilisateur
+    // Loop on couples (physics / modeling)
+    std::string local;
+    std::string entityName;
+    int occ = 0;
     for ( listOfModsAndGrpsIter curIter = _modelisations.begin();
           curIter != _modelisations.end();
           ++curIter )
     {
-        // Definition d'une accourence d'un mot-cle facteur
-        FactorKeywordOccurence occurAFFE = FactorKeywordOccurence();
+        PyObject* affe = PyDict_New();
+        addStringKeyword( affe, "PHENOMENE", curIter->first.getPhysic().c_str() );
+        addStringKeyword( affe, "MODELISATION", curIter->first.getModeling().c_str() );
 
-        // Definition du mot-cle simple PHENOMENE
-        SimpleKeyWordStr mCSPhenomene = SimpleKeyWordStr("PHENOMENE");
-        // Ajout de la valeur donnee par l'utilisateur
-        mCSPhenomene.addValues((*curIter).first.getPhysic());
-        // Ajout du mot-cle simple a l'occurence du mot-cle facteur
-        occurAFFE.addSimpleKeywordString(mCSPhenomene);
-
-        SimpleKeyWordStr mCSModeling = SimpleKeyWordStr("MODELISATION");
-        mCSModeling.addValues((*curIter).first.getModeling());
-        occurAFFE.addSimpleKeywordString(mCSModeling);
-
-        SimpleKeyWordStr mCSGroup;
         if ( typeid( *(curIter->second) ) == typeid( AllMeshEntitiesInstance ) )
         {
-            mCSGroup = SimpleKeyWordStr("TOUT");
-            mCSGroup.addValues("OUI");
+            addStringKeyword( affe, "TOUT", "OUI" );
         }
         else
         {
+            entityName = (curIter->second)->getEntityName();
             if ( typeid( *(curIter->second) ) == typeid( GroupOfNodesInstance ) )
-                mCSGroup = SimpleKeyWordStr("GROUP_NO");
+                local = "GROUP_NO";
             else if ( typeid( *(curIter->second) ) == typeid( GroupOfElementsInstance ) )
-                mCSGroup = SimpleKeyWordStr("GROUP_MA");
-
-            mCSGroup.addValues( (curIter->second)->getEntityName() );
+                local = "GROUP_MA";
+            addStringKeyword( affe, local.c_str(), entityName.c_str() );
         }
-        occurAFFE.addSimpleKeywordString(mCSGroup);
-        // Ajout de l'occurence au mot-cle facteur AFFE
-        motCleAFFE.addOccurence(occurAFFE);
+        PyList_SetItem( listAffe, occ, affe);
+        ++occ;
     }
+    return dict;
+}
 
-    // Ajout du mot-cle facteur AFFE a la commande AFFE_MODELE
-    syntaxeAffeModele.addFactorKeyword(motCleAFFE);
+bool ModelInstance::build()
+{
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
     INTEGER op = 18;

@@ -23,6 +23,8 @@ from cython.operator cimport dereference as deref
 from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.Mesh.cMesh cimport MeshPtr
 
+from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
+
 from cPhysicsAndModeling cimport Physics, Modelings
 
 Mechanics, Thermal, Acoustics = cMechanics, cThermal, cAcoustics
@@ -50,10 +52,6 @@ cdef class Model:
         """Return the pointer on the c++ object"""
         return self._cptr
 
-    def build( self ):
-        """Build the model"""
-        self._cptr.get().build()
-
     def addModelingOnAllMesh( self, phys, mod ):
         """Add a modeling on all the mesh"""
         self._cptr.get().addModelingOnAllMesh( phys, mod )
@@ -75,3 +73,17 @@ cdef class Model:
         mesh = Mesh()
         mesh.set( self._cptr.get().getSupportMesh() )
         return mesh
+
+    def build( self ):
+        """Build the Model object"""
+        syntax = CommandSyntax( "AFFE_MODELE" )
+        # self._cptr.get().getType()
+        syntax.setResult( resultNaming.getResultObjectName(), "MODELE" )
+
+        dict = self._cptr.get().getCommandKeywords()
+        syntax.define( dict )
+
+        ret = self._cptr.get().build()
+        syntax.free()
+        ret = True
+        return ret

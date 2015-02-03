@@ -43,7 +43,9 @@ cdef class ResultNaming:
         """Return the name of the result created by the current command
         @return String of 8 characters containing the name
         """
-        return "{:<8x}".format( self._numberOfAsterObjects )
+        cdef string name = "{:<8x}".format( self._numberOfAsterObjects )
+        debug( "getResultObjectName returns", name )
+        return name
 
 # global instance
 resultNaming = ResultNaming()
@@ -138,6 +140,7 @@ cdef class CommandSyntax:
             dictDef = self._getFactorKeywordOccurrence( factName, occurrence )
             if not dictDef:
                 dictDef = {}
+        assert type(dictDef) is dict, "syntax not defined"
         return dictDef
 
     cpdef int getFactorKeywordNbOcc( self, factName ):
@@ -200,7 +203,7 @@ cdef public void getres_( char* resultName, char* resultType, char* commandName,
     """Wrapper for fortran calls to getName, getResultName and getResultType"""
     if currentCommand is None:
         raise ValueError( "there is no active command" )
-    print currentCommand
+    debug( "Current Command is", currentCommand )
     copyToFStr( commandName, currentCommand.getName(), lcmd )
     copyToFStr( resultName, currentCommand.getResultName(), lres )
     copyToFStr( resultType, currentCommand.getResultType(), ltype )
