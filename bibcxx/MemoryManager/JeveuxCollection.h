@@ -135,15 +135,14 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
 {
     _listObjects.clear();
     long nbColObj, valTmp;
-    // Attention const_cast
     const char* charName = _name.c_str();
     JeveuxChar8 param( "NMAXOC" );
     char* charval = MakeBlankFStr(32);
     // Attention rajouter des verifications d'existence
-    CALL_JELIRA( const_cast< char* >(charName), const_cast< char* >(param.c_str()), &nbColObj, charval );
+    CALL_JELIRA( charName, param.c_str(), &nbColObj, charval );
 
     param = "ACCES ";
-    CALL_JELIRA( const_cast< char* >(charName), const_cast< char* >(param.c_str()), &valTmp, charval );
+    CALL_JELIRA( charName, param.c_str(), &valTmp, charval );
     string resu = string( charval, 2 );
     FreeStr( charval );
 
@@ -156,7 +155,7 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
     for ( long i = 1; i <= nbColObj; ++i )
     {
         ValueType* valuePtr;
-        CALL_JEXNUM( charval, const_cast< char* >(charName), &i );
+        CALL_JEXNUM( charval, charName, &i );
         if ( named )
             CALL_JENUNO( charval, collectionObjectName );
         CALL_JEVEUOC( charval, tmp, (void*)(&valuePtr) );
@@ -177,8 +176,7 @@ bool JeveuxCollectionInstance< ValueType >::existsObject( string name )
     const char* collName = _name.c_str();
     char* charJeveuxName = MakeBlankFStr(32);
     long returnBool;
-    CALL_JEXNOM( charJeveuxName, const_cast< char* >(collName),
-                 const_cast< char* >(name.c_str()) );
+    CALL_JEXNOM( charJeveuxName,collName, name.c_str() );
     CALL_JEEXIN( charJeveuxName, &returnBool );
     if ( returnBool == 0 ) return false;
     return true;
