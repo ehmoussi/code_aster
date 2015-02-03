@@ -80,7 +80,6 @@ cdef class Mesh:
                           )
                      )
 
-        # inst.ExecOperator( 1 )
         ret = self._cptr.get().readMEDFile( filename )
         syntax.free()
         return ret
