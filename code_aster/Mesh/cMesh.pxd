@@ -21,6 +21,10 @@ from libcpp.string cimport string
 
 from code_aster.DataFields.cFieldOnNodes cimport FieldOnNodesPtrDouble
 
+cdef extern from "RunManager/Exceptions.h":
+
+    cdef void AsterCythonCustomException()
+
 cdef extern from "Mesh/Mesh.h":
 
     cdef cppclass MeshInstance:

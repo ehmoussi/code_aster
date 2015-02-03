@@ -26,6 +26,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include "astercxx.h"
 #include "DataStructure/DataStructure.h"
 #include "LinearAlgebra/LinearSolver.h"
@@ -77,15 +78,15 @@ class DOFNumberingInstance: public DataStructure
          * @brief Methode permettant d'ajouter un chargement
          * @param currentLoad objet MechanicalLoad
          */
-        void addLoad( const MechanicalLoad& currentLoad )
+        void addLoad( const MechanicalLoad& currentLoad ) throw ( std::runtime_error )
         {
-            throw "Not yet implemented";
+            throw std::runtime_error( "Not yet implemented" );
         };
 
         /**
          * @brief Determination de la numerotation
          */
-        bool computeNumerotation();
+        bool computeNumerotation() throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant de savoir si la numerotation est vide
@@ -100,10 +101,10 @@ class DOFNumberingInstance: public DataStructure
          * @brief Methode permettant de definir les matrices elementaires
          * @param currentMatrix objet ElementaryMatrix
          */
-        void setElementaryMatrix( const ElementaryMatrix& currentMatrix )
+        void setElementaryMatrix( const ElementaryMatrix& currentMatrix ) throw ( std::runtime_error )
         {
             if ( _supportModel )
-                throw "It is not allowed to defined Model and ElementaryMatrix together";
+                throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
             _supportMatrix = currentMatrix;
         };
 
@@ -111,10 +112,10 @@ class DOFNumberingInstance: public DataStructure
          * @brief Methode permettant de definir le solveur
          * @param currentModel Model support de la numerotation
          */
-        void setLinearSolver( const LinearSolver& currentSolver )
+        void setLinearSolver( const LinearSolver& currentSolver ) throw ( std::runtime_error )
         {
             if ( ! _isEmpty )
-                throw "It is too late to set the linear solver";
+                throw std::runtime_error( "It is too late to set the linear solver" );
             _linearSolver = currentSolver;
         };
 
@@ -122,10 +123,10 @@ class DOFNumberingInstance: public DataStructure
          * @brief Methode permettant de definir le modele support
          * @param currentModel Model support de la numerotation
          */
-        void setSupportModel( const ModelPtr& currentModel )
+        void setSupportModel( const ModelPtr& currentModel ) throw ( std::runtime_error )
         {
             if ( ! _supportMatrix.isEmpty() )
-                throw "It is not allowed to defined Model and ElementaryMatrix together";
+                throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
             _supportModel = currentModel;
         };
 };

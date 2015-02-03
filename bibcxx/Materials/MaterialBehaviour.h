@@ -211,7 +211,7 @@ class GeneralMaterialBehaviourInstance
          * @brief Construction du GeneralMaterialBehaviourInstance
          * @return Booleen valant true si la tache s'est bien deroulee
          */
-        bool build();
+        bool build() throw ( std::runtime_error );
 
     private:
         /**

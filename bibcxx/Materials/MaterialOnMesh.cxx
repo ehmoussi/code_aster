@@ -23,6 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include "astercxx.h"
 
 #include "Materials/MaterialOnMesh.h"
@@ -37,7 +38,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance():
                                 _supportMesh( MeshPtr() )
 {};
 
-bool MaterialOnMeshInstance::build()
+bool MaterialOnMeshInstance::build() throw ( std::runtime_error )
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeAffeMater( "AFFE_MATERIAU", true,
@@ -46,7 +47,7 @@ bool MaterialOnMeshInstance::build()
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSMaillage = SimpleKeyWordStr("MAILLAGE");
     if ( ! _supportMesh )
-        throw string("Support mesh is undefined");
+        throw std::runtime_error( "Support mesh is undefined" );
     // Affectation d'une valeur au mot cle simple MAILLAGE
     // Si _supportMesh->getJeveuxName() = 'MA      ' alors
     // cela correspondra dans le fichier de commande emule a :
@@ -82,7 +83,7 @@ bool MaterialOnMeshInstance::build()
         {
             if ( typeid( *(curIter->second) ) == typeid( GroupOfElementsInstance ) )
                 mCSGroup = SimpleKeyWordStr("GROUP_MA");
-            else throw "Bad type of mesh entity, group of elements required";
+            else throw std::runtime_error( "Bad type of mesh entity, group of elements required" );
 
             mCSGroup.addValues( (curIter->second)->getEntityName() );
         }

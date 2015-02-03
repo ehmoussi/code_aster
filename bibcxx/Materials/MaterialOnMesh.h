@@ -26,6 +26,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include "astercxx.h"
 #include "DataStructure/DataStructure.h"
 #include "Modeling/Model.h"
@@ -81,11 +82,11 @@ class MaterialOnMeshInstance: public DataStructure
          * @param curMater Materiau a ajouter
          * @param nameOfGroup Nom du groupe de mailles
          */
-        void addMaterialOnGroupOfElements( Material& curMater, string nameOfGroup )
+        void addMaterialOnGroupOfElements( Material& curMater, string nameOfGroup ) throw ( std::runtime_error )
         {
-            if ( ! _supportMesh ) throw "Support mesh is not defined";
+            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
             if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
-                throw nameOfGroup + "not in support mesh";
+                throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMater,
                                                 MeshEntityPtr( new GroupOfElementsInstance(nameOfGroup) ) ) );
@@ -95,16 +96,16 @@ class MaterialOnMeshInstance: public DataStructure
          * @brief Construction (au sens Jeveux fortran) de la sd_cham_mater
          * @return booleen indiquant que la construction s'est bien deroulee
          */
-        bool build();
+        bool build() throw ( std::runtime_error );
 
         /**
          * @brief Definition du maillage support
          * @param currentMesh objet MeshPtr sur lequel le modele reposera
          */
-        bool setSupportMesh( MeshPtr& currentMesh )
+        bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
         {
             if ( currentMesh->isEmpty() )
-                throw string("Mesh is empty");
+                throw std::runtime_error( "Mesh is empty" );
             _supportMesh = currentMesh;
             return true;
         };
@@ -113,10 +114,10 @@ class MaterialOnMeshInstance: public DataStructure
          * @brief Obtenir le maillage support
          * @return Maillage support du champ de materiau
          */
-        MeshPtr getSupportMesh()
+        MeshPtr getSupportMesh() throw ( std::runtime_error )
         {
             if ( _supportMesh->isEmpty() )
-                throw string("support mesh of current model is empty");
+                throw std::runtime_error( "support mesh of current model is empty" );
             return _supportMesh;
         };
 };

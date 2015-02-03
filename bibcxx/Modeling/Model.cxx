@@ -23,6 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include "astercxx.h"
 
 #include "Modeling/Model.h"
@@ -36,7 +37,7 @@ ModelInstance::ModelInstance(): DataStructure( getNewResultObjectName(), "MODELE
                                 _isEmpty( true )
 {};
 
-bool ModelInstance::build()
+bool ModelInstance::build() throw ( std::runtime_error )
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeAffeModele( "AFFE_MODELE", true,
@@ -49,7 +50,7 @@ bool ModelInstance::build()
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSMaillage = SimpleKeyWordStr("MAILLAGE");
     if ( ! _supportMesh )
-        throw string("Support mesh is undefined");
+        throw std::runtime_error( "Support mesh is undefined" );
     // Affectation d'une valeur au mot cle simple MAILLAGE
     // Si _supportMesh->getJeveuxName() = 'MA      ' alors
     // cela correspondra dans le fichier de commande emule a :
@@ -103,8 +104,15 @@ bool ModelInstance::build()
     syntaxeAffeModele.addFactorKeyword(motCleAFFE);
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
-    INTEGER op = 18;
-    CALL_EXECOP( &op );
+    try
+    {
+        INTEGER op = 18;
+        CALL_EXECOP( op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
     _isEmpty = false;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _typeOfElements->updateValuePointer();

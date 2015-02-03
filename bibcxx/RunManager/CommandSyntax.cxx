@@ -23,6 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include "RunManager/CommandSyntax.h"
 #include <stdlib.h>
 
@@ -50,7 +51,7 @@ char* getSDType(char* nom)
 {
     mapStrSDIterator curIter = mapNameDataStructure.find( string( nom, 0, 8 ) );
     if ( curIter == mapNameDataStructure.end() )
-        throw "Problem !!!";
+        throw std::runtime_error( "Problem !!!" );
     return const_cast< char* >( curIter->second->getType().c_str() );
 };
 

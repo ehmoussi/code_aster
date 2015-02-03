@@ -211,8 +211,7 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
             lstop = .true.
             if (.not. lerrm) then
                 call ib1mai()
-                call uexcep(numex, idmess, nk, valk, ni,&
-                            vali, nr, valr)
+                call uexcep()
             endif
         endif
 !

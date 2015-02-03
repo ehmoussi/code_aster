@@ -21,6 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdexcept>
 #include "astercxx.h"
 
 #include "LinearAlgebra/ElementaryVector.h"
@@ -34,14 +35,14 @@ ElementaryVectorInstance::ElementaryVectorInstance():
                 _material( MaterialOnMesh( false ) )
 {};
 
-FieldOnNodesPtrDouble ElementaryVectorInstance::assembleVector( const DOFNumbering& currentNumerotation )
+FieldOnNodesPtrDouble ElementaryVectorInstance::assembleVector( const DOFNumbering& currentNumerotation ) throw ( std::runtime_error )
 {
 
     if ( _isEmpty )
-        throw "The ElementaryVector is empty";
+        throw std::runtime_error( "The ElementaryVector is empty" );
 
     if ( currentNumerotation.isEmpty() || currentNumerotation->isEmpty() )
-        throw "Numerotation is empty";
+        throw std::runtime_error( "Numerotation is empty" );
 
     const string newName( getNewResultObjectName() );
     FieldOnNodesPtrDouble vectTmp( new FieldOnNodesInstanceDouble( newName ) );
@@ -66,10 +67,10 @@ FieldOnNodesPtrDouble ElementaryVectorInstance::assembleVector( const DOFNumberi
     return vectTmp;
 }
 
-bool ElementaryVectorInstance::computeMechanicalLoads()
+bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_error )
 {
     if ( ! _isEmpty )
-        throw "The MechanicalLoads is already compute";
+        throw std::runtime_error( "The MechanicalLoads is already compute" );
 
     // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
     setType( getType() + "_DEPL_R" );

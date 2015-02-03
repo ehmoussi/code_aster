@@ -25,6 +25,7 @@
  */
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include <string>
 #include <map>
 
@@ -56,7 +57,7 @@ class DataStructure
         /**
          * @brief Destructeur
          */
-        ~DataStructure();
+        ~DataStructure() throw ( std::runtime_error );
 
         /**
          * @brief Function membre getName

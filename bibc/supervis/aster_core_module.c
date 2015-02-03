@@ -447,10 +447,10 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     }
 
     res = PyObject_Call(pFunc, args, kwargs);
-    if (!res)
-    {
-       MYABORT("erreur lors de l'appel a MessageLog");
-    }
+//     if (!res)
+//     {
+//        MYABORT("erreur lors de l'appel a MessageLog");
+//     }
     if ( iexc == 1 ) {
         PyErr_Restore(etype, eval, etb);
     }
@@ -462,7 +462,7 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     Py_DECREF(tup_valk);
     Py_DECREF(tup_vali);
     Py_DECREF(tup_valr);
-    Py_DECREF(res);
+    if ( res ) Py_DECREF(res);
 }
 
 void DEFPP(CHKMSG,chkmsg, _IN INTEGER *info_alarm, _OUT INTEGER *iret)

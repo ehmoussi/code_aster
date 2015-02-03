@@ -21,6 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdexcept>
 #include "astercxx.h"
 
 #include "LinearAlgebra/ElementaryMatrix.h"
@@ -35,7 +36,7 @@ ElementaryMatrixInstance::ElementaryMatrixInstance():
                 _material( MaterialOnMesh( false ) )
 {};
 
-bool ElementaryMatrixInstance::computeMechanicalRigidity()
+bool ElementaryMatrixInstance::computeMechanicalRigidity() throw ( std::runtime_error )
 {
     // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
     setType( getType() + "_DEPL_R" );
@@ -53,14 +54,14 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity()
     // ??? Ajouter des verifs pour savoir si l'interieur du modele est vide ???
     SimpleKeyWordStr mCSModele = SimpleKeyWordStr( "MODELE" );
     if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-        throw string("Support model is undefined");
+        throw std::runtime_error( "Support model is undefined" );
     mCSModele.addValues( _supportModel->getName() );
     syntaxeCalcMatrElem.addSimpleKeywordString( mCSModele );
 
     // Definition du mot cle simple CHAM_MATER
     SimpleKeyWordStr mCSChamMater = SimpleKeyWordStr( "CHAM_MATER" );
     if ( _material.isEmpty() )
-        throw string("Material is empty");
+        throw std::runtime_error( "Material is empty" );
     mCSChamMater.addValues( _material->getName() );
     syntaxeCalcMatrElem.addSimpleKeywordString( mCSChamMater );
 

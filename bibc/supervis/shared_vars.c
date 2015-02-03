@@ -46,16 +46,6 @@ static PyObject* gMsgLog = (PyObject*)0;
 /*! Global variable to handle the aster_core python module from libaster */
 static PyObject* gPyMod = (PyObject*)0;
 
-
-/*! gJeveuxStatus is:
-      0 before aster_init,
-      1 during the execution,
-      0 after xfini.
-
-   This allows to lock the call to jeveux functions out of the execution
-*/
-static int gJeveuxStatus = 0;
-
 /*! Variable referencing the 'etape' object */
 static PyObject *gEtape = (PyObject*)0;
 
@@ -94,12 +84,6 @@ void register_sh_etape(PyObject *obj) {
     return;
 }
 
-/*! Register the status of jeveux */
-void register_sh_jeveux_status(int obj) {
-    gJeveuxStatus = obj;
-    return;
-}
-
 /* get functions */
 /*! Return the global JDC object */
 PyObject * get_sh_jdc() {
@@ -124,11 +108,6 @@ PyObject * get_sh_pymod() {
 /*! Return the current 'etape' object */
 PyObject * get_sh_etape() {
     return gEtape;
-}
-
-/*! Return the status of jeveux */
-int get_sh_jeveux_status() {
-    return gJeveuxStatus;
 }
 
 /*

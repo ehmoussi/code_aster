@@ -25,6 +25,8 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include <stdexcept>
 #include "astercxx.h"
 
 #include "aster_fort.h"
@@ -71,10 +73,10 @@ class LogicalUnitManager
          * @brief Methode permettant d'obtenir une unite logique libre
          * @return une entier correspondant a l'unite libre
          */
-        static int getLogicalUnit()
+        static int getLogicalUnit() throw ( std::runtime_error )
         {
             if ( _freeLogicalUnit.size() == 0 )
-                throw "No more logical unit";
+                throw std::runtime_error( "No more logical unit" );
             int retour = (*_freeLogicalUnit.begin());
             _freeLogicalUnit.erase( _freeLogicalUnit.begin() );
 
@@ -88,11 +90,11 @@ class LogicalUnitManager
          * @param unitToRelease Numero de l'unite logique a liberer
          * @return true ou leve une exception
          */
-        static bool releaseLogicalUnit( const int unitToRelease )
+        static bool releaseLogicalUnit( const int unitToRelease ) throw ( std::runtime_error )
         {
             SetIntIter curIter = _nonFreeLogicalUnit.find( unitToRelease );
             if ( curIter == _nonFreeLogicalUnit.end() )
-                throw "Unable to free this logical unit";
+                throw std::runtime_error( "Unable to free this logical unit" );
 
             _nonFreeLogicalUnit.erase( curIter );
             _freeLogicalUnit.push_back( unitToRelease );

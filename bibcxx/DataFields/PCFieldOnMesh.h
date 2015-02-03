@@ -26,6 +26,7 @@
 
 /* person_in_charge: natacha.bereux at edf.fr */
 
+#include <stdexcept>
 #include <string>
 #include <assert.h>
 
@@ -95,10 +96,10 @@ class PCFieldOnMeshInstance
          * @param currentMesh objet Mesh sur lequel le modele reposera
          * @return renvoit true si la définition  s'est bien deroulee, false sinon
          */
-        bool setSupportMesh(MeshPtr& currentMesh)
+        bool setSupportMesh(MeshPtr& currentMesh) throw ( std::runtime_error )
         {
             if ( currentMesh->isEmpty() )
-                throw string("Mesh is empty");
+                throw std::runtime_error( "Mesh is empty" );
             _supportMesh = currentMesh;
             return true;
         };

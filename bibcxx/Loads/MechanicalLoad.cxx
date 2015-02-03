@@ -21,6 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdexcept>
 #include "astercxx.h"
 
 #include "Loads/MechanicalLoad.h"
@@ -36,7 +37,7 @@ MechanicalLoadInstance::MechanicalLoadInstance():
                                 _supportModel( ModelPtr() )
 {};
 
-bool MechanicalLoadInstance::build()
+bool MechanicalLoadInstance::build() throw ( std::runtime_error )
 {
 // Definition du bout de fichier de commande correspondant à l'appel de
 // la commande AFFE_CHAR_MECA
@@ -46,7 +47,7 @@ bool MechanicalLoadInstance::build()
 // Définition du mot clé simple MODELE
     SimpleKeyWordStr mCSModel = SimpleKeyWordStr("MODELE");
     if ( ! _supportModel )
-        throw string("Support model is undefined");
+        throw std::runtime_error( "Support model is undefined" );
     mCSModel.addValues(_supportModel->getName());
     cout <<  "Nom du modele support: " << _supportModel->getName() << " . " << endl;
     syntaxeAffeCharMeca.addSimpleKeywordString(mCSModel);

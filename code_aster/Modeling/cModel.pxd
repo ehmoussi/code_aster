@@ -33,7 +33,7 @@ cdef extern from "Modeling/Model.h":
         void setSplittingMethod()
         bint setSupportMesh( MeshPtr& currentMesh )
         MeshPtr getSupportMesh()
-        bint build()
+        bint build() except +
 
     cdef cppclass ModelPtr:
 

@@ -26,6 +26,7 @@
 #include "astercxx.h"
 #include "aster_fort.h"
 
+#include <stdexcept>
 #include "Modeling/Model.h"
 #include "Loads/UnitaryLoad.h"
 #include "DataFields/PCFieldOnMesh.h"
@@ -59,10 +60,10 @@ class MechanicalLoadInstance : public DataStructure
 
         /** @brief Structure de données Aster */
         const string           _jeveuxName;
-        PCFieldOnMeshPtrDouble    _kinematicLoad;
-        PCFieldOnMeshPtrDouble    _pressure;
+        PCFieldOnMeshPtrDouble _kinematicLoad;
+        PCFieldOnMeshPtrDouble _pressure;
         /** @brief Modele support */
-        ModelPtr       _supportModel;
+        ModelPtr               _supportModel;
 
     public:
         /**
@@ -78,16 +79,16 @@ class MechanicalLoadInstance : public DataStructure
          */
 
         bool setDisplacementOnElements(AsterCoordinates coordinate,
-                                    string nameOfGroup, double value)
+                                       string nameOfGroup, double value) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw string("Model is empty");
+                throw std::runtime_error( "Model is empty" );
 // Check that nameOfGroup defines a group of nodes of the support mesh
             MeshPtr currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
-                throw  nameOfGroup +" is not a group of elements of the mesh you provided";
+                throw  std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
@@ -102,16 +103,16 @@ class MechanicalLoadInstance : public DataStructure
          */
 
         bool setDisplacementOnNodes(AsterCoordinates coordinate,
-                                    string nameOfGroup, double value)
+                                    string nameOfGroup, double value) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw string("Model is empty");
+                throw std::runtime_error( "Model is empty" );
 // Check that nameOfGroup defines a group of nodes of the support mesh
             MeshPtr currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfNodes( nameOfGroup ))
             {
-                throw nameOfGroup +" is not a group of nodes of the mesh you provided";
+                throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfNodesInstance( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
@@ -125,16 +126,16 @@ class MechanicalLoadInstance : public DataStructure
          * @param value imposed value
          * @return bool
          */
-        bool setPressureOnElements(double value, string nameOfGroup)
+        bool setPressureOnElements(double value, string nameOfGroup) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw string("Model is empty");
+                throw std::runtime_error( "Model is empty" );
 // Check that nameOfGroup is the name of a group belonging to the support mesh
             MeshPtr currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
-                throw nameOfGroup +" is not a group of nodes of the mesh you provided" ;
+                throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
             AsterCoordinates coordinate = Pressure;
@@ -148,16 +149,16 @@ class MechanicalLoadInstance : public DataStructure
          * @param value imposed value
          * @return bool
          */
-        bool setPressureOnNodes(double value, string nameOfGroup)
+        bool setPressureOnNodes(double value, string nameOfGroup) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw string("Model is empty");
+                throw std::runtime_error( "Model is empty" );
 // Check that nameOfGroup is the name of a group belonging to the support mesh
             MeshPtr currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfNodes( nameOfGroup ))
             {
-                throw nameOfGroup +" is not a group of nodes of the mesh you provided" ;
+                throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfNodesInstance( nameOfGroup ) );
             AsterCoordinates coordinate = Pressure;
@@ -171,16 +172,16 @@ class MechanicalLoadInstance : public DataStructure
          * @param value imposed value
          * @return bool
          */
-        bool setDistributedPressureOnElements(double value, string nameOfGroup)
+        bool setDistributedPressureOnElements(double value, string nameOfGroup) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw string("Model is empty");
+                throw std::runtime_error( "Model is empty" );
 // Check that nameOfGroup is the name of a group belonging to the support mesh
             MeshPtr currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
-                throw nameOfGroup +" is not a group of elements of the mesh you provided" ;
+                throw std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
             AsterCoordinates coordinate = Pressure;
@@ -194,16 +195,16 @@ class MechanicalLoadInstance : public DataStructure
         * @param value imposed value
         * @return bool
         */
-        bool setPipePressureOnElements( double value, string nameOfGroup )
+        bool setPipePressureOnElements( double value, string nameOfGroup ) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw string("Model is empty");
+                throw std::runtime_error( "Model is empty" );
 // Check that nameOfGroup is the name of a group belonging to the support mesh
             MeshPtr currentMesh= _supportModel->getSupportMesh();
             if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
             {
-                throw nameOfGroup +" is not a group of elements of the mesh you provided" ;
+                throw std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
             AsterCoordinates coordinate = Pressure;
@@ -215,16 +216,16 @@ class MechanicalLoadInstance : public DataStructure
          * @brief Construction de la charge (appel a OP007)
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool build();
+        bool build() throw ( std::runtime_error );
 
        /**
          * @brief Definition du modele support
          * @param currentMesh objet Model sur lequel la charge reposera
          */
-        bool setSupportModel(ModelPtr& currentModel)
+        bool setSupportModel(ModelPtr currentModel) throw ( std::runtime_error )
         {
             if ( ! currentModel )
-                throw string("Model is empty");
+                throw std::runtime_error( "Model is empty" );
             _supportModel = currentModel;
             return true;
         };

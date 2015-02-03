@@ -23,6 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include "Solvers/StaticMechanicalSolver.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
@@ -31,7 +32,7 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _linearSolver( LinearSolver() )
 {};
 
-ResultsContainer StaticMechanicalSolverInstance::execute()
+ResultsContainer StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
     ResultsContainer resultC( string( "EVOL_ELAS" ) );
     string nameOfSD = resultC->getName();
@@ -42,7 +43,7 @@ ResultsContainer StaticMechanicalSolverInstance::execute()
     // Definition du mot cle simple MODELE
     SimpleKeyWordStr mCSModele = SimpleKeyWordStr( "MODELE" );
     if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-        throw string("Support model is undefined");
+        throw std::runtime_error( "Support model is undefined" );
     mCSModele.addValues( _supportModel->getName() );
     syntaxeMecaStat.addSimpleKeywordString( mCSModele );
 
@@ -55,7 +56,7 @@ ResultsContainer StaticMechanicalSolverInstance::execute()
     }
 
     if ( _listOfMechanicalLoads.size() == 0 && _listOfKinematicsLoads.size() == 0 )
-        throw string("At least one load is needed");
+        throw std::runtime_error( "At least one load is needed" );
 
     FactorKeyword mCFExcit = FactorKeyword( "EXCIT", true );
     for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
