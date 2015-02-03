@@ -33,6 +33,7 @@
 #include "aster_utils.h"
 
 #include "MemoryManager/JeveuxAllowedTypes.h"
+#include "MemoryManager/JeveuxString.h"
 
 #include <string>
 #include <list>
@@ -136,13 +137,13 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
     long nbColObj, valTmp;
     // Attention const_cast
     const char* charName = _name.c_str();
-    char* param = "NMAXOC";
+    JeveuxChar8 param( "NMAXOC" );
     char* charval = MakeBlankFStr(32);
-    // Attention rajouter des verifications d'existance
-    CALL_JELIRA( const_cast< char* >(charName), param, &nbColObj, charval );
+    // Attention rajouter des verifications d'existence
+    CALL_JELIRA( const_cast< char* >(charName), const_cast< char* >(param.c_str()), &nbColObj, charval );
 
     param = "ACCES ";
-    CALL_JELIRA( const_cast< char* >(charName), param, &valTmp, charval );
+    CALL_JELIRA( const_cast< char* >(charName), const_cast< char* >(param.c_str()), &valTmp, charval );
     string resu = string( charval, 2 );
     FreeStr( charval );
 
