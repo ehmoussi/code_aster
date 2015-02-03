@@ -43,7 +43,7 @@ cdef class ResultNaming:
         """Return the name of the result created by the current command
         @return String of 8 characters containing the name
         """
-        return "{:<8}".format( self._numberOfAsterObjects )
+        return "{:<8x}".format( self._numberOfAsterObjects )
 
 # global instance
 resultNaming = ResultNaming()
