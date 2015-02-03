@@ -106,7 +106,7 @@ extern void DEF0(JEMARQ,jemarq);
 extern void DEF0(JEDEMA,jedema);
 
 #define CALL_JEDETR(a) CALLS(JEDETR, jedetr, a)
-extern void DEFS(JEDETR, jedetr, char *, STRING_SIZE);
+extern void DEFS(JEDETR, jedetr, const char *, STRING_SIZE);
 
 #define CALL_JEDETC(a, b, c) CALLSSP(JEDETC, jedetc, a, b, c)
 extern void DEFSSP(JEDETC, jedetc, char *, STRING_SIZE, char *, STRING_SIZE, INTEGER*);
@@ -115,18 +115,18 @@ extern void DEFSSP(JEDETC, jedetc, char *, STRING_SIZE, char *, STRING_SIZE, INT
 extern void DEFSSPP(JELST3,jelst3, char*, STRING_SIZE, char*, STRING_SIZE, INTEGER*, INTEGER*);
 
 #define CALL_JELIRA(a,b,c,d)  CALLSSPS(JELIRA,jelira,a,b,c,d)
-extern void DEFSSPS(JELIRA,jelira, char*, STRING_SIZE, char*, STRING_SIZE, INTEGER*,
+extern void DEFSSPS(JELIRA,jelira, const char*, STRING_SIZE, const char*, STRING_SIZE, INTEGER*,
                     char*, STRING_SIZE );
 
 #define CALL_JEEXIN(a,b)  CALLSP(JEEXIN,jeexin,a,b)
-extern void DEFSP(JEEXIN,jeexin, char*, STRING_SIZE, INTEGER* );
+extern void DEFSP(JEEXIN,jeexin, const char*, STRING_SIZE, INTEGER* );
 
 /* char functions: the first two arguments is the result */
 #define CALL_JEXNUM(a,b,c) CALLVSP(JEXNUM,jexnum,a,b,c)
-extern void DEFVSP(JEXNUM, jexnum, char*, STRING_SIZE, char*, STRING_SIZE, INTEGER* );
+extern void DEFVSP(JEXNUM, jexnum, char*, STRING_SIZE, const char*, STRING_SIZE, INTEGER* );
 
 #define CALL_JEXNOM(a,b,c) CALLVSS(JEXNOM,jexnom,a,b,c)
-extern void DEFVSS(JEXNOM,jexnom, char*, STRING_SIZE, char*, STRING_SIZE, char*, STRING_SIZE );
+extern void DEFVSS(JEXNOM,jexnom, char*, STRING_SIZE, const char*, STRING_SIZE, const char*, STRING_SIZE );
 
 #define CALL_JENUNO(a, b) CALLSS(JENUNO, jenuno, a, b)
 extern void DEFSS(JENUNO,jenuno, char*, STRING_SIZE, char*, STRING_SIZE );
