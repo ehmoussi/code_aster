@@ -41,8 +41,9 @@ def build(self):
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
     )
-    
+
     build_libaster_dependencies(self)
+    self.add_group()
     build_wrappers_on_libaster(self)
 
 
@@ -87,6 +88,6 @@ def build_wrappers_on_libaster(self):
             features = 'cxx cxxshlib pyext',
               source = cymodule,
               target = osp.join(dirname, modname),
-                 use = ['asterlib'],
+                 use = ['asterlib', 'CODE_ASTER_CORE'],
         install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
         )
