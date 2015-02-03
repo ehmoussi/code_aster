@@ -36,13 +36,13 @@
                                 DEBUG_EXCEPT("interruptTry: level=%d", gExcLvl); \
                                 longjmp(gExcEnv[gExcLvl], val); } \
                             else { printf("Exception raised out of Code_Aster commands.\n"); \
-                                _raiseException(val); }
+                                _raiseException(); }
 #define except(val)         else if (gExcNumb == val)
 #define exceptAll           else
 #define endTry()            _end_try(); DEBUG_EXCEPT("endTry: level=%d", gExcLvl);
 #define raiseException()    _end_try(); \
                             DEBUG_EXCEPT("raiseException: level=%d", gExcLvl); \
-                            _raiseException(gExcNumb); \
+                            _raiseException(); \
                             return NULL
 #define raiseExceptionString(exc, args) \
                             _end_try(); \
@@ -65,7 +65,6 @@ extern void initExceptions(PyObject *dict);
  */
 extern void _new_try();
 extern void _end_try();
-void _raiseException( _IN int val );
 
 /* FIN ASTER_EXCEPTIONS_H */
 #endif

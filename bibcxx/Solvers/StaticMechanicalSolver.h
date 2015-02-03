@@ -66,7 +66,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
         /**
          * @brief Lancement de la resolution
          */
-        ResultsContainer execute();
+        ResultsContainer execute() throw ( std::runtime_error );
 
         /**
          * @brief Function d'ajout d'une charge cinematique

@@ -87,7 +87,7 @@ class ElementaryMatrixInstance: public DataStructure
         /**
          * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
          */
-        bool computeMechanicalRigidity();
+        bool computeMechanicalRigidity() throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant de savoir si les matrices elementaires sont vides

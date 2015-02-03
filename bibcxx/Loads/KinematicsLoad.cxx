@@ -21,6 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdexcept>
 #include "astercxx.h"
 
 #include "Loads/KinematicsLoad.h"
@@ -31,7 +32,7 @@ KinematicsLoadInstance::KinematicsLoadInstance():
                     _supportModel( ModelPtr() )
 {};
 
-bool KinematicsLoadInstance::build()
+bool KinematicsLoadInstance::build() throw ( std::runtime_error )
 {
     string typSd;
     if ( _listOfDoubleImposedDisplacement.size() != 0 )
@@ -39,7 +40,7 @@ bool KinematicsLoadInstance::build()
     if ( _listOfDoubleImposedTemperature.size() != 0 )
         typSd = getType() + "_THER";
     if ( _listOfDoubleImposedDisplacement.size() == 0 && _listOfDoubleImposedTemperature.size() == 0 )
-        throw "KinematicsLoad empty";
+        throw std::runtime_error( "KinematicsLoad empty" );
     // Definition du bout de fichier de commande correspondant a AFFE_CHAR_CINE
     CommandSyntax syntaxeAffeCharCine( "AFFE_CHAR_CINE", true, getResultObjectName(),
                                        typSd );
@@ -47,7 +48,7 @@ bool KinematicsLoadInstance::build()
     // Definition du mot cle simple MAILLAGE
     SimpleKeyWordStr mCSModel = SimpleKeyWordStr("MODELE");
     if ( ! _supportModel )
-        throw string("Support model is undefined");
+        throw std::runtime_error( "Support model is undefined" );
     mCSModel.addValues( _supportModel->getName() );
     syntaxeAffeCharCine.addSimpleKeywordString(mCSModel);
 

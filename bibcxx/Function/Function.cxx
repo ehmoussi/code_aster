@@ -1,5 +1,6 @@
 /* person_in_charge: mathieu.courtois@edf.fr */
 
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -14,10 +15,10 @@ FunctionInstance::FunctionInstance():
     _value( JeveuxVectorDouble( _jeveuxName + ".VALE           " ) )
 {}
 
-void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &ord )
+void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &ord ) throw ( std::runtime_error )
 {
     if ( absc.size() != ord.size() )
-        throw "Function: length of abscissa and ordinates must be equal";
+        throw std::runtime_error( "Function: length of abscissa and ordinates must be equal" );
     _absc = absc;
     _ord = ord;
 }

@@ -26,6 +26,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include "astercxx.h"
 #include "Modeling/PhysicsAndModelings.h"
 #include <set>
@@ -87,7 +88,7 @@ struct PhysicsChecker
     /**
      * @brief Fonction statique verifiant qu'une paire physique modelisation est autorisee
      */
-    static bool isAllowedModelingForPhysics( Physics phys, Modelings model )
+    static bool isAllowedModelingForPhysics( Physics phys, Modelings model ) throw ( std::runtime_error )
     {
         switch ( phys )
         {
@@ -96,7 +97,7 @@ struct PhysicsChecker
             case Thermal:
                 return ThermalModelingsChecker::isAllowedModeling( model );
             default:
-                throw "Not a valid physics";
+                throw std::runtime_error( "Not a valid physics" );
         }
     };
 };

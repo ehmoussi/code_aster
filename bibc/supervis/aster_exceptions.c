@@ -24,6 +24,7 @@
 
 #include "aster.h"
 #include "aster_fort.h"
+#include "RunManager/Exceptions.h"
 #include "aster_exceptions.h"
 
 /*
@@ -115,66 +116,7 @@ void _end_try()
     gExcLvl -= 1;
 }
 
-void _raiseException( _IN int val )
+void DEF0(UEXCEP, uexcep)
 {
-    /* Raise the exception of code `val`.
-     * Called through raiseException by aster_oper, aster_opsexe, aster_debut,
-     * aster_poursu.
-     * 
-     * WARNING: The error indicator will be reset by a PyObject_CallMethod or similar.
-     * All C-Python methods must take care of that indicator (ex. UTPRIN).
-     */
-    PyObject *exc;
-
-    if ( val == EOFError ) {
-        PyErr_SetString(PyExc_EOFError, "exit ASTER");
-    } else {
-        exc = PyObject_CallMethod(exc_module, "get_exception", "i", val);
-        PyErr_SetObject(exc, gExcArgs);
-    }
-    return;
-}
-
-void DEFPSPSPPPP(UEXCEP,uexcep, _IN INTEGER *exc_type,
-                                _IN char *idmess, _IN STRING_SIZE lidmess,
-                                _IN INTEGER *nbk, _IN char *valk, _IN STRING_SIZE lvk,
-                                _IN INTEGER *nbi, _IN INTEGER *vali,
-                                _IN INTEGER *nbr, _IN DOUBLE *valr)
-{
-    /*
-     * Fortran/Python interface to raise an exception from the fortran subroutines
-     */
-    INTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
-    PyObject *tup_valk, *tup_vali, *tup_valr;
-    char *kvar;
-    int i;
-    /* call clean-up subroutine as after each operator */
-    CALL_POST_OP();
-
-    tup_valk = PyTuple_New( *nbk ) ;
-    for(i=0;i<*nbk;i++){
-       kvar = valk + i*lvk;
-       PyTuple_SetItem( tup_valk, i, PyString_FromStringAndSize(kvar,lvk) ) ;
-    }
-
-    tup_vali = PyTuple_New( *nbi ) ;
-    for(i=0;i<*nbi;i++){
-       PyTuple_SetItem( tup_vali, i, PyInt_FromLong(vali[i]) ) ;
-    }
-
-    tup_valr = PyTuple_New( *nbr ) ;
-    for(i=0;i<*nbr;i++){
-       PyTuple_SetItem( tup_valr, i, PyFloat_FromDouble(valr[i]) ) ;
-    }
-
-    gExcArgs = PyTuple_New( 4 );
-    PyTuple_SetItem( gExcArgs, (Py_ssize_t)0, PyString_FromStringAndSize(idmess, lidmess) );
-    PyTuple_SetItem( gExcArgs, (Py_ssize_t)1, tup_valk );
-    PyTuple_SetItem( gExcArgs, (Py_ssize_t)2, tup_vali );
-    PyTuple_SetItem( gExcArgs, (Py_ssize_t)3, tup_valr );
-
-    interruptTry((int)*exc_type);
+    _raiseException();
 }

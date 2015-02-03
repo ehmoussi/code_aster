@@ -24,6 +24,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdexcept>
 #include "astercxx.h"
 #include "Modeling/Model.h"
 #include "Loads/UnitaryLoad.h"
@@ -67,9 +68,9 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedAcousticDOFOnElements( string nameOfGroup, double value )
+        bool addImposedAcousticDOFOnElements( string nameOfGroup, double value ) throw ( std::runtime_error )
         {
-            throw "Not yet implemented";
+            throw std::runtime_error( "Not yet implemented" );
         };
 
         /**
@@ -78,9 +79,9 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedAcousticDOFOnNodes( string nameOfGroup, double value )
+        bool addImposedAcousticDOFOnNodes( string nameOfGroup, double value ) throw ( std::runtime_error )
         {
-            throw "Not yet implemented";
+            throw std::runtime_error( "Not yet implemented" );
         };
 
         /**
@@ -90,14 +91,14 @@ class KinematicsLoadInstance: public DataStructure
          * @return Booleen indiquant que tout s'est bien passe
          */
         bool addImposedMechanicalDOFOnElements( AsterCoordinates coordinate,
-                                                double value, string nameOfGroup )
+                                                double value, string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw "The support model is empty";
+                throw std::runtime_error( "The support model is empty" );
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
-                throw nameOfGroup + "not in support mesh";
+                throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
@@ -112,14 +113,14 @@ class KinematicsLoadInstance: public DataStructure
          * @return Booleen indiquant que tout s'est bien passe
          */
         bool addImposedMechanicalDOFOnNodes( AsterCoordinates coordinate,
-                                             double value, string nameOfGroup )
+                                             double value, string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw "The support model is empty";
+                throw std::runtime_error( "The support model is empty" );
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
-                throw nameOfGroup + "not in support mesh";
+                throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfNodesInstance( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
@@ -134,14 +135,14 @@ class KinematicsLoadInstance: public DataStructure
          * @return Booleen indiquant que tout s'est bien passe
          */
         bool addImposedThermalDOFOnElements( AsterCoordinates coordinate,
-                                             double value, string nameOfGroup )
+                                             double value, string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw "The support model is empty";
+                throw std::runtime_error( "The support model is empty");
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
-                throw nameOfGroup + "not in support mesh";
+                throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
             DoubleLoadTemperature resu( meshEnt, coordinate, value );
@@ -156,14 +157,14 @@ class KinematicsLoadInstance: public DataStructure
          * @return Booleen indiquant que tout s'est bien passe
          */
         bool addImposedThermalDOFOnNodes( AsterCoordinates coordinate,
-                                          double value, string nameOfGroup )
+                                          double value, string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw "The support model is empty";
+                throw std::runtime_error( "The support model is empty" );
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
-                throw nameOfGroup + "not in support mesh";
+                throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfNodesInstance( nameOfGroup ) );
             DoubleLoadTemperature resu( meshEnt, coordinate, value );
@@ -175,7 +176,7 @@ class KinematicsLoadInstance: public DataStructure
          * @brief Construction de la charge (appel a OP0101)
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool build();
+        bool build() throw ( std::runtime_error );
 
         /**
          * @brief Definition du modele support

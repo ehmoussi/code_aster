@@ -28,6 +28,7 @@
 
 #ifdef __cplusplus
 
+#include <stdexcept>
 #include <list>
 #include <vector>
 #include <string>
@@ -233,7 +234,7 @@ class FactorKeywordOccurence
             return false;
         };
 
-        ListString& stringValuesInKeyword(string motCle)
+        ListString& stringValuesInKeyword(string motCle) throw ( std::runtime_error )
         {
             list< SimpleKeyWordStr >::iterator curIter;
             for ( curIter = _listSimpleKeywordsStr.begin();
@@ -243,11 +244,11 @@ class FactorKeywordOccurence
                 if ( curIter->keywordName() == motCle ) break;
             }
             if ( curIter == _listSimpleKeywordsStr.end() )
-                throw "Problem in CommandSyntax. " + motCle + "not found";
+                throw std::runtime_error( "Problem in CommandSyntax. " + motCle + "not found" );
             return curIter->getListOfValues();
         };
 
-        ListDouble& doubleValuesInKeyword(string motCle)
+        ListDouble& doubleValuesInKeyword(string motCle) throw ( std::runtime_error )
         {
             list< SimpleKeyWordDbl >::iterator curIter;
             for ( curIter = _listSimpleKeywordsDbl.begin();
@@ -257,11 +258,11 @@ class FactorKeywordOccurence
                 if ( curIter->keywordName() == motCle ) break;
             }
             if ( curIter == _listSimpleKeywordsDbl.end() )
-                throw "Problem in CommandSyntax. " + motCle + "not found";
+                throw std::runtime_error( "Problem in CommandSyntax. " + motCle + "not found" );
             return curIter->getListOfValues();
         };
 
-        ListInt& intValuesInKeyword(string motCle)
+        ListInt& intValuesInKeyword(string motCle) throw ( std::runtime_error )
         {
             list< SimpleKeyWordInt >::iterator curIter;
             for ( curIter = _listSimpleKeywordsInt.begin();
@@ -271,7 +272,7 @@ class FactorKeywordOccurence
                 if ( curIter->keywordName() == motCle ) break;
             }
             if ( curIter == _listSimpleKeywordsInt.end() )
-                throw "Problem in CommandSyntax. " + motCle + "not found";
+                throw std::runtime_error( "Problem in CommandSyntax. " + motCle + "not found" );
             return curIter->getListOfValues();
         };
 };
@@ -414,13 +415,14 @@ class CommandSyntax
          *                 ex : MA = LIRE_MAILAGE : nomObjet = "MA      "
          */
         CommandSyntax(string nom, bool operateur,
-                      string nomObjet = "", string typeObjet = ""): _commandName( nom ),
+                      string nomObjet = "", string typeObjet = "") throw ( std::runtime_error ):
+                                                                    _commandName( nom ),
                                                                     _isOperateur( operateur ),
                                                                     _nomObjetJeveux( nomObjet ),
                                                                     _typeSDAster( typeObjet )
         {
             if ( commandeCourante != NULL )
-                throw "Two objects CommandSyntax are not allowed in the same time";
+                throw std::runtime_error( "Two objects CommandSyntax are not allowed in the same time" );
             _factorKeywordsMap.insert( mapStrMCFValue( string(""), FactorKeyword(" ", false) ) );
             mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
             (*curIter).second.addOccurence(FactorKeywordOccurence());

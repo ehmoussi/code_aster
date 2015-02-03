@@ -21,6 +21,8 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdexcept>
+
 #include "astercxx.h"
 
 #include "LinearAlgebra/DOFNumbering.h"
@@ -35,22 +37,22 @@ DOFNumberingInstance::DOFNumberingInstance():
             _isEmpty( true )
 {};
 
-bool DOFNumberingInstance::computeNumerotation()
+bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
 {
     // Definition du bout de fichier de commande correspondant a AFFE_MODELE
     CommandSyntax syntaxeNumeDdl( "NUME_DDL", true,
-                                     getResultObjectName(), getType() );
+                                  getResultObjectName(), getType() );
 
     if ( _supportModel )
     {
         if ( _supportModel->isEmpty() )
-            throw "Support Model is empty";
-        throw "Not yet implemented";
+            throw std::runtime_error( "Support Model is empty" );
+        throw std::runtime_error( "Not yet implemented" );
     }
     else if ( ! _supportMatrix.isEmpty() )
     {
         if ( _supportMatrix->isEmpty() )
-            throw "Support ElementaryMatrix is empty";
+            throw std::runtime_error( "Support ElementaryMatrix is empty" );
 
         SimpleKeyWordStr mCSMatrRigi = SimpleKeyWordStr( "MATR_RIGI" );
         mCSMatrRigi.addValues( _supportMatrix->getName() );
@@ -65,7 +67,7 @@ bool DOFNumberingInstance::computeNumerotation()
         syntaxeNumeDdl.addSimpleKeywordString(mCSRenum);
     }
     else
-        throw "No support matrix and support model defined";
+        throw std::runtime_error( "No support matrix and support model defined" );
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
     INTEGER op = 11;

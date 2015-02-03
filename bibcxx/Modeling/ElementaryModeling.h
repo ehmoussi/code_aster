@@ -26,6 +26,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include "astercxx.h"
 #include "Modeling/AuthorizedModelings.h"
 #include <string>
@@ -51,12 +52,16 @@ class ElementaryModeling
          * @param phys Physique
          * @param mod Modelisation
          */
-        ElementaryModeling( const Physics phys, const Modelings mod ): _physic(phys),
+        ElementaryModeling( const Physics phys, const Modelings mod ) throw ( std::runtime_error ):
+                                                                       _physic(phys),
                                                                        _modelisation(mod)
         {
             bool retour = PhysicsChecker::isAllowedModelingForPhysics( phys, mod );
             if ( ! retour )
-                throw string( PhysicNames[_physic] ) + " with " + ModelingNames[_modelisation] + " not allowed";
+            {
+                string error( string( PhysicNames[_physic] ) + " with " + string ( ModelingNames[_modelisation] ) + " not allowed" );
+                throw std::runtime_error( error );
+            }
         };
 
         /**

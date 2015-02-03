@@ -26,6 +26,8 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
+
 #include "astercxx.h"
 #include "aster_fort.h"
 
@@ -94,13 +96,13 @@ class AssemblyMatrixInstance: public DataStructure
         /**
          * @brief Assemblage de la matrice
          */
-        bool build();
+        bool build() throw ( std::runtime_error );
 
         /**
          * @brief Factorisation de la matrice
          * @return true
         */
-        bool factorization();
+        bool factorization() throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant de savoir si les matrices elementaires sont vides
@@ -142,10 +144,10 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance():
 {};
 
 template< class ValueType >
-bool AssemblyMatrixInstance< ValueType >::factorization()
+bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_error )
 {
     if ( _isEmpty )
-        throw "Assembly matrix is empty";
+        throw std::runtime_error( "Assembly matrix is empty" );
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
     CommandSyntax syntaxeFactoriser( "FACTORISER", true, getName(), getType() );
@@ -205,17 +207,17 @@ bool AssemblyMatrixInstance< ValueType >::factorization()
 };
 
 template< class ValueType >
-bool AssemblyMatrixInstance< ValueType >::build()
+bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
 {
     if ( _elemMatrix.isEmpty() || _elemMatrix->isEmpty() )
-        throw "Elementary matrix is empty";
+        throw std::runtime_error( "Elementary matrix is empty" );
     if ( _elemMatrix->getType() == "MATR_ELEM_DEPL_R" )
         setType( getType() + "_DEPL_R" );
     else
-        throw "Not yet implemented";
+        throw std::runtime_error( "Not yet implemented" );
 
     if ( _dofNum.isEmpty() || _dofNum->isEmpty() )
-        throw "Numerotation is empty";
+        throw std::runtime_error( "Numerotation is empty" );
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
     CommandSyntax syntaxeAsseMatrice( "ASSE_MATRICE", true,

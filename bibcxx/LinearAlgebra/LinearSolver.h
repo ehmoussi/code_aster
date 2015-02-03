@@ -24,6 +24,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdexcept>
 #include <list>
 #include <set>
 #include <string>
@@ -124,7 +125,7 @@ struct SolverChecker
      * @param renumber Type de renumeroteur
      * @return vrai si le couple est valide
      */
-    static bool isAllowedRenumberingForSolver( LinearSolverEnum solver, Renumbering renumber )
+    static bool isAllowedRenumberingForSolver( LinearSolverEnum solver, Renumbering renumber ) throw ( std::runtime_error )
     {
         switch ( solver )
         {
@@ -139,7 +140,7 @@ struct SolverChecker
             case Gcpc:
                 return GcpcRenumberingChecker::isAllowedRenumbering( renumber );
             default:
-                throw "Not a valid linear solver";
+                throw std::runtime_error( "Not a valid linear solver" );
         }
     };
 };

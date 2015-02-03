@@ -26,6 +26,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include "astercxx.h"
 #include "DataStructure/DataStructure.h"
 #include "Mesh/Mesh.h"
@@ -89,11 +90,11 @@ class ModelInstance: public DataStructure
          * @param mod Modelisation a ajouter
          * @param nameOfGroup Nom du groupe de mailles
          */
-        void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup )
+        void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup ) throw ( std::runtime_error )
         {
-            if ( ! _supportMesh ) throw "Support mesh is not defined";
+            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
             if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
-                throw nameOfGroup + "not in support mesh";
+                throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
                                             MeshEntityPtr( new GroupOfElementsInstance(nameOfGroup) ) ) );
@@ -105,11 +106,11 @@ class ModelInstance: public DataStructure
          * @param mod Modelisation a ajouter
          * @param nameOfGroup Nom du groupe de noeuds
          */
-        void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
+        void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup ) throw ( std::runtime_error )
         {
-            if ( ! _supportMesh ) throw "Support mesh is not defined";
+            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
             if ( ! _supportMesh->hasGroupOfNodes( nameOfGroup ) )
-                throw nameOfGroup + "not in support mesh";
+                throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
                                             MeshEntityPtr( new GroupOfNodesInstance(nameOfGroup) ) ) );
@@ -119,7 +120,7 @@ class ModelInstance: public DataStructure
          * @brief Construction (au sens Jeveux fortran) de la sd_modele
          * @return booleen indiquant que la construction s'est bien deroulee
          */
-        bool build();
+        bool build() throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant de savoir si le modele est vide
@@ -133,27 +134,27 @@ class ModelInstance: public DataStructure
         /**
          * @brief Definition de la methode de partition
          */
-        void setSplittingMethod()
+        void setSplittingMethod() throw ( std::runtime_error )
         {
-            throw "Not yet implemented";
+            throw std::runtime_error( "Not yet implemented" );
         };
 
         /**
          * @brief Definition du maillage support
          * @param currentMesh objet MeshPtr sur lequel le modele reposera
          */
-        bool setSupportMesh( MeshPtr& currentMesh )
+        bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
         {
             if ( currentMesh->isEmpty() )
-                throw string("Mesh is empty");
+                throw std::runtime_error( "Mesh is empty" );
             _supportMesh = currentMesh;
             return true;
         };
 
-        MeshPtr getSupportMesh()
+        MeshPtr getSupportMesh() throw ( std::runtime_error )
         {
             if ( ( ! _supportMesh ) || _supportMesh->isEmpty() )
-                throw string("Support mesh of current model is empty");
+                throw std::runtime_error( "Support mesh of current model is empty" );
             return _supportMesh;
         };
 };

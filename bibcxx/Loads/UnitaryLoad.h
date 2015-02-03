@@ -24,6 +24,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdexcept>
 #include "astercxx.h"
 #include "Loads/PhysicalQuantity.h"
 
@@ -57,13 +58,13 @@ class UnitaryLoad
          * @param curCoord Coordonnee de la grandeur sur laquelle on impose le chargement
          * @param value Valeur du chargement
          */
-        UnitaryLoad( MeshEntityPtr supportMeshEntity, AsterCoordinates curCoord, ValueType value ):
+        UnitaryLoad( MeshEntityPtr supportMeshEntity, AsterCoordinates curCoord, ValueType value ) throw ( std::runtime_error ):
             _supportMeshEntity( supportMeshEntity ),
             _loadCoordinate( curCoord ),
             _value( value )
         {
             if ( ! PhysicalQuantityType::hasCoordinate( curCoord ) )
-                throw string( AsterCoordinatesNames[ (int) curCoord ] ) + " not allowed";
+                throw std::runtime_error( string ( AsterCoordinatesNames[ (int) curCoord ] ) + " not allowed" );
         };
 
         /**

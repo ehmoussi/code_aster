@@ -69,7 +69,7 @@ class FunctionInstance: public DataStructure
         * @param ord values of the ordinates
         * @type  ord vector of double
         */
-        void setValues( const VectorDouble &absc, const VectorDouble &ord );
+        void setValues( const VectorDouble &absc, const VectorDouble &ord ) throw ( std::runtime_error );
 
         /**
         * Build Jeveux objects of the function

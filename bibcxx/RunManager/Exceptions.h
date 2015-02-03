@@ -1,6 +1,9 @@
+#ifndef EXCEPTIONS_H_
+#define EXCEPTIONS_H_
+
 /**
- * @file DataStructure.cxx
- * @brief Implementation des fonctions membres de DataStructure
+ * @file Exceptions.h
+ * @brief Fichier entete de la classe Exceptions
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
@@ -21,29 +24,30 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Python.h"
+
+#ifdef __cplusplus
+
+#include <iostream>
 #include <stdexcept>
-#include "DataStructure/DataStructure.h"
-#include "Debug/DebugPrint.h"
 
-mapStrSD mapNameDataStructure = mapStrSD();
+#define __Pyx_CppExn2PyErr AsterCythonCustomException
 
-DataStructure::DataStructure( string name, string type ): _name( name ), _type( type )
-{
-    mapNameDataStructure.insert( mapStrSDValue( _name, this ) );
-};
+/**
+ * @brief Catch an exception in cython to raise a python exception
+ */
+void AsterCythonCustomException();
 
-DataStructure::~DataStructure() throw ( std::runtime_error )
-{
-#ifdef __DEBUG_GC__
-    std::cout << "DataStructure.destr: " << this->getName() << std::endl;
+extern "C" {
 #endif
-    mapStrSDIterator curIter = mapNameDataStructure.find( _name );
-    if ( curIter == mapNameDataStructure.end() )
-        throw std::runtime_error( "Problem !!!" );
-    mapNameDataStructure.erase( curIter );
-};
 
-void DataStructure::debugPrint(int logicalUnit) const
-{
-    jeveuxDebugPrint( *this, logicalUnit );
-};
+/**
+ * @brief Raise an C++ exception from the Fortran of Aster
+ */
+void _raiseException();
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

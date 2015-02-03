@@ -23,9 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include <stdexcept>
 #include "Materials/MaterialBehaviour.h"
 
-bool GeneralMaterialBehaviourInstance::build()
+bool GeneralMaterialBehaviourInstance::build() throw ( std::runtime_error )
 {
     const int nbOfMaterialProperties = _listOfNameOfMaterialProperties.size();
     _complexValues->allocate( "G", nbOfMaterialProperties );
@@ -49,10 +50,10 @@ bool GeneralMaterialBehaviourInstance::build()
         }
         else if ( curIter3 != _mapOfComplexMaterialProperties.end() )
         {
-            throw "Pas encore implemente";
+            throw std::runtime_error( "Pas encore implemente" );
         }
         else
-            throw "Le parametre materiau doit etre un double ou un complexe";
+            throw std::runtime_error( "Le parametre materiau doit etre un double ou un complexe");
         ++position;
     }
 
