@@ -38,6 +38,12 @@ extern "C"
 
 #include "code_aster/Supervis/libCommandSyntax.h"
 
+// shortcuts to add keywords
+#define addStringKeyword(pyobj, key, value) PyDict_SetItemString( pyobj, key, PyString_FromString( value ) )
+#define addDoubleKeyword(pyobj, key, value) PyDict_SetItemString( pyobj, key, PyFloat_FromDouble( value ) )
+#define addLongKeyword(pyobj, key, value)   PyDict_SetItemString( pyobj, key, PyLong_FromLong( value ) )
+
+
 } // extern "C"
 #endif
 
