@@ -69,11 +69,6 @@ cdef class CommandSyntax:
             "CommandSyntax {} must be freed".format( currentCommand._name )
         currentCommand = self
 
-    def __dealloc__( self ):
-        """Destructor: ensure that the command has been freed"""
-        assert currentCommand is None, \
-            "CommandSyntax {} must be freed".format( self._name )
-
     cpdef free( self ):
         """Reset the current command pointer as soon as possible"""
         # `currentCommand` must be reset before the garbage collector will do it

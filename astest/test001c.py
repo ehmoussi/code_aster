@@ -5,10 +5,12 @@ import code_aster
 # Creation du maillage
 monMaillage = code_aster.Mesh()
 
-# Relecture du fichier MED
-monMaillage.readMedFile("test001a.mmed")
+# test de relecture d'un fichier Gmsh
+monMaillage.readGmshFile("ssnv187a.msh")
 
-#help(monMaillage)
+# test du format Gibi
+mtest = code_aster.Mesh()
+mtest.readGibiFile("zzzz364a.mgib")
 
 coord = monMaillage.getCoordinates()
 
@@ -30,8 +32,10 @@ monModel.addModelingOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
 print "Ecrasement de monMaillage !! L'objet C++ ne doit pas etre supprime"
 del monMaillage
 # On force python a supprimer cet objet !!! Sinon, il ne le fait pas en presence du try except precedent
-try: monMaillage.getCoordinates()
-except: pass
+try:
+    monMaillage.getCoordinates()
+except:
+    pass
 
 print "Ecrasement de monModel"
 monModel = 1
