@@ -35,6 +35,7 @@ cdef extern from "Mesh/Mesh.h":
         bint hasGroupOfElements( string name )
         bint hasGroupOfNodes( string name )
         bint readMEDFile( string pathFichier )
+        void debugPrint( int logicalUnit )
 
     cdef cppclass MeshPtr:
 

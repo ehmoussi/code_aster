@@ -46,3 +46,6 @@ del mesh
 
 mesh2 = model.getSupportMesh()
 assert mesh2.hasGroupOfElements('Tout')
+
+# Vérification du debug
+mesh2.debugPrint()
