@@ -66,27 +66,27 @@ cdef class Mesh:
     def hasGroupOfNodes( self, string name ):
         """Tell if a group of nodes exists in the mesh"""
         return self._cptr.get().hasGroupOfNodes( name )
- 
+
     def readGibiMesh ( self, string filename ):
         """Read a Gibi mesh file"""
 
         gibiFile = File( filename, FileType.Ascii, FileAccess.Old )
         mailAsterFile = File( "/tmp/tmp_maillage_aster", FileType.Ascii, FileAccess.New )
-        
-        syntax = CommandSyntax( "PRE_GIBI" ) 
+
+        syntax = CommandSyntax( "PRE_GIBI" )
         """ Add logical units """
         syntax.define( _F ( UNITE_GIBI=gibiFile.getLogicalUnit(),
                        UNITE_MAILLAGE=mailAsterFile.getLogicalUnit() )
                       )
         cdef INTEGER numOp = 49
         libaster.execop_( &numOp )
-        syntax.free() 
+        syntax.free()
 
-        """Read a Aster mesh file"""                     
-        syntax = CommandSyntax( "LIRE_MAILLAGE" ) 
-        
+        """Read a Aster mesh file"""
+        syntax = CommandSyntax( "LIRE_MAILLAGE" )
+
         syntax.setResult( resultNaming.getResultObjectName(), "MAILLAGE" )
-                    
+
         syntax.define( _F ( FORMAT="ASTER",
                             UNITE=mailAsterFile.getLogicalUnit(),
                             VERI_MAIL=_F( VERIF="OUI",
@@ -95,30 +95,28 @@ cdef class Mesh:
                      )
         numOp = 1
         libaster.execop_( &numOp )
-        ret = self._cptr.get().readMeshFile()
+        ret = self._cptr.get().build()
         syntax.free()
         return ret
-     
-    def readGmshMesh ( self, string filename ):
-        """Read a Gmsh mesh file"""
 
+    def readGmshMesh( self, string filename ):
+        """Read a Gmsh mesh file"""
         gmshFile = File( filename, FileType.Ascii, FileAccess.Old )
         mailAsterFile = File( "/tmp/tmp_maillage_aster", FileType.Ascii, FileAccess.New )
-        
-        syntax = CommandSyntax( "PRE_GMSH" ) 
-        """ Add logical units """
+
+        syntax = CommandSyntax( "PRE_GMSH" )
         syntax.define( _F ( UNITE_GMSH=gmshFile.getLogicalUnit(),
                             UNITE_MAILLAGE=mailAsterFile.getLogicalUnit() )
                       )
         cdef INTEGER numOp = 47
         libaster.execop_( &numOp )
-        syntax.free() 
+        syntax.free()
 
-        """Read a Aster mesh file"""                     
-        syntax = CommandSyntax( "LIRE_MAILLAGE" ) 
-        
+        # read a Aster mesh file
+        syntax = CommandSyntax( "LIRE_MAILLAGE" )
+
         syntax.setResult( resultNaming.getResultObjectName(), "MAILLAGE" )
-                    
+
         syntax.define( _F ( FORMAT="ASTER",
                             UNITE=mailAsterFile.getLogicalUnit(),
                             VERI_MAIL=_F( VERIF="OUI",
@@ -127,12 +125,10 @@ cdef class Mesh:
                      )
         numOp = 1
         libaster.execop_( &numOp )
-        ret = self._cptr.get().readMeshFile()
+        ret = self._cptr.get().build()
         syntax.free()
         return ret
 
-
- 
     def readMedMesh( self, string filename ):
         """Read a MED Mesh file"""
         medFile = File( filename, FileType.Binary, FileAccess.Old )
@@ -149,7 +145,7 @@ cdef class Mesh:
                      )
         cdef INTEGER numOp = 1
         libaster.execop_( &numOp )
-        ret = self._cptr.get().readMeshFile()
+        ret = self._cptr.get().build()
         syntax.free()
         return ret
 
