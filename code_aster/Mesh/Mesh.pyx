@@ -22,10 +22,12 @@ from cython.operator cimport dereference as deref
 
 from cMesh cimport MeshInstance, MeshPtr
 
+from code_aster cimport libaster
+from code_aster.libaster cimport INTEGER
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 from code_aster.RunManager.File cimport File
-
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
+
 from code_aster.Supervis.libCommandSyntax import _F
 from code_aster.RunManager.File import FileType, FileAccess
 
@@ -64,9 +66,75 @@ cdef class Mesh:
     def hasGroupOfNodes( self, string name ):
         """Tell if a group of nodes exists in the mesh"""
         return self._cptr.get().hasGroupOfNodes( name )
+ 
+    def readGibiMesh ( self, string filename ):
+        """Read a Gibi mesh file"""
 
-    def readMEDFile( self, string filename ):
-        """Read a MED file"""
+        gibiFile = File( filename, FileType.Ascii, FileAccess.Old )
+        mailAsterFile = File( "/tmp/tmp_maillage_aster", FileType.Ascii, FileAccess.New )
+        
+        syntax = CommandSyntax( "PRE_GIBI" ) 
+        """ Add logical units """
+        syntax.define( _F ( UNITE_GIBI=gibiFile.getLogicalUnit(),
+                       UNITE_MAILLAGE=mailAsterFile.getLogicalUnit() )
+                      )
+        cdef INTEGER numOp = 49
+        libaster.execop_( &numOp )
+        syntax.free() 
+
+        """Read a Aster mesh file"""                     
+        syntax = CommandSyntax( "LIRE_MAILLAGE" ) 
+        
+        syntax.setResult( resultNaming.getResultObjectName(), "MAILLAGE" )
+                    
+        syntax.define( _F ( FORMAT="ASTER",
+                            UNITE=mailAsterFile.getLogicalUnit(),
+                            VERI_MAIL=_F( VERIF="OUI",
+                                          APLAT=1.e-3 ),
+                          )
+                     )
+        numOp = 1
+        libaster.execop_( &numOp )
+        ret = self._cptr.get().readMeshFile()
+        syntax.free()
+        return ret
+     
+    def readGmshMesh ( self, string filename ):
+        """Read a Gmsh mesh file"""
+
+        gmshFile = File( filename, FileType.Ascii, FileAccess.Old )
+        mailAsterFile = File( "/tmp/tmp_maillage_aster", FileType.Ascii, FileAccess.New )
+        
+        syntax = CommandSyntax( "PRE_GMSH" ) 
+        """ Add logical units """
+        syntax.define( _F ( UNITE_GMSH=gmshFile.getLogicalUnit(),
+                            UNITE_MAILLAGE=mailAsterFile.getLogicalUnit() )
+                      )
+        cdef INTEGER numOp = 47
+        libaster.execop_( &numOp )
+        syntax.free() 
+
+        """Read a Aster mesh file"""                     
+        syntax = CommandSyntax( "LIRE_MAILLAGE" ) 
+        
+        syntax.setResult( resultNaming.getResultObjectName(), "MAILLAGE" )
+                    
+        syntax.define( _F ( FORMAT="ASTER",
+                            UNITE=mailAsterFile.getLogicalUnit(),
+                            VERI_MAIL=_F( VERIF="OUI",
+                                          APLAT=1.e-3 ),
+                          )
+                     )
+        numOp = 1
+        libaster.execop_( &numOp )
+        ret = self._cptr.get().readMeshFile()
+        syntax.free()
+        return ret
+
+
+ 
+    def readMedMesh( self, string filename ):
+        """Read a MED Mesh file"""
         medFile = File( filename, FileType.Binary, FileAccess.Old )
 
         syntax = CommandSyntax( "LIRE_MAILLAGE" )
@@ -79,8 +147,9 @@ cdef class Mesh:
                                           APLAT=1.e-3 ),
                           )
                      )
-
-        ret = self._cptr.get().readMEDFile( filename )
+        cdef INTEGER numOp = 1
+        libaster.execop_( &numOp )
+        ret = self._cptr.get().readMeshFile()
         syntax.free()
         return ret
 

@@ -46,11 +46,8 @@ MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE
     assert(_jeveuxName.size() == 8);
 };
 
-bool MeshInstance::readMEDFile( string pathFichier )
+bool MeshInstance::readMeshFile( )
 {
-    INTEGER op = 1;
-    CALL_EXECOP( &op );
-
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _dimensionInformations->updateValuePointer();
     _coordinates->updateValuePointers();

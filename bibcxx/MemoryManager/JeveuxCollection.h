@@ -137,8 +137,10 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
     long nbColObj, valTmp;
     const char* charName = _name.c_str();
     JeveuxChar8 param( "NMAXOC" );
-    char* charval = MakeBlankFStr(32);
-    // Attention rajouter des verifications d'existence
+    char* charval = MakeBlankFStr(32); 
+    long iret=0;
+    CALL_JEEXIN( charName, &iret);
+    if ( iret == 0) return false;
     CALL_JELIRA( charName, param.c_str(), &nbColObj, charval );
 
     param = "ACCES ";
