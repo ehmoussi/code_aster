@@ -8,8 +8,8 @@ code_aster.setExecutionParameter('memory', 2000.)
 mesh = code_aster.Mesh()
 
 # Relecture du fichier MED
-mesh.readMEDFile("test001a.mmed")
-# mesh.readMEDFile("epicu01b.mail.med")
+mesh.readMedFile("test001a.mmed")
+# mesh.readMedFile("epicu01b.mail.med")
 
 #help(mesh)
 
