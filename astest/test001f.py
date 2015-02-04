@@ -3,7 +3,7 @@
 import code_aster
 
 monMaillage = code_aster.Mesh()
-monMaillage.readMEDFile( "test001f.mmed" )
+monMaillage.readMedFile( "test001f.mmed" )
 
 monModel = code_aster.Model()
 monModel.setSupportMesh( monMaillage )

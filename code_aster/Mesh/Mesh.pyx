@@ -67,7 +67,7 @@ cdef class Mesh:
         """Tell if a group of nodes exists in the mesh"""
         return self._cptr.get().hasGroupOfNodes( name )
 
-    def readGibiMesh ( self, string filename ):
+    def readGibiFile( self, string filename ):
         """Read a Gibi mesh file"""
 
         gibiFile = File( filename, FileType.Ascii, FileAccess.Old )
@@ -99,7 +99,7 @@ cdef class Mesh:
         syntax.free()
         return ret
 
-    def readGmshMesh( self, string filename ):
+    def readGmshFile( self, string filename ):
         """Read a Gmsh mesh file"""
         gmshFile = File( filename, FileType.Ascii, FileAccess.Old )
         mailAsterFile = File( "/tmp/tmp_maillage_aster", FileType.Ascii, FileAccess.New )
@@ -129,7 +129,7 @@ cdef class Mesh:
         syntax.free()
         return ret
 
-    def readMedMesh( self, string filename ):
+    def readMedFile( self, string filename ):
         """Read a MED Mesh file"""
         medFile = File( filename, FileType.Binary, FileAccess.Old )
 
