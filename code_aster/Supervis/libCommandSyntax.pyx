@@ -65,6 +65,9 @@ cdef class CommandSyntax:
         self._resultType = " "
         self._definition = None
         debug( "new command is ", self._name )
+        # only FIN is allowed to free the current "in failure" command
+        if self._name == "FIN" and currentCommand is not None:
+            currentCommand.free()
         assert currentCommand is None, \
             "CommandSyntax {} must be freed".format( currentCommand._name )
         currentCommand = self
@@ -169,6 +172,14 @@ cdef class CommandSyntax:
 
 cdef CommandSyntax currentCommand
 currentCommand = None
+
+def setCurrentCommand( syntax ):
+    global currentCommand
+    currentCommand = syntax
+
+def getCurrentCommand():
+    global currentCommand
+    return currentCommand
 
 
 def _F( **kwargs ):

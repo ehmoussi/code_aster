@@ -19,14 +19,14 @@
 
 import unittest
 
-from code_aster.Supervis.libBaseUtils import to_fstr, to_cstr
+from code_aster.Supervis.libBaseUtils import resizeStr, to_cstr
 
 
 class TestBaseUtils( unittest.TestCase ):
 
-    def test01_to_fstr( self ):
-        """check to_fstr function"""
-        res = to_fstr("hello", 8)
+    def test01_resizeStr( self ):
+        """check resizeStr function"""
+        res = resizeStr("hello", 8)
         assert len(res) == 8, repr(res)
         assert res == "hello   ", repr(res)
 

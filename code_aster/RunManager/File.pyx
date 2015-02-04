@@ -18,6 +18,7 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
+from code_aster.Supervis.libCommandSyntax import getCurrentCommand, setCurrentCommand
 
 from code_aster.Supervis.libCommandSyntax import _F
 
@@ -87,6 +88,8 @@ cdef class File:
         self._logicalUnit = logicalUnitManager.getFreeLogicalUnit()
         self._numOp26 = 26
 
+        previous = getCurrentCommand()
+        setCurrentCommand( None )
         syntax = CommandSyntax( "DEFI_FICHIER" )
         syntax.define( _F( ACTION="ASSOCIER",
                            UNITE=self._logicalUnit,
@@ -97,12 +100,15 @@ cdef class File:
                      )
         libaster.opsexe_( &self._numOp26 )
         syntax.free()
+        setCurrentCommand( previous )
 
     def __dealloc__( self ):
         """Destructor
         Call DEFI_FICHIER to release the logical unit"""
         logicalUnitManager.releaseLogicalUnit( self._logicalUnit )
 
+        previous = getCurrentCommand()
+        setCurrentCommand( None )
         syntax = CommandSyntax( "DEFI_FICHIER" )
         syntax.define( _F( ACTION="LIBERER",
                            UNITE=self._logicalUnit,
@@ -111,6 +117,7 @@ cdef class File:
                      )
         libaster.opsexe_( &self._numOp26 )
         syntax.free()
+        setCurrentCommand( previous )
 
     cpdef int getLogicalUnit( self ):
         """Return the logical unit associated to this file"""
