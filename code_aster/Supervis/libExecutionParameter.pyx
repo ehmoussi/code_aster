@@ -22,7 +22,7 @@ import platform
 
 import aster_pkginfo
 
-from code_aster.Supervis.libBaseUtils import to_cstr
+from code_aster.Supervis.libBaseUtils import debug, to_cstr
 
 
 class ExecutionParameter:
@@ -86,7 +86,7 @@ class ExecutionParameter:
     def parse_args( self, argv ):
         """Parse the command line arguments to set the execution parameters"""
         #TODO
-        print "TODO: parsing arguments:", argv
+        debug( "TODO: parsing arguments:", argv )
 
 
 # global instance
@@ -101,14 +101,14 @@ cdef public long getParameterLong( char* argName ):
     """Request the value of an execution parameter of type 'int'"""
     global executionParameter
     value = executionParameter.get( argName ) or 0
-    print 'gtopti( {} ): {}'.format( argName, value )
+    debug( 'gtopti( {} ): {}'.format( argName, value ) )
     return value
 
 cdef public double getParameterDouble( char* argName ):
     """Request the value of an execution parameter of type 'double'"""
     global executionParameter
     value = executionParameter.get( argName ) or 0.
-    print 'gtoptr( {} ): {}'.format( argName, value )
+    debug( 'gtoptr( {} ): {}'.format( argName, value ) )
     return value
 
 cdef public void gtoptk_( char* argName, char* valk, long* iret,
@@ -122,4 +122,4 @@ cdef public void gtoptk_( char* argName, char* valk, long* iret,
     else:
         copyToFStr( valk, value, lvalk )
         iret[0] = 0
-    print 'gtoptk( {} ): {}, iret {}'.format( arg, value, iret[0] )
+    debug( 'gtoptk( {} ): {}, iret {}'.format( arg, value, iret[0] ) )

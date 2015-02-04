@@ -83,3 +83,7 @@ cdef class Mesh:
         ret = self._cptr.get().readMEDFile( filename )
         syntax.free()
         return ret
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self._cptr.get().debugPrint( logicalUnit )

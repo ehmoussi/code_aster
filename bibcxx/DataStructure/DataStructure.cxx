@@ -22,12 +22,14 @@
  */
 
 #include <stdexcept>
+#include <string>
+
 #include "DataStructure/DataStructure.h"
-#include "Debug/DebugPrint.h"
+#include "MemoryManager/JeveuxString.h"
 
 mapStrSD mapNameDataStructure = mapStrSD();
 
-DataStructure::DataStructure( string name, string type ): _name( name ), _type( type )
+DataStructure::DataStructure( std::string name, std::string type ): _name( name ), _type( type )
 {
     mapNameDataStructure.insert( mapStrSDValue( _name, this ) );
 };
@@ -43,7 +45,22 @@ DataStructure::~DataStructure() throw ( std::runtime_error )
     mapNameDataStructure.erase( curIter );
 };
 
-void DataStructure::debugPrint(int logicalUnit) const
+void DataStructure::debugPrint( int logicalUnit ) const
 {
-    jeveuxDebugPrint( *this, logicalUnit );
+    INTEGER unit, niveau, ipos, True, False;
+    unit = INTEGER( logicalUnit );
+    niveau = 2;
+    True = 1;
+    False = 0;
+    ipos = 1;
+    JeveuxString< 1 > base( "G" );
+    JeveuxString< 3 > no( "NON" );
+    try {
+        CALL_UTIMSD( &unit, &niveau, &False, &True, this->getName().c_str(),
+                     &ipos, base.c_str(), no.c_str() );
+    }
+    catch (...)
+    {
+        throw std::runtime_error( "debugPrint failed!" );
+    }
 };

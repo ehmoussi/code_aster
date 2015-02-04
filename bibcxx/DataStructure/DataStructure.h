@@ -84,17 +84,6 @@ class DataStructure
          */
         void debugPrint( const int logicalUnit ) const;
 
-        /**
-         * @brief Member function ExecOp
-         *        Execute a fortran operator
-         * @param operator Number Operator number
-         */
-        void ExecOperator( const int operatorNumber ) const
-        {
-            INTEGER number = (INTEGER)operatorNumber;
-            CALL_EXECOP( &number );
-        };
-
     protected:
         /**
          * @brief Methode servant a fixer a posteriori le type d'une sd
