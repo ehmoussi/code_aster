@@ -6,16 +6,20 @@ code_aster.setExecutionParameter('memory', 2000.)
 
 # Creation du maillage
 mesh = code_aster.Mesh()
+# help(mesh)
 
 # Relecture du fichier MED
 mesh.readMedFile("test001a.mmed")
 # mesh.readMedFile("epicu01b.mail.med")
 
-#help(mesh)
-
 coord = mesh.getCoordinates()
+# help(coord)
 
-#help(coord)
+# test impression au format MED
+#TODO only field named with 8 chars can currently be printed
+# coord.printMEDFile( "coord.med" )
+#import os.path as osp
+# assert osp.isfile( "coord.med" )
 
 # Acces uniquement en lecture verifie !
 print "coord[3] ",coord[3]
