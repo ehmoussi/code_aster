@@ -31,6 +31,7 @@ cdef extern from "Mesh/Mesh.h":
 
         MeshInstance()
         const FieldOnNodesPtrDouble getCoordinates()
+        string getName()
         bint hasGroupOfElements( string name )
         bint hasGroupOfNodes( string name )
         bint readMEDFile( string pathFichier )

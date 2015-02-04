@@ -19,6 +19,10 @@
 #ifndef SHARED_VARS_H
 #define SHARED_VARS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "Python.h"
 
 /*
@@ -40,6 +44,9 @@ extern void register_sh_pymod(PyObject *);
 /*! Register the current 'etape' object as a global variable */
 extern void register_sh_etape(PyObject *);
 
+/*! Register the status of jeveux */
+extern void register_sh_jeveux_status(int);
+
 /*! Return the global JDC object */
 extern PyObject * get_sh_jdc();
 
@@ -55,6 +62,9 @@ extern PyObject * get_sh_pymod();
 /*! Return the current 'etape' object */
 extern PyObject * get_sh_etape();
 
+/*! Return the status of jeveux */
+extern int get_sh_jeveux_status();
+
 /*! Initialize the stack of 'etape' objects */
 extern void init_etape_stack();
 
@@ -63,6 +73,10 @@ extern PyObject * append_etape(PyObject *);
 
 /*! Remove and return the last 'etape' object on stack */
 extern PyObject * pop_etape();
+
+#ifdef __cplusplus
+}
+#endif
 
 /* FIN SHARED_VARS_H */
 #endif
