@@ -33,7 +33,7 @@ cdef class LogicalUnitManager:
 cdef LogicalUnitManager logicalUnitManager
 
 
-cdef class File:
+cdef class LogicalUnitFile:
 
     cdef                _fileName
     cdef unsigned int   _type

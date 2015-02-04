@@ -27,7 +27,8 @@ from cMesh cimport MeshInstance, MeshPtr
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
-from code_aster.RunManager.File cimport File
+from code_aster.RunManager.File cimport LogicalUnitFile
+
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
 from code_aster.Supervis.libCommandSyntax import _F
@@ -74,8 +75,8 @@ cdef class Mesh:
         assert self._cptr.get().isEmpty(), "The mesh is already filled!"
         tmpfile = tempfile.NamedTemporaryFile( dir='.' ).name
 
-        gibiFile = File( filename, FileType.Ascii, FileAccess.Old )
-        mailAsterFile = File( tmpfile, FileType.Ascii, FileAccess.New )
+        gibiFile = LogicalUnitFile( filename, FileType.Ascii, FileAccess.Old )
+        mailAsterFile = LogicalUnitFile( tmpfile, FileType.Ascii, FileAccess.New )
 
         syntax = CommandSyntax( "PRE_GIBI" )
         """ Add logical units """
@@ -108,8 +109,8 @@ cdef class Mesh:
         assert self._cptr.get().isEmpty(), "The mesh is already filled!"
         tmpfile = tempfile.NamedTemporaryFile( dir='.' ).name
 
-        gmshFile = File( filename, FileType.Ascii, FileAccess.Old )
-        mailAsterFile = File( tmpfile, FileType.Ascii, FileAccess.New )
+        gmshFile = LogicalUnitFile( filename, FileType.Ascii, FileAccess.Old )
+        mailAsterFile = LogicalUnitFile( tmpfile, FileType.Ascii, FileAccess.New )
 
         syntax = CommandSyntax( "PRE_GMSH" )
         syntax.define( _F ( UNITE_GMSH=gmshFile.getLogicalUnit(),
@@ -139,7 +140,7 @@ cdef class Mesh:
     def readMedFile( self, string filename ):
         """Read a MED Mesh file"""
         assert self._cptr.get().isEmpty(), "The mesh is already filled!"
-        medFile = File( filename, FileType.Binary, FileAccess.Old )
+        medFile = LogicalUnitFile( filename, FileType.Binary, FileAccess.Old )
 
         syntax = CommandSyntax( "LIRE_MAILLAGE" )
         # self._cptr.get().getType()
