@@ -37,6 +37,7 @@
 #include "LinearAlgebra/DOFNumbering.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/KinematicsLoad.h"
+#include "RunManager/CommandSyntax.h"
 
 /**
  * @class AssemblyMatrixInstance

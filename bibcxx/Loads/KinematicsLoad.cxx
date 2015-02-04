@@ -22,10 +22,11 @@
  */
 
 #include <stdexcept>
+#include <typeinfo>
 #include "astercxx.h"
 
 #include "Loads/KinematicsLoad.h"
-#include <typeinfo>
+#include "RunManager/CommandSyntax.h"
 
 KinematicsLoadInstance::KinematicsLoadInstance():
                     DataStructure( getNewResultObjectName(), "CHAR_CINE" ),

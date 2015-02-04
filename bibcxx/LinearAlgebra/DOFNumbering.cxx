@@ -26,6 +26,7 @@
 #include "astercxx.h"
 
 #include "LinearAlgebra/DOFNumbering.h"
+#include "RunManager/CommandSyntax.h"
 
 DOFNumberingInstance::DOFNumberingInstance():
             DataStructure( getNewResultObjectName(), "NUME_DDL" ),

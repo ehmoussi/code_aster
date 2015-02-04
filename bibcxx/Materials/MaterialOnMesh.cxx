@@ -24,10 +24,12 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <stdexcept>
+#include <typeinfo>
 #include "astercxx.h"
 
 #include "Materials/MaterialOnMesh.h"
-#include <typeinfo>
+#include "RunManager/CommandSyntax.h"
+
 
 MaterialOnMeshInstance::MaterialOnMeshInstance():
                                 DataStructure( getNewResultObjectName(), "CHAM_MATER" ),
