@@ -116,10 +116,11 @@ class MeshInstance: public DataStructure
         };
 
         /**
-         * @brief Fonction permettant de relire un fichier MED
-         * @return retourne true si le maillage a correctement ete relu
+         * @brief Construction de l'objet Mesh
+                On met à jour les pointeurs vers les objets Jeveux.
+         * @return Retourne true si tout s'est bien déroulé
          */
-        bool readMeshFile( );
+        bool build( );
 };
 
 

@@ -46,7 +46,7 @@ MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE
     assert(_jeveuxName.size() == 8);
 };
 
-bool MeshInstance::readMeshFile( )
+bool MeshInstance::build( )
 {
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _dimensionInformations->updateValuePointer();
