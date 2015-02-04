@@ -34,8 +34,6 @@
 
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructure/DataStructure.h"
-#include "RunManager/CommandSyntax.h"
-#include "RunManager/LogicalUnitManager.h"
 
 /**
  * @class FieldOnNodesInstance

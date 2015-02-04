@@ -22,10 +22,11 @@
  */
 
 #include <stdexcept>
+#include <typeinfo>
 #include "astercxx.h"
 
 #include "Loads/MechanicalLoad.h"
-#include <typeinfo>
+#include "RunManager/CommandSyntax.h"
 
 MechanicalLoadInstance::MechanicalLoadInstance():
                                 DataStructure( getNewResultObjectName(), "CHAR_MECA" ),

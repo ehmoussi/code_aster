@@ -25,6 +25,7 @@
 
 #include <stdexcept>
 #include "Solvers/StaticMechanicalSolver.h"
+#include "RunManager/CommandSyntax.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _supportModel( ModelPtr() ),
