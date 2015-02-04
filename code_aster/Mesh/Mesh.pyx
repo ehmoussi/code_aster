@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+import tempfile
+
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
@@ -69,9 +71,11 @@ cdef class Mesh:
 
     def readGibiFile( self, string filename ):
         """Read a Gibi mesh file"""
+        assert self._cptr.get().isEmpty(), "The mesh is already filled!"
+        tmpfile = tempfile.NamedTemporaryFile( dir='.' ).name
 
         gibiFile = File( filename, FileType.Ascii, FileAccess.Old )
-        mailAsterFile = File( "/tmp/tmp_maillage_aster", FileType.Ascii, FileAccess.New )
+        mailAsterFile = File( tmpfile, FileType.Ascii, FileAccess.New )
 
         syntax = CommandSyntax( "PRE_GIBI" )
         """ Add logical units """
@@ -101,8 +105,11 @@ cdef class Mesh:
 
     def readGmshFile( self, string filename ):
         """Read a Gmsh mesh file"""
+        assert self._cptr.get().isEmpty(), "The mesh is already filled!"
+        tmpfile = tempfile.NamedTemporaryFile( dir='.' ).name
+
         gmshFile = File( filename, FileType.Ascii, FileAccess.Old )
-        mailAsterFile = File( "/tmp/tmp_maillage_aster", FileType.Ascii, FileAccess.New )
+        mailAsterFile = File( tmpfile, FileType.Ascii, FileAccess.New )
 
         syntax = CommandSyntax( "PRE_GMSH" )
         syntax.define( _F ( UNITE_GMSH=gmshFile.getLogicalUnit(),
@@ -131,6 +138,7 @@ cdef class Mesh:
 
     def readMedFile( self, string filename ):
         """Read a MED Mesh file"""
+        assert self._cptr.get().isEmpty(), "The mesh is already filled!"
         medFile = File( filename, FileType.Binary, FileAccess.Old )
 
         syntax = CommandSyntax( "LIRE_MAILLAGE" )

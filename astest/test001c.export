@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm test001c.py D 1
-F nom test001a.mmed D 0
+F nom ssnv187a.msh D 0
+F nom zzzz364a.mgib D 0
