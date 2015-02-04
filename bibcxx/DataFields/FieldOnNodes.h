@@ -85,13 +85,6 @@ class FieldOnNodesInstance: public DataStructure
         };
 
         /**
-         * @brief Impression du champ au format MED
-         * @param pathFichier path ne servant pour le moment a rien
-         * @return true
-        */
-        bool printMEDFormat( string pathFichier );
-
-        /**
          * @brief Mise a jour des pointeurs Jeveux
          * @return renvoit true si la mise a jour s'est bien deroulee, false sinon
          */
@@ -102,46 +95,6 @@ class FieldOnNodesInstance: public DataStructure
             retour = ( retour && _valuesList->updateValuePointer() );
             return retour;
         };
-};
-
-template< class ValueType >
-bool FieldOnNodesInstance< ValueType >::printMEDFormat( string pathFichier )
-{
-    LogicalUnitFile currentFile( pathFichier, Binary, New );
-    int currentUL = currentFile.getLogicalUnit();
-
-    CommandSyntax syntaxeImprResu( "IMPR_RESU", false );
-
-    SimpleKeyWordStr mCSChamNo = SimpleKeyWordStr( "FORMAT" );
-    mCSChamNo.addValues( "MED" );
-    syntaxeImprResu.addSimpleKeywordString( mCSChamNo );
-
-    SimpleKeyWordInt mCSUnite( "UNITE" );
-    mCSUnite.addValues( currentUL );
-    syntaxeImprResu.addSimpleKeywordInteger( mCSUnite );
-
-    FactorKeyword motCleResu = FactorKeyword( "RESU", false );
-    FactorKeywordOccurence occurResu = FactorKeywordOccurence();
-
-    SimpleKeyWordStr mCSChamGd( "CHAM_GD" );
-    mCSChamGd.addValues( getName() );
-    occurResu.addSimpleKeywordString( mCSChamGd );
-
-    SimpleKeyWordStr mCSInfo( "INFO_MAILLAGE" );
-    mCSInfo.addValues( "NON" );
-    occurResu.addSimpleKeywordString( mCSInfo );
-
-    SimpleKeyWordStr mCSNomVari( "IMPR_NOM_VARI" );
-    mCSNomVari.addValues( "NON" );
-    occurResu.addSimpleKeywordString( mCSNomVari );
-
-    motCleResu.addOccurence( occurResu );
-    syntaxeImprResu.addFactorKeyword( motCleResu );
-
-    INTEGER op = 39;
-    CALL_EXECOP( &op );
-
-    return true;
 };
 
 

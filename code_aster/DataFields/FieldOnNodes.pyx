@@ -20,6 +20,14 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster cimport libaster
+from code_aster.libaster cimport INTEGER
+from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
+from code_aster.RunManager.File cimport LogicalUnitFile
+
+from code_aster.Supervis.libCommandSyntax import _F
+from code_aster.RunManager.File import FileType, FileAccess
+
 
 cdef class FieldOnNodesDouble:
     """Python wrapper on the C++ FieldOnNodes object"""
@@ -46,3 +54,20 @@ cdef class FieldOnNodesDouble:
         """Return the value at the given index"""
         cdef double val = deref(self._cptr.get())[i]
         return val
+
+    def printMEDFile( self, string filename ):
+        """Print the field using the MED format"""
+        name = self._cptr.get().getName()
+        assert len(name.strip()) <= 8, \
+            "TODO: field with name longer than 8 chars can not be directly printed"
+
+        syntax = CommandSyntax( "IMPR_RESU" )
+        medFile = LogicalUnitFile( filename, FileType.Binary, FileAccess.New )
+        syntax.define( _F( FORMAT="MED",
+                           UNITE=medFile.getLogicalUnit(),
+                           RESU=_F( CHAM_GD=name,
+                                    INFO_MAILLAGE="NON",
+                                    IMPR_NOM_VARI="NON", ), ), )
+        cdef INTEGER numOp = 39
+        libaster.execop_( & numOp )
+        syntax.free()

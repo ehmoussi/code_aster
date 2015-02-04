@@ -26,8 +26,8 @@ cdef extern from "DataFields/FieldOnNodes.h":
 
         FieldOnNodesInstance( string name )
         ValueType& operator[]( int i )
-        bint printMEDFormat( string pathFichier )
         bint updateValuePointers()
+        string getName()
 
     cdef cppclass FieldOnNodesPtrDouble:
 
