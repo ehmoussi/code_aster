@@ -33,6 +33,11 @@ cdef extern from "Modeling/Model.h":
         void setSplittingMethod()
         bint setSupportMesh( MeshPtr& currentMesh )
         MeshPtr getSupportMesh()
+        string getEntity( int )
+        string getEntityName( int )
+        string getModeling( int )
+        int getNumberOfModeling()
+        string getPhysic( int )
         bint build() except +
 
     cdef cppclass ModelPtr:

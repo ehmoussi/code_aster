@@ -14,6 +14,8 @@ ctypedef long           Addr
 cdef extern from "aster_init.h":
     void initAsterModules()
 
+cdef extern from "shared_vars.h":
+    void register_sh_jeveux_status( int )
 
 cdef extern from "aster_utils.h":
     char* MakeCStrFromFStr( char *, STRING_SIZE )

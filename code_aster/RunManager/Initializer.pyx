@@ -41,6 +41,7 @@ def init( int mode ):
 
     libaster.ibmain_()
     libaster.debut_()
+    libaster.register_sh_jeveux_status( 1 );
     syntax.free()
 
 def finalize():
@@ -50,6 +51,7 @@ def finalize():
     syntax.define( _F( STATUT=0 ) )
     cdef INTEGER numOp = 9999
     libaster.execop_( &numOp )
+    libaster.register_sh_jeveux_status(0);
     syntax.free()
 
 def cataBuilder():

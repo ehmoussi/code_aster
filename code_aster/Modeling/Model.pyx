@@ -22,6 +22,7 @@ from cython.operator cimport dereference as deref
 
 from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.Mesh.cMesh cimport MeshPtr
+from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
 from cPhysicsAndModeling cimport Physics, Modelings
 
@@ -52,7 +53,28 @@ cdef class Model:
 
     def build( self ):
         """Build the model"""
-        self._cptr.get().build()
+        syntax = CommandSyntax( "AFFE_MODELE" )
+        # self._cptr.get().getType()
+        syntax.setResult( resultNaming.getResultObjectName(), "MODELE" )
+
+        dictSyntax = {}
+        dictSyntax["VERI_JACOBIEN"] = "OUI"
+        cdef Mesh var1 = self.getSupportMesh()
+        dictSyntax["MAILLAGE"] = var1.get().get().getName()
+
+        dictAffe = []
+        instance = self._cptr.get()
+        for i in range( instance.getNumberOfModeling() ):
+            curDict = {}
+            curDict["PHENOMENE"] = instance.getPhysic(i)
+            curDict["MODELISATION"] = instance.getModeling(i)
+            curDict[instance.getEntity(i)] = instance.getEntityName(i)
+            dictAffe.append( curDict )
+        dictSyntax["AFFE"] = dictAffe
+
+        syntax.define( dictSyntax )
+        instance.build()
+        syntax.free()
 
     def addModelingOnAllMesh( self, phys, mod ):
         """Add a modeling on all the mesh"""
