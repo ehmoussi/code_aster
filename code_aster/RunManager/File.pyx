@@ -71,7 +71,7 @@ cdef LogicalUnitManager logicalUnitManager
 logicalUnitManager = LogicalUnitManager()
 
 
-cdef class File:
+cdef class LogicalUnitFile:
 
     """This class defines a file associated to a fortran logical unit"""
 
