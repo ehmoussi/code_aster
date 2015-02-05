@@ -189,49 +189,9 @@ class KinematicsLoadInstance: public DataStructure
 };
 
 /**
- * @class KinematicsLoad
- * @brief Enveloppe d'un pointeur intelligent vers un KinematicsLoadInstance
- * @author Nicolas Sellenet
+ * @typedef KinematicsLoad
+ * @brief Pointeur intelligent vers un KinematicsLoadInstance
  */
-class KinematicsLoad
-{
-    public:
-        typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
-
-    private:
-        KinematicsLoadPtr _kinematicsLoadPtr;
-
-    public:
-        KinematicsLoad(bool initilisation = true): _kinematicsLoadPtr()
-        {
-            if ( initilisation == true )
-                _kinematicsLoadPtr = KinematicsLoadPtr( new KinematicsLoadInstance() );
-        };
-
-        ~KinematicsLoad()
-        {};
-
-        KinematicsLoad& operator=(const KinematicsLoad& tmp)
-        {
-            _kinematicsLoadPtr = tmp._kinematicsLoadPtr;
-            return *this;
-        };
-
-        const KinematicsLoadPtr& operator->() const
-        {
-            return _kinematicsLoadPtr;
-        };
-
-        KinematicsLoadInstance& operator*(void) const
-        {
-            return *_kinematicsLoadPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _kinematicsLoadPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
+typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
 
 #endif /* KINEMATICSLOAD_H_ */

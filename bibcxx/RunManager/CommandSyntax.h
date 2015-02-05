@@ -115,7 +115,7 @@ class SimpleKeyWord
 
 typedef list< string > ListString;
 typedef list< double > ListDouble;
-typedef list< int > ListInt;
+typedef list< int > ListInteger;
 
 typedef SimpleKeyWord< string > SimpleKeyWordStr;
 typedef SimpleKeyWord< double > SimpleKeyWordDbl;
@@ -262,7 +262,7 @@ class FactorKeywordOccurence
             return curIter->getListOfValues();
         };
 
-        ListInt& intValuesInKeyword(string motCle) throw ( std::runtime_error )
+        ListInteger& intValuesInKeyword(string motCle) throw ( std::runtime_error )
         {
             list< SimpleKeyWordInt >::iterator curIter;
             for ( curIter = _listSimpleKeywordsInt.begin();
@@ -375,7 +375,7 @@ class FactorKeyword
             return _vectorOccurences[occurence].doubleValuesInKeyword(motCle);
         };
 
-        ListInt& intValuesInKeyword(int occurence, string motCle)
+        ListInteger& intValuesInKeyword(int occurence, string motCle)
         {
             return _vectorOccurences[occurence].intValuesInKeyword(motCle);
         };
@@ -539,7 +539,7 @@ class CommandSyntax
             return (*curIter).second.doubleValuesInKeyword(occurence, mcSim);
         };
 
-        ListInt& intValuesOfKeyword(string mCFac, int occurence, string mcSim)
+        ListInteger& intValuesOfKeyword(string mCFac, int occurence, string mcSim)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             return (*curIter).second.intValuesInKeyword(occurence, mcSim);

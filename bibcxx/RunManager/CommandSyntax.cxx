@@ -243,12 +243,12 @@ int* valeursMotCleInt(char* motCleFacteur, int occurence, char* motCleSimple, in
         return NULL;
     }
 
-    ListInt& retour = commandeCourante->intValuesOfKeyword(string(motCleFacteur), occBis, string(motCleSimple));
+    ListInteger& retour = commandeCourante->intValuesOfKeyword(string(motCleFacteur), occBis, string(motCleSimple));
     *taille = retour.size();
     if ( *taille == 0 ) return NULL;
 
     int* tabRetour = (int*)malloc(sizeof(int)*(*taille));
-    ListInt::iterator iter;
+    ListInteger::iterator iter;
     int compteur = 0;
     for ( iter = retour.begin();
           iter != retour.end();

@@ -59,20 +59,9 @@ cdef class Model:
         # self.getInstance().getType()
         syntax.setResult( resultNaming.getResultObjectName(), "MODELE" )
 
-        dictSyntax = {}
-        dictSyntax["VERI_JACOBIEN"] = "OUI"
-        cdef Mesh var1 = self.getSupportMesh()
-        dictSyntax["MAILLAGE"] = var1.getInstance().getName()
-
-        dictAffe = []
-        instance = self.getInstance()
-        for i in range( instance.getNumberOfModeling() ):
-            curDict = {}
-            curDict["PHENOMENE"] = instance.getPhysic(i)
-            curDict["MODELISATION"] = instance.getModeling(i)
-            curDict[instance.getEntity(i)] = instance.getEntityName(i)
-            dictAffe.append( curDict )
-        dictSyntax["AFFE"] = dictAffe
+        instance = self._cptr.get()
+        dictSyntax = instance.getCommandKeywords()
+        print dictSyntax
 
         syntax.define( dictSyntax )
         instance.build()

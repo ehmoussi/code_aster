@@ -123,67 +123,10 @@ class ModelInstance: public DataStructure
         bool build() throw ( std::runtime_error );
 
         /**
-         * @brief Recuperation de la chaine represantant le type d'entite
-         * @return "GROUP_MA", "GROUP_NO" ou "TOUT"
+         * @brief 
+         * @return 
          */
-        std::string getEntity( int position ) throw ( std::runtime_error )
-        {
-            if ( typeid( *(_modelisations[ position ].second) ) == typeid( AllMeshEntitiesInstance ) )
-            {
-                return "TOUT";
-            }
-            else
-            {
-                if ( typeid( *(_modelisations[ position ].second) ) == typeid( GroupOfNodesInstance ) )
-                    return "GROUP_NO";
-                else if ( typeid( *(_modelisations[ position ].second) ) == typeid( GroupOfElementsInstance ) )
-                    return "GROUP_MA";
-            }
-            throw std::runtime_error( "Error in entity type" );
-        };
-
-        /**
-         * @brief
-         * @return
-         */
-        std::string getEntityName( int position )
-        {
-            if ( typeid( *(_modelisations[ position ].second) ) == typeid( AllMeshEntitiesInstance ) )
-            {
-                return "OUI";
-            }
-            else
-            {
-                return _modelisations[ position ].second->getEntityName();
-            }
-        };
-
-        /**
-         * @brief
-         * @return
-         */
-        std::string getModeling( int position )
-        {
-            return _modelisations[ position ].first.getModeling();
-        };
-
-        /**
-         * @brief Obtention du nombre de modelisations demandees par l'utilisateur
-         * @return entier
-         */
-        int getNumberOfModeling()
-        {
-            return _modelisations.size();
-        };
-
-        /**
-         * @brief
-         * @return
-         */
-        std::string getPhysic( int position )
-        {
-            return _modelisations[ position ].first.getPhysic();
-        };
+        PyObject* getCommandKeywords();
 
         /**
          * @brief Methode permettant de savoir si le modele est vide
