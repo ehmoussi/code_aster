@@ -17,22 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from libcpp.string cimport string
+cdef extern from "RunManager/Exceptions.h":
 
-
-cdef extern from "DataFields/FieldOnNodes.h":
-
-    cdef cppclass FieldOnNodesInstance[ ValueType ]:
-
-        FieldOnNodesInstance( string name )
-        ValueType& operator[]( int i )
-        bint updateValuePointers()
-        string getName()
-
-    cdef cppclass FieldOnNodesPtrDouble:
-
-        FieldOnNodesPtrDouble( FieldOnNodesPtrDouble& )
-        FieldOnNodesPtrDouble( FieldOnNodesInstance[ double ]* )
-        FieldOnNodesInstance[ double ]* get()
-
-ctypedef FieldOnNodesInstance[ double ] FieldOnNodesInstanceDouble
+    cdef void AsterCythonCustomException()

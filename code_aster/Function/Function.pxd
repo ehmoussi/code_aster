@@ -17,7 +17,21 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from cFunction cimport FunctionInstance, FunctionPtr
+from libcpp.string cimport string
+
+
+cdef extern from "Function/Function.h":
+
+    cdef cppclass FunctionInstance:
+        FunctionInstance()
+        void setParameterName( string name )
+        bint build()
+
+    cdef cppclass FunctionPtr:
+
+        FunctionPtr( FunctionPtr& )
+        FunctionPtr( FunctionInstance* )
+        FunctionInstance* get()
 
 
 cdef class Function:

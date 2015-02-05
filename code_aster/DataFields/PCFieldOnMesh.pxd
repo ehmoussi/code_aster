@@ -17,7 +17,26 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from cPCFieldOnMesh cimport PCFieldOnMeshPtrDouble, PCFieldOnMeshInstanceDouble
+from libcpp.string cimport string
+
+from code_aster.Mesh.Mesh cimport MeshPtr
+
+
+cdef extern from "DataFields/PCFieldOnMesh.h":
+
+    cdef cppclass PCFieldOnMeshInstance[ ValueType ]:
+
+        PCFieldOnMeshInstance( string name )
+        bint updateValuePointers()
+        bint setSupportMesh( MeshPtr& currentMesh )
+
+    cdef cppclass PCFieldOnMeshPtrDouble:
+
+        PCFieldOnMeshPtrDouble( PCFieldOnMeshPtrDouble& )
+        PCFieldOnMeshPtrDouble( PCFieldOnMeshInstance[ double ]* )
+        PCFieldOnMeshInstance[ double ]* get()
+
+ctypedef PCFieldOnMeshInstance[ double ] PCFieldOnMeshInstanceDouble
 
 
 cdef class PCFieldOnMeshDouble:
