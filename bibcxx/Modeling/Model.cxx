@@ -29,6 +29,8 @@
 #include "Modeling/Model.h"
 #include <typeinfo>
 
+#include "Utilities/SyntaxDictionary.h"
+
 ModelInstance::ModelInstance(): DataStructure( getNewResultObjectName(), "MODELE" ),
                                 _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
                                 _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
@@ -54,4 +56,40 @@ bool ModelInstance::build() throw ( std::runtime_error )
     _typeOfElements->updateValuePointer();
 
     return true;
+};
+
+PyObject* ModelInstance::getCommandKeywords()
+{
+    SyntaxMapContainer dict;
+
+    dict.container["VERI_JACOBIEN"] = "OUI";
+    if ( ! _supportMesh )
+        throw string("Support mesh is undefined");
+    dict.container["MAILLAGE"] = _supportMesh->getName();
+
+    ListSyntaxMapContainer listeAFFE;
+    for ( listOfModsAndGrpsIter curIter = _modelisations.begin();
+          curIter != _modelisations.end();
+          ++curIter )
+    {
+        SyntaxMapContainer dict2;
+        dict2.container["PHENOMENE"] = curIter->first.getPhysic();
+        dict2.container["MODELISATION"] = curIter->first.getModeling();
+
+        if ( typeid( *(curIter->second) ) == typeid( AllMeshEntitiesInstance ) )
+        {
+            dict2.container["TOUT"] = "OUI";
+        }
+        else
+        {
+            if ( typeid( *(curIter->second) ) == typeid( GroupOfNodesInstance ) )
+                dict2.container["GROUP_NO"] = (curIter->second)->getEntityName();
+            else if ( typeid( *(curIter->second) ) == typeid( GroupOfElementsInstance ) )
+                dict2.container["GROUP_MA"] = (curIter->second)->getEntityName();
+        }
+        listeAFFE.push_back( dict2 );
+    }
+    dict.container["AFFE"] = listeAFFE;
+    PyObject* returnDict = dict.convertToPythonDictionnary();
+    return returnDict;
 };

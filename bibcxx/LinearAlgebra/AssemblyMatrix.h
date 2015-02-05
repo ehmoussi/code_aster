@@ -50,7 +50,7 @@ class AssemblyMatrixInstance: public DataStructure
 {
     private:
         /** @typedef std::list de KinematicsLoad */
-        typedef list< KinematicsLoad > ListKinematicsLoad;
+        typedef list< KinematicsLoadPtr > ListKinematicsLoad;
         /** @typedef Iterateur sur une std::list de KinematicsLoad */
         typedef ListKinematicsLoad::iterator ListKinematicsLoadIter;
 
@@ -89,7 +89,7 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Methode permettant d'ajouter un chargement
          * @param currentLoad objet MechanicalLoad
          */
-        void addKinematicsLoad( const KinematicsLoad& currentLoad )
+        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
         {
             _listOfLoads.push_back( currentLoad );
         };

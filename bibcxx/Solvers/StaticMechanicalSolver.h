@@ -42,7 +42,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
         /** @typedef Iterateur sur une std::list de MechanicalLoad */
         typedef ListMecaLoad::iterator ListMecaLoadIter;
         /** @typedef std::list de KinematicsLoad */
-        typedef list< KinematicsLoad > ListKineLoad;
+        typedef list< KinematicsLoadPtr > ListKineLoad;
         /** @typedef Iterateur sur une std::list de KinematicsLoad */
         typedef ListKineLoad::iterator ListKineLoadIter;
 
@@ -72,7 +72,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
          * @brief Function d'ajout d'une charge cinematique
          * @param currentLoad charge a ajouter a la sd
          */
-        void addKinematicsLoad( const KinematicsLoad& currentLoad )
+        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
         {
             _listOfKinematicsLoads.push_back( currentLoad );
         };
