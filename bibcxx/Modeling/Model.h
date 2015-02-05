@@ -143,8 +143,8 @@ class ModelInstance: public DataStructure
         };
 
         /**
-         * @brief 
-         * @return 
+         * @brief
+         * @return
          */
         std::string getEntityName( int position )
         {
@@ -159,8 +159,8 @@ class ModelInstance: public DataStructure
         };
 
         /**
-         * @brief 
-         * @return 
+         * @brief
+         * @return
          */
         std::string getModeling( int position )
         {
@@ -177,8 +177,8 @@ class ModelInstance: public DataStructure
         };
 
         /**
-         * @brief 
-         * @return 
+         * @brief
+         * @return
          */
         std::string getPhysic( int position )
         {
