@@ -20,11 +20,9 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-from code_aster.Mesh.Mesh cimport Mesh
-from code_aster.Mesh.cMesh cimport MeshPtr
+from code_aster.Mesh.Mesh cimport Mesh, MeshPtr
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
-from cPhysicsAndModeling cimport Physics, Modelings
 
 Mechanics, Thermal, Acoustics = cMechanics, cThermal, cAcoustics
 Axisymmetrical, Tridimensional, Planar, DKT = cAxisymmetrical, cTridimensional, cPlanar, cDKT

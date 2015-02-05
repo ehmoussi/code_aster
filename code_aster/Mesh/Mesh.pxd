@@ -17,7 +17,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from cMesh cimport MeshInstance, MeshPtr
+from libcpp.string cimport string
+
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesPtrDouble
+
+
+cdef extern from "Mesh/Mesh.h":
+
+    cdef cppclass MeshInstance:
+
+        MeshInstance()
+        const FieldOnNodesPtrDouble getCoordinates()
+        string getName()
+        bint hasGroupOfElements( string name )
+        bint hasGroupOfNodes( string name )
+        bint isEmpty()
+        bint build()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass MeshPtr:
+
+        MeshPtr( MeshPtr& )
+        MeshPtr( MeshInstance* )
+        MeshInstance* get()
 
 
 cdef class Mesh:

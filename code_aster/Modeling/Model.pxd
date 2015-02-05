@@ -17,11 +17,38 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from cPhysicsAndModeling cimport Physics, Modelings
-from cPhysicsAndModeling cimport cMechanics, cThermal, cAcoustics
-from cPhysicsAndModeling cimport cAxisymmetrical, cTridimensional, cPlanar, cDKT
+from libcpp.string cimport string
 
-from cModel cimport ModelInstance, ModelPtr
+from code_aster.Mesh.Mesh cimport MeshPtr
+
+from PhysicsAndModeling cimport Physics, Modelings
+from PhysicsAndModeling cimport cMechanics, cThermal, cAcoustics
+from PhysicsAndModeling cimport cAxisymmetrical, cTridimensional, cPlanar, cDKT
+
+
+cdef extern from "Modeling/Model.h":
+
+    cdef cppclass ModelInstance:
+
+        ModelInstance()
+        void addModelingOnAllMesh( Physics phys, Modelings mod )
+        void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup )
+        void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
+        void setSplittingMethod()
+        bint setSupportMesh( MeshPtr& currentMesh )
+        MeshPtr getSupportMesh()
+        string getEntity( int )
+        string getEntityName( int )
+        string getModeling( int )
+        int getNumberOfModeling()
+        string getPhysic( int )
+        bint build() except +
+
+    cdef cppclass ModelPtr:
+
+        ModelPtr( ModelPtr& )
+        ModelPtr( ModelInstance* )
+        ModelInstance* get()
 
 
 cdef class Model:

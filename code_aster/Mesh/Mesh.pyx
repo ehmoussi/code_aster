@@ -22,8 +22,6 @@ import tempfile
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-from cMesh cimport MeshInstance, MeshPtr
-
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble

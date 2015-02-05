@@ -19,7 +19,7 @@
 
 from libcpp.string cimport string
 
-from code_aster.Mesh.cMesh cimport MeshPtr
+from code_aster.Mesh.Mesh cimport MeshPtr
 
 
 cdef extern from "DataFields/PCFieldOnMesh.h":
