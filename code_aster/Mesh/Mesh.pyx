@@ -50,27 +50,31 @@ cdef class Mesh:
         """Point to an existing object"""
         self._cptr = new MeshPtr( other )
 
-    cdef MeshPtr* get( self ):
-        """Return the pointer on the c++ object"""
+    cdef MeshPtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
+
+    cdef MeshInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
 
     def getCoordinates(self):
         """Return the coordinates as a FieldOnNodesDouble object"""
         coordinates = FieldOnNodesDouble()
-        coordinates.set( self._cptr.get().getCoordinates() )
+        coordinates.set( self.getInstance().getCoordinates() )
         return coordinates
 
     def hasGroupOfElements( self, string name ):
         """Tell if a group of elements exists in the mesh"""
-        return self._cptr.get().hasGroupOfElements( name )
+        return self.getInstance().hasGroupOfElements( name )
 
     def hasGroupOfNodes( self, string name ):
         """Tell if a group of nodes exists in the mesh"""
-        return self._cptr.get().hasGroupOfNodes( name )
+        return self.getInstance().hasGroupOfNodes( name )
 
     def readGibiFile( self, string filename ):
         """Read a Gibi mesh file"""
-        assert self._cptr.get().isEmpty(), "The mesh is already filled!"
+        assert self.getInstance().isEmpty(), "The mesh is already filled!"
         tmpfile = tempfile.NamedTemporaryFile( dir='.' ).name
 
         gibiFile = LogicalUnitFile( filename, FileType.Ascii, FileAccess.Old )
@@ -98,13 +102,13 @@ cdef class Mesh:
                      )
         numOp = 1
         libaster.execop_( &numOp )
-        ret = self._cptr.get().build()
+        ret = self.getInstance().build()
         syntax.free()
         return ret
 
     def readGmshFile( self, string filename ):
         """Read a Gmsh mesh file"""
-        assert self._cptr.get().isEmpty(), "The mesh is already filled!"
+        assert self.getInstance().isEmpty(), "The mesh is already filled!"
         tmpfile = tempfile.NamedTemporaryFile( dir='.' ).name
 
         gmshFile = LogicalUnitFile( filename, FileType.Ascii, FileAccess.Old )
@@ -131,17 +135,17 @@ cdef class Mesh:
                      )
         numOp = 1
         libaster.execop_( &numOp )
-        ret = self._cptr.get().build()
+        ret = self.getInstance().build()
         syntax.free()
         return ret
 
     def readMedFile( self, string filename ):
         """Read a MED Mesh file"""
-        assert self._cptr.get().isEmpty(), "The mesh is already filled!"
+        assert self.getInstance().isEmpty(), "The mesh is already filled!"
         medFile = LogicalUnitFile( filename, FileType.Binary, FileAccess.Old )
 
         syntax = CommandSyntax( "LIRE_MAILLAGE" )
-        # self._cptr.get().getType()
+        # self.getInstance().getType()
         syntax.setResult( resultNaming.getResultObjectName(), "MAILLAGE" )
 
         syntax.define( _F ( FORMAT="MED",
@@ -152,10 +156,10 @@ cdef class Mesh:
                      )
         cdef INTEGER numOp = 1
         libaster.execop_( &numOp )
-        ret = self._cptr.get().build()
+        ret = self.getInstance().build()
         syntax.free()
         return ret
 
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
-        self._cptr.get().debugPrint( logicalUnit )
+        self.getInstance().debugPrint( logicalUnit )

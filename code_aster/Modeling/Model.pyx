@@ -45,23 +45,27 @@ cdef class Model:
         """Point to an existing object"""
         self._cptr = new ModelPtr( other )
 
-    cdef ModelPtr* get( self ):
-        """Return the pointer on the c++ object"""
+    cdef ModelPtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
+
+    cdef ModelInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
 
     def build( self ):
         """Build the model"""
         syntax = CommandSyntax( "AFFE_MODELE" )
-        # self._cptr.get().getType()
+        # self.getInstance().getType()
         syntax.setResult( resultNaming.getResultObjectName(), "MODELE" )
 
         dictSyntax = {}
         dictSyntax["VERI_JACOBIEN"] = "OUI"
         cdef Mesh var1 = self.getSupportMesh()
-        dictSyntax["MAILLAGE"] = var1.get().get().getName()
+        dictSyntax["MAILLAGE"] = var1.getInstance().getName()
 
         dictAffe = []
-        instance = self._cptr.get()
+        instance = self.getInstance()
         for i in range( instance.getNumberOfModeling() ):
             curDict = {}
             curDict["PHENOMENE"] = instance.getPhysic(i)
@@ -76,22 +80,22 @@ cdef class Model:
 
     def addModelingOnAllMesh( self, phys, mod ):
         """Add a modeling on all the mesh"""
-        self._cptr.get().addModelingOnAllMesh( phys, mod )
+        self.getInstance().addModelingOnAllMesh( phys, mod )
 
     def addModelingOnGroupOfElements( self, phys, mod, nameOfGroup ):
         """Add a modeling on a group of elements"""
-        self._cptr.get().addModelingOnGroupOfElements( phys, mod, nameOfGroup )
+        self.getInstance().addModelingOnGroupOfElements( phys, mod, nameOfGroup )
 
     def addModelingOnGroupOfNodes( self, phys, mod, nameOfGroup ):
         """Add a modeling on a group of nodes"""
-        self._cptr.get().addModelingOnGroupOfNodes( phys, mod, nameOfGroup )
+        self.getInstance().addModelingOnGroupOfNodes( phys, mod, nameOfGroup )
 
     def setSupportMesh( self, Mesh mesh ):
         """Set the support mesh of the model"""
-        return self._cptr.get().setSupportMesh( deref( mesh.get() ) )
+        return self.getInstance().setSupportMesh( deref( mesh.getPtr() ) )
 
     def getSupportMesh( self ):
         """Return the support mesh"""
         mesh = Mesh()
-        mesh.set( self._cptr.get().getSupportMesh() )
+        mesh.set( self.getInstance().getSupportMesh() )
         return mesh

@@ -40,10 +40,14 @@ cdef class PCFieldOnMeshDouble:
         """Point to an existing object"""
         self._cptr = new PCFieldOnMeshPtrDouble( other )
 
-    cdef PCFieldOnMeshPtrDouble* get( self ):
-        """Return the pointer on the c++ object"""
+    cdef PCFieldOnMeshPtrDouble* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
+
+    cdef PCFieldOnMeshInstanceDouble* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
 
     def setSupportMesh( self, Mesh mesh ):
         """Set the support mesh of the model"""
-        return self._cptr.get().setSupportMesh( deref(mesh.get()) )
+        return self.getInstance().setSupportMesh( deref(mesh.getPtr()) )

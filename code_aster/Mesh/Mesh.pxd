@@ -47,4 +47,5 @@ cdef class Mesh:
     cdef MeshPtr* _cptr
 
     cdef set( self, MeshPtr other )
-    cdef MeshPtr* get( self )
+    cdef MeshPtr* getPtr( self )
+    cdef MeshInstance* getInstance( self )

@@ -46,18 +46,22 @@ cdef class FieldOnNodesDouble:
         """Point to an existing object"""
         self._cptr = new FieldOnNodesPtrDouble( other )
 
-    cdef FieldOnNodesPtrDouble* get( self ):
-        """Return the pointer on the c++ object"""
+    cdef FieldOnNodesPtrDouble* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
+
+    cdef FieldOnNodesInstanceDouble* getInstance( self ):
+        """Return the pointer on the c++ instance objet"""
+        return self._cptr.get()
 
     def __getitem__( self, i ):
         """Return the value at the given index"""
-        cdef double val = deref(self._cptr.get())[i]
+        cdef double val = deref(self.getInstance())[i]
         return val
 
     def printMEDFile( self, string filename ):
         """Print the field using the MED format"""
-        name = self._cptr.get().getName()
+        name = self.getInstance().getName()
         assert len(name.strip()) <= 8, \
             "TODO: field with name longer than 8 chars can not be directly printed"
 

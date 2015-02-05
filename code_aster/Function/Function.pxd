@@ -39,4 +39,5 @@ cdef class Function:
     cdef FunctionPtr* _cptr
 
     cdef set( self, FunctionPtr other )
-    cdef FunctionPtr* get( self )
+    cdef FunctionPtr* getPtr( self )
+    cdef FunctionInstance* getInstance( self )
