@@ -37,10 +37,14 @@ cdef class Function:
         """Point to an existing object"""
         self._cptr = new FunctionPtr( other )
 
-    cdef FunctionPtr* get( self ):
-        """Return the pointer on the c++ object"""
+    cdef FunctionPtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
+
+    cdef FunctionInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
 
     def setParameterName( self, string name ):
         """Set the name of the parameter"""
-        self._cptr.get().setParameterName( name )
+        self.getInstance().setParameterName( name )

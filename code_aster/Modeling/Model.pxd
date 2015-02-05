@@ -56,4 +56,5 @@ cdef class Model:
     cdef ModelPtr* _cptr
 
     cdef set( self, ModelPtr other )
-    cdef ModelPtr* get( self )
+    cdef ModelPtr* getPtr( self )
+    cdef ModelInstance* getInstance( self )

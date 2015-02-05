@@ -43,4 +43,5 @@ cdef class FieldOnNodesDouble:
     cdef FieldOnNodesPtrDouble* _cptr
 
     cdef set( self, FieldOnNodesPtrDouble other )
-    cdef FieldOnNodesPtrDouble* get( self )
+    cdef FieldOnNodesPtrDouble* getPtr( self )
+    cdef FieldOnNodesInstanceDouble* getInstance( self )
