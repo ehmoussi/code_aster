@@ -32,7 +32,7 @@ ElementaryVectorInstance::ElementaryVectorInstance():
                 _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
-                _material( MaterialOnMesh( false ) )
+                _materialOnMesh( MaterialOnMeshPtr() )
 {};
 
 FieldOnNodesPtrDouble ElementaryVectorInstance::assembleVector( const DOFNumbering& currentNumerotation ) throw ( std::runtime_error )
@@ -83,10 +83,10 @@ bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_err
     mCSOption.addValues( "CHAR_MECA" );
     syntaxeCalcVectElem.addSimpleKeywordString( mCSOption );
 
-    if ( ! _material.isEmpty() )
+    if ( _materialOnMesh )
     {
         SimpleKeyWordStr mCSChamMater = SimpleKeyWordStr( "CHAM_MATER" );
-        mCSChamMater.addValues( _material->getName() );
+        mCSChamMater.addValues( _materialOnMesh->getName() );
         syntaxeCalcVectElem.addSimpleKeywordString( mCSChamMater );
     }
 

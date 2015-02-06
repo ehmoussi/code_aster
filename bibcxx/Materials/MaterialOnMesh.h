@@ -94,6 +94,12 @@ class MaterialOnMeshInstance: public DataStructure
         };
 
         /**
+         * @brief Return a Python dict to emulate the command keywords
+         * @return PyDict
+         */
+        PyObject* getCommandKeywords() throw ( std::runtime_error );
+
+        /**
          * @brief Construction (au sens Jeveux fortran) de la sd_cham_mater
          * @return booleen indiquant que la construction s'est bien deroulee
          */
@@ -124,49 +130,9 @@ class MaterialOnMeshInstance: public DataStructure
 };
 
 /**
- * @class MaterialOnMesh
- * @brief Enveloppe d'un pointeur intelligent vers un MaterialOnMeshInstance
- * @author Nicolas Sellenet
+ * @typedef MaterialOnMeshPtr
+ * @brief Pointeur intelligent vers un MaterialOnMeshInstance
  */
-class MaterialOnMesh
-{
-    public:
-        typedef boost::shared_ptr< MaterialOnMeshInstance > MaterialOnMeshPtr;
-
-    private:
-        MaterialOnMeshPtr _materAllocPtr;
-
-    public:
-        MaterialOnMesh(bool initilisation = true): _materAllocPtr()
-        {
-            if ( initilisation == true )
-                _materAllocPtr = MaterialOnMeshPtr( new MaterialOnMeshInstance() );
-        };
-
-        ~MaterialOnMesh()
-        {};
-
-        MaterialOnMesh& operator=(const MaterialOnMesh& tmp)
-        {
-            _materAllocPtr = tmp._materAllocPtr;
-            return *this;
-        };
-
-        const MaterialOnMeshPtr& operator->() const
-        {
-            return _materAllocPtr;
-        };
-
-        MaterialOnMeshInstance& operator*(void) const
-        {
-            return *_materAllocPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _materAllocPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
+typedef boost::shared_ptr< MaterialOnMeshInstance > MaterialOnMeshPtr;
 
 #endif /* MATERIALONMESH_H_ */

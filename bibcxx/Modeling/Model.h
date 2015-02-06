@@ -125,8 +125,8 @@ class ModelInstance: public DataStructure
         bool build() throw ( std::runtime_error );
 
         /**
-         * @brief 
-         * @return 
+         * @brief Return a Python dict emulate the command keywords
+         * @return PyDict
          */
         PyObject* getCommandKeywords() throw ( std::runtime_error );
 

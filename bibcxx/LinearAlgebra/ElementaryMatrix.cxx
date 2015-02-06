@@ -33,7 +33,7 @@ ElementaryMatrixInstance::ElementaryMatrixInstance():
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
                 _supportModel( ModelPtr() ),
-                _material( MaterialOnMesh( false ) )
+                _materialOnMesh( MaterialOnMeshPtr() )
 {};
 
 bool ElementaryMatrixInstance::computeMechanicalRigidity() throw ( std::runtime_error )
@@ -60,9 +60,9 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity() throw ( std::runtime_
 
     // Definition du mot cle simple CHAM_MATER
     SimpleKeyWordStr mCSChamMater = SimpleKeyWordStr( "CHAM_MATER" );
-    if ( _material.isEmpty() )
+    if ( ! _materialOnMesh )
         throw std::runtime_error( "Material is empty" );
-    mCSChamMater.addValues( _material->getName() );
+    mCSChamMater.addValues( _materialOnMesh->getName() );
     syntaxeCalcMatrElem.addSimpleKeywordString( mCSChamMater );
 
     if ( _listOfMechanicalLoads.size() != 0 )

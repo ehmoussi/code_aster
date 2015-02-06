@@ -47,15 +47,15 @@ class StaticMechanicalSolverInstance: public GenericSolver
         typedef ListKineLoad::iterator ListKineLoadIter;
 
         /** @brief Modele support */
-        ModelPtr       _supportModel;
+        ModelPtr          _supportModel;
         /** @brief Champ de materiau a utiliser */
-        MaterialOnMesh _materialOnMesh;
+        MaterialOnMeshPtr _materialOnMesh;
         /** @brief Solveur lineaire */
-        LinearSolver   _linearSolver;
+        LinearSolver      _linearSolver;
         /** @brief Chargements Mecaniques */
-        ListMecaLoad   _listOfMechanicalLoads;
+        ListMecaLoad      _listOfMechanicalLoads;
         /** @brief Chargements cinematiques */
-        ListKineLoad   _listOfKinematicsLoads;
+        ListKineLoad      _listOfKinematicsLoads;
 
     public:
         /**
@@ -97,9 +97,9 @@ class StaticMechanicalSolverInstance: public GenericSolver
 
         /**
          * @brief Methode permettant de definir le champ de materiau
-         * @param currentMaterial objet MaterialOnMesh
+         * @param currentMaterial objet MaterialOnMeshPtr
          */
-        void setMaterialOnMesh( const MaterialOnMesh& currentMaterial )
+        void setMaterialOnMesh( const MaterialOnMeshPtr& currentMaterial )
         {
             _materialOnMesh = currentMaterial;
         };

@@ -18,41 +18,36 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
-
 from code_aster.Mesh.Mesh cimport MeshPtr
-
-from PhysicsAndModeling cimport Physics, Modelings
-from PhysicsAndModeling cimport cMechanics, cThermal, cAcoustics
-from PhysicsAndModeling cimport cAxisymmetrical, cTridimensional, cPlanar, cDKT
+from code_aster.Materials.Material cimport MaterialPtr
 
 
-cdef extern from "Modeling/Model.h":
+cdef extern from "Materials/MaterialOnMesh.h":
 
-    cdef cppclass ModelInstance:
+    cdef cppclass MaterialOnMeshInstance:
 
-        ModelInstance()
-        void addModelingOnAllMesh( Physics phys, Modelings mod )
-        void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup )
-        void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
-        void setSplittingMethod()
+        MaterialOnMeshInstance()
+        void addMaterialOnAllMesh( MaterialPtr& curMater )
+        void addMaterialOnGroupOfElements( MaterialPtr& curMater,
+                                           string nameOfGroup )
         bint setSupportMesh( MeshPtr& currentMesh )
-        bint build() except +
-        getCommandKeywords()
         MeshPtr getSupportMesh()
+        getCommandKeywords()
+        bint build()
         const string getType()
         void debugPrint( int logicalUnit )
 
-    cdef cppclass ModelPtr:
+    cdef cppclass MaterialOnMeshPtr:
 
-        ModelPtr( ModelPtr& )
-        ModelPtr( ModelInstance* )
-        ModelInstance* get()
+        MaterialOnMeshPtr( MaterialOnMeshPtr& )
+        MaterialOnMeshPtr( MaterialOnMeshInstance* )
+        MaterialOnMeshInstance* get()
 
 
-cdef class Model:
+cdef class MaterialOnMesh:
 
-    cdef ModelPtr* _cptr
+    cdef MaterialOnMeshPtr* _cptr
 
-    cdef set( self, ModelPtr other )
-    cdef ModelPtr* getPtr( self )
-    cdef ModelInstance* getInstance( self )
+    cdef set( self, MaterialOnMeshPtr other )
+    cdef MaterialOnMeshPtr* getPtr( self )
+    cdef MaterialOnMeshInstance* getInstance( self )

@@ -29,7 +29,7 @@
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _supportModel( ModelPtr() ),
-                _materialOnMesh( MaterialOnMesh( false ) ),
+                _materialOnMesh( MaterialOnMeshPtr() ),
                 _linearSolver( LinearSolver() )
 {};
 
@@ -49,7 +49,7 @@ ResultsContainer StaticMechanicalSolverInstance::execute() throw ( std::runtime_
     syntaxeMecaStat.addSimpleKeywordString( mCSModele );
 
     // Definition du mot cle simple CHAM_MATER
-    if ( ! _materialOnMesh.isEmpty() )
+    if ( _materialOnMesh )
     {
         SimpleKeyWordStr mCSChamMater = SimpleKeyWordStr( "CHAM_MATER" );
         mCSChamMater.addValues( _materialOnMesh->getName() );

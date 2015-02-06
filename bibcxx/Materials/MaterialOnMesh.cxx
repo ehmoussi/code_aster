@@ -28,7 +28,7 @@
 #include "astercxx.h"
 
 #include "Materials/MaterialOnMesh.h"
-#include "RunManager/CommandSyntax.h"
+#include "Utilities/SyntaxDictionary.h"
 
 
 MaterialOnMeshInstance::MaterialOnMeshInstance():
@@ -40,79 +40,53 @@ MaterialOnMeshInstance::MaterialOnMeshInstance():
                                 _supportMesh( MeshPtr() )
 {};
 
-bool MaterialOnMeshInstance::build() throw ( std::runtime_error )
+PyObject* MaterialOnMeshInstance::getCommandKeywords() throw ( std::runtime_error )
 {
-    // Definition du bout de fichier de commande correspondant a AFFE_MODELE
-    CommandSyntax syntaxeAffeMater( "AFFE_MATERIAU", true,
-                                    getResultObjectName(), getType() );
+    SyntaxMapContainer dict;
 
-    // Definition du mot cle simple MAILLAGE
-    SimpleKeyWordStr mCSMaillage = SimpleKeyWordStr("MAILLAGE");
     if ( ! _supportMesh )
-        throw std::runtime_error( "Support mesh is undefined" );
-    // Affectation d'une valeur au mot cle simple MAILLAGE
-    // Si _supportMesh->getJeveuxName() = 'MA      ' alors
-    // cela correspondra dans le fichier de commande emule a :
-    // MAILLAGE = MA
-    mCSMaillage.addValues( _supportMesh->getName() );
-    syntaxeAffeMater.addSimpleKeywordString(mCSMaillage);
+        throw std::runtime_error("Support mesh is undefined");
+    dict.container["MAILLAGE"] = _supportMesh->getName();
 
-    // Definition de mot cle facteur AFFE
-    FactorKeyword motCleAFFE = FactorKeyword("AFFE", true);
-
-    // Boucle sur les couples (physique / modelisation) ajoutes par l'utilisateur
+    ListSyntaxMapContainer listeAFFE;
     for ( listOfMatsAndGrpsIter curIter = _materialsOnMeshEntity.begin();
           curIter != _materialsOnMeshEntity.end();
           ++curIter )
     {
-        // Definition d'une accourence d'un mot-cle facteur
-        FactorKeywordOccurence occurAFFE = FactorKeywordOccurence();
+        SyntaxMapContainer dict2;
+        dict2.container["MATER"] = curIter->first->getName();
 
-        // Definition du mot-cle simple PHENOMENE
-        SimpleKeyWordStr mCSMater = SimpleKeyWordStr("MATER");
-        // Ajout de la valeur donnee par l'utilisateur
-        mCSMater.addValues( (*curIter).first->getName() );
-        // Ajout du mot-cle simple a l'occurence du mot-cle facteur
-        occurAFFE.addSimpleKeywordString(mCSMater);
-
-        SimpleKeyWordStr mCSGroup;
         if ( typeid( *(curIter->second) ) == typeid( AllMeshEntities ) )
         {
-            mCSGroup = SimpleKeyWordStr("TOUT");
-            mCSGroup.addValues("OUI");
+            dict2.container["TOUT"] = "OUI";
         }
         else
         {
             if ( typeid( *(curIter->second) ) == typeid( GroupOfElements ) )
-                mCSGroup = SimpleKeyWordStr("GROUP_MA");
-            else throw std::runtime_error( "Bad type of mesh entity, group of elements required" );
-
-            mCSGroup.addValues( (curIter->second)->getEntityName() );
+                dict2.container["GROUP_MA"] = (curIter->second)->getEntityName();
+            else if ( typeid( *(curIter->second) ) == typeid( GroupOfNodes ) )
+                dict2.container["GROUP_NO"] = (curIter->second)->getEntityName();
         }
-        occurAFFE.addSimpleKeywordString(mCSGroup);
-        // Ajout de l'occurence au mot-cle facteur AFFE
-        motCleAFFE.addOccurence(occurAFFE);
+        listeAFFE.push_back( dict2 );
     }
+    dict.container["AFFE"] = listeAFFE;
 
-    // Ajout du mot-cle facteur AFFE a la commande AFFE_MODELE
-    syntaxeAffeMater.addFactorKeyword(motCleAFFE);
+    PyObject* returnDict = dict.convertToPythonDictionnary();
+    return returnDict;
+};
 
-    // Definition du mot cle simple LIST_NOM_VARC
-    SimpleKeyWordStr mCSLNomVarc = SimpleKeyWordStr("LIST_NOM_VARC");
-    mCSLNomVarc.addValues( "TEMP" );
-    syntaxeAffeMater.addSimpleKeywordString(mCSLNomVarc);
-
-    FactorKeyword motCleVarcTemp = FactorKeyword("VARC_TEMP", false);
-    FactorKeywordOccurence occurVarcTemp = FactorKeywordOccurence();
-    SimpleKeyWordStr mCSNomVarc = SimpleKeyWordStr("NOM_VARC");
-    mCSNomVarc.addValues( "TEMP" );
-    occurVarcTemp.addSimpleKeywordString(mCSNomVarc);
-    motCleVarcTemp.addOccurence(occurVarcTemp);
-    syntaxeAffeMater.addFactorKeyword(motCleVarcTemp);
-
-    // Maintenant que le fichier de commande est pret, on appelle OP0006
-    INTEGER op = 6;
-    CALL_EXECOP( &op );
+bool MaterialOnMeshInstance::build() throw ( std::runtime_error )
+{
+    // Maintenant que le fichier de commande est pret, on appelle OP0018
+    try
+    {
+        INTEGER op = 6;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _listOfMaterials->updateValuePointers();
 
