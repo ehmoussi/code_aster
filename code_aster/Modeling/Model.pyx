@@ -60,6 +60,7 @@ cdef class Model:
         syntax.setResult( resultNaming.getResultObjectName(), "MODELE" )
 
         instance = self._cptr.get()
+        print "ICI"
         dictSyntax = instance.getCommandKeywords()
         print dictSyntax
 

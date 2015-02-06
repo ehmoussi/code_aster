@@ -81,7 +81,7 @@ class ModelInstance: public DataStructure
         void addModelingOnAllMesh( Physics phys, Modelings mod )
         {
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
-                                                              MeshEntityPtr( new AllMeshEntitiesInstance() ) ) );
+                                                              MeshEntityPtr( new AllMeshEntities() ) ) );
         };
 
         /**
@@ -97,7 +97,7 @@ class ModelInstance: public DataStructure
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
-                                            MeshEntityPtr( new GroupOfElementsInstance(nameOfGroup) ) ) );
+                                            MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
         };
 
         /**
@@ -113,7 +113,7 @@ class ModelInstance: public DataStructure
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
-                                            MeshEntityPtr( new GroupOfNodesInstance(nameOfGroup) ) ) );
+                                            MeshEntityPtr( new GroupOfNodes(nameOfGroup) ) ) );
         };
 
         /**

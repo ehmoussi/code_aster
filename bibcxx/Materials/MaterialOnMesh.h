@@ -74,7 +74,7 @@ class MaterialOnMeshInstance: public DataStructure
         void addMaterialOnAllMesh( Material& curMater )
         {
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMater,
-                                                MeshEntityPtr( new AllMeshEntitiesInstance() ) ) );
+                                                MeshEntityPtr( new AllMeshEntities() ) ) );
         };
 
         /**
@@ -89,7 +89,7 @@ class MaterialOnMeshInstance: public DataStructure
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMater,
-                                                MeshEntityPtr( new GroupOfElementsInstance(nameOfGroup) ) ) );
+                                                MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
         };
 
         /**

@@ -90,7 +90,7 @@ class MechanicalLoadInstance : public DataStructure
             {
                 throw  std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
             }
-            MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
+            MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
             _listOfDoubleImposedDisplacement.push_back( resu );
             return true;
@@ -114,7 +114,7 @@ class MechanicalLoadInstance : public DataStructure
             {
                 throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
             }
-            MeshEntityPtr meshEnt( new GroupOfNodesInstance( nameOfGroup ) );
+            MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
             _listOfDoubleImposedDisplacement.push_back( resu );
             return true;
@@ -137,7 +137,7 @@ class MechanicalLoadInstance : public DataStructure
             {
                 throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
             }
-            MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
+            MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
             AsterCoordinates coordinate = Pressure;
             DoubleLoadPressure resu( meshEnt, coordinate, value );
             _listOfDoubleImposedPressure.push_back( resu );
@@ -160,7 +160,7 @@ class MechanicalLoadInstance : public DataStructure
             {
                 throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
             }
-            MeshEntityPtr meshEnt( new GroupOfNodesInstance( nameOfGroup ) );
+            MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
             AsterCoordinates coordinate = Pressure;
             DoubleLoadPressure resu( meshEnt, coordinate, value );
             _listOfDoubleImposedPressure.push_back( resu );
@@ -183,7 +183,7 @@ class MechanicalLoadInstance : public DataStructure
             {
                 throw std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
             }
-            MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
+            MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
             AsterCoordinates coordinate = Pressure;
             DoubleLoadPressure resu( meshEnt, coordinate, value );
             _listOfDoubleImposedDistributedPressure.push_back( resu );
@@ -206,7 +206,7 @@ class MechanicalLoadInstance : public DataStructure
             {
                 throw std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
             }
-            MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
+            MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
             AsterCoordinates coordinate = Pressure;
             DoubleLoadPressure resu( meshEnt, coordinate, value );
             _listOfDoubleImposedPipePressure.push_back( resu );

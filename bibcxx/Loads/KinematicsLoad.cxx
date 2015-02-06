@@ -67,16 +67,16 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
 
             SimpleKeyWordStr mCSGroup;
             const MeshEntityPtr& tmp = curIter->getMeshEntityPtr();
-            if ( typeid( *(tmp) ) == typeid( AllMeshEntitiesInstance ) )
+            if ( typeid( *(tmp) ) == typeid( AllMeshEntities ) )
             {
                 mCSGroup = SimpleKeyWordStr("TOUT");
                 mCSGroup.addValues("OUI");
             }
             else
             {
-                if ( typeid( *(tmp) ) == typeid( GroupOfNodesInstance ) )
+                if ( typeid( *(tmp) ) == typeid( GroupOfNodes ) )
                     mCSGroup = SimpleKeyWordStr("GROUP_NO");
-                else if ( typeid( *(tmp) ) == typeid( GroupOfElementsInstance ) )
+                else if ( typeid( *(tmp) ) == typeid( GroupOfElements ) )
                     mCSGroup = SimpleKeyWordStr("GROUP_MA");
 
                 mCSGroup.addValues( tmp->getEntityName() );

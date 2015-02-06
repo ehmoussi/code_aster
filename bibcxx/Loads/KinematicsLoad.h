@@ -100,7 +100,7 @@ class KinematicsLoadInstance: public DataStructure
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
-            MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
+            MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
             _listOfDoubleImposedDisplacement.push_back( resu );
             return true;
@@ -122,7 +122,7 @@ class KinematicsLoadInstance: public DataStructure
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
-            MeshEntityPtr meshEnt( new GroupOfNodesInstance( nameOfGroup ) );
+            MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
             _listOfDoubleImposedDisplacement.push_back( resu );
             return true;
@@ -144,7 +144,7 @@ class KinematicsLoadInstance: public DataStructure
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
-            MeshEntityPtr meshEnt( new GroupOfElementsInstance( nameOfGroup ) );
+            MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
             DoubleLoadTemperature resu( meshEnt, coordinate, value );
             _listOfDoubleImposedTemperature.push_back( resu );
             return true;
@@ -166,7 +166,7 @@ class KinematicsLoadInstance: public DataStructure
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
-            MeshEntityPtr meshEnt( new GroupOfNodesInstance( nameOfGroup ) );
+            MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
             DoubleLoadTemperature resu( meshEnt, coordinate, value );
             _listOfDoubleImposedTemperature.push_back( resu );
             return true;
