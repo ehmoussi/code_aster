@@ -3,6 +3,6 @@ The ``code_aster`` directory contains different Cython source files.
 
 - ``Supervis`` must not depend on ``libaster`` or other cython modules.
 
-- ``libaster`` depends on ``Core``.
+- ``libaster`` depends on ``Supervis``.
 
 - Wrappers (other cython modules) depend on ``Supervis`` and ``libaster``.
