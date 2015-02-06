@@ -38,7 +38,7 @@
 class MaterialInstance: public DataStructure
 {
     private:
-        typedef std::vector< GeneralMaterialBehaviour > VectorOfGeneralMaterialBehaviour;
+        typedef std::vector< GeneralMaterialBehaviourPtr > VectorOfGeneralMaterialBehaviour;
         typedef VectorOfGeneralMaterialBehaviour::iterator VectorOfGeneralMaterialIter;
 
         /** @brief Nom Jeveux de la SD */
@@ -47,7 +47,7 @@ class MaterialInstance: public DataStructure
         JeveuxVectorChar32               _materialBehaviourNames;
         /** @brief Nombre de MaterialBehaviour deja ajoutes */
         int                              _nbMaterialBehaviour;
-        /** @brief Vecteur contenant les GeneralMaterialBehaviour ajoutes par l'utilisateur */
+        /** @brief Vecteur contenant les GeneralMaterialBehaviourPtr ajoutes par l'utilisateur */
         VectorOfGeneralMaterialBehaviour _vecMatBehaviour;
 
     public:
@@ -57,10 +57,10 @@ class MaterialInstance: public DataStructure
         MaterialInstance();
 
         /**
-         * @brief Ajout d'un GeneralMaterialBehaviour
-         * @param curMaterBehav GeneralMaterialBehaviour a ajouter au MaterialInstance
+         * @brief Ajout d'un GeneralMaterialBehaviourPtr
+         * @param curMaterBehav GeneralMaterialBehaviourPtr a ajouter au MaterialInstance
          */
-        void addMaterialBehaviour( GeneralMaterialBehaviour& curMaterBehav )
+        void addMaterialBehaviour( GeneralMaterialBehaviourPtr& curMaterBehav )
         {
             ++_nbMaterialBehaviour;
 
@@ -73,7 +73,7 @@ class MaterialInstance: public DataStructure
 
         /**
          * @brief Construction du MaterialInstance
-         *   A partir des GeneralMaterialBehaviour ajoutes par l'utilisateur :
+         *   A partir des GeneralMaterialBehaviourPtr ajoutes par l'utilisateur :
          *   creation de objets Jeveux
          * @return Booleen indiquant que la construction s'est bien deroulee
          */
@@ -81,49 +81,10 @@ class MaterialInstance: public DataStructure
 };
 
 /**
- * class Material
- * @brief Enveloppe d'un pointeur intelligent vers un MaterialInstance
- * @author Nicolas Sellenet
+ * @typedef MaterialPtr
+ * @brief Pointeur intelligent vers un MaterialInstance
  */
-class Material
-{
-    public:
-        typedef boost::shared_ptr< MaterialInstance > MaterialPtr;
+typedef boost::shared_ptr< MaterialInstance > MaterialPtr;
 
-    private:
-        MaterialPtr _materialPtr;
-
-    public:
-        Material( bool initilisation = true ): _materialPtr()
-        {
-            if ( initilisation == true )
-                _materialPtr = MaterialPtr( new MaterialInstance() );
-        };
-
-        ~Material()
-        {};
-
-        Material& operator=( const Material& tmp )
-        {
-            _materialPtr = tmp._materialPtr;
-            return *this;
-        };
-
-        const MaterialPtr& operator->() const
-        {
-            return _materialPtr;
-        };
-
-        MaterialInstance& operator*(void) const
-        {
-            return *_materialPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _materialPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
 
 #endif /* MATERIAL_H_ */

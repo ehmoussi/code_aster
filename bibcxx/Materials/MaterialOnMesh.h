@@ -46,7 +46,7 @@ class MaterialOnMeshInstance: public DataStructure
         /** @typedef Definition d'un pointeur intelligent sur un VirtualMeshEntity */
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
         /** @typedef std::list d'une std::pair de MeshEntityPtr */
-        typedef std::list< std::pair< Material, MeshEntityPtr > > listOfMatsAndGrps;
+        typedef std::list< std::pair< MaterialPtr, MeshEntityPtr > > listOfMatsAndGrps;
         /** @typedef Definition de la valeur contenue dans un listOfMatsAndGrps */
         typedef listOfMatsAndGrps::value_type listOfMatsAndGrpsValue;
         /** @typedef Definition d'un iterateur sur listOfMatsAndGrps */
@@ -71,7 +71,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @brief Ajout d'un materiau sur tout le maillage
          * @param curMater Materiau a ajouter
          */
-        void addMaterialOnAllMesh( Material& curMater )
+        void addMaterialOnAllMesh( MaterialPtr& curMater )
         {
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMater,
                                                 MeshEntityPtr( new AllMeshEntities() ) ) );
@@ -82,7 +82,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @param curMater Materiau a ajouter
          * @param nameOfGroup Nom du groupe de mailles
          */
-        void addMaterialOnGroupOfElements( Material& curMater,
+        void addMaterialOnGroupOfElements( MaterialPtr& curMater,
                                            std::string nameOfGroup ) throw ( std::runtime_error )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );

@@ -267,56 +267,9 @@ class ElasticMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/**
- * class template MaterialBehaviour
- * @brief Enveloppe d'un pointeur intelligent vers un MaterialBehaviourInstance
- * @author Nicolas Sellenet
- */
-template< class MaterialBehaviourInstance >
-class MaterialBehaviour
-{
-    public:
-        typedef boost::shared_ptr< MaterialBehaviourInstance > MaterialBehaviourPtr;
-
-    private:
-        MaterialBehaviourPtr _materialBehaviourPtr;
-
-    public:
-        MaterialBehaviour(bool initilisation = true): _materialBehaviourPtr()
-        {
-            if ( initilisation == true )
-                _materialBehaviourPtr = MaterialBehaviourPtr( new MaterialBehaviourInstance() );
-        };
-
-        ~MaterialBehaviour()
-        {};
-
-        MaterialBehaviour& operator=(const MaterialBehaviour& tmp)
-        {
-            _materialBehaviourPtr = tmp._materialBehaviourPtr;
-            return *this;
-        };
-
-        const MaterialBehaviourPtr& operator->() const
-        {
-            return _materialBehaviourPtr;
-        };
-
-        MaterialBehaviourInstance& operator*(void) const
-        {
-            return *_materialBehaviourPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _materialBehaviourPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
-
-/** @typedef Definition d'un comportement materiau elastique */
-typedef class MaterialBehaviour< ElasticMaterialBehaviourInstance > ElasticMaterialBehaviour;
-/** @typedef Definition d'un comportement materiau quelconque */
-typedef class MaterialBehaviour< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviour;
+/** @typedef Pointeur intellignet vers un comportement materiau elastique */
+typedef boost::shared_ptr< ElasticMaterialBehaviourInstance > ElasticMaterialBehaviourPtr;
+/** @typedef Pointeur intellignet vers un comportement materiau quelconque */
+typedef boost::shared_ptr< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviourPtr;
 
 #endif /* MATERIALBEHAVIOUR_H_ */
