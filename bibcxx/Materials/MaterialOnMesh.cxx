@@ -76,14 +76,14 @@ bool MaterialOnMeshInstance::build() throw ( std::runtime_error )
         occurAFFE.addSimpleKeywordString(mCSMater);
 
         SimpleKeyWordStr mCSGroup;
-        if ( typeid( *(curIter->second) ) == typeid( AllMeshEntitiesInstance ) )
+        if ( typeid( *(curIter->second) ) == typeid( AllMeshEntities ) )
         {
             mCSGroup = SimpleKeyWordStr("TOUT");
             mCSGroup.addValues("OUI");
         }
         else
         {
-            if ( typeid( *(curIter->second) ) == typeid( GroupOfElementsInstance ) )
+            if ( typeid( *(curIter->second) ) == typeid( GroupOfElements ) )
                 mCSGroup = SimpleKeyWordStr("GROUP_MA");
             else throw std::runtime_error( "Bad type of mesh entity, group of elements required" );
 

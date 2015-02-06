@@ -36,13 +36,9 @@ cdef extern from "Modeling/Model.h":
         void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
         void setSplittingMethod()
         bint setSupportMesh( MeshPtr& currentMesh )
-        MeshPtr getSupportMesh()
-        string getEntity( int )
-        string getEntityName( int )
-        string getModeling( int )
-        int getNumberOfModeling()
-        string getPhysic( int )
         bint build() except +
+        getCommandKeywords()
+        MeshPtr getSupportMesh()
 
     cdef cppclass ModelPtr:
 

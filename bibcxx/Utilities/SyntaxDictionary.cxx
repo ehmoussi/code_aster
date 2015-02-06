@@ -1,55 +1,27 @@
+/**
+ * @file SyntaxDictionary.cxx
+ * @brief Implementation de SyntaxMapContainer
+ * @author Nicolas Sellenet
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "Utilities/SyntaxDictionary.h"
-
-// void SyntaxMapContainer::imprimer( std::string toAdd )
-// {
-//     for( SyntaxMapIter curIter = container.begin();
-//             curIter != container.end();
-//             ++curIter )
-//     {
-//         if ( (*curIter).second.type() == typeid( int ) )
-//         {
-//             int& tmp = boost::get< int >( (*curIter).second );
-//             std::cout << toAdd << (*curIter).first << " " << tmp << std::endl;
-//         }
-//         else if ( (*curIter).second.type() == typeid( ListInt ) )
-//         {
-//             std::cout << toAdd << (*curIter).first << " ";
-//             printValues< ListInt >( boost::get< ListInt >( (*curIter).second ) );
-//         }
-//         else if ( (*curIter).second.type() == typeid( std::string ) )
-//         {
-//             std::string& tmp = boost::get< std::string >( (*curIter).second );
-//             std::cout << toAdd << (*curIter).first << " " << tmp << std::endl;
-//         }
-//         else if ( (*curIter).second.type() == typeid( ListOfString ) )
-//         {
-//             std::cout << toAdd << (*curIter).first << " ";
-//             printValues< ListOfString >( boost::get< ListOfString >( (*curIter).second ) );
-//         }
-//         else if ( (*curIter).second.type() == typeid( double ) )
-//         {
-//             double& tmp = boost::get< double >( (*curIter).second );
-//             std::cout << toAdd << (*curIter).first << " " << tmp << std::endl;
-//         }
-//         else if ( (*curIter).second.type() == typeid( ListOfDouble ) )
-//         {
-//             std::cout << toAdd << (*curIter).first << " ";
-//             printValues< ListOfDouble >( boost::get< ListOfDouble >( (*curIter).second ) );
-//         }
-//         else if ( (*curIter).second.type() == typeid( ListSyntaxMapContainer ) )
-//         {
-//             ListSyntaxMapContainer& tmp = boost::get< ListSyntaxMapContainer >( (*curIter).second );
-//             std::cout << (*curIter).first << std::endl;
-//             for ( ListSyntaxMapContainerIter iter2 = tmp.begin();
-//                     iter2 != tmp.end();
-//                     ++iter2 )
-//             {
-//                 iter2->imprimer( "\t" );
-//             }
-//         }
-//     }
-// };
 
 PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
 {
@@ -64,12 +36,12 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
             int& tmp = boost::get< int >( (*curIter).second );
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(), PyLong_FromLong( tmp ) );
         }
-        else if ( (*curIter).second.type() == typeid( ListInt ) )
+        else if ( (*curIter).second.type() == typeid( VectorInt ) )
         {
-            ListInt& currentList = boost::get< ListInt >( (*curIter).second );
+            VectorInt& currentList = boost::get< VectorInt >( (*curIter).second );
             PyObject* listValues = PyList_New( currentList.size() );
             int count = 0;
-            for ( ListIntIter iter = currentList.begin();
+            for ( VectorIntIter iter = currentList.begin();
                   iter != currentList.end();
                   ++iter )
             {
@@ -84,12 +56,12 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(),
                                   PyString_FromString( tmp.c_str() ) );
         }
-        else if ( (*curIter).second.type() == typeid( ListOfString ) )
+        else if ( (*curIter).second.type() == typeid( VectorString ) )
         {
-            ListOfString& currentList = boost::get< ListOfString >( (*curIter).second );
+            VectorString& currentList = boost::get< VectorString >( (*curIter).second );
             PyObject* listValues = PyList_New( currentList.size() );
             int count = 0;
-            for ( ListOfStringIter iter = currentList.begin();
+            for ( VectorStringIter iter = currentList.begin();
                   iter != currentList.end();
                   ++iter )
             {
@@ -104,12 +76,12 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
             double& tmp = boost::get< double >( (*curIter).second );
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(), PyFloat_FromDouble( tmp ) );
         }
-        else if ( (*curIter).second.type() == typeid( ListOfDouble ) )
+        else if ( (*curIter).second.type() == typeid( VectorDouble ) )
         {
-            ListOfDouble& currentList = boost::get< ListOfDouble >( (*curIter).second );
+            VectorDouble& currentList = boost::get< VectorDouble >( (*curIter).second );
             PyObject* listValues = PyList_New( currentList.size() );
             int count = 0;
-            for ( ListOfDoubleIter iter = currentList.begin();
+            for ( VectorDoubleIter iter = currentList.begin();
                   iter != currentList.end();
                   ++iter )
             {
@@ -134,5 +106,5 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(), list_F );
         }
     }
-    return NULL;
+    return returnDict;
 };

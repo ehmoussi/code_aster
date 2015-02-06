@@ -76,15 +76,15 @@ PyObject* ModelInstance::getCommandKeywords()
         dict2.container["PHENOMENE"] = curIter->first.getPhysic();
         dict2.container["MODELISATION"] = curIter->first.getModeling();
 
-        if ( typeid( *(curIter->second) ) == typeid( AllMeshEntitiesInstance ) )
+        if ( ( *(curIter->second) ).getType() == AllMeshEntitiesType )
         {
             dict2.container["TOUT"] = "OUI";
         }
         else
         {
-            if ( typeid( *(curIter->second) ) == typeid( GroupOfNodesInstance ) )
+            if ( ( *(curIter->second) ).getType() == GroupOfNodesType )
                 dict2.container["GROUP_NO"] = (curIter->second)->getEntityName();
-            else if ( typeid( *(curIter->second) ) == typeid( GroupOfElementsInstance ) )
+            else if ( ( *(curIter->second) ).getType() == GroupOfElementsType )
                 dict2.container["GROUP_MA"] = (curIter->second)->getEntityName();
         }
         listeAFFE.push_back( dict2 );

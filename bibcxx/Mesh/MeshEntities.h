@@ -26,8 +26,16 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
+// #include "astercxx.h"
 #include "MemoryManager/JeveuxCollection.h"
+
+enum EntityType { GroupOfNodesType, GroupOfElementsType, AllMeshEntitiesType, NoType };
+
+/**
+ * @todo Un MeshEntity pourrait etre concu comme un template qui prendrait
+         son type et sa syntaxe Aster en argument
+         Comme ca on aurait pas a faire de if dans le C++
+ */
 
 /**
  * @class VirtualMeshEntity
@@ -39,14 +47,18 @@ class VirtualMeshEntity
 {
     private:
         /** @brief Nom de l'entite */
-        const string _name;
+        const string     _name;
+
+    protected:
+        /** @brief Type de l'entite */
+        const EntityType _type;
 
     public:
         /**
          * @brief Constructeur
          * @param name nom de l'entite
          */
-        VirtualMeshEntity( string name ): _name( name )
+        VirtualMeshEntity( string name, EntityType type ): _name( name ), _type( type )
         {};
 
         /**
@@ -58,145 +70,71 @@ class VirtualMeshEntity
             return _name;
         };
 
-        virtual string getType() = 0;
+        virtual EntityType getType() const = 0;
 };
 
 /**
- * @class GroupOfNodesInstanceInstance
+ * @class GroupOfNodesInstance
  * @brief Cette classe permet de definir des groupes de noeuds
  * @author Nicolas Sellenet
  */
-class GroupOfNodesInstance: public VirtualMeshEntity
+class GroupOfNodes: public VirtualMeshEntity
 {
     public:
         /**
          * @brief Constructeur
          * @param name nom de l'entite
          */
-        GroupOfNodesInstance(string name): VirtualMeshEntity(name)
+        GroupOfNodes( string name ): VirtualMeshEntity( name, GroupOfNodesType )
         {};
 
-        string getType()
+        EntityType getType() const
         {
-            return "GroupOfNodesInstance";
-        }
+            return _type;
+        };
 };
 
 /**
- * @class GroupOfElementsInstance
+ * @class GroupOfElements
  * @brief Cette classe permet de definir des groupes de mailles
  * @author Nicolas Sellenet
  */
-class GroupOfElementsInstance: public VirtualMeshEntity
+class GroupOfElements: public VirtualMeshEntity
 {
     public:
         /**
          * @brief Constructeur
          * @param name nom de l'entite
          */
-        GroupOfElementsInstance(string name): VirtualMeshEntity(name)
+        GroupOfElements( string name ): VirtualMeshEntity( name, GroupOfElementsType )
         {};
 
-        string getType()
+        EntityType getType() const
         {
-            return "GroupOfElementsInstance";
-        }
+            return _type;
+        };
 };
 
 /**
- * @class AllMeshEntitiesInstance
+ * @class AllMeshEntities
  * @brief Cette classe permet de definir toutes les entites du maillage
  *        Equivalent du mot cle simple TOUT = 'OUI'
  * @author Nicolas Sellenet
  */
-class AllMeshEntitiesInstance: public VirtualMeshEntity
+class AllMeshEntities: public VirtualMeshEntity
 {
     public:
         /**
          * @brief Constructeur
          * @param name nom de l'entite
          */
-        AllMeshEntitiesInstance(): VirtualMeshEntity( "TOUT" )
+        AllMeshEntities(): VirtualMeshEntity( "TOUT", AllMeshEntitiesType )
         {};
 
-        string getType()
+        EntityType getType() const
         {
-            return "AllMeshEntitiesInstance";
-        }
-};
-
-/**
- * @class WrapperMeshEntity
- * @brief Enveloppe d'un pointeur intelligent vers un MeshEntityInstance
- * @author Nicolas Sellenet
- */
-template< class MeshEntityInstance >
-class WrapperMeshEntity
-{
-    public:
-        typedef boost::shared_ptr< MeshEntityInstance > MeshEntityPtr;
-
-    private:
-        MeshEntityPtr _meshEntityPtr;
-
-    public:
-        WrapperMeshEntity(bool initialisation = true): _meshEntityPtr()
-        {
-            if ( initialisation == true )
-                _meshEntityPtr = MeshEntityPtr( new MeshEntityInstance() );
-        };
-
-        WrapperMeshEntity(string name, JeveuxCollectionLong& grpOfEntities,
-                          bool initialisation = true): _meshEntityPtr()
-        {
-            if ( initialisation == true )
-                _meshEntityPtr = MeshEntityPtr( new MeshEntityInstance(name, grpOfEntities) );
-        };
-
-        WrapperMeshEntity(string name, bool initialisation = true): _meshEntityPtr()
-        {
-            if ( initialisation == true )
-                _meshEntityPtr = MeshEntityPtr( new MeshEntityInstance(name) );
-        };
-
-        ~WrapperMeshEntity()
-        {};
-
-        const MeshEntityPtr& getPointer() const
-        {
-            return _meshEntityPtr;
-        };
-
-        WrapperMeshEntity& operator=(const WrapperMeshEntity& tmp)
-        {
-            _meshEntityPtr = tmp._meshEntityPtr;
-            return *this;
-        };
-
-        const MeshEntityPtr& operator->() const
-        {
-            return _meshEntityPtr;
-        };
-
-        MeshEntityInstance& operator*(void) const
-        {
-            return *_meshEntityPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _meshEntityPtr.use_count() == 0 ) return true;
-            return false;
+            return _type;
         };
 };
-
-/** @typedef Definition d'un MeshEntity */
-typedef class WrapperMeshEntity< VirtualMeshEntity > MeshEntity;
-/** @typedef Definition d'un GroupOfNodes */
-typedef class WrapperMeshEntity< GroupOfNodesInstance > GroupOfNodes;
-/** @typedef Definition d'un GroupOfElements */
-typedef class WrapperMeshEntity< GroupOfElementsInstance > GroupOfElements;
-/** @typedef Definition d'un AllMeshEntities */
-typedef class WrapperMeshEntity< AllMeshEntitiesInstance > AllMeshEntities;
 
 #endif /* MESHENTITES_H_ */
