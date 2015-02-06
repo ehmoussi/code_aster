@@ -54,7 +54,7 @@ class ElementaryVectorInstance: public DataStructure
         /** @brief Booleen indiquant si la sd est vide */
         bool                   _isEmpty;
         /** @brief Champ de materiau a utiliser */
-        MaterialOnMesh         _material;
+        MaterialOnMeshPtr      _materialOnMesh;
         /** @brief Charges ajoutees aux vecteurs elementaires */
         std::list< MechanicalLoad > _listOfMechanicalLoad;
 
@@ -105,11 +105,11 @@ class ElementaryVectorInstance: public DataStructure
 
         /**
          * @brief Methode permettant de definir le champ de materiau
-         * @param currentMaterial objet MaterialOnMesh
+         * @param currentMaterial objet MaterialOnMeshPtr
          */
-        void setMaterialOnMesh( const MaterialOnMesh& currentMaterial )
+        void setMaterialOnMesh( const MaterialOnMeshPtr& currentMaterial )
         {
-            _material = currentMaterial;
+            _materialOnMesh = currentMaterial;
         };
 };
 

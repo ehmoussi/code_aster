@@ -20,7 +20,7 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-from code_aster.Mesh.Mesh cimport Mesh, MeshPtr
+from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
 
@@ -55,18 +55,14 @@ cdef class Model:
 
     def build( self ):
         """Build the model"""
+        instance = self.getInstance()
         syntax = CommandSyntax( "AFFE_MODELE" )
-        # self.getInstance().getType()
-        syntax.setResult( resultNaming.getResultObjectName(), "MODELE" )
-
-        instance = self._cptr.get()
-        print "ICI"
+        syntax.setResult( resultNaming.getResultObjectName(), instance.getType() )
         dictSyntax = instance.getCommandKeywords()
-        print dictSyntax
-
         syntax.define( dictSyntax )
-        instance.build()
+        iret = instance.build()
         syntax.free()
+        return iret
 
     def addModelingOnAllMesh( self, phys, mod ):
         """Add a modeling on all the mesh"""
@@ -89,3 +85,7 @@ cdef class Model:
         mesh = Mesh()
         mesh.set( self.getInstance().getSupportMesh() )
         return mesh
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
