@@ -35,8 +35,8 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
 
 ResultsContainer StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
-    ResultsContainer resultC( string( "EVOL_ELAS" ) );
-    string nameOfSD = resultC->getName();
+    ResultsContainer resultC( std::string( "EVOL_ELAS" ) );
+    std::string nameOfSD = resultC->getName();
 
     CommandSyntax syntaxeMecaStat( "MECA_STATIQUE", true,
                                    resultC->getName(), resultC->getType() );

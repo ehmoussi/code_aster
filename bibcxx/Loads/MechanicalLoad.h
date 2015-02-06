@@ -42,13 +42,14 @@ class MechanicalLoadInstance : public DataStructure
     private:
         /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+
         /** @typedef std::list de DoubleLoadDisplacement */
-        typedef list< DoubleLoadDisplacement > ListDoubleDisp;
+        typedef std::list< DoubleLoadDisplacement > ListDoubleDisp;
         /** @typedef ListDoubleDisp iterator*/
         typedef ListDoubleDisp::iterator ListDoubleDispIter;
 
         /** @typedef std::list of DoubleLoadPressure */
-        typedef list< DoubleLoadPressure > ListDoublePres;
+        typedef std::list< DoubleLoadPressure > ListDoublePres;
         /** @typedef ListDoubleTemp iterator*/
         typedef ListDoublePres::iterator ListDoublePresIter;
 
@@ -59,7 +60,7 @@ class MechanicalLoadInstance : public DataStructure
         ListDoublePres      _listOfDoubleImposedPipePressure;
 
         /** @brief Structure de données Aster */
-        const string           _jeveuxName;
+        const std::string      _jeveuxName;
         PCFieldOnMeshPtrDouble _kinematicLoad;
         PCFieldOnMeshPtrDouble _pressure;
         /** @brief Modele support */
@@ -79,7 +80,7 @@ class MechanicalLoadInstance : public DataStructure
          */
 
         bool setDisplacementOnElements(AsterCoordinates coordinate,
-                                       string nameOfGroup, double value) throw ( std::runtime_error )
+                                       std::string nameOfGroup, double value) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
@@ -103,7 +104,7 @@ class MechanicalLoadInstance : public DataStructure
          */
 
         bool setDisplacementOnNodes(AsterCoordinates coordinate,
-                                    string nameOfGroup, double value) throw ( std::runtime_error )
+                                    std::string nameOfGroup, double value) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
@@ -126,7 +127,7 @@ class MechanicalLoadInstance : public DataStructure
          * @param value imposed value
          * @return bool
          */
-        bool setPressureOnElements(double value, string nameOfGroup) throw ( std::runtime_error )
+        bool setPressureOnElements(double value, std::string nameOfGroup) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
@@ -149,7 +150,7 @@ class MechanicalLoadInstance : public DataStructure
          * @param value imposed value
          * @return bool
          */
-        bool setPressureOnNodes(double value, string nameOfGroup) throw ( std::runtime_error )
+        bool setPressureOnNodes(double value, std::string nameOfGroup) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
@@ -172,7 +173,7 @@ class MechanicalLoadInstance : public DataStructure
          * @param value imposed value
          * @return bool
          */
-        bool setDistributedPressureOnElements(double value, string nameOfGroup) throw ( std::runtime_error )
+        bool setDistributedPressureOnElements(double value, std::string nameOfGroup) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
@@ -195,7 +196,7 @@ class MechanicalLoadInstance : public DataStructure
         * @param value imposed value
         * @return bool
         */
-        bool setPipePressureOnElements( double value, string nameOfGroup ) throw ( std::runtime_error )
+        bool setPipePressureOnElements( double value, std::string nameOfGroup ) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )

@@ -32,9 +32,9 @@ MechanicalLoadInstance::MechanicalLoadInstance():
                                 DataStructure( getNewResultObjectName(), "CHAR_MECA" ),
                                 _jeveuxName( getName() ),
                                 _kinematicLoad( PCFieldOnMeshPtrDouble(
-                                    new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.CIMPO") ) ) ),
+                                    new PCFieldOnMeshInstanceDouble( _jeveuxName+".CHME.CIMPO" ) ) ),
                                 _pressure( PCFieldOnMeshPtrDouble(
-                                    new PCFieldOnMeshInstanceDouble( string(_jeveuxName+".CHME.PRESS") ) ) ),
+                                    new PCFieldOnMeshInstanceDouble( _jeveuxName+".CHME.PRESS" ) ) ),
                                 _supportModel( ModelPtr() )
 {};
 
@@ -50,7 +50,7 @@ bool MechanicalLoadInstance::build() throw ( std::runtime_error )
     if ( ! _supportModel )
         throw std::runtime_error( "Support model is undefined" );
     mCSModel.addValues(_supportModel->getName());
-    cout <<  "Nom du modele support: " << _supportModel->getName() << " . " << endl;
+    std::cout <<  "Nom du modele support: " << _supportModel->getName() << " . " << std::endl;
     syntaxeAffeCharMeca.addSimpleKeywordString(mCSModel);
 
 // Définition de mot clé facteur DDL_IMPO
@@ -85,7 +85,7 @@ bool MechanicalLoadInstance::build() throw ( std::runtime_error )
             }
             occurDDL_IMPO.addSimpleKeywordString(mCSGroup);
 
-            const string nomComp = curIter->getAsterCoordinateName();
+            const std::string nomComp = curIter->getAsterCoordinateName();
             SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
             // Ajout de la valeur donnee par l'utilisateur
             mCSComp.addValues( curIter->getValue() );
@@ -121,7 +121,7 @@ bool MechanicalLoadInstance::build() throw ( std::runtime_error )
             }
             occurDDL_IMPO.addSimpleKeywordString(mCSGroup);
 
-            const string nomComp = curIter->getAsterCoordinateName();
+            const std::string nomComp = curIter->getAsterCoordinateName();
             SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
             // Ajout de la valeur donnee par l'utilisateur
             mCSComp.addValues( curIter->getValue() );
@@ -166,7 +166,7 @@ bool MechanicalLoadInstance::build() throw ( std::runtime_error )
             }
             occurPRES_REP.addSimpleKeywordString(mCSGroup);
 
-            const string nomComp = curIter->getAsterCoordinateName();
+            const std::string nomComp = curIter->getAsterCoordinateName();
             SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
             // Ajout de la valeur donnee par l'utilisateur
             mCSComp.addValues( curIter->getValue() );
@@ -214,7 +214,7 @@ bool MechanicalLoadInstance::build() throw ( std::runtime_error )
             }
             occurFORCE_TUYAU.addSimpleKeywordString(mCSGroup);
 
-            const string nomComp = curIter->getAsterCoordinateName();
+            const std::string nomComp = curIter->getAsterCoordinateName();
             SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
             // Ajout de la valeur donnee par l'utilisateur
             mCSComp.addValues( curIter->getValue() );
@@ -230,7 +230,7 @@ bool MechanicalLoadInstance::build() throw ( std::runtime_error )
 
     }
    // Maintenant que le fichier de commande est pret, on appelle OP0007
-    cout << " Appel de execop" << endl;
+    std::cout << " Appel de execop" << std::endl;
     INTEGER op = 7;
     CALL_EXECOP( &op );
     return true;

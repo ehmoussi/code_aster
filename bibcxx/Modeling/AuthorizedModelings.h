@@ -31,8 +31,6 @@
 #include "Modeling/PhysicsAndModelings.h"
 #include <set>
 
-using namespace std;
-
 // Ces wrappers sont la pour autoriser que les set soitent const
 // Sinon, on aurait pas pu passer directement des const set<> en parametre template
 /**
@@ -41,7 +39,7 @@ using namespace std;
  */
 struct WrapMechanics
 {
-    static const set< Modelings > setOfModelings;
+    static const std::set< Modelings > setOfModelings;
 };
 
 /**
@@ -50,7 +48,7 @@ struct WrapMechanics
  */
 struct WrapThermal
 {
-    static const set< Modelings > setOfModelings;
+    static const std::set< Modelings > setOfModelings;
 };
 
 /**

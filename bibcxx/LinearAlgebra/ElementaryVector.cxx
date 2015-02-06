@@ -44,7 +44,7 @@ FieldOnNodesPtrDouble ElementaryVectorInstance::assembleVector( const DOFNumberi
     if ( currentNumerotation.isEmpty() || currentNumerotation->isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
 
-    const string newName( getNewResultObjectName() );
+    const std::string newName( getNewResultObjectName() );
     FieldOnNodesPtrDouble vectTmp( new FieldOnNodesInstanceDouble( newName ) );
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE

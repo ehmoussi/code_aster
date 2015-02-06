@@ -34,7 +34,7 @@ bool GeneralMaterialBehaviourInstance::build() throw ( std::runtime_error )
     _char16Values->allocate( "G", 2*nbOfMaterialProperties );
 
     int position = 0;
-    for ( list< string >::iterator curIter = _listOfNameOfMaterialProperties.begin();
+    for ( ListStringIter curIter = _listOfNameOfMaterialProperties.begin();
           curIter != _listOfNameOfMaterialProperties.end();
           ++curIter )
     {
@@ -44,7 +44,7 @@ bool GeneralMaterialBehaviourInstance::build() throw ( std::runtime_error )
         {
             (*_doubleValues)[position] = (*curIter2).second.getValue();
 
-            string nameOfProperty = (*curIter2).second.getName();
+            std::string nameOfProperty = (*curIter2).second.getName();
             nameOfProperty.resize( 16, ' ' );
             (*_char16Values)[position] = nameOfProperty.c_str();
         }

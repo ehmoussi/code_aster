@@ -46,7 +46,7 @@ class MaterialOnMeshInstance: public DataStructure
         /** @typedef Definition d'un pointeur intelligent sur un VirtualMeshEntity */
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
         /** @typedef std::list d'une std::pair de MeshEntityPtr */
-        typedef list< pair< Material, MeshEntityPtr > > listOfMatsAndGrps;
+        typedef std::list< std::pair< Material, MeshEntityPtr > > listOfMatsAndGrps;
         /** @typedef Definition de la valeur contenue dans un listOfMatsAndGrps */
         typedef listOfMatsAndGrps::value_type listOfMatsAndGrpsValue;
         /** @typedef Definition d'un iterateur sur listOfMatsAndGrps */
@@ -57,9 +57,9 @@ class MaterialOnMeshInstance: public DataStructure
         /** @brief Carte '.TEMPE_REF' */
         PCFieldOnMeshPtrDouble _listOfTemperatures;
         /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
-        listOfMatsAndGrps   _materialsOnMeshEntity;
+        listOfMatsAndGrps      _materialsOnMeshEntity;
         /** @brief Maillage sur lequel repose la sd_cham_mater */
-        MeshPtr             _supportMesh;
+        MeshPtr                _supportMesh;
 
     public:
         /**
@@ -82,7 +82,8 @@ class MaterialOnMeshInstance: public DataStructure
          * @param curMater Materiau a ajouter
          * @param nameOfGroup Nom du groupe de mailles
          */
-        void addMaterialOnGroupOfElements( Material& curMater, string nameOfGroup ) throw ( std::runtime_error )
+        void addMaterialOnGroupOfElements( Material& curMater,
+                                           std::string nameOfGroup ) throw ( std::runtime_error )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
             if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )

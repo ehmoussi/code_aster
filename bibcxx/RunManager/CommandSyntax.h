@@ -49,8 +49,6 @@ extern "C"
     void FreeStr( char * );
 }
 
-using namespace std;
-
 /**
  * @class template SimpleKeyWord
  * @brief Classe permettant d'emuler un mot cle simple dans une commande
@@ -60,14 +58,14 @@ template<class ValueType>
 class SimpleKeyWord
 {
     public:
-        typedef list< ValueType > listValue;
-        typename list< ValueType >::iterator listValueIterator;
-        typename list< ValueType >::value_type listValueValue;
+        typedef std::list< ValueType > listValue;
+        typename std::list< ValueType >::iterator listValueIterator;
+        typename std::list< ValueType >::value_type listValueValue;
 
     private:
-        string    _simpleKeyWordName;
-        bool      _isValueObject;
-        listValue _valuesList;
+        std::string    _simpleKeyWordName;
+        bool           _isValueObject;
+        listValue      _valuesList;
 
     public:
         /**
@@ -83,7 +81,7 @@ class SimpleKeyWord
          *   ex : pour le mot-cle simple MAILLAGE, nom sera egale a
          *        'MAILLAGE'
          */
-        SimpleKeyWord(string nom, bool concept = false): _simpleKeyWordName(nom),
+        SimpleKeyWord(std::string nom, bool concept = false): _simpleKeyWordName(nom),
                                                          _isValueObject(concept)
         {};
 
@@ -102,22 +100,22 @@ class SimpleKeyWord
             return _isValueObject;
         };
 
-        string& keywordName()
+        std::string& keywordName()
         {
             return _simpleKeyWordName;
         };
 
-        list< ValueType >& getListOfValues()
+        std::list< ValueType >& getListOfValues()
         {
             return _valuesList;
         };
 };
 
-typedef list< string > ListString;
-typedef list< double > ListDouble;
-typedef list< int > ListInteger;
+typedef std::list< std::string > ListString;
+typedef std::list< double > ListDouble;
+typedef std::list< int > ListInteger;
 
-typedef SimpleKeyWord< string > SimpleKeyWordStr;
+typedef SimpleKeyWord< std::string > SimpleKeyWordStr;
 typedef SimpleKeyWord< double > SimpleKeyWordDbl;
 typedef SimpleKeyWord< int > SimpleKeyWordInt;
 
@@ -129,18 +127,18 @@ typedef SimpleKeyWord< int > SimpleKeyWordInt;
 class FactorKeywordOccurence
 {
     private:
-        list< SimpleKeyWordStr > _listSimpleKeywordsStr;
-        list< SimpleKeyWordDbl > _listSimpleKeywordsDbl;
-        list< SimpleKeyWordInt > _listSimpleKeywordsInt;
-        set< string > _setKeywordNames;
+        std::list< SimpleKeyWordStr > _listSimpleKeywordsStr;
+        std::list< SimpleKeyWordDbl > _listSimpleKeywordsDbl;
+        std::list< SimpleKeyWordInt > _listSimpleKeywordsInt;
+        std::set< std::string >       _setKeywordNames;
 
     public:
         /**
          * @brief Constructeur
          */
-        FactorKeywordOccurence(): _listSimpleKeywordsStr( list< SimpleKeyWordStr >() ),
-                                  _listSimpleKeywordsDbl( list< SimpleKeyWordDbl >() ),
-                                  _listSimpleKeywordsInt( list< SimpleKeyWordInt >() )
+        FactorKeywordOccurence(): _listSimpleKeywordsStr( std::list< SimpleKeyWordStr >() ),
+                                  _listSimpleKeywordsDbl( std::list< SimpleKeyWordDbl >() ),
+                                  _listSimpleKeywordsInt( std::list< SimpleKeyWordInt >() )
         {};
 
         /**
@@ -176,31 +174,31 @@ class FactorKeywordOccurence
             _setKeywordNames.insert(motCleAAjouter.keywordName());
         };
 
-        list< SimpleKeyWordStr >& getStringKeywordList()
+        std::list< SimpleKeyWordStr >& getStringKeywordList()
         {
             return _listSimpleKeywordsStr;
         };
 
-        list< SimpleKeyWordDbl >& getDoubleKeywordList()
+        std::list< SimpleKeyWordDbl >& getDoubleKeywordList()
         {
             return _listSimpleKeywordsDbl;
         };
 
-        list< SimpleKeyWordInt >& getIntegerKeywordList()
+        std::list< SimpleKeyWordInt >& getIntegerKeywordList()
         {
             return _listSimpleKeywordsInt;
         };
 
-        bool isKeywordPresent(string motCle)
+        bool isKeywordPresent(std::string motCle)
         {
-            const set< string >::iterator retour = _setKeywordNames.find(motCle);
+            const std::set< std::string >::iterator retour = _setKeywordNames.find(motCle);
             if ( retour != _setKeywordNames.end() ) return true;
             return false;
         };
 
-        bool isKeywordPresentDbl(string motCle)
+        bool isKeywordPresentDbl(std::string motCle)
         {
-            list< SimpleKeyWordDbl >::iterator curIter;
+            std::list< SimpleKeyWordDbl >::iterator curIter;
             for ( curIter = _listSimpleKeywordsDbl.begin();
                   curIter != _listSimpleKeywordsDbl.end();
                   ++curIter )
@@ -210,9 +208,9 @@ class FactorKeywordOccurence
             return false;
         };
 
-        bool isKeywordPresentInt(string motCle)
+        bool isKeywordPresentInt(std::string motCle)
         {
-            list< SimpleKeyWordInt >::iterator curIter;
+            std::list< SimpleKeyWordInt >::iterator curIter;
             for ( curIter = _listSimpleKeywordsInt.begin();
                   curIter != _listSimpleKeywordsInt.end();
                   ++curIter )
@@ -222,9 +220,9 @@ class FactorKeywordOccurence
             return false;
         };
 
-        bool isKeywordPresentStr(string motCle)
+        bool isKeywordPresentStr(std::string motCle)
         {
-            list< SimpleKeyWordStr >::iterator curIter;
+            std::list< SimpleKeyWordStr >::iterator curIter;
             for ( curIter = _listSimpleKeywordsStr.begin();
                   curIter != _listSimpleKeywordsStr.end();
                   ++curIter )
@@ -234,9 +232,9 @@ class FactorKeywordOccurence
             return false;
         };
 
-        ListString& stringValuesInKeyword(string motCle) throw ( std::runtime_error )
+        ListString& stringValuesInKeyword(std::string motCle) throw ( std::runtime_error )
         {
-            list< SimpleKeyWordStr >::iterator curIter;
+            std::list< SimpleKeyWordStr >::iterator curIter;
             for ( curIter = _listSimpleKeywordsStr.begin();
                   curIter != _listSimpleKeywordsStr.end();
                   ++curIter )
@@ -248,9 +246,9 @@ class FactorKeywordOccurence
             return curIter->getListOfValues();
         };
 
-        ListDouble& doubleValuesInKeyword(string motCle) throw ( std::runtime_error )
+        ListDouble& doubleValuesInKeyword(std::string motCle) throw ( std::runtime_error )
         {
-            list< SimpleKeyWordDbl >::iterator curIter;
+            std::list< SimpleKeyWordDbl >::iterator curIter;
             for ( curIter = _listSimpleKeywordsDbl.begin();
                   curIter != _listSimpleKeywordsDbl.end();
                   ++curIter )
@@ -262,9 +260,9 @@ class FactorKeywordOccurence
             return curIter->getListOfValues();
         };
 
-        ListInteger& intValuesInKeyword(string motCle) throw ( std::runtime_error )
+        ListInteger& intValuesInKeyword(std::string motCle) throw ( std::runtime_error )
         {
-            list< SimpleKeyWordInt >::iterator curIter;
+            std::list< SimpleKeyWordInt >::iterator curIter;
             for ( curIter = _listSimpleKeywordsInt.begin();
                   curIter != _listSimpleKeywordsInt.end();
                   ++curIter )
@@ -285,9 +283,9 @@ class FactorKeywordOccurence
 class FactorKeyword
 {
     private:
-        const string _factorKeywordName;
-        vector< FactorKeywordOccurence > _vectorOccurences;
-        bool _repetition;
+        const std::string                     _factorKeywordName;
+        std::vector< FactorKeywordOccurence > _vectorOccurences;
+        bool                                  _repetition;
 
     public:
         /**
@@ -295,7 +293,7 @@ class FactorKeyword
          * @param nom Chaine de caractere contenant le nom du mot cle facteur
          * @param repet booleen precisant si le mot cle facteur est repetable
          */
-        FactorKeyword(string nom, bool repet = true): _factorKeywordName(nom), _repetition(repet)
+        FactorKeyword(std::string nom, bool repet = true): _factorKeywordName(nom), _repetition(repet)
         {};
 
         /**
@@ -314,10 +312,10 @@ class FactorKeyword
             return _vectorOccurences[numero];
         };
 
-        bool isKeywordPresent(string motCle)
+        bool isKeywordPresent(std::string motCle)
         {
             bool trouve = false;
-            vector< FactorKeywordOccurence >::iterator curIter = _vectorOccurences.begin();
+            std::vector< FactorKeywordOccurence >::iterator curIter = _vectorOccurences.begin();
             for ( curIter = _vectorOccurences.begin();
                   curIter!= _vectorOccurences.end();
                   ++curIter )
@@ -331,19 +329,19 @@ class FactorKeyword
             return trouve;
         };
 
-        bool isDoubleKeywordPresentInOccurence( string motCle, int num )
+        bool isDoubleKeywordPresentInOccurence( std::string motCle, int num )
         {
             if ( (unsigned int)num >= _vectorOccurences.size() ) return false;
             return _vectorOccurences[num].isKeywordPresentDbl( motCle );
         };
 
-        bool isIntegerKeywordPresentInOccurence( string motCle, int num )
+        bool isIntegerKeywordPresentInOccurence( std::string motCle, int num )
         {
             if ( (unsigned int)num >= _vectorOccurences.size() ) return false;
             return _vectorOccurences[num].isKeywordPresentInt( motCle );
         };
 
-        bool isStringKeywordPresentInOccurence( string motCle, int num )
+        bool isStringKeywordPresentInOccurence( std::string motCle, int num )
         {
             if ( (unsigned int)num >= _vectorOccurences.size() ) return false;
             return _vectorOccurences[num].isKeywordPresentStr( motCle );
@@ -360,22 +358,22 @@ class FactorKeyword
             return _vectorOccurences.size();
         };
 
-        const string& nom() const
+        const std::string& nom() const
         {
             return _factorKeywordName;
         };
 
-        ListString& stringValuesInKeyword(int occurence, string motCle)
+        ListString& stringValuesInKeyword(int occurence, std::string motCle)
         {
             return _vectorOccurences[occurence].stringValuesInKeyword(motCle);
         };
 
-        ListDouble& doubleValuesInKeyword(int occurence, string motCle)
+        ListDouble& doubleValuesInKeyword(int occurence, std::string motCle)
         {
             return _vectorOccurences[occurence].doubleValuesInKeyword(motCle);
         };
 
-        ListInteger& intValuesInKeyword(int occurence, string motCle)
+        ListInteger& intValuesInKeyword(int occurence, std::string motCle)
         {
             return _vectorOccurences[occurence].intValuesInKeyword(motCle);
         };
@@ -394,15 +392,15 @@ extern CommandSyntax* commandeCourante;
 class CommandSyntax
 {
     private:
-        typedef map< string, FactorKeyword > mapStrMCF;
-        typedef map< string, FactorKeyword >::iterator mapStrMCFIterator;
+        typedef std::map< std::string, FactorKeyword > mapStrMCF;
+        typedef std::map< std::string, FactorKeyword >::iterator mapStrMCFIterator;
         typedef mapStrMCF::value_type mapStrMCFValue;
 
-        const string _commandName;
-        mapStrMCF    _factorKeywordsMap;
-        bool         _isOperateur;
-        const string _nomObjetJeveux;
-        const string _typeSDAster;
+        const std::string _commandName;
+        mapStrMCF         _factorKeywordsMap;
+        bool              _isOperateur;
+        const std::string _nomObjetJeveux;
+        const std::string _typeSDAster;
 
     public:
         /**
@@ -414,8 +412,8 @@ class CommandSyntax
          * @param nomObjet Chaine precisant le nom Jeveux de la sd produite
          *                 ex : MA = LIRE_MAILAGE : nomObjet = "MA      "
          */
-        CommandSyntax(string nom, bool operateur,
-                      string nomObjet = "", string typeObjet = "") throw ( std::runtime_error ):
+        CommandSyntax(std::string nom, bool operateur,
+                      std::string nomObjet = "", std::string typeObjet = "") throw ( std::runtime_error ):
                                                                     _commandName( nom ),
                                                                     _isOperateur( operateur ),
                                                                     _nomObjetJeveux( nomObjet ),
@@ -423,8 +421,8 @@ class CommandSyntax
         {
             if ( commandeCourante != NULL )
                 throw std::runtime_error( "Two objects CommandSyntax are not allowed in the same time" );
-            _factorKeywordsMap.insert( mapStrMCFValue( string(""), FactorKeyword(" ", false) ) );
-            mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
+            _factorKeywordsMap.insert( mapStrMCFValue( std::string(""), FactorKeyword(" ", false) ) );
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(std::string(""));
             (*curIter).second.addOccurence(FactorKeywordOccurence());
             commandeCourante = this;
         };
@@ -434,14 +432,14 @@ class CommandSyntax
             commandeCourante = NULL;
         };
 
-        bool isFactorKeywordPresent(string keywordName)
+        bool isFactorKeywordPresent(std::string keywordName)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(keywordName);
             if ( curIter != _factorKeywordsMap.end() ) return true;
             return false;
         };
 
-        bool isFactorKeywordPresent(string keywordName, int num)
+        bool isFactorKeywordPresent(std::string keywordName, int num)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(keywordName);
             if ( curIter != _factorKeywordsMap.end() )
@@ -451,32 +449,32 @@ class CommandSyntax
             return false;
         };
 
-        bool isFactorKeywordPresentSimpleKeyWord(string mCFac, string mcSim)
+        bool isFactorKeywordPresentSimpleKeyWord(std::string mCFac, std::string mcSim)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             if ( curIter == _factorKeywordsMap.end() ) return false;
             return (*curIter).second.isKeywordPresent(mcSim);
         };
 
-        bool isDoubleKeywordPresentInOccurence( string mCFac, string motCle, int num )
+        bool isDoubleKeywordPresentInOccurence( std::string mCFac, std::string motCle, int num )
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             return (*curIter).second.isDoubleKeywordPresentInOccurence(motCle, num);
         };
 
-        bool isIntegerKeywordPresentInOccurence( string mCFac, string motCle, int num )
+        bool isIntegerKeywordPresentInOccurence( std::string mCFac, std::string motCle, int num )
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             return (*curIter).second.isIntegerKeywordPresentInOccurence(motCle, num);
         };
 
-        bool isStringKeywordPresentInOccurence( string mCFac, string motCle, int num )
+        bool isStringKeywordPresentInOccurence( std::string mCFac, std::string motCle, int num )
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             return (*curIter).second.isStringKeywordPresentInOccurence(motCle, num);
         };
 
-        FactorKeyword& getFactorKeyword(string keywordName)
+        FactorKeyword& getFactorKeyword(std::string keywordName)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(keywordName);
             return curIter->second;
@@ -499,7 +497,7 @@ class CommandSyntax
          */
         bool addSimpleKeywordDouble(const SimpleKeyWordDbl motCle)
         {
-            mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(std::string(""));
             (*curIter).second.getOccurence(0).addSimpleKeywordDouble(motCle);
             return true;
         };
@@ -510,7 +508,7 @@ class CommandSyntax
          */
         bool addSimpleKeywordInteger(const SimpleKeyWordInt motCle)
         {
-            mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(std::string(""));
             (*curIter).second.getOccurence(0).addSimpleKeywordInteger(motCle);
             return true;
         };
@@ -522,30 +520,30 @@ class CommandSyntax
          */
         bool addSimpleKeywordString(const SimpleKeyWordStr motCle)
         {
-            mapStrMCFIterator curIter = _factorKeywordsMap.find(string(""));
+            mapStrMCFIterator curIter = _factorKeywordsMap.find(std::string(""));
             (*curIter).second.getOccurence(0).addSimpleKeywordString(motCle);
             return true;
         };
 
-        ListString& stringValuesOfKeyword(string mCFac, int occurence, string mcSim)
+        ListString& stringValuesOfKeyword(std::string mCFac, int occurence, std::string mcSim)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             return (*curIter).second.stringValuesInKeyword(occurence, mcSim);
         };
 
-        ListDouble& doubleValuesOfKeyword(string mCFac, int occurence, string mcSim)
+        ListDouble& doubleValuesOfKeyword(std::string mCFac, int occurence, std::string mcSim)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             return (*curIter).second.doubleValuesInKeyword(occurence, mcSim);
         };
 
-        ListInteger& intValuesOfKeyword(string mCFac, int occurence, string mcSim)
+        ListInteger& intValuesOfKeyword(std::string mCFac, int occurence, std::string mcSim)
         {
             mapStrMCFIterator curIter = _factorKeywordsMap.find(mCFac);
             return (*curIter).second.intValuesInKeyword(occurence, mcSim);
         };
 
-        const string& commandName()
+        const std::string& commandName()
         {
             return _commandName;
         };
@@ -555,12 +553,12 @@ class CommandSyntax
             return _isOperateur;
         };
 
-        const string& getObjectName()
+        const std::string& getObjectName()
         {
             return _nomObjetJeveux;
         };
 
-        const string& getTypeObjetResu()
+        const std::string& getTypeObjetResu()
         {
             return _typeSDAster;
         };

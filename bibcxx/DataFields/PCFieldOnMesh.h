@@ -45,7 +45,7 @@ class PCFieldOnMeshInstance
 {
     private:
         /** @brief Nom Jeveux de la carte */
-        string                  _name;
+        std::string             _name;
         /** @brief Vecteur Jeveux '.NOMA' */
         JeveuxVectorChar8       _meshName;
         /** @brief Vecteur Jeveux '.DESC' */
@@ -64,13 +64,14 @@ class PCFieldOnMeshInstance
          * @brief Constructeur
          * @param name Nom Jeveux de la carte
          */
-        PCFieldOnMeshInstance( string name ): _name( name ),
-                                              _meshName( JeveuxVectorChar8( name+".NOMA" ) ),
-                                              _descriptor( JeveuxVectorLong( string( name+".DESC" ) ) ),
-                                              _nameOfLigrels( JeveuxVectorChar24( string( name+".NOLI") ) ),
-                                              _listOfMeshElements( JeveuxCollectionLong( string( name+".LIMA") ) ),
-                                              _valuesList( JeveuxVector<ValueType>( string( name+".VALE") ) ),
-                                              _supportMesh( MeshPtr() )
+        PCFieldOnMeshInstance( std::string name ):
+                                            _name( name ),
+                                            _meshName( JeveuxVectorChar8( name+".NOMA" ) ),
+                                            _descriptor( JeveuxVectorLong( name+".DESC" ) ),
+                                            _nameOfLigrels( JeveuxVectorChar24( name+".NOLI" ) ),
+                                            _listOfMeshElements( JeveuxCollectionLong( name+".LIMA" ) ),
+                                            _valuesList( JeveuxVector<ValueType>( name+".VALE" ) ),
+                                            _supportMesh( MeshPtr() )
         {
             assert(name.size() == 19);
         };

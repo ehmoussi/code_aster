@@ -65,27 +65,34 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
     private:
         /** @brief Nom Aster du type elementaire de propriete materielle */
         // ex : "NU" pour le coefficient de Poisson
-        string    _name;
+        std::string _name;
         /** @brief Description de parametre, ex : "Young's modulus" */
-        string    _description;
+        std::string _description;
         /** @brief Valeur du parametre (double, complex, ...) */
-        ValueType _value;
+        ValueType   _value;
 
     public:
+        /**
+         * @brief Constructeur vide (utile pour ajouter une MaterialPropertyInstance a une std::map
+         */
+        MaterialPropertyInstance()
+        {};
+
         /**
          * @brief Constructeur
          * @param name Nom Aster du parametre materiau (ex : "NU")
          * @param description Description libre
          */
-        MaterialPropertyInstance(string name, string description = ""): _name( name ),
-                                                                        _description( description )
+        MaterialPropertyInstance( std::string name,
+                                  std::string description = "" ): _name( name ),
+                                                                  _description( description )
         {};
 
         /**
          * @brief Recuperation de la valeur du parametre
          * @return le nom Aster du parametre
          */
-        const string& getName() const
+        const std::string& getName() const
         {
             return _name;
         };
@@ -103,7 +110,7 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
          * @brief Fonction servant a fixer la valeur du parametre
          * @param currentValue valeur donnee par l'utilisateur
          */
-        void setValue(ValueType& currentValue)
+        void setValue( ValueType& currentValue )
         {
             _value = currentValue;
         };
@@ -123,43 +130,47 @@ class GeneralMaterialBehaviourInstance
 {
     protected:
         /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyDouble */
-        typedef map< string, ElementaryMaterialPropertyDouble > mapStrEMPD;
+        typedef std::map< std::string, ElementaryMaterialPropertyDouble > mapStrEMPD;
         /** @typedef Iterateur sur mapStrEMPD */
         typedef mapStrEMPD::iterator mapStrEMPDIterator;
         /** @typedef Valeur contenue dans un mapStrEMPD */
         typedef mapStrEMPD::value_type mapStrEMPDValue;
 
         /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyComplex */
-        typedef map< string, ElementaryMaterialPropertyComplex > mapStrEMPC;
+        typedef std::map< std::string, ElementaryMaterialPropertyComplex > mapStrEMPC;
         /** @typedef Iterateur sur mapStrEMPC */
         typedef mapStrEMPC::iterator mapStrEMPCIterator;
         /** @typedef Valeur contenue dans un mapStrEMPC */
         typedef mapStrEMPC::value_type mapStrEMPCValue;
 
+        /** @typedef std::list< std::string > */
+        typedef std::list< std::string > ListString;
+        typedef ListString::iterator ListStringIter;
+
         friend class MaterialInstance;
         /** @brief Chaine correspondant au nom Aster du MaterialBehaviourInstance */
         // ex : ELAS ou ELAS_FO
-        string              _asterName;
+        std::string              _asterName;
         /** @brief Vector Jeveux 'CPT.XXXXXX.VALC' */
-        JeveuxVectorComplex _complexValues;
+        JeveuxVectorComplex      _complexValues;
         /** @brief Vector Jeveux 'CPT.XXXXXX.VALR' */
-        JeveuxVectorDouble  _doubleValues;
+        JeveuxVectorDouble       _doubleValues;
         /** @brief Vector Jeveux 'CPT.XXXXXX.VALK' */
-        JeveuxVectorChar16  _char16Values;
+        JeveuxVectorChar16       _char16Values;
         /** @brief Map contenant les noms des proprietes double ainsi que les
                    MaterialPropertyInstance correspondant */
-        mapStrEMPD          _mapOfDoubleMaterialProperties;
+        mapStrEMPD               _mapOfDoubleMaterialProperties;
         /** @brief Map contenant les noms des proprietes complex ainsi que les
                    MaterialPropertyInstance correspondant */
-        mapStrEMPC          _mapOfComplexMaterialProperties;
+        mapStrEMPC               _mapOfComplexMaterialProperties;
         /** @brief Liste contenant tous les noms des parametres materiau */
-        list< string >      _listOfNameOfMaterialProperties;
+        ListString _listOfNameOfMaterialProperties;
 
     public:
         /**
          * @brief Constructeur
          */
-        GeneralMaterialBehaviourInstance(): _asterName( string( " " ) ),
+        GeneralMaterialBehaviourInstance(): _asterName( " " ),
                                             _complexValues( JeveuxVectorComplex("") ),
                                             _doubleValues( JeveuxVectorDouble("") ),
                                             _char16Values( JeveuxVectorChar16("") )
@@ -170,7 +181,7 @@ class GeneralMaterialBehaviourInstance
          *        ex : 'ELAS', 'ELAS_FO', ...
          * @return Chaine contenant le nom Aster
          */
-        const string getAsterName() const
+        const std::string getAsterName() const
         {
             return _asterName;
         };
@@ -181,7 +192,7 @@ class GeneralMaterialBehaviourInstance
          * @param value Double correspondant a la valeur donnee par l'utilisateur
          * @return Booleen valant true si la tache s'est bien deroulee
          */
-        bool setDoubleValue( string nameOfProperty, double value )
+        bool setDoubleValue( std::string nameOfProperty, double value )
         {
             // Recherche de la propriete materielle
             mapStrEMPDIterator curIter = _mapOfDoubleMaterialProperties.find(nameOfProperty);
@@ -197,7 +208,7 @@ class GeneralMaterialBehaviourInstance
          * @param value Complex correspondant a la valeur donnee par l'utilisateur
          * @return Booleen valant true si la tache s'est bien deroulee
          */
-        bool setComplexValue( string nameOfProperty, double complex value )
+        bool setComplexValue( std::string nameOfProperty, double complex value )
         {
             // Recherche de la propriete materielle
             mapStrEMPCIterator curIter = _mapOfComplexMaterialProperties.find(nameOfProperty);
@@ -218,11 +229,19 @@ class GeneralMaterialBehaviourInstance
          * @brief Modification a posteriori des objets Jeveux ".VALC", ...
          * @param name Nom des objets Jeveux contenus dans la classe
          */
-        void setJeveuxObjectNames( const string name )
+        void setJeveuxObjectNames( const std::string name )
         {
             _complexValues = JeveuxVectorComplex( name + ".VALC" );
             _doubleValues = JeveuxVectorDouble( name + ".VALR" );
             _char16Values = JeveuxVectorChar16( name + ".VALK" );
+        };
+
+    protected:
+        bool addDoubleProperty( std::string key, ElementaryMaterialPropertyDouble value )
+        {
+            _mapOfDoubleMaterialProperties[ key ] = value;
+            _listOfNameOfMaterialProperties.push_back( key );
+            return true;
         };
 };
 
@@ -243,13 +262,8 @@ class ElasticMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             _asterName = "ELAS";
 
             // Deux parametres E et Nu
-            ElementaryMaterialPropertyDouble firstElt("E", "Young Modulus");
-            _mapOfDoubleMaterialProperties.insert( mapStrEMPDValue ( string("E"), firstElt ) );
-            _listOfNameOfMaterialProperties.push_back("E");
-
-            ElementaryMaterialPropertyDouble secondElt("NU", "Poisson's ratio");
-            _mapOfDoubleMaterialProperties.insert( mapStrEMPDValue ( string("Nu"), secondElt ) );
-            _listOfNameOfMaterialProperties.push_back("Nu");
+            this->addDoubleProperty( "E", ElementaryMaterialPropertyDouble( "E", "Young Modulus" ) );
+            this->addDoubleProperty( "Nu", ElementaryMaterialPropertyDouble( "NU", "Poisson's ratio" ) );
         };
 };
 

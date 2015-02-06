@@ -33,8 +33,11 @@ const AsterCoordinates TempCoordinates[nbThermalCoordinates] = { Temperature, Mi
 
 const AsterCoordinates PresCoordinates[nbPressureCoordinates] = { Pressure };
 
-const set< AsterCoordinates >WrapDepl::setOfCoordinates( DeplCoordinates, DeplCoordinates + nbDisplacementCoordinates );
+const std::set< AsterCoordinates >WrapDepl::setOfCoordinates( DeplCoordinates,
+                                                              DeplCoordinates + nbDisplacementCoordinates );
 
-const set< AsterCoordinates >WrapTemp::setOfCoordinates( TempCoordinates, TempCoordinates + nbThermalCoordinates );
+const std::set< AsterCoordinates >WrapTemp::setOfCoordinates( TempCoordinates,
+                                                              TempCoordinates + nbThermalCoordinates );
 
-const set< AsterCoordinates >WrapPres::setOfCoordinates( PresCoordinates, PresCoordinates + nbPressureCoordinates );
+const std::set< AsterCoordinates >WrapPres::setOfCoordinates( PresCoordinates,
+                                                              PresCoordinates + nbPressureCoordinates );

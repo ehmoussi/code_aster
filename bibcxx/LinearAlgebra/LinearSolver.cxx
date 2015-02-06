@@ -28,25 +28,26 @@
 #include "LinearAlgebra/LinearSolver.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 
-const set< Renumbering > WrapMultFront::setOfAllowedRenumbering( MultFrontRenumbering,
+const std::set< Renumbering > WrapMultFront::setOfAllowedRenumbering( MultFrontRenumbering,
                                                                  MultFrontRenumbering + nbRenumberingMultFront );
 
-const set< Renumbering > WrapLdlt::setOfAllowedRenumbering( LdltRenumbering,
+const std::set< Renumbering > WrapLdlt::setOfAllowedRenumbering( LdltRenumbering,
                                                             LdltRenumbering + nbRenumberingLdlt );
 
-const set< Renumbering > WrapMumps::setOfAllowedRenumbering( MumpsRenumbering,
+const std::set< Renumbering > WrapMumps::setOfAllowedRenumbering( MumpsRenumbering,
                                                              MumpsRenumbering + nbRenumberingMumps );
 
-const set< Renumbering > WrapPetsc::setOfAllowedRenumbering( PetscRenumbering,
+const std::set< Renumbering > WrapPetsc::setOfAllowedRenumbering( PetscRenumbering,
                                                              PetscRenumbering + nbRenumberingPetsc );
 
-const set< Renumbering > WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering,
+const std::set< Renumbering > WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering,
                                                             GcpcRenumbering + nbRenumberingGcpc );
 
-FieldOnNodesPtrDouble LinearSolverInstance::solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
-                                                                  const FieldOnNodesPtrDouble& currentRHS ) const
+FieldOnNodesPtrDouble LinearSolverInstance::solveDoubleLinearSystem(
+            const AssemblyMatrixDouble& currentMatrix,
+            const FieldOnNodesPtrDouble& currentRHS ) const
 {
-    const string newName( getNewResultObjectName() );
+    const std::string newName( getNewResultObjectName() );
     FieldOnNodesPtrDouble returnField( new FieldOnNodesInstanceDouble( newName ) );
 
     // Definition du bout de fichier de commande correspondant a RESOUDRE

@@ -56,7 +56,7 @@ class FieldOnNodesInstance: public DataStructure
          * @brief Constructeur
          * @param name Nom Jeveux du champ aux noeuds
          */
-        FieldOnNodesInstance( string name ):
+        FieldOnNodesInstance( std::string name ):
                         DataStructure( name, "CHAM_NO" ),
                         _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                         _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
