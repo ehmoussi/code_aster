@@ -56,7 +56,7 @@ class ResultsContainerInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        ResultsContainerInstance( const string resuTyp = "???" ):
+        ResultsContainerInstance( const std::string resuTyp = "???" ):
                 DataStructure( getNewResultObjectName(), resuTyp ),
                 _symbolicNamesOfFields( JeveuxBidirectionalMap( getName() + "           .DESC" ) ),
                 _namesOfFields( JeveuxCollectionChar24( getName() + "           .TACH" ) ),
@@ -86,7 +86,7 @@ class ResultsContainer
                 _meshPtr = ResultsContainerPtr( new ResultsContainerInstance() );
         };
 
-        ResultsContainer( const string resuTyp ): _meshPtr()
+        ResultsContainer( const std::string resuTyp ): _meshPtr()
         {
             _meshPtr = ResultsContainerPtr( new ResultsContainerInstance( resuTyp ) );
         };

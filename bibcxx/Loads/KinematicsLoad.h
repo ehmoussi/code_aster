@@ -25,6 +25,8 @@
  */
 
 #include <stdexcept>
+#include <list>
+#include <string>
 #include "astercxx.h"
 #include "Modeling/Model.h"
 #include "Loads/UnitaryLoad.h"
@@ -41,12 +43,12 @@ class KinematicsLoadInstance: public DataStructure
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
         /** @typedef std::list de DoubleLoadDisplacement */
-        typedef list< DoubleLoadDisplacement > ListDoubleDisp;
+        typedef std::list< DoubleLoadDisplacement > ListDoubleDisp;
         /** @typedef Iterateur sur ListDoubleDisp */
         typedef ListDoubleDisp::iterator ListDoubleDispIter;
 
         /** @typedef std::list de DoubleLoadTemperature */
-        typedef list< DoubleLoadTemperature > ListDoubleTemp;
+        typedef std::list< DoubleLoadTemperature > ListDoubleTemp;
         /** @typedef Iterateur sur ListDoubleTemp */
         typedef ListDoubleTemp::iterator ListDoubleTempIter;
 
@@ -68,7 +70,8 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedAcousticDOFOnElements( string nameOfGroup, double value ) throw ( std::runtime_error )
+        bool addImposedAcousticDOFOnElements( std::string nameOfGroup,
+                                              double value ) throw ( std::runtime_error )
         {
             throw std::runtime_error( "Not yet implemented" );
         };
@@ -79,7 +82,8 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedAcousticDOFOnNodes( string nameOfGroup, double value ) throw ( std::runtime_error )
+        bool addImposedAcousticDOFOnNodes( std::string nameOfGroup,
+                                           double value ) throw ( std::runtime_error )
         {
             throw std::runtime_error( "Not yet implemented" );
         };
@@ -90,8 +94,8 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedMechanicalDOFOnElements( AsterCoordinates coordinate,
-                                                double value, string nameOfGroup ) throw ( std::runtime_error )
+        bool addImposedMechanicalDOFOnElements( AsterCoordinates coordinate, double value,
+                                                std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
@@ -112,8 +116,8 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedMechanicalDOFOnNodes( AsterCoordinates coordinate,
-                                             double value, string nameOfGroup ) throw ( std::runtime_error )
+        bool addImposedMechanicalDOFOnNodes( AsterCoordinates coordinate, double value,
+                                             std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
@@ -134,8 +138,8 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedThermalDOFOnElements( AsterCoordinates coordinate,
-                                             double value, string nameOfGroup ) throw ( std::runtime_error )
+        bool addImposedThermalDOFOnElements( AsterCoordinates coordinate, double value,
+                                             std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
@@ -156,8 +160,8 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedThermalDOFOnNodes( AsterCoordinates coordinate,
-                                          double value, string nameOfGroup ) throw ( std::runtime_error )
+        bool addImposedThermalDOFOnNodes( AsterCoordinates coordinate, double value,
+                                          std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides

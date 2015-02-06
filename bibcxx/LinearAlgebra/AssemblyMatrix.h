@@ -27,6 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <stdexcept>
+#include <list>
 
 #include "astercxx.h"
 #include "aster_fort.h"
@@ -50,7 +51,7 @@ class AssemblyMatrixInstance: public DataStructure
 {
     private:
         /** @typedef std::list de KinematicsLoad */
-        typedef list< KinematicsLoadPtr > ListKinematicsLoad;
+        typedef std::list< KinematicsLoadPtr > ListKinematicsLoad;
         /** @typedef Iterateur sur une std::list de KinematicsLoad */
         typedef ListKinematicsLoad::iterator ListKinematicsLoadIter;
 

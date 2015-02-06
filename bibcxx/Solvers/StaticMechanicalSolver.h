@@ -38,11 +38,11 @@ class StaticMechanicalSolverInstance: public GenericSolver
 {
     private:
         /** @typedef std::list de MechanicalLoad */
-        typedef list< MechanicalLoad > ListMecaLoad;
+        typedef std::list< MechanicalLoad > ListMecaLoad;
         /** @typedef Iterateur sur une std::list de MechanicalLoad */
         typedef ListMecaLoad::iterator ListMecaLoadIter;
         /** @typedef std::list de KinematicsLoad */
-        typedef list< KinematicsLoadPtr > ListKineLoad;
+        typedef std::list< KinematicsLoadPtr > ListKineLoad;
         /** @typedef Iterateur sur une std::list de KinematicsLoad */
         typedef ListKineLoad::iterator ListKineLoadIter;
 

@@ -49,7 +49,7 @@ char* getTypeObjetResu()
 
 char* getSDType(char* nom)
 {
-    mapStrSDIterator curIter = mapNameDataStructure.find( string( nom, 0, 8 ) );
+    mapStrSDIterator curIter = mapNameDataStructure.find( std::string( nom, 0, 8 ) );
     if ( curIter == mapNameDataStructure.end() )
         throw std::runtime_error( "Problem !!!" );
     return const_cast< char* >( curIter->second->getType().c_str() );
@@ -73,16 +73,16 @@ int listeMotCleSimpleFromMotCleFacteur(char* motCleFacteur, int occurence,
     FactorKeyword curFK = commandeCourante->getFactorKeyword( motCleFacteur );
     FactorKeywordOccurence curOccur = curFK.getOccurence( occurence );
 
-    list< SimpleKeyWordStr > listeMCChaines = curOccur.getStringKeywordList();
-    list< SimpleKeyWordDbl > listeMCDoubles = curOccur.getDoubleKeywordList();
-    list< SimpleKeyWordInt > listeMCEntiers = curOccur.getIntegerKeywordList();
+    std::list< SimpleKeyWordStr > listeMCChaines = curOccur.getStringKeywordList();
+    std::list< SimpleKeyWordDbl > listeMCDoubles = curOccur.getDoubleKeywordList();
+    std::list< SimpleKeyWordInt > listeMCEntiers = curOccur.getIntegerKeywordList();
 
     *nbMotsCles = listeMCChaines.size() + listeMCDoubles.size() + listeMCEntiers.size();
     *motsClesSimples = (char**)malloc( sizeof(char*)*(*nbMotsCles) );
     *typeMotsCles = (char**)malloc( sizeof(char*)*(*nbMotsCles) );
 
     int compteur = 0;
-    for ( list< SimpleKeyWordStr >::iterator curIter = listeMCChaines.begin();
+    for ( std::list< SimpleKeyWordStr >::iterator curIter = listeMCChaines.begin();
           curIter != listeMCChaines.end();
           ++curIter )
     {
@@ -103,7 +103,7 @@ int listeMotCleSimpleFromMotCleFacteur(char* motCleFacteur, int occurence,
         ++compteur;
     }
 
-    for ( list< SimpleKeyWordDbl >::iterator curIter = listeMCDoubles.begin();
+    for ( std::list< SimpleKeyWordDbl >::iterator curIter = listeMCDoubles.begin();
           curIter != listeMCDoubles.end();
           ++curIter )
     {
@@ -124,7 +124,7 @@ int listeMotCleSimpleFromMotCleFacteur(char* motCleFacteur, int occurence,
         ++compteur;
     }
 
-    for ( list< SimpleKeyWordInt >::iterator curIter = listeMCEntiers.begin();
+    for ( std::list< SimpleKeyWordInt >::iterator curIter = listeMCEntiers.begin();
           curIter != listeMCEntiers.end();
           ++curIter )
     {
@@ -150,9 +150,9 @@ int listeMotCleSimpleFromMotCleFacteur(char* motCleFacteur, int occurence,
 int nombreOccurencesMotCleFacteur(char* motCle)
 {
     if ( commandeCourante == NULL ) return false;
-    bool retour = commandeCourante->isFactorKeywordPresent( string(motCle) );
+    bool retour = commandeCourante->isFactorKeywordPresent( std::string(motCle) );
     if ( not retour ) return 0;
-    FactorKeyword retour2 = commandeCourante->getFactorKeyword( string(motCle) );
+    FactorKeyword retour2 = commandeCourante->getFactorKeyword( std::string(motCle) );
     int nbOccur = retour2.numberOfOccurences();
     return nbOccur;
 };
@@ -160,7 +160,8 @@ int nombreOccurencesMotCleFacteur(char* motCle)
 int presenceMotCle(char* motCleFacteur, char* motCleSimple)
 {
     if ( commandeCourante == NULL ) return false;
-    bool retour = commandeCourante->isFactorKeywordPresentSimpleKeyWord( string(motCleFacteur), string(motCleSimple) );
+    bool retour = commandeCourante->isFactorKeywordPresentSimpleKeyWord( std::string(motCleFacteur),
+                                                                         std::string(motCleSimple) );
     if ( retour ) return 1;
     return 0;
 };
@@ -168,7 +169,7 @@ int presenceMotCle(char* motCleFacteur, char* motCleSimple)
 int presenceMotCleFacteur(char* motCle)
 {
     if ( commandeCourante == NULL ) return false;
-    bool retour = commandeCourante->isFactorKeywordPresent( string(motCle) );
+    bool retour = commandeCourante->isFactorKeywordPresent( std::string(motCle) );
     if ( retour ) return 1;
     return 0;
 };
@@ -185,7 +186,8 @@ char** valeursMotCleChaine(char* motCleFacteur, int occurence, char* motCleSimpl
         return NULL;
     }
 
-    ListString& retour = commandeCourante->stringValuesOfKeyword(string(motCleFacteur), occBis, string(motCleSimple));
+    ListString& retour = commandeCourante->stringValuesOfKeyword( std::string(motCleFacteur), occBis,
+                                                                  std::string(motCleSimple) );
     *taille = retour.size();
     if ( *taille == 0 ) return NULL;
 
@@ -243,7 +245,8 @@ int* valeursMotCleInt(char* motCleFacteur, int occurence, char* motCleSimple, in
         return NULL;
     }
 
-    ListInteger& retour = commandeCourante->intValuesOfKeyword(string(motCleFacteur), occBis, string(motCleSimple));
+    ListInteger& retour = commandeCourante->intValuesOfKeyword( std::string(motCleFacteur), occBis,
+                                                                std::string(motCleSimple) );
     *taille = retour.size();
     if ( *taille == 0 ) return NULL;
 

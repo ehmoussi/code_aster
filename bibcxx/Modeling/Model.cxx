@@ -58,13 +58,13 @@ bool ModelInstance::build() throw ( std::runtime_error )
     return true;
 };
 
-PyObject* ModelInstance::getCommandKeywords()
+PyObject* ModelInstance::getCommandKeywords() throw ( std::runtime_error )
 {
     SyntaxMapContainer dict;
 
     dict.container["VERI_JACOBIEN"] = "OUI";
     if ( ! _supportMesh )
-        throw string("Support mesh is undefined");
+        throw std::runtime_error("Support mesh is undefined");
     dict.container["MAILLAGE"] = _supportMesh->getName();
 
     ListSyntaxMapContainer listeAFFE;

@@ -39,8 +39,6 @@
 #include <list>
 #include <map>
 
-using namespace std;
-
 /**
  * @class JeveuxCollectionObject
  * @brief Cette classe template permet de definir un objet de collection Jeveux
@@ -51,13 +49,13 @@ class JeveuxCollectionObject: private AllowedJeveuxType< ValueType >
 {
     private:
         /** @brief Nom Jeveux de la collection */
-        string     _collectionName;
+        std::string _collectionName;
         /** @brief Position dans la collection */
-        int        _numberInCollection;
+        int         _numberInCollection;
         /** @brief Nom de l'objet de collection */
-        string     _nameOfObject;
+        std::string _nameOfObject;
         /** @brief Pointeur vers le vecteur Jeveux */
-        ValueType* _valuePtr;
+        ValueType*  _valuePtr;
 
     public:
         /**
@@ -66,11 +64,11 @@ class JeveuxCollectionObject: private AllowedJeveuxType< ValueType >
          * @param number Numero de l'objet dans la collection
          * @param ptr Pointeur vers le vecteur Jeveux
          */
-        JeveuxCollectionObject(string collectionName, int number,
-                               ValueType* ptr = NULL): _collectionName(collectionName),
-                                                       _numberInCollection(number),
-                                                       _nameOfObject(""),
-                                                       _valuePtr(ptr)
+        JeveuxCollectionObject( std::string collectionName, int number,
+                                ValueType* ptr = NULL ): _collectionName(collectionName),
+                                                         _numberInCollection(number),
+                                                         _nameOfObject(""),
+                                                         _valuePtr(ptr)
         {};
 
         /**
@@ -80,11 +78,11 @@ class JeveuxCollectionObject: private AllowedJeveuxType< ValueType >
          * @param objectName Nom de l'objet de collection
          * @param ptr Pointeur vers le vecteur Jeveux
          */
-        JeveuxCollectionObject(string collectionName, int number, string objectName,
-                               ValueType* ptr = NULL): _collectionName(collectionName),
-                                                       _numberInCollection(number),
-                                                       _nameOfObject(objectName),
-                                                       _valuePtr(ptr)
+        JeveuxCollectionObject( std::string collectionName, int number, std::string objectName,
+                                ValueType* ptr = NULL ): _collectionName(collectionName),
+                                                         _numberInCollection(number),
+                                                         _nameOfObject(objectName),
+                                                         _valuePtr(ptr)
         {};
 };
 
@@ -100,19 +98,19 @@ class JeveuxCollectionInstance
         /** @brief Definition d'un objet de collection du type ValueType */
         typedef JeveuxCollectionObject< ValueType > JeveuxCollObjValType;
         /** @brief std::map associant une chaine a un JeveuxCollObjValType */
-        typedef map< string, JeveuxCollObjValType > mapStrCollectionObject;
+        typedef std::map< std::string, JeveuxCollObjValType > mapStrCollectionObject;
 
         /** @brief Nom de la collection */
-        string                                    _name;
+        std::string                                    _name;
         /** @brief Listes de objets de collection */
-        list< JeveuxCollectionObject<ValueType> > _listObjects;
+        std::list< JeveuxCollectionObject<ValueType> > _listObjects;
 
     public:
         /**
          * @brief Constructeur
          * @param name Chaine representant le nom de la collection
          */
-        JeveuxCollectionInstance(string name): _name(name)
+        JeveuxCollectionInstance( std::string name ): _name( name )
         {};
 
         /**
@@ -127,7 +125,7 @@ class JeveuxCollectionInstance
          * @param name Chaine contenant le nom de l'objet
          * @return Renvoit true si l'objet existe dans la collection
          */
-        bool existsObject(string name);
+        bool existsObject( std::string name );
 };
 
 template< class ValueType >
@@ -145,7 +143,7 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
 
     param = "ACCES ";
     CALL_JELIRA( charName, param.c_str(), &valTmp, charval );
-    string resu = string( charval, 2 );
+    std::string resu( charval, 2 );
     FreeStr( charval );
 
     bool named = false;
@@ -173,7 +171,7 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
 };
 
 template< class ValueType >
-bool JeveuxCollectionInstance< ValueType >::existsObject( string name )
+bool JeveuxCollectionInstance< ValueType >::existsObject( std::string name )
 {
     const char* collName = _name.c_str();
     char* charJeveuxName = MakeBlankFStr(32);
@@ -199,7 +197,7 @@ class JeveuxCollection
         JeveuxCollectionTypePtr _jeveuxCollectionPtr;
 
     public:
-        JeveuxCollection( string nom ):
+        JeveuxCollection( std::string nom ):
                 _jeveuxCollectionPtr( new JeveuxCollectionInstance< ValueType > (nom) )
         {};
 

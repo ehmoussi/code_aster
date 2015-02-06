@@ -48,7 +48,7 @@ class ModelInstance: public DataStructure
         /** @brief Pointeur intelligent vers un VirtualMeshEntity */
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
         /** @brief std::list de std::pair de ElementaryModeling et MeshEntityPtr */
-        typedef vector< pair< ElementaryModeling, MeshEntityPtr > > listOfModsAndGrps;
+        typedef std::vector< std::pair< ElementaryModeling, MeshEntityPtr > > listOfModsAndGrps;
         /** @brief Valeur contenue dans listOfModsAndGrps */
         typedef listOfModsAndGrps::value_type listOfModsAndGrpsValue;
         /** @brief Iterateur sur un listOfModsAndGrps */
@@ -90,7 +90,8 @@ class ModelInstance: public DataStructure
          * @param mod Modelisation a ajouter
          * @param nameOfGroup Nom du groupe de mailles
          */
-        void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup ) throw ( std::runtime_error )
+        void addModelingOnGroupOfElements( Physics phys, Modelings mod,
+                                           std::string nameOfGroup ) throw ( std::runtime_error )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
             if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
@@ -106,7 +107,8 @@ class ModelInstance: public DataStructure
          * @param mod Modelisation a ajouter
          * @param nameOfGroup Nom du groupe de noeuds
          */
-        void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup ) throw ( std::runtime_error )
+        void addModelingOnGroupOfNodes( Physics phys, Modelings mod,
+                                        std::string nameOfGroup ) throw ( std::runtime_error )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
             if ( ! _supportMesh->hasGroupOfNodes( nameOfGroup ) )
@@ -126,7 +128,7 @@ class ModelInstance: public DataStructure
          * @brief 
          * @return 
          */
-        PyObject* getCommandKeywords();
+        PyObject* getCommandKeywords() throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant de savoir si le modele est vide

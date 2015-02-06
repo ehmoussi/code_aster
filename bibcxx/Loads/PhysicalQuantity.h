@@ -26,9 +26,6 @@
 
 #include <list>
 #include <set>
-#include <string>
-
-using namespace std;
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -81,7 +78,7 @@ extern const AsterCoordinates PresCoordinates[nbPressureCoordinates];
 struct WrapDepl
 {
     /** @brief Coordonnees autorisees pour DEPL */
-    static const set< AsterCoordinates > setOfCoordinates;
+    static const std::set< AsterCoordinates > setOfCoordinates;
 };
 
 /**
@@ -91,7 +88,7 @@ struct WrapDepl
 struct WrapTemp
 {
     /** @brief Coordonnees autorisees pour TEMP */
-    static const set< AsterCoordinates > setOfCoordinates;
+    static const std::set< AsterCoordinates > setOfCoordinates;
 };
 
 /**
@@ -101,7 +98,7 @@ struct WrapTemp
 struct WrapPres
 {
     /** @brief Coordonnees autorisees pour PRESSION */
-    static const set< AsterCoordinates > setOfCoordinates;
+    static const std::set< AsterCoordinates > setOfCoordinates;
 };
 
 /**
@@ -124,7 +121,7 @@ struct PhysicalQuantity
     {
         if ( Wrapping::setOfCoordinates.find( test ) == Wrapping::setOfCoordinates.end() ) return false;
         return true;
-    }
+    };
 };
 
 /** @typedef Definition de DEPL_R */

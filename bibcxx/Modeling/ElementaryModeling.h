@@ -31,8 +31,6 @@
 #include "Modeling/AuthorizedModelings.h"
 #include <string>
 
-using namespace std;
-
 /**
  * @class ElementaryModellisation
  * @brief Element de base d'un modele, c'est une paire PHYSIQUE, MODELISATION
@@ -59,7 +57,8 @@ class ElementaryModeling
             bool retour = PhysicsChecker::isAllowedModelingForPhysics( phys, mod );
             if ( ! retour )
             {
-                string error( string( PhysicNames[_physic] ) + " with " + string ( ModelingNames[_modelisation] ) + " not allowed" );
+                std::string error( std::string( PhysicNames[_physic] ) + " with " +
+                                   std::string ( ModelingNames[_modelisation] ) + " not allowed" );
                 throw std::runtime_error( error );
             }
         };
@@ -68,7 +67,7 @@ class ElementaryModeling
          * @brief Recuperation de la chaine modelisation
          * @return chaine de caracteres
          */
-        const string getModeling() const
+        const std::string getModeling() const
         {
             return ModelingNames[_modelisation];
         };
@@ -77,7 +76,7 @@ class ElementaryModeling
          * @brief Recuperation de la chaine physics
          * @return chaine de caracteres
          */
-        const string getPhysic() const
+        const std::string getPhysic() const
         {
             return PhysicNames[_physic];
         };

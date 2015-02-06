@@ -43,7 +43,7 @@ class MeshInstance: public DataStructure
 {
     private:
         /** @brief Nom Jeveux du maillage */
-        const string           _jeveuxName;
+        const std::string      _jeveuxName;
         /** @brief Objet Jeveux '.DIME' */
         JeveuxVectorLong       _dimensionInformations;
         /** @brief Pointeur de nom Jeveux '.NOMNOE' */
@@ -92,7 +92,7 @@ class MeshInstance: public DataStructure
          * @brief Teste l'existence d'un groupe de mailles dans le maillage
          * @return true si le groupe existe
          */
-        bool hasGroupOfElements( string name ) const
+        bool hasGroupOfElements( std::string name ) const
         {
             return _groupsOfElements->existsObject(name) ;
         };
@@ -101,7 +101,7 @@ class MeshInstance: public DataStructure
          * @brief Teste l'existence d'un groupe de noeuds dans le maillage
          * @return true si le groupe existe
          */
-        bool hasGroupOfNodes( string name ) const
+        bool hasGroupOfNodes( std::string name ) const
         {
             return _groupsOfNodes->existsObject(name) ;
         };

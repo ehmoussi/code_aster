@@ -41,13 +41,13 @@ bool MaterialInstance::build()
     _materialBehaviourNames->allocate( "G", nbMCF );
     int num = 0;
     // Boucle sur les GeneralMaterialBehaviour
-    for ( vector< GeneralMaterialBehaviour >::iterator curIter = _vecMatBehaviour.begin();
+    for ( VectorOfGeneralMaterialIter curIter = _vecMatBehaviour.begin();
           curIter != _vecMatBehaviour.end();
           ++curIter )
     {
         // Recuperation du nom Aster (ELAS, ELAS_FO, ...) du GeneralMaterialBehaviour
         // sur lequel on travaille
-        string curStr( (*curIter)->getAsterName().c_str() );
+        std::string curStr( (*curIter)->getAsterName().c_str() );
         curStr.resize( 32, ' ' );
         // Recopie dans le ".MATERIAU.NOMRC"
         (*_materialBehaviourNames)[num] = curStr.c_str();

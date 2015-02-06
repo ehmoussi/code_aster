@@ -26,7 +26,6 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-// #include "astercxx.h"
 #include "MemoryManager/JeveuxCollection.h"
 
 enum EntityType { GroupOfNodesType, GroupOfElementsType, AllMeshEntitiesType, NoType };
@@ -47,25 +46,25 @@ class VirtualMeshEntity
 {
     private:
         /** @brief Nom de l'entite */
-        const string     _name;
+        const std::string _name;
 
     protected:
         /** @brief Type de l'entite */
-        const EntityType _type;
+        const EntityType  _type;
 
     public:
         /**
          * @brief Constructeur
          * @param name nom de l'entite
          */
-        VirtualMeshEntity( string name, EntityType type ): _name( name ), _type( type )
+        VirtualMeshEntity( std::string name, EntityType type ): _name( name ), _type( type )
         {};
 
         /**
          * @brief Obtenir le nom de l'entite
          * @return renvoit le nom de l'entite
          */
-        const string& getEntityName()
+        const std::string& getEntityName()
         {
             return _name;
         };
@@ -85,7 +84,7 @@ class GroupOfNodes: public VirtualMeshEntity
          * @brief Constructeur
          * @param name nom de l'entite
          */
-        GroupOfNodes( string name ): VirtualMeshEntity( name, GroupOfNodesType )
+        GroupOfNodes( std::string name ): VirtualMeshEntity( name, GroupOfNodesType )
         {};
 
         EntityType getType() const
@@ -106,7 +105,7 @@ class GroupOfElements: public VirtualMeshEntity
          * @brief Constructeur
          * @param name nom de l'entite
          */
-        GroupOfElements( string name ): VirtualMeshEntity( name, GroupOfElementsType )
+        GroupOfElements( std::string name ): VirtualMeshEntity( name, GroupOfElementsType )
         {};
 
         EntityType getType() const

@@ -38,14 +38,17 @@
 class MaterialInstance: public DataStructure
 {
     private:
+        typedef std::vector< GeneralMaterialBehaviour > VectorOfGeneralMaterialBehaviour;
+        typedef VectorOfGeneralMaterialBehaviour::iterator VectorOfGeneralMaterialIter;
+
         /** @brief Nom Jeveux de la SD */
-        const string                       _jeveuxName;
+        const std::string                _jeveuxName;
         /** @brief Vecteur Jeveux '.MATERIAU.NOMRC' */
-        JeveuxVectorChar32                 _materialBehaviourNames;
+        JeveuxVectorChar32               _materialBehaviourNames;
         /** @brief Nombre de MaterialBehaviour deja ajoutes */
-        int                                _nbMaterialBehaviour;
+        int                              _nbMaterialBehaviour;
         /** @brief Vecteur contenant les GeneralMaterialBehaviour ajoutes par l'utilisateur */
-        vector< GeneralMaterialBehaviour > _vecMatBehaviour;
+        VectorOfGeneralMaterialBehaviour _vecMatBehaviour;
 
     public:
         /**
@@ -57,15 +60,15 @@ class MaterialInstance: public DataStructure
          * @brief Ajout d'un GeneralMaterialBehaviour
          * @param curMaterBehav GeneralMaterialBehaviour a ajouter au MaterialInstance
          */
-        void addMaterialBehaviour(GeneralMaterialBehaviour& curMaterBehav)
+        void addMaterialBehaviour( GeneralMaterialBehaviour& curMaterBehav )
         {
             ++_nbMaterialBehaviour;
 
-            ostringstream numString;
+            std::ostringstream numString;
             numString << std::setw( 6 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
             curMaterBehav->setJeveuxObjectNames( _jeveuxName + ".CPT." + numString.str() );
 
-            _vecMatBehaviour.push_back(curMaterBehav);
+            _vecMatBehaviour.push_back( curMaterBehav );
         };
 
         /**
@@ -91,7 +94,7 @@ class Material
         MaterialPtr _materialPtr;
 
     public:
-        Material(bool initilisation = true): _materialPtr()
+        Material( bool initilisation = true ): _materialPtr()
         {
             if ( initilisation == true )
                 _materialPtr = MaterialPtr( new MaterialInstance() );
@@ -100,7 +103,7 @@ class Material
         ~Material()
         {};
 
-        Material& operator=(const Material& tmp)
+        Material& operator=( const Material& tmp )
         {
             _materialPtr = tmp._materialPtr;
             return *this;

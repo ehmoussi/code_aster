@@ -26,8 +26,8 @@
  * Initialisation des modelisations autorisees pour chaque physique
  */
 
-const set< Modelings > WrapMechanics::setOfModelings( MechanicsModelings,
-                                                      MechanicsModelings + nbModelingsMechanics );
+const std::set< Modelings > WrapMechanics::setOfModelings( MechanicsModelings,
+                                                           MechanicsModelings + nbModelingsMechanics );
 
-const set< Modelings > WrapThermal::setOfModelings( ThermalModelings,
-                                                    ThermalModelings + nbModelingsThermal );
+const std::set< Modelings > WrapThermal::setOfModelings( ThermalModelings,
+                                                         ThermalModelings + nbModelingsThermal );

@@ -43,7 +43,7 @@ class ElementaryVectorInstance: public DataStructure
 {
     private:
         /** @typedef std::list de MechanicalLoad */
-        typedef list< MechanicalLoad > ListMechanicalLoad;
+        typedef std::list< MechanicalLoad > ListMechanicalLoad;
         /** @typedef Iterateur sur une std::list de MechanicalLoad */
         typedef ListMechanicalLoad::iterator ListMechanicalLoadIter;
 
@@ -56,7 +56,7 @@ class ElementaryVectorInstance: public DataStructure
         /** @brief Champ de materiau a utiliser */
         MaterialOnMesh         _material;
         /** @brief Charges ajoutees aux vecteurs elementaires */
-        list< MechanicalLoad > _listOfMechanicalLoad;
+        std::list< MechanicalLoad > _listOfMechanicalLoad;
 
     public:
         /**

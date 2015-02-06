@@ -33,8 +33,6 @@
 #include "DataFields/FieldOnNodes.h"
 #include "LinearAlgebra/AllowedLinearSolver.h"
 
-using namespace std;
-
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 // Ces wrappers sont la pour autoriser que les set soitent const
@@ -45,7 +43,7 @@ using namespace std;
  */
 struct WrapMultFront
 {
-    static const set< Renumbering > setOfAllowedRenumbering;
+    static const std::set< Renumbering > setOfAllowedRenumbering;
 };
 
 /**
@@ -54,7 +52,7 @@ struct WrapMultFront
  */
 struct WrapLdlt
 {
-    static const set< Renumbering > setOfAllowedRenumbering;
+    static const std::set< Renumbering > setOfAllowedRenumbering;
 };
 
 /**
@@ -63,7 +61,7 @@ struct WrapLdlt
  */
 struct WrapMumps
 {
-    static const set< Renumbering > setOfAllowedRenumbering;
+    static const std::set< Renumbering > setOfAllowedRenumbering;
 };
 
 /**
@@ -72,7 +70,7 @@ struct WrapMumps
  */
 struct WrapPetsc
 {
-    static const set< Renumbering > setOfAllowedRenumbering;
+    static const std::set< Renumbering > setOfAllowedRenumbering;
 };
 
 /**
@@ -81,7 +79,7 @@ struct WrapPetsc
  */
 struct WrapGcpc
 {
-    static const set< Renumbering > setOfAllowedRenumbering;
+    static const std::set< Renumbering > setOfAllowedRenumbering;
 };
 
 /**
@@ -180,7 +178,7 @@ class LinearSolverInstance
          * @brief Recuperer le nom du solveur
          * @return chaine contenant le nom Aster du solveur
          */
-        const string getSolverName() const
+        const std::string getSolverName() const
         {
             return LinearSolverNames[ (int)_linearSolver ];
         };
@@ -189,7 +187,7 @@ class LinearSolverInstance
          * @brief Recuperer le nom du renumeroteur
          * @return chaine contenant le nom Aster du renumeroteur
          */
-        const string getRenumburingName() const
+        const std::string getRenumburingName() const
         {
             return RenumberingNames[ (int)_renumber ];
         };
@@ -201,7 +199,7 @@ class LinearSolverInstance
          * @return champ aux noeuds resultat
          */
         FieldOnNodesPtrDouble solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
-                                                    const FieldOnNodesPtrDouble& currentRHS ) const;
+                                                       const FieldOnNodesPtrDouble& currentRHS ) const;
 };
 
 /**

@@ -32,15 +32,15 @@
 
 MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE" ),
                         _jeveuxName( getName() ),
-                        _dimensionInformations( JeveuxVectorLong( string(_jeveuxName + ".DIME      ") ) ),
-                        _nameOfNodes( JeveuxBidirectionalMap( string(_jeveuxName + ".NOMNOE    ") ) ),
+                        _dimensionInformations( JeveuxVectorLong( _jeveuxName + ".DIME      " ) ),
+                        _nameOfNodes( JeveuxBidirectionalMap( _jeveuxName + ".NOMNOE    " ) ),
                         _coordinates( FieldOnNodesPtrDouble(
-                            new FieldOnNodesInstanceDouble( string(_jeveuxName + ".COORDO    ") ) ) ),
-                        _groupsOfNodes( JeveuxCollectionLong( string(_jeveuxName + ".GROUPENO  ") ) ),
-                        _connectivity( JeveuxCollectionLong( string(_jeveuxName + ".CONNEX    ") ) ),
-                        _nameOfElements( JeveuxBidirectionalMap( string(_jeveuxName + ".NOMMAI    ") ) ),
-                        _elementsType( JeveuxVectorLong( string(_jeveuxName + ".TYPMAIL   ") ) ),
-                        _groupsOfElements( JeveuxCollectionLong( string(_jeveuxName + ".GROUPEMA  ") ) ),
+                            new FieldOnNodesInstanceDouble( _jeveuxName + ".COORDO    " ) ) ),
+                        _groupsOfNodes( JeveuxCollectionLong( _jeveuxName + ".GROUPENO  " ) ),
+                        _connectivity( JeveuxCollectionLong( _jeveuxName + ".CONNEX    " ) ),
+                        _nameOfElements( JeveuxBidirectionalMap( _jeveuxName + ".NOMMAI    " ) ),
+                        _elementsType( JeveuxVectorLong( _jeveuxName + ".TYPMAIL   " ) ),
+                        _groupsOfElements( JeveuxCollectionLong( _jeveuxName + ".GROUPEMA  " ) ),
                         _isEmpty( true )
 {
     assert(_jeveuxName.size() == 8);

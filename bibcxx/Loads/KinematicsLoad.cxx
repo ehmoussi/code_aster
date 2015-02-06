@@ -35,7 +35,7 @@ KinematicsLoadInstance::KinematicsLoadInstance():
 
 bool KinematicsLoadInstance::build() throw ( std::runtime_error )
 {
-    string typSd;
+    std::string typSd;
     if ( _listOfDoubleImposedDisplacement.size() != 0 )
         typSd = getType() + "_MECA";
     if ( _listOfDoubleImposedTemperature.size() != 0 )
@@ -83,7 +83,7 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
             }
             occurMECA_IMPO.addSimpleKeywordString(mCSGroup);
 
-            const string nomComp = curIter->getAsterCoordinateName();
+            const std::string nomComp = curIter->getAsterCoordinateName();
             SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
             // Ajout de la valeur donnee par l'utilisateur
             mCSComp.addValues( curIter->getValue() );

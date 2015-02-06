@@ -28,8 +28,6 @@
 
 #include "astercxx.h"
 
-using namespace std;
-
 /**
  * @class JeveuxBidirectionalMapInstance
  * @brief Equivalent du pointeur de nom dans Jeveux
@@ -39,14 +37,14 @@ class JeveuxBidirectionalMapInstance
 {
     private:
         /** @brief Nom Jeveux de l'objet */
-        string _jeveuxName;
+        std::string _jeveuxName;
 
     public:
         /**
          * @brief Constructeur
          * @param name Nom Jeveux de l'objet
          */
-        JeveuxBidirectionalMapInstance(string name): _jeveuxName(name)
+        JeveuxBidirectionalMapInstance( std::string name ): _jeveuxName( name )
         {};
 
         /**
@@ -54,14 +52,14 @@ class JeveuxBidirectionalMapInstance
          * @param elementNumber Numero de l'element demande
          * @return Chaine de caractere correspondante
          */
-        string findStringOfElement(long elementNumber);
+        std::string findStringOfElement( long elementNumber );
 
         /**
          * @brief Recuperation de l'entier correspondant a une chaine
          * @param elementName Chaine recherchee
          * @return Entier correspondant
          */
-        long findIntegerOfElement(string elementName);
+        long findIntegerOfElement( std::string elementName );
 };
 
 /**
@@ -78,7 +76,7 @@ class JeveuxBidirectionalMap
         JeveuxBidirectionalMapPtr _jeveuxBidirectionalMapPtr;
 
     public:
-        JeveuxBidirectionalMap(string nom):
+        JeveuxBidirectionalMap( std::string nom ):
             _jeveuxBidirectionalMapPtr( new JeveuxBidirectionalMapInstance (nom) )
         {};
 

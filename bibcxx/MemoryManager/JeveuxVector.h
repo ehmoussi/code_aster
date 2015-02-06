@@ -33,8 +33,6 @@
 
 #include <string>
 
-using namespace std;
-
 /**
  * @class JeveuxVectorInstance
  * @brief Cette classe template permet de definir un vecteur Jeveux
@@ -45,9 +43,9 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
 {
     private:
         /** @brief Nom du vecteur Jeveux */
-        string     _name;
+        std::string _name;
         /** @brief Pointeur vers la premiere position du vecteur Jeveux */
-        ValueType* _valuePtr;
+        ValueType*  _valuePtr;
 
     public:
         /**
@@ -56,7 +54,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          *   Attention, le pointeur est mis a zero. Avant d'utiliser ce vecteur,
          *   il faut donc faire appel a JeveuxVectorInstance::updateValuePointer
          */
-        JeveuxVectorInstance( string nom ): _name( nom ), _valuePtr( NULL )
+        JeveuxVectorInstance( std::string nom ): _name( nom ), _valuePtr( NULL )
         {};
 
         /**
@@ -117,14 +115,14 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          * @param length Longueur du vecteur Jeveux a allouer
          * @return true si l'allocation s'est bien passee
          */
-        bool allocate( string jeveuxBase, unsigned long length )
+        bool allocate( std::string jeveuxBase, unsigned long length )
         {
             if ( _name != "" && length > 0 )
             {
                 assert( jeveuxBase == "V" || jeveuxBase == "G" );
                 long taille = length;
                 const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
-                string carac = jeveuxBase + " V " + JeveuxTypesNames[intType];
+                std::string carac = jeveuxBase + " V " + JeveuxTypesNames[intType];
                 CALL_WKVECTC( _name.c_str(), carac.c_str(),
                               &taille, (void*)(&_valuePtr));
                 if ( _valuePtr == NULL ) return false;
@@ -149,7 +147,7 @@ class JeveuxVector
         JeveuxVectorTypePtr _jeveuxVectorPtr;
 
     public:
-        JeveuxVector(string nom): _jeveuxVectorPtr( new JeveuxVectorInstance< ValueType > (nom) )
+        JeveuxVector(std::string nom): _jeveuxVectorPtr( new JeveuxVectorInstance< ValueType > (nom) )
         {};
 
         ~JeveuxVector()

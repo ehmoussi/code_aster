@@ -64,16 +64,17 @@ class UnitaryLoad
             _value( value )
         {
             if ( ! PhysicalQuantityType::hasCoordinate( curCoord ) )
-                throw std::runtime_error( string ( AsterCoordinatesNames[ (int) curCoord ] ) + " not allowed" );
+                throw std::runtime_error( std::string ( AsterCoordinatesNames[ (int) curCoord ] ) +
+                                          " not allowed" );
         };
 
         /**
          * @brief Obtenir le nom de la coordonnee
          * @return Chaine representant le nom Aster de la coordonnee
          */
-        const string getAsterCoordinateName() const
+        const std::string getAsterCoordinateName() const
         {
-            return string( AsterCoordinatesNames[ (int) _loadCoordinate ] );
+            return std::string( AsterCoordinatesNames[ (int) _loadCoordinate ] );
         };
 
         /**
