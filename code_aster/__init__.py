@@ -55,7 +55,7 @@ from code_aster.Mesh.Mesh import Mesh
 from code_aster.Modeling.Model import Model
 from code_aster.DataFields.FieldOnNodes import FieldOnNodesDouble
 from code_aster.Function.Function import Function
-from code_aster.Loads.KinematicsLoad import KinematicsLoad
+# from code_aster.Loads.KinematicsLoad import KinematicsLoad
 
 # replace by: from code_aster.Modeling import Physics and use Physics.Mechanics
 from code_aster.Modeling.Model import Mechanics, Thermal, Acoustics

@@ -35,17 +35,17 @@ MaterialInstance::MaterialInstance(): DataStructure( getNewResultObjectName(), "
 
 bool MaterialInstance::build()
 {
-    // Recuperation du nombre de GeneralMaterialBehaviour ajoutes par l'utilisateur
+    // Recuperation du nombre de GeneralMaterialBehaviourPtr ajoutes par l'utilisateur
     const int nbMCF = _vecMatBehaviour.size();
     // Creation du vecteur Jeveux ".MATERIAU.NOMRC"
     _materialBehaviourNames->allocate( "G", nbMCF );
     int num = 0;
-    // Boucle sur les GeneralMaterialBehaviour
+    // Boucle sur les GeneralMaterialBehaviourPtr
     for ( VectorOfGeneralMaterialIter curIter = _vecMatBehaviour.begin();
           curIter != _vecMatBehaviour.end();
           ++curIter )
     {
-        // Recuperation du nom Aster (ELAS, ELAS_FO, ...) du GeneralMaterialBehaviour
+        // Recuperation du nom Aster (ELAS, ELAS_FO, ...) du GeneralMaterialBehaviourPtr
         // sur lequel on travaille
         std::string curStr( (*curIter)->getAsterName().c_str() );
         curStr.resize( 32, ' ' );
