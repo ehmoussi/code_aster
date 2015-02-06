@@ -19,7 +19,7 @@
 
 import os.path as osp
 
-from waflib import TaskGen, Configure, Logs, Utils, Errors
+from waflib import TaskGen, Configure, Logs, Utils, Errors, Context
 
 
 def options(self):
@@ -27,6 +27,9 @@ def options(self):
 
 def configure(self):
     self.load('cython')
+    self.start_msg('Checking for Cython version')
+    output = self.cmd_and_log([self.env['CYTHON'], '--version'], output=Context.STDERR)
+    self.end_msg(output.strip())
 
 def build(self):
     get_srcs = self.path.get_src().ant_glob
