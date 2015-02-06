@@ -49,10 +49,9 @@ if 'MANUAL' not in options:
     atexit.register( Initializer.finalize )
 
 # import datastructures
-# TODO: replace by 'from code_aster.Mesh import Mesh'
-#       and choose in Mesh/__init__.py what to export.
-from code_aster.Mesh.Mesh import Mesh
+from code_aster.Mesh import Mesh
 from code_aster.Modeling.Model import Model
+from code_aster.Materials import *
 from code_aster.DataFields.FieldOnNodes import FieldOnNodesDouble
 from code_aster.Function.Function import Function
 # from code_aster.Loads.KinematicsLoad import KinematicsLoad

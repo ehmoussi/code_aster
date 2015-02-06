@@ -3,11 +3,11 @@
 import code_aster
 
 acier = code_aster.Material()
-tmp = code_aster.ElasticMaterialBehaviour()
-tmp.setDoubleValue( "E", 2.e11 )
-tmp.setDoubleValue( "Nu", 0.3 )
+elas = code_aster.ElasticMaterialBehaviour()
+elas.setDoubleValue( "E", 2.e11 )
+elas.setDoubleValue( "Nu", 0.3 )
 
-acier.addMaterialBehaviour( tmp )
+acier.addMaterialBehaviour( elas )
 acier.build()
 acier.debugPrint( 8 )
 
