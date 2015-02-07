@@ -18,14 +18,20 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+from libcpp.vector cimport vector
 
 
 cdef extern from "Function/Function.h":
 
+    ctypedef vector[ double] VectorDouble
+
     cdef cppclass FunctionInstance:
         FunctionInstance()
-        void setParameterName( string name )
-        bint build()
+        void setParameterName( string name ) except +
+        void setResultName( string name ) except +
+        void setValues( const VectorDouble &absc, const VectorDouble &ord ) except +
+        bint build() except +
+        void debugPrint( int logicalUnit ) except +
 
     cdef cppclass FunctionPtr:
 
