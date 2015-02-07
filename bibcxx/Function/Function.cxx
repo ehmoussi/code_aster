@@ -13,43 +13,35 @@ FunctionInstance::FunctionInstance():
     _jeveuxName( getResultObjectName() ),
     _property( JeveuxVectorChar16( _jeveuxName + ".PROL           " ) ),
     _value( JeveuxVectorDouble( _jeveuxName + ".VALE           " ) )
-{}
+{
+    // Create Jeveux vector ".PROL"
+    _property->allocate( "G", 6 );
+    (*_property)[0] = "FONCTION";
+    (*_property)[1] = "LIN LIN";
+    (*_property)[1] = "";
+    (*_property)[3] = "TOUTRESU";
+    (*_property)[4] = "EE";
+    (*_property)[5] = _jeveuxName.c_str();
+}
 
 void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &ord ) throw ( std::runtime_error )
 {
     if ( absc.size() != ord.size() )
         throw std::runtime_error( "Function: length of abscissa and ordinates must be equal" );
-    _absc = absc;
-    _ord = ord;
-}
-
-bool FunctionInstance::build()
-{
-    // Create Jeveux vector ".PROL"
-    // XXX: should be allocated in the constructor with default values
-    _property->allocate( "G", 6 );
-
-    (*_property)[0] = "FONCTION";
-    (*_property)[1] = "LIN LIN";
-    (*_property)[2] = _parameterName.c_str();
-    (*_property)[3] = _resultName.c_str();
-    (*_property)[4] = "EE";
-    (*_property)[5] = _jeveuxName.c_str();
 
     // Create Jeveux vector ".VALE"
-    const int nbpts = _absc.size();
+    const int nbpts = absc.size();
     _value->allocate( "G", 2 * nbpts );
 
     // Loop on the points
-    VectorDouble::iterator abscIt = _absc.begin();
-    VectorDouble::iterator ordIt = _ord.begin();
+    VectorDouble::const_iterator abscIt = absc.begin();
+    VectorDouble::const_iterator ordIt = ord.begin();
     int idx = 0;
-    for ( ; abscIt != _absc.end(); ++abscIt, ++ordIt )
+    for ( ; abscIt != absc.end(); ++abscIt, ++ordIt )
     {
         (*_value)[idx] = *abscIt;
         ++idx;
         (*_value)[idx] = *ordIt;
         ++idx;
     }
-    return true;
 }

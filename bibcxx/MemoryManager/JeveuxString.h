@@ -88,7 +88,7 @@ class JeveuxString
 
         /**
          * @brief Surcharge de l'operateur = pour une affectation rapide a partir d'un char*
-         * @param chaine Recopie a partir d'un JeveuxString
+         * @param chaine Recopie a partir d'un char*
          * @return reference vers la chaine recopiee
          */
         inline JeveuxString& operator=( const char* chaine )
