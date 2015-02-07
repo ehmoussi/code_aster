@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+# person_in_charge: mathieu.courtois@edf.fr
+
 # discourage import *
 __all__ = []
 
@@ -48,18 +50,17 @@ if 'MANUAL' not in options:
     import atexit
     atexit.register( Initializer.finalize )
 
-# import datastructures
-from code_aster.Mesh import Mesh
-from code_aster.Modeling.Model import Model
+# import datastructures, physical quantities and constants
+# each package is responsible to export only the relevant objects
+from code_aster.DataFields import *
+from code_aster.Function import *
+from code_aster.LinearAlgebra import *
 from code_aster.Materials import *
-from code_aster.DataFields.FieldOnNodes import FieldOnNodesDouble
-from code_aster.Function.Function import Function
-# from code_aster.Loads.KinematicsLoad import KinematicsLoad
+from code_aster.Mesh import *
+from code_aster.Modeling import *
+from code_aster.Results import *
+from code_aster.Solvers import *
+from code_aster.Loads import *
 
-# replace by: from code_aster.Modeling import Physics and use Physics.Mechanics
-from code_aster.Modeling.Model import Mechanics, Thermal, Acoustics
-from code_aster.Modeling.Model import Axisymmetrical, Tridimensional, Planar, DKT
-from code_aster.Loads.PhysicalQuantity import *
 
-del mode
-del options
+del mode, options, sys
