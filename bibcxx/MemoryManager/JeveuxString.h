@@ -48,7 +48,9 @@ class JeveuxString
          * @brief Constructeur par defaut
          */
         inline JeveuxString()
-        {};
+        {
+            memset( &currentValue, ' ', sizeof( char )*length );
+        };
 
         /**
          * @brief Constructeur a partir d'un char*
@@ -56,8 +58,9 @@ class JeveuxString
          */
         inline JeveuxString( const char* chaine )
         {
-            assert( strlen( chaine ) >= length );
-            memcpy( &currentValue, chaine, sizeof( char )*length );
+            assert( strlen( chaine ) <= length );
+            memset( &currentValue, ' ', sizeof( char )*length );
+            memcpy( &currentValue, chaine, sizeof( char )*strlen( chaine ) );
         };
 
         /**
@@ -66,31 +69,32 @@ class JeveuxString
          */
         inline JeveuxString( const char& chaine )
         {
-            assert( strlen( chaine ) >= length );
-            memcpy( &currentValue, &chaine, sizeof( char )*length );
+            assert( strlen( chaine ) <= length );
+            memset( &currentValue, ' ', sizeof( char )*length );
+            memcpy( &currentValue, &chaine, sizeof( char )*strlen( chaine ) );
         };
 
         /**
          * @brief Surcharge de l'operateur = pour une affectation rapide
-         * @param jvString Recopie a partir d'un JeveuxString
+         * @param chaine Recopie a partir d'un JeveuxString
          * @return reference vers la chaine recopiee
          */
-        inline JeveuxString& operator=( const JeveuxString< length >& jvString )
+        inline JeveuxString& operator=( const JeveuxString< length >& chaine )
         {
-            assert( strlen( jvString ) >= length );
-            memcpy( &currentValue, &( jvString.currentValue ), sizeof( char )*length );
+            assert( strlen( chaine ) <= length );
+            memcpy( &currentValue, &( chaine.currentValue ), sizeof( char )*strlen( chaine ) );
             return *this;
         };
 
         /**
          * @brief Surcharge de l'operateur = pour une affectation rapide a partir d'un char*
-         * @param jvString Recopie a partir d'un JeveuxString
+         * @param chaine Recopie a partir d'un JeveuxString
          * @return reference vers la chaine recopiee
          */
-        inline JeveuxString& operator=( const char* tmp )
+        inline JeveuxString& operator=( const char* chaine )
         {
-            assert( strlen( tmp ) >= length );
-            memcpy( &currentValue, tmp, sizeof( char )*length );
+            assert( strlen( chaine ) <= length );
+            memcpy( &currentValue, chaine, sizeof( char )*strlen( chaine ) );
             return *this;
         };
 
