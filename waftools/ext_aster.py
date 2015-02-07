@@ -128,6 +128,8 @@ def dynamic_post(self):
 @Configure.conf
 def safe_remove(self, var, value):
     """Remove 'value' from the variable, remove duplicates"""
+    if type(self.env[var]) is not list:
+        return
     self.env[var] = self.remove_duplicates(self.env[var])
     while value in self.env[var]:
         self.env[var].remove(value)

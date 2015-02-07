@@ -136,6 +136,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
  * @class JeveuxVector
  * @brief Enveloppe d'un pointeur intelligent vers un JeveuxVectorInstance
  * @author Nicolas Sellenet
+ * @todo Supprimer la classe enveloppe
  */
 template<class ValueType>
 class JeveuxVector
