@@ -29,9 +29,7 @@
 
 #include "astercxx.h"
 
-#ifdef DEBUG
-#include "assert.h"
-#endif
+#include <assert.h>
 
 /**
  * @class JeveuxString
@@ -58,9 +56,7 @@ class JeveuxString
          */
         inline JeveuxString( const char* chaine )
         {
-#ifdef DEBUG
             assert( strlen( chaine ) >= length );
-#endif
             memcpy( &currentValue, chaine, sizeof( char )*length );
         };
 
@@ -70,9 +66,7 @@ class JeveuxString
          */
         inline JeveuxString( const char& chaine )
         {
-#ifdef DEBUG
             assert( strlen( chaine ) >= length );
-#endif
             memcpy( &currentValue, &chaine, sizeof( char )*length );
         };
 
@@ -83,9 +77,7 @@ class JeveuxString
          */
         inline JeveuxString& operator=( const JeveuxString< length >& jvString )
         {
-#ifdef DEBUG
             assert( strlen( jvString ) >= length );
-#endif
             memcpy( &currentValue, &( jvString.currentValue ), sizeof( char )*length );
             return *this;
         };
@@ -97,9 +89,7 @@ class JeveuxString
          */
         inline JeveuxString& operator=( const char* tmp )
         {
-#ifdef DEBUG
             assert( strlen( tmp ) >= length );
-#endif
             memcpy( &currentValue, tmp, sizeof( char )*length );
             return *this;
         };

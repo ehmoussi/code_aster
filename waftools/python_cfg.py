@@ -125,6 +125,9 @@ def check_numpy_version(self, minver=None):
 def check_optimization_python(self):
     self.setenv('debug')
     self.env['PYC'] = self.env['PYO'] = 0
+    for key in self.env.keys():
+        if key.startswith('DEFINES'):
+            self.safe_remove(key, 'NDEBUG')
     self.setenv('release')
     self.env['PYC'] = self.env['PYO'] = 0
 
