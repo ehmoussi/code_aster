@@ -27,15 +27,6 @@ class FunctionInstance: public DataStructure
         // Vecteur Jeveux '.VALE'
         JeveuxVectorDouble _value;
 
-        // Parameter name
-        std::string _parameterName;
-        // Result name
-        std::string _resultName;
-        // Abscissa
-        VectorDouble _absc;
-        // Ordinates
-        VectorDouble _ord;
-
     public:
         /**
         * Constructeur
@@ -49,7 +40,7 @@ class FunctionInstance: public DataStructure
         */
         void setParameterName( const std::string name )
         {
-            _parameterName = name;
+            (*_property)[2] = name.c_str();
         }
 
         /**
@@ -59,7 +50,29 @@ class FunctionInstance: public DataStructure
         */
         void setResultName( const std::string name )
         {
-            _resultName = name;
+            (*_property)[3] = name.c_str();
+        }
+
+        /**
+        * @brief Definition of the type of interpolation
+        * @param interpolation type of interpolation
+        * @type  interpolation string
+        * @todo checking
+        */
+        void setInterpolation( const std::string type )
+        {
+            (*_property)[1] = type.c_str();
+        }
+
+        /**
+        * @brief Definition of the type of extrapolation
+        * @param extrapolation type of extrapolation
+        * @type  extrapolation string
+        * @todo checking
+        */
+        void setExtrapolation( const std::string type )
+        {
+            (*_property)[4] = type.c_str();
         }
 
         /**
@@ -70,12 +83,6 @@ class FunctionInstance: public DataStructure
         * @type  ord vector of double
         */
         void setValues( const VectorDouble &absc, const VectorDouble &ord ) throw ( std::runtime_error );
-
-        /**
-        * Build Jeveux objects of the function
-        * @return true if the creation is ok
-        */
-        bool build();
 
 };
 

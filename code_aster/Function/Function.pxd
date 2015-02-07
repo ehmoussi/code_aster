@@ -29,8 +29,9 @@ cdef extern from "Function/Function.h":
         FunctionInstance()
         void setParameterName( string name ) except +
         void setResultName( string name ) except +
+        void setInterpolation( string type ) except +
+        void setExtrapolation( string type ) except +
         void setValues( const VectorDouble &absc, const VectorDouble &ord ) except +
-        bint build() except +
         void debugPrint( int logicalUnit ) except +
 
     cdef cppclass FunctionPtr:

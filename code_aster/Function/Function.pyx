@@ -53,13 +53,34 @@ cdef class Function:
         """Set the name of the parameter"""
         self.getInstance().setResultName( name )
 
+    def setInterpolation( self, typ ):
+        """Set the type of interpolation"""
+        typ = typ.strip()
+        try:
+            assert len(typ) == 7
+            spl = typ.split()
+            assert len(spl) == 2
+            assert spl[0] in ('LIN', 'LOG', 'NON')
+            assert spl[1] in ('LIN', 'LOG', 'NON')
+            typ = " ".join(spl)
+        except AssertionError:
+            raise ValueError( "Invalid interpolation type: '{}'".format( typ ) )
+        self.getInstance().setInterpolation( typ )
+
+    def setExtrapolation( self, typ ):
+        """Set the type of extrapolation"""
+        typ = typ.strip()
+        try:
+            assert len(typ) == 2
+            assert typ[0] in ('E', 'C', 'L', 'I')
+            assert typ[1] in ('E', 'C', 'L', 'I')
+        except AssertionError:
+            raise ValueError( "Invalid extrapolation type: '{}'".format( typ ) )
+        self.getInstance().setExtrapolation( typ )
+
     def setValues( self, abscissas, ordinates ):
         """Define the values of the function"""
         self.getInstance().setValues( abscissas, ordinates )
-
-    def build( self ):
-        """Build the function"""
-        return self.getInstance().build()
 
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""

@@ -7,6 +7,13 @@ import code_aster
 fun = code_aster.Function()
 fun.setParameterName("INST")
 fun.setResultName("TEMP")
+fun.setInterpolation("LIN LOG")
+
+try:
+    fun.setInterpolation("invalid")
+except ValueError:
+    pass
+fun.setExtrapolation("CC")
 
 # valx = code_aster.VectorDouble(10)
 # valy = code_aster.VectorDouble(10)
@@ -18,5 +25,4 @@ valy = [sin(i) for i in valx]
 
 fun.setValues(valx, valy)
 
-fun.build()
 fun.debugPrint(6)
