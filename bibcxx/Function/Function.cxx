@@ -26,14 +26,8 @@ void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &
 bool FunctionInstance::build()
 {
     // Create Jeveux vector ".PROL"
-    // XXX: could be allocated in the constructor
+    // XXX: should be allocated in the constructor with default values
     _property->allocate( "G", 6 );
-//     CopyStringToFStr( (*_property)[0], "FONCTION", 16 );
-//     CopyStringToFStr( (*_property)[1], "LIN LIN", 16 );
-//     CopyStringToFStr( (*_property)[2], _parameterName.c_str(), 16 );
-//     CopyStringToFStr( (*_property)[3], _resultName.c_str(), 16 );
-//     CopyStringToFStr( (*_property)[4], "EE", 16 );
-//     CopyStringToFStr( (*_property)[5], _jeveuxName.c_str(), 16 );
 
     (*_property)[0] = "FONCTION";
     (*_property)[1] = "LIN LIN";

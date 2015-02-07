@@ -48,3 +48,19 @@ cdef class Function:
     def setParameterName( self, string name ):
         """Set the name of the parameter"""
         self.getInstance().setParameterName( name )
+
+    def setResultName( self, string name ):
+        """Set the name of the parameter"""
+        self.getInstance().setResultName( name )
+
+    def setValues( self, abscissas, ordinates ):
+        """Define the values of the function"""
+        self.getInstance().setValues( abscissas, ordinates )
+
+    def build( self ):
+        """Build the function"""
+        return self.getInstance().build()
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )

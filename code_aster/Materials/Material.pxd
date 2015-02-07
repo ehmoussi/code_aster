@@ -26,9 +26,9 @@ cdef extern from "Materials/Material.h":
     cdef cppclass MaterialInstance:
 
         MaterialInstance()
-        void addMaterialBehaviour(GeneralMaterialBehaviourPtr& curMaterBehav)
-        bint build()
-        void debugPrint( int logicalUnit )
+        void addMaterialBehaviour(GeneralMaterialBehaviourPtr& curMaterBehav) except +
+        bint build() except +
+        void debugPrint( int logicalUnit ) except +
 
     cdef cppclass MaterialPtr:
 
