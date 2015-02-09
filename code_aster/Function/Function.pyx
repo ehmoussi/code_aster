@@ -22,6 +22,7 @@ from libcpp.string cimport string
 # numpy implementation in cython currently generates a warning at compilation
 import numpy as np
 cimport numpy as np
+np.import_array()
 
 
 cdef class Function:
@@ -90,16 +91,24 @@ cdef class Function:
         """Return the number of point of the function"""
         return self.getInstance().size()
 
-    def getValuesAsArray( self ):
-        """Return an array object of the values"""
+    def getValuesAsArray( self, copy=True, writeable=False ):
+        """Return an array object of the values with (default) or without
+        copying the data"""
         cdef const double* data = self.getInstance().getDataPtr()
         cdef long size = self.getInstance().size()
+        cdef np.npy_intp shape[2]
         cdef long i
         cdef np.ndarray[np.float64_t, ndim=2] res
-        res = np.zeros([size, 2], dtype=float)
-        for i in range( size ):
-            res[i, 0] = data[2 * i]
-            res[i, 1] = data[2 * i + 1]
+        if copy:
+            res = np.empty([size, 2], dtype=float)
+            for i in range( size ):
+                res[i, 0] = data[2 * i]
+                res[i, 1] = data[2 * i + 1]
+        else:
+            shape[0] = <np.npy_intp> size
+            shape[1] = 2
+            res = np.PyArray_SimpleNewFromData( 2, shape, np.NPY_DOUBLE, <void*> data )
+            res.flags.writeable = writeable
         return res
 
     def debugPrint( self, logicalUnit=6 ):
