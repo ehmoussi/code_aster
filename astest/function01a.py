@@ -15,14 +15,13 @@ except ValueError:
     pass
 fun.setExtrapolation("CC")
 
-# valx = code_aster.VectorDouble(10)
-# valy = code_aster.VectorDouble(10)
-# for i in range(10):
-#     valx[i] = 1. * i
-#     valy[i] = sin(1. * i)
-valx = [1. * i for i in range(10)]
+n = 10
+valx = [1. * i for i in range( n )]
 valy = [sin(i) for i in valx]
 
 fun.setValues(valx, valy)
 
 fun.debugPrint(6)
+
+values = fun.getValuesAsArray()
+assert values.shape == ( n, 2 )

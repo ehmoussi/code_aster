@@ -32,6 +32,8 @@ cdef extern from "Function/Function.h":
         void setInterpolation( string type ) except +
         void setExtrapolation( string type ) except +
         void setValues( const VectorDouble &absc, const VectorDouble &ord ) except +
+        long size()
+        const double* getDataPtr()
         void debugPrint( int logicalUnit ) except +
 
     cdef cppclass FunctionPtr:
