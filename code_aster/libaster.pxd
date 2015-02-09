@@ -16,6 +16,7 @@ cdef extern from "aster_init.h":
 
 cdef extern from "shared_vars.h":
     void register_sh_jeveux_status( int )
+    int get_sh_jeveux_status()
 
 cdef extern from "aster_utils.h":
     char* MakeCStrFromFStr( char *, STRING_SIZE )

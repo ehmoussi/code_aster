@@ -63,4 +63,4 @@ from code_aster.Solvers import *
 from code_aster.Loads import *
 
 
-del mode, options, sys
+del mode, options, sys, atexit

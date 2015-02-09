@@ -46,7 +46,8 @@ def init( int mode ):
 
 def finalize():
     """Finalize Code_Aster execution"""
-    # cInitializer.asterFinalization()
+    if libaster.get_sh_jeveux_status() != 1:
+        return
     syntax = CommandSyntax( "FIN" )
     syntax.define( _F( STATUT=0 ) )
     cdef INTEGER numOp = 9999
