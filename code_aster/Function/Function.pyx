@@ -19,6 +19,10 @@
 
 from libcpp.string cimport string
 
+# numpy implementation in cython currently generates a warning at compilation
+import numpy as np
+cimport numpy as np
+
 
 cdef class Function:
     """Python wrapper on the C++ Function object"""
@@ -81,6 +85,22 @@ cdef class Function:
     def setValues( self, abscissas, ordinates ):
         """Define the values of the function"""
         self.getInstance().setValues( abscissas, ordinates )
+
+    def size( self ):
+        """Return the number of point of the function"""
+        return self.getInstance().size()
+
+    def getValuesAsArray( self ):
+        """Return an array object of the values"""
+        cdef const double* data = self.getInstance().getDataPtr()
+        cdef long size = self.getInstance().size()
+        cdef long i
+        cdef np.ndarray[np.float64_t, ndim=2] res
+        res = np.zeros([size, 2], dtype=float)
+        for i in range( size ):
+            res[i, 0] = data[2 * i]
+            res[i, 1] = data[2 * i + 1]
+        return res
 
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""

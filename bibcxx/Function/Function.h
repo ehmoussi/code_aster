@@ -84,6 +84,22 @@ class FunctionInstance: public DataStructure
         */
         void setValues( const VectorDouble &absc, const VectorDouble &ord ) throw ( std::runtime_error );
 
+        /**
+        * @brief Return a pointer to the vector of data
+        */
+        const double* getDataPtr() const
+        {
+            return _value->getDataPtr();
+        }
+
+        /**
+        * @brief Return the number of points in the function
+        */
+        long size() const
+        {
+            return _value->size() / 2;
+        }
+
 };
 
 /**
