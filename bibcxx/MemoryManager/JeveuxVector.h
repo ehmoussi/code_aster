@@ -130,6 +130,27 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
             else return false;
             return true;
         };
+
+        /**
+        * @brief Return a pointer to the vector
+        */
+        const ValueType* getDataPtr() const
+        {
+            return _valuePtr;
+        }
+
+        /**
+        * @brief Return the size of the vector
+        */
+        long size() const
+        {
+            long vectSize;
+            JeveuxChar8 param( "LONMAX" );
+            // JeveuxChar32 dummy( " " );
+            char dummy[32] = " ";
+            CALL_JELIRA( _name.c_str(), param.c_str(), &vectSize, dummy );
+            return vectSize;
+        }
 };
 
 /**
