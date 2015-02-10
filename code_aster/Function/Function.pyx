@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+import cython
 from libcpp.string cimport string
 
 # numpy implementation in cython currently generates a warning at compilation
@@ -88,12 +89,18 @@ cdef class Function:
         self.getInstance().setValues( abscissas, ordinates )
 
     def size( self ):
-        """Return the number of point of the function"""
+        """Return the number of points of the function"""
         return self.getInstance().size()
 
+    def getProperties( self ):
+        """Return the properties of the function"""
+        return self.getInstance().getProperties()
+
+    @cython.boundscheck(False)
     def getValuesAsArray( self, copy=True, writeable=False ):
         """Return an array object of the values with (default) or without
-        copying the data"""
+        copying the data. Without copying you should delete the 'view' when
+        the Function is removed."""
         cdef const double* data = self.getInstance().getDataPtr()
         cdef long size = self.getInstance().size()
         cdef np.npy_intp shape[2]
@@ -101,9 +108,10 @@ cdef class Function:
         cdef np.ndarray[np.float64_t, ndim=2] res
         if copy:
             res = np.empty([size, 2], dtype=float)
-            for i in range( size ):
-                res[i, 0] = data[2 * i]
-                res[i, 1] = data[2 * i + 1]
+            with nogil:
+                for i in range( size ):
+                    res[i, 0] = data[2 * i]
+                    res[i, 1] = data[2 * i + 1]
         else:
             shape[0] = <np.npy_intp> size
             shape[1] = 2
@@ -114,3 +122,21 @@ cdef class Function:
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
+
+    def copyProperties( self, other ):
+        """Shortcut to copy the properties of another function"""
+        prop = other.getProperties()
+        self = Function()
+        self.setParameterName( prop[2] )
+        self.setResultName( prop[3] )
+        self.setInterpolation( prop[1] )
+        self.setExtrapolation( prop[4] )
+
+    # operations on Functions
+    def abs( self ):
+        """Return the absolute value"""
+        new = Function()
+        new.copyProperties( self )
+        values = self.getValuesAsArray()
+        new.setValues( values[:, 0], np.abs(values[:, 1]) )
+        return new

@@ -93,11 +93,25 @@ class FunctionInstance: public DataStructure
         }
 
         /**
-        * @brief Return the number of points in the function
+        * @brief Return the number of points of the function
         */
         long size() const
         {
             return _value->size() / 2;
+        }
+
+        /**
+        * @brief Return the properties of the function
+        * @return vector of strings
+        */
+        std::vector< std::string > getProperties() const
+        {
+            std::vector< std::string > prop;
+            for ( int i = 0; i < 6; ++i )
+            {
+                prop.push_back( (*_property)[i].rstrip() );
+            }
+            return prop;
         }
 
 };
