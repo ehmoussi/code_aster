@@ -23,6 +23,7 @@
 def ExactlyOne( keywords, args ):
     """Check that exactly one argument listed in 'args' is defined in
     'keywords'"""
+    # UN_PARMI
     not_none = [keywords.has_key(i) for i in args]
     if sum(not_none) != 1:
         raise NameError("Exactly one argument of {} is required".format(args))
@@ -32,3 +33,16 @@ def Together( keywords, args ):
     not_none = [keywords.has_key(i) for i in args]
     if sum(not_none) not in ( 0, len(args) ):
         raise NameError("{} must be all defined or all undefined".format(args))
+
+def AtLeastOne( keywords, args ):
+    """At least one argument must be defined"""
+    not_none = [keywords.has_key(i) for i in args]
+    if sum(not_none) < 1:
+        raise NameError("At least one argument of {} must be defined".format(args))
+
+def AtMostOne( keywords, args ):
+    """Only one argument (or zero) can be defined"""
+    # AU_PLUS_UN == EXCLUS
+    not_none = [keywords.has_key(i) for i in args]
+    if sum(not_none) > 1:
+        raise NameError("At most one argument of {} can be defined".format(args))
