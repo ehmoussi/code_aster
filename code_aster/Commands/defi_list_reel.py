@@ -16,3 +16,35 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+
+# person_in_charge: mathieu.courtois@edf.fr
+
+import numpy as np
+
+from code_aster.Commands import rules
+
+
+def DEFI_LIST_REEL( **kwargs ):
+    """Définir une liste de réels strictement croissante"""
+    rules.ExactlyOne( kwargs, ['VALE', 'DEBUT'] )
+    rules.Together( kwargs, ['DEBUT', 'INTERVALLE'] )
+    rules.AtMostOne( kwargs, ['VALE', 'INTERVALLE'] )
+
+    vale = kwargs.get('VALE')
+    if vale is not None:
+        values = np.array(vale)
+    else:
+        factkw = kwargs['INTERVALLE']
+        rules.ExactlyOne( factkw, ['NOMBRE', 'PAS'] )
+        start = kwargs['DEBUT']
+        stop = factkw['JUSQU_A']
+        step = factkw.get('PAS')
+        if step is None:
+            step = ( stop - start ) / factkw['NOMBRE']
+        if step > stop - start:
+            raise ValueError("PAS is greater than the interval")
+        values = np.arange(1. * start, stop, step)
+        if abs( stop - values[-1] ) < 1.e-3 * step:
+            values = values[:-1]
+        values = np.concatenate( ( values, np.array([stop]) ) )
+    return values
