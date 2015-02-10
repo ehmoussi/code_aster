@@ -40,7 +40,7 @@ def build(self):
     self(
         features = 'py',
             name = 'code_aster_py',
-          source = get_srcs('**/*.py'),
+          source = get_srcs('**/*.py') + get_srcs('Commands/**/*.py'),
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
     )
@@ -57,7 +57,7 @@ def build_libaster_dependencies(self):
 
     # Core & Supervis are used by libaster (must be named 'lib*')
     # bibcxx is using the generated includes
-    for cymodule in get_srcs('Core/**/*.pyx') + get_srcs('Supervis/**/*.pyx'):
+    for cymodule in get_srcs('Supervis/**/*.pyx'):
         path = cymodule.abspath()
         modname = osp.splitext(osp.basename(path))[0]
         dirname = osp.basename(osp.dirname(path))
