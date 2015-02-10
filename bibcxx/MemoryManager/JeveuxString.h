@@ -81,7 +81,7 @@ class JeveuxString
          */
         inline JeveuxString& operator=( const JeveuxString< length >& chaine )
         {
-            assert( strlen( chaine ) <= length );
+            assert( strlen( chaine ) == length );
             memcpy( &currentValue, &( chaine.currentValue ), sizeof( char )*strlen( chaine ) );
             return *this;
         };
@@ -94,6 +94,7 @@ class JeveuxString
         inline JeveuxString& operator=( const char* chaine )
         {
             assert( strlen( chaine ) <= length );
+            memset( &currentValue, ' ', sizeof( char )*length );
             memcpy( &currentValue, chaine, sizeof( char )*strlen( chaine ) );
             return *this;
         };

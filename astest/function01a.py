@@ -20,7 +20,7 @@ fsin.setExtrapolation("CC")
 
 # check properties assignment
 prop = fsin.getProperties()
-# assert prop[1:5] == ['LIN LOG', 'INST', 'TEMP', 'CC'], prop[1:5]
+assert prop[1:5] == ['LIN LOG', 'INST', 'TEMP', 'CC'], prop[1:5]
 
 # values assignment
 n = 10

@@ -18,7 +18,7 @@ FunctionInstance::FunctionInstance():
     _property->allocate( "G", 6 );
     (*_property)[0] = "FONCTION";
     (*_property)[1] = "LIN LIN";
-    (*_property)[1] = "";
+    (*_property)[2] = "";
     (*_property)[3] = "TOUTRESU";
     (*_property)[4] = "EE";
     (*_property)[5] = _jeveuxName.c_str();
