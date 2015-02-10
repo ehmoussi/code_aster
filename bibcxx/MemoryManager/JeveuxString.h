@@ -124,6 +124,18 @@ class JeveuxString
         {
             return std::string( currentValue, length );
         };
+
+        std::string rstrip() const
+        {
+            std::string buff ( currentValue, length );
+            std::string whitespaces ( " \t\f\v\n\r" );
+            std::size_t found = buff.find_last_not_of( whitespaces );
+            if ( found != std::string::npos )
+                buff.erase( found + 1 );
+            else
+                buff.clear();
+            return buff;
+        }
 };
 
 /** @typedef Definition d'une chaine Jeveux de longueur 8 */

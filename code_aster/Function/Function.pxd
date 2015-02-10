@@ -34,6 +34,7 @@ cdef extern from "Function/Function.h":
         void setValues( const VectorDouble &absc, const VectorDouble &ord ) except +
         long size()
         const double* getDataPtr()
+        vector[ string ] getProperties()
         void debugPrint( int logicalUnit ) except +
 
     cdef cppclass FunctionPtr:

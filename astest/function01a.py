@@ -1,47 +1,59 @@
 #!/usr/bin/python
 
-from math import sin
+from math import sin, pi
+import numpy as np
 
 import code_aster
 
-fun = code_aster.Function()
-fun.setParameterName("INST")
-fun.setResultName("TEMP")
-fun.setInterpolation("LIN LOG")
+fsin = code_aster.Function()
+fsin.setParameterName("INST")
+fsin.setResultName("TEMP")
+fsin.setInterpolation("LIN LOG")
 
 try:
-    fun.setInterpolation("invalid")
+    fsin.setInterpolation("invalid")
     raise AssertionError("invalid assignment should have failed")
 except ValueError:
     pass
 
-fun.setExtrapolation("CC")
+fsin.setExtrapolation("CC")
 
+# check properties assignment
+prop = fsin.getProperties()
+# assert prop[1:5] == ['LIN LOG', 'INST', 'TEMP', 'CC'], prop[1:5]
+
+# values assignment
 n = 10
-valx = [1. * i for i in range( n )]
-valy = [sin(i) for i in valx]
+valx = np.arange( n ) * 2. * pi / n
+valy = np.sin( valx )
 
-fun.setValues(valx, valy)
+fsin.setValues(valx, valy)
+fsin.debugPrint( 6 )
 
-fun.debugPrint( 6 )
+# check Function.abs()
+fabs = fsin.abs()
+arrabs = fabs.getValuesAsArray(copy=False)
+assert np.alltrue( arrabs[:, 1] ) >= 0., arrabs
 
-values = fun.getValuesAsArray()
+values = fsin.getValuesAsArray()
 assert values.shape == ( n, 2 )
 
 # read-only view
-view = fun.getValuesAsArray(copy=False)
+view = fsin.getValuesAsArray(copy=False)
 try:
     view[1, 0] = 1.
     raise AssertionError("assignment should have failed")
 except ValueError:
     pass
 
-view = fun.getValuesAsArray(copy=False, writeable=True)
+# change values of fsin that becomes fcos
+view = fsin.getValuesAsArray(copy=False, writeable=True)
 assert view.shape == ( n, 2 )
+view[:, 1] = np.cos( valx )
+fcos = fsin
+del fsin
+fcos.debugPrint( 6 )
 
-view[:, 1] = [i**2 for i in range( n )]
-fun.debugPrint( 6 )
 
-del fun
-# view must not be used now, it points on invalid data.
+# view must not be used now, it points on invalid data
 assert values[0, 0] == 0.
