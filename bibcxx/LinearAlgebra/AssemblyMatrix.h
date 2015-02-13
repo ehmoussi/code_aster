@@ -304,6 +304,6 @@ class AssemblyMatrix
 /** @typedef Definition d'une matrice assemblee de double */
 typedef AssemblyMatrix< double > AssemblyMatrixDouble;
 /** @typedef Definition d'une matrice assemblee de complexe */
-typedef AssemblyMatrix< double complex > AssemblyMatrixComplex;
+typedef AssemblyMatrix< DoubleComplex > AssemblyMatrixComplex;
 
 #endif /* ASSEMBLYMATRIX_H_ */

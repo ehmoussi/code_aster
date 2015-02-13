@@ -51,9 +51,6 @@ struct AllowedMaterialPropertyType;
 template<> struct AllowedMaterialPropertyType< double >
 {};
 
-template<> struct AllowedMaterialPropertyType< double complex >
-{};
-
 /**
  * @class MaterialPropertyInstance
  * @brief Cette classe template permet de definir un type elementaire de propriete materielle
@@ -68,7 +65,7 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
         std::string _name;
         /** @brief Description de parametre, ex : "Young's modulus" */
         std::string _description;
-        /** @brief Valeur du parametre (double, complex, ...) */
+        /** @brief Valeur du parametre (double, FunctionInstance, ...) */
         ValueType   _value;
 
     public:
@@ -118,8 +115,6 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
 
 /** @typedef Definition d'une propriete materiau de type double */
 typedef MaterialPropertyInstance< double > ElementaryMaterialPropertyDouble;
-/** @typedef Definition d'une propriete materiau de type complexe */
-typedef MaterialPropertyInstance< double complex > ElementaryMaterialPropertyComplex;
 
 /**
  * @class GeneralMaterialBehaviourInstance
@@ -135,13 +130,6 @@ class GeneralMaterialBehaviourInstance
         typedef mapStrEMPD::iterator mapStrEMPDIterator;
         /** @typedef Valeur contenue dans un mapStrEMPD */
         typedef mapStrEMPD::value_type mapStrEMPDValue;
-
-        /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyComplex */
-        typedef std::map< std::string, ElementaryMaterialPropertyComplex > mapStrEMPC;
-        /** @typedef Iterateur sur mapStrEMPC */
-        typedef mapStrEMPC::iterator mapStrEMPCIterator;
-        /** @typedef Valeur contenue dans un mapStrEMPC */
-        typedef mapStrEMPC::value_type mapStrEMPCValue;
 
         /** @typedef std::list< std::string > */
         typedef std::list< std::string > ListString;
@@ -160,9 +148,6 @@ class GeneralMaterialBehaviourInstance
         /** @brief Map contenant les noms des proprietes double ainsi que les
                    MaterialPropertyInstance correspondant */
         mapStrEMPD               _mapOfDoubleMaterialProperties;
-        /** @brief Map contenant les noms des proprietes complex ainsi que les
-                   MaterialPropertyInstance correspondant */
-        mapStrEMPC               _mapOfComplexMaterialProperties;
         /** @brief Liste contenant tous les noms des parametres materiau */
         ListString _listOfNameOfMaterialProperties;
 
@@ -197,22 +182,6 @@ class GeneralMaterialBehaviourInstance
             // Recherche de la propriete materielle
             mapStrEMPDIterator curIter = _mapOfDoubleMaterialProperties.find(nameOfProperty);
             if ( curIter ==  _mapOfDoubleMaterialProperties.end() ) return false;
-            // Ajout de la valeur
-            (*curIter).second.setValue(value);
-            return true;
-        };
-
-        /**
-         * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
-         * @param nameOfProperty Nom de la propriete
-         * @param value Complex correspondant a la valeur donnee par l'utilisateur
-         * @return Booleen valant true si la tache s'est bien deroulee
-         */
-        bool setComplexValue( std::string nameOfProperty, double complex value )
-        {
-            // Recherche de la propriete materielle
-            mapStrEMPCIterator curIter = _mapOfComplexMaterialProperties.find(nameOfProperty);
-            if ( curIter ==  _mapOfComplexMaterialProperties.end() ) return false;
             // Ajout de la valeur
             (*curIter).second.setValue(value);
             return true;

@@ -29,7 +29,10 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <complex>
 #include <boost/shared_ptr.hpp>
+
+typedef std::complex< double > DoubleComplex;
 
 extern "C"
 {

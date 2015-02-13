@@ -39,7 +39,6 @@ bool GeneralMaterialBehaviourInstance::build() throw ( std::runtime_error )
           ++curIter )
     {
         mapStrEMPDIterator curIter2 = _mapOfDoubleMaterialProperties.find(*curIter);
-        mapStrEMPCIterator curIter3 = _mapOfComplexMaterialProperties.find(*curIter);
         if ( curIter2 != _mapOfDoubleMaterialProperties.end() )
         {
             (*_doubleValues)[position] = (*curIter2).second.getValue();
@@ -47,10 +46,6 @@ bool GeneralMaterialBehaviourInstance::build() throw ( std::runtime_error )
             std::string nameOfProperty = (*curIter2).second.getName();
             nameOfProperty.resize( 16, ' ' );
             (*_char16Values)[position] = nameOfProperty.c_str();
-        }
-        else if ( curIter3 != _mapOfComplexMaterialProperties.end() )
-        {
-            throw std::runtime_error( "Pas encore implemente" );
         }
         else
             throw std::runtime_error( "Le parametre materiau doit etre un double ou un complexe");
