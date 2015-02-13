@@ -228,7 +228,7 @@ typedef JeveuxCollection< short int > JeveuxCollectionShort;
 /** @typedef Definition d'une collection de type double */
 typedef JeveuxCollection< double > JeveuxCollectionDouble;
 /** @typedef Definition d'une collection de type double complex */
-typedef JeveuxCollection< double complex > JeveuxCollectionComplex;
+typedef JeveuxCollection< DoubleComplex > JeveuxCollectionComplex;
 /** @typedef Definition d'une collection de JeveuxChar8 */
 typedef JeveuxCollection< JeveuxChar8 > JeveuxCollectionChar8;
 /** @typedef Definition d'une collection de JeveuxChar16 */

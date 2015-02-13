@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 #include "MemoryManager/JeveuxString.h"
-#include <complex.h>
+#include <complex>
 
 /**
  * @enum JeveuxTypes
@@ -64,7 +64,7 @@ template<> struct AllowedJeveuxType< double >
     static const unsigned short numTypeJeveux = Double;
 };
 
-template<> struct AllowedJeveuxType< double complex >
+template<> struct AllowedJeveuxType< DoubleComplex >
 {
     static const unsigned short numTypeJeveux = Complex;
 };

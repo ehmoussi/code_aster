@@ -205,7 +205,7 @@ typedef JeveuxVector< short int > JeveuxVectorShort;
 /** @typedef Definition d'un vecteur Jeveux double */
 typedef JeveuxVector< double > JeveuxVectorDouble;
 /** @typedef Definition d'un vecteur Jeveux double complex */
-typedef JeveuxVector< double complex > JeveuxVectorComplex;
+typedef JeveuxVector< DoubleComplex > JeveuxVectorComplex;
 /** @typedef Definition d'un vecteur de JeveuxChar8 */
 typedef JeveuxVector< JeveuxChar8 > JeveuxVectorChar8;
 /** @typedef Definition d'un vecteur JeveuxChar16 */
