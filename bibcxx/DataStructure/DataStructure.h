@@ -42,7 +42,8 @@ class DataStructure
 {
     private:
         /** @brief Nom de la sd */
-        const std::string _name;
+        /** @todo remettre le const */
+        std::string _name;
         /** @brief Type de la sd */
         std::string       _type;
 
