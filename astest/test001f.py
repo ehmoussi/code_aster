@@ -10,7 +10,7 @@ monModel.setSupportMesh( monMaillage )
 monModel.addModelingOnAllMesh( code_aster.Mechanics, code_aster.Tridimensional )
 monModel.build()
 
-materElas = code_aster.ElasticMaterialBehaviour()
+materElas = code_aster.MaterialBehaviour.ElasMaterialBehaviour()
 materElas.setDoubleValue( "E", 2.e11 )
 materElas.setDoubleValue( "Nu", 0.3 )
 
