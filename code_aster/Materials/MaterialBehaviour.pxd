@@ -46,171 +46,171 @@ cdef extern from "Materials/MaterialBehaviour.h":
         ElasMaterialBehaviourPtr( ElasMaterialBehaviourInstance* )
         ElasMaterialBehaviourInstance* get()
 
-    cdef cppclass Elas_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_foMaterialBehaviourInstance()
+        ElasFoMaterialBehaviourInstance()
 
-    cdef cppclass Elas_foMaterialBehaviourPtr:
+    cdef cppclass ElasFoMaterialBehaviourPtr:
 
-        Elas_foMaterialBehaviourPtr( Elas_foMaterialBehaviourPtr& )
-        Elas_foMaterialBehaviourPtr( Elas_foMaterialBehaviourInstance* )
-        Elas_foMaterialBehaviourInstance* get()
+        ElasFoMaterialBehaviourPtr( ElasFoMaterialBehaviourPtr& )
+        ElasFoMaterialBehaviourPtr( ElasFoMaterialBehaviourInstance* )
+        ElasFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_fluiMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasFluiMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_fluiMaterialBehaviourInstance()
+        ElasFluiMaterialBehaviourInstance()
 
-    cdef cppclass Elas_fluiMaterialBehaviourPtr:
+    cdef cppclass ElasFluiMaterialBehaviourPtr:
 
-        Elas_fluiMaterialBehaviourPtr( Elas_fluiMaterialBehaviourPtr& )
-        Elas_fluiMaterialBehaviourPtr( Elas_fluiMaterialBehaviourInstance* )
-        Elas_fluiMaterialBehaviourInstance* get()
+        ElasFluiMaterialBehaviourPtr( ElasFluiMaterialBehaviourPtr& )
+        ElasFluiMaterialBehaviourPtr( ElasFluiMaterialBehaviourInstance* )
+        ElasFluiMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_istrMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasIstrMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_istrMaterialBehaviourInstance()
+        ElasIstrMaterialBehaviourInstance()
 
-    cdef cppclass Elas_istrMaterialBehaviourPtr:
+    cdef cppclass ElasIstrMaterialBehaviourPtr:
 
-        Elas_istrMaterialBehaviourPtr( Elas_istrMaterialBehaviourPtr& )
-        Elas_istrMaterialBehaviourPtr( Elas_istrMaterialBehaviourInstance* )
-        Elas_istrMaterialBehaviourInstance* get()
+        ElasIstrMaterialBehaviourPtr( ElasIstrMaterialBehaviourPtr& )
+        ElasIstrMaterialBehaviourPtr( ElasIstrMaterialBehaviourInstance* )
+        ElasIstrMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_istr_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasIstrFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_istr_foMaterialBehaviourInstance()
+        ElasIstrFoMaterialBehaviourInstance()
 
-    cdef cppclass Elas_istr_foMaterialBehaviourPtr:
+    cdef cppclass ElasIstrFoMaterialBehaviourPtr:
 
-        Elas_istr_foMaterialBehaviourPtr( Elas_istr_foMaterialBehaviourPtr& )
-        Elas_istr_foMaterialBehaviourPtr( Elas_istr_foMaterialBehaviourInstance* )
-        Elas_istr_foMaterialBehaviourInstance* get()
+        ElasIstrFoMaterialBehaviourPtr( ElasIstrFoMaterialBehaviourPtr& )
+        ElasIstrFoMaterialBehaviourPtr( ElasIstrFoMaterialBehaviourInstance* )
+        ElasIstrFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_orthMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasOrthMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_orthMaterialBehaviourInstance()
+        ElasOrthMaterialBehaviourInstance()
 
-    cdef cppclass Elas_orthMaterialBehaviourPtr:
+    cdef cppclass ElasOrthMaterialBehaviourPtr:
 
-        Elas_orthMaterialBehaviourPtr( Elas_orthMaterialBehaviourPtr& )
-        Elas_orthMaterialBehaviourPtr( Elas_orthMaterialBehaviourInstance* )
-        Elas_orthMaterialBehaviourInstance* get()
+        ElasOrthMaterialBehaviourPtr( ElasOrthMaterialBehaviourPtr& )
+        ElasOrthMaterialBehaviourPtr( ElasOrthMaterialBehaviourInstance* )
+        ElasOrthMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_orth_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasOrthFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_orth_foMaterialBehaviourInstance()
+        ElasOrthFoMaterialBehaviourInstance()
 
-    cdef cppclass Elas_orth_foMaterialBehaviourPtr:
+    cdef cppclass ElasOrthFoMaterialBehaviourPtr:
 
-        Elas_orth_foMaterialBehaviourPtr( Elas_orth_foMaterialBehaviourPtr& )
-        Elas_orth_foMaterialBehaviourPtr( Elas_orth_foMaterialBehaviourInstance* )
-        Elas_orth_foMaterialBehaviourInstance* get()
+        ElasOrthFoMaterialBehaviourPtr( ElasOrthFoMaterialBehaviourPtr& )
+        ElasOrthFoMaterialBehaviourPtr( ElasOrthFoMaterialBehaviourInstance* )
+        ElasOrthFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_hyperMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasHyperMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_hyperMaterialBehaviourInstance()
+        ElasHyperMaterialBehaviourInstance()
 
-    cdef cppclass Elas_hyperMaterialBehaviourPtr:
+    cdef cppclass ElasHyperMaterialBehaviourPtr:
 
-        Elas_hyperMaterialBehaviourPtr( Elas_hyperMaterialBehaviourPtr& )
-        Elas_hyperMaterialBehaviourPtr( Elas_hyperMaterialBehaviourInstance* )
-        Elas_hyperMaterialBehaviourInstance* get()
+        ElasHyperMaterialBehaviourPtr( ElasHyperMaterialBehaviourPtr& )
+        ElasHyperMaterialBehaviourPtr( ElasHyperMaterialBehaviourInstance* )
+        ElasHyperMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_coqueMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasCoqueMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_coqueMaterialBehaviourInstance()
+        ElasCoqueMaterialBehaviourInstance()
 
-    cdef cppclass Elas_coqueMaterialBehaviourPtr:
+    cdef cppclass ElasCoqueMaterialBehaviourPtr:
 
-        Elas_coqueMaterialBehaviourPtr( Elas_coqueMaterialBehaviourPtr& )
-        Elas_coqueMaterialBehaviourPtr( Elas_coqueMaterialBehaviourInstance* )
-        Elas_coqueMaterialBehaviourInstance* get()
+        ElasCoqueMaterialBehaviourPtr( ElasCoqueMaterialBehaviourPtr& )
+        ElasCoqueMaterialBehaviourPtr( ElasCoqueMaterialBehaviourInstance* )
+        ElasCoqueMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_coque_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasCoqueFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_coque_foMaterialBehaviourInstance()
+        ElasCoqueFoMaterialBehaviourInstance()
 
-    cdef cppclass Elas_coque_foMaterialBehaviourPtr:
+    cdef cppclass ElasCoqueFoMaterialBehaviourPtr:
 
-        Elas_coque_foMaterialBehaviourPtr( Elas_coque_foMaterialBehaviourPtr& )
-        Elas_coque_foMaterialBehaviourPtr( Elas_coque_foMaterialBehaviourInstance* )
-        Elas_coque_foMaterialBehaviourInstance* get()
+        ElasCoqueFoMaterialBehaviourPtr( ElasCoqueFoMaterialBehaviourPtr& )
+        ElasCoqueFoMaterialBehaviourPtr( ElasCoqueFoMaterialBehaviourInstance* )
+        ElasCoqueFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_membraneMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasMembraneMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_membraneMaterialBehaviourInstance()
+        ElasMembraneMaterialBehaviourInstance()
 
-    cdef cppclass Elas_membraneMaterialBehaviourPtr:
+    cdef cppclass ElasMembraneMaterialBehaviourPtr:
 
-        Elas_membraneMaterialBehaviourPtr( Elas_membraneMaterialBehaviourPtr& )
-        Elas_membraneMaterialBehaviourPtr( Elas_membraneMaterialBehaviourInstance* )
-        Elas_membraneMaterialBehaviourInstance* get()
+        ElasMembraneMaterialBehaviourPtr( ElasMembraneMaterialBehaviourPtr& )
+        ElasMembraneMaterialBehaviourPtr( ElasMembraneMaterialBehaviourInstance* )
+        ElasMembraneMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_2ndgMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass Elas2ndgMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_2ndgMaterialBehaviourInstance()
+        Elas2ndgMaterialBehaviourInstance()
 
-    cdef cppclass Elas_2ndgMaterialBehaviourPtr:
+    cdef cppclass Elas2ndgMaterialBehaviourPtr:
 
-        Elas_2ndgMaterialBehaviourPtr( Elas_2ndgMaterialBehaviourPtr& )
-        Elas_2ndgMaterialBehaviourPtr( Elas_2ndgMaterialBehaviourInstance* )
-        Elas_2ndgMaterialBehaviourInstance* get()
+        Elas2ndgMaterialBehaviourPtr( Elas2ndgMaterialBehaviourPtr& )
+        Elas2ndgMaterialBehaviourPtr( Elas2ndgMaterialBehaviourInstance* )
+        Elas2ndgMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_glrcMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasGlrcMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_glrcMaterialBehaviourInstance()
+        ElasGlrcMaterialBehaviourInstance()
 
-    cdef cppclass Elas_glrcMaterialBehaviourPtr:
+    cdef cppclass ElasGlrcMaterialBehaviourPtr:
 
-        Elas_glrcMaterialBehaviourPtr( Elas_glrcMaterialBehaviourPtr& )
-        Elas_glrcMaterialBehaviourPtr( Elas_glrcMaterialBehaviourInstance* )
-        Elas_glrcMaterialBehaviourInstance* get()
+        ElasGlrcMaterialBehaviourPtr( ElasGlrcMaterialBehaviourPtr& )
+        ElasGlrcMaterialBehaviourPtr( ElasGlrcMaterialBehaviourInstance* )
+        ElasGlrcMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_glrc_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasGlrcFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_glrc_foMaterialBehaviourInstance()
+        ElasGlrcFoMaterialBehaviourInstance()
 
-    cdef cppclass Elas_glrc_foMaterialBehaviourPtr:
+    cdef cppclass ElasGlrcFoMaterialBehaviourPtr:
 
-        Elas_glrc_foMaterialBehaviourPtr( Elas_glrc_foMaterialBehaviourPtr& )
-        Elas_glrc_foMaterialBehaviourPtr( Elas_glrc_foMaterialBehaviourInstance* )
-        Elas_glrc_foMaterialBehaviourInstance* get()
+        ElasGlrcFoMaterialBehaviourPtr( ElasGlrcFoMaterialBehaviourPtr& )
+        ElasGlrcFoMaterialBehaviourPtr( ElasGlrcFoMaterialBehaviourInstance* )
+        ElasGlrcFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_dhrcMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasDhrcMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_dhrcMaterialBehaviourInstance()
+        ElasDhrcMaterialBehaviourInstance()
 
-    cdef cppclass Elas_dhrcMaterialBehaviourPtr:
+    cdef cppclass ElasDhrcMaterialBehaviourPtr:
 
-        Elas_dhrcMaterialBehaviourPtr( Elas_dhrcMaterialBehaviourPtr& )
-        Elas_dhrcMaterialBehaviourPtr( Elas_dhrcMaterialBehaviourInstance* )
-        Elas_dhrcMaterialBehaviourInstance* get()
+        ElasDhrcMaterialBehaviourPtr( ElasDhrcMaterialBehaviourPtr& )
+        ElasDhrcMaterialBehaviourPtr( ElasDhrcMaterialBehaviourInstance* )
+        ElasDhrcMaterialBehaviourInstance* get()
 
 
 
@@ -226,15 +226,15 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Veri_borneMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass VeriBorneMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Veri_borneMaterialBehaviourInstance()
+        VeriBorneMaterialBehaviourInstance()
 
-    cdef cppclass Veri_borneMaterialBehaviourPtr:
+    cdef cppclass VeriBorneMaterialBehaviourPtr:
 
-        Veri_borneMaterialBehaviourPtr( Veri_borneMaterialBehaviourPtr& )
-        Veri_borneMaterialBehaviourPtr( Veri_borneMaterialBehaviourInstance* )
-        Veri_borneMaterialBehaviourInstance* get()
+        VeriBorneMaterialBehaviourPtr( VeriBorneMaterialBehaviourPtr& )
+        VeriBorneMaterialBehaviourPtr( VeriBorneMaterialBehaviourInstance* )
+        VeriBorneMaterialBehaviourInstance* get()
 
 
 
@@ -250,123 +250,123 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Ecro_lineMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass EcroLineMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Ecro_lineMaterialBehaviourInstance()
+        EcroLineMaterialBehaviourInstance()
 
-    cdef cppclass Ecro_lineMaterialBehaviourPtr:
+    cdef cppclass EcroLineMaterialBehaviourPtr:
 
-        Ecro_lineMaterialBehaviourPtr( Ecro_lineMaterialBehaviourPtr& )
-        Ecro_lineMaterialBehaviourPtr( Ecro_lineMaterialBehaviourInstance* )
-        Ecro_lineMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Endo_heterogeneMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Endo_heterogeneMaterialBehaviourInstance()
-
-    cdef cppclass Endo_heterogeneMaterialBehaviourPtr:
-
-        Endo_heterogeneMaterialBehaviourPtr( Endo_heterogeneMaterialBehaviourPtr& )
-        Endo_heterogeneMaterialBehaviourPtr( Endo_heterogeneMaterialBehaviourInstance* )
-        Endo_heterogeneMaterialBehaviourInstance* get()
+        EcroLineMaterialBehaviourPtr( EcroLineMaterialBehaviourPtr& )
+        EcroLineMaterialBehaviourPtr( EcroLineMaterialBehaviourInstance* )
+        EcroLineMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Ecro_line_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass EndoHeterogeneMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Ecro_line_foMaterialBehaviourInstance()
+        EndoHeterogeneMaterialBehaviourInstance()
 
-    cdef cppclass Ecro_line_foMaterialBehaviourPtr:
+    cdef cppclass EndoHeterogeneMaterialBehaviourPtr:
 
-        Ecro_line_foMaterialBehaviourPtr( Ecro_line_foMaterialBehaviourPtr& )
-        Ecro_line_foMaterialBehaviourPtr( Ecro_line_foMaterialBehaviourInstance* )
-        Ecro_line_foMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Ecro_puisMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Ecro_puisMaterialBehaviourInstance()
-
-    cdef cppclass Ecro_puisMaterialBehaviourPtr:
-
-        Ecro_puisMaterialBehaviourPtr( Ecro_puisMaterialBehaviourPtr& )
-        Ecro_puisMaterialBehaviourPtr( Ecro_puisMaterialBehaviourInstance* )
-        Ecro_puisMaterialBehaviourInstance* get()
+        EndoHeterogeneMaterialBehaviourPtr( EndoHeterogeneMaterialBehaviourPtr& )
+        EndoHeterogeneMaterialBehaviourPtr( EndoHeterogeneMaterialBehaviourInstance* )
+        EndoHeterogeneMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Ecro_puis_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass EcroLineFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Ecro_puis_foMaterialBehaviourInstance()
+        EcroLineFoMaterialBehaviourInstance()
 
-    cdef cppclass Ecro_puis_foMaterialBehaviourPtr:
+    cdef cppclass EcroLineFoMaterialBehaviourPtr:
 
-        Ecro_puis_foMaterialBehaviourPtr( Ecro_puis_foMaterialBehaviourPtr& )
-        Ecro_puis_foMaterialBehaviourPtr( Ecro_puis_foMaterialBehaviourInstance* )
-        Ecro_puis_foMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Ecro_cookMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Ecro_cookMaterialBehaviourInstance()
-
-    cdef cppclass Ecro_cookMaterialBehaviourPtr:
-
-        Ecro_cookMaterialBehaviourPtr( Ecro_cookMaterialBehaviourPtr& )
-        Ecro_cookMaterialBehaviourPtr( Ecro_cookMaterialBehaviourInstance* )
-        Ecro_cookMaterialBehaviourInstance* get()
+        EcroLineFoMaterialBehaviourPtr( EcroLineFoMaterialBehaviourPtr& )
+        EcroLineFoMaterialBehaviourPtr( EcroLineFoMaterialBehaviourInstance* )
+        EcroLineFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Ecro_cook_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass EcroPuisMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Ecro_cook_foMaterialBehaviourInstance()
+        EcroPuisMaterialBehaviourInstance()
 
-    cdef cppclass Ecro_cook_foMaterialBehaviourPtr:
+    cdef cppclass EcroPuisMaterialBehaviourPtr:
 
-        Ecro_cook_foMaterialBehaviourPtr( Ecro_cook_foMaterialBehaviourPtr& )
-        Ecro_cook_foMaterialBehaviourPtr( Ecro_cook_foMaterialBehaviourInstance* )
-        Ecro_cook_foMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Beton_ecro_lineMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Beton_ecro_lineMaterialBehaviourInstance()
-
-    cdef cppclass Beton_ecro_lineMaterialBehaviourPtr:
-
-        Beton_ecro_lineMaterialBehaviourPtr( Beton_ecro_lineMaterialBehaviourPtr& )
-        Beton_ecro_lineMaterialBehaviourPtr( Beton_ecro_lineMaterialBehaviourInstance* )
-        Beton_ecro_lineMaterialBehaviourInstance* get()
+        EcroPuisMaterialBehaviourPtr( EcroPuisMaterialBehaviourPtr& )
+        EcroPuisMaterialBehaviourPtr( EcroPuisMaterialBehaviourInstance* )
+        EcroPuisMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Beton_regle_prMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass EcroPuisFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Beton_regle_prMaterialBehaviourInstance()
+        EcroPuisFoMaterialBehaviourInstance()
 
-    cdef cppclass Beton_regle_prMaterialBehaviourPtr:
+    cdef cppclass EcroPuisFoMaterialBehaviourPtr:
 
-        Beton_regle_prMaterialBehaviourPtr( Beton_regle_prMaterialBehaviourPtr& )
-        Beton_regle_prMaterialBehaviourPtr( Beton_regle_prMaterialBehaviourInstance* )
-        Beton_regle_prMaterialBehaviourInstance* get()
+        EcroPuisFoMaterialBehaviourPtr( EcroPuisFoMaterialBehaviourPtr& )
+        EcroPuisFoMaterialBehaviourPtr( EcroPuisFoMaterialBehaviourInstance* )
+        EcroPuisFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Endo_orth_betonMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass EcroCookMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Endo_orth_betonMaterialBehaviourInstance()
+        EcroCookMaterialBehaviourInstance()
 
-    cdef cppclass Endo_orth_betonMaterialBehaviourPtr:
+    cdef cppclass EcroCookMaterialBehaviourPtr:
 
-        Endo_orth_betonMaterialBehaviourPtr( Endo_orth_betonMaterialBehaviourPtr& )
-        Endo_orth_betonMaterialBehaviourPtr( Endo_orth_betonMaterialBehaviourInstance* )
-        Endo_orth_betonMaterialBehaviourInstance* get()
+        EcroCookMaterialBehaviourPtr( EcroCookMaterialBehaviourPtr& )
+        EcroCookMaterialBehaviourPtr( EcroCookMaterialBehaviourInstance* )
+        EcroCookMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass EcroCookFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        EcroCookFoMaterialBehaviourInstance()
+
+    cdef cppclass EcroCookFoMaterialBehaviourPtr:
+
+        EcroCookFoMaterialBehaviourPtr( EcroCookFoMaterialBehaviourPtr& )
+        EcroCookFoMaterialBehaviourPtr( EcroCookFoMaterialBehaviourInstance* )
+        EcroCookFoMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass BetonEcroLineMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        BetonEcroLineMaterialBehaviourInstance()
+
+    cdef cppclass BetonEcroLineMaterialBehaviourPtr:
+
+        BetonEcroLineMaterialBehaviourPtr( BetonEcroLineMaterialBehaviourPtr& )
+        BetonEcroLineMaterialBehaviourPtr( BetonEcroLineMaterialBehaviourInstance* )
+        BetonEcroLineMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass BetonReglePrMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        BetonReglePrMaterialBehaviourInstance()
+
+    cdef cppclass BetonReglePrMaterialBehaviourPtr:
+
+        BetonReglePrMaterialBehaviourPtr( BetonReglePrMaterialBehaviourPtr& )
+        BetonReglePrMaterialBehaviourPtr( BetonReglePrMaterialBehaviourInstance* )
+        BetonReglePrMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass EndoOrthBetonMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        EndoOrthBetonMaterialBehaviourInstance()
+
+    cdef cppclass EndoOrthBetonMaterialBehaviourPtr:
+
+        EndoOrthBetonMaterialBehaviourPtr( EndoOrthBetonMaterialBehaviourPtr& )
+        EndoOrthBetonMaterialBehaviourPtr( EndoOrthBetonMaterialBehaviourInstance* )
+        EndoOrthBetonMaterialBehaviourInstance* get()
 
 
 
@@ -382,15 +382,15 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Prager_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass PragerFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Prager_foMaterialBehaviourInstance()
+        PragerFoMaterialBehaviourInstance()
 
-    cdef cppclass Prager_foMaterialBehaviourPtr:
+    cdef cppclass PragerFoMaterialBehaviourPtr:
 
-        Prager_foMaterialBehaviourPtr( Prager_foMaterialBehaviourPtr& )
-        Prager_foMaterialBehaviourPtr( Prager_foMaterialBehaviourInstance* )
-        Prager_foMaterialBehaviourInstance* get()
+        PragerFoMaterialBehaviourPtr( PragerFoMaterialBehaviourPtr& )
+        PragerFoMaterialBehaviourPtr( PragerFoMaterialBehaviourInstance* )
+        PragerFoMaterialBehaviourInstance* get()
 
 
 
@@ -406,15 +406,15 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Taheri_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass TaheriFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Taheri_foMaterialBehaviourInstance()
+        TaheriFoMaterialBehaviourInstance()
 
-    cdef cppclass Taheri_foMaterialBehaviourPtr:
+    cdef cppclass TaheriFoMaterialBehaviourPtr:
 
-        Taheri_foMaterialBehaviourPtr( Taheri_foMaterialBehaviourPtr& )
-        Taheri_foMaterialBehaviourPtr( Taheri_foMaterialBehaviourInstance* )
-        Taheri_foMaterialBehaviourInstance* get()
+        TaheriFoMaterialBehaviourPtr( TaheriFoMaterialBehaviourPtr& )
+        TaheriFoMaterialBehaviourPtr( TaheriFoMaterialBehaviourInstance* )
+        TaheriFoMaterialBehaviourInstance* get()
 
 
 
@@ -430,123 +430,123 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Rousselier_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass RousselierFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Rousselier_foMaterialBehaviourInstance()
+        RousselierFoMaterialBehaviourInstance()
 
-    cdef cppclass Rousselier_foMaterialBehaviourPtr:
+    cdef cppclass RousselierFoMaterialBehaviourPtr:
 
-        Rousselier_foMaterialBehaviourPtr( Rousselier_foMaterialBehaviourPtr& )
-        Rousselier_foMaterialBehaviourPtr( Rousselier_foMaterialBehaviourInstance* )
-        Rousselier_foMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Visc_sinhMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Visc_sinhMaterialBehaviourInstance()
-
-    cdef cppclass Visc_sinhMaterialBehaviourPtr:
-
-        Visc_sinhMaterialBehaviourPtr( Visc_sinhMaterialBehaviourPtr& )
-        Visc_sinhMaterialBehaviourPtr( Visc_sinhMaterialBehaviourInstance* )
-        Visc_sinhMaterialBehaviourInstance* get()
+        RousselierFoMaterialBehaviourPtr( RousselierFoMaterialBehaviourPtr& )
+        RousselierFoMaterialBehaviourPtr( RousselierFoMaterialBehaviourInstance* )
+        RousselierFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Visc_sinh_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ViscSinhMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Visc_sinh_foMaterialBehaviourInstance()
+        ViscSinhMaterialBehaviourInstance()
 
-    cdef cppclass Visc_sinh_foMaterialBehaviourPtr:
+    cdef cppclass ViscSinhMaterialBehaviourPtr:
 
-        Visc_sinh_foMaterialBehaviourPtr( Visc_sinh_foMaterialBehaviourPtr& )
-        Visc_sinh_foMaterialBehaviourPtr( Visc_sinh_foMaterialBehaviourInstance* )
-        Visc_sinh_foMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Cin1_chabMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Cin1_chabMaterialBehaviourInstance()
-
-    cdef cppclass Cin1_chabMaterialBehaviourPtr:
-
-        Cin1_chabMaterialBehaviourPtr( Cin1_chabMaterialBehaviourPtr& )
-        Cin1_chabMaterialBehaviourPtr( Cin1_chabMaterialBehaviourInstance* )
-        Cin1_chabMaterialBehaviourInstance* get()
+        ViscSinhMaterialBehaviourPtr( ViscSinhMaterialBehaviourPtr& )
+        ViscSinhMaterialBehaviourPtr( ViscSinhMaterialBehaviourInstance* )
+        ViscSinhMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Cin1_chab_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ViscSinhFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Cin1_chab_foMaterialBehaviourInstance()
+        ViscSinhFoMaterialBehaviourInstance()
 
-    cdef cppclass Cin1_chab_foMaterialBehaviourPtr:
+    cdef cppclass ViscSinhFoMaterialBehaviourPtr:
 
-        Cin1_chab_foMaterialBehaviourPtr( Cin1_chab_foMaterialBehaviourPtr& )
-        Cin1_chab_foMaterialBehaviourPtr( Cin1_chab_foMaterialBehaviourInstance* )
-        Cin1_chab_foMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Cin2_chabMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Cin2_chabMaterialBehaviourInstance()
-
-    cdef cppclass Cin2_chabMaterialBehaviourPtr:
-
-        Cin2_chabMaterialBehaviourPtr( Cin2_chabMaterialBehaviourPtr& )
-        Cin2_chabMaterialBehaviourPtr( Cin2_chabMaterialBehaviourInstance* )
-        Cin2_chabMaterialBehaviourInstance* get()
+        ViscSinhFoMaterialBehaviourPtr( ViscSinhFoMaterialBehaviourPtr& )
+        ViscSinhFoMaterialBehaviourPtr( ViscSinhFoMaterialBehaviourInstance* )
+        ViscSinhFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Cin2_chab_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass Cin1ChabMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Cin2_chab_foMaterialBehaviourInstance()
+        Cin1ChabMaterialBehaviourInstance()
 
-    cdef cppclass Cin2_chab_foMaterialBehaviourPtr:
+    cdef cppclass Cin1ChabMaterialBehaviourPtr:
 
-        Cin2_chab_foMaterialBehaviourPtr( Cin2_chab_foMaterialBehaviourPtr& )
-        Cin2_chab_foMaterialBehaviourPtr( Cin2_chab_foMaterialBehaviourInstance* )
-        Cin2_chab_foMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Cin2_nradMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Cin2_nradMaterialBehaviourInstance()
-
-    cdef cppclass Cin2_nradMaterialBehaviourPtr:
-
-        Cin2_nradMaterialBehaviourPtr( Cin2_nradMaterialBehaviourPtr& )
-        Cin2_nradMaterialBehaviourPtr( Cin2_nradMaterialBehaviourInstance* )
-        Cin2_nradMaterialBehaviourInstance* get()
+        Cin1ChabMaterialBehaviourPtr( Cin1ChabMaterialBehaviourPtr& )
+        Cin1ChabMaterialBehaviourPtr( Cin1ChabMaterialBehaviourInstance* )
+        Cin1ChabMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Memo_ecroMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass Cin1ChabFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Memo_ecroMaterialBehaviourInstance()
+        Cin1ChabFoMaterialBehaviourInstance()
 
-    cdef cppclass Memo_ecroMaterialBehaviourPtr:
+    cdef cppclass Cin1ChabFoMaterialBehaviourPtr:
 
-        Memo_ecroMaterialBehaviourPtr( Memo_ecroMaterialBehaviourPtr& )
-        Memo_ecroMaterialBehaviourPtr( Memo_ecroMaterialBehaviourInstance* )
-        Memo_ecroMaterialBehaviourInstance* get()
+        Cin1ChabFoMaterialBehaviourPtr( Cin1ChabFoMaterialBehaviourPtr& )
+        Cin1ChabFoMaterialBehaviourPtr( Cin1ChabFoMaterialBehaviourInstance* )
+        Cin1ChabFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Memo_ecro_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass Cin2ChabMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Memo_ecro_foMaterialBehaviourInstance()
+        Cin2ChabMaterialBehaviourInstance()
 
-    cdef cppclass Memo_ecro_foMaterialBehaviourPtr:
+    cdef cppclass Cin2ChabMaterialBehaviourPtr:
 
-        Memo_ecro_foMaterialBehaviourPtr( Memo_ecro_foMaterialBehaviourPtr& )
-        Memo_ecro_foMaterialBehaviourPtr( Memo_ecro_foMaterialBehaviourInstance* )
-        Memo_ecro_foMaterialBehaviourInstance* get()
+        Cin2ChabMaterialBehaviourPtr( Cin2ChabMaterialBehaviourPtr& )
+        Cin2ChabMaterialBehaviourPtr( Cin2ChabMaterialBehaviourInstance* )
+        Cin2ChabMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass Cin2ChabFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        Cin2ChabFoMaterialBehaviourInstance()
+
+    cdef cppclass Cin2ChabFoMaterialBehaviourPtr:
+
+        Cin2ChabFoMaterialBehaviourPtr( Cin2ChabFoMaterialBehaviourPtr& )
+        Cin2ChabFoMaterialBehaviourPtr( Cin2ChabFoMaterialBehaviourInstance* )
+        Cin2ChabFoMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass Cin2NradMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        Cin2NradMaterialBehaviourInstance()
+
+    cdef cppclass Cin2NradMaterialBehaviourPtr:
+
+        Cin2NradMaterialBehaviourPtr( Cin2NradMaterialBehaviourPtr& )
+        Cin2NradMaterialBehaviourPtr( Cin2NradMaterialBehaviourInstance* )
+        Cin2NradMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass MemoEcroMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        MemoEcroMaterialBehaviourInstance()
+
+    cdef cppclass MemoEcroMaterialBehaviourPtr:
+
+        MemoEcroMaterialBehaviourPtr( MemoEcroMaterialBehaviourPtr& )
+        MemoEcroMaterialBehaviourPtr( MemoEcroMaterialBehaviourInstance* )
+        MemoEcroMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass MemoEcroFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        MemoEcroFoMaterialBehaviourInstance()
+
+    cdef cppclass MemoEcroFoMaterialBehaviourPtr:
+
+        MemoEcroFoMaterialBehaviourPtr( MemoEcroFoMaterialBehaviourPtr& )
+        MemoEcroFoMaterialBehaviourPtr( MemoEcroFoMaterialBehaviourInstance* )
+        MemoEcroFoMaterialBehaviourInstance* get()
 
 
 
@@ -562,15 +562,15 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Viscochab_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ViscochabFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Viscochab_foMaterialBehaviourInstance()
+        ViscochabFoMaterialBehaviourInstance()
 
-    cdef cppclass Viscochab_foMaterialBehaviourPtr:
+    cdef cppclass ViscochabFoMaterialBehaviourPtr:
 
-        Viscochab_foMaterialBehaviourPtr( Viscochab_foMaterialBehaviourPtr& )
-        Viscochab_foMaterialBehaviourPtr( Viscochab_foMaterialBehaviourInstance* )
-        Viscochab_foMaterialBehaviourInstance* get()
+        ViscochabFoMaterialBehaviourPtr( ViscochabFoMaterialBehaviourPtr& )
+        ViscochabFoMaterialBehaviourPtr( ViscochabFoMaterialBehaviourInstance* )
+        ViscochabFoMaterialBehaviourInstance* get()
 
 
 
@@ -586,99 +586,99 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Lemaitre_irraMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass LemaitreIrraMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Lemaitre_irraMaterialBehaviourInstance()
+        LemaitreIrraMaterialBehaviourInstance()
 
-    cdef cppclass Lemaitre_irraMaterialBehaviourPtr:
+    cdef cppclass LemaitreIrraMaterialBehaviourPtr:
 
-        Lemaitre_irraMaterialBehaviourPtr( Lemaitre_irraMaterialBehaviourPtr& )
-        Lemaitre_irraMaterialBehaviourPtr( Lemaitre_irraMaterialBehaviourInstance* )
-        Lemaitre_irraMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Lmarc_irraMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Lmarc_irraMaterialBehaviourInstance()
-
-    cdef cppclass Lmarc_irraMaterialBehaviourPtr:
-
-        Lmarc_irraMaterialBehaviourPtr( Lmarc_irraMaterialBehaviourPtr& )
-        Lmarc_irraMaterialBehaviourPtr( Lmarc_irraMaterialBehaviourInstance* )
-        Lmarc_irraMaterialBehaviourInstance* get()
+        LemaitreIrraMaterialBehaviourPtr( LemaitreIrraMaterialBehaviourPtr& )
+        LemaitreIrraMaterialBehaviourPtr( LemaitreIrraMaterialBehaviourInstance* )
+        LemaitreIrraMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Visc_irra_logMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass LmarcIrraMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Visc_irra_logMaterialBehaviourInstance()
+        LmarcIrraMaterialBehaviourInstance()
 
-    cdef cppclass Visc_irra_logMaterialBehaviourPtr:
+    cdef cppclass LmarcIrraMaterialBehaviourPtr:
 
-        Visc_irra_logMaterialBehaviourPtr( Visc_irra_logMaterialBehaviourPtr& )
-        Visc_irra_logMaterialBehaviourPtr( Visc_irra_logMaterialBehaviourInstance* )
-        Visc_irra_logMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Gran_irra_logMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Gran_irra_logMaterialBehaviourInstance()
-
-    cdef cppclass Gran_irra_logMaterialBehaviourPtr:
-
-        Gran_irra_logMaterialBehaviourPtr( Gran_irra_logMaterialBehaviourPtr& )
-        Gran_irra_logMaterialBehaviourPtr( Gran_irra_logMaterialBehaviourInstance* )
-        Gran_irra_logMaterialBehaviourInstance* get()
+        LmarcIrraMaterialBehaviourPtr( LmarcIrraMaterialBehaviourPtr& )
+        LmarcIrraMaterialBehaviourPtr( LmarcIrraMaterialBehaviourInstance* )
+        LmarcIrraMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Lema_seuilMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ViscIrraLogMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Lema_seuilMaterialBehaviourInstance()
+        ViscIrraLogMaterialBehaviourInstance()
 
-    cdef cppclass Lema_seuilMaterialBehaviourPtr:
+    cdef cppclass ViscIrraLogMaterialBehaviourPtr:
 
-        Lema_seuilMaterialBehaviourPtr( Lema_seuilMaterialBehaviourPtr& )
-        Lema_seuilMaterialBehaviourPtr( Lema_seuilMaterialBehaviourInstance* )
-        Lema_seuilMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Lemaitre_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Lemaitre_foMaterialBehaviourInstance()
-
-    cdef cppclass Lemaitre_foMaterialBehaviourPtr:
-
-        Lemaitre_foMaterialBehaviourPtr( Lemaitre_foMaterialBehaviourPtr& )
-        Lemaitre_foMaterialBehaviourPtr( Lemaitre_foMaterialBehaviourInstance* )
-        Lemaitre_foMaterialBehaviourInstance* get()
+        ViscIrraLogMaterialBehaviourPtr( ViscIrraLogMaterialBehaviourPtr& )
+        ViscIrraLogMaterialBehaviourPtr( ViscIrraLogMaterialBehaviourInstance* )
+        ViscIrraLogMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Meta_lema_aniMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass GranIrraLogMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Meta_lema_aniMaterialBehaviourInstance()
+        GranIrraLogMaterialBehaviourInstance()
 
-    cdef cppclass Meta_lema_aniMaterialBehaviourPtr:
+    cdef cppclass GranIrraLogMaterialBehaviourPtr:
 
-        Meta_lema_aniMaterialBehaviourPtr( Meta_lema_aniMaterialBehaviourPtr& )
-        Meta_lema_aniMaterialBehaviourPtr( Meta_lema_aniMaterialBehaviourInstance* )
-        Meta_lema_aniMaterialBehaviourInstance* get()
+        GranIrraLogMaterialBehaviourPtr( GranIrraLogMaterialBehaviourPtr& )
+        GranIrraLogMaterialBehaviourPtr( GranIrraLogMaterialBehaviourInstance* )
+        GranIrraLogMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Meta_lema_ani_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass LemaSeuilMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Meta_lema_ani_foMaterialBehaviourInstance()
+        LemaSeuilMaterialBehaviourInstance()
 
-    cdef cppclass Meta_lema_ani_foMaterialBehaviourPtr:
+    cdef cppclass LemaSeuilMaterialBehaviourPtr:
 
-        Meta_lema_ani_foMaterialBehaviourPtr( Meta_lema_ani_foMaterialBehaviourPtr& )
-        Meta_lema_ani_foMaterialBehaviourPtr( Meta_lema_ani_foMaterialBehaviourInstance* )
-        Meta_lema_ani_foMaterialBehaviourInstance* get()
+        LemaSeuilMaterialBehaviourPtr( LemaSeuilMaterialBehaviourPtr& )
+        LemaSeuilMaterialBehaviourPtr( LemaSeuilMaterialBehaviourInstance* )
+        LemaSeuilMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass LemaitreFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        LemaitreFoMaterialBehaviourInstance()
+
+    cdef cppclass LemaitreFoMaterialBehaviourPtr:
+
+        LemaitreFoMaterialBehaviourPtr( LemaitreFoMaterialBehaviourPtr& )
+        LemaitreFoMaterialBehaviourPtr( LemaitreFoMaterialBehaviourInstance* )
+        LemaitreFoMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass MetaLemaAniMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        MetaLemaAniMaterialBehaviourInstance()
+
+    cdef cppclass MetaLemaAniMaterialBehaviourPtr:
+
+        MetaLemaAniMaterialBehaviourPtr( MetaLemaAniMaterialBehaviourPtr& )
+        MetaLemaAniMaterialBehaviourPtr( MetaLemaAniMaterialBehaviourInstance* )
+        MetaLemaAniMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass MetaLemaAniFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        MetaLemaAniFoMaterialBehaviourInstance()
+
+    cdef cppclass MetaLemaAniFoMaterialBehaviourPtr:
+
+        MetaLemaAniFoMaterialBehaviourPtr( MetaLemaAniFoMaterialBehaviourPtr& )
+        MetaLemaAniFoMaterialBehaviourPtr( MetaLemaAniFoMaterialBehaviourInstance* )
+        MetaLemaAniFoMaterialBehaviourInstance* get()
 
 
 
@@ -694,99 +694,99 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Asse_cornMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass AsseCornMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Asse_cornMaterialBehaviourInstance()
+        AsseCornMaterialBehaviourInstance()
 
-    cdef cppclass Asse_cornMaterialBehaviourPtr:
+    cdef cppclass AsseCornMaterialBehaviourPtr:
 
-        Asse_cornMaterialBehaviourPtr( Asse_cornMaterialBehaviourPtr& )
-        Asse_cornMaterialBehaviourPtr( Asse_cornMaterialBehaviourInstance* )
-        Asse_cornMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Dis_contactMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Dis_contactMaterialBehaviourInstance()
-
-    cdef cppclass Dis_contactMaterialBehaviourPtr:
-
-        Dis_contactMaterialBehaviourPtr( Dis_contactMaterialBehaviourPtr& )
-        Dis_contactMaterialBehaviourPtr( Dis_contactMaterialBehaviourInstance* )
-        Dis_contactMaterialBehaviourInstance* get()
+        AsseCornMaterialBehaviourPtr( AsseCornMaterialBehaviourPtr& )
+        AsseCornMaterialBehaviourPtr( AsseCornMaterialBehaviourInstance* )
+        AsseCornMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Endo_scalaireMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass DisContactMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Endo_scalaireMaterialBehaviourInstance()
+        DisContactMaterialBehaviourInstance()
 
-    cdef cppclass Endo_scalaireMaterialBehaviourPtr:
+    cdef cppclass DisContactMaterialBehaviourPtr:
 
-        Endo_scalaireMaterialBehaviourPtr( Endo_scalaireMaterialBehaviourPtr& )
-        Endo_scalaireMaterialBehaviourPtr( Endo_scalaireMaterialBehaviourInstance* )
-        Endo_scalaireMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Endo_scalaire_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Endo_scalaire_foMaterialBehaviourInstance()
-
-    cdef cppclass Endo_scalaire_foMaterialBehaviourPtr:
-
-        Endo_scalaire_foMaterialBehaviourPtr( Endo_scalaire_foMaterialBehaviourPtr& )
-        Endo_scalaire_foMaterialBehaviourPtr( Endo_scalaire_foMaterialBehaviourInstance* )
-        Endo_scalaire_foMaterialBehaviourInstance* get()
+        DisContactMaterialBehaviourPtr( DisContactMaterialBehaviourPtr& )
+        DisContactMaterialBehaviourPtr( DisContactMaterialBehaviourInstance* )
+        DisContactMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Endo_fiss_expMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass EndoScalaireMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Endo_fiss_expMaterialBehaviourInstance()
+        EndoScalaireMaterialBehaviourInstance()
 
-    cdef cppclass Endo_fiss_expMaterialBehaviourPtr:
+    cdef cppclass EndoScalaireMaterialBehaviourPtr:
 
-        Endo_fiss_expMaterialBehaviourPtr( Endo_fiss_expMaterialBehaviourPtr& )
-        Endo_fiss_expMaterialBehaviourPtr( Endo_fiss_expMaterialBehaviourInstance* )
-        Endo_fiss_expMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Endo_fiss_exp_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Endo_fiss_exp_foMaterialBehaviourInstance()
-
-    cdef cppclass Endo_fiss_exp_foMaterialBehaviourPtr:
-
-        Endo_fiss_exp_foMaterialBehaviourPtr( Endo_fiss_exp_foMaterialBehaviourPtr& )
-        Endo_fiss_exp_foMaterialBehaviourPtr( Endo_fiss_exp_foMaterialBehaviourInstance* )
-        Endo_fiss_exp_foMaterialBehaviourInstance* get()
+        EndoScalaireMaterialBehaviourPtr( EndoScalaireMaterialBehaviourPtr& )
+        EndoScalaireMaterialBehaviourPtr( EndoScalaireMaterialBehaviourInstance* )
+        EndoScalaireMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Dis_gricraMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass EndoScalaireFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Dis_gricraMaterialBehaviourInstance()
+        EndoScalaireFoMaterialBehaviourInstance()
 
-    cdef cppclass Dis_gricraMaterialBehaviourPtr:
+    cdef cppclass EndoScalaireFoMaterialBehaviourPtr:
 
-        Dis_gricraMaterialBehaviourPtr( Dis_gricraMaterialBehaviourPtr& )
-        Dis_gricraMaterialBehaviourPtr( Dis_gricraMaterialBehaviourInstance* )
-        Dis_gricraMaterialBehaviourInstance* get()
+        EndoScalaireFoMaterialBehaviourPtr( EndoScalaireFoMaterialBehaviourPtr& )
+        EndoScalaireFoMaterialBehaviourPtr( EndoScalaireFoMaterialBehaviourInstance* )
+        EndoScalaireFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Beton_double_dpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass EndoFissExpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Beton_double_dpMaterialBehaviourInstance()
+        EndoFissExpMaterialBehaviourInstance()
 
-    cdef cppclass Beton_double_dpMaterialBehaviourPtr:
+    cdef cppclass EndoFissExpMaterialBehaviourPtr:
 
-        Beton_double_dpMaterialBehaviourPtr( Beton_double_dpMaterialBehaviourPtr& )
-        Beton_double_dpMaterialBehaviourPtr( Beton_double_dpMaterialBehaviourInstance* )
-        Beton_double_dpMaterialBehaviourInstance* get()
+        EndoFissExpMaterialBehaviourPtr( EndoFissExpMaterialBehaviourPtr& )
+        EndoFissExpMaterialBehaviourPtr( EndoFissExpMaterialBehaviourInstance* )
+        EndoFissExpMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass EndoFissExpFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        EndoFissExpFoMaterialBehaviourInstance()
+
+    cdef cppclass EndoFissExpFoMaterialBehaviourPtr:
+
+        EndoFissExpFoMaterialBehaviourPtr( EndoFissExpFoMaterialBehaviourPtr& )
+        EndoFissExpFoMaterialBehaviourPtr( EndoFissExpFoMaterialBehaviourInstance* )
+        EndoFissExpFoMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass DisGricraMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        DisGricraMaterialBehaviourInstance()
+
+    cdef cppclass DisGricraMaterialBehaviourPtr:
+
+        DisGricraMaterialBehaviourPtr( DisGricraMaterialBehaviourPtr& )
+        DisGricraMaterialBehaviourPtr( DisGricraMaterialBehaviourInstance* )
+        DisGricraMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass BetonDoubleDpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        BetonDoubleDpMaterialBehaviourInstance()
+
+    cdef cppclass BetonDoubleDpMaterialBehaviourPtr:
+
+        BetonDoubleDpMaterialBehaviourPtr( BetonDoubleDpMaterialBehaviourPtr& )
+        BetonDoubleDpMaterialBehaviourPtr( BetonDoubleDpMaterialBehaviourInstance* )
+        BetonDoubleDpMaterialBehaviourInstance* get()
 
 
 
@@ -802,15 +802,15 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Vendochab_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass VendochabFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Vendochab_foMaterialBehaviourInstance()
+        VendochabFoMaterialBehaviourInstance()
 
-    cdef cppclass Vendochab_foMaterialBehaviourPtr:
+    cdef cppclass VendochabFoMaterialBehaviourPtr:
 
-        Vendochab_foMaterialBehaviourPtr( Vendochab_foMaterialBehaviourPtr& )
-        Vendochab_foMaterialBehaviourPtr( Vendochab_foMaterialBehaviourInstance* )
-        Vendochab_foMaterialBehaviourInstance* get()
+        VendochabFoMaterialBehaviourPtr( VendochabFoMaterialBehaviourPtr& )
+        VendochabFoMaterialBehaviourPtr( VendochabFoMaterialBehaviourInstance* )
+        VendochabFoMaterialBehaviourInstance* get()
 
 
 
@@ -826,111 +826,111 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Visc_endoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ViscEndoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Visc_endoMaterialBehaviourInstance()
+        ViscEndoMaterialBehaviourInstance()
 
-    cdef cppclass Visc_endoMaterialBehaviourPtr:
+    cdef cppclass ViscEndoMaterialBehaviourPtr:
 
-        Visc_endoMaterialBehaviourPtr( Visc_endoMaterialBehaviourPtr& )
-        Visc_endoMaterialBehaviourPtr( Visc_endoMaterialBehaviourInstance* )
-        Visc_endoMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Visc_endo_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Visc_endo_foMaterialBehaviourInstance()
-
-    cdef cppclass Visc_endo_foMaterialBehaviourPtr:
-
-        Visc_endo_foMaterialBehaviourPtr( Visc_endo_foMaterialBehaviourPtr& )
-        Visc_endo_foMaterialBehaviourPtr( Visc_endo_foMaterialBehaviourInstance* )
-        Visc_endo_foMaterialBehaviourInstance* get()
+        ViscEndoMaterialBehaviourPtr( ViscEndoMaterialBehaviourPtr& )
+        ViscEndoMaterialBehaviourPtr( ViscEndoMaterialBehaviourInstance* )
+        ViscEndoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Pinto_menegottoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ViscEndoFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Pinto_menegottoMaterialBehaviourInstance()
+        ViscEndoFoMaterialBehaviourInstance()
 
-    cdef cppclass Pinto_menegottoMaterialBehaviourPtr:
+    cdef cppclass ViscEndoFoMaterialBehaviourPtr:
 
-        Pinto_menegottoMaterialBehaviourPtr( Pinto_menegottoMaterialBehaviourPtr& )
-        Pinto_menegottoMaterialBehaviourPtr( Pinto_menegottoMaterialBehaviourInstance* )
-        Pinto_menegottoMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Bpel_betonMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Bpel_betonMaterialBehaviourInstance()
-
-    cdef cppclass Bpel_betonMaterialBehaviourPtr:
-
-        Bpel_betonMaterialBehaviourPtr( Bpel_betonMaterialBehaviourPtr& )
-        Bpel_betonMaterialBehaviourPtr( Bpel_betonMaterialBehaviourInstance* )
-        Bpel_betonMaterialBehaviourInstance* get()
+        ViscEndoFoMaterialBehaviourPtr( ViscEndoFoMaterialBehaviourPtr& )
+        ViscEndoFoMaterialBehaviourPtr( ViscEndoFoMaterialBehaviourInstance* )
+        ViscEndoFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Bpel_acierMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass PintoMenegottoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Bpel_acierMaterialBehaviourInstance()
+        PintoMenegottoMaterialBehaviourInstance()
 
-    cdef cppclass Bpel_acierMaterialBehaviourPtr:
+    cdef cppclass PintoMenegottoMaterialBehaviourPtr:
 
-        Bpel_acierMaterialBehaviourPtr( Bpel_acierMaterialBehaviourPtr& )
-        Bpel_acierMaterialBehaviourPtr( Bpel_acierMaterialBehaviourInstance* )
-        Bpel_acierMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Etcc_betonMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Etcc_betonMaterialBehaviourInstance()
-
-    cdef cppclass Etcc_betonMaterialBehaviourPtr:
-
-        Etcc_betonMaterialBehaviourPtr( Etcc_betonMaterialBehaviourPtr& )
-        Etcc_betonMaterialBehaviourPtr( Etcc_betonMaterialBehaviourInstance* )
-        Etcc_betonMaterialBehaviourInstance* get()
+        PintoMenegottoMaterialBehaviourPtr( PintoMenegottoMaterialBehaviourPtr& )
+        PintoMenegottoMaterialBehaviourPtr( PintoMenegottoMaterialBehaviourInstance* )
+        PintoMenegottoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Etcc_acierMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass BpelBetonMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Etcc_acierMaterialBehaviourInstance()
+        BpelBetonMaterialBehaviourInstance()
 
-    cdef cppclass Etcc_acierMaterialBehaviourPtr:
+    cdef cppclass BpelBetonMaterialBehaviourPtr:
 
-        Etcc_acierMaterialBehaviourPtr( Etcc_acierMaterialBehaviourPtr& )
-        Etcc_acierMaterialBehaviourPtr( Etcc_acierMaterialBehaviourInstance* )
-        Etcc_acierMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Mohr_coulombMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Mohr_coulombMaterialBehaviourInstance()
-
-    cdef cppclass Mohr_coulombMaterialBehaviourPtr:
-
-        Mohr_coulombMaterialBehaviourPtr( Mohr_coulombMaterialBehaviourPtr& )
-        Mohr_coulombMaterialBehaviourPtr( Mohr_coulombMaterialBehaviourInstance* )
-        Mohr_coulombMaterialBehaviourInstance* get()
+        BpelBetonMaterialBehaviourPtr( BpelBetonMaterialBehaviourPtr& )
+        BpelBetonMaterialBehaviourPtr( BpelBetonMaterialBehaviourInstance* )
+        BpelBetonMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Cam_clayMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass BpelAcierMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Cam_clayMaterialBehaviourInstance()
+        BpelAcierMaterialBehaviourInstance()
 
-    cdef cppclass Cam_clayMaterialBehaviourPtr:
+    cdef cppclass BpelAcierMaterialBehaviourPtr:
 
-        Cam_clayMaterialBehaviourPtr( Cam_clayMaterialBehaviourPtr& )
-        Cam_clayMaterialBehaviourPtr( Cam_clayMaterialBehaviourInstance* )
-        Cam_clayMaterialBehaviourInstance* get()
+        BpelAcierMaterialBehaviourPtr( BpelAcierMaterialBehaviourPtr& )
+        BpelAcierMaterialBehaviourPtr( BpelAcierMaterialBehaviourInstance* )
+        BpelAcierMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass EtccBetonMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        EtccBetonMaterialBehaviourInstance()
+
+    cdef cppclass EtccBetonMaterialBehaviourPtr:
+
+        EtccBetonMaterialBehaviourPtr( EtccBetonMaterialBehaviourPtr& )
+        EtccBetonMaterialBehaviourPtr( EtccBetonMaterialBehaviourInstance* )
+        EtccBetonMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass EtccAcierMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        EtccAcierMaterialBehaviourInstance()
+
+    cdef cppclass EtccAcierMaterialBehaviourPtr:
+
+        EtccAcierMaterialBehaviourPtr( EtccAcierMaterialBehaviourPtr& )
+        EtccAcierMaterialBehaviourPtr( EtccAcierMaterialBehaviourInstance* )
+        EtccAcierMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass MohrCoulombMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        MohrCoulombMaterialBehaviourInstance()
+
+    cdef cppclass MohrCoulombMaterialBehaviourPtr:
+
+        MohrCoulombMaterialBehaviourPtr( MohrCoulombMaterialBehaviourPtr& )
+        MohrCoulombMaterialBehaviourPtr( MohrCoulombMaterialBehaviourInstance* )
+        MohrCoulombMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass CamClayMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        CamClayMaterialBehaviourInstance()
+
+    cdef cppclass CamClayMaterialBehaviourPtr:
+
+        CamClayMaterialBehaviourPtr( CamClayMaterialBehaviourPtr& )
+        CamClayMaterialBehaviourPtr( CamClayMaterialBehaviourInstance* )
+        CamClayMaterialBehaviourInstance* get()
 
 
 
@@ -970,111 +970,111 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Ecro_asym_lineMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass EcroAsymLineMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Ecro_asym_lineMaterialBehaviourInstance()
+        EcroAsymLineMaterialBehaviourInstance()
 
-    cdef cppclass Ecro_asym_lineMaterialBehaviourPtr:
+    cdef cppclass EcroAsymLineMaterialBehaviourPtr:
 
-        Ecro_asym_lineMaterialBehaviourPtr( Ecro_asym_lineMaterialBehaviourPtr& )
-        Ecro_asym_lineMaterialBehaviourPtr( Ecro_asym_lineMaterialBehaviourInstance* )
-        Ecro_asym_lineMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Granger_fpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Granger_fpMaterialBehaviourInstance()
-
-    cdef cppclass Granger_fpMaterialBehaviourPtr:
-
-        Granger_fpMaterialBehaviourPtr( Granger_fpMaterialBehaviourPtr& )
-        Granger_fpMaterialBehaviourPtr( Granger_fpMaterialBehaviourInstance* )
-        Granger_fpMaterialBehaviourInstance* get()
+        EcroAsymLineMaterialBehaviourPtr( EcroAsymLineMaterialBehaviourPtr& )
+        EcroAsymLineMaterialBehaviourPtr( EcroAsymLineMaterialBehaviourInstance* )
+        EcroAsymLineMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Granger_fp_indtMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass GrangerFpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Granger_fp_indtMaterialBehaviourInstance()
+        GrangerFpMaterialBehaviourInstance()
 
-    cdef cppclass Granger_fp_indtMaterialBehaviourPtr:
+    cdef cppclass GrangerFpMaterialBehaviourPtr:
 
-        Granger_fp_indtMaterialBehaviourPtr( Granger_fp_indtMaterialBehaviourPtr& )
-        Granger_fp_indtMaterialBehaviourPtr( Granger_fp_indtMaterialBehaviourInstance* )
-        Granger_fp_indtMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass V_granger_fpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        V_granger_fpMaterialBehaviourInstance()
-
-    cdef cppclass V_granger_fpMaterialBehaviourPtr:
-
-        V_granger_fpMaterialBehaviourPtr( V_granger_fpMaterialBehaviourPtr& )
-        V_granger_fpMaterialBehaviourPtr( V_granger_fpMaterialBehaviourInstance* )
-        V_granger_fpMaterialBehaviourInstance* get()
+        GrangerFpMaterialBehaviourPtr( GrangerFpMaterialBehaviourPtr& )
+        GrangerFpMaterialBehaviourPtr( GrangerFpMaterialBehaviourInstance* )
+        GrangerFpMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Beton_burger_fpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass GrangerFp_indtMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Beton_burger_fpMaterialBehaviourInstance()
+        GrangerFp_indtMaterialBehaviourInstance()
 
-    cdef cppclass Beton_burger_fpMaterialBehaviourPtr:
+    cdef cppclass GrangerFp_indtMaterialBehaviourPtr:
 
-        Beton_burger_fpMaterialBehaviourPtr( Beton_burger_fpMaterialBehaviourPtr& )
-        Beton_burger_fpMaterialBehaviourPtr( Beton_burger_fpMaterialBehaviourInstance* )
-        Beton_burger_fpMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Beton_umlv_fpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Beton_umlv_fpMaterialBehaviourInstance()
-
-    cdef cppclass Beton_umlv_fpMaterialBehaviourPtr:
-
-        Beton_umlv_fpMaterialBehaviourPtr( Beton_umlv_fpMaterialBehaviourPtr& )
-        Beton_umlv_fpMaterialBehaviourPtr( Beton_umlv_fpMaterialBehaviourInstance* )
-        Beton_umlv_fpMaterialBehaviourInstance* get()
+        GrangerFp_indtMaterialBehaviourPtr( GrangerFp_indtMaterialBehaviourPtr& )
+        GrangerFp_indtMaterialBehaviourPtr( GrangerFp_indtMaterialBehaviourInstance* )
+        GrangerFp_indtMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Beton_ragMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass VGrangerFpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Beton_ragMaterialBehaviourInstance()
+        VGrangerFpMaterialBehaviourInstance()
 
-    cdef cppclass Beton_ragMaterialBehaviourPtr:
+    cdef cppclass VGrangerFpMaterialBehaviourPtr:
 
-        Beton_ragMaterialBehaviourPtr( Beton_ragMaterialBehaviourPtr& )
-        Beton_ragMaterialBehaviourPtr( Beton_ragMaterialBehaviourInstance* )
-        Beton_ragMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Poro_betonMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Poro_betonMaterialBehaviourInstance()
-
-    cdef cppclass Poro_betonMaterialBehaviourPtr:
-
-        Poro_betonMaterialBehaviourPtr( Poro_betonMaterialBehaviourPtr& )
-        Poro_betonMaterialBehaviourPtr( Poro_betonMaterialBehaviourInstance* )
-        Poro_betonMaterialBehaviourInstance* get()
+        VGrangerFpMaterialBehaviourPtr( VGrangerFpMaterialBehaviourPtr& )
+        VGrangerFpMaterialBehaviourPtr( VGrangerFpMaterialBehaviourInstance* )
+        VGrangerFpMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Glrc_dmMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass BetonBurgerFpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Glrc_dmMaterialBehaviourInstance()
+        BetonBurgerFpMaterialBehaviourInstance()
 
-    cdef cppclass Glrc_dmMaterialBehaviourPtr:
+    cdef cppclass BetonBurgerFpMaterialBehaviourPtr:
 
-        Glrc_dmMaterialBehaviourPtr( Glrc_dmMaterialBehaviourPtr& )
-        Glrc_dmMaterialBehaviourPtr( Glrc_dmMaterialBehaviourInstance* )
-        Glrc_dmMaterialBehaviourInstance* get()
+        BetonBurgerFpMaterialBehaviourPtr( BetonBurgerFpMaterialBehaviourPtr& )
+        BetonBurgerFpMaterialBehaviourPtr( BetonBurgerFpMaterialBehaviourInstance* )
+        BetonBurgerFpMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass BetonUmlvFpMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        BetonUmlvFpMaterialBehaviourInstance()
+
+    cdef cppclass BetonUmlvFpMaterialBehaviourPtr:
+
+        BetonUmlvFpMaterialBehaviourPtr( BetonUmlvFpMaterialBehaviourPtr& )
+        BetonUmlvFpMaterialBehaviourPtr( BetonUmlvFpMaterialBehaviourInstance* )
+        BetonUmlvFpMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass BetonRagMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        BetonRagMaterialBehaviourInstance()
+
+    cdef cppclass BetonRagMaterialBehaviourPtr:
+
+        BetonRagMaterialBehaviourPtr( BetonRagMaterialBehaviourPtr& )
+        BetonRagMaterialBehaviourPtr( BetonRagMaterialBehaviourInstance* )
+        BetonRagMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass PoroBetonMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        PoroBetonMaterialBehaviourInstance()
+
+    cdef cppclass PoroBetonMaterialBehaviourPtr:
+
+        PoroBetonMaterialBehaviourPtr( PoroBetonMaterialBehaviourPtr& )
+        PoroBetonMaterialBehaviourPtr( PoroBetonMaterialBehaviourInstance* )
+        PoroBetonMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass GlrcDmMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        GlrcDmMaterialBehaviourInstance()
+
+    cdef cppclass GlrcDmMaterialBehaviourPtr:
+
+        GlrcDmMaterialBehaviourPtr( GlrcDmMaterialBehaviourPtr& )
+        GlrcDmMaterialBehaviourPtr( GlrcDmMaterialBehaviourInstance* )
+        GlrcDmMaterialBehaviourInstance* get()
 
 
 
@@ -1090,87 +1090,87 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Gatt_monerieMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass GattMonerieMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Gatt_monerieMaterialBehaviourInstance()
+        GattMonerieMaterialBehaviourInstance()
 
-    cdef cppclass Gatt_monerieMaterialBehaviourPtr:
+    cdef cppclass GattMonerieMaterialBehaviourPtr:
 
-        Gatt_monerieMaterialBehaviourPtr( Gatt_monerieMaterialBehaviourPtr& )
-        Gatt_monerieMaterialBehaviourPtr( Gatt_monerieMaterialBehaviourInstance* )
-        Gatt_monerieMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Corr_acierMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Corr_acierMaterialBehaviourInstance()
-
-    cdef cppclass Corr_acierMaterialBehaviourPtr:
-
-        Corr_acierMaterialBehaviourPtr( Corr_acierMaterialBehaviourPtr& )
-        Corr_acierMaterialBehaviourPtr( Corr_acierMaterialBehaviourInstance* )
-        Corr_acierMaterialBehaviourInstance* get()
+        GattMonerieMaterialBehaviourPtr( GattMonerieMaterialBehaviourPtr& )
+        GattMonerieMaterialBehaviourPtr( GattMonerieMaterialBehaviourInstance* )
+        GattMonerieMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Dis_ecro_cineMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass CorrAcierMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Dis_ecro_cineMaterialBehaviourInstance()
+        CorrAcierMaterialBehaviourInstance()
 
-    cdef cppclass Dis_ecro_cineMaterialBehaviourPtr:
+    cdef cppclass CorrAcierMaterialBehaviourPtr:
 
-        Dis_ecro_cineMaterialBehaviourPtr( Dis_ecro_cineMaterialBehaviourPtr& )
-        Dis_ecro_cineMaterialBehaviourPtr( Dis_ecro_cineMaterialBehaviourInstance* )
-        Dis_ecro_cineMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Dis_viscMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Dis_viscMaterialBehaviourInstance()
-
-    cdef cppclass Dis_viscMaterialBehaviourPtr:
-
-        Dis_viscMaterialBehaviourPtr( Dis_viscMaterialBehaviourPtr& )
-        Dis_viscMaterialBehaviourPtr( Dis_viscMaterialBehaviourInstance* )
-        Dis_viscMaterialBehaviourInstance* get()
+        CorrAcierMaterialBehaviourPtr( CorrAcierMaterialBehaviourPtr& )
+        CorrAcierMaterialBehaviourPtr( CorrAcierMaterialBehaviourInstance* )
+        CorrAcierMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Dis_bili_elasMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass DisEcroCineMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Dis_bili_elasMaterialBehaviourInstance()
+        DisEcroCineMaterialBehaviourInstance()
 
-    cdef cppclass Dis_bili_elasMaterialBehaviourPtr:
+    cdef cppclass DisEcroCineMaterialBehaviourPtr:
 
-        Dis_bili_elasMaterialBehaviourPtr( Dis_bili_elasMaterialBehaviourPtr& )
-        Dis_bili_elasMaterialBehaviourPtr( Dis_bili_elasMaterialBehaviourInstance* )
-        Dis_bili_elasMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Ther_nlMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Ther_nlMaterialBehaviourInstance()
-
-    cdef cppclass Ther_nlMaterialBehaviourPtr:
-
-        Ther_nlMaterialBehaviourPtr( Ther_nlMaterialBehaviourPtr& )
-        Ther_nlMaterialBehaviourPtr( Ther_nlMaterialBehaviourInstance* )
-        Ther_nlMaterialBehaviourInstance* get()
+        DisEcroCineMaterialBehaviourPtr( DisEcroCineMaterialBehaviourPtr& )
+        DisEcroCineMaterialBehaviourPtr( DisEcroCineMaterialBehaviourInstance* )
+        DisEcroCineMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Ther_hydrMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass DisViscMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Ther_hydrMaterialBehaviourInstance()
+        DisViscMaterialBehaviourInstance()
 
-    cdef cppclass Ther_hydrMaterialBehaviourPtr:
+    cdef cppclass DisViscMaterialBehaviourPtr:
 
-        Ther_hydrMaterialBehaviourPtr( Ther_hydrMaterialBehaviourPtr& )
-        Ther_hydrMaterialBehaviourPtr( Ther_hydrMaterialBehaviourInstance* )
-        Ther_hydrMaterialBehaviourInstance* get()
+        DisViscMaterialBehaviourPtr( DisViscMaterialBehaviourPtr& )
+        DisViscMaterialBehaviourPtr( DisViscMaterialBehaviourInstance* )
+        DisViscMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass DisBiliElasMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        DisBiliElasMaterialBehaviourInstance()
+
+    cdef cppclass DisBiliElasMaterialBehaviourPtr:
+
+        DisBiliElasMaterialBehaviourPtr( DisBiliElasMaterialBehaviourPtr& )
+        DisBiliElasMaterialBehaviourPtr( DisBiliElasMaterialBehaviourInstance* )
+        DisBiliElasMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass TherNlMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        TherNlMaterialBehaviourInstance()
+
+    cdef cppclass TherNlMaterialBehaviourPtr:
+
+        TherNlMaterialBehaviourPtr( TherNlMaterialBehaviourPtr& )
+        TherNlMaterialBehaviourPtr( TherNlMaterialBehaviourInstance* )
+        TherNlMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass TherHydrMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        TherHydrMaterialBehaviourInstance()
+
+    cdef cppclass TherHydrMaterialBehaviourPtr:
+
+        TherHydrMaterialBehaviourPtr( TherHydrMaterialBehaviourPtr& )
+        TherHydrMaterialBehaviourPtr( TherHydrMaterialBehaviourInstance* )
+        TherHydrMaterialBehaviourInstance* get()
 
 
 
@@ -1186,219 +1186,219 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Ther_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass TherFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Ther_foMaterialBehaviourInstance()
+        TherFoMaterialBehaviourInstance()
 
-    cdef cppclass Ther_foMaterialBehaviourPtr:
+    cdef cppclass TherFoMaterialBehaviourPtr:
 
-        Ther_foMaterialBehaviourPtr( Ther_foMaterialBehaviourPtr& )
-        Ther_foMaterialBehaviourPtr( Ther_foMaterialBehaviourInstance* )
-        Ther_foMaterialBehaviourInstance* get()
+        TherFoMaterialBehaviourPtr( TherFoMaterialBehaviourPtr& )
+        TherFoMaterialBehaviourPtr( TherFoMaterialBehaviourInstance* )
+        TherFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Ther_orthMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass TherOrthMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Ther_orthMaterialBehaviourInstance()
+        TherOrthMaterialBehaviourInstance()
 
-    cdef cppclass Ther_orthMaterialBehaviourPtr:
+    cdef cppclass TherOrthMaterialBehaviourPtr:
 
-        Ther_orthMaterialBehaviourPtr( Ther_orthMaterialBehaviourPtr& )
-        Ther_orthMaterialBehaviourPtr( Ther_orthMaterialBehaviourInstance* )
-        Ther_orthMaterialBehaviourInstance* get()
+        TherOrthMaterialBehaviourPtr( TherOrthMaterialBehaviourPtr& )
+        TherOrthMaterialBehaviourPtr( TherOrthMaterialBehaviourInstance* )
+        TherOrthMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Ther_coqueMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass TherCoqueMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Ther_coqueMaterialBehaviourInstance()
+        TherCoqueMaterialBehaviourInstance()
 
-    cdef cppclass Ther_coqueMaterialBehaviourPtr:
+    cdef cppclass TherCoqueMaterialBehaviourPtr:
 
-        Ther_coqueMaterialBehaviourPtr( Ther_coqueMaterialBehaviourPtr& )
-        Ther_coqueMaterialBehaviourPtr( Ther_coqueMaterialBehaviourInstance* )
-        Ther_coqueMaterialBehaviourInstance* get()
+        TherCoqueMaterialBehaviourPtr( TherCoqueMaterialBehaviourPtr& )
+        TherCoqueMaterialBehaviourPtr( TherCoqueMaterialBehaviourInstance* )
+        TherCoqueMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Ther_coque_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass TherCoqueFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Ther_coque_foMaterialBehaviourInstance()
+        TherCoqueFoMaterialBehaviourInstance()
 
-    cdef cppclass Ther_coque_foMaterialBehaviourPtr:
+    cdef cppclass TherCoqueFoMaterialBehaviourPtr:
 
-        Ther_coque_foMaterialBehaviourPtr( Ther_coque_foMaterialBehaviourPtr& )
-        Ther_coque_foMaterialBehaviourPtr( Ther_coque_foMaterialBehaviourInstance* )
-        Ther_coque_foMaterialBehaviourInstance* get()
+        TherCoqueFoMaterialBehaviourPtr( TherCoqueFoMaterialBehaviourPtr& )
+        TherCoqueFoMaterialBehaviourPtr( TherCoqueFoMaterialBehaviourInstance* )
+        TherCoqueFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Sech_grangerMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass SechGrangerMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Sech_grangerMaterialBehaviourInstance()
+        SechGrangerMaterialBehaviourInstance()
 
-    cdef cppclass Sech_grangerMaterialBehaviourPtr:
+    cdef cppclass SechGrangerMaterialBehaviourPtr:
 
-        Sech_grangerMaterialBehaviourPtr( Sech_grangerMaterialBehaviourPtr& )
-        Sech_grangerMaterialBehaviourPtr( Sech_grangerMaterialBehaviourInstance* )
-        Sech_grangerMaterialBehaviourInstance* get()
+        SechGrangerMaterialBehaviourPtr( SechGrangerMaterialBehaviourPtr& )
+        SechGrangerMaterialBehaviourPtr( SechGrangerMaterialBehaviourInstance* )
+        SechGrangerMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Sech_mensiMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass SechMensiMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Sech_mensiMaterialBehaviourInstance()
+        SechMensiMaterialBehaviourInstance()
 
-    cdef cppclass Sech_mensiMaterialBehaviourPtr:
+    cdef cppclass SechMensiMaterialBehaviourPtr:
 
-        Sech_mensiMaterialBehaviourPtr( Sech_mensiMaterialBehaviourPtr& )
-        Sech_mensiMaterialBehaviourPtr( Sech_mensiMaterialBehaviourInstance* )
-        Sech_mensiMaterialBehaviourInstance* get()
+        SechMensiMaterialBehaviourPtr( SechMensiMaterialBehaviourPtr& )
+        SechMensiMaterialBehaviourPtr( SechMensiMaterialBehaviourInstance* )
+        SechMensiMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Sech_bazantMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass SechBazantMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Sech_bazantMaterialBehaviourInstance()
+        SechBazantMaterialBehaviourInstance()
 
-    cdef cppclass Sech_bazantMaterialBehaviourPtr:
+    cdef cppclass SechBazantMaterialBehaviourPtr:
 
-        Sech_bazantMaterialBehaviourPtr( Sech_bazantMaterialBehaviourPtr& )
-        Sech_bazantMaterialBehaviourPtr( Sech_bazantMaterialBehaviourInstance* )
-        Sech_bazantMaterialBehaviourInstance* get()
+        SechBazantMaterialBehaviourPtr( SechBazantMaterialBehaviourPtr& )
+        SechBazantMaterialBehaviourPtr( SechBazantMaterialBehaviourInstance* )
+        SechBazantMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Sech_nappeMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass SechNappeMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Sech_nappeMaterialBehaviourInstance()
+        SechNappeMaterialBehaviourInstance()
 
-    cdef cppclass Sech_nappeMaterialBehaviourPtr:
+    cdef cppclass SechNappeMaterialBehaviourPtr:
 
-        Sech_nappeMaterialBehaviourPtr( Sech_nappeMaterialBehaviourPtr& )
-        Sech_nappeMaterialBehaviourPtr( Sech_nappeMaterialBehaviourInstance* )
-        Sech_nappeMaterialBehaviourInstance* get()
+        SechNappeMaterialBehaviourPtr( SechNappeMaterialBehaviourPtr& )
+        SechNappeMaterialBehaviourPtr( SechNappeMaterialBehaviourInstance* )
+        SechNappeMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Meta_acierMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MetaAcierMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Meta_acierMaterialBehaviourInstance()
+        MetaAcierMaterialBehaviourInstance()
 
-    cdef cppclass Meta_acierMaterialBehaviourPtr:
+    cdef cppclass MetaAcierMaterialBehaviourPtr:
 
-        Meta_acierMaterialBehaviourPtr( Meta_acierMaterialBehaviourPtr& )
-        Meta_acierMaterialBehaviourPtr( Meta_acierMaterialBehaviourInstance* )
-        Meta_acierMaterialBehaviourInstance* get()
+        MetaAcierMaterialBehaviourPtr( MetaAcierMaterialBehaviourPtr& )
+        MetaAcierMaterialBehaviourPtr( MetaAcierMaterialBehaviourInstance* )
+        MetaAcierMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Meta_zircMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MetaZircMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Meta_zircMaterialBehaviourInstance()
+        MetaZircMaterialBehaviourInstance()
 
-    cdef cppclass Meta_zircMaterialBehaviourPtr:
+    cdef cppclass MetaZircMaterialBehaviourPtr:
 
-        Meta_zircMaterialBehaviourPtr( Meta_zircMaterialBehaviourPtr& )
-        Meta_zircMaterialBehaviourPtr( Meta_zircMaterialBehaviourInstance* )
-        Meta_zircMaterialBehaviourInstance* get()
+        MetaZircMaterialBehaviourPtr( MetaZircMaterialBehaviourPtr& )
+        MetaZircMaterialBehaviourPtr( MetaZircMaterialBehaviourInstance* )
+        MetaZircMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Durt_metaMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass DurtMetaMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Durt_metaMaterialBehaviourInstance()
+        DurtMetaMaterialBehaviourInstance()
 
-    cdef cppclass Durt_metaMaterialBehaviourPtr:
+    cdef cppclass DurtMetaMaterialBehaviourPtr:
 
-        Durt_metaMaterialBehaviourPtr( Durt_metaMaterialBehaviourPtr& )
-        Durt_metaMaterialBehaviourPtr( Durt_metaMaterialBehaviourInstance* )
-        Durt_metaMaterialBehaviourInstance* get()
+        DurtMetaMaterialBehaviourPtr( DurtMetaMaterialBehaviourPtr& )
+        DurtMetaMaterialBehaviourPtr( DurtMetaMaterialBehaviourInstance* )
+        DurtMetaMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_metaMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasMetaMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_metaMaterialBehaviourInstance()
+        ElasMetaMaterialBehaviourInstance()
 
-    cdef cppclass Elas_metaMaterialBehaviourPtr:
+    cdef cppclass ElasMetaMaterialBehaviourPtr:
 
-        Elas_metaMaterialBehaviourPtr( Elas_metaMaterialBehaviourPtr& )
-        Elas_metaMaterialBehaviourPtr( Elas_metaMaterialBehaviourInstance* )
-        Elas_metaMaterialBehaviourInstance* get()
+        ElasMetaMaterialBehaviourPtr( ElasMetaMaterialBehaviourPtr& )
+        ElasMetaMaterialBehaviourPtr( ElasMetaMaterialBehaviourInstance* )
+        ElasMetaMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_meta_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasMetaFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_meta_foMaterialBehaviourInstance()
+        ElasMetaFoMaterialBehaviourInstance()
 
-    cdef cppclass Elas_meta_foMaterialBehaviourPtr:
+    cdef cppclass ElasMetaFoMaterialBehaviourPtr:
 
-        Elas_meta_foMaterialBehaviourPtr( Elas_meta_foMaterialBehaviourPtr& )
-        Elas_meta_foMaterialBehaviourPtr( Elas_meta_foMaterialBehaviourInstance* )
-        Elas_meta_foMaterialBehaviourInstance* get()
+        ElasMetaFoMaterialBehaviourPtr( ElasMetaFoMaterialBehaviourPtr& )
+        ElasMetaFoMaterialBehaviourPtr( ElasMetaFoMaterialBehaviourInstance* )
+        ElasMetaFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Meta_ecro_lineMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MetaEcroLineMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Meta_ecro_lineMaterialBehaviourInstance()
+        MetaEcroLineMaterialBehaviourInstance()
 
-    cdef cppclass Meta_ecro_lineMaterialBehaviourPtr:
+    cdef cppclass MetaEcroLineMaterialBehaviourPtr:
 
-        Meta_ecro_lineMaterialBehaviourPtr( Meta_ecro_lineMaterialBehaviourPtr& )
-        Meta_ecro_lineMaterialBehaviourPtr( Meta_ecro_lineMaterialBehaviourInstance* )
-        Meta_ecro_lineMaterialBehaviourInstance* get()
+        MetaEcroLineMaterialBehaviourPtr( MetaEcroLineMaterialBehaviourPtr& )
+        MetaEcroLineMaterialBehaviourPtr( MetaEcroLineMaterialBehaviourInstance* )
+        MetaEcroLineMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Meta_tractionMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MetaTractionMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Meta_tractionMaterialBehaviourInstance()
+        MetaTractionMaterialBehaviourInstance()
 
-    cdef cppclass Meta_tractionMaterialBehaviourPtr:
+    cdef cppclass MetaTractionMaterialBehaviourPtr:
 
-        Meta_tractionMaterialBehaviourPtr( Meta_tractionMaterialBehaviourPtr& )
-        Meta_tractionMaterialBehaviourPtr( Meta_tractionMaterialBehaviourInstance* )
-        Meta_tractionMaterialBehaviourInstance* get()
+        MetaTractionMaterialBehaviourPtr( MetaTractionMaterialBehaviourPtr& )
+        MetaTractionMaterialBehaviourPtr( MetaTractionMaterialBehaviourInstance* )
+        MetaTractionMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Meta_visc_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MetaViscFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Meta_visc_foMaterialBehaviourInstance()
+        MetaViscFoMaterialBehaviourInstance()
 
-    cdef cppclass Meta_visc_foMaterialBehaviourPtr:
+    cdef cppclass MetaViscFoMaterialBehaviourPtr:
 
-        Meta_visc_foMaterialBehaviourPtr( Meta_visc_foMaterialBehaviourPtr& )
-        Meta_visc_foMaterialBehaviourPtr( Meta_visc_foMaterialBehaviourInstance* )
-        Meta_visc_foMaterialBehaviourInstance* get()
+        MetaViscFoMaterialBehaviourPtr( MetaViscFoMaterialBehaviourPtr& )
+        MetaViscFoMaterialBehaviourPtr( MetaViscFoMaterialBehaviourInstance* )
+        MetaViscFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Meta_ptMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MetaPtMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Meta_ptMaterialBehaviourInstance()
+        MetaPtMaterialBehaviourInstance()
 
-    cdef cppclass Meta_ptMaterialBehaviourPtr:
+    cdef cppclass MetaPtMaterialBehaviourPtr:
 
-        Meta_ptMaterialBehaviourPtr( Meta_ptMaterialBehaviourPtr& )
-        Meta_ptMaterialBehaviourPtr( Meta_ptMaterialBehaviourInstance* )
-        Meta_ptMaterialBehaviourInstance* get()
+        MetaPtMaterialBehaviourPtr( MetaPtMaterialBehaviourPtr& )
+        MetaPtMaterialBehaviourPtr( MetaPtMaterialBehaviourInstance* )
+        MetaPtMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Meta_reMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MetaReMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Meta_reMaterialBehaviourInstance()
+        MetaReMaterialBehaviourInstance()
 
-    cdef cppclass Meta_reMaterialBehaviourPtr:
+    cdef cppclass MetaReMaterialBehaviourPtr:
 
-        Meta_reMaterialBehaviourPtr( Meta_reMaterialBehaviourPtr& )
-        Meta_reMaterialBehaviourPtr( Meta_reMaterialBehaviourInstance* )
-        Meta_reMaterialBehaviourInstance* get()
+        MetaReMaterialBehaviourPtr( MetaReMaterialBehaviourPtr& )
+        MetaReMaterialBehaviourPtr( MetaReMaterialBehaviourInstance* )
+        MetaReMaterialBehaviourInstance* get()
 
 
 
@@ -1414,73 +1414,73 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Thm_initMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ThmInitMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Thm_initMaterialBehaviourInstance()
+        ThmInitMaterialBehaviourInstance()
 
-    cdef cppclass Thm_initMaterialBehaviourPtr:
+    cdef cppclass ThmInitMaterialBehaviourPtr:
 
-        Thm_initMaterialBehaviourPtr( Thm_initMaterialBehaviourPtr& )
-        Thm_initMaterialBehaviourPtr( Thm_initMaterialBehaviourInstance* )
-        Thm_initMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Thm_diffuMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Thm_diffuMaterialBehaviourInstance()
-
-    cdef cppclass Thm_diffuMaterialBehaviourPtr:
-
-        Thm_diffuMaterialBehaviourPtr( Thm_diffuMaterialBehaviourPtr& )
-        Thm_diffuMaterialBehaviourPtr( Thm_diffuMaterialBehaviourInstance* )
-        Thm_diffuMaterialBehaviourInstance* get()
+        ThmInitMaterialBehaviourPtr( ThmInitMaterialBehaviourPtr& )
+        ThmInitMaterialBehaviourPtr( ThmInitMaterialBehaviourInstance* )
+        ThmInitMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Thm_liquMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ThmDiffuMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Thm_liquMaterialBehaviourInstance()
+        ThmDiffuMaterialBehaviourInstance()
 
-    cdef cppclass Thm_liquMaterialBehaviourPtr:
+    cdef cppclass ThmDiffuMaterialBehaviourPtr:
 
-        Thm_liquMaterialBehaviourPtr( Thm_liquMaterialBehaviourPtr& )
-        Thm_liquMaterialBehaviourPtr( Thm_liquMaterialBehaviourInstance* )
-        Thm_liquMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Thm_gazMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Thm_gazMaterialBehaviourInstance()
-
-    cdef cppclass Thm_gazMaterialBehaviourPtr:
-
-        Thm_gazMaterialBehaviourPtr( Thm_gazMaterialBehaviourPtr& )
-        Thm_gazMaterialBehaviourPtr( Thm_gazMaterialBehaviourInstance* )
-        Thm_gazMaterialBehaviourInstance* get()
+        ThmDiffuMaterialBehaviourPtr( ThmDiffuMaterialBehaviourPtr& )
+        ThmDiffuMaterialBehaviourPtr( ThmDiffuMaterialBehaviourInstance* )
+        ThmDiffuMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Thm_vape_gazMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ThmLiquMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Thm_vape_gazMaterialBehaviourInstance()
+        ThmLiquMaterialBehaviourInstance()
 
-    cdef cppclass Thm_vape_gazMaterialBehaviourPtr:
+    cdef cppclass ThmLiquMaterialBehaviourPtr:
 
-        Thm_vape_gazMaterialBehaviourPtr( Thm_vape_gazMaterialBehaviourPtr& )
-        Thm_vape_gazMaterialBehaviourPtr( Thm_vape_gazMaterialBehaviourInstance* )
-        Thm_vape_gazMaterialBehaviourInstance* get()
+        ThmLiquMaterialBehaviourPtr( ThmLiquMaterialBehaviourPtr& )
+        ThmLiquMaterialBehaviourPtr( ThmLiquMaterialBehaviourInstance* )
+        ThmLiquMaterialBehaviourInstance* get()
 
-    cdef cppclass Thm_air_dissMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Thm_air_dissMaterialBehaviourInstance()
 
-    cdef cppclass Thm_air_dissMaterialBehaviourPtr:
+    cdef cppclass ThmGazMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Thm_air_dissMaterialBehaviourPtr( Thm_air_dissMaterialBehaviourPtr& )
-        Thm_air_dissMaterialBehaviourPtr( Thm_air_dissMaterialBehaviourInstance* )
-        Thm_air_dissMaterialBehaviourInstance* get()
+        ThmGazMaterialBehaviourInstance()
+
+    cdef cppclass ThmGazMaterialBehaviourPtr:
+
+        ThmGazMaterialBehaviourPtr( ThmGazMaterialBehaviourPtr& )
+        ThmGazMaterialBehaviourPtr( ThmGazMaterialBehaviourInstance* )
+        ThmGazMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass ThmVapeGazMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        ThmVapeGazMaterialBehaviourInstance()
+
+    cdef cppclass ThmVapeGazMaterialBehaviourPtr:
+
+        ThmVapeGazMaterialBehaviourPtr( ThmVapeGazMaterialBehaviourPtr& )
+        ThmVapeGazMaterialBehaviourPtr( ThmVapeGazMaterialBehaviourInstance* )
+        ThmVapeGazMaterialBehaviourInstance* get()
+
+    cdef cppclass ThmAirDissMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        ThmAirDissMaterialBehaviourInstance()
+
+    cdef cppclass ThmAirDissMaterialBehaviourPtr:
+
+        ThmAirDissMaterialBehaviourPtr( ThmAirDissMaterialBehaviourPtr& )
+        ThmAirDissMaterialBehaviourPtr( ThmAirDissMaterialBehaviourInstance* )
+        ThmAirDissMaterialBehaviourInstance* get()
 
 
 
@@ -1496,39 +1496,39 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Domma_lemaitreMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass DommaLemaitreMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Domma_lemaitreMaterialBehaviourInstance()
+        DommaLemaitreMaterialBehaviourInstance()
 
-    cdef cppclass Domma_lemaitreMaterialBehaviourPtr:
+    cdef cppclass DommaLemaitreMaterialBehaviourPtr:
 
-        Domma_lemaitreMaterialBehaviourPtr( Domma_lemaitreMaterialBehaviourPtr& )
-        Domma_lemaitreMaterialBehaviourPtr( Domma_lemaitreMaterialBehaviourInstance* )
-        Domma_lemaitreMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Cisa_plan_critMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Cisa_plan_critMaterialBehaviourInstance()
-
-    cdef cppclass Cisa_plan_critMaterialBehaviourPtr:
-
-        Cisa_plan_critMaterialBehaviourPtr( Cisa_plan_critMaterialBehaviourPtr& )
-        Cisa_plan_critMaterialBehaviourPtr( Cisa_plan_critMaterialBehaviourInstance* )
-        Cisa_plan_critMaterialBehaviourInstance* get()
+        DommaLemaitreMaterialBehaviourPtr( DommaLemaitreMaterialBehaviourPtr& )
+        DommaLemaitreMaterialBehaviourPtr( DommaLemaitreMaterialBehaviourInstance* )
+        DommaLemaitreMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Thm_ruptMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass CisaPlanCritMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Thm_ruptMaterialBehaviourInstance()
+        CisaPlanCritMaterialBehaviourInstance()
 
-    cdef cppclass Thm_ruptMaterialBehaviourPtr:
+    cdef cppclass CisaPlanCritMaterialBehaviourPtr:
 
-        Thm_ruptMaterialBehaviourPtr( Thm_ruptMaterialBehaviourPtr& )
-        Thm_ruptMaterialBehaviourPtr( Thm_ruptMaterialBehaviourInstance* )
-        Thm_ruptMaterialBehaviourInstance* get()
+        CisaPlanCritMaterialBehaviourPtr( CisaPlanCritMaterialBehaviourPtr& )
+        CisaPlanCritMaterialBehaviourPtr( CisaPlanCritMaterialBehaviourInstance* )
+        CisaPlanCritMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass ThmRuptMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        ThmRuptMaterialBehaviourInstance()
+
+    cdef cppclass ThmRuptMaterialBehaviourPtr:
+
+        ThmRuptMaterialBehaviourPtr( ThmRuptMaterialBehaviourPtr& )
+        ThmRuptMaterialBehaviourPtr( ThmRuptMaterialBehaviourInstance* )
+        ThmRuptMaterialBehaviourInstance* get()
 
 
 
@@ -1544,99 +1544,99 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Weibull_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass WeibullFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Weibull_foMaterialBehaviourInstance()
+        WeibullFoMaterialBehaviourInstance()
 
-    cdef cppclass Weibull_foMaterialBehaviourPtr:
+    cdef cppclass WeibullFoMaterialBehaviourPtr:
 
-        Weibull_foMaterialBehaviourPtr( Weibull_foMaterialBehaviourPtr& )
-        Weibull_foMaterialBehaviourPtr( Weibull_foMaterialBehaviourInstance* )
-        Weibull_foMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Non_localMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Non_localMaterialBehaviourInstance()
-
-    cdef cppclass Non_localMaterialBehaviourPtr:
-
-        Non_localMaterialBehaviourPtr( Non_localMaterialBehaviourPtr& )
-        Non_localMaterialBehaviourPtr( Non_localMaterialBehaviourInstance* )
-        Non_localMaterialBehaviourInstance* get()
+        WeibullFoMaterialBehaviourPtr( WeibullFoMaterialBehaviourPtr& )
+        WeibullFoMaterialBehaviourPtr( WeibullFoMaterialBehaviourInstance* )
+        WeibullFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Rupt_fragMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass NonLocalMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Rupt_fragMaterialBehaviourInstance()
+        NonLocalMaterialBehaviourInstance()
 
-    cdef cppclass Rupt_fragMaterialBehaviourPtr:
+    cdef cppclass NonLocalMaterialBehaviourPtr:
 
-        Rupt_fragMaterialBehaviourPtr( Rupt_fragMaterialBehaviourPtr& )
-        Rupt_fragMaterialBehaviourPtr( Rupt_fragMaterialBehaviourInstance* )
-        Rupt_fragMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Rupt_frag_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Rupt_frag_foMaterialBehaviourInstance()
-
-    cdef cppclass Rupt_frag_foMaterialBehaviourPtr:
-
-        Rupt_frag_foMaterialBehaviourPtr( Rupt_frag_foMaterialBehaviourPtr& )
-        Rupt_frag_foMaterialBehaviourPtr( Rupt_frag_foMaterialBehaviourInstance* )
-        Rupt_frag_foMaterialBehaviourInstance* get()
+        NonLocalMaterialBehaviourPtr( NonLocalMaterialBehaviourPtr& )
+        NonLocalMaterialBehaviourPtr( NonLocalMaterialBehaviourInstance* )
+        NonLocalMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Czm_lab_mixMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass RuptFragMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Czm_lab_mixMaterialBehaviourInstance()
+        RuptFragMaterialBehaviourInstance()
 
-    cdef cppclass Czm_lab_mixMaterialBehaviourPtr:
+    cdef cppclass RuptFragMaterialBehaviourPtr:
 
-        Czm_lab_mixMaterialBehaviourPtr( Czm_lab_mixMaterialBehaviourPtr& )
-        Czm_lab_mixMaterialBehaviourPtr( Czm_lab_mixMaterialBehaviourInstance* )
-        Czm_lab_mixMaterialBehaviourInstance* get()
-
-
-
-    cdef cppclass Rupt_ductMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
-
-        Rupt_ductMaterialBehaviourInstance()
-
-    cdef cppclass Rupt_ductMaterialBehaviourPtr:
-
-        Rupt_ductMaterialBehaviourPtr( Rupt_ductMaterialBehaviourPtr& )
-        Rupt_ductMaterialBehaviourPtr( Rupt_ductMaterialBehaviourInstance* )
-        Rupt_ductMaterialBehaviourInstance* get()
+        RuptFragMaterialBehaviourPtr( RuptFragMaterialBehaviourPtr& )
+        RuptFragMaterialBehaviourPtr( RuptFragMaterialBehaviourInstance* )
+        RuptFragMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Joint_meca_ruptMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass RuptFragFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Joint_meca_ruptMaterialBehaviourInstance()
+        RuptFragFoMaterialBehaviourInstance()
 
-    cdef cppclass Joint_meca_ruptMaterialBehaviourPtr:
+    cdef cppclass RuptFragFoMaterialBehaviourPtr:
 
-        Joint_meca_ruptMaterialBehaviourPtr( Joint_meca_ruptMaterialBehaviourPtr& )
-        Joint_meca_ruptMaterialBehaviourPtr( Joint_meca_ruptMaterialBehaviourInstance* )
-        Joint_meca_ruptMaterialBehaviourInstance* get()
+        RuptFragFoMaterialBehaviourPtr( RuptFragFoMaterialBehaviourPtr& )
+        RuptFragFoMaterialBehaviourPtr( RuptFragFoMaterialBehaviourInstance* )
+        RuptFragFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Joint_meca_frotMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass CzmLabMixMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Joint_meca_frotMaterialBehaviourInstance()
+        CzmLabMixMaterialBehaviourInstance()
 
-    cdef cppclass Joint_meca_frotMaterialBehaviourPtr:
+    cdef cppclass CzmLabMixMaterialBehaviourPtr:
 
-        Joint_meca_frotMaterialBehaviourPtr( Joint_meca_frotMaterialBehaviourPtr& )
-        Joint_meca_frotMaterialBehaviourPtr( Joint_meca_frotMaterialBehaviourInstance* )
-        Joint_meca_frotMaterialBehaviourInstance* get()
+        CzmLabMixMaterialBehaviourPtr( CzmLabMixMaterialBehaviourPtr& )
+        CzmLabMixMaterialBehaviourPtr( CzmLabMixMaterialBehaviourInstance* )
+        CzmLabMixMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass RuptDuctMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        RuptDuctMaterialBehaviourInstance()
+
+    cdef cppclass RuptDuctMaterialBehaviourPtr:
+
+        RuptDuctMaterialBehaviourPtr( RuptDuctMaterialBehaviourPtr& )
+        RuptDuctMaterialBehaviourPtr( RuptDuctMaterialBehaviourInstance* )
+        RuptDuctMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass JointMecaRuptMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        JointMecaRuptMaterialBehaviourInstance()
+
+    cdef cppclass JointMecaRuptMaterialBehaviourPtr:
+
+        JointMecaRuptMaterialBehaviourPtr( JointMecaRuptMaterialBehaviourPtr& )
+        JointMecaRuptMaterialBehaviourPtr( JointMecaRuptMaterialBehaviourInstance* )
+        JointMecaRuptMaterialBehaviourInstance* get()
+
+
+
+    cdef cppclass JointMecaFrotMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+
+        JointMecaFrotMaterialBehaviourInstance()
+
+    cdef cppclass JointMecaFrotMaterialBehaviourPtr:
+
+        JointMecaFrotMaterialBehaviourPtr( JointMecaFrotMaterialBehaviourPtr& )
+        JointMecaFrotMaterialBehaviourPtr( JointMecaFrotMaterialBehaviourInstance* )
+        JointMecaFrotMaterialBehaviourInstance* get()
 
 
 
@@ -1652,15 +1652,15 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Rccm_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass RccmFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Rccm_foMaterialBehaviourInstance()
+        RccmFoMaterialBehaviourInstance()
 
-    cdef cppclass Rccm_foMaterialBehaviourPtr:
+    cdef cppclass RccmFoMaterialBehaviourPtr:
 
-        Rccm_foMaterialBehaviourPtr( Rccm_foMaterialBehaviourPtr& )
-        Rccm_foMaterialBehaviourPtr( Rccm_foMaterialBehaviourInstance* )
-        Rccm_foMaterialBehaviourInstance* get()
+        RccmFoMaterialBehaviourPtr( RccmFoMaterialBehaviourPtr& )
+        RccmFoMaterialBehaviourPtr( RccmFoMaterialBehaviourInstance* )
+        RccmFoMaterialBehaviourInstance* get()
 
 
 
@@ -1688,219 +1688,219 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Druck_pragerMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass DruckPragerMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Druck_pragerMaterialBehaviourInstance()
+        DruckPragerMaterialBehaviourInstance()
 
-    cdef cppclass Druck_pragerMaterialBehaviourPtr:
+    cdef cppclass DruckPragerMaterialBehaviourPtr:
 
-        Druck_pragerMaterialBehaviourPtr( Druck_pragerMaterialBehaviourPtr& )
-        Druck_pragerMaterialBehaviourPtr( Druck_pragerMaterialBehaviourInstance* )
-        Druck_pragerMaterialBehaviourInstance* get()
+        DruckPragerMaterialBehaviourPtr( DruckPragerMaterialBehaviourPtr& )
+        DruckPragerMaterialBehaviourPtr( DruckPragerMaterialBehaviourInstance* )
+        DruckPragerMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Druck_prager_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass DruckPragerFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Druck_prager_foMaterialBehaviourInstance()
+        DruckPragerFoMaterialBehaviourInstance()
 
-    cdef cppclass Druck_prager_foMaterialBehaviourPtr:
+    cdef cppclass DruckPragerFoMaterialBehaviourPtr:
 
-        Druck_prager_foMaterialBehaviourPtr( Druck_prager_foMaterialBehaviourPtr& )
-        Druck_prager_foMaterialBehaviourPtr( Druck_prager_foMaterialBehaviourInstance* )
-        Druck_prager_foMaterialBehaviourInstance* get()
+        DruckPragerFoMaterialBehaviourPtr( DruckPragerFoMaterialBehaviourPtr& )
+        DruckPragerFoMaterialBehaviourPtr( DruckPragerFoMaterialBehaviourInstance* )
+        DruckPragerFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Visc_druc_pragMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ViscDrucPragMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Visc_druc_pragMaterialBehaviourInstance()
+        ViscDrucPragMaterialBehaviourInstance()
 
-    cdef cppclass Visc_druc_pragMaterialBehaviourPtr:
+    cdef cppclass ViscDrucPragMaterialBehaviourPtr:
 
-        Visc_druc_pragMaterialBehaviourPtr( Visc_druc_pragMaterialBehaviourPtr& )
-        Visc_druc_pragMaterialBehaviourPtr( Visc_druc_pragMaterialBehaviourInstance* )
-        Visc_druc_pragMaterialBehaviourInstance* get()
+        ViscDrucPragMaterialBehaviourPtr( ViscDrucPragMaterialBehaviourPtr& )
+        ViscDrucPragMaterialBehaviourPtr( ViscDrucPragMaterialBehaviourInstance* )
+        ViscDrucPragMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Hoek_brownMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass HoekBrownMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Hoek_brownMaterialBehaviourInstance()
+        HoekBrownMaterialBehaviourInstance()
 
-    cdef cppclass Hoek_brownMaterialBehaviourPtr:
+    cdef cppclass HoekBrownMaterialBehaviourPtr:
 
-        Hoek_brownMaterialBehaviourPtr( Hoek_brownMaterialBehaviourPtr& )
-        Hoek_brownMaterialBehaviourPtr( Hoek_brownMaterialBehaviourInstance* )
-        Hoek_brownMaterialBehaviourInstance* get()
+        HoekBrownMaterialBehaviourPtr( HoekBrownMaterialBehaviourPtr& )
+        HoekBrownMaterialBehaviourPtr( HoekBrownMaterialBehaviourInstance* )
+        HoekBrownMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Elas_gonfMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass ElasGonfMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Elas_gonfMaterialBehaviourInstance()
+        ElasGonfMaterialBehaviourInstance()
 
-    cdef cppclass Elas_gonfMaterialBehaviourPtr:
+    cdef cppclass ElasGonfMaterialBehaviourPtr:
 
-        Elas_gonfMaterialBehaviourPtr( Elas_gonfMaterialBehaviourPtr& )
-        Elas_gonfMaterialBehaviourPtr( Elas_gonfMaterialBehaviourInstance* )
-        Elas_gonfMaterialBehaviourInstance* get()
+        ElasGonfMaterialBehaviourPtr( ElasGonfMaterialBehaviourPtr& )
+        ElasGonfMaterialBehaviourPtr( ElasGonfMaterialBehaviourInstance* )
+        ElasGonfMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Joint_bandisMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass JointBandisMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Joint_bandisMaterialBehaviourInstance()
+        JointBandisMaterialBehaviourInstance()
 
-    cdef cppclass Joint_bandisMaterialBehaviourPtr:
+    cdef cppclass JointBandisMaterialBehaviourPtr:
 
-        Joint_bandisMaterialBehaviourPtr( Joint_bandisMaterialBehaviourPtr& )
-        Joint_bandisMaterialBehaviourPtr( Joint_bandisMaterialBehaviourInstance* )
-        Joint_bandisMaterialBehaviourInstance* get()
+        JointBandisMaterialBehaviourPtr( JointBandisMaterialBehaviourPtr& )
+        JointBandisMaterialBehaviourPtr( JointBandisMaterialBehaviourInstance* )
+        JointBandisMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_visc1MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoVisc1MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_visc1MaterialBehaviourInstance()
+        MonoVisc1MaterialBehaviourInstance()
 
-    cdef cppclass Mono_visc1MaterialBehaviourPtr:
+    cdef cppclass MonoVisc1MaterialBehaviourPtr:
 
-        Mono_visc1MaterialBehaviourPtr( Mono_visc1MaterialBehaviourPtr& )
-        Mono_visc1MaterialBehaviourPtr( Mono_visc1MaterialBehaviourInstance* )
-        Mono_visc1MaterialBehaviourInstance* get()
+        MonoVisc1MaterialBehaviourPtr( MonoVisc1MaterialBehaviourPtr& )
+        MonoVisc1MaterialBehaviourPtr( MonoVisc1MaterialBehaviourInstance* )
+        MonoVisc1MaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_visc2MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoVisc2MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_visc2MaterialBehaviourInstance()
+        MonoVisc2MaterialBehaviourInstance()
 
-    cdef cppclass Mono_visc2MaterialBehaviourPtr:
+    cdef cppclass MonoVisc2MaterialBehaviourPtr:
 
-        Mono_visc2MaterialBehaviourPtr( Mono_visc2MaterialBehaviourPtr& )
-        Mono_visc2MaterialBehaviourPtr( Mono_visc2MaterialBehaviourInstance* )
-        Mono_visc2MaterialBehaviourInstance* get()
+        MonoVisc2MaterialBehaviourPtr( MonoVisc2MaterialBehaviourPtr& )
+        MonoVisc2MaterialBehaviourPtr( MonoVisc2MaterialBehaviourInstance* )
+        MonoVisc2MaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_isot1MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoIsot1MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_isot1MaterialBehaviourInstance()
+        MonoIsot1MaterialBehaviourInstance()
 
-    cdef cppclass Mono_isot1MaterialBehaviourPtr:
+    cdef cppclass MonoIsot1MaterialBehaviourPtr:
 
-        Mono_isot1MaterialBehaviourPtr( Mono_isot1MaterialBehaviourPtr& )
-        Mono_isot1MaterialBehaviourPtr( Mono_isot1MaterialBehaviourInstance* )
-        Mono_isot1MaterialBehaviourInstance* get()
+        MonoIsot1MaterialBehaviourPtr( MonoIsot1MaterialBehaviourPtr& )
+        MonoIsot1MaterialBehaviourPtr( MonoIsot1MaterialBehaviourInstance* )
+        MonoIsot1MaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_isot2MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoIsot2MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_isot2MaterialBehaviourInstance()
+        MonoIsot2MaterialBehaviourInstance()
 
-    cdef cppclass Mono_isot2MaterialBehaviourPtr:
+    cdef cppclass MonoIsot2MaterialBehaviourPtr:
 
-        Mono_isot2MaterialBehaviourPtr( Mono_isot2MaterialBehaviourPtr& )
-        Mono_isot2MaterialBehaviourPtr( Mono_isot2MaterialBehaviourInstance* )
-        Mono_isot2MaterialBehaviourInstance* get()
+        MonoIsot2MaterialBehaviourPtr( MonoIsot2MaterialBehaviourPtr& )
+        MonoIsot2MaterialBehaviourPtr( MonoIsot2MaterialBehaviourInstance* )
+        MonoIsot2MaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_cine1MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoCine1MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_cine1MaterialBehaviourInstance()
+        MonoCine1MaterialBehaviourInstance()
 
-    cdef cppclass Mono_cine1MaterialBehaviourPtr:
+    cdef cppclass MonoCine1MaterialBehaviourPtr:
 
-        Mono_cine1MaterialBehaviourPtr( Mono_cine1MaterialBehaviourPtr& )
-        Mono_cine1MaterialBehaviourPtr( Mono_cine1MaterialBehaviourInstance* )
-        Mono_cine1MaterialBehaviourInstance* get()
+        MonoCine1MaterialBehaviourPtr( MonoCine1MaterialBehaviourPtr& )
+        MonoCine1MaterialBehaviourPtr( MonoCine1MaterialBehaviourInstance* )
+        MonoCine1MaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_cine2MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoCine2MaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_cine2MaterialBehaviourInstance()
+        MonoCine2MaterialBehaviourInstance()
 
-    cdef cppclass Mono_cine2MaterialBehaviourPtr:
+    cdef cppclass MonoCine2MaterialBehaviourPtr:
 
-        Mono_cine2MaterialBehaviourPtr( Mono_cine2MaterialBehaviourPtr& )
-        Mono_cine2MaterialBehaviourPtr( Mono_cine2MaterialBehaviourInstance* )
-        Mono_cine2MaterialBehaviourInstance* get()
+        MonoCine2MaterialBehaviourPtr( MonoCine2MaterialBehaviourPtr& )
+        MonoCine2MaterialBehaviourPtr( MonoCine2MaterialBehaviourInstance* )
+        MonoCine2MaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_dd_krMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoDdKrMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_dd_krMaterialBehaviourInstance()
+        MonoDdKrMaterialBehaviourInstance()
 
-    cdef cppclass Mono_dd_krMaterialBehaviourPtr:
+    cdef cppclass MonoDdKrMaterialBehaviourPtr:
 
-        Mono_dd_krMaterialBehaviourPtr( Mono_dd_krMaterialBehaviourPtr& )
-        Mono_dd_krMaterialBehaviourPtr( Mono_dd_krMaterialBehaviourInstance* )
-        Mono_dd_krMaterialBehaviourInstance* get()
+        MonoDdKrMaterialBehaviourPtr( MonoDdKrMaterialBehaviourPtr& )
+        MonoDdKrMaterialBehaviourPtr( MonoDdKrMaterialBehaviourInstance* )
+        MonoDdKrMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_dd_cfcMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoDdCfcMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_dd_cfcMaterialBehaviourInstance()
+        MonoDdCfcMaterialBehaviourInstance()
 
-    cdef cppclass Mono_dd_cfcMaterialBehaviourPtr:
+    cdef cppclass MonoDdCfcMaterialBehaviourPtr:
 
-        Mono_dd_cfcMaterialBehaviourPtr( Mono_dd_cfcMaterialBehaviourPtr& )
-        Mono_dd_cfcMaterialBehaviourPtr( Mono_dd_cfcMaterialBehaviourInstance* )
-        Mono_dd_cfcMaterialBehaviourInstance* get()
+        MonoDdCfcMaterialBehaviourPtr( MonoDdCfcMaterialBehaviourPtr& )
+        MonoDdCfcMaterialBehaviourPtr( MonoDdCfcMaterialBehaviourInstance* )
+        MonoDdCfcMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_dd_cfc_irraMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoDdCfc_irraMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_dd_cfc_irraMaterialBehaviourInstance()
+        MonoDdCfc_irraMaterialBehaviourInstance()
 
-    cdef cppclass Mono_dd_cfc_irraMaterialBehaviourPtr:
+    cdef cppclass MonoDdCfc_irraMaterialBehaviourPtr:
 
-        Mono_dd_cfc_irraMaterialBehaviourPtr( Mono_dd_cfc_irraMaterialBehaviourPtr& )
-        Mono_dd_cfc_irraMaterialBehaviourPtr( Mono_dd_cfc_irraMaterialBehaviourInstance* )
-        Mono_dd_cfc_irraMaterialBehaviourInstance* get()
+        MonoDdCfc_irraMaterialBehaviourPtr( MonoDdCfc_irraMaterialBehaviourPtr& )
+        MonoDdCfc_irraMaterialBehaviourPtr( MonoDdCfc_irraMaterialBehaviourInstance* )
+        MonoDdCfc_irraMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_dd_fatMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoDdFatMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_dd_fatMaterialBehaviourInstance()
+        MonoDdFatMaterialBehaviourInstance()
 
-    cdef cppclass Mono_dd_fatMaterialBehaviourPtr:
+    cdef cppclass MonoDdFatMaterialBehaviourPtr:
 
-        Mono_dd_fatMaterialBehaviourPtr( Mono_dd_fatMaterialBehaviourPtr& )
-        Mono_dd_fatMaterialBehaviourPtr( Mono_dd_fatMaterialBehaviourInstance* )
-        Mono_dd_fatMaterialBehaviourInstance* get()
+        MonoDdFatMaterialBehaviourPtr( MonoDdFatMaterialBehaviourPtr& )
+        MonoDdFatMaterialBehaviourPtr( MonoDdFatMaterialBehaviourInstance* )
+        MonoDdFatMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_dd_ccMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoDdCcMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_dd_ccMaterialBehaviourInstance()
+        MonoDdCcMaterialBehaviourInstance()
 
-    cdef cppclass Mono_dd_ccMaterialBehaviourPtr:
+    cdef cppclass MonoDdCcMaterialBehaviourPtr:
 
-        Mono_dd_ccMaterialBehaviourPtr( Mono_dd_ccMaterialBehaviourPtr& )
-        Mono_dd_ccMaterialBehaviourPtr( Mono_dd_ccMaterialBehaviourInstance* )
-        Mono_dd_ccMaterialBehaviourInstance* get()
+        MonoDdCcMaterialBehaviourPtr( MonoDdCcMaterialBehaviourPtr& )
+        MonoDdCcMaterialBehaviourPtr( MonoDdCcMaterialBehaviourInstance* )
+        MonoDdCcMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Mono_dd_cc_irraMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass MonoDdCc_irraMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Mono_dd_cc_irraMaterialBehaviourInstance()
+        MonoDdCc_irraMaterialBehaviourInstance()
 
-    cdef cppclass Mono_dd_cc_irraMaterialBehaviourPtr:
+    cdef cppclass MonoDdCc_irraMaterialBehaviourPtr:
 
-        Mono_dd_cc_irraMaterialBehaviourPtr( Mono_dd_cc_irraMaterialBehaviourPtr& )
-        Mono_dd_cc_irraMaterialBehaviourPtr( Mono_dd_cc_irraMaterialBehaviourInstance* )
-        Mono_dd_cc_irraMaterialBehaviourInstance* get()
+        MonoDdCc_irraMaterialBehaviourPtr( MonoDdCc_irraMaterialBehaviourPtr& )
+        MonoDdCc_irraMaterialBehaviourPtr( MonoDdCc_irraMaterialBehaviourInstance* )
+        MonoDdCc_irraMaterialBehaviourInstance* get()
 
 
 
@@ -1916,27 +1916,27 @@ cdef extern from "Materials/MaterialBehaviour.h":
 
 
 
-    cdef cppclass Umat_foMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass UmatFoMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Umat_foMaterialBehaviourInstance()
+        UmatFoMaterialBehaviourInstance()
 
-    cdef cppclass Umat_foMaterialBehaviourPtr:
+    cdef cppclass UmatFoMaterialBehaviourPtr:
 
-        Umat_foMaterialBehaviourPtr( Umat_foMaterialBehaviourPtr& )
-        Umat_foMaterialBehaviourPtr( Umat_foMaterialBehaviourInstance* )
-        Umat_foMaterialBehaviourInstance* get()
+        UmatFoMaterialBehaviourPtr( UmatFoMaterialBehaviourPtr& )
+        UmatFoMaterialBehaviourPtr( UmatFoMaterialBehaviourInstance* )
+        UmatFoMaterialBehaviourInstance* get()
 
 
 
-    cdef cppclass Crit_ruptMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
+    cdef cppclass CritRuptMaterialBehaviourInstance( GeneralMaterialBehaviourInstance ):
 
-        Crit_ruptMaterialBehaviourInstance()
+        CritRuptMaterialBehaviourInstance()
 
-    cdef cppclass Crit_ruptMaterialBehaviourPtr:
+    cdef cppclass CritRuptMaterialBehaviourPtr:
 
-        Crit_ruptMaterialBehaviourPtr( Crit_ruptMaterialBehaviourPtr& )
-        Crit_ruptMaterialBehaviourPtr( Crit_ruptMaterialBehaviourInstance* )
-        Crit_ruptMaterialBehaviourInstance* get()
+        CritRuptMaterialBehaviourPtr( CritRuptMaterialBehaviourPtr& )
+        CritRuptMaterialBehaviourPtr( CritRuptMaterialBehaviourInstance* )
+        CritRuptMaterialBehaviourInstance* get()
 
 
 cdef class GeneralMaterialBehaviour:
@@ -1951,59 +1951,59 @@ cdef class ElasMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_fluiMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasFluiMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_istrMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasIstrMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_istr_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasIstrFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_orthMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasOrthMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_orth_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasOrthFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_hyperMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasHyperMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_coqueMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasCoqueMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_coque_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasCoqueFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_membraneMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasMembraneMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_2ndgMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Elas2ndgMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_glrcMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasGlrcMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_glrc_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasGlrcFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_dhrcMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasDhrcMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2011,7 +2011,7 @@ cdef class CableMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Veri_borneMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class VeriBorneMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2019,43 +2019,43 @@ cdef class TractionMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ecro_lineMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Endo_heterogeneMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoHeterogeneMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ecro_line_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroLineFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ecro_puisMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroPuisMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ecro_puis_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroPuisFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ecro_cookMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroCookMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ecro_cook_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroCookFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Beton_ecro_lineMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonEcroLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Beton_regle_prMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonReglePrMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Endo_orth_betonMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoOrthBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2063,7 +2063,7 @@ cdef class PragerMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Prager_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class PragerFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2071,7 +2071,7 @@ cdef class TaheriMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Taheri_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TaheriFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2079,43 +2079,43 @@ cdef class RousselierMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Rousselier_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class RousselierFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Visc_sinhMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscSinhMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Visc_sinh_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscSinhFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Cin1_chabMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Cin1ChabMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Cin1_chab_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Cin1ChabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Cin2_chabMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Cin2ChabMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Cin2_chab_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Cin2ChabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Cin2_nradMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Cin2NradMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Memo_ecroMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MemoEcroMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Memo_ecro_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MemoEcroFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2123,7 +2123,7 @@ cdef class ViscochabMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Viscochab_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscochabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2131,35 +2131,35 @@ cdef class LemaitreMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Lemaitre_irraMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class LemaitreIrraMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Lmarc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class LmarcIrraMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Visc_irra_logMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscIrraLogMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Gran_irra_logMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class GranIrraLogMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Lema_seuilMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class LemaSeuilMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Lemaitre_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class LemaitreFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Meta_lema_aniMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaLemaAniMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Meta_lema_ani_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaLemaAniFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2167,35 +2167,35 @@ cdef class ArmeMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Asse_cornMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class AsseCornMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Dis_contactMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DisContactMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Endo_scalaireMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoScalaireMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Endo_scalaire_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoScalaireFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Endo_fiss_expMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoFissExpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Endo_fiss_exp_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoFissExpFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Dis_gricraMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DisGricraMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Beton_double_dpMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonDoubleDpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2203,7 +2203,7 @@ cdef class VendochabMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Vendochab_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class VendochabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2211,39 +2211,39 @@ cdef class HayhurstMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Visc_endoMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscEndoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Visc_endo_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscEndoFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Pinto_menegottoMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class PintoMenegottoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Bpel_betonMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BpelBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Bpel_acierMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BpelAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Etcc_betonMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EtccBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Etcc_acierMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EtccAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mohr_coulombMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MohrCoulombMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Cam_clayMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class CamClayMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2259,39 +2259,39 @@ cdef class HujeuxMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ecro_asym_lineMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroAsymLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Granger_fpMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class GrangerFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Granger_fp_indtMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class GrangerFp_indtMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class V_granger_fpMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class VGrangerFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Beton_burger_fpMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonBurgerFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Beton_umlv_fpMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonUmlvFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Beton_ragMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonRagMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Poro_betonMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class PoroBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Glrc_dmMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class GlrcDmMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2299,31 +2299,31 @@ cdef class DhrcMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Gatt_monerieMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class GattMonerieMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Corr_acierMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class CorrAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Dis_ecro_cineMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DisEcroCineMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Dis_viscMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DisViscMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Dis_bili_elasMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DisBiliElasMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ther_nlMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherNlMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ther_hydrMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherHydrMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2331,75 +2331,75 @@ cdef class TherMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ther_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ther_orthMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherOrthMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ther_coqueMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherCoqueMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Ther_coque_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherCoqueFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Sech_grangerMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class SechGrangerMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Sech_mensiMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class SechMensiMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Sech_bazantMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class SechBazantMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Sech_nappeMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class SechNappeMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Meta_acierMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Meta_zircMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaZircMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Durt_metaMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DurtMetaMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_metaMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasMetaMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_meta_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasMetaFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Meta_ecro_lineMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaEcroLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Meta_tractionMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaTractionMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Meta_visc_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaViscFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Meta_ptMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaPtMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Meta_reMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaReMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2407,27 +2407,27 @@ cdef class FluideMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Thm_initMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmInitMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Thm_diffuMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmDiffuMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Thm_liquMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmLiquMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Thm_gazMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmGazMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Thm_vape_gazMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmVapeGazMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
 
-cdef class Thm_air_dissMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmAirDissMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
 
@@ -2436,15 +2436,15 @@ cdef class FatigueMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Domma_lemaitreMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DommaLemaitreMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Cisa_plan_critMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class CisaPlanCritMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Thm_ruptMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmRuptMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2452,35 +2452,35 @@ cdef class WeibullMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Weibull_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class WeibullFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Non_localMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class NonLocalMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Rupt_fragMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class RuptFragMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Rupt_frag_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class RuptFragFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Czm_lab_mixMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class CzmLabMixMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Rupt_ductMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class RuptDuctMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Joint_meca_ruptMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class JointMecaRuptMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Joint_meca_frotMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class JointMecaFrotMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2488,7 +2488,7 @@ cdef class RccmMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Rccm_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class RccmFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2500,75 +2500,75 @@ cdef class LetkMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Druck_pragerMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DruckPragerMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Druck_prager_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DruckPragerFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Visc_druc_pragMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscDrucPragMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Hoek_brownMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class HoekBrownMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Elas_gonfMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasGonfMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Joint_bandisMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class JointBandisMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_visc1MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoVisc1MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_visc2MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoVisc2MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_isot1MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoIsot1MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_isot2MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoIsot2MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_cine1MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoCine1MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_cine2MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoCine2MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_dd_krMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdKrMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_dd_cfcMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdCfcMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_dd_cfc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdCfc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_dd_fatMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdFatMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_dd_ccMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdCcMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Mono_dd_cc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdCc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
@@ -2576,11 +2576,11 @@ cdef class UmatMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Umat_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class UmatFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     
-cdef class Crit_ruptMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class CritRuptMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
     

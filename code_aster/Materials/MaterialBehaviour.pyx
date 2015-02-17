@@ -69,9 +69,9 @@ cdef class ElasMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new ElasMaterialBehaviourPtr( new ElasMaterialBehaviourInstance() )
                 
-cdef class Elas_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_foMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -80,11 +80,11 @@ cdef class Elas_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_foMaterialBehaviourPtr( new Elas_foMaterialBehaviourInstance() )
+                new ElasFoMaterialBehaviourPtr( new ElasFoMaterialBehaviourInstance() )
                 
-cdef class Elas_fluiMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasFluiMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_fluiMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasFluiMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -93,11 +93,11 @@ cdef class Elas_fluiMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_fluiMaterialBehaviourPtr( new Elas_fluiMaterialBehaviourInstance() )
+                new ElasFluiMaterialBehaviourPtr( new ElasFluiMaterialBehaviourInstance() )
                 
-cdef class Elas_istrMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasIstrMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_istrMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasIstrMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -106,11 +106,11 @@ cdef class Elas_istrMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_istrMaterialBehaviourPtr( new Elas_istrMaterialBehaviourInstance() )
+                new ElasIstrMaterialBehaviourPtr( new ElasIstrMaterialBehaviourInstance() )
                 
-cdef class Elas_istr_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasIstrFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_istr_foMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasIstrFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -119,11 +119,11 @@ cdef class Elas_istr_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_istr_foMaterialBehaviourPtr( new Elas_istr_foMaterialBehaviourInstance() )
+                new ElasIstrFoMaterialBehaviourPtr( new ElasIstrFoMaterialBehaviourInstance() )
                 
-cdef class Elas_orthMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasOrthMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_orthMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasOrthMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -132,11 +132,11 @@ cdef class Elas_orthMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_orthMaterialBehaviourPtr( new Elas_orthMaterialBehaviourInstance() )
+                new ElasOrthMaterialBehaviourPtr( new ElasOrthMaterialBehaviourInstance() )
                 
-cdef class Elas_orth_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasOrthFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_orth_foMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasOrthFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -145,11 +145,11 @@ cdef class Elas_orth_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_orth_foMaterialBehaviourPtr( new Elas_orth_foMaterialBehaviourInstance() )
+                new ElasOrthFoMaterialBehaviourPtr( new ElasOrthFoMaterialBehaviourInstance() )
                 
-cdef class Elas_hyperMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasHyperMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_hyperMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasHyperMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -158,11 +158,11 @@ cdef class Elas_hyperMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_hyperMaterialBehaviourPtr( new Elas_hyperMaterialBehaviourInstance() )
+                new ElasHyperMaterialBehaviourPtr( new ElasHyperMaterialBehaviourInstance() )
                 
-cdef class Elas_coqueMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasCoqueMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_coqueMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasCoqueMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -171,11 +171,11 @@ cdef class Elas_coqueMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_coqueMaterialBehaviourPtr( new Elas_coqueMaterialBehaviourInstance() )
+                new ElasCoqueMaterialBehaviourPtr( new ElasCoqueMaterialBehaviourInstance() )
                 
-cdef class Elas_coque_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasCoqueFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_coque_foMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasCoqueFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -184,11 +184,11 @@ cdef class Elas_coque_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_coque_foMaterialBehaviourPtr( new Elas_coque_foMaterialBehaviourInstance() )
+                new ElasCoqueFoMaterialBehaviourPtr( new ElasCoqueFoMaterialBehaviourInstance() )
                 
-cdef class Elas_membraneMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasMembraneMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_membraneMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasMembraneMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -197,11 +197,11 @@ cdef class Elas_membraneMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_membraneMaterialBehaviourPtr( new Elas_membraneMaterialBehaviourInstance() )
+                new ElasMembraneMaterialBehaviourPtr( new ElasMembraneMaterialBehaviourInstance() )
                 
-cdef class Elas_2ndgMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Elas2ndgMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_2ndgMaterialBehaviour object"""
+    """Python wrapper on the C++ Elas2ndgMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -210,11 +210,11 @@ cdef class Elas_2ndgMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_2ndgMaterialBehaviourPtr( new Elas_2ndgMaterialBehaviourInstance() )
+                new Elas2ndgMaterialBehaviourPtr( new Elas2ndgMaterialBehaviourInstance() )
                 
-cdef class Elas_glrcMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasGlrcMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_glrcMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasGlrcMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -223,11 +223,11 @@ cdef class Elas_glrcMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_glrcMaterialBehaviourPtr( new Elas_glrcMaterialBehaviourInstance() )
+                new ElasGlrcMaterialBehaviourPtr( new ElasGlrcMaterialBehaviourInstance() )
                 
-cdef class Elas_glrc_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasGlrcFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_glrc_foMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasGlrcFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -236,11 +236,11 @@ cdef class Elas_glrc_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_glrc_foMaterialBehaviourPtr( new Elas_glrc_foMaterialBehaviourInstance() )
+                new ElasGlrcFoMaterialBehaviourPtr( new ElasGlrcFoMaterialBehaviourInstance() )
                 
-cdef class Elas_dhrcMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasDhrcMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_dhrcMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasDhrcMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -249,7 +249,7 @@ cdef class Elas_dhrcMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_dhrcMaterialBehaviourPtr( new Elas_dhrcMaterialBehaviourInstance() )
+                new ElasDhrcMaterialBehaviourPtr( new ElasDhrcMaterialBehaviourInstance() )
                 
 cdef class CableMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -264,9 +264,9 @@ cdef class CableMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new CableMaterialBehaviourPtr( new CableMaterialBehaviourInstance() )
                 
-cdef class Veri_borneMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class VeriBorneMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Veri_borneMaterialBehaviour object"""
+    """Python wrapper on the C++ VeriBorneMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -275,7 +275,7 @@ cdef class Veri_borneMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Veri_borneMaterialBehaviourPtr( new Veri_borneMaterialBehaviourInstance() )
+                new VeriBorneMaterialBehaviourPtr( new VeriBorneMaterialBehaviourInstance() )
                 
 cdef class TractionMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -290,9 +290,9 @@ cdef class TractionMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new TractionMaterialBehaviourPtr( new TractionMaterialBehaviourInstance() )
                 
-cdef class Ecro_lineMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ecro_lineMaterialBehaviour object"""
+    """Python wrapper on the C++ EcroLineMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -301,11 +301,11 @@ cdef class Ecro_lineMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ecro_lineMaterialBehaviourPtr( new Ecro_lineMaterialBehaviourInstance() )
+                new EcroLineMaterialBehaviourPtr( new EcroLineMaterialBehaviourInstance() )
                 
-cdef class Endo_heterogeneMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoHeterogeneMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Endo_heterogeneMaterialBehaviour object"""
+    """Python wrapper on the C++ EndoHeterogeneMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -314,11 +314,11 @@ cdef class Endo_heterogeneMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Endo_heterogeneMaterialBehaviourPtr( new Endo_heterogeneMaterialBehaviourInstance() )
+                new EndoHeterogeneMaterialBehaviourPtr( new EndoHeterogeneMaterialBehaviourInstance() )
                 
-cdef class Ecro_line_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroLineFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ecro_line_foMaterialBehaviour object"""
+    """Python wrapper on the C++ EcroLineFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -327,11 +327,11 @@ cdef class Ecro_line_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ecro_line_foMaterialBehaviourPtr( new Ecro_line_foMaterialBehaviourInstance() )
+                new EcroLineFoMaterialBehaviourPtr( new EcroLineFoMaterialBehaviourInstance() )
                 
-cdef class Ecro_puisMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroPuisMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ecro_puisMaterialBehaviour object"""
+    """Python wrapper on the C++ EcroPuisMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -340,11 +340,11 @@ cdef class Ecro_puisMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ecro_puisMaterialBehaviourPtr( new Ecro_puisMaterialBehaviourInstance() )
+                new EcroPuisMaterialBehaviourPtr( new EcroPuisMaterialBehaviourInstance() )
                 
-cdef class Ecro_puis_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroPuisFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ecro_puis_foMaterialBehaviour object"""
+    """Python wrapper on the C++ EcroPuisFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -353,11 +353,11 @@ cdef class Ecro_puis_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ecro_puis_foMaterialBehaviourPtr( new Ecro_puis_foMaterialBehaviourInstance() )
+                new EcroPuisFoMaterialBehaviourPtr( new EcroPuisFoMaterialBehaviourInstance() )
                 
-cdef class Ecro_cookMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroCookMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ecro_cookMaterialBehaviour object"""
+    """Python wrapper on the C++ EcroCookMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -366,11 +366,11 @@ cdef class Ecro_cookMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ecro_cookMaterialBehaviourPtr( new Ecro_cookMaterialBehaviourInstance() )
+                new EcroCookMaterialBehaviourPtr( new EcroCookMaterialBehaviourInstance() )
                 
-cdef class Ecro_cook_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroCookFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ecro_cook_foMaterialBehaviour object"""
+    """Python wrapper on the C++ EcroCookFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -379,11 +379,11 @@ cdef class Ecro_cook_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ecro_cook_foMaterialBehaviourPtr( new Ecro_cook_foMaterialBehaviourInstance() )
+                new EcroCookFoMaterialBehaviourPtr( new EcroCookFoMaterialBehaviourInstance() )
                 
-cdef class Beton_ecro_lineMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonEcroLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Beton_ecro_lineMaterialBehaviour object"""
+    """Python wrapper on the C++ BetonEcroLineMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -392,11 +392,11 @@ cdef class Beton_ecro_lineMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Beton_ecro_lineMaterialBehaviourPtr( new Beton_ecro_lineMaterialBehaviourInstance() )
+                new BetonEcroLineMaterialBehaviourPtr( new BetonEcroLineMaterialBehaviourInstance() )
                 
-cdef class Beton_regle_prMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonReglePrMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Beton_regle_prMaterialBehaviour object"""
+    """Python wrapper on the C++ BetonReglePrMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -405,11 +405,11 @@ cdef class Beton_regle_prMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Beton_regle_prMaterialBehaviourPtr( new Beton_regle_prMaterialBehaviourInstance() )
+                new BetonReglePrMaterialBehaviourPtr( new BetonReglePrMaterialBehaviourInstance() )
                 
-cdef class Endo_orth_betonMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoOrthBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Endo_orth_betonMaterialBehaviour object"""
+    """Python wrapper on the C++ EndoOrthBetonMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -418,7 +418,7 @@ cdef class Endo_orth_betonMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Endo_orth_betonMaterialBehaviourPtr( new Endo_orth_betonMaterialBehaviourInstance() )
+                new EndoOrthBetonMaterialBehaviourPtr( new EndoOrthBetonMaterialBehaviourInstance() )
                 
 cdef class PragerMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -433,9 +433,9 @@ cdef class PragerMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new PragerMaterialBehaviourPtr( new PragerMaterialBehaviourInstance() )
                 
-cdef class Prager_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class PragerFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Prager_foMaterialBehaviour object"""
+    """Python wrapper on the C++ PragerFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -444,7 +444,7 @@ cdef class Prager_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Prager_foMaterialBehaviourPtr( new Prager_foMaterialBehaviourInstance() )
+                new PragerFoMaterialBehaviourPtr( new PragerFoMaterialBehaviourInstance() )
                 
 cdef class TaheriMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -459,9 +459,9 @@ cdef class TaheriMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new TaheriMaterialBehaviourPtr( new TaheriMaterialBehaviourInstance() )
                 
-cdef class Taheri_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TaheriFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Taheri_foMaterialBehaviour object"""
+    """Python wrapper on the C++ TaheriFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -470,7 +470,7 @@ cdef class Taheri_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Taheri_foMaterialBehaviourPtr( new Taheri_foMaterialBehaviourInstance() )
+                new TaheriFoMaterialBehaviourPtr( new TaheriFoMaterialBehaviourInstance() )
                 
 cdef class RousselierMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -485,9 +485,9 @@ cdef class RousselierMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new RousselierMaterialBehaviourPtr( new RousselierMaterialBehaviourInstance() )
                 
-cdef class Rousselier_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class RousselierFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Rousselier_foMaterialBehaviour object"""
+    """Python wrapper on the C++ RousselierFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -496,11 +496,11 @@ cdef class Rousselier_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Rousselier_foMaterialBehaviourPtr( new Rousselier_foMaterialBehaviourInstance() )
+                new RousselierFoMaterialBehaviourPtr( new RousselierFoMaterialBehaviourInstance() )
                 
-cdef class Visc_sinhMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscSinhMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Visc_sinhMaterialBehaviour object"""
+    """Python wrapper on the C++ ViscSinhMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -509,11 +509,11 @@ cdef class Visc_sinhMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Visc_sinhMaterialBehaviourPtr( new Visc_sinhMaterialBehaviourInstance() )
+                new ViscSinhMaterialBehaviourPtr( new ViscSinhMaterialBehaviourInstance() )
                 
-cdef class Visc_sinh_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscSinhFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Visc_sinh_foMaterialBehaviour object"""
+    """Python wrapper on the C++ ViscSinhFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -522,11 +522,11 @@ cdef class Visc_sinh_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Visc_sinh_foMaterialBehaviourPtr( new Visc_sinh_foMaterialBehaviourInstance() )
+                new ViscSinhFoMaterialBehaviourPtr( new ViscSinhFoMaterialBehaviourInstance() )
                 
-cdef class Cin1_chabMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Cin1ChabMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Cin1_chabMaterialBehaviour object"""
+    """Python wrapper on the C++ Cin1ChabMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -535,11 +535,11 @@ cdef class Cin1_chabMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Cin1_chabMaterialBehaviourPtr( new Cin1_chabMaterialBehaviourInstance() )
+                new Cin1ChabMaterialBehaviourPtr( new Cin1ChabMaterialBehaviourInstance() )
                 
-cdef class Cin1_chab_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Cin1ChabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Cin1_chab_foMaterialBehaviour object"""
+    """Python wrapper on the C++ Cin1ChabFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -548,11 +548,11 @@ cdef class Cin1_chab_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Cin1_chab_foMaterialBehaviourPtr( new Cin1_chab_foMaterialBehaviourInstance() )
+                new Cin1ChabFoMaterialBehaviourPtr( new Cin1ChabFoMaterialBehaviourInstance() )
                 
-cdef class Cin2_chabMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Cin2ChabMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Cin2_chabMaterialBehaviour object"""
+    """Python wrapper on the C++ Cin2ChabMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -561,11 +561,11 @@ cdef class Cin2_chabMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Cin2_chabMaterialBehaviourPtr( new Cin2_chabMaterialBehaviourInstance() )
+                new Cin2ChabMaterialBehaviourPtr( new Cin2ChabMaterialBehaviourInstance() )
                 
-cdef class Cin2_chab_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Cin2ChabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Cin2_chab_foMaterialBehaviour object"""
+    """Python wrapper on the C++ Cin2ChabFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -574,11 +574,11 @@ cdef class Cin2_chab_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Cin2_chab_foMaterialBehaviourPtr( new Cin2_chab_foMaterialBehaviourInstance() )
+                new Cin2ChabFoMaterialBehaviourPtr( new Cin2ChabFoMaterialBehaviourInstance() )
                 
-cdef class Cin2_nradMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class Cin2NradMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Cin2_nradMaterialBehaviour object"""
+    """Python wrapper on the C++ Cin2NradMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -587,11 +587,11 @@ cdef class Cin2_nradMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Cin2_nradMaterialBehaviourPtr( new Cin2_nradMaterialBehaviourInstance() )
+                new Cin2NradMaterialBehaviourPtr( new Cin2NradMaterialBehaviourInstance() )
                 
-cdef class Memo_ecroMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MemoEcroMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Memo_ecroMaterialBehaviour object"""
+    """Python wrapper on the C++ MemoEcroMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -600,11 +600,11 @@ cdef class Memo_ecroMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Memo_ecroMaterialBehaviourPtr( new Memo_ecroMaterialBehaviourInstance() )
+                new MemoEcroMaterialBehaviourPtr( new MemoEcroMaterialBehaviourInstance() )
                 
-cdef class Memo_ecro_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MemoEcroFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Memo_ecro_foMaterialBehaviour object"""
+    """Python wrapper on the C++ MemoEcroFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -613,7 +613,7 @@ cdef class Memo_ecro_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Memo_ecro_foMaterialBehaviourPtr( new Memo_ecro_foMaterialBehaviourInstance() )
+                new MemoEcroFoMaterialBehaviourPtr( new MemoEcroFoMaterialBehaviourInstance() )
                 
 cdef class ViscochabMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -628,9 +628,9 @@ cdef class ViscochabMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new ViscochabMaterialBehaviourPtr( new ViscochabMaterialBehaviourInstance() )
                 
-cdef class Viscochab_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscochabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Viscochab_foMaterialBehaviour object"""
+    """Python wrapper on the C++ ViscochabFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -639,7 +639,7 @@ cdef class Viscochab_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Viscochab_foMaterialBehaviourPtr( new Viscochab_foMaterialBehaviourInstance() )
+                new ViscochabFoMaterialBehaviourPtr( new ViscochabFoMaterialBehaviourInstance() )
                 
 cdef class LemaitreMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -654,9 +654,9 @@ cdef class LemaitreMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new LemaitreMaterialBehaviourPtr( new LemaitreMaterialBehaviourInstance() )
                 
-cdef class Lemaitre_irraMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class LemaitreIrraMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Lemaitre_irraMaterialBehaviour object"""
+    """Python wrapper on the C++ LemaitreIrraMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -665,11 +665,11 @@ cdef class Lemaitre_irraMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Lemaitre_irraMaterialBehaviourPtr( new Lemaitre_irraMaterialBehaviourInstance() )
+                new LemaitreIrraMaterialBehaviourPtr( new LemaitreIrraMaterialBehaviourInstance() )
                 
-cdef class Lmarc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class LmarcIrraMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Lmarc_irraMaterialBehaviour object"""
+    """Python wrapper on the C++ LmarcIrraMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -678,11 +678,11 @@ cdef class Lmarc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Lmarc_irraMaterialBehaviourPtr( new Lmarc_irraMaterialBehaviourInstance() )
+                new LmarcIrraMaterialBehaviourPtr( new LmarcIrraMaterialBehaviourInstance() )
                 
-cdef class Visc_irra_logMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscIrraLogMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Visc_irra_logMaterialBehaviour object"""
+    """Python wrapper on the C++ ViscIrraLogMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -691,11 +691,11 @@ cdef class Visc_irra_logMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Visc_irra_logMaterialBehaviourPtr( new Visc_irra_logMaterialBehaviourInstance() )
+                new ViscIrraLogMaterialBehaviourPtr( new ViscIrraLogMaterialBehaviourInstance() )
                 
-cdef class Gran_irra_logMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class GranIrraLogMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Gran_irra_logMaterialBehaviour object"""
+    """Python wrapper on the C++ GranIrraLogMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -704,11 +704,11 @@ cdef class Gran_irra_logMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Gran_irra_logMaterialBehaviourPtr( new Gran_irra_logMaterialBehaviourInstance() )
+                new GranIrraLogMaterialBehaviourPtr( new GranIrraLogMaterialBehaviourInstance() )
                 
-cdef class Lema_seuilMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class LemaSeuilMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Lema_seuilMaterialBehaviour object"""
+    """Python wrapper on the C++ LemaSeuilMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -717,11 +717,11 @@ cdef class Lema_seuilMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Lema_seuilMaterialBehaviourPtr( new Lema_seuilMaterialBehaviourInstance() )
+                new LemaSeuilMaterialBehaviourPtr( new LemaSeuilMaterialBehaviourInstance() )
                 
-cdef class Lemaitre_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class LemaitreFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Lemaitre_foMaterialBehaviour object"""
+    """Python wrapper on the C++ LemaitreFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -730,11 +730,11 @@ cdef class Lemaitre_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Lemaitre_foMaterialBehaviourPtr( new Lemaitre_foMaterialBehaviourInstance() )
+                new LemaitreFoMaterialBehaviourPtr( new LemaitreFoMaterialBehaviourInstance() )
                 
-cdef class Meta_lema_aniMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaLemaAniMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Meta_lema_aniMaterialBehaviour object"""
+    """Python wrapper on the C++ MetaLemaAniMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -743,11 +743,11 @@ cdef class Meta_lema_aniMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Meta_lema_aniMaterialBehaviourPtr( new Meta_lema_aniMaterialBehaviourInstance() )
+                new MetaLemaAniMaterialBehaviourPtr( new MetaLemaAniMaterialBehaviourInstance() )
                 
-cdef class Meta_lema_ani_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaLemaAniFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Meta_lema_ani_foMaterialBehaviour object"""
+    """Python wrapper on the C++ MetaLemaAniFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -756,7 +756,7 @@ cdef class Meta_lema_ani_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Meta_lema_ani_foMaterialBehaviourPtr( new Meta_lema_ani_foMaterialBehaviourInstance() )
+                new MetaLemaAniFoMaterialBehaviourPtr( new MetaLemaAniFoMaterialBehaviourInstance() )
                 
 cdef class ArmeMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -771,9 +771,9 @@ cdef class ArmeMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new ArmeMaterialBehaviourPtr( new ArmeMaterialBehaviourInstance() )
                 
-cdef class Asse_cornMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class AsseCornMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Asse_cornMaterialBehaviour object"""
+    """Python wrapper on the C++ AsseCornMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -782,11 +782,11 @@ cdef class Asse_cornMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Asse_cornMaterialBehaviourPtr( new Asse_cornMaterialBehaviourInstance() )
+                new AsseCornMaterialBehaviourPtr( new AsseCornMaterialBehaviourInstance() )
                 
-cdef class Dis_contactMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DisContactMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Dis_contactMaterialBehaviour object"""
+    """Python wrapper on the C++ DisContactMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -795,11 +795,11 @@ cdef class Dis_contactMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Dis_contactMaterialBehaviourPtr( new Dis_contactMaterialBehaviourInstance() )
+                new DisContactMaterialBehaviourPtr( new DisContactMaterialBehaviourInstance() )
                 
-cdef class Endo_scalaireMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoScalaireMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Endo_scalaireMaterialBehaviour object"""
+    """Python wrapper on the C++ EndoScalaireMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -808,11 +808,11 @@ cdef class Endo_scalaireMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Endo_scalaireMaterialBehaviourPtr( new Endo_scalaireMaterialBehaviourInstance() )
+                new EndoScalaireMaterialBehaviourPtr( new EndoScalaireMaterialBehaviourInstance() )
                 
-cdef class Endo_scalaire_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoScalaireFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Endo_scalaire_foMaterialBehaviour object"""
+    """Python wrapper on the C++ EndoScalaireFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -821,11 +821,11 @@ cdef class Endo_scalaire_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Endo_scalaire_foMaterialBehaviourPtr( new Endo_scalaire_foMaterialBehaviourInstance() )
+                new EndoScalaireFoMaterialBehaviourPtr( new EndoScalaireFoMaterialBehaviourInstance() )
                 
-cdef class Endo_fiss_expMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoFissExpMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Endo_fiss_expMaterialBehaviour object"""
+    """Python wrapper on the C++ EndoFissExpMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -834,11 +834,11 @@ cdef class Endo_fiss_expMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Endo_fiss_expMaterialBehaviourPtr( new Endo_fiss_expMaterialBehaviourInstance() )
+                new EndoFissExpMaterialBehaviourPtr( new EndoFissExpMaterialBehaviourInstance() )
                 
-cdef class Endo_fiss_exp_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EndoFissExpFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Endo_fiss_exp_foMaterialBehaviour object"""
+    """Python wrapper on the C++ EndoFissExpFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -847,11 +847,11 @@ cdef class Endo_fiss_exp_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Endo_fiss_exp_foMaterialBehaviourPtr( new Endo_fiss_exp_foMaterialBehaviourInstance() )
+                new EndoFissExpFoMaterialBehaviourPtr( new EndoFissExpFoMaterialBehaviourInstance() )
                 
-cdef class Dis_gricraMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DisGricraMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Dis_gricraMaterialBehaviour object"""
+    """Python wrapper on the C++ DisGricraMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -860,11 +860,11 @@ cdef class Dis_gricraMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Dis_gricraMaterialBehaviourPtr( new Dis_gricraMaterialBehaviourInstance() )
+                new DisGricraMaterialBehaviourPtr( new DisGricraMaterialBehaviourInstance() )
                 
-cdef class Beton_double_dpMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonDoubleDpMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Beton_double_dpMaterialBehaviour object"""
+    """Python wrapper on the C++ BetonDoubleDpMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -873,7 +873,7 @@ cdef class Beton_double_dpMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Beton_double_dpMaterialBehaviourPtr( new Beton_double_dpMaterialBehaviourInstance() )
+                new BetonDoubleDpMaterialBehaviourPtr( new BetonDoubleDpMaterialBehaviourInstance() )
                 
 cdef class VendochabMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -888,9 +888,9 @@ cdef class VendochabMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new VendochabMaterialBehaviourPtr( new VendochabMaterialBehaviourInstance() )
                 
-cdef class Vendochab_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class VendochabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Vendochab_foMaterialBehaviour object"""
+    """Python wrapper on the C++ VendochabFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -899,7 +899,7 @@ cdef class Vendochab_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Vendochab_foMaterialBehaviourPtr( new Vendochab_foMaterialBehaviourInstance() )
+                new VendochabFoMaterialBehaviourPtr( new VendochabFoMaterialBehaviourInstance() )
                 
 cdef class HayhurstMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -914,9 +914,9 @@ cdef class HayhurstMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new HayhurstMaterialBehaviourPtr( new HayhurstMaterialBehaviourInstance() )
                 
-cdef class Visc_endoMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscEndoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Visc_endoMaterialBehaviour object"""
+    """Python wrapper on the C++ ViscEndoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -925,11 +925,11 @@ cdef class Visc_endoMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Visc_endoMaterialBehaviourPtr( new Visc_endoMaterialBehaviourInstance() )
+                new ViscEndoMaterialBehaviourPtr( new ViscEndoMaterialBehaviourInstance() )
                 
-cdef class Visc_endo_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscEndoFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Visc_endo_foMaterialBehaviour object"""
+    """Python wrapper on the C++ ViscEndoFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -938,11 +938,11 @@ cdef class Visc_endo_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Visc_endo_foMaterialBehaviourPtr( new Visc_endo_foMaterialBehaviourInstance() )
+                new ViscEndoFoMaterialBehaviourPtr( new ViscEndoFoMaterialBehaviourInstance() )
                 
-cdef class Pinto_menegottoMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class PintoMenegottoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Pinto_menegottoMaterialBehaviour object"""
+    """Python wrapper on the C++ PintoMenegottoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -951,11 +951,11 @@ cdef class Pinto_menegottoMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Pinto_menegottoMaterialBehaviourPtr( new Pinto_menegottoMaterialBehaviourInstance() )
+                new PintoMenegottoMaterialBehaviourPtr( new PintoMenegottoMaterialBehaviourInstance() )
                 
-cdef class Bpel_betonMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BpelBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Bpel_betonMaterialBehaviour object"""
+    """Python wrapper on the C++ BpelBetonMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -964,11 +964,11 @@ cdef class Bpel_betonMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Bpel_betonMaterialBehaviourPtr( new Bpel_betonMaterialBehaviourInstance() )
+                new BpelBetonMaterialBehaviourPtr( new BpelBetonMaterialBehaviourInstance() )
                 
-cdef class Bpel_acierMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BpelAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Bpel_acierMaterialBehaviour object"""
+    """Python wrapper on the C++ BpelAcierMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -977,11 +977,11 @@ cdef class Bpel_acierMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Bpel_acierMaterialBehaviourPtr( new Bpel_acierMaterialBehaviourInstance() )
+                new BpelAcierMaterialBehaviourPtr( new BpelAcierMaterialBehaviourInstance() )
                 
-cdef class Etcc_betonMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EtccBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Etcc_betonMaterialBehaviour object"""
+    """Python wrapper on the C++ EtccBetonMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -990,11 +990,11 @@ cdef class Etcc_betonMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Etcc_betonMaterialBehaviourPtr( new Etcc_betonMaterialBehaviourInstance() )
+                new EtccBetonMaterialBehaviourPtr( new EtccBetonMaterialBehaviourInstance() )
                 
-cdef class Etcc_acierMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EtccAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Etcc_acierMaterialBehaviour object"""
+    """Python wrapper on the C++ EtccAcierMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1003,11 +1003,11 @@ cdef class Etcc_acierMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Etcc_acierMaterialBehaviourPtr( new Etcc_acierMaterialBehaviourInstance() )
+                new EtccAcierMaterialBehaviourPtr( new EtccAcierMaterialBehaviourInstance() )
                 
-cdef class Mohr_coulombMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MohrCoulombMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mohr_coulombMaterialBehaviour object"""
+    """Python wrapper on the C++ MohrCoulombMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1016,11 +1016,11 @@ cdef class Mohr_coulombMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mohr_coulombMaterialBehaviourPtr( new Mohr_coulombMaterialBehaviourInstance() )
+                new MohrCoulombMaterialBehaviourPtr( new MohrCoulombMaterialBehaviourInstance() )
                 
-cdef class Cam_clayMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class CamClayMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Cam_clayMaterialBehaviour object"""
+    """Python wrapper on the C++ CamClayMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1029,7 +1029,7 @@ cdef class Cam_clayMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Cam_clayMaterialBehaviourPtr( new Cam_clayMaterialBehaviourInstance() )
+                new CamClayMaterialBehaviourPtr( new CamClayMaterialBehaviourInstance() )
                 
 cdef class BarceloneMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -1070,9 +1070,9 @@ cdef class HujeuxMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new HujeuxMaterialBehaviourPtr( new HujeuxMaterialBehaviourInstance() )
                 
-cdef class Ecro_asym_lineMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class EcroAsymLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ecro_asym_lineMaterialBehaviour object"""
+    """Python wrapper on the C++ EcroAsymLineMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1081,11 +1081,11 @@ cdef class Ecro_asym_lineMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ecro_asym_lineMaterialBehaviourPtr( new Ecro_asym_lineMaterialBehaviourInstance() )
+                new EcroAsymLineMaterialBehaviourPtr( new EcroAsymLineMaterialBehaviourInstance() )
                 
-cdef class Granger_fpMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class GrangerFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Granger_fpMaterialBehaviour object"""
+    """Python wrapper on the C++ GrangerFpMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1094,11 +1094,11 @@ cdef class Granger_fpMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Granger_fpMaterialBehaviourPtr( new Granger_fpMaterialBehaviourInstance() )
+                new GrangerFpMaterialBehaviourPtr( new GrangerFpMaterialBehaviourInstance() )
                 
-cdef class Granger_fp_indtMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class GrangerFp_indtMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Granger_fp_indtMaterialBehaviour object"""
+    """Python wrapper on the C++ GrangerFp_indtMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1107,11 +1107,11 @@ cdef class Granger_fp_indtMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Granger_fp_indtMaterialBehaviourPtr( new Granger_fp_indtMaterialBehaviourInstance() )
+                new GrangerFp_indtMaterialBehaviourPtr( new GrangerFp_indtMaterialBehaviourInstance() )
                 
-cdef class V_granger_fpMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class VGrangerFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ V_granger_fpMaterialBehaviour object"""
+    """Python wrapper on the C++ VGrangerFpMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1120,11 +1120,11 @@ cdef class V_granger_fpMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new V_granger_fpMaterialBehaviourPtr( new V_granger_fpMaterialBehaviourInstance() )
+                new VGrangerFpMaterialBehaviourPtr( new VGrangerFpMaterialBehaviourInstance() )
                 
-cdef class Beton_burger_fpMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonBurgerFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Beton_burger_fpMaterialBehaviour object"""
+    """Python wrapper on the C++ BetonBurgerFpMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1133,11 +1133,11 @@ cdef class Beton_burger_fpMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Beton_burger_fpMaterialBehaviourPtr( new Beton_burger_fpMaterialBehaviourInstance() )
+                new BetonBurgerFpMaterialBehaviourPtr( new BetonBurgerFpMaterialBehaviourInstance() )
                 
-cdef class Beton_umlv_fpMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonUmlvFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Beton_umlv_fpMaterialBehaviour object"""
+    """Python wrapper on the C++ BetonUmlvFpMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1146,11 +1146,11 @@ cdef class Beton_umlv_fpMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Beton_umlv_fpMaterialBehaviourPtr( new Beton_umlv_fpMaterialBehaviourInstance() )
+                new BetonUmlvFpMaterialBehaviourPtr( new BetonUmlvFpMaterialBehaviourInstance() )
                 
-cdef class Beton_ragMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class BetonRagMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Beton_ragMaterialBehaviour object"""
+    """Python wrapper on the C++ BetonRagMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1159,11 +1159,11 @@ cdef class Beton_ragMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Beton_ragMaterialBehaviourPtr( new Beton_ragMaterialBehaviourInstance() )
+                new BetonRagMaterialBehaviourPtr( new BetonRagMaterialBehaviourInstance() )
                 
-cdef class Poro_betonMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class PoroBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Poro_betonMaterialBehaviour object"""
+    """Python wrapper on the C++ PoroBetonMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1172,11 +1172,11 @@ cdef class Poro_betonMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Poro_betonMaterialBehaviourPtr( new Poro_betonMaterialBehaviourInstance() )
+                new PoroBetonMaterialBehaviourPtr( new PoroBetonMaterialBehaviourInstance() )
                 
-cdef class Glrc_dmMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class GlrcDmMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Glrc_dmMaterialBehaviour object"""
+    """Python wrapper on the C++ GlrcDmMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1185,7 +1185,7 @@ cdef class Glrc_dmMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Glrc_dmMaterialBehaviourPtr( new Glrc_dmMaterialBehaviourInstance() )
+                new GlrcDmMaterialBehaviourPtr( new GlrcDmMaterialBehaviourInstance() )
                 
 cdef class DhrcMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -1200,9 +1200,9 @@ cdef class DhrcMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new DhrcMaterialBehaviourPtr( new DhrcMaterialBehaviourInstance() )
                 
-cdef class Gatt_monerieMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class GattMonerieMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Gatt_monerieMaterialBehaviour object"""
+    """Python wrapper on the C++ GattMonerieMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1211,11 +1211,11 @@ cdef class Gatt_monerieMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Gatt_monerieMaterialBehaviourPtr( new Gatt_monerieMaterialBehaviourInstance() )
+                new GattMonerieMaterialBehaviourPtr( new GattMonerieMaterialBehaviourInstance() )
                 
-cdef class Corr_acierMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class CorrAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Corr_acierMaterialBehaviour object"""
+    """Python wrapper on the C++ CorrAcierMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1224,11 +1224,11 @@ cdef class Corr_acierMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Corr_acierMaterialBehaviourPtr( new Corr_acierMaterialBehaviourInstance() )
+                new CorrAcierMaterialBehaviourPtr( new CorrAcierMaterialBehaviourInstance() )
                 
-cdef class Dis_ecro_cineMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DisEcroCineMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Dis_ecro_cineMaterialBehaviour object"""
+    """Python wrapper on the C++ DisEcroCineMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1237,11 +1237,11 @@ cdef class Dis_ecro_cineMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Dis_ecro_cineMaterialBehaviourPtr( new Dis_ecro_cineMaterialBehaviourInstance() )
+                new DisEcroCineMaterialBehaviourPtr( new DisEcroCineMaterialBehaviourInstance() )
                 
-cdef class Dis_viscMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DisViscMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Dis_viscMaterialBehaviour object"""
+    """Python wrapper on the C++ DisViscMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1250,11 +1250,11 @@ cdef class Dis_viscMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Dis_viscMaterialBehaviourPtr( new Dis_viscMaterialBehaviourInstance() )
+                new DisViscMaterialBehaviourPtr( new DisViscMaterialBehaviourInstance() )
                 
-cdef class Dis_bili_elasMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DisBiliElasMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Dis_bili_elasMaterialBehaviour object"""
+    """Python wrapper on the C++ DisBiliElasMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1263,11 +1263,11 @@ cdef class Dis_bili_elasMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Dis_bili_elasMaterialBehaviourPtr( new Dis_bili_elasMaterialBehaviourInstance() )
+                new DisBiliElasMaterialBehaviourPtr( new DisBiliElasMaterialBehaviourInstance() )
                 
-cdef class Ther_nlMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherNlMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ther_nlMaterialBehaviour object"""
+    """Python wrapper on the C++ TherNlMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1276,11 +1276,11 @@ cdef class Ther_nlMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ther_nlMaterialBehaviourPtr( new Ther_nlMaterialBehaviourInstance() )
+                new TherNlMaterialBehaviourPtr( new TherNlMaterialBehaviourInstance() )
                 
-cdef class Ther_hydrMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherHydrMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ther_hydrMaterialBehaviour object"""
+    """Python wrapper on the C++ TherHydrMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1289,7 +1289,7 @@ cdef class Ther_hydrMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ther_hydrMaterialBehaviourPtr( new Ther_hydrMaterialBehaviourInstance() )
+                new TherHydrMaterialBehaviourPtr( new TherHydrMaterialBehaviourInstance() )
                 
 cdef class TherMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -1304,9 +1304,9 @@ cdef class TherMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new TherMaterialBehaviourPtr( new TherMaterialBehaviourInstance() )
                 
-cdef class Ther_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ther_foMaterialBehaviour object"""
+    """Python wrapper on the C++ TherFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1315,11 +1315,11 @@ cdef class Ther_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ther_foMaterialBehaviourPtr( new Ther_foMaterialBehaviourInstance() )
+                new TherFoMaterialBehaviourPtr( new TherFoMaterialBehaviourInstance() )
                 
-cdef class Ther_orthMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherOrthMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ther_orthMaterialBehaviour object"""
+    """Python wrapper on the C++ TherOrthMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1328,11 +1328,11 @@ cdef class Ther_orthMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ther_orthMaterialBehaviourPtr( new Ther_orthMaterialBehaviourInstance() )
+                new TherOrthMaterialBehaviourPtr( new TherOrthMaterialBehaviourInstance() )
                 
-cdef class Ther_coqueMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherCoqueMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ther_coqueMaterialBehaviour object"""
+    """Python wrapper on the C++ TherCoqueMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1341,11 +1341,11 @@ cdef class Ther_coqueMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ther_coqueMaterialBehaviourPtr( new Ther_coqueMaterialBehaviourInstance() )
+                new TherCoqueMaterialBehaviourPtr( new TherCoqueMaterialBehaviourInstance() )
                 
-cdef class Ther_coque_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class TherCoqueFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Ther_coque_foMaterialBehaviour object"""
+    """Python wrapper on the C++ TherCoqueFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1354,11 +1354,11 @@ cdef class Ther_coque_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Ther_coque_foMaterialBehaviourPtr( new Ther_coque_foMaterialBehaviourInstance() )
+                new TherCoqueFoMaterialBehaviourPtr( new TherCoqueFoMaterialBehaviourInstance() )
                 
-cdef class Sech_grangerMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class SechGrangerMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Sech_grangerMaterialBehaviour object"""
+    """Python wrapper on the C++ SechGrangerMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1367,11 +1367,11 @@ cdef class Sech_grangerMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Sech_grangerMaterialBehaviourPtr( new Sech_grangerMaterialBehaviourInstance() )
+                new SechGrangerMaterialBehaviourPtr( new SechGrangerMaterialBehaviourInstance() )
                 
-cdef class Sech_mensiMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class SechMensiMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Sech_mensiMaterialBehaviour object"""
+    """Python wrapper on the C++ SechMensiMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1380,11 +1380,11 @@ cdef class Sech_mensiMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Sech_mensiMaterialBehaviourPtr( new Sech_mensiMaterialBehaviourInstance() )
+                new SechMensiMaterialBehaviourPtr( new SechMensiMaterialBehaviourInstance() )
                 
-cdef class Sech_bazantMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class SechBazantMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Sech_bazantMaterialBehaviour object"""
+    """Python wrapper on the C++ SechBazantMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1393,11 +1393,11 @@ cdef class Sech_bazantMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Sech_bazantMaterialBehaviourPtr( new Sech_bazantMaterialBehaviourInstance() )
+                new SechBazantMaterialBehaviourPtr( new SechBazantMaterialBehaviourInstance() )
                 
-cdef class Sech_nappeMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class SechNappeMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Sech_nappeMaterialBehaviour object"""
+    """Python wrapper on the C++ SechNappeMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1406,11 +1406,11 @@ cdef class Sech_nappeMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Sech_nappeMaterialBehaviourPtr( new Sech_nappeMaterialBehaviourInstance() )
+                new SechNappeMaterialBehaviourPtr( new SechNappeMaterialBehaviourInstance() )
                 
-cdef class Meta_acierMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Meta_acierMaterialBehaviour object"""
+    """Python wrapper on the C++ MetaAcierMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1419,11 +1419,11 @@ cdef class Meta_acierMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Meta_acierMaterialBehaviourPtr( new Meta_acierMaterialBehaviourInstance() )
+                new MetaAcierMaterialBehaviourPtr( new MetaAcierMaterialBehaviourInstance() )
                 
-cdef class Meta_zircMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaZircMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Meta_zircMaterialBehaviour object"""
+    """Python wrapper on the C++ MetaZircMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1432,11 +1432,11 @@ cdef class Meta_zircMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Meta_zircMaterialBehaviourPtr( new Meta_zircMaterialBehaviourInstance() )
+                new MetaZircMaterialBehaviourPtr( new MetaZircMaterialBehaviourInstance() )
                 
-cdef class Durt_metaMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DurtMetaMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Durt_metaMaterialBehaviour object"""
+    """Python wrapper on the C++ DurtMetaMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1445,11 +1445,11 @@ cdef class Durt_metaMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Durt_metaMaterialBehaviourPtr( new Durt_metaMaterialBehaviourInstance() )
+                new DurtMetaMaterialBehaviourPtr( new DurtMetaMaterialBehaviourInstance() )
                 
-cdef class Elas_metaMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasMetaMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_metaMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasMetaMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1458,11 +1458,11 @@ cdef class Elas_metaMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_metaMaterialBehaviourPtr( new Elas_metaMaterialBehaviourInstance() )
+                new ElasMetaMaterialBehaviourPtr( new ElasMetaMaterialBehaviourInstance() )
                 
-cdef class Elas_meta_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasMetaFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_meta_foMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasMetaFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1471,11 +1471,11 @@ cdef class Elas_meta_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_meta_foMaterialBehaviourPtr( new Elas_meta_foMaterialBehaviourInstance() )
+                new ElasMetaFoMaterialBehaviourPtr( new ElasMetaFoMaterialBehaviourInstance() )
                 
-cdef class Meta_ecro_lineMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaEcroLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Meta_ecro_lineMaterialBehaviour object"""
+    """Python wrapper on the C++ MetaEcroLineMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1484,11 +1484,11 @@ cdef class Meta_ecro_lineMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Meta_ecro_lineMaterialBehaviourPtr( new Meta_ecro_lineMaterialBehaviourInstance() )
+                new MetaEcroLineMaterialBehaviourPtr( new MetaEcroLineMaterialBehaviourInstance() )
                 
-cdef class Meta_tractionMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaTractionMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Meta_tractionMaterialBehaviour object"""
+    """Python wrapper on the C++ MetaTractionMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1497,11 +1497,11 @@ cdef class Meta_tractionMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Meta_tractionMaterialBehaviourPtr( new Meta_tractionMaterialBehaviourInstance() )
+                new MetaTractionMaterialBehaviourPtr( new MetaTractionMaterialBehaviourInstance() )
                 
-cdef class Meta_visc_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaViscFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Meta_visc_foMaterialBehaviour object"""
+    """Python wrapper on the C++ MetaViscFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1510,11 +1510,11 @@ cdef class Meta_visc_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Meta_visc_foMaterialBehaviourPtr( new Meta_visc_foMaterialBehaviourInstance() )
+                new MetaViscFoMaterialBehaviourPtr( new MetaViscFoMaterialBehaviourInstance() )
                 
-cdef class Meta_ptMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaPtMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Meta_ptMaterialBehaviour object"""
+    """Python wrapper on the C++ MetaPtMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1523,11 +1523,11 @@ cdef class Meta_ptMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Meta_ptMaterialBehaviourPtr( new Meta_ptMaterialBehaviourInstance() )
+                new MetaPtMaterialBehaviourPtr( new MetaPtMaterialBehaviourInstance() )
                 
-cdef class Meta_reMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MetaReMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Meta_reMaterialBehaviour object"""
+    """Python wrapper on the C++ MetaReMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1536,7 +1536,7 @@ cdef class Meta_reMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Meta_reMaterialBehaviourPtr( new Meta_reMaterialBehaviourInstance() )
+                new MetaReMaterialBehaviourPtr( new MetaReMaterialBehaviourInstance() )
                 
 cdef class FluideMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -1551,9 +1551,9 @@ cdef class FluideMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new FluideMaterialBehaviourPtr( new FluideMaterialBehaviourInstance() )
                 
-cdef class Thm_initMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmInitMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Thm_initMaterialBehaviour object"""
+    """Python wrapper on the C++ ThmInitMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1562,11 +1562,11 @@ cdef class Thm_initMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Thm_initMaterialBehaviourPtr( new Thm_initMaterialBehaviourInstance() )
+                new ThmInitMaterialBehaviourPtr( new ThmInitMaterialBehaviourInstance() )
                 
-cdef class Thm_diffuMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmDiffuMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Thm_diffuMaterialBehaviour object"""
+    """Python wrapper on the C++ ThmDiffuMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1575,11 +1575,11 @@ cdef class Thm_diffuMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Thm_diffuMaterialBehaviourPtr( new Thm_diffuMaterialBehaviourInstance() )
+                new ThmDiffuMaterialBehaviourPtr( new ThmDiffuMaterialBehaviourInstance() )
                 
-cdef class Thm_liquMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmLiquMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Thm_liquMaterialBehaviour object"""
+    """Python wrapper on the C++ ThmLiquMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1588,11 +1588,11 @@ cdef class Thm_liquMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Thm_liquMaterialBehaviourPtr( new Thm_liquMaterialBehaviourInstance() )
+                new ThmLiquMaterialBehaviourPtr( new ThmLiquMaterialBehaviourInstance() )
                 
-cdef class Thm_gazMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmGazMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Thm_gazMaterialBehaviour object"""
+    """Python wrapper on the C++ ThmGazMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1601,11 +1601,11 @@ cdef class Thm_gazMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Thm_gazMaterialBehaviourPtr( new Thm_gazMaterialBehaviourInstance() )
+                new ThmGazMaterialBehaviourPtr( new ThmGazMaterialBehaviourInstance() )
                 
-cdef class Thm_vape_gazMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmVapeGazMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Thm_vape_gazMaterialBehaviour object"""
+    """Python wrapper on the C++ ThmVapeGazMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1614,11 +1614,11 @@ cdef class Thm_vape_gazMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Thm_vape_gazMaterialBehaviourPtr( new Thm_vape_gazMaterialBehaviourInstance() )
+                new ThmVapeGazMaterialBehaviourPtr( new ThmVapeGazMaterialBehaviourInstance() )
                                                               
-cdef class Thm_air_dissMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmAirDissMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Thm_air_dissMaterialBehaviour object"""
+    """Python wrapper on the C++ ThmAirDissMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1627,7 +1627,7 @@ cdef class Thm_air_dissMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Thm_air_dissMaterialBehaviourPtr( new Thm_air_dissMaterialBehaviourInstance() )
+                new ThmAirDissMaterialBehaviourPtr( new ThmAirDissMaterialBehaviourInstance() )
                                                        
 cdef class FatigueMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -1642,9 +1642,9 @@ cdef class FatigueMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new FatigueMaterialBehaviourPtr( new FatigueMaterialBehaviourInstance() )
                 
-cdef class Domma_lemaitreMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DommaLemaitreMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Domma_lemaitreMaterialBehaviour object"""
+    """Python wrapper on the C++ DommaLemaitreMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1653,11 +1653,11 @@ cdef class Domma_lemaitreMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Domma_lemaitreMaterialBehaviourPtr( new Domma_lemaitreMaterialBehaviourInstance() )
+                new DommaLemaitreMaterialBehaviourPtr( new DommaLemaitreMaterialBehaviourInstance() )
                 
-cdef class Cisa_plan_critMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class CisaPlanCritMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Cisa_plan_critMaterialBehaviour object"""
+    """Python wrapper on the C++ CisaPlanCritMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1666,11 +1666,11 @@ cdef class Cisa_plan_critMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Cisa_plan_critMaterialBehaviourPtr( new Cisa_plan_critMaterialBehaviourInstance() )
+                new CisaPlanCritMaterialBehaviourPtr( new CisaPlanCritMaterialBehaviourInstance() )
                 
-cdef class Thm_ruptMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ThmRuptMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Thm_ruptMaterialBehaviour object"""
+    """Python wrapper on the C++ ThmRuptMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1679,7 +1679,7 @@ cdef class Thm_ruptMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Thm_ruptMaterialBehaviourPtr( new Thm_ruptMaterialBehaviourInstance() )
+                new ThmRuptMaterialBehaviourPtr( new ThmRuptMaterialBehaviourInstance() )
                 
 cdef class WeibullMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -1694,9 +1694,9 @@ cdef class WeibullMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new WeibullMaterialBehaviourPtr( new WeibullMaterialBehaviourInstance() )
                 
-cdef class Weibull_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class WeibullFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Weibull_foMaterialBehaviour object"""
+    """Python wrapper on the C++ WeibullFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1705,11 +1705,11 @@ cdef class Weibull_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Weibull_foMaterialBehaviourPtr( new Weibull_foMaterialBehaviourInstance() )
+                new WeibullFoMaterialBehaviourPtr( new WeibullFoMaterialBehaviourInstance() )
                 
-cdef class Non_localMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class NonLocalMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Non_localMaterialBehaviour object"""
+    """Python wrapper on the C++ NonLocalMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1718,11 +1718,11 @@ cdef class Non_localMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Non_localMaterialBehaviourPtr( new Non_localMaterialBehaviourInstance() )
+                new NonLocalMaterialBehaviourPtr( new NonLocalMaterialBehaviourInstance() )
                 
-cdef class Rupt_fragMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class RuptFragMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Rupt_fragMaterialBehaviour object"""
+    """Python wrapper on the C++ RuptFragMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1731,11 +1731,11 @@ cdef class Rupt_fragMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Rupt_fragMaterialBehaviourPtr( new Rupt_fragMaterialBehaviourInstance() )
+                new RuptFragMaterialBehaviourPtr( new RuptFragMaterialBehaviourInstance() )
                 
-cdef class Rupt_frag_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class RuptFragFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Rupt_frag_foMaterialBehaviour object"""
+    """Python wrapper on the C++ RuptFragFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1744,11 +1744,11 @@ cdef class Rupt_frag_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Rupt_frag_foMaterialBehaviourPtr( new Rupt_frag_foMaterialBehaviourInstance() )
+                new RuptFragFoMaterialBehaviourPtr( new RuptFragFoMaterialBehaviourInstance() )
                 
-cdef class Czm_lab_mixMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class CzmLabMixMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Czm_lab_mixMaterialBehaviour object"""
+    """Python wrapper on the C++ CzmLabMixMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1757,11 +1757,11 @@ cdef class Czm_lab_mixMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Czm_lab_mixMaterialBehaviourPtr( new Czm_lab_mixMaterialBehaviourInstance() )
+                new CzmLabMixMaterialBehaviourPtr( new CzmLabMixMaterialBehaviourInstance() )
                 
-cdef class Rupt_ductMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class RuptDuctMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Rupt_ductMaterialBehaviour object"""
+    """Python wrapper on the C++ RuptDuctMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1770,11 +1770,11 @@ cdef class Rupt_ductMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Rupt_ductMaterialBehaviourPtr( new Rupt_ductMaterialBehaviourInstance() )
+                new RuptDuctMaterialBehaviourPtr( new RuptDuctMaterialBehaviourInstance() )
                 
-cdef class Joint_meca_ruptMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class JointMecaRuptMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Joint_meca_ruptMaterialBehaviour object"""
+    """Python wrapper on the C++ JointMecaRuptMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1783,11 +1783,11 @@ cdef class Joint_meca_ruptMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Joint_meca_ruptMaterialBehaviourPtr( new Joint_meca_ruptMaterialBehaviourInstance() )
+                new JointMecaRuptMaterialBehaviourPtr( new JointMecaRuptMaterialBehaviourInstance() )
                 
-cdef class Joint_meca_frotMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class JointMecaFrotMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Joint_meca_frotMaterialBehaviour object"""
+    """Python wrapper on the C++ JointMecaFrotMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1796,7 +1796,7 @@ cdef class Joint_meca_frotMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Joint_meca_frotMaterialBehaviourPtr( new Joint_meca_frotMaterialBehaviourInstance() )
+                new JointMecaFrotMaterialBehaviourPtr( new JointMecaFrotMaterialBehaviourInstance() )
                 
 cdef class RccmMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -1811,9 +1811,9 @@ cdef class RccmMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new RccmMaterialBehaviourPtr( new RccmMaterialBehaviourInstance() )
                 
-cdef class Rccm_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class RccmFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Rccm_foMaterialBehaviour object"""
+    """Python wrapper on the C++ RccmFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1822,7 +1822,7 @@ cdef class Rccm_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Rccm_foMaterialBehaviourPtr( new Rccm_foMaterialBehaviourInstance() )
+                new RccmFoMaterialBehaviourPtr( new RccmFoMaterialBehaviourInstance() )
                 
 cdef class LaigleMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -1850,9 +1850,9 @@ cdef class LetkMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new LetkMaterialBehaviourPtr( new LetkMaterialBehaviourInstance() )
                 
-cdef class Druck_pragerMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DruckPragerMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Druck_pragerMaterialBehaviour object"""
+    """Python wrapper on the C++ DruckPragerMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1861,11 +1861,11 @@ cdef class Druck_pragerMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Druck_pragerMaterialBehaviourPtr( new Druck_pragerMaterialBehaviourInstance() )
+                new DruckPragerMaterialBehaviourPtr( new DruckPragerMaterialBehaviourInstance() )
                 
-cdef class Druck_prager_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class DruckPragerFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Druck_prager_foMaterialBehaviour object"""
+    """Python wrapper on the C++ DruckPragerFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1874,11 +1874,11 @@ cdef class Druck_prager_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Druck_prager_foMaterialBehaviourPtr( new Druck_prager_foMaterialBehaviourInstance() )
+                new DruckPragerFoMaterialBehaviourPtr( new DruckPragerFoMaterialBehaviourInstance() )
                 
-cdef class Visc_druc_pragMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ViscDrucPragMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Visc_druc_pragMaterialBehaviour object"""
+    """Python wrapper on the C++ ViscDrucPragMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1887,11 +1887,11 @@ cdef class Visc_druc_pragMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Visc_druc_pragMaterialBehaviourPtr( new Visc_druc_pragMaterialBehaviourInstance() )
+                new ViscDrucPragMaterialBehaviourPtr( new ViscDrucPragMaterialBehaviourInstance() )
                 
-cdef class Hoek_brownMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class HoekBrownMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Hoek_brownMaterialBehaviour object"""
+    """Python wrapper on the C++ HoekBrownMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1900,11 +1900,11 @@ cdef class Hoek_brownMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Hoek_brownMaterialBehaviourPtr( new Hoek_brownMaterialBehaviourInstance() )
+                new HoekBrownMaterialBehaviourPtr( new HoekBrownMaterialBehaviourInstance() )
                 
-cdef class Elas_gonfMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class ElasGonfMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Elas_gonfMaterialBehaviour object"""
+    """Python wrapper on the C++ ElasGonfMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1913,11 +1913,11 @@ cdef class Elas_gonfMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Elas_gonfMaterialBehaviourPtr( new Elas_gonfMaterialBehaviourInstance() )
+                new ElasGonfMaterialBehaviourPtr( new ElasGonfMaterialBehaviourInstance() )
                 
-cdef class Joint_bandisMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class JointBandisMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Joint_bandisMaterialBehaviour object"""
+    """Python wrapper on the C++ JointBandisMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1926,11 +1926,11 @@ cdef class Joint_bandisMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Joint_bandisMaterialBehaviourPtr( new Joint_bandisMaterialBehaviourInstance() )
+                new JointBandisMaterialBehaviourPtr( new JointBandisMaterialBehaviourInstance() )
                 
-cdef class Mono_visc1MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoVisc1MaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_visc1MaterialBehaviour object"""
+    """Python wrapper on the C++ MonoVisc1MaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1939,11 +1939,11 @@ cdef class Mono_visc1MaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_visc1MaterialBehaviourPtr( new Mono_visc1MaterialBehaviourInstance() )
+                new MonoVisc1MaterialBehaviourPtr( new MonoVisc1MaterialBehaviourInstance() )
                 
-cdef class Mono_visc2MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoVisc2MaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_visc2MaterialBehaviour object"""
+    """Python wrapper on the C++ MonoVisc2MaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1952,11 +1952,11 @@ cdef class Mono_visc2MaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_visc2MaterialBehaviourPtr( new Mono_visc2MaterialBehaviourInstance() )
+                new MonoVisc2MaterialBehaviourPtr( new MonoVisc2MaterialBehaviourInstance() )
                 
-cdef class Mono_isot1MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoIsot1MaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_isot1MaterialBehaviour object"""
+    """Python wrapper on the C++ MonoIsot1MaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1965,11 +1965,11 @@ cdef class Mono_isot1MaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_isot1MaterialBehaviourPtr( new Mono_isot1MaterialBehaviourInstance() )
+                new MonoIsot1MaterialBehaviourPtr( new MonoIsot1MaterialBehaviourInstance() )
                 
-cdef class Mono_isot2MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoIsot2MaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_isot2MaterialBehaviour object"""
+    """Python wrapper on the C++ MonoIsot2MaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1978,11 +1978,11 @@ cdef class Mono_isot2MaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_isot2MaterialBehaviourPtr( new Mono_isot2MaterialBehaviourInstance() )
+                new MonoIsot2MaterialBehaviourPtr( new MonoIsot2MaterialBehaviourInstance() )
                 
-cdef class Mono_cine1MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoCine1MaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_cine1MaterialBehaviour object"""
+    """Python wrapper on the C++ MonoCine1MaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -1991,11 +1991,11 @@ cdef class Mono_cine1MaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_cine1MaterialBehaviourPtr( new Mono_cine1MaterialBehaviourInstance() )
+                new MonoCine1MaterialBehaviourPtr( new MonoCine1MaterialBehaviourInstance() )
                 
-cdef class Mono_cine2MaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoCine2MaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_cine2MaterialBehaviour object"""
+    """Python wrapper on the C++ MonoCine2MaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -2004,11 +2004,11 @@ cdef class Mono_cine2MaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_cine2MaterialBehaviourPtr( new Mono_cine2MaterialBehaviourInstance() )
+                new MonoCine2MaterialBehaviourPtr( new MonoCine2MaterialBehaviourInstance() )
                 
-cdef class Mono_dd_krMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdKrMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_dd_krMaterialBehaviour object"""
+    """Python wrapper on the C++ MonoDdKrMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -2017,11 +2017,11 @@ cdef class Mono_dd_krMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_dd_krMaterialBehaviourPtr( new Mono_dd_krMaterialBehaviourInstance() )
+                new MonoDdKrMaterialBehaviourPtr( new MonoDdKrMaterialBehaviourInstance() )
                 
-cdef class Mono_dd_cfcMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdCfcMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_dd_cfcMaterialBehaviour object"""
+    """Python wrapper on the C++ MonoDdCfcMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -2030,11 +2030,11 @@ cdef class Mono_dd_cfcMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_dd_cfcMaterialBehaviourPtr( new Mono_dd_cfcMaterialBehaviourInstance() )
+                new MonoDdCfcMaterialBehaviourPtr( new MonoDdCfcMaterialBehaviourInstance() )
                 
-cdef class Mono_dd_cfc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdCfc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_dd_cfc_irraMaterialBehaviour object"""
+    """Python wrapper on the C++ MonoDdCfc_irraMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -2043,11 +2043,11 @@ cdef class Mono_dd_cfc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_dd_cfc_irraMaterialBehaviourPtr( new Mono_dd_cfc_irraMaterialBehaviourInstance() )
+                new MonoDdCfc_irraMaterialBehaviourPtr( new MonoDdCfc_irraMaterialBehaviourInstance() )
                 
-cdef class Mono_dd_fatMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdFatMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_dd_fatMaterialBehaviour object"""
+    """Python wrapper on the C++ MonoDdFatMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -2056,11 +2056,11 @@ cdef class Mono_dd_fatMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_dd_fatMaterialBehaviourPtr( new Mono_dd_fatMaterialBehaviourInstance() )
+                new MonoDdFatMaterialBehaviourPtr( new MonoDdFatMaterialBehaviourInstance() )
                 
-cdef class Mono_dd_ccMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdCcMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_dd_ccMaterialBehaviour object"""
+    """Python wrapper on the C++ MonoDdCcMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -2069,11 +2069,11 @@ cdef class Mono_dd_ccMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_dd_ccMaterialBehaviourPtr( new Mono_dd_ccMaterialBehaviourInstance() )
+                new MonoDdCcMaterialBehaviourPtr( new MonoDdCcMaterialBehaviourInstance() )
                 
-cdef class Mono_dd_cc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class MonoDdCc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Mono_dd_cc_irraMaterialBehaviour object"""
+    """Python wrapper on the C++ MonoDdCc_irraMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -2082,7 +2082,7 @@ cdef class Mono_dd_cc_irraMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Mono_dd_cc_irraMaterialBehaviourPtr( new Mono_dd_cc_irraMaterialBehaviourInstance() )
+                new MonoDdCc_irraMaterialBehaviourPtr( new MonoDdCc_irraMaterialBehaviourInstance() )
                 
 cdef class UmatMaterialBehaviour( GeneralMaterialBehaviour ):
 
@@ -2097,9 +2097,9 @@ cdef class UmatMaterialBehaviour( GeneralMaterialBehaviour ):
             self._cptr = <GeneralMaterialBehaviourPtr *>\
                 new UmatMaterialBehaviourPtr( new UmatMaterialBehaviourInstance() )
                 
-cdef class Umat_foMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class UmatFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Umat_foMaterialBehaviour object"""
+    """Python wrapper on the C++ UmatFoMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -2108,11 +2108,11 @@ cdef class Umat_foMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Umat_foMaterialBehaviourPtr( new Umat_foMaterialBehaviourInstance() )
+                new UmatFoMaterialBehaviourPtr( new UmatFoMaterialBehaviourInstance() )
                 
-cdef class Crit_ruptMaterialBehaviour( GeneralMaterialBehaviour ):
+cdef class CritRuptMaterialBehaviour( GeneralMaterialBehaviour ):
 
-    """Python wrapper on the C++ Crit_ruptMaterialBehaviour object"""
+    """Python wrapper on the C++ CritRuptMaterialBehaviour object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
@@ -2121,5 +2121,5 @@ cdef class Crit_ruptMaterialBehaviour( GeneralMaterialBehaviour ):
             del self._cptr
         if init:
             self._cptr = <GeneralMaterialBehaviourPtr *>\
-                new Crit_ruptMaterialBehaviourPtr( new Crit_ruptMaterialBehaviourInstance() )
+                new CritRuptMaterialBehaviourPtr( new CritRuptMaterialBehaviourInstance() )
                 

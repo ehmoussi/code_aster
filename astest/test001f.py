@@ -10,13 +10,46 @@ monModel.setSupportMesh( monMaillage )
 monModel.addModelingOnAllMesh( code_aster.Mechanics, code_aster.Tridimensional )
 monModel.build()
 
+YOUNG = 200000.0;
+POISSON = 0.3;
+
 materElas = code_aster.MaterialBehaviour.ElasMaterialBehaviour()
-materElas.setDoubleValue( "E", 2.e11 )
-materElas.setDoubleValue( "Nu", 0.3 )
+materElas.setDoubleValue( "E", YOUNG )
+materElas.setDoubleValue( "Nu", POISSON )
 
 acier = code_aster.Material()
 acier.addMaterialBehaviour( materElas )
+
+Kinv= 3.2841e-4
+Kv=1./Kinv
+SY = 437.0;
+Rinf = 758.0;
+Qzer   = 758.0-437.;
+Qinf   = Qzer + 100.;
+b = 2.3;
+C1inf = 63767.0/2.0
+C2inf = 63767.0/2.0
+Gam1 = 341.0
+Gam2 = 341.0
+C_Pa = 1.e+6
+
+materViscochab = code_aster.MaterialBehaviour.ViscochabMaterialBehaviour()
+materViscochab.setDoubleValue( "K",  SY*C_Pa )
+materViscochab.setDoubleValue( "B",  b )
+materViscochab.setDoubleValue( "Mu", 10 )
+materViscochab.setDoubleValue( "Q_M", Qinf * C_Pa )
+materViscochab.setDoubleValue( "Q_0", Qzer * C_Pa )
+materViscochab.setDoubleValue( "C1", C1inf * C_Pa )
+materViscochab.setDoubleValue( "C2", C2inf * C_Pa )
+materViscochab.setDoubleValue( "G1_0", Gam1 )
+materViscochab.setDoubleValue( "G2_0", Gam2 )
+materViscochab.setDoubleValue( "K_0", Kv * C_Pa)
+materViscochab.setDoubleValue( "N", 11)
+materViscochab.setDoubleValue( "A_k", 1.)
+
+acier.addMaterialBehaviour( materViscochab )
 acier.build()
+acier.debugPrint(6)
 
 affectMat = code_aster.MaterialOnMesh()
 affectMat.setSupportMesh( monMaillage )

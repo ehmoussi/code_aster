@@ -150,7 +150,7 @@ class GeneralMaterialBehaviourInstance
 
         friend class MaterialInstance;
         /** @brief Chaine correspondant au nom Aster du MaterialBehaviourInstance */
-        // ex : ELAS ou ELAS_FO
+        // ex : ELAS ou ELASFo
         std::string              _asterName;
         /** @brief Vector Jeveux 'CPT.XXXXXX.VALC' */
         JeveuxVectorComplex      _complexValues;
@@ -179,7 +179,7 @@ class GeneralMaterialBehaviourInstance
 
         /**
          * @brief Recuperation du nom Aster du GeneralMaterialBehaviourInstance
-         *        ex : 'ELAS', 'ELAS_FO', ...
+         *        ex : 'ELAS', 'ELASFo', ...
          * @return Chaine contenant le nom Aster
          */
         const std::string getAsterName() const
@@ -222,6 +222,7 @@ class GeneralMaterialBehaviourInstance
         /**
          * @brief Construction du GeneralMaterialBehaviourInstance
          * @return Booleen valant true si la tache s'est bien deroulee
+         * @todo vérifier les valeurs réelles par défaut du .VALR
          */
         bool build() throw ( std::runtime_error );
 
@@ -285,17 +286,17 @@ typedef boost::shared_ptr< ElasMaterialBehaviourInstance > ElasMaterialBehaviour
 
 
 /**
- * @class Elas_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_fo
+ * @class ElasFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasFo
  * @author Jean-Pierre Lefebvre
  */
-class Elas_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_foMaterialBehaviourInstance()
+        ElasFoMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_FO" dans Aster
             _asterName = "ELAS_FO";
@@ -316,22 +317,22 @@ class Elas_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_fo */
-typedef boost::shared_ptr< Elas_foMaterialBehaviourInstance > Elas_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasFo */
+typedef boost::shared_ptr< ElasFoMaterialBehaviourInstance > ElasFoMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_fluiMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_flui
+ * @class ElasFluiMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasFlui
  * @author Jean-Pierre Lefebvre
  */
-class Elas_fluiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasFluiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_fluiMaterialBehaviourInstance()
+        ElasFluiMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_FLUI" dans Aster
             _asterName = "ELAS_FLUI";
@@ -346,22 +347,22 @@ class Elas_fluiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_flui */
-typedef boost::shared_ptr< Elas_fluiMaterialBehaviourInstance > Elas_fluiMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasFlui */
+typedef boost::shared_ptr< ElasFluiMaterialBehaviourInstance > ElasFluiMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_istrMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_istr
+ * @class ElasIstrMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasIstr
  * @author Jean-Pierre Lefebvre
  */
-class Elas_istrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasIstrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_istrMaterialBehaviourInstance()
+        ElasIstrMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_ISTR" dans Aster
             _asterName = "ELAS_ISTR";
@@ -378,22 +379,22 @@ class Elas_istrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_istr */
-typedef boost::shared_ptr< Elas_istrMaterialBehaviourInstance > Elas_istrMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasIstr */
+typedef boost::shared_ptr< ElasIstrMaterialBehaviourInstance > ElasIstrMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_istr_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_istr_fo
+ * @class ElasIstrFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasIstrFo
  * @author Jean-Pierre Lefebvre
  */
-class Elas_istr_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasIstrFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_istr_foMaterialBehaviourInstance()
+        ElasIstrFoMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_ISTR_FO" dans Aster
             _asterName = "ELAS_ISTR_FO";
@@ -412,22 +413,22 @@ class Elas_istr_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_istr_fo */
-typedef boost::shared_ptr< Elas_istr_foMaterialBehaviourInstance > Elas_istr_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasIstrFo */
+typedef boost::shared_ptr< ElasIstrFoMaterialBehaviourInstance > ElasIstrFoMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_orthMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_orth
+ * @class ElasOrthMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasOrth
  * @author Jean-Pierre Lefebvre
  */
-class Elas_orthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasOrthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_orthMaterialBehaviourInstance()
+        ElasOrthMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_ORTH" dans Aster
             _asterName = "ELAS_ORTH";
@@ -457,22 +458,22 @@ class Elas_orthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_orth */
-typedef boost::shared_ptr< Elas_orthMaterialBehaviourInstance > Elas_orthMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasOrth */
+typedef boost::shared_ptr< ElasOrthMaterialBehaviourInstance > ElasOrthMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_orth_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_orth_fo
+ * @class ElasOrthFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasOrthFo
  * @author Jean-Pierre Lefebvre
  */
-class Elas_orth_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasOrthFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_orth_foMaterialBehaviourInstance()
+        ElasOrthFoMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_ORTH_FO" dans Aster
             _asterName = "ELAS_ORTH_FO";
@@ -499,22 +500,22 @@ class Elas_orth_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_orth_fo */
-typedef boost::shared_ptr< Elas_orth_foMaterialBehaviourInstance > Elas_orth_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasOrthFo */
+typedef boost::shared_ptr< ElasOrthFoMaterialBehaviourInstance > ElasOrthFoMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_hyperMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_hyper
+ * @class ElasHyperMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasHyper
  * @author Jean-Pierre Lefebvre
  */
-class Elas_hyperMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasHyperMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_hyperMaterialBehaviourInstance()
+        ElasHyperMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_HYPER" dans Aster
             _asterName = "ELAS_HYPER";
@@ -529,22 +530,22 @@ class Elas_hyperMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_hyper */
-typedef boost::shared_ptr< Elas_hyperMaterialBehaviourInstance > Elas_hyperMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasHyper */
+typedef boost::shared_ptr< ElasHyperMaterialBehaviourInstance > ElasHyperMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_coqueMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_coque
+ * @class ElasCoqueMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasCoque
  * @author Jean-Pierre Lefebvre
  */
-class Elas_coqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasCoqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_coqueMaterialBehaviourInstance()
+        ElasCoqueMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_COQUE" dans Aster
             _asterName = "ELAS_COQUE";
@@ -598,22 +599,22 @@ class Elas_coqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_coque */
-typedef boost::shared_ptr< Elas_coqueMaterialBehaviourInstance > Elas_coqueMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasCoque */
+typedef boost::shared_ptr< ElasCoqueMaterialBehaviourInstance > ElasCoqueMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_coque_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_coque_fo
+ * @class ElasCoqueFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasCoqueFo
  * @author Jean-Pierre Lefebvre
  */
-class Elas_coque_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasCoqueFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_coque_foMaterialBehaviourInstance()
+        ElasCoqueFoMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_COQUE_FO" dans Aster
             _asterName = "ELAS_COQUE_FO";
@@ -667,22 +668,22 @@ class Elas_coque_foMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_coque_fo */
-typedef boost::shared_ptr< Elas_coque_foMaterialBehaviourInstance > Elas_coque_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasCoqueFo */
+typedef boost::shared_ptr< ElasCoqueFoMaterialBehaviourInstance > ElasCoqueFoMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_membraneMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_membrane
+ * @class ElasMembraneMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasMembrane
  * @author Jean-Pierre Lefebvre
  */
-class Elas_membraneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasMembraneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_membraneMaterialBehaviourInstance()
+        ElasMembraneMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_MEMBRANE" dans Aster
             _asterName = "ELAS_MEMBRANE";
@@ -699,22 +700,22 @@ class Elas_membraneMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_membrane */
-typedef boost::shared_ptr< Elas_membraneMaterialBehaviourInstance > Elas_membraneMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasMembrane */
+typedef boost::shared_ptr< ElasMembraneMaterialBehaviourInstance > ElasMembraneMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_2ndgMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_2ndg
+ * @class Elas2ndgMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas2ndg
  * @author Jean-Pierre Lefebvre
  */
-class Elas_2ndgMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class Elas2ndgMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_2ndgMaterialBehaviourInstance()
+        Elas2ndgMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_2NDG" dans Aster
             _asterName = "ELAS_2NDG";
@@ -728,22 +729,22 @@ class Elas_2ndgMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_2ndg */
-typedef boost::shared_ptr< Elas_2ndgMaterialBehaviourInstance > Elas_2ndgMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau Elas2ndg */
+typedef boost::shared_ptr< Elas2ndgMaterialBehaviourInstance > Elas2ndgMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_glrcMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_glrc
+ * @class ElasGlrcMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasGlrc
  * @author Jean-Pierre Lefebvre
  */
-class Elas_glrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasGlrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_glrcMaterialBehaviourInstance()
+        ElasGlrcMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_GLRC" dans Aster
             _asterName = "ELAS_GLRC";
@@ -763,22 +764,22 @@ class Elas_glrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_glrc */
-typedef boost::shared_ptr< Elas_glrcMaterialBehaviourInstance > Elas_glrcMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasGlrc */
+typedef boost::shared_ptr< ElasGlrcMaterialBehaviourInstance > ElasGlrcMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_glrc_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_glrc_fo
+ * @class ElasGlrcFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasGlrcFo
  * @author Jean-Pierre Lefebvre
  */
-class Elas_glrc_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasGlrcFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_glrc_foMaterialBehaviourInstance()
+        ElasGlrcFoMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_GLRC_FO" dans Aster
             _asterName = "ELAS_GLRC_FO";
@@ -799,22 +800,22 @@ class Elas_glrc_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_glrc_fo */
-typedef boost::shared_ptr< Elas_glrc_foMaterialBehaviourInstance > Elas_glrc_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasGlrcFo */
+typedef boost::shared_ptr< ElasGlrcFoMaterialBehaviourInstance > ElasGlrcFoMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_dhrcMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_dhrc
+ * @class ElasDhrcMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasDhrc
  * @author Jean-Pierre Lefebvre
  */
-class Elas_dhrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasDhrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_dhrcMaterialBehaviourInstance()
+        ElasDhrcMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_DHRC" dans Aster
             _asterName = "ELAS_DHRC";
@@ -849,8 +850,8 @@ class Elas_dhrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_dhrc */
-typedef boost::shared_ptr< Elas_dhrcMaterialBehaviourInstance > Elas_dhrcMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasDhrc */
+typedef boost::shared_ptr< ElasDhrcMaterialBehaviourInstance > ElasDhrcMaterialBehaviourPtr;
 
 
 /**
@@ -879,17 +880,17 @@ typedef boost::shared_ptr< CableMaterialBehaviourInstance > CableMaterialBehavio
 
 
 /**
- * @class Veri_borneMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Veri_borne
+ * @class VeriBorneMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau VeriBorne
  * @author Jean-Pierre Lefebvre
  */
-class Veri_borneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class VeriBorneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Veri_borneMaterialBehaviourInstance()
+        VeriBorneMaterialBehaviourInstance()
         {
             // Mot cle "VERI_BORNE" dans Aster
             _asterName = "VERI_BORNE";
@@ -902,8 +903,8 @@ class Veri_borneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Veri_borne */
-typedef boost::shared_ptr< Veri_borneMaterialBehaviourInstance > Veri_borneMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau VeriBorne */
+typedef boost::shared_ptr< VeriBorneMaterialBehaviourInstance > VeriBorneMaterialBehaviourPtr;
 
 
 /**
@@ -932,17 +933,17 @@ typedef boost::shared_ptr< TractionMaterialBehaviourInstance > TractionMaterialB
 
 
 /**
- * @class Ecro_lineMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ecro_line
+ * @class EcroLineMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EcroLine
  * @author Jean-Pierre Lefebvre
  */
-class Ecro_lineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ecro_lineMaterialBehaviourInstance()
+        EcroLineMaterialBehaviourInstance()
         {
             // Mot cle "ECRO_LINE" dans Aster
             _asterName = "ECRO_LINE";
@@ -955,22 +956,22 @@ class Ecro_lineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ecro_line */
-typedef boost::shared_ptr< Ecro_lineMaterialBehaviourInstance > Ecro_lineMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EcroLine */
+typedef boost::shared_ptr< EcroLineMaterialBehaviourInstance > EcroLineMaterialBehaviourPtr;
 
 
 /**
- * @class Endo_heterogeneMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Endo_heterogene
+ * @class EndoHeterogeneMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EndoHeterogene
  * @author Jean-Pierre Lefebvre
  */
-class Endo_heterogeneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EndoHeterogeneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Endo_heterogeneMaterialBehaviourInstance()
+        EndoHeterogeneMaterialBehaviourInstance()
         {
             // Mot cle "ENDO_HETEROGENE" dans Aster
             _asterName = "ENDO_HETEROGENE";
@@ -984,22 +985,22 @@ class Endo_heterogeneMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Endo_heterogene */
-typedef boost::shared_ptr< Endo_heterogeneMaterialBehaviourInstance > Endo_heterogeneMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EndoHeterogene */
+typedef boost::shared_ptr< EndoHeterogeneMaterialBehaviourInstance > EndoHeterogeneMaterialBehaviourPtr;
 
 
 /**
- * @class Ecro_line_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ecro_line_fo
+ * @class EcroLineFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EcroLineFo
  * @author Jean-Pierre Lefebvre
  */
-class Ecro_line_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EcroLineFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ecro_line_foMaterialBehaviourInstance()
+        EcroLineFoMaterialBehaviourInstance()
         {
             // Mot cle "ECRO_LINE_FO" dans Aster
             _asterName = "ECRO_LINE_FO";
@@ -1010,22 +1011,22 @@ class Ecro_line_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ecro_line_fo */
-typedef boost::shared_ptr< Ecro_line_foMaterialBehaviourInstance > Ecro_line_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EcroLineFo */
+typedef boost::shared_ptr< EcroLineFoMaterialBehaviourInstance > EcroLineFoMaterialBehaviourPtr;
 
 
 /**
- * @class Ecro_puisMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ecro_puis
+ * @class EcroPuisMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EcroPuis
  * @author Jean-Pierre Lefebvre
  */
-class Ecro_puisMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EcroPuisMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ecro_puisMaterialBehaviourInstance()
+        EcroPuisMaterialBehaviourInstance()
         {
             // Mot cle "ECRO_PUIS" dans Aster
             _asterName = "ECRO_PUIS";
@@ -1037,22 +1038,22 @@ class Ecro_puisMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ecro_puis */
-typedef boost::shared_ptr< Ecro_puisMaterialBehaviourInstance > Ecro_puisMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EcroPuis */
+typedef boost::shared_ptr< EcroPuisMaterialBehaviourInstance > EcroPuisMaterialBehaviourPtr;
 
 
 /**
- * @class Ecro_puis_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ecro_puis_fo
+ * @class EcroPuisFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EcroPuisFo
  * @author Jean-Pierre Lefebvre
  */
-class Ecro_puis_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EcroPuisFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ecro_puis_foMaterialBehaviourInstance()
+        EcroPuisFoMaterialBehaviourInstance()
         {
             // Mot cle "ECRO_PUIS_FO" dans Aster
             _asterName = "ECRO_PUIS_FO";
@@ -1064,22 +1065,22 @@ class Ecro_puis_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ecro_puis_fo */
-typedef boost::shared_ptr< Ecro_puis_foMaterialBehaviourInstance > Ecro_puis_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EcroPuisFo */
+typedef boost::shared_ptr< EcroPuisFoMaterialBehaviourInstance > EcroPuisFoMaterialBehaviourPtr;
 
 
 /**
- * @class Ecro_cookMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ecro_cook
+ * @class EcroCookMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EcroCook
  * @author Jean-Pierre Lefebvre
  */
-class Ecro_cookMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EcroCookMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ecro_cookMaterialBehaviourInstance()
+        EcroCookMaterialBehaviourInstance()
         {
             // Mot cle "ECRO_COOK" dans Aster
             _asterName = "ECRO_COOK";
@@ -1096,22 +1097,22 @@ class Ecro_cookMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ecro_cook */
-typedef boost::shared_ptr< Ecro_cookMaterialBehaviourInstance > Ecro_cookMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EcroCook */
+typedef boost::shared_ptr< EcroCookMaterialBehaviourInstance > EcroCookMaterialBehaviourPtr;
 
 
 /**
- * @class Ecro_cook_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ecro_cook_fo
+ * @class EcroCookFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EcroCookFo
  * @author Jean-Pierre Lefebvre
  */
-class Ecro_cook_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EcroCookFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ecro_cook_foMaterialBehaviourInstance()
+        EcroCookFoMaterialBehaviourInstance()
         {
             // Mot cle "ECRO_COOK_FO" dans Aster
             _asterName = "ECRO_COOK_FO";
@@ -1128,22 +1129,22 @@ class Ecro_cook_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ecro_cook_fo */
-typedef boost::shared_ptr< Ecro_cook_foMaterialBehaviourInstance > Ecro_cook_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EcroCookFo */
+typedef boost::shared_ptr< EcroCookFoMaterialBehaviourInstance > EcroCookFoMaterialBehaviourPtr;
 
 
 /**
- * @class Beton_ecro_lineMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Beton_ecro_line
+ * @class BetonEcroLineMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BetonEcroLine
  * @author Jean-Pierre Lefebvre
  */
-class Beton_ecro_lineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class BetonEcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Beton_ecro_lineMaterialBehaviourInstance()
+        BetonEcroLineMaterialBehaviourInstance()
         {
             // Mot cle "BETON_ECRO_LINE" dans Aster
             _asterName = "BETON_ECRO_LINE";
@@ -1155,22 +1156,22 @@ class Beton_ecro_lineMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Beton_ecro_line */
-typedef boost::shared_ptr< Beton_ecro_lineMaterialBehaviourInstance > Beton_ecro_lineMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau BetonEcroLine */
+typedef boost::shared_ptr< BetonEcroLineMaterialBehaviourInstance > BetonEcroLineMaterialBehaviourPtr;
 
 
 /**
- * @class Beton_regle_prMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Beton_regle_pr
+ * @class BetonReglePrMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BetonReglePr
  * @author Jean-Pierre Lefebvre
  */
-class Beton_regle_prMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class BetonReglePrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Beton_regle_prMaterialBehaviourInstance()
+        BetonReglePrMaterialBehaviourInstance()
         {
             // Mot cle "BETON_REGLE_PR" dans Aster
             _asterName = "BETON_REGLE_PR";
@@ -1184,22 +1185,22 @@ class Beton_regle_prMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Beton_regle_pr */
-typedef boost::shared_ptr< Beton_regle_prMaterialBehaviourInstance > Beton_regle_prMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau BetonReglePr */
+typedef boost::shared_ptr< BetonReglePrMaterialBehaviourInstance > BetonReglePrMaterialBehaviourPtr;
 
 
 /**
- * @class Endo_orth_betonMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Endo_orth_beton
+ * @class EndoOrthBetonMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EndoOrthBeton
  * @author Jean-Pierre Lefebvre
  */
-class Endo_orth_betonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EndoOrthBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Endo_orth_betonMaterialBehaviourInstance()
+        EndoOrthBetonMaterialBehaviourInstance()
         {
             // Mot cle "ENDO_ORTH_BETON" dans Aster
             _asterName = "ENDO_ORTH_BETON";
@@ -1214,8 +1215,8 @@ class Endo_orth_betonMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Endo_orth_beton */
-typedef boost::shared_ptr< Endo_orth_betonMaterialBehaviourInstance > Endo_orth_betonMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EndoOrthBeton */
+typedef boost::shared_ptr< EndoOrthBetonMaterialBehaviourInstance > EndoOrthBetonMaterialBehaviourPtr;
 
 
 /**
@@ -1244,17 +1245,17 @@ typedef boost::shared_ptr< PragerMaterialBehaviourInstance > PragerMaterialBehav
 
 
 /**
- * @class Prager_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Prager_fo
+ * @class PragerFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau PragerFo
  * @author Jean-Pierre Lefebvre
  */
-class Prager_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class PragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Prager_foMaterialBehaviourInstance()
+        PragerFoMaterialBehaviourInstance()
         {
             // Mot cle "PRAGER_FO" dans Aster
             _asterName = "PRAGER_FO";
@@ -1264,8 +1265,8 @@ class Prager_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Prager_fo */
-typedef boost::shared_ptr< Prager_foMaterialBehaviourInstance > Prager_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau PragerFo */
+typedef boost::shared_ptr< PragerFoMaterialBehaviourInstance > PragerFoMaterialBehaviourPtr;
 
 
 /**
@@ -1301,17 +1302,17 @@ typedef boost::shared_ptr< TaheriMaterialBehaviourInstance > TaheriMaterialBehav
 
 
 /**
- * @class Taheri_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Taheri_fo
+ * @class TaheriFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau TaheriFo
  * @author Jean-Pierre Lefebvre
  */
-class Taheri_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class TaheriFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Taheri_foMaterialBehaviourInstance()
+        TaheriFoMaterialBehaviourInstance()
         {
             // Mot cle "TAHERI_FO" dans Aster
             _asterName = "TAHERI_FO";
@@ -1328,8 +1329,8 @@ class Taheri_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Taheri_fo */
-typedef boost::shared_ptr< Taheri_foMaterialBehaviourInstance > Taheri_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau TaheriFo */
+typedef boost::shared_ptr< TaheriFoMaterialBehaviourInstance > TaheriFoMaterialBehaviourPtr;
 
 
 /**
@@ -1368,17 +1369,17 @@ typedef boost::shared_ptr< RousselierMaterialBehaviourInstance > RousselierMater
 
 
 /**
- * @class Rousselier_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Rousselier_fo
+ * @class RousselierFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau RousselierFo
  * @author Jean-Pierre Lefebvre
  */
-class Rousselier_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class RousselierFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Rousselier_foMaterialBehaviourInstance()
+        RousselierFoMaterialBehaviourInstance()
         {
             // Mot cle "ROUSSELIER_FO" dans Aster
             _asterName = "ROUSSELIER_FO";
@@ -1398,22 +1399,22 @@ class Rousselier_foMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Rousselier_fo */
-typedef boost::shared_ptr< Rousselier_foMaterialBehaviourInstance > Rousselier_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau RousselierFo */
+typedef boost::shared_ptr< RousselierFoMaterialBehaviourInstance > RousselierFoMaterialBehaviourPtr;
 
 
 /**
- * @class Visc_sinhMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Visc_sinh
+ * @class ViscSinhMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ViscSinh
  * @author Jean-Pierre Lefebvre
  */
-class Visc_sinhMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ViscSinhMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Visc_sinhMaterialBehaviourInstance()
+        ViscSinhMaterialBehaviourInstance()
         {
             // Mot cle "VISC_SINH" dans Aster
             _asterName = "VISC_SINH";
@@ -1425,22 +1426,22 @@ class Visc_sinhMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Visc_sinh */
-typedef boost::shared_ptr< Visc_sinhMaterialBehaviourInstance > Visc_sinhMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ViscSinh */
+typedef boost::shared_ptr< ViscSinhMaterialBehaviourInstance > ViscSinhMaterialBehaviourPtr;
 
 
 /**
- * @class Visc_sinh_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Visc_sinh_fo
+ * @class ViscSinhFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ViscSinhFo
  * @author Jean-Pierre Lefebvre
  */
-class Visc_sinh_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ViscSinhFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Visc_sinh_foMaterialBehaviourInstance()
+        ViscSinhFoMaterialBehaviourInstance()
         {
             // Mot cle "VISC_SINH_FO" dans Aster
             _asterName = "VISC_SINH_FO";
@@ -1452,22 +1453,22 @@ class Visc_sinh_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Visc_sinh_fo */
-typedef boost::shared_ptr< Visc_sinh_foMaterialBehaviourInstance > Visc_sinh_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ViscSinhFo */
+typedef boost::shared_ptr< ViscSinhFoMaterialBehaviourInstance > ViscSinhFoMaterialBehaviourPtr;
 
 
 /**
- * @class Cin1_chabMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cin1_chab
+ * @class Cin1ChabMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cin1Chab
  * @author Jean-Pierre Lefebvre
  */
-class Cin1_chabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class Cin1ChabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Cin1_chabMaterialBehaviourInstance()
+        Cin1ChabMaterialBehaviourInstance()
         {
             // Mot cle "CIN1_CHAB" dans Aster
             _asterName = "CIN1_CHAB";
@@ -1484,22 +1485,22 @@ class Cin1_chabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Cin1_chab */
-typedef boost::shared_ptr< Cin1_chabMaterialBehaviourInstance > Cin1_chabMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau Cin1Chab */
+typedef boost::shared_ptr< Cin1ChabMaterialBehaviourInstance > Cin1ChabMaterialBehaviourPtr;
 
 
 /**
- * @class Cin1_chab_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cin1_chab_fo
+ * @class Cin1ChabFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cin1ChabFo
  * @author Jean-Pierre Lefebvre
  */
-class Cin1_chab_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class Cin1ChabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Cin1_chab_foMaterialBehaviourInstance()
+        Cin1ChabFoMaterialBehaviourInstance()
         {
             // Mot cle "CIN1_CHAB_FO" dans Aster
             _asterName = "CIN1_CHAB_FO";
@@ -1516,22 +1517,22 @@ class Cin1_chab_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Cin1_chab_fo */
-typedef boost::shared_ptr< Cin1_chab_foMaterialBehaviourInstance > Cin1_chab_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau Cin1ChabFo */
+typedef boost::shared_ptr< Cin1ChabFoMaterialBehaviourInstance > Cin1ChabFoMaterialBehaviourPtr;
 
 
 /**
- * @class Cin2_chabMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cin2_chab
+ * @class Cin2ChabMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cin2Chab
  * @author Jean-Pierre Lefebvre
  */
-class Cin2_chabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class Cin2ChabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Cin2_chabMaterialBehaviourInstance()
+        Cin2ChabMaterialBehaviourInstance()
         {
             // Mot cle "CIN2_CHAB" dans Aster
             _asterName = "CIN2_CHAB";
@@ -1550,22 +1551,22 @@ class Cin2_chabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Cin2_chab */
-typedef boost::shared_ptr< Cin2_chabMaterialBehaviourInstance > Cin2_chabMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau Cin2Chab */
+typedef boost::shared_ptr< Cin2ChabMaterialBehaviourInstance > Cin2ChabMaterialBehaviourPtr;
 
 
 /**
- * @class Cin2_chab_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cin2_chab_fo
+ * @class Cin2ChabFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cin2ChabFo
  * @author Jean-Pierre Lefebvre
  */
-class Cin2_chab_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class Cin2ChabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Cin2_chab_foMaterialBehaviourInstance()
+        Cin2ChabFoMaterialBehaviourInstance()
         {
             // Mot cle "CIN2_CHAB_FO" dans Aster
             _asterName = "CIN2_CHAB_FO";
@@ -1584,22 +1585,22 @@ class Cin2_chab_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Cin2_chab_fo */
-typedef boost::shared_ptr< Cin2_chab_foMaterialBehaviourInstance > Cin2_chab_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau Cin2ChabFo */
+typedef boost::shared_ptr< Cin2ChabFoMaterialBehaviourInstance > Cin2ChabFoMaterialBehaviourPtr;
 
 
 /**
- * @class Cin2_nradMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cin2_nrad
+ * @class Cin2NradMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cin2Nrad
  * @author Jean-Pierre Lefebvre
  */
-class Cin2_nradMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class Cin2NradMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Cin2_nradMaterialBehaviourInstance()
+        Cin2NradMaterialBehaviourInstance()
         {
             // Mot cle "CIN2_NRAD" dans Aster
             _asterName = "CIN2_NRAD";
@@ -1610,22 +1611,22 @@ class Cin2_nradMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Cin2_nrad */
-typedef boost::shared_ptr< Cin2_nradMaterialBehaviourInstance > Cin2_nradMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau Cin2Nrad */
+typedef boost::shared_ptr< Cin2NradMaterialBehaviourInstance > Cin2NradMaterialBehaviourPtr;
 
 
 /**
- * @class Memo_ecroMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Memo_ecro
+ * @class MemoEcroMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MemoEcro
  * @author Jean-Pierre Lefebvre
  */
-class Memo_ecroMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MemoEcroMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Memo_ecroMaterialBehaviourInstance()
+        MemoEcroMaterialBehaviourInstance()
         {
             // Mot cle "MEMO_ECRO" dans Aster
             _asterName = "MEMO_ECRO";
@@ -1638,22 +1639,22 @@ class Memo_ecroMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Memo_ecro */
-typedef boost::shared_ptr< Memo_ecroMaterialBehaviourInstance > Memo_ecroMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MemoEcro */
+typedef boost::shared_ptr< MemoEcroMaterialBehaviourInstance > MemoEcroMaterialBehaviourPtr;
 
 
 /**
- * @class Memo_ecro_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Memo_ecro_fo
+ * @class MemoEcroFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MemoEcroFo
  * @author Jean-Pierre Lefebvre
  */
-class Memo_ecro_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MemoEcroFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Memo_ecro_foMaterialBehaviourInstance()
+        MemoEcroFoMaterialBehaviourInstance()
         {
             // Mot cle "MEMO_ECRO_FO" dans Aster
             _asterName = "MEMO_ECRO_FO";
@@ -1666,8 +1667,8 @@ class Memo_ecro_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Memo_ecro_fo */
-typedef boost::shared_ptr< Memo_ecro_foMaterialBehaviourInstance > Memo_ecro_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MemoEcroFo */
+typedef boost::shared_ptr< MemoEcroFoMaterialBehaviourInstance > MemoEcroFoMaterialBehaviourPtr;
 
 
 /**
@@ -1720,17 +1721,17 @@ typedef boost::shared_ptr< ViscochabMaterialBehaviourInstance > ViscochabMateria
 
 
 /**
- * @class Viscochab_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Viscochab_fo
+ * @class ViscochabFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ViscochabFo
  * @author Jean-Pierre Lefebvre
  */
-class Viscochab_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ViscochabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Viscochab_foMaterialBehaviourInstance()
+        ViscochabFoMaterialBehaviourInstance()
         {
             // Mot cle "VISCOCHAB_FO" dans Aster
             _asterName = "VISCOCHAB_FO";
@@ -1764,8 +1765,8 @@ class Viscochab_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Viscochab_fo */
-typedef boost::shared_ptr< Viscochab_foMaterialBehaviourInstance > Viscochab_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ViscochabFo */
+typedef boost::shared_ptr< ViscochabFoMaterialBehaviourInstance > ViscochabFoMaterialBehaviourPtr;
 
 
 /**
@@ -1796,17 +1797,17 @@ typedef boost::shared_ptr< LemaitreMaterialBehaviourInstance > LemaitreMaterialB
 
 
 /**
- * @class Lemaitre_irraMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Lemaitre_irra
+ * @class LemaitreIrraMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau LemaitreIrra
  * @author Jean-Pierre Lefebvre
  */
-class Lemaitre_irraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class LemaitreIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Lemaitre_irraMaterialBehaviourInstance()
+        LemaitreIrraMaterialBehaviourInstance()
         {
             // Mot cle "LEMAITRE_IRRA" dans Aster
             _asterName = "LEMAITRE_IRRA";
@@ -1819,26 +1820,26 @@ class Lemaitre_irraMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" ) );
             this->addDoubleProperty( "Phi_zero", ElementaryMaterialPropertyDouble( "PHI_ZERO" ) );
             this->addDoubleProperty( "L", ElementaryMaterialPropertyDouble( "L" ) );
-            this->addFunctionProperty( "Gran_fo", ElementaryMaterialPropertyFunction( "GRAN_FO" ) );
+            this->addFunctionProperty( "GranFo", ElementaryMaterialPropertyFunction( "GRANFo" ) );
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Lemaitre_irra */
-typedef boost::shared_ptr< Lemaitre_irraMaterialBehaviourInstance > Lemaitre_irraMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau LemaitreIrra */
+typedef boost::shared_ptr< LemaitreIrraMaterialBehaviourInstance > LemaitreIrraMaterialBehaviourPtr;
 
 
 /**
- * @class Lmarc_irraMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Lmarc_irra
+ * @class LmarcIrraMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau LmarcIrra
  * @author Jean-Pierre Lefebvre
  */
-class Lmarc_irraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class LmarcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Lmarc_irraMaterialBehaviourInstance()
+        LmarcIrraMaterialBehaviourInstance()
         {
             // Mot cle "LMARC_IRRA" dans Aster
             _asterName = "LMARC_IRRA";
@@ -1873,26 +1874,26 @@ class Lmarc_irraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addDoubleProperty( "R22", ElementaryMaterialPropertyDouble( "R22" ) );
             this->addDoubleProperty( "R33", ElementaryMaterialPropertyDouble( "R33" ) );
             this->addDoubleProperty( "R66", ElementaryMaterialPropertyDouble( "R66" ) );
-            this->addFunctionProperty( "Gran_fo", ElementaryMaterialPropertyFunction( "GRAN_FO" ) );
+            this->addFunctionProperty( "GranFo", ElementaryMaterialPropertyFunction( "GRANFo" ) );
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Lmarc_irra */
-typedef boost::shared_ptr< Lmarc_irraMaterialBehaviourInstance > Lmarc_irraMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau LmarcIrra */
+typedef boost::shared_ptr< LmarcIrraMaterialBehaviourInstance > LmarcIrraMaterialBehaviourPtr;
 
 
 /**
- * @class Visc_irra_logMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Visc_irra_log
+ * @class ViscIrraLogMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ViscIrraLog
  * @author Jean-Pierre Lefebvre
  */
-class Visc_irra_logMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ViscIrraLogMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Visc_irra_logMaterialBehaviourInstance()
+        ViscIrraLogMaterialBehaviourInstance()
         {
             // Mot cle "VISC_IRRA_LOG" dans Aster
             _asterName = "VISC_IRRA_LOG";
@@ -1906,22 +1907,22 @@ class Visc_irra_logMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Visc_irra_log */
-typedef boost::shared_ptr< Visc_irra_logMaterialBehaviourInstance > Visc_irra_logMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ViscIrraLog */
+typedef boost::shared_ptr< ViscIrraLogMaterialBehaviourInstance > ViscIrraLogMaterialBehaviourPtr;
 
 
 /**
- * @class Gran_irra_logMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Gran_irra_log
+ * @class GranIrraLogMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau GranIrraLog
  * @author Jean-Pierre Lefebvre
  */
-class Gran_irra_logMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class GranIrraLogMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Gran_irra_logMaterialBehaviourInstance()
+        GranIrraLogMaterialBehaviourInstance()
         {
             // Mot cle "GRAN_IRRA_LOG" dans Aster
             _asterName = "GRAN_IRRA_LOG";
@@ -1932,26 +1933,26 @@ class Gran_irra_logMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             this->addDoubleProperty( "Cste_tps", ElementaryMaterialPropertyDouble( "CSTE_TPS" ) );
             this->addDoubleProperty( "Ener_act", ElementaryMaterialPropertyDouble( "ENER_ACT" ) );
             this->addDoubleProperty( "Flux_phi", ElementaryMaterialPropertyDouble( "FLUX_PHI" ) );
-            this->addFunctionProperty( "Gran_fo", ElementaryMaterialPropertyFunction( "GRAN_FO" ) );
+            this->addFunctionProperty( "GranFo", ElementaryMaterialPropertyFunction( "GRANFo" ) );
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Gran_irra_log */
-typedef boost::shared_ptr< Gran_irra_logMaterialBehaviourInstance > Gran_irra_logMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau GranIrraLog */
+typedef boost::shared_ptr< GranIrraLogMaterialBehaviourInstance > GranIrraLogMaterialBehaviourPtr;
 
 
 /**
- * @class Lema_seuilMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Lema_seuil
+ * @class LemaSeuilMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau LemaSeuil
  * @author Jean-Pierre Lefebvre
  */
-class Lema_seuilMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class LemaSeuilMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Lema_seuilMaterialBehaviourInstance()
+        LemaSeuilMaterialBehaviourInstance()
         {
             // Mot cle "LEMA_SEUIL" dans Aster
             _asterName = "LEMA_SEUIL";
@@ -1959,7 +1960,7 @@ class Lema_seuilMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             // Parametres matériau
             this->addDoubleProperty( "A", ElementaryMaterialPropertyDouble( "A" ) );
             this->addDoubleProperty( "S", ElementaryMaterialPropertyDouble( "S" ) );
-            this->addFunctionProperty( "Lema_seuil_fo=", ElementaryMaterialPropertyFunction( "LEMA_SEUIL_FO=" ) );
+            this->addFunctionProperty( "LemaSeuilFo=", ElementaryMaterialPropertyFunction( "LEMA_SEUILFo=" ) );
             this->addFunctionProperty( "A", ElementaryMaterialPropertyFunction( "A" ) );
             this->addFunctionProperty( "S", ElementaryMaterialPropertyFunction( "S" ) );
             this->addFunctionProperty( "Irrad3m=", ElementaryMaterialPropertyFunction( "IRRAD3M=" ) );
@@ -1978,22 +1979,22 @@ class Lema_seuilMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Lema_seuil */
-typedef boost::shared_ptr< Lema_seuilMaterialBehaviourInstance > Lema_seuilMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau LemaSeuil */
+typedef boost::shared_ptr< LemaSeuilMaterialBehaviourInstance > LemaSeuilMaterialBehaviourPtr;
 
 
 /**
- * @class Lemaitre_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Lemaitre_fo
+ * @class LemaitreFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau LemaitreFo
  * @author Jean-Pierre Lefebvre
  */
-class Lemaitre_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class LemaitreFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Lemaitre_foMaterialBehaviourInstance()
+        LemaitreFoMaterialBehaviourInstance()
         {
             // Mot cle "LEMAITRE_FO" dans Aster
             _asterName = "LEMAITRE_FO";
@@ -2005,22 +2006,22 @@ class Lemaitre_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Lemaitre_fo */
-typedef boost::shared_ptr< Lemaitre_foMaterialBehaviourInstance > Lemaitre_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau LemaitreFo */
+typedef boost::shared_ptr< LemaitreFoMaterialBehaviourInstance > LemaitreFoMaterialBehaviourPtr;
 
 
 /**
- * @class Meta_lema_aniMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Meta_lema_ani
+ * @class MetaLemaAniMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MetaLemaAni
  * @author Jean-Pierre Lefebvre
  */
-class Meta_lema_aniMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MetaLemaAniMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Meta_lema_aniMaterialBehaviourInstance()
+        MetaLemaAniMaterialBehaviourInstance()
         {
             // Mot cle "META_LEMA_ANI" dans Aster
             _asterName = "META_LEMA_ANI";
@@ -2063,22 +2064,22 @@ class Meta_lema_aniMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Meta_lema_ani */
-typedef boost::shared_ptr< Meta_lema_aniMaterialBehaviourInstance > Meta_lema_aniMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MetaLemaAni */
+typedef boost::shared_ptr< MetaLemaAniMaterialBehaviourInstance > MetaLemaAniMaterialBehaviourPtr;
 
 
 /**
- * @class Meta_lema_ani_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Meta_lema_ani_fo
+ * @class MetaLemaAniFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MetaLemaAniFo
  * @author Jean-Pierre Lefebvre
  */
-class Meta_lema_ani_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MetaLemaAniFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Meta_lema_ani_foMaterialBehaviourInstance()
+        MetaLemaAniFoMaterialBehaviourInstance()
         {
             // Mot cle "META_LEMA_ANI_FO" dans Aster
             _asterName = "META_LEMA_ANI_FO";
@@ -2121,8 +2122,8 @@ class Meta_lema_ani_foMaterialBehaviourInstance: public GeneralMaterialBehaviour
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Meta_lema_ani_fo */
-typedef boost::shared_ptr< Meta_lema_ani_foMaterialBehaviourInstance > Meta_lema_ani_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MetaLemaAniFo */
+typedef boost::shared_ptr< MetaLemaAniFoMaterialBehaviourInstance > MetaLemaAniFoMaterialBehaviourPtr;
 
 
 /**
@@ -2155,17 +2156,17 @@ typedef boost::shared_ptr< ArmeMaterialBehaviourInstance > ArmeMaterialBehaviour
 
 
 /**
- * @class Asse_cornMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Asse_corn
+ * @class AsseCornMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau AsseCorn
  * @author Jean-Pierre Lefebvre
  */
-class Asse_cornMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class AsseCornMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Asse_cornMaterialBehaviourInstance()
+        AsseCornMaterialBehaviourInstance()
         {
             // Mot cle "ASSE_CORN" dans Aster
             _asterName = "ASSE_CORN";
@@ -2189,22 +2190,22 @@ class Asse_cornMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Asse_corn */
-typedef boost::shared_ptr< Asse_cornMaterialBehaviourInstance > Asse_cornMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau AsseCorn */
+typedef boost::shared_ptr< AsseCornMaterialBehaviourInstance > AsseCornMaterialBehaviourPtr;
 
 
 /**
- * @class Dis_contactMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Dis_contact
+ * @class DisContactMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DisContact
  * @author Jean-Pierre Lefebvre
  */
-class Dis_contactMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class DisContactMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Dis_contactMaterialBehaviourInstance()
+        DisContactMaterialBehaviourInstance()
         {
             // Mot cle "DIS_CONTACT" dans Aster
             _asterName = "DIS_CONTACT";
@@ -2221,22 +2222,22 @@ class Dis_contactMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Dis_contact */
-typedef boost::shared_ptr< Dis_contactMaterialBehaviourInstance > Dis_contactMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau DisContact */
+typedef boost::shared_ptr< DisContactMaterialBehaviourInstance > DisContactMaterialBehaviourPtr;
 
 
 /**
- * @class Endo_scalaireMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Endo_scalaire
+ * @class EndoScalaireMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EndoScalaire
  * @author Jean-Pierre Lefebvre
  */
-class Endo_scalaireMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EndoScalaireMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Endo_scalaireMaterialBehaviourInstance()
+        EndoScalaireMaterialBehaviourInstance()
         {
             // Mot cle "ENDO_SCALAIRE" dans Aster
             _asterName = "ENDO_SCALAIRE";
@@ -2252,22 +2253,22 @@ class Endo_scalaireMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Endo_scalaire */
-typedef boost::shared_ptr< Endo_scalaireMaterialBehaviourInstance > Endo_scalaireMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EndoScalaire */
+typedef boost::shared_ptr< EndoScalaireMaterialBehaviourInstance > EndoScalaireMaterialBehaviourPtr;
 
 
 /**
- * @class Endo_scalaire_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Endo_scalaire_fo
+ * @class EndoScalaireFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EndoScalaireFo
  * @author Jean-Pierre Lefebvre
  */
-class Endo_scalaire_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EndoScalaireFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Endo_scalaire_foMaterialBehaviourInstance()
+        EndoScalaireFoMaterialBehaviourInstance()
         {
             // Mot cle "ENDO_SCALAIRE_FO" dans Aster
             _asterName = "ENDO_SCALAIRE_FO";
@@ -2283,22 +2284,22 @@ class Endo_scalaire_foMaterialBehaviourInstance: public GeneralMaterialBehaviour
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Endo_scalaire_fo */
-typedef boost::shared_ptr< Endo_scalaire_foMaterialBehaviourInstance > Endo_scalaire_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EndoScalaireFo */
+typedef boost::shared_ptr< EndoScalaireFoMaterialBehaviourInstance > EndoScalaireFoMaterialBehaviourPtr;
 
 
 /**
- * @class Endo_fiss_expMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Endo_fiss_exp
+ * @class EndoFissExpMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EndoFissExp
  * @author Jean-Pierre Lefebvre
  */
-class Endo_fiss_expMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EndoFissExpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Endo_fiss_expMaterialBehaviourInstance()
+        EndoFissExpMaterialBehaviourInstance()
         {
             // Mot cle "ENDO_FISS_EXP" dans Aster
             _asterName = "ENDO_FISS_EXP";
@@ -2315,22 +2316,22 @@ class Endo_fiss_expMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Endo_fiss_exp */
-typedef boost::shared_ptr< Endo_fiss_expMaterialBehaviourInstance > Endo_fiss_expMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EndoFissExp */
+typedef boost::shared_ptr< EndoFissExpMaterialBehaviourInstance > EndoFissExpMaterialBehaviourPtr;
 
 
 /**
- * @class Endo_fiss_exp_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Endo_fiss_exp_fo
+ * @class EndoFissExpFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EndoFissExpFo
  * @author Jean-Pierre Lefebvre
  */
-class Endo_fiss_exp_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EndoFissExpFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Endo_fiss_exp_foMaterialBehaviourInstance()
+        EndoFissExpFoMaterialBehaviourInstance()
         {
             // Mot cle "ENDO_FISS_EXP_FO" dans Aster
             _asterName = "ENDO_FISS_EXP_FO";
@@ -2347,22 +2348,22 @@ class Endo_fiss_exp_foMaterialBehaviourInstance: public GeneralMaterialBehaviour
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Endo_fiss_exp_fo */
-typedef boost::shared_ptr< Endo_fiss_exp_foMaterialBehaviourInstance > Endo_fiss_exp_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EndoFissExpFo */
+typedef boost::shared_ptr< EndoFissExpFoMaterialBehaviourInstance > EndoFissExpFoMaterialBehaviourPtr;
 
 
 /**
- * @class Dis_gricraMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Dis_gricra
+ * @class DisGricraMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DisGricra
  * @author Jean-Pierre Lefebvre
  */
-class Dis_gricraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class DisGricraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Dis_gricraMaterialBehaviourInstance()
+        DisGricraMaterialBehaviourInstance()
         {
             // Mot cle "DIS_GRICRA" dans Aster
             _asterName = "DIS_GRICRA";
@@ -2372,7 +2373,7 @@ class Dis_gricraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addDoubleProperty( "Kt_ax", ElementaryMaterialPropertyDouble( "KT_AX" ) );
             this->addDoubleProperty( "Coul_ax", ElementaryMaterialPropertyDouble( "COUL_AX" ) );
             this->addDoubleProperty( "F_ser", ElementaryMaterialPropertyDouble( "F_SER" ) );
-            this->addFunctionProperty( "F_ser_fo", ElementaryMaterialPropertyFunction( "F_SER_FO" ) );
+            this->addFunctionProperty( "F_serFo", ElementaryMaterialPropertyFunction( "F_SERFo" ) );
             this->addDoubleProperty( "Et_ax", ElementaryMaterialPropertyDouble( "ET_AX" ) );
             this->addDoubleProperty( "Et_rot", ElementaryMaterialPropertyDouble( "ET_ROT" ) );
             this->addDoubleProperty( "Ang1", ElementaryMaterialPropertyDouble( "ANG1" ) );
@@ -2380,30 +2381,30 @@ class Dis_gricraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addDoubleProperty( "Pen1", ElementaryMaterialPropertyDouble( "PEN1" ) );
             this->addDoubleProperty( "Pen2", ElementaryMaterialPropertyDouble( "PEN2" ) );
             this->addDoubleProperty( "Pen3", ElementaryMaterialPropertyDouble( "PEN3" ) );
-            this->addFunctionProperty( "Ang1_fo", ElementaryMaterialPropertyFunction( "ANG1_FO" ) );
-            this->addFunctionProperty( "Ang2_fo", ElementaryMaterialPropertyFunction( "ANG2_FO" ) );
-            this->addFunctionProperty( "Pen1_fo", ElementaryMaterialPropertyFunction( "PEN1_FO" ) );
-            this->addFunctionProperty( "Pen2_fo", ElementaryMaterialPropertyFunction( "PEN2_FO" ) );
-            this->addFunctionProperty( "Pen3_fo", ElementaryMaterialPropertyFunction( "PEN3_FO" ) );
+            this->addFunctionProperty( "Ang1Fo", ElementaryMaterialPropertyFunction( "ANG1Fo" ) );
+            this->addFunctionProperty( "Ang2Fo", ElementaryMaterialPropertyFunction( "ANG2Fo" ) );
+            this->addFunctionProperty( "Pen1Fo", ElementaryMaterialPropertyFunction( "PEN1Fo" ) );
+            this->addFunctionProperty( "Pen2Fo", ElementaryMaterialPropertyFunction( "PEN2Fo" ) );
+            this->addFunctionProperty( "Pen3Fo", ElementaryMaterialPropertyFunction( "PEN3Fo" ) );
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Dis_gricra */
-typedef boost::shared_ptr< Dis_gricraMaterialBehaviourInstance > Dis_gricraMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau DisGricra */
+typedef boost::shared_ptr< DisGricraMaterialBehaviourInstance > DisGricraMaterialBehaviourPtr;
 
 
 /**
- * @class Beton_double_dpMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Beton_double_dp
+ * @class BetonDoubleDpMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BetonDoubleDp
  * @author Jean-Pierre Lefebvre
  */
-class Beton_double_dpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class BetonDoubleDpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Beton_double_dpMaterialBehaviourInstance()
+        BetonDoubleDpMaterialBehaviourInstance()
         {
             // Mot cle "BETON_DOUBLE_DP" dans Aster
             _asterName = "BETON_DOUBLE_DP";
@@ -2428,7 +2429,7 @@ class Beton_double_dpMaterialBehaviourInstance: public GeneralMaterialBehaviourI
             this->addDoubleProperty( "Chi", ElementaryMaterialPropertyDouble( "CHI" ) );
             this->addDoubleProperty( "Sigm_lim", ElementaryMaterialPropertyDouble( "SIGM_LIM" ) );
             this->addDoubleProperty( "Epsi_lim", ElementaryMaterialPropertyDouble( "EPSI_LIM" ) );
-            this->addFunctionProperty( "Mazars_fo=", ElementaryMaterialPropertyFunction( "MAZARS_FO=" ) );
+            this->addFunctionProperty( "MazarsFo=", ElementaryMaterialPropertyFunction( "MAZARSFo=" ) );
             this->addFunctionProperty( "Epsd0", ElementaryMaterialPropertyFunction( "EPSD0" ) );
             this->addFunctionProperty( "K", ElementaryMaterialPropertyFunction( "K" ) );
             this->addFunctionProperty( "Ac", ElementaryMaterialPropertyFunction( "AC" ) );
@@ -2454,8 +2455,8 @@ class Beton_double_dpMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Beton_double_dp */
-typedef boost::shared_ptr< Beton_double_dpMaterialBehaviourInstance > Beton_double_dpMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau BetonDoubleDp */
+typedef boost::shared_ptr< BetonDoubleDpMaterialBehaviourInstance > BetonDoubleDpMaterialBehaviourPtr;
 
 
 /**
@@ -2489,17 +2490,17 @@ typedef boost::shared_ptr< VendochabMaterialBehaviourInstance > VendochabMateria
 
 
 /**
- * @class Vendochab_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Vendochab_fo
+ * @class VendochabFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau VendochabFo
  * @author Jean-Pierre Lefebvre
  */
-class Vendochab_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class VendochabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Vendochab_foMaterialBehaviourInstance()
+        VendochabFoMaterialBehaviourInstance()
         {
             // Mot cle "VENDOCHAB_FO" dans Aster
             _asterName = "VENDOCHAB_FO";
@@ -2514,8 +2515,8 @@ class Vendochab_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Vendochab_fo */
-typedef boost::shared_ptr< Vendochab_foMaterialBehaviourInstance > Vendochab_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau VendochabFo */
+typedef boost::shared_ptr< VendochabFoMaterialBehaviourInstance > VendochabFoMaterialBehaviourPtr;
 
 
 /**
@@ -2556,17 +2557,17 @@ typedef boost::shared_ptr< HayhurstMaterialBehaviourInstance > HayhurstMaterialB
 
 
 /**
- * @class Visc_endoMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Visc_endo
+ * @class ViscEndoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ViscEndo
  * @author Jean-Pierre Lefebvre
  */
-class Visc_endoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ViscEndoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Visc_endoMaterialBehaviourInstance()
+        ViscEndoMaterialBehaviourInstance()
         {
             // Mot cle "VISC_ENDO" dans Aster
             _asterName = "VISC_ENDO";
@@ -2578,22 +2579,22 @@ class Visc_endoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Visc_endo */
-typedef boost::shared_ptr< Visc_endoMaterialBehaviourInstance > Visc_endoMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ViscEndo */
+typedef boost::shared_ptr< ViscEndoMaterialBehaviourInstance > ViscEndoMaterialBehaviourPtr;
 
 
 /**
- * @class Visc_endo_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Visc_endo_fo
+ * @class ViscEndoFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ViscEndoFo
  * @author Jean-Pierre Lefebvre
  */
-class Visc_endo_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ViscEndoFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Visc_endo_foMaterialBehaviourInstance()
+        ViscEndoFoMaterialBehaviourInstance()
         {
             // Mot cle "VISC_ENDO_FO" dans Aster
             _asterName = "VISC_ENDO_FO";
@@ -2605,22 +2606,22 @@ class Visc_endo_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Visc_endo_fo */
-typedef boost::shared_ptr< Visc_endo_foMaterialBehaviourInstance > Visc_endo_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ViscEndoFo */
+typedef boost::shared_ptr< ViscEndoFoMaterialBehaviourInstance > ViscEndoFoMaterialBehaviourPtr;
 
 
 /**
- * @class Pinto_menegottoMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Pinto_menegotto
+ * @class PintoMenegottoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau PintoMenegotto
  * @author Jean-Pierre Lefebvre
  */
-class Pinto_menegottoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class PintoMenegottoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Pinto_menegottoMaterialBehaviourInstance()
+        PintoMenegottoMaterialBehaviourInstance()
         {
             // Mot cle "PINTO_MENEGOTTO" dans Aster
             _asterName = "PINTO_MENEGOTTO";
@@ -2641,22 +2642,22 @@ class Pinto_menegottoMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Pinto_menegotto */
-typedef boost::shared_ptr< Pinto_menegottoMaterialBehaviourInstance > Pinto_menegottoMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau PintoMenegotto */
+typedef boost::shared_ptr< PintoMenegottoMaterialBehaviourInstance > PintoMenegottoMaterialBehaviourPtr;
 
 
 /**
- * @class Bpel_betonMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Bpel_beton
+ * @class BpelBetonMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BpelBeton
  * @author Jean-Pierre Lefebvre
  */
-class Bpel_betonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class BpelBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Bpel_betonMaterialBehaviourInstance()
+        BpelBetonMaterialBehaviourInstance()
         {
             // Mot cle "BPEL_BETON" dans Aster
             _asterName = "BPEL_BETON";
@@ -2667,22 +2668,22 @@ class Bpel_betonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Bpel_beton */
-typedef boost::shared_ptr< Bpel_betonMaterialBehaviourInstance > Bpel_betonMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau BpelBeton */
+typedef boost::shared_ptr< BpelBetonMaterialBehaviourInstance > BpelBetonMaterialBehaviourPtr;
 
 
 /**
- * @class Bpel_acierMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Bpel_acier
+ * @class BpelAcierMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BpelAcier
  * @author Jean-Pierre Lefebvre
  */
-class Bpel_acierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class BpelAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Bpel_acierMaterialBehaviourInstance()
+        BpelAcierMaterialBehaviourInstance()
         {
             // Mot cle "BPEL_ACIER" dans Aster
             _asterName = "BPEL_ACIER";
@@ -2696,22 +2697,22 @@ class Bpel_acierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Bpel_acier */
-typedef boost::shared_ptr< Bpel_acierMaterialBehaviourInstance > Bpel_acierMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau BpelAcier */
+typedef boost::shared_ptr< BpelAcierMaterialBehaviourInstance > BpelAcierMaterialBehaviourPtr;
 
 
 /**
- * @class Etcc_betonMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Etcc_beton
+ * @class EtccBetonMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EtccBeton
  * @author Jean-Pierre Lefebvre
  */
-class Etcc_betonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EtccBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Etcc_betonMaterialBehaviourInstance()
+        EtccBetonMaterialBehaviourInstance()
         {
             // Mot cle "ETCC_BETON" dans Aster
             _asterName = "ETCC_BETON";
@@ -2721,22 +2722,22 @@ class Etcc_betonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Etcc_beton */
-typedef boost::shared_ptr< Etcc_betonMaterialBehaviourInstance > Etcc_betonMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EtccBeton */
+typedef boost::shared_ptr< EtccBetonMaterialBehaviourInstance > EtccBetonMaterialBehaviourPtr;
 
 
 /**
- * @class Etcc_acierMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Etcc_acier
+ * @class EtccAcierMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EtccAcier
  * @author Jean-Pierre Lefebvre
  */
-class Etcc_acierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EtccAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Etcc_acierMaterialBehaviourInstance()
+        EtccAcierMaterialBehaviourInstance()
         {
             // Mot cle "ETCC_ACIER" dans Aster
             _asterName = "ETCC_ACIER";
@@ -2749,22 +2750,22 @@ class Etcc_acierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Etcc_acier */
-typedef boost::shared_ptr< Etcc_acierMaterialBehaviourInstance > Etcc_acierMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EtccAcier */
+typedef boost::shared_ptr< EtccAcierMaterialBehaviourInstance > EtccAcierMaterialBehaviourPtr;
 
 
 /**
- * @class Mohr_coulombMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mohr_coulomb
+ * @class MohrCoulombMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MohrCoulomb
  * @author Jean-Pierre Lefebvre
  */
-class Mohr_coulombMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MohrCoulombMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mohr_coulombMaterialBehaviourInstance()
+        MohrCoulombMaterialBehaviourInstance()
         {
             // Mot cle "MOHR_COULOMB" dans Aster
             _asterName = "MOHR_COULOMB";
@@ -2776,22 +2777,22 @@ class Mohr_coulombMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mohr_coulomb */
-typedef boost::shared_ptr< Mohr_coulombMaterialBehaviourInstance > Mohr_coulombMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MohrCoulomb */
+typedef boost::shared_ptr< MohrCoulombMaterialBehaviourInstance > MohrCoulombMaterialBehaviourPtr;
 
 
 /**
- * @class Cam_clayMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cam_clay
+ * @class CamClayMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau CamClay
  * @author Jean-Pierre Lefebvre
  */
-class Cam_clayMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class CamClayMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Cam_clayMaterialBehaviourInstance()
+        CamClayMaterialBehaviourInstance()
         {
             // Mot cle "CAM_CLAY" dans Aster
             _asterName = "CAM_CLAY";
@@ -2808,8 +2809,8 @@ class Cam_clayMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Cam_clay */
-typedef boost::shared_ptr< Cam_clayMaterialBehaviourInstance > Cam_clayMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau CamClay */
+typedef boost::shared_ptr< CamClayMaterialBehaviourInstance > CamClayMaterialBehaviourPtr;
 
 
 /**
@@ -2934,17 +2935,17 @@ typedef boost::shared_ptr< HujeuxMaterialBehaviourInstance > HujeuxMaterialBehav
 
 
 /**
- * @class Ecro_asym_lineMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ecro_asym_line
+ * @class EcroAsymLineMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau EcroAsymLine
  * @author Jean-Pierre Lefebvre
  */
-class Ecro_asym_lineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class EcroAsymLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ecro_asym_lineMaterialBehaviourInstance()
+        EcroAsymLineMaterialBehaviourInstance()
         {
             // Mot cle "ECRO_ASYM_LINE" dans Aster
             _asterName = "ECRO_ASYM_LINE";
@@ -2957,22 +2958,22 @@ class Ecro_asym_lineMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ecro_asym_line */
-typedef boost::shared_ptr< Ecro_asym_lineMaterialBehaviourInstance > Ecro_asym_lineMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau EcroAsymLine */
+typedef boost::shared_ptr< EcroAsymLineMaterialBehaviourInstance > EcroAsymLineMaterialBehaviourPtr;
 
 
 /**
- * @class Granger_fpMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Granger_fp
+ * @class GrangerFpMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau GrangerFp
  * @author Jean-Pierre Lefebvre
  */
-class Granger_fpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class GrangerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Granger_fpMaterialBehaviourInstance()
+        GrangerFpMaterialBehaviourInstance()
         {
             // Mot cle "GRANGER_FP" dans Aster
             _asterName = "GRANGER_FP";
@@ -2998,22 +2999,22 @@ class Granger_fpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Granger_fp */
-typedef boost::shared_ptr< Granger_fpMaterialBehaviourInstance > Granger_fpMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau GrangerFp */
+typedef boost::shared_ptr< GrangerFpMaterialBehaviourInstance > GrangerFpMaterialBehaviourPtr;
 
 
 /**
- * @class Granger_fp_indtMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Granger_fp_indt
+ * @class GrangerFp_indtMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau GrangerFp_indt
  * @author Jean-Pierre Lefebvre
  */
-class Granger_fp_indtMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class GrangerFp_indtMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Granger_fp_indtMaterialBehaviourInstance()
+        GrangerFp_indtMaterialBehaviourInstance()
         {
             // Mot cle "GRANGER_FP_INDT" dans Aster
             _asterName = "GRANGER_FP_INDT";
@@ -3038,22 +3039,22 @@ class Granger_fp_indtMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Granger_fp_indt */
-typedef boost::shared_ptr< Granger_fp_indtMaterialBehaviourInstance > Granger_fp_indtMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau GrangerFp_indt */
+typedef boost::shared_ptr< GrangerFp_indtMaterialBehaviourInstance > GrangerFp_indtMaterialBehaviourPtr;
 
 
 /**
- * @class V_granger_fpMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau V_granger_fp
+ * @class VGrangerFpMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau VGrangerFp
  * @author Jean-Pierre Lefebvre
  */
-class V_granger_fpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class VGrangerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        V_granger_fpMaterialBehaviourInstance()
+        VGrangerFpMaterialBehaviourInstance()
         {
             // Mot cle "V_GRANGER_FP" dans Aster
             _asterName = "V_GRANGER_FP";
@@ -3064,22 +3065,22 @@ class V_granger_fpMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau V_granger_fp */
-typedef boost::shared_ptr< V_granger_fpMaterialBehaviourInstance > V_granger_fpMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau VGrangerFp */
+typedef boost::shared_ptr< VGrangerFpMaterialBehaviourInstance > VGrangerFpMaterialBehaviourPtr;
 
 
 /**
- * @class Beton_burger_fpMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Beton_burger_fp
+ * @class BetonBurgerFpMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BetonBurgerFp
  * @author Jean-Pierre Lefebvre
  */
-class Beton_burger_fpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class BetonBurgerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Beton_burger_fpMaterialBehaviourInstance()
+        BetonBurgerFpMaterialBehaviourInstance()
         {
             // Mot cle "BETON_BURGER_FP" dans Aster
             _asterName = "BETON_BURGER_FP";
@@ -3096,22 +3097,22 @@ class Beton_burger_fpMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Beton_burger_fp */
-typedef boost::shared_ptr< Beton_burger_fpMaterialBehaviourInstance > Beton_burger_fpMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau BetonBurgerFp */
+typedef boost::shared_ptr< BetonBurgerFpMaterialBehaviourInstance > BetonBurgerFpMaterialBehaviourPtr;
 
 
 /**
- * @class Beton_umlv_fpMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Beton_umlv_fp
+ * @class BetonUmlvFpMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BetonUmlvFp
  * @author Jean-Pierre Lefebvre
  */
-class Beton_umlv_fpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class BetonUmlvFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Beton_umlv_fpMaterialBehaviourInstance()
+        BetonUmlvFpMaterialBehaviourInstance()
         {
             // Mot cle "BETON_UMLV_FP" dans Aster
             _asterName = "BETON_UMLV_FP";
@@ -3128,22 +3129,22 @@ class Beton_umlv_fpMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Beton_umlv_fp */
-typedef boost::shared_ptr< Beton_umlv_fpMaterialBehaviourInstance > Beton_umlv_fpMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau BetonUmlvFp */
+typedef boost::shared_ptr< BetonUmlvFpMaterialBehaviourInstance > BetonUmlvFpMaterialBehaviourPtr;
 
 
 /**
- * @class Beton_ragMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Beton_rag
+ * @class BetonRagMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BetonRag
  * @author Jean-Pierre Lefebvre
  */
-class Beton_ragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class BetonRagMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Beton_ragMaterialBehaviourInstance()
+        BetonRagMaterialBehaviourInstance()
         {
             // Mot cle "BETON_RAG" dans Aster
             _asterName = "BETON_RAG";
@@ -3185,22 +3186,22 @@ class Beton_ragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Beton_rag */
-typedef boost::shared_ptr< Beton_ragMaterialBehaviourInstance > Beton_ragMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau BetonRag */
+typedef boost::shared_ptr< BetonRagMaterialBehaviourInstance > BetonRagMaterialBehaviourPtr;
 
 
 /**
- * @class Poro_betonMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Poro_beton
+ * @class PoroBetonMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau PoroBeton
  * @author Jean-Pierre Lefebvre
  */
-class Poro_betonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class PoroBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Poro_betonMaterialBehaviourInstance()
+        PoroBetonMaterialBehaviourInstance()
         {
             // Mot cle "PORO_BETON" dans Aster
             _asterName = "PORO_BETON";
@@ -3265,22 +3266,22 @@ class Poro_betonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Poro_beton */
-typedef boost::shared_ptr< Poro_betonMaterialBehaviourInstance > Poro_betonMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau PoroBeton */
+typedef boost::shared_ptr< PoroBetonMaterialBehaviourInstance > PoroBetonMaterialBehaviourPtr;
 
 
 /**
- * @class Glrc_dmMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Glrc_dm
+ * @class GlrcDmMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau GlrcDm
  * @author Jean-Pierre Lefebvre
  */
-class Glrc_dmMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class GlrcDmMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Glrc_dmMaterialBehaviourInstance()
+        GlrcDmMaterialBehaviourInstance()
         {
             // Mot cle "GLRC_DM" dans Aster
             _asterName = "GLRC_DM";
@@ -3296,8 +3297,8 @@ class Glrc_dmMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Glrc_dm */
-typedef boost::shared_ptr< Glrc_dmMaterialBehaviourInstance > Glrc_dmMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau GlrcDm */
+typedef boost::shared_ptr< GlrcDmMaterialBehaviourInstance > GlrcDmMaterialBehaviourPtr;
 
 
 /**
@@ -3562,17 +3563,17 @@ typedef boost::shared_ptr< DhrcMaterialBehaviourInstance > DhrcMaterialBehaviour
 
 
 /**
- * @class Gatt_monerieMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Gatt_monerie
+ * @class GattMonerieMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau GattMonerie
  * @author Jean-Pierre Lefebvre
  */
-class Gatt_monerieMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class GattMonerieMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Gatt_monerieMaterialBehaviourInstance()
+        GattMonerieMaterialBehaviourInstance()
         {
             // Mot cle "GATT_MONERIE" dans Aster
             _asterName = "GATT_MONERIE";
@@ -3585,22 +3586,22 @@ class Gatt_monerieMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Gatt_monerie */
-typedef boost::shared_ptr< Gatt_monerieMaterialBehaviourInstance > Gatt_monerieMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau GattMonerie */
+typedef boost::shared_ptr< GattMonerieMaterialBehaviourInstance > GattMonerieMaterialBehaviourPtr;
 
 
 /**
- * @class Corr_acierMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Corr_acier
+ * @class CorrAcierMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau CorrAcier
  * @author Jean-Pierre Lefebvre
  */
-class Corr_acierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class CorrAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Corr_acierMaterialBehaviourInstance()
+        CorrAcierMaterialBehaviourInstance()
         {
             // Mot cle "CORR_ACIER" dans Aster
             _asterName = "CORR_ACIER";
@@ -3622,22 +3623,22 @@ class Corr_acierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Corr_acier */
-typedef boost::shared_ptr< Corr_acierMaterialBehaviourInstance > Corr_acierMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau CorrAcier */
+typedef boost::shared_ptr< CorrAcierMaterialBehaviourInstance > CorrAcierMaterialBehaviourPtr;
 
 
 /**
- * @class Dis_ecro_cineMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Dis_ecro_cine
+ * @class DisEcroCineMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DisEcroCine
  * @author Jean-Pierre Lefebvre
  */
-class Dis_ecro_cineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class DisEcroCineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Dis_ecro_cineMaterialBehaviourInstance()
+        DisEcroCineMaterialBehaviourInstance()
         {
             // Mot cle "DIS_ECRO_CINE" dans Aster
             _asterName = "DIS_ECRO_CINE";
@@ -3670,22 +3671,22 @@ class Dis_ecro_cineMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Dis_ecro_cine */
-typedef boost::shared_ptr< Dis_ecro_cineMaterialBehaviourInstance > Dis_ecro_cineMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau DisEcroCine */
+typedef boost::shared_ptr< DisEcroCineMaterialBehaviourInstance > DisEcroCineMaterialBehaviourPtr;
 
 
 /**
- * @class Dis_viscMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Dis_visc
+ * @class DisViscMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DisVisc
  * @author Jean-Pierre Lefebvre
  */
-class Dis_viscMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class DisViscMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Dis_viscMaterialBehaviourInstance()
+        DisViscMaterialBehaviourInstance()
         {
             // Mot cle "DIS_VISC" dans Aster
             _asterName = "DIS_VISC";
@@ -3702,22 +3703,22 @@ class Dis_viscMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Dis_visc */
-typedef boost::shared_ptr< Dis_viscMaterialBehaviourInstance > Dis_viscMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau DisVisc */
+typedef boost::shared_ptr< DisViscMaterialBehaviourInstance > DisViscMaterialBehaviourPtr;
 
 
 /**
- * @class Dis_bili_elasMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Dis_bili_elas
+ * @class DisBiliElasMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DisBiliElas
  * @author Jean-Pierre Lefebvre
  */
-class Dis_bili_elasMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class DisBiliElasMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Dis_bili_elasMaterialBehaviourInstance()
+        DisBiliElasMaterialBehaviourInstance()
         {
             // Mot cle "DIS_BILI_ELAS" dans Aster
             _asterName = "DIS_BILI_ELAS";
@@ -3735,22 +3736,22 @@ class Dis_bili_elasMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Dis_bili_elas */
-typedef boost::shared_ptr< Dis_bili_elasMaterialBehaviourInstance > Dis_bili_elasMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau DisBiliElas */
+typedef boost::shared_ptr< DisBiliElasMaterialBehaviourInstance > DisBiliElasMaterialBehaviourPtr;
 
 
 /**
- * @class Ther_nlMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ther_nl
+ * @class TherNlMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau TherNl
  * @author Jean-Pierre Lefebvre
  */
-class Ther_nlMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class TherNlMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ther_nlMaterialBehaviourInstance()
+        TherNlMaterialBehaviourInstance()
         {
             // Mot cle "THER_NL" dans Aster
             _asterName = "THER_NL";
@@ -3762,22 +3763,22 @@ class Ther_nlMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ther_nl */
-typedef boost::shared_ptr< Ther_nlMaterialBehaviourInstance > Ther_nlMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau TherNl */
+typedef boost::shared_ptr< TherNlMaterialBehaviourInstance > TherNlMaterialBehaviourPtr;
 
 
 /**
- * @class Ther_hydrMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ther_hydr
+ * @class TherHydrMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau TherHydr
  * @author Jean-Pierre Lefebvre
  */
-class Ther_hydrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class TherHydrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ther_hydrMaterialBehaviourInstance()
+        TherHydrMaterialBehaviourInstance()
         {
             // Mot cle "THER_HYDR" dans Aster
             _asterName = "THER_HYDR";
@@ -3790,8 +3791,8 @@ class Ther_hydrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ther_hydr */
-typedef boost::shared_ptr< Ther_hydrMaterialBehaviourInstance > Ther_hydrMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau TherHydr */
+typedef boost::shared_ptr< TherHydrMaterialBehaviourInstance > TherHydrMaterialBehaviourPtr;
 
 
 /**
@@ -3821,17 +3822,17 @@ typedef boost::shared_ptr< TherMaterialBehaviourInstance > TherMaterialBehaviour
 
 
 /**
- * @class Ther_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ther_fo
+ * @class TherFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau TherFo
  * @author Jean-Pierre Lefebvre
  */
-class Ther_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class TherFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ther_foMaterialBehaviourInstance()
+        TherFoMaterialBehaviourInstance()
         {
             // Mot cle "THER_FO" dans Aster
             _asterName = "THER_FO";
@@ -3842,22 +3843,22 @@ class Ther_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ther_fo */
-typedef boost::shared_ptr< Ther_foMaterialBehaviourInstance > Ther_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau TherFo */
+typedef boost::shared_ptr< TherFoMaterialBehaviourInstance > TherFoMaterialBehaviourPtr;
 
 
 /**
- * @class Ther_orthMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ther_orth
+ * @class TherOrthMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau TherOrth
  * @author Jean-Pierre Lefebvre
  */
-class Ther_orthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class TherOrthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ther_orthMaterialBehaviourInstance()
+        TherOrthMaterialBehaviourInstance()
         {
             // Mot cle "THER_ORTH" dans Aster
             _asterName = "THER_ORTH";
@@ -3870,22 +3871,22 @@ class Ther_orthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ther_orth */
-typedef boost::shared_ptr< Ther_orthMaterialBehaviourInstance > Ther_orthMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau TherOrth */
+typedef boost::shared_ptr< TherOrthMaterialBehaviourInstance > TherOrthMaterialBehaviourPtr;
 
 
 /**
- * @class Ther_coqueMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ther_coque
+ * @class TherCoqueMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau TherCoque
  * @author Jean-Pierre Lefebvre
  */
-class Ther_coqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class TherCoqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ther_coqueMaterialBehaviourInstance()
+        TherCoqueMaterialBehaviourInstance()
         {
             // Mot cle "THER_COQUE" dans Aster
             _asterName = "THER_COQUE";
@@ -3910,22 +3911,22 @@ class Ther_coqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ther_coque */
-typedef boost::shared_ptr< Ther_coqueMaterialBehaviourInstance > Ther_coqueMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau TherCoque */
+typedef boost::shared_ptr< TherCoqueMaterialBehaviourInstance > TherCoqueMaterialBehaviourPtr;
 
 
 /**
- * @class Ther_coque_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Ther_coque_fo
+ * @class TherCoqueFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau TherCoqueFo
  * @author Jean-Pierre Lefebvre
  */
-class Ther_coque_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class TherCoqueFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Ther_coque_foMaterialBehaviourInstance()
+        TherCoqueFoMaterialBehaviourInstance()
         {
             // Mot cle "THER_COQUE_FO" dans Aster
             _asterName = "THER_COQUE_FO";
@@ -3950,22 +3951,22 @@ class Ther_coque_foMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Ther_coque_fo */
-typedef boost::shared_ptr< Ther_coque_foMaterialBehaviourInstance > Ther_coque_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau TherCoqueFo */
+typedef boost::shared_ptr< TherCoqueFoMaterialBehaviourInstance > TherCoqueFoMaterialBehaviourPtr;
 
 
 /**
- * @class Sech_grangerMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Sech_granger
+ * @class SechGrangerMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau SechGranger
  * @author Jean-Pierre Lefebvre
  */
-class Sech_grangerMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class SechGrangerMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Sech_grangerMaterialBehaviourInstance()
+        SechGrangerMaterialBehaviourInstance()
         {
             // Mot cle "SECH_GRANGER" dans Aster
             _asterName = "SECH_GRANGER";
@@ -3978,22 +3979,22 @@ class Sech_grangerMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Sech_granger */
-typedef boost::shared_ptr< Sech_grangerMaterialBehaviourInstance > Sech_grangerMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau SechGranger */
+typedef boost::shared_ptr< SechGrangerMaterialBehaviourInstance > SechGrangerMaterialBehaviourPtr;
 
 
 /**
- * @class Sech_mensiMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Sech_mensi
+ * @class SechMensiMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau SechMensi
  * @author Jean-Pierre Lefebvre
  */
-class Sech_mensiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class SechMensiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Sech_mensiMaterialBehaviourInstance()
+        SechMensiMaterialBehaviourInstance()
         {
             // Mot cle "SECH_MENSI" dans Aster
             _asterName = "SECH_MENSI";
@@ -4004,22 +4005,22 @@ class Sech_mensiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Sech_mensi */
-typedef boost::shared_ptr< Sech_mensiMaterialBehaviourInstance > Sech_mensiMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau SechMensi */
+typedef boost::shared_ptr< SechMensiMaterialBehaviourInstance > SechMensiMaterialBehaviourPtr;
 
 
 /**
- * @class Sech_bazantMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Sech_bazant
+ * @class SechBazantMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau SechBazant
  * @author Jean-Pierre Lefebvre
  */
-class Sech_bazantMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class SechBazantMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Sech_bazantMaterialBehaviourInstance()
+        SechBazantMaterialBehaviourInstance()
         {
             // Mot cle "SECH_BAZANT" dans Aster
             _asterName = "SECH_BAZANT";
@@ -4032,22 +4033,22 @@ class Sech_bazantMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Sech_bazant */
-typedef boost::shared_ptr< Sech_bazantMaterialBehaviourInstance > Sech_bazantMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau SechBazant */
+typedef boost::shared_ptr< SechBazantMaterialBehaviourInstance > SechBazantMaterialBehaviourPtr;
 
 
 /**
- * @class Sech_nappeMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Sech_nappe
+ * @class SechNappeMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau SechNappe
  * @author Jean-Pierre Lefebvre
  */
-class Sech_nappeMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class SechNappeMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Sech_nappeMaterialBehaviourInstance()
+        SechNappeMaterialBehaviourInstance()
         {
             // Mot cle "SECH_NAPPE" dans Aster
             _asterName = "SECH_NAPPE";
@@ -4057,22 +4058,22 @@ class Sech_nappeMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Sech_nappe */
-typedef boost::shared_ptr< Sech_nappeMaterialBehaviourInstance > Sech_nappeMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau SechNappe */
+typedef boost::shared_ptr< SechNappeMaterialBehaviourInstance > SechNappeMaterialBehaviourPtr;
 
 
 /**
- * @class Meta_acierMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Meta_acier
+ * @class MetaAcierMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MetaAcier
  * @author Jean-Pierre Lefebvre
  */
-class Meta_acierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MetaAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Meta_acierMaterialBehaviourInstance()
+        MetaAcierMaterialBehaviourInstance()
         {
             // Mot cle "META_ACIER" dans Aster
             _asterName = "META_ACIER";
@@ -4093,22 +4094,22 @@ class Meta_acierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Meta_acier */
-typedef boost::shared_ptr< Meta_acierMaterialBehaviourInstance > Meta_acierMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MetaAcier */
+typedef boost::shared_ptr< MetaAcierMaterialBehaviourInstance > MetaAcierMaterialBehaviourPtr;
 
 
 /**
- * @class Meta_zircMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Meta_zirc
+ * @class MetaZircMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MetaZirc
  * @author Jean-Pierre Lefebvre
  */
-class Meta_zircMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MetaZircMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Meta_zircMaterialBehaviourInstance()
+        MetaZircMaterialBehaviourInstance()
         {
             // Mot cle "META_ZIRC" dans Aster
             _asterName = "META_ZIRC";
@@ -4129,22 +4130,22 @@ class Meta_zircMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Meta_zirc */
-typedef boost::shared_ptr< Meta_zircMaterialBehaviourInstance > Meta_zircMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MetaZirc */
+typedef boost::shared_ptr< MetaZircMaterialBehaviourInstance > MetaZircMaterialBehaviourPtr;
 
 
 /**
- * @class Durt_metaMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Durt_meta
+ * @class DurtMetaMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DurtMeta
  * @author Jean-Pierre Lefebvre
  */
-class Durt_metaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class DurtMetaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Durt_metaMaterialBehaviourInstance()
+        DurtMetaMaterialBehaviourInstance()
         {
             // Mot cle "DURT_META" dans Aster
             _asterName = "DURT_META";
@@ -4158,22 +4159,22 @@ class Durt_metaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Durt_meta */
-typedef boost::shared_ptr< Durt_metaMaterialBehaviourInstance > Durt_metaMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau DurtMeta */
+typedef boost::shared_ptr< DurtMetaMaterialBehaviourInstance > DurtMetaMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_metaMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_meta
+ * @class ElasMetaMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasMeta
  * @author Jean-Pierre Lefebvre
  */
-class Elas_metaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasMetaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_metaMaterialBehaviourInstance()
+        ElasMetaMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_META" dans Aster
             _asterName = "ELAS_META";
@@ -4201,22 +4202,22 @@ class Elas_metaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_meta */
-typedef boost::shared_ptr< Elas_metaMaterialBehaviourInstance > Elas_metaMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasMeta */
+typedef boost::shared_ptr< ElasMetaMaterialBehaviourInstance > ElasMetaMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_meta_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_meta_fo
+ * @class ElasMetaFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasMetaFo
  * @author Jean-Pierre Lefebvre
  */
-class Elas_meta_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasMetaFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_meta_foMaterialBehaviourInstance()
+        ElasMetaFoMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_META_FO" dans Aster
             _asterName = "ELAS_META_FO";
@@ -4245,22 +4246,22 @@ class Elas_meta_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_meta_fo */
-typedef boost::shared_ptr< Elas_meta_foMaterialBehaviourInstance > Elas_meta_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasMetaFo */
+typedef boost::shared_ptr< ElasMetaFoMaterialBehaviourInstance > ElasMetaFoMaterialBehaviourPtr;
 
 
 /**
- * @class Meta_ecro_lineMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Meta_ecro_line
+ * @class MetaEcroLineMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MetaEcroLine
  * @author Jean-Pierre Lefebvre
  */
-class Meta_ecro_lineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MetaEcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Meta_ecro_lineMaterialBehaviourInstance()
+        MetaEcroLineMaterialBehaviourInstance()
         {
             // Mot cle "META_ECRO_LINE" dans Aster
             _asterName = "META_ECRO_LINE";
@@ -4274,22 +4275,22 @@ class Meta_ecro_lineMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Meta_ecro_line */
-typedef boost::shared_ptr< Meta_ecro_lineMaterialBehaviourInstance > Meta_ecro_lineMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MetaEcroLine */
+typedef boost::shared_ptr< MetaEcroLineMaterialBehaviourInstance > MetaEcroLineMaterialBehaviourPtr;
 
 
 /**
- * @class Meta_tractionMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Meta_traction
+ * @class MetaTractionMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MetaTraction
  * @author Jean-Pierre Lefebvre
  */
-class Meta_tractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MetaTractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Meta_tractionMaterialBehaviourInstance()
+        MetaTractionMaterialBehaviourInstance()
         {
             // Mot cle "META_TRACTION" dans Aster
             _asterName = "META_TRACTION";
@@ -4303,22 +4304,22 @@ class Meta_tractionMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Meta_traction */
-typedef boost::shared_ptr< Meta_tractionMaterialBehaviourInstance > Meta_tractionMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MetaTraction */
+typedef boost::shared_ptr< MetaTractionMaterialBehaviourInstance > MetaTractionMaterialBehaviourPtr;
 
 
 /**
- * @class Meta_visc_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Meta_visc_fo
+ * @class MetaViscFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MetaViscFo
  * @author Jean-Pierre Lefebvre
  */
-class Meta_visc_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MetaViscFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Meta_visc_foMaterialBehaviourInstance()
+        MetaViscFoMaterialBehaviourInstance()
         {
             // Mot cle "META_VISC_FO" dans Aster
             _asterName = "META_VISC_FO";
@@ -4347,22 +4348,22 @@ class Meta_visc_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Meta_visc_fo */
-typedef boost::shared_ptr< Meta_visc_foMaterialBehaviourInstance > Meta_visc_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MetaViscFo */
+typedef boost::shared_ptr< MetaViscFoMaterialBehaviourInstance > MetaViscFoMaterialBehaviourPtr;
 
 
 /**
- * @class Meta_ptMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Meta_pt
+ * @class MetaPtMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MetaPt
  * @author Jean-Pierre Lefebvre
  */
-class Meta_ptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MetaPtMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Meta_ptMaterialBehaviourInstance()
+        MetaPtMaterialBehaviourInstance()
         {
             // Mot cle "META_PT" dans Aster
             _asterName = "META_PT";
@@ -4379,22 +4380,22 @@ class Meta_ptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Meta_pt */
-typedef boost::shared_ptr< Meta_ptMaterialBehaviourInstance > Meta_ptMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MetaPt */
+typedef boost::shared_ptr< MetaPtMaterialBehaviourInstance > MetaPtMaterialBehaviourPtr;
 
 
 /**
- * @class Meta_reMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Meta_re
+ * @class MetaReMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MetaRe
  * @author Jean-Pierre Lefebvre
  */
-class Meta_reMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MetaReMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Meta_reMaterialBehaviourInstance()
+        MetaReMaterialBehaviourInstance()
         {
             // Mot cle "META_RE" dans Aster
             _asterName = "META_RE";
@@ -4411,8 +4412,8 @@ class Meta_reMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Meta_re */
-typedef boost::shared_ptr< Meta_reMaterialBehaviourInstance > Meta_reMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MetaRe */
+typedef boost::shared_ptr< MetaReMaterialBehaviourInstance > MetaReMaterialBehaviourPtr;
 
 
 /**
@@ -4445,17 +4446,17 @@ typedef boost::shared_ptr< FluideMaterialBehaviourInstance > FluideMaterialBehav
 
 
 /**
- * @class Thm_initMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_init
+ * @class ThmInitMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ThmInit
  * @author Jean-Pierre Lefebvre
  */
-class Thm_initMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ThmInitMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Thm_initMaterialBehaviourInstance()
+        ThmInitMaterialBehaviourInstance()
         {
             // Mot cle "THM_INIT" dans Aster
             _asterName = "THM_INIT";
@@ -4471,22 +4472,22 @@ class Thm_initMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Thm_init */
-typedef boost::shared_ptr< Thm_initMaterialBehaviourInstance > Thm_initMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ThmInit */
+typedef boost::shared_ptr< ThmInitMaterialBehaviourInstance > ThmInitMaterialBehaviourPtr;
 
 
 /**
- * @class Thm_diffuMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_diffu
+ * @class ThmDiffuMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ThmDiffu
  * @author Jean-Pierre Lefebvre
  */
-class Thm_diffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ThmDiffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Thm_diffuMaterialBehaviourInstance()
+        ThmDiffuMaterialBehaviourInstance()
         {
             // Mot cle "THM_DIFFU" dans Aster
             _asterName = "THM_DIFFU";
@@ -4546,22 +4547,22 @@ class Thm_diffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Thm_diffu */
-typedef boost::shared_ptr< Thm_diffuMaterialBehaviourInstance > Thm_diffuMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ThmDiffu */
+typedef boost::shared_ptr< ThmDiffuMaterialBehaviourInstance > ThmDiffuMaterialBehaviourPtr;
 
 
 /**
- * @class Thm_liquMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_liqu
+ * @class ThmLiquMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ThmLiqu
  * @author Jean-Pierre Lefebvre
  */
-class Thm_liquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ThmLiquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Thm_liquMaterialBehaviourInstance()
+        ThmLiquMaterialBehaviourInstance()
         {
             // Mot cle "THM_LIQU" dans Aster
             _asterName = "THM_LIQU";
@@ -4576,22 +4577,22 @@ class Thm_liquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Thm_liqu */
-typedef boost::shared_ptr< Thm_liquMaterialBehaviourInstance > Thm_liquMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ThmLiqu */
+typedef boost::shared_ptr< ThmLiquMaterialBehaviourInstance > ThmLiquMaterialBehaviourPtr;
 
 
 /**
- * @class Thm_gazMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_gaz
+ * @class ThmGazMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ThmGaz
  * @author Jean-Pierre Lefebvre
  */
-class Thm_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ThmGazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Thm_gazMaterialBehaviourInstance()
+        ThmGazMaterialBehaviourInstance()
         {
             // Mot cle "THM_GAZ" dans Aster
             _asterName = "THM_GAZ";
@@ -4604,22 +4605,22 @@ class Thm_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Thm_gaz */
-typedef boost::shared_ptr< Thm_gazMaterialBehaviourInstance > Thm_gazMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ThmGaz */
+typedef boost::shared_ptr< ThmGazMaterialBehaviourInstance > ThmGazMaterialBehaviourPtr;
 
 
 /**
- * @class Thm_vape_gazMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_vape_gaz
+ * @class ThmVapeGazMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ThmVapeGaz
  * @author Jean-Pierre Lefebvre
  */
-class Thm_vape_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ThmVapeGazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Thm_vape_gazMaterialBehaviourInstance()
+        ThmVapeGazMaterialBehaviourInstance()
         {
             // Mot cle "THM_VAPE_GAZ" dans Aster
             _asterName = "THM_VAPE_GAZ";
@@ -4632,801 +4633,21 @@ class Thm_vape_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Thm_vape_gaz */
-typedef boost::shared_ptr< Thm_vape_gazMaterialBehaviourInstance > Thm_vape_gazMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_initMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_init
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_initMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_initMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_INIT" dans Aster
-            //_asterName = "THM_INIT";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Pre1", ElementaryMaterialPropertyDouble( "PRE1" ) );
-            //this->addDoubleProperty( "Pre2", ElementaryMaterialPropertyDouble( "PRE2" ) );
-            //this->addDoubleProperty( "Poro", ElementaryMaterialPropertyDouble( "PORO" ) );
-            //this->addDoubleProperty( "Temp", ElementaryMaterialPropertyDouble( "TEMP" ) );
-            //this->addDoubleProperty( "Pres_vape", ElementaryMaterialPropertyDouble( "PRES_VAPE" ) );
-            //this->addDoubleProperty( "Degr_satu", ElementaryMaterialPropertyDouble( "DEGR_SATU" ) );
-            //this->addDoubleProperty( "Comp_thm", ElementaryMaterialPropertyDouble( "COMP_THM" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_init */
-//typedef boost::shared_ptr< Thm_initMaterialBehaviourInstance > Thm_initMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_diffuMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_diffu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_diffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_diffuMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_DIFFU" dans Aster
-            //_asterName = "THM_DIFFU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "R_gaz", ElementaryMaterialPropertyDouble( "R_GAZ" ) );
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Biot_coef", ElementaryMaterialPropertyDouble( "BIOT_COEF" ) );
-            //this->addDoubleProperty( "Biot_l", ElementaryMaterialPropertyDouble( "BIOT_L" ) );
-            //this->addDoubleProperty( "Biot_n", ElementaryMaterialPropertyDouble( "BIOT_N" ) );
-            //this->addDoubleProperty( "Biot_t", ElementaryMaterialPropertyDouble( "BIOT_T" ) );
-            //this->addDoubleProperty( "Pesa_x", ElementaryMaterialPropertyDouble( "PESA_X" ) );
-            //this->addDoubleProperty( "Pesa_y", ElementaryMaterialPropertyDouble( "PESA_Y" ) );
-            //this->addDoubleProperty( "Pesa_z", ElementaryMaterialPropertyDouble( "PESA_Z" ) );
-            //this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyFunction( "SATU_PRES" ) );
-            //this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyFunction( "D_SATU_PRES" ) );
-            //this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyFunction( "PERM_LIQU" ) );
-            //this->addFunctionProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyFunction( "D_PERM_LIQU_SATU" ) );
-            //this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyFunction( "PERM_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyFunction( "D_PERM_SATU_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyFunction( "D_PERM_PRES_GAZ" ) );
-            //this->addDoubleProperty( "Vg_n", ElementaryMaterialPropertyDouble( "VG_N" ) );
-            //this->addDoubleProperty( "Vg_sr", ElementaryMaterialPropertyDouble( "VG_SR" ) );
-            //this->addDoubleProperty( "Vg_pr", ElementaryMaterialPropertyDouble( "VG_PR" ) );
-            //this->addDoubleProperty( "Vg_smax", ElementaryMaterialPropertyDouble( "VG_SMAX" ) );
-            //this->addDoubleProperty( "Vg_satur", ElementaryMaterialPropertyDouble( "VG_SATUR" ) );
-            //this->addFunctionProperty( "Pesa_mult", ElementaryMaterialPropertyFunction( "PESA_MULT" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Perm_in", ElementaryMaterialPropertyFunction( "PERM_IN" ) );
-            //this->addFunctionProperty( "Permin_l", ElementaryMaterialPropertyFunction( "PERMIN_L" ) );
-            //this->addFunctionProperty( "Permin_n", ElementaryMaterialPropertyFunction( "PERMIN_N" ) );
-            //this->addFunctionProperty( "Permin_t", ElementaryMaterialPropertyFunction( "PERMIN_T" ) );
-            //this->addFunctionProperty( "Perm_end", ElementaryMaterialPropertyFunction( "PERM_END" ) );
-            //this->addFunctionProperty( "Lamb_phi", ElementaryMaterialPropertyFunction( "LAMB_PHI" ) );
-            //this->addFunctionProperty( "D_lb_phi", ElementaryMaterialPropertyFunction( "D_LB_PHI" ) );
-            //this->addFunctionProperty( "Lamb_t", ElementaryMaterialPropertyFunction( "LAMB_T" ) );
-            //this->addFunctionProperty( "Lamb_tl", ElementaryMaterialPropertyFunction( "LAMB_TL" ) );
-            //this->addFunctionProperty( "Lamb_tn", ElementaryMaterialPropertyFunction( "LAMB_TN" ) );
-            //this->addFunctionProperty( "Lamb_tt", ElementaryMaterialPropertyFunction( "LAMB_TT" ) );
-            //this->addFunctionProperty( "D_lb_t", ElementaryMaterialPropertyFunction( "D_LB_T" ) );
-            //this->addFunctionProperty( "D_lb_tl", ElementaryMaterialPropertyFunction( "D_LB_TL" ) );
-            //this->addFunctionProperty( "D_lb_tn", ElementaryMaterialPropertyFunction( "D_LB_TN" ) );
-            //this->addFunctionProperty( "D_lb_tt", ElementaryMaterialPropertyFunction( "D_LB_TT" ) );
-            //this->addFunctionProperty( "Lamb_s", ElementaryMaterialPropertyFunction( "LAMB_S" ) );
-            //this->addFunctionProperty( "D_lb_s", ElementaryMaterialPropertyFunction( "D_LB_S" ) );
-            //this->addDoubleProperty( "Lamb_ct", ElementaryMaterialPropertyDouble( "LAMB_CT" ) );
-            //this->addDoubleProperty( "Lamb_c_l", ElementaryMaterialPropertyDouble( "LAMB_C_L" ) );
-            //this->addDoubleProperty( "Lamb_c_n", ElementaryMaterialPropertyDouble( "LAMB_C_N" ) );
-            //this->addDoubleProperty( "Lamb_c_t", ElementaryMaterialPropertyDouble( "LAMB_C_T" ) );
-            //this->addDoubleProperty( "Emmag", ElementaryMaterialPropertyDouble( "EMMAG" ) );
-            //this->addFunctionProperty( "Fickv_t", ElementaryMaterialPropertyFunction( "FICKV_T" ) );
-            //this->addFunctionProperty( "Fickv_pv", ElementaryMaterialPropertyFunction( "FICKV_PV" ) );
-            //this->addFunctionProperty( "Fickv_pg", ElementaryMaterialPropertyFunction( "FICKV_PG" ) );
-            //this->addFunctionProperty( "Fickv_s", ElementaryMaterialPropertyFunction( "FICKV_S" ) );
-            //this->addFunctionProperty( "D_fv_t", ElementaryMaterialPropertyFunction( "D_FV_T" ) );
-            //this->addFunctionProperty( "D_fv_pg", ElementaryMaterialPropertyFunction( "D_FV_PG" ) );
-            //this->addFunctionProperty( "Ficka_t", ElementaryMaterialPropertyFunction( "FICKA_T" ) );
-            //this->addFunctionProperty( "Ficka_pa", ElementaryMaterialPropertyFunction( "FICKA_PA" ) );
-            //this->addFunctionProperty( "Ficka_pl", ElementaryMaterialPropertyFunction( "FICKA_PL" ) );
-            //this->addFunctionProperty( "Ficka_s", ElementaryMaterialPropertyFunction( "FICKA_S" ) );
-            //this->addFunctionProperty( "D_fa_t", ElementaryMaterialPropertyFunction( "D_FA_T" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_diffu */
-//typedef boost::shared_ptr< Thm_diffuMaterialBehaviourInstance > Thm_diffuMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_liquMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_liqu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_liquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_liquMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_LIQU" dans Aster
-            //_asterName = "THM_LIQU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Un_sur_k", ElementaryMaterialPropertyDouble( "UN_SUR_K" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_liqu */
-//typedef boost::shared_ptr< Thm_liquMaterialBehaviourInstance > Thm_liquMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_GAZ" dans Aster
-            //_asterName = "THM_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_gaz */
-//typedef boost::shared_ptr< Thm_gazMaterialBehaviourInstance > Thm_gazMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_vape_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_vape_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_vape_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_vape_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_VAPE_GAZ" dans Aster
-            //_asterName = "THM_VAPE_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_vape_gaz */
-//typedef boost::shared_ptr< Thm_vape_gazMaterialBehaviourInstance > Thm_vape_gazMaterialBehaviourPtr;
-
-
-/////**
- //* @class Thm_initMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_init
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_initMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_initMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_INIT" dans Aster
-            //_asterName = "THM_INIT";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Temp", ElementaryMaterialPropertyDouble( "TEMP" ) );
-            //this->addDoubleProperty( "Pre1", ElementaryMaterialPropertyDouble( "PRE1" ) );
-            //this->addDoubleProperty( "Poro", ElementaryMaterialPropertyDouble( "PORO" ) );
-            //this->addDoubleProperty( "Pre2", ElementaryMaterialPropertyDouble( "PRE2" ) );
-            //this->addDoubleProperty( "Pres_vape", ElementaryMaterialPropertyDouble( "PRES_VAPE" ) );
-            //this->addDoubleProperty( "Degr_satu", ElementaryMaterialPropertyDouble( "DEGR_SATU" ) );
-            //this->addDoubleProperty( "Comp_thm", ElementaryMaterialPropertyDouble( "COMP_THM" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_init */
-//typedef boost::shared_ptr< Thm_initMaterialBehaviourInstance > Thm_initMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_diffuMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_diffu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_diffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_diffuMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_DIFFU" dans Aster
-            //_asterName = "THM_DIFFU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "R_gaz", ElementaryMaterialPropertyDouble( "R_GAZ" ) );
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Biot_coef", ElementaryMaterialPropertyDouble( "BIOT_COEF" ) );
-            //this->addDoubleProperty( "Biot_l", ElementaryMaterialPropertyDouble( "BIOT_L" ) );
-            //this->addDoubleProperty( "Biot_n", ElementaryMaterialPropertyDouble( "BIOT_N" ) );
-            //this->addDoubleProperty( "Biot_t", ElementaryMaterialPropertyDouble( "BIOT_T" ) );
-            //this->addDoubleProperty( "Pesa_x", ElementaryMaterialPropertyDouble( "PESA_X" ) );
-            //this->addDoubleProperty( "Pesa_y", ElementaryMaterialPropertyDouble( "PESA_Y" ) );
-            //this->addDoubleProperty( "Pesa_z", ElementaryMaterialPropertyDouble( "PESA_Z" ) );
-            //this->addFunctionProperty( "Pesa_mult", ElementaryMaterialPropertyFunction( "PESA_MULT" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Perm_in", ElementaryMaterialPropertyFunction( "PERM_IN" ) );
-            //this->addFunctionProperty( "Permin_l", ElementaryMaterialPropertyFunction( "PERMIN_L" ) );
-            //this->addFunctionProperty( "Permin_n", ElementaryMaterialPropertyFunction( "PERMIN_N" ) );
-            //this->addFunctionProperty( "Permin_t", ElementaryMaterialPropertyFunction( "PERMIN_T" ) );
-            //this->addFunctionProperty( "Perm_end", ElementaryMaterialPropertyFunction( "PERM_END" ) );
-            //this->addFunctionProperty( "Lamb_phi", ElementaryMaterialPropertyFunction( "LAMB_PHI" ) );
-            //this->addFunctionProperty( "D_lb_phi", ElementaryMaterialPropertyFunction( "D_LB_PHI" ) );
-            //this->addFunctionProperty( "Lamb_t", ElementaryMaterialPropertyFunction( "LAMB_T" ) );
-            //this->addFunctionProperty( "Lamb_tl", ElementaryMaterialPropertyFunction( "LAMB_TL" ) );
-            //this->addFunctionProperty( "Lamb_tn", ElementaryMaterialPropertyFunction( "LAMB_TN" ) );
-            //this->addFunctionProperty( "Lamb_tt", ElementaryMaterialPropertyFunction( "LAMB_TT" ) );
-            //this->addFunctionProperty( "D_lb_t", ElementaryMaterialPropertyFunction( "D_LB_T" ) );
-            //this->addFunctionProperty( "D_lb_tl", ElementaryMaterialPropertyFunction( "D_LB_TL" ) );
-            //this->addFunctionProperty( "D_lb_tn", ElementaryMaterialPropertyFunction( "D_LB_TN" ) );
-            //this->addFunctionProperty( "D_lb_tt", ElementaryMaterialPropertyFunction( "D_LB_TT" ) );
-            //this->addFunctionProperty( "Lamb_s", ElementaryMaterialPropertyFunction( "LAMB_S" ) );
-            //this->addFunctionProperty( "D_lb_s", ElementaryMaterialPropertyFunction( "D_LB_S" ) );
-            //this->addDoubleProperty( "Lamb_ct", ElementaryMaterialPropertyDouble( "LAMB_CT" ) );
-            //this->addDoubleProperty( "Lamb_c_l", ElementaryMaterialPropertyDouble( "LAMB_C_L" ) );
-            //this->addDoubleProperty( "Lamb_c_n", ElementaryMaterialPropertyDouble( "LAMB_C_N" ) );
-            //this->addDoubleProperty( "Lamb_c_t", ElementaryMaterialPropertyDouble( "LAMB_C_T" ) );
-            //this->addDoubleProperty( "Emmag", ElementaryMaterialPropertyDouble( "EMMAG" ) );
-            //this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyFunction( "SATU_PRES" ) );
-            //this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyFunction( "D_SATU_PRES" ) );
-            //this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyFunction( "PERM_LIQU" ) );
-            //this->addFunctionProperty( "D_perm_liqu_satu=", ElementaryMaterialPropertyFunction( "D_PERM_LIQU_SATU=" ) );
-            //this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyFunction( "PERM_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyFunction( "D_PERM_SATU_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyFunction( "D_PERM_PRES_GAZ" ) );
-            //this->addFunctionProperty( "Fickv_t", ElementaryMaterialPropertyFunction( "FICKV_T" ) );
-            //this->addFunctionProperty( "Fickv_pv", ElementaryMaterialPropertyFunction( "FICKV_PV" ) );
-            //this->addFunctionProperty( "Fickv_pg", ElementaryMaterialPropertyFunction( "FICKV_PG" ) );
-            //this->addFunctionProperty( "Fickv_s", ElementaryMaterialPropertyFunction( "FICKV_S" ) );
-            //this->addFunctionProperty( "D_fv_t", ElementaryMaterialPropertyFunction( "D_FV_T" ) );
-            //this->addFunctionProperty( "D_fv_pg", ElementaryMaterialPropertyFunction( "D_FV_PG" ) );
-            //this->addFunctionProperty( "Ficka_t", ElementaryMaterialPropertyFunction( "FICKA_T" ) );
-            //this->addFunctionProperty( "Ficka_pa", ElementaryMaterialPropertyFunction( "FICKA_PA" ) );
-            //this->addFunctionProperty( "Ficka_pl", ElementaryMaterialPropertyFunction( "FICKA_PL" ) );
-            //this->addFunctionProperty( "Ficka_s", ElementaryMaterialPropertyFunction( "FICKA_S" ) );
-            //this->addFunctionProperty( "D_fa_t", ElementaryMaterialPropertyFunction( "D_FA_T" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_diffu */
-//typedef boost::shared_ptr< Thm_diffuMaterialBehaviourInstance > Thm_diffuMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_GAZ" dans Aster
-            //_asterName = "THM_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_gaz */
-//typedef boost::shared_ptr< Thm_gazMaterialBehaviourInstance > Thm_gazMaterialBehaviourPtr;
-
-
-/////**
- //* @class Thm_liquMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_liqu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_liquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_liquMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_LIQU" dans Aster
-            //_asterName = "THM_LIQU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Un_sur_k", ElementaryMaterialPropertyDouble( "UN_SUR_K" ) );
-            //this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Coef_henry", ElementaryMaterialPropertyDouble( "COEF_HENRY" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_liqu */
-//typedef boost::shared_ptr< Thm_liquMaterialBehaviourInstance > Thm_liquMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_vape_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_vape_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_vape_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_vape_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_VAPE_GAZ" dans Aster
-            //_asterName = "THM_VAPE_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_vape_gaz */
-//typedef boost::shared_ptr< Thm_vape_gazMaterialBehaviourInstance > Thm_vape_gazMaterialBehaviourPtr;
-
-
-/////**
- //* @class Thm_initMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_init
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_initMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_initMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_INIT" dans Aster
-            //_asterName = "THM_INIT";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Pre1", ElementaryMaterialPropertyDouble( "PRE1" ) );
-            //this->addDoubleProperty( "Poro", ElementaryMaterialPropertyDouble( "PORO" ) );
-            //this->addDoubleProperty( "Temp", ElementaryMaterialPropertyDouble( "TEMP" ) );
-            //this->addDoubleProperty( "Pre2", ElementaryMaterialPropertyDouble( "PRE2" ) );
-            //this->addDoubleProperty( "Pres_vape", ElementaryMaterialPropertyDouble( "PRES_VAPE" ) );
-            //this->addDoubleProperty( "Degr_satu", ElementaryMaterialPropertyDouble( "DEGR_SATU" ) );
-            //this->addDoubleProperty( "Comp_thm", ElementaryMaterialPropertyDouble( "COMP_THM" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_init */
-//typedef boost::shared_ptr< Thm_initMaterialBehaviourInstance > Thm_initMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_diffuMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_diffu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_diffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_diffuMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_DIFFU" dans Aster
-            //_asterName = "THM_DIFFU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Biot_coef", ElementaryMaterialPropertyDouble( "BIOT_COEF" ) );
-            //this->addDoubleProperty( "Biot_l", ElementaryMaterialPropertyDouble( "BIOT_L" ) );
-            //this->addDoubleProperty( "Biot_n", ElementaryMaterialPropertyDouble( "BIOT_N" ) );
-            //this->addDoubleProperty( "Biot_t", ElementaryMaterialPropertyDouble( "BIOT_T" ) );
-            //this->addDoubleProperty( "Pesa_x", ElementaryMaterialPropertyDouble( "PESA_X" ) );
-            //this->addDoubleProperty( "Pesa_y", ElementaryMaterialPropertyDouble( "PESA_Y" ) );
-            //this->addDoubleProperty( "Pesa_z", ElementaryMaterialPropertyDouble( "PESA_Z" ) );
-            //this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyFunction( "SATU_PRES" ) );
-            //this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyFunction( "D_SATU_PRES" ) );
-            //this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyFunction( "PERM_LIQU" ) );
-            //this->addFunctionProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyFunction( "D_PERM_LIQU_SATU" ) );
-            //this->addFunctionProperty( "Pesa_mult", ElementaryMaterialPropertyFunction( "PESA_MULT" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Perm_in", ElementaryMaterialPropertyFunction( "PERM_IN" ) );
-            //this->addFunctionProperty( "Permin_l", ElementaryMaterialPropertyFunction( "PERMIN_L" ) );
-            //this->addFunctionProperty( "Permin_n", ElementaryMaterialPropertyFunction( "PERMIN_N" ) );
-            //this->addFunctionProperty( "Permin_t", ElementaryMaterialPropertyFunction( "PERMIN_T" ) );
-            //this->addFunctionProperty( "Perm_end", ElementaryMaterialPropertyFunction( "PERM_END" ) );
-            //this->addFunctionProperty( "Lamb_phi", ElementaryMaterialPropertyFunction( "LAMB_PHI" ) );
-            //this->addFunctionProperty( "D_lb_phi", ElementaryMaterialPropertyFunction( "D_LB_PHI" ) );
-            //this->addFunctionProperty( "Lamb_t", ElementaryMaterialPropertyFunction( "LAMB_T" ) );
-            //this->addFunctionProperty( "Lamb_tl", ElementaryMaterialPropertyFunction( "LAMB_TL" ) );
-            //this->addFunctionProperty( "Lamb_tn", ElementaryMaterialPropertyFunction( "LAMB_TN" ) );
-            //this->addFunctionProperty( "Lamb_tt", ElementaryMaterialPropertyFunction( "LAMB_TT" ) );
-            //this->addFunctionProperty( "D_lb_t", ElementaryMaterialPropertyFunction( "D_LB_T" ) );
-            //this->addFunctionProperty( "D_lb_tl", ElementaryMaterialPropertyFunction( "D_LB_TL" ) );
-            //this->addFunctionProperty( "D_lb_tn", ElementaryMaterialPropertyFunction( "D_LB_TN" ) );
-            //this->addFunctionProperty( "D_lb_tt", ElementaryMaterialPropertyFunction( "D_LB_TT" ) );
-            //this->addFunctionProperty( "Lamb_s", ElementaryMaterialPropertyFunction( "LAMB_S" ) );
-            //this->addFunctionProperty( "D_lb_s", ElementaryMaterialPropertyFunction( "D_LB_S" ) );
-            //this->addDoubleProperty( "Lamb_ct", ElementaryMaterialPropertyDouble( "LAMB_CT" ) );
-            //this->addDoubleProperty( "Lamb_c_l", ElementaryMaterialPropertyDouble( "LAMB_C_L" ) );
-            //this->addDoubleProperty( "Lamb_c_n", ElementaryMaterialPropertyDouble( "LAMB_C_N" ) );
-            //this->addDoubleProperty( "Lamb_c_t", ElementaryMaterialPropertyDouble( "LAMB_C_T" ) );
-            //this->addDoubleProperty( "Emmag", ElementaryMaterialPropertyDouble( "EMMAG" ) );
-            //this->addDoubleProperty( "R_gaz", ElementaryMaterialPropertyDouble( "R_GAZ" ) );
-            //this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyFunction( "PERM_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyFunction( "D_PERM_SATU_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyFunction( "D_PERM_PRES_GAZ" ) );
-            //this->addFunctionProperty( "Fickv_t", ElementaryMaterialPropertyFunction( "FICKV_T" ) );
-            //this->addFunctionProperty( "Fickv_pv", ElementaryMaterialPropertyFunction( "FICKV_PV" ) );
-            //this->addFunctionProperty( "Fickv_pg", ElementaryMaterialPropertyFunction( "FICKV_PG" ) );
-            //this->addFunctionProperty( "Fickv_s", ElementaryMaterialPropertyFunction( "FICKV_S" ) );
-            //this->addFunctionProperty( "D_fv_t", ElementaryMaterialPropertyFunction( "D_FV_T" ) );
-            //this->addFunctionProperty( "D_fv_pg", ElementaryMaterialPropertyFunction( "D_FV_PG" ) );
-            //this->addFunctionProperty( "Ficka_t", ElementaryMaterialPropertyFunction( "FICKA_T" ) );
-            //this->addFunctionProperty( "Ficka_pa", ElementaryMaterialPropertyFunction( "FICKA_PA" ) );
-            //this->addFunctionProperty( "Ficka_pl", ElementaryMaterialPropertyFunction( "FICKA_PL" ) );
-            //this->addFunctionProperty( "Ficka_s", ElementaryMaterialPropertyFunction( "FICKA_S" ) );
-            //this->addFunctionProperty( "D_fa_t", ElementaryMaterialPropertyFunction( "D_FA_T" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_diffu */
-//typedef boost::shared_ptr< Thm_diffuMaterialBehaviourInstance > Thm_diffuMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_liquMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_liqu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_liquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_liquMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_LIQU" dans Aster
-            //_asterName = "THM_LIQU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Un_sur_k", ElementaryMaterialPropertyDouble( "UN_SUR_K" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_liqu */
-//typedef boost::shared_ptr< Thm_liquMaterialBehaviourInstance > Thm_liquMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_GAZ" dans Aster
-            //_asterName = "THM_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_gaz */
-//typedef boost::shared_ptr< Thm_gazMaterialBehaviourInstance > Thm_gazMaterialBehaviourPtr;
-
-
-/////**
- //* @class Thm_vape_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_vape_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_vape_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_vape_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_VAPE_GAZ" dans Aster
-            //_asterName = "THM_VAPE_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_vape_gaz */
-//typedef boost::shared_ptr< Thm_vape_gazMaterialBehaviourInstance > Thm_vape_gazMaterialBehaviourPtr;
-
-
-/////**
- ////* @class Thm_initMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_init
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_initMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_initMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_INIT" dans Aster
-            //_asterName = "THM_INIT";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Pre1", ElementaryMaterialPropertyDouble( "PRE1" ) );
-            //this->addDoubleProperty( "Pre2", ElementaryMaterialPropertyDouble( "PRE2" ) );
-            //this->addDoubleProperty( "Poro", ElementaryMaterialPropertyDouble( "PORO" ) );
-            //this->addDoubleProperty( "Pres_vape", ElementaryMaterialPropertyDouble( "PRES_VAPE" ) );
-            //this->addDoubleProperty( "Temp", ElementaryMaterialPropertyDouble( "TEMP" ) );
-            //this->addDoubleProperty( "Degr_satu", ElementaryMaterialPropertyDouble( "DEGR_SATU" ) );
-            //this->addDoubleProperty( "Comp_thm", ElementaryMaterialPropertyDouble( "COMP_THM" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_init */
-//typedef boost::shared_ptr< Thm_initMaterialBehaviourInstance > Thm_initMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_diffuMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_diffu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_diffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_diffuMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_DIFFU" dans Aster
-            //_asterName = "THM_DIFFU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "R_gaz", ElementaryMaterialPropertyDouble( "R_GAZ" ) );
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Biot_coef", ElementaryMaterialPropertyDouble( "BIOT_COEF" ) );
-            //this->addDoubleProperty( "Biot_l", ElementaryMaterialPropertyDouble( "BIOT_L" ) );
-            //this->addDoubleProperty( "Biot_n", ElementaryMaterialPropertyDouble( "BIOT_N" ) );
-            //this->addDoubleProperty( "Biot_t", ElementaryMaterialPropertyDouble( "BIOT_T" ) );
-            //this->addDoubleProperty( "Pesa_x", ElementaryMaterialPropertyDouble( "PESA_X" ) );
-            //this->addDoubleProperty( "Pesa_y", ElementaryMaterialPropertyDouble( "PESA_Y" ) );
-            //this->addDoubleProperty( "Pesa_z", ElementaryMaterialPropertyDouble( "PESA_Z" ) );
-            //this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyFunction( "SATU_PRES" ) );
-            //this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyFunction( "D_SATU_PRES" ) );
-            //this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyFunction( "PERM_LIQU" ) );
-            //this->addFunctionProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyFunction( "D_PERM_LIQU_SATU" ) );
-            //this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyFunction( "PERM_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyFunction( "D_PERM_SATU_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyFunction( "D_PERM_PRES_GAZ" ) );
-            //this->addDoubleProperty( "Vg_n", ElementaryMaterialPropertyDouble( "VG_N" ) );
-            //this->addDoubleProperty( "Vg_sr", ElementaryMaterialPropertyDouble( "VG_SR" ) );
-            //this->addDoubleProperty( "Vg_pr", ElementaryMaterialPropertyDouble( "VG_PR" ) );
-            //this->addDoubleProperty( "Vg_smax", ElementaryMaterialPropertyDouble( "VG_SMAX" ) );
-            //this->addDoubleProperty( "Vg_satur", ElementaryMaterialPropertyDouble( "VG_SATUR" ) );
-            //this->addFunctionProperty( "Fickv_t", ElementaryMaterialPropertyFunction( "FICKV_T" ) );
-            //this->addFunctionProperty( "Ficka_t", ElementaryMaterialPropertyFunction( "FICKA_T" ) );
-            //this->addFunctionProperty( "Pesa_mult", ElementaryMaterialPropertyFunction( "PESA_MULT" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Perm_in", ElementaryMaterialPropertyFunction( "PERM_IN" ) );
-            //this->addFunctionProperty( "Permin_l", ElementaryMaterialPropertyFunction( "PERMIN_L" ) );
-            //this->addFunctionProperty( "Permin_n", ElementaryMaterialPropertyFunction( "PERMIN_N" ) );
-            //this->addFunctionProperty( "Permin_t", ElementaryMaterialPropertyFunction( "PERMIN_T" ) );
-            //this->addFunctionProperty( "Perm_end", ElementaryMaterialPropertyFunction( "PERM_END" ) );
-            //this->addFunctionProperty( "Lamb_phi", ElementaryMaterialPropertyFunction( "LAMB_PHI" ) );
-            //this->addFunctionProperty( "D_lb_phi", ElementaryMaterialPropertyFunction( "D_LB_PHI" ) );
-            //this->addFunctionProperty( "Lamb_t", ElementaryMaterialPropertyFunction( "LAMB_T" ) );
-            //this->addFunctionProperty( "Lamb_tl", ElementaryMaterialPropertyFunction( "LAMB_TL" ) );
-            //this->addFunctionProperty( "Lamb_tn", ElementaryMaterialPropertyFunction( "LAMB_TN" ) );
-            //this->addFunctionProperty( "Lamb_tt", ElementaryMaterialPropertyFunction( "LAMB_TT" ) );
-            //this->addFunctionProperty( "D_lb_t", ElementaryMaterialPropertyFunction( "D_LB_T" ) );
-            //this->addFunctionProperty( "D_lb_tl", ElementaryMaterialPropertyFunction( "D_LB_TL" ) );
-            //this->addFunctionProperty( "D_lb_tn", ElementaryMaterialPropertyFunction( "D_LB_TN" ) );
-            //this->addFunctionProperty( "D_lb_tt", ElementaryMaterialPropertyFunction( "D_LB_TT" ) );
-            //this->addFunctionProperty( "Lamb_s", ElementaryMaterialPropertyFunction( "LAMB_S" ) );
-            //this->addFunctionProperty( "D_lb_s", ElementaryMaterialPropertyFunction( "D_LB_S" ) );
-            //this->addDoubleProperty( "Lamb_ct", ElementaryMaterialPropertyDouble( "LAMB_CT" ) );
-            //this->addDoubleProperty( "Lamb_c_l", ElementaryMaterialPropertyDouble( "LAMB_C_L" ) );
-            //this->addDoubleProperty( "Lamb_c_n", ElementaryMaterialPropertyDouble( "LAMB_C_N" ) );
-            //this->addDoubleProperty( "Lamb_c_t", ElementaryMaterialPropertyDouble( "LAMB_C_T" ) );
-            //this->addDoubleProperty( "Emmag", ElementaryMaterialPropertyDouble( "EMMAG" ) );
-            //this->addFunctionProperty( "Fickv_pv", ElementaryMaterialPropertyFunction( "FICKV_PV" ) );
-            //this->addFunctionProperty( "Fickv_pg", ElementaryMaterialPropertyFunction( "FICKV_PG" ) );
-            //this->addFunctionProperty( "Fickv_s", ElementaryMaterialPropertyFunction( "FICKV_S" ) );
-            //this->addFunctionProperty( "D_fv_t", ElementaryMaterialPropertyFunction( "D_FV_T" ) );
-            //this->addFunctionProperty( "D_fv_pg", ElementaryMaterialPropertyFunction( "D_FV_PG" ) );
-            //this->addFunctionProperty( "Ficka_pa", ElementaryMaterialPropertyFunction( "FICKA_PA" ) );
-            //this->addFunctionProperty( "Ficka_pl", ElementaryMaterialPropertyFunction( "FICKA_PL" ) );
-            //this->addFunctionProperty( "Ficka_s", ElementaryMaterialPropertyFunction( "FICKA_S" ) );
-            //this->addFunctionProperty( "D_fa_t", ElementaryMaterialPropertyFunction( "D_FA_T" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_diffu */
-//typedef boost::shared_ptr< Thm_diffuMaterialBehaviourInstance > Thm_diffuMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_liquMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_liqu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_liquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_liquMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_LIQU" dans Aster
-            //_asterName = "THM_LIQU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Un_sur_k", ElementaryMaterialPropertyDouble( "UN_SUR_K" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_liqu */
-//typedef boost::shared_ptr< Thm_liquMaterialBehaviourInstance > Thm_liquMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_GAZ" dans Aster
-            //_asterName = "THM_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_gaz */
-//typedef boost::shared_ptr< Thm_gazMaterialBehaviourInstance > Thm_gazMaterialBehaviourPtr;
-
-
-/////**
- //* @class Thm_vape_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_vape_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_vape_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_vape_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_VAPE_GAZ" dans Aster
-            //_asterName = "THM_VAPE_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_vape_gaz */
-//typedef boost::shared_ptr< Thm_vape_gazMaterialBehaviourInstance > Thm_vape_gazMaterialBehaviourPtr;
-
+/** @typedef Pointeur intelligent vers un comportement materiau ThmVapeGaz */
+typedef boost::shared_ptr< ThmVapeGazMaterialBehaviourInstance > ThmVapeGazMaterialBehaviourPtr;
 
 /**
- * @class Thm_air_dissMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_air_diss
+ * @class ThmAirDissMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ThmAirDiss
  * @author Jean-Pierre Lefebvre
  */
-class Thm_air_dissMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ThmAirDissMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Thm_air_dissMaterialBehaviourInstance()
+        ThmAirDissMaterialBehaviourInstance()
         {
             // Mot cle "THM_AIR_DISS" dans Aster
             _asterName = "THM_AIR_DISS";
@@ -5437,626 +4658,8 @@ class Thm_air_dissMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Thm_air_diss */
-typedef boost::shared_ptr< Thm_air_dissMaterialBehaviourInstance > Thm_air_dissMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_initMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_init
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_initMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_initMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_INIT" dans Aster
-            //_asterName = "THM_INIT";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Pre1", ElementaryMaterialPropertyDouble( "PRE1" ) );
-            //this->addDoubleProperty( "Pre2", ElementaryMaterialPropertyDouble( "PRE2" ) );
-            //this->addDoubleProperty( "Poro", ElementaryMaterialPropertyDouble( "PORO" ) );
-            //this->addDoubleProperty( "Pres_vape", ElementaryMaterialPropertyDouble( "PRES_VAPE" ) );
-            //this->addDoubleProperty( "Temp", ElementaryMaterialPropertyDouble( "TEMP" ) );
-            //this->addDoubleProperty( "Degr_satu", ElementaryMaterialPropertyDouble( "DEGR_SATU" ) );
-            //this->addDoubleProperty( "Comp_thm", ElementaryMaterialPropertyDouble( "COMP_THM" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_init */
-//typedef boost::shared_ptr< Thm_initMaterialBehaviourInstance > Thm_initMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_diffuMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_diffu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_diffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_diffuMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_DIFFU" dans Aster
-            //_asterName = "THM_DIFFU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "R_gaz", ElementaryMaterialPropertyDouble( "R_GAZ" ) );
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Biot_coef", ElementaryMaterialPropertyDouble( "BIOT_COEF" ) );
-            //this->addDoubleProperty( "Biot_l", ElementaryMaterialPropertyDouble( "BIOT_L" ) );
-            //this->addDoubleProperty( "Biot_n", ElementaryMaterialPropertyDouble( "BIOT_N" ) );
-            //this->addDoubleProperty( "Biot_t", ElementaryMaterialPropertyDouble( "BIOT_T" ) );
-            //this->addDoubleProperty( "Pesa_x", ElementaryMaterialPropertyDouble( "PESA_X" ) );
-            //this->addDoubleProperty( "Pesa_y", ElementaryMaterialPropertyDouble( "PESA_Y" ) );
-            //this->addDoubleProperty( "Pesa_z", ElementaryMaterialPropertyDouble( "PESA_Z" ) );
-            //this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyFunction( "SATU_PRES" ) );
-            //this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyFunction( "D_SATU_PRES" ) );
-            //this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyFunction( "PERM_LIQU" ) );
-            //this->addFunctionProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyFunction( "D_PERM_LIQU_SATU" ) );
-            //this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyFunction( "PERM_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyFunction( "D_PERM_SATU_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyFunction( "D_PERM_PRES_GAZ" ) );
-            //this->addDoubleProperty( "Vg_n", ElementaryMaterialPropertyDouble( "VG_N" ) );
-            //this->addDoubleProperty( "Vg_sr", ElementaryMaterialPropertyDouble( "VG_SR" ) );
-            //this->addDoubleProperty( "Vg_pr", ElementaryMaterialPropertyDouble( "VG_PR" ) );
-            //this->addDoubleProperty( "Vg_smax", ElementaryMaterialPropertyDouble( "VG_SMAX" ) );
-            //this->addDoubleProperty( "Vg_satur", ElementaryMaterialPropertyDouble( "VG_SATUR" ) );
-            //this->addFunctionProperty( "Fickv_t", ElementaryMaterialPropertyFunction( "FICKV_T" ) );
-            //this->addFunctionProperty( "Pesa_mult", ElementaryMaterialPropertyFunction( "PESA_MULT" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Perm_in", ElementaryMaterialPropertyFunction( "PERM_IN" ) );
-            //this->addFunctionProperty( "Permin_l", ElementaryMaterialPropertyFunction( "PERMIN_L" ) );
-            //this->addFunctionProperty( "Permin_n", ElementaryMaterialPropertyFunction( "PERMIN_N" ) );
-            //this->addFunctionProperty( "Permin_t", ElementaryMaterialPropertyFunction( "PERMIN_T" ) );
-            //this->addFunctionProperty( "Perm_end", ElementaryMaterialPropertyFunction( "PERM_END" ) );
-            //this->addFunctionProperty( "Lamb_phi", ElementaryMaterialPropertyFunction( "LAMB_PHI" ) );
-            //this->addFunctionProperty( "D_lb_phi", ElementaryMaterialPropertyFunction( "D_LB_PHI" ) );
-            //this->addFunctionProperty( "Lamb_t", ElementaryMaterialPropertyFunction( "LAMB_T" ) );
-            //this->addFunctionProperty( "Lamb_tl", ElementaryMaterialPropertyFunction( "LAMB_TL" ) );
-            //this->addFunctionProperty( "Lamb_tn", ElementaryMaterialPropertyFunction( "LAMB_TN" ) );
-            //this->addFunctionProperty( "Lamb_tt", ElementaryMaterialPropertyFunction( "LAMB_TT" ) );
-            //this->addFunctionProperty( "D_lb_t", ElementaryMaterialPropertyFunction( "D_LB_T" ) );
-            //this->addFunctionProperty( "D_lb_tl", ElementaryMaterialPropertyFunction( "D_LB_TL" ) );
-            //this->addFunctionProperty( "D_lb_tn", ElementaryMaterialPropertyFunction( "D_LB_TN" ) );
-            //this->addFunctionProperty( "D_lb_tt", ElementaryMaterialPropertyFunction( "D_LB_TT" ) );
-            //this->addFunctionProperty( "Lamb_s", ElementaryMaterialPropertyFunction( "LAMB_S" ) );
-            //this->addFunctionProperty( "D_lb_s", ElementaryMaterialPropertyFunction( "D_LB_S" ) );
-            //this->addDoubleProperty( "Lamb_ct", ElementaryMaterialPropertyDouble( "LAMB_CT" ) );
-            //this->addDoubleProperty( "Lamb_c_l", ElementaryMaterialPropertyDouble( "LAMB_C_L" ) );
-            //this->addDoubleProperty( "Lamb_c_n", ElementaryMaterialPropertyDouble( "LAMB_C_N" ) );
-            //this->addDoubleProperty( "Lamb_c_t", ElementaryMaterialPropertyDouble( "LAMB_C_T" ) );
-            //this->addDoubleProperty( "Emmag", ElementaryMaterialPropertyDouble( "EMMAG" ) );
-            //this->addFunctionProperty( "Fickv_pv", ElementaryMaterialPropertyFunction( "FICKV_PV" ) );
-            //this->addFunctionProperty( "Fickv_pg", ElementaryMaterialPropertyFunction( "FICKV_PG" ) );
-            //this->addFunctionProperty( "Fickv_s", ElementaryMaterialPropertyFunction( "FICKV_S" ) );
-            //this->addFunctionProperty( "D_fv_t", ElementaryMaterialPropertyFunction( "D_FV_T" ) );
-            //this->addFunctionProperty( "D_fv_pg", ElementaryMaterialPropertyFunction( "D_FV_PG" ) );
-            //this->addFunctionProperty( "Ficka_t", ElementaryMaterialPropertyFunction( "FICKA_T" ) );
-            //this->addFunctionProperty( "Ficka_pa", ElementaryMaterialPropertyFunction( "FICKA_PA" ) );
-            //this->addFunctionProperty( "Ficka_pl", ElementaryMaterialPropertyFunction( "FICKA_PL" ) );
-            //this->addFunctionProperty( "Ficka_s", ElementaryMaterialPropertyFunction( "FICKA_S" ) );
-            //this->addFunctionProperty( "D_fa_t", ElementaryMaterialPropertyFunction( "D_FA_T" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_diffu */
-//typedef boost::shared_ptr< Thm_diffuMaterialBehaviourInstance > Thm_diffuMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_liquMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_liqu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_liquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_liquMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_LIQU" dans Aster
-            //_asterName = "THM_LIQU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Un_sur_k", ElementaryMaterialPropertyDouble( "UN_SUR_K" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_liqu */
-//typedef boost::shared_ptr< Thm_liquMaterialBehaviourInstance > Thm_liquMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_GAZ" dans Aster
-            //_asterName = "THM_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_gaz */
-//typedef boost::shared_ptr< Thm_gazMaterialBehaviourInstance > Thm_gazMaterialBehaviourPtr;
-
-
-/////**
- //* @class Thm_vape_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_vape_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_vape_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_vape_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_VAPE_GAZ" dans Aster
-            //_asterName = "THM_VAPE_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_vape_gaz */
-//typedef boost::shared_ptr< Thm_vape_gazMaterialBehaviourInstance > Thm_vape_gazMaterialBehaviourPtr;
-
-
-/////**
- //* @class Thm_initMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_init
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_initMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_initMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_INIT" dans Aster
-            //_asterName = "THM_INIT";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Pre1", ElementaryMaterialPropertyDouble( "PRE1" ) );
-            //this->addDoubleProperty( "Pre2", ElementaryMaterialPropertyDouble( "PRE2" ) );
-            //this->addDoubleProperty( "Poro", ElementaryMaterialPropertyDouble( "PORO" ) );
-            //this->addDoubleProperty( "Pres_vape", ElementaryMaterialPropertyDouble( "PRES_VAPE" ) );
-            //this->addDoubleProperty( "Temp", ElementaryMaterialPropertyDouble( "TEMP" ) );
-            //this->addDoubleProperty( "Degr_satu", ElementaryMaterialPropertyDouble( "DEGR_SATU" ) );
-            //this->addDoubleProperty( "Comp_thm", ElementaryMaterialPropertyDouble( "COMP_THM" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_init */
-//typedef boost::shared_ptr< Thm_initMaterialBehaviourInstance > Thm_initMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_diffuMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_diffu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_diffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_diffuMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_DIFFU" dans Aster
-            //_asterName = "THM_DIFFU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "R_gaz", ElementaryMaterialPropertyDouble( "R_GAZ" ) );
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Biot_coef", ElementaryMaterialPropertyDouble( "BIOT_COEF" ) );
-            //this->addDoubleProperty( "Biot_l", ElementaryMaterialPropertyDouble( "BIOT_L" ) );
-            //this->addDoubleProperty( "Biot_n", ElementaryMaterialPropertyDouble( "BIOT_N" ) );
-            //this->addDoubleProperty( "Biot_t", ElementaryMaterialPropertyDouble( "BIOT_T" ) );
-            //this->addDoubleProperty( "Pesa_x", ElementaryMaterialPropertyDouble( "PESA_X" ) );
-            //this->addDoubleProperty( "Pesa_y", ElementaryMaterialPropertyDouble( "PESA_Y" ) );
-            //this->addDoubleProperty( "Pesa_z", ElementaryMaterialPropertyDouble( "PESA_Z" ) );
-            //this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyFunction( "SATU_PRES" ) );
-            //this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyFunction( "D_SATU_PRES" ) );
-            //this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyFunction( "PERM_LIQU" ) );
-            //this->addFunctionProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyFunction( "D_PERM_LIQU_SATU" ) );
-            //this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyFunction( "PERM_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyFunction( "D_PERM_SATU_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyFunction( "D_PERM_PRES_GAZ" ) );
-            //this->addDoubleProperty( "Vg_n", ElementaryMaterialPropertyDouble( "VG_N" ) );
-            //this->addDoubleProperty( "Vg_sr", ElementaryMaterialPropertyDouble( "VG_SR" ) );
-            //this->addDoubleProperty( "Vg_pr", ElementaryMaterialPropertyDouble( "VG_PR" ) );
-            //this->addDoubleProperty( "Vg_smax", ElementaryMaterialPropertyDouble( "VG_SMAX" ) );
-            //this->addDoubleProperty( "Vg_satur", ElementaryMaterialPropertyDouble( "VG_SATUR" ) );
-            //this->addFunctionProperty( "Fickv_t", ElementaryMaterialPropertyFunction( "FICKV_T" ) );
-            //this->addFunctionProperty( "Ficka_t", ElementaryMaterialPropertyFunction( "FICKA_T" ) );
-            //this->addFunctionProperty( "Pesa_mult", ElementaryMaterialPropertyFunction( "PESA_MULT" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Perm_in", ElementaryMaterialPropertyFunction( "PERM_IN" ) );
-            //this->addFunctionProperty( "Permin_l", ElementaryMaterialPropertyFunction( "PERMIN_L" ) );
-            //this->addFunctionProperty( "Permin_n", ElementaryMaterialPropertyFunction( "PERMIN_N" ) );
-            //this->addFunctionProperty( "Permin_t", ElementaryMaterialPropertyFunction( "PERMIN_T" ) );
-            //this->addFunctionProperty( "Perm_end", ElementaryMaterialPropertyFunction( "PERM_END" ) );
-            //this->addFunctionProperty( "Lamb_phi", ElementaryMaterialPropertyFunction( "LAMB_PHI" ) );
-            //this->addFunctionProperty( "D_lb_phi", ElementaryMaterialPropertyFunction( "D_LB_PHI" ) );
-            //this->addFunctionProperty( "Lamb_t", ElementaryMaterialPropertyFunction( "LAMB_T" ) );
-            //this->addFunctionProperty( "Lamb_tl", ElementaryMaterialPropertyFunction( "LAMB_TL" ) );
-            //this->addFunctionProperty( "Lamb_tn", ElementaryMaterialPropertyFunction( "LAMB_TN" ) );
-            //this->addFunctionProperty( "Lamb_tt", ElementaryMaterialPropertyFunction( "LAMB_TT" ) );
-            //this->addFunctionProperty( "D_lb_t", ElementaryMaterialPropertyFunction( "D_LB_T" ) );
-            //this->addFunctionProperty( "D_lb_tl", ElementaryMaterialPropertyFunction( "D_LB_TL" ) );
-            //this->addFunctionProperty( "D_lb_tn", ElementaryMaterialPropertyFunction( "D_LB_TN" ) );
-            //this->addFunctionProperty( "D_lb_tt", ElementaryMaterialPropertyFunction( "D_LB_TT" ) );
-            //this->addFunctionProperty( "Lamb_s", ElementaryMaterialPropertyFunction( "LAMB_S" ) );
-            //this->addFunctionProperty( "D_lb_s", ElementaryMaterialPropertyFunction( "D_LB_S" ) );
-            //this->addDoubleProperty( "Lamb_ct", ElementaryMaterialPropertyDouble( "LAMB_CT" ) );
-            //this->addDoubleProperty( "Lamb_c_l", ElementaryMaterialPropertyDouble( "LAMB_C_L" ) );
-            //this->addDoubleProperty( "Lamb_c_n", ElementaryMaterialPropertyDouble( "LAMB_C_N" ) );
-            //this->addDoubleProperty( "Lamb_c_t", ElementaryMaterialPropertyDouble( "LAMB_C_T" ) );
-            //this->addDoubleProperty( "Emmag", ElementaryMaterialPropertyDouble( "EMMAG" ) );
-            //this->addFunctionProperty( "Fickv_pv", ElementaryMaterialPropertyFunction( "FICKV_PV" ) );
-            //this->addFunctionProperty( "Fickv_pg", ElementaryMaterialPropertyFunction( "FICKV_PG" ) );
-            //this->addFunctionProperty( "Fickv_s", ElementaryMaterialPropertyFunction( "FICKV_S" ) );
-            //this->addFunctionProperty( "D_fv_t", ElementaryMaterialPropertyFunction( "D_FV_T" ) );
-            //this->addFunctionProperty( "D_fv_pg", ElementaryMaterialPropertyFunction( "D_FV_PG" ) );
-            //this->addFunctionProperty( "Ficka_pa", ElementaryMaterialPropertyFunction( "FICKA_PA" ) );
-            //this->addFunctionProperty( "Ficka_pl", ElementaryMaterialPropertyFunction( "FICKA_PL" ) );
-            //this->addFunctionProperty( "Ficka_s", ElementaryMaterialPropertyFunction( "FICKA_S" ) );
-            //this->addFunctionProperty( "D_fa_t", ElementaryMaterialPropertyFunction( "D_FA_T" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_diffu */
-//typedef boost::shared_ptr< Thm_diffuMaterialBehaviourInstance > Thm_diffuMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_liquMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_liqu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_liquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_liquMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_LIQU" dans Aster
-            //_asterName = "THM_LIQU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Un_sur_k", ElementaryMaterialPropertyDouble( "UN_SUR_K" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_liqu */
-//typedef boost::shared_ptr< Thm_liquMaterialBehaviourInstance > Thm_liquMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_GAZ" dans Aster
-            //_asterName = "THM_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_gaz */
-//typedef boost::shared_ptr< Thm_gazMaterialBehaviourInstance > Thm_gazMaterialBehaviourPtr;
-
-
-/////**
- //* @class Thm_vape_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_vape_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_vape_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_vape_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_VAPE_GAZ" dans Aster
-            //_asterName = "THM_VAPE_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_vape_gaz */
-//typedef boost::shared_ptr< Thm_vape_gazMaterialBehaviourInstance > Thm_vape_gazMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_air_dissMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_air_diss
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_air_dissMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_air_dissMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_AIR_DISS" dans Aster
-            //_asterName = "THM_AIR_DISS";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Coef_henry", ElementaryMaterialPropertyFunction( "COEF_HENRY" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_air_diss */
-//typedef boost::shared_ptr< Thm_air_dissMaterialBehaviourInstance > Thm_air_dissMaterialBehaviourPtr;
-
-
-/////**
- //* @class Thm_initMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_init
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_initMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_initMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_INIT" dans Aster
-            //_asterName = "THM_INIT";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Pre1", ElementaryMaterialPropertyDouble( "PRE1" ) );
-            //this->addDoubleProperty( "Poro", ElementaryMaterialPropertyDouble( "PORO" ) );
-            //this->addDoubleProperty( "Pres_vape", ElementaryMaterialPropertyDouble( "PRES_VAPE" ) );
-            //this->addDoubleProperty( "Temp", ElementaryMaterialPropertyDouble( "TEMP" ) );
-            //this->addDoubleProperty( "Pre2", ElementaryMaterialPropertyDouble( "PRE2" ) );
-            //this->addDoubleProperty( "Degr_satu", ElementaryMaterialPropertyDouble( "DEGR_SATU" ) );
-            //this->addDoubleProperty( "Comp_thm", ElementaryMaterialPropertyDouble( "COMP_THM" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_init */
-//typedef boost::shared_ptr< Thm_initMaterialBehaviourInstance > Thm_initMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_diffuMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_diffu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_diffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_diffuMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_DIFFU" dans Aster
-            //_asterName = "THM_DIFFU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "R_gaz", ElementaryMaterialPropertyDouble( "R_GAZ" ) );
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Biot_coef", ElementaryMaterialPropertyDouble( "BIOT_COEF" ) );
-            //this->addDoubleProperty( "Biot_l", ElementaryMaterialPropertyDouble( "BIOT_L" ) );
-            //this->addDoubleProperty( "Biot_n", ElementaryMaterialPropertyDouble( "BIOT_N" ) );
-            //this->addDoubleProperty( "Biot_t", ElementaryMaterialPropertyDouble( "BIOT_T" ) );
-            //this->addDoubleProperty( "Pesa_x", ElementaryMaterialPropertyDouble( "PESA_X" ) );
-            //this->addDoubleProperty( "Pesa_y", ElementaryMaterialPropertyDouble( "PESA_Y" ) );
-            //this->addDoubleProperty( "Pesa_z", ElementaryMaterialPropertyDouble( "PESA_Z" ) );
-            //this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyFunction( "SATU_PRES" ) );
-            //this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyFunction( "D_SATU_PRES" ) );
-            //this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyFunction( "PERM_LIQU" ) );
-            //this->addFunctionProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyFunction( "D_PERM_LIQU_SATU" ) );
-            //this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyFunction( "PERM_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyFunction( "D_PERM_SATU_GAZ" ) );
-            //this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyFunction( "D_PERM_PRES_GAZ" ) );
-            //this->addDoubleProperty( "Vg_n", ElementaryMaterialPropertyDouble( "VG_N" ) );
-            //this->addDoubleProperty( "Vg_sr", ElementaryMaterialPropertyDouble( "VG_SR" ) );
-            //this->addDoubleProperty( "Vg_pr", ElementaryMaterialPropertyDouble( "VG_PR" ) );
-            //this->addDoubleProperty( "Vg_smax", ElementaryMaterialPropertyDouble( "VG_SMAX" ) );
-            //this->addDoubleProperty( "Vg_satur", ElementaryMaterialPropertyDouble( "VG_SATUR" ) );
-            //this->addFunctionProperty( "Pesa_mult", ElementaryMaterialPropertyFunction( "PESA_MULT" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Perm_in", ElementaryMaterialPropertyFunction( "PERM_IN" ) );
-            //this->addFunctionProperty( "Permin_l", ElementaryMaterialPropertyFunction( "PERMIN_L" ) );
-            //this->addFunctionProperty( "Permin_n", ElementaryMaterialPropertyFunction( "PERMIN_N" ) );
-            //this->addFunctionProperty( "Permin_t", ElementaryMaterialPropertyFunction( "PERMIN_T" ) );
-            //this->addFunctionProperty( "Perm_end", ElementaryMaterialPropertyFunction( "PERM_END" ) );
-            //this->addFunctionProperty( "Lamb_phi", ElementaryMaterialPropertyFunction( "LAMB_PHI" ) );
-            //this->addFunctionProperty( "D_lb_phi", ElementaryMaterialPropertyFunction( "D_LB_PHI" ) );
-            //this->addFunctionProperty( "Lamb_t", ElementaryMaterialPropertyFunction( "LAMB_T" ) );
-            //this->addFunctionProperty( "Lamb_tl", ElementaryMaterialPropertyFunction( "LAMB_TL" ) );
-            //this->addFunctionProperty( "Lamb_tn", ElementaryMaterialPropertyFunction( "LAMB_TN" ) );
-            //this->addFunctionProperty( "Lamb_tt", ElementaryMaterialPropertyFunction( "LAMB_TT" ) );
-            //this->addFunctionProperty( "D_lb_t", ElementaryMaterialPropertyFunction( "D_LB_T" ) );
-            //this->addFunctionProperty( "D_lb_tl", ElementaryMaterialPropertyFunction( "D_LB_TL" ) );
-            //this->addFunctionProperty( "D_lb_tn", ElementaryMaterialPropertyFunction( "D_LB_TN" ) );
-            //this->addFunctionProperty( "D_lb_tt", ElementaryMaterialPropertyFunction( "D_LB_TT" ) );
-            //this->addFunctionProperty( "Lamb_s", ElementaryMaterialPropertyFunction( "LAMB_S" ) );
-            //this->addFunctionProperty( "D_lb_s", ElementaryMaterialPropertyFunction( "D_LB_S" ) );
-            //this->addDoubleProperty( "Lamb_ct", ElementaryMaterialPropertyDouble( "LAMB_CT" ) );
-            //this->addDoubleProperty( "Lamb_c_l", ElementaryMaterialPropertyDouble( "LAMB_C_L" ) );
-            //this->addDoubleProperty( "Lamb_c_n", ElementaryMaterialPropertyDouble( "LAMB_C_N" ) );
-            //this->addDoubleProperty( "Lamb_c_t", ElementaryMaterialPropertyDouble( "LAMB_C_T" ) );
-            //this->addDoubleProperty( "Emmag", ElementaryMaterialPropertyDouble( "EMMAG" ) );
-            //this->addFunctionProperty( "Fickv_t", ElementaryMaterialPropertyFunction( "FICKV_T" ) );
-            //this->addFunctionProperty( "Fickv_pv", ElementaryMaterialPropertyFunction( "FICKV_PV" ) );
-            //this->addFunctionProperty( "Fickv_pg", ElementaryMaterialPropertyFunction( "FICKV_PG" ) );
-            //this->addFunctionProperty( "Fickv_s", ElementaryMaterialPropertyFunction( "FICKV_S" ) );
-            //this->addFunctionProperty( "D_fv_t", ElementaryMaterialPropertyFunction( "D_FV_T" ) );
-            //this->addFunctionProperty( "D_fv_pg", ElementaryMaterialPropertyFunction( "D_FV_PG" ) );
-            //this->addFunctionProperty( "Ficka_t", ElementaryMaterialPropertyFunction( "FICKA_T" ) );
-            //this->addFunctionProperty( "Ficka_pa", ElementaryMaterialPropertyFunction( "FICKA_PA" ) );
-            //this->addFunctionProperty( "Ficka_pl", ElementaryMaterialPropertyFunction( "FICKA_PL" ) );
-            //this->addFunctionProperty( "Ficka_s", ElementaryMaterialPropertyFunction( "FICKA_S" ) );
-            //this->addFunctionProperty( "D_fa_t", ElementaryMaterialPropertyFunction( "D_FA_T" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_diffu */
-//typedef boost::shared_ptr< Thm_diffuMaterialBehaviourInstance > Thm_diffuMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_liquMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_liqu
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_liquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_liquMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_LIQU" dans Aster
-            //_asterName = "THM_LIQU";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
-            //this->addDoubleProperty( "Un_sur_k", ElementaryMaterialPropertyDouble( "UN_SUR_K" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-            //this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_liqu */
-//typedef boost::shared_ptr< Thm_liquMaterialBehaviourInstance > Thm_liquMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_vape_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_vape_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_vape_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_vape_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_VAPE_GAZ" dans Aster
-            //_asterName = "THM_VAPE_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_vape_gaz */
-//typedef boost::shared_ptr< Thm_vape_gazMaterialBehaviourInstance > Thm_vape_gazMaterialBehaviourPtr;
-
-
-///**
- //* @class Thm_gazMaterialBehaviourInstance
- //* @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_gaz
- //* @author Jean-Pierre Lefebvre
- //*/
-//class Thm_gazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-//{
-    //public:
-        ///**
-         //* @brief Constructeur 
-         //*/
-        //Thm_gazMaterialBehaviourInstance()
-        //{
-            //// Mot cle "THM_GAZ" dans Aster
-            //_asterName = "THM_GAZ";
-
-            //// Parametres matériau
-            //this->addDoubleProperty( "Mass_mol", ElementaryMaterialPropertyDouble( "MASS_MOL" ) );
-            //this->addDoubleProperty( "Cp", ElementaryMaterialPropertyDouble( "CP" ) );
-            //this->addFunctionProperty( "Visc", ElementaryMaterialPropertyFunction( "VISC" ) );
-            //this->addFunctionProperty( "D_visc_temp", ElementaryMaterialPropertyFunction( "D_VISC_TEMP" ) );
-        //};
-//};
-
-///** @typedef Pointeur intelligent vers un comportement materiau Thm_gaz */
-//typedef boost::shared_ptr< Thm_gazMaterialBehaviourInstance > Thm_gazMaterialBehaviourPtr;
-
+/** @typedef Pointeur intelligent vers un comportement materiau ThmAirDiss */
+typedef boost::shared_ptr< ThmAirDissMaterialBehaviourInstance > ThmAirDissMaterialBehaviourPtr;
 
 /**
  * @class FatigueMaterialBehaviourInstance
@@ -6095,17 +4698,17 @@ typedef boost::shared_ptr< FatigueMaterialBehaviourInstance > FatigueMaterialBeh
 
 
 /**
- * @class Domma_lemaitreMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Domma_lemaitre
+ * @class DommaLemaitreMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DommaLemaitre
  * @author Jean-Pierre Lefebvre
  */
-class Domma_lemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class DommaLemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Domma_lemaitreMaterialBehaviourInstance()
+        DommaLemaitreMaterialBehaviourInstance()
         {
             // Mot cle "DOMMA_LEMAITRE" dans Aster
             _asterName = "DOMMA_LEMAITRE";
@@ -6117,22 +4720,22 @@ class Domma_lemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Domma_lemaitre */
-typedef boost::shared_ptr< Domma_lemaitreMaterialBehaviourInstance > Domma_lemaitreMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau DommaLemaitre */
+typedef boost::shared_ptr< DommaLemaitreMaterialBehaviourInstance > DommaLemaitreMaterialBehaviourPtr;
 
 
 /**
- * @class Cisa_plan_critMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Cisa_plan_crit
+ * @class CisaPlanCritMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau CisaPlanCrit
  * @author Jean-Pierre Lefebvre
  */
-class Cisa_plan_critMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class CisaPlanCritMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Cisa_plan_critMaterialBehaviourInstance()
+        CisaPlanCritMaterialBehaviourInstance()
         {
             // Mot cle "CISA_PLAN_CRIT" dans Aster
             _asterName = "CISA_PLAN_CRIT";
@@ -6150,22 +4753,22 @@ class Cisa_plan_critMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Cisa_plan_crit */
-typedef boost::shared_ptr< Cisa_plan_critMaterialBehaviourInstance > Cisa_plan_critMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau CisaPlanCrit */
+typedef boost::shared_ptr< CisaPlanCritMaterialBehaviourInstance > CisaPlanCritMaterialBehaviourPtr;
 
 
 /**
- * @class Thm_ruptMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Thm_rupt
+ * @class ThmRuptMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ThmRupt
  * @author Jean-Pierre Lefebvre
  */
-class Thm_ruptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ThmRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Thm_ruptMaterialBehaviourInstance()
+        ThmRuptMaterialBehaviourInstance()
         {
             // Mot cle "THM_RUPT" dans Aster
             _asterName = "THM_RUPT";
@@ -6176,8 +4779,8 @@ class Thm_ruptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Thm_rupt */
-typedef boost::shared_ptr< Thm_ruptMaterialBehaviourInstance > Thm_ruptMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ThmRupt */
+typedef boost::shared_ptr< ThmRuptMaterialBehaviourInstance > ThmRuptMaterialBehaviourPtr;
 
 
 /**
@@ -6209,17 +4812,17 @@ typedef boost::shared_ptr< WeibullMaterialBehaviourInstance > WeibullMaterialBeh
 
 
 /**
- * @class Weibull_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Weibull_fo
+ * @class WeibullFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau WeibullFo
  * @author Jean-Pierre Lefebvre
  */
-class Weibull_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class WeibullFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Weibull_foMaterialBehaviourInstance()
+        WeibullFoMaterialBehaviourInstance()
         {
             // Mot cle "WEIBULL_FO" dans Aster
             _asterName = "WEIBULL_FO";
@@ -6233,22 +4836,22 @@ class Weibull_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Weibull_fo */
-typedef boost::shared_ptr< Weibull_foMaterialBehaviourInstance > Weibull_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau WeibullFo */
+typedef boost::shared_ptr< WeibullFoMaterialBehaviourInstance > WeibullFoMaterialBehaviourPtr;
 
 
 /**
- * @class Non_localMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Non_local
+ * @class NonLocalMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau NonLocal
  * @author Jean-Pierre Lefebvre
  */
-class Non_localMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class NonLocalMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Non_localMaterialBehaviourInstance()
+        NonLocalMaterialBehaviourInstance()
         {
             // Mot cle "NON_LOCAL" dans Aster
             _asterName = "NON_LOCAL";
@@ -6262,22 +4865,22 @@ class Non_localMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Non_local */
-typedef boost::shared_ptr< Non_localMaterialBehaviourInstance > Non_localMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau NonLocal */
+typedef boost::shared_ptr< NonLocalMaterialBehaviourInstance > NonLocalMaterialBehaviourPtr;
 
 
 /**
- * @class Rupt_fragMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Rupt_frag
+ * @class RuptFragMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau RuptFrag
  * @author Jean-Pierre Lefebvre
  */
-class Rupt_fragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class RuptFragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Rupt_fragMaterialBehaviourInstance()
+        RuptFragMaterialBehaviourInstance()
         {
             // Mot cle "RUPT_FRAG" dans Aster
             _asterName = "RUPT_FRAG";
@@ -6293,22 +4896,22 @@ class Rupt_fragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Rupt_frag */
-typedef boost::shared_ptr< Rupt_fragMaterialBehaviourInstance > Rupt_fragMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau RuptFrag */
+typedef boost::shared_ptr< RuptFragMaterialBehaviourInstance > RuptFragMaterialBehaviourPtr;
 
 
 /**
- * @class Rupt_frag_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Rupt_frag_fo
+ * @class RuptFragFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau RuptFragFo
  * @author Jean-Pierre Lefebvre
  */
-class Rupt_frag_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class RuptFragFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Rupt_frag_foMaterialBehaviourInstance()
+        RuptFragFoMaterialBehaviourInstance()
         {
             // Mot cle "RUPT_FRAG_FO" dans Aster
             _asterName = "RUPT_FRAG_FO";
@@ -6324,22 +4927,22 @@ class Rupt_frag_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Rupt_frag_fo */
-typedef boost::shared_ptr< Rupt_frag_foMaterialBehaviourInstance > Rupt_frag_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau RuptFragFo */
+typedef boost::shared_ptr< RuptFragFoMaterialBehaviourInstance > RuptFragFoMaterialBehaviourPtr;
 
 
 /**
- * @class Czm_lab_mixMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Czm_lab_mix
+ * @class CzmLabMixMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau CzmLabMix
  * @author Jean-Pierre Lefebvre
  */
-class Czm_lab_mixMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class CzmLabMixMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Czm_lab_mixMaterialBehaviourInstance()
+        CzmLabMixMaterialBehaviourInstance()
         {
             // Mot cle "CZM_LAB_MIX" dans Aster
             _asterName = "CZM_LAB_MIX";
@@ -6354,22 +4957,22 @@ class Czm_lab_mixMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Czm_lab_mix */
-typedef boost::shared_ptr< Czm_lab_mixMaterialBehaviourInstance > Czm_lab_mixMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau CzmLabMix */
+typedef boost::shared_ptr< CzmLabMixMaterialBehaviourInstance > CzmLabMixMaterialBehaviourPtr;
 
 
 /**
- * @class Rupt_ductMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Rupt_duct
+ * @class RuptDuctMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau RuptDuct
  * @author Jean-Pierre Lefebvre
  */
-class Rupt_ductMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class RuptDuctMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Rupt_ductMaterialBehaviourInstance()
+        RuptDuctMaterialBehaviourInstance()
         {
             // Mot cle "RUPT_DUCT" dans Aster
             _asterName = "RUPT_DUCT";
@@ -6384,22 +4987,22 @@ class Rupt_ductMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Rupt_duct */
-typedef boost::shared_ptr< Rupt_ductMaterialBehaviourInstance > Rupt_ductMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau RuptDuct */
+typedef boost::shared_ptr< RuptDuctMaterialBehaviourInstance > RuptDuctMaterialBehaviourPtr;
 
 
 /**
- * @class Joint_meca_ruptMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Joint_meca_rupt
+ * @class JointMecaRuptMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau JointMecaRupt
  * @author Jean-Pierre Lefebvre
  */
-class Joint_meca_ruptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class JointMecaRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Joint_meca_ruptMaterialBehaviourInstance()
+        JointMecaRuptMaterialBehaviourInstance()
         {
             // Mot cle "JOINT_MECA_RUPT" dans Aster
             _asterName = "JOINT_MECA_RUPT";
@@ -6420,22 +5023,22 @@ class Joint_meca_ruptMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Joint_meca_rupt */
-typedef boost::shared_ptr< Joint_meca_ruptMaterialBehaviourInstance > Joint_meca_ruptMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau JointMecaRupt */
+typedef boost::shared_ptr< JointMecaRuptMaterialBehaviourInstance > JointMecaRuptMaterialBehaviourPtr;
 
 
 /**
- * @class Joint_meca_frotMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Joint_meca_frot
+ * @class JointMecaFrotMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau JointMecaFrot
  * @author Jean-Pierre Lefebvre
  */
-class Joint_meca_frotMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class JointMecaFrotMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Joint_meca_frotMaterialBehaviourInstance()
+        JointMecaFrotMaterialBehaviourInstance()
         {
             // Mot cle "JOINT_MECA_FROT" dans Aster
             _asterName = "JOINT_MECA_FROT";
@@ -6457,8 +5060,8 @@ class Joint_meca_frotMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Joint_meca_frot */
-typedef boost::shared_ptr< Joint_meca_frotMaterialBehaviourInstance > Joint_meca_frotMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau JointMecaFrot */
+typedef boost::shared_ptr< JointMecaFrotMaterialBehaviourInstance > JointMecaFrotMaterialBehaviourPtr;
 
 
 /**
@@ -6497,17 +5100,17 @@ typedef boost::shared_ptr< RccmMaterialBehaviourInstance > RccmMaterialBehaviour
 
 
 /**
- * @class Rccm_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Rccm_fo
+ * @class RccmFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau RccmFo
  * @author Jean-Pierre Lefebvre
  */
-class Rccm_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class RccmFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Rccm_foMaterialBehaviourInstance()
+        RccmFoMaterialBehaviourInstance()
         {
             // Mot cle "RCCM_FO" dans Aster
             _asterName = "RCCM_FO";
@@ -6526,8 +5129,8 @@ class Rccm_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Rccm_fo */
-typedef boost::shared_ptr< Rccm_foMaterialBehaviourInstance > Rccm_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau RccmFo */
+typedef boost::shared_ptr< RccmFoMaterialBehaviourInstance > RccmFoMaterialBehaviourPtr;
 
 
 /**
@@ -6620,17 +5223,17 @@ typedef boost::shared_ptr< LetkMaterialBehaviourInstance > LetkMaterialBehaviour
 
 
 /**
- * @class Druck_pragerMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Druck_prager
+ * @class DruckPragerMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DruckPrager
  * @author Jean-Pierre Lefebvre
  */
-class Druck_pragerMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class DruckPragerMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Druck_pragerMaterialBehaviourInstance()
+        DruckPragerMaterialBehaviourInstance()
         {
             // Mot cle "DRUCK_PRAGER" dans Aster
             _asterName = "DRUCK_PRAGER";
@@ -6648,22 +5251,22 @@ class Druck_pragerMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Druck_prager */
-typedef boost::shared_ptr< Druck_pragerMaterialBehaviourInstance > Druck_pragerMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau DruckPrager */
+typedef boost::shared_ptr< DruckPragerMaterialBehaviourInstance > DruckPragerMaterialBehaviourPtr;
 
 
 /**
- * @class Druck_prager_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Druck_prager_fo
+ * @class DruckPragerFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DruckPragerFo
  * @author Jean-Pierre Lefebvre
  */
-class Druck_prager_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class DruckPragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Druck_prager_foMaterialBehaviourInstance()
+        DruckPragerFoMaterialBehaviourInstance()
         {
             // Mot cle "DRUCK_PRAGER_FO" dans Aster
             _asterName = "DRUCK_PRAGER_FO";
@@ -6681,22 +5284,22 @@ class Druck_prager_foMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Druck_prager_fo */
-typedef boost::shared_ptr< Druck_prager_foMaterialBehaviourInstance > Druck_prager_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau DruckPragerFo */
+typedef boost::shared_ptr< DruckPragerFoMaterialBehaviourInstance > DruckPragerFoMaterialBehaviourPtr;
 
 
 /**
- * @class Visc_druc_pragMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Visc_druc_prag
+ * @class ViscDrucPragMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ViscDrucPrag
  * @author Jean-Pierre Lefebvre
  */
-class Visc_druc_pragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ViscDrucPragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Visc_druc_pragMaterialBehaviourInstance()
+        ViscDrucPragMaterialBehaviourInstance()
         {
             // Mot cle "VISC_DRUC_PRAG" dans Aster
             _asterName = "VISC_DRUC_PRAG";
@@ -6719,22 +5322,22 @@ class Visc_druc_pragMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Visc_druc_prag */
-typedef boost::shared_ptr< Visc_druc_pragMaterialBehaviourInstance > Visc_druc_pragMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ViscDrucPrag */
+typedef boost::shared_ptr< ViscDrucPragMaterialBehaviourInstance > ViscDrucPragMaterialBehaviourPtr;
 
 
 /**
- * @class Hoek_brownMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Hoek_brown
+ * @class HoekBrownMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau HoekBrown
  * @author Jean-Pierre Lefebvre
  */
-class Hoek_brownMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class HoekBrownMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Hoek_brownMaterialBehaviourInstance()
+        HoekBrownMaterialBehaviourInstance()
         {
             // Mot cle "HOEK_BROWN" dans Aster
             _asterName = "HOEK_BROWN";
@@ -6754,22 +5357,22 @@ class Hoek_brownMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Hoek_brown */
-typedef boost::shared_ptr< Hoek_brownMaterialBehaviourInstance > Hoek_brownMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau HoekBrown */
+typedef boost::shared_ptr< HoekBrownMaterialBehaviourInstance > HoekBrownMaterialBehaviourPtr;
 
 
 /**
- * @class Elas_gonfMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Elas_gonf
+ * @class ElasGonfMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasGonf
  * @author Jean-Pierre Lefebvre
  */
-class Elas_gonfMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class ElasGonfMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Elas_gonfMaterialBehaviourInstance()
+        ElasGonfMaterialBehaviourInstance()
         {
             // Mot cle "ELAS_GONF" dans Aster
             _asterName = "ELAS_GONF";
@@ -6780,22 +5383,22 @@ class Elas_gonfMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Elas_gonf */
-typedef boost::shared_ptr< Elas_gonfMaterialBehaviourInstance > Elas_gonfMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau ElasGonf */
+typedef boost::shared_ptr< ElasGonfMaterialBehaviourInstance > ElasGonfMaterialBehaviourPtr;
 
 
 /**
- * @class Joint_bandisMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Joint_bandis
+ * @class JointBandisMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau JointBandis
  * @author Jean-Pierre Lefebvre
  */
-class Joint_bandisMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class JointBandisMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Joint_bandisMaterialBehaviourInstance()
+        JointBandisMaterialBehaviourInstance()
         {
             // Mot cle "JOINT_BANDIS" dans Aster
             _asterName = "JOINT_BANDIS";
@@ -6808,22 +5411,22 @@ class Joint_bandisMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Joint_bandis */
-typedef boost::shared_ptr< Joint_bandisMaterialBehaviourInstance > Joint_bandisMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau JointBandis */
+typedef boost::shared_ptr< JointBandisMaterialBehaviourInstance > JointBandisMaterialBehaviourPtr;
 
 
 /**
- * @class Mono_visc1MaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_visc1
+ * @class MonoVisc1MaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoVisc1
  * @author Jean-Pierre Lefebvre
  */
-class Mono_visc1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoVisc1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_visc1MaterialBehaviourInstance()
+        MonoVisc1MaterialBehaviourInstance()
         {
             // Mot cle "MONO_VISC1" dans Aster
             _asterName = "MONO_VISC1";
@@ -6836,22 +5439,22 @@ class Mono_visc1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_visc1 */
-typedef boost::shared_ptr< Mono_visc1MaterialBehaviourInstance > Mono_visc1MaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoVisc1 */
+typedef boost::shared_ptr< MonoVisc1MaterialBehaviourInstance > MonoVisc1MaterialBehaviourPtr;
 
 
 /**
- * @class Mono_visc2MaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_visc2
+ * @class MonoVisc2MaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoVisc2
  * @author Jean-Pierre Lefebvre
  */
-class Mono_visc2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoVisc2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_visc2MaterialBehaviourInstance()
+        MonoVisc2MaterialBehaviourInstance()
         {
             // Mot cle "MONO_VISC2" dans Aster
             _asterName = "MONO_VISC2";
@@ -6866,22 +5469,22 @@ class Mono_visc2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_visc2 */
-typedef boost::shared_ptr< Mono_visc2MaterialBehaviourInstance > Mono_visc2MaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoVisc2 */
+typedef boost::shared_ptr< MonoVisc2MaterialBehaviourInstance > MonoVisc2MaterialBehaviourPtr;
 
 
 /**
- * @class Mono_isot1MaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_isot1
+ * @class MonoIsot1MaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoIsot1
  * @author Jean-Pierre Lefebvre
  */
-class Mono_isot1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoIsot1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_isot1MaterialBehaviourInstance()
+        MonoIsot1MaterialBehaviourInstance()
         {
             // Mot cle "MONO_ISOT1" dans Aster
             _asterName = "MONO_ISOT1";
@@ -6901,22 +5504,22 @@ class Mono_isot1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_isot1 */
-typedef boost::shared_ptr< Mono_isot1MaterialBehaviourInstance > Mono_isot1MaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoIsot1 */
+typedef boost::shared_ptr< MonoIsot1MaterialBehaviourInstance > MonoIsot1MaterialBehaviourPtr;
 
 
 /**
- * @class Mono_isot2MaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_isot2
+ * @class MonoIsot2MaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoIsot2
  * @author Jean-Pierre Lefebvre
  */
-class Mono_isot2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoIsot2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_isot2MaterialBehaviourInstance()
+        MonoIsot2MaterialBehaviourInstance()
         {
             // Mot cle "MONO_ISOT2" dans Aster
             _asterName = "MONO_ISOT2";
@@ -6938,22 +5541,22 @@ class Mono_isot2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_isot2 */
-typedef boost::shared_ptr< Mono_isot2MaterialBehaviourInstance > Mono_isot2MaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoIsot2 */
+typedef boost::shared_ptr< MonoIsot2MaterialBehaviourInstance > MonoIsot2MaterialBehaviourPtr;
 
 
 /**
- * @class Mono_cine1MaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_cine1
+ * @class MonoCine1MaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoCine1
  * @author Jean-Pierre Lefebvre
  */
-class Mono_cine1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoCine1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_cine1MaterialBehaviourInstance()
+        MonoCine1MaterialBehaviourInstance()
         {
             // Mot cle "MONO_CINE1" dans Aster
             _asterName = "MONO_CINE1";
@@ -6964,22 +5567,22 @@ class Mono_cine1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_cine1 */
-typedef boost::shared_ptr< Mono_cine1MaterialBehaviourInstance > Mono_cine1MaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoCine1 */
+typedef boost::shared_ptr< MonoCine1MaterialBehaviourInstance > MonoCine1MaterialBehaviourPtr;
 
 
 /**
- * @class Mono_cine2MaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_cine2
+ * @class MonoCine2MaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoCine2
  * @author Jean-Pierre Lefebvre
  */
-class Mono_cine2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoCine2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_cine2MaterialBehaviourInstance()
+        MonoCine2MaterialBehaviourInstance()
         {
             // Mot cle "MONO_CINE2" dans Aster
             _asterName = "MONO_CINE2";
@@ -6993,22 +5596,22 @@ class Mono_cine2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_cine2 */
-typedef boost::shared_ptr< Mono_cine2MaterialBehaviourInstance > Mono_cine2MaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoCine2 */
+typedef boost::shared_ptr< MonoCine2MaterialBehaviourInstance > MonoCine2MaterialBehaviourPtr;
 
 
 /**
- * @class Mono_dd_krMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_dd_kr
+ * @class MonoDdKrMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoDdKr
  * @author Jean-Pierre Lefebvre
  */
-class Mono_dd_krMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoDdKrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_dd_krMaterialBehaviourInstance()
+        MonoDdKrMaterialBehaviourInstance()
         {
             // Mot cle "MONO_DD_KR" dans Aster
             _asterName = "MONO_DD_KR";
@@ -7034,22 +5637,22 @@ class Mono_dd_krMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_dd_kr */
-typedef boost::shared_ptr< Mono_dd_krMaterialBehaviourInstance > Mono_dd_krMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoDdKr */
+typedef boost::shared_ptr< MonoDdKrMaterialBehaviourInstance > MonoDdKrMaterialBehaviourPtr;
 
 
 /**
- * @class Mono_dd_cfcMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_dd_cfc
+ * @class MonoDdCfcMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoDdCfc
  * @author Jean-Pierre Lefebvre
  */
-class Mono_dd_cfcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoDdCfcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_dd_cfcMaterialBehaviourInstance()
+        MonoDdCfcMaterialBehaviourInstance()
         {
             // Mot cle "MONO_DD_CFC" dans Aster
             _asterName = "MONO_DD_CFC";
@@ -7073,22 +5676,22 @@ class Mono_dd_cfcMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_dd_cfc */
-typedef boost::shared_ptr< Mono_dd_cfcMaterialBehaviourInstance > Mono_dd_cfcMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoDdCfc */
+typedef boost::shared_ptr< MonoDdCfcMaterialBehaviourInstance > MonoDdCfcMaterialBehaviourPtr;
 
 
 /**
- * @class Mono_dd_cfc_irraMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_dd_cfc_irra
+ * @class MonoDdCfc_irraMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoDdCfc_irra
  * @author Jean-Pierre Lefebvre
  */
-class Mono_dd_cfc_irraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoDdCfc_irraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_dd_cfc_irraMaterialBehaviourInstance()
+        MonoDdCfc_irraMaterialBehaviourInstance()
         {
             // Mot cle "MONO_DD_CFC_IRRA" dans Aster
             _asterName = "MONO_DD_CFC_IRRA";
@@ -7120,22 +5723,22 @@ class Mono_dd_cfc_irraMaterialBehaviourInstance: public GeneralMaterialBehaviour
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_dd_cfc_irra */
-typedef boost::shared_ptr< Mono_dd_cfc_irraMaterialBehaviourInstance > Mono_dd_cfc_irraMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoDdCfc_irra */
+typedef boost::shared_ptr< MonoDdCfc_irraMaterialBehaviourInstance > MonoDdCfc_irraMaterialBehaviourPtr;
 
 
 /**
- * @class Mono_dd_fatMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_dd_fat
+ * @class MonoDdFatMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoDdFat
  * @author Jean-Pierre Lefebvre
  */
-class Mono_dd_fatMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoDdFatMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_dd_fatMaterialBehaviourInstance()
+        MonoDdFatMaterialBehaviourInstance()
         {
             // Mot cle "MONO_DD_FAT" dans Aster
             _asterName = "MONO_DD_FAT";
@@ -7157,22 +5760,22 @@ class Mono_dd_fatMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_dd_fat */
-typedef boost::shared_ptr< Mono_dd_fatMaterialBehaviourInstance > Mono_dd_fatMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoDdFat */
+typedef boost::shared_ptr< MonoDdFatMaterialBehaviourInstance > MonoDdFatMaterialBehaviourPtr;
 
 
 /**
- * @class Mono_dd_ccMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_dd_cc
+ * @class MonoDdCcMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoDdCc
  * @author Jean-Pierre Lefebvre
  */
-class Mono_dd_ccMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoDdCcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_dd_ccMaterialBehaviourInstance()
+        MonoDdCcMaterialBehaviourInstance()
         {
             // Mot cle "MONO_DD_CC" dans Aster
             _asterName = "MONO_DD_CC";
@@ -7203,22 +5806,22 @@ class Mono_dd_ccMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_dd_cc */
-typedef boost::shared_ptr< Mono_dd_ccMaterialBehaviourInstance > Mono_dd_ccMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoDdCc */
+typedef boost::shared_ptr< MonoDdCcMaterialBehaviourInstance > MonoDdCcMaterialBehaviourPtr;
 
 
 /**
- * @class Mono_dd_cc_irraMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Mono_dd_cc_irra
+ * @class MonoDdCc_irraMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MonoDdCc_irra
  * @author Jean-Pierre Lefebvre
  */
-class Mono_dd_cc_irraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class MonoDdCc_irraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Mono_dd_cc_irraMaterialBehaviourInstance()
+        MonoDdCc_irraMaterialBehaviourInstance()
         {
             // Mot cle "MONO_DD_CC_IRRA" dans Aster
             _asterName = "MONO_DD_CC_IRRA";
@@ -7251,8 +5854,8 @@ class Mono_dd_cc_irraMaterialBehaviourInstance: public GeneralMaterialBehaviourI
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Mono_dd_cc_irra */
-typedef boost::shared_ptr< Mono_dd_cc_irraMaterialBehaviourInstance > Mono_dd_cc_irraMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau MonoDdCc_irra */
+typedef boost::shared_ptr< MonoDdCc_irraMaterialBehaviourInstance > MonoDdCc_irraMaterialBehaviourPtr;
 
 
 /**
@@ -7478,17 +6081,17 @@ typedef boost::shared_ptr< UmatMaterialBehaviourInstance > UmatMaterialBehaviour
 
 
 /**
- * @class Umat_foMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Umat_fo
+ * @class UmatFoMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau UmatFo
  * @author Jean-Pierre Lefebvre
  */
-class Umat_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class UmatFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Umat_foMaterialBehaviourInstance()
+        UmatFoMaterialBehaviourInstance()
         {
             // Mot cle "UMAT_FO" dans Aster
             _asterName = "UMAT_FO";
@@ -7695,22 +6298,22 @@ class Umat_foMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau Umat_fo */
-typedef boost::shared_ptr< Umat_foMaterialBehaviourInstance > Umat_foMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau UmatFo */
+typedef boost::shared_ptr< UmatFoMaterialBehaviourInstance > UmatFoMaterialBehaviourPtr;
 
 
 /**
- * @class Crit_ruptMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Crit_rupt
+ * @class CritRuptMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau CritRupt
  * @author Jean-Pierre Lefebvre
  */
-class Crit_ruptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+class CritRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
          * @brief Constructeur 
          */
-        Crit_ruptMaterialBehaviourInstance()
+        CritRuptMaterialBehaviourInstance()
         {
             // Mot cle "CRIT_RUPT" dans Aster
             _asterName = "CRIT_RUPT";
@@ -7726,8 +6329,8 @@ class Crit_ruptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 
-/** @typedef Pointeur intelligent vers un comportement materiau Crit_rupt */
-typedef boost::shared_ptr< Crit_ruptMaterialBehaviourInstance > Crit_ruptMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau CritRupt */
+typedef boost::shared_ptr< CritRuptMaterialBehaviourInstance > CritRuptMaterialBehaviourPtr;
 
 
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */

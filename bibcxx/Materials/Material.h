@@ -76,6 +76,7 @@ class MaterialInstance: public DataStructure
          *   A partir des GeneralMaterialBehaviourPtr ajoutes par l'utilisateur :
          *   creation de objets Jeveux
          * @return Booleen indiquant que la construction s'est bien deroulee
+         * @todo pouvoir compléter un matériau (ajout d'un comportement après build)
          */
         bool build();
 };
