@@ -106,6 +106,50 @@ template <> struct PhysicalQuantityTraits <Displacement>
     static const std::string name;
 };
 
+/****************************************/
+/*        Pressure                      */
+/****************************************/
+
+/**
+ * @def nbPressureComponents
+ * @brief Number of components specifying a pressure
+ */
+const int nbPressureComponents = 1;
+
+/**
+ * @def PressureComponents
+ * @brief Declare Pressure Components 
+ */
+extern const Component_Enum PressureComponents[nbPressureComponents];
+
+template <> struct PhysicalQuantityTraits <Pressure>
+{
+    static const std::set< Component_Enum > components;
+    static const std::string name;
+};
+
+/****************************************/
+/*        Temperature                      */
+/****************************************/
+
+/**
+ * @def nbTemperatureComponents
+ * @brief Number of components specifying a Temperature
+ */
+const int nbTemperatureComponents = 2;
+
+/**
+ * @def TemperatureComponents
+ * @brief Declare Temperature Components 
+ */
+extern const Component_Enum TemperatureComponents[nbTemperatureComponents];
+
+template <> struct PhysicalQuantityTraits <Temperature>
+{
+    static const std::set< Component_Enum > components;
+    static const std::string name;
+};
+
 /******************************************/
 /* @class PhysicalQuantityInstance
 /* @brief Defines a physical quantity 
@@ -220,5 +264,14 @@ template class PhysicalQuantityInstance< double, Displacement >;
 typedef PhysicalQuantityInstance< double, Displacement > DisplacementDoubleInstance;
 typedef boost::shared_ptr< DisplacementDoubleInstance > DisplacementDoublePtr; 
 
+/** @typedef PressureDouble Pression */
+template class PhysicalQuantityInstance< double, Pressure >; 
+typedef PhysicalQuantityInstance< double, Pressure > PressureDoubleInstance;
+typedef boost::shared_ptr< PressureDoubleInstance > PressureDoublePtr; 
+
+/** @typedef TemperatureDouble Temperature */
+template class PhysicalQuantityInstance< double, Temperature >; 
+typedef PhysicalQuantityInstance< double, Temperature > TemperatureDoubleInstance;
+typedef boost::shared_ptr< TemperatureDoubleInstance > TemperatureDoublePtr; 
 
 #endif /* PHYSICALQUANTITY_H_ */

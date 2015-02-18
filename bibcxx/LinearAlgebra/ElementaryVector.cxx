@@ -89,8 +89,10 @@ bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_err
         mCSChamMater.addValues( _materialOnMesh->getName() );
         syntaxeCalcVectElem.addSimpleKeywordString( mCSChamMater );
     }
-
+    /** @todo */
+    /*
     if ( _listOfMechanicalLoad.size() != 0 )
+    
     {
         SimpleKeyWordStr mCSCharge( "CHARGE" );
         for ( ListMechanicalLoadIter curIter = _listOfMechanicalLoad.begin();
@@ -101,7 +103,7 @@ bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_err
         }
         syntaxeCalcVectElem.addSimpleKeywordString( mCSCharge );
     }
-
+    */
     INTEGER op = 8;
     CALL_EXECOP( &op );
     _isEmpty = false;

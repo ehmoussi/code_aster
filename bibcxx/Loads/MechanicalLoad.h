@@ -3,8 +3,7 @@
 
 /**
  * @file MechanicalLoad.h
- * @brief Fichier entete de la classe MechanicalLoad
- * @author Natacha Bereux
+ 
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
  *
@@ -23,253 +22,206 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "astercxx.h"
-#include "aster_fort.h"
 
+#include <iostream> 
 #include <stdexcept>
+#include <string> 
+#include "astercxx.h"
+#include "DataStructure/DataStructure.h"
+#include "Loads/PhysicalQuantity.h"
+#include "Mesh/MeshEntities.h"
 #include "Modeling/Model.h"
-#include "Loads/UnitaryLoad.h"
-#include "DataFields/PCFieldOnMesh.h"
+
+#include "Utilities/SyntaxDictionary.h"
 
 /**
- * @class MechanicalLoadInstance
- * @brief This class defines a mechanical load (resulting from AFFE_CHAR_MECA command)
- * @author Natacha Bereux
- * @todo Mutualiser avec KinematicsLoad. Typedef et méthodes sont parfois des copies serviles
+ * @enum Load_Enum
+ * @brief Inventory of all mechanical loads available in Code_Aster
  */
-class MechanicalLoadInstance : public DataStructure
-{
-    private:
-        /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
-        /** @typedef std::list de DoubleLoadDisplacement */
-//        typedef std::list< DoubleLoadDisplacement > ListDoubleDisp;
-        /** @typedef ListDoubleDisp iterator*/
-//        typedef ListDoubleDisp::iterator ListDoubleDispIter;
+enum Load_Enum { NodalForce, LineicForce, EdgeForce, ImposedDoF, DistributedPressure, EndLoad };
 
-        /** @typedef std::list of DoubleLoadPressure */
-//        typedef std::list< DoubleLoadPressure > ListDoublePres;
-        /** @typedef ListDoubleTemp iterator*/
-//        typedef ListDoublePres::iterator ListDoublePresIter;
-
-        /** @brief User description of imposed loads */
-//        ListDoubleDisp      _listOfDoubleImposedDisplacement;
-//        ListDoublePres      _listOfDoubleImposedPressure;
-//        ListDoublePres      _listOfDoubleImposedDistributedPressure;
-//        ListDoublePres      _listOfDoubleImposedPipePressure;
-
-        /** @brief Structure de données Aster */
-        const std::string      _jeveuxName;
-        PCFieldOnMeshPtrDouble _kinematicLoad;
-        PCFieldOnMeshPtrDouble _pressure;
-        /** @brief Modele support */
-        ModelPtr               _supportModel;
-
-    public:
-        /**
-        * @brief Constructeur
-        */
-        MechanicalLoadInstance();
-
-        /**
-         * @brief Set displacement on a group of elements
-         * @param nameOfGroup name of the group of elements
-         * @param value imposed value
-         * @return bool
-         */
-
-        bool setDisplacementOnElements(Component_Enum coordinate,
-                                       std::string nameOfGroup, double value) throw ( std::runtime_error )
-        {
-// Check that neither the pointer to the support model nor the model itself are empty
-            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw std::runtime_error( "Model is empty" );
-// Check that nameOfGroup defines a group of nodes of the support mesh
-            MeshPtr currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
-            {
-                throw  std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
-            }
-            MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-//            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
-//            _listOfDoubleImposedDisplacement.push_back( resu );
-            return true;
-        };
 /**
-         * @brief Set displacement on a group of nodes
-         * @param nameOfGroup name of the group of nodes
-         * @param value imposed value
-         * @return bool
-         */
+* @class LoadTraits
+* @brief Traits class for a Load
+*/
+/* This is the most general case (defined but intentionally not implemented) */
+/* It will be specialized for each load listed in the inventory */
 
-        bool setDisplacementOnNodes(Component_Enum coordinate,
-                                    std::string nameOfGroup, double value) throw ( std::runtime_error )
-        {
-// Check that neither the pointer to the support model nor the model itself are empty
-            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw std::runtime_error( "Model is empty" );
-// Check that nameOfGroup defines a group of nodes of the support mesh
-            MeshPtr currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfNodes( nameOfGroup ))
-            {
-                throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
-            }
-            MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
-//            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
-//            _listOfDoubleImposedDisplacement.push_back( resu );
-            return true;
-        };
+template < Load_Enum Load > struct LoadTraits; 
 
-        /**
-         * @brief Set the pressure on a group of elements
-         * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
-         * @param value imposed value
-         * @return bool
-         */
-        bool setPressureOnElements(double value, std::string nameOfGroup) throw ( std::runtime_error )
-        {
-// Check that neither the pointer to the support model nor the model itself are empty
-            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw std::runtime_error( "Model is empty" );
-// Check that nameOfGroup is the name of a group belonging to the support mesh
-            MeshPtr currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
-            {
-                throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
-            }
-            MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-            Component_Enum coordinate = Pres;
-//            DoubleLoadPressure resu( meshEnt, coordinate, value );
-//            _listOfDoubleImposedPressure.push_back( resu );
-            return true;
-        };
-        /**
-         * @brief Set the pressure on a group of nodes
-         * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
-         * @param value imposed value
-         * @return bool
-         */
-        bool setPressureOnNodes(double value, std::string nameOfGroup) throw ( std::runtime_error )
-        {
-// Check that neither the pointer to the support model nor the model itself are empty
-            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw std::runtime_error( "Model is empty" );
-// Check that nameOfGroup is the name of a group belonging to the support mesh
-            MeshPtr currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfNodes( nameOfGroup ))
-            {
-                throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
-            }
-            MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
-            Component_Enum coordinate = Pres;
-//            DoubleLoadPressure resu( meshEnt, coordinate, value );
-//            _listOfDoubleImposedPressure.push_back( resu );
-            return true;
-        };
-        /**
-         * @brief Set a distributed pressure on a group of elements
-         * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
-         * @param value imposed value
-         * @return bool
-         */
-        bool setDistributedPressureOnElements(double value, std::string nameOfGroup) throw ( std::runtime_error )
-        {
-// Check that neither the pointer to the support model nor the model itself are empty
-            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw std::runtime_error( "Model is empty" );
-// Check that nameOfGroup is the name of a group belonging to the support mesh
-            MeshPtr currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
-            {
-                throw std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
-            }
-            MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-            Component_Enum coordinate = Pres;
-//            DoubleLoadPressure resu( meshEnt, coordinate, value );
-//            _listOfDoubleImposedDistributedPressure.push_back( resu );
-            return true;
-        };
-        /**
-        * @brief Set a pressure on a group of elements describing a pipe
-        * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
-        * @param value imposed value
-        * @return bool
-        */
-        bool setPipePressureOnElements( double value, std::string nameOfGroup ) throw ( std::runtime_error )
-        {
-// Check that neither the pointer to the support model nor the model itself are empty
-            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw std::runtime_error( "Model is empty" );
-// Check that nameOfGroup is the name of a group belonging to the support mesh
-            MeshPtr currentMesh= _supportModel->getSupportMesh();
-            if ( !currentMesh->hasGroupOfElements( nameOfGroup ))
-            {
-                throw std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
-            }
-            MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-            Component_Enum coordinate = Pres;
-//            DoubleLoadPressure resu( meshEnt, coordinate, value );
-//            _listOfDoubleImposedPipePressure.push_back( resu );
-            return true;
-        };
-        /**
-         * @brief Construction de la charge (appel a OP007)
-         * @return Booleen indiquant que tout s'est bien passe
-         */
-        bool build() throw ( std::runtime_error );
+/** @def LoadTraits <NodalForce>
+*  @brief Declare specialization for NodalForce
+*/
 
-       /**
-         * @brief Definition du modele support
-         * @param currentMesh objet Model sur lequel la charge reposera
-         */
-        bool setSupportModel(ModelPtr currentModel) throw ( std::runtime_error )
-        {
-            if ( ! currentModel )
-                throw std::runtime_error( "Model is empty" );
-            _supportModel = currentModel;
-            return true;
-        };
+template <> struct LoadTraits <NodalForce>
+{
+/* Mot clé facteur pour AFFE_CHAR_MECA */
+    static const std::string factorKeyword; 
+/* Authorized support MeshEntity */
+    static bool const isAllowedOnGroupOfElements = false;
+    static bool const isAllowedOnGroupOfNodes = true;
 };
 
-class MechanicalLoad
+
+
+template< class PhysicalQuantity, Load_Enum Load >
+ 
+class MechanicalLoadInstance: public DataStructure
 {
     public:
-        typedef boost::shared_ptr< MechanicalLoadInstance > MechanicalLoadPtr;
-
+    /** @typedef Traits Define the Traits type */
+    typedef LoadTraits<Load> Traits;
+    /** @typedef PhysicalQuantity Define the underlying PhysicalQuantity */
+    typedef PhysicalQuantity PhysicalQuantityType; 
+    
     private:
-        MechanicalLoadPtr _MechanicalLoadPtr;
+    /** @typedef Definition d'un pointeur intelligent sur un VirtualMeshEntity */
+    typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+    /** @typedef Definition d'un pointeur intelligent sur une PhysicalQuantity */
+    typedef boost::shared_ptr< PhysicalQuantity > PhysicalQuantityPtr;
 
+    /** @typedef PhysicalQuantity que l'on veut imposer*/
+    PhysicalQuantityPtr _physicalQuantity;
+    /** @brief MeshEntity sur laquelle repose le "blocage" */
+    MeshEntityPtr    _supportMeshEntity;
+    /** @ brief Modèle support */
+    ModelPtr _supportModel;
+    
     public:
-        MechanicalLoad(bool initialisation = true): _MechanicalLoadPtr()
-        {
-            if ( initialisation == true )
-                _MechanicalLoadPtr = MechanicalLoadPtr( new MechanicalLoadInstance() );
-        };
 
-        ~MechanicalLoad()
-        {};
+    /** 
+    * @brief Constructor
+    */ 
+    MechanicalLoadInstance():
+                    DataStructure( getNewResultObjectName(), "CHAR_MECA" ),
+                    _supportModel( ModelPtr() )
+    {};
 
-        MechanicalLoad& operator=(const MechanicalLoad& tmp)
-        {
-            _MechanicalLoadPtr = tmp._MechanicalLoadPtr;
-            return(*this);
-        };
+    /** 
+    @brief Destructor
+    */
+    ~MechanicalLoadInstance(){};
 
-        const MechanicalLoadPtr& operator->() const
-        {
-            return _MechanicalLoadPtr;
-        };
+    /**
+    * @brief Set a physical quantity on a MeshEntity (group of nodes 
+    * or group of elements)
+    * @param physPtr shared pointer to a PhysicalQuantity 
+    * @param nameOfGroup name of the group of elements
+    * @return bool success/failure index
+    */
 
-        MechanicalLoadInstance& operator*(void) const
-        {
-            return *_MechanicalLoadPtr;
-        };
+    bool setQuantityOnMeshEntity( PhysicalQuantityPtr physPtr, std::string nameOfGroup ) throw ( std::runtime_error )
+    {
+    /* Check that the pointer to the support model is not empty */
+    if ( ( ! _supportModel ) || _supportModel->isEmpty() )
+        throw std::runtime_error( "Model is empty" );
+    
+    /* Get the type of MeshEntity */
+    MeshPtr currentMesh= _supportModel->getSupportMesh();
+    
+    /* nameOfGroup is the name of a group of elements and 
+    LoadTraits authorizes to base the current load on such a group */
+    
+    if ( currentMesh->hasGroupOfElements( nameOfGroup ) && Traits::isAllowedOnGroupOfElements )
+    {
+        _supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+    }
+    /* nameOfGroup is the name of a group of nodes and LoadTraits authorizes
+    to base the current load on such a group */
+    else if ( currentMesh->hasGroupOfNodes( nameOfGroup ) && Traits::isAllowedOnGroupOfNodes )
+    {
+        _supportMeshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
+    }
+    else
+        throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the current load " );
 
-        bool isEmpty() const
+    /* Copy the shared pointer of the Physical Quantity */
+    _physicalQuantity = physPtr; 
+    return true;
+    };
+
+    /**
+    * @brief Define the support model
+    * @param currentMesh objet Model sur lequel la charge reposera
+    */
+    bool setSupportModel( ModelPtr& currentModel )
+    {
+        _supportModel = currentModel;
+        return true;
+    };
+
+    /**
+    * @brief appel de op0007 
+    */
+    bool build() throw ( std::runtime_error )
+    {
+    try
+    {
+       INTEGER op = 7;
+       CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    return true; 
+    };
+
+    /**
+    * @brief Return a Python dict emulate the command keywords
+    * @return PyDict
+    */
+    PyObject* getCommandKeywords() throw ( std::runtime_error )
+    {
+    SyntaxMapContainer dict;
+    if ( ! _supportModel )
+        throw std::runtime_error("Support model is undefined");
+    dict.container["MODELE"] = _supportModel->getName();
+    ListSyntaxMapContainer listeLoad;
+    SyntaxMapContainer dict2;
+    std::cout << "MODELE  " <<  _supportModel->getName() << std::endl;
+    /* On itere sur les composantes de la "PhysicalQuantity" */
+    typename PhysicalQuantityType::MapOfCompAndVal comp_val=_physicalQuantity-> getMap(); 
+    for ( typename PhysicalQuantityType::MapIt curIter(comp_val.begin());
+      curIter != comp_val.end(); 
+      ++curIter )
+    {
+        dict2.container[ComponentNames[curIter-> first] ] = curIter->second ;
+        std::cout << ComponentNames[curIter-> first] << "   " << curIter->second << std::endl;
+    }
+    /* Caractéristiques du MeshEntity */
+    if ( _supportMeshEntity->getType() == AllMeshEntitiesType )
         {
-            if ( _MechanicalLoadPtr.use_count() == 0 ) return true;
-            return false;
-        };
+            dict2.container["TOUT"] = "OUI";
+        }
+    else
+        {
+            if ( _supportMeshEntity->getType()  == GroupOfNodesType )
+                {dict2.container["GROUP_NO"] = _supportMeshEntity->getEntityName();
+                std::cout << "GROUP_NO " <<  _supportMeshEntity->getEntityName() << std::endl;} 
+            else if ( _supportMeshEntity->getType()  ==  GroupOfElementsType )
+                dict2.container["GROUP_MA"] = _supportMeshEntity->getEntityName();
+        }
+    listeLoad.push_back( dict2 );
+    /*mot-clé facteur*/ 
+    std::string kw = Traits::factorKeyword;
+    dict.container[kw] = listeLoad;
+    PyObject* returnDict = dict.convertToPythonDictionnary();
+    return returnDict;
 };
+
+};
+
+/**********************************************************/
+/*  Explicit instantiation of template classes
+/**********************************************************/
+
+/** @typedef NodalForceDouble  */
+template class MechanicalLoadInstance< ForceDoubleInstance, NodalForce >;
+typedef MechanicalLoadInstance< ForceDoubleInstance, NodalForce > NodalForceDoubleInstance;
+typedef boost::shared_ptr< NodalForceDoubleInstance > NodalForceDoublePtr;
+
+
+
 
 #endif /* MECHANICALLOAD_H_ */

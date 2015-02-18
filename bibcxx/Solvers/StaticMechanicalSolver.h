@@ -30,13 +30,15 @@
 #include "Solvers/GenericSolver.h"
 #include "Modeling/Model.h"
 #include "Materials/MaterialOnMesh.h"
-#include "Loads/MechanicalLoad.h"
+//#include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "LinearAlgebra/LinearSolver.h"
 
 class StaticMechanicalSolverInstance: public GenericSolver
 {
     private:
+        /** @todo */
+        typedef int MechanicalLoad; 
         /** @typedef std::list de MechanicalLoad */
         typedef std::list< MechanicalLoad > ListMecaLoad;
         /** @typedef Iterateur sur une std::list de MechanicalLoad */

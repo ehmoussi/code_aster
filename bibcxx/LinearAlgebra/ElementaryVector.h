@@ -30,7 +30,7 @@
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Materials/MaterialOnMesh.h"
-#include "Loads/MechanicalLoad.h"
+//#include "Loads/MechanicalLoad.h"
 #include "DataFields/FieldOnNodes.h"
 #include "LinearAlgebra/DOFNumbering.h"
 
@@ -42,11 +42,12 @@
 class ElementaryVectorInstance: public DataStructure
 {
     private:
+        /** @todo  */
+        typedef int MechanicalLoad;
         /** @typedef std::list de MechanicalLoad */
         typedef std::list< MechanicalLoad > ListMechanicalLoad;
         /** @typedef Iterateur sur une std::list de MechanicalLoad */
         typedef ListMechanicalLoad::iterator ListMechanicalLoadIter;
-
         /** @brief Objet Jeveux '.RERR' */
         JeveuxVectorChar24     _description;
         /** @brief Objet Jeveux '.RELR' */

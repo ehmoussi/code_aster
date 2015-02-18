@@ -60,6 +60,8 @@ ResultsContainer StaticMechanicalSolverInstance::execute() throw ( std::runtime_
         throw std::runtime_error( "At least one load is needed" );
 
     FactorKeyword mCFExcit = FactorKeyword( "EXCIT", true );
+    /** @todo */
+    /*
     for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
           curIter != _listOfMechanicalLoads.end();
           ++curIter )
@@ -78,7 +80,7 @@ ResultsContainer StaticMechanicalSolverInstance::execute() throw ( std::runtime_
         // Ajout de l'occurence du MCF
         mCFExcit.addOccurence( occurExcit );
     }
-
+    */
     for ( ListKineLoadIter curIter = _listOfKinematicsLoads.begin();
           curIter != _listOfKinematicsLoads.end();
           ++curIter )
