@@ -2,6 +2,7 @@
  * @file MaterialBehaviour.cxx
  * @brief Implementation de GeneralMaterialBehaviourInstance
  * @author Nicolas Sellenet
+ * @todo autoriser le type Function pour les paramètres matériau 
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
  *
