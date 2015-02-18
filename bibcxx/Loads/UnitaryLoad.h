@@ -46,7 +46,7 @@ class UnitaryLoad
         /** @brief MeshEntity sur laquelle repose le "blocage" */
         MeshEntityPtr    _supportMeshEntity;
         /** @brief "Numero" de la composante à imposer */
-        AsterCoordinates _loadCoordinate;
+        Component_Enum _loadCoordinate;
         /** @brief Valeur a imposer */
         ValueType        _value;
 
@@ -58,14 +58,14 @@ class UnitaryLoad
          * @param curCoord Coordonnee de la grandeur sur laquelle on impose le chargement
          * @param value Valeur du chargement
          */
-        UnitaryLoad( MeshEntityPtr supportMeshEntity, AsterCoordinates curCoord, ValueType value ) throw ( std::runtime_error ):
+        UnitaryLoad( MeshEntityPtr supportMeshEntity, Component_Enum curCoord, ValueType value ) throw ( std::runtime_error ):
             _supportMeshEntity( supportMeshEntity ),
             _loadCoordinate( curCoord ),
             _value( value )
         {
-            if ( ! PhysicalQuantityType::hasCoordinate( curCoord ) )
-                throw std::runtime_error( std::string ( AsterCoordinatesNames[ (int) curCoord ] ) +
-                                          " not allowed" );
+//            if ( ! PhysicalQuantityType::hasCoordinate( curCoord ) )
+//                throw std::runtime_error( std::string ( Component_EnumNames[ (int) curCoord ] ) +
+//                                          " not allowed" );
         };
 
         /**
@@ -74,7 +74,7 @@ class UnitaryLoad
          */
         const std::string getAsterCoordinateName() const
         {
-            return std::string( AsterCoordinatesNames[ (int) _loadCoordinate ] );
+            return std::string( Component_EnumNames[ (int) _loadCoordinate ] );
         };
 
         /**
@@ -97,9 +97,9 @@ class UnitaryLoad
 };
 
 /** @typedef Definition d'un chargement sur DEPL_R */
-typedef UnitaryLoad< DoubleDisplacementType > DoubleLoadDisplacement;
+//typedef UnitaryLoad< DisplacementInstanceDouble > DoubleLoadDisplacement;
 /** @typedef Definition d'un chargement sur TEMP_R */
-typedef UnitaryLoad< DoubleTemperatureType > DoubleLoadTemperature;
+//typedef UnitaryLoad< TemperatureInstanceDouble > DoubleLoadTemperature;
 /** @typedef Definition d'un chargement pression */
-typedef UnitaryLoad< DoublePressureType > DoubleLoadPressure;
+//typedef UnitaryLoad< PressureInstanceDouble > DoubleLoadPressure;
 #endif /* UNITARYLOAD_H_ */

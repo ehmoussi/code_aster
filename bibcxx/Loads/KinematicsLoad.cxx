@@ -35,6 +35,7 @@ KinematicsLoadInstance::KinematicsLoadInstance():
 
 bool KinematicsLoadInstance::build() throw ( std::runtime_error )
 {
+/*
     std::string typSd;
     if ( _listOfDoubleImposedDisplacement.size() != 0 )
         typSd = getType() + "_MECA";
@@ -101,6 +102,6 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
     // Maintenant que le fichier de commande est pret, on appelle OP0018
     INTEGER op = 101;
     CALL_EXECOP( &op );
-
+*/
     return true;
 };

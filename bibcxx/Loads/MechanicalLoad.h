@@ -42,22 +42,21 @@ class MechanicalLoadInstance : public DataStructure
     private:
         /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
-
         /** @typedef std::list de DoubleLoadDisplacement */
-        typedef std::list< DoubleLoadDisplacement > ListDoubleDisp;
+//        typedef std::list< DoubleLoadDisplacement > ListDoubleDisp;
         /** @typedef ListDoubleDisp iterator*/
-        typedef ListDoubleDisp::iterator ListDoubleDispIter;
+//        typedef ListDoubleDisp::iterator ListDoubleDispIter;
 
         /** @typedef std::list of DoubleLoadPressure */
-        typedef std::list< DoubleLoadPressure > ListDoublePres;
+//        typedef std::list< DoubleLoadPressure > ListDoublePres;
         /** @typedef ListDoubleTemp iterator*/
-        typedef ListDoublePres::iterator ListDoublePresIter;
+//        typedef ListDoublePres::iterator ListDoublePresIter;
 
         /** @brief User description of imposed loads */
-        ListDoubleDisp      _listOfDoubleImposedDisplacement;
-        ListDoublePres      _listOfDoubleImposedPressure;
-        ListDoublePres      _listOfDoubleImposedDistributedPressure;
-        ListDoublePres      _listOfDoubleImposedPipePressure;
+//        ListDoubleDisp      _listOfDoubleImposedDisplacement;
+//        ListDoublePres      _listOfDoubleImposedPressure;
+//        ListDoublePres      _listOfDoubleImposedDistributedPressure;
+//        ListDoublePres      _listOfDoubleImposedPipePressure;
 
         /** @brief Structure de données Aster */
         const std::string      _jeveuxName;
@@ -79,7 +78,7 @@ class MechanicalLoadInstance : public DataStructure
          * @return bool
          */
 
-        bool setDisplacementOnElements(AsterCoordinates coordinate,
+        bool setDisplacementOnElements(Component_Enum coordinate,
                                        std::string nameOfGroup, double value) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
@@ -92,8 +91,8 @@ class MechanicalLoadInstance : public DataStructure
                 throw  std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
-            _listOfDoubleImposedDisplacement.push_back( resu );
+//            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
+//            _listOfDoubleImposedDisplacement.push_back( resu );
             return true;
         };
 /**
@@ -103,7 +102,7 @@ class MechanicalLoadInstance : public DataStructure
          * @return bool
          */
 
-        bool setDisplacementOnNodes(AsterCoordinates coordinate,
+        bool setDisplacementOnNodes(Component_Enum coordinate,
                                     std::string nameOfGroup, double value) throw ( std::runtime_error )
         {
 // Check that neither the pointer to the support model nor the model itself are empty
@@ -116,8 +115,8 @@ class MechanicalLoadInstance : public DataStructure
                 throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
-            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
-            _listOfDoubleImposedDisplacement.push_back( resu );
+//            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
+//            _listOfDoubleImposedDisplacement.push_back( resu );
             return true;
         };
 
@@ -139,9 +138,9 @@ class MechanicalLoadInstance : public DataStructure
                 throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-            AsterCoordinates coordinate = Pressure;
-            DoubleLoadPressure resu( meshEnt, coordinate, value );
-            _listOfDoubleImposedPressure.push_back( resu );
+            Component_Enum coordinate = Pres;
+//            DoubleLoadPressure resu( meshEnt, coordinate, value );
+//            _listOfDoubleImposedPressure.push_back( resu );
             return true;
         };
         /**
@@ -162,9 +161,9 @@ class MechanicalLoadInstance : public DataStructure
                 throw std::runtime_error( nameOfGroup +" is not a group of nodes of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
-            AsterCoordinates coordinate = Pressure;
-            DoubleLoadPressure resu( meshEnt, coordinate, value );
-            _listOfDoubleImposedPressure.push_back( resu );
+            Component_Enum coordinate = Pres;
+//            DoubleLoadPressure resu( meshEnt, coordinate, value );
+//            _listOfDoubleImposedPressure.push_back( resu );
             return true;
         };
         /**
@@ -185,9 +184,9 @@ class MechanicalLoadInstance : public DataStructure
                 throw std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-            AsterCoordinates coordinate = Pressure;
-            DoubleLoadPressure resu( meshEnt, coordinate, value );
-            _listOfDoubleImposedDistributedPressure.push_back( resu );
+            Component_Enum coordinate = Pres;
+//            DoubleLoadPressure resu( meshEnt, coordinate, value );
+//            _listOfDoubleImposedDistributedPressure.push_back( resu );
             return true;
         };
         /**
@@ -208,9 +207,9 @@ class MechanicalLoadInstance : public DataStructure
                 throw std::runtime_error( nameOfGroup +" is not a group of elements of the mesh you provided" );
             }
             MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-            AsterCoordinates coordinate = Pressure;
-            DoubleLoadPressure resu( meshEnt, coordinate, value );
-            _listOfDoubleImposedPipePressure.push_back( resu );
+            Component_Enum coordinate = Pres;
+//            DoubleLoadPressure resu( meshEnt, coordinate, value );
+//            _listOfDoubleImposedPipePressure.push_back( resu );
             return true;
         };
         /**

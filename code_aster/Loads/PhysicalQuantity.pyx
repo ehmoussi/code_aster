@@ -17,8 +17,42 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+from libcpp.string cimport string
+from cython.operator cimport dereference as deref
 
-#cdef extern from "Loads/PhysicalQuantity.h":
+Dx, Dy, Dz, Drx, Dry, Drz = cDx, cDy, cDz, cDrx, cDry, cDrz
+Fx, Fy, Fz, Mx, My, Mz = cFx, cFy, cFz, cMx, cMy, cMz
+Pressure = cPressure
 
-    #cpdef enum AsterCoordinates:
-     #   Dx, Dy, Dz, Drx, Dry, Drz, Temperature, MiddleTemperature, Pressure
+cdef class ForceDouble:
+    """Python wrapper on the C++ ForceDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = new ForceDoublePtr( new ForceDoubleInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, ForceDoublePtr other ):
+        """Point to an existing object"""
+        self._cptr = new ForceDoublePtr( other )
+
+    cdef ForceDoublePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef ForceDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def debugPrint( self ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( )
+
+    def setValue( self, component , value ):
+        """Define the value of a component of the physical quantity """
+        self.getInstance().setValue( component, value )

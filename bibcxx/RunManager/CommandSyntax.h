@@ -50,6 +50,10 @@ extern "C"
 }
 
 /**
+* @todo compléter gettco dans aster_module.c (le type du résultat est mis en dur à UNKNOWN)
+*/
+
+/**
  * @class template SimpleKeyWord
  * @brief Classe permettant d'emuler un mot cle simple dans une commande
  * @author Nicolas Sellenet

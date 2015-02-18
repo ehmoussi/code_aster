@@ -20,5 +20,38 @@
 
 cdef extern from "Loads/PhysicalQuantity.h":
 
-    cpdef enum AsterCoordinates:
-        Dx, Dy, Dz, Drx, Dry, Drz, Temperature, MiddleTemperature, Pressure
+    cdef enum Component_Enum:
+        cDx         "Dx"
+        cDy         "Dy"
+        cDz         "Dz"
+        cDrx        "Drx"
+        cDry        "Dry"
+        cDrz        "Drz"
+        cPressure   "Pressure"
+        cFx         "Fx"
+        cFy         "Fy"
+        cFz         "Fz"
+        cMx         "Mx"
+        cMy         "My"
+        cMz         "Mz"
+        
+
+    cdef cppclass ForceDoubleInstance:
+        ForceDoubleInstance()
+        void setValue( Component_Enum comp, double val ) except +
+        void debugPrint()
+
+
+    cdef cppclass ForceDoublePtr:
+
+        ForceDoublePtr( ForceDoublePtr& )
+        ForceDoublePtr( ForceDoubleInstance * )
+        ForceDoubleInstance* get()
+
+cdef class ForceDouble:
+
+    cdef ForceDoublePtr* _cptr
+
+    cdef set( self, ForceDoublePtr other )
+    cdef ForceDoublePtr* getPtr( self )
+    cdef ForceDoubleInstance* getInstance( self )

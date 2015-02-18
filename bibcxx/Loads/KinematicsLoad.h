@@ -43,20 +43,20 @@ class KinematicsLoadInstance: public DataStructure
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
         /** @typedef std::list de DoubleLoadDisplacement */
-        typedef std::list< DoubleLoadDisplacement > ListDoubleDisp;
+//        typedef std::list< DoubleLoadDisplacement > ListDoubleDisp;
         /** @typedef Iterateur sur ListDoubleDisp */
-        typedef ListDoubleDisp::iterator ListDoubleDispIter;
+//        typedef ListDoubleDisp::iterator ListDoubleDispIter;
 
         /** @typedef std::list de DoubleLoadTemperature */
-        typedef std::list< DoubleLoadTemperature > ListDoubleTemp;
+//        typedef std::list< DoubleLoadTemperature > ListDoubleTemp;
         /** @typedef Iterateur sur ListDoubleTemp */
-        typedef ListDoubleTemp::iterator ListDoubleTempIter;
+//        typedef ListDoubleTemp::iterator ListDoubleTempIter;
 
         /** @brief Modele support */
         ModelPtr       _supportModel;
         /** @brief Listes des valeurs imposees DEPL_R et TEMP_R */
-        ListDoubleDisp _listOfDoubleImposedDisplacement;
-        ListDoubleTemp _listOfDoubleImposedTemperature;
+//        ListDoubleDisp _listOfDoubleImposedDisplacement;
+//        ListDoubleTemp _listOfDoubleImposedTemperature;
 
     public:
         /**
@@ -94,7 +94,7 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedMechanicalDOFOnElements( AsterCoordinates coordinate, double value,
+        bool addImposedMechanicalDOFOnElements( Component_Enum coordinate, double value,
                                                 std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
@@ -105,8 +105,8 @@ class KinematicsLoadInstance: public DataStructure
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
-            _listOfDoubleImposedDisplacement.push_back( resu );
+//            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
+//            _listOfDoubleImposedDisplacement.push_back( resu );
             return true;
         };
 
@@ -116,7 +116,7 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedMechanicalDOFOnNodes( AsterCoordinates coordinate, double value,
+        bool addImposedMechanicalDOFOnNodes( Component_Enum coordinate, double value,
                                              std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
@@ -127,8 +127,8 @@ class KinematicsLoadInstance: public DataStructure
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
-            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
-            _listOfDoubleImposedDisplacement.push_back( resu );
+//            DoubleLoadDisplacement resu( meshEnt, coordinate, value );
+//            _listOfDoubleImposedDisplacement.push_back( resu );
             return true;
         };
 
@@ -138,7 +138,7 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedThermalDOFOnElements( AsterCoordinates coordinate, double value,
+        bool addImposedThermalDOFOnElements( Component_Enum coordinate, double value,
                                              std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
@@ -149,8 +149,8 @@ class KinematicsLoadInstance: public DataStructure
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-            DoubleLoadTemperature resu( meshEnt, coordinate, value );
-            _listOfDoubleImposedTemperature.push_back( resu );
+//            DoubleLoadTemperature resu( meshEnt, coordinate, value );
+//            _listOfDoubleImposedTemperature.push_back( resu );
             return true;
         };
 
@@ -160,7 +160,7 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedThermalDOFOnNodes( AsterCoordinates coordinate, double value,
+        bool addImposedThermalDOFOnNodes( Component_Enum coordinate, double value,
                                           std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
@@ -171,8 +171,8 @@ class KinematicsLoadInstance: public DataStructure
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
-            DoubleLoadTemperature resu( meshEnt, coordinate, value );
-            _listOfDoubleImposedTemperature.push_back( resu );
+//            DoubleLoadTemperature resu( meshEnt, coordinate, value );
+//            _listOfDoubleImposedTemperature.push_back( resu );
             return true;
         };
 

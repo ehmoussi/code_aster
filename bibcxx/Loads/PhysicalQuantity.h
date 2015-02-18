@@ -3,8 +3,8 @@
 
 /**
  * @file PhysicalQuantity.h
- * @brief Fichier definissant les grandeurs physiques de Code_Aster
- * @author Nicolas Sellenet
+ * @brief Definition of the  Physical Quantities used in Code_Aster
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
  *
@@ -25,112 +25,200 @@
  */
 
 #include <list>
+#include <map>
 #include <set>
+#include <stdexcept> 
+#include <string>
+#include "astercxx.h"
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
-/**
- * @enum AsterCoordinates
- * @brief Toutes les coordonnees des grandeurs de Code_Aster
- */
-enum AsterCoordinates { Dx, Dy, Dz, Drx, Dry, Drz, Temperature, MiddleTemperature, Pressure };
-extern const char* AsterCoordinatesNames[9];
 
 /**
- * @def nbDisplacementCoordinates
- * @brief Nombre de coordonnees du deplacement
+ * @enum PhysicalQuantity_Enum
+ * @brief Inventory of all physical quantities available in Code_Aster
  */
-const int nbDisplacementCoordinates = 6;
-/**
- * @def DeplCoordinates
- * @brief Declaration des coordonnees du deplacement
- */
-extern const AsterCoordinates DeplCoordinates[nbDisplacementCoordinates];
+enum PhysicalQuantity_Enum { Force, Displacement, Pressure, Temperature };
 
 /**
- * @def nbThermalCoordinates
- * @brief Nombre de coordonnees de la temperature
+ * @enum Component_Enum 
+ * @brief Inventory of components of the physical quantities listed in PhysicalQuantity_Enum 
  */
-const int nbThermalCoordinates = 2;
-/**
- * @def TempCoordinates
- * @brief Declaration des coordonnees de la temperature
- */
-extern const AsterCoordinates TempCoordinates[nbThermalCoordinates];
+enum Component_Enum { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz };
 
 /**
- * @def nbPressureCoordinates
- * @brief Number of of coordinates specifying a pressure 
- */
-const int nbPressureCoordinates = 1;
-/**
- * @def PresCoordinates
- * @brief Declare pressure coodinates 
- */
-extern const AsterCoordinates PresCoordinates[nbPressureCoordinates];
+* @def ComponentNames
+* @brief Aster names of the components of the physical quantities
+*/
+extern const char* ComponentNames[15];
 
-// Ces wrappers sont la pour autoriser que les set soient const
-// Sinon, on aurait pas pu passer directement des const set<> en parametre template
 /**
- * @struct WrapDepl
- * @brief Structure destinee a definir les coordonnees autorisees pour DEPL
+* @class PhysicalQuantityTraits
+* @brief Traits class for a Physical Quantity
+*/
+/* This is the most general case (defined but intentionally not implemented) */
+/* It will be specialized for each physical quantity listed in the inventory */
+
+template < PhysicalQuantity_Enum PQ > struct PhysicalQuantityTraits; 
+
+/****************************************/
+/*            Force                     */
+/****************************************/
+
+/**
+ * @def nbForceComponents
+ * @brief Number of components specifying a force 
  */
-struct WrapDepl
+const int nbForceComponents = 6;
+/**
+ * @def ForceComponents
+ * @brief Declare Force Components 
+ */
+extern const Component_Enum ForceComponents[nbForceComponents];
+
+/** @def PhysicalQuantityTraits <Force>
+*  @brief Declare specialization for Force
+*/
+
+template <> struct PhysicalQuantityTraits <Force>
 {
-    /** @brief Coordonnees autorisees pour DEPL */
-    static const std::set< AsterCoordinates > setOfCoordinates;
+    static const std::set< Component_Enum > components;
+    static const std::string name;
 };
 
-/**
- * @struct WrapTemp
- * @brief Structure destinee a definir les coordonnees autorisees pour TEMP
- */
-struct WrapTemp
-{
-    /** @brief Coordonnees autorisees pour TEMP */
-    static const std::set< AsterCoordinates > setOfCoordinates;
-};
+/****************************************/
+/*        Displacement                  */
+/****************************************/
 
 /**
- * @struct WrapTemp
- * @brief Structure destinee a definir les coordonnees autorisees pour TEMP
+ * @def nbDisplComponents
+ * @brief Number of components specifying a displacement 
  */
-struct WrapPres
-{
-    /** @brief Coordonnees autorisees pour PRESSION */
-    static const std::set< AsterCoordinates > setOfCoordinates;
-};
+const int nbDisplacementComponents = 6;
 
 /**
- * @struct PhysicalQuantity
- * @brief Classe definissant un grandeur physique (DEPL_R, TEMP_R, etc.)
- * @author Nicolas Sellenet
+ * @def DisplComponents
+ * @brief Declare Displacement Components 
  */
-template< class ValueType, class Wrapping >
-struct PhysicalQuantity
+extern const Component_Enum DisplacementComponents[nbDisplacementComponents];
+
+template <> struct PhysicalQuantityTraits <Displacement>
 {
-    /** @typedef Definition du type informatique de la grandeur physique */
+    static const std::set< Component_Enum > components;
+    static const std::string name;
+};
+
+/******************************************/
+/* @class PhysicalQuantityInstance
+/* @brief Defines a physical quantity 
+/******************************************/
+
+template< class ValueType, PhysicalQuantity_Enum PhysicalQuantity >
+
+class PhysicalQuantityInstance
+{
+    public:
+    /** @typedef Define the Traits type */
+    typedef PhysicalQuantityTraits<PhysicalQuantity> Traits;
+    /** @typedef Value type of the physical quantity (double, function ...) */
     typedef ValueType QuantityType;
+    /** @typedef Components and Values of the PhysicalQuantityInstance */
+    typedef typename std::map< Component_Enum, QuantityType > MapOfCompAndVal;
+    typedef typename MapOfCompAndVal::iterator MapIt;
+    typedef typename std::pair<Component_Enum, QuantityType> CompAndVal;
+
+    /* @def  */
+    MapOfCompAndVal  _compAndVal;
+    
+    /** 
+    * @brief Constructor
+    */
+    PhysicalQuantityInstance(){};
+    
+    /**
+    * @brief Destructor
+    */
+     ~PhysicalQuantityInstance(){};
+     
+    /**
+    * @function hasComponent
+    * @brief test if a component is authorized for the physical quantity
+    */
+    
+    static bool hasComponent( Component_Enum comp )
+    {
+        if ( Traits::components.find( comp ) == Traits::components.end() ) return false;
+        return true;
+    }
+    
+    void setValue( Component_Enum comp, QuantityType val )
+    {
+    if ( ! hasComponent( comp ) ) 
+        {
+            throw std::runtime_error( "This component is not allowed for the current Physical Quantity" );
+        }
+    /* On teste le retour de map.insert pour savoir si le terme existe déjà */ 
+    std::pair< MapIt , bool> ret = _compAndVal.insert( CompAndVal( comp, val ) );
+    if (! ret.second )
+        {
+    /* S'il existe déjà, on le retire et on le remplace par un nouveau */
+      _compAndVal.erase( comp );
+      _compAndVal.insert( CompAndVal( comp, val ) ); 
+        }
+    }
 
     /**
-     * @brief Fonction statique hasCoordinate
-     * @param test coordonnee a tester
-     * @return vrai sur la coordonnee fait partie de la grandeur
-     */
-    static bool hasCoordinate( AsterCoordinates test )
+    * @brief debugPrint 
+    */
+    void debugPrint() const
     {
-        if ( Wrapping::setOfCoordinates.find( test ) == Wrapping::setOfCoordinates.end() ) return false;
-        return true;
+        std::cout << "Nom de la grandeur physique : " << Traits::name << std::endl; 
+        std::cout << "Nb de composantes   : " << Traits::components.size() << std::endl;
+        std::cout << "Nom des composantes : " ;
+        for (std::set<Component_Enum>::iterator it(Traits::components.begin());
+        it!=Traits::components.end(); it++)
+        {
+        std::cout << ComponentNames[*it] << " , " ; 
+        }
+        std::cout << std::endl; 
+        for ( typename MapOfCompAndVal::const_iterator it(_compAndVal.begin()); 
+            it!= _compAndVal.end(); it++)
+        {
+        std::cout << ComponentNames[it->first] << " : " << it->second << std::endl; 
+        }
+    };
+    
+    /**
+     * @brief getMap
+     * @return Map storing components and values of the physical quantity 
+     */
+    const MapOfCompAndVal& getMap() const
+    {
+      return _compAndVal; 
+    };
+    
+    /** 
+    * @brief get the name of the PhysicalQuantity
+    */
+    
+    std::string getName() const
+    {
+    return Traits::name; 
     };
 };
 
-/** @typedef Definition de DEPL_R */
-typedef PhysicalQuantity< double, WrapDepl > DoubleDisplacementType;
 
-/** @typedef Definition de TEMP_R */
-typedef PhysicalQuantity< double, WrapTemp > DoubleTemperatureType;
+/**********************************************************/
+/*  Explicit instantiation of template classes
+/**********************************************************/
 
-/** @typedef Pression */
-typedef PhysicalQuantity< double, WrapPres > DoublePressureType;
+/** @typedef ForceDouble FORC_R */
+template class PhysicalQuantityInstance< double, Force >; 
+typedef PhysicalQuantityInstance< double, Force > ForceDoubleInstance;
+typedef boost::shared_ptr< ForceDoubleInstance > ForceDoublePtr; 
+
+/** @typedef DisplacementDouble DEPL_R */
+template class PhysicalQuantityInstance< double, Displacement >; 
+typedef PhysicalQuantityInstance< double, Displacement > DisplacementDoubleInstance;
+typedef boost::shared_ptr< DisplacementDoubleInstance > DisplacementDoublePtr; 
+
 
 #endif /* PHYSICALQUANTITY_H_ */

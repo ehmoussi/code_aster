@@ -80,7 +80,6 @@ class DataStructure
 
         /**
          * @brief Function membre debugPrint
-         *        appel IMPR_CO
          * @param logicalUnit Unite logique d'impression
          */
         void debugPrint( const int logicalUnit ) const;
