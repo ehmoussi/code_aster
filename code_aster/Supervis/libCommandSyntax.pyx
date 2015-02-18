@@ -18,7 +18,7 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from code_aster.Supervis.libBaseUtils import debug, to_cstr
-
+from cpython.ref cimport PyObject
 
 cdef class ResultNaming:
 
@@ -82,6 +82,12 @@ cdef class CommandSyntax:
     def __repr__( self ):
         """Representation of the command"""
         return "Command {!r}, returns {!r} <{!r}>\n` syntax: {}".format( \
+            self._name, self._resultName, self._resultType,
+            self._definition)
+
+    def debugPrint( self ):
+        """Representation of the command"""
+        print "Command {!r}, returns {!r} <{!r}>\n` syntax: {}".format( \
             self._name, self._resultName, self._resultType,
             self._definition)
 
@@ -180,6 +186,28 @@ def setCurrentCommand( syntax ):
 def getCurrentCommand():
     global currentCommand
     return currentCommand
+
+
+cdef public void newCommandSyntax( const char* name ):
+    global currentCommand
+    currentCommand = CommandSyntax( name )
+
+cdef public void deleteCommandSyntax():
+    global currentCommand
+    currentCommand.free()
+
+cdef public void setResultCommandSyntax( const char* resultObjectName, const char* resultType ):
+    global currentCommand
+    currentCommand.setResult( resultObjectName, resultType )
+
+cdef public void defineCommandSyntax( PyObject* dict ):
+    global currentCommand
+    cdef object curDict = <object>dict
+    currentCommand.define( curDict )
+
+cdef public void debugPrintCommandSyntax():
+    global currentCommand
+    currentCommand.debugPrint()
 
 
 def _F( **kwargs ):
