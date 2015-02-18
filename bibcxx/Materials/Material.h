@@ -59,6 +59,7 @@ class MaterialInstance: public DataStructure
         /**
          * @brief Ajout d'un GeneralMaterialBehaviourPtr
          * @param curMaterBehav GeneralMaterialBehaviourPtr a ajouter au MaterialInstance
+         * @todo pouvoiur utiliser addMaterialBehaviour plusieurs fois après build
          */
         void addMaterialBehaviour( GeneralMaterialBehaviourPtr& curMaterBehav )
         {
