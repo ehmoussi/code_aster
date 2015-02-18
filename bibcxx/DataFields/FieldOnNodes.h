@@ -70,7 +70,7 @@ class FieldOnNodesInstance: public DataStructure
 #ifdef __DEBUG_GC__
             std::cout << "FieldOnNodes.destr: " << this->getName() << std::endl;
 #endif
-        }
+        };
 
         /**
          * @brief Surcharge de l'operateur []

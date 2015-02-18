@@ -15,13 +15,13 @@ FunctionInstance::FunctionInstance():
     _value( JeveuxVectorDouble( _jeveuxName + ".VALE           " ) )
 {
     // Create Jeveux vector ".PROL"
-    _property->allocate( "G", 6 );
+    _property->allocate( Permanent, 6 );
     (*_property)[0] = "FONCTION";
     (*_property)[1] = "LIN LIN";
     (*_property)[2] = "";
     (*_property)[3] = "TOUTRESU";
     (*_property)[4] = "EE";
-    (*_property)[5] = _jeveuxName.c_str();
+    (*_property)[5] = _jeveuxName;
 }
 
 void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &ord ) throw ( std::runtime_error )
@@ -31,7 +31,7 @@ void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &
 
     // Create Jeveux vector ".VALE"
     const int nbpts = absc.size();
-    _value->allocate( "G", 2 * nbpts );
+    _value->allocate( Permanent, 2 * nbpts );
 
     // Loop on the points
     VectorDouble::const_iterator abscIt = absc.begin();

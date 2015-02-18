@@ -26,6 +26,7 @@
 
 #include <string.h>
 #include <string>
+#include <stdexcept>
 
 #include "astercxx.h"
 
@@ -43,13 +44,51 @@ class JeveuxString
         /** @brief Pointeur vers la chaine de caractere */
         char currentValue[ length ];
 
+        /**
+         * @brief Recopie securisee d'un char*
+         * @param chaine char*
+         * @param chaine Taille de la chaine a recopier
+         */
+        inline void safeCopyFromChar( const char* chaine, const int size )
+        {
+            if ( size < length )
+            {
+                memset( &currentValue, ' ', sizeof( char )*length );
+                memcpy( &currentValue, chaine, sizeof( char )*size );
+            }
+            else
+            {
+                memcpy( &currentValue, chaine, sizeof( char )*length );
+            }
+        };
+
     public:
         /**
          * @brief Constructeur par defaut
          */
         inline JeveuxString()
+        {};
+
+        /**
+         * @brief Constructeur a partir d'un char*
+         * @param chaine Chaine a recopier en style fortran
+         */
+        inline JeveuxString( const JeveuxString< length >& chaine )
         {
-            memset( &currentValue, ' ', sizeof( char )*length );
+            memcpy( &currentValue, chaine, sizeof( char )*length );
+        };
+
+        /**
+         * @brief Constructeur rapide a partir d'un char*
+         * @param chaine Chaine a recopier en style fortran
+         * @param size Taille de la chaine a recopier
+         */
+        inline JeveuxString( const char* chaine, const int size )
+        {
+#ifdef DEBUG
+            if ( size < length ) throw std::runtime_error( "String size error" );
+#endif
+            memcpy( &currentValue, chaine, sizeof( char )*length );
         };
 
         /**
@@ -58,44 +97,39 @@ class JeveuxString
          */
         inline JeveuxString( const char* chaine )
         {
-            assert( strlen( chaine ) <= length );
-            memset( &currentValue, ' ', sizeof( char )*length );
-            memcpy( &currentValue, chaine, sizeof( char )*strlen( chaine ) );
-        };
-
-        /**
-         * @brief Constructeur a partir d'une reference vers une chaine
-         * @param chaine Chaine a recopier en style fortran
-         */
-        inline JeveuxString( const char& chaine )
-        {
-            assert( strlen( chaine ) <= length );
-            memset( &currentValue, ' ', sizeof( char )*length );
-            memcpy( &currentValue, &chaine, sizeof( char )*strlen( chaine ) );
+            safeCopyFromChar( chaine, strlen( chaine ) );
         };
 
         /**
          * @brief Surcharge de l'operateur = pour une affectation rapide
          * @param chaine Recopie a partir d'un JeveuxString
-         * @return reference vers la chaine recopiee
+         * @return Reference vers la chaine recopiee
          */
         inline JeveuxString& operator=( const JeveuxString< length >& chaine )
         {
-            assert( strlen( chaine ) == length );
-            memcpy( &currentValue, &( chaine.currentValue ), sizeof( char )*strlen( chaine ) );
+            memcpy( &currentValue, &( chaine.currentValue ), sizeof( char )*length );
             return *this;
         };
 
         /**
-         * @brief Surcharge de l'operateur = pour une affectation rapide a partir d'un char*
+         * @brief Surcharge de l'operateur = pour une affectation a partir d'un char*
          * @param chaine Recopie a partir d'un char*
          * @return reference vers la chaine recopiee
          */
         inline JeveuxString& operator=( const char* chaine )
         {
-            assert( strlen( chaine ) <= length );
-            memset( &currentValue, ' ', sizeof( char )*length );
-            memcpy( &currentValue, chaine, sizeof( char )*strlen( chaine ) );
+            safeCopyFromChar( chaine, strlen( chaine ) );
+            return *this;
+        };
+
+        /**
+         * @brief Surcharge de l'operateur = pour une affectation a partir d'une string
+         * @param chaine Recopie a partir d'une string
+         * @return reference vers la chaine recopiee
+         */
+        inline JeveuxString& operator=( const std::string& chaine )
+        {
+            safeCopyFromChar( chaine.c_str(), chaine.size() );
             return *this;
         };
 
@@ -106,6 +140,18 @@ class JeveuxString
         inline const char* c_str() const
         {
             return currentValue;
+        };
+
+        std::string rstrip() const
+        {
+            std::string buff ( currentValue, length );
+            std::string whitespaces ( " \t\f\v\n\r" );
+            std::size_t found = buff.find_last_not_of( whitespaces );
+            if ( found != std::string::npos )
+                buff.erase( found + 1 );
+            else
+                buff.clear();
+            return buff;
         };
 
         /**
@@ -125,18 +171,6 @@ class JeveuxString
         {
             return std::string( currentValue, length );
         };
-
-        std::string rstrip() const
-        {
-            std::string buff ( currentValue, length );
-            std::string whitespaces ( " \t\f\v\n\r" );
-            std::size_t found = buff.find_last_not_of( whitespaces );
-            if ( found != std::string::npos )
-                buff.erase( found + 1 );
-            else
-                buff.clear();
-            return buff;
-        }
 };
 
 /** @typedef Definition d'une chaine Jeveux de longueur 8 */

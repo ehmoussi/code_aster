@@ -115,14 +115,15 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          * @param length Longueur du vecteur Jeveux a allouer
          * @return true si l'allocation s'est bien passee
          */
-        bool allocate( std::string jeveuxBase, unsigned long length )
+        bool allocate( JeveuxMemory jeveuxBase, unsigned long length )
         {
             if ( _name != "" && length > 0 )
             {
-                assert( jeveuxBase == "V" || jeveuxBase == "G" );
+                std::string strJeveuxBase( "V" );
+                if ( jeveuxBase == Permanent ) strJeveuxBase = "G";
                 long taille = length;
                 const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
-                std::string carac = jeveuxBase + " V " + JeveuxTypesNames[intType];
+                std::string carac = strJeveuxBase + " V " + JeveuxTypesNames[intType];
                 CALL_WKVECTC( _name.c_str(), carac.c_str(),
                               &taille, (void*)(&_valuePtr));
                 if ( _valuePtr == NULL ) return false;
@@ -132,16 +133,16 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         };
 
         /**
-        * @brief Return a pointer to the vector
-        */
+         * @brief Return a pointer to the vector
+         */
         const ValueType* getDataPtr() const
         {
             return _valuePtr;
         }
 
         /**
-        * @brief Return the size of the vector
-        */
+         * @brief Return the size of the vector
+         */
         long size() const
         {
             long vectSize;

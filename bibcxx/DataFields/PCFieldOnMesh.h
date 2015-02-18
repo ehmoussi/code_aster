@@ -34,30 +34,85 @@
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Mesh/Mesh.h"
+#include "aster_fort.h"
 
 /**
- * @class Piecewise Constant (PC) Field on Mesh template
+ * @class PCFieldOnMeshInstance Piecewise Constant (PC) Field on Mesh template
  * @brief Cette classe permet de definir une carte (champ défini sur les mailles)
  * @author Natacha Bereux
  */
-template<class ValueType>
-class PCFieldOnMeshInstance
+template< class ValueType >
+class PCFieldOnMeshInstance: public DataStructure
 {
     private:
-        /** @brief Nom Jeveux de la carte */
-        std::string             _name;
         /** @brief Vecteur Jeveux '.NOMA' */
-        JeveuxVectorChar8       _meshName;
+        JeveuxVectorChar8         _meshName;
         /** @brief Vecteur Jeveux '.DESC' */
-        JeveuxVectorLong        _descriptor;
+        JeveuxVectorLong          _descriptor;
         /** @brief Vecteur Jeveux '.NOLI' */
-        JeveuxVectorChar24      _nameOfLigrels;
+        JeveuxVectorChar24        _nameOfLigrels;
         /** @brief Collection  '.LIMA' */
-        JeveuxCollectionLong    _listOfMeshElements;
+        JeveuxCollectionLong      _listOfMeshElements;
         /** @brief Vecteur Jeveux '.VALE' */
-        JeveuxVector<ValueType> _valuesList;
+        JeveuxVector< ValueType > _valuesList;
         /** @brief Maillage sous-jacent */
-        MeshPtr                 _supportMesh;
+        MeshPtr                   _supportMesh;
+        /** @brief La carte est-elle allouée ? */
+        bool                      _isAllocated;
+        /** @brief Objet temporaire '.NCMP' */
+        JeveuxVectorChar8         _componentNames;
+        /** @brief Objet temporaire '.VALV' */
+        JeveuxVector< ValueType > _valuesListTmp;
+
+    private:
+        void fortranAddValues( const long code, const std::string grp, const std::string mode,
+                               const long nma, const JeveuxVectorLong limanu,
+                               const std::string ligrel, JeveuxVectorChar8& component,
+                               JeveuxVector< ValueType > values ) const
+            throw ( std::runtime_error )
+        {
+            bool test = _componentNames->updateValuePointer();
+            test = test && _valuesListTmp->updateValuePointer();
+            if ( ! test )
+                throw std::runtime_error( "PCFieldOnMeshInstance not allocate" );
+            const long taille = _componentNames->size();
+
+            const long tVerif1 = component->size();
+            const long tVerif2 = values->size();
+            if ( tVerif1 > taille || tVerif2 > taille || tVerif1 != tVerif2 )
+                throw std::runtime_error( "Unconsistent size" );
+
+            for ( int position = 0; position < tVerif1; ++position )
+            {
+                (*_componentNames)[position] = (*component)[position];
+                (*_valuesListTmp)[position] = (*values)[position];
+            }
+
+            const std::string limano( " " );
+            try
+            {
+                CALL_NOCARTC( getName().c_str(), &code, &tVerif1, grp.c_str(), mode.c_str(),
+                              &nma, limano.c_str(), &( *limanu )[0], ligrel.c_str() );
+            }
+            catch( ... )
+            {
+                throw;
+            }
+        };
+
+        void fortranAllocate( const std::string base, const std::string quantity ) const
+            throw ( std::runtime_error )
+        {
+            try
+            {
+                CALL_ALCART( base.c_str(), getName().c_str(), _supportMesh->getName().c_str(),
+                             quantity.c_str() );
+            }
+            catch( ... )
+            {
+                throw;
+            }
+        };
 
     public:
         /**
@@ -65,17 +120,104 @@ class PCFieldOnMeshInstance
          * @param name Nom Jeveux de la carte
          */
         PCFieldOnMeshInstance( std::string name ):
-                                            _name( name ),
-                                            _meshName( JeveuxVectorChar8( name+".NOMA" ) ),
-                                            _descriptor( JeveuxVectorLong( name+".DESC" ) ),
-                                            _nameOfLigrels( JeveuxVectorChar24( name+".NOLI" ) ),
-                                            _listOfMeshElements( JeveuxCollectionLong( name+".LIMA" ) ),
-                                            _valuesList( JeveuxVector<ValueType>( name+".VALE" ) ),
-                                            _supportMesh( MeshPtr() )
+                                            DataStructure( name, "CARTE" ),
+                                            _meshName( JeveuxVectorChar8( name + ".NOMA" ) ),
+                                            _descriptor( JeveuxVectorLong( name + ".DESC" ) ),
+                                            _nameOfLigrels( JeveuxVectorChar24( name + ".NOLI" ) ),
+                                            _listOfMeshElements( JeveuxCollectionLong( name + ".LIMA" ) ),
+                                            _valuesList( JeveuxVector<ValueType>( name + ".VALE" ) ),
+                                            _supportMesh( MeshPtr() ),
+                                            _isAllocated( false ),
+                                            _componentNames( name + ".NCMP" ),
+                                            _valuesListTmp( name + ".VALV" )
         {
-            assert(name.size() == 19);
+            assert( name.size() == 19 );
         };
 
+        /**
+         * @brief Allocation de la carte
+         * @return true si l'allocation s'est bien deroulee, false sinon
+         */
+        void allocate( const JeveuxMemory jeveuxBase, const std::string componant )
+            throw ( std::runtime_error )
+        {
+            if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+
+            std::string strJeveuxBase( "V" );
+            if ( jeveuxBase == Permanent ) strJeveuxBase = "G";
+            fortranAllocate( strJeveuxBase, componant );
+            _isAllocated = true;
+        };
+
+        /**
+         * @brief Définition du maillage sous-jacent
+         * @param currentMesh objet Mesh sur lequel le modele reposera
+         * @return renvoit true si la définition s'est bien deroulee, false sinon
+         */
+        bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
+        {
+            if ( currentMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+            _supportMesh = currentMesh;
+            return true;
+        };
+
+        /**
+         * @brief Fixer une valeur sur tout le maillage
+         * @param component JeveuxVectorChar8 contenant le nom des composantes à fixer
+         * @param values JeveuxVector< ValueType > contenant les valeurs
+         * @param ligrel TEMPORAIRE
+         * @return renvoit true si l'ajout s'est bien deroulee, false sinon
+         * @todo Ajouter la possibilite de donner un ligrel (n'existe pas encore)
+         */
+        bool setValueOnAllMesh( JeveuxVectorChar8& component, JeveuxVector< ValueType > values,
+                                std::string ligrel = " " )
+            throw ( std::runtime_error )
+        {
+            if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+            if ( ligrel != " " )
+                throw std::runtime_error( "Build a PCFieldOnMeshInstance with a ligrel not yet available" );
+
+            const long code = 1;
+            const std::string grp( " " );
+            const std::string mode( " " );
+            const long nbMa = 0;
+            JeveuxVectorLong limanu( "empty" );
+            limanu->allocate( Temporary, 1 );
+            fortranAddValues( code, grp, mode, nbMa, limanu, ligrel, component, values );
+            return true;
+        };
+
+        /**
+         * @brief Fixer une valeur sur un groupe de mailles
+         * @param component JeveuxVectorChar8 contenant le nom des composantes à fixer
+         * @param values JeveuxVector< ValueType > contenant les valeurs
+         * @param grp Groupe de mailles
+         * @param ligrel TEMPORAIRE
+         * @return renvoit true si l'ajout s'est bien deroulee, false sinon
+         * @todo Ajouter la possibilite de donner un ligrel (n'existe pas encore)
+         */
+        bool setValueOnGroupOfElements( JeveuxVectorChar8& component, JeveuxVector< ValueType > values,
+                                        GroupOfElements grp, std::string ligrel = " " )
+            throw ( std::runtime_error )
+        {
+            if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+            if ( ligrel != " " )
+                throw std::runtime_error( "Build a PCFieldOnMeshInstance with a ligrel not yet available" );
+            if ( ! _supportMesh->hasGroupOfElements( grp.getEntityName() ) )
+                throw std::runtime_error( "Group " + grp.getEntityName() + " not in mesh" );
+
+            const long code = 2;
+            const std::string mode( " " );
+            const long nbMa = 0;
+            JeveuxVectorLong limanu( "empty" );
+            limanu->allocate( Temporary, 1 );
+            fortranAddValues( code, grp.getEntityName(), mode, nbMa, limanu, ligrel, component, values );
+            return true;
+        };
 
         /**
          * @brief Mise a jour des pointeurs Jeveux
@@ -90,19 +232,6 @@ class PCFieldOnMeshInstance
             _listOfMeshElements->buildFromJeveux();
             _nameOfLigrels->updateValuePointer();
             return retour;
-        };
-
-        /**
-         * @brief Définition du maillage sous-jacent
-         * @param currentMesh objet Mesh sur lequel le modele reposera
-         * @return renvoit true si la définition  s'est bien deroulee, false sinon
-         */
-        bool setSupportMesh(MeshPtr& currentMesh) throw ( std::runtime_error )
-        {
-            if ( currentMesh->isEmpty() )
-                throw std::runtime_error( "Mesh is empty" );
-            _supportMesh = currentMesh;
-            return true;
         };
 };
 

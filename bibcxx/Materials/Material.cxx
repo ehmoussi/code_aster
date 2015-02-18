@@ -38,7 +38,7 @@ bool MaterialInstance::build()
     // Recuperation du nombre de GeneralMaterialBehaviourPtr ajoutes par l'utilisateur
     const int nbMCF = _vecMatBehaviour.size();
     // Creation du vecteur Jeveux ".MATERIAU.NOMRC"
-    _materialBehaviourNames->allocate( "G", nbMCF );
+    _materialBehaviourNames->allocate( Permanent, nbMCF );
     int num = 0;
     // Boucle sur les GeneralMaterialBehaviourPtr
     for ( VectorOfGeneralMaterialIter curIter = _vecMatBehaviour.begin();

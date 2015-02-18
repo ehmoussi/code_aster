@@ -31,6 +31,12 @@
 #include <complex>
 
 /**
+ * @enum JeveuxMemory
+ * @brief Fournit les types de memoire Jeveux
+ */
+enum JeveuxMemory { Permanent, Temporary };
+
+/**
  * @enum JeveuxTypes
  * @brief Fournit tous les types autorises dans le gestionnaire memoire Jeveux
  */
