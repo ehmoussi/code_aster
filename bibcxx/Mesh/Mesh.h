@@ -121,6 +121,7 @@ class MeshInstance: public DataStructure
          * @return Retourne true si tout s'est bien déroulé
          */
         bool build( );
+        
 };
 
 

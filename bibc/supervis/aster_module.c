@@ -67,7 +67,7 @@ void DEFP(XFINI,xfini, _IN INTEGER *code)
    /* jeveux est fermé */
    register_sh_jeveux_status(0);
    // TODO NS : J'ai commente cette ligne car elle fait planter le code
-   // et que je ne l'a comprend pas
+   // et que je ne la comprend pas
    // TODO MC: ceci lève EOFError, appelé par FIN, à voir ce qu'il faut en faire
    // interruptTry(*code);
 }

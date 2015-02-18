@@ -1,7 +1,7 @@
 /**
  * @file PhysicalQuantity.cxx
  * @brief Initialisation de tableaux de coordonnees autorisees
- * @author Nicolas Sellenet
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
  *
@@ -21,23 +21,20 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
+
 
 #include "Loads/PhysicalQuantity.h"
 
-const char* AsterCoordinatesNames[9] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP", "TEMP_MIL", "PRES" };
+const char* ComponentNames[15] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP", "TEMP_MIL", "PRES", "FX", "FY", "FZ", "MX", "MY","MZ"};
 
-const AsterCoordinates DeplCoordinates[nbDisplacementCoordinates] = { Dx, Dy, Dz, Drx, Dry, Drz };
+/* Init const data */
 
-const AsterCoordinates TempCoordinates[nbThermalCoordinates] = { Temperature, MiddleTemperature };
+/* Force */
+const Component_Enum ForceComponents[nbForceComponents] = { Fx, Fy, Fz, Mx, My, Mz };
+const std::string PhysicalQuantityTraits <Force>::name = "FORCE"; 
+const std::set< Component_Enum > PhysicalQuantityTraits<Force>::components( ForceComponents, ForceComponents + nbForceComponents );
 
-const AsterCoordinates PresCoordinates[nbPressureCoordinates] = { Pressure };
-
-const std::set< AsterCoordinates >WrapDepl::setOfCoordinates( DeplCoordinates,
-                                                              DeplCoordinates + nbDisplacementCoordinates );
-
-const std::set< AsterCoordinates >WrapTemp::setOfCoordinates( TempCoordinates,
-                                                              TempCoordinates + nbThermalCoordinates );
-
-const std::set< AsterCoordinates >WrapPres::setOfCoordinates( PresCoordinates,
-                                                              PresCoordinates + nbPressureCoordinates );
+/* Displacement */
+const Component_Enum DisplacementComponents[nbDisplacementComponents] = { Dx, Dy, Dz, Dx, Dy, Dz };
+const std::string PhysicalQuantityTraits <Displacement>::name = "DISPLACEMENT"; 
+const std::set< Component_Enum > PhysicalQuantityTraits<Displacement>::components( DisplacementComponents, DisplacementComponents + nbDisplacementComponents );

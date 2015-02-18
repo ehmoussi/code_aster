@@ -85,6 +85,7 @@ struct SyntaxMapContainer
      * @return un dict python contenant la syntaxe valorisable par l'objet CommandSyntax
      */
     PyObject* convertToPythonDictionnary( PyObject* returnDict = NULL );
+    
 };
 
 #endif
