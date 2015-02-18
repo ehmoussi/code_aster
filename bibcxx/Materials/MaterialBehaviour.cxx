@@ -29,9 +29,9 @@
 bool GeneralMaterialBehaviourInstance::build() throw ( std::runtime_error )
 {
     const int nbOfMaterialProperties = _listOfNameOfMaterialProperties.size();
-    _complexValues->allocate( "G", nbOfMaterialProperties );
-    _doubleValues->allocate( "G", nbOfMaterialProperties );
-    _char16Values->allocate( "G", 2*nbOfMaterialProperties );
+    _complexValues->allocate( Permanent, nbOfMaterialProperties );
+    _doubleValues->allocate( Permanent, nbOfMaterialProperties );
+    _char16Values->allocate( Permanent, 2*nbOfMaterialProperties );
 
     int position = 0;
     for ( ListStringIter curIter = _listOfNameOfMaterialProperties.begin();
