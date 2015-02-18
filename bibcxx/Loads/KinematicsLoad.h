@@ -57,6 +57,8 @@ class KinematicsLoadInstance: public DataStructure
         /** @brief Listes des valeurs imposees DEPL_R et TEMP_R */
         ListDoubleDisp _listOfDoubleImposedDisplacement;
         ListDoubleTemp _listOfDoubleImposedTemperature;
+        /** @brief La SD est-elle vide ? */
+        bool           _isEmpty;
 
     public:
         /**
@@ -186,9 +188,12 @@ class KinematicsLoadInstance: public DataStructure
          * @brief Definition du modele support
          * @param currentMesh objet Model sur lequel la charge reposera
          */
-        void setSupportModel( ModelPtr& currentModel )
+        bool setSupportModel( ModelPtr& currentModel )
         {
+            if ( currentModel->isEmpty() )
+                throw std::runtime_error( "Model is empty" );
             _supportModel = currentModel;
+            return true;
         };
 };
 

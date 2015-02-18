@@ -26,16 +26,21 @@
 #include "astercxx.h"
 
 #include "Loads/KinematicsLoad.h"
-#include "RunManager/CommandSyntax.h"
+#include "Utilities/SyntaxDictionary.h"
+
+__PYX_EXTERN_C DL_IMPORT(void) newCommandSyntax(const char *);
+__PYX_EXTERN_C DL_IMPORT(void) deleteCommandSyntax(void);
+__PYX_EXTERN_C DL_IMPORT(void) setResultCommandSyntax(const char *, const char *);
+__PYX_EXTERN_C DL_IMPORT(void) defineCommandSyntax(PyObject *);
 
 KinematicsLoadInstance::KinematicsLoadInstance():
                     DataStructure( getNewResultObjectName(), "CHAR_CINE" ),
-                    _supportModel( ModelPtr() )
+                    _supportModel( ModelPtr() ),
+                    _isEmpty( true )
 {};
 
 bool KinematicsLoadInstance::build() throw ( std::runtime_error )
 {
-/*
     std::string typSd;
     if ( _listOfDoubleImposedDisplacement.size() != 0 )
         typSd = getType() + "_MECA";
@@ -43,65 +48,57 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
         typSd = getType() + "_THER";
     if ( _listOfDoubleImposedDisplacement.size() == 0 && _listOfDoubleImposedTemperature.size() == 0 )
         throw std::runtime_error( "KinematicsLoad empty" );
-    // Definition du bout de fichier de commande correspondant a AFFE_CHAR_CINE
-    CommandSyntax syntaxeAffeCharCine( "AFFE_CHAR_CINE", true, getResultObjectName(),
-                                       typSd );
+    newCommandSyntax( "AFFE_CHAR_CINE" );
+    setResultCommandSyntax( getResultObjectName().c_str(), typSd.c_str() );
 
-    // Definition du mot cle simple MAILLAGE
-    SimpleKeyWordStr mCSModel = SimpleKeyWordStr("MODELE");
+    SyntaxMapContainer dict;
     if ( ! _supportModel )
         throw std::runtime_error( "Support model is undefined" );
-    mCSModel.addValues( _supportModel->getName() );
-    syntaxeAffeCharCine.addSimpleKeywordString(mCSModel);
+    dict.container["MODELE"] = _supportModel->getName();
 
     // Definition de mot cle facteur MECA_IMPO
     if ( _listOfDoubleImposedDisplacement.size() != 0 )
     {
-        FactorKeyword motCleMECA_IMPO = FactorKeyword("MECA_IMPO", true);
-
+        ListSyntaxMapContainer listeMecaImpo;
         for ( ListDoubleDispIter curIter = _listOfDoubleImposedDisplacement.begin();
               curIter != _listOfDoubleImposedDisplacement.end();
               ++curIter )
         {
-            // Definition d'une occurence d'un mot-cle facteur
-            FactorKeywordOccurence occurMECA_IMPO = FactorKeywordOccurence();
-
-            SimpleKeyWordStr mCSGroup;
+            SyntaxMapContainer dict2;
             const MeshEntityPtr& tmp = curIter->getMeshEntityPtr();
-            if ( typeid( *(tmp) ) == typeid( AllMeshEntities ) )
+            if ( tmp->getType() == AllMeshEntitiesType )
             {
-                mCSGroup = SimpleKeyWordStr("TOUT");
-                mCSGroup.addValues("OUI");
+                dict2.container["TOUI"] = "OUI";
             }
             else
             {
-                if ( typeid( *(tmp) ) == typeid( GroupOfNodes ) )
-                    mCSGroup = SimpleKeyWordStr("GROUP_NO");
-                else if ( typeid( *(tmp) ) == typeid( GroupOfElements ) )
-                    mCSGroup = SimpleKeyWordStr("GROUP_MA");
-
-                mCSGroup.addValues( tmp->getEntityName() );
+                if ( tmp->getType() == GroupOfNodesType )
+                    dict2.container["GROUP_NO"] = tmp->getEntityName();
+                else if ( tmp->getType() == GroupOfElementsType )
+                    dict2.container["GROUP_MA"] = tmp->getEntityName();
             }
-            occurMECA_IMPO.addSimpleKeywordString(mCSGroup);
 
             const std::string nomComp = curIter->getAsterCoordinateName();
-            SimpleKeyWordDbl mCSComp = SimpleKeyWordDbl( nomComp );
-            // Ajout de la valeur donnee par l'utilisateur
-            mCSComp.addValues( curIter->getValue() );
-            // Ajout du mot-cle simple a l'occurence du mot-cle facteur
-            occurMECA_IMPO.addSimpleKeywordDouble(mCSComp);
+            dict2.container[ nomComp ] = curIter->getValue();
 
-            // Ajout de l'occurence au mot-cle facteur MECA_IMPO
-            motCleMECA_IMPO.addOccurence(occurMECA_IMPO);
+            listeMecaImpo.push_back( dict2 );
         }
 
-        // Ajout du mot-cle facteur MECA_IMPO a la commande AFFE_CHAR_CINE
-        syntaxeAffeCharCine.addFactorKeyword(motCleMECA_IMPO);
+        dict.container["MECA_IMPO"] = listeMecaImpo;
     }
+    defineCommandSyntax( dict.convertToPythonDictionnary() );
+    debugPrintCommandSyntax();
+    try
+    {
+        INTEGER op = 101;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    _isEmpty = false;
+    deleteCommandSyntax();
 
-    // Maintenant que le fichier de commande est pret, on appelle OP0018
-    INTEGER op = 101;
-    CALL_EXECOP( &op );
-*/
     return true;
 };

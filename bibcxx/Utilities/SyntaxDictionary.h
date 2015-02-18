@@ -83,6 +83,7 @@ struct SyntaxMapContainer
     /**
      * @brief Convertisseur du conteneur en dictionnaire python
      * @return un dict python contenant la syntaxe valorisable par l'objet CommandSyntax
+     * @todo Probleme de refcounting : ajouter un objet wrapper qui se chargera de la destruction
      */
     PyObject* convertToPythonDictionnary( PyObject* returnDict = NULL );
     

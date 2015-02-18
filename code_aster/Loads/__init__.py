@@ -4,3 +4,4 @@
 
 from code_aster.Loads.PhysicalQuantity import *
 from code_aster.Loads.MechanicalLoad import *
+from code_aster.Loads.KinematicsLoad import *
