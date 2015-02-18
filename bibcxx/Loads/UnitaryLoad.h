@@ -63,9 +63,9 @@ class UnitaryLoad
             _loadCoordinate( curCoord ),
             _value( value )
         {
-//            if ( ! PhysicalQuantityType::hasCoordinate( curCoord ) )
-//                throw std::runtime_error( std::string ( Component_EnumNames[ (int) curCoord ] ) +
-//                                          " not allowed" );
+            if ( ! PhysicalQuantityType::hasComponent( curCoord ) )
+                throw std::runtime_error( std::string ( ComponentNames[ (int) curCoord ] ) +
+                                          " not allowed" );
         };
 
         /**
@@ -74,7 +74,7 @@ class UnitaryLoad
          */
         const std::string getAsterCoordinateName() const
         {
-            return std::string( Component_EnumNames[ (int) _loadCoordinate ] );
+            return std::string( ComponentNames[ (int) _loadCoordinate ] );
         };
 
         /**
@@ -97,9 +97,9 @@ class UnitaryLoad
 };
 
 /** @typedef Definition d'un chargement sur DEPL_R */
-//typedef UnitaryLoad< DisplacementInstanceDouble > DoubleLoadDisplacement;
+typedef UnitaryLoad< DisplacementDoubleInstance > DoubleLoadDisplacement;
 /** @typedef Definition d'un chargement sur TEMP_R */
-//typedef UnitaryLoad< TemperatureInstanceDouble > DoubleLoadTemperature;
+typedef UnitaryLoad< TemperatureDoubleInstance > DoubleLoadTemperature;
 /** @typedef Definition d'un chargement pression */
-//typedef UnitaryLoad< PressureInstanceDouble > DoubleLoadPressure;
+typedef UnitaryLoad< PressureDoubleInstance > DoubleLoadPressure;
 #endif /* UNITARYLOAD_H_ */

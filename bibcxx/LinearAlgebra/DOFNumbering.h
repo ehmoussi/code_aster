@@ -33,7 +33,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
-#include "Loads/MechanicalLoad.h"
+//#include "Loads/MechanicalLoad.h"
 
 /**
  * @class DOFNumberingInstance
@@ -44,6 +44,8 @@
 class DOFNumberingInstance: public DataStructure
 {
     private:
+        /** @todo */
+        typedef int MechanicalLoad; 
         // !!! Classe succinte car on ne sait pas comment elle sera utiliser !!!
         /** @brief Objet Jeveux '.NSLV' */
         JeveuxVectorChar24 _nameOfSolverDataStructure;

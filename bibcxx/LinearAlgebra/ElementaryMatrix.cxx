@@ -64,7 +64,8 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity() throw ( std::runtime_
         throw std::runtime_error( "Material is empty" );
     mCSChamMater.addValues( _materialOnMesh->getName() );
     syntaxeCalcMatrElem.addSimpleKeywordString( mCSChamMater );
-
+    /** @todo */
+    /*
     if ( _listOfMechanicalLoads.size() != 0 )
     {
         SimpleKeyWordStr mCSCharge( "CHARGE" );
@@ -76,7 +77,7 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity() throw ( std::runtime_
         }
         syntaxeCalcMatrElem.addSimpleKeywordString( mCSCharge );
     }
-
+    */
     INTEGER op = 9;
     CALL_EXECOP( &op );
     _isEmpty = false;

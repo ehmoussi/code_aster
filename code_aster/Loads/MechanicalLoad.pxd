@@ -23,7 +23,7 @@ from code_aster.Modeling.Model cimport ModelPtr
 from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr
 
 
-cdef extern from "Loads/CharMeca.h":
+cdef extern from "Loads/MechanicalLoad.h":
 
     cdef cppclass NodalForceDoubleInstance:
 
