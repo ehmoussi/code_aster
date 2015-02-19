@@ -20,7 +20,7 @@
 from libcpp.string cimport string
 
 from code_aster.Modeling.Model cimport ModelPtr
-from PhysicalQuantity cimport AsterCoordinates
+from PhysicalQuantity cimport PhysicalQuantityComponent
 
 
 cdef extern from "Loads/KinematicsLoad.h":
@@ -28,10 +28,10 @@ cdef extern from "Loads/KinematicsLoad.h":
     cdef cppclass KinematicsLoadInstance:
 
         KinematicsLoadInstance()
-        void addImposedMechanicalDOFOnElements( AsterCoordinates coordinate, double value, string nameOfGroup )
-        void addImposedMechanicalDOFOnNodes( AsterCoordinates coordinate, double value, string nameOfGroup )
-        void addImposedThermalDOFOnElements( AsterCoordinates coordinate, double value, string nameOfGroup )
-        void addImposedThermalDOFOnNodes( AsterCoordinates coordinate, double value, string nameOfGroup )
+        void addImposedMechanicalDOFOnElements( PhysicalQuantityComponent coordinate, double value, string nameOfGroup )
+        void addImposedMechanicalDOFOnNodes( PhysicalQuantityComponent coordinate, double value, string nameOfGroup )
+        void addImposedThermalDOFOnElements( PhysicalQuantityComponent coordinate, double value, string nameOfGroup )
+        void addImposedThermalDOFOnNodes( PhysicalQuantityComponent coordinate, double value, string nameOfGroup )
         bint build() except +
         void debugPrint( int logicalUnit )
         const string getType()

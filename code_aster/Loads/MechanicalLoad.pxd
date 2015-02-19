@@ -32,7 +32,6 @@ cdef extern from "Loads/MechanicalLoad.h":
         bint setSupportModel( ModelPtr currentModel )
         bint build() except +
         const string getType()
-        getCommandKeywords()
         void debugPrint( int logicalUnit )
 
     cdef cppclass NodalForceDoublePtr:

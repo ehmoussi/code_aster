@@ -52,12 +52,7 @@ cdef class NodalForceDouble:
     def build( self ):
         """Build the model"""
         instance = self.getInstance()
-        syntax = CommandSyntax( "AFFE_CHAR_MECA" )
-        syntax.setResult( resultNaming.getResultObjectName(), instance.getType() )
-        dictSyntax = instance.getCommandKeywords()
-        syntax.define( dictSyntax )
         iret = instance.build()
-        syntax.free()
         return iret
 
 

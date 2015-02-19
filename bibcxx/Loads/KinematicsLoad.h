@@ -96,7 +96,7 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedMechanicalDOFOnElements( Component_Enum coordinate, double value,
+        bool addImposedMechanicalDOFOnElements( PhysicalQuantityComponent coordinate, double value,
                                                 std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
@@ -118,7 +118,7 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedMechanicalDOFOnNodes( Component_Enum coordinate, double value,
+        bool addImposedMechanicalDOFOnNodes( PhysicalQuantityComponent coordinate, double value,
                                              std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
@@ -140,7 +140,7 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedThermalDOFOnElements( Component_Enum coordinate, double value,
+        bool addImposedThermalDOFOnElements( PhysicalQuantityComponent coordinate, double value,
                                              std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
@@ -162,7 +162,7 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedThermalDOFOnNodes( Component_Enum coordinate, double value,
+        bool addImposedThermalDOFOnNodes( PhysicalQuantityComponent coordinate, double value,
                                           std::string nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme

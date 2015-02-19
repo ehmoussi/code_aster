@@ -29,7 +29,7 @@
 #include "Modeling/Model.h"
 #include <typeinfo>
 
-#include "Utilities/SyntaxDictionary.h"
+#include "RunManager/CommandSyntaxCython.h"
 
 ModelInstance::ModelInstance(): DataStructure( getNewResultObjectName(), "MODELE" ),
                                 _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
@@ -41,25 +41,9 @@ ModelInstance::ModelInstance(): DataStructure( getNewResultObjectName(), "MODELE
 
 bool ModelInstance::build() throw ( std::runtime_error )
 {
-    // Maintenant que le fichier de commande est pret, on appelle OP0018
-    try
-    {
-        INTEGER op = 18;
-        CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
-    }
-    _isEmpty = false;
-    // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
-    _typeOfElements->updateValuePointer();
+    CommandSyntaxCython cmdSt( "AFFE_MODELE" );
+    cmdSt.setResult( getResultObjectName(), "MODELE" );
 
-    return true;
-};
-
-PyObject* ModelInstance::getCommandKeywords() throw ( std::runtime_error )
-{
     SyntaxMapContainer dict;
 
     dict.container["VERI_JACOBIEN"] = "OUI";
@@ -90,6 +74,26 @@ PyObject* ModelInstance::getCommandKeywords() throw ( std::runtime_error )
         listeAFFE.push_back( dict2 );
     }
     dict.container["AFFE"] = listeAFFE;
-    PyObject* returnDict = dict.convertToPythonDictionnary();
-    return returnDict;
+    cmdSt.define( dict );
+
+    // Maintenant que le fichier de commande est pret, on appelle OP0018
+    try
+    {
+        INTEGER op = 18;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    _isEmpty = false;
+    // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
+    _typeOfElements->updateValuePointer();
+
+    return true;
+};
+
+PyObject* ModelInstance::getCommandKeywords() throw ( std::runtime_error )
+{
+    return NULL;
 };

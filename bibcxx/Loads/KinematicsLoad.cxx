@@ -26,12 +26,7 @@
 #include "astercxx.h"
 
 #include "Loads/KinematicsLoad.h"
-#include "Utilities/SyntaxDictionary.h"
-
-__PYX_EXTERN_C DL_IMPORT(void) newCommandSyntax(const char *);
-__PYX_EXTERN_C DL_IMPORT(void) deleteCommandSyntax(void);
-__PYX_EXTERN_C DL_IMPORT(void) setResultCommandSyntax(const char *, const char *);
-__PYX_EXTERN_C DL_IMPORT(void) defineCommandSyntax(PyObject *);
+#include "RunManager/CommandSyntaxCython.h"
 
 KinematicsLoadInstance::KinematicsLoadInstance():
                     DataStructure( getNewResultObjectName(), "CHAR_CINE" ),
@@ -48,8 +43,8 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
         typSd = getType() + "_THER";
     if ( _listOfDoubleImposedDisplacement.size() == 0 && _listOfDoubleImposedTemperature.size() == 0 )
         throw std::runtime_error( "KinematicsLoad empty" );
-    newCommandSyntax( "AFFE_CHAR_CINE" );
-    setResultCommandSyntax( getResultObjectName().c_str(), typSd.c_str() );
+    CommandSyntaxCython cmdSt( "AFFE_CHAR_CINE" );
+    cmdSt.setResult( getResultObjectName(), typSd );
 
     SyntaxMapContainer dict;
     if ( ! _supportModel )
@@ -86,8 +81,8 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
 
         dict.container["MECA_IMPO"] = listeMecaImpo;
     }
-    defineCommandSyntax( dict.convertToPythonDictionnary() );
-    debugPrintCommandSyntax();
+    cmdSt.define( dict );
+
     try
     {
         INTEGER op = 101;
@@ -98,7 +93,6 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
         throw;
     }
     _isEmpty = false;
-    deleteCommandSyntax();
 
     return true;
 };
