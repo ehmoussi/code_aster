@@ -597,12 +597,6 @@ char* getNomObjetJeveux();
 char* getTypeObjetResu();
 
 /**
- * @fn getSDType
- * @brief Obtention du type de la sd dont le nom est passe en argument
- */
-char* getSDType(char*);
-
-/**
  * @fn isCommandeOperateur
  * @brief Fonction permettant de savoir si une commande est un operateur
  */

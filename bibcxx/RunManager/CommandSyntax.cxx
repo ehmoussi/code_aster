@@ -47,14 +47,6 @@ char* getTypeObjetResu()
     return const_cast< char* >( commandeCourante->getTypeObjetResu().c_str() );
 };
 
-char* getSDType(char* nom)
-{
-    mapStrSDIterator curIter = mapNameDataStructure.find( std::string( nom, 0, 8 ) );
-    if ( curIter == mapNameDataStructure.end() )
-        throw std::runtime_error( "Problem !!!" );
-    return const_cast< char* >( curIter->second->getType().c_str() );
-};
-
 int isCommandeOperateur()
 {
     if ( commandeCourante == NULL ) return 0;
