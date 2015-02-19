@@ -609,11 +609,6 @@ char* getSDType(char*);
 int isCommandeOperateur();
 
 /**
- * @fn listeMotCleSimpleFromMotCleFacteur
- */
-int listeMotCleSimpleFromMotCleFacteur(char *, int, int, int, char***, char***, int*);
-
-/**
  * @fn nombreOccurencesMotCleFacteur
  */
 int nombreOccurencesMotCleFacteur(char *);

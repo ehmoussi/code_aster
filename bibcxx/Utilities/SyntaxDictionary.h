@@ -69,24 +69,30 @@ typedef VectorDouble::iterator VectorDoubleIter;
  * @brief Cette struct decrit un dictionnaire permettant de contenir la syntaxe des commandes Aster
  * @author Nicolas Sellenet
  */
-struct SyntaxMapContainer
+class SyntaxMapContainer
 {
-    /** @brief Typedef definissant un map associant une chaine a divers types */
-    typedef std::map< std::string, boost::variant< int, std::string, double,
-                                                   VectorInt, VectorString, VectorDouble,
-                                                   ListSyntaxMapContainer > > SyntaxMap;
-    typedef SyntaxMap::iterator SyntaxMapIter;
+    public:
+        /** @brief Typedef definissant un map associant une chaine a divers types */
+        typedef std::map< std::string, boost::variant< int, std::string, double,
+                                                       VectorInt, VectorString, VectorDouble,
+                                                       ListSyntaxMapContainer > > SyntaxMap;
+        typedef SyntaxMap::iterator SyntaxMapIter;
 
-    /** @brief Conteneur a proprement parler */
-    SyntaxMap container;
+        /** @brief Conteneur a proprement parler */
+        SyntaxMap container;
 
-    /**
-     * @brief Convertisseur du conteneur en dictionnaire python
-     * @return un dict python contenant la syntaxe valorisable par l'objet CommandSyntax
-     * @todo Probleme de refcounting : ajouter un objet wrapper qui se chargera de la destruction
-     */
-    PyObject* convertToPythonDictionnary( PyObject* returnDict = NULL );
-    
+    protected:
+        /**
+         * @brief Convertisseur du conteneur en dictionnaire python
+         * @return un dict python contenant la syntaxe valorisable par l'objet CommandSyntax
+         * @todo Probleme de refcounting : ajouter un objet wrapper qui se chargera de la destruction
+         * @todo seul CommandSyntaxCython et le cython devrait pouvoir appeler cette fonction ?
+         */
+        PyObject* convertToPythonDictionnary( PyObject* returnDict = NULL );
+
+    private:
+        friend class CommandSyntaxCython;
+        friend class MaterialOnMeshInstance;
 };
 
 #endif

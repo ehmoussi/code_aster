@@ -20,27 +20,13 @@
 
 cdef extern from "Loads/PhysicalQuantity.h":
 
-    cdef enum Component_Enum:
-        cDx         "Dx"
-        cDy         "Dy"
-        cDz         "Dz"
-        cDrx        "Drx"
-        cDry        "Dry"
-        cDrz        "Drz"
-        cPressure   "Pressure"
-        cFx         "Fx"
-        cFy         "Fy"
-        cFz         "Fz"
-        cMx         "Mx"
-        cMy         "My"
-        cMz         "Mz"
-        
+    cpdef enum PhysicalQuantityComponent:
+        Dx, Dy, Dz, Drx, Dry, Drz, Pressure, Fx, Fy, Fz, Mx, My, Mz
 
     cdef cppclass ForceDoubleInstance:
         ForceDoubleInstance()
-        void setValue( Component_Enum comp, double val ) except +
+        void setValue( PhysicalQuantityComponent comp, double val ) except +
         void debugPrint()
-
 
     cdef cppclass ForceDoublePtr:
 

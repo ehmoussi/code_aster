@@ -32,7 +32,7 @@
 #include "Mesh/MeshEntities.h"
 #include "Modeling/Model.h"
 
-#include "Utilities/SyntaxDictionary.h"
+#include "RunManager/CommandSyntaxCython.h"
 
 /**
  * @enum Load_Enum
@@ -112,32 +112,32 @@ class MechanicalLoadInstance: public DataStructure
 
     bool setQuantityOnMeshEntity( PhysicalQuantityPtr physPtr, std::string nameOfGroup ) throw ( std::runtime_error )
     {
-    /* Check that the pointer to the support model is not empty */
-    if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-        throw std::runtime_error( "Model is empty" );
-    
-    /* Get the type of MeshEntity */
-    MeshPtr currentMesh= _supportModel->getSupportMesh();
-    
-    /* nameOfGroup is the name of a group of elements and 
-    LoadTraits authorizes to base the current load on such a group */
-    
-    if ( currentMesh->hasGroupOfElements( nameOfGroup ) && Traits::isAllowedOnGroupOfElements )
-    {
-        _supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
-    }
-    /* nameOfGroup is the name of a group of nodes and LoadTraits authorizes
-    to base the current load on such a group */
-    else if ( currentMesh->hasGroupOfNodes( nameOfGroup ) && Traits::isAllowedOnGroupOfNodes )
-    {
-        _supportMeshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
-    }
-    else
-        throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the current load " );
+        /* Check that the pointer to the support model is not empty */
+        if ( ( ! _supportModel ) || _supportModel->isEmpty() )
+            throw std::runtime_error( "Model is empty" );
+        
+        /* Get the type of MeshEntity */
+        MeshPtr currentMesh= _supportModel->getSupportMesh();
+        
+        /* nameOfGroup is the name of a group of elements and 
+        LoadTraits authorizes to base the current load on such a group */
+        
+        if ( currentMesh->hasGroupOfElements( nameOfGroup ) && Traits::isAllowedOnGroupOfElements )
+        {
+            _supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+        }
+        /* nameOfGroup is the name of a group of nodes and LoadTraits authorizes
+        to base the current load on such a group */
+        else if ( currentMesh->hasGroupOfNodes( nameOfGroup ) && Traits::isAllowedOnGroupOfNodes )
+        {
+            _supportMeshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
+        }
+        else
+            throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the current load " );
 
-    /* Copy the shared pointer of the Physical Quantity */
-    _physicalQuantity = physPtr; 
-    return true;
+        /* Copy the shared pointer of the Physical Quantity */
+        _physicalQuantity = physPtr; 
+        return true;
     };
 
     /**
@@ -155,46 +155,31 @@ class MechanicalLoadInstance: public DataStructure
     */
     bool build() throw ( std::runtime_error )
     {
-    try
-    {
-       INTEGER op = 7;
-       CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
-    }
-    return true; 
-    };
+        CommandSyntaxCython cmdSt( "AFFE_CHAR_MECA" );
+        cmdSt.setResult( getResultObjectName(), "CHAR_MECA" );
 
-    /**
-    * @brief Return a Python dict emulate the command keywords
-    * @return PyDict
-    */
-    PyObject* getCommandKeywords() throw ( std::runtime_error )
-    {
-    SyntaxMapContainer dict;
-    if ( ! _supportModel )
-        throw std::runtime_error("Support model is undefined");
-    dict.container["MODELE"] = _supportModel->getName();
-    ListSyntaxMapContainer listeLoad;
-    SyntaxMapContainer dict2;
-    std::cout << "MODELE  " <<  _supportModel->getName() << std::endl;
-    /* On itere sur les composantes de la "PhysicalQuantity" */
-    typename PhysicalQuantityType::MapOfCompAndVal comp_val=_physicalQuantity-> getMap(); 
-    for ( typename PhysicalQuantityType::MapIt curIter(comp_val.begin());
-      curIter != comp_val.end(); 
-      ++curIter )
-    {
-        dict2.container[ComponentNames[curIter-> first] ] = curIter->second ;
-        std::cout << ComponentNames[curIter-> first] << "   " << curIter->second << std::endl;
-    }
-    /* Caractéristiques du MeshEntity */
-    if ( _supportMeshEntity->getType() == AllMeshEntitiesType )
+        SyntaxMapContainer dict;
+        if ( ! _supportModel )
+            throw std::runtime_error("Support model is undefined");
+        dict.container["MODELE"] = _supportModel->getName();
+        ListSyntaxMapContainer listeLoad;
+        SyntaxMapContainer dict2;
+        std::cout << "MODELE  " <<  _supportModel->getName() << std::endl;
+        /* On itere sur les composantes de la "PhysicalQuantity" */
+        typename PhysicalQuantityType::MapOfCompAndVal comp_val=_physicalQuantity-> getMap(); 
+        for ( typename PhysicalQuantityType::MapIt curIter(comp_val.begin());
+              curIter != comp_val.end(); 
+              ++curIter )
+        {
+            dict2.container[ComponentNames[curIter-> first] ] = curIter->second ;
+            std::cout << ComponentNames[curIter-> first] << "   " << curIter->second << std::endl;
+        }
+        /* Caractéristiques du MeshEntity */
+        if ( _supportMeshEntity->getType() == AllMeshEntitiesType )
         {
             dict2.container["TOUT"] = "OUI";
         }
-    else
+        else
         {
             if ( _supportMeshEntity->getType()  == GroupOfNodesType )
                 {dict2.container["GROUP_NO"] = _supportMeshEntity->getEntityName();
@@ -202,14 +187,23 @@ class MechanicalLoadInstance: public DataStructure
             else if ( _supportMeshEntity->getType()  ==  GroupOfElementsType )
                 dict2.container["GROUP_MA"] = _supportMeshEntity->getEntityName();
         }
-    listeLoad.push_back( dict2 );
-    /*mot-clé facteur*/ 
-    std::string kw = Traits::factorKeyword;
-    dict.container[kw] = listeLoad;
-    PyObject* returnDict = dict.convertToPythonDictionnary();
-    return returnDict;
-};
+        listeLoad.push_back( dict2 );
+        /*mot-clé facteur*/ 
+        std::string kw = Traits::factorKeyword;
+        dict.container[kw] = listeLoad;
+        cmdSt.define( dict );
 
+        try
+        {
+            INTEGER op = 7;
+            CALL_EXECOP( &op );
+        }
+        catch( ... )
+        {
+            throw;
+        }
+        return true;
+    };
 };
 
 /**********************************************************/

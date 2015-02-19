@@ -20,10 +20,6 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-Dx, Dy, Dz, Drx, Dry, Drz = cDx, cDy, cDz, cDrx, cDry, cDrz
-Fx, Fy, Fz, Mx, My, Mz = cFx, cFy, cFz, cMx, cMy, cMz
-Pressure = cPressure
-
 cdef class ForceDouble:
     """Python wrapper on the C++ ForceDouble Object"""
 

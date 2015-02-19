@@ -46,7 +46,7 @@ class UnitaryLoad
         /** @brief MeshEntity sur laquelle repose le "blocage" */
         MeshEntityPtr    _supportMeshEntity;
         /** @brief "Numero" de la composante à imposer */
-        Component_Enum _loadCoordinate;
+        PhysicalQuantityComponent _loadCoordinate;
         /** @brief Valeur a imposer */
         ValueType        _value;
 
@@ -58,7 +58,7 @@ class UnitaryLoad
          * @param curCoord Coordonnee de la grandeur sur laquelle on impose le chargement
          * @param value Valeur du chargement
          */
-        UnitaryLoad( MeshEntityPtr supportMeshEntity, Component_Enum curCoord, ValueType value ) throw ( std::runtime_error ):
+        UnitaryLoad( MeshEntityPtr supportMeshEntity, PhysicalQuantityComponent curCoord, ValueType value ) throw ( std::runtime_error ):
             _supportMeshEntity( supportMeshEntity ),
             _loadCoordinate( curCoord ),
             _value( value )

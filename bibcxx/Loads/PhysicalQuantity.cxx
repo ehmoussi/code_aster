@@ -30,21 +30,21 @@ const char* ComponentNames[15] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP"
 /* Init const data */
 
 /* Force */
-const Component_Enum ForceComponents[nbForceComponents] = { Fx, Fy, Fz, Mx, My, Mz };
+const PhysicalQuantityComponent ForceComponents[nbForceComponents] = { Fx, Fy, Fz, Mx, My, Mz };
 const std::string PhysicalQuantityTraits <Force>::name = "Force"; 
-const std::set< Component_Enum > PhysicalQuantityTraits<Force>::components( ForceComponents, ForceComponents + nbForceComponents );
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Force>::components( ForceComponents, ForceComponents + nbForceComponents );
 
 /* Displacement */
-const Component_Enum DisplacementComponents[nbDisplacementComponents] = { Dx, Dy, Dz, Dx, Dy, Dz };
+const PhysicalQuantityComponent DisplacementComponents[nbDisplacementComponents] = { Dx, Dy, Dz, Dx, Dy, Dz };
 const std::string PhysicalQuantityTraits <Displacement>::name = "Displacement"; 
-const std::set< Component_Enum > PhysicalQuantityTraits<Displacement>::components( DisplacementComponents, DisplacementComponents + nbDisplacementComponents );
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Displacement>::components( DisplacementComponents, DisplacementComponents + nbDisplacementComponents );
 
 /* Pressure */
-const Component_Enum PressureComponents[nbPressureComponents] = { Pres };
+const PhysicalQuantityComponent PressureComponents[nbPressureComponents] = { Pres };
 const std::string PhysicalQuantityTraits <Pressure>::name = "Pressure"; 
-const std::set< Component_Enum > PhysicalQuantityTraits<Pressure>::components( PressureComponents, PressureComponents + nbPressureComponents );
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Pressure>::components( PressureComponents, PressureComponents + nbPressureComponents );
 
 /* Temperature */
-const Component_Enum TemperatureComponents[nbTemperatureComponents] = { Temp, MiddleTemp };
+const PhysicalQuantityComponent TemperatureComponents[nbTemperatureComponents] = { Temp, MiddleTemp };
 const std::string PhysicalQuantityTraits <Temperature>::name = "Temperature"; 
-const std::set< Component_Enum > PhysicalQuantityTraits<Temperature>::components( TemperatureComponents, TemperatureComponents + nbTemperatureComponents );
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Temperature>::components( TemperatureComponents, TemperatureComponents + nbTemperatureComponents );

@@ -56,12 +56,7 @@ cdef class Model:
     def build( self ):
         """Build the model"""
         instance = self.getInstance()
-        syntax = CommandSyntax( "AFFE_MODELE" )
-        syntax.setResult( resultNaming.getResultObjectName(), instance.getType() )
-        dictSyntax = instance.getCommandKeywords()
-        syntax.define( dictSyntax )
         iret = instance.build()
-        syntax.free()
         return iret
 
     def addModelingOnAllMesh( self, phys, mod ):

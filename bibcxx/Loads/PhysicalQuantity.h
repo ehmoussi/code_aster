@@ -33,16 +33,16 @@
 
 
 /**
- * @enum PhysicalQuantity_Enum
+ * @enum PhysicalQuantityEnum
  * @brief Inventory of all physical quantities available in Code_Aster
  */
-enum PhysicalQuantity_Enum { Force, Displacement, Pressure, Temperature };
+enum PhysicalQuantityEnum { Force, Displacement, Pressure, Temperature };
 
 /**
- * @enum Component_Enum 
- * @brief Inventory of components of the physical quantities listed in PhysicalQuantity_Enum 
+ * @enum PhysicalQuantityComponent 
+ * @brief Inventory of components of the physical quantities listed in PhysicalQuantityEnum 
  */
-enum Component_Enum { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz };
+enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz };
 
 /**
 * @def ComponentNames
@@ -57,7 +57,7 @@ extern const char* ComponentNames[15];
 /* This is the most general case (defined but intentionally not implemented) */
 /* It will be specialized for each physical quantity listed in the inventory */
 
-template < PhysicalQuantity_Enum PQ > struct PhysicalQuantityTraits; 
+template < PhysicalQuantityEnum PQ > struct PhysicalQuantityTraits; 
 
 /****************************************/
 /*            Force                     */
@@ -72,7 +72,7 @@ const int nbForceComponents = 6;
  * @def ForceComponents
  * @brief Declare Force Components 
  */
-extern const Component_Enum ForceComponents[nbForceComponents];
+extern const PhysicalQuantityComponent ForceComponents[nbForceComponents];
 
 /** @def PhysicalQuantityTraits <Force>
 *  @brief Declare specialization for Force
@@ -80,7 +80,7 @@ extern const Component_Enum ForceComponents[nbForceComponents];
 
 template <> struct PhysicalQuantityTraits <Force>
 {
-    static const std::set< Component_Enum > components;
+    static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
 };
 
@@ -98,11 +98,11 @@ const int nbDisplacementComponents = 6;
  * @def DisplComponents
  * @brief Declare Displacement Components 
  */
-extern const Component_Enum DisplacementComponents[nbDisplacementComponents];
+extern const PhysicalQuantityComponent DisplacementComponents[nbDisplacementComponents];
 
 template <> struct PhysicalQuantityTraits <Displacement>
 {
-    static const std::set< Component_Enum > components;
+    static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
 };
 
@@ -120,11 +120,11 @@ const int nbPressureComponents = 1;
  * @def PressureComponents
  * @brief Declare Pressure Components 
  */
-extern const Component_Enum PressureComponents[nbPressureComponents];
+extern const PhysicalQuantityComponent PressureComponents[nbPressureComponents];
 
 template <> struct PhysicalQuantityTraits <Pressure>
 {
-    static const std::set< Component_Enum > components;
+    static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
 };
 
@@ -142,11 +142,11 @@ const int nbTemperatureComponents = 2;
  * @def TemperatureComponents
  * @brief Declare Temperature Components 
  */
-extern const Component_Enum TemperatureComponents[nbTemperatureComponents];
+extern const PhysicalQuantityComponent TemperatureComponents[nbTemperatureComponents];
 
 template <> struct PhysicalQuantityTraits <Temperature>
 {
-    static const std::set< Component_Enum > components;
+    static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
 };
 
@@ -155,8 +155,7 @@ template <> struct PhysicalQuantityTraits <Temperature>
 /* @brief Defines a physical quantity 
 /******************************************/
 
-template< class ValueType, PhysicalQuantity_Enum PhysicalQuantity >
-
+template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 class PhysicalQuantityInstance
 {
     public:
@@ -165,9 +164,9 @@ class PhysicalQuantityInstance
     /** @typedef Value type of the physical quantity (double, function ...) */
     typedef ValueType QuantityType;
     /** @typedef Components and Values of the PhysicalQuantityInstance */
-    typedef typename std::map< Component_Enum, QuantityType > MapOfCompAndVal;
+    typedef typename std::map< PhysicalQuantityComponent, QuantityType > MapOfCompAndVal;
     typedef typename MapOfCompAndVal::iterator MapIt;
-    typedef typename std::pair<Component_Enum, QuantityType> CompAndVal;
+    typedef typename std::pair<PhysicalQuantityComponent, QuantityType> CompAndVal;
 
     /* @def  */
     MapOfCompAndVal  _compAndVal;
@@ -187,13 +186,13 @@ class PhysicalQuantityInstance
     * @brief test if a component is authorized for the physical quantity
     */
     
-    static bool hasComponent( Component_Enum comp )
+    static bool hasComponent( PhysicalQuantityComponent comp )
     {
         if ( Traits::components.find( comp ) == Traits::components.end() ) return false;
         return true;
     }
     
-    void setValue( Component_Enum comp, QuantityType val )
+    void setValue( PhysicalQuantityComponent comp, QuantityType val )
     {
     if ( ! hasComponent( comp ) ) 
         {
@@ -217,7 +216,7 @@ class PhysicalQuantityInstance
         std::cout << "Nom de la grandeur physique : " << Traits::name << std::endl; 
         std::cout << "Nb de composantes   : " << Traits::components.size() << std::endl;
         std::cout << "Nom des composantes : " ;
-        for (std::set<Component_Enum>::iterator it(Traits::components.begin());
+        for (std::set<PhysicalQuantityComponent>::iterator it(Traits::components.begin());
         it!=Traits::components.end(); it++)
         {
         std::cout << ComponentNames[*it] << " , " ; 

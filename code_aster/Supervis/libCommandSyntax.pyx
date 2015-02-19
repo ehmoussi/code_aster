@@ -19,6 +19,8 @@
 
 from code_aster.Supervis.libBaseUtils import debug, to_cstr
 from cpython.ref cimport PyObject
+from libc.stdlib cimport malloc
+from libc.string cimport memset
 
 cdef class ResultNaming:
 
@@ -244,11 +246,44 @@ cdef public void getres_( char* resultName, char* resultType, char* commandName,
     debug( "getres", ( commandName[:lcmd], resultName[:lres], resultType[:ltype] ) )
 
 
+cdef char* MakeBlankStr( int size ):
+    cdef char* tmp
+    tmp = <char*>malloc( sizeof(char*)*(size) )
+    memset( tmp, ' ', size )
+    tmp[size] = '\0'
+    return tmp
+
 cdef public int listeMotCleSimpleFromMotCleFacteur(
         char* factKeyword, int occurrence, int keywordSize, int typeSize,
         char*** arraySimpleKeyword, char*** arrayType, int* nbKeyword):
-    # TODO: getmjm
-    pass
+    if currentCommand is None:
+        raise ValueError( "there is no active command" )
+    dictFkw = currentCommand._getFactorKeywordOccurrence( factKeyword, occurrence )
+    if dictFkw == None:
+        return 1
+
+    size = len( dictFkw.keys() )
+    nbKeyword[0] = size
+    arraySimpleKeyword[0] = <char**>malloc( sizeof(char*)*(size) )
+    arrayType[0] = <char**>malloc( sizeof(char*)*(size) )
+
+    cdef char* tmp
+    cdef int compteur = 0
+    for key, value in dictFkw.iteritems():
+        arraySimpleKeyword[0][compteur] = MakeBlankStr( keywordSize )
+        copyToFStr( arraySimpleKeyword[0][compteur], key, len(key) )
+
+        arrayType[0][compteur] = MakeBlankStr( typeSize )
+        if type( value ) == str:
+            copyToFStr( arrayType[0][compteur], "TX", 2 )
+        elif type( value ) == float:
+            copyToFStr( arrayType[0][compteur], "R8", 2 )
+        elif type( value ) == int:
+            copyToFStr( arrayType[0][compteur], "IS", 2 )
+        else:
+            raise NameError( "Type unknown" )
+        compteur += 1
+    return 0
 
 cdef public void getfac_( char* factName, long* number, unsigned int lname ):
     """Wrapper function to command.getFactorKeywordNbOcc()"""
