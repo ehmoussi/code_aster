@@ -33,6 +33,8 @@
 #include "aster_utils.h"
 #include "aster_exceptions.h"
 
+#include "DataStructure/DataStructure.h"
+
 /*
  * Only an extract of #include "code_aster/Supervis/libCommandSyntax.h"
  * because it uses C++ std::string.
@@ -248,8 +250,7 @@ void DEFSS(GETTCO,gettco,_IN char *nomobj, _IN STRING_SIZE lnom,
     char* tmp = (char*)malloc(lnom + 1);
     strncpy(tmp, nomobj, lnom);
     tmp[lnom] = '\0';
-    // char* nomCmdCp = getSDType(tmp);
-    char nomCmdCp[7] = "UNKNOWN";
+    char* nomCmdCp = getSDType(tmp);
     CopyCStrToFStr(typobj, nomCmdCp, ltyp);
     fprintf(fileOut, "GETTCO %s\n", typobj);
     FreeStr(tmp);

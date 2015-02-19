@@ -25,6 +25,8 @@
  */
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#ifdef __cplusplus
+
 #include <stdexcept>
 #include <string>
 #include <map>
@@ -107,5 +109,21 @@ typedef mapStrSD::value_type mapStrSDValue;
  *   Ce map contient toutes les DataStructures initialisees
  */
 extern mapStrSD mapNameDataStructure;
+
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @fn getSDType
+ * @brief Obtention du type de la sd dont le nom est passe en argument
+ */
+char* getSDType(char*);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* DATASTRUCTURE_H_ */

@@ -64,3 +64,11 @@ void DataStructure::debugPrint( int logicalUnit ) const
         throw std::runtime_error( "debugPrint failed!" );
     }
 };
+
+char* getSDType(char* nom)
+{
+    mapStrSDIterator curIter = mapNameDataStructure.find( std::string( nom, 0, 8 ) );
+    if ( curIter == mapNameDataStructure.end() )
+        throw std::runtime_error( "Problem !!!" );
+    return const_cast< char* >( curIter->second->getType().c_str() );
+};
