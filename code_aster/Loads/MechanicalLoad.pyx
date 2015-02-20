@@ -299,3 +299,49 @@ cdef class InternalForceDouble:
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
+
+###### ForceAndMomentumOnBeamDouble
+
+cdef class ForceAndMomentumOnBeamDouble:
+    """Python wrapper on the C++ ForceAndMomentumOnBeamDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = new ForceAndMomentumOnBeamDoublePtr ( new ForceAndMomentumOnBeamDoubleInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, ForceAndMomentumOnBeamDoublePtr other ):
+        """Point to an existing object"""
+        self._cptr = new ForceAndMomentumOnBeamDoublePtr( other )
+
+    cdef ForceAndMomentumOnBeamDoublePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef ForceAndMomentumOnBeamDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def build( self ):
+        """Build the model"""
+        instance = self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, ForceAndMomentumDouble Force, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        return self.getInstance().setValue( deref( Force.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )

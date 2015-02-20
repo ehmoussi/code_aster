@@ -105,3 +105,14 @@ print "     sur le groupe : ", nameOfGroup
 ret = CharMeca6.build()
 print " Fin de la construction : ", ret 
 print "Fin"
+
+# Definition d'un chargement de type FORCE_POUTRE à partir d'un ForceAndMomentumDouble
+print " >>>> Construction d'un chargement ForceAndMomentumOnBeamDouble"
+
+CharMeca7 = code_aster.ForceAndMomentumOnBeamDouble()
+CharMeca7.setSupportModel(monModel)
+nameOfGroup = "BOTTOM" 
+CharMeca7.setValue( moment, nameOfGroup )
+print "     sur le groupe : ", nameOfGroup
+ret = CharMeca7.build()
+print " Fin de la construction : ", ret 

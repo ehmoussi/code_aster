@@ -15,4 +15,6 @@ const std::string LoadTraits <ForceOnEdge>::factorKeyword = "FORCE_ARETE";
 
 const std::string LoadTraits <LineicForce>::factorKeyword = "FORCE_CONTOUR"; 
 
-const std::string LoadTraits <InternalForce>::factorKeyword = "FORCE_INTERNE"; 
+const std::string LoadTraits <InternalForce>::factorKeyword = "FORCE_INTERNE";
+
+const std::string LoadTraits <ForceOnBeam>::factorKeyword = "FORCE_POUTRE"; 

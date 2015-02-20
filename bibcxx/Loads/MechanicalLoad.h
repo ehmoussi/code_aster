@@ -38,7 +38,7 @@
  * @enum LoadEnum
  * @brief Inventory of all mechanical loads available in Code_Aster
  */
-enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ImposedDoF, DistributedPressure, EndLoad };
+enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam, ImposedDoF, DistributedPressure, EndLoad };
 
 /**
 * @class LoadTraits
@@ -120,6 +120,21 @@ template <> struct LoadTraits <InternalForce>
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
+};
+
+/** @def LoadTraits <ForceOnBeam>
+*  @brief Declare specialization for ForceOnBeam
+*/
+
+template <> struct LoadTraits <ForceOnBeam>
+{
+/* Mot clé facteur pour AFFE_CHAR_MECA */ 
+    static const std::string factorKeyword; 
+/* Authorized support MeshEntity */
+    static bool const isAllowedOnWholeMesh = true;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
+    /** @todo mot clé supplémentaire TYPE_CHARGE=FORCE */
 };
 
 /***********************************************************/
@@ -307,5 +322,10 @@ typedef boost::shared_ptr< LineicForceAndMomentumDoubleInstance > LineicForceAnd
 template class MechanicalLoadInstance< ForceDoubleInstance, InternalForce >;
 typedef MechanicalLoadInstance< ForceDoubleInstance, InternalForce > InternalForceDoubleInstance;
 typedef boost::shared_ptr< InternalForceDoubleInstance > InternalForceDoublePtr;
+
+/** @typedef ForceAndMomentumOnBeamDouble  */
+template class MechanicalLoadInstance< ForceAndMomentumDoubleInstance, ForceOnBeam >;
+typedef MechanicalLoadInstance< ForceAndMomentumDoubleInstance, LineicForce > ForceAndMomentumOnBeamDoubleInstance;
+typedef boost::shared_ptr< ForceAndMomentumOnBeamDoubleInstance > ForceAndMomentumOnBeamDoublePtr;
 
 #endif /* MECHANICALLOAD_H_ */
