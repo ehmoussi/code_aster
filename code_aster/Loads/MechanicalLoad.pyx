@@ -254,3 +254,48 @@ cdef class LineicForceAndMomentumDouble:
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
 
+###### InternalForceDouble
+
+cdef class InternalForceDouble:
+    """Python wrapper on the C++ InternalForceDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = new InternalForceDoublePtr ( new InternalForceDoubleInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, InternalForceDoublePtr other ):
+        """Point to an existing object"""
+        self._cptr = new InternalForceDoublePtr( other )
+
+    cdef InternalForceDoublePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef InternalForceDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def build( self ):
+        """Build the model"""
+        instance = self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, ForceDouble force, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        return self.getInstance().setValue( deref( force.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )

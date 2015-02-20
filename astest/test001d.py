@@ -93,4 +93,15 @@ CharMeca5.setValue( moment, nameOfGroup )
 print "     sur le groupe : ", nameOfGroup
 ret = CharMeca5.build()
 print " Fin de la construction : ", ret 
+
+# Definition d'un chargement de type FORCE_INTERNE à partir d'un ForceDouble
+print " >>>> Construction d'un chargement InternalForceDouble"
+
+CharMeca6 = code_aster.InternalForceDouble()
+CharMeca6.setSupportModel(monModel)
+nameOfGroup = "BOTTOM" 
+CharMeca6.setValue( traction, nameOfGroup )
+print "     sur le groupe : ", nameOfGroup
+ret = CharMeca6.build()
+print " Fin de la construction : ", ret 
 print "Fin"
