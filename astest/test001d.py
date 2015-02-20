@@ -33,7 +33,9 @@ try:
 except:
     print " On ne peut pas imposer une force nodale sur tout le maillage "
 
-CharMeca1.setValue( traction, "A" )
+nameOfGroup = "A"
+CharMeca1.setValue( traction, nameOfGroup )
+print "     sur le groupe : ", nameOfGroup
 ret=CharMeca1.build()
 #CharMeca1.debugPrint()
 print " Fin de la construction : ", ret 
@@ -49,7 +51,9 @@ print " >>>> Construction d'un chargement NodalForceAndMomentumDouble"
 print "      Ce chargement est correct pour le catalogue mais conduit à une erreur Fortran "
 CharMeca2 = code_aster.NodalForceAndMomentumDouble()
 CharMeca2.setSupportModel(monModel)
-CharMeca2.setValue( moment, "B" )
+nameOfGroup = "B"
+CharMeca2.setValue( moment, nameOfGroup )
+print "     sur le groupe : ", nameOfGroup
 try:
     ret = CharMeca2.build()
 except:
@@ -62,16 +66,31 @@ print " >>>> Construction d'un chargement ForceOnFaceDouble"
 
 CharMeca3 = code_aster.ForceOnFaceDouble()
 CharMeca3.setSupportModel(monModel)
-CharMeca3.setValue( traction, "UP" )
+nameOfGroup = "UP"
+CharMeca3.setValue( traction, nameOfGroup )
+print "     sur le groupe : ", nameOfGroup
 ret = CharMeca3.build()
 print " Fin de la construction : ", ret 
 
 # Definition d'un chargement de type FORCE_ARETE à partir d'un ForceAndMomentumDouble
 print " >>>> Construction d'un chargement ForceAndMomentumOnEdgeDouble"
-
+# C'est bizarre, on entre un groupe qui est une face et le fortran ne détecte rien !
 CharMeca4 = code_aster.ForceAndMomentumOnEdgeDouble()
 CharMeca4.setSupportModel(monModel)
-CharMeca4.setValue( moment, "UP" )
+nameOfGroup = "UP"
+CharMeca4.setValue( moment, nameOfGroup )
+print "     sur le groupe : ", nameOfGroup
 ret = CharMeca4.build()
+print " Fin de la construction : ", ret 
+
+# Definition d'un chargement de type FORCE_CONTOUR à partir d'un ForceAndMomentumDouble
+print " >>>> Construction d'un chargement LineicForceAndMomentumDouble"
+
+CharMeca5 = code_aster.LineicForceAndMomentumDouble()
+CharMeca5.setSupportModel(monModel)
+nameOfGroup = "BOTTOM" 
+CharMeca5.setValue( moment, nameOfGroup )
+print "     sur le groupe : ", nameOfGroup
+ret = CharMeca5.build()
 print " Fin de la construction : ", ret 
 print "Fin"

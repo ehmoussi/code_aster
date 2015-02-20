@@ -208,6 +208,7 @@ class MechanicalLoadInstance: public DataStructure
     */
     bool build() throw ( std::runtime_error )
     {
+        //std::cout << " build " << std::endl; 
         CommandSyntaxCython cmdSt( "AFFE_CHAR_MECA" );
         cmdSt.setResult( getResultObjectName(), "CHAR_MECA" );
 
@@ -217,7 +218,7 @@ class MechanicalLoadInstance: public DataStructure
         dict.container["MODELE"] = _supportModel->getName();
         ListSyntaxMapContainer listeLoad;
         SyntaxMapContainer dict2;
-        std::cout << "MODELE  " <<  _supportModel->getName() << std::endl;
+        //std::cout << "MODELE  " <<  _supportModel->getName() << std::endl;
         /* On itere sur les composantes de la "PhysicalQuantity" */
         typename PhysicalQuantityType::MapOfCompAndVal comp_val=_physicalQuantity-> getMap(); 
         for ( typename PhysicalQuantityType::MapIt curIter(comp_val.begin());
@@ -236,7 +237,8 @@ class MechanicalLoadInstance: public DataStructure
         {
             if ( _supportMeshEntity->getType()  == GroupOfNodesType )
                 {dict2.container["GROUP_NO"] = _supportMeshEntity->getEntityName();
-                std::cout << "GROUP_NO " <<  _supportMeshEntity->getEntityName() << std::endl;} 
+        //        std::cout << "GROUP_NO " <<  _supportMeshEntity->getEntityName() << std::endl;
+                } 
             else if ( _supportMeshEntity->getType()  ==  GroupOfElementsType )
                 dict2.container["GROUP_MA"] = _supportMeshEntity->getEntityName();
         }
@@ -283,9 +285,9 @@ template class MechanicalLoadInstance< ForceAndMomentumDoubleInstance, ForceOnEd
 typedef MechanicalLoadInstance< ForceAndMomentumDoubleInstance, ForceOnEdge > ForceAndMomentumOnEdgeDoubleInstance;
 typedef boost::shared_ptr< ForceAndMomentumOnEdgeDoubleInstance > ForceAndMomentumOnEdgeDoublePtr;
 
-/** @typedef LineicForceDouble  */
-template class MechanicalLoadInstance< ForceDoubleInstance, LineicForce >;
-typedef MechanicalLoadInstance< ForceDoubleInstance, LineicForce > LineicForceDoubleInstance;
-typedef boost::shared_ptr< LineicForceDoubleInstance > LineicForceDoublePtr;
+/** @typedef LineicForceAndMomentumDouble  */
+template class MechanicalLoadInstance< ForceAndMomentumDoubleInstance, LineicForce >;
+typedef MechanicalLoadInstance< ForceAndMomentumDoubleInstance, LineicForce > LineicForceAndMomentumDoubleInstance;
+typedef boost::shared_ptr< LineicForceAndMomentumDoubleInstance > LineicForceAndMomentumDoublePtr;
 
 #endif /* MECHANICALLOAD_H_ */
