@@ -110,6 +110,23 @@ cdef extern from "Loads/MechanicalLoad.h":
         LineicForceAndMomentumDoublePtr( LineicForceAndMomentumDoubleInstance * )
         LineicForceAndMomentumDoubleInstance* get()
 
+#### InternalForceDouble 
+
+    cdef cppclass InternalForceDoubleInstance:
+
+        InternalForceDoubleInstance()
+        bint setValue( ForceDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass InternalForceDoublePtr:
+
+        InternalForceDoublePtr( InternalForceDoublePtr& )
+        InternalForceDoublePtr( InternalForceDoubleInstance * )
+        InternalForceDoubleInstance* get()
+
 ############################################################################################
 
 
@@ -152,4 +169,14 @@ cdef class LineicForceAndMomentumDouble:
     cdef LineicForceAndMomentumDoublePtr* _cptr
     cdef set( self, LineicForceAndMomentumDoublePtr other )
     cdef LineicForceAndMomentumDoublePtr* getPtr( self )
-    cdef LineicForceAndMomentumDoubleInstance* getInstance( self )    
+    cdef LineicForceAndMomentumDoubleInstance* getInstance( self )
+
+#### InternalForceDouble 
+
+cdef class InternalForceDouble:
+    cdef InternalForceDoublePtr* _cptr
+    cdef set( self, InternalForceDoublePtr other )
+    cdef InternalForceDoublePtr* getPtr( self )
+    cdef InternalForceDoubleInstance* getInstance( self )
+
+
