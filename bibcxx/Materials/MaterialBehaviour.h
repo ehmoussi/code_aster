@@ -52,13 +52,15 @@ struct AllowedMaterialPropertyType;
 template<> struct AllowedMaterialPropertyType< double >
 {};
 
-template<> struct AllowedMaterialPropertyType< FunctionInstance >
+template<> struct AllowedMaterialPropertyType< FunctionPtr >
 {};
 
 /**
  * @class MaterialPropertyInstance
  * @brief Cette classe template permet de definir un type elementaire de propriete materielle
  * @author Nicolas Sellenet
+ * @todo on pourrait detemplatiser cette classe pour qu'elle prenne soit des doubles soit des fct
+ *       on pourrait alors fusionner elas et elas_fo par exemple
  */
 template< class ValueType >
 class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
@@ -69,8 +71,10 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
         std::string _name;
         /** @brief Description de parametre, ex : "Young's modulus" */
         std::string _description;
-        /** @brief Valeur du parametre (double, FunctionInstance, ...) */
+        /** @brief Valeur du parametre (double, FunctionPtr, ...) */
         ValueType   _value;
+        /** @brief Booleen qui precise si la propriété a été initialisée */
+        bool        _existsValue;
 
     public:
         /**
@@ -84,9 +88,24 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
          * @param name Nom Aster du parametre materiau (ex : "NU")
          * @param description Description libre
          */
-        MaterialPropertyInstance( std::string name,
-                                  std::string description = "" ): _name( name ),
-                                                                  _description( description )
+        MaterialPropertyInstance( const std::string name,
+                                  const std::string description = "" ): _name( name ),
+                                                                        _description( description ),
+                                                                        _existsValue( false )
+        {};
+
+        /**
+         * @brief Constructeur
+         * @param name Nom Aster du parametre materiau (ex : "NU")
+         * @param ValueType Valeur par défaut
+         * @param description Description libre
+         */
+        MaterialPropertyInstance( const std::string name,
+                                  const ValueType& currentValue,
+                                  const std::string description = "" ): _name( name ),
+                                                                        _description( description ),
+                                                                        _value( currentValue ),
+                                                                        _existsValue( true )
         {};
 
         /**
@@ -108,6 +127,15 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
         };
 
         /**
+         * @brief Cette propriété a-t-elle une valeur ?
+         * @return true si la valeur a été précisée
+         */
+        bool hasValue() const
+        {
+            return _existsValue;
+        };
+
+        /**
          * @brief Fonction servant a fixer la valeur du parametre
          * @param currentValue valeur donnee par l'utilisateur
          */
@@ -120,7 +148,7 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
 /** @typedef Definition d'une propriete materiau de type double */
 typedef MaterialPropertyInstance< double > ElementaryMaterialPropertyDouble;
 /** @typedef Definition d'une propriete materiau de type Function */
-typedef MaterialPropertyInstance< FunctionInstance > ElementaryMaterialPropertyFunction;
+typedef MaterialPropertyInstance< FunctionPtr > ElementaryMaterialPropertyFunction;
 
 /**
  * @class GeneralMaterialBehaviourInstance
@@ -209,7 +237,7 @@ class GeneralMaterialBehaviourInstance
          * @param value Function correspondant a la valeur donnee par l'utilisateur
          * @return Booleen valant true si la tache s'est bien deroulee
          */
-        bool setFunctionValue( std::string nameOfProperty, FunctionInstance value )
+        bool setFunctionValue( std::string nameOfProperty, FunctionPtr value )
         {
             // Recherche de la propriete materielle
             mapStrEMPFIterator curIter = _mapOfFunctionMaterialProperties.find(nameOfProperty);
@@ -306,13 +334,13 @@ class ElasFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addFunctionProperty( "Nu", ElementaryMaterialPropertyFunction( "NU" ) );
             this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" ) );
             this->addDoubleProperty( "Temp_def_alpha", ElementaryMaterialPropertyDouble( "TEMP_DEF_ALPHA" ) );
-            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" ) );
+            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION", 1. ) );
             this->addFunctionProperty( "Alpha", ElementaryMaterialPropertyFunction( "ALPHA" ) );
             this->addFunctionProperty( "Amor_alpha", ElementaryMaterialPropertyFunction( "AMOR_ALPHA" ) );
             this->addFunctionProperty( "Amor_beta", ElementaryMaterialPropertyFunction( "AMOR_BETA" ) );
             this->addFunctionProperty( "Amor_hyst", ElementaryMaterialPropertyFunction( "AMOR_HYST" ) );
-            this->addDoubleProperty( "K_dessic", ElementaryMaterialPropertyDouble( "K_DESSIC" ) );
-            this->addDoubleProperty( "B_endoge", ElementaryMaterialPropertyDouble( "B_ENDOGE" ) );
+            this->addDoubleProperty( "K_dessic", ElementaryMaterialPropertyDouble( "K_DESSIC", 0. ) );
+            this->addDoubleProperty( "B_endoge", ElementaryMaterialPropertyDouble( "B_ENDOGE", 0. ) );
             this->addFunctionProperty( "Fonc_desorp", ElementaryMaterialPropertyFunction( "FONC_DESORP" ) );
         };
 };
