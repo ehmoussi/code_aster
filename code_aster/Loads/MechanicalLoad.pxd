@@ -20,15 +20,17 @@
 from libcpp.string cimport string
 
 from code_aster.Modeling.Model cimport ModelPtr
-from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr
+from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr, ForceAndMomentumDoublePtr
 
 
 cdef extern from "Loads/MechanicalLoad.h":
 
+#### ForceDouble 
+
     cdef cppclass NodalForceDoubleInstance:
 
         NodalForceDoubleInstance()
-        bint setQuantityOnMeshEntity( ForceDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setValue( ForceDoublePtr physQuantPtr, string nameOfGroup ) except+
         bint setSupportModel( ModelPtr currentModel )
         bint build() except +
         const string getType()
@@ -40,10 +42,37 @@ cdef extern from "Loads/MechanicalLoad.h":
         NodalForceDoublePtr( NodalForceDoubleInstance * )
         NodalForceDoubleInstance* get()
 
+#### ForceAndMomentumDouble 
+
+    cdef cppclass NodalForceAndMomentumDoubleInstance:
+
+        NodalForceAndMomentumDoubleInstance()
+        bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass NodalForceAndMomentumDoublePtr:
+
+        NodalForceAndMomentumDoublePtr( NodalForceAndMomentumDoublePtr& )
+        NodalForceAndMomentumDoublePtr( NodalForceAndMomentumDoubleInstance * )
+        NodalForceAndMomentumDoubleInstance* get()
+
+#### ForceDouble 
 
 cdef class NodalForceDouble:
     cdef NodalForceDoublePtr* _cptr
     cdef set( self, NodalForceDoublePtr other )
     cdef NodalForceDoublePtr* getPtr( self )
     cdef NodalForceDoubleInstance* getInstance( self )
+
+#### ForceAndMomentumDouble 
+
+cdef class NodalForceAndMomentumDouble:
+    cdef NodalForceAndMomentumDoublePtr* _cptr
+    cdef set( self, NodalForceAndMomentumDoublePtr other )
+    cdef NodalForceAndMomentumDoublePtr* getPtr( self )
+    cdef NodalForceAndMomentumDoubleInstance* getInstance( self )
+
 

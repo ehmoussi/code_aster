@@ -20,6 +20,8 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+#### ForceDouble
+
 cdef class ForceDouble:
     """Python wrapper on the C++ ForceDouble Object"""
 
@@ -42,6 +44,41 @@ cdef class ForceDouble:
         return self._cptr
 
     cdef ForceDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def debugPrint( self ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( )
+
+    def setValue( self, component , value ):
+        """Define the value of a component of the physical quantity """
+        self.getInstance().setValue( component, value )
+
+#####  ForceAndMomentumDouble
+
+cdef class ForceAndMomentumDouble:
+    """Python wrapper on the C++ ForceAndMomentumDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = new ForceAndMomentumDoublePtr( new ForceAndMomentumDoubleInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, ForceAndMomentumDoublePtr other ):
+        """Point to an existing object"""
+        self._cptr = new ForceAndMomentumDoublePtr( other )
+
+    cdef ForceAndMomentumDoublePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef ForceAndMomentumDoubleInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 

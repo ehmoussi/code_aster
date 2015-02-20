@@ -23,6 +23,8 @@ cdef extern from "Loads/PhysicalQuantity.h":
     cpdef enum PhysicalQuantityComponent:
         Dx, Dy, Dz, Drx, Dry, Drz, Pressure, Fx, Fy, Fz, Mx, My, Mz
 
+#### ForceDouble
+
     cdef cppclass ForceDoubleInstance:
         ForceDoubleInstance()
         void setValue( PhysicalQuantityComponent comp, double val ) except +
@@ -34,6 +36,21 @@ cdef extern from "Loads/PhysicalQuantity.h":
         ForceDoublePtr( ForceDoubleInstance * )
         ForceDoubleInstance* get()
 
+#### ForceAndMomentumDouble
+
+    cdef cppclass ForceAndMomentumDoubleInstance:
+        ForceAndMomentumDoubleInstance()
+        void setValue( PhysicalQuantityComponent comp, double val ) except +
+        void debugPrint()
+
+    cdef cppclass ForceAndMomentumDoublePtr:
+
+        ForceAndMomentumDoublePtr( ForceAndMomentumDoublePtr& )
+        ForceAndMomentumDoublePtr( ForceAndMomentumDoubleInstance * )
+        ForceAndMomentumDoubleInstance* get()
+
+#### ForceDouble
+
 cdef class ForceDouble:
 
     cdef ForceDoublePtr* _cptr
@@ -41,3 +58,13 @@ cdef class ForceDouble:
     cdef set( self, ForceDoublePtr other )
     cdef ForceDoublePtr* getPtr( self )
     cdef ForceDoubleInstance* getInstance( self )
+
+#### ForceAndMomentumDouble
+
+cdef class ForceAndMomentumDouble:
+
+    cdef ForceAndMomentumDoublePtr* _cptr
+
+    cdef set( self, ForceAndMomentumDoublePtr other )
+    cdef ForceAndMomentumDoublePtr* getPtr( self )
+    cdef ForceAndMomentumDoubleInstance* getInstance( self )

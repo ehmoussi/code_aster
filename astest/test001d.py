@@ -15,21 +15,45 @@ monModel.setSupportMesh(monMaillage)
 monModel.addModelingOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
 monModel.build()
 
-# Definition des chargements
+# Definition d'un chargement de type FORCE_NODALE à partir d'une ForceDouble
+
 traction=code_aster.ForceDouble()
-traction.setValue( code_aster.Loads.Fz,100.0 )
+traction.setValue( code_aster.Loads.Fz, 100.0 )
 
-
-monCharMeca = code_aster.NodalForceDouble()
-monCharMeca.setSupportModel(monModel)
+print " >>>> Construction d'un chargement NodalForceDouble"
+CharMeca1 = code_aster.NodalForceDouble()
+CharMeca1.setSupportModel(monModel)
 try:
-    monCharMeca.setQuantityOnMeshEntity( traction, "UP" )
+    CharMeca1.setValue( traction, "UP" )
 except:
     print " On ne peut pas imposer une force nodale sur un groupe de mailles "
 
-monCharMeca.setQuantityOnMeshEntity( traction, "A" )
+try:
+    CharMeca1.setValue( traction )
+except:
+    print " On ne peut pas imposer une force nodale sur tout le maillage "
 
-print "Appel de la construction (build) du chargement mécanique (affe_char_meca)"
-#monCharMeca.build()
-#monCharMeca.debugPrint()
+CharMeca1.setValue( traction, "A" )
+ret=CharMeca1.build()
+#CharMeca1.debugPrint()
+print " Fin de la construction : ", ret 
+
+# Definition d'un chargement de type FORCE_NODALE à partir d'un ForceAndMomentumDouble
+
+moment=code_aster.ForceAndMomentumDouble()
+moment.setValue( code_aster.Loads.Mx, 10.0 )
+moment.setValue( code_aster.Loads.My, 20.0 )
+moment.setValue( code_aster.Loads.Mz, 30.0 )
+
+print " >>>> Construction d'un chargement NodalForceAndMomentumDouble"
+print "      Ce chargement est correct pour le catalogue mais conduit à une erreur Fortran "
+CharMeca2 = code_aster.NodalForceAndMomentumDouble()
+CharMeca2.setSupportModel(monModel)
+CharMeca2.setValue( moment, "B" )
+try:
+    ret = CharMeca2.build()
+except:
+    " Le Dl MX n'est pas autorisé (erreur Fortran) "
+
+#CharMeca2.debugPrint()
 print "Fin"
