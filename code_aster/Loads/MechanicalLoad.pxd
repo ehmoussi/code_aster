@@ -127,6 +127,23 @@ cdef extern from "Loads/MechanicalLoad.h":
         InternalForceDoublePtr( InternalForceDoubleInstance * )
         InternalForceDoubleInstance* get()
 
+#### ForceAndMomentumOnBeamDouble 
+
+    cdef cppclass ForceAndMomentumOnBeamDoubleInstance:
+
+        ForceAndMomentumOnBeamDoubleInstance()
+        bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass ForceAndMomentumOnBeamDoublePtr:
+
+        ForceAndMomentumOnBeamDoublePtr( ForceAndMomentumOnBeamDoublePtr& )
+        ForceAndMomentumOnBeamDoublePtr( ForceAndMomentumOnBeamDoubleInstance * )
+        ForceAndMomentumOnBeamDoubleInstance* get()
+
 ############################################################################################
 
 
@@ -179,4 +196,11 @@ cdef class InternalForceDouble:
     cdef InternalForceDoublePtr* getPtr( self )
     cdef InternalForceDoubleInstance* getInstance( self )
 
+#### ForceAndMomentumOnBeamDouble 
+
+cdef class ForceAndMomentumOnBeamDouble:
+    cdef ForceAndMomentumOnBeamDoublePtr* _cptr
+    cdef set( self, ForceAndMomentumOnBeamDoublePtr other )
+    cdef ForceAndMomentumOnBeamDoublePtr* getPtr( self )
+    cdef ForceAndMomentumOnBeamDoubleInstance* getInstance( self )
 
