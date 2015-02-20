@@ -35,10 +35,10 @@
 #include "RunManager/CommandSyntaxCython.h"
 
 /**
- * @enum Load_Enum
+ * @enum LoadEnum
  * @brief Inventory of all mechanical loads available in Code_Aster
  */
-enum Load_Enum { NodalForce, LineicForce, EdgeForce, ImposedDoF, DistributedPressure, EndLoad };
+enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, ImposedDoF, DistributedPressure, EndLoad };
 
 /**
 * @class LoadTraits
@@ -47,8 +47,11 @@ enum Load_Enum { NodalForce, LineicForce, EdgeForce, ImposedDoF, DistributedPres
 /* This is the most general case (defined but intentionally not implemented) */
 /* It will be specialized for each load listed in the inventory */
 
-template < Load_Enum Load > struct LoadTraits; 
+template < LoadEnum Load > struct LoadTraits; 
 
+/*************************************************************/
+/*  Loads consisting of a force applied to some localization */
+/*************************************************************/
 /** @def LoadTraits <NodalForce>
 *  @brief Declare specialization for NodalForce
 */
@@ -58,13 +61,60 @@ template <> struct LoadTraits <NodalForce>
 /* Mot clé facteur pour AFFE_CHAR_MECA */
     static const std::string factorKeyword; 
 /* Authorized support MeshEntity */
+    static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = false;
     static bool const isAllowedOnGroupOfNodes = true;
 };
 
+/** @def LoadTraits <ForceOnFace>
+*  @brief Declare specialization for ForceOnFace
+*/
+
+template <> struct LoadTraits <ForceOnFace>
+{
+/* Mot clé facteur pour AFFE_CHAR_MECA */
+    static const std::string factorKeyword; 
+/* Authorized support MeshEntity */
+    static bool const isAllowedOnWholeMesh = false;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
+};
+
+/** @def LoadTraits <ForceOnEdge>
+*  @brief Declare specialization for ForceOnEdge
+*/
+
+template <> struct LoadTraits <ForceOnEdge>
+{
+/* Mot clé facteur pour AFFE_CHAR_MECA */
+    static const std::string factorKeyword; 
+/* Authorized support MeshEntity */
+    static bool const isAllowedOnWholeMesh = false;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
+};
+
+/** @def LoadTraits <LineicForce>
+*  @brief Declare specialization for LineicForce
+*/
+
+template <> struct LoadTraits <LineicForce>
+{
+/* Mot clé facteur pour AFFE_CHAR_MECA */
+    static const std::string factorKeyword; 
+/* Authorized support MeshEntity */
+    static bool const isAllowedOnWholeMesh = false;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
+};
 
 
-template< class PhysicalQuantity, Load_Enum Load >
+/***********************************************************/
+/* @class MechanicalLoadInstance                           */
+/* @brief Define a mechanical load                         */
+/***********************************************************/
+
+template< class PhysicalQuantity, LoadEnum Load >
  
 class MechanicalLoadInstance: public DataStructure
 {
@@ -110,30 +160,33 @@ class MechanicalLoadInstance: public DataStructure
     * @return bool success/failure index
     */
 
-    bool setQuantityOnMeshEntity( PhysicalQuantityPtr physPtr, std::string nameOfGroup ) throw ( std::runtime_error )
+    bool setValue( PhysicalQuantityPtr physPtr, std::string nameOfGroup = "") throw ( std::runtime_error )
     {
-        /* Check that the pointer to the support model is not empty */
-        if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-            throw std::runtime_error( "Model is empty" );
-        
-        /* Get the type of MeshEntity */
-        MeshPtr currentMesh= _supportModel->getSupportMesh();
-        
-        /* nameOfGroup is the name of a group of elements and 
-        LoadTraits authorizes to base the current load on such a group */
-        
-        if ( currentMesh->hasGroupOfElements( nameOfGroup ) && Traits::isAllowedOnGroupOfElements )
-        {
-            _supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
-        }
-        /* nameOfGroup is the name of a group of nodes and LoadTraits authorizes
-        to base the current load on such a group */
-        else if ( currentMesh->hasGroupOfNodes( nameOfGroup ) && Traits::isAllowedOnGroupOfNodes )
-        {
-            _supportMeshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
-        }
-        else
-            throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the current load " );
+    /* Check that the pointer to the support model is not empty */
+    if ( ( ! _supportModel ) || _supportModel->isEmpty() )
+        throw std::runtime_error( "Model is empty" );
+    
+    /* Get the type of MeshEntity */
+    MeshPtr currentMesh= _supportModel->getSupportMesh();
+    /* If the support MeshEntity is not given, the quantity is set on the whole mesh */
+    if ( nameOfGroup.size() == 0  && Traits::isAllowedOnWholeMesh )
+    {
+        _supportMeshEntity = MeshEntityPtr( new  AllMeshEntities() ) ;
+    } 
+    /* nameOfGroup is the name of a group of elements and 
+    LoadTraits authorizes to base the current load on such a group */
+    else if ( currentMesh->hasGroupOfElements( nameOfGroup ) && Traits::isAllowedOnGroupOfElements )
+    {
+        _supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+    }
+    /* nameOfGroup is the name of a group of nodes and LoadTraits authorizes
+    to base the current load on such a group */
+    else if ( currentMesh->hasGroupOfNodes( nameOfGroup ) && Traits::isAllowedOnGroupOfNodes )
+    {
+        _supportMeshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
+    }
+    else
+        throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the current load " );
 
         /* Copy the shared pointer of the Physical Quantity */
         _physicalQuantity = physPtr; 
@@ -215,7 +268,24 @@ template class MechanicalLoadInstance< ForceDoubleInstance, NodalForce >;
 typedef MechanicalLoadInstance< ForceDoubleInstance, NodalForce > NodalForceDoubleInstance;
 typedef boost::shared_ptr< NodalForceDoubleInstance > NodalForceDoublePtr;
 
+/** @typedef NodalForceAndMomentumDouble  */
+template class MechanicalLoadInstance< ForceAndMomentumDoubleInstance, NodalForce >;
+typedef MechanicalLoadInstance< ForceAndMomentumDoubleInstance, NodalForce > NodalForceAndMomentumDoubleInstance;
+typedef boost::shared_ptr< NodalForceAndMomentumDoubleInstance > NodalForceAndMomentumDoublePtr;
 
+/** @typedef ForceOnFaceDouble  */
+template class MechanicalLoadInstance< ForceDoubleInstance, ForceOnFace >;
+typedef MechanicalLoadInstance< ForceDoubleInstance, ForceOnFace > ForceOnFaceDoubleInstance;
+typedef boost::shared_ptr< ForceOnFaceDoubleInstance > ForceOnFaceDoublePtr;
 
+/** @typedef ForceOnEdgeDouble  */
+template class MechanicalLoadInstance< ForceDoubleInstance, ForceOnEdge >;
+typedef MechanicalLoadInstance< ForceDoubleInstance, ForceOnEdge > ForceOnEdgeDoubleInstance;
+typedef boost::shared_ptr< ForceOnEdgeDoubleInstance > ForceOnEdgeDoublePtr;
+
+/** @typedef LineicForceDouble  */
+template class MechanicalLoadInstance< ForceDoubleInstance, LineicForce >;
+typedef MechanicalLoadInstance< ForceDoubleInstance, LineicForce > LineicForceDoubleInstance;
+typedef boost::shared_ptr< LineicForceDoubleInstance > LineicForceDoublePtr;
 
 #endif /* MECHANICALLOAD_H_ */

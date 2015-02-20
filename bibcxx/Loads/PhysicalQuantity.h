@@ -36,7 +36,7 @@
  * @enum PhysicalQuantityEnum
  * @brief Inventory of all physical quantities available in Code_Aster
  */
-enum PhysicalQuantityEnum { Force, Displacement, Pressure, Temperature };
+enum PhysicalQuantityEnum { Force, ForceAndMomentum, Displacement, Pressure, Temperature };
 
 /**
  * @enum PhysicalQuantityComponent 
@@ -56,6 +56,9 @@ extern const char* ComponentNames[15];
 */
 /* This is the most general case (defined but intentionally not implemented) */
 /* It will be specialized for each physical quantity listed in the inventory */
+/*
+/*
+/*************************************************************************/
 
 template < PhysicalQuantityEnum PQ > struct PhysicalQuantityTraits; 
 
@@ -67,7 +70,7 @@ template < PhysicalQuantityEnum PQ > struct PhysicalQuantityTraits;
  * @def nbForceComponents
  * @brief Number of components specifying a force 
  */
-const int nbForceComponents = 6;
+const int nbForceComponents = 3;
 /**
  * @def ForceComponents
  * @brief Declare Force Components 
@@ -79,6 +82,31 @@ extern const PhysicalQuantityComponent ForceComponents[nbForceComponents];
 */
 
 template <> struct PhysicalQuantityTraits <Force>
+{
+    static const std::set< PhysicalQuantityComponent > components;
+    static const std::string name;
+};
+
+/****************************************/
+/*     ForceAndMomentum                 */
+/****************************************/
+
+/**
+ * @def nbForceComponents
+ * @brief Number of components specifying a force 
+ */
+const int nbForceAndMomentumComponents = 6;
+/**
+ * @def ForceComponents
+ * @brief Declare Force Components 
+ */
+extern const PhysicalQuantityComponent ForceAndMomentumComponents[nbForceAndMomentumComponents];
+
+/** @def PhysicalQuantityTraits <ForceAndMomentum>
+*  @brief Declare specialization for ForceAndMomentum
+*/
+
+template <> struct PhysicalQuantityTraits <ForceAndMomentum>
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
@@ -257,6 +285,11 @@ class PhysicalQuantityInstance
 template class PhysicalQuantityInstance< double, Force >; 
 typedef PhysicalQuantityInstance< double, Force > ForceDoubleInstance;
 typedef boost::shared_ptr< ForceDoubleInstance > ForceDoublePtr; 
+
+/** @typedef ForceAndMomentumDouble FORC_R */
+template class PhysicalQuantityInstance< double, ForceAndMomentum >; 
+typedef PhysicalQuantityInstance< double, ForceAndMomentum > ForceAndMomentumDoubleInstance;
+typedef boost::shared_ptr< ForceAndMomentumDoubleInstance > ForceAndMomentumDoublePtr; 
 
 /** @typedef DisplacementDouble DEPL_R */
 template class PhysicalQuantityInstance< double, Displacement >; 

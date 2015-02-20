@@ -30,9 +30,14 @@ const char* ComponentNames[15] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP"
 /* Init const data */
 
 /* Force */
-const PhysicalQuantityComponent ForceComponents[nbForceComponents] = { Fx, Fy, Fz, Mx, My, Mz };
+const PhysicalQuantityComponent ForceComponents[nbForceComponents] = { Fx, Fy, Fz };
 const std::string PhysicalQuantityTraits <Force>::name = "Force"; 
 const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Force>::components( ForceComponents, ForceComponents + nbForceComponents );
+
+/* ForceAndMomentum */
+const PhysicalQuantityComponent ForceAndMomentumComponents[nbForceAndMomentumComponents] = { Fx, Fy, Fz, Mx, My, Mz };
+const std::string PhysicalQuantityTraits <ForceAndMomentum>::name = "ForceAndMomentum"; 
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<ForceAndMomentum>::components( ForceAndMomentumComponents, ForceAndMomentumComponents + nbForceAndMomentumComponents );
 
 /* Displacement */
 const PhysicalQuantityComponent DisplacementComponents[nbDisplacementComponents] = { Dx, Dy, Dz, Dx, Dy, Dz };
