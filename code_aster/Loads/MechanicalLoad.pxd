@@ -93,6 +93,26 @@ cdef extern from "Loads/MechanicalLoad.h":
         ForceAndMomentumOnEdgeDoublePtr( ForceAndMomentumOnEdgeDoubleInstance * )
         ForceAndMomentumOnEdgeDoubleInstance* get()
 
+#### LineicForceAndMomentumDouble 
+
+    cdef cppclass LineicForceAndMomentumDoubleInstance:
+
+        LineicForceAndMomentumDoubleInstance()
+        bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass LineicForceAndMomentumDoublePtr:
+
+        LineicForceAndMomentumDoublePtr( LineicForceAndMomentumDoublePtr& )
+        LineicForceAndMomentumDoublePtr( LineicForceAndMomentumDoubleInstance * )
+        LineicForceAndMomentumDoubleInstance* get()
+
+############################################################################################
+
+
 #### NodalForceDouble 
 
 cdef class NodalForceDouble:
@@ -124,4 +144,12 @@ cdef class ForceAndMomentumOnEdgeDouble:
     cdef ForceAndMomentumOnEdgeDoublePtr* _cptr
     cdef set( self, ForceAndMomentumOnEdgeDoublePtr other )
     cdef ForceAndMomentumOnEdgeDoublePtr* getPtr( self )
-    cdef ForceAndMomentumOnEdgeDoubleInstance* getInstance( self )    
+    cdef ForceAndMomentumOnEdgeDoubleInstance* getInstance( self )
+
+#### LineicForceAndMomentumDouble 
+
+cdef class LineicForceAndMomentumDouble:
+    cdef LineicForceAndMomentumDoublePtr* _cptr
+    cdef set( self, LineicForceAndMomentumDoublePtr other )
+    cdef LineicForceAndMomentumDoublePtr* getPtr( self )
+    cdef LineicForceAndMomentumDoubleInstance* getInstance( self )    
