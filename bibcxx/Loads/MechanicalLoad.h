@@ -278,10 +278,10 @@ template class MechanicalLoadInstance< ForceDoubleInstance, ForceOnFace >;
 typedef MechanicalLoadInstance< ForceDoubleInstance, ForceOnFace > ForceOnFaceDoubleInstance;
 typedef boost::shared_ptr< ForceOnFaceDoubleInstance > ForceOnFaceDoublePtr;
 
-/** @typedef ForceOnEdgeDouble  */
-template class MechanicalLoadInstance< ForceDoubleInstance, ForceOnEdge >;
-typedef MechanicalLoadInstance< ForceDoubleInstance, ForceOnEdge > ForceOnEdgeDoubleInstance;
-typedef boost::shared_ptr< ForceOnEdgeDoubleInstance > ForceOnEdgeDoublePtr;
+/** @typedef ForceAndMomentumOnEdgeDouble  */
+template class MechanicalLoadInstance< ForceAndMomentumDoubleInstance, ForceOnEdge >;
+typedef MechanicalLoadInstance< ForceAndMomentumDoubleInstance, ForceOnEdge > ForceAndMomentumOnEdgeDoubleInstance;
+typedef boost::shared_ptr< ForceAndMomentumOnEdgeDoubleInstance > ForceAndMomentumOnEdgeDoublePtr;
 
 /** @typedef LineicForceDouble  */
 template class MechanicalLoadInstance< ForceDoubleInstance, LineicForce >;

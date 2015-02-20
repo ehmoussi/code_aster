@@ -25,7 +25,7 @@ from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr, ForceAndMomentumD
 
 cdef extern from "Loads/MechanicalLoad.h":
 
-#### ForceDouble 
+#### NodalForceDouble 
 
     cdef cppclass NodalForceDoubleInstance:
 
@@ -42,7 +42,7 @@ cdef extern from "Loads/MechanicalLoad.h":
         NodalForceDoublePtr( NodalForceDoubleInstance * )
         NodalForceDoubleInstance* get()
 
-#### ForceAndMomentumDouble 
+#### NodalForceAndMomentumDouble 
 
     cdef cppclass NodalForceAndMomentumDoubleInstance:
 
@@ -59,7 +59,41 @@ cdef extern from "Loads/MechanicalLoad.h":
         NodalForceAndMomentumDoublePtr( NodalForceAndMomentumDoubleInstance * )
         NodalForceAndMomentumDoubleInstance* get()
 
-#### ForceDouble 
+#### ForceOnFaceDouble 
+
+    cdef cppclass ForceOnFaceDoubleInstance:
+
+        ForceOnFaceDoubleInstance()
+        bint setValue( ForceDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass ForceOnFaceDoublePtr:
+
+        ForceOnFaceDoublePtr( ForceOnFaceDoublePtr& )
+        ForceOnFaceDoublePtr( ForceOnFaceDoubleInstance * )
+        ForceOnFaceDoubleInstance* get()
+
+#### ForceAndMomentumOnEdgeDouble 
+
+    cdef cppclass ForceAndMomentumOnEdgeDoubleInstance:
+
+        ForceAndMomentumOnEdgeDoubleInstance()
+        bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass ForceAndMomentumOnEdgeDoublePtr:
+
+        ForceAndMomentumOnEdgeDoublePtr( ForceAndMomentumOnEdgeDoublePtr& )
+        ForceAndMomentumOnEdgeDoublePtr( ForceAndMomentumOnEdgeDoubleInstance * )
+        ForceAndMomentumOnEdgeDoubleInstance* get()
+
+#### NodalForceDouble 
 
 cdef class NodalForceDouble:
     cdef NodalForceDoublePtr* _cptr
@@ -67,7 +101,7 @@ cdef class NodalForceDouble:
     cdef NodalForceDoublePtr* getPtr( self )
     cdef NodalForceDoubleInstance* getInstance( self )
 
-#### ForceAndMomentumDouble 
+#### NodalForceAndMomentumDouble 
 
 cdef class NodalForceAndMomentumDouble:
     cdef NodalForceAndMomentumDoublePtr* _cptr
@@ -76,3 +110,18 @@ cdef class NodalForceAndMomentumDouble:
     cdef NodalForceAndMomentumDoubleInstance* getInstance( self )
 
 
+#### ForceOnFaceDouble 
+
+cdef class ForceOnFaceDouble:
+    cdef ForceOnFaceDoublePtr* _cptr
+    cdef set( self, ForceOnFaceDoublePtr other )
+    cdef ForceOnFaceDoublePtr* getPtr( self )
+    cdef ForceOnFaceDoubleInstance* getInstance( self )
+
+#### ForceAndMomentumOnEdgeDouble 
+
+cdef class ForceAndMomentumOnEdgeDouble:
+    cdef ForceAndMomentumOnEdgeDoublePtr* _cptr
+    cdef set( self, ForceAndMomentumOnEdgeDoublePtr other )
+    cdef ForceAndMomentumOnEdgeDoublePtr* getPtr( self )
+    cdef ForceAndMomentumOnEdgeDoubleInstance* getInstance( self )    
