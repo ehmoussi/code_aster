@@ -56,4 +56,22 @@ except:
     " Le Dl MX n'est pas autorisé (erreur Fortran) "
 
 #CharMeca2.debugPrint()
+
+# Definition d'un chargement de type FORCE_FACE à partir d'un ForceDouble
+print " >>>> Construction d'un chargement ForceOnFaceDouble"
+
+CharMeca3 = code_aster.ForceOnFaceDouble()
+CharMeca3.setSupportModel(monModel)
+CharMeca3.setValue( traction, "UP" )
+ret = CharMeca3.build()
+print " Fin de la construction : ", ret 
+
+# Definition d'un chargement de type FORCE_ARETE à partir d'un ForceAndMomentumDouble
+print " >>>> Construction d'un chargement ForceAndMomentumOnEdgeDouble"
+
+CharMeca4 = code_aster.ForceAndMomentumOnEdgeDouble()
+CharMeca4.setSupportModel(monModel)
+CharMeca4.setValue( moment, "UP" )
+ret = CharMeca4.build()
+print " Fin de la construction : ", ret 
 print "Fin"
