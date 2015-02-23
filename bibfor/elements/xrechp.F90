@@ -1,7 +1,7 @@
 subroutine xrechp(ndim, elrefp, nnop, igeom, itps,&
                   ihechp, jptint, jcface, jlonch,&
-                  jlst, jlsn, jbasec, nfh, nfe, fonree,&
-                  imattt)
+                  jlst, jbasec, nfh, nfe, fonree,&
+                  imattt, heavn)
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -64,12 +64,13 @@ subroutine xrechp(ndim, elrefp, nnop, igeom, itps,&
 #include "asterfort/xjacf2.h"
 #include "asterfort/xjacff.h"
 #include "asterfort/xxmmvd.h"
-#include "asterfort/xcoef_he.h"
-#include "asterfort/xcalf_he.h"
+#include "asterfort/xcalc_saut.h"
+#include "asterfort/xcalc_code.h"
+#include "asterfort/xcalc_heav.h"
     character(len=4) :: fonree
     character(len=8) :: elrefp
     integer :: ndim, nnop, igeom, itps, ihechp, jptint, jcface, jlonch
-    integer :: jlst, jlsn, jbasec, nfh, nfe, imattt
+    integer :: jlst, jbasec, nfh, nfe, imattt, heavn(27,5)
 !
 !-----------------------------------------------------------------------
 !
@@ -79,7 +80,7 @@ subroutine xrechp(ndim, elrefp, nnop, igeom, itps,&
     integer :: fac(6, 8), nbar, ar(12, 3), cface(18, 6), ninter, nface, nptf
     integer :: i, j, ifa, nnof, npgf, ipoidf, ivff, idfdef
     integer :: ipgf, ilev, inp, jnp, kddl, lddl, ind1, ind2, iddlma, ier
-    integer :: mxstac
+    integer :: mxstac, hea_fa(2), ifh, ife
 !
     parameter (mxstac=1000)
 !
@@ -102,6 +103,11 @@ subroutine xrechp(ndim, elrefp, nnop, igeom, itps,&
 !     (VOIR CRS 1404)
     ASSERT(nnop.le.mxstac .and. 1+nfh+nfe.le.mxstac)
 !
+!    DEFINITION A LA MAIN DE LA TOPOLOGIE DE SOUS-DOMAINE PAR FACETTE (SI NFISS=1)
+    do ilev=1,2
+      hea_fa(ilev)=xcalc_code(1,he_real=[he(ilev)])
+    enddo
+!
 !     S'AGIT-IL D'UNE MODELISATION AXIS
     axi = .false.
     if (lteatt('AXIS','OUI')) axi = .true.
@@ -116,7 +122,7 @@ subroutine xrechp(ndim, elrefp, nnop, igeom, itps,&
     zxain = xxmmvd('ZXAIN')
 !
 !     ELREFE ET FPG POUR LES FACETTES
-    call tecael(iadzi, iazk24)
+    call tecael(iadzi, iazk24, noms=0)
     typma=zk24(iazk24-1+3+zi(iadzi-1+2)+3)(1:8)
     if (ndim .eq. 3) then
         call confac(typma, ibid2, ibid, fac, nbf)
@@ -220,7 +226,7 @@ subroutine xrechp(ndim, elrefp, nnop, igeom, itps,&
                     ffenr(i,1) = ff(i)
 !             DDL HEAVISIDE (H1)
                     if (nfh .eq. 1) then
-                        ffenr(i,1+nfh) = xcalf_he(he(ilev),zr(jlsn-1+i))*ff(i)
+                        ffenr(i,1+nfh) = xcalc_heav(heavn(i,1),hea_fa(ilev),heavn(i,5))*ff(i)
                     endif
 !             DDL CRACK-TIP (E1)
                     if (nfe .eq. 1) then
@@ -234,39 +240,50 @@ subroutine xrechp(ndim, elrefp, nnop, igeom, itps,&
 !
                         ind1 = (nbddl*(inp-1)+kddl-1) * (nbddl*(inp-1) +kddl ) /2
 !
-                        do 500 lddl = 1, nbddl
-                            do 510 jnp = 1, inp
+                        do 510 jnp = 1, inp
 !
 !                   IDDLMA : NUMERO DE DDL MAX PR NE PAS DEPASSER LA
 !                   DIGAONALE (ON STOCKE LA PARTIE TRIANGULAIRE INF)
-                                if (jnp .eq. inp) then
-                                    iddlma = kddl
-                                else
-                                    iddlma = nbddl
-                                endif
+                            if (jnp .eq. inp) then
+                                 iddlma = kddl
+                            else
+                                 iddlma = nbddl
+                            endif
 !
-!                   ON NE DEPASSE PAS PAS LA DIAGONALE
+                            do ifh = 1, nfh
+                                lddl=1+ifh
                                 if (lddl .le. iddlma) then
+!                     ON ECRIT PROPREMENT LES TERMES DE COUPLAGE COMPTE TENU
+!                      * DU SAUT DE DEPLACEMENT SUR LES TERMES HEAVISIDES
+!                      * DE LA CONVENTION D ECRITURE DU SAUT SUR CHAQUE FRONTIERE 
+!                               - FRONTIERE 1 : 1-->2
+!                               - FRONTIERE 2 : 2-->1
+                                      if (ilev .eq. 1) then
+                                       r8tmp = (xcalc_heav(heavn(jnp,1),hea_fa(1),heavn(jnp,5))&
+                                               -xcalc_heav(heavn(jnp,1),hea_fa(2),heavn(jnp,5))&
+                                              )*ff(jnp)
+                                      elseif (ilev .eq. 2) then
+                                       r8tmp = (xcalc_heav(heavn(jnp,1),hea_fa(2),heavn(jnp,5))&
+                                               -xcalc_heav(heavn(jnp,1),hea_fa(1),heavn(jnp,5))&
+                                              )*ff(jnp)
+                                      endif
+                                      ind2 = ind1 + nbddl*(jnp-1)+lddl
+                                      zr(imattt-1+ind2) = zr(imattt-1+ ind2) + theta*hechp*jac&
+                                                        &* ffenr(inp,kddl)*r8tmp
+                                  endif
+                              enddo
 !
-!                     QUANTITE LIEE AU SAUT DE TEMPERATURE
-!                     A TRAVERS LES LEVRES DE LA FISSURE
-                                    if (lddl .eq. 1) then
-                                        r8tmp = 0.d0
-                                    else if (lddl.eq.2) then
-                                        r8tmp = xcoef_he()*he(ilev)*ff(jnp)
-                                    else if (lddl.eq.3) then
-                                        r8tmp = 2.d0*rr(ilev)*ff(jnp)
-                                    else
-                                        ASSERT(.false.)
-                                    endif
-!
-                                    ind2 = ind1 + nbddl*(jnp-1)+lddl
-                                    zr(imattt-1+ind2) = zr(imattt-1+ ind2) + theta*hechp*jac&
+                              do ife = 1, nfe
+                                lddl=1+nfh+ife
+                                if (lddl .le. iddlma) then
+                                      r8tmp = 2.d0*rr(ilev)*ff(jnp)
+                                      ind2 = ind1 + nbddl*(jnp-1)+lddl
+                                      zr(imattt-1+ind2) = zr(imattt-1+ ind2) + theta*hechp*jac&
                                                         &* ffenr(inp,kddl)*r8tmp
                                 endif
+                              enddo
 !
-510                         continue
-500                     continue
+510                     continue
 410                 continue
 400             continue
 !

@@ -1,5 +1,5 @@
 subroutine xsifle(ndim, ifa, jptint, cface,&
-                  igeom, nfh, singu, nfe, ddlc,&
+                  igeom, nfh, jheavn, singu, nfe, ddlc,&
                   ddlm, jlst, ipres, ipref, itemps,&
                   idepl, nnop, valres, basloc, ithet,&
                   nompar, presn, option, igthet, jbasec,&
@@ -35,6 +35,8 @@ subroutine xsifle(ndim, ifa, jptint, cface,&
 #include "asterfort/jemarq.h"
 #include "asterc/r8pi.h"
 #include "asterfort/tecael.h"
+#include "asterfort/tecach.h"
+#include "asterfort/vecini.h"
 #include "asterfort/xjacf2.h"
 #include "asterfort/xjacff.h"
 #include "asterfort/xsifl1.h"
@@ -45,7 +47,7 @@ subroutine xsifle(ndim, ifa, jptint, cface,&
     character(len=8) :: nompar(4)
     character(len=16) :: option
     integer :: ndim, ifa, cface(18, 6), igeom, nfh, singu, jlst, ipres
-    integer :: nfe, ddlc, ipref, itemps, nnop, ithet, jptint, igthet, idepl
+    integer :: nfe, ddlc, ipref, itemps, nnop, ithet, jptint, igthet, idepl, jheavn
     integer :: ddlm, jbasec, contac
     real(kind=8) :: valres(3)
     real(kind=8) :: basloc(9*nnop), presn(27)
@@ -86,8 +88,8 @@ subroutine xsifle(ndim, ifa, jptint, cface,&
 !
     integer :: iadzi, iazk24, ibid2(12, 3), ibid, fac(6, 8), nbf
     integer :: ar(12, 3), nbar, nnof, npgf, ipoidf, ivff, idfdef
-    integer :: ipgf, zxain
-    integer :: ddld, ddls, nnops
+    integer :: ipgf, zxain, heavn(nnop,5)
+    integer :: ddld, ddls, nnops, ncompn, ino, ig, iret, jtab(7)
     real(kind=8) :: xg(4), jac, ff(27), nd(3)
     real(kind=8) :: angl(2)
     real(kind=8) :: e, nu, mu, ka, coeff, coeff3, r27bid(27)
@@ -95,7 +97,6 @@ subroutine xsifle(ndim, ifa, jptint, cface,&
     real(kind=8) :: he(2)
 !
     integer :: nnos, nno
-    real(kind=8) :: ffc(27)
     character(len=8) :: elref, typma, fpg, elc, elrefc
     real(kind=8) :: tau1(3), tau2(3)
     data     he / -1.d0 , 1.d0/
@@ -109,6 +110,20 @@ subroutine xsifle(ndim, ifa, jptint, cface,&
     angl(1) = -r8pi()
     angl(2) = r8pi()
 !
+!     RECUPERATION DE LA DEFINITION DES DDL HEAVISIDES
+    if (nfh.gt.0) then
+      ASSERT(jheavn.gt.0)
+      call tecach('OOO', 'PHEA_NO', 'L', iret, nval=7,&
+                itab=jtab)
+      ncompn = jtab(2)/jtab(3)
+      ASSERT(ncompn.eq.5)
+      do ino = 1, nnop
+        do ig = 1 , ncompn
+          heavn(ino,ig) = zi(jheavn-1+ncompn*(ino-1)+ig)
+        enddo
+      enddo
+    endif
+!
 !     NOMBRE DE DDL DE DEPLACEMENT À CHAQUE NOEUD SOMMET
     ddld=ndim*(1+nfh+nfe)
 !
@@ -116,7 +131,7 @@ subroutine xsifle(ndim, ifa, jptint, cface,&
     ddls=ddld+ddlc
 !
     call elref1(elref)
-    call tecael(iadzi, iazk24)
+    call tecael(iadzi, iazk24, noms=0)
     typma=zk24(iazk24-1+3+zi(iadzi-1+2)+3)
 !
     if (ndim .eq. 3) then
@@ -153,18 +168,17 @@ subroutine xsifle(ndim, ifa, jptint, cface,&
 !       ET DES FF DE L'ÉLÉMENT PARENT AU POINT DE GAUSS
 !       ET LA NORMALE ND ORIENTÉE DE ESCL -> MAIT
 !       ET DE XG : COORDONNEES REELLES DU POINT DE GAUSS
-!       ET DE DFDI : DERIVVES DES FF PARENT
+!       ET DE DFDI : DERIVES DES FF PARENT
+        call elelin(contac, elref, elrefc, nno, nnos)
+        elrefc='NON'
+        call vecini(27, 0.d0, ff)
         if (ndim .eq. 3) then
-            call elelin(contac, elref, elrefc, nno, nnos)
-            nnops = nnos
             ASSERT(nno.eq.nnop)
-            elrefc='NON'
             call xjacff(elref, elrefc, elc, ndim, fpg,&
                         jptint, ifa, cface, ipgf, nnop,&
                         igeom, jbasec, xg, jac, ff,&
-                        ffc, dfdi, nd, tau1, tau2)
+                        r27bid, dfdi, nd, tau1, tau2)
         else if (ndim.eq.2) then
-            elrefc='NON'
             call xjacf2(elref, elrefc, elc, ndim, fpg,&
                         jptint, ifa, cface, ndim, ipgf,&
                         nnop, igeom, jbasec, xg, jac,&
@@ -172,10 +186,10 @@ subroutine xsifle(ndim, ifa, jptint, cface,&
         endif
         if (option .ne. 'CALC_K_G_COHE') then
             call xsifl1(angl, basloc, coeff, coeff3, ddlm,&
-                        ddls, dfdi, ff, he, idepl,&
+                        ddls, dfdi, ff, he, heavn, idepl,&
                         igthet, ipref, ipres, ithet, jac,&
                         jlst, ka, mu, nd,&
-                        ndim, nfh, nnop, nnops, itemps,&
+                        ndim, nfh, nnop, nnos, itemps,&
                         nompar, option, presn, singu, xg)
         endif
         if (option .eq. 'CALC_K_G_COHE') then
