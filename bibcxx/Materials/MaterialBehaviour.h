@@ -69,6 +69,8 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
         /** @brief Nom Aster du type elementaire de propriete materielle */
         // ex : "NU" pour le coefficient de Poisson
         std::string _name;
+        /** @brief Booleen qui precise si la propriété est obligatoire */
+        bool        _isMandatory;
         /** @brief Description de parametre, ex : "Young's modulus" */
         std::string _description;
         /** @brief Valeur du parametre (double, FunctionPtr, ...) */
@@ -89,7 +91,9 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
          * @param description Description libre
          */
         MaterialPropertyInstance( const std::string name,
+                                  const bool isMandatory = false,
                                   const std::string description = "" ): _name( name ),
+                                                                        _isMandatory( isMandatory ),
                                                                         _description( description ),
                                                                         _existsValue( false )
         {};
@@ -102,7 +106,9 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
          */
         MaterialPropertyInstance( const std::string name,
                                   const ValueType& currentValue,
+                                  const bool isMandatory = false,
                                   const std::string description = "" ): _name( name ),
+                                                                        _isMandatory( isMandatory ),
                                                                         _description( description ),
                                                                         _value( currentValue ),
                                                                         _existsValue( true )
@@ -119,7 +125,7 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
 
         /**
          * @brief Recuperation de la valeur du parametre
-         * @return renvoit la valeur du parametre
+         * @return la valeur du parametre
          */
         const ValueType& getValue() const
         {
@@ -127,7 +133,16 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
         };
 
         /**
-         * @brief Cette propriété a-t-elle une valeur ?
+         * @brief Cette propriété est-elle obligatoire ?
+         * @return true si la propriété est obligatoire
+         */
+        void isMadatory()
+        {
+            return _isMandatory;
+        };
+
+        /**
+         * @brief Cette propriété a-t-elle une valeur fixée par l'utilisateur ?
          * @return true si la valeur a été précisée
          */
         bool hasValue() const
