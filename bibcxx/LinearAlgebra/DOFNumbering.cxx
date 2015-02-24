@@ -32,8 +32,8 @@ DOFNumberingInstance::DOFNumberingInstance():
             DataStructure( getNewResultObjectName(), "NUME_DDL" ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
             _supportModel( ModelPtr() ),
-            _supportMatrix( ElementaryMatrix( false ) ),
-            _load( MechanicalLoad( false ) ),
+//             _supportMatrix( new ElementaryMatrix( false ) ),
+//             _load( MechanicalLoad( false ) ),
             _linearSolver( LinearSolver( MultFront, Metis ) ),
             _isEmpty( true )
 {};
@@ -50,7 +50,7 @@ bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
             throw std::runtime_error( "Support Model is empty" );
         throw std::runtime_error( "Not yet implemented" );
     }
-    else if ( ! _supportMatrix.isEmpty() )
+    else if ( ! _supportMatrix.use_count() == 0 )
     {
         if ( _supportMatrix->isEmpty() )
             throw std::runtime_error( "Support ElementaryMatrix is empty" );

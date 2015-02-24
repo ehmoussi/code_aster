@@ -28,8 +28,8 @@ cdef extern from "LinearAlgebra/ElementaryVector.h":
     cdef cppclass ElementaryVectorInstance:
 
         ElementaryVectorInstance()
-        void addMechanicalLoad( GenericMechanicalLoadPtr currentLoad )
-        void setMaterialOnMesh( MaterialOnMeshPtr currentMat )
+        void addMechanicalLoad( GenericMechanicalLoadPtr& currentLoad )
+        void setMaterialOnMesh( MaterialOnMeshPtr& currentMat )
         const string getType()
         void debugPrint( int logicalUnit )
 

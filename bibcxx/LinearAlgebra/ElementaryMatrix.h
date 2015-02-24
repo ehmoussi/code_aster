@@ -31,7 +31,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
 #include "Materials/MaterialOnMesh.h"
-//#include "Loads/MechanicalLoad.h"
+#include "Loads/MechanicalLoad.h"
 
 /**
  * @class ElementaryMatrixInstance
@@ -44,7 +44,7 @@ class ElementaryMatrixInstance: public DataStructure
         /** @todo */
         typedef int MechanicalLoad; 
         /** @typedef std::list de MechanicalLoad */
-        typedef std::list< MechanicalLoad > ListMecaLoad;
+        typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;
         /** @typedef Iterateur sur une std::list de MechanicalLoad */
         typedef ListMecaLoad::iterator ListMecaLoadIter;
 
@@ -81,7 +81,7 @@ class ElementaryMatrixInstance: public DataStructure
          * @brief Function d'ajout d'une charge mecanique
          * @param currentLoad charge a ajouter a la sd
          */
-        void addMechanicalLoad( const MechanicalLoad& currentLoad )
+        void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
         {
             _listOfMechanicalLoads.push_back( currentLoad );
         };
@@ -120,49 +120,9 @@ class ElementaryMatrixInstance: public DataStructure
 };
 
 /**
- * @class ElementaryMatrix
- * @brief Enveloppe d'un pointeur intelligent vers un ElementaryMatrixInstance
- * @author Nicolas Sellenet
+ * @typedef ElementaryMatrixPtr
+ * @brief Pointeur intelligent vers un ElementaryMatrixInstance
  */
-class ElementaryMatrix
-{
-    public:
-        typedef boost::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
-
-    private:
-        ElementaryMatrixPtr _elementaryMatrixPtr;
-
-    public:
-        ElementaryMatrix(bool initialisation = true): _elementaryMatrixPtr()
-        {
-            if ( initialisation == true )
-                _elementaryMatrixPtr = ElementaryMatrixPtr( new ElementaryMatrixInstance() );
-        };
-
-        ~ElementaryMatrix()
-        {};
-
-        ElementaryMatrix& operator=(const ElementaryMatrix& tmp)
-        {
-            _elementaryMatrixPtr = tmp._elementaryMatrixPtr;
-            return *this;
-        };
-
-        const ElementaryMatrixPtr& operator->() const
-        {
-            return _elementaryMatrixPtr;
-        };
-
-        ElementaryMatrixInstance& operator*(void) const
-        {
-            return *_elementaryMatrixPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _elementaryMatrixPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
+typedef boost::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
 
 #endif /* ELEMENTARYMATRIX_H_ */

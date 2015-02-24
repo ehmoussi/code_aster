@@ -48,17 +48,17 @@ class DOFNumberingInstance: public DataStructure
         typedef int MechanicalLoad; 
         // !!! Classe succinte car on ne sait pas comment elle sera utiliser !!!
         /** @brief Objet Jeveux '.NSLV' */
-        JeveuxVectorChar24 _nameOfSolverDataStructure;
+        JeveuxVectorChar24         _nameOfSolverDataStructure;
         /** @brief Modele support */
-        ModelPtr           _supportModel;
+        ModelPtr                   _supportModel;
         /** @brief Matrices elementaires */
-        ElementaryMatrix   _supportMatrix;
+        ElementaryMatrixPtr        _supportMatrix;
         /** @brief Conditions aux limites */
-        MechanicalLoad     _load;
+        GenericMechanicalLoadPtr   _load;
         /** @brief Solveur lineaire */
-        LinearSolver       _linearSolver;
+        LinearSolver               _linearSolver;
         /** @brief Booleen permettant de preciser sur la sd est vide */
-        bool               _isEmpty;
+        bool                       _isEmpty;
 
     public:
         /**
@@ -80,7 +80,7 @@ class DOFNumberingInstance: public DataStructure
          * @brief Methode permettant d'ajouter un chargement
          * @param currentLoad objet MechanicalLoad
          */
-        void addLoad( const MechanicalLoad& currentLoad ) throw ( std::runtime_error )
+        void addLoad( const GenericMechanicalLoadPtr& currentLoad ) throw ( std::runtime_error )
         {
             throw std::runtime_error( "Not yet implemented" );
         };
@@ -103,7 +103,7 @@ class DOFNumberingInstance: public DataStructure
          * @brief Methode permettant de definir les matrices elementaires
          * @param currentMatrix objet ElementaryMatrix
          */
-        void setElementaryMatrix( const ElementaryMatrix& currentMatrix ) throw ( std::runtime_error )
+        void setElementaryMatrix( const ElementaryMatrixPtr& currentMatrix ) throw ( std::runtime_error )
         {
             if ( _supportModel )
                 throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
@@ -127,7 +127,7 @@ class DOFNumberingInstance: public DataStructure
          */
         void setSupportModel( const ModelPtr& currentModel ) throw ( std::runtime_error )
         {
-            if ( ! _supportMatrix.isEmpty() )
+            if ( ! _supportMatrix.use_count() == 0 )
                 throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
             _supportModel = currentModel;
         };
