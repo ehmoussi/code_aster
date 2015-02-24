@@ -77,7 +77,7 @@ matr_elem.computeMechanicalRigidity()
 
 monSolver = code_aster.LinearSolver( code_aster.Mumps, code_aster.Metis )
 
-numeDDL = code_aster.DOFNumerotation()
+numeDDL = code_aster.DOFNumbering()
 numeDDL.setElementaryMatrix( matr_elem )
 numeDDL.setLinearSolver( monSolver )
 numeDDL.computeNumerotation()
@@ -91,7 +91,7 @@ retour = vectElem.assembleVector( numeDDL )
 
 matrAsse = code_aster.AssemblyMatrixDouble()
 matrAsse.setElementaryMatrix( matr_elem )
-matrAsse.setDOFNumerotation( numeDDL )
+matrAsse.setDOFNumbering( numeDDL )
 matrAsse.build()
 matrAsse.factorization()
 
