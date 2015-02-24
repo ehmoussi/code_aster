@@ -3,7 +3,7 @@
 
 /**
  * @file MechanicalLoad.h
- 
+ * @author Natacha Bereux
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
  *
@@ -41,199 +41,224 @@
 enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam, ImposedDoF, DistributedPressure, EndLoad };
 
 /**
-* @class LoadTraits
-* @brief Traits class for a Load
-*/
-/* This is the most general case (defined but intentionally not implemented) */
-/* It will be specialized for each load listed in the inventory */
+ * @class LoadTraits
+ * @brief Traits class for a Load
+ */
+// This is the most general case (defined but intentionally not implemented)
+// It will be specialized for each load listed in the inventory
 
 template < LoadEnum Load > struct LoadTraits; 
 
 /*************************************************************/
 /*  Loads consisting of a force applied to some localization */
 /*************************************************************/
-/** @def LoadTraits <NodalForce>
-*  @brief Declare specialization for NodalForce
-*/
-
+/**
+ * @def LoadTraits <NodalForce>
+ * @brief Declare specialization for NodalForce
+ */
 template <> struct LoadTraits <NodalForce>
 {
-/* Mot clé facteur pour AFFE_CHAR_MECA */
+    // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
-/* Authorized support MeshEntity */
+    // Authorized support MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = false;
     static bool const isAllowedOnGroupOfNodes = true;
 };
 
-/** @def LoadTraits <ForceOnFace>
-*  @brief Declare specialization for ForceOnFace
-*/
-
+/**
+ * @def LoadTraits <ForceOnFace>
+ * @brief Declare specialization for ForceOnFace
+ */
 template <> struct LoadTraits <ForceOnFace>
 {
-/* Mot clé facteur pour AFFE_CHAR_MECA */
+    // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
-/* Authorized support MeshEntity */
+    // Authorized support MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
-/** @def LoadTraits <ForceOnEdge>
-*  @brief Declare specialization for ForceOnEdge
-*/
-
+/**
+ * @def LoadTraits <ForceOnEdge>
+ * @brief Declare specialization for ForceOnEdge
+ */
 template <> struct LoadTraits <ForceOnEdge>
 {
-/* Mot clé facteur pour AFFE_CHAR_MECA */
+    // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
-/* Authorized support MeshEntity */
+    // Authorized support MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
-/** @def LoadTraits <LineicForce>
-*  @brief Declare specialization for LineicForce
-*/
-
+/**
+ * @def LoadTraits <LineicForce>
+ * @brief Declare specialization for LineicForce
+ */
 template <> struct LoadTraits <LineicForce>
 {
-/* Mot clé facteur pour AFFE_CHAR_MECA */
+    // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
-/* Authorized support MeshEntity */
+    // Authorized support MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
-/** @def LoadTraits <InternalForce>
-*  @brief Declare specialization for InternalForce
-*/
-
+/**
+ * @def LoadTraits <InternalForce>
+ * @brief Declare specialization for InternalForce
+ */
 template <> struct LoadTraits <InternalForce>
 {
-/* Mot clé facteur pour AFFE_CHAR_MECA */
+    // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
-/* Authorized support MeshEntity */
+    // Authorized support MeshEntity
     static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
-/** @def LoadTraits <ForceOnBeam>
-*  @brief Declare specialization for ForceOnBeam
-*/
-
+/**
+ * @def LoadTraits <ForceOnBeam>
+ * @brief Declare specialization for ForceOnBeam
+ */
 template <> struct LoadTraits <ForceOnBeam>
 {
-/* Mot clé facteur pour AFFE_CHAR_MECA */ 
+    // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
-/* Authorized support MeshEntity */
+    // Authorized support MeshEntity
     static bool const isAllowedOnWholeMesh = true;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
     /** @todo mot clé supplémentaire TYPE_CHARGE=FORCE */
 };
 
-/***********************************************************/
-/* @class MechanicalLoadInstance                           */
-/* @brief Define a mechanical load                         */
-/***********************************************************/
+/**
+ * @class GenericMechanicalLoadInstance
+ * @brief Define a generic mechanical load
+ * @author Nicolas Sellenet
+ */
+class GenericMechanicalLoadInstance: public DataStructure
+{
+    protected:
+        /** @typedef Definition d'un pointeur intelligent sur un VirtualMeshEntity */
+        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
+        /** @brief MeshEntity sur laquelle repose le "blocage" */
+        MeshEntityPtr    _supportMeshEntity;
+        /** @brief Modèle support */
+        ModelPtr         _supportModel;
+
+    public:
+        /**
+         * @brief Constructor
+         */
+        GenericMechanicalLoadInstance():
+                        DataStructure( getNewResultObjectName(), "CHAR_MECA" ),
+                        _supportModel( ModelPtr() )
+        {};
+
+        /**
+         * @brief Destructor
+         */
+        ~GenericMechanicalLoadInstance()
+        {};
+
+        /**
+         * @brief Define the support model
+         * @param currentMesh objet Model sur lequel la charge reposera
+         */
+        bool setSupportModel( ModelPtr& currentModel )
+        {
+            _supportModel = currentModel;
+            return true;
+        };
+
+        virtual bool build() = 0;
+};
+
+/**
+ * @class MechanicalLoadInstance
+ * @brief Define a mechanical load
+ * @author Natacha Bereux
+ */
 template< class PhysicalQuantity, LoadEnum Load >
- 
-class MechanicalLoadInstance: public DataStructure
+class MechanicalLoadInstance: public GenericMechanicalLoadInstance
 {
     public:
     /** @typedef Traits Define the Traits type */
-    typedef LoadTraits<Load> Traits;
+    typedef LoadTraits< Load > Traits;
     /** @typedef PhysicalQuantity Define the underlying PhysicalQuantity */
     typedef PhysicalQuantity PhysicalQuantityType; 
-    
+
     private:
-    /** @typedef Definition d'un pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
     /** @typedef Definition d'un pointeur intelligent sur une PhysicalQuantity */
     typedef boost::shared_ptr< PhysicalQuantity > PhysicalQuantityPtr;
 
     /** @typedef PhysicalQuantity que l'on veut imposer*/
     PhysicalQuantityPtr _physicalQuantity;
-    /** @brief MeshEntity sur laquelle repose le "blocage" */
-    MeshEntityPtr    _supportMeshEntity;
-    /** @ brief Modèle support */
-    ModelPtr _supportModel;
-    
+
     public:
 
-    /** 
-    * @brief Constructor
-    */ 
-    MechanicalLoadInstance():
-                    DataStructure( getNewResultObjectName(), "CHAR_MECA" ),
-                    _supportModel( ModelPtr() )
+    /**
+     * @brief Constructor
+     */
+    MechanicalLoadInstance(): GenericMechanicalLoadInstance()
     {};
 
-    /** 
-    @brief Destructor
-    */
-    ~MechanicalLoadInstance(){};
+    /**
+     * @brief Destructor
+     */
+    ~MechanicalLoadInstance()
+    {};
 
     /**
-    * @brief Set a physical quantity on a MeshEntity (group of nodes 
-    * or group of elements)
-    * @param physPtr shared pointer to a PhysicalQuantity 
-    * @param nameOfGroup name of the group of elements
-    * @return bool success/failure index
-    */
-
+     * @brief Set a physical quantity on a MeshEntity (group of nodes 
+     *        or group of elements)
+     * @param physPtr shared pointer to a PhysicalQuantity 
+     * @param nameOfGroup name of the group of elements
+     * @return bool success/failure index
+     */
     bool setValue( PhysicalQuantityPtr physPtr, std::string nameOfGroup = "") throw ( std::runtime_error )
     {
-    /* Check that the pointer to the support model is not empty */
-    if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-        throw std::runtime_error( "Model is empty" );
-    
-    /* Get the type of MeshEntity */
-    MeshPtr currentMesh= _supportModel->getSupportMesh();
-    /* If the support MeshEntity is not given, the quantity is set on the whole mesh */
-    if ( nameOfGroup.size() == 0  && Traits::isAllowedOnWholeMesh )
-    {
-        _supportMeshEntity = MeshEntityPtr( new  AllMeshEntities() ) ;
-    } 
-    /* nameOfGroup is the name of a group of elements and 
-    LoadTraits authorizes to base the current load on such a group */
-    else if ( currentMesh->hasGroupOfElements( nameOfGroup ) && Traits::isAllowedOnGroupOfElements )
-    {
-        _supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
-    }
-    /* nameOfGroup is the name of a group of nodes and LoadTraits authorizes
-    to base the current load on such a group */
-    else if ( currentMesh->hasGroupOfNodes( nameOfGroup ) && Traits::isAllowedOnGroupOfNodes )
-    {
-        _supportMeshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
-    }
-    else
-        throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the current load " );
+        // Check that the pointer to the support model is not empty
+        if ( ( ! _supportModel ) || _supportModel->isEmpty() )
+            throw std::runtime_error( "Model is empty" );
 
-        /* Copy the shared pointer of the Physical Quantity */
+        // Get the type of MeshEntity
+        MeshPtr currentMesh= _supportModel->getSupportMesh();
+        // If the support MeshEntity is not given, the quantity is set on the whole mesh
+        if ( nameOfGroup.size() == 0  && Traits::isAllowedOnWholeMesh )
+        {
+            _supportMeshEntity = MeshEntityPtr( new  AllMeshEntities() ) ;
+        }
+        // nameOfGroup is the name of a group of elements and 
+        // LoadTraits authorizes to base the current load on such a group
+        else if ( currentMesh->hasGroupOfElements( nameOfGroup ) && Traits::isAllowedOnGroupOfElements )
+        {
+            _supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+        }
+        // nameOfGroup is the name of a group of nodes and LoadTraits authorizes
+        //to base the current load on such a group
+        else if ( currentMesh->hasGroupOfNodes( nameOfGroup ) && Traits::isAllowedOnGroupOfNodes )
+        {
+            _supportMeshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
+        }
+        else
+            throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the current load " );
+
+        // Copy the shared pointer of the Physical Quantity
         _physicalQuantity = physPtr; 
         return true;
     };
 
     /**
-    * @brief Define the support model
-    * @param currentMesh objet Model sur lequel la charge reposera
-    */
-    bool setSupportModel( ModelPtr& currentModel )
-    {
-        _supportModel = currentModel;
-        return true;
-    };
-
-    /**
-    * @brief appel de op0007 
-    */
+     * @brief appel de op0007
+     */
     bool build() throw ( std::runtime_error )
     {
         //std::cout << " build " << std::endl; 
@@ -271,7 +296,7 @@ class MechanicalLoadInstance: public DataStructure
                 dict2.container["GROUP_MA"] = _supportMeshEntity->getEntityName();
         }
         listeLoad.push_back( dict2 );
-        /*mot-clé facteur*/ 
+        //mot-clé facteur
         std::string kw = Traits::factorKeyword;
         dict.container[kw] = listeLoad;
         cmdSt.define( dict );
@@ -292,6 +317,9 @@ class MechanicalLoadInstance: public DataStructure
 /**********************************************************/
 /*  Explicit instantiation of template classes
 /**********************************************************/
+
+/** @typedef GenericMechanicalLoad  */
+typedef boost::shared_ptr< GenericMechanicalLoadInstance > GenericMechanicalLoadPtr;
 
 /** @typedef NodalForceDouble  */
 template class MechanicalLoadInstance< ForceDoubleInstance, NodalForce >;
