@@ -30,7 +30,7 @@
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Materials/MaterialOnMesh.h"
-//#include "Loads/MechanicalLoad.h"
+#include "Loads/MechanicalLoad.h"
 #include "DataFields/FieldOnNodes.h"
 #include "LinearAlgebra/DOFNumbering.h"
 
@@ -48,6 +48,7 @@ class ElementaryVectorInstance: public DataStructure
         typedef std::list< MechanicalLoad > ListMechanicalLoad;
         /** @typedef Iterateur sur une std::list de MechanicalLoad */
         typedef ListMechanicalLoad::iterator ListMechanicalLoadIter;
+
         /** @brief Objet Jeveux '.RERR' */
         JeveuxVectorChar24     _description;
         /** @brief Objet Jeveux '.RELR' */
@@ -56,8 +57,9 @@ class ElementaryVectorInstance: public DataStructure
         bool                   _isEmpty;
         /** @brief Champ de materiau a utiliser */
         MaterialOnMeshPtr      _materialOnMesh;
+
         /** @brief Charges ajoutees aux vecteurs elementaires */
-        std::list< MechanicalLoad > _listOfMechanicalLoad;
+        std::list< GenericMechanicalLoadPtr > _listOfMechanicalLoad;
 
     public:
         /**
@@ -79,7 +81,7 @@ class ElementaryVectorInstance: public DataStructure
          * @brief Ajouter une charge mecanique
          * @param currentLoad objet MechanicalLoad
          */
-        void addMechanicalLoad( const MechanicalLoad& currentLoad )
+        void addMechanicalLoad( const GenericMechanicalLoadPtr currentLoad )
         {
             _listOfMechanicalLoad.push_back( currentLoad );
         };
@@ -115,49 +117,9 @@ class ElementaryVectorInstance: public DataStructure
 };
 
 /**
- * @class ElementaryVector
- * @brief Enveloppe d'un pointeur intelligent vers un ElementaryVectorInstance
- * @author Nicolas Sellenet
+ * @typedef ElementaryVectorPtr
+ * @brief Pointeur intelligent vers un ElementaryVectorInstance
  */
-class ElementaryVector
-{
-    public:
-        typedef boost::shared_ptr< ElementaryVectorInstance > ElementaryVectorPtr;
-
-    private:
-        ElementaryVectorPtr _elementaryVectorPtr;
-
-    public:
-        ElementaryVector(bool initialisation = true): _elementaryVectorPtr()
-        {
-            if ( initialisation == true )
-                _elementaryVectorPtr = ElementaryVectorPtr( new ElementaryVectorInstance() );
-        };
-
-        ~ElementaryVector()
-        {};
-
-        ElementaryVector& operator=(const ElementaryVector& tmp)
-        {
-            _elementaryVectorPtr = tmp._elementaryVectorPtr;
-            return *this;
-        };
-
-        const ElementaryVectorPtr& operator->() const
-        {
-            return _elementaryVectorPtr;
-        };
-
-        ElementaryVectorInstance& operator*(void) const
-        {
-            return *_elementaryVectorPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _elementaryVectorPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
+typedef boost::shared_ptr< ElementaryVectorInstance > ElementaryVectorPtr;
 
 #endif /* ELEMENTARYVECTOR_H_ */

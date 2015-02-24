@@ -25,9 +25,24 @@ from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr, ForceAndMomentumD
 
 cdef extern from "Loads/MechanicalLoad.h":
 
+#### GenericMechanicalLoad
+
+    cdef cppclass GenericMechanicalLoadInstance:
+
+        GenericMechanicalLoadInstance()
+        bint setSupportModel( ModelPtr currentModel )
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass GenericMechanicalLoadPtr:
+
+        GenericMechanicalLoadPtr( GenericMechanicalLoadPtr& )
+        GenericMechanicalLoadPtr( GenericMechanicalLoadInstance * )
+        GenericMechanicalLoadInstance* get()
+
 #### NodalForceDouble 
 
-    cdef cppclass NodalForceDoubleInstance:
+    cdef cppclass NodalForceDoubleInstance( GenericMechanicalLoadInstance ):
 
         NodalForceDoubleInstance()
         bint setValue( ForceDoublePtr physQuantPtr, string nameOfGroup ) except+
@@ -44,7 +59,7 @@ cdef extern from "Loads/MechanicalLoad.h":
 
 #### NodalForceAndMomentumDouble 
 
-    cdef cppclass NodalForceAndMomentumDoubleInstance:
+    cdef cppclass NodalForceAndMomentumDoubleInstance( GenericMechanicalLoadInstance ):
 
         NodalForceAndMomentumDoubleInstance()
         bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
@@ -61,7 +76,7 @@ cdef extern from "Loads/MechanicalLoad.h":
 
 #### ForceOnFaceDouble 
 
-    cdef cppclass ForceOnFaceDoubleInstance:
+    cdef cppclass ForceOnFaceDoubleInstance( GenericMechanicalLoadInstance ):
 
         ForceOnFaceDoubleInstance()
         bint setValue( ForceDoublePtr physQuantPtr, string nameOfGroup ) except+
@@ -78,7 +93,7 @@ cdef extern from "Loads/MechanicalLoad.h":
 
 #### ForceAndMomentumOnEdgeDouble 
 
-    cdef cppclass ForceAndMomentumOnEdgeDoubleInstance:
+    cdef cppclass ForceAndMomentumOnEdgeDoubleInstance( GenericMechanicalLoadInstance ):
 
         ForceAndMomentumOnEdgeDoubleInstance()
         bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
@@ -95,7 +110,7 @@ cdef extern from "Loads/MechanicalLoad.h":
 
 #### LineicForceAndMomentumDouble 
 
-    cdef cppclass LineicForceAndMomentumDoubleInstance:
+    cdef cppclass LineicForceAndMomentumDoubleInstance( GenericMechanicalLoadInstance ):
 
         LineicForceAndMomentumDoubleInstance()
         bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
@@ -112,7 +127,7 @@ cdef extern from "Loads/MechanicalLoad.h":
 
 #### InternalForceDouble 
 
-    cdef cppclass InternalForceDoubleInstance:
+    cdef cppclass InternalForceDoubleInstance( GenericMechanicalLoadInstance ):
 
         InternalForceDoubleInstance()
         bint setValue( ForceDoublePtr physQuantPtr, string nameOfGroup ) except+
@@ -129,7 +144,7 @@ cdef extern from "Loads/MechanicalLoad.h":
 
 #### ForceAndMomentumOnBeamDouble 
 
-    cdef cppclass ForceAndMomentumOnBeamDoubleInstance:
+    cdef cppclass ForceAndMomentumOnBeamDoubleInstance( GenericMechanicalLoadInstance ):
 
         ForceAndMomentumOnBeamDoubleInstance()
         bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
@@ -146,61 +161,53 @@ cdef extern from "Loads/MechanicalLoad.h":
 
 ############################################################################################
 
+#### GenericMechanicalLoad
+
+cdef class GenericMechanicalLoad:
+    cdef GenericMechanicalLoadPtr* _cptr
+    cdef set( self, GenericMechanicalLoadPtr other )
+    cdef GenericMechanicalLoadPtr* getPtr( self )
+    cdef GenericMechanicalLoadInstance* getInstance( self )
+
 
 #### NodalForceDouble 
 
-cdef class NodalForceDouble:
-    cdef NodalForceDoublePtr* _cptr
-    cdef set( self, NodalForceDoublePtr other )
-    cdef NodalForceDoublePtr* getPtr( self )
-    cdef NodalForceDoubleInstance* getInstance( self )
+cdef class NodalForceDouble( GenericMechanicalLoad ):
+    pass
+
 
 #### NodalForceAndMomentumDouble 
 
-cdef class NodalForceAndMomentumDouble:
-    cdef NodalForceAndMomentumDoublePtr* _cptr
-    cdef set( self, NodalForceAndMomentumDoublePtr other )
-    cdef NodalForceAndMomentumDoublePtr* getPtr( self )
-    cdef NodalForceAndMomentumDoubleInstance* getInstance( self )
+cdef class NodalForceAndMomentumDouble( GenericMechanicalLoad ):
+    pass
 
 
 #### ForceOnFaceDouble 
 
-cdef class ForceOnFaceDouble:
-    cdef ForceOnFaceDoublePtr* _cptr
-    cdef set( self, ForceOnFaceDoublePtr other )
-    cdef ForceOnFaceDoublePtr* getPtr( self )
-    cdef ForceOnFaceDoubleInstance* getInstance( self )
+cdef class ForceOnFaceDouble( GenericMechanicalLoad ):
+    pass
+
 
 #### ForceAndMomentumOnEdgeDouble 
 
-cdef class ForceAndMomentumOnEdgeDouble:
-    cdef ForceAndMomentumOnEdgeDoublePtr* _cptr
-    cdef set( self, ForceAndMomentumOnEdgeDoublePtr other )
-    cdef ForceAndMomentumOnEdgeDoublePtr* getPtr( self )
-    cdef ForceAndMomentumOnEdgeDoubleInstance* getInstance( self )
+cdef class ForceAndMomentumOnEdgeDouble( GenericMechanicalLoad ):
+    pass
+
 
 #### LineicForceAndMomentumDouble 
 
-cdef class LineicForceAndMomentumDouble:
-    cdef LineicForceAndMomentumDoublePtr* _cptr
-    cdef set( self, LineicForceAndMomentumDoublePtr other )
-    cdef LineicForceAndMomentumDoublePtr* getPtr( self )
-    cdef LineicForceAndMomentumDoubleInstance* getInstance( self )
+cdef class LineicForceAndMomentumDouble( GenericMechanicalLoad ):
+    pass
+
 
 #### InternalForceDouble 
 
-cdef class InternalForceDouble:
-    cdef InternalForceDoublePtr* _cptr
-    cdef set( self, InternalForceDoublePtr other )
-    cdef InternalForceDoublePtr* getPtr( self )
-    cdef InternalForceDoubleInstance* getInstance( self )
+cdef class InternalForceDouble( GenericMechanicalLoad ):
+    pass
+
 
 #### ForceAndMomentumOnBeamDouble 
 
-cdef class ForceAndMomentumOnBeamDouble:
-    cdef ForceAndMomentumOnBeamDoublePtr* _cptr
-    cdef set( self, ForceAndMomentumOnBeamDoublePtr other )
-    cdef ForceAndMomentumOnBeamDoublePtr* getPtr( self )
-    cdef ForceAndMomentumOnBeamDoubleInstance* getInstance( self )
+cdef class ForceAndMomentumOnBeamDouble( GenericMechanicalLoad ):
+    pass
 
