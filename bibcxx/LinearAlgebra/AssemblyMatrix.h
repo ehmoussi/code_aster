@@ -62,7 +62,7 @@ class AssemblyMatrixInstance: public DataStructure
         /** @brief Objet '.CONL' */
         JeveuxVectorDouble            _scaleFactorLagrangian;
         /** @brief ElementaryMatrix sur lesquelles sera construit la matrice */
-        ElementaryMatrix              _elemMatrix;
+        ElementaryMatrixPtr           _elemMatrix;
         /** @brief Objet nume_ddl */
         DOFNumbering                  _dofNum;
         /** @brief La matrice est elle vide ? */
@@ -128,7 +128,7 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Methode permettant de definir les matrices elementaires
          * @param currentElemMatrix objet ElementaryMatrix
          */
-        void setElementaryMatrix( const ElementaryMatrix& currentElemMatrix )
+        void setElementaryMatrix( const ElementaryMatrixPtr& currentElemMatrix )
         {
             _elemMatrix = currentElemMatrix;
         };
@@ -211,8 +211,8 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
 template< class ValueType >
 bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
 {
-    if ( _elemMatrix.isEmpty() || _elemMatrix->isEmpty() )
-        throw std::runtime_error( "Elementary matrix is empty" );
+//     if ( _elemMatrix.isEmpty() || _elemMatrix->isEmpty() )
+//         throw std::runtime_error( "Elementary matrix is empty" );
     if ( _elemMatrix->getType() == "MATR_ELEM_DEPL_R" )
         setType( getType() + "_DEPL_R" );
     else

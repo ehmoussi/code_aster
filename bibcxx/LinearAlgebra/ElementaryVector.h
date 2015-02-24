@@ -81,7 +81,7 @@ class ElementaryVectorInstance: public DataStructure
          * @brief Ajouter une charge mecanique
          * @param currentLoad objet MechanicalLoad
          */
-        void addMechanicalLoad( const GenericMechanicalLoadPtr currentLoad )
+        void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
         {
             _listOfMechanicalLoad.push_back( currentLoad );
         };
