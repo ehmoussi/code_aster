@@ -37,8 +37,6 @@
 class StaticMechanicalSolverInstance: public GenericSolver
 {
     private:
-        /** @todo */
-        typedef int MechanicalLoad; 
         /** @typedef std::list de MechanicalLoad */
         typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;
         /** @typedef Iterateur sur une std::list de MechanicalLoad */

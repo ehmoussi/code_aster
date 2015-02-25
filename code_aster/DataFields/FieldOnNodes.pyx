@@ -75,3 +75,7 @@ cdef class FieldOnNodesDouble:
         cdef INTEGER numOp = 39
         libaster.execop_( & numOp )
         syntax.free()
+
+    def debugPrint( self, logicalUnit = 6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )

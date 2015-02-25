@@ -19,8 +19,10 @@
 
 from libcpp.string cimport string
 from code_aster.Mesh.Mesh cimport MeshPtr
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
+from code_aster.LinearAlgebra.DOFNumbering cimport DOFNumberingPtr
 
 
 cdef extern from "LinearAlgebra/ElementaryVector.h":
@@ -29,6 +31,8 @@ cdef extern from "LinearAlgebra/ElementaryVector.h":
 
         ElementaryVectorInstance()
         void addMechanicalLoad( GenericMechanicalLoadPtr& currentLoad )
+        FieldOnNodesDoublePtr assembleVector( DOFNumberingPtr& currentNumerotation )
+        bint computeMechanicalLoads()
         void setMaterialOnMesh( MaterialOnMeshPtr& currentMat )
         const string getType()
         void debugPrint( int logicalUnit )

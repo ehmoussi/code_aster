@@ -44,7 +44,8 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
     if ( (! currentNumerotation ) || currentNumerotation->isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
 
-    const std::string newName( getNewResultObjectName() );
+    std::string newName( getNewResultObjectName() );
+    newName.resize( 19, ' ' );
     FieldOnNodesDoublePtr vectTmp( new FieldOnNodesDoubleInstance( newName ) );
 
     SyntaxMapContainer dict;
@@ -55,8 +56,15 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
     cmdSt.setResult( newName, "CHAM_NO" );
     cmdSt.define( dict );
 
-    INTEGER op = 13;
-    CALL_EXECOP( &op );
+    try
+    {
+        INTEGER op = 13;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
     _isEmpty = false;
 
     return vectTmp;
@@ -90,8 +98,15 @@ bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_err
     }
     cmdSt.define( dict );
 
-    INTEGER op = 8;
-    CALL_EXECOP( &op );
+    try
+    {
+        INTEGER op = 8;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
     _isEmpty = false;
 
     return true;

@@ -44,8 +44,6 @@
 class DOFNumberingInstance: public DataStructure
 {
     private:
-        /** @todo */
-        typedef int MechanicalLoad; 
         // !!! Classe succinte car on ne sait pas comment elle sera utiliser !!!
         /** @brief Objet Jeveux '.NSLV' */
         JeveuxVectorChar24       _nameOfSolverDataStructure;
