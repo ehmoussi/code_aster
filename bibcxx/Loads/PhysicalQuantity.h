@@ -35,6 +35,7 @@
 /**
  * @enum PhysicalQuantityEnum
  * @brief Inventory of all physical quantities available in Code_Aster
+ * @todo attention confusion entre Pressure et Pres
  */
 enum PhysicalQuantityEnum { Force, ForceAndMomentum, Displacement, Pressure, Temperature };
 
@@ -81,7 +82,7 @@ extern const PhysicalQuantityComponent ForceComponents[nbForceComponents];
 *  @brief Declare specialization for Force
 */
 
-template <> struct PhysicalQuantityTraits <Force>
+template <> struct PhysicalQuantityTraits< Force >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
@@ -106,7 +107,7 @@ extern const PhysicalQuantityComponent ForceAndMomentumComponents[nbForceAndMome
 *  @brief Declare specialization for ForceAndMomentum
 */
 
-template <> struct PhysicalQuantityTraits <ForceAndMomentum>
+template <> struct PhysicalQuantityTraits< ForceAndMomentum >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
@@ -128,7 +129,7 @@ const int nbDisplacementComponents = 6;
  */
 extern const PhysicalQuantityComponent DisplacementComponents[nbDisplacementComponents];
 
-template <> struct PhysicalQuantityTraits <Displacement>
+template <> struct PhysicalQuantityTraits< Displacement >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
@@ -150,7 +151,7 @@ const int nbPressureComponents = 1;
  */
 extern const PhysicalQuantityComponent PressureComponents[nbPressureComponents];
 
-template <> struct PhysicalQuantityTraits <Pressure>
+template <> struct PhysicalQuantityTraits< Pressure >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
@@ -172,7 +173,7 @@ const int nbTemperatureComponents = 2;
  */
 extern const PhysicalQuantityComponent TemperatureComponents[nbTemperatureComponents];
 
-template <> struct PhysicalQuantityTraits <Temperature>
+template <> struct PhysicalQuantityTraits< Temperature >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;

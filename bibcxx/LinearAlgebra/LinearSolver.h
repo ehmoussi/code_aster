@@ -198,8 +198,8 @@ class LinearSolverInstance
          * @param currentRHS Second membre
          * @return champ aux noeuds resultat
          */
-        FieldOnNodesPtrDouble solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
-                                                       const FieldOnNodesPtrDouble& currentRHS ) const;
+        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
+                                                       const FieldOnNodesDoublePtr& currentRHS ) const;
 };
 
 /**

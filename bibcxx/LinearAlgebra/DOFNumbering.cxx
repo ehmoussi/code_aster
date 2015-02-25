@@ -22,11 +22,10 @@
  */
 
 #include <stdexcept>
-
 #include "astercxx.h"
 
 #include "LinearAlgebra/DOFNumbering.h"
-#include "RunManager/CommandSyntax.h"
+#include "RunManager/CommandSyntaxCython.h"
 
 DOFNumberingInstance::DOFNumberingInstance():
             DataStructure( getNewResultObjectName(), "NUME_DDL" ),
@@ -38,10 +37,10 @@ DOFNumberingInstance::DOFNumberingInstance():
 
 bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
 {
-    // Definition du bout de fichier de commande correspondant a AFFE_MODELE
-    CommandSyntax syntaxeNumeDdl( "NUME_DDL", true,
-                                  getResultObjectName(), getType() );
+    CommandSyntaxCython cmdSt( "NUME_DDL" );
+    cmdSt.setResult( getResultObjectName(), getType() );
 
+    SyntaxMapContainer dict;
     if ( _supportModel )
     {
         if ( _supportModel->isEmpty() )
@@ -53,22 +52,16 @@ bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
         if ( _supportMatrix->isEmpty() )
             throw std::runtime_error( "Support ElementaryMatrix is empty" );
 
-        SimpleKeyWordStr mCSMatrRigi = SimpleKeyWordStr( "MATR_RIGI" );
-        mCSMatrRigi.addValues( _supportMatrix->getName() );
-        syntaxeNumeDdl.addSimpleKeywordString(mCSMatrRigi);
-
-        SimpleKeyWordStr mCSSolveur = SimpleKeyWordStr( "METHODE" );
-        mCSSolveur.addValues( _linearSolver->getSolverName() );
-        syntaxeNumeDdl.addSimpleKeywordString(mCSSolveur);
-
-        SimpleKeyWordStr mCSRenum = SimpleKeyWordStr( "RENUM" );
-        mCSRenum.addValues( _linearSolver->getRenumburingName() );
-        syntaxeNumeDdl.addSimpleKeywordString(mCSRenum);
+        dict.container[ "MATR_RIGI" ] = _supportMatrix->getName();
+        dict.container[ "METHODE" ] = _linearSolver->getSolverName();
+        dict.container[ "RENUM" ] = _linearSolver->getRenumburingName();
     }
     else
         throw std::runtime_error( "No support matrix and support model defined" );
 
-    // Maintenant que le fichier de commande est pret, on appelle OP0018
+    cmdSt.define( dict );
+
+    // Maintenant que le fichier de commande est pret, on appelle OP0011
     INTEGER op = 11;
     CALL_EXECOP( &op );
     _isEmpty = false;

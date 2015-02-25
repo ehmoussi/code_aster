@@ -97,12 +97,12 @@ class FieldOnNodesInstance: public DataStructure
 
 
 /** @typedef FieldOnNodesInstanceDouble Instance d'une carte de double */
-typedef FieldOnNodesInstance< double > FieldOnNodesInstanceDouble;
+typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
 
 /**
  * @typedef FieldOnNodesPtrDouble
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef boost::shared_ptr< FieldOnNodesInstanceDouble > FieldOnNodesPtrDouble;
+typedef boost::shared_ptr< FieldOnNodesDoubleInstance > FieldOnNodesDoublePtr;
 
 #endif /* FIELDONNODES_H_ */

@@ -19,7 +19,7 @@
 
 from libcpp.string cimport string
 
-from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesPtrDouble
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 
 
 cdef extern from "Mesh/Mesh.h":
@@ -27,7 +27,7 @@ cdef extern from "Mesh/Mesh.h":
     cdef cppclass MeshInstance:
 
         MeshInstance()
-        const FieldOnNodesPtrDouble getCoordinates()
+        const FieldOnNodesDoublePtr getCoordinates()
         string getName()
         bint hasGroupOfElements( string name )
         bint hasGroupOfNodes( string name )

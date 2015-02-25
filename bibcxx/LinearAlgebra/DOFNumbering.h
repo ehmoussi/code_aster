@@ -134,49 +134,10 @@ class DOFNumberingInstance: public DataStructure
 };
 
 /**
- * @class DOFNumbering
- * @brief Enveloppe d'un pointeur intelligent vers un DOFNumbering
+ * @typedef DOFNumberingPtr
+ * @brief Enveloppe d'un pointeur intelligent vers un DOFNumberingInstance
  * @author Nicolas Sellenet
  */
-class DOFNumbering
-{
-    public:
-        typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
-
-    private:
-        DOFNumberingPtr _dOFNumerotationPtr;
-
-    public:
-        DOFNumbering(bool initialisation = true): _dOFNumerotationPtr()
-        {
-            if ( initialisation == true )
-                _dOFNumerotationPtr = DOFNumberingPtr( new DOFNumberingInstance() );
-        };
-
-        ~DOFNumbering()
-        {};
-
-        DOFNumbering& operator=(const DOFNumbering& tmp)
-        {
-            _dOFNumerotationPtr = tmp._dOFNumerotationPtr;
-            return *this;
-        };
-
-        const DOFNumberingPtr& operator->() const
-        {
-            return _dOFNumerotationPtr;
-        };
-
-        DOFNumberingInstance& operator*(void) const
-        {
-            return *_dOFNumerotationPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _dOFNumerotationPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
+typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
 
 #endif /* DOFNUMBERING_H_ */

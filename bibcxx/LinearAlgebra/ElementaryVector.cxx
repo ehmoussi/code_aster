@@ -25,7 +25,7 @@
 #include "astercxx.h"
 
 #include "LinearAlgebra/ElementaryVector.h"
-#include "RunManager/CommandSyntax.h"
+#include "RunManager/CommandSyntaxCython.h"
 
 ElementaryVectorInstance::ElementaryVectorInstance():
                 DataStructure( getNewResultObjectName(), "VECT_ELEM" ),
@@ -35,30 +35,25 @@ ElementaryVectorInstance::ElementaryVectorInstance():
                 _materialOnMesh( MaterialOnMeshPtr() )
 {};
 
-FieldOnNodesPtrDouble ElementaryVectorInstance::assembleVector( const DOFNumbering& currentNumerotation ) throw ( std::runtime_error )
+FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberingPtr& currentNumerotation )
+    throw ( std::runtime_error )
 {
-
     if ( _isEmpty )
         throw std::runtime_error( "The ElementaryVector is empty" );
 
-    if ( currentNumerotation.isEmpty() || currentNumerotation->isEmpty() )
+    if ( (! currentNumerotation ) || currentNumerotation->isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
 
     const std::string newName( getNewResultObjectName() );
-    FieldOnNodesPtrDouble vectTmp( new FieldOnNodesInstanceDouble( newName ) );
+    FieldOnNodesDoublePtr vectTmp( new FieldOnNodesDoubleInstance( newName ) );
 
-    // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
-    CommandSyntax syntaxeAsseVecteur( "ASSE_VECTEUR", true, newName, "CHAM_NO" );
+    SyntaxMapContainer dict;
+    dict.container[ "VECT_ELEM" ] = this->getName();
+    dict.container[ "NUME_DDL" ] = currentNumerotation->getName();
 
-    // Definition du mot cle simple MATR_ELEM
-    SimpleKeyWordStr mCSVectElem = SimpleKeyWordStr( "VECT_ELEM" );
-    mCSVectElem.addValues( this->getName() );
-    syntaxeAsseVecteur.addSimpleKeywordString( mCSVectElem );
-
-    // Definition du mot cle simple NUME_DDL
-    SimpleKeyWordStr mCSNumeDdl = SimpleKeyWordStr( "NUME_DDL" );
-    mCSNumeDdl.addValues( currentNumerotation->getName() );
-    syntaxeAsseVecteur.addSimpleKeywordString( mCSNumeDdl );
+    CommandSyntaxCython cmdSt( "ASSE_VECTEUR" );
+    cmdSt.setResult( newName, "CHAM_NO" );
+    cmdSt.define( dict );
 
     INTEGER op = 13;
     CALL_EXECOP( &op );
@@ -75,35 +70,26 @@ bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_err
     // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
     setType( getType() + "_DEPL_R" );
 
-    // Definition du bout de fichier de commande correspondant a AFFE_MODELE
-    CommandSyntax syntaxeCalcVectElem( "CALC_VECT_ELEM", true, getName(), getType() );
+    CommandSyntaxCython cmdSt( "CALC_VECT_ELEM" );
+    cmdSt.setResult( getName(), getType() );
 
-    // Definition du mot cle simple MAILLAGE
-    SimpleKeyWordStr mCSOption = SimpleKeyWordStr( "OPTION" );
-    mCSOption.addValues( "CHAR_MECA" );
-    syntaxeCalcVectElem.addSimpleKeywordString( mCSOption );
+    SyntaxMapContainer dict;
+    dict.container[ "OPTION" ] = "CHAR_MECA";
 
     if ( _materialOnMesh )
-    {
-        SimpleKeyWordStr mCSChamMater = SimpleKeyWordStr( "CHAM_MATER" );
-        mCSChamMater.addValues( _materialOnMesh->getName() );
-        syntaxeCalcVectElem.addSimpleKeywordString( mCSChamMater );
-    }
-    /** @todo */
-    /*
+        dict.container[ "CHAM_MATER" ] = _materialOnMesh->getName();
+
     if ( _listOfMechanicalLoad.size() != 0 )
-    
     {
-        SimpleKeyWordStr mCSCharge( "CHARGE" );
+        VectorString tmp;
         for ( ListMechanicalLoadIter curIter = _listOfMechanicalLoad.begin();
             curIter != _listOfMechanicalLoad.end();
             ++curIter )
-        {
-            mCSCharge.addValues( (*curIter)->getName() );
-        }
-        syntaxeCalcVectElem.addSimpleKeywordString( mCSCharge );
+            tmp.push_back( (*curIter)->getName() );
+        dict.container[ "CHARGE" ] = tmp;
     }
-    */
+    cmdSt.define( dict );
+
     INTEGER op = 8;
     CALL_EXECOP( &op );
     _isEmpty = false;

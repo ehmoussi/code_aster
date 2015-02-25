@@ -29,19 +29,19 @@ cdef extern from "DataFields/FieldOnNodes.h":
         bint updateValuePointers()
         string getName()
 
-    cdef cppclass FieldOnNodesPtrDouble:
+    cdef cppclass FieldOnNodesDoublePtr:
 
-        FieldOnNodesPtrDouble( FieldOnNodesPtrDouble& )
-        FieldOnNodesPtrDouble( FieldOnNodesInstance[ double ]* )
+        FieldOnNodesDoublePtr( FieldOnNodesDoublePtr& )
+        FieldOnNodesDoublePtr( FieldOnNodesInstance[ double ]* )
         FieldOnNodesInstance[ double ]* get()
 
-ctypedef FieldOnNodesInstance[ double ] FieldOnNodesInstanceDouble
+ctypedef FieldOnNodesInstance[ double ] FieldOnNodesDoubleInstance
 
 
 cdef class FieldOnNodesDouble:
 
-    cdef FieldOnNodesPtrDouble* _cptr
+    cdef FieldOnNodesDoublePtr* _cptr
 
-    cdef set( self, FieldOnNodesPtrDouble other )
-    cdef FieldOnNodesPtrDouble* getPtr( self )
-    cdef FieldOnNodesInstanceDouble* getInstance( self )
+    cdef set( self, FieldOnNodesDoublePtr other )
+    cdef FieldOnNodesDoublePtr* getPtr( self )
+    cdef FieldOnNodesDoubleInstance* getInstance( self )
