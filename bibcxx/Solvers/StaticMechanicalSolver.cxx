@@ -25,7 +25,7 @@
 
 #include <stdexcept>
 #include "Solvers/StaticMechanicalSolver.h"
-#include "RunManager/CommandSyntax.h"
+#include "RunManager/CommandSyntaxCython.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _supportModel( ModelPtr() ),
@@ -38,130 +38,72 @@ ResultsContainer StaticMechanicalSolverInstance::execute() throw ( std::runtime_
     ResultsContainer resultC( std::string( "EVOL_ELAS" ) );
     std::string nameOfSD = resultC->getName();
 
-    CommandSyntax syntaxeMecaStat( "MECA_STATIQUE", true,
-                                   resultC->getName(), resultC->getType() );
+    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    cmdSt.setResult( resultC->getName(), resultC->getType() );
 
-    // Definition du mot cle simple MODELE
-    SimpleKeyWordStr mCSModele = SimpleKeyWordStr( "MODELE" );
+    SyntaxMapContainer dict;
     if ( ( ! _supportModel ) || _supportModel->isEmpty() )
         throw std::runtime_error( "Support model is undefined" );
-    mCSModele.addValues( _supportModel->getName() );
-    syntaxeMecaStat.addSimpleKeywordString( mCSModele );
+    dict.container[ "MODELE" ] = _supportModel->getName();
 
     // Definition du mot cle simple CHAM_MATER
     if ( _materialOnMesh )
-    {
-        SimpleKeyWordStr mCSChamMater = SimpleKeyWordStr( "CHAM_MATER" );
-        mCSChamMater.addValues( _materialOnMesh->getName() );
-        syntaxeMecaStat.addSimpleKeywordString( mCSChamMater );
-    }
+        dict.container[ "CHAM_MATER" ] = _supportModel->getName();
 
     if ( _listOfMechanicalLoads.size() == 0 && _listOfKinematicsLoads.size() == 0 )
         throw std::runtime_error( "At least one load is needed" );
 
-    FactorKeyword mCFExcit = FactorKeyword( "EXCIT", true );
-    /** @todo */
-    /*
+    ListSyntaxMapContainer listeExcit;
     for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
           curIter != _listOfMechanicalLoads.end();
           ++curIter )
     {
-        // Definition d'une occurence d'un mot-cle facteur
-        FactorKeywordOccurence occurExcit = FactorKeywordOccurence();
-
-        SimpleKeyWordStr mCSCharge( "CHARGE" );
-        mCSCharge.addValues( (*curIter)->getName() );
-        occurExcit.addSimpleKeywordString( mCSCharge );
-
-        SimpleKeyWordStr mCSTypChar( "TYPE_CHARGE" );
-        mCSTypChar.addValues( "FIXE" );
-        occurExcit.addSimpleKeywordString( mCSTypChar );
-
-        // Ajout de l'occurence du MCF
-        mCFExcit.addOccurence( occurExcit );
+        SyntaxMapContainer dict2;
+        dict2.container[ "CHARGE" ] = (*curIter)->getName();
+        dict2.container[ "TYPE_CHARGE" ] = "FIXE";
+        listeExcit.push_back( dict2 );
     }
-    */
     for ( ListKineLoadIter curIter = _listOfKinematicsLoads.begin();
           curIter != _listOfKinematicsLoads.end();
           ++curIter )
     {
-        // Definition d'une occurence d'un mot-cle facteur
-        FactorKeywordOccurence occurExcit = FactorKeywordOccurence();
-
-        SimpleKeyWordStr mCSCharge( "CHARGE" );
-        mCSCharge.addValues( (*curIter)->getName() );
-        occurExcit.addSimpleKeywordString( mCSCharge );
-
-        SimpleKeyWordStr mCSTypChar( "TYPE_CHARGE" );
-        mCSTypChar.addValues( "FIXE" );
-        occurExcit.addSimpleKeywordString( mCSTypChar );
-
-        // Ajout de l'occurence du MCF
-        mCFExcit.addOccurence( occurExcit );
+        SyntaxMapContainer dict2;
+        dict2.container[ "CHARGE" ] = (*curIter)->getName();
+        dict2.container[ "TYPE_CHARGE" ] = "FIXE";
+        listeExcit.push_back( dict2 );
     }
-    syntaxeMecaStat.addFactorKeyword( mCFExcit );
+    dict.container[ "EXCIT" ] = listeExcit;
 
     // A mettre ailleurs ?
-    FactorKeyword mCFSolveur = FactorKeyword( "SOLVEUR", false );
-    FactorKeywordOccurence occurSolveur = FactorKeywordOccurence();
+    ListSyntaxMapContainer listeSolver;
+    SyntaxMapContainer dict3;
+    dict3.container[ "METHODE" ] = _linearSolver->getSolverName();
+    dict3.container[ "RENUM" ] = _linearSolver->getRenumburingName();
+    dict3.container[ "GESTION_MEMOIRE" ] = "OUT_OF_CORE";
+    dict3.container[ "STOP_SINGULIER" ] = "OUI";
+    dict3.container[ "PRETRAITEMENTS" ] = "AUTO";
+    dict3.container[ "TYPE_RESOL" ] = "AUTO";
+    dict3.container[ "MATR_DISTRIBUEE" ] = "NON";
+    dict3.container[ "ELIM_LAGR" ] = "LAGR2";
+    dict3.container[ "POSTTRAITEMENTS" ] = "AUTO";
+    dict3.container[ "PCENT_PIVOT" ] = 50;
+    dict3.container[ "NPREC" ] = -1;
+    dict3.container[ "RESI_RELA" ] = -1.0;
+    listeSolver.push_back( dict3 );
+    dict.container[ "SOLVEUR" ] = listeSolver;
 
-    SimpleKeyWordStr mCSMethode( "METHODE" );
-    mCSMethode.addValues( _linearSolver->getSolverName() );
-    occurSolveur.addSimpleKeywordString( mCSMethode );
+    dict.container[ "OPTION" ] = "SIEF_ELGA";
+    cmdSt.define( dict );
 
-    SimpleKeyWordStr mCSRenum( "RENUM" );
-    mCSRenum.addValues( _linearSolver->getRenumburingName() );
-    occurSolveur.addSimpleKeywordString( mCSRenum );
-
-    SimpleKeyWordStr mCSGestionMem( "GESTION_MEMOIRE" );
-    mCSGestionMem.addValues( "OUT_OF_CORE" );
-    occurSolveur.addSimpleKeywordString( mCSGestionMem );
-
-    SimpleKeyWordStr mCSStopSing( "STOP_SINGULIER" );
-    mCSStopSing.addValues( "OUI" );
-    occurSolveur.addSimpleKeywordString( mCSStopSing );
-
-    SimpleKeyWordStr mCSPretraitement( "PRETRAITEMENTS" );
-    mCSPretraitement.addValues( "AUTO" );
-    occurSolveur.addSimpleKeywordString( mCSPretraitement );
-
-    SimpleKeyWordStr mCSTypeResol( "TYPE_RESOL" );
-    mCSTypeResol.addValues( "AUTO" );
-    occurSolveur.addSimpleKeywordString( mCSTypeResol );
-
-    SimpleKeyWordStr mCSMatrD( "MATR_DISTRIBUEE" );
-    mCSMatrD.addValues( "NON" );
-    occurSolveur.addSimpleKeywordString( mCSMatrD );
-
-    SimpleKeyWordStr mCSElimLagr( "ELIM_LAGR" );
-    mCSElimLagr.addValues( "LAGR2" );
-    occurSolveur.addSimpleKeywordString( mCSElimLagr );
-
-    SimpleKeyWordStr mCSPostTraitement( "POSTTRAITEMENTS" );
-    mCSPostTraitement.addValues( "AUTO" );
-    occurSolveur.addSimpleKeywordString( mCSPostTraitement );
-
-    SimpleKeyWordInt mCSPcentPivot( "PCENT_PIVOT" );
-    mCSPcentPivot.addValues( 50 );
-    occurSolveur.addSimpleKeywordInteger( mCSPcentPivot );
-
-    SimpleKeyWordInt mCSNprec( "NPREC" );
-    mCSNprec.addValues( -1 );
-    occurSolveur.addSimpleKeywordInteger( mCSNprec );
-
-    SimpleKeyWordDbl mCSResiRela( "RESI_RELA" );
-    mCSResiRela.addValues( -1.0 );
-    occurSolveur.addSimpleKeywordDouble( mCSResiRela );
-
-    mCFSolveur.addOccurence( occurSolveur );
-    syntaxeMecaStat.addFactorKeyword( mCFSolveur );
-
-    SimpleKeyWordStr mCSOption = SimpleKeyWordStr( "OPTION" );
-    mCSOption.addValues( "SIEF_ELGA" );
-    syntaxeMecaStat.addSimpleKeywordString( mCSOption );
-
-    INTEGER op = 46;
-    CALL_EXECOP( &op );
+    try
+    {
+        INTEGER op = 46;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
 
     return resultC;
 };

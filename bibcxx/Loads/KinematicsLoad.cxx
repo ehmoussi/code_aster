@@ -49,7 +49,7 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
     SyntaxMapContainer dict;
     if ( ! _supportModel )
         throw std::runtime_error( "Support model is undefined" );
-    dict.container["MODELE"] = _supportModel->getName();
+    dict.container[ "MODELE" ] = _supportModel->getName();
 
     // Definition de mot cle facteur MECA_IMPO
     if ( _listOfDoubleImposedDisplacement.size() != 0 )
@@ -63,14 +63,14 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
             const MeshEntityPtr& tmp = curIter->getMeshEntityPtr();
             if ( tmp->getType() == AllMeshEntitiesType )
             {
-                dict2.container["TOUI"] = "OUI";
+                dict2.container[ "TOUI" ] = "OUI";
             }
             else
             {
                 if ( tmp->getType() == GroupOfNodesType )
-                    dict2.container["GROUP_NO"] = tmp->getEntityName();
+                    dict2.container[ "GROUP_NO" ] = tmp->getEntityName();
                 else if ( tmp->getType() == GroupOfElementsType )
-                    dict2.container["GROUP_MA"] = tmp->getEntityName();
+                    dict2.container[ "GROUP_MA" ] = tmp->getEntityName();
             }
 
             const std::string nomComp = curIter->getAsterCoordinateName();
@@ -79,7 +79,7 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
             listeMecaImpo.push_back( dict2 );
         }
 
-        dict.container["MECA_IMPO"] = listeMecaImpo;
+        dict.container[ "MECA_IMPO" ] = listeMecaImpo;
     }
     cmdSt.define( dict );
 

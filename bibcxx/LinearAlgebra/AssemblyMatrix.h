@@ -38,7 +38,7 @@
 #include "LinearAlgebra/DOFNumbering.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/KinematicsLoad.h"
-#include "RunManager/CommandSyntax.h"
+#include "RunManager/CommandSyntaxCython.h"
 
 /**
  * @class AssemblyMatrixInstance
@@ -150,58 +150,33 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
     if ( _isEmpty )
         throw std::runtime_error( "Assembly matrix is empty" );
 
-    // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
-    CommandSyntax syntaxeFactoriser( "FACTORISER", true, getName(), getType() );
+    CommandSyntaxCython cmdSt( "FACTORISER" );
+    cmdSt.setResult( getName(), getType() );
 
-    // Definition du mot cle simple MATR_ASSE
-    SimpleKeyWordStr mCSMatrAsse = SimpleKeyWordStr( "MATR_ASSE" );
-    mCSMatrAsse.addValues( getName() );
-    syntaxeFactoriser.addSimpleKeywordString( mCSMatrAsse );
-
+    SyntaxMapContainer dict;
     // !!! Rajouter un if MUMPS !!!
-    // Definition du mot cle simple ELIM_LAGR
-    SimpleKeyWordStr mCSElimLagr = SimpleKeyWordStr( "ELIM_LAGR" );
-    mCSElimLagr.addValues( "LAGR2" );
-    syntaxeFactoriser.addSimpleKeywordString( mCSElimLagr );
+    dict.container[ "MATR_ASSE" ] = getName();
+    dict.container[ "ELIM_LAGR" ] = "LAGR2";
+    dict.container[ "TYPE_RESOL" ] = "AUTO";
+    dict.container[ "PRETRAITEMENTS" ] = "AUTO";
+    dict.container[ "PCENT_PIVOT" ] = 20;
+    dict.container[ "GESTION_MEMOIRE" ] = "IN_CORE";
+    dict.container[ "REMPLISSAGE" ] = 1.0;
+    dict.container[ "NIVE_REMPLISSAGE" ] = 0;
+    dict.container[ "STOP_SINGULIER" ] = "OUI";
+    dict.container[ "PRE_COND" ] = "LDLT_INC";
+    dict.container[ "NPREC" ] = 8;
+    cmdSt.define( dict );
 
-    SimpleKeyWordStr mCSTypeResol = SimpleKeyWordStr( "TYPE_RESOL" );
-    mCSTypeResol.addValues( "AUTO" );
-    syntaxeFactoriser.addSimpleKeywordString( mCSTypeResol );
-
-    SimpleKeyWordStr mCSPretr = SimpleKeyWordStr( "PRETRAITEMENTS" );
-    mCSPretr.addValues( "AUTO" );
-    syntaxeFactoriser.addSimpleKeywordString( mCSPretr );
-
-    SimpleKeyWordInt mCSPcentPivot = SimpleKeyWordInt( "PCENT_PIVOT" );
-    mCSPcentPivot.addValues( 20 );
-    syntaxeFactoriser.addSimpleKeywordInteger( mCSPcentPivot );
-
-    SimpleKeyWordStr mCSMemoire = SimpleKeyWordStr( "GESTION_MEMOIRE" );
-    mCSMemoire.addValues( "IN_CORE" );
-    syntaxeFactoriser.addSimpleKeywordString( mCSMemoire );
-
-    SimpleKeyWordDbl mCSRempl = SimpleKeyWordDbl( "REMPLISSAGE" );
-    mCSRempl.addValues( 1.0 );
-    syntaxeFactoriser.addSimpleKeywordDouble( mCSRempl );
-
-    SimpleKeyWordInt mCSNiveRempl = SimpleKeyWordInt( "NIVE_REMPLISSAGE" );
-    mCSNiveRempl.addValues( 0 );
-    syntaxeFactoriser.addSimpleKeywordInteger( mCSNiveRempl );
-
-    SimpleKeyWordStr mCSSing = SimpleKeyWordStr( "STOP_SINGULIER" );
-    mCSSing.addValues( "OUI" );
-    syntaxeFactoriser.addSimpleKeywordString( mCSSing );
-
-    SimpleKeyWordStr mCSPrecond = SimpleKeyWordStr( "PRE_COND" );
-    mCSPrecond.addValues( "LDLT_INC" );
-    syntaxeFactoriser.addSimpleKeywordString( mCSPrecond );
-
-    SimpleKeyWordInt mCSNprec = SimpleKeyWordInt( "NPREC" );
-    mCSNprec.addValues( 8 );
-    syntaxeFactoriser.addSimpleKeywordInteger( mCSNprec );
-
-    INTEGER op = 14;
-    CALL_EXECOP( &op );
+    try
+    {
+        INTEGER op = 14;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
     _isEmpty = false;
 
     return true;
@@ -210,8 +185,8 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
 template< class ValueType >
 bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
 {
-//     if ( _elemMatrix.isEmpty() || _elemMatrix->isEmpty() )
-//         throw std::runtime_error( "Elementary matrix is empty" );
+    if ( ( ! _elemMatrix ) || _elemMatrix->isEmpty() )
+        throw std::runtime_error( "Elementary matrix is empty" );
     if ( _elemMatrix->getType() == "MATR_ELEM_DEPL_R" )
         setType( getType() + "_DEPL_R" );
     else
@@ -221,30 +196,23 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
         throw std::runtime_error( "Numerotation is empty" );
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
-    CommandSyntax syntaxeAsseMatrice( "ASSE_MATRICE", true,
-                                       getResultObjectName(), getType() );
+    CommandSyntaxCython cmdSt( "ASSE_MATRICE" );
+    cmdSt.setResult( getResultObjectName(), getType() );
 
-    // Definition du mot cle simple MATR_ELEM
-    SimpleKeyWordStr mCSMatrElem = SimpleKeyWordStr( "MATR_ELEM" );
-    mCSMatrElem.addValues( _elemMatrix->getName() );
-    syntaxeAsseMatrice.addSimpleKeywordString( mCSMatrElem );
-
-    // Definition du mot cle simple NUME_DDL
-    SimpleKeyWordStr mCSNumeDdl = SimpleKeyWordStr( "NUME_DDL" );
-    mCSNumeDdl.addValues( _dofNum->getName() );
-    syntaxeAsseMatrice.addSimpleKeywordString( mCSNumeDdl );
+    SyntaxMapContainer dict;
+    dict.container[ "MATR_ELEM" ] = _elemMatrix->getName();
+    dict.container[ "NUME_DDL" ] = _dofNum->getName();
 
     if ( _listOfLoads.size() != 0 )
     {
-        SimpleKeyWordStr mCSCharge( "CHAR_CINE" );
+        VectorString tmp;
         for ( ListKinematicsLoadIter curIter = _listOfLoads.begin();
               curIter != _listOfLoads.end();
               ++curIter )
-        {
-            mCSCharge.addValues( (*curIter)->getName() );
-        }
-        syntaxeAsseMatrice.addSimpleKeywordString( mCSCharge );
+            tmp.push_back( (*curIter)->getName() );
+        dict.container[ "CHAR_CINE" ] = tmp;
     }
+    cmdSt.define( dict );
 
     INTEGER op = 12;
     CALL_EXECOP( &op );
