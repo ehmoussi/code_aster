@@ -27,7 +27,6 @@
 
 #include "LinearAlgebra/LinearSolver.h"
 #include "RunManager/CommandSyntaxCython.h"
-#include "LinearAlgebra/AssemblyMatrix.h"
 
 const std::set< Renumbering > WrapMultFront::setOfAllowedRenumbering( MultFrontRenumbering,
                                                                  MultFrontRenumbering + nbRenumberingMultFront );
@@ -45,10 +44,11 @@ const std::set< Renumbering > WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering
                                                             GcpcRenumbering + nbRenumberingGcpc );
 
 FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystem(
-            const AssemblyMatrixDouble& currentMatrix,
+            const AssemblyMatrixDoublePtr& currentMatrix,
             const FieldOnNodesDoublePtr& currentRHS ) const
 {
-    const std::string newName( getNewResultObjectName() );
+    std::string newName( getNewResultObjectName() );
+    newName.resize( 19, ' ' );
     FieldOnNodesDoublePtr returnField( new FieldOnNodesDoubleInstance( newName ) );
 
     // Definition du bout de fichier de commande correspondant a RESOUDRE

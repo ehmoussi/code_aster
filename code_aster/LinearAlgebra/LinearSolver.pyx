@@ -20,7 +20,9 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-#### LinearSolver
+from code_aster.LinearAlgebra.AssemblyMatrix cimport AssemblyMatrixDouble
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
+
 
 cdef class LinearSolver:
     """Python wrapper on the C++ LinearSolver Object"""
@@ -47,3 +49,10 @@ cdef class LinearSolver:
     cdef LinearSolverInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
+
+    def solveDoubleLinearSystem( self, AssemblyMatrixDouble currentMatrix, FieldOnNodesDouble currentRHS ):
+        """Assembly elementary vector"""
+        result = FieldOnNodesDouble()
+        result.set( self.getInstance().solveDoubleLinearSystem( deref( currentMatrix.getPtr() ),
+                                                                deref( currentRHS.getPtr() ) ) )
+        return result

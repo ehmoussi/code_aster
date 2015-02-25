@@ -29,9 +29,23 @@
 
 mapStrSD mapNameDataStructure = mapStrSD();
 
+std::string trim( const std::string& str,
+                  const std::string& whitespace = " \t" )
+{
+    const int strBegin = str.find_first_not_of(whitespace);
+    if (strBegin == std::string::npos)
+        return ""; // no content
+
+    const int strEnd = str.find_last_not_of(whitespace);
+    const int strRange = strEnd - strBegin + 1;
+
+    return str.substr(strBegin, strRange);
+};
+
 DataStructure::DataStructure( std::string name, std::string type ): _name( name ), _type( type )
 {
-    mapNameDataStructure.insert( mapStrSDValue( _name, this ) );
+    std::string nameWithoutBlanks = trim( name );
+    mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
 };
 
 DataStructure::~DataStructure() throw ( std::runtime_error )
@@ -39,7 +53,8 @@ DataStructure::~DataStructure() throw ( std::runtime_error )
 #ifdef __DEBUG_GC__
     std::cout << "DataStructure.destr: " << this->getName() << std::endl;
 #endif
-    mapStrSDIterator curIter = mapNameDataStructure.find( _name );
+    std::string nameWithoutBlanks = trim( _name );
+    mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
     if ( curIter == mapNameDataStructure.end() )
         throw std::runtime_error( "Problem !!!" );
     mapNameDataStructure.erase( curIter );
@@ -65,9 +80,10 @@ void DataStructure::debugPrint( int logicalUnit ) const
     }
 };
 
-char* getSDType(char* nom)
+char* getSDType( char* nom )
 {
-    mapStrSDIterator curIter = mapNameDataStructure.find( std::string( nom, 0, 8 ) );
+    std::string nameWithoutBlanks = trim( nom );
+    mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
     if ( curIter == mapNameDataStructure.end() )
         throw std::runtime_error( "Problem !!!" );
     return const_cast< char* >( curIter->second->getType().c_str() );

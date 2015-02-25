@@ -59,7 +59,7 @@ cdef class ElementaryVector:
 
     def assembleVector( self, DOFNumbering currentNumerotation ):
         """Assembly elementary vector"""
-        assemblyVector = FieldOnNodesDouble(  )
+        assemblyVector = FieldOnNodesDouble()
         assemblyVector.set( self.getInstance().assembleVector( deref( currentNumerotation.getPtr() ) ) )
         return assemblyVector
 

@@ -35,10 +35,16 @@
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
-#include "LinearAlgebra/DOFNumbering.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/KinematicsLoad.h"
 #include "RunManager/CommandSyntaxCython.h"
+
+/**
+ * @brief But des 2 lignes suivantes : casser la reference circulaire
+ * @todo Attention includes circulaires entre AssemblyMatrix, DOFNumbering et LinearSolver
+ */
+class DOFNumberingInstance;
+typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
 
 /**
  * @class AssemblyMatrixInstance
@@ -140,7 +146,6 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance():
                 _description( JeveuxVectorChar24( getName() + "           .REFA" ) ),
                 _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
-                _elemMatrix( ElementaryMatrix( false ) ),
                 _isEmpty( true )
 {};
 
@@ -192,7 +197,7 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
     else
         throw std::runtime_error( "Not yet implemented" );
 
-    if ( _dofNum.isEmpty() || _dofNum->isEmpty() )
+    if ( ( ! _dofNum ) || _dofNum->isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
@@ -214,63 +219,26 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
     }
     cmdSt.define( dict );
 
-    INTEGER op = 12;
-    CALL_EXECOP( &op );
+    try
+    {
+        INTEGER op = 12;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
     _isEmpty = false;
 
     return true;
 };
 
-/**
- * @class AssemblyMatrix
- * @brief Enveloppe d'un pointeur intelligent vers un AssemblyMatrix
- * @author Nicolas Sellenet
- */
-template< class ValueType >
-class AssemblyMatrix
-{
-    public:
-        typedef boost::shared_ptr< AssemblyMatrixInstance< ValueType > > AssemblyMatrixPtr;
-
-    private:
-        AssemblyMatrixPtr _assemblyMatrixPtr;
-
-    public:
-        AssemblyMatrix(bool initialisation = true): _assemblyMatrixPtr()
-        {
-            if ( initialisation == true )
-                _assemblyMatrixPtr = AssemblyMatrixPtr( new AssemblyMatrixInstance< ValueType >() );
-        };
-
-        ~AssemblyMatrix()
-        {};
-
-        AssemblyMatrix& operator=(const AssemblyMatrix& tmp)
-        {
-            _assemblyMatrixPtr = tmp._assemblyMatrixPtr;
-            return *this;
-        };
-
-        const AssemblyMatrixPtr& operator->() const
-        {
-            return _assemblyMatrixPtr;
-        };
-
-        AssemblyMatrixInstance< ValueType >& operator*(void) const
-        {
-            return *_assemblyMatrixPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _assemblyMatrixPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
-
 /** @typedef Definition d'une matrice assemblee de double */
-typedef AssemblyMatrix< double > AssemblyMatrixDouble;
+typedef AssemblyMatrixInstance< double > AssemblyMatrixDoubleInstance;
 /** @typedef Definition d'une matrice assemblee de complexe */
-typedef AssemblyMatrix< DoubleComplex > AssemblyMatrixComplex;
+typedef AssemblyMatrixInstance< DoubleComplex > AssemblyMatrixComplexInstance;
+
+typedef boost::shared_ptr< AssemblyMatrixDoubleInstance > AssemblyMatrixDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixComplexInstance > AssemblyMatrixComplexPtr;
 
 #endif /* ASSEMBLYMATRIX_H_ */
