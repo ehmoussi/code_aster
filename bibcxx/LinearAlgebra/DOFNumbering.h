@@ -48,17 +48,17 @@ class DOFNumberingInstance: public DataStructure
         typedef int MechanicalLoad; 
         // !!! Classe succinte car on ne sait pas comment elle sera utiliser !!!
         /** @brief Objet Jeveux '.NSLV' */
-        JeveuxVectorChar24         _nameOfSolverDataStructure;
+        JeveuxVectorChar24       _nameOfSolverDataStructure;
         /** @brief Modele support */
-        ModelPtr                   _supportModel;
+        ModelPtr                 _supportModel;
         /** @brief Matrices elementaires */
-        ElementaryMatrixPtr        _supportMatrix;
+        ElementaryMatrixPtr      _supportMatrix;
         /** @brief Conditions aux limites */
-        GenericMechanicalLoadPtr   _load;
+        GenericMechanicalLoadPtr _load;
         /** @brief Solveur lineaire */
-        LinearSolver               _linearSolver;
+        LinearSolverPtr          _linearSolver;
         /** @brief Booleen permettant de preciser sur la sd est vide */
-        bool                       _isEmpty;
+        bool                     _isEmpty;
 
     public:
         /**
@@ -114,7 +114,7 @@ class DOFNumberingInstance: public DataStructure
          * @brief Methode permettant de definir le solveur
          * @param currentModel Model support de la numerotation
          */
-        void setLinearSolver( const LinearSolver& currentSolver ) throw ( std::runtime_error )
+        void setLinearSolver( const LinearSolverPtr& currentSolver ) throw ( std::runtime_error )
         {
             if ( ! _isEmpty )
                 throw std::runtime_error( "It is too late to set the linear solver" );

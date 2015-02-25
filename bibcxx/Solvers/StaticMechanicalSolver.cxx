@@ -30,7 +30,7 @@
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _supportModel( ModelPtr() ),
                 _materialOnMesh( MaterialOnMeshPtr() ),
-                _linearSolver( LinearSolver() )
+                _linearSolver( LinearSolverPtr() )
 {};
 
 ResultsContainer StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
