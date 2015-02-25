@@ -25,7 +25,7 @@
 #include "astercxx.h"
 
 #include "LinearAlgebra/ElementaryMatrix.h"
-#include "RunManager/CommandSyntax.h"
+#include "RunManager/CommandSyntaxCython.h"
 
 ElementaryMatrixInstance::ElementaryMatrixInstance():
                 DataStructure( getNewResultObjectName(), "MATR_ELEM" ),
@@ -42,44 +42,42 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity() throw ( std::runtime_
     setType( getType() + "_DEPL_R" );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
-    CommandSyntax syntaxeCalcMatrElem( "CALC_MATR_ELEM", true,
-                                       getResultObjectName(), getType() );
+    CommandSyntaxCython cmdSt( "CALC_MATR_ELEM" );
+    cmdSt.setResult( getResultObjectName(), getType() );
 
+    SyntaxMapContainer dict;
     // Definition du mot cle simple OPTION
-    SimpleKeyWordStr mCSOption = SimpleKeyWordStr( "OPTION" );
-    mCSOption.addValues( "RIGI_MECA" );
-    syntaxeCalcMatrElem.addSimpleKeywordString( mCSOption );
+    dict.container[ "OPTION" ] = "RIGI_MECA";
 
     // Definition du mot cle simple MODELE
-    // ??? Ajouter des verifs pour savoir si l'interieur du modele est vide ???
-    SimpleKeyWordStr mCSModele = SimpleKeyWordStr( "MODELE" );
     if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-        throw std::runtime_error( "Support model is undefined" );
-    mCSModele.addValues( _supportModel->getName() );
-    syntaxeCalcMatrElem.addSimpleKeywordString( mCSModele );
+        throw std::runtime_error( "Model is empty" );
+    dict.container[ "MODELE" ] = _supportModel->getName();
 
     // Definition du mot cle simple CHAM_MATER
-    SimpleKeyWordStr mCSChamMater = SimpleKeyWordStr( "CHAM_MATER" );
     if ( ! _materialOnMesh )
         throw std::runtime_error( "Material is empty" );
-    mCSChamMater.addValues( _materialOnMesh->getName() );
-    syntaxeCalcMatrElem.addSimpleKeywordString( mCSChamMater );
-    /** @todo */
-    /*
+    dict.container[ "CHAM_MATER" ] = _materialOnMesh->getName();
+
     if ( _listOfMechanicalLoads.size() != 0 )
     {
-        SimpleKeyWordStr mCSCharge( "CHARGE" );
+        VectorString tmp;
         for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
               curIter != _listOfMechanicalLoads.end();
               ++curIter )
-        {
-            mCSCharge.addValues( (*curIter)->getName() );
-        }
-        syntaxeCalcMatrElem.addSimpleKeywordString( mCSCharge );
+            tmp.push_back( (*curIter)->getName() );
+        dict.container[ "CHARGE" ] = tmp;
     }
-    */
-    INTEGER op = 9;
-    CALL_EXECOP( &op );
+    cmdSt.define( dict );
+    try
+    {
+        INTEGER op = 9;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
     _isEmpty = false;
 
     return true;

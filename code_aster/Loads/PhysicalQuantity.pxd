@@ -21,7 +21,7 @@
 cdef extern from "Loads/PhysicalQuantity.h":
 
     cpdef enum PhysicalQuantityComponent:
-        Dx, Dy, Dz, Drx, Dry, Drz, Pressure, Fx, Fy, Fz, Mx, My, Mz
+        Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz
 
 #### ForceDouble
 
