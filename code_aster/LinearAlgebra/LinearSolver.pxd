@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+from code_aster.LinearAlgebra.AssemblyMatrix cimport AssemblyMatrixDoublePtr
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
+
 
 cdef extern from "LinearAlgebra/AllowedLinearSolver.h":
 
@@ -31,6 +34,8 @@ cdef extern from "LinearAlgebra/LinearSolver.h":
     cdef cppclass LinearSolverInstance:
 
         LinearSolverInstance( LinearSolverEnum curLinSolv, Renumbering curRenum )
+        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
+                                                       const FieldOnNodesDoublePtr& currentRHS )
 
     cdef cppclass LinearSolverPtr:
 

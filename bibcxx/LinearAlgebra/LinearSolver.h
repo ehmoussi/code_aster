@@ -32,6 +32,7 @@
 #include "astercxx.h"
 #include "DataFields/FieldOnNodes.h"
 #include "LinearAlgebra/AllowedLinearSolver.h"
+#include "LinearAlgebra/AssemblyMatrix.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -143,9 +144,6 @@ struct SolverChecker
     };
 };
 
-template< class tmp > class AssemblyMatrix;
-typedef AssemblyMatrix< double > AssemblyMatrixDouble;
-
 /**
  * @class LinearSolverInstance
  * @brief Cette classe permet de definir un solveur lineraire
@@ -198,7 +196,7 @@ class LinearSolverInstance
          * @param currentRHS Second membre
          * @return champ aux noeuds resultat
          */
-        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDouble& currentMatrix,
+        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
                                                        const FieldOnNodesDoublePtr& currentRHS ) const;
 };
 

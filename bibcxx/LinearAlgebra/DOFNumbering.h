@@ -52,7 +52,7 @@ class DOFNumberingInstance: public DataStructure
         /** @brief Matrices elementaires */
         ElementaryMatrixPtr      _supportMatrix;
         /** @brief Conditions aux limites */
-        GenericMechanicalLoadPtr _load;
+//         GenericMechanicalLoadPtr _load;
         /** @brief Solveur lineaire */
         LinearSolverPtr          _linearSolver;
         /** @brief Booleen permettant de preciser sur la sd est vide */
