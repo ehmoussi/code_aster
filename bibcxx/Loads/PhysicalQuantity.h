@@ -198,17 +198,17 @@ class PhysicalQuantityInstance
 
     /* @def  */
     MapOfCompAndVal  _compAndVal;
-    
+
     /** 
     * @brief Constructor
     */
     PhysicalQuantityInstance(){};
-    
+
     /**
     * @brief Destructor
     */
      ~PhysicalQuantityInstance(){};
-     
+
     /**
     * @function hasComponent
     * @brief test if a component is authorized for the physical quantity
@@ -219,60 +219,59 @@ class PhysicalQuantityInstance
         if ( Traits::components.find( comp ) == Traits::components.end() ) return false;
         return true;
     }
-    
+
     void setValue( PhysicalQuantityComponent comp, QuantityType val )
     {
-    if ( ! hasComponent( comp ) ) 
+        if ( ! hasComponent( comp ) ) 
         {
             throw std::runtime_error( "This component is not allowed for the current Physical Quantity" );
         }
-    /* On teste le retour de map.insert pour savoir si le terme existe déjà */ 
-    std::pair< MapIt , bool> ret = _compAndVal.insert( CompAndVal( comp, val ) );
-    if (! ret.second )
+        // On teste le retour de map.insert pour savoir si le terme existe déjà */ 
+        std::pair< MapIt , bool> ret = _compAndVal.insert( CompAndVal( comp, val ) );
+        if (! ret.second )
         {
-    /* S'il existe déjà, on le retire et on le remplace par un nouveau */
-      _compAndVal.erase( comp );
-      _compAndVal.insert( CompAndVal( comp, val ) ); 
+            // S'il existe déjà, on le retire et on le remplace par un nouveau */
+            _compAndVal.erase( comp );
+            _compAndVal.insert( CompAndVal( comp, val ) ); 
         }
     }
 
     /**
-    * @brief debugPrint 
-    */
+     * @brief debugPrint 
+     */
     void debugPrint() const
     {
         std::cout << "Nom de la grandeur physique : " << Traits::name << std::endl; 
         std::cout << "Nb de composantes   : " << Traits::components.size() << std::endl;
         std::cout << "Nom des composantes : " ;
         for (std::set<PhysicalQuantityComponent>::iterator it(Traits::components.begin());
-        it!=Traits::components.end(); it++)
+             it!=Traits::components.end(); it++)
         {
-        std::cout << ComponentNames[*it] << " , " ; 
+            std::cout << ComponentNames[*it] << " , " ;
         }
         std::cout << std::endl; 
-        for ( typename MapOfCompAndVal::const_iterator it(_compAndVal.begin()); 
-            it!= _compAndVal.end(); it++)
+        for ( typename MapOfCompAndVal::const_iterator it(_compAndVal.begin());
+              it!= _compAndVal.end(); it++)
         {
-        std::cout << ComponentNames[it->first] << " : " << it->second << std::endl; 
+            std::cout << ComponentNames[it->first] << " : " << it->second << std::endl; 
         }
     };
-    
+
     /**
      * @brief getMap
      * @return Map storing components and values of the physical quantity 
      */
     const MapOfCompAndVal& getMap() const
     {
-      return _compAndVal; 
+        return _compAndVal; 
     };
-    
-    /** 
+
+    /**
     * @brief get the name of the PhysicalQuantity
     */
-    
     std::string getName() const
     {
-    return Traits::name; 
+        return Traits::name; 
     };
 };
 
@@ -291,15 +290,15 @@ template class PhysicalQuantityInstance< double, ForceAndMomentum >;
 typedef PhysicalQuantityInstance< double, ForceAndMomentum > ForceAndMomentumDoubleInstance;
 typedef boost::shared_ptr< ForceAndMomentumDoubleInstance > ForceAndMomentumDoublePtr; 
 
-/** @typedef DisplacementDouble DEPL_R */
+/** @typedef DoubleDisplacement DEPL_R */
 template class PhysicalQuantityInstance< double, Displacement >; 
-typedef PhysicalQuantityInstance< double, Displacement > DisplacementDoubleInstance;
-typedef boost::shared_ptr< DisplacementDoubleInstance > DisplacementDoublePtr; 
+typedef PhysicalQuantityInstance< double, Displacement > DoubleDisplacementInstance;
+typedef boost::shared_ptr< DoubleDisplacementInstance > DoubleDisplacementPtr; 
 
-/** @typedef PressureDouble Pression */
+/** @typedef DoublePressure Pression */
 template class PhysicalQuantityInstance< double, Pressure >; 
-typedef PhysicalQuantityInstance< double, Pressure > PressureDoubleInstance;
-typedef boost::shared_ptr< PressureDoubleInstance > PressureDoublePtr; 
+typedef PhysicalQuantityInstance< double, Pressure > DoublePressureInstance;
+typedef boost::shared_ptr< DoublePressureInstance > DoublePressurePtr; 
 
 /** @typedef TemperatureDouble Temperature */
 template class PhysicalQuantityInstance< double, Temperature >; 

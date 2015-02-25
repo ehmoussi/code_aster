@@ -49,6 +49,33 @@ cdef extern from "Loads/PhysicalQuantity.h":
         ForceAndMomentumDoublePtr( ForceAndMomentumDoubleInstance * )
         ForceAndMomentumDoubleInstance* get()
 
+#### DoubleDisplacement
+
+    cdef cppclass DoubleDisplacementInstance:
+        DoubleDisplacementInstance()
+        void setValue( PhysicalQuantityComponent comp, double val ) except +
+        void debugPrint()
+
+    cdef cppclass DoubleDisplacementPtr:
+
+        DoubleDisplacementPtr( DoubleDisplacementPtr& )
+        DoubleDisplacementPtr( DoubleDisplacementInstance * )
+        DoubleDisplacementInstance* get()
+
+#### DoublePressure
+
+    cdef cppclass DoublePressureInstance:
+        DoublePressureInstance()
+        void setValue( PhysicalQuantityComponent comp, double val ) except +
+        void debugPrint()
+
+    cdef cppclass DoublePressurePtr:
+
+        DoublePressurePtr( DoublePressurePtr& )
+        DoublePressurePtr( DoublePressureInstance * )
+        DoublePressureInstance* get()
+
+
 #### ForceDouble
 
 cdef class ForceDouble:
@@ -59,6 +86,7 @@ cdef class ForceDouble:
     cdef ForceDoublePtr* getPtr( self )
     cdef ForceDoubleInstance* getInstance( self )
 
+
 #### ForceAndMomentumDouble
 
 cdef class ForceAndMomentumDouble:
@@ -68,3 +96,25 @@ cdef class ForceAndMomentumDouble:
     cdef set( self, ForceAndMomentumDoublePtr other )
     cdef ForceAndMomentumDoublePtr* getPtr( self )
     cdef ForceAndMomentumDoubleInstance* getInstance( self )
+
+
+#### DoubleDisplacement
+
+cdef class DoubleDisplacement:
+
+    cdef DoubleDisplacementPtr* _cptr
+
+    cdef set( self, DoubleDisplacementPtr other )
+    cdef DoubleDisplacementPtr* getPtr( self )
+    cdef DoubleDisplacementInstance* getInstance( self )
+
+
+#### DoublePressure
+
+cdef class DoublePressure:
+
+    cdef DoublePressurePtr* _cptr
+
+    cdef set( self, DoublePressurePtr other )
+    cdef DoublePressurePtr* getPtr( self )
+    cdef DoublePressureInstance* getInstance( self )
