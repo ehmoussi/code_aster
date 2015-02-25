@@ -57,7 +57,7 @@ cdef class ElementaryMatrix:
 
     def computeMechanicalRigidity( self ):
         """Compute the mechanical rigidity"""
-        self.getInstance().computeMechanicalRigidity()
+        return self.getInstance().computeMechanicalRigidity()
 
     def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
         """Set the support mesh"""

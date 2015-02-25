@@ -33,7 +33,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
-//#include "Loads/MechanicalLoad.h"
+#include "Loads/MechanicalLoad.h"
 
 /**
  * @class DOFNumberingInstance
