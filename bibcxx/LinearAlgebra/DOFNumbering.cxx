@@ -32,9 +32,7 @@ DOFNumberingInstance::DOFNumberingInstance():
             DataStructure( getNewResultObjectName(), "NUME_DDL" ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
             _supportModel( ModelPtr() ),
-//             _supportMatrix( new ElementaryMatrix( false ) ),
-//             _load( MechanicalLoad( false ) ),
-            _linearSolver( LinearSolver( MultFront, Metis ) ),
+            _linearSolver( new LinearSolverInstance( MultFront, Metis ) ),
             _isEmpty( true )
 {};
 

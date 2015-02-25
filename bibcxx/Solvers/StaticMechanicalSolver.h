@@ -30,7 +30,7 @@
 #include "Solvers/GenericSolver.h"
 #include "Modeling/Model.h"
 #include "Materials/MaterialOnMesh.h"
-//#include "Loads/MechanicalLoad.h"
+#include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "LinearAlgebra/LinearSolver.h"
 
@@ -40,7 +40,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
         /** @todo */
         typedef int MechanicalLoad; 
         /** @typedef std::list de MechanicalLoad */
-        typedef std::list< MechanicalLoad > ListMecaLoad;
+        typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;
         /** @typedef Iterateur sur une std::list de MechanicalLoad */
         typedef ListMecaLoad::iterator ListMecaLoadIter;
         /** @typedef std::list de KinematicsLoad */
@@ -53,7 +53,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
         /** @brief Champ de materiau a utiliser */
         MaterialOnMeshPtr _materialOnMesh;
         /** @brief Solveur lineaire */
-        LinearSolver      _linearSolver;
+        LinearSolverPtr   _linearSolver;
         /** @brief Chargements Mecaniques */
         ListMecaLoad      _listOfMechanicalLoads;
         /** @brief Chargements cinematiques */
@@ -83,7 +83,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
          * @brief Function d'ajout d'une charge mecanique
          * @param currentLoad charge a ajouter a la sd
          */
-        void addMechanicalLoad( const MechanicalLoad& currentLoad )
+        void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
         {
             _listOfMechanicalLoads.push_back( currentLoad );
         };
@@ -92,7 +92,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
          * @brief Methode permettant de definir le solveur lineaire
          * @param currentSolver Solveur lineaire
          */
-        void setLinearSolver( const LinearSolver& currentSolver )
+        void setLinearSolver( const LinearSolverPtr& currentSolver )
         {
             _linearSolver = currentSolver;
         };

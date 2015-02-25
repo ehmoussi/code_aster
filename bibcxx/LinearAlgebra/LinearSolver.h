@@ -203,53 +203,9 @@ class LinearSolverInstance
 };
 
 /**
- * @class LinearSolver
+ * @typedef LinearSolverPtr
  * @brief Enveloppe d'un pointeur intelligent vers un LinearSolverInstance
- * @author Nicolas Sellenet
  */
-class LinearSolver
-{
-    public:
-        typedef boost::shared_ptr< LinearSolverInstance > LinearSolverPtr;
-
-    private:
-        LinearSolverPtr _linearSolverPtr;
-
-    public:
-        LinearSolver(): _linearSolverPtr()
-        {};
-
-        LinearSolver( const LinearSolverEnum currentLinearSolver,
-                      const Renumbering currentRenumber ): _linearSolverPtr()
-        {
-            _linearSolverPtr = LinearSolverPtr( new LinearSolverInstance( currentLinearSolver,
-                                                                          currentRenumber ) );
-        };
-
-        ~LinearSolver()
-        {};
-
-        LinearSolver& operator=(const LinearSolver& tmp)
-        {
-            _linearSolverPtr = tmp._linearSolverPtr;
-            return *this;
-        };
-
-        const LinearSolverPtr& operator->() const
-        {
-            return _linearSolverPtr;
-        };
-
-        LinearSolverInstance& operator*(void) const
-        {
-            return *_linearSolverPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _linearSolverPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
+typedef boost::shared_ptr< LinearSolverInstance > LinearSolverPtr;
 
 #endif /* LINEARSOLVER_H_ */
