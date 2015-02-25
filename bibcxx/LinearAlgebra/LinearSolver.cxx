@@ -26,6 +26,7 @@
 #include "astercxx.h"
 
 #include "LinearAlgebra/LinearSolver.h"
+#include "RunManager/CommandSyntaxCython.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 
 const std::set< Renumbering > WrapMultFront::setOfAllowedRenumbering( MultFrontRenumbering,
@@ -51,35 +52,28 @@ FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystem(
     FieldOnNodesDoublePtr returnField( new FieldOnNodesDoubleInstance( newName ) );
 
     // Definition du bout de fichier de commande correspondant a RESOUDRE
-    CommandSyntax syntaxeResoudre( "RESOUDRE", true, newName, "CHAM_NO" );
+    CommandSyntaxCython cmdSt( "RESOUDRE" );
+    cmdSt.setResult( newName, "CHAM_NO" );
 
+    SyntaxMapContainer dict;
     // Definition du mot cle simple MATR
-    SimpleKeyWordStr mCSMatr = SimpleKeyWordStr( "MATR" );
-    mCSMatr.addValues( currentMatrix->getName() );
-    syntaxeResoudre.addSimpleKeywordString( mCSMatr );
+    dict.container[ "MATR" ] = currentMatrix->getName();
+    dict.container[ "CHAM_NO" ] = currentRHS->getName();
+    dict.container[ "NMAX_ITER" ] = 0;
+    dict.container[ "ALGORITHME" ] = "GMRES";
+    dict.container[ "RESI_RELA" ] = 1e-6;
+    dict.container[ "POSTTRAITEMENTS" ] = "AUTO";
+    cmdSt.define( dict );
 
-    SimpleKeyWordStr mCSChamNo = SimpleKeyWordStr( "CHAM_NO" );
-    mCSChamNo.addValues( currentRHS->getName() );
-    syntaxeResoudre.addSimpleKeywordString( mCSChamNo );
-
-    SimpleKeyWordInt mCSMaxIter = SimpleKeyWordInt( "NMAX_ITER" );
-    mCSMaxIter.addValues( 0 );
-    syntaxeResoudre.addSimpleKeywordInteger( mCSMaxIter );
-
-    SimpleKeyWordStr mCSAlgo = SimpleKeyWordStr( "ALGORITHME" );
-    mCSAlgo.addValues( "GMRES" );
-    syntaxeResoudre.addSimpleKeywordString( mCSAlgo );
-
-    SimpleKeyWordDbl mCSResiRela = SimpleKeyWordDbl( "RESI_RELA" );
-    mCSResiRela.addValues( 1e-6 );
-    syntaxeResoudre.addSimpleKeywordDouble( mCSResiRela );
-
-    SimpleKeyWordStr mCSPost = SimpleKeyWordStr( "POSTTRAITEMENTS" );
-    mCSPost.addValues( "AUTO" );
-    syntaxeResoudre.addSimpleKeywordString( mCSPost );
-
-    INTEGER op = 15;
-    CALL_EXECOP( &op );
+    try
+    {
+        INTEGER op = 15;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
 
     return returnField;
 };
