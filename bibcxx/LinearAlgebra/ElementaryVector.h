@@ -42,8 +42,6 @@
 class ElementaryVectorInstance: public DataStructure
 {
     private:
-        /** @todo  */
-        typedef int MechanicalLoad;
         /** @typedef std::list de MechanicalLoad */
         typedef std::list< GenericMechanicalLoadPtr > ListMechanicalLoad;
         /** @typedef Iterateur sur une std::list de MechanicalLoad */

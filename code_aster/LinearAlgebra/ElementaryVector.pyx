@@ -21,8 +21,10 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from code_aster.Mesh.Mesh cimport Mesh
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
+from code_aster.LinearAlgebra.DOFNumbering cimport DOFNumbering
 
 
 cdef class ElementaryVector:
@@ -55,10 +57,20 @@ cdef class ElementaryVector:
         """Add a mechanical load"""
         self.getInstance().addMechanicalLoad( deref( load.getPtr() ) )
 
+    def assembleVector( self, DOFNumbering currentNumerotation ):
+        """Assembly elementary vector"""
+        assemblyVector = FieldOnNodesDouble(  )
+        assemblyVector.set( self.getInstance().assembleVector( deref( currentNumerotation.getPtr() ) ) )
+        return assemblyVector
+
+    def computeMechanicalLoads( self ):
+        """Compute mechanical load"""
+        return self.getInstance().computeMechanicalLoads()
+
     def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
         """Set the material"""
         self.getInstance().setMaterialOnMesh( deref( curMatOnMesh.getPtr() ) )
 
-    def debugPrint( self, logicalUnit=6 ):
+    def debugPrint( self, logicalUnit = 6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )

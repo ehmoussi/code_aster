@@ -28,6 +28,7 @@ cdef extern from "DataFields/FieldOnNodes.h":
         ValueType& operator[]( int i )
         bint updateValuePointers()
         string getName()
+        void debugPrint( int logicalUnit )
 
     cdef cppclass FieldOnNodesDoublePtr:
 
