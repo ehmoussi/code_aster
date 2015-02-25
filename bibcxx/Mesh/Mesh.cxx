@@ -34,8 +34,8 @@ MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE
                         _jeveuxName( getName() ),
                         _dimensionInformations( JeveuxVectorLong( _jeveuxName + ".DIME      " ) ),
                         _nameOfNodes( JeveuxBidirectionalMap( _jeveuxName + ".NOMNOE    " ) ),
-                        _coordinates( FieldOnNodesPtrDouble(
-                            new FieldOnNodesInstanceDouble( _jeveuxName + ".COORDO    " ) ) ),
+                        _coordinates( FieldOnNodesDoublePtr(
+                            new FieldOnNodesDoubleInstance( _jeveuxName + ".COORDO    " ) ) ),
                         _groupsOfNodes( JeveuxCollectionLong( _jeveuxName + ".GROUPENO  " ) ),
                         _connectivity( JeveuxCollectionLong( _jeveuxName + ".CONNEX    " ) ),
                         _nameOfElements( JeveuxBidirectionalMap( _jeveuxName + ".NOMMAI    " ) ),

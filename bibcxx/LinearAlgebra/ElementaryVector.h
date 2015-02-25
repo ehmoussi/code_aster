@@ -45,21 +45,21 @@ class ElementaryVectorInstance: public DataStructure
         /** @todo  */
         typedef int MechanicalLoad;
         /** @typedef std::list de MechanicalLoad */
-        typedef std::list< MechanicalLoad > ListMechanicalLoad;
+        typedef std::list< GenericMechanicalLoadPtr > ListMechanicalLoad;
         /** @typedef Iterateur sur une std::list de MechanicalLoad */
         typedef ListMechanicalLoad::iterator ListMechanicalLoadIter;
 
         /** @brief Objet Jeveux '.RERR' */
-        JeveuxVectorChar24     _description;
+        JeveuxVectorChar24 _description;
         /** @brief Objet Jeveux '.RELR' */
-        JeveuxVectorChar24     _listOfElementaryResults;
+        JeveuxVectorChar24 _listOfElementaryResults;
         /** @brief Booleen indiquant si la sd est vide */
-        bool                   _isEmpty;
+        bool               _isEmpty;
         /** @brief Champ de materiau a utiliser */
-        MaterialOnMeshPtr      _materialOnMesh;
+        MaterialOnMeshPtr  _materialOnMesh;
 
         /** @brief Charges ajoutees aux vecteurs elementaires */
-        std::list< GenericMechanicalLoadPtr > _listOfMechanicalLoad;
+        ListMechanicalLoad _listOfMechanicalLoad;
 
     public:
         /**
@@ -90,7 +90,8 @@ class ElementaryVectorInstance: public DataStructure
          * @brief Assembler les vecteurs elementaires en se fondant sur currentNumerotation
          * @param currentNumerotation objet DOFNumbering
          */
-        FieldOnNodesPtrDouble assembleVector( const DOFNumbering& currentNumerotation ) throw ( std::runtime_error );
+        FieldOnNodesDoublePtr assembleVector( const DOFNumberingPtr& currentNumerotation )
+            throw ( std::runtime_error );
 
         /**
          * @brief Calcul des matrices elementaires pour l'option CHAR_MECA

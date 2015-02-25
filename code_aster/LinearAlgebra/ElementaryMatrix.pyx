@@ -52,7 +52,7 @@ cdef class ElementaryMatrix:
         return self._cptr.get()
 
     def addMechanicalLoad( self, GenericMechanicalLoad load ):
-        """Add the same material on all the mesh"""
+        """Add a mechanical load"""
         self.getInstance().addMechanicalLoad( deref( load.getPtr() ) )
 
     def computeMechanicalRigidity( self ):
@@ -60,11 +60,11 @@ cdef class ElementaryMatrix:
         return self.getInstance().computeMechanicalRigidity()
 
     def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
-        """Set the support mesh"""
+        """Set the material"""
         self.getInstance().setMaterialOnMesh( deref( curMatOnMesh.getPtr() ) )
 
     def setSupportModel( self, Model curModel ):
-        """Set the support mesh"""
+        """Set the support model"""
         self.getInstance().setSupportModel( deref( curModel.getPtr() ) )
 
     def debugPrint( self, logicalUnit=6 ):

@@ -64,7 +64,7 @@ class AssemblyMatrixInstance: public DataStructure
         /** @brief ElementaryMatrix sur lesquelles sera construit la matrice */
         ElementaryMatrixPtr           _elemMatrix;
         /** @brief Objet nume_ddl */
-        DOFNumbering                  _dofNum;
+        DOFNumberingPtr               _dofNum;
         /** @brief La matrice est elle vide ? */
         bool                          _isEmpty;
         /** @brief Liste de charges cinematiques */
@@ -119,7 +119,7 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Methode permettant de definir la numerotation
          * @param currentElemMatrix objet ElementaryMatrix
          */
-        void setDOFNumbering( const DOFNumbering& currentNum )
+        void setDOFNumbering( const DOFNumberingPtr& currentNum )
         {
             _dofNum = currentNum;
         };
@@ -141,7 +141,6 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance():
                 _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
                 _elemMatrix( ElementaryMatrix( false ) ),
-                _dofNum( DOFNumbering( false ) ),
                 _isEmpty( true )
 {};
 

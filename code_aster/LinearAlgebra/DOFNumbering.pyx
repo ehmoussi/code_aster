@@ -20,44 +20,57 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-from code_aster.Mesh.Mesh cimport Mesh
-from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
+from code_aster.Modeling.Model cimport Model
+from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrix
+from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
 
+#### DOFNumbering
 
-cdef class ElementaryVector:
+cdef class DOFNumbering:
+    """Python wrapper on the C++ DOFNumbering Object"""
 
-    """Python wrapper on the C++ ElementaryVector object"""
-
-    def __cinit__( self, bint init=True ):
+    def __cinit__( self, bint init = True ):
         """Initialization: stores the pointer to the C++ object"""
-        if init:
-            self._cptr = new ElementaryVectorPtr( new ElementaryVectorInstance() )
+        if init :
+            self._cptr = new DOFNumberingPtr( new DOFNumberingInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, ElementaryVectorPtr other ):
+    cdef set( self, DOFNumberingPtr other ):
         """Point to an existing object"""
-        self._cptr = new ElementaryVectorPtr( other )
+        self._cptr = new DOFNumberingPtr( other )
 
-    cdef ElementaryVectorPtr* getPtr( self ):
+    cdef DOFNumberingPtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef ElementaryVectorInstance* getInstance( self ):
+    cdef DOFNumberingInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
-    def addMechanicalLoad( self, GenericMechanicalLoad load ):
+    def addLoad( self, GenericMechanicalLoad load ):
         """Add a mechanical load"""
-        self.getInstance().addMechanicalLoad( deref( load.getPtr() ) )
+        self.getInstance().addLoad( deref( load.getPtr() ) )
 
-    def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
-        """Set the material"""
-        self.getInstance().setMaterialOnMesh( deref( curMatOnMesh.getPtr() ) )
+    def computeNumerotation( self ):
+        """Compute the numerotation"""
+        return self.getInstance().computeNumerotation()
+
+    def setElementaryMatrix( self, ElementaryMatrix curElemMat ):
+        """Set the elementary matrix"""
+        self.getInstance().setElementaryMatrix( deref( curElemMat.getPtr() ) )
+
+    def setLinearSolver( self, LinearSolver curLinSolv ):
+        """Set the linear solver"""
+        self.getInstance().setLinearSolver( deref( curLinSolv.getPtr() ) )
+
+    def setSupportModel( self, Model curModel ):
+        """Set the support model"""
+        self.getInstance().setSupportModel( deref( curModel.getPtr() ) )
 
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""

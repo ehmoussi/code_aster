@@ -35,22 +35,22 @@ cdef class FieldOnNodesDouble:
     def __cinit__( self, string name="" ):
         """Initialization: stores the pointer to the C++ object"""
         if len(name) > 0:
-            self._cptr = new FieldOnNodesPtrDouble( new FieldOnNodesInstanceDouble( name ) )
+            self._cptr = new FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( name ) )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, FieldOnNodesPtrDouble other ):
+    cdef set( self, FieldOnNodesDoublePtr other ):
         """Point to an existing object"""
-        self._cptr = new FieldOnNodesPtrDouble( other )
+        self._cptr = new FieldOnNodesDoublePtr( other )
 
-    cdef FieldOnNodesPtrDouble* getPtr( self ):
+    cdef FieldOnNodesDoublePtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef FieldOnNodesInstanceDouble* getInstance( self ):
+    cdef FieldOnNodesDoubleInstance* getInstance( self ):
         """Return the pointer on the c++ instance objet"""
         return self._cptr.get()
 
