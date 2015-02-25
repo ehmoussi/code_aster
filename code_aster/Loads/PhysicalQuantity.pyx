@@ -51,9 +51,10 @@ cdef class ForceDouble:
         """Print debug information of the content"""
         self.getInstance().debugPrint( )
 
-    def setValue( self, component , value ):
+    def setValue( self, component, value ):
         """Define the value of a component of the physical quantity """
         self.getInstance().setValue( component, value )
+
 
 #####  ForceAndMomentumDouble
 
@@ -86,6 +87,78 @@ cdef class ForceAndMomentumDouble:
         """Print debug information of the content"""
         self.getInstance().debugPrint( )
 
-    def setValue( self, component , value ):
+    def setValue( self, component, value ):
+        """Define the value of a component of the physical quantity """
+        self.getInstance().setValue( component, value )
+
+
+#####  DoubleDisplacement
+
+cdef class DoubleDisplacement:
+    """Python wrapper on the C++ DoubleDisplacement Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = new DoubleDisplacementPtr( new DoubleDisplacementInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, DoubleDisplacementPtr other ):
+        """Point to an existing object"""
+        self._cptr = new DoubleDisplacementPtr( other )
+
+    cdef DoubleDisplacementPtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef DoubleDisplacementInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def debugPrint( self ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( )
+
+    def setValue( self, component, value ):
+        """Define the value of a component of the physical quantity """
+        self.getInstance().setValue( component, value )
+
+
+#####  DoublePressure
+
+cdef class DoublePressure:
+    """Python wrapper on the C++ DoublePressure Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = new DoublePressurePtr( new DoublePressureInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, DoublePressurePtr other ):
+        """Point to an existing object"""
+        self._cptr = new DoublePressurePtr( other )
+
+    cdef DoublePressurePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef DoublePressureInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def debugPrint( self ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( )
+
+    def setValue( self, component, value ):
         """Define the value of a component of the physical quantity """
         self.getInstance().setValue( component, value )

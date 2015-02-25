@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 from code_aster.Loads.PhysicalQuantity cimport ForceDouble, ForceAndMomentumDouble
+from code_aster.Loads.PhysicalQuantity cimport DoubleDisplacement, DoublePressure
 from code_aster.Modeling.Model cimport Model
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
@@ -118,6 +119,7 @@ cdef class NodalForceAndMomentumDouble( GenericMechanicalLoad ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
 
+
 ###### ForceOnFaceDouble
 
 cdef class ForceOnFaceDouble( GenericMechanicalLoad ):
@@ -148,6 +150,7 @@ cdef class ForceOnFaceDouble( GenericMechanicalLoad ):
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
+
 
 ###### ForceAndMomentumOnEdgeDouble
 
@@ -180,6 +183,7 @@ cdef class ForceAndMomentumOnEdgeDouble( GenericMechanicalLoad ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
 
+
 ###### LineicForceAndMomentumDouble
 
 cdef class LineicForceAndMomentumDouble( GenericMechanicalLoad ):
@@ -210,6 +214,7 @@ cdef class LineicForceAndMomentumDouble( GenericMechanicalLoad ):
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
+
 
 ###### InternalForceDouble
 
@@ -242,6 +247,7 @@ cdef class InternalForceDouble( GenericMechanicalLoad ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
 
+
 ###### ForceAndMomentumOnBeamDouble
 
 cdef class ForceAndMomentumOnBeamDouble( GenericMechanicalLoad ):
@@ -267,6 +273,70 @@ cdef class ForceAndMomentumOnBeamDouble( GenericMechanicalLoad ):
         """Set a physical quantity of a Mesh entity"""
         instance = <ForceAndMomentumOnBeamDoubleInstance*>self.getInstance()
         return instance.setValue( deref( Force.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
+
+###### ImposedDoubleDisplacement
+
+cdef class ImposedDoubleDisplacement( GenericMechanicalLoad ):
+    """Python wrapper on the C++ ImposedDoubleDisplacement Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new ImposedDoubleDisplacementPtr ( new ImposedDoubleDisplacementInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <ImposedDoubleDisplacementInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, DoubleDisplacement disp, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <ImposedDoubleDisplacementInstance*>self.getInstance()
+        return instance.setValue( deref( disp.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
+
+###### DistributedDoublePressure
+
+cdef class DistributedDoublePressure( GenericMechanicalLoad ):
+    """Python wrapper on the C++ DistributedDoublePressure Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new DistributedDoublePressurePtr ( new DistributedDoublePressureInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <DistributedDoublePressureInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, DoublePressure pressure, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <DistributedDoublePressureInstance*>self.getInstance()
+        return instance.setValue( deref( pressure.getPtr() ), nameOfGroup )
 
 
     def debugPrint( self, logicalUnit=6 ):

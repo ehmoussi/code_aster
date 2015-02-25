@@ -55,17 +55,19 @@ PyObject* MaterialOnMeshInstance::getCommandKeywords() throw ( std::runtime_erro
     {
         SyntaxMapContainer dict2;
         dict2.container["MATER"] = curIter->first->getName();
-
-        if ( typeid( *(curIter->second) ) == typeid( AllMeshEntities ) )
+        const MeshEntityPtr& tmp = curIter->second;
+        if ( tmp->getType() == AllMeshEntitiesType )
         {
             dict2.container["TOUT"] = "OUI";
         }
         else
         {
-            if ( typeid( *(curIter->second) ) == typeid( GroupOfElements ) )
+            if ( tmp->getType() == GroupOfNodesType )
                 dict2.container["GROUP_MA"] = (curIter->second)->getEntityName();
-            else if ( typeid( *(curIter->second) ) == typeid( GroupOfNodes ) )
+            else if ( tmp->getType() == GroupOfElementsType )
                 dict2.container["GROUP_NO"] = (curIter->second)->getEntityName();
+            else
+                throw std::runtime_error("Support entity undefined");
         }
         listeAFFE.push_back( dict2 );
     }

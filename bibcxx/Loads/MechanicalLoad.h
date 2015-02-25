@@ -38,7 +38,8 @@
  * @enum LoadEnum
  * @brief Inventory of all mechanical loads available in Code_Aster
  */
-enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam, ImposedDoF, DistributedPressure, EndLoad };
+enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam,
+                ImposedDisplacement, DistributedPressure, EndLoad };
 
 /**
  * @class LoadTraits
@@ -47,16 +48,16 @@ enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce
 // This is the most general case (defined but intentionally not implemented)
 // It will be specialized for each load listed in the inventory
 
-template < LoadEnum Load > struct LoadTraits; 
+template< LoadEnum Load > struct LoadTraits; 
 
 /*************************************************************/
 /*  Loads consisting of a force applied to some localization */
 /*************************************************************/
 /**
- * @def LoadTraits <NodalForce>
+ * @def LoadTraits<NodalForce>
  * @brief Declare specialization for NodalForce
  */
-template <> struct LoadTraits <NodalForce>
+template <> struct LoadTraits< NodalForce >
 {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
@@ -67,10 +68,10 @@ template <> struct LoadTraits <NodalForce>
 };
 
 /**
- * @def LoadTraits <ForceOnFace>
+ * @def LoadTraits<ForceOnFace>
  * @brief Declare specialization for ForceOnFace
  */
-template <> struct LoadTraits <ForceOnFace>
+template <> struct LoadTraits< ForceOnFace >
 {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
@@ -81,10 +82,10 @@ template <> struct LoadTraits <ForceOnFace>
 };
 
 /**
- * @def LoadTraits <ForceOnEdge>
+ * @def LoadTraits<ForceOnEdge>
  * @brief Declare specialization for ForceOnEdge
  */
-template <> struct LoadTraits <ForceOnEdge>
+template <> struct LoadTraits< ForceOnEdge >
 {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
@@ -95,10 +96,10 @@ template <> struct LoadTraits <ForceOnEdge>
 };
 
 /**
- * @def LoadTraits <LineicForce>
+ * @def LoadTraits<LineicForce>
  * @brief Declare specialization for LineicForce
  */
-template <> struct LoadTraits <LineicForce>
+template <> struct LoadTraits< LineicForce >
 {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
@@ -109,10 +110,10 @@ template <> struct LoadTraits <LineicForce>
 };
 
 /**
- * @def LoadTraits <InternalForce>
+ * @def LoadTraits<InternalForce>
  * @brief Declare specialization for InternalForce
  */
-template <> struct LoadTraits <InternalForce>
+template <> struct LoadTraits< InternalForce >
 {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
@@ -123,10 +124,10 @@ template <> struct LoadTraits <InternalForce>
 };
 
 /**
- * @def LoadTraits <ForceOnBeam>
+ * @def LoadTraits<ForceOnBeam>
  * @brief Declare specialization for ForceOnBeam
  */
-template <> struct LoadTraits <ForceOnBeam>
+template <> struct LoadTraits< ForceOnBeam >
 {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
@@ -135,6 +136,34 @@ template <> struct LoadTraits <ForceOnBeam>
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
     /** @todo mot clé supplémentaire TYPE_CHARGE=FORCE */
+};
+
+/**
+ * @def LoadTraits<ImposedDisplacement>
+ * @brief Declare specialization for ImposedDisplacement
+ */
+template <> struct LoadTraits< ImposedDisplacement >
+{
+    // Mot clé facteur pour AFFE_CHAR_MECA
+    static const std::string factorKeyword; 
+    // Authorized support MeshEntity
+    static bool const isAllowedOnWholeMesh = true;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = true;
+};
+
+/**
+ * @def LoadTraits<DistributedPressure>
+ * @brief Declare specialization for DistributedPressure
+ */
+template <> struct LoadTraits< DistributedPressure >
+{
+    // Mot clé facteur pour AFFE_CHAR_MECA
+    static const std::string factorKeyword; 
+    // Authorized support MeshEntity
+    static bool const isAllowedOnWholeMesh = true;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
 };
 
 /**
@@ -355,5 +384,15 @@ typedef boost::shared_ptr< InternalForceDoubleInstance > InternalForceDoublePtr;
 template class MechanicalLoadInstance< ForceAndMomentumDoubleInstance, ForceOnBeam >;
 typedef MechanicalLoadInstance< ForceAndMomentumDoubleInstance, LineicForce > ForceAndMomentumOnBeamDoubleInstance;
 typedef boost::shared_ptr< ForceAndMomentumOnBeamDoubleInstance > ForceAndMomentumOnBeamDoublePtr;
+
+/** @typedef ImposedDoubleDisplacement  */
+template class MechanicalLoadInstance< DoubleDisplacementInstance, ImposedDisplacement >;
+typedef MechanicalLoadInstance< DoubleDisplacementInstance, ImposedDisplacement > ImposedDoubleDisplacementInstance;
+typedef boost::shared_ptr< ImposedDoubleDisplacementInstance > ImposedDoubleDisplacementPtr;
+
+/** @typedef DistributedDoublePressure  */
+template class MechanicalLoadInstance< DoublePressureInstance, DistributedPressure >;
+typedef MechanicalLoadInstance< DoublePressureInstance, DistributedPressure > DistributedDoublePressureInstance;
+typedef boost::shared_ptr< DistributedDoublePressureInstance > DistributedDoublePressurePtr;
 
 #endif /* MECHANICALLOAD_H_ */
