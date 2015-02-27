@@ -30,6 +30,7 @@
 bool ForwardDOFNumberingPtr::isEmpty() const
 {
     if ( _curDOFNum.use_count() == 0 ) return true;
+    if ( _curDOFNum->isEmpty() ) return true;
     return false;
 };
 

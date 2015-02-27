@@ -232,9 +232,6 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
     return true;
 };
 
-// class AssemblyMatrixInstance< double >;
-// class AssemblyMatrixInstance< DoubleComplex >;
-
 /** @typedef Definition d'une matrice assemblee de double */
 typedef AssemblyMatrixInstance< double > AssemblyMatrixDoubleInstance;
 /** @typedef Definition d'une matrice assemblee de complexe */

@@ -67,49 +67,9 @@ class ResultsContainerInstance: public DataStructure
 };
 
 /**
-* @class ResultsContainer
-* @brief Enveloppe d'un pointeur intelligent vers un ResultsContainerInstance
-* @author Nicolas Sellenet
-*/
-class ResultsContainer
-{
-    public:
-        typedef boost::shared_ptr< ResultsContainerInstance > ResultsContainerPtr;
-
-    private:
-        ResultsContainerPtr _meshPtr;
-
-    public:
-        ResultsContainer( bool initilisation = true ): _meshPtr()
-        {
-            if ( initilisation == true )
-                _meshPtr = ResultsContainerPtr( new ResultsContainerInstance() );
-        };
-
-        ResultsContainer( const std::string resuTyp ): _meshPtr()
-        {
-            _meshPtr = ResultsContainerPtr( new ResultsContainerInstance( resuTyp ) );
-        };
-
-        ~ResultsContainer()
-        {};
-
-        ResultsContainer& operator=(const ResultsContainer& tmp)
-        {
-            _meshPtr = tmp._meshPtr;
-            return *this;
-        };
-
-        const ResultsContainerPtr& operator->() const
-        {
-            return _meshPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _meshPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
+ * @typedef ResultsContainerPtr
+ * @brief Pointeur intelligent vers un ResultsContainerInstance
+ */
+typedef boost::shared_ptr< ResultsContainerInstance > ResultsContainerPtr;
 
 #endif /* RESULTSCONTAINER_H_ */
