@@ -40,7 +40,7 @@ model.build()
 model2 = code_aster.Model()
 model2.setSupportMesh(mesh)
 try:
-    model2.addElementaryModeling(code_aster.Thermal, code_aster.DKT)
+    model2.addModelingOnAllMesh(code_aster.Thermal, code_aster.DKT)
 except Exception as e:
     print e
 

@@ -78,7 +78,7 @@ class ModelInstance: public DataStructure
          * @param phys Physique a ajouter
          * @param mod Modelisation a ajouter
          */
-        void addModelingOnAllMesh( Physics phys, Modelings mod )
+        void addModelingOnAllMesh( Physics phys, Modelings mod ) throw ( std::runtime_error )
         {
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
                                                               MeshEntityPtr( new AllMeshEntities() ) ) );
@@ -123,12 +123,6 @@ class ModelInstance: public DataStructure
          * @return booleen indiquant que la construction s'est bien deroulee
          */
         bool build() throw ( std::runtime_error );
-
-        /**
-         * @brief Return a Python dict emulate the command keywords
-         * @return PyDict
-         */
-        PyObject* getCommandKeywords() throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant de savoir si le modele est vide

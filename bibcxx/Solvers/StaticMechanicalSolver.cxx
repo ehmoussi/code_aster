@@ -48,7 +48,7 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
 
     // Definition du mot cle simple CHAM_MATER
     if ( _materialOnMesh )
-        dict.container[ "CHAM_MATER" ] = _supportModel->getName();
+        dict.container[ "CHAM_MATER" ] = _materialOnMesh->getName();
 
     if ( _listOfMechanicalLoads.size() == 0 && _listOfKinematicsLoads.size() == 0 )
         throw std::runtime_error( "At least one load is needed" );

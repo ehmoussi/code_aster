@@ -31,13 +31,12 @@ cdef extern from "Modeling/Model.h":
     cdef cppclass ModelInstance:
 
         ModelInstance()
-        void addModelingOnAllMesh( Physics phys, Modelings mod )
-        void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup )
-        void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup )
+        void addModelingOnAllMesh( Physics phys, Modelings mod ) except +
+        void addModelingOnGroupOfElements( Physics phys, Modelings mod, string nameOfGroup ) except +
+        void addModelingOnGroupOfNodes( Physics phys, Modelings mod, string nameOfGroup ) except +
         void setSplittingMethod()
         bint setSupportMesh( MeshPtr& currentMesh )
         bint build() except +
-        getCommandKeywords()
         MeshPtr getSupportMesh()
         const string getType()
         void debugPrint( int logicalUnit )
