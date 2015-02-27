@@ -43,6 +43,14 @@ cdef extern from "LinearAlgebra/DOFNumbering.h":
         DOFNumberingPtr( DOFNumberingInstance* )
         DOFNumberingInstance* get()
 
+
+cdef extern from "LinearAlgebra/ForwardDOFNumbering.h":
+
+    cdef cppclass ForwardDOFNumberingPtr:
+
+        ForwardDOFNumberingPtr( DOFNumberingPtr& )
+
+
 #### DOFNumbering
 
 cdef class DOFNumbering:

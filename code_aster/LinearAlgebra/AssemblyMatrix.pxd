@@ -20,7 +20,7 @@
 from libcpp.string cimport string
 
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
-from code_aster.LinearAlgebra.DOFNumbering cimport DOFNumberingPtr
+from code_aster.LinearAlgebra.DOFNumbering cimport ForwardDOFNumberingPtr
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrixPtr
 
 
@@ -32,7 +32,7 @@ cdef extern from "LinearAlgebra/AssemblyMatrix.h":
         void addKinematicsLoad( KinematicsLoadPtr& currentLoad )
         bint build()
         bint factorization()
-        void setDOFNumbering( DOFNumberingPtr& curDOFNumber )
+        void setDOFNumbering( ForwardDOFNumberingPtr& curDOFNumber )
         void setElementaryMatrix(  ElementaryMatrixPtr& currentElemMatrix )
         const string getType()
         void debugPrint( int logicalUnit )
