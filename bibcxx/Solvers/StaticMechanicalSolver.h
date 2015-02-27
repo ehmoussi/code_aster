@@ -64,11 +64,6 @@ class StaticMechanicalSolverInstance: public GenericSolver
         StaticMechanicalSolverInstance();
 
         /**
-         * @brief Lancement de la resolution
-         */
-        ResultsContainer execute() throw ( std::runtime_error );
-
-        /**
          * @brief Function d'ajout d'une charge cinematique
          * @param currentLoad charge a ajouter a la sd
          */
@@ -85,6 +80,11 @@ class StaticMechanicalSolverInstance: public GenericSolver
         {
             _listOfMechanicalLoads.push_back( currentLoad );
         };
+
+        /**
+         * @brief Lancement de la resolution
+         */
+        ResultsContainerPtr execute() throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant de definir le solveur lineaire
@@ -115,48 +115,9 @@ class StaticMechanicalSolverInstance: public GenericSolver
 };
 
 /**
- * @class StaticMechanicalSolver
+ * @typedef StaticMechanicalSolverPtr
  * @brief Enveloppe d'un pointeur intelligent vers un StaticMechanicalSolverInstance
- * @author Nicolas Sellenet
  */
-class StaticMechanicalSolver
-{
-    public:
-        typedef boost::shared_ptr< StaticMechanicalSolverInstance > StaticMechanicalSolverPtr;
-
-    private:
-        StaticMechanicalSolverPtr _staticMechanicalSolverPtr;
-
-    public:
-        StaticMechanicalSolver(): _staticMechanicalSolverPtr()
-        {
-            _staticMechanicalSolverPtr = StaticMechanicalSolverPtr( new StaticMechanicalSolverInstance() );
-        };
-
-        ~StaticMechanicalSolver()
-        {};
-
-        StaticMechanicalSolver& operator=(const StaticMechanicalSolver& tmp)
-        {
-            _staticMechanicalSolverPtr = tmp._staticMechanicalSolverPtr;
-            return *this;
-        };
-
-        const StaticMechanicalSolverPtr& operator->() const
-        {
-            return _staticMechanicalSolverPtr;
-        };
-
-        StaticMechanicalSolverInstance& operator*(void) const
-        {
-            return *_staticMechanicalSolverPtr;
-        };
-
-        bool isEmpty() const
-        {
-            if ( _staticMechanicalSolverPtr.use_count() == 0 ) return true;
-            return false;
-        };
-};
+typedef boost::shared_ptr< StaticMechanicalSolverInstance > StaticMechanicalSolverPtr;
 
 #endif /* STATICMECHANICALSOLVER_H_ */

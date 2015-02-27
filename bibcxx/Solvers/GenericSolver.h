@@ -46,7 +46,7 @@ class GenericSolver
          * @brief Methode permettant d'executer le solveur
          * @return une sd_resultat Aster
          */
-        virtual ResultsContainer execute() = 0;
+        virtual ResultsContainerPtr execute() = 0;
 };
 
 #endif /* GENERICSOLVER_H_ */

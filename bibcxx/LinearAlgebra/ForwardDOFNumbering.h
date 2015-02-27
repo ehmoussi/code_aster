@@ -26,23 +26,47 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+/**
+ * @brief Forward decalaration de DOFNumberingInstance pour éviter la référence circulaire
+ */
 class DOFNumberingInstance;
 typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
 
+/**
+ * @class ForwardDOFNumberingPtr
+ * @brief Classe enveloppe de DOFNumberingPtr utile uniquement pour AssemblyMatrixInstance
+ * @author Nicolas Sellenet
+ */
 class ForwardDOFNumberingPtr
 {
     private:
+        /** @brief Pointeur intelligent vers une DOFNumberingInstance */
         DOFNumberingPtr _curDOFNum;
 
     public:
+        /**
+         * @brief Constructeur
+         */
         ForwardDOFNumberingPtr()
         {};
 
+        /**
+         * @brief Constructeur à partir d'un DOFNumberingPtr
+         * @param curTmp objet DOFNumberingPtr
+         */
         ForwardDOFNumberingPtr( const DOFNumberingPtr& curTmp ): _curDOFNum( curTmp )
         {};
 
+        /**
+         * @brief Methode permettant de savoir si les matrices elementaires sont vides
+         * @return true le DOFNumberingInstance ou le pointeur sont vides
+         */
         bool isEmpty() const;
 
+        /**
+         * @brief Methode permettant de récupérer le nom de la DOFNumberingInstance
+         * @return std::string contenant le nom
+         */
         std::string getName() const;
 };
 
