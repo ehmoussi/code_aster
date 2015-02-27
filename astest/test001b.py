@@ -3,7 +3,7 @@
 import code_aster
 
 acier = code_aster.Material()
-elas = code_aster.ElasticMaterialBehaviour()
+elas = code_aster.MaterialBehaviour.ElasMaterialBehaviour()
 elas.setDoubleValue( "E", 2.e11 )
 elas.setDoubleValue( "Nu", 0.3 )
 

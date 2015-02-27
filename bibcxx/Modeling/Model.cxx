@@ -92,8 +92,3 @@ bool ModelInstance::build() throw ( std::runtime_error )
 
     return true;
 };
-
-PyObject* ModelInstance::getCommandKeywords() throw ( std::runtime_error )
-{
-    return NULL;
-};
