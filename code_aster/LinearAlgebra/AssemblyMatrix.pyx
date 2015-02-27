@@ -21,7 +21,7 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
-from code_aster.LinearAlgebra.DOFNumbering cimport DOFNumbering
+from code_aster.LinearAlgebra.DOFNumbering cimport DOFNumbering, ForwardDOFNumberingPtr
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrix
 
 
@@ -66,7 +66,8 @@ cdef class AssemblyMatrixDouble:
 
     def setDOFNumbering( self, DOFNumbering curDOFNumber ):
         """Set the degree of freedom numbering"""
-        self.getInstance().setDOFNumbering( deref( curDOFNumber.getPtr() ) )
+        test = new ForwardDOFNumberingPtr( deref( curDOFNumber.getPtr() ) )
+        self.getInstance().setDOFNumbering( deref( test ) )
 
     def setElementaryMatrix( self, ElementaryMatrix currentElemMatrix ):
         """Set the base elementary matrix used to build the assembly matrix"""

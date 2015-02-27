@@ -40,11 +40,10 @@
 #include "RunManager/CommandSyntaxCython.h"
 
 /**
- * @brief But des 2 lignes suivantes : casser la reference circulaire
+ * @brief But de cette ligne : casser la reference circulaire
  * @todo Attention includes circulaires entre AssemblyMatrix, DOFNumbering et LinearSolver
  */
-class DOFNumberingInstance;
-typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
+#include "LinearAlgebra/ForwardDOFNumbering.h"
 
 /**
  * @class AssemblyMatrixInstance
@@ -70,7 +69,7 @@ class AssemblyMatrixInstance: public DataStructure
         /** @brief ElementaryMatrix sur lesquelles sera construit la matrice */
         ElementaryMatrixPtr           _elemMatrix;
         /** @brief Objet nume_ddl */
-        DOFNumberingPtr               _dofNum;
+        ForwardDOFNumberingPtr        _dofNum;
         /** @brief La matrice est elle vide ? */
         bool                          _isEmpty;
         /** @brief Liste de charges cinematiques */
@@ -125,7 +124,7 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Methode permettant de definir la numerotation
          * @param currentElemMatrix objet ElementaryMatrix
          */
-        void setDOFNumbering( const DOFNumberingPtr& currentNum )
+        void setDOFNumbering( const ForwardDOFNumberingPtr& currentNum )
         {
             _dofNum = currentNum;
         };
@@ -197,7 +196,7 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
     else
         throw std::runtime_error( "Not yet implemented" );
 
-    if ( ( ! _dofNum ) || _dofNum->isEmpty() )
+    if ( _dofNum.isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
 
     // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
@@ -206,7 +205,7 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
 
     SyntaxMapContainer dict;
     dict.container[ "MATR_ELEM" ] = _elemMatrix->getName();
-    dict.container[ "NUME_DDL" ] = _dofNum->getName();
+    dict.container[ "NUME_DDL" ] = _dofNum.getName();
 
     if ( _listOfLoads.size() != 0 )
     {
@@ -232,6 +231,9 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
 
     return true;
 };
+
+// class AssemblyMatrixInstance< double >;
+// class AssemblyMatrixInstance< DoubleComplex >;
 
 /** @typedef Definition d'une matrice assemblee de double */
 typedef AssemblyMatrixInstance< double > AssemblyMatrixDoubleInstance;
