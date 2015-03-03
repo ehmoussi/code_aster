@@ -2506,8 +2506,8 @@ class BetonDoubleDpMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             this->addFunctionProperty( "Ener_trac_rupt", ElementaryMaterialPropertyFunction( "ENER_TRAC_RUPT" , true ) );
             this->addDoubleProperty( "Coef_elas_comp", ElementaryMaterialPropertyDouble( "COEF_ELAS_COMP" , true ) );
             this->addDoubleProperty( "Long_cara", ElementaryMaterialPropertyDouble( "LONG_CARA" , false ) );
-            this->addFunctionProperty( "Ecro_comp_p_pic", ElementaryMaterialPropertyFunction( "ECRO_COMP_P_PIC" , 0 , false ) );
-            this->addFunctionProperty( "Ecro_trac_p_pic", ElementaryMaterialPropertyFunction( "ECRO_TRAC_P_PIC" , 0 , false ) );
+            this->addFunctionProperty( "Ecro_comp_p_pic", ElementaryMaterialPropertyFunction( "ECRO_COMP_P_PIC" , false ) );
+            this->addFunctionProperty( "Ecro_trac_p_pic", ElementaryMaterialPropertyFunction( "ECRO_TRAC_P_PIC" , false ) );
         };
 };
 
@@ -5061,7 +5061,7 @@ typedef boost::shared_ptr< NonLocalMaterialBehaviourInstance > NonLocalMaterialB
 class RuptFragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
-        /**
+        /** 
          * @brief Constructeur 
          */
         RuptFragMaterialBehaviourInstance()
@@ -5076,7 +5076,7 @@ class RuptFragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Pena_contact", ElementaryMaterialPropertyDouble( "PENA_CONTACT" , 0 , false ) );
             this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 0 , false ) );
             this->addDoubleProperty( "Rigi_glis", ElementaryMaterialPropertyDouble( "RIGI_GLIS" , 0 , false ) );
-            this->addFunctionProperty( "Cinematique", ElementaryMaterialPropertyFunction( "CINEMATIQUE" , 0 , false ) );
+            this->addFunctionProperty( "Cinematique", ElementaryMaterialPropertyFunction( "CINEMATIQUE" , false ) );
         };
 };
 
@@ -5107,7 +5107,7 @@ class RuptFragFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addDoubleProperty( "Pena_contact", ElementaryMaterialPropertyDouble( "PENA_CONTACT" , 0 , false ) );
             this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 0 , false ) );
             this->addDoubleProperty( "Rigi_glis", ElementaryMaterialPropertyDouble( "RIGI_GLIS" , 0 , false ) );
-            this->addFunctionProperty( "Cinematique", ElementaryMaterialPropertyFunction( "CINEMATIQUE" , 0 , false ) );
+            this->addFunctionProperty( "Cinematique", ElementaryMaterialPropertyFunction( "CINEMATIQUE" , false ) );
         };
 };
 
@@ -5137,7 +5137,7 @@ class CzmLabMixMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , false ) );
             this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , false ) );
             this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , false ) );
-            this->addFunctionProperty( "Cinematique", ElementaryMaterialPropertyFunction( "CINEMATIQUE" , 0 , false ) );
+            this->addFunctionProperty( "Cinematique", ElementaryMaterialPropertyFunction( "CINEMATIQUE" , false ) );
         };
 };
 
@@ -6505,7 +6505,7 @@ class CritRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             // Parametres matériau
             this->addDoubleProperty( "Sigm_c", ElementaryMaterialPropertyDouble( "SIGM_C" , true ) );
             this->addDoubleProperty( "Coef", ElementaryMaterialPropertyDouble( "COEF" , true ) );
-            this->addFunctionProperty( "Info", ElementaryMaterialPropertyFunction( "INFO" , 0 , false ) );
+            this->addFunctionProperty( "Info", ElementaryMaterialPropertyFunction( "INFO" , false ) );
         };
 };
 
