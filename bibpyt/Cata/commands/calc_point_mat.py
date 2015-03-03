@@ -1,4 +1,8 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
+
+from Cata.Descriptor import *
+
+
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY

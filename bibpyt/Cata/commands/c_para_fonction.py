@@ -1,3 +1,7 @@
+# coding=utf-8
+
+from Cata.Descriptor import *
+
 # person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2011  EDF R&D                  WWW.CODE-ASTER.ORG
