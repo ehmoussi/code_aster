@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from Cata.Descriptor import *
+from Cata.Commons import *
 
 # person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================

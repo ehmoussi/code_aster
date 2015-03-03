@@ -1,9 +1,10 @@
 # coding=utf-8
 
 from Cata.Descriptor import *
+from Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2011  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -19,15 +20,11 @@ from Cata.Descriptor import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.        
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
-def C_ARCHIVAGE() : return FACT(statut='d',max=1,
-    regles         = (EXCLUS('PAS_ARCH','LIST_INST','INST'),),
-    LIST_INST      = SIMP(statut='f',typ=(listr8_sdaster) ),
-    INST           = SIMP(statut='f',typ='R',validators=NoRepeat(),max='**' ),
-    PAS_ARCH       = SIMP(statut='f',typ='I' ),
-    CRITERE        = SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
-           b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
-              PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-           b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
-              PRECISION       =SIMP(statut='o',typ='R',),),
-    CHAM_EXCLU     = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',),
-);
+def C_RECH_LINEAIRE() : return FACT(statut='f',
+           METHODE         =SIMP(statut='f',typ='TXM',defaut="CORDE",into=("CORDE","MIXTE","PILOTAGE") ),
+           RESI_LINE_RELA  =SIMP(statut='f',typ='R',defaut= 1.0E-1 ),
+           ITER_LINE_MAXI  =SIMP(statut='f',typ='I',defaut= 3,val_max=999),
+           RHO_MIN         =SIMP(statut='f',typ='R',defaut=1.0E-2),
+           RHO_MAX         =SIMP(statut='f',typ='R',defaut=1.0E+1),
+           RHO_EXCL        =SIMP(statut='f',typ='R',defaut=0.9E-2,val_min=0.),
+         );

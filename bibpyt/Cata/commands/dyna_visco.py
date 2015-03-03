@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from Cata.Descriptor import *
+from Cata.Commons import *
 
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG

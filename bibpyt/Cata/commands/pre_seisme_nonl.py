@@ -1,6 +1,11 @@
 # coding=utf-8
 
 from Cata.Descriptor import *
+from Cata.Commons import *
+from Cata.commands.affe_materiau import AFFE_MATERIAU
+from Cata.commands.affe_modele import AFFE_MODELE
+from Cata.commands.affe_cara_elem import AFFE_CARA_ELEM
+from Cata.commands.affe_char_meca import AFFE_CHAR_MECA
 
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -46,12 +51,12 @@ def pre_seisme_nonl_sdprod(self, RESULTAT, PARAMETRE, **args):
 
 def affe_char_meca_regles(**args):
        # ONLY if PRE_CALC_MISS is not None
-       AFFE_CHAR_MECA.entites['MODELE'].statut = 'f'   
+       AFFE_CHAR_MECA.getEntites()['MODELE'].statut = 'f'
        return AFFE_CHAR_MECA.regles
 
 def affe_cara_elem_regles(**args):
        # ONLY if PRE_CALC_MISS is not None
-       AFFE_CARA_ELEM.entites['MODELE'].statut = 'f'
+       AFFE_CARA_ELEM.getEntites()['MODELE'].statut = 'f'
        return AFFE_CARA_ELEM.regles
 
 PRE_SEISME_NONL = MACRO(nom="PRE_SEISME_NONL",
@@ -62,20 +67,20 @@ PRE_SEISME_NONL = MACRO(nom="PRE_SEISME_NONL",
                  UIinfo={"groupes":("Fonctions",)},
                  AFFE_MODELE = FACT(statut='d',
                      regles=AFFE_MODELE.regles,
-                     **AFFE_MODELE.entites
+                     **AFFE_MODELE.getEntites()
                                     ),
                  AFFE_MATERIAU = FACT(statut='d',
                      regles=AFFE_MATERIAU.regles,
-                     **AFFE_MATERIAU.entites
+                     **AFFE_MATERIAU.getEntites()
                                     ),
 
                  AFFE_CARA_ELEM = FACT(statut='d',
                      regles=affe_cara_elem_regles(),
-                     **AFFE_CARA_ELEM.entites
+                     **AFFE_CARA_ELEM.getEntites()
                                     ),
                  AFFE_CHAR_MECA = FACT(statut='d',
                      regles=affe_char_meca_regles(),
-                     **AFFE_CHAR_MECA.entites
+                     **AFFE_CHAR_MECA.getEntites()
                                     ),
                  PARAMETRE = FACT( statut = 'o', min = 1, max = 1,
                                    regles = UN_PARMI('PRE_CALC_MISS','POST_CALC_MISS'),
