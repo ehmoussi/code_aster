@@ -1,9 +1,10 @@
 # coding=utf-8
 
 from Cata.Descriptor import *
+from Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -19,10 +20,15 @@ from Cata.Descriptor import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.        
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
-
-def C_AFFICHAGE() : return FACT(statut='f',max=1,
-        INFO_RESIDU = SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON")),
-        INFO_TEMPS  = SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON")),  
-        UNITE       = SIMP(statut='f',typ='I',val_min=1),
-        PAS         = SIMP(statut='f',typ='I',val_min=1),
-       );
+def C_ARCHIVAGE() : return FACT(statut='d',max=1,
+    regles         = (EXCLUS('PAS_ARCH','LIST_INST','INST'),),
+    LIST_INST      = SIMP(statut='f',typ=(listr8_sdaster) ),
+    INST           = SIMP(statut='f',typ='R',validators=NoRepeat(),max='**' ),
+    PAS_ARCH       = SIMP(statut='f',typ='I' ),
+    CRITERE        = SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
+           b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+              PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
+           b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+              PRECISION       =SIMP(statut='o',typ='R',),),
+    CHAM_EXCLU     = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',),
+);

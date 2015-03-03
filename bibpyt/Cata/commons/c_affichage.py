@@ -1,9 +1,10 @@
 # coding=utf-8
 
 from Cata.Descriptor import *
+from Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -19,29 +20,10 @@ from Cata.Descriptor import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.        
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
-def C_INCREMENT(TYPE_CMD) :   #COMMUN#
-#
-    assert TYPE_CMD in ('THERMIQUE','MECANIQUE',)
-    kwargs = {}
-    statut_liste_inst = ' '
 
-# La liste d'instants est facultative en thermique et obligatoire en mecanique
-
-    if TYPE_CMD in ('THERMIQUE'):
-      statut_liste_inst = 'f'
-    elif TYPE_CMD in ('MECANIQUE'):
-      statut_liste_inst = 'o'
-
-    kwargs['LIST_INST']         =SIMP(statut=statut_liste_inst,typ=(listr8_sdaster,list_inst))
-    kwargs['NUME_INST_INIT']    =SIMP(statut='f',typ='I')
-    kwargs['INST_INIT']         =SIMP(statut='f',typ='R')
-    kwargs['NUME_INST_FIN']     =SIMP(statut='f',typ='I')
-    kwargs['INST_FIN']          =SIMP(statut='f',typ='R')
-    kwargs['PRECISION']         =SIMP(statut='f',typ='R',defaut=1.0E-6 )
-
-    mcfact = FACT(statut=statut_liste_inst,max='**',            
-                  regles=(EXCLUS('NUME_INST_INIT','INST_INIT'),
-                            EXCLUS('NUME_INST_FIN','INST_FIN'),),
-                  **kwargs)
-
-    return mcfact
+def C_AFFICHAGE() : return FACT(statut='f',max=1,
+        INFO_RESIDU = SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON")),
+        INFO_TEMPS  = SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON")),  
+        UNITE       = SIMP(statut='f',typ='I',val_min=1),
+        PAS         = SIMP(statut='f',typ='I',val_min=1),
+       );
