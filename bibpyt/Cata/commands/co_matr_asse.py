@@ -1,3 +1,7 @@
+# coding=utf-8
+
+from Cata.Descriptor import *
+
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2014  EDF R&D                  WWW.CODE-ASTER.ORG
 # COPYRIGHT (C) 2014 STEFAN H. REITERER stefan.harald.reiterer@gmail.com
