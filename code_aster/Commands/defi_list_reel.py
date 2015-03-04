@@ -21,21 +21,18 @@
 
 import numpy as np
 
-from code_aster.Commands import rules
+from code_aster.Cata import Commands
 
 
 def DEFI_LIST_REEL( **kwargs ):
     """Définir une liste de réels strictement croissante"""
-    rules.ExactlyOne( kwargs, ['VALE', 'DEBUT'] )
-    rules.Together( kwargs, ['DEBUT', 'INTERVALLE'] )
-    rules.AtMostOne( kwargs, ['VALE', 'INTERVALLE'] )
+    Commands.DEFI_LIST_REEL.checkSyntax( kwargs )
 
     vale = kwargs.get('VALE')
     if vale is not None:
         values = np.array(vale)
     else:
         factkw = kwargs['INTERVALLE']
-        rules.ExactlyOne( factkw, ['NOMBRE', 'PAS'] )
         start = kwargs['DEBUT']
         stop = factkw['JUSQU_A']
         step = factkw.get('PAS')
