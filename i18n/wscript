@@ -166,8 +166,8 @@ class compile_po(CaptureTask):
 def run_gettext_compile(self):
     """compile .po files into .mo and install them.
 
-	:param install_path: installation directory
-	:type install_path: string
+    :param install_path: installation directory
+    :type install_path: string
     """
     if not self.env['do_i18n_gettext']:
         return
@@ -185,10 +185,10 @@ def run_gettext_compile(self):
 def make_pot(self):
     """Create task to build the pot file
 
-    :param deps: list of the python files to run xgettext on
-    :type deps: nodes
-    :param target: name of the ``.pot`` file
-    :type target: string
+        :param deps: list of the python files to run xgettext on
+        :type deps: nodes
+        :param target: name of the ``.pot`` file
+        :type target: string
     """
     target = self.target
     deps = getattr(self, 'deps', [])
@@ -203,8 +203,8 @@ def make_pot(self):
 def update_po(self):
     """Create task to update the po files
 
-    :param pot: updated .pot file
-    :type pot: string
+        :param pot: updated .pot file
+        :type pot: string
     """
     pot = self.pot
     podir = self.path.parent.get_bld().make_node(self.podir)
@@ -262,8 +262,8 @@ def update_qtlinguist(self):
 def run_qtlinguist_compile(self):
     """compile .ts files into .qm and install them.
 
-	:param install_path: installation directory
-	:type install_path: string
+        :param install_path: installation directory
+        :type install_path: string
     """
     if not self.env['do_i18n_qtlinguist']:
         return

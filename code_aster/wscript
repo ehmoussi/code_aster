@@ -17,9 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import os.path as osp
 
-from waflib import TaskGen, Configure, Logs, Utils, Errors, Context
+from waflib import TaskGen, Task, Configure, Logs, Utils, Errors, Context
 
 
 def options(self):
@@ -40,10 +41,13 @@ def build(self):
     self(
         features = 'py',
             name = 'code_aster_py',
-          source = get_srcs('**/*.py') + get_srcs('Commands/**/*.py'),
+          source = get_srcs('**/*.py',
+                            excl=['Cata/Commons/*.py', 'Cata/Commands/*.py']),
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
     )
+
+    build_eficas_catalog(self)
 
     build_libaster_dependencies(self)
     self.add_group()
@@ -94,3 +98,56 @@ def build_wrappers_on_libaster(self):
                  use = ['asterlib', 'CODE_ASTER_CORE'],
         install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
         )
+
+###############################################################################
+def build_eficas_catalog(self):
+    get_srcs = self.path.get_src().ant_glob
+    env = self.all_envs[self.variant]
+    # catalog for eficas
+    self(
+        features = 'catapy',
+            name = 'cata_py',
+          source = get_srcs('Cata/Commons/accas.capy') \
+                 + get_srcs('Cata/Commons/*.py') \
+                 + get_srcs('Cata/Commands/*.py'),
+          target = 'cata.py',
+    install_from = '.',
+    install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
+    )
+
+# manage extension
+@TaskGen.extension('.capy')
+def capy(self, node):
+    pass
+
+@TaskGen.feature('catapy')
+def make_cata(self):
+    """Create the cata.py"""
+    target = self.bld.bldnode.make_node(self.target)
+    tsk = self.create_task('make_capy', src=self.source, tgt=target)
+    # self.process_py(target): not use because would use `install_from` argument
+    def inst_py(ctx):
+        install_pyfile(self, target, 'Cata')
+    self.bld.add_post_fun(inst_py)
+
+def install_pyfile(self, node, subdir):
+    """See waflib/Tools/python.py: Just ignore install_from argument"""
+    from_node = node.parent
+    dest = osp.join(self.install_path, subdir, node.path_from(from_node))
+    tsk = self.bld.install_as(dest, node, postpone=False)
+
+class make_capy(Task.Task):
+    color   = 'PINK'
+    ext_out = ['.py']
+
+    def run(self):
+        """Merge capy files to cata.py and install it."""
+        # doing merge in python as it is multi-plateform
+        target = self.outputs[0]
+        with open(target.abspath(), 'w') as fid:
+            for node in self.inputs:
+                with open(node.abspath()) as subfid:
+                    fid.write(subfid.read())
+                    fid.write(os.linesep)
+                    fid.flush()
+        target.sig = Utils.h_file(target.abspath())

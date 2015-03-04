@@ -72,6 +72,10 @@ def customize_task_output():
             return 'task in %r was not executed for some reason: %r' % (name, self)
         elif self.hasrun == CRASHED:
             bldlog = osp.join(self.generator.bld.cwd, '%s.log' % name)
+            try:
+                os.makedirs(osp.dirname(bldlog))
+            except:
+                pass
             slog = ''
             try:
                 open(bldlog, 'wb').write('task %r:\n%r\n\nlast command:\n%r\n' % (name, self, msg))
