@@ -19,6 +19,20 @@
 
 # TODO: replace by the Cython objects
 
+from code_aster import (
+    Mesh, Model, Material, MaterialOnMesh,
+    Function,
+)
+
+# compatibility layer to avoid changing all the catalogs
+cham_mater = MaterialOnMesh
+fonction_sdaster = Function
+maillage_sdaster = Mesh
+mater_sdaster = Material
+modele_sdaster = Model
+
+
+# for the datastructures that are not yet defined
 class AsterDataStructure(object):
     pass
 
@@ -30,6 +44,7 @@ grno = MeshEntity
 ma = MeshEntity
 no = MeshEntity
 
+
 acou_harmo = AsterDataStructure
 cabl_precont = AsterDataStructure
 cara_elem = AsterDataStructure
@@ -37,7 +52,6 @@ carte_sdaster = AsterDataStructure
 cham_elem = AsterDataStructure
 cham_gd_sdaster = AsterDataStructure
 cham_no_sdaster = AsterDataStructure
-cham_mater = AsterDataStructure
 char_acou = AsterDataStructure
 char_cine_acou = AsterDataStructure
 char_cine_meca = AsterDataStructure
@@ -58,7 +72,6 @@ evol_sdaster = AsterDataStructure
 evol_ther = AsterDataStructure
 evol_varc = AsterDataStructure
 fonction_c = AsterDataStructure
-fonction_sdaster = AsterDataStructure
 fond_fiss = AsterDataStructure
 formule = AsterDataStructure
 formule_c = AsterDataStructure
@@ -75,8 +88,6 @@ listis_sdaster = AsterDataStructure
 listr8_sdaster = AsterDataStructure
 macr_elem_dyna = AsterDataStructure
 macr_elem_stat = AsterDataStructure
-maillage_sdaster = AsterDataStructure
-mater_sdaster = AsterDataStructure
 matr_asse_depl_c = AsterDataStructure
 matr_asse_depl_r = AsterDataStructure
 matr_asse_gene_c = AsterDataStructure
@@ -99,7 +110,6 @@ mode_gene = AsterDataStructure
 mode_meca = AsterDataStructure
 mode_meca_c = AsterDataStructure
 modele_gene = AsterDataStructure
-modele_sdaster = AsterDataStructure
 mult_elas = AsterDataStructure
 not_checked = AsterDataStructure
 nume_ddl_gene = AsterDataStructure

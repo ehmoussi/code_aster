@@ -1,6 +1,7 @@
 # coding=utf-8
 
-from Cata.Descriptor import *
+from Cata.Syntax import *
+from Cata.DataStructure import *
 from Cata.Commons import *
 
 

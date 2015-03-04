@@ -35,8 +35,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path as osp
-from glob import glob
 
 from Cata.commons.c_affichage import C_AFFICHAGE
 from Cata.commons.c_archivage import C_ARCHIVAGE
