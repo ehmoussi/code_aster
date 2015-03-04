@@ -45,24 +45,32 @@ def _(args):
 __builtin__._ = _
 
 
-def addValueToConditionString(string, key, defaultValue):
-    if type(defaultValue) == str:
-        string = string + "%s = \"%s\"" % (key, defaultValue) + "; "
-    elif type(defaultValue) == int:
-        string = string + "%s = %d" % (key, defaultValue) + "; "
-    elif type(defaultValue) == tuple:
-        string = string + "%s = %s" % (key, str(defaultValue)) + "; "
-    else:
-        raise TypeError("Unknown type " + str(defaultValue) + " " + key)
-    return string
+def _debug( *args ):
+    """Debug print"""
+    # return
+    from pprint import pprint
+    print "DEBUG:",
+    pprint( args )
 
-def checkMandatory(dictKeywords, dictSyntax):
+def checkMandatory(dictDefinition, dictSyntax):
     """Check that mandatory keywords are present in the given syntax"""
-    for key, value in dictKeywords.iteritems():
+    for key, value in dictDefinition.iteritems():
         if isinstance(value, PartOfSyntax):
             if value.isMandatory() and not dictSyntax.has_key(key):
+                _debug( "keyword =", value )
+                _debug( "syntax =", dictSyntax )
                 raise KeyError("Keyword {} is mandatory".format(key))
 
+def buildConditionContext(dictDefinition, dictSyntax):
+    """Build the context to evaluate bloc conditions.
+    The values given by the user (dictSyntax) preempt on the definition ones"""
+    ctxt = {}
+    for key, value in dictDefinition.iteritems():
+        if isinstance(value, SimpleKeyword):
+            # use the default or None
+            ctxt[key] = value.defaultValue()
+    ctxt.update(dictSyntax)
+    return ctxt
 
 
 class PartOfSyntax(object):
@@ -72,19 +80,56 @@ class PartOfSyntax(object):
     """
 
     def __init__(self, curDict):
+        """Initialization"""
         if type(curDict) != dict:
             raise TypeError("'dict' is expected")
         self.dictionary = curDict
         self.regles = curDict.get("regles")
 
     def __repr__(self):
+        """Simple representation"""
         return "%s( %r )" % (self.__class__, self.dictionary)
 
     def isMandatory(self):
-        """
-        Le bout de syntax est-il obligatoire ?
-        """
+        """Tell if this keyword is mandatory"""
         return self.dictionary.get("statut", "n") == "o"
+
+    def getEntites(self):
+        """Retourne les "entités" composant l'objet (SIMP, FACT, BLOC)
+        """
+        entites = self.dictionary.copy()
+        for key, value in entites.items():
+            if type(value) not in (SimpleKeyword, Bloc, FactorKeyword):
+                del entites[key]
+        return entites
+
+    def inspectBlocs(self, dictSyntax):
+        """
+        Fonction membre inspectBlocs
+        Parcourt les blocs présents et produit un dictionnaire avec les mot-clés
+        à ajouter en fonction des conditions
+        """
+        ctxt = buildConditionContext(self.dictionary, dictSyntax)
+        # XXX il y a sans doute un risque qu'on mette dans dictTmp des mots-clés
+        #     qui sont à un niveau trop profond.
+        dictTmp = {}
+        # On évalue ensuite les conditions une après l'autre pour ajouter les
+        # mot-clés
+        for key, value in self.dictionary.iteritems():
+            if isinstance(value, Bloc):
+                dictTmp.update( value.inspectBlocs(dictSyntax) )
+
+                findCondition = False
+                currentCondition = value.getCondition()
+                try:
+                    findCondition = eval(currentCondition, ctxt)
+                except:
+                    pass
+                if findCondition:
+                    for key2, value2 in value.dictionary.iteritems():
+                        if isinstance(value2, SimpleKeyword):
+                            dictTmp[key2] = value2
+        return dictTmp
 
 
 class FactorKeyword(PartOfSyntax):
@@ -107,7 +152,7 @@ class FactorKeyword(PartOfSyntax):
         """
         if type(tupleSyntax) == dict:
             tupleSyntax = [tupleSyntax]
-        elif type(tupleSyntax) == tuple:
+        elif type(tupleSyntax) in (list, tuple):
             pass
         else:
             raise TypeError("Type 'dict' or 'tuple' is expected")
@@ -146,47 +191,6 @@ class FactorKeyword(PartOfSyntax):
                         kw = dictTmp[key]
                         kw.check(value)
 
-    def inspectBlocs(self, dictSyntax):
-        """
-        Fonction membre inspectBlocs
-        Parcourt les blocs présents dans le mot-clé facteur et produit
-        un dictionnaire avec les mot-clés à ajouter en fonction des conditions
-        """
-        # Boucle pour rechercher les blocs
-        txt = ""
-        # Construction des valeurs par défauts (catalogue) et données par l'utilisateur
-        # A ce niveau comme on fait passer les valeurs de l'utilisateur après,
-        # il peut y avoir surcharge
-        for key, value in self.dictionary.iteritems():
-            if isinstance(value, SimpleKeyword):
-                if value.hasDefaultValue():
-                    defaultValue = value.defaultValue()
-                    txt = addValueToConditionString(txt, key, defaultValue)
-        for key, value in dictSyntax.iteritems():
-            txt = addValueToConditionString(txt, key, str(value))
-        exec(txt)
-
-        dictTmp = {}
-        # On évalue ensuite les conditions une après l'autre pour ajouter les
-        # mot-clés
-        for key, value in self.dictionary.iteritems():
-            if isinstance(value, Bloc):
-                dictTmp2 = value.inspectBlocs(dictSyntax)
-                for key3, value3 in dictTmp2.iteritems():
-                    dictTmp[key3] = value3
-
-                findCondition = False
-                currentCondition = value.getCondition()
-                try:
-                    findCondition = eval(currentCondition)
-                except:
-                    pass
-                if findCondition:
-                    for key2, value2 in value.dictionary.iteritems():
-                        if isinstance(value2, SimpleKeyword):
-                            dictTmp[key2] = value2
-        return dictTmp
-
 
 class SimpleKeyword(PartOfSyntax):
 
@@ -217,25 +221,18 @@ class SimpleKeyword(PartOfSyntax):
         else:
             raise TypeError( "Unsupported type: {!r}".format(currentType) )
 
-        # Vérification du into
-        if self.dictionary.has_key("into"):
-            if skwValue not in self.dictionary["into"]:
-                raise ValueError( "Value must be in {!r}".format(
-                                  self.dictionary["into"]) )
-
         # Vérification des valeurs max et min
         valMin = self.dictionary.get('val_min')
         valMax = self.dictionary.get('val_max')
 
-        if type(skwValue) == tuple:
+        if type(skwValue) in (list, tuple):
             # Vérification du nombre de valeurs
             nbMin = self.dictionary.get('min')
             nbMax = self.dictionary.get('max')
             if nbMax == "**":
                 nbMax = None
-
             if nbMax != None and len(skwValue) > nbMax:
-                print self.dictionary
+                _debug( self )
                 raise ValueError('At most {} values are expected'.format(nbMax))
             if nbMin != None and len(skwValue) < nbMin:
                 raise ValueError('Bad number of values')
@@ -244,11 +241,18 @@ class SimpleKeyword(PartOfSyntax):
 
         # Vérification du type et des bornes des valeurs
         for i in skwValue:
+            # into
+            if self.dictionary.has_key("into"):
+                if i not in self.dictionary["into"]:
+                    raise ValueError( "Value must be in {!r}".format(
+                                      self.dictionary["into"]) )
+            # type
             if type(i) not in validType \
                and not isinstance(i, DS.DataStructure) \
                and type(i) not in [DS.Mesh, DS.Model, DS.Material]:
                 self._context(i)
                 raise TypeError('Unexpected type ' + type(i))
+            # val_min/val_max
             if valMax != None and i > valMax:
                 raise ValueError('Value must be smaller than {}'.format(valMax))
             if valMin != None and i < valMin:
@@ -273,83 +277,20 @@ class Bloc(PartOfSyntax):
     Objet Bloc équivalent à BLOC dans les capy
     """
 
-    def __init__(self, curDict):
-        PartOfSyntax.__init__(self, curDict)
-
-    def __repr__(self):
-        return "%s( %r )" % (self.__class__, self.dictionary)
-
     def getCondition(self):
         """
         Récupération de la condition d'apparition d'un bloc
         """
         cond = self.dictionary.get('condition')
-        assert cond is not None, "Impossible ?!?"
+        assert cond is not None, "A bloc must have a condition!"
         return cond
 
-    def inspectBlocs(self, dictSyntax):
-        """
-        Fonction membre inspectBlocs
-        Parcourt les blocs présents dans le mot-clé facteur et produit
-        un dictionnaire avec les mot-clés à ajouter en fonction des conditions
-        """
-        # Boucle pour rechercher les blocs
-        txt = ""
-        # Construction des valeurs par défauts (catalogue) et données par l'utilisateur
-        # A ce niveau comme on fait passer les valeurs de l'utilisateur après,
-        # il peut y avoir surcharge
-        for key, value in self.dictionary.iteritems():
-            if isinstance(value, SimpleKeyword):
-                if value.hasDefaultValue():
-                    defaultValue = value.defaultValue()
-                    txt = addValueToConditionString(txt, key, defaultValue)
-        for key, value in dictSyntax.iteritems():
-            txt = addValueToConditionString(txt, key, str(value))
-        exec(txt)
 
-        dictTmp = {}
-        # On évalue ensuite les conditions une après l'autre pour ajouter les
-        # mot-clés
-        for key, value in self.dictionary.iteritems():
-            if isinstance(value, Bloc):
-                findCondition = False
-                currentCondition = value.getCondition()
-                try:
-                    findCondition = eval(currentCondition)
-                except:
-                    pass
-                if findCondition:
-                    for key2, value2 in value.dictionary.iteritems():
-                        if isinstance(value2, SimpleKeyword):
-                            dictTmp[key2] = value2
-        return dictTmp
-
-
-class Command(object):
+class Command(PartOfSyntax):
 
     """
     Object Command qui représente toute la syntaxe d'une commande
     """
-
-    def __init__(self, curDict):
-        if type(curDict) != dict:
-            raise TypeError("'dict' is expected")
-        self.dictionary = curDict
-        self.regles = None
-        if curDict.has_key("regles"):
-            self.regles = curDict["regles"]
-
-    def __repr__(self):
-        return "%s( %r )" % (self.__class__, self.dictionary)
-
-    def getEntites(self):
-        """Retourne les "entités" de la commande (SIMP, FACT, BLOC)
-        """
-        entites = self.dictionary.copy()
-        for key, value in entites.items():
-            if type(value) not in (SimpleKeyword, Bloc, FactorKeyword):
-                del entites[key]
-        return entites
 
     def checkSyntax(self, dictSyntax):
         """
@@ -368,15 +309,7 @@ class Command(object):
 
         # On commence par rechercher les blocs à ajouter
         # Construction des conditions
-        txt = ""
-        for key, value in self.dictionary.iteritems():
-            if isinstance(value, SimpleKeyword):
-                if value.hasDefaultValue():
-                    defaultValue = value.defaultValue()
-                    txt = addValueToConditionString(txt, key, defaultValue)
-        for key, value in dictSyntax.iteritems():
-            txt = addValueToConditionString(txt, key, str(value))
-        exec(txt)
+        ctxt = buildConditionContext(self.dictionary, dictSyntax)
 
         dictTmp = {}
         # Evaluation des conditions et ajout des mot-clés nécessaires
@@ -385,7 +318,7 @@ class Command(object):
                 findCondition = False
                 currentCondition = value.getCondition()
                 try:
-                    findCondition = eval(currentCondition)
+                    findCondition = eval(currentCondition, ctxt)
                 except:
                     pass
                 if findCondition:
@@ -403,7 +336,6 @@ class Command(object):
         # On vérifie ensuite que les mots-clés donnés par l'utilisateur
         # sont autorisés et ont la bonne syntaxe
         for key, value in dictSyntax.iteritems():
-            # print key, value
             if not self.dictionary.has_key(key):
                 raise KeyError("Keyword " + key + " unauthorized")
             else:

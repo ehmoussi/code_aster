@@ -22,7 +22,7 @@
 import numpy as np
 
 from code_aster import Function
-from code_aster.Commands import rules
+from code_aster.Cata import Commands
 
 
 funcParameterNames = (
@@ -33,20 +33,19 @@ funcParameterNames = (
     "NORM","EPAIS","NEUT1","NEUT2","XF","YF","ZF"
 )
 
-def DEFI_FONCTION( NOM_PARA, **kwargs ):
+def DEFI_FONCTION( **kwargs ):
     """Définit une fonction réelle ou complexe d'une variable réelle"""
+    Commands.DEFI_FONCTION.checkSyntax( kwargs )
+
+    NOM_PARA = kwargs['NOM_PARA']
     assert NOM_PARA in funcParameterNames
-    rules.ExactlyOne( kwargs, ['VALE', 'VALE_C', 'VALE_PARA', 'NOEUD_PARA', 'ABSCISSE'] )
-    rules.Together( kwargs, ['ABSCISSE', 'ORDONNEE'] )
-    rules.Together( kwargs, ['VALE_PARA', 'VALE_FONC'] )
-    rules.Together( kwargs, ['NOEUD_PARA', 'MAILLAGE', 'VALE_Y'] )
     # default values
     NOM_RESU = kwargs.get("NOM_RESU", "TOUTRESU")
     ABSCISSE = kwargs.get("ABSCISSE")
     VALE_PARA = kwargs.get("VALE_PARA")
     VALE = kwargs.get("VALE")
     VALE_C = kwargs.get("VALE_C")
-    # rules switch
+    # switch
     if ABSCISSE is not None:
         absc = np.array(ABSCISSE)
         ordo = np.array(kwargs["ORDONNEE"])
