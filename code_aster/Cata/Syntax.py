@@ -56,6 +56,14 @@ def addValueToConditionString(string, key, defaultValue):
         raise TypeError("Unknown type " + str(defaultValue) + " " + key)
     return string
 
+def checkMandatory(dictKeywords, dictSyntax):
+    """Check that mandatory keywords are present in the given syntax"""
+    for key, value in dictKeywords.iteritems():
+        if isinstance(value, PartOfSyntax):
+            if value.isMandatory() and not dictSyntax.has_key(key):
+                raise KeyError("Keyword {} is mandatory".format(key))
+
+
 
 class PartOfSyntax(object):
 
@@ -85,6 +93,7 @@ class FactorKeyword(PartOfSyntax):
     Objet mot-clé facteur equivalent de FACT dans les capy
     """
 
+
     def check(self, tupleSyntax):
         """
         Fonction membre check
@@ -104,12 +113,10 @@ class FactorKeyword(PartOfSyntax):
             raise TypeError("Type 'dict' or 'tuple' is expected")
 
         # Vérification du nombre de mots-clés facteurs
-        if self.dictionary.has_key("min"):
-            if len(tupleSyntax) < self.dictionary["min"]:
-                raise ValueError("Too few factor keyword")
-        if self.dictionary.has_key("max"):
-            if len(tupleSyntax) > self.dictionary["max"]:
-                raise ValueError("Too much factor keyword")
+        if len(tupleSyntax) < self.dictionary.get('min', 0):
+            raise ValueError("Too few factor keyword")
+        if len(tupleSyntax) > self.dictionary.get('max', 1000000000):
+            raise ValueError("Too much factor keyword")
 
         # Boucle sur toutes les occurences du mot-clé facteur
         for dictSyntax in tupleSyntax:
@@ -120,19 +127,10 @@ class FactorKeyword(PartOfSyntax):
 
             # On vérifie que les mots-clés simples qui doivent être présents le
             # sont
-            for key, value in self.dictionary.iteritems():
-                # print key, value
-                if isinstance(value, PartOfSyntax):
-                    if value.isMandatory() and not dictSyntax.has_key(key):
-                        raise KeyError("Keyword " + key + " is mandatory")
-
+            checkMandatory(self.dictionary, dictSyntax)
             # Pour les blocs aussi
             dictTmp = self.inspectBlocs(dictSyntax)
-            for key, value in dictTmp.iteritems():
-                # print key, value
-                if isinstance(value, PartOfSyntax):
-                    if value.isMandatory() and not dictSyntax.has_key(key):
-                        raise KeyError("Keyword " + key + " is mandatory")
+            checkMandatory(dictTmp, dictSyntax)
 
             # On boucle sur la syntax de l'utilisateur vérifier les mots-clés
             # simples
@@ -226,12 +224,8 @@ class SimpleKeyword(PartOfSyntax):
                                   self.dictionary["into"]) )
 
         # Vérification des valeurs max et min
-        valMin = None
-        if self.dictionary.has_key("val_min"):
-            valMin = self.dictionary["val_min"]
-        valMax = None
-        if self.dictionary.has_key("val_max"):
-            valMax = self.dictionary["val_max"]
+        valMin = self.dictionary.get('val_min')
+        valMax = self.dictionary.get('val_max')
 
         if type(skwValue) == tuple:
             # Vérification du nombre de valeurs
@@ -245,26 +239,25 @@ class SimpleKeyword(PartOfSyntax):
                 raise ValueError('At most {} values are expected'.format(nbMax))
             if nbMin != None and len(skwValue) < nbMin:
                 raise ValueError('Bad number of values')
-
-            # Vérification du type des valeurs
-            for i in skwValue:
-                if type(i) not in validType:
-                    print self.dictionary
-                    print validType, type(i)
-                    raise TypeError('Bad value type')
-                if valMax != None and i > valMax:
-                    raise ValueError('Value too big')
-                if valMin != None and i < valMin:
-                    raise ValueError('Value too low')
         else:
-            # Vérification du type de la valeur
-            if type(skwValue) not in [DS.DataStructure] + validType:
-                raise TypeError('Bad value type ' + str(skwValue))
-            # Vérification des valeurs max et min
-            if valMax != None and skwValue > valMax:
-                raise ValueError('Value too big')
-            if valMin != None and skwValue < valMin:
-                raise ValueError('Value too low')
+            skwValue = [skwValue]
+
+        # Vérification du type et des bornes des valeurs
+        for i in skwValue:
+            if type(i) not in validType \
+               and not isinstance(i, DS.DataStructure) \
+               and type(i) not in [DS.Mesh, DS.Model, DS.Material]:
+                self._context(i)
+                raise TypeError('Unexpected type ' + type(i))
+            if valMax != None and i > valMax:
+                raise ValueError('Value must be smaller than {}'.format(valMax))
+            if valMin != None and i < valMin:
+                raise ValueError('Value must be bigger than {}'.format(valMin))
+
+    def _context(self, value):
+        """Print contextual informations"""
+        print "CONTEXT: value={!r}, type={}".format(value, type(value))
+        print "CONTEXT: definition:", self
 
     def hasDefaultValue(self):
         undef = object()
@@ -402,18 +395,10 @@ class Command(object):
 
         # Vérification que tous les mots-clés obligatoires sont présents
         # à la fois dans les blocs
-        for key, value in dictTmp.iteritems():
-            # print key, value
-            if isinstance(value, PartOfSyntax):
-                if value.isMandatory() and not dictSyntax.has_key(key):
-                    raise KeyError("Keyword " + key + " is mandatory")
+        checkMandatory(dictTmp, dictSyntax)
 
         # Mais aussi dans le dictionnaire standard
-        for key, value in self.dictionary.iteritems():
-            # print key, value
-            if isinstance(value, PartOfSyntax):
-                if value.isMandatory() and not dictSyntax.has_key(key):
-                    raise KeyError("Keyword " + key + " is mandatory")
+        checkMandatory(self.dictionary, dictSyntax)
 
         # On vérifie ensuite que les mots-clés donnés par l'utilisateur
         # sont autorisés et ont la bonne syntaxe
