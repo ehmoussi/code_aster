@@ -65,7 +65,7 @@ class PartOfSyntax(object):
 
     def __init__(self, curDict):
         if type(curDict) != dict:
-            raise TypeError("Type 'dict' is expected")
+            raise TypeError("'dict' is expected")
         self.dictionary = curDict
         self.regles = curDict.get("regles")
 
@@ -207,15 +207,15 @@ class SimpleKeyword(PartOfSyntax):
         """
         # Vérification du type
         currentType = self.dictionary["typ"]
-        typePython = None
+        validType = None
         if currentType == 'TXM':
-            typePython = str
+            validType = [str, unicode]
         elif currentType == 'I':
-            typePython = int
+            validType = [int, ]
         elif currentType == 'R':
-            typePython = float
+            validType = [float, int]
         elif currentType in DS_content:
-            typePython = str
+            validType = [str, ]    # XXX str ???
         else:
             raise TypeError( "Unsupported type: {!r}".format(currentType) )
 
@@ -235,35 +235,30 @@ class SimpleKeyword(PartOfSyntax):
 
         if type(skwValue) == tuple:
             # Vérification du nombre de valeurs
-            nbMin = None
-            if self.dictionary.has_key("min"):
-                nbMin = self.dictionary["min"]
-            nbMax = None
-            if self.dictionary.has_key("max"):
-                nbMax = self.dictionary["max"]
-                if nbMax == "**":
-                    nbMax = -1
+            nbMin = self.dictionary.get('min')
+            nbMax = self.dictionary.get('max')
+            if nbMax == "**":
+                nbMax = None
 
-            if nbMax != None:
-                if len(skwValue) > nbMax:
-                    raise ValueError('Bad number of values')
-            if nbMin != None:
-                if len(skwValue) < nbMin:
-                    raise ValueError('Bad number of values')
+            if nbMax != None and len(skwValue) > nbMax:
+                print self.dictionary
+                raise ValueError('At most {} values are expected'.format(nbMax))
+            if nbMin != None and len(skwValue) < nbMin:
+                raise ValueError('Bad number of values')
 
             # Vérification du type des valeurs
             for i in skwValue:
-                if type(i) != typePython:
+                if type(i) not in validType:
+                    print self.dictionary
+                    print validType, type(i)
                     raise TypeError('Bad value type')
                 if valMax != None and i > valMax:
                     raise ValueError('Value too big')
                 if valMin != None and i < valMin:
                     raise ValueError('Value too low')
         else:
-            # Vérification du type de la valeurs
-            if type(skwValue) != type(DS.DataStructure) and type(skwValue) != typePython:
-                raise TypeError('Bad value type ' + str(skwValue))
-            if type(skwValue) == 'classobj' and skwValue != typePython:
+            # Vérification du type de la valeur
+            if type(skwValue) not in [DS.DataStructure] + validType:
                 raise TypeError('Bad value type ' + str(skwValue))
             # Vérification des valeurs max et min
             if valMax != None and skwValue > valMax:
@@ -345,7 +340,7 @@ class Command(object):
 
     def __init__(self, curDict):
         if type(curDict) != dict:
-            raise TypeError("Type 'dict' is expected")
+            raise TypeError("'dict' is expected")
         self.dictionary = curDict
         self.regles = None
         if curDict.has_key("regles"):
@@ -368,7 +363,7 @@ class Command(object):
         Fonction membre permettant de verifier la syntaxe d'une commande
         """
         if type(dictSyntax) != dict:
-            raise TypeError("Type 'dict' is expected")
+            raise TypeError("'dict' is expected")
 
         # Vérification des règles
         if self.regles != None:
