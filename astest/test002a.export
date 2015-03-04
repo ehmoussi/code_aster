@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist verification sequential asterxx
 
 F comm test002a.py D 1
-F nom test002a.mmed D 0
+F nom test001f.mmed D 0
