@@ -24,8 +24,12 @@
 #       - Les fonctions definies dans la paire d'accolade NOOK sont à revoir
 
 from code_aster.Cata.Rules import (
-    AU_MOINS_UN, AllPresent, AllTogether, AtLeastOne, ENSEMBLE, EXCLUS, Exclusion,
-    OneIn, OnlyFirstPresent, PRESENT_ABSENT, PRESENT_PRESENT, Rule, UN_PARMI
+    AU_MOINS_UN, AtLeastOne,
+    UN_PARMI, ExactlyOne,
+    EXCLUS, AtMostOne,
+    PRESENT_PRESENT, IfFirstAllPresent,
+    PRESENT_ABSENT, OnlyFirstPresent,
+    ENSEMBLE, AllTogether,
 )
 from code_aster.Cata import DataStructure as DS
 DS_content = DS.__dict__.values()
@@ -90,6 +94,10 @@ class PartOfSyntax(object):
         """Simple representation"""
         return "%s( %r )" % (self.__class__, self.dictionary)
 
+    def checkSyntax(self, syntax):
+        """Check the syntax"""
+        raise NotImplementedError("must be defined in a subclass")
+
     def isMandatory(self):
         """Tell if this keyword is mandatory"""
         return self.dictionary.get("statut", "n") == "o"
@@ -138,10 +146,9 @@ class FactorKeyword(PartOfSyntax):
     Objet mot-clé facteur equivalent de FACT dans les capy
     """
 
-
-    def check(self, tupleSyntax):
+    def checkSyntax(self, tupleSyntax):
         """
-        Fonction membre check
+        Fonction membre checkSyntax
         Vérifie :
             - qu'on a bien le bon nombre d'occurence du mot-clé
             - que les règles du catalogues sont bien vérifiées
@@ -186,10 +193,10 @@ class FactorKeyword(PartOfSyntax):
                 else:
                     if self.dictionary.has_key(key):
                         kw = self.dictionary[key]
-                        kw.check(value)
+                        kw.checkSyntax(value)
                     if dictTmp.has_key(key):
                         kw = dictTmp[key]
-                        kw.check(value)
+                        kw.checkSyntax(value)
 
 
 class SimpleKeyword(PartOfSyntax):
@@ -198,9 +205,9 @@ class SimpleKeyword(PartOfSyntax):
     Objet mot-clé simple équivalent à SIMP dans les capy
     """
 
-    def check(self, skwValue):
+    def checkSyntax(self, skwValue):
         """
-        Fonction membre check
+        Fonction membre checkSyntax
         Vérifie tout ce qu'il y a à vérifier pour un mot-clé simple :
             - le type,
             - le into,
@@ -341,7 +348,7 @@ class Command(PartOfSyntax):
             else:
                 if self.dictionary.has_key(key):
                     kw = self.dictionary[key]
-                    kw.check(value)
+                    kw.checkSyntax(value)
 
 
 class Operator(Command):
