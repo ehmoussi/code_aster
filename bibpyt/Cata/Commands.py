@@ -38,7 +38,7 @@
 import os.path as osp
 from glob import glob
 
-from Cata.Descriptor import AsterCommand
+from Cata.Syntax import AsterCommand
 
 
 def _init_command(ctx, debug):
@@ -48,19 +48,15 @@ def _init_command(ctx, debug):
     l_mod = [osp.splitext(osp.basename(modname))[0]
              for modname in glob(osp.join(pkgdir, 'commands', '*.py'))]
     for modname in l_mod:
-        try:
-            mod = __import__('%s.%s.%s' %
-                             (pkg, 'commands', modname), globals(), locals(), [modname])
-            # liste des commandes définies dans le module
-            for objname in dir(mod):
-                obj = getattr(mod, objname)
-                if isinstance(obj, AsterCommand):
-                    if debug:
-                        print '<Commande> Module "%s" - ajout "%s"' % (modname, objname)
-                    ctx[objname] = obj
-        except Exception, msg:
-            err = "Erreur import de '%s' : %s", modname, str(msg)
-            raise ImportError(err)
+        mod = __import__('%s.%s.%s' %
+                         (pkg, 'commands', modname), globals(), locals(), [modname])
+        # liste des commandes définies dans le module
+        for objname in dir(mod):
+            obj = getattr(mod, objname)
+            if isinstance(obj, AsterCommand):
+                if debug:
+                    print '<Commande> Module "%s" - ajout "%s"' % (modname, objname)
+                ctx[objname] = obj
 
 _init_command(ctx=globals(), debug=False)
 del _init_command

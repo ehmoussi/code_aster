@@ -18,13 +18,17 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 # TODO : - prendre en compte des conditions de blocs plus compliquées
-#            (rajouter mCS = Nonequand on n'a pas de valeurs, ...)
+#            (rajouter mCS = None quand on n'a pas de valeurs, ...)
 #       - validators=NoRepeat
 #       - prendre en compte les types Aster qui sont aujourd'hui tous des AsterDataStructure
 #       - Les fonctions definies dans la paire d'accolade NOOK sont à revoir
 
-from Cata.Rules import *
-from Cata.DataStructure import *
+from Cata.Rules import (
+    AU_MOINS_UN, AllPresent, AllTogether, AtLeastOne, ENSEMBLE, EXCLUS, Exclusion,
+    OneIn, OnlyFirstPresent, PRESENT_ABSENT, PRESENT_PRESENT, Rule, UN_PARMI
+)
+from Cata import DataStructure as DS
+DS_content = DS.__dict__.values()
 
 import __builtin__
 
@@ -210,9 +214,7 @@ class SimpleKeyword(PartOfSyntax):
             typePython = int
         elif currentType == 'R':
             typePython = float
-        elif currentType == AsterDataStructure:
-            typePython = AsterDataStructure
-        elif currentType == MeshEntity:
+        elif currentType in DS_content:
             typePython = str
         else:
             raise TypeError( "Unsupported type: {!r}".format(currentType) )
@@ -259,7 +261,7 @@ class SimpleKeyword(PartOfSyntax):
                     raise ValueError('Value too low')
         else:
             # Vérification du type de la valeurs
-            if type(skwValue) != type(AsterDataStructure) and type(skwValue) != typePython:
+            if type(skwValue) != type(DS.AsterDataStructure) and type(skwValue) != typePython:
                 raise TypeError('Bad value type ' + str(skwValue))
             if type(skwValue) == 'classobj' and skwValue != typePython:
                 raise TypeError('Bad value type ' + str(skwValue))
