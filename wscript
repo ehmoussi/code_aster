@@ -224,7 +224,7 @@ def build(self):
     self.recurse('bibpyt')
     self.recurse('mfront')
     self.recurse('i18n')
-    lsub = ['materiau', 'datg', 'catapy', 'catalo']
+    lsub = ['materiau', 'datg', 'catalo']
     if self.env.install_tests:
         lsub.extend(['astest', '../validation/astest'])
     for optional in lsub:
