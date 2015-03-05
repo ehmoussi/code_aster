@@ -35,6 +35,8 @@ const std::string LoadTraits< InternalForce >::factorKeyword = "FORCE_INTERNE";
 
 const std::string LoadTraits< ForceOnBeam >::factorKeyword = "FORCE_POUTRE";
 
+const std::string LoadTraits< ForceOnShell >::factorKeyword = "FORCE_COQUE";
+
 const std::string LoadTraits< ImposedDisplacement >::factorKeyword = "DDL_IMPO";
 
 const std::string LoadTraits< DistributedPressure >::factorKeyword = "PRES_REP"; 

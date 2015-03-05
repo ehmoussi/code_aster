@@ -38,7 +38,7 @@
  * @enum LoadEnum
  * @brief Inventory of all mechanical loads available in Code_Aster
  */
-enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam,
+enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam, ForceOnShell,
                 ImposedDisplacement, DistributedPressure, EndLoad };
 
 /**
@@ -136,6 +136,20 @@ template <> struct LoadTraits< ForceOnBeam >
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
     /** @todo mot clé supplémentaire TYPE_CHARGE=FORCE */
+};
+
+/**
+ * @def LoadTraits<ForceOnShell>
+ * @brief Declare specialization for ForceOnShell
+ */
+template <> struct LoadTraits< ForceOnShell >
+{
+    // Mot clé facteur pour AFFE_CHAR_MECA
+    static const std::string factorKeyword; 
+    // Authorized support MeshEntity
+    static bool const isAllowedOnWholeMesh = true;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
 };
 
 /**
@@ -350,40 +364,62 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
 /** @typedef GenericMechanicalLoad  */
 typedef boost::shared_ptr< GenericMechanicalLoadInstance > GenericMechanicalLoadPtr;
 
+/* Appliquer une force nodale sur une modélisation 3D */
 /** @typedef NodalForceDouble  */
 template class MechanicalLoadInstance< ForceDoubleInstance, NodalForce >;
 typedef MechanicalLoadInstance< ForceDoubleInstance, NodalForce > NodalForceDoubleInstance;
 typedef boost::shared_ptr< NodalForceDoubleInstance > NodalForceDoublePtr;
 
-/** @typedef NodalForceAndMomentumDouble  */
-template class MechanicalLoadInstance< ForceAndMomentumDoubleInstance, NodalForce >;
-typedef MechanicalLoadInstance< ForceAndMomentumDoubleInstance, NodalForce > NodalForceAndMomentumDoubleInstance;
-typedef boost::shared_ptr< NodalForceAndMomentumDoubleInstance > NodalForceAndMomentumDoublePtr;
+/* Appliquer une force nodale sur des éléments de structure */
+/** @typedef NodalStructuralForceDouble  */
+template class MechanicalLoadInstance< StructuralForceDoubleInstance, NodalForce >;
+typedef MechanicalLoadInstance< StructuralForceDoubleInstance, NodalForce > NodalStructuralForceDoubleInstance;
+typedef boost::shared_ptr< NodalStructuralForceDoubleInstance > NodalStructuralForceDoublePtr;
 
 /** @typedef ForceOnFaceDouble  */
 template class MechanicalLoadInstance< ForceDoubleInstance, ForceOnFace >;
 typedef MechanicalLoadInstance< ForceDoubleInstance, ForceOnFace > ForceOnFaceDoubleInstance;
 typedef boost::shared_ptr< ForceOnFaceDoubleInstance > ForceOnFaceDoublePtr;
 
-/** @typedef ForceAndMomentumOnEdgeDouble  */
-template class MechanicalLoadInstance< ForceAndMomentumDoubleInstance, ForceOnEdge >;
-typedef MechanicalLoadInstance< ForceAndMomentumDoubleInstance, ForceOnEdge > ForceAndMomentumOnEdgeDoubleInstance;
-typedef boost::shared_ptr< ForceAndMomentumOnEdgeDoubleInstance > ForceAndMomentumOnEdgeDoublePtr;
+/* Appliquer une force sur une arête d'élément volumique */
+/** @typedef ForceOnEdgeDouble  */
+template class MechanicalLoadInstance< ForceDoubleInstance, ForceOnEdge >;
+typedef MechanicalLoadInstance< ForceDoubleInstance, ForceOnEdge > ForceOnEdgeDoubleInstance;
+typedef boost::shared_ptr< ForceOnEdgeDoubleInstance > ForceOnEdgeDoublePtr;
 
-/** @typedef LineicForceAndMomentumDouble  */
-template class MechanicalLoadInstance< ForceAndMomentumDoubleInstance, LineicForce >;
-typedef MechanicalLoadInstance< ForceAndMomentumDoubleInstance, LineicForce > LineicForceAndMomentumDoubleInstance;
-typedef boost::shared_ptr< LineicForceAndMomentumDoubleInstance > LineicForceAndMomentumDoublePtr;
+/* Appliquer une force sur une arête d'élément de structure (coque/plaque) */
+/** @typedef StructuralForceOnEdgeDouble  */
+template class MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnEdge >;
+typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnEdge > StructuralForceOnEdgeDoubleInstance;
+typedef boost::shared_ptr< StructuralForceOnEdgeDoubleInstance > StructuralForceOnEdgeDoublePtr;
+
+/** @typedef LineicForceDouble  */
+template class MechanicalLoadInstance< ForceDoubleInstance, LineicForce >;
+typedef MechanicalLoadInstance< ForceDoubleInstance, LineicForce > LineicForceDoubleInstance;
+typedef boost::shared_ptr< LineicForceDoubleInstance > LineicForceDoublePtr;
 
 /** @typedef InternalForceDouble  */
 template class MechanicalLoadInstance< ForceDoubleInstance, InternalForce >;
 typedef MechanicalLoadInstance< ForceDoubleInstance, InternalForce > InternalForceDoubleInstance;
 typedef boost::shared_ptr< InternalForceDoubleInstance > InternalForceDoublePtr;
 
-/** @typedef ForceAndMomentumOnBeamDouble  */
-template class MechanicalLoadInstance< ForceAndMomentumDoubleInstance, ForceOnBeam >;
-typedef MechanicalLoadInstance< ForceAndMomentumDoubleInstance, LineicForce > ForceAndMomentumOnBeamDoubleInstance;
-typedef boost::shared_ptr< ForceAndMomentumOnBeamDoubleInstance > ForceAndMomentumOnBeamDoublePtr;
+/* Appliquer une force (définie dans le repère global) à une poutre */
+/** @typedef StructuralForceOnBeamDouble  */
+template class MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnBeam >;
+typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnBeam > StructuralForceOnBeamDoubleInstance;
+typedef boost::shared_ptr< StructuralForceOnBeamDoubleInstance > StructuralForceOnBeamDoublePtr;
+
+/* Appliquer une force (définie dans le repère local) à une poutre */
+/** @typedef LocalForceOnBeamDouble  */
+template class MechanicalLoadInstance< LocalBeamForceDoubleInstance, ForceOnBeam >;
+typedef MechanicalLoadInstance< LocalBeamForceDoubleInstance, ForceOnBeam > LocalForceOnBeamDoubleInstance;
+typedef boost::shared_ptr< LocalForceOnBeamDoubleInstance > LocalForceOnBeamDoublePtr;
+
+/* Appliquer une force (définie dans le repère local) à une coque/plaque */
+/** @typedef LocalForceOnShellDouble  */
+template class MechanicalLoadInstance< LocalShellForceDoubleInstance, ForceOnShell >;
+typedef MechanicalLoadInstance< LocalShellForceDoubleInstance, ForceOnShell > LocalForceOnShellDoubleInstance;
+typedef boost::shared_ptr< LocalForceOnShellDoubleInstance > LocalForceOnShellDoublePtr;
 
 /** @typedef ImposedDoubleDisplacement  */
 template class MechanicalLoadInstance< DoubleDisplacementInstance, ImposedDisplacement >;

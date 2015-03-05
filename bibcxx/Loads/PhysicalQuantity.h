@@ -37,19 +37,20 @@
  * @brief Inventory of all physical quantities available in Code_Aster
  * @todo attention confusion entre Pressure et Pres
  */
-enum PhysicalQuantityEnum { Force, ForceAndMomentum, Displacement, Pressure, Temperature };
+enum PhysicalQuantityEnum { Force, StructuralForce, LocalBeamForce, LocalShellForce, Displacement, Pressure, Temperature };
 
 /**
  * @enum PhysicalQuantityComponent 
  * @brief Inventory of components of the physical quantities listed in PhysicalQuantityEnum 
  */
-enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz };
+enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2 };
 
+const int nbComponent=26; 
 /**
 * @def ComponentNames
 * @brief Aster names of the components of the physical quantities
 */
-extern const char* ComponentNames[15];
+extern const char* ComponentNames[nbComponent];
 
 /**
 * @class PhysicalQuantityTraits
@@ -79,7 +80,9 @@ const int nbForceComponents = 3;
 extern const PhysicalQuantityComponent ForceComponents[nbForceComponents];
 
 /** @def PhysicalQuantityTraits <Force>
-*  @brief Declare specialization for Force
+*  @brief Declare specialization for Force 
+*  A Force is defined by its 3 components in the global basis.
+*  It is applied to a 3D (or 2D) domain. 
 */
 
 template <> struct PhysicalQuantityTraits< Force >
@@ -89,29 +92,85 @@ template <> struct PhysicalQuantityTraits< Force >
 };
 
 /****************************************/
-/*     ForceAndMomentum                 */
+/*     StructuralForce                 */
 /****************************************/
 
 /**
- * @def nbForceComponents
- * @brief Number of components specifying a force 
+ * @def nbStructuralForceComponents
+ * @brief Number of components specifying a StructuralForce 
  */
-const int nbForceAndMomentumComponents = 6;
+const int nbStructuralForceComponents = 6;
 /**
- * @def ForceComponents
- * @brief Declare Force Components 
+ * @def StructuralForceComponents
+ * @brief Declare StructuralForce Components 
  */
-extern const PhysicalQuantityComponent ForceAndMomentumComponents[nbForceAndMomentumComponents];
+extern const PhysicalQuantityComponent StructuralForceComponents[nbStructuralForceComponents];
 
-/** @def PhysicalQuantityTraits <ForceAndMomentum>
-*  @brief Declare specialization for ForceAndMomentum
+/** @def PhysicalQuantityTraits <StructuralForce>
+*  @brief Declare specialization for StructuralForce
+* A Structural Force is defined in the global basis. It is applied on structural elements
+* (0d, 1d, 2d)
 */
 
-template <> struct PhysicalQuantityTraits< ForceAndMomentum >
+template <> struct PhysicalQuantityTraits< StructuralForce >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
 };
+
+/****************************************/
+/*     LocalBeamForce                 */
+/****************************************/
+
+/**
+ * @def nbLocalBeamForceComponents
+ * @brief Number of components specifying a LocalBeamForce 
+ */
+const int nbLocalBeamForceComponents = 6;
+/**
+ * @def LocalBeamForceComponents
+ * @brief Declare Force Components 
+ */
+extern const PhysicalQuantityComponent LocalBeamForceComponents[nbLocalBeamForceComponents];
+
+/** @def PhysicalQuantityTraits <LocalBeamForce>
+*  @brief Declare specialization for LocalBeamForce
+* A LocalBeam Force is defined in the local basis of the beam. It is applied on beam elements.
+*/
+
+template <> struct PhysicalQuantityTraits< LocalBeamForce >
+{
+    static const std::set< PhysicalQuantityComponent > components;
+    static const std::string name;
+};
+
+/****************************************/
+/*     LocalShellForce                 */
+/****************************************/
+
+/**
+ * @def nbLocalShellForceComponents
+ * @brief Number of components specifying a LocalShellForce 
+ */
+const int nbLocalShellForceComponents = 5;
+/**
+ * @def LocalShellForceComponents
+ * @brief Declare Force Components 
+ */
+extern const PhysicalQuantityComponent LocalShellForceComponents[nbLocalShellForceComponents];
+
+/** @def PhysicalQuantityTraits <LocalShellForce>
+*  @brief Declare specialization for LocalShellForce
+* A LocalShell Force is defined in the local basis of the plate/shell. It is applied on plate/shell elements.
+*/
+
+template <> struct PhysicalQuantityTraits< LocalShellForce >
+{
+    static const std::set< PhysicalQuantityComponent > components;
+    static const std::string name;
+};
+
+
 
 /****************************************/
 /*        Displacement                  */
@@ -286,10 +345,20 @@ template class PhysicalQuantityInstance< double, Force >;
 typedef PhysicalQuantityInstance< double, Force > ForceDoubleInstance;
 typedef boost::shared_ptr< ForceDoubleInstance > ForceDoublePtr; 
 
-/** @typedef ForceAndMomentumDouble FORC_R */
-template class PhysicalQuantityInstance< double, ForceAndMomentum >; 
-typedef PhysicalQuantityInstance< double, ForceAndMomentum > ForceAndMomentumDoubleInstance;
-typedef boost::shared_ptr< ForceAndMomentumDoubleInstance > ForceAndMomentumDoublePtr; 
+/** @typedef StructuralForceDouble  */
+template class PhysicalQuantityInstance< double, StructuralForce >; 
+typedef PhysicalQuantityInstance< double, StructuralForce > StructuralForceDoubleInstance;
+typedef boost::shared_ptr< StructuralForceDoubleInstance > StructuralForceDoublePtr; 
+
+/** @typedef LocalBeamForceDouble  */
+template class PhysicalQuantityInstance< double, LocalBeamForce >; 
+typedef PhysicalQuantityInstance< double, LocalBeamForce > LocalBeamForceDoubleInstance;
+typedef boost::shared_ptr< LocalBeamForceDoubleInstance > LocalBeamForceDoublePtr; 
+
+/** @typedef LocalShellForceDouble  */
+template class PhysicalQuantityInstance< double, LocalShellForce >; 
+typedef PhysicalQuantityInstance< double, LocalShellForce > LocalShellForceDoubleInstance;
+typedef boost::shared_ptr< LocalShellForceDoubleInstance > LocalShellForceDoublePtr; 
 
 /** @typedef DoubleDisplacement DEPL_R */
 template class PhysicalQuantityInstance< double, Displacement >; 

@@ -25,7 +25,8 @@
 
 #include "Loads/PhysicalQuantity.h"
 
-const char* ComponentNames[15] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP", "TEMP_MIL", "PRES", "FX", "FY", "FZ", "MX", "MY","MZ"};
+const char* ComponentNames[nbComponent] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP", "TEMP_MIL", "PRES", "FX", "FY", "FZ", "MX", "MY","MZ",
+ "N", "VY", "VZ", "MT", "MFY", "MFZ", "F1", "F2", "F3", "MF1", "MF2"};
 
 /* Init const data */
 
@@ -34,10 +35,20 @@ const PhysicalQuantityComponent ForceComponents[nbForceComponents] = { Fx, Fy, F
 const std::string PhysicalQuantityTraits <Force>::name = "Force"; 
 const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Force>::components( ForceComponents, ForceComponents + nbForceComponents );
 
-/* ForceAndMomentum */
-const PhysicalQuantityComponent ForceAndMomentumComponents[nbForceAndMomentumComponents] = { Fx, Fy, Fz, Mx, My, Mz };
-const std::string PhysicalQuantityTraits <ForceAndMomentum>::name = "ForceAndMomentum"; 
-const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<ForceAndMomentum>::components( ForceAndMomentumComponents, ForceAndMomentumComponents + nbForceAndMomentumComponents );
+/* StructuralForce */
+const PhysicalQuantityComponent StructuralForceComponents[nbStructuralForceComponents] = { Fx, Fy, Fz, Mx, My, Mz };
+const std::string PhysicalQuantityTraits <StructuralForce>::name = "StructuralForce"; 
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<StructuralForce>::components( StructuralForceComponents, StructuralForceComponents + nbStructuralForceComponents );
+
+/* LocalBeamForce */
+const PhysicalQuantityComponent LocalBeamForceComponents[nbLocalBeamForceComponents] = { N, Vy, Vz, Mt, Mfy, Mfz };
+const std::string PhysicalQuantityTraits <LocalBeamForce>::name = "LocalBeamForce"; 
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<LocalBeamForce>::components( LocalBeamForceComponents, LocalBeamForceComponents + nbLocalBeamForceComponents );
+
+/* LocalShellForce */
+const PhysicalQuantityComponent LocalShellForceComponents[nbLocalShellForceComponents] = { F1, F2, F3, Mf1, Mf2 };
+const std::string PhysicalQuantityTraits <LocalShellForce>::name = "LocalShellForce"; 
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<LocalShellForce>::components( LocalShellForceComponents, LocalShellForceComponents + nbLocalShellForceComponents );
 
 /* Displacement */
 const PhysicalQuantityComponent DisplacementComponents[nbDisplacementComponents] = { Dx, Dy, Dz, Dx, Dy, Dz };

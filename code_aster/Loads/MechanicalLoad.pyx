@@ -19,7 +19,7 @@
 
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
-from code_aster.Loads.PhysicalQuantity cimport ForceDouble, ForceAndMomentumDouble
+from code_aster.Loads.PhysicalQuantity cimport ForceDouble, StructuralForceDouble, LocalBeamForceDouble, LocalShellForceDouble
 from code_aster.Loads.PhysicalQuantity cimport DoubleDisplacement, DoublePressure
 from code_aster.Modeling.Model cimport Model
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
@@ -82,26 +82,25 @@ cdef class NodalForceDouble( GenericMechanicalLoad ):
         instance = <NodalForceDoubleInstance*> self.getInstance()
         return instance.setValue( deref( force.getPtr() ), nameOfGroup )
 
-
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
 
 
-###### NodalForceAndMomentumDouble
+###### NodalStructuralForceDouble
 
-cdef class NodalForceAndMomentumDouble( GenericMechanicalLoad ):
-    """Python wrapper on the C++ NodalForceAndMomentumDouble Object"""
+cdef class NodalStructuralForceDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ NodalStructuralForceDouble Object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
         if init:
             self._cptr = <GenericMechanicalLoadPtr *>\
-                new NodalForceAndMomentumDoublePtr ( new NodalForceAndMomentumDoubleInstance() )
+                new NodalStructuralForceDoublePtr ( new NodalStructuralForceDoubleInstance() )
 
     def build( self ):
         """Build the model"""
-        instance = <NodalForceAndMomentumDoubleInstance*> self.getInstance()
+        instance = <NodalStructuralForceDoubleInstance*> self.getInstance()
         iret = instance.build()
         return iret
 
@@ -109,10 +108,10 @@ cdef class NodalForceAndMomentumDouble( GenericMechanicalLoad ):
         """Set the support model of the mechanical load"""
         return self.getInstance().setSupportModel( deref( model.getPtr() ) )
 
-    def setValue( self, ForceAndMomentumDouble ForceAndMomentum, string nameOfGroup = ""):
+    def setValue( self, StructuralForceDouble StructuralForce, string nameOfGroup = ""):
         """Set a physical quantity of a Mesh entity"""
-        instance = <NodalForceAndMomentumDoubleInstance*> self.getInstance()
-        return instance.setValue( deref( ForceAndMomentum.getPtr() ), nameOfGroup )
+        instance = <NodalStructuralForceDoubleInstance*> self.getInstance()
+        return instance.setValue( deref( StructuralForce.getPtr() ), nameOfGroup )
 
 
     def debugPrint( self, logicalUnit=6 ):
@@ -152,20 +151,20 @@ cdef class ForceOnFaceDouble( GenericMechanicalLoad ):
         self.getInstance().debugPrint( logicalUnit )
 
 
-###### ForceAndMomentumOnEdgeDouble
+###### ForceOnEdgeDouble
 
-cdef class ForceAndMomentumOnEdgeDouble( GenericMechanicalLoad ):
-    """Python wrapper on the C++ ForceAndMomentumOnEdgeDouble Object"""
+cdef class ForceOnEdgeDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ ForceOnEdgeDouble Object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
         if init:
             self._cptr = <GenericMechanicalLoadPtr *>\
-                new ForceAndMomentumOnEdgeDoublePtr ( new ForceAndMomentumOnEdgeDoubleInstance() )
+                new ForceOnEdgeDoublePtr ( new ForceOnEdgeDoubleInstance() )
 
     def build( self ):
         """Build the model"""
-        instance = <ForceAndMomentumOnEdgeDoubleInstance*> self.getInstance()
+        instance = <ForceOnEdgeDoubleInstance*> self.getInstance()
         iret = instance.build()
         return iret
 
@@ -173,9 +172,9 @@ cdef class ForceAndMomentumOnEdgeDouble( GenericMechanicalLoad ):
         """Set the support model of the mechanical load"""
         return self.getInstance().setSupportModel( deref( model.getPtr() ) )
 
-    def setValue( self, ForceAndMomentumDouble Force, string nameOfGroup = ""):
+    def setValue( self, ForceDouble Force, string nameOfGroup = ""):
         """Set a physical quantity of a Mesh entity"""
-        instance = <ForceAndMomentumOnEdgeDoubleInstance*> self.getInstance()
+        instance = <ForceOnEdgeDoubleInstance*> self.getInstance()
         return instance.setValue( deref( Force.getPtr() ), nameOfGroup )
 
 
@@ -184,20 +183,20 @@ cdef class ForceAndMomentumOnEdgeDouble( GenericMechanicalLoad ):
         self.getInstance().debugPrint( logicalUnit )
 
 
-###### LineicForceAndMomentumDouble
+###### StructuralForceOnEdgeDouble
 
-cdef class LineicForceAndMomentumDouble( GenericMechanicalLoad ):
-    """Python wrapper on the C++ LineicForceAndMomentumDouble Object"""
+cdef class StructuralForceOnEdgeDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ StructuralForceOnEdgeDouble Object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
         if init:
             self._cptr = <GenericMechanicalLoadPtr *>\
-                new LineicForceAndMomentumDoublePtr ( new LineicForceAndMomentumDoubleInstance() )
+                new StructuralForceOnEdgeDoublePtr ( new StructuralForceOnEdgeDoubleInstance() )
 
     def build( self ):
         """Build the model"""
-        instance = <LineicForceAndMomentumDoubleInstance*>self.getInstance()
+        instance = <StructuralForceOnEdgeDoubleInstance*> self.getInstance()
         iret = instance.build()
         return iret
 
@@ -205,9 +204,41 @@ cdef class LineicForceAndMomentumDouble( GenericMechanicalLoad ):
         """Set the support model of the mechanical load"""
         return self.getInstance().setSupportModel( deref( model.getPtr() ) )
 
-    def setValue( self, ForceAndMomentumDouble Force, string nameOfGroup = ""):
+    def setValue( self, StructuralForceDouble Force, string nameOfGroup = ""):
         """Set a physical quantity of a Mesh entity"""
-        instance = <LineicForceAndMomentumDoubleInstance*>self.getInstance()
+        instance = <StructuralForceOnEdgeDoubleInstance*> self.getInstance()
+        return instance.setValue( deref( Force.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
+
+###### LineicForceDouble
+
+cdef class LineicForceDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ LineicForceDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new LineicForceDoublePtr ( new LineicForceDoubleInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <LineicForceDoubleInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, ForceDouble Force, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <LineicForceDoubleInstance*>self.getInstance()
         return instance.setValue( deref( Force.getPtr() ), nameOfGroup )
 
 
@@ -248,20 +279,20 @@ cdef class InternalForceDouble( GenericMechanicalLoad ):
         self.getInstance().debugPrint( logicalUnit )
 
 
-###### ForceAndMomentumOnBeamDouble
+###### StructuralForceOnBeamDouble
 
-cdef class ForceAndMomentumOnBeamDouble( GenericMechanicalLoad ):
-    """Python wrapper on the C++ ForceAndMomentumOnBeamDouble Object"""
+cdef class StructuralForceOnBeamDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ StructuralForceOnBeamDouble Object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
         if init:
             self._cptr = <GenericMechanicalLoadPtr *>\
-                new ForceAndMomentumOnBeamDoublePtr ( new ForceAndMomentumOnBeamDoubleInstance() )
+                new StructuralForceOnBeamDoublePtr ( new StructuralForceOnBeamDoubleInstance() )
 
     def build( self ):
         """Build the model"""
-        instance = <ForceAndMomentumOnBeamDoubleInstance*>self.getInstance()
+        instance = <StructuralForceOnBeamDoubleInstance*>self.getInstance()
         iret = instance.build()
         return iret
 
@@ -269,9 +300,9 @@ cdef class ForceAndMomentumOnBeamDouble( GenericMechanicalLoad ):
         """Set the support model of the mechanical load"""
         return self.getInstance().setSupportModel( deref( model.getPtr() ) )
 
-    def setValue( self, ForceAndMomentumDouble Force, string nameOfGroup = ""):
+    def setValue( self, StructuralForceDouble Force, string nameOfGroup = ""):
         """Set a physical quantity of a Mesh entity"""
-        instance = <ForceAndMomentumOnBeamDoubleInstance*>self.getInstance()
+        instance = <StructuralForceOnBeamDoubleInstance*>self.getInstance()
         return instance.setValue( deref( Force.getPtr() ), nameOfGroup )
 
 
@@ -279,6 +310,66 @@ cdef class ForceAndMomentumOnBeamDouble( GenericMechanicalLoad ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
 
+
+###### LocalForceOnBeamDouble
+
+cdef class LocalForceOnBeamDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ LocalForceOnBeamDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new LocalForceOnBeamDoublePtr ( new LocalForceOnBeamDoubleInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <LocalForceOnBeamDoubleInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, LocalBeamForceDouble Force, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <LocalForceOnBeamDoubleInstance*>self.getInstance()
+        return instance.setValue( deref( Force.getPtr() ), nameOfGroup )
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
+###### LocalForceOnShellDouble
+
+cdef class LocalForceOnShellDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ LocalForceOnShellDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new LocalForceOnShellDoublePtr ( new LocalForceOnShellDoubleInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <LocalForceOnShellDoubleInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, LocalShellForceDouble Force, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <LocalForceOnShellDoubleInstance*>self.getInstance()
+        return instance.setValue( deref( Force.getPtr() ), nameOfGroup )
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
 
 ###### ImposedDoubleDisplacement
 
