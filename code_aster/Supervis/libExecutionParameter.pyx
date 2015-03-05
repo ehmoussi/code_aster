@@ -45,6 +45,7 @@ class ExecutionParameter:
 
         self._args['repdex'] = '.'
         self._computed()
+        self._on_command_line()
 
     def _computed( self ):
         """Fill some "computed" values"""
@@ -73,6 +74,11 @@ class ExecutionParameter:
         self._args['versionD0'] = '%d.%02d.%02d' % version
         self._args['versLabel'] = aster_pkginfo.get_version_desc()
 
+    def _on_command_line(self):
+        """Initialize parameters that can be changed by the command line"""
+        self._args['buildelem'] = 0
+        self._args['autostart'] = 1
+
     def set( self, argName, argValue ):
         """Set the value of an execution parameter"""
         self._args[argName] = argValue
@@ -86,8 +92,25 @@ class ExecutionParameter:
 
     def parse_args( self, argv ):
         """Parse the command line arguments to set the execution parameters"""
-        #TODO
-        debug( "TODO: parsing arguments:", argv )
+        from argparse import ArgumentParser
+        # command arguments parser
+        parser = ArgumentParser(description='execute a Code_Aster study',
+                                prog="Code_Aster{called by Python}")
+        parser.add_argument('--build-elem', dest='buildelem', action='store_true',
+            default=False,
+            help="enable specific starting mode to build the elements database")
+        parser.add_argument('--auto-start', dest='autostart',
+            action='store_true', default=True,
+            help="automatically start the memory manager")
+        parser.add_argument('--no-auto-start', dest='autostart',
+            action='store_false',
+            help="turn off the automatic start of the memory manager")
+
+        args, ignored = parser.parse_known_args( argv )
+        debug( "Ignored arguments:", ignored )
+        # assign parameter values
+        self.set( 'buildelem', int(args.buildelem) )
+        self.set( 'autostart', int(args.autostart) )
 
 
 # global instance

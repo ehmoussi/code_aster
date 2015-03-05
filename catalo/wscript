@@ -86,10 +86,7 @@ def build_cata_ele(self, ojb, install_path):
     Logs.info('+ build the elements catalog %s using installed aster (from %s)'
               % ('elem.1', ojb))
 
-    # generate the options and command files
-    opts = bldnode.make_node('aster_init_options.py')
-    opts.write("options = ['CATAELEM', ]\n", 'w')
-
+    # generate the command file
     comm = bldnode.make_node('fort.1')
     content = os.linesep.join([
         "from code_aster.RunManager.Initializer import cataBuilder",
@@ -104,7 +101,7 @@ def build_cata_ele(self, ojb, install_path):
 
     try:
         #  generate the command line
-        exec_pyaster(self, comm.abspath(), cwd=bldnode.abspath(), args=[])
+        exec_pyaster(self, comm.abspath(), cwd=bldnode.abspath(), args=['--build-elem'])
     finally: # fort.4 -> .ojb
         os.rename(after, before)
 
