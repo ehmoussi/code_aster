@@ -55,7 +55,6 @@ bool MaterialInstance::build() throw( std::runtime_error )
         curStr.resize( 32, ' ' );
         // Recopie dans le ".MATERIAU.NOMRC"
         (*_materialBehaviourNames)[ num ] = curStr.c_str();
-        ++num;
 
         // Construction des objets Jeveux .CPT.XXXXXX.VALR, .CPT.XXXXXX.VALK, ...
         JeveuxVectorComplex& vec1 = _vectorOfComplexValues[ num ];
@@ -63,6 +62,7 @@ bool MaterialInstance::build() throw( std::runtime_error )
         JeveuxVectorChar16& vec3 = _vectorOfChar16Values[ num ];
         const bool retour = (*curIter)->buildJeveuxVectors( vec1, vec2, vec3 );
         if ( !retour ) return false;
+        ++num;
     }
     return true;
 };
