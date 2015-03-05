@@ -20,7 +20,7 @@
 from libcpp.string cimport string
 
 from code_aster.Modeling.Model cimport ModelPtr
-from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr, ForceAndMomentumDoublePtr
+from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr, StructuralForceDoublePtr, LocalBeamForceDoublePtr, LocalShellForceDoublePtr
 from code_aster.Loads.PhysicalQuantity cimport DoubleDisplacementPtr, DoublePressurePtr
 
 
@@ -58,22 +58,22 @@ cdef extern from "Loads/MechanicalLoad.h":
         NodalForceDoublePtr( NodalForceDoubleInstance * )
         NodalForceDoubleInstance* get()
 
-#### NodalForceAndMomentumDouble
+#### NodalStructuralForceDouble
 
-    cdef cppclass NodalForceAndMomentumDoubleInstance( GenericMechanicalLoadInstance ):
+    cdef cppclass NodalStructuralForceDoubleInstance( GenericMechanicalLoadInstance ):
 
-        NodalForceAndMomentumDoubleInstance()
-        bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
+        NodalStructuralForceDoubleInstance()
+        bint setValue( StructuralForceDoublePtr physQuantPtr, string nameOfGroup ) except+
         bint setSupportModel( ModelPtr currentModel )
         bint build() except +
         const string getType()
         void debugPrint( int logicalUnit )
 
-    cdef cppclass NodalForceAndMomentumDoublePtr:
+    cdef cppclass NodalStructuralForceDoublePtr:
 
-        NodalForceAndMomentumDoublePtr( NodalForceAndMomentumDoublePtr& )
-        NodalForceAndMomentumDoublePtr( NodalForceAndMomentumDoubleInstance * )
-        NodalForceAndMomentumDoubleInstance* get()
+        NodalStructuralForceDoublePtr( NodalStructuralForceDoublePtr& )
+        NodalStructuralForceDoublePtr( NodalStructuralForceDoubleInstance * )
+        NodalStructuralForceDoubleInstance* get()
 
 #### ForceOnFaceDouble
 
@@ -92,39 +92,56 @@ cdef extern from "Loads/MechanicalLoad.h":
         ForceOnFaceDoublePtr( ForceOnFaceDoubleInstance * )
         ForceOnFaceDoubleInstance* get()
 
-#### ForceAndMomentumOnEdgeDouble
+#### ForceOnEdgeDouble
 
-    cdef cppclass ForceAndMomentumOnEdgeDoubleInstance( GenericMechanicalLoadInstance ):
+    cdef cppclass ForceOnEdgeDoubleInstance( GenericMechanicalLoadInstance ):
 
-        ForceAndMomentumOnEdgeDoubleInstance()
-        bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
+        ForceOnEdgeDoubleInstance()
+        bint setValue( ForceDoublePtr physQuantPtr, string nameOfGroup ) except+
         bint setSupportModel( ModelPtr currentModel )
         bint build() except +
         const string getType()
         void debugPrint( int logicalUnit )
 
-    cdef cppclass ForceAndMomentumOnEdgeDoublePtr:
+    cdef cppclass ForceOnEdgeDoublePtr:
 
-        ForceAndMomentumOnEdgeDoublePtr( ForceAndMomentumOnEdgeDoublePtr& )
-        ForceAndMomentumOnEdgeDoublePtr( ForceAndMomentumOnEdgeDoubleInstance * )
-        ForceAndMomentumOnEdgeDoubleInstance* get()
+        ForceOnEdgeDoublePtr( ForceOnEdgeDoublePtr& )
+        ForceOnEdgeDoublePtr( ForceOnEdgeDoubleInstance * )
+        ForceOnEdgeDoubleInstance* get()
 
-#### LineicForceAndMomentumDouble
+#### StructuralForceOnEdgeDouble
 
-    cdef cppclass LineicForceAndMomentumDoubleInstance( GenericMechanicalLoadInstance ):
+    cdef cppclass StructuralForceOnEdgeDoubleInstance( GenericMechanicalLoadInstance ):
 
-        LineicForceAndMomentumDoubleInstance()
-        bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
+        StructuralForceOnEdgeDoubleInstance()
+        bint setValue( StructuralForceDoublePtr physQuantPtr, string nameOfGroup ) except+
         bint setSupportModel( ModelPtr currentModel )
         bint build() except +
         const string getType()
         void debugPrint( int logicalUnit )
 
-    cdef cppclass LineicForceAndMomentumDoublePtr:
+    cdef cppclass StructuralForceOnEdgeDoublePtr:
 
-        LineicForceAndMomentumDoublePtr( LineicForceAndMomentumDoublePtr& )
-        LineicForceAndMomentumDoublePtr( LineicForceAndMomentumDoubleInstance * )
-        LineicForceAndMomentumDoubleInstance* get()
+        StructuralForceOnEdgeDoublePtr( StructuralForceOnEdgeDoublePtr& )
+        StructuralForceOnEdgeDoublePtr( StructuralForceOnEdgeDoubleInstance * )
+        StructuralForceOnEdgeDoubleInstance* get()
+
+#### LineicForceDouble
+
+    cdef cppclass LineicForceDoubleInstance( GenericMechanicalLoadInstance ):
+
+        LineicForceDoubleInstance()
+        bint setValue( ForceDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass LineicForceDoublePtr:
+
+        LineicForceDoublePtr( LineicForceDoublePtr& )
+        LineicForceDoublePtr( LineicForceDoubleInstance * )
+        LineicForceDoubleInstance* get()
 
 #### InternalForceDouble
 
@@ -143,22 +160,56 @@ cdef extern from "Loads/MechanicalLoad.h":
         InternalForceDoublePtr( InternalForceDoubleInstance * )
         InternalForceDoubleInstance* get()
 
-#### ForceAndMomentumOnBeamDouble
+#### StructuralForceOnBeamDouble
 
-    cdef cppclass ForceAndMomentumOnBeamDoubleInstance( GenericMechanicalLoadInstance ):
+    cdef cppclass StructuralForceOnBeamDoubleInstance( GenericMechanicalLoadInstance ):
 
-        ForceAndMomentumOnBeamDoubleInstance()
-        bint setValue( ForceAndMomentumDoublePtr physQuantPtr, string nameOfGroup ) except+
+        StructuralForceOnBeamDoubleInstance()
+        bint setValue( StructuralForceDoublePtr physQuantPtr, string nameOfGroup ) except+
         bint setSupportModel( ModelPtr currentModel )
         bint build() except +
         const string getType()
         void debugPrint( int logicalUnit )
 
-    cdef cppclass ForceAndMomentumOnBeamDoublePtr:
+    cdef cppclass StructuralForceOnBeamDoublePtr:
 
-        ForceAndMomentumOnBeamDoublePtr( ForceAndMomentumOnBeamDoublePtr& )
-        ForceAndMomentumOnBeamDoublePtr( ForceAndMomentumOnBeamDoubleInstance * )
-        ForceAndMomentumOnBeamDoubleInstance* get()
+        StructuralForceOnBeamDoublePtr( StructuralForceOnBeamDoublePtr& )
+        StructuralForceOnBeamDoublePtr( StructuralForceOnBeamDoubleInstance * )
+        StructuralForceOnBeamDoubleInstance* get()
+
+#### LocalForceOnBeamDouble
+
+    cdef cppclass LocalForceOnBeamDoubleInstance( GenericMechanicalLoadInstance ):
+
+        LocalForceOnBeamDoubleInstance()
+        bint setValue( LocalBeamForceDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass LocalForceOnBeamDoublePtr:
+
+        LocalForceOnBeamDoublePtr( LocalForceOnBeamDoublePtr& )
+        LocalForceOnBeamDoublePtr( LocalForceOnBeamDoubleInstance * )
+        LocalForceOnBeamDoubleInstance* get()
+
+#### LocalForceOnShellDouble
+
+    cdef cppclass LocalForceOnShellDoubleInstance( GenericMechanicalLoadInstance ):
+
+        LocalForceOnShellDoubleInstance()
+        bint setValue( LocalShellForceDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass LocalForceOnShellDoublePtr:
+
+        LocalForceOnShellDoublePtr( LocalForceOnShellDoublePtr& )
+        LocalForceOnShellDoublePtr( LocalForceOnShellDoubleInstance * )
+        LocalForceOnShellDoubleInstance* get()
 
 #### ImposedDoubleDisplacement
 
@@ -211,9 +262,9 @@ cdef class NodalForceDouble( GenericMechanicalLoad ):
     pass
 
 
-#### NodalForceAndMomentumDouble
+#### NodalStructuralForceDouble
 
-cdef class NodalForceAndMomentumDouble( GenericMechanicalLoad ):
+cdef class NodalStructuralForceDouble( GenericMechanicalLoad ):
     pass
 
 
@@ -223,15 +274,19 @@ cdef class ForceOnFaceDouble( GenericMechanicalLoad ):
     pass
 
 
-#### ForceAndMomentumOnEdgeDouble
+#### ForceOnEdgeDouble
 
-cdef class ForceAndMomentumOnEdgeDouble( GenericMechanicalLoad ):
+cdef class ForceOnEdgeDouble( GenericMechanicalLoad ):
     pass
 
+#### StructuralForceOnEdgeDouble
 
-#### LineicForceAndMomentumDouble
+cdef class StructuralForceOnEdgeDouble( GenericMechanicalLoad ):
+    pass
 
-cdef class LineicForceAndMomentumDouble( GenericMechanicalLoad ):
+#### LineicForceDouble
+
+cdef class LineicForceDouble( GenericMechanicalLoad ):
     pass
 
 
@@ -241,11 +296,20 @@ cdef class InternalForceDouble( GenericMechanicalLoad ):
     pass
 
 
-#### ForceAndMomentumOnBeamDouble
+#### StructuralForceOnBeamDouble
 
-cdef class ForceAndMomentumOnBeamDouble( GenericMechanicalLoad ):
+cdef class StructuralForceOnBeamDouble( GenericMechanicalLoad ):
     pass
 
+#### LocalForceOnBeamDouble
+
+cdef class LocalForceOnBeamDouble( GenericMechanicalLoad ):
+    pass
+
+#### LocalForceOnShellDouble
+
+cdef class LocalForceOnShellDouble( GenericMechanicalLoad ):
+    pass
 
 #### ImposedDoubleDisplacement
 

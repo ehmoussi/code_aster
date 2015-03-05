@@ -56,30 +56,30 @@ cdef class ForceDouble:
         self.getInstance().setValue( component, value )
 
 
-#####  ForceAndMomentumDouble
+#####  StructuralForceDouble
 
-cdef class ForceAndMomentumDouble:
-    """Python wrapper on the C++ ForceAndMomentumDouble Object"""
+cdef class StructuralForceDouble:
+    """Python wrapper on the C++ StructuralForceDouble Object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
         if init :
-            self._cptr = new ForceAndMomentumDoublePtr( new ForceAndMomentumDoubleInstance() )
+            self._cptr = new StructuralForceDoublePtr( new StructuralForceDoubleInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, ForceAndMomentumDoublePtr other ):
+    cdef set( self, StructuralForceDoublePtr other ):
         """Point to an existing object"""
-        self._cptr = new ForceAndMomentumDoublePtr( other )
+        self._cptr = new StructuralForceDoublePtr( other )
 
-    cdef ForceAndMomentumDoublePtr* getPtr( self ):
+    cdef StructuralForceDoublePtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef ForceAndMomentumDoubleInstance* getInstance( self ):
+    cdef StructuralForceDoubleInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
@@ -91,6 +91,75 @@ cdef class ForceAndMomentumDouble:
         """Define the value of a component of the physical quantity """
         self.getInstance().setValue( component, value )
 
+#####  LocalBeamForceDouble
+
+cdef class LocalBeamForceDouble:
+    """Python wrapper on the C++ LocalBeamForceDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = new LocalBeamForceDoublePtr( new LocalBeamForceDoubleInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, LocalBeamForceDoublePtr other ):
+        """Point to an existing object"""
+        self._cptr = new LocalBeamForceDoublePtr( other )
+
+    cdef LocalBeamForceDoublePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef LocalBeamForceDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def debugPrint( self ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( )
+
+    def setValue( self, component, value ):
+        """Define the value of a component of the physical quantity """
+        self.getInstance().setValue( component, value )
+
+#####  LocalShellForceDouble
+
+cdef class LocalShellForceDouble:
+    """Python wrapper on the C++ LocalShellForceDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = new LocalShellForceDoublePtr( new LocalShellForceDoubleInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, LocalShellForceDoublePtr other ):
+        """Point to an existing object"""
+        self._cptr = new LocalShellForceDoublePtr( other )
+
+    cdef LocalShellForceDoublePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef LocalShellForceDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def debugPrint( self ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( )
+
+    def setValue( self, component, value ):
+        """Define the value of a component of the physical quantity """
+        self.getInstance().setValue( component, value )
 
 #####  DoubleDisplacement
 

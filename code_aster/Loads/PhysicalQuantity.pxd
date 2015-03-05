@@ -21,7 +21,7 @@
 cdef extern from "Loads/PhysicalQuantity.h":
 
     cpdef enum PhysicalQuantityComponent:
-        Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz
+        Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2
 
 #### ForceDouble
 
@@ -36,18 +36,45 @@ cdef extern from "Loads/PhysicalQuantity.h":
         ForceDoublePtr( ForceDoubleInstance * )
         ForceDoubleInstance* get()
 
-#### ForceAndMomentumDouble
+#### StructuralForceDouble
 
-    cdef cppclass ForceAndMomentumDoubleInstance:
-        ForceAndMomentumDoubleInstance()
+    cdef cppclass StructuralForceDoubleInstance:
+        StructuralForceDoubleInstance()
         void setValue( PhysicalQuantityComponent comp, double val ) except +
         void debugPrint()
 
-    cdef cppclass ForceAndMomentumDoublePtr:
+    cdef cppclass StructuralForceDoublePtr:
 
-        ForceAndMomentumDoublePtr( ForceAndMomentumDoublePtr& )
-        ForceAndMomentumDoublePtr( ForceAndMomentumDoubleInstance * )
-        ForceAndMomentumDoubleInstance* get()
+        StructuralForceDoublePtr( StructuralForceDoublePtr& )
+        StructuralForceDoublePtr( StructuralForceDoubleInstance * )
+        StructuralForceDoubleInstance* get()
+
+#### LocalBeamForceDouble
+
+    cdef cppclass LocalBeamForceDoubleInstance:
+        LocalBeamForceDoubleInstance()
+        void setValue( PhysicalQuantityComponent comp, double val ) except +
+        void debugPrint()
+
+    cdef cppclass LocalBeamForceDoublePtr:
+
+        LocalBeamForceDoublePtr( LocalBeamForceDoublePtr& )
+        LocalBeamForceDoublePtr( LocalBeamForceDoubleInstance * )
+        LocalBeamForceDoubleInstance* get()
+
+
+#### LocalShellForceDouble
+
+    cdef cppclass LocalShellForceDoubleInstance:
+        LocalShellForceDoubleInstance()
+        void setValue( PhysicalQuantityComponent comp, double val ) except +
+        void debugPrint()
+
+    cdef cppclass LocalShellForceDoublePtr:
+
+        LocalShellForceDoublePtr( LocalShellForceDoublePtr& )
+        LocalShellForceDoublePtr( LocalShellForceDoubleInstance * )
+        LocalShellForceDoubleInstance* get()
 
 #### DoubleDisplacement
 
@@ -87,15 +114,36 @@ cdef class ForceDouble:
     cdef ForceDoubleInstance* getInstance( self )
 
 
-#### ForceAndMomentumDouble
+#### StructuralForceDouble
 
-cdef class ForceAndMomentumDouble:
+cdef class StructuralForceDouble:
 
-    cdef ForceAndMomentumDoublePtr* _cptr
+    cdef StructuralForceDoublePtr* _cptr
 
-    cdef set( self, ForceAndMomentumDoublePtr other )
-    cdef ForceAndMomentumDoublePtr* getPtr( self )
-    cdef ForceAndMomentumDoubleInstance* getInstance( self )
+    cdef set( self, StructuralForceDoublePtr other )
+    cdef StructuralForceDoublePtr* getPtr( self )
+    cdef StructuralForceDoubleInstance* getInstance( self )
+
+
+#### LocalBeamForceDouble
+
+cdef class LocalBeamForceDouble:
+
+    cdef LocalBeamForceDoublePtr* _cptr
+
+    cdef set( self, LocalBeamForceDoublePtr other )
+    cdef LocalBeamForceDoublePtr* getPtr( self )
+    cdef LocalBeamForceDoubleInstance* getInstance( self )
+
+#### LocalShellForceDouble
+
+cdef class LocalShellForceDouble:
+
+    cdef LocalShellForceDoublePtr* _cptr
+
+    cdef set( self, LocalShellForceDoublePtr other )
+    cdef LocalShellForceDoublePtr* getPtr( self )
+    cdef LocalShellForceDoubleInstance* getInstance( self )
 
 
 #### DoubleDisplacement
