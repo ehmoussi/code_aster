@@ -23,32 +23,23 @@
 __all__ = []
 
 import sys
+import atexit
 
-from code_aster.Supervis import setExecutionParameter
+from code_aster.Supervis import executionParameter
+from code_aster.RunManager import Initializer
 
+executionParameter.parse_args( sys.argv )
 
-# The `aster_init_options` module allows a custom startup
-mode = 0
-try:
-    from aster_init_options import options
-except ImportError:
-    options = ['']
-
-# used to build the elements catalog
-if 'CATAELEM' in options:
-    print "starting with mode = 1 (build CATAELEM)..."
-    mode = 1
-
-# standard startup
-if 'MANUAL' not in options:
-    from code_aster.RunManager import Initializer
-    from code_aster.Supervis import executionParameter
-
-    executionParameter.parse_args( sys.argv )
-    Initializer.init( mode )
-
-    import atexit
+# automatic startup
+if executionParameter.get( 'autostart' ):
+    Initializer.init( executionParameter.get( 'buildelem' ) )
     atexit.register( Initializer.finalize )
+
+# hide temporary objects
+del sys, atexit
+
+# export some utilities
+from code_aster.Supervis import setExecutionParameter
 
 # import datastructures, physical quantities and constants
 # each package is responsible to export only the relevant objects
@@ -61,6 +52,3 @@ from code_aster.Modeling import *
 from code_aster.Results import *
 from code_aster.Solvers import *
 from code_aster.Loads import *
-
-
-del mode, options, sys, atexit
