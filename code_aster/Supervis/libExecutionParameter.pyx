@@ -23,6 +23,7 @@ import platform
 import aster_pkginfo
 
 from code_aster.Supervis.libBaseUtils import debug, to_cstr
+from code_aster.Supervis.libBaseUtils cimport copyToFStr
 
 
 class ExecutionParameter:

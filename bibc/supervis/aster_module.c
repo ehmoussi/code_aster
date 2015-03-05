@@ -41,7 +41,7 @@
  */
 #define __PYX_EXTERN_C extern
 __PYX_EXTERN_C DL_IMPORT(void) getres_(char *, char *, char *, unsigned int, unsigned int, unsigned int);
-__PYX_EXTERN_C DL_IMPORT(int) listeMotCleSimpleFromMotCleFacteur(char *, int, int, int, char ***, char ***, int *);
+__PYX_EXTERN_C DL_IMPORT(int) listeMotCleSimpleFromMotCleFacteur(char *, int, int, char ***, int, char ***, int, int *);
 __PYX_EXTERN_C DL_IMPORT(void) getfac_(char *, long *, unsigned int);
 __PYX_EXTERN_C DL_IMPORT(int) existsCommandFactorAndSimpleKeyword(char *, int, char *);
 __PYX_EXTERN_C DL_IMPORT(char) **getCommandKeywordValueString(char *, int, char *, int *);
@@ -322,33 +322,13 @@ void DEFSPPSSP(GETMJM,getmjm,_IN char *nomfac,_IN STRING_SIZE lfac,
         */
     fprintf(fileOut, "GETMJM\n");
 
-    char* tmp = MakeCStrFromFStr(nomfac, lfac);
-    char **retour, **retour2;
     int nbMC;
-    int cret = listeMotCleSimpleFromMotCleFacteur( tmp, (*iocc)-1, lcle, ltyp, &retour, &retour2, &nbMC );
-    FreeStr(tmp);
-    if ( cret == 0 )
-    {
-        if ( (*nbval) <= 0 )
-            (*nbarg) = -nbMC;
-        else
-        {
-            *nbarg = nbMC;
-            if ( *nbval < nbMC ) *nbarg = *nbval;
-            int i;
-            for ( i = 0; i < *nbarg; ++i )
-            {
-                SetTabFStr(motcle, i, retour[i], lcle);
-                free(retour[i]);
-                SetTabFStr(type, i, retour2[i], ltyp);
-                free(retour2[i]);
-            }
-            free(retour);
-            free(retour2);
-        }
-    }
-    else
-        *nbarg = 0;
+    char* mcfact = MakeCStrFromFStr(nomfac, lfac);
+    int cret = listeMotCleSimpleFromMotCleFacteur( mcfact, (int)(*iocc)-1, (int)(*nbval),
+                                                   (char***)motcle, lcle,
+                                                   (char***)type, ltyp, &nbMC );
+    FreeStr(mcfact);
+    *nbarg = (INTEGER)nbMC;
     return;
 }
 
