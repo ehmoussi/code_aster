@@ -177,6 +177,7 @@ class GeneralMaterialBehaviourInstance
         typedef std::map< std::string, ElementaryMaterialPropertyDouble > mapStrEMPD;
         /** @typedef Iterateur sur mapStrEMPD */
         typedef mapStrEMPD::iterator mapStrEMPDIterator;
+        typedef mapStrEMPD::const_iterator mapStrEMPDConstIterator;
         /** @typedef Valeur contenue dans un mapStrEMPD */
         typedef mapStrEMPD::value_type mapStrEMPDValue;
 
@@ -184,23 +185,18 @@ class GeneralMaterialBehaviourInstance
         typedef std::map< std::string, ElementaryMaterialPropertyFunction > mapStrEMPF;
         /** @typedef Iterateur sur mapStrEMPF */
         typedef mapStrEMPF::iterator mapStrEMPFIterator;
+        typedef mapStrEMPF::const_iterator mapStrEMPFConstIterator;
         /** @typedef Valeur contenue dans un mapStrEMPF */
         typedef mapStrEMPF::value_type mapStrEMPFValue;
 
         /** @typedef std::list< std::string > */
         typedef std::list< std::string > ListString;
         typedef ListString::iterator ListStringIter;
+        typedef ListString::const_iterator ListStringConstIter;
 
-        friend class MaterialInstance;
         /** @brief Chaine correspondant au nom Aster du MaterialBehaviourInstance */
         // ex : ELAS ou ELASFo
         std::string              _asterName;
-        /** @brief Vector Jeveux 'CPT.XXXXXX.VALC' */
-        JeveuxVectorComplex      _complexValues;
-        /** @brief Vector Jeveux 'CPT.XXXXXX.VALR' */
-        JeveuxVectorDouble       _doubleValues;
-        /** @brief Vector Jeveux 'CPT.XXXXXX.VALK' */
-        JeveuxVectorChar16       _char16Values;
         /** @brief Map contenant les noms des proprietes double ainsi que les
                    MaterialPropertyInstance correspondant */
         mapStrEMPD               _mapOfDoubleMaterialProperties;
@@ -208,16 +204,13 @@ class GeneralMaterialBehaviourInstance
                    MaterialPropertyInstance correspondant */
         mapStrEMPF               _mapOfFunctionMaterialProperties;
         /** @brief Liste contenant tous les noms des parametres materiau */
-        ListString _listOfNameOfMaterialProperties;
+        ListString               _listOfNameOfMaterialProperties;
 
     public:
         /**
          * @brief Constructeur
          */
-        GeneralMaterialBehaviourInstance(): _asterName( " " ),
-                                            _complexValues( JeveuxVectorComplex("") ),
-                                            _doubleValues( JeveuxVectorDouble("") ),
-                                            _char16Values( JeveuxVectorChar16("") )
+        GeneralMaterialBehaviourInstance()
         {};
 
         /**
@@ -267,19 +260,10 @@ class GeneralMaterialBehaviourInstance
          * @return Booleen valant true si la tache s'est bien deroulee
          * @todo vérifier les valeurs réelles par défaut du .VALR
          */
-        bool build() throw ( std::runtime_error );
-
-    private:
-        /**
-         * @brief Modification a posteriori des objets Jeveux ".VALC", ...
-         * @param name Nom des objets Jeveux contenus dans la classe
-         */
-        void setJeveuxObjectNames( const std::string name )
-        {
-            _complexValues = JeveuxVectorComplex( name + ".VALC" );
-            _doubleValues = JeveuxVectorDouble( name + ".VALR" );
-            _char16Values = JeveuxVectorChar16( name + ".VALK" );
-        };
+        bool buildJeveuxVectors( JeveuxVectorComplex& complexValues,
+                                 JeveuxVectorDouble& doubleValues,
+                                 JeveuxVectorChar16& char16Values ) const
+            throw ( std::runtime_error );
 
     protected:
         bool addDoubleProperty( std::string key, ElementaryMaterialPropertyDouble value )
@@ -288,7 +272,8 @@ class GeneralMaterialBehaviourInstance
             _listOfNameOfMaterialProperties.push_back( key );
             return true;
         };
-         bool addFunctionProperty( std::string key, ElementaryMaterialPropertyFunction value )
+
+        bool addFunctionProperty( std::string key, ElementaryMaterialPropertyFunction value )
         {
             _mapOfFunctionMaterialProperties[ key ] = value;
             _listOfNameOfMaterialProperties.push_back( key );
@@ -1399,7 +1384,7 @@ class RousselierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addDoubleProperty( "Poro_crit", ElementaryMaterialPropertyDouble( "PORO_CRIT" , 0 , false ) );
             this->addDoubleProperty( "Poro_acce", ElementaryMaterialPropertyDouble( "PORO_ACCE" , 0 , false ) );
             this->addDoubleProperty( "Poro_limi", ElementaryMaterialPropertyDouble( "PORO_LIMI" , 0 , false ) );
-            this->addFunctionProperty( "D_sigm_epsi_norm=", ElementaryMaterialPropertyFunction( "D_SIGM_EPSI_NORM=" , false ) );
+            this->addFunctionProperty( "D_sigm_epsi_norm", ElementaryMaterialPropertyFunction( "D_SIGM_EPSI_NORM" , false ) );
             this->addDoubleProperty( "An", ElementaryMaterialPropertyDouble( "AN" , 0 , false ) );
             this->addDoubleProperty( "Dp_maxi", ElementaryMaterialPropertyDouble( "DP_MAXI" , 0 , false ) );
             this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0 , false ) );
@@ -1434,7 +1419,7 @@ class RousselierFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
             this->addDoubleProperty( "Poro_crit", ElementaryMaterialPropertyDouble( "PORO_CRIT" , 0 , false ) );
             this->addDoubleProperty( "Poro_acce", ElementaryMaterialPropertyDouble( "PORO_ACCE" , 0 , false ) );
             this->addDoubleProperty( "Poro_limi", ElementaryMaterialPropertyDouble( "PORO_LIMI" , 0 , false ) );
-            this->addFunctionProperty( "D_sigm_epsi_norm=", ElementaryMaterialPropertyFunction( "D_SIGM_EPSI_NORM=" , false ) );
+            this->addFunctionProperty( "D_sigm_epsi_norm", ElementaryMaterialPropertyFunction( "D_SIGM_EPSI_NORM" , false ) );
             this->addDoubleProperty( "An", ElementaryMaterialPropertyDouble( "AN" , 0 , false ) );
             this->addDoubleProperty( "Dp_maxi", ElementaryMaterialPropertyDouble( "DP_MAXI" , 0 , false ) );
             this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0 , false ) );
@@ -4737,7 +4722,7 @@ class ThmDiffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyFunction( "SATU_PRES" , false ) );
             this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyFunction( "D_SATU_PRES" , false ) );
             this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyFunction( "PERM_LIQU" , false ) );
-            this->addFunctionProperty( "D_perm_liqu_satu=", ElementaryMaterialPropertyFunction( "D_PERM_LIQU_SATU=" , false ) );
+            this->addFunctionProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyFunction( "D_PERM_LIQU_SATU" , false ) );
             this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyFunction( "PERM_GAZ" , false ) );
             this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyFunction( "D_PERM_SATU_GAZ" , false ) );
             this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyFunction( "D_PERM_PRES_GAZ" , false ) );
@@ -6515,8 +6500,5 @@ typedef boost::shared_ptr< CritRuptMaterialBehaviourInstance > CritRuptMaterialB
  
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */
 typedef boost::shared_ptr< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviourPtr;
- 
- 
- 
-  
+
 #endif
