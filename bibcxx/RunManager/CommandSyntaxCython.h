@@ -26,7 +26,7 @@
 
 #include "Utilities/SyntaxDictionary.h"
 
-/** @brief Déclarations de fonctions cython */
+/** @brief Déclarations des fonctions cython */
 __PYX_EXTERN_C DL_IMPORT(void) newCommandSyntax(const char *);
 __PYX_EXTERN_C DL_IMPORT(void) deleteCommandSyntax(void);
 __PYX_EXTERN_C DL_IMPORT(void) setResultCommandSyntax(const char *, const char *);
@@ -82,6 +82,7 @@ class CommandSyntaxCython
         void define( SyntaxMapContainer& syntax )
         {
             _dictCommand = syntax.convertToPythonDictionnary();
+            Py_INCREF( _dictCommand );
             defineCommandSyntax( _dictCommand );
         };
 

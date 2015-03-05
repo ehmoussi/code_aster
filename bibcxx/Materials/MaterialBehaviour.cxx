@@ -27,29 +27,32 @@
 #include <stdexcept>
 #include "Materials/MaterialBehaviour.h"
 
-bool GeneralMaterialBehaviourInstance::build() throw ( std::runtime_error )
+bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& complexValues,
+                                                           JeveuxVectorDouble& doubleValues,
+                                                           JeveuxVectorChar16& char16Values ) const
+    throw( std::runtime_error )
 {
     const int nbOfMaterialProperties = _listOfNameOfMaterialProperties.size();
-    _complexValues->allocate( Permanent, nbOfMaterialProperties );
-    _doubleValues->allocate( Permanent, nbOfMaterialProperties );
-    _char16Values->allocate( Permanent, 2*nbOfMaterialProperties );
+    complexValues->allocate( Permanent, nbOfMaterialProperties );
+    doubleValues->allocate( Permanent, nbOfMaterialProperties );
+    char16Values->allocate( Permanent, 2*nbOfMaterialProperties );
 
     int position = 0;
-    for ( ListStringIter curIter = _listOfNameOfMaterialProperties.begin();
-          curIter != _listOfNameOfMaterialProperties.end();
-          ++curIter )
+    for( ListStringConstIter curIter = _listOfNameOfMaterialProperties.begin();
+         curIter != _listOfNameOfMaterialProperties.end();
+         ++curIter )
     {
-        mapStrEMPDIterator curIter2 = _mapOfDoubleMaterialProperties.find(*curIter);
-        if ( curIter2 != _mapOfDoubleMaterialProperties.end() )
+        mapStrEMPDConstIterator curIter2 = _mapOfDoubleMaterialProperties.find(*curIter);
+        if( curIter2 != _mapOfDoubleMaterialProperties.end() )
         {
-            (*_doubleValues)[position] = (*curIter2).second.getValue();
+            (*doubleValues)[position] = (*curIter2).second.getValue();
 
             std::string nameOfProperty = (*curIter2).second.getName();
             nameOfProperty.resize( 16, ' ' );
-            (*_char16Values)[position] = nameOfProperty.c_str();
+            (*char16Values)[position] = nameOfProperty.c_str();
         }
         else
-            throw std::runtime_error( "Le parametre materiau doit etre un double ou un complexe");
+            throw std::runtime_error( "Le parametre materiau doit etre un double");
         ++position;
     }
 
