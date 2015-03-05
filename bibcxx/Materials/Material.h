@@ -74,7 +74,7 @@ class MaterialInstance: public DataStructure
 
             std::ostringstream numString;
             numString << std::setw( 6 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
-            const std::string currentName = _jeveuxName + ".CPT.";
+            const std::string currentName = _jeveuxName + ".CPT." + numString.str();
             _vectorOfComplexValues.push_back( JeveuxVectorComplex( currentName + ".VALC" ) );
             _vectorOfDoubleValues.push_back( JeveuxVectorDouble( currentName + ".VALR" ) );
             _vectorOfChar16Values.push_back( JeveuxVectorChar16( currentName + ".VALK" ) );
