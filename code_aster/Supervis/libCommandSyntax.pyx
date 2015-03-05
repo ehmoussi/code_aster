@@ -17,10 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from code_aster.Supervis.libBaseUtils import debug, to_cstr
 from cpython.ref cimport PyObject
-from libc.stdlib cimport malloc
-from libc.string cimport memset
+
+from code_aster.Supervis.libBaseUtils import debug, to_cstr
+from code_aster.Supervis cimport libBaseUtils
+from code_aster.Supervis.libBaseUtils cimport copyToFStr, to_fstring_array
+
 
 cdef class ResultNaming:
 
@@ -246,44 +248,42 @@ cdef public void getres_( char* resultName, char* resultType, char* commandName,
     debug( "getres", ( commandName[:lcmd], resultName[:lres], resultType[:ltype] ) )
 
 
-cdef char* MakeBlankStr( int size ):
-    cdef char* tmp
-    tmp = <char*>malloc( sizeof(char*)*(size) )
-    memset( tmp, ' ', size )
-    tmp[size] = '\0'
-    return tmp
-
 cdef public int listeMotCleSimpleFromMotCleFacteur(
-        char* factKeyword, int occurrence, int keywordSize, int typeSize,
-        char*** arraySimpleKeyword, char*** arrayType, int* nbKeyword):
+        char* factKeyword, int occurrence, int nbval,
+        char*** arraySimpleKeyword, int keywordSize,
+        char*** arrayType, int typeSize, int* nbKeyword):
+    """Return the list of the SimpleKeyword under a FactorKeyword
+    Fills the passed and already allocated fortran array of strings.
+    """
     if currentCommand is None:
         raise ValueError( "there is no active command" )
     dictFkw = currentCommand._getFactorKeywordOccurrence( factKeyword, occurrence )
-    if dictFkw == None:
+    if dictFkw is None:
+        nbKeyword[0] = 0
         return 1
 
     size = len( dictFkw.keys() )
+    if nbval <= 0:
+        nbKeyword[0] = -size
+        return 0
     nbKeyword[0] = size
-    arraySimpleKeyword[0] = <char**>malloc( sizeof(char*)*(size) )
-    arrayType[0] = <char**>malloc( sizeof(char*)*(size) )
 
-    cdef char* tmp
-    cdef int compteur = 0
+    keywords = dictFkw.keys()
+    types = []
     for key, value in dictFkw.iteritems():
-        arraySimpleKeyword[0][compteur] = MakeBlankStr( keywordSize )
-        copyToFStr( arraySimpleKeyword[0][compteur], key, len(key) )
-
-        arrayType[0][compteur] = MakeBlankStr( typeSize )
         if type( value ) == str:
-            copyToFStr( arrayType[0][compteur], "TX", 2 )
+            typ = "TX"
         elif type( value ) == float:
-            copyToFStr( arrayType[0][compteur], "R8", 2 )
+            typ = "R8"
         elif type( value ) == int:
-            copyToFStr( arrayType[0][compteur], "IS", 2 )
+            typ ="IS"
         else:
-            raise NameError( "Type unknown" )
-        compteur += 1
+            raise TypeError( "Unexpected type: {!r}".format(type(value)) )
+    # fill the fortran array
+    to_fstring_array( keywords, keywordSize, arraySimpleKeyword )
+    to_fstring_array( types, typeSize, arrayType )
     return 0
+
 
 cdef public void getfac_( char* factName, long* number, unsigned int lname ):
     """Wrapper function to command.getFactorKeywordNbOcc()"""
@@ -292,6 +292,7 @@ cdef public void getfac_( char* factName, long* number, unsigned int lname ):
         return
     keyword = to_cstr( factName, lname )
     number[0] = currentCommand.getFactorKeywordNbOcc( keyword )
+
 
 cdef public int existsCommandFactorAndSimpleKeyword(
         char* factName, int occurrence, char* simpName ):

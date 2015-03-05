@@ -84,11 +84,11 @@ class JeveuxString
          * @param size Taille de la chaine a recopier
          */
         inline JeveuxString( const char* chaine, const int size )
-#ifdef DEBUG
+#ifndef NDEBUG
             throw( std::runtime_error )
 #endif
         {
-#ifdef DEBUG
+#ifndef NDEBUG
             if ( size < length ) throw std::runtime_error( "String size error" );
 #endif
             memcpy( &currentValue, chaine, sizeof( char )*length );
@@ -180,11 +180,11 @@ class JeveuxString
          * @param chaine String to copy
          */
         inline void unsafeFastCopy( const char* chaine )
-#ifdef DEBUG
+#ifndef NDEBUG
             throw( std::runtime_error )
 #endif
         {
-#ifdef DEBUG
+#ifndef NDEBUG
             if ( strlen( chaine ) < length ) throw std::runtime_error( "String size error" );
 #endif
             memcpy( &currentValue, chaine, sizeof( char )*length );

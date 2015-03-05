@@ -35,7 +35,7 @@ __PYX_EXTERN_C DL_IMPORT(void) debugPrintCommandSyntax(void);
 
 /**
  * @class CommandSyntaxCython
- * @brief This class is a miror of class CommandSyntax in cython
+ * @brief This class is a mirror of class CommandSyntax in cython
  * @author Nicolas Sellenet
  */
 class CommandSyntaxCython

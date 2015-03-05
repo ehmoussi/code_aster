@@ -19,9 +19,6 @@
 
 from libcpp.string cimport string
 
-from code_aster.Supervis cimport libBaseUtils
-from code_aster.Supervis.libBaseUtils cimport copyToFStr
-
 
 cdef class ResultNaming:
 
