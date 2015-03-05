@@ -41,7 +41,7 @@
  */
 #define __PYX_EXTERN_C extern
 __PYX_EXTERN_C DL_IMPORT(void) getres_(char *, char *, char *, unsigned int, unsigned int, unsigned int);
-__PYX_EXTERN_C DL_IMPORT(int) listeMotCleSimpleFromMotCleFacteur(char *, int, int, char ***, int, char ***, int, int *);
+__PYX_EXTERN_C DL_IMPORT(int) listeMotCleSimpleFromMotCleFacteur(char *, int, int, char *, int, char *, int, int *);
 __PYX_EXTERN_C DL_IMPORT(void) getfac_(char *, long *, unsigned int);
 __PYX_EXTERN_C DL_IMPORT(int) existsCommandFactorAndSimpleKeyword(char *, int, char *);
 __PYX_EXTERN_C DL_IMPORT(char) **getCommandKeywordValueString(char *, int, char *, int *);
@@ -320,13 +320,11 @@ void DEFSPPSSP(GETMJM,getmjm,_IN char *nomfac,_IN STRING_SIZE lfac,
                     CO , COL : un concept ou une liste de concepts.
            nbarg  : nombre d arguments des mots cles du mot cle facteur
         */
-    fprintf(fileOut, "GETMJM\n");
-
     int nbMC;
     char* mcfact = MakeCStrFromFStr(nomfac, lfac);
     int cret = listeMotCleSimpleFromMotCleFacteur( mcfact, (int)(*iocc)-1, (int)(*nbval),
-                                                   (char***)motcle, lcle,
-                                                   (char***)type, ltyp, &nbMC );
+                                                   motcle, lcle,
+                                                   type, ltyp, &nbMC );
     FreeStr(mcfact);
     *nbarg = (INTEGER)nbMC;
     return;

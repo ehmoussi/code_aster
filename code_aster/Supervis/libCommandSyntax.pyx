@@ -250,8 +250,8 @@ cdef public void getres_( char* resultName, char* resultType, char* commandName,
 
 cdef public int listeMotCleSimpleFromMotCleFacteur(
         char* factKeyword, int occurrence, int nbval,
-        char*** arraySimpleKeyword, int keywordSize,
-        char*** arrayType, int typeSize, int* nbKeyword):
+        char* arraySimpleKeyword, int keywordSize,
+        char* arrayType, int typeSize, int* nbKeyword):
     """Return the list of the SimpleKeyword under a FactorKeyword
     Fills the passed and already allocated fortran array of strings.
     """
@@ -262,15 +262,15 @@ cdef public int listeMotCleSimpleFromMotCleFacteur(
         nbKeyword[0] = 0
         return 1
 
-    size = len( dictFkw.keys() )
+    keywords = dictFkw.keys()
+    size = len( keywords )
     if nbval <= 0:
         nbKeyword[0] = -size
         return 0
     nbKeyword[0] = size
 
-    keywords = dictFkw.keys()
     types = []
-    for key, value in dictFkw.iteritems():
+    for value in dictFkw.values():
         if type( value ) == str:
             typ = "TX"
         elif type( value ) == float:
@@ -279,7 +279,11 @@ cdef public int listeMotCleSimpleFromMotCleFacteur(
             typ ="IS"
         else:
             raise TypeError( "Unexpected type: {!r}".format(type(value)) )
+        types.append( typ )
     # fill the fortran array
+    debug("getmjm: keywords =", keywords)
+    debug("getmjm: types =", types)
+    assert len(keywords) == len(types) == size
     to_fstring_array( keywords, keywordSize, arraySimpleKeyword )
     to_fstring_array( types, typeSize, arrayType )
     return 0

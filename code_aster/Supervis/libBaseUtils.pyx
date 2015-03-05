@@ -54,12 +54,12 @@ cdef long* to_clong_array( list_long ):
     return ret
 
 
-cdef void to_fstring_array( list_str, int str_size, char*** ret ):
+cdef void to_fstring_array( list_str, int str_size, char* ret ):
     """Convert a list of strings (of the same size) into a char**"""
     # http://stackoverflow.com/questions/17511309/fast-string-array-cython
     cdef int i
     for i in range( len( list_str ) ):
-        ret[0][i] = PyString_AsString( resizeStr(list_str[i], str_size) )
+        copyToFStr( ret + i * str_size, resizeStr(list_str[i], str_size), str_size )
 
 
 def debug(title, *obj):
