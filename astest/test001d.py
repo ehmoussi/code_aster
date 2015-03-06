@@ -182,3 +182,13 @@ CharMeca12.setValue( pression, nameOfGroup )
 print "     sur le groupe : ", nameOfGroup
 ret = CharMeca12.build()
 print " Fin de la construction : ", ret 
+
+# Imposer une PressureDouble sur un groupe de noeuds
+print " >>>> Construction d'un chargement ImposedPressureDouble"
+CharMeca13 = code_aster.ImposedPressureDouble()
+CharMeca13.setSupportModel(monModel)
+nameOfGroup = "O" 
+CharMeca13.setValue( pression, nameOfGroup )
+print "     sur le groupe : ", nameOfGroup
+#ret = CharMeca13.build()
+#print " Fin de la construction : ", ret 

@@ -465,6 +465,37 @@ cdef class ImposedDisplacementDouble( GenericMechanicalLoad ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
 
+###### ImposedPressureDouble
+
+cdef class ImposedPressureDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ ImposedPressureDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new ImposedPressureDoublePtr ( new ImposedPressureDoubleInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <ImposedPressureDoubleInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, PressureDouble disp, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <ImposedPressureDoubleInstance*>self.getInstance()
+        return instance.setValue( deref( disp.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
 ###### DistributedPressureDouble
 
 cdef class DistributedPressureDouble( GenericMechanicalLoad ):
