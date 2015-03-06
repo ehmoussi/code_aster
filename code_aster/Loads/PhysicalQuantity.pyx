@@ -301,3 +301,73 @@ cdef class NormalSpeedDouble:
     def setValue( self, component, value ):
         """Define the value of a component of the physical quantity """
         self.getInstance().setValue( component, value )
+
+#####  HeatFluxDouble
+
+cdef class HeatFluxDouble:
+    """Python wrapper on the C++ HeatFluxDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = new HeatFluxDoublePtr( new HeatFluxDoubleInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, HeatFluxDoublePtr other ):
+        """Point to an existing object"""
+        self._cptr = new HeatFluxDoublePtr( other )
+
+    cdef HeatFluxDoublePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef HeatFluxDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def debugPrint( self ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( )
+
+    def setValue( self, component, value ):
+        """Define the value of a component of the physical quantity """
+        self.getInstance().setValue( component, value )
+
+#####  HydraulicFluxDouble
+
+cdef class HydraulicFluxDouble:
+    """Python wrapper on the C++ HydraulicFluxDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = new HydraulicFluxDoublePtr( new HydraulicFluxDoubleInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, HydraulicFluxDoublePtr other ):
+        """Point to an existing object"""
+        self._cptr = new HydraulicFluxDoublePtr( other )
+
+    cdef HydraulicFluxDoublePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef HydraulicFluxDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def debugPrint( self ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( )
+
+    def setValue( self, component, value ):
+        """Define the value of a component of the physical quantity """
+        self.getInstance().setValue( component, value )
