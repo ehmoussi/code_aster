@@ -161,30 +161,30 @@ cdef class LocalShellForceDouble:
         """Define the value of a component of the physical quantity """
         self.getInstance().setValue( component, value )
 
-#####  DoubleDisplacement
+#####  DisplacementDouble
 
-cdef class DoubleDisplacement:
-    """Python wrapper on the C++ DoubleDisplacement Object"""
+cdef class DisplacementDouble:
+    """Python wrapper on the C++ DisplacementDouble Object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
         if init :
-            self._cptr = new DoubleDisplacementPtr( new DoubleDisplacementInstance() )
+            self._cptr = new DisplacementDoublePtr( new DisplacementDoubleInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, DoubleDisplacementPtr other ):
+    cdef set( self, DisplacementDoublePtr other ):
         """Point to an existing object"""
-        self._cptr = new DoubleDisplacementPtr( other )
+        self._cptr = new DisplacementDoublePtr( other )
 
-    cdef DoubleDisplacementPtr* getPtr( self ):
+    cdef DisplacementDoublePtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef DoubleDisplacementInstance* getInstance( self ):
+    cdef DisplacementDoubleInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
@@ -197,30 +197,30 @@ cdef class DoubleDisplacement:
         self.getInstance().setValue( component, value )
 
 
-#####  DoublePressure
+#####  PressureDouble
 
-cdef class DoublePressure:
-    """Python wrapper on the C++ DoublePressure Object"""
+cdef class PressureDouble:
+    """Python wrapper on the C++ PressureDouble Object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
         if init :
-            self._cptr = new DoublePressurePtr( new DoublePressureInstance() )
+            self._cptr = new PressureDoublePtr( new PressureDoubleInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, DoublePressurePtr other ):
+    cdef set( self, PressureDoublePtr other ):
         """Point to an existing object"""
-        self._cptr = new DoublePressurePtr( other )
+        self._cptr = new PressureDoublePtr( other )
 
-    cdef DoublePressurePtr* getPtr( self ):
+    cdef PressureDoublePtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef DoublePressureInstance* getInstance( self ):
+    cdef PressureDoubleInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 

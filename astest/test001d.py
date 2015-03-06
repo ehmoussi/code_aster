@@ -142,6 +142,17 @@ print "     sur le groupe : ", nameOfGroup
 ret = CharMeca9.build()
 print " Fin de la construction : ", ret 
 
+# Definition d'un chargement de type FORCE_COQUE à partir d'un StructuralForceDouble
+print " >>>> Construction d'un chargement StructuralForceOnShellDouble"
+
+CharMeca10 = code_aster.StructuralForceOnShellDouble()
+CharMeca10.setSupportModel(monModel)
+nameOfGroup = "UP" 
+CharMeca10.setValue( force_pour_structure, nameOfGroup )
+print "     sur le groupe : ", nameOfGroup
+ret = CharMeca10.build()
+print " Fin de la construction : ", ret 
+
 # Definition d'un chargement de type FORCE_COQUE à partir d'un LocalShellForceDouble
 print " >>>> Construction d'un chargement LocalForceOnShellDouble"
 
@@ -150,11 +161,24 @@ fshell.setValue(code_aster.Loads.F1, 11.0)
 fshell.setValue(code_aster.Loads.F2, 12.0)
 fshell.setValue(code_aster.Loads.F3, 13.0)
  
-CharMeca10 = code_aster.LocalForceOnShellDouble()
-CharMeca10.setSupportModel(monModel)
+CharMeca11 = code_aster.LocalForceOnShellDouble()
+CharMeca11.setSupportModel(monModel)
 nameOfGroup = "UP" 
-CharMeca10.setValue( fshell, nameOfGroup )
+CharMeca11.setValue( fshell, nameOfGroup )
 print "     sur le groupe : ", nameOfGroup
-ret = CharMeca10.build()
+ret = CharMeca11.build()
 print " Fin de la construction : ", ret 
 
+# Definition d'un chargement de type FORCE_COQUE à partir d'une PressureDouble
+print " >>>> Construction d'un chargement PressureOnShellDouble"
+
+pression = code_aster.PressureDouble()
+pression.setValue(code_aster.Loads.Pres, 14.0)
+ 
+CharMeca12 = code_aster.PressureOnShellDouble()
+CharMeca12.setSupportModel(monModel)
+nameOfGroup = "UP" 
+CharMeca12.setValue( pression, nameOfGroup )
+print "     sur le groupe : ", nameOfGroup
+ret = CharMeca12.build()
+print " Fin de la construction : ", ret 

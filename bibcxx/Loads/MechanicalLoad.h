@@ -415,20 +415,33 @@ template class MechanicalLoadInstance< LocalBeamForceDoubleInstance, ForceOnBeam
 typedef MechanicalLoadInstance< LocalBeamForceDoubleInstance, ForceOnBeam > LocalForceOnBeamDoubleInstance;
 typedef boost::shared_ptr< LocalForceOnBeamDoubleInstance > LocalForceOnBeamDoublePtr;
 
+/* Appliquer une force (définie dans le repère global) à une coque/plaque */
+/** @typedef StructuralForceOnShellDouble  */
+template class MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnShell >;
+typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnShell > StructuralForceOnShellDoubleInstance;
+typedef boost::shared_ptr< StructuralForceOnShellDoubleInstance > StructuralForceOnShellDoublePtr;
+
 /* Appliquer une force (définie dans le repère local) à une coque/plaque */
 /** @typedef LocalForceOnShellDouble  */
 template class MechanicalLoadInstance< LocalShellForceDoubleInstance, ForceOnShell >;
 typedef MechanicalLoadInstance< LocalShellForceDoubleInstance, ForceOnShell > LocalForceOnShellDoubleInstance;
 typedef boost::shared_ptr< LocalForceOnShellDoubleInstance > LocalForceOnShellDoublePtr;
 
-/** @typedef ImposedDoubleDisplacement  */
-template class MechanicalLoadInstance< DoubleDisplacementInstance, ImposedDisplacement >;
-typedef MechanicalLoadInstance< DoubleDisplacementInstance, ImposedDisplacement > ImposedDoubleDisplacementInstance;
-typedef boost::shared_ptr< ImposedDoubleDisplacementInstance > ImposedDoubleDisplacementPtr;
+/* Appliquer une pression à une coque/plaque */
+/** @typedef PressureOnShellDouble  */
+template class MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell >;
+typedef MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell > PressureOnShellDoubleInstance;
+typedef boost::shared_ptr< PressureOnShellDoubleInstance > PressureOnShellDoublePtr;
 
-/** @typedef DistributedDoublePressure  */
-template class MechanicalLoadInstance< DoublePressureInstance, DistributedPressure >;
-typedef MechanicalLoadInstance< DoublePressureInstance, DistributedPressure > DistributedDoublePressureInstance;
-typedef boost::shared_ptr< DistributedDoublePressureInstance > DistributedDoublePressurePtr;
+
+/** @typedef ImposedDisplacementDouble  */
+template class MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDisplacement >;
+typedef MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDisplacement > ImposedDisplacementDoubleInstance;
+typedef boost::shared_ptr< ImposedDisplacementDoubleInstance > ImposedDisplacementDoublePtr;
+
+/** @typedef DistributedPressureDouble  */
+template class MechanicalLoadInstance< PressureDoubleInstance, DistributedPressure >;
+typedef MechanicalLoadInstance< PressureDoubleInstance, DistributedPressure > DistributedPressureDoubleInstance;
+typedef boost::shared_ptr< DistributedPressureDoubleInstance > DistributedPressureDoublePtr;
 
 #endif /* MECHANICALLOAD_H_ */

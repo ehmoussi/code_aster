@@ -21,7 +21,7 @@ from libcpp.string cimport string
 
 from code_aster.Modeling.Model cimport ModelPtr
 from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr, StructuralForceDoublePtr, LocalBeamForceDoublePtr, LocalShellForceDoublePtr
-from code_aster.Loads.PhysicalQuantity cimport DoubleDisplacementPtr, DoublePressurePtr
+from code_aster.Loads.PhysicalQuantity cimport DisplacementDoublePtr, PressureDoublePtr
 
 
 cdef extern from "Loads/MechanicalLoad.h":
@@ -194,6 +194,23 @@ cdef extern from "Loads/MechanicalLoad.h":
         LocalForceOnBeamDoublePtr( LocalForceOnBeamDoubleInstance * )
         LocalForceOnBeamDoubleInstance* get()
 
+#### StructuralForceOnShellDouble
+
+    cdef cppclass StructuralForceOnShellDoubleInstance( GenericMechanicalLoadInstance ):
+
+        StructuralForceOnShellDoubleInstance()
+        bint setValue( StructuralForceDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass StructuralForceOnShellDoublePtr:
+
+        StructuralForceOnShellDoublePtr( StructuralForceOnShellDoublePtr& )
+        StructuralForceOnShellDoublePtr( StructuralForceOnShellDoubleInstance * )
+        StructuralForceOnShellDoubleInstance* get()
+
 #### LocalForceOnShellDouble
 
     cdef cppclass LocalForceOnShellDoubleInstance( GenericMechanicalLoadInstance ):
@@ -211,39 +228,56 @@ cdef extern from "Loads/MechanicalLoad.h":
         LocalForceOnShellDoublePtr( LocalForceOnShellDoubleInstance * )
         LocalForceOnShellDoubleInstance* get()
 
-#### ImposedDoubleDisplacement
+#### PressureOnShellDouble
 
-    cdef cppclass ImposedDoubleDisplacementInstance( GenericMechanicalLoadInstance ):
+    cdef cppclass PressureOnShellDoubleInstance( GenericMechanicalLoadInstance ):
 
-        ImposedDoubleDisplacementInstance()
-        bint setValue( DoubleDisplacementPtr physQuantPtr, string nameOfGroup ) except+
+        PressureOnShellDoubleInstance()
+        bint setValue( PressureDoublePtr physQuantPtr, string nameOfGroup ) except+
         bint setSupportModel( ModelPtr currentModel )
         bint build() except +
         const string getType()
         void debugPrint( int logicalUnit )
 
-    cdef cppclass ImposedDoubleDisplacementPtr:
+    cdef cppclass PressureOnShellDoublePtr:
 
-        ImposedDoubleDisplacementPtr( ImposedDoubleDisplacementPtr& )
-        ImposedDoubleDisplacementPtr( ImposedDoubleDisplacementInstance * )
-        ImposedDoubleDisplacementInstance* get()
+        PressureOnShellDoublePtr( PressureOnShellDoublePtr& )
+        PressureOnShellDoublePtr( PressureOnShellDoubleInstance * )
+        PressureOnShellDoubleInstance* get()
 
-#### DistributedDoublePressure
+#### ImposedDisplacementDouble
 
-    cdef cppclass DistributedDoublePressureInstance( GenericMechanicalLoadInstance ):
+    cdef cppclass ImposedDisplacementDoubleInstance( GenericMechanicalLoadInstance ):
 
-        DistributedDoublePressureInstance()
-        bint setValue( DoublePressurePtr physQuantPtr, string nameOfGroup ) except+
+        ImposedDisplacementDoubleInstance()
+        bint setValue( DisplacementDoublePtr physQuantPtr, string nameOfGroup ) except+
         bint setSupportModel( ModelPtr currentModel )
         bint build() except +
         const string getType()
         void debugPrint( int logicalUnit )
 
-    cdef cppclass DistributedDoublePressurePtr:
+    cdef cppclass ImposedDisplacementDoublePtr:
 
-        DistributedDoublePressurePtr( DistributedDoublePressurePtr& )
-        DistributedDoublePressurePtr( DistributedDoublePressureInstance * )
-        DistributedDoublePressureInstance* get()
+        ImposedDisplacementDoublePtr( ImposedDisplacementDoublePtr& )
+        ImposedDisplacementDoublePtr( ImposedDisplacementDoubleInstance * )
+        ImposedDisplacementDoubleInstance* get()
+
+#### DistributedPressureDouble
+
+    cdef cppclass DistributedPressureDoubleInstance( GenericMechanicalLoadInstance ):
+
+        DistributedPressureDoubleInstance()
+        bint setValue( PressureDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass DistributedPressureDoublePtr:
+
+        DistributedPressureDoublePtr( DistributedPressureDoublePtr& )
+        DistributedPressureDoublePtr( DistributedPressureDoubleInstance * )
+        DistributedPressureDoubleInstance* get()
 
 ############################################################################################
 
@@ -306,19 +340,29 @@ cdef class StructuralForceOnBeamDouble( GenericMechanicalLoad ):
 cdef class LocalForceOnBeamDouble( GenericMechanicalLoad ):
     pass
 
+#### StructuralForceOnShellDouble
+
+cdef class StructuralForceOnShellDouble( GenericMechanicalLoad ):
+    pass
+
 #### LocalForceOnShellDouble
 
 cdef class LocalForceOnShellDouble( GenericMechanicalLoad ):
     pass
 
-#### ImposedDoubleDisplacement
+#### PressureOnShellDouble
 
-cdef class ImposedDoubleDisplacement( GenericMechanicalLoad ):
+cdef class PressureOnShellDouble( GenericMechanicalLoad ):
+    pass
+
+#### ImposedDisplacementDouble
+
+cdef class ImposedDisplacementDouble( GenericMechanicalLoad ):
     pass
 
 
-#### DistributedDoublePressure
+#### DistributedPressureDouble
 
-cdef class DistributedDoublePressure( GenericMechanicalLoad ):
+cdef class DistributedPressureDouble( GenericMechanicalLoad ):
     pass
 

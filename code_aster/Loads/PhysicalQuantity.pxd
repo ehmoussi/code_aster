@@ -76,31 +76,31 @@ cdef extern from "Loads/PhysicalQuantity.h":
         LocalShellForceDoublePtr( LocalShellForceDoubleInstance * )
         LocalShellForceDoubleInstance* get()
 
-#### DoubleDisplacement
+#### DisplacementDouble
 
-    cdef cppclass DoubleDisplacementInstance:
-        DoubleDisplacementInstance()
+    cdef cppclass DisplacementDoubleInstance:
+        DisplacementDoubleInstance()
         void setValue( PhysicalQuantityComponent comp, double val ) except +
         void debugPrint()
 
-    cdef cppclass DoubleDisplacementPtr:
+    cdef cppclass DisplacementDoublePtr:
 
-        DoubleDisplacementPtr( DoubleDisplacementPtr& )
-        DoubleDisplacementPtr( DoubleDisplacementInstance * )
-        DoubleDisplacementInstance* get()
+        DisplacementDoublePtr( DisplacementDoublePtr& )
+        DisplacementDoublePtr( DisplacementDoubleInstance * )
+        DisplacementDoubleInstance* get()
 
-#### DoublePressure
+#### PressureDouble
 
-    cdef cppclass DoublePressureInstance:
-        DoublePressureInstance()
+    cdef cppclass PressureDoubleInstance:
+        PressureDoubleInstance()
         void setValue( PhysicalQuantityComponent comp, double val ) except +
         void debugPrint()
 
-    cdef cppclass DoublePressurePtr:
+    cdef cppclass PressureDoublePtr:
 
-        DoublePressurePtr( DoublePressurePtr& )
-        DoublePressurePtr( DoublePressureInstance * )
-        DoublePressureInstance* get()
+        PressureDoublePtr( PressureDoublePtr& )
+        PressureDoublePtr( PressureDoubleInstance * )
+        PressureDoubleInstance* get()
 
 
 #### ForceDouble
@@ -146,23 +146,23 @@ cdef class LocalShellForceDouble:
     cdef LocalShellForceDoubleInstance* getInstance( self )
 
 
-#### DoubleDisplacement
+#### DisplacementDouble
 
-cdef class DoubleDisplacement:
+cdef class DisplacementDouble:
 
-    cdef DoubleDisplacementPtr* _cptr
+    cdef DisplacementDoublePtr* _cptr
 
-    cdef set( self, DoubleDisplacementPtr other )
-    cdef DoubleDisplacementPtr* getPtr( self )
-    cdef DoubleDisplacementInstance* getInstance( self )
+    cdef set( self, DisplacementDoublePtr other )
+    cdef DisplacementDoublePtr* getPtr( self )
+    cdef DisplacementDoubleInstance* getInstance( self )
 
 
-#### DoublePressure
+#### PressureDouble
 
-cdef class DoublePressure:
+cdef class PressureDouble:
 
-    cdef DoublePressurePtr* _cptr
+    cdef PressureDoublePtr* _cptr
 
-    cdef set( self, DoublePressurePtr other )
-    cdef DoublePressurePtr* getPtr( self )
-    cdef DoublePressureInstance* getInstance( self )
+    cdef set( self, PressureDoublePtr other )
+    cdef PressureDoublePtr* getPtr( self )
+    cdef PressureDoubleInstance* getInstance( self )
