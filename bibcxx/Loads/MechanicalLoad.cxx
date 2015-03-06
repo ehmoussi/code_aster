@@ -48,3 +48,5 @@ const std::string LoadTraits< ImpedanceOnFace >::factorKeyword = "IMPE_FACE";
 const std::string LoadTraits< NormalSpeedOnFace >::factorKeyword = "VITE_FACE";
 
 const std::string LoadTraits< WavePressureOnFace >::factorKeyword = "ONDE_FLUI";
+
+const std::string LoadTraits< THMFlux >::factorKeyword = "FLUX_THM_REP";

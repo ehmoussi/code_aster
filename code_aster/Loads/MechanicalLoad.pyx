@@ -21,7 +21,7 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 from code_aster.Loads.PhysicalQuantity cimport ForceDouble, StructuralForceDouble, LocalBeamForceDouble, LocalShellForceDouble
 from code_aster.Loads.PhysicalQuantity cimport DisplacementDouble, PressureDouble
-from code_aster.Loads.PhysicalQuantity cimport ImpedanceDouble, NormalSpeedDouble
+from code_aster.Loads.PhysicalQuantity cimport ImpedanceDouble, NormalSpeedDouble, HeatFluxDouble, HydraulicFluxDouble
 from code_aster.Modeling.Model cimport Model
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
@@ -651,3 +651,64 @@ cdef class WavePressureOnFaceDouble( GenericMechanicalLoad ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
 
+###### DistributedHeatFluxDouble
+
+cdef class DistributedHeatFluxDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ DistributedHeatFluxDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new DistributedHeatFluxDoublePtr ( new DistributedHeatFluxDoubleInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <DistributedHeatFluxDoubleInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, HeatFluxDouble heatFlux, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <DistributedHeatFluxDoubleInstance*>self.getInstance()
+        return instance.setValue( deref( heatFlux.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
+###### DistributedHydraulicFluxDouble
+
+cdef class DistributedHydraulicFluxDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ DistributedHydraulicFluxDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new DistributedHydraulicFluxDoublePtr ( new DistributedHydraulicFluxDoubleInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <DistributedHydraulicFluxDoubleInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, HydraulicFluxDouble hydraulicFlux, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <DistributedHydraulicFluxDoubleInstance*>self.getInstance()
+        return instance.setValue( deref( hydraulicFlux.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
