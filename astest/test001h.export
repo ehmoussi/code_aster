@@ -1,0 +1,12 @@
+# the goal of this testcase is to check the --no-start argument
+# aslint: disable=E2003
+P time_limit 60
+P memory_limit 512
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist verification sequential asterxx
+
+# asrun automatically add a hyphen...
+A -no-start
+F comm test001h.py D 1

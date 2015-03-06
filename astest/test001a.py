@@ -2,7 +2,6 @@
 # coding: utf-8
 
 import code_aster
-code_aster.setExecutionParameter('memory', 2000.)
 
 # Creation du maillage
 mesh = code_aster.Mesh()
