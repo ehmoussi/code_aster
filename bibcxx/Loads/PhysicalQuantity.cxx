@@ -26,7 +26,7 @@
 #include "Loads/PhysicalQuantity.h"
 
 const char* ComponentNames[nbComponent] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP", "TEMP_MIL", "PRES", "FX", "FY", "FZ", "MX", "MY","MZ",
- "N", "VY", "VZ", "MT", "MFY", "MFZ", "F1", "F2", "F3", "MF1", "MF2"};
+ "N", "VY", "VZ", "MT", "MFY", "MFZ", "F1", "F2", "F3", "MF1", "MF2", "IMPE", "VNOR"};
 
 /* Init const data */
 
@@ -64,3 +64,13 @@ const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Pressure>::co
 const PhysicalQuantityComponent TemperatureComponents[nbTemperatureComponents] = { Temp, MiddleTemp };
 const std::string PhysicalQuantityTraits <Temperature>::name = "Temperature"; 
 const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Temperature>::components( TemperatureComponents, TemperatureComponents + nbTemperatureComponents );
+
+/* Impedance */
+const PhysicalQuantityComponent ImpedanceComponents[nbImpedanceComponents] = { Impe };
+const std::string PhysicalQuantityTraits <Impedance>::name = "Impedance"; 
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Impedance>::components( ImpedanceComponents, ImpedanceComponents + nbImpedanceComponents );
+
+/* NormalSpeed */
+const PhysicalQuantityComponent NormalSpeedComponents[nbNormalSpeedComponents] = { Impe };
+const std::string PhysicalQuantityTraits <NormalSpeed>::name = "NormalSpeed"; 
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<NormalSpeed>::components( NormalSpeedComponents, NormalSpeedComponents + nbNormalSpeedComponents );

@@ -22,6 +22,7 @@ from libcpp.string cimport string
 from code_aster.Modeling.Model cimport ModelPtr
 from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr, StructuralForceDoublePtr, LocalBeamForceDoublePtr, LocalShellForceDoublePtr
 from code_aster.Loads.PhysicalQuantity cimport DisplacementDoublePtr, PressureDoublePtr
+from code_aster.Loads.PhysicalQuantity cimport ImpedanceDoublePtr, NormalSpeedDoublePtr
 
 
 cdef extern from "Loads/MechanicalLoad.h":
@@ -296,6 +297,57 @@ cdef extern from "Loads/MechanicalLoad.h":
         DistributedPressureDoublePtr( DistributedPressureDoubleInstance * )
         DistributedPressureDoubleInstance* get()
 
+#### ImpedanceOnFaceDouble
+
+    cdef cppclass ImpedanceOnFaceDoubleInstance( GenericMechanicalLoadInstance ):
+
+        ImpedanceOnFaceDoubleInstance()
+        bint setValue( ImpedanceDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass ImpedanceOnFaceDoublePtr:
+
+        ImpedanceOnFaceDoublePtr( ImpedanceOnFaceDoublePtr& )
+        ImpedanceOnFaceDoublePtr( ImpedanceOnFaceDoubleInstance * )
+        ImpedanceOnFaceDoubleInstance* get()
+
+#### NormalSpeedOnFaceDouble
+
+    cdef cppclass NormalSpeedOnFaceDoubleInstance( GenericMechanicalLoadInstance ):
+
+        NormalSpeedOnFaceDoubleInstance()
+        bint setValue( NormalSpeedDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass NormalSpeedOnFaceDoublePtr:
+
+        NormalSpeedOnFaceDoublePtr( NormalSpeedOnFaceDoublePtr& )
+        NormalSpeedOnFaceDoublePtr( NormalSpeedOnFaceDoubleInstance * )
+        NormalSpeedOnFaceDoubleInstance* get()
+
+#### WavePressureOnFaceDouble
+
+    cdef cppclass WavePressureOnFaceDoubleInstance( GenericMechanicalLoadInstance ):
+
+        WavePressureOnFaceDoubleInstance()
+        bint setValue( PressureDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass WavePressureOnFaceDoublePtr:
+
+        WavePressureOnFaceDoublePtr( WavePressureOnFaceDoublePtr& )
+        WavePressureOnFaceDoublePtr( WavePressureOnFaceDoubleInstance * )
+        WavePressureOnFaceDoubleInstance* get()
+
 ############################################################################################
 
 #### GenericMechanicalLoad
@@ -385,5 +437,20 @@ cdef class ImposedPressureDouble( GenericMechanicalLoad ):
 #### DistributedPressureDouble
 
 cdef class DistributedPressureDouble( GenericMechanicalLoad ):
+    pass
+
+#### ImpedanceOnFaceDouble
+
+cdef class ImpedanceOnFaceDouble( GenericMechanicalLoad ):
+    pass
+
+#### NormalSpeedOnFaceDouble
+
+cdef class NormalSpeedOnFaceDouble( GenericMechanicalLoad ):
+    pass
+
+#### WavePressureOnFaceDouble
+
+cdef class WavePressureOnFaceDouble( GenericMechanicalLoad ):
     pass
 

@@ -231,3 +231,73 @@ cdef class PressureDouble:
     def setValue( self, component, value ):
         """Define the value of a component of the physical quantity """
         self.getInstance().setValue( component, value )
+
+#####  ImpedanceDouble
+
+cdef class ImpedanceDouble:
+    """Python wrapper on the C++ ImpedanceDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = new ImpedanceDoublePtr( new ImpedanceDoubleInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, ImpedanceDoublePtr other ):
+        """Point to an existing object"""
+        self._cptr = new ImpedanceDoublePtr( other )
+
+    cdef ImpedanceDoublePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef ImpedanceDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def debugPrint( self ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( )
+
+    def setValue( self, component, value ):
+        """Define the value of a component of the physical quantity """
+        self.getInstance().setValue( component, value )
+
+#####  NormalSpeedDouble
+
+cdef class NormalSpeedDouble:
+    """Python wrapper on the C++ NormalSpeedDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = new NormalSpeedDoublePtr( new NormalSpeedDoubleInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, NormalSpeedDoublePtr other ):
+        """Point to an existing object"""
+        self._cptr = new NormalSpeedDoublePtr( other )
+
+    cdef NormalSpeedDoublePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef NormalSpeedDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def debugPrint( self ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( )
+
+    def setValue( self, component, value ):
+        """Define the value of a component of the physical quantity """
+        self.getInstance().setValue( component, value )
