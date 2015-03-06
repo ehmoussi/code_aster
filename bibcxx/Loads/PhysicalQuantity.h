@@ -360,15 +360,15 @@ template class PhysicalQuantityInstance< double, LocalShellForce >;
 typedef PhysicalQuantityInstance< double, LocalShellForce > LocalShellForceDoubleInstance;
 typedef boost::shared_ptr< LocalShellForceDoubleInstance > LocalShellForceDoublePtr; 
 
-/** @typedef DoubleDisplacement DEPL_R */
+/** @typedef DisplacementDouble DEPL_R */
 template class PhysicalQuantityInstance< double, Displacement >; 
-typedef PhysicalQuantityInstance< double, Displacement > DoubleDisplacementInstance;
-typedef boost::shared_ptr< DoubleDisplacementInstance > DoubleDisplacementPtr; 
+typedef PhysicalQuantityInstance< double, Displacement > DisplacementDoubleInstance;
+typedef boost::shared_ptr< DisplacementDoubleInstance > DisplacementDoublePtr; 
 
-/** @typedef DoublePressure Pression */
+/** @typedef PressureDouble Pression */
 template class PhysicalQuantityInstance< double, Pressure >; 
-typedef PhysicalQuantityInstance< double, Pressure > DoublePressureInstance;
-typedef boost::shared_ptr< DoublePressureInstance > DoublePressurePtr; 
+typedef PhysicalQuantityInstance< double, Pressure > PressureDoubleInstance;
+typedef boost::shared_ptr< PressureDoubleInstance > PressureDoublePtr; 
 
 /** @typedef TemperatureDouble Temperature */
 template class PhysicalQuantityInstance< double, Temperature >; 
