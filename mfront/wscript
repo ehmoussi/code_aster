@@ -93,7 +93,7 @@ def build(self):
                 name = 'mfront_mater',
                  lst = lst,
                 path = self.path,
-              target = 'c_mfront_official.capy',
+              target = 'c_mfront_official.py',
                  env = env.derive(),
                  use = 'asterbehaviour',
         )
@@ -103,7 +103,7 @@ def build(self):
                 name = 'mfront_mater',
                 path = self.path,
                  env = env.derive(),
-              target = 'c_mfront_official.capy',
+              target = 'c_mfront_official.py',
         )
 
 ###############################################################################
@@ -214,10 +214,10 @@ def mater_capy(self):
 
 class mfront_capy(Task.Task):
     color   = 'PINK'
-    ext_out = ['.capy']
+    ext_out = ['.py']
 
     def run(self):
-        """Create a .capy file for the MFront behaviours"""
+        """Create a .py file for the MFront behaviours"""
         req = self.inputs[0].abspath()
         # open libAsterBehaviour.so
         libpath = self.inputs[1].abspath()
@@ -248,10 +248,10 @@ def fake_mater_capy(self):
 
 class fake_mfront_capy(Task.Task):
     color   = 'PINK'
-    ext_out = ['.capy']
+    ext_out = ['.py']
 
     def run(self):
-        """Create a .capy file for the MFront behaviours"""
+        """Create a .py file for the MFront behaviours"""
         target = self.outputs[0]
         lines = [capy_header, capy_footer]
         open(target.abspath(), 'w').write(os.linesep.join(lines))

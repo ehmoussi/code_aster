@@ -444,12 +444,6 @@ class Ops(object):
 ops = Ops()
 
 
-class C_MFRONT_OFFICIAL(object):
-
-    def keys(self):
-        return {}
-
-
 class PROC_ETAPE(Procedure):
     pass
 # } Ok

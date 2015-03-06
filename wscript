@@ -21,7 +21,7 @@ import zlib
 import base64
 from functools import partial
 from itertools import chain
-from waflib import Configure, Logs, Utils, Build
+from waflib import Configure, Utils, Build, TaskGen, Task
 
 
 def options(self):
@@ -232,6 +232,8 @@ def build(self):
             self.recurse(optional)
     self.load('scm_aster', tooldir='waftools')
     self.recurse('data')
+    # this task depends on generated files
+    build_eficas_catalog(self)
 
 def build_elements(self):
     self.recurse('catalo')
@@ -402,3 +404,84 @@ def get_config_h(self, language):
         else:
             lst.append(cmt % '#undef %s' % x)
     return "\n".join(lst)
+
+###############################################################################
+def build_eficas_catalog(self):
+    get_srcs = self.path.get_src().ant_glob
+    env = self.all_envs[self.variant]
+    root = 'code_aster/Cata/'
+    # catalog for eficas
+    mfront_capy = self.path.get_bld().find_or_declare('c_mfront_official.py')
+    self(
+        features = 'catapy py',
+            name = 'catapy',
+          source = get_srcs(root + 'Commons/accas.capy') \
+                 + get_srcs(root + 'Commons/allco.capy') \
+                 + [mfront_capy] \
+                 + get_srcs(root + 'Commons/*.py',
+                            excl=[root + 'Commons/__init__.py',
+                                  root + 'Commons/ops.py']) \
+                 + get_srcs(root + 'Commands/*.py',
+                            excl=root + 'Commands/__init__.py'),
+          target = 'cata.py',
+    install_from = '.',
+    install_path = env.ASTERLIBDIR,
+    )
+    self(
+        features = 'py',
+            name = 'opspy',
+          source = get_srcs(root + 'Commons/ops.py'),
+    install_path = osp.join(env.ASTERLIBDIR, 'eficas'),
+    )
+    self(
+        features = 'py',
+            name = 'commonspy',
+          source = mfront_capy,
+    install_path = osp.join(env.ASTERLIBDIR, root + 'Commons'),
+    )
+
+# manage extension
+@TaskGen.extension('.capy')
+def capy(self, node):
+    pass
+
+@TaskGen.feature('catapy')
+def make_cata(self):
+    """Create the cata.py"""
+    target = self.bld.bldnode.make_node(self.target)
+    init = self.bld.bldnode.make_node('__init__.py')
+    init.write('# init')
+    init.sig = Utils.h_file(init.abspath())
+    tsk = self.create_task('make_capy', src=self.source, tgt=target)
+    # self.process_py(target): not use because would use `install_from` argument
+    def inst_py(ctx):
+        install_pyfile(self, target, 'eficas')
+        install_pyfile(self, init, 'eficas')
+    self.bld.add_post_fun(inst_py)
+
+def install_pyfile(self, node, subdir):
+    """See waflib/Tools/python.py: Just ignore install_from argument"""
+    from_node = node.parent
+    dest = osp.join(self.install_path, subdir, node.path_from(from_node))
+    tsk = self.bld.install_as(dest, node, postpone=False)
+
+class make_capy(Task.Task):
+    color   = 'PINK'
+    ext_in = ['.capy']
+    ext_out = ['.py']
+    banned = 'code_aster.Cata'
+
+    def run(self):
+        """Merge capy files to cata.py and install it."""
+        # doing merge in python as it is multi-plateform
+        target = self.outputs[0]
+        cata = []
+        for node in self.inputs:
+            with open(node.abspath()) as subfid:
+                lines = [line for line in subfid.read().splitlines() \
+                         if self.banned not in line]
+                cata.extend(lines)
+        print "DEBUG: write cata.py"
+        with open(target.abspath(), 'w') as fid:
+            fid.write(os.linesep.join(cata))
+        target.sig = Utils.h_file(target.abspath())
