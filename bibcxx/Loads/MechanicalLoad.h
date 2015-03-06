@@ -39,7 +39,7 @@
  * @brief Inventory of all mechanical loads available in Code_Aster
  */
 enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam, ForceOnShell,
-                ImposedDisplacement, DistributedPressure, EndLoad };
+                ImposedDoF, DistributedPressure, EndLoad };
 
 /**
  * @class LoadTraits
@@ -153,10 +153,10 @@ template <> struct LoadTraits< ForceOnShell >
 };
 
 /**
- * @def LoadTraits<ImposedDisplacement>
- * @brief Declare specialization for ImposedDisplacement
+ * @def LoadTraits<ImposedDoF>
+ * @brief Declare specialization for ImposedDoF
  */
-template <> struct LoadTraits< ImposedDisplacement >
+template <> struct LoadTraits< ImposedDoF >
 {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
@@ -433,11 +433,18 @@ template class MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell >;
 typedef MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell > PressureOnShellDoubleInstance;
 typedef boost::shared_ptr< PressureOnShellDoubleInstance > PressureOnShellDoublePtr;
 
-
+/* Imposer un déplacement sur des noeuds */
 /** @typedef ImposedDisplacementDouble  */
-template class MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDisplacement >;
-typedef MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDisplacement > ImposedDisplacementDoubleInstance;
+template class MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDoF >;
+typedef MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDoF > ImposedDisplacementDoubleInstance;
 typedef boost::shared_ptr< ImposedDisplacementDoubleInstance > ImposedDisplacementDoublePtr;
+
+/* Imposer une pression sur des noeuds */
+/** @typedef ImposedPressureDouble  */
+template class MechanicalLoadInstance< PressureDoubleInstance, ImposedDoF >;
+typedef MechanicalLoadInstance< PressureDoubleInstance, ImposedDoF > ImposedPressureDoubleInstance;
+typedef boost::shared_ptr< ImposedPressureDoubleInstance > ImposedPressureDoublePtr;
+
 
 /** @typedef DistributedPressureDouble  */
 template class MechanicalLoadInstance< PressureDoubleInstance, DistributedPressure >;
