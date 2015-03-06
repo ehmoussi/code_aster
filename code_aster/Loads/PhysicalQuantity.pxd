@@ -21,7 +21,9 @@
 cdef extern from "Loads/PhysicalQuantity.h":
 
     cpdef enum PhysicalQuantityComponent:
-        Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2
+        Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2, Impe, Vnor
+
+
 
 #### ForceDouble
 
@@ -102,6 +104,33 @@ cdef extern from "Loads/PhysicalQuantity.h":
         PressureDoublePtr( PressureDoubleInstance * )
         PressureDoubleInstance* get()
 
+#### ImpedanceDouble
+
+    cdef cppclass ImpedanceDoubleInstance:
+        ImpedanceDoubleInstance()
+        void setValue( PhysicalQuantityComponent comp, double val ) except +
+        void debugPrint()
+
+    cdef cppclass ImpedanceDoublePtr:
+
+        ImpedanceDoublePtr( ImpedanceDoublePtr& )
+        ImpedanceDoublePtr( ImpedanceDoubleInstance * )
+        ImpedanceDoubleInstance* get()
+
+#### NormalSpeedDouble
+
+    cdef cppclass NormalSpeedDoubleInstance:
+        NormalSpeedDoubleInstance()
+        void setValue( PhysicalQuantityComponent comp, double val ) except +
+        void debugPrint()
+
+    cdef cppclass NormalSpeedDoublePtr:
+
+        NormalSpeedDoublePtr( NormalSpeedDoublePtr& )
+        NormalSpeedDoublePtr( NormalSpeedDoubleInstance * )
+        NormalSpeedDoubleInstance* get()
+
+
 
 #### ForceDouble
 
@@ -166,3 +195,23 @@ cdef class PressureDouble:
     cdef set( self, PressureDoublePtr other )
     cdef PressureDoublePtr* getPtr( self )
     cdef PressureDoubleInstance* getInstance( self )
+
+#### ImpedanceDouble
+
+cdef class ImpedanceDouble:
+
+    cdef ImpedanceDoublePtr* _cptr
+
+    cdef set( self, ImpedanceDoublePtr other )
+    cdef ImpedanceDoublePtr* getPtr( self )
+    cdef ImpedanceDoubleInstance* getInstance( self )
+
+#### NormalSpeedDouble
+
+cdef class NormalSpeedDouble:
+
+    cdef NormalSpeedDoublePtr* _cptr
+
+    cdef set( self, NormalSpeedDoublePtr other )
+    cdef NormalSpeedDoublePtr* getPtr( self )
+    cdef NormalSpeedDoubleInstance* getInstance( self )

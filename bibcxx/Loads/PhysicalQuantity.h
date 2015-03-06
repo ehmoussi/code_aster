@@ -37,15 +37,15 @@
  * @brief Inventory of all physical quantities available in Code_Aster
  * @todo attention confusion entre Pressure et Pres
  */
-enum PhysicalQuantityEnum { Force, StructuralForce, LocalBeamForce, LocalShellForce, Displacement, Pressure, Temperature };
+enum PhysicalQuantityEnum { Force, StructuralForce, LocalBeamForce, LocalShellForce, Displacement, Pressure, Temperature, Impedance, NormalSpeed };
 
 /**
  * @enum PhysicalQuantityComponent 
  * @brief Inventory of components of the physical quantities listed in PhysicalQuantityEnum 
  */
-enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2 };
+enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2, Impe, Vnor };
 
-const int nbComponent=26; 
+const int nbComponent=28; 
 /**
 * @def ComponentNames
 * @brief Aster names of the components of the physical quantities
@@ -217,7 +217,7 @@ template <> struct PhysicalQuantityTraits< Pressure >
 };
 
 /****************************************/
-/*        Temperature                      */
+/*        Temperature                   */
 /****************************************/
 
 /**
@@ -233,6 +233,50 @@ const int nbTemperatureComponents = 2;
 extern const PhysicalQuantityComponent TemperatureComponents[nbTemperatureComponents];
 
 template <> struct PhysicalQuantityTraits< Temperature >
+{
+    static const std::set< PhysicalQuantityComponent > components;
+    static const std::string name;
+};
+
+/****************************************/
+/*        Impédance (acoustique)        */
+/****************************************/
+
+/**
+ * @def nbImpedanceComponents
+ * @brief Number of components specifying a Impedance
+ */
+const int nbImpedanceComponents = 1;
+
+/**
+ * @def ImpedanceComponents
+ * @brief Declare Impedance Components 
+ */
+extern const PhysicalQuantityComponent ImpedanceComponents[nbImpedanceComponents];
+
+template <> struct PhysicalQuantityTraits< Impedance >
+{
+    static const std::set< PhysicalQuantityComponent > components;
+    static const std::string name;
+};
+
+/****************************************/
+/*        Vitesse Normale (acoustique)        */
+/****************************************/
+
+/**
+ * @def nbNormalSpeedComponents
+ * @brief Number of components specifying a NormalSpeed
+ */
+const int nbNormalSpeedComponents = 1;
+
+/**
+ * @def NormalSpeedComponents
+ * @brief Declare NormalSpeed Components 
+ */
+extern const PhysicalQuantityComponent NormalSpeedComponents[nbNormalSpeedComponents];
+
+template <> struct PhysicalQuantityTraits< NormalSpeed >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
@@ -256,7 +300,7 @@ class PhysicalQuantityInstance
     typedef typename MapOfCompAndVal::iterator MapIt;
     typedef typename std::pair<PhysicalQuantityComponent, QuantityType> CompAndVal;
 
-    /* @def  */
+    /* @def  _compAndVal Components and Values  */
     MapOfCompAndVal  _compAndVal;
 
     /** 
@@ -375,4 +419,13 @@ template class PhysicalQuantityInstance< double, Temperature >;
 typedef PhysicalQuantityInstance< double, Temperature > TemperatureDoubleInstance;
 typedef boost::shared_ptr< TemperatureDoubleInstance > TemperatureDoublePtr; 
 
+/** @typedef ImpedanceDouble Impedance */
+template class PhysicalQuantityInstance< double, Impedance >; 
+typedef PhysicalQuantityInstance< double, Impedance > ImpedanceDoubleInstance;
+typedef boost::shared_ptr< ImpedanceDoubleInstance > ImpedanceDoublePtr; 
+
+/** @typedef NormalSpeedDouble Normal Speed  */
+template class PhysicalQuantityInstance< double, NormalSpeed >; 
+typedef PhysicalQuantityInstance< double, NormalSpeed > NormalSpeedDoubleInstance;
+typedef boost::shared_ptr< NormalSpeedDoubleInstance > NormalSpeedDoublePtr; 
 #endif /* PHYSICALQUANTITY_H_ */

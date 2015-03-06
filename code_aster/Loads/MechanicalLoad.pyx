@@ -21,6 +21,7 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 from code_aster.Loads.PhysicalQuantity cimport ForceDouble, StructuralForceDouble, LocalBeamForceDouble, LocalShellForceDouble
 from code_aster.Loads.PhysicalQuantity cimport DisplacementDouble, PressureDouble
+from code_aster.Loads.PhysicalQuantity cimport ImpedanceDouble, NormalSpeedDouble
 from code_aster.Modeling.Model cimport Model
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
@@ -526,3 +527,97 @@ cdef class DistributedPressureDouble( GenericMechanicalLoad ):
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
+
+###### ImpedanceOnFaceDouble
+
+cdef class ImpedanceOnFaceDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ ImpedanceOnFaceDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new ImpedanceOnFaceDoublePtr ( new ImpedanceOnFaceDoubleInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <ImpedanceOnFaceDoubleInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, ImpedanceDouble impedance, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <ImpedanceOnFaceDoubleInstance*>self.getInstance()
+        return instance.setValue( deref( impedance.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
+###### NormalSpeedOnFaceDouble
+
+cdef class NormalSpeedOnFaceDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ NormalSpeedOnFaceDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new NormalSpeedOnFaceDoublePtr ( new NormalSpeedOnFaceDoubleInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <NormalSpeedOnFaceDoubleInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, NormalSpeedDouble NormalSpeed, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <NormalSpeedOnFaceDoubleInstance*>self.getInstance()
+        return instance.setValue( deref( NormalSpeed.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
+###### WavePressureOnFaceDouble
+
+cdef class WavePressureOnFaceDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ WavePressureOnFaceDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new WavePressureOnFaceDoublePtr ( new WavePressureOnFaceDoubleInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <WavePressureOnFaceDoubleInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, PressureDouble pressure, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <WavePressureOnFaceDoubleInstance*>self.getInstance()
+        return instance.setValue( deref( pressure.getPtr() ), nameOfGroup )
+
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+

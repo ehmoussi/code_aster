@@ -39,7 +39,7 @@
  * @brief Inventory of all mechanical loads available in Code_Aster
  */
 enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam, ForceOnShell,
-                ImposedDoF, DistributedPressure, EndLoad };
+                ImposedDoF, DistributedPressure, ImpedanceOnFace, NormalSpeedOnFace, WavePressureOnFace };
 
 /**
  * @class LoadTraits
@@ -176,6 +176,48 @@ template <> struct LoadTraits< DistributedPressure >
     static const std::string factorKeyword; 
     // Authorized support MeshEntity
     static bool const isAllowedOnWholeMesh = true;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
+};
+
+/**
+ * @def LoadTraits<ImpedanceOnFace>
+ * @brief Declare specialization for ImpedanceOnFace
+ */
+template <> struct LoadTraits< ImpedanceOnFace >
+{
+    // Mot clé facteur pour AFFE_CHAR_MECA
+    static const std::string factorKeyword; 
+    // Authorized support MeshEntity
+    static bool const isAllowedOnWholeMesh = false;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
+};
+
+/**
+ * @def LoadTraits<NormalSpeedOnFace>
+ * @brief Declare specialization for NormalSpeedOnFace
+ */
+template <> struct LoadTraits< NormalSpeedOnFace >
+{
+    // Mot clé facteur pour AFFE_CHAR_MECA
+    static const std::string factorKeyword; 
+    // Authorized support MeshEntity
+    static bool const isAllowedOnWholeMesh = false;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
+};
+
+/**
+ * @def LoadTraits<WavePressureOnFace>
+ * @brief Declare specialization for WavePressureOnFace
+ */
+template <> struct LoadTraits< WavePressureOnFace >
+{
+    // Mot clé facteur pour AFFE_CHAR_MECA
+    static const std::string factorKeyword; 
+    // Authorized support MeshEntity
+    static bool const isAllowedOnWholeMesh = false;
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
@@ -451,4 +493,18 @@ template class MechanicalLoadInstance< PressureDoubleInstance, DistributedPressu
 typedef MechanicalLoadInstance< PressureDoubleInstance, DistributedPressure > DistributedPressureDoubleInstance;
 typedef boost::shared_ptr< DistributedPressureDoubleInstance > DistributedPressureDoublePtr;
 
+/** @typedef ImpedanceOnFaceDouble  */
+template class MechanicalLoadInstance< ImpedanceDoubleInstance, ImpedanceOnFace >;
+typedef MechanicalLoadInstance< ImpedanceDoubleInstance, ImpedanceOnFace > ImpedanceOnFaceDoubleInstance;
+typedef boost::shared_ptr< ImpedanceOnFaceDoubleInstance > ImpedanceOnFaceDoublePtr;
+
+/** @typedef NormalSpeedOnFaceDouble  */
+template class MechanicalLoadInstance< NormalSpeedDoubleInstance, NormalSpeedOnFace >;
+typedef MechanicalLoadInstance< NormalSpeedDoubleInstance, NormalSpeedOnFace > NormalSpeedOnFaceDoubleInstance;
+typedef boost::shared_ptr< NormalSpeedOnFaceDoubleInstance > NormalSpeedOnFaceDoublePtr;
+
+/** @typedef WavePressureOnFaceDouble  */
+template class MechanicalLoadInstance< PressureDoubleInstance, WavePressureOnFace >;
+typedef MechanicalLoadInstance< PressureDoubleInstance, WavePressureOnFace > WavePressureOnFaceDoubleInstance;
+typedef boost::shared_ptr< WavePressureOnFaceDoubleInstance > WavePressureOnFaceDoublePtr;
 #endif /* MECHANICALLOAD_H_ */

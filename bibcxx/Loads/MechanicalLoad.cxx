@@ -40,3 +40,9 @@ const std::string LoadTraits< ForceOnShell >::factorKeyword = "FORCE_COQUE";
 const std::string LoadTraits< ImposedDoF >::factorKeyword = "DDL_IMPO";
 
 const std::string LoadTraits< DistributedPressure >::factorKeyword = "PRES_REP"; 
+
+const std::string LoadTraits< ImpedanceOnFace >::factorKeyword = "IMPE_FACE";
+
+const std::string LoadTraits< NormalSpeedOnFace >::factorKeyword = "VITE_FACE";
+
+const std::string LoadTraits< WavePressureOnFace >::factorKeyword = "ONDE_FLUI";
