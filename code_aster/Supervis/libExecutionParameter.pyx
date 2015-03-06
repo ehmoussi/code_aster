@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 import re
 import platform
 
@@ -90,7 +91,7 @@ class ExecutionParameter:
         """
         return self._args.get( argName, None )
 
-    def parse_args( self, argv ):
+    def parse_args( self, argv=None ):
         """Parse the command line arguments to set the execution parameters"""
         from argparse import ArgumentParser
         # command arguments parser
@@ -99,14 +100,14 @@ class ExecutionParameter:
         parser.add_argument('--build-elem', dest='buildelem', action='store_true',
             default=False,
             help="enable specific starting mode to build the elements database")
-        parser.add_argument('--auto-start', dest='autostart',
+        parser.add_argument('--start', dest='autostart',
             action='store_true', default=True,
             help="automatically start the memory manager")
-        parser.add_argument('--no-auto-start', dest='autostart',
+        parser.add_argument('--no-start', dest='autostart',
             action='store_false',
             help="turn off the automatic start of the memory manager")
 
-        args, ignored = parser.parse_known_args( argv )
+        args, ignored = parser.parse_known_args( argv or sys.argv )
         debug( "Ignored arguments:", ignored )
         # assign parameter values
         self.set( 'buildelem', int(args.buildelem) )

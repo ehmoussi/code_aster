@@ -17,9 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+import atexit
+
 from code_aster.Supervis.libExecutionParameter import executionParameter
 from code_aster.Supervis.libCommandSyntax import _F
 
+
+def finalize():
+    """Finalize Code_Aster execution"""
+    if libaster.get_sh_jeveux_status() != 1:
+        return
+    syntax = CommandSyntax( "FIN" )
+    syntax.define( _F( STATUT=0 ) )
+    cdef INTEGER numOp = 9999
+    libaster.execop_( &numOp )
+    libaster.register_sh_jeveux_status( 0 )
+    syntax.free()
 
 def init( int mode ):
     """Initialize Code_Aster & its memory manager"""
@@ -43,17 +56,7 @@ def init( int mode ):
     libaster.register_sh_jeveux_status( 1 )
     libaster.debut_()
     syntax.free()
-
-def finalize():
-    """Finalize Code_Aster execution"""
-    if libaster.get_sh_jeveux_status() != 1:
-        return
-    syntax = CommandSyntax( "FIN" )
-    syntax.define( _F( STATUT=0 ) )
-    cdef INTEGER numOp = 9999
-    libaster.execop_( &numOp )
-    libaster.register_sh_jeveux_status( 0 )
-    syntax.free()
+    atexit.register( finalize )
 
 def cataBuilder():
     """Build the elements catalog"""

@@ -22,24 +22,15 @@
 # discourage import *
 __all__ = []
 
-import sys
-import atexit
-
 from code_aster.Supervis import executionParameter
 from code_aster.RunManager import Initializer
 
-executionParameter.parse_args( sys.argv )
+executionParameter.parse_args()
 
 # automatic startup
 if executionParameter.get( 'autostart' ):
     Initializer.init( executionParameter.get( 'buildelem' ) )
-    atexit.register( Initializer.finalize )
 
-# hide temporary objects
-del sys, atexit
-
-# export some utilities
-from code_aster.Supervis import setExecutionParameter
 
 # import datastructures, physical quantities and constants
 # each package is responsible to export only the relevant objects
