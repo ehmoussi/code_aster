@@ -246,6 +246,23 @@ cdef extern from "Loads/MechanicalLoad.h":
         PressureOnShellDoublePtr( PressureOnShellDoubleInstance * )
         PressureOnShellDoubleInstance* get()
 
+#### PressureOnPipeDouble
+
+    cdef cppclass PressureOnPipeDoubleInstance( GenericMechanicalLoadInstance ):
+
+        PressureOnPipeDoubleInstance()
+        bint setValue( PressureDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass PressureOnPipeDoublePtr:
+
+        PressureOnPipeDoublePtr( PressureOnPipeDoublePtr& )
+        PressureOnPipeDoublePtr( PressureOnPipeDoubleInstance * )
+        PressureOnPipeDoubleInstance* get()
+
 #### ImposedDisplacementDouble
 
     cdef cppclass ImposedDisplacementDoubleInstance( GenericMechanicalLoadInstance ):
@@ -422,6 +439,11 @@ cdef class LocalForceOnShellDouble( GenericMechanicalLoad ):
 #### PressureOnShellDouble
 
 cdef class PressureOnShellDouble( GenericMechanicalLoad ):
+    pass
+
+#### PressureOnPipeDouble
+
+cdef class PressureOnPipeDouble( GenericMechanicalLoad ):
     pass
 
 #### ImposedDisplacementDouble

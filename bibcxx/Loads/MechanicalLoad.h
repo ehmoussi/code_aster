@@ -39,7 +39,7 @@
  * @brief Inventory of all mechanical loads available in Code_Aster
  */
 enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam, ForceOnShell,
-                ImposedDoF, DistributedPressure, ImpedanceOnFace, NormalSpeedOnFace, WavePressureOnFace };
+                PressureOnPipe, ImposedDoF, DistributedPressure, ImpedanceOnFace, NormalSpeedOnFace, WavePressureOnFace };
 
 /**
  * @class LoadTraits
@@ -143,6 +143,20 @@ template <> struct LoadTraits< ForceOnBeam >
  * @brief Declare specialization for ForceOnShell
  */
 template <> struct LoadTraits< ForceOnShell >
+{
+    // Mot clé facteur pour AFFE_CHAR_MECA
+    static const std::string factorKeyword; 
+    // Authorized support MeshEntity
+    static bool const isAllowedOnWholeMesh = true;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
+};
+
+/**
+ * @def LoadTraits<PressureOnPipe>
+ * @brief Declare specialization for PressureOnPipe
+ */
+template <> struct LoadTraits< PressureOnPipe >
 {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword; 
@@ -474,6 +488,12 @@ typedef boost::shared_ptr< LocalForceOnShellDoubleInstance > LocalForceOnShellDo
 template class MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell >;
 typedef MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell > PressureOnShellDoubleInstance;
 typedef boost::shared_ptr< PressureOnShellDoubleInstance > PressureOnShellDoublePtr;
+
+/* Appliquer une pression à un tuyau */
+/** @typedef PressureOnPipeDouble  */
+template class MechanicalLoadInstance< PressureDoubleInstance, PressureOnPipe >;
+typedef MechanicalLoadInstance< PressureDoubleInstance, PressureOnPipe > PressureOnPipeDoubleInstance;
+typedef boost::shared_ptr< PressureOnPipeDoubleInstance > PressureOnPipeDoublePtr;
 
 /* Imposer un déplacement sur des noeuds */
 /** @typedef ImposedDisplacementDouble  */

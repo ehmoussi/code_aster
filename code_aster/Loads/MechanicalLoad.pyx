@@ -435,6 +435,36 @@ cdef class PressureOnShellDouble( GenericMechanicalLoad ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
 
+###### PressureOnPipeDouble
+
+cdef class PressureOnPipeDouble( GenericMechanicalLoad ):
+    """Python wrapper on the C++ PressureOnPipeDouble Object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericMechanicalLoadPtr *>\
+                new PressureOnPipeDoublePtr ( new PressureOnPipeDoubleInstance() )
+
+    def build( self ):
+        """Build the model"""
+        instance = <PressureOnPipeDoubleInstance*>self.getInstance()
+        iret = instance.build()
+        return iret
+
+    def setSupportModel( self, Model model ):
+        """Set the support model of the mechanical load"""
+        return self.getInstance().setSupportModel( deref( model.getPtr() ) )
+
+    def setValue( self, PressureDouble pressure, string nameOfGroup = ""):
+        """Set a physical quantity of a Mesh entity"""
+        instance = <PressureOnPipeDoubleInstance*>self.getInstance()
+        return instance.setValue( deref( pressure.getPtr() ), nameOfGroup )
+
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
 ###### ImposedDisplacementDouble
 
 cdef class ImposedDisplacementDouble( GenericMechanicalLoad ):
