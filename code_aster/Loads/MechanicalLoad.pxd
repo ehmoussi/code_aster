@@ -22,7 +22,7 @@ from libcpp.string cimport string
 from code_aster.Modeling.Model cimport ModelPtr
 from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr, StructuralForceDoublePtr, LocalBeamForceDoublePtr, LocalShellForceDoublePtr
 from code_aster.Loads.PhysicalQuantity cimport DisplacementDoublePtr, PressureDoublePtr
-from code_aster.Loads.PhysicalQuantity cimport ImpedanceDoublePtr, NormalSpeedDoublePtr
+from code_aster.Loads.PhysicalQuantity cimport ImpedanceDoublePtr, NormalSpeedDoublePtr, HeatFluxDoublePtr, HydraulicFluxDoublePtr
 
 
 cdef extern from "Loads/MechanicalLoad.h":
@@ -365,6 +365,40 @@ cdef extern from "Loads/MechanicalLoad.h":
         WavePressureOnFaceDoublePtr( WavePressureOnFaceDoubleInstance * )
         WavePressureOnFaceDoubleInstance* get()
 
+#### DistributedHeatFluxDouble
+
+    cdef cppclass DistributedHeatFluxDoubleInstance( GenericMechanicalLoadInstance ):
+
+        DistributedHeatFluxDoubleInstance()
+        bint setValue( HeatFluxDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass DistributedHeatFluxDoublePtr:
+
+        DistributedHeatFluxDoublePtr( DistributedHeatFluxDoublePtr& )
+        DistributedHeatFluxDoublePtr( DistributedHeatFluxDoubleInstance * )
+        DistributedHeatFluxDoubleInstance* get()
+
+#### DistributedHydraulicFluxDouble
+
+    cdef cppclass DistributedHydraulicFluxDoubleInstance( GenericMechanicalLoadInstance ):
+
+        DistributedHydraulicFluxDoubleInstance()
+        bint setValue( HydraulicFluxDoublePtr physQuantPtr, string nameOfGroup ) except+
+        bint setSupportModel( ModelPtr currentModel )
+        bint build() except +
+        const string getType()
+        void debugPrint( int logicalUnit )
+
+    cdef cppclass DistributedHydraulicFluxDoublePtr:
+
+        DistributedHydraulicFluxDoublePtr( DistributedHydraulicFluxDoublePtr& )
+        DistributedHydraulicFluxDoublePtr( DistributedHydraulicFluxDoubleInstance * )
+        DistributedHydraulicFluxDoubleInstance* get()
+
 ############################################################################################
 
 #### GenericMechanicalLoad
@@ -476,3 +510,12 @@ cdef class NormalSpeedOnFaceDouble( GenericMechanicalLoad ):
 cdef class WavePressureOnFaceDouble( GenericMechanicalLoad ):
     pass
 
+#### DistributedHeatFluxDouble
+
+cdef class DistributedHeatFluxDouble( GenericMechanicalLoad ):
+    pass
+
+#### DistributedHydraulicFluxDouble
+
+cdef class DistributedHydraulicFluxDouble( GenericMechanicalLoad ):
+    pass

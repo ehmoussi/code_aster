@@ -39,7 +39,8 @@
  * @brief Inventory of all mechanical loads available in Code_Aster
  */
 enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam, ForceOnShell,
-                PressureOnPipe, ImposedDoF, DistributedPressure, ImpedanceOnFace, NormalSpeedOnFace, WavePressureOnFace };
+                PressureOnPipe, ImposedDoF, DistributedPressure, ImpedanceOnFace, NormalSpeedOnFace, WavePressureOnFace, 
+                THMFlux};
 
 /**
  * @class LoadTraits
@@ -235,6 +236,21 @@ template <> struct LoadTraits< WavePressureOnFace >
     static bool const isAllowedOnGroupOfElements = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
+
+/**
+ * @def LoadTraits<THMFlux>
+ * @brief Declare specialization for THMFlux
+ */
+template <> struct LoadTraits< THMFlux >
+{
+    // Mot clé facteur pour AFFE_CHAR_MECA
+    static const std::string factorKeyword; 
+    // Authorized support MeshEntity
+    static bool const isAllowedOnWholeMesh = true;
+    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfNodes = false;
+};
+
 
 /**
  * @class GenericMechanicalLoadInstance
@@ -527,4 +543,14 @@ typedef boost::shared_ptr< NormalSpeedOnFaceDoubleInstance > NormalSpeedOnFaceDo
 template class MechanicalLoadInstance< PressureDoubleInstance, WavePressureOnFace >;
 typedef MechanicalLoadInstance< PressureDoubleInstance, WavePressureOnFace > WavePressureOnFaceDoubleInstance;
 typedef boost::shared_ptr< WavePressureOnFaceDoubleInstance > WavePressureOnFaceDoublePtr;
+
+/** @typedef DistributedHeatFluxDouble  */
+template class MechanicalLoadInstance< HeatFluxDoubleInstance, THMFlux >;
+typedef MechanicalLoadInstance< HeatFluxDoubleInstance, THMFlux > DistributedHeatFluxDoubleInstance;
+typedef boost::shared_ptr< DistributedHeatFluxDoubleInstance > DistributedHeatFluxDoublePtr;
+
+/** @typedef DistributedHydraulicFluxDouble  */
+template class MechanicalLoadInstance< HydraulicFluxDoubleInstance, THMFlux >;
+typedef MechanicalLoadInstance< HydraulicFluxDoubleInstance, THMFlux > DistributedHydraulicFluxDoubleInstance;
+typedef boost::shared_ptr< DistributedHydraulicFluxDoubleInstance > DistributedHydraulicFluxDoublePtr;
 #endif /* MECHANICALLOAD_H_ */
