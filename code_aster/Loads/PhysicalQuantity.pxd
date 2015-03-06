@@ -21,7 +21,7 @@
 cdef extern from "Loads/PhysicalQuantity.h":
 
     cpdef enum PhysicalQuantityComponent:
-        Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2, Impe, Vnor
+        Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2, Impe, Vnor, Flun, FlunHydr1, FlunHydr2
 
 
 
@@ -130,7 +130,31 @@ cdef extern from "Loads/PhysicalQuantity.h":
         NormalSpeedDoublePtr( NormalSpeedDoubleInstance * )
         NormalSpeedDoubleInstance* get()
 
+#### HeatFluxDouble
 
+    cdef cppclass HeatFluxDoubleInstance:
+        HeatFluxDoubleInstance()
+        void setValue( PhysicalQuantityComponent comp, double val ) except +
+        void debugPrint()
+
+    cdef cppclass HeatFluxDoublePtr:
+
+        HeatFluxDoublePtr( HeatFluxDoublePtr& )
+        HeatFluxDoublePtr( HeatFluxDoubleInstance * )
+        HeatFluxDoubleInstance* get()
+
+#### HydraulicFluxDouble
+
+    cdef cppclass HydraulicFluxDoubleInstance:
+        HydraulicFluxDoubleInstance()
+        void setValue( PhysicalQuantityComponent comp, double val ) except +
+        void debugPrint()
+
+    cdef cppclass HydraulicFluxDoublePtr:
+
+        HydraulicFluxDoublePtr( HydraulicFluxDoublePtr& )
+        HydraulicFluxDoublePtr( HydraulicFluxDoubleInstance * )
+        HydraulicFluxDoubleInstance* get()
 
 #### ForceDouble
 
@@ -215,3 +239,23 @@ cdef class NormalSpeedDouble:
     cdef set( self, NormalSpeedDoublePtr other )
     cdef NormalSpeedDoublePtr* getPtr( self )
     cdef NormalSpeedDoubleInstance* getInstance( self )
+
+#### HeatFluxDouble
+
+cdef class HeatFluxDouble:
+
+    cdef HeatFluxDoublePtr* _cptr
+
+    cdef set( self, HeatFluxDoublePtr other )
+    cdef HeatFluxDoublePtr* getPtr( self )
+    cdef HeatFluxDoubleInstance* getInstance( self )
+
+#### HydraulicFluxDouble
+
+cdef class HydraulicFluxDouble:
+
+    cdef HydraulicFluxDoublePtr* _cptr
+
+    cdef set( self, HydraulicFluxDoublePtr other )
+    cdef HydraulicFluxDoublePtr* getPtr( self )
+    cdef HydraulicFluxDoubleInstance* getInstance( self )

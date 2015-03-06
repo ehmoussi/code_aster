@@ -26,7 +26,7 @@
 #include "Loads/PhysicalQuantity.h"
 
 const char* ComponentNames[nbComponent] = { "DX", "DY", "DZ", "DRX", "DRY", "DRZ", "TEMP", "TEMP_MIL", "PRES", "FX", "FY", "FZ", "MX", "MY","MZ",
- "N", "VY", "VZ", "MT", "MFY", "MFZ", "F1", "F2", "F3", "MF1", "MF2", "IMPE", "VNOR"};
+ "N", "VY", "VZ", "MT", "MFY", "MFZ", "F1", "F2", "F3", "MF1", "MF2", "IMPE", "VNOR", "FLUN", "FLUN_HYDR1", "FLUN_HYDR2"};
 
 /* Init const data */
 
@@ -74,3 +74,13 @@ const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Impedance>::c
 const PhysicalQuantityComponent NormalSpeedComponents[nbNormalSpeedComponents] = { Impe };
 const std::string PhysicalQuantityTraits <NormalSpeed>::name = "NormalSpeed"; 
 const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<NormalSpeed>::components( NormalSpeedComponents, NormalSpeedComponents + nbNormalSpeedComponents );
+
+/* HeatFlux */
+const PhysicalQuantityComponent HeatFluxComponents[nbHeatFluxComponents] = { Flun };
+const std::string PhysicalQuantityTraits <HeatFlux>::name = "HeatFlux"; 
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<HeatFlux>::components( HeatFluxComponents, HeatFluxComponents + nbHeatFluxComponents );
+
+/* HydraulicFlux */
+const PhysicalQuantityComponent HydraulicFluxComponents[nbHydraulicFluxComponents] = { FlunHydr1, FlunHydr2 };
+const std::string PhysicalQuantityTraits <HydraulicFlux>::name = "HydraulicFlux"; 
+const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<HydraulicFlux>::components( HydraulicFluxComponents, HydraulicFluxComponents + nbHydraulicFluxComponents );

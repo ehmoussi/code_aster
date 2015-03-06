@@ -37,15 +37,15 @@
  * @brief Inventory of all physical quantities available in Code_Aster
  * @todo attention confusion entre Pressure et Pres
  */
-enum PhysicalQuantityEnum { Force, StructuralForce, LocalBeamForce, LocalShellForce, Displacement, Pressure, Temperature, Impedance, NormalSpeed };
+enum PhysicalQuantityEnum { Force, StructuralForce, LocalBeamForce, LocalShellForce, Displacement, Pressure, Temperature, Impedance, NormalSpeed, HeatFlux, HydraulicFlux };
 
 /**
  * @enum PhysicalQuantityComponent 
  * @brief Inventory of components of the physical quantities listed in PhysicalQuantityEnum 
  */
-enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2, Impe, Vnor };
+enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2, Impe, Vnor, Flun, FlunHydr1, FlunHydr2 };
 
-const int nbComponent=28; 
+const int nbComponent=31; 
 /**
 * @def ComponentNames
 * @brief Aster names of the components of the physical quantities
@@ -261,7 +261,7 @@ template <> struct PhysicalQuantityTraits< Impedance >
 };
 
 /****************************************/
-/*        Vitesse Normale (acoustique)        */
+/*        Vitesse Normale (acoustique)  */
 /****************************************/
 
 /**
@@ -281,6 +281,51 @@ template <> struct PhysicalQuantityTraits< NormalSpeed >
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
 };
+
+/****************************************/
+/*        Flux de Chaleur (THM)         */
+/****************************************/
+
+/**
+ * @def nbHeatFluxComponents
+ * @brief Number of components specifying a HeatFlux
+ */
+const int nbHeatFluxComponents = 1;
+
+/**
+ * @def HeatFluxComponents
+ * @brief Declare HeatFlux Components 
+ */
+extern const PhysicalQuantityComponent HeatFluxComponents[nbHeatFluxComponents];
+
+template <> struct PhysicalQuantityTraits< HeatFlux >
+{
+    static const std::set< PhysicalQuantityComponent > components;
+    static const std::string name;
+};
+
+/****************************************/
+/*        Flux Hydraulique (THM)         */
+/****************************************/
+
+/**
+ * @def nbHydraulicFluxComponents
+ * @brief Number of components specifying a HydraulicFlux
+ */
+const int nbHydraulicFluxComponents = 2;
+
+/**
+ * @def HydraulicFluxComponents
+ * @brief Declare HydraulicFlux Components 
+ */
+extern const PhysicalQuantityComponent HydraulicFluxComponents[nbHydraulicFluxComponents];
+
+template <> struct PhysicalQuantityTraits< HydraulicFlux >
+{
+    static const std::set< PhysicalQuantityComponent > components;
+    static const std::string name;
+};
+
 
 /******************************************/
 /* @class PhysicalQuantityInstance
@@ -428,4 +473,14 @@ typedef boost::shared_ptr< ImpedanceDoubleInstance > ImpedanceDoublePtr;
 template class PhysicalQuantityInstance< double, NormalSpeed >; 
 typedef PhysicalQuantityInstance< double, NormalSpeed > NormalSpeedDoubleInstance;
 typedef boost::shared_ptr< NormalSpeedDoubleInstance > NormalSpeedDoublePtr; 
+
+/** @typedef HeatFluxDouble Normal Speed  */
+template class PhysicalQuantityInstance< double, HeatFlux >; 
+typedef PhysicalQuantityInstance< double, HeatFlux > HeatFluxDoubleInstance;
+typedef boost::shared_ptr< HeatFluxDoubleInstance > HeatFluxDoublePtr; 
+
+/** @typedef HydraulicFluxDouble Normal Speed  */
+template class PhysicalQuantityInstance< double, HydraulicFlux >; 
+typedef PhysicalQuantityInstance< double, HydraulicFlux > HydraulicFluxDoubleInstance;
+typedef boost::shared_ptr< HydraulicFluxDoubleInstance > HydraulicFluxDoublePtr; 
 #endif /* PHYSICALQUANTITY_H_ */
