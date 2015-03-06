@@ -60,7 +60,7 @@ template<> struct AllowedMaterialPropertyType< FunctionPtr >
  * @brief Cette classe template permet de definir un type elementaire de propriete materielle
  * @author Nicolas Sellenet
  * @todo on pourrait detemplatiser cette classe pour qu'elle prenne soit des doubles soit des fct
- *       on pourrait alors fusionner elas et elas_fo par exemple
+ *       on pourrait alors fusionner elas et elasFo par exemple
  */
 template< class ValueType >
 class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
@@ -334,13 +334,13 @@ class ElasFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addFunctionProperty( "Nu", ElementaryMaterialPropertyFunction( "NU" , true ) );
             this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" , false ) );
             this->addDoubleProperty( "Temp_def_alpha", ElementaryMaterialPropertyDouble( "TEMP_DEF_ALPHA" , false ) );
-            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 0 , false ) );
+            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 1. , false ) );
             this->addFunctionProperty( "Alpha", ElementaryMaterialPropertyFunction( "ALPHA" , false ) );
             this->addFunctionProperty( "Amor_alpha", ElementaryMaterialPropertyFunction( "AMOR_ALPHA" , false ) );
             this->addFunctionProperty( "Amor_beta", ElementaryMaterialPropertyFunction( "AMOR_BETA" , false ) );
             this->addFunctionProperty( "Amor_hyst", ElementaryMaterialPropertyFunction( "AMOR_HYST" , false ) );
-            this->addDoubleProperty( "K_dessic", ElementaryMaterialPropertyDouble( "K_DESSIC" , 0 , false ) );
-            this->addDoubleProperty( "B_endoge", ElementaryMaterialPropertyDouble( "B_ENDOGE" , 0 , false ) );
+            this->addDoubleProperty( "K_dessic", ElementaryMaterialPropertyDouble( "K_DESSIC" , 0.E+0 , false ) );
+            this->addDoubleProperty( "B_endoge", ElementaryMaterialPropertyDouble( "B_ENDOGE" , 0.E+0 , false ) );
             this->addFunctionProperty( "Fonc_desorp", ElementaryMaterialPropertyFunction( "FONC_DESORP" , false ) );
         };
 };
@@ -402,8 +402,8 @@ class ElasIstrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Nu_ln", ElementaryMaterialPropertyDouble( "NU_LN" , true ) );
             this->addDoubleProperty( "G_ln", ElementaryMaterialPropertyDouble( "G_LN" , true ) );
             this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" , false ) );
-            this->addDoubleProperty( "Alpha_l", ElementaryMaterialPropertyDouble( "ALPHA_L" , 0 , false ) );
-            this->addDoubleProperty( "Alpha_n", ElementaryMaterialPropertyDouble( "ALPHA_N" , 0 , false ) );
+            this->addDoubleProperty( "Alpha_l", ElementaryMaterialPropertyDouble( "ALPHA_L" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Alpha_n", ElementaryMaterialPropertyDouble( "ALPHA_N" , 0.E+0 , false ) );
         };
 };
 
@@ -435,7 +435,7 @@ class ElasIstrFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addFunctionProperty( "G_ln", ElementaryMaterialPropertyFunction( "G_LN" , true ) );
             this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" , false ) );
             this->addDoubleProperty( "Temp_def_alpha", ElementaryMaterialPropertyDouble( "TEMP_DEF_ALPHA" , false ) );
-            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 0 , false ) );
+            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 1. , false ) );
             this->addFunctionProperty( "Alpha_l", ElementaryMaterialPropertyFunction( "ALPHA_L" , false ) );
             this->addFunctionProperty( "Alpha_n", ElementaryMaterialPropertyFunction( "ALPHA_N" , false ) );
         };
@@ -472,14 +472,14 @@ class ElasOrthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "G_ln", ElementaryMaterialPropertyDouble( "G_LN" , false ) );
             this->addDoubleProperty( "G_tn", ElementaryMaterialPropertyDouble( "G_TN" , false ) );
             this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" , false ) );
-            this->addDoubleProperty( "Alpha_l", ElementaryMaterialPropertyDouble( "ALPHA_L" , 0 , false ) );
-            this->addDoubleProperty( "Alpha_t", ElementaryMaterialPropertyDouble( "ALPHA_T" , 0 , false ) );
-            this->addDoubleProperty( "Alpha_n", ElementaryMaterialPropertyDouble( "ALPHA_N" , 0 , false ) );
-            this->addDoubleProperty( "Xt", ElementaryMaterialPropertyDouble( "XT" , 0 , false ) );
-            this->addDoubleProperty( "Xc", ElementaryMaterialPropertyDouble( "XC" , 0 , false ) );
-            this->addDoubleProperty( "Yt", ElementaryMaterialPropertyDouble( "YT" , 0 , false ) );
-            this->addDoubleProperty( "Yc", ElementaryMaterialPropertyDouble( "YC" , 0 , false ) );
-            this->addDoubleProperty( "S_lt", ElementaryMaterialPropertyDouble( "S_LT" , 0 , false ) );
+            this->addDoubleProperty( "Alpha_l", ElementaryMaterialPropertyDouble( "ALPHA_L" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Alpha_t", ElementaryMaterialPropertyDouble( "ALPHA_T" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Alpha_n", ElementaryMaterialPropertyDouble( "ALPHA_N" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Xt", ElementaryMaterialPropertyDouble( "XT" , 1. , false ) );
+            this->addDoubleProperty( "Xc", ElementaryMaterialPropertyDouble( "XC" , 1. , false ) );
+            this->addDoubleProperty( "Yt", ElementaryMaterialPropertyDouble( "YT" , 1. , false ) );
+            this->addDoubleProperty( "Yc", ElementaryMaterialPropertyDouble( "YC" , 1. , false ) );
+            this->addDoubleProperty( "S_lt", ElementaryMaterialPropertyDouble( "S_LT" , 1. , false ) );
             this->addDoubleProperty( "Amor_alpha", ElementaryMaterialPropertyDouble( "AMOR_ALPHA" , false ) );
             this->addDoubleProperty( "Amor_beta", ElementaryMaterialPropertyDouble( "AMOR_BETA" , false ) );
             this->addDoubleProperty( "Amor_hyst", ElementaryMaterialPropertyDouble( "AMOR_HYST" , false ) );
@@ -518,7 +518,7 @@ class ElasOrthFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addFunctionProperty( "G_tn", ElementaryMaterialPropertyFunction( "G_TN" , true ) );
             this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" , false ) );
             this->addDoubleProperty( "Temp_def_alpha", ElementaryMaterialPropertyDouble( "TEMP_DEF_ALPHA" , false ) );
-            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 0 , false ) );
+            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 1. , false ) );
             this->addFunctionProperty( "Alpha_l", ElementaryMaterialPropertyFunction( "ALPHA_L" , false ) );
             this->addFunctionProperty( "Alpha_t", ElementaryMaterialPropertyFunction( "ALPHA_T" , false ) );
             this->addFunctionProperty( "Alpha_n", ElementaryMaterialPropertyFunction( "ALPHA_N" , false ) );
@@ -550,11 +550,11 @@ class ElasHyperMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 
             // Parametres matériau
             this->addDoubleProperty( "C10", ElementaryMaterialPropertyDouble( "C10" , true ) );
-            this->addDoubleProperty( "C01", ElementaryMaterialPropertyDouble( "C01" , 0 , false ) );
-            this->addDoubleProperty( "C20", ElementaryMaterialPropertyDouble( "C20" , 0 , false ) );
+            this->addDoubleProperty( "C01", ElementaryMaterialPropertyDouble( "C01" , 0.0 , false ) );
+            this->addDoubleProperty( "C20", ElementaryMaterialPropertyDouble( "C20" , 0.0 , false ) );
             this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , false ) );
             this->addDoubleProperty( "Nu", ElementaryMaterialPropertyDouble( "NU" , false ) );
-            this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" , 0 , false ) );
+            this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" , 0.0 , false ) );
         };
 };
 
@@ -899,7 +899,7 @@ class CableMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             _asterName = "CABLE";
 
             // Parametres matériau
-            this->addDoubleProperty( "Ec_sur_e", ElementaryMaterialPropertyDouble( "EC_SUR_E" , 0 , false ) );
+            this->addDoubleProperty( "Ec_sur_e", ElementaryMaterialPropertyDouble( "EC_SUR_E" , 1.E-4 , false ) );
         };
 };
 
@@ -1009,7 +1009,7 @@ class EndoHeterogeneMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
             this->addDoubleProperty( "Sy", ElementaryMaterialPropertyDouble( "SY" , true ) );
             this->addDoubleProperty( "Ki", ElementaryMaterialPropertyDouble( "KI" , true ) );
             this->addDoubleProperty( "Epai", ElementaryMaterialPropertyDouble( "EPAI" , true ) );
-            this->addDoubleProperty( "Gr", ElementaryMaterialPropertyDouble( "GR" , 0 , false ) );
+            this->addDoubleProperty( "Gr", ElementaryMaterialPropertyDouble( "GR" , 1.0 , false ) );
         };
 };
 
@@ -1234,10 +1234,10 @@ class EndoOrthBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             _asterName = "ENDO_ORTH_BETON";
 
             // Parametres matériau
-            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , 0 , false ) );
+            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , 0.9 , false ) );
             this->addDoubleProperty( "K0", ElementaryMaterialPropertyDouble( "K0" , true ) );
             this->addDoubleProperty( "K1", ElementaryMaterialPropertyDouble( "K1" , true ) );
-            this->addDoubleProperty( "K2", ElementaryMaterialPropertyDouble( "K2" , 0 , false ) );
+            this->addDoubleProperty( "K2", ElementaryMaterialPropertyDouble( "K2" , 7.E-4 , false ) );
             this->addDoubleProperty( "Ecrob", ElementaryMaterialPropertyDouble( "ECROB" , true ) );
             this->addDoubleProperty( "Ecrod", ElementaryMaterialPropertyDouble( "ECROD" , true ) );
         };
@@ -1381,14 +1381,14 @@ class RousselierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addDoubleProperty( "D", ElementaryMaterialPropertyDouble( "D" , true ) );
             this->addDoubleProperty( "Sigm_1", ElementaryMaterialPropertyDouble( "SIGM_1" , true ) );
             this->addDoubleProperty( "Poro_init", ElementaryMaterialPropertyDouble( "PORO_INIT" , true ) );
-            this->addDoubleProperty( "Poro_crit", ElementaryMaterialPropertyDouble( "PORO_CRIT" , 0 , false ) );
-            this->addDoubleProperty( "Poro_acce", ElementaryMaterialPropertyDouble( "PORO_ACCE" , 0 , false ) );
-            this->addDoubleProperty( "Poro_limi", ElementaryMaterialPropertyDouble( "PORO_LIMI" , 0 , false ) );
-            this->addFunctionProperty( "D_sigm_epsi_norm", ElementaryMaterialPropertyFunction( "D_SIGM_EPSI_NORM" , false ) );
-            this->addDoubleProperty( "An", ElementaryMaterialPropertyDouble( "AN" , 0 , false ) );
-            this->addDoubleProperty( "Dp_maxi", ElementaryMaterialPropertyDouble( "DP_MAXI" , 0 , false ) );
-            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0 , false ) );
-            this->addDoubleProperty( "Poro_type", ElementaryMaterialPropertyDouble( "PORO_TYPE" , 0 , false ) );
+            this->addDoubleProperty( "Poro_crit", ElementaryMaterialPropertyDouble( "PORO_CRIT" , 1. , false ) );
+            this->addDoubleProperty( "Poro_acce", ElementaryMaterialPropertyDouble( "PORO_ACCE" , 1. , false ) );
+            this->addDoubleProperty( "Poro_limi", ElementaryMaterialPropertyDouble( "PORO_LIMI" , 0.999 , false ) );
+            this->addDoubleProperty( "D_sigm_epsi_norm=", ElementaryMaterialPropertyDouble( "D_SIGM_EPSI_NORM=" , false ) );
+            this->addDoubleProperty( "An", ElementaryMaterialPropertyDouble( "AN" , 0. , false ) );
+            this->addDoubleProperty( "Dp_maxi", ElementaryMaterialPropertyDouble( "DP_MAXI" , 0.1 , false ) );
+            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0.85 , false ) );
+            this->addDoubleProperty( "Poro_type", ElementaryMaterialPropertyDouble( "PORO_TYPE" , 1. , false ) );
         };
 };
 
@@ -1416,14 +1416,14 @@ class RousselierFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
             this->addFunctionProperty( "D", ElementaryMaterialPropertyFunction( "D" , true ) );
             this->addFunctionProperty( "Sigm_1", ElementaryMaterialPropertyFunction( "SIGM_1" , true ) );
             this->addFunctionProperty( "Poro_init", ElementaryMaterialPropertyFunction( "PORO_INIT" , true ) );
-            this->addDoubleProperty( "Poro_crit", ElementaryMaterialPropertyDouble( "PORO_CRIT" , 0 , false ) );
-            this->addDoubleProperty( "Poro_acce", ElementaryMaterialPropertyDouble( "PORO_ACCE" , 0 , false ) );
-            this->addDoubleProperty( "Poro_limi", ElementaryMaterialPropertyDouble( "PORO_LIMI" , 0 , false ) );
-            this->addFunctionProperty( "D_sigm_epsi_norm", ElementaryMaterialPropertyFunction( "D_SIGM_EPSI_NORM" , false ) );
-            this->addDoubleProperty( "An", ElementaryMaterialPropertyDouble( "AN" , 0 , false ) );
-            this->addDoubleProperty( "Dp_maxi", ElementaryMaterialPropertyDouble( "DP_MAXI" , 0 , false ) );
-            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0 , false ) );
-            this->addDoubleProperty( "Poro_type", ElementaryMaterialPropertyDouble( "PORO_TYPE" , 0 , false ) );
+            this->addDoubleProperty( "Poro_crit", ElementaryMaterialPropertyDouble( "PORO_CRIT" , 1. , false ) );
+            this->addDoubleProperty( "Poro_acce", ElementaryMaterialPropertyDouble( "PORO_ACCE" , 1. , false ) );
+            this->addDoubleProperty( "Poro_limi", ElementaryMaterialPropertyDouble( "PORO_LIMI" , 0.999 , false ) );
+            this->addDoubleProperty( "D_sigm_epsi_norm=", ElementaryMaterialPropertyDouble( "D_SIGM_EPSI_NORM=" , false ) );
+            this->addDoubleProperty( "An", ElementaryMaterialPropertyDouble( "AN" , 0. , false ) );
+            this->addDoubleProperty( "Dp_maxi", ElementaryMaterialPropertyDouble( "DP_MAXI" , 0.1 , false ) );
+            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0.85 , false ) );
+            this->addDoubleProperty( "Poro_type", ElementaryMaterialPropertyDouble( "PORO_TYPE" , 1. , false ) );
         };
 };
 
@@ -1504,12 +1504,12 @@ class Cin1ChabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             // Parametres matériau
             this->addDoubleProperty( "R_0", ElementaryMaterialPropertyDouble( "R_0" , true ) );
             this->addDoubleProperty( "R_i", ElementaryMaterialPropertyDouble( "R_I" , false ) );
-            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0 , false ) );
+            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0.0E+0 , false ) );
             this->addDoubleProperty( "C_i", ElementaryMaterialPropertyDouble( "C_I" , true ) );
-            this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , 0 , false ) );
-            this->addDoubleProperty( "W", ElementaryMaterialPropertyDouble( "W" , 0 , false ) );
+            this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , 1.0E+0 , false ) );
+            this->addDoubleProperty( "W", ElementaryMaterialPropertyDouble( "W" , 0.0E+0 , false ) );
             this->addDoubleProperty( "G_0", ElementaryMaterialPropertyDouble( "G_0" , true ) );
-            this->addDoubleProperty( "A_i", ElementaryMaterialPropertyDouble( "A_I" , 0 , false ) );
+            this->addDoubleProperty( "A_i", ElementaryMaterialPropertyDouble( "A_I" , 1.0E+0 , false ) );
         };
 };
 
@@ -1568,14 +1568,14 @@ class Cin2ChabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             // Parametres matériau
             this->addDoubleProperty( "R_0", ElementaryMaterialPropertyDouble( "R_0" , true ) );
             this->addDoubleProperty( "R_i", ElementaryMaterialPropertyDouble( "R_I" , false ) );
-            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0 , false ) );
+            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0.E+0 , false ) );
             this->addDoubleProperty( "C1_i", ElementaryMaterialPropertyDouble( "C1_I" , true ) );
             this->addDoubleProperty( "C2_i", ElementaryMaterialPropertyDouble( "C2_I" , true ) );
-            this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , 0 , false ) );
-            this->addDoubleProperty( "W", ElementaryMaterialPropertyDouble( "W" , 0 , false ) );
+            this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , 1. , false ) );
+            this->addDoubleProperty( "W", ElementaryMaterialPropertyDouble( "W" , 0.E+0 , false ) );
             this->addDoubleProperty( "G1_0", ElementaryMaterialPropertyDouble( "G1_0" , true ) );
             this->addDoubleProperty( "G2_0", ElementaryMaterialPropertyDouble( "G2_0" , true ) );
-            this->addDoubleProperty( "A_i", ElementaryMaterialPropertyDouble( "A_I" , 0 , false ) );
+            this->addDoubleProperty( "A_i", ElementaryMaterialPropertyDouble( "A_I" , 1.E+0 , false ) );
         };
 };
 
@@ -1634,8 +1634,8 @@ class Cin2NradMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             _asterName = "CIN2_NRAD";
 
             // Parametres matériau
-            this->addDoubleProperty( "Delta1", ElementaryMaterialPropertyDouble( "DELTA1" , 0 , false ) );
-            this->addDoubleProperty( "Delta2", ElementaryMaterialPropertyDouble( "DELTA2" , 0 , false ) );
+            this->addDoubleProperty( "Delta1", ElementaryMaterialPropertyDouble( "DELTA1" , 1.E+0 , false ) );
+            this->addDoubleProperty( "Delta2", ElementaryMaterialPropertyDouble( "DELTA2" , 1.E+0 , false ) );
         };
 };
 
@@ -1663,7 +1663,7 @@ class MemoEcroMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Mu", ElementaryMaterialPropertyDouble( "MU" , true ) );
             this->addDoubleProperty( "Q_m", ElementaryMaterialPropertyDouble( "Q_M" , true ) );
             this->addDoubleProperty( "Q_0", ElementaryMaterialPropertyDouble( "Q_0" , true ) );
-            this->addDoubleProperty( "Eta", ElementaryMaterialPropertyDouble( "ETA" , 0 , false ) );
+            this->addDoubleProperty( "Eta", ElementaryMaterialPropertyDouble( "ETA" , 0.5E+0 , false ) );
         };
 };
 
@@ -1717,30 +1717,30 @@ class ViscochabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 
             // Parametres matériau
             this->addDoubleProperty( "K_0", ElementaryMaterialPropertyDouble( "K_0" , true ) );
-            this->addDoubleProperty( "A_k", ElementaryMaterialPropertyDouble( "A_K" , 0 , false ) );
-            this->addDoubleProperty( "A_r", ElementaryMaterialPropertyDouble( "A_R" , 0 , false ) );
+            this->addDoubleProperty( "A_k", ElementaryMaterialPropertyDouble( "A_K" , 0.E+0 , false ) );
+            this->addDoubleProperty( "A_r", ElementaryMaterialPropertyDouble( "A_R" , 1.E+0 , false ) );
             this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , true ) );
             this->addDoubleProperty( "N", ElementaryMaterialPropertyDouble( "N" , true ) );
-            this->addDoubleProperty( "Alp", ElementaryMaterialPropertyDouble( "ALP" , 0 , false ) );
+            this->addDoubleProperty( "Alp", ElementaryMaterialPropertyDouble( "ALP" , 0.E+0 , false ) );
             this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , false ) );
-            this->addDoubleProperty( "M_r", ElementaryMaterialPropertyDouble( "M_R" , 0 , false ) );
-            this->addDoubleProperty( "G_r", ElementaryMaterialPropertyDouble( "G_R" , 0 , false ) );
-            this->addDoubleProperty( "Mu", ElementaryMaterialPropertyDouble( "MU" , 0 , true ) );
+            this->addDoubleProperty( "M_r", ElementaryMaterialPropertyDouble( "M_R" , 1.E+0 , false ) );
+            this->addDoubleProperty( "G_r", ElementaryMaterialPropertyDouble( "G_R" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Mu", ElementaryMaterialPropertyDouble( "MU" , 0.E+0 , true ) );
             this->addDoubleProperty( "Q_m", ElementaryMaterialPropertyDouble( "Q_M" , true ) );
             this->addDoubleProperty( "Q_0", ElementaryMaterialPropertyDouble( "Q_0" , true ) );
-            this->addDoubleProperty( "Qr_0", ElementaryMaterialPropertyDouble( "QR_0" , 0 , false ) );
-            this->addDoubleProperty( "Eta", ElementaryMaterialPropertyDouble( "ETA" , 0 , false ) );
+            this->addDoubleProperty( "Qr_0", ElementaryMaterialPropertyDouble( "QR_0" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Eta", ElementaryMaterialPropertyDouble( "ETA" , 0.5E+0 , false ) );
             this->addDoubleProperty( "C1", ElementaryMaterialPropertyDouble( "C1" , true ) );
-            this->addDoubleProperty( "M_1", ElementaryMaterialPropertyDouble( "M_1" , 0 , false ) );
-            this->addDoubleProperty( "D1", ElementaryMaterialPropertyDouble( "D1" , 0 , false ) );
-            this->addDoubleProperty( "G_x1", ElementaryMaterialPropertyDouble( "G_X1" , 0 , false ) );
+            this->addDoubleProperty( "M_1", ElementaryMaterialPropertyDouble( "M_1" , 1.E+0 , false ) );
+            this->addDoubleProperty( "D1", ElementaryMaterialPropertyDouble( "D1" , 1.E+0 , false ) );
+            this->addDoubleProperty( "G_x1", ElementaryMaterialPropertyDouble( "G_X1" , 0.E+0 , false ) );
             this->addDoubleProperty( "G1_0", ElementaryMaterialPropertyDouble( "G1_0" , true ) );
             this->addDoubleProperty( "C2", ElementaryMaterialPropertyDouble( "C2" , true ) );
-            this->addDoubleProperty( "M_2", ElementaryMaterialPropertyDouble( "M_2" , 0 , false ) );
-            this->addDoubleProperty( "D2", ElementaryMaterialPropertyDouble( "D2" , 0 , false ) );
-            this->addDoubleProperty( "G_x2", ElementaryMaterialPropertyDouble( "G_X2" , 0 , false ) );
+            this->addDoubleProperty( "M_2", ElementaryMaterialPropertyDouble( "M_2" , 1.E+0 , false ) );
+            this->addDoubleProperty( "D2", ElementaryMaterialPropertyDouble( "D2" , 1.E+0 , false ) );
+            this->addDoubleProperty( "G_x2", ElementaryMaterialPropertyDouble( "G_X2" , 0.E+0 , false ) );
             this->addDoubleProperty( "G2_0", ElementaryMaterialPropertyDouble( "G2_0" , true ) );
-            this->addDoubleProperty( "A_i", ElementaryMaterialPropertyDouble( "A_I" , 0 , false ) );
+            this->addDoubleProperty( "A_i", ElementaryMaterialPropertyDouble( "A_I" , 1.E+0 , false ) );
         };
 };
 
@@ -1816,7 +1816,7 @@ class LemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             // Parametres matériau
             this->addDoubleProperty( "N", ElementaryMaterialPropertyDouble( "N" , true ) );
             this->addDoubleProperty( "Un_sur_k", ElementaryMaterialPropertyDouble( "UN_SUR_K" , true ) );
-            this->addDoubleProperty( "Un_sur_m", ElementaryMaterialPropertyDouble( "UN_SUR_M" , 0 , false ) );
+            this->addDoubleProperty( "Un_sur_m", ElementaryMaterialPropertyDouble( "UN_SUR_M" , 0.E+0 , false ) );
         };
 };
 
@@ -1843,11 +1843,11 @@ class LemaitreIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
             // Parametres matériau
             this->addDoubleProperty( "N", ElementaryMaterialPropertyDouble( "N" , true ) );
             this->addDoubleProperty( "Un_sur_k", ElementaryMaterialPropertyDouble( "UN_SUR_K" , true ) );
-            this->addDoubleProperty( "Un_sur_m", ElementaryMaterialPropertyDouble( "UN_SUR_M" , 0 , false ) );
-            this->addDoubleProperty( "Qsr_k", ElementaryMaterialPropertyDouble( "QSR_K" , 0 , false ) );
-            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0 , false ) );
-            this->addDoubleProperty( "Phi_zero", ElementaryMaterialPropertyDouble( "PHI_ZERO" , 0 , false ) );
-            this->addDoubleProperty( "L", ElementaryMaterialPropertyDouble( "L" , 0 , false ) );
+            this->addDoubleProperty( "Un_sur_m", ElementaryMaterialPropertyDouble( "UN_SUR_M" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Qsr_k", ElementaryMaterialPropertyDouble( "QSR_K" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Phi_zero", ElementaryMaterialPropertyDouble( "PHI_ZERO" , 1.E+20 , false ) );
+            this->addDoubleProperty( "L", ElementaryMaterialPropertyDouble( "L" , 0.E+0 , false ) );
             this->addFunctionProperty( "GranFo", ElementaryMaterialPropertyFunction( "GRAN_FO" , false ) );
         };
 };
@@ -1927,10 +1927,10 @@ class ViscIrraLogMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
             _asterName = "VISC_IRRA_LOG";
 
             // Parametres matériau
-            this->addDoubleProperty( "A", ElementaryMaterialPropertyDouble( "A" , 0 , false ) );
-            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0 , false ) );
-            this->addDoubleProperty( "Cste_tps", ElementaryMaterialPropertyDouble( "CSTE_TPS" , 0 , false ) );
-            this->addDoubleProperty( "Ener_act", ElementaryMaterialPropertyDouble( "ENER_ACT" , 0 , false ) );
+            this->addDoubleProperty( "A", ElementaryMaterialPropertyDouble( "A" , 1.28E-1 , false ) );
+            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0.01159 , false ) );
+            this->addDoubleProperty( "Cste_tps", ElementaryMaterialPropertyDouble( "CSTE_TPS" , 0.3540 , false ) );
+            this->addDoubleProperty( "Ener_act", ElementaryMaterialPropertyDouble( "ENER_ACT" , 5000. , false ) );
             this->addDoubleProperty( "Flux_phi", ElementaryMaterialPropertyDouble( "FLUX_PHI" , true ) );
         };
 };
@@ -1956,10 +1956,10 @@ class GranIrraLogMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
             _asterName = "GRAN_IRRA_LOG";
 
             // Parametres matériau
-            this->addDoubleProperty( "A", ElementaryMaterialPropertyDouble( "A" , 0 , false ) );
-            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0 , false ) );
-            this->addDoubleProperty( "Cste_tps", ElementaryMaterialPropertyDouble( "CSTE_TPS" , 0 , false ) );
-            this->addDoubleProperty( "Ener_act", ElementaryMaterialPropertyDouble( "ENER_ACT" , 0 , false ) );
+            this->addDoubleProperty( "A", ElementaryMaterialPropertyDouble( "A" , 1.28E-1 , false ) );
+            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0.01159 , false ) );
+            this->addDoubleProperty( "Cste_tps", ElementaryMaterialPropertyDouble( "CSTE_TPS" , 0.3540 , false ) );
+            this->addDoubleProperty( "Ener_act", ElementaryMaterialPropertyDouble( "ENER_ACT" , 5000. , false ) );
             this->addDoubleProperty( "Flux_phi", ElementaryMaterialPropertyDouble( "FLUX_PHI" , true ) );
             this->addFunctionProperty( "GranFo", ElementaryMaterialPropertyFunction( "GRAN_FO" , false ) );
         };
@@ -2047,9 +2047,9 @@ class Irrad3mMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Rg0", ElementaryMaterialPropertyDouble( "RG0" , true ) );
             this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , true ) );
             this->addDoubleProperty( "Phi0", ElementaryMaterialPropertyDouble( "PHI0" , true ) );
-            this->addDoubleProperty( "Kappa", ElementaryMaterialPropertyDouble( "KAPPA" , 0 , false ) );
+            this->addDoubleProperty( "Kappa", ElementaryMaterialPropertyDouble( "KAPPA" , 0.8 , false ) );
             this->addFunctionProperty( "Zeta_g", ElementaryMaterialPropertyFunction( "ZETA_G" , false ) );
-            this->addDoubleProperty( "Toler_et", ElementaryMaterialPropertyDouble( "TOLER_ET" , 0 , false ) );
+            this->addDoubleProperty( "Toler_et", ElementaryMaterialPropertyDouble( "TOLER_ET" , 0.15 , false ) );
         };
 };
 
@@ -2260,7 +2260,7 @@ class AsseCornMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Kz", ElementaryMaterialPropertyDouble( "KZ" , true ) );
             this->addDoubleProperty( "Krx", ElementaryMaterialPropertyDouble( "KRX" , true ) );
             this->addDoubleProperty( "Krz", ElementaryMaterialPropertyDouble( "KRZ" , true ) );
-            this->addDoubleProperty( "R_p0", ElementaryMaterialPropertyDouble( "R_P0" , 0 , false ) );
+            this->addDoubleProperty( "R_p0", ElementaryMaterialPropertyDouble( "R_P0" , 1.E+4 , false ) );
         };
 };
 
@@ -2286,13 +2286,13 @@ class DisContactMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 
             // Parametres matériau
             this->addDoubleProperty( "Rigi_nor", ElementaryMaterialPropertyDouble( "RIGI_NOR" , false ) );
-            this->addDoubleProperty( "Rigi_tan", ElementaryMaterialPropertyDouble( "RIGI_TAN" , 0 , false ) );
+            this->addDoubleProperty( "Rigi_tan", ElementaryMaterialPropertyDouble( "RIGI_TAN" , 0.E+0 , false ) );
             this->addDoubleProperty( "Amor_nor", ElementaryMaterialPropertyDouble( "AMOR_NOR" , false ) );
             this->addDoubleProperty( "Amor_tan", ElementaryMaterialPropertyDouble( "AMOR_TAN" , false ) );
-            this->addDoubleProperty( "Coulomb", ElementaryMaterialPropertyDouble( "COULOMB" , 0 , false ) );
-            this->addDoubleProperty( "Dist_1", ElementaryMaterialPropertyDouble( "DIST_1" , 0 , false ) );
-            this->addDoubleProperty( "Dist_2", ElementaryMaterialPropertyDouble( "DIST_2" , 0 , false ) );
-            this->addDoubleProperty( "Jeu", ElementaryMaterialPropertyDouble( "JEU" , 0 , false ) );
+            this->addDoubleProperty( "Coulomb", ElementaryMaterialPropertyDouble( "COULOMB" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Dist_1", ElementaryMaterialPropertyDouble( "DIST_1" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Dist_2", ElementaryMaterialPropertyDouble( "DIST_2" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Jeu", ElementaryMaterialPropertyDouble( "JEU" , 0.E+0 , false ) );
         };
 };
 
@@ -2319,11 +2319,11 @@ class EndoScalaireMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
             // Parametres matériau
             this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , true ) );
             this->addDoubleProperty( "P", ElementaryMaterialPropertyDouble( "P" , true ) );
-            this->addDoubleProperty( "Q", ElementaryMaterialPropertyDouble( "Q" , 0 , false ) );
+            this->addDoubleProperty( "Q", ElementaryMaterialPropertyDouble( "Q" , 0.0 , false ) );
             this->addDoubleProperty( "M", ElementaryMaterialPropertyDouble( "M" , true ) );
-            this->addDoubleProperty( "C_comp", ElementaryMaterialPropertyDouble( "C_COMP" , 0 , false ) );
-            this->addDoubleProperty( "C_volu", ElementaryMaterialPropertyDouble( "C_VOLU" , 0 , false ) );
-            this->addDoubleProperty( "Coef_rigi_mini", ElementaryMaterialPropertyDouble( "COEF_RIGI_MINI" , 0 , false ) );
+            this->addDoubleProperty( "C_comp", ElementaryMaterialPropertyDouble( "C_COMP" , 0.0 , false ) );
+            this->addDoubleProperty( "C_volu", ElementaryMaterialPropertyDouble( "C_VOLU" , 1.0 , false ) );
+            this->addDoubleProperty( "Coef_rigi_mini", ElementaryMaterialPropertyDouble( "COEF_RIGI_MINI" , 1.E-5 , false ) );
         };
 };
 
@@ -2350,11 +2350,11 @@ class EndoScalaireFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
             // Parametres matériau
             this->addFunctionProperty( "K", ElementaryMaterialPropertyFunction( "K" , true ) );
             this->addFunctionProperty( "P", ElementaryMaterialPropertyFunction( "P" , true ) );
-            this->addDoubleProperty( "Q", ElementaryMaterialPropertyDouble( "Q" , 0 , false ) );
+            this->addDoubleProperty( "Q", ElementaryMaterialPropertyDouble( "Q" , 0.0 , false ) );
             this->addFunctionProperty( "M", ElementaryMaterialPropertyFunction( "M" , true ) );
             this->addFunctionProperty( "C_comp", ElementaryMaterialPropertyFunction( "C_COMP" , true ) );
             this->addFunctionProperty( "C_volu", ElementaryMaterialPropertyFunction( "C_VOLU" , true ) );
-            this->addDoubleProperty( "Coef_rigi_mini", ElementaryMaterialPropertyDouble( "COEF_RIGI_MINI" , 0 , false ) );
+            this->addDoubleProperty( "Coef_rigi_mini", ElementaryMaterialPropertyDouble( "COEF_RIGI_MINI" , 1.E-5 , false ) );
         };
 };
 
@@ -2381,12 +2381,12 @@ class EndoFissExpMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
             // Parametres matériau
             this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , true ) );
             this->addDoubleProperty( "P", ElementaryMaterialPropertyDouble( "P" , true ) );
-            this->addDoubleProperty( "Q", ElementaryMaterialPropertyDouble( "Q" , 0 , false ) );
+            this->addDoubleProperty( "Q", ElementaryMaterialPropertyDouble( "Q" , 0.0 , false ) );
             this->addDoubleProperty( "M", ElementaryMaterialPropertyDouble( "M" , true ) );
             this->addDoubleProperty( "Tau", ElementaryMaterialPropertyDouble( "TAU" , true ) );
             this->addDoubleProperty( "Sig0", ElementaryMaterialPropertyDouble( "SIG0" , true ) );
-            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0 , false ) );
-            this->addDoubleProperty( "Coef_rigi_mini", ElementaryMaterialPropertyDouble( "COEF_RIGI_MINI" , 0 , false ) );
+            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0.1 , false ) );
+            this->addDoubleProperty( "Coef_rigi_mini", ElementaryMaterialPropertyDouble( "COEF_RIGI_MINI" , 1.E-5 , false ) );
         };
 };
 
@@ -2413,12 +2413,12 @@ class EndoFissExpFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             // Parametres matériau
             this->addFunctionProperty( "K", ElementaryMaterialPropertyFunction( "K" , true ) );
             this->addFunctionProperty( "P", ElementaryMaterialPropertyFunction( "P" , true ) );
-            this->addDoubleProperty( "Q", ElementaryMaterialPropertyDouble( "Q" , 0 , false ) );
+            this->addDoubleProperty( "Q", ElementaryMaterialPropertyDouble( "Q" , 0.0 , false ) );
             this->addFunctionProperty( "M", ElementaryMaterialPropertyFunction( "M" , true ) );
             this->addFunctionProperty( "Tau", ElementaryMaterialPropertyFunction( "TAU" , true ) );
             this->addFunctionProperty( "Sig0", ElementaryMaterialPropertyFunction( "SIG0" , true ) );
-            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0 , false ) );
-            this->addDoubleProperty( "Coef_rigi_mini", ElementaryMaterialPropertyDouble( "COEF_RIGI_MINI" , 0 , false ) );
+            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0.1 , false ) );
+            this->addDoubleProperty( "Coef_rigi_mini", ElementaryMaterialPropertyDouble( "COEF_RIGI_MINI" , 1.E-5 , false ) );
         };
 };
 
@@ -2448,8 +2448,8 @@ class DisGricraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             this->addDoubleProperty( "Coul_ax", ElementaryMaterialPropertyDouble( "COUL_AX" , true ) );
             this->addDoubleProperty( "F_ser", ElementaryMaterialPropertyDouble( "F_SER" , false ) );
             this->addFunctionProperty( "F_serFo", ElementaryMaterialPropertyFunction( "F_SER_FO" , false ) );
-            this->addDoubleProperty( "Et_ax", ElementaryMaterialPropertyDouble( "ET_AX" , 0 , false ) );
-            this->addDoubleProperty( "Et_rot", ElementaryMaterialPropertyDouble( "ET_ROT" , 0 , false ) );
+            this->addDoubleProperty( "Et_ax", ElementaryMaterialPropertyDouble( "ET_AX" , 1.e-7 , false ) );
+            this->addDoubleProperty( "Et_rot", ElementaryMaterialPropertyDouble( "ET_ROT" , 1.e-7 , false ) );
             this->addDoubleProperty( "Ang1", ElementaryMaterialPropertyDouble( "ANG1" , false ) );
             this->addDoubleProperty( "Ang2", ElementaryMaterialPropertyDouble( "ANG2" , false ) );
             this->addDoubleProperty( "Pen1", ElementaryMaterialPropertyDouble( "PEN1" , false ) );
@@ -2491,8 +2491,8 @@ class BetonDoubleDpMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             this->addFunctionProperty( "Ener_trac_rupt", ElementaryMaterialPropertyFunction( "ENER_TRAC_RUPT" , true ) );
             this->addDoubleProperty( "Coef_elas_comp", ElementaryMaterialPropertyDouble( "COEF_ELAS_COMP" , true ) );
             this->addDoubleProperty( "Long_cara", ElementaryMaterialPropertyDouble( "LONG_CARA" , false ) );
-            this->addFunctionProperty( "Ecro_comp_p_pic", ElementaryMaterialPropertyFunction( "ECRO_COMP_P_PIC" , false ) );
-            this->addFunctionProperty( "Ecro_trac_p_pic", ElementaryMaterialPropertyFunction( "ECRO_TRAC_P_PIC" , false ) );
+            this->addDoubleProperty( "Ecro_comp_p_pic", ElementaryMaterialPropertyDouble( "ECRO_COMP_P_PIC" , 0.0 , false ) );
+            this->addDoubleProperty( "Ecro_trac_p_pic", ElementaryMaterialPropertyDouble( "ECRO_TRAC_P_PIC" , 8.0 , false ) );
         };
 };
 
@@ -2581,20 +2581,20 @@ class JointBaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             _asterName = "JOINT_BA";
 
             // Parametres matériau
-            this->addDoubleProperty( "Hpen", ElementaryMaterialPropertyDouble( "HPEN" , 0 , true ) );
+            this->addDoubleProperty( "Hpen", ElementaryMaterialPropertyDouble( "HPEN" , 1.E+0 , true ) );
             this->addDoubleProperty( "Gtt", ElementaryMaterialPropertyDouble( "GTT" , true ) );
             this->addDoubleProperty( "Gamd0", ElementaryMaterialPropertyDouble( "GAMD0" , true ) );
             this->addDoubleProperty( "Ad1", ElementaryMaterialPropertyDouble( "AD1" , true ) );
-            this->addDoubleProperty( "Bd1", ElementaryMaterialPropertyDouble( "BD1" , 0 , true ) );
+            this->addDoubleProperty( "Bd1", ElementaryMaterialPropertyDouble( "BD1" , 5.E-1 , true ) );
             this->addDoubleProperty( "Gamd2", ElementaryMaterialPropertyDouble( "GAMD2" , true ) );
             this->addDoubleProperty( "Ad2", ElementaryMaterialPropertyDouble( "AD2" , true ) );
-            this->addDoubleProperty( "Bd2", ElementaryMaterialPropertyDouble( "BD2" , 0 , true ) );
+            this->addDoubleProperty( "Bd2", ElementaryMaterialPropertyDouble( "BD2" , 1.E+0 , true ) );
             this->addDoubleProperty( "Vifrot", ElementaryMaterialPropertyDouble( "VIFROT" , true ) );
             this->addDoubleProperty( "Fa", ElementaryMaterialPropertyDouble( "FA" , true ) );
             this->addDoubleProperty( "Fc", ElementaryMaterialPropertyDouble( "FC" , true ) );
             this->addDoubleProperty( "Epstr0", ElementaryMaterialPropertyDouble( "EPSTR0" , true ) );
             this->addDoubleProperty( "Adn", ElementaryMaterialPropertyDouble( "ADN" , true ) );
-            this->addDoubleProperty( "Bdn", ElementaryMaterialPropertyDouble( "BDN" , 0 , true ) );
+            this->addDoubleProperty( "Bdn", ElementaryMaterialPropertyDouble( "BDN" , 1.E+0 , true ) );
         };
 };
 
@@ -2619,9 +2619,9 @@ class VendochabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "VENDOCHAB";
 
             // Parametres matériau
-            this->addDoubleProperty( "Sy", ElementaryMaterialPropertyDouble( "SY" , 0 , true ) );
-            this->addDoubleProperty( "Alpha_d", ElementaryMaterialPropertyDouble( "ALPHA_D" , 0 , true ) );
-            this->addDoubleProperty( "Beta_d", ElementaryMaterialPropertyDouble( "BETA_D" , 0 , true ) );
+            this->addDoubleProperty( "Sy", ElementaryMaterialPropertyDouble( "SY" , 0.E+0 , true ) );
+            this->addDoubleProperty( "Alpha_d", ElementaryMaterialPropertyDouble( "ALPHA_D" , 0.E+0 , true ) );
+            this->addDoubleProperty( "Beta_d", ElementaryMaterialPropertyDouble( "BETA_D" , 0.E+0 , true ) );
             this->addDoubleProperty( "R_d", ElementaryMaterialPropertyDouble( "R_D" , true ) );
             this->addDoubleProperty( "A_d", ElementaryMaterialPropertyDouble( "A_D" , true ) );
             this->addDoubleProperty( "K_d", ElementaryMaterialPropertyDouble( "K_D" , true ) );
@@ -2687,11 +2687,11 @@ class HayhurstMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Delta2", ElementaryMaterialPropertyDouble( "DELTA2" , true ) );
             this->addDoubleProperty( "H1st", ElementaryMaterialPropertyDouble( "H1ST" , true ) );
             this->addDoubleProperty( "H2st", ElementaryMaterialPropertyDouble( "H2ST" , true ) );
-            this->addDoubleProperty( "Kc", ElementaryMaterialPropertyDouble( "KC" , 0 , false ) );
+            this->addDoubleProperty( "Kc", ElementaryMaterialPropertyDouble( "KC" , 0. , false ) );
             this->addDoubleProperty( "Biga", ElementaryMaterialPropertyDouble( "BIGA" , true ) );
             this->addDoubleProperty( "Sig0", ElementaryMaterialPropertyDouble( "SIG0" , true ) );
-            this->addDoubleProperty( "Alphad", ElementaryMaterialPropertyDouble( "ALPHAD" , 0 , false ) );
-            this->addDoubleProperty( "S_equi_d", ElementaryMaterialPropertyDouble( "S_EQUI_D" , 0 , false ) );
+            this->addDoubleProperty( "Alphad", ElementaryMaterialPropertyDouble( "ALPHAD" , 0. , false ) );
+            this->addDoubleProperty( "S_equi_d", ElementaryMaterialPropertyDouble( "S_EQUI_D" , 0. , false ) );
         };
 };
 
@@ -2716,7 +2716,7 @@ class ViscEndoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             _asterName = "VISC_ENDO";
 
             // Parametres matériau
-            this->addDoubleProperty( "Sy", ElementaryMaterialPropertyDouble( "SY" , 0 , true ) );
+            this->addDoubleProperty( "Sy", ElementaryMaterialPropertyDouble( "SY" , 0.E+0 , true ) );
             this->addDoubleProperty( "R_d", ElementaryMaterialPropertyDouble( "R_D" , true ) );
             this->addDoubleProperty( "A_d", ElementaryMaterialPropertyDouble( "A_D" , true ) );
         };
@@ -2773,15 +2773,15 @@ class PintoMenegottoMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
             this->addDoubleProperty( "Sy", ElementaryMaterialPropertyDouble( "SY" , true ) );
             this->addDoubleProperty( "Epsi_ultm", ElementaryMaterialPropertyDouble( "EPSI_ULTM" , true ) );
             this->addDoubleProperty( "Sigm_ultm", ElementaryMaterialPropertyDouble( "SIGM_ULTM" , true ) );
-            this->addDoubleProperty( "Elan", ElementaryMaterialPropertyDouble( "ELAN" , 0 , false ) );
+            this->addDoubleProperty( "Elan", ElementaryMaterialPropertyDouble( "ELAN" , 4. , false ) );
             this->addDoubleProperty( "Epsp_hard", ElementaryMaterialPropertyDouble( "EPSP_HARD" , true ) );
-            this->addDoubleProperty( "R_pm", ElementaryMaterialPropertyDouble( "R_PM" , 0 , false ) );
+            this->addDoubleProperty( "R_pm", ElementaryMaterialPropertyDouble( "R_PM" , 20. , false ) );
             this->addDoubleProperty( "Ep_sur_e", ElementaryMaterialPropertyDouble( "EP_SUR_E" , false ) );
-            this->addDoubleProperty( "A1_pm", ElementaryMaterialPropertyDouble( "A1_PM" , 0 , false ) );
-            this->addDoubleProperty( "A2_pm", ElementaryMaterialPropertyDouble( "A2_PM" , 0 , false ) );
-            this->addDoubleProperty( "A6_pm", ElementaryMaterialPropertyDouble( "A6_PM" , 0 , false ) );
-            this->addDoubleProperty( "C_pm", ElementaryMaterialPropertyDouble( "C_PM" , 0 , false ) );
-            this->addDoubleProperty( "A_pm", ElementaryMaterialPropertyDouble( "A_PM" , 0 , false ) );
+            this->addDoubleProperty( "A1_pm", ElementaryMaterialPropertyDouble( "A1_PM" , 18.5 , false ) );
+            this->addDoubleProperty( "A2_pm", ElementaryMaterialPropertyDouble( "A2_PM" , 0.15 , false ) );
+            this->addDoubleProperty( "A6_pm", ElementaryMaterialPropertyDouble( "A6_PM" , 620. , false ) );
+            this->addDoubleProperty( "C_pm", ElementaryMaterialPropertyDouble( "C_PM" , 0.5 , false ) );
+            this->addDoubleProperty( "A_pm", ElementaryMaterialPropertyDouble( "A_PM" , 6.0E-3 , false ) );
         };
 };
 
@@ -2806,8 +2806,8 @@ class BpelBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "BPEL_BETON";
 
             // Parametres matériau
-            this->addDoubleProperty( "Pert_flua", ElementaryMaterialPropertyDouble( "PERT_FLUA" , 0 , false ) );
-            this->addDoubleProperty( "Pert_retr", ElementaryMaterialPropertyDouble( "PERT_RETR" , 0 , false ) );
+            this->addDoubleProperty( "Pert_flua", ElementaryMaterialPropertyDouble( "PERT_FLUA" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Pert_retr", ElementaryMaterialPropertyDouble( "PERT_RETR" , 0.E+0 , false ) );
         };
 };
 
@@ -2832,11 +2832,11 @@ class BpelAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "BPEL_ACIER";
 
             // Parametres matériau
-            this->addDoubleProperty( "Relax_1000", ElementaryMaterialPropertyDouble( "RELAX_1000" , 0 , false ) );
-            this->addDoubleProperty( "Mu0_relax", ElementaryMaterialPropertyDouble( "MU0_RELAX" , 0 , false ) );
+            this->addDoubleProperty( "Relax_1000", ElementaryMaterialPropertyDouble( "RELAX_1000" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Mu0_relax", ElementaryMaterialPropertyDouble( "MU0_RELAX" , 0.E+0 , false ) );
             this->addDoubleProperty( "F_prg", ElementaryMaterialPropertyDouble( "F_PRG" , false ) );
-            this->addDoubleProperty( "Frot_courb", ElementaryMaterialPropertyDouble( "FROT_COURB" , 0 , false ) );
-            this->addDoubleProperty( "Frot_line", ElementaryMaterialPropertyDouble( "FROT_LINE" , 0 , false ) );
+            this->addDoubleProperty( "Frot_courb", ElementaryMaterialPropertyDouble( "FROT_COURB" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Frot_line", ElementaryMaterialPropertyDouble( "FROT_LINE" , 0.E+0 , false ) );
         };
 };
 
@@ -2861,7 +2861,7 @@ class EtccBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "ETCC_BETON";
 
             // Parametres matériau
-            this->addDoubleProperty( "Ep_beton", ElementaryMaterialPropertyDouble( "EP_BETON" , 0 , false ) );
+            this->addDoubleProperty( "Ep_beton", ElementaryMaterialPropertyDouble( "EP_BETON" , 0. , false ) );
         };
 };
 
@@ -2887,9 +2887,9 @@ class EtccAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 
             // Parametres matériau
             this->addDoubleProperty( "F_prg", ElementaryMaterialPropertyDouble( "F_PRG" , false ) );
-            this->addDoubleProperty( "Coef_frot", ElementaryMaterialPropertyDouble( "COEF_FROT" , 0 , false ) );
-            this->addDoubleProperty( "Pert_ligne", ElementaryMaterialPropertyDouble( "PERT_LIGNE" , 0 , false ) );
-            this->addDoubleProperty( "Relax_1000", ElementaryMaterialPropertyDouble( "RELAX_1000" , 0 , false ) );
+            this->addDoubleProperty( "Coef_frot", ElementaryMaterialPropertyDouble( "COEF_FROT" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Pert_ligne", ElementaryMaterialPropertyDouble( "PERT_LIGNE" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Relax_1000", ElementaryMaterialPropertyDouble( "RELAX_1000" , 0.E+0 , false ) );
         };
 };
 
@@ -3013,18 +3013,18 @@ class CjsMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             // Parametres matériau
             this->addDoubleProperty( "Beta_cjs", ElementaryMaterialPropertyDouble( "BETA_CJS" , true ) );
             this->addDoubleProperty( "Rm", ElementaryMaterialPropertyDouble( "RM" , true ) );
-            this->addDoubleProperty( "N_cjs", ElementaryMaterialPropertyDouble( "N_CJS" , 0 , false ) );
-            this->addDoubleProperty( "Kp", ElementaryMaterialPropertyDouble( "KP" , 0 , false ) );
-            this->addDoubleProperty( "Rc", ElementaryMaterialPropertyDouble( "RC" , 0 , false ) );
-            this->addDoubleProperty( "A_cjs", ElementaryMaterialPropertyDouble( "A_CJS" , 0 , false ) );
-            this->addDoubleProperty( "B_cjs", ElementaryMaterialPropertyDouble( "B_CJS" , 0 , false ) );
-            this->addDoubleProperty( "C_cjs", ElementaryMaterialPropertyDouble( "C_CJS" , 0 , false ) );
+            this->addDoubleProperty( "N_cjs", ElementaryMaterialPropertyDouble( "N_CJS" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Kp", ElementaryMaterialPropertyDouble( "KP" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Rc", ElementaryMaterialPropertyDouble( "RC" , 0.E+0 , false ) );
+            this->addDoubleProperty( "A_cjs", ElementaryMaterialPropertyDouble( "A_CJS" , 0.E+0 , false ) );
+            this->addDoubleProperty( "B_cjs", ElementaryMaterialPropertyDouble( "B_CJS" , 1.0E+25 , false ) );
+            this->addDoubleProperty( "C_cjs", ElementaryMaterialPropertyDouble( "C_CJS" , 0.E+0 , false ) );
             this->addDoubleProperty( "Gamma_cjs", ElementaryMaterialPropertyDouble( "GAMMA_CJS" , true ) );
-            this->addDoubleProperty( "Mu_cjs", ElementaryMaterialPropertyDouble( "MU_CJS" , 0 , false ) );
-            this->addDoubleProperty( "Pco", ElementaryMaterialPropertyDouble( "PCO" , 0 , false ) );
+            this->addDoubleProperty( "Mu_cjs", ElementaryMaterialPropertyDouble( "MU_CJS" , 0.E+0 , false ) );
+            this->addDoubleProperty( "Pco", ElementaryMaterialPropertyDouble( "PCO" , 0.E+0 , false ) );
             this->addDoubleProperty( "Pa", ElementaryMaterialPropertyDouble( "PA" , true ) );
-            this->addDoubleProperty( "Q_init", ElementaryMaterialPropertyDouble( "Q_INIT" , 0 , false ) );
-            this->addDoubleProperty( "R_init", ElementaryMaterialPropertyDouble( "R_INIT" , 0 , false ) );
+            this->addDoubleProperty( "Q_init", ElementaryMaterialPropertyDouble( "Q_INIT" , 0.E+0 , false ) );
+            this->addDoubleProperty( "R_init", ElementaryMaterialPropertyDouble( "R_INIT" , 0.E+0 , false ) );
         };
 };
 
@@ -3069,7 +3069,7 @@ class HujeuxMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Rd_cyc", ElementaryMaterialPropertyDouble( "RD_CYC" , true ) );
             this->addDoubleProperty( "Ri_cyc", ElementaryMaterialPropertyDouble( "RI_CYC" , true ) );
             this->addDoubleProperty( "Dila", ElementaryMaterialPropertyDouble( "DILA" , true ) );
-            this->addDoubleProperty( "Ptrac", ElementaryMaterialPropertyDouble( "PTRAC" , 0 , false ) );
+            this->addDoubleProperty( "Ptrac", ElementaryMaterialPropertyDouble( "PTRAC" , 0.E+0 , false ) );
         };
 };
 
@@ -3293,7 +3293,7 @@ class BetonRagMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             _asterName = "BETON_RAG";
 
             // Parametres matériau
-            this->addDoubleProperty( "Activ_fl", ElementaryMaterialPropertyDouble( "ACTIV_FL" , 0 , false ) );
+            this->addDoubleProperty( "Activ_fl", ElementaryMaterialPropertyDouble( "ACTIV_FL" , 1.0 , false ) );
             this->addDoubleProperty( "K_rs", ElementaryMaterialPropertyDouble( "K_RS" , true ) );
             this->addDoubleProperty( "K_is", ElementaryMaterialPropertyDouble( "K_IS" , true ) );
             this->addDoubleProperty( "Eta_rs", ElementaryMaterialPropertyDouble( "ETA_RS" , true ) );
@@ -3304,20 +3304,20 @@ class BetonRagMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Eta_id", ElementaryMaterialPropertyDouble( "ETA_ID" , true ) );
             this->addDoubleProperty( "Eps_0", ElementaryMaterialPropertyDouble( "EPS_0" , true ) );
             this->addDoubleProperty( "Tau_0", ElementaryMaterialPropertyDouble( "TAU_0" , true ) );
-            this->addDoubleProperty( "Eps_fl_l", ElementaryMaterialPropertyDouble( "EPS_FL_L" , 0 , false ) );
-            this->addDoubleProperty( "Activ_lo", ElementaryMaterialPropertyDouble( "ACTIV_LO" , 0 , false ) );
+            this->addDoubleProperty( "Eps_fl_l", ElementaryMaterialPropertyDouble( "EPS_FL_L" , 3.0e-2 , false ) );
+            this->addDoubleProperty( "Activ_lo", ElementaryMaterialPropertyDouble( "ACTIV_LO" , 1.0 , false ) );
             this->addDoubleProperty( "F_c", ElementaryMaterialPropertyDouble( "F_C" , true ) );
             this->addDoubleProperty( "F_t", ElementaryMaterialPropertyDouble( "F_T" , true ) );
-            this->addDoubleProperty( "Ang_crit", ElementaryMaterialPropertyDouble( "ANG_CRIT" , 0 , false ) );
+            this->addDoubleProperty( "Ang_crit", ElementaryMaterialPropertyDouble( "ANG_CRIT" , 8.594367 , false ) );
             this->addDoubleProperty( "Eps_comp", ElementaryMaterialPropertyDouble( "EPS_COMP" , true ) );
             this->addDoubleProperty( "Eps_trac", ElementaryMaterialPropertyDouble( "EPS_TRAC" , true ) );
-            this->addDoubleProperty( "Lc_comp", ElementaryMaterialPropertyDouble( "LC_COMP" , 0 , true ) );
-            this->addDoubleProperty( "Lc_trac", ElementaryMaterialPropertyDouble( "LC_TRAC" , 0 , true ) );
-            this->addDoubleProperty( "Hyd_pres", ElementaryMaterialPropertyDouble( "HYD_PRES" , 0 , false ) );
-            this->addDoubleProperty( "A_van_ge", ElementaryMaterialPropertyDouble( "A_VAN_GE" , 0 , false ) );
-            this->addDoubleProperty( "B_van_ge", ElementaryMaterialPropertyDouble( "B_VAN_GE" , 0 , false ) );
-            this->addDoubleProperty( "Biot_eau", ElementaryMaterialPropertyDouble( "BIOT_EAU" , 0 , true ) );
-            this->addDoubleProperty( "Modu_eau", ElementaryMaterialPropertyDouble( "MODU_EAU" , 0 , true ) );
+            this->addDoubleProperty( "Lc_comp", ElementaryMaterialPropertyDouble( "LC_COMP" , 1.0 , true ) );
+            this->addDoubleProperty( "Lc_trac", ElementaryMaterialPropertyDouble( "LC_TRAC" , 1.0 , true ) );
+            this->addDoubleProperty( "Hyd_pres", ElementaryMaterialPropertyDouble( "HYD_PRES" , 0. , false ) );
+            this->addDoubleProperty( "A_van_ge", ElementaryMaterialPropertyDouble( "A_VAN_GE" , 0.0 , false ) );
+            this->addDoubleProperty( "B_van_ge", ElementaryMaterialPropertyDouble( "B_VAN_GE" , 1.9 , false ) );
+            this->addDoubleProperty( "Biot_eau", ElementaryMaterialPropertyDouble( "BIOT_EAU" , 0.3 , true ) );
+            this->addDoubleProperty( "Modu_eau", ElementaryMaterialPropertyDouble( "MODU_EAU" , 0.0 , true ) );
             this->addDoubleProperty( "W_eau_0", ElementaryMaterialPropertyDouble( "W_EAU_0" , true ) );
             this->addDoubleProperty( "Biot_gel", ElementaryMaterialPropertyDouble( "BIOT_GEL" , true ) );
             this->addDoubleProperty( "Modu_gel", ElementaryMaterialPropertyDouble( "MODU_GEL" , true ) );
@@ -3436,7 +3436,7 @@ class GlrcDmMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Nyt", ElementaryMaterialPropertyDouble( "NYT" , true ) );
             this->addDoubleProperty( "Nyc", ElementaryMaterialPropertyDouble( "NYC" , false ) );
             this->addDoubleProperty( "Myf", ElementaryMaterialPropertyDouble( "MYF" , true ) );
-            this->addDoubleProperty( "Alpha_c", ElementaryMaterialPropertyDouble( "ALPHA_C" , 0 , false ) );
+            this->addDoubleProperty( "Alpha_c", ElementaryMaterialPropertyDouble( "ALPHA_C" , 1.E+0 , false ) );
         };
 };
 
@@ -3724,8 +3724,8 @@ class GattMonerieMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
             // Parametres matériau
             this->addDoubleProperty( "D_grain", ElementaryMaterialPropertyDouble( "D_GRAIN" , true ) );
             this->addDoubleProperty( "Poro_init", ElementaryMaterialPropertyDouble( "PORO_INIT" , true ) );
-            this->addDoubleProperty( "Epsi_01", ElementaryMaterialPropertyDouble( "EPSI_01" , 0 , true ) );
-            this->addDoubleProperty( "Epsi_02", ElementaryMaterialPropertyDouble( "EPSI_02" , 0 , true ) );
+            this->addDoubleProperty( "Epsi_01", ElementaryMaterialPropertyDouble( "EPSI_01" , 2.7252E-10 , true ) );
+            this->addDoubleProperty( "Epsi_02", ElementaryMaterialPropertyDouble( "EPSI_02" , 9.1440E-41 , true ) );
         };
 };
 
@@ -3778,13 +3778,13 @@ class CableGaineFrotMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
             _asterName = "CABLE_GAINE_FROT";
 
             // Parametres matériau
-            this->addFunctionProperty( "Type", ElementaryMaterialPropertyFunction( "TYPE" , true ) );
-            this->addDoubleProperty( "Frot_line", ElementaryMaterialPropertyDouble( "FROT_LINE" , 0 , false ) );
-            this->addDoubleProperty( "Frot_courb", ElementaryMaterialPropertyDouble( "FROT_COURB" , 0 , false ) );
-            this->addDoubleProperty( "Frot_line", ElementaryMaterialPropertyDouble( "FROT_LINE" , 0 , false ) );
-            this->addDoubleProperty( "Frot_courb", ElementaryMaterialPropertyDouble( "FROT_COURB" , 0 , false ) );
-            this->addDoubleProperty( "Frot_line", ElementaryMaterialPropertyDouble( "FROT_LINE" , 0 , true ) );
-            this->addDoubleProperty( "Frot_courb", ElementaryMaterialPropertyDouble( "FROT_COURB" , 0 , true ) );
+            this->addDoubleProperty( "Type", ElementaryMaterialPropertyDouble( "TYPE" , true ) );
+            this->addDoubleProperty( "Frot_line", ElementaryMaterialPropertyDouble( "FROT_LINE" , 0.0 , false ) );
+            this->addDoubleProperty( "Frot_courb", ElementaryMaterialPropertyDouble( "FROT_COURB" , 0.0 , false ) );
+            this->addDoubleProperty( "Frot_line", ElementaryMaterialPropertyDouble( "FROT_LINE" , -1.0 , false ) );
+            this->addDoubleProperty( "Frot_courb", ElementaryMaterialPropertyDouble( "FROT_COURB" , 0.0 , false ) );
+            this->addDoubleProperty( "Frot_line", ElementaryMaterialPropertyDouble( "FROT_LINE" , 0.0 , true ) );
+            this->addDoubleProperty( "Frot_courb", ElementaryMaterialPropertyDouble( "FROT_COURB" , 0.0 , true ) );
             this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , true ) );
         };
 };
@@ -4220,7 +4220,7 @@ class SechNappeMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "SECH_NAPPE";
 
             // Parametres matériau
-            this->addFunctionProperty( "Fonction", ElementaryMaterialPropertyFunction( "FONCTION" , true ) );
+            this->addDoubleProperty( "Fonction", ElementaryMaterialPropertyDouble( "FONCTION" , true ) );
         };
 };
 
@@ -4245,7 +4245,7 @@ class MetaAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "META_ACIER";
 
             // Parametres matériau
-            this->addFunctionProperty( "Trc", ElementaryMaterialPropertyFunction( "TRC" , true ) );
+            this->addDoubleProperty( "Trc", ElementaryMaterialPropertyDouble( "TRC" , true ) );
             this->addDoubleProperty( "Ar3", ElementaryMaterialPropertyDouble( "AR3" , true ) );
             this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , true ) );
             this->addDoubleProperty( "Ms0", ElementaryMaterialPropertyDouble( "MS0" , true ) );
@@ -4350,9 +4350,9 @@ class ElasMetaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Nu", ElementaryMaterialPropertyDouble( "NU" , true ) );
             this->addDoubleProperty( "F_alpha", ElementaryMaterialPropertyDouble( "F_ALPHA" , true ) );
             this->addDoubleProperty( "C_alpha", ElementaryMaterialPropertyDouble( "C_ALPHA" , true ) );
-            this->addFunctionProperty( "Phase_refe", ElementaryMaterialPropertyFunction( "PHASE_REFE" , true ) );
+            this->addDoubleProperty( "Phase_refe", ElementaryMaterialPropertyDouble( "PHASE_REFE" , true ) );
             this->addDoubleProperty( "Epsf_epsc_tref", ElementaryMaterialPropertyDouble( "EPSF_EPSC_TREF" , true ) );
-            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 0 , false ) );
+            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 1.0E+0 , false ) );
             this->addDoubleProperty( "F1_sy", ElementaryMaterialPropertyDouble( "F1_SY" , false ) );
             this->addDoubleProperty( "F2_sy", ElementaryMaterialPropertyDouble( "F2_SY" , false ) );
             this->addDoubleProperty( "F3_sy", ElementaryMaterialPropertyDouble( "F3_SY" , false ) );
@@ -4393,10 +4393,10 @@ class ElasMetaFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addFunctionProperty( "Nu", ElementaryMaterialPropertyFunction( "NU" , true ) );
             this->addFunctionProperty( "F_alpha", ElementaryMaterialPropertyFunction( "F_ALPHA" , true ) );
             this->addFunctionProperty( "C_alpha", ElementaryMaterialPropertyFunction( "C_ALPHA" , true ) );
-            this->addFunctionProperty( "Phase_refe", ElementaryMaterialPropertyFunction( "PHASE_REFE" , true ) );
+            this->addDoubleProperty( "Phase_refe", ElementaryMaterialPropertyDouble( "PHASE_REFE" , true ) );
             this->addDoubleProperty( "Epsf_epsc_tref", ElementaryMaterialPropertyDouble( "EPSF_EPSC_TREF" , true ) );
             this->addDoubleProperty( "Temp_def_alpha", ElementaryMaterialPropertyDouble( "TEMP_DEF_ALPHA" , false ) );
-            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 0 , false ) );
+            this->addDoubleProperty( "Precision", ElementaryMaterialPropertyDouble( "PRECISION" , 1.0E+0 , false ) );
             this->addFunctionProperty( "F1_sy", ElementaryMaterialPropertyFunction( "F1_SY" , false ) );
             this->addFunctionProperty( "F2_sy", ElementaryMaterialPropertyFunction( "F2_SY" , false ) );
             this->addFunctionProperty( "F3_sy", ElementaryMaterialPropertyFunction( "F3_SY" , false ) );
@@ -4601,9 +4601,9 @@ class FluideMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             // Parametres matériau
             this->addDoubleProperty( "Rho", ElementaryMaterialPropertyDouble( "RHO" , true ) );
             this->addDoubleProperty( "Pesa_z", ElementaryMaterialPropertyDouble( "PESA_Z" , false ) );
-            this->addFunctionProperty( "Cele_c", ElementaryMaterialPropertyFunction( "CELE_C" , false ) );
+            this->addDoubleProperty( "Cele_c", ElementaryMaterialPropertyDouble( "CELE_C" , false ) );
             this->addDoubleProperty( "Cele_r", ElementaryMaterialPropertyDouble( "CELE_R" , false ) );
-            this->addFunctionProperty( "Comp_thm", ElementaryMaterialPropertyFunction( "COMP_THM" , false ) );
+            this->addDoubleProperty( "Comp_thm", ElementaryMaterialPropertyDouble( "COMP_THM" , false ) );
         };
 };
 
@@ -4634,7 +4634,7 @@ class ThmInitMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Pre2", ElementaryMaterialPropertyDouble( "PRE2" , false ) );
             this->addDoubleProperty( "Pres_vape", ElementaryMaterialPropertyDouble( "PRES_VAPE" , false ) );
             this->addDoubleProperty( "Degr_satu", ElementaryMaterialPropertyDouble( "DEGR_SATU" , false ) );
-            this->addDoubleProperty( "Comp_thm", ElementaryMaterialPropertyDouble( "COMP_THM" , 0 , false ) );
+            this->addDoubleProperty( "Comp_thm", ElementaryMaterialPropertyDouble( "COMP_THM" , 1.0 , false ) );
         };
 };
 
@@ -4722,7 +4722,7 @@ class ThmDiffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyFunction( "SATU_PRES" , false ) );
             this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyFunction( "D_SATU_PRES" , false ) );
             this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyFunction( "PERM_LIQU" , false ) );
-            this->addFunctionProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyFunction( "D_PERM_LIQU_SATU" , false ) );
+            this->addDoubleProperty( "D_perm_liqu_satu=", ElementaryMaterialPropertyDouble( "D_PERM_LIQU_SATU=" , false ) );
             this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyFunction( "PERM_GAZ" , false ) );
             this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyFunction( "D_PERM_SATU_GAZ" , false ) );
             this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyFunction( "D_PERM_PRES_GAZ" , false ) );
@@ -4829,7 +4829,6 @@ class ThmVapeGazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 /** @typedef Pointeur intelligent vers un comportement materiau ThmVapeGaz */
 typedef boost::shared_ptr< ThmVapeGazMaterialBehaviourInstance > ThmVapeGazMaterialBehaviourPtr;
 
-
 /**
  * @class FatigueMaterialBehaviourInstance
  * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Fatigue
@@ -4885,7 +4884,7 @@ class DommaLemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             // Parametres matériau
             this->addFunctionProperty( "S", ElementaryMaterialPropertyFunction( "S" , true ) );
             this->addFunctionProperty( "Epsp_seuil", ElementaryMaterialPropertyFunction( "EPSP_SEUIL" , true ) );
-            this->addDoubleProperty( "Exp_s", ElementaryMaterialPropertyDouble( "EXP_S" , 0 , false ) );
+            this->addDoubleProperty( "Exp_s", ElementaryMaterialPropertyDouble( "EXP_S" , 1.0 , false ) );
         };
 };
 
@@ -4910,7 +4909,7 @@ class CisaPlanCritMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
             _asterName = "CISA_PLAN_CRIT";
 
             // Parametres matériau
-            this->addFunctionProperty( "Critere", ElementaryMaterialPropertyFunction( "CRITERE" , true ) );
+            this->addDoubleProperty( "Critere", ElementaryMaterialPropertyDouble( "CRITERE" , true ) );
             this->addDoubleProperty( "Matake_a", ElementaryMaterialPropertyDouble( "MATAKE_A" , true ) );
             this->addDoubleProperty( "Matake_b", ElementaryMaterialPropertyDouble( "MATAKE_B" , true ) );
             this->addDoubleProperty( "Coef_flex_tors", ElementaryMaterialPropertyDouble( "COEF_FLEX_TORS" , true ) );
@@ -4944,7 +4943,7 @@ class ThmRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 
             // Parametres matériau
             this->addDoubleProperty( "Ouv_fict", ElementaryMaterialPropertyDouble( "OUV_FICT" , true ) );
-            this->addDoubleProperty( "Un_sur_n", ElementaryMaterialPropertyDouble( "UN_SUR_N" , 0 , false ) );
+            this->addDoubleProperty( "Un_sur_n", ElementaryMaterialPropertyDouble( "UN_SUR_N" , 0. , false ) );
         };
 };
 
@@ -4972,7 +4971,7 @@ class WeibullMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "M", ElementaryMaterialPropertyDouble( "M" , true ) );
             this->addDoubleProperty( "Volu_refe", ElementaryMaterialPropertyDouble( "VOLU_REFE" , true ) );
             this->addDoubleProperty( "Sigm_refe", ElementaryMaterialPropertyDouble( "SIGM_REFE" , true ) );
-            this->addDoubleProperty( "Seuil_epsp_cumu", ElementaryMaterialPropertyDouble( "SEUIL_EPSP_CUMU" , 0 , false ) );
+            this->addDoubleProperty( "Seuil_epsp_cumu", ElementaryMaterialPropertyDouble( "SEUIL_EPSP_CUMU" , 1.0E-6 , false ) );
         };
 };
 
@@ -5001,7 +5000,7 @@ class WeibullFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             this->addDoubleProperty( "Volu_refe", ElementaryMaterialPropertyDouble( "VOLU_REFE" , true ) );
             this->addDoubleProperty( "Sigm_cnv", ElementaryMaterialPropertyDouble( "SIGM_CNV" , true ) );
             this->addFunctionProperty( "Sigm_refe", ElementaryMaterialPropertyFunction( "SIGM_REFE" , true ) );
-            this->addDoubleProperty( "Seuil_epsp_cumu", ElementaryMaterialPropertyDouble( "SEUIL_EPSP_CUMU" , 0 , false ) );
+            this->addDoubleProperty( "Seuil_epsp_cumu", ElementaryMaterialPropertyDouble( "SEUIL_EPSP_CUMU" , 1.0E-6 , false ) );
         };
 };
 
@@ -5028,7 +5027,7 @@ class NonLocalMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             // Parametres matériau
             this->addDoubleProperty( "Long_cara", ElementaryMaterialPropertyDouble( "LONG_CARA" , false ) );
             this->addDoubleProperty( "C_grad_vari", ElementaryMaterialPropertyDouble( "C_GRAD_VARI" , false ) );
-            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 0 , false ) );
+            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 1.0E3 , false ) );
             this->addDoubleProperty( "C_gonf", ElementaryMaterialPropertyDouble( "C_GONF" , false ) );
             this->addDoubleProperty( "Coef_rigi_mini", ElementaryMaterialPropertyDouble( "COEF_RIGI_MINI" , false ) );
         };
@@ -5046,7 +5045,7 @@ typedef boost::shared_ptr< NonLocalMaterialBehaviourInstance > NonLocalMaterialB
 class RuptFragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
-        /** 
+        /**
          * @brief Constructeur 
          */
         RuptFragMaterialBehaviourInstance()
@@ -5058,10 +5057,10 @@ class RuptFragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Gc", ElementaryMaterialPropertyDouble( "GC" , true ) );
             this->addDoubleProperty( "Sigm_c", ElementaryMaterialPropertyDouble( "SIGM_C" , false ) );
             this->addDoubleProperty( "Pena_adherence", ElementaryMaterialPropertyDouble( "PENA_ADHERENCE" , false ) );
-            this->addDoubleProperty( "Pena_contact", ElementaryMaterialPropertyDouble( "PENA_CONTACT" , 0 , false ) );
-            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 0 , false ) );
-            this->addDoubleProperty( "Rigi_glis", ElementaryMaterialPropertyDouble( "RIGI_GLIS" , 0 , false ) );
-            this->addFunctionProperty( "Cinematique", ElementaryMaterialPropertyFunction( "CINEMATIQUE" , false ) );
+            this->addDoubleProperty( "Pena_contact", ElementaryMaterialPropertyDouble( "PENA_CONTACT" , 1. , false ) );
+            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 1.0E2 , false ) );
+            this->addDoubleProperty( "Rigi_glis", ElementaryMaterialPropertyDouble( "RIGI_GLIS" , 1.0E1 , false ) );
+            this->addDoubleProperty( "Cinematique", ElementaryMaterialPropertyDouble( "CINEMATIQUE" , 0.0 , false ) );
         };
 };
 
@@ -5089,10 +5088,10 @@ class RuptFragFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addFunctionProperty( "Gc", ElementaryMaterialPropertyFunction( "GC" , true ) );
             this->addFunctionProperty( "Sigm_c", ElementaryMaterialPropertyFunction( "SIGM_C" , false ) );
             this->addFunctionProperty( "Pena_adherence", ElementaryMaterialPropertyFunction( "PENA_ADHERENCE" , false ) );
-            this->addDoubleProperty( "Pena_contact", ElementaryMaterialPropertyDouble( "PENA_CONTACT" , 0 , false ) );
-            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 0 , false ) );
-            this->addDoubleProperty( "Rigi_glis", ElementaryMaterialPropertyDouble( "RIGI_GLIS" , 0 , false ) );
-            this->addFunctionProperty( "Cinematique", ElementaryMaterialPropertyFunction( "CINEMATIQUE" , false ) );
+            this->addDoubleProperty( "Pena_contact", ElementaryMaterialPropertyDouble( "PENA_CONTACT" , 1. , false ) );
+            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 1.0E2 , false ) );
+            this->addDoubleProperty( "Rigi_glis", ElementaryMaterialPropertyDouble( "RIGI_GLIS" , 1.0E1 , false ) );
+            this->addDoubleProperty( "Cinematique", ElementaryMaterialPropertyDouble( "CINEMATIQUE" , 0.0 , false ) );
         };
 };
 
@@ -5119,10 +5118,10 @@ class CzmLabMixMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             // Parametres matériau
             this->addDoubleProperty( "Sigm_c", ElementaryMaterialPropertyDouble( "SIGM_C" , true ) );
             this->addDoubleProperty( "Glis_c", ElementaryMaterialPropertyDouble( "GLIS_C" , true ) );
-            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , false ) );
-            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , false ) );
-            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , false ) );
-            this->addFunctionProperty( "Cinematique", ElementaryMaterialPropertyFunction( "CINEMATIQUE" , false ) );
+            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , 0.5 , false ) );
+            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 1. , false ) );
+            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 100. , false ) );
+            this->addDoubleProperty( "Cinematique", ElementaryMaterialPropertyDouble( "CINEMATIQUE" , 0.0 , false ) );
         };
 };
 
@@ -5151,8 +5150,8 @@ class RuptDuctMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Sigm_c", ElementaryMaterialPropertyDouble( "SIGM_C" , true ) );
             this->addDoubleProperty( "Coef_extr", ElementaryMaterialPropertyDouble( "COEF_EXTR" , true ) );
             this->addDoubleProperty( "Coef_plas", ElementaryMaterialPropertyDouble( "COEF_PLAS" , true ) );
-            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 0 , false ) );
-            this->addDoubleProperty( "Rigi_glis", ElementaryMaterialPropertyDouble( "RIGI_GLIS" , 0 , false ) );
+            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 1.0E2 , false ) );
+            this->addDoubleProperty( "Rigi_glis", ElementaryMaterialPropertyDouble( "RIGI_GLIS" , 1.0E1 , false ) );
         };
 };
 
@@ -5180,9 +5179,9 @@ class JointMecaRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             this->addDoubleProperty( "K_n", ElementaryMaterialPropertyDouble( "K_N" , true ) );
             this->addDoubleProperty( "K_t", ElementaryMaterialPropertyDouble( "K_T" , false ) );
             this->addDoubleProperty( "Sigm_max", ElementaryMaterialPropertyDouble( "SIGM_MAX" , true ) );
-            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , 0 , false ) );
+            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , 1. , false ) );
             this->addDoubleProperty( "Pena_rupture", ElementaryMaterialPropertyDouble( "PENA_RUPTURE" , false ) );
-            this->addDoubleProperty( "Pena_contact", ElementaryMaterialPropertyDouble( "PENA_CONTACT" , 0 , false ) );
+            this->addDoubleProperty( "Pena_contact", ElementaryMaterialPropertyDouble( "PENA_CONTACT" , 1. , false ) );
             this->addFunctionProperty( "Pres_fluide", ElementaryMaterialPropertyFunction( "PRES_FLUIDE" , false ) );
             this->addFunctionProperty( "Pres_clavage", ElementaryMaterialPropertyFunction( "PRES_CLAVAGE" , false ) );
             this->addFunctionProperty( "Sciage", ElementaryMaterialPropertyFunction( "SCIAGE" , false ) );
@@ -5220,7 +5219,7 @@ class JointMecaFrotMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             this->addDoubleProperty( "Coef_amor", ElementaryMaterialPropertyDouble( "COEF_AMOR" , false ) );
             this->addDoubleProperty( "Mu", ElementaryMaterialPropertyDouble( "MU" , true ) );
             this->addDoubleProperty( "Pena_tang", ElementaryMaterialPropertyDouble( "PENA_TANG" , false ) );
-            this->addDoubleProperty( "Adhesion", ElementaryMaterialPropertyDouble( "ADHESION" , 0 , false ) );
+            this->addDoubleProperty( "Adhesion", ElementaryMaterialPropertyDouble( "ADHESION" , 0. , false ) );
             this->addFunctionProperty( "Pres_fluide", ElementaryMaterialPropertyFunction( "PRES_FLUIDE" , false ) );
             this->addFunctionProperty( "Sciage", ElementaryMaterialPropertyFunction( "SCIAGE" , false ) );
             this->addDoubleProperty( "Rho_fluide", ElementaryMaterialPropertyDouble( "RHO_FLUIDE" , false ) );
@@ -5411,12 +5410,12 @@ class DruckPragerMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
             this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , true ) );
             this->addDoubleProperty( "Sy", ElementaryMaterialPropertyDouble( "SY" , true ) );
             this->addDoubleProperty( "P_ultm", ElementaryMaterialPropertyDouble( "P_ULTM" , true ) );
-            this->addFunctionProperty( "Ecrouissage", ElementaryMaterialPropertyFunction( "ECROUISSAGE" , true ) );
+            this->addDoubleProperty( "Ecrouissage", ElementaryMaterialPropertyDouble( "ECROUISSAGE" , true ) );
             this->addDoubleProperty( "H", ElementaryMaterialPropertyDouble( "H" , true ) );
-            this->addDoubleProperty( "Type_dp", ElementaryMaterialPropertyDouble( "TYPE_DP" , 0 , false ) );
+            this->addDoubleProperty( "Type_dp", ElementaryMaterialPropertyDouble( "TYPE_DP" , 1.0 , false ) );
             this->addDoubleProperty( "Sy_ultm", ElementaryMaterialPropertyDouble( "SY_ULTM" , true ) );
-            this->addDoubleProperty( "Type_dp", ElementaryMaterialPropertyDouble( "TYPE_DP" , 0 , false ) );
-            this->addDoubleProperty( "Dilat", ElementaryMaterialPropertyDouble( "DILAT" , 0 , false ) );
+            this->addDoubleProperty( "Type_dp", ElementaryMaterialPropertyDouble( "TYPE_DP" , 2.0 , false ) );
+            this->addDoubleProperty( "Dilat", ElementaryMaterialPropertyDouble( "DILAT" , 0.0 , false ) );
         };
 };
 
@@ -5444,12 +5443,12 @@ class DruckPragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             this->addFunctionProperty( "Alpha", ElementaryMaterialPropertyFunction( "ALPHA" , true ) );
             this->addFunctionProperty( "Sy", ElementaryMaterialPropertyFunction( "SY" , true ) );
             this->addFunctionProperty( "P_ultm", ElementaryMaterialPropertyFunction( "P_ULTM" , true ) );
-            this->addFunctionProperty( "Ecrouissage", ElementaryMaterialPropertyFunction( "ECROUISSAGE" , true ) );
+            this->addDoubleProperty( "Ecrouissage", ElementaryMaterialPropertyDouble( "ECROUISSAGE" , true ) );
             this->addFunctionProperty( "H", ElementaryMaterialPropertyFunction( "H" , true ) );
-            this->addDoubleProperty( "Type_dp", ElementaryMaterialPropertyDouble( "TYPE_DP" , 0 , false ) );
+            this->addDoubleProperty( "Type_dp", ElementaryMaterialPropertyDouble( "TYPE_DP" , 1.0 , false ) );
             this->addFunctionProperty( "Sy_ultm", ElementaryMaterialPropertyFunction( "SY_ULTM" , true ) );
-            this->addDoubleProperty( "Type_dp", ElementaryMaterialPropertyDouble( "TYPE_DP" , 0 , false ) );
-            this->addDoubleProperty( "Dilat", ElementaryMaterialPropertyDouble( "DILAT" , 0 , false ) );
+            this->addDoubleProperty( "Type_dp", ElementaryMaterialPropertyDouble( "TYPE_DP" , 2.0 , false ) );
+            this->addDoubleProperty( "Dilat", ElementaryMaterialPropertyDouble( "DILAT" , 0.0 , false ) );
         };
 };
 
@@ -5601,7 +5600,7 @@ class MonoVisc1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "MONO_VISC1";
 
             // Parametres matériau
-            this->addFunctionProperty( "Type_para", ElementaryMaterialPropertyFunction( "TYPE_PARA" , false ) );
+            this->addDoubleProperty( "Type_para", ElementaryMaterialPropertyDouble( "TYPE_PARA" , false ) );
             this->addDoubleProperty( "N", ElementaryMaterialPropertyDouble( "N" , true ) );
             this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , true ) );
             this->addDoubleProperty( "C", ElementaryMaterialPropertyDouble( "C" , true ) );
@@ -5629,7 +5628,7 @@ class MonoVisc2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "MONO_VISC2";
 
             // Parametres matériau
-            this->addFunctionProperty( "Type_para", ElementaryMaterialPropertyFunction( "TYPE_PARA" , false ) );
+            this->addDoubleProperty( "Type_para", ElementaryMaterialPropertyDouble( "TYPE_PARA" , false ) );
             this->addDoubleProperty( "N", ElementaryMaterialPropertyDouble( "N" , true ) );
             this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , true ) );
             this->addDoubleProperty( "C", ElementaryMaterialPropertyDouble( "C" , true ) );
@@ -5659,7 +5658,7 @@ class MonoIsot1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "MONO_ISOT1";
 
             // Parametres matériau
-            this->addFunctionProperty( "Type_para", ElementaryMaterialPropertyFunction( "TYPE_PARA" , false ) );
+            this->addDoubleProperty( "Type_para", ElementaryMaterialPropertyDouble( "TYPE_PARA" , false ) );
             this->addDoubleProperty( "R_0", ElementaryMaterialPropertyDouble( "R_0" , true ) );
             this->addDoubleProperty( "Q", ElementaryMaterialPropertyDouble( "Q" , true ) );
             this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , true ) );
@@ -5694,7 +5693,7 @@ class MonoIsot2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "MONO_ISOT2";
 
             // Parametres matériau
-            this->addFunctionProperty( "Type_para", ElementaryMaterialPropertyFunction( "TYPE_PARA" , false ) );
+            this->addDoubleProperty( "Type_para", ElementaryMaterialPropertyDouble( "TYPE_PARA" , false ) );
             this->addDoubleProperty( "R_0", ElementaryMaterialPropertyDouble( "R_0" , true ) );
             this->addDoubleProperty( "Q1", ElementaryMaterialPropertyDouble( "Q1" , true ) );
             this->addDoubleProperty( "B1", ElementaryMaterialPropertyDouble( "B1" , true ) );
@@ -5731,7 +5730,7 @@ class MonoCine1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "MONO_CINE1";
 
             // Parametres matériau
-            this->addFunctionProperty( "Type_para", ElementaryMaterialPropertyFunction( "TYPE_PARA" , false ) );
+            this->addDoubleProperty( "Type_para", ElementaryMaterialPropertyDouble( "TYPE_PARA" , false ) );
             this->addDoubleProperty( "D", ElementaryMaterialPropertyDouble( "D" , true ) );
         };
 };
@@ -5757,7 +5756,7 @@ class MonoCine2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "MONO_CINE2";
 
             // Parametres matériau
-            this->addFunctionProperty( "Type_para", ElementaryMaterialPropertyFunction( "TYPE_PARA" , false ) );
+            this->addDoubleProperty( "Type_para", ElementaryMaterialPropertyDouble( "TYPE_PARA" , false ) );
             this->addDoubleProperty( "D", ElementaryMaterialPropertyDouble( "D" , true ) );
             this->addDoubleProperty( "Gm", ElementaryMaterialPropertyDouble( "GM" , true ) );
             this->addDoubleProperty( "Pm", ElementaryMaterialPropertyDouble( "PM" , true ) );
@@ -5827,21 +5826,21 @@ class MonoDdCfcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             _asterName = "MONO_DD_CFC";
 
             // Parametres matériau
-            this->addDoubleProperty( "Gamma0", ElementaryMaterialPropertyDouble( "GAMMA0" , 0 , false ) );
+            this->addDoubleProperty( "Gamma0", ElementaryMaterialPropertyDouble( "GAMMA0" , 0.001 , false ) );
             this->addDoubleProperty( "Tau_f", ElementaryMaterialPropertyDouble( "TAU_F" , true ) );
-            this->addDoubleProperty( "A", ElementaryMaterialPropertyDouble( "A" , 0 , false ) );
-            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0 , false ) );
-            this->addDoubleProperty( "N", ElementaryMaterialPropertyDouble( "N" , 0 , false ) );
+            this->addDoubleProperty( "A", ElementaryMaterialPropertyDouble( "A" , 0.13 , false ) );
+            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0.005 , false ) );
+            this->addDoubleProperty( "N", ElementaryMaterialPropertyDouble( "N" , 200. , false ) );
             this->addDoubleProperty( "Y", ElementaryMaterialPropertyDouble( "Y" , true ) );
-            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , 0 , false ) );
+            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , 0.35 , false ) );
             this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , true ) );
             this->addDoubleProperty( "Rho_ref", ElementaryMaterialPropertyDouble( "RHO_REF" , true ) );
             this->addDoubleProperty( "H", ElementaryMaterialPropertyDouble( "H" , false ) );
-            this->addDoubleProperty( "H1", ElementaryMaterialPropertyDouble( "H1" , 0 , false ) );
-            this->addDoubleProperty( "H2", ElementaryMaterialPropertyDouble( "H2" , 0 , false ) );
-            this->addDoubleProperty( "H3", ElementaryMaterialPropertyDouble( "H3" , 0 , false ) );
-            this->addDoubleProperty( "H4", ElementaryMaterialPropertyDouble( "H4" , 0 , false ) );
-            this->addDoubleProperty( "H5", ElementaryMaterialPropertyDouble( "H5" , 0 , false ) );
+            this->addDoubleProperty( "H1", ElementaryMaterialPropertyDouble( "H1" , 0.124 , false ) );
+            this->addDoubleProperty( "H2", ElementaryMaterialPropertyDouble( "H2" , 0.625 , false ) );
+            this->addDoubleProperty( "H3", ElementaryMaterialPropertyDouble( "H3" , 0.137 , false ) );
+            this->addDoubleProperty( "H4", ElementaryMaterialPropertyDouble( "H4" , 0.122 , false ) );
+            this->addDoubleProperty( "H5", ElementaryMaterialPropertyDouble( "H5" , 0.07 , false ) );
         };
 };
 
@@ -5866,21 +5865,21 @@ class MonoDdCfcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
             _asterName = "MONO_DD_CFC_IRRA";
 
             // Parametres matériau
-            this->addDoubleProperty( "Gamma0", ElementaryMaterialPropertyDouble( "GAMMA0" , 0 , false ) );
+            this->addDoubleProperty( "Gamma0", ElementaryMaterialPropertyDouble( "GAMMA0" , 0.001 , false ) );
             this->addDoubleProperty( "Tau_f", ElementaryMaterialPropertyDouble( "TAU_F" , true ) );
-            this->addDoubleProperty( "A", ElementaryMaterialPropertyDouble( "A" , 0 , false ) );
-            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0 , false ) );
-            this->addDoubleProperty( "N", ElementaryMaterialPropertyDouble( "N" , 0 , false ) );
+            this->addDoubleProperty( "A", ElementaryMaterialPropertyDouble( "A" , 0.13 , false ) );
+            this->addDoubleProperty( "B", ElementaryMaterialPropertyDouble( "B" , 0.005 , false ) );
+            this->addDoubleProperty( "N", ElementaryMaterialPropertyDouble( "N" , 200. , false ) );
             this->addDoubleProperty( "Y", ElementaryMaterialPropertyDouble( "Y" , true ) );
-            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , 0 , false ) );
+            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , 0.35 , false ) );
             this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , true ) );
             this->addDoubleProperty( "Rho_ref", ElementaryMaterialPropertyDouble( "RHO_REF" , true ) );
             this->addDoubleProperty( "H", ElementaryMaterialPropertyDouble( "H" , false ) );
-            this->addDoubleProperty( "H1", ElementaryMaterialPropertyDouble( "H1" , 0 , false ) );
-            this->addDoubleProperty( "H2", ElementaryMaterialPropertyDouble( "H2" , 0 , false ) );
-            this->addDoubleProperty( "H3", ElementaryMaterialPropertyDouble( "H3" , 0 , false ) );
-            this->addDoubleProperty( "H4", ElementaryMaterialPropertyDouble( "H4" , 0 , false ) );
-            this->addDoubleProperty( "H5", ElementaryMaterialPropertyDouble( "H5" , 0 , false ) );
+            this->addDoubleProperty( "H1", ElementaryMaterialPropertyDouble( "H1" , 0.124 , false ) );
+            this->addDoubleProperty( "H2", ElementaryMaterialPropertyDouble( "H2" , 0.625 , false ) );
+            this->addDoubleProperty( "H3", ElementaryMaterialPropertyDouble( "H3" , 0.137 , false ) );
+            this->addDoubleProperty( "H4", ElementaryMaterialPropertyDouble( "H4" , 0.122 , false ) );
+            this->addDoubleProperty( "H5", ElementaryMaterialPropertyDouble( "H5" , 0.07 , false ) );
             this->addDoubleProperty( "Dz_irra", ElementaryMaterialPropertyDouble( "DZ_IRRA" , true ) );
             this->addDoubleProperty( "Xi_irra", ElementaryMaterialPropertyDouble( "XI_IRRA" , true ) );
             this->addDoubleProperty( "Rho_void", ElementaryMaterialPropertyDouble( "RHO_VOID" , true ) );
@@ -5921,11 +5920,11 @@ class MonoDdFatMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
             this->addDoubleProperty( "Gc0", ElementaryMaterialPropertyDouble( "GC0" , true ) );
             this->addDoubleProperty( "K", ElementaryMaterialPropertyDouble( "K" , true ) );
             this->addDoubleProperty( "H", ElementaryMaterialPropertyDouble( "H" , false ) );
-            this->addDoubleProperty( "H1", ElementaryMaterialPropertyDouble( "H1" , 0 , false ) );
-            this->addDoubleProperty( "H2", ElementaryMaterialPropertyDouble( "H2" , 0 , false ) );
-            this->addDoubleProperty( "H3", ElementaryMaterialPropertyDouble( "H3" , 0 , false ) );
-            this->addDoubleProperty( "H4", ElementaryMaterialPropertyDouble( "H4" , 0 , false ) );
-            this->addDoubleProperty( "H5", ElementaryMaterialPropertyDouble( "H5" , 0 , false ) );
+            this->addDoubleProperty( "H1", ElementaryMaterialPropertyDouble( "H1" , 0.124 , false ) );
+            this->addDoubleProperty( "H2", ElementaryMaterialPropertyDouble( "H2" , 0.625 , false ) );
+            this->addDoubleProperty( "H3", ElementaryMaterialPropertyDouble( "H3" , 0.137 , false ) );
+            this->addDoubleProperty( "H4", ElementaryMaterialPropertyDouble( "H4" , 0.122 , false ) );
+            this->addDoubleProperty( "H5", ElementaryMaterialPropertyDouble( "H5" , 0.07 , false ) );
         };
 };
 
@@ -5967,10 +5966,10 @@ class MonoDdCcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "H1", ElementaryMaterialPropertyDouble( "H1" , true ) );
             this->addDoubleProperty( "H2", ElementaryMaterialPropertyDouble( "H2" , true ) );
             this->addDoubleProperty( "H3", ElementaryMaterialPropertyDouble( "H3" , true ) );
-            this->addDoubleProperty( "H4", ElementaryMaterialPropertyDouble( "H4" , 0 , false ) );
-            this->addDoubleProperty( "H5", ElementaryMaterialPropertyDouble( "H5" , 0 , false ) );
-            this->addDoubleProperty( "H6", ElementaryMaterialPropertyDouble( "H6" , 0 , false ) );
-            this->addDoubleProperty( "Depdt", ElementaryMaterialPropertyDouble( "DEPDT" , 0 , false ) );
+            this->addDoubleProperty( "H4", ElementaryMaterialPropertyDouble( "H4" , 0. , false ) );
+            this->addDoubleProperty( "H5", ElementaryMaterialPropertyDouble( "H5" , 0. , false ) );
+            this->addDoubleProperty( "H6", ElementaryMaterialPropertyDouble( "H6" , 0. , false ) );
+            this->addDoubleProperty( "Depdt", ElementaryMaterialPropertyDouble( "DEPDT" , 0. , false ) );
             this->addDoubleProperty( "Mu_moy", ElementaryMaterialPropertyDouble( "MU_MOY" , false ) );
         };
 };
@@ -6013,10 +6012,10 @@ class MonoDdCcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
             this->addDoubleProperty( "H1", ElementaryMaterialPropertyDouble( "H1" , true ) );
             this->addDoubleProperty( "H2", ElementaryMaterialPropertyDouble( "H2" , true ) );
             this->addDoubleProperty( "H3", ElementaryMaterialPropertyDouble( "H3" , true ) );
-            this->addDoubleProperty( "H4", ElementaryMaterialPropertyDouble( "H4" , 0 , false ) );
-            this->addDoubleProperty( "H5", ElementaryMaterialPropertyDouble( "H5" , 0 , false ) );
-            this->addDoubleProperty( "H6", ElementaryMaterialPropertyDouble( "H6" , 0 , false ) );
-            this->addDoubleProperty( "Depdt", ElementaryMaterialPropertyDouble( "DEPDT" , 0 , false ) );
+            this->addDoubleProperty( "H4", ElementaryMaterialPropertyDouble( "H4" , 0. , false ) );
+            this->addDoubleProperty( "H5", ElementaryMaterialPropertyDouble( "H5" , 0. , false ) );
+            this->addDoubleProperty( "H6", ElementaryMaterialPropertyDouble( "H6" , 0. , false ) );
+            this->addDoubleProperty( "Depdt", ElementaryMaterialPropertyDouble( "DEPDT" , 0. , false ) );
             this->addDoubleProperty( "A_irra", ElementaryMaterialPropertyDouble( "A_IRRA" , true ) );
             this->addDoubleProperty( "Xi_irra", ElementaryMaterialPropertyDouble( "XI_IRRA" , true ) );
             this->addDoubleProperty( "Mu_moy", ElementaryMaterialPropertyDouble( "MU_MOY" , false ) );
@@ -6490,7 +6489,7 @@ class CritRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             // Parametres matériau
             this->addDoubleProperty( "Sigm_c", ElementaryMaterialPropertyDouble( "SIGM_C" , true ) );
             this->addDoubleProperty( "Coef", ElementaryMaterialPropertyDouble( "COEF" , true ) );
-            this->addFunctionProperty( "Info", ElementaryMaterialPropertyFunction( "INFO" , false ) );
+            this->addDoubleProperty( "Info", ElementaryMaterialPropertyDouble( "INFO" , 1 , false ) );
         };
 };
 
@@ -6500,5 +6499,8 @@ typedef boost::shared_ptr< CritRuptMaterialBehaviourInstance > CritRuptMaterialB
  
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */
 typedef boost::shared_ptr< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviourPtr;
-
+ 
+ 
+ 
+  
 #endif
