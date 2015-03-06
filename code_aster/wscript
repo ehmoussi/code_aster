@@ -108,8 +108,10 @@ def build_eficas_catalog(self):
         features = 'catapy',
             name = 'cata_py',
           source = get_srcs('Cata/Commons/accas.capy') \
-                 + get_srcs('Cata/Commons/*.py') \
-                 + get_srcs('Cata/Commands/*.py'),
+                 + get_srcs('Cata/Commons/*.py',
+                            excl='Cata/Commons/__init__.py') \
+                 + get_srcs('Cata/Commands/*.py',
+                            excl='Cata/Commands/__init__.py'),
           target = 'cata.py',
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
@@ -127,7 +129,7 @@ def make_cata(self):
     tsk = self.create_task('make_capy', src=self.source, tgt=target)
     # self.process_py(target): not use because would use `install_from` argument
     def inst_py(ctx):
-        install_pyfile(self, target, 'Cata')
+        install_pyfile(self, target, '../eficas')
     self.bld.add_post_fun(inst_py)
 
 def install_pyfile(self, node, subdir):
@@ -139,15 +141,18 @@ def install_pyfile(self, node, subdir):
 class make_capy(Task.Task):
     color   = 'PINK'
     ext_out = ['.py']
+    banned = 'code_aster.Cata'
 
     def run(self):
         """Merge capy files to cata.py and install it."""
         # doing merge in python as it is multi-plateform
         target = self.outputs[0]
+        cata = []
+        for node in self.inputs:
+            with open(node.abspath()) as subfid:
+                lines = [line for line in subfid.read().splitlines() \
+                         if self.banned not in line]
+                cata.extend(lines)
         with open(target.abspath(), 'w') as fid:
-            for node in self.inputs:
-                with open(node.abspath()) as subfid:
-                    fid.write(subfid.read())
-                    fid.write(os.linesep)
-                    fid.flush()
+            fid.write(os.linesep.join(cata))
         target.sig = Utils.h_file(target.abspath())
