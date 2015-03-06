@@ -129,6 +129,8 @@ class PartOfSyntax(object):
             if type(value) not in (SimpleKeyword, Bloc, FactorKeyword):
                 del entites[key]
         return entites
+    # for compatibility (and avoid changing `pre_seisme_nonl`)
+    entites = property(getEntites)
 
     def inspectBlocs(self, dictSyntax):
         """

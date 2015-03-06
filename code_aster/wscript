@@ -104,17 +104,27 @@ def build_eficas_catalog(self):
     get_srcs = self.path.get_src().ant_glob
     env = self.all_envs[self.variant]
     # catalog for eficas
+    mfront_capy = self.path.get_bld().parent.find_or_declare('c_mfront_official.py')
     self(
         features = 'catapy',
             name = 'cata_py',
           source = get_srcs('Cata/Commons/accas.capy') \
+                 + get_srcs('Cata/Commons/allco.capy') \
+                 + [mfront_capy] \
                  + get_srcs('Cata/Commons/*.py',
-                            excl='Cata/Commons/__init__.py') \
+                            excl=['Cata/Commons/__init__.py', 'Cata/Commons/ops.py']) \
                  + get_srcs('Cata/Commands/*.py',
                             excl='Cata/Commands/__init__.py'),
           target = 'cata.py',
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
+    )
+    self(
+        features = 'py',
+            name = 'ops_py',
+          source = get_srcs('Cata/Commons/ops.py'),
+          target = 'ops.py',
+    install_path = osp.join(env.ASTERLIBDIR, 'eficas'),
     )
 
 # manage extension
@@ -126,10 +136,14 @@ def capy(self, node):
 def make_cata(self):
     """Create the cata.py"""
     target = self.bld.bldnode.make_node(self.target)
+    init = self.bld.bldnode.make_node('__init__.py')
+    init.write('# init')
+    init.sig = Utils.h_file(init.abspath())
     tsk = self.create_task('make_capy', src=self.source, tgt=target)
     # self.process_py(target): not use because would use `install_from` argument
     def inst_py(ctx):
         install_pyfile(self, target, '../eficas')
+        install_pyfile(self, init, '../eficas')
     self.bld.add_post_fun(inst_py)
 
 def install_pyfile(self, node, subdir):
