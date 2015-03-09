@@ -28,11 +28,13 @@ def build(self):
 
 @TaskGen.feature('catalo')
 @TaskGen.before('process_source')
+@TaskGen.after('catapy')
 def pre_build_catalo(self):
     # deps => any change in these files induce a rebuild of the pickled
     deps = self.bld.srcnode.ant_glob('*/Lecture_Cata_Ele/*.py')
     catalo = self.path
     catalo.get_bld().mkdir()
+    capy = self.path.get_bld().find_or_declare('cata.py')
     pickled = catalo.get_bld().make_node('cata_ele.pickled')
     ojb = catalo.get_bld().make_node('cata_ele.ojb')
     self.create_task('picklecata', src=[catalo] + deps, tgt=pickled)
