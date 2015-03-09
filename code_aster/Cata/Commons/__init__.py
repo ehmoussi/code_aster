@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+from code_aster.Cata.Commons.c_mfront_official import C_MFRONT_OFFICIAL
 
 from code_aster.Cata.Commons.c_affichage import C_AFFICHAGE
 from code_aster.Cata.Commons.c_archivage import C_ARCHIVAGE
