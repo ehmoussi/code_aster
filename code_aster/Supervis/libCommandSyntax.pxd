@@ -23,7 +23,7 @@ from libcpp.string cimport string
 cdef class ResultNaming:
 
     cdef int _numberOfAsterObjects
-    cdef int _maxNumberOfAsterObjects
+    cdef long _maxNumberOfAsterObjects
 
     cdef string getNewResultObjectName( self )
     cdef string getResultObjectName( self )
@@ -39,6 +39,7 @@ cdef class CommandSyntax:
     cdef        _resultName
     cdef        _resultType
     cdef object _definition
+    cdef object _syntaxChecker
 
     cpdef setResult( self, sdName, sdType )
 

@@ -21,6 +21,7 @@ import os.path as osp
 from glob import glob
 
 from code_aster.Cata.Syntax import Command
+from code_aster.Supervis import libCommandSyntax
 
 
 def _init_command(ctx, debug):
@@ -29,6 +30,7 @@ def _init_command(ctx, debug):
     pkg = osp.basename(pkgdir)
     l_mod = [osp.splitext(osp.basename(modname))[0]
              for modname in glob(osp.join(pkgdir, '*.py'))]
+    curDict = {}
     for modname in l_mod:
         mod = __import__('code_aster.Cata.{}.{}'.format(pkg, modname),
                          globals(), locals(), [modname])
@@ -38,7 +40,9 @@ def _init_command(ctx, debug):
             if isinstance(obj, Command):
                 if debug:
                     print '<Commande> Module "%s" - ajout "%s"' % (modname, objname)
-                ctx[objname] = obj
+                curDict[objname] = obj
+    ctx.update(curDict)
+    libCommandSyntax.commandsRegister(curDict)
 
 _init_command(ctx=globals(), debug=False)
 del _init_command

@@ -75,6 +75,10 @@ cdef class CommandSyntax:
         assert currentCommand is None, \
             "CommandSyntax {} must be freed".format( currentCommand._name )
         currentCommand = self
+        self._syntaxChecker = None
+        commandChecker = getCommandChecker( name )
+        if commandChecker != None:
+            self._syntaxChecker = commandChecker
 
     cpdef free( self ):
         """Reset the current command pointer as soon as possible"""
@@ -102,6 +106,21 @@ cdef class CommandSyntax:
 
     cpdef define( self, dictSyntax ):
         """Register the keywords values"""
+        if self._syntaxChecker != None:
+            dict2 = self._syntaxChecker.getDefaultKeywords( dictSyntax )
+            for key, value in dict2.iteritems():
+                ret1 = dictSyntax.get( key )
+                if type( value ) == dict:
+                    if ret1 == None:
+                        dictSyntax[ key ] = value
+                    else:
+                        for key2, value2 in value.iteritems():
+                            ret2 = ret1.get( key2 )
+                            if ret2 == None:
+                                dictSyntax[ key ][ key2 ] = value2
+                else:
+                    if ret1 == None:
+                        dictSyntax[ key ] = value
         self._definition = dictSyntax
         debug( "syntax", self._name, self._definition )
 
@@ -182,6 +201,16 @@ cdef class CommandSyntax:
 
 cdef CommandSyntax currentCommand
 currentCommand = None
+commandCheckerDictionary = {}
+
+def commandsRegister( commandsDict ):
+    global commandCheckerDictionary
+    commandCheckerDictionary = commandsDict
+
+def getCommandChecker( name ):
+    global commandCheckerDictionary
+    return commandCheckerDictionary.get( name )
+
 
 def setCurrentCommand( syntax ):
     global currentCommand

@@ -96,8 +96,6 @@ cdef class Mesh:
 
         syntax.define( _F ( FORMAT="ASTER",
                             UNITE=mailAsterFile.getLogicalUnit(),
-                            VERI_MAIL=_F( VERIF="OUI",
-                                          APLAT=1.e-3 ),
                           )
                      )
         numOp = 1
@@ -128,10 +126,7 @@ cdef class Mesh:
         syntax.setResult( resultNaming.getResultObjectName(), "MAILLAGE" )
 
         syntax.define( _F ( FORMAT="ASTER",
-                            UNITE=mailAsterFile.getLogicalUnit(),
-                            VERI_MAIL=_F( VERIF="OUI",
-                                          APLAT=1.e-3 ),
-                          )
+                            UNITE=mailAsterFile.getLogicalUnit(), ),
                      )
         numOp = 1
         libaster.execop_( &numOp )
@@ -145,15 +140,13 @@ cdef class Mesh:
         medFile = LogicalUnitFile( filename, FileType.Binary, FileAccess.Old )
 
         syntax = CommandSyntax( "LIRE_MAILLAGE" )
+        curDict = _F ( FORMAT="MED",
+                       UNITE=medFile.getLogicalUnit(), )
+
         # self.getInstance().getType()
         syntax.setResult( resultNaming.getResultObjectName(), "MAILLAGE" )
 
-        syntax.define( _F ( FORMAT="MED",
-                            UNITE=medFile.getLogicalUnit(),
-                            VERI_MAIL=_F( VERIF="OUI",
-                                          APLAT=1.e-3 ),
-                          )
-                     )
+        syntax.define( curDict )
         cdef INTEGER numOp = 1
         libaster.execop_( &numOp )
         ret = self.getInstance().build()
