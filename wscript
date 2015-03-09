@@ -224,16 +224,16 @@ def build(self):
     self.recurse('bibpyt')
     self.recurse('mfront')
     self.recurse('i18n')
+    self.load('scm_aster', tooldir='waftools')
+    self.recurse('data')
+    # this task depends on generated files
+    build_eficas_catalog(self)
     lsub = ['materiau', 'datg', 'catalo']
     if self.env.install_tests:
         lsub.extend(['astest', '../validation/astest'])
     for optional in lsub:
         if osp.exists(osp.join(optional, 'wscript')):
             self.recurse(optional)
-    self.load('scm_aster', tooldir='waftools')
-    self.recurse('data')
-    # this task depends on generated files
-    build_eficas_catalog(self)
 
 def build_elements(self):
     self.recurse('catalo')
@@ -444,6 +444,7 @@ def capy(self, node):
     pass
 
 @TaskGen.feature('catapy')
+@TaskGen.before('process_source')
 def make_cata(self):
     """Create the cata.py"""
     target = self.bld.bldnode.make_node(self.target)
