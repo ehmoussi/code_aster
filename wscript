@@ -419,10 +419,8 @@ def build_eficas_catalog(self):
                  + get_srcs(root + 'Commons/allco.capy') \
                  + [mfront_capy] \
                  + get_srcs(root + 'Commons/*.py',
-                            excl=[root + 'Commons/__init__.py',
-                                  root + 'Commons/ops.py']) \
-                 + get_srcs(root + 'Commands/*.py',
-                            excl=root + 'Commands/__init__.py'),
+                            excl=[root + 'Commons/ops.py']) \
+                 + get_srcs(root + 'Commands/*.py'),
           target = 'cata.py',
     install_from = '.',
     install_path = env.ASTERLIBDIR,
@@ -477,6 +475,8 @@ class make_capy(Task.Task):
         target = self.outputs[0]
         cata = []
         for node in self.inputs:
+            if osp.basename(node.abspath()) == '__init__.py':
+                continue
             with open(node.abspath()) as subfid:
                 lines = [line for line in subfid.read().splitlines() \
                          if self.banned not in line]
