@@ -161,6 +161,51 @@ class PartOfSyntax(object):
                             dictTmp[key2] = value2
         return dictTmp
 
+    def getDefaultKeywords(self, dictSyntax):
+        if type(dictSyntax) != dict:
+            raise TypeError("'dict' is expected")
+
+        ctxt = buildConditionContext(self.definition, dictSyntax)
+
+        returnDict = {}
+        for key, value in self.definition.iteritems():
+            if isinstance(value, SimpleKeyword):
+                if not dictSyntax.has_key(key) and value.hasDefaultValue():
+                    returnDict[key] = value.defaultValue()
+            elif isinstance(value, FactorKeyword):
+                returnDict2 = {}
+                stat = 'f'
+                if value.definition.has_key('statut'): stat = value.definition['statut']
+                if stat == 'd' or stat == 'o':
+                    value2 = {}
+                    if dictSyntax.has_key(key): value2 = dictSyntax[key]
+                    return2 = value.getDefaultKeywords(value2)
+
+                    for key2, value2 in return2.iteritems():
+                        returnDict2[key2] = value2
+
+                return2 = value.inspectBlocs(dictSyntax)
+
+                for key2, value2 in return2.iteritems():
+                    returnDict2[key2] = value2
+                if len(returnDict2) != 0:
+                    returnDict[key] = returnDict2
+            elif isinstance(value, Bloc):
+                dictTmp = value.inspectBlocs(dictSyntax)
+
+                findCondition = False
+                currentCondition = value.getCondition()
+                try:
+                    findCondition = eval(currentCondition, ctxt)
+                except:
+                    pass
+                if findCondition:
+                    for key2, value2 in value.definition.iteritems():
+                        if isinstance(value2, SimpleKeyword):
+                            if not dictSyntax.has_key(key) and value2.hasDefaultValue():
+                                returnDict[key2] = value2.defaultValue()
+        return returnDict
+
 
 class SimpleKeyword(PartOfSyntax):
 
