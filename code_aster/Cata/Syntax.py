@@ -112,6 +112,15 @@ class PartOfSyntax(object):
         """Simple representation"""
         return "%s( %r )" % (self.__class__, self.definition)
 
+    def __call__(self, **args ):
+        """Simulate the command execution"""
+        from code_aster.Cata import Commands
+        commandName = self.definition['nom']
+        getattr(Commands, commandName).checkSyntax( args )
+        resultType = self.definition.get('sd_prod')
+        if resultType:
+            return resultType()
+
     def accept(self, visitor, syntax=None):
         """Called by a Visitor"""
         raise NotImplementedError("must be defined in a subclass")
