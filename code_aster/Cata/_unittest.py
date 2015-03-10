@@ -19,36 +19,8 @@
 
 import unittest
 
-from code_aster.Cata import Commands
-from code_aster.Cata.DataStructure import (
-    maillage_sdaster, modele_sdaster, mater_sdaster, cham_mater,
-    cara_elem, char_meca
-)
-
-# declare fake commands
-def LIRE_MAILLAGE( **args ):
-    Commands.LIRE_MAILLAGE.checkSyntax( args )
-    return maillage_sdaster()
-
-def AFFE_MODELE( **args ):
-    Commands.AFFE_MODELE.checkSyntax( args )
-    return modele_sdaster()
-
-def DEFI_MATERIAU( **args ):
-    Commands.DEFI_MATERIAU.checkSyntax( args )
-    return mater_sdaster()
-
-def AFFE_MATERIAU( **args ):
-    Commands.AFFE_MATERIAU.checkSyntax( args )
-    return cham_mater()
-
-def AFFE_CHAR_MECA( **args ):
-    Commands.AFFE_CHAR_MECA.checkSyntax( args )
-    return char_meca()
-
-def AFFE_CARA_ELEM( **args ):
-    Commands.AFFE_CARA_ELEM.checkSyntax( args )
-    return cara_elem()
+from code_aster.Cata.Commands import *
+from code_aster.Cata.DataStructure import *
 
 
 class TestSyntaxChecker( unittest.TestCase ):
