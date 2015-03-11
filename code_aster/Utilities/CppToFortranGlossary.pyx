@@ -23,6 +23,9 @@ cdef class FortranGlossary:
     def __cinit__( self ):
         self._cptr = getGlossary()
 
+    def getComponent( self, searchComp ):
+        return deref( self._cptr ).getComponent( searchComp )
+
     def getModeling( self, searchMod ):
         return deref( self._cptr ).getModeling( searchMod )
 

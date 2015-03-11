@@ -25,6 +25,8 @@ from code_aster.Cata import Commands
 
 def LIRE_MAILLAGE( **kwargs ):
     """Opérateur de relecture du maillage"""
+    Commands.LIRE_MAILLAGE.checkSyntax( kwargs )
+
     retour = Commands.LIRE_MAILLAGE.getDefaultKeywords( kwargs )
 
     mesh = Mesh()

@@ -19,13 +19,15 @@
 
 from libcpp.string cimport string
 from code_aster.Modeling.PhysicsAndModeling cimport Physics, Modelings
+from code_aster.Loads.PhysicalQuantity cimport PhysicalQuantityComponent
 
 cdef extern from "Utilities/CppToFortranGlossary.h":
 
     cdef cppclass Glossary:
         Glossary()
-        Modelings getModeling( string searchMod )
-        Physics getPhysics( string searchPhysics )
+        PhysicalQuantityComponent getComponent( string searchMod ) except +
+        Modelings getModeling( string searchMod ) except +
+        Physics getPhysics( string searchPhysics ) except +
 
     cpdef Glossary* getGlossary()
 

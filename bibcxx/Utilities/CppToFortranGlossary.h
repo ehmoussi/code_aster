@@ -28,6 +28,7 @@
 #include <stdexcept>
 
 #include "Modeling/PhysicsAndModelings.h"
+#include "Loads/PhysicalQuantity.h"
 
 /**
  * @class Glossary
@@ -57,6 +58,20 @@ class Glossary
          */
         ~Glossary()
         {};
+
+        /**
+         * @brief getPhysics
+         * @param searchPhysics Nom d'une physique dans le fichier de commande
+         * @return une valeur dans l'enum Physics
+         */
+        PhysicalQuantityComponent getComponent( std::string searchComp )
+            throw( std::runtime_error )
+        {
+            MapStrIntIter curIter = _strToInt.find( searchComp );
+            if( curIter == _strToInt.end() )
+                throw std::runtime_error( "Unknown component" );
+            return ( PhysicalQuantityComponent )( curIter->second );
+        };
 
         /**
          * @brief getModeling
