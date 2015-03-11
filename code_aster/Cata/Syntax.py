@@ -162,6 +162,7 @@ class PartOfSyntax(object):
         return dictTmp
 
     def getDefaultKeywords(self, dictSyntax):
+        """Get default keywords of the PartOfSyntax"""
         if type(dictSyntax) != dict:
             raise TypeError("'dict' is expected")
 
@@ -173,25 +174,43 @@ class PartOfSyntax(object):
                 if not dictSyntax.has_key(key) and value.hasDefaultValue():
                     returnDict[key] = value.defaultValue()
             elif isinstance(value, FactorKeyword):
-                returnDict2 = {}
+                returnList = []
+                value2 = dictSyntax.get(key, {})
+
                 stat = 'f'
                 if value.definition.has_key('statut'): stat = value.definition['statut']
+                if stat == 'f' and value2 == {}: continue
+
+                if type(value2) != list: value2 = [value2]
                 if stat == 'd' or stat == 'o':
-                    value2 = {}
-                    if dictSyntax.has_key(key): value2 = dictSyntax[key]
-                    return2 = value.getDefaultKeywords(value2)
+                    for curDict in value2:
+                        return2 = value.getDefaultKeywords(curDict)
+                        returnDict3 = {}
+                        for key3, value3 in return2.iteritems():
+                            returnDict3[key3] = value3
+                        returnList.append(returnDict3)
+                else:
+                    for val in value2: returnList.append({})
 
-                    for key2, value2 in return2.iteritems():
-                        returnDict2[key2] = value2
+                ind = 0
+                # Ce bloc est-il utile ???
+                for curDict in value2:
+                    return2 = value.inspectBlocs(curDict)
+                    returnDict2 = {}
+                    for key3, value3 in return2.iteritems():
+                        if isinstance(value3, SimpleKeyword):
+                            if not dictSyntax.has_key(key) and value3.hasDefaultValue():
+                                returnDict2[key3] = value3.defaultValue()
+                    returnList[ind].update(returnDict2)
+                    ind += 1
 
-                return2 = value.inspectBlocs(dictSyntax)
-
-                for key2, value2 in return2.iteritems():
-                    returnDict2[key2] = value2
-                if len(returnDict2) != 0:
-                    returnDict[key] = returnDict2
+                if len(returnList) == 1:
+                    if returnList[0] == {}: continue
+                if len(returnList) != 0:
+                    returnDict[key] = returnList
             elif isinstance(value, Bloc):
-                dictTmp = value.inspectBlocs(dictSyntax)
+                value2 = dictSyntax.get(key, {})
+                dictTmp = value.inspectBlocs(value2)
 
                 findCondition = False
                 currentCondition = value.getCondition()

@@ -107,17 +107,28 @@ cdef class CommandSyntax:
     cpdef define( self, dictSyntax ):
         """Register the keywords values"""
         if self._syntaxChecker != None:
+            debug( "syntax0", self._name, dictSyntax )
             dict2 = self._syntaxChecker.getDefaultKeywords( dictSyntax )
             for key, value in dict2.iteritems():
                 ret1 = dictSyntax.get( key )
                 if type( value ) == dict:
+                    assert False
+                if type( value ) == list:
                     if ret1 == None:
                         dictSyntax[ key ] = value
+                    elif type( ret1 ) == dict:
+                        assert len( value ) == 1
+                        dictSyntax[ key ].update(value[0])
                     else:
-                        for key2, value2 in value.iteritems():
-                            ret2 = ret1.get( key2 )
-                            if ret2 == None:
-                                dictSyntax[ key ][ key2 ] = value2
+                        assert len(ret1) == len(value)
+                        for i in range(len(value)):
+                            ret2 = value[i]
+                            ret3 = ret1[i]
+                            print "ret2, ret3", ret2, ret3
+                            for key2, value2 in ret2.iteritems():
+                                ret4 = ret3.get( key2 )
+                                if ret4 == None:
+                                    ret3[ key2 ] = value2
                 else:
                     if ret1 == None:
                         dictSyntax[ key ] = value
