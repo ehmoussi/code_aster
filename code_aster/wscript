@@ -19,12 +19,17 @@
 
 import os
 import os.path as osp
+import shutil
 
 from waflib import Context
 
 
 def options(self):
     self.load('cython')
+    group = self.get_option_group("Code_Aster options")
+    group.add_option('--force-cython', action='store_true',
+                    dest='force_cython', default=False,
+                    help='Force rebuild of all Cython source files')
 
 def configure(self):
     self.load('cython')
@@ -32,10 +37,16 @@ def configure(self):
     output = self.cmd_and_log([self.env['CYTHON'], '--version'], output=Context.STDERR)
     self.end_msg(output.strip())
 
+    if self.options.force_cython:
+        self.env.CYTHON_FORCE_REBUILD = True
+
 def build(self):
     get_srcs = self.path.get_src().ant_glob
     env = self.all_envs[self.variant]
     uses = env['all_dependencies']
+    # force rebuild ?
+    if env.CYTHON_FORCE_REBUILD or self.options.force_cython:
+        shutil.rmtree( self.path.get_bld().abspath() )
 
     # pure Python files (just installed)
     self(
