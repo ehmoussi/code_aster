@@ -36,6 +36,12 @@ Glossary::Glossary()
         const std::string curName( ModelingNames[i] );
         _strToInt[ curName ] = i;
     }
+
+    for( int i = 0; i < nbComponent; ++i )
+    {
+        const std::string curName( ComponentNames[i] );
+        _strToInt[ curName ] = i;
+    }
 };
 
 Glossary fortranGlossary;

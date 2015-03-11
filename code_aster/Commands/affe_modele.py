@@ -26,12 +26,12 @@ from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
 
 def AFFE_MODELE( **kwargs ):
     """Opérateur d'affection de modélisations"""
-    retour = Commands.AFFE_MODELE.getDefaultKeywords( kwargs )
+    Commands.AFFE_MODELE.checkSyntax( kwargs )
 
     glossary = FortranGlossary()
 
     model = Model()
-    model.setSupportMesh(  kwargs[ "MAILLAGE" ] )
+    model.setSupportMesh( kwargs[ "MAILLAGE" ] )
 
     fkwAffe = kwargs.get( "AFFE" )
     if fkwAffe != None:

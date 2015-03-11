@@ -45,7 +45,7 @@ enum PhysicalQuantityEnum { Force, StructuralForce, LocalBeamForce, LocalShellFo
  */
 enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres, Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2, Impe, Vnor, Flun, FlunHydr1, FlunHydr2 };
 
-const int nbComponent=31; 
+const int nbComponent = 31; 
 /**
 * @def ComponentNames
 * @brief Aster names of the components of the physical quantities
