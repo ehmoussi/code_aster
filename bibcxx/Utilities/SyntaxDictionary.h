@@ -95,4 +95,4 @@ class SyntaxMapContainer
         friend class MaterialOnMeshInstance;
 };
 
-#endif
+#endif /* SYNTAXDICTIONARY_H_ */

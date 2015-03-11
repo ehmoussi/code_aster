@@ -52,7 +52,7 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
             (*char16Values)[position] = nameOfProperty.c_str();
         }
         else
-            throw std::runtime_error( "Le parametre materiau doit etre un double");
+            throw std::runtime_error( "Le parametre materiau doit etre un double" );
         ++position;
     }
 

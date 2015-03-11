@@ -49,7 +49,7 @@ class MeshInstance: public DataStructure
         /** @brief Pointeur de nom Jeveux '.NOMNOE' */
         JeveuxBidirectionalMap _nameOfNodes;
         /** @brief Champ aux noeuds '.COORDO' */
-        FieldOnNodesDoublePtr     _coordinates;
+        FieldOnNodesDoublePtr  _coordinates;
         /** @brief Collection Jeveux '.GROUPENO' */
         JeveuxCollectionLong   _groupsOfNodes;
         /** @brief Collection Jeveux '.CONNEX' */
