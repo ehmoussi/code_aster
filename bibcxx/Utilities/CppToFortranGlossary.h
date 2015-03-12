@@ -29,6 +29,7 @@
 
 #include "Modeling/PhysicsAndModelings.h"
 #include "Loads/PhysicalQuantity.h"
+#include "LinearAlgebra/AllowedLinearSolver.h"
 
 /**
  * @class Glossary
@@ -61,8 +62,8 @@ class Glossary
 
         /**
          * @brief getPhysics
-         * @param searchPhysics Nom d'une physique dans le fichier de commande
-         * @return une valeur dans l'enum Physics
+         * @param searchPhysics Nom d'un nom de composante dans le fichier de commande
+         * @return une valeur dans l'enum PhysicalQuantityComponent
          */
         PhysicalQuantityComponent getComponent( std::string searchComp )
             throw( std::runtime_error )
@@ -97,6 +98,32 @@ class Glossary
             if( curIter == _strToInt.end() )
                 throw std::runtime_error( "Unknown physics" );
             return ( Physics )( curIter->second );
+        };
+
+        /**
+         * @brief getRenumbering
+         * @param searchMod Nom d'un solveur dans le fichier de commande
+         * @return une valeur dans l'enum LinearSolverEnum
+         */
+        Renumbering getRenumbering( std::string searchRenum ) throw( std::runtime_error )
+        {
+            MapStrIntIter curIter = _strToInt.find( searchRenum );
+            if( curIter == _strToInt.end() )
+                throw std::runtime_error( "Unknown renumbering" );
+            return ( Renumbering )( curIter->second );
+        };
+
+        /**
+         * @brief getSolver
+         * @param searchMod Nom d'un solveur dans le fichier de commande
+         * @return une valeur dans l'enum LinearSolverEnum
+         */
+        LinearSolverEnum getSolver( std::string searchSol ) throw( std::runtime_error )
+        {
+            MapStrIntIter curIter = _strToInt.find( searchSol );
+            if( curIter == _strToInt.end() )
+                throw std::runtime_error( "Unknown linear solver" );
+            return ( LinearSolverEnum )( curIter->second );
         };
 };
 

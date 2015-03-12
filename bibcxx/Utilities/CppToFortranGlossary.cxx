@@ -42,6 +42,18 @@ Glossary::Glossary()
         const std::string curName( ComponentNames[i] );
         _strToInt[ curName ] = i;
     }
+
+    for( int i = 0; i < nbSolvers; ++i )
+    {
+        const std::string curName( LinearSolverNames[i] );
+        _strToInt[ curName ] = i;
+    }
+
+    for( int i = 0; i < nbRenumberings; ++i )
+    {
+        const std::string curName( RenumberingNames[i] );
+        _strToInt[ curName ] = i;
+    }
 };
 
 Glossary fortranGlossary;
