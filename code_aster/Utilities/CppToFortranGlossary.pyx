@@ -31,3 +31,9 @@ cdef class FortranGlossary:
 
     def getPhysics( self, searchPhysics ):
         return deref( self._cptr ).getPhysics( searchPhysics )
+
+    def getRenumbering( self, searchRenum ):
+        return deref( self._cptr ).getRenumbering( searchRenum )
+
+    def getSolver( self, searchSol ):
+        return deref( self._cptr ).getSolver( searchSol )

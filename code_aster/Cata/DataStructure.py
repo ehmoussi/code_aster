@@ -19,11 +19,14 @@
 
 from code_aster import (
     Mesh, Model, Material, MaterialOnMesh,
-    Function,
+    Function, KinematicsLoad, MechanicalLoad
 )
 
 # compatibility layer to avoid changing all the catalogs
 cham_mater = MaterialOnMesh
+char_cine_acou = KinematicsLoad
+char_cine_meca = KinematicsLoad
+char_cine_ther = KinematicsLoad
 fonction_sdaster = Function
 maillage_sdaster = Mesh
 mater_sdaster = Material
@@ -51,9 +54,6 @@ cham_elem = DataStructure
 cham_gd_sdaster = DataStructure
 cham_no_sdaster = DataStructure
 char_acou = DataStructure
-char_cine_acou = DataStructure
-char_cine_meca = DataStructure
-char_cine_ther = DataStructure
 char_contact = DataStructure
 char_meca = DataStructure
 char_ther = DataStructure

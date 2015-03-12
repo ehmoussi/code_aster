@@ -181,7 +181,7 @@ class PartOfSyntax(object):
                 if value.definition.has_key('statut'): stat = value.definition['statut']
                 if stat == 'f' and value2 == {}: continue
 
-                if type(value2) != list: value2 = [value2]
+                if type(value2) not in (list, tuple): value2 = [value2]
                 if stat == 'd' or stat == 'o':
                     for curDict in value2:
                         return2 = value.getDefaultKeywords(curDict)

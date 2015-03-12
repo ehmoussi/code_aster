@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from code_aster.Modeling.PhysicsAndModeling cimport Physics, Modelings
 from code_aster.Loads.PhysicalQuantity cimport PhysicalQuantityComponent
+from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverEnum, Renumbering
 
 cdef extern from "Utilities/CppToFortranGlossary.h":
 
@@ -28,6 +29,8 @@ cdef extern from "Utilities/CppToFortranGlossary.h":
         PhysicalQuantityComponent getComponent( string searchMod ) except +
         Modelings getModeling( string searchMod ) except +
         Physics getPhysics( string searchPhysics ) except +
+        Renumbering getRenumbering( string searchRenum ) except +
+        LinearSolverEnum getSolver( string searchSol ) except +
 
     cpdef Glossary* getGlossary()
 
