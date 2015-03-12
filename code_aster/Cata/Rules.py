@@ -86,7 +86,7 @@ class OnlyFirstPresent(Rule):
         """Check the rule"""
         super(OnlyFirstPresent, self).check(dictSyntax)
         if self._firstExists(dictSyntax) and \
-           sum( self._not_none(dictSyntax) ) != 0:
+           sum( self._not_none(dictSyntax)[1:] ) != 0:
             raise ValueError("{} must be all undefined".format(self.ruleArgs[1:]))
 
 

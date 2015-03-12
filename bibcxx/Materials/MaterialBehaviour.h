@@ -136,7 +136,7 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
          * @brief Cette propriété est-elle obligatoire ?
          * @return true si la propriété est obligatoire
          */
-        void isMandatory()
+        bool isMandatory() const
         {
             return _isMandatory;
         };

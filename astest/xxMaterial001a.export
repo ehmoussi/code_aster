@@ -6,3 +6,4 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm xxMaterial001a.py D 1
+F mmed test001f.mmed D 20
