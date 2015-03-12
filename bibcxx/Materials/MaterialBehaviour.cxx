@@ -43,13 +43,18 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
          ++curIter )
     {
         mapStrEMPDConstIterator curIter2 = _mapOfDoubleMaterialProperties.find(*curIter);
+
+        std::string nameOfProperty = (*curIter2).second.getName();
+        if( (*curIter2).second.isMandatory() && ! (*curIter2).second.hasValue() )
+            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
+
         if( curIter2 != _mapOfDoubleMaterialProperties.end() )
         {
-            (*doubleValues)[position] = (*curIter2).second.getValue();
-
-            std::string nameOfProperty = (*curIter2).second.getName();
             nameOfProperty.resize( 16, ' ' );
             (*char16Values)[position] = nameOfProperty.c_str();
+
+            if( (*curIter2).second.hasValue() )
+                (*doubleValues)[position] = (*curIter2).second.getValue();
         }
         else
             throw std::runtime_error( "Le parametre materiau doit etre un double" );

@@ -136,7 +136,7 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
          * @brief Cette propriété est-elle obligatoire ?
          * @return true si la propriété est obligatoire
          */
-        void isMadatory()
+        void isMandatory()
         {
             return _isMandatory;
         };
@@ -156,6 +156,7 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
          */
         void setValue( ValueType& currentValue )
         {
+            _existsValue = true;
             _value = currentValue;
         };
 };
@@ -911,6 +912,7 @@ typedef boost::shared_ptr< CableMaterialBehaviourInstance > CableMaterialBehavio
  * @class VeriBorneMaterialBehaviourInstance
  * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau VeriBorne
  * @author Jean-Pierre Lefebvre
+ * @todo VeriBorne n'est pas un MaterialBehaviour !!!
  */
 class VeriBorneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
@@ -1384,7 +1386,7 @@ class RousselierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
             this->addDoubleProperty( "Poro_crit", ElementaryMaterialPropertyDouble( "PORO_CRIT" , 1. , false ) );
             this->addDoubleProperty( "Poro_acce", ElementaryMaterialPropertyDouble( "PORO_ACCE" , 1. , false ) );
             this->addDoubleProperty( "Poro_limi", ElementaryMaterialPropertyDouble( "PORO_LIMI" , 0.999 , false ) );
-            this->addDoubleProperty( "D_sigm_epsi_norm=", ElementaryMaterialPropertyDouble( "D_SIGM_EPSI_NORM=" , false ) );
+            this->addDoubleProperty( "D_sigm_epsi_norm", ElementaryMaterialPropertyDouble( "D_SIGM_EPSI_NORM" , false ) );
             this->addDoubleProperty( "An", ElementaryMaterialPropertyDouble( "AN" , 0. , false ) );
             this->addDoubleProperty( "Dp_maxi", ElementaryMaterialPropertyDouble( "DP_MAXI" , 0.1 , false ) );
             this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0.85 , false ) );
@@ -1419,7 +1421,7 @@ class RousselierFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
             this->addDoubleProperty( "Poro_crit", ElementaryMaterialPropertyDouble( "PORO_CRIT" , 1. , false ) );
             this->addDoubleProperty( "Poro_acce", ElementaryMaterialPropertyDouble( "PORO_ACCE" , 1. , false ) );
             this->addDoubleProperty( "Poro_limi", ElementaryMaterialPropertyDouble( "PORO_LIMI" , 0.999 , false ) );
-            this->addDoubleProperty( "D_sigm_epsi_norm=", ElementaryMaterialPropertyDouble( "D_SIGM_EPSI_NORM=" , false ) );
+            this->addDoubleProperty( "D_sigm_epsi_norm", ElementaryMaterialPropertyDouble( "D_SIGM_EPSI_NORM" , false ) );
             this->addDoubleProperty( "An", ElementaryMaterialPropertyDouble( "AN" , 0. , false ) );
             this->addDoubleProperty( "Dp_maxi", ElementaryMaterialPropertyDouble( "DP_MAXI" , 0.1 , false ) );
             this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0.85 , false ) );
@@ -4722,7 +4724,7 @@ class ThmDiffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addFunctionProperty( "Satu_pres", ElementaryMaterialPropertyFunction( "SATU_PRES" , false ) );
             this->addFunctionProperty( "D_satu_pres", ElementaryMaterialPropertyFunction( "D_SATU_PRES" , false ) );
             this->addFunctionProperty( "Perm_liqu", ElementaryMaterialPropertyFunction( "PERM_LIQU" , false ) );
-            this->addDoubleProperty( "D_perm_liqu_satu=", ElementaryMaterialPropertyDouble( "D_PERM_LIQU_SATU=" , false ) );
+            this->addDoubleProperty( "D_perm_liqu_satu", ElementaryMaterialPropertyDouble( "D_PERM_LIQU_SATU" , false ) );
             this->addFunctionProperty( "Perm_gaz", ElementaryMaterialPropertyFunction( "PERM_GAZ" , false ) );
             this->addFunctionProperty( "D_perm_satu_gaz", ElementaryMaterialPropertyFunction( "D_PERM_SATU_GAZ" , false ) );
             this->addFunctionProperty( "D_perm_pres_gaz", ElementaryMaterialPropertyFunction( "D_PERM_PRES_GAZ" , false ) );
