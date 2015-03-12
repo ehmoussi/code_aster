@@ -482,7 +482,6 @@ class make_capy(Task.Task):
                 lines = [line for line in subfid.read().splitlines() \
                          if self.banned not in line]
                 cata.extend(lines)
-        print "DEBUG: write cata.py"
         with open(target.abspath(), 'w') as fid:
             fid.write(os.linesep.join(cata))
         target.sig = Utils.h_file(target.abspath())
