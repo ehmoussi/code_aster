@@ -124,7 +124,6 @@ cdef class CommandSyntax:
                         for i in range(len(value)):
                             ret2 = value[i]
                             ret3 = ret1[i]
-                            print "ret2, ret3", ret2, ret3
                             for key2, value2 in ret2.iteritems():
                                 ret4 = ret3.get( key2 )
                                 if ret4 == None:

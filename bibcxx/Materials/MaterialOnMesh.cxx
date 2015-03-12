@@ -62,9 +62,9 @@ PyObject* MaterialOnMeshInstance::getCommandKeywords() throw ( std::runtime_erro
         }
         else
         {
-            if ( tmp->getType() == GroupOfNodesType )
+            if ( tmp->getType() == GroupOfElementsType )
                 dict2.container["GROUP_MA"] = (curIter->second)->getEntityName();
-            else if ( tmp->getType() == GroupOfElementsType )
+            else if ( tmp->getType() == GroupOfNodesType  )
                 dict2.container["GROUP_NO"] = (curIter->second)->getEntityName();
             else
                 throw std::runtime_error("Support entity undefined");
