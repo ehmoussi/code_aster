@@ -52,6 +52,10 @@ cdef class GeneralMaterialBehaviour:
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
+    def getAsterName( self ):
+        """Get the aster name of the material behaviour"""
+        return self.getInstance().getAsterName()
+
     def setDoubleValue( self, property, value ):
         """Define the value of a material property"""
         return self.getInstance().setDoubleValue( property, value )
