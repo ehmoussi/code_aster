@@ -85,7 +85,7 @@ subroutine op0033()
     character(len=16) :: option, compor(ncmpma), nompar(ntamax), opt2
     character(len=19) :: codi, sddisc, k19b, sdcrit
     character(len=24) :: sderro
-    integer, parameter :: carsiz=20
+    integer, parameter :: carsiz=21
     real(kind=8) :: instam, instap, ang(7), r8b, carcri(carsiz), fem(9)
     real(kind=8) :: deps(9), sigm(6), sigp(6), epsm(9), eps(9), vr(ntamax)
     real(kind=8) :: valimp(9), r(12), rini(12), dy(12), ddy(12), y(12), rac2
@@ -123,9 +123,9 @@ subroutine op0033()
     action=1
     finpas=.false.
     itemax=.false.
-    do 10 i = 1, 5
+    do i = 1, 5
         liccvg(i)=0
- 10 end do
+    end do
 !
 !     RECUPERATION DES OPTIONS DEMANDEES
 !     ----------------------------------
@@ -346,7 +346,7 @@ subroutine op0033()
     call dcopy(6, dy(7), 1, deps, 1)
 !
 !           POUR LE CALCUL DE LA MATRICE TANGENTE PAR PERTURBATION
-1000 continue
+400 continue
 !
 !           CALCUL DU RESIDU
     liccvg(2) = 0
@@ -382,7 +382,7 @@ subroutine op0033()
                 nbvari, epsilo, varia, matper, dsidep,&
                 smatr, sdeps, ssigp, zr(lsvip), itgt)
     if (itgt .ne. 0) then
-        goto 1000
+        goto 400
     endif
 !
     call dcopy(12, ym, 1, y, 1)

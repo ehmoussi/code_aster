@@ -50,6 +50,13 @@ subroutine check_homo_ratio(cara, vale, nval)
         end do
     end do
 !
+    if (tcar(1)(1:1).eq. ' ')then
+        call utmess('F', 'MODELISA5_54', sk=carpou(1))
+    endif
+    if (tcar(2)(1:1).eq. ' ')then
+        call utmess('F', 'MODELISA5_54', sk=carpou(2))
+    endif
+!
 !   default: EPi = Ri
     if (tcar(3)(1:1) .eq. ' ') then
         tval(3) = tval(1)
