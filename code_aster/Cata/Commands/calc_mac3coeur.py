@@ -22,15 +22,30 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: romeo.fernandes at edf.fr
 
+def calc_mac3coeur_prod(self,RESU_DEF,**args):
+    if RESU_DEF:
+        self.type_sdprod(RESU_DEF,evol_noli)
+    return evol_noli
 
 CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
                        op=OPS("Mac3coeur.mac3coeur_calcul.calc_mac3coeur_ops"),
-                       sd_prod=evol_noli,
+                       sd_prod=calc_mac3coeur_prod,
 
          TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","TEST","900","1300","N4","EPR"),position='global' ),
          # TYPE DE COEUR A CONSIDERER
          TABLE_N      = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N
          MAILLAGE_N   = SIMP(statut='f',typ=maillage_sdaster),      # MAILLAGE EN ATTENDANT MIEUX ???
+         RESU_DEF     = SIMP(statut='f',typ=CO,defaut=None),
+
+         ETAT_INITIAL = FACT(statut='f',max=1,
+                          fr=tr("Estimation d'un etat initial a partir d un DAMAC"),
+               TABLE_NP1    = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N+1
+               MAILLAGE_NP1 = SIMP(statut='o',typ=maillage_sdaster),      # MAILLAGE EN ATTENDANT MIEUX ???
+               UNITE_THYC   = SIMP(statut='f',typ='I', max=1),            # Unite Logique du fichier THYC
+               NIVE_FLUENCE =  SIMP(statut='o',typ='R',validators=NoRepeat(),max=1), # FLUENCE MAXIMALE DANS LE COEUR
+               TYPE_MAINTIEN = SIMP(statut='f',typ='TXM',into=("DEPL_PSC",),defaut="DEPL_PSC" ),
+               ARCHIMEDE = SIMP(statut='f',typ='TXM',into=("OUI"),defaut="OUI" ),
+            ),
 
          LAME = FACT(statut='f',max=1,
                      fr=tr("Estimation des lames d'eau entre AC"),

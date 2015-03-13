@@ -516,15 +516,6 @@ Utilisez ELIM_ARETE='DUAL'.
      Coordonnées des points du fond de fissure sur la grille
 """),
 
-    76: _(u"""
-  -> Il n'est pas possible d'utiliser des éléments quadratiques dans le cadre
-     d'un modèle X-FEM axisymétrique.
-
-  -> Risque & Conseil:
-     Veuillez utiliser un maillage linéaire.
-"""),
-
-
     77: _(u"""
   -> Il y a éventuellement des créations de mailles
      supplémentaires de type POI1 lorsque des affectations sont faites sur des nœuds ou des groupes de
@@ -609,5 +600,14 @@ Utilisez ELIM_ARETE='DUAL'.
     94: _(u"""
      --> L algorithme de détection a détecté un front qui va au delà de
          la zone de fissuration potentielle. Il faut agrandir celle-ci.
+"""),
+    95: _(u"""
+  -> Le mot-clé CRITERE de PROPA_FISS vaut 'ANGLE_IMPO_GAMMA' ou 'ANGLE_IMPO_BETA_GAMMA' et le tableau
+     des facteurs d'intensité de contraintes (SIF) de la fissure %(k1)s ne contient
+     pas de colonne 'GAMMA'.
+  -> Risque & Conseil:
+     Si vous souhaitez imposer les valeurs de l'angle de déversement aux points 
+     du fonds de fissure, veuillez indiquer CRITERE='ANGLE_IMPO_GAMMA' ou 'ANGLE_IMPO_BETA_GAMMA' et ajouter
+     une colonne 'GAMMA' au tableau de SIF manuellement.
 """),
 }
