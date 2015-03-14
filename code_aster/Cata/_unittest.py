@@ -124,3 +124,7 @@ class TestSyntaxChecker( unittest.TestCase ):
                                                 DZ=0.,
                                                 GROUP_NO='Bas',),)
         self._check_type( char_meca3, char_meca )
+
+
+if __name__ == '__main__':
+    unittest.main()
