@@ -32,7 +32,6 @@ from code_aster.Cata.Rules import (
     ENSEMBLE, AllTogether,
 )
 from code_aster.Cata import DataStructure as DS
-DS_content = DS.__dict__.values()
 
 import __builtin__
 import numpy
@@ -334,7 +333,7 @@ class SyntaxCheckerVisitor(object):
         validType = []
         for i in currentType:
             pytypes = fromTypeName(i)
-            if not pytypes and i in DS_content:
+            if not pytypes and issubclass(i, (DS.DataStructure, DS.MeshEntity)):
                 pytypes = [i]
             validType.extend( pytypes )
         if not validType:
@@ -369,7 +368,7 @@ class SyntaxCheckerVisitor(object):
             # type
             if type(i) not in validType \
                and not isinstance(i, DS.DataStructure) \
-               and type(i) not in [DS.Mesh, DS.Model, DS.Material]:
+               and not (type(i) is str and issubclass(validType[0], DS.MeshEntity)):
                 step._context(i)
                 raise TypeError('Unexpected type {}'.format(type(i)))
             # val_min/val_max
