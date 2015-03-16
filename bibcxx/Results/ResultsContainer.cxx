@@ -23,4 +23,54 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "aster_fort.h"
+
 #include "Results/ResultsContainer.h"
+#include "RunManager/LogicalUnitManagerCython.h"
+#include "RunManager/CommandSyntaxCython.h"
+
+FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::string name,
+                                                                     const int rank ) const
+{
+    INTEGER retour;
+    retour = 0;
+    const INTEGER rankLong = rank;
+    JeveuxChar24 returnName( " " );
+    CALL_RSEXCH( " ", getName().c_str(), name.c_str(), &rankLong, returnName.c_str(), &retour);
+    std::string bis( returnName.c_str(), 19 );
+    FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
+    return result;
+};
+
+bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
+    throw ( std::runtime_error )
+{
+    LogicalUnitFileCython a( fileName, Binary, New );
+    int retour = a.getLogicalUnit();
+    CommandSyntaxCython cmdSt( "IMPR_RESU" );
+
+    SyntaxMapContainer dict;
+    dict.container[ "FORMAT" ] = "MED";
+    dict.container[ "UNITE" ] = retour;
+
+    ListSyntaxMapContainer listeResu;
+    SyntaxMapContainer dict2;
+    dict2.container[ "RESULTAT" ] = getName();
+    dict2.container[ "TOUT_ORDRE" ] = "OUI";
+    listeResu.push_back( dict2 );
+    dict.container[ "RESU" ] = listeResu;
+
+    cmdSt.define( dict );
+
+    try
+    {
+        INTEGER op = 39;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    
+    return true;
+};

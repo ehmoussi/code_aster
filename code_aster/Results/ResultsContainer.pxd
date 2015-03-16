@@ -18,6 +18,7 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 
 
 cdef extern from "Results/ResultsContainer.h":
@@ -27,6 +28,8 @@ cdef extern from "Results/ResultsContainer.h":
         ResultsContainerInstance()
         const string getType()
         void debugPrint( int logicalUnit )
+        FieldOnNodesDoublePtr getRealFieldOnNodes( string name, int rank )
+        bint printMedFile( string fileName )
 
     cdef cppclass ResultsContainerPtr:
 

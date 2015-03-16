@@ -23,6 +23,17 @@ from code_aster import Materials
 from code_aster.Cata import Commands
 
 
+def _addMaterial( materOnMesh, fkw ):
+    kwTout = fkw.get( "TOUT" )
+    kwGrMa = fkw.get( "GROUP_MA" )
+    mater = fkw[ "MATER" ]
+
+    if kwTout != None:
+        materOnMesh.addMaterialOnAllMesh( mater )
+    elif kwGrMa != None:
+        materOnMesh.addMaterialOnGroupOfElements( mater, kwGrMa )
+    else: assert False
+
 def AFFE_MATERIAU( **kwargs ):
     """Opérateur d'affection d'un matériau"""
     Commands.AFFE_MATERIAU.checkSyntax( kwargs )
@@ -39,26 +50,10 @@ def AFFE_MATERIAU( **kwargs ):
 
     fkw = kwargs[ "AFFE" ]
     if type( fkw ) == dict:
-        kwTout = fkw.get( "TOUT" )
-        kwGrMa = fkw.get( "GROUP_MA" )
-        mater = fkw[ "MATER" ]
-
-        if kwTout != None:
-            materOnMesh.addMaterialOnAllMesh( mater )
-        elif kwGrMa != None:
-            materOnMesh.addMaterialOnGroupOfElements( mater, kwGrMa )
-        else: assert False
+        _addMaterial( materOnMesh, fkw )
     elif type( fkw ) == tuple:
         for curDict in fkw:
-            kwTout = curDict.get( "TOUT" )
-            kwGrMa = curDict.get( "GROUP_MA" )
-            mater = curDict[ "MATER" ]
-
-            if kwTout != None:
-                materOnMesh.addMaterialOnAllMesh( mater )
-            elif kwGrMa != None:
-                materOnMesh.addMaterialOnGroupOfElements( mater, kwGrMa )
-            else: assert False
+            _addMaterial( materOnMesh,curDict  )
     else:
         assert False
 

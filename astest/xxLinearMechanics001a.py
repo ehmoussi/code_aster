@@ -13,7 +13,7 @@ MATER1 = DEFI_MATERIAU( ELAS = _F( E = 200000.0,
                                    NU = 0.3, ), )
 
 AFFMAT = AFFE_MATERIAU( MAILLAGE = mail1,
-                        AFFE = _F(TOUT = 'OUI',
+                        AFFE = _F( TOUT = 'OUI',
                                    MATER = MATER1, ), )
 
 load = AFFE_CHAR_CINE( MODELE = model,
@@ -29,7 +29,6 @@ resu = MECA_STATIQUE( MODELE = model,
                       EXCIT = ( _F( CHARGE = load, ),
                                 _F( CHARGE = load2, ), ),
                       SOLVEUR = _F( METHODE = "MUMPS",
-                                    RENUM = "METIS", ),
-                      )
+                                    RENUM = "METIS", ), )
 
 resu.debugPrint()

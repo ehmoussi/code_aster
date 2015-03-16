@@ -32,6 +32,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
+#include "DataFields/FieldOnNodes.h"
 
 /**
  * @class ResultsContainerInstance
@@ -64,6 +65,23 @@ class ResultsContainerInstance: public DataStructure
                 _calculationParameter( JeveuxCollectionChar8( getName() + "           .TAVA" ) ),
                 _serialNumber( JeveuxVectorLong( getName() + "           .ORDR" ) )
         {};
+
+        /**
+         * @brief Obtenir un champ au noeud réel à partir de son nom et de son numéro d'ordre
+         * @param name nom Aster du champ
+         * @param rank numéro d'ordre
+         * @return FieldOnNodesDoublePtr pointant vers le champ
+         */
+        FieldOnNodesDoublePtr getRealFieldOnNodes( const std::string name, const int rank ) const;
+
+        /**
+         * @brief Impression de la sd au format MED
+         * @param fileName Nom du fichier MED à imprimer
+         * @return true
+         * @todo revoir la gestion des mot-clés par défaut (ex : TOUT_ORDRE)
+         * @todo revoir la gestion des unités logiques (notamment si fort.20 existe déjà)
+         */
+        bool printMedFile( std::string fileName ) const throw ( std::runtime_error );
 };
 
 /**

@@ -145,6 +145,15 @@ class JeveuxString
             return currentValue;
         };
 
+        /**
+         * @brief Fonction permettant d'obtenir le pointeur vers le debut de la chaine
+         * @return Pointeur vers le debut de la chaine. Attention pas de \0 a la fin !!
+         */
+        inline const char* c_str()
+        {
+            return currentValue;
+        };
+
         std::string rstrip() const
         {
             std::string buff ( currentValue, length );

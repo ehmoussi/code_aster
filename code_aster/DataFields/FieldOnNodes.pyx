@@ -23,10 +23,10 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
-from code_aster.RunManager.File cimport LogicalUnitFile
+from code_aster.Supervis.libFile cimport LogicalUnitFile
 
 from code_aster.Supervis.libCommandSyntax import _F
-from code_aster.RunManager.File import FileType, FileAccess
+from code_aster.Supervis.libFile import FileType, FileAccess
 
 
 cdef class FieldOnNodesDouble:
