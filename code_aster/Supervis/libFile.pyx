@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+from cython.operator cimport dereference as deref
+
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
 from code_aster.Supervis.libCommandSyntax import getCurrentCommand, setCurrentCommand
 
@@ -146,3 +148,22 @@ class _TestLogicalUnitManager:
     @staticmethod
     def releaseLogicalUnit( unit ):
         return logicalUnitManager.releaseLogicalUnit( unit )
+
+cppFileDict = {}
+
+cdef public void newLogicalUnitFile( const char* name, const int type, const int access ):
+    global cppFileDict
+    pyName = <bytes> name
+    tmp = LogicalUnitFile( pyName, type, access )
+    cppFileDict[ pyName ] = tmp
+
+cdef public void deleteLogicalUnitFile( const char* name ):
+    global cppFileDict
+    pyName = <bytes> name
+    cppFileDict.pop( pyName )
+
+cdef public int getFileLogicalUnit( const char* name ):
+    global cppFileDict
+    pyName = <bytes> name
+    returnInt = cppFileDict[ pyName ].getLogicalUnit()
+    return returnInt

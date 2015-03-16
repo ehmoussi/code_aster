@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 
 #### ResultsContainer
 
@@ -50,3 +51,13 @@ cdef class ResultsContainer:
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
+
+    def getRealFieldOnNodes( self, name, rank ):
+        """Get a real FieldOnNodes from name and rank"""
+        returnField = FieldOnNodesDouble()
+        returnField.set( self.getInstance().getRealFieldOnNodes( name, rank ) )
+        return returnField
+
+    def printMedFile( self, name ):
+        """Print MED file from ResultsContainer"""
+        return self.getInstance().printMedFile( name )

@@ -146,6 +146,9 @@ void DEFSSSS(ALCART, alcart, const char *, STRING_SIZE, const char *, STRING_SIZ
 #define CALL_NOCARTC(a, b, c, d, e, f, g, h, i) CALLSPPSSPSPS(NOCART_C, nocart_c, a, b, c, d, e, f, g, h, i)
 void DEFSPPSSPSPS(NOCART_C, nocart_c, const char *, STRING_SIZE, const INTEGER*, const INTEGER*, const char *, STRING_SIZE, const char *, STRING_SIZE, const INTEGER*, const char *, STRING_SIZE, const INTEGER*, const char *, STRING_SIZE);
 
+#define CALL_RSEXCH(a, b, c, d, e, f) CALLSSSPSP(RSEXCH, rsexch, a, b, c, d, e, f)
+void DEFSSSPSP(RSEXCH, rsexch, const char *, STRING_SIZE, const char *, STRING_SIZE, const char *, STRING_SIZE, const INTEGER*, const char *, STRING_SIZE, const INTEGER*);
+
 #define CALL_UTIMSD(a, b, c, d, e, f, g, h) CALLPPPPSPSS(UTIMSD, utimsd, a, b, c, d, e, f, g, h)
 void DEFPPPPSPSS(UTIMSD,utimsd, INTEGER*, INTEGER*, INTEGER*, INTEGER*, const char*, STRING_SIZE,
                                 INTEGER*, const char*, STRING_SIZE, const char*, STRING_SIZE );

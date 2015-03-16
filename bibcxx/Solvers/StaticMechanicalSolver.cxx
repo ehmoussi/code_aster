@@ -60,7 +60,6 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     {
         SyntaxMapContainer dict2;
         dict2.container[ "CHARGE" ] = (*curIter)->getName();
-//         dict2.container[ "TYPE_CHARGE" ] = "FIXE";
         listeExcit.push_back( dict2 );
     }
     for ( ListKineLoadIter curIter = _listOfKinematicsLoads.begin();
@@ -69,7 +68,6 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     {
         SyntaxMapContainer dict2;
         dict2.container[ "CHARGE" ] = (*curIter)->getName();
-//         dict2.container[ "TYPE_CHARGE" ] = "FIXE";
         listeExcit.push_back( dict2 );
     }
     dict.container[ "EXCIT" ] = listeExcit;
@@ -79,16 +77,6 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     SyntaxMapContainer dict3;
     dict3.container[ "METHODE" ] = _linearSolver->getSolverName();
     dict3.container[ "RENUM" ] = _linearSolver->getRenumburingName();
-//     dict3.container[ "GESTION_MEMOIRE" ] = "IN_CORE";
-//     dict3.container[ "STOP_SINGULIER" ] = "OUI";
-//     dict3.container[ "PRETRAITEMENTS" ] = "AUTO";
-//     dict3.container[ "TYPE_RESOL" ] = "AUTO";
-//     dict3.container[ "MATR_DISTRIBUEE" ] = "NON";
-//     dict3.container[ "ELIM_LAGR" ] = "LAGR2";
-//     dict3.container[ "POSTTRAITEMENTS" ] = "AUTO";
-//     dict3.container[ "PCENT_PIVOT" ] = 50;
-//     dict3.container[ "NPREC" ] = -1;
-//     dict3.container[ "RESI_RELA" ] = -1.0;
     listeSolver.push_back( dict3 );
     dict.container[ "SOLVEUR" ] = listeSolver;
 

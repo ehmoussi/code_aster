@@ -24,6 +24,19 @@ from code_aster.Cata import Commands
 from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
 
 
+def _addLoad( mechaSolv, fkw ):
+    load = fkw[ "CHARGE" ]
+    if fkw.get( "FONC_MULT" ) != None:
+        raise NameError( "Not yet implemented" )
+
+    if isinstance( load, Loads.KinematicsLoad ):
+        mechaSolv.addKinematicsLoad( load )
+    elif isinstance( load, Loads.KinematicsLoad ):
+        mechaSolv.addMechanicalLoad( load )
+    else:
+        assert False
+
+
 def MECA_STATIQUE( **kwargs ):
     """Opérateur de résolution de mécanique statique linéaire"""
     Commands.MECA_STATIQUE.checkSyntax( kwargs )
@@ -45,28 +58,10 @@ def MECA_STATIQUE( **kwargs ):
 
     fkw = kwargs[ "EXCIT" ]
     if type( fkw ) == dict:
-        load = fkw[ "CHARGE" ]
-        if kwargs.get( "FONC_MULT" ) != None:
-            raise NameError( "Not yet implemented" )
-
-        if isinstance( load, Loads.KinematicsLoad ):
-            mechaSolv.addKinematicsLoad( load )
-        elif isinstance( load, Loads.KinematicsLoad ):
-            mechaSolv.addMechanicalLoad( load )
-        else:
-            assert False
+        _addLoad( mechaSolv, fkw )
     elif type( fkw ) == tuple:
         for curDict in fkw:
-            load = curDict[ "CHARGE" ]
-            if kwargs.get( "FONC_MULT" ) != None:
-                raise NameError( "Not yet implemented" )
-
-            if isinstance( load, Loads.KinematicsLoad ):
-                mechaSolv.addKinematicsLoad( load )
-            elif isinstance( load, Loads.KinematicsLoad ):
-                mechaSolv.addMechanicalLoad( load )
-            else:
-                assert False
+            _addLoad( mechaSolv, curDict )
     else:
         assert False
 
