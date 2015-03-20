@@ -28,7 +28,7 @@ def finalize():
     if libaster.get_sh_jeveux_status() != 1:
         return
     syntax = CommandSyntax( "FIN" )
-    syntax.define( _F( STATUT=0 ) )
+    syntax.define( _F( INFO_RESU="NON" ) )
     cdef INTEGER numOp = 9999
     libaster.execop_( &numOp )
     libaster.register_sh_jeveux_status( 0 )

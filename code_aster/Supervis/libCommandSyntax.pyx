@@ -75,10 +75,7 @@ cdef class CommandSyntax:
         assert currentCommand is None, \
             "CommandSyntax {} must be freed".format( currentCommand._name )
         currentCommand = self
-        self._syntaxChecker = None
-        commandChecker = getCommandChecker( name )
-        if commandChecker != None:
-            self._syntaxChecker = commandChecker
+        self._commandCata = getCommandCata( name )
 
     cpdef free( self ):
         """Reset the current command pointer as soon as possible"""
@@ -106,33 +103,31 @@ cdef class CommandSyntax:
 
     cpdef define( self, dictSyntax ):
         """Register the keywords values"""
-        if self._syntaxChecker != None:
-            debug( "syntax0", self._name, dictSyntax )
-            dict2 = self._syntaxChecker.getDefaultKeywords( dictSyntax )
-            for key, value in dict2.iteritems():
-                ret1 = dictSyntax.get( key )
-                if type( value ) == dict:
-                    assert False
+        if self._commandCata != None:
+            debug( "define0", self._name, dictSyntax )
+            defaultKwds = self._commandCata.getDefaultKeywords( dictSyntax )
+            for key, value in defaultKwds.iteritems():
+                assert type( value ) != dict, \
+                    'unexpected type for value: {!r}'.format( value )
+                userValue = dictSyntax.get( key )
+                if userValue == None:
+                    dictSyntax[ key ] = value
+                    continue
                 if type( value ) == list:
-                    if ret1 == None:
-                        dictSyntax[ key ] = value
-                    elif type( ret1 ) == dict:
+                    if type( userValue ) == dict:
                         assert len( value ) == 1
                         dictSyntax[ key ].update(value[0])
                     else:
-                        assert len(ret1) == len(value)
+                        assert len(userValue) == len(value)
                         for i in range(len(value)):
                             ret2 = value[i]
-                            ret3 = ret1[i]
+                            ret3 = userValue[i]
                             for key2, value2 in ret2.iteritems():
                                 ret4 = ret3.get( key2 )
                                 if ret4 == None:
                                     ret3[ key2 ] = value2
-                else:
-                    if ret1 == None:
-                        dictSyntax[ key ] = value
         self._definition = dictSyntax
-        debug( "syntax", self._name, self._definition )
+        debug( "define1", self._name, self._definition )
 
     cdef getName( self ):
         """Return the command name"""
@@ -211,15 +206,15 @@ cdef class CommandSyntax:
 
 cdef CommandSyntax currentCommand
 currentCommand = None
-commandCheckerDictionary = {}
+commandCataDictionary = {}
 
 def commandsRegister( commandsDict ):
-    global commandCheckerDictionary
-    commandCheckerDictionary = commandsDict
+    global commandCataDictionary
+    commandCataDictionary = commandsDict
 
-def getCommandChecker( name ):
-    global commandCheckerDictionary
-    return commandCheckerDictionary.get( name )
+def getCommandCata( name ):
+    global commandCataDictionary
+    return commandCataDictionary.get( name )
 
 
 def setCurrentCommand( syntax ):
