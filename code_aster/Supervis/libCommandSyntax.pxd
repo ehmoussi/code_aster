@@ -39,7 +39,7 @@ cdef class CommandSyntax:
     cdef        _resultName
     cdef        _resultType
     cdef object _definition
-    cdef object _syntaxChecker
+    cdef object _commandCata
 
     cpdef setResult( self, sdName, sdType )
 

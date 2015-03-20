@@ -547,7 +547,7 @@ def CO():
     pass
 
 
-class assd(object):
+class assd(DS.ASSD):
     pass
 
 
