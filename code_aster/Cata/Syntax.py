@@ -35,7 +35,7 @@ from code_aster.Cata import DataStructure as DS
 
 import __builtin__
 import numpy
-
+import types
 
 def _F(**args):
     return args
@@ -106,20 +106,14 @@ class PartOfSyntax(object):
         if type(curDict) != dict:
             raise TypeError("'dict' is expected")
         self.definition = curDict
-        self.regles = curDict.get("regles")
+        regles = curDict.get("regles")
+        if regles and type(regles) not in (list, tuple):
+            regles = (regles, )
+        self.regles = regles
 
     def __repr__(self):
         """Simple representation"""
         return "%s( %r )" % (self.__class__, self.definition)
-
-    def __call__(self, **args ):
-        """Simulate the command execution"""
-        from code_aster.Cata import Commands
-        commandName = self.definition['nom']
-        getattr(Commands, commandName).checkSyntax( args )
-        resultType = self.definition.get('sd_prod')
-        if resultType:
-            return resultType()
 
     def accept(self, visitor, syntax=None):
         """Called by a Visitor"""
@@ -298,14 +292,28 @@ class Command(PartOfSyntax):
         visitor.visitCommand(self, syntax)
 
     def checkSyntax(self, dictSyntax):
-        """
-        Fonction membre permettant de verifier la syntaxe d'une commande
-        """
+        """Check the syntax of a command
+        `dictSyntax` contains the keywords filled by the user"""
         if type(dictSyntax) != dict:
             raise TypeError("'dict' is expected")
 
         checker = SyntaxCheckerVisitor()
         self.accept( checker, dictSyntax )
+
+    def __call__(self, **args ):
+        """Simulate the command execution"""
+        self.checkSyntax( args )
+        resultType = self.definition.get('sd_prod')
+        if resultType:
+            if type(resultType) is types.FunctionType:
+                ctxt = buildConditionContext( self.definition, args )
+                resultType = self.build_sd_prod( resultType, ctxt )
+            return resultType()
+
+    def build_sd_prod( self, sdprodFunc, ctxt ):
+        """Call the `sd_prod` function"""
+        resultType = sdprodFunc( **ctxt )
+        return resultType
 
 
 class SyntaxCheckerVisitor(object):
@@ -375,6 +383,7 @@ class SyntaxCheckerVisitor(object):
                     raise ValueError( "Value must be in {!r}".format(
                                       step.definition["into"]) )
             # type
+            #    and not (type(i) is type and issubclass(i, DS.DataStructure)) \
             if type(i) not in validType \
                and not isinstance(i, DS.DataStructure) \
                and not (type(i) is str and issubclass(validType[0], DS.MeshEntity)):
@@ -426,7 +435,10 @@ class SyntaxCheckerVisitor(object):
             # simples
             for key, value in dictSyntax.iteritems():
                 # print key, value
-                if not step.definition.has_key(key) and not dictTmp.has_key(key):
+                if key == "reuse":
+                    if step.definition.get("reentrant") not in ("o", "f"):
+                        raise KeyError("reuse is not allowed!")
+                elif not step.definition.has_key(key) and not dictTmp.has_key(key):
                     raise KeyError("Unauthorized keyword: {!r}".format(key))
                 else:
                     kw = step.definition.get(key)
@@ -444,7 +456,12 @@ class Operator(Command):
 
 class Macro(Command):
 
-    pass
+    """Specialization of the Command object for MACRO"""
+
+    def build_sd_prod( self, sdprodFunc, ctxt ):
+        """Call the `sd_prod` function"""
+        resultType = sdprodFunc( self, **ctxt )
+        return resultType
 
 
 class Procedure(Command):
@@ -522,6 +539,9 @@ class PROC_ETAPE(Procedure):
 
 # NOOK {
 
+def AsType( obj ):
+    """Return the type of `obj`"""
+    return type(obj)
 
 def CO():
     pass
