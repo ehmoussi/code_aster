@@ -1,61 +1,11 @@
-subroutine nxacmv(modele, mate, carele, fomult, charge,&
-                  infcha, infoch, numedd, solveu, lostat,&
-                  time, tpsthe, reasvc, reasvt, reasmt,&
-                  reasrg, reasms, creas, vtemp, vhydr,&
-                  tmpchi, tmpchf, vec2nd, vec2ni, matass,&
-                  maprec, cndirp, cnchci, mediri, compor)
+subroutine nxacmv(model , mate  , cara_elem, list_load, nume_dof,&
+                  solver, lostat, time     , tpsthe   , reasvc  ,&
+                  reasvt, reasmt, reasrg   , reasms   , creas   ,&
+                  vtemp , vhydr , varc_curr, dry_prev , dry_curr,&
+                  vec2nd, vec2ni, matass   , maprec   , cndirp  ,&
+                  cnchci, mediri, compor)
 !
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
-!
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
-!
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
-! person_in_charge: jessica.haelewyn at edf.fr
-! ----------------------------------------------------------------------
-!
-! COMMANDE THER_LINEAIRE : ACTUALISATION EVENTUELLE
-!   - DES VECTEURS CONTRIBUANT AU SECOND MEMBRE
-!   - DE LA MATRICE ASSEMBLEE
-! COMMANDE THER_NON_LINE : ACTUALISATION EVENTUELLE
-!   - DES VECTEURS CONTRIBUANT AU SECOND MEMBRE (RESIDU)
-!   - DE LA MATRICE TANGENTE ASSEMBLEE
-!
-! OUT VEC2ND  : VECTEUR ASSEMBLE SECOND MEMBRE = L1(V,T-)
-! OUT VEC2NI  : VECTEUR ASSEMBLE SECOND MEMBRE = L1(V,T-)
-!                         AVEC RHOCP.T- ET NON PLUS H(T-)
-! OUT MATASS,MAPREC  MATRICE DE RIGIDITE ASSEMBLEE
-! OUT CNDIRP  : VECTEUR ASSEMBLE DES DIRICHLETS
-! OUT CNCHCI  : ????????
-! IN  VTEMP   : CHAMP DE LA TEMPERATURE A L'INSTANT PRECEDENT
-!   -------------------------------------------------------------------
-!     SUBROUTINES APPELLEES:
-!       MESSAGE:UTMESS, UTMESI, UTMESK, UTMESG
-!       JEVEUX:JEMARQ,JEVEUO,JEDETR,JELIRA.
-!       MANIP SD: MECACT.
-!       DIRICHLET: VEDITH,ASCAVC
-!       SECONDS MEMBRES:VETNTH,VECHNL.
-!       CALCUL: CALCUL,ASAVE,ASCOVA.
-!       FICH COMM: GETRES.
-!
-!     FONCTIONS INTRINSEQUES:
-!       AUCUNE.
-!----------------------------------------------------------------------
-! CORPS DU PROGRAMME
-! aslint: disable=W1504
-    implicit none
-!
-! 0.1. ==> ARGUMENTS
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -82,19 +32,60 @@ subroutine nxacmv(modele, mate, carele, fomult, charge,&
 #include "asterfort/vedith.h"
 #include "asterfort/vetnth.h"
 #include "asterfort/vrcins.h"
+!
+! ======================================================================
+! COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+! (AT YOUR OPTION) ANY LATER VERSION.
+!
+! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+!
+! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+!    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+! ======================================================================
+! person_in_charge: jessica.haelewyn at edf.fr
+! aslint: disable=W1504
+!
+    character(len=24), intent(in) :: model
+    character(len=24), intent(in) :: mate
+    character(len=24), intent(in) :: cara_elem
+    character(len=19), intent(in) :: list_load
+    character(len=24), intent(in) :: nume_dof
+    character(len=19), intent(in) :: solver
+    character(len=24), intent(in) :: time
+    character(len=19), intent(in) :: varc_curr
     aster_logical :: reasvc, reasvt, reasmt, reasrg, reasms, lostat
     real(kind=8) :: tpsthe(6)
     character(len=1) :: creas
-    character(len=19) :: infcha, solveu, maprec
-    character(len=24) :: modele, mate, carele, fomult, charge, infoch, numedd
-    character(len=24) :: time, vtemp, vec2nd, vec2ni, vhydr, compor, tmpchi
-    character(len=24) :: tmpchf, matass, cndirp, cnchci, cnchtp, cntntp, cntnti
+    character(len=19) :: maprec
+    character(len=24) :: vtemp, vec2nd, vec2ni, vhydr, compor, dry_prev
+    character(len=24) :: dry_curr, matass, cndirp, cnchci, cnchtp, cntntp, cntnti
     character(len=24) :: cnchnl
 !
-! 0.2. ==> COMMUNS
+! --------------------------------------------------------------------------------------------------
 !
+! COMMANDE THER_LINEAIRE : ACTUALISATION EVENTUELLE
+!   - DES VECTEURS CONTRIBUANT AU SECOND MEMBRE
+!   - DE LA MATRICE ASSEMBLEE
+! COMMANDE THER_NON_LINE : ACTUALISATION EVENTUELLE
+!   - DES VECTEURS CONTRIBUANT AU SECOND MEMBRE (RESIDU)
+!   - DE LA MATRICE TANGENTE ASSEMBLEE
 !
-! 0.3. ==> VARIABLES LOCALES
+! OUT VEC2ND  : VECTEUR ASSEMBLE SECOND MEMBRE = L1(V,T-)
+! OUT VEC2NI  : VECTEUR ASSEMBLE SECOND MEMBRE = L1(V,T-)
+!                         AVEC RHOCP.T- ET NON PLUS H(T-)
+! OUT MATASS,MAPREC  MATRICE DE RIGIDITE ASSEMBLEE
+! OUT CNDIRP  : VECTEUR ASSEMBLE DES DIRICHLETS
+! OUT CNCHCI  : ????????
+! IN  VTEMP   : CHAMP DE LA TEMPERATURE A L'INSTANT PRECEDENT
+!
+! --------------------------------------------------------------------------------------------------
 !
     character(len=6) :: nompro
     parameter ( nompro = 'NXACMV' )
@@ -103,13 +94,15 @@ subroutine nxacmv(modele, mate, carele, fomult, charge,&
     integer :: j2ni, j2ni1, j2ni2, j2ni3, iret, typcum, ifm, niv
     character(len=1) :: typres
     character(len=2) :: codret
+    real(kind=8) :: time_curr
     character(len=8) :: k8bid, nomcmp(6)
-    character(len=19) :: chvarc
     character(len=16) :: k16bid, option, nomcmd
     character(len=24) :: ligrmo, merigi, memass, mediri, tlimat(3), bidon
     character(len=24) :: vediri, vechtp, vetntp, vetnti, vadirp, vachtp, vechtn
     character(len=24) :: vachtn, vtemp2
     aster_logical :: llin
+    character(len=24) :: lload_name, lload_info, lload_func
+!
     data typres /'R'/
     data nomcmp /'INST    ','DELTAT  ','THETA   ','KHI     ',&
      &             'R       ','RHO     '/
@@ -123,11 +116,10 @@ subroutine nxacmv(modele, mate, carele, fomult, charge,&
     data cnchtp,cntntp,cntnti,cnchnl  /4*' '/
     data bidon  /' '/
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call infniv(ifm, niv)
-    chvarc = '&&NXACMV.CHVARC'
 !
 !====
 ! 1. PREALABLE
@@ -138,6 +130,10 @@ subroutine nxacmv(modele, mate, carele, fomult, charge,&
     vachtp = '&&'//nompro//'VATCHA'
     vachtn = '&&'//nompro//'VANCHA'
     creas = ' '
+    time_curr = tpsthe(1)
+    lload_name = list_load(1:19)//'.LCHA'
+    lload_info = list_load(1:19)//'.INFC'
+    lload_func = list_load(1:19)//'.FCHA'
 !
 ! DETERMINATION DU TYPE DE CALCUL (LINEAIRE OU NON)
     if (nomcmd(1:13) .eq. 'THER_LINEAIRE') then
@@ -164,28 +160,28 @@ subroutine nxacmv(modele, mate, carele, fomult, charge,&
 ! ======================================================================
 !
 !     VARIABLES DE COMMANDE
-    call vrcins(modele, mate, carele, tpsthe(1), chvarc,&
+    call vrcins(model, mate, cara_elem, tpsthe(1), varc_curr,&
                 codret)
 !
     if (reasvt) then
 !
 ! 1.1. ==> (RE)ACTUALISATION DU CHAMP CONSTANT EN ESPACE : TIME
 !
-        ligrmo = modele(1:8)//'.MODELE'
+        ligrmo = model(1:8)//'.MODELE'
         call mecact('V', time, 'MODELE', ligrmo, 'INST_R',&
                     ncmp=6, lnomcmp=nomcmp, vr=tpsthe)
 !
 ! 1.2. ==> TEMPERATURES IMPOSEES (DIRICHLET)                 ---& CNDIRP
-        call vedith(modele, charge, infoch, time, vediri)
-        call asasve(vediri, numedd, typres, vadirp)
-        call ascova('D', vadirp, fomult, 'INST', tpsthe(1),&
+        call vedith(model, list_load, time, vediri)
+        call asasve(vediri, nume_dof, typres, vadirp)
+        call ascova('D', vadirp, lload_func, 'INST', tpsthe(1),&
                     typres, cndirp)
         call jeveuo(cndirp(1:19)//'.VALE', 'L', jndirp)
 !
 ! 1.3. ==> CHARGES CINEMATIQUES                              ---& CNCHCI
 !
         cnchci = ' '
-        call ascavc(charge, infoch, fomult, numedd, tpsthe(1),&
+        call ascavc(lload_name, lload_info, lload_func, nume_dof, tpsthe(1),&
                     cnchci)
 !
 ! 1.4. ==> CONTRIBUTION DU CHAMP A L'INSTANT PRECEDENT       ---& CNTNTP
@@ -201,16 +197,16 @@ subroutine nxacmv(modele, mate, carele, fomult, charge,&
             endif
 !
 ! CALCULS ELEMENTAIRES ET SOMMATION DANS LES VECT_ELEM VETNTP
-            call vetnth(option, modele, carele, mate, time,&
-                        vtemp, compor, tmpchi, tmpchf, vhydr,&
-                        vetntp, vetnti)
+            call vetnth(option, model, cara_elem, mate, time,&
+                        vtemp, compor, dry_prev, dry_curr, vhydr,&
+                        vetntp, vetnti, varc_curr)
 !
-            call asasve(vetntp, numedd, typres, cntntp)
+            call asasve(vetntp, nume_dof, typres, cntntp)
             call jeveuo(cntntp, 'L', jtn)
             call jeveuo(zk24(jtn)(1:19)//'.VALE', 'L', jntntp)
 !
             if (.not.llin) then
-                call asasve(vetnti, numedd, typres, cntnti)
+                call asasve(vetnti, nume_dof, typres, cntnti)
                 call jeveuo(cntnti, 'L', jtni)
                 call jeveuo(zk24(jtni)(1:19)//'.VALE', 'L', jntnti)
             endif
@@ -227,22 +223,24 @@ subroutine nxacmv(modele, mate, carele, fomult, charge,&
 !
     if (reasvc) then
 !
-! 2.1. ==> CHARGEMENTS THERMIQUES                            ---& CNCHTP
+! ----- Neumann loads elementary vectors (second member)
 !
+        call vechth('STAT', model    , lload_name, lload_info, cara_elem,&
+                    mate  , time_curr, time      , vtemp     , vechtp,&
+                    varc_curr_ = varc_curr)
 !
-! CALCULS ELEMENTAIRES ET SOMMATION DANS LES VECT_ELEM VECHTP ET VACHTP
-        call vechth(modele, charge, infoch, carele, mate,&
-                    time, vtemp, vechtp)
-        call asasve(vechtp, numedd, typres, vachtp)
-        call ascova('D', vachtp, fomult, 'INST', tpsthe(1),&
+! ----- Neumann loads assembled vector (second member)
+!
+        call asasve(vechtp, nume_dof, typres, vachtp)
+        call ascova('D', vachtp, lload_func, 'INST', tpsthe(1),&
                     typres, cnchtp)
         call jeveuo(cnchtp(1:19)//'.VALE', 'L', jnchtp)
 !
 ! 2.2. ==> CHARGEMENTS THERMIQUES NON LINEAIRES EN TEMPERATURE -& CNCHNL
         if (.not.llin) then
-            call vechnl(modele, charge, infoch, carele, time,&
+            call vechnl(model, lload_name, lload_info, cara_elem, time,&
                         vtemp, vechtn)
-            call asasve(vechtn, numedd, typres, vachtn)
+            call asasve(vechtn, nume_dof, typres, vachtn)
             call ascova('D', vachtn, bidon, 'INST', tpsthe(1),&
                         typres, cnchnl)
             call jeveuo(cnchnl(1:19)//'.VALE', 'L', jnchnl)
@@ -323,18 +321,18 @@ subroutine nxacmv(modele, mate, carele, fomult, charge,&
 ! 2.3.3. ==> CUMUL DES DIFFERENTS TERMES
 !
         if (typcum .eq. 2) then
-            do 23002 , k = 0, loncm1
-            zr(j2nd+k) = zr(j2nd1+k) + zr(j2nd2+k)
-23002         continue
+            do k = 0, loncm1
+                zr(j2nd+k) = zr(j2nd1+k) + zr(j2nd2+k)
+            end do
         else if (typcum.eq.3) then
-            do 23003 , k = 0, loncm1
-            zr(j2nd+k) = zr(j2nd1+k) + zr(j2nd2+k) + zr(j2nd3+k)
-23003         continue
+            do k = 0, loncm1
+                zr(j2nd+k) = zr(j2nd1+k) + zr(j2nd2+k) + zr(j2nd3+k)
+            end do
         else if (typcum.eq.33) then
-            do 23033 , k = 0, loncm1
-            zr(j2nd+k) = zr(j2nd1+k) + zr(j2nd2+k) + zr(j2nd3+k)
-            zr(j2ni+k) = zr(j2ni1+k) + zr(j2ni2+k) + zr(j2ni3+k)
-23033         continue
+            do k = 0, loncm1
+                zr(j2nd+k) = zr(j2nd1+k) + zr(j2nd2+k) + zr(j2nd3+k)
+                zr(j2ni+k) = zr(j2ni1+k) + zr(j2ni2+k) + zr(j2ni3+k)
+            end do
         else
             ASSERT(.false.)
         endif
@@ -355,21 +353,25 @@ subroutine nxacmv(modele, mate, carele, fomult, charge,&
 !
             creas = 'M'
             vtemp2 = vtemp
-            call merxth(modele, charge, infoch, carele, mate,&
-                        time, vtemp2, merigi, compor, tmpchi,&
-                        tmpchf)
+!
+! -------- Tangent matrix (non-linear) - Volumic and surfacic terms
+!
+            call merxth(model    , lload_name, lload_info, cara_elem, mate     ,&
+                        time_curr, time      , vtemp2    , compor   , varc_curr,&
+                        dry_prev , dry_curr  , merigi)
 !
 ! 3.1.2. ==> (RE)CALCUL DES MATRICES DE MASSE ET DE RIGIDITE EN LINEAIRE
 !
         else
 !
             if (reasms) then
-                call memsth(modele, carele, mate, time, memass)
+                call memsth(model, cara_elem, mate, time, varc_curr,&
+                            memass)
             endif
 !
             if (reasrg) then
-                call mergth(modele, charge, infoch, carele, mate,&
-                            time, merigi)
+                call mergth(model    , lload_name, lload_info, cara_elem, mate,&
+                            time_curr, time      , varc_curr , merigi)
             endif
 !
         endif
@@ -405,12 +407,12 @@ subroutine nxacmv(modele, mate, carele, fomult, charge,&
             endif
         endif
 !
-        call asmatr(nbmat, tlimat, ' ', numedd, solveu,&
-                    infcha, 'ZERO', 'V', 1, matass)
+        call asmatr(nbmat, tlimat, ' ', nume_dof, solver,&
+                    lload_info, 'ZERO', 'V', 1, matass)
 !
 ! 3.3. ==> DECOMPOSITION OU CALCUL DE LA MATRICE DE PRECONDITIONNEMENT
 !
-        call preres(solveu, 'V', ierr, maprec, matass,&
+        call preres(solver, 'V', ierr, maprec, matass,&
                     ibid, -9999)
 !
     endif

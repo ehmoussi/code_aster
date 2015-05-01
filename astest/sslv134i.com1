@@ -21,7 +21,7 @@ POURSUITE(CODE='OUI')
 # -------------------------------------------------------------
 #           TEST DE NON REGRESSION DES CONTRAINTES
 #    SIEF_ELGA CALCULEES PAR MECA_STATIQUE ET STAT_NON_LINE
-#              SUR LES ELEMENTS X-FEM AXIS
+#              SUR LES ELEMENTS X-FEM AXIS (LINEAIRE)
 # -------------------------------------------------------------
 
 L_INST=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=_F(JUSQU_A=1.,NOMBRE=1))

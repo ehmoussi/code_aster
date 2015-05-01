@@ -15,44 +15,46 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 #include "asterf_types.h"
 !
 interface
-    subroutine nxnewt(modele, mate, carele, charge, infcha,&
-                      infoch, numedd, solveu, time, lonch,&
-                      matass, maprec, cnchci, vtemp, vtempm,&
-                      vtempp, vec2nd, mediri, conver, vhydr,&
-                      vhydrp, tmpchi, tmpchf, compor, cnvabt,&
-                      cnresi, parcri, parcrr, reasma, testr,&
+    subroutine nxnewt(model    , mate       , cara_elem  , list_load, nume_dof ,&
+                      solver   , tpsthe     , time       , lonch    , matass   ,&
+                      maprec   , cnchci     , varc_curr  , temp_prev, temp_iter,&
+                      vtempp   , vec2nd     , mediri     , conver   , hydr_prev,&
+                      hydr_curr, dry_prev   , dry_curr   , compor   , cnvabt   ,&
+                      cnresi   , ther_crit_i, ther_crit_r, reasma   , testr    ,&
                       testm)
-        character(len=24) :: modele
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=24) :: charge
-        character(len=19) :: infcha
-        character(len=24) :: infoch
-        character(len=24) :: numedd
-        character(len=19) :: solveu
-        character(len=24) :: time
+        character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: cara_elem
+        character(len=19), intent(in) :: list_load
+        character(len=24), intent(in) :: nume_dof
+        character(len=19), intent(in) :: solver
+        real(kind=8) :: tpsthe(6)
+        character(len=24), intent(in) :: time
+        character(len=19), intent(in) :: varc_curr
         integer :: lonch
         character(len=24) :: matass
         character(len=19) :: maprec
         character(len=24) :: cnchci
-        character(len=24) :: vtemp
-        character(len=24) :: vtempm
+        character(len=24) :: temp_prev
+        character(len=24) :: temp_iter
         character(len=24) :: vtempp
         character(len=24) :: vec2nd
         character(len=24) :: mediri
         aster_logical :: conver
-        character(len=24) :: vhydr
-        character(len=24) :: vhydrp
-        character(len=24) :: tmpchi
-        character(len=24) :: tmpchf
+        character(len=24) :: hydr_prev
+        character(len=24) :: hydr_curr
+        character(len=24) :: dry_prev
+        character(len=24) :: dry_curr
         character(len=24) :: compor
         character(len=24) :: cnvabt
         character(len=24) :: cnresi
-        integer :: parcri(3)
-        real(kind=8) :: parcrr(2)
+        integer :: ther_crit_i(*)
+        real(kind=8) :: ther_crit_r(*)
         aster_logical :: reasma
         real(kind=8) :: testr
         real(kind=8) :: testm

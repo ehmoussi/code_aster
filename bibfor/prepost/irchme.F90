@@ -1,7 +1,7 @@
 subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
                   nomsym, typech, numord, nbrcmp, nomcmp,&
                   nbnoec, linoec, nbmaec, limaec, lvarie,&
-                  sdcarm, codret)
+                  sdcarm, linopa, codret)
 !_______________________________________________________________________
 ! person_in_charge: nicolas.sellenet at edf.fr
 ! ======================================================================
@@ -66,6 +66,7 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
 #include "asterfort/infniv.h"
 #include "asterfort/irceme.h"
 #include "asterfort/ircnme.h"
+#include "asterfort/irmpav.h"
 #include "asterfort/irvari.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -80,7 +81,7 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
 !
     character(len=8) :: noresu, typech, sdcarm
     character(len=16) :: nomsym
-    character(len=19) :: chanom, ligrel
+    character(len=19) :: chanom, ligrel, linopa
     character(len=24) :: nocelk
     character(len=*) :: nomcmp(*), partie
 !
@@ -177,6 +178,10 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
                 endif
             endif
             numpt = numord
+            if ( linopa.ne.' ' ) then
+                call irmpav(noresu, ifichi, linopa, numpt, numord,&
+                            instan)
+            endif
 !
         else
 !

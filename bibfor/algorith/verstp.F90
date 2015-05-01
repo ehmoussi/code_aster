@@ -1,6 +1,25 @@
-subroutine verstp(modele, charge, infcha, carele, mate,&
-                  inst, compor, chti, chtip, chthy,&
-                  chthyp, chtsci, chtscf, veres)
+subroutine verstp(model    , lload_name, lload_info, mate      , time_curr,&
+                  time     , compor    , temp_prev , temp_iter , hydr_prev,&
+                  hydr_curr, dry_prev  , dry_curr  , varc_curr , vect_elem)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/calcul.h"
+#include "asterfort/corich.h"
+#include "asterfort/gcnco2.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/mecara.h"
+#include "asterfort/megeom.h"
+#include "asterfort/reajre.h"
+#include "asterfort/load_neut_prep.h"
+#include "asterfort/load_neut_comp.h"
+#include "asterfort/hydr_resi.h"
+#include "asterfort/inical.h"
+#include "asterfort/load_list_info.h"
+!
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -17,199 +36,103 @@ subroutine verstp(modele, charge, infcha, carele, mate,&
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-    implicit none
-#include "jeveux.h"
-#include "asterfort/calcul.h"
-#include "asterfort/corich.h"
-#include "asterfort/gcnco2.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/mecara.h"
-#include "asterfort/megeom.h"
-#include "asterfort/reajre.h"
-    character(len=24) :: modele, charge, infcha, carele, inst, chti, chtip
-    character(len=24) :: veres, mate, chthy, chthyp, chtsci, chtscf, compor
-! ----------------------------------------------------------------------
-! CALCUL DES VECTEURS ELEMENTAIRES RESIDU
 !
-! IN  MODELE  : NOM DU MODELE
-! IN  CHARGE  : LISTE DES CHARGES
-! IN  INFCHA  : INFORMATIONS SUR LES CHARGES
-! IN  CARELE  : CHAMP DE CARA_ELEM
-! IN  MATE    : CHAMP DE MATERIAU
-! IN  COMPOR  : CHAMP DE COMPORTEMENT (POUR TESTER L HYDRATATION)
-! IN  INST    : CARTE CONTENANT LA VALEUR DU TEMPS ET AUTRES PARAMETRES
-! IN  CHTI    : TEMPERATURE AU TEMPS PRECEDENT
-! IN  CHTIP   : I EME ITERE DU CHAMP DE TEMPERATURE
-! IN  CHTHY   : HYDRATATION AU TEMPS PRECEDENT
-! IN  CHTSCI  : CHAMP DE TEMPERAT. A T    (POUR LE CALCUL DE D-SECHAGE)
-! IN  CHTSCF  : CHAMP DE TEMPERAT. A T+DT (POUR LE CALCUL DE D-SECHAGE)
-! OUT CHTHYP  : I EME ITERE DU CHAMP D HYDRATATION
-! OUT VERES   : VECTEURS ELEMENTAIRES (RESIDU)
+    character(len=24), intent(in) :: model
+    character(len=24), intent(in) :: lload_name
+    character(len=24), intent(in) :: lload_info
+    real(kind=8), intent(in) :: time_curr
+    character(len=24), intent(in) :: time
+    character(len=24), intent(in) :: mate
+    character(len=24), intent(in) :: temp_prev
+    character(len=24), intent(in) :: temp_iter
+    character(len=24), intent(in) :: hydr_prev   
+    character(len=24), intent(in) :: hydr_curr
+    character(len=24), intent(in) :: dry_prev   
+    character(len=24), intent(in) :: dry_curr
+    character(len=24), intent(in) :: compor
+    character(len=19), intent(in) :: varc_curr    
+    character(len=24), intent(inout) :: vect_elem
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Thermic - Loads
+! 
+! Neumann loads elementary vectors (residuals)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  model            : name of the model
+! In  mate             : name of material characteristics (field)
+! In  lload_name       : name of object for list of loads name
+! In  lload_info       : name of object for list of loads info
+! In  time_curr        : current time
+! In  time             : time (<CARTE>)
+! In  temp_prev        : previous temperature
+! In  temp_iter        : temperature field at current Newton iteration
+! In  hydr_prev        : previous hydratation
+! In  hydr_curr        : current hydratation
+! In  dry_prev         : previous drying
+! In  dry_curr         : current drying
+! In  compor           : name of comportment definition (field)
+! In  varc_curr        : command variable for current time
+! IO  vect_elem        : name of vect_elem result
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: nb_in_maxi, nbout
+    parameter (nb_in_maxi = 5, nbout = 2)
+    character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
+    character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
+!
+    character(len=1) :: base, stop_calc
+    character(len=8) :: load_name
+    character(len=19) :: resu_elem
+    integer :: load_nume
+    aster_logical :: load_empty
+    integer :: i_load, nb_load, nb_in_prep
+    character(len=24), pointer :: v_load_name(:) => null()
+    integer, pointer :: v_load_info(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
 !
 !
+! - Initializations
 !
-    character(len=1) :: c1
-    character(len=8) :: nomcha, lpain(10), lpaout(2), newnom
-    character(len=16) :: option
-    character(len=24) :: ligrmo, lchin(10), lchout(2), ligrch
-    character(len=24) :: chgeom, chcara(18)
-    integer :: iret, jinf
-    integer :: icha, jchar, nchar
+    resu_elem   = '&&VERSTP.0000000'
+    stop_calc   = 'S'
+    base        = 'V'
 !
-!-----------------------------------------------------------------------
-    integer :: ibid
-!-----------------------------------------------------------------------
-    call jemarq()
-    newnom = '.0000000'
-    ligrmo = modele(1:8)//'.MODELE'
-    call jeexin(charge, iret)
-    if (iret .ne. 0) then
-        call jelira(charge, 'LONMAX', nchar)
-        call jeveuo(charge, 'L', jchar)
-        call jeveuo(infcha, 'L', jinf)
-    else
-        nchar = 0
-    endif
+! - Init fields
 !
-    call megeom(modele, chgeom)
-    call mecara(carele, chcara)
+    call inical(nb_in_maxi, lpain, lchin, nbout, lpaout,&
+                lchout)    
 !
-    lpaout(1) = 'PRESIDU'
-    lchout(1) = '&&VERSTP.???????'
-    lpain(1) = 'PGEOMER'
-    lchin(1) = chgeom
-    lpain(3) = 'PTEMPSR'
-    lchin(3) = inst
-    lpain(4) = 'PTEMPEI'
-    lchin(4) = chtip
+! - Loads
 !
-! --- TERME VOLUMIQUE PROVENANT DU COMPORTEMENT
+    call load_list_info(load_empty, nb_load   , v_load_name, v_load_info,&
+                        lload_name, lload_info)
 !
-    option = 'RESI_RIGI_MASS'
-    lpain(2) = 'PMATERC'
-    lchin(2) = mate
-    lpain(5) = 'PHYDRPM'
-    lchin(5) = chthy
-    lpain(6) = 'PCOMPOR'
-    lchin(6) = compor
-    lpain(7) = 'PTEMPER'
-    lchin(7) = chti
-    lpain(8) = 'PTMPCHI'
-    lchin(8) = chtsci
-    lpain(9) = 'PTMPCHF'
-    lchin(9) = chtscf
-    lpain(10) = 'PVARCPR'
-    lchin(10) = '&&NXACMV.CHVARC'
+! - Hydratation vector
 !
-    lpaout(2) = 'PHYDRPP'
-    lchout(2) = chthyp
-    call gcnco2(newnom)
-    lchout(1) (10:16) = newnom(2:8)
-    call corich('E', lchout(1), -1, ibid)
-    call calcul('S', option, ligrmo, 10, lchin,&
-                lpain, 2, lchout, lpaout, 'V',&
-                'OUI')
-    call reajre(veres, lchout(1), 'V')
+    call hydr_resi(model    , mate     , time     , compor    , temp_prev,&
+                   temp_iter, hydr_prev, hydr_curr, dry_prev  , dry_curr ,&
+                   varc_curr, vect_elem)
 !
-! --- TERME SURFACIQUE PROVENANT DES CONDITIONS AUX LIMITES
-! --- ET VOLUMIQUE PROVENANT D'UNE SOURCE NON LINEAIRE
+! - Preparing input fields
 !
-    if (nchar .gt. 0) then
-        do 10 icha = 1, nchar
+    call load_neut_prep(model, nb_in_maxi, nb_in_prep, lchin, lpain,&
+                        temp_iter_ = temp_iter)
 !
-            lpain(2) = 'PFLUXNL'
-            lchin(2) = zk24(jchar+icha-1) (1:8)//'.CHTH.FLUNL.DESC'
-            call jeexin(lchin(2), iret)
-            if (iret .ne. 0) then
-                option = 'RESI_THER_FLUXNL'
-                call gcnco2(newnom)
-                lchout(1) (10:16) = newnom(2:8)
-                call corich('E', lchout(1), -1, ibid)
-                call calcul('S', option, ligrmo, 4, lchin,&
-                            lpain, 1, lchout, lpaout, 'V',&
-                            'OUI')
-                call reajre(veres, lchout(1), 'V')
-            endif
+! - Computation
 !
-            lpain(2) = 'PSOURNL'
-            lchin(2) = zk24(jchar+icha-1) (1:8)//'.CHTH.SOUNL.DESC'
-            call jeexin(lchin(2), iret)
-            if (iret .ne. 0) then
-                option = 'RESI_THER_SOURNL'
-                call gcnco2(newnom)
-                lchout(1) (10:16) = newnom(2:8)
-                call corich('E', lchout(1), -1, ibid)
-                call calcul('S', option, ligrmo, 4, lchin,&
-                            lpain, 1, lchout, lpaout, 'V',&
-                            'OUI')
-                call reajre(veres, lchout(1), 'V')
-            endif
+    do i_load = 1, nb_load
+        load_name = v_load_name(i_load)(1:8)
+        load_nume = v_load_info(nb_load+i_load+1)
+        if (load_nume .gt. 0) then
+            call load_neut_comp('RESI'   , stop_calc, model     , time_curr , time ,&
+                                load_name, load_nume, nb_in_maxi, nb_in_prep, lpain,&
+                                lchin    , base     , resu_elem , vect_elem )
+        endif
+    end do
 !
-            lchin(2) = zk24(jchar+icha-1) (1:8)//'.CHTH.T_EXT.DESC'
-            call jeexin(lchin(2), iret)
-            if (iret .ne. 0) then
-                c1 = 'R'
-                if (zi(jinf+nchar+icha) .gt. 1) then
-                    c1 = 'F'
-                endif
-                option = 'RESI_THER_COEF_'//c1
-                lpain(2) = 'PCOEFH'//c1
-                lchin(2) = zk24(jchar+icha-1) (1:8)//'.CHTH.COEFH'
-                call gcnco2(newnom)
-                lchout(1) (10:16) = newnom(2:8)
-                call corich('E', lchout(1), -1, ibid)
-                call calcul('S', option, ligrmo, 4, lchin,&
-                            lpain, 1, lchout, lpaout, 'V',&
-                            'OUI')
-                call reajre(veres, lchout(1), 'V')
-            endif
-!
-            lchin(2) = zk24(jchar+icha-1) (1:8)//'.CHTH.RAYO .DESC'
-            call jeexin(lchin(2), iret)
-            if (iret .ne. 0) then
-                c1 = 'R'
-                if (zi(jinf+nchar+icha) .gt. 1) then
-                    c1 = 'F'
-                endif
-                option = 'RESI_THER_RAYO_'//c1
-                lpain(2) = 'PRAYON'//c1
-                lchin(2) = zk24(jchar+icha-1) (1:8)//'.CHTH.RAYO'
-                call gcnco2(newnom)
-                lchout(1) (10:16) = newnom(2:8)
-                call corich('E', lchout(1), -1, ibid)
-                call calcul('S', option, ligrmo, 4, lchin,&
-                            lpain, 1, lchout, lpaout, 'V',&
-                            'OUI')
-                call reajre(veres, lchout(1), 'V')
-            endif
-!
-            nomcha = zk24(jchar+icha-1) (1:8)
-            ligrch = nomcha//'.CHTH.LIGRE'
-            lchin(2) = nomcha//'.CHTH.HECHP.DESC'
-            call jeexin(lchin(2), iret)
-            if (iret .ne. 0) then
-                c1 = 'R'
-                if (zi(jinf+nchar+icha) .gt. 1) then
-                    c1 = 'F'
-                endif
-                option = 'RESI_THER_PARO_'//c1
-                lpain(2) = 'PHECHP'//c1
-                lchin(2) = nomcha//'.CHTH.HECHP'
-                call gcnco2(newnom)
-                lchout(1) (10:16) = newnom(2:8)
-                call corich('E', lchout(1), -1, ibid)
-                call calcul('S', option, ligrch, 4, lchin,&
-                            lpain, 1, lchout, lpaout, 'V',&
-                            'OUI')
-                call reajre(veres, lchout(1), 'V')
-            endif
-!
-10      continue
-    endif
-! FIN ------------------------------------------------------------------
-    call jedema()
 end subroutine

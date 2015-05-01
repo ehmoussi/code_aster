@@ -171,14 +171,6 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      soient orthogonales entre elles.
   """),
 
-    56 : _(u"""
-  -> Aucun noeud n'a été trouvé pour le calcul du résidu local.
-  -> Le calcul du résidu local n'est pas possible.
-  -> Risque & Conseil:
-     Veuillez vérifier que la fissure n'est pas à l'extérieur du
-     maillage après la propagation actuelle.
-  """),
-
     57 : _(u"""
   -> La définition de un ou plusieurs éléments du maillage utilisé pour
      la représentation des level-sets (PROPA_FISS) n'est pas correcte.
@@ -230,12 +222,6 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
   -> Le calcul du résidu local n'est pas possible.
   -> Risque & Conseil:
      Veuillez utiliser une valeur du RAYON plus grande.
-  """),
-
-    65 : _(u"""
-  -> Le nombre maximal d'itérations a été atteint.
-  -> Risque & Conseil:
-     Essayer d'utiliser un maillage plus raffiné, ou bien une grille auxiliaire.
   """),
 
     70 : _(u"""

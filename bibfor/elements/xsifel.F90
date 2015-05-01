@@ -92,6 +92,7 @@ subroutine xsifel(elrefp, ndim, coorse, igeom, jheavt,&
     integer :: ndimb, nno, nnos, npgbis, ddld, ddls
     integer :: ifiss, isigi, ncmp
     integer :: heavn(nnop, 5), ncompn, hea_se
+    integer :: iret1, iret2, iret3
     real(kind=8) :: g, k1, k2, k3, coefk, coeff3, valres(4), alpha, he(nfiss)
     real(kind=8) :: devres(4), e, nu, lambda, mu, ka, c1, c2, c3, xg(ndim)
     real(kind=8) :: fe(4), k3a
@@ -104,13 +105,14 @@ subroutine xsifel(elrefp, ndim, coorse, igeom, jheavt,&
     real(kind=8) :: dtdm(3, 3), tzero(3), dzero(3, 4), lsng, lstg, th
     real(kind=8) :: dudme(3, 4), dtdme(3, 4), du1dme(3, 4), du2dme(3, 4)
     real(kind=8) :: du3dme(3, 4),sigse(6*27), dfdx(27), dfdy(27), dfdz(27)
-    real(kind=8) :: u1l(3), u2l(3), u3l(3), u1(3), u2(3), u3(3), ur, r
+    real(kind=8) :: u1l(3), u2l(3), u3l(3), u1(3), u2(3), u3(3), r
     real(kind=8) :: depla(3), theta(3), tgudm(3), tpn(27), tref, tempg
     real(kind=8) :: ttrgu, ttrgv, dfdm(3, 4), cs, coef, rho, rac2
+    real(kind=8) :: dtx, dty, dtz
     integer :: icodre(4)
     character(len=16) :: nomres(4)
     character(len=8) :: elrese(6), fami(6)
-    aster_logical :: lcour, grdepl, axi
+    aster_logical :: lcour, grdepl, axi, l_temp_noeu
     integer :: irese, nnops, ddln, nnon, indenn, mxstac
     parameter      (mxstac=1000)
 !
@@ -202,16 +204,18 @@ subroutine xsifel(elrefp, ndim, coorse, igeom, jheavt,&
     endif
 !
 !   TEMPERATURE DE REF
-    call rcvarc(' ', 'TEMP', 'REF', 'RIGI', 1,&
+    call rcvarc(' ', 'TEMP', 'REF', 'XFEM', 1,&
                 1, tref, iret)
     if (iret .ne. 0) tref = 0.d0
 !
 !   TEMPERATURE AUX NOEUDS PARENT
+    l_temp_noeu = .false.
     do ino = 1, nnop
         call rcvarc(' ', 'TEMP', '+', 'NOEU', ino,&
                     1, tpn(ino), iret)
         if (iret .ne. 0) tpn(ino) = 0.d0
     end do
+    if (iret .eq. 0) l_temp_noeu = .true.
 !
 !   FONCTION HEAVYSIDE CSTE SUR LE SS-ÉLT ET PAR FISSURE
     do ifiss = 1, nfiss
@@ -334,21 +338,10 @@ subroutine xsifel(elrefp, ndim, coorse, igeom, jheavt,&
 100     continue
 !
 ! -     CALCUL DE LA DISTANCE A L'AXE (AXISYMETRIQUE)
-!       ET DU DEPL. RADIAL
         if (axi) then
             r = 0.d0
-            ur = 0.d0
             do 114 ino = 1, nnop
                 r = r + ff(ino)*zr(igeom-1+2*(ino-1)+1)
-                ur = ur + ff(ino)*zr(idepl-1+ddls*(ino-1)+1)
-                do 115 ig = 1, nfh
-                    ur = ur + ff(ino) *zr(idepl-1+ddls*(ino-1)+ndim* ig+1) *&
-                             xcalc_heav(heavn(ino,ig),hea_se,heavn(ino,5))
-115             continue
-                do 116 ig = 1, nfe
-                    ur = ur + ff(ino) *zr(idepl-1+ddls*(ino-1)+ndim*( nfh+ig)+1) *fe(ig)
-116             continue
-!
 114         continue
 !
             if (axi) then
@@ -463,8 +456,8 @@ subroutine xsifel(elrefp, ndim, coorse, igeom, jheavt,&
 !       CALCUL DU GRAD DE U AU POINT DE GAUSS
 !
         call reeref(elrefp, nnop, zr(igeom), xg, ndim, xe, ff, dfdi=dfdi)
-        call xcinem(axi, nnop, nnops, idepl, grdepl, ndim, he,&
-                    r, ur, nfiss, nfh, nfe, ddls, ddlm,&
+        call xcinem(axi, igeom, nnop, nnops, idepl, grdepl, ndim, he,&
+                    nfiss, nfh, nfe, ddls, ddlm,&
                     fe, dgdgl, ff, dfdi, f, eps, grad, heavn)
 !
 !       ON RECOPIE GRAD DANS DUDM (CAR PB DE DIMENSIONNEMENT SI 2D)
@@ -505,10 +498,32 @@ subroutine xsifel(elrefp, ndim, coorse, igeom, jheavt,&
 !
         do 400 i = 1, ndim
             tgudm(i)=0.d0
-            do 401 ino = 1, nnop
-                tgudm(i) = tgudm(i) + dfdi(ino,i) * tpn(ino)
-401         continue
+!           cas de la varc TEMP, "continue" et donnee au noeud. Calcul
+!           de ses derivees partielles
+            if (l_temp_noeu) then
+                do 401 ino = 1, nnop
+                    tgudm(i) = tgudm(i) + dfdi(ino,i) * tpn(ino)
+401             continue
+            endif
 400     continue
+!
+!       cas des varc DTX DTY DTZ, derivees partielles de la temperature
+!       "discontinue". Ces varc sont donnees aux pg xfem
+        call rcvarc(' ', 'DTX', '+', 'XFEM', ipg, 1, dtx, iret1)
+        if (iret1 .eq. 0) then
+!           economisons les appels a rcvarc... si DTX est absent, pas
+!           besoin de recuperer les autres composantes
+            ASSERT(.not.l_temp_noeu)
+            call rcvarc(' ', 'DTY', '+', 'XFEM', ipg, 1, dty, iret2)
+            ASSERT(iret2 .eq. 0)
+            tgudm(1) = dtx
+            tgudm(2) = dty
+            if (ndim .eq. 3) then
+                call rcvarc(' ', 'DTZ', '+', 'XFEM', ipg, 1, dtz, iret3)
+                ASSERT(iret3 .eq. 0)
+                tgudm(3) = dtz
+            endif
+        endif
 !
 !       ------------------------------------------------
 !       5) CALCUL DES CHAMPS AUXILIAIRES ET DE LEURS DERIVEES

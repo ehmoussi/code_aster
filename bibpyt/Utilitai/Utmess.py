@@ -461,15 +461,25 @@ Exception : %s
         self.add_to_buffer(dictmess)
         # occurrences
         res = self.get_info_alarm(only_ignored)
+        not_seen = set(self._ignored_alarm.keys())
         for idmess, nb, masq in res:
             mark = ' ' + '(*)' * masq
             dictmess = self.get_message(
                 'I', 'CATAMESS_90', valk=(mark, idmess), vali=nb)
             self.add_to_buffer(dictmess)
+            not_seen.discard(idmess)
         if not res:
             dictmess = self.get_message('I', 'CATAMESS_92')
             self.add_to_buffer(dictmess)
         self.print_buffer_content()
+        if not_seen:
+            # current step should be the JDC object in FIN()
+            jdc = CONTEXT.get_current_step()
+            code = 'A'
+            if getattr(jdc, 'fico', None):
+                code = 'F'
+            self.print_message(code, 'CATAMESS_87', valk=list(not_seen),
+                               exception=True)
 
     def update_counter(self, code, idmess):
         """Mise à jour des compteurs.
@@ -785,6 +795,7 @@ def __fake__():
     UTMESS('I', 'JEVEUX_45')      # émis depuis le C (iodr)
     UTMESS('I', 'GENERIC_1')      # dans des tests pour traiter les exceptions
     UTMESS('I', 'CATAMESS_1')     # pour supv002a
+    UTMESS('I', 'CATAMESS_2')     # pour vocab01a
     UTMESS('I', 'CATAMESS_55')    # pour u2mesg.f via UTPRIN
     UTMESS('I', 'CATAMESS_69')    # pour u2mesg.f via UTPRIN
     UTMESS('I', 'CATAMESS_70')    # pour u2mesg.f via UTPRIN
@@ -796,6 +807,7 @@ def __fake__():
     UTMESS('I', 'CATAMESS_6')
     UTMESS('I', 'CATAMESS_41')
     UTMESS('I', 'CATAMESS_57')
+    UTMESS('I', 'CATAMESS_87')
     UTMESS('I', 'CATAMESS_89')
     UTMESS('I', 'CATAMESS_90')
     UTMESS('I', 'CATAMESS_92')

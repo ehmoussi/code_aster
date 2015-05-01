@@ -20,7 +20,7 @@
 interface
     subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
                       liordr, lresu, nbnoec, linoec, nbmaec,&
-                      limaec, nomcmp, lvarie, carael)
+                      limaec, nomcmp, lvarie, carael, linopa)
         character(len=*) :: nomcon
         integer :: ifichi
         character(len=*) :: nocham
@@ -35,5 +35,6 @@ interface
         character(len=*) :: nomcmp
         aster_logical :: lvarie
         character(len=8) :: carael
+        character(len=19) :: linopa
     end subroutine iremed
 end interface

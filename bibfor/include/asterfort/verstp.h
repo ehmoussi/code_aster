@@ -16,22 +16,23 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine verstp(modele, charge, infcha, carele, mate,&
-                      inst, compor, chti, chtip, chthy,&
-                      chthyp, chtsci, chtscf, veres)
-        character(len=24) :: modele
-        character(len=24) :: charge
-        character(len=24) :: infcha
-        character(len=24) :: carele
-        character(len=24) :: mate
-        character(len=24) :: inst
-        character(len=24) :: compor
-        character(len=24) :: chti
-        character(len=24) :: chtip
-        character(len=24) :: chthy
-        character(len=24) :: chthyp
-        character(len=24) :: chtsci
-        character(len=24) :: chtscf
-        character(len=24) :: veres
+    subroutine verstp(model    , lload_name, lload_info, mate      , time_curr,&
+                      time     , compor    , temp_prev , temp_iter , hydr_prev,&
+                      hydr_curr, dry_prev  , dry_curr  , varc_curr , vect_elem)
+        character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: lload_name
+        character(len=24), intent(in) :: lload_info
+        real(kind=8), intent(in) :: time_curr
+        character(len=24), intent(in) :: time
+        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: temp_prev
+        character(len=24), intent(in) :: temp_iter
+        character(len=24), intent(in) :: hydr_prev   
+        character(len=24), intent(in) :: hydr_curr
+        character(len=24), intent(in) :: dry_prev   
+        character(len=24), intent(in) :: dry_curr
+        character(len=24), intent(in) :: compor
+        character(len=19), intent(in) :: varc_curr    
+        character(len=24), intent(inout) :: vect_elem
     end subroutine verstp
 end interface
