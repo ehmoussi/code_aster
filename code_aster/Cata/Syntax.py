@@ -476,8 +476,6 @@ class Formule(Command):
 # Les fonctions definies dans la paire d'accolade Ok ont été correctement traitées
 # Les fonctions definies dans la paire d'accolade NOOK sont à revoir
 # Ok {
-
-
 def OPER(**kwargs):
     return Operator(kwargs)
 
@@ -538,7 +536,6 @@ class PROC_ETAPE(Procedure):
 # } Ok
 
 # NOOK {
-
 def AsType( obj ):
     """Return the type of `obj`"""
     return type(obj)
@@ -546,23 +543,30 @@ def AsType( obj ):
 def CO():
     pass
 
-
 class assd(DS.ASSD):
     pass
-
 
 def NoRepeat():
     return
 
-
 def LongStr(a, b):
     pass
-
 
 def AndVal(*args):
     pass
 
+def OrVal(*args):
+    pass
 
 def OrdList(args):
+    pass
+
+def Together(args):
+    pass
+
+def Absent(args):
+    pass
+
+def Compulsory(*args):
     pass
 # } NOOK
