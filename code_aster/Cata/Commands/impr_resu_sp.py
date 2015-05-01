@@ -1,3 +1,9 @@
+# coding=utf-8
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2011  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -41,6 +47,3 @@ IMPR_RESU_SP=MACRO(nom="IMPR_RESU_SP",
     ),
     UNITE =SIMP(statut='o',typ='I',max=1,min=1,fr=tr("Unité du fichier d'archive.")),
 )
-
-
-
