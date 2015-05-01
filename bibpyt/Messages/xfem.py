@@ -129,6 +129,10 @@ cata_msg = {
      ou bien les supprimer du maillage.
 """),
 
+    14: _(u"""
+Le calcul de la norme L2 de la pression de contact sur une fissure XFEM n'est pas disponible. 
+"""),
+
     15: _(u"""
   -> Cette option n'a pas encore été programmée.
   -> Risque & Conseil:
@@ -205,6 +209,11 @@ cata_msg = {
 
     26: _(u"""
      Numéros des mailles de la zone fissure.
+"""),
+
+    27: _(u"""
+     L'utilisation de la grille auxiliaire avec la méthode SIMPLEXE n'est pas disponible.
+     Utiliser la méthode UPWIND ou effectuer le calcul sur le maillage physique.    
 """),
 
     29: _(u"""
@@ -403,8 +412,6 @@ Utilisez ELIM_ARETE='DUAL'.
      fond de la fissure (il ne faut pas utiliser ZONE_MAJ='TOUT' dans PROPA_FISS). Dans ce
      cas, si vous utilisez la méthode simplexe (METHODE='SIMPLEXE'), vous pouvez essayer
      d'utiliser un rayon de localisation plus élevé (opérande RAYON_TORE).
-     Si vous utilisez la méthode simplexe, vous pouvez essayer d'utiliser la méthode UPWIND
-     qui est plus robuste, stable et performante (METHODE='UPWIND').
 
      Dans tout le cas, il faut vérifier que l'angle de propagation de la fissure calculée
      par CALC_G a sens physique pour le problème à résoudre.
@@ -592,6 +599,23 @@ Utilisez ELIM_ARETE='DUAL'.
   -> Risque & Conseil:
      Veuillez utiliser un maillage linéaire.
 """),
+
+    86: _(u"""
+Le CHAM_GD utilisé par l'opération ASSE_DEPL de l'opérateur CREA_CHAMP doit être un champ nodal." 
+"""),
+
+    87: _(u"""
+Le CHAM_GD utilisé par l'opération ASSE_DEPL de l'opérateur CREA_CHAMP doit être de type DEPL_R." 
+"""),
+
+    88: _(u"""
+L'opération ASSE_DEPL de l'opérateur CREA_CHAMP ne doit pas être utilisée si le modèle le comporte pas d'éléments X-FEM." 
+"""),
+
+    89: _(u"""
+L'opération ASSE_DEPL de l'opérateur CREA_CHAMP ne prend pas en charge les éléments HM." 
+"""),
+
     93: _(u"""
      --> La loi cohésive CZM_LIN_MIX est utilisable uniquement avec un contact de type mortier
          dans le modèle %(k1)s. En revanche, les autres lois cohésives et de contact-frottement
@@ -609,5 +633,15 @@ Utilisez ELIM_ARETE='DUAL'.
      Si vous souhaitez imposer les valeurs de l'angle de déversement aux points 
      du fonds de fissure, veuillez indiquer CRITERE='ANGLE_IMPO_GAMMA' ou 'ANGLE_IMPO_BETA_GAMMA' et ajouter
      une colonne 'GAMMA' au tableau de SIF manuellement.
+"""),
+
+    96: _(u"""
+  -> Vous avez renseigné le mot-clé EVOL de AFFE_MATERIAU / AFFE_VARC avec un résultat thermique X-FEM.
+     Dans ce cas, vous ne pouvez définir qu'une seule occurrence du mot-clé facteur AFFE_VARC.
+"""),
+
+    97: _(u"""
+  -> Vous avez renseigné le mot-clé EVOL de AFFE_MATERIAU / AFFE_VARC avec un résultat thermique X-FEM.
+     Dans ce cas, le mot-clé MODELE de AFFE_MATERIAU devient obligatoire.
 """),
 }

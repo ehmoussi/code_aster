@@ -27,6 +27,13 @@ Erreur lors de la vérification des messages.
 %(k2)s
 """),
 
+    2 : _(u"""
+Erreur lors de la vérification du catalogue de commandes.
+%(k1)s
+
+%(k2)s
+"""),
+
     6: _(u"""
 Fin à la suite de message(s) <E>
 """),
@@ -56,6 +63,13 @@ Appels récursifs de messages d'erreur ou d'alarme.
 
     70: _(u"""
   Validation du concept '%(k1)s'.
+"""),
+
+    87: _(u"""
+  On ne devrait pas ignorer des alarmes si elles ne sont pas émises !
+  Merci de retirer ces alarmes de DEBUT ou POURSUITE.
+
+  Alarme(s) : '%(k1)s'
 """),
 
     # on ne veut pas émettre d'alarme mais que le message se voit, donc on

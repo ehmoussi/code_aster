@@ -88,6 +88,8 @@ def build_c_source(self, env, excl):
 def build_libaster(self, shenv):
     get_srcs = self.path.get_src().ant_glob
     uses = shenv['all_dependencies']
+    if shenv.BUILD_MFRONT:
+        uses.append('astermfront')
     # {bibfor, bibc, bibcxx}/*.o
     self(
         features = 'cxx cxxshlib',
@@ -97,12 +99,11 @@ def build_libaster(self, shenv):
          defines = '_MAIN_=_unused_main_', #'_WITHOUT_PYMOD_',
              env = shenv.derive(),
              use = ['PYEMBED', 'NUMPY', 'asterbibfor', 'asterbibc',
-                    'asterbibcxx', 'astermfront', 'CODE_ASTER_CORE'] + uses + ['CXX'],
+                    'asterbibcxx', 'CODE_ASTER_CORE'] + uses + ['CXX'],
     install_path = shenv.ASTERLIBDIR,
     )
 
 
-###############################################################################
 @Configure.conf
 def check_cflags(self):
     self.start_msg('Getting C compiler flags')

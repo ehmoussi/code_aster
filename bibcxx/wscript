@@ -26,11 +26,6 @@ def build(self):
         paths = get_srcs('mfront', src=True, dir=True)
         paths = [d.abspath() for d in paths]
         env.append_value('INCLUDES', paths)
-        # envmfr = env.derive()
-        # for flag in ('-fvisibility=hidden', '-fvisibility-inlines-hidden',
-        #              '-ftree-vectorize'):
-        #     envmfr.append_value('CFLAGS_MFRONT_ONLY', flag)
-        #     envmfr.append_value('CXXFLAGS_MFRONT_ONLY', flag)
         self(
             features = 'cxx',
                 name = 'astermfront',

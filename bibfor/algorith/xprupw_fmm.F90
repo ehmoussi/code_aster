@@ -2,7 +2,8 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
                   noesom, lcmin, cnsln, grln, cnslt,&
                   grlt, isozro, nodtor,eletor, liggrd,&
                   vpoint , cnsbl ,deltat ,cnsbet ,listp, nbrinit)
-
+!
+! aslint: disable=W1504
    implicit none
 !
 #include "jeveux.h"
@@ -106,11 +107,11 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
 !     ------------------------------------------------------------------
 
     character(len=19) :: cnsls, grls
-    character(len=19) :: copiels, vtemp, calculs, k19bid
+    character(len=19) :: copiels, vtemp, calculs
     character(len=2) :: levset
 
 !     MESH INFORMATION RETREIVING AND GENERAL PURPOSE VARIABLES
-    integer :: nbno, nbnoma, jcoor, jcnsls, jgrls
+    integer :: nbno, nbnoma, jcnsls, jgrls
     integer :: node , ndim , nodneg ,nodpos
     integer :: jbl, jbeta, jlistp, jvp, jltno
     integer :: ifm, niv, jnodto
@@ -126,7 +127,7 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
     character(len=19) :: cnols, celgls, chams
     character(len=24) :: lchin(4), lchout(2)
     integer :: ibid
-
+    real(kind=8), pointer       :: vale(:) => null()
 !    GENERAL VARIABLES
     real(kind=8) :: newlsn, newlst
 
@@ -177,9 +178,7 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
 !     RETRIEVE THE NUMBER OF NODES AND ELEMENTS IN THE MESH
     call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbnoma)
 !     RETRIEVE THE COORDINATES OF THE NODES
-!                12345678901234567890
-    call jeveuo(noma//'.COORDO    .VALE', 'L', jcoor)
-
+    call jeveuo(noma//'.COORDO    .VALE', 'L', vr=vale)
 !     RETRIEVE THE NUMBER OF THE NODES THAT MUST TO BE USED IN THE
 !     CALCULUS (SAME ORDER THAN THE ONE USED IN THE CONNECTION TABLE)
     call jeveuo(nodtor, 'L', jnodto)
@@ -194,10 +193,8 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
 
     call wkvect(isozro, 'V V L', nbnoma, jzero)
 
-    k19bid=' '
     call xprls0(fispre, noma, noesom, lcmin, cnsln,&
-                cnslt, isozro, levset, nodtor, eletor,&
-                k19bid, k19bid)
+                cnslt, isozro, levset, nodtor, eletor)
 
 !----------------------------------------------------------------------
 !                     BOUCLE LS INFERIEUR
@@ -236,8 +233,8 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
                 zr(jcalculs-1+node) = zr(jcopiels-1+node)
             else
                 !calcul geometrique des noeuds autour de l'iso zéro pour lst
-                call xcalculgeo(ndim, jcoor, jvp, jbl, deltat, jnodto, nbno, &
-                                jbeta, jlistp, node, newlst, newlsn)
+                call xcalculgeo(ndim, vale, jvp, jbl, deltat, jbeta, &
+                                jlistp, node, newlst, newlsn)
                 zr(jcalculs-1+node) = -newlst
                 zl(jvtemp-1+node) = .true.
             endif
@@ -267,18 +264,18 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
             if (zi(jvcn-1+nodneg) .gt. 0) then
                 if ( zl(jvtemp-1+zi(jvcn-1+nodneg)) .and. .not. zl(jzero-1+zi(jvcn-1+nodneg)) ) then
                     !!calcul des noeuds voisins (i-1,j-i,k-1) !!
-                    call xcalculfmm(nbno, jvtemp, jcalculs, jcopiels, jnodto, jzero, &
+                    call xcalculfmm(nbno, jcalculs, jcopiels, jnodto, &
                                     ndim, nodneg, jltno, jvcn, jgrlr, jbl, jbeta, &
-                                    jlistp , jvp, jcoor, deltat, levset, 'inf')
+                                    jlistp , jvp, vale, deltat, levset, 'inf')
                 endif
             endif
 
             if (zi(jvcn-1+nodpos) .gt. 0) then
                 if ( zl(jvtemp-1+zi(jvcn-1+nodpos)) .and. .not. zl(jzero-1+zi(jvcn-1+nodpos)) ) then
                     !!calcul des noeuds voisins (i+1,j+i,k+1) !!
-                    call xcalculfmm(nbno, jvtemp, jcalculs, jcopiels, jnodto, jzero, &
+                    call xcalculfmm(nbno, jcalculs, jcopiels, jnodto, &
                                     ndim, nodpos, jltno, jvcn, jgrlr, jbl, jbeta, &
-                                    jlistp , jvp, jcoor, deltat, levset, 'inf')
+                                    jlistp , jvp, vale, deltat, levset, 'inf')
                 endif
             endif
          end do
@@ -319,8 +316,8 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
                     zl(jvtemp-1+node) = .true.
                     zr(jcalculs-1+node) = zr(jcopiels-1+node)
                 else
-                    call xcalculgeo(ndim, jcoor, jvp, jbl, deltat, jnodto, nbno, &
-                                    jbeta, jlistp, node, newlst, newlsn)
+                    call xcalculgeo(ndim, vale, jvp, jbl, deltat, jbeta, &
+                                    jlistp, node, newlst, newlsn)
                     zr(jcalculs-1+node) = newlst
                     zl(jvtemp-1+node) = .true.
                 endif
@@ -348,18 +345,18 @@ subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr,&
             if (zi(jvcn-1+nodneg) .gt. 0) then
                 if ( zl(jvtemp-1+zi(jvcn-1+nodneg)) .and. .not. zl(jzero-1+zi(jvcn-1+nodneg)) ) then
                     !!calcul des noeuds voisins (i-1,j-i,k-1) !!
-                    call xcalculfmm(nbno, jvtemp, jcalculs, jcopiels, jnodto, jzero, &
+                    call xcalculfmm(nbno, jcalculs, jcopiels, jnodto, &
                                     ndim, nodneg, jltno, jvcn, jgrlr, jbl, jbeta, &
-                                    jlistp , jvp, jcoor, deltat, levset, 'sup')
+                                    jlistp , jvp, vale, deltat, levset, 'sup')
                 endif
             endif
 
             if (zi(jvcn-1+nodpos) .gt. 0) then
                 if ( zl(jvtemp-1+zi(jvcn-1+nodpos)) .and. .not. zl(jzero-1+zi(jvcn-1+nodpos)) ) then
                     !!calcul des noeuds voisins (i+1,j+i,k+1) !!
-                    call xcalculfmm(nbno, jvtemp, jcalculs, jcopiels, jnodto, jzero, &
+                    call xcalculfmm(nbno, jcalculs, jcopiels, jnodto, &
                                     ndim, nodpos, jltno, jvcn, jgrlr, jbl, jbeta, &
-                                    jlistp , jvp, jcoor, deltat, levset, 'sup')
+                                    jlistp , jvp, vale, deltat, levset, 'sup')
                 endif
             endif
         end do

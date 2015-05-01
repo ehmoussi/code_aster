@@ -16,9 +16,10 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine celces(celz, basez, cesz)
+    subroutine celces(celz, basez, cesz, copy_nan)
         character(len=*) :: celz
         character(len=*) :: basez
         character(len=*) :: cesz
+        character(len=*), optional, intent(in) :: copy_nan
     end subroutine celces
 end interface

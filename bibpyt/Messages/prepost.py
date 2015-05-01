@@ -71,6 +71,14 @@ Attention :
  phénomène non valide
 """),
 
+    11 : _(u"""
+ la macro-commande POST_ERREUR prend en charge seulement le phénomène MECANIQUE.
+"""),
+
+    12 : _(u"""
+ une et une seule fonction doit être associée à chaque GROUP_MA, pour la composante %(k1)s.
+"""),
+
     13 : _(u"""
  Les valeurs non existantes du champ %(k1)s lues sur le maillage donné
  sont considérées nulles.
@@ -288,6 +296,14 @@ Attention :
 
     90 : _(u"""
  On ne sait pas imprimer le champ  %(k1)s  au format  %(k2)s
+"""),
+
+    91 : _(u"""
+ On ne sait pas imprimer au format 'MED' les cartes de type %(k1)s
+"""),
+
+    92 : _(u"""
+ On ne sait pas imprimer au format 'RESULTAT' les champs de type "carte".
 """),
 
     97 : _(u"""

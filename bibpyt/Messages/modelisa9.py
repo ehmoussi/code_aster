@@ -51,7 +51,17 @@ Erreur utilisateur dans la commande CREA_CHAMP / EXTR / TABLE :
    éliminer les colonnes RESULTAT, NUME_ORDRE, ....
 """),
 
+    3 : _(u"""
+Alarme de programmation :
+   Plusieurs matériaux ont été affectés sur la maille %(k1)s.
+   Le programme cherche un paramètre matériel (%(k2)s) sans préciser le matériau.
+   On utilise le premier matériau de la liste affectée sur la maille.
 
+Risques et conseils :
+   Le comportement du code est dangereux car les résultats dépendent de l'ordre  
+   des matériaux affectés dans la commande AFFE_MATERIAU.
+   Il faut sans doute émettre une demande de correction du code.
+"""),
 
 
 
@@ -234,13 +244,8 @@ Conseil :
  l'utilisation de 'PREF_NUME' est recommandée.
 """),
 
-    55 : _(u"""
- comportement : %(k1)s non trouve
-"""),
 
-    56 : _(u"""
- pour la maille  %(k1)s
-"""),
+
 
     57 : _(u"""
 Erreur d'utilisation pour la commande CREA_MAILLAGE / CREA_GROUP_MA :

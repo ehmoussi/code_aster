@@ -1,6 +1,6 @@
 subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
                   liordr, lresu, nbnoec, linoec, nbmaec,&
-                  limaec, nomcmp, lvarie, carael)
+                  limaec, nomcmp, lvarie, carael, linopa)
     implicit none
 !
 #include "asterf_types.h"
@@ -12,6 +12,7 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 #include "asterfort/dismoi.h"
 #include "asterfort/exisd.h"
 #include "asterfort/irchme.h"
+#include "asterfort/irmpar.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -30,6 +31,7 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 #include "asterfort/as_allocate.h"
 !
     character(len=8) :: carael
+    character(len=19) :: linopa
     character(len=*) :: nomcon, novcmp, nocham, liordr, nomcmp, partie
     integer :: ifichi, nbnoec, linoec(*), nbmaec, limaec(*)
     aster_logical :: lresu, lvarie
@@ -67,10 +69,11 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 ! IN  LIMAEC : I   : NUMEROS DES MAILLES A IMPRIMER
 ! IN  NOMCMP : K*  : NOMS DES COMPOSANTES A IMPRIMER
 ! IN  CARAEL : K*  : NOM DU CARA_ELEM
+! IN  NOPARA : K16 : NOM D'UN PARAMATRE A AJOUTER
 !     ------------------------------------------------------------------
 !
 !     ------------------------------------------------------------------
-    character(len=6) :: chnumo
+    character(len=6) :: chnumo, tsca
     character(len=8) :: typech, nomgd, saux08, noresu, sdcarm, carel2, valk2(2)
     character(len=16) :: nosy16
     character(len=19) :: cham19, cesnsp, cescoq, cesfib, cesori, cestuy
@@ -158,6 +161,10 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
         endif
     endif
 !
+    if ( linopa.ne.' ' ) then
+        call irmpar(nomcon, ifichi, linopa)
+    endif
+!
 !     --- BOUCLE SUR LE NOMBRE DE CHAMPS A IMPRIMER
 !
     do isy = 1, nbcham
@@ -228,8 +235,13 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 !
 !         --- NOM DE LA GRANDEUR ASSOCIEE AU CHAMP CHAM19
             call dismoi('NOM_GD', cham19, 'CHAMP', repk=nomgd)
-            if ((typech(1:4).eq. 'CART'.and.nomgd(6:7).ne.'R') .or. nomgd .eq. 'COMPOR') &
-            goto 999
+            call dismoi('TYPE_SCA', nomgd, 'GRANDEUR', repk=tsca)
+
+            if ((typech(1:4).eq. 'CART'.and. tsca.ne.'R')) then
+                valk(1)=tsca
+                call utmess('A+', 'PREPOST_91', nk=1, valk=valk)
+                goto 999
+             endif
 !
             if (nbrcmp .ne. 0) then
                 if ((nomgd.eq.'VARI_R') .and. (typech(1:2).eq.'EL')) then
@@ -271,7 +283,7 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
             call irchme(ifichi, cham19, partie, nochmd, noresu,&
                         nosy16, typech, numord, nbrcmp, zk8(jnocmp),&
                         nbnoec, linoec, nbmaec, limaec, lvarie,&
-                        sdcarm, codret)
+                        sdcarm, linopa, codret)
 !
 999         continue
 !
