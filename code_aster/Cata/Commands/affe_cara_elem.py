@@ -65,8 +65,14 @@ def IsDefinitionOK(cond, message , vmess=None):
         raise AsException( mess )
 
 
-def affe_cara_elem_prod(self,POUTRE,BARRE,COQUE,CABLE,DISCRET,DISCRET_2D,GRILLE,**args):
-    #
+def affe_cara_elem_prod(self, **args):
+    POUTRE = args.get('POUTRE')
+    BARRE = args.get('BARRE')
+    COQUE = args.get('COQUE')
+    CABLE = args.get('CABLE')
+    DISCRET = args.get('DISCRET')
+    DISCRET_2D = args.get('DISCRET_2D')
+    GRILLE = args.get('GRILLE')
     mess0 =tr("Concept : %(k1)s\nOccurence numéro %(i1)d de %(k2)s, les cardinaux de CARA et VALE sont différents.")
     # - - - - - - - - - - - - - - -
     if POUTRE != None:
