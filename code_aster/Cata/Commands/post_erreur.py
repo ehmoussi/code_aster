@@ -1,3 +1,9 @@
+# coding=utf-8
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2011  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -19,10 +25,10 @@
 POST_ERREUR=MACRO(nom="POST_ERREUR",
                   op=OPS('Macro.post_erreur_ops.post_erreur_ops'),
                   sd_prod=table_sdaster,
-                  reentrant='f',                    
-                  OPTION       = SIMP(statut='o',typ='TXM',into=("DEPL_RELA","ENER_RELA","LAGR_RELA") ),                     
+                  reentrant='f',
+                  OPTION       = SIMP(statut='o',typ='TXM',into=("DEPL_RELA","ENER_RELA","LAGR_RELA") ),
                   MODELE       = SIMP(statut='o',typ=modele_sdaster),
-                  GROUP_MA     = SIMP(statut='o',typ=grma,max='**'),               
+                  GROUP_MA     = SIMP(statut='o',typ=grma,max='**'),
                   b_depl =BLOC(condition = "OPTION == 'DEPL_RELA' ",
                                fr="Paramètres pour l'erreur en deplacement en norme l2",
                                CHAM_GD      = SIMP(statut='o',typ=cham_no_sdaster),
