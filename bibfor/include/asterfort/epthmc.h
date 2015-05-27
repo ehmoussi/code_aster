@@ -16,20 +16,20 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine epthmc(fami, nno, ndim, nbsig, npg,&
-                      ni, xyz, repere, instan, mater,&
-                      option, epsith)
-        character(len=*) :: fami
-        integer :: nno
-        integer :: ndim
-        integer :: nbsig
-        integer :: npg
-        real(kind=8) :: ni(1)
-        real(kind=8) :: xyz(*)
-        real(kind=8) :: repere(7)
-        real(kind=8) :: instan
-        integer :: mater
-        character(len=16) :: option
-        real(kind=8) :: epsith(1)
+    subroutine epthmc(fami      , nno      , ndim  , nbsig, npg    ,&
+                      shape_func, xyz      , repere, time , j_mater,&
+                      option    , epsi_varc)
+        character(len=*), intent(in) :: fami
+        integer, intent(in) :: nno
+        integer, intent(in) :: ndim
+        integer, intent(in) :: nbsig
+        integer, intent(in) :: npg
+        real(kind=8), intent(in) :: shape_func(1)
+        real(kind=8), intent(in) :: xyz(*)
+        real(kind=8), intent(in) :: repere(7)
+        real(kind=8), intent(in) :: time
+        integer, intent(in) :: j_mater
+        character(len=16), intent(in) :: option
+        real(kind=8), intent(out) :: epsi_varc(1)
     end subroutine epthmc
 end interface

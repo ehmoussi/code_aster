@@ -1,4 +1,4 @@
-subroutine pmfinfo(nbfibr,nbgrfi,tygrfi,nbcarm,nug)
+subroutine pmfinfo(nbfibr,nbgrfi,tygrfi,nbcarm,nug,jacf,nbassfi)
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -25,22 +25,27 @@ subroutine pmfinfo(nbfibr,nbgrfi,tygrfi,nbcarm,nug)
 ! --------------------------------------------------------------------------------------------------
 !
 !   OUT
-!       nbfibr  : nombre total de fibre
-!       nbgrfi  : nombre de groupe de fibres
-!       tygrfi  : type des groupes de fibres
-!       nbcarm  : nombre de composantes dans la carte
-!       nug     : numéro des groupes de fibres nug(1:nbgrfi)
+!       nbfibr      : nombre total de fibre
+!       nbgrfi      : nombre de groupe de fibres
+!       tygrfi      : type des groupes de fibres
+!       nbcarm      : nombre de composantes dans la carte
+!       nug         : numéro des groupes de fibres nug(1:nbgrfi)
+!       jacf        : pointeur sur les caractéristiques de fibres
+!       nbassfi     : nombre d'assemblage de fibre
 ! --------------------------------------------------------------------------------------------------
 !
     implicit none
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/jevech.h"
+#include "asterfort/utmess.h"
 !
     integer, intent(out) :: nbfibr, nbgrfi, tygrfi, nbcarm, nug(*)
+    integer, intent(out),optional :: jacf, nbassfi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jnbspi
+    integer :: jnbspi, ii, numgr, jacf_loc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,4 +56,30 @@ subroutine pmfinfo(nbfibr,nbgrfi,tygrfi,nbcarm,nug)
     nbcarm = zi(jnbspi+3)
     nug(1:nbgrfi) = zi(jnbspi+3+1:jnbspi+3+nbgrfi)
 !
+    if ( tygrfi .eq. 1 ) then
+        if ( present(jacf) ) then
+            call jevech('PFIBRES', 'L', jacf)
+        endif
+        if ( present(nbassfi) ) then
+            nbassfi = 1
+        endif
+    else if ( tygrfi .eq. 2 ) then
+        if ( present(jacf) ) then
+            call jevech('PFIBRES', 'L', jacf_loc)
+            jacf = jacf_loc
+        endif
+        if ( present(nbassfi) ) then
+            if ( absent(jacf) ) then
+                call jevech('PFIBRES', 'L', jacf_loc)
+            endif
+            nbassfi = 0
+            do ii = 1 , nbfibr
+                numgr = nint( zr(jacf_loc - 1 + ii*nbcarm) )
+                nbassfi = max( nbassfi , numgr )
+            enddo
+            ASSERT( nbassfi .ne. 0 )
+        endif
+    else
+        call utmess('F', 'ELEMENTS2_40', si=tygrfi)
+    endif
 end subroutine

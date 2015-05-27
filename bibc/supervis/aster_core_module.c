@@ -701,9 +701,10 @@ static PyObject* aster_mpi_warn(self, args)
 PyObject *self; /* Not used */
 PyObject *args;
 {
+    INTEGER iexc=1;
     /* call ASMPI_WARN */
     try {
-        CALL_ASMPI_WARN();
+        CALL_ASMPI_WARN(&iexc);
     }
     exceptAll {
         raiseException();

@@ -43,9 +43,10 @@ from Cata.cata import _F, MACR_ELEM_DYNA, IMPR_MACR_ELEM
 
 from Utilitai.Utmess import UTMESS
 from Utilitai.System import ExecCommand
-from Utilitai.UniteAster import UniteAster
 from Utilitai.utils import set_debug, _print, _printDBG
 from Utilitai.utils import encode_str, decode_str, send_file
+
+from Miss.miss_utils import copie_fichier
 from Miss.miss_fichier_sol import fichier_sol
 from Miss.miss_fichier_option import fichier_option
 from Miss.miss_resu_aster import ResuAsterReader
@@ -206,8 +207,7 @@ class CalculMiss(object):
     def cree_resultat_aster(self):
         """Produit le(s) fichier(s) issu(s) d'Aster."""
         self._dbg_trace("Start")
-        UL = UniteAster()
-        ulaster = UL.Libre(action='ASSOCIER')
+        ulaster = self.param.UL.Libre(action='ASSOCIER')
         mael = self.param['MACR_ELEM_DYNA']
         if mael is None:
             opts = {}
@@ -235,7 +235,7 @@ class CalculMiss(object):
                        SOUS_TITRE='PRODUIT PAR CALC_MISS',
                        UNITE=ulaster,
                        **other_groups)
-        UL.EtatInit()
+        self.param.UL.EtatInit(ulaster)
         copie_fichier(self.param.UL.Nom(ulaster), self._fichier_tmp("aster"))
         self.data = self.resu_aster_reader.read(self._fichier_tmp("aster"))
         self._dbg_trace("Stop")
@@ -310,9 +310,10 @@ class CalculMiss(object):
         return osp.join('./', osp.basename(self._fichier_tmp(ext)))
 
     def _fichier_aster(self, unite):
-        """Nom du fichier d'unité logique unite dans le répertoire d'exécution de Code_Aster.
-        """
-        return osp.join(self.param['_INIDIR'], "fort.%d" % unite)
+        """Nom du fichier d'unité logique unite dans le répertoire d'exécution
+        de Code_Aster"""
+        filename = osp.join(self.param['_INIDIR'], self.param.UL.Nom(unite))
+        return filename
 
     def _dbg_trace(self, on_off):
         if not self.debug:
@@ -514,13 +515,3 @@ def get_number_PC(parent, macr_elem, lgrpc):
     lgrpma = mail.LIST_GROUP_MA()
     result = sum([nbel for name, nbel, dim in lgrpma if name in lgrpc])
     return result
-
-
-def copie_fichier(src, dst):
-    """Copie d'un fichier.
-    """
-    if src and dst:
-        try:
-            shutil.copyfile(src, dst)
-        except:
-            raise aster.error('MISS0_6', valk=(src, dst))

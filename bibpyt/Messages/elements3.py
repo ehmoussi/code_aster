@@ -55,6 +55,13 @@ cata_msg = {
  Les champs de température (TGU et TGV) sont différents
 """),
 
+    13 : _(u"""
+  Les composantes SIXZ et SIYZ du champs de contraintes sont nulles pour les
+  éléments DKT et TUYAU. Le calcul des composantes EPXZ et EPYZ du champs de déformations
+  anélastiques donnerait des valeurs fausses. Ces valeurs sont donc mises
+  à zéro et ne doivent pas être prises en compte.
+"""),
+
     16 : _(u"""
  Comportement: %(k1)s non implanté
 """),
@@ -167,10 +174,6 @@ cata_msg = {
   le coefficient de poisson est non constant. la programmation actuelle n en tient pas compte.
 """),
 
-    60 : _(u"""
- Noeuds confondus pour un élément de poutre
-"""),
-
     61 : _(u"""
  loi  %(k1)s  indisponible pour les POU_D_E/d_t
 """),
@@ -192,24 +195,9 @@ cata_msg = {
  pour l'option "RICE_TRACEY", la relation " %(k1)s " n'est pas admise
 """),
 
-    75 : _(u"""
- le matériau %(k1)s  n'est pas autorisé pour calculer les déformations plastiques :
- seuls les matériaux isotropes sont traités en plasticité
-"""),
-
     76 : _(u"""
- couplage fluage/fissuration :
- la loi BETON_DOUBLE_DP ne peut être couplée qu'avec une loi de fluage de GRANGER
-"""),
-
-    77 : _(u"""
-  -> Attention vous êtes en contraintes planes, et vous utilisez la loi
-     de comportement %(k1)s. La composante du tenseur des déformations
-     plastiques EPZZ est calculée en supposant l'incompréhensibilité des
-     déformations plastiques : EPZZ = -(EPXX + EPYY).
-  -> Risque & Conseil :
-     Vérifiez que cette expression est valide avec votre loi de comportement.
-
+Couplage fluage/fissuration :
+La loi BETON_DOUBLE_DP ne peut être couplée qu'avec une loi de fluage de GRANGER
 """),
 
     80 : _(u"""

@@ -33,7 +33,6 @@ def C_NOM_GRANDEUR() : return  ( #COMMUN#
 "CADISK",
 "CADISM",
 "CAFI_R",
-"CAGEBA",
 "CAGEPO",
 "CAGNBA",
 "CAGNPO",

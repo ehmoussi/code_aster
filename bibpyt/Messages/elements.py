@@ -272,6 +272,10 @@ Conseil :
  impossibilité, la surface de l'élément est nulle.
 """),
 
+    49 : _(u"""
+ Le comportement matériau %(k1)s n'est pas traité pour l'option %(k2)s.
+"""),
+
     50 : _(u"""
  comportement élastique inexistant
 """),
@@ -290,15 +294,15 @@ Erreur utilisateur :
  ELREFA inconnu:  %(k1)s
 """),
 
-    58 : _(u"""
- la nature du matériau  %(k1)s  nécessite la définition du coefficient  B_ENDOGE dans DEFI_MATERIAU.
-"""),
+
 
     62 : _(u"""
  GROUP_MA :  %(k1)s  inconnu dans le maillage
 """),
 
-
+    63 : _(u"""
+ Le groupe de mailles %(k1)s n'existe pas.
+"""),
 
 
 

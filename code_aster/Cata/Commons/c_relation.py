@@ -146,7 +146,6 @@ def C_RELATION( COMMAND ):
                                         "LEMAITRE_IRRA",
                                         "LEMA_SEUIL",
                                         "LETK",
-                                        "LMARC_IRRA",
                                         "MAZARS",
                                         "MAZARS_GC",
                                         "META_LEMA_ANI",
