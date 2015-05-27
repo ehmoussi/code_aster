@@ -57,6 +57,7 @@ subroutine fin999()
 !
     call chkmsg(1, ichk)
 !
-    call lcdiscard(" ")
+! TODO
+!   call lcdiscard(" ")
 !
 end subroutine
