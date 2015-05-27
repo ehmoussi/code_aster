@@ -1,4 +1,4 @@
-subroutine xfem_precond(action, matass, base, filtrage)
+subroutine xfem_precond(action, matass, base)
 !-----------------------------------------------------------------------
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -38,7 +38,6 @@ subroutine xfem_precond(action, matass, base, filtrage)
     character(len=*) :: matass
     character(len=1),optional :: base
     character(len=*) :: action
-    aster_logical,optional :: filtrage
 !
 !-----------------------------------------------------------------------
 !
@@ -46,21 +45,14 @@ subroutine xfem_precond(action, matass, base, filtrage)
 !
     call jemarq()
 !
-    ASSERT((action .eq. 'PRE_COND').or.(action .eq. 'PRE_COND_DPB').or.(action .eq. 'FIN'))
+    ASSERT((action .eq. 'PRE_COND').or.(action .eq. 'FIN'))
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (action .eq. 'PRE_COND') then 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-       ASSERT(present(base) .and. present(filtrage))
+       ASSERT(present(base))
 !    PRE_CONDITIONNEMENT DE LA MATRICE
-       call xfem_pc(matass, base, filtrage,'D')
-!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    elseif (action .eq. 'PRE_COND_DPB') then 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-       ASSERT(present(base) .and. present(filtrage))
-!    PRE_CONDITIONNEMENT DE LA MATRICE
-       call xfem_pc(matass, base, filtrage,'DPB')
+       call xfem_pc(matass, base)
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     elseif (action .eq. 'FIN') then 

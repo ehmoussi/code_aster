@@ -46,4 +46,5 @@ CALC_FLUI_STRU=OPER(nom="CALC_FLUI_STRU",op= 144,sd_prod=melasflu_sdaster,
            PARA_COUPLAGE   =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
            DEFORMEE        =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON") ),
          ),
+           STOP_ERREUR     =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
 )  ;

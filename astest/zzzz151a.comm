@@ -16,77 +16,93 @@
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 #
-# ATTENTION LES DIFFERENTS LOGICIELS APPELES DOIVENT ETRE ACCESSIBLES 
-# DEPUIS LE REPERTOIRE ./outils
+# Attention les différents logiciels appelés doivent être accessibles
+# depuis le répertoire "outils"
 #
+# Les TOLE_MACHINE sont là car entre les différentes versions des mailleurs
+# (Gmsh 2.5/2.8) les résultats sont très différents !
+# On n'a pas pour objectif de tester la non régression des mailleurs donc
+# on prend une marge confortable.
+# aslint: disable=W2005
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),IMPR_MACRO='OUI',)
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
+      DEBUG=_F(SDVERI='OUI'),
+      IMPR_MACRO='NON',)
 
-import os.path as osp
-import Templates
-TEMPLATESDIR = osp.dirname(Templates.__file__)
+EXEC_LOGICIEL(LOGICIEL='ls -la', SHELL='OUI')
 
-EXEC_LOGICIEL(LOGICIEL='ls -la')
+EXEC_LOGICIEL(LOGICIEL='pwd', SHELL='NON')
 
-EXEC_LOGICIEL(LOGICIEL='pwd',
-              MACHINE_DISTANTE=_F(SSH_ADRESSE  = 'localhost',
-                                  SSH_PORT     = 22,),);
- 
-EXEC_LOGICIEL(LOGICIEL='fic=`mktemp`;salome start -t --ns-port-log=$fic;\
-                        salome shell -p `cat $fic`  ./fort.19; salome shell -p\
-                        `cat $fic` killSalomeWithPort.py args:`cat $fic`; rm -f $fic', INFO=2);
+magmsh = EXEC_LOGICIEL(MAILLAGE=_F(FORMAT='GMSH',
+                                   UNITE_GEOM=16,),
+                       INFO=1)
 
-DEFI_FICHIER(ACTION='ASSOCIER',
-               TYPE='LIBRE',
-               UNITE=33,
-               FICHIER='Mesh_1.med',
-               ACCES='OLD',)
-               
-sammed = LIRE_MAILLAGE(INFO=1,
-                        UNITE=33,
-                        FORMAT='MED',
-                        INFO_MED=1,
-                        )
-DEFI_FICHIER(ACTION='LIBERER',
-               UNITE=33,)
+# pour éviter la variabilité aux différentes versions du mailleur,
+# on impose simplement un minimum de mailles/noeuds produits
+TEST_RESU(MAILLAGE=(
+    _F(MAILLAGE=magmsh,
+       CARA='NB_MAILLE',
+       REFERENCE='ANALYTIQUE',
+       CRITERE='ABSOLU',
+       VALE_REFE_I=458,     # entre 458 (2.5) et 605 (2.8) mailles
+       PRECISION=200,
+       VALE_CALC_I=458,
+       TOLE_MACHINE=200,
+      ),
+    _F(MAILLAGE=magmsh,
+       CARA='NB_NOEUD',
+       REFERENCE='ANALYTIQUE',
+       CRITERE='ABSOLU',
+       VALE_REFE_I=96,     # entre 96 (2.5) et 130 (2.8) noeuds
+       PRECISION=50,
+       VALE_CALC_I=96,
+       TOLE_MACHINE=50,
+      ),
+))
 
+masalom = EXEC_LOGICIEL(MAILLAGE=_F(FORMAT='SALOME',
+                                    UNITE_GEOM=17,),
+                        ARGUMENT='plaque.med',
+                        INFO=1)
 
-EXEC_LOGICIEL(MAILLAGE=_F(FORMAT='GMSH',
-                          UNITE_GEOM=16,
-                          UNITE=19,
-                          MAILLAGE=CO('magmsh'),),
-              # sur l'AlphaServer, gmsh 1.44 (!) retourne un code retour 1...
-              CODE_RETOUR_MAXI=1,
-              INFO=1)
+# marge de 10 %
+TEST_RESU(MAILLAGE=(
+    _F(MAILLAGE=masalom,
+       CARA='NB_MAILLE',
+       REFERENCE='ANALYTIQUE',
+       VALE_REFE_I=1508,
+       PRECISION=0.10,
+       VALE_CALC_I=1508,
+       TOLE_MACHINE=0.10,
+      ),
+    _F(MAILLAGE=masalom,
+       CARA='NB_NOEUD',
+       REFERENCE='ANALYTIQUE',
+       VALE_REFE_I=2917,
+       PRECISION=0.10,
+       VALE_CALC_I=2917,
+       TOLE_MACHINE=0.10,
+      ),
+))
 
-EXEC_LOGICIEL(MAILLAGE=_F(FORMAT='SALOME',
-                          UNITE_GEOM=17,
-                          UNITE=21,
-                          MAILLAGE=CO('mamed'),),
-              ARGUMENT='cube.mmed',
-              INFO=1)
+magibi = EXEC_LOGICIEL(MAILLAGE=_F(FORMAT='GIBI',
+                                   UNITE_GEOM=14,),
+                       INFO=1)
 
-EXEC_LOGICIEL(MAILLAGE=_F(FORMAT='GIBI',
-                          UNITE_GEOM=14,
-                          UNITE=20,
-                          MAILLAGE=CO('magibi'),),
-              INFO=1)
-
-# ----------------------------------------------------------------------------
-# TEST_TABLE toujours ok pour disposer d'un test valide
-# En cas d'erreur, le code retour de la commande doit arreter l'execution.
-tab1 = CREA_TABLE(LISTE=(_F(PARA='TEST',
-                            TYPE_K='K8',
-                            LISTE_K='VALEUR  ',),
-                         _F(PARA='BOOLEEN',
-                            LISTE_I=1,),),)
-
-TEST_TABLE(CRITERE='ABSOLU',
-           VALE_CALC_I=1,
-           NOM_PARA='BOOLEEN',
-           TABLE=tab1,
-           FILTRE=_F(NOM_PARA='TEST',
-                     VALE_K='VALEUR  ',),
-           )
+# Gibi ne bougeant plus, on peut ne pas prendre de marge!
+TEST_RESU(MAILLAGE=(
+    _F(MAILLAGE=magibi,
+       CARA='NB_MAILLE',
+       REFERENCE='ANALYTIQUE',
+       VALE_REFE_I=14,
+       VALE_CALC_I=14,
+      ),
+    _F(MAILLAGE=magibi,
+       CARA='NB_NOEUD',
+       REFERENCE='ANALYTIQUE',
+       VALE_REFE_I=27,
+       VALE_CALC_I=27,
+      ),
+))
 
 FIN()

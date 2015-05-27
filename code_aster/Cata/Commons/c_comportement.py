@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jean-michel.proix at edf.fr
+# person_in_charge: david.haboussa at edf.fr
 def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
 
     assert COMMAND in ('MACR_ASCOUF_CALC','MACR_ASPIC_CALC','CALC_G','POST_GP','CALC_ESSAI_GEOMECA','CALC_EUROPLEXUS',
@@ -127,7 +127,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                        "JOINT_BANDIS",
                                        "CZM_LIN_REG",
                                        "CZM_EXP_REG",
-                                       "MFRONT",                                       
+                                       "MFRONT",
 
 # THMC
                                        "GAZ",
@@ -145,7 +145,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                        "HYDR_ENDO",
                                        ),),
 
- # mfront pour la loi meca de THM                                     
+ # mfront pour la loi meca de THM
            b_mfront_thm = BLOC(condition = "'MFRONT' in RELATION_KIT",fr=tr("Comportement utilisateur meca THM de type MFRONT"),
                                           LIBRAIRIE = SIMP(statut='o', typ='TXM',
                                                            fr=tr("Chemin vers la bibliothèque dynamique définissant le comportement MFRONT")),
@@ -154,7 +154,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                       ),
 
                                        ),
-                
+
            b_kit_meta = BLOC(condition = "RELATION in ('META_LEMA_ANI','META_P_CL_PT_RE','META_P_CL_PT','META_P_CL_RE','META_P_CL',\
            'META_P_IL_PT_RE','META_P_IL_PT','META_P_IL_RE','META_P_IL','META_P_INL_PT_RE','META_P_INL_PT','META_P_INL_RE','META_P_INL',\
            'META_V_CL_PT_RE','META_V_CL_PT','META_V_CL_RE','META_V_CL','META_V_IL_PT_RE','META_V_IL_PT','META_V_IL_RE','META_V_IL',\
@@ -182,6 +182,19 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                 fr=tr("Nombre d'itérations maxi pour assurer la condition de contraintes planes")),
         )
     else:
+        opts = {}
+        if COMMAND == 'STAT_NON_LINE' or 'DYNA_NON_LINE':
+            opts['b_crirupt'] = BLOC(condition =
+                    "RELATION in ('VMIS_ISOT_LINE','VMIS_ISOT_TRAC','VISCOCHAB','VISC_ISOT_LINE','VISC_ISOT_TRAC',)",
+                                   fr=tr("Critere de rupture selon une contrainte critique"),
+                    POST_ITER    =SIMP(statut='f',typ='TXM',into=("CRIT_RUPT",), ),
+                                  )
+        if COMMAND == 'STAT_NON_LINE':
+            opts['b_anneal'] = BLOC(condition =
+                    "RELATION in ('VMIS_ISOT_LINE','VMIS_CINE_LINE','VMIS_ECMI_LINE','VMIS_ISOT_TRAC',)",
+                                   fr=tr("Restauration d'écrouissage"),
+                    POST_INCR    =SIMP(statut='f',typ='TXM',into=("REST_ECRO",), ),
+                                  )
         mcfact = FACT(statut='f',min=1,max='**',
 
            regles=(PRESENT_ABSENT('TOUT','GROUP_MA','MAILLE'),),
@@ -271,7 +284,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                        "JOINT_BANDIS",
                                        "CZM_LIN_REG",
                                        "CZM_EXP_REG",
-                                       "MFRONT",                                       
+                                       "MFRONT",
 
 # THMC
                                        "GAZ",
@@ -289,7 +302,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                        "HYDR_ENDO",
                                        ),),
 
- # mfront pour la loi meca de THM                                     
+ # mfront pour la loi meca de THM
            b_mfront_thm = BLOC(condition = "'MFRONT' in RELATION_KIT",fr=tr("Comportement utilisateur meca THM de type MFRONT"),
                                           LIBRAIRIE = SIMP(statut='o', typ='TXM',
                                                            fr=tr("Chemin vers la bibliothèque dynamique définissant le comportement MFRONT")),
@@ -298,7 +311,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                       ),
 
                                        ),
-                
+
            b_kit_meta = BLOC(condition = "RELATION in ('META_LEMA_ANI','META_P_CL_PT_RE','META_P_CL_PT','META_P_CL_RE','META_P_CL',\
            'META_P_IL_PT_RE','META_P_IL_PT','META_P_IL_RE','META_P_IL','META_P_INL_PT_RE','META_P_INL_PT','META_P_INL_RE','META_P_INL',\
            'META_V_CL_PT_RE','META_V_CL_PT','META_V_CL_RE','META_V_CL','META_V_IL_PT_RE','META_V_IL_PT','META_V_IL_RE','META_V_IL',\
@@ -333,7 +346,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                     RESI_INTE_MAXI    =SIMP(statut='f',typ='R',defaut= 1.0E-8),
                     ITER_INTE_MAXI    =SIMP(statut='f',typ='I',defaut= 100 ),
                 ),
-               
+
                 b_no_mfront      = BLOC(condition = "RELATION !='MFRONT'",
                     RESI_INTE_RELA    =SIMP(statut='f',typ='R',defaut= 1.0E-6),
                     ITER_INTE_MAXI    =SIMP(statut='f',typ='I',defaut= 20 ),
@@ -362,22 +375,13 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                     TAUX_RETOUR  =SIMP(statut='f',typ='R',defaut= 0.05 ),
                                   ),
 
-                b_crirupt        = BLOC(condition =
-                    " RELATION in ('VMIS_ISOT_LINE','VMIS_ISOT_TRAC','VISCOCHAB','VISC_ISOT_LINE','VISC_ISOT_TRAC',)",
-                                   fr=tr("Critere de rupture selon une contrainte critique"),
-                    POST_ITER    =SIMP(statut='f',typ='TXM',into=("CRIT_RUPT",), ),
-                                  ),
-
-                b_anneal        = BLOC(condition =
-                    " RELATION in ('VMIS_ISOT_LINE','VMIS_CINE_LINE','VMIS_ECMI_LINE','VMIS_ISOT_TRAC',)",
-                                   fr=tr("Restauration d'écrouissage"),
-                    POST_INCR    =SIMP(statut='f',typ='TXM',into=("REST_ECRO",), ),
-                                  ),
 
                 PARM_THETA      =SIMP(statut='f',typ='R',val_min=0.,val_max=1., defaut= 1.),
                 PARM_ALPHA      =SIMP(statut='f',typ='R',defaut= 1. ),
 
                 b_radi          =BLOC(condition = "TYPE_MATR_TANG == None", RESI_RADI_RELA  =SIMP(statut='f',typ='R', ),),
+
+                **opts
             )
 
 

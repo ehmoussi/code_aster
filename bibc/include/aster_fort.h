@@ -200,8 +200,8 @@ extern void DEFSPSPPPS(RSACCH,rsacch,char *, STRING_SIZE, INTEGER *, char *,STRI
 #define CALL_ASMPI_CHECK(a) CALLP(ASMPI_CHECK,asmpi_check,a)
 extern void DEFP(ASMPI_CHECK,asmpi_check,INTEGER *);
 
-#define CALL_ASMPI_WARN() CALL0(ASMPI_WARN,asmpi_warn)
-extern void DEF0(ASMPI_WARN,asmpi_warn);
+#define CALL_ASMPI_WARN(a) CALLP(ASMPI_WARN,asmpi_warn,a)
+extern void DEFP(ASMPI_WARN,asmpi_warn,INTEGER *);
 
 /* routines intrinseques fortran */
 #define CALL_ABORTF() CALL0(ABORTF,abortf)

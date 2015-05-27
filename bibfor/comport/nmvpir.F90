@@ -135,7 +135,7 @@ subroutine nmvpir(fami, kpg, ksp, ndim, typmod,&
 ! DEB ------------------------------------------------------------------
 !
     call verift(fami, kpg, ksp, 'T', imate,&
-                iret = iret3, epsth=epsthe, temp_prev_out = tm, temp_curr_out = tp)
+                iret = iret3, epsth=epsthe, temp_prev_ = tm, temp_curr_ = tp)
     theta = crit(4)
 ! TEMPERATURE AU MILIEU DU PAS DE TEMPS
     if (iret3 .eq. 0) then
@@ -326,9 +326,6 @@ subroutine nmvpir(fami, kpg, ksp, ndim, typmod,&
         if (unsurk .lt. 0.d0) then
             call utmess('F', 'ALGORITH8_89')
         endif
-!
-    else if (compor(1)(1:10).eq.'LMARC_IRRA') then
-        call utmess('F', 'ALGORITH8_90')
 !
     endif
 !

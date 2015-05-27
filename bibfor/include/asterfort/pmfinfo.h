@@ -16,11 +16,13 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine pmfinfo(nbfibr, nbgrfi, tygrfi, nbcarm, nug)
+    subroutine pmfinfo(nbfibr, nbgrfi, tygrfi, nbcarm, nug, jacf, nbassfi)
         integer,intent(out) :: nbfibr
         integer,intent(out) :: nbgrfi
         integer,intent(out) :: tygrfi
         integer,intent(out) :: nbcarm
         integer,intent(out) :: nug(*)
+        integer,intent(out), optional :: jacf
+        integer,intent(out), optional :: nbassfi
     end subroutine pmfinfo
 end interface

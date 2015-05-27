@@ -1,5 +1,15 @@
-subroutine nmcrls(sddisc, provli, numini, numfin, linsti,&
-                  instin, nbtemp, dtmin)
+subroutine nmcrls(sddisc   , list_inst  , nume_ini, nume_end, l_init_noexist,&
+                  inst_init, nb_inst_new, dtmin)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterc/r8maem.h"
+#include "asterfort/assert.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/utdidt.h"
+#include "asterfort/utmess.h"
+#include "asterfort/wkvect.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -19,104 +29,84 @@ subroutine nmcrls(sddisc, provli, numini, numfin, linsti,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterc/r8maem.h"
-#include "asterfort/assert.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/utdidt.h"
-#include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
-    integer :: numini, numfin, nbtemp
-    aster_logical :: linsti
-    real(kind=8) :: instin
-    character(len=19) :: provli
-    character(len=19) :: sddisc
-    real(kind=8) :: dtmin
+    character(len=19), intent(in) :: sddisc
+    character(len=19), intent(in) :: list_inst
+    integer, intent(in) :: nume_ini
+    integer, intent(in) :: nume_end
+    aster_logical, intent(in) :: l_init_noexist
+    real(kind=8), intent(in) :: inst_init
+    integer, intent(out) :: nb_inst_new
+    real(kind=8), intent(out) :: dtmin
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE *_NON_LINE (STRUCTURES DE DONNES - DISCRETISATION)
+! *_NON_LINE - Time discretization datastructure
 !
-! RETAILLAGE DE LA LISTE D'INSTANT PROVISOIRE
+! Resize list of times
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! RETAILLE PROVLI SUIVANT [NUMINI,NUMFIN]
+! In  sddisc           : datastructure for time discretization
+! In  list_inst        : list of times from INCREMENT/LIST_INST
+! In  nume_ini         : index of initial time
+! In  nume_end         : index of final time
+! In  inst_init        : initial time if ETAT_INIT
+! In  l_init_noexist   : .true. if initial time doesn't exist in list of times
+! Out nb_inst          : number of time steps in list after resize
+! Out dtmin            : minimum time between two steps after resize
 !
-! IN  PROVLI : NOM DE LA LISTE D'INSTANT PROVISOIRE
-! IN  SDDISC : SD DISCRETISATION
-! IN  NUMINI : PREMIER INSTANT
-! IN  NUMFIN : DERNIER INSTANT
-! IN  LINSTI : .TRUE. SI L'INSTANT INITIAL N'EXISTAIT PAS
-! IN  INSTIN : INSTANT INITIAL QUAND ETAT_INIT
-! OUT NBTEMP : NOMBE D'INSTANTS DE LA LISTE RETAILLEE
-! OUT DTMIN  : INTERVALLE DE TEMPS MINIMUM DE LA LISTE RETAILLEE
+! --------------------------------------------------------------------------------------------------
 !
+    integer :: pos, i_inst, nb_inst
+    real(kind=8) :: deltat, valr(2)
+    real(kind=8), pointer :: v_list_inst(:) => null()
+    character(len=24) :: sddisc_ditr
+    real(kind=8), pointer :: v_sddisc_ditr(:) => null()
 !
+! --------------------------------------------------------------------------------------------------
 !
+    call utdidt('L', sddisc, 'LIST', 'NBINST',&
+                vali_ = nb_inst)
 !
-    integer :: pos, i, ibid, nbinst
-    real(kind=8) :: deltat, r8bid, valr(2)
-    character(len=8) :: k8bid
-    character(len=24) :: tpsdit
-    integer :: jtemps, jinst
+! - Final number of time steps
 !
-! ----------------------------------------------------------------------
+    nb_inst_new = (nume_end-nume_ini) + 1
+    ASSERT(nb_inst_new.le.nb_inst)  
 !
-    call jemarq()
+! - Acces to list of times
 !
-! --- INITIALISATIONS
+    call jeveuo(list_inst, 'L', vr = v_list_inst)
 !
-    call utdidt('L', sddisc, 'LIST', ibid, 'NBINST',&
-                r8bid, nbinst, k8bid)
+! - Create new list of time
 !
-! --- NOMBRE FINAL D'INSTANTS
+    sddisc_ditr = sddisc(1:19)//'.DITR'
+    call wkvect(sddisc_ditr, 'V V R', nb_inst_new, vr = v_sddisc_ditr)
 !
-    nbtemp = (numfin-numini) + 1
-    ASSERT(nbtemp.le.nbinst)
+! - Update new list of time
 !
-! --- NOMS SD_DISC
-!
-    tpsdit = sddisc(1:19)//'.DITR'
-!
-! --- ACCES LISTE D'INSTANTS PROVISOIRE
-!
-    call jeveuo(provli, 'L', jinst)
-!
-! --- CREATION DE LA LISTE D'INSTANTS
-!
-    call wkvect(tpsdit, 'V V R', nbtemp, jtemps)
     pos = 0
-    do 20 i = numini, numfin
-        zr(jtemps+pos) = zr(jinst+i)
+    do i_inst = nume_ini, nume_end
+        v_sddisc_ditr(pos+1) = v_list_inst(i_inst+1)
         pos = pos+1
- 20 end do
+    end do
 !
-! --- NOUVEL INTERVALLE DE TEMPS MINIMAL : DTMIN
+! - New minimum time between two steps
 !
     dtmin = r8maem()
-    do 25 i = 1, nbtemp-1
-        deltat = zr(jtemps-1+i+1) - zr(jtemps-1+i)
-        dtmin = min(deltat,dtmin)
- 25 end do
+    do i_inst = 1, nb_inst_new-1
+        deltat = v_sddisc_ditr(i_inst+1) - v_sddisc_ditr(i_inst)
+        dtmin  = min(deltat,dtmin)
+    end do
 !
-! --- SI L'INSTANT INITIAL N'EXISTAIT PAS DANS LA LISTE D'INSTANTS
-! --- ON A PRIS PLUS HAUT L'INSTANT LE PLUS PROCHE PRECEDENT : ICI
-! --- ON MET LA BONNE VALEUR COMME INSTANT INITIAL
+! - Initial time doesn't exist in list of times => change for real initial time
 !
-    if (linsti) then
-        zr(jtemps) = instin
-        if (instin .ge. zr(jtemps+1)) then
-            valr(1) = instin
-            valr(2) = zr(jtemps+1)
+    if (l_init_noexist) then
+        v_sddisc_ditr(1) = inst_init
+        if (inst_init .ge. v_sddisc_ditr(2)) then
+            valr(1) = inst_init
+            valr(2) = v_sddisc_ditr(2)
             call utmess('F', 'DISCRETISATION_2', nr=2, valr=valr)
         endif
     endif
-!
-    call jedema()
 !
 end subroutine

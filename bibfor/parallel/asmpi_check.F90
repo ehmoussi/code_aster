@@ -49,13 +49,14 @@ subroutine asmpi_check(iret)
 #include "asterf_constant.h"
 #include "asterc/asmpi_irecv_i4.h"
 #include "asterc/asmpi_send_i4.h"
+#include "asterc/asmpi_cancel.h"
 #include "asterc/asmpi_test.h"
 
     aster_logical :: lcont
     mpi_int :: term
     integer :: i, nbterm, nbproc, np1, resp0
     mpi_int :: nbpro4, rank, istat, mpicou, wki(1), nbv, ip4
-    real(kind=8) :: valr(1), tres, timout, t0, tf
+    real(kind=8) :: tres, timeout, t0, tf
     aster_logical, pointer :: isterm(:) => null()
     mpi_int, pointer :: diag(:) => null()
     mpi_int, pointer :: request(:) => null()
@@ -77,10 +78,10 @@ subroutine asmpi_check(iret)
         AS_ALLOCATE(vi4=request, size=nbproc)
 
         call uttrst(tres)
-        timout = tres * 0.2d0
-        if (timout < 0) then
-            timout = 120.
-            call utmess('A', 'APPELMPI_94', sr=timout)
+        timeout = tres * 0.2d0
+        if (timeout < 0) then
+            timeout = 120.
+            call utmess('A', 'APPELMPI_94', sr=timeout)
         endif
 
 !       Ask each processor for its status
@@ -112,10 +113,9 @@ subroutine asmpi_check(iret)
             lcont = nbterm .lt. np1
 !           timeout
             tf = asmpi_wtime()
-            if (lcont .and. (tf - t0) .gt. timout) then
+            if (lcont .and. (tf - t0) .gt. timeout) then
                 lcont = .false.
-                valr(1) = timout
-                call utmess('E', 'APPELMPI_97', sr=valr(1))
+                call utmess('E', 'APPELMPI_97', sr=timeout)
                 do i = 1, np1
                     if (.not. isterm(i)) then
                         call utmess('E+', 'APPELMPI_96', si=i)
@@ -144,6 +144,10 @@ subroutine asmpi_check(iret)
                 ip4 = i
                 DEBUG_MPI('mpi_check:send status / to', wki(1), ip4)
                 call asmpi_send_i4(wki, nbv, ip4, ST_TAG_CNT, mpicou)
+            else
+!               cancel those have not answered
+                DEBUG_MPI('mpi_check', 'cancel request for proc', i)
+                call asmpi_cancel(request(i))
             endif
         end do
 !
