@@ -1,9 +1,9 @@
-#ifndef STUDYDESCRIPTION_H_
-#define STUDYDESCRIPTION_H_
+#ifndef DISCRETEPROBLEM_H_
+#define DISCRETEPROBLEM_H_
 
 /**
- * @file StudyDescription.h
- * @brief Fichier entete de la classe StudyDescription
+ * @file DiscreteProblem.h
+ * @brief Fichier entete de la classe DiscreteProblem
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
@@ -28,22 +28,19 @@
 
 #include "astercxx.h"
 
-#include "MemoryManager/JeveuxVector.h"
-#include "Modeling/Model.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Studies/StudyDescription.h"
+#include "LinearAlgebra/ElementaryVector.h"
 
 /**
- * @class StudyDescriptionInstance
+ * @class DiscreteProblemInstance
  * @brief Cette classe permet de definir une étude au sens Aster
  * @author Nicolas Sellenet
  */
-class StudyDescriptionInstance
+class DiscreteProblemInstance
 {
     private:
-        /** @brief Modèle support */
-        ModelPtr          _supportModel;
-        /** @brief Materiau affecté */
-        MaterialOnMeshPtr _supportMaterialOnMesh;
+        /** @brief Etude definie par l'utilisateur */
+        StudyDescriptionPtr _study;
 
     public:
         /**
@@ -51,21 +48,28 @@ class StudyDescriptionInstance
          * @param ModelPtr Modèle de l'étude
          * @param MaterialOnMeshPtr Matériau de l'étude
          */
-        StudyDescriptionInstance( ModelPtr& curModel,
-                                  MaterialOnMeshPtr& curMat):
-            _supportModel( curModel ),
-            _supportMaterialOnMesh( curMat )
+        DiscreteProblemInstance( StudyDescriptionPtr& currentStudy ):
+            _study( currentStudy )
         {};
 
-        ~StudyDescriptionInstance()
+        /**
+         * @brief Desctructeur
+         */
+        ~DiscreteProblemInstance()
         {};
+
+        /**
+         * @brief Fonction permettant de calculer les matrices élémentaires de rigidité
+         * @return Vecteur élémentaire contenant la rigidité mécanique
+         */
+        ElementaryVectorPtr buildElementaryRigidityMatrix();
 };
 
 
 /**
- * @typedef StudyDescriptionPtr
- * @brief Pointeur intelligent vers un StudyDescription
+ * @typedef DiscreteProblemPtr
+ * @brief Pointeur intelligent vers un DiscreteProblem
  */
-typedef boost::shared_ptr< StudyDescriptionInstance > StudyDescriptionPtr;
+typedef boost::shared_ptr< DiscreteProblemInstance > DiscreteProblemPtr;
 
-#endif /* STUDYDESCRIPTION_H_ */
+#endif /* DISCRETEPROBLEM_H_ */
