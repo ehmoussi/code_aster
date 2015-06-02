@@ -31,7 +31,7 @@ def _addLoad( mechaSolv, fkw ):
 
     if isinstance( load, Loads.KinematicsLoad ):
         mechaSolv.addKinematicsLoad( load )
-    elif isinstance( load, Loads.KinematicsLoad ):
+    elif isinstance( load, Loads.MechanicalLoad ):
         mechaSolv.addMechanicalLoad( load )
     else:
         assert False
