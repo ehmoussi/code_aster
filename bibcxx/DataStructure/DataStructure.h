@@ -47,7 +47,7 @@ class DataStructure
         /** @todo remettre le const */
         std::string _name;
         /** @brief Type de la sd */
-        std::string       _type;
+        std::string _type;
 
     public:
         /**
