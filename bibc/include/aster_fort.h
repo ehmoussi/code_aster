@@ -153,6 +153,12 @@ void DEFSSSPSP(RSEXCH, rsexch, const char *, STRING_SIZE, const char *, STRING_S
 void DEFPPPPSPSS(UTIMSD,utimsd, INTEGER*, INTEGER*, INTEGER*, INTEGER*, const char*, STRING_SIZE,
                                 INTEGER*, const char*, STRING_SIZE, const char*, STRING_SIZE );
 
+#define CALL_MERIME_WRAP(a, b, c, d, e, f, g, h, i, j, k) CALLSPSSSPPSSPS(MERIME_WRAP, merime_wrap, a, b, c, d, e, f, g, h, i, j, k)
+void DEFSPSSSPPSSPS(MERIME_WRAP,merime_wrap, const char*, STRING_SIZE, INTEGER*, const char*, STRING_SIZE,
+                                const char*, STRING_SIZE, const char*, STRING_SIZE, INTEGER*,
+                                DOUBLE *, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                INTEGER*, const char*, STRING_SIZE );
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)
