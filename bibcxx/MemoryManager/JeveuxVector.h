@@ -133,12 +133,39 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         };
 
         /**
+         * @brief Desallocation d'un vecteur Jeveux
+         */
+        void deallocate()
+        {
+            if ( _name != "" )
+            {
+                CALL_JEDETR(  _name.c_str() );
+            }
+        };
+
+        /**
          * @brief Return a pointer to the vector
          */
         const ValueType* getDataPtr() const
         {
             return _valuePtr;
-        }
+        };
+
+        /**
+         * @brief Fonction pour savoir si un vecteur est alloue
+         * @return true si le vecteur est alloue
+         */
+        bool isAllocated()
+        {
+            // Si on n'a pas de nom, on sort
+            if ( _name == "" ) return false;
+
+            long boolRetour;
+            // Appel a jeexin pour verifier que le vecteur existe
+            CALL_JEEXIN( _name.c_str(), &boolRetour );
+            if ( boolRetour == 0 ) return false;
+            return true;
+        };
 
         /**
          * @brief Return the size of the vector
