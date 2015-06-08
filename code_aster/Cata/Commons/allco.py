@@ -1,3 +1,10 @@
+
+# coding=utf-8
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
 # List built using `capy` files::
 #   egrep -h '^class' catapy/entete/co_* | sed -e 's/:$/:\n    pass\n/g'
 
