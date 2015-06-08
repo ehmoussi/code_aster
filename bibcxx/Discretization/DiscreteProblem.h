@@ -45,8 +45,7 @@ class DiscreteProblemInstance
     public:
         /**
          * @brief Constructeur
-         * @param ModelPtr Modèle de l'étude
-         * @param MaterialOnMeshPtr Matériau de l'étude
+         * @param StudyDescriptionPtr Etude utilisateur
          */
         DiscreteProblemInstance( StudyDescriptionPtr& currentStudy ):
             _study( currentStudy )

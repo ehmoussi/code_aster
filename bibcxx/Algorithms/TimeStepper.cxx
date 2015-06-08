@@ -1,6 +1,6 @@
 /**
- * @file DiscreteProblem.cxx
- * @brief Implementation de DiscreteProblem
+ * @file TimeStepper.cxx
+ * @brief Implementation de TimeStepper
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
@@ -21,12 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Discretization/DiscreteProblem.h"
+#include "Algorithms/TimeStepper.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
-
-ElementaryVectorPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
-{
-    ElementaryVectorPtr retour( new ElementaryVectorInstance() );
-    return retour;
-};

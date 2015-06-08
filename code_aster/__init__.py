@@ -43,5 +43,6 @@ from code_aster.Modeling import *
 from code_aster.Results import *
 from code_aster.Solvers import *
 from code_aster.Loads import *
+from code_aster.Algorithms import *
 
 from code_aster.Cata import Commands
