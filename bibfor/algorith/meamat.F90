@@ -1,6 +1,6 @@
-subroutine meacmv(modele, mate, carele, fomult, lischa,&
-                  partps, numedd, assmat, solveu, vecass,&
-                  matass, maprec, cnchci, base, compor)
+subroutine meamat(modele, mate, carele, lischa, partps,&
+                  numedd, assmat, solveu, matass, maprec,&
+                  base, compor)
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -22,54 +22,35 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterfort/asasve.h"
-#include "asterfort/ascavc.h"
-#include "asterfort/ascova.h"
 #include "asterfort/asmatr.h"
 #include "asterfort/detrsd.h"
-#include "asterfort/fetccn.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/meacha.h"
-#include "asterfort/meamat.h"
 #include "asterfort/merime.h"
-#include "asterfort/nmvcd2.h"
-#include "asterfort/nmvcex.h"
-#include "asterfort/nmvcle.h"
 #include "asterfort/preres.h"
 #include "asterfort/uttcpu.h"
-#include "asterfort/vechme.h"
-#include "asterfort/vectme.h"
-#include "asterfort/vecvme.h"
-#include "asterfort/vedime.h"
-#include "asterfort/velame.h"
 #include "asterfort/vrcref.h"
     aster_logical :: assmat
     character(len=1) :: base
-    character(len=19) :: lischa, solveu, vecass, matass, maprec
-    character(len=24) :: cnchci, modele, carele, fomult, numedd, compor
+    character(len=19) :: lischa, solveu, matass, maprec
+    character(len=24) :: modele, carele, numedd, compor
     character(len=*) :: mate
     real(kind=8) :: partps(3)
 !
 ! ----------------------------------------------------------------------
-!     MECANIQUE STATIQUE - ACTUALISATION DES CHARGEMENTS MECANIQUES
-!     **                   *                 *           *
+!     MECANIQUE STATIQUE - ACTUALISATION DE LA MATRICE ASSEMBLEE
+!     **                   *                   ***
 ! ----------------------------------------------------------------------
 ! IN  MODELE  : NOM DU MODELE
 ! IN  MATE    : NOM DU MATERIAU
 ! IN  CARELE  : NOM D'1 CARAC_ELEM
-! IN  FOMULT  : LISTE DES FONCTIONS MULTIPLICATRICES
 ! IN  LISCHA  : INFORMATION SUR LES CHARGEMENTS
 ! IN  PARTPS  : PARAMETRES TEMPORELS
 ! IN  NUMEDD  : PROFIL DE LA MATRICE
 ! IN  ASSMAT  : BOOLEEN POUR LE CALCUL DE LA MATRICE
 ! IN  SOLVEU  : METHODE DE RESOLUTION 'LDLT' OU 'GCPC'
-! OUT VECASS  : VECTEUR ASSEMBLE SECOND MEMBRE
 ! OUT MATASS,MAPREC  MATRICE DE RIGIDITE ASSEMBLEE
-! OUT CNCHCI  : OBJET DE S.D. CHAM_NO DIMENSIONNE A LA TAILLE DU
-!               PROBLEME, VALANT 0 PARTOUT, SAUF LA OU LES DDLS IMPOSES
-!               SONT TRAITES PAR ELIMINATION (= DEPLACEMENT IMPOSE)
 ! IN  BASE    : BASE DE TRAVAIL
 ! IN/OUT  MAPREC  : MATRICE PRECONDITIONNEE
 ! IN  COMPOR  : COMPOR POUR LES MULTIFIBRE (POU_D_EM)
@@ -85,19 +66,11 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
     character(len=6) :: nompro
     parameter ( nompro = 'MEACMV' )
 !
-    integer :: jchar, jinf, nh, ierr, jtp, ibid
-    integer :: nchar, typcum
+    integer :: jchar, jinf, nh, ierr, ibid, nchar
     real(kind=8) :: time
-    character(len=1) :: typres
     character(len=8) :: matele
-    character(len=14) :: com
-    character(len=19) :: chvref, chvarc
-    character(len=16) :: option
-    character(len=19) :: chamn1, chamn2, chamn3, chamn4
-    character(len=24) :: k24bid, blan24, vediri, vadiri, velapl, valapl, vecham
-    character(len=24) :: vacham, chlapl, chdiri, chcham, chths, charge, infoch
-    character(len=24) :: vecths
-    aster_logical :: ass1er, lhydr, lsech, ltemp, lptot
+    character(len=24) :: charge, infoch
+    aster_logical :: ass1er
 !
 ! DEB-------------------------------------------------------------------
 !====
@@ -106,24 +79,66 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
 !
     call jemarq()
 !
+! 1.2. ==> NOM DES STRUCTURES
+!
+! 1.2.1. ==> FIXES
+!
+!             12345678
+    matele = '&&MATELE'
+!
+! 1.2. ==> LES CONSTANTES
+!
+    time = partps(1)
+!
+    charge = lischa//'.LCHA'
+!
+    call jeveuo(charge, 'L', jchar)
+    infoch = lischa//'.INFC'
+    call jeveuo(infoch, 'L', jinf)
+    nchar = zi(jinf)
+!
+    nh = 0
+!
+    ass1er = .false.
+!
 !
 !
 !====
 ! 2. LE PREMIER MEMBRE
 !====
 !
-    call meamat(modele, mate, carele, lischa, partps,&
-                numedd, assmat, solveu, matass, maprec,&
-                base, compor)
+! 2.1. ==> CALCULS ELEMENTAIRES DU 1ER MEMBRE:
 !
-!====
-! 3. LES CHARGEMENTS
-!====
+    if (assmat) then
 !
-    call uttcpu('CPU.OP0046.3', 'DEBUT', ' ')
+        call uttcpu('CPU.OP0046.1', 'DEBUT', ' ')
+        call merime(modele(1:8), nchar, zk24(jchar), mate, carele(1:8),&
+                    .true._1, time, compor, matele, nh,&
+                    base)
+        ass1er = .true.
+        call uttcpu('CPU.OP0046.1', 'FIN', ' ')
 !
-    call meacha(modele, mate, carele, fomult, lischa,&
-                partps, numedd, vecass, cnchci, compor)
+    endif
+!
+! 2.2. ==> ASSEMBLAGE
+!
+    if (ass1er) then
+!
+        call uttcpu('CPU.OP0046.2', 'DEBUT', ' ')
+        call asmatr(1, matele, ' ', numedd, solveu,&
+                    lischa, 'ZERO', 'V', 1, matass)
+        call detrsd('MATR_ELEM', matele)
+!
+! 2.3. ==> DECOMPOSITION OU CALCUL DE LA MATRICE DE PRECONDITIONEMENT
+!
+        call preres(solveu, 'V', ierr, maprec, matass,&
+                    ibid, -9999)
+!
+!
+        ass1er = .false.
+        call uttcpu('CPU.OP0046.2', 'FIN', ' ')
+!
+    endif
 !
     call jedema()
 end subroutine

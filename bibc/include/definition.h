@@ -217,6 +217,9 @@
 #define DEFPPPPPPPPPPPPPPPPPPPSPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,lt,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L,lt)
 #define CALLPPPPPPPPPPPPPPPPPPPSPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)                 F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L,strlen(t))
 
+#define DEFSPSSSPPSSPS(UN,LN,a,la,b,c,lc,d,ld,e,le,f,g,h,lh,i,li,j,k,lk)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,la,lc,ld,le,lh,li,lk)
+#define CALLSPSSSPPSSPS(UN,LN,a,b,c,d,e,f,g,h,i,j,k)                       F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,strlen(a),strlen(c),strlen(d),strlen(e),strlen(h),strlen(i),strlen(k))
+
 /* V=value <type string> returned by the function, the two first argument are for V */
 #define DEFVSP(UN,LN,a,la,b,lb,c)               STDCALL(UN,LN)(a,la,b,c,lb)
 #define CALLVSP(UN,LN,a,b,c)                    F_FUNC(UN,LN)(a,strlen(a),b,c,strlen(b))
@@ -367,6 +370,9 @@
 #define CALLPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r)              F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r)
 #define DEFPPPPPPPPPPPPPPPPPPPSPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,lt,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,lt,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)
 #define CALLPPPPPPPPPPPPPPPPPPPSPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)                 F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,strlen(t),u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)
+
+#define DEFSPSSSPPSSPS(UN,LN,a,la,b,c,lc,d,ld,e,le,f,g,h,lh,i,li,j,k,lk)               STDCALL(UN,LN)(a,la,b,c,lc,d,ld,e,le,f,g,h,lh,i,li,j,k,lk)
+#define CALLSPSSSPPSSPS(UN,LN,a,b,c,d,e,f,g,h,i,j,k)                       F_FUNC(UN,LN)(a,strlen(a),b,c,strlen(c),d,strlen(d),e,strlen(e),f,g,h,strlen(h),i,strlen(i),j,k,strlen(k))
 
 #endif
 
