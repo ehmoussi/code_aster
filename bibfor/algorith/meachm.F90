@@ -1,5 +1,5 @@
-subroutine meacha(modele, mate, carele, fomult, lischa,&
-                  partps, numedd, vecass, cnchci, compor)
+subroutine meachm(modele, mate, carele, fomult, lischa,&
+                  partps, numedd, vecass, compor)
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -39,13 +39,13 @@ subroutine meacha(modele, mate, carele, fomult, lischa,&
 #include "asterfort/velame.h"
 #include "asterfort/vrcref.h"
     character(len=19) :: lischa, vecass
-    character(len=24) :: cnchci, modele, carele, fomult, numedd, compor
+    character(len=24) :: modele, carele, fomult, numedd, compor
     character(len=*) :: mate
     real(kind=8) :: partps(3)
 !
 ! ----------------------------------------------------------------------
-!     MECANIQUE STATIQUE - ACTUALISATION DES CHARGEMENTS MECANIQUES
-!     **                   *                 ***
+!     MECANIQUE STATIQUE - ACTUALISATION DU CHARGEMENT CINEMATIQUE
+!     **                   *                **         *
 ! ----------------------------------------------------------------------
 ! IN  MODELE  : NOM DU MODELE
 ! IN  MATE    : NOM DU MATERIAU
@@ -55,9 +55,6 @@ subroutine meacha(modele, mate, carele, fomult, lischa,&
 ! IN  PARTPS  : PARAMETRES TEMPORELS
 ! IN  NUMEDD  : PROFIL DE LA MATRICE
 ! OUT VECASS  : VECTEUR ASSEMBLE SECOND MEMBRE
-! OUT CNCHCI  : OBJET DE S.D. CHAM_NO DIMENSIONNE A LA TAILLE DU
-!               PROBLEME, VALANT 0 PARTOUT, SAUF LA OU LES DDLS IMPOSES
-!               SONT TRAITES PAR ELIMINATION (= DEPLACEMENT IMPOSE)
 ! IN  COMPOR  : COMPOR POUR LES MULTIFIBRE (POU_D_EM)
 !----------------------------------------------------------------------
 !
@@ -128,10 +125,10 @@ subroutine meacha(modele, mate, carele, fomult, lischa,&
 !
 !
 !====
-! 3. LES CHARGEMENTS
+! 2. LES CHARGEMENTS
 !====
 !
-! 3.1. ==> LES DIRICHLETS
+! 2.1. ==> LES DIRICHLETS
 !
     vadiri = blan24
     vediri = blan24
@@ -142,7 +139,7 @@ subroutine meacha(modele, mate, carele, fomult, lischa,&
     call ascova('D', vadiri, fomult, 'INST', time,&
                 typres, chdiri)
 !
-! 3.2. ==> CAS DU CHARGEMENT TEMPERATURE, HYDRATATION, SECHAGE,
+! 2.2. ==> CAS DU CHARGEMENT TEMPERATURE, HYDRATATION, SECHAGE,
 !          PRESSION TOTALE (CHAINAGE HM)
 !
     if (ltemp .or. lhydr .or. lsech .or. lptot) then
@@ -172,7 +169,7 @@ subroutine meacha(modele, mate, carele, fomult, lischa,&
         chths=zk24(jtp)(1:19)
     endif
 !
-! 3.3. ==> FORCES DE LAPLACE
+! 2.3. ==> FORCES DE LAPLACE
 !
     valapl = blan24
     velapl = blan24
@@ -183,7 +180,7 @@ subroutine meacha(modele, mate, carele, fomult, lischa,&
     call ascova('D', valapl, fomult, 'INST', time,&
                 typres, chlapl)
 !
-! 3.4. ==> AUTRES CHARGEMENTS
+! 2.4. ==> AUTRES CHARGEMENTS
 !
     vacham = blan24
     vecham = blan24
@@ -196,7 +193,7 @@ subroutine meacha(modele, mate, carele, fomult, lischa,&
     call ascova('D', vacham, fomult, 'INST', time,&
                 typres, chcham)
 !
-! 3.6. ==> SECOND MEMBRE DEFINITIF : VECASS
+! 2.6. ==> SECOND MEMBRE DEFINITIF : VECASS
 !
     typcum = 3
     chamn1 = chdiri(1:19)
@@ -207,20 +204,13 @@ subroutine meacha(modele, mate, carele, fomult, lischa,&
         chamn4 = chths(1:19)
     endif
 !
-! 3.6.2. ==> CONCATENATION DES SECOND(S) MEMBRE(S)
+! 2.6.2. ==> CONCATENATION DES SECOND(S) MEMBRE(S)
 !
     call fetccn(chamn1, chamn2, chamn3, chamn4, typcum,&
                 vecass)
 !
-!
-! 3.7. ==> CHARGES CINEMATIQUES
-!
-    cnchci = blan24
-    call ascavc(charge, infoch, fomult, numedd, time,&
-                cnchci)
-!
 !====
-! 4. DESTRUCTION DES CHAMPS TEMPORAIRES
+! 3. DESTRUCTION DES CHAMPS TEMPORAIRES
 !====
 !
     call detrsd('VECT_ELEM', vediri(1:19))

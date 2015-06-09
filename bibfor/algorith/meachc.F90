@@ -1,6 +1,5 @@
-subroutine meacmv(modele, mate, carele, fomult, lischa,&
-                  partps, numedd, assmat, solveu, vecass,&
-                  matass, maprec, cnchci, base, compor)
+subroutine meachc(modele, fomult, lischa, partps, numedd,&
+                  cnchci)
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -25,55 +24,36 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
 #include "asterfort/asasve.h"
 #include "asterfort/ascavc.h"
 #include "asterfort/ascova.h"
-#include "asterfort/asmatr.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/fetccn.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/meachc.h"
-#include "asterfort/meachm.h"
-#include "asterfort/meamat.h"
-#include "asterfort/merime.h"
 #include "asterfort/nmvcd2.h"
 #include "asterfort/nmvcex.h"
 #include "asterfort/nmvcle.h"
-#include "asterfort/preres.h"
-#include "asterfort/uttcpu.h"
 #include "asterfort/vechme.h"
 #include "asterfort/vectme.h"
 #include "asterfort/vecvme.h"
 #include "asterfort/vedime.h"
 #include "asterfort/velame.h"
 #include "asterfort/vrcref.h"
-    aster_logical :: assmat
-    character(len=1) :: base
-    character(len=19) :: lischa, solveu, vecass, matass, maprec
-    character(len=24) :: cnchci, modele, carele, fomult, numedd, compor
-    character(len=*) :: mate
+    character(len=19) :: lischa
+    character(len=24) :: cnchci, modele, fomult, numedd
     real(kind=8) :: partps(3)
 !
 ! ----------------------------------------------------------------------
 !     MECANIQUE STATIQUE - ACTUALISATION DES CHARGEMENTS MECANIQUES
-!     **                   *                 *           *
+!     **                   *                 **          *
 ! ----------------------------------------------------------------------
 ! IN  MODELE  : NOM DU MODELE
-! IN  MATE    : NOM DU MATERIAU
-! IN  CARELE  : NOM D'1 CARAC_ELEM
 ! IN  FOMULT  : LISTE DES FONCTIONS MULTIPLICATRICES
 ! IN  LISCHA  : INFORMATION SUR LES CHARGEMENTS
 ! IN  PARTPS  : PARAMETRES TEMPORELS
 ! IN  NUMEDD  : PROFIL DE LA MATRICE
-! IN  ASSMAT  : BOOLEEN POUR LE CALCUL DE LA MATRICE
-! IN  SOLVEU  : METHODE DE RESOLUTION 'LDLT' OU 'GCPC'
-! OUT VECASS  : VECTEUR ASSEMBLE SECOND MEMBRE
-! OUT MATASS,MAPREC  MATRICE DE RIGIDITE ASSEMBLEE
 ! OUT CNCHCI  : OBJET DE S.D. CHAM_NO DIMENSIONNE A LA TAILLE DU
 !               PROBLEME, VALANT 0 PARTOUT, SAUF LA OU LES DDLS IMPOSES
 !               SONT TRAITES PAR ELIMINATION (= DEPLACEMENT IMPOSE)
-! IN  BASE    : BASE DE TRAVAIL
-! IN/OUT  MAPREC  : MATRICE PRECONDITIONNEE
-! IN  COMPOR  : COMPOR POUR LES MULTIFIBRE (POU_D_EM)
 !----------------------------------------------------------------------
 !
 !
@@ -83,22 +63,8 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
 !
 ! 0.3. ==> VARIABLES LOCALES
 !
-    character(len=6) :: nompro
-    parameter ( nompro = 'MEACMV' )
-!
-    integer :: jchar, jinf, nh, ierr, jtp, ibid
-    integer :: nchar, typcum
     real(kind=8) :: time
-    character(len=1) :: typres
-    character(len=8) :: matele
-    character(len=14) :: com
-    character(len=19) :: chvref, chvarc
-    character(len=16) :: option
-    character(len=19) :: chamn1, chamn2, chamn3, chamn4
-    character(len=24) :: k24bid, blan24, vediri, vadiri, velapl, valapl, vecham
-    character(len=24) :: vacham, chlapl, chdiri, chcham, chths, charge, infoch
-    character(len=24) :: vecths
-    aster_logical :: ass1er, lhydr, lsech, ltemp, lptot
+    character(len=24) :: charge, infoch
 !
 ! DEB-------------------------------------------------------------------
 !====
@@ -107,30 +73,15 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
 !
     call jemarq()
 !
-!
-!
 !====
-! 2. LE PREMIER MEMBRE
+! 2. CHARGES CINEMATIQUES
 !====
 !
-    call meamat(modele, mate, carele, lischa, partps,&
-                numedd, assmat, solveu, matass, maprec,&
-                base, compor)
-!
-!====
-! 3. LES CHARGEMENTS
-!====
-!
-    call uttcpu('CPU.OP0046.3', 'DEBUT', ' ')
-!
-! 3.1. ==> LES DIRICHLETS
-!
-    call meachm(modele, mate, carele, fomult, lischa,&
-                partps, numedd, vecass, cnchci, compor)
-!
-! 3.1. ==> LES CHARGES CINEMATIQUES
-!
-    call meachc(modele, fomult, lischa, partps, numedd,&
+    cnchci = ' '
+    time = partps(1)
+    charge = lischa//'.LCHA'
+    infoch = lischa//'.INFC'
+    call ascavc(charge, infoch, fomult, numedd, time,&
                 cnchci)
 !
     call jedema()
