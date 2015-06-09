@@ -19,7 +19,7 @@
 !
 interface
     subroutine meacha(modele, mate, carele, fomult, lischa,&
-                      partps, numedd, vecass, cnchci, compor)
+                      partps, numedd, vecass, compor)
         character(len=24) :: modele
         character(len=*) :: mate
         character(len=24) :: carele
@@ -27,13 +27,7 @@ interface
         character(len=19) :: lischa
         real(kind=8) :: partps(3)
         character(len=24) :: numedd
-        aster_logical :: assmat
-        character(len=19) :: solveu
         character(len=19) :: vecass
-        character(len=19) :: matass
-        character(len=19) :: maprec
-        character(len=24) :: cnchci
-        character(len=1) :: base
         character(len=24) :: compor
     end subroutine meacha
 end interface
