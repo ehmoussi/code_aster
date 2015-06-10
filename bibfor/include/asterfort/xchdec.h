@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,17 +16,9 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine vechmx(nomo, lischa, ichar, nbch, nomlis,&
-                      nbin_maxi, lpain, lchin, lastin, vecele)
-        integer :: nbin_maxi
-        character(len=8) :: nomo
-        character(len=19) :: lischa
-        integer :: ichar
-        integer :: nbch
-        character(len=24) :: nomlis
-        character(len=8) :: lpain(nbin_maxi)
-        character(len=19) :: lchin(nbin_maxi)
-        integer :: lastin
-        character(len=19) :: vecele
-    end subroutine vechmx
+    subroutine xchdec(modelx, decou, chdec)
+        character(len=8) :: modelx
+        character(len=8) :: decou
+        character(len=19) :: chdec
+    end subroutine xchdec
 end interface

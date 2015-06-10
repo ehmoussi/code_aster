@@ -16,17 +16,10 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine vechmx(nomo, lischa, ichar, nbch, nomlis,&
-                      nbin_maxi, lpain, lchin, lastin, vecele)
-        integer :: nbin_maxi
-        character(len=8) :: nomo
-        character(len=19) :: lischa
-        integer :: ichar
-        integer :: nbch
-        character(len=24) :: nomlis
-        character(len=8) :: lpain(nbin_maxi)
-        character(len=19) :: lchin(nbin_maxi)
-        integer :: lastin
-        character(len=19) :: vecele
-    end subroutine vechmx
+    subroutine permnoe(maillage, deform, nbmod, nbno)
+        character(len=8), intent(in) :: maillage
+        integer, intent(in) :: nbmod
+        integer, intent(in) :: nbno
+        real(kind=8) :: deform(nbno, nbmod)
+    end subroutine permnoe
 end interface

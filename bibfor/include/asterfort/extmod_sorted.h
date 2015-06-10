@@ -1,4 +1,3 @@
-!
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -16,17 +15,16 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine vechmx(nomo, lischa, ichar, nbch, nomlis,&
-                      nbin_maxi, lpain, lchin, lastin, vecele)
-        integer :: nbin_maxi
-        character(len=8) :: nomo
-        character(len=19) :: lischa
-        integer :: ichar
-        integer :: nbch
-        character(len=24) :: nomlis
-        character(len=8) :: lpain(nbin_maxi)
-        character(len=19) :: lchin(nbin_maxi)
-        integer :: lastin
-        character(len=19) :: vecele
-    end subroutine vechmx
+    subroutine extmod_sorted(basemo, numddl, nume, nbnumo, dmode,&
+                      nbeq, nbnoe, iddl, nbddl)
+        integer :: nbddl
+        integer :: nbnoe
+        integer :: nbnumo
+        character(len=8) :: basemo
+        character(len=14) :: numddl
+        integer :: nume(nbnumo)
+        real(kind=8) :: dmode(nbddl*nbnoe*nbnumo)
+        integer :: nbeq
+        integer :: iddl(nbddl)
+    end subroutine extmod_sorted
 end interface

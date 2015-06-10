@@ -18,10 +18,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine xcodec(noma, modelx, k8condi, linter)
+    subroutine xcodec(noma, modelx, k8condi, linter, decou)
         character(len=8) :: noma
         character(len=8) :: modelx
         character(len=8) :: k8condi
         aster_logical :: linter
+        character(len=8) :: decou
     end subroutine xcodec
 end interface
