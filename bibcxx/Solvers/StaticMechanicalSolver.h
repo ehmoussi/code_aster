@@ -57,6 +57,11 @@ class StaticMechanicalSolverInstance: public GenericSolver
         /** @brief Chargements cinematiques */
         ListKineLoad      _listOfKinematicsLoads;
 
+        /**
+         * @brief Temporaire ! Test de MECA_STATIQUE en C++
+         */
+        void myTmpFunc() throw ( std::runtime_error );
+
     public:
         /**
          * @brief Constructeur

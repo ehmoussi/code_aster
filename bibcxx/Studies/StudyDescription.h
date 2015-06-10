@@ -31,6 +31,8 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
 #include "Materials/MaterialOnMesh.h"
+#include "Loads/MechanicalLoad.h"
+#include "Loads/KinematicsLoad.h"
 
 /**
  * @class StudyDescriptionInstance
@@ -43,7 +45,11 @@ class StudyDescriptionInstance
         /** @brief Modèle support */
         ModelPtr          _supportModel;
         /** @brief Materiau affecté */
-        MaterialOnMeshPtr _supportMaterialOnMesh;
+        MaterialOnMeshPtr _materialOnMesh;
+        /** @brief Chargements Mecaniques */
+        ListMecaLoad      _listOfMechanicalLoads;
+        /** @brief Chargements cinematiques */
+        ListKineLoad      _listOfKinematicsLoads;
 
     public:
         /**
@@ -51,14 +57,64 @@ class StudyDescriptionInstance
          * @param ModelPtr Modèle de l'étude
          * @param MaterialOnMeshPtr Matériau de l'étude
          */
-        StudyDescriptionInstance( ModelPtr& curModel,
-                                  MaterialOnMeshPtr& curMat):
+        StudyDescriptionInstance( const ModelPtr& curModel,
+                                  const MaterialOnMeshPtr& curMat ):
             _supportModel( curModel ),
-            _supportMaterialOnMesh( curMat )
+            _materialOnMesh( curMat )
         {};
 
         ~StudyDescriptionInstance()
         {};
+
+        /**
+         * @brief Function d'ajout d'une charge cinematique
+         * @param currentLoad charge a ajouter a la sd
+         */
+        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
+        {
+            _listOfKinematicsLoads.push_back( currentLoad );
+        };
+
+        /**
+         * @brief Function d'ajout d'une charge mecanique
+         * @param currentLoad charge a ajouter a la sd
+         */
+        void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
+        {
+            _listOfMechanicalLoads.push_back( currentLoad );
+        };
+
+        /**
+         * @brief Obtenir la liste des chargements cinematiques
+         */
+        const ListKineLoad& getListOfKinematicsLoads() const
+        {
+            return _listOfKinematicsLoads;
+        };
+
+        /**
+         * @brief Obtenir la liste des chargements mecaniques
+         */
+        const ListMecaLoad& getListOfMechanicalLoads() const
+        {
+            return _listOfMechanicalLoads;
+        };
+
+        /**
+         * @brief Obtenir le matériau affecté
+         */
+        MaterialOnMeshPtr getMaterialOnMesh() const
+        {
+            return _materialOnMesh;
+        };
+
+        /**
+         * @brief Obtenir le modèle de l'étude
+         */
+        ModelPtr getModel() const
+        {
+            return _supportModel;
+        };
 };
 
 

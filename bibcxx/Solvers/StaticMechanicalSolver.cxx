@@ -27,14 +27,35 @@
 #include "Solvers/StaticMechanicalSolver.h"
 #include "RunManager/CommandSyntaxCython.h"
 
+#include "Discretization/DiscreteProblem.h"
+
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _supportModel( ModelPtr() ),
                 _materialOnMesh( MaterialOnMeshPtr() ),
                 _linearSolver( LinearSolverPtr() )
 {};
 
+void StaticMechanicalSolverInstance::myTmpFunc() throw ( std::runtime_error )
+{
+    StudyDescriptionPtr study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) );
+
+    for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
+          curIter != _listOfMechanicalLoads.end();
+          ++curIter )
+        study->addMechanicalLoad( *curIter );
+    for ( ListKineLoadIter curIter = _listOfKinematicsLoads.begin();
+          curIter != _listOfKinematicsLoads.end();
+          ++curIter )
+        study->addKinematicsLoad( *curIter );
+
+    DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
+    dProblem->buildElementaryRigidityMatrix();
+};
+
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
+    myTmpFunc();
+
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
     std::string nameOfSD = resultC->getName();
 

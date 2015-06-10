@@ -202,5 +202,11 @@ class KinematicsLoadInstance: public DataStructure
  * @brief Pointeur intelligent vers un KinematicsLoadInstance
  */
 typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
+/** @typedef std::list de KinematicsLoad */
+typedef std::list< KinematicsLoadPtr > ListKineLoad;
+/** @typedef Iterateur sur une std::list de KinematicsLoad */
+typedef ListKineLoad::iterator ListKineLoadIter;
+/** @typedef Iterateur constant sur une std::list de KinematicsLoad */
+typedef ListKineLoad::const_iterator ListKineLoadCIter;
 
 #endif /* KINEMATICSLOAD_H_ */
