@@ -1,4 +1,4 @@
-subroutine cresol(solveu)
+subroutine cresol(solveu, basz)
     implicit none
 #include "jeveux.h"
 #include "asterc/getexm.h"
@@ -20,6 +20,7 @@ subroutine cresol(solveu)
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
     character(len=19) :: solveu
+    character(len=1), optional :: basz
 ! ----------------------------------------------------------------------
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -49,6 +50,7 @@ subroutine cresol(solveu)
     integer :: zslvk, zslvr, zslvi
     integer :: istop, nsolve, ibid, nprec, islvk, islvr, islvi, n1
     real(kind=8) :: epsmat
+    character(len=1) :: base
     character(len=3) :: syme, mixpre, kmd, kellag
     character(len=8) :: kstop, modele, kxfem
     character(len=8) :: partit
@@ -59,6 +61,10 @@ subroutine cresol(solveu)
 ! ----------------------------------------------------------------------
 !
     call jemarq()
+    base='V'
+    if (present(basz)) then
+        base=basz
+    endif
 !
 ! --- INITS. GLOBALES (CAR MOT-CLES OPTIONNELS)
     nomsol='SOLVEUR'
@@ -152,9 +158,9 @@ subroutine cresol(solveu)
     zslvk = sdsolv('ZSLVK')
     zslvr = sdsolv('ZSLVR')
     zslvi = sdsolv('ZSLVI')
-    call wkvect(solveu//'.SLVK', 'V V K24', zslvk, islvk)
-    call wkvect(solveu//'.SLVR', 'V V R', zslvr, islvr)
-    call wkvect(solveu//'.SLVI', 'V V I', zslvi, islvi)
+    call wkvect(solveu//'.SLVK', base//' V K24', zslvk, islvk)
+    call wkvect(solveu//'.SLVR', base//' V R', zslvr, islvr)
+    call wkvect(solveu//'.SLVI', base//' V I', zslvi, islvi)
 !
 ! ------------------------------------------------------
 ! --- LECTURE MOT-CLE ET REMPLISSAGE DE LA SD_SOLVEUR PROPRE A CHAQUE

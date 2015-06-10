@@ -26,8 +26,8 @@
 #include <stdexcept>
 #include "Solvers/StaticMechanicalSolver.h"
 #include "RunManager/CommandSyntaxCython.h"
-
 #include "Discretization/DiscreteProblem.h"
+#include "LinearAlgebra/AssemblyMatrix.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _supportModel( ModelPtr() ),
@@ -37,8 +37,10 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
 
 void StaticMechanicalSolverInstance::myTmpFunc() throw ( std::runtime_error )
 {
+    // Define the study
     StudyDescriptionPtr study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) );
 
+    // Add Loads to the study
     for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
           curIter != _listOfMechanicalLoads.end();
           ++curIter )
@@ -48,13 +50,22 @@ void StaticMechanicalSolverInstance::myTmpFunc() throw ( std::runtime_error )
           ++curIter )
         study->addKinematicsLoad( *curIter );
 
+    // Define the discrete problem
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
+
+    // Compute elementary rigidity matrix
     dProblem->buildElementaryRigidityMatrix();
+
+    // Build the linear solver (sd_solver)
+    _linearSolver->build();
+
+//NS     AssemblyMatrixPtr aMatrix;
+//NS     aMatrix.setElementaryMatrix();
 };
 
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
-    myTmpFunc();
+//NS     myTmpFunc();
 
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
     std::string nameOfSD = resultC->getName();

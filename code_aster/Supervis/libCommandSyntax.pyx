@@ -157,11 +157,8 @@ cdef class CommandSyntax:
         dictDef = self._getFactorKeyword( factName )
         if dictDef is None:
             return None
-        if occurrence > len( dictDef ) - 1:
-            return None
-        else:
-            dictDef = dictDef[occurrence]
-        return dictDef
+        try: return dictDef[occurrence]
+        except: return None
 
     def _getDefinition( self, factName, occurrence ):
         """Return the definition of a factor keyword or of the top-level

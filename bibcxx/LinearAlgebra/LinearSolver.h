@@ -33,6 +33,8 @@
 #include "DataFields/FieldOnNodes.h"
 #include "LinearAlgebra/AllowedLinearSolver.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
+#include "DataStructure/DataStructure.h"
+#include "MemoryManager/JeveuxVector.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -149,13 +151,17 @@ struct SolverChecker
  * @brief Cette classe permet de definir un solveur lineraire
  * @author Nicolas Sellenet
  */
-class LinearSolverInstance
+class LinearSolverInstance: public DataStructure
 {
     private:
         /** @brief Type du solveur lineaire */
-        LinearSolverEnum _linearSolver;
+        LinearSolverEnum    _linearSolver;
         /** @brief Type du renumeroteur */
-        Renumbering      _renumber;
+        Renumbering         _renumber;
+
+        JeveuxVectorChar24  _charValues;
+        JeveuxVectorDouble  _doubleValues;
+        JeveuxVectorLong    _integerValues;
 
     public:
         /**
@@ -166,11 +172,21 @@ class LinearSolverInstance
          */
         LinearSolverInstance( const LinearSolverEnum currentLinearSolver,
                               const Renumbering currentRenumber ):
+                    DataStructure( getNewResultObjectName(), "SOLVEUR" ),
                     _linearSolver( currentLinearSolver ),
-                    _renumber( currentRenumber )
+                    _renumber( currentRenumber ),
+                    _charValues( JeveuxVectorChar24( getName() + "           .SLVK" ) ),
+                    _doubleValues( JeveuxVectorDouble( getName() + "           .SLVR" ) ),
+                    _integerValues( JeveuxVectorLong( getName() + "           .SLVI" ) )
         {
             SolverChecker::isAllowedRenumberingForSolver( currentLinearSolver, currentRenumber );
         };
+
+        /**
+         * @brief Construction de la sd_solveur
+         * @return vrai si tout s'est bien passé
+         */
+        bool build();
 
         /**
          * @brief Recuperer le nom du solveur
