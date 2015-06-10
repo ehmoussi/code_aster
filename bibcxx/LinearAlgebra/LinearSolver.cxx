@@ -43,6 +43,34 @@ const std::set< Renumbering > WrapPetsc::setOfAllowedRenumbering( PetscRenumberi
 const std::set< Renumbering > WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering,
                                                             GcpcRenumbering + nbRenumberingGcpc );
 
+bool LinearSolverInstance::build()
+{
+    std::string newName( getName() );
+    newName.resize( 19, ' ' );
+
+    // Definition du bout de fichier de commande pour SOLVEUR
+    CommandSyntaxCython cmdSt( "SOLVEUR" );
+    cmdSt.setResult( getName(), getType() );
+
+    ListSyntaxMapContainer listeSolver;
+    SyntaxMapContainer dict;
+    SyntaxMapContainer dict1;
+    dict1.container[ "METHODE" ] = getSolverName();
+    dict1.container[ "RENUM" ] = getRenumburingName();
+    dict1.container[ "PCENT_PIVOT" ] = 20;
+    dict1.container[ "TYPE_RESOL" ] = "AUTO";
+    dict1.container[ "PRETRAITEMENTS" ] = "AUTO";
+    dict1.container[ "ELIM_LAGR" ] = "LAGR2";
+    dict1.container[ "GESTION_MEMOIRE" ] = "AUTO";
+    listeSolver.push_back( dict1 );
+    dict.container[ "SOLVEUR" ] = listeSolver;
+    cmdSt.define( dict );
+
+    CALL_CRESOL_WRAP( newName.c_str(), "G" );
+
+    return true;
+};
+
 FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystem(
             const AssemblyMatrixDoublePtr& currentMatrix,
             const FieldOnNodesDoublePtr& currentRHS ) const

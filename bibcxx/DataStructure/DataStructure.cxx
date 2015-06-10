@@ -68,7 +68,7 @@ void DataStructure::debugPrint( int logicalUnit ) const
     True = 1;
     False = 0;
     ipos = 1;
-    JeveuxString< 1 > base( "G" );
+    JeveuxString< 1 > base( " " );
     JeveuxString< 3 > no( "NON" );
     try {
         CALL_UTIMSD( &unit, &niveau, &False, &True, this->getName().c_str(),

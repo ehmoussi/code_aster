@@ -27,7 +27,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 /**
- * @brief Forward decalaration de DOFNumberingInstance pour éviter la référence circulaire
+ * @brief Forward declaration de DOFNumberingInstance pour éviter la référence circulaire
+ * @todo A SUPPRIMER
  */
 class DOFNumberingInstance;
 typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;

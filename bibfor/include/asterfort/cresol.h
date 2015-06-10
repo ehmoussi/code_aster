@@ -16,7 +16,8 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine cresol(solveu)
+    subroutine cresol(solveu, basz)
         character(len=19) :: solveu
+        character(len=1), optional :: basz
     end subroutine cresol
 end interface
