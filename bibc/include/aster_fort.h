@@ -159,6 +159,9 @@ void DEFSPSSSPPSSPS(MERIME_WRAP,merime_wrap, const char*, STRING_SIZE, INTEGER*,
                                 DOUBLE *, const char*, STRING_SIZE, const char*, STRING_SIZE,
                                 INTEGER*, const char*, STRING_SIZE );
 
+#define CALL_RCMFMC(a, b) CALLSS(RCMFMC, rcmfmc, a, b)
+void DEFSS(RCMFMC,rcmfmc, const char*, STRING_SIZE, const char*, STRING_SIZE);
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)

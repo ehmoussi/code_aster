@@ -553,4 +553,12 @@ typedef boost::shared_ptr< DistributedHeatFluxDoubleInstance > DistributedHeatFl
 template class MechanicalLoadInstance< HydraulicFluxDoubleInstance, THMFlux >;
 typedef MechanicalLoadInstance< HydraulicFluxDoubleInstance, THMFlux > DistributedHydraulicFluxDoubleInstance;
 typedef boost::shared_ptr< DistributedHydraulicFluxDoubleInstance > DistributedHydraulicFluxDoublePtr;
+
+/** @typedef std::list de MechanicalLoad */
+typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;
+/** @typedef Iterateur sur une std::list de MechanicalLoad */
+typedef ListMecaLoad::iterator ListMecaLoadIter;
+/** @typedef Iterateur constant sur une std::list de MechanicalLoad */
+typedef ListMecaLoad::const_iterator ListMecaLoadCIter;
+
 #endif /* MECHANICALLOAD_H_ */
