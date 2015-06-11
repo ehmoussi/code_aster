@@ -33,6 +33,7 @@
 #include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
+#include "LinearAlgebra/DOFNumbering.h"
 
 /**
  * @class StudyDescriptionInstance

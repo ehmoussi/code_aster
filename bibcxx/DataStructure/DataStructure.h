@@ -89,7 +89,7 @@ class DataStructure
     protected:
         /**
          * @brief Methode servant a fixer a posteriori le type d'une sd
-         * @param newType chaine contenant le nouveau nom
+         * @param newType chaine contenant le nouveau type
          */
         void setType( const std::string newType )
         {

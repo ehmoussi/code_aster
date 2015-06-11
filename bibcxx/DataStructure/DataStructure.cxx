@@ -42,7 +42,7 @@ std::string trim( const std::string& str,
     return str.substr(strBegin, strRange);
 };
 
-DataStructure::DataStructure( std::string name, std::string type ): _name( name ), _type( type )
+DataStructure::DataStructure( const std::string name, const std::string type ): _name( name ), _type( type )
 {
     std::string nameWithoutBlanks = trim( name );
     mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );

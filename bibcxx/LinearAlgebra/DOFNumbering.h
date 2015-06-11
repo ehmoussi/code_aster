@@ -28,12 +28,15 @@
 
 #include <stdexcept>
 #include "astercxx.h"
+#include <string>
+
 #include "DataStructure/DataStructure.h"
 #include "LinearAlgebra/LinearSolver.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/MechanicalLoad.h"
+#include "Loads/KinematicsLoad.h"
 
 /**
  * @class DOFNumberingInstance
@@ -51,8 +54,10 @@ class DOFNumberingInstance: public DataStructure
         ModelPtr                 _supportModel;
         /** @brief Matrices elementaires */
         ElementaryMatrixPtr      _supportMatrix;
-        /** @brief Conditions aux limites */
-//         GenericMechanicalLoadPtr _load;
+        /** @brief Chargements Mecaniques */
+        ListMecaLoad             _listOfMechanicalLoads;
+        /** @brief Chargements cinematiques */
+        ListKineLoad             _listOfKinematicsLoads;
         /** @brief Solveur lineaire */
         LinearSolverPtr          _linearSolver;
         /** @brief Booleen permettant de preciser sur la sd est vide */
@@ -65,6 +70,12 @@ class DOFNumberingInstance: public DataStructure
         DOFNumberingInstance();
 
         /**
+         * @brief Constructeur
+         * @param name nom souhaité de la sd (utile pour le DOFNumberingInstance d'une sd_resu)
+         */
+        DOFNumberingInstance( const std::string name );
+
+        /**
          * @brief Destructeur
          */
         ~DOFNumberingInstance()
@@ -75,12 +86,21 @@ class DOFNumberingInstance: public DataStructure
         };
 
         /**
-         * @brief Methode permettant d'ajouter un chargement
-         * @param currentLoad objet MechanicalLoad
+         * @brief Function d'ajout d'une charge cinematique
+         * @param currentLoad charge a ajouter a la sd
          */
-        void addLoad( const GenericMechanicalLoadPtr& currentLoad ) throw ( std::runtime_error )
+        void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
         {
-            throw std::runtime_error( "Not yet implemented" );
+            _listOfKinematicsLoads.push_back( currentLoad );
+        };
+
+        /**
+         * @brief Function d'ajout d'une charge mecanique
+         * @param currentLoad charge a ajouter a la sd
+         */
+        void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
+        {
+            _listOfMechanicalLoads.push_back( currentLoad );
         };
 
         /**

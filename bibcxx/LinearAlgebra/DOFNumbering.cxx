@@ -35,6 +35,14 @@ DOFNumberingInstance::DOFNumberingInstance():
             _isEmpty( true )
 {};
 
+DOFNumberingInstance::DOFNumberingInstance( const std::string name ):
+            DataStructure( name, "NUME_DDL" ),
+            _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
+            _supportModel( ModelPtr() ),
+            _linearSolver( new LinearSolverInstance( MultFront, Metis ) ),
+            _isEmpty( true )
+{};
+
 bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
 {
     CommandSyntaxCython cmdSt( "NUME_DDL" );

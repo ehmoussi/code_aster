@@ -61,7 +61,13 @@ class DiscreteProblemInstance
          * @brief Fonction permettant de calculer les matrices élémentaires de rigidité
          * @return Vecteur élémentaire contenant la rigidité mécanique
          */
-        ElementaryVectorPtr buildElementaryRigidityMatrix();
+        ElementaryMatrixPtr buildElementaryRigidityMatrix();
+
+        /**
+         * @brief Détermination de la numérotation de ddl
+         * @return Numérotation du problème discret
+         */
+        DOFNumberingPtr computeDOFNumbering( const std::string name = "" );
 };
 
 

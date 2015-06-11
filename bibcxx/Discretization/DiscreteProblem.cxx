@@ -32,9 +32,9 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-ElementaryVectorPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
+ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
 {
-    ElementaryVectorPtr retour( new ElementaryVectorInstance() );
+    ElementaryMatrixPtr retour( new ElementaryMatrixInstance() );
     ModelPtr curModel = _study->getModel();
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
 
@@ -74,5 +74,12 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
     CALL_MERIME_WRAP( modelName.c_str(), &nbLoad, tmp->getDataPtr()->c_str(),
                       mate.c_str(), blanc.c_str(), &exiti0, &time,
                       blanc.c_str(), retour->getName().c_str(), &nh, "G" );
+    return retour;
+};
+
+DOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( const std::string name )
+{
+    DOFNumberingPtr retour( new DOFNumberingInstance() );
+    
     return retour;
 };
