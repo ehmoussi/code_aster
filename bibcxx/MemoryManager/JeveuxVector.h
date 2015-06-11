@@ -172,6 +172,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          */
         long size() const
         {
+            if ( _name == "" ) return 0;
             long vectSize;
             JeveuxChar8 param( "LONMAX" );
             // JeveuxChar32 dummy( " " );

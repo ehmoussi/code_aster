@@ -135,6 +135,8 @@
 #define CALLPPPSPP(UN,LN,a,b,c,d,e,f)                 F_FUNC(UN,LN)(a,b,c,d,e,f,strlen(d))
 #define DEFSPPSSP(UN,LN,a,la,b,c,d,ld,e,le,f)               STDCALL(UN,LN)(a,b,c,d,e,f,la,ld,le)
 #define CALLSPPSSP(UN,LN,a,b,c,d,e,f)                       F_FUNC(UN,LN)(a,b,c,d,e,f,strlen(a),strlen(d),strlen(e))
+#define DEFSSSSSSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)               STDCALL(UN,LN)(a,b,c,d,e,f,g,la,lb,lc,ld,le,lf,lg)
+#define CALLSSSSSSS(UN,LN,a,b,c,d,e,f,g)                       F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b),strlen(c),strlen(d),strlen(e),strlen(f),strlen(g))
 
 
 #define DEFSPPSSPSPS(UN,LN,a,la,b,c,d,ld,e,le,f,g,lg,h,i,li)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,la,ld,le,lg,li)
@@ -370,6 +372,9 @@
 #define CALLPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r)              F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r)
 #define DEFPPPPPPPPPPPPPPPPPPPSPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,lt,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,lt,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)
 #define CALLPPPPPPPPPPPPPPPPPPPSPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)                 F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,strlen(t),u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)
+
+#define DEFSSSSSSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)
+#define CALLSSSSSSS(UN,LN,a,b,c,d,e,f,g)                       F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,strlen(d),e,strlen(e),f,strlen(f),g,strlen(g))
 
 #define DEFSPSSSPPSSPS(UN,LN,a,la,b,c,lc,d,ld,e,le,f,g,h,lh,i,li,j,k,lk)               STDCALL(UN,LN)(a,la,b,c,lc,d,ld,e,le,f,g,h,lh,i,li,j,k,lk)
 #define CALLSPSSSPPSSPS(UN,LN,a,b,c,d,e,f,g,h,i,j,k)                       F_FUNC(UN,LN)(a,strlen(a),b,c,strlen(c),d,strlen(d),e,strlen(e),f,g,h,strlen(h),i,strlen(i),j,k,strlen(k))

@@ -24,10 +24,13 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <stdexcept>
+
 #include "Solvers/StaticMechanicalSolver.h"
 #include "RunManager/CommandSyntaxCython.h"
 #include "Discretization/DiscreteProblem.h"
+#include "LinearAlgebra/ElementaryMatrix.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
+#include "LinearAlgebra/DOFNumbering.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _supportModel( ModelPtr() ),
@@ -54,18 +57,21 @@ void StaticMechanicalSolverInstance::myTmpFunc() throw ( std::runtime_error )
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
 
     // Compute elementary rigidity matrix
-    dProblem->buildElementaryRigidityMatrix();
+    ElementaryMatrixPtr matrElem = dProblem->buildElementaryRigidityMatrix();
+
+    DOFNumberingPtr dofNum = dProblem->computeDOFNumbering();
 
     // Build the linear solver (sd_solver)
     _linearSolver->build();
 
-//NS     AssemblyMatrixPtr aMatrix;
-//NS     aMatrix.setElementaryMatrix();
+//     AssemblyMatrixDoublePtr aMatrix;
+//     aMatrix->setElementaryMatrix( matrElem );
+
 };
 
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
-//NS     myTmpFunc();
+//     myTmpFunc();
 
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
     std::string nameOfSD = resultC->getName();
