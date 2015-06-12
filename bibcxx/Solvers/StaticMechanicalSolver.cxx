@@ -38,7 +38,7 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _linearSolver( LinearSolverPtr() )
 {};
 
-void StaticMechanicalSolverInstance::myTmpFunc() throw ( std::runtime_error )
+void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) throw ( std::runtime_error )
 {
     // Define the study
     StudyDescriptionPtr study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) );
@@ -59,22 +59,24 @@ void StaticMechanicalSolverInstance::myTmpFunc() throw ( std::runtime_error )
     // Compute elementary rigidity matrix
     ElementaryMatrixPtr matrElem = dProblem->buildElementaryRigidityMatrix();
 
-    DOFNumberingPtr dofNum = dProblem->computeDOFNumbering();
-
     // Build the linear solver (sd_solver)
     _linearSolver->build();
 
-//     AssemblyMatrixDoublePtr aMatrix;
-//     aMatrix->setElementaryMatrix( matrElem );
+    DOFNumberingPtr dofNum1 = resultC->getEmptyDOFNumbering();
+    dofNum1->setLinearSolver( _linearSolver );
+    dofNum1 = dProblem->computeDOFNumbering(dofNum1);
+
+    AssemblyMatrixDoublePtr aMatrix;
+    aMatrix->setElementaryMatrix( matrElem );
 
 };
 
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
-//     myTmpFunc();
-
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
     std::string nameOfSD = resultC->getName();
+
+    execute2( resultC );
 
     CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( resultC->getName(), resultC->getType() );

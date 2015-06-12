@@ -35,7 +35,7 @@
 ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
 {
     ElementaryMatrixPtr retour( new ElementaryMatrixInstance() );
-    ModelPtr curModel = _study->getModel();
+    ModelPtr curModel = _study->getSupportModel();
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
 
     const ListKineLoad& kineLoads = _study->getListOfKinematicsLoads();
@@ -77,9 +77,26 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
     return retour;
 };
 
-DOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( const std::string name )
+DOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( DOFNumberingPtr dofNum )
 {
-    DOFNumberingPtr retour( new DOFNumberingInstance() );
-    
-    return retour;
+    if ( dofNum->getName() == "" )
+        dofNum = DOFNumberingPtr( new DOFNumberingInstance() );
+
+    dofNum->setSupportModel( _study->getSupportModel() );
+
+    const ListKineLoad& kineLoads = _study->getListOfKinematicsLoads();
+    const ListMecaLoad& mecaLoads = _study->getListOfMechanicalLoads();
+    int compteur = 0;
+    for ( ListMecaLoadCIter curIter = mecaLoads.begin();
+          curIter != mecaLoads.end();
+          ++curIter )
+        dofNum->addMechanicalLoad( *curIter );
+    for ( ListKineLoadCIter curIter = kineLoads.begin();
+          curIter != kineLoads.end();
+          ++curIter )
+        dofNum->addKinematicsLoad( *curIter );
+
+    dofNum->computeNumerotation();
+
+    return dofNum;
 };

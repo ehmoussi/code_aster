@@ -60,7 +60,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
         /**
          * @brief Temporaire ! Test de MECA_STATIQUE en C++
          */
-        void myTmpFunc() throw ( std::runtime_error );
+        void execute2( ResultsContainerPtr& ) throw ( std::runtime_error );
 
     public:
         /**

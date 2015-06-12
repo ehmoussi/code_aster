@@ -39,40 +39,65 @@ DOFNumberingInstance::DOFNumberingInstance( const std::string name ):
             DataStructure( name, "NUME_DDL" ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
             _supportModel( ModelPtr() ),
-            _linearSolver( new LinearSolverInstance( MultFront, Metis ) ),
             _isEmpty( true )
 {};
 
 bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "NUME_DDL" );
-    cmdSt.setResult( getResultObjectName(), getType() );
-
-    SyntaxMapContainer dict;
     if ( _supportModel )
     {
         if ( _supportModel->isEmpty() )
             throw std::runtime_error( "Support Model is empty" );
-        throw std::runtime_error( "Not yet implemented" );
+
+        if ( ! _linearSolver )
+            throw std::runtime_error( "Linear solver is undefined" );
+
+        long nbLoad = _listOfMechanicalLoads.size() + _listOfKinematicsLoads.size();
+        std::string nameOfLisCha( "&&DNICN.Charge     " );
+        // Attention pour la creation des charges ce n'est pas sis simple (cf. nmdoch)
+        JeveuxVectorChar24 tmp( nameOfLisCha + ".LCHA" );
+        tmp->allocate( Temporary, nbLoad );
+
+        int compteur = 0;
+        for ( ListMecaLoadCIter curIter = _listOfMechanicalLoads.begin();
+            curIter != _listOfMechanicalLoads.end();
+            ++curIter )
+        {
+            ( *tmp )[compteur] = JeveuxChar24( ( *curIter )->getName().c_str(), 8 );
+            ++compteur;
+        };
+        for ( ListKineLoadCIter curIter = _listOfKinematicsLoads.begin();
+            curIter != _listOfKinematicsLoads.end();
+            ++curIter )
+        {
+            ( *tmp )[compteur] = JeveuxChar24( ( *curIter )->getName().c_str(), 8 );
+            ++compteur;
+        };
+        CALL_NUMERO_WRAP( getName().c_str(), _linearSolver->getName().c_str(), "VG", " ",
+                          " ", _supportModel->getName().c_str(), nameOfLisCha.c_str() );
     }
     else if ( ! _supportMatrix.use_count() == 0 )
     {
+        CommandSyntaxCython cmdSt( "NUME_DDL" );
+        cmdSt.setResult( getResultObjectName(), getType() );
+
+        SyntaxMapContainer dict;
         if ( _supportMatrix->isEmpty() )
             throw std::runtime_error( "Support ElementaryMatrix is empty" );
 
         dict.container[ "MATR_RIGI" ] = _supportMatrix->getName();
         dict.container[ "METHODE" ] = _linearSolver->getSolverName();
         dict.container[ "RENUM" ] = _linearSolver->getRenumburingName();
+
+        cmdSt.define( dict );
+
+        // Maintenant que le fichier de commande est pret, on appelle OP0011
+        INTEGER op = 11;
+        CALL_EXECOP( &op );
+        _isEmpty = false;
     }
     else
-        throw std::runtime_error( "No support matrix and support model defined" );
-
-    cmdSt.define( dict );
-
-    // Maintenant que le fichier de commande est pret, on appelle OP0011
-    INTEGER op = 11;
-    CALL_EXECOP( &op );
-    _isEmpty = false;
+        throw std::runtime_error( "No support matrix or support model defined" );
 
     return true;
 };

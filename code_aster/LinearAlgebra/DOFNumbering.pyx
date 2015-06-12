@@ -24,6 +24,7 @@ from code_aster.Modeling.Model cimport Model
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrix
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
+from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 
 #### DOFNumbering
 
@@ -52,9 +53,13 @@ cdef class DOFNumbering:
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
-    def addLoad( self, GenericMechanicalLoad load ):
+    def addKinematicsLoad( self, KinematicsLoad load ):
         """Add a mechanical load"""
-        self.getInstance().addLoad( deref( load.getPtr() ) )
+        self.getInstance().addKinematicsLoad( deref( load.getPtr() ) )
+
+    def addMechanicalLoad( self, GenericMechanicalLoad load ):
+        """Add a mechanical load"""
+        self.getInstance().addMechanicalLoad( deref( load.getPtr() ) )
 
     def computeNumerotation( self ):
         """Compute the numerotation"""

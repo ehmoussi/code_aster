@@ -29,6 +29,17 @@
 #include "RunManager/LogicalUnitManagerCython.h"
 #include "RunManager/CommandSyntaxCython.h"
 
+DOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering() const
+{
+    std::string resuName( getName() );
+    std::string name( "12345678.00000" );
+    long a = 10, b = 14;
+    CALL_GNOMSD( resuName.c_str(), name.c_str(), &a, &b );
+    DOFNumberingPtr retour( new DOFNumberingInstance( name ) );
+    return retour;
+};
+
+
 FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::string name,
                                                                      const int rank ) const
 {

@@ -112,7 +112,7 @@ class StudyDescriptionInstance
         /**
          * @brief Obtenir le modèle de l'étude
          */
-        ModelPtr getModel() const
+        ModelPtr getSupportModel() const
         {
             return _supportModel;
         };
