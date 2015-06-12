@@ -24,7 +24,7 @@ from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
-from code_aster.LinearAlgebra.DOFNumbering cimport DOFNumbering
+from code_aster.Discretization.DOFNumbering cimport DOFNumbering
 
 
 cdef class ElementaryVector:

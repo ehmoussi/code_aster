@@ -21,7 +21,7 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
-from code_aster.LinearAlgebra.DOFNumbering cimport DOFNumbering, ForwardDOFNumberingPtr
+from code_aster.Discretization.DOFNumbering cimport DOFNumbering, ForwardDOFNumberingPtr
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrix
 
 

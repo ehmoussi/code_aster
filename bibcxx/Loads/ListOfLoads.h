@@ -34,7 +34,7 @@
 
 /**
  * @class ListOfLoadInstance
- * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
+ * @brief Classe definissant une liste de charge
  * @author Nicolas Sellenet
  */
 class ListOfLoadsInstance: public DataStructure
@@ -51,7 +51,7 @@ class ListOfLoadsInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        ListOfLoadsInstance( std::string name );
+        ListOfLoadsInstance();
 
         /**
          * @brief Function d'ajout d'une charge cinematique
@@ -81,7 +81,7 @@ class ListOfLoadsInstance: public DataStructure
          * @brief Function de récupération de la liste des charges cinématiques
          * @return _listOfKinematicsLoads
          */
-        const ListKineLoad getListOfKinematicsLoads() const
+        const ListKineLoad& getListOfKinematicsLoads() const
         {
             return _listOfKinematicsLoads;
         };
@@ -90,7 +90,7 @@ class ListOfLoadsInstance: public DataStructure
          * @brief Function de récupération de la liste des charges mécaniques
          * @return _listOfMechanicalLoads
          */
-        const ListMecaLoad getListOfMechanicalLoads() const
+        const ListMecaLoad& getListOfMechanicalLoads() const
         {
             return _listOfMechanicalLoads;
         };

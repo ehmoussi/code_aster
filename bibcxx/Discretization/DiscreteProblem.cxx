@@ -44,6 +44,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
     long nbLoad = kineLoads.size() + mecaLoads.size();
     JeveuxVectorChar8 tmp( "&&BERM.Charge" );
     tmp->allocate( Temporary, nbLoad );
+    _study->buildListOfLoads();
 
     int compteur = 0;
     for ( ListMecaLoadCIter curIter = mecaLoads.begin();

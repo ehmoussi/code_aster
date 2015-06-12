@@ -28,8 +28,8 @@
 #include "Loads/ListOfLoads.h"
 #include "RunManager/CommandSyntaxCython.h"
 
-ListOfLoadsInstance::ListOfLoadsInstance( std::string name ):
-                    DataStructure( name, "L_CHARGES" ),
+ListOfLoadsInstance::ListOfLoadsInstance():
+                    DataStructure(),
                     _isEmpty( true )
 {};
 

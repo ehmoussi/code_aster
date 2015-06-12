@@ -22,7 +22,7 @@ from code_aster.Mesh.Mesh cimport MeshPtr
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
-from code_aster.LinearAlgebra.DOFNumbering cimport DOFNumberingPtr
+from code_aster.Discretization.DOFNumbering cimport DOFNumberingPtr
 
 
 cdef extern from "LinearAlgebra/ElementaryVector.h":

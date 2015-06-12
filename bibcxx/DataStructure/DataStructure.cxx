@@ -54,7 +54,7 @@ DataStructure::DataStructure( const std::string name, const std::string type ): 
 
 DataStructure::DataStructure()
 {
-    _name = tempName.getNewTemporaryName();
+    _name = TemporaryDataStructure::getNewTemporaryName();
     std::string nameWithoutBlanks = trim( _name );
     if ( nameWithoutBlanks != "" )
         mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
