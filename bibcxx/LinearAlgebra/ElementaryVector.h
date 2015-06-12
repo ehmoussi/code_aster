@@ -32,7 +32,7 @@
 #include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
 #include "DataFields/FieldOnNodes.h"
-#include "LinearAlgebra/DOFNumbering.h"
+#include "Discretization/DOFNumbering.h"
 
 /**
  * @class ElementaryVectorInstance

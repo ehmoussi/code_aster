@@ -24,7 +24,7 @@
 #include <stdexcept>
 #include "astercxx.h"
 
-#include "LinearAlgebra/DOFNumbering.h"
+#include "Discretization/DOFNumbering.h"
 #include "RunManager/CommandSyntaxCython.h"
 
 DOFNumberingInstance::DOFNumberingInstance():

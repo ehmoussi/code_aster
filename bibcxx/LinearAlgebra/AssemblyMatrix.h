@@ -43,7 +43,7 @@
  * @brief But de cette ligne : casser la reference circulaire
  * @todo Attention includes circulaires entre AssemblyMatrix, DOFNumbering et LinearSolver
  */
-#include "LinearAlgebra/ForwardDOFNumbering.h"
+#include "Discretization/ForwardDOFNumbering.h"
 
 /**
  * @class AssemblyMatrixInstance

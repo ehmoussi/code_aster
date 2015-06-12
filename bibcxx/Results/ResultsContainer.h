@@ -33,7 +33,7 @@
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 #include "DataFields/FieldOnNodes.h"
-#include "LinearAlgebra/DOFNumbering.h"
+#include "Discretization/DOFNumbering.h"
 
 /**
  * @class ResultsContainerInstance
