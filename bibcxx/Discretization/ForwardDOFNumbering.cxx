@@ -24,8 +24,8 @@
 #include <stdexcept>
 #include "astercxx.h"
 
-#include "LinearAlgebra/ForwardDOFNumbering.h"
-#include "LinearAlgebra/DOFNumbering.h"
+#include "Discretization/ForwardDOFNumbering.h"
+#include "Discretization/DOFNumbering.h"
 
 bool ForwardDOFNumberingPtr::isEmpty() const
 {

@@ -30,6 +30,7 @@
 
 #include "Studies/StudyDescription.h"
 #include "LinearAlgebra/ElementaryVector.h"
+#include "Discretization/DOFNumbering.h"
 
 /**
  * @class DiscreteProblemInstance

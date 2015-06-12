@@ -30,7 +30,7 @@
 #include "Discretization/DiscreteProblem.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
-#include "LinearAlgebra/DOFNumbering.h"
+#include "Discretization/DOFNumbering.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _supportModel( ModelPtr() ),
@@ -43,6 +43,9 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
     // Define the study
     StudyDescriptionPtr study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) );
 
+    // Define the discrete problem
+    DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
+
     // Add Loads to the study
     for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
           curIter != _listOfMechanicalLoads.end();
@@ -53,12 +56,6 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
           ++curIter )
         study->addKinematicsLoad( *curIter );
 
-    // Define the discrete problem
-    DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
-
-    // Compute elementary rigidity matrix
-    ElementaryMatrixPtr matrElem = dProblem->buildElementaryRigidityMatrix();
-
     // Build the linear solver (sd_solver)
     _linearSolver->build();
 
@@ -66,7 +63,10 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
     dofNum1->setLinearSolver( _linearSolver );
     dofNum1 = dProblem->computeDOFNumbering(dofNum1);
 
-    AssemblyMatrixDoublePtr aMatrix;
+    // Compute elementary rigidity matrix
+    ElementaryMatrixPtr matrElem = dProblem->buildElementaryRigidityMatrix();
+
+    AssemblyMatrixDoublePtr aMatrix( new AssemblyMatrixDoubleInstance() );
     aMatrix->setElementaryMatrix( matrElem );
 
 };
