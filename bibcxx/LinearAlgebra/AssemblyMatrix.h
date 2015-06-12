@@ -36,7 +36,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
-#include "Loads/KinematicsLoad.h"
+#include "Loads/ListOfLoads.h"
 #include "RunManager/CommandSyntaxCython.h"
 
 /**
@@ -73,7 +73,7 @@ class AssemblyMatrixInstance: public DataStructure
         /** @brief La matrice est elle vide ? */
         bool                          _isEmpty;
         /** @brief Liste de charges cinematiques */
-        ListKinematicsLoad            _listOfLoads;
+        ListOfLoadsPtr                _listOfLoads;
 
     public:
         /**
@@ -97,7 +97,7 @@ class AssemblyMatrixInstance: public DataStructure
          */
         void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
         {
-            _listOfLoads.push_back( currentLoad );
+            _listOfLoads.addKinematicsLoad( currentLoad );
         };
 
         /**
@@ -137,6 +137,15 @@ class AssemblyMatrixInstance: public DataStructure
         {
             _elemMatrix = currentElemMatrix;
         };
+
+        /**
+         * @brief Methode permettant de definir la liste de chargement
+         * @param lLoads objet de type ListOfLoadsPtr
+         */
+        void setListOfLoads( const ListOfLoadsPtr& lLoads )
+        {
+            _listOfLoads = lLoads;
+        };
 };
 
 template< class ValueType >
@@ -145,7 +154,8 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance():
                 _description( JeveuxVectorChar24( getName() + "           .REFA" ) ),
                 _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
-                _isEmpty( true )
+                _isEmpty( true ),
+                _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
 {};
 
 template< class ValueType >
