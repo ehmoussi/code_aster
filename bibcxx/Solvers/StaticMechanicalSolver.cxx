@@ -45,9 +45,6 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
     // Define the study
     StudyDescriptionPtr study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) );
 
-    // Define the discrete problem
-    DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
-
     // Add Loads to the study
     const ListMecaLoad& mecaList = _listOfLoads->getListOfMechanicalLoads();
     for ( ListMecaLoadCIter curIter = mecaList.begin();
@@ -59,6 +56,9 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
           curIter != kineList.end();
           ++curIter )
         study->addKinematicsLoad( *curIter );
+
+    // Define the discrete problem
+    DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
 
     // Build the linear solver (sd_solver)
     _linearSolver->build();
@@ -72,7 +72,8 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
 
     AssemblyMatrixDoublePtr aMatrix( new AssemblyMatrixDoubleInstance() );
     aMatrix->setElementaryMatrix( matrElem );
-
+    aMatrix->setDOFNumbering( dofNum1 );
+    aMatrix->setListOfLoads( _listOfLoads );
 };
 
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
