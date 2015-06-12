@@ -26,6 +26,9 @@
 
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxString.h"
+#include "DataStructure/TemporaryDataStructureName.h"
+
+TemporaryDataStructure tempName = TemporaryDataStructure();
 
 mapStrSD mapNameDataStructure = mapStrSD();
 
@@ -45,6 +48,14 @@ std::string trim( const std::string& str,
 DataStructure::DataStructure( const std::string name, const std::string type ): _name( name ), _type( type )
 {
     std::string nameWithoutBlanks = trim( name );
+    if ( nameWithoutBlanks != "" )
+        mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
+};
+
+DataStructure::DataStructure()
+{
+    _name = tempName.getNewTemporaryName();
+    std::string nameWithoutBlanks = trim( _name );
     if ( nameWithoutBlanks != "" )
         mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
 };

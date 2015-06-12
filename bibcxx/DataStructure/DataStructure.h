@@ -58,6 +58,11 @@ class DataStructure
         DataStructure( std::string name, std::string type );
 
         /**
+         * @brief Constructeur
+         */
+        DataStructure();
+
+        /**
          * @brief Destructeur
          */
         ~DataStructure() throw ( std::runtime_error );

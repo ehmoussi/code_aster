@@ -52,22 +52,24 @@ bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
         if ( ! _linearSolver )
             throw std::runtime_error( "Linear solver is undefined" );
 
-        long nbLoad = _listOfMechanicalLoads.size() + _listOfKinematicsLoads.size();
+        const ListMecaLoad& mecaList = _listOfLoads->getListOfMechanicalLoads();
+        const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();
+        long nbLoad = mecaList.size() + kineList.size();
         std::string nameOfLisCha( "&&DNICN.Charge     " );
         // Attention pour la creation des charges ce n'est pas sis simple (cf. nmdoch)
         JeveuxVectorChar24 tmp( nameOfLisCha + ".LCHA" );
         tmp->allocate( Temporary, nbLoad );
 
         int compteur = 0;
-        for ( ListMecaLoadCIter curIter = _listOfMechanicalLoads.begin();
-            curIter != _listOfMechanicalLoads.end();
+        for ( ListMecaLoadCIter curIter = mecaList.begin();
+            curIter != mecaList.end();
             ++curIter )
         {
             ( *tmp )[compteur] = JeveuxChar24( ( *curIter )->getName().c_str(), 8 );
             ++compteur;
         };
-        for ( ListKineLoadCIter curIter = _listOfKinematicsLoads.begin();
-            curIter != _listOfKinematicsLoads.end();
+        for ( ListKineLoadCIter curIter = kineList.begin();
+            curIter != kineList.end();
             ++curIter )
         {
             ( *tmp )[compteur] = JeveuxChar24( ( *curIter )->getName().c_str(), 8 );
