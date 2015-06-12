@@ -81,7 +81,7 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
     std::string nameOfSD = resultC->getName();
 
-    execute2( resultC );
+//NS     execute2( resultC );
 
     CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( resultC->getName(), resultC->getType() );
