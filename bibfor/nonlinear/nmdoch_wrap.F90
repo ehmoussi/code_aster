@@ -1,4 +1,4 @@
-subroutine nmdoch_wrap(list_load, l_load_user0, list_load_resu)
+subroutine nmdoch_wrap(list_load0, l_load_user0, list_load_resu0)
 !
 implicit none
 !
@@ -25,8 +25,8 @@ implicit none
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
     integer :: l_load_user0
-    character(len=19) :: list_load
-    character(len=19) :: list_load_resu
+    character(len=*) :: list_load0
+    character(len=*) :: list_load_resu0
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,9 +43,13 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_load_user
+    character(len=19) :: list_load
+    character(len=19) :: list_load_resu
 !
 ! --------------------------------------------------------------------------------------------------
 !
     l_load_user = l_load_user0
+    list_load = list_load0
+    list_load_resu = list_load_resu0
     call nmdoch(list_load, l_load_user, list_load_resu)
 end subroutine

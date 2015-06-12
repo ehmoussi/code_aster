@@ -37,6 +37,7 @@
  * @class JeveuxVectorInstance
  * @brief Cette classe template permet de definir un vecteur Jeveux
  * @author Nicolas Sellenet
+ * @todo rajouter un constructeur de nom jeveux pour que .NSLV soit bien placé (cf DOFNumbering.cxx)
  */
 template< typename ValueType >
 class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
