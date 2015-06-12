@@ -97,7 +97,7 @@ class AssemblyMatrixInstance: public DataStructure
          */
         void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
         {
-            _listOfLoads.addKinematicsLoad( currentLoad );
+            _listOfLoads->addKinematicsLoad( currentLoad );
         };
 
         /**
@@ -217,11 +217,12 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
     dict.container[ "MATR_ELEM" ] = _elemMatrix->getName();
     dict.container[ "NUME_DDL" ] = _dofNum.getName();
 
-    if ( _listOfLoads.size() != 0 )
+    if ( _listOfLoads->size() != 0 )
     {
         VectorString tmp;
-        for ( ListKinematicsLoadIter curIter = _listOfLoads.begin();
-              curIter != _listOfLoads.end();
+        const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();
+        for ( ListKineLoadCIter curIter = kineList.begin();
+              curIter != kineList.end();
               ++curIter )
             tmp.push_back( (*curIter)->getName() );
         dict.container[ "CHAR_CINE" ] = tmp;
