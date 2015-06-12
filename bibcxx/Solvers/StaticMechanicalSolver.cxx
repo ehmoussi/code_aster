@@ -35,7 +35,8 @@
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
                 _supportModel( ModelPtr() ),
                 _materialOnMesh( MaterialOnMeshPtr() ),
-                _linearSolver( LinearSolverPtr() )
+                _linearSolver( LinearSolverPtr() ),
+                _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance ( getNewResultObjectName() ) ) )
 {};
 
 void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) throw ( std::runtime_error )
@@ -47,12 +48,14 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
 
     // Add Loads to the study
-    for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
-          curIter != _listOfMechanicalLoads.end();
+    const ListMecaLoad& mecaList = _listOfLoads->getListOfMechanicalLoads();
+    for ( ListMecaLoadCIter curIter = mecaList.begin();
+          curIter != mecaList.end();
           ++curIter )
         study->addMechanicalLoad( *curIter );
-    for ( ListKineLoadIter curIter = _listOfKinematicsLoads.begin();
-          curIter != _listOfKinematicsLoads.end();
+    const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();
+    for ( ListKineLoadCIter curIter = kineList.begin();
+          curIter != kineList.end();
           ++curIter )
         study->addKinematicsLoad( *curIter );
 
@@ -61,7 +64,7 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
 
     DOFNumberingPtr dofNum1 = resultC->getEmptyDOFNumbering();
     dofNum1->setLinearSolver( _linearSolver );
-    dofNum1 = dProblem->computeDOFNumbering(dofNum1);
+    dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
 
     // Compute elementary rigidity matrix
     ElementaryMatrixPtr matrElem = dProblem->buildElementaryRigidityMatrix();
@@ -90,20 +93,22 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     if ( _materialOnMesh )
         dict.container[ "CHAM_MATER" ] = _materialOnMesh->getName();
 
-    if ( _listOfMechanicalLoads.size() == 0 && _listOfKinematicsLoads.size() == 0 )
+    if ( _listOfLoads->size() == 0 )
         throw std::runtime_error( "At least one load is needed" );
 
     ListSyntaxMapContainer listeExcit;
-    for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
-          curIter != _listOfMechanicalLoads.end();
+    const ListMecaLoad& mecaList = _listOfLoads->getListOfMechanicalLoads();
+    for ( ListMecaLoadCIter curIter = mecaList.begin();
+          curIter != mecaList.end();
           ++curIter )
     {
         SyntaxMapContainer dict2;
         dict2.container[ "CHARGE" ] = (*curIter)->getName();
         listeExcit.push_back( dict2 );
     }
-    for ( ListKineLoadIter curIter = _listOfKinematicsLoads.begin();
-          curIter != _listOfKinematicsLoads.end();
+    const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();
+    for ( ListKineLoadCIter curIter = kineList.begin();
+          curIter != kineList.end();
           ++curIter )
     {
         SyntaxMapContainer dict2;

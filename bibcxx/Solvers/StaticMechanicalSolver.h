@@ -32,6 +32,7 @@
 #include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
+#include "Loads/ListOfLoads.h"
 #include "LinearAlgebra/LinearSolver.h"
 
 class StaticMechanicalSolverInstance: public GenericSolver
@@ -52,10 +53,8 @@ class StaticMechanicalSolverInstance: public GenericSolver
         MaterialOnMeshPtr _materialOnMesh;
         /** @brief Solveur lineaire */
         LinearSolverPtr   _linearSolver;
-        /** @brief Chargements Mecaniques */
-        ListMecaLoad      _listOfMechanicalLoads;
-        /** @brief Chargements cinematiques */
-        ListKineLoad      _listOfKinematicsLoads;
+        /** @brief Liste des chargements */
+        ListOfLoadsPtr    _listOfLoads;
 
         /**
          * @brief Temporaire ! Test de MECA_STATIQUE en C++
@@ -74,7 +73,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
          */
         void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
         {
-            _listOfKinematicsLoads.push_back( currentLoad );
+            _listOfLoads->addKinematicsLoad( currentLoad );
         };
 
         /**
@@ -83,7 +82,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
          */
         void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
         {
-            _listOfMechanicalLoads.push_back( currentLoad );
+            _listOfLoads->addMechanicalLoad( currentLoad );
         };
 
         /**

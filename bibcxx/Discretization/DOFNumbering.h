@@ -37,6 +37,7 @@
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
+#include "Loads/ListOfLoads.h"
 
 /**
  * @class DOFNumberingInstance
@@ -54,10 +55,8 @@ class DOFNumberingInstance: public DataStructure
         ModelPtr                 _supportModel;
         /** @brief Matrices elementaires */
         ElementaryMatrixPtr      _supportMatrix;
-        /** @brief Chargements Mecaniques */
-        ListMecaLoad             _listOfMechanicalLoads;
-        /** @brief Chargements cinematiques */
-        ListKineLoad             _listOfKinematicsLoads;
+        /** @brief Chargements */
+        ListOfLoadsPtr           _listOfLoads;
         /** @brief Solveur lineaire */
         LinearSolverPtr          _linearSolver;
         /** @brief Booleen permettant de preciser sur la sd est vide */
@@ -91,7 +90,7 @@ class DOFNumberingInstance: public DataStructure
          */
         void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
         {
-            _listOfKinematicsLoads.push_back( currentLoad );
+            _listOfLoads->addKinematicsLoad( currentLoad );
         };
 
         /**
@@ -100,13 +99,22 @@ class DOFNumberingInstance: public DataStructure
          */
         void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
         {
-            _listOfMechanicalLoads.push_back( currentLoad );
+            _listOfLoads->addMechanicalLoad( currentLoad );
         };
 
         /**
          * @brief Determination de la numerotation
          */
         bool computeNumerotation() throw ( std::runtime_error );
+
+        /**
+         * @brief Methode permettant d'obtenir le solveur
+         * @return _linearSolver
+         */
+        LinearSolverPtr getLinearSolver()
+        {
+            return _linearSolver;
+        };
 
         /**
          * @brief Methode permettant de savoir si la numerotation est vide
