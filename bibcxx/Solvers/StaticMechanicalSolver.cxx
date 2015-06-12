@@ -31,12 +31,13 @@
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "Discretization/DOFNumbering.h"
+#include "DataStructure/TemporaryDataStructureName.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
-                _supportModel( ModelPtr() ),
-                _materialOnMesh( MaterialOnMeshPtr() ),
-                _linearSolver( LinearSolverPtr() ),
-                _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance ( getNewResultObjectName() ) ) )
+    _supportModel( ModelPtr() ),
+    _materialOnMesh( MaterialOnMeshPtr() ),
+    _linearSolver( LinearSolverPtr() ),
+    _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
 {};
 
 void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) throw ( std::runtime_error )

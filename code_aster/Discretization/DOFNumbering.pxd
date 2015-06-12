@@ -25,7 +25,7 @@ from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 
 
-cdef extern from "LinearAlgebra/DOFNumbering.h":
+cdef extern from "Discretization/DOFNumbering.h":
 
     cdef cppclass DOFNumberingInstance:
 
@@ -46,7 +46,7 @@ cdef extern from "LinearAlgebra/DOFNumbering.h":
         DOFNumberingInstance* get()
 
 
-cdef extern from "LinearAlgebra/ForwardDOFNumbering.h":
+cdef extern from "Discretization/ForwardDOFNumbering.h":
 
     cdef cppclass ForwardDOFNumberingPtr:
 

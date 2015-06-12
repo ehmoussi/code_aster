@@ -45,5 +45,6 @@ from code_aster.Solvers import *
 from code_aster.Loads import *
 from code_aster.Algorithms import *
 from code_aster.Studies import *
+from code_aster.Discretization import *
 
 from code_aster.Cata import Commands

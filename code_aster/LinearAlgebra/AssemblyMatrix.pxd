@@ -20,7 +20,7 @@
 from libcpp.string cimport string
 
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
-from code_aster.LinearAlgebra.DOFNumbering cimport ForwardDOFNumberingPtr
+from code_aster.Discretization.DOFNumbering cimport ForwardDOFNumberingPtr
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrixPtr
 
 

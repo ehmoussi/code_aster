@@ -33,6 +33,7 @@
 #include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
+#include "Loads/ListOfLoads.h"
 #include "Discretization/DOFNumbering.h"
 
 /**
@@ -47,10 +48,8 @@ class StudyDescriptionInstance
         ModelPtr          _supportModel;
         /** @brief Materiau affecté */
         MaterialOnMeshPtr _materialOnMesh;
-        /** @brief Chargements Mecaniques */
-        ListMecaLoad      _listOfMechanicalLoads;
-        /** @brief Chargements cinematiques */
-        ListKineLoad      _listOfKinematicsLoads;
+        /** @brief Liste des chargements */
+        ListOfLoadsPtr    _listOfLoads;
 
     public:
         /**
@@ -61,7 +60,8 @@ class StudyDescriptionInstance
         StudyDescriptionInstance( const ModelPtr& curModel,
                                   const MaterialOnMeshPtr& curMat ):
             _supportModel( curModel ),
-            _materialOnMesh( curMat )
+            _materialOnMesh( curMat ),
+            _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
         {};
 
         ~StudyDescriptionInstance()
@@ -73,7 +73,7 @@ class StudyDescriptionInstance
          */
         void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
         {
-            _listOfKinematicsLoads.push_back( currentLoad );
+            _listOfLoads->addKinematicsLoad( currentLoad );
         };
 
         /**
@@ -82,7 +82,15 @@ class StudyDescriptionInstance
          */
         void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
         {
-            _listOfMechanicalLoads.push_back( currentLoad );
+            _listOfLoads->addMechanicalLoad( currentLoad );
+        };
+
+        /**
+         * @brief Construction de la liste de chargements
+         */
+        void buildListOfLoads()
+        {
+            _listOfLoads->build();
         };
 
         /**
@@ -90,7 +98,7 @@ class StudyDescriptionInstance
          */
         const ListKineLoad& getListOfKinematicsLoads() const
         {
-            return _listOfKinematicsLoads;
+            return _listOfLoads->getListOfKinematicsLoads();
         };
 
         /**
@@ -98,7 +106,7 @@ class StudyDescriptionInstance
          */
         const ListMecaLoad& getListOfMechanicalLoads() const
         {
-            return _listOfMechanicalLoads;
+            return _listOfLoads->getListOfMechanicalLoads();
         };
 
         /**

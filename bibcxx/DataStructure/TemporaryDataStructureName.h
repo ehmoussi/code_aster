@@ -43,21 +43,9 @@ class TemporaryDataStructure
 
     public:
         /**
-         * @brief Constructeur
-         */
-        TemporaryDataStructure()
-        {};
-
-        /**
-         * @brief Destructeur
-         */
-        ~TemporaryDataStructure()
-        {};
-
-        /**
          * @brief Function membre getNewTemporaryName
          */
-        std::string getNewTemporaryName()
+        static std::string getNewTemporaryName()
         {
             std::ostringstream oss;
             assert( _number <= _maxNumberOfAsterObjects );
