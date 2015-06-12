@@ -67,7 +67,7 @@ class DiscreteProblemInstance
          * @brief Détermination de la numérotation de ddl
          * @return Numérotation du problème discret
          */
-        DOFNumberingPtr computeDOFNumbering( const std::string name = "" );
+        DOFNumberingPtr computeDOFNumbering( DOFNumberingPtr dofNum = DOFNumberingPtr( new DOFNumberingInstance("") ) );
 };
 
 

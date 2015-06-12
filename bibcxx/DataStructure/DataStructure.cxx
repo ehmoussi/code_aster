@@ -45,7 +45,8 @@ std::string trim( const std::string& str,
 DataStructure::DataStructure( const std::string name, const std::string type ): _name( name ), _type( type )
 {
     std::string nameWithoutBlanks = trim( name );
-    mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
+    if ( nameWithoutBlanks != "" )
+        mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
 };
 
 DataStructure::~DataStructure() throw ( std::runtime_error )
@@ -54,6 +55,8 @@ DataStructure::~DataStructure() throw ( std::runtime_error )
     std::cout << "DataStructure.destr: " << this->getName() << std::endl;
 #endif
     std::string nameWithoutBlanks = trim( _name );
+    if ( nameWithoutBlanks == "" )
+        return;
     mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
     if ( curIter == mapNameDataStructure.end() )
         throw std::runtime_error( "Problem !!!" );

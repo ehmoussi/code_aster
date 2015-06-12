@@ -33,6 +33,7 @@
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 #include "DataFields/FieldOnNodes.h"
+#include "LinearAlgebra/DOFNumbering.h"
 
 /**
  * @class ResultsContainerInstance
@@ -65,6 +66,12 @@ class ResultsContainerInstance: public DataStructure
                 _calculationParameter( JeveuxCollectionChar8( getName() + "           .TAVA" ) ),
                 _serialNumber( JeveuxVectorLong( getName() + "           .ORDR" ) )
         {};
+
+        /**
+         * @brief Obtenir un DOFNumbering à remplir
+         * @return DOFNumbering à remplir
+         */
+        DOFNumberingPtr getEmptyDOFNumbering() const;
 
         /**
          * @brief Obtenir un champ au noeud réel à partir de son nom et de son numéro d'ordre

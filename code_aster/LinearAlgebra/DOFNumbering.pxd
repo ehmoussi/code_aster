@@ -22,6 +22,7 @@ from code_aster.Modeling.Model cimport ModelPtr
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrixPtr
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
+from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 
 
 cdef extern from "LinearAlgebra/DOFNumbering.h":
@@ -29,7 +30,8 @@ cdef extern from "LinearAlgebra/DOFNumbering.h":
     cdef cppclass DOFNumberingInstance:
 
         DOFNumberingInstance()
-        void addLoad( GenericMechanicalLoadPtr& load )
+        void addKinematicsLoad( KinematicsLoadPtr& load )
+        void addMechanicalLoad( GenericMechanicalLoadPtr& load )
         bint computeNumerotation()
         void setElementaryMatrix( ElementaryMatrixPtr& curElemMat )
         void setLinearSolver( LinearSolverPtr& curLinSolv )

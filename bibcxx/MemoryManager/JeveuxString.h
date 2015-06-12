@@ -84,14 +84,8 @@ class JeveuxString
          * @param size Taille de la chaine a recopier
          */
         inline JeveuxString( const char* chaine, const int size )
-#ifndef NDEBUG
-            throw( std::runtime_error )
-#endif
         {
-#ifndef NDEBUG
-            if ( size < length ) throw std::runtime_error( "String size error" );
-#endif
-            memcpy( &currentValue, chaine, sizeof( char )*length );
+            safeCopyFromChar( chaine, size );
         };
 
         /**
