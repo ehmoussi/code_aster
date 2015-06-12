@@ -51,7 +51,7 @@ class TemporaryDataStructure
             assert( _number <= _maxNumberOfAsterObjects );
             oss << "&" << std::hex << _number;
             ++_number;
-            return std::string( oss.str() + " ", 0, 8 );
+            return std::string( oss.str() + "        ", 0, 8 );
         };
 };
 

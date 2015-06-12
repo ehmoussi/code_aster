@@ -137,6 +137,15 @@ class DOFNumberingInstance: public DataStructure
         };
 
         /**
+         * @brief Methode permettant de definir la liste de charge
+         * @param currentList Liste charge
+         */
+        void setListOfLoads( const ListOfLoadsPtr& currentList  )
+        {
+            _listOfLoads = currentList;
+        };
+
+        /**
          * @brief Methode permettant de definir le solveur
          * @param currentModel Model support de la numerotation
          */

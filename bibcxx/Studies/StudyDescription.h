@@ -87,10 +87,11 @@ class StudyDescriptionInstance
 
         /**
          * @brief Construction de la liste de chargements
+         * @return true si tout s'est bien passé
          */
-        void buildListOfLoads()
+        bool buildListOfLoads()
         {
-            _listOfLoads->build();
+            return _listOfLoads->build();
         };
 
         /**
@@ -99,6 +100,14 @@ class StudyDescriptionInstance
         const ListKineLoad& getListOfKinematicsLoads() const
         {
             return _listOfLoads->getListOfKinematicsLoads();
+        };
+
+        /**
+         * @brief Renvoit la liste de chargements
+         */
+        const ListOfLoadsPtr& getListOfLoads() const
+        {
+            return _listOfLoads;
         };
 
         /**

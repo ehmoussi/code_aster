@@ -30,11 +30,15 @@
 
 ListOfLoadsInstance::ListOfLoadsInstance():
                     DataStructure(),
+                    _loadInformations( JeveuxVectorLong( getName() + "           .INFC" ) ),
+                    _list( JeveuxVectorChar24( getName() + "           .LCHA" ) ),
                     _isEmpty( true )
 {};
 
 bool ListOfLoadsInstance::build() throw ( std::runtime_error )
 {
+    if ( ! _isEmpty )
+        return true;
 //     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
     CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
 //     cmdSt.setResult( resultC->getName(), resultC->getType() );
@@ -60,5 +64,6 @@ bool ListOfLoadsInstance::build() throw ( std::runtime_error )
     cmdSt.define( dict );
     long iexcit = 1;
     CALL_NMDOCH_WRAP( getName().c_str(), &iexcit, " " );
+    _isEmpty = false;
     return true;
 };

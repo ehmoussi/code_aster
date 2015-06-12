@@ -22,6 +22,7 @@
  */
 
 #include <string>
+#include <iostream>
 
 #include "Discretization/DiscreteProblem.h"
 #include "Modeling/Model.h"
@@ -38,29 +39,10 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
     ModelPtr curModel = _study->getSupportModel();
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
 
-    const ListKineLoad& kineLoads = _study->getListOfKinematicsLoads();
-    const ListMecaLoad& mecaLoads = _study->getListOfMechanicalLoads();
-
-    long nbLoad = kineLoads.size() + mecaLoads.size();
-    JeveuxVectorChar8 tmp( "&&BERM.Charge" );
-    tmp->allocate( Temporary, nbLoad );
     _study->buildListOfLoads();
-
-    int compteur = 0;
-    for ( ListMecaLoadCIter curIter = mecaLoads.begin();
-          curIter != mecaLoads.end();
-          ++curIter )
-    {
-        ( *tmp )[compteur] = ( *curIter )->getName();
-        ++compteur;
-    };
-    for ( ListKineLoadCIter curIter = kineLoads.begin();
-          curIter != kineLoads.end();
-          ++curIter )
-    {
-        ( *tmp )[compteur] = ( *curIter )->getName();
-        ++compteur;
-    };
+    JeveuxVectorChar24 jvListOfLoads = _study->getListOfLoads()->getListVector();
+    jvListOfLoads->updateValuePointer();
+    long nbLoad = jvListOfLoads->size();
 
     std::string blanc( 24, ' ' );
     std::string modelName = curModel->getName();
@@ -72,7 +54,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
 
     long exiti0 = 0, nh = 0;
     double time = 0.;
-    CALL_MERIME_WRAP( modelName.c_str(), &nbLoad, tmp->getDataPtr()->c_str(),
+    CALL_MERIME_WRAP( modelName.c_str(), &nbLoad, jvListOfLoads->getDataPtr()->c_str(),
                       mate.c_str(), blanc.c_str(), &exiti0, &time,
                       blanc.c_str(), retour->getName().c_str(), &nh, "G" );
     return retour;
@@ -84,19 +66,7 @@ DOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( DOFNumberingPtr do
         dofNum = DOFNumberingPtr( new DOFNumberingInstance() );
 
     dofNum->setSupportModel( _study->getSupportModel() );
-
-    const ListKineLoad& kineLoads = _study->getListOfKinematicsLoads();
-    const ListMecaLoad& mecaLoads = _study->getListOfMechanicalLoads();
-    int compteur = 0;
-    for ( ListMecaLoadCIter curIter = mecaLoads.begin();
-          curIter != mecaLoads.end();
-          ++curIter )
-        dofNum->addMechanicalLoad( *curIter );
-    for ( ListKineLoadCIter curIter = kineLoads.begin();
-          curIter != kineLoads.end();
-          ++curIter )
-        dofNum->addKinematicsLoad( *curIter );
-
+    dofNum->setListOfLoads( _study->getListOfLoads() );
     dofNum->computeNumerotation();
 
     return dofNum;

@@ -27,10 +27,11 @@
 #include <stdexcept>
 #include <list>
 #include <string>
+
 #include "astercxx.h"
-#include "Modeling/Model.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
+#include "MemoryManager/JeveuxVector.h"
 
 /**
  * @class ListOfLoadInstance
@@ -41,11 +42,15 @@ class ListOfLoadsInstance: public DataStructure
 {
     private:
         /** @brief Chargements cinematiques */
-        ListKineLoad _listOfKinematicsLoads;
+        ListKineLoad       _listOfKinematicsLoads;
         /** @brief Chargements Mecaniques */
-        ListMecaLoad _listOfMechanicalLoads;
+        ListMecaLoad       _listOfMechanicalLoads;
+        /** @brief .INFC */
+        JeveuxVectorLong   _loadInformations;
+        /** @brief .LCHA */
+        JeveuxVectorChar24 _list;
         /** @brief La matrice est elle vide ? */
-        bool         _isEmpty;
+        bool               _isEmpty;
 
     public:
         /**
@@ -59,6 +64,7 @@ class ListOfLoadsInstance: public DataStructure
          */
         void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
         {
+            _isEmpty = true;
             _listOfKinematicsLoads.push_back( currentLoad );
         };
 
@@ -68,6 +74,7 @@ class ListOfLoadsInstance: public DataStructure
          */
         void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
         {
+            _isEmpty = true;
             _listOfMechanicalLoads.push_back( currentLoad );
         };
 
@@ -76,6 +83,15 @@ class ListOfLoadsInstance: public DataStructure
          * @return Booleen indiquant que tout s'est bien passe
          */
         bool build() throw ( std::runtime_error );
+
+        /**
+         * @brief Function de récupération des informations des charges
+         * @return _loadInformations
+         */
+        JeveuxVectorLong getInformationVector() const
+        {
+            return _loadInformations;
+        };
 
         /**
          * @brief Function de récupération de la liste des charges cinématiques
@@ -93,6 +109,15 @@ class ListOfLoadsInstance: public DataStructure
         const ListMecaLoad& getListOfMechanicalLoads() const
         {
             return _listOfMechanicalLoads;
+        };
+
+        /**
+         * @brief Function de récupération de la liste des charges
+         * @return _list
+         */
+        JeveuxVectorChar24 getListVector() const
+        {
+            return _list;
         };
 
         /**

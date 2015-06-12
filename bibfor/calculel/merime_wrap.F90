@@ -26,7 +26,7 @@ subroutine merime_wrap(modelz, nchar, lchar, mate, carelz,&
     integer :: nchar, nh
     real(kind=8) :: time
     character(len=*) :: modelz, carelz, matelz
-    character(len=8) :: lchar(nchar)
+    character(len=24) :: lchar(nchar)
     character(len=*) :: mate, basz, compoz
     integer :: exiti0
 !
