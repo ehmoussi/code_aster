@@ -177,6 +177,12 @@ void DEFSSPP(GNOMSD,gnomsd, const char*, STRING_SIZE, const char*, STRING_SIZE, 
 #define CALL_NMDOCH_WRAP(a, b, c) CALLSPS(NMDOCH_WRAP, nmdoch_wrap, a, b, c)
 void DEFSPS(NMDOCH_WRAP,nmdoch_wrap, const char*, STRING_SIZE, INTEGER *, const char*, STRING_SIZE);
 
+#define CALL_ASMATR(a, b, c, d, e, f, g, h, i, j) CALLPSSSSSSSPS(ASMATR, asmatr, a, b, c, d, e, f, g, h, i, j)
+void DEFPSSSSSSSPS(ASMATR,asmatr, INTEGER *, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                  const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                  const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                  const char*, STRING_SIZE, INTEGER *, const char*, STRING_SIZE);
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)

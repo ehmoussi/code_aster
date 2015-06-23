@@ -45,18 +45,22 @@ std::string trim( const std::string& str,
     return str.substr(strBegin, strRange);
 };
 
-DataStructure::DataStructure( const std::string name, const std::string type ): _name( name ), _type( type )
+DataStructure::DataStructure( const std::string name, const std::string type,
+                              const JeveuxMemory memType ): _name( name ), _type( type ),
+                                                            _memoryType( memType )
 {
     std::string nameWithoutBlanks = trim( name );
-    if ( nameWithoutBlanks != "" )
+    if ( nameWithoutBlanks != "" && memType == Permanent )
         mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
 };
 
-DataStructure::DataStructure()
+DataStructure::DataStructure( const std::string type, const JeveuxMemory memType ):
+        _name( DataStructureNaming::getNewName( memType ) ),
+        _type( type ),
+        _memoryType( memType )
 {
-    _name = TemporaryDataStructure::getNewTemporaryName();
     std::string nameWithoutBlanks = trim( _name );
-    if ( nameWithoutBlanks != "" )
+    if ( nameWithoutBlanks != "" && memType == Permanent )
         mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
 };
 
@@ -66,7 +70,7 @@ DataStructure::~DataStructure() throw ( std::runtime_error )
     std::cout << "DataStructure.destr: " << this->getName() << std::endl;
 #endif
     std::string nameWithoutBlanks = trim( _name );
-    if ( nameWithoutBlanks == "" )
+    if ( nameWithoutBlanks == "" || _memoryType == Temporary )
         return;
     mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
     if ( curIter == mapNameDataStructure.end() )

@@ -137,6 +137,8 @@
 #define CALLSPPSSP(UN,LN,a,b,c,d,e,f)                       F_FUNC(UN,LN)(a,b,c,d,e,f,strlen(a),strlen(d),strlen(e))
 #define DEFSSSSSSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)               STDCALL(UN,LN)(a,b,c,d,e,f,g,la,lb,lc,ld,le,lf,lg)
 #define CALLSSSSSSS(UN,LN,a,b,c,d,e,f,g)                       F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b),strlen(c),strlen(d),strlen(e),strlen(f),strlen(g))
+#define DEFPSSSSSSSPS(UN,LN,a,b,lb,c,lc,d,ld,e,le,f,lf,g,lg,h,lh,i,j,lj)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j,lb,lc,ld,le,lf,lg,lh,lj)
+#define CALLPSSSSSSSPS(UN,LN,a,b,c,d,e,f,g,h,i,j)                          F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,strlen(b),strlen(c),strlen(d),strlen(e),strlen(f),strlen(g),strlen(h),strlen(j))
 
 
 #define DEFSPPSSPSPS(UN,LN,a,la,b,c,d,ld,e,le,f,g,lg,h,i,li)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,la,ld,le,lg,li)
@@ -372,6 +374,9 @@
 #define CALLPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r)              F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r)
 #define DEFPPPPPPPPPPPPPPPPPPPSPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,lt,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,lt,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)
 #define CALLPPPPPPPPPPPPPPPPPPPSPPPPPPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)                 F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,strlen(t),u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L)
+#define DEFPSSSSSSSPS(UN,LN,a,b,lb,c,lc,d,ld,e,le,f,lf,g,lg,h,lh,i,j,lj)               STDCALL(UN,LN)(a,b,lb,c,lc,d,ld,e,le,f,lf,g,lg,h,lh,i,j,lj)
+#define CALLPSSSSSSSPS(UN,LN,a,b,c,d,e,f,g,h,i,j)                          F_FUNC(UN,LN)(a,b,strlen(b),c,strlen(c),d,strlen(d),e,strlen(e),f,strlen(f),g,strlen(g),h,strlen(h),i,j,strlen(j))
+
 
 #define DEFSSSSSSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)
 #define CALLSSSSSSS(UN,LN,a,b,c,d,e,f,g)                       F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,strlen(d),e,strlen(e),f,strlen(f),g,strlen(g))

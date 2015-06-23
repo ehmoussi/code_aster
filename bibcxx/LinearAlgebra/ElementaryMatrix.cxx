@@ -36,6 +36,15 @@ ElementaryMatrixInstance::ElementaryMatrixInstance():
                 _materialOnMesh( MaterialOnMeshPtr() )
 {};
 
+ElementaryMatrixInstance::ElementaryMatrixInstance( std::string type ):
+                DataStructure( getNewResultObjectName(), "MATR_ELEM_" + type ),
+                _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
+                _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
+                _isEmpty( true ),
+                _supportModel( ModelPtr() ),
+                _materialOnMesh( MaterialOnMeshPtr() )
+{};
+
 bool ElementaryMatrixInstance::computeMechanicalRigidity() throw ( std::runtime_error )
 {
     // Comme on calcul RIGI_MECA, il faut preciser le type de la sd

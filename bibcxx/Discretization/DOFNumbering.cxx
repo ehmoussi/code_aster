@@ -27,8 +27,8 @@
 #include "Discretization/DOFNumbering.h"
 #include "RunManager/CommandSyntaxCython.h"
 
-DOFNumberingInstance::DOFNumberingInstance():
-            DataStructure( getNewResultObjectName(), "NUME_DDL" ),
+DOFNumberingInstance::DOFNumberingInstance( const JeveuxMemory memType = Permanent ):
+            DataStructure( getNewResultObjectName(), "NUME_DDL", memType ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
             _supportModel( ModelPtr() ),
             _linearSolver( new LinearSolverInstance( MultFront, Metis ) ),
@@ -36,8 +36,8 @@ DOFNumberingInstance::DOFNumberingInstance():
             _isEmpty( true )
 {};
 
-DOFNumberingInstance::DOFNumberingInstance( const std::string name ):
-            DataStructure( name, "NUME_DDL" ),
+DOFNumberingInstance::DOFNumberingInstance( const std::string name, const JeveuxMemory memType = Permanent ):
+            DataStructure( name, "NUME_DDL", memType ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
             _supportModel( ModelPtr() ),
             _listOfLoads( new ListOfLoadsInstance() ),
@@ -83,10 +83,10 @@ bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
         // Maintenant que le fichier de commande est pret, on appelle OP0011
         INTEGER op = 11;
         CALL_EXECOP( &op );
-        _isEmpty = false;
     }
     else
         throw std::runtime_error( "No support matrix or support model defined" );
+    _isEmpty = false;
 
     return true;
 };
