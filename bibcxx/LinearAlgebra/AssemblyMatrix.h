@@ -44,6 +44,7 @@
  * @todo Attention includes circulaires entre AssemblyMatrix, DOFNumbering et LinearSolver
  */
 #include "Discretization/ForwardDOFNumbering.h"
+#include "LinearAlgebra/ForwardLinearSolver.h"
 
 /**
  * @class AssemblyMatrixInstance
@@ -70,6 +71,8 @@ class AssemblyMatrixInstance: public DataStructure
         ElementaryMatrixPtr           _elemMatrix;
         /** @brief Objet nume_ddl */
         ForwardDOFNumberingPtr        _dofNum;
+        /** @brief Objet sd_solver */
+        ForwardLinearSolverPtr        _linSolv;
         /** @brief La matrice est elle vide ? */
         bool                          _isEmpty;
         /** @brief Liste de charges cinematiques */
@@ -79,7 +82,7 @@ class AssemblyMatrixInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        AssemblyMatrixInstance();
+        AssemblyMatrixInstance( const JeveuxMemory memType = Permanent );
 
         /**
          * @brief Destructeur
@@ -122,7 +125,7 @@ class AssemblyMatrixInstance: public DataStructure
 
         /**
          * @brief Methode permettant de definir la numerotation
-         * @param currentElemMatrix objet ElementaryMatrix
+         * @param currentNum objet ForwardDOFNumbering
          */
         void setDOFNumbering( const ForwardDOFNumberingPtr& currentNum )
         {
@@ -139,6 +142,15 @@ class AssemblyMatrixInstance: public DataStructure
         };
 
         /**
+         * @brief Methode permettant de definir le solveur linéaire
+         * @param currentLS objet ForwardLinearSolver
+         */
+        void setLinearSolver( const ForwardLinearSolverPtr& currentLS )
+        {
+            _linSolv = currentLS;
+        };
+
+        /**
          * @brief Methode permettant de definir la liste de chargement
          * @param lLoads objet de type ListOfLoadsPtr
          */
@@ -149,14 +161,45 @@ class AssemblyMatrixInstance: public DataStructure
 };
 
 template< class ValueType >
-AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance():
-                DataStructure( getNewResultObjectName(), "MATR_ASSE" ),
+AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const JeveuxMemory memType ):
+                DataStructure( "MATR_ASSE", memType ),
                 _description( JeveuxVectorChar24( getName() + "           .REFA" ) ),
                 _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
                 _isEmpty( true ),
                 _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
 {};
+
+template< class ValueType >
+bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
+{
+    if ( ( ! _elemMatrix ) || _elemMatrix->isEmpty() )
+        throw std::runtime_error( "Elementary matrix is empty" );
+    long type = 1;
+    if ( _elemMatrix->getType() == "MATR_ELEM_DEPL_R" )
+    {
+        type = 1;
+        setType( getType() + "_DEPL_R" );
+    }
+    else
+        throw std::runtime_error( "Not yet implemented" );
+
+    if ( _dofNum.isEmpty() )
+        throw std::runtime_error( "Numerotation is empty" );
+
+    std::string solverName( " " );
+    if ( ! _linSolv.isEmpty() )
+        solverName = _linSolv.getName();
+
+    std::string blanc( " " );
+    long nbMatrElem = 1;
+    CALL_ASMATR( &nbMatrElem, _elemMatrix->getName().c_str(), blanc.c_str(), _dofNum.getName().c_str(),
+                 solverName.c_str(), _listOfLoads->getName().c_str(), blanc.c_str(), "G", &type,
+                 getName().c_str() );
+    _isEmpty = false;
+
+    return true;
+};
 
 template< class ValueType >
 bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_error )
@@ -185,53 +228,6 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
     try
     {
         INTEGER op = 14;
-        CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
-    }
-    _isEmpty = false;
-
-    return true;
-};
-
-template< class ValueType >
-bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
-{
-    if ( ( ! _elemMatrix ) || _elemMatrix->isEmpty() )
-        throw std::runtime_error( "Elementary matrix is empty" );
-    if ( _elemMatrix->getType() == "MATR_ELEM_DEPL_R" )
-        setType( getType() + "_DEPL_R" );
-    else
-        throw std::runtime_error( "Not yet implemented" );
-
-    if ( _dofNum.isEmpty() )
-        throw std::runtime_error( "Numerotation is empty" );
-
-    // Definition du bout de fichier de commande correspondant a ASSE_MATRICE
-    CommandSyntaxCython cmdSt( "ASSE_MATRICE" );
-    cmdSt.setResult( getResultObjectName(), getType() );
-
-    SyntaxMapContainer dict;
-    dict.container[ "MATR_ELEM" ] = _elemMatrix->getName();
-    dict.container[ "NUME_DDL" ] = _dofNum.getName();
-
-    if ( _listOfLoads->size() != 0 )
-    {
-        VectorString tmp;
-        const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();
-        for ( ListKineLoadCIter curIter = kineList.begin();
-              curIter != kineList.end();
-              ++curIter )
-            tmp.push_back( (*curIter)->getName() );
-        dict.container[ "CHAR_CINE" ] = tmp;
-    }
-    cmdSt.define( dict );
-
-    try
-    {
-        INTEGER op = 12;
         CALL_EXECOP( &op );
     }
     catch( ... )

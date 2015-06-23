@@ -66,6 +66,11 @@ class ElementaryMatrixInstance: public DataStructure
         ElementaryMatrixInstance();
 
         /**
+         * @brief Constructeur
+         */
+        ElementaryMatrixInstance( std::string type );
+
+        /**
          * @brief Destructeur
          */
         ~ElementaryMatrixInstance()
@@ -96,6 +101,15 @@ class ElementaryMatrixInstance: public DataStructure
         bool isEmpty()
         {
             return _isEmpty;
+        };
+
+        /**
+         * @brief Methode permettant de changer l'état de remplissage
+         * @param bEmpty booleen permettant de dire que l'objet est vide ou pas
+         */
+        void setEmpty( bool bEmpty )
+        {
+            _isEmpty = bEmpty;
         };
 
         /**

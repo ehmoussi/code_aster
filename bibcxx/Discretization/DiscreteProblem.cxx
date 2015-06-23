@@ -35,7 +35,7 @@
 
 ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
 {
-    ElementaryMatrixPtr retour( new ElementaryMatrixInstance() );
+    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( "DEPL_R" ) );
     ModelPtr curModel = _study->getSupportModel();
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
 
@@ -57,6 +57,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
     CALL_MERIME_WRAP( modelName.c_str(), &nbLoad, jvListOfLoads->getDataPtr()->c_str(),
                       mate.c_str(), blanc.c_str(), &exiti0, &time,
                       blanc.c_str(), retour->getName().c_str(), &nh, "G" );
+    retour->setEmpty( false );
     return retour;
 };
 

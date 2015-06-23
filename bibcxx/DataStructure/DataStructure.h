@@ -34,6 +34,9 @@
 #include "astercxx.h"
 #include "aster_fort.h"
 
+#include "MemoryManager/JeveuxAllowedTypes.h"
+#include "DataStructure/DataStructureNaming.h"
+
 
 /**
  * @class DataStructure
@@ -45,9 +48,11 @@ class DataStructure
     private:
         /** @brief Nom de la sd */
         /** @todo remettre le const */
-        std::string _name;
+        std::string  _name;
         /** @brief Type de la sd */
-        std::string _type;
+        std::string  _type;
+        /** @brief Type de la sd */
+        JeveuxMemory _memoryType;
 
     public:
         /**
@@ -55,12 +60,15 @@ class DataStructure
          * @param name Nom Jeveux de la sd
          * @param type Type Aster de la sd
          */
-        DataStructure( std::string name, std::string type );
+        DataStructure( const std::string name, const std::string type,
+                       const JeveuxMemory memType = Permanent );
 
         /**
          * @brief Constructeur
+         * @param type Type Aster de la sd
+         * @param memType Mémoire Jeveux de création de l'objet
          */
-        DataStructure();
+        DataStructure( const std::string type = "", const JeveuxMemory memType = Permanent );
 
         /**
          * @brief Destructeur
