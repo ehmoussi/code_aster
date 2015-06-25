@@ -35,6 +35,11 @@
  * @brief Fournit les types de memoire Jeveux
  */
 enum JeveuxMemory { Permanent, Temporary };
+/**
+ * @def JeveuxTypesNames
+ * @brief Fournit la lettre correspondant aux différentes base Jeveux
+ */
+static const char* JeveuxMemoryTypesNames[2] = { "G", "V" };
 
 /**
  * @enum JeveuxTypes

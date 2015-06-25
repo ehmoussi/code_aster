@@ -38,6 +38,7 @@
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
+#include "DataFields/FieldOnNodes.h"
 
 /**
  * @class DOFNumberingInstance
@@ -106,6 +107,13 @@ class DOFNumberingInstance: public DataStructure
          * @brief Determination de la numerotation
          */
         bool computeNumerotation() throw ( std::runtime_error );
+
+        /**
+         * @brief Methode permettant d'obtenir un champ aux noeuds construit sur le DOFNumberingInstance
+         * @return Champ aux noeuds vide
+         */
+        FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const JeveuxMemory memType = Permanent ) const
+            throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant d'obtenir le solveur
