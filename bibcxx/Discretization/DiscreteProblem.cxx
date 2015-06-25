@@ -33,6 +33,90 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector()
+{
+    ElementaryVectorPtr retour( new ElementaryVectorInstance( Temporary ) );
+
+    ModelPtr curModel = _study->getSupportModel();
+    std::string modelName = curModel->getName();
+    modelName.resize(24);
+
+    JeveuxVectorChar24 jvListOfLoads = _study->getListOfLoads()->getListVector();
+    std::string nameLcha = jvListOfLoads->getName();
+    nameLcha.resize(24);
+
+    JeveuxVectorLong jvInfo = _study->getListOfLoads()->getInformationVector();
+    std::string nameInfc = jvInfo->getName();
+    nameInfc.resize(24);
+
+    double inst = 0.;
+
+    std::string typres( "R" );
+    std::string resultName( retour->getName() );
+
+    CALL_VEDIME( modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), &inst,
+                 typres.c_str(), resultName.c_str() );
+    retour->setEmpty( false );
+
+    retour->setListOfLoads( _study->getListOfLoads() );
+    return retour;
+};
+
+ElementaryVectorPtr DiscreteProblemInstance::buildElementaryLaplaceVector()
+{
+    ElementaryVectorPtr retour( new ElementaryVectorInstance( Temporary ) );
+
+    ModelPtr curModel = _study->getSupportModel();
+    std::string modelName = curModel->getName();
+    modelName.resize(24);
+
+    JeveuxVectorChar24 jvListOfLoads = _study->getListOfLoads()->getListVector();
+    std::string nameLcha = jvListOfLoads->getName();
+    nameLcha.resize(24);
+
+    JeveuxVectorLong jvInfo = _study->getListOfLoads()->getInformationVector();
+    std::string nameInfc = jvInfo->getName();
+    nameInfc.resize(24);
+
+    std::string blanc( " " );
+    std::string resultName( retour->getName() );
+
+    CALL_VELAME( modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), blanc.c_str(),
+                 resultName.c_str() );
+    retour->setEmpty( false );
+
+    retour->setListOfLoads( _study->getListOfLoads() );
+    return retour;
+};
+
+ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector()
+{
+    ElementaryVectorPtr retour( new ElementaryVectorInstance( Temporary ) );
+    MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
+
+    ModelPtr curModel = _study->getSupportModel();
+    std::string modelName = curModel->getName();
+
+    JeveuxVectorChar24 jvListOfLoads = _study->getListOfLoads()->getListVector();
+    std::string nameLcha = jvListOfLoads->getName();
+
+    JeveuxVectorLong jvInfo = _study->getListOfLoads()->getInformationVector();
+    std::string nameInfc = jvInfo->getName();
+
+    double inst = 0.;
+    std::string stop( "S" );
+    std::string blanc( " " );
+    std::string resultName( retour->getName() );
+    std::string materName = curMater->getName();
+
+    CALL_VECHME_WRAP( stop.c_str(), modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), &inst,
+                      blanc.c_str(), materName.c_str(), retour->getName().c_str(), blanc.c_str() );
+    retour->setEmpty( false );
+
+    retour->setListOfLoads( _study->getListOfLoads() );
+    return retour;
+};
+
 ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
 {
     ElementaryMatrixPtr retour( new ElementaryMatrixInstance( "DEPL_R", Temporary ) );

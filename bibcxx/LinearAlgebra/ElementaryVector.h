@@ -31,6 +31,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
+#include "Loads/ListOfLoads.h"
 #include "DataFields/FieldOnNodes.h"
 #include "Discretization/DOFNumbering.h"
 
@@ -56,14 +57,14 @@ class ElementaryVectorInstance: public DataStructure
         /** @brief Champ de materiau a utiliser */
         MaterialOnMeshPtr  _materialOnMesh;
 
-        /** @brief Charges ajoutees aux vecteurs elementaires */
-        ListMechanicalLoad _listOfMechanicalLoad;
+        /** @brief Liste de charges */
+        ListOfLoadsPtr     _listOfLoads;
 
     public:
         /**
          * @brief Constructeur
          */
-        ElementaryVectorInstance();
+        ElementaryVectorInstance( const JeveuxMemory memType = Permanent );
 
         /**
          * @brief Destructeur
@@ -81,14 +82,15 @@ class ElementaryVectorInstance: public DataStructure
          */
         void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
         {
-            _listOfMechanicalLoad.push_back( currentLoad );
+            _listOfLoads->addMechanicalLoad( currentLoad );
         };
 
         /**
          * @brief Assembler les vecteurs elementaires en se fondant sur currentNumerotation
          * @param currentNumerotation objet DOFNumbering
          */
-        FieldOnNodesDoublePtr assembleVector( const DOFNumberingPtr& currentNumerotation )
+        FieldOnNodesDoublePtr assembleVector( const DOFNumberingPtr& currentNumerotation,
+                                              const JeveuxMemory memType = Permanent )
             throw ( std::runtime_error );
 
         /**
@@ -103,6 +105,24 @@ class ElementaryVectorInstance: public DataStructure
         bool isEmpty()
         {
             return _isEmpty;
+        };
+
+        /**
+         * @brief Methode permettant de changer l'état de remplissage
+         * @param bEmpty booleen permettant de dire que l'objet est vide ou pas
+         */
+        void setEmpty( bool bEmpty )
+        {
+            _isEmpty = bEmpty;
+        };
+
+        /**
+         * @brief Methode permettant de definir la liste de charge
+         * @param currentList Liste charge
+         */
+        void setListOfLoads( const ListOfLoadsPtr& currentList  )
+        {
+            _listOfLoads = currentList;
         };
 
         /**

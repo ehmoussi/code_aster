@@ -49,6 +49,8 @@ class ListOfLoadsInstance: public DataStructure
         JeveuxVectorLong   _loadInformations;
         /** @brief .LCHA */
         JeveuxVectorChar24 _list;
+        /** @brief .FCHA */
+        JeveuxVectorChar24 _listOfFunctions;
         /** @brief La matrice est elle vide ? */
         bool               _isEmpty;
 
@@ -88,9 +90,18 @@ class ListOfLoadsInstance: public DataStructure
          * @brief Function de récupération des informations des charges
          * @return _loadInformations
          */
-        JeveuxVectorLong getInformationVector() const
+        const JeveuxVectorLong getInformationVector() const
         {
             return _loadInformations;
+        };
+
+        /**
+         * @brief Function de récupération de la liste des fonctions multiplicatrices
+         * @return _listOfFunctions
+         */
+        const JeveuxVectorChar24 getListOfFunctions() const
+        {
+            return _listOfFunctions;
         };
 
         /**
@@ -115,7 +126,7 @@ class ListOfLoadsInstance: public DataStructure
          * @brief Function de récupération de la liste des charges
          * @return _list
          */
-        JeveuxVectorChar24 getListVector() const
+        const JeveuxVectorChar24 getListVector() const
         {
             return _list;
         };
