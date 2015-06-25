@@ -35,7 +35,7 @@
 
 ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
 {
-    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( "DEPL_R" ) );
+    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( "DEPL_R", Temporary ) );
     ModelPtr curModel = _study->getSupportModel();
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
 

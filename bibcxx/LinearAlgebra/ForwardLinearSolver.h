@@ -69,6 +69,16 @@ class ForwardLinearSolverPtr
          * @return std::string contenant le nom
          */
         std::string getName() const;
+
+        bool operator!() const
+        {
+            return ! _curLinSolv;
+        };
+
+        LinearSolverInstance& operator->()
+        {
+            return *_curLinSolv;
+        };
 };
 
 #endif /* FORWARDLINEARSOLVER_H_ */

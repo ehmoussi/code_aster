@@ -67,6 +67,23 @@ bool LinearSolverInstance::build()
     cmdSt.define( dict );
 
     CALL_CRESOL_WRAP( newName.c_str(), "G" );
+    _isEmpty = false;
+
+    return true;
+};
+
+bool LinearSolverInstance::matrixFactorization( const AssemblyMatrixDoublePtr currentMatrix ) const
+{
+    const std::string solverName = getName();
+    std::string base( "V" );
+    if ( currentMatrix->getMemoryType() == Permanent )
+        base = std::string( "G" );
+    long cret = 0, npvneg = 0, istop = -9999;
+    const std::string matpre( " " );
+    const std::string matass = currentMatrix->getName();
+
+    CALL_MATRIX_FACTOR( solverName.c_str(), base.c_str(), &cret, matpre.c_str(),
+                        matass.c_str(), &npvneg, &istop );
 
     return true;
 };

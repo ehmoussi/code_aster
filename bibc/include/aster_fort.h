@@ -183,6 +183,11 @@ void DEFPSSSSSSSPS(ASMATR,asmatr, INTEGER *, const char*, STRING_SIZE, const cha
                                   const char*, STRING_SIZE, const char*, STRING_SIZE,
                                   const char*, STRING_SIZE, INTEGER *, const char*, STRING_SIZE);
 
+#define CALL_MATRIX_FACTOR(a, b, c, d, e, f, g) CALLSSPSSPP(MATRIX_FACTOR, matrix_factor, a, b, c, d, e, f, g)
+void DEFSSPSSPP(MATRIX_FACTOR,matrix_factor, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                  INTEGER *, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                  INTEGER *, INTEGER *);
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)

@@ -224,6 +224,9 @@
 #define DEFSPSSSPPSSPS(UN,LN,a,la,b,c,lc,d,ld,e,le,f,g,h,lh,i,li,j,k,lk)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,la,lc,ld,le,lh,li,lk)
 #define CALLSPSSSPPSSPS(UN,LN,a,b,c,d,e,f,g,h,i,j,k)                       F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,strlen(a),strlen(c),strlen(d),strlen(e),strlen(h),strlen(i),strlen(k))
 
+#define DEFSSPSSPP(UN,LN,a,la,b,lb,c,d,ld,e,le,f,g)               STDCALL(UN,LN)(a,b,c,d,e,f,g,la,lb,ld,le)
+#define CALLSSPSSPP(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b),strlen(d),strlen(e))
+
 /* V=value <type string> returned by the function, the two first argument are for V */
 #define DEFVSP(UN,LN,a,la,b,lb,c)               STDCALL(UN,LN)(a,la,b,c,lb)
 #define CALLVSP(UN,LN,a,b,c)                    F_FUNC(UN,LN)(a,strlen(a),b,c,strlen(b))
@@ -377,6 +380,8 @@
 #define DEFPSSSSSSSPS(UN,LN,a,b,lb,c,lc,d,ld,e,le,f,lf,g,lg,h,lh,i,j,lj)               STDCALL(UN,LN)(a,b,lb,c,lc,d,ld,e,le,f,lf,g,lg,h,lh,i,j,lj)
 #define CALLPSSSSSSSPS(UN,LN,a,b,c,d,e,f,g,h,i,j)                          F_FUNC(UN,LN)(a,b,strlen(b),c,strlen(c),d,strlen(d),e,strlen(e),f,strlen(f),g,strlen(g),h,strlen(h),i,j,strlen(j))
 
+#define DEFSSPSSPP(UN,LN,a,la,b,lb,c,d,ld,e,le,f,g)               STDCALL(UN,LN)(a,la,b,lb,c,d,ld,e,le,f,g)
+#define CALLSSPSSPP(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,d,strlen(d),e,strlen(e),f,g)
 
 #define DEFSSSSSSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)
 #define CALLSSSSSSS(UN,LN,a,b,c,d,e,f,g)                       F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,strlen(d),e,strlen(e),f,strlen(f),g,strlen(g))
