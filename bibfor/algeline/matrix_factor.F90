@@ -1,8 +1,14 @@
-subroutine preres(solveu, base, iret, matpre, matass,&
-                  npvneg, istop)
+subroutine matrix_factor(solveu, base, iret, matpre, matass,&
+                         npvneg, istop)
     implicit none
 #include "jeveux.h"
-#include "asterfort/matrix_factor.h"
+#include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/prere3.h"
+#include "asterfort/prere2.h"
+#include "asterfort/xfem_ksolv.h"
 #include "asterfort/uttcpu.h"
 !-----------------------------------------------------------------------
     integer :: npvneg, istop, iret
@@ -60,18 +66,23 @@ subroutine preres(solveu, base, iret, matpre, matass,&
 ! cette routine est une surcouche de la routine prere1.
 ! elle est necessaire pour traiter le cas elim_lagr='oui'
 !----------------------------------------------------------------------
-    character(len=19) :: matas1
+    character(len=3) :: kxfem
 !----------------------------------------------------------------------
-    call jemarq()
-    call uttcpu('CPU.RESO.1', 'DEBUT', ' ')
-    call uttcpu('CPU.RESO.4', 'DEBUT', ' ')
 !
-    matas1=matass
+!    VERIFICATION SI XFEM : 
+!   -------------------------------------
+    call xfem_ksolv(solveu, kxfem)
 !
-    call matrix_factor(solveu, base, iret, matpre, matas1,&
-                       npvneg, istop)
+    if ( kxfem .eq. 'OUI') then
 !
-    call uttcpu('CPU.RESO.1', 'FIN', ' ')
-    call uttcpu('CPU.RESO.4', 'FIN', ' ')
-    call jedema()
+       call prere3(solveu, base, iret, matpre, matass,&
+                   npvneg, istop)
+!
+    else
+!
+       call prere2(solveu, base, iret, matpre, matass,&
+                   npvneg, istop)
+!
+    endif
+!
 end subroutine

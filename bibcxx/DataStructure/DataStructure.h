@@ -60,7 +60,7 @@ class DataStructure
          * @param name Nom Jeveux de la sd
          * @param type Type Aster de la sd
          */
-        DataStructure( const std::string name, const std::string type,
+        DataStructure( const std::string name, const std::string type = "",
                        const JeveuxMemory memType = Permanent );
 
         /**
@@ -74,6 +74,15 @@ class DataStructure
          * @brief Destructeur
          */
         ~DataStructure() throw ( std::runtime_error );
+
+        /**
+         * @brief Function membre getMemoryType
+         * @return le type de mémoire (globale ou volatile)
+         */
+        const JeveuxMemory& getMemoryType() const
+        {
+            return _memoryType;
+        };
 
         /**
          * @brief Function membre getName

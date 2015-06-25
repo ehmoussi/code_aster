@@ -115,8 +115,8 @@ class AssemblyMatrixInstance: public DataStructure
         bool factorization() throw ( std::runtime_error );
 
         /**
-         * @brief Methode permettant de savoir si les matrices elementaires sont vides
-         * @return true si les matrices elementaires sont vides
+         * @brief Methode permettant de savoir si la matrice est vide
+         * @return true si vide
          */
         bool isEmpty()
         {
@@ -160,6 +160,14 @@ class AssemblyMatrixInstance: public DataStructure
         };
 };
 
+/** @typedef Definition d'une matrice assemblee de double */
+typedef AssemblyMatrixInstance< double > AssemblyMatrixDoubleInstance;
+/** @typedef Definition d'une matrice assemblee de complexe */
+typedef AssemblyMatrixInstance< DoubleComplex > AssemblyMatrixComplexInstance;
+
+typedef boost::shared_ptr< AssemblyMatrixDoubleInstance > AssemblyMatrixDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixComplexInstance > AssemblyMatrixComplexPtr;
+
 template< class ValueType >
 AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const JeveuxMemory memType ):
                 DataStructure( "MATR_ASSE", memType ),
@@ -167,7 +175,7 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const JeveuxMemory 
                 _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
                 _isEmpty( true ),
-                _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
+                _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance( memType ) ) )
 {};
 
 template< class ValueType >
@@ -192,9 +200,10 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
         solverName = _linSolv.getName();
 
     std::string blanc( " " );
+    std::string cumul( "ZERO" );
     long nbMatrElem = 1;
     CALL_ASMATR( &nbMatrElem, _elemMatrix->getName().c_str(), blanc.c_str(), _dofNum.getName().c_str(),
-                 solverName.c_str(), _listOfLoads->getName().c_str(), blanc.c_str(), "G", &type,
+                 solverName.c_str(), _listOfLoads->getName().c_str(), cumul.c_str(), "G", &type,
                  getName().c_str() );
     _isEmpty = false;
 
@@ -206,45 +215,42 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
 {
     if ( _isEmpty )
         throw std::runtime_error( "Assembly matrix is empty" );
+    if ( ! _linSolv )
+        throw std::runtime_error( "Linear solver is missing" );
+    if ( _linSolv.isEmpty() )
+        throw std::runtime_error( "Linear solver is empty" );
 
-    CommandSyntaxCython cmdSt( "FACTORISER" );
-    cmdSt.setResult( getName(), getType() );
-
-    SyntaxMapContainer dict;
-    // !!! Rajouter un if MUMPS !!!
-    dict.container[ "MATR_ASSE" ] = getName();
-    dict.container[ "ELIM_LAGR" ] = "LAGR2";
-    dict.container[ "TYPE_RESOL" ] = "AUTO";
-    dict.container[ "PRETRAITEMENTS" ] = "AUTO";
-    dict.container[ "PCENT_PIVOT" ] = 20;
-    dict.container[ "GESTION_MEMOIRE" ] = "IN_CORE";
-    dict.container[ "REMPLISSAGE" ] = 1.0;
-    dict.container[ "NIVE_REMPLISSAGE" ] = 0;
-    dict.container[ "STOP_SINGULIER" ] = "OUI";
-    dict.container[ "PRE_COND" ] = "LDLT_INC";
-    dict.container[ "NPREC" ] = 8;
-    cmdSt.define( dict );
-
-    try
-    {
-        INTEGER op = 14;
-        CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
-    }
-    _isEmpty = false;
+    _linSolv.operator->().matrixFactorization( AssemblyMatrixDoublePtr( this ) );
+//     CommandSyntaxCython cmdSt( "FACTORISER" );
+//     cmdSt.setResult( getName(), getType() );
+// 
+//     SyntaxMapContainer dict;
+//     // !!! Rajouter un if MUMPS !!!
+//     dict.container[ "MATR_ASSE" ] = getName();
+//     dict.container[ "ELIM_LAGR" ] = "LAGR2";
+//     dict.container[ "TYPE_RESOL" ] = "AUTO";
+//     dict.container[ "PRETRAITEMENTS" ] = "AUTO";
+//     dict.container[ "PCENT_PIVOT" ] = 20;
+//     dict.container[ "GESTION_MEMOIRE" ] = "IN_CORE";
+//     dict.container[ "REMPLISSAGE" ] = 1.0;
+//     dict.container[ "NIVE_REMPLISSAGE" ] = 0;
+//     dict.container[ "STOP_SINGULIER" ] = "OUI";
+//     dict.container[ "PRE_COND" ] = "LDLT_INC";
+//     dict.container[ "NPREC" ] = 8;
+//     cmdSt.define( dict );
+// 
+//     try
+//     {
+//         INTEGER op = 14;
+//         CALL_EXECOP( &op );
+//     }
+//     catch( ... )
+//     {
+//         throw;
+//     }
+//     _isEmpty = false;
 
     return true;
 };
-
-/** @typedef Definition d'une matrice assemblee de double */
-typedef AssemblyMatrixInstance< double > AssemblyMatrixDoubleInstance;
-/** @typedef Definition d'une matrice assemblee de complexe */
-typedef AssemblyMatrixInstance< DoubleComplex > AssemblyMatrixComplexInstance;
-
-typedef boost::shared_ptr< AssemblyMatrixDoubleInstance > AssemblyMatrixDoublePtr;
-typedef boost::shared_ptr< AssemblyMatrixComplexInstance > AssemblyMatrixComplexPtr;
 
 #endif /* ASSEMBLYMATRIX_H_ */

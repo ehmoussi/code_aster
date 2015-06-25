@@ -66,13 +66,13 @@ class DOFNumberingInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        DOFNumberingInstance();
+        DOFNumberingInstance( const JeveuxMemory memType = Permanent );
 
         /**
          * @brief Constructeur
          * @param name nom souhaité de la sd (utile pour le DOFNumberingInstance d'une sd_resu)
          */
-        DOFNumberingInstance( const std::string name );
+        DOFNumberingInstance( const std::string name, const JeveuxMemory memType = Permanent );
 
         /**
          * @brief Destructeur

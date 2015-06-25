@@ -28,8 +28,8 @@
 #include "Loads/ListOfLoads.h"
 #include "RunManager/CommandSyntaxCython.h"
 
-ListOfLoadsInstance::ListOfLoadsInstance():
-                    DataStructure(),
+ListOfLoadsInstance::ListOfLoadsInstance( const JeveuxMemory memType ):
+                    DataStructure( "L_CHARGES", memType ),
                     _loadInformations( JeveuxVectorLong( getName() + "           .INFC" ) ),
                     _list( JeveuxVectorChar24( getName() + "           .LCHA" ) ),
                     _isEmpty( true )

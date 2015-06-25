@@ -158,6 +158,8 @@ class LinearSolverInstance: public DataStructure
         LinearSolverEnum    _linearSolver;
         /** @brief Type du renumeroteur */
         Renumbering         _renumber;
+        /** @brief Le solveur est-il vide ? */
+        bool                _isEmpty;
 
         JeveuxVectorChar24  _charValues;
         JeveuxVectorDouble  _doubleValues;
@@ -175,6 +177,7 @@ class LinearSolverInstance: public DataStructure
                     DataStructure( getNewResultObjectName(), "SOLVEUR" ),
                     _linearSolver( currentLinearSolver ),
                     _renumber( currentRenumber ),
+                    _isEmpty( true ),
                     _charValues( JeveuxVectorChar24( getName() + "           .SLVK" ) ),
                     _doubleValues( JeveuxVectorDouble( getName() + "           .SLVR" ) ),
                     _integerValues( JeveuxVectorLong( getName() + "           .SLVI" ) )
@@ -205,6 +208,21 @@ class LinearSolverInstance: public DataStructure
         {
             return RenumberingNames[ (int)_renumber ];
         };
+
+        /**
+         * @brief Methode permettant de savoir si la matrice est vide
+         * @return true si vide
+         */
+        bool isEmpty()
+        {
+            return _isEmpty;
+        };
+
+        /**
+         * @brief Factorisation d'une matrice
+         * @param currentMatrix Matrice assemblee
+         */
+        bool matrixFactorization( const AssemblyMatrixDoublePtr currentMatrix ) const;
 
         /**
          * @brief Inversion du systeme lineaire

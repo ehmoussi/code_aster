@@ -56,7 +56,7 @@ class ListOfLoadsInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        ListOfLoadsInstance();
+        ListOfLoadsInstance( const JeveuxMemory memType = Permanent );
 
         /**
          * @brief Function d'ajout d'une charge cinematique

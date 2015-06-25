@@ -63,12 +63,12 @@ class ElementaryMatrixInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        ElementaryMatrixInstance();
+        ElementaryMatrixInstance( const JeveuxMemory memType = Permanent );
 
         /**
          * @brief Constructeur
          */
-        ElementaryMatrixInstance( std::string type );
+        ElementaryMatrixInstance( std::string type, const JeveuxMemory memType = Permanent );
 
         /**
          * @brief Destructeur

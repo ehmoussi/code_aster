@@ -27,8 +27,8 @@
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "RunManager/CommandSyntaxCython.h"
 
-ElementaryMatrixInstance::ElementaryMatrixInstance():
-                DataStructure( getNewResultObjectName(), "MATR_ELEM" ),
+ElementaryMatrixInstance::ElementaryMatrixInstance( const JeveuxMemory memType ):
+                DataStructure( "MATR_ELEM", memType ),
                 _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
@@ -36,8 +36,8 @@ ElementaryMatrixInstance::ElementaryMatrixInstance():
                 _materialOnMesh( MaterialOnMeshPtr() )
 {};
 
-ElementaryMatrixInstance::ElementaryMatrixInstance( std::string type ):
-                DataStructure( getNewResultObjectName(), "MATR_ELEM_" + type ),
+ElementaryMatrixInstance::ElementaryMatrixInstance( std::string type, const JeveuxMemory memType ):
+                DataStructure( "MATR_ELEM_" + type, memType ),
                 _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),

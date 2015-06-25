@@ -27,7 +27,7 @@
 #include "Discretization/DOFNumbering.h"
 #include "RunManager/CommandSyntaxCython.h"
 
-DOFNumberingInstance::DOFNumberingInstance( const JeveuxMemory memType = Permanent ):
+DOFNumberingInstance::DOFNumberingInstance( const JeveuxMemory memType ):
             DataStructure( getNewResultObjectName(), "NUME_DDL", memType ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
             _supportModel( ModelPtr() ),
@@ -36,7 +36,7 @@ DOFNumberingInstance::DOFNumberingInstance( const JeveuxMemory memType = Permane
             _isEmpty( true )
 {};
 
-DOFNumberingInstance::DOFNumberingInstance( const std::string name, const JeveuxMemory memType = Permanent ):
+DOFNumberingInstance::DOFNumberingInstance( const std::string name, const JeveuxMemory memType ):
             DataStructure( name, "NUME_DDL", memType ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
             _supportModel( ModelPtr() ),
