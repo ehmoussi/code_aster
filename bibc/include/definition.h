@@ -135,6 +135,10 @@
 #define CALLPPPSPP(UN,LN,a,b,c,d,e,f)                 F_FUNC(UN,LN)(a,b,c,d,e,f,strlen(d))
 #define DEFSPPSSP(UN,LN,a,la,b,c,d,ld,e,le,f)               STDCALL(UN,LN)(a,b,c,d,e,f,la,ld,le)
 #define CALLSPPSSP(UN,LN,a,b,c,d,e,f)                       F_FUNC(UN,LN)(a,b,c,d,e,f,strlen(a),strlen(d),strlen(e))
+
+#define DEFSSSSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,le)               STDCALL(UN,LN)(a,b,c,d,e,la,lb,lc,ld,le)
+#define CALLSSSSS(UN,LN,a,b,c,d,e)                       F_FUNC(UN,LN)(a,b,c,d,e,strlen(a),strlen(b),strlen(c),strlen(d),strlen(e))
+
 #define DEFSSSSSSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)               STDCALL(UN,LN)(a,b,c,d,e,f,g,la,lb,lc,ld,le,lf,lg)
 #define CALLSSSSSSS(UN,LN,a,b,c,d,e,f,g)                       F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b),strlen(c),strlen(d),strlen(e),strlen(f),strlen(g))
 #define DEFPSSSSSSSPS(UN,LN,a,b,lb,c,lc,d,ld,e,le,f,lf,g,lg,h,lh,i,j,lj)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j,lb,lc,ld,le,lf,lg,lh,lj)
@@ -164,10 +168,14 @@
 #define CALLSSPPPPP(UN,LN,a,b,c,d,e,f,g)                    F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b))
 #define DEFSSPPPSP(UN,LN,a,la,b,lb,c,d,e,f,lf,g)               STDCALL(UN,LN)(a,b,c,d,e,f,g,la,lb,lf)
 #define CALLSSPPPSP(UN,LN,a,b,c,d,e,f,g)                       F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b),strlen(f))
+#define DEFSSSPSS(UN,LN,a,la,b,lb,c,lc,d,e,le,f,lf)               STDCALL(UN,LN)(a,b,c,d,e,f,la,lb,lc,le,lf)
+#define CALLSSSPSS(UN,LN,a,b,c,d,e,f)                             F_FUNC(UN,LN)(a,b,c,d,e,f,strlen(a),strlen(b),strlen(c),strlen(e),strlen(f))
 #define DEFSSSPSSP(UN,LN,a,la,b,lb,c,lc,d,e,le,f,lf,g)               STDCALL(UN,LN)(a,b,c,d,e,f,g,la,lb,lc,le,lf)
 #define CALLSSSPSSP(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b),strlen(c),strlen(e),strlen(f))
 #define DEFSSSSPPS(UN,LN,a,la,b,lb,c,lc,d,ld,e,f,g,lg)               STDCALL(UN,LN)(a,b,c,d,e,f,g,la,lb,lc,ld,lg)
 #define CALLSSSSPPS(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b),strlen(c),strlen(d),strlen(g))
+#define DEFSSSSPSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,f,lf,g,lg)               STDCALL(UN,LN)(a,b,c,d,e,f,g,la,lb,lc,ld,lf,lg)
+#define CALLSSSSPSS(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b),strlen(c),strlen(d),strlen(f),strlen(g))
 #define DEFSSSSPSP(UN,LN,a,la,b,lb,c,lc,d,ld,e,f,lf,g)               STDCALL(UN,LN)(a,b,c,d,e,f,g,la,lb,lc,ld,lf)
 #define CALLSSSSPSP(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b),strlen(c),strlen(d),strlen(f))
 #define DEFPPPPSPSP(UN,LN,a,b,c,d,e,le,f,g,lg,h)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,le,lg)
@@ -226,6 +234,9 @@
 
 #define DEFSSPSSPP(UN,LN,a,la,b,lb,c,d,ld,e,le,f,g)               STDCALL(UN,LN)(a,b,c,d,e,f,g,la,lb,ld,le)
 #define CALLSSPSSPP(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,b,c,d,e,f,g,strlen(a),strlen(b),strlen(d),strlen(e))
+
+#define DEFSSSSPSSSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,f,lf,g,lg,h,lh,i,li)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,la,lb,lc,ld,lf,lg,lh,li)
+#define CALLSSSSPSSSS(UN,LN,a,b,c,d,e,f,g,h,i)                             F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,strlen(a),strlen(b),strlen(c),strlen(d),strlen(f),strlen(g),strlen(h),strlen(i))
 
 /* V=value <type string> returned by the function, the two first argument are for V */
 #define DEFVSP(UN,LN,a,la,b,lb,c)               STDCALL(UN,LN)(a,la,b,c,lb)
@@ -321,10 +332,14 @@
 #define CALLSSPPPPP(UN,LN,a,b,c,d,e,f,g)                    F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,d,e,f,g)
 #define DEFSSPPPSP(UN,LN,a,la,b,lb,c,d,e,f,lf,g)               STDCALL(UN,LN)(a,la,b,lb,c,d,e,f,lf,g)
 #define CALLSSPPPSP(UN,LN,a,b,c,d,e,f,g)                       F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,d,e,f,strlen(f),g)
+#define DEFSSSPSS(UN,LN,a,la,b,lb,c,lc,d,e,le,f,lf)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,e,le,f,lf)
+#define CALLSSSPSS(UN,LN,a,b,c,d,e,f)                             F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,e,strlen(e),f,strlen(f))
 #define DEFSSSPSSP(UN,LN,a,la,b,lb,c,lc,d,e,le,f,lf,g)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,e,le,f,lf,g)
 #define CALLSSSPSSP(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,e,strlen(e),f,strlen(f),g)
 #define DEFSSSSPPS(UN,LN,a,la,b,lb,c,lc,d,ld,e,f,g,lg)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,ld,e,f,g,lg)
 #define CALLSSSSPPS(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,strlen(d),e,f,g,strlen(g))
+#define DEFSSSSPSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,f,lf,g,lg)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,ld,e,f,lf,g,lg)
+#define CALLSSSSPSS(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,strlen(d),e,f,strlen(f),g,strlen(g))
 #define DEFSSSSPSP(UN,LN,a,la,b,lb,c,lc,d,ld,e,f,lf,g)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,ld,e,f,lf,g)
 #define CALLSSSSPSP(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,strlen(d),e,f,strlen(f),g)
 #define DEFPPPPSPSP(UN,LN,a,b,c,d,e,le,f,g,lg,h)               STDCALL(UN,LN)(a,b,c,d,e,le,f,g,lg,h)
@@ -383,11 +398,17 @@
 #define DEFSSPSSPP(UN,LN,a,la,b,lb,c,d,ld,e,le,f,g)               STDCALL(UN,LN)(a,la,b,lb,c,d,ld,e,le,f,g)
 #define CALLSSPSSPP(UN,LN,a,b,c,d,e,f,g)                             F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,d,strlen(d),e,strlen(e),f,g)
 
+#define DEFSSSSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,le)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,ld,e,le)
+#define CALLSSSSS(UN,LN,a,b,c,d,e)                       F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,strlen(d),e,strlen(e))
+
 #define DEFSSSSSSS(UN,LN,a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,ld,e,le,f,lf,g,lg)
 #define CALLSSSSSSS(UN,LN,a,b,c,d,e,f,g)                       F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,strlen(d),e,strlen(e),f,strlen(f),g,strlen(g))
 
 #define DEFSPSSSPPSSPS(UN,LN,a,la,b,c,lc,d,ld,e,le,f,g,h,lh,i,li,j,k,lk)               STDCALL(UN,LN)(a,la,b,c,lc,d,ld,e,le,f,g,h,lh,i,li,j,k,lk)
 #define CALLSPSSSPPSSPS(UN,LN,a,b,c,d,e,f,g,h,i,j,k)                       F_FUNC(UN,LN)(a,strlen(a),b,c,strlen(c),d,strlen(d),e,strlen(e),f,g,h,strlen(h),i,strlen(i),j,k,strlen(k))
+
+#define DEFSSSSPSSSSP(UN,LN,a,la,b,lb,c,lc,d,ld,e,f,lf,g,lg,h,lh,i,li)               STDCALL(UN,LN)(a,la,b,lb,c,lc,d,ld,e,f,lf,g,lg,h,lh,i,li)
+#define CALLSSSSPSSSSP(UN,LN,a,b,c,d,e,f,g,h,i)                             F_FUNC(UN,LN)(a,strlen(a),b,strlen(b),c,strlen(c),d,strlen(d),e,f,strlen(f),g,strlen(g),h,strlen(h),i,strlen(i))
 
 #endif
 

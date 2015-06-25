@@ -56,13 +56,26 @@ class FieldOnNodesInstance: public DataStructure
          * @brief Constructeur
          * @param name Nom Jeveux du champ aux noeuds
          */
-        FieldOnNodesInstance( std::string name ):
+        FieldOnNodesInstance( const std::string name ):
                         DataStructure( name, "CHAM_NO" ),
                         _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                         _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
                         _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
         {
-            assert(name.size() == 19);
+            assert( name.size() == 19 );
+        };
+
+        /**
+         * @brief Constructeur
+         * @param memType Mémoire d'allocation
+         */
+        FieldOnNodesInstance( const JeveuxMemory memType ):
+                        DataStructure( "CHAM_NO", memType ),
+                        _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+                        _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
+                        _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
+        {
+            assert( getName().size() == 19 );
         };
 
         ~FieldOnNodesInstance()

@@ -188,6 +188,38 @@ void DEFSSPSSPP(MATRIX_FACTOR,matrix_factor, const char*, STRING_SIZE, const cha
                                   INTEGER *, const char*, STRING_SIZE, const char*, STRING_SIZE,
                                   INTEGER *, INTEGER *);
 
+#define CALL_VEDIME(a, b, c, d, e, f) CALLSSSPSS(VEDIME, vedime, a, b, c, d, e, f)
+void DEFSSSPSS(VEDIME,vedime, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                              const char*, STRING_SIZE, DOUBLE *, const char*, STRING_SIZE,
+                              const char*, STRING_SIZE);
+
+#define CALL_VELAME(a, b, c, d, e) CALLSSSSS(VELAME, velame, a, b, c, d, e)
+void DEFSSSSS(VELAME,velame, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                             const char*, STRING_SIZE, const char*, STRING_SIZE,
+                             const char*, STRING_SIZE);
+
+#define CALL_VECHME_WRAP(a, b, c, d, e, f, g, h, i) CALLSSSSPSSSS(VECHME_WRAP, vechme_wrap, a, b, c, d, e, f, g, h, i)
+void DEFSSSSPSSSS(VECHME_WRAP,vechme_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                            const char*, STRING_SIZE, const char*, STRING_SIZE, DOUBLE*,
+                                            const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                            const char*, STRING_SIZE, const char*, STRING_SIZE);
+
+#define CALL_VTCREB_WRAP(a, b, c, d) CALLSSSS(VTCREB_WRAP, vtcreb_wrap, a, b, c, d)
+void DEFSSSS(VTCREB_WRAP,vtcreb_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                      const char*, STRING_SIZE, const char*, STRING_SIZE);
+
+#define CALL_ASASVE(a, b, c, d) CALLSSSS(ASASVE, asasve, a, b, c, d)
+void DEFSSSS(ASASVE,asasve, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                            const char*, STRING_SIZE, const char*, STRING_SIZE);
+
+#define CALL_ASCOVA(a, b, c, d, e, f, g) CALLSSSSPSS(ASCOVA, ascova, a, b, c, d, e, f, g)
+void DEFSSSSPSS(ASCOVA,ascova, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                               const char*, STRING_SIZE, const char*, STRING_SIZE, DOUBLE*,
+                               const char*, STRING_SIZE, const char*, STRING_SIZE );
+
+#define CALL_DETRSD(a, b) CALLSS(DETRSD, detrsd, a, b)
+void DEFSS(DETRSD,detrsd, const char*, STRING_SIZE, const char*, STRING_SIZE);
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)

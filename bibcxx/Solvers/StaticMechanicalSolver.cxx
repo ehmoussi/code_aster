@@ -3,7 +3,7 @@
  * @brief Fichier source contenant le source du solveur de mecanique statique
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -70,13 +70,28 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
     // Compute elementary rigidity matrix
     ElementaryMatrixPtr matrElem = dProblem->buildElementaryRigidityMatrix();
 
+    // Build assembly matrix
     AssemblyMatrixDoublePtr aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) );
     aMatrix->setElementaryMatrix( matrElem );
     aMatrix->setDOFNumbering( dofNum1 );
     aMatrix->setListOfLoads( _listOfLoads );
     aMatrix->setLinearSolver( _linearSolver );
     aMatrix->build();
+
+    // Matrix factorization
     aMatrix->factorization();
+
+    // Build Dirichlet loads
+    ElementaryVectorPtr vectElem1 = dProblem->buildElementaryDirichletVector();
+    FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1 );
+
+    // Build Laplace forces
+    ElementaryVectorPtr vectElem2 = dProblem->buildElementaryLaplaceVector();
+    FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1 );
+
+    // Build Neumann loads
+    ElementaryVectorPtr vectElem3 = dProblem->buildElementaryNeumannVector();
+    FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1 );
 };
 
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )

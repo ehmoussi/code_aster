@@ -30,6 +30,7 @@
 
 #include "Studies/StudyDescription.h"
 #include "LinearAlgebra/ElementaryVector.h"
+#include "LinearAlgebra/ElementaryMatrix.h"
 #include "Discretization/DOFNumbering.h"
 
 /**
@@ -57,6 +58,27 @@ class DiscreteProblemInstance
          */
         ~DiscreteProblemInstance()
         {};
+
+        /**
+         * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
+                  chargements de Dirichlet
+         * @return Vecteur élémentaire
+         */
+        ElementaryVectorPtr buildElementaryDirichletVector();
+
+        /**
+         * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
+                  forces de Laplace
+         * @return Vecteur élémentaire
+         */
+        ElementaryVectorPtr buildElementaryLaplaceVector();
+
+        /**
+         * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
+                  chargements de Neumann
+         * @return Vecteur élémentaire
+         */
+        ElementaryVectorPtr buildElementaryNeumannVector();
 
         /**
          * @brief Fonction permettant de calculer les matrices élémentaires de rigidité

@@ -27,15 +27,17 @@
 #include "LinearAlgebra/ElementaryVector.h"
 #include "RunManager/CommandSyntaxCython.h"
 
-ElementaryVectorInstance::ElementaryVectorInstance():
-                DataStructure( getNewResultObjectName(), "VECT_ELEM" ),
+ElementaryVectorInstance::ElementaryVectorInstance( const JeveuxMemory memType ):
+                DataStructure( "VECT_ELEM", memType ),
                 _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
-                _materialOnMesh( MaterialOnMeshPtr() )
+                _materialOnMesh( MaterialOnMeshPtr() ),
+                _listOfLoads( new ListOfLoadsInstance( memType ) )
 {};
 
-FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberingPtr& currentNumerotation )
+FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberingPtr& currentNumerotation,
+                                                                const JeveuxMemory memType )
     throw ( std::runtime_error )
 {
     if ( _isEmpty )
@@ -44,31 +46,47 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
     if ( (! currentNumerotation ) || currentNumerotation->isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
 
-    std::string newName( getNewResultObjectName() );
-    newName.resize( 19, ' ' );
-    FieldOnNodesDoublePtr vectTmp( new FieldOnNodesDoubleInstance( newName ) );
+//     std::string newName( getNewResultObjectName() );
+//     newName.resize( 19, ' ' );
+    FieldOnNodesDoublePtr vectTmp( new FieldOnNodesDoubleInstance( memType ) );
+    std::string name( " " );
+    name.resize( 24 );
 
-    SyntaxMapContainer dict;
-    dict.container[ "VECT_ELEM" ] = this->getName();
-    dict.container[ "NUME_DDL" ] = currentNumerotation->getName();
+    std::string typres( "R" );
+    CALL_ASASVE( getName().c_str(), currentNumerotation->getName().c_str(), typres.c_str(),
+                 name.c_str() );
 
-    CommandSyntaxCython cmdSt( "ASSE_VECTEUR" );
-    cmdSt.setResult( newName, "CHAM_NO" );
-    cmdSt.define( dict );
+    std::string detr( "D" );
+    std::string fomult( " " );
+    const JeveuxVectorChar24 lOF = _listOfLoads->getListOfFunctions();
+    if ( ! lOF.isEmpty() )
+        fomult = lOF->getName();
+    std::string param( "INST" );
+    double valpar = 0.;
+    CALL_ASCOVA( detr.c_str(), name.c_str(), fomult.c_str(), param.c_str(), &valpar,
+                 typres.c_str(), getName().c_str() );
 
-    try
-    {
-        INTEGER op = 13;
-        CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
-    }
+//     SyntaxMapContainer dict;
+//     dict.container[ "VECT_ELEM" ] = this->getName();
+//     dict.container[ "NUME_DDL" ] = currentNumerotation->getName();
+// 
+//     CommandSyntaxCython cmdSt( "ASSE_VECTEUR" );
+//     cmdSt.setResult( newName, "CHAM_NO" );
+//     cmdSt.define( dict );
+// 
+//     try
+//     {
+//         INTEGER op = 13;
+//         CALL_EXECOP( &op );
+//     }
+//     catch( ... )
+//     {
+//         throw;
+//     }
     _isEmpty = false;
 
     return vectTmp;
-}
+};
 
 bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_error )
 {
@@ -87,12 +105,13 @@ bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_err
     if ( _materialOnMesh )
         dict.container[ "CHAM_MATER" ] = _materialOnMesh->getName();
 
-    if ( _listOfMechanicalLoad.size() != 0 )
+    const ListMechanicalLoad listOfMechanicalLoad = _listOfLoads->getListOfMechanicalLoads();
+    if ( listOfMechanicalLoad.size() != 0 )
     {
         VectorString tmp;
-        for ( ListMechanicalLoadIter curIter = _listOfMechanicalLoad.begin();
-            curIter != _listOfMechanicalLoad.end();
-            ++curIter )
+        for ( ListMecaLoadCIter curIter = listOfMechanicalLoad.begin();
+              curIter != listOfMechanicalLoad.end();
+              ++curIter )
             tmp.push_back( (*curIter)->getName() );
         dict.container[ "CHARGE" ] = tmp;
     }

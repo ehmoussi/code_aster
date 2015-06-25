@@ -32,6 +32,7 @@ ListOfLoadsInstance::ListOfLoadsInstance( const JeveuxMemory memType ):
                     DataStructure( "L_CHARGES", memType ),
                     _loadInformations( JeveuxVectorLong( getName() + "           .INFC" ) ),
                     _list( JeveuxVectorChar24( getName() + "           .LCHA" ) ),
+                    _listOfFunctions( JeveuxVectorChar24( getName() + "           .FCHA" ) ),
                     _isEmpty( true )
 {};
 

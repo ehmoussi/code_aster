@@ -90,27 +90,6 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         };
 
         /**
-         * @brief Mise a jour du pointeur Jeveux
-         * @return true si la mise a jour s'est bien passee
-         */
-        bool updateValuePointer()
-        {
-            _valuePtr = NULL;
-            // Si on n'a pas de nom, on sort
-            if ( _name == "" ) return false;
-
-            long boolRetour;
-            // Appel a jeexin pour verifier que le vecteur existe
-            CALL_JEEXIN( _name.c_str(), &boolRetour );
-            if ( boolRetour == 0 ) return false;
-
-            const char* tmp = "L";
-            CALL_JEVEUOC( _name.c_str(), tmp, (void*)(&_valuePtr) );
-            if ( _valuePtr == NULL ) return false;
-            return true;
-        };
-
-        /**
          * @brief Fonction d'allocation d'un vecteur Jeveux
          * @param jeveuxBase Base sur laquelle doit etre allouee le vecteur : 'G' ou 'V'
          * @param length Longueur du vecteur Jeveux a allouer
@@ -153,6 +132,14 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         };
 
         /**
+         * @brief Return the name
+         */
+        std::string getName() const
+        {
+            return _name;
+        };
+
+        /**
          * @brief Fonction pour savoir si un vecteur est alloue
          * @return true si le vecteur est alloue
          */
@@ -180,7 +167,28 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
             char dummy[32] = " ";
             CALL_JELIRA( _name.c_str(), param.c_str(), &vectSize, dummy );
             return vectSize;
-        }
+        };
+
+        /**
+         * @brief Mise a jour du pointeur Jeveux
+         * @return true si la mise a jour s'est bien passee
+         */
+        bool updateValuePointer()
+        {
+            _valuePtr = NULL;
+            // Si on n'a pas de nom, on sort
+            if ( _name == "" ) return false;
+
+            long boolRetour;
+            // Appel a jeexin pour verifier que le vecteur existe
+            CALL_JEEXIN( _name.c_str(), &boolRetour );
+            if ( boolRetour == 0 ) return false;
+
+            const char* tmp = "L";
+            CALL_JEVEUOC( _name.c_str(), tmp, (void*)(&_valuePtr) );
+            if ( _valuePtr == NULL ) return false;
+            return true;
+        };
 };
 
 /**
