@@ -66,6 +66,7 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
     DOFNumberingPtr dofNum1 = resultC->getEmptyDOFNumbering();
     dofNum1->setLinearSolver( _linearSolver );
     dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
+    FieldOnNodesDoublePtr vecass = dofNum1->getEmptyFieldOnNodesDouble( Temporary );
 
     // Compute elementary rigidity matrix
     ElementaryMatrixPtr matrElem = dProblem->buildElementaryRigidityMatrix();
