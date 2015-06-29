@@ -31,9 +31,6 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/meachc.h"
-#include "asterfort/meachm.h"
-#include "asterfort/meamat.h"
 #include "asterfort/merime.h"
 #include "asterfort/nmvcd2.h"
 #include "asterfort/nmvcex.h"
@@ -107,15 +104,90 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
 !
     call jemarq()
 !
+! 1.2. ==> NOM DES STRUCTURES
+!
+! 1.2.1. ==> FIXES
+!
+!               12   345678   9012345678901234
+    com = '&&'//nompro//'.COM__'
+    chvarc = '&&'//nompro//'.CHVRC'
+!     -- POUR NE CREER Q'UN SEUL CHAMP DE VARIABLES DE REFERENCE
+    chvref = modele(1:8)//'.CHVCREF'
+!
+!               12345678
+    matele = '&&MATELE'
+!
+!
+    blan24 = ' '
+    k24bid = blan24
+    lhydr=.false.
+    lsech=.false.
+    lptot=.false.
+    chths = blan24
+!
+! 1.2. ==> LES CONSTANTES
+!
+    time = partps(1)
+!
+    charge = lischa//'.LCHA'
+!
+    call nmvcle(modele, mate, carele, time, com)
+    call vrcref(modele(1:8), mate(1:8), carele(1:8), chvref)
+    call nmvcex('TOUT', com, chvarc)
+    call nmvcd2('HYDR', mate, lhydr)
+    call nmvcd2('PTOT', mate, lptot)
+    call nmvcd2('SECH', mate, lsech)
+    call nmvcd2('TEMP', mate, ltemp)
+!
+    call jeveuo(charge, 'L', jchar)
+    infoch = lischa//'.INFC'
+    call jeveuo(infoch, 'L', jinf)
+    nchar = zi(jinf)
+!
+    nh = 0
+!
+    typres = 'R'
+!
+    ass1er = .false.
+!
 !
 !
 !====
 ! 2. LE PREMIER MEMBRE
 !====
 !
-    call meamat(modele, mate, carele, lischa, partps,&
-                numedd, assmat, solveu, matass, maprec,&
-                base, compor)
+! 2.1. ==> CALCULS ELEMENTAIRES DU 1ER MEMBRE:
+!
+    if (assmat) then
+!
+        call uttcpu('CPU.OP0046.1', 'DEBUT', ' ')
+        call merime(modele(1:8), nchar, zk24(jchar), mate, carele(1:8),&
+                    .true._1, time, compor, matele, nh,&
+                    base)
+        ass1er = .true.
+        call uttcpu('CPU.OP0046.1', 'FIN', ' ')
+!
+    endif
+!
+! 2.2. ==> ASSEMBLAGE
+!
+    if (ass1er) then
+!
+        call uttcpu('CPU.OP0046.2', 'DEBUT', ' ')
+        call asmatr(1, matele, ' ', numedd, solveu,&
+                    lischa, 'ZERO', 'V', 1, matass)
+        call detrsd('MATR_ELEM', matele)
+!
+! 2.3. ==> DECOMPOSITION OU CALCUL DE LA MATRICE DE PRECONDITIONEMENT
+!
+        call preres(solveu, 'V', ierr, maprec, matass,&
+                    ibid, -9999)
+!
+!
+        ass1er = .false.
+        call uttcpu('CPU.OP0046.2', 'FIN', ' ')
+!
+    endif
 !
 !====
 ! 3. LES CHARGEMENTS
@@ -125,13 +197,106 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
 !
 ! 3.1. ==> LES DIRICHLETS
 !
-    call meachm(modele, mate, carele, fomult, lischa,&
-                partps, numedd, vecass, cnchci, compor)
+    vadiri = blan24
+    vediri = blan24
+    chdiri = blan24
+    call vedime(modele, charge, infoch, time, typres,&
+                vediri)
+    call asasve(vediri, numedd, typres, vadiri)
+    call ascova('D', vadiri, fomult, 'INST', time,&
+                typres, chdiri)
 !
-! 3.1. ==> LES CHARGES CINEMATIQUES
+! 3.2. ==> CAS DU CHARGEMENT TEMPERATURE, HYDRATATION, SECHAGE,
+!          PRESSION TOTALE (CHAINAGE HM)
 !
-    call meachc(modele, fomult, lischa, partps, numedd,&
+    if (ltemp .or. lhydr .or. lsech .or. lptot) then
+        vecths = blan24
+        if (ltemp) then
+            call vectme(modele, carele, mate, compor, com,&
+                        vecths)
+            call asasve(vecths, numedd, typres, chths)
+        endif
+        if (lhydr) then
+            option = 'CHAR_MECA_HYDR_R'
+            call vecvme(option, modele, carele, mate, compor,&
+                        com, numedd, chths)
+        endif
+        if (lptot) then
+            option = 'CHAR_MECA_PTOT_R'
+            call vecvme(option, modele, carele, mate, compor,&
+                        com, numedd, chths)
+        endif
+        if (lsech) then
+            option = 'CHAR_MECA_SECH_R'
+            call vecvme(option, modele, carele, mate, compor,&
+                        com, numedd, chths)
+        endif
+!
+        call jeveuo(chths, 'L', jtp)
+        chths=zk24(jtp)(1:19)
+    endif
+!
+! 3.3. ==> FORCES DE LAPLACE
+!
+    valapl = blan24
+    velapl = blan24
+    chlapl = blan24
+    k24bid = blan24
+    call velame(modele, charge, infoch, k24bid, velapl)
+    call asasve(velapl, numedd, typres, valapl)
+    call ascova('D', valapl, fomult, 'INST', time,&
+                typres, chlapl)
+!
+! 3.4. ==> AUTRES CHARGEMENTS
+!
+    vacham = blan24
+    vecham = blan24
+    chcham = blan24
+    k24bid = blan24
+!
+    call vechme('S', modele, charge, infoch, partps,&
+                carele, mate, vecham, varc_currz = chvarc)
+    call asasve(vecham, numedd, typres, vacham)
+    call ascova('D', vacham, fomult, 'INST', time,&
+                typres, chcham)
+!
+! 3.6. ==> SECOND MEMBRE DEFINITIF : VECASS
+!
+    typcum = 3
+    chamn1 = chdiri(1:19)
+    chamn2 = chcham(1:19)
+    chamn3 = chlapl(1:19)
+    if (chths(1:19) .ne. ' ') then
+        typcum = 4
+        chamn4 = chths(1:19)
+    endif
+!
+! 3.6.2. ==> CONCATENATION DES SECOND(S) MEMBRE(S)
+!
+    call fetccn(chamn1, chamn2, chamn3, chamn4, typcum,&
+                vecass)
+!
+!
+! 3.7. ==> CHARGES CINEMATIQUES
+!
+    cnchci = blan24
+    call ascavc(charge, infoch, fomult, numedd, time,&
                 cnchci)
+!
+!====
+! 4. DESTRUCTION DES CHAMPS TEMPORAIRES
+!====
+!
+    call detrsd('VECT_ELEM', vediri(1:19))
+    call detrsd('CHAMP_GD', chdiri(1:19))
+    call detrsd('VECT_ELEM', velapl(1:19))
+    call detrsd('CHAMP_GD', chlapl(1:19))
+    call detrsd('VECT_ELEM', vecham(1:19))
+    call detrsd('CHAMP_GD', chcham(1:19))
+    if (ltemp) then
+        call detrsd('VECT_ELEM', vecths(1:19))
+        call detrsd('CHAMP_GD', chths(1:19))
+    endif
 !
     call jedema()
 end subroutine
