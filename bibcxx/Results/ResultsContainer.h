@@ -74,7 +74,15 @@ class ResultsContainerInstance: public DataStructure
         DOFNumberingPtr getEmptyDOFNumbering() const;
 
         /**
-         * @brief Obtenir un champ au noeud réel à partir de son nom et de son numéro d'ordre
+         * @brief Obtenir un champ aux noeuds réel vide à partir de son nom et de son numéro d'ordre
+         * @param name nom Aster du champ
+         * @param rank numéro d'ordre
+         * @return FieldOnNodesDoublePtr pointant vers le champ
+         */
+        FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const std::string name, const int rank ) const;
+
+        /**
+         * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
          * @param name nom Aster du champ
          * @param rank numéro d'ordre
          * @return FieldOnNodesDoublePtr pointant vers le champ

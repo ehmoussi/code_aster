@@ -68,7 +68,8 @@ class DataStructure
          * @param type Type Aster de la sd
          * @param memType Mémoire Jeveux de création de l'objet
          */
-        DataStructure( const std::string type = "", const JeveuxMemory memType = Permanent );
+        DataStructure( const std::string type = "", const JeveuxMemory memType = Permanent,
+                       int lenghtName = 8 );
 
         /**
          * @brief Destructeur

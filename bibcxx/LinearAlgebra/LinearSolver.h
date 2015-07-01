@@ -232,6 +232,17 @@ class LinearSolverInstance: public DataStructure
          */
         FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
                                                        const FieldOnNodesDoublePtr& currentRHS ) const;
+
+        /**
+         * @brief Inversion du systeme lineaire
+         * @param currentMatrix Matrice assemblee
+         * @param currentRHS Second membre
+         * @return champ aux noeuds resultat
+         */
+        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
+                                                       const FieldOnNodesDoublePtr& kinematicsField,
+                                                       const FieldOnNodesDoublePtr& currentRHS,
+                                                       FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( "" ) ) ) const;
 };
 
 /**

@@ -149,6 +149,13 @@ void DEFSPPSSPSPS(NOCART_C, nocart_c, const char *, STRING_SIZE, const INTEGER*,
 #define CALL_RSEXCH(a, b, c, d, e, f) CALLSSSPSP(RSEXCH, rsexch, a, b, c, d, e, f)
 void DEFSSSPSP(RSEXCH, rsexch, const char *, STRING_SIZE, const char *, STRING_SIZE, const char *, STRING_SIZE, const INTEGER*, const char *, STRING_SIZE, const INTEGER*);
 
+#define CALL_RSNOCH(a, b, c) CALLSSP(RSNOCH, rsnoch, a, b, c)
+void DEFSSP(RSNOCH, rsnoch, const char *, STRING_SIZE, const char *, STRING_SIZE, const INTEGER*);
+
+#define CALL_RSCRSD(a, b, c, d) CALLSSSP(RSCRSD, rscrsd, a, b, c, d)
+void DEFSSSP(RSCRSD, rscrsd, const char *, STRING_SIZE, const char *, STRING_SIZE,
+                             const char *, STRING_SIZE, const INTEGER*);
+
 #define CALL_UTIMSD(a, b, c, d, e, f, g, h) CALLPPPPSPSS(UTIMSD, utimsd, a, b, c, d, e, f, g, h)
 void DEFPPPPSPSS(UTIMSD,utimsd, INTEGER*, INTEGER*, INTEGER*, INTEGER*, const char*, STRING_SIZE,
                                 INTEGER*, const char*, STRING_SIZE, const char*, STRING_SIZE );
@@ -188,6 +195,14 @@ void DEFSSPSSPP(MATRIX_FACTOR,matrix_factor, const char*, STRING_SIZE, const cha
                                   INTEGER *, const char*, STRING_SIZE, const char*, STRING_SIZE,
                                   INTEGER *, INTEGER *);
 
+#define CALL_RESOUD_WRAP(a, b, c, d, e, f, g, h, i, j, k) CALLSSSSPSSSPPP(RESOUD_WRAP, resoud_wrap, a, b, c, d, e, f, g, h, i, j, k)
+void DEFSSSSPSSSPPP(RESOUD_WRAP,resoud_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                             const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                             INTEGER*,
+                                             const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                             const char*, STRING_SIZE,
+                                             INTEGER *, INTEGER *, INTEGER *);
+
 #define CALL_VEDIME(a, b, c, d, e, f) CALLSSSPSS(VEDIME, vedime, a, b, c, d, e, f)
 void DEFSSSPSS(VEDIME,vedime, const char*, STRING_SIZE, const char*, STRING_SIZE,
                               const char*, STRING_SIZE, DOUBLE *, const char*, STRING_SIZE,
@@ -216,6 +231,11 @@ void DEFSSSS(ASASVE,asasve, const char*, STRING_SIZE, const char*, STRING_SIZE,
 void DEFSSSSPSS(ASCOVA,ascova, const char*, STRING_SIZE, const char*, STRING_SIZE,
                                const char*, STRING_SIZE, const char*, STRING_SIZE, DOUBLE*,
                                const char*, STRING_SIZE, const char*, STRING_SIZE );
+
+#define CALL_ASCAVC(a, b, c, d, e, f) CALLSSSSPS(ASCAVC, ascavc, a, b, c, d, e, f)
+void DEFSSSSPS(ASCAVC,ascavc, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                              const char*, STRING_SIZE, const char*, STRING_SIZE,
+                              DOUBLE*, const char*, STRING_SIZE );
 
 #define CALL_DETRSD(a, b) CALLSS(DETRSD, detrsd, a, b)
 void DEFSS(DETRSD,detrsd, const char*, STRING_SIZE, const char*, STRING_SIZE);
