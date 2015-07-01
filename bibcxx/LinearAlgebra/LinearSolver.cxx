@@ -122,3 +122,23 @@ FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystem(
 
     return returnField;
 };
+
+FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystem(
+            const AssemblyMatrixDoublePtr& currentMatrix,
+            const FieldOnNodesDoublePtr& kinematicsField,
+            const FieldOnNodesDoublePtr& currentRHS,
+            FieldOnNodesDoublePtr result ) const
+{
+    if ( result->getName() == "" )
+        result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) );
+
+    std::string blanc( " " );
+    long nsecm = 0, prepos = 1, istop = 0, iret = 0;
+    std::string base( JeveuxMemoryTypesNames[ result->getMemoryType() ] );
+
+    CALL_RESOUD_WRAP( currentMatrix->getName().c_str(), blanc.c_str(), getName().c_str(),
+                      kinematicsField->getName().c_str(), &nsecm, currentRHS->getName().c_str(),
+                      base.c_str(), blanc.c_str(), &prepos, &istop, &iret );
+
+    return result;
+};

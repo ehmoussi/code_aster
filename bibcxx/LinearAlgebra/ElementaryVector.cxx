@@ -46,8 +46,6 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
     if ( (! currentNumerotation ) || currentNumerotation->isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
 
-//     std::string newName( getNewResultObjectName() );
-//     newName.resize( 19, ' ' );
     FieldOnNodesDoublePtr vectTmp( new FieldOnNodesDoubleInstance( memType ) );
     std::string name( " " );
     name.resize( 24 );
@@ -64,25 +62,8 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
     std::string param( "INST" );
     double valpar = 0.;
     CALL_ASCOVA( detr.c_str(), name.c_str(), fomult.c_str(), param.c_str(), &valpar,
-                 typres.c_str(), getName().c_str() );
+                 typres.c_str(), vectTmp->getName().c_str() );
 
-//     SyntaxMapContainer dict;
-//     dict.container[ "VECT_ELEM" ] = this->getName();
-//     dict.container[ "NUME_DDL" ] = currentNumerotation->getName();
-// 
-//     CommandSyntaxCython cmdSt( "ASSE_VECTEUR" );
-//     cmdSt.setResult( newName, "CHAM_NO" );
-//     cmdSt.define( dict );
-// 
-//     try
-//     {
-//         INTEGER op = 13;
-//         CALL_EXECOP( &op );
-//     }
-//     catch( ... )
-//     {
-//         throw;
-//     }
     _isEmpty = false;
 
     return vectTmp;

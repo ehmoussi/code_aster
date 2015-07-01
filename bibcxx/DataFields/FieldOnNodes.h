@@ -70,7 +70,7 @@ class FieldOnNodesInstance: public DataStructure
          * @param memType Mémoire d'allocation
          */
         FieldOnNodesInstance( const JeveuxMemory memType ):
-                        DataStructure( "CHAM_NO", memType ),
+                        DataStructure( "CHAM_NO", memType, 19 ),
                         _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                         _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
                         _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
@@ -89,10 +89,25 @@ class FieldOnNodesInstance: public DataStructure
          * @brief Surcharge de l'operateur []
          * @param i Indice dans le tableau Jeveux
          * @return la valeur du tableau Jeveux a la position i
+         * @todo cython n'autorise pas la présence de 2 operator[] (un avec et l'autre sans const)
          */
-        const ValueType &operator[](int i) const
+        ValueType &operator[]( int i )
         {
             return _valuesList->operator[](i);
+        };
+
+        /**
+         * @brief Addition d'un champ aux noeuds
+         * @return renvoit true si l'additionr s'est bien deroulée, false sinon
+         */
+        bool addFieldOnNodes( FieldOnNodesInstance< ValueType >& tmp )
+        {
+            bool retour = tmp.updateValuePointers();
+            retour = ( retour && _valuesList->updateValuePointer() );
+            int taille = _valuesList->size();
+            for ( int pos = 0; pos < taille; ++pos )
+                ( *this )[ pos ] = ( *this )[ pos ] + tmp[ pos ];
+            return retour;
         };
 
         /**
@@ -106,6 +121,17 @@ class FieldOnNodesInstance: public DataStructure
             retour = ( retour && _valuesList->updateValuePointer() );
             return retour;
         };
+
+    protected:
+        /**
+         * @brief Surcharge de l'operateur []
+         * @param i Indice dans le tableau Jeveux
+         * @return la valeur du tableau Jeveux a la position i
+         */
+//         ValueType &operator[]( int i )
+//         {
+//             return _valuesList->operator[](i);
+//         };
 };
 
 

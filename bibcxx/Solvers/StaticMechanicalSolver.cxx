@@ -56,6 +56,7 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
           curIter != kineList.end();
           ++curIter )
         study->addKinematicsLoad( *curIter );
+    _listOfLoads->build();
 
     // Define the discrete problem
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
@@ -82,22 +83,37 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
     // Matrix factorization
     aMatrix->factorization();
 
+    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    cmdSt.setResult( resultC->getName(), resultC->getType() );
+
     // Build Dirichlet loads
     ElementaryVectorPtr vectElem1 = dProblem->buildElementaryDirichletVector();
-    FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1 );
+    FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1, Temporary );
 
     // Build Laplace forces
     ElementaryVectorPtr vectElem2 = dProblem->buildElementaryLaplaceVector();
-    FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1 );
+    FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, Temporary );
 
     // Build Neumann loads
     ElementaryVectorPtr vectElem3 = dProblem->buildElementaryNeumannVector();
-    FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1 );
+    FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1, Temporary );
+
+    vecass->addFieldOnNodes( *chNoDir );
+    vecass->addFieldOnNodes( *chNoLap );
+    vecass->addFieldOnNodes( *chNoNeu );
+
+    FieldOnNodesDoublePtr kineLoadsFON = _listOfLoads->buildKinematicsLoad( dofNum1, Temporary );
+
+    FieldOnNodesDoublePtr resultField = resultC->getEmptyFieldOnNodesDouble( "DEPL", 0 );
+
+    resultField = _linearSolver->solveDoubleLinearSystem( aMatrix, kineLoadsFON,
+                                                          vecass, resultField );
 };
 
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
+    Rajouter un appel a RSCRSD
     std::string nameOfSD = resultC->getName();
 
     execute2( resultC );

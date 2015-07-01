@@ -39,6 +39,20 @@ DOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering() const
     return retour;
 };
 
+FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
+                                                                            const int rank ) const
+{
+    INTEGER retour;
+    retour = 0;
+    const INTEGER rankLong = rank;
+    JeveuxChar24 returnName( " " );
+    CALL_RSEXCH( " ", getName().c_str(), name.c_str(), &rankLong, returnName.c_str(), &retour );
+    CALL_RSNOCH( getName().c_str(), name.c_str(), &rankLong );
+    std::string bis( returnName.c_str(), 19 );
+    FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
+    return result;
+};
+
 FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::string name,
                                                                      const int rank ) const
 {

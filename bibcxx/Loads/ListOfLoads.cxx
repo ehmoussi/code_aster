@@ -68,3 +68,28 @@ bool ListOfLoadsInstance::build() throw ( std::runtime_error )
     _isEmpty = false;
     return true;
 };
+
+FieldOnNodesDoublePtr ListOfLoadsInstance::buildKinematicsLoad( const ForwardDOFNumberingPtr& curDOFNum,
+                                                                const JeveuxMemory& memType = Permanent )
+    const throw ( std::runtime_error )
+{
+    if ( _isEmpty )
+        throw std::runtime_error( "ListOfLoads is empty" );
+
+    FieldOnNodesDoublePtr retour( new FieldOnNodesDoubleInstance( memType ) );
+    std::string resuName = retour->getName();
+    std::string dofNumName = curDOFNum.getName();
+
+    std::string lLoadName = _list->getName();
+    lLoadName.resize(24);
+    std::string infLoadName = _loadInformations->getName();
+    infLoadName.resize(24);
+    std::string funcLoadName = _listOfFunctions->getName();
+    funcLoadName.resize(24);
+    double inst = 0.;
+
+    CALL_ASCAVC( lLoadName.c_str(), infLoadName.c_str(), funcLoadName.c_str(),
+                 dofNumName.c_str(), &inst, resuName.c_str() );
+
+    return retour;
+};

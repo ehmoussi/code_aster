@@ -54,8 +54,8 @@ DataStructure::DataStructure( const std::string name, const std::string type,
         mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
 };
 
-DataStructure::DataStructure( const std::string type, const JeveuxMemory memType ):
-        _name( DataStructureNaming::getNewName( memType ) ),
+DataStructure::DataStructure( const std::string type, const JeveuxMemory memType, int lenghtName ):
+        _name( DataStructureNaming::getNewName( memType, lenghtName ) ),
         _type( type ),
         _memoryType( memType )
 {

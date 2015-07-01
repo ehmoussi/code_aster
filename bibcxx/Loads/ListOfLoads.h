@@ -32,6 +32,8 @@
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "DataFields/FieldOnNodes.h"
+#include "Discretization/ForwardDOFNumbering.h"
 
 /**
  * @class ListOfLoadInstance
@@ -85,6 +87,14 @@ class ListOfLoadsInstance: public DataStructure
          * @return Booleen indiquant que tout s'est bien passe
          */
         bool build() throw ( std::runtime_error );
+
+        /**
+         * @brief Construction d'un vecteur de chargement cinématique
+         * @return Booleen indiquant que tout s'est bien passe
+         */
+        FieldOnNodesDoublePtr buildKinematicsLoad( const ForwardDOFNumberingPtr& curDOFNum,
+                                                   const JeveuxMemory& memType )
+            const throw ( std::runtime_error );
 
         /**
          * @brief Function de récupération des informations des charges
