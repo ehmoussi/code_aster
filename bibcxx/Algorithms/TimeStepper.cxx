@@ -30,8 +30,9 @@ bool TimeStepperInstance::setValues( const VectorDouble& values ) throw ( std::r
     if( _values->isAllocated() )
         _values->deallocate();
 
-    _values->allocate( getMemoryType(), values.size() );
-    _values->updateValuePointer();
+    _values->allocate( getMemoryType(), values.size() + 1 );
+    if ( ! _values->updateValuePointer() )
+        throw std::runtime_error( "Unable to update pointers of TimeStepperInstance" );
 
     int compteur = 0;
     double save = 0.;
@@ -46,5 +47,6 @@ bool TimeStepperInstance::setValues( const VectorDouble& values ) throw ( std::r
         save = *tmp;
         ++compteur;
     }
+    ( *_values )[ compteur ] = -9999.;
     return true;
 };

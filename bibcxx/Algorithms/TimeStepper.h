@@ -38,7 +38,7 @@ typedef VectorDouble::const_iterator VectorDoubleCIter;
  * @brief Cette classe permet de definir une liste d'instant
  * @author Nicolas Sellenet
  */
-class TimeStepperInstance: public DataStructure
+class TimeStepperInstance: public DataStructure, public GenericStepper
 {
     private:
         /** @brief Liste des instants */
@@ -51,7 +51,10 @@ class TimeStepperInstance: public DataStructure
         TimeStepperInstance( JeveuxMemory memType = Permanent ):
             DataStructure( "LIST_INST", memType ),
             _values( getName() + ".LIST" )
-        {};
+        {
+            VectorDouble tmp( 1, 0. );
+            setValues( tmp );
+        };
 
         /**
          * @brief Desctructeur
@@ -59,11 +62,77 @@ class TimeStepperInstance: public DataStructure
         ~TimeStepperInstance()
         {};
 
+        struct iterator
+        {
+            double* position;
+
+            inline iterator(): position( NULL )
+            {};
+
+            inline iterator( double* memoryPosition ): position( memoryPosition )
+            {};
+
+            inline iterator( const iterator& iter ): position( iter.position )
+            {};
+
+            inline iterator& operator=( const iterator& testIter )
+            {
+                position = testIter.position;
+                return *this;
+            };
+
+            inline iterator& operator++()
+            {
+                ++position;
+                return *this;
+            };
+
+            inline bool operator==( const iterator& testIter ) const
+            {
+                if ( testIter.position != position ) return false;
+                return true;
+            };
+
+            inline bool operator!=( const iterator& testIter ) const
+            {
+                if ( testIter.position != position ) return true;
+                return false;
+            };
+
+            inline double& operator->()
+            {
+                return *position;
+            };
+
+            inline double& operator*()
+            {
+                return *position;
+            };
+        };
+
+        /**
+         * @brief 
+         * @return 
+         */
+        iterator begin() const
+        {
+            return iterator( &( *_values )[0] );
+        };
+
+        /**
+         * @brief 
+         * @return 
+         */
+        iterator end() const
+        {
+            return iterator( &( *_values )[ _values->size() - 1 ] );
+        };
+
         /**
          * @brief Fonction permettant de fixer la liste de pas de temps
          * @param values Liste des valeurs
          */
-        bool setValues( const VectorDouble& values ) throw ( std::runtime_error );;
+        bool setValues( const VectorDouble& values ) throw ( std::runtime_error );
 
         /**
          * @brief Fonction permettant de connaître le nombre de pas de temps

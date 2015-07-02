@@ -54,7 +54,9 @@ class ResultsContainerInstance: public DataStructure
         /** @brief Vecteur Jeveux '.ORDR' */
         JeveuxVectorLong       _serialNumber;
         /** @brief Liste des champs */
-        std::vector< FieldOnNodesDoublePtr >       _listOfFields;
+        std::vector< FieldOnNodesDoublePtr > _listOfFields;
+        /** @brief Liste des NUME_DDL */
+        std::vector< DOFNumberingPtr >       _listOfDOFNum;
 
     public:
         /**
@@ -80,7 +82,7 @@ class ResultsContainerInstance: public DataStructure
          * @brief Obtenir un DOFNumbering à remplir
          * @return DOFNumbering à remplir
          */
-        DOFNumberingPtr getEmptyDOFNumbering() const;
+        DOFNumberingPtr getEmptyDOFNumbering();
 
         /**
          * @brief Obtenir un champ aux noeuds réel vide à partir de son nom et de son numéro d'ordre
@@ -89,6 +91,15 @@ class ResultsContainerInstance: public DataStructure
          * @return FieldOnNodesDoublePtr pointant vers le champ
          */
         FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const std::string name, const int rank );
+
+        /**
+         * @brief Obtenir le dernier DOFNumbering
+         * @return Dernier DOFNumbering
+         */
+        DOFNumberingPtr getLastDOFNumbering() const
+        {
+            return _listOfDOFNum[ _listOfDOFNum.size() - 1 ];
+        };
 
         /**
          * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
