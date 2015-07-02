@@ -53,6 +53,8 @@ class ResultsContainerInstance: public DataStructure
         JeveuxCollectionChar8  _calculationParameter;
         /** @brief Vecteur Jeveux '.ORDR' */
         JeveuxVectorLong       _serialNumber;
+        /** @brief Liste des champs */
+        std::vector< FieldOnNodesDoublePtr >       _listOfFields;
 
     public:
         /**
@@ -68,6 +70,13 @@ class ResultsContainerInstance: public DataStructure
         {};
 
         /**
+         * @brief Allouer une sd_resultat
+         * @param nbRanks nombre de numéro d'ordre
+         * @return true si l'allocation s'est bien passée
+         */
+        bool allocate( int nbRanks ) throw ( std::runtime_error );
+
+        /**
          * @brief Obtenir un DOFNumbering à remplir
          * @return DOFNumbering à remplir
          */
@@ -79,7 +88,7 @@ class ResultsContainerInstance: public DataStructure
          * @param rank numéro d'ordre
          * @return FieldOnNodesDoublePtr pointant vers le champ
          */
-        FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const std::string name, const int rank ) const;
+        FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const std::string name, const int rank );
 
         /**
          * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre

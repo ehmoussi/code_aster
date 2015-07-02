@@ -29,6 +29,14 @@
 #include "RunManager/LogicalUnitManagerCython.h"
 #include "RunManager/CommandSyntaxCython.h"
 
+bool ResultsContainerInstance::allocate( int nbRanks ) throw ( std::runtime_error )
+{
+    std::string base( JeveuxMemoryTypesNames[ getMemoryType() ] );
+    long nbordr = nbRanks;
+    CALL_RSCRSD( base.c_str(), getName().c_str(), getType().c_str(), &nbordr );
+    return true;
+};
+
 DOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering() const
 {
     std::string resuName( getName() );
@@ -40,16 +48,17 @@ DOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering() const
 };
 
 FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
-                                                                            const int rank ) const
+                                                                            const int rank )
 {
     INTEGER retour;
     retour = 0;
     const INTEGER rankLong = rank;
-    JeveuxChar24 returnName( " " );
+    std::string returnName( 19, ' ' );
     CALL_RSEXCH( " ", getName().c_str(), name.c_str(), &rankLong, returnName.c_str(), &retour );
     CALL_RSNOCH( getName().c_str(), name.c_str(), &rankLong );
     std::string bis( returnName.c_str(), 19 );
     FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
+    _listOfFields.push_back( result );
     return result;
 };
 
@@ -59,7 +68,7 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::
     INTEGER retour;
     retour = 0;
     const INTEGER rankLong = rank;
-    JeveuxChar24 returnName( " " );
+    std::string returnName( 19, ' ' );
     CALL_RSEXCH( " ", getName().c_str(), name.c_str(), &rankLong, returnName.c_str(), &retour );
     std::string bis( returnName.c_str(), 19 );
     FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );

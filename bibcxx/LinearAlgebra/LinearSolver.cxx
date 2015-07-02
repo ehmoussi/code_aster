@@ -138,7 +138,8 @@ FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystem(
 
     CALL_RESOUD_WRAP( currentMatrix->getName().c_str(), blanc.c_str(), getName().c_str(),
                       kinematicsField->getName().c_str(), &nsecm, currentRHS->getName().c_str(),
-                      base.c_str(), blanc.c_str(), &prepos, &istop, &iret );
+                      result->getName().c_str(), base.c_str(), blanc.c_str(),
+                      &prepos, &istop, &iret );
 
     return result;
 };
