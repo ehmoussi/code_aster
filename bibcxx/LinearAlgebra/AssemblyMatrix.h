@@ -220,35 +220,34 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
     if ( _linSolv.isEmpty() )
         throw std::runtime_error( "Linear solver is empty" );
 
-    _linSolv.operator->().matrixFactorization( AssemblyMatrixDoublePtr( this ) );
-//     CommandSyntaxCython cmdSt( "FACTORISER" );
-//     cmdSt.setResult( getName(), getType() );
-// 
-//     SyntaxMapContainer dict;
-//     // !!! Rajouter un if MUMPS !!!
-//     dict.container[ "MATR_ASSE" ] = getName();
-//     dict.container[ "ELIM_LAGR" ] = "LAGR2";
-//     dict.container[ "TYPE_RESOL" ] = "AUTO";
-//     dict.container[ "PRETRAITEMENTS" ] = "AUTO";
-//     dict.container[ "PCENT_PIVOT" ] = 20;
-//     dict.container[ "GESTION_MEMOIRE" ] = "IN_CORE";
-//     dict.container[ "REMPLISSAGE" ] = 1.0;
-//     dict.container[ "NIVE_REMPLISSAGE" ] = 0;
-//     dict.container[ "STOP_SINGULIER" ] = "OUI";
-//     dict.container[ "PRE_COND" ] = "LDLT_INC";
-//     dict.container[ "NPREC" ] = 8;
-//     cmdSt.define( dict );
-// 
-//     try
-//     {
-//         INTEGER op = 14;
-//         CALL_EXECOP( &op );
-//     }
-//     catch( ... )
-//     {
-//         throw;
-//     }
-//     _isEmpty = false;
+    CommandSyntaxCython cmdSt( "FACTORISER" );
+    cmdSt.setResult( getName(), getType() );
+
+    SyntaxMapContainer dict;
+    // !!! Rajouter un if MUMPS !!!
+    dict.container[ "MATR_ASSE" ] = getName();
+    dict.container[ "ELIM_LAGR" ] = "LAGR2";
+    dict.container[ "TYPE_RESOL" ] = "AUTO";
+    dict.container[ "PRETRAITEMENTS" ] = "AUTO";
+    dict.container[ "PCENT_PIVOT" ] = 20;
+    dict.container[ "GESTION_MEMOIRE" ] = "IN_CORE";
+    dict.container[ "REMPLISSAGE" ] = 1.0;
+    dict.container[ "NIVE_REMPLISSAGE" ] = 0;
+    dict.container[ "STOP_SINGULIER" ] = "OUI";
+    dict.container[ "PRE_COND" ] = "LDLT_INC";
+    dict.container[ "NPREC" ] = 8;
+    cmdSt.define( dict );
+
+    try
+    {
+        INTEGER op = 14;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    _isEmpty = false;
 
     return true;
 };
