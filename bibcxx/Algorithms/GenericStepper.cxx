@@ -1,6 +1,6 @@
 /**
- * @file TimeStepper.cxx
- * @brief Implementation de TimeStepper
+ * @file GenericStepper.cxx
+ * @brief Implementation de GenericStepper
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
@@ -21,30 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Algorithms/TimeStepper.h"
+#include "Algorithms/GenericStepper.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
-
-bool TimeStepperInstance::setValues( const VectorDouble& values ) throw ( std::runtime_error )
-{
-    if( _values->isAllocated() )
-        _values->deallocate();
-
-    _values->allocate( getMemoryType(), values.size() );
-    _values->updateValuePointer();
-
-    int compteur = 0;
-    double save = 0.;
-    for( VectorDoubleCIter tmp = values.begin();
-            tmp != values.end();
-            ++tmp )
-    {
-        ( *_values )[ compteur ] = *tmp;
-        const double& curVal = *tmp;
-        if ( compteur != 0 && save >= curVal )
-            throw std::runtime_error( "Time function not strictly increasing" );
-        save = *tmp;
-        ++compteur;
-    }
-    return true;
-};

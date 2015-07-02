@@ -48,8 +48,9 @@ class TimeStepperInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        TimeStepperInstance(): DataStructure( getNewResultObjectName(), "LIST_INST" ),
-                               _values( getName() + ".LIST" )
+        TimeStepperInstance( JeveuxMemory memType = Permanent ):
+            DataStructure( "LIST_INST", memType ),
+            _values( getName() + ".LIST" )
         {};
 
         /**
@@ -62,27 +63,7 @@ class TimeStepperInstance: public DataStructure
          * @brief Fonction permettant de fixer la liste de pas de temps
          * @param values Liste des valeurs
          */
-        bool setValues( const VectorDouble& values ) throw ( std::runtime_error )
-        {
-            if( _values->isAllocated() )
-                _values->deallocate();
-
-            _values->allocate( Permanent, values.size() );
-
-            int compteur = 0;
-            double save = 0.;
-            for( VectorDoubleCIter tmp = values.begin();
-                 tmp != values.end();
-                 ++tmp )
-            {
-                ( *_values )[ compteur ] = *tmp;
-                if ( compteur != 0 && save < *tmp )
-                    throw std::runtime_error( "Time function not strictly increasing" );
-                save = *tmp;
-                ++compteur;
-            }
-            return true;
-        };
+        bool setValues( const VectorDouble& values ) throw ( std::runtime_error );;
 
         /**
          * @brief Fonction permettant de connaître le nombre de pas de temps
