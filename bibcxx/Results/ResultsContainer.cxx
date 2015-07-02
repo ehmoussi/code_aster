@@ -37,13 +37,14 @@ bool ResultsContainerInstance::allocate( int nbRanks ) throw ( std::runtime_erro
     return true;
 };
 
-DOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering() const
+DOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering()
 {
     std::string resuName( getName() );
     std::string name( "12345678.00000" );
     long a = 10, b = 14;
     CALL_GNOMSD( resuName.c_str(), name.c_str(), &a, &b );
     DOFNumberingPtr retour( new DOFNumberingInstance( name ) );
+    _listOfDOFNum.push_back( retour );
     return retour;
 };
 

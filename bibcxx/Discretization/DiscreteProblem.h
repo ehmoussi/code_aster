@@ -97,6 +97,15 @@ class DiscreteProblemInstance
          * @return Numérotation du problème discret
          */
         DOFNumberingPtr computeDOFNumbering( DOFNumberingPtr dofNum = DOFNumberingPtr( new DOFNumberingInstance("") ) );
+
+        /**
+         * @brief Récupération de l'étude
+         * @return Numérotation du problème discret
+         */
+        StudyDescriptionPtr getStudyDescription()
+        {
+            return _study;
+        };
 };
 
 
