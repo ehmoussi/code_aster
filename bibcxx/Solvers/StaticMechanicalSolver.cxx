@@ -37,12 +37,17 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
     _supportModel( ModelPtr() ),
     _materialOnMesh( MaterialOnMeshPtr() ),
     _linearSolver( LinearSolverPtr() ),
-    _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
+    _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
+    _timeStep( TimeStepperPtr( new TimeStepperInstance() ) )
 {};
 
-void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) throw ( std::runtime_error )
+ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
 {
-    resultC->allocate( 1 );
+    ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
+    std::string nameOfSD = resultC->getName();
+
+    if ( _timeStep->size() == 0 )
+        resultC->allocate( 1 );
 
     // Define the study
     StudyDescriptionPtr study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) );
@@ -97,7 +102,11 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
     FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, Temporary );
 
     // Build Neumann loads
-    ElementaryVectorPtr vectElem3 = dProblem->buildElementaryNeumannVector();
+    VectorDouble times;
+    times.push_back( 0. );
+    times.push_back( 0. );
+    times.push_back( 0. );
+    ElementaryVectorPtr vectElem3 = dProblem->buildElementaryNeumannVector( times );
     FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1, Temporary );
 
     vecass->addFieldOnNodes( *chNoDir );
@@ -110,72 +119,6 @@ void StaticMechanicalSolverInstance::execute2( ResultsContainerPtr& resultC ) th
 
     resultField = _linearSolver->solveDoubleLinearSystem( aMatrix, kineLoadsFON,
                                                           vecass, resultField );
-    resultField->debugPrint( 8 );
-};
-
-ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
-{
-    ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_ELAS" ) ) );
-    std::string nameOfSD = resultC->getName();
-
-    execute2( resultC );
-
-//     CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
-//     cmdSt.setResult( resultC->getName(), resultC->getType() );
-// 
-//     SyntaxMapContainer dict;
-//     if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-//         throw std::runtime_error( "Support model is undefined" );
-//     dict.container[ "MODELE" ] = _supportModel->getName();
-// 
-//     // Definition du mot cle simple CHAM_MATER
-//     if ( _materialOnMesh )
-//         dict.container[ "CHAM_MATER" ] = _materialOnMesh->getName();
-// 
-//     if ( _listOfLoads->size() == 0 )
-//         throw std::runtime_error( "At least one load is needed" );
-// 
-//     ListSyntaxMapContainer listeExcit;
-//     const ListMecaLoad& mecaList = _listOfLoads->getListOfMechanicalLoads();
-//     for ( ListMecaLoadCIter curIter = mecaList.begin();
-//           curIter != mecaList.end();
-//           ++curIter )
-//     {
-//         SyntaxMapContainer dict2;
-//         dict2.container[ "CHARGE" ] = (*curIter)->getName();
-//         listeExcit.push_back( dict2 );
-//     }
-//     const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();
-//     for ( ListKineLoadCIter curIter = kineList.begin();
-//           curIter != kineList.end();
-//           ++curIter )
-//     {
-//         SyntaxMapContainer dict2;
-//         dict2.container[ "CHARGE" ] = (*curIter)->getName();
-//         listeExcit.push_back( dict2 );
-//     }
-//     dict.container[ "EXCIT" ] = listeExcit;
-// 
-//     // A mettre ailleurs ?
-//     ListSyntaxMapContainer listeSolver;
-//     SyntaxMapContainer dict3;
-//     dict3.container[ "METHODE" ] = _linearSolver->getSolverName();
-//     dict3.container[ "RENUM" ] = _linearSolver->getRenumburingName();
-//     listeSolver.push_back( dict3 );
-//     dict.container[ "SOLVEUR" ] = listeSolver;
-// 
-//     dict.container[ "OPTION" ] = "SIEF_ELGA";
-//     cmdSt.define( dict );
-// 
-//     try
-//     {
-//         INTEGER op = 46;
-//         CALL_EXECOP( &op );
-//     }
-//     catch( ... )
-//     {
-//         throw;
-//     }
 
     return resultC;
 };

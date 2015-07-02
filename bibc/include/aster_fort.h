@@ -215,7 +215,7 @@ void DEFSSSSS(VELAME,velame, const char*, STRING_SIZE, const char*, STRING_SIZE,
 
 #define CALL_VECHME_WRAP(a, b, c, d, e, f, g, h, i) CALLSSSSPSSSS(VECHME_WRAP, vechme_wrap, a, b, c, d, e, f, g, h, i)
 void DEFSSSSPSSSS(VECHME_WRAP,vechme_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
-                                            const char*, STRING_SIZE, const char*, STRING_SIZE, DOUBLE*,
+                                            const char*, STRING_SIZE, const char*, STRING_SIZE, const DOUBLE*,
                                             const char*, STRING_SIZE, const char*, STRING_SIZE,
                                             const char*, STRING_SIZE, const char*, STRING_SIZE);
 
