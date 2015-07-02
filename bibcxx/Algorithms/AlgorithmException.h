@@ -1,6 +1,9 @@
+#ifndef ALGORITHMEEXCEPTION_H_
+#define ALGORITHMEEXCEPTION_H_
+
 /**
- * @file TimeStepper.cxx
- * @brief Implementation de TimeStepper
+ * @file AlgorithmException.h
+ * @brief Fichier entete de la classe AlgorithmException
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
@@ -21,30 +24,19 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Algorithms/TimeStepper.h"
-
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-bool TimeStepperInstance::setValues( const VectorDouble& values ) throw ( std::runtime_error )
+#include <string>
+
+/**
+ * @class AlgorithmException
+ * @brief Classe mère des exceptions levées par un algorithme
+ * @author Nicolas Sellenet
+ */
+class AlgoException
 {
-    if( _values->isAllocated() )
-        _values->deallocate();
-
-    _values->allocate( getMemoryType(), values.size() );
-    _values->updateValuePointer();
-
-    int compteur = 0;
-    double save = 0.;
-    for( VectorDoubleCIter tmp = values.begin();
-            tmp != values.end();
-            ++tmp )
-    {
-        ( *_values )[ compteur ] = *tmp;
-        const double& curVal = *tmp;
-        if ( compteur != 0 && save >= curVal )
-            throw std::runtime_error( "Time function not strictly increasing" );
-        save = *tmp;
-        ++compteur;
-    }
-    return true;
+    public:
+        virtual const std::string what() const throw() = 0;
 };
+
+#endif /* ALGORITHMEEXCEPTION_H_ */
