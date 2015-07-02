@@ -160,7 +160,15 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          */
         long size() const
         {
-            if ( _name == "" ) return 0;
+            if ( _name == "" )
+                return 0;
+
+            long boolRetour;
+            // Appel a jeexin pour verifier que le vecteur existe
+            CALL_JEEXIN( _name.c_str(), &boolRetour );
+            if ( boolRetour == 0 )
+                return 0;
+
             long vectSize;
             JeveuxChar8 param( "LONMAX" );
             // JeveuxChar32 dummy( " " );
@@ -177,16 +185,19 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         {
             _valuePtr = NULL;
             // Si on n'a pas de nom, on sort
-            if ( _name == "" ) return false;
+            if ( _name == "" )
+                return false;
 
             long boolRetour;
             // Appel a jeexin pour verifier que le vecteur existe
             CALL_JEEXIN( _name.c_str(), &boolRetour );
-            if ( boolRetour == 0 ) return false;
+            if ( boolRetour == 0 )
+                return false;
 
             const char* tmp = "L";
             CALL_JEVEUOC( _name.c_str(), tmp, (void*)(&_valuePtr) );
-            if ( _valuePtr == NULL ) return false;
+            if ( _valuePtr == NULL )
+                return false;
             return true;
         };
 };

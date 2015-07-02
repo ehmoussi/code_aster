@@ -33,7 +33,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector()
+ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector( double time )
 {
     ElementaryVectorPtr retour( new ElementaryVectorInstance( Temporary ) );
 
@@ -49,12 +49,10 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector()
     std::string nameInfc = jvInfo->getName();
     nameInfc.resize(24);
 
-    double inst = 0.;
-
     std::string typres( "R" );
     std::string resultName( retour->getName() );
 
-    CALL_VEDIME( modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), &inst,
+    CALL_VEDIME( modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), &time,
                  typres.c_str(), resultName.c_str() );
     retour->setEmpty( false );
 
@@ -89,8 +87,12 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryLaplaceVector()
     return retour;
 };
 
-ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector()
+ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector( const VectorDouble time )
+    throw ( std::runtime_error )
 {
+    if ( time.size() != 3 )
+        throw std::runtime_error( "Invalid number of parameter" );
+
     ElementaryVectorPtr retour( new ElementaryVectorInstance( Temporary ) );
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
 
@@ -103,7 +105,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector()
     JeveuxVectorLong jvInfo = _study->getListOfLoads()->getInformationVector();
     std::string nameInfc = jvInfo->getName();
 
-    double inst = 0.;
+    const double& inst = time[0];
     std::string stop( "S" );
     std::string blanc( " " );
     std::string resultName( retour->getName() );
@@ -117,7 +119,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector()
     return retour;
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
+ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( double time )
 {
     ElementaryMatrixPtr retour( new ElementaryMatrixInstance( "DEPL_R", Temporary ) );
     ModelPtr curModel = _study->getSupportModel();
@@ -137,7 +139,6 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix()
     CALL_RCMFMC( materName.c_str(), mate.c_str() );
 
     long exiti0 = 0, nh = 0;
-    double time = 0.;
     CALL_MERIME_WRAP( modelName.c_str(), &nbLoad, jvListOfLoads->getDataPtr()->c_str(),
                       mate.c_str(), blanc.c_str(), &exiti0, &time,
                       blanc.c_str(), retour->getName().c_str(), &nh, "G" );

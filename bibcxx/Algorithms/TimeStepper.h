@@ -28,12 +28,10 @@
 
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructure/DataStructure.h"
-
-#include <string>
-#include <iostream>
+#include "Algorithms/GenericStepper.h"
 
 typedef std::vector< double > VectorDouble;
-typedef VectorDouble::const_iterator VectorDoubleIter;
+typedef VectorDouble::const_iterator VectorDoubleCIter;
 
 /**
  * @class TimeStepperInstance
@@ -73,7 +71,7 @@ class TimeStepperInstance: public DataStructure
 
             int compteur = 0;
             double save = 0.;
-            for( VectorDoubleIter tmp = values.begin();
+            for( VectorDoubleCIter tmp = values.begin();
                  tmp != values.end();
                  ++tmp )
             {
@@ -84,6 +82,15 @@ class TimeStepperInstance: public DataStructure
                 ++compteur;
             }
             return true;
+        };
+
+        /**
+         * @brief Fonction permettant de connaître le nombre de pas de temps
+         * @return nombre de pas de temps
+         */
+        bool size()
+        {
+            return _values->size();
         };
 };
 

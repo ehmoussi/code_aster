@@ -34,6 +34,7 @@
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
 #include "LinearAlgebra/LinearSolver.h"
+#include "Algorithms/TimeStepper.h"
 
 class StaticMechanicalSolverInstance: public GenericSolver
 {
@@ -55,11 +56,8 @@ class StaticMechanicalSolverInstance: public GenericSolver
         LinearSolverPtr   _linearSolver;
         /** @brief Liste des chargements */
         ListOfLoadsPtr    _listOfLoads;
-
-        /**
-         * @brief Temporaire ! Test de MECA_STATIQUE en C++
-         */
-        void execute2( ResultsContainerPtr& ) throw ( std::runtime_error );
+        /** @brief Liste de pas de temps */
+        TimeStepperPtr    _timeStep;
 
     public:
         /**
@@ -115,6 +113,15 @@ class StaticMechanicalSolverInstance: public GenericSolver
         void setSupportModel( const ModelPtr& currentModel )
         {
             _supportModel = currentModel;
+        };
+
+        /**
+         * @brief Methode permettant de definir les pas de temps
+         * @param currentStepper Liste de pas de temps
+         */
+        void setTimeStepper( const TimeStepperPtr& currentStepper )
+        {
+            _timeStep = currentStepper;
         };
 };
 

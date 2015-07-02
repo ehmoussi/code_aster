@@ -28,6 +28,8 @@
 
 #include "astercxx.h"
 
+#include <vector>
+
 #include "Studies/StudyDescription.h"
 #include "LinearAlgebra/ElementaryVector.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
@@ -62,9 +64,10 @@ class DiscreteProblemInstance
         /**
          * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
                   chargements de Dirichlet
+         * @param time Instant de calcul
          * @return Vecteur élémentaire
          */
-        ElementaryVectorPtr buildElementaryDirichletVector();
+        ElementaryVectorPtr buildElementaryDirichletVector( double time = 0. );
 
         /**
          * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
@@ -76,15 +79,18 @@ class DiscreteProblemInstance
         /**
          * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
                   chargements de Neumann
+         * @param time Instants de calcul (vecteur de longueur 3 : instant courant, deltat, paramètre theta
          * @return Vecteur élémentaire
          */
-        ElementaryVectorPtr buildElementaryNeumannVector();
+        ElementaryVectorPtr buildElementaryNeumannVector( const VectorDouble time )
+            throw ( std::runtime_error );
 
         /**
          * @brief Fonction permettant de calculer les matrices élémentaires de rigidité
+         * @param time Instant de calcul
          * @return Vecteur élémentaire contenant la rigidité mécanique
          */
-        ElementaryMatrixPtr buildElementaryRigidityMatrix();
+        ElementaryMatrixPtr buildElementaryRigidityMatrix( double time = 0. );
 
         /**
          * @brief Détermination de la numérotation de ddl
