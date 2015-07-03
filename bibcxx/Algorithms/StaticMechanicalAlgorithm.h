@@ -34,7 +34,7 @@
 
 /**
  * @class StaticMechanicalAlgorithm
- * @brief 
+ * @brief Un pas de l'algorithme de l'opérateur de mécanqiue statique linéaire
  * @author Nicolas Sellenet
  */
 template< class Stepper >
@@ -69,9 +69,18 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
             _time( 0. )
         {};
 
+        /**
+         * @brief Avancer d'un pas dans un algorithme
+         */
         void oneStep() throw( AlgoException& );
 
+        /** @typedef Rappel du typedef de GenericUnitaryAlgorithm */
         typedef typename Stepper::const_iterator AlgorithmStepperIter;
+
+        /**
+         * @brief Préparation de l'itération suivante
+         * @param curStep Iterateur courant issu du Stepper
+         */
         void prepareStep( AlgorithmStepperIter& curStep ) throw( AlgoException& );
 };
 

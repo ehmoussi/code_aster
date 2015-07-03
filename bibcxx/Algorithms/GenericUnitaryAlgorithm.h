@@ -30,17 +30,22 @@
 
 /**
  * @class GenericUnitaryAlgorithm
- * @brief 
+ * @brief Classe générique décrivant un algorithme unitaire
  * @author Nicolas Sellenet
  */
 template< class Stepper >
 class GenericUnitaryAlgorithm
 {
     public:
+        /** @typedef Définition de l'objet servant à itérer sur l'algorihtme unitaire */
         typedef Stepper AlgorithmStepper;
+        /** @typedef Définition de l'itérateur constant utiliser pour préparer une étape */
         typedef typename Stepper::const_iterator AlgorithmStepperIter;
 
+        /** @brief Méthode virtuelle pure nécessaire à l'avancer de l'algorithme */
         virtual void oneStep() throw( AlgoException& ) = 0;
+
+        /** @typedef Méthode virtuelle pure nécessaire à la préparation d'une étape de l'algo */
         virtual void prepareStep( AlgorithmStepperIter& curStep ) throw( AlgoException& ) = 0;
 };
 
