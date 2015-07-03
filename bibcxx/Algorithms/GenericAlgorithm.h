@@ -33,15 +33,21 @@
 
 /**
  * @class GenericAlgorithm
- * @brief 
+ * @brief Classe statique template servant à itérer sur un algorithme en se servant d'un Stepper
  * @author Nicolas Sellenet
  */
 template< class GenericUnitaryAlgorithm >
 class Algorithm
 {
     public:
+        /** @typedef Définition du Stepper */
         typedef typename GenericUnitaryAlgorithm::AlgorithmStepper Stepper;
 
+        /**
+         * @brief Réalistion de l'algorithme
+         * @param timeStep Objet sur lequel il faut itérer
+         * @param algo Algorithme à réaliser à chaque itération
+         */
         static bool runAllStepsOverAlgorithm( Stepper& timeStep, GenericUnitaryAlgorithm& algo )
         {
             typedef typename Stepper::const_iterator it;

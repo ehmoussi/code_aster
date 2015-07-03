@@ -21,15 +21,4 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MemoryManager/JeveuxVector.h"
-#include "Algorithms/StaticMechanicalAlgorithm.h"
-#include "DataFields/FieldOnNodes.h"
-#include "LinearAlgebra/ElementaryMatrix.h"
-#include "LinearAlgebra/ElementaryVector.h"
-#include "LinearAlgebra/AssemblyMatrix.h"
-#include "LinearAlgebra/LinearSolver.h"
-#include "Discretization/DOFNumbering.h"
-#include "Loads/ListOfLoads.h"
-#include "RunManager/CommandSyntaxCython.h"
-
 /* person_in_charge: nicolas.sellenet at edf.fr */
