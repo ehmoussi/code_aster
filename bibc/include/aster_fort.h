@@ -229,13 +229,13 @@ void DEFSSSS(ASASVE,asasve, const char*, STRING_SIZE, const char*, STRING_SIZE,
 
 #define CALL_ASCOVA(a, b, c, d, e, f, g) CALLSSSSPSS(ASCOVA, ascova, a, b, c, d, e, f, g)
 void DEFSSSSPSS(ASCOVA,ascova, const char*, STRING_SIZE, const char*, STRING_SIZE,
-                               const char*, STRING_SIZE, const char*, STRING_SIZE, DOUBLE*,
+                               const char*, STRING_SIZE, const char*, STRING_SIZE, const DOUBLE*,
                                const char*, STRING_SIZE, const char*, STRING_SIZE );
 
 #define CALL_ASCAVC(a, b, c, d, e, f) CALLSSSSPS(ASCAVC, ascavc, a, b, c, d, e, f)
 void DEFSSSSPS(ASCAVC,ascavc, const char*, STRING_SIZE, const char*, STRING_SIZE,
                               const char*, STRING_SIZE, const char*, STRING_SIZE,
-                              DOUBLE*, const char*, STRING_SIZE );
+                              const DOUBLE*, const char*, STRING_SIZE );
 
 #define CALL_DETRSD(a, b) CALLSS(DETRSD, detrsd, a, b)
 void DEFSS(DETRSD,detrsd, const char*, STRING_SIZE, const char*, STRING_SIZE);

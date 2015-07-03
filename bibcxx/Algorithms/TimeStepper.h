@@ -62,49 +62,49 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
         ~TimeStepperInstance()
         {};
 
-        struct iterator
+        struct const_iterator
         {
             double* position;
 
-            inline iterator(): position( NULL )
+            inline const_iterator(): position( NULL )
             {};
 
-            inline iterator( double* memoryPosition ): position( memoryPosition )
+            inline const_iterator( double* memoryPosition ): position( memoryPosition )
             {};
 
-            inline iterator( const iterator& iter ): position( iter.position )
+            inline const_iterator( const const_iterator& iter ): position( iter.position )
             {};
 
-            inline iterator& operator=( const iterator& testIter )
+            inline const_iterator& operator=( const const_iterator& testIter )
             {
                 position = testIter.position;
                 return *this;
             };
 
-            inline iterator& operator++()
+            inline const_iterator& operator++()
             {
                 ++position;
                 return *this;
             };
 
-            inline bool operator==( const iterator& testIter ) const
+            inline bool operator==( const const_iterator& testIter ) const
             {
                 if ( testIter.position != position ) return false;
                 return true;
             };
 
-            inline bool operator!=( const iterator& testIter ) const
+            inline bool operator!=( const const_iterator& testIter ) const
             {
                 if ( testIter.position != position ) return true;
                 return false;
             };
 
-            inline double& operator->()
+            inline const double& operator->() const
             {
                 return *position;
             };
 
-            inline double& operator*()
+            inline const double& operator*() const
             {
                 return *position;
             };
@@ -114,18 +114,18 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
          * @brief 
          * @return 
          */
-        iterator begin() const
+        const_iterator begin() const
         {
-            return iterator( &( *_values )[0] );
+            return const_iterator( &( *_values )[0] );
         };
 
         /**
          * @brief 
          * @return 
          */
-        iterator end() const
+        const_iterator end() const
         {
-            return iterator( &( *_values )[ _values->size() - 1 ] );
+            return const_iterator( &( *_values )[ _values->size() - 1 ] );
         };
 
         /**
@@ -138,7 +138,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
          * @brief Fonction permettant de connaître le nombre de pas de temps
          * @return nombre de pas de temps
          */
-        bool size()
+        bool size() const
         {
             return _values->size();
         };
