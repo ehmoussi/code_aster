@@ -36,28 +36,31 @@
  * @brief 
  * @author Nicolas Sellenet
  */
-template< class Stepper >
-struct Algorithm
+template< class GenericUnitaryAlgorithm >
+class Algorithm
 {
-    bool runAllStepsOverAlgorithm( const Stepper& timeStep, GenericUnitaryAlgorithm& algo )
-    {
-        typedef typename Stepper::iterator it;
-        for( it curVal = timeStep.begin();
-             curVal != timeStep.end();
-             ++curVal )
+    public:
+        typedef typename GenericUnitaryAlgorithm::AlgorithmStepper Stepper;
+
+        static bool runAllStepsOverAlgorithm( Stepper& timeStep, GenericUnitaryAlgorithm& algo )
         {
-            try
+            typedef typename Stepper::const_iterator it;
+            for( it curVal = timeStep.begin();
+                curVal != timeStep.end();
+                ++curVal )
             {
-                algo.oneStep();
+                try
+                {
+                    algo.oneStep();
+                }
+                catch( AlgoException& exc )
+                {
+                    std::cout << exc.what() << std::endl;
+                    break;
+                }
             }
-            catch( AlgoException& exc )
-            {
-                std::cout << exc.what() << std::endl;
-                break;
-            }
-        }
-        return true;
-    };
+            return true;
+        };
 };
 
 #endif /* GENERICALGORITHM_H_ */

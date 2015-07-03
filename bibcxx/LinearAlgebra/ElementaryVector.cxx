@@ -37,6 +37,7 @@ ElementaryVectorInstance::ElementaryVectorInstance( const JeveuxMemory memType )
 {};
 
 FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberingPtr& currentNumerotation,
+                                                                const double& time,
                                                                 const JeveuxMemory memType )
     throw ( std::runtime_error )
 {
@@ -60,8 +61,7 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
     if ( ! lOF.isEmpty() )
         fomult = lOF->getName();
     std::string param( "INST" );
-    double valpar = 0.;
-    CALL_ASCOVA( detr.c_str(), name.c_str(), fomult.c_str(), param.c_str(), &valpar,
+    CALL_ASCOVA( detr.c_str(), name.c_str(), fomult.c_str(), param.c_str(), &time,
                  typres.c_str(), vectTmp->getName().c_str() );
 
     _isEmpty = false;

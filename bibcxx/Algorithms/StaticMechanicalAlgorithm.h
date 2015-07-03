@@ -37,7 +37,8 @@
  * @brief 
  * @author Nicolas Sellenet
  */
-class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm
+template< class Stepper >
+class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
 {
     private:
         /** @brief Problème discret */
@@ -48,6 +49,8 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm
         ResultsContainerPtr _results;
         /** @brief Chargements */
         ListOfLoadsPtr      _listOfLoads;
+        /** @brief Pas de temps courant */
+        double              _time;
 
     public:
         /**
@@ -62,10 +65,71 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm
             _discreteProblem( curPb ),
             _linearSolver( linSolv ),
             _listOfLoads( _discreteProblem->getStudyDescription()->getListOfLoads() ),
-            _results( container )
+            _results( container ),
+            _time( 0. )
         {};
 
         void oneStep() throw( AlgoException& );
+
+        typedef typename Stepper::const_iterator AlgorithmStepperIter;
+        void prepareStep( AlgorithmStepperIter& curStep ) throw( AlgoException& );
+};
+
+template< class Stepper >
+void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
+{
+    DOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
+
+    ElementaryMatrixPtr matrElem = _discreteProblem->buildElementaryRigidityMatrix( _time );
+
+    // Build assembly matrix
+    AssemblyMatrixDoublePtr aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) );
+    aMatrix->setElementaryMatrix( matrElem );
+    aMatrix->setDOFNumbering( dofNum1 );
+    aMatrix->setListOfLoads( _listOfLoads );
+    aMatrix->setLinearSolver( _linearSolver );
+    aMatrix->build();
+
+    // Matrix factorization
+    _linearSolver->matrixFactorization( aMatrix );
+
+    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    cmdSt.setResult( _results->getName(), _results->getType() );
+
+    // Build Dirichlet loads
+    ElementaryVectorPtr vectElem1 = _discreteProblem->buildElementaryDirichletVector( _time );
+    FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1, _time, Temporary );
+
+    // Build Laplace forces
+    ElementaryVectorPtr vectElem2 = _discreteProblem->buildElementaryLaplaceVector();
+    FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, _time, Temporary );
+
+    // Build Neumann loads
+    VectorDouble times;
+    times.push_back( _time );
+    times.push_back( 0. );
+    times.push_back( 0. );
+    ElementaryVectorPtr vectElem3 = _discreteProblem->buildElementaryNeumannVector( times );
+    FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1, _time, Temporary );
+
+    chNoDir->addFieldOnNodes( *chNoLap );
+    chNoDir->addFieldOnNodes( *chNoNeu );
+
+    FieldOnNodesDoublePtr kineLoadsFON = _listOfLoads->buildKinematicsLoad( dofNum1, _time,
+                                                                            Temporary );
+
+    FieldOnNodesDoublePtr resultField = _results->getEmptyFieldOnNodesDouble( "DEPL", 0 );
+
+    resultField = _linearSolver->solveDoubleLinearSystem( aMatrix, kineLoadsFON,
+                                                          chNoDir, resultField );
+    _results->debugPrint(8);
+};
+
+template< class Stepper >
+void StaticMechanicalAlgorithm< Stepper >::prepareStep( AlgorithmStepperIter& curStep )
+    throw( AlgoException& )
+{
+    _time = *curStep;
 };
 
 #endif /* STATICMECHANICALGORITHM_H_ */

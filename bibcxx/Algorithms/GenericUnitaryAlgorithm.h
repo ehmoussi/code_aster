@@ -33,10 +33,15 @@
  * @brief 
  * @author Nicolas Sellenet
  */
+template< class Stepper >
 class GenericUnitaryAlgorithm
 {
     public:
+        typedef Stepper AlgorithmStepper;
+        typedef typename Stepper::const_iterator AlgorithmStepperIter;
+
         virtual void oneStep() throw( AlgoException& ) = 0;
+        virtual void prepareStep( AlgorithmStepperIter& curStep ) throw( AlgoException& ) = 0;
 };
 
 #endif /* GENERICUNITARYALGORITHM_H_ */

@@ -28,8 +28,6 @@
 #include "Solvers/StaticMechanicalSolver.h"
 #include "RunManager/CommandSyntaxCython.h"
 #include "Discretization/DiscreteProblem.h"
-// #include "LinearAlgebra/ElementaryMatrix.h"
-// #include "LinearAlgebra/AssemblyMatrix.h"
 #include "Discretization/DOFNumbering.h"
 #include "DataStructure/TemporaryDataStructureName.h"
 #include "Algorithms/GenericAlgorithm.h"
@@ -80,52 +78,9 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
     FieldOnNodesDoublePtr vecass = dofNum1->getEmptyFieldOnNodesDouble( Temporary );
 
-//     // Debut de l'algo de MECA_STATIQUE
-//     // Compute elementary rigidity matrix
-//     ElementaryMatrixPtr matrElem = dProblem->buildElementaryRigidityMatrix();
-// 
-//     // Build assembly matrix
-//     AssemblyMatrixDoublePtr aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) );
-//     aMatrix->setElementaryMatrix( matrElem );
-//     aMatrix->setDOFNumbering( dofNum1 );
-//     aMatrix->setListOfLoads( _listOfLoads );
-//     aMatrix->setLinearSolver( _linearSolver );
-//     aMatrix->build();
-// 
-//     // Matrix factorization
-//     _linearSolver->matrixFactorization( aMatrix );
-// 
-//     CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
-//     cmdSt.setResult( resultC->getName(), resultC->getType() );
-// 
-//     // Build Dirichlet loads
-//     ElementaryVectorPtr vectElem1 = dProblem->buildElementaryDirichletVector();
-//     FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1, Temporary );
-// 
-//     // Build Laplace forces
-//     ElementaryVectorPtr vectElem2 = dProblem->buildElementaryLaplaceVector();
-//     FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, Temporary );
-// 
-//     // Build Neumann loads
-//     VectorDouble times;
-//     times.push_back( 0. );
-//     times.push_back( 0. );
-//     times.push_back( 0. );
-//     ElementaryVectorPtr vectElem3 = dProblem->buildElementaryNeumannVector( times );
-//     FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1, Temporary );
-// 
-//     vecass->addFieldOnNodes( *chNoDir );
-//     vecass->addFieldOnNodes( *chNoLap );
-//     vecass->addFieldOnNodes( *chNoNeu );
-// 
-//     FieldOnNodesDoublePtr kineLoadsFON = _listOfLoads->buildKinematicsLoad( dofNum1, Temporary );
-// 
-//     FieldOnNodesDoublePtr resultField = resultC->getEmptyFieldOnNodesDouble( "DEPL", 0 );
-// 
-//     resultField = _linearSolver->solveDoubleLinearSystem( aMatrix, kineLoadsFON,
-//                                                           vecass, resultField );
-    StaticMechanicalAlgorithm unitaryAlgo( dProblem, _linearSolver, resultC );
-    Algorithm< TimeStepperInstance > algoMS;
+    typedef StaticMechanicalAlgorithm< TimeStepperInstance > MSAlgo;
+    MSAlgo unitaryAlgo( dProblem, _linearSolver, resultC );
+    Algorithm< MSAlgo > algoMS;
     algoMS.runAllStepsOverAlgorithm( *_timeStep, unitaryAlgo );
 
     return resultC;

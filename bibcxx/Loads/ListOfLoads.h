@@ -93,7 +93,8 @@ class ListOfLoadsInstance: public DataStructure
          * @return Booleen indiquant que tout s'est bien passe
          */
         FieldOnNodesDoublePtr buildKinematicsLoad( const ForwardDOFNumberingPtr& curDOFNum,
-                                                   const JeveuxMemory& memType )
+                                                   const double& time,
+                                                   const JeveuxMemory& memType = Permanent )
             const throw ( std::runtime_error );
 
         /**
