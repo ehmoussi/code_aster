@@ -76,7 +76,7 @@ bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
 
         dict.container[ "MATR_RIGI" ] = _supportMatrix->getName();
         dict.container[ "METHODE" ] = _linearSolver->getSolverName();
-        dict.container[ "RENUM" ] = _linearSolver->getRenumburingName();
+        dict.container[ "RENUM" ] = _linearSolver->getRenumberingName();
 
         cmdSt.define( dict );
 

@@ -38,7 +38,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-// Ces wrappers sont la pour autoriser que les set soitent const
+// Ces wrappers sont la pour autoriser que les set soient const
 // Sinon, on aurait pas pu passer directement des const set<> en parametre template
 /**
  * @struct WrapMultFront
@@ -148,7 +148,7 @@ struct SolverChecker
 
 /**
  * @class LinearSolverInstance
- * @brief Cette classe permet de definir un solveur lineraire
+ * @brief Cette classe permet de definir un solveur lineaire
  * @author Nicolas Sellenet
  */
 class LinearSolverInstance: public DataStructure
@@ -204,7 +204,7 @@ class LinearSolverInstance: public DataStructure
          * @brief Recuperer le nom du renumeroteur
          * @return chaine contenant le nom Aster du renumeroteur
          */
-        const std::string getRenumburingName() const
+        const std::string getRenumberingName() const
         {
             return RenumberingNames[ (int)_renumber ];
         };

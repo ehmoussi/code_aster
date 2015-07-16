@@ -88,6 +88,13 @@ class ListOfLoadsInstance: public DataStructure
          */
         bool build() throw ( std::runtime_error );
 
+         /**
+         * @brief Construction de la liste des charges pour valoriser le mot-clé facteur EXCIT de 
+         * STAT_NON_LINE . C'est une méthode temporaire 
+         * @return listExcit 
+         */
+        ListSyntaxMapContainer buildListExcit() throw ( std::runtime_error ); 
+
         /**
          * @brief Construction d'un vecteur de chargement cinématique
          * @return Booleen indiquant que tout s'est bien passe

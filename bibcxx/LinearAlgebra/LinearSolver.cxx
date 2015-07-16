@@ -56,7 +56,7 @@ bool LinearSolverInstance::build()
     SyntaxMapContainer dict;
     SyntaxMapContainer dict1;
     dict1.container[ "METHODE" ] = getSolverName();
-    dict1.container[ "RENUM" ] = getRenumburingName();
+    dict1.container[ "RENUM" ] = getRenumberingName();
     dict1.container[ "PCENT_PIVOT" ] = 20;
     dict1.container[ "TYPE_RESOL" ] = "AUTO";
     dict1.container[ "PRETRAITEMENTS" ] = "AUTO";

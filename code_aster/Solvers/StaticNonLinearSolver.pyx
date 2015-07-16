@@ -23,34 +23,35 @@ from cython.operator cimport dereference as deref
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
 from code_aster.Results.ResultsContainer cimport ResultsContainer
-from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
+from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethod
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Modeling.Model cimport Model
 
 
-cdef class StaticMechanicalSolver:
-    """Python wrapper on the C++ StaticMechanicalSolver object"""
+cdef class StaticNonLinearSolver:
+
+    """Python wrapper on the C++ StaticNonLinearSolver object"""
 
     def __cinit__( self, bint init = True ):
         """Initialization: stores the pointer to the C++ object"""
         if init:
-            self._cptr = new StaticMechanicalSolverPtr( new StaticMechanicalSolverInstance() )
+            self._cptr = new StaticNonLinearSolverPtr( new StaticNonLinearSolverInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, StaticMechanicalSolverPtr other ):
+    cdef set( self, StaticNonLinearSolverPtr other ):
         """Point to an existing object"""
         # set must be subclassed if it is necessary
-        self._cptr = new StaticMechanicalSolverPtr( other )
+        self._cptr = new StaticNonLinearSolverPtr( other )
 
-    cdef StaticMechanicalSolverPtr* getPtr( self ):
+    cdef StaticNonLinearSolverPtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef StaticMechanicalSolverInstance* getInstance( self ):
+    cdef StaticNonLinearSolverInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
@@ -62,15 +63,13 @@ cdef class StaticMechanicalSolver:
         """Add a Mechanical Load"""
         self.getInstance().addMechanicalLoad( deref( currentLoad.getPtr() ) )
 
-    def execute( self ):
+    def execute_op70( self ):
         """Solve the problem"""
-        results = ResultsContainer()
-        results.set( self.getInstance().execute() )
-        return results
+        self.getInstance().execute_op70()
 
-    def setLinearSolver( self, LinearSolver curLinSolv ):
-        """Set the degree of freedom numbering"""
-        self.getInstance().setLinearSolver( deref( curLinSolv.getPtr() ) )
+    def setNonLinearMethod( self, NonLinearMethod curNonLinearMethod ):
+        """Set the nonlinear method """
+        self.getInstance().setNonLinearMethod( deref( curNonLinearMethod.getPtr() ) )
 
     def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
         """Set the base elementary matrix used to build the assembly matrix"""
