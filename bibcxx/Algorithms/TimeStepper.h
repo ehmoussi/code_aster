@@ -35,7 +35,7 @@ typedef VectorDouble::const_iterator VectorDoubleCIter;
 
 /**
  * @class TimeStepperInstance
- * @brief Cette classe permet de definir une liste d'instant
+ * @brief Cette classe permet de definir une liste d'instants
  * @author Nicolas Sellenet
  */
 class TimeStepperInstance: public DataStructure, public GenericStepper
@@ -57,7 +57,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
         };
 
         /**
-         * @brief Desctructeur
+         * @brief Destructeur
          */
         ~TimeStepperInstance()
         {};

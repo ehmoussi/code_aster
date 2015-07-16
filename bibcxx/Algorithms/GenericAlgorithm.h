@@ -44,7 +44,7 @@ class Algorithm
         typedef typename GenericUnitaryAlgorithm::AlgorithmStepper Stepper;
 
         /**
-         * @brief Réalistion de l'algorithme
+         * @brief Réalisation de l'algorithme
          * @param timeStep Objet sur lequel il faut itérer
          * @param algo Algorithme à réaliser à chaque itération
          */

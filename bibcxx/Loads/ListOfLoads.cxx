@@ -69,6 +69,30 @@ bool ListOfLoadsInstance::build() throw ( std::runtime_error )
     return true;
 };
 
+/* buildListExcit : construit la liste des charges utilisées pour valoriser le mot-clé facteur EXCIT 
+dans STAT_NON_LINE. C'est une méthode temporaire qui disparaîtra avec la réécriture d'op0070 */
+ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() throw ( std::runtime_error )
+{
+    ListSyntaxMapContainer listeExcit;
+    for ( ListMecaLoadCIter curIter = _listOfMechanicalLoads.begin();
+          curIter != _listOfMechanicalLoads.end();
+          ++curIter )
+    {
+        SyntaxMapContainer dict2;
+        dict2.container[ "CHARGE" ] = (*curIter)->getName();
+        listeExcit.push_back( dict2 );
+    }
+    for ( ListKineLoadCIter curIter = _listOfKinematicsLoads.begin();
+          curIter != _listOfKinematicsLoads.end();
+          ++curIter )
+    {
+        SyntaxMapContainer dict2;
+        dict2.container[ "CHARGE" ] = (*curIter)->getName();
+        listeExcit.push_back( dict2 );
+    }
+    return listeExcit;
+};
+
 FieldOnNodesDoublePtr ListOfLoadsInstance::buildKinematicsLoad( const ForwardDOFNumberingPtr& curDOFNum,
                                                                 const double& time,
                                                                 const JeveuxMemory& memType )
