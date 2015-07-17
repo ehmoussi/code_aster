@@ -57,6 +57,7 @@ class Algorithm
             {
                 try
                 {
+                    algo.prepareStep();
                     algo.oneStep();
                 }
                 catch( AlgoException& exc )
