@@ -132,6 +132,7 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
     resultField = _linearSolver->solveDoubleLinearSystem( aMatrix, kineLoadsFON,
                                                           chNoDir, resultField );
     _results->debugPrint(8);
+    /** @todo rajouter un rsadpa */
 };
 
 template< class Stepper >
