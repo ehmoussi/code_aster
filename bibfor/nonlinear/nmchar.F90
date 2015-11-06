@@ -1,8 +1,20 @@
-subroutine nmchar(mode, phasez, modele, numedd, mate,&
-                  carele, compor, lischa, carcri, numins,&
-                  sdtime, sddisc, parcon, fonact, resoco,&
-                  resocu, comref, valinc, solalg, veelem,&
-                  measse, veasse, sddyna)
+subroutine nmchar(mode    , phasez, modele, numedd, mate  ,&
+                  carele  , compor, lischa, numins, sdtime,&
+                  sddisc  , fonact, resoco, resocu, comref,&
+                  ds_inout, valinc, solalg, veelem, measse,&
+                  veasse  , sddyna)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/isfonc.h"
+#include "asterfort/ndynlo.h"
+#include "asterfort/nmcvec.h"
+#include "asterfort/nmxvec.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -21,28 +33,17 @@ subroutine nmchar(mode, phasez, modele, numedd, mate,&
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/ndynlo.h"
-#include "asterfort/nmcvec.h"
-#include "asterfort/nmxvec.h"
+!
     character(len=4) :: mode
     character(len=*) :: phasez
     character(len=19) :: lischa
     character(len=24) :: modele, mate, carele, numedd, sdtime
-    character(len=24) :: compor, carcri, comref
+    character(len=24) :: compor, comref
     character(len=19) :: sddyna, sddisc
     integer :: fonact(*)
     integer :: numins
-    real(kind=8) :: parcon(8)
+    type(NL_DS_InOut), intent(in) :: ds_inout
     character(len=24) :: resoco, resocu
     character(len=19) :: veelem(*), measse(*), veasse(*)
     character(len=19) :: solalg(*), valinc(*)
@@ -67,14 +68,13 @@ subroutine nmchar(mode, phasez, modele, numedd, mate,&
 ! IN  MATE   : CHAMP MATERIAU
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  COMPOR : CARTE DECRIVANT LE TYPE DE COMPORTEMENT
-! IN  CARCRI : PARAMETRES DES METHODES D'INTEGRATION LOCALES
 ! IN  NUMEDD : NUME_DDL
 ! IN  NUMINS : NUMERO INSTANT
 ! IN  SDTIME : SD TIMER
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  PARCON : PARAMETRES DU CRITERE DE CONVERGENCE REFERENCE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  COMREF : VARI_COM DE REFERENCE
+! In  ds_inout         : datastructure for input/output management
 ! IN  RESOCO : SD POUR LA RESOLUTION DE CONTACT
 ! IN  RESOCU : SD POUR LA RESOLUTION DE LIAISON_UNILATER
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -88,7 +88,7 @@ subroutine nmchar(mode, phasez, modele, numedd, mate,&
 !
     aster_logical :: ldyna, lexpl
     aster_logical :: londe, llapl, lammo, lsstf, lviss
-    aster_logical :: limpe, lpilo, lmacr, limpex
+    aster_logical :: limpe, lpilo, lmacr, limpex, l_diri_undead
     character(len=10) :: phase
     integer :: nbvect
     character(len=16) :: loptve(20)
@@ -98,14 +98,9 @@ subroutine nmchar(mode, phasez, modele, numedd, mate,&
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><CHAR> CALCUL DU CHARGEMENT: ',&
-        mode
+        write (ifm,*) '<MECANONLINE><CHAR> CALCUL DU CHARGEMENT: ',mode
     endif
 !
 ! --- INITIALISATIONS
@@ -114,19 +109,20 @@ subroutine nmchar(mode, phasez, modele, numedd, mate,&
     call nmcvec('INIT', ' ', ' ', .false._1, .false._1,&
                 nbvect, ltypve, loptve, lcalve, lassve)
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
 !
-    londe = ndynlo(sddyna,'ONDE_PLANE')
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lexpl = ndynlo(sddyna,'EXPLICITE')
-    llapl = isfonc(fonact,'LAPLACE')
-    limpe = ndynlo(sddyna,'IMPE_ABSO')
-    lammo = ndynlo(sddyna,'AMOR_MODAL')
-    lpilo = isfonc(fonact,'PILOTAGE')
-    limpex = isfonc(fonact,'IMPLEX')
-    lmacr = isfonc(fonact,'MACR_ELEM_STAT')
-    lsstf = isfonc(fonact,'SOUS_STRUC')
-    lviss = ndynlo(sddyna,'VECT_ISS')
+    londe         = ndynlo(sddyna,'ONDE_PLANE')
+    ldyna         = ndynlo(sddyna,'DYNAMIQUE')
+    lexpl         = ndynlo(sddyna,'EXPLICITE')
+    llapl         = isfonc(fonact,'LAPLACE')
+    limpe         = ndynlo(sddyna,'IMPE_ABSO')
+    lammo         = ndynlo(sddyna,'AMOR_MODAL')
+    lpilo         = isfonc(fonact,'PILOTAGE')
+    limpex        = isfonc(fonact,'IMPLEX')
+    lmacr         = isfonc(fonact,'MACR_ELEM_STAT')
+    lsstf         = isfonc(fonact,'SOUS_STRUC')
+    lviss         = ndynlo(sddyna,'VECT_ISS')
+    l_diri_undead = isfonc(fonact,'DIRI_UNDEAD')
 !
 ! --- CHARGEMENTS FIXES PENDANT LE PAS DE TEMPS (ON EST EN PREDICTION)
 !
@@ -208,15 +204,22 @@ subroutine nmchar(mode, phasez, modele, numedd, mate,&
 !
 ! --- CALCUL ET ASSEMBLAGE
 !
-        call nmxvec(modele, mate, carele, compor, carcri,&
-                    sdtime, sddisc, sddyna, numins, valinc,&
-                    solalg, lischa, comref, resoco, resocu,&
-                    numedd, parcon, veelem, veasse, measse,&
-                    nbvect, ltypve, lcalve, loptve, lassve)
+        call nmxvec(modele  , mate  , carele, compor, sdtime,&
+                    sddisc  , sddyna, numins, valinc, solalg,&
+                    lischa  , comref, resoco, resocu, numedd,&
+                    ds_inout, veelem, veasse, measse, nbvect,&
+                    ltypve  , lcalve, loptve, lassve)
 !
 ! --- CHARGEMENTS VARIABLES PENDANT LE PAS DE TEMPS
 !
     else if (mode.eq.'VARI') then
+!
+! --- DEPLACEMENTS IMPOSES DONNES
+!
+        if (l_diri_undead) then
+        call nmcvec('AJOU', 'CNDIDO', ' ', .true._1, .true._1,&
+                    nbvect, ltypve, loptve, lcalve, lassve)
+        endif
 !
 ! --- FORCES NODALES (POUR METHODE IMPLEX)
 !
@@ -278,11 +281,11 @@ subroutine nmchar(mode, phasez, modele, numedd, mate,&
 !
 ! --- CALCUL EFFECTIF
 !
-        call nmxvec(modele, mate, carele, compor, carcri,&
-                    sdtime, sddisc, sddyna, numins, valinc,&
-                    solalg, lischa, comref, resoco, resocu,&
-                    numedd, parcon, veelem, veasse, measse,&
-                    nbvect, ltypve, lcalve, loptve, lassve)
+        call nmxvec(modele  , mate  , carele, compor, sdtime,&
+                    sddisc  , sddyna, numins, valinc, solalg,&
+                    lischa  , comref, resoco, resocu, numedd,&
+                    ds_inout, veelem, veasse, measse, nbvect,&
+                    ltypve  , lcalve, loptve, lassve)
 !
 ! --- CHARGEMENTS POUR ACCELERATION INITIALE
 !
@@ -346,14 +349,13 @@ subroutine nmchar(mode, phasez, modele, numedd, mate,&
 !
 ! --- CALCUL ET ASSEMBLAGE
 !
-        call nmxvec(modele, mate, carele, compor, carcri,&
-                    sdtime, sddisc, sddyna, numins, valinc,&
-                    solalg, lischa, comref, resoco, resocu,&
-                    numedd, parcon, veelem, veasse, measse,&
-                    nbvect, ltypve, lcalve, loptve, lassve)
+        call nmxvec(modele  , mate  , carele, compor, sdtime,&
+                    sddisc  , sddyna, numins, valinc, solalg,&
+                    lischa  , comref, resoco, resocu, numedd,&
+                    ds_inout, veelem, veasse, measse, nbvect,&
+                    ltypve  , lcalve, loptve, lassve)
     else
         ASSERT(.false.)
     endif
 !
-    call jedema()
 end subroutine

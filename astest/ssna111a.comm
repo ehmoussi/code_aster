@@ -1,7 +1,7 @@
 #
 # TITRE INDENTATION D'UN MASSIF PAR UN POINCON
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -100,7 +100,7 @@ F=DEFI_FONCTION(NOM_PARA='INST',
                       1.0,  0.98),
                       );
 
-RESU=STAT_NON_LINE(SOLVEUR=_F(SYME='OUI',),
+RESU=STAT_NON_LINE(
                    MODELE=MO,
                    CHAM_MATER=CHMAT,
                    EXCIT=_F(CHARGE=CHA,
@@ -117,7 +117,7 @@ RESU=STAT_NON_LINE(SOLVEUR=_F(SYME='OUI',),
                    CONVERGENCE=(_F(ITER_GLOB_MAXI=20,)),
                    INCREMENT=_F(LIST_INST=DEFLIST,
                                 INST_FIN=1.,),
-                   NEWTON=_F(MATRICE='TANGENTE',
+                   NEWTON=_F(MATRICE='TANGENTE',MATR_RIGI_SYME='OUI',
                              PREDICTION='ELASTIQUE',
                              REAC_ITER=1,),
                    ARCHIVAGE=_F(LIST_INST=L_INST,),);

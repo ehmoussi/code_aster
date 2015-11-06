@@ -18,9 +18,9 @@
 #include "asterf_types.h"
 !
 interface
-    function isdiri(lischa, soutyp)
-        character(len=19) :: lischa
-        character(len=4) :: soutyp
+    function isdiri(list_load, load_type_2)
+        character(len=19), intent(in) :: list_load
+        character(len=4), intent(in) :: load_type_2
         aster_logical :: isdiri
     end function isdiri
 end interface

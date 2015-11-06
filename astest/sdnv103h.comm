@@ -1,6 +1,6 @@
 # TITRE IMPACT D UNE BARRE DE TAYLOR ELASTOPLASTIQUE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -153,9 +153,8 @@ RESU1=DYNA_NON_LINE(MODELE=MODE,
                    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
                                  FORMULATION='DEPLACEMENT',
                                  BETA=0.49,GAMMA=0.9,),
-                   NEWTON=_F(REAC_INCR=1,
+                   NEWTON=_F(REAC_INCR=1,MATR_RIGI_SYME='OUI',
                              REAC_ITER=1,),
-                   SOLVEUR=_F(SYME='OUI',),
                    CONVERGENCE=_F(RESI_GLOB_RELA=1.E-06,
                                   ITER_GLOB_MAXI=20,),
                                 );
@@ -167,7 +166,7 @@ CONTB1_1=POST_RELEVE_T (ACTION = _F(GROUP_NO='B1',
                                  INTITULE = 'MESSAGE',
                                  RESULTAT = RESU1,
                                  TOUT_CMP='OUI',
-                                 NOM_CHAM   = 'VALE_CONT',
+                                 NOM_CHAM   = 'CONT_NOEU',
                                  OPERATION = 'EXTRACTION'))
 
 DEPLA2_1=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL EN A2',
@@ -224,7 +223,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='B1',
                    RESULTAT=RESU1,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=0.757152254903,
+                   VALE_CALC=0.757151755763,
                    TOLE_MACHINE=5.E-5,                  # TODO TOLE_MACHINE
                    ),
                 _F(GROUP_NO='A2',
@@ -241,7 +240,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='B1',
                    RESULTAT=RESU1,
                    NOM_CHAM='VITE',
                    NOM_CMP='DX',
-                   VALE_CALC=78447.6579193,
+                   VALE_CALC=78447.7043926,
                    TOLE_MACHINE=5.E-5,                  # TODO TOLE_MACHINE
                    ),
                 _F(GROUP_NO='A2',
@@ -270,7 +269,7 @@ TEST_TABLE(CRITERE='ABSOLU',
            )
 
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=289.965138687,
+           VALE_CALC=289.964718992,
            TOLE_MACHINE=5.E-5,                  # TODO TOLE_MACHINE
            NOM_PARA='R',
            TABLE=CONTB1_1,
@@ -341,9 +340,8 @@ RESU2=DYNA_NON_LINE(MODELE=MODE,
                    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
                                  FORMULATION='DEPLACEMENT',
                                  BETA=0.49,GAMMA=0.9,),
-                   NEWTON=_F(REAC_INCR=1,
+                   NEWTON=_F(REAC_INCR=1,MATR_RIGI_SYME='OUI',
                              REAC_ITER=1,),
-                   SOLVEUR=_F(SYME='OUI',),
                    CONVERGENCE=_F(RESI_GLOB_RELA=1.E-06,
                                   ITER_GLOB_MAXI=20,),
                                 );
@@ -355,7 +353,7 @@ CONTB1_2=POST_RELEVE_T (ACTION = _F(GROUP_NO='B1',
                                  INTITULE = 'MESSAGE',
                                  RESULTAT = RESU2,
                                  TOUT_CMP='OUI',
-                                 NOM_CHAM   = 'VALE_CONT',
+                                 NOM_CHAM   = 'CONT_NOEU',
                                  OPERATION = 'EXTRACTION'))
 
 DEPLA2_2=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL EN A2',
@@ -412,7 +410,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='B1',
                    RESULTAT=RESU2,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=0.759618818253,
+                   VALE_CALC=0.759617910969,
                    TOLE_MACHINE=5.E-5,                  # TODO TOLE_MACHINE
                    ),
                 _F(GROUP_NO='A2',
@@ -429,7 +427,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='B1',
                    RESULTAT=RESU2,
                    NOM_CHAM='VITE',
                    NOM_CMP='DX',
-                   VALE_CALC=86687.0297893,
+                   VALE_CALC=86687.0273109,
                    TOLE_MACHINE=5.E-5,                  # TODO TOLE_MACHINE
                    ),
                 _F(GROUP_NO='A2',
@@ -458,7 +456,7 @@ TEST_TABLE(CRITERE='ABSOLU',
            )
 
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=277.996686665,
+           VALE_CALC=277.996903856,
            TOLE_MACHINE=2.E-04,                  # TODO TOLE_MACHINE
            NOM_PARA='R',
            TABLE=CONTB1_2,

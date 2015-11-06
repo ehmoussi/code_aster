@@ -15,17 +15,20 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nminit(result, model      , numedd     , numfix   , mate,&
-                      compor, carele     , parmet     , lischa   , maprec,&
-                      solveu, carcri     , numins     , sdstat   , sddisc,&
-                      sdnume, sdcont_defi, sdcrit     , varc_refe, fonact,&
-                      parcon, parcri     , method     , lisch2   , mesh,&
-                      sdpilo, sddyna     , sdimpr     , sd_suiv  , sd_obsv,&
-                      sdtime, sderro     , sdpost     , sd_inout , sdener,&
-                      sdconv, sdcriq     , sdunil_defi, resocu   , resoco,&
-                      valinc, solalg     , measse     , veelem   , meelem,&
-                      veasse, codere)
+    subroutine nminit(result  , model      , numedd    , numfix     , mate    ,&
+                      compor  , carele     , list_load , ds_algopara, maprec  ,&
+                      solveu  , carcri     , numins    , sdstat     , sddisc  ,&
+                      sdnume  , sdcont_defi, sdcrit    , varc_refe  , fonact  ,&
+                      mesh    , sdpilo     , sddyna    , ds_print   , sd_suiv ,&
+                      sd_obsv , sdtime     , sderro    , sdpost     , ds_inout,&
+                      sdener  , ds_conv    , sdcriq    , sdunil_defi, resocu  ,&
+                      resoco  , valinc     , solalg    , measse     , veelem  ,&
+                      meelem  , veasse     , codere)
+        use NonLin_Datastructure_type
+        type(NL_DS_InOut), intent(inout) :: ds_inout
         character(len=8) :: result
         character(len=24) :: model
         character(len=24) :: numedd
@@ -33,8 +36,7 @@ interface
         character(len=24) :: mate
         character(len=24) :: compor
         character(len=24) :: carele
-        real(kind=8) :: parmet(*)
-        character(len=19) :: lischa
+        character(len=19) :: list_load
         character(len=19) :: maprec
         character(len=19) :: solveu
         character(len=24) :: carcri
@@ -47,22 +49,18 @@ interface
         character(len=19) :: sdcrit
         character(len=24) :: varc_refe
         integer :: fonact(*)
-        real(kind=8) :: parcon(*)
-        real(kind=8) :: parcri(*)
-        character(len=16) :: method(*)
-        character(len=19) :: lisch2
         character(len=8) :: mesh
         character(len=19) :: sdpilo
         character(len=19) :: sddyna
-        character(len=24) :: sdimpr
+        type(NL_DS_Print), intent(inout) :: ds_print
         character(len=24), intent(out) :: sd_suiv
         character(len=24) :: sdtime
         character(len=24) :: sderro
         character(len=19) :: sdpost
-        character(len=24), intent(out) :: sd_inout
         character(len=19), intent(out) :: sd_obsv
         character(len=19) :: sdener
-        character(len=24) :: sdconv
+        type(NL_DS_Conv), intent(inout) :: ds_conv
+        type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
         character(len=24) :: sdcriq
         character(len=24) :: resocu
         character(len=24) :: resoco

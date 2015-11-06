@@ -16,9 +16,10 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine nmprdc(algo_meth, nume_dof , disp_prev, sddisc, nume_inst,&
-                      incr_esti, disp_esti)
-        character(len=16), intent(in) :: algo_meth(*)
+    subroutine nmprdc(ds_algopara, nume_dof , disp_prev, sddisc, nume_inst,&
+                      incr_esti  , disp_esti)
+        use NonLin_Datastructure_type
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=24), intent(in) :: nume_dof
         character(len=19), intent(in) :: disp_prev
         character(len=19), intent(in) :: sddisc

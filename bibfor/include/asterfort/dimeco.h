@@ -16,13 +16,13 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine dimeco(char, ndim, nzoco, nsuco, nmaco,&
-                      nnoco)
-        character(len=8) :: char
-        integer :: ndim
-        integer :: nzoco
-        integer :: nsuco
-        integer :: nmaco
-        integer :: nnoco
+    subroutine dimeco(sdcont      , model_ndim, nb_cont_zone, nb_cont_surf, nb_cont_elem,&
+                      nb_cont_node)
+        character(len=8), intent(in) :: sdcont
+        integer, intent(in) :: model_ndim
+        integer, intent(in) :: nb_cont_zone
+        integer, intent(in) :: nb_cont_surf
+        integer, intent(in) :: nb_cont_elem
+        integer, intent(in) :: nb_cont_node
     end subroutine dimeco
 end interface

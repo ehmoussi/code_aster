@@ -7,8 +7,6 @@ subroutine te0547(option, nomte)
 #include "asterfort/elelin.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterfort/pipeba.h"
 #include "asterfort/pipel2.h"
@@ -70,7 +68,7 @@ subroutine te0547(option, nomte)
     integer :: ipoids, ivf, idfde, jgano, ddlm
     integer :: ipoidf, ivff, idfdef, iadzi, iazk24
     integer :: npg, npgf, nptf, integ, singu
-    integer :: ninter, nface, cface(18, 6)
+    integer :: ninter, nface, cface(30, 6)
     integer :: lact(8), nlact, ncompv
     integer :: jdonco, jlsn, jlst, igeom, jptint, vstnc(1)
     integer :: jaint, jcface, jlonch, jbasec, icopil, ictau
@@ -90,7 +88,6 @@ subroutine te0547(option, nomte)
     character(len=8) :: job, champ
     aster_logical :: lbid
 !......................................................................
-    call jemarq()
 !
 !-----------------------------------------------------------------------
 !     INITIALISATIONS
@@ -363,5 +360,4 @@ subroutine te0547(option, nomte)
         end do
     endif
 !
-    call jedema()
 end subroutine

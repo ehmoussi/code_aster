@@ -15,27 +15,28 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nmprma(modelz, mate, carele, compor, carcri,&
-                      parmet, method, lischa, numedd, numfix,&
-                      solveu, comref, sdimpr, sdstat, sdtime,&
-                      sddisc, sddyna, numins, fonact, defico,&
-                      resoco, valinc, solalg, veelem, meelem,&
-                      measse, maprec, matass, codere, faccvg,&
-                      ldccvg)
+    subroutine nmprma(modelz     , mate    , carele, compor, carcri,&
+                      ds_algopara, lischa  , numedd, numfix, solveu,&
+                      comref     , ds_print, sdstat, sdtime, sddisc,&
+                      sddyna     , numins  , fonact, defico, resoco,&
+                      valinc     , solalg  , veelem, meelem, measse,&
+                      maprec     , matass  , codere, faccvg, ldccvg)
+        use NonLin_Datastructure_type
         character(len=*) :: modelz
         character(len=24) :: mate
         character(len=24) :: carele
         character(len=24) :: compor
         character(len=24) :: carcri
-        real(kind=8) :: parmet(*)
-        character(len=16) :: method(*)
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=19) :: lischa
         character(len=24) :: numedd
         character(len=24) :: numfix
         character(len=19) :: solveu
         character(len=24) :: comref
-        character(len=24) :: sdimpr
+        type(NL_DS_Print), intent(inout) :: ds_print
         character(len=24) :: sdstat
         character(len=24) :: sdtime
         character(len=19) :: sddisc

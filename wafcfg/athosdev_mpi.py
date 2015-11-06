@@ -22,13 +22,17 @@ def configure(self):
     self.env['ADDMEM'] = 400
 
     self.env.append_value('OPT_ENV', [
-        'module load intel_mpi'])
+        'module load intel_mpi/4.1.1.036'])
 
     self.env.prepend_value('LIBPATH', [
-        YAMMROOT + '/prerequisites/Mumps_mpi-20151/lib',
-        YAMMROOT + '/prerequisites/Petsc_mpi-petsc_aster/lib'])
+        YAMMROOT + '/prerequisites/Mumps-501_consortium_aster3/lib',
+        YAMMROOT + '/prerequisites/Petsc_mpi-petsc_aster/lib',
+    ])
+
     self.env.prepend_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Petsc_mpi-petsc_aster/include'])
+        YAMMROOT + '/prerequisites/Mumps-501_consortium_aster3/include',
+        YAMMROOT + '/prerequisites/Petsc_mpi-petsc_aster/include',
+    ])
 
     opts.enable_petsc = True
 

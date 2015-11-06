@@ -1,7 +1,7 @@
 # person_in_charge: patrick.massin at edf.fr
 # TITRE  : MODES DE VIBRATION D'UN COUDE DE TUYAUTERIE MINCE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -52,7 +52,7 @@ CARELEM=AFFE_CARA_ELEM(   MODELE=MODELE,
                                    CARA = ('R', 'EP',),
                                    VALE = (0.010, 0.002,),
                               MODI_METRIQUE = 'OUI'),
-                            ORIENTATION=_F( NOEUD = 'NO1',
+                            ORIENTATION=_F( GROUP_NO = 'D',
                                          CARA = 'GENE_TUYAU',
                                          VALE = (0., 0., 1.,))
                           )
@@ -96,7 +96,7 @@ ASSEMBLAGE(        MODELE=MODELE,
                      CHAM_MATER=AFF_MAT,
                          CHARGE=(COND_LIM,),
                        NUME_DDL=CO("NU"),
-                        SOLVEUR=_F(  METHODE = 'LDLT'),MATR_ASSE=(
+                        MATR_ASSE=(
                       _F(  MATRICE = CO("K"),  OPTION = 'RIGI_MECA'),
                       _F(  MATRICE = CO("M"),  OPTION = 'MASS_MECA')),
                           TITRE='MAT_ASSE'

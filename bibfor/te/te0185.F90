@@ -15,7 +15,7 @@ subroutine te0185(option, nomte)
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! person_in_charge: jacques.pellet at edf.fr
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
     implicit none
 ! aslint: disable=W0104
 #include "asterf_types.h"
@@ -79,8 +79,8 @@ subroutine te0185(option, nomte)
         else if (cmod.eq.'CQ3') then
 !         -- COQUE_3D
             call ef0410(nomte)
-        else if (cmod.eq.'CQA'.or.cmod.eq.'CQC'.or.cmod.eq.'CQD') then
-!         -- COQUE_AXIS, COQUE_C_PLAN, COQUE_D_PLAN
+        else if (cmod.eq.'CQA') then
+!         -- COQUE_AXIS
             call ef0231(nomte)
         else if (cmod.eq.'DIT') then
 !         -- DIS_T
@@ -94,9 +94,6 @@ subroutine te0185(option, nomte)
         else if (cmod.eq.'DTR') then
 !         -- DIS_TR
             call ef0042(nomte)
-        else if (cmod.eq.'PCT') then
-!         -- POU_C_T
-            call ef0142(nomte)
         else if (cmod.eq.'PDE') then
 !         -- POU_D_E
             call ef0142(nomte)
@@ -144,8 +141,8 @@ subroutine te0185(option, nomte)
         else if (cmod.eq.'CQ3') then
 !         -- COQUE_3D
             call ef0415(nomte)
-        else if (cmod.eq.'CQA'.or.cmod.eq.'CQC'.or.cmod.eq.'CQD') then
-!         -- COQUE_AXIS, COQUE_C_PLAN, COQUE_D_PLAN
+        else if (cmod.eq.'CQA') then
+!         -- COQUE_AXIS
             ASSERT(.false.)
         else if (cmod.eq.'DIT') then
 !         -- DIS_T
@@ -158,9 +155,6 @@ subroutine te0185(option, nomte)
             call ef0031(nomte)
         else if (cmod.eq.'DTR') then
 !         -- DIS_TR
-            call ef0039(nomte)
-        else if (cmod.eq.'PCT') then
-!         -- POU_C_T
             call ef0039(nomte)
         else if (cmod.eq.'PDE') then
 !         -- POU_D_E

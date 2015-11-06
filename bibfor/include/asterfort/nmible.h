@@ -16,19 +16,18 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine nmible(modele, noma, defico, resoco, fonact,&
-                      numins, niveau, numedd, sdstat, sdtime,&
-                      sdimpr)
-        character(len=24) :: modele
-        character(len=8) :: noma
-        character(len=24) :: defico
-        character(len=24) :: resoco
-        integer :: fonact(*)
-        integer :: numins
-        integer :: niveau
-        character(len=24) :: numedd
-        character(len=24) :: sdstat
-        character(len=24) :: sdtime
-        character(len=24) :: sdimpr
+    subroutine nmible(cont_loop     , model   , mesh  , sdcont_defi, sdcont_solv,&
+                      list_func_acti, nume_dof, sdstat, sdtime     , ds_print)
+        use NonLin_Datastructure_type        
+        integer, intent(inout) :: cont_loop
+        character(len=24), intent(in) :: model
+        character(len=8), intent(in) :: mesh
+        character(len=24), intent(in) :: sdcont_defi
+        character(len=24), intent(in) :: sdcont_solv
+        integer, intent(in):: list_func_acti(*)
+        character(len=24), intent(in) :: nume_dof
+        character(len=24), intent(in) :: sdstat
+        character(len=24), intent(in) :: sdtime
+        type(NL_DS_Print), intent(inout) :: ds_print
     end subroutine nmible
 end interface

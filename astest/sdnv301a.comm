@@ -1,6 +1,6 @@
 # TITRE COLLISION HERZIENNE DE DEUX BILLES ELASTIQUES 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -84,7 +84,6 @@ resu=DYNA_NON_LINE(MODELE=model,
                    CHAM_MATER=chmat,
                    CONTACT=contact,
                    EXCIT=_F(CHARGE=clim),
-                   SOLVEUR=_F(SYME='OUI'),
                    COMPORTEMENT=_F(RELATION='ELAS',),
                    INCREMENT=_F(LIST_INST=deflist,),
                    SCHEMA_TEMPS=_F(SCHEMA='HHT',

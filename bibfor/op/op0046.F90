@@ -62,8 +62,6 @@ subroutine op0046()
 #include "asterfort/utmess.h"
 #include "asterfort/vrcins.h"
 #include "asterfort/vrcref.h"
-    character(len=6) :: nompro
-    parameter ( nompro = 'OP0046' )
 !
     integer :: ibid, nh, nbchre, n1, n4, n5, n7
     integer :: iordr, nbmax, nchar, jchar
@@ -108,9 +106,9 @@ subroutine op0046()
 ! -- INITIALISATIONS
 !
     base ='G'
-    solveu = '&&'//nompro//'.SOLVEUR   '
-    lischa = '&&'//nompro//'.LISCHA    '
-    matass = '&&'//nompro//'_MATR_ASSEM'
+    solveu = '&&OP0046.SOLVEUR'
+    lischa = '&&OP0046.LISCHA'
+    matass = '&&OP0046.MATR_RIGI'
     chtime = ' '
     charge = ' '
     nh = 0

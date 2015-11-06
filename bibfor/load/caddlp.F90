@@ -1,6 +1,6 @@
 subroutine caddlp(load, mesh, ligrmo, vale_type)
 !
-    implicit none
+implicit none
 !
 #include "jeveux.h"
 #include "asterc/getfac.h"
@@ -206,7 +206,7 @@ subroutine caddlp(load, mesh, ligrmo, vale_type)
 !
 ! - Final linear relation affectation
 !
-    call aflrch(lisrel, load)
+    call aflrch(lisrel, load, 'LIN')
 !
     call jedetr('&&CADDLP.DIRECT')
     AS_DEALLOCATE(vi=dimension)

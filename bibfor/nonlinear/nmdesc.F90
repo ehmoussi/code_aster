@@ -1,10 +1,26 @@
-subroutine nmdesc(modele, numedd, numfix, mate, carele,&
-                  comref, compor, lischa, resoco, method,&
-                  solveu, parmet, carcri, fonact, numins,&
-                  iterat, sddisc, sdimpr, sdstat, sdtime,&
-                  sddyna, sdnume, sderro, matass, maprec,&
-                  defico, valinc, solalg, meelem, measse,&
-                  veasse, veelem, lerrit)
+subroutine nmdesc(modele, numedd  , numfix, mate  , carele     ,&
+                  comref, compor  , lischa, resoco, ds_algopara,&
+                  solveu, carcri  , fonact, numins, iterat     ,&
+                  sddisc, ds_print, sdstat, sdtime, sddyna     ,&
+                  sdnume, sderro  , matass, maprec, defico     ,&
+                  valinc, solalg  , meelem, measse, veasse     ,&
+                  veelem, lerrit  )
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/copisd.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/nmacin.h"
+#include "asterfort/nmassc.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmcoma.h"
+#include "asterfort/nmcret.h"
+#include "asterfort/nmltev.h"
+#include "asterfort/nmresd.h"
+#include "asterfort/vtzero.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -23,28 +39,12 @@ subroutine nmdesc(modele, numedd, numfix, mate, carele,&
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/copisd.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmacin.h"
-#include "asterfort/nmassc.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmcoma.h"
-#include "asterfort/nmcret.h"
-#include "asterfort/nmltev.h"
-#include "asterfort/nmresd.h"
-#include "asterfort/vtzero.h"
+!
     integer :: numins, iterat
-    real(kind=8) :: parmet(*)
-    character(len=16) :: method(*)
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=19) :: matass, maprec
-    character(len=24) :: sdimpr, sdtime, sdstat
+    character(len=24) :: sdtime, sdstat
     character(len=19) :: lischa, solveu, sddisc, sddyna, sdnume
     character(len=24) :: numedd, numfix
     character(len=24) :: modele, mate, carele, comref, compor, carcri
@@ -53,6 +53,7 @@ subroutine nmdesc(modele, numedd, numfix, mate, carele,&
     character(len=19) :: meelem(*), veelem(*)
     character(len=19) :: solalg(*), valinc(*)
     character(len=19) :: measse(*), veasse(*)
+    type(NL_DS_Print), intent(inout) :: ds_print
     aster_logical :: lerrit
 !
 ! ----------------------------------------------------------------------
@@ -73,7 +74,7 @@ subroutine nmdesc(modele, numedd, numfix, mate, carele,&
 ! IN  COMPOR : COMPORTEMENT
 ! IN  LISCHA : L_CHARGES
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  SDIMPR : SD AFFICHAGE
+! IO  ds_print         : datastructure for printing parameters
 ! IN  SDTIME : SD TIMER
 ! IN  SDSTAT : SD STATISTIQUES
 ! IN  SDERRO : SD GESTION DES ERREURS
@@ -81,7 +82,7 @@ subroutine nmdesc(modele, numedd, numfix, mate, carele,&
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  RESOCO : SD RESOLUTION CONTACT
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLE
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
@@ -100,8 +101,10 @@ subroutine nmdesc(modele, numedd, numfix, mate, carele,&
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
+    if (niv .ge. 2) then
+        write (ifm,*) '<MECANONLINE> CALCUL DIRECTION DE DESCENTE...'
+    endif
 !
 ! --- INITIALISATIONS
 !
@@ -111,12 +114,6 @@ subroutine nmdesc(modele, numedd, numfix, mate, carele,&
     call vtzero(cndonn)
     call vtzero(cnpilo)
     call vtzero(cncind)
-!
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CALCUL DIRECTION DE DESCENTE...'
-    endif
 !
 ! --- INITIALISATIONS CODES RETOURS
 !
@@ -132,18 +129,18 @@ subroutine nmdesc(modele, numedd, numfix, mate, carele,&
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmcoma(modele, mate, carele, compor, carcri,&
-                parmet, method, lischa, numedd, numfix,&
-                solveu, comref, sddisc, sddyna, sdimpr,&
-                sdstat, sdtime, numins, iterat, fonact,&
-                defico, resoco, valinc, solalg, veelem,&
-                meelem, measse, veasse, maprec, matass,&
-                codere, faccvg, ldccvg, sdnume)
+    call nmcoma(modele     , mate  , carele, compor  , carcri,&
+                ds_algopara, lischa, numedd, numfix  , solveu,&
+                comref     , sddisc, sddyna, ds_print, sdstat,&
+                sdtime     , numins, iterat, fonact  , defico,&
+                resoco     , valinc, solalg, veelem  , meelem,&
+                measse     , veasse, maprec, matass  , codere,&
+                faccvg     , ldccvg, sdnume)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
-    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 9999
-    if (ldccvg .eq. 1) goto 9999
+    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
+    if (ldccvg .eq. 1) goto 999
 !
 ! --- PREPARATION DU SECOND MEMBRE
 !
@@ -161,7 +158,7 @@ subroutine nmdesc(modele, numedd, numfix, mate, carele,&
                 numedd, r8bid, maprec, matass, cndonn,&
                 cnpilo, cncind, solalg, rescvg)
 !
-9999 continue
+999 continue
 !
 ! --- TRANSFORMATION DES CODES RETOURS EN EVENEMENTS
 !
@@ -173,5 +170,4 @@ subroutine nmdesc(modele, numedd, numfix, mate, carele,&
 !
     call nmltev(sderro, 'ERRI', 'NEWT', lerrit)
 !
-    call jedema()
 end subroutine

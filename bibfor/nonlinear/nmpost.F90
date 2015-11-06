@@ -1,15 +1,16 @@
-subroutine nmpost(modele, mesh  , numedd, numfix, carele,&
-                  compor, solveu, numins, mate  , comref,&
-                  lischa, defico, resoco, resocu, parmet,&
-                  parcon, fonact, carcri, sdimpr, sdstat,&
-                  sddisc, sdtime, sd_obsv, sderro, sddyna,&
-                  sdpost, valinc, solalg, meelem, measse,&
-                  veelem, veasse, sdener, sdcriq, eta)
+subroutine nmpost(modele , mesh    , numedd, numfix     , carele  ,&
+                  compor , numins  , mate  , comref     , ds_inout,&
+                  defico , resoco  , resocu, ds_algopara, fonact  ,&
+                  carcri , ds_print, sdstat, sddisc     , sdtime  ,&
+                  sd_obsv, sderro  , sddyna, sdpost     , valinc  ,&
+                  solalg , meelem  , measse, veelem     , veasse  ,&
+                  sdener , sdcriq  , eta   , lischa)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/cfmxpo.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmener.h"
@@ -41,17 +42,20 @@ implicit none
 !
     integer :: numins
     character(len=8), intent(in) :: mesh
-    real(kind=8) :: parmet(*), parcon(*), eta
+    real(kind=8) :: eta
+    type(NL_DS_InOut), intent(in) :: ds_inout
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=19) :: meelem(*)
     character(len=24) :: resoco, defico, resocu
-    character(len=19) :: solveu
-    character(len=19) :: lischa, sdener
+    character(len=19) :: sdener
+    character(len=19) :: lischa
     character(len=19) :: sddisc, sddyna, sdpost
     character(len=19), intent(in) :: sd_obsv
+    type(NL_DS_Print), intent(in) :: ds_print
     character(len=24) :: modele, numedd, numfix, compor
     character(len=19) :: veelem(*), measse(*), veasse(*)
     character(len=19) :: solalg(*), valinc(*)
-    character(len=24) :: sdimpr, sdstat, sdtime, sderro, sdcriq
+    character(len=24) :: sdstat, sdtime, sderro, sdcriq
     character(len=24) :: mate, carele
     character(len=24) :: carcri, comref
     integer :: fonact(*)
@@ -71,16 +75,15 @@ implicit none
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  COMREF : VARI_COM DE REFERENCE
 ! IN  COMPOR : COMPORTEMENT
-! IN  LISCHA : LISTE DES CHARGES
 ! IN  RESOCO : SD RESOLUTION CONTACT
 ! IN  DEFICO : SD DEFINITION CONTACT
-! IN  SDIMPR : SD AFFICHAGE
+! In  ds_inout         : datastructure for input/output management
+! In  ds_print         : datastructure for printing parameters
 ! IN  SDTIME : SD TIMER
 ! IN  SDSTAT : SD STATISTIQUES
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
-! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION (VOIR NMLECT)
-! IN  SOLVEU : SOLVEUR
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  CARCRI : PARAMETRES METHODES D'INTEGRATION LOCALES (VOIR NMLECT)
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -95,14 +98,11 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-!
-! --- FONCTIONNALITES ACTIVEES
-!
-    lcont = isfonc(fonact,'CONTACT')
-    lerrt = isfonc(fonact,'ERRE_TEMPS_THM')
-    lmvib = isfonc(fonact,'MODE_VIBR')
-    lflam = isfonc(fonact,'CRIT_STAB')
-    lener = isfonc(fonact,'ENERGIE')
+    lcont       = isfonc(fonact,'CONTACT')
+    lerrt       = isfonc(fonact,'ERRE_TEMPS_THM')
+    lmvib       = isfonc(fonact,'MODE_VIBR')
+    lflam       = isfonc(fonact,'CRIT_STAB')
+    lener       = isfonc(fonact,'ENERGIE')
     l_post_incr = isfonc(fonact,'POST_INCR')
 !
 ! --- LE PAS FIXE A NECESSAIREMENT CONVERGE
@@ -124,7 +124,7 @@ implicit none
     if (lcont) then
         call nmtime(sdtime, 'INI', 'POST_TRAITEMENT')
         call nmtime(sdtime, 'RUN', 'POST_TRAITEMENT')
-        call cfmxpo(mesh, modele, defico, resoco, numins,&
+        call cfmxpo(mesh  , modele, defico, resoco, numins,&
                     sddisc, sdstat, solalg, valinc, veasse)
         call nmtime(sdtime, 'END', 'POST_TRAITEMENT')
     endif
@@ -134,24 +134,23 @@ implicit none
     if (lmvib .or. lflam) then
         call nmtime(sdtime, 'INI', 'POST_TRAITEMENT')
         call nmtime(sdtime, 'RUN', 'POST_TRAITEMENT')
-        call nmspec(modele, numedd, numfix, carele, compor,&
-                    solveu, numins, mate, comref, lischa,&
-                    defico, resoco, parmet, fonact, carcri,&
-                    sdimpr, sdstat, sdtime, sddisc, valinc,&
-                    solalg, meelem, measse, veelem, sddyna,&
-                    sdpost, sderro)
+        call nmspec(modele  , numedd, numfix     , carele, compor,&
+                    numins, mate       , comref, lischa,&
+                    defico  , resoco, ds_algopara, fonact, carcri,&
+                    ds_print, sdstat, sdtime     , sddisc, valinc,&
+                    solalg  , meelem, measse     , veelem, sddyna,&
+                    sdpost  , sderro)
         call nmtime(sdtime, 'END', 'POST_TRAITEMENT')
     endif
 !
 ! --- CALCUL DES ENERGIES
 !
     if (lener) then
-        call nmener(valinc, veasse, measse, sddyna, eta,&
-                    sdener, fonact, solveu, numedd, numfix,&
-                    meelem, numins, modele, mate, carele,&
-                    compor, carcri, sdtime, sddisc, solalg,&
-                    lischa, comref, resoco, resocu, parcon,&
-                    veelem)
+        call nmener(valinc, veasse, measse, sddyna, eta        ,&
+                    sdener, fonact, numedd, numfix, ds_algopara,&
+                    meelem, numins, modele, mate  , carele     ,&
+                    compor, sdtime, sddisc, solalg, lischa     ,&
+                    comref, resoco, resocu, veelem, ds_inout)
     endif
 
 !
@@ -167,6 +166,5 @@ implicit none
                 carele, mate  , compor, comref , valinc)
 !
 99  continue
-!
 !
 end subroutine

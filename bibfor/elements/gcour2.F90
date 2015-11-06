@@ -1,7 +1,7 @@
 subroutine gcour2(resu, noma, nomo, nomno, coorn,&
-                  nbnoeu, trav1, trav2, trav3, chfond,&
-                  fond, connex, stok4, thlagr, thlag2,&
-                  nbre, milieu, ndimte, pair)
+                  nbnoeu, trav1, trav2, trav3, fonoeu, chfond, basfon,&
+                  nomfiss, connex, stok4, liss,&
+                  nbre, milieu, ndimte, pair, norfon)
     implicit none
 !     ------------------------------------------------------------------
 ! ======================================================================
@@ -39,12 +39,13 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
 !        NOMO   : NOM DU CONCEPT MODELE
 !        NOMNO  : NOM DE L'OBJET CONTENANT LES NOEUDS DU MAILLAGE
 !        COORN  : NOM DE L'OBJET CONTENANT LES COORDONNEES DU MAILLAGE
-!        NBNOEU  : NOMBRE DE NOEUDS DE GAMM0
-!        CHFOND : NOMS DES NOEUDS DU FOND DE FISSURE
-!        FOND   : NOM DU CONCEPT FOND_FISS
+!        NBNOEU : NOMBRE DE NOEUDS DE GAMM0
+!        FONOEU : NOMS DES NOEUDS DU FOND DE FISSURE
+!        CHFOND : NOM DE L'OBJET CONTENANT LES COORDONNEES DES NOEUDS DE GAMM0
+!        NOMFISS: NOM DU CONCEPT FOND_FISS
 !        TRAV1  : RINF
 !        TRAV2  : RSUP
-!        THLAGR  : SI PRESENCE DU MOT CLE THETA_LOCAL
+!        LISS   : TYPE DE LISSAGE
 !        NBRE   : DEGRE DES POLYNOMES DE LEGENDRE
 !                     SINON 0
 !        CONNEX: .TRUE.  : FOND DE FISSURE FERME
@@ -71,6 +72,7 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
 #include "asterfort/gdinor.h"
 #include "asterfort/gdirec.h"
 #include "asterfort/getvr8.h"
+#include "asterfort/getvis.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeecra.h"
@@ -86,18 +88,18 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
 #include "asterfort/wkvect.h"
 #include "blas/dcopy.h"
 !
-    character(len=24) :: trav1, trav2, trav3, objor, objex, chfond, repk
-    character(len=24) :: obj3, norm, numgam, chamno
+    character(len=24) :: trav1, trav2, trav3, objor, objex, fonoeu, repk
+    character(len=24) :: obj3, norm, numgam, chamno, chfond, basfon
     character(len=24) :: stok4, dire4, coorn, nomno, dire5, indicg
-    character(len=24) :: absgam
+    character(len=24) :: absgam, liss, norfon
     character(len=16) :: k16b, nomcmd
-    character(len=8) :: fond, resu, noma, nomo, k8b
+    character(len=8) :: nomfiss, resu, noma, nomo, k8b
     character(len=6) :: kiord
 !
-    integer :: nbnoeu, iadrt1, iadrt2, iadrt3, itheta
+    integer :: nbnoeu, iadrt1, iadrt2, iadrt3, itheta, ifon
     integer :: in2, iadrco, jmin, ielinf, iadnum, jvect
-    integer :: iadrno, num, indic, iadrtt, nbre, nbr8
-    integer :: iret, numa, ndimte, iaorig, nbnoff, iebas
+    integer :: iadrno, num, indic, iadrtt, nbre, nbr8, nbptfd
+    integer :: iret, numa, ndimte, iaorig, iebas
     integer :: itanex, itanor, nbnos, iadabs, kno, iaextr, jnorm
 !
     real(kind=8) :: dirx, diry, dirz, xi1, yi1, zi1, xj1, yj1, zj1
@@ -106,10 +108,10 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
     real(kind=8) :: rii, rsi, alpha, valx, valy, valz, norm2, psca
     real(kind=8) :: norme, vecx, vecy, vecz, xl, tmpv(3)
 !
-    aster_logical :: thlagr, milieu, connex, thlag2, pair
+    aster_logical :: milieu, connex, pair
 !
 !-----------------------------------------------------------------------
-    integer :: i, i1, idesc, idiri, idirs, ielsup
+    integer :: i, i1, idesc, idiri, idirs, ielsup, inorfon
     integer :: ienorm, irefe, j, jresu, k, nbel
     real(kind=8) :: s0, s1
 !-----------------------------------------------------------------------
@@ -122,41 +124,69 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
     call jeveuo(trav1, 'L', iadrt1)
     call jeveuo(trav2, 'L', iadrt2)
     call jeveuo(trav3, 'E', iadrt3)
-    call jeveuo(chfond, 'L', iadrno)
+    call jeveuo(fonoeu, 'L', iadrno)
     call jeveuo(coorn, 'L', iadrco)
+    call jeveuo(chfond, 'L', ifon)    
+
+!
+! VERIFICATION SI MAILLAGE QUADRATIQUE OU NON
+!
+    call dismoi('ELEM_VOLU_QUAD', nomo, 'MODELE', repk=repk)
+    if (repk .eq. 'OUI') then
+        milieu = .true.
+    else if (repk.eq.'NON') then
+        milieu = .false.
+    endif 
+!
+! VERIFICATION PRESENCE NB_POINT_FOND
+!
+    call getvis('THETA', 'NB_POINT_FOND', iocc=1, nbval=1, nbret=nbptfd)
+!
+! SI PRESENCE NB_POINT_FOND ALORS NOEUDS MILIEU ABSENTS
+
+    if (nbptfd .ne. 0) then
+        milieu = .false.
+    endif
+!
+! INTERDICTION D AVOIR NB_POINT_FOND AVEC LISSAGES LAGRANGE_REGU,
+! LAGRANGE_NO_NO, MIXTE OU LEGENDRE
+!
+    if (nbptfd .ne. 0) then
+        if ((liss.eq.'LEGENDRE').or.(liss.eq.'MIXTE')&
+           .or.(liss.eq.'LAGRANGE_NO_NO')&
+           .or.(liss.eq.'LAGRANGE_REGU')) then
+            call utmess('F', 'RUPTURE1_73')
+        endif
+    endif
+!
+! RECUPERATION DES DIRECTIONS AUX EXTREMITES DE GAMM0
+!
+    objor = nomfiss//'.DTAN_ORIGINE'
+    call jeexin(objor, itanor)
+    objex = nomfiss//'.DTAN_EXTREMITE'
+    call jeexin(objex, itanex)
 !
 ! RECUPERATION  DES NUMEROS DE NOEUDS DE GAMM0
 !
     numgam = '&&COURON.NUMGAMM0'
     call wkvect(numgam, 'V V I', nbnoeu, iadnum)
     do j = 1, nbnoeu
-        call jenonu(jexnom(nomno, zk8(iadrno+j-1)), zi(iadnum+j-1))
-    end do
-!
-! RECUPERATION DES DIRECTIONS AUX EXTREMITES DE GAMM0
-!
-    objor = fond//'.DTAN_ORIGINE'
-    call jeexin(objor, itanor)
-    objex = fond//'.DTAN_EXTREMITE'
-    call jeexin(objex, itanex)
-!
-!     RECUPERATION DU NOMBRE DE NOEUD
-!
-    call jelira(fond//'.FOND.NOEU', 'LONUTI', nbnoff)
+        call jenonu(jexnom(nomno, zk8(iadrno+j-1)), zi(iadnum+j-1))      
+    enddo
 !
 !  SI LEVRE_SUP EST DEFINIE DANS LE CONCEPT FOND
 !
-    obj3 = fond//'.LEVRESUP.MAIL'
+    obj3 = nomfiss//'.LEVRESUP.MAIL'
     call jeexin(obj3, ielsup)
 !
 !  SI LEVRE_INF EST DEFINIE DANS LE CONCEPT FOND
 !
-    obj3 = fond//'.LEVREINF.MAIL'
+    obj3 = nomfiss//'.LEVREINF.MAIL'
     call jeexin(obj3, ielinf)
 !
 !  SI NORMALE EST DEFINIE DANS LE CONCEPT FOND
 !
-    norm = fond//'.NORMALE        '
+    norm = nomfiss//'.NORMALE        '
     call jeexin(norm, ienorm)
 !
     stok4 = '&&COURON.DIREC'
@@ -201,28 +231,29 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
             zr(in2+(i-1)*3+2-1) = dir(2)/norme
             zr(in2+(i-1)*3+3-1) = dir(3)/norme
         end do
-        call dismoi('ELEM_VOLU_QUAD', nomo, 'MODELE', repk=repk)
-        if (repk .eq. 'OUI') then
-            milieu = .true.
-        else if (repk.eq.'NON') then
-            milieu = .false.
-        endif
 !
     else
+!      LA DIRECTION DE THETA EST DONNEE DANS BASEFOND SI ON UTILISE NB_POINT_FOND
+        if (nbptfd .ne. 0) then
+            call jeveuo(basfon, 'L', jvect)
+            do i = 1, nbnoeu
+                zr(in2+(i-1)*3+1-1) = zr(jvect-1+6*(i-1)+4)
+                zr(in2+(i-1)*3+2-1) = zr(jvect-1+6*(i-1)+5)
+                zr(in2+(i-1)*3+3-1) = zr(jvect-1+6*(i-1)+6)
+            end do
+            
+!      LA DIRECTION DE THETA EST CALCULEE DANS GDIREC PUIS ON LA NORME
 !
-!      LA DIRECTION DE THETA EST CALCULEE, ON LA NORME
-!
-!  LEVRE SUPERIEURE
-!
-        if (ielsup .ne. 0) then
-            call gdirec(noma, fond, 'LEVRESUP', nomno, zk8(iadrno),&
+!  LEVRE SUPERIEURE        
+        else if (ielsup .ne. 0) then
+            call gdirec(noma, nomfiss, 'LEVRESUP', nomno, zk8(iadrno),&
                         coorn, nbnoeu, dire4, milieu)
             call jeveuo(dire4, 'L', idirs)
             if (ielinf .ne. 0) then
 !
 !  LEVRE INFERIEURE
 !
-                call gdirec(noma, fond, 'LEVREINF', nomno, zk8(iadrno),&
+                call gdirec(noma, nomfiss, 'LEVREINF', nomno, zk8(iadrno),&
                             coorn, nbnoeu, dire5, milieu)
                 call jeveuo(dire5, 'L', idiri)
 !
@@ -252,22 +283,10 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
                 end do
             endif
         else if (ienorm.ne.0) then
-            call dismoi('ELEM_VOLU_QUAD', nomo, 'MODELE', repk=repk)
-            if (repk .eq. 'OUI') then
-                milieu = .true.
-            else if (repk.eq.'NON') then
-                milieu = .false.
-            endif
             call gdinor(norm, nbnoeu, iadnum, coorn, in2)
         else
-            call dismoi('ELEM_VOLU_QUAD', nomo, 'MODELE', repk=repk)
-            if (repk .eq. 'OUI') then
-                milieu = .true.
-            else if (repk.eq.'NON') then
-                milieu = .false.
-            endif
-            call jeveuo(fond//'.BASEFOND', 'L', jvect)
-            do i = 1, nbnoff
+            call jeveuo(basfon, 'L', jvect)
+            do i = 1, nbnoeu
                 zr(in2+(i-1)*3+1-1) = zr(jvect-1+6*(i-1)+4)
                 zr(in2+(i-1)*3+2-1) = zr(jvect-1+6*(i-1)+5)
                 zr(in2+(i-1)*3+3-1) = zr(jvect-1+6*(i-1)+6)
@@ -300,9 +319,9 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
     endif
 !
 !     CORRECTION AUX EXTREMITES DU FOND
-    call jeexin(fond//'.BASEFOND', iebas)
+    call jeexin(basfon, iebas)
     if (iebas .ne. 0) then
-        call jeveuo(fond//'.BASEFOND', 'L', jvect)
+        call jeveuo(basfon, 'L', jvect)
         zr(in2+1-1) = zr(jvect-1+4)
         zr(in2+2-1) = zr(jvect-1+5)
         zr(in2+3-1) = zr(jvect-1+6)
@@ -311,16 +330,47 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
         zr(in2+(nbnoeu-1)*3+3-1) = zr(jvect-1+6*(nbnoeu-1)+6)
     endif
 !
+    norfon= '&&NORM.STOCK'
+    call wkvect(norfon, 'V V R', 3*nbnoeu, inorfon)
+!
+!   stockage des directions des normales au fond de fissure
+    call jeexin(nomfiss//'.BASEFOND', iebas)
+!
+    if (iebas .ne. 0) then
+!       * cas general : la base du fond de fissure est definie et on 
+!                       copie la normale
+        call jeveuo(basfon, 'L', jvect)
+        do i = 1, nbnoeu
+            zr(inorfon+(i-1)*3+1-1) = zr(jvect-1+(i-1)*6+4)
+            zr(inorfon+(i-1)*3+2-1) = zr(jvect-1+(i-1)*6+5)
+            zr(inorfon+(i-1)*3+3-1) = zr(jvect-1+(i-1)*6+6)
+        end do
+    else
+!   * cas particulier : la base locale n'est pas définie,
+!       e.g. si l'utilisateur donne le champ de normale dans
+!       DEFI_FOND_FISS
+!       on copie la direction du champ theta et on aura donc
+!       theta . n = 1, pour un champ theta norme
+        do i = 1, nbnoeu
+            zr(inorfon+(i-1)*3+1-1) = zr(in2+(i-1)*3+1-1)
+            zr(inorfon+(i-1)*3+2-1) = zr(in2+(i-1)*3+2-1)
+            zr(inorfon+(i-1)*3+3-1) = zr(in2+(i-1)*3+3-1)
+        end do
+    endif
+!
 ! ALLOCATION D UN OBJET INDICATEUR DU CHAMP THETA SUR GAMMO
 !
     call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbel)
+
     indicg = '&&COURON.INDIC        '
+    
     call wkvect(indicg, 'V V I', nbel, indic)
+!
 !
 ! ALLOCATION DES OBJETS POUR STOCKER LE CHAMP_NO THETA ET LA DIRECTION
 ! TYPE CHAM_NO ( DEPL_R) AVEC PROFIL NOEUD CONSTANT (3 DDL)
 !
-    if (thlag2) then
+    if (liss.eq.'LAGRANGE_REGU') then
         pair = .false.
         nbnos = nbnoeu
         if (milieu) nbnos = (nbnoeu+1)/2
@@ -332,7 +382,7 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
                 call utmess('F', 'RUPTURE1_1')
             endif
         endif
-    else if (thlagr) then
+    else if ((liss.eq.'LAGRANGE').or.(liss.eq.'LAGRANGE_NO_NO').or.(liss.eq.'MIXTE')) then
         ndimte = nbnoeu
     else
         ndimte = nbre + 1
@@ -353,6 +403,7 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
             call jedetr(chamno(1:19)//'.REFE')
             call jedetr(chamno(1:19)//'.VALE')
         endif
+!
 !
 !  .DESC
         chamno(20:24) = '.DESC'
@@ -375,7 +426,7 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
 !
         if (k .ne. (ndimte+1)) then
 !
-            if (thlag2) then
+            if (liss.eq.'LAGRANGE_REGU') then
 !
                 do i = 1, nbnoeu
                     num = zi(iadnum+i-1)
@@ -384,7 +435,7 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
                     zr(itheta+(num-1)*3+3-1) = 0.d0
                     zi(indic+num-1) = 1
                 end do
-                call gabscu(nbnoeu, coorn, nomno, chfond, xl,&
+                call gabscu(nbnoeu, coorn, nomno, fonoeu, xl,&
                             absgam)
                 call jeveuo(absgam, 'L', iadabs)
                 if (milieu) then
@@ -513,58 +564,70 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
                     end do
                 endif
 !
-            else if (thlagr) then
-!
-                do i = 1, nbnoeu
-                    num = zi(iadnum+i-1)
-                    zr(itheta+(num-1)*3+1-1) = 0.d0
-                    zr(itheta+(num-1)*3+2-1) = 0.d0
-                    zr(itheta+(num-1)*3+3-1) = 0.d0
-                    zi(indic+num-1) = 1
-                end do
-                num = zi(iadnum+k-1)
-                iadrtt = iadrt3 + (k-1)*nbnoeu + k - 1
-                zr(iadrtt) = 1.d0
-                zr(itheta+(num-1)*3+1-1) = zr(iadrtt)*zr(in2+(k-1)*3+ 1-1)
-                zr(itheta+(num-1)*3+2-1) = zr(iadrtt)*zr(in2+(k-1)*3+ 2-1)
-                zr(itheta+(num-1)*3+3-1) = zr(iadrtt)*zr(in2+(k-1)*3+ 3-1)
-                if (connex .and. (k.eq.1)) then
-                    num = zi(iadnum+ndimte-1)
-                    iadrtt = iadrt3 + (k-1)*nbnoeu + ndimte - 1
+            else if ((liss.eq.'LAGRANGE').or.(liss.eq.'LAGRANGE_NO_NO')&
+            .or.(liss.eq.'MIXTE')) then
+                if (nbptfd.eq.0) then
+                    do i = 1, nbnoeu
+                        num = zi(iadnum+i-1)
+                        zr(itheta+(num-1)*3+1-1) = 0.d0
+                        zr(itheta+(num-1)*3+2-1) = 0.d0
+                        zr(itheta+(num-1)*3+3-1) = 0.d0
+                        zi(indic+num-1) = 1
+                    end do
+                    num = zi(iadnum+k-1)
+                    iadrtt = iadrt3 + (k-1)*nbnoeu + k - 1
                     zr(iadrtt) = 1.d0
-                    zr(itheta+(num-1)*3+1-1)=zr(iadrtt)*zr(in2+(&
-                    ndimte-1)*3+1-1)
-                    zr(itheta+(num-1)*3+2-1)=zr(iadrtt)*zr(in2+(&
-                    ndimte-1)*3+2-1)
-                    zr(itheta+(num-1)*3+3-1)=zr(iadrtt)*zr(in2+(&
-                    ndimte-1)*3+3-1)
-                endif
-                if (connex .and. (k.eq.ndimte)) then
-                    num = zi(iadnum+1-1)
-                    iadrtt = iadrt3 + (k-1)*nbnoeu + 1 - 1
-                    zr(iadrtt) = 1.d0
-                    zr(itheta+(num-1)*3+1-1) = zr(iadrtt)*zr(in2+(1-1) *3+1-1)
-                    zr(itheta+(num-1)*3+2-1) = zr(iadrtt)*zr(in2+(1-1) *3+2-1)
-                    zr(itheta+(num-1)*3+3-1) = zr(iadrtt)*zr(in2+(1-1) *3+3-1)
+                    zr(itheta+(num-1)*3+1-1) = zr(iadrtt)*zr(in2+(k-1)*3+ 1-1)
+                    zr(itheta+(num-1)*3+2-1) = zr(iadrtt)*zr(in2+(k-1)*3+ 2-1)
+                    zr(itheta+(num-1)*3+3-1) = zr(iadrtt)*zr(in2+(k-1)*3+ 3-1)
+                    if (connex .and. (k.eq.1)) then
+                        num = zi(iadnum+ndimte-1)
+                        iadrtt = iadrt3 + (k-1)*nbnoeu + ndimte - 1
+                        zr(iadrtt) = 1.d0
+                        zr(itheta+(num-1)*3+1-1)=zr(iadrtt)*zr(in2+(&
+                        ndimte-1)*3+1-1)
+                        zr(itheta+(num-1)*3+2-1)=zr(iadrtt)*zr(in2+(&
+                        ndimte-1)*3+2-1)
+                        zr(itheta+(num-1)*3+3-1)=zr(iadrtt)*zr(in2+(&
+                        ndimte-1)*3+3-1)
+                    endif
+                    if (connex .and. (k.eq.ndimte)) then
+                        num = zi(iadnum+1-1)
+                        iadrtt = iadrt3 + (k-1)*nbnoeu + 1 - 1
+                        zr(iadrtt) = 1.d0
+                        zr(itheta+(num-1)*3+1-1) = zr(iadrtt)*zr(in2+(1-1) *3+1-1)
+                        zr(itheta+(num-1)*3+2-1) = zr(iadrtt)*zr(in2+(1-1) *3+2-1)
+                        zr(itheta+(num-1)*3+3-1) = zr(iadrtt)*zr(in2+(1-1) *3+3-1)
+                    endif
+                else
+                    zr(iadrt3-1+(k-1)*nbnoeu+k) = 1.d0
                 endif
             else
-                do i = 1, nbnoeu
-                    num = zi(iadnum+i-1)
-                    iadrtt = iadrt3 + (k-1)*nbnoeu + i - 1
-                    zr(itheta+(num-1)*3+1-1) = zr(iadrtt)*zr(in2+(i-1) *3+1-1)
-                    zr(itheta+(num-1)*3+2-1) = zr(iadrtt)*zr(in2+(i-1) *3+2-1)
-                    zr(itheta+(num-1)*3+3-1) = zr(iadrtt)*zr(in2+(i-1) *3+3-1)
-                    zi(indic+num-1) = 1
-                end do
+                if (nbptfd.eq.0) then
+                    do i = 1, nbnoeu
+                        num = zi(iadnum+i-1)
+                        iadrtt = iadrt3 + (k-1)*nbnoeu + i - 1
+                        zr(itheta+(num-1)*3+1-1) = zr(iadrtt)*zr(in2+(i-1) *3+1-1)
+                        zr(itheta+(num-1)*3+2-1) = zr(iadrtt)*zr(in2+(i-1) *3+2-1)
+                        zr(itheta+(num-1)*3+3-1) = zr(iadrtt)*zr(in2+(i-1) *3+3-1)
+                        zi(indic+num-1) = 1
+                    end do
+                else
+                    do i = 1, nbnoeu
+                        zr(iadrt3-1+(k-1)*nbnoeu+i) = 1.d0
+                    end do 
+                endif
             endif
         else
 !     STOCKAGE DE LA DIRECTION DU CHAMPS THETA SUR LE FOND DE FISSURE
-            do i = 1, nbnoeu
-                num = zi(iadnum+i-1)
-                zr(itheta+(num-1)*3+1-1) = zr(in2+(i-1)*3+1-1)
-                zr(itheta+(num-1)*3+2-1) = zr(in2+(i-1)*3+2-1)
-                zr(itheta+(num-1)*3+3-1) = zr(in2+(i-1)*3+3-1)
-            end do
+            if (nbptfd.eq.0) then
+                do i = 1, nbnoeu
+                    num = zi(iadnum+i-1)
+                    zr(itheta+(num-1)*3+1-1) = zr(in2+(i-1)*3+1-1)
+                    zr(itheta+(num-1)*3+2-1) = zr(in2+(i-1)*3+2-1)
+                    zr(itheta+(num-1)*3+3-1) = zr(in2+(i-1)*3+3-1)
+                end do
+            endif
         endif
     end do
 !
@@ -572,7 +635,10 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
 !         POUR CALCULER PROJ(M)=N
 !
     do i = 1, nbel
-        if (zi(indic+i-1) .ne. 1) then
+        if ((zi(indic+i-1) .ne. 1).or.(nbptfd.ne.0)) then
+            zr(itheta+(i-1)*3+1-1) = 0.d0
+            zr(itheta+(i-1)*3+2-1) = 0.d0
+            zr(itheta+(i-1)*3+3-1) = 0.d0
             xm = zr(iadrco+(i-1)*3+1-1)
             ym = zr(iadrco+(i-1)*3+2-1)
             zm = zr(iadrco+(i-1)*3+3-1)
@@ -580,12 +646,12 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
             jmin = 0
             smin = 0.d0
             do j = 1, nbnoeu-1
-                xi1 = zr(iadrco+(zi(iadnum+j-1)-1)*3+1-1)
-                yi1 = zr(iadrco+(zi(iadnum+j-1)-1)*3+2-1)
-                zi1 = zr(iadrco+(zi(iadnum+j-1)-1)*3+3-1)
-                xj1 = zr(iadrco+(zi(iadnum+j+1-1)-1)*3+1-1)
-                yj1 = zr(iadrco+(zi(iadnum+j+1-1)-1)*3+2-1)
-                zj1 = zr(iadrco+(zi(iadnum+j+1-1)-1)*3+3-1)
+                xi1 = zr(ifon-1+4*(j-1)+1)
+                yi1 = zr(ifon-1+4*(j-1)+2)
+                zi1 = zr(ifon-1+4*(j-1)+3)
+                xj1 = zr(ifon-1+4*(j-1+1)+1)
+                yj1 = zr(ifon-1+4*(j-1+1)+2)
+                zj1 = zr(ifon-1+4*(j-1+1)+3)
                 xij = xj1-xi1
                 yij = yj1-yi1
                 zij = zj1-zi1
@@ -649,7 +715,7 @@ subroutine gcour2(resu, noma, nomo, nomno, coorn,&
                     zr(itheta+(i-1)*3+2-1) = 0.d0
                     zr(itheta+(i-1)*3+3-1) = 0.d0
                 endif
-            end do
+            end do          
         endif
     end do
 !

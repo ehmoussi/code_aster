@@ -15,18 +15,16 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-interface
-    subroutine crsvgc(motfac, solveu, istop, nprec, syme,&
-                      epsmat, mixpre, kmd, kellag, kxfem)
-        character(len=16) :: motfac
-        character(len=19) :: solveu
-        integer :: istop
-        integer :: nprec
-        character(len=3) :: syme
-        real(kind=8) :: epsmat
-        character(len=3) :: mixpre
-        character(len=3) :: kmd
-        character(len=3) :: kellag
-        character(len=8) :: kxfem
-    end subroutine crsvgc
-end interface
+          interface 
+            subroutine crsvgc(motfac,solveu,istop,nprec,epsmat,mixpre,  &
+     &kellag,kxfem)
+              character(len=16) :: motfac
+              character(len=19) :: solveu
+              integer :: istop
+              integer :: nprec
+              real(kind=8) :: epsmat
+              character(len=3) :: mixpre
+              character(len=3) :: kellag
+              character(len=8) :: kxfem
+            end subroutine crsvgc
+          end interface 

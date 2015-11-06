@@ -1,6 +1,6 @@
 # TITRE CALCUL DE RESATURATION D UNE BO PAR UNE BG SUR UN BI-MATERIAUX BO-BG
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -170,10 +170,11 @@ EL = DEFI_FONCTION  ( NOM_PARA   = 'TEMP' ,
 
 NU=DEFI_CONSTANTE(VALE=0.2,);
 BIDON = 0.,
+RHOF=DEFI_CONSTANTE(VALE = 2670.,)
 MATERBO=DEFI_MATERIAU(
                     ELAS_FO=_F(E=EL,
                               NU=NU,
-                              RHO=2670.,
+                              RHO=RHOF,
                               ALPHA=ZERO,
                               TEMP_DEF_ALPHA  =BIDON,
                               ),
@@ -242,7 +243,7 @@ DLSBG=DEFI_CONSTANTE(VALE=0.05,);
 MATERBG=DEFI_MATERIAU(
                     ELAS_FO=_F(E=EL,
                               NU=NU,
-                              RHO=2670.,
+                              RHO=RHOF,
                               ALPHA=ZERO,
                               TEMP_DEF_ALPHA  =BIDON,
                               ),

@@ -70,22 +70,6 @@ Erreur d'utilisation dans la commande CREA_MAILLAGE :
   Le mot clé MAILLAGE est ici obligatoire.
 """),
 
-    11 : _(u"""
- le paramètre est a valeurs de type  " %(k1)s "  et la valeur de référence de type  " %(k2)s ".
-"""),
-
-    12 : _(u"""
- TYPE_TEST inconnu
-"""),
-
-    13 : _(u"""
- le champ  %(k1)s  est a valeurs de type  " %(k2)s "  et la valeur de référence de type  " %(k3)s ".
-"""),
-
-    14 : _(u"""
- le champ  %(k1)s  est de type inconnu.
-"""),
-
     20 : _(u"""
  le GROUP_NO  %(k1)s  contient  %(k2)s  noeuds
 """),
@@ -173,14 +157,24 @@ PROJ_CHAMP (ou LIAISON_MAILLE) :
     48 : _(u"""
  Vous utilisez la commande PROJ_CHAMP ou un mot clé nécessitant de "projeter"
  des noeuds sur des mailles (par exemple LIAISON_MAIL).
- Il y a %(i1)d noeuds qui ont été projetés sur des mailles distantes.
- Pour ces noeuds, la distance à la maille la plus proche est supérieure à 1/10ème
- de la taille de cette maille.
+ Il y a %(i1)d noeuds qui ont été projetés sur des mailles jugées distantes.
+
+ Les noeuds sont jugés distants si :
+  * la distance à la maille la plus proche est supérieure à DISTANCE_ALARME 
+    (si ce mot clé est utilisé).
+  * ou si la distance à la maille la plus proche est supérieure à 1/10ème
+    de la taille de cette maille (si le mot clé DISTANCE_ALARME n'est pas utilisé).
+
  Les %(i2)d noeuds les plus éloignés ont été imprimés ci-dessus.
 
 Risques et conseils :
-  Le mot clé DISTANCE_MAX permet d'éviter que les noeuds trop distants ne soient
-  projetés (ou "liés" quand on utilise le mot clé LIAISON_MAIL).
+  * Un maillage constitué des noeuds distants a été imprimé au format MED.
+    La visualisation de ce maillage pourra vous rassurer (ou non).
+    Le nom du fichier MED est : %(k1)s
+  * Le mot clé DISTANCE_MAX permet d'éviter que les noeuds trop distants ne soient
+    projetés (ou "liés" quand on utilise le mot clé LIAISON_MAIL).
+  * Le mot clé DISTANCE_ALARME permet d'éviter cette alarme.
+
 """),
 
     49 : _(u"""
@@ -222,9 +216,9 @@ Alarme utilisateur :
   de noeuds.
   Le nuage formé par ces noeuds est volumique mais il est très aplati.
   Le rapport entre les dimensions 3 et 1 est faible : %(r1)f
-  Les relations cinématiques engendrées peuvent être proches de la 
+  Les relations cinématiques engendrées peuvent être proches de la
   redondance et provoquer des problèmes de type "pivot nul".
- 
+
 Risques et Conseils :
   En utilisant le mot clé DIST_MIN, vous pouvez faire en sorte que le
   programme considère le nuage de points comme surfacique.
@@ -237,7 +231,7 @@ Alarme utilisateur :
   de noeuds.
   Le nuage formé par ces noeuds est surfacique mais il est très allongé.
   Le rapport entre les dimensions 2 et 1 est faible : %(r1)f
-  Les relations cinématiques engendrées peuvent être proches de la 
+  Les relations cinématiques engendrées peuvent être proches de la
   redondance et provoquer des problèmes de type "pivot nul".
 
 Risques et Conseils :

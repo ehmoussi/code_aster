@@ -54,7 +54,7 @@ subroutine te0431(option, nomte)
     character(len=16) :: nomres(2)
     integer :: nddl, nno, nnos, npg, ndim, i, j, j1, n, m, kpg, kk, kkd, lgpg
     integer :: cod(9)
-    integer :: imatuu, ipoids, ivf, idfde, igeom, imate, icamas, icontm, ivarim
+    integer :: imatuu, ipoids, ivf, idfde, igeom, imate, icontm, ivarim
     integer :: jgano, jtab(7), jcret, ideplm, ideplp, icompo, icarcr, iret
     integer :: ivectu, icontp, ivarip, ivarix, icontx
     real(kind=8) :: dff(2, 8), b(6, 8), p(3, 6), jac
@@ -90,23 +90,12 @@ subroutine te0431(option, nomte)
         call jevech('PDEPLPR', 'L', ideplp)
         call jevech('PDEPLMR', 'L', ideplm)
         call jevech('PMATERC', 'L', imate)
-        call tecach('OON', 'PVARIMR', 'L', iret, nval=7,&
+        call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
                     itab=jtab)
         lgpg = max(jtab(6),1)*jtab(7)
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PVARIMP', 'L', ivarix)
-!
-! --- ORIENTATION DU MASSIF
-!
-        call tecach('NNN', 'PCAMASS', 'L', iret, iad=icamas)
         call r8inir(3, r8nnem(), angmas, 1)
-        if (icamas .gt. 0) then
-            if (zr(icamas) .gt. 0.d0) then
-                angmas(1) = zr(icamas+1)*r8dgrd()
-                angmas(2) = zr(icamas+2)*r8dgrd()
-                angmas(3) = zr(icamas+3)*r8dgrd()
-            endif
-        endif
     endif
 !
 ! - PARAMETRES EN SORTIE

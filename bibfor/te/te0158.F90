@@ -45,7 +45,6 @@ subroutine te0158(option, nomte)
 !   NOMTE  :
 !       'MECA_POU_D_E'      : POUTRE DROITE D'EULER       (SECTION VARIABLE)
 !       'MECA_POU_D_T'      : POUTRE DROITE DE TIMOSHENKO (SECTION VARIABLE)
-!       'MECA_POU_C_T'      : POUTRE COURBE DE TIMOSHENKO(SECTION CONSTANTE)
 !       'MECA_POU_D_TG'     : POUTRE DROITE DE TIMOSHENKO (GAUCHISSEMENT)
 !       'MECA_POU_D_EM'     : POUTRE DROITE MULTIFIBRE D EULER (SECT. CONST)
 !       'MECA_POU_D_TGM'    : POUTRE DROITE MULTIFIBRE DE TIMOSHENKO (GAUCHISSEMENT)
@@ -62,7 +61,7 @@ subroutine te0158(option, nomte)
     real(kind=8) :: b(4), gg, xi, wi
     real(kind=8) :: ul(14), pgl(3, 3), d1b(6, 12), dege(3, 7), d1btg(7, 14)
     real(kind=8) :: degem(6), alpha
-    real(kind=8) :: temp, e, xnu, epsthe(1), g, xl
+    real(kind=8) :: temp, e, xnu, epsthe, g, xl
     real(kind=8) :: a, xiy, xiz, alfay, alfaz, phiy, phiz
     real(kind=8) :: ksi1, d1b3(2, 3), ey, ez
 !
@@ -77,7 +76,7 @@ subroutine te0158(option, nomte)
 !
     fami = 'RIGI'
     call elrefe_info(fami=fami, nno=nno, npg=npg, jpoids=ipoids, jvf=ivf)
-    !
+!
     if (option .eq. 'DEGE_ELNO') then
         call jevech('PDEFOGR', 'E', jeffg)
     else
@@ -110,7 +109,7 @@ subroutine te0158(option, nomte)
         call jevech('PMATERC', 'L', lmater)
         call pmfmats(lmater, nomat)
 !
-        call verifm(fami, npg, 1, '+', zi(lmater), 'ELAS', 1, epsthe, iret)
+        call verifm(fami, npg, 1, '+', zi(lmater), epsthe, iret)
         itemp=0
         if (iret .eq. 0) itemp=1
 !
@@ -157,7 +156,7 @@ subroutine te0158(option, nomte)
                         dege(kp,i) = dege(kp,i) + d1btg(i,j)*ul(j)
                     enddo
                 enddo
-                dege(kp,1) = dege(kp,1) - epsthe(1)
+                dege(kp,1) = dege(kp,1) - epsthe
             enddo
         else
             do kp = 1, npg
@@ -168,7 +167,7 @@ subroutine te0158(option, nomte)
                         dege(kp,i) = dege(kp,i) + d1b(i,j)*ul(j)
                     enddo
                 enddo
-                dege(kp,1) = dege(kp,1) - epsthe(1)
+                dege(kp,1) = dege(kp,1) - epsthe
             enddo
         endif
 !       POUR LE POINT 1
@@ -195,7 +194,7 @@ subroutine te0158(option, nomte)
 !       passage des deplacements dans le repere local
         call utpvgl(nno, nc, pgl, zr(jdepl), ul)
 !       alpha modes incompatibles
-        call tecach('ONN','PSTRXRR','L',iret, nval=7, itab= jtab)
+        call tecach('ONO','PSTRXRR','L',iret, nval=7, itab= jtab)
         istrxr=jtab(1)
         alpha=zr(istrxr-1+15)
 !

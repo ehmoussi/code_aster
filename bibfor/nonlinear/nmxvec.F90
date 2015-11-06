@@ -1,8 +1,19 @@
-subroutine nmxvec(modelz, mate, carele, compor, carcri,&
-                  sdtime, sddisc, sddyna, numins, valinc,&
-                  solalg, lischa, comref, resoco, resocu,&
-                  numedd, parcon, veelem, veasse, measse,&
-                  nbvect, ltypve, lcalve, loptve, lassve)
+subroutine nmxvec(modelz  , mate  , carele, compor, sdtime,&
+                  sddisc  , sddyna, numins, valinc, solalg,&
+                  lischa  , comref, resoco, resocu, numedd,&
+                  ds_inout, veelem, veasse, measse, nbvect,&
+                  ltypve  , lcalve, loptve, lassve)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/diinst.h"
+#include "asterfort/nmassv.h"
+#include "asterfort/nmcalv.h"
+#include "asterfort/nmchex.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -21,24 +32,17 @@ subroutine nmxvec(modelz, mate, carele, compor, carcri,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/diinst.h"
-#include "asterfort/nmassv.h"
-#include "asterfort/nmcalv.h"
-#include "asterfort/nmchex.h"
+!
     integer :: nbvect
     character(len=6) :: ltypve(20)
     aster_logical :: lcalve(20), lassve(20)
     character(len=16) :: loptve(20)
     character(len=*) :: modelz
     character(len=24) :: mate, carele, sdtime
-    character(len=24) :: compor, carcri, numedd
+    character(len=24) :: compor, numedd
     integer :: numins
-    real(kind=8) :: parcon(*)
+    type(NL_DS_InOut), intent(in) :: ds_inout
     character(len=19) :: sddisc, sddyna, lischa
     character(len=24) :: resoco, resocu, comref
     character(len=19) :: veelem(*), veasse(*), measse(*)
@@ -56,15 +60,6 @@ subroutine nmxvec(modelz, mate, carele, compor, carcri,&
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
 ! IN  MATE   : CHAMP MATERIAU
-! IN  PARCON : PARAMETRES DU CRITERE DE CONVERGENCE REFERENCE
-!                     1 : SIGM_REFE
-!                     2 : EPSI_REFE
-!                     3 : FLUX_THER_REFE
-!                     4 : FLUX_HYD1_REFE
-!                     5 : FLUX_HYD2_REFE
-!                     6 : VARI_REFE
-!                     7 : EFFORT (FORC_REFE)
-!                     8 : MOMENT (FORC_REFE)
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  COMREF : VARI_COM DE REFERENCE
 ! IN  COMPOR : COMPORTEMENT
@@ -76,9 +71,9 @@ subroutine nmxvec(modelz, mate, carele, compor, carcri,&
 ! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION (VOIR NMLECT)
 ! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION (VOIR NMLECT)
 ! IN  SOLVEU : SOLVEUR
-! IN  CARCRI : PARAMETRES METHODES D'INTEGRATION LOCALES (VOIR NMLECT)
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
+! In  ds_inout         : datastructure for input/output management
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  NBVECT : NOMBRE DE VECT_ELEM DANS LA LISTE
@@ -99,10 +94,6 @@ subroutine nmxvec(modelz, mate, carele, compor, carcri,&
 !
 ! ----------------------------------------------------------------------
 !
-!
-!
-! --- INITIALISATIONS
-!
     if (numins .eq. 0) then
         instam = 0.d0
         instap = diinst(sddisc,numins)
@@ -114,7 +105,7 @@ subroutine nmxvec(modelz, mate, carele, compor, carcri,&
 !
 ! --- CALCUL ET ASSEMBLAGE DES VECT_ELEM
 !
-    do 10 ivect = 1, nbvect
+    do ivect = 1, nbvect
 !
 ! --- VECT_ELEM COURANT
 !
@@ -145,21 +136,21 @@ subroutine nmxvec(modelz, mate, carele, compor, carcri,&
 !
         if (lcalc) then
             call nmchex(veelem, 'VEELEM', typvec, vecele)
-            call nmcalv(typvec, modele, lischa, mate, carele,&
-                        compor, carcri, numedd, comref, sdtime,&
-                        parcon, instam, instap, valinc, solalg,&
-                        sddyna, option, vecele)
+            call nmcalv(typvec, modele, lischa, mate  , carele,&
+                        compor, numedd, comref, sdtime, instam,&
+                        instap, valinc, solalg, sddyna, option,&
+                        vecele)
         endif
 !
 ! --- ASSEMBLER VECT_ELEM
 !
         if (lasse) then
-            call nmchex(veasse, 'VEASSE', typvec, vecass)
-            call nmassv(typvec, modelz, lischa, mate, carele,&
-                        compor, numedd, instam, instap, resoco,&
-                        resocu, sddyna, sdtime, valinc, comref,&
-                        measse, vecele, vecass)
+            call nmchex(veasse  , 'VEASSE', typvec, vecass)
+            call nmassv(typvec  , modelz, lischa, mate, carele,&
+                        compor  , numedd, instam, instap, resoco,&
+                        resocu  , sddyna, sdtime, valinc, comref,&
+                        ds_inout, measse, vecele, vecass)
         endif
- 10 end do
+    end do
 !
 end subroutine

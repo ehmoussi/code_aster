@@ -1,25 +1,22 @@
 subroutine xalgo3(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
-                      igeom, jlsn, pmilie, ninter, ainter, ar, npts, nptm, &
-                      pmmax, nmilie, mfis, lonref, pinref)
+                  geom, lsnelp, pmilie, ninter, ainter, ar, npts, nptm, &
+                  pmmax, nmilie, mfis, lonref, pinref, pintt, pmitt, jonc)
     implicit none
 !
 #    include "jeveux.h"
 #    include "asterfort/assert.h"
-#    include "asterfort/jedema.h"
-#    include "asterfort/jemarq.h"
 #    include "asterfort/xalg30.h"
 #    include "asterfort/xalg31.h"
 #    include "asterfort/xalg40.h"
 #    include "asterfort/xalg41.h"
 #    include "asterfort/xalg42.h"
 #    include "asterfort/xalg20.h"
-#    include "asterfort/xalg62.h"
-#    include "asterfort/xalg51.h"
     character(len=8) :: typma, elrefp
-    integer ::  ndim, ndime, nnop, it, nnose, cnset(*), igeom, jlsn
+    integer ::  ndim, ndime, nnop, it, nnose, cnset(*)
     integer ::  ninter, pmmax, npts, nptm, nmilie, mfis, ar(12, 3)
-    real(kind=8) :: lonref, ainter(*), pmilie(*)
-    real(kind=8) :: pinref(*)
+    real(kind=8) :: lonref, ainter(*), pmilie(*), lsnelp(27)
+    real(kind=8) :: pinref(*), pintt(*), pmitt(*), geom(81)
+    aster_logical :: jonc
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -49,49 +46,43 @@ subroutine xalgo3(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
 !       AR       : CONNECTIVITE DU TETRA
 !       PMMAX    : NOMBRE DE POINTS MILIEUX MAXIMAL DETECTABLE
 !       NPTS     : NB DE PTS D'INTERSECTION COINCIDANT AVEC UN NOEUD SOMMET
+!       LSNELP   : LSN AUX NOEUDS DE L'ELEMENT PARENT POUR LA FISSURE COURANTE
+!       PINTT    : COORDONNEES REELLES DES POINTS D'INTERSECTION
+!       PMITT    : COORDONNEES REELLES DES POINTS MILIEUX
+!       JONC     : L'ELEMENT PARENT EST-IL TRAVERSE PAR PLUSIEURS FISSURES
 !
 !     SORTIE
 !       NMILIE   : NOMBRE DE POINTS MILIEUX
 !       PMILIE   : COORDONNES DES POINS MILIEUX
 !     ----------------------------------------------------------------
 !
-    call jemarq()
 !
     if (ndime .eq. 2) then
-        call xalg20(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
-                      igeom, jlsn, pmilie, ninter, ainter, ar, npts, nptm,&
-                      pmmax, nmilie, mfis, lonref, pinref)
+        call xalg20(ndim, elrefp, it, nnose, cnset, typma, ndime,&
+                      geom, lsnelp, pmilie, ninter, ainter, ar, npts, nptm,&
+                      pmmax, nmilie, mfis, lonref, pinref, pintt, pmitt, jonc)
     else if (ninter .eq. 3 .and. npts .eq. 0) then
-         call xalg30(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
-                      igeom, jlsn, pmilie, ninter, ainter, ar, npts, nptm,&
-                      pmmax, nmilie, mfis, lonref, pinref)
+         call xalg30(ndim, elrefp, it, nnose, cnset, typma, ndime,&
+                      geom, lsnelp, pmilie, ninter, ainter, ar, npts, nptm,&
+                      pmmax, nmilie, mfis, lonref, pinref, pintt, pmitt, jonc)
     else if (ninter .eq. 3 .and. npts .eq. 1) then
-         call xalg31(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
-                      igeom, jlsn, pmilie, ninter, ainter, ar, npts, nptm,&
-                      pmmax, nmilie, mfis, lonref, pinref)
+         call xalg31(ndim, elrefp, it, nnose, cnset, typma, ndime,&
+                      geom, lsnelp, pmilie, ninter, ainter, ar, npts, nptm,&
+                      pmmax, nmilie, mfis, lonref, pinref, pintt, pmitt, jonc)
     else if (ninter .eq. 4 .and. npts.eq. 0) then
          call xalg40(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
-                      igeom, jlsn, pmilie, ninter, ainter, ar, npts, nptm,&
-                      pmmax, nmilie, mfis, lonref, pinref)
+                      geom, lsnelp, pmilie, ninter, ainter, ar, npts, nptm,&
+                      pmmax, nmilie, mfis, lonref, pinref, pintt, pmitt, jonc)
     else if (ninter .eq. 4 .and. npts.eq. 2) then
-        call xalg42(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
-                      igeom, jlsn, pmilie, ninter, ainter, ar, npts, nptm,&
-                      pmmax, nmilie, mfis, lonref, pinref)
+        call xalg42(ndim, elrefp, it, nnose, cnset, typma, ndime,&
+                      geom, lsnelp, pmilie, ninter, ainter, ar, npts, nptm,&
+                      pmmax, nmilie, mfis, lonref, pinref, pintt, pmitt, jonc)
     else if (ninter .eq. 4 .and. npts.eq. 1) then
         call xalg41(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
-                      igeom, jlsn, pmilie, ninter, ainter, ar, npts, nptm,&
-                      pmmax, nmilie, mfis, lonref, pinref)
-    else if (ninter .eq. 6 .and. npts.eq. 2) then
-        call xalg62(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
-                      igeom, jlsn, pmilie, ninter, ainter, ar, npts, nptm,&
-                      pmmax, nmilie, mfis, lonref, pinref)
-    else if (ninter .eq. 5 .and. npts.eq. 1) then
-        call xalg51(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
-                      igeom, jlsn, pmilie, ninter, ainter, ar, npts, nptm,&
-                      pmmax, nmilie, mfis, lonref, pinref)
+                      geom, lsnelp, pmilie, ninter, ainter, ar, npts, nptm,&
+                      pmmax, nmilie, mfis, lonref, pinref, pintt, pmitt, jonc)
     else
         ASSERT(.false.)
     endif
 !
-    call jedema()
 end subroutine

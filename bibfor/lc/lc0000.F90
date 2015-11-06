@@ -6,7 +6,7 @@ subroutine lc0000(fami, kpg, ksp, ndim, typmod,&
                   sigp, vip, ndsde, dsidep, icomp,&
                   nvi, nwkout, wkout, codret)
 ! aslint: disable=W1501,W1504
-use module_calcul, only : ca_iactif_
+use calcul_module, only : ca_iactif_
 implicit none
 !       ================================================================
 ! ======================================================================
@@ -203,6 +203,7 @@ implicit none
 #include "asterfort/lc0098.h"
 #include "asterfort/lc0099.h"
 #include "asterfort/lc0100.h"
+#include "asterfort/lc9999.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcpto.h"
     integer :: imate, ndim, nvi, kpg, ksp
@@ -890,6 +891,12 @@ implicit none
                     nvi, dsidep, codret)
     case (100)
         call lc0100(fami, kpg, ksp, ndim, imate,&
+                    compor, crit, instam, instap, epsm,&
+                    deps, sigm, vim, option, angmas,&
+                    sigp, vip, wkin, typmod, icomp,&
+                    nvi, dsidep, codret)
+    case (9999)
+        call lc9999(fami, kpg, ksp, ndim, imate,&
                     compor, crit, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, wkin, typmod, icomp,&

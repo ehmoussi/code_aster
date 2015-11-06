@@ -1,6 +1,6 @@
 subroutine caddli(keywordfact, load, mesh, ligrmo, vale_type)
 !
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -278,7 +278,9 @@ subroutine caddli(keywordfact, load, mesh, ligrmo, vale_type)
 !
 ! - Final linear relation affectation
 !
-    call aflrch(list_rela, load)
+    if (keywordfact.eq.'DDL_IMPO') then
+    endif
+    call aflrch(list_rela, load, 'LIN')
 !
     call jedetr('&&CADDLI.DIRECT')
     call jedetr(keywordexcl)

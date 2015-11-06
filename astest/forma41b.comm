@@ -1,6 +1,6 @@
 # TITRE : POUTRE EN BA EN FLEXION 3 POINTS 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -229,10 +229,11 @@ YOUNG=DEFI_FONCTION(NOM_PARA='TEMP',VALE=(0,30E10,
 POISSON=DEFI_CONSTANTE(VALE=0.2,);
 
 DILAT=DEFI_CONSTANTE(VALE=1.2E-6,);
+RHOF=DEFI_CONSTANTE(VALE = 2400.,)
 
 BETON=DEFI_MATERIAU(ELAS_FO=_F(E=YOUNG,
                                NU=POISSON,
-                               RHO=2400,
+                               RHO=RHOF,
                                TEMP_DEF_ALPHA=20,
                                ALPHA=DILAT,
                                B_ENDOGE=9E-5,

@@ -15,14 +15,17 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nmrepl(modele, numedd, mate, carele, comref,&
-                      compor, lischa, parmet, carcri, fonact,&
-                      iterat, sdstat, sdpilo, sdnume, sddyna,&
-                      method, defico, resoco, deltat, valinc,&
-                      solalg, veelem, veasse, sdtime, sddisc,&
-                      etan, conv, eta, rho, offset,&
-                      ldccvg, pilcvg, matass)
+    subroutine nmrepl(modele , numedd, mate       , carele, comref,&
+                      compor , lischa, ds_algopara, carcri, fonact,&
+                      iterat , sdstat, sdpilo     , sdnume, sddyna,&
+                      defico , resoco, deltat     , valinc, solalg,&
+                      veelem , veasse, sdtime     , sddisc, etan  ,&
+                      ds_conv, eta   , offset     , ldccvg, pilcvg,&
+                      matass )
+        use NonLin_Datastructure_type
         character(len=24) :: modele
         character(len=24) :: numedd
         character(len=24) :: mate
@@ -30,7 +33,7 @@ interface
         character(len=24) :: comref
         character(len=24) :: compor
         character(len=19) :: lischa
-        real(kind=8) :: parmet(*)
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=24) :: carcri
         integer :: fonact(*)
         integer :: iterat
@@ -38,7 +41,6 @@ interface
         character(len=19) :: sdpilo
         character(len=19) :: sdnume
         character(len=19) :: sddyna
-        character(len=16) :: method(*)
         character(len=24) :: defico
         character(len=24) :: resoco
         real(kind=8) :: deltat
@@ -49,9 +51,8 @@ interface
         character(len=24) :: sdtime
         character(len=19) :: sddisc
         real(kind=8) :: etan
-        real(kind=8) :: conv(*)
+        type(NL_DS_Conv), intent(inout) :: ds_conv
         real(kind=8) :: eta
-        real(kind=8) :: rho
         real(kind=8) :: offset
         integer :: ldccvg
         integer :: pilcvg

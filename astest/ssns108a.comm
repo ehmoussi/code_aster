@@ -1,6 +1,6 @@
 # TITRE SIMULATION DE L'ESSAI SAFE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -136,7 +136,7 @@ modele_aff.append({'GROUP_MA':  MURS,
 
 MO=AFFE_MODELE(MAILLAGE=MA,
                INFO=1,
-               
+
                AFFE=modele_aff,
                 ) ;
 
@@ -150,9 +150,10 @@ RHOBET= 2500.
 E     = DEFI_CONSTANTE(VALE = 32308.e6)
 NU    = DEFI_CONSTANTE(VALE = 0.2)
 
+RHOF=DEFI_CONSTANTE(VALE = RHOBET,)
 BETON = DEFI_MATERIAU(ELAS_FO = _F(E   = E,
                                    NU       = NU,
-                                   RHO      = RHOBET,
+                                   RHO      = RHOF,
                                    B_ENDOGE = 1.5E-5,
                                  ),
                         BETON_ECRO_LINE = _F(SYT         = 3.415e6,
@@ -282,9 +283,7 @@ MASS_ELE = CALC_MATR_ELEM( MODELE=MO,
                            CHAM_MATER=MATER,
                            CHARGE=CHAR0);
 
-NUM_DDL = NUME_DDL( MATR_RIGI=RIGI_ELE,
-                     METHODE='LDLT',
-                     RENUM='SANS');
+NUM_DDL = NUME_DDL( MATR_RIGI=RIGI_ELE); 
 
 MASSE = ASSE_MATRICE( MATR_ELEM=MASS_ELE,
                          NUME_DDL=NUM_DDL );
@@ -378,7 +377,6 @@ RESU = STAT_NON_LINE (
                       CONVERGENCE=_F(
                                      RESI_GLOB_RELA=RESI_GLOB_RELA,
                                      ITER_GLOB_MAXI=Nmax,
-                                     ITER_GLOB_ELAS=Nmax,
                                      ),
                   );
 

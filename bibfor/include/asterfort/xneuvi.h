@@ -17,13 +17,14 @@
 !
 interface
     subroutine xneuvi(nb_edgez, nb_edge, nbno, tabdir, scorno,&
-                      noeud, sdline_crack)
+                      noeud, crack, tabhyp)
         integer :: nbno
         integer :: nb_edgez
         integer :: nb_edge
         integer :: tabdir(nb_edgez, 2)
         integer :: scorno(2*nb_edgez)
         integer :: noeud(2*nb_edgez)
-        character(len=14) :: sdline_crack
+        character(len=8) :: crack
+        aster_logical, intent(in) :: tabhyp(nb_edgez)
     end subroutine xneuvi
 end interface

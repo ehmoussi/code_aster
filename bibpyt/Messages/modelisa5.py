@@ -149,19 +149,15 @@ La maille numéro %(i1)d du groupe %(k1)s sur lequel des caractéristiques de po
 à section circulaire et homothétique sont affectés n'est pas connectée à la maille
 précédente ou n'est pas orientée de la même manière.
 
-Conseil et solution : 
+Conseil et solution :
     - vérifier que les mailles sont correctement ordonnées dans le groupe
-    définissant la poutre 
+    définissant la poutre
     - réorienter les mailles du groupe avec MODI_MAILLAGE/ORIE_LIGNE.
 """),
 
     54 : _(u"""
 Poutre circulaire à section homothétique :
 La présence de la caractéristique %(k1)s est obligatoire.
-"""),
-
-    55 : _(u"""
- VERIF : 2 arguments max
 """),
 
     56 : _(u"""

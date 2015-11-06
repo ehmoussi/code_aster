@@ -76,13 +76,13 @@ subroutine rigflu(modele, time, nomcmp, tps, nbchar,&
 !
 !----------------  NUMEROTATION
 !
-    call numero(nu, solveu, 'VV',&
+    call numero(nu, 'VV',&
                 modelz = modele , list_loadz = list_load)
 
 !
 !---------------- ASSEMBLAGE
 !
-    call asmatr(1, mel, ' ', nu, solveu,&
+    call asmatr(1, mel, ' ', nu, &
                 list_load, 'ZERO', 'V', 1, ma)
 !
 !------- FACTORISATION LDLT DE LA MATRICE DE RAIDEUR

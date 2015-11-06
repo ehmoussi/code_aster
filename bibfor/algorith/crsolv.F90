@@ -1,11 +1,13 @@
-subroutine crsolv(method, renum, solve, bas)
+subroutine crsolv(method, renum, blrfront, blreps, solve, bas)
     implicit none
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jevtbl.h"
 #include "asterfort/sdsolv.h"
 #include "asterfort/wkvect.h"
+    real(kind=8) :: blrfront, blreps
     character(len=*) :: method, renum, solve, bas
 ! ----------------------------------------------------------------------
 ! ======================================================================
@@ -35,7 +37,6 @@ subroutine crsolv(method, renum, solve, bas)
     integer :: zslvk, zslvr, zslvi
     real(kind=8) :: epsmat
     character(len=1) :: base
-    character(len=3) :: syme
     character(len=8) :: preco
     character(len=19) :: solveu
 !
@@ -49,7 +50,6 @@ subroutine crsolv(method, renum, solve, bas)
     base = bas
 !
     preco = 'SANS'
-    syme = 'NON'
 !
     resire = 1.d-6
     nprec = 8
@@ -80,7 +80,7 @@ subroutine crsolv(method, renum, solve, bas)
         zk24(islvk-1+6) = 'XXXX'
     endif
     zk24(islvk-1+4) = renum
-    zk24(islvk-1+5) = syme
+    zk24(islvk-1+5) = 'XXXX'
     zk24(islvk-1+7) = 'XXXX'
     zk24(islvk-1+8) = 'XXXX'
     zk24(islvk-1+9) = 'XXXX'
@@ -91,8 +91,13 @@ subroutine crsolv(method, renum, solve, bas)
 !
     zr(islvr-1+1) = epsmat
     zr(islvr-1+2) = resire
-    zr(islvr-1+3) = jevtbl('TAILLE_BLOC')
-    zr(islvr-1+4) = 0.d0
+    if (method .eq. 'MUMPS') then
+        zr(islvr-1+3) = blrfront
+        zr(islvr-1+4) = blreps
+    else
+        zr(islvr-1+3) = jevtbl('TAILLE_BLOC')
+        zr(islvr-1+4) = 0.d0
+    endif
 !
     zi(islvi-1+1) = nprec
     zi(islvi-1+2) =-9999

@@ -1,31 +1,15 @@
-subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
-                  mate, carele, sddisc, sddyna, fonact,&
-                  numins, valinc, solalg, lischa, comref,&
-                  defico, resoco, solveu, numedd, numfix,&
-                  compor, carcri, sdstat, sdtime, meelem,&
-                  measse, veelem, nddle, ddlexc, modrig,&
+subroutine nmflma(typmat, mod45 , defo  , ds_algopara, modelz,&
+                  mate  , carele, sddisc, sddyna     , fonact,&
+                  numins, valinc, solalg, lischa     , comref,&
+                  defico, resoco, numedd     , numfix,&
+                  compor, carcri, sdstat, sdtime     , meelem,&
+                  measse, veelem, nddle , ddlexc     , modrig,&
                   ldccvg, matass, matgeo)
 !
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
+use NonLin_Datastructure_type
 !
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+implicit none
 !
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
-! person_in_charge: mickael.abbas at edf.fr
-!
-! aslint: disable=W1504
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/ascoma.h"
@@ -48,17 +32,37 @@ subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
 #include "asterfort/nmcmat.h"
 #include "asterfort/nmxmat.h"
 #include "asterfort/utmess.h"
+!
+! ======================================================================
+! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+! (AT YOUR OPTION) ANY LATER VERSION.
+!
+! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+!
+! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+! ======================================================================
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
     character(len=16) :: typmat, modrig
     character(len=4) :: mod45
     integer :: defo
-    real(kind=8) :: parmet(*)
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     integer :: fonact(*)
     character(len=*) :: modelz
     character(len=24) :: mate, carele
     character(len=24) :: compor, carcri
     character(len=24) :: sdtime, sdstat
     integer :: numins, ldccvg, nddle
-    character(len=19) :: sddisc, sddyna, lischa, solveu
+    character(len=19) :: sddisc, sddyna, lischa
     character(len=24) :: defico, resoco
     character(len=24) :: comref, numedd, numfix, ddlexc
     character(len=19) :: meelem(*), measse(*), veelem(*)
@@ -95,9 +99,7 @@ subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
 ! IN  RESOCO : SD RESOLUTION CONTACT
 ! IN  DEFICO : SD DEFINITION CONTACT
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION (VOIR NMLECT)
-! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION (VOIR NMLECT)
-! IN  SOLVEU : SOLVEUR
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  CARCRI : PARAMETRES METHODES D'INTEGRATION LOCALES (VOIR NMLECT)
 ! IN  SDDISC : SD DISC_INST
 ! IN  PREMIE : SI PREMIER INSTANT DE CALCUL
@@ -129,7 +131,7 @@ subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
 !
     aster_logical :: reasma
     aster_logical :: lcrigi, lcfint, lmacr
-    aster_logical :: lsuiv
+    aster_logical :: l_neum_undead
     character(len=16) :: optrig
     integer :: reincr, iterat
     character(len=8) :: tdiag, syme
@@ -137,10 +139,10 @@ subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
     character(len=19) :: rigi2, masse, memass, megeom
     character(len=19) :: depplu, vitplu, accplu, sigplu, varplu, valin2(zvalin)
     integer :: nmax
-    integer :: nbmatr, jexx
-    character(len=6) :: ltypma(20)
-    character(len=16) :: loptme(20), loptma(20), modlag
-    aster_logical :: lassme(20), lcalme(20)
+    integer :: nb_matr, jexx
+    character(len=6) :: list_matr_type(20)
+    character(len=16) :: list_calc_opti(20), list_asse_opti(20), modlag
+    aster_logical :: list_l_asse(20), list_l_calc(20)
     integer :: ifm, niv
 !
 ! ----------------------------------------------------------------------
@@ -154,11 +156,10 @@ subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
         write (ifm,*) '<MECANONLINE> ...... CALCUL MATRICE'
     endif
 !
-! --- INITIALISATIONS
+! - Initializations
 !
-    call nmcmat('INIT', ' ', ' ', ' ', .true._1,&
-                .true._1, nbmatr, ltypma, loptme, loptma,&
-                lcalme, lassme)
+    nb_matr              = 0
+    list_matr_type(1:20) = ' '
     codere = '&&NMFLMA.CODERE'
     iterat = 0
 !
@@ -171,8 +172,8 @@ subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
-    lsuiv = isfonc(fonact,'FORCE_SUIVEUSE')
-    lmacr = isfonc(fonact,'MACR_ELEM_STAT')
+    l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
+    lmacr         = isfonc(fonact,'MACR_ELEM_STAT')
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
@@ -200,9 +201,9 @@ subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
 !
     rigi2 = '&&NMFLMA.RIGISYME'
 !
-! --- PARAMETRES
+! - Get parameter
 !
-    reincr = nint(parmet(1))
+    reincr = ds_algopara%reac_incr
 !
 ! --- REASSEMBLAGE DE LA MATRICE GLOBALE
 !
@@ -237,60 +238,60 @@ subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
 ! --- CALCUL DES MATR-ELEM DE RIGIDITE
 !
     if (lcrigi) then
-        call nmcmat('AJOU', 'MERIGI', optrig, ' ', .true._1,&
-                    reasma, nbmatr, ltypma, loptme, loptma,&
-                    lcalme, lassme)
+        call nmcmat('MERIGI', optrig, ' ', .true._1,&
+                    reasma, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                    list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL DES MATR-ELEM DES CHARGEMENTS SUIVEURS
 !
-    if (lsuiv) then
-        call nmcmat('AJOU', 'MESUIV', ' ', ' ', .true._1,&
-                    .false._1, nbmatr, ltypma, loptme, loptma,&
-                    lcalme, lassme)
+    if (l_neum_undead) then
+        call nmcmat('MESUIV', ' ', ' ', .true._1,&
+                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                    list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL DE LA RIGIDITE GEOMETRIQUE DANS LE CAS HPP
 !
     if (mod45 .eq. 'FLAM') then
         if (defo .eq. 0) then
-            call nmcmat('AJOU', 'MEGEOM', ' ', ' ', .true._1,&
-                        .false._1, nbmatr, ltypma, loptme, loptma,&
-                        lcalme, lassme)
+            call nmcmat('MEGEOM', ' ', ' ', .true._1,&
+                        .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                        list_l_calc, list_l_asse)
         endif
     endif
 !
 ! --- CALCUL DES MATR-ELEM DES SOUS-STRUCTURES
 !
     if (lmacr) then
-        call nmcmat('AJOU', 'MESSTR', ' ', ' ', .true._1,&
-                    .false._1, nbmatr, ltypma, loptme, loptma,&
-                    lcalme, lassme)
+        call nmcmat('MESSTR', ' ', ' ', .true._1,&
+                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                    list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
-    if (nbmatr .gt. 0) then
+    if (nb_matr .gt. 0) then
         call nmxmat(modelz, mate, carele, compor, carcri,&
                     sddisc, sddyna, fonact, numins, iterat,&
                     valin2, solalg, lischa, comref, defico,&
-                    resoco, solveu, numedd, numfix, sdstat,&
-                    sdtime, nbmatr, ltypma, loptme, loptma,&
-                    lcalme, lassme, lcfint, meelem, measse,&
+                    resoco, numedd, numfix, sdstat, ds_algopara,&
+                    sdtime, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                    list_l_calc, list_l_asse, lcfint, meelem, measse,&
                     veelem, ldccvg, codere)
     endif
 !
 ! --- ON RECONSTRUIT RIGI2 TOUJOURS SYMETRIQUE
 !
-    call asmari(fonact, meelem, numedd, solveu, lischa,&
+    call asmari(fonact, meelem, numedd, lischa, ds_algopara,&
                 rigi2)
     matass = rigi2
 !
 ! --- PRISE EN COMPTE DE LA MATRICE TANGENTE DES FORCES SUIVEUSES
 !
     if (reasma) then
-        if (lsuiv) then
-            call ascoma(meelem, numedd, solveu, lischa, matass)
+        if (l_neum_undead) then
+            call ascoma(meelem, numedd, lischa, matass)
         endif
     endif
 !
@@ -308,7 +309,7 @@ subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
 !
     if (mod45 .eq. 'FLAM') then
         if (defo .eq. 0) then
-            call asmatr(1, megeom, ' ', numedd, solveu,&
+            call asmatr(1, megeom, ' ', numedd, &
                         lischa, 'ZERO', 'V', 1, matgeo)
             if ((nddle.ne.0) .and. (modrig(1:13).eq.'MODI_RIGI_OUI')) then
                 call matide(matgeo, nddle, zk8(jexx), modlag, tdiag,&
@@ -318,7 +319,7 @@ subroutine nmflma(typmat, mod45, defo, parmet, modelz,&
             matgeo = matass
         endif
     else if (mod45 .eq. 'VIBR') then
-        call asmama(memass, ' ', numedd, solveu, lischa,&
+        call asmama(memass, ' ', numedd, lischa,&
                     matgeo)
     endif
 !

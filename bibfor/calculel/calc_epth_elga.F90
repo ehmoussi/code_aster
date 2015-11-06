@@ -6,9 +6,7 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/matrot.h"
-#include "asterfort/get_elas_type.h"
-#include "asterfort/get_meta_phasis.h"
-#include "asterfort/get_meta_type.h"
+#include "asterfort/get_elas_id.h"
 #include "asterfort/jevech.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/tecael.h"
@@ -48,14 +46,14 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! Compute thermic strains
-! 
+!
 ! For isoparametric elements
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  fami         : Gauss family for integration point rule
 ! In  ndim         : dimension of space
-! In  poum         : parameters evaluation 
+! In  poum         : parameters evaluation
 !                     '-' for previous temperature
 !                     '+' for current temperature
 !                     'T' for current and previous temperature
@@ -68,14 +66,12 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: elem_name
-    character(len=16) :: elas_keyword, rela_comp
-    character(len=32) :: valk(2)
-    integer :: elas_type, meta_type, nb_phasis, iret
-    real(kind=8) :: angl(3), epsthe(3), phase(2)
-    real(kind=8) :: dire(3), orig(3), p_glob_loca(3, 3), epsi_ther_vect(6), epsi_ther_scal
-    real(kind=8) :: vepst1(6), vepst2(6), zcold, zhot
-    integer :: iadzi, iazk24, icompo
+    character(len=16) :: elas_keyword
+    integer :: elas_id
+    real(kind=8) :: angl(3)
+    real(kind=8) :: dire(3), orig(3), p_glob_loca(3, 3), epsi_ther_vect(6)
+    real(kind=8) :: epsth, epsth_anis(3)
+    real(kind=8) :: vepst1(6), vepst2(6)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -83,33 +79,12 @@ implicit none
 !
 ! - Get elasticity type
 !
-    call get_elas_type(j_mater, elas_type, elas_keyword)
-    ASSERT(elas_type.le.3)
-!
-! - Comportment
-!
-    call tecach('NNN', 'PCOMPOR', 'L', iret, iad=icompo)
-    if (iret.eq.0) then
-        rela_comp  = zk16(icompo)
-    else
-        rela_comp = 'Unknown'
-    endif
-!
-! - Strains for metallurgical laws: not possible except META_LEMA_ANI
-!
-    if (elas_keyword.eq.'ELAS_META') then
-        if (rela_comp.ne.'META_LEMA_ANI') then
-            call tecael(iadzi, iazk24)
-            elem_name = zk24(iazk24-1+3) (1:8)
-            valk(1) = elem_name
-            valk(2) = 'EPVC_ELGA'
-            call utmess('F', 'COMPOR5_11', nk = 2, valk = valk)
-        endif
-    endif
+    call get_elas_id(j_mater, elas_id, elas_keyword)
+    ASSERT(elas_id.le.3)
 !
 ! - Non-isotropic elasticity: prepare basis
 !
-    if (elas_type.gt.1)  then
+    if (elas_id.gt.1)  then
         if (repere(1) .gt. 0.d0) then
             angl(1) = repere(2)
             angl(2) = repere(3)
@@ -128,33 +103,32 @@ implicit none
 !
 ! - Compute (local) thermic strains
 !
-    if (elas_type.eq.1) then
-        if (rela_comp.eq.'META_LEMA_ANI') then
-            call get_meta_type(meta_type, nb_phasis)
-            ASSERT(nb_phasis.eq.2)
-            call get_meta_phasis(fami     , '+' , kpg   , ksp , meta_type,&
-                                 nb_phasis, phase, zcold_ = zcold, zhot_ = zhot)
-            call verift(fami, kpg, ksp, '+', j_mater,&
-                        vepsth=epsthe)
-            epsi_ther_scal = zhot*epsthe(1) + zcold*epsthe(2)
+    if (elas_id.eq.1) then
+        if (elas_keyword.eq.'ELAS_META') then
+            call verift(fami, kpg, ksp, poum, j_mater,&
+                        epsth_meta_= epsth)
         else
             call verift(fami, kpg, ksp, poum, j_mater,&
-                        epsth = epsi_ther_scal)
-        endif        
-        epsi_ther(1) = epsi_ther_scal
-        epsi_ther(2) = epsi_ther_scal
-        epsi_ther(3) = epsi_ther_scal
-    else if (elas_type.eq.2)  then
+                        epsth_ = epsth)
+        endif
+        epsi_ther(1) = epsth
+        epsi_ther(2) = epsth
+        epsi_ther(3) = epsth
+    else if (elas_id.eq.2)  then
         call verift(fami, kpg, ksp, poum, j_mater,&
-                    vepsth=epsi_ther_vect)
+                    epsth_anis_=epsth_anis)
+        epsi_ther_vect(1) = epsth_anis(1)
+        epsi_ther_vect(2) = epsth_anis(2)
+        epsi_ther_vect(3) = epsth_anis(3)
         epsi_ther_vect(4) = 0.d0
         epsi_ther_vect(5) = 0.d0
         epsi_ther_vect(6) = 0.d0
-    else if (elas_type.eq.3) then
+    else if (elas_id.eq.3) then
         call verift(fami, kpg, ksp, poum, j_mater,&
-                    vepsth=epsi_ther_vect)
-        epsi_ther_vect(3) = epsi_ther_vect(2)
-        epsi_ther_vect(2) = epsi_ther_vect(1)
+                    epsth_anis_=epsth_anis)
+        epsi_ther_vect(1) = epsth_anis(1)
+        epsi_ther_vect(2) = epsth_anis(1)
+        epsi_ther_vect(3) = epsth_anis(2)
         epsi_ther_vect(4) = 0.d0
         epsi_ther_vect(5) = 0.d0
         epsi_ther_vect(6) = 0.d0
@@ -164,7 +138,7 @@ implicit none
 !
 ! - Non-isotropic elasticity: rotate strains
 !
-    if (elas_type.gt.1)  then
+    if (elas_id.gt.1)  then
         vepst1(1)=epsi_ther_vect(1)
         vepst1(2)=epsi_ther_vect(4)
         vepst1(3)=epsi_ther_vect(2)

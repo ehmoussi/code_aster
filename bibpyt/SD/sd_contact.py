@@ -18,6 +18,7 @@
 
 from SD import *
 from SD.sd_char_meca import sd_char_chme
+from SD.sd_char_meca import sd_char_dual
 from SD.sd_ligrel import sd_ligrel
 from sd_prof_chno import sd_prof_chno
 from SD.sd_champ import sd_champ
@@ -264,10 +265,12 @@ class sd_contact(AsBase):
 
 #   Formulation XFEM
 
-    MODELX = Facultatif(AsVK8(SDNom(nomj='.CONTACT.MODELX')))
     CARAXF = Facultatif(AsVR(SDNom(nomj='.CONTACT.CARAXF')))
     XFIMAI = Facultatif(AsVK8(SDNom(nomj='.CONTACT.XFIMAI')))
     XNRELL = Facultatif(AsVK24(SDNom(nomj='.CONTACT.XNRELL')))
+
+#   Relations linéaires pour LBB
+    RELLBB = Facultatif(sd_char_dual(SDNom(nomj='.DUAL')))
 
 #   Objet spécifique grands glissements
     MAESCX = Facultatif(AsVI(SDNom(nomj='.CONTACT.MAESCX')))
@@ -280,7 +283,6 @@ class sd_contact(AsBase):
         if (self.formulation_xfem()):
             nzoco, nsuco, nmaco, nnoco, ntnoe, ntmae, ntpt, ntelno = self.dimeCO(
             )
-            assert self.MODELX.lonmax == 1
             assert self.CARAXF.lonmax == self.zcmxf * nzoco
             assert self.XFIMAI.lonmax == nzoco
             assert self.XNRELL.exists
@@ -289,15 +291,6 @@ class sd_contact(AsBase):
                 assert self.MAESCX.lonuti == self.zmesx * ntmae
         return
 
-    # Verification MODELE xfem
-    def check_char_contact_xfem_MODELX(self, checker):
-        if not self.formulation_xfem():
-            return
-        # glute en attendant que sd_modele_xfem soit OK
-        return True
-        nom = self.MODELX.get()[0]
-        sd2 = sd_modele_xfem(nom)
-        sd2.check(checker)
 
     def check_char_contact_xfem_XNRELL(self, checker):
         if (self.formulation_xfem()):

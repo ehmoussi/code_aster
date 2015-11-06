@@ -1,15 +1,15 @@
-subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
-                  sddyna, sdconv, sdimpr, defico, resoco,&
-                  matass, numins, conv, resi_glob_rela, resi_glob_maxi,&
-                  eta, comref, valinc, solalg, veasse,&
-                  measse, vrela, vmaxi, vchar, vresi,&
-                  vrefe, vinit, vcomp, vfrot, vgeom)
+subroutine nmresi(noma  , mate   , numedd  , sdnume  , fonact,&
+                  sddyna, ds_conv, ds_print, defico  , resoco,&
+                  matass, numins , eta     , comref  , valinc,&
+                  solalg, veasse , measse  , ds_inout, vresi ,&
+                  vchar)
 !
-    implicit none
+use NonLin_Datastructure_type
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterc/getfac.h"
 #include "asterc/r8vide.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
@@ -24,6 +24,8 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
 #include "asterfort/nmequi.h"
 #include "asterfort/nmigno.h"
 #include "asterfort/nmimre.h"
+#include "asterfort/nmimre_dof.h"
+#include "asterfort/GetResi.h"
 #include "asterfort/nmpcin.h"
 #include "asterfort/nmrede.h"
 #include "asterfort/nmvcmx.h"
@@ -51,7 +53,9 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
     character(len=8) :: noma
     character(len=24) :: numedd
     character(len=24) :: defico, resoco
-    character(len=24) :: sdimpr, sdconv, mate
+    type(NL_DS_Conv), intent(inout) :: ds_conv
+    type(NL_DS_Print), intent(inout) :: ds_print
+    character(len=24) :: mate
     integer :: numins
     character(len=19) :: sddyna, sdnume
     character(len=19) :: measse(*), veasse(*)
@@ -59,29 +63,28 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
     character(len=19) :: matass
     character(len=24) :: comref
     integer :: fonact(*)
-    real(kind=8) :: eta, conv(*), resi_glob_rela, resi_glob_maxi
-    real(kind=8) :: vrela, vmaxi, vchar, vresi, vrefe, vinit, vcomp, vfrot
-    real(kind=8) :: vgeom
+    real(kind=8) :: eta
+    type(NL_DS_InOut), intent(in) :: ds_inout
+    real(kind=8), intent(out) :: vchar
+    real(kind=8), intent(out) :: vresi
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (UTILITAIRE)
+! MECA_NON_LINE - Convergence management
 !
-! CALCULS DES RESIDUS D'EQUILIBRE ET DES CHARGEMENTS POUR
-! ESTIMATION DE LA CONVERGENCE
+! Compute residuals
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  NOMA   : NOM DU MAILLAGE
-! IN  SDIMPR : SD AFFICHAGE
+! IO  ds_print         : datastructure for printing parameters
 ! IN  NUMEDD : NUMEROTATION NUME_DDL
 ! IN  SDNUME : NOM DE LA SD NUMEROTATION
-! IN  SDCONV : SD GESTION DE LA CONVERGENCE
+! In  ds_inout         : datastructure for input/output management
+! IO  ds_conv          : datastructure for convergence management
 ! IN  COMREF : VARI_COM REFE
 ! IN  MATASS : MATRICE DU PREMIER MEMBRE ASSEMBLEE
 ! IN  NUMINS : NUMERO D'INSTANT
-! IN  resi_glob_rela : RESI_GLOB_RELA
 ! IN  DEFICO : SD POUR LA DEFINITION DE CONTACT
 ! IN  RESOCO : SD POUR LA RESOLUTION DE CONTACT
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -89,22 +92,13 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
 ! IN  ETA    : COEFFICIENT DE PILOTAGE
-! OUT CONV   : INFORMATIONS SUR LA CONVERGENCE DU CALCUL
-!                 3 - RESI_GLOB_RELA
-!                 4 - RESI_GLOB_MAXI
-! OUT VRELA  : RESI_GLOB_RELA MAXI
-! OUT VMAXI  : RESI_GLOB_MAXI MAXI
-! OUT VCHAR  : CHARGEMENT EXTERIEUR MAXI
-! OUT VRESI  : RESIDU EQUILIBRE MAXI
-! OUT VREFE  : RESI_GLOB_REFE MAXI
-! OUT VINIT  : CONTRAINTES INITIALES MAXI
-! OUT VCOMP  : RESI_COMP_RELA MAXI
-! OUT VFROT  : RESI_FROT MAXI
+! Out vresi            : norm of equilibrium residual
+! Out vchar            : norm of exterior loads
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: jccid=0, jdiri=0, jvcfo=0, jiner=0
-    integer :: ifm=0, niv=0, nocc=0
+    integer :: ifm=0, niv=0
     integer :: neq=0
     character(len=8) :: noddlm=' '
     aster_logical :: ldyna, lstat, lcine, lctcc
@@ -115,14 +109,16 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
     character(len=19) :: cnfnod=' ', cndipi=' ', cndfdo=' '
     integer :: jfnod=0
     integer :: ieq=0
-    aster_logical :: lrefe=.false._1, linit=.false._1, lcmp=.false._1
+    aster_logical :: lrefe=.false._1, linit=.false._1, lcmp=.false._1, l_rela=.false._1
     real(kind=8) :: val1=0.d0, val4=0.d0, val5=0.d0
     real(kind=8) :: maxres=0.d0
     integer :: irela=0, imaxi=0, iresi=0, irefe=0, ichar=0, icomp=0
     aster_logical :: lndepl=.false._1, lpilo=.false._1
+    real(kind=8) :: resi_glob_rela, resi_glob_maxi
     character(len=16) :: nfrot=' ', ngeom=' '
     character(len=24) :: sdnuco=' '
     integer :: jnuco=0
+    real(kind=8) :: vrela, vmaxi, vrefe, vinit, vcomp, vfrot, vgeom
     real(kind=8), pointer :: budi(:) => null()
     real(kind=8), pointer :: dfdo(:) => null()
     real(kind=8), pointer :: dipi(:) => null()
@@ -132,13 +128,10 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
     real(kind=8), pointer :: vcf1(:) => null()
     integer, pointer :: deeq(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ... CALCUL DES RESIDUS'
     endif
@@ -172,8 +165,7 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
     lpilo = isfonc(fonact,'PILOTAGE')
     lcine = isfonc(fonact,'DIRI_CINE')
     lctcc = isfonc(fonact,'CONT_CONTINU')
-    call getfac('ETAT_INIT', nocc)
-    linit = (numins.eq.1).and.(nocc.eq.0)
+    linit = (numins.eq.1).and.(ds_inout%l_state_init)
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
@@ -222,7 +214,6 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
 !
     call dismoi('PROF_CHNO', depmoi, 'CHAM_NO', repk=profch)
     call jeveuo(profch(1:19)//'.DEEQ', 'L', vi=deeq)
-!
 !
 ! --- CALCULE LE MAX DES RESIDUS PAR CMP POUR LE RESIDU RESI_COMP_RELA
 !
@@ -290,8 +281,7 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
 ! --- CALCUL DU RESIDU A PROPREMENT PARLER
 !
         if (lpilo) then
-            val1 = abs(fint(ieq)+zr(jdiri+ieq-1)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1)-eta*dipi(ieq)&
-                   )
+            val1 = abs(fint(ieq)+zr(jdiri+ieq-1)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1)-eta*dipi(ieq))
         else
             val1 = abs( fint(ieq)+zr(jdiri+ieq-1)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1) )
         endif
@@ -307,10 +297,8 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
 !
         if (lrefe) then
             if (deeq(2*ieq) .gt. 0) then
-                val4 = abs(&
-                       fint(ieq)+zr(jdiri+ieq-1)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1))/refe(1+ieq- &
-                       &1&
-                       )
+                val4 = abs(fint(ieq)+zr(jdiri+ieq-1)+budi(ieq) -fext(ieq)-dfdo(1+ieq-1))/&
+                       refe(ieq)
                 if (vrefe .le. val4) then
                     vrefe = val4
                     irefe = ieq
@@ -326,7 +314,6 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
                 vinit = val5
             endif
         endif
-!
  20     continue
     end do
 !
@@ -352,32 +339,36 @@ subroutine nmresi(noma, mate, numedd, sdnume, fonact,&
                     vfrot, nfrot, vgeom, ngeom)
     endif
 !
-! --- ECRITURE DES INFOS SUR LES RESIDUS POUR AFFICHAGE
+! - Save informations about residuals into convergence datastructure
 !
-    call nmimre(numedd, sdimpr, sdconv, vrela, vmaxi,&
-                vrefe, vcomp, vfrot, vgeom, irela,&
-                imaxi, irefe, noddlm, icomp, nfrot,&
-                ngeom)
+    call nmimre_dof(numedd, ds_conv, vrela, vmaxi, vrefe, &
+                    vcomp , vfrot  , vgeom, irela, imaxi, &
+                    irefe , noddlm , icomp, nfrot, ngeom)
 !
-! --- SAUVEGARDES RESIDUS
+! - Set value of residuals informations in convergence table
 !
-    conv(3) = vrela
-    conv(4) = vmaxi
+    call nmimre(ds_conv, ds_print)
+!
+! - Get convergence parmeters
+!
+    call GetResi(ds_conv, type = 'RESI_GLOB_RELA' , user_para_ = resi_glob_rela,&
+                 l_resi_test_ = l_rela)
+    call GetResi(ds_conv, type = 'RESI_GLOB_MAXI' , user_para_ = resi_glob_maxi)
 !
 ! --- VERIFICATION QUE LES VARIABLES DE COMMANDE INITIALES CONDUISENT
 ! --- A DES FORCES NODALES NULLES
 !
     if (linit) then
-        if (resi_glob_rela .eq. r8vide()) then
-            if (vinit .gt. resi_glob_maxi) then
-                call nmvcmx(mate, noma, comref, commoi)
-            endif
-        else
+        if (l_rela) then
             if (vchar .gt. resi_glob_rela) then
                 vinit = vinit/vchar
                 if (vinit .gt. resi_glob_rela) then
                     call nmvcmx(mate, noma, comref, commoi)
                 endif
+            endif
+        else
+            if (vinit .gt. resi_glob_maxi) then
+                call nmvcmx(mate, noma, comref, commoi)
             endif
         endif
     endif

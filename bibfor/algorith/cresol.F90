@@ -51,11 +51,9 @@ subroutine cresol(solveu, basz)
     integer :: istop, nsolve, ibid, nprec, islvk, islvr, islvi, n1
     real(kind=8) :: epsmat
     character(len=1) :: base
-    character(len=3) :: syme, mixpre, kmd, kellag
+    character(len=3) :: mixpre, kellag
     character(len=8) :: kstop, modele, kxfem
-    character(len=8) :: partit
     character(len=16) :: method, nomsol
-    character(len=19) :: ligrmo
     integer :: eximc
 !
 ! ----------------------------------------------------------------------
@@ -68,13 +66,11 @@ subroutine cresol(solveu, basz)
 !
 ! --- INITS. GLOBALES (CAR MOT-CLES OPTIONNELS)
     nomsol='SOLVEUR'
-    syme='NON'
     nprec=8
     istop=0
     kstop=' '
     epsmat=-1.d0
     mixpre='NON'
-    kmd='NON'
     modele = ' '
     kellag='NON'
     kxfem=' '
@@ -104,12 +100,6 @@ subroutine cresol(solveu, basz)
         endif
     endif
 !
-! ----- SYME
-    eximc=getexm(nomsol,'SYME')
-    if (eximc .eq. 1) then
-        call getvtx(nomsol, 'SYME', iocc=1, scal=syme, nbret=ibid)
-    endif
-!
 ! ----- FILTRAGE_MATRICE
     eximc=getexm(nomsol,'FILTRAGE_MATRICE')
     if (eximc .eq. 1) then
@@ -120,19 +110,6 @@ subroutine cresol(solveu, basz)
     eximc=getexm(nomsol,'MIXER_PRECISION')
     if (eximc .eq. 1) then
         call getvtx(nomsol, 'MIXER_PRECISION', iocc=1, scal=mixpre, nbret=ibid)
-    endif
-!
-! ------ MATR_DISTRIBUEE
-    eximc=getexm(nomsol,'MATR_DISTRIBUEE')
-    if (eximc .eq. 1) then
-        call getvtx(nomsol, 'MATR_DISTRIBUEE', iocc=1, scal=kmd, nbret=ibid)
-        call getvid(' ', 'MODELE', scal=modele, nbret=ibid)
-        ligrmo=modele//'.MODELE'
-        call dismoi('PARTITION', ligrmo, 'LIGREL', repk=partit)
-        if ((partit.eq.' ') .and. (kmd.eq.'OUI')) then
-            kmd='NON'
-            call utmess('I', 'ASSEMBLA_3')
-        endif
     endif
 !
 ! ------ ELIM_LAGR
@@ -169,28 +146,28 @@ subroutine cresol(solveu, basz)
 !
     if (method .eq. 'MUMPS') then
 !     -----------------------------
-        call crsvmu(nomsol, solveu, istop, nprec, syme,&
-                    epsmat, mixpre, kmd, kellag, kxfem)
+        call crsvmu(nomsol, solveu, istop, nprec,&
+                    epsmat, mixpre, kellag, kxfem)
 !
     else if (method.eq.'PETSC') then
 !     -----------------------------
-        call crsvpe(nomsol, solveu, istop, nprec, syme,&
-                    epsmat, mixpre, kmd, kellag, kxfem)
+        call crsvpe(nomsol, solveu, istop, nprec,&
+                    epsmat, mixpre, kellag, kxfem)
 !
     else if (method.eq.'LDLT') then
 !     -----------------------------
-        call crsvld(nomsol, solveu, istop, nprec, syme,&
-                    epsmat, mixpre, kmd, kellag, kxfem)
+        call crsvld(nomsol, solveu, istop, nprec,&
+                    epsmat, mixpre, kellag, kxfem)
 !
     else if (method.eq.'GCPC') then
 !     -----------------------------
-        call crsvgc(nomsol, solveu, istop, nprec, syme,&
-                    epsmat, mixpre, kmd, kellag, kxfem)
+        call crsvgc(nomsol, solveu, istop, nprec,&
+                    epsmat, mixpre, kellag, kxfem)
 !
     else if (method.eq.'MULT_FRONT') then
 !     -----------------------------
-        call crsvmf(nomsol, solveu, istop, nprec, syme,&
-                    epsmat, mixpre, kmd, kellag, kxfem)
+        call crsvmf(nomsol, solveu, istop, nprec,&
+                    epsmat, mixpre, kellag, kxfem)
 !
     else
         ASSERT(.false.)

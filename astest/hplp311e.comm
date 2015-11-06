@@ -1,6 +1,6 @@
 # TITRE MURA 11.17 FISSURE SOUS FLUX DE CHALEUR UNIFORME
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -198,7 +198,6 @@ G00=CALC_G(        RESULTAT=RESU,
 GK00=CALC_G(        RESULTAT=RESU,
                     THETA=_F(R_INF = 3.75E-3,
                               R_SUP = 7.50E-3,
-                              DIRECTION=(1., 0., 0.,),
                               FOND_FISS=FOND),
                     EXCIT=_F(CHARGE=CH,),
                     OPTION='CALC_K_G'
@@ -243,7 +242,6 @@ G01=CALC_G(        RESULTAT=RESU,
 GK01=CALC_G(       RESULTAT=RESU,
                    THETA=_F(R_INF = 7.50E-3,
                               R_SUP = 1.125E-2,
-                              DIRECTION=(1., 0., 0.,),
                               FOND_FISS=FOND),
                    EXCIT=_F(CHARGE=CH,),
                    OPTION='CALC_K_G'
@@ -288,7 +286,6 @@ G02=CALC_G(        RESULTAT=RESU,
 GK02=CALC_G(        RESULTAT=RESU,
                     THETA=_F(R_INF = 1.125E-2,
                               R_SUP = 1.500E-2,
-                              DIRECTION=(1., 0., 0.,),
                               FOND_FISS=FOND),
                     EXCIT=_F(CHARGE=CH,),
                     OPTION='CALC_K_G'
@@ -333,7 +330,6 @@ G03=CALC_G(        RESULTAT=RESU,
 GK03=CALC_G(        RESULTAT=RESU,
                     THETA=_F(R_INF = 1.500E-2,
                               R_SUP = 1.875E-2,
-                              DIRECTION=(1., 0., 0.,),
                               FOND_FISS=FOND),
                     EXCIT=_F(CHARGE=CH,),
                     OPTION='CALC_K_G'

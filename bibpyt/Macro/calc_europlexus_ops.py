@@ -294,6 +294,16 @@ class EUROPLEXUS:
             self.PAS_NBRE_COURBE = args['PAS_NBRE_COURBE']
         else:
             self.PAS_NBRE_COURBE = None
+            
+        if args.has_key('INST_COURBE'):
+            self.INST_COURBE = args['INST_COURBE']
+        else:
+            self.INST_COURBE = None
+        
+        if args.has_key('NUME_ORDRE_COURBE'):
+            self.NUME_ORDRE_COURBE = args['NUME_ORDRE_COURBE']
+        else:
+            self.NUME_ORDRE_COURBE = None
 
         if args.has_key('TABLE_COURBE'):
             self.TABLE_COURBE = args['TABLE_COURBE']
@@ -318,6 +328,9 @@ class EUROPLEXUS:
             nom_fic = nom_fichiers[fic]
             nom_fichiers[fic] = os.path.join(self.REPE_epx, nom_fic)
         self.nom_fichiers = nom_fichiers
+
+        # creation du dictionnaire de données complementaires sur les modélisations
+        self.info_mode_compl = {}
 
 
   #-----------------------------------------------------------------------
@@ -442,10 +455,10 @@ class EUROPLEXUS:
         """
         from Calc_epx.calc_epx_geom import export_modele
 
-        [self.epx, self.dic_epx_geom, self.gmaInterfaces, self.modi_repere,
+        [self.epx, self.dic_epx_geom, self.modi_repere,
          self.etat_init_cont] = export_modele(self.epx, self.MAILLAGE,
-                                              self.MODELE, self.INTERFACES,
-                                              self.mode_from_cara)
+                                              self.MODELE, self.gmaInterfaces,
+                                              self.info_mode_compl)
 
    #-----------------------------------------------------------------------
     def export_CARA_ELEM(self):
@@ -509,7 +522,7 @@ class EUROPLEXUS:
 
                     self.dicOrthotropie = dicOrthotropie
 
-        self.mode_from_cara = mode_from_cara
+        self.info_mode_compl.update(mode_from_cara)
 
 
     #-----------------------------------------------------------------------
@@ -521,9 +534,10 @@ class EUROPLEXUS:
         """
         from Calc_epx.calc_epx_mate import export_mate
 
-        self.epx, self.compor_gr = export_mate(self.epx, self.CHAM_MATER,
-                  self.COMPORTEMENT,self.gmaInterfaces, self.dicOrthotropie)
+        self.epx, self.compor_gr, mode_from_compor, self.gmaInterfaces = export_mate(self.epx, self.CHAM_MATER,
+                  self.COMPORTEMENT,self.INTERFACES, self.dicOrthotropie)
 
+        self.info_mode_compl.update(mode_from_compor)
 
   #-----------------------------------------------------------------------
     def export_EXCIT(self):
@@ -541,8 +555,8 @@ class EUROPLEXUS:
             et fichiers.
         """
         from Calc_epx.calc_epx_struc import BLOC_DONNEES
-        from Calc_epx.calc_epx_cata import cata_champs, cata_inst, cata_courbe
-        from Calc_epx.calc_epx_utils import get_val_exclu
+        from Calc_epx.calc_epx_cata import cata_champs
+        from Calc_epx.calc_epx_utils import ctime
         epx = self.epx
 
         directive = 'ECRITURE'
@@ -554,20 +568,26 @@ class EUROPLEXUS:
         if self.OBSERVATION is not None:
             listing_fact = self.OBSERVATION.List_F()[0]
             nom_cham = tolist(listing_fact['NOM_CHAM'])
-            cle_freq_listing, vale_freq_listing = get_val_exclu(listing_fact,
-                                                                cata_inst)
+            
             # champs
             for cham_aster in nom_cham:
                 cham_epx = cata_champs[cham_aster]
                 bloc_champ = BLOC_DONNEES(cham_epx)
                 epx[directive].add_bloc(bloc_champ)
-            bloc_freq = BLOC_DONNEES(cle_freq_listing, cle=vale_freq_listing)
-            epx[directive].add_bloc(bloc_freq)
+            
+            # instants
+            blocs_inst = ctime(listing_fact)
+            for bloc in blocs_inst:
+                epx[directive].add_bloc(bloc)
 
             # noeuds
             if listing_fact.has_key('TOUT_GROUP_NO'):
                 # tous les noeuds du modèle
-                epx[directive].add_bloc(bloc_poin)
+                if bloc_poin is not None:
+                    epx[directive].add_bloc(bloc_poin)
+                else:
+                    bloc = BLOC_DONNEES('NOPO')
+                    epx[directive].add_bloc(bloc)
             elif listing_fact.has_key('GROUP_NO'):
                 gr_no = tolist(listing_fact['GROUP_NO'])
                 bloc = BLOC_DONNEES('POIN', l_group=gr_no,)
@@ -579,7 +599,11 @@ class EUROPLEXUS:
             # mailles
             if listing_fact.has_key('TOUT_GROUP_MA'):
                 # toutes les mailles du modèle
-                epx[directive].add_bloc(bloc_elem)
+                if bloc_elem is not None:
+                    epx[directive].add_bloc(bloc_elem)
+                else:
+                    bloc = BLOC_DONNEES('NOEL')
+                    epx[directive].add_bloc(bloc)
             elif listing_fact.has_key('GROUP_MA'):
                 gr_ma = tolist(listing_fact['GROUP_MA'])
                 bloc = BLOC_DONNEES('ELEM', l_group=gr_ma,)
@@ -595,16 +619,21 @@ class EUROPLEXUS:
 
             concept_bid = {}
             if self.PAS_NBRE_COURBE:
-                concept_bid['PAS_NBRE_COURBE'] = self.PAS_NBRE_COURBE
-            elif self.PAS_INST_COURBE:
-                concept_bid['PAS_INST_COURBE'] = self.PAS_INST_COURBE
+                concept_bid['PAS_NBRE'] = self.PAS_NBRE_COURBE
+            if self.PAS_INST_COURBE:
+                concept_bid['PAS_INST'] = self.PAS_INST_COURBE
+            if self.INST_COURBE:
+                concept_bid['INST'] = self.INST_COURBE
+            if self.NUME_ORDRE_COURBE:
+                concept_bid['NUME_ORDRE'] = self.NUME_ORDRE_COURBE
 
             mot_cle = "FICHIER ALIT 11"
             objet = epx[directive].add_mcfact(mot_cle)
-
-            cle_freq, vale_freq = get_val_exclu(concept_bid, cata_courbe)
-            bloc_freq = BLOC_DONNEES(cle_freq, cle=vale_freq)
-            objet.add_bloc(bloc_freq)
+            
+            # instants
+            blocs_inst = ctime(concept_bid)
+            for bloc in blocs_inst:
+                objet.add_bloc(bloc)
 
             # Liste les noeuds a postraiter
             lnoeuds = set()
@@ -641,17 +670,19 @@ class EUROPLEXUS:
             mot_cle = "FICHIER MED"
             objet = epx[directive].add_mcfact(mot_cle)
 
-            cle_freq_champ, vale_freq_champ = get_val_exclu(champ_fact,
-                                                           cata_inst)
             fichier_med = "'%s'"%(self.nom_fichiers['MED'])
             bloc_fic = BLOC_DONNEES(fichier_med)
             objet.add_bloc(bloc_fic)
-            bloc_freq = BLOC_DONNEES(cle_freq_champ, cle=vale_freq_champ)
-            objet.add_bloc(bloc_freq)
+            # instants
+            blocs_inst = ctime(champ_fact)
+            for bloc in blocs_inst:
+                objet.add_bloc(bloc)
 
             # tous les groupes de mailles du modèle
-            objet.add_bloc(bloc_poin)
-            objet.add_bloc(bloc_elem)
+            if bloc_poin is not None:
+                objet.add_bloc(bloc_poin)
+            if bloc_elem is not None:
+                objet.add_bloc(bloc_elem)
 
         # FICHIER SAUV
         mot_cle = 'FICHIER SAUV'
@@ -708,42 +739,43 @@ class EUROPLEXUS:
         # Dictionnaire décrivant les légendes des abscisses et ordodonnees
         # des courbes imprimées et utilisées dans get_tables.
         self.legend_courbes = {}
-        entites_courbe = ['GROUP_NO', 'GROUP_MA']
-        entite_EPX = {'GROUP_NO' : 'NOEUD', 'GROUP_MA' : 'ELEM'}
-        icourbe = 0
+        dic_entite = {'GROUP_NO' : 'NOEUD', 'GROUP_MA' : 'ELEM'}
+        nb_courbe = 0
         lnoeuds = []
-        for table in courbe_fact:
-            for entite_type in entites_courbe:
-                if table.has_key(entite_type):
-                    entite = table[entite_type]
-                    cham_aster = table['NOM_CHAM']
-                    cmp_aster = table['NOM_CMP']
+        nb_char_lim_pun = 16
+        for i_courbe,courbe in enumerate(courbe_fact):
+            for entite_type in dic_entite.keys():
+                if courbe.has_key(entite_type):
+                    entite = courbe[entite_type]
+                    cham_aster = courbe['NOM_CHAM']
+                    cmp_aster = courbe['NOM_CMP']
                     cham_epx = cata_champs[cham_aster]
                     if not cata_compo[cham_aster].has_key(cmp_aster):
                         UTMESS('F', 'PLEXUS_38', valk=[cham_aster, cmp_aster])
                     cmp_epx = cata_compo[cham_aster][cmp_aster]
-                    ylabel = cham_aster + '_' + cmp_aster
+                    label = courbe['NOM_COURBE']
                     entite = tolist(entite)
+                    ll = len(label)
+                    if ll > nb_char_lim_pun:
+                        UTMESS('A', 'PLEXUS_21', vali = [i_courbe+1, nb_char_lim_pun])
+#                   on laisse la boucle meme s'il ne peut y avoir qu'un seul groupe
                     for el in entite:
                         # COURBE
-                        icourbe += 1
-                        label = ylabel + '_%s'%el
-                        if entite_type == 'GROUP_MA':
-                            label = label+'_%s'%table['NUM_GAUSS']
+                        nb_courbe += 1
                         mot_cle = 'COURBE'
                         cara = [cham_epx, 'COMP', ]
                         vale = ['', cmp_epx, ]
                         if entite_type == 'GROUP_MA':
                             cara.append('GAUSS')
-                            num_gauss = table['NUM_GAUSS']
+                            num_gauss = courbe['NUM_GAUSS']
                             if type(num_gauss) is tuple:
                                 num_gauss = num_gauss[0]
                             vale.append(num_gauss)
-                        cara.append(entite_EPX[entite_type])
+                        cara.append(dic_entite[entite_type])
                         vale.append('')
                         val_cle = "'%s'"%label
                         bloc_courbe = BLOC_DONNEES(mot_cle, l_group=el,
-                                                   cle=icourbe,
+                                                   cle=nb_courbe,
                                                    val_cle=val_cle, cara=cara,
                                                    vale=vale)
                         objet.add_bloc(bloc_courbe)
@@ -751,10 +783,10 @@ class EUROPLEXUS:
                         mot_cle = 'LIST'
                         cara = 'AXES 1.'
                         vale = "'%s'"%label
-                        bloc_liste = BLOC_DONNEES(mot_cle, val_cle=icourbe,
+                        bloc_liste = BLOC_DONNEES(mot_cle, val_cle=nb_courbe,
                                                    cara=cara, vale=vale)
                         objet.add_bloc(bloc_liste)
-                        self.legend_courbes[icourbe] = ['TEMPS', label]
+                        self.legend_courbes[nb_courbe] = ['TEMPS', label]
 
   #-----------------------------------------------------------------------
     def export_CALCUL(self):
@@ -882,12 +914,12 @@ class EUROPLEXUS:
         # Les modules MODELE et RIGI_PARASOL doivent être exécutés avant
         # MAILLAGE car le maillage peut être modifié dans ces modules (ajout de
         # groupes uniquement).
-        # Le module CARA_ELEM doit être exécuté avec MODELE pour connaître la
-        # modelisation à affecter à certains éléments.
+        # Les modules CARA_ELEM et CHAM_MATER doivent être exécutés avant MODELE
+        # pour connaître la modelisation à affecter à certains éléments.
         # Le module CHAM_MATER doit être exécuté avant MAILLAGE pour avoir
         # les infos permettant de traduire les variables internes.
 
-        modules_exe = ['DEBUT', 'CARA_ELEM', 'MODELE', 'CHAM_MATER',
+        modules_exe = ['DEBUT', 'CARA_ELEM', 'CHAM_MATER', 'MODELE',
                        'MAILLAGE', 'EXCIT', 'ECRITURE', 'CALCUL',
                        'POST_COURBE']
         directives = ['DEBUT', 'GEOM', 'COMPLEMENT', 'FONC', 'MATE',
@@ -1060,7 +1092,10 @@ class EUROPLEXUS:
                                                        ['GROUP_MA'])
         li_blocs = []
         for cle in ['POIN', 'ELEM']:
-            bloc = BLOC_DONNEES(cle, l_group=entite_geo[cle],)
+            if entite_geo[cle] != []:
+                bloc = BLOC_DONNEES(cle, l_group=entite_geo[cle],)
+            else:
+                bloc = None
             li_blocs.append(bloc)
 
         return li_blocs

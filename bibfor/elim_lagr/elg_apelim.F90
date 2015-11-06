@@ -69,7 +69,8 @@ subroutine elg_apelim(kptsc)
     character(len=24), pointer :: slvk(:) => null()
     mpi_int :: mpicomm
     PetscInt :: restart, nbelig
-    PetscInt :: ierr, nbnvco, clag1, nlag 
+    PetscInt :: nbnvco, clag1, nlag 
+    PetscErrorCode :: ierr
     PetscInt:: nphys, nlag1, nlag2, neq, i1, j1, i, iphys
     PetscInt, parameter  :: izero=0, ione = 1
     PetscScalar, parameter :: rzero=0.d0, rone = 1.d0
@@ -98,9 +99,9 @@ subroutine elg_apelim(kptsc)
 !
 !
 !     -- LECTURE DU COMMUN
-    nomat = nomats(kptsc)
+    nomat = nomat_courant
+    nonu = nonu_courant
     nosolv = nosols(kptsc)
-    nonu = nonus(kptsc)
 !
     call jeveuo(nosolv//'.SLVK', 'L', vk24=slvk)
 !

@@ -15,21 +15,23 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nmcoma(modelz, mate, carele, compor, carcri,&
-                      parmet, method, lischa, numedd, numfix,&
-                      solveu, comref, sddisc, sddyna, sdimpr,&
-                      sdstat, sdtime, numins, iterat, fonact,&
-                      defico, resoco, valinc, solalg, veelem,&
-                      meelem, measse, veasse, maprec, matass,&
-                      codere, faccvg, ldccvg, sdnume)
+    subroutine nmcoma(modelz     , mate  , carele, compor  , carcri,&
+                      ds_algopara, lischa, numedd, numfix  , solveu,&
+                      comref     , sddisc, sddyna, ds_print, sdstat,&
+                      sdtime     , numins, iterat, fonact  , defico,&
+                      resoco     , valinc, solalg, veelem  , meelem,&
+                      measse     , veasse, maprec, matass  , codere,&
+                      faccvg     , ldccvg, sdnume)
+        use NonLin_Datastructure_type
         character(len=*) :: modelz
         character(len=24) :: mate
         character(len=24) :: carele
         character(len=24) :: compor
         character(len=24) :: carcri
-        real(kind=8) :: parmet(*)
-        character(len=16) :: method(*)
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=19) :: lischa
         character(len=24) :: numedd
         character(len=24) :: numfix
@@ -37,7 +39,7 @@ interface
         character(len=24) :: comref
         character(len=19) :: sddisc
         character(len=19) :: sddyna
-        character(len=24) :: sdimpr
+        type(NL_DS_Print), intent(inout) :: ds_print
         character(len=24) :: sdstat
         character(len=24) :: sdtime
         integer :: numins

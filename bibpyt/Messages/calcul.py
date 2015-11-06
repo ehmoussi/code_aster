@@ -118,9 +118,9 @@ Erreur dans un calcul élémentaire :
    - type_élément  : %(k3)s
    - maille        : %(k4)s
 
-Risques et conseils :
-  Certaines informations sur le contexte de cette erreur sont imprimées ci-dessous.
-  Elles peuvent aider à comprendre une éventuelle erreur d'utilisation.
+Remarque :
+  On a imprimé ci-dessus, une liste de booléens indiquant les composantes trouvées
+  sur la maille.
 """),
 
     20: _(u"""
@@ -181,11 +181,7 @@ Conseils :
    (Ou de n'avoir renseigné que AFFE_VARC/VALE_REF sans avoir renseigné EVOL ou CHAM_GD)
 """),
 
-    25 : _(u"""
- Erreur de programmation (catalogue des éléments finis) :
- Les éléments finis ayant l'attribut VF_AVEC_VOISIN='OUI' ne peuvent créer que des
- matrices élémentaires non-symétriques.
-"""),
+
 
     26 : _(u"""
  Erreur utilisateur :

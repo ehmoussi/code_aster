@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # TITRE : GRANDES DEFORMATIONS SUR UN CUBE MONOCRISTALLIN LOI MONO_DD_CC
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -269,7 +269,8 @@ SOLNL=STAT_NON_LINE(
                       SIGM_REFE      = tau_f,
                       RESI_REFE_RELA = 1.E-3,
                       ITER_GLOB_MAXI = 15,
-                      FORC_REFE =(CoefRef,CoefRef),
+                      EFFORT_REFE = CoefRef,
+                      MOMENT_REFE = CoefRef,
                       ),
                     );
 
@@ -475,4 +476,3 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=0.26136480978897,
               )
 
 FIN()
-

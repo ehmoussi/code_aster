@@ -58,7 +58,7 @@ subroutine te0580(nomopt, nomte)
 !   ===================================================================================
         do kpara=1,2
             param=lparam1(kpara)
-            call tecach('NNN', param, 'L', iret, nval=8, itab=itab)
+            call tecach('NNO', param, 'L', iret, nval=8, itab=itab)
             if (iret.eq.0) then
                 jad=itab(1)
                 nbv=itab(2)
@@ -83,12 +83,32 @@ subroutine te0580(nomopt, nomte)
         enddo
 
 
+    elseif (nomopt.eq.'CHAR_MECA_EPSI_R'  ) then
+!   ===================================================================================
+        do kpara=1,1
+            param='PEPSINR'
+            call tecach('NNO', param, 'L', iret, nval=8, itab=itab)
+            if (iret.eq.0) then
+                jad=itab(1)
+                nbv=itab(2)
+                ASSERT(itab(5).eq.1 .or. itab(5).eq.4)
+                if (itab(5).eq.1) then
+                    do k=1,nbv
+                        if (zr(jad-1+k).ne.0.d0) goto 998
+                    enddo
+                else
+                    ASSERT(.false.)
+                endif
+            endif
+        enddo
+
+
     elseif ( nomopt.eq.'CHAR_MECA_SFCO3D' .or. nomopt.eq.'CHAR_MECA_SRCO3D'  &
         .or. nomopt.eq.'RIGI_MECA_SFCO3D' .or. nomopt.eq.'RIGI_MECA_SRCO3D' ) then
 !   ===================================================================================
         do kpara=1,2
             param=lparam3(kpara)
-            call tecach('NNN', param, 'L', iret, nval=8, itab=itab)
+            call tecach('NNO', param, 'L', iret, nval=8, itab=itab)
             if (iret.eq.0) then
                 jad=itab(1)
                 nbv=itab(2)
@@ -142,7 +162,7 @@ subroutine te0580(nomopt, nomte)
 2       continue
         do kpara=1,6
             param=lparam2(kpara)
-            call tecach('NNN', param, 'L', iret, nval=8, itab=itab)
+            call tecach('NNO', param, 'L', iret, nval=8, itab=itab)
             if (iret.eq.0) then
                 jad=itab(1)
                 nbv=itab(2)
@@ -174,7 +194,7 @@ subroutine te0580(nomopt, nomte)
         nompar(3)='Z'
 
         call elrefe_info(fami='RIGI',ndim=ndim,nno=nno)
-        call tecach('ONN', 'PGEOMER', 'L', iret, nval=5, itab=itab)
+        call tecach('ONO', 'PGEOMER', 'L', iret, nval=5, itab=itab)
         igeom=itab(1)
         idimge=itab(2)/nno
 

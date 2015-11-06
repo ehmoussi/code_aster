@@ -1,6 +1,6 @@
 # TITRE CONTACT DE DEUX POUTRES EN PETITES DEFORMATIONS
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -154,7 +154,7 @@ ULAG=STAT_NON_LINE(MODELE=MODE,
                              INST_FIN=1.,),
                 NEWTON=_F(REAC_ITER=1,),
                 CONVERGENCE=_F(ITER_GLOB_MAXI=40,),
-                SOLVEUR=_F(SYME='OUI',),
+                SOLVEUR=_F(),
                 ARCHIVAGE=_F(LIST_INST=L_ARCH),
                 INFO=1,);
 

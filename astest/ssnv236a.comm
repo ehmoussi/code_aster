@@ -1,6 +1,6 @@
 #  TITRE FLUAGE BIAXIAL (Gopola)
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -78,12 +78,13 @@ NU=DEFI_CONSTANTE(VALE=nu1,);
 ALPHA=DEFI_CONSTANTE(VALE=0.00001,);
 
 
+RHOF=DEFI_CONSTANTE(VALE = 2400.,)
 BETON=DEFI_MATERIAU(ELAS_FO =_F(     E     = E,
                                    NU    = NU,
                                    TEMP_DEF_ALPHA=20.,
                                    ALPHA   =ALPHA,
                                    K_DESSIC=0.,
-                                   B_ENDOGE=0.,RHO=2400),
+                                   B_ENDOGE=0.,RHO=RHOF),
              PORO_BETON          =_F(
                                     HYDS =0.2
                                    ,F_C =rc1
@@ -246,9 +247,9 @@ U=CALC_CHAMP(reuse=U,RESULTAT=U,CONTRAINTE=('SIGM_ELNO','SIEF_NOEU'),VARI_INTERN
 
 
 
-# VALEURS DE NON-REGRESSION
+# VALEURS CASTEM
 TEST_RESU(RESU=(_F(INST=28.0,
-                   REFERENCE='NON_DEFINI',
+                   REFERENCE='SOURCE_EXTERNE',
                    RESULTAT=U,
                    NOM_CHAM='EPSI_ELNO',
                    NOEUD='N19',
@@ -258,7 +259,7 @@ TEST_RESU(RESU=(_F(INST=28.0,
                    PRECISION=5.0000000000000001E-3,
                    MAILLE='M1',),
                 _F(INST=28.0,
-                   REFERENCE='NON_DEFINI',
+                   REFERENCE='SOURCE_EXTERNE',
                    RESULTAT=U,
                    NOM_CHAM='EPSI_ELNO',
                    NOEUD='N19',
@@ -268,7 +269,7 @@ TEST_RESU(RESU=(_F(INST=28.0,
                    PRECISION=5.0000000000000001E-3,
                    MAILLE='M1',),
                 _F(INST=50.0,
-                   REFERENCE='NON_DEFINI',
+                   REFERENCE='SOURCE_EXTERNE',
                    RESULTAT=U,
                    NOM_CHAM='EPSI_ELNO',
                    NOEUD='N19',
@@ -278,7 +279,7 @@ TEST_RESU(RESU=(_F(INST=28.0,
                    PRECISION=5.0000000000000001E-3,
                    MAILLE='M1',),
                 _F(INST=50.0,
-                   REFERENCE='NON_DEFINI',
+                   REFERENCE='SOURCE_EXTERNE',
                    RESULTAT=U,
                    NOM_CHAM='EPSI_ELNO',
                    NOEUD='N19',

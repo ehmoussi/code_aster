@@ -1,6 +1,6 @@
 # TITRE VALEUR DE REFERENCE POUR LES ELEMENTS CABLES
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -43,7 +43,7 @@ MO_CAB = AFFE_MODELE(MAILLAGE=MA,
 RAYON = 0.02
 
 CA_CAB = AFFE_CARA_ELEM(  CABLE=_F( GROUP_MA='TOUT',
-                                  SECTION=RAYON*RAYON*3.14159),
+                                  SECTION=RAYON*RAYON*3.14159, N_INIT=5000.0),
                                   MODELE=MO_CAB)
 
 CL_CAB = AFFE_CHAR_MECA(MODELE=MO_CAB,
@@ -61,7 +61,9 @@ RE_CAB=STAT_NON_LINE(MODELE     = MO_CAB,
                      COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
                   RELATION='CABLE',),
                      INCREMENT = _F(LIST_INST = LIS_INST,),
-                     CONVERGENCE = _F(RESI_REFE_RELA=1.E-7,FORC_REFE =(CoefRef,CoefRef),),
+                     CONVERGENCE = _F(RESI_REFE_RELA=1.E-7,
+                                      EFFORT_REFE = CoefRef,
+                                      MOMENT_REFE = CoefRef,),
    );
 
 TB_CAB = RECU_TABLE(CO=RE_CAB,NOM_PARA=('ITER_GLOB'),)

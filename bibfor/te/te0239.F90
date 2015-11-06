@@ -18,11 +18,12 @@ subroutine te0239(option, nomte)
 !                          COQUE 1D
 !                          OPTION : 'RIGI_MECA_TANG ',
 !                                   'FULL_MECA      ','RAPH_MECA      '
-!                          ELEMENT: MECXSE3,METCSE3,METDSE3
+!                          ELEMENT: MECXSE3 (COQUE_AXIS)
 !    - ARGUMENTS:
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! ......................................................................
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
     implicit none
 !
 #include "asterf_types.h"
@@ -53,7 +54,7 @@ subroutine te0239(option, nomte)
     character(len=16) :: nomres(nbres), option, nomte
     character(len=8) ::  nompar, elrefe
     integer :: valret(nbres)
-    real(kind=8) :: valres(nbres), tempm, tempp
+    real(kind=8) :: valres(nbres), tempm
     real(kind=8) :: dfdx(3), zero, un, deux
     real(kind=8) :: test, test2, eps, nu, h, cosa, sina, cour, r
     real(kind=8) :: jacp, kappa, correc
@@ -63,7 +64,7 @@ subroutine te0239(option, nomte)
     real(kind=8) :: rtangi(9, 9), rtange(9, 9), sigm2d(4), sigp2d(4)
     real(kind=8) :: angmas(3)
     integer :: nno, nnos, jgano, ndim, kp, npg, i, j, k, imatuu, icaco, ndimv
-    integer :: ivarix, mod
+    integer :: ivarix
     integer :: ipoids, ivf, idfdk, igeom, imate
     integer :: nbpar, cod, iret, ksp
     aster_logical :: vecteu, matric, testl1, testl2
@@ -129,7 +130,7 @@ subroutine te0239(option, nomte)
 !--- LECTURE DU NBRE DE VAR. INTERNES, DE COUCHES ET LONG. MAX DU
 !--- POINT D'INTEGRATION
     read (zk16(icompo-1+2),'(I16)') nbvari
-    call tecach('OON', 'PVARIMR', 'L', iret, nval=7,&
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
                 itab=itab)
 !      LGPG = MAX(ITAB(6),1)*ITAB(7) resultats faux sur Bull avec ifort
     if (itab(6) .le. 1) then
@@ -166,7 +167,7 @@ subroutine te0239(option, nomte)
     call r8inir(81, 0.d0, rtange, 1)
     kpki = 0
 !-- DEBUT DE BOUCLE D'INTEGRATION SUR LA SURFACE NEUTRE
-    do 140 kp = 1, npg
+    do  kp = 1, npg
         k = (kp-1)*nno
         call dfdm1d(nno, zr(ipoids+kp-1), zr(idfdk+k), zr(igeom), dfdx,&
                     cour, jacp, cosa, sina)
@@ -177,9 +178,9 @@ subroutine te0239(option, nomte)
 !
 !-- BOUCLE SUR LES POINTS D'INTEGRATION SUR LA SURFACE
 !
-        do 30 i = 1, nno
+        do  i = 1, nno
             r = r + zr(igeom+2*i-2)*zr(ivf+k+i-1)
- 30     continue
+        enddo
 !
 !===============================================================
 !     -- RECUPERATION DE LA TEMPERATURE POUR LE MATERIAU:
@@ -195,7 +196,8 @@ subroutine te0239(option, nomte)
         nu = valres(2)
         cisail = valres(1)/ (un+nu)
 !
-        if (nomte .eq. 'MECXSE3') jacp = jacp*r
+!       ON EST EN AXIS:
+        jacp = jacp*r
 !
         test = abs(h*cour/deux)
         if (test .ge. un) correc = zero
@@ -210,8 +212,8 @@ subroutine te0239(option, nomte)
 !
 !-- DEBUT DE BOUCLE D'INTEGRATION DANS L'EPAISSEUR
 !
-        do 110 icou = 1, nbcou
-            do 100 inte = 1, npge
+        do  icou = 1, nbcou
+            do  inte = 1, npge
                 if (inte .eq. 1) then
                     zic = zmin + (icou-1)*hic
                     coef = 1.d0/3.d0
@@ -249,20 +251,6 @@ subroutine te0239(option, nomte)
                             sina, cosa, cour, zr( ivf+k), dfdx,&
                             zr(ideplp), deps2d, depsx3)
 !
-!           COQUE_D_PLAN
-                if (nomte .eq. 'METDSE3') then
-                    eps2d(2) = 0.d0
-                    deps2d(2) = 0.d0
-                    mod=2
-!           COQUE_C_PLAN
-                else if (nomte.eq.'METCSE3') then
-                    eps2d(2) = 0.d0
-                    deps2d(2) = 0.d0
-                    mod=-1
-!           COQUE_AXIS
-                else if (nomte.eq.'MECXSE3') then
-                    mod=1
-                endif
 !
 !           CONSTRUCTION DE LA DEFORMATION GSX3
 !           ET DE LA CONTRAINTE SGMSX3
@@ -275,20 +263,20 @@ subroutine te0239(option, nomte)
                 k2 = lgpg* (kp-1) + (npge* (icou-1)+inte-1)*nbvari
                 ksp=(icou-1)*npge + inte
 !
-                do 55 i = 1, 4
+                do  i = 1, 4
                     sigm2d(i)=zr(icontm+k1+i-1)
- 55             continue
+              enddo
 !
 !  APPEL AU COMPORTEMENT
-                call comcq1('RIGI', kp, ksp, mod, zi(imate),&
+                call comcq1('RIGI', kp, ksp, zi(imate),&
                             zk16(icompo), zr(icarcr), zr(iinstm), zr(iinstp), eps2d,&
-                            deps2d, tempm, tempp, sigm2d, zr(ivarim+k2),&
+                            deps2d,  sigm2d, zr(ivarim+k2),&
                             option, angmas, sigp2d, zr( ivarip+k2), dsidep,&
                             cod)
                 if (vecteu) then
-                    do 56 i = 1, 4
+                    do  i = 1, 4
                         zr(icontp+k1+i-1)=sigp2d(i)
- 56                 continue
+                  enddo
                 endif
 !
 !           COD=1 : ECHEC INTEGRATION LOI DE COMPORTEMENT
@@ -306,36 +294,29 @@ subroutine te0239(option, nomte)
                     call matdtd(nomte, testl1, testl2, dsidep, cisail,&
                                 x3, cour, r, cosa, kappa,&
                                 dtildi)
-                    do 80 i = 1, 5
-                        do 70 j = 1, 5
+                    do  i = 1, 5
+                        do  j = 1, 5
                             dtild(i,j) = dtild(i,j) + dtildi(i,j)* 0.5d0*hic*coef
- 70                     continue
- 80                 continue
+                      enddo
+                  enddo
                 endif
 !
                 if (vecteu) then
 !-- CALCULS DES EFFORTS INTERIEURS : BOUCLE SUR L'EPAISSEUR
-                    if (nomte .eq. 'MECXSE3') then
-                        sigtdi(1) = zr(icontp-1+k1+1)/rhos
-                        sigtdi(2) = x3*zr(icontp-1+k1+1)/rhos
-                        sigtdi(3) = zr(icontp-1+k1+2)/rhot
-                        sigtdi(4) = x3*zr(icontp-1+k1+2)/rhot
-                        sigtdi(5) = sgmsx3/rhos
-                    else
-                        sigtdi(1) = zr(icontp-1+k1+1)/rhos
-                        sigtdi(2) = x3*zr(icontp-1+k1+1)/rhos
-                        sigtdi(3) = sgmsx3/rhos
-                        sigtdi(4) = 0.d0
-                        sigtdi(5) = 0.d0
-                    endif
 !
-                    do 90 i = 1, 5
+                    sigtdi(1) = zr(icontp-1+k1+1)/rhos
+                    sigtdi(2) = x3*zr(icontp-1+k1+1)/rhos
+                    sigtdi(3) = zr(icontp-1+k1+2)/rhot
+                    sigtdi(4) = x3*zr(icontp-1+k1+2)/rhot
+                    sigtdi(5) = sgmsx3/rhos
+!
+                    do  i = 1, 5
                         sigmtd(i) = sigmtd(i) + sigtdi(i)*0.5d0*hic* coef
- 90                 continue
+                  enddo
                 endif
 !-- FIN DE BOUCLE SUR LES POINTS D'INTEGRATION DANS L'EPAISSEUR
-100         continue
-110     continue
+         enddo
+     enddo
 !
         if (vecteu) then
 !-- CALCUL DES EFFORTS INTERIEURS
@@ -346,23 +327,23 @@ subroutine te0239(option, nomte)
 !-- CONSTRUCTION DE LA MATRICE TANGENTE
             call mattge(nomte, dtild, sina, cosa, r,&
                         jacp, zr(ivf+k), dfdx, rtangi)
-            do 130 i = 1, 9
-                do 120 j = 1, 9
+            do  i = 1, 9
+                do  j = 1, 9
                     rtange(i,j) = rtange(i,j) + rtangi(i,j)
-120             continue
-130         continue
+             enddo
+         enddo
         endif
 !-- FIN DE BOUCLE SUR LES POINTS D'INTEGRATION DE LA SURFACE NEUTRE
-140 end do
+ end do
     if (matric) then
 !-- STOCKAGE DE LA MATRICE TANGENTE
         kompt = 0
-        do 160 j = 1, 9
-            do 150 i = 1, j
+        do  j = 1, 9
+            do i = 1, j
                 kompt = kompt + 1
                 zr(imatuu-1+kompt) = rtange(i,j)
-150         continue
-160     continue
+         end do 
+       end do
     endif
     if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
         call jevech('PCODRET', 'E', jcret)

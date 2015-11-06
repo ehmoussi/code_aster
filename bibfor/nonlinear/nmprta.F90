@@ -1,10 +1,28 @@
-subroutine nmprta(modele, numedd, numfix, mate, carele,&
-                  comref, compor, lischa, method, solveu,&
-                  fonact, parmet, carcri, sdimpr, sdstat,&
-                  sdtime, sddisc, numins, valinc, solalg,&
-                  matass, maprec, defico, resoco, resocu,&
-                  sddyna, meelem, measse, veelem, veasse,&
-                  sdnume, ldccvg, faccvg, rescvg, codere)
+subroutine nmprta(modele  , numedd, numfix  , mate       , carele,&
+                  comref  , compor, lischa  , ds_algopara, solveu,&
+                  fonact  , carcri, ds_print, sdstat     , sdtime,&
+                  sddisc  , numins, valinc  , solalg     , matass,&
+                  maprec  , defico, resoco  , resocu     , sddyna,&
+                  meelem  , measse, veelem  , veasse     , sdnume,&
+                  ds_inout, ldccvg, faccvg  , rescvg     , codere)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/diinst.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/isfonc.h"
+#include "asterfort/ndynlo.h"
+#include "asterfort/nmassp.h"
+#include "asterfort/nmchar.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmdep0.h"
+#include "asterfort/nmfocc.h"
+#include "asterfort/nmprma.h"
+#include "asterfort/nmresd.h"
+#include "asterfort/vtzero.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -23,30 +41,14 @@ subroutine nmprta(modele, numedd, numfix, mate, carele,&
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/diinst.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/ndynlo.h"
-#include "asterfort/nmassp.h"
-#include "asterfort/nmchar.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmdep0.h"
-#include "asterfort/nmfocc.h"
-#include "asterfort/nmprma.h"
-#include "asterfort/nmresd.h"
-#include "asterfort/vtzero.h"
+!
     integer :: fonact(*)
     integer :: numins, faccvg, rescvg, ldccvg
-    real(kind=8) :: parmet(*)
-    character(len=16) :: method(*)
-    character(len=24) :: sdimpr, sdtime, sdstat
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+    character(len=24) :: sdtime, sdstat
+    type(NL_DS_Print), intent(inout) :: ds_print
+    type(NL_DS_InOut), intent(in) :: ds_inout
     character(len=19) :: matass, maprec
     character(len=19) :: lischa, solveu, sddisc, sddyna, sdnume
     character(len=24) :: modele, mate, carele, comref, compor
@@ -65,7 +67,6 @@ subroutine nmprta(modele, numedd, numfix, mate, carele,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
@@ -74,12 +75,12 @@ subroutine nmprta(modele, numedd, numfix, mate, carele,&
 ! IN  COMREF : VARIABLES DE COMMANDE DE REFERENCE
 ! IN  COMPOR : COMPORTEMENT
 ! IN  LISCHA : LISTE DES CHARGES
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SOLVEU : SOLVEUR
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
-! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION
 ! IN  CARCRI : PARAMETRES DES METHODES D'INTEGRATION LOCALES
-! IN  SDIMPR : SD AFFICHAGE
+! IO  ds_print         : datastructure for printing parameters
+! In  ds_inout         : datastructure for input/output management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IN  SDTIME : SD TIMER
 ! IN  SDSTAT : SD STATISTIQUES
@@ -121,17 +122,12 @@ subroutine nmprta(modele, numedd, numfix, mate, carele,&
 !
     real(kind=8) :: instap
     character(len=19) :: cncine, cndonn, cnpilo
-    real(kind=8) :: r8bid(8)
     aster_logical :: lstat, limpl, leltc
     integer :: ifm, niv
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> PREDICTION TYPE EULER'
     endif
@@ -165,26 +161,25 @@ subroutine nmprta(modele, numedd, numfix, mate, carele,&
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmprma(modele, mate, carele, compor, carcri,&
-                parmet, method, lischa, numedd, numfix,&
-                solveu, comref, sdimpr, sdstat, sdtime,&
-                sddisc, sddyna, numins, fonact, defico,&
-                resoco, valinc, solalg, veelem, meelem,&
-                measse, maprec, matass, codere, faccvg,&
-                ldccvg)
+    call nmprma(modele     , mate    , carele, compor, carcri,&
+                ds_algopara, lischa  , numedd, numfix, solveu,&
+                comref     , ds_print, sdstat, sdtime, sddisc,&
+                sddyna     , numins  , fonact, defico, resoco,&
+                valinc     , solalg  , veelem, meelem, measse,&
+                maprec     , matass  , codere, faccvg, ldccvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
-    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 9999
-    if (ldccvg .eq. 1) goto 9999
+    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
+    if (ldccvg .eq. 1) goto 999
 !
 ! --- CALCUL DES CHARGEMENTS VARIABLES AU COURS DU PAS DE TEMPS
 !
-    call nmchar('VARI', 'PREDICTION', modele, numedd, mate,&
-                carele, compor, lischa, carcri, numins,&
-                sdtime, sddisc, r8bid, fonact, resoco,&
-                resocu, comref, valinc, solalg, veelem,&
-                measse, veasse, sddyna)
+    call nmchar('VARI'  , 'PREDICTION', modele, numedd, mate,&
+                carele  , compor      , lischa, numins, sdtime,&
+                sddisc  , fonact      , resoco, resocu, comref,&
+                ds_inout, valinc      , solalg, veelem, measse,&
+                veasse  , sddyna)
 !
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
@@ -196,7 +191,7 @@ subroutine nmprta(modele, numedd, numfix, mate, carele,&
 !
 ! --- CALCUL DU SECOND MEMBRE
 !
-    call nmassp(modele, numedd, mate, carele, comref,&
+    call nmassp(modele, numedd, mate  , carele, comref,&
                 compor, lischa, carcri, fonact, sdstat,&
                 defico, sddyna, valinc, solalg, veelem,&
                 veasse, sdtime, ldccvg, codere, cnpilo,&
@@ -214,7 +209,6 @@ subroutine nmprta(modele, numedd, numfix, mate, carele,&
                 numedd, instap, maprec, matass, cndonn,&
                 cnpilo, cncine, solalg, rescvg)
 !
-9999 continue
+999 continue
 !
-    call jedema()
 end subroutine

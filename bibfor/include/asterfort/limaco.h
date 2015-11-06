@@ -16,14 +16,14 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine limaco(char, motfac, noma, nomo, ndim,&
-                      nzoco, ligret)
-        character(len=8) :: char
-        character(len=16) :: motfac
-        character(len=8) :: noma
-        character(len=8) :: nomo
-        integer :: ndim
-        integer :: nzoco
-        character(len=19) :: ligret
+    subroutine limaco(sdcont      , keywf , mesh, model, model_ndim,&
+                      nb_cont_zone, ligret)
+        character(len=8), intent(in) :: sdcont
+        character(len=8), intent(in) :: mesh
+        character(len=8), intent(in) :: model
+        character(len=16), intent(in) :: keywf
+        character(len=19), intent(in) :: ligret
+        integer, intent(in) :: nb_cont_zone
+        integer, intent(in) :: model_ndim
     end subroutine limaco
 end interface

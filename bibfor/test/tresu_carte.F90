@@ -1,8 +1,9 @@
 subroutine tresu_carte(cham19, nomail, nocmp, tbtxt, refi,&
                        refr, refc, typres, epsi, crit,&
-                       ific, llab, ignore, compare)
+                       llab, ignore, compare)
     implicit none
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/utchca.h"
 #include "asterfort/tresu_print_all.h"
@@ -17,7 +18,6 @@ subroutine tresu_carte(cham19, nomail, nocmp, tbtxt, refi,&
     character(len=*), intent(in) :: typres
     real(kind=8), intent(in) :: epsi
     character(len=*), intent(in) :: crit
-    integer, intent(in) :: ific
     aster_logical, intent(in) :: llab
     aster_logical, intent(in), optional :: ignore
     real(kind=8), intent(in), optional :: compare
@@ -49,7 +49,6 @@ subroutine tresu_carte(cham19, nomail, nocmp, tbtxt, refi,&
 ! IN  : REFC   : VALEUR COMPLEXE ATTENDUE
 ! IN  : CRIT   : 'RELATIF' OU 'ABSOLU'(PRECISION RELATIVE OU ABSOLUE).
 ! IN  : EPSI   : PRECISION ESPEREE
-! IN  : IFIC   : NUMERO LOGIQUE DU FICHIER DE SORTIE
 ! IN  : LLAB   : FLAG D IMPRESSION DES LABELS
 ! OUT : IMPRESSION SUR LISTING
 ! ----------------------------------------------------------------------
@@ -80,13 +79,11 @@ subroutine tresu_carte(cham19, nomail, nocmp, tbtxt, refi,&
 !
     call utchca(cham19, nomma, nomail, nocmp, typres,&
                 valr, vali, valc, ier)
-    if (ier .ne. 0) then
-        write (ific,*) 'NOOK '
-    else
-        call tresu_print_all(tbtxt(1), tbtxt(2), llab, typres, 1,&
-                             crit, epsi, 'NON', [refr], valr,&
-                             [refi], vali, [refc], valc, ignore=skip,&
-                             compare=ordgrd)
-    endif
+    ASSERT(ier .eq. 0)
+
+    call tresu_print_all(tbtxt(1), tbtxt(2), llab, typres, 1,&
+                         crit, epsi, 'NON', [refr], valr,&
+                         [refi], vali, [refc], valc, ignore=skip,&
+                         compare=ordgrd)
 !
 end subroutine

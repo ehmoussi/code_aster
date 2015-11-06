@@ -1,5 +1,15 @@
-subroutine pmactn(sddisc, parcri, iterat, numins, itemax,&
-                  sderro, liccvg, actite, action)
+subroutine pmactn(sddisc, ds_conv, iterat, numins, itemax,&
+                  sderro, liccvg , actite, action)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/nmacto.h"
+#include "asterfort/nmevac.h"
+#include "asterfort/utmess.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -18,18 +28,9 @@ subroutine pmactn(sddisc, parcri, iterat, numins, itemax,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/assert.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmacto.h"
-#include "asterfort/nmevac.h"
-#include "asterfort/utmess.h"
     character(len=19) :: sddisc
     character(len=24) :: sderro
-    real(kind=8) :: parcri(*)
+    type(NL_DS_Conv), intent(in) :: ds_conv
     integer :: liccvg(5)
     aster_logical :: itemax
     integer :: action, actite
@@ -45,9 +46,8 @@ subroutine pmactn(sddisc, parcri, iterat, numins, itemax,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  SDDISC : SD DISCRETISATION
-! IN  PARCRI : CRITERES DE CONVERGENCE
+! In  ds_conv          : datastructure for convergence management
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
 ! IN  NUMINS : NUMERO D'INSTANT
 ! I/O ITEMAX : .TRUE. SI ITERATION MAXIMUM ATTEINTE
@@ -62,27 +62,17 @@ subroutine pmactn(sddisc, parcri, iterat, numins, itemax,&
 !               2 ON FAIT DES ITERATIONS DE NEWTON EN PLUS
 !               3 ON FINIT LE PAS DE TEMPS NORMALEMENT
 !
-!
-!
+! ----------------------------------------------------------------------
 !
     integer :: retact, ievdac
-    aster_logical :: arret
     integer :: ldccvg, faccvg
-    character(len=24) :: sdimpr, k24bla
     character(len=19) :: solveu
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
-!
-! --- INITIALISATIONS
-!
     ldccvg = liccvg(2)
     faccvg = liccvg(5)
-    arret = (nint(parcri(4)).eq.0)
     action = 0
-    sdimpr = '&&PMACTN.SDIMPR'
-    k24bla = ' '
     solveu = '&&OP0033'
 !
 ! --- CONTINUER LA BOUCLE DE NEWTON EST IMPOSSIBLE ICI
@@ -126,8 +116,8 @@ subroutine pmactn(sddisc, parcri, iterat, numins, itemax,&
     if (ievdac .eq. 0) then
         retact = 0
     else
-        call nmevac(sdimpr, sddisc, sderro, k24bla, k24bla,&
-                    ievdac, numins, iterat, retact)
+        call nmevac(sddisc, sderro, ievdac, numins, iterat,&
+                    retact)
     endif
 !
 ! --- TRAITEMENT DE L'ACTION
@@ -151,14 +141,14 @@ subroutine pmactn(sddisc, parcri, iterat, numins, itemax,&
         action = 0
         call utmess('Z', 'MECANONLINE9_7', num_except=22)
 !
-    else if ((retact.eq.4).and.(.not.arret).and.itemax) then
+    else if ((retact.eq.4).and.(.not.ds_conv%l_stop).and.itemax) then
 !
 ! ----- CONVERGENCE FORCEE: ON VA AU PAS DE TEMPS SUIVANT
 !
         call utmess('A', 'MECANONLINE2_37')
         action = 3
 !
-    else if ((retact.eq.4).and.(.not.arret)) then
+    else if ((retact.eq.4).and.(.not.ds_conv%l_stop)) then
 !
 ! ----- CONVERGENCE FORCEE: ON VA AU PAS DE TEMPS SUIVANT
 !
@@ -177,5 +167,4 @@ subroutine pmactn(sddisc, parcri, iterat, numins, itemax,&
 !
     itemax = .false.
 !
-    call jedema()
 end subroutine

@@ -1,6 +1,6 @@
 # TITRE FISSURE LONGITUDINALE SEMI-ELLIPTIQUE DEBOUCHANT EN PEAU INTERNE D'UN TUBE SOUS PRESSION 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -19,7 +19,7 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       DEBUG=_F(SDVERI='OUI'),
-      IGNORE_ALARM=('XFEM_22', 'MODELE1_63', 'UTILITAI4_2'),
+      IGNORE_ALARM=('XFEM_22', 'MODELE1_63', 'CALCCHAMP_6'),
       );
 
 # IGNORE_ALARM : 'XFEM_22' -> on ne modelise qu'un demi-tube, donc on 
@@ -27,7 +27,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
 #                             noeuds par lesquels passe la fissure. Il 
 #                             est legitime d'ignorer cette alarme.
 # IGNORE_ALARM : 'MODELE1_63' -> a cause de la visu XFEM
-# IGNORE_ALARM : 'UTILITAI4_2' -> a cause de la visu XFEM
+# IGNORE_ALARM : 'CALCCHAMP_6' -> a cause de la visu XFEM
 
 #-----------------------------------------------------------------------
 #-----------------------------------------------------------------------
@@ -372,7 +372,7 @@ TEST_TABLE(TABLE=CGleg,
            PRECISION=5.E-2,
            REFERENCE='AUTRE_ASTER',
            VALE_REFE=9.21683395221,
-           VALE_CALC=8.94099893125,
+           VALE_CALC=8.94089410419,
            )
 TEST_TABLE(TABLE=CGleg,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -381,7 +381,7 @@ TEST_TABLE(TABLE=CGleg,
            PRECISION=5.E-2,
            REFERENCE='AUTRE_ASTER',
            VALE_REFE=7.61774576541,
-           VALE_CALC=7.37305995089,
+           VALE_CALC=7.37308080243,
            )
 
 #----------------------------------------------------------------------
@@ -397,7 +397,7 @@ TEST_TABLE(TABLE=CGleg2,
            PRECISION=5.E-2,
            REFERENCE='AUTRE_ASTER',
            VALE_REFE=9.21683395221,
-           VALE_CALC=8.94292765446,
+           VALE_CALC=8.94281399737,
            )
 TEST_TABLE(TABLE=CGleg2,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -406,7 +406,7 @@ TEST_TABLE(TABLE=CGleg2,
            PRECISION=5.E-2,
            REFERENCE='AUTRE_ASTER',
            VALE_REFE=7.61774576541,
-           VALE_CALC=7.40684611277,
+           VALE_CALC=7.40687271313,
            )
 
 #----------------------------------------------------------------------
@@ -422,7 +422,7 @@ TEST_TABLE(TABLE=CGla15,
            PRECISION=5.E-2,
            REFERENCE='AUTRE_ASTER',
            VALE_REFE=9.21683395221,
-           VALE_CALC=8.87238432644,
+           VALE_CALC=8.8723869142,
            )
 TEST_TABLE(TABLE=CGla15,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -431,7 +431,7 @@ TEST_TABLE(TABLE=CGla15,
            PRECISION=5.E-2,
            REFERENCE='AUTRE_ASTER',
            VALE_REFE=7.61774576541,
-           VALE_CALC=7.28402195413,
+           VALE_CALC=7.28402205001,
            )
 
 #----------------------------------------------------------------------
@@ -447,7 +447,7 @@ TEST_TABLE(TABLE=CGregu,
            PRECISION=5.E-2,
            REFERENCE='AUTRE_ASTER',
            VALE_REFE=9.21683395221,
-           VALE_CALC=8.85720653999,
+           VALE_CALC=8.85720482668,
            )
 TEST_TABLE(TABLE=CGregu,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -456,7 +456,7 @@ TEST_TABLE(TABLE=CGregu,
            PRECISION=5.E-2,
            REFERENCE='AUTRE_ASTER',
            VALE_REFE=7.61774576541,
-           VALE_CALC=7.36455296728,
+           VALE_CALC=7.36455100415,
            )
 
 FIN()

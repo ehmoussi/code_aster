@@ -17,20 +17,11 @@
 # ======================================================================
 # person_in_charge: jean-luc.flejou at edf.fr
 #
-def ValeurCara(cara, Lcara, Lvale, valdefaut=None):
-    if ( cara in Lcara ):
-        return Lvale[Lcara.index(cara)]
-    else:
-        if valdefaut != None :
-            return valdefaut
-        else:
-            raise AsException("Erreur construction")
-
 
 def affe_cara_elem_ops(self, MODELE, INFO, VERIF,
     POUTRE, BARRE, COQUE, CABLE,
-    DISCRET, DISCRET_2D, ORIENTATION, DEFI_ARC, MASSIF, POUTRE_FLUI, GRILLE, MEMBRANE,
-    RIGI_PARASOL, RIGI_MISS_3D, MASS_AJOU,
+    DISCRET, DISCRET_2D, ORIENTATION, MASSIF, POUTRE_FLUI, GRILLE, MEMBRANE,
+    RIGI_PARASOL, RIGI_MISS_3D, MASS_AJOU, MASS_REP,
     GEOM_FIBRE, MULTIFIBRE, **args):
     """
        Ecriture de la macro AFFE_CARA_ELEM
@@ -72,9 +63,6 @@ def affe_cara_elem_ops(self, MODELE, INFO, VERIF,
     if ORIENTATION != None:
         motclef_cara_elem['ORIENTATION']    = ORIENTATION.List_F()
     #
-    if DEFI_ARC != None:
-        motclef_cara_elem['DEFI_ARC']       = DEFI_ARC.List_F()
-    #
     if MASSIF != None:
         motclef_cara_elem['MASSIF']         = MASSIF.List_F()
     #
@@ -95,6 +83,9 @@ def affe_cara_elem_ops(self, MODELE, INFO, VERIF,
     #
     if MASS_AJOU != None:
         motclef_cara_elem['MASS_AJOU']      = MASS_AJOU.List_F()
+    #
+    if MASS_REP != None:
+        motclef_cara_elem['MASS_REP']       = MASS_REP.List_F()
     #
     if GEOM_FIBRE != None:
         motclef_cara_elem['GEOM_FIBRE']     = GEOM_FIBRE

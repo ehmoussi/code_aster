@@ -15,14 +15,11 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine xappar(loptin, noma, modele, defico, resoco)
-        aster_logical :: loptin
-        character(len=8) :: noma
-        character(len=8) :: modele
-        character(len=24) :: defico
-        character(len=24) :: resoco
+    subroutine xappar(mesh, model, sdcont_defi, sdcont_solv)
+        character(len=8), intent(in) :: mesh
+        character(len=8), intent(in) :: model
+        character(len=24), intent(in) :: sdcont_defi
+        character(len=24), intent(in) :: sdcont_solv
     end subroutine xappar
 end interface

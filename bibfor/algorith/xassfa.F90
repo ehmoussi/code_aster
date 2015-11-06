@@ -4,13 +4,11 @@ subroutine xassfa(elp, npts, nintar, lst, noeud, cface, nface, pinter, jgrlsn)
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/iselli.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/provec.h"
 #include "blas/ddot.h"
 !
-    integer :: npts, nintar, noeud(9), cface(18,6), nface, jgrlsn
-    real(kind=8) :: lst(3), pinter(*)
+    integer :: npts, nintar, noeud(9), cface(30,6), nface, jgrlsn
+    real(kind=8) :: lst(6), pinter(*)
     character(len=8) :: elp
 !
 ! ======================================================================
@@ -50,7 +48,6 @@ subroutine xassfa(elp, npts, nintar, lst, noeud, cface, nface, pinter, jgrlsn)
     integer :: tempo, jj
     real(kind=8) ::  ab(3), bc(3), normfa(3), gradlsn(3), det
 !
-    call jemarq()
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !      3 CAS SONT POSSIBLES:
@@ -63,7 +60,7 @@ subroutine xassfa(elp, npts, nintar, lst, noeud, cface, nface, pinter, jgrlsn)
 !   PREMIER CAS
     if (npts.eq.1.and.nintar.eq.2) then
        nface = nface+1
-       if (lst(1).lt.0.d0.or.lst(2).lt.0.d0) then
+       if (lst(2).lt.0.d0.or.lst(3).lt.0.d0) then
           cface(nface,1) = noeud(3)
           cface(nface,2) = noeud(1)
           cface(nface,3) = noeud(4)
@@ -72,7 +69,7 @@ subroutine xassfa(elp, npts, nintar, lst, noeud, cface, nface, pinter, jgrlsn)
              cface(nface,5) = noeud(6)
              cface(nface,6) = noeud(8)
           endif
-       else if (lst(3).lt.0.d0) then
+       else if (lst(1).lt.0.d0) then
           cface(nface,1) = noeud(1)
           cface(nface,2) = noeud(3)
           cface(nface,3) = noeud(4)
@@ -210,6 +207,5 @@ subroutine xassfa(elp, npts, nintar, lst, noeud, cface, nface, pinter, jgrlsn)
        endif
     endif
 !
-    call jedema()
 !
 end subroutine

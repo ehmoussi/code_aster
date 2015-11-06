@@ -40,7 +40,7 @@ subroutine te0496(option, nomte)
 !     LES AUTRES INFO VIENNENT DE PNBSP_I
 !     SI PCOMPOR N'EST PAS FOURNI : NCMP_DYN = 0
 !     ------------------------------------------------
-    call tecach('ONN', 'PCOMPOR', 'L', iret, nval=2,&
+    call tecach('ONO', 'PCOMPOR', 'L', iret, nval=2,&
                 itab=itab)
     if (itab(1) .ne. 0) then
         ASSERT(itab(2).eq.1)
@@ -56,12 +56,11 @@ subroutine te0496(option, nomte)
 !
 !     PNBSP_I : INFOS NECESSSAIRES AU CALCUL DU NOMBRE DE SOUS-POINTS.
 !     SI LE CHAMP N'EST PAS DONNE ==> VALEUR PAR DEFAUT
-    call tecach('NNN', 'PNBSP_I', 'L', iret, iad=jnbsp)
+    call tecach('NNO', 'PNBSP_I', 'L', iret, iad=jnbsp)
     if (jnbsp .eq. 0) goto 9999
 !
 ! --- CAS DES ELEMENTS "COQUE EPAISSE" (MULTI-COUCHE) :
-    if ((nomte.eq.'MEC3QU9H') .or. (nomte.eq.'MEC3TR7H') .or. (nomte.eq.'METCSE3') .or.&
-        (nomte.eq.'METDSE3') .or. (nomte.eq.'MECXSE3')) then
+    if ((nomte.eq.'MEC3QU9H') .or. (nomte.eq.'MEC3TR7H').or. (nomte.eq.'MECXSE3')) then
         nbcou = zi(jnbsp-1+1)
         npgh = 3
         zi(jdcel-1+1) = npgh*nbcou

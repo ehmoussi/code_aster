@@ -1,5 +1,19 @@
-subroutine nmactp(sdimpr, sddisc, sderro, defico, resoco,&
-                  parcri, nbiter, numins)
+subroutine nmactp(ds_print, sddisc, sderro, defico, resoco,&
+                  ds_conv , nbiter, numins)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/isacti.h"
+#include "asterfort/nmacto.h"
+#include "asterfort/nmeceb.h"
+#include "asterfort/nmevac.h"
+#include "asterfort/nmleeb.h"
+#include "asterfort/utdidt.h"
+#include "asterfort/utmess.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -19,24 +33,14 @@ subroutine nmactp(sdimpr, sddisc, sderro, defico, resoco,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/assert.h"
-#include "asterfort/isacti.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmacto.h"
-#include "asterfort/nmeceb.h"
-#include "asterfort/nmevac.h"
-#include "asterfort/nmleeb.h"
-#include "asterfort/utdidt.h"
-#include "asterfort/utmess.h"
-    character(len=24) :: sdimpr, sderro
-    character(len=24) :: defico, resoco
-    character(len=19) :: sddisc
-    real(kind=8) :: parcri(*)
-    integer :: nbiter, numins
+    type(NL_DS_Print), intent(in) :: ds_print
+    character(len=24), intent(in) :: sderro
+    character(len=24), intent(in) :: defico
+    character(len=24), intent(in) :: resoco
+    character(len=19), intent(in) :: sddisc
+    type(NL_DS_Conv), intent(in) :: ds_conv
+    integer, intent(in) :: nbiter
+    integer, intent(in) :: numins
 !
 ! ----------------------------------------------------------------------
 !
@@ -46,32 +50,24 @@ subroutine nmactp(sdimpr, sddisc, sderro, defico, resoco,&
 !
 ! ----------------------------------------------------------------------
 !
-!
-! IN  SDIMPR : SD AFFICHAGE
+! In  ds_print         : datastructure for printing parameters
 ! In  sddisc           : datastructure for time discretization
 ! IN  SDERRO : SD GESTION DES ERREURS
 ! IN  DEFICO : SD POUR LA DEFINITION DE CONTACT
 ! IN  RESOCO : SD POUR LA RESOLUTION DE CONTACT
-! IN  PARCRI : CRITERES DE CONVERGENCE
+! In  ds_conv          : datastructure for convergence management
 ! IN  NBITER : NOMBRE D'ITERATIONS DE NEWTON
 ! IN  NUMINS : NUMERO D'INSTANT
 !
-!
-!
+! ----------------------------------------------------------------------
 !
     integer :: retact, i_echec_acti, actpas, iterat, i_action
     character(len=4) :: etinst
-    aster_logical :: arret
     integer :: piless
     character(len=16) :: pilcho
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
-!
-! --- INITIALISATIONS
-!
-    arret = (nint(parcri(4)).eq.0)
     retact = 4
     actpas = 3
     iterat = nbiter - 1
@@ -86,8 +82,8 @@ subroutine nmactp(sdimpr, sddisc, sderro, defico, resoco,&
         retact = 0
     else if (etinst.eq.'EVEN') then
         call nmacto(sddisc, i_echec_acti)
-        call nmevac(sdimpr      , sddisc, sderro, defico, resoco,&
-                    i_echec_acti, numins, iterat, retact)
+        call nmevac(sddisc, sderro  , i_echec_acti  , numins, iterat, &
+                    retact, ds_print, defico, resoco)
     else if (etinst.eq.'ERRE') then
         retact = 1
     else if (etinst.eq.'STOP') then
@@ -120,7 +116,7 @@ subroutine nmactp(sdimpr, sddisc, sderro, defico, resoco,&
 !
 ! ----- ECHEC DE L'ACTION
 !
-        if (.not.arret) then
+        if (.not.ds_conv%l_stop) then
 !
 ! ------- CONVERGENCE FORCEE -> ON PASSE A LA SUITE
 !
@@ -172,5 +168,4 @@ subroutine nmactp(sdimpr, sddisc, sderro, defico, resoco,&
         endif
     endif
 !
-    call jedema()
 end subroutine

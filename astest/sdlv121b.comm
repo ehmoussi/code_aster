@@ -1,6 +1,6 @@
 # TITRE ONDE DE CISAILLEMENT DANS UNE COLONNE ELASTIQUE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -42,6 +42,8 @@ MAIL=DEFI_GROUP( reuse=MAIL,   MAILLAGE=MAIL,CREA_GROUP_NO=(
                        _F( GROUP_MA = 'ABSO'),
                        _F( GROUP_MA = 'LIBR'))
                      )
+
+IMPR_RESU(RESU=_F(MAILLAGE=MAIL));
 
 MAT1=DEFI_MATERIAU( ELAS=_F(  E = 4.44E+8, RHO = 1900.,  NU = 0.48)
                     )
@@ -93,6 +95,7 @@ LIAISON=AFFE_CHAR_MECA(
 ONDE=AFFE_CHAR_MECA_F(  MODELE=MODELE,
 
                 ONDE_PLANE=_F( DIRECTION = (0., 1., 0.), TYPE_ONDE = 'S',
+                DIST=-50.,
                  FONC_SIGNAL = FONCT,GROUP_MA='ABSO'
                  ),
                          )
@@ -122,7 +125,7 @@ VECT_ELE=CALC_VECT_ELEM(     OPTION='CHAR_MECA',
                              CHARGE=LIAISON
                            )
 
-NUMEDDL=NUME_DDL(    MATR_RIGI=RIGI_ELE,   METHODE='LDLT')
+NUMEDDL=NUME_DDL(    MATR_RIGI=RIGI_ELE)
 
 RIGIDITE=ASSE_MATRICE(    MATR_ELEM=RIGI_ELE,
                             NUME_DDL=NUMEDDL
@@ -145,6 +148,7 @@ TEMPLI=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=_F( JUSQU_A = 0.8, NOMBRE = 1000))
 INTLI=DEFI_LIST_ENTI( DEBUT=1, INTERVALLE=_F( JUSQU_A = 1001, PAS = 1))
 
 DYNA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
+                        SOLVEUR=_F(METHODE='LDLT'),
                         MODELE=MODELE,
                         MATR_MASS=MASSE,
                         MATR_RIGI=RIGIDITE,
@@ -153,9 +157,7 @@ DYNA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                           _F(  VECT_ASSE = VECAS,
                                COEF_MULT = 1.),
                           _F(  CHARGE = ONDE)),
-####CDURAND####         ETAT_INIT=_F(  INST_INIT = 0.),
                         INCREMENT=_F( LIST_INST = TEMPLI),
-#                        ARCHIVAGE=_F(  LIST_ARCH = INTLI),
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                         )
 

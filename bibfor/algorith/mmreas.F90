@@ -24,8 +24,7 @@ subroutine mmreas(noma, defico, resoco, valinc)
 #include "asterfort/cfdisi.h"
 #include "asterfort/cfmmvd.h"
 #include "asterfort/cfnumm.h"
-#include "asterfort/cnocns.h"
-#include "asterfort/cnsred.h"
+#include "asterfort/mmfield_prep.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
@@ -36,7 +35,7 @@ subroutine mmreas(noma, defico, resoco, valinc)
 #include "asterfort/mminfi.h"
 #include "asterfort/mminfl.h"
 #include "asterfort/mminfm.h"
-#include "asterfort/mmvalp.h"
+#include "asterfort/mmvalp_scal.h"
 #include "asterfort/nmchex.h"
     character(len=8) :: noma
     character(len=24) :: defico, resoco
@@ -68,10 +67,10 @@ subroutine mmreas(noma, defico, resoco, valinc)
     integer :: nne, nbmae, nptm
     integer :: ndimg, nzoco
     aster_logical :: lveri
-    real(kind=8) :: lambdc(1), ksipc1, ksipc2
+    real(kind=8) :: lambdc, ksipc1, ksipc2
     real(kind=8) :: mlagc(9)
     character(len=8) :: aliase
-    character(len=19) :: cnsplu, cnslbd, depplu
+    character(len=19) :: cnslbd, depplu
     character(len=24) :: tabfin
     integer :: jtabf
 !
@@ -79,18 +78,15 @@ subroutine mmreas(noma, defico, resoco, valinc)
 !
     call jemarq()
     call infdbg('CONTACT', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> ... MISE A JOUR DES SEUILS DE '//&
-        'FROTTEMENT'
+        write (ifm,*) '<CONTACT> ... MISE A JOUR DES SEUILS DE FROTTEMENT'
     endif
 !
 ! --- INITIALISATIONS
 !
     ndimg = cfdisi(defico,'NDIM' )
     nzoco = cfdisi(defico,'NZOCO')
+    ibid = 0
 !
 ! --- RECUPERATION DES QCQS DONNEES
 !
@@ -104,16 +100,14 @@ subroutine mmreas(noma, defico, resoco, valinc)
 !
 ! --- TRANSFORMATION DEPPLU EN CHAM_NO_S ET REDUCTION SUR LES LAGRANGES
 !
-    cnsplu = '&&REACLM.CNSPLU'
-    call cnocns(depplu, 'V', cnsplu)
     cnslbd = '&&REACLM.CNSLBD'
-    call cnsred(cnsplu, 0, [ibid], 1, 'LAGS_C',&
-                'V', cnslbd)
+    call mmfield_prep(depplu, cnslbd,&
+                      l_sort_ = .true._1, nb_cmp_ = 1, list_cmp_ = ['LAGS_C  '])
 !
 ! --- BOUCLE SUR LES ZONES
 !
     iptc = 1
-    do 10 izone = 1, nzoco
+    do izone = 1, nzoco
 !
 ! --- OPTIONS SUR LA ZONE DE CONTACT
 !
@@ -139,7 +133,7 @@ subroutine mmreas(noma, defico, resoco, valinc)
 !
 ! ------- INFOS SUR LA MAILLE
 !
-            call mmelty(noma, nummae, aliase, nne, ibid)
+            call mmelty(noma, nummae, aliase, nne)
 !
 ! ------- MULTIPLICATEURS DE CONTACT SUR LES NOEUDS DE LA MAILLE ESCLAVE
 !
@@ -160,12 +154,12 @@ subroutine mmreas(noma, defico, resoco, valinc)
 !
 ! --------- MULTIPLICATEUR DE LAGRANGE DE CONTACT DU POINT
 !
-                call mmvalp(ndimg, aliase, nne, 1, ksipc1,&
-                            ksipc2, mlagc, lambdc)
+                call mmvalp_scal(ndimg, aliase, nne, ksipc1,&
+                                 ksipc2, mlagc, lambdc)
 !
 ! --------- SAUVEGARDE
 !
-                zr(jtabf+ztabf*(iptc-1)+16) = lambdc(1)
+                zr(jtabf+ztabf*(iptc-1)+16) = lambdc
 !
 ! --------- LIAISON DE CONTACT SUIVANTE
 !
@@ -173,9 +167,8 @@ subroutine mmreas(noma, defico, resoco, valinc)
  30         continue
  20     continue
  25     continue
- 10 end do
+    end do
 !
-    call detrsd('CHAM_NO_S', cnsplu)
     call detrsd('CHAM_NO_S', cnslbd)
     call jedema()
 end subroutine

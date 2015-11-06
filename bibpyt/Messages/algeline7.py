@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -98,4 +98,41 @@ numéro    itération      erreur              valeur propre
  Cela est dû au fait qu'il manque des degrés de liberté dans  "%(k1)s" par
  rapport à "%(k2)s".
 """),
+
+    22: _(u"""
+
+       ===============================================
+       =                                             =
+       =          Opérateur CALC_ERC_DYN             =
+       =                                             =
+       =        Résolution d'un problème de          =
+       =      minimisation d'une fonctionnelle       =
+       =    d'erreur en relation de comportement     =
+       =           en dynamique linéaire.            =
+       =                                             =
+       =        Formulation fréquentielle.           =
+       =                                             =
+       ===============================================
+ 
+ Nombre de fréquences demandées    = %(i1)d
+ 
+ Ordres de grandeur des matrices du problème:
+ (informations combinant degrés de liberté physiques et de Lagrange)
+ -------------------------------------------------------------------
+
+ Dimension des matrices de masse (M) et raideur (K)  = %(i2)d x %(i2)d
+ Termes non nuls des matrices de masse et raideur    = %(i3)d
+ 
+ Dimension de la matrice d'observation (H)           = %(i4)d x %(i2)d
+ Termes non nuls de la matrice d'observation         = %(i5)d
+ Dimension de la matrice norme (G)                   = %(i4)d x %(i4)d
+  
+ Termes non nuls du sous-bloc H^T*G*H                = %(i6)d
+ 
+ Dimension de la matrice du problème d'ERC           = %(i7)d x %(i7)d
+ Termes non nuls de la matrice du problème d'ERC     = %(i8)d
+
+ ===============================================
+
+"""),   
 }

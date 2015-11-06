@@ -67,6 +67,7 @@ subroutine prere1(solvez, base, iret, matpre, matass,&
 #include "asterfort/pcmump.h"
 #include "asterfort/sdmpic.h"
 #include "asterfort/tldlg3.h"
+#include "asterfort/jelira.h"
 #include "asterfort/utmess.h"
 #include "asterfort/uttcpr.h"
 #include "asterfort/uttcpu.h"
@@ -77,17 +78,18 @@ subroutine prere1(solvez, base, iret, matpre, matass,&
 !
     integer :: idbgav, ifm, niv, islvk, ibid
     integer :: islvi, lmat, nprec, ndeci, isingu, niremp
-    integer :: istopz, iretgc
+    integer :: istopz, iretgc, n1
     character(len=24) :: metres, precon
     character(len=19) :: matas, maprec, matas1, solveu
     character(len=8) :: renum, kmpic, kmatd
+    character(len=24), pointer :: refa(:) => null()
     aster_logical :: dbg
 !
 !----------------------------------------------------------------------
     call jemarq()
     call jedbg2(idbgav, 0)
     call infniv(ifm, niv)
-!
+
 !     COHERENCE DES VALEURS DE ISTOPZ (NIVEAU DEVELOPPEUR)
     istopz=istop
     if ((istopz.ne.0) .and. (istopz.ne.1) .and. (istopz.ne.2) .and. (istopz.ne.-9999)) then
@@ -95,26 +97,30 @@ subroutine prere1(solvez, base, iret, matpre, matass,&
     endif
     dbg=.true.
     dbg=.false.
-!
+
     matas1=matass
     matas = matass
     maprec = matpre
     npvneg=-9999
-!
+
     solveu=solvez
-    if (solveu .eq. ' ') call dismoi('SOLVEUR', matas, 'MATR_ASSE', repk=solveu)
+    if (solveu .eq. ' ')  call dismoi('SOLVEUR', matas, 'MATR_ASSE', repk=solveu)
     call jeveuo(solveu//'.SLVK', 'L', islvk)
     metres = zk24(islvk)
-!
+
+!   -- pour que la destruction des instances mumps et petsc fonctionne,
+!      il faut renseigner le solveur dans la matrice :
+    call jeveuo(matas//'.REFA', 'E', vk24=refa)
+    refa(7)=solveu
 !
     if (dbg) then
         call cheksd(matas, 'SD_MATR_ASSE', ibid)
         call cheksd(solveu, 'SD_SOLVEUR', ibid)
     endif
-!
+
     call dismoi('MPI_COMPLET', matas, 'MATR_ASSE', repk=kmpic)
     call dismoi('MATR_DISTR', matas, 'MATR_ASSE', repk=kmatd)
-!
+
     if (kmpic .eq. 'NON') then
         if (metres .eq. 'MUMPS' .or. ( metres.eq.'PETSC'.and.kmatd.eq.'OUI')) then
         else
@@ -163,6 +169,9 @@ subroutine prere1(solvez, base, iret, matpre, matass,&
         call jeveuo(solveu//'.SLVK', 'L', islvk)
         call jeveuo(solveu//'.SLVI', 'E', islvi)
         precon=zk24(islvk-1+2)
+        call jelira(matas//'.VALM', 'NUTIOC', n1)
+        ASSERT(n1.eq.1 .or. n1.eq.2)
+        if (n1.eq.2) call utmess('F', 'ASSEMBLA_1')
 !
         if (precon .eq. 'LDLT_INC') then
             niremp = zi(islvi-1+4)

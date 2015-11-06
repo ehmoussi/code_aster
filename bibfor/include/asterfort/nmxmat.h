@@ -21,10 +21,11 @@ interface
     subroutine nmxmat(modelz, mate, carele, compor, carcri,&
                       sddisc, sddyna, fonact, numins, iterat,&
                       valinc, solalg, lischa, comref, defico,&
-                      resoco, solveu, numedd, numfix, sdstat,&
+                      resoco, numedd, numfix, sdstat, ds_algopara,&
                       sdtime, nbmatr, ltypma, loptme, loptma,&
                       lcalme, lassme, lcfint, meelem, measse,&
                       veelem, ldccvg, codere)
+        use NonLin_Datastructure_type        
         character(len=*) :: modelz
         character(len=*) :: mate
         character(len=24) :: carele
@@ -41,7 +42,6 @@ interface
         character(len=24) :: comref
         character(len=24) :: defico
         character(len=24) :: resoco
-        character(len=19) :: solveu
         character(len=24) :: numedd
         character(len=24) :: numfix
         character(len=24) :: sdstat
@@ -58,5 +58,6 @@ interface
         character(len=19) :: veelem(*)
         integer :: ldccvg
         character(len=24) :: codere
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     end subroutine nmxmat
 end interface

@@ -296,6 +296,22 @@ La subdivision du pas de temps est déclenchée.
 Il faut pour cela l'autoriser avec le mot clef SUBD_METHODE de la commande STAT_NON_LINE.
 """),
 
+    59: _(u"""
+Aucune des mailles déclarées dans l'occurrence numéro %(i1)d du mot-clé COMPORTEMENT
+n'est présente dans le modèle.
+Il faut supprimer cette occurrence pour que le calcul fonctionne.
+"""),
+
+    60: _(u"""
+Toutes les mailles déclarées dans l'occurrence numéro %(i1)d du mot-clé COMPORTEMENT
+sont des éléments de bord qui ne portent pas de rigidité.
+Il faut supprimer cette occurrence pour que le calcul fonctionne.
+"""),
+
+    61: _(u"""
+Vous utilisez un comportement élastique non-linéaire avec un état initial.
+Cet état initial ne sera pas pris en compte. 
+"""),
 
     63 : _(u"""
    ATTENTION SR > 1    SR = %(r1)f
@@ -414,7 +430,7 @@ Les résultats obtenus ne sont pas exactes avec un autre type d'élément.
 """),
 
     90 : _(u"""
-La loi d'endommagement de Sellier est mal utilisée ou bien il y a un problème
+La loi d'endommagement de KIT_RGI est mal utilisée ou bien il y a un problème
 d'intégration local d'un phénomène.
 
 Vérifiez les propriétés matériaux et que la modélisation est 3D.
@@ -424,6 +440,10 @@ Vérifiez les propriétés matériaux et que la modélisation est 3D.
  REST_ECRO : la fonction de restauration d'écrouissage vaut %(r1)E or elle doit être comprise entre 0 et 1.
 
 Vérifiez les valeurs de la fonction.
+"""),
+
+    92 : _(u"""
+Seule la modélisation 3D est disponible avec la loi d'endommagement de KIT_RGI. 
 """),
 
 }

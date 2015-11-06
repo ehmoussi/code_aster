@@ -1,10 +1,24 @@
 subroutine nmxmat(modelz, mate, carele, compor, carcri,&
                   sddisc, sddyna, fonact, numins, iterat,&
                   valinc, solalg, lischa, comref, defico,&
-                  resoco, solveu, numedd, numfix, sdstat,&
+                  resoco, numedd, numfix, sdstat, ds_algopara,&
                   sdtime, nbmatr, ltypma, loptme, loptma,&
                   lcalme, lassme, lcfint, meelem, measse,&
                   veelem, ldccvg, codere)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/diinst.h"
+#include "asterfort/nmassm.h"
+#include "asterfort/nmcalm.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmrigi.h"
+#include "asterfort/nmrinc.h"
+#include "asterfort/nmtime.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -23,18 +37,9 @@ subroutine nmxmat(modelz, mate, carele, compor, carcri,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/diinst.h"
-#include "asterfort/nmassm.h"
-#include "asterfort/nmcalm.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmrigi.h"
-#include "asterfort/nmrinc.h"
-#include "asterfort/nmtime.h"
+!
+!
     integer :: nbmatr
     character(len=6) :: ltypma(20)
     character(len=16) :: loptme(20), loptma(20)
@@ -44,7 +49,7 @@ subroutine nmxmat(modelz, mate, carele, compor, carcri,&
     character(len=24) :: sdtime, sdstat
     character(len=24) :: compor, carcri, carele
     integer :: numins, iterat, ldccvg
-    character(len=19) :: sddisc, sddyna, lischa, solveu
+    character(len=19) :: sddisc, sddyna, lischa
     character(len=24) :: defico, resoco
     character(len=24) :: numedd, numfix
     character(len=24) :: comref, codere
@@ -52,6 +57,7 @@ subroutine nmxmat(modelz, mate, carele, compor, carcri,&
     character(len=19) :: solalg(*), valinc(*)
     integer :: fonact(*)
     aster_logical :: lcfint
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! ----------------------------------------------------------------------
 !
@@ -76,13 +82,13 @@ subroutine nmxmat(modelz, mate, carele, compor, carcri,&
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION (VOIR NMLECT)
 ! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION (VOIR NMLECT)
-! IN  SOLVEU : SOLVEUR
 ! IN  CARCRI : PARAMETRES METHODES D'INTEGRATION LOCALES (VOIR NMLECT)
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  ITERAT : NUMERO D'ITERATION
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  NBMATR : NOMBRE DE MATR_ELEM DANS LA LISTE
 ! IN  LTYPMA : LISTE DES NOMS DES MATR_ELEM
 ! IN  LOPTME : LISTE DES OPTIONS DES MATR_ELEM
@@ -110,10 +116,6 @@ subroutine nmxmat(modelz, mate, carele, compor, carcri,&
 !
 ! ----------------------------------------------------------------------
 !
-!
-!
-! --- INITIALISATIONS
-!
     base = 'V'
     instam = diinst(sddisc,numins-1)
     instap = diinst(sddisc,numins)
@@ -127,7 +129,7 @@ subroutine nmxmat(modelz, mate, carele, compor, carcri,&
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM
 !
-    do 10 imatr = 1, nbmatr
+    do imatr = 1, nbmatr
 !
 ! --- MATR_ELEM COURANTE
 !
@@ -151,10 +153,10 @@ subroutine nmxmat(modelz, mate, carele, compor, carcri,&
                     call nmtime(sdtime, 'INI', 'CTCC_MATR')
                     call nmtime(sdtime, 'RUN', 'CTCC_MATR')
                 endif
-                call nmcalm(typmat, modelz, lischa, mate, carele,&
-                            compor, instam, instap, carcri, valinc,&
-                            solalg, optcal, base, meelem, defico,&
-                            resoco, matele)
+                call nmcalm(typmat, modelz, lischa, mate  , carele,&
+                            compor, instam, instap, valinc, solalg,&
+                            optcal, base  , meelem, defico, resoco,&
+                            matele)
                 if ((typmat.eq.'MEELTC') .or. (typmat.eq.'MEELTF')) then
                     call nmtime(sdtime, 'END', 'CTCC_MATR')
                     call nmrinc(sdstat, 'CTCC_MATR')
@@ -168,10 +170,10 @@ subroutine nmxmat(modelz, mate, carele, compor, carcri,&
             call nmtime(sdtime, 'INI', 'ASSE_MATR')
             call nmtime(sdtime, 'RUN', 'ASSE_MATR')
             call nmchex(measse, 'MEASSE', typmat, matass)
-            call nmassm(fonact, lischa, solveu, numedd, numfix,&
+            call nmassm(fonact, lischa, numedd, numfix, ds_algopara,&
                         typmat, optass, meelem, matass)
             call nmtime(sdtime, 'END', 'ASSE_MATR')
         endif
- 10 end do
+    end do
 !
 end subroutine

@@ -15,17 +15,21 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nmnpas(modele, noma  , mate  , carele, fonact,&
-                      sdimpr, sddisc, sdsuiv, sddyna, sdnume,&
-                      sdstat, sdtime, numedd, numins, conv,&
-                      defico, resoco, valinc, solalg, solveu)
+    subroutine nmnpas(modele  , noma  , mate  , carele, fonact ,&
+                      ds_print, sddisc, sdsuiv, sddyna, sdnume ,&
+                      sdstat  , sdtime, numedd, numins, defico ,&
+                      resoco  , valinc, solalg, solveu, ds_conv,&
+                      lischa)
+        use NonLin_Datastructure_type
         character(len=24) :: modele
         character(len=8) :: noma
         character(len=24) :: mate
         character(len=24) :: carele
         integer :: fonact(*)
-        character(len=24) :: sdimpr
+        type(NL_DS_Print), intent(inout) :: ds_print
         character(len=19) :: sddisc
         character(len=24) :: sdsuiv
         character(len=19) :: sddyna
@@ -34,11 +38,12 @@ interface
         character(len=24) :: sdtime
         character(len=24) :: numedd
         integer :: numins
-        real(kind=8) :: conv(*)
         character(len=24) :: defico
         character(len=24) :: resoco
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: solveu
+        type(NL_DS_Conv), intent(inout) :: ds_conv
+        character(len=19), intent(in) :: lischa
     end subroutine nmnpas
 end interface

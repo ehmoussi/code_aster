@@ -1,6 +1,6 @@
 subroutine rcvarc(arret, novrc, poum, fami, kpg,&
                   ksp, valvrc, iret)
-use module_calcul, only : ca_decala_, ca_iactif_, ca_iel_, ca_iredec_, &
+use calcul_module, only : ca_decala_, ca_iactif_, ca_iel_, ca_iredec_, &
      ca_jfpgl_, ca_jvcnom_, ca_km_, ca_kp_,&
      ca_kr_, ca_nbcvrc_, ca_nfpg_, ca_nomte_, ca_option_, &
      ca_td1_, ca_tf1_, ca_timed1_, ca_timef1_
@@ -23,7 +23,6 @@ implicit none
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 #include "jeveux.h"
-#include "asterc/iisnan.h"
 #include "asterc/indik8.h"
 #include "asterc/r8nnem.h"
 #include "asterfort/assert.h"
@@ -208,7 +207,7 @@ implicit none
         kpgvrc=(kpgmat-1)*nbsp+ksp
         valvrp=zr(itabp(1) -1 + (kpgvrc-1)*ca_nbcvrc_ + kcvrc)
 
-        if ((iisnan(valvrm).eq.0) .and. (iisnan(valvrp).eq.0)) then
+        if ((.not.isnan(valvrm)) .and. (.not.isnan(valvrp))) then
             if (poum .eq. '-') then
                 valvrc=valvrm+(ca_td1_-ca_timed1_)*(valvrp-valvrm)/(ca_timef1_-&
                 ca_timed1_)
@@ -227,7 +226,7 @@ implicit none
     endif
 
     iret=0
-    if (iisnan(valvrc) .gt. 0) iret=1
+    if (isnan(valvrc)) iret=1
 
 
 !   5) traitement si iret=1

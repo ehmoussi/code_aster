@@ -30,8 +30,6 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
 #include "asterfort/dfdm3d.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/iselli.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/nmelnl.h"
@@ -119,7 +117,6 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
     data    fami   /'BID','XINT','XINT','BID','XINT','XINT'/
 !
 !
-    call jemarq()
 !
 !     VERIF QUE LES TABLEAUX LOCAUX DYNAMIQUES NE SONT PAS TROP GRANDS
 !     (VOIR CRS 1404)
@@ -199,7 +196,7 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
     endif
     
 !   Recuperation de la contrainte initiale aux noeuds des sous-elts
-    call tecach('ONN', 'PSIGISE', 'L', iret, iad=jsigse)
+    call tecach('ONO', 'PSIGISE', 'L', iret, iad=jsigse)
     
 !   Indicateur de contrainte initiale
     isigi=0
@@ -491,16 +488,17 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
 !       4) CALCUL DU CHAMP DE TEMPERATURE ET DE SA DERIVEE
 !       --------------------------------------------------
 !
-        do i = 1, ndim
-            tgudm(i)=0.d0
-!           cas de la varc TEMP, "continue" et donnee au noeud. Calcul
-!           de ses derivees partielles
-            if (l_temp_noeu) then
+        call vecini(3, 0.d0, tgudm)
+!
+!       cas de la varc TEMP, "continue" et donnee au noeud. Calcul
+!       de ses derivees partielles
+        if (l_temp_noeu) then
+            do i = 1, ndim
                 do ino = 1, nnop
                     tgudm(i) = tgudm(i) + dfdi(ino,i) * tpn(ino)
-                end do
-            endif
-        end do
+                enddo
+            enddo
+        endif
 !
 !       cas des varc DTX DTY DTZ, derivees partielles de la temperature
 !       "discontinue". Ces varc sont donnees aux pg xfem
@@ -714,5 +712,4 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
 
 
 !
-    call jedema()
 end subroutine

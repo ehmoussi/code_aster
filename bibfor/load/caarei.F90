@@ -1,6 +1,6 @@
 subroutine caarei(load, mesh, ligrmo, vale_type)
 !
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -284,7 +284,7 @@ subroutine caarei(load, mesh, ligrmo, vale_type)
 !
 ! - Final linear relation affectation
 !
-    call aflrch(list_rela, load)
+    call aflrch(list_rela, load, 'LIN')
 !
     call jedetr('&&CATANG.TANGENT')
     call jedetr('&&CAAREI.REPE_DEFI')

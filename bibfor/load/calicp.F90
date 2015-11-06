@@ -1,6 +1,6 @@
 subroutine calicp(load, mesh, ligrmo, vale_type)
 !
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -222,7 +222,7 @@ subroutine calicp(load, mesh, ligrmo, vale_type)
 !
 ! - Final linear relation affectation
 !
-    call aflrch(list_rela, load)
+    call aflrch(list_rela, load, 'NLIN')
 !
     call jedetr(list_pair)
 !

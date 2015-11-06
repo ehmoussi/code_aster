@@ -15,6 +15,7 @@ subroutine te0243(option, nomte)
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
+! aslint: disable=C1513
     implicit none
 #include "jeveux.h"
 #include "asterfort/connec.h"
@@ -142,10 +143,11 @@ subroutine te0243(option, nomte)
 !
     do 200 ise = 1, nse
 !
-        do 205 i = 1, nno
-            do 205 j = 1, 2
+        do i = 1, nno
+            do j = 1, 2
                 coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-205          continue
+            enddo
+        enddo
 !
         if (zk16(icomp)(1:5) .eq. 'THER_') then
 !
@@ -183,10 +185,11 @@ subroutine te0243(option, nomte)
 !
 ! ------- TERME DE MASSE : 3EME FAMILLE DE PTS DE GAUSS -----------
 !
-            do 405 i = 1, nno
-                do 405 j = 1, 2
+            do i = 1, nno
+                do j = 1, 2
                     coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-405              continue
+                enddo
+            enddo
 !
             call ntfcma(zk16(icomp), zi(imate), ifon)
             do 401 kp = 1, npg2

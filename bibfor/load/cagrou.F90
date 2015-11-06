@@ -1,6 +1,6 @@
-subroutine cagrou(load, mesh, vale_type)
+subroutine cagrou(load, mesh, vale_type, phenom)
 !
-    implicit none
+implicit none
 !
 #include "jeveux.h"
 #include "asterc/getfac.h"
@@ -40,6 +40,7 @@ subroutine cagrou(load, mesh, vale_type)
     character(len=8), intent(in) :: load
     character(len=8), intent(in) :: mesh
     character(len=4), intent(in) :: vale_type
+    character(len=4), intent(in) :: phenom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -164,7 +165,9 @@ subroutine cagrou(load, mesh, vale_type)
 !
 ! - Final linear relation affectation
 !
-    call aflrch(list_rela, load)
+    if (phenom.eq.'MECA') then
+    endif
+    call aflrch(list_rela, load, 'LIN')
 !
 999  continue
     call jedema()

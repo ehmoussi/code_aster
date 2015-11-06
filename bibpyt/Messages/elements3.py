@@ -80,14 +80,6 @@ cata_msg = {
  Mauvaise définition des caractéristiques de la section
 """),
 
-    28 : _(u"""
- Rigidité géométrique non définie pour les éléments courbes
-"""),
-
-    29 : _(u"""
- Force élémentaire électrique non définie pour les éléments courbes
-"""),
-
     30 : _(u"""
  Section non tubulaire pour MASS_FLUI_STRU
 """),
@@ -126,17 +118,14 @@ cata_msg = {
  éléments de type %(k2)s.
 """),
 
-    46 : _(u"""
- le paramètre "pnosym" n'existe pas dans le catalogue de l'élément  %(k1)s  .
-"""),
 
-    47 : _(u"""
- la taille de la matrice non-symétrique en entrée est fausse.
-"""),
 
-    48 : _(u"""
- la taille de la matrice symétrique en sortie est fausse.
-"""),
+
+
+
+
+
+
 
     49 : _(u"""
  anisotropie non prévue pour coque1d

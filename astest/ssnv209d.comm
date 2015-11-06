@@ -1,6 +1,6 @@
 # TITRE INTERFACE EN CONTACT FROTTANT AVEC X-FEM
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -38,17 +38,17 @@ MAILLAG2=DEFI_GROUP(reuse =MAILLAG2,
                     MAILLAGE=MAILLAG2,
                     CREA_GROUP_NO= (_F(GROUP_MA='SURF'),
                                     _F(GROUP_MA='LIG1',
-                                       NOM='NLIG1')),
+                                       NOM='NLIG1'),
+                                    _F(OPTION='PLAN',
+                                       NOM='nBAT',
+                                       GROUP_NO_CENTRE='P1',
+                                       VECT_NORMALE= (0.,1.),
+                                       PRECISION=0.009)),
                     CREA_GROUP_MA= (_F(OPTION='BANDE',
                                        NOM='PLAQ',
                                        GROUP_NO_CENTRE='P4',
                                        VECT_NORMALE= (0.,1.),
-                                       DIST=0.0399),
-                                    _F(OPTION='BANDE',
-                                       NOM='BAT',
-                                       GROUP_NO_CENTRE='P1',
-                                       VECT_NORMALE= (0.,1.),
-                                       DIST=0.0099)),
+                                       DIST=0.0399)),
                     INFO=1);
 
 MAILLAG2=DEFI_GROUP(reuse =MAILLAG2,
@@ -128,13 +128,12 @@ NU_F=DEFI_FONCTION(NOM_PARA='NEUT1',
 E_F=DEFI_FONCTION(NOM_PARA='NEUT1',
                   VALE=(-1.0,1.E16,-1.E-9,1.E16,1.E-9,E,1.0,E));
 
-MATVAR=DEFI_MATERIAU(ELAS_FO=_F(E=E_F,NU=NU_F,RHO=rho));
+RHOF=DEFI_CONSTANTE(VALE = rho,)
+MATVAR=DEFI_MATERIAU(ELAS_FO=_F(E=E_F,NU=NU_F,RHO=RHOF));
 
 CHAMPMA1=AFFE_MATERIAU(MAILLAGE=MAILLAG2,
                        MODELE=MODELEK,
-                       AFFE=(_F(GROUP_MA=('PLAQ'),
-                                MATER=MATVAR),
-                             _F(GROUP_MA=('BAT'),
+                       AFFE=(_F(GROUP_MA=('SURF'),
                                 MATER=MATVAR)),
                        AFFE_VARC=_F(NOM_VARC='NEUT1',
                                     CHAM_GD=CHABNO));
@@ -160,17 +159,37 @@ CTXFEM = DEFI_CONTACT(MODELE         = MODELEK,
                                COEF_CONT      = 100.,
                                ALGO_FROT      = 'STANDARD',
                                COEF_FROT      = 100.,
-                               ALGO_LAGR      = 'VERSION2',
                              ),
                          ),
                    );
 
+H_plus = -2.
 
-CHCINE=AFFE_CHAR_CINE(MODELE=MODELEK,
+CHCINE=AFFE_CHAR_MECA(MODELE=MODELEK,
 #                     ENCASTREMENT DU BAS
-                      MECA_IMPO=(_F(GROUP_NO='NLIG1',
-                                    DX=0.,
-                                    DY=0.)));
+                      DDL_IMPO=(_F(GROUP_NO='NLIG1',
+                                   DX=0.,
+                                   DY=0.),),
+#                 Condition sur les noeuds appartenant à l'interface
+                      LIAISON_GROUP=(
+                                    # --- DX ---
+                                    _F(GROUP_NO_1 = ('NFISSU'),
+                                       GROUP_NO_2 = ('NFISSU'),
+                                       DDL_1      = ('DX', 'H1X'),
+                                       DDL_2      = ('DX', 'H1X'),
+                                       COEF_MULT_1= (0., 0.),
+                                       COEF_MULT_2= (1., H_plus),
+                                       COEF_IMPO= 0.),
+                                    # --- DY ---
+                                    _F(GROUP_NO_1 = ('NFISSU'),
+                                       GROUP_NO_2 = ('NFISSU'),
+                                       DDL_1      = ('DY', 'H1Y'),
+                                       DDL_2      = ('DY', 'H1Y'),
+                                       COEF_MULT_1= (0., 0.),
+                                       COEF_MULT_2= (1., H_plus),
+                                       COEF_IMPO= 0.),),
+
+                     );
 
 CHMECA=AFFE_CHAR_MECA(MODELE=MODELEK,
 #                     FORCE IMPOSEE EN A
@@ -311,10 +330,10 @@ DEP_NFI = CALC_TABLE(reuse = DEP_NFI,
 
 IMPR_TABLE(TABLE=DEP_NFI);
 
-VC_PPR=POST_RELEVE_T(ACTION=_F(INTITULE='VALE_CONT',
+VC_PPR=POST_RELEVE_T(ACTION=_F(INTITULE='CONT_NOEU',
                                GROUP_NO=('PPR'),
                                RESULTAT=UTOT1,
-                               NOM_CHAM='VALE_CONT',
+                               NOM_CHAM='CONT_NOEU',
                                INST=1.0,
                                TOUT_CMP='OUI',
                                OPERATION='EXTRACTION'));
@@ -416,7 +435,7 @@ TEST_TABLE(CRITERE='ABSOLU',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=0.10000000000000001,
-           VALE_CALC= 9.65281071E+04,
+           VALE_CALC=96528.5506724,
            VALE_REFE=1.048637688477E5,
            NOM_PARA='RN',
            TYPE_TEST='MAX',
@@ -425,8 +444,8 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC= 2.84873383E-05,
-           VALE_REFE=2.8459439896693998E-05,
+           VALE_CALC=2.84874012245E-05,
+           VALE_REFE=2.84594384304E-05,
            NOM_PARA='DX',
            TYPE_TEST='MAX',
            TABLE=DEP_PPA,)
@@ -434,17 +453,8 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC= 2.84873383E-05,
-           VALE_REFE=2.8459439896693998E-05,
-           NOM_PARA='DX',
-           TYPE_TEST='MIN',
-           TABLE=DEP_PPA,)
-
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-2,
-           VALE_CALC= 2.71146788E-05,
-           VALE_REFE=2.7079237982464999E-05,
+           VALE_CALC=2.71147418354E-05,
+           VALE_REFE=2.70792364103E-05,
            NOM_PARA='DX',
            TYPE_TEST='MAX',
            TABLE=DEP_PPB,)
@@ -452,17 +462,8 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC= 2.71146788E-05,
-           VALE_REFE=2.7079237982464999E-05,
-           NOM_PARA='DX',
-           TYPE_TEST='MIN',
-           TABLE=DEP_PPB,)
-
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-2,
-           VALE_CALC= 2.27672829E-05,
-           VALE_REFE=2.2740263403973999E-05,
+           VALE_CALC=2.27673455717E-05,
+           VALE_REFE=2.27402555462E-05,
            NOM_PARA='DX',
            TYPE_TEST='MAX',
            TABLE=DEP_PPC,)
@@ -470,17 +471,8 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC= 2.27672829E-05,
-           VALE_REFE=2.2740263403973999E-05,
-           NOM_PARA='DX',
-           TYPE_TEST='MIN',
-           TABLE=DEP_PPC,)
-
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-2,
-           VALE_CALC= 1.97480363E-05,
-           VALE_REFE=1.9727070717204E-05,
+           VALE_CALC=1.97480934002E-05,
+           VALE_REFE=1.97270669318E-05,
            NOM_PARA='DX',
            TYPE_TEST='MAX',
            TABLE=DEP_PPD,)
@@ -488,28 +480,10 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC= 1.97480363E-05,
-           VALE_REFE=1.9727070717204E-05,
-           NOM_PARA='DX',
-           TYPE_TEST='MIN',
-           TABLE=DEP_PPD,)
-
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-2,
-           VALE_CALC= 1.53717419E-05,
-           VALE_REFE=1.5364129019093E-05,
+           VALE_CALC=1.53717902207E-05,
+           VALE_REFE=1.53641594362E-05,
            NOM_PARA='DX',
            TYPE_TEST='MAX',
-           TABLE=DEP_PPE,)
-
-TEST_TABLE(CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-2,
-           VALE_CALC= 1.53717419E-05,
-           VALE_REFE=1.5364129019093E-05,
-           NOM_PARA='DX',
-           TYPE_TEST='MIN',
            TABLE=DEP_PPE,)
 
 FIN();

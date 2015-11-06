@@ -1,10 +1,32 @@
-subroutine nmrepl(modele, numedd, mate, carele, comref,&
-                  compor, lischa, parmet, carcri, fonact,&
-                  iterat, sdstat, sdpilo, sdnume, sddyna,&
-                  method, defico, resoco, deltat, valinc,&
-                  solalg, veelem, veasse, sdtime, sddisc,&
-                  etan, conv, eta, rho, offset,&
-                  ldccvg, pilcvg, matass)
+subroutine nmrepl(modele , numedd, mate       , carele, comref,&
+                  compor , lischa, ds_algopara, carcri, fonact,&
+                  iterat , sdstat, sdpilo     , sdnume, sddyna,&
+                  defico , resoco, deltat     , valinc, solalg,&
+                  veelem , veasse, sdtime     , sddisc, etan  ,&
+                  ds_conv, eta   , offset     , ldccvg, pilcvg,&
+                  matass )
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterc/ismaem.h"
+#include "asterc/r8maem.h"
+#include "asterfort/assert.h"
+#include "asterfort/copisd.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/nmceta.h"
+#include "asterfort/nmcha0.h"
+#include "asterfort/nmchai.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmchso.h"
+#include "asterfort/nmfext.h"
+#include "asterfort/nmpilo.h"
+#include "asterfort/nmpilr.h"
+#include "asterfort/nmrelp.h"
+#include "asterfort/nmrep2.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -23,40 +45,19 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterc/ismaem.h"
-#include "asterc/r8maem.h"
-#include "asterfort/assert.h"
-#include "asterfort/copisd.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/nmceta.h"
-#include "asterfort/nmcha0.h"
-#include "asterfort/nmchai.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmchso.h"
-#include "asterfort/nmfext.h"
-#include "asterfort/nmpilo.h"
-#include "asterfort/nmpilr.h"
-#include "asterfort/nmrelp.h"
-#include "asterfort/nmrep2.h"
+!
     integer :: fonact(*)
     integer :: iterat
-    real(kind=8) :: parmet(*), conv(*)
-    real(kind=8) :: deltat, eta, etan, rho, offset
-    character(len=16) :: method(*)
+    real(kind=8) :: deltat, eta, etan, offset
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=19) :: lischa, sddyna, sdnume, sdpilo, sddisc, matass
     character(len=24) :: carcri, defico, resoco
     character(len=24) :: sdstat, sdtime
     character(len=24) :: modele, numedd, mate, carele, comref, compor
     character(len=19) :: veelem(*), veasse(*)
     character(len=19) :: solalg(*), valinc(*)
+    type(NL_DS_Conv), intent(inout) :: ds_conv
     integer :: pilcvg, ldccvg
 !
 ! ----------------------------------------------------------------------
@@ -67,7 +68,6 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
 ! IN  MATE   : CHAMP MATERIAU
@@ -75,7 +75,6 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
 ! IN  COMREF : VARI_COM DE REFERENCE
 ! IN  COMPOR : COMPORTEMENT
 ! IN  LISCHA : LISTE DES CHARGES
-! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION
 ! IN  CARCRI : PARAMETRES DES METHODES D'INTEGRATION LOCALES
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
@@ -83,7 +82,7 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
 ! IN  SDNUME : SD NUMEROTATION
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IN  SDSTAT : SD STATISTIQUES
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  DEFICO : SD DEFINITION DU CONTACT
 ! IN  RESOCO : SD RESOLUTION DU CONTACT VOLATILE OP0070
 ! IN  DELTAT : INCREMENT DE TEMPS
@@ -94,9 +93,7 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
 ! IN  ETAN   : ETA_PILOTAGE AU DEBUT DE L'ITERATION
 ! IN  SDTIME : SD TIMER
 ! IN  SDDISC : SD DISCRETISATION
-! OUT CONV   : INFORMATIONS SUR LA CONVERGENCE DU CALCUL
-!                 1 : ITERATIONS RECHERCHE LINEAIRE
-!                 2 : VALEUR DE RHO
+! IO  ds_conv          : datastructure for convergence management
 ! OUT ETA    : PARAMETRE DE PILOTAGE
 ! OUT RHO    : PARAMETRE DE RECHERCHE_LINEAIRE
 ! OUT OFFSET : DECALAGE DE ETA_PILOTAGE EN FONCTION DE RHO
@@ -125,7 +122,7 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
     real(kind=8) :: rhomin, rhomax, rhoexm, rhoexp, relirl, fcvg
     real(kind=8) :: rhoopt, f0, fopt, proeta(2)
     real(kind=8) :: r(1002), g(1002), memfg(1002)
-    real(kind=8) :: fgmax, fgmin, amelio, residu, etaopt
+    real(kind=8) :: fgmax, fgmin, amelio, residu, etaopt, rho
     character(len=19) :: veasst(zveass), solalt(zsolal), valint(zvalin, 2)
     character(len=19) :: cnfins(2), cndirs(2), k19bla
     character(len=19) :: cndiri, cnfint, cnfext
@@ -138,11 +135,7 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('PILOTAGE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<PILOTAGE> ... PILOTAGE AVEC RECH_LINE'
     endif
@@ -166,12 +159,12 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
 !
 ! --- PARAMETRES RECHERCHE LINEAIRE
 !
-    itrlmx = nint(parmet(5))
-    rhomin = parmet(7)
-    rhomax = parmet(8)
-    rhoexm = -parmet(9)
-    rhoexp = parmet(9)
-    relirl = parmet(6)
+    itrlmx = ds_algopara%line_search%iter_maxi
+    rhomin = ds_algopara%line_search%rho_mini
+    rhomax = ds_algopara%line_search%rho_maxi
+    rhoexm = -ds_algopara%line_search%rho_excl
+    rhoexp = ds_algopara%line_search%rho_excl
+    relirl = ds_algopara%line_search%resi_rela
     ASSERT(itrlmx.le.1000)
 !
 ! --- DECOMPACTION VARIABLES CHAPEAUX
@@ -191,12 +184,12 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
 ! --- FONCTIONS DE PILOTAGE LINEAIRES : RECHERCHE LINEAIRE STANDARD
 !
     if (typilo .eq. 'DDL_IMPO') then
-        call nmrelp(modele, numedd, mate, carele, comref,&
-                    compor, lischa, carcri, fonact, iterat,&
-                    sdstat, sdnume, sddyna, parmet, method,&
-                    defico, valinc, solalg, veelem, veasse,&
-                    sdtime, conv, ldccvg)
-        goto 9999
+        call nmrelp(modele , numedd, mate  , carele     , comref,&
+                    compor , lischa, carcri, fonact     , iterat,&
+                    sdstat , sdnume, sddyna, ds_algopara, defico,&
+                    valinc , solalg, veelem, veasse     , sdtime,&
+                    ds_conv, ldccvg)
+        goto 999
     endif
 !
 ! --- PREPARATION DES ZONES TEMPORAIRES POUR ITERATION COURANTE
@@ -246,7 +239,7 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
     rho = 1.d0
     act = 1
 !
-    do 20 iterho = 0, itrlmx
+    do iterho = 0, itrlmx
 !
 ! ----- RESOLUTION DE L'EQUATION DE PILOTAGE: NVELLE DIRECT. DE DESCENTE
 !
@@ -254,14 +247,14 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
                     modele, mate, compor, resoco, valinc,&
                     nbatte, numedd, nbeffe, proeta, pilcvg,&
                     carele)
-        if (pilcvg .eq. 1) goto 9999
+        if (pilcvg .eq. 1) goto 999
 !
 ! ----- DECALAGE DU ETA_PILOTAGE
 !
         offset = etan*(1-rho)
-        do 21 n = 1, nbeffe
+        do n = 1, nbeffe
             proeta(n) = proeta(n) + offset
- 21     continue
+        end do
 !
 ! ----- CHOIX DU ETA_PILOTAGE
 !
@@ -279,7 +272,7 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
 !
         if (ldccvg .gt. 0) then
             if (exopt) goto 100
-            goto 9999
+            goto 999
         endif
 !
 ! ---    SI ON A PAS ENCORE CONVERGE LE PILO :
@@ -327,7 +320,7 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
         call nmrep2(nr, r, g, fcvg, rhomin,&
                     rhomax, rhoexm, rhoexp, pos)
         rho = r(pos)
- 20 end do
+    end do
     iterho = itrlmx
 !
 ! --- STOCKAGE DU RHO OPTIMAL ET DES CHAMPS CORRESPONDANTS
@@ -353,16 +346,15 @@ subroutine nmrepl(modele, numedd, mate, carele, comref,&
         call copisd('CHAMP_GD', 'V', cndirs(opt), cndiri)
     endif
 !
-! --- INFORMATIONS SUR LA RECHERCHE LINEAIRE
+! - Save results of line search
 !
-    conv(1) = iterho
-    conv(2) = rhoopt
+    ds_conv%line_sear_coef = rhoopt
+    ds_conv%line_sear_iter = iterho
     pilcvg = pilopt
-9999 continue
+999 continue
 !
 ! --- LE CALCUL DE PILOTAGE A FORCEMENT ETE REALISE
 !
     ASSERT(pilcvg.ge.0)
 !
-    call jedema()
 end subroutine

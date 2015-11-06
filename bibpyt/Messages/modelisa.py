@@ -79,10 +79,6 @@ Risques et conseils :
  l'orientation des armatures.
 """),
 
-    13 : _(u"""
- erreur(s) dans les données.
-"""),
-
     14 : _(u"""
  POUTRE : une erreur a été détectée lors de l'affectation des valeurs dans le tampon
 """),
@@ -100,13 +96,6 @@ Risques et conseils :
  caractéristique  %(k1)s  non admise actuellement
 """),
 
-    18 : _(u"""
- le noeud  %(k1)s  non modélisé par un discret
-"""),
-
-    19 : _(u"""
- pas de noeuds du Radier modélisés par des discrets
-"""),
 
     20 : _(u"""
  le discret  %(k1)s  n'a pas le bon nombre de noeuds.
@@ -116,9 +105,6 @@ Risques et conseils :
  le noeud  %(k1)s  extrémité d'un des discrets n'existe pas dans la surface donnée par GROUP_MA.
 """),
 
-    22 : _(u"""
- La température de référence doit être comprise entre %(r1)f et %(r2)f.
-"""),
 
     23 : _(u"""
 AFFE_CARA_ELEM :
@@ -188,10 +174,6 @@ La caractéristique %(k1)s, coefficient de cisaillement, pour les poutres doit t
  qui ne contient pas un seul élément GRILLE
 """),
 
-    37 : _(u"""
- impossible d'affecter des caractéristiques à des noeuds de ce modèle
- car aucun noeud ne supporte un élément
-"""),
 
     38 : _(u"""
  la maille  %(k1)s  n'a pas été affectée par des caractéristiques de poutre.
@@ -213,9 +195,6 @@ La caractéristique %(k1)s, coefficient de cisaillement, pour les poutres doit t
  la maille  %(k1)s  n'a pas été affectée par des caractéristiques de grille.
 """),
 
-    43 : _(u"""
- le noeud  %(k1)s  n'a pas été affecté par une matrice.
-"""),
 
     44 : _(u"""
  BARRE :
@@ -321,38 +300,12 @@ La caractéristique %(k1)s, coefficient de cisaillement, pour les poutres doit t
  nombre de valeurs entrées incorrect
 """),
 
-    61 : _(u"""
- DEFI_ARC:
- le rayon de courbure doit être positif.
-"""),
-
-    62 : _(u"""
- DEFI_ARC:
- il faut 3 réels pour définir le centre de courbure.
-"""),
-
-    63 : _(u"""
- DEFI_ARC:
- il faut 3 réels pour définir le point de concours des tangentes.
-"""),
-
-    64 : _(u"""
- DEFI_ARC:
- le coefficient de flexibilité doit être positif.
-"""),
-
-    65 : _(u"""
- DEFI_ARC: l'indice de contrainte doit être positif.
-"""),
 
     66 : _(u"""
  poutre :
  occurrence  %(k1)s
  section "cercle", VARI_SECT "constant" la caractéristique "r" est obligatoire
 """),
-
-
-
 
 
     69 : _(u"""

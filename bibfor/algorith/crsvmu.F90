@@ -1,5 +1,5 @@
-subroutine crsvmu(motfac, solveu, istop, nprec, syme,&
-                  epsmat, mixpre, kmd, kellag, kxfem)
+subroutine crsvmu(motfac, solveu, istop, nprec,&
+                  epsmat, mixpre, kellag, kxfem)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -22,7 +22,7 @@ subroutine crsvmu(motfac, solveu, istop, nprec, syme,&
 #include "asterfort/wkvect.h"
     integer :: istop, nprec
     real(kind=8) :: epsmat
-    character(len=3) :: syme, mixpre, kmd, kellag
+    character(len=3) :: mixpre, kellag
     character(len=8) :: kxfem
     character(len=16) :: motfac
     character(len=19) :: solveu
@@ -50,10 +50,8 @@ subroutine crsvmu(motfac, solveu, istop, nprec, syme,&
 ! OUT    SOLVEU  : LE SOLVEUR EST CREE ET INSTANCIE
 ! IN  IN ISTOP   : PARAMETRE LIE AUX MOT-CLE STOP_SINGULIER
 ! IN  IN NPREC   :                           NPREC
-! IN  K3 SYME    :                           SYME
 ! IN  R8 EPSMAT  :                           FILTRAGE_MATRICE
 ! IN  K3 MIXPRE  :                           MIXER_PRECISION
-! IN  K3 KMD     :                           MATR_DISTRIBUEE
 ! IN  K3 KELLAG  :                           ELIM_LAGR
 ! IN  K8 KXFEM   :                           PRE_COND_XFEM
 ! ----------------------------------------------------------
@@ -61,7 +59,7 @@ subroutine crsvmu(motfac, solveu, istop, nprec, syme,&
     integer :: ibid, ifm, niv, i, pcpiv, nbproc, rang, iaux
     integer :: monit(12), n1, vali(2), compt
     integer :: nbma
-    real(kind=8) :: eps
+    real(kind=8) :: eps, blreps, blrfront
     character(len=5) :: klag2
     character(len=8) :: ktypr, ktyps, ktyprn, ktypp, modele, partit, matra
     character(len=12) :: kooc
@@ -217,6 +215,10 @@ subroutine crsvmu(motfac, solveu, istop, nprec, syme,&
     ASSERT(ibid.eq.1)
     call getvtx(motfac, 'PRETRAITEMENTS', iocc=1, scal=ktyps, nbret=ibid)
     ASSERT(ibid.eq.1)
+    call getvr8(motfac, 'LOW_RANK_TAILLE', iocc=1, scal=blrfront, nbret=ibid)
+    ASSERT(ibid.eq.1)
+    call getvr8(motfac, 'LOW_RANK_SEUIL', iocc=1, scal=blreps, nbret=ibid)
+    ASSERT(ibid.eq.1)
 !
     ktypp='SANS'
     eximc=getexm(motfac,'POSTTRAITEMENTS')
@@ -249,12 +251,12 @@ subroutine crsvmu(motfac, solveu, istop, nprec, syme,&
     slvk(2) = ktyps
     slvk(3) = ktypr
     slvk(4) = ktyprn
-    slvk(5) = syme
+    slvk(5) = 'XXXX'
     slvk(6) = klag2
     slvk(7) = mixpre
     slvk(8) = 'NON'
     slvk(9) = kooc
-    slvk(10) = kmd
+    slvk(10) = 'XXXX'
     slvk(11) = ktypp
     slvk(12) = 'XXXX'
     slvk(13)= kellag
@@ -262,8 +264,8 @@ subroutine crsvmu(motfac, solveu, istop, nprec, syme,&
 !
     slvr(1) = epsmat
     slvr(2) = eps
-    slvr(3) = 0.d0
-    slvr(4) = 0.d0
+    slvr(3) = blrfront
+    slvr(4) = blreps
 !
     slvi(1) = nprec
     slvi(2) = pcpiv

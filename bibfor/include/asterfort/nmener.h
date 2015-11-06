@@ -15,13 +15,15 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nmener(valinc, veasse, measse, sddyna, eta,&
-                      sdener, fonact, solveu, numedd, numfix,&
-                      meelem, numins, modele, mate, carele,&
-                      compor, carcri, sdtime, sddisc, solalg,&
-                      lischa, comref, resoco, resocu, parcon,&
-                      veelem)
+    subroutine nmener(valinc, veasse, measse, sddyna, eta        ,&
+                      sdener, fonact, numedd, numfix, ds_algopara,&
+                      meelem, numins, modele, mate  , carele     ,&
+                      compor, sdtime, sddisc, solalg, lischa     ,&
+                      comref, resoco, resocu, veelem, ds_inout)
+        use NonLin_Datastructure_type
         character(len=19) :: valinc(*)
         character(len=19) :: veasse(*)
         character(len=19) :: measse(*)
@@ -29,7 +31,6 @@ interface
         real(kind=8) :: eta
         character(len=19) :: sdener
         integer :: fonact(*)
-        character(len=19) :: solveu
         character(len=24) :: numedd
         character(len=24) :: numfix
         character(len=19) :: meelem(*)
@@ -37,8 +38,9 @@ interface
         character(len=24) :: modele
         character(len=24) :: mate
         character(len=24) :: carele
+        type(NL_DS_InOut), intent(in) :: ds_inout
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=24) :: compor
-        character(len=24) :: carcri
         character(len=24) :: sdtime
         character(len=19) :: sddisc
         character(len=19) :: solalg(*)
@@ -46,7 +48,6 @@ interface
         character(len=24) :: comref
         character(len=24) :: resoco
         character(len=24) :: resocu
-        real(kind=8) :: parcon(*)
         character(len=19) :: veelem(*)
     end subroutine nmener
 end interface

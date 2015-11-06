@@ -1,6 +1,6 @@
 subroutine tresu_tabl(nomta, para, typtes, typres, tbtxt,&
                       refi, refr, refc, epsi, crit,&
-                      ific, llab, ssigne, ignore, compare)
+                      llab, ssigne, ignore, compare)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -22,7 +22,6 @@ subroutine tresu_tabl(nomta, para, typtes, typres, tbtxt,&
     complex(kind=8), intent(in) :: refc
     real(kind=8), intent(in) :: epsi
     character(len=*), intent(in) :: crit
-    integer, intent(in) :: ific
     aster_logical, intent(in) :: llab
     character(len=*), intent(in) :: ssigne
     aster_logical, intent(in), optional :: ignore
@@ -54,7 +53,6 @@ subroutine tresu_tabl(nomta, para, typtes, typres, tbtxt,&
 ! IN  : REFC   : VALEUR COMPLEXE ATTENDUE
 ! IN  : CRIT   : 'RELATIF' OU 'ABSOLU'(PRECISION RELATIVE OU ABSOLUE).
 ! IN  : EPSI   : PRECISION ESPEREE
-! IN  : IFIC   : NUMERO LOGIQUE DU FICHIER DE SORTIE
 ! IN  : LLAB   : FLAG D IMPRESSION DES LABELS
 ! OUT : IMPRESSION SUR LISTING
 ! ----------------------------------------------------------------------
@@ -97,10 +95,9 @@ subroutine tresu_tabl(nomta, para, typtes, typres, tbtxt,&
     endif
 !
     if (type(1:1) .ne. typrez) then
-        write(ific,*) 'NOOK '
         valk(1) = type
         valk(2) = typrez
-        call utmess('A', 'CALCULEL5_11', nk=2, valk=valk)
+        call utmess('F', 'TEST0_7', nk=2, valk=valk)
         goto 9999
     endif
 !
@@ -138,8 +135,7 @@ subroutine tresu_tabl(nomta, para, typtes, typres, tbtxt,&
                 if (zi(jvall+i-1) .eq. 1) vali = min( vali,zi(jvale+i-1) )
 106         continue
         else
-            write(ific,*) 'NOOK '
-            call utmess('A', 'CALCULEL5_12')
+            call utmess('F', 'TEST0_8', sk=typtes)
             goto 9999
         endif
     else if (type .eq. 'R') then
@@ -164,8 +160,7 @@ subroutine tresu_tabl(nomta, para, typtes, typres, tbtxt,&
                 if (zi(jvall+i-1) .eq. 1) valr = min( valr,zr(jvale+i-1) )
 206         continue
         else
-            write(ific,*) 'NOOK '
-            call utmess('A', 'CALCULEL5_12')
+            call utmess('F', 'TEST0_8', sk=typtes)
             goto 9999
         endif
     else if (type .eq. 'C') then
@@ -179,8 +174,7 @@ subroutine tresu_tabl(nomta, para, typtes, typres, tbtxt,&
                 if (zi(jvall+i-1) .eq. 1) valc = valc + zc(jvale+i-1)
 302         continue
         else
-            write(ific,*) 'NOOK '
-            call utmess('A', 'CALCULEL5_12')
+            call utmess('F', 'TEST0_8', sk=typtes)
             goto 9999
         endif
     endif

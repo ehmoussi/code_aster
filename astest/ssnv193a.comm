@@ -1,6 +1,6 @@
 # TITRE CONTACT AVEC MACRO-ELEMENTS STATIQUE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -114,13 +114,13 @@ UCTCC=STAT_NON_LINE(MODELE=MO,
                 INCREMENT=_F(LIST_INST=LISTIN1,),
                 NEWTON=_F(MATRICE='ELASTIQUE',
                           REAC_ITER=1,),
-                SOLVEUR=_F(SYME='OUI',),
+                SOLVEUR=_F(),
                 INFO=1,);
 
 TEST_RESU(RESU=_F(NUME_ORDRE=2,
                   GROUP_NO='A',
                   RESULTAT=UCTCC,
-                  NOM_CHAM='VALE_CONT',
+                  NOM_CHAM='CONT_NOEU',
                   NOM_CMP='RZ',
                   VALE_CALC=-1.3801560770878E9,
                   CRITERE='RELATIF',
@@ -214,7 +214,7 @@ ENCAST2=AFFE_CHAR_CINE(MODELE=MOMACR,
 
 UMCTCC=STAT_NON_LINE(MODELE=MOMACR,
                 CHAM_MATER=CHMAT2,
-                SOLVEUR=_F(SYME='OUI',),
+                SOLVEUR=_F(),
                 EXCIT=(
                         _F(CHARGE=ENCAST2,),
                       ),
@@ -234,7 +234,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=2,
                   GROUP_NO='A',
                   REFERENCE='AUTRE_ASTER',
                   RESULTAT=UMCTCC,
-                  NOM_CHAM='VALE_CONT',
+                  NOM_CHAM='CONT_NOEU',
                   NOM_CMP='RZ',
                   VALE_CALC=-1.38015608E+09,
                   VALE_REFE=-1.3801560770878E9,
@@ -258,7 +258,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=2,
 
 UMCTCD=STAT_NON_LINE(MODELE=MOMACR,
                    CHAM_MATER=CHMAT2,
-                   SOLVEUR=_F(SYME='OUI',),
+                   SOLVEUR=_F(),
                 EXCIT=(
                         _F(CHARGE=ENCAST2,),
                       ),
@@ -278,7 +278,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=2,
                   GROUP_NO='A',
                   REFERENCE='AUTRE_ASTER',
                   RESULTAT=UMCTCD,
-                  NOM_CHAM='VALE_CONT',
+                  NOM_CHAM='CONT_NOEU',
                   NOM_CMP='RZ',
                   VALE_CALC=-1.38015608E+09,
                   VALE_REFE=-1.3801560770878E9,

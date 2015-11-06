@@ -1,7 +1,7 @@
 
 # TITRE EXTRUSION D'UN LOPIN
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -166,7 +166,7 @@ L_INST=DEFI_LIST_REEL(DEBUT=0.0,
                                   _F(JUSQU_A=155.0,
                                      PAS=15.0,),),);
 
-U=STAT_NON_LINE(SOLVEUR=_F(SYME='OUI',),
+U=STAT_NON_LINE(SOLVEUR=_F(),
                 MODELE=MO,
                 CHAM_MATER=CM,
                 EXCIT=(_F(CHARGE=COND_LIM,),

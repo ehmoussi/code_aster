@@ -1,7 +1,7 @@
 # ======================================================================
 # TITRE TEST HM, 3D , MODELISATION THMC=LIQU_GAZ_ATM SOLVEUR = SYME
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -168,8 +168,7 @@ CHARHO=AFFE_CHAR_MECA(   MODELE=MODELE,
 RESU0=STAT_NON_LINE(
                             MODELE=MODELE,
                            SOLVEUR=_F(
-                               METHODE = 'LDLT',
-                               SYME    =  'OUI',),
+                               METHODE = 'LDLT',),
                         CHAM_MATER=CHMAT0,EXCIT=(
                              _F(
                 CHARGE = CHARHO),
@@ -182,7 +181,7 @@ RESU0=STAT_NON_LINE(
                          INCREMENT=_F(
                 LIST_INST = LI),
                             NEWTON=_F(
-                MATRICE = 'TANGENTE',
+                MATRICE = 'TANGENTE',MATR_RIGI_SYME='OUI',
                 REAC_ITER = 121),
                        CONVERGENCE=_F(
                 RESI_GLOB_RELA = 1.E-8,

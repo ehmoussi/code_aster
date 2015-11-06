@@ -1,5 +1,5 @@
 subroutine rcmfmc(chmatz, chmacz)
-use module_calcul, only : ca_jvcnom_, ca_nbcvrc_
+use calcul_module, only : ca_jvcnom_, ca_nbcvrc_
 implicit none
 #include "jeveux.h"
 #include "asterc/ismaem.h"
@@ -121,8 +121,8 @@ implicit none
     icompt=0
     inbmat=0
     do i = 1, nbgrp
-!        -- IL NE PEUT PAS Y AVOIR PLUS DE 28 MATERIAUX
-        do j = 1, 28
+!        -- IL NE PEUT PAS Y AVOIR PLUS DE 26 MATERIAUX
+        do j = 1, 26
             k=(i-1)*nbcmp+j
             if (vale(k) .eq. 'TREF=>') goto 30
             if (vale(k) .ne. ' ') then

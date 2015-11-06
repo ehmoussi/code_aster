@@ -1,10 +1,31 @@
-subroutine nmprma(modelz, mate, carele, compor, carcri,&
-                  parmet, method, lischa, numedd, numfix,&
-                  solveu, comref, sdimpr, sdstat, sdtime,&
-                  sddisc, sddyna, numins, fonact, defico,&
-                  resoco, valinc, solalg, veelem, meelem,&
-                  measse, maprec, matass, codere, faccvg,&
-                  ldccvg)
+subroutine nmprma(modelz     , mate    , carele, compor, carcri,&
+                  ds_algopara, lischa  , numedd, numfix, solveu,&
+                  comref     , ds_print, sdstat, sdtime, sddisc,&
+                  sddyna     , numins  , fonact, defico, resoco,&
+                  valinc     , solalg  , veelem, meelem, measse,&
+                  maprec     , matass  , codere, faccvg, ldccvg)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/isfonc.h"
+#include "asterfort/ndynlo.h"
+#include "asterfort/nmchcc.h"
+#include "asterfort/nmchoi.h"
+#include "asterfort/nmchra.h"
+#include "asterfort/nmchrm.h"
+#include "asterfort/nmcmat.h"
+#include "asterfort/nmimck.h"
+#include "asterfort/nmmatr.h"
+#include "asterfort/nmrenu.h"
+#include "asterfort/nmrinc.h"
+#include "asterfort/nmtime.h"
+#include "asterfort/nmxmat.h"
+#include "asterfort/preres.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -23,32 +44,14 @@ subroutine nmprma(modelz, mate, carele, compor, carcri,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/isfonc.h"
-#include "asterfort/ndynlo.h"
-#include "asterfort/nmchcc.h"
-#include "asterfort/nmchoi.h"
-#include "asterfort/nmchra.h"
-#include "asterfort/nmchrm.h"
-#include "asterfort/nmcmat.h"
-#include "asterfort/nmimck.h"
-#include "asterfort/nmmatr.h"
-#include "asterfort/nmrenu.h"
-#include "asterfort/nmrinc.h"
-#include "asterfort/nmtime.h"
-#include "asterfort/nmxmat.h"
-#include "asterfort/preres.h"
-    real(kind=8) :: parmet(*)
-    character(len=16) :: method(*)
+!
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     integer :: fonact(*)
     character(len=*) :: modelz
     character(len=24) :: mate, carele
-    character(len=24) :: sdimpr, sdtime, sdstat
+    character(len=24) :: sdtime, sdstat
+    type(NL_DS_Print), intent(inout) :: ds_print
     character(len=24) :: compor, carcri, numedd, numfix
     character(len=19) :: sddisc, sddyna, lischa, solveu
     character(len=24) :: comref, codere
@@ -67,7 +70,6 @@ subroutine nmprma(modelz, mate, carele, compor, carcri,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
@@ -78,12 +80,11 @@ subroutine nmprma(modelz, mate, carele, compor, carcri,&
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  RESOCO : SD RESOLUTION CONTACT
 ! IN  DEFICO : SD DEFINITION CONTACT
-! IN  SDIMPR : SD AFFICHAGE
+! IO  ds_print         : datastructure for printing parameters
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IN  SDTIME : SD TIMER
 ! IN  SDSTAT : SD STATISTIQUES
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION (VOIR NMLECT)
-! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION (VOIR NMLECT)
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SOLVEU : SOLVEUR
 ! IN  CARCRI : PARAMETRES METHODES D'INTEGRATION LOCALES (VOIR NMLECT)
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
@@ -115,48 +116,44 @@ subroutine nmprma(modelz, mate, carele, compor, carcri,&
 !
     aster_logical :: reasma, renume
     aster_logical :: lcrigi, lcfint, lcamor, larigi
-    aster_logical :: ldyna, lamor, lsuiv
-    character(len=16) :: metcor, metpre, k16bla
+    aster_logical :: ldyna, lamor, l_neum_undead, l_diri_undead
+    character(len=16) :: metcor, metpre
     character(len=16) :: optrig, optamo
     integer :: ifm, niv, ibid
     integer :: iterat
-    integer :: nbmatr
-    character(len=6) :: ltypma(20)
-    character(len=16) :: loptme(20), loptma(20)
-    aster_logical :: lassme(20), lcalme(20)
+    integer :: nb_matr
+    character(len=6) :: list_matr_type(20)
+    character(len=16) :: list_calc_opti(20), list_asse_opti(20)
+    aster_logical :: list_l_asse(20), list_l_calc(20)
 !
 ! ----------------------------------------------------------------------
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ... CALCUL MATRICE'
     endif
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalites
 !
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lamor = ndynlo(sddyna,'MAT_AMORT')
-    lsuiv = isfonc(fonact,'FORCE_SUIVEUSE')
+    ldyna         = ndynlo(sddyna,'DYNAMIQUE')
+    lamor         = ndynlo(sddyna,'MAT_AMORT')
+    l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
+    l_diri_undead = isfonc(fonact,'DIRI_UNDEAD')
 !
-! --- INITIALISATIONS
+! - Initializations
 !
-    call nmcmat('INIT', ' ', ' ', ' ', .false._1,&
-                .false._1, nbmatr, ltypma, loptme, loptma,&
-                lcalme, lassme)
+    nb_matr              = 0
+    list_matr_type(1:20) = ' '
     faccvg = -1
     ldccvg = -1
     iterat = 0
-    k16bla = ' '
     lcamor = .false.
 !
 ! --- CHOIX DE REASSEMBLAGE DE LA MATRICE GLOBALE
 !
-    call nmchrm('PREDICTION', parmet, method, fonact, sddisc,&
-                sddyna, numins, iterat, defico, metpre,&
-                metcor, reasma)
+    call nmchrm('PREDICTION', ds_algopara, fonact, sddisc, sddyna,&
+                numins, iterat, defico, metpre, metcor,&
+                reasma)
 !
 ! --- CHOIX DE REASSEMBLAGE DE L'AMORTISSEMENT
 !
@@ -166,7 +163,7 @@ subroutine nmprma(modelz, mate, carele, compor, carcri,&
 !
 ! --- RE-CREATION DU NUME_DDL OU PAS
 !
-    call nmrenu(modelz, fonact, lischa, solveu, defico,&
+    call nmrenu(modelz, fonact, lischa, defico,&
                 resoco, numedd, renume)
 !
 ! --- OPTION DE CALCUL POUR MERIMO
@@ -181,40 +178,48 @@ subroutine nmprma(modelz, mate, carele, compor, carcri,&
 !
 ! --- CALCUL DES MATR_ELEM CONTACT/XFEM_CONTACT
 !
-    call nmchcc(fonact, nbmatr, ltypma, loptme, loptma,&
-                lassme, lcalme)
+    call nmchcc(fonact, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                list_l_asse, list_l_calc)
 !
 ! --- CALCUL DES MATR-ELEM DE RIGIDITE
 !
     if (lcrigi) then
-        call nmcmat('AJOU', 'MERIGI', optrig, ' ', .true._1,&
-                    larigi, nbmatr, ltypma, loptme, loptma,&
-                    lcalme, lassme)
+        call nmcmat('MERIGI', optrig, ' ', .true._1,&
+                    larigi, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                    list_l_calc, list_l_asse)
+    endif
+!
+! - Update dualized matrix for non-linear Dirichlet boundary conditions (undead)
+!
+    if (l_diri_undead .and. (metpre.ne.'EXTRAPOLE')) then
+        call nmcmat('MEDIRI', ' ', ' ', .true._1,&
+                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                    list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR-ELEM D'AMORTISSEMENT DE RAYLEIGH
 !
     if (lcamor) then
-        call nmcmat('AJOU', 'MEAMOR', optamo, ' ', .true._1,&
-                    .true._1, nbmatr, ltypma, loptme, loptma,&
-                    lcalme, lassme)
+        call nmcmat('MEAMOR', optamo, ' ', .true._1,&
+                    .true._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                    list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL DES MATR-ELEM DES CHARGEMENTS
 !
-    if (lsuiv .and. (metpre.ne.'EXTRAPOLE')) then
-        call nmcmat('AJOU', 'MESUIV', ' ', ' ', .true._1,&
-                    .false._1, nbmatr, ltypma, loptme, loptma,&
-                    lcalme, lassme)
+    if (l_neum_undead .and. (metpre.ne.'EXTRAPOLE')) then
+        call nmcmat('MESUIV', ' ', ' ', .true._1,&
+                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                    list_l_calc, list_l_asse)
     endif
 !
 ! --- RE-CREATION MATRICE MASSE SI NECESSAIRE (NOUVEUA NUME_DDL
 !
     if (renume) then
         if (ldyna) then
-            call nmcmat('AJOU', 'MEMASS', ' ', ' ', .false._1,&
-                        .true._1, nbmatr, ltypma, loptme, loptma,&
-                        lcalme, lassme)
+            call nmcmat('MEMASS', ' ', ' ', .false._1,&
+                        .true._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                        list_l_calc, list_l_asse)
         endif
         if (.not.reasma) then
             ASSERT(.false.)
@@ -223,13 +228,13 @@ subroutine nmprma(modelz, mate, carele, compor, carcri,&
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
-    if (nbmatr .gt. 0) then
+    if (nb_matr .gt. 0) then
         call nmxmat(modelz, mate, carele, compor, carcri,&
                     sddisc, sddyna, fonact, numins, iterat,&
                     valinc, solalg, lischa, comref, defico,&
-                    resoco, solveu, numedd, numfix, sdstat,&
-                    sdtime, nbmatr, ltypma, loptme, loptma,&
-                    lcalme, lassme, lcfint, meelem, measse,&
+                    resoco, numedd, numfix, sdstat, ds_algopara,&
+                    sdtime, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+                    list_l_calc, list_l_asse, lcfint, meelem, measse,&
                     veelem, ldccvg, codere)
     endif
 !
@@ -240,12 +245,12 @@ subroutine nmprma(modelz, mate, carele, compor, carcri,&
 ! --- CALCUL DE LA MATRICE ASSEMBLEE GLOBALE
 !
     if (reasma) then
-        call nmmatr('PREDICTION', fonact, lischa, solveu, numedd,&
+        call nmmatr('PREDICTION', fonact, lischa, numedd,&
                     sddyna, numins, defico, resoco, meelem,&
                     measse, matass)
-        call nmimck(sdimpr, 'MATR_ASSE', metpre, .true._1)
+        call nmimck(ds_print, 'MATR_ASSE', metpre, .true._1)
     else
-        call nmimck(sdimpr, 'MATR_ASSE', k16bla, .false._1)
+        call nmimck(ds_print, 'MATR_ASSE', ' '   , .false._1)
     endif
 !
 ! --- FACTORISATION DE LA MATRICE ASSEMBLEE GLOBALE

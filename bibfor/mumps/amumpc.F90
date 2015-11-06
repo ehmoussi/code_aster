@@ -58,6 +58,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 #include "asterfort/amumpt.h"
 #include "asterfort/amumpu.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -81,12 +82,13 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
     integer :: rang, nbproc, niv, ifm, ibid, ietdeb, ifactm, nbfact
     integer :: ietrat, nprec, ifact, iaux, iaux1, vali(4), pcpi
     character(len=1) :: rouc, type, prec
+    character(len=3) :: matd
     character(len=5) :: etam, klag2
     character(len=8) :: ktypr
     character(len=12) :: usersm, k12bid
     character(len=14) :: nonu
     character(len=19) :: nomat
-    character(len=24) :: kmonit(12), k24aux, kvers, k24bid
+    character(len=24) :: kmonit(12), k24aux, kvers, k24bid, posttrait
     real(kind=8) :: epsmax, valr(2), rctdeb, rbid(1), temps(6), epsmat
     aster_logical :: lquali, ldist, lresol, lmd, lbid, lpreco, lbis, lpb13, ldet
     aster_logical :: lopfac
@@ -129,6 +131,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !
     epsmax=slvr(2)
     lquali=(epsmax.gt.0.d0)
+    posttrait=slvk(11)
 !
 ! --- POUR "ELIMINER" LE 2EME LAGRANGE :
 ! --- OPTION DEBRANCHEE SI CALCUL DE DETERMINANT
@@ -161,7 +164,8 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
     nbproc=cmpsk%nprocs
 !
 ! --- MATRICE ASTER DISTRIBUEE ?
-    lmd = slvk(10)(1:3).eq.'OUI'
+    call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
+    lmd = matd.eq.'OUI'
 !
 ! --- MUMPS EST-IL UTILISE COMME PRECONDITIONNEUR ?
 ! --- SI OUI, ON DEBRANCHE LES ALARMES ET INFO (PAS LES UTMESS_F)
@@ -211,20 +215,13 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !       -----------------------------------------------------
         ldet=.false.
         if (slvi(5) .eq. 1) then
-            select case (kvers)
-                case('4.10.0')
-! --- ON DEBRANCHE ELIM_LAGR='LAGR2' CAR CELA FAUSSE LA VALEUR DU DETER
-! --- MINANT PAR RAPPORT AUX AUTRES SOLVEURS DIRECTS
-                if ((niv.ge.2) .and. (lbis) .and. (.not.lpreco)) then
-                    call utmess('I', 'FACTOR_88')
-                endif
-                slvk(6)='NON'
-                klag2='NON'
-                lbis=.false.
-                ldet=.true.
-                case('4.9.2')
-                call utmess('F', 'FACTOR_87', sk=kvers)
-            end select
+            if ((niv.ge.2) .and. (lbis) .and. (.not.lpreco)) then
+                call utmess('I', 'FACTOR_88')
+            endif
+            slvk(6)='NON'
+            klag2='NON'
+            lbis=.false.
+            ldet=.true.
         endif
 !
 !       ------------------------------------------------
@@ -241,14 +238,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !       CONSERVE-T-ON LES FACTEURS OU NON ?
 !       -----------------------------------------------------
         if (slvi(4) .eq. 1) then
-            select case (kvers)
-                case('4.10.0')
-                cmpsk%icntl(31)=1
-                case('4.9.2')
-                if ((niv.ge.2) .and. (.not.lpreco)) then
-                    call utmess('I', 'FACTOR_86', sk=kvers)
-                endif
-            end select
+             cmpsk%icntl(31)=1
         endif
 !
 !       ------------------------------------------------
@@ -278,8 +268,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !       ------------------------------------------------
         if (cmpsk%infog(1) .eq. 0) then
 !              -- C'EST OK
-            else if ((cmpsk%infog(1).eq.-5).or.(cmpsk%infog(1).eq.-7))&
-        then
+        else if ((cmpsk%infog(1).eq.-5).or.(cmpsk%infog(1).eq.-7)) then
             call utmess('F', 'FACTOR_64')
         else if (cmpsk%infog(1).eq.-6) then
             iret=2
@@ -450,7 +439,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !       ON SOULAGE LA MEMOIRE JEVEUX DES QUE POSSIBLE D'OBJETS MUMPS
 !       INUTILES
         if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
-            if (.not.lquali .and. .not.lopfac) then
+            if (.not.(lquali).and.(posttrait(1:4).ne.'MINI').and. .not.lopfac) then
                 if (ldist) then
                     deallocate(cmpsk%a_loc,stat=ibid)
                     deallocate(cmpsk%irn_loc,stat=ibid)
@@ -520,7 +509,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
             endif
         endif
 ! --- CONTROLE DE L'ERREUR SUR LA SOLUTION :
-        if (lquali) then
+        if ((lquali).and.(posttrait(1:4).ne.'MINI')) then
             if (cmpsk%rinfog(9) .gt. epsmax) then
                 valr(1)=cmpsk%rinfog(9)
                 valr(2)=epsmax
@@ -539,8 +528,8 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !        AFFICHAGE DU MONITORING :
 !       ------------------------------------------------
         call amumpt(12, kmonit, temps, rang, nbproc,&
-                    kxmps, lquali, type, ietdeb, ietrat,&
-                    rctdeb, ldist)
+                    kxmps, lquali, type, ietdeb,&
+                    ietrat, rctdeb, ldist)
 !
 !     ------------------------------------------------
 !     ------------------------------------------------

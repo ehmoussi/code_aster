@@ -15,13 +15,16 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine ndexpl(modele, numedd, numfix, mate, carele,&
-                      comref, compor, lischa, method, fonact,&
-                      carcri, parcon, sdimpr, sdstat, sdnume,&
-                      sddyna, sddisc, sdtime, sderro, valinc,&
-                      numins, solalg, solveu, matass, maprec,&
-                      meelem, measse, veelem, veasse, nbiter)
+    subroutine ndexpl(modele, numedd  , numfix, mate       , carele  ,&
+                      comref, compor  , lischa, ds_algopara, fonact  ,&
+                      carcri, ds_print, sdstat, sdnume     , sddyna  ,&
+                      sddisc, sdtime  , sderro, valinc     , numins  ,&
+                      solalg, solveu  , matass, maprec     , ds_inout,&
+                      meelem, measse  , veelem, veasse     , nbiter)
+        use NonLin_Datastructure_type
         character(len=24) :: modele
         character(len=24) :: numedd
         character(len=24) :: numfix
@@ -30,11 +33,11 @@ interface
         character(len=24) :: comref
         character(len=24) :: compor
         character(len=19) :: lischa
-        character(len=16) :: method(*)
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         integer :: fonact(*)
         character(len=24) :: carcri
-        real(kind=8) :: parcon(*)
-        character(len=24) :: sdimpr
+        type(NL_DS_InOut), intent(in) :: ds_inout
+        type(NL_DS_Print), intent(inout) :: ds_print
         character(len=24) :: sdstat
         character(len=19) :: sdnume
         character(len=19) :: sddyna

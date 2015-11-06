@@ -16,8 +16,6 @@ subroutine xcfaq2(jlsn, jlst, jgrlsn, igeom, noma,&
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/elrfvf.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/loncar.h"
 #include "asterfort/padist.h"
 #include "asterfort/provec.h"
@@ -30,7 +28,7 @@ subroutine xcfaq2(jlsn, jlst, jgrlsn, igeom, noma,&
 #include "asterfort/xmilfi.h"
 #include "asterfort/xxmmvd.h"
 #include "blas/ddot.h"
-    integer :: jgrlsn, igeom, nface, cface(18, 6), jlsn, jlst
+    integer :: jgrlsn, igeom, nface, cface(30, 6), jlsn, jlst
     integer :: nfiss, ifiss, nptf, nbtot, nmaabs
     real(kind=8) :: pinter(*), ainter(*)
     character(len=8) :: noma
@@ -89,7 +87,6 @@ subroutine xcfaq2(jlsn, jlst, jgrlsn, igeom, noma,&
     parameter       (ptmax=4, elc='SE3',nbnomx=27)
 ! --------------------------------------------------------------------
 !
-    call jemarq()
 !
     eps=-1.0d-10
 !
@@ -308,8 +305,8 @@ subroutine xcfaq2(jlsn, jlst, jgrlsn, igeom, noma,&
 !     CAS 2D
     if (ndim .eq. 2) then
 !
-        do 800 i = 1, 18
-            do 801 j = 1, 5
+        do 800 i = 1, 30
+            do 801 j = 1, 6
                 cface(i,j)=0
 801         continue
 800     continue
@@ -359,5 +356,4 @@ subroutine xcfaq2(jlsn, jlst, jgrlsn, igeom, noma,&
     endif
 !
 999 continue
-    call jedema()
 end subroutine

@@ -73,7 +73,7 @@ subroutine dxsith(nomte, mater, sigma)
 !
 ! --- RECUPERATION DE L'INSTANT
 !     -------------------------
-    call tecach('ONN', 'PTEMPSR', 'L', iret, nval=8,&
+    call tecach('ONO', 'PTEMPSR', 'L', iret, nval=8,&
                 itab=itab)
     ibid = itab(1)
     if (iret .eq. 0) then
@@ -108,7 +108,7 @@ subroutine dxsith(nomte, mater, sigma)
 !         ----------------------------------------------------
                 ipgh=npgh*(icou-1)+igauh
                 call verift('RIGI', ipg, ipgh, '+', mater,&
-                            epsth=epsth(1))
+                            epsth_=epsth(1))
 !
                 epsth(2) = epsth(1)
                 epsth(3) = zero

@@ -15,9 +15,10 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine get_elasth_para(fami     , j_mater     , poum   , ipg    , ispg,&
-                               elas_type, elas_keyword, materiz,&
-                               alpha    , alpha_l     , alpha_t, alpha_n)
+    subroutine get_elasth_para(fami     , j_mater     , poum   , ipg       , ispg,&
+                               elas_type, elas_keyword, materi_, temp_vale_, &
+                               alpha    , alpha_l     , alpha_t, alpha_n,&
+                               z_h_r_   , deps_ch_tref_)
         character(len=*), intent(in) :: fami
         integer, intent(in) :: j_mater
         character(len=*), intent(in) :: poum
@@ -25,10 +26,13 @@ interface
         integer, intent(in) :: ispg
         integer, intent(in) :: elas_type
         character(len=16), intent(in) :: elas_keyword
-        character(len=8), optional, intent(in) :: materiz
+        character(len=8), optional, intent(in) :: materi_
+        real(kind=8), optional, intent(in) :: temp_vale_
         real(kind=8), optional, intent(out) :: alpha(2)
         real(kind=8), optional, intent(out) :: alpha_l
         real(kind=8), optional, intent(out) :: alpha_t
         real(kind=8), optional, intent(out) :: alpha_n
+        real(kind=8), optional, intent(out) :: z_h_r_
+        real(kind=8), optional, intent(out) :: deps_ch_tref_
     end subroutine get_elasth_para
 end interface

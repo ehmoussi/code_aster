@@ -93,9 +93,8 @@ class MESSAGE_LOGGER(Singleton):
 
         # compteur des alarmes émises { 'id_alarm' : count }
         self.nmax_alarm = 5
-        self.count_alarm = {}
-            # dans la commande courante (pour arret à 5)
-        self.count_alarm_tot = {}     # au total
+        self.count_alarm = {}       # dans la commande courante (pour arret à 5)
+        self.count_alarm_tot = {}   # au total
 
         # alarmes à ignorer, à masquer (on ne les compte pas temporairement)
         self._ignored_alarm = {}
@@ -169,6 +168,7 @@ class MESSAGE_LOGGER(Singleton):
 
         # si on n'attend pas une suite, ...
         if is_last_message(code):
+            id0 = self.get_current_id().strip()
             # vérification des compteurs
             self.check_limit()
 
@@ -186,8 +186,8 @@ class MESSAGE_LOGGER(Singleton):
                         self.affiche(unite, txt)
                 exc_typ = dictmess.get('exc_typ')
                 if exc_typ:
-                    raise exc_typ(idmess, valk, vali, valr)
-                raise error(idmess, valk, vali, valr)
+                    raise exc_typ(id0, valk, vali, valr)
+                raise error(id0, valk, vali, valr)
         return None
 
     def build_dict_args(self, valk, vali, valr):
@@ -234,8 +234,12 @@ class MESSAGE_LOGGER(Singleton):
             # doit permettre d'éviter la récursivité (catamess réservé à
             # Utmess)
             if catamess != 'catamess':
-                self.print_message(
-                    'A', 'CATAMESS_57', valk=(catamess, str(msg)))
+                code = 'A'
+                if in_testcase():
+                    raise ImportError(
+                        _(u"Fichier de messages non trouvé: {0}").format(str(msg)))
+                self.print_message(code, 'CATAMESS_57',
+                                   valk=(catamess, str(msg)))
             cata_msg = {}
 
         # corps du message
@@ -268,6 +272,9 @@ class MESSAGE_LOGGER(Singleton):
         except Exception, msg:
             if code == 'I':
                 code = 'A'
+            if in_testcase():
+                raise SyntaxError(_(u"Impossible de construire le texte du "
+                                    u"message: {0}").format(str(msg)))
             dictmess = {
                 'code': code,
                 'flags': 0,
@@ -315,6 +322,10 @@ Exception : %s
         """
         self._buffer = []
         self.set_parent(None)
+
+    def is_buffer_empty(self):
+        """Tell if the buffer is currently empty"""
+        return len(self._buffer) < 1
 
     def set_parent(self, idmess):
         """Store the parent id of the current message"""
@@ -478,17 +489,21 @@ Exception : %s
             # current step should be the JDC object in FIN()
             jdc = CONTEXT.get_current_step()
             code = 'A'
-            if getattr(jdc, 'fico', None):
+            if in_testcase():
                 code = 'F'
             self.print_message(code, 'CATAMESS_87', valk=list(not_seen),
                                exception=True)
 
     def update_counter(self, code, idmess):
-        """Mise à jour des compteurs.
-        Return True if everything is ok, False if the message will skipped."""
+        """Update the counters of alarms.
+        The counter is updated only for the first message in the buffer. So
+        it is important to call this method before adding the message into the
+        buffer.
+        Return True if everything is ok, False if the message will be skipped."""
         if code[0] == 'A':
             parent = self._parent
-            if parent == idmess and self._hidden_alarm.get(idmess, 0) == 0:
+            if parent == idmess and self._hidden_alarm.get(idmess, 0) == 0 \
+                and self.is_buffer_empty():
                 self.count_alarm[idmess] = self.count_alarm.get(idmess, 0) + 1
                 self.count_alarm_tot[
                     idmess] = self.count_alarm_tot.get(idmess, 0) + 1
@@ -705,6 +720,17 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
         else:
             return 'EXCEPTION'
 
+# could be share elsewhere
+def in_testcase():
+    """Tell if we are currently executing a testcase"""
+    step = CONTEXT.get_current_step()
+    jdc = getattr(step, 'jdc', step)
+    print "DEBUG: step:", step, "  jdc:", jdc
+    if jdc and getattr(jdc, 'fico', None):
+        print "DEBUG: in a testcase"
+        return True
+    print "DEBUG: NOT in a testcase"
+    return False
 
 def is_last_message(code):
     """Tell if a message 'code' is the last message or not."""

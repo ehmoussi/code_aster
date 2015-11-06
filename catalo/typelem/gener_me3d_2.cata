@@ -20,18 +20,23 @@ TYPE_GENE__
 
 ENTETE__ ELEMENT__ MECA_FACE3       MAILLE__ TRIA3
    ELREFE__  TR3       GAUSS__  RIGI=FPG3    FPG_LISTE__ MATER=(RIGI )
+   ATTRIBUT__  BORD_ISO='OUI'
    ENS_NOEUD__  EN1     =     1  2  3
 ENTETE__ ELEMENT__ MECA_FACE4       MAILLE__ QUAD4
    ELREFE__  QU4       GAUSS__  RIGI=FPG4      FPG_LISTE__ MATER=(RIGI)
+   ATTRIBUT__  BORD_ISO='OUI'
    ENS_NOEUD__  EN1     =     1  2  3  4
 ENTETE__ ELEMENT__ MECA_FACE6       MAILLE__ TRIA6
    ELREFE__  TR6       GAUSS__  RIGI=FPG6      FPG_LISTE__ MATER=(RIGI)
+   ATTRIBUT__  BORD_ISO='OUI'
    ENS_NOEUD__  EN1     =     1  2  3  4  5  6
 ENTETE__ ELEMENT__ MECA_FACE8       MAILLE__ QUAD8
    ELREFE__  QU8       GAUSS__  RIGI=FPG9      FPG_LISTE__ MATER=(RIGI)
+   ATTRIBUT__  BORD_ISO='OUI'
    ENS_NOEUD__  EN1     =     1  2  3  4  5  6  7  8
 ENTETE__ ELEMENT__ MECA_FACE9       MAILLE__ QUAD9
    ELREFE__  QU9       GAUSS__  RIGI=FPG9      FPG_LISTE__ MATER=(RIGI)
+   ATTRIBUT__  BORD_ISO='OUI'
    ENS_NOEUD__  EN1     =     1  2  3  4  5  6  7  8  9
 
 MODE_LOCAL__
@@ -39,6 +44,7 @@ MODE_LOCAL__
     EDEPLPG  = DEPL_R   ELGA__ RIGI    (DX       DY       DZ       )
    
     CFORCEF  = FORC_F   ELEM__         (FX       FY       FZ       )
+    CFORCER  = FORC_R   ELEM__         (FX       FY       FZ       )
     NFORCER  = FORC_R   ELNO__ IDEN__  (FX       FY       FZ       )
     E1NEUTR  = NEUT_R   ELEM__         (X1       )
     ECONTNO  = SIEF_R   ELNO__ IDEN__  (SIXX     SIYY     SIZZ     SIXY     SIXZ     SIYZ     )
@@ -194,10 +200,8 @@ OPTION__
                           OUT__ MMATUNS  PMATUNS
     SIRO_ELEM        411  IN__  NGEOMER  PGEOMER  ECONTNO  PSIG3D
                           OUT__ EPJSIGM  PPJSIGM
-    SYME_MDNS_R      222  IN__  MMATUNS  PNOSYM
-                          OUT__ MMATUUR  PSYM
     TOU_INI_ELEM      99  IN__
-                          OUT__ CPRES_R  PPRES_R
+                          OUT__ CPRES_R  PPRES_R  CFORCER  PFORC_R
     TOU_INI_ELGA      99  IN__
                           OUT__ EDEPLPG  PDEPL_R  EGGEOM_R PGEOM_R  EGNEUT_F PNEUT_F  EGNEUT_R PNEUT_R
                                 EPRESGA  PPRES_R

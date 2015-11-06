@@ -143,11 +143,10 @@ OPTION__
                           OUT__ MMATUNS  PMATUNS
     SIEF_ELNO          4  IN__  EEFGEGA  PCONTRR  ZVARCPG  PVARCPR
                           OUT__ EEFGENC  PSIEFNOC EEFGENO  PSIEFNOR
-    SYME_MDNS_R      222  IN__  MMATUNS  PNOSYM
-                          OUT__ MMATUUR  PSYM
     TOU_INI_ELEM      99  IN__
                           OUT__ CGEOMER  PGEOM_R
     TOU_INI_ELGA      99  IN__
                           OUT__ EGNEUT_F PNEUT_F  EGNEUT_R PNEUT_R  EEFGEGA  PSIEF_R  ZVARIPG  PVARI_R
     VARI_ELNO          4  IN__  ZVARIPG  PVARIGR
                           OUT__ ZVARINO  PVARINR
+    TOU_INI_ELNO      99  IN__ OUT__ NGEOMER  PGEOM_R

@@ -1,6 +1,6 @@
 # TITRE IMPACT D UNE BARRE DE TAYLOR ELASTOPLASTIQUE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -159,11 +159,10 @@ RESU=DYNA_NON_LINE(MODELE=MODE,
                    SCHEMA_TEMPS=_F(SCHEMA='HHT',
                                 FORMULATION='DEPLACEMENT',
                                 MODI_EQUI='NON',ALPHA=-0.6,),
-                   NEWTON=_F(
+                   NEWTON=_F(MATR_RIGI_SYME='OUI',
                              REAC_INCR=1,
                              MATRICE='TANGENTE',
                              REAC_ITER=1,),
-                   SOLVEUR=_F(SYME='OUI',),
                    CONVERGENCE=_F(RESI_GLOB_RELA=1.E-06,
 #  On force le sous-decoupage du pas de temps :
 #                                  ITER_GLOB_MAXI=20,
@@ -220,7 +219,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='A2',
 TABJEU=POST_RELEVE_T(ACTION=_F(INTITULE='MESSAGE',
                                GROUP_NO='B1',
                                RESULTAT=RESU,
-                               NOM_CHAM='VALE_CONT',
+                               NOM_CHAM='CONT_NOEU',
                                TOUT_CMP='OUI',
                                OPERATION='EXTRACTION',),);
 # JEU

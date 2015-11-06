@@ -56,7 +56,7 @@ subroutine te0297(option, nomte)
     integer :: jpintt, jcnset, jheavt, jlonch, jbaslo, igeom, idepl
     integer :: ipres, ipref, itemps, jptint, jcface, jlongc, imate
     integer :: ithet, i, j, compt, igthet, ibid, jlsn, jlst, idecpg, icode
-    integer :: nface, cface(18, 6), ifa, singu, jpmilt, ipuls, iret, jtab(7)
+    integer :: nface, cface(30, 6), ifa, singu, jpmilt, ipuls, iret, jtab(7)
     integer :: irese, ddlm, jbasec, nptf, nfiss, jheavn
     integer :: contac
     real(kind=8) :: thet, valres(3), devres(3), presn(27), valpar(4)
@@ -66,7 +66,7 @@ subroutine te0297(option, nomte)
     character(len=16) :: nomres(3)
 !
     data    elrese /'SE2','TR3','TE4','SE3','TR6','T10'/
-    data    fami   /'BID','RIGI','XINT','BID','RIGI','XINT'/
+    data    fami   /'BID','XINT','XINT','BID','XINT','XINT'/
     data    nomres /'E','NU','ALPHA'/
 !
     
@@ -136,7 +136,7 @@ subroutine te0297(option, nomte)
 !
 ! --- RECUPERATION DE LA PULSATION
 !
-    call tecach('ONN', 'PPULPRO', 'L', iret, nval=7,&
+    call tecach('ONO', 'PPULPRO', 'L', iret, nval=7,&
                 itab=jtab)
     ipuls=jtab(1)
     if (iret .eq. 0) then
@@ -230,8 +230,8 @@ subroutine te0297(option, nomte)
     nptf=zi(jlongc-1+3)
     if (ninter .lt. ndim) goto 999
 !
-    do 40 i = 1, 5
-        do 41 j = 1, 3
+    do 40 i = 1, 30
+        do 41 j = 1, 6
             cface(i,j)=0
 41      continue
 40  continue
@@ -261,7 +261,7 @@ subroutine te0297(option, nomte)
                     igeom, nfh, jheavn, singu, nfe, ddlc,&
                     ddlm, jlst, ipres, ipref, itemps,&
                     idepl, nnop, valres, zr( jbaslo), ithet,&
-                    nompar, presn, option, igthet, jbasec,&
+                    nompar, option, igthet, jbasec,&
                     contac)
 200  continue
 !

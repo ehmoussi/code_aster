@@ -1,8 +1,8 @@
-subroutine xalg20(ndim, elrefp, nnop, it, nnose,&
-                  cnset, typma, ndime, igeom, jlsn,&
+subroutine xalg20(ndim, elrefp, it, nnose,&
+                  cnset, typma, ndime, geom, lsnelp,&
                   pmilie, ninter, ainter, ar, npts,&
                   nptm, pmmax, nmilie, mfis, lonref,&
-                  pinref)
+                  pinref, pintt, pmitt, jonc)
     implicit none
 !
 #include "asterf_types.h"
@@ -20,10 +20,11 @@ subroutine xalg20(ndim, elrefp, nnop, it, nnose,&
 #include "asterfort/xxmmvd.h"
 !
     character(len=8) :: typma, elrefp
-    integer :: ndim, ndime, nnop, it, nnose, cnset(*), igeom, jlsn
+    integer :: ndim, ndime, it, nnose, cnset(*)
     integer :: ninter, pmmax, npts, nptm, nmilie, mfis, ar(12, 3)
-    real(kind=8) :: ainter(*), pmilie(*), lonref
-    real(kind=8) :: pinref(*)
+    real(kind=8) :: ainter(*), pmilie(*), lonref, lsnelp(*)
+    real(kind=8) :: pinref(*), pintt(*), pmitt(*), geom(81)
+    aster_logical :: jonc
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -53,6 +54,10 @@ subroutine xalg20(ndim, elrefp, nnop, it, nnose,&
 !       AR       : CONNECTIVITE DU TETRA
 !       PMMAX    : NOMBRE DE POINTS MILIEUX MAXIMAL DETECTABLE
 !       NPTS     : NB DE PTS D'INTERSECTION COINCIDANT AVEC UN NOEUD SOMMET
+!       LSNELP   : LSN AUX NOEUDS DE L'ELEMENT PARENT POUR LA FISSURE COURANTE
+!       PINTT    : COORDONNEES REELLES DES POINTS D'INTERSECTION
+!       PMITT    : COORDONNEES REELLES DES POINTS MILIEUX
+!       JONC     : L'ELEMENT PARENT EST-IL TRAVERSE PAR PLUSIEURS FISSURES
 !
 !     SORTIE
 !       NMILIE   : NOMBRE DE POINTS MILIEUX
@@ -61,14 +66,14 @@ subroutine xalg20(ndim, elrefp, nnop, it, nnose,&
 !     ----------------------------------------------------------------
 !
     real(kind=8) :: milfi(3), milara(3), milarb(3)
-    real(kind=8) :: milfa(3), geom(81)
+    real(kind=8) :: milfa(3)
     real(kind=8) :: pmiref(6*ndime), ksia(ndime), ksib(ndime)
     integer :: n(3)
-    integer :: i, ipm, k, ino
+    integer :: i, ipm, k
     integer :: noeua
     integer :: j, r, ip, a1, a2, a3, ip1(4), ip2(4), nbpi
     integer :: pm1a(4), pm1b(4), pm2(4)
-    integer :: nm, inm, ia, ib
+    integer :: nm, inm, ia, ib, im
     integer :: zxain
     aster_logical :: ispm3, ispm2, ajout
 !
@@ -85,12 +90,6 @@ subroutine xalg20(ndim, elrefp, nnop, it, nnose,&
     mfis=0
 !
     call vecini(51, 0.d0, pmilie)
-!
-    do ino = 1, nnop
-        do i = 1, ndim
-            geom(ndim*(ino-1)+i)=zr(igeom-1+ndim*(ino-1)+i)
-        enddo
-    enddo
 !
     do 204 i = 1, 4
         ip1(i)=0
@@ -142,12 +141,13 @@ subroutine xalg20(ndim, elrefp, nnop, it, nnose,&
             if (ar(a2,i) .eq. noeua) then
                 ia=cnset(nnose*(it-1)+ar(a2,3-i))
                 ib=cnset(nnose*(it-1)+ar(a2,i))
+                im=cnset(nnose*(it-1)+ar(a2,3))
             endif
 320     continue 
         ASSERT((ia*ib) .gt. 0)
         call xmilar(ndim, ndime, elrefp, geom, pinref,&
-                    ia, ib, r, ksia, ksib,&
-                    milara, milarb)
+                    ia, ib, im, r, ksia, ksib,&
+                    milara, milarb, pintt, pmitt)
 !         STOCKAGE PMILIE
         call xajpmi(ndim, pmilie, pmmax, ipm, inm, milara,&
                     lonref, ajout)
@@ -183,9 +183,9 @@ subroutine xalg20(ndim, elrefp, nnop, it, nnose,&
 !
 !        CALCUL DU POINT MILIEU DE 101-102
 !
-            call xmifis(ndim, ndime, elrefp, geom, zr(jlsn),&
+            call xmifis(ndim, ndime, elrefp, geom, lsnelp,&
                         n, ip1(k), ip2(k), pinref, ksia,&
-                        milfi)
+                        milfi, pintt, jonc)
 !
 !        STOCKAGE PMILIE
             mfis=mfis+1
@@ -218,7 +218,7 @@ subroutine xalg20(ndim, elrefp, nnop, it, nnose,&
             call xmilfa(elrefp, ndim, ndime, geom, cnset,&
                         nnose, it, ainter, ip1(k), ip2(k),&
                         pm2(k), typma, pinref, pmiref, ksia,&
-                        milfa)
+                        milfa, pintt, pmitt)
 !
             call xajpmi(ndim, pmilie, pmmax, ipm, inm, milfa,&
                         lonref, ajout)

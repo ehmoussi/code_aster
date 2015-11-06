@@ -16,31 +16,23 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine nmini0(zpmet, zpcri, zconv, zpcon, znmeth,&
-                      fonact, parmet, parcri, conv, parcon,&
-                      method, eta, numins, matass, zmeelm,&
-                      zmeass, zveelm, zveass, zsolal, zvalin,&
-                      sdimpr)
-        integer :: znmeth
-        integer :: zpcon
-        integer :: zconv
-        integer :: zpcri
-        integer :: zpmet
-        integer :: fonact(*)
-        real(kind=8) :: parmet(zpmet)
-        real(kind=8) :: parcri(zpcri)
-        real(kind=8) :: conv(zconv)
-        real(kind=8) :: parcon(zpcon)
-        character(len=16) :: method(znmeth)
-        real(kind=8) :: eta
-        integer :: numins
-        character(len=19) :: matass
-        integer :: zmeelm
-        integer :: zmeass
-        integer :: zveelm
-        integer :: zveass
-        integer :: zsolal
-        integer :: zvalin
-        character(len=24) :: sdimpr
+    subroutine nmini0(list_func_acti, eta    , nume_inst  , matass  , zmeelm,&
+                      zmeass        , zveelm , zveass     , zsolal  , zvalin,&
+                      ds_print      , ds_conv, ds_algopara, ds_inout)
+        use NonLin_Datastructure_type
+        integer, intent(out) :: list_func_acti(*)
+        character(len=19), intent(out) :: matass
+        integer, intent(out) :: nume_inst
+        real(kind=8), intent(out) :: eta
+        integer, intent(in) :: zmeelm
+        integer, intent(in) :: zmeass
+        integer, intent(in) :: zveelm
+        integer, intent(in) :: zveass
+        integer, intent(in) :: zsolal
+        integer, intent(in) :: zvalin
+        type(NL_DS_Print), intent(out) :: ds_print
+        type(NL_DS_Conv), intent(out) :: ds_conv
+        type(NL_DS_AlgoPara), intent(out) :: ds_algopara
+        type(NL_DS_InOut), intent(out) :: ds_inout
     end subroutine nmini0
 end interface

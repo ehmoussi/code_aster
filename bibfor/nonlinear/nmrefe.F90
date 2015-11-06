@@ -1,5 +1,26 @@
-subroutine nmrefe(modele, compor, mate, carele, depmoi,&
-                  parcon, vecelz)
+subroutine nmrefe(model  , compor, mate  , cara_elem, nume_dof,&
+                  ds_conv, valinc, veelem, veasse)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/assmiv.h"
+#include "asterfort/calcul.h"
+#include "asterfort/dbgcal.h"
+#include "asterfort/detrsd.h"
+#include "asterfort/exixfe.h"
+#include "asterfort/inical.h"
+#include "asterfort/mecact.h"
+#include "asterfort/mecara.h"
+#include "asterfort/megeom.h"
+#include "asterfort/memare.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/reajre.h"
+#include "asterfort/xajcin.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -19,216 +40,154 @@ subroutine nmrefe(modele, compor, mate, carele, depmoi,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/calcul.h"
-#include "asterfort/dbgcal.h"
-#include "asterfort/detrsd.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/inical.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/mecact.h"
-#include "asterfort/mecara.h"
-#include "asterfort/megeom.h"
-#include "asterfort/memare.h"
-#include "asterfort/reajre.h"
-    real(kind=8) :: parcon(*)
-    character(len=*) :: vecelz
-    character(len=24) :: modele
-    character(len=24) :: compor
-    character(len=24) :: mate
-    character(len=24) :: carele
-    character(len=19) :: depmoi
+    character(len=24), intent(in) :: model
+    character(len=24), intent(in) :: compor
+    character(len=24), intent(in) :: mate
+    character(len=24), intent(in) :: cara_elem
+    character(len=24), intent(in) :: nume_dof
+    type(NL_DS_Conv), intent(in) :: ds_conv
+    character(len=19), intent(in) :: valinc(*)
+    character(len=19), intent(in) :: veelem(*)
+    character(len=19), intent(in) :: veasse(*)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (CALCUL)
+! MECA_NON_LINE - Computation
 !
-! CALCUL DE LA CARTE POUR RESI_RELA_REFE POUR UN ELEMENT CABLE/GAINE
+! Compute reference vector for RESI_REFE_RELA
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  model            : name of model
+! In  compor           : name of comportment definition (field)
+! In  mate             : name of material characteristics (field)
+! In  cara_elem        : name of elementary characteristics (field)
+! In  nume_dof         : name of numbering (NUME_DDL)
+! In  ds_conv          : datastructure for convergence management
+! In  valinc           : hat variable for algorithm fields
+! In  veelem           : hat variable for elementary vectors
+! In  veasse           : hat variable for vectors
 !
-! IN  MODELE : MODELE MECANIQUE
-! IN  COMPOR : CARTE COMPORTEMENT
-! IN  MATE   : NOM DU CHAMP DE MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  DEPMOI : DEPLACEMENT EN T-
-! IN  PARCON : PARAMETRES DU CRITERE DE CONVERGENCE REFERENCE
-!                     1 : SIGM_REFE
-!                     2 : EPSI_REFE
-!                     3 : FLUX_THER_REFE
-!                     4 : FLUX_HYD1_REFE
-!                     5 : FLUX_HYD2_REFE
-!                     6 : VARI_REFE
-!                     7 : EFFORT (FORC_REFE)
-!                     8 : MOMENT (FORC_REFE)
-!                     9 : DEPL_REFE
-!                    10 : LAGR_REFE
-! OUT VECELZ : NOM DU VECT_ELEM
+! --------------------------------------------------------------------------------------------------
 !
+    integer, parameter :: nbout = 1
+    integer, parameter :: nb_in_maxi = 26
+    character(len=8) :: lpaout(nbout), lpain(nb_in_maxi)
+    character(len=19) :: lchout(nbout), lchin(nb_in_maxi)
 !
-!
-!
-!
-    integer :: nbout, nbin
-    parameter    (nbout=1, nbin=26)
-    character(len=8) :: lpaout(nbout), lpain(nbin)
-    character(len=19) :: lchout(nbout), lchin(nbin)
-!
-    integer :: nbsig
-    parameter    (nbsig=11)
-    character(len=8) :: sigere(nbsig)
-!
-    character(len=19) :: vecele
-    character(len=19) :: ligrmo, verefe, carte
-    character(len=24) :: chgeom
-    character(len=24) :: chcara(18)
-    character(len=19) :: pintto, cnseto, heavto, loncha, pmilto, hea_no
-    character(len=19) :: pinter, ainter, baseco, ccface, lonfac
-    aster_logical :: debug
-    integer :: ifmdbg, nivdbg
+    character(len=19) :: vect_elem, vect_asse, disp_prev
+    character(len=19) :: ligrmo, resu_elem, chrefe
+    character(len=24) :: chgeom, chcara(18)
+    integer :: i_refe, nb_refe, nb_in_prep, ier
+    character(len=8), pointer :: list_cmp(:) => null()
+    real(kind=8), pointer :: list_vale(:) => null()
     character(len=16) :: option
+    aster_logical :: l_xfem
 !
-    data  sigere / 'SIGM','EPSI','FTHERM','FHYDR1','FHYDR2','VARI',&
-     &               'EFFORT','MOMENT','DEPL','LAG_GV','PI' /
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
-    call infdbg('PRE_CALCUL', ifmdbg, nivdbg)
-!
-! --- INITIALISATIONS
-!
-    carte = '&&NMREFE.SIGERE'
-    verefe = '&&NMREFE.VEREFE'
-    vecele = vecelz
-    ligrmo = modele(1:8) // '.MODELE'
-    if (nivdbg .ge. 2) then
-        debug = .true.
-    else
-        debug = .false.
-    endif
+    chrefe  = '&&NMREFE.SIGERE'
+    resu_elem = '&&NMREFE.VEREFE'
+    ligrmo = model(1:8) // '.MODELE'
     option = 'REFE_FORC_NODA'
+    call exixfe(model, ier)
+    l_xfem = ier.ne.0
 !
-! --- CREATION CARTE DES VALEURS DE REFRENCES
+! - Get names of fields
 !
-    call mecact('V', carte, 'MODELE', ligrmo, 'PREC',&
-                ncmp=nbsig, lnomcmp=sigere, vr=parcon)
+    call nmchex(valinc, 'VALINC', 'DEPMOI', disp_prev)
+    call nmchex(veelem, 'VEELEM', 'CNREFE', vect_elem)
+    call nmchex(veasse, 'VEASSE', 'CNREFE', vect_asse)
 !
-! --- CARTE DE LA GEOMETRIE
+! - Get parameters from convergence datastructure
 !
-    call megeom(modele, chgeom)
+    nb_refe       = ds_conv%nb_refe
+    AS_ALLOCATE(vk8 = list_cmp, size = nb_refe)
+    AS_ALLOCATE(vr  = list_vale, size = nb_refe)
+    do i_refe = 1, nb_refe
+        list_cmp(i_refe)  = ds_conv%list_refe(i_refe)%cmp_name
+        list_vale(i_refe) = ds_conv%list_refe(i_refe)%user_para
+    end do
 !
-! --- CARTE POUR LES CARA. ELEM.
+! - Init fields
 !
-    call mecara(carele(1:8), chcara)
-!
-! --- INITIALISATION DES CHAMPS POUR CALCUL
-!
-    call inical(nbin, lpain, lchin, nbout, lpaout,&
+    call inical(nb_in_maxi, lpain, lchin, nbout, lpaout,&
                 lchout)
 !
-! --- RECUPERATION DES DONNEES XFEM (TOPOSE)
+! - Field for reference values
 !
-    pintto = modele(1:8)//'.TOPOSE.PIN'
-    cnseto = modele(1:8)//'.TOPOSE.CNS'
-    heavto = modele(1:8)//'.TOPOSE.HEA'
-    loncha = modele(1:8)//'.TOPOSE.LON'
-    pmilto = modele(1:8)//'.TOPOSE.PMI'
+    call mecact('V', chrefe, 'MODELE', ligrmo, 'PREC',&
+                ncmp=nb_refe, lnomcmp=list_cmp, vr=list_vale)
 !
-! --- RECUPERATION DES DONNEES XFEM (TOPONO)
+! - Geometry field
 !
-    hea_no = modele(1:8)//'.TOPONO.HNO'
+    call megeom(model, chgeom)
 !
-! --- RECUPERATION DES DONNEES XFEM (TOPOFAC)
+! - Elementary characteristics fields
 !
-    pinter = modele(1:8)//'.TOPOFAC.OE'
-    ainter = modele(1:8)//'.TOPOFAC.AI'
-    ccface = modele(1:8)//'.TOPOFAC.CF'
-    baseco = modele(1:8)//'.TOPOFAC.BA'
-    lonfac = modele(1:8)//'.TOPOFAC.LO'
+    call mecara(cara_elem, chcara)
 !
-! --- CREATION DES LISTES DES CHAMPS IN
+! - Preparation of VECT_ELEM
 !
-    lpain(1) = 'PGEOMER'
-    lchin(1) = chgeom(1:19)
-    lpain(2) = 'PREFCO'
-    lchin(2) = carte
-    lpain(3) = 'PCAORIE'
-    lchin(3) = chcara(1)(1:19)
-    lpain(4) = 'PCOMPOR'
-    lchin(4) = compor(1:19)
-    lpain(5) = 'PMATERC'
-    lchin(5) = mate(1:19)
-    lpain(6) = 'PDEPLMR'
-    lchin(6) = depmoi
-    lpain(7) = 'PCACOQU'
-    lchin(7) = chcara(7)(1:19)
-    lpain(8) = 'PCAGEPO'
-    lchin(8) = chcara(5)(1:19)
-    lpain(9) = 'PNBSP_I'
-    lchin(9) = chcara(1) (1:8)//'.CANBSP'
-    lpain(10) = 'PPINTTO'
-    lchin(10) = pintto
-    lpain(11) = 'PHEAVTO'
-    lchin(11) = heavto
-    lpain(12) = 'PLONCHA'
-    lchin(12) = loncha
-    lpain(13) = 'PCNSETO'
-    lchin(13) = cnseto
-    lpain(14) = 'PBASLOR'
-    lchin(14) = modele(1:8)//'.BASLOC'
-    lpain(15) = 'PLSN'
-    lchin(15) = modele(1:8)//'.LNNO'
-    lpain(16) = 'PLST'
-    lchin(16) = modele(1:8)//'.LTNO'
-    lpain(17) = 'PCAMASS'
-    lchin(17) = chcara(12) (1:19)
-    lpain(18) = 'PPMILTO'
-    lchin(18) = pmilto
-    lpain(19) = 'PCINFDI'
-    lchin(19) = chcara(15)(1:19)
-    lpain(20) = 'PPINTER'
-    lchin(20) = pinter
-    lpain(21) = 'PAINTER'
-    lchin(21) = ainter
-    lpain(22) = 'PCFACE'
-    lchin(22) = ccface
-    lpain(23) = 'PBASECO'
-    lchin(23) = baseco
-    lpain(24) = 'PLONFA'
-    lchin(24) = lonfac
-    lpain(25) = 'PCAGNBA'
-    lchin(25) = chcara(11)(1:19)
-    lpain(26) = 'PHEA_NO'
-    lchin(26) = hea_no
+    call detrsd('VECT_ELEM', vect_elem)
+    call memare('V', vect_elem, model, ' ', ' ', 'CHAR_MECA')
 !
-! --- CREATION DES LISTES DES CHAMPS OUT
+! - Input fields
+!
+    lpain(1)  = 'PGEOMER'
+    lchin(1)  = chgeom(1:19)
+    lpain(2)  = 'PREFCO'
+    lchin(2)  = chrefe
+    lpain(3)  = 'PCAORIE'
+    lchin(3)  = chcara(1)(1:19)
+    lpain(4)  = 'PCOMPOR'
+    lchin(4)  = compor(1:19)
+    lpain(5)  = 'PMATERC'
+    lchin(5)  = mate(1:19)
+    lpain(6)  = 'PDEPLMR'
+    lchin(6)  = disp_prev
+    lpain(7)  = 'PCACOQU'
+    lchin(7)  = chcara(7)(1:19)
+    lpain(8)  = 'PCAGEPO'
+    lchin(8)  = chcara(5)(1:19)
+    lpain(9)  = 'PNBSP_I'
+    lchin(9)  = chcara(1) (1:8)//'.CANBSP'
+    lpain(10) = 'PCAMASS'
+    lchin(10) = chcara(12) (1:19)
+    lpain(11) = 'PCAGNBA'
+    lchin(11) = chcara(11)(1:19)
+    lpain(12) = 'PCINFDI'
+    lchin(12) = chcara(15)(1:19)
+    nb_in_prep = 12
+!
+! - XFEM fields
+!
+    if (l_xfem) then
+        call xajcin(model, 'REFE_FORC_NODA', nb_in_maxi, lchin, lpain,&
+                    nb_in_prep)
+    endif
+!
+! - Output fields
 !
     lpaout(1) = 'PVECTUR'
-    lchout(1) = verefe
+    lchout(1) = resu_elem
 !
-! --- PREPARATION DES VECT_ELEM
+! - Computation
 !
-    call detrsd('VECT_ELEM', vecele)
-    call memare('V', vecele, modele(1:8), ' ', ' ',&
-                'CHAR_MECA')
-!
-! --- APPEL A CALCUL
-!
-    call calcul('S', option, ligrmo, nbin, lchin,&
+    call calcul('S', option, ligrmo , nb_in_prep, lchin,&
                 lpain, nbout, lchout, lpaout, 'V',&
                 'OUI')
 !
-    if (debug) then
-        call dbgcal(option, ifmdbg, nbin, lpain, lchin,&
-                    nbout, lpaout, lchout)
-    endif
+! - Copying output field
 !
-    call reajre(vecele, lchout(1), 'V')
+    call reajre(vect_elem, lchout(1), 'V')
 !
-    call jedema()
+! - Assembly
+!
+    call assmiv('V', vect_asse, 1, vect_elem, [1.d0],&
+                nume_dof, ' ', 'ZERO', 1)
+!
+    AS_DEALLOCATE(vk8 = list_cmp)
+    AS_DEALLOCATE(vr  = list_vale)
 !
 end subroutine

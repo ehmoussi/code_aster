@@ -1,7 +1,32 @@
-subroutine nmnpas(modele, noma  , mate  , carele, fonact,&
-                  sdimpr, sddisc, sdsuiv, sddyna, sdnume,&
-                  sdstat, sdtime, numedd, numins, conv,&
-                  defico, resoco, valinc, solalg, solveu)
+subroutine nmnpas(modele  , noma  , mate  , carele, fonact ,&
+                  ds_print, sddisc, sdsuiv, sddyna, sdnume ,&
+                  sdstat  , sdtime, numedd, numins, defico ,&
+                  resoco  , valinc, solalg, solveu, ds_conv,&
+                  lischa)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterc/isnnem.h"
+#include "asterc/r8vide.h"
+#include "asterfort/copisd.h"
+#include "asterfort/diinst.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/initia.h"
+#include "asterfort/isfonc.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/cldual_maj.h"
+#include "asterfort/cont_init.h"
+#include "asterfort/ndnpas.h"
+#include "asterfort/ndynlo.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmimin.h"
+#include "asterfort/nmnkft.h"
+#include "asterfort/nmvcle.h"
+#include "asterfort/SetResi.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -20,38 +45,19 @@ subroutine nmnpas(modele, noma  , mate  , carele, fonact,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterc/isnnem.h"
-#include "asterc/r8vide.h"
-#include "asterfort/cfinit.h"
-#include "asterfort/copisd.h"
-#include "asterfort/diinst.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/initia.h"
-#include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/mmapin.h"
-#include "asterfort/ndnpas.h"
-#include "asterfort/ndynlo.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmimin.h"
-#include "asterfort/nmnkft.h"
-#include "asterfort/nmvcle.h"
+!
     integer :: fonact(*)
     character(len=8) :: noma
     character(len=19) :: sddyna, sdnume, sddisc, solveu
     character(len=24) :: modele, mate, carele
     integer :: numins
-    real(kind=8) :: conv(*)
-    character(len=24) :: sdimpr, sdstat, sdtime, sdsuiv
+    type(NL_DS_Print), intent(inout) :: ds_print
+    character(len=24) :: sdstat, sdtime, sdsuiv
     character(len=24) :: defico, resoco, numedd
     character(len=19) :: solalg(*), valinc(*)
+    type(NL_DS_Conv), intent(inout) :: ds_conv
+    character(len=19), intent(in) :: lischa
 !
 ! ----------------------------------------------------------------------
 !
@@ -61,7 +67,6 @@ subroutine nmnpas(modele, noma  , mate  , carele, fonact,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  MODELE : NOM DU MODELE
 ! IN  NOMA   : NOM DU MAILLAGE
 ! IN  MATE   : CHAMP DE MATERIAU
@@ -69,7 +74,7 @@ subroutine nmnpas(modele, noma  , mate  , carele, fonact,&
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  NUMEDD : NUME_DDL
 ! IN  NUMINS : NUMERO INSTANT COURANT
-! IN  SDIMPR : SD AFFICHAGE
+! IO  ds_print         : datastructure for printing parameters
 ! IN  SDTIME : SD TIMER
 ! IN  SDSTAT : SD STATISTIQUES
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
@@ -80,14 +85,15 @@ subroutine nmnpas(modele, noma  , mate  , carele, fonact,&
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
+! IO  ds_conv          : datastructure for convergence management
 !
 ! ----------------------------------------------------------------------
 !
     aster_logical :: lgrot, ldyna, lnkry
-    aster_logical :: lcont, leltc, lctcc
+    aster_logical :: lcont, leltc, lctcc, l_diri_undead
     integer :: neq
     character(len=19) :: depmoi, varmoi
-    character(len=19) :: depplu, varplu, vitplu, accplu
+    character(len=19) :: depplu, varplu
     character(len=19) :: complu, depdel
     real(kind=8) :: instan
     integer :: jdepde
@@ -100,34 +106,26 @@ subroutine nmnpas(modele, noma  , mate  , carele, fonact,&
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
-!
-! --- INITIALISATIONS
-!
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
     scotch = .false.
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalites
 !
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lcont = isfonc(fonact,'CONTACT')
-    lgrot = isfonc(fonact,'GD_ROTA')
-    lnkry = isfonc(fonact,'NEWTON_KRYLOV')
-    leltc = isfonc(fonact,'ELT_CONTACT')
-    lctcc = isfonc(fonact,'CONT_CONTINU')
-!
-! --- REINITIALISATION DU TABLEAU DE CONVERGENCE
-!
-    conv(3) = r8vide()
-    conv(4) = r8vide()
+    ldyna         = ndynlo(sddyna,'DYNAMIQUE')
+    lcont         = isfonc(fonact,'CONTACT')
+    lgrot         = isfonc(fonact,'GD_ROTA')
+    lnkry         = isfonc(fonact,'NEWTON_KRYLOV')
+    leltc         = isfonc(fonact,'ELT_CONTACT')
+    lctcc         = isfonc(fonact,'CONT_CONTINU')
+    l_diri_undead = isfonc(fonact,'DIRI_UNDEAD')
 !
 ! --- INSTANT COURANT
 !
     instan = diinst(sddisc,numins)
 !
-! --- INITIALISATION DES IMPRESSIONS
+! - Print management - Initializations for new step time
 !
-    call nmimin(sdimpr, fonact, sddisc, sdsuiv, numins)
+    call nmimin(fonact, sddisc, sdsuiv, numins, ds_print)
 !
 ! --- POUTRES EN GRANDES ROTATIONS
 !
@@ -142,8 +140,6 @@ subroutine nmnpas(modele, noma  , mate  , carele, fonact,&
     call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
     call nmchex(valinc, 'VALINC', 'VARMOI', varmoi)
     call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
-    call nmchex(valinc, 'VALINC', 'VITPLU', vitplu)
-    call nmchex(valinc, 'VALINC', 'ACCPLU', accplu)
     call nmchex(valinc, 'VALINC', 'VARPLU', varplu)
     call nmchex(valinc, 'VALINC', 'COMPLU', complu)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
@@ -160,11 +156,21 @@ subroutine nmnpas(modele, noma  , mate  , carele, fonact,&
 !
     call copisd('CHAMP_GD', 'V', depmoi, depplu)
 !
+! - Initializations of residuals
+!
+    call SetResi(ds_conv, vale_calc_ = r8vide())
+!
 ! --- INITIALISATION DE L'INCREMENT DE DEPLACEMENT DEPDEL
 !
     call jeveuo(depdel//'.VALE', 'E', jdepde)
     call jeveuo(depplu//'.VALE', 'L', vr=depp)
     call initia(neq, lgrot, zi(indro), depp, zr(jdepde))
+!
+! - Update dualized relations for non-linear Dirichlet boundary conditions (undead)
+!
+    if (l_diri_undead) then
+        call cldual_maj(lischa, depmoi)
+    endif
 !
 ! --- INITIALISATIONS EN DYNAMIQUE
 !
@@ -187,20 +193,12 @@ subroutine nmnpas(modele, noma  , mate  , carele, fonact,&
         call nmnkft(solveu, sddisc, iterat)
     endif
 !
-! --- INITIALISATIONS POUR LE CONTACT
+! - Initializations of contact for current time step
 !
     if (lcont) then
-        call cfinit(noma, fonact, defico, resoco, numins,&
-                    sddyna, valinc, sdnume)
+        call cont_init(noma  , modele, defico, resoco, numins,&
+                       sdtime, sdstat, sddyna, valinc, sdnume,&
+                       numedd, fonact)
     endif
-!
-! --- APPARIEMENT INITIAL POUR CONTACT CONTINU
-!
-    if (leltc) then
-        call mmapin(modele, noma, defico, resoco, numedd,&
-                    numins, sdstat, sdtime)
-    endif
-!
-    call jedema()
 !
 end subroutine

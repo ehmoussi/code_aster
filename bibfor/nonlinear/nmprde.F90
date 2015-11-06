@@ -1,10 +1,24 @@
-subroutine nmprde(modele, numedd, numfix, mate, carele,&
-                  comref, compor, lischa, method, solveu,&
-                  fonact, parmet, carcri, sdimpr, sdstat,&
-                  sdtime, sddisc, numins, valinc, solalg,&
-                  matass, maprec, defico, resoco, sddyna,&
-                  meelem, measse, veelem, veasse, ldccvg,&
-                  faccvg, rescvg, codere)
+subroutine nmprde(modele, numedd, numfix  , mate       , carele,&
+                  comref, compor, lischa  , ds_algopara, solveu,&
+                  fonact, carcri, ds_print, sdstat     , sdtime,&
+                  sddisc, numins, valinc  , solalg     , matass,&
+                  maprec, defico, resoco  , sddyna     , meelem,&
+                  measse, veelem, veasse  , ldccvg     , faccvg,&
+                  rescvg, codere)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/copisd.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmprca.h"
+#include "asterfort/nmprdc.h"
+#include "asterfort/nmprex.h"
+#include "asterfort/vtcopy.h"
+#include "asterfort/vtzero.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -23,27 +37,14 @@ subroutine nmprde(modele, numedd, numfix, mate, carele,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/assert.h"
-#include "asterfort/copisd.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmprca.h"
-#include "asterfort/nmprdc.h"
-#include "asterfort/nmprex.h"
-#include "asterfort/vtcopy.h"
-#include "asterfort/vtzero.h"
+!
     integer :: fonact(*)
     integer :: numins, ldccvg, faccvg, rescvg
-    real(kind=8) :: parmet(*)
-    character(len=16) :: method(*)
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=19) :: maprec, matass
-    character(len=24) :: sdimpr, sdtime, sdstat
+    character(len=24) :: sdtime, sdstat
+    type(NL_DS_Print), intent(inout) :: ds_print
     character(len=19) :: lischa, solveu, sddisc, sddyna
     character(len=24) :: numedd, numfix
     character(len=24) :: modele, mate, carele, comref, compor
@@ -62,7 +63,6 @@ subroutine nmprde(modele, numedd, numfix, mate, carele,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
@@ -73,11 +73,10 @@ subroutine nmprde(modele, numedd, numfix, mate, carele,&
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  MAPREC : MATRICE DE PRECONDITIONNEMENT (GCPC)
 ! IN  MATASS : MATRICE ASSEMBLEE
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION
 ! IN  SOLVEU : SOLVEUR
-! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  CARCRI : PARAMETRES DES METHODES D'INTEGRATION LOCALES
-! IN  SDIMPR : SD AFFICHAGE
+! IO  ds_print         : datastructure for printing parameters
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IN  SDTIME : SD TIMER
 ! IN  SDSTAT : SD STATISTIQUES
@@ -120,10 +119,6 @@ subroutine nmprde(modele, numedd, numfix, mate, carele,&
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
-!
-! --- INITIALISATIONS
-!
     depest = '&&CNPART.CHP1'
     incest = '&&CNPART.CHP2'
     call vtzero(depest)
@@ -144,12 +139,12 @@ subroutine nmprde(modele, numedd, numfix, mate, carele,&
 ! --- VALEUR DU DEPLACEMENT -> DEPEST
 ! --- VALEUR DE L'INCREMENT DE DEPLACEMENT -> INCEST
 !
-    if (method(5) .eq. 'EXTRAPOLE') then
+    if (ds_algopara%matrix_pred .eq. 'EXTRAPOLE') then
         call nmprex(numedd, depmoi, solalg, sddisc, numins,&
                     incest, depest)
-    else if (method(5) .eq. 'DEPL_CALCULE') then
-        call nmprdc(method, numedd, depmoi, sddisc, numins,&
-                    incest, depest)
+    else if (ds_algopara%matrix_pred .eq. 'DEPL_CALCULE') then
+        call nmprdc(ds_algopara, numedd, depmoi, sddisc, numins,&
+                    incest     , depest)
     else
         ASSERT(.false.)
     endif
@@ -166,14 +161,13 @@ subroutine nmprde(modele, numedd, numfix, mate, carele,&
 ! --- CINEMATIQUEMENT ADMISSIBLE
 !
     if (lproj) then
-        call nmprca(modele, numedd, numfix, mate, carele,&
-                    comref, compor, lischa, method, solveu,&
-                    fonact, parmet, carcri, sdimpr, sdstat,&
-                    sddisc, sdtime, numins, valinc, solalg,&
-                    matass, maprec, defico, resoco, sddyna,&
-                    meelem, measse, veelem, veasse, depest,&
-                    ldccvg, faccvg, rescvg, codere)
+        call nmprca(modele, numedd, numfix  , mate       , carele,&
+                    comref, compor, lischa  , ds_algopara, solveu,&
+                    fonact, carcri, ds_print, sdstat     , sddisc,&
+                    sdtime, numins, valinc  , solalg     , matass,&
+                    maprec, defico, resoco  , sddyna     , meelem,&
+                    measse, veelem, veasse  , depest     , ldccvg,&
+                    faccvg, rescvg, codere)
     endif
 !
-    call jedema()
 end subroutine

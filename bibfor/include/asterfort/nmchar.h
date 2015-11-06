@@ -15,12 +15,15 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nmchar(mode, phasez, modele, numedd, mate,&
-                      carele, compor, lischa, carcri, numins,&
-                      sdtime, sddisc, parcon, fonact, resoco,&
-                      resocu, comref, valinc, solalg, veelem,&
-                      measse, veasse, sddyna)
+    subroutine nmchar(mode    , phasez, modele, numedd, mate  ,&
+                      carele  , compor, lischa, numins, sdtime,&
+                      sddisc  , fonact, resoco, resocu, comref,&
+                      ds_inout, valinc, solalg, veelem, measse,&
+                      veasse  , sddyna)
+        use NonLin_Datastructure_type
         character(len=4) :: mode
         character(len=*) :: phasez
         character(len=24) :: modele
@@ -29,15 +32,14 @@ interface
         character(len=24) :: carele
         character(len=24) :: compor
         character(len=19) :: lischa
-        character(len=24) :: carcri
         integer :: numins
         character(len=24) :: sdtime
         character(len=19) :: sddisc
-        real(kind=8) :: parcon(8)
         integer :: fonact(*)
         character(len=24) :: resoco
         character(len=24) :: resocu
         character(len=24) :: comref
+        type(NL_DS_InOut), intent(in) :: ds_inout
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: veelem(*)

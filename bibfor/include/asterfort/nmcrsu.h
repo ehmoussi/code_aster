@@ -18,14 +18,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmcrsu(sddisc, lisins, parcri, limpex, lctcd,&
-                      solveu, defico)
-        character(len=19) :: sddisc
-        character(len=19) :: lisins
-        real(kind=8) :: parcri(*)
-        aster_logical :: limpex
-        aster_logical :: lctcd
-        character(len=19) :: solveu
-        character(len=24) :: defico
+    subroutine nmcrsu(sddisc     , lisins, ds_conv     , ds_algopara, l_implex,&
+                      l_cont_disc, solveu, sdcont_defi_)
+        use NonLin_Datastructure_type
+        character(len=19) :: sddisc, lisins, solveu
+        type(NL_DS_Conv), intent(in) :: ds_conv
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+        aster_logical :: l_implex, l_cont_disc
+        character(len=24), optional, intent(in) :: sdcont_defi_
     end subroutine nmcrsu
 end interface

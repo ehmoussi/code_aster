@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # TITRE : POUTRE SOUMISE A UNE PRESSION UNIFORME TEST MFRONT DKT cf SSNL501B
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -118,20 +118,20 @@ RESULTAT=STAT_NON_LINE(      MODELE=MOD_B,
                                  _F( CHARGE = CHAR0),
                                        _F( CHARGE = PRES_LIM,
                                         TYPE_CHARGE = 'FIXE_PILO')),
-
+ 
                              COMPORTEMENT=_F( RELATION = 'Chaboche',
                                               RESI_INTE_RELA=1.E-12,
                                             ),
                              INCREMENT=_F( LIST_INST = LIS_INST),
-
+ 
                                        NEWTON=_F(
                                         PAS_MINI_ELAS = 0.24,
                                         REAC_INCR = 1,
                                         REAC_ITER = 1,
                                         REAC_ITER_ELAS = 1),
-
+ 
                                        CONVERGENCE=_F( RESI_GLOB_RELA = 1.E-6,
-                                        ITER_GLOB_MAXI = 1030,ITER_GLOB_ELAS = 50,),
+                                        ITER_GLOB_MAXI = 1030,ITER_GLOB_ELAS = 60,),
                               PILOTAGE=_F( TYPE = 'DDL_IMPO',
                                         GROUP_NO = 'E',
                                         NOM_CMP = 'DX',
@@ -210,16 +210,16 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=30,
                    PARA='ETA_PILOTAGE',
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=RESULTAT,
-                   VALE_CALC=1.1374939608748,
+                   VALE_CALC=1.09853157354 ,
                    VALE_REFE=1.0,
-                   PRECISION=0.14999999999999999,),
+                   PRECISION=0.10,),
                 _F(NUME_ORDRE=40,
                    PARA='ETA_PILOTAGE',
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=RESULTAT,
-                   VALE_CALC=1.1392945681832,
+                   VALE_CALC=1.09898574223 ,
                    VALE_REFE=1.0,
-                   PRECISION=0.14999999999999999,),
+                   PRECISION=0.10,),
                 ),
           )
 

@@ -74,6 +74,7 @@ subroutine lc0058(fami, kpg, ksp, ndim, typmod,&
 #include "asterfort/mfront_get_mater_value.h"
 #include "asterfort/mfront_varc.h"
 #include "asterfort/lcdetf.h"
+#include "asterfort/utmess.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
@@ -81,7 +82,7 @@ subroutine lc0058(fami, kpg, ksp, ndim, typmod,&
     integer ::      imate, ndim, kpg, ksp, codret, icomp, nvi, nprops, czm, nbvarc
     integer ::      npropmax, ntens, ndi, nshr, i, nstatv, npt, noel, layer, npred
     integer ::      kspt, kstep, kinc, idbg, j, ifm, niv, nwkin
-    integer ::      pfcmfr, pmatprop, pnbprop
+    integer ::      pfcmfr
     integer ::      nummod
     parameter     ( npropmax = 197)
     parameter     ( npred = 8)
@@ -126,15 +127,10 @@ subroutine lc0058(fami, kpg, ksp, ndim, typmod,&
 
 !     IMPRESSIONS EVENTUELLES EN DEBUG
     call infniv(ifm, niv)
-
-!   Adresse des fonctions/data MFront
-    pmatprop = nint(crit(19))
-    pnbprop = nint(crit(20))
 !
 !   LECTURE DES PROPRIETES MATERIAU (MOT-CLE MFRONT DE DEFI_MATERIAU)
     call mfront_get_mater_value(fami, kpg, ksp, imate, ifm, &
-                                niv, idbg, pmatprop, pnbprop, compor(1), &
-                                nprops, props)
+                                niv, idbg, compor(1), nprops, props)
 
 !   LECTURE DES VARIABLES DE COMMANDE ET DEFORMATIONS ASSOCIEES
     if ( typmod(1)(1:4).eq.'AXIS' ) then
@@ -363,7 +359,19 @@ subroutine lc0058(fami, kpg, ksp, ndim, typmod,&
         endif
     endif
 !
-    if (pnewdt .lt. 0.99d0) codret=1
+    if (pnewdt .lt. 0.0d0) then
+        if (pnewdt .lt. -0.99d0 .and. pnewdt .gt. -1.01d0) then
+            codret=1
+        else if (pnewdt .lt. -1.99d0 .and. pnewdt .gt. -2.01d0) then
+            call utmess('F', 'MFRONT_1')
+        else if (pnewdt .lt. -2.99d0 .and. pnewdt .gt. -3.01d0) then
+            call utmess('F', 'MFRONT_2')
+        else if (pnewdt .lt. -3.99d0 .and. pnewdt .gt. -4.01d0) then
+            codret=1
+        else
+            call utmess('F', 'MFRONT_3')
+        endif
+    endif
     idbg=0
 !
 end subroutine

@@ -60,7 +60,7 @@ implicit none
 ! - At least one step
 !
     if (nb_inst .lt. 2) then
-        call utmess('F', 'DISCRETISATION_86')
+        call utmess('F', 'DISCRETISATION_95')
     endif
 !
 ! - Minimum time between two steps

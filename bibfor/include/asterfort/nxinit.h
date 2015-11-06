@@ -15,32 +15,27 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-#include "asterf_types.h"
-!
-interface
-    subroutine nxinit(result, modele, mate, carele, compor,&
-                      lischa, lisch2, solveu, para, numedd,&
-                      lostat, levol, lnonl, sddisc, sd_inout,&
-                      vhydr, sdobse, mailla, sdcrit, time)
-        character(len=24) :: result
-        character(len=24) :: modele
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=24) :: compor
-        character(len=19) :: lischa
-        character(len=19) :: lisch2
-        character(len=19) :: solveu
-        real(kind=8) :: para(*)
-        character(len=24) :: numedd
-        aster_logical :: lostat
-        aster_logical :: levol
-        aster_logical :: lnonl
-        character(len=19) :: sddisc
-        character(len=24), intent(out) :: sd_inout
-        character(len=24) :: vhydr
-        character(len=19) :: sdobse
-        character(len=8) :: mailla
-        character(len=19) :: sdcrit
-        character(len=24) :: time
-    end subroutine nxinit
-end interface
+          interface 
+            subroutine nxinit(modele,mate,carele,compor,lischa,para,    &
+     &numedd,lostat,l_evol,lnonl,sddisc,ds_inout,vhydr,sdobse,mailla,   &
+     &sdcrit,time)
+              use nonlin_datastructure_type
+              character(len=24) :: modele
+              character(len=24) :: mate
+              character(len=24) :: carele
+              character(len=24) :: compor
+              character(len=19) :: lischa
+              real(kind=8) :: para(*)
+              character(len=24) :: numedd
+              aster_logical :: lostat
+              aster_logical :: l_evol
+              aster_logical :: lnonl
+              character(len=19) :: sddisc
+              type (NL_DS_InOut), intent(inout) :: ds_inout
+              character(len=24) :: vhydr
+              character(len=19) :: sdobse
+              character(len=8) :: mailla
+              character(len=19) :: sdcrit
+              character(len=24) :: time
+            end subroutine nxinit
+          end interface 

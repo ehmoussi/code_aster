@@ -1,6 +1,6 @@
 # TITRE CONTACT AVEC FROTTEMENT D'UNE PLAQUE SUR UN PLAN RIGIDE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -115,7 +115,7 @@ U4M=STAT_NON_LINE(MODELE=MO,
 TEST_RESU(RESU=(_F(INST=1.0,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=U4M,
-                   NOM_CHAM='VALE_CONT',
+                   NOM_CHAM='CONT_NOEU',
                    NOEUD='N32',
                    NOM_CMP='JEU',
                    VALE_CALC= 3.231174267785E-27,
@@ -126,7 +126,7 @@ TEST_RESU(RESU=(_F(INST=1.0,
                 _F(INST=1.0,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=U4M,
-                   NOM_CHAM='VALE_CONT',
+                   NOM_CHAM='CONT_NOEU',
                    NOEUD='N32',
                    NOM_CMP='CONT',
                    VALE_CALC=1.000000000,
@@ -137,7 +137,7 @@ TEST_RESU(RESU=(_F(INST=1.0,
                 _F(INST=1.0,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=U4M,
-                   NOM_CHAM='VALE_CONT',
+                   NOM_CHAM='CONT_NOEU',
                    NOEUD='N32',
                    NOM_CMP='RN',
                    VALE_CALC= 1.04863224E+05,
@@ -208,7 +208,7 @@ U4L=STAT_NON_LINE(MODELE=MO,
                        ),
                 CONTACT  = CHA2,
                 COMPORTEMENT=_F(RELATION = 'ELAS'),
-                SOLVEUR=_F(METHODE = 'LDLT', RENUM = 'SANS'),
+                SOLVEUR=_F(METHODE = 'LDLT'),
                 NEWTON=_F(REAC_ITER=1),
                 INCREMENT=_F(LIST_INST = L_INST),
                 CONVERGENCE=_F(ARRET = 'OUI',

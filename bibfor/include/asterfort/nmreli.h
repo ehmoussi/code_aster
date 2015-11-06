@@ -15,12 +15,15 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nmreli(modele, numedd, mate, carele, comref,&
-                      compor, lischa, carcri, fonact, iterat,&
-                      sdstat, sdnume, sddyna, parmet, method,&
-                      defico, valinc, solalg, veelem, veasse,&
-                      sdtime, conv, ldccvg)
+    subroutine nmreli(modele, numedd , mate  , carele     , comref,&
+                      compor , lischa, carcri, fonact     , iterat,&
+                      sdstat , sdnume, sddyna, ds_algopara, defico,&
+                      valinc , solalg, veelem, veasse     , sdtime,&
+                      ds_conv, ldccvg)
+        use NonLin_Datastructure_type
         character(len=24) :: modele
         character(len=24) :: numedd
         character(len=24) :: mate
@@ -34,15 +37,14 @@ interface
         character(len=24) :: sdstat
         character(len=19) :: sdnume
         character(len=19) :: sddyna
-        real(kind=8) :: parmet(*)
-        character(len=16) :: method(*)
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=24) :: defico
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: veelem(*)
         character(len=19) :: veasse(*)
         character(len=24) :: sdtime
-        real(kind=8) :: conv(*)
+        type(NL_DS_Conv), intent(inout) :: ds_conv
         integer :: ldccvg
     end subroutine nmreli
 end interface

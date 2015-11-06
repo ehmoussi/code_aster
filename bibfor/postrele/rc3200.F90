@@ -1,5 +1,5 @@
 subroutine rc3200(pmpb, sn, snet, fatigu, lrocht,&
-                  mater, symax)
+                  mater, symax, fatiguenv)
     implicit none
 #include "asterf_types.h"
 #include "asterfort/jedetc.h"
@@ -10,8 +10,10 @@ subroutine rc3200(pmpb, sn, snet, fatigu, lrocht,&
 #include "asterfort/rc32rs.h"
 #include "asterfort/rc32si.h"
 #include "asterfort/rc32th.h"
+#include "asterfort/rc32in.h"
     real(kind=8) :: symax
     aster_logical :: pmpb, sn, snet, fatigu, lrocht
+    aster_logical :: fatiguenv
     character(len=8) :: mater
 !     ------------------------------------------------------------------
 ! ======================================================================
@@ -35,17 +37,27 @@ subroutine rc3200(pmpb, sn, snet, fatigu, lrocht,&
 !
 ! DEB ------------------------------------------------------------------
 !
+    aster_logical :: transip, transif
+!
 !     ------------------------------------------------------------------
 !                           LES SITUATIONS
 !     ------------------------------------------------------------------
 !
-    call rc32si()
+    transip = .false.
+    transif = .false.
+    call rc32si(transip, transif)
 !
 !     ------------------------------------------------------------------
 !              RECUPERATION DES CARACTERISTIQUES MATERIAU
 !     ------------------------------------------------------------------
 !
     call rc32ma(mater)
+!
+!     ------------------------------------------------------------------
+!              RECUPERATION DES FACTEURS D'INTENSITE DE CONTRAINTE
+!     ------------------------------------------------------------------
+!
+    call rc32in()
 !
 !     ------------------------------------------------------------------
 !              RECUPERATION DU CALCUL MECANIQUE UNITAIRE
@@ -78,14 +90,14 @@ subroutine rc3200(pmpb, sn, snet, fatigu, lrocht,&
 !     -------------------------
 !
     call rc32ac(pmpb, sn, snet, fatigu, lrocht,&
-                mater)
+                mater, fatiguenv)
 !
 !
 ! --- STOCKAGE DES RESULTATS
 !     ----------------------
 !
     call rc32rs(pmpb, sn, snet, fatigu, lrocht,&
-                mater, symax)
+                mater, symax, fatiguenv)
 !
     call jedetc('V', '&&RC3200', 1)
 !

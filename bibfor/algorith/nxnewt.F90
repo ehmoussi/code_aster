@@ -1,5 +1,5 @@
 subroutine nxnewt(model    , mate       , cara_elem  , list_load, nume_dof ,&
-                  solver   , tpsthe     , time       , lonch    , matass   ,&
+                  solver   , tpsthe     , time       , matass   , cn2mbr   ,&
                   maprec   , cnchci     , varc_curr  , temp_prev, temp_iter,&
                   vtempp   , vec2nd     , mediri     , conver   , hydr_prev,&
                   hydr_curr, dry_prev   , dry_curr   , compor   , cnvabt   ,&
@@ -14,12 +14,13 @@ implicit none
 #include "asterfort/ascova.h"
 #include "asterfort/asmatr.h"
 #include "asterfort/copisd.h"
+#include "asterfort/nxreso.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/merxth.h"
+#include "asterfort/nxresi.h"
 #include "asterfort/preres.h"
-#include "asterfort/resoud.h"
 #include "asterfort/verstp.h"
 #include "asterfort/vethbt.h"
 !
@@ -51,10 +52,9 @@ implicit none
     real(kind=8) :: tpsthe(6)
     character(len=24), intent(in) :: time
     character(len=19), intent(in) :: varc_curr
-    integer :: lonch
     aster_logical :: conver, reasma
     character(len=19) :: maprec
-    character(len=24) :: matass, cnchci, cnresi, temp_prev, temp_iter, vtempp, vec2nd
+    character(len=24) :: matass, cnchci, cnresi, temp_prev, temp_iter, vtempp, vec2nd, cn2mbr
     character(len=24) :: hydr_prev, hydr_curr, compor, dry_prev, dry_curr
     integer :: ther_crit_i(*)
     real(kind=8) :: ther_crit_r(*)
@@ -71,22 +71,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    complex(kind=8) :: cbid
-    integer :: k, j2nd, ibid
+    integer :: ibid
     integer :: jmed, jmer, nbmat, ierr
     real(kind=8) :: r8bid
     character(len=1) :: typres
     character(len=19) :: chsol
-    character(len=24) :: bidon, veresi, varesi, vabtla, vebtla, criter
+    character(len=24) :: bidon, veresi, varesi, vabtla, vebtla
     character(len=24) :: tlimat(2), mediri, merigi, cnvabt
-    real(kind=8) :: testr, testm, vnorm
+    real(kind=8) :: testr, testm
     real(kind=8) :: time_curr
     character(len=24) :: lload_name, lload_info
-    integer :: iret
-    real(kind=8), pointer :: btla(:) => null()
-    real(kind=8), pointer :: tempp(:) => null()
-    real(kind=8), pointer :: vare(:) => null()
-    cbid = dcmplx(0.d0, 0.d0)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -95,7 +89,6 @@ implicit none
     vabtla = '&&VATBTL'
     cnresi = ' '
     cnvabt = ' '
-    criter = '&&RESGRA_GCPC'
     typres = 'R'
     chsol  = '&&NXNEWT.SOLUTION'
     bidon  = '&&FOMULT.BIDON'
@@ -105,10 +98,6 @@ implicit none
     time_curr = tpsthe(1)
     lload_name = list_load(1:19)//'.LCHA'
     lload_info = list_load(1:19)//'.INFC'
-!
-! --- RECUPERATION D'ADRESSES
-!
-    call jeveuo(vec2nd(1:19)//'.VALE', 'L', j2nd)
 !
 ! - Neumann loads elementary vectors (residuals)
 !
@@ -121,7 +110,6 @@ implicit none
     call asasve(veresi, nume_dof, typres, varesi)
     call ascova('D', varesi, bidon, 'INST', r8bid,&
                 typres, cnresi)
-    call jeveuo(cnresi(1:19)//'.VALE', 'L', vr=vare)
 !
 ! --- BT LAMBDA - CALCUL ET ASSEMBLAGE
 !
@@ -130,44 +118,17 @@ implicit none
     call asasve(vebtla, nume_dof, typres, vabtla)
     call ascova('D', vabtla, bidon, 'INST', r8bid,&
                 typres, cnvabt)
-    call jeveuo(cnvabt(1:19)//'.VALE', 'L', vr=btla)
 !
-!==========================================================
-! --- CALCUL DU RESIDU ET
-!     DU CRITERE DE CONVERGENCE DES ITERATIONS (NORME SUP)
-!==========================================================
+! - Evaluate residuals
 !
-    call jeveuo(vtempp(1:19)//'.VALE', 'E', vr=tempp)
-    testr = 0.d0
-    testm = 0.d0
-    vnorm = 0.d0
-    do k = 1, lonch
-        tempp(k) = zr(j2nd+k-1) - vare(k) - btla(k)
-        testr = testr + ( tempp(k) )**2
-        vnorm = vnorm + ( zr(j2nd+k-1) - btla(k) )**2
-        testm = max( testm,abs( tempp(k) ) )
-    end do
-    if (vnorm .gt. 0d0) then
-        testr = sqrt( testr / vnorm )
+    call nxresi(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi,&
+                cn2mbr     , testr      , testm , conver)
+    if (conver) then
+        call copisd('CHAMP_GD', 'V', temp_iter, vtempp)
+        goto 999
     endif
 !
-    if (ther_crit_i(1) .ne. 0) then
-        if (testm .lt. ther_crit_r(1)) then
-            conver=.true.
-            call copisd('CHAMP_GD', 'V', temp_iter(1:19), vtempp(1:19))
-            goto 999
-        else
-            conver=.false.
-        endif
-    else
-        if (testr .lt. ther_crit_r(2)) then
-            conver=.true.
-            call copisd('CHAMP_GD', 'V', temp_iter(1:19), vtempp(1:19))
-            goto 999
-        else
-            conver=.false.
-        endif
-    endif
+! - New matrix if necessary
 !
     if (reasma) then
 !
@@ -191,7 +152,7 @@ implicit none
 !
 ! --- ASSEMBLAGE DE LA MATRICE
 !
-        call asmatr(nbmat, tlimat, ' ', nume_dof, solver,&
+        call asmatr(nbmat, tlimat, ' ', nume_dof, &
                     list_load, 'ZERO', 'V', 1, matass)
 !
 ! --- DECOMPOSITION OU CALCUL DE LA MATRICE DE PRECONDITIONNEMENT
@@ -201,12 +162,10 @@ implicit none
 !
     endif
 !
-!==========================================================
-! --- RESOLUTION (VTEMPP CONTIENT LE SECOND MEMBRE, CHSOL LA SOLUTION)
+! - Solve linear system
 !
-    call resoud(matass, maprec, solver, cnchci, 0,&
-                vtempp, chsol, 'V', [0.d0], [cbid],&
-                criter, .true._1, 0, iret)
+    call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
+                chsol)
 !
 ! --- RECOPIE DANS VTEMPP DU CHAMP SOLUTION CHSOL,
 !     INCREMENT DE TEMPERATURE

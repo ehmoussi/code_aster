@@ -16,9 +16,9 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine xintva(elrefp, n, ptxx, ndime, intinf, intsup)
-        character(len=8) :: elrefp
-        integer :: n(3)
+    subroutine xintva(name, dekker, ptxx, ndime, intinf, intsup)
+        character(len=6) :: name
+        real(kind=8) :: dekker(4*ndime)
         real(kind=8) :: ptxx(*)
         integer :: ndime
         real(kind=8) :: intinf

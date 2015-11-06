@@ -36,6 +36,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
                       'CALC_MATR_AJOU',
                       'CALC_PRECONT',
                       'CREA_ELEM_SSD',
+                      'CALC_CORR_SSD',
                       'DEFI_BASE_MODALE',
                       'DYNA_LINE_HARM',
                       'DYNA_LINE_TRAN',
@@ -77,6 +78,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 
 #  Classification ('SD'/'LIN'/'NL')
    if COMMAND in ('CREA_ELEM_SSD',
+                  'CALC_CORR_SSD',
                   'DEFI_BASE_MODALE',
                   'DYNA_LINE_HARM',
                   'DYNA_TRAN_MODAL',
@@ -143,26 +145,14 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
-   _syme   = False
-
-#  Seuls les opérateurs non-linéaires produisent des matrices non-symétriques
-   if _type == 'NL':
-      _syme = True
-   if COMMAND == 'THER_NON_LINE_MO':
-      _syme = True
-
-# ----------------------------------------------------------------------------------------------------------------------------------
-
    _singu  = True
-   _rcmk   = True
    _resol  = True
    _cmodal = False
 
-#  Avec les solveurs modaux STOP_SINGULIER n'existe pas, de plus RCMK n'est pas disponible
+#  Avec les solveurs modaux STOP_SINGULIER n'existe pas
    if COMMAND in ('INFO_MODE','MODE_ITER_INV','MODE_ITER_SIMULT'):
       _cmodal= True
       _singu = False
-      _rcmk  = False
 #     Dans INFO_MODE on ne fait que factoriser
       if COMMAND == 'INFO_MODE':
          _resol = False
@@ -203,7 +193,6 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 # ----------------------------------------------------------------------------------------------------------------------------------
 #
 # MOT-CLES SIMPLES : METHODE
-#                    SYME
 #
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -230,12 +219,6 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
    _MotCleSimples['METHODE'] = SIMP(statut='f', typ='TXM', defaut=_defaut, into=_into, )
 
 # ----------------------------------------------------------------------------------------------------------------------------------
-
-#  SYME
-   if _syme:
-      _MotCleSimples['SYME'] = SIMP(statut='f', typ='TXM', defaut="NON", into=("OUI", "NON", ), )
-
-# ----------------------------------------------------------------------------------------------------------------------------------
 #
 # MULT_FRONT/LDLT/MUMPS (RENUM/NPREC/STOP_SINGULIER)
 #
@@ -244,14 +227,9 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 #  RENUM
    _BlocMF['RENUM'] = SIMP(statut='f', typ='TXM', defaut="METIS", into=("MD", "MDA", "METIS", ), )
 
-   if _rcmk:
-      _into = ("RCMK", "SANS", )
-      _defaut = "RCMK"
-   else:
-      _into = ("SANS",)
-      _defaut = "SANS"
+   
 
-   _BlocLD['RENUM'] = SIMP(statut='f', typ='TXM', defaut=_defaut, into=_into, )
+   _BlocLD['RENUM'] = SIMP(statut='f', typ='TXM', defaut="SANS", into=("SANS",), )
 
    _BlocMU['RENUM'] = SIMP(statut='f', typ='TXM', defaut="AUTO", into=("AMD", "AMF", "PORD", "METIS", "QAMD", "SCOTCH", "AUTO", ), )
 
@@ -295,6 +273,12 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 
    _BlocMU['TYPE_RESOL'     ] = SIMP(statut='f', typ='TXM', defaut="AUTO", into=("NONSYM", "SYMGEN", "SYMDEF", "AUTO", ), )
 
+
+# ----------------------------------------------------------------------------------------------------------------------------------
+
+   _BlocMU['LOW_RANK_TAILLE'] =SIMP(statut='f', typ='R', defaut=-1.0,)
+   _BlocMU['LOW_RANK_SEUIL']=SIMP(statut='f', typ='R', defaut=0.0, )
+
 # ----------------------------------------------------------------------------------------------------------------------------------
 
    _BlocMU['PRETRAITEMENTS' ] = SIMP(statut='f', typ='TXM', defaut="AUTO", into=("SANS", "AUTO", ), )
@@ -302,7 +286,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 # ----------------------------------------------------------------------------------------------------------------------------------
 
    if _resol:
-      _BlocMU['POSTTRAITEMENTS'] = SIMP(statut='f', typ='TXM', defaut="AUTO", into=("SANS", "AUTO", "FORCE", ), )
+      _BlocMU['POSTTRAITEMENTS'] = SIMP(statut='f', typ='TXM', defaut="AUTO", into=("SANS", "AUTO", "FORCE", "MINI"), )
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -338,7 +322,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 #
 # ----------------------------------------------------------------------------------------------------------------------------------
 
-   _BlocPE['ALGORITHME'] = SIMP(statut='f', typ='TXM', defaut="GMRES", into=("CG", "CR", "GMRES", "GCR", ), )
+   _BlocPE['ALGORITHME'] = SIMP(statut='f', typ='TXM', defaut="FGMRES", into=("CG", "CR", "GMRES", "GCR", "FGMRES" ), )
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -366,8 +350,8 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
-   _BlocGC_INC['RENUM'] = SIMP(statut='f', typ='TXM', defaut="RCMK", into=("SANS","RCMK"), )
-   _BlocPE_INC['RENUM'] = SIMP(statut='f', typ='TXM', defaut="RCMK", into=("SANS","RCMK"), )
+   _BlocGC_INC['RENUM'] = SIMP(statut='f', typ='TXM', defaut="SANS", into=("SANS",), )
+   _BlocPE_INC['RENUM'] = SIMP(statut='f', typ='TXM', defaut="SANS", into=("SANS",), )
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -397,7 +381,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
-   _BlocXX_Autres['RENUM'] = SIMP(statut='f', typ='TXM', defaut="SANS", into=("SANS","RCMK", ), )
+   _BlocXX_Autres['RENUM'] = SIMP(statut='f', typ='TXM', defaut="SANS", into=("SANS", ), )
 
 
 # ----------------------------------------------------------------------------------------------------------------------------------

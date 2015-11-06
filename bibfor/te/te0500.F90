@@ -25,7 +25,6 @@ subroutine te0500(option, nomte)
 !   -------------------------------------------------------------------
 !     SUBROUTINES APPELLEES :
 !       MESSAGE              : UTMESS,UTMESK.
-!       JEVEUX               : JEMARQ,JEDEMA.
 !       CHAMPS LOCAUX        : JEVECH,TECACH,TECAEL.
 !       ENVIMA               : R8MIEM.
 !       MATERIAUX/CHARGES    : RCVALB,RCCOMA.
@@ -45,8 +44,6 @@ subroutine te0500(option, nomte)
 #include "asterc/r8miem.h"
 #include "asterfort/caethm.h"
 #include "asterfort/dfdm2d.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lxlgut.h"
 #include "asterfort/rcvalb.h"
@@ -106,7 +103,6 @@ subroutine te0500(option, nomte)
 !
 ! ------------------------------------------------------------------
 !
-    call jemarq()
 !
     ovfl = r8miem()
 !
@@ -114,7 +110,6 @@ subroutine te0500(option, nomte)
 ! 1. RECUPERATION D'INFORMATIONS SUR L'ELEMENT THM
 ! =====================================================================
     ibid = 0
-    typvf = 0
     vf = .false.
     call caethm(nomte, laxi, perman, vf, typvf,&
                 typmod, modint, mecani, press1, press2,&
@@ -127,7 +122,7 @@ subroutine te0500(option, nomte)
 ! =====================================================================
 ! 2. RECUPERATION DES PARAMETRES TEMPORELS
 ! =====================================================================
-    call tecach('ONN', 'PTEMPSR', 'L', iret, iad=itab(1))
+    call tecach('ONO', 'PTEMPSR', 'L', iret, iad=itab(1))
     if (iret .eq. 0) then
         time = zr(itab(1))
     else
@@ -148,7 +143,7 @@ subroutine te0500(option, nomte)
 ! 3.3 CONTRAINTES ( T- ET T+ )
 !
     call jevech('PCONTGM', 'L', isigam)
-    call tecach('ONN', 'PCONTGP', 'L', iret, nval=3,&
+    call tecach('ONO', 'PCONTGP', 'L', iret, nval=3,&
                 itab=itab)
 !
     isigap = itab(1)
@@ -323,6 +318,5 @@ subroutine te0500(option, nomte)
 !
     zr(ierre) = tertps
 !
-    call jedema()
 !
 end subroutine

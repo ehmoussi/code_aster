@@ -16,14 +16,17 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine nmrefe(modele, compor, mate, carele, depmoi,&
-                      parcon, vecelz)
-        character(len=24) :: modele
-        character(len=24) :: compor
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=19) :: depmoi
-        real(kind=8) :: parcon(*)
-        character(len=*) :: vecelz
+    subroutine nmrefe(model  , compor, mate  , cara_elem, nume_dof,&
+                      ds_conv, valinc, veelem, veasse)
+        use NonLin_Datastructure_type
+        character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: compor
+        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: cara_elem
+        character(len=24), intent(in) :: nume_dof
+        type(NL_DS_Conv), intent(in) :: ds_conv
+        character(len=19), intent(in) :: valinc(*)
+        character(len=19), intent(in) :: veelem(*)
+        character(len=19), intent(in) :: veasse(*)
     end subroutine nmrefe
 end interface

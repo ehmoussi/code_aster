@@ -3,7 +3,7 @@
 #                   + AFFE_CHAR_MECA/FORCE_CONTOUR
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -85,7 +85,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=2,
                   NOM_CHAM='PRES',
                   NOEUD='N3',
                   NOM_CMP='PRES',
-                  VALE_CALC=4.000000000,
+                  VALE_CALC=4.0,
                   VALE_REFE=4.0,
                   PRECISION=9.9999999999999995E-07,
                   MAILLE='M15',),
@@ -119,7 +119,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='N1',
                   NOM_CMP='DY',
-                  VALE_CALC=-37.000000000,
+                  VALE_CALC=-37.0,
                   VALE_REFE=-37.0,
                   PRECISION=9.9999999999999995E-07,),
           )
@@ -140,7 +140,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='N1',
                   NOM_CMP='DY',
-                  VALE_CALC=-37.000000000,
+                  VALE_CALC=-37.0,
                   VALE_REFE=-37.0,
                   PRECISION=9.9999999999999995E-07,),
           )
@@ -162,7 +162,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='N1',
                   NOM_CMP='DY',
-                  VALE_CALC=-36.999995067,
+                  VALE_CALC=-36.9999950667,
                   VALE_REFE=-37.0,
                   PRECISION=9.9999999999999995E-07,),
           )
@@ -196,7 +196,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='N1',
                   NOM_CMP='DY',
-                  VALE_CALC=-36.999995067,
+                  VALE_CALC=-36.9999950667,
                   VALE_REFE=-37.0,
                   PRECISION=9.9999999999999995E-07,),
           )
@@ -237,8 +237,8 @@ vecel     = CALC_VECT_ELEM(CHARGE=CH_ALL, INST=1.0, CHAM_MATER=CHMAT, OPTION='CH
 numeddl   = NUME_DDL(MATR_RIGI = rigiel)
 matass    = ASSE_MATRICE(MATR_ELEM=rigiel , NUME_DDL=numeddl)
 vecas     = ASSE_VECTEUR(VECT_ELEM=vecel, NUME_DDL=numeddl)
-k         = FACTORISER(MATR_ASSE=matass);
-U6        = RESOUDRE( MATR = k, CHAM_NO= vecas )
+matass    = FACTORISER(reuse=matass, MATR_ASSE=matass);
+U6        = RESOUDRE( MATR = matass, CHAM_NO= vecas )
 TEST_RESU(CHAM_NO=_F(
                   REFERENCE='ANALYTIQUE',
                   CHAM_GD=U6,

@@ -1,11 +1,11 @@
 subroutine assma3(lmasym, lmesym, tt, igr, iel,&
                   c1, rang, jnueq, jnumsd, jresl,&
-                  jrsvi, nbvel, nnoe, ldist, ldgrel,&
+                  nbvel, nnoe, ldist, ldgrel,&
                   ilima, jadli, jadne, jprn1, jprn2,&
                   jnulo1, jnulo2, jposd1, jposd2, admodl,&
                   lcmodl, mode, nec, nmxcmp, ncmp,&
                   jsmhc, jsmdi, iconx1, iconx2, jtmp2,&
-                  lgtmp2, jvalm, ilinu, ellagr, exivf,&
+                  lgtmp2, jvalm, ilinu, ellagr,&
                   jdesc, jrepe, jptvoi, jelvoi, codvoi)
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -39,33 +39,28 @@ subroutine assma3(lmasym, lmesym, tt, igr, iel,&
 #include "asterfort/utmess.h"
 #include "asterfort/voiuti.h"
     aster_logical :: lmasym, lmesym
-    character(len=*) :: exivf
     character(len=2) :: tt
     real(kind=8) :: c1
     integer :: iel, admodl, rang, iconx1, iconx2, jadli, jadne
     integer :: i1, i2, iad1, iad11, iad2, iad21
     integer :: igr, ilima, ilinu, nbterm
     integer :: jnueq, jnulo1, jnumsd, jposd1, jprn1, jprn2
-    integer :: jresl, jrsvi, jsmdi, jsmhc, jtmp2, jvalm(2), lgtmp2
+    integer :: jresl, jsmdi, jsmhc, jtmp2, jvalm(2), lgtmp2
     integer :: lcmodl, k1, k2, n2, n3, jnulo2, jposd2
     integer :: mode, n1, nbvel, ncmp, nddl1, nddl2
     integer :: nec, nmxcmp, nnoe, numa, nk2, decael, jdesc
     aster_logical :: ldist, ldgrel
 !
     character(len=16) :: codvoi
-    integer :: nvoima, nscoma, jrepe, jptvoi, jelvoi, nbvois
-    parameter(nvoima=100,nscoma=4)
-    integer :: livois(1:nvoima), tyvois(1:nvoima), nbnovo(1:nvoima)
-    integer :: nbsoco(1:nvoima), lisoco(1:nvoima, 1:nscoma, 1:2)
+    integer :: jrepe, jptvoi, jelvoi
     integer :: nbi1mx, nbi1
-    parameter (nbi1mx=27*27*10*10)
+    parameter (nbi1mx=27*27*20*20)
     integer :: ti1(nbi1mx)
     integer :: ti2(nbi1mx)
 !-----------------------------------------------------------------------
 !     FONCTIONS FORMULES :
 !-----------------------------------------------------------------------
     integer :: ellagr
-    integer :: nnov, igr2, mode2, numav, kvois
 !
 #define zzconx(imail,j) zi(iconx1-1+zi(iconx2+imail-1)+j-1)
 #define zzliel(ili,igrel,j) zi(zi(jadli+3*(ili-1)+1)-1+ \
@@ -226,52 +221,6 @@ subroutine assma3(lmasym, lmesym, tt, igr, iel,&
                 jsmdi, nbi1, ti1, ti2)
 !
 !
-!     -- SI LE RESUELEM EST 'VOISIN_VF', IL FAUT ENCORE ASSEMBLER LES
-!        CONTRIBUTIONS DES ELEMENTS VOISINS :
-!     -----------------------------------------------------------------
-    if (exivf .eq. 'OUI') then
-        ASSERT(.not.lmesym )
-        call voiuti(numa, codvoi, nvoima, nscoma, jrepe,&
-                    jptvoi, jelvoi, nbvois, livois, tyvois,&
-                    nbnovo, nbsoco, lisoco)
-        ASSERT(nbvois.le.30)
-        do kvois = 1, nbvois
-            numav=livois(kvois)
-            nnov =nbnovo(kvois)
-            igr2=zi(jrepe-1+2*(numav-1)+1)
-            mode2=zi(jdesc+igr2+1)
-!
-            do k2 = 1, nnov
-                n2=zzconx(numav,k2)
-                iad2=zzprno(1,n2,1)
-                call corddl(admodl, lcmodl, jprn1, jprn2, 1,&
-                            mode2, nec, ncmp, n2, k2,&
-                            nddl2, zi(jposd2-1+nmxcmp*(k2-1)+1))
-                ASSERT(nddl2.le.nmxcmp)
-                zi(jnulo2-1+2*(k2-1)+1)=iad2
-                zi(jnulo2-1+2*(k2-1)+2)=nddl2
-            end do
-!
-!
-            do k1 = 1, nnoe
-                iad1=numlo1(k1,1)
-                nddl1=numlo1(k1,2)
-                do i1 = 1, nddl1
-                    do k2 = 1, nnov
-                        iad2=numlo2(k2,1)
-                        nddl2=numlo2(k2,2)
-                        do i2 = 1, nddl2
-                            iad11=zi(jnueq-1+iad1+posdd1(k1,i1)-1)
-                            iad21=zi(jnueq-1+iad2+posdd2(k2,i2)-1)
-                            call asretm(lmasym, jtmp2, lgtmp2, nbterm, jsmhc,&
-                                        jsmdi, iad11, iad21)
-                        end do
-                    end do
-                end do
-            end do
-!
-        end do
-    endif
 !
 !
 !
@@ -279,11 +228,7 @@ subroutine assma3(lmasym, lmesym, tt, igr, iel,&
 !     3. ON RECOPIE EFFECTIVEMENT LES TERMES:
 !        (NBTERM CONTIENT LE NOMBRE DE TERMES (R/C) A TRAITER)
 !     -----------------------------------------------------------
-    if (exivf .eq. 'OUI') then
-        decael=zi(jrsvi-1+iel)-1
-    else
-        decael=nbvel*(iel-1)
-    endif
+    decael=nbvel*(iel-1)
     call ascopr(lmasym, lmesym, tt, jtmp2, nbterm,&
                 jresl+decael, c1, jvalm)
 !

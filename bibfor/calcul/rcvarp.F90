@@ -1,5 +1,5 @@
 subroutine rcvarp(arret, novrc, poum, valvrc, iret)
-use module_calcul, only : ca_iredec_, ca_jvcnom_, ca_jvcval_, ca_nbcvrc_,&
+use calcul_module, only : ca_iredec_, ca_jvcnom_, ca_jvcval_, ca_nbcvrc_,&
                           ca_td1_, ca_tf1_, ca_timed1_, ca_timef1_
 implicit none
 ! ======================================================================
@@ -19,7 +19,6 @@ implicit none
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 #include "jeveux.h"
-#include "asterc/iisnan.h"
 #include "asterc/indik8.h"
 #include "asterc/r8nnem.h"
 #include "asterfort/assert.h"
@@ -100,7 +99,7 @@ implicit none
 !
         valvrp=zr(ca_jvcval_-1+ 3*(kcvrc-1)+2)
 !
-        if ((iisnan(valvrm).eq.0) .and. (iisnan(valvrp).eq.0)) then
+        if ((.not.isnan(valvrm)) .and. (.not.isnan(valvrp))) then
             if (poum .eq. '-') then
                 valvrc=valvrm+(ca_td1_-ca_timed1_)*(valvrp-valvrm)/(ca_timef1_-&
                 ca_timed1_)
@@ -119,7 +118,7 @@ implicit none
     endif
 !
     iret=0
-    if (iisnan(valvrc) .gt. 0) iret=1
+    if (isnan(valvrc)) iret=1
 !
 !
 !     -- TRAITEMENT SI IRET=1

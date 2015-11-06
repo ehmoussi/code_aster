@@ -1,33 +1,16 @@
-subroutine nmnewt(noma, modele, numins, numedd, numfix,&
-                  mate, carele, comref, compor, lischa,&
-                  method, fonact, carcri, parcon, conv,&
-                  parmet, parcri, sdstat, sdtime,&
-                  sderro, sdimpr, sdnume, sddyna, sddisc,&
-                  sdcrit, sdsuiv, sdpilo, sdconv, solveu,&
-                  maprec, matass, valinc, solalg, meelem,&
-                  measse, veelem, veasse, defico, resoco,&
-                  deficu, resocu, eta, nbiter)
+subroutine nmnewt(noma       , modele  , numins  , numedd , numfix,&
+                  mate       , carele  , comref  , compor , lischa,&
+                  ds_algopara, fonact  , carcri  , sdstat , sdtime,&
+                  sderro     , ds_print, sdnume  , sddyna , sddisc,&
+                  sdcrit     , sdsuiv  , sdpilo  , ds_conv, solveu,&
+                  maprec     , matass  , ds_inout, valinc , solalg,&
+                  meelem     , measse  , veelem  , veasse , defico,&
+                  resoco     , deficu  , resocu  , eta    , nbiter)
 !
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
+use NonLin_Datastructure_type
 !
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+implicit none
 !
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
-! person_in_charge: mickael.abbas at edf.fr
-!
-! aslint: disable=W1504
-    implicit none
 #include "asterf_types.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmactf.h"
@@ -61,17 +44,39 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 #include "asterfort/nmtble.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/nmtimr.h"
+!
+! ======================================================================
+! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+! (AT YOUR OPTION) ANY LATER VERSION.
+!
+! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+!
+! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+!    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+! ======================================================================
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
     integer :: numins
     integer :: fonact(*)
-    character(len=16) :: method(*)
-    real(kind=8) :: parmet(*), parcri(*), parcon(*), conv(*)
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=24) :: carcri
-    character(len=24) :: sdtime, sderro, sdimpr, sdstat, sdconv, sdsuiv
+    character(len=24) :: sdtime, sderro, sdstat, sdsuiv
     character(len=19) :: sdnume, sddyna, sddisc, sdcrit
     character(len=19) :: sdpilo
     character(len=19) :: valinc(*), solalg(*)
     character(len=19) :: meelem(*), veelem(*)
     character(len=19) :: measse(*), veasse(*)
+    type(NL_DS_Print), intent(inout) :: ds_print
+    type(NL_DS_Conv), intent(inout) :: ds_conv
+    type(NL_DS_InOut), intent(in) :: ds_inout
     character(len=19) :: lischa
     character(len=19) :: solveu, maprec, matass
     character(len=24) :: modele, numedd, numfix
@@ -90,7 +95,6 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
@@ -99,18 +103,17 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 ! IN  COMREF : VARIABLES DE COMMANDE DE REFERENCE
 ! IN  COMPOR : COMPORTEMENT
 ! IN  LISCHA : LISTE DES CHARGES
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION
 ! IN  SOLVEU : SOLVEUR
 ! IN  SDSTAT : SD STATISTIQUES
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
-! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION
-! I/O CONV   : INFORMATIONS SUR LA CONVERGENCE DU CALCUL
-! IN  PARCRI : CRITERES DE CONVERGENCE
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  CARCRI : PARAMETRES DES METHODES D'INTEGRATION LOCALES
 ! IN  SDDISC : SD DISC_INST
 ! IN  SDTIME : SD TIMER
 ! IN  SDERRO : GESTION DES ERREURS
-! IN  SDCONV : SD GESTION DE LA CONVERGENCE
+! IO  ds_print         : datastructure for printing parameters
+! IO  ds_conv          : datastructure for convergence management
+! In  ds_inout         : datastructure for input/output management
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
@@ -159,9 +162,9 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 !
     call nmevr0(sddisc)
 !
-! --- INITIALISATION AFFECTATION DES COLONNES
+! - Set values are not affected on rows in convergence table for Newton loop
 !
-    call nmimr0(sdimpr, 'NEWT')
+    call nmimr0(ds_print, 'NEWT')
 !
 ! --- ACTIVATION BOUCLES CONTACT
 !
@@ -176,18 +179,19 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 !
 ! --- INITIALISATIONS POUR LE NOUVEAU PAS DE TEMPS
 !
-    call nmnpas(modele, noma  , mate  , carele, fonact,&
-                sdimpr, sddisc, sdsuiv, sddyna, sdnume,&
-                sdstat, sdtime, numedd, numins, conv,&
-                defico, resoco, valinc, solalg, solveu)
+    call nmnpas(modele  , noma  , mate  , carele, fonact ,&
+                ds_print, sddisc, sdsuiv, sddyna, sdnume ,&
+                sdstat  , sdtime, numedd, numins, defico ,&
+                resoco  , valinc, solalg, solveu, ds_conv,&
+                lischa  )
 !
 ! --- CALCUL DES CHARGEMENTS CONSTANTS AU COURS DU PAS DE TEMPS
 !
-    call nmchar('FIXE', ' ', modele, numedd, mate,&
-                carele, compor, lischa, carcri, numins,&
-                sdtime, sddisc, parcon, fonact, resoco,&
-                resocu, comref, valinc, solalg, veelem,&
-                measse, veasse, sddyna)
+    call nmchar('FIXE'  , ' '   , modele, numedd, mate  ,&
+                carele  , compor, lischa, numins, sdtime,&
+                sddisc  , fonact, resoco, resocu, comref,&
+                ds_inout, valinc, solalg, veelem, measse,&
+                veasse  , sddyna)
 !
 ! ======================================================================
 !     BOUCLE POINTS FIXES
@@ -200,13 +204,12 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 !
 ! --- GESTION DEBUT DE BOUCLE POINTS FIXES
 !
-    call nmible(modele, noma, defico, resoco, fonact,&
-                numins, niveau, numedd, sdstat, sdtime,&
-                sdimpr)
+    call nmible(niveau, modele, noma  , defico, resoco  ,&
+                fonact, numedd, sdstat, sdtime, ds_print)
 !
 ! --- CREATION OBJETS POUR CONTACT CONTINU
 !
-    call nmnble(numins, modele, noma, numedd, sdstat,&
+    call nmnble(numins, modele, noma  , numedd, sdstat,&
                 sdtime, sddyna, sddisc, fonact, defico,&
                 resoco, valinc, solalg)
 !
@@ -218,12 +221,12 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 !
 ! --- PREDICTION D'UNE DIRECTION DE DESCENTE
 !
-    call nmpred(modele, numedd, numfix, mate, carele,&
-                comref, compor, lischa, method, solveu,&
-                fonact, parmet, carcri, sdimpr, sdstat,&
-                sdtime, sddisc, sdnume, sderro, numins,&
-                valinc, solalg, matass, maprec, defico,&
-                resoco, resocu, sddyna, meelem, measse,&
+    call nmpred(modele, numedd, numfix  , mate       , carele,&
+                comref, compor, lischa  , ds_algopara, solveu,&
+                fonact, carcri, ds_print, sdstat     , sdtime,&
+                sddisc, sdnume, sderro  , numins     , valinc,&
+                solalg, matass, maprec  , defico     , resoco,&
+                resocu, sddyna, ds_inout, meelem     , measse,&
                 veelem, veasse, lerrit)
 !
     if (lerrit) goto 315
@@ -239,47 +242,46 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 ! --- EN CORRIGEANT LA (LES) DIRECTIONS DE DESCENTE
 ! --- SI CONTACT OU PILOTAGE OU RECHERCHE LINEAIRE
 !
-    call nmdepl(modele, numedd, mate, carele, comref,&
-                compor, lischa, fonact, sdstat, parmet,&
-                carcri, noma, method, numins, iterat,&
-                solveu, matass, sddisc, sddyna, sdnume,&
-                sdpilo, sdtime, sderro, defico, resoco,&
-                deficu, resocu, valinc, solalg, veelem,&
-                veasse, eta, conv, lerrit)
+    call nmdepl(modele, numedd , mate  , carele, comref     ,&
+                compor, lischa , fonact, sdstat, ds_algopara,&
+                carcri, noma   , numins, iterat, solveu     ,&
+                matass, sddisc , sddyna, sdnume, sdpilo     ,&
+                sdtime, sderro , defico, resoco, deficu     ,&
+                resocu, valinc , solalg, veelem, veasse     ,&
+                eta   , ds_conv, lerrit)
 !
     if (lerrit) goto 315
 !
 ! --- CALCUL DES FORCES APRES CORRECTION
 !
-    call nmfcor(modele, numedd, mate, carele, comref,&
-                compor, lischa, fonact, parmet, carcri,&
-                method, numins, iterat, sdstat, sdtime,&
-                sddisc, sddyna, sdnume, sderro, defico,&
-                resoco, resocu, parcon, valinc, solalg,&
-                veelem, veasse, meelem, measse, matass,&
-                lerrit)
+    call nmfcor(modele, numedd  , mate  , carele     , comref,&
+                compor, lischa  , fonact, ds_algopara, carcri,&
+                numins, iterat  , sdstat, sdtime     , sddisc,&
+                sddyna, sdnume  , sderro, defico     , resoco,&
+                resocu, ds_inout, valinc, solalg     , veelem,&
+                veasse, meelem  , measse, matass     , lerrit)
 !
     if (lerrit) goto 315
 !
 ! - DOF monitoring
 !
-    call nmsuiv(noma  , sdsuiv, sdimpr, carele, modele,&
-                mate  , compor, valinc, comref, sddisc,&
+    call nmsuiv(noma  , sdsuiv, ds_print, carele, modele,&
+                mate  , compor, valinc  , comref, sddisc,&
                 numins)
 !
 ! --- ESTIMATION DE LA CONVERGENCE
 !
 315 continue
-    call nmconv(noma, modele, mate, numedd, sdnume,&
-                fonact, sddyna, sdconv, sdimpr, sdstat,&
-                sddisc, sdtime, sdcrit, sderro, parmet,&
-                comref, matass, solveu, numins, iterat,&
-                conv, eta, parcri, defico, resoco,&
-                valinc, solalg, measse, veasse)
+    call nmconv(noma    , modele, mate   , numedd  , sdnume     ,&
+                fonact  , sddyna, ds_conv, ds_print, sdstat     ,&
+                sddisc  , sdtime, sdcrit , sderro  , ds_algopara,&
+                ds_inout, comref, matass , solveu  , numins     ,&
+                iterat  , eta   , defico , resoco  , valinc     ,&
+                solalg  , measse, veasse )
 !
 ! --- MISE A JOUR DES EFFORTS DE CONTACT
 !
-    call nmfcon(modele, numedd, mate, fonact, defico,&
+    call nmfcon(modele, numedd, mate  , fonact, defico,&
                 resoco, sdstat, sdtime, valinc, solalg,&
                 veelem, veasse)
 !
@@ -288,10 +290,13 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
     call nmcvgn(sddisc, sderro, valinc, defico, resoco)
     call nmleeb(sderro, 'NEWT', etnewt)
 !
-! --- AFFICHAGE PENDANT LES ITERATIONS DE NEWTON
+! - Set iteration number in convergence table
 !
-    call nmimci(sdimpr, 'ITER_NUME', iterat, .true._1)
-    call nmaffi(fonact, sdconv, sdimpr, sderro, sddisc,&
+    call nmimci(ds_print, 'ITER_NUME', iterat, .true._1)
+!
+! - Print during Newton loop
+!
+    call nmaffi(fonact, ds_conv, ds_print, sderro, sddisc,&
                 'NEWT')
 !
     if (etnewt .ne. 'CONT') goto 330
@@ -300,13 +305,13 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 !
 320 continue
 !
-    call nmdesc(modele, numedd, numfix, mate, carele,&
-                comref, compor, lischa, resoco, method,&
-                solveu, parmet, carcri, fonact, numins,&
-                iterat, sddisc, sdimpr, sdstat, sdtime,&
-                sddyna, sdnume, sderro, matass, maprec,&
-                defico, valinc, solalg, meelem, measse,&
-                veasse, veelem, lerrit)
+    call nmdesc(modele, numedd  , numfix, mate  , carele     ,&
+                comref, compor  , lischa, resoco, ds_algopara,&
+                solveu, carcri  , fonact, numins, iterat     ,&
+                sddisc, ds_print, sdstat, sdtime, sddyna     ,&
+                sdnume, sderro  , matass, maprec, defico     ,&
+                valinc, solalg  , meelem, measse, veasse     ,&
+                veelem, lerrit  )
 !
     if (lerrit) goto 315
 !
@@ -331,18 +336,21 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
     call nmtime(sdtime, 'END', 'ITE')
     call nmrinc(sdstat, 'ITE')
 !
-! --- TEMPS PASSE DANS L'ITERATION
+! - Save time during Newton iteration
 !
     call nmtimr(sdtime, 'TEMPS_PHASE', 'N', time)
-    call nmimcr(sdimpr, 'ITER_TIME', time, .true._1)
+!
+! - Print time during Newton iteration
+!
+    call nmimcr(ds_print, 'ITER_TIME', time, .true._1)
 !
 ! --- VERIFICATION DU DECLENCHEMENT DES ERREURS FATALES
 !
     call nmevdt(sdtime, sderro, 'ITE')
 !
-! --- STATISTIQUES SUR ITERATION DE NEWTON
+! - Print statistics during Newton iteration
 !
-    call nmstat('N', fonact, sdstat, sdtime, sdimpr,&
+    call nmstat('N'   , fonact, sdstat, sdtime, ds_print,&
                 defico)
 !
 ! --- ON CONTINUE NEWTON ?
@@ -358,8 +366,8 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 !
 ! --- GESTION DES ACTIONS A LA FIN DE LA BOUCLE DE NEWTON
 !
-    call nmactn(sdimpr, sddisc, sderro, defico, resoco,&
-                parcri, iterat, numins)
+    call nmactn(ds_print, sddisc, sderro, defico, resoco,&
+                ds_conv , iterat, numins)
 !
 ! --- ON FAIT DES ITERATIONS SUPPLEMENTAIRES ?
 !
@@ -372,9 +380,9 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 !
 ! --- GESTION FIN DE BOUCLE POINTS FIXES
 !
-    call nmtble(modele, noma, mate, defico, resoco,&
-                niveau, fonact, sdimpr, sdstat, sdtime,&
-                sddyna, sderro, sdconv, sddisc, numins,&
+    call nmtble(niveau, modele, noma    , mate  , defico, &
+                resoco, fonact, ds_print, sdstat, sdtime,&
+                sddyna, sderro, ds_conv , sddisc, numins,&
                 valinc, solalg)
 !
 ! --- ETAT DE LA CONVERGENCE POINT FIXE
@@ -383,8 +391,8 @@ subroutine nmnewt(noma, modele, numins, numedd, numfix,&
 !
 ! --- GESTION DES ACTIONS A LA FIN D'UNE BOUCLE DE POINT FIXE
 !
-    call nmactf(sdimpr, sddisc, sderro, defico, resoco,&
-                parcri, iterat, numins)
+    call nmactf(ds_print, sddisc, sderro, defico, resoco,&
+                ds_conv , iterat, numins)
 !
 ! --- POUR LA CONTINUATION DU POINT FIXE: GLUTE DUE AU CONTACT DISCRET
 !
