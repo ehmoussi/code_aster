@@ -1,4 +1,4 @@
-subroutine numero_wrap(nume_ddlz    , solverz     , base,&
+subroutine numero_wrap(nume_ddlz    , base,&
                        old_nume_ddlz, modelocz    ,&
                        modelz       , list_loadz)
 !
@@ -25,8 +25,7 @@ implicit none
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
     character(len=*) :: nume_ddlz
-    character(len=*) :: solverz
-    character(len=2)  :: base
+    character(len=2) :: base
     character(len=*) :: modelz
     character(len=*) :: list_loadz
     character(len=*) :: old_nume_ddlz
@@ -41,7 +40,6 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! IO  nume_ddl       : name of numbering object (NUME_DDL)
-! In  solver         : name of solver datastructure
 ! In  base           : JEVEUX base to create objects
 !                      base(1:1) => PROF_CHNO objects
 !                      base(2:2) => NUME_DDL objects
@@ -59,7 +57,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call numero(nume_ddlz, solverz, base, old_nume_ddlz, modelocz,&
+    call numero(nume_ddlz, base, old_nume_ddlz, modelocz,&
                 modelz, list_loadz)
 !
 end subroutine
