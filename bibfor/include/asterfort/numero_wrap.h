@@ -16,10 +16,9 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine numero_wrap(nume_ddlz    , solverz     , base,&
+    subroutine numero_wrap(nume_ddlz    , base,&
                            old_nume_ddlz, modelocz    ,&
                            modelz       , list_loadz)
-        character(len=*), intent(in) :: solverz
         character(len=*), intent(inout) :: nume_ddlz
         character(len=2), intent(in) :: base
         character(len=*), optional, intent(in) :: modelz
