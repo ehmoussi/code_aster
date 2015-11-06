@@ -1,6 +1,6 @@
 # TITRE ANALYSE AUX VALEURS PROPRES DANS DYNA_NON_LINE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -91,7 +91,6 @@ ASSEMBLAGE ( MODELE = MO,
                   CHAM_MATER=CHMAT,
                   CHARGE     = (LIAISON,),
                   NUME_DDL   = CO('NUMSTA'),
-                  SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='METIS'),
                   MATR_ASSE=(
                    _F( MATRICE= CO('RIGSTA'), OPTION= 'RIGI_MECA'),
                    _F( MATRICE= CO('MASSTA'), OPTION= 'MASS_MECA'),),);
@@ -107,7 +106,6 @@ ASSEMBLAGE ( MODELE = MO,
                   CHAM_MATER=CHMAT2,
                   CHARGE    = (LIAISON,),
                   NUME_DDL  = CO('NUMST2'),
-                  SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='METIS'),
                   MATR_ASSE=(
                    _F( MATRICE= CO('RIGST2'), OPTION= 'RIGI_MECA'),
                    _F( MATRICE= CO('MASST2'), OPTION= 'MASS_MECA'),),);

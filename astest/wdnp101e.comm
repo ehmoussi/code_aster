@@ -1,6 +1,6 @@
 # TITRE SOLLICITATION SISMIQUE D UNE COLONNE DE SOL APRES CONSTRUCTION
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -667,15 +667,11 @@ U9B=STAT_NON_LINE(MODELE=MOD[9],
                                ALGO_INTE='SPECIFIQUE',
                                RELATION_KIT=('HUJEUX','LIQU_SATU','HYDR_UTIL'),
                                GROUP_MA=list_group_ma[1:nbcouche]),
-                            _F(RELATION='ELAS',
-                               DEFORMATION='PETIT',
-                               GROUP_MA=('BAS',),
-                               PARM_THETA=0.57,),),
+                            ),
                  SOLVEUR=_F(RENUM='METIS',
                             STOP_SINGULIER='NON',
                             METHODE='MULT_FRONT',
-                            NPREC=15,
-                            SYME='NON'),
+                            NPREC=15,),
                  ETAT_INIT=_F(DEPL=DEP[9],
                               SIGM=SIG[9],
                               VARI=VAR[9]),
@@ -738,13 +734,10 @@ U9B=DYNA_NON_LINE(reuse=U9B,
                                ALGO_INTE='SPECIFIQUE',
                                RELATION_KIT=('HUJEUX','LIQU_SATU','HYDR_UTIL'),
                                GROUP_MA=list_group_ma[1:nbcouche]),
-                            _F(RELATION='ELAS',
-                               DEFORMATION='PETIT',
-                               GROUP_MA=('BAS',),
-                               PARM_THETA=0.57,),),
+                             ),
+                 NEWTON=_F(MATR_RIGI_SYME='OUI',),
                  SOLVEUR=_F(RENUM='METIS',
-                            METHODE='MUMPS',
-                            SYME='OUI',),
+                            METHODE='MUMPS',),
                  ETAT_INIT=_F(EVOL_NOLI=U9B,
                               INST=0.0,PRECISION=1.E-6,
                               ),
@@ -808,7 +801,7 @@ TABINF1 = INFO_FONCTION(RMS = _F(FONCTION = ACCA47X,
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
            PRECISION=6.E-2,
            TOLE_MACHINE=3.e-4, # On ne sait pas pourquoi ...
-           VALE_CALC=1.9972291957409,
+           VALE_CALC=1.99687909867,
            VALE_REFE=1.8911159616941,
            NOM_PARA='RMS',
            TABLE=TABINF1,);

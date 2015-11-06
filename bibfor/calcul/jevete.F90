@@ -1,5 +1,5 @@
 subroutine jevete(nomobj, code, iad)
-use module_calcul, only : ca_iainel_, ca_ininel_, ca_nbobj_
+use calcul_module, only : ca_iainel_, ca_ininel_, ca_nbobj_
 implicit none
 !
 ! ======================================================================
@@ -18,8 +18,8 @@ implicit none
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-!     ARGUMENTS:
-!     ----------
+! aslint: disable=W0104
+! pour 'code'
 #include "jeveux.h"
 !
 #include "asterfort/assert.h"

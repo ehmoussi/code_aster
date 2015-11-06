@@ -24,7 +24,7 @@ subroutine te0123(option, nomte)
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! ----------------------------------------------------------------------
 !
-use module_calcul, only : ca_jelvoi_, ca_jptvoi_, ca_jrepe_
+use calcul_module, only : ca_jelvoi_, ca_jptvoi_, ca_jrepe_
 implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -144,13 +144,13 @@ implicit none
 !
 ! - ON VERIFIE QUE PVARIMR ET PVARIPR ONT LE MEME NOMBRE DE V.I. :
 !
-        call tecach('OON', 'PVARIMR', 'L', iret, nval=7,&
+        call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
                     itab=jtab)
         ASSERT(jtab(1).eq.ivarim)
         lgpg1 = max(jtab(6),1)*jtab(7)
 !
         if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-            call tecach('OON', 'PVARIPR', 'E', iret, nval=7,&
+            call tecach('OOO', 'PVARIPR', 'E', iret, nval=7,&
                         itab=jtab)
             lgpg2 = max(jtab(6),1)*jtab(7)
             if (lgpg1 .ne. lgpg2) then

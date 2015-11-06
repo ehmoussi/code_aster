@@ -4,8 +4,6 @@ subroutine te0041(option, nomte)
 #include "asterfort/assert.h"
 #include "asterfort/infdis.h"
 #include "asterfort/infted.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterfort/matrot.h"
 #include "asterfort/pmavec.h"
@@ -75,7 +73,6 @@ subroutine te0041(option, nomte)
     parameter     (zero=0.0d0,un=1.0d0,ntermx=144)
     real(kind=8) :: tempo(ntermx)
 ! --- ------------------------------------------------------------------
-    call jemarq()
 !
 !
     ! Ce sont bien des elements discrets :
@@ -183,7 +180,7 @@ subroutine te0041(option, nomte)
             call infdis('REPA', irep, r8bid, k8bid)
             call jevech('PMATUUR', 'E', jdm)
             if (ndim .ne. 3) goto 6
-            call tecach('ONN', 'PRIGIEL', 'L', iret, iad=jdr)
+            call tecach('ONO', 'PRIGIEL', 'L', iret, iad=jdr)
             if (jdr .eq. 0) goto 6
             call tecach('NNN', 'PMATERC', 'L', iret, iad=jma)
             if ((jma.eq.0) .or. (iret.ne.0)) goto 6
@@ -337,7 +334,7 @@ subroutine te0041(option, nomte)
             call infdis('REPA', irep, r8bid, k8bid)
             call jevech('PMATUNS', 'E', jdm)
             if (ndim .ne. 3) goto 8
-            call tecach('ONN', 'PRIGIEL', 'L', iret, iad=jdr)
+            call tecach('ONO', 'PRIGIEL', 'L', iret, iad=jdr)
             if (jdr .eq. 0) goto 8
             call tecach('NNN', 'PMATERC', 'L', iret, iad=jma)
             if ((jma.eq.0) .or. (iret.ne.0)) goto 8
@@ -436,5 +433,4 @@ subroutine te0041(option, nomte)
 !
 999  continue
 !
-    call jedema()
 end subroutine

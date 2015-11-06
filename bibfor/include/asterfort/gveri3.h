@@ -18,14 +18,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine gveri3(chfond, taillr, config, lnoff, thlagr,&
-                      thlag2, ndeg, trav1, trav2, trav3, typdis)
+    subroutine gveri3(chfond, taillr, config, lnoff, liss,&
+                      ndeg, trav1, trav2, trav3, typdis)
         character(len=24) :: chfond
         character(len=24) :: taillr
         character(len=8) :: config
         integer :: lnoff
-        aster_logical :: thlagr
-        aster_logical :: thlag2
+        character(len=24) :: liss
         integer :: ndeg
         character(len=24) :: trav1
         character(len=24) :: trav2

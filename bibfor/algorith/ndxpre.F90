@@ -1,9 +1,25 @@
-subroutine ndxpre(modele, numedd, numfix, mate, carele,&
-                  comref, compor, lischa, method, solveu,&
-                  fonact, carcri, sddisc, sdstat, sdtime,&
-                  numins, valinc, solalg, matass, maprec,&
-                  sddyna, sderro, meelem, measse, veelem,&
-                  veasse, lerrit)
+subroutine ndxpre(modele, numedd, numfix  , mate       , carele,&
+                  comref, compor, lischa  , ds_algopara, solveu,&
+                  fonact, carcri, sddisc  , sdstat     , sdtime,&
+                  numins, valinc, solalg  , matass     , maprec,&
+                  sddyna, sderro, ds_inout, meelem     , measse,&
+                  veelem, veasse, lerrit)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/diinst.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/ndxprm.h"
+#include "asterfort/nmassx.h"
+#include "asterfort/nmchar.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmcret.h"
+#include "asterfort/nmltev.h"
+#include "asterfort/nmresd.h"
+#include "asterfort/vtzero.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -22,25 +38,12 @@ subroutine ndxpre(modele, numedd, numfix, mate, carele,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "asterfort/diinst.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/ndxprm.h"
-#include "asterfort/nmassx.h"
-#include "asterfort/nmchar.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmcret.h"
-#include "asterfort/nmltev.h"
-#include "asterfort/nmresd.h"
-#include "asterfort/vtzero.h"
+!
     integer :: fonact(*)
     integer :: numins
-    character(len=16) :: method(*)
+    type(NL_DS_InOut), intent(in) :: ds_inout
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=19) :: matass, maprec
     character(len=24) :: sdtime, sdstat
     character(len=19) :: lischa, solveu, sddisc, sddyna
@@ -61,7 +64,6 @@ subroutine ndxpre(modele, numedd, numfix, mate, carele,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
@@ -69,7 +71,8 @@ subroutine ndxpre(modele, numedd, numfix, mate, carele,&
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  COMREF : VARIABLES DE COMMANDE DE REFERENCE
 ! IN  COMPOR : COMPORTEMENT
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION
+! In  ds_inout         : datastructure for input/output management
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SOLVEU : SOLVEUR
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IN  LISCHA : SD LISTE DES CHARGES
@@ -98,16 +101,11 @@ subroutine ndxpre(modele, numedd, numfix, mate, carele,&
     character(len=19) :: cncine, cndonn, cnzero
     character(len=24) :: k24bla, codere
     integer :: ldccvg, faccvg, rescvg
-    real(kind=8) :: r8bid(8)
     integer :: ifm, niv
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> CALCUL DE PREDICTION'
     endif
@@ -133,25 +131,25 @@ subroutine ndxpre(modele, numedd, numfix, mate, carele,&
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call ndxprm(modele, mate, carele, compor, carcri,&
-                method, lischa, numedd, numfix, solveu,&
-                comref, sddisc, sddyna, sdstat, sdtime,&
-                numins, fonact, valinc, solalg, veelem,&
-                meelem, measse, maprec, matass, codere,&
-                faccvg, ldccvg)
+    call ndxprm(modele     , mate  , carele, compor, carcri,&
+                ds_algopara, lischa, numedd, numfix, solveu,&
+                comref     , sddisc, sddyna, sdstat, sdtime,&
+                numins     , fonact, valinc, solalg, veelem,&
+                meelem     , measse, maprec, matass, codere,&
+                faccvg     , ldccvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
-    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 9999
-    if (ldccvg .eq. 1) goto 9999
+    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
+    if (ldccvg .eq. 1) goto 999
 !
 ! --- CALCUL DES CHARGEMENTS VARIABLES AU COURS DU PAS DE TEMPS
 !
-    call nmchar('VARI', 'PREDICTION', modele, numedd, mate,&
-                carele, compor, lischa, carcri, numins,&
-                sdtime, sddisc, r8bid, fonact, k24bla,&
-                k24bla, comref, valinc, solalg, veelem,&
-                measse, veasse, sddyna)
+    call nmchar('VARI'  , 'PREDICTION', modele, numedd, mate,&
+                carele  , compor, lischa, numins, sdtime,&
+                sddisc  , fonact, k24bla, k24bla, comref,&
+                ds_inout, valinc, solalg, veelem, measse,&
+                veasse  , sddyna)
 !
 ! --- CALCUL DU SECOND MEMBRE
 !
@@ -162,7 +160,7 @@ subroutine ndxpre(modele, numedd, numfix, mate, carele,&
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
-    if (ldccvg .eq. 1) goto 9999
+    if (ldccvg .eq. 1) goto 999
 !
 ! --- RESOLUTION
 !
@@ -170,7 +168,7 @@ subroutine ndxpre(modele, numedd, numfix, mate, carele,&
                 numedd, instap, maprec, matass, cndonn,&
                 cnzero, cncine, solalg, rescvg)
 !
-9999 continue
+999 continue
 !
 ! --- TRANSFORMATION DES CODES RETOURS EN EVENEMENTS
 !
@@ -182,5 +180,4 @@ subroutine ndxpre(modele, numedd, numfix, mate, carele,&
 !
     call nmltev(sderro, 'ERRI', 'NEWT', lerrit)
 !
-    call jedema()
 end subroutine

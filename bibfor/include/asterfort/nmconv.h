@@ -15,13 +15,16 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nmconv(noma, modele, mate, numedd, sdnume,&
-                      fonact, sddyna, sdconv, sdimpr, sdstat,&
-                      sddisc, sdtime, sdcrit, sderro, parmet,&
-                      comref, matass, solveu, numins, iterat,&
-                      conv, eta, parcri, defico, resoco,&
-                      valinc, solalg, measse, veasse)
+    subroutine nmconv(noma    , modele, mate   , numedd  , sdnume     ,&
+                      fonact  , sddyna, ds_conv, ds_print, sdstat     ,&
+                      sddisc  , sdtime, sdcrit , sderro  , ds_algopara,&
+                      ds_inout, comref, matass , solveu  , numins     ,&
+                      iterat  , eta   , defico , resoco  , valinc     ,&
+                      solalg  , measse, veasse )
+        use NonLin_Datastructure_type
         character(len=8) :: noma
         character(len=24) :: modele
         character(len=24) :: mate
@@ -29,22 +32,21 @@ interface
         character(len=19) :: sdnume
         integer :: fonact(*)
         character(len=19) :: sddyna
-        character(len=24) :: sdconv
-        character(len=24) :: sdimpr
+        type(NL_DS_Conv), intent(inout) :: ds_conv
+        type(NL_DS_Print), intent(inout) :: ds_print
         character(len=24) :: sdstat
         character(len=19) :: sddisc
         character(len=24) :: sdtime
         character(len=19) :: sdcrit
         character(len=24) :: sderro
-        real(kind=8) :: parmet(*)
+        type(NL_DS_InOut), intent(in) :: ds_inout
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=24) :: comref
         character(len=19) :: matass
         character(len=19) :: solveu
         integer :: numins
         integer :: iterat
-        real(kind=8) :: conv(*)
         real(kind=8) :: eta
-        real(kind=8) :: parcri(*)
         character(len=24) :: defico
         character(len=24) :: resoco
         character(len=19) :: valinc(*)

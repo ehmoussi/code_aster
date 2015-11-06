@@ -18,13 +18,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmfonc(crit_para  , algo_para     , algo_meth, solver , model ,&
-                      sdcont_defi, list_load     , l_cont   , l_unil , sdnume,&
-                      sddyna     , sdcriq        , mate     , compor_, result,&
-                      comp_para  , list_func_acti)
-        real(kind=8), intent(in) :: crit_para(*)
-        real(kind=8), intent(in) :: algo_para(*)
-        character(len=16), intent(in) :: algo_meth(*)
+    subroutine nmfonc(ds_conv       , ds_algopara, solver , model   , sdcont_defi,&
+                      list_load     , l_cont     , l_unil , sdnume  , sddyna     ,&
+                      sdcriq        , mate       , compor_, ds_inout, comp_para  ,&
+                      list_func_acti)
+        use NonLin_Datastructure_type
+        type(NL_DS_Conv), intent(in) :: ds_conv
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=19), intent(in) :: solver
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: sdcont_defi
@@ -36,7 +36,7 @@ interface
         character(len=24), intent(in) :: sdcriq
         character(len=24), intent(in) :: mate
         character(len=*), intent(in) :: compor_
-        character(len=8), intent(in) :: result
+        type(NL_DS_InOut), intent(in) :: ds_inout
         character(len=24), intent(in) :: comp_para
         integer, intent(inout) :: list_func_acti(*)
     end subroutine nmfonc

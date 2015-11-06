@@ -41,7 +41,7 @@ subroutine crsmsp(solvbz, matasz, pcpiv)
     integer :: zslvk, zslvr, zslvi
     integer :: jslvk, jslvr, jslvi, iret
     character(len=19) :: matass, solvbd
-    character(len=8) :: symk, kmatd
+    character(len=8) :: symk
     character(len=3) :: syme
 !----------------------------------------------------------------------
     call jemarq()
@@ -61,7 +61,6 @@ subroutine crsmsp(solvbz, matasz, pcpiv)
     else
         ASSERT(.false.)
     endif
-    call dismoi('MATR_DISTR', matass, 'MATR_ASSE', repk=kmatd)
 !
     zslvk = sdsolv('ZSLVK')
     zslvr = sdsolv('ZSLVR')
@@ -82,8 +81,8 @@ subroutine crsmsp(solvbz, matasz, pcpiv)
     endif
 !     RENUM
     zk24(jslvk-1+4) = 'AUTO'
-!     SYME
-    zk24(jslvk-1+5) = syme
+
+    zk24(jslvk-1+5) = 'XXXX'
 !     ELIM_LAGR
     zk24(jslvk-1+6) = 'NON'
 !     MIXER_PRECISION
@@ -92,8 +91,8 @@ subroutine crsmsp(solvbz, matasz, pcpiv)
     zk24(jslvk-1+8) = 'OUI'
 !     MEMOIRE_MUMPS
     zk24(jslvk-1+9) = 'IN_CORE'
-!     MATR_DISTRIBUEE
-    zk24(jslvk-1+10) = kmatd
+    zk24(jslvk-1+10) = 'XXXX'
+    
 !     POSTTRAITEMENTS
     zk24(jslvk-1+11) = 'SANS'
     zk24(jslvk-1+12) = 'XXXX'

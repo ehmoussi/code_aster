@@ -1,10 +1,34 @@
-subroutine nmdepl(modele, numedd, mate, carele, comref,&
-                  compor, lischa, fonact, sdstat, parmet,&
-                  carcri, noma, method, numins, iterat,&
-                  solveu, matass, sddisc, sddyna, sdnume,&
-                  sdpilo, sdtime, sderro, defico, resoco,&
-                  deficu, resocu, valinc, solalg, veelem,&
-                  veasse, eta, conv, lerrit)
+subroutine nmdepl(modele, numedd , mate  , carele, comref     ,&
+                  compor, lischa , fonact, sdstat, ds_algopara,&
+                  carcri, noma   , numins, iterat, solveu     ,&
+                  matass, sddisc , sddyna, sdnume, sdpilo     ,&
+                  sdtime, sderro , defico, resoco, deficu     ,&
+                  resocu, valinc , solalg, veelem, veasse     ,&
+                  eta   , ds_conv, lerrit)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/cldual_maj.h"
+#include "asterfort/dbgcha.h"
+#include "asterfort/diinst.h"
+#include "asterfort/GetResi.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/isfonc.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmcoun.h"
+#include "asterfort/nmcret.h"
+#include "asterfort/nmfext.h"
+#include "asterfort/nmltev.h"
+#include "asterfort/nmmajc.h"
+#include "asterfort/nmpich.h"
+#include "asterfort/nmpild.h"
+#include "asterfort/nmreli.h"
+#include "asterfort/nmrepl.h"
+#include "asterfort/nmsolm.h"
+#include "asterfort/nmsolu.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -23,34 +47,14 @@ subroutine nmdepl(modele, numedd, mate, carele, comref,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/dbgcha.h"
-#include "asterfort/diinst.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmcoun.h"
-#include "asterfort/nmcret.h"
-#include "asterfort/nmfext.h"
-#include "asterfort/nmltev.h"
-#include "asterfort/nmmajc.h"
-#include "asterfort/nmpich.h"
-#include "asterfort/nmpild.h"
-#include "asterfort/nmreli.h"
-#include "asterfort/nmrepl.h"
-#include "asterfort/nmsolm.h"
-#include "asterfort/nmsolu.h"
+!
     integer :: fonact(*)
     integer :: iterat, numins
-    real(kind=8) :: parmet(*), conv(*), eta
+    real(kind=8) :: eta
     character(len=8) :: noma
-    character(len=16) :: method(*)
+    type(NL_DS_Conv), intent(inout) :: ds_conv
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=19) :: sddisc, sdnume, sddyna, sdpilo
     character(len=19) :: lischa, matass, solveu
     character(len=24) :: modele, numedd, mate, carele, comref, compor
@@ -60,7 +64,7 @@ subroutine nmdepl(modele, numedd, mate, carele, comref,&
     character(len=24) :: defico, deficu, resocu, resoco
     aster_logical :: lerrit
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME)
 !
@@ -68,8 +72,7 @@ subroutine nmdepl(modele, numedd, mate, carele, comref,&
 ! DE DESCENTE
 ! PRISE EN COMPTE DU PILOTAGE ET DE LA RECHERCHE LINEAIRE
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
@@ -81,10 +84,9 @@ subroutine nmdepl(modele, numedd, mate, carele, comref,&
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  SDTIME : SD TIMER
 ! IN  SDSTAT : SD STATISTIQUES
-! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  CARCRI : PARAMETRES DES METHODES D'INTEGRATION LOCALES
 ! IN  NOMA   : NOM DU MAILLAGE
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  MATASS : NOM DE LA MATRICE DU PREMIER MEMBRE ASSEMBLEE
@@ -102,27 +104,22 @@ subroutine nmdepl(modele, numedd, mate, carele, comref,&
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! I/O CONV   : INFORMATIONS SUR LA CONVERGENCE DU CALCUL
+! IO  ds_conv          : datastructure for convergence management
 ! I/O ETA    : PARAMETRE DE PILOTAGE
 ! OUT LERRIT : .TRUE. SI ERREUR PENDANT L'ITERATION
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: etan, offset, rho
-    real(kind=8) :: instam, instap, deltat, resigr
-    aster_logical :: lpilo, lreli, lctcd, lunil
-    character(len=19) :: cnfext
+    real(kind=8) :: instam, instap, deltat, resi_glob_rela
+    aster_logical :: lpilo, lreli, lctcd, lunil, l_diri_undead
+    character(len=19) :: cnfext, depplu
     integer :: ctccvg, ldccvg, pilcvg
     integer :: ifm, niv
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> CORRECTION INCR. DEPL.'
     endif
@@ -133,12 +130,14 @@ subroutine nmdepl(modele, numedd, mate, carele, comref,&
     ctccvg = -1
     pilcvg = -1
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalites
 !
-    lpilo = isfonc(fonact,'PILOTAGE')
-    lreli = isfonc(fonact,'RECH_LINE')
-    lunil = isfonc(fonact,'LIAISON_UNILATER')
-    lctcd = isfonc(fonact,'CONT_DISCRET')
+    lpilo         = isfonc(fonact,'PILOTAGE')
+    lreli         = isfonc(fonact,'RECH_LINE')
+    lunil         = isfonc(fonact,'LIAISON_UNILATER')
+    lctcd         = isfonc(fonact,'CONT_DISCRET')
+    l_diri_undead = isfonc(fonact,'DIRI_UNDEAD')
+    call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
 !
 ! --- INITIALISATIONS
 !
@@ -147,9 +146,10 @@ subroutine nmdepl(modele, numedd, mate, carele, comref,&
     deltat = instap - instam
     etan = eta
     rho = 1.d0
+    ds_conv%line_sear_coef = 1.d0
     offset = 0.d0
     eta = 0.d0
-    resigr = conv(3)
+    call GetResi(ds_conv, type = 'RESI_GLOB_RELA' , vale_calc_ = resi_glob_rela)
 !
 ! --- CALCUL DE LA RESULTANTE DES EFFORTS EXTERIEURS
 !
@@ -164,59 +164,59 @@ subroutine nmdepl(modele, numedd, mate, carele, comref,&
 !
     if (.not.lreli .or. iterat .eq. 0) then
         if (lpilo) then
-            call nmpich(modele, numedd, mate, carele, comref,&
+            call nmpich(modele, numedd, mate  , carele, comref,&
                         compor, lischa, carcri, fonact, sdstat,&
                         defico, resoco, sdpilo, iterat, sdnume,&
                         deltat, valinc, solalg, veelem, veasse,&
-                        sdtime, sddisc, eta, rho, offset,&
+                        sdtime, sddisc, eta   , rho   , offset,&
                         ldccvg, pilcvg, matass)
-            conv(1) = 0
-            conv(2) = 1.d0
+            ds_conv%line_sear_coef = 1.d0
+            ds_conv%line_sear_iter = 0
         endif
     else
 !
 ! --- RECHERCHE LINEAIRE
 !
         if (lpilo) then
-            call nmrepl(modele, numedd, mate, carele, comref,&
-                        compor, lischa, parmet, carcri, fonact,&
-                        iterat, sdstat, sdpilo, sdnume, sddyna,&
-                        method, defico, resoco, deltat, valinc,&
-                        solalg, veelem, veasse, sdtime, sddisc,&
-                        etan, conv, eta, rho, offset,&
-                        ldccvg, pilcvg, matass)
+            call nmrepl(modele , numedd, mate       , carele, comref,&
+                        compor , lischa, ds_algopara, carcri, fonact,&
+                        iterat , sdstat, sdpilo     , sdnume, sddyna,&
+                        defico , resoco, deltat     , valinc, solalg,&
+                        veelem , veasse, sdtime     , sddisc, etan  ,&
+                        ds_conv, eta   , offset     , ldccvg, pilcvg,&
+                        matass )
         else
-            call nmreli(modele, numedd, mate, carele, comref,&
-                        compor, lischa, carcri, fonact, iterat,&
-                        sdstat, sdnume, sddyna, parmet, method,&
-                        defico, valinc, solalg, veelem, veasse,&
-                        sdtime, conv, ldccvg)
-            rho = conv(2)
+            call nmreli(modele , numedd, mate  , carele     , comref,&
+                        compor , lischa, carcri, fonact     , iterat,&
+                        sdstat , sdnume, sddyna, ds_algopara, defico,&
+                        valinc , solalg, veelem, veasse     , sdtime,&
+                        ds_conv, ldccvg)
         endif
     endif
 !
 ! --- SI ERREUR PENDANT L'INTEGRATION OU LE PILOTAGE -> ON SORT DIRECT
 !
     if ((ldccvg .eq. 1) .or. (pilcvg .eq. 1)) then
-        goto 9999
+        goto 999
     endif
 !
 ! --- AJUSTEMENT DE LA DIRECTION DE DESCENTE (AVEC ETA, RHO ET OFFSET)
 !
+    rho = ds_conv%line_sear_coef
     call nmpild(numedd, sddyna, solalg, eta, rho,&
                 offset)
 !
 ! --- MODIFICATIONS DEPLACEMENTS SI CONTACT DISCRET OU LIAISON_UNILA
 !
     if (lunil .or. lctcd) then
-        call nmcoun(noma, fonact, solveu, numedd, matass,&
+        call nmcoun(noma  , fonact, solveu, numedd, matass,&
                     defico, resoco, deficu, resocu, iterat,&
-                    valinc, solalg, veasse, instap, resigr,&
+                    valinc, solalg, veasse, instap, resi_glob_rela,&
                     sdtime, sdstat, ctccvg)
         if (ctccvg .eq. 0) then
             call nmsolm(sddyna, solalg)
         else
-            goto 9999
+            goto 999
         endif
     endif
 !
@@ -225,7 +225,13 @@ subroutine nmdepl(modele, numedd, mate, carele, comref,&
     call nmmajc(fonact, sddyna, sdnume, deltat, numedd,&
                 valinc, solalg)
 !
-9999 continue
+! - Update dualized relations for non-linear Dirichlet boundary conditions (undead)
+!
+    if (l_diri_undead) then
+        call cldual_maj(lischa, depplu)
+    endif
+!
+999 continue
 !
 ! --- TRANSFORMATION DES CODES RETOURS EN EVENEMENTS
 !
@@ -241,5 +247,4 @@ subroutine nmdepl(modele, numedd, mate, carele, comref,&
 !
     call dbgcha(valinc, instap, iterat)
 !
-    call jedema()
 end subroutine

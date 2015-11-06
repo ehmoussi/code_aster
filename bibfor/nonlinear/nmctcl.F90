@@ -1,5 +1,14 @@
-subroutine nmctcl(numins, modele, noma, defico, resoco,&
-                  sddyna, sddisc, loptin)
+subroutine nmctcl(model, mesh, sdcont_defi, sdcont_solv)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/cfdisi.h"
+#include "asterfort/cfdisl.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/mmligr.h"
+#include "asterfort/xmligr.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -19,86 +28,54 @@ subroutine nmctcl(numins, modele, noma, defico, resoco,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/assert.h"
-#include "asterfort/cfdisl.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/mmchml.h"
-#include "asterfort/mmligr.h"
-#include "asterfort/xmcart.h"
-#include "asterfort/xmelem.h"
-#include "asterfort/xmligr.h"
-    aster_logical :: loptin
-    character(len=8) :: noma
-    character(len=24) :: modele
-    character(len=24) :: defico, resoco
-    integer :: numins
-    character(len=19) :: sddyna, sddisc
+    character(len=8), intent(in) :: model
+    character(len=8), intent(in) :: mesh
+    character(len=24), intent(in) :: sdcont_defi 
+    character(len=24), intent(in) :: sdcont_solv
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGO - BOUCLE CONTACT)
+! MECA_NON_LINE - Continue/XFEM method
 !
-! CREATION DU LIGREL ET DES CHAMPS/CARTE POUR LES ELEMENTS TARDIFS
+! Create elements for contact
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  model            : name of model
+! In  mesh             : name of mesh
+! In  sdcont_defi      : name of contact definition datastructure (from DEFI_CONTACT)
+! In  sdcont_solv      : name of contact solving datastructure
 !
-! IN  NOMA   : NOM DU MAILLAGE
-! IN  MODELE : NOM DU MODELE
-! IN  LOPTIN : VAUT .TRUE. SI ACTIVATION DES OPTIONS *_INIT
-! IN  DEFICO : SD POUR LA DEFINITION DE CONTACT
-! IN  RESOCO : SD POUR LA RESOLUTION DE CONTACT
-! IN  SDDYNA : SD DEDIEE A LA DYNAMIQUE
-! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  NUMINS : NUMERO D'INSTANT
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
-!
+    integer :: cont_form
     integer :: ifm, niv
-    aster_logical :: lctcc, lxfcm
-    aster_logical :: ltfcm
+    aster_logical :: l_cont_xfem_gg
     character(len=8) :: nomo
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECANONLINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CREATION ET INITIALISATION'//&
-        ' DES OBJETS POUR LE CONTACT'
+        write (ifm,*) '<MECANONLINE> Create elements for contact'
     endif
 !
-! --- TYPE DE CONTACT
+! - Parameters
 !
-    lctcc = cfdisl(defico,'FORMUL_CONTINUE')
-    lxfcm = cfdisl(defico,'FORMUL_XFEM')
-    ltfcm = cfdisl(defico,'CONT_XFEM_GG')
-    nomo = modele(1:8)
+    cont_form      = cfdisi(sdcont_defi,'FORMULATION')
+    l_cont_xfem_gg = cfdisl(sdcont_defi,'CONT_XFEM_GG')
+    nomo           = model(1:8)
 !
-    if (lxfcm) then
-        if (loptin) then
-            call xmelem(noma, nomo, defico, resoco)
+! - Create elements for contact
+!
+    if (cont_form .eq. 2) then
+        call mmligr(mesh, nomo, sdcont_defi, sdcont_solv)
+    elseif  (cont_form .eq. 3) then
+        if (l_cont_xfem_gg) then
+            call xmligr(mesh, nomo, sdcont_solv)
         endif
-        if (ltfcm) then
-            call xmligr(noma, nomo, resoco)
-            call xmcart(noma, defico, nomo, resoco)
-        endif
-    else if (lctcc) then
-        call mmligr(noma, nomo, defico, resoco)
-        call mmchml(noma, defico, resoco, sddisc, sddyna,&
-                    numins)
     else
         ASSERT(.false.)
     endif
 !
-!
-    call jedema()
 end subroutine

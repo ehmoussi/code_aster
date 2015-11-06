@@ -92,13 +92,12 @@ subroutine mmveri(noma, defico, resoco, newgeo, sdappa,&
     integer :: izone, imae, ip, iptm, ipt
     integer :: ndimg, nzoco
     integer :: nptm, nbmae, nbpc, nnomae, npt0
-    integer :: ibid
     real(kind=8) :: geomp(3), coorpc(3)
     real(kind=8) :: tau1m(3), tau2m(3)
     real(kind=8) :: tau1(3), tau2(3)
     real(kind=8) :: norm(3), noor
     real(kind=8) :: ksipr1, ksipr2
-    real(kind=8) :: jeu, dist
+    real(kind=8) :: jeu, gap_user
     character(len=8) :: nommae, nommam, aliase
     character(len=16) :: nompt, noment
     aster_logical :: lveri, lexfro
@@ -162,7 +161,7 @@ subroutine mmveri(noma, defico, resoco, newgeo, sdappa,&
 !
 ! ------- INFOS SUR LA MAILLE ESCLAVE
 !
-            call mmelty(noma, nummae, aliase, nnomae, ibid)
+            call mmelty(noma, nummae, aliase, nnomae)
             call jenuno(jexnum(noma//'.NOMMAI', nummae), nommae)
             call mminfm(posmae, defico, 'NDEXFR', ndexfr)
             lexfro = (ndexfr.ne.0)
@@ -231,8 +230,8 @@ subroutine mmveri(noma, defico, resoco, newgeo, sdappa,&
 !
 ! --------- CALCUL DU JEU FICTIF AU POINT DE CONTACT
 !
-                call cfdist(defico, 'CONTINUE', izone, posnoe, posmae,&
-                            coorpc, dist, instan)
+                call cfdist(defico, izone, posmae, coorpc, instan, &
+                            gap_user)
 !
 ! --------- NOM DU POINT DE CONTACT
 !
@@ -242,7 +241,7 @@ subroutine mmveri(noma, defico, resoco, newgeo, sdappa,&
 !
                 if (typapp .eq. 2) then
                     noment = nommam
-                    jeu = jeu+dist
+                    jeu = jeu+gap_user
                 else if (typapp.eq.-1) then
                     noment = 'EXCLU'
                     jeu = r8vide()

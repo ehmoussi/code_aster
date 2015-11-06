@@ -6,14 +6,11 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
 #include "jeveux.h"
 #include "asterc/r8gaem.h"
 #include "asterfort/assert.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vecini.h"
 #include "asterfort/xdelt0.h"
 #include "asterfort/xdelt2.h"
 #include "asterfort/xdelt3.h"
-#include "asterfort/xdelt4.h"
 #include "asterfort/xintva.h"
     integer :: ndime, ndim, ipp, ip, n(3)
     real(kind=8) :: ptxx(*), tabco(*), tabls(*)
@@ -21,7 +18,7 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
     real(kind=8) :: epsmax, ksi(ndime)
     character(len=6) :: name
     character(len=8) :: elrefp
-    integer, intent(in), optional :: dekker
+    real(kind=8), intent(in), optional :: dekker(4*ndime)
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -67,7 +64,6 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
 !
 ! ------------------------------------------------------------------
 !
-    call jemarq()
 !
 ! --- POINT DE DEPART
 !
@@ -83,9 +79,10 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
     epsrel = epsmax
     dmin = r8gaem()
     dist = 0.d0
+    arete = 1
 !
     if (present(dekker)) then
-        call xintva(elrefp, n, ptxx, ndime, intinf,&
+        call xintva(name, dekker, ptxx, ndime, intinf,&
                     intsup)
     endif
 !
@@ -105,8 +102,6 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
                     delta)
     elseif (name .eq. 'XINTAR') then
         call xdelt3(ndim, ksi2, tabls, delta(1))
-    elseif (name .eq. 'XINTFA') then
-        call xdelt4(elrefp, ksi2, ptxx, ndim, tabls, delta)
     else if (name .eq. 'XINTER') then
         call xdelt0(elrefp, ndime, tabls, ptxx, ksi2(1),&
                     delta(1), arete)
@@ -133,8 +128,15 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
 !
 !   ON VERIFIE POUR XMIFIS QUE LE NEWTON RESTE DANS LA FACE TRIA
 !   DE RECHERCHE, SINON ON ACTIVE LA METHODE DE DEKKER
-    if (name .eq. 'XMIFIS') then
+    if (name .eq. 'XMIFIS' .or. name .eq. 'XCENFI') then
         if (present(dekker)) then
+            if (iter.eq.itemax) then
+!   DANS CERTAINS CAS, IL EST IMPOSSIBLE DE TROUVER UN POINT MILIEU SUR LA
+!   FISSURE DANS LA FACE DU SOUS ELEMENT, ON EFFECTUE ALORS UNE APPROXIAMTION
+!   LINEAIRE DE LA FISSURE SUR CETTE FACE
+               ksi2(1) = 0.d0
+               goto 30
+            endif
             if (ksi2(1) .gt. intsup) then
                 ksi2(1) = ksi2(1)+delta(1)
                 ksi2(1) = (ksi2(1)+intsup)/2.d0
@@ -196,10 +198,10 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
         ksi2(i)=ksi2(i)-delta(i)
     end do
 !
+30  continue
 !   GESTION DU CAS NDIME<NDIM
     do i = 1, ndime
         ksi(i)=ksi2(i)
     enddo
 !    write(6,*)'CONVERGENCE DE ',name,' EN ',iter,' ITERATIONS'
-    call jedema()
 end subroutine

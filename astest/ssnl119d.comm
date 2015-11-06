@@ -1,0 +1,237 @@
+# TITRE POUTRE DKT MODELE DHRC (STATIQUE NON-LINEAIRE)
+# ======================================================================
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+# ======================================================================
+# tps_job 480 mem_job 32Mo ncpus 1 liste_test S
+
+#-----------------------------------------------
+# PARAMETRES DU CALCUL
+#-----------------------------------------------
+## BETON
+# epaisseur de la plaque
+ep_beton = 0.50
+
+###
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
+
+#-----------------------------------------------
+# LECTURE DU MAILLAGE
+#-----------------------------------------------
+MA=LIRE_MAILLAGE(FORMAT='MED',);
+
+MA=DEFI_GROUP(reuse =MA,
+                MAILLAGE=MA,
+                CREA_GROUP_NO=(_F(GROUP_MA='A',),
+                               _F(GROUP_MA='B',),),);
+
+MA=MODI_MAILLAGE(reuse =MA,
+                   MAILLAGE=MA,
+                   ORIE_NORM_COQUE=_F(GROUP_MA='POUTRE',
+                                      VECT_NORM=(0.,1.,0.,),
+                                      GROUP_NO='AA',),);
+
+#-----------------------------------------------
+# CREATION DU MODELE
+#-----------------------------------------------
+MO=AFFE_MODELE(MAILLAGE=MA,
+               AFFE=(_F(GROUP_MA=('POUTRE'),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='DKTG',),),);
+
+#-----------------------------------------------
+# DEFINTION DES MATERIAUX
+#-----------------------------------------------
+INCLUDE(UNITE=22, INFO=1)
+
+MATER=AFFE_MATERIAU(MAILLAGE=MA,
+                    AFFE=(_F(GROUP_MA='POUTRE',
+                             MATER=mat_dhrc,),),);
+
+CAEL=AFFE_CARA_ELEM(MODELE=MO,
+                    COQUE=_F(GROUP_MA='POUTRE',
+                             EPAIS=ep_beton,
+                             ANGL_REP=(0.0,0.0,),
+                             INER_ROTA='OUI',),);
+
+#-----------------------------------------------
+# DEFINTION DES CONDITIONS AUX LIMITES ET CHARGEMENTS
+#-----------------------------------------------
+CL=AFFE_CHAR_MECA(MODELE=MO,
+                  DDL_IMPO=(_F(GROUP_NO='A',
+                               DX=0.0,
+                               DY=0.0,
+                               DZ=0.0,
+                               DRX=0.0,
+                               DRY=0.0,),
+                            _F(GROUP_NO='B',
+                               DY=0.0,),),);
+
+CHARGE=AFFE_CHAR_MECA(MODELE=MO,
+                      DDL_IMPO=_F(GROUP_NO='C',
+                                  DY=-1.E-2,),);
+
+FOFO=DEFI_FONCTION(NOM_PARA='INST',
+                   VALE=(0.0,0.0,5.,5.),
+                   PROL_DROITE='EXCLU',
+                   PROL_GAUCHE='EXCLU',);
+
+LINST=DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=(_F(JUSQU_A=0.1,NOMBRE=2,),
+                                 _F(JUSQU_A=1.4,NOMBRE=13,),
+                                 _F(JUSQU_A=3. ,NOMBRE=16,),
+                                 _F(JUSQU_A=5. ,NOMBRE=10,),),);
+
+#-----------------------------------------------
+# CALCUL DES RESULTATS POUR LE CHARGEMENT
+#-----------------------------------------------
+RESU=STAT_NON_LINE(MODELE=MO,
+                   CHAM_MATER=MATER,
+                   CARA_ELEM=CAEL,
+                   EXCIT=(_F(CHARGE=CHARGE,
+                             FONC_MULT=FOFO,),
+                          _F(CHARGE=CL,),),
+                   COMPORTEMENT=(_F(GROUP_MA ='POUTRE',
+                                    RELATION='DHRC',
+                                    ITER_INTE_MAXI=30,),),
+                   INCREMENT=_F(LIST_INST=LINST,),
+                   NEWTON=_F(REAC_ITER=1,
+                             MATRICE='TANGENTE',),);
+
+CALC_CHAMP(reuse=RESU,
+           RESULTAT=RESU,
+           FORCE=('FORC_NODA','REAC_NODA'),);
+
+#-----------------------------------------------
+# CALCUL DES TEST_RESU
+#-----------------------------------------------
+
+# les resultats experimentaux sont donnees dans le fichier joint
+# il s'agit de Fy_(N)Uy_(m)Eps_xx(S)_traction
+INCLUDE(UNITE=12)
+
+POST=POST_RELEVE_T(ACTION=_F(INTITULE='RESULTANTE',
+                             RESULTAT=RESU,
+                             OPERATION=('EXTRACTION',),
+                             GROUP_NO=('A',),
+                             RESULTANTE=('DY'),
+                             REPERE='GLOBAL',
+                             MOYE_NOEUD='OUI',
+                             NOM_CHAM='REAC_NODA',),);
+
+IMPR_TABLE(TABLE=POST)
+
+#########################
+
+TEST_TABLE(TABLE=POST,
+           NOM_PARA='DY',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=0.3,
+                     CRITERE='RELATIF',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=(48867.6921749 ),
+           VALE_REFE=(val_exp[3]*0.5 ),
+           PRECISION=0.7,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=POST,
+           NOM_PARA='DY',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=0.5,
+                     CRITERE='RELATIF',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=( 67983.3362827   ),
+           VALE_REFE=(val_exp[6]*0.5 ),
+           PRECISION=0.7,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=POST,
+           NOM_PARA='DY',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=0.7,
+                     CRITERE='RELATIF',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=(84564.4262962 ),
+           VALE_REFE=(val_exp[9]*0.5 ),
+           PRECISION=0.7,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=POST,
+           NOM_PARA='DY',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=1.1,
+                     CRITERE='RELATIF',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=(115472.016082 ),
+           VALE_REFE=(val_exp[12]*0.5 ),
+           PRECISION=0.7,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=POST,
+           NOM_PARA='DY',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=1.6,
+                     CRITERE='RELATIF',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=(152162.498692  ),
+           VALE_REFE=(val_exp[15]*0.5 ),
+           PRECISION=0.7,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=POST,
+           NOM_PARA='DY',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=1.9,
+                     CRITERE='RELATIF',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=(173515.540736  ),
+           VALE_REFE=(val_exp[18]*0.5),
+           PRECISION=0.75,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=POST,
+           NOM_PARA='DY',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=5.0,
+                     CRITERE='RELATIF',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=(371160.248829  ),
+           VALE_REFE=(val_exp[21]*0.5  ),
+           PRECISION=2.20,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+FIN()

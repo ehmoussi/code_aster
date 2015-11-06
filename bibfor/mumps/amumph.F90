@@ -32,8 +32,8 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 !     /'VERSION' : POUR RECUPERER LE NUMERO DE VERSION (SEULEMENT LA
 !              SD_SOLVEUR OU LA MATAS SONT REQUIS). CE NUMERO EST
 !              STOCKEE DANS SD_SOLVEUR.SLVK(12). IL DOIT ETRE LICITE
-!              (4.9.2 OU 4.10.0) SINON UTMESS_F. PAR DEFAUT ON CHERCHE
-!              LE NUMERO DS LA SD_SOLVEUR, SINON ON PREND CELUI LIE
+!              (4.10.0, 5.0.1 ou 5.0.1consortium) SINON UTMESS_F.
+!              PAR DEFAUT ON CHERCHE LE NUMERO DS LA SD_SOLVEUR, SINON ON PREND CELUI LIE
 !              AU PACKAGE MUMPS LINKE.
 !     /'PRERES'  : POUR DEMANDER LES ETAPES ANALYSE+FACTORISATION
 !     /'RESOUD'  : POUR DEMANDER LA DESCENTE/REMONTEE
@@ -110,7 +110,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
     character(len=12) :: k12bid
     character(len=14) :: nonu, nu, impr
     character(len=19) :: matas, vcine, nomat, nosolv, solveu
-    character(len=24) :: kvers, etamat
+    character(len=24) :: kvers
     character(len=24), pointer :: slvk(:) => null()
     integer, pointer :: slvi(:) => null()
 !----------------------------------------------------------------
@@ -234,7 +234,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 ! --- STOCKE DANS LA SD_SOLVEUR
                     kvers=trim(adjustl(slvk(12)))
                     select case (kvers)
-                        case('4.9.2','4.10.0')
+                        case('4.10.0','5.0.1','5.0.1consortium')
                     case default
                         call utmess('F', 'FACTOR_72', sk=kvers)
                     end select
@@ -337,20 +337,10 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
         nonus(kxmps)=nonu
         roucs(kxmps)=rouc
         precs(kxmps)=prec
-!
-!        -- LA MATRICE EST-ELLE DEJA FACTORISEE ?
-!           POUR LDLT ET MF C'EST FAIT DS TLDLR8/MULFR8...
+
         call jeveuo(nomat//'.REFA', 'E', jrefa)
-        etamat=zk24(jrefa-1+8)
-        if (etamat(1:4) .eq. 'DECT') then
-            if (.not.lpreco) then
-                call utmess('A', 'FACTOR_59')
-            endif
-            goto 999
-        else
-            zk24(jrefa-1+8)='DECT'
-        endif
-!
+        zk24(jrefa-1+8)='DECT'
+
 !        --- PARAMETRE NPREC
         call jeveuo(nosolv//'.SLVI', 'L', vi=slvi)
         nprec=slvi(1)

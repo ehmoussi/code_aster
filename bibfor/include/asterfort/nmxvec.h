@@ -17,17 +17,19 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nmxvec(modelz, mate, carele, compor, carcri,&
-                      sdtime, sddisc, sddyna, numins, valinc,&
-                      solalg, lischa, comref, resoco, resocu,&
-                      numedd, parcon, veelem, veasse, measse,&
-                      nbvect, ltypve, lcalve, loptve, lassve)
+    subroutine nmxvec(modelz  , mate  , carele, compor, sdtime,&
+                      sddisc  , sddyna, numins, valinc, solalg,&
+                      lischa  , comref, resoco, resocu, numedd,&
+                      ds_inout, veelem, veasse, measse, nbvect,&
+                      ltypve  , lcalve, loptve, lassve)
+        use NonLin_Datastructure_type
         character(len=*) :: modelz
         character(len=24) :: mate
         character(len=24) :: carele
         character(len=24) :: compor
-        character(len=24) :: carcri
         character(len=24) :: sdtime
         character(len=19) :: sddisc
         character(len=19) :: sddyna
@@ -39,7 +41,7 @@ interface
         character(len=24) :: resoco
         character(len=24) :: resocu
         character(len=24) :: numedd
-        real(kind=8) :: parcon(*)
+        type(NL_DS_InOut), intent(in) :: ds_inout
         character(len=19) :: veelem(*)
         character(len=19) :: veasse(*)
         character(len=19) :: measse(*)

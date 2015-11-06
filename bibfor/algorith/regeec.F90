@@ -52,6 +52,14 @@ subroutine regeec(nomres, resgen, nomsst)
 !  RESTITUER EN BASE PHYSIQUE SUR UNE SOUS-STRUCTURE LES RESULTATS
 !  ISSUS DE LA SOUS-STRUCTURATION GENERALE
 !  LE CONCEPT RESULTAT EST UN RESULTAT COMPOSE "MODE_MECA"
+!
+!  /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\
+!
+!--   LES ROUTINES REGEEC ET REGE2C FONT LA MEME CHOSE, UNE EN REEL,
+!--   L'AUTRE EN COMPLEXE. EN CAS DE MODIFICATION D'UNE DES ROUTINES,
+!--   NE PAS OUBLIER DE REPORTER LE CHANGEMENT DANS L'AUTRE.
+!
+!  /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\
 !-----------------------------------------------------------------------
 !
 ! NOMRES /I/ : NOM K8 DU CONCEPT MODE MECA RESULTAT

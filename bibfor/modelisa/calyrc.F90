@@ -1,5 +1,5 @@
 subroutine calyrc(chargz)
-    implicit none
+implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getfac.h"
@@ -301,23 +301,23 @@ subroutine calyrc(chargz)
 !        -- 1er groupe esclave / 1er groupe maitre --
             call pj2dco('PARTIE', mo, mo, nbma1, limanu1,&
                         nbno3, zi( iagno3), ' ', geom3, cores1,&
-                        .false._1, r8b)
+                        .false._1, r8b, 0.d0)
             if (nbma2 .gt. 0) then
 !        -- 1er groupe esclave  / 2eme groupe maitre --
                 call pj2dco('PARTIE', mo, mo, nbma2, limanu2,&
                             nbno3, zi( iagno3), ' ', geom3, cores2,&
-                            .false._1, r8b)
+                            .false._1, r8b, 0.d0)
             endif
         else if (ndim.eq.3) then
 !        -- 1er groupe esclave / 1er groupe maitre --
             call pj3dco('PARTIE', mo, mo, nbma1, limanu1,&
                         nbno3, zi( iagno3), ' ', geom3, cores1,&
-                        .false._1, r8b)
+                        .false._1, r8b, 0.d0)
             if (nbma2 .gt. 0) then
 !        -- 1er groupe esclave  / 2eme groupe maitre --
                 call pj3dco('PARTIE', mo, mo, nbma2, limanu2,&
                             nbno3, zi( iagno3), ' ', geom3, cores2,&
-                            .false._1, r8b)
+                            .false._1, r8b, 0.d0)
             endif
         endif
 !
@@ -633,7 +633,7 @@ subroutine calyrc(chargz)
 !
 ! --- AFFECTATION DE LA LISTE DE RELATIONS A LA CHARGE :
 !     ------------------------------------------------
-    call aflrch(lisrel, charge)
+    call aflrch(lisrel, charge, 'LIN')
 !
 310 continue
     call jedema()

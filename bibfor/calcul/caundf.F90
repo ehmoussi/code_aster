@@ -1,5 +1,5 @@
 subroutine caundf(code, opt, te)
-use module_calcul, only : ca_iaoppa_, ca_iawlo2_, ca_iawloc_, &
+use calcul_module, only : ca_iaoppa_, ca_iawlo2_, ca_iawloc_, &
     ca_iawtyp_, ca_igr_, ca_nbgr_, ca_npario_
 implicit none
 ! ======================================================================
@@ -23,7 +23,6 @@ implicit none
 !     ----------
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterc/iisnan.h"
 #include "asterc/indik8.h"
 #include "asterc/isnnem.h"
 #include "asterc/r8nnem.h"
@@ -74,7 +73,7 @@ implicit none
             iachlo=zi(ca_iawloc_-1+3*(iparg-1)+1)
             if ((iachlo.eq.-1) .or. (iachlo.eq.-2)) goto 10
 !
-            typsca = zk8(ca_iawtyp_-1+iparg)
+            typsca = zk8(ca_iawtyp_-1+iparg)(1:3)
             lggrel=zi(ca_iawlo2_-1+5*(ca_nbgr_*(iparg-1)+ca_igr_-1)+4)
             debugr=zi(ca_iawlo2_-1+5*(ca_nbgr_*(iparg-1)+ca_igr_-1)+5)
 !
@@ -114,16 +113,16 @@ implicit none
             iachlo=zi(ca_iawloc_-1+3*(iparg-1)+1)
             if ((iachlo.eq.-1) .or. (iachlo.eq.-2)) goto 30
 !
-            typsca = zk8(ca_iawtyp_-1+iparg)
+            typsca = zk8(ca_iawtyp_-1+iparg)(1:3)
             lggrel=zi(ca_iawlo2_-1+5*(ca_nbgr_*(iparg-1)+ca_igr_-1)+4)
             debugr=zi(ca_iawlo2_-1+5*(ca_nbgr_*(iparg-1)+ca_igr_-1)+5)
 !
 !
             if (typsca .eq. 'R') then
-                if (iisnan(zr(iachlo-1+debugr-1+lggrel+1)) .eq. 0) ecras=.true.
+                if (.not.isnan(zr(iachlo-1+debugr-1+lggrel+1))) ecras=.true.
             else if (typsca.eq.'C') then
-                if (iisnan(dble(zc(iachlo-1+debugr-1+lggrel+1))) .eq. 0) ecras=.true.
-                if (iisnan(dimag(zc(iachlo-1+debugr-1+lggrel+1))) .eq. 0) ecras=.true.
+                if (.not.isnan(dble(zc(iachlo-1+debugr-1+lggrel+1)))) ecras=.true.
+                if (.not.isnan(dimag(zc(iachlo-1+debugr-1+lggrel+1)))) ecras=.true.
             else if (typsca.eq.'I') then
                 if (zi(iachlo-1+debugr-1+lggrel+1) .ne. innem) ecras= .true.
             else

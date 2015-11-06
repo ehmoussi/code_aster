@@ -1,24 +1,23 @@
-subroutine nmconv(noma, modele, mate, numedd, sdnume,&
-                  fonact, sddyna, sdconv, sdimpr, sdstat,&
-                  sddisc, sdtime, sdcrit, sderro, parmet,&
-                  comref, matass, solveu, numins, iterat,&
-                  conv, eta, parcri, defico, resoco,&
-                  valinc, solalg, measse, veasse)
+subroutine nmconv(noma    , modele, mate   , numedd  , sdnume     ,&
+                  fonact  , sddyna, ds_conv, ds_print, sdstat     ,&
+                  sddisc  , sdtime, sdcrit , sderro  , ds_algopara,&
+                  ds_inout, comref, matass , solveu  , numins     ,&
+                  iterat  , eta   , defico , resoco  , valinc     ,&
+                  solalg  , measse, veasse )
 !
-    implicit none
+use NonLin_Datastructure_type
+!
+implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterc/r8vide.h"
 #include "asterfort/cfmmcv.h"
 #include "asterfort/dierre.h"
 #include "asterfort/diinst.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmadev.h"
 #include "asterfort/nmcore.h"
@@ -58,7 +57,8 @@ subroutine nmconv(noma, modele, mate, numedd, sdnume,&
 !
     integer :: fonact(*)
     integer :: iterat, numins
-    real(kind=8) :: eta, conv(*), parcri(*), parmet(*), instan
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+    real(kind=8) :: eta, instan
     character(len=19) :: sdcrit, sddisc, sddyna, sdnume
     character(len=19) :: matass, solveu
     character(len=19) :: measse(*), veasse(*)
@@ -67,25 +67,27 @@ subroutine nmconv(noma, modele, mate, numedd, sdnume,&
     character(len=8) :: noma
     character(len=24) :: numedd, modele
     character(len=24) :: defico, resoco
-    character(len=24) :: sdimpr, sderro, sdstat, sdconv, sdtime
+    character(len=24) :: sderro, sdstat, sdtime
+    type(NL_DS_InOut), intent(in) :: ds_inout
+    type(NL_DS_Print), intent(inout) :: ds_print
+    type(NL_DS_Conv), intent(inout) :: ds_conv
 !
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! MECA_NON_LINE - Convergence management
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! Global convergence of current Newton iteration
 !
-! VERIFICATION DES CRITERES D'ARRET
-!
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  NOMA   : NOM DU MAILLAGE
 ! IN  MODELE : NOM DU MODELE
 ! IN  DEFICO : SD POUR LA DEFINITION DU CONTACT
 ! IN  RESOCO : SD POUR LA RESOLUTION DU CONTACT
-! IN  SDIMPR : SD AFFICHAGE
-! IN  SDCONV : SD GESTION DE LA CONVERGENCE
+! IO  ds_conv          : datastructure for convergence management
 ! IN  SDTIME : SD TIMER
+! In  ds_inout         : datastructure for input/output management
+! IO  ds_print         : datastructure for printing parameters
 ! IN  NUMEDD : NUMEROTATION NUME_DDL
 ! IN  SDNUME : NOM DE LA SD NUMEROTATION
 ! IN  COMREF : VARI_COM REFE
@@ -98,39 +100,31 @@ subroutine nmconv(noma, modele, mate, numedd, sdnume,&
 ! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
 ! IN  ETA    : COEFFICIENT DE PILOTAGE
-! I/O CONV   : INFORMATIONS SUR LA CONVERGENCE DU CALCUL
-! IN  PARCRI : CRITERES DE CONVERGENCE
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  SDERRO : GESTION DES ERREURS
-! IN  PARMET : PARAMETRES DE LA METHODE DE RESOLUTION
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
-! IN  SDIMPR : SD AFFICHAGE
 ! IN  SDSTAT : SD STATISTIQUES
 ! IN  SDCRIT : SYNTHESE DES RESULTATS DE CONVERGENCE POUR ARCHIVAGE
 ! IN  COMREF : VARI_COM REFE
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: lreli, lnkry, limpex, lcont
     real(kind=8) :: r8bid
-    real(kind=8) :: resi_glob_rela, resi_glob_maxi, pasmin
+    real(kind=8) :: pasmin
     real(kind=8) :: instam, instap
-    real(kind=8) :: vrela, vmaxi, vrefe, vresi, vchar, vinit, vcomp, vfrot
-    real(kind=8) :: vgeom
+    real(kind=8) :: vresi, vchar
     aster_logical :: lerror, itemax, dvdebo
     aster_logical :: cvnewt, cvresi
     integer :: nbiter, itesup
     integer :: ifm, niv
-    real(kind=8) :: relcoe
-    integer :: relite
+    real(kind=8) :: line_sear_coef
+    integer :: line_sear_iter
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> EVALUATION DE LA CONVERGENCE'
     endif
@@ -140,20 +134,9 @@ subroutine nmconv(noma, modele, mate, numedd, sdnume,&
     itemax = .false.
     lerror = .false.
     cvnewt = .false.
-    resi_glob_maxi = parcri(1)
-    resi_glob_rela = parcri(2)
-    pasmin = parmet(3)
-    vrela = r8vide()
-    vmaxi = r8vide()
-    vrefe = r8vide()
-    vresi = r8vide()
-    vchar = r8vide()
-    vinit = r8vide()
-    vcomp = r8vide()
-    vfrot = r8vide()
-    vgeom = r8vide()
-    relcoe = r8vide()
-    relite = -1
+    pasmin = ds_algopara%pas_mini_elas
+    line_sear_coef = r8vide()
+    line_sear_iter = -1
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
@@ -168,9 +151,9 @@ subroutine nmconv(noma, modele, mate, numedd, sdnume,&
     instam = diinst(sddisc,numins-1)
     instap = diinst(sddisc,numins )
 !
-! --- INITIALISATION AFFECTATION DES COLONNES
+! - Set values are not affected on rows for residuals loop
 !
-    call nmimr0(sdimpr, 'RESI')
+    call nmimr0(ds_print, 'RESI')
 !
 ! --- EVENEMENT ERREUR ACTIVE ?
 !
@@ -182,9 +165,9 @@ subroutine nmconv(noma, modele, mate, numedd, sdnume,&
     call nmlerr(sddisc, 'L', 'ITERSUP', r8bid, itesup)
     if (itesup .eq. 0) then
         if (abs(instap-instam) .lt. pasmin) then
-            nbiter = nint(parcri(5))
+            nbiter = ds_conv%iter_glob_elas
         else
-            nbiter = nint(parcri(1))
+            nbiter = ds_conv%iter_glob_maxi
         endif
     else
         call nmlerr(sddisc, 'L', 'NBITER', r8bid, nbiter)
@@ -194,26 +177,23 @@ subroutine nmconv(noma, modele, mate, numedd, sdnume,&
 ! --- STATISTIQUES POUR RECHERCHE LINEAIRE
 !
     if (lreli) then
-        relite = nint(conv(1))
-        relcoe = conv(2)
+        line_sear_coef = ds_conv%line_sear_coef
+        line_sear_iter = ds_conv%line_sear_iter
     endif
-    call nmrvai(sdstat, 'RECH_LINE_ITER', 'E', relite)
+    call nmrvai(sdstat, 'RECH_LINE_ITER', 'E', line_sear_iter)
 !
-! --- CALCUL DES RESIDUS
+! - Compute residuals
 !
-    call nmresi(noma, mate, numedd, sdnume, fonact,&
-                sddyna, sdconv, sdimpr, defico, resoco,&
-                matass, numins, conv, resi_glob_rela, resi_glob_maxi,&
-                eta, comref, valinc, solalg, veasse,&
-                measse, vrela, vmaxi, vchar, vresi,&
-                vrefe, vinit, vcomp, vfrot, vgeom)
+    call nmresi(noma  , mate   , numedd  , sdnume  , fonact,&
+                sddyna, ds_conv, ds_print, defico  , resoco,&
+                matass, numins , eta     , comref  , valinc,&
+                solalg, veasse , measse  , ds_inout, vresi ,&
+                vchar)
 !
-! --- VERIFICATION DES CRITERES D'ARRET SUR RESIDUS
+! - Evaluate convergence of residuals
 !
-    call nmcore(sdcrit, sderro, sdconv, defico, numins,&
-                iterat, fonact, relite, eta, parcri,&
-                vresi, vrela, vmaxi, vchar, vrefe,&
-                vcomp, vfrot, vgeom)
+    call nmcore(sdcrit        , sderro, fonact, numins, iterat ,&
+                line_sear_iter, eta   , vresi , vchar , ds_conv)
 !
 ! --- METHODE IMPLEX: CONVERGENCE FORCEE
 !
@@ -222,15 +202,15 @@ subroutine nmconv(noma, modele, mate, numedd, sdnume,&
 ! --- CONVERGENCE ADAPTEE AU CONTACT
 !
     if (lcont) then
-        call cfmmcv(noma, modele, numedd, fonact, sddyna,&
-                    sdimpr, sdstat, sddisc, sdtime, sderro,&
-                    numins, iterat, defico, resoco, valinc,&
-                    solalg, instan)
+        call cfmmcv(noma    , modele, numedd, fonact, sddyna,&
+                    ds_print, sdstat, sddisc, sdtime, sderro,&
+                    numins  , iterat, defico, resoco, valinc,&
+                    solalg  , instan)
     endif
 !
-! --- ENREGISTRE LES DONNEES POUR AFFICHAGE DANS LA SDIMPR
+! - Set value of informations in convergence table (residuals are in nmimre)
 !
-    call nmimrv(sdimpr, fonact, iterat, relcoe, relite,&
+    call nmimrv(ds_print, fonact, iterat, line_sear_coef, line_sear_iter,&
                 eta)
 !
 ! --- CAPTURE ERREUR EVENTUELLE
@@ -279,5 +259,4 @@ subroutine nmconv(noma, modele, mate, numedd, sdnume,&
 !
     call nmadev(sddisc, sderro, iterat)
 !
-    call jedema()
 end subroutine

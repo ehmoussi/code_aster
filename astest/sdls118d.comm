@@ -1,6 +1,6 @@
 # TITRE RADIER CIRCULAIRE RIGIDE : VARIABILITE SPATIALE ET FONDATION QUELCONQUE 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -95,7 +95,10 @@ CARA_EL0=AFFE_CARA_ELEM( MODELE=STICKMOD,
                       GROUP_MA=('PRADIER'),
                       VALE=(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),
                    ),
-          RIGI_PARASOL=_F(VALE=(6.36E10,6.36E10,8.02E10,
+          # on de-symetrise les modes propres de MODSTA1 en modifiant un petit peu la rigidite de
+          # RIGI_PARASOL dans la direction Oy : 6.36 -> 6.37
+          # Cela permet d'eviter les modes doubles et cela evite les TOLE MACHINE
+          RIGI_PARASOL=_F(VALE=(6.36E10,6.37E10,8.02E10,
                                 2.07E13,2.06E13,2.70E13,),
                                        UNITE=8,
                                        COEF_GROUP=1.0,
@@ -361,7 +364,9 @@ DETRUIRE(CONCEPT=_F(NOM=(ssi_1_b)),INFO=1)
 
 #---------------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------
-#ALPHA=0.7     
+#ALPHA=0.7 
+from math import pi
+p_alpha = 0.7 / 2. / pi    
 # MITA et LUCO
 # test:  cas avec frequence de fin de calcul superieure a la frequence de coupure
 #---------------------------------------------------------------------------------------------------------------------------
@@ -379,7 +384,7 @@ ssi_2_a = DYNA_ISS_VARI(
                        MATR_COHE = _F(
                                   TYPE =    'MITA_LUCO', 
                                   VITE_ONDE = 200. ,
-                                  PARA_ALPHA =0.7,),
+                                  PARA_ALPHA = p_alpha,),
                        UNITE_RESU_IMPE = 32,
                        UNITE_RESU_FORC = 33,                
                        MATR_GENE = _F(
@@ -415,7 +420,7 @@ ssi_2_b = DYNA_ISS_VARI(
                        MATR_COHE = _F(
                                   TYPE =    'MITA_LUCO',    
                                   VITE_ONDE = 200. ,
-                                  PARA_ALPHA =0.7,),
+                                  PARA_ALPHA = p_alpha,),
                        UNITE_RESU_IMPE = 32,
                        UNITE_RESU_FORC = 33,                
                        MATR_GENE = _F(
@@ -471,17 +476,17 @@ SRADBX3=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ssi_2b, LIST_FREQ = L_FREQ,
 
 TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX1,  NOM_PARA= ('AMOR', 'FREQ',),  
                             VALE_PARA = (amo_sro, 30.0), 
-                            VALE_REFE = 2.970E-01, VALE_CALC = 0.29630,
+                            VALE_REFE = 2.970E-01, VALE_CALC=0.29630040240994,
                             CRITERE = 'RELATIF', 
-                            PRECISION=1.E-02, TOLE_MACHINE=1.E-3,
+                            PRECISION=1.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 
 TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX1,  NOM_PARA= ('AMOR', 'FREQ',),  
                             VALE_PARA = (amo_sro, 10.0), 
-                            VALE_REFE =6.573E-01, VALE_CALC = 0.65738,
+                            VALE_REFE =6.573E-01, VALE_CALC=0.65739266957609,
                             CRITERE = 'RELATIF', 
-                            PRECISION=1.E-02, TOLE_MACHINE=1.E-3,
+                            PRECISION=1.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 # -------REFERENCE = 'NON_REGRESSION',  
@@ -490,33 +495,33 @@ TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX1,  NOM_PARA= ('AMOR', 'FREQ',),
 
 TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX2,  NOM_PARA= ('AMOR', 'FREQ',),  
                             VALE_PARA = (amo_sro, 30.0), 
-                            VALE_REFE = 2.386E-01 , VALE_CALC = 0.23475,
+                            VALE_REFE = 2.386E-01 , VALE_CALC=0.23475027658042,
                             CRITERE = 'RELATIF', 
-                            PRECISION=2.E-02, TOLE_MACHINE=3.E-3,
+                            PRECISION=2.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 
 TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX2,  NOM_PARA= ('AMOR', 'FREQ',),  
                             VALE_PARA = (amo_sro, 10.0), 
-                            VALE_REFE =5.35E-01 , VALE_CALC = 0.5418,
+                            VALE_REFE =5.35E-01 , VALE_CALC=0.54177479245044,
                             CRITERE = 'RELATIF', 
-                            PRECISION=2.E-02, TOLE_MACHINE=2.E-3,
+                            PRECISION=2.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 
 TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX3,  NOM_PARA= ('AMOR', 'FREQ',),  
                             VALE_PARA = (amo_sro, 30.0), 
-                            VALE_REFE = 2.386E-01 , VALE_CALC = 0.23327,
+                            VALE_REFE = 2.386E-01 , VALE_CALC=0.23327211382427,
                             CRITERE = 'RELATIF', 
-                            PRECISION=2.5E-02, TOLE_MACHINE=3.E-3,
+                            PRECISION=2.5E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 
 TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX3,  NOM_PARA= ('AMOR', 'FREQ',),  
                             VALE_PARA = (amo_sro, 10.0),
-                            VALE_REFE =5.35E-01 , VALE_CALC = 0.5418,
+                            VALE_REFE =5.35E-01 , VALE_CALC=0.54177802928060,
                             CRITERE = 'RELATIF', 
-                            PRECISION=2.E-02, TOLE_MACHINE=2.E-3,
+                            PRECISION=2.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
  
  #--------------------------------------------------------------------------------------------------------------------------
@@ -563,17 +568,17 @@ SRADBX4=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ssi_4, LIST_FREQ = L_FREQ,
 
 TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX4,  NOM_PARA= ('AMOR', 'FREQ',),  
                             VALE_PARA = (amo_sro, 30.0), 
-                            VALE_REFE = 2.390E-01 , VALE_CALC = 0.23877,
+                            VALE_REFE = 2.390E-01 , VALE_CALC=0.23877406255696,
                             CRITERE = 'RELATIF', 
-                            PRECISION=1.E-02, TOLE_MACHINE=1.E-3,
+                            PRECISION=1.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 
 TEST_FONCTION( VALEUR = _F(FONCTION=SRADBX4,  NOM_PARA= ('AMOR', 'FREQ',),  
                             VALE_PARA = (amo_sro, 10.0), 
-                            VALE_REFE =5.723E-01 , VALE_CALC = 0.5747,
+                            VALE_REFE =5.723E-01 , VALE_CALC=0.57471072618139,
                             CRITERE = 'RELATIF', 
-                            PRECISION=1.E-02, TOLE_MACHINE=3.E-3,
+                            PRECISION=1.E-02,
                             REFERENCE = 'AUTRE_ASTER',),);
 
 FIN();

@@ -1,6 +1,6 @@
 # TITRE PLAQUE TROUEE EN TRACTION EN ELASTICITE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,7 +21,7 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',
               VISU_EFICAS='NON',),
       DEBUG=_F(SDVERI='OUI'),
-      IGNORE_ALARM='UTILITAI4_2',
+      IGNORE_ALARM='CALCCHAMP_6',
       )
 
 import math
@@ -29,7 +29,7 @@ import math
 # <MODELE1_63> : Dans un modele, il existe des elements de type "bord" qui n'ont pas de voisin avec rigidite
 #  le modele provoquant ces alarmes ne sert qu'a la visualisation
 
-# <UTILITAI4_2> : Le mot clef EXCIT de CALC_CHAMP n'est pas renseigne car il ne sert a rien pour calculer les contraintes
+# <CALCCHAMP_6> : Le mot clef EXCIT de CALC_CHAMP n'est pas renseigne car il ne sert a rien pour calculer les contraintes
 
 # ======================================================================
 #                 PARAMETRES UTILISATEURS
@@ -253,7 +253,7 @@ TEST_TABLE(TABLE=SIG_A,
            TYPE_TEST='MIN',
            REFERENCE='ANALYTIQUE',
            VALE_REFE=-100.,
-           VALE_CALC=-101.042925282,
+           VALE_CALC=-101.043073142,
            PRECISION=0.05,
            )
 
@@ -262,7 +262,7 @@ TEST_TABLE(TABLE=SIG_A,
            TYPE_TEST='MAX',
            REFERENCE='ANALYTIQUE',
            VALE_REFE=-100.,
-           VALE_CALC=-96.151325951,
+           VALE_CALC=-96.1514793005,
            PRECISION=0.05,
            )
 
@@ -272,7 +272,7 @@ TEST_TABLE(TABLE=SIG_B,
            TYPE_TEST='MIN',
            REFERENCE='ANALYTIQUE',
            VALE_REFE=303.,
-           VALE_CALC=294.125381078,
+           VALE_CALC=294.121896899,
            PRECISION=0.05,
            )
 
@@ -281,7 +281,7 @@ TEST_TABLE(TABLE=SIG_B,
            TYPE_TEST='MAX',
            REFERENCE='ANALYTIQUE',
            VALE_REFE=303.,
-           VALE_CALC=301.020639278,
+           VALE_CALC=301.01711799,
            PRECISION=0.05,
            )
 

@@ -1,30 +1,13 @@
-subroutine nmener(valinc, veasse, measse, sddyna, eta,&
-                  sdener, fonact, solveu, numedd, numfix,&
-                  meelem, numins, modele, mate, carele,&
-                  compor, carcri, sdtime, sddisc, solalg,&
-                  lischa, comref, resoco, resocu, parcon,&
-                  veelem)
+subroutine nmener(valinc, veasse, measse, sddyna, eta        ,&
+                  sdener, fonact, numedd, numfix, ds_algopara,&
+                  meelem, numins, modele, mate  , carele     ,&
+                  compor, sdtime, sddisc, solalg, lischa     ,&
+                  comref, resoco, resocu, veelem, ds_inout)
 !
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
+use NonLin_Datastructure_type
 !
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+implicit none
 !
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
-! person_in_charge: ludovic.idoux at edf.fr
-!
-! aslint: disable=W1504
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -42,12 +25,34 @@ subroutine nmener(valinc, veasse, measse, sddyna, eta,&
 #include "asterfort/nmfini.h"
 #include "asterfort/nmmass.h"
 #include "asterfort/wkvect.h"
+!
+! ======================================================================
+! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+! (AT YOUR OPTION) ANY LATER VERSION.
+!
+! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+!
+! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+! ======================================================================
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
     character(len=19) :: sddyna, sdener, valinc(*), veasse(*), measse(*)
-    character(len=19) :: solveu, meelem(*), sddisc, solalg(*), lischa, veelem(*)
-    character(len=24) :: numedd, numfix, modele, mate, carele, compor, carcri
+    character(len=19) :: meelem(*), sddisc, solalg(*), lischa, veelem(*)
+    character(len=24) :: numedd, numfix, modele, mate, carele, compor
     character(len=24) :: sdtime, comref, resoco, resocu
-    real(kind=8) :: eta, parcon(*)
+    real(kind=8) :: eta
     integer :: fonact(*), numins
+    type(NL_DS_InOut), intent(in) :: ds_inout
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! ----------------------------------------------------------------------
 !
@@ -64,16 +69,16 @@ subroutine nmener(valinc, veasse, measse, sddyna, eta,&
 ! IN  ETA    : COEFFICIENT DU PILOTAGE
 ! IN  SDENER : SD ENERGIE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  SOLVEU : SOLVEUR
 ! IN  NUMEDD : NUME_DDL
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
 ! IN  MEELEM : MATRICES ELEMENTAIRES
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  MODELE : MODELE
 ! IN  MATE   : CHAMP MATERIAU
+! In  ds_inout         : datastructure for input/output management
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  COMPOR : COMPORTEMENT
-! IN  CARCRI : PARAMETRES METHODES D'INTEGRATION LOCALES (VOIR NMLECT)
 ! IN  SDTIME : SD TIMER
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
@@ -82,7 +87,6 @@ subroutine nmener(valinc, veasse, measse, sddyna, eta,&
 ! IN  DEFICO : SD DEF. CONTACT
 ! IN  RESOCO : SD RESOLUTION CONTACT
 ! IN  RESOCU : SD RESOLUTION LIAISON_UNILATER
-! IN  PARCON : PARAMETRES DU CRITERE DE CONVERGENCE REFERENCE
 ! IN  VEELEM : VECTEURS ELEMENTAIRES
 !
 ! ----------------------------------------------------------------------
@@ -323,7 +327,7 @@ subroutine nmener(valinc, veasse, measse, sddyna, eta,&
     if (reassm) then
 ! --- REASSEMBLAGE DE LA MATRICE DE MASSE.
         lisbid=' '
-        call nmmass(fonact, lisbid, sddyna, solveu, numedd,&
+        call nmmass(fonact, lisbid, sddyna, numedd, ds_algopara,&
                     numfix, meelem, masse)
     endif
 !
@@ -332,10 +336,10 @@ subroutine nmener(valinc, veasse, measse, sddyna, eta,&
 ! --- ON LE FAIT ICI AFIN DE DISPOSER D UNE MATRICE D AMORTISSEMENT.
 !
     if (numins .eq. 1) then
-        call nmfini(sddyna, valinc, measse, modele, mate,&
-                    carele, compor, carcri, sdtime, sddisc,&
-                    numins, solalg, lischa, comref, resoco,&
-                    resocu, numedd, parcon, veelem, veasse)
+        call nmfini(sddyna  , valinc, measse, modele, mate  ,&
+                    carele  , compor, sdtime, sddisc, numins,&
+                    solalg  , lischa, comref, resoco, resocu,&
+                    ds_inout, numedd, veelem, veasse)
     endif
 !
 ! --- PREPARATION DES CHAMPS DE FORCE

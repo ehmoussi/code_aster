@@ -80,10 +80,10 @@ subroutine op0100()
 #include "asterfort/xcourb.h"
     integer :: nbord, iord, ibid, i, iad, jnord, ivec, iret, nbpara
     integer :: lnoff, jinst, ndeg, nbropt, iadrco, iadrno, j, ipuls, iord0
-    integer :: iord1, iord2, nborn, nbco, ibor, ig, nbval
+    integer :: iord1, iord2, nborn, nbco, ibor, ig, nbval, iadfis, iadnoe
     integer :: ndimte, ier, ndim, jopt
     integer :: nxpara
-    parameter (nxpara = 11)
+    parameter (nxpara = 15)
 !
     real(kind=8) :: time, timeu, timev, dir(3), rinf, rsup, module, puls
     character(len=6) :: nompro
@@ -100,6 +100,7 @@ subroutine op0100()
     character(len=24) :: nomno, coorn, melord
     character(len=24) :: trav1, trav2, trav3, stok4
     character(len=24) :: trav4, courb, depla1, depla2
+    character(len=24) :: norfon
     parameter  ( resuc2 = '&&MECALG' )
 !
     aster_logical :: exitim, thlagr, connex, glagr, milieu, direc
@@ -135,6 +136,7 @@ subroutine op0100()
 !     - CONFIG
 !     - LNOFF
 !     - LISS, NDEG
+!     - TYPDIS
     call cglect(resu, modele, ndim, option, cas,&
                 typfis, nomfis, fonoeu, chfond, basfon,&
                 taillr, config, lnoff, liss, ndeg, typdis)
@@ -144,6 +146,16 @@ subroutine op0100()
     nomno = noma//'.NOMNOE'
     coorn = noma//'.COORDO    .VALE'
     call jeveuo(coorn, 'L', iadrco)
+!     RECUPERATION DES COORDONNEES POINTS FOND DE FISSURE ET ABSC CURV
+    if (typfis.ne.'THETA') then
+        call jeveuo(chfond, 'L', iadfis)
+    else
+        iadfis=0
+    endif
+!     RECUPERATION DU NOM DES NOEUDS DU FOND DE FISSURE
+    if (typfis .eq. 'FONDFISS') then
+        call jeveuo(fonoeu, 'L', iadnoe)
+    endif
 !
 !     RECUPERATION DU CONCEPT DE SORTIE : TABLE
     call getres(table, k16bid, k16bid)
@@ -223,10 +235,6 @@ subroutine op0100()
         if (ndim .eq. 2) dir(3)=0.d0
         if (iret .eq. 0) then
             direc=.false.
-!         A VIRER !!
-            if (typfis .eq. 'FONDFISS' .and. ndim .eq. 2) then
-                call utmess('F', 'RUPTURE0_81')
-            endif
         else if (iret.lt.0) then
             ASSERT(.false.)
         else if (iret.gt.0) then
@@ -295,11 +303,11 @@ subroutine op0100()
         thetai = '&&THETA '
         grlt = nomfis//'.GRLTNO'
 !
-        call gveri3(chfond, taillr, config, lnoff, thlagr,&
-                    thlag2, ndeg, trav1, trav2, trav3, typdis)
+        call gveri3(chfond, taillr, config, lnoff,&
+                    liss, ndeg, trav1, trav2, trav3, typdis)
         call gcour3(thetai, noma, coorn, lnoff, trav1,&
                     trav2, trav3, chfond, connex, grlt,&
-                    thlagr, thlag2, basfon, ndeg, milieu,&
+                    liss, basfon, ndeg, milieu,&
                     pair, ndimte, typdis, nomfis)
 !
     else if (cas.eq.'3D_LOCAL'.and.typfis.eq.'FONDFISS') then
@@ -320,12 +328,12 @@ subroutine op0100()
 !
         thetai = '&&THETA '
 !
-        call gveri3(chfond, taillr, config, lnoff, thlagr,&
-                    thlag2, ndeg, trav1, trav2, trav3, option)
+        call gveri3(chfond, taillr, config, lnoff, liss,&
+                    ndeg, trav1, trav2, trav3, option)
         call gcour2(thetai, noma, modele, nomno, coorn,&
-                    lnoff, trav1, trav2, trav3, fonoeu,&
-                    nomfis, connex, stok4, thlagr, thlag2,&
-                    ndeg, milieu, ndimte, pair)
+                    lnoff, trav1, trav2, trav3, fonoeu, chfond, basfon,&
+                    nomfis, connex, stok4, liss,&
+                    ndeg, milieu, ndimte, pair, norfon)
 !
     endif
 !
@@ -349,9 +357,12 @@ subroutine op0100()
 !
 !     CREATION DE LA TABLE
 !
-    if(option.eq.'K_G_COHE') nbpara = 11
-    call cgcrtb(table, option, lmelas, cas, typfis,&
+    call cgcrtb(table, option, lmelas, cas, typfis, nxpara,&
                 lmoda, nbpara, linopa, litypa)
+!
+!!    ARRET POUR CONTROLE DEVELOPPEMENT DANS CGCRTB
+!    ASSERT(.false.)
+
 !
     if (option(1:6) .eq. 'G_BILI' .or. option(1:5) .eq. 'G_MAX') then
 !
@@ -404,10 +415,10 @@ subroutine op0100()
                 if (cas .eq. '3D_LOCAL') then
                     call mbilgl(optio2, table, modele, depla1, depla2,&
                                 thetai, mate, lischa, symech, chfond,&
-                                lnoff, ndeg, thlagr, glagr, thlag2,&
+                                lnoff, ndeg, liss,&
                                 milieu, ndimte, pair, exitim, timeu,&
                                 timev, i, j, nbpara, linopa,&
-                                lmelas, nomcas, fonoeu)
+                                lmelas, nomcas, fonoeu, connex)
                 else
                     call mebilg(optio2, table, modele, depla1, depla2,&
                                 theta, mate, lischa, symech, timeu,&
@@ -509,10 +520,10 @@ subroutine op0100()
             call cakg3d(option, table, modele, depla, thetai,&
                         mate, compor, lischa, symech, chfond,&
                         lnoff, basloc, courb, iord, ndeg,&
-                        thlagr, glagr, thlag2, pair, ndimte,&
+                        liss, pair, ndimte,&
                         exitim, time, nbpara, linopa, nomfis,&
                         lmelas, nomcas, lmoda, puls, milieu,&
-                        connex, typdis)
+                        connex, iadfis, iadnoe, typdis)
 !
  33         continue
         end do
@@ -529,10 +540,10 @@ subroutine op0100()
 !
         call mmaxkl(table, modele, thetai, mate, compor,&
                     symech, chfond, lnoff, basloc, courb,&
-                    ndeg, thlagr, glagr, thlag2, pair,&
+                    ndeg, liss, pair,&
                     ndimte, nbpara, linopa, nomfis, nbord,&
-                    ivec, resu, lmelas, lncas, zl( jnord),&
-                    milieu, connex, lischa)
+                    ivec, resu, lmelas, lncas, zl(jnord),&
+                    milieu, connex, lischa, iadfis, iadnoe)
 !
 !     -------------------------------
 !     3.5. ==> CALCUL DE G, K_G (2D)
@@ -596,16 +607,17 @@ subroutine op0100()
                 call mecalg(option, table, modele, depla, theta,&
                             mate, lischa, symech, compor, incr,&
                             time, iord, nbpara, linopa, chvite,&
-                            chacce, lmelas, nomcas, calsig)
+                            chacce, lmelas, nomcas, calsig, iadfis, iadnoe)
 !
             else if (option(1:6).eq.'CALC_G'.and.cas.eq.'3D_LOCAL') then
 !
                 call mecagl(option, table, modele, depla, thetai,&
                             mate, compor, lischa, symech, chfond,&
-                            lnoff, iord, ndeg, thlagr, glagr,&
-                            thlag2, milieu, ndimte, pair, exitim,&
+                            lnoff, iord, ndeg, liss,&
+                            milieu, ndimte, pair, exitim,&
                             time, nbpara, linopa, chvite, chacce,&
-                            lmelas, nomcas, calsig, fonoeu, incr)
+                            lmelas, nomcas, calsig, fonoeu, incr, iadfis, &
+                            norfon, connex)
 !
             else if (option(1:6).eq.'CALC_K'.and.cas.eq.'2D') then
 !

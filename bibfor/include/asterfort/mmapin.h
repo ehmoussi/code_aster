@@ -16,15 +16,13 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine mmapin(modele, noma, defico, resoco, numedd,&
-                      numins, sdstat, sdtime)
-        character(len=24) :: modele
-        character(len=8) :: noma
-        character(len=24) :: defico
-        character(len=24) :: resoco
-        character(len=24) :: numedd
-        integer :: numins
-        character(len=24) :: sdstat
-        character(len=24) :: sdtime
+    subroutine mmapin(mesh  , sdcont_defi, sdcont_solv, nume_dof, sdtime,&
+                      sdstat)
+        character(len=8), intent(in) :: mesh
+        character(len=24), intent(in) :: sdcont_defi
+        character(len=24), intent(in) :: sdcont_solv
+        character(len=24), intent(in) :: nume_dof
+        character(len=24), intent(in) :: sdtime
+        character(len=24), intent(in) :: sdstat         
     end subroutine mmapin
 end interface

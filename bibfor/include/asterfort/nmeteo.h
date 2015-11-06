@@ -18,15 +18,16 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmeteo(result    , sdimpr, sddisc , sd_inout, force,&
-                      nume_store, time  , i_field)
-        character(len=24), intent(in) :: sd_inout
-        character(len=24), intent(in) :: sdimpr
+    subroutine nmeteo(result, sddisc , ds_inout , force, nume_store,&
+                      time  , i_field, ds_print_)
+        use NonLin_Datastructure_type
+        type(NL_DS_InOut), intent(in) :: ds_inout
         character(len=19), intent(in) :: sddisc
         character(len=8), intent(in) :: result
         integer, intent(in) :: i_field
         integer, intent(in) :: nume_store
         real(kind=8), intent(in) :: time
         aster_logical, intent(in) :: force
+        type(NL_DS_Print), optional, intent(in) :: ds_print_
     end subroutine nmeteo
 end interface

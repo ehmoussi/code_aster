@@ -48,7 +48,6 @@ subroutine rc32sn(typz, lieu, numsip, pi, mi,&
 ! IN  : NUMSIQ : NUMERO SITUATION DE L'ETAT STABILISE Q
 ! IN  : PJ     : PRESSION ASSOCIEE A L'ETAT STABILISE J
 ! IN  : MJ     : EFFORTS ASSOCIEES A L'ETAT STABILISE J (6)
-! IN  : PJ     : PRESSION ASSOCIEE A L'ETAT STABILISE J
 ! IN  : SEISME : =.FALSE. SI PAS DE SEISME, =.TRUE. SINON
 ! IN  : MSE    : EFFORTS DUS AU SEISME
 ! VAR : SNIJ   : AMPLITUDE DE VARIATION DES CONTRAINTES LINEARISEES
@@ -99,7 +98,7 @@ subroutine rc32sn(typz, lieu, numsip, pi, mi,&
     if (numsip .ne. 0) then
         knumes = 'S       '
         call codent(numsip, 'D0', knumes(2:8))
-        call jelira(jexnom('&&RC3200.SITU_THERMIQUE', knumes), 'LONUTI', nbthep)
+        call jelira(jexnom('&&RC3200.SITU_THER', knumes), 'LONUTI', nbthep)
         if (nbthep .eq. 0) then
             nbinst = 0
             indicp = 1
@@ -117,7 +116,7 @@ subroutine rc32sn(typz, lieu, numsip, pi, mi,&
             endif
             snij = max( snij , sn )
         else
-            call jeveuo(jexnom('&&RC3200.SITU_THERMIQUE', knumes), 'L', jther)
+            call jeveuo(jexnom('&&RC3200.SITU_THER', knumes), 'L', jther)
             do 100 ith = 1, nbthep
                 numth = zi(jther+ith-1)
                 knumet = 'T       '
@@ -162,7 +161,7 @@ subroutine rc32sn(typz, lieu, numsip, pi, mi,&
     if (numsiq .ne. 0) then
         knumes = 'S       '
         call codent(numsiq, 'D0', knumes(2:8))
-        call jelira(jexnom('&&RC3200.SITU_THERMIQUE', knumes), 'LONUTI', nbtheq)
+        call jelira(jexnom('&&RC3200.SITU_THER', knumes), 'LONUTI', nbtheq)
         if (nbtheq .eq. 0) then
             nbinst = 0
             indicq = 1
@@ -189,7 +188,7 @@ subroutine rc32sn(typz, lieu, numsip, pi, mi,&
                 snij = max( snij , sn )
             endif
         else
-            call jeveuo(jexnom('&&RC3200.SITU_THERMIQUE', knumes), 'L', jther)
+            call jeveuo(jexnom('&&RC3200.SITU_THER', knumes), 'L', jther)
             do 110 ith = 1, nbtheq
                 numth = zi(jther+ith-1)
                 knumet = 'T       '

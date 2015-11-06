@@ -23,8 +23,6 @@ subroutine te0367(option, nomte)
 #include "asterfort/assert.h"
 #include "asterfort/elelin.h"
 #include "asterfort/elrfvf.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterfort/tecach.h"
 #include "asterfort/normev.h"
@@ -93,7 +91,6 @@ subroutine te0367(option, nomte)
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
 !
 ! --- INFOS SUR LA MAILLE DE CONTACT
 !
@@ -109,7 +106,7 @@ subroutine te0367(option, nomte)
 ! --- INITIALISATIONS
 !
     call vecini(n, 0.d0, vtmp)
-    call vecini(9, 0.d0, geopi)
+    call vecini(18, 0.d0, geopi)
     call vecini(2, 0.d0, dlagrf)
     dlagrc = 0.d0
 !
@@ -368,5 +365,4 @@ subroutine te0367(option, nomte)
         zr(ivect-1+i)=vtmp(i)
     end do
 !
-    call jedema()
 end subroutine

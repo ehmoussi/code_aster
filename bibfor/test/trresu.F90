@@ -61,13 +61,13 @@ subroutine trresu(ific, nocc)
 !
     integer :: vali, iocc, iret, ivari, jlue, jordr, n1, n2, n3, n4
     integer :: nbordr, numord, nupo, nbcmp
-    integer :: n1r, n2r, n3r, irefrr, irefir, irefcr
+    integer :: n1r, n2r, n3r, irefrr, irefir, irefcr, n1a, n1b
     integer :: nusp, irefr, irefi, irefc, nref, nl1, nl2, nl11, nl22
     real(kind=8) :: valr, epsi, epsir, prec, ordgrd
     complex(kind=8) :: valc
     character(len=1) :: typres
     character(len=3) :: ssigne
-    character(len=4) :: typch, testok, chpt
+    character(len=4) :: typch, chpt
     character(len=8) :: crit, crit2, nomail, noddl, nomma
     character(len=8) :: noresu, typtes, nomgd
     character(len=8) :: leresu
@@ -101,7 +101,6 @@ subroutine trresu(ific, nocc)
     irefrr=1
     do iocc = 1, nocc
         noddl = ' '
-        testok = 'NOOK'
 !
         call getvtx('RESU', 'NOM_CMP', iocc=iocc, scal=noddl, nbret=n1)
         call getvid('RESU', 'RESULTAT', iocc=iocc, scal=noresu, nbret=n1)
@@ -327,11 +326,11 @@ subroutine trresu(ific, nocc)
                     endif
                     call tresu_champ_all(cham19, typtes, typres, nref, tbtxt,&
                                          zi( irefi), zr(irefr), zc(irefc), epsi, crit,&
-                                         ific, .true._1, ssigne, ignore=skip, compare=ordgrd)
+                                         .true._1, ssigne, ignore=skip, compare=ordgrd)
                     if (lref) then
                         call tresu_champ_all(cham19, typtes, typres, nref, tbref,&
                                              zi(irefir), zr(irefrr), zc(irefcr), epsir, crit,&
-                                             ific, .false._1, ssigne)
+                                             .false._1, ssigne)
                     endif
                 else
                     nbcmp = -n4
@@ -394,12 +393,8 @@ subroutine trresu(ific, nocc)
                 if (n1 .ne. 0) then
 !              RIEN A FAIRE.
                 else if (n2.ne.0) then
-                    call utnono('A', nomma, 'NOEUD', nogrno, nonoeu(1:8),&
+                    call utnono('F', nomma, 'NOEUD', nogrno, nonoeu(1:8),&
                                 iret)
-                    if (iret .ne. 0) then
-                        write (ific,*) testok
-                        goto 50
-                    endif
                     nonoeu(10:33) = nogrno
                 endif
                 call dismoi('TYPE_CHAMP', cham19, 'CHAMP', repk=typch)
@@ -447,18 +442,19 @@ subroutine trresu(ific, nocc)
                     endif
                     call tresu_champ_no(cham19, nonoeu, noddl, nref, tbtxt,&
                                         zi( irefi), zr(irefr), zc(irefc), typres, epsi,&
-                                        crit, ific, .true._1, ssigne, ignore=skip,&
-                                        compare=ordgrd)
+                                        crit, .true._1, ssigne, ignore=skip, compare=ordgrd)
                     if (lref) then
                         call tresu_champ_no(cham19, nonoeu, noddl, nref, tbref,&
                                             zi(irefir), zr(irefrr), zc(irefcr), typres, epsir,&
-                                            crit, ific, .false._1, ssigne)
+                                            crit, .false._1, ssigne)
                     endif
                 else if (typch(1:2).eq.'EL') then
                     call getvem(nomma, 'MAILLE', 'RESU', 'MAILLE', iocc,&
-                                iarg, 1, nomail, n1)
-                    if (n1 .eq. 0) then
-                        call utmess('F', 'CALCULEL5_8')
+                                iarg, 1, nomail, n1a)
+                    if (n1a .eq. 0) then
+                        call getvem(nomma, 'MAILLE', 'RESU', 'GROUP_MA', iocc,&
+                                iarg, 1, nomail, n1b)
+                        if (n1b .eq. 0) call utmess('F', 'CALCULEL5_8')
                     endif
 !
                     nl1 = lxlgut(lign1)
@@ -516,17 +512,16 @@ subroutine trresu(ific, nocc)
                     call tresu_champ_val(cham19, nomail, nonoeu, nupo, nusp,&
                                          ivari, noddl, nref, tbtxt, zi(irefi),&
                                          zr(irefr), zc(irefc), typres, epsi, crit,&
-                                         ific, .true._1, ssigne, ignore=skip, compare=ordgrd)
+                                         .true._1, ssigne, ignore=skip, compare=ordgrd)
                     if (lref) then
                         call tresu_champ_val(cham19, nomail, nonoeu, nupo, nusp,&
                                              ivari, noddl, nref, tbref, zi(irefir),&
                                              zr(irefrr), zc(irefcr), typres, epsir, crit,&
-                                             ific, .false._1, ssigne)
+                                             .false._1, ssigne)
                     endif
                 endif
             endif
         endif
- 50     continue
         call jedetr(knum)
         write (ific,*)' '
     end do

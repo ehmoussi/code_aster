@@ -2,6 +2,7 @@ subroutine preres(solveu, base, iret, matpre, matass,&
                   npvneg, istop)
     implicit none
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/matrix_factor.h"
 #include "asterfort/uttcpu.h"
 !-----------------------------------------------------------------------
@@ -29,7 +30,7 @@ subroutine preres(solveu, base, iret, matpre, matass,&
 ! BUT : FACTORISER UNE MATR_ASSE (LDLT/MULT_FRONT/MUMPS)
 !       OU FABRIQUER UNE MATRICE DE PRECONDITIONNEMENT (GCPC,PETSC)
 !
-! SOLVEU (K19) IN : OBJET SOLVEUR (OU ' ')
+! SOLVEU (K19) IN : OBJET SOLVEUR
 ! BASE (K1)    IN : BASE SUR LAQUELLE ON CREE LA MATRICE FACTORISEE
 !                  (OU LA MATRICE DE PRECONDITIONNEMENT)
 ! IRET (I)     OUT : CODE_RETOUR :
@@ -57,20 +58,19 @@ subroutine preres(solveu, base, iret, matpre, matass,&
 !                        POUR STOP_SINGULIER (VALEUR 0 OU 1 SEULEMENT)
 !                 /AUTRE --> ASSERT
 !-----------------------------------------------------------------------
-! cette routine est une surcouche de la routine prere1.
-! elle est necessaire pour traiter le cas elim_lagr='oui'
+! Cette routine est une surcouche de la routine prere1.
+! elle est necessaire pour traiter le cas ELIM_LAGR='OUI'
 !----------------------------------------------------------------------
     character(len=19) :: matas1
 !----------------------------------------------------------------------
     call jemarq()
     call uttcpu('CPU.RESO.1', 'DEBUT', ' ')
     call uttcpu('CPU.RESO.4', 'DEBUT', ' ')
-!
     matas1=matass
+    ASSERT(solveu.ne.' ')
 !
     call matrix_factor(solveu, base, iret, matpre, matas1,&
                        npvneg, istop)
-!
     call uttcpu('CPU.RESO.1', 'FIN', ' ')
     call uttcpu('CPU.RESO.4', 'FIN', ' ')
     call jedema()

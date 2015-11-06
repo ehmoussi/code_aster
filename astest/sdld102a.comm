@@ -1,6 +1,6 @@
 # TITRE SOUS-STRUCTURATION TRANSITOIRE : SYSTEME MASSES-RESSORTS
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -52,15 +52,22 @@ PRE_IDEAS(UNITE_IDEAS=19,
 
 #
 
-MAILLA=LIRE_MAILLAGE(UNITE=21,);
+MAILLA0=LIRE_MAILLAGE(UNITE=21,);
 
 #
+
+MAILLA=CREA_MAILLAGE(MAILLAGE=MAILLA0,
+    CREA_POI1=(
+        _F(NOM_GROUP_MA='MASSE',   GROUP_NO='MASSE', ),
+    ),
+)
+
 
 MODELE=AFFE_MODELE(MAILLAGE=MAILLA,
                    AFFE=(_F(GROUP_MA='RESSORT',
                             PHENOMENE='MECANIQUE',
                             MODELISATION='DIS_TR',),
-                         _F(GROUP_NO='MASSE',
+                         _F(GROUP_MA='MASSE',
                             PHENOMENE='MECANIQUE',
                             MODELISATION='DIS_T',),),);
 
@@ -77,7 +84,7 @@ PARAM=AFFE_CARA_ELEM(MODELE=MODELE,
                                         0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
                                         0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),
                               _F(CARA='M_T_D_N',
-                                 GROUP_NO='MASSE',
+                                 GROUP_MA='MASSE',
                                  VALE=1.,),),);
 
 #
@@ -259,10 +266,12 @@ IMPR_GENE(UNITE=38,
 DEFI_FICHIER(ACTION='LIBERER',
              UNITE=38,);
 
-TEST_FICHIER(FICHIER='./REPE_OUT/FGEN.gene',
-             NB_VALE=24,
-             VALE_CALC=27.175237,
-             INFO=1,);
+TEST_FICHIER(FICHIER="./REPE_OUT/FGEN.gene",
+             NB_VALE_I=13,
+             VALE_CALC_I=23,
+             NB_VALE=11,
+             VALE_CALC=4.1752370000,
+)
 
 #---------------------------------------------------------------------
 #
@@ -305,10 +314,12 @@ IMPR_GENE(
 DEFI_FICHIER(ACTION='LIBERER',
              UNITE=37,);
 
-TEST_FICHIER(FICHIER='./REPE_OUT/RESU.gene',
-             NB_VALE=105,
-             VALE_CALC=417.980381,
-             INFO=1,);
+TEST_FICHIER(FICHIER="./REPE_OUT/RESU.gene",
+             NB_VALE_I=53,
+             VALE_CALC_I=386,
+             NB_VALE=52,
+             VALE_CALC=31.980381000,
+)
 
 #---------------------------------------------------------------------
 
@@ -817,15 +828,22 @@ TEST_RESU(RESU=_F(INST=80.0,
 
 #
 
-MAYA=LIRE_MAILLAGE(UNITE=20,);
+MAYA0=LIRE_MAILLAGE(UNITE=20,);
 
 #
+
+MAYA=CREA_MAILLAGE(MAILLAGE=MAYA0,
+    CREA_POI1=(
+        _F(NOM_GROUP_MA='MASSE',   GROUP_NO='MASSE', ),
+    ),
+)
+
 
 MODEL=AFFE_MODELE(MAILLAGE=MAYA,
                   AFFE=(_F(GROUP_MA='RESSORT',
                            PHENOMENE='MECANIQUE',
                            MODELISATION='DIS_TR',),
-                        _F(GROUP_NO='MASSE',
+                        _F(GROUP_MA='MASSE',
                            PHENOMENE='MECANIQUE',
                            MODELISATION='DIS_T',),),);
 
@@ -842,7 +860,7 @@ PARAME=AFFE_CARA_ELEM(MODELE=MODEL,
                                         0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
                                         0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),
                                _F(CARA='M_T_D_N',
-                                  GROUP_NO='MASSE',
+                                  GROUP_MA='MASSE',
                                   VALE=1.,),),);
 
 #

@@ -15,12 +15,15 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine nmchht(model      , mate       , cara_elem     , compor        , comp_para  ,&
-                      list_load  , nume_dof   , varc_refe     , list_func_acti, sdstat     ,&
-                      sddyna     , sdtime     , sddisc        , sdnume        , sdcont_defi,&
-                      sdcont_solv, sdunil_solv, crit_refe_para, hval_incr     , hval_algo  ,&
-                      hval_veasse, result)
+    subroutine nmchht(model      , mate       , cara_elem, compor        , comp_para  ,&
+                      list_load  , nume_dof   , varc_refe, list_func_acti, sdstat     ,&
+                      sddyna     , sdtime     , sddisc   , sdnume        , sdcont_defi,&
+                      sdcont_solv, sdunil_solv, hval_incr, hval_algo     , hval_veasse,&
+                      hval_measse, ds_inout)
+        use NonLin_Datastructure_type
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: mate
         character(len=24), intent(in) :: cara_elem
@@ -38,10 +41,10 @@ interface
         character(len=24), intent(in) :: sdcont_defi
         character(len=24), intent(in) :: sdcont_solv
         character(len=24), intent(in) :: sdunil_solv
-        real(kind=8), intent(in) :: crit_refe_para(*)
         character(len=19), intent(in) :: hval_incr(*)
         character(len=19), intent(in) :: hval_algo(*)
         character(len=19), intent(in) :: hval_veasse(*)
-        character(len=8), intent(in) :: result
+        character(len=19), intent(in) :: hval_measse(*)
+        type(NL_DS_InOut), intent(in) :: ds_inout
     end subroutine nmchht
 end interface

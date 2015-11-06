@@ -155,7 +155,7 @@ subroutine calimc(chargz)
         typlag = '12'
         call getvid(motfac, 'MACR_ELEM_DYNA', iocc=iocc, scal=macrel, nbret=nmc)
         call jeveuo(macrel//'.MAEL_REFE', 'L', vk24=mael_refe)
-        basemo = mael_refe(1)
+        basemo = mael_refe(1)(1:8)
         call rsorac(basemo, 'LONUTI', 0, rbid, k8b,&
                     cbid, rbid, k8b, nbmode, 1,&
                     ibid)
@@ -369,7 +369,7 @@ subroutine calimc(chargz)
 !
 ! --- AFFECTATION DE LA LISTE_RELA A LA CHARGE :
 !     ----------------------------------------
-    call aflrch(lisrel, charge)
+    call aflrch(lisrel, charge, 'LIN')
 !
 ! --- MENAGE :
 !     ------

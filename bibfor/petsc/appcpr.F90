@@ -65,6 +65,7 @@ subroutine appcpr(kptsc)
     character(len=14) :: nonu
     character(len=8) :: nomail
     character(len=4) :: exilag
+    character(len=3) :: matd
     character(len=24), dimension(:), pointer :: slvk => null()
 !
     real(kind=8) :: fillin, val
@@ -75,7 +76,8 @@ subroutine appcpr(kptsc)
 !
 !----------------------------------------------------------------
 !     Variables PETSc
-    PetscInt :: low, high, ierr, bs, nterm, nsmooth
+    PetscInt :: low, high, bs, nterm, nsmooth
+    PetscErrorCode ::  ierr
     PetscReal :: fillp
     PetscScalar :: xx_v(1)
     PetscOffset :: xx_i  
@@ -93,9 +95,9 @@ subroutine appcpr(kptsc)
     call asmpi_comm('GET', mpicomm)
 !
 !     -- LECTURE DU COMMUN
-    nomat = nomats(kptsc)
+    nomat = nomat_courant
+    nonu = nonu_courant
     nosolv = nosols(kptsc)
-    nonu = nonus(kptsc)
     a = ap(kptsc)
     ksp = kp(kptsc)
 !
@@ -106,7 +108,8 @@ subroutine appcpr(kptsc)
     
     fillin = slvr(3)
     niremp = slvi(4)
-    lmd = slvk(10)(1:3).eq.'OUI'
+    call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
+    lmd = matd.eq.'OUI'
 !
     fill = niremp
     fillp = fillin
@@ -298,7 +301,6 @@ subroutine appcpr(kptsc)
         if (ierr .ne. 0) then
             call utmess('F', 'PETSC_19', sk=precon)
         endif
-        call PetscOptionsSetValue('-pc_type', 'ml', ierr)
         ASSERT(ierr.eq.0)
 !        CHOIX DE LA RESTRICTION (UNCOUPLED UNIQUEMENT ACTUELLEMENT)
         call PetscOptionsSetValue('-pc_ml_CoarsenScheme', 'Uncoupled', ierr)

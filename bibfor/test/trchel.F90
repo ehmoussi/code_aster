@@ -54,11 +54,11 @@ subroutine trchel(ific, nocc)
 !
     integer :: iocc, iret, nbcmp, jcmp, n1, n2, n3, n4, ivari, nupo, nusp
     integer :: irefr, irefi, irefc, nref, nl1, nl2, nl11, nl22, n1r, n2r, n3r
-    integer :: irefrr, irefir, irefcr
+    integer :: irefrr, irefir, irefcr, n1a, n1b
     real(kind=8) :: epsi, epsir
     character(len=1) :: typres
     character(len=3) :: ssigne
-    character(len=4) :: testok, chpt
+    character(len=4) :: chpt
     character(len=8) :: crit, noddl, nomma, typtes, nomail, nomgd
     character(len=11) :: motcle
     character(len=19) :: cham19
@@ -90,7 +90,6 @@ subroutine trchel(ific, nocc)
     do iocc = 1, nocc
         lign1 = ' '
         lign2 = ' '
-        testok = 'NOOK'
         nonoeu = ' '
         noddl = ' '
         call getvid('CHAM_ELEM', 'CHAM_GD', iocc=iocc, scal=cham19, nbret=n1)
@@ -228,11 +227,11 @@ subroutine trchel(ific, nocc)
                 endif
                 call tresu_champ_all(cham19, typtes, typres, nref, tbtxt,&
                                      zi(irefi), zr(irefr), zc(irefc), epsi, crit,&
-                                     ific, .true._1, ssigne, ignore=skip, compare=ordgrd)
+                                     .true._1, ssigne, ignore=skip, compare=ordgrd)
                 if (lref) then
                     call tresu_champ_all(cham19, typtes, typres, nref, tbref,&
                                          zi(irefir), zr(irefrr), zc(irefcr), epsir, crit,&
-                                         ific, .false._1, ssigne)
+                                         .false._1, ssigne)
                 endif
             else
                 nbcmp = -n4
@@ -262,8 +261,16 @@ subroutine trchel(ific, nocc)
 !
             call getvtx('CHAM_ELEM', 'NOM_CMP', iocc=iocc, scal=noddl, nbret=n1)
             call dismoi('NOM_MAILLA', cham19, 'CHAMP', repk=nomma)
+            n1=0
             call getvem(nomma, 'MAILLE', 'CHAM_ELEM', 'MAILLE', iocc,&
-                        iarg, 1, nomail, n1)
+                        iarg, 1, nomail, n1a)
+            if (n1a .eq. 1) then
+                n1=1
+            else if (n1a .eq. 0) then
+                call getvem(nomma, 'MAILLE', 'CHAM_ELEM', 'GROUP_MA', iocc,&
+                        iarg, 1, nomail, n1b)
+                if (n1b .eq. 1) n1=1
+            endif
             if (n1 .ne. 0) then
                 nl1 = lxlgut(lign1)
                 nl2 = lxlgut(lign2)
@@ -298,12 +305,8 @@ subroutine trchel(ific, nocc)
             if (n3 .eq. 1) then
 !             RIEN A FAIRE.
             else if (n4.eq.1) then
-                call utnono('A', nomma, 'NOEUD', nogrno, nonoeu(1:8),&
+                call utnono('F', nomma, 'NOEUD', nogrno, nonoeu(1:8),&
                             iret)
-                if (iret .ne. 0) then
-                    write (ific,*) testok
-                    goto 100
-                endif
                 nonoeu(10:33) = nogrno
             endif
 !
@@ -349,17 +352,16 @@ subroutine trchel(ific, nocc)
             call tresu_champ_val(cham19, nomail, nonoeu, nupo, nusp,&
                                  ivari, noddl, nref, tbtxt, zi(irefi),&
                                  zr(irefr), zc(irefc), typres, epsi, crit,&
-                                 ific, .true._1, ssigne, ignore=skip, compare=ordgrd)
+                                 .true._1, ssigne, ignore=skip, compare=ordgrd)
             if (lref) then
                 call tresu_champ_val(cham19, nomail, nonoeu, nupo, nusp,&
                                      ivari, noddl, nref, tbref, zi(irefir),&
                                      zr(irefrr), zc(irefcr), typres, epsir, crit,&
-                                     ific, .false._1, ssigne)
+                                     .false._1, ssigne)
             endif
             write (ific,*)' '
         endif
 ! ----------------------------------------------------------------------
-100     continue
     end do
 !
     1160 format(1x,a80,a)

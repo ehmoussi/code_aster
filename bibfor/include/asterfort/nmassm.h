@@ -16,16 +16,17 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine nmassm(fonact, lischa, solveu, numedd, numfix,&
+    subroutine nmassm(fonact, lischa, numedd, numfix, ds_algopara,&
                       typmat, optasz, meelem, matass)
+        use NonLin_Datastructure_type
         integer :: fonact(*)
         character(len=19) :: lischa
-        character(len=19) :: solveu
         character(len=24) :: numedd
         character(len=24) :: numfix
         character(len=6) :: typmat
         character(len=*) :: optasz
         character(len=19) :: meelem(8)
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         character(len=19) :: matass
     end subroutine nmassm
 end interface

@@ -609,7 +609,7 @@ subroutine carbe3(charge)
 !
 !     -- AFFECTATION DE LA LISTE_RELA A LA CHARGE :
 !     ---------------------------------------------
-    call aflrch(lisrel, charge)
+    call aflrch(lisrel, charge, 'NLIN')
 !
     call jedema()
 !

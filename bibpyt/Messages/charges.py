@@ -55,7 +55,6 @@ La charge %(k1)s est de type cinématique (AFFE_CHAR_CINE):
  elle ne peut pas être différentielle.
 """),
 
-
     26 : _(u"""
 La charge %(k1)s a été déclarée comme étant pilotable alors que ce n'est pas possible.
 Si votre chargement contient plusieurs types dont certains ne peuvent être pilotables, il faut les séparer.
@@ -70,6 +69,19 @@ La charge %(k1)s est de type cinématique (AFFE_CHAR_CINE):
     28 : _(u"""
 On ne peut pas piloter la charge %(k1)s car c'est une charge fonction du temps.
 """),
+
+    29 : _(u"""
+Il y a trop de chargements de type Dirichlet suiveur.
+"""),
+
+    30 : _(u"""
+Erreur utilisateur :
+  Le chargement contient des relations cinématiques qui sont non-linéaires
+  lorsque l'on utilise EXCIT / TYPE_CHARGE='SUIV'.
+  Le code ne sait pas encore traiter ces relations non linéaires.
+"""),
+
+
 
     34 : _(u"""
 La charge de type EVOL_CHAR %(k1)s  ne peut pas être pilotée.

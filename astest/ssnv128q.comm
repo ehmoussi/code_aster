@@ -1,6 +1,6 @@
 # TITRE CONTACT AVEC FROTTEMENT D UNE PLAQUE SUR UN PLAN RIGIDE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -114,7 +114,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPR',
                    INST=1.0,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=U2M,
-                   NOM_CHAM='VALE_CONT',
+                   NOM_CHAM='CONT_NOEU',
                    NOM_CMP='JEU',
                    VALE_CALC= 2.151491063319E-34,
                    VALE_REFE=0.0,
@@ -125,7 +125,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPR',
                    INST=1.0,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=U2M,
-                   NOM_CHAM='VALE_CONT',
+                   NOM_CHAM='CONT_NOEU',
                    NOM_CMP='CONT',
                    VALE_CALC=1.000000000,
                    VALE_REFE=1.0,
@@ -136,7 +136,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPR',
                    INST=1.0,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=U2M,
-                   NOM_CHAM='VALE_CONT',
+                   NOM_CHAM='CONT_NOEU',
                    NOM_CMP='RN',
                    VALE_CALC= 1.04863768E+05,
                    VALE_REFE=1.04864E5,

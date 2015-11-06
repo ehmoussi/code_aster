@@ -7,7 +7,6 @@ subroutine caethm(nomte, axi, perman, vf, typvf,&
                   ivf, idfde, ipoid2, ivf2, idfde2,&
                   npi2, jgano)
 ! ======================================================================
-! ======================================================================
 ! person_in_charge: sylvie.granet at edf.fr
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -24,8 +23,6 @@ subroutine caethm(nomte, axi, perman, vf, typvf,&
 ! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
-! ======================================================================
 ! ======================================================================
 ! --- BUT : PREPARATION DU CALCUL SUR UN ELEMENT THM -------------------
 ! ======================================================================
@@ -67,10 +64,10 @@ subroutine caethm(nomte, axi, perman, vf, typvf,&
 ! OUT IDFDE2 : ADRESSE DU TABLEAU DES DERIVESS DES FONCTIONS DE FORME P1
 ! OUT JGANO  : ADRESSE DANS ZR DE LA MATRICE DE PASSAGE
 !              GAUSS -> NOEUDS
-! OUT TYPVF   TYPE DE VF : 1  = TPFA (FLUX A DEUX POINTS)
-!                          2  = SUSHI AVEC VOISIN DECENTRE MAILLE (SUDM)
+! OUT TYPVF   TYPE DE VF : 1  = TPFA (FLUX A DEUX POINTS - SUPPRIME)
+!                          2  = SUSHI AVEC VOISIN DECENTRE MAILLE (SUDM - SUPPRIME)
 !                          3  = SUSHI AVEC VOISIN DECENTRE ARETE (SUDA)
-!                          4  = SUSHI AVEC VOISIN CENTRE  (SUC)
+!                          4  = SUSHI AVEC VOISIN CENTRE  (SUC - SUPPRIME)
 ! CORPS DU PROGRAMME
 ! aslint: disable=W1504
     implicit none

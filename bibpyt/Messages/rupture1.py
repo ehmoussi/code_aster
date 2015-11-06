@@ -238,7 +238,13 @@ Si vous utilisez CALC_THETA/THETA_2D ou CALC_G/THETA en 2d, veuillez fournir
 une valeur nulle pour la 3ème composante.
 """),
 
-
+    31: _(u"""
+DELTA_K_EQ contient une ou plusieurs valeurs négatives.
+Cela peut provenir d'un calcul erroné de DELTA_K_EQ par l'utilisateur ou bien de l'utilisation
+de l'opérande CUMUL='MODE_I' dans POST_RUPTURE dans le cas où K_I aurait des valeurs négatives.
+-> Risque et Conseils
+Vérifiez le calcul de DELTA_K_EQ.
+"""),
 
     35: _(u"""
 Les directions normales au plan de la fissure entre les points %(i1)d et %(i2)d successifs du fond forment un angle
@@ -457,6 +463,14 @@ Seule la variable de commande TEMP est autorisée pour CALC_G
 -> Conseil :
 Veuillez revoir l'affectation des variables de commandes dans le champ de matériau %(k2)s.
 (commande AFFE_MATERIAU, mot clé facteur AFFE_VARC)
+"""),
+
+    73: _(u"""
+CALC_G :
+Il est interdit d'utiliser NB_POINT_FOND avec les lissages LEGENDRE, LAGRANGE_REGU,
+LAGRANGE_NO_NO et MIXTE
+-> Conseil :
+Veuillez revoir le type de lissage utilisé
 """),
 
 }

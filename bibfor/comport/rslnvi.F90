@@ -1,7 +1,10 @@
-subroutine rslnvi(mod, ndt, ndi, nr, nvi)
-    implicit none
+subroutine rslnvi(elem_model, ndt_, ndi_, nr_, nvi_)
+!
+implicit none
+!
+#include "asterfort/assert.h"
 #include "asterfort/utmess.h"
-!       ================================================================
+!
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -18,41 +21,63 @@ subroutine rslnvi(mod, ndt, ndi, nr, nvi)
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-!       ----------------------------------------------------------------
-!       ROUSSELIER : NOMBRE DE COMPOSANTES DES CONTRAINTES ET
-!                    NOMBRE VARIABLES
-!       ----------------------------------------------------------------
-!       IN  MOD    :  TYPE DE MODELISATION
-!       OUT NDT    :  NB TOTAL DE COMPOSANTES TENSEURS
-!           NDI    :  NB DE COMPOSANTES DIRECTES TENSEURS
-!           NR     :  NB DE COMPOSANTES SYSTEME NL
-!           NVI    :  NB DE VARIABLES INTERNES
-!       ----------------------------------------------------------------
+!
+    character(len=*), intent(in) :: elem_model
+    integer, optional, intent(out) :: ndt_
+    integer, optional, intent(out) :: ndi_
+    integer, optional, intent(out) :: nr_
+    integer, optional, intent(out) :: nvi_
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Comportment ROUSSELIER
+!
+! Size of tensors and number of internal variables
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  elem_model : type of model on element
+! Out ndt        : number of terms in tensors
+! Out ndi        : number of "indirect" (?) terms in tensors
+! Out nr         : number of non-linear system
+! Out nvi        : number of internal variables
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: ndt, ndi, nr, nvi
-    character(len=8) :: mod
-!       ----------------------------------------------------------------
 !
-! -     NB DE COMPOSANTES / VARIABLES INTERNES -------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    if (mod(1:2) .eq. '3D') then
+    nvi = 5
+    if (elem_model(1:2) .eq. '3D') then
         ndt = 6
         ndi = 3
         nr = ndt+2
-        else if ( mod(1:6) .eq. 'D_PLAN' .or. mod(1:4) .eq. 'AXIS'&
-    ) then
+    else if ( elem_model(1:6) .eq. 'D_PLAN' .or. elem_model(1:4) .eq. 'AXIS') then
         ndt = 4
         ndi = 3
         nr = ndt+2
-    else if (mod(1:6) .eq. 'C_PLAN') then
-        ndt = 4
-        ndi = 3
-        nr = ndt+3
-        call utmess('F', 'ALGORITH10_51')
-    else if (mod(1:2) .eq. '1D') then
+    else if (elem_model(1:6) .eq. 'C_PLAN') then
+        call utmess('F', 'COMPOR5_52')
+    else if (elem_model(1:2) .eq. '1D') then
         ndt = 3
         ndi = 3
         nr = ndt+2
+    else
+        ASSERT(.false.)
     endif
-    nvi = 5
+!
+    if (present(ndt_)) then
+        ndt_ = ndt
+    endif
+    if (present(ndi_)) then
+        ndi_ = ndi
+    endif
+    if (present(nr_)) then
+        nr_  = nr
+    endif
+    if (present(nvi_)) then
+        nvi_ = nvi
+    endif
 !
 end subroutine

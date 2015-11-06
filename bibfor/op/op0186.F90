@@ -1,5 +1,7 @@
 subroutine op0186()
 !
+use NonLin_Datastructure_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -36,6 +38,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/uttcpr.h"
 #include "asterfort/uttcpu.h"
+#include "asterfort/vtcreb.h"
+#include "asterfort/vtzero.h"
+#include "asterfort/CreateInOutDS.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -75,20 +80,20 @@ implicit none
     real(kind=8) :: rtab(2)
     character(len=1) :: creas, base
     character(len=3) :: kreas
-    character(len=8) :: result_dry, mailla
+    character(len=8) :: result, result_dry, mailla
     character(len=19) :: sdobse
-    character(len=16) :: tysd, k16b1, k16b2
-    character(len=19) :: list_load, list_load_save
-    character(len=19) :: solver, maprec, sddisc, sdcrit, varc_curr
-    character(len=24) :: model, mate, cara_elem, result
+    character(len=16) :: tysd
+    character(len=19) :: solver, maprec, sddisc, sdcrit, varc_curr, list_load
+    character(len=24) :: model, mate, cara_elem
     character(len=24) :: time, tmpchi, tmpchf, compor, vtemp, vtempm, vtempp
-    character(len=24) :: vtempr, vec2nd, vec2ni, nume_dof, mediri, matass, cndirp
+    character(len=24) :: vtempr, vec2nd, vec2ni, nume_dof, mediri, matass, cndirp, cn2mbr
     character(len=24) :: cnchci, cnresi, vabtla, vhydr, vhydrp
-    character(len=24) :: sdieto, tpscvt
+    character(len=24) :: tpscvt
     character(len=76) :: fmt2, fmt3, fmt4
     character(len=85) :: fmt1
     real(kind=8), pointer :: crtr(:) => null()
     real(kind=8), pointer :: tempm(:) => null()
+    type(NL_DS_InOut) :: ds_inout
 !
     data sdcrit/'&&OP0186.CRITERE'/
     data maprec/'&&OP0186.MAPREC'/
@@ -97,6 +102,7 @@ implicit none
     data cnchci/1*' '/
     data vec2nd/'&&OP0186.2ND'/
     data vec2ni/'&&OP0186.2NI'/
+    data cn2mbr/'&&OP0186.2MBRE'/
     data tmpchi,tmpchf/'&&OP0186.TCHI','&&OP0186.TCHF'/
     data vhydr,vhydrp/'&&OP0186.HY','&&OP0186.HYP'/
     data mediri/' '/
@@ -118,12 +124,17 @@ implicit none
     list_load = '&&OP0186.LISCHA'
     varc_curr = '&&OP0186.CHVARC'
 !
+! - Create input/output management datastructure
+!
+    call CreateInOutDS('THER', ds_inout)
+!
 ! - Read parameters
 !
     l_ther_nonl = .true.
     call nxlect(l_ther_nonl, list_load  , solver    , ther_para_i, ther_para_r,&
                 ther_crit_i, ther_crit_r, result_dry, matcst     , coecst     ,&
-                result     , model      , mate      , cara_elem  , compor     )
+                result     , model      , mate      , cara_elem  , compor     ,&
+                ds_inout)
     para(1)    = ther_para_r(1)
     itmax      = ther_crit_i(3)
     rechli     = .false.
@@ -145,10 +156,10 @@ implicit none
 !
 ! --- INITIALISATIONS
 !
-    call nxinit(result   , model         , mate       , cara_elem, compor  ,&
-                list_load, list_load_save, solver     , para     , nume_dof,&
-                lostat   , levol         , l_ther_nonl, sddisc   , sdieto  ,&
-                vhydr    , sdobse        , mailla     , sdcrit   , time  )
+    call nxinit(model      , mate  , cara_elem, compor, list_load,&
+                para       , nume_dof , lostat, levol    ,&
+                l_ther_nonl, sddisc, ds_inout , vhydr , sdobse   ,&
+                mailla     , sdcrit, time  )
 !
     if (lostat) then
         numins=0
@@ -162,12 +173,27 @@ implicit none
     vtempp='&&NXLECTVAR_T_MO'
     vtempm='&&NXLECTVAR_T_PL'
     vtempr='&&NXLECTVAR_INIT'
-    call copisd('CHAMP_GD', 'V', vtemp(1:19), vtempm(1:19))
-    call copisd('CHAMP_GD', 'V', vtemp(1:19), vtempp(1:19))
-    call copisd('CHAMP_GD', 'V', vtemp(1:19), vtempr(1:19))
-    call copisd('CHAMP_GD', 'V', vtemp(1:19), vec2nd(1:19))
-    call copisd('CHAMP_GD', 'V', vtemp(1:19), vec2ni(1:19))
-    call copisd('CHAMP_GD', 'V', vhydr(1:19), vhydrp(1:19))
+    
+
+    if (lostat) then
+        call vtcreb(vtempm, 'V', 'R', nume_ddlz = nume_dof)
+        call vtcreb(vtempp, 'V', 'R', nume_ddlz = nume_dof)
+        call vtcreb(vtempr, 'V', 'R', nume_ddlz = nume_dof)
+        call vtcreb(vec2nd, 'V', 'R', nume_ddlz = nume_dof)
+        call vtcreb(vec2ni, 'V', 'R', nume_ddlz = nume_dof)
+    else
+        call copisd('CHAMP_GD', 'V', vtemp, vtempm)
+        call copisd('CHAMP_GD', 'V', vtemp, vtempp)
+        call copisd('CHAMP_GD', 'V', vtemp, vtempr)
+        call copisd('CHAMP_GD', 'V', vtemp, vec2nd)
+        call copisd('CHAMP_GD', 'V', vtemp, vec2ni)
+    endif
+
+    call copisd('CHAMP_GD', 'V', vhydr, vhydrp)
+!
+! - Total second member
+!
+    call copisd('CHAMP_GD', 'V', vtemp, cn2mbr)
 !
 ! --- CALCUL DES MATRICES ELEMENTAIRES DES DIRICHLETS
     call medith(model, list_load, mediri)
@@ -230,10 +256,8 @@ implicit none
     call jelira(vtempm(1:19)//'.VALE', 'LONMAX', neq)
 !
 ! RECUPERATION DE:
-! RESULT --> NOM DE LA SD RESULTAT
 ! VTEMP  --> T+,I+1BIS
 ! VTEMPP --> T-
-    call getres(result, k16b1, k16b2)
     vtemp='&&NXLECTVAR_____'
 !
 ! --- RECUPERATION DU CHAMP DE TEMPERATURE A T ET T+DT POUR LE SECHAGE
@@ -282,6 +306,7 @@ implicit none
                 vtemp , vhydr , varc_curr, tmpchi   , tmpchf  ,&
                 vec2nd, vec2ni, matass   , maprec   , cndirp  ,&
                 cnchci, mediri, compor)
+    
 !
 ! ======================================================================
 !                        PHASE DE PREDICTION
@@ -297,8 +322,9 @@ implicit none
     call nxpred(model , mate  , cara_elem, list_load, nume_dof,&
                 solver, lostat, tpsthe   , time     , matass  ,&
                 neq   , maprec, varc_curr, vtemp    , vtempm  ,&
-                vtempp, vhydr , vhydrp   , tmpchi   , tmpchf  ,&
-                compor, cndirp, cnchci   , vec2nd   , vec2ni)
+                cn2mbr, vhydr , vhydrp   , tmpchi   , tmpchf  ,&
+                compor, cndirp, cnchci   , vec2nd   , vec2ni  )
+    
 !
 ! ======================================================================
 !              ITERATIONS DE LA METHODE DE NEWTON-RAPHSON
@@ -332,7 +358,7 @@ implicit none
 ! SOLUTION: VTEMPP = T+,I+1 - T+,I
 !
     call nxnewt(model      , mate       , cara_elem  , list_load, nume_dof,&
-                solver     , tpsthe     , time       , neq      , matass  ,&
+                solver     , tpsthe     , time       , matass   , cn2mbr  ,&
                 maprec     , cnchci     , varc_curr  , vtemp    , vtempm  ,&
                 vtempp     , vec2nd     , mediri     , conver   , vhydr   ,&
                 vhydrp     , tmpchi     , tmpchf     , compor   , vabtla  ,&
@@ -360,7 +386,6 @@ implicit none
         endif
         call jeveuo(vtempp(1:19)//'.VALE', 'L', jtempp)
         call jeveuo(vtempm(1:19)//'.VALE', 'E', vr=tempm)
-        call jeveuo(vtemp(1:19)//'.VALE', 'L', jtemp)
 !
 ! SOLUTION: VTEMPM = VTEMPR = T+,I+1BIS
         do k = 1, neq
@@ -438,7 +463,7 @@ implicit none
     call jeveuo(vtemp(1:19)//'.VALE', 'E', jtemp)
 ! VTEMPM --> VTEMP
     do k = 1, neq
-        zr(jtemp+k-1) = zr(jtempp+k-1)
+        zr(jtemp+k-1) = zr(jtempp+k-1) 
     end do
     call uttcpu('CPU.OP0186.3', 'FIN', ' ')
     call uttcpr('CPU.OP0186.3', 4, tps3)
@@ -450,9 +475,8 @@ implicit none
     else
         force = .false.
     endif
-    call ntarch(numins, model, mate, cara_elem, l_ther_nonl,&
-                para, sddisc, sdcrit, sdieto, list_load_save,&
-                force)
+    call ntarch(numins, model , mate  , cara_elem, l_ther_nonl,&
+                para  , sddisc, sdcrit, ds_inout , force)
 !
 ! - Make observation
 !

@@ -1,4 +1,4 @@
-subroutine ldsp1(ierr)
+subroutine ldsp1(pc, ierr)
 !
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
 !
@@ -34,7 +34,8 @@ subroutine ldsp1(ierr)
 !----------------------------------------------------------------
 !     Variables PETSc
 ! because of conditional (if _HAVE_PETSC) and external types
-    PetscInt :: ierr
+     PC, intent(inout)           :: pc 
+     PetscErrorCode, intent(out) :: ierr
 !----------------------------------------------------------------
 !     VARIABLES LOCALES
     integer :: jrefa, iret
@@ -58,7 +59,7 @@ subroutine ldsp1(ierr)
 #else
 !
 !      DECLARATION BIDON POUR ASSURER LA COMPILATION
-    integer :: ierr
+    integer :: pc, ierr
 !
 #endif
 !

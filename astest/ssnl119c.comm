@@ -1,6 +1,6 @@
 # TITRE POUTRE DKT MODELE GLRC_DM (STATIQUE NON-LINEAIRE)
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -65,7 +65,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
 #-----------------------------------------------
 # LECTURE DU MAILLAGE
-#-----------------------------------------------    
+#-----------------------------------------------
 MA=LIRE_MAILLAGE(FORMAT='MED',);
 
 MA=DEFI_GROUP(reuse =MA,
@@ -77,12 +77,11 @@ MA=MODI_MAILLAGE(reuse =MA,
                    MAILLAGE=MA,
                    ORIE_NORM_COQUE=_F(GROUP_MA='POUTRE',
                                       VECT_NORM=(0.,1.,0.,),
-                                      GROUP_NO='A',),);
-                      
+                                      GROUP_NO='AA',),);
 
 #-----------------------------------------------
 # CREATION DU MODELE
-#-----------------------------------------------                                                  
+#-----------------------------------------------
 MO=AFFE_MODELE(MAILLAGE=MA,
                AFFE=(_F(GROUP_MA=('POUTRE'),
                         PHENOMENE='MECANIQUE',
@@ -118,7 +117,6 @@ MATER=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=(_F(GROUP_MA='POUTRE',
                              MATER=MAT_T,),),);
 
-                      
 CAEL=AFFE_CARA_ELEM(MODELE=MO,
                     COQUE=_F(GROUP_MA='POUTRE',
                              EPAIS=ep_beton,
@@ -126,8 +124,8 @@ CAEL=AFFE_CARA_ELEM(MODELE=MO,
                              INER_ROTA='OUI',),);
 
 #-----------------------------------------------
-# DEFINTION DES CONDITIONS AUX LIMITES ET CHARGEMENTS 
-#-----------------------------------------------     
+# DEFINTION DES CONDITIONS AUX LIMITES ET CHARGEMENTS
+#-----------------------------------------------
 CL=AFFE_CHAR_MECA(MODELE=MO,
                   DDL_IMPO=(_F(GROUP_NO='A',
                                DX=0.0,
@@ -154,7 +152,7 @@ LINST=DEFI_LIST_REEL(DEBUT=0.0,
                                  _F(JUSQU_A=5. ,NOMBRE=10,),),);
 
 #-----------------------------------------------
-# CALCUL DES RESULTATS POUR LE CHARGEMENT 
+# CALCUL DES RESULTATS POUR LE CHARGEMENT
 #-----------------------------------------------
 RESU=STAT_NON_LINE(MODELE=MO,
                    CHAM_MATER=MATER,
@@ -178,7 +176,7 @@ CALC_CHAMP(reuse=RESU,
 #-----------------------------------------------
 
 # les resultats experimentaux sont donnees dans le fichier joint
-# il s'agit de Fy_(N)Uy_(m)Eps_xx(S)_traction 
+# il s'agit de Fy_(N)Uy_(m)Eps_xx(S)_traction
 INCLUDE(UNITE=12)
 
 POST=POST_RELEVE_T(ACTION=_F(INTITULE='RESULTANTE',
@@ -189,6 +187,8 @@ POST=POST_RELEVE_T(ACTION=_F(INTITULE='RESULTANTE',
                              REPERE='GLOBAL',
                              MOYE_NOEUD='OUI',
                              NOM_CHAM='REAC_NODA',),);
+
+IMPR_TABLE(TABLE=POST)
 
 #########################
 

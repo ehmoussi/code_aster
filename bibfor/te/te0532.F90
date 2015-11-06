@@ -6,8 +6,6 @@ subroutine te0532(option, nomte)
 #include "asterfort/elelin.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterc/r8prem.h"
 #include "asterfort/tecach.h"
@@ -64,7 +62,7 @@ subroutine te0532(option, nomte)
     integer :: ivff, iadzi, iazk24, ibid, jout1, jout2
     integer :: jout3, jmemco, ndim, nfh, ddlc, ddls, ddlm
     integer :: npg, npgf, incoca, nfe, ninter, nnof, vstnc(1)
-    integer :: indco, gliss, memco, nface, cface(18, 6)
+    integer :: indco, gliss, memco, nface, cface(30, 6)
     integer :: nno, nnos, nnom, nnol, pla(27), lact(8), nlact, nvec
     integer :: contac, jbasec, nddl, nfiss, jfisno
     integer :: jmate, singu, jcohes, jcoheo, jheano, ifiss, jheafa, jheavn, ncomph
@@ -85,7 +83,6 @@ subroutine te0532(option, nomte)
     integer :: zxain
 !......................................................................
 !
-    call jemarq()
 !
     imprim=.false.
     incoca=0
@@ -397,5 +394,4 @@ subroutine te0532(option, nomte)
 !     ENREGISTREMENT DES CHAMPS DE SORTIE
     zi(jout1)=incoca
 !
-    call jedema()
 end subroutine

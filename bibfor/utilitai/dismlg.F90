@@ -111,26 +111,6 @@ subroutine dismlg(questi, nomobz, repi, repkz, ierd)
 !
 !
 !     -----------------------------------------------------------------
-    else if ((questi.eq.'EXI_VF')) then
-!     -----------------------------------------------------------------
-        repk='NON'
-        call jeexin(nomob//'.LIEL', iexi)
-        if (iexi .gt. 0) then
-            call jelira(nomob//'.LIEL', 'NUTIOC', nbgrel)
-            do 10 igrel = 1, nbgrel
-                call jeveuo(jexnum(nomob//'.LIEL', igrel), 'L', jliel)
-                call jelira(jexnum(nomob//'.LIEL', igrel), 'LONMAX', nel)
-                itypel=zi(jliel-1+nel)
-                call jenuno(jexnum('&CATA.TE.NOMTE', itypel), nomte)
-                if (lteatt('VF_AVEC_VOISIN','OUI', typel=nomte)) then
-                    repk='OUI'
-                    goto 10
-!
-                endif
- 10         continue
-        endif
-!
-!     -----------------------------------------------------------------
     else if ((questi.eq.'BESOIN_VOISIN')) then
 !     -----------------------------------------------------------------
         repk='NON'
@@ -173,17 +153,10 @@ subroutine dismlg(questi, nomobz, repi, repkz, ierd)
                 call jenuno(jexnum('&CATA.TE.NOMTE', itypel), nomte)
 !
                 if (questi .eq. 'EXI_RDM') then
-                    call dismte('MODELISATION', nomte, repi, nomodl, ierd)
-                    if ((nomodl(1:3).eq.'DKT') .or. (nomodl(1:3) .eq.'DST') .or.&
-                        (nomodl(1:3).eq.'Q4G') .or. (nomodl(1:5).eq.'CABLE') .or.&
-                        (nomodl(1:4) .eq.'POU_') .or. (nomodl(1:5).eq.'BARRE') .or.&
-                        (nomodl(1:4).eq.'DIS_') .or. (nomodl(1:5) .eq.'TUYAU') .or.&
-                        (nomodl(3:7).eq.'_DIS_') .or. (nomodl(1:6).eq.'GRILLE') .or.&
-                        (nomodl(1:5) .eq.'COQUE')) then
-                        repk='OUI'
-                        goto 110
-!
-                    endif
+                    if (lteatt('COQUE','OUI', typel=nomte)) repk='OUI'
+                    if (lteatt('POUTRE','OUI', typel=nomte)) repk='OUI'
+                    if (lteatt('DISCRET','OUI', typel=nomte)) repk='OUI'
+                    if (repk.eq.'OUI') goto 110
 !
                 else if (questi.eq.'CALC_RIGI') then
                     repk='NON'
@@ -240,7 +213,7 @@ subroutine dismlg(questi, nomobz, repi, repkz, ierd)
                 else if (questi.eq.'EXI_POUX') then
                     if ((nomte.eq.'MECA_POU_D_E') .or. ( nomte.eq.'MECA_POU_D_EM') .or.&
                         ( nomte.eq.'MECA_POU_D_T') .or. ( nomte.eq.'MECA_POU_D_TG') .or.&
-                        ( nomte.eq.'MECA_POU_D_TGM') .or. ( nomte.eq.'MECA_POU_C_T')) then
+                        ( nomte.eq.'MECA_POU_D_TGM')) then
                         repk='OUI'
                         goto 110
 !
@@ -265,7 +238,7 @@ subroutine dismlg(questi, nomobz, repi, repkz, ierd)
                     call teattr('C', 'MODTHM', mthm, iret, typel=nomte)
                     if (iret .eq. 0) then
                         repk='OUI'
-                        if ((nomte.eq.'HM_D_PLAN_SE3_P') .or. ( nomte.eq.'HM_DPQ8_P') .or.&
+                        if ((nomte.eq.'HM_DPSE3_P') .or. ( nomte.eq.'HM_DPQ8_P') .or.&
                             ( nomte.eq.'HM_DPTR6_P')) then
                             repk='OUI_P'
                         endif

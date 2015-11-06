@@ -108,8 +108,8 @@ implicit none
 !
 ! - Check informations in COMPOR <CARTE>
 !
-    call comp_meca_chck(model         , mesh       , full_elem_s, p_info_comp_valk, l_auto_elas,&
-                        l_auto_deborst, l_comp_erre)
+    call comp_meca_chck(model      , mesh          , full_elem_s, l_etat_init, p_info_comp_valk,&
+                        l_auto_elas, l_auto_deborst, l_comp_erre)
     if (l_auto_deborst) then
         call utmess('I', 'COMPOR5_20')
     endif
@@ -127,7 +127,7 @@ implicit none
 ! - Save informations in COMPOR <CARTE>
 !
     call comp_meca_save(model           , mesh            , chmate          , compor, nb_cmp,&
-                        p_info_comp_valk, p_info_comp_vali, p_info_comp_nvar)
+                        p_info_comp_valk, p_info_comp_nvar)
 !
 ! - Prepare informations about internal variables
 !

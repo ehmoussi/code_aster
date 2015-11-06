@@ -1,10 +1,31 @@
-subroutine nmfcor(modele, numedd, mate, carele, comref,&
-                  compor, lischa, fonact, parmet, carcri,&
-                  method, numins, iterat, sdstat, sdtime,&
-                  sddisc, sddyna, sdnume, sderro, defico,&
-                  resoco, resocu, parcon, valinc, solalg,&
-                  veelem, veasse, meelem, measse, matass,&
-                  lerrit)
+subroutine nmfcor(modele, numedd  , mate  , carele     , comref,&
+                  compor, lischa  , fonact, ds_algopara, carcri,&
+                  numins, iterat  , sdstat, sdtime     , sddisc,&
+                  sddyna, sdnume  , sderro, defico     , resoco,&
+                  resocu, ds_inout, valinc, solalg     , veelem,&
+                  veasse, meelem  , measse, matass     , lerrit)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/isfonc.h"
+#include "asterfort/nmadir.h"
+#include "asterfort/nmaint.h"
+#include "asterfort/nmbudi.h"
+#include "asterfort/nmchar.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmchfi.h"
+#include "asterfort/nmcret.h"
+#include "asterfort/nmctcd.h"
+#include "asterfort/nmdiri.h"
+#include "asterfort/nmfint.h"
+#include "asterfort/nmfocc.h"
+#include "asterfort/nmltev.h"
+#include "asterfort/nmrigi.h"
+#include "asterfort/nmtime.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -23,39 +44,17 @@ subroutine nmfcor(modele, numedd, mate, carele, comref,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmadir.h"
-#include "asterfort/nmaint.h"
-#include "asterfort/nmbudi.h"
-#include "asterfort/nmchar.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmchfi.h"
-#include "asterfort/nmcret.h"
-#include "asterfort/nmctcd.h"
-#include "asterfort/nmdiri.h"
-#include "asterfort/nmfint.h"
-#include "asterfort/nmfocc.h"
-#include "asterfort/nmltev.h"
-#include "asterfort/nmrigi.h"
-#include "asterfort/nmtime.h"
+!
     integer :: fonact(*)
     integer :: iterat, numins
-    real(kind=8) :: parmet(*)
-    real(kind=8) :: parcon(*)
-    character(len=16) :: method(*)
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=24) :: sdstat, sdtime
     character(len=19) :: sddisc, sddyna, sdnume
     character(len=19) :: lischa, matass
     character(len=24) :: modele, numedd, mate, carele, comref, compor
     character(len=24) :: carcri, sderro
+    type(NL_DS_InOut), intent(in) :: ds_inout
     character(len=19) :: meelem(*), veelem(*), measse(*), veasse(*)
     character(len=19) :: solalg(*), valinc(*)
     character(len=24) :: defico, resocu, resoco
@@ -70,7 +69,6 @@ subroutine nmfcor(modele, numedd, mate, carele, comref,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
 ! IN  MATE   : CHAMP MATERIAU
@@ -82,9 +80,8 @@ subroutine nmfcor(modele, numedd, mate, carele, comref,&
 ! IN  SDSTAT : SD STATISTIQUES
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  SDTIME : SD TIMER
-! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  CARCRI : PARAMETRES DES METHODES D'INTEGRATION LOCALES
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
@@ -92,7 +89,6 @@ subroutine nmfcor(modele, numedd, mate, carele, comref,&
 ! IN  DEFICO : SD DEFINITION CONTACT
 ! IN  RESOCO : SD RESOLUTION CONTACT
 ! IN  RESOCU : SD RESOLUTION LIAISON_UNILATERALE
-! IN  PARCON : PARAMETRES DU CRITERE DE CONVERGENCE REFERENCE
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
@@ -115,11 +111,7 @@ subroutine nmfcor(modele, numedd, mate, carele, comref,&
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> CORRECTION DES FORCES'
     endif
@@ -149,11 +141,11 @@ subroutine nmfcor(modele, numedd, mate, carele, comref,&
 !
 ! --- CALCUL DES CHARGEMENTS VARIABLES AU COURS DU PAS DE TEMPS
 !
-    call nmchar('VARI', 'CORRECTION', modele, numedd, mate,&
-                carele, compor, lischa, carcri, numins,&
-                sdtime, sddisc, parcon, fonact, resoco,&
-                resocu, comref, valinc, solalg, veelem,&
-                measse, veasse, sddyna)
+    call nmchar('VARI'  , 'CORRECTION', modele, numedd, mate,&
+                carele  , compor, lischa, numins, sdtime,&
+                sddisc  , fonact, resoco, resocu, comref,&
+                ds_inout, valinc, solalg, veelem, measse,&
+                veasse  , sddyna)
 !
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
@@ -165,9 +157,9 @@ subroutine nmfcor(modele, numedd, mate, carele, comref,&
 !
 ! --- OPTION POUR MERIMO
 !
-    call nmchfi(parmet, method, fonact, sddisc, sddyna,&
-                numins, iterat, defico, lcfint, lcdiri,&
-                lcbudi, lcrigi, option)
+    call nmchfi(ds_algopara, fonact, sddisc, sddyna, numins,&
+                iterat     , defico, lcfint, lcdiri, lcbudi,&
+                lcrigi     , option)
 !
 ! --- CALCUL DES FORCES INTERNES ET DE LA RIGIDITE SI NECESSAIRE
 !
@@ -187,16 +179,16 @@ subroutine nmfcor(modele, numedd, mate, carele, comref,&
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
-    if (ldccvg .eq. 1) goto 9999
+    if (ldccvg .eq. 1) goto 999
 !
 ! --- CALCUL DES FORCES DE CONTACT ET LIAISON_UNILATER
 !
     if (lctcd .or. lunil) then
-        call nmctcd(modele, mate, carele, fonact, compor,&
-                    carcri, sdtime, sddisc, sddyna, numins,&
-                    valinc, solalg, lischa, comref, defico,&
-                    resoco, resocu, numedd, parcon, veelem,&
-                    veasse, measse)
+        call nmctcd(modele, mate  , carele  , fonact, compor,&
+                    sdtime, sddisc, sddyna  , numins, valinc,&
+                    solalg, lischa, comref  , defico, resoco,&
+                    resocu, numedd, ds_inout, veelem, veasse,&
+                    measse)
     endif
 !
 ! --- ASSEMBLAGE DES FORCES INTERIEURES
@@ -224,7 +216,7 @@ subroutine nmfcor(modele, numedd, mate, carele, comref,&
 !
     call nmtime(sdtime, 'END', 'SECO_MEMB')
 !
-9999 continue
+999 continue
 !
 ! --- TRANSFORMATION DES CODES RETOURS EN EVENEMENTS
 !
@@ -234,5 +226,4 @@ subroutine nmfcor(modele, numedd, mate, carele, comref,&
 !
     call nmltev(sderro, 'ERRI', 'NEWT', lerrit)
 !
-    call jedema()
 end subroutine

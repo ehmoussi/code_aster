@@ -1,7 +1,7 @@
 # ======================================================================
 # TITRE ETUDE  : ESSAI TRIAXIAL DRAINE AVEC LE MODELE DE LAIGLE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -186,11 +186,10 @@ U2=STAT_NON_LINE(
                 LIST_INST = TEMPS2,
                                   ),
                             NEWTON=_F(
-                MATRICE = 'TANGENTE',
+                MATRICE = 'TANGENTE',MATR_RIGI_SYME='OUI',
                 REAC_ITER = 1,
                 ),
-                       SOLVEUR=_F(
-                SYME ='OUI'),
+                
                        CONVERGENCE=_F(
                 RESI_GLOB_RELA = 1.E-6,
                 ITER_GLOB_MAXI = 100)

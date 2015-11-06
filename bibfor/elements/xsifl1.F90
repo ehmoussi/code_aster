@@ -3,7 +3,7 @@ subroutine xsifl1(angl, basloc, coeff, coeff3, ddlm,&
                   igthet, ipref, ipres, ithet, jac,&
                   jlst, ka, mu, nd,&
                   ndim, nfh, nnop, nnops, itemps,&
-                  nompar, option, presn, singu, xg)
+                  nompar, option, singu, xg, igeom)
     implicit none
 !
 ! ======================================================================
@@ -22,10 +22,13 @@ subroutine xsifl1(angl, basloc, coeff, coeff3, ddlm,&
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
+#include "asterf_types.h"
+#include "asterc/r8prem.h"
 #include "asterfort/assert.h"
 #include "asterfort/chauxi.h"
 #include "asterfort/fointe.h"
 #include "asterfort/indent.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/normev.h"
 #include "asterfort/provec.h"
 #include "asterfort/utmess.h"
@@ -37,6 +40,7 @@ subroutine xsifl1(angl, basloc, coeff, coeff3, ddlm,&
 ! Calcul de G avec forces de pression XFEM sur les levres
 !   de la fissure
 !
+    integer :: igeom
     integer :: nnop, ndim, heavn(nnop,5)
     real(kind=8) :: angl(2), basloc(9*nnop), cisa, coeff, coeff3
     integer :: cpt, ddlm, ddls
@@ -47,17 +51,18 @@ subroutine xsifl1(angl, basloc, coeff, coeff3, ddlm,&
     integer :: ipref, ipres, ithet, j
     real(kind=8) :: jac
     integer :: jlst
-    real(kind=8) :: jm, dpredi(3, 3)
-    integer :: k
+    real(kind=8) :: jm, var(ndim+1)
     real(kind=8) :: k1, k2, k3, ka, lsn, lst, mu, nd(3)
     integer :: nfh, nnops, itemps
     character(len=8) :: nompar(4)
     real(kind=8) :: norme
     character(len=16) :: option
-    real(kind=8) :: p(3, 3), pres, presn(27), rb9(3, 3), rr(2)
+    real(kind=8) :: p(3, 3), pres, rb9(3, 3), rr(2)
+    real(kind=8) :: pres_test, cisa_test, r8pre
     integer :: singu
     real(kind=8) :: theta(3), u1(3), u1l(3), u2(3), u2l(3), u3(3)
-    real(kind=8) :: u3l(3), xg(4), rb33(3,3,3)
+    real(kind=8) :: u3l(3), xg(3), rb33(3,3,3), r
+    aster_logical :: axi, l_pres_var, l_cisa_var
     call vecini(3, 0.d0, e1)
     call vecini(3, 0.d0, e2)
     lsn=0.d0
@@ -128,10 +133,14 @@ subroutine xsifl1(angl, basloc, coeff, coeff3, ddlm,&
             .or. (option .eq. 'CALC_GTP_F')) then
 !
 !         VALEUR DE LA PRESSION
-        xg(ndim+1) = zr(itemps)
-        call fointe('FM', zk8(ipref), ndim+1, nompar, xg,&
+        call vecini(ndim+1, 0.d0, var)
+        do j = 1, ndim
+           var(j) = xg(j)
+        end do
+        var(ndim+1) = zr(itemps)
+        call fointe('FM', zk8(ipref), ndim+1, nompar, var,&
                     pres, ier)
-        if (ndim .eq. 2) call fointe('FM', zk8(ipref+1), ndim+1, nompar, xg,&
+        if (ndim .eq. 2) call fointe('FM', zk8(ipref+1), ndim+1, nompar, var,&
                                      cisa, ier)
         do 260 j = 1, ndim
             forrep(j,1) = -pres * nd(j)
@@ -168,6 +177,18 @@ subroutine xsifl1(angl, basloc, coeff, coeff3, ddlm,&
         divt = divt + dtdm(i,i)
 !
 390  continue
+!
+    axi = lteatt('AXIS','OUI')
+    if (axi) then
+        r = 0.d0
+        do ino = 1, nnop
+            r = r + ff(ino)*zr(igeom-1+2*(ino-1)+1)
+        end do
+        ASSERT(r.gt.0d0)
+        divt = divt + theta(1)/r
+        jac = jac * r
+    endif
+
 !
 !     BOUCLE SUR LES DEUX LEVRES
     do 300 ilev = 1, 2
@@ -226,30 +247,49 @@ subroutine xsifl1(angl, basloc, coeff, coeff3, ddlm,&
 !       -----------------------------------------
 !       5) CALCUL DE 'DFOR' =  D(PRES)/DI . THETA
 !       -----------------------------------------
-        call vecini(9, 0.d0, dpredi)
         call vecini(3, 0.d0, dfor)
 !
-        do 400 i = 1, ndim
-            do 410 j = 1, ndim
-                do 411 ino = 1, nnop
-                    if ((option.eq.'CALC_K_G') .or. ( option.eq.'CALC_G').or.&
-                        ( option.eq.'CALC_GTP')) then
-                        dpredi(i,j) = dpredi(i,j) + xcalc_heav(heavn(ino,1),hea_fa(ilev),&
-                                  heavn(ino,5))*ff(ino)*dfdi( ino,j)*zr(ipres-1+ino)*nd(i)
+!       D(PRES)/DI n'etait pas correctement calcule dans cette routine.
+!       issue24174 supprime le calcul de cette quantite (DFOR reste nul) 
+!       et interdit toute autre chose qu'un chargement constant.
+        if ( (option.eq.'CALC_K_G') .or.&
+             (option.eq.'CALC_G') ) then
+!
+!           Tester le nom de l'option (CALC_*G ou CALC_*G_F) ne suffit
+!           pas pour detecter le caractere constant du chargement si on
+!           a un evol_char. Le test ci-dessous est plus robuste.
+            r8pre = r8prem()
+!           en 2D on a les composantes PRES, CISA
+            if (ndim .eq. 2) then
+                pres_test = zr(ipres-1+2*(1-1)+1)
+                cisa_test = zr(ipres-1+2*(1-1)+2)
+                do ino = 1, nnop
+                    l_pres_var = abs( zr(ipres-1+2*(ino-1)+1) - pres_test ) .ge. r8pre
+                    l_cisa_var = abs( zr(ipres-1+2*(ino-1)+2) - cisa_test ) .ge. r8pre
+                    if ( l_pres_var .or. l_cisa_var ) then
+                        ASSERT(.false.)
                     endif
-                    if ((option.eq.'CALC_K_G_F') .or. ( option.eq.'CALC_G_F').or.&
-                        ( option.eq.'CALC_GTP_F')) then
-                        dpredi(i,j) = dpredi(i,j) + xcalc_heav(heavn(ino,1),hea_fa(ilev),&
-                                  heavn(ino,5))*dfdi( ino,j)*presn(ino)*nd(i)
+                enddo
+            endif
+!           en 3D on a uniquement la composante PRES
+            if (ndim .eq. 3) then
+                pres_test = zr(ipres-1+1)
+                do ino = 1, nnop
+                    l_pres_var = abs( zr(ipres-1+ino) - pres_test ) .ge. r8pre
+                    if ( l_pres_var ) then
+                        ASSERT(.false.)
                     endif
-411              continue
-410          continue
-400      continue
-        do 312 i = 1, ndim
-            do 313 k = 1, ndim
-                dfor(i) = dpredi(i,k) * theta(k)
-313          continue
-312      continue
+                enddo
+            endif
+!
+        elseif ( (option.eq.'CALC_K_G_F') .or.&
+                 (option.eq.'CALC_G_F') ) then
+!
+            call utmess('F', 'XFEM_99')
+!
+        else
+            ASSERT(.false.)
+        endif
 !
 !       -----------------------------------
 !       6) CALCUL EFFECTIF DE G, K1, K2, K3

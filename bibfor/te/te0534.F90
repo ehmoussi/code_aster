@@ -6,8 +6,6 @@ subroutine te0534(option, nomte)
 #include "asterfort/elelin.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterfort/teattr.h"
 #include "asterfort/tecach.h"
@@ -63,7 +61,7 @@ subroutine te0534(option, nomte)
     integer :: ivff, iadzi, iazk24, ibid, ivect, jbasec
     integer :: ndim, nfh, ddlc, ddls, nddl, nno, nnos, nnom, nnof, ddlm
     integer :: npg, npgf, jseuil
-    integer :: indco, ninter, nface, cface(18, 6)
+    integer :: indco, ninter, nface, cface(30, 6)
     integer :: nfe, singu, jstno, nvit, algocr, algofr, nvec
     integer :: nnol, pla(27), lact(8), nlact, jcohes, jheavn
     integer :: jmate, nfiss, jfisno, contac, nbspg, nspfis
@@ -81,7 +79,6 @@ subroutine te0534(option, nomte)
 !
 !.......................................................................
 !
-    call jemarq()
 !
 ! --- INITIALISATIONS
 !
@@ -315,5 +312,4 @@ subroutine te0534(option, nomte)
                     vect=zr(ivect))
     endif
 !
-    call jedema()
 end subroutine

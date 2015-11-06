@@ -1,6 +1,6 @@
 # TITRE VALIDATION DE RIGI_MISS_3D AVEC DES DIS_CONTACT POUR DECOLLEMENT
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -166,9 +166,6 @@ MELM=CALC_MATR_ELEM(OPTION='MASS_MECA',
 
 
 NUM=NUME_DDL(MATR_RIGI=MELR,
-   #          METHODE='MULT_FRONT',
-   #          RENUM='LDLT');
-   #          RENUM='MDA'
              );
 
 
@@ -330,7 +327,7 @@ ASSEMBLAGE(MODELE=MODELE,
 #                                          'LIGRAD'),
 #                                ),
 #                   );
-# # 
+# #
 # IMPR_TABLE(TABLE=MASSTOT,);
 
 
@@ -565,8 +562,7 @@ EVOL=STAT_NON_LINE(MODELE=MODELE,
                       SOLVEUR=_F(RENUM='METIS',
                                  STOP_SINGULIER='NON',
                                  METHODE='MULT_FRONT',
-                                 NPREC=15,
-                                 SYME='NON'),
+                                 NPREC=15,),
                       EXCIT=(
                              _F(CHARGE=COND_LIB,),
                              _F(CHARGE=CHAPP,),),
@@ -611,7 +607,6 @@ EVOL=DYNA_NON_LINE(reuse=EVOL,MODELE=MODELE,
                                      ITER_GLOB_MAXI=20,),
                       ARCHIVAGE=_F(LIST_INST=TEMPLI,),);
 
-#  Le TOLE_MACHINE est du a clap0f0q (32 bits)
 TEST_RESU(RESU=(_F(INST=0.0,
                    RESULTAT=EVOL,
                    NOM_CHAM='DEPL',
@@ -641,7 +636,7 @@ TEST_RESU(RESU=(_F(INST=0.0,
                    NOM_CHAM='DEPL',
                    NOEUD='N1',
                    NOM_CMP='DX',
-                   VALE_CALC=-3.6555389040987E-04,TOLE_MACHINE=6.E-6,
+                   VALE_CALC=-3.6555389040987E-04,TOLE_MACHINE=6.E-6,  # En attente issue24202 
                    CRITERE=('RELATIF', 'RELATIF'),
                    ),
                 ),

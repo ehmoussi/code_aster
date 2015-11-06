@@ -1,5 +1,5 @@
 subroutine jevech(nmparz, louez, itab)
-use module_calcul, only : ca_caindz_, ca_capoiz_, ca_evfini_, ca_iachoi_,&
+use calcul_module, only : ca_caindz_, ca_capoiz_, ca_iachoi_,&
      ca_iachok_, ca_iaoppa_, ca_iawlo2_, ca_iawloc_,&
      ca_iel_, ca_igr_, ca_nbgr_, ca_nomte_, ca_nparin_, ca_npario_, ca_option_
 implicit none
@@ -28,7 +28,7 @@ implicit none
 #include "asterc/indik8.h"
 #include "asterfort/assert.h"
 #include "asterfort/chloet.h"
-#include "asterfort/contex.h"
+#include "asterfort/contex_param.h"
 #include "asterfort/jenonu.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
@@ -53,10 +53,9 @@ implicit none
     integer :: ilchlo, k, kk, debugr
     integer ::  iparg,  lgcata
     integer ::    jceld, adiel
-    integer :: debgr2, lonchl, decael, iadzi, iazk24, jrsvi, jcrsvi, i1
+    integer :: debgr2, lonchl, decael, iadzi, iazk24
     integer :: opt, iaopd2, iaoplo, iapara, ipara, npari2
 !
-    integer :: ich
 !
     aster_logical :: etendu
     character(len=24) :: valk(5)
@@ -86,7 +85,7 @@ implicit none
         valk(1) = nompar
         valk(2) = ca_option_
         call utmess('E', 'CALCUL_15', nk=2, valk=valk)
-        call contex(ca_option_, ' ')
+        call contex_param(ca_option_, ' ')
     endif
 !
 ! --- ON VERIFIE QUE LES PARAMETRE IN SONT EN LECTURE
@@ -104,24 +103,12 @@ implicit none
     lgcata=zi(ca_iawlo2_-1+5*(ca_nbgr_*(iparg-1)+ca_igr_-1)+2)
     debugr=zi(ca_iawlo2_-1+5*(ca_nbgr_*(iparg-1)+ca_igr_-1)+5)
 !
-!     -- CALCUL DE JRSVI ET JCRSVI :
-    jrsvi=0
-    if (ca_evfini_ .eq. 1) then
-        ich=zi(ca_iawloc_-1+3*(iparg-1)+3)
-        if (iparg .gt. ca_nparin_ .and. ich .gt. 0) then
-            if (zk8(ca_iachok_-1+2*(ich-1)+1) .eq. 'RESL') then
-                jrsvi=zi(ca_iachoi_-1+3*(ich-1)+2)
-                jcrsvi=zi(ca_iachoi_-1+3*(ich-1)+3)
-            endif
-        endif
-    endif
-!
     if (lgcata .eq. -1) then
         valk(1) = nompar
         valk(2) = ca_option_
         valk(3) = ca_nomte_
         call utmess('E', 'CALCUL_16', nk=3, valk=valk)
-        call contex(ca_option_, nompar)
+        call contex_param(ca_option_, nompar)
     endif
 !
 !
@@ -152,7 +139,7 @@ implicit none
         valk(2) = ca_option_
         valk(3) = ca_nomte_
         call utmess('E', 'CALCUL_17', nk=3, valk=valk)
-        call contex(ca_option_, nompar)
+        call contex_param(ca_option_, nompar)
 !
     endif
     ASSERT(iachlo.ne.-2)
@@ -168,15 +155,8 @@ implicit none
         decael = (adiel-debgr2)
         lonchl = zi(jceld-1+zi(jceld-1+4+ca_igr_)+4+4* (ca_iel_-1)+3)
     else
-        if (jrsvi .eq. 0) then
-            decael = (ca_iel_-1)*lgcata
-            lonchl = lgcata
-        else
-            i1 = zi(jcrsvi-1+ca_igr_)
-            decael = zi(jrsvi-1+i1-1+ca_iel_)
-            lonchl = zi(jrsvi-1+i1-1+ca_iel_+1) - decael
-            decael = decael -1
-        endif
+        decael = (ca_iel_-1)*lgcata
+        lonchl = lgcata
     endif
     itab = iachlo+debugr-1+decael
 !
@@ -206,12 +186,12 @@ implicit none
                     call utmess('F', 'CALCUL_23', nk=4, valk=valk)
 !
                 else
-                    call utmess('E', 'CALCUL_19', nk=4, valk=valk)
 !
                     write (6,*) 'ERREUR JEVECH ZL :',nompar, (zl(&
                     ilchlo+debugr-1+decael-1+kk),kk=1,lonchl)
                     write (6,*) 'MAILLE: ',zk24(iazk24-1+3)
-                    call contex(ca_option_, nompar)
+                    call utmess('E', 'CALCUL_19', nk=4, valk=valk)
+                    call contex_param(ca_option_, nompar)
                 endif
             endif
  10     continue

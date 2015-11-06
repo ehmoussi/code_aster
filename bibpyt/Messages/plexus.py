@@ -82,6 +82,7 @@ ne permet pas à CALC_EUROPLEXUS de retrouver les informations.
     Lancement d'Europlexus en utilisant %(k1)s
 """),
 
+
     14 : _(u"""
 Le fichier MED contenant les résultats d'Europlexus est introuvable ou vide.
 L'exécution d'Europlexus s'est probablement mal déroulée.
@@ -90,6 +91,13 @@ L'exécution d'Europlexus s'est probablement mal déroulée.
     15 : _(u"""Les différentes occurrences de RIGI_PARASOL dans AFFE_CARA_ELEM n'ont pas la même
 liste de caractéristiques (mot-clé CARA).
 CALC_EUROPLEXUS ne sait pas traiter de tels cas.
+"""),
+
+    16 : _(u""" Dans l'une des occurrences du mot-clé facteur %(k1)s du concept issue de AFFE_CARA_ELEM,
+les informations données ne peuvent être transmises à Europlexus car il n'est pas aussi riche que Code_Aster
+pour la présente fonctionnalité.
+Pour le mot-clé %(k2)s, les valeurs en positions %(i1)d et %(i2)d de VALE doivent être égales pour que la
+traduction vers Europlexus soit possible.
 """),
 
     17 : _(u"""
@@ -106,6 +114,11 @@ en état initial ne sera pas transmis à EPX pour les éléments affectés des m
 """),
 
     20 : _(u"""Le concept %(k1)s donné par %(k2)s n'a pas été trouvé.'
+"""),
+
+    21 : _(u"""
+Dans l'occurrence %(i1)d du mot-clé COURBE, NOM_COURBE dépasse.%(i2)d caractères.
+Le nom de la colonne correspondante sera tronqué dans la table. 
 """),
 
     22 : _(u"""La valeur du mot-clé %(k1)s du matériau %(k2)s est différente de %(k3)s.
@@ -174,7 +187,7 @@ On ne trouve pas le mot-clé %(k1)s dans le matériau %(k2)s. Il est indispensab
 """),
 
     34 : _(u"""
-Le groupe %(k1)s est donné dans AFFE_CARA_ELEM, mais n'est pas présent dans le MODELE.
+Le groupe %(k1)s est donné dans AFFE_CARA_ELEM ou dans COMPORTEMENT, mais n'est pas présent dans le MODELE.
 """),
 
     35 : _(u"""
@@ -299,8 +312,7 @@ ne contient pas de champ %(k1)s. Il ne peut pas être traité.
 """),
 
     52 : _(u"""
-La valeur %(k1)s n'est pas autorisée pour l'opérande %(k2)s dans CALC_EUROPLEXUS pour le mot-clé
-facteur %(k3)s d'AFFE_CARA_ELEM.
+CALC_EUROPLEXUS ne sait pas traduire une instance du mot-clé facteur %(k1)s d'AFFE_CARA_ELEM.
 """),
 
     53 : _(u"""
@@ -323,5 +335,12 @@ LIRE_EUROPLEXUS ne sait pas traduire les données de ce champ. Les éléments du
 Code_Aster associés aux mêmes éléments du maillage, s'ils existent,
 gardent des valeurs nulles sur le champ correspondant.
 """),
+
+    56 : _(u"""
+Dans une occurrence du mot-clé facteur %(k1)s de AFFE_CARA_ELEM, on de trouve pas
+le mot-clé %(k2)s qui est obligatoire.
+"""),
+
+
 
 }

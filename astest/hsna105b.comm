@@ -1,6 +1,6 @@
 # TITRE Expansion d'un cylindre creux infini avec prise en compte des dissipations thermiques dues aux deformations mecaniques
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -72,9 +72,10 @@ DSIGEPSI=DEFI_FONCTION(NOM_PARA='TEMP',
                        VALE=(0.0   ,2.1E8,
                              10000.,2.1E8,),);
 
+RHOF=DEFI_CONSTANTE(VALE = 2700.0,)
 MATER=DEFI_MATERIAU(ELAS_FO=_F(E=E,
                                NU=NU,
-                               RHO=2700.0,
+                               RHO=RHOF,
                                TEMP_DEF_ALPHA=TREF,
                                ALPHA=ALPHA,),
                     ECRO_COOK_FO=_F(A=SY,

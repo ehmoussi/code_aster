@@ -1,8 +1,19 @@
-subroutine nmini0(zpmet, zpcri, zconv, zpcon, znmeth,&
-                  fonact, parmet, parcri, conv, parcon,&
-                  method, eta, numins, matass, zmeelm,&
-                  zmeass, zveelm, zveass, zsolal, zvalin,&
-                  sdimpr)
+subroutine nmini0(list_func_acti, eta    , nume_inst  , matass  , zmeelm,&
+                  zmeass        , zveelm , zveass     , zsolal  , zvalin,&
+                  ds_print      , ds_conv, ds_algopara, ds_inout)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterc/r8vide.h"
+#include "asterfort/assert.h"
+#include "asterfort/nmchai.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/CreateConvDS.h"
+#include "asterfort/CreatePrintDS.h"
+#include "asterfort/CreateAlgoParaDS.h"
+#include "asterfort/CreateInOutDS.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -22,86 +33,73 @@ subroutine nmini0(zpmet, zpcri, zconv, zpcon, znmeth,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-! aslint: disable=W1504
-    implicit none
-#include "jeveux.h"
-#include "asterc/r8vide.h"
-#include "asterfort/assert.h"
-#include "asterfort/nmchai.h"
-#include "asterfort/obcrea.h"
-    integer :: zpmet, zpcri, zconv
-    integer :: zpcon, znmeth
-    integer :: fonact(*)
-    real(kind=8) :: parmet(zpmet), parcri(zpcri), conv(zconv)
-    real(kind=8) :: parcon(zpcon)
-    character(len=16) :: method(znmeth)
-    character(len=19) :: matass
-    character(len=24) :: sdimpr
-    integer :: numins
-    real(kind=8) :: eta
-    integer :: zmeelm, zmeass, zveelm, zveass, zsolal, zvalin
+    integer, intent(out) :: list_func_acti(*)
+    character(len=19), intent(out) :: matass
+    integer, intent(out) :: nume_inst
+    real(kind=8), intent(out) :: eta
+    integer, intent(in) :: zmeelm
+    integer, intent(in) :: zmeass
+    integer, intent(in) :: zveelm
+    integer, intent(in) :: zveass
+    integer, intent(in) :: zsolal
+    integer, intent(in) :: zvalin
+    type(NL_DS_Print), intent(out) :: ds_print
+    type(NL_DS_Conv), intent(out) :: ds_conv
+    type(NL_DS_AlgoPara), intent(out) :: ds_algopara
+    type(NL_DS_InOut), intent(out) :: ds_inout
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (INITIALISATIONS)
+! MECA_NON_LINE - Initializations
 !
-! PREMIERES INITIALISATIONS DE MECA_NON_LINE: MISES A ZERO
+! Creation of datastructures
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! IN  SDIMPR : SD AFFICHAGE
+! Out list_func_acti   : list of active functionnalities
+! Out nume_inst        : index of current time step
+! Out ds_print         : datastructure for printing parameters
+! Out ds_conv          : datastructure for convergence management
+! Out ds_algopara      : datastructure for algorithm parameters
+! Out ds_inout         : datastructure for input/output management
 !
+! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
+    real(kind=8), parameter :: zero = 0.d0
+    integer :: long
 !
+! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: zero
-    parameter    (zero=0.d0)
-    integer :: i, long
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        write (ifm,*) '<MECANONLINE> Create datastructures'
+    endif
 !
-! ----------------------------------------------------------------------
+! - Create printing management datastructure
 !
+    call CreatePrintDS(ds_print)
+!
+! - Create convergence management datastructure
+!
+    call CreateConvDS(ds_conv)
+!
+! - Create algorithm parameters datastructure
+!
+    call CreateAlgoParaDS(ds_algopara)
+!
+! - Create input/output management datastructure
+!
+    call CreateInOutDS('MECA', ds_inout)
 !
 ! --- FONCTIONNALITES ACTIVEES               (NMFONC/ISFONC)
 !
-    do 2 i = 1, 100
-        fonact(i) = 0
- 2  end do
-!
-! --- PARAMETRES DES METHODES DE RESOLUTION  (NMDOMT)
-!
-    do 3 i = 1, zpmet
-        parmet(i) = zero
- 3  end do
-!
-! --- PARAMETRES DES CRITERES DE CONVERGENCE (NMLECT)
-!
-    do 4 i = 1, zpcri
-        parcri(i) = zero
- 4  end do
-!
-! --- INFORMATIONS SUR LA CONVERGENCE DU CALCUL
-!
-    do 5 i = 1, zconv
-        conv (i) = r8vide()
- 5  end do
-    conv(1) = -1
-!
-! --- PARAMETRES DU CRITERE DE CONVERGENCE EN CONTRAINTE (NMLECT)
-!
-    do 7 i = 1, zpcon
-        parcon(i) = zero
- 7  end do
-!
-! --- METHODES DE RESOLUTION
-!
-    do 8 i = 1, znmeth
-        method(i) = ' '
- 8  end do
+    list_func_acti(1:100) = 0
 !
 ! --- INITIALISATION BOUCLE EN TEMPS
 !
-    numins = 0
-    eta = 0.d0
+    nume_inst = 0
+    eta    = zero
     matass = '&&OP0070.MATASS'
 !
 ! --- VERIF. LONGUEURS VARIABLES CHAPEAUX (SYNCHRO OP0070/NMCHAI)
@@ -118,9 +116,5 @@ subroutine nmini0(zpmet, zpcri, zconv, zpcon, znmeth,&
     ASSERT(long.eq.zsolal)
     call nmchai('VALINC', 'LONMAX', long)
     ASSERT(long.eq.zvalin)
-!
-! --- CREATION SD AFFICHAGE
-!
-    call obcrea('AFFICHAGE', sdimpr)
 !
 end subroutine

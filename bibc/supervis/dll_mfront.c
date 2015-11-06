@@ -197,6 +197,41 @@ void DEFSSSPPPPP(MFRONT_GET_POINTERS,
 #endif
 }
 
+void DEFSSSP(MFRONT_SET_OUTOFBOUNDS_POLICY,
+             mfront_set_outofbounds_policy,
+    char* nomlib, STRING_SIZE lnomlib, char* nomsub, STRING_SIZE lnomsub,
+    char* nommod, STRING_SIZE lnommod, INTEGER* value)
+{
+#ifdef _POSIX
+    char *libname, *symbol, *model, *symbname=NULL;
+    int retour = 0;
+    FUNC_MFRONT_SET_OUTOFBOUNDS_POLICY(f_mfront) = NULL;
+    PyObject* DLL_DICT;
+    DLL_DICT = get_dll_register_dict();
+
+    libname = MakeCStrFromFStr(nomlib, lnomlib);
+    symbol = MakeCStrFromFStr(nomsub, lnomsub);
+    model = MakeCStrFromFStr(nommod, lnommod);
+
+    mfront_name(libname, symbol, model, "_setOutOfBoundsPolicy", &symbname);
+    if ( symbname == NULL )
+    {
+        error_symbol_not_found(libname, symbname);
+    }
+
+    f_mfront = (FUNC_MFRONT_SET_OUTOFBOUNDS_POLICY())libsymb_get_symbol(DLL_DICT,libname,symbname);
+    CALLMFRONTSETOUTOFBOUNDSPOLICY(f_mfront, (unsigned short)(*value));
+
+    FreeStr(libname);
+    FreeStr(model);
+    FreeStr(symbol);
+    FreeStr(symbname);
+#else
+    printf("Not available under Windows.\n");
+    abort();
+#endif
+}
+
 void DEFSSSPP(MFRONT_GET_NBVARI, mfront_get_nbvari,
     char* nomlib, STRING_SIZE lnomlib, char* nomsub, STRING_SIZE lnomsub,
     char* nommod, STRING_SIZE lnommod,
@@ -215,14 +250,14 @@ void DEFSSSPP(MFRONT_GET_NBVARI, mfront_get_nbvari,
 
     mfront_name(libname, symbol, model, "_InternalStateVariablesTypes", &symbname);
     if ( symbname == NULL ) {
-        error_symbol_not_found(libname, symbname);
+        error_symbol_not_found(libname, symbol);
     }
 
     int* int_var = (int*)libsymb_get_symbol(DLL_DICT, libname, symbname);
 
     mfront_name(libname, symbol, model, "_nInternalStateVariables", &symbname);
     if ( symbname == NULL ) {
-        error_symbol_not_found(libname, symbname);
+        error_symbol_not_found(libname, symbol);
     }
     unsigned short* nb_int_var = (unsigned short*)libsymb_get_symbol(DLL_DICT, libname, symbname);
 
@@ -249,7 +284,7 @@ void DEFSSSPP(MFRONT_GET_NBVARI, mfront_get_nbvari,
                 AS_ASSERT( *ndim == 2 || *ndim == 3 );
             }
         }
-       else if ( int_var[i] == 3 )
+        else if ( int_var[i] == 3 )
         {
                  (*nbvari) += 9;
         }
@@ -367,6 +402,7 @@ int load_mfront_lib(const char* libname, const char* symbol)
     }
 
     if ((error = dlerror()) != NULL)  {
+        DEBUG_DLL_VV("not found %s%s\n", ":-(", "");
         return 1;
     }
     DEBUG_DLL_VV("found: %s %p", "address", (char *)f_mfront);
@@ -439,7 +475,7 @@ void mfront_name(
 void error_symbol_not_found(const char* libname, const char* symbname)
 {
     char *valk;
-    INTEGER ibid=0, n0=0, nk=0;
+    INTEGER ibid=0, n0=0, nk=3;
     DOUBLE rbid=0.;
     valk = MakeTabFStr(nk, VALK_SIZE);
     SetTabFStr(valk, 0, "MFRONT", VALK_SIZE);

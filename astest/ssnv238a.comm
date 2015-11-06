@@ -1,6 +1,6 @@
 #  TITRE  TEST chergement cyclique traction-compression
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -17,7 +17,7 @@
 # ======================================================================
 #
 #  TEST A DU  BENCHMARK SUR L EVALUATION DES MODELES POUR LE BETON (2014)
-#  TEST LOI KITT_RGI (module ENDO_PORO_BETON)
+#  TEST LOI KIT_RGI (module ENDO_PORO_BETON)
 # ________________________________________________________
 #  MAILLAGE : 1 CUB20
 #
@@ -52,12 +52,13 @@ ALPHA=DEFI_CONSTANTE(VALE=0,);
 #Les propriétés matériaux entrées ne sont pas Toutes physiques. 
 #Il est nécessaire d'identifier les paramètres à partir d'essais expérimentaux
 
+RHOF=DEFI_CONSTANTE(VALE = 2300.,)
 MATERIAU=DEFI_MATERIAU(ELAS_FO =_F(     E     = E,
                                    NU    = Nu,
                                    TEMP_DEF_ALPHA=20.,
                                    ALPHA   =ALPHA,
                                    K_DESSIC=0.,
-                                   B_ENDOGE=0.,RHO=2300),
+                                   B_ENDOGE=0.,RHO=RHOF),
                         PORO_BETON =_F(HYDS = 0.2,
                                    F_C    = 40,
                                    F_T    = 4,
@@ -267,68 +268,49 @@ RES1=CALC_CHAMP(reuse=RES1,RESULTAT=RES1,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=(
 
 # VALEURS DE NON-REGRESSION
 TEST_RESU(RESU=(_F(NUME_ORDRE=25,
-                   REFERENCE='NON_DEFINI',
                    RESULTAT=RES1,
                    NOM_CHAM='SIGM_ELNO',
                    NOEUD='N6',
                    NOM_CMP='SIXX',
                    VALE_CALC=3.41812195348,
-                   VALE_REFE=3.41812195348,
-                   PRECISION=1.0000000000000001E-5,
                    MAILLE='M1',),
                 _F(NUME_ORDRE=50,
-                   REFERENCE='NON_DEFINI',
                    RESULTAT=RES1,
                    NOM_CHAM='SIGM_ELNO',
                    NOEUD='N6',
                    NOM_CMP='SIXX',
                    VALE_CALC=2.8763697378,
-                   VALE_REFE=2.8763697378,
-                   PRECISION=1.0000000000000001E-5,
                    MAILLE='M1',),
                 _F(NUME_ORDRE=150,
-                   REFERENCE='NON_DEFINI',
                    RESULTAT=RES1,
                    NOM_CHAM='SIGM_ELNO',
                    NOEUD='N6',
                    NOM_CMP='SIXX',
                    VALE_CALC=0.208565555073 ,
-                   VALE_REFE=0.208565555073,
-                   PRECISION=1.0000000000000001E-5,
                    MAILLE='M1',),
                 _F(NUME_ORDRE=182,
-                   REFERENCE='NON_DEFINI',
                    RESULTAT=RES1,
                    NOM_CHAM='SIGM_ELNO',
                    NOEUD='N6',
                    NOM_CMP='SIXX',
                    VALE_CALC=-39.9608704872,
-                   VALE_REFE=-39.9608704872,
-                   PRECISION=1.0000000000000001E-5,
                    MAILLE='M1',),
                 _F(NUME_ORDRE=282,
-                   REFERENCE='NON_DEFINI',
                    RESULTAT=RES1,
                    NOM_CHAM='SIGM_ELNO',
                    NOEUD='N6',
                    NOM_CMP='SIXX',
                    VALE_CALC=-14.8938610556,
-                   VALE_REFE=-14.8938610556,
-                   PRECISION=1.0000000000000001E-5,
                    MAILLE='M1',),
                 _F(NUME_ORDRE=332,
                    RESULTAT=RES1,
                    NOM_CHAM='SIGM_ELNO',
-                   REFERENCE='NON_DEFINI',
                    NOEUD='N6',
                    NOM_CMP='SIXX',
                    VALE_CALC=-0.352871253166,
-                   VALE_REFE=-0.352871253166,
-                   PRECISION=1.0000000000000001E-5,
                    MAILLE='M1',),
                 ),
           )
 
 
 FIN();
-

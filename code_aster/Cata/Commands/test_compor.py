@@ -22,19 +22,9 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: jean-michel.proix at edf.fr
 
-
-#              MACRO "TEST_THERMOPLASTIQUE"
-#           ----------------------------
-# def test_compor_sdprod(self, COMPORTEMENT, **kwargs):
-#     """Ne produit une table qu'en présence de COMPORTEMENT."""
-#     if COMPORTEMENT:
-#         return table_sdaster
-#     return None
-
-
 TEST_COMPOR =MACRO(nom="TEST_COMPOR",
                    op=OPS('Macro.test_compor_ops.test_compor_ops'),
-                  # sd_prod=test_compor_sdprod,
+                   UIinfo={"groupes":("Résultats et champs","Utilitaires",)},
                    sd_prod=table_sdaster,
                    docu="",reentrant='n',
                    fr=tr("macro de test des comportements incrementaux dependant de la temperature"),
@@ -43,7 +33,7 @@ TEST_COMPOR =MACRO(nom="TEST_COMPOR",
 
          COMPORTEMENT       =C_COMPORTEMENT('SIMU_POINT_MAT'),
          NEWTON          =C_NEWTON(),
-         CONVERGENCE     =C_CONVERGENCE(),
+         CONVERGENCE     =C_CONVERGENCE('SIMU_POINT_MAT'),
 
          b_ther          =BLOC(condition = "OPTION == 'THER'",
             regles=(EXCLUS('C_PRAG','D_SIGM_EPSI'),),

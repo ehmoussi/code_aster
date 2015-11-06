@@ -15,10 +15,13 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine ntcrli(inst_init, list_inst, sddisc)
+    subroutine ntcrli(inst_init, list_inst, sddisc, lostat)
         character(len=19), intent(in) :: sddisc
         character(len=19), intent(in) :: list_inst
         real(kind=8), intent(in) :: inst_init
+        aster_logical, intent(in) :: lostat
     end subroutine ntcrli
 end interface

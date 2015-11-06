@@ -1,6 +1,6 @@
 # TITRE MODELISATION DU GONFLEMENT DE L ARGILE GONFLANTE (3D THH2MS)
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -333,7 +333,7 @@ U2=STAT_NON_LINE(MODELE=MODELE,
                  METHODE='NEWTON_KRYLOV',
                  SOLVEUR=_F(METHODE='PETSC',ALGORITHME='GMRES',PRE_COND='LDLT_INC'),
                  CONVERGENCE=_F(ITER_GLOB_MAXI=40,
-                                ITER_GLOB_ELAS=50,RESI_GLOB_RELA = RESI_GLOB_RELA,
+                                RESI_GLOB_RELA = RESI_GLOB_RELA,
                                 ),
                  )
 
@@ -351,9 +351,9 @@ U2=STAT_NON_LINE(reuse=U2,
                  INCREMENT=_F(LIST_INST = TEMPS2,),
                  METHODE='NEWTON_KRYLOV',
                  NEWTON=_F( MATRICE = 'TANGENTE',REAC_ITER = 1,),
-                 SOLVEUR=_F(METHODE='PETSC',ALGORITHME='GMRES',PRE_COND='LDLT_SP',PCENT_PIVOT=20,),
+                 SOLVEUR=_F(METHODE='PETSC',ALGORITHME='FGMRES',PRE_COND='LDLT_SP',PCENT_PIVOT=20,),
                  CONVERGENCE=_F(ITER_GLOB_MAXI=40,
-                                ITER_GLOB_ELAS=50,RESI_GLOB_RELA = RESI_GLOB_RELA,
+                                RESI_GLOB_RELA = RESI_GLOB_RELA,
                                 ),
                  )
 

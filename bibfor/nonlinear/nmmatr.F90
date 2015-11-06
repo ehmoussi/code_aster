@@ -1,7 +1,21 @@
-subroutine nmmatr(phasez, fonact, lischa, solveu, numedd,&
-                  sddyna, numins, defico, resoco, meelem,&
-                  measse, matass)
-! ----------------------------------------------------------------------
+subroutine nmmatr(phasez, fonact, lischa, numedd, sddyna,&
+                  numins, defico, resoco, meelem, measse,&
+                  matass)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/ascoma.h"
+#include "asterfort/detrsd.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/isfonc.h"
+#include "asterfort/mtcmbl.h"
+#include "asterfort/mtdefs.h"
+#include "asterfort/ndynlo.h"
+#include "asterfort/ndynre.h"
+#include "asterfort/nmasfr.h"
+#include "asterfort/nmchex.h"
+!
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -20,21 +34,6 @@ subroutine nmmatr(phasez, fonact, lischa, solveu, numedd,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/ascoma.h"
-#include "asterfort/detrsd.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/mtcmbl.h"
-#include "asterfort/mtdefs.h"
-#include "asterfort/ndynlo.h"
-#include "asterfort/ndynre.h"
-#include "asterfort/nmasfr.h"
-#include "asterfort/nmchex.h"
     character(len=*) :: phasez
     character(len=19) :: matass
     character(len=19) :: sddyna
@@ -43,7 +42,7 @@ subroutine nmmatr(phasez, fonact, lischa, solveu, numedd,&
     integer :: numins
     character(len=19) :: meelem(*), measse(*)
     character(len=24) :: numedd
-    character(len=19) :: lischa, solveu
+    character(len=19) :: lischa
 !
 ! ----------------------------------------------------------------------
 !
@@ -64,7 +63,6 @@ subroutine nmmatr(phasez, fonact, lischa, solveu, numedd,&
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  NUMEDD : NOM DE LA NUMEROTATION MECANIQUE
 ! IN  LISCHA : SD LISTE DES CHARGES
-! IN  SOLVEU : NOM DU SOLVEUR DE NEWTON
 ! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
 ! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
 ! OUT MATASS : MATRICE ASSEMBLEE RESULTANTE
@@ -72,7 +70,7 @@ subroutine nmmatr(phasez, fonact, lischa, solveu, numedd,&
 ! ----------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: ldyna, lctcd, lexpl, lamor, lsuiv, lshima, lprem
+    aster_logical :: ldyna, lctcd, lexpl, lamor, l_neum_undead, lshima, lprem
     real(kind=8) :: coerig, coeamo, coemas, coeshi
     character(len=8) :: nomddl
     real(kind=8) :: coemat(3)
@@ -87,11 +85,7 @@ subroutine nmmatr(phasez, fonact, lischa, solveu, numedd,&
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE><CALC> CALCUL MATRICE GLOBALE'
     endif
@@ -109,12 +103,12 @@ subroutine nmmatr(phasez, fonact, lischa, solveu, numedd,&
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
-    lctcd = isfonc(fonact,'CONT_DISCRET')
-    lsuiv = isfonc(fonact,'FORCE_SUIVEUSE')
-    lamor = ndynlo(sddyna,'MAT_AMORT')
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lexpl = ndynlo(sddyna,'EXPLICITE')
-    lshima = ndynlo(sddyna,'COEF_MASS_SHIFT')
+    lctcd         = isfonc(fonact,'CONT_DISCRET')
+    l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
+    lamor         = ndynlo(sddyna,'MAT_AMORT')
+    ldyna         = ndynlo(sddyna,'DYNAMIQUE')
+    lexpl         = ndynlo(sddyna,'EXPLICITE')
+    lshima        = ndynlo(sddyna,'COEF_MASS_SHIFT')
 !
 ! --- PREMIER PAS DE TEMPS ?
 !
@@ -209,13 +203,13 @@ subroutine nmmatr(phasez, fonact, lischa, solveu, numedd,&
         matass = rigid
     endif
     if (phase .eq. 'ACCEL_INIT') then
-        goto 9999
+        goto 999
     endif
 !
 ! --- PRISE EN COMPTE DE LA MATRICE TANGENTE DES FORCES SUIVEUSES
 !
-    if (lsuiv) then
-        call ascoma(meelem, numedd, solveu, lischa, matass)
+    if (l_neum_undead) then
+        call ascoma(meelem, numedd, lischa, matass)
     endif
 !
 ! --- PRISE EN COMPTE DE LA MATRICE TANGENTE DU FROTTEMENT
@@ -224,7 +218,6 @@ subroutine nmmatr(phasez, fonact, lischa, solveu, numedd,&
         call nmasfr(defico, resoco, matass)
     endif
 !
-9999 continue
+999 continue
 !
-    call jedema()
 end subroutine

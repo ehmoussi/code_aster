@@ -7,6 +7,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/edgani.h"
 #include "asterfort/edgequ.h"
 #include "asterfort/edgini.h"
@@ -15,6 +16,7 @@ implicit none
 #include "asterfort/mgauss.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/verift.h"
+#include "asterfort/get_meta_id.h"
 #include "asterfort/get_meta_phasis.h"
 !
 ! ======================================================================
@@ -34,19 +36,33 @@ implicit none
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 !
-    integer :: ndim, imat, iret, kpg, ksp
-    character(len=16) :: option
-    character(len=8) :: typmod(2)
-    character(len=*) :: fami
-    real(kind=8) :: crit(3), instam, instap, coord(3)
-    real(kind=8) :: deps2(6)
-    real(kind=8) :: sigm2(6), vim(2), sigp(6), vip(2)
-    real(kind=8) :: dsidep(6, 6)
+    character(len=*), intent(in) :: fami
+    integer, intent(in) :: kpg
+    integer, intent(in) :: ksp
+    integer, intent(in) :: ndim
+    integer, intent(in) :: imat
+    real(kind=8), intent(in) :: crit(*)
+    character(len=8), intent(in) :: typmod(2)
+    real(kind=8), intent(in) :: instam
+    real(kind=8), intent(in) :: instap
+    real(kind=8), intent(in) :: coord(3)
+    real(kind=8), intent(in) :: deps2(*)
+    real(kind=8), intent(in) :: sigm2(*)
+    real(kind=8), intent(in) :: vim(2)
+    character(len=16), intent(in) :: option
+    real(kind=8), intent(out) :: sigp(*)
+    real(kind=8), intent(out) :: vip(2)
+    real(kind=8), intent(out) :: dsidep(6, 6)
+    integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!     MODELE VISCOPLASTIQUE SANS SEUIL DE EDGAR
-!     INTEGRATION DU MODELE PAR UNE METHODE DE NEWTON
+! Comportment
+!
+! META_LEMA_ANI
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  NDIM    : DIMENSION DE L'ESPACE
 ! IN  IMAT    : ADRESSE DU MATERIAU CODE
 ! IN  COMPOR  : COMPORTEMENT : RELCOM ET DEFORM
@@ -75,18 +91,17 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i, j, k, nz, ndimsi
+    integer :: i, j, k, nb_phasis, ndimsi, meta_id
     integer :: ire2
-    integer :: iter, itemax, nb_phasis, meta_type
+    integer :: iter, itemax
     real(kind=8) :: tm, tp, tref, temp, dt
-    real(kind=8) :: phase(3), phasm(3), zalpha
-    real(kind=8) :: zero, prec, rbid
-    real(kind=8) :: kron(6)
+    real(kind=8) :: phase(5), phasm(5), zalpha
+    real(kind=8) :: zero, prec, rbid, tole_bound
     real(kind=8) :: mum, mu, troiskm, troisk, anic(6, 6)
     real(kind=8) :: ani(6, 6)
     real(kind=8) :: m(3), n(3), gamma(3), depsth
     real(kind=8) :: deps(2*ndim), sigm(2*ndim)
-    real(kind=8) :: trdeps, trsigm, trsigp, epsthe(3)
+    real(kind=8) :: trdeps, trsigm, trsigp
     real(kind=8) :: dvdeps(2*ndim), dvepel(2*ndim)
     real(kind=8) :: dvsigm(2*ndim), dvsitr(2*ndim), dvsigp(2*ndim)
     real(kind=8) :: eqsitr, eqeptr
@@ -94,11 +109,10 @@ implicit none
     real(kind=8) :: y(2*ndim+1), g(2*ndim+1), maxg, dgdy(2*ndim+1, 2*ndim+1)
     real(kind=8) :: vect(2*ndim), mat(2*ndim+1, 2*ndim+1)
     real(kind=8) :: r1(2*ndim+1, 2*ndim), h1(2*ndim, 2*ndim)
-    character(len=1) :: c1
+    character(len=1) :: poum
     aster_logical :: resi, rigi
     logical :: zcylin
-!
-    data          kron/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/
+    real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
 !
 ! LEXIQUE SUR LE NOM DES VARIABLES VALABLES DANS TOUTES LES ROUTINES
 ! INDICE I QUAND SOMMATION SUR LA DIMENSION DE L ESPACE
@@ -109,18 +123,18 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
-    rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
-!
-    if (ndim .eq. 2) then
-        ndimsi=4
-    else
-        ndimsi=6
-    endif
-!
-    zero = 100.d0*r8prem()
-    dt   = instap-instam
-    iret = 0
+    do i = 1, 2*ndim
+        sigp(i) = 0.d0
+    end do
+    vip(1:2)        = 0.d0
+    dsidep(1:6,1:6) = 0.d0
+    iret            = 0
+    ndimsi          = 2*ndim
+    resi            = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
+    rigi            = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
+    dt              = instap-instam
+    zero            = 100.d0*r8prem()
+    tole_bound      = 100.d0*r8prem()
 !
 ! - Get temperatures
 !
@@ -132,32 +146,29 @@ implicit none
                 ksp, tp, ire2)
     if (resi) then
         temp=tp
-        c1='+'
+        poum='+'
     else
         temp=tm
-        c1='-'
+        poum='-'
     endif
 !
-! - Get metallurgical phasis
+! - Get metallurgy type
 !
-    meta_type = 2
-    nz        = 3
-    nb_phasis = 2
+    call get_meta_id(meta_id, nb_phasis)
+    ASSERT(meta_id.eq.2)
+    ASSERT(nb_phasis.eq.3)
+!
+! - Get phasis
+!
     if (resi) then
-        call get_meta_phasis(fami     , '+'  , kpg   , ksp , meta_type,&
-                             nb_phasis, phase, zcold_ = zalpha, zhot_ = phase(nz))
-        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_type,&
+        call get_meta_phasis(fami     , '+'  , kpg   , ksp , meta_id,&
+                             nb_phasis, phase, zcold_ = zalpha, tole_bound_ = tole_bound)
+        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_id,&
                              nb_phasis, phasm)
     else
-        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_type,&
-                             nb_phasis, phase, zcold_ = zalpha, zhot_ = phase(nz))
+        call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_id,&
+                             nb_phasis, phase, zcold_ = zalpha, tole_bound_ = tole_bound)
     endif
-    do k = 1, nz
-        if (phase(k) .le. zero) phase(k)=0.d0
-        if (phase(k) .ge. 1.d0) phase(k)=1.d0
-    end do
-    if (zalpha .le. zero) zalpha=0.d0
-    if (zalpha .ge. 1.d0) zalpha=1.d0
 !
 ! **************************************
 ! 2 - RECUPERATION DES CARACTERISTIQUES
@@ -166,7 +177,7 @@ implicit none
 ! REPERE (R - T - Z) DONC IL FAUT FAIRE UN CHANGEMENT DE REPERE
 ! EN AXI C EST SIMPLE CAR IL SUFFIT D INVERSER LES TERMES 2 ET 3
 !
-    call edgmat(fami   , kpg   , ksp   , imat  , c1 ,&
+    call edgmat(fami   , kpg   , ksp   , imat  , poum ,&
                 zalpha , temp  , dt    , mum   , mu ,&
                 troiskm, troisk, anic  , m     , n  ,&
                 gamma  , zcylin)
@@ -208,8 +219,7 @@ implicit none
 ! 3.2 - TRACE
 !
         call verift(fami, kpg, ksp, 'T', imat,&
-                    vepsth=epsthe)
-        depsth = phase(nz)*epsthe(1) + zalpha*epsthe(2)
+                    epsth_meta_=depsth)
         trdeps = (deps(1)+deps(2)+deps(3))/3.d0
         trsigm = (sigm(1)+sigm(2)+sigm(3))/3.d0
         trsigp = trsigm*troisk/troiskm + troisk*(trdeps-depsth)
@@ -355,7 +365,7 @@ implicit none
 ! SI FULL MAIS VIP(2)=1 => MATRICE COHERENTE A TP
 !
     if (rigi) then
-        if ((option(1:4).eq.'RIGI') .or. ((option(1:4).eq.'FULL').and.( vip(2).eq.0.d0))) then
+        if ((option(1:4).eq.'RIGI') .or. ((option(1:4).eq.'FULL').and.( vip(2).le.0.5d0))) then
 !
             do i = 1, ndimsi
                 do j = 1, ndimsi
@@ -375,7 +385,7 @@ implicit none
             end do
         endif
 !
-        if ((option(1:4).eq.'FULL') .and. (vip(2).eq.1.d0)) then
+        if ((option(1:4).eq.'FULL') .and. (vip(2).ge.0.5d0)) then
 !
             do j = 1, ndimsi
                 do i = 1, ndimsi+1

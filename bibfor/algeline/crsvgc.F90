@@ -1,5 +1,5 @@
-subroutine crsvgc(motfac, solveu, istop, nprec, syme,&
-                  epsmat, mixpre, kmd, kellag, kxfem)
+subroutine crsvgc(motfac, solveu, istop, nprec, &
+                  epsmat, mixpre, kellag, kxfem)
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -13,7 +13,7 @@ subroutine crsvgc(motfac, solveu, istop, nprec, syme,&
 !
     integer :: istop, nprec
     real(kind=8) :: epsmat
-    character(len=3) :: syme, mixpre, kmd, kellag
+    character(len=3) :: mixpre, kellag
     character(len=8) :: kxfem
     character(len=16) :: motfac
     character(len=19) :: solveu
@@ -40,10 +40,8 @@ subroutine crsvgc(motfac, solveu, istop, nprec, syme,&
 ! OUT    SOLVEU  : LE SOLVEUR EST CREE ET INSTANCIE
 ! IN  IN ISTOP   : PARAMETRE LIE AUX MOT-CLE STOP_SINGULIER
 ! IN  IN NPREC   :                           NPREC
-! IN  K3 SYME    :                           SYME
 ! IN  R8 EPSMAT  :                           FILTRAGE_MATRICE
 ! IN  K3 MIXPRE  :                           MIXER_PRECISION
-! IN  K3 KMD     :                           MATR_DISTRIBUEE
 ! IN  K3 KELLAG  :                           ELIM_LAGR
 ! IN  K8 KXFEM   :                           PRE_COND_XFEM
 ! ----------------------------------------------------------
@@ -109,7 +107,7 @@ subroutine crsvgc(motfac, solveu, istop, nprec, syme,&
     slvk(2) = precon
     slvk(3) = solvbd
     slvk(4) = renum
-    slvk(5) = syme
+    slvk(5) = 'XXXX'
     slvk(6) = 'XXXX'
     slvk(7) = 'XXXX'
     slvk(8) = 'XXXX'

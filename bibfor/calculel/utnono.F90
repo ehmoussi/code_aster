@@ -71,7 +71,7 @@ subroutine utnono(mess, nomma, type, nomgrp, nomobj,&
         typgrp = '.GROUPEMA       '
         nom = '.NOMMAI         '
     else
-        goto 9999
+        goto 999
     endif
 !
     call jeexin(jexnom(nomma//typgrp, nomgrp), iret1)
@@ -81,20 +81,20 @@ subroutine utnono(mess, nomma, type, nomgrp, nomobj,&
         nbno=0
     endif
     if (nbno .eq. 0) then
-        if (typm .eq. ' ') goto 9999
+        if (typm .eq. ' ') goto 999
         if (type(1:5) .eq. 'NOEUD') then
             call utmess(typm, 'ELEMENTS_67', sk=nomgrp)
         else
             call utmess(typm, 'ELEMENTS_73', sk=nomgrp)
         endif
-        goto 9999
+        goto 999
     endif
 !
     iret = 0
     ASSERT(nbno.gt.0)
     if (nbno .ne. 1) then
         iret = 1
-        if (typm .eq. 'F' .or. typm .eq. 'E') then
+        if (typm .ne. ' ') then
             call codent(nbno, 'D', knbno)
             if (type(1:5) .eq. 'NOEUD') then
                 valk(1) = nomgrp
@@ -105,13 +105,13 @@ subroutine utnono(mess, nomma, type, nomgrp, nomobj,&
                 valk(2) = knbno
                 call utmess(typm, 'CALCULEL5_21', nk=2, valk=valk)
             endif
-            goto 9999
+            goto 999
         endif
     endif
 !
     call jeveuo(jexnom(nomma//typgrp, nomgrp), 'L', iad)
     call jenuno(jexnum(nomma//nom, zi(iad)), nomobj)
 !
-9999  continue
+999 continue
     call jedema()
 end subroutine

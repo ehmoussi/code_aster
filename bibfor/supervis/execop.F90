@@ -1,4 +1,5 @@
 subroutine execop( nuoper )
+use calcul_module, only : ca_iactif_
     implicit none
     integer, intent(in) :: nuoper
 !     ------------------------------------------------------------------
@@ -31,7 +32,6 @@ subroutine execop( nuoper )
 #include "asterfort/iunifi.h"
 #include "asterfort/jermxd.h"
 #include "asterfort/jevema.h"
-#include "asterfort/mecoel.h"
 #include "asterfort/op9999.h"
 #include "asterfort/opsexe.h"
 #include "asterfort/post_op.h"
@@ -74,8 +74,9 @@ subroutine execop( nuoper )
     nivpgm = 1
     unite = iunifi('MESSAGE')
 !
-!     -- ON INITIALISE LA VARIABLE IACTIF D'UN COMMON DE CALCUL:
-    call mecoel(0)
+!   -- on initialise la variable ca_iactif de calcul_module
+!      (pour le cas ou on serait sorti brutalement de la routine calcul (exception))
+    ca_iactif_ = 0
 !
     k8tab(1) = 'LIMIT_JV'
     k8tab(2) = 'MEM_TOTA'

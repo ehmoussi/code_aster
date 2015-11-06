@@ -1,8 +1,7 @@
-subroutine comcq1(fami, kpg, ksp, mod, imate,&
-                  compor, carcri, instm, instp, eps,&
-                  deps, tempm, tempp, sigm, vim,&
-                  option, angmas, sigp, vip, dsde,&
-                  codret)
+subroutine comcq1(fami  ,kpg   ,ksp   ,imate ,compor,&
+                  carcri,instm ,instp ,eps   ,deps  ,&
+                  sigm  ,vim   ,option,angmas,sigp  ,&
+                  vip   ,dsde  ,codret)
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -19,7 +18,7 @@ subroutine comcq1(fami, kpg, ksp, mod, imate,&
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! aslint: disable=W1504
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
     implicit none
 #include "asterfort/nm1dci.h"
 #include "asterfort/nm1dis.h"
@@ -32,103 +31,29 @@ subroutine comcq1(fami, kpg, ksp, mod, imate,&
 !
 !  VARIABLE ENTREE/SORTIE
     character(len=*) :: fami
-    character(len=16) :: option, compor(*), valkm(2)
-    integer :: codret, kpg, ksp, mod, imate
-    real(kind=8) :: tempm, tempp, angmas(3), sigm(4), eps(4), deps(4), val(1)
+    character(len=16) :: option, compor(*)
+    integer :: codret, kpg, ksp, imate
+    real(kind=8) :: angmas(3), sigm(4), eps(4), deps(4)
     real(kind=8) :: vim(*), vip(*), sigp(4), dsde(6, 6), carcri(*), lc(1)
-    real(kind=8) :: instm, instp, ep, em, depsth(1), etg, depsm, wkout(1)
-    character(len=8) :: typmod(2), nompar
-    integer :: codres(1)
+    real(kind=8) :: instm, instp,  wkout(1)
+    character(len=8) :: typmod(2)
 !
 !
-!  VARIABLE LOCALE
-    integer :: iret
     call r8inir(36, 0.d0, dsde, 1)
     call r8inir(4, 0.d0, sigp, 1)
 !
     codret=0
 !     INTEGRATION DE LA LOI DE COMPORTEMENT POUR LES COQUE_1D :
-!     COQUE_C_PLAN : COMPORTEMNT 1D
-!     COQUE_AXIS ET COQUE_D_PLAN : COMPORTEMENT C_PLAN
-!
-!
-    if (mod .gt. 0) then
-!
-!     EN COQUE_D_PLAN ET COQUE_AXIS, DIRECTION Y : CPLAN (EVT DEBORST)
+!     COQUE_AXIS : COMPORTEMENT C_PLAN
+!     COQUE_AXIS, DIRECTION Y : CPLAN (EVT DEBORST)
 !     DIRECTION Z : EPSZZ CONNU
 !
         typmod(1) = 'C_PLAN  '
-        typmod(2) = '        '
         call nmcomp(fami, kpg, ksp, 2, typmod,&
                     imate, compor, carcri, instm, instp,&
                     4, eps, deps, 4, sigm,&
                     vim, option, angmas, 1, lc,&
                     sigp, vip, 36, dsde, 1,&
                     wkout, codret)
-    else
-!
-!         EN COQUE_C_PLAN : COMPORTEMENT 1D.
-!
-        if ((compor(5).eq.'DEBORST') .or. (compor(1).eq.'SANS')) then
-            typmod(1) = 'COMP1D'
-            typmod(2) = '        '
-            call nmcomp(fami, kpg, ksp, 2, typmod,&
-                        imate, compor, carcri, instm, instp,&
-                        4, eps, deps, 4, sigm,&
-                        vim, option, angmas, 1, lc,&
-                        sigp, vip, 36, dsde, 1,&
-                        wkout, codret)
-!
-        else
-!
-!            COMPORTEMENT INTEGRE EN 1D
-!
-!            CARACTERISTIQUES ELASTIQUES A TMOINS
-            nompar = 'TEMP'
-            call rcvalb('RIGI', kpg, 1, '-', imate,&
-                        ' ', 'ELAS', 1, nompar, [tempm],&
-                        1, 'E', val, codres, 1)
-            em=val(1)            
-!
-! ---        CARACTERISTIQUES ELASTIQUES A TPLUS
-            call rcvalb('RIGI', kpg, 1, '+', imate,&
-                        ' ', 'ELAS', 1, nompar, [tempp],&
-                        1, 'E', val, codres, 1)
-            ep=val(1)            
-            if (compor(1) .eq. 'ELAS') then
-                call verifg('RIGI', kpg, 3, 'T', imate,&
-                            'ELAS', 1, depsth, iret)
-                sigp(1) = ep* (sigm(1)/em+deps(1)-depsth(1))
-                dsde(1,1) = ep
-                dsde(2,2) = ep
-            else if ((compor(1).eq.'VMIS_ISOT_LINE') .or. (compor(1).eq.'VMIS_ISOT_TRAC')) then
-                call verift(fami, kpg, 1, 'T', imate,&
-                            epsth=depsth(1))
-                depsm=deps(1)-depsth(1)
-                call nm1dis(fami, kpg, ksp, imate, em,&
-                            ep, sigm(1), depsm, vim, option,&
-                            compor, ' ', sigp(1), vip, etg)
-                dsde(1,1) = etg+1.d-6*ep
-!               DSDE(1,1) = ETG
-                dsde(2,2) = ep
-                sigp(2)=0.d0
-            else if (compor(1).eq.'VMIS_CINE_LINE') then
-                call verift(fami, kpg, 1, 'T', imate,&
-                            epsth=depsth(1))
-                depsm=deps(1)-depsth(1)
-                call nm1dci(fami, kpg, ksp, imate, em,&
-                            ep, sigm(1), depsm, vim, option,&
-                            ' ', sigp(1), vip, ep)
-                dsde(1,1) = etg
-                dsde(2,2) = ep
-            else
-                valkm(1) = compor(1)
-                valkm(2) = 'COMP_INCR'
-                call utmess('F', 'ALGORITH6_81', nk=2, valk=valkm)
-            endif
-!
-        endif
-!
-    endif
 !
 end subroutine

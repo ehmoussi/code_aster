@@ -62,7 +62,8 @@ subroutine apvsmb(kptsc, lmd, rsolu)
 !
 !----------------------------------------------------------------
 !     Variables PETSc
-    PetscInt :: low2, high2, ierr
+    PetscInt :: low2, high2
+    PetscErrorCode ::  ierr
     PetscScalar :: xx(1)
     PetscOffset :: xidx
     mpi_int :: mrank, msize
@@ -74,12 +75,12 @@ subroutine apvsmb(kptsc, lmd, rsolu)
     call asmpi_comm('GET', mpicomm)
 !
 !     -- LECTURE DU COMMUN
-    nomat = nomats(kptsc)
+    nomat = nomat_courant
+    nonu = nonu_courant
     bs = tblocs(kptsc)
     fictif = fictifs(kptsc)
     ASSERT(bs.ge.1)
     nosolv = nosols(kptsc)
-    nonu = nonus(kptsc)
 
 !
     if (lmd) then

@@ -1,6 +1,6 @@
 # TITRE INDENTATION ELASTOPLASTIQUE D'UN DEMI-PLAN
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -125,7 +125,7 @@ LINST=DEFI_LIST_REEL(DEBUT=0.0,
                                  _F(JUSQU_A=1.0,
                                     NOMBRE=17,),),);
 
-U=STAT_NON_LINE(SOLVEUR=_F(SYME='OUI',#METHODE='MUMPS',
+U=STAT_NON_LINE(SOLVEUR=_F(#METHODE='MUMPS',
                            ),
                 MODELE=MO,
                 CHAM_MATER=CHMAT,
@@ -228,7 +228,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 # TESTS DE NON-REGRESSION (AUTRES)
 TEST_RESU(RESU=_F(INST=1.0,
                   RESULTAT=U,
-                  NOM_CHAM='VALE_CONT',
+                  NOM_CHAM='CONT_NOEU',
                   NOEUD='N295',
                   NOM_CMP='RN',
                   VALE_CALC=1.1058342751679E+06,
@@ -238,7 +238,7 @@ TEST_RESU(RESU=_F(INST=1.0,
 
 TEST_RESU(RESU=_F(INST=1.0,
                   RESULTAT=U,
-                  NOM_CHAM='VALE_CONT',
+                  NOM_CHAM='CONT_NOEU',
                   NOEUD='N294',
                   NOM_CMP='RN',
                   VALE_CALC=0.0E+00,

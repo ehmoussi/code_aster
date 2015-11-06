@@ -1,4 +1,11 @@
-subroutine nmimr0(sdimpr, nombcl)
+subroutine nmimr0(ds_print, loop_name)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/SetCol.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -18,72 +25,49 @@ subroutine nmimr0(sdimpr, nombcl)
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
+    type(NL_DS_Print), intent(inout) :: ds_print
+    character(len=4), intent(in) :: loop_name
 !
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmimca.h"
-#include "asterfort/obgeti.h"
-#include "asterfort/obgetk.h"
-#include "asterfort/obgeto.h"
-#include "asterfort/oblgai.h"
-#include "asterfort/oblgoi.h"
-    character(len=24) :: sdimpr
-    character(len=4) :: nombcl
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! MECA_NON_LINE - Print management
 !
-! ROUTINE MECA_NON_LINE (UTILITAIRE)
+! Set values are not affected on cols for a loop level
 !
-! INITIALISATION AFFECTATION DES COLONNES
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! IO  ds_print         : datastructure for printing parameters
+! In  loop_name        : name of loop
+!                         'RESI' - Loop on residuals
+!                         'NEWT' - Newton loop
+!                         'FIXE' - Fixed points loop
+!                         'INST' - Step time loop
+!                         'CALC' - Computation
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  SDIMPR : SD AFFICHAGE
-! IN  NOMBCL : NOM DE LA BOUCLE
-!               'RESI' - BOUCLE SUR LES RESIDUS D'EQUILIBRE
-!               'NEWT' - BOUCLE DE NEWTON
-!               'FIXE' - BOUCLE DE POINT FIXE
-!               'INST' - BOUCLE SUR LES PAS DE TEMPS
-!               'CALC' - CALCUL
-! IN  SDCONV : SD GESTION DE LA CONVERGENCE
+    integer :: i_col, nb_cols
+    character(len=9) :: col_name
+    type(NL_DS_Table) :: table_cvg
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: icol, ncol
-    character(len=9) :: typcol
-    aster_logical :: laffe, lacti
-    character(len=24) :: slcolo, sdtabc, sdcolo
-    character(len=4) :: lieuin
+    table_cvg = ds_print%table_cvg
+    nb_cols   = table_cvg%nb_cols
 !
-! ----------------------------------------------------------------------
+! - No value affected in row for loop level
 !
-    call jemarq()
-!
-! --- INITIALISATIONS
-!
-    laffe = .false.
-!
-! --- LISTE DES COLONNES DISPONIBLES DANS LE TABLEAU DE CONVERGENCE
-!
-    call obgeto(sdimpr, 'TABLEAU_CONV', sdtabc)
-    call obgeto(sdtabc, 'COLONNES_DISPOS', slcolo)
-    call obgeti(slcolo, 'NBRE_STRUCTS', ncol)
-!
-! --- DESAFFECTE TOUTES LES COLONNES
-!
-    do 30 icol = 1, ncol
-        call oblgoi(slcolo, icol, sdcolo)
-        call oblgai(slcolo, icol, lacti)
-        if (lacti) then
-            call obgetk(sdcolo, 'TYPE_COLONNE', typcol)
-            call obgetk(sdcolo, 'TYPE_COLONNE', lieuin)
-            if (nombcl .eq. lieuin) call nmimca(sdimpr, typcol, laffe)
+    do i_col = 1, nb_cols
+        if (table_cvg%l_cols_acti(i_col)) then
+            col_name = table_cvg%cols(i_col)%name
+            if (loop_name .eq. col_name(1:4)) then
+                call SetCol(table_cvg, name_ = col_name, flag_affe_ = .false._1)
+            endif
         endif
- 30 end do
+    end do
 !
-    call jedema()
+! - Set convergence table
+!
+    ds_print%table_cvg = table_cvg
+!
 end subroutine

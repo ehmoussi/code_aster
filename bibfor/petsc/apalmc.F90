@@ -17,7 +17,7 @@ subroutine apalmc(kptsc)
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
     implicit none
-! person_in_charge: thomas.de-soza at edf.fr
+! person_in_charge: natacha.bereux at edf.fr
 #include "asterf_types.h"
 #include "asterf.h"
 #include "jeveux.h"
@@ -64,7 +64,8 @@ subroutine apalmc(kptsc)
 !
 !----------------------------------------------------------------
 !     Variables PETSc
-    PetscInt :: low2, high2, low1, high1,ierr
+    PetscInt :: low2, high2, low1, high1
+    PetscErrorCode ::  ierr
     integer :: neq, neq2
     Vec :: vtmp
     Mat :: a
@@ -76,9 +77,9 @@ subroutine apalmc(kptsc)
     call asmpi_comm('GET', mpicou)
 !
 !     -- LECTURE DU COMMUN
-    nomat = nomats(kptsc)
+    nomat = nomat_courant
+    nonu = nonu_courant
     nosolv = nosols(kptsc)
-    nonu = nonus(kptsc)
 !
     call jeveuo(nonu//'.SMOS.SMDI', 'L', vi=smdi)
     call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)

@@ -27,7 +27,9 @@ subroutine op0077()
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
 #include "asterc/gettco.h"
+#include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/dcapno.h"
 #include "asterfort/excygl.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
@@ -46,7 +48,9 @@ subroutine op0077()
 #include "asterfort/recygl.h"
 #include "asterfort/refdaj.h"
 #include "asterfort/regeec.h"
+#include "asterfort/rege2c.h"
 #include "asterfort/regegl.h"
+#include "asterfort/regegc.h"
 #include "asterfort/regene.h"
 #include "asterfort/regres.h"
 #include "asterfort/rehaec.h"
@@ -73,8 +77,12 @@ subroutine op0077()
     integer :: j2refe, j3refe, jrefn, jrefnb, lmacr, lmodge
     integer ::  n1, n2, nbcham, numsec
     integer, pointer :: ordr(:) => null()
+    character(len=3) :: typesca
     character(len=8), pointer :: refm(:) => null()
+    character(len=16) :: depl
+    character(len=24) :: chamol
 !-----------------------------------------------------------------------
+    data depl   /'DEPL            '/
     data k8b/'        '/
     data param/'MODELE','CHAMPMAT','CARAELEM'/
     data vbl24 /'                        '/
@@ -221,12 +229,36 @@ subroutine op0077()
         if (typrep(1:11) .eq. 'MODELE_GENE') then
 !
             call getvid(' ', 'SQUELETTE', nbval=0, nbret=isk)
+            call jeveuo(resin(1:8)//'           .ORDR','L',ibid)
+            call dcapno(resin, depl, zi(ibid), chamol)
+            call dismoi('TYPE_SCA', chamol(1:19), 'CHAM_NO', repk=typesca)
+            
             if (isk .eq. 0) then
                 call getvtx(' ', 'SOUS_STRUC', scal=nomsst, nbret=ibid)
-                call regeec(nomres, resin, nomsst)
+                !-- les routines REGEEC et REGE2C font la meme chose, une en reel,
+                !-- l'autre en complexe. En cas de modification d'une des routines,
+                !-- ne pas oublier de reporter le changement dans l'autre.
+                if (typesca .eq. "R") then
+                    call regeec(nomres, resin, nomsst)
+                elseif (typesca .eq. "C") then
+                    call rege2c(nomres, resin, nomsst)
+                else
+                    ASSERT(.false.)
+                endif
+                
             else
                 call getvid(' ', 'SQUELETTE', scal=mailsk, nbret=ibid)
-                call regegl(nomres, resin, mailsk, profno)
+                
+                !-- les routines REGEGL et REGEGC font la meme chose, une en reel,
+                !-- l'autre en complexe. En cas de modification d'une des routines,
+                !-- ne pas oublier de reporter le changement dans l'autre.
+                if (typesca .eq. "R") then
+                    call regegl(nomres, resin, mailsk, profno)
+                elseif (typesca .eq. "C") then
+                    call regegc(nomres, resin, mailsk, profno)
+                else
+                    ASSERT(.false.)
+                endif
                 call jeveuo(profno//'.REFN', 'E', jrefnb)
                 zk24(jrefnb)=mailsk
                 zk24(jrefnb+1)='DEPL_R'

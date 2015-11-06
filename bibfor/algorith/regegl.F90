@@ -57,6 +57,14 @@ subroutine regegl(nomres, resgen, mailsk, profno)
 !  ISSUS DE LA SOUS-STRUCTURATION GENERALE.
 !  LE CONCEPT RESULTAT EST UN RESULTAT COMPOSE "MODE_MECA"
 !
+!
+!  /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\
+!
+!--   LES ROUTINES REGEGL ET REGEGC FONT LA MEME CHOSE, UNE EN REEL,
+!--   L'AUTRE EN COMPLEXE. EN CAS DE MODIFICATION D'UNE DES ROUTINES,
+!--   NE PAS OUBLIER DE REPORTER LE CHANGEMENT DANS L'AUTRE.
+!
+!  /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\
 !-----------------------------------------------------------------------
 !
 ! NOMRES  /I/ : NOM K8 DU CONCEPT MODE_MECA RESULTAT
@@ -73,7 +81,7 @@ subroutine regegl(nomres, resgen, mailsk, profno)
     integer ::  llors, llprs, llrot
     integer ::  nbbas, nbcmp, nbcou, nbmas, nbmax, nbmod(1), nbnot, nbsst
     integer :: neq, neqs, nno, numo, nutars,   elim, lmoet
-    integer :: neqet, lmapro, neqred, lsilia, numsst, lsst
+    integer :: neqet, lmapro, neqred, lsilia, numsst, lsst, lrevind
     integer :: iadpar(12)
     integer :: vali(2), i_ligr_ss
     real(kind=8) :: compx, compy, compz, efmasx, efmasy, efmasz, freq, genek, fpartx, fparty
@@ -211,6 +219,12 @@ subroutine regegl(nomres, resgen, mailsk, profno)
             neqet=neqet+zi(lsilia+i-1)
         end do
         call wkvect('&&MODE_ETENDU_REST_ELIM', 'V V R', neqet, lmoet)
+        !-- Recherche de la position dans MODGEN des SST de NUMGEN
+        call wkvect('&&REGEGL.REVERSE_INDEX','V V I',nbsst,lrevind)
+        do k = 1, nbsst
+          call jenonu(jexnom(nomsst, zk8(lsst+k-1)), numsst)
+          zi(lrevind+numsst-1)=k
+        end do
     endif
 !
 !C
@@ -273,7 +287,7 @@ subroutine regegl(nomres, resgen, mailsk, profno)
             if (iret .ne. 0) then
                 kbid='  '
                 if (elim .ne. 0) then
-                    call jenonu(jexnom(nomsst, zk8(lsst+k-1)), numsst)
+                    numsst=zi(lrevind+k-1)
                     ieq=0
                     do i1 = 1, numsst-1
                         ieq=ieq+zi(lsilia+i1-1)
@@ -388,12 +402,14 @@ subroutine regegl(nomres, resgen, mailsk, profno)
 !
 !  ROTATION DU CHAMPS AUX NOEUDS
 !
-        call rotchm(profno, vale, rotz, nbsst, skeleton,&
-                    nbnot, nbcmp, 3)
-        call rotchm(profno, vale, roty, nbsst, skeleton,&
-                    nbnot, nbcmp, 2)
         call rotchm(profno, vale, rotx, nbsst, skeleton,&
                     nbnot, nbcmp, 1)
+        call rotchm(profno, vale, roty, nbsst, skeleton,&
+                    nbnot, nbcmp, 2)
+        call rotchm(profno, vale, rotz, nbsst, skeleton,&
+                    nbnot, nbcmp, 3)
+            
+
     end do
 !
 ! --- MENAGE
@@ -402,6 +418,7 @@ subroutine regegl(nomres, resgen, mailsk, profno)
     AS_DEALLOCATE(vr=rotz)
 !
     call jedetr('&&MODE_ETENDU_REST_ELIM')
+    call jedetr('&&REGEGL.REVERSE_INDEX')
     call jedetr(indirf)
     call jelibe(prof_gene//'.NUEQ')
     call jedetr('&&REGEGL.NUME')

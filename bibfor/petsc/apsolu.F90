@@ -57,7 +57,8 @@ subroutine apsolu(kptsc, lmd, rsolu)
 !
 !----------------------------------------------------------------
 !     Variables PETSc
-    PetscInt :: i, neqg, neql, nuglpe, high2, low2, ierr
+    PetscInt :: i, neqg, neql, nuglpe, high2, low2
+    PetscErrorCode ::  ierr
     PetscScalar :: xx(1)
     PetscOffset :: xidx
     VecScatter :: ctx
@@ -67,8 +68,8 @@ subroutine apsolu(kptsc, lmd, rsolu)
     call jemarq()
 !
 !     -- LECTURE DU COMMUN
-    nomat = nomats(kptsc)
-    nonu = nonus(kptsc)
+    nomat = nomat_courant
+    nonu = nonu_courant
     bs = tblocs(kptsc)
     fictif = fictifs(kptsc)
 !

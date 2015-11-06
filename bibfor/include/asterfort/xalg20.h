@@ -16,17 +16,15 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface 
-    subroutine xalg20(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
-                      igeom, jlsn, pmilie, ninter, ainter, ar, npts, nptm, &
-                      pmmax, nmilie, mfis, lonref, pinref)
+    subroutine xalg20(ndim, elrefp, it, nnose, cnset, typma, ndime,&
+                      geom, lsnelp, pmilie, ninter, ainter, ar, npts, nptm, &
+                      pmmax, nmilie, mfis, lonref, pinref, pintt, pmitt, jonc)
         integer :: ndim
-        integer :: nnop
         integer :: it
         integer :: nnose
         integer :: cnset(*)
         integer :: ndime
-        integer :: igeom
-        integer :: jlsn
+        real(kind=8) :: geom(81)
         integer :: ninter
         integer ::  ar(12, 3)
         integer :: npts
@@ -41,5 +39,9 @@ interface
         real(kind=8) :: ainter(*)
         real(kind=8) :: pmilie(*)
         real(kind=8) :: pinref(*) 
+        real(kind=8) :: lsnelp(*)
+        real(kind=8) :: pintt(*)
+        real(kind=8) :: pmitt(*)
+        aster_logical :: jonc
     end subroutine xalg20
 end interface 

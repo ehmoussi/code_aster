@@ -1,30 +1,14 @@
-subroutine nmflam(option, modele, numedd, numfix, carele,&
-                  compor, solveu, numins, mate, comref,&
-                  lischa, defico, resoco, parmet, fonact,&
-                  carcri, sdimpr, sdstat, sddisc, sdtime,&
-                  sddyna, sdpost, valinc, solalg, meelem,&
-                  measse, veelem, sderro)
+subroutine nmflam(option, modele, numedd, numfix     , carele,&
+                  compor, numins, mate       , comref,&
+                  lischa, defico, resoco, ds_algopara, fonact,&
+                  carcri, sdstat, sddisc, sdtime     , sddyna,&
+                  sdpost, valinc, solalg, meelem     , measse,&
+                  veelem, sderro)
 !
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
+use NonLin_Datastructure_type
 !
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+implicit none
 !
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
-! person_in_charge: mickael.abbas at edf.fr
-!
-! aslint: disable=W1504
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8maem.h"
@@ -46,13 +30,32 @@ subroutine nmflam(option, modele, numedd, numfix, carele,&
 #include "asterfort/rsexch.h"
 #include "asterfort/utmess.h"
 !
+! ======================================================================
+! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+! (AT YOUR OPTION) ANY LATER VERSION.
+!
+! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+!
+! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+! ======================================================================
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
     integer :: numins
-    real(kind=8) :: parmet(*)
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=16) :: option
     character(len=19) :: meelem(*)
     character(len=24) :: resoco, defico
-    character(len=24) :: sdimpr, sdstat, sdtime, sderro
-    character(len=19) :: lischa, solveu, sddisc, sddyna, sdpost
+    character(len=24) :: sdstat, sdtime, sderro
+    character(len=19) :: lischa, sddisc, sddyna, sdpost
     character(len=24) :: modele, numedd, numfix, carele, compor
     character(len=19) :: veelem(*), measse(*)
     character(len=19) :: solalg(*), valinc(*)
@@ -83,12 +86,10 @@ subroutine nmflam(option, modele, numedd, numfix, carele,&
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  RESOCO : SD RESOLUTION CONTACT
 ! IN  DEFICO : SD DEFINITION CONTACT
-! IN  SDIMPR : SD AFFICHAGE
 ! IN  SDTIME : SD TIMER
 ! IN  SDSTAT : SD STATISTIQUES
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
-! IN  PARMET : PARAMETRES DES METHODES DE RESOLUTION (VOIR NMLECT)
-! IN  SOLVEU : SOLVEUR
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
 ! IN  CARCRI : PARAMETRES METHODES D'INTEGRATION LOCALES (VOIR NMLECT)
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
@@ -112,12 +113,10 @@ subroutine nmflam(option, modele, numedd, numfix, carele,&
     real(kind=8) :: csta
     character(len=4) :: mod45
     character(len=8) :: sdmode, sdstab
-    character(len=8) :: syme
-    character(len=16) :: k16bid, optmod, varacc, typmat, modrig
+    character(len=16) :: optmod, varacc, typmat, modrig
     character(len=19) :: matgeo, matas2, vecmod, champ
     character(len=19) :: champ2, vecmo2
     character(len=24) :: k24bid, ddlexc, ddlsta
-    character(len=24), pointer :: slvk(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
@@ -125,7 +124,6 @@ subroutine nmflam(option, modele, numedd, numfix, carele,&
 !
 ! --- INITIALISATIONS
 !
-    call jeveuo(solveu(1:19)//'.SLVK', 'E', vk24=slvk)
     matgeo = '&&NMFLAM.MAGEOM'
     matas2 = '&&NMFLAM.MATASS'
     linsta = .false.
@@ -141,25 +139,16 @@ subroutine nmflam(option, modele, numedd, numfix, carele,&
                 nfreq, cdsp, typmat, optmod, bande,&
                 nddle, ddlexc, nsta, ddlsta, modrig)
 !
-! --- ON FORCE LA MATRICE TANGENTE EN SYMETRIQUE A CAUSE DE SORENSEN
-!
-    syme = slvk(5)(1:8)
-    slvk(5) = 'OUI'
-!
 ! --- CALCUL DE LA MATRICE TANGENTE ASSEMBLEE ET DE LA MATRICE GEOM.
 !
-    call nmflma(typmat, mod45, defo, parmet, modele,&
-                mate, carele, sddisc, sddyna, fonact,&
-                numins, valinc, solalg, lischa, comref,&
-                defico, resoco, solveu, numedd, numfix,&
-                compor, carcri, sdstat, sdtime, meelem,&
-                measse, veelem, nddle, ddlexc, modrig,&
+    call nmflma(typmat, mod45 , defo  , ds_algopara, modele,&
+                mate  , carele, sddisc, sddyna     , fonact,&
+                numins, valinc, solalg, lischa     , comref,&
+                defico, resoco, numedd     , numfix,&
+                compor, carcri, sdstat, sdtime     , meelem,&
+                measse, veelem, nddle , ddlexc     , modrig,&
                 ldccvg, matas2, matgeo)
     ASSERT(ldccvg.eq.0)
-!
-! --- RETABLISSEMENTS VALEURS
-!
-    slvk(5) = syme(1:3)
 !
 ! --- CALCUL DES MODES PROPRES
 !
@@ -187,9 +176,9 @@ subroutine nmflam(option, modele, numedd, numfix, carele,&
     endif
     freqm = r8maem()
     numord = 0
-    do 60 i = 1, nfreqc
+    do i = 1, nfreqc
         call rsadpa(sdmode, 'L', 1, varacc, i,&
-                    0, sjv=ljeveu, styp=k16bid)
+                    0, sjv=ljeveu)
         freqv = zr(ljeveu)
         freqa = abs(freqv)
         if (freqa .lt. freqm) then
@@ -204,10 +193,10 @@ subroutine nmflam(option, modele, numedd, numfix, carele,&
         else
             ASSERT(.false.)
         endif
- 60 end do
+    end do
     if (nsta .ne. 0) then
         call rsadpa(sdstab, 'L', 1, 'CHAR_STAB', 1,&
-                    0, sjv=ljeve2, styp=k16bid)
+                    0, sjv=ljeve2)
         csta = zr(ljeve2)
         call utmess('I', 'MECANONLINE6_12', si=1, sr=csta)
     endif

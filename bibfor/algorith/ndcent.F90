@@ -1,4 +1,4 @@
-subroutine ndcent(igeom, ndim, lsn, tx, txlsn, nnc)
+subroutine ndcent(igeom, ndim, lsn, nfiss, tx, txlsn, nnc)
     implicit none
 !
 #include "jeveux.h"
@@ -9,8 +9,8 @@ subroutine ndcent(igeom, ndim, lsn, tx, txlsn, nnc)
 #include "asterfort/reereg.h"
 #include "asterfort/reerel.h"
 #include "asterfort/vecini.h"
-    integer :: igeom, nnc, ndim
-    real(kind=8) :: tx(3, 7), lsn(*), txlsn(7)
+    integer :: igeom, nnc, ndim, nfiss
+    real(kind=8) :: tx(3, 7), lsn(*), txlsn(28)
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -34,6 +34,7 @@ subroutine ndcent(igeom, ndim, lsn, tx, txlsn, nnc)
 !     ENTREE
 !       IGEOM    : ADRESSE DES COORDONNÉES DES NOEUDS DE L'ELT PARENT
 !       LSN      : LSN DES NOEUDS DE L'ELT PARENT
+!       NFISS    : NOMBRE DE FISSURES
 !     SORTIE
 !       X        : COORDONNEES DES NOEUDS MILIEUX CENTRAUX
 !       XLSN     : LSN AUX NOEUDS MILIEUX CENTRAUX
@@ -41,15 +42,15 @@ subroutine ndcent(igeom, ndim, lsn, tx, txlsn, nnc)
 !
     integer :: nbnomx
     parameter     (nbnomx = 20)
-    integer :: i, j, nnop, ibid
-    real(kind=8) :: ff(nbnomx), xlsn, xe(3)
+    integer :: i, j, nnop, ibid, ifiss, arint(7,2)
+    real(kind=8) :: ff(nbnomx), xlsn, xe(3), lsna, lsnb, lsnm
     character(len=8) :: elp
 !
 !
     call elref1(elp)
     call elrefe_info(elrefe=elp,fami='RIGI',nno=nnop)
     call matini(3, 7, 0.d0, tx)
-    call vecini(7, 0.d0, txlsn)
+    call vecini(28, 0.d0, txlsn)
 !
 !     INITIALIASATION PAR DEFAUT DU NOMBRE DE NOEUDS CENTRAUX A ZERO
 !     (E.G. TRIANGLES ET TETRAHEDRES)
@@ -121,11 +122,13 @@ subroutine ndcent(igeom, ndim, lsn, tx, txlsn, nnc)
 11      continue
 !
         call elrfvf(elp, xe, nbnomx, ff, ibid)
-        xlsn = 0
-        do 12 i = 1, nnop
-            xlsn = xlsn + ff(i)*lsn(i)
-12      continue
-        txlsn(j)=xlsn
+        do ifiss = 1, nfiss
+           xlsn = 0.d0
+           do 12 i = 1, nnop
+               xlsn = xlsn + ff(i)*lsn((i-1)*nfiss+ifiss)
+12         continue
+           txlsn((j-1)*nfiss+ifiss)=xlsn
+        end do
 10  end do
 !
 !.....................................................................
@@ -137,4 +140,63 @@ subroutine ndcent(igeom, ndim, lsn, tx, txlsn, nnc)
             tx(i,j)=xe(i)
 21      continue
 20  continue
+!
+!.....................................................................
+!      AJUSTEMENT DES LEVEL SET POUR LES ARETES INTERNES
+!
+!      connectivite des aretes internes
+    do i = 1, 7
+       do j = 1, 2
+          arint(i,j) =0
+       end do
+    end do
+!
+    if (nnop .eq. 20) then
+       arint(1,1)=2
+       arint(1,2)=4
+       arint(2,1)=2
+       arint(2,2)=5
+       arint(3,1)=3
+       arint(3,2)=6
+       arint(4,1)=3
+       arint(4,2)=8
+       arint(5,1)=4
+       arint(5,2)=5
+       arint(6,1)=6
+       arint(6,2)=8
+       arint(7,1)=6
+       arint(7,2)=4
+    else if (nnop.eq.15) then
+       arint(1,1)=1
+       arint(1,2)=5
+       arint(2,1)=2
+       arint(2,2)=6
+       arint(3,1)=1
+       arint(3,2)=6
+    else if (nnop.eq.13) then
+       arint(1,1)=1
+       arint(1,2)=3
+    else if (nnop.eq.8) then
+       arint(1,1)=2
+       arint(1,2)=4
+    endif
+!
+   do ifiss = 1, nfiss
+      do j = 1, nnc
+         lsna = lsn((arint(j,1)-1)*nfiss+ifiss)
+         lsnb = lsn((arint(j,2)-1)*nfiss+ifiss)
+         lsnm = txlsn((j-1)*nfiss+ifiss)
+         if (lsna.eq.0.d0 .and. lsnb.eq.0.d0 .and. lsnm.ne.0.d0) then
+            txlsn((j-1)*nfiss+ifiss)=0.d0
+         elseif (lsna.eq.0.d0 .and. lsnb*lsnm.lt.0.d0) then
+            txlsn((j-1)*nfiss+ifiss)=0.d0
+         elseif (lsnb.eq.0.d0 .and. lsna*lsnm.lt.0.d0) then
+            txlsn((j-1)*nfiss+ifiss)=0.d0
+         elseif (lsnm.eq.0.d0 .and. lsna*lsnb.gt.0.d0) then
+            txlsn((j-1)*nfiss+ifiss)=(lsna+lsnb)/20.d0
+         elseif (lsnm*lsna.lt.0.d0 .and. lsnm*lsnb.lt.0.d0) then
+            txlsn((j-1)*nfiss+ifiss)=(lsna+lsnb)/20.d0
+         endif
+      end do
+   end do
 end subroutine

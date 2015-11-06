@@ -24,6 +24,7 @@ from code_aster.Cata.Commons import *
 
 POST_ERREUR=MACRO(nom="POST_ERREUR",
                   op=OPS('Macro.post_erreur_ops.post_erreur_ops'),
+                  UIinfo={"groupes":("Post-traitements",)},
                   sd_prod=table_sdaster,
                   reentrant='f',
                   OPTION       = SIMP(statut='o',typ='TXM',into=("DEPL_RELA","ENER_RELA","LAGR_RELA") ),

@@ -95,12 +95,12 @@ implicit none
                     nb_edge)
     end do
 !
-! - Afffectation of linear relations
+! - Affectation of linear relations
 !
     if (nb_edge .ne. 0) then
         call utmess('I','XFEM2_4', si = nb_edge)
         if (.not.l_edge_elim) then
-            call aflrch(list_rela_line, sdcont)
+            call aflrch(list_rela_line, sdcont, 'LIN')
         endif
     endif
 !

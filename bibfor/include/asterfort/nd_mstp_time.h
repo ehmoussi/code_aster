@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,8 +18,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nd_mstp_time(result, list_func_acti, time_prev_step, l_comp_mstp)
-        character(len=8), intent(in) :: result
+    subroutine nd_mstp_time(ds_inout, list_func_acti, time_prev_step, l_comp_mstp)
+        use NonLin_Datastructure_type
+        type(NL_DS_InOut), intent(in) :: ds_inout
         integer, intent(in) :: list_func_acti(*)
         real(kind=8), intent(out) :: time_prev_step
         aster_logical, intent(out) :: l_comp_mstp

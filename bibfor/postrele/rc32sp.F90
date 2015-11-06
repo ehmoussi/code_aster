@@ -1,6 +1,6 @@
 subroutine rc32sp(typz, lieu, numsip, pi, mi,&
                   numsiq, pj, mj, seisme, mse,&
-                  spij, typeke, spmeca, spther)
+                  spij, typeke, spmeca)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -14,7 +14,6 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
 #include "asterfort/rc32st.h"
     integer :: numsip, numsiq
     real(kind=8) :: pi, mi(*), pj, mj(*), mse(*), spij(2), typeke, spmeca(2)
-    real(kind=8) :: spther(2)
     aster_logical :: seisme
     character(len=4) :: lieu
     character(len=*) :: typz
@@ -53,11 +52,10 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
 ! IN  : MSE    : EFFORTS DUS AU SEISME
 ! OUT : SPIJ   : AMPLITUDE DE VARIATION DES CONTRAINTES TOTALES
 ! OUT : SPMECA : AMPLITUDE DE VARIATION DES CONTRAINTES MECANIQUES
-! OUT : SPTHER : AMPLITUDE DE VARIATION DES CONTRAINTES THERMIQUES
 !
     integer :: icmp, jsigu, icmps, long, nbinst, nbthep, nbtheq, jther, numth
     integer :: jthunq, i1, jthunp, jthun
-    real(kind=8) :: pij, mij(12), sp, sij(6), sigu, sij0(6), sqma(6), sqmi(6)
+    real(kind=8) :: pij, mij(12), sp, sij(6), sigu, sqma(6), sqmi(6)
     real(kind=8) :: sp1, sp2, spth(6), spqma(2), spqmi(2), sqth(6)
     character(len=4) :: typ2
     character(len=8) :: type, knumes, knumet
@@ -66,8 +64,6 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
 !
     spij(1) = 0.d0
     spij(2) = 0.d0
-    spther(1) = 0.d0
-    spther(2) = 0.d0
     spmeca(1) = 0.d0
     spmeca(2) = 0.d0
     do 8 i1 = 1, 6
@@ -94,7 +90,6 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
 !
     do 30 icmps = 1, 6
         sij(icmps) = 0.d0
-        sij0(icmps) = 0.d0
         do 20 icmp = 1, 12
             sigu = zr(jsigu-1+6*(icmp-1)+icmps)
             sij(icmps) = sij(icmps) + mij(icmp)*sigu
@@ -112,7 +107,7 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
     if (numsip .ne. 0) then
         knumes = 'S       '
         call codent(numsip, 'D0', knumes(2:8))
-        call jelira(jexnom('&&RC3200.SITU_THERMIQUE', knumes), 'LONUTI', nbthep)
+        call jelira(jexnom('&&RC3200.SITU_THER', knumes), 'LONUTI', nbthep)
         if (nbthep .eq. 0) then
             nbinst = 0
             jthun = 1
@@ -131,7 +126,7 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
             spij(1) = max(spij(1),sp)
             if (typ2 .eq. 'COMB') spij(2) = max(spij(2),sp)
         else
-            call jeveuo(jexnom('&&RC3200.SITU_THERMIQUE', knumes), 'L', jther)
+            call jeveuo(jexnom('&&RC3200.SITU_THER', knumes), 'L', jther)
             numth = zi(jther)
             knumet = 'T       '
             call codent(numth, 'D0', knumet(2:8))
@@ -155,10 +150,6 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
                     call rc32st(sij, nbinst, spth, sp)
                 endif
                 spij(1) = max(spij(1),sp)
-! --- CALCUL DE KE_THER POUR LA SITUATION P
-                if (typeke .gt. 0.d0) then
-                    call rc32s2(sij0, spth, spther)
-                endif
             endif
         endif
     endif
@@ -169,7 +160,7 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
     if (numsiq .ne. 0) then
         knumes = 'S       '
         call codent(numsiq, 'D0', knumes(2:8))
-        call jelira(jexnom('&&RC3200.SITU_THERMIQUE', knumes), 'LONUTI', nbtheq)
+        call jelira(jexnom('&&RC3200.SITU_THER', knumes), 'LONUTI', nbtheq)
         if (nbtheq .eq. 0) then
             nbinst = 0
             jthun = 1
@@ -198,7 +189,7 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
                 endif
             endif
         else
-            call jeveuo(jexnom('&&RC3200.SITU_THERMIQUE', knumes), 'L', jther)
+            call jeveuo(jexnom('&&RC3200.SITU_THER', knumes), 'L', jther)
             numth = zi(jther)
             knumet = 'T       '
             call codent(numth, 'D0', knumet(2:8))
@@ -249,13 +240,6 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
                         call rc32s2(sij, sqma, spqma)
                         spij(1) = max(spqma(1),spqmi(1))
                         spij(2) = min(spqma(1),spqmi(1))
-                    endif
-! --- CALCUL DE KE_THER POUR LA COMBINAISON DES SITUATIONS P ET Q
-                    if (typeke .gt. 0.d0) then
-                        call rc32s2(sij0, sqmi, spqmi)
-                        call rc32s2(sij0, sqma, spqma)
-                        spther(1) = max(spqma(1),spqmi(1))
-                        spther(2) = min(spqma(1),spqmi(1))
                     endif
                 endif
             endif

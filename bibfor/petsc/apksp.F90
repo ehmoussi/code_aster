@@ -51,7 +51,7 @@ subroutine apksp(kptsc)
 !
 !----------------------------------------------------------------
 !     Variables PETSc
-    PetscInt :: ierr
+    PetscErrorCode :: ierr
     PetscInt :: maxits
     PetscReal :: rtol, atol, dtol, aster_petsc_default_real
     Mat :: a
@@ -65,11 +65,11 @@ subroutine apksp(kptsc)
     aster_petsc_default_real = PETSC_DEFAULT_DOUBLE_PRECISION
 #else
     aster_petsc_default_real = PETSC_DEFAULT_REAL
-#endif 
+#endif
 !     -- LECTURE DU COMMUN
-    nomat = nomats(kptsc)
+    nomat = nomat_courant
+    nonu = nonu_courant
     nosolv = nosols(kptsc)
-    nonu = nonus(kptsc)
     a = ap(kptsc)
     ksp = kp(kptsc)
 !
@@ -94,8 +94,8 @@ subroutine apksp(kptsc)
     else if (algo.eq.'GCR') then
         call KSPSetType(ksp, KSPGCR, ierr)
         ASSERT(ierr.eq.0)
-    else if (algo.eq.'BCGS') then
-        call KSPSetType(ksp, KSPBCGS, ierr)
+    else if (algo.eq.'FGMRES') then
+        call KSPSetType(ksp, KSPFGMRES, ierr)
         ASSERT(ierr.eq.0)
     else
         ASSERT(.false.)

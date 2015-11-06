@@ -4,6 +4,7 @@ subroutine liscad(phenom       , list_load      , i_load    , load_namez  , load
 implicit none
 !
 #include "asterfort/assert.h"
+#include "asterfort/gcnco2.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
@@ -128,6 +129,8 @@ implicit none
                 if (info_type(10:15) .eq. '_DIDI') then
                     v_load_info(3*nb_load+2+i_load+1) = 1
                 endif
+            else if (info_type.eq.'DIRI_SUIV') then
+                v_load_info(i_load+1) = 4
             else if (info_type.eq.'NEUM_ONDE') then
                 v_load_info(nb_load+i_load+1) = 6
             else if (info_type.eq.'NEUM_ONDF') then

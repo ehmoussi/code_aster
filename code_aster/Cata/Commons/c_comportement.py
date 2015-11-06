@@ -64,7 +64,10 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                    LIBRAIRIE = SIMP(statut='o', typ='TXM',validators=LongStr(1,128),
                         fr=tr("Chemin vers la bibliothèque dynamique définissant le comportement MFRONT")),
                    NOM_ROUTINE = SIMP(statut='o', typ='TXM',
-                        fr=tr("Nom de la routine MFRONT dans la bibliothèque")),),
+                        fr=tr("Nom de la routine MFRONT dans la bibliothèque")),
+                   VERI_BORNE = SIMP(statut='f', typ='TXM',
+                                     defaut="ARRET",into=('ARRET','SANS','MESSAGE'),
+                        fr=tr("Vérification des bornes physiques de la loi de comportement MFRONT"),),),
 
 # KITs
            b_kit_ddi = BLOC(condition = "RELATION == 'KIT_DDI' ",
@@ -151,6 +154,9 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                                            fr=tr("Chemin vers la bibliothèque dynamique définissant le comportement MFRONT")),
                                           NOM_ROUTINE = SIMP(statut='o', typ='TXM',
                                                            fr=tr("Nom de la routine MFRONT dans la bibliothèque")),
+                                          VERI_BORNE = SIMP(statut='f', typ='TXM',
+                                                            defaut="ARRET",into=('ARRET','SANS','MESSAGE'),
+                                                           fr=tr("Vérification des bornes physiques de la loi de comportement MFRONT"),)
                                       ),
 
                                        ),
@@ -221,7 +227,10 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                    LIBRAIRIE = SIMP(statut='o', typ='TXM',validators=LongStr(1,128),
                         fr=tr("Chemin vers la bibliothèque dynamique définissant le comportement MFRONT")),
                    NOM_ROUTINE = SIMP(statut='o', typ='TXM',
-                        fr=tr("Nom de la routine MFRONT dans la bibliothèque")),),
+                        fr=tr("Nom de la routine MFRONT dans la bibliothèque")),
+                   VERI_BORNE = SIMP(statut='f', typ='TXM',
+                                     defaut="ARRET",into=('ARRET','SANS','MESSAGE'),
+                        fr=tr("Vérification des bornes physiques de la loi de comportement MFRONT"),)),
 
 # KITs
            b_kit_ddi = BLOC(condition = "RELATION == 'KIT_DDI' ",
@@ -308,6 +317,9 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                                            fr=tr("Chemin vers la bibliothèque dynamique définissant le comportement MFRONT")),
                                           NOM_ROUTINE = SIMP(statut='o', typ='TXM',
                                                            fr=tr("Nom de la routine MFRONT dans la bibliothèque")),
+                                          VERI_BORNE = SIMP(statut='f', typ='TXM',
+                                                            defaut="ARRET",into=('ARRET','SANS','MESSAGE'),
+                                               fr=tr("Vérification des bornes physiques de la loi de comportement MFRONT"),)
                                       ),
 
                                        ),

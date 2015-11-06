@@ -34,7 +34,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
 #
          GRANDEUR_CARA =FACT(statut='f',max=1,
          fr=tr("Grandeurs caractéristiques pour l'adimensionnement des indicateurs d'erreur HM"),
-         
+
 #
             LONGUEUR      =SIMP(statut='f',typ='R',val_min=0,
                                 fr =tr("Longueur caractéristique"),
@@ -112,8 +112,6 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "CABLE_POULIE",    # RESP. : None
                                   "COQUE_3D",        # RESP. : DESROCHES X.DESROCHES
                                   "COQUE_AXIS",      # RESP. : DESROCHES X.DESROCHES
-                                  "COQUE_C_PLAN",    # RESP. : DESROCHES X.DESROCHES
-                                  "COQUE_D_PLAN",    # RESP. : DESROCHES X.DESROCHES
                                   "D_PLAN",          # RESP. : LEFEBVRE J.P.LEFEBVRE
                                   "D_PLAN_GRAD_EPSI",# RESP. : MICHEL S.MICHEL
                                   "D_PLAN_GRAD_VARI",# RESP. : MICHEL S.MICHEL
@@ -139,7 +137,6 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "GRILLE_EXCENTRE", # RESP. : ROSPARS C.ROSPARS
                                   "GRILLE_MEMBRANE", # RESP. : ROSPARS C.ROSPARS
                                   "MEMBRANE",        # RESP. : ROSPARS C.ROSPARS
-                                  "POU_C_T",         # RESP. : FLEJOU J.L.FLEJOU
                                   "POU_D_E",         # RESP. : FLEJOU J.L.FLEJOU
                                   "POU_D_EM",        # RESP. : FLEJOU J.L.FLEJOU
                                   "POU_D_T",         # RESP. : FLEJOU J.L.FLEJOU
@@ -237,12 +234,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "3D_HHS",          # RESP. : GRANET S.GRANET
                                   "3D_HH2D",         # RESP. : GRANET S.GRANET
                                   "3D_HH2S",         # RESP. : GRANET S.GRANET
-                                  "VF1",             # RESP. : GRANET S.GRANET
-                                  "3D_HH2SUDM",      # RESP. : GRANET S.GRANET
                                   "3D_HH2SUDA",      # RESP. : GRANET S.GRANET
-                                  "3D_HH2SUC",       # RESP. : GRANET S.GRANET
-                                  "D_PLAN_HH2SUDM",  # RESP. : GRANET S.GRANET
-                                  "D_PLAN_HH2SUC",   # RESP. : GRANET S.GRANET
                                   "D_PLAN_HH2SUDA",  # RESP. : GRANET S.GRANET
                                   "PLAN_JHMS",
                                   "AXIS_JHMS",

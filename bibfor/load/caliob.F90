@@ -1,6 +1,6 @@
 subroutine caliob(load, mesh, ligrmo, vale_type)
 !
-    implicit none
+implicit none
 !
 #include "jeveux.h"
 #include "asterc/getfac.h"
@@ -219,7 +219,7 @@ subroutine caliob(load, mesh, ligrmo, vale_type)
 !
 ! - Final linear relation affectation
 !
-    call aflrch(lisrel, load)
+    call aflrch(lisrel, load, 'LIN')
 !
     call jedetc('V', '&&CALIOB.RLLISTE', 1)
     call jedetr(keywordexcl)

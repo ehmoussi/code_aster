@@ -1,6 +1,6 @@
 # TITRE CONSTRUCTION PAR COUCHES D'UNE COLONNE DE SOL AVEC MODELE DE HUJEUX
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -548,7 +548,7 @@ for n in range(1,nbcouche-1):
                               INST_INIT=t_init,
                               INST_FIN=t_fin),
                  SOLVEUR = _F(METHODE='MUMPS',
-
+ 
                              RESI_RELA=1.,
                              TYPE_RESOL='NONSYM'),
                  ARCHIVAGE=_F(LIST_INST=TEMPS),

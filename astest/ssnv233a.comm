@@ -1,6 +1,6 @@
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2013  EDF R&D                WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
 #
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -166,8 +166,7 @@ TSIGPERT=SIMU_POINT_MAT(INFO=2,
                             REAC_ITER=1,
                             PREDICTION='ELASTIQUE'),
                   CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-10,
-                                 ITER_GLOB_MAXI = 50,
-                                 ARRET='OUI',),
+                                 ITER_GLOB_MAXI = 50,),
                   ARCHIVAGE=_F(LIST_INST=TEMPS1,),
                   SIGM_IMPOSE=sigm_impose,
                   EPSI_IMPOSE=epsi_impose,
@@ -194,8 +193,7 @@ TSIGTANG=SIMU_POINT_MAT(INFO=2,
                             REAC_ITER=1,
                             PREDICTION='ELASTIQUE'),
                   CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-10,
-                                 ITER_GLOB_MAXI = 10,
-                                 ARRET='OUI',),
+                                 ITER_GLOB_MAXI = 10),
                   ARCHIVAGE=_F(LIST_INST=TEMPS1,),
                   SIGM_IMPOSE=sigm_impose,
                   EPSI_IMPOSE=epsi_impose,

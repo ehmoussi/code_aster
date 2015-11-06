@@ -18,16 +18,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine gmeth3(nnoff, fond, gthi, milieu, gs,&
-                      objcur, gi, num, gxfem)
-        integer :: nnoff
-        character(len=24) :: fond
-        real(kind=8) :: gthi(1)
-        aster_logical :: milieu
-        real(kind=8) :: gs(1)
+    subroutine gmeth3(nnoff, gthi, milieu, gs,&
+                      objcur, gi, num, connex)
+        integer           :: nnoff
+        real(kind=8)      :: gthi(1)
+        aster_logical     :: milieu
+        real(kind=8)      :: gs(1)
         character(len=24) :: objcur
-        real(kind=8) :: gi(1)
-        integer :: num
-        aster_logical :: gxfem
+        real(kind=8)      :: gi(1)
+        integer           :: num
+        aster_logical     :: connex
     end subroutine gmeth3
 end interface

@@ -1,9 +1,21 @@
-subroutine ndexpl(modele, numedd, numfix, mate, carele,&
-                  comref, compor, lischa, method, fonact,&
-                  carcri, parcon, sdimpr, sdstat, sdnume,&
-                  sddyna, sddisc, sdtime, sderro, valinc,&
-                  numins, solalg, solveu, matass, maprec,&
-                  meelem, measse, veelem, veasse, nbiter)
+subroutine ndexpl(modele, numedd  , numfix, mate       , carele  ,&
+                  comref, compor  , lischa, ds_algopara, fonact  ,&
+                  carcri, ds_print, sdstat, sdnume     , sddyna  ,&
+                  sddisc, sdtime  , sderro, valinc     , numins  ,&
+                  solalg, solveu  , matass, maprec     , ds_inout,&
+                  meelem, measse  , veelem, veasse     , nbiter  )
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/ndxcvg.h"
+#include "asterfort/ndxdec.h"
+#include "asterfort/ndxdep.h"
+#include "asterfort/ndxnpa.h"
+#include "asterfort/ndxpre.h"
+#include "asterfort/nmchar.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -22,23 +34,16 @@ subroutine ndexpl(modele, numedd, numfix, mate, carele,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
-!
 ! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "asterfort/ndxcvg.h"
-#include "asterfort/ndxdec.h"
-#include "asterfort/ndxdep.h"
-#include "asterfort/ndxnpa.h"
-#include "asterfort/ndxpre.h"
-#include "asterfort/nmchar.h"
+!
     integer :: numins
     integer :: fonact(*)
-    character(len=16) :: method(*)
-    real(kind=8) :: parcon(*)
+    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=24) :: carcri
-    character(len=24) :: sdstat, sdtime, sderro, sdimpr
+    character(len=24) :: sdstat, sdtime, sderro
     character(len=19) :: sdnume, sddyna, sddisc
+    type(NL_DS_InOut), intent(in) :: ds_inout
+    type(NL_DS_Print), intent(inout) :: ds_print
     character(len=19) :: valinc(*), solalg(*)
     character(len=19) :: meelem(*), veelem(*)
     character(len=19) :: measse(*), veasse(*)
@@ -65,7 +70,8 @@ subroutine ndexpl(modele, numedd, numfix, mate, carele,&
 ! IN  COMREF : VARIABLES DE COMMANDE DE REFERENCE
 ! IN  COMPOR : COMPORTEMENT
 ! IN  LISCHA : L_CHARGES
-! IN  METHOD : INFORMATIONS SUR LES METHODES DE RESOLUTION
+! In  ds_inout         : datastructure for input/output management
+! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SOLVEU : SOLVEUR
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IN  CARCRI : PARAMETRES DES METHODES D'INTEGRATION LOCALES
@@ -95,26 +101,26 @@ subroutine ndexpl(modele, numedd, numfix, mate, carele,&
 !
 ! --- INITIALISATION DES CHAMPS D'INCONNUES POUR LE NOUVEAU PAS DE TEMPS
 !
-    call ndxnpa(modele, mate  , carele, fonact, sdimpr,&
-                sddisc, sddyna, sdnume, numedd, numins,&
+    call ndxnpa(modele, mate  , carele, fonact, ds_print,&
+                sddisc, sddyna, sdnume, numedd, numins  ,&
                 valinc, solalg)
 !
 ! --- CALCUL DES CHARGEMENTS CONSTANTS AU COURS DU PAS DE TEMPS
 !
-    call nmchar('FIXE', ' ', modele, numedd, mate,&
-                carele, compor, lischa, carcri, numins,&
-                sdtime, sddisc, parcon, fonact, k24bla,&
-                k24bla, comref, valinc, solalg, veelem,&
-                measse, veasse, sddyna)
+    call nmchar('FIXE'  , ' '   , modele, numedd, mate  ,&
+                carele  , compor, lischa, numins, sdtime,&
+                sddisc  , fonact, k24bla, k24bla, comref,&
+                ds_inout, valinc, solalg, veelem, measse,&
+                veasse  , sddyna)
 !
 ! --- PREDICTION D'UNE DIRECTION DE DESCENTE
 !
-    call ndxpre(modele, numedd, numfix, mate, carele,&
-                comref, compor, lischa, method, solveu,&
-                fonact, carcri, sddisc, sdstat, sdtime,&
-                numins, valinc, solalg, matass, maprec,&
-                sddyna, sderro, meelem, measse, veelem,&
-                veasse, lerrit)
+    call ndxpre(modele, numedd, numfix  , mate       , carele,&
+                comref, compor, lischa  , ds_algopara, solveu,&
+                fonact, carcri, sddisc  , sdstat     , sdtime,&
+                numins, valinc, solalg  , matass     , maprec,&
+                sddyna, sderro, ds_inout, meelem     , measse,&
+                veelem, veasse, lerrit)
 !
     if (lerrit) goto 315
 !
@@ -131,7 +137,7 @@ subroutine ndexpl(modele, numedd, numfix, mate, carele,&
 ! --- EN L'ABSENCE DE CONVERGENCE ON CHERCHE A SUBDIVISER LE PAS
 ! --- DE TEMPS SI L'UTILISATEUR A FAIT LA DEMANDE
 !
-    call ndxdec(sdimpr, sddisc, sderro, numins)
+    call ndxdec(ds_print, sddisc, sderro, numins)
 !
     nbiter = 1
 !

@@ -31,6 +31,7 @@ subroutine ops007()
 #include "asterfort/jemarq.h"
 #include "asterfort/jvinfo.h"
 #include "asterfort/lxlgut.h"
+#include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"

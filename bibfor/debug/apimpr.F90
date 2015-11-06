@@ -1,15 +1,14 @@
-subroutine apimpr(sdappa, ifm)
+subroutine apimpr(sdappa, ifm, mesh, sdcont_defi)
 !
-    implicit     none
+implicit none
 !
 #include "jeveux.h"
 #include "asterfort/apcopt.h"
 #include "asterfort/apinfi.h"
 #include "asterfort/apinfr.h"
-#include "asterfort/apnomk.h"
 #include "asterfort/apnomp.h"
-#include "asterfort/apnumm.h"
-#include "asterfort/apnumn.h"
+#include "asterfort/cfnumm.h"
+#include "asterfort/cfnumn.h"
 #include "asterfort/appari.h"
 #include "asterfort/apvect.h"
 #include "asterfort/apzoni.h"
@@ -38,41 +37,37 @@ subroutine apimpr(sdappa, ifm)
 !
     character(len=19), intent(in) :: sdappa
     integer, intent(in) :: ifm
+    character(len=8), intent(in) :: mesh
+    character(len=24), intent(in) :: sdcont_defi
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE APPARIEMENT (UTILITAIRE)
+! Contact - Pairing
 !
-! IMPRESSION DES INFOS DETAILLES DE L'APPARIEMENT
+! Debug print
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  sdappa           : name of pairing datastructure
+! In  ifm              : unit for message
+! In  mesh             : name of mesh
+! In  sdcont_defi      : name of contact definition datastructure (from DEFI_CONTACT)
 !
-! IN  SDAPPA : NOM DE LA SD APPARIEMENT
-! IN  IFM    : UNITE D'IMPRESSION DU MESSAGE
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
-!
-    character(len=24) :: rnomsd, defico
     integer :: nbzone, ntpt, nbpt
     integer :: typapp, entapp
     real(kind=8) :: coorpt(3)
     real(kind=8) :: dist, ksi1, ksi2, tau1(3), tau2(3)
     character(len=16) :: nompt
     integer :: izone, ip, k, i
-    integer :: numnom(1), nummam
-    integer :: posnom(1), posmam
-    character(len=8) :: noma, nomnom, nommam
+    integer :: numnom(1), elem_mast_nume
+    integer :: posnom(1), elem_mast_indx
+    character(len=8) :: nomnom, nommam
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-!
-! --- NOM SD MAILLAGE
-!
-    call apnomk(sdappa, 'NOMA', rnomsd)
-    noma = rnomsd(1:8)
-    call apnomk(sdappa, 'DEFICO', defico)
 !
 ! --- INITIALISATIONS
 !
@@ -89,8 +84,8 @@ subroutine apimpr(sdappa, ifm)
     write(ifm,100) nbzone
     write(ifm,101) ntpt
 !
-    100 format (' <APPARIEMENT> NOMBRE DE ZONES                   : ',i6)
-    101 format (' <APPARIEMENT> NOMBRE MAX. DE POINTS A APPARIER  : ',i6)
+100 format (' <APPARIEMENT> NOMBRE DE ZONES                   : ',i6)
+101 format (' <APPARIEMENT> NOMBRE MAX. DE POINTS A APPARIER  : ',i6)
 !
 ! --- BOUCLE SUR LES ZONES
 !
@@ -109,7 +104,6 @@ subroutine apimpr(sdappa, ifm)
             call apnomp(sdappa, ip, nompt)
             write(ifm,400) ip,nompt
             call apcopt(sdappa, ip, coorpt)
-!
 !
 ! ------- INFOS APPARIEMENT
 !
@@ -132,17 +126,16 @@ subroutine apimpr(sdappa, ifm)
             else if (typapp.eq.1) then
                 write(ifm,401) coorpt(1),coorpt(2),coorpt(3)
                 posnom = entapp
-                call apnumn(defico, posnom(1), numnom(1))
-                call jenuno(jexnum(noma//'.NOMNOE', numnom(1)), nomnom)
+                call cfnumn(sdcont_defi, 1, posnom(1), numnom(1))
+                call jenuno(jexnum(mesh//'.NOMNOE', numnom(1)), nomnom)
                 write(ifm,601) nomnom
                 write(ifm,801) dist
             else if (typapp.eq.2) then
                 write(ifm,401) coorpt(1),coorpt(2),coorpt(3)
-                posmam = entapp
-                call apnumm(sdappa, defico, posmam, nummam)
-                call jenuno(jexnum(noma//'.NOMMAI', nummam), nommam)
+                elem_mast_indx = entapp
+                call cfnumm(sdcont_defi, elem_mast_indx, elem_mast_nume)
+                call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), nommam)
                 write(ifm,602) nommam
-!
                 write(ifm,701) ksi1,ksi2
                 write(ifm,801) dist
                 write(ifm,901) (tau1(k),k=1,3)
@@ -157,27 +150,22 @@ subroutine apimpr(sdappa, ifm)
         end do
     end do
 !
-    400 format (' <APPARIEMENT> POINT            ',i6,' (',&
-     &        a16,')')
-    401 format (' <APPARIEMENT> ** DE COORDONNEES ',1pe15.8,&
-     &        1pe15.8,1pe15.8)
+400 format (' <APPARIEMENT> POINT            ',i6,' (',a16,')')
+401 format (' <APPARIEMENT> ** DE COORDONNEES ',1pe15.8,1pe15.8,1pe15.8)
 !
-    501 format (' <APPARIEMENT> -> EXCLU - PAR SANS_NOEUD')
-    502 format (' <APPARIEMENT> -> EXCLU - PAR TOLE_APPA')
-    503 format (' <APPARIEMENT> -> EXCLU - PAR TOLE_PROJ_EXT')
-    504 format (' <APPARIEMENT> -> NON APPARIE (ERREUR)')
+501 format (' <APPARIEMENT> -> EXCLU - PAR SANS_NOEUD')
+502 format (' <APPARIEMENT> -> EXCLU - PAR TOLE_APPA')
+503 format (' <APPARIEMENT> -> EXCLU - PAR TOLE_PROJ_EXT')
+504 format (' <APPARIEMENT> -> NON APPARIE (ERREUR)')
 !
 !
-    601 format (' <APPARIEMENT> -> APPARIEMENT AVEC NOEUD  ',a8)
-    602 format (' <APPARIEMENT> -> APPARIEMENT AVEC MAILLE ',a8)
+601 format (' <APPARIEMENT> -> APPARIEMENT AVEC NOEUD  ',a8)
+602 format (' <APPARIEMENT> -> APPARIEMENT AVEC MAILLE ',a8)
 !
-    701 format (' <APPARIEMENT>      SUR POINT KSI1,KSI2: ',&
-     &          1pe15.8,1pe15.8)
-    801 format (' <APPARIEMENT>      DISTANCE: ',1pe15.8)
-    901 format (' <APPARIEMENT>      TANGENTE BRUTE  DIR. 1   : ',&
-     &         3(1pe15.8,2x))
-    902 format (' <APPARIEMENT>      TANGENTE BRUTE  DIR. 2   : ',&
-     &         3(1pe15.8,2x))
+701 format (' <APPARIEMENT>      SUR POINT KSI1,KSI2: ',1pe15.8,1pe15.8)
+801 format (' <APPARIEMENT>      DISTANCE: ',1pe15.8)
+901 format (' <APPARIEMENT>      TANGENTE BRUTE  DIR. 1   : ',3(1pe15.8,2x))
+902 format (' <APPARIEMENT>      TANGENTE BRUTE  DIR. 2   : ',3(1pe15.8,2x))
 !
     call jedema()
 !

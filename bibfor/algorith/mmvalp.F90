@@ -1,12 +1,9 @@
-subroutine mmvalp(ndim, alias, nno, ncmp, ksi1,&
-                  ksi2, valend, valept)
+subroutine mmvalp(nb_dim, elem_type, elem_nbno, nb_cmp, ksi1,&
+                  ksi2  , vale_node, vale_poin)
 !
-    implicit     none
+implicit none
 !
-#include "jeveux.h"
 #include "asterfort/assert.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/mmnonf.h"
 !
 ! ======================================================================
@@ -27,58 +24,56 @@ subroutine mmvalp(ndim, alias, nno, ncmp, ksi1,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    integer :: ndim, nno, ncmp
-    character(len=8) :: alias
-    real(kind=8) :: ksi1, ksi2
-    real(kind=8) :: valend(*), valept(*)
+    integer, intent(in) :: nb_dim
+    character(len=8), intent(in) :: elem_type
+    integer, intent(in) :: elem_nbno
+    integer, intent(in) :: nb_cmp
+    real(kind=8), intent(in) :: ksi1
+    real(kind=8), intent(in) :: ksi2
+    real(kind=8), intent(in) :: vale_node(*)
+    real(kind=8), intent(out) :: vale_poin(*)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE CONTACT (METHODE CONTINUE - UTILITAIRE)
+! Contact - Utility
 !
-! CALCUL D'UNE COMPOSANTE D'UN CHAMP EN UN POINT DONNE D'UNE MAILLE
+! Continue method - Interpolate component(s) at point in given element
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  nb_dim           : dimension of element
+! In  elem_type        : type of element
+! In  elem_nbno        : number of nodes
+! In  nb_cmp           : number of components to interpolate
+! In  ksi1             : first parametric coordinate of the point 
+! In  ksi2             : second parametric coordinate of the point 
+! In  vale_node        : value of components at nodes
+! Out vale_poin        : value of components at point
 !
-! IN  ALIAS  : NOM D'ALIAS DE L'ELEMENT
-! IN  NNO    : NOMBRE DE NOEUD DE L'ELEMENT
-! IN  NDIM   : DIMENSION DE LA MAILLE (2 OU 3)
-! IN  NCMP   : NOMBRE DE COMPOSANTE
-! IN  KSI1   : COORDONNEE KSI1 SUR LA MAILLE
-! IN  KSI2   : COORDONNEE KSI2 SUR LA MAILLE
-! IN  VALEND : VALEUR DU CHAMP AUX NOEUDS
-! OUT VALEPT : VALEUR DU CHAMP SUR LE POINT
+! --------------------------------------------------------------------------------------------------
 !
+    real(kind=8) :: shape_func(9)
+    integer :: i_node, i_cmp
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-    real(kind=8) :: ff(9)
-    integer :: ino, icmp
-!
-! ----------------------------------------------------------------------
-!
-    call jemarq()
-!
-! --- INITIALISATIONS
-!
-    do icmp = 1, ncmp
-        valept(icmp) = 0.d0
+    do i_cmp = 1, nb_cmp
+        vale_poin(i_cmp) = 0.d0
     end do
-    ASSERT(nno.le.9)
+    ASSERT(elem_nbno.le.9)
 !
-! --- FONCTIONS DE FORME
+! - Shape functions
 !
-    call mmnonf(ndim, nno, alias, ksi1, ksi2,&
-                ff)
+    call mmnonf(nb_dim    , elem_nbno, elem_type, ksi1, ksi2,&
+                shape_func)
 !
-! --- CALCUL
+! - Compute
 !
-    do icmp = 1, ncmp
-        do ino = 1, nno
-            valept(icmp) = ff(ino)*valend((ino-1)*ncmp+icmp) + valept(icmp)
+    do i_cmp = 1, nb_cmp
+        do i_node = 1, elem_nbno
+            vale_poin(i_cmp) = shape_func(i_node)*vale_node((i_node-1)*nb_cmp+i_cmp) +&
+                               vale_poin(i_cmp)
         end do
     end do
 !
-    call jedema()
 end subroutine

@@ -1,6 +1,6 @@
 # TITRE EXTRUSION D'UN LOPIN CONTACT GLISSIERE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2012  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -147,7 +147,7 @@ L_INST=DEFI_LIST_REEL(DEBUT=0.0,
 #                                     PAS=5.0,),
                                     ),);
 
-U=STAT_NON_LINE(SOLVEUR=_F(SYME='OUI',),
+U=STAT_NON_LINE(SOLVEUR=_F(),
                 MODELE=MO,
                 CHAM_MATER=CM,
                 INFO=1,
@@ -186,7 +186,7 @@ DEPLAC=POST_RELEVE_T(ACTION=_F(INTITULE='DEPLAC',
 TCONT=POST_RELEVE_T(ACTION=_F(INTITULE='CONT',
                               GROUP_NO='RELEVE',
                               RESULTAT=U,
-                              NOM_CHAM='VALE_CONT',
+                              NOM_CHAM='CONT_NOEU',
 #                              INST=(6.,12.,37.,62.,107.),
                               LIST_INST=L_INST,
                               TOUT_CMP='OUI',
@@ -208,7 +208,7 @@ IMPR_RESU(MODELE=MO,
           RESU=_F(RESULTAT=U,
                   MAILLAGE=MAILL1,
                   NOM_CHAM=('DEPL',
-                            'VALE_CONT',
+                            'CONT_NOEU',
                             'SIGM_NOEU',
                             ),
                   TOUT_ORDRE='OUI',

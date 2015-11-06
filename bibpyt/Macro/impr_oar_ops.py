@@ -711,33 +711,27 @@ class tuyauterie(OAR_element):
 
     def __init__(self, **args):
         self.nodeComp = XMLNode("TUYAUTERIE")
-        try:
-            self.para_resu_meca = args['RESU_MECA']
-            self.num_char = self.para_resu_meca['NUM_CHAR']
 
-            # Gestion du maillage
-            self.maillage = self.para_resu_meca['MAILLAGE']
-            mapy = MAIL_PY()
-            mapy.FromAster(self.maillage)
+        self.para_resu_meca = args['RESU_MECA']
+        self.num_char = self.para_resu_meca['NUM_CHAR']
 
-            self.ma = [val.rstrip() for val in mapy.correspondance_mailles]
-            self.no = [val.rstrip() for val in mapy.correspondance_noeuds]
+        # Gestion du maillage
+        self.maillage = self.para_resu_meca['MAILLAGE']
+        mapy = MAIL_PY()
+        mapy.FromAster(self.maillage)
 
-            self.dictMailleNoeuds = dict()
-            for val in self.ma:
-                self.dictMailleNoeuds[val] = list()
+        self.ma = [val.rstrip() for val in mapy.correspondance_mailles]
+        self.no = [val.rstrip() for val in mapy.correspondance_noeuds]
 
-            for i in range(0, len(mapy.co)):
-                self.dictMailleNoeuds[self.ma[i]].append(
-                    self.no[mapy.co[i][0]])
-                self.dictMailleNoeuds[self.ma[i]].append(
-                    self.no[mapy.co[i][1]])
+        self.dictMailleNoeuds = dict()
 
-            self.dictNoeudValTorseur = dict()
-            self.buildTableTorseur()
+        for i in range(0, len(mapy.co)):
+            # on ne traite que les SEG2 ou les SEG3 :
+            if len(mapy.co[i]) not in (2,3) : continue
+            self.dictMailleNoeuds[self.ma[i]]=[self.no[mapy.co[i][0]],self.no[mapy.co[i][1]]]
 
-        except:
-            UTMESS('F', 'OAR0_4')
+        self.dictNoeudValTorseur = dict()
+        self.buildTableTorseur()
 
         # Construction de l arborescence
         self.buildTree()
@@ -786,11 +780,16 @@ class tuyauterie(OAR_element):
         nodeMTG = nodeTM.append("MAILLE_TORSEUR-GRP")
         nodeMT = nodeMTG.append("MAILLE_TORSEUR")
         for MA in self.dictMailleNoeuds.keys():  # Boucle sur les mailles
-            nodeMT.append("oar:MAILLE-REF", MA)
+            NbNoeuds = 0
             for NO in self.dictMailleNoeuds[MA]:  # 2 noeuds
-                nodeTorseur = nodeMT.append("oar:TORSEUR")
-                for val, cle in zip(self.dictNoeudValTorseur[NO], torseur_XML):  # 6 valeurs
-                    nodeTorseur.append(cle, val)
+                if ( NO in self.dictNoeudValTorseur.keys() ):
+                    NbNoeuds += 1
+            if ( NbNoeuds == 2 ):
+                nodeMT.append("oar:MAILLE-REF", MA)
+                for NO in self.dictMailleNoeuds[MA]:  # 2 noeuds
+                    nodeTorseur = nodeMT.append("oar:TORSEUR")
+                    for val, cle in zip(self.dictNoeudValTorseur[NO], torseur_XML):  # 6 valeurs
+                        nodeTorseur.append(cle, val)
 
 
 def impr_oar_ops(self, TYPE_CALC, **args):

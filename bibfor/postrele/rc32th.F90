@@ -236,6 +236,9 @@ subroutine rc32th()
             l = ncmp*4 + j
             zr(jorig-1+l) = momen0
 !
+            l = ncmp*6 + j
+            zr(jorig-1+l) = 0.5d0*momen1
+!
             vale(1) = tmin(2)
             do 266 k = 1, nbabsc
                 vale(2) = zr(jabsc+k-1)

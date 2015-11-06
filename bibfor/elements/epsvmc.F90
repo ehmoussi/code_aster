@@ -12,12 +12,9 @@ implicit none
 #include "asterfort/eps1mc.h"
 #include "asterfort/eps2mc.h"
 #include "asterfort/epthmc.h"
-#include "asterfort/get_elas_type.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/jevech.h"
 #include "asterfort/rccoma.h"
-#include "asterfort/tecach.h"
-#include "asterfort/utmess.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -80,12 +77,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: elas_keyword, rela_comp
-    integer :: elas_type
     real(kind=8) :: epsi_varc(162), epsi_tota_g(162), epsi_tota(162)
     real(kind=8) :: xyzgau(3), d(4, 4)
     real(kind=8) :: zero, un, deux
-    integer :: i, iret, kpg, j_compo
+    integer :: i, kpg
     aster_logical :: l_modi_cp
 !
 ! --------------------------------------------------------------------------------------------------
@@ -98,17 +93,6 @@ implicit none
     epsi_tota(1:nbsig*npg)   = zero
     epsi_tota_g(1:nbsig*npg) = zero
     epsi_varc(1:nbsig*npg)   = zero
-!
-! - Get comportment
-!
-    if (option(1:4).eq.'EPME'.or.option(1:4).eq.'EPMG') then
-        call tecach('NNN', 'PCOMPOR', 'L', iret, iad=j_compo)
-        if (iret.eq.0) then
-            rela_comp  = zk16(j_compo)
-        else
-            rela_comp = 'Unknown'
-        endif
-    endif
 !
 ! - Total strains: first order (small strains)
 !
@@ -128,18 +112,6 @@ implicit none
     do i = 1, nbsig*npg
         epsi(i) = epsi_tota(i) + epsi_tota_g(i)
     end do
-!
-! - Elasticity type
-!
-    call get_elas_type(j_mater, elas_type, elas_keyword)
-!
-! - Mechanical strains: not metallurgy except META_LEMA_ANI !
-!
-    if (option(1:4).eq.'EPME'.or.option(1:4).eq.'EPMG') then
-        if (elas_keyword.eq.'ELAS_META'.and.rela_comp.ne.'META_LEMA_ANI') then
-            call utmess('F', 'ELEMENTS6_4')
-        endif
-    endif
 !
 ! - Compute variable commands strains (thermics, drying, etc.)
 !
@@ -171,11 +143,11 @@ implicit none
             xyzgau(2) = zero
             xyzgau(3) = zero
 !
-! --------- il s'agit de calculer EPS33 : pour cela il faut donner la 
-! --------- condition SIG33=0 dans l'expression complete de la loi de 
-! --------- Hooke c'est à dire avec la loi 3D : 
-! --------- Eps33= -1/D33 (D13.Eps11 +D12.Eps22), ce qui donne (en 
-! --------- isotrope) l'expression classique : 
+! --------- il s'agit de calculer EPS33 : pour cela il faut donner la
+! --------- condition SIG33=0 dans l'expression complete de la loi de
+! --------- Hooke c'est à dire avec la loi 3D :
+! --------- Eps33= -1/D33 (D13.Eps11 +D12.Eps22), ce qui donne (en
+! --------- isotrope) l'expression classique :
 ! --------- Eps33 = -Nu / (1-Nu) * (Eps11 + Eps22).
 ! --------- voir issue12540
 !

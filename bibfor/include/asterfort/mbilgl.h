@@ -15,42 +15,42 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
 #include "asterf_types.h"
 !
 interface
     subroutine mbilgl(option, result, modele, depla1, depla2,&
                       thetai, mate, lischa, symech,chfond,&
-                      nnoff , ndeg, thlagr, glagr,thlag2,&
+                      nnoff , ndeg, liss,&
                       milieu, ndimte, pair, extim,timeu,&
                       timev , indi, indj, nbprup,noprup,&
-                      lmelas, nomcas, fonoeu)
+                      lmelas, nomcas, fonoeu, connex)
         character(len=16) :: option
-        character(len=8) :: result
-        character(len=8) :: modele
+        character(len=8)  :: result
+        character(len=8)  :: modele
         character(len=24) :: depla1
         character(len=24) :: depla2
-        character(len=8) :: thetai
+        character(len=8)  :: thetai
         character(len=24) :: mate
         character(len=19) :: lischa
-        character(len=8) :: symech
+        character(len=8)  :: symech
         character(len=24) :: chfond
-        integer :: nnoff
-        integer :: ndeg
-        aster_logical :: thlagr
-        aster_logical :: glagr
-        aster_logical :: thlag2
-        aster_logical :: milieu
-        integer :: ndimte
-        aster_logical :: pair
-        aster_logical :: extim
-        real(kind=8) :: timeu
-        real(kind=8) :: timev
-        integer :: indi
-        integer :: indj
-        integer :: nbprup
+        integer           :: nnoff
+        integer           :: ndeg
+        character(len=24) :: liss
+        aster_logical     :: milieu
+        integer           :: ndimte
+        aster_logical     :: pair
+        aster_logical     :: extim
+        real(kind=8)      :: timeu
+        real(kind=8)      :: timev
+        integer           :: indi
+        integer           :: indj
+        integer           :: nbprup
         character(len=16) :: noprup(*)
-        aster_logical :: lmelas
+        aster_logical     :: lmelas
         character(len=16) :: nomcas
         character(len=24) :: fonoeu
+        aster_logical     :: connex
     end subroutine mbilgl
 end interface

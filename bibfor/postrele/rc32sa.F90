@@ -1,14 +1,16 @@
 subroutine rc32sa(typz, nommat, mati, matj, snpq,&
-                  spij, typeke, spmeca, spther, kemeca,&
+                  spij, typeke, spmeca, kemeca,&
                   kether, saltij, sm, fuij)
     implicit none
 #include "asterf_types.h"
+#include "jeveux.h"
 #include "asterc/r8maem.h"
 #include "asterc/r8vide.h"
 #include "asterfort/limend.h"
 #include "asterfort/prccm3.h"
 #include "asterfort/rcvale.h"
 #include "asterfort/utmess.h"
+#include "asterfort/jeveuo.h"
     real(kind=8) :: mati(*), matj(*), snpq, spij(2), saltij(2), sm
     real(kind=8) :: typeke, spmeca(2), spther(2), fuij(2)
     character(len=8) :: nommat
@@ -42,16 +44,15 @@ subroutine rc32sa(typz, nommat, mati, matj, snpq,&
 ! IN  : SPIJ   : AMPLITUDE DE VARIATION DES CONTRAINTES TOTALES
 ! IN  : TYPEKE    : =-1 SI KE_MECA, =1 SI KE_MIXTE
 ! IN  : SPMECA   : AMPLITUDE DE VARIATION DES CONTRAINTES MECANIQUES
-! IN  : SPTHER   : AMPLITUDE DE VARIATION DES CONTRAINTES THERMIQUES
 ! OUT : SALTIJ : AMPLITUDE DE CONTRAINTE ENTRE LES ETATS I ET J
 ! OUT : FUIJ : FACTEUR D USAGE POUR LA COMBINAISON ENTRE I ET J
 !
 !     ------------------------------------------------------------------
 !
     real(kind=8) :: e, ec, para(3), m, n, nadm(1), saltm, salth, kemeca, kether
-    real(kind=8) :: kethe1, valr(2)
+    real(kind=8) :: kethe1, valr(2), ktsn, ktsp
     character(len=8) :: kbid
-    integer :: icodre(1)
+    integer :: icodre(1), jvalin
     aster_logical :: endur
 ! DEB ------------------------------------------------------------------
 !
@@ -71,6 +72,18 @@ subroutine rc32sa(typz, nommat, mati, matj, snpq,&
     saltij(2) = 0.d0
     fuij(1) = 0.d0
     fuij(2) = 0.d0
+!
+! --- APPLICATION D'UN KT A SN et/ou SP
+    if(typz .eq. 'COMB') then
+        call jeveuo('&&RC3200.INDI', 'L', jvalin)
+        ktsn = zr(jvalin+9)
+        ktsp = zr(jvalin+10) 
+        snpq = ktsn * snpq
+        spij(1) = ktsp * spij(1)
+        spij(2) = ktsp * spij(2)
+        spmeca(1) = ktsp * spmeca(1)
+        spmeca(2) = ktsp * spmeca(2)
+    endif
 !
 ! --- CALCUL DU COEFFICIENT DE CONCENTRATION ELASTO-PLASTIQUE KE
 ! --- CALCUL DE LA CONTRAINTE EQUIVALENTE ALTERNEE SALT
@@ -94,6 +107,7 @@ subroutine rc32sa(typz, nommat, mati, matj, snpq,&
         kether = max(1.d0,kethe1)
         call prccm3(nommat, para, sm, snpq, spmeca(1),&
                     kemeca, saltm, nadm(1))
+        spther(1)=max(0.d0,spij(1)-spmeca(1))
         salth = 0.5d0 * para(3) * kether * spther(1)
         saltij(1) = saltm + salth
 !
@@ -116,6 +130,7 @@ subroutine rc32sa(typz, nommat, mati, matj, snpq,&
         if (typz .eq. 'COMB') then
             call prccm3(nommat, para, sm, snpq, spmeca(2),&
                         kemeca, saltm, nadm(1))
+            spther(2)=max(0.d0,spij(2)-spmeca(2))
             salth = 0.5d0 * para(3) * kether * spther(2)
             saltij(2) = saltm + salth
 ! --- CALCUL DU NOMBRE DE CYCLES ADMISSIBLE nadm(1) : TR. 2

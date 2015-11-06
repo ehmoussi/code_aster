@@ -1,5 +1,13 @@
-subroutine nmarce(sdieto, result, sdimpr, sddisc, instan,&
-                  numarc, force)
+subroutine nmarce(ds_inout, result   , sddisc, time, nume_store,&
+                  force   , ds_print_)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/nmeteo.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -19,60 +27,48 @@ subroutine nmarce(sdieto, result, sdimpr, sddisc, instan,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/nmeteo.h"
-    character(len=24) :: sdieto, sdimpr
-    character(len=8) :: result
-    character(len=19) :: sddisc
-    integer :: numarc
-    real(kind=8) :: instan
-    aster_logical :: force
+    type(NL_DS_InOut), intent(in) :: ds_inout
+    character(len=8), intent(in) :: result
+    character(len=19), intent(in) :: sddisc
+    real(kind=8), intent(in) :: time
+    integer, intent(in) :: nume_store
+    aster_logical, intent(in) :: force
+    type(NL_DS_Print), optional, intent(in) :: ds_print_
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME - ARCHIVAGE )
+! *_NON_LINE - Input/output datastructure
 !
-! ARCHIVAGE DES CHAMPS
+! Save fields in results datastructure
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  result           : name of datastructure for results
+! In  ds_inout         : datastructure for input/output management
+! In  ds_print         : datastructure for printing parameters
+! In  sddisc           : datastructure for discretization
+! In  time             : current time
+! In  force            : .true. to store field whatever storing options
+! In  nume_store       : index to store in results
 !
-! IN  SDIETO : SD GESTION IN ET OUT
-! IN  SDIMPR : SD AFFICHAGE
-! IN  RESULT : NOM UTILISATEUR DU CONCEPT RESULTAT
-! IN  FORCE  : VRAI SI ON SOUHAITE FORCER L'ARCHIVAGE DE TOUS LES CHAMPS
-! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  INSTAN : INSTANT D'ARCHIVAGE
-! IN  NUMARC : NUMERO D'ARCHIVAGE
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+    integer :: nb_field, i_field
 !
-    character(len=24) :: ioinfo
-    integer :: jioinf
-    integer :: nbcham
-    integer :: icham
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+    nb_field = ds_inout%nb_field
 !
-    call jemarq()
+! - Loop on fields
 !
-! --- ACCES SD IN ET OUT
+    do i_field = 1, nb_field
+        if (present(ds_print_)) then
+            call nmeteo(result, sddisc , ds_inout , force, nume_store, &
+                        time  , i_field, ds_print_)
+        else
+            call nmeteo(result, sddisc , ds_inout , force, nume_store, &
+                        time  , i_field)
+        endif
+    end do
 !
-    ioinfo = sdieto(1:19)//'.INFO'
-    call jeveuo(ioinfo, 'L', jioinf)
-    nbcham = zi(jioinf+1-1)
-!
-! --- BOUCLE SUR LES CHAMPS
-!
-    do 10 icham = 1, nbcham
-        call nmeteo(result, sdimpr, sddisc, sdieto, force,&
-                    numarc, instan, icham)
- 10 end do
-!
-    call jedema()
 end subroutine

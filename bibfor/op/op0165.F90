@@ -32,6 +32,7 @@ subroutine op0165()
 #include "asterfort/getvtx.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/rc3200.h"
+#include "asterfort/rcZ200.h"
 #include "asterfort/rc3600.h"
 #include "asterfort/rccome.h"
 #include "asterfort/rcevol.h"
@@ -40,6 +41,7 @@ subroutine op0165()
     integer :: n1, nbopt, iopt, nbther
     real(kind=8) :: symax
     aster_logical :: pmpb, sn, snet, fatigu, lrocht
+    aster_logical :: transip, transif, fatiguenv
     integer :: icodre
     character(len=8) :: nommat
     character(len=16) :: typtab, typmec, kopt(4)
@@ -81,7 +83,7 @@ subroutine op0165()
 !
 !     ------------------------------------------------------------------
 !
-    else if (typmec .eq. 'TUYAUTERIE') then
+    else if (typmec .eq. 'B3600') then
 !
         call getvtx(' ', 'OPTION', scal=kopt(1), nbret=n1)
 !
@@ -97,13 +99,15 @@ subroutine op0165()
 !
 !     ------------------------------------------------------------------
 !
-    else
+    else if (typmec .eq. 'B3200_UNIT') then
 !
         fatigu = .false.
+        fatiguenv = .false.
         pmpb = .false.
         sn = .false.
         snet = .false.
         lrocht = .false.
+        transip = .false.
 !
         call getfac('RESU_THER', nbther)
         if (nbther .ne. 0) then
@@ -123,6 +127,11 @@ subroutine op0165()
                 fatigu = .true.
                 pmpb = .true.
                 sn = .true.
+            else if (kopt(iopt) .eq. 'EFAT') then
+                fatigu = .true.
+                pmpb = .true.
+                sn = .true.
+                fatiguenv = .true.
             endif
  30     continue
 !
@@ -130,7 +139,59 @@ subroutine op0165()
         call getvr8(' ', 'SY_MAX', scal=symax, nbret=n1)
 !
         call rc3200(pmpb, sn, snet, fatigu, lrocht,&
-                    nommat, symax)
+                    nommat, symax, fatiguenv)
+!
+!     ------------------------------------------------------------------
+!
+!     ----------TYPE_RESU_MECA = ZE200a, ZE200b, B3200_T ---------------
+!
+!     ------------------------------------------------------------------
+!
+    else
+!
+        fatigu = .false.
+        fatiguenv = .false.
+        sn = .false.
+        snet = .false.
+        lrocht = .false.
+        transip = .false.
+        transif = .false.
+!
+        call getfac('RESU_THER', nbther)
+        if (nbther .ne. 0) then
+            snet = .true.
+            lrocht = .true.
+        endif
+!
+        if (typmec .eq. 'ZE200b') then
+            transip = .true.
+        endif
+!
+        if (typmec .eq. 'B3200_T') then
+            transif = .true.
+        endif
+!
+        call getvtx(' ', 'OPTION', nbval=0, nbret=n1)
+        nbopt = -n1
+        call getvtx(' ', 'OPTION', nbval=nbopt, vect=kopt, nbret=n1)
+        do 20 iopt = 1, nbopt
+            if (kopt(iopt) .eq. 'SN') then
+                sn = .true.
+            else if (kopt(iopt) .eq. 'FATIGUE') then
+                fatigu = .true.
+                sn = .true.
+            else if (kopt(iopt) .eq. 'EFAT') then
+                fatigu = .true.
+                sn = .true.
+                fatiguenv = .true.
+            endif
+ 20     continue
+!
+        call getvid(' ', 'MATER', scal=nommat, nbret=n1)
+        call getvr8(' ', 'SY_MAX', scal=symax, nbret=n1)
+!
+        call rcZ200(sn, snet, fatigu, lrocht,&
+                    nommat, symax, transip, transif, fatiguenv)
 !
     endif
 !
