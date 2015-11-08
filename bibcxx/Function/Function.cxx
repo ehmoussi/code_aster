@@ -8,11 +8,16 @@
 #include "Function/Function.h"
 
 
-FunctionInstance::FunctionInstance():
-    DataStructure( getNewResultObjectName(), "FONCTION" ),
-    _jeveuxName( getResultObjectName() ),
-    _property( JeveuxVectorChar16( _jeveuxName + ".PROL           " ) ),
-    _value( JeveuxVectorDouble( _jeveuxName + ".VALE           " ) )
+FunctionInstance::FunctionInstance( const std::string jeveuxName ):
+    DataStructure( jeveuxName, "FONCTION" ),
+    _jeveuxName( jeveuxName ),
+    _property( JeveuxVectorChar16( jeveuxName + ".PROL           " ) ),
+    _value( JeveuxVectorDouble( jeveuxName + ".VALE           " ) )
+{
+}
+
+FunctionInstance::FunctionInstance() :
+    FunctionInstance::FunctionInstance( getNewResultObjectName() )
 {
     // Create Jeveux vector ".PROL"
     _property->allocate( Permanent, 6 );
@@ -45,3 +50,16 @@ void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &
         ++idx;
     }
 }
+
+bool FunctionInstance::build( )
+{
+    bool ok;
+    ok = _property->updateValuePointer();
+    if ( ! ok )
+        return false;
+    ok = _value->updateValuePointer();
+    if ( ! ok )
+        return false;
+
+    return true;
+};

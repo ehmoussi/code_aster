@@ -27,6 +27,8 @@ cdef extern from "Function/Function.h":
 
     cdef cppclass FunctionInstance:
         FunctionInstance()
+        FunctionInstance( string )
+        bint build()
         string getName()
         void setParameterName( string name ) except +
         void setResultName( string name ) except +
@@ -50,5 +52,6 @@ cdef class Function:
     cdef FunctionPtr* _cptr
 
     cdef set( self, FunctionPtr other )
+    cpdef attach( self, string jeveuxName )
     cdef FunctionPtr* getPtr( self )
     cdef FunctionInstance* getInstance( self )

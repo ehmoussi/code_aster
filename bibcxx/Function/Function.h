@@ -34,6 +34,8 @@ class FunctionInstance: public DataStructure
         */
         FunctionInstance();
 
+        FunctionInstance( const std::string jeveuxName );
+
         /**
         * @brief Definition of the name of the parameter (abscissa)
         * @param name name of the parameter
@@ -114,6 +116,12 @@ class FunctionInstance: public DataStructure
             }
             return prop;
         }
+
+        /**
+         * @brief Update the pointers to the Jeveux objects
+         * @return Return true if ok
+         */
+        bool build( );
 
 };
 

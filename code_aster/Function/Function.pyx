@@ -20,6 +20,8 @@
 import cython
 from libcpp.string cimport string
 
+from code_aster.Supervis.libBaseUtils import resizeStr
+
 # numpy implementation in cython currently generates a warning at compilation
 import numpy as np
 cimport numpy as np
@@ -29,10 +31,17 @@ np.import_array()
 cdef class Function:
     """Python wrapper on the C++ Function object"""
 
-    def __cinit__( self, bint init=True ):
+    def __cinit__( self, bint init=True, string jeveuxName=" " ):
         """Initialization: stores the pointer to the C++ object"""
         if init:
             self._cptr = new FunctionPtr( new FunctionInstance() )
+        else:
+            self.attach( jeveuxName )
+
+    def __getnewargs__(self):
+        """Define arguments to create an instance at unpickling and to attach it
+        to its Jeveux object."""
+        return ( False, self.getInstance().getName() )
 
     def __dealloc__( self ):
         """Destructor"""
@@ -42,6 +51,15 @@ cdef class Function:
     cdef set( self, FunctionPtr other ):
         """Point to an existing object"""
         self._cptr = new FunctionPtr( other )
+
+    cpdef attach( self, string jeveuxName ):
+        """Attach this function to an existing Jeveux object"""
+        jname = resizeStr( jeveuxName, 8 )
+        if not jname:
+            return
+        self._cptr = new FunctionPtr( new FunctionInstance( jname ) )
+        ret = self.getInstance().build()
+        assert ret, "can't attach Function to the Jeveux object >{0}<".format(jname)
 
     cdef FunctionPtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
