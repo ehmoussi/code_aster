@@ -18,7 +18,14 @@
 # person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
-
+    1: _(u"""
+  Une divergence a été détectée à l'instant %(r1)f, inutile de poursuivre avec 
+  l'intégration temporelle. 
+  
+  Conseil : réduire le pas de temps du schéma d'intégration ou choisir un schéma 
+  adaptatif avec une valeur de tolérance adaptée à la raideur du système dynamique 
+  aussi bien en vol libre qu'en état de choc.
+"""),
 
     2: _(u"""
          Comportement %(k1)s non implanté pour l'élément d'interface
@@ -108,7 +115,9 @@ cata_msg = {
   Il y a %(i1)d points de Gauss sur l'axe de rotation. En ces points les axes Or et suivant thêta ne sont pas définis. On prend
    un axe Or quelconque normal à Oz pour continuer le changement de repère mais seules les composantes suivant z ont un sens en ces points.
 """),
-
+    23 : _(u"""
+    Vous effectuez un changement de repère %(k1)s. Le repère est défini par %(i1)d occurrences du mot-clé AFFE : or une seule occurrence de ce mot-clé est autorisée pour ce type de changement de repère. 
+"""),
     25 : _(u"""
   Lors de la reprise du calcul, la liste des champs calculés (DEPL, VITE, ACCE) doit être la même
   pour le concept entrant et sortant.
