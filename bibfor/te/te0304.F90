@@ -35,23 +35,19 @@ subroutine te0304(option, nomte)
 #include "asterfort/elrefe_info.h"
 #include "asterfort/fointe.h"
 #include "asterfort/jevech.h"
-    character(len=8) :: elrefe, nompar(4), lirefe(2)
+    character(len=8) ::  nompar(4)
     character(len=16) :: nomte, option
     real(kind=8) :: nx, ny, nz, sx(9, 9), sy(9, 9), sz(9, 9), xx, yy, zz, jac
     real(kind=8) :: tem, theta, hechp, valpar(4)
     integer :: ipoids, ivf, idfdx, idfdy, igeom, i, itemp, itemps, ndim, nno
     integer :: ipg, npg1, ivectt, ihechp, ino, jno, idec, jdec, kdec, ldec, ier
-    integer :: j, nbelr, nnos, jgano
+    integer :: j, nnos, jgano
 !
 !====
 ! 1.1 PREALABLES: RECUPERATION ADRESSES FONCTIONS DE FORMES...
 !====
 !
-    call elref2(nomte, 2, lirefe, nbelr)
-    ASSERT(nbelr.eq.2)
-    elrefe = lirefe(2)
-!
-    call elrefe_info(elrefe=elrefe,fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
+    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
   npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfdx,jgano=jgano)
     idfdy = idfdx + 1
 !
@@ -116,28 +112,29 @@ subroutine te0304(option, nomte)
         nx = 0.0d0
         ny = 0.0d0
         nz = 0.0d0
-        do 102 i = 1, nno
+        do i = 1, nno
             idec = (i-1)*ndim
-            do 102 j = 1, nno
+            do j = 1, nno
                 jdec = (j-1)*ndim
                 nx=nx+zr(idfdx+kdec+idec)*zr(idfdy+kdec+jdec)*sx(i,j)
                 ny=ny+zr(idfdx+kdec+idec)*zr(idfdy+kdec+jdec)*sy(i,j)
                 nz=nz+zr(idfdx+kdec+idec)*zr(idfdy+kdec+jdec)*sz(i,j)
-102          continue
+            end do
+        end do
 !
 ! --- CALCUL DU JACOBIEN AU POINT DE GAUSS IPG
 !
         jac = sqrt(nx*nx + ny*ny + nz*nz)
         tem = 0.d0
-        do 104 i = 1, nno
+        do i = 1, nno
             ldec = (ipg-1)*nno
             tem = tem + (zr(itemp+nno+i-1)- zr(itemp+i-1) ) * zr(ivf+ ldec+i-1)
-104      continue
-        do 103 i = 1, nno
+        end do
+        do i = 1, nno
             zr(ivectt+i-1) = zr(ivectt+i-1) + jac * hechp * zr(ipoids+ ipg-1) * zr(ivf+ldec+i-1) &
                              &* (1.0d0-theta)*tem
             zr(ivectt+nno+i-1) = zr(ivectt+nno+i-1) - jac * hechp * zr(ipoids+ipg-1) * zr(ivf+lde&
                                  &c+i-1) * (1.0d0-theta)*tem
-103      continue
+103     end do
 101  end do
 end subroutine
