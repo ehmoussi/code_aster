@@ -27,6 +27,7 @@ cdef extern from "Function/Function.h":
 
     cdef cppclass FunctionInstance:
         FunctionInstance()
+        string getName()
         void setParameterName( string name ) except +
         void setResultName( string name ) except +
         void setInterpolation( string type ) except +
