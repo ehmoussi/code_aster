@@ -66,12 +66,11 @@ def debug(title, *obj):
     """Debug function
     :todo: would be better to hide it with a '#define'-like
     """
-    return
-    py_string = ", ".join([repr(i) for i in obj])
-    cdef bytes py_bytes = py_string.encode()
-    cdef char* c_string = py_bytes
-    cdef char* format
-    title = " DEBUG: " + title + ": %s\n"
-    format = title
-    printf( format, c_string )
-    fflush( stdout )
+    # py_string = ", ".join([repr(i) for i in obj])
+    # cdef bytes py_bytes = py_string.encode()
+    # cdef char* c_string = py_bytes
+    # cdef char* format
+    # title = " DEBUG: " + title + ": %s\n"
+    # format = title
+    # printf( format, c_string )
+    # fflush( stdout )

@@ -28,6 +28,9 @@
 #define aster_logical logical(kind=aster_logical_kind)
 #define to_aster_logical(a) logical(a, ASTER_LOGICAL_SIZE)
 !
+! convert C "bool" stored as a long (1:true, 0,false) as a logical
+#define int_to_logical(a) transfer(a, .true.)
+!
 #define ASTER_TRUE to_aster_logical(.true.)
 #define ASTER_FALSE to_aster_logical(.false.)
 !

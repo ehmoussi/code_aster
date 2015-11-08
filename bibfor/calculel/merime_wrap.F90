@@ -54,7 +54,7 @@ subroutine merime_wrap(modelz, nchar, lchar, mate, carelz,&
 !
 ! ----------------------------------------------------------------------
 !
-    exitim = exiti0
+    exitim = int_to_logical(exiti0)
     call merime(modelz, nchar, lchar, mate, carelz,&
                 exitim, time, compoz, matelz, nh,&
                 basz)
