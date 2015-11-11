@@ -33,6 +33,8 @@ cdef extern from "aster_fort.h":
 
     void debut_()
 
+    void poursu_()
+
     void execop_( INTEGER* numOp )
 
     void opsexe_( INTEGER* numOp )

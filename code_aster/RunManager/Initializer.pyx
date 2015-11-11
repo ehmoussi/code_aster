@@ -17,9 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+import os.path as osp
 import atexit
 import cPickle
 import types
+
+from code_aster.Supervis.libCommandSyntax cimport resultNaming
 
 from code_aster.Supervis.libExecutionParameter import executionParameter
 from code_aster.Supervis.libCommandSyntax import _F
@@ -41,22 +44,30 @@ def init( int mode ):
     # TODO: what future for aster modules?
     # At least: aster_mpi_init, exceptions, med module...
     libaster.initAsterModules()
-    # Emulate the syntax of DEBUT (default values should be added)
-    make_cata = {}
-    if mode == 1:
-        make_cata = _F( CATALOGUE=_F(FICHIER='CATAELEM',
-                                     UNITE=4) )
+    # Is there any glob.* to reload ?
+    # TODO see repglob option
+    restart =  osp.exists('glob.1')
+    if mode or not restart:
+        # Emulate the syntax of DEBUT (default values should be added)
+        make_cata = {}
+        if mode == 1:
+            make_cata = _F( CATALOGUE=_F(FICHIER='CATAELEM',
+                                         UNITE=4) )
+        syntax = CommandSyntax( "DEBUT" )
+        syntax.define( _F( CODE=_F( NIV_PUB_WEB='NON' ),
+                           **make_cata )
+                     )
+        libaster.ibmain_()
+        libaster.register_sh_jeveux_status( 1 )
+        libaster.debut_()
+    else:
+        print "restarting from a previous execution..."
+        syntax = CommandSyntax( "POURSUITE" )
+        syntax.define( _F( CODE='OUI' ) )
+        libaster.ibmain_()
+        libaster.register_sh_jeveux_status( 1 )
+        libaster.poursu_()
 
-    syntax = CommandSyntax( "DEBUT" )
-    syntax.define( _F( CODE=_F( NIV_PUB_WEB='NON' ),
-                       MEMOIRE=_F( TAILLE_BLOC=800.,
-                                   TAILLE_GROUP_ELEM=1000 ),
-                       **make_cata )
-                 )
-
-    libaster.ibmain_()
-    libaster.register_sh_jeveux_status( 1 )
-    libaster.debut_()
     syntax.free()
     atexit.register( finalize )
 
@@ -83,7 +94,9 @@ def saveObjects(context, filename="code_aster.pick"):
             print "object can't be pickled: {0}".format(name)
             continue
         objList.append( name )
+    # add management objects on the stack
     cPickle.dump( objList, pick )
+    cPickle.dump( resultNaming.getLastId(), pick )
     pick.close()
     return 0
 
@@ -97,11 +110,14 @@ def loadObjects(context, filename="code_aster.pick"):
             obj = cPickle.load( pick )
             objects.append( obj )
     except EOFError:
+        # return management objects from the end of the end
+        lastId = objects.pop()
         objList = objects.pop()
     pick.close()
     assert len(objects) == len(objList), (objects, objList)
     for name, obj in zip( objList, objects ):
         context[name] = obj
+    resultNaming.initCounter( lastId )
     return 0
 
 
