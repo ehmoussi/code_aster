@@ -51,6 +51,15 @@ cdef class ResultNaming:
         debug( "getResultObjectName returns", name )
         return name
 
+    def initCounter( self, start ):
+        """Initialise the counter of objects"""
+        self._numberOfAsterObjects = start
+
+    def getLastId( self ):
+        """Return the id of the last created objects"""
+        return self._numberOfAsterObjects
+
+
 # global instance
 resultNaming = ResultNaming()
 
