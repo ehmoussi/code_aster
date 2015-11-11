@@ -24,8 +24,8 @@ from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.Materials.Material cimport Material
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
+from code_aster.Supervis.logger import logger
 from code_aster.Supervis.libCommandSyntax import _F
-from code_aster.Supervis.libBaseUtils import debug
 
 
 cdef class MaterialOnMesh:
@@ -85,7 +85,7 @@ cdef class MaterialOnMesh:
                                         "NEUT2", "PTOT", "DIVU" )
         dictSyntax.update( _hiddenKeywords() )
 
-        debug( "AFFE_MATERIAU", dictSyntax )
+        logger.debug( "AFFE_MATERIAU: %r", dictSyntax )
         syntax.define( dictSyntax )
         iret = instance.build()
         syntax.free()

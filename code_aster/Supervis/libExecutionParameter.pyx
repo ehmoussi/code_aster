@@ -23,7 +23,8 @@ import platform
 
 import aster_pkginfo
 
-from code_aster.Supervis.libBaseUtils import debug, to_cstr
+from code_aster.Supervis.logger import logger, setlevel
+from code_aster.Supervis.libBaseUtils import to_cstr
 from code_aster.Supervis.libBaseUtils cimport copyToFStr
 
 
@@ -97,6 +98,8 @@ class ExecutionParameter:
         # command arguments parser
         parser = ArgumentParser(description='execute a Code_Aster study',
                                 prog="Code_Aster{called by Python}")
+        parser.add_argument('-g', '--debug', action='store_true',
+            help="add debug informations")
         parser.add_argument('--build-elem', dest='buildelem', action='store_true',
             default=False,
             help="enable specific starting mode to build the elements database")
@@ -108,7 +111,9 @@ class ExecutionParameter:
             help="turn off the automatic start of the memory manager")
 
         args, ignored = parser.parse_known_args( argv or sys.argv )
-        debug( "Ignored arguments:", ignored )
+        if args.debug:
+            setlevel()
+        logger.debug( "Ignored arguments: %r", ignored )
         # assign parameter values
         self.set( 'buildelem', int(args.buildelem) )
         self.set( 'autostart', int(args.autostart) )
@@ -126,14 +131,14 @@ cdef public long getParameterLong( char* argName ):
     """Request the value of an execution parameter of type 'int'"""
     global executionParameter
     value = executionParameter.get( argName ) or 0
-    debug( 'gtopti( {} ): {}'.format( argName, value ) )
+    logger.debug( 'gtopti( %r ): %r', argName, value )
     return value
 
 cdef public double getParameterDouble( char* argName ):
     """Request the value of an execution parameter of type 'double'"""
     global executionParameter
     value = executionParameter.get( argName ) or 0.
-    debug( 'gtoptr( {} ): {}'.format( argName, value ) )
+    logger.debug( 'gtoptr( %r ): %r', argName, value )
     return value
 
 cdef public void gtoptk_( char* argName, char* valk, long* iret,
@@ -147,4 +152,4 @@ cdef public void gtoptk_( char* argName, char* valk, long* iret,
     else:
         copyToFStr( valk, value, lvalk )
         iret[0] = 0
-    debug( 'gtoptk( {} ): {}, iret {}'.format( arg, value, iret[0] ) )
+    logger.debug( 'gtoptk( %r ): %r, iret %r', arg, value, iret[0] )
