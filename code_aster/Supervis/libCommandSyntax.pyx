@@ -19,7 +19,8 @@
 
 from cpython.ref cimport PyObject
 
-from code_aster.Supervis.libBaseUtils import debug, to_cstr
+from code_aster.Supervis.logger import logger
+from code_aster.Supervis.libBaseUtils import to_cstr
 from code_aster.Supervis cimport libBaseUtils
 from code_aster.Supervis.libBaseUtils cimport copyToFStr, to_fstring_array
 
@@ -48,7 +49,7 @@ cdef class ResultNaming:
         @return String of 8 characters containing the name
         """
         cdef string name = "{:<8x}".format( self._numberOfAsterObjects )
-        debug( "getResultObjectName returns", name )
+        logger.debug( "getResultObjectName returns %r", name )
         return name
 
     def initCounter( self, start ):
@@ -77,7 +78,7 @@ cdef class CommandSyntax:
         self._resultName = " "
         self._resultType = " "
         self._definition = None
-        debug( "new command is ", self._name )
+        logger.debug( "new command is %r", self._name )
         # only FIN is allowed to free the current "in failure" command
         if self._name == "FIN" and currentCommand is not None:
             currentCommand.free()
@@ -90,7 +91,7 @@ cdef class CommandSyntax:
         """Reset the current command pointer as soon as possible"""
         # `currentCommand` must be reset before the garbage collector will do it
         global currentCommand
-        debug( "del command ", self._name )
+        logger.debug( "del command %r", self._name )
         currentCommand = None
 
     def __repr__( self ):
@@ -101,9 +102,9 @@ cdef class CommandSyntax:
 
     def debugPrint( self ):
         """Representation of the command"""
-        print "Command {!r}, returns {!r} <{!r}>\n` syntax: {}".format( \
-            self._name, self._resultName, self._resultType,
-            self._definition)
+        logger.debug( "Command %r, returns %r <%r>\n` syntax: %r",
+                      self._name, self._resultName, self._resultType,
+                      self._definition )
 
     cpdef setResult( self, sdName, sdType ):
         """Register the result of the command: name and type"""
@@ -113,7 +114,7 @@ cdef class CommandSyntax:
     cpdef define( self, dictSyntax ):
         """Register the keywords values"""
         if self._commandCata != None:
-            debug( "define0", self._name, dictSyntax )
+            logger.debug( "define0 %r: %r", self._name, dictSyntax )
             defaultKwds = self._commandCata.getDefaultKeywords( dictSyntax )
             for key, value in defaultKwds.iteritems():
                 assert type( value ) != dict, \
@@ -136,7 +137,7 @@ cdef class CommandSyntax:
                                 if ret4 == None:
                                     ret3[ key2 ] = value2
         self._definition = dictSyntax
-        debug( "define1", self._name, self._definition )
+        logger.debug( "define1 %r: %r", self._name, self._definition )
 
     cdef getName( self ):
         """Return the command name"""
@@ -154,7 +155,7 @@ cdef class CommandSyntax:
         """Return the occurrences of a factor keyword"""
         # a factor keyword may be empty: {} (None means 'does not exist')
         dictDef = self._definition.get( factName, None )
-        debug( "factor keyword", factName, dictDef )
+        logger.debug( "factor keyword %r: %r", factName, dictDef )
         if dictDef is None:
             return None
         if type( dictDef ) is dict:
@@ -184,10 +185,10 @@ cdef class CommandSyntax:
     cpdef int getFactorKeywordNbOcc( self, factName ):
         """Return the number of occurrences of a factor keyword"""
         dictDef = self._getFactorKeyword( factName )
-        debug( "_getFactorKeyword", factName, dictDef )
+        logger.debug( "_getFactorKeyword %r: %r", factName, dictDef )
         if dictDef is None:
             return 0
-        debug( "getFactorKeywordNbOcc: len(dictDef) = ", len( dictDef ) )
+        logger.debug( "getFactorKeywordNbOcc: len(dictDef) = %d", len(dictDef) )
         return len(dictDef)
 
     cpdef int existsFactorAndSimpleKeyword( self, factName, int occurrence,
@@ -206,7 +207,7 @@ cdef class CommandSyntax:
         value = self._getDefinition( factName, occurrence )[simpName]
         if type( value ) not in (list, tuple):
             value = [value, ]
-        debug( "getValue", value )
+        logger.debug( "getValue: %r", value )
         return value
 
 
@@ -281,11 +282,11 @@ cdef public void getres_( char* resultName, char* resultType, char* commandName,
     """Wrapper for fortran calls to getName, getResultName and getResultType"""
     if currentCommand is None:
         raise ValueError( "there is no active command" )
-    debug( "Current Command is", currentCommand )
+    logger.debug( "Current Command is %r", currentCommand )
     copyToFStr( commandName, currentCommand.getName(), lcmd )
     copyToFStr( resultName, currentCommand.getResultName(), lres )
     copyToFStr( resultType, currentCommand.getResultType(), ltype )
-    debug( "getres", ( commandName[:lcmd], resultName[:lres], resultType[:ltype] ) )
+    logger.debug( "getres: %r", ( commandName[:lcmd], resultName[:lres], resultType[:ltype] ) )
 
 
 cdef public int listeMotCleSimpleFromMotCleFacteur(
@@ -321,8 +322,8 @@ cdef public int listeMotCleSimpleFromMotCleFacteur(
             raise TypeError( "Unexpected type: {!r}".format(type(value)) )
         types.append( typ )
     # fill the fortran array
-    debug("getmjm: keywords =", keywords)
-    debug("getmjm: types =", types)
+    logger.debug("getmjm: keywords = %r", keywords)
+    logger.debug("getmjm: types = %r", types)
     assert len(keywords) == len(types) == size
     to_fstring_array( keywords, keywordSize, arraySimpleKeyword )
     to_fstring_array( types, typeSize, arrayType )

@@ -19,6 +19,7 @@
 
 import atexit
 
+from code_aster.Supervis.logger import logger
 from code_aster.Supervis.libExecutionParameter import executionParameter
 from code_aster.Supervis.libCommandSyntax import _F
 from code_aster.RunManager.Pickling import Pickler
@@ -56,7 +57,7 @@ def init( int mode ):
         libaster.register_sh_jeveux_status( 1 )
         libaster.debut_()
     else:
-        print "restarting from a previous execution..."
+        logger.info( "restarting from a previous execution..." )
         syntax = CommandSyntax( "POURSUITE" )
         syntax.define( _F( CODE='OUI' ) )
         libaster.ibmain_()
