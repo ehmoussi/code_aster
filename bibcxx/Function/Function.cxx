@@ -50,16 +50,3 @@ void FunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &
         ++idx;
     }
 }
-
-bool FunctionInstance::build( )
-{
-    bool ok;
-    ok = _property->updateValuePointer();
-    if ( ! ok )
-        return false;
-    ok = _value->updateValuePointer();
-    if ( ! ok )
-        return false;
-
-    return true;
-};
