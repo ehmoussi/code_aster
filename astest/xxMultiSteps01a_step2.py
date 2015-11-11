@@ -9,7 +9,7 @@ import code_aster
 #code_aster.loadObjects( globals() )
 
 ctxt = {}
-code_aster.loadObjects( ctxt, filename='code_aster.pick')
+code_aster.loadObjects( ctxt )
 
 assert type(ctxt['fsin']) is code_aster.Function, ctxt.keys()
 
