@@ -121,7 +121,10 @@ class FunctionInstance: public DataStructure
          * @brief Update the pointers to the Jeveux objects
          * @return Return true if ok
          */
-        bool build( );
+        bool build( )
+        {
+            return _property->updateValuePointer() && _value->updateValuePointer();
+        }
 
 };
 
