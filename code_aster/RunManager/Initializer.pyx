@@ -17,15 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-import os.path as osp
 import atexit
-import cPickle
-import types
-
-from code_aster.Supervis.libCommandSyntax cimport resultNaming
 
 from code_aster.Supervis.libExecutionParameter import executionParameter
 from code_aster.Supervis.libCommandSyntax import _F
+from code_aster.RunManager.Pickling import Pickler
 
 
 def finalize():
@@ -45,9 +41,8 @@ def init( int mode ):
     # At least: aster_mpi_init, exceptions, med module...
     libaster.initAsterModules()
     # Is there any glob.* to reload ?
-    # TODO see repglob option
-    restart =  osp.exists('glob.1')
-    if mode or not restart:
+    pickler = Pickler()
+    if mode or not pickler.canRestart():
         # Emulate the syntax of DEBUT (default values should be added)
         make_cata = {}
         if mode == 1:
@@ -78,59 +73,3 @@ def cataBuilder():
     cdef INTEGER numOp = 20
     libaster.execop_( &numOp )
     syntax.free()
-
-# pickling/unpickling functions
-def saveObjects(context, filename="code_aster.pick"):
-    """Save objects of the context in a file.
-    No instruction should be called after this!"""
-    ctxt = _filteringContext(context)
-    pick = open(filename, "wb")
-    # ordered list of objects names
-    objList = []
-    for name, obj in ctxt.items():
-        try:
-            cPickle.dump( obj, pick, -1 )
-        except TypeError:
-            print "object can't be pickled: {0}".format(name)
-            continue
-        objList.append( name )
-    # add management objects on the stack
-    cPickle.dump( objList, pick )
-    cPickle.dump( resultNaming.getLastId(), pick )
-    pick.close()
-    return 0
-
-def loadObjects(context, filename="code_aster.pick"):
-    """Load objects from a file in the context"""
-    pick = open(filename, "rb")
-    # load all the objects
-    objects = []
-    try:
-        while True:
-            obj = cPickle.load( pick )
-            objects.append( obj )
-    except EOFError:
-        # return management objects from the end of the end
-        lastId = objects.pop()
-        objList = objects.pop()
-    pick.close()
-    assert len(objects) == len(objList), (objects, objList)
-    for name, obj in zip( objList, objects ):
-        context[name] = obj
-    resultNaming.initCounter( lastId )
-    return 0
-
-
-def _filteringContext(context):
-    """Return a context by filtering the input objects by excluding:
-    - modules,
-    - code_aster objects,
-    - ..."""
-    ctxt = {}
-    for name, obj in context.items():
-        if ( name in ('code_aster', ) or name.startswith('__') or
-             type(obj) in (types.ModuleType, types.ClassType, types.FunctionType) or
-             issubclass(type(obj), types.TypeType) ):
-            continue
-        ctxt[name] = obj
-    return ctxt
