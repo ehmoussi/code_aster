@@ -48,7 +48,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    l_load_user = l_load_user0
+    l_load_user = int_to_logical(l_load_user0)
     list_load = list_load0
     list_load_resu = list_load_resu0
     call nmdoch(list_load, l_load_user, list_load_resu)

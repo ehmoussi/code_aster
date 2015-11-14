@@ -3,6 +3,8 @@ subroutine preres(solveu, base, iret, matpre, matass,&
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jemarq.h"
 #include "asterfort/matrix_factor.h"
 #include "asterfort/uttcpu.h"
 !-----------------------------------------------------------------------
