@@ -73,7 +73,7 @@ subroutine resoud_wrap(matass, matpre, solveu, chcine, nsecm,&
     aster_logical prepos
 ! ----------------------------------------------------------------------
 !
-    prepos = prepo2
+    prepos = int_to_logical(prepo2)
     call resoud(matass, matpre, solveu, chcine, nsecm,&
                 chsecm, chsolu, base, rsolu, csolu,&
                 criter, prepos, istop, iret)
