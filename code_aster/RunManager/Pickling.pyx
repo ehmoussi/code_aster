@@ -22,6 +22,7 @@ import types
 import traceback
 import os.path as osp
 
+from code_aster.Supervis.logger import logger
 from code_aster.Supervis.libCommandSyntax cimport resultNaming
 
 
@@ -47,7 +48,7 @@ class Pickler(object):
         # return ( osp.exists(self._base) and osp.exists(self._filename) and
         #          read_signature(self._filename) == base_signature(self._base) )
 
-    def save(self):
+    def save(self, delete=True):
         """Save objects of the context."""
         assert self._ctxt is not None, "context is required"
         ctxt = _filteringContext(self._ctxt)
@@ -59,9 +60,12 @@ class Pickler(object):
             try:
                 cPickle.dump( obj, pick, -1 )
             except TypeError:
-                print "object can't be pickled: {0}".format(name)
+                logger.warn("object can't be pickled: {0}".format(name))
                 continue
             objList.append( name )
+            # TODO should only delete Code_Aster objects, not all!
+            if delete:
+                del self._ctxt[name]
         # add management objects on the stack
         cPickle.dump( objList, pick, -1 )
         cPickle.dump( resultNaming.getLastId(), pick, -1 )
@@ -89,17 +93,6 @@ class Pickler(object):
         resultNaming.initCounter( lastId )
 
 
-# pickling/unpickling functions
-def saveObjects(context):
-    """Save objects of the context in a file.
-    No instruction should be called after this!"""
-    return Pickler(context).save()
-
-def loadObjects(context):
-    """Load objects from a file in the context"""
-    return Pickler(context).load()
-
-
 def _filteringContext(context):
     """Return a context by filtering the input objects by excluding:
     - modules,
@@ -123,7 +116,7 @@ def read_signature(pickled):
             sign = cPickle.load( pick )
     except (IOError, OSError):
         traceback.print_exc()
-    # print "pickled signature: {0}".format(sign)
+    logger.debug("pickled signature: {0}".format(sign))
     return sign
 
 def base_signature(filename):
@@ -138,5 +131,5 @@ def base_signature(filename):
             sign = sha256(fobj.read(bufsize)).hexdigest()
     except (IOError, OSError):
         traceback.print_exc()
-    # print "results database signature: {0}".format(sign)
+    logger.debug("results database signature: {0}".format(sign))
     return sign

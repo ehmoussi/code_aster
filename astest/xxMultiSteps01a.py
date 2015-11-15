@@ -5,7 +5,6 @@ from math import pi
 import numpy as np
 
 import code_aster
-from code_aster.Commands import DEFI_LIST_REEL
 
 fsin = code_aster.Function()
 fsin.setParameterName("INST")
@@ -19,4 +18,14 @@ valy = np.sin( valx )
 fsin.setValues(valx, valy)
 fsin.debugPrint( 6 )
 
-code_aster.saveObjects( globals() )
+from xxMultiSteps01a_imp import fcos
+fcos.debugPrint( 6 )
+
+code_aster.saveObjects()
+
+# after the backup Code_Aster objects must not available
+try:
+    print fsin
+    raise ValueError("object must not be available!")
+except NameError:
+    print "ok"
