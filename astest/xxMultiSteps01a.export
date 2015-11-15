@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential asterxx
 
 F comm xxMultiSteps01a.py D 1
+F nom xxMultiSteps01a_imp.py D 0
 F comm xxMultiSteps01a_step2.py D 1
