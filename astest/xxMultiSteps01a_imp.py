@@ -11,7 +11,7 @@ fcos.setParameterName("INST")
 fcos.setResultName("TEMP")
 
 # values assignment
-n = 10
+n = 20
 valx = np.arange( n ) * 2. * pi / n
 valy = np.cos( valx )
 

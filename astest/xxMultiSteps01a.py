@@ -18,6 +18,7 @@ valy = np.sin( valx )
 fsin.setValues(valx, valy)
 fsin.debugPrint( 6 )
 
+# check that imported objects will be saved
 from xxMultiSteps01a_imp import fcos
 fcos.debugPrint( 6 )
 

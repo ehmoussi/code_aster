@@ -6,12 +6,12 @@ import numpy as np
 import code_aster
 
 
-code_aster.loadObjects()
-
 assert type(fsin) is code_aster.Function, ctxt.keys()
+assert type(fcos) is code_aster.Function, ctxt.keys()
 
 fsin.debugPrint( 6 )
 assert fsin.size() == 10, fsin.size()
+assert fcos.size() == 20, fcos.size()
 
 # continue...
 # check Function.abs()

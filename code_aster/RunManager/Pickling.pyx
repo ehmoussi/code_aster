@@ -44,9 +44,16 @@ class Pickler(object):
     def canRestart(self):
         """Tell if a restart is possible.
         This means that glob & pickled files are consistent."""
-        return ( osp.exists(self._base) and osp.exists(self._filename) )
-        # return ( osp.exists(self._base) and osp.exists(self._filename) and
-        #          read_signature(self._filename) == base_signature(self._base) )
+        if not osp.exists(self._base) or not osp.exists(self._filename):
+            return False
+        signPick = read_signature(self._filename)
+        signBase = base_signature(self._base)
+        if signPick != signBase:
+            logger.warn("current base signature: {0}".format(signBase))
+            logger.warn("pickled base signature: {0}".format(signPick))
+            logger.warn("base and pickled objects are not consistent.")
+            return False
+        return True
 
     def save(self, delete=True):
         """Save objects of the context."""

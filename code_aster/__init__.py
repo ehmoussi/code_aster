@@ -32,7 +32,7 @@ if executionParameter.get( 'autostart' ):
     Initializer.init( executionParameter.get( 'buildelem' ) )
 
 # import general purpose functions
-from code_aster.RunManager import saveObjects, loadObjects
+from code_aster.RunManager.saving import saveObjects
 
 # import datastructures, physical quantities and constants
 # each package is responsible to export only the relevant objects
