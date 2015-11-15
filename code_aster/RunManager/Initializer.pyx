@@ -23,6 +23,7 @@ from code_aster.Supervis.logger import logger
 from code_aster.Supervis.libExecutionParameter import executionParameter
 from code_aster.Supervis.libCommandSyntax import _F
 from code_aster.RunManager.Pickling import Pickler
+from code_aster.RunManager.loading import loadObjects
 
 
 def finalize():
@@ -63,6 +64,7 @@ def init( int mode ):
         libaster.ibmain_()
         libaster.register_sh_jeveux_status( 1 )
         libaster.poursu_()
+        loadObjects(level=2)
 
     syntax.free()
     atexit.register( finalize )

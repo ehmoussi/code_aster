@@ -43,10 +43,10 @@ class PerLevelFormatter(logging.Formatter):
 
     def _adjust_format(self, level):
         """Adjust the format for the given level"""
-        if level >= logging.WARNING:
-            self._fmt =  "%(levelname)-7s %(message)s"
+        if level != logging.INFO:
+            self._fmt = "%(levelname)-7s %(message)s"
         else:
-            self._fmt =  "%(message)s"
+            self._fmt = "%(message)s"
 
     def format(self, record):
         """Enhance error and warning messages"""
@@ -93,7 +93,7 @@ def build_logger(level=logging.WARN):
     logger = logging.getLogger("code_aster")
     logger.setLevel(level)
     term = HgStreamHandler(sys.stdout)
-    #term.setFormatter(PerLevelColorFormatter())
+    term.setFormatter(PerLevelFormatter())
     logger.addHandler(term)
     return logger
 
