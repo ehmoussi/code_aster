@@ -21,7 +21,7 @@ import os
 import os.path as osp
 import shutil
 
-from waflib import Context
+from waflib import Context, Configure
 
 
 def options(self):
@@ -107,3 +107,9 @@ def build_wrappers_on_libaster(self):
                  use = ['asterlib', 'CODE_ASTER_CORE'],
         install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
         )
+
+@Configure.conf
+def check_optimization_cython(self):
+    self.setenv('debug')
+    self.env.append_unique('CYTHONFLAGS', ["-a"])
+    self.setenv('release')
