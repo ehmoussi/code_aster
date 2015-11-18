@@ -333,6 +333,7 @@ def check_optimization_options(self):
     self.check_optimization_cxxflags()
     self.check_optimization_fcflags()
     self.check_optimization_python()
+    self.check_optimization_cython()
     self.check_variant_vars()
 
 @Configure.conf
