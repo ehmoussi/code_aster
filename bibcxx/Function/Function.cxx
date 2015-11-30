@@ -8,7 +8,7 @@
 #include "Function/Function.h"
 
 
-FunctionInstance::FunctionInstance( const std::string jeveuxName=getNewResultObjectName()):
+FunctionInstance::FunctionInstance( const std::string jeveuxName = getNewResultObjectName()):
     DataStructure( jeveuxName, "FONCTION" ),
     _jeveuxName( jeveuxName ),
     _property( JeveuxVectorChar16( jeveuxName + ".PROL           " ) ),
