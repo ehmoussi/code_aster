@@ -38,21 +38,13 @@ enum ConvergenceState { failure, success, iterate };
 class SolverControlInstance
 {
     public:
-    SolverControlInstance( double rTol=1.e-6, int nIterMax=100 ): 
-    _relativeTol( rTol ), _nIterMax(nIterMax) 
-    {}
+    SolverControlInstance( double rTol=1.e-6, int nIterMax=100 ); 
+
     ~SolverControlInstance()
     {}
-    virtual ConvergenceState check( const double relativeResNorm, const int iter) const
-    {
-     if ( abs(relativeResNorm) <= _relativeTol ) {
-        return success; 
-     }
-     if ( iter >= _nIterMax ){
-        return failure;
-     }
-     return iterate; 
-    }
+
+    virtual ConvergenceState check( const double relativeResNorm, const int iter ) const;
+
     double getRelativeTol() const
     {
         return _relativeTol; 
@@ -67,39 +59,6 @@ class SolverControlInstance
     /* resi_rela*/
     double _relativeTol; 
 };
-/**
- * @class NonLinearControl
- * @brief Control class used to check convergence of Newton solver 
- * @author Natacha Béreux 
- */
-
-class NonLinearControlInstance : public SolverControlInstance
-{
-    public:
-    NonLinearControlInstance( double rTol=1.e-6, int nIterMax=10, double maxTol=1.e-6, double relMaxTol=0.0, double relTolCmp=0.0):
-    //SolveurControlInstance(rTol, nIterMax),
-     _maxTol(maxTol), _relativeMaxTol(relMaxTol), _relativeTolByComponent(relTolCmp)
-    { 
-     _relativeTol = rTol;
-     _nIterMax = nIterMax;
-     }
-    ~NonLinearControlInstance()
-    {}
-    
-    virtual ConvergenceState check( const double checkValue, const int iter ) const 
-    {
-        return failure; 
-    }
-    protected: 
-/* resi_glob_maxi*/
-    double _maxTol;
-/* resi_glob_rela */ 
-    double _relativeMaxTol;
-/* resi_comp_rela */
-    double _relativeTolByComponent;
-/* TODO resi_refe_rela */
-   
-};
 
 /**
  * @typedef SolverControlPtr
@@ -107,9 +66,5 @@ class NonLinearControlInstance : public SolverControlInstance
  */
 typedef boost::shared_ptr< SolverControlInstance > SolverControlPtr;
 
-/**
- * @typedef NonLinearControlPtr
- * @brief Pointeur intelligent vers un NonLinearControl
- */
-typedef boost::shared_ptr< NonLinearControlInstance > NonLinearControlPtr;
+
 #endif

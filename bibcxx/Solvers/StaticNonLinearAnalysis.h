@@ -1,8 +1,8 @@
-#ifndef STATICNONLINEARSOLVER_H_
-#define STATICNONLINEARSOLVER_H_
+#ifndef STATICNONLINEARANALYSIS_H_
+#define STATICNONLINEARANALYSIS_H_
 
 /**
- * @file StaticNonLinearSolver.h
+ * @file StaticNonLinearAnalysis.h
  * @brief Definition of the static mechanical solver
  * @author Natacha Béreux
  * @section LICENCE
@@ -27,18 +27,25 @@
 /* person_in_charge: natacha.bereux at edf.fr */
 #include "astercxx.h"
 
-#include "Solvers/GenericSolver.h"
-#include "Modeling/Model.h"
-#include "Materials/MaterialOnMesh.h"
-#include "Loads/MechanicalLoad.h"
+#include "Algorithms/StaticNonLinearAlgorithm.h"
+#include "Algorithms/TimeStepper.h"
+#include "LinearAlgebra/LinearSolver.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
-#include "LinearAlgebra/LinearSolver.h"
-#include "Algorithms/TimeStepper.h"
-//#include "NonLinear/NonLinearBehaviour.h"
-#include "NonLinear/NonLinearMethod.h" 
+#include "Loads/MechanicalLoad.h"
+#include "Materials/MaterialOnMesh.h"
+#include "Modeling/Model.h"
+#include "NonLinear/Behaviour.h"
+#include "Solvers/InitialState.h"
+#include "Solvers/GenericSolver.h"
 
-class StaticNonLinearSolverInstance: public GenericSolver
+
+/**
+ @brief the StaticNonLinearAnalysis class is used to perform 
+ a static analysis on the FE_Model.
+*/
+
+class StaticNonLinearAnalysisInstance: public GenericSolver
 {
     private:
         /** @typedef std::list de MechanicalLoad */
@@ -58,17 +65,17 @@ class StaticNonLinearSolverInstance: public GenericSolver
         NonLinearMethodPtr   _nonLinearMethod;
         /** @brief Liste des chargements */
         ListOfLoadsPtr    _listOfLoads;
-        /** @brief Liste de pas de temps */
-        TimeStepperPtr    _timeStep;
+        /** @brief Liste de pas de chargements */
+        TimeStepperPtr    _loadStep;
         /** @brief NonLinear Behaviour */
-        //NonLinearBehaviour _behaviour
-        LineSearchMethodPtr _lineSearchMethod;
-
+        BehaviourPtr _behaviour;
+        /** @brief Initial State of the Analysis */
+        InitialStatePtr _initialState;
     public:
         /**
          * @brief Constructeur
          */
-        StaticNonLinearSolverInstance();
+        StaticNonLinearAnalysisInstance();
 
         /**
          * @brief Function d'ajout d'une charge cinematique
@@ -93,12 +100,12 @@ class StaticNonLinearSolverInstance: public GenericSolver
          */
         bool execute_op70() throw ( std::runtime_error );
          /**
-         * @brief Lancement de la resolution réécrit
+         * @brief Run the analysis 
          */
         ResultsContainerPtr execute() throw ( std::runtime_error );
         /**
-         * @brief Methode permettant de definir le solveur nonlinéaire
-         * @param currentSolver Solveur lineaire
+         * @brief 
+         * @param currentAnalysis Solveur lineaire
          */
         void setNonLinearMethod( const NonLinearMethodPtr& currentMethod )
         {
@@ -129,22 +136,29 @@ class StaticNonLinearSolverInstance: public GenericSolver
          */
         void setTimeStepper( const TimeStepperPtr& currentStepper )
         {
-            _timeStep = currentStepper;
+            _loadStep = currentStepper;
         };
         /**
          * @brief Methode permettant de definir la méthode de recherche linéaire
          * @param 
          */
-        void setLineSearch( const LineSearchMethodPtr& currentLineSearch )
+        void setLineSearchMethod( const LineSearchMethodPtr& currentLineSearch )
         {
-            _lineSearchMethod = currentLineSearch;
+            _nonLinearMethod -> setLineSearchMethod(currentLineSearch);
         };
+        /**
+        * @brief method for the definition of the initial state of the analysis 
+        */
+        void setInitialState( const InitialStatePtr& currentInitialState ) 
+            {
+                _initialState = currentInitialState; 
+            }
 };
 
 /**
- * @typedef StaticNonLinearSolverPtr
- * @brief Enveloppe d'un pointeur intelligent vers un StaticNonLinearSolverInstance
+ * @typedef StaticNonLinearAnalysisPtr
+ * @brief Enveloppe d'un pointeur intelligent vers un StaticNonLinearAnalysisInstance
  */
-typedef boost::shared_ptr< StaticNonLinearSolverInstance > StaticNonLinearSolverPtr;
+typedef boost::shared_ptr< StaticNonLinearAnalysisInstance > StaticNonLinearAnalysisPtr;
 
-#endif /* STATICNONLINEARSOLVER_H_ */
+#endif /* STATICNONLINEARANALYSIS_H_ */

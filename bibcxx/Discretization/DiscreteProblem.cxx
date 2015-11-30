@@ -146,6 +146,19 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     return retour;
 };
 
+// TODO calcul de la matrice tangente pour l'étape de prédiction de la méthode de Newton  
+ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryTangentMatrix( double time )
+{
+    return this-> buildElementaryRigidityMatrix( time );
+};
+
+// TODO calcul de la matrice jacobienne pour l'étape de correction de la méthode de Newton  
+ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryJacobianMatrix( double time )
+{
+    return this-> buildElementaryRigidityMatrix( time );
+};
+
+
 DOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( DOFNumberingPtr dofNum )
 {
     if ( dofNum->getName() == "" )

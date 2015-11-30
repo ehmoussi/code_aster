@@ -1,9 +1,9 @@
 /**
- * @file SolverControl.cxx
- * @brief Control class to eval the convergence status of an iterative solver 
+ * @file StaticNonLinearAlgorithm.cxx
+ * @brief StaticNonLinearAlgorithm class 
  * @author Natacha Béreux 
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -21,28 +21,8 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge:  natacha.bereux at edf.fr */
+/* person_in_charge: natacha.bereux at edf.fr */
 
-#include "astercxx.h"
+#include "Algorithms/StaticNonLinearAlgorithm.h"
 
-#include "LinearAlgebra/SolverControl.h"
-
-
-SolverControlInstance::SolverControlInstance( double rTol, int nIterMax ): 
-    _relativeTol( rTol ), _nIterMax(nIterMax) 
-{}
-
-
-ConvergenceState SolverControlInstance::check( const double relativeResNorm, const int iter ) const
-{
-    if ( abs(relativeResNorm) <= _relativeTol ) 
-    {
-       return success; 
-    }
-    if ( iter >= _nIterMax )
-    {
-        return failure;
-    }
-    return iterate; 
-}
 

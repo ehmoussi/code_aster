@@ -1,5 +1,5 @@
 /**
- * @file StaticNonLinearSolver.cxx
+ * @file StaticNonLinearAnalysis.cxx
  * @brief Fichier source contenant le source du solveur de mecanique statique
  * @author Natacha Béreux
  * @section LICENCE
@@ -25,29 +25,30 @@
 
 #include <stdexcept>
 
-#include "Solvers/StaticNonLinearSolver.h"
+#include "Algorithms/GenericAlgorithm.h"
+#include "Solvers/StaticNonLinearAnalysis.h"
 #include "Discretization/DiscreteProblem.h"
 #include "RunManager/CommandSyntaxCython.h"
 
-StaticNonLinearSolverInstance::StaticNonLinearSolverInstance():
+StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance():
     _supportModel( ModelPtr() ),
     _materialOnMesh( MaterialOnMeshPtr() ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-    _timeStep( TimeStepperPtr( new TimeStepperInstance( Temporary ) ) ), 
-    _nonLinearMethod( NonLinearMethodPtr() ),  
-    _lineSearchMethod( LineSearchMethodPtr())
+    _loadStep( TimeStepperPtr( new TimeStepperInstance( Temporary ) ) ), 
+    _nonLinearMethod( NonLinearMethodPtr())
 {};
 
 
-ResultsContainerPtr StaticNonLinearSolverInstance::execute() throw ( std::runtime_error )
+ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runtime_error )
 {
     ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_NOLI" ) ) );
     std::string nameOfSD = resultC->getName();
+    
 
-    if ( _timeStep->size() == 0 )
+    if ( _loadStep->size() == 0 )
         resultC->allocate( 1 );
     else
-        resultC->allocate( _timeStep->size() );
+        resultC->allocate( _loadStep->size() );
 
     // Define the study
     StudyDescriptionPtr study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) );
@@ -67,26 +68,30 @@ ResultsContainerPtr StaticNonLinearSolverInstance::execute() throw ( std::runtim
 
     // Define the discrete problem
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
-/*
-    // Build the linear solver (sd_solver)
-    _linearSolver->build();
+    
+    // Define the nonlinear method 
+    _nonLinearMethod -> build(); 
+    // Définir le résultat pour le premier numéro d'ordre à partir de l'état initial 
+    _initialState-> setInitialStep( resultC );
 
+    // préparer le NUME_DDL
     DOFNumberingPtr dofNum1 = resultC->getEmptyDOFNumbering();
-    dofNum1->setLinearSolver( _linearSolver );
+    dofNum1->setLinearSolver( _nonLinearMethod->getLinearSolver() );
     dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
-    FieldOnNodesDoublePtr vecass = dofNum1->getEmptyFieldOnNodesDouble( Temporary );
 
-
-
-    typedef StaticMechanicalAlgorithm< TimeStepperInstance > MSAlgo;
-    MSAlgo unitaryAlgo( dProblem, _linearSolver, resultC );
-    Algorithm< MSAlgo > algoMS;
-    algoMS.runAllStepsOverAlgorithm( *_timeStep, unitaryAlgo );
-*/
+    typedef StaticNonLinearAlgorithm< TimeStepperInstance > SNLAlgo;
+    SNLAlgo unitaryAlgo( dProblem, _nonLinearMethod, resultC );
+    Algorithm< SNLAlgo > algoStatNonLine;
+    algoStatNonLine.runAllStepsOverAlgorithm( *_loadStep, unitaryAlgo );
     return resultC;
 };
+
+
+
+
+
 /* On appelle op0070 */
-bool StaticNonLinearSolverInstance::execute_op70() throw ( std::runtime_error )
+bool StaticNonLinearAnalysisInstance::execute_op70() throw ( std::runtime_error )
 {
 
     std::cout << " Entrée dans execute_op70 " << std::endl; 
@@ -128,4 +133,5 @@ bool StaticNonLinearSolverInstance::execute_op70() throw ( std::runtime_error )
     
     return true;
 };
+
 

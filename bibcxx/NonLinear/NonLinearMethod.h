@@ -28,7 +28,7 @@
 #include "astercxx.h"
 
 #include "LinearAlgebra/LinearSolver.h"
-#include "LinearAlgebra/SolverControl.h" 
+#include "NonLinear/NonLinearControl.h" 
 #include "NonLinear/LineSearchMethod.h"
 
 /** @todo définir un enum avec les méthodes nonlinéaires Newton, Newton-Krylov, Implex
@@ -44,31 +44,57 @@ class NonLinearMethodInstance
         /** @brief Solveur lineaire */
         LinearSolverPtr    _linearSolver;
         /** @brief Méthode de recherche linéaire */
-        LineSearchMethodPtr _lineSearch; 
-        
+        LineSearchMethodPtr _lineSearch;
     public:
         /**
          * @brief Constructeur
          */
-        NonLinearMethodInstance( std::string name="NEWTON" ): _name(name)
-         {}
+        NonLinearMethodInstance( std::string name="NEWTON" ): 
+        _name(name), _linearSolver( LinearSolverPtr() )
+        {};
         /**
          * @brief Methode permettant de definir le solveur lineaire
          * @param currentSolver Solveur lineaire
          */
         void setLinearSolver( const LinearSolverPtr& currentSolver )
         {
-          _linearSolver = currentSolver;
+            _linearSolver = currentSolver;
         };
-        
         /**
-         * @brief Methode permettant de definir le solveur lineaire
-         * @param currentSolver Solveur lineaire
+         * @brief Methode retournant le solveur lineaire
+         */
+        LinearSolverPtr&  getLinearSolver()
+        {
+             return _linearSolver;
+        };
+        /**
+         * @brief Methode permettant de definir la méthode de recherche lineaire
+         * @param currentLineSearch méthode de recherche lineaire
          */
         void setLineSearchMethod( const LineSearchMethodPtr& currentLineSearch )
         {
-          _lineSearch = currentLineSearch;
+            _lineSearch = currentLineSearch;
         };
+        
+        /** @brief Construction de la sd solveur pour le solveur linéaire 
+        */
+        void build()
+        {
+            _linearSolver->build(); 
+        };
+        
+        /** @brief  Check convergence status of the nonlinear method
+        */
+        ConvergenceState check ( DiscreteProblemPtr& dProblem, FieldOnNodesDoublePtr& uField, int niter )
+        {
+            return _control-> check( dProblem, uField, niter );
+        }
+        /** @brief  Clean history data in control object 
+        */
+        void cleanLog ()
+        {
+            _control-> cleanLog();
+        }
 };
 
 /**
