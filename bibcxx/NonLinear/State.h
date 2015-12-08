@@ -1,9 +1,9 @@
-#ifndef INITIALSTATE_H_
-#define INITIALSTATE_H_
+#ifndef STATE_H_
+#define STATE_H_
 
 /**
- * @file InitialState.h
- * @brief Fichier entete de la classe InitialState
+ * @file State.h
+ * @brief Fichier entete de la classe State
  * @author Natacha Béreux 
  * @section LICENCE
  *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
@@ -34,38 +34,45 @@
 
 
 /**
- * @class InitialStateInstance
- * @brief Cette classe permet de definir l'état initial d'une analyse (par exemple d'une analyse non-linéaire) 
+ * @class StateInstance
+ * @brief Cette classe permet de definir l'état d'une analyse (par exemple d'une analyse non-linéaire) 
+ * L'algorithme (non-linéaire) permet de calculer l'état courant (i.e. la valeur des champs de déplacement, de contraintes, 
+ * de variables internes) à partir de l'état précédent (valeur des mêmes champs au pas précédent)
  * @author Natacha Béreux 
  */
-class InitialStateInstance
+class StateInstance
 {
     private:
-        /** @brief Instant initial défini par l'utilisateur */
+        /** @brief Instant/pas de chargement  défini par l'utilisateur */
         int _stepIndex;
-        /** @ brief Champ de déplacement à l'instant initial */ 
+        /** @brief Champ de déplacement */ 
         FieldOnNodesDoublePtr _depl;
+        /** @brief Champ de contraintes */ 
+        //FieldOnGaussPointsTensorPtr _sigm;
+        /** @brief Champ de variables internes */
+        // _vari
     public:
         /**
          * @brief Constructeur
-         * @param 
+         * @param step index (default value 0) 
          */
-        InitialStateInstance(int iStep = 0 ): _stepIndex(iStep)
+        StateInstance(int iStep = 0 ): _stepIndex(iStep)
         {};
 
         /**
          * @brief Destructeur
          */
-        ~InitialStateInstance()
+        ~StateInstance()
         {};
         
         /**
-        * @brief Define a displacement field as initial state of an analysis
+        * @brief Define a displacement field as  state of an analysis
         */
         void setDisplacement( FieldOnNodesDoublePtr depl ) 
         {
             _depl = depl; 
         };
+        
         /** 
         */
         int getStepIndex() const 
@@ -73,15 +80,16 @@ class InitialStateInstance
             return _stepIndex; 
         }
         /**
-        * @brief Get the initial displacement field 
+        * @brief Get the  displacement field 
         */
         FieldOnNodesDoublePtr getDisplacement() const
         {
             return _depl; 
         };
-        /** @brief Initialiser le premier pas de chargement dans la sd résultat 
+        /** @brief Initialiser un pas (temps/chargement) dans la sd résultat
+            @param result data structure 
         */
-        void setInitialStep( ResultsContainerPtr result ) const 
+        void setStep( ResultsContainerPtr result ) const 
         {
             if ( _depl )
             {
@@ -89,17 +97,17 @@ class InitialStateInstance
             }
             else
             {
-            //TODO initialiser à zéro mais c'est peut-être toujours le cas ??
+            //TODO Initialiser à zéro mais c'est peut-être toujours le cas ??
             }
-            // TODO on définit l'état initial à partir de SIGM/VARI
+            // TODO on définit l'état  à partir de SIGM/VARI
         };
 };
 
 
 /**
- * @typedef InitialStatePtr
- * @brief Pointeur intelligent vers un InitialStateInstance
+ * @typedef StatePtr
+ * @brief Pointeur intelligent vers un StateInstance
  */
-typedef boost::shared_ptr< InitialStateInstance > InitialStatePtr;
+typedef boost::shared_ptr< StateInstance > StatePtr;
 
-#endif /* INITIALSTATE_H_ */
+#endif /* STATE_H_ */

@@ -98,7 +98,7 @@ class FieldOnNodesInstance: public DataStructure
 
         /**
          * @brief Addition d'un champ aux noeuds
-         * @return renvoit true si l'additionr s'est bien deroulée, false sinon
+         * @return renvoit true si l'addition s'est bien deroulée, false sinon
          */
         bool addFieldOnNodes( FieldOnNodesInstance< ValueType >& tmp )
         {
@@ -121,7 +121,6 @@ class FieldOnNodesInstance: public DataStructure
             retour = ( retour && _valuesList->updateValuePointer() );
             return retour;
         };
-
     protected:
         /**
          * @brief Surcharge de l'operateur []

@@ -27,30 +27,31 @@ from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
 from code_aster.Modeling.Model cimport ModelPtr
 
 
-cdef extern from "Solvers/StaticNonLinearSolver.h":
+cdef extern from "Solvers/StaticNonLinearAnalysis.h":
 
-    cdef cppclass StaticNonLinearSolverInstance:
+    cdef cppclass StaticNonLinearAnalysisInstance:
 
-        StaticNonLinearSolverInstance()
+        StaticNonLinearAnalysisInstance()
         void addKinematicsLoad( KinematicsLoadPtr& currentLoad )
         void addMechanicalLoad( GenericMechanicalLoadPtr& currentLoad )
         bint execute_op70()
+        ResultsContainerPtr execute()
         void setNonLinearMethod( NonLinearMethodPtr& curNonLinearMethod )
         void setMaterialOnMesh( MaterialOnMeshPtr& curMatOnMesh )
         void setSupportModel( ModelPtr& curModel )
         const string getType()
 
-    cdef cppclass StaticNonLinearSolverPtr:
+    cdef cppclass StaticNonLinearAnalysisPtr:
 
-        StaticNonLinearSolverPtr( StaticNonLinearSolverPtr& )
-        StaticNonLinearSolverPtr( StaticNonLinearSolverInstance * )
-        StaticNonLinearSolverInstance* get()
+        StaticNonLinearAnalysisPtr( StaticNonLinearAnalysisPtr& )
+        StaticNonLinearAnalysisPtr( StaticNonLinearAnalysisInstance * )
+        StaticNonLinearAnalysisInstance* get()
 
 
-#### StaticNonLinearSolver
+#### StaticNonLinearAnalysis
 
-cdef class StaticNonLinearSolver:
-    cdef StaticNonLinearSolverPtr* _cptr
-    cdef set( self, StaticNonLinearSolverPtr other )
-    cdef StaticNonLinearSolverPtr* getPtr( self )
-    cdef StaticNonLinearSolverInstance* getInstance( self )
+cdef class StaticNonLinearAnalysis:
+    cdef StaticNonLinearAnalysisPtr* _cptr
+    cdef set( self, StaticNonLinearAnalysisPtr other )
+    cdef StaticNonLinearAnalysisPtr* getPtr( self )
+    cdef StaticNonLinearAnalysisInstance* getInstance( self )

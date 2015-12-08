@@ -32,6 +32,7 @@
 #include "Results/ResultsContainer.h"
 #include "Loads/ListOfLoads.h"
 #include "NonLinear/NonLinearMethod.h"
+#include "NonLinear/State.h"
 
 /**
  * @class StaticNonLinearAlgorithm
@@ -44,7 +45,7 @@ class StaticNonLinearAlgorithm: public GenericUnitaryAlgorithm< Stepper >
     private:
         /** @brief Problème discret */
         DiscreteProblemPtr  _discreteProblem;
-        /** @brief Solveur linéaire */
+        /** @brief Solveur non linéaire */
         NonLinearMethodPtr  _nonLinearMethod;
         /** @brief Sd de stockage des résultats */
         ResultsContainerPtr _results;
@@ -52,7 +53,10 @@ class StaticNonLinearAlgorithm: public GenericUnitaryAlgorithm< Stepper >
         ListOfLoadsPtr      _listOfLoads;
         /** @brief Pas de chargement courant */
         double              _loadStep;
-        
+        /** @brief Etat du système au pas de chargement courant */
+        StatePtr _currentState;
+        /** @brief Etat du système au pas de chargement précédent */
+        StatePtr _lastState;
     public:
         /**
          * @brief Constructeur
@@ -111,9 +115,9 @@ void StaticNonLinearAlgorithm< Stepper >::oneStep() throw( AlgoException& )
     // Il est initialisé au déplacement au pas de chargement précédent
     // uField = copy ( _results->getEmptyFieldOnNodesDouble( "DEPL", _lastLoadStep );
     //
-    // TODO Il faut aussi stocker le champ de contraintes et le champ de variables internes 
-    // Est-ce actuellement dans le résultat ?
-    // Sinon on crée un objet "state" avec 3 champs (comme InitialState à renommer)
+    // TODO pour un calcul non linéaire plus compliqué on devra aussi stocker le champ de contraintes
+    // et le champ de variables internes 
+    // => utiliser des objets "state" avec 3 champs 
     //
     // On crée un champ aux noeuds de même profil que le champ de déplacement.
     // Il contient l'incrément de déplacement
@@ -129,7 +133,6 @@ void StaticNonLinearAlgorithm< Stepper >::oneStep() throw( AlgoException& )
     // and check if it is a satisfactory solution 
     ConvergenceState status = _nonLinearMethod->check( _discreteProblem, uField, nIter );
     // If uField is not satisfactory, proceed to the correction steps 
-    // Allouer un champ aux noeuds de la même taille que uField 
     // 
     
     while ( status == iterate ) 
