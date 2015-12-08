@@ -36,7 +36,7 @@
 #include "Materials/MaterialOnMesh.h"
 #include "Modeling/Model.h"
 #include "NonLinear/Behaviour.h"
-#include "Solvers/InitialState.h"
+#include "NonLinear/State.h"
 #include "Solvers/GenericSolver.h"
 
 
@@ -70,7 +70,7 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         /** @brief NonLinear Behaviour */
         BehaviourPtr _behaviour;
         /** @brief Initial State of the Analysis */
-        InitialStatePtr _initialState;
+        StatePtr _initialState;
     public:
         /**
          * @brief Constructeur
@@ -149,9 +149,9 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         /**
         * @brief method for the definition of the initial state of the analysis 
         */
-        void setInitialState( const InitialStatePtr& currentInitialState ) 
+        void setInitialState( const StatePtr& currentState ) 
             {
-                _initialState = currentInitialState; 
+                _initialState = currentState; 
             }
 };
 

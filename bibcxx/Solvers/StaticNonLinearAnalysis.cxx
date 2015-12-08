@@ -72,22 +72,19 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     // Define the nonlinear method 
     _nonLinearMethod -> build(); 
     // Définir le résultat pour le premier numéro d'ordre à partir de l'état initial 
-    _initialState-> setInitialStep( resultC );
+    _initialState-> setStep( resultC );
 
-    // préparer le NUME_DDL
+    // préparer le NUME_DDL dans le probleme discret 
     DOFNumberingPtr dofNum1 = resultC->getEmptyDOFNumbering();
     dofNum1->setLinearSolver( _nonLinearMethod->getLinearSolver() );
     dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
-
+    // Calculer l'état du système pour tous les pas de chargement 
     typedef StaticNonLinearAlgorithm< TimeStepperInstance > SNLAlgo;
     SNLAlgo unitaryAlgo( dProblem, _nonLinearMethod, resultC );
     Algorithm< SNLAlgo > algoStatNonLine;
     algoStatNonLine.runAllStepsOverAlgorithm( *_loadStep, unitaryAlgo );
     return resultC;
 };
-
-
-
 
 
 /* On appelle op0070 */

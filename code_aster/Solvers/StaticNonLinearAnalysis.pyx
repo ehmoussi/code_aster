@@ -28,30 +28,30 @@ from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Modeling.Model cimport Model
 
 
-cdef class StaticNonLinearSolver:
+cdef class StaticNonLinearAnalysis:
 
-    """Python wrapper on the C++ StaticNonLinearSolver object"""
+    """Python wrapper on the C++ StaticNonLinearAnalysis object"""
 
     def __cinit__( self, bint init = True ):
         """Initialization: stores the pointer to the C++ object"""
         if init:
-            self._cptr = new StaticNonLinearSolverPtr( new StaticNonLinearSolverInstance() )
+            self._cptr = new StaticNonLinearAnalysisPtr( new StaticNonLinearAnalysisInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, StaticNonLinearSolverPtr other ):
+    cdef set( self, StaticNonLinearAnalysisPtr other ):
         """Point to an existing object"""
         # set must be subclassed if it is necessary
-        self._cptr = new StaticNonLinearSolverPtr( other )
+        self._cptr = new StaticNonLinearAnalysisPtr( other )
 
-    cdef StaticNonLinearSolverPtr* getPtr( self ):
+    cdef StaticNonLinearAnalysisPtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef StaticNonLinearSolverInstance* getInstance( self ):
+    cdef StaticNonLinearAnalysisInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
@@ -67,6 +67,12 @@ cdef class StaticNonLinearSolver:
         """Solve the problem"""
         self.getInstance().execute_op70()
 
+    def execute( self ):
+        """Solve the problem"""
+        results = ResultsContainer()
+        results.set( self.getInstance().execute() )
+        return results
+    
     def setNonLinearMethod( self, NonLinearMethod curNonLinearMethod ):
         """Set the nonlinear method """
         self.getInstance().setNonLinearMethod( deref( curNonLinearMethod.getPtr() ) )
