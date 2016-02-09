@@ -46,8 +46,8 @@ subroutine nmdorc_wrap(model, chmate, i_etat_init, compor, carcri)
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_etat_init
-    
-    l_etat_init = i_etat_init
+
+    l_etat_init = int_to_logical(i_etat_init)
     call nmdorc(model, chmate, l_etat_init, compor, carcri)
 !
 end subroutine
