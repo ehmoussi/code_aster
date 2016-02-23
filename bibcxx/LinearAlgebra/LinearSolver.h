@@ -236,7 +236,9 @@ class LinearSolverInstance: public DataStructure
         /**
          * @brief Inversion du systeme lineaire
          * @param currentMatrix Matrice assemblee
+         * @param kinematicsField Charge cinématique
          * @param currentRHS Second membre
+         * @param result champ aux noeuds résultat (optionnel)
          * @return champ aux noeuds resultat
          */
         FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
