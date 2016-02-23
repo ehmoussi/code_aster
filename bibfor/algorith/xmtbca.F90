@@ -1,4 +1,23 @@
-subroutine xmtbca(noma, defico, resoco, valinc, mmcvca)
+subroutine xmtbca(mesh, hval_incr, ds_contact)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterfort/calcul.h"
+#include "asterfort/cfdisi.h"
+#include "asterfort/cfmmvd.h"
+#include "asterfort/dbgcal.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/inical.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/mmbouc.h"
+#include "asterfort/nmchex.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -16,51 +35,27 @@ subroutine xmtbca(noma, defico, resoco, valinc, mmcvca)
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! person_in_charge: ionel.nistor at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
+    character(len=8), intent(in) :: mesh
+    character(len=19), intent(in) :: hval_incr(*)
+    type(NL_DS_Contact), intent(inout) :: ds_contact
 !
-#include "asterfort/calcul.h"
-#include "asterfort/cfdisi.h"
-#include "asterfort/cfmmvd.h"
-#include "asterfort/dbgcal.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/inical.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/nmchex.h"
-    aster_logical :: mmcvca
-    character(len=8) :: noma
-    character(len=24) :: defico, resoco
-    character(len=19) :: valinc(*)
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! Contact - Solve
 !
-! ROUTINE XFEM (CONTACT - GRANDS GLISSEMENTS)
+! XFEM large sliding - Management of contact loop
 !
-! MISE À JOUR DU STATUT DES POINTS DE CONTACT
-! ET RENVOIE MMCVCA (INDICE DE CONVERGENCE DE LA BOUCLE
-! SUR LES CONTRAINTES ACTIVES)
+! --------------------------------------------------------------------------------------------------
 !
+! In  mesh             : name of mesh
+! In  hval_incr        : hat-variable for incremental values fields
+! IO  ds_contact       : datastructure for contact management
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-!
-! IN  NOMA   : NOM DE L'OBJET MAILLAGE
-! IN  DEFICO : SD CONTACT (DEFINITION)
-! IN  RESOCO : SD CONTACT (RESOLUTION)
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! OUT MMCVCA : INDICE DE CONVERGENCE DE LA BOUCLE SUR LES C.A.
-!
-!
-!
-!
-    integer :: nbout, nbin
-    parameter    (nbout=1, nbin=7)
+    integer, parameter :: nbout = 1
+    integer, parameter :: nbin  = 7
     character(len=8) :: lpaout(nbout), lpain(nbin)
     character(len=19) :: lchout(nbout), lchin(nbin)
 !
@@ -69,8 +64,6 @@ subroutine xmtbca(noma, defico, resoco, valinc, mmcvca)
     real(kind=8) :: group
     character(len=24) :: tabfin
     integer :: ztabf
-    character(len=24) :: nosdco
-    integer :: jnosdc
     character(len=19) :: ligrxf, cindco
     character(len=19) :: cpoint, cainte, heavno, hea_fa, hea_no
     character(len=19) :: oldgeo, depplu
@@ -81,8 +74,9 @@ subroutine xmtbca(noma, defico, resoco, valinc, mmcvca)
     integer :: adiel, adiel2, jad, jad2, debgr, debgr2
     integer, pointer :: celd(:) => null()
     integer, pointer :: celv(:) => null()
+    aster_logical :: loop_cont_conv
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call infdbg('XFEM', ifm, niv)
@@ -90,14 +84,12 @@ subroutine xmtbca(noma, defico, resoco, valinc, mmcvca)
 !
 ! --- INITIALISATIONS
 !
-    oldgeo = noma(1:8)//'.COORDO'
-    cpoint = resoco(1:14)//'.XFPO'
-    cainte = resoco(1:14)//'.XFAI'
-    nosdco = resoco(1:14)//'.NOSDCO'
-    heavno = resoco(1:14)//'.XFPL'
-    hea_fa = resoco(1:14)//'.XFHF'
-    hea_no = resoco(1:14)//'.XFHN'
-    call jeveuo(nosdco, 'L', jnosdc)
+    oldgeo = mesh(1:8)//'.COORDO'
+    cpoint = ds_contact%sdcont_solv(1:14)//'.XFPO'
+    cainte = ds_contact%sdcont_solv(1:14)//'.XFAI'
+    heavno = ds_contact%sdcont_solv(1:14)//'.XFPL'
+    hea_fa = ds_contact%sdcont_solv(1:14)//'.XFHF'
+    hea_no = ds_contact%sdcont_solv(1:14)//'.XFHN'
     option = 'XCVBCA'
     if (nivdbg .ge. 2) then
         debug = .true.
@@ -105,29 +97,29 @@ subroutine xmtbca(noma, defico, resoco, valinc, mmcvca)
         debug = .false.
     endif
 !
-! --- LIGREL DES ELEMENTS TARDIFS DE CONTACT/FROTTEMENT
+! - <LIGREL> for contact elements
 !
-    ligrxf = zk24(jnosdc+3-1)(1:19)
+    ligrxf = ds_contact%ligrel_elem_cont
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
-    call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
+    call nmchex(hval_incr, 'VALINC', 'DEPPLU', depplu)
 !
 !----RECUPERATION DE TABFIN -
 !
-    tabfin = resoco(1:14)//'.TABFIN'
+    tabfin = ds_contact%sdcont_solv(1:14)//'.TABFIN'
     call jeveuo(tabfin, 'E', jtabf)
     ztabf = cfmmvd('ZTABF')
 !
     cindco = '&&XMTBCA.INDCO'
 !
-    ntpc = cfdisi(defico,'NTPC' )
+    ntpc = cfdisi(ds_contact%sdcont_defi,'NTPC' )
 !
 ! --- INITIALISATION DE L'INDICATEUR DE CONVERGENCE DE LA BOUCLE
 ! --- SUR LES CONTRAINTES ACTIVES (CONVERGENCE <=> INCOCA =1)
 !
     sinco = 0
-    mmcvca = .true.
+    loop_cont_conv = .true.
 !
 ! --- INITIALISATION DES CHAMPS POUR CALCUL
 !
@@ -175,11 +167,11 @@ subroutine xmtbca(noma, defico, resoco, valinc, mmcvca)
 !
 ! --- ON INTERVERTI LE STATUT DES ARETES SI NECESSAIRE
 !
-    do 10 igr = 1, ngrel
+    do igr = 1, ngrel
         debgr = celd(4+igr)
         nel = celd(debgr+1)
         call jeveuo(jexnum(ligrxf//'.LIEL', igr), 'L', jad)
-        do 20 iel = 1, nel
+        do iel = 1, nel
             adiel = celd(debgr+4+4*(iel-1)+4)
 ! --- SI PAS DE CHANGEMENT DE STATUT DU POINT D'INTEGRATION, ON SORT
             if (celv(adiel) .eq. 0) goto 20
@@ -195,21 +187,20 @@ subroutine xmtbca(noma, defico, resoco, valinc, mmcvca)
 ! --- ON REGARDE SI UN PT SUR L'ARETE VITALE DE CE GROUPE DEVIENT OU
 ! --- RESTE CONTACTANT
             naret = nint(zr(jtabf+ztabf*(ipc-1)+5))
-            do 30 igr2 = 1, ngrel
+            do igr2 = 1, ngrel
                 debgr2 = celd(4+igr2)
                 nel2 = celd(debgr2+1)
                 call jeveuo(jexnum(ligrxf//'.LIEL', igr2), 'L', jad2)
-                do 40 iel2 = 1, nel2
+                do iel2 = 1, nel2
                     adiel2=celd(debgr2+4+4*(iel2-1)+4)
                     ipc2 = -zi(jad2-1+iel2)
                     if (zr(jtabf+ztabf*(ipc2-1)+4) .ne. group) goto 40
                     if (zr(jtabf+ztabf*(ipc2-1)+27) .eq. 0) goto 40
 ! --- LE PT VITAL EST CONTACTANT
                     if (celv(adiel2+1) .eq. 1) goto 20
-!              ASSERT(ZI(JVALV-1+ADIEL2+2).EQ.0)
 ! --- ATTENTION,LE PT VITAL EST NON CONTACTNT
                     naret2 = int(zr(jtabf+ztabf*(ipc2-1)+5))
-                    do 50 ipc2 = 1, ntpc
+                    do ipc2 = 1, ntpc
 ! --- ON INTERVERTI LE PT NON VITAL AVEC LE PT VITAL
                         if (zr(jtabf+ztabf*(ipc2-1)+4) .eq. group) then
                             if (zr(jtabf+ztabf*(ipc2-1)+5) .eq. naret2) then
@@ -219,34 +210,45 @@ subroutine xmtbca(noma, defico, resoco, valinc, mmcvca)
                                 zr(jtabf+ztabf*(ipc2-1)+27) = 1
                             endif
                         endif
- 50                 continue
+                    end do
                     goto 20
- 40             continue
- 30         continue
-!
- 20     continue
- 10 end do
+                end do
+40              continue
+            end do
+20      continue
+        end do
+    end do
 !
 ! --- MISE A JOUR DU STATUT DE CONTACT ET DE LA MEMOIRE DE CONTACT,
 ! --- SINCO = SOMME DES CICOCA SUR LES ÉLTS DU LIGREL
 !
-    do 60 igr = 1, ngrel
+    do igr = 1, ngrel
         debgr = celd(4+igr)
         nel = celd(debgr+1)
         call jeveuo(jexnum(ligrxf//'.LIEL', igr), 'L', jad)
-        do 70 iel = 1, nel
+        do iel = 1, nel
             adiel = celd(debgr+4+4*(iel-1)+4)
             ipc = -zi(jad-1+iel)
             zr(jtabf+ztabf*(ipc-1)+13) = celv(adiel+1)
             zr(jtabf+ztabf*(ipc-1)+28) = celv(adiel+2)
             sinco = sinco + celv(adiel)
- 70     continue
- 60 end do
+        end do
+    end do
 !
 !
 ! --- SI SINCO EST STRICTEMENT POSITIF, ON A PAS CONVERGÉ
 !
-    if (sinco .gt. 0) mmcvca = .false.
+    if (sinco .gt. 0) then
+        loop_cont_conv = .false.
+    endif
+!
+! - Set loop values
+!
+    if (loop_cont_conv) then
+        call mmbouc(ds_contact, 'Cont', 'Set_Convergence')
+    else
+        call mmbouc(ds_contact, 'Cont', 'Set_Divergence')
+    endif
 !
     call jedema()
 end subroutine

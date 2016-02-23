@@ -9,7 +9,7 @@ subroutine exisd(typesd, nomsd, iret)
     character(len=*) :: typesd, nomsd
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -69,9 +69,8 @@ subroutine exisd(typesd, nomsd, iret)
 !     ------------------------------
         ch8 = nomsd
         call jeexin(ch8//'.MAILLE', i1)
-        call jeexin(ch8//'.NOEUD', i2)
-        call jeexin(ch8//'.MODELE    .LIEL', i3)
-        if (i1*i2*i3 .ne. 0) goto 20
+        call jeexin(ch8//'.MODELE    .LIEL', i2)
+        if (i1*i2 .ne. 0) goto 20
 !
 !
     else if (typ2sd.eq.'CARTE') then

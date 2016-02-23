@@ -1,7 +1,14 @@
 # coding=utf-8
+# Ce catalogue correspondant aux elements fluides lineaires massifs 3D
+# pour le couplage fluide-structure n'ont que des DDL de :
+#  pression PRES et potentiel de deplacement PHI.
+# La contrainte n'existe pas, ni la deformation.
+# Les options FULL_MECA et RAPH_MECA sont disponibles mais correspondent
+# a un probleme lineaire : le CODRET sera toujours OK sur ces elements.
+# On le garde neanmoins pour des raisons de compatibilite.
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -130,6 +137,10 @@ class MEFL_HEXA20(Element):
         OP.RIGI_MECA(te=170,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      ),
+            para_out=((SP.PMATUUR, MMATUUR), ),
+        ),
+
+        OP.RIGI_MECA_GE(te=99,
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 

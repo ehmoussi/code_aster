@@ -1,5 +1,7 @@
-subroutine nmrenu(modelz     , list_func_acti, list_load, sdcont_defi,&
-                  sdcont_solv, nume_ddl      , l_renumber)
+subroutine nmrenu(modelz  , list_func_acti, list_load, ds_contact, nume_dof,&
+                  l_renumber)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
@@ -31,10 +33,9 @@ implicit none
 ! person_in_charge: mickael.abbas at edf.fr
 !
     character(len=*), intent(in) :: modelz
-    character(len=24), intent(inout) :: nume_ddl
+    character(len=24), intent(inout) :: nume_dof
     character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: sdcont_defi
-    character(len=24), intent(in) :: sdcont_solv
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     integer, intent(in) :: list_func_acti(*)
     aster_logical, intent(out) :: l_renumber
 !
@@ -46,23 +47,18 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  nume_ddl       : name of numbering object (NUME_DDL)
-! In  model          : name of model datastructure
-! In  list_load      : list of loads
-! In  sdcont_defi    : name of contact definition datastructure (from DEFI_CONTACT)
-! In  sdcont_solv    : name of contact solving datastructure
-! In  list_func_acti : list of active functionnalities
-! Out l_renumber     : .true. if renumber
+! IO  nume_dof         : name of numbering object (NUME_DDL)
+! In  model            : name of model datastructure
+! In  list_load        : list of loads
+! IO  ds_contact       : datastructure for contact management
+! In  list_func_acti   : list of active functionnalities
+! Out l_renumber       : .true. if renumber
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     aster_logical :: l_cont, l_cont_cont, l_cont_xfem, l_cont_elem, l_cont_xfem_gg
     character(len=24) :: sd_iden_rela
-    character(len=24) :: crnudd
-    aster_logical, pointer :: v_crnudd(:) => null()
-    character(len=24) :: nosdco
-    character(len=24), pointer :: v_nosdco(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,8 +66,6 @@ implicit none
 !
 ! - Initializations
 !
-    crnudd       = sdcont_solv(1:14)//'.NUDD'
-    nosdco       = sdcont_solv(1:14)//'.NOSDCO'
     l_renumber   = .false.
     l_cont       = isfonc(list_func_acti,'CONTACT')
     if (.not.l_cont) then
@@ -80,8 +74,7 @@ implicit none
 !
 ! - Get identity relation datastructure
 !
-    call jeveuo(nosdco, 'L', vk24 = v_nosdco)
-    sd_iden_rela = v_nosdco(4)
+    sd_iden_rela = ds_contact%iden_rela
 !
 ! - Contact method
 !
@@ -93,16 +86,15 @@ implicit none
 !
     if (l_cont_elem) then
         if (l_cont_xfem) then
-            l_cont_xfem_gg = cfdisl(sdcont_defi,'CONT_XFEM_GG')
+            l_cont_xfem_gg = cfdisl(ds_contact%sdcont_defi,'CONT_XFEM_GG')
             if (l_cont_xfem_gg) then
                l_renumber = .true.
             else
                l_renumber = .false.
             endif
         else
-            call jeveuo(crnudd, 'E', vl = v_crnudd)
-            l_renumber = v_crnudd(1)
-            v_crnudd(1) = .false.
+            l_renumber = ds_contact%l_renumber
+            ds_contact%l_renumber = .false.
         endif
     endif
 !
@@ -112,7 +104,7 @@ implicit none
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ...... RE-CREATION DU NUME_DDL '
         endif
-        call numer3(modelz, list_load, nume_ddl, sd_iden_rela)
+        call numer3(modelz, list_load, nume_dof, sd_iden_rela)
     endif
 !
 999 continue

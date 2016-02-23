@@ -5,7 +5,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 2091 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -36,26 +36,23 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: vali
-    character(len=32) :: valk
+!!    integer :: vali
+!!    character(len=32) :: valk
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (mater .eq. 'DRUCK_PRAGER_FO') then
-        vali = 13
-        valk    = "Le matériau 'DRUCK_PRAGER_FO'"
+!!    Replace XXX by deprecated material name
+!!    if (mater .eq. 'XXX') then
+!!        vali = 13
+!!        valk    = "Le materiau 'XXX'"
 !
-    else if (mater .eq. 'GATT_MONERIE') then
-        vali = 13
-        valk    = "Le matériau 'GATT_MONERIE'"
+!!    else
+!!         goto 999
 !
-    else
-        goto 999
+!!    endif
 !
-    endif
+!!    call utmess('A', 'SUPERVIS_9', sk = valk, si = vali)
 !
-    call utmess('A', 'SUPERVIS_9', sk = valk, si = vali)
-!
-999 continue
+!!999 continue
 !
 end subroutine

@@ -1,14 +1,13 @@
-subroutine nmtble(cont_loop  , model         , mesh    , mate  , sdcont_defi,&
-                  sdcont_solv, list_func_acti, ds_print, sdstat, sdtime     ,&
-                  sddyna     , sderro        , ds_conv , sddisc, nume_inst  ,&
-                  hval_incr  , hval_algo)
+subroutine nmtble(cont_loop     , model   , mesh  , mate     , ds_contact,&
+                  list_func_acti, ds_print, sdstat, sdtime   , sddyna    ,&
+                  sderro        , ds_conv , sddisc, nume_inst, hval_incr ,&
+                  hval_algo)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/diinst.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/mmbouc.h"
 #include "asterfort/mm_cycl_erase.h"
@@ -24,7 +23,7 @@ implicit none
 #include "asterfort/nmtime.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -45,8 +44,7 @@ implicit none
     character(len=24), intent(in) :: model
     character(len=8), intent(in) :: mesh
     character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: sdcont_defi
-    character(len=24), intent(in) :: sdcont_solv
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     integer, intent(in) :: list_func_acti(*)
     type(NL_DS_Print), intent(inout) :: ds_print
     character(len=24), intent(in) :: sdstat
@@ -75,8 +73,7 @@ implicit none
 ! In  model            : name of model
 ! In  mesh             : name of mesh
 ! In  mate             : name of material characteristics (field)
-! In  sdcont_defi      : name of contact definition datastructure (from DEFI_CONTACT)
-! In  sdcont_solv      : name of contact solving datastructure
+! IO  ds_contact       : datastructure for contact management
 ! In  list_func_acti   : list of active functionnalities
 ! IO  ds_print         : datastructure for printing parameters
 ! In  sdstat           : datastructure for statistics
@@ -91,11 +88,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: loop_cont_conv, loop_frot_conv, loop_geom_conv
-    aster_logical :: l_loop_frot, l_loop_geom, l_loop_cont
-    integer :: i_loop_geom, i_loop_frot, i_loop_cont
+    aster_logical :: loop_cont_conv, loop_fric_conv, loop_geom_conv
+    aster_logical :: l_loop_frot, l_loop_geom, l_loop_cont, l_cont_cont
+    integer :: loop_geom_count, loop_fric_count, loop_cont_count, loop_cont_vali
     character(len=4) :: state_newt
-    real(kind=8) :: time_curr
+    real(kind=8) :: loop_cont_vale
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -115,16 +112,17 @@ implicit none
 !
 ! - Contact loops
 !
+    l_cont_cont = isfonc(list_func_acti,'CONT_CONTINU')
     l_loop_frot = isfonc(list_func_acti, 'BOUCLE_EXT_FROT')
     l_loop_geom = isfonc(list_func_acti, 'BOUCLE_EXT_GEOM')
     l_loop_cont = isfonc(list_func_acti, 'BOUCLE_EXT_CONT')
 !
 ! - Initializations
 !
+    loop_cont_vali = 0
     loop_cont_conv = .false.
-    loop_frot_conv = .false.
+    loop_fric_conv = .false.
     loop_geom_conv = .false.
-    time_curr      = diinst(sddisc,nume_inst)
 !
 ! - <1> - Contact loop
 !
@@ -133,9 +131,12 @@ implicit none
             cont_loop = 1
             call nmtime(sdtime, 'INI', 'CTCC_CONT')
             call nmtime(sdtime, 'RUN', 'CTCC_CONT')
-            call nmctcc(mesh          , model      , mate       , sddyna   , sderro   ,&
-                        sdstat        , sdcont_defi, sdcont_solv, hval_incr, hval_algo,&
-                        loop_cont_conv, time_curr)
+            call nmctcc(mesh      , model , mate  , nume_inst, sddyna   ,&
+                        sderro    , sdstat, sddisc, hval_incr, hval_algo,&
+                        ds_contact)
+            call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
+            call mmbouc(ds_contact, 'Cont', 'Get_Vale'      , loop_vale_  = loop_cont_vale)
+            loop_cont_vali = nint(loop_cont_vale)
             call nmtime(sdtime, 'END', 'CTCC_CONT')
             call nmrinc(sdstat, 'CTCC_CONT')
             if (.not.loop_cont_conv) then
@@ -152,11 +153,11 @@ implicit none
             cont_loop = 2
             call nmtime(sdtime, 'INI', 'CTCC_FROT')
             call nmtime(sdtime, 'RUN', 'CTCC_FROT')
-            call nmctcf(mesh       , model    , ds_print      , sderro, sdcont_defi,&
-                        sdcont_solv, hval_incr, loop_frot_conv)
+            call nmctcf(mesh, model, sderro, hval_incr, ds_print, ds_contact)
+            call mmbouc(ds_contact, 'Fric', 'Is_Convergence', loop_state_ = loop_fric_conv)
             call nmtime(sdtime, 'END', 'CTCC_FROT')
             call nmrinc(sdstat, 'CTCC_FROT')
-            if (.not.loop_frot_conv) then
+            if (.not.loop_fric_conv) then
                 cont_loop = 2
                 goto 500
             endif
@@ -168,8 +169,8 @@ implicit none
     if (cont_loop .le. 3) then
         if (l_loop_geom) then
             cont_loop = 3
-            call nmctgo(mesh     , ds_print      , sderro, sdcont_defi, sdcont_solv,&
-                        hval_incr, loop_geom_conv)
+            call nmctgo(mesh, sderro, hval_incr, ds_print, ds_contact)
+            call mmbouc(ds_contact, 'Geom', 'Is_Convergence' , loop_state_ = loop_geom_conv)
             if (.not.loop_geom_conv) then
                 cont_loop = 3
                 goto 500
@@ -181,8 +182,8 @@ implicit none
 !
 ! - Initialization of data structures for cycling detection and treatment
 !
-    if (loop_cont_conv .or. loop_frot_conv .or. loop_geom_conv) then
-        call mm_cycl_erase(sdcont_defi, sdcont_solv, 0, 0)
+    if ((loop_cont_conv .or. loop_fric_conv .or. loop_geom_conv).and.l_cont_cont) then
+        call mm_cycl_erase(ds_contact, 0, 0)
     endif
 !
 ! - Print line
@@ -193,26 +194,27 @@ implicit none
 ! - New iteration in loops
 !
     if (.not.loop_cont_conv .and. cont_loop .eq. 1) then
-        call mmbouc(sdcont_solv, 'CONT', 'INCR')
+        call mmbouc(ds_contact, 'Cont', 'Incr_Counter')
     endif
-    if (.not.loop_frot_conv .and. cont_loop .eq. 2) then 
-        call mmbouc(sdcont_solv, 'FROT', 'INCR')
+    if (.not.loop_fric_conv .and. cont_loop .eq. 2) then 
+        call mmbouc(ds_contact, 'Fric', 'Incr_Counter')
     endif
     if (.not.loop_geom_conv .and. cont_loop .eq. 3) then 
-        call mmbouc(sdcont_solv, 'GEOM', 'INCR')
+        call mmbouc(ds_contact, 'Geom', 'Incr_Counter')
     endif
 !
 ! - Update loops index
 !
-    call mmbouc(sdcont_solv, 'CONT', 'READ', i_loop_cont)
-    call mmbouc(sdcont_solv, 'FROT', 'READ', i_loop_frot)
-    call mmbouc(sdcont_solv, 'GEOM', 'READ', i_loop_geom)
+    call mmbouc(ds_contact, 'Cont', 'Read_Counter', loop_cont_count)
+    call mmbouc(ds_contact, 'Fric', 'Read_Counter', loop_fric_count)
+    call mmbouc(ds_contact, 'Geom', 'Read_Counter', loop_geom_count)
 !
-! - Set values of loops index in convergence table
+! - Print management
 !
-    call nmimci(ds_print, 'BOUC_CONT', i_loop_cont, .true._1)
-    call nmimci(ds_print, 'BOUC_FROT', i_loop_frot, .true._1)
-    call nmimci(ds_print, 'BOUC_GEOM', i_loop_geom, .true._1)
+    call nmimci(ds_print, 'CONT_NEWT', loop_cont_vali , .true._1)
+    call nmimci(ds_print, 'BOUC_CONT', loop_cont_count, .true._1)
+    call nmimci(ds_print, 'BOUC_FROT', loop_fric_count, .true._1)
+    call nmimci(ds_print, 'BOUC_GEOM', loop_geom_count, .true._1)
 !
 999 continue
 !

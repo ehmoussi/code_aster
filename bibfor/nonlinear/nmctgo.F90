@@ -1,12 +1,10 @@
-subroutine nmctgo(noma  , ds_print, sderro, defico, resoco,&
-                  valinc, mmcvgo)
+subroutine nmctgo(mesh, sderro, hval_incr, ds_print, ds_contact)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/cfdisi.h"
@@ -15,11 +13,9 @@ implicit none
 #include "asterfort/cfverl.h"
 #include "asterfort/copisd.h"
 #include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mmbouc.h"
-#include "asterfort/mmmcri.h"
+#include "asterfort/mmmcri_geom.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmcrel.h"
 #include "asterfort/nmimck.h"
@@ -44,151 +40,134 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    character(len=8) :: noma
-    character(len=24) :: defico, resoco
-    character(len=24) :: sderro
+    character(len=8), intent(in) :: mesh
+    character(len=24), intent(in) :: sderro
+    character(len=19), intent(in) :: hval_incr(*)
     type(NL_DS_Print), intent(inout) :: ds_print
-    character(len=19) :: valinc(*)
-    aster_logical :: mmcvgo
+    type(NL_DS_Contact), intent(inout) :: ds_contact
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGO - BOUCLE CONTACT)
+! MECA_NON_LINE - Algo
 !
-! SEUIL DE GEOMETRIE
+! Geometry loop management - Management
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! IN  NOMA   : NOM DU MAILLAGE
+! In  mesh             : name of mesh
+! In  sderro           : datastructure for errors during algorithm
+! In  hval_incr        : hat-variable for incremental values fields
 ! IO  ds_print         : datastructure for printing parameters
-! IN  SDERRO : GESTION DES ERREURS
-! IN  DEFICO : SD POUR LA DEFINITION DE CONTACT
-! IN  RESOCO : SD POUR LA RESOLUTION DE CONTACT
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! OUT MMCVCA : INDICATEUR DE CONVERGENCE POUR BOUCLE DE
-!              GEOMETRIE
-!               .TRUE. SI LA BOUCLE A CONVERGE
+! IO  ds_contact       : datastructure for contact management
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: lctcc, lctcd, lxfcm
-    aster_logical :: lsans, lmanu, lauto
-    integer :: nbreag, maxgeo
-    integer :: mmitgo
-    character(len=19) :: depplu, depgeo, depmoi
-    character(len=16) :: cvgnoe
-    real(kind=8) :: cvgval, epsgeo
-    character(len=24) :: clreac
-    integer :: jclrea
-    aster_logical :: ctcgeo, lerrog
+    aster_logical :: l_cont_cont, l_cont_disc, l_cont_xfem
+    aster_logical :: l_geom_sans, l_geom_manu, l_geom_auto
+    integer :: nb_iter_geom, iter_geom_maxi
+    integer :: loop_geom_count
+    character(len=19) :: disp_curr, loop_geom_disp, disp_prev
+    character(len=16) :: loop_geom_node
+    real(kind=8) :: loop_geom_vale
+    aster_logical :: loop_geom_conv, loop_geom_error
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> MISE A JOUR DU SEUIL DE GEOMETRIE'
     endif
 !
-! --- INITIALISATIONS
+! - Initializations
 !
-    cvgnoe = ' '
-    cvgval = r8vide()
-    mmcvgo = .false.
-    depgeo = resoco(1:14)//'.DEPG'
-    lerrog = .false.
+    loop_geom_node  = ' '
+    loop_geom_vale  = r8vide()
+    call mmbouc(ds_contact, 'Geom', 'Set_NoError')
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+! - Get fields
 !
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
-    call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
+    call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
+    call nmchex(hval_incr, 'VALINC', 'DEPPLU', disp_curr)
 !
-! --- INFOS BOUCLE GEOMETRIQUE
+! - Get contact parameters
 !
-    call mmbouc(resoco, 'GEOM', 'READ', mmitgo)
-    maxgeo = cfdisi(defico,'ITER_GEOM_MAXI')
-    nbreag = cfdisi(defico,'NB_ITER_GEOM' )
-    epsgeo = cfdisr(defico,'RESI_GEOM' )
+    l_cont_cont = cfdisl(ds_contact%sdcont_defi,'FORMUL_CONTINUE')
+    l_cont_disc = cfdisl(ds_contact%sdcont_defi,'FORMUL_DISCRETE')
+    l_cont_xfem = cfdisl(ds_contact%sdcont_defi,'FORMUL_XFEM')
 !
-! --- TYPE DE CONTACT
+! - Get geometry loop parameters
 !
-    lctcc = cfdisl(defico,'FORMUL_CONTINUE')
-    lctcd = cfdisl(defico,'FORMUL_DISCRETE')
-    lxfcm = cfdisl(defico,'FORMUL_XFEM')
+    loop_geom_disp = ds_contact%sdcont_solv(1:14)//'.DEPG'
+    iter_geom_maxi = cfdisi(ds_contact%sdcont_defi, 'ITER_GEOM_MAXI')
+    nb_iter_geom   = cfdisi(ds_contact%sdcont_defi, 'NB_ITER_GEOM' )
+    l_geom_manu    = cfdisl(ds_contact%sdcont_defi, 'REAC_GEOM_MANU')
+    l_geom_sans    = cfdisl(ds_contact%sdcont_defi, 'REAC_GEOM_SANS')
+    l_geom_auto    = cfdisl(ds_contact%sdcont_defi, 'REAC_GEOM_AUTO')
 !
-    lmanu = cfdisl(defico,'REAC_GEOM_MANU')
-    lsans = cfdisl(defico,'REAC_GEOM_SANS')
-    lauto = cfdisl(defico,'REAC_GEOM_AUTO')
+! - Update triggers
 !
-! --- MISE A JOUR DES SEUILS
+    if (l_cont_cont .or. l_cont_xfem) then
 !
-    if (lctcc .or. lxfcm) then
+! ----- Compute geometry criterion
 !
-! ----- CALCUL DU CRITERE
+        call mmmcri_geom(mesh      , disp_prev, loop_geom_disp, disp_curr,&
+                         ds_contact)
 !
-        call mmmcri('GEOM', noma, depmoi, depgeo, depplu,&
-                    resoco, epsgeo, cvgnoe, cvgval, mmcvgo)
+! ----- Get values
 !
-! ----- CAS MANUEL
+        call mmbouc(ds_contact, 'Geom', 'Read_Counter'  , loop_geom_count)
+        call mmbouc(ds_contact, 'Geom', 'Is_Convergence', loop_state_ = loop_geom_conv)         
 !
-        if (lmanu) then
-            if (mmitgo .eq. nbreag) then
-                if ((.not.mmcvgo) .and. (nbreag.gt.1)) then
+! ----- For REAC_GEOM = 'MANU'
+!
+        if (l_geom_manu) then
+            if (loop_geom_count .eq. nb_iter_geom) then
+                if ((.not.loop_geom_conv) .and. (nb_iter_geom.gt.1)) then
                     call utmess('A', 'CONTACT3_96')
                 endif
-                mmcvgo = .true.
+                call mmbouc(ds_contact, 'Geom', 'Set_Convergence')
             else
-                mmcvgo = .false.
+                call mmbouc(ds_contact, 'Geom', 'Set_Divergence')
             endif
         endif
 !
-! ----- CAS SANS
+! ----- For REAC_GEOM = 'SANS'
 !
-        if (lsans) then
-            mmcvgo = .true.
+        if (l_geom_sans) then
+            call mmbouc(ds_contact, 'Geom', 'Set_Convergence')
         endif
 !
-! ----- CAS AUTO
+! ----- For REAC_GEOM = 'AUTO'
 !
-        if (lauto) then
-            if ((.not.mmcvgo) .and. (mmitgo.eq.maxgeo)) then
-!           LA VERIFICATION DE LA FACETTISATION N'A PAS DE SENS EN X-FEM
-                if (.not.lxfcm) then
-                    call cfverl(defico, resoco)
+        if (l_geom_auto) then
+            if ((.not.loop_geom_conv) .and. (loop_geom_count .eq. iter_geom_maxi)) then
+                if (l_cont_cont) then
+                    call cfverl(ds_contact)
                 endif
-                lerrog = .true.
+                call mmbouc(ds_contact, 'Geom', 'Set_Error')
             endif
         endif
 !
-        if (.not.mmcvgo) then
-            call copisd('CHAMP_GD', 'V', depplu, depgeo)
+! ----- Update reference displacement for geometry loop
+!
+        call mmbouc(ds_contact, 'Geom', 'Is_Convergence', loop_state_ = loop_geom_conv)
+        if (.not.loop_geom_conv) then
+            call copisd('CHAMP_GD', 'V', disp_curr, loop_geom_disp)
         endif
-    else if (lctcd) then
-!
-        clreac = resoco(1:14)//'.REAL'
-        call jeveuo(clreac, 'L', jclrea)
-!
-! ----- CTCGEO : TRUE. SI BOUCLE GEOMETRIQUE CONVERGEE
-!
-        ctcgeo = zl(jclrea+1-1)
-        lerrog = zl(jclrea+4-1)
-!
-! ----- IMPRESSIONS
-!
-        if (ctcgeo) then
-            mmcvgo = .false.
-        else
-            mmcvgo = .true.
-        endif
-    else
-        ASSERT(.false.)
     endif
 !
-! --- SAUVEGARDE DES EVENEMENTS
+! - Get final loop state
 !
-    call nmcrel(sderro, 'ERRE_CTCG', lerrog)
-    if (mmcvgo) then
+    call mmbouc(ds_contact, 'Geom', 'Is_Convergence', loop_state_ = loop_geom_conv)
+    call mmbouc(ds_contact, 'Geom', 'Is_Error'      , loop_state_ = loop_geom_error)
+    call mmbouc(ds_contact, 'Geom', 'Get_Locus'     , loop_locus_ = loop_geom_node)
+    call mmbouc(ds_contact, 'Geom', 'Get_Vale'      , loop_vale_  = loop_geom_vale)
+!
+! - Save events
+!
+    call nmcrel(sderro, 'ERRE_CTCG', loop_geom_error)
+    if (loop_geom_conv) then
         call nmcrel(sderro, 'DIVE_FIXG', .false._1)
     else
         call nmcrel(sderro, 'DIVE_FIXG', .true._1)
@@ -196,10 +175,9 @@ implicit none
 !
 ! - Set values in convergence table for contact geoemtry informations
 !
-    if (lctcc .or. lxfcm) then
-        call nmimck(ds_print, 'BOUC_NOEU', cvgnoe, .true._1)
-        call nmimcr(ds_print, 'BOUC_VALE', cvgval, .true._1)
+    if (l_cont_cont .or. l_cont_xfem) then
+        call nmimck(ds_print, 'BOUC_NOEU', loop_geom_node, .true._1)
+        call nmimcr(ds_print, 'BOUC_VALE', loop_geom_vale, .true._1)
     endif
 !
-    call jedema()
 end subroutine

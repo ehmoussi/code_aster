@@ -1,7 +1,7 @@
 # person_in_charge: jean-michel.proix at edf.fr
 # TITRE PLAQUE EN FLEXION AVEC DIVERS ELANCEMENTS. MODELISATION SHB MAILLAGE REGULIER
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -125,7 +125,7 @@ Uz=F*L*L*L/3/YG/Iy
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    GROUP_NO='P7',
-                   REFERENCE='SOURCE_EXTERNE',
+                   REFERENCE='ANALYTIQUE',
                    RESULTAT=RESU31,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DZ',
@@ -134,7 +134,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=0.040000000000000001,),
                 _F(NUME_ORDRE=1,
                    GROUP_NO='P8',
-                   REFERENCE='SOURCE_EXTERNE',
+                   REFERENCE='ANALYTIQUE',
                    RESULTAT=RESU31,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DZ',
@@ -191,7 +191,7 @@ Uz=F*L*L*L/3/YG/Iy
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    GROUP_NO='P7',
-                   REFERENCE='SOURCE_EXTERNE',
+                   REFERENCE='ANALYTIQUE',
                    RESULTAT=RESU32,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DZ',
@@ -200,7 +200,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PRECISION=0.050000000000000003,),
                 _F(NUME_ORDRE=1,
                    GROUP_NO='P8',
-                   REFERENCE='SOURCE_EXTERNE',
+                   REFERENCE='ANALYTIQUE',
                    RESULTAT=RESU32,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DZ',
@@ -261,27 +261,28 @@ RESU33=MECA_STATIQUE(MODELE=MODMEC33,
 Iy=b*h*h*h/12
 Uz=F*L*L*L/3/YG/Iy
 
-# LA SOLUTION OBTENUE PRESENTE UNE FAIBLE VARIABILITE ENTRE MACHINES QUI DECOULE
-# DU MAUVAIS CONDITIONNEMENT
+# La solution obtenue presente une certaine variabilite entre machines qui decoule
+# du mauvais conditionnement du probleme quand l'epaisseur est trop petite.
+# => l'usage du mot cle TOLE_MACHINE.
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    GROUP_NO='P7',
-                   REFERENCE='SOURCE_EXTERNE',
+                   REFERENCE='ANALYTIQUE',
                    RESULTAT=RESU33,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DZ',
                    VALE_CALC=0.00193310754583,
                    VALE_REFE=Uz,
-                   TOLE_MACHINE=1.E-4, #TODO TOLE_MACHINE
+                   TOLE_MACHINE=1.e-4, # Voir commentaire plus haut
                    PRECISION=0.05,),
                 _F(NUME_ORDRE=1,
                    GROUP_NO='P8',
-                   REFERENCE='SOURCE_EXTERNE',
+                   REFERENCE='ANALYTIQUE',
                    RESULTAT=RESU33,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DZ',
                    VALE_CALC=0.0019105982676,
                    VALE_REFE=Uz,
-                   TOLE_MACHINE=1.E-4, #TODO TOLE_MACHINE
+                   TOLE_MACHINE=1.e-4, # Voir commentaire plus haut
                    PRECISION=0.05,),
                 ),
           )

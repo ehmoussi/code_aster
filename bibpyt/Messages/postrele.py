@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -83,23 +83,18 @@ cata_msg = {
  Contactez le support
 """),
 
-    16 : _(u"""
- problème maillage
- Contactez le support
-"""),
+ 
 
     17 : _(u"""
  on ne traite que des champs de type "DEPL_R" pour un changement de repère
 """),
 
-    18 : _(u"""
- le type de maille %(k1)s n'est pas traité
-"""),
+ 
 
-    19 : _(u"""
- mauvaise définition du chemin, problème de continuité du chemin sur une maille
- diminuer la précision dans l'opérateur INTE_MAIL_(2D/3D)
-"""),
+
+
+
+
 
     20 : _(u"""
  on ne traite pas ce cas
@@ -116,17 +111,10 @@ cata_msg = {
    - soit plusieurs noeuds
 """),
 
-    23 : _(u"""
- on ne peut pas mélanger des arcs et des segments.
-"""),
 
-    24 : _(u"""
- chemin de maille vide
-"""),
+ 
 
-    25 : _(u"""
- contradiction avec INTE_MAIL_2D
-"""),
+
 
     26 : _(u"""
  changement de repère:
@@ -146,9 +134,7 @@ cata_msg = {
  changement de repère non traité
 """),
 
-    29 : _(u"""
- on ne sait pas faire ce post-traitement pour le chemin %(k1)s en repère %(k2)s
-"""),
+
 
     30 : _(u"""
  le noeud %(k1)s est confondu avec l'origine
@@ -310,10 +296,7 @@ cata_msg = {
  la composante %(k1)s n'est pas présente au catalogue des grandeurs.
 """),
 
-    49 : _(u"""
- occurrence %(i1)d du mot clé facteur ACTION
- le maillage de la courbe %(k1)s est différent du maillage du champ à traiter %(k2)s
-"""),
+
 
     50 : _(u"""
  occurrence %(i1)d du mot clé facteur ACTION
@@ -395,16 +378,9 @@ Dans le cas d'un champ de type ELEM, l'utilisation des mots clés NOEUD, GROUP_N
 n'a pas de sens, seul le mot clé MAILLE ou GROUP_MA est autorisé.
 """),
 
-    67 : _(u"""
-Erreur de programmation dans la commande POST_RELEVE_T : Une incohérence a été détectée.
-  * Si la commande n'utilise pas le mot clé ACTION / CHEMIN, il faut émettre une
-    fiche d'anomalie.
+ 
 
-  * Si la commande utilise le mot clé ACTION / CHEMIN, il est conseillé de modifier
-    le fichier de commande pour ne plus utiliser le mot clé CHEMIN.
-    C'est à dire qu'il faut remplacer INTE_MAIL_XX + POST_RELEVE par MACR_LIGN_COUPE.
 
-"""),
 
     68 : _(u"""
 Erreur utilisateur dans la commande POST_RELEVE_T :

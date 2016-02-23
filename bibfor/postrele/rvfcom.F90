@@ -2,7 +2,7 @@ subroutine rvfcom(nmaila, m1, f1, m2, f2)
     implicit none
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -22,6 +22,7 @@ subroutine rvfcom(nmaila, m1, f1, m2, f2)
 #include "jeveux.h"
 #include "asterfort/i2extf.h"
 #include "asterfort/utmess.h"
+#include "asterfort/assert.h"
     character(len=8) :: nmaila
     integer :: m1, m2, f1, f2
 !
@@ -89,9 +90,7 @@ subroutine rvfcom(nmaila, m1, f1, m2, f2)
 !
         f2 = f2 + 1
 !
-        if (f2 .gt. 12) then
-            call utmess('F', 'POSTRELE_19')
-        endif
+        ASSERT (f2 .le. 12)
 !
         call i2extf(m2, f2, nconec, ntype, n2g,&
                     n2d)

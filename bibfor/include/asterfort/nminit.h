@@ -18,15 +18,14 @@
 ! aslint: disable=W1504
 !
 interface
-    subroutine nminit(result  , model      , numedd    , numfix     , mate    ,&
-                      compor  , carele     , list_load , ds_algopara, maprec  ,&
-                      solveu  , carcri     , numins    , sdstat     , sddisc  ,&
-                      sdnume  , sdcont_defi, sdcrit    , varc_refe  , fonact  ,&
-                      mesh    , sdpilo     , sddyna    , ds_print   , sd_suiv ,&
-                      sd_obsv , sdtime     , sderro    , sdpost     , ds_inout,&
-                      sdener  , ds_conv    , sdcriq    , sdunil_defi, resocu  ,&
-                      resoco  , valinc     , solalg    , measse     , veelem  ,&
-                      meelem  , veasse     , codere)
+    subroutine nminit(result , model , numedd   , numfix     , mate      ,&
+                      compor , carele, list_load, ds_algopara, maprec    ,&
+                      solveu , carcri, numins   , sdstat     , sddisc    ,&
+                      sdnume , sdcrit, varc_refe, fonact     , mesh      ,&
+                      sdpilo , sddyna, ds_print , sd_suiv    , sd_obsv   ,&
+                      sdtime , sderro, sdpost   , ds_inout   , sdener    ,&
+                      ds_conv, sdcriq, valinc   , solalg     , measse    ,&
+                      veelem , meelem, veasse   , codere     , ds_contact)
         use NonLin_Datastructure_type
         type(NL_DS_InOut), intent(inout) :: ds_inout
         character(len=8) :: result
@@ -44,8 +43,6 @@ interface
         character(len=24) :: sdstat
         character(len=19) :: sddisc
         character(len=19) :: sdnume
-        character(len=24), intent(out) :: sdcont_defi
-        character(len=24), intent(out) :: sdunil_defi
         character(len=19) :: sdcrit
         character(len=24) :: varc_refe
         integer :: fonact(*)
@@ -62,8 +59,6 @@ interface
         type(NL_DS_Conv), intent(inout) :: ds_conv
         type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
         character(len=24) :: sdcriq
-        character(len=24) :: resocu
-        character(len=24) :: resoco
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: measse(*)
@@ -71,5 +66,6 @@ interface
         character(len=19) :: meelem(*)
         character(len=19) :: veasse(*)
         character(len=24) :: codere
+        type(NL_DS_Contact), intent(inout) :: ds_contact
     end subroutine nminit
 end interface

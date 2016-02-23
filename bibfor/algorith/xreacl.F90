@@ -1,4 +1,21 @@
-subroutine xreacl(noma, nomo, valinc, resoco)
+subroutine xreacl(mesh, model, hval_incr, ds_contact)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterfort/calcul.h"
+#include "asterfort/copisd.h"
+#include "asterfort/dbgcal.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/inical.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/xmchex.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -18,23 +35,10 @@ subroutine xreacl(noma, nomo, valinc, resoco)
 ! ======================================================================
 ! person_in_charge: samuel.geniaut at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/calcul.h"
-#include "asterfort/copisd.h"
-#include "asterfort/dbgcal.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/inical.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/xmchex.h"
-    character(len=8) :: noma, nomo
-    character(len=24) :: resoco
-    character(len=19) :: valinc(*)
+    character(len=8), intent(in) :: mesh
+    character(len=8), intent(in) :: model
+    character(len=19), intent(in) :: hval_incr(*)
+    type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! ----------------------------------------------------------------------
 !
@@ -44,20 +48,18 @@ subroutine xreacl(noma, nomo, valinc, resoco)
 !
 ! ----------------------------------------------------------------------
 !
-!
-! IN  NOMO   : NOM DE L'OBJET MODELE
-! IN  NOMA   : NOM DE L'OBJET MAILLAGE
-! IN  RESOCO : SD CONTACT (RESOLUTION)
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-!
+! In  mesh             : name of mesh
+! In  model            : name of model
+! In  ds_contact       : datastructure for contact management
+! In  hval_incr        : hat-variable for incremental values fields
 !
 !
-    integer :: nbout, nbin
-    parameter    (nbout=1, nbin=10)
+!
+    integer, parameter :: nbout = 1
+    integer, parameter :: nbin  = 10
     character(len=8) :: lpaout(nbout), lpain(nbin)
     character(len=19) :: lchout(nbout), lchin(nbin)
 !
-    integer :: nbma
     character(len=19) :: ligrmo, xdonco, xseuco, cseuil
     character(len=19) :: lnno, ltno
     character(len=16) :: option
@@ -75,25 +77,24 @@ subroutine xreacl(noma, nomo, valinc, resoco)
 !
 ! --- INITIALISATIONS
 !
-    ligrmo = nomo(1:8)//'.MODELE'
+    ligrmo = model(1:8)//'.MODELE'
     cseuil = '&&XREACL.SEUIL'
-    xdonco = resoco(1:14)//'.XFDO'
-    xseuco = resoco(1:14)//'.XFSE'
+    xdonco = ds_contact%sdcont_solv(1:14)//'.XFDO'
+    xseuco = ds_contact%sdcont_solv(1:14)//'.XFSE'
     option = 'XREACL'
     if (nivdbg .ge. 2) then
         debug = .true.
     else
         debug = .false.
     endif
-    call dismoi('NB_MA_MAILLA', noma, 'MAILLAGE', repi=nbma)
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
-    call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
+    call nmchex(hval_incr, 'VALINC', 'DEPPLU', depplu)
 !
 ! --- SI PAS DE CONTACT ALORS ON ZAPPE LA VÉRIFICATION
 !
-    call jeveuo(nomo(1:8)//'.XFEM_CONT', 'L', vi=xfem_cont)
+    call jeveuo(model(1:8)//'.XFEM_CONT', 'L', vi=xfem_cont)
     lcontx = xfem_cont(1) .ge. 1
     if (.not.lcontx) then
         goto 999
@@ -106,21 +107,21 @@ subroutine xreacl(noma, nomo, valinc, resoco)
 !
 ! --- RECUPERATION DES DONNEES XFEM
 !
-    lnno = nomo(1:8)//'.LNNO'
-    ltno = nomo(1:8)//'.LTNO'
-    ainter = nomo(1:8)//'.TOPOFAC.AI'
-    cface = nomo(1:8)//'.TOPOFAC.CF'
-    faclon = nomo(1:8)//'.TOPOFAC.LO'
-    pinter = nomo(1:8)//'.TOPOFAC.OE'
-    baseco = nomo(1:8)//'.TOPOFAC.BA'
+    lnno = model(1:8)//'.LNNO'
+    ltno = model(1:8)//'.LTNO'
+    ainter = model(1:8)//'.TOPOFAC.AI'
+    cface = model(1:8)//'.TOPOFAC.CF'
+    faclon = model(1:8)//'.TOPOFAC.LO'
+    pinter = model(1:8)//'.TOPOFAC.OE'
+    baseco = model(1:8)//'.TOPOFAC.BA'
 !
 ! --- CREATION DU CHAM_ELEM_S VIERGE
 !
-    call xmchex(noma, nbma, xseuco, cseuil)
+    call xmchex(mesh, xseuco, cseuil)
 !
 ! --- RECUPERATION DES COORDONNEES DES NOEUDS
 !
-    chgeom = noma(1:8)//'.COORDO'
+    chgeom = mesh(1:8)//'.COORDO'
 !
 ! --- CREATION DES LISTES DES CHAMPS IN
 !

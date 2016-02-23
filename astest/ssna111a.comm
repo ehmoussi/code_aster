@@ -1,7 +1,7 @@
 #
 # TITRE INDENTATION D'UN MASSIF PAR UN POINCON
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -131,6 +131,8 @@ RESU=CALC_CHAMP(reuse =RESU,
              FORCE='REAC_NODA',
              RESULTAT=RESU,);
 
+
+
 TAB_FORC=POST_RELEVE_T(ACTION=_F(INTITULE='FORCE',
                             GROUP_NO='GM12',
                             RESULTAT=RESU,
@@ -153,14 +155,14 @@ TEST_RESU(RESU=(_F(GROUP_NO='GM16',
                    RESULTAT=RESU,
                    NOM_CHAM='REAC_NODA',
                    NOM_CMP='DX',
-                   VALE_CALC=3.248040141,
+                   VALE_CALC=3.24819766338,
                    ),
                 _F(GROUP_NO='GM16',
                    INST=0.5,
                    RESULTAT=RESU,
                    NOM_CHAM='REAC_NODA',
                    NOM_CMP='DY',
-                   VALE_CALC=-8.769704784,
+                   VALE_CALC=-8.77013009279,
                    ),
                 ),
           )
@@ -179,17 +181,18 @@ TEST_RESU(RESU=(_F(GROUP_NO='GM16',
                    RESULTAT=RESU,
                    NOM_CHAM='REAC_NODA',
                    NOM_CMP='DX',
-                   VALE_CALC=1.8134154153126,
+                   VALE_CALC=1.81358351784,
                    ),
                 _F(GROUP_NO='GM16',
                    INST=1.0,
                    RESULTAT=RESU,
                    NOM_CHAM='REAC_NODA',
                    NOM_CMP='DY',
-                   VALE_CALC=-4.8962216215394,
+                   VALE_CALC=-4.89667549836,
                    ),
                 ),
           )
+
 
 FY=RECU_FONCTION(TABLE=TAB_FORC,
                  PARA_X='INST',

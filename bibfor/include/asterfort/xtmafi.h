@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -17,7 +17,7 @@
 !
 interface
     subroutine xtmafi(ndim, fiss, nfiss, lismai,&
-                      mesmai, nbma, mesh, model)
+                      mesmai, nbma, mesh, model, typ_enr)
         integer :: nfiss
         integer :: ndim
         character(len=8) :: fiss(nfiss)
@@ -26,5 +26,6 @@ interface
         integer :: nbma
         character(len=8), optional, intent(in) :: mesh
         character(len=8), optional, intent(in) :: model
+        character(len=*), optional, intent(in) :: typ_enr
     end subroutine xtmafi
 end interface

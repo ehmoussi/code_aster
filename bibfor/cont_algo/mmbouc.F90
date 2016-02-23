@@ -1,4 +1,7 @@
-subroutine mmbouc(sdcont_solv, loop_name, operation, loop_value)
+subroutine mmbouc(ds_contact   , loop_type  , operation_ ,&
+                  loop_counter_, loop_state_, loop_locus_, loop_vale_)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
@@ -23,10 +26,13 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    character(len=24), intent(in) :: sdcont_solv
-    character(len=4), intent(in) :: loop_name
-    character(len=4), intent(in) :: operation
-    integer, intent(out), optional :: loop_value
+    type(NL_DS_Contact), intent(inout) :: ds_contact
+    character(len=4), intent(in) :: loop_type
+    character(len=*), intent(in) :: operation_
+    integer, intent(out), optional :: loop_counter_
+    aster_logical, intent(out), optional :: loop_state_
+    character(len=16), intent(inout), optional :: loop_locus_
+    real(kind=8), intent(inout), optional :: loop_vale_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -36,68 +42,113 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  sdcont_solv      : name of contact solving datastructure
-! In  loop_name        : name of loop
-!                        'CONT' - Contact status
-!                        'FROT' - Friction trigger
-!                        'GEOM' - Geometric loop
+! In  ds_contact       : datastructure for contact management
+! In  loop_type        : name of loop
+!                        'Cont' - Contact status loop
+!                        'Fric' - Friction loop
+!                        'Geom' - Geometric loop
 ! In  operation        : type of operation on loop
-!                        'READ' - Read value of loop iteration
-!                        'INCR' - Add iteration to loop
-!                        'INIT' - Initialization of loop
-! Out loop_value       : value of loop (iteration)
+!                        'Read_Counter'    - Read value of loop counter
+!                        'Incr_Counter'    - Add iteration to loop counter
+!                        'Init_counter'    - Initialization of loop counter
+!                        'Set_Convergence' - Set convergence of loop
+!                        'Set_Error'       - Set error in loop
+!                        'Set_NoError'     - Set no error in loop
+!                        'Set_Divergence'  - Set divergence of loop
+!                        'Is_Error'        - Return if loop error
+!                        'Is_NoError'      - Return if no loop error
+!                        'Is_Convergence'  - Return if loop converged
+!                        'Is_Divergence'   - Return if loop not converged
+!                        'Set_Locus'       - Set locus
+!                        'Get_Locus'       - Get locus
+!                        'Set_Vale'        - Set value of residual
+!                        'Get_Vale'        - Get value of residual
+! Out loop_counter     : value of loop (counter)
+! Out loop_state       : value of flag (convergence/error)
+! IO  loop_locus       : value of locus 
+! IO  loop_vale        : value of residual 
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: sdcont_mboucl
-    integer, pointer :: v_sdcont_mboucl(:) => null()
+    integer :: i_loop, nb_loop, loop_indx, loop_counter
+    character(len=16) :: operation
+    aster_logical :: loop_state
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    sdcont_mboucl = sdcont_solv(1:14)//'.MBOUCL'
-    call jeveuo(sdcont_mboucl, 'E', vi = v_sdcont_mboucl)
+    operation    = operation_
+    loop_state   = .false.
+    loop_counter = 0
+    loop_indx    = 0
 !
-    if (loop_name .eq. 'CONT') then
-        if (operation .eq. 'INIT') then
-            v_sdcont_mboucl(1) = 0
-        else if (operation.eq.'INCR') then
-            v_sdcont_mboucl(1) = v_sdcont_mboucl(1) +1
-        else if (operation.eq.'READ') then
-            loop_value = v_sdcont_mboucl(1)
+! - Find loop
+!
+    nb_loop = ds_contact%nb_loop
+    do i_loop = 1, nb_loop
+        if (ds_contact%loop(i_loop)%type .eq. loop_type) then
+            loop_indx = i_loop
+        endif
+    end do
+    ASSERT(loop_indx .ne. 0)
+!
+! - Operation
+!
+    if (operation .eq. 'Init_Counter') then
+        ds_contact%loop(loop_indx)%counter = 0
+    else if (operation.eq.'Incr_Counter') then
+        ds_contact%loop(loop_indx)%counter = ds_contact%loop(loop_indx)%counter +1
+    else if (operation.eq.'Read_Counter') then
+        loop_counter = ds_contact%loop(loop_indx)%counter
+    else if (operation.eq.'Set_Convergence') then
+        ds_contact%loop(loop_indx)%conv = .true.
+    else if (operation.eq.'Set_Divergence') then
+        ds_contact%loop(loop_indx)%conv = .false.
+    else if (operation.eq.'Set_Error') then
+        ds_contact%loop(loop_indx)%error = .true.
+    else if (operation.eq.'Set_NoError') then
+        ds_contact%loop(loop_indx)%error = .false.
+    else if (operation.eq.'Is_Convergence') then
+        if (ds_contact%loop(loop_indx)%conv) then
+            loop_state = .true.
         else
-            ASSERT(.false.)
+            loop_state = .false.
         endif
-        if (present(loop_value)) then
-            loop_value = v_sdcont_mboucl(1)
-        endif
-    else if (loop_name.eq.'FROT') then
-        if (operation .eq. 'INIT') then
-            v_sdcont_mboucl(2) = 0
-        else if (operation.eq.'INCR') then
-            v_sdcont_mboucl(2) = v_sdcont_mboucl(2) +1
-        else if (operation.eq.'READ') then
-            loop_value = v_sdcont_mboucl(2)
+    else if (operation.eq.'Is_Divergence') then
+        if (ds_contact%loop(loop_indx)%conv) then
+            loop_state = .false.
         else
-            ASSERT(.false.)
+            loop_state = .true.
         endif
-        if (present(loop_value)) then
-            loop_value = v_sdcont_mboucl(2)
-        endif
-    else if (loop_name.eq.'GEOM') then
-        if (operation .eq. 'INIT') then
-            v_sdcont_mboucl(3) = 0
-        else if (operation.eq.'INCR') then
-            v_sdcont_mboucl(3) = v_sdcont_mboucl(3) +1
-        else if (operation.eq.'READ') then
-            loop_value = v_sdcont_mboucl(3)
+    else if (operation.eq.'Is_Error') then
+        if (ds_contact%loop(loop_indx)%error) then
+            loop_state = .true.
         else
-            ASSERT(.false.)
+            loop_state = .false.
         endif
-        if (present(loop_value)) then
-            loop_value = v_sdcont_mboucl(3)
+    else if (operation.eq.'Is_NoError') then
+        if (ds_contact%loop(loop_indx)%error) then
+            loop_state = .false.
+        else
+            loop_state = .true.
         endif
+    else if (operation.eq.'Set_Locus') then
+        ds_contact%loop(loop_indx)%locus_calc = loop_locus_
+    else if (operation.eq.'Get_Locus') then
+        loop_locus_ = ds_contact%loop(loop_indx)%locus_calc
+    else if (operation.eq.'Set_Vale') then
+        ds_contact%loop(loop_indx)%vale_calc = loop_vale_
+    else if (operation.eq.'Get_Vale') then
+        loop_vale_ = ds_contact%loop(loop_indx)%vale_calc        
     else
         ASSERT(.false.)
+    endif
+!
+    if (present(loop_counter_)) then
+        loop_counter_ = loop_counter
+    endif
+!
+    if (present(loop_state_)) then
+        loop_state_ = loop_state
     endif
 !
 end subroutine

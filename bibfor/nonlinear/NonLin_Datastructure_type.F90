@@ -209,4 +209,68 @@ implicit none
         real(kind=8)      :: temp_init
     end type NL_DS_InOut
 !
+! - Type: loop management
+! 
+    type NL_DS_Loop
+        character(len=4)  :: type
+        integer           :: counter
+        aster_logical     :: conv
+        aster_logical     :: error
+        real(kind=8)      :: vale_calc
+        character(len=16) :: locus_calc
+    end type NL_DS_Loop
+!
+! - Type: contact management
+! 
+    type NL_DS_Contact
+        aster_logical     :: l_contact
+        aster_logical     :: l_meca_cont
+        aster_logical     :: l_meca_unil
+        character(len=8)  :: sdcont
+        character(len=24) :: sdcont_defi
+        character(len=24) :: sdcont_solv
+        character(len=24) :: sdunil_defi
+        character(len=24) :: sdunil_solv
+        aster_logical     :: l_form_cont
+        aster_logical     :: l_form_disc
+        aster_logical     :: l_form_xfem
+        aster_logical     :: l_form_lac
+! ----- Name of <LIGREL> for slave elements (create in DEFI_CONTACT)
+        character(len=8)  :: ligrel_elem_slav
+        aster_logical     :: l_elem_slav
+! ----- Name of <LIGREL> for contact elements (create in MECA_NON_LINE)
+        character(len=19) :: ligrel_elem_cont
+        aster_logical     :: l_elem_cont
+! ----- Identity relations between dof (XFEM with ELIM_ARETE or LAC method)
+        aster_logical     :: l_iden_rela
+        character(len=24) :: iden_rela
+! ----- Relations between dof (QUAD8 in discrete methods or XFEM, create in DEFI_CONTACT)
+        aster_logical     :: l_dof_rela
+        character(len=8)  :: ligrel_dof_rela
+! ----- Name of <CHELEM> - Input field
+        character(len=19) :: field_input
+! ----- NUME_DOF for discrete friction methods 
+        character(len=14) :: nume_dof_frot
+! ----- Field for CONT_NODE 
+        character(len=19) :: field_cont_node
+        character(len=19) :: fields_cont_node
+        character(len=19) :: field_cont_perc
+! ----- Loops
+        integer           :: nb_loop
+        integer           :: nb_loop_maxi = 3
+        type(NL_DS_Loop)  :: loop(3)
+! ----- Flag for (re) numbering
+        aster_logical     :: l_renumber
+! ----- Geometric loop control
+        real(kind=8)      :: geom_maxi
+! ----- Get-off indicator
+        aster_logical     :: l_getoff
+! ----- First geometric loop
+        aster_logical     :: l_first_geom
+! ----- Flag for pairing
+        aster_logical     :: l_pair
+! ----- Wait for contact sub-iterations convergence
+        aster_logical     :: l_wait_conv
+    end type NL_DS_Contact
+!
 end module

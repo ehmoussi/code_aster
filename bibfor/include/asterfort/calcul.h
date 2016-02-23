@@ -1,4 +1,4 @@
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -15,14 +15,14 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface 
-    subroutine calcul(stop, optio, ligrlz, nin, lchin,&
+    subroutine calcul(stop, option_, ligrel_, nin, lchin,&
                       lpain, nou, lchou, lpaou, base,&
                       mpic)
         integer, intent(in) :: nou
         integer, intent(in) :: nin
         character(len=1), intent(in) :: stop
-        character(len=*), intent(in) :: optio
-        character(len=*), intent(in) :: ligrlz
+        character(len=*), intent(in) :: option_
+        character(len=*), intent(in) :: ligrel_
         character(len=*), intent(in) :: lchin(*)
         character(len=*), intent(in) :: lpain(*)
         character(len=*), intent(in) :: lchou(*)

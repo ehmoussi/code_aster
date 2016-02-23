@@ -1,4 +1,5 @@
-subroutine cresol(solveu, basz)
+subroutine cresol(solveu)
+    use superv_module, only: asthread_blasset
     implicit none
 #include "jeveux.h"
 #include "asterc/getexm.h"
@@ -20,10 +21,9 @@ subroutine cresol(solveu, basz)
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
     character(len=19) :: solveu
-    character(len=1), optional :: basz
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -50,7 +50,6 @@ subroutine cresol(solveu, basz)
     integer :: zslvk, zslvr, zslvi
     integer :: istop, nsolve, ibid, nprec, islvk, islvr, islvi, n1
     real(kind=8) :: epsmat
-    character(len=1) :: base
     character(len=3) :: mixpre, kellag
     character(len=8) :: kstop, modele, kxfem
     character(len=16) :: method, nomsol
@@ -59,10 +58,6 @@ subroutine cresol(solveu, basz)
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    base='V'
-    if (present(basz)) then
-        base=basz
-    endif
 !
 ! --- INITS. GLOBALES (CAR MOT-CLES OPTIONNELS)
     nomsol='SOLVEUR'
@@ -135,9 +130,9 @@ subroutine cresol(solveu, basz)
     zslvk = sdsolv('ZSLVK')
     zslvr = sdsolv('ZSLVR')
     zslvi = sdsolv('ZSLVI')
-    call wkvect(solveu//'.SLVK', base//' V K24', zslvk, islvk)
-    call wkvect(solveu//'.SLVR', base//' V R', zslvr, islvr)
-    call wkvect(solveu//'.SLVI', base//' V I', zslvi, islvi)
+    call wkvect(solveu//'.SLVK', 'V V K24', zslvk, islvk)
+    call wkvect(solveu//'.SLVR', 'V V R', zslvr, islvr)
+    call wkvect(solveu//'.SLVI', 'V V I', zslvi, islvi)
 !
 ! ------------------------------------------------------
 ! --- LECTURE MOT-CLE ET REMPLISSAGE DE LA SD_SOLVEUR PROPRE A CHAQUE
@@ -166,6 +161,8 @@ subroutine cresol(solveu, basz)
 !
     else if (method.eq.'MULT_FRONT') then
 !     -----------------------------
+!       do not create threads in blas
+        call asthread_blasset(1)
         call crsvmf(nomsol, solveu, istop, nprec,&
                     epsmat, mixpre, kellag, kxfem)
 !

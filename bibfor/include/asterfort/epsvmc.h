@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,8 +18,7 @@
 interface
     subroutine epsvmc(fami   , nno    , ndim  , nbsig, npg   ,&
                       j_poids, j_vf   , j_dfde, xyz  , disp  ,&
-                      time   , j_mater, repere, nharm, option,&
-                      epsi   )
+                      time   , repere, nharm, option,  epsi   )
         character(len=*), intent(in) :: fami
         integer, intent(in) :: nno
         integer, intent(in) :: ndim
@@ -31,7 +30,6 @@ interface
         real(kind=8), intent(in) :: xyz(1)
         real(kind=8), intent(in) :: disp(1)
         real(kind=8), intent(in) :: time
-        integer, intent(in) :: j_mater
         real(kind=8), intent(in) :: repere(7)
         real(kind=8), intent(in) :: nharm
         character(len=16), intent(in) :: option

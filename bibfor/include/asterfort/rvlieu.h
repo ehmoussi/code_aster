@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,10 +16,9 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine rvlieu(mailla, typco, courbe, nlsnac, sdlieu)
+    subroutine rvlieu(mailla, typco, nlsnac, sdlieu)
         character(len=8) :: mailla
         character(len=8) :: typco
-        character(len=8) :: courbe
         character(len=24) :: nlsnac
         character(len=24) :: sdlieu
     end subroutine rvlieu

@@ -1,6 +1,6 @@
 # TITRE TEST DE FONDATION FILANTE AVEC LA LOI DE CAMCLAY EN MECANIQUE DRAINE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -49,7 +49,9 @@ G       = 9.81 ;           # ACCELERATION DE LA PESANTEUR
 
 #PRE_GIBI();
 
-MAILLAGE=LIRE_MAILLAGE(FORMAT='MED',);
+MAILLAGE=LIRE_MAILLAGE(FORMAT='MED')
+# Pour eviter les "TOLE MACHINE", on perturbe legerement la geometrie du maillage :
+MODI_MAILLAGE(reuse =MAILLAGE, MAILLAGE=MAILLAGE, DEFORME=_F(OPTION='TRAN', ALEA=1.e-8,),)
 
 MAILLAGE=DEFI_GROUP(reuse =MAILLAGE,
                     MAILLAGE=MAILLAGE,
@@ -232,93 +234,6 @@ VARINI=CREA_CHAMP(INFO=1,
                                         'V5','V6','V7')));
 
 
-#--------------------------------------------------------------------
-#              TEST D'EQUILIBRE EN ELASTIQUE LINEAIRE
-#--------------------------------------------------------------------
-
-# CE TEST SERT A S'ASSURER QU'AVEC LES CHAMPS DE CONTRAINTES
-# IMPOSES, ON EST A L'EQUILIBRE MECANIQUE A L'INSTANT INITIAL
-#
-# CE FAISANT, ON NE DOIT PAS VOIR NOS CHAMPS EVOLUER DANS LE TEMPS:
-# ==> VERIF OK NORMALEMENT...
-
-# resu0=STAT_NON_LINE(INFO=1,MODELE=MODMEC1,
-#                     CHAM_MATER=chmat,
-#                     EXCIT=(_F(CHARGE=DDLIMP0,),
-#                            _F(CHARGE=PESE)),
-#                     COMPORTEMENT=_F(RELATION='ELAS'),
-#                     ETAT_INIT=_F(SIGM=SIEFINI),
-#                     INCREMENT=_F(LIST_INST    =TAN0,),
-#                     NEWTON=_F(MATRICE='TANGENTE',
-#                               REAC_ITER=1,),
-#                     CONVERGENCE=_F(RESI_GLOB_RELA=1e-06,
-#                                    ITER_GLOB_MAXI=10,
-#                                    ARRET='OUI',),
-#                     );
-#
-# resu0=CALC_CHAMP(reuse =resu0,
-#                  RESULTAT=resu0,
-#                  CONTRAINTE='SIGM_ELNO');
-#
-# DETRUIRE(CONCEPT=_F(NOM=('PCRY','PCR1','PCR2','SIEF1',
-#                          'SIEF2','CHXN','CHXG')));
-#
-# coupe1 = INTE_MAIL_2D(MAILLAGE=MAILLAGE,
-#                       GROUP_MA='SOL',
-#                       DEFI_SEGMENT=_F(ORIGINE  = (1.,10.),
-#                                       EXTREMITE= (1., 0.)));
-#
-# coupe2 = INTE_MAIL_2D(MAILLAGE=MAILLAGE,
-#                       GROUP_MA='SOL',
-#                       DEFI_SEGMENT=_F(ORIGINE  = (5.,10.),
-#                                       EXTREMITE= (5., 0.)));
-#
-# coupe3 = INTE_MAIL_2D(MAILLAGE=MAILLAGE,
-#                       GROUP_MA='SOL',
-#                       DEFI_SEGMENT=_F(ORIGINE  = (10.,10.),
-#                                       EXTREMITE= (10., 0.)));
-#
-# TAB_DEP1=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL',
-#                               CHEMIN=coupe1,
-#                               RESULTAT=resu0,
-#                               NOM_CHAM='DEPL',
-#                               NOM_CMP=('DX','DY'),
-#                               OPERATION='EXTRACTION'));
-#
-# TAB_DEP2=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL',
-#                               CHEMIN=coupe2,
-#                               RESULTAT=resu0,
-#                               NOM_CHAM='DEPL',
-#                               NOM_CMP=('DX','DY'),
-#                               OPERATION='EXTRACTION'));
-#
-# TAB_DEP3=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL',
-#                               CHEMIN=coupe3,
-#                               RESULTAT=resu0,
-#                               NOM_CHAM='DEPL',
-#                               NOM_CMP=('DX','DY'),
-#                               OPERATION='EXTRACTION'));
-#
-# TAB_SIEF=POST_RELEVE_T(ACTION=_F(INTITULE='SIEF',
-#                              CHEMIN=coupe3,
-#                              RESULTAT=resu0,
-#                              NOM_CHAM='SIGM_ELNO',
-#                              NOM_CMP=('SIXX','SIYY','SIZZ'),
-#                              OPERATION='EXTRACTION'));
-#
-# IMPR_TABLE(TABLE=TAB_DEP1,
-#            UNITE=8,);
-#
-# IMPR_TABLE(TABLE=TAB_DEP2,
-#            UNITE=8,);
-#
-# IMPR_TABLE(TABLE=TAB_DEP3,
-#            UNITE=8,);
-#
-# IMPR_TABLE(TABLE=TAB_SIEF,
-#            UNITE=8,);
-
-#FIN();
 
 #--------------------------------------------------------------------
 #                  TEST D'EQUILIBRE AVEC CAMCLAY
@@ -351,85 +266,6 @@ resu1=STAT_NON_LINE(MODELE    =MODMEC1,
 resu1=CALC_CHAMP(reuse=resu1,RESULTAT=resu1,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=('VARI_ELNO'))
 
 
-# DETRUIRE(CONCEPT=_F(NOM=('coupe1','coupe2','coupe3','TAB_DEP1',
-#                          'TAB_DEP2','TAB_DEP3','TAB_SIEF',
-#                          'resu0','SIEFINI','VARINI')));
-#
-# coupe1 = INTE_MAIL_2D(MAILLAGE=MAILLAGE,
-#                       GROUP_MA='SOL',
-#                       DEFI_SEGMENT=_F(ORIGINE   = (.5,10.),
-#                                       EXTREMITE = (.5, 0.)));
-#
-# coupe2 = INTE_MAIL_2D(MAILLAGE=MAILLAGE,
-#                       GROUP_MA='SOL',
-#                       DEFI_SEGMENT=_F(ORIGINE   = (5.,10.),
-#                                       EXTREMITE = (5., 0.)));
-#
-# TAB_DEPL=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL',
-#                                  CHEMIN=coupe1,
-#                                  RESULTAT=resu1,
-#                                  NOM_CHAM='DEPL',
-#                                  NOM_CMP='DY',
-#                                  OPERATION='EXTRACTION'));
-#
-# TAB_SIEF=POST_RELEVE_T(ACTION=_F(INTITULE='SIEF',
-#                                  CHEMIN=coupe1,
-#                                  RESULTAT=resu1,
-#                                  NOM_CHAM='SIGM_ELNO',
-#                                  TOUT_CMP='OUI',
-#                                  #NOM_CMP=('SIXX','SIYY','SIZZ'),
-#                                  OPERATION='EXTRACTION'));
-#
-# TAB_VARI=POST_RELEVE_T(ACTION=_F(INTITULE='VARI',
-#                                  CHEMIN=coupe1,
-#                                  RESULTAT=resu1,
-#                                  NOM_CHAM='VARI_ELNO',
-#                                  NOM_CMP=('V1','V3','V4','V5','V6','V7'),
-#                                  OPERATION='EXTRACTION'));
-#
-# IMPR_TABLE(TABLE=TAB_DEPL,
-#            UNITE=8,);
-#
-# IMPR_TABLE(TABLE=TAB_SIEF,
-#            UNITE=8,);
-#
-# IMPR_TABLE(TABLE=TAB_VARI,
-#            UNITE=8,);
-#
-# DETRUIRE(CONCEPT=_F(NOM=('TAB_VARI','TAB_DEPL','TAB_SIEF')));
-#
-# TAB_DEPL=POST_RELEVE_T(ACTION=_F(INTITULE='DEPL',
-#                                  CHEMIN=coupe2,
-#                                  RESULTAT=resu1,
-#                                  NOM_CHAM='DEPL',
-#                                  NOM_CMP='DY',
-#                                  OPERATION='EXTRACTION'));
-#
-# TAB_SIEF=POST_RELEVE_T(ACTION=_F(INTITULE='SIEF',
-#                                  CHEMIN=coupe2,
-#                                  RESULTAT=resu1,
-#                                  NOM_CHAM='SIGM_ELNO',
-#                                  TOUT_CMP='OUI',
-#                                  #NOM_CMP=('SIXX','SIYY','SIZZ'),
-#                                  OPERATION='EXTRACTION'));
-#
-# TAB_VARI=POST_RELEVE_T(ACTION=_F(INTITULE='VARI',
-#                                  CHEMIN=coupe2,
-#                                  RESULTAT=resu1,
-#                                  NOM_CHAM='VARI_ELNO',
-#                                  NOM_CMP=('V1','V3','V4','V5','V6','V7'),
-#                                  OPERATION='EXTRACTION'));
-#
-# IMPR_TABLE(TABLE=TAB_DEPL,
-#            UNITE=8);
-#
-# IMPR_TABLE(TABLE=TAB_SIEF,
-#            UNITE=8);
-#
-# IMPR_TABLE(TABLE=TAB_VARI,
-#            UNITE=8);
-#
-# FIN();
 
 #--------------------------------------------------------------------
 #          CALCUL DE LA FONDATION FILANTE AVEC CAMCLAY
@@ -512,8 +348,8 @@ IMPR_TABLE(TABLE=T_VARI_A);
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=4.E-2,
-           TOLE_MACHINE=2.1E-5,             # TODO TOLE_MACHINE
-           VALE_CALC=434.417483668,
+
+           VALE_CALC=434.27570954,
            VALE_REFE=450.0,
            NOM_PARA='V4',
            TABLE=T_VARI_O,
@@ -526,7 +362,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.04,
-           VALE_CALC=19467.8640229,
+           VALE_CALC=19467.7298244,
            VALE_REFE=2.E4,
            NOM_PARA='V4',
            TABLE=T_VARI_O,
@@ -539,7 +375,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.02,
-           VALE_CALC=25774.1413366,
+           VALE_CALC=25774.0327611,
            VALE_REFE=2.6060E4,
            NOM_PARA='V4',
            TABLE=T_VARI_O,
@@ -552,7 +388,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=29260.8953713,
+           VALE_CALC=29260.7894326,
            VALE_REFE=2.9490E4,
            NOM_PARA='V4',
            TABLE=T_VARI_O,
@@ -565,7 +401,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=33993.6386966,
+           VALE_CALC=33993.5211146,
            VALE_REFE=3.4040E4,
            NOM_PARA='V4',
            TABLE=T_VARI_O,
@@ -580,7 +416,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=155.0,
-           VALE_CALC=227.177149727,
+           VALE_CALC=227.178107509,
            VALE_REFE=76.0,
            NOM_PARA='V4',
            TABLE=T_VARI_A,
@@ -593,7 +429,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=1.E-2,
-           VALE_CALC=4944.54267887,
+           VALE_CALC=4944.53968618,
            VALE_REFE=4950.0,
            NOM_PARA='V4',
            TABLE=T_VARI_A,
@@ -606,7 +442,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.06,
-           VALE_CALC=9904.14444351,
+           VALE_CALC=9904.13710133,
            VALE_REFE=1.0420E4,
            NOM_PARA='V4',
            TABLE=T_VARI_A,
@@ -619,7 +455,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.1,
-           VALE_CALC=15244.4924543,
+           VALE_CALC=15244.4804984,
            VALE_REFE=1.6830E4,
            NOM_PARA='V4',
            TABLE=T_VARI_A,
@@ -632,7 +468,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.1,
-           VALE_CALC=19999.7101923,
+           VALE_CALC=19999.6942273,
            VALE_REFE=2.1870E4,
            NOM_PARA='V4',
            TABLE=T_VARI_A,
@@ -643,18 +479,14 @@ TEST_TABLE(CRITERE='RELATIF',
            )
 
 # TEST DE LA FORCE EXERCEE SUR LA FONDATION (COMPARAISON FLAQ)
-b_fonda=INTE_MAIL_2D(MAILLAGE=MAILLAGE,
-                     GROUP_MA='SOL',
-                     DEFI_SEGMENT=_F(ORIGINE  =(0.0,10.0),
-                                     EXTREMITE=(1.0,10.0)));
+# pour que la coupe soit bien dans la matiere, on se decale un peu vers le "bas" :
+dixm=10. - 1.e-5
+T_FORCE = MACR_LIGN_COUPE( RESULTAT =resu2, NOM_CHAM ='SIGM_ELNO',
+             LIGN_COUPE = _F(TYPE='SEGMENT', COOR_ORIG=(0.0, dixm), COOR_EXTR=(1.0, dixm),
+                             NB_POINTS=10,
+                             NOM_CMP  ='SIYY', OPERATION='MOYENNE', INTITULE='RESULTANTE', ))
 
-T_FORCE=POST_RELEVE_T(INFO=1,
-                      ACTION=_F(INTITULE ='RESULTANTE',
-                                RESULTAT =resu2,
-                                NOM_CHAM ='SIGM_ELNO',
-                                CHEMIN   =b_fonda,
-                                NOM_CMP  ='SIYY',
-                                OPERATION='MOYENNE'));
+
 T_FORCE=CALC_TABLE(reuse =T_FORCE,
                TABLE=T_FORCE,
                ACTION=(_F(
@@ -668,7 +500,7 @@ T_FORCE=CALC_TABLE(reuse =T_FORCE,
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.02,
-           VALE_CALC=-110104.830704,
+           VALE_CALC=-110038.599526,
            VALE_REFE=-1.08500E5,
            NOM_PARA='SIYY',
            TABLE=T_FORCE,
@@ -685,7 +517,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.05,
-           VALE_CALC=-129170.972281,
+           VALE_CALC=-128174.341181,
            VALE_REFE=-1.25800E5,
            NOM_PARA='SIYY',
            TABLE=T_FORCE,
@@ -702,7 +534,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.05,
-           VALE_CALC=-149438.577346,
+           VALE_CALC=-147577.255248,
            VALE_REFE=-1.44600E5,
            NOM_PARA='SIYY',
            TABLE=T_FORCE,
@@ -719,7 +551,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.05,
-           VALE_CALC=-167043.075489,
+           VALE_CALC=-164415.903426,
            VALE_REFE=-1.60900E5,
            NOM_PARA='SIYY',
            TABLE=T_FORCE,
@@ -736,7 +568,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='SOURCE_EXTERNE',
            PRECISION=0.05,
-           VALE_CALC=-188807.402179,
+           VALE_CALC=-184953.495166,
            VALE_REFE=-1.81100E5,
            NOM_PARA='SIYY',
            TABLE=T_FORCE,

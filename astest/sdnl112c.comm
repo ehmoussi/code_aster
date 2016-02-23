@@ -29,7 +29,10 @@ TUBE=LIRE_MAILLAGE(FORMAT='MED')
 MODI_MAILLAGE(reuse=TUBE, MAILLAGE=TUBE,ABSC_CURV=_F(NOEUD_ORIG='N_01_001',TOUT='OUI'))
 
 TUBE=DEFI_GROUP( reuse=TUBE,   MAILLAGE=TUBE,
-                       CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI'))
+                       CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI'),
+                       CREA_GROUP_NO =_F(NOEUD = 'N_04_001',
+                                         NOM = 'G_NO_04'),);
+
 
 #
 MODELE=AFFE_MODELE(  MAILLAGE=TUBE,
@@ -441,7 +444,7 @@ OBST1=DEFI_OBSTACLE(  TYPE='PLAN_Y'   )
 
 TRANGENE=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                     BASE_ELAS_FLUI=MELFLUI, NUME_VITE_FLUI=1,
-                    SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_32'),
+                    SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_32',PAS_MINI=T_PAS,PAS_MAXI=T_PAS),
                     MATR_MASS=MASSPROJ,
                     MATR_RIGI=RIGIPROJ,
                   AMOR_MODAL=_F(AMOR_REDUIT=(
@@ -455,7 +458,7 @@ TRANGENE=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                              FONC_MULT = EFPROJ3),
                         _F(  NUME_ORDRE = 4,
                              FONC_MULT = EFPROJ4)),
-          CHOC=_F(  NOEUD_1 = 'N_04_001',
+          CHOC=_F(  GROUP_NO_1 = 'G_NO_04',
                  OBSTACLE = OBST1,
                  ORIG_OBST = ( 0.000000E+00,
                                 3.626403E-07,
@@ -465,10 +468,10 @@ TRANGENE=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                 9.703448E-01,
                                 2.417252E-01,
                               ),
-                 RIGI_NOR = 5.582200E+06,
-                 AMOR_NOR = 2.655900E+02,
-                 RIGI_TAN = 5.582200E+07,
-                 AMOR_TAN = 1.185410E+04,
+                 RIGI_NOR = 5.582200E+03,
+                 AMOR_NOR = 2.655900E+01,
+                 RIGI_TAN = 5.582200E+03,
+                 AMOR_TAN = 1.185410E+02,
                  JEU = 1.200000E-02,
                  ANGL_VRIL = 0.000000E+00,
                  FROTTEMENT='COULOMB',
@@ -510,9 +513,8 @@ IMPR_TABLE(  TABLE=TABLE,
                        'T_REBON_MOYEN','%_T_CHOC','PUIS_USURE',)
  )
 #
-
-TEST_TABLE(VALE_CALC=0.0074259838065,
-           TOLE_MACHINE=5.E-3,                          # TODO TOLE_MACHINE
+TEST_TABLE(VALE_CALC=0.0140239567531,
+           TOLE_MACHINE=5.E-3, ## tole machine pour clap0f0q (cf.issue24595)
            NOM_PARA='RMS',
            TABLE=TABLE,
            FILTRE=(_F(NOM_PARA='CALCUL',
@@ -522,8 +524,8 @@ TEST_TABLE(VALE_CALC=0.0074259838065,
                    ),
            )
 
-TEST_TABLE(VALE_CALC=0.0074259838065,
-           TOLE_MACHINE=5.E-3,                          # TODO TOLE_MACHINE
+TEST_TABLE(VALE_CALC=0.0140239567531,
+           TOLE_MACHINE=5.E-3, ## tole machine pour clap0f0q (cf.issue24595)
            NOM_PARA='RMS',
            TABLE=TABLE,
            FILTRE=(_F(NOM_PARA='CALCUL',
@@ -533,8 +535,8 @@ TEST_TABLE(VALE_CALC=0.0074259838065,
                    ),
            )
 
-TEST_TABLE(VALE_CALC=127.778468069,
-           TOLE_MACHINE=5.E-3,                          # TODO TOLE_MACHINE
+TEST_TABLE(VALE_CALC=127.618721899,
+           TOLE_MACHINE=5.E-3,  ## tole machine pour clap0f0q (cf.issue24595)
            NOM_PARA='RMS',
            TABLE=TABLE,
            FILTRE=(_F(NOM_PARA='CALCUL',
@@ -544,8 +546,8 @@ TEST_TABLE(VALE_CALC=127.778468069,
                    ),
            )
 
-TEST_TABLE(VALE_CALC=0.0074259838065,
-           TOLE_MACHINE=5.E-3,                          # TODO TOLE_MACHINE
+TEST_TABLE(VALE_CALC=0.0140239567531,
+           TOLE_MACHINE=5.E-3, ## tole machine pour clap0f0q (cf.issue24595)
            NOM_PARA='RMS',
            TABLE=TABLE,
            FILTRE=(_F(NOM_PARA='CALCUL',
@@ -555,8 +557,8 @@ TEST_TABLE(VALE_CALC=0.0074259838065,
                    ),
            )
 
-TEST_TABLE(VALE_CALC=0.0074259838065,
-           TOLE_MACHINE=5.E-3,                          # TODO TOLE_MACHINE
+TEST_TABLE(VALE_CALC=0.0140239567531,
+           TOLE_MACHINE=5.E-3, ## tole machine pour clap0f0q (cf.issue24595)
            NOM_PARA='RMS',
            TABLE=TABLE,
            FILTRE=(_F(NOM_PARA='CALCUL',
@@ -566,8 +568,8 @@ TEST_TABLE(VALE_CALC=0.0074259838065,
                    ),
            )
 
-TEST_TABLE(VALE_CALC=127.778468069,
-           TOLE_MACHINE=5.E-3,                          # TODO TOLE_MACHINE
+TEST_TABLE(VALE_CALC=127.618721899,
+           TOLE_MACHINE=5.E-3, ## tole machine pour clap0f0q (cf.issue24595)
            NOM_PARA='RMS',
            TABLE=TABLE,
            FILTRE=(_F(NOM_PARA='CALCUL',
@@ -587,7 +589,7 @@ DATA=DEFI_LIST_REEL(  VALE=(
 )
 
 USURE=POST_USURE(  RESU_GENE=TRANGENE,
-                   NOEUD='N_04_001',
+                   GROUP_NO ='G_NO_04',
                    INST_INIT=0.0,
                    INST_FIN=INST_F,
                    LOI_USURE='ARCHARD',
@@ -661,3 +663,4 @@ TEST_TABLE(  TABLE=USURE,
                   VALE = 1.62075E-09     )
 
 #
+
