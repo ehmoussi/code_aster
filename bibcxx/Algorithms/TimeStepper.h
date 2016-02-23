@@ -125,7 +125,8 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
          */
         const_iterator end() const
         {
-            return const_iterator( &( *_values )[ _values->size() - 1 ] );
+//             return const_iterator( &( *_values )[ _values->size() - 1 ] );
+            return const_iterator( &( *_values )[ _values->size() ] );
         };
 
         /**
