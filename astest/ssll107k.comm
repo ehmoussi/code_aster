@@ -1,6 +1,6 @@
 # TITRE UTILISATION DE LA MARCO_CARA_POUTRE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -26,12 +26,14 @@ TAB_PL=MACR_CARA_POUTRE(UNITE=20,
 
 TAB_EP=MACR_CARA_POUTRE(UNITE=21,
                         FORMAT='MED',
-                        GROUP_MA_BORD=('int','ext',),
+                        GROUP_MA_BORD='ext',
+                        GROUP_MA_INTE='int',
                         NOEUD='N1',);
 
 TAB_FIN=MACR_CARA_POUTRE(UNITE=22,
                          FORMAT='MED',
-                         GROUP_MA_BORD=('int','ext',),
+                         GROUP_MA_BORD='ext',
+                         GROUP_MA_INTE='int',
                          NOEUD='N1',);
 
 TEST_TABLE(CRITERE='ABSOLU',

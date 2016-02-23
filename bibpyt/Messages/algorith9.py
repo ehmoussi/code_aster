@@ -33,6 +33,15 @@ cata_msg = {
  valeur de THETA illicite
 """),
 
+    8 : _(u"""
+ nombre de vecteurs demandé inférieur au nombre de modes du concept MODE_MECA
+ on tronque la base modale
+"""),
+
+    9 : _(u"""
+ nombre de coordonnées généralisées différent du nombre de modes de base de projection
+"""),
+
     10 : _(u"""
  nombre de vecteurs demandé trop grand
  on prend tous les modes du concept MODE_MECA
@@ -211,13 +220,6 @@ cata_msg = {
     71 : _(u"""
  Problème lors de la construction de la matrice d'observation. Le code s'arrête.
  Contactez l'assistance technique.
-"""),
-    74 : _(u"""
- attention, mode sur amorti
-"""),
-
-    75 : _(u"""
- attention, mode instable
 """),
 
     81 : _(u"""

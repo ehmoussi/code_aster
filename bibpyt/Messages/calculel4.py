@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -257,6 +257,11 @@ Erreur utilisateur :
  erreur dans etenca pour le problème dual
 """),
 
+    69 : _(u"""
+Erreur utilisateur dans la commande CREA_CHAMP :
+ Le mot clé NUME_DDL (%(k1)s) est associé au maillage (%(k2)s).
+ Il est incompatible avec le mot clé MAILLAGE (%(k3)s).
+"""),
 
     70 : _(u"""
 Erreur utilisateur dans CREA_CHAMP :

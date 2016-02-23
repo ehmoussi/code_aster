@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,12 +16,11 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine xdetfo(cnsdet, cnsln, cnslt, jmafon, ndim,&
+    subroutine xdetfo(cnsdet, cnsln, cnslt, ndim,&
                       nmafon, noma, nomfis, resuco)
         character(len=19) :: cnsdet
         character(len=19) :: cnsln
         character(len=19) :: cnslt
-        integer :: jmafon
         integer :: ndim
         integer :: nmafon
         character(len=8) :: noma

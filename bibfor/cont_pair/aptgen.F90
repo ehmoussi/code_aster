@@ -3,15 +3,13 @@ subroutine aptgen(sdappa, mesh, sdcont_defi, newgeo)
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/appari.h"
-#include "asterfort/apparr.h"
+#include "asterfort/cfdisi.h"
+#include "asterfort/cfdisr.h"
 #include "asterfort/aptgem.h"
-#include "asterfort/apzoni.h"
-#include "asterfort/apzonl.h"
+#include "asterfort/mminfi.h"
+#include "asterfort/mminfr.h"
+#include "asterfort/cfcald.h"
 #include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -51,65 +49,63 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbzone, ndimg
+    integer :: nb_cont_zone, model_ndim
     integer :: ifm, niv
-    integer :: izone
-    integer :: jdecmm, nbmam
-    integer :: jdecme, nbmae
-    character(len=4) :: typzon
+    integer :: i_zone
+    integer :: jdecmm, nb_elem_mast
+    integer :: jdecme, nb_elem_slav
+    character(len=4) :: zone_type
     aster_logical :: apcald
-    real(kind=8) :: epsmax
-    integer :: itemax
+    real(kind=8) :: epsi_maxi
+    integer :: iter_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('APPARIEMENT', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<APPARIEMENT> ...... TANGENTES SUR LES NOEUDS PAR ELEMENT (ELNO)'
     endif
 !
-! --- INITIALISATIONS
+! - Get parameters
 !
-    call apparr(sdappa, 'PROJ_NEWT_RESI', epsmax)
-    call appari(sdappa, 'PROJ_NEWT_ITER', itemax)
-    call appari(sdappa, 'APPARI_NDIMG', ndimg)
-    call appari(sdappa, 'APPARI_NBZONE', nbzone)
+    epsi_maxi    = cfdisr(sdcont_defi,'PROJ_NEWT_RESI')
+    iter_maxi    = cfdisi(sdcont_defi,'PROJ_NEWT_ITER')
+    model_ndim   = cfdisi(sdcont_defi,'NDIM'  )
+    nb_cont_zone = cfdisi(sdcont_defi,'NZOCO' )
 !
-! --- BOUCLE SUR LES ZONES
+! - Loop on contact zones
 !
-    do izone = 1, nbzone
+    do i_zone = 1, nb_cont_zone
 !
-! ----- INFORMATION SUR LA ZONE MAITRE
+! ----- Parameters on current zone - Master
 !
-        call apzoni(sdappa, izone, 'NBMAM', nbmam)
-        call apzoni(sdappa, izone, 'JDECMM', jdecmm)
-        typzon = 'MAIT'
+        nb_elem_mast = mminfi(sdcont_defi, 'NBMAM' , i_zone)
+        jdecmm       = mminfi(sdcont_defi, 'JDECMM', i_zone)
+        zone_type = 'MAIT'
 !
-! ----- CALCUL SUR LA ZONE MAITRE
+! ----- Compute tangents at each node for each element - Master
 !
-        call apzonl(sdappa, izone, 'CALC_NORM_MAIT', apcald)
+        apcald = cfcald(sdcont_defi, i_zone, 'MAIT')
         if (apcald) then
-            call aptgem(sdappa, mesh, newgeo, sdcont_defi, ndimg,&
-                        izone, typzon, itemax, epsmax, jdecmm,&
-                        nbmam)
+            call aptgem(sdappa      , mesh     , newgeo   , sdcont_defi, model_ndim,&
+                        i_zone      , zone_type, iter_maxi, epsi_maxi  , jdecmm    ,&
+                        nb_elem_mast)
         endif
 !
-! ----- INFORMATION SUR LA ZONE ESCLAVE
+! ----- Parameters on current zone - Slave
 !
-        call apzoni(sdappa, izone, 'NBMAE', nbmae)
-        call apzoni(sdappa, izone, 'JDECME', jdecme)
-        typzon = 'ESCL'
+        nb_elem_slav = mminfi(sdcont_defi, 'NBMAE' , i_zone)
+        jdecme       = mminfi(sdcont_defi, 'JDECME', i_zone)
+        zone_type = 'ESCL'
 !
-! ----- CALCUL SUR LA ZONE ESCLAVE
+! ----- Compute tangents at each node for each element - Slave
 !
-        call apzonl(sdappa, izone, 'CALC_NORM_ESCL', apcald)
+        apcald = cfcald(sdcont_defi, i_zone, 'ESCL')
         if (apcald) then
-            call aptgem(sdappa, mesh, newgeo, sdcont_defi, ndimg,&
-                        izone, typzon, itemax, epsmax, jdecme,&
-                        nbmae)
+            call aptgem(sdappa      , mesh     , newgeo   , sdcont_defi, model_ndim,&
+                        i_zone      , zone_type, iter_maxi, epsi_maxi  , jdecme    ,&
+                        nb_elem_slav)
         endif
     end do
 !
-    call jedema()
 end subroutine

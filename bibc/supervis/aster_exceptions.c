@@ -20,20 +20,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
-#include <signal.h>
 
 #include "aster.h"
 #include "aster_fort.h"
-#include "RunManager/Exceptions.h"
 #include "aster_exceptions.h"
 
 /*
  * Emulate the behavior of exceptions using the system functions 'setjmp/longjmp'.
- * 
+ *
  * The fortran subroutines can raise an exception by calling interruptTry via XFINI
  * or UEXCEP (usually UEXCEP if called through UTEXCP or U2MESS subroutines).
  * XFINI is called at the end of a normal execution and raise the EOFError exception.
- * 
+ *
  * try {                                            if ((gExcNumb = setjmp(env)) == 0) { <--
  *      ...                                                 ...                     |
  *      interruptTry( code );                               longjmp(env, code);   ---
@@ -46,19 +44,19 @@
  *      ...                                                 ...
  * }                                                }
  * endTry();
- * 
+ *
  * NB: there are two differences with the Python behavior/syntax.
  *     1. There is no finally clause.
  *     2. An additional statement endTry() to decrement the counter level.
  *        Do not forget endTry() if there is a return statement in a block.
- * 
+ *
  * except( code ) : will probably be not very usefull in C.
- * 
+ *
  * Global variables:
  *  gExcNumb: code of the exception to raise
  *  gExcEnv : array to store the stack environment
  *  gExcArgs: arguments passed to the exception raised
- * 
+ *
  */
 int gExcLvl = 0;
 int gExcNumb = -1;
@@ -69,7 +67,7 @@ static PyObject *exc_module = NULL;
 
 /*
  *   PUBLIC FUNCTIONS
- * 
+ *
  */
 void initExceptions(PyObject *dict)
 {
@@ -96,7 +94,7 @@ void initExceptions(PyObject *dict)
 
 /*
  *   PRIVATE FUNCTIONS
- * 
+ *
  */
 void _new_try()
 {

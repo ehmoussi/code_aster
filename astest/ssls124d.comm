@@ -1,6 +1,6 @@
 # TITRE PLAQUE EN FLEXION AVEC DIVERS ELANCEMENTS. MODELISATION SHB20 MAILLAGE REGULIER
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -272,10 +272,11 @@ RESU33=MECA_STATIQUE(MODELE=MODMEC33,
 Iy=b*h*h*h/12
 Uz=F*L*L*L/3/YG/Iy
 
-# LA SOLUTION OBTENUE PRESENTE UNE FAIBLE VARIABILITE ENTRE MACHINES QUI DECOULE
-# DU MAUVAIS CONDITIONNEMENT
-calc_aster5_p7=0.00198308363708
-calc_aster5_p8=0.00198308627625
+# La solution obtenue presente une certaine variabilite entre machines qui decoule
+# du mauvais conditionnement du probleme quand l'epaisseur est trop petite.
+# => l'usage du mot cle TOLE_MACHINE.
+calc_aster5_p7=0.00198338285691
+calc_aster5_p8=0.0019833846718
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    GROUP_NO='P7',
                    REFERENCE='ANALYTIQUE',
@@ -284,7 +285,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CMP='DZ',
                    VALE_CALC=calc_aster5_p7,
                    VALE_REFE=Uz,
-                   TOLE_MACHINE=1.E-2, #TODO TOLE_MACHINE
+                   TOLE_MACHINE=1.e-2, # Voir commentaire plus haut
                    PRECISION=1.E-2,
 ),
                 _F(NUME_ORDRE=1,
@@ -295,7 +296,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CMP='DZ',
                    VALE_CALC=calc_aster5_p8,
                    VALE_REFE=Uz,
-                   TOLE_MACHINE=1.E-2, #TODO TOLE_MACHINE
+                   TOLE_MACHINE=1.e-2, # Voir commentaire plus haut
                    PRECISION=1.E-2,),
                 ),
           )

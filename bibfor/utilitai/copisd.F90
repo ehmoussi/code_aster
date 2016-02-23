@@ -20,7 +20,7 @@ subroutine copisd(typesd, base, sd1, sd2)
     character(len=*) :: typesd, base, sd1, sd2
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -420,7 +420,6 @@ subroutine copisd(typesd, base, sd1, sd2)
         call copis2('LIGREL', bas2, k81//'.MODELE', k82//'.MODELE')
         call copis2('L_TABLE', bas2, k81, k82)
 !
-        call jedup1(k81//'.NOEUD', bas2, k82//'.NOEUD')
         call jedup1(k81//'.MAILLE', bas2, k82//'.MAILLE')
         call jedup1(k81//'.PARTIT', bas2, k82//'.PARTIT')
 !

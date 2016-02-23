@@ -1,6 +1,7 @@
-subroutine mmmbca(mesh          , sddyna   , iter_newt, sdcont_defi, sdcont_solv   ,&
-                  sdstat        , hval_incr, hval_algo, time_curr  , loop_cont_node,&
-                  loop_cont_conv)
+subroutine mmmbca(mesh  , iter_newt, nume_inst, sddyna    , sdstat,&
+                  sddisc, hval_incr, hval_algo, ds_contact)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
@@ -12,6 +13,7 @@ implicit none
 #include "asterfort/cfmmvd.h"
 #include "asterfort/cfnumm.h"
 #include "asterfort/detrsd.h"
+#include "asterfort/diinst.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -56,16 +58,14 @@ implicit none
 ! person_in_charge: mickael.abbas at edf.fr
 !
     character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: sddyna
     integer, intent(in) :: iter_newt
-    character(len=24), intent(in) :: sdcont_defi
-    character(len=24), intent(in) :: sdcont_solv
+    integer, intent(in) :: nume_inst
+    character(len=19), intent(in) :: sddyna
     character(len=24), intent(in) :: sdstat
+    character(len=19), intent(in) :: sddisc
     character(len=19), intent(in) :: hval_incr(*)
     character(len=19), intent(in) :: hval_algo(*)
-    real(kind=8), intent(in) :: time_curr
-    aster_logical, intent(out) :: loop_cont_conv
-    integer, intent(out) :: loop_cont_node
+    type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,16 +76,14 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  mesh             : name of mesh
-! In  sddyna           : dynamic parameters datastructure
 ! In  iter_newt        : index of current Newton iteration
-! In  sdcont_defi      : name of contact definition datastructure (from DEFI_CONTACT)
-! In  sdcont_solv      : name of contact solving datastructure
+! In  nume_inst        : index of current time step
+! In  sddyna           : dynamic parameters datastructure
 ! In  sdstat           : datastructure for statistics
+! In  sddisc           : datastructure for time discretization
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  time_curr        : current time
-! Out loop_cont_conv   : .true. if contact loop converged
-! Out loop_cont_node   : number of contact state changing
+! IO  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -94,7 +92,7 @@ implicit none
     integer :: jdecme, elem_slav_indx, elem_slav_nume, elem_mast_nume
     integer :: indi_cont_curr, indi_cont_prev, indi_frot_prev, indi_frot_curr
     integer :: i_zone, i_elem_slav, i_cont_poin, i_poin_elem
-    integer :: model_ndim, nb_cont_zone
+    integer :: model_ndim, nb_cont_zone, loop_cont_vali
     integer :: elem_slav_nbno, nb_poin_elem, nb_elem_slav
     integer :: indi_cont_eval, indi_frot_eval
     integer :: indi_cont_init, indi_frot_init
@@ -102,21 +100,19 @@ implicit none
     real(kind=8) :: norm(3), tau1(3), tau2(3)
     real(kind=8) :: lagr_cont_node(9), lagr_fro1_node(9), lagr_fro2_node(9)
     real(kind=8) :: elem_slav_coor(27)
-    real(kind=8) :: lagr_cont_poin
+    real(kind=8) :: lagr_cont_poin, time_curr
     real(kind=8) :: gap, gap_speed, gap_user
     real(kind=8) :: pres_frot(3), gap_user_frot(3)
-    real(kind=8) :: coef_cont, coef_frot
+    real(kind=8) :: coef_cont, coef_frot, loop_cont_vale
     character(len=8) :: elem_slav_type
     character(len=19) :: cnscon, cnsfr1, cnsfr2
-    character(len=24) :: sdcont_mdecol
-    aster_logical, pointer :: v_sdcont_mdecol(:) => null()
     character(len=19) :: oldgeo, newgeo
     character(len=19) :: speed_field, chdepd
     character(len=19) :: depdel, depplu, vitplu
     aster_logical :: l_glis, l_speed, scotch
-    aster_logical :: l_glis_init, l_veri, l_exis_glis, l_loop_cont, l_coef_adap
+    aster_logical :: l_glis_init, l_veri, l_exis_glis, loop_cont_conv, l_coef_adap, l_loop_cont
     aster_logical :: l_frot_zone, l_pena_frot, l_frot
-    integer :: i_loop_geom, i_loop_frot, i_loop_cont
+    integer :: loop_geom_count, loop_fric_count, loop_cont_count
     character(len=24) :: sdcont_cychis, sdcont_cyccoe
     real(kind=8), pointer :: v_sdcont_cychis(:) => null()
     real(kind=8), pointer :: v_sdcont_cyccoe(:) => null()
@@ -136,34 +132,32 @@ implicit none
 ! - Initializations
 !
     loop_cont_conv = .true.
-    loop_cont_node = 0
+    loop_cont_vali = 0
 !
 ! - Parameters
 !
     l_speed      = ndynlo(sddyna,'FORMUL_VITE')
-    l_exis_glis  = cfdisl(sdcont_defi,'EXIS_GLISSIERE')
-    l_loop_cont  = cfdisl(sdcont_defi,'CONT_BOUCLE')
-    l_coef_adap  = cfdisl(sdcont_defi,'COEF_ADAPT')
-    model_ndim   = cfdisi(sdcont_defi,'NDIM' )
-    nb_cont_zone = cfdisi(sdcont_defi,'NZOCO')
-    l_frot       = cfdisl(sdcont_defi,'FROTTEMENT')
+    l_exis_glis  = cfdisl(ds_contact%sdcont_defi,'EXIS_GLISSIERE')
+    l_loop_cont  = cfdisl(ds_contact%sdcont_defi,'CONT_BOUCLE')
+    l_coef_adap  = cfdisl(ds_contact%sdcont_defi,'COEF_ADAPT')
+    model_ndim   = cfdisi(ds_contact%sdcont_defi,'NDIM' )
+    nb_cont_zone = cfdisi(ds_contact%sdcont_defi,'NZOCO')
+    l_frot       = cfdisl(ds_contact%sdcont_defi,'FROTTEMENT')
 !
 ! - Acces to contact objects
 !
     ztabf = cfmmvd('ZTABF')
-    sdcont_tabfin = sdcont_solv(1:14)//'.TABFIN'
-    sdcont_jsupco = sdcont_solv(1:14)//'.JSUPCO'
-    sdcont_apjeu  = sdcont_solv(1:14)//'.APJEU'
-    sdcont_mdecol = sdcont_solv(1:14)//'.MDECOL'
+    sdcont_tabfin = ds_contact%sdcont_solv(1:14)//'.TABFIN'
+    sdcont_jsupco = ds_contact%sdcont_solv(1:14)//'.JSUPCO'
+    sdcont_apjeu  = ds_contact%sdcont_solv(1:14)//'.APJEU'
     call jeveuo(sdcont_tabfin, 'E', vr = v_sdcont_tabfin)
     call jeveuo(sdcont_jsupco, 'E', vr = v_sdcont_jsupco)
     call jeveuo(sdcont_apjeu , 'E', vr = v_sdcont_apjeu)
-    call jeveuo(sdcont_mdecol, 'E', vl = v_sdcont_mdecol)
 !
 ! - Acces to cycling objects
 !
-    sdcont_cychis = sdcont_solv(1:14)//'.CYCHIS'
-    sdcont_cyccoe = sdcont_solv(1:14)//'.CYCCOE'
+    sdcont_cychis = ds_contact%sdcont_solv(1:14)//'.CYCHIS'
+    sdcont_cyccoe = ds_contact%sdcont_solv(1:14)//'.CYCCOE'
     call jeveuo(sdcont_cychis, 'E', vr = v_sdcont_cychis)
     call jeveuo(sdcont_cyccoe, 'E', vr = v_sdcont_cyccoe)
 !
@@ -173,15 +167,19 @@ implicit none
     call nmchex(hval_incr, 'VALINC', 'VITPLU', vitplu)
     call nmchex(hval_algo, 'SOLALG', 'DEPDEL', depdel)
 !
+! - Get current time
+!
+    time_curr = diinst(sddisc, nume_inst)
+!
 ! - Get off indicator for speed schemes
 !
-    scotch = v_sdcont_mdecol(1)
+    scotch = ds_contact%l_getoff
 !
 ! - Geometric update
 !
     oldgeo = mesh//'.COORDO'
-    newgeo = sdcont_solv(1:14)//'.NEWG'
-    call mreacg(mesh, sdcont_solv, field_update_ = depplu)
+    newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
+    call mreacg(mesh, ds_contact, field_update_ = depplu)
 !
 ! - Create speed field
 !    
@@ -220,12 +218,12 @@ implicit none
 !
 ! ----- Parameters of zone
 !
-        l_glis       = mminfl(sdcont_defi,'GLISSIERE_ZONE' , i_zone)
-        l_veri       = mminfl(sdcont_defi,'VERIF'          , i_zone)
-        nb_elem_slav = mminfi(sdcont_defi,'NBMAE'          , i_zone)
-        jdecme       = mminfi(sdcont_defi,'JDECME'         , i_zone)
-        l_frot_zone  = mminfl(sdcont_defi,'FROTTEMENT_ZONE', i_zone)
-        l_pena_frot  = mminfl(sdcont_defi,'ALGO_FROT_PENA' , i_zone)
+        l_glis       = mminfl(ds_contact%sdcont_defi,'GLISSIERE_ZONE' , i_zone)
+        l_veri       = mminfl(ds_contact%sdcont_defi,'VERIF'          , i_zone)
+        nb_elem_slav = mminfi(ds_contact%sdcont_defi,'NBMAE'          , i_zone)
+        jdecme       = mminfi(ds_contact%sdcont_defi,'JDECME'         , i_zone)
+        l_frot_zone  = mminfl(ds_contact%sdcont_defi,'FROTTEMENT_ZONE', i_zone)
+        l_pena_frot  = mminfl(ds_contact%sdcont_defi,'ALGO_FROT_PENA' , i_zone)
 !
 ! ----- No computation: no contact point
 !
@@ -243,11 +241,11 @@ implicit none
 !
 ! --------- Informations about slave element
 !
-            call cfnumm(sdcont_defi, elem_slav_indx, elem_slav_nume)
+            call cfnumm(ds_contact%sdcont_defi, elem_slav_indx, elem_slav_nume)
 !
 ! --------- Number of integration points on element
 !
-            call mminfm(elem_slav_indx, sdcont_defi, 'NPTM', nb_poin_elem)
+            call mminfm(elem_slav_indx, ds_contact%sdcont_defi, 'NPTM', nb_poin_elem)
 !
 ! --------- Get coordinates of slave element
 !
@@ -256,14 +254,14 @@ implicit none
 !
 ! --------- Get value of contact lagrangian multiplier at slave nodes
 !
-            call mmextm(sdcont_defi, cnscon, elem_slav_indx, lagr_cont_node)
+            call mmextm(ds_contact%sdcont_defi, cnscon, elem_slav_indx, lagr_cont_node)
 !
 ! --------- Get value of friction lagrangian multipliers at slave nodes
 !
             if (l_frot_zone) then
-                call mmextm(sdcont_defi, cnsfr1, elem_slav_indx, lagr_fro1_node)
+                call mmextm(ds_contact%sdcont_defi, cnsfr1, elem_slav_indx, lagr_fro1_node)
                 if (model_ndim .eq. 3) then
-                    call mmextm(sdcont_defi, cnsfr2, elem_slav_indx, lagr_fro2_node)
+                    call mmextm(ds_contact%sdcont_defi, cnsfr2, elem_slav_indx, lagr_fro2_node)
                 endif
             endif       
 !
@@ -296,9 +294,9 @@ implicit none
 !
 ! ------------- Compute gap and contact pressure
 !
-                call mmeval_prep(mesh   , time_curr  , model_ndim     , sdcont_defi , sdcont_solv,&
+                call mmeval_prep(mesh   , time_curr  , model_ndim     , ds_contact,&
                                  l_speed, speed_field, i_zone         ,&
-                                 ksipc1 , ksipc2     , ksipr1         , ksipr2     ,&
+                                 ksipc1 , ksipc2     , ksipr1         , ksipr2    ,&
                                  tau1   , tau2       ,&
                                  elem_slav_indx, elem_slav_nume, elem_slav_nbno,&
                                  elem_slav_type, elem_slav_coor,&
@@ -352,11 +350,11 @@ implicit none
 !
 ! ------------- Status treatment
 !
-                call mmalgo(sdcont_defi, sdcont_solv, l_loop_cont, l_frot_zone, l_speed,&
+                call mmalgo(ds_contact, l_loop_cont, l_frot_zone, l_speed,&
                             l_glis_init, l_coef_adap, i_zone, i_cont_poin, indi_cont_init,&
                             indi_cont_eval, indi_frot_eval, gap, gap_speed, lagr_cont_poin,&
                        gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, indi_cont_curr,&
-                            indi_frot_curr, loop_cont_node, loop_cont_conv, scotch)
+                            indi_frot_curr, loop_cont_vali, loop_cont_conv, scotch)
 !
  19             continue
 !
@@ -386,34 +384,44 @@ implicit none
 ! - Bilateral contact management
 !
     if (loop_cont_conv .and. l_exis_glis) then
-        call mmglis(sdcont_defi, sdcont_solv)
+        call mmglis(ds_contact)
     endif
 !
 ! - Statistics for cycling
 !
-    call mm_cycl_stat(sdstat, sdcont_defi, sdcont_solv)
+    call mm_cycl_stat(sdstat, ds_contact)
 !
 ! - Propagation of coefficient
 !
     if (l_coef_adap) then
-        call mm_cycl_prop(sdcont_defi, sdcont_solv)
+        call mm_cycl_prop(ds_contact)
     endif
 !
 ! - Event management for impact
 !
-    call mmbouc(sdcont_solv, 'GEOM', 'READ', i_loop_geom)
-    call mmbouc(sdcont_solv, 'FROT', 'READ', i_loop_frot)
-    call mmbouc(sdcont_solv, 'CONT', 'READ', i_loop_cont)
+    call mmbouc(ds_contact, 'Geom', 'Read_Counter', loop_geom_count)
+    call mmbouc(ds_contact, 'Fric', 'Read_Counter', loop_fric_count)
+    call mmbouc(ds_contact, 'Cont', 'Read_Counter', loop_cont_count)
     if ((iter_newt.eq.0) .and.&
-        (i_loop_geom.eq.1) .and. (i_loop_frot.eq.1) .and. (i_loop_cont.eq.1)) then
-        call mmeven('INI', sdcont_defi, sdcont_solv)
+        (loop_geom_count.eq.1) .and. (loop_fric_count.eq.1) .and. (loop_cont_count.eq.1)) then
+        call mmeven('INI', ds_contact)
     else
-        call mmeven('FIN', sdcont_defi, sdcont_solv)
+        call mmeven('FIN', ds_contact)
     endif
 !
 ! - Get off indicator for speed schemes
 !
-    v_sdcont_mdecol(1) = scotch
+    ds_contact%l_getoff = scotch
+!
+! - Set loop values
+!
+    if (loop_cont_conv) then
+        call mmbouc(ds_contact, 'Cont', 'Set_Convergence')
+    else
+        call mmbouc(ds_contact, 'Cont', 'Set_Divergence')
+    endif
+    loop_cont_vale = real(loop_cont_vali, kind=8)
+    call mmbouc(ds_contact, 'Cont', 'Set_Vale' , loop_vale_ = loop_cont_vale)
 !
 ! - Cleaning
 !

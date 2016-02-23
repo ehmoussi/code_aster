@@ -32,7 +32,7 @@ def dyna_vibra_sdprod(BASE_CALCUL, TYPE_CALCUL, MATR_RIGI,**args):
         if TYPE_CALCUL == 'TRAN': return tran_gene
         return harm_gene
 
-DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA", 
+DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
                    op       = 29,
                    sd_prod  = dyna_vibra_sdprod,
                    reentrant='f',
@@ -69,7 +69,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
         VITE_ROTA       =     SIMP(statut='o',typ=(fonction_sdaster,formule),),
         MATR_RIGY       =     SIMP(statut='f',typ=(matr_asse_gene_r),),
         ACCE_ROTA       =     SIMP(statut='f',typ=(fonction_sdaster,formule),),),
- 
+
         b_constante     = BLOC(condition="VITESSE_VARIABLE=='NON'",
         VITE_ROTA       =     SIMP(statut='o',typ='R',defaut=0.E0),),
         COUPLAGE_EDYOS  =     FACT(statut='f',max=1,
@@ -161,7 +161,8 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
        # 3. Initial state
 
         b_init_gene     = BLOC(condition="BASE_CALCUL == 'GENE'",
-        ETAT_INIT       =     FACT(statut='f', regles=(EXCLUS('RESULTAT','DEPL'), EXCLUS('RESULTAT','VITE'),),
+        ETAT_INIT       =     FACT(statut='f', max = 1,
+                                               regles=(EXCLUS('RESULTAT','DEPL'), EXCLUS('RESULTAT','VITE'),),
 
             RESULTAT    =         SIMP(statut='f',typ=tran_gene),
 
@@ -179,7 +180,8 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
             VITE        =         SIMP(statut='f',typ=vect_asse_gene),),),
 
         b_init_phys     = BLOC(condition="BASE_CALCUL == 'PHYS'",
-        ETAT_INIT       =     FACT(statut='f', regles=(AU_MOINS_UN('RESULTAT', 'DEPL', 'VITE', 'ACCE'),
+        ETAT_INIT       =     FACT(statut='f', max = 1,
+                                               regles=(AU_MOINS_UN('RESULTAT', 'DEPL', 'VITE', 'ACCE'),
                                                        PRESENT_ABSENT('RESULTAT', 'DEPL', 'VITE', 'ACCE'),),
             RESULTAT    =         SIMP(statut='f',typ=dyna_trans),
 
@@ -244,7 +246,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
 
 #       B. Transient case, physical basis
         b_excit_line_tran= BLOC(condition="TYPE_CALCUL == 'TRAN' and BASE_CALCUL == 'PHYS'",
-        EXCIT            = FACT(statut='f',max='**', 
+        EXCIT            = FACT(statut='f',max='**',
                                 regles=(UN_PARMI('CHARGE','VECT_ASSE'),
                                         EXCLUS('CHARGE','COEF_MULT'), EXCLUS('FONC_MULT','COEF_MULT'), EXCLUS('ACCE','COEF_MULT'),
                                         PRESENT_ABSENT('ACCE','FONC_MULT'), PRESENT_PRESENT('ACCE','VITE','DEPL'),),
@@ -403,7 +405,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
             PUIS_ALPHA  =     SIMP(statut='f',typ='R',defaut= 0.E+0),
             DX_MAX      =     SIMP(statut='f',typ='R',defaut= 1.),),
 
-#       C.2.6 Discrete viscous coupling, generalized Zener      
+#       C.2.6 Discrete viscous coupling, generalized Zener
         DIS_VISC        = FACT(statut='f',max='**', fr=tr("Loi pour un discret de type visqueux : Zener Généralisé."),
                                regles=(UN_PARMI('NOEUD_1','GROUP_NO_1'), UN_PARMI('NOEUD_2','GROUP_NO_2'),
                                        UN_PARMI('K1','UNSUR_K1'), UN_PARMI('K2','UNSUR_K2'), UN_PARMI('K3','UNSUR_K3'),),
@@ -424,16 +426,22 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
             RESI_INTE_RELA=   SIMP(statut='f',typ='R',defaut= 1.0E-6),),
 
 
-#       C.2.7 Force displacement relationship non linearity      
+#       C.2.7 Force displacement relationship non linearity
         RELA_EFFO_DEPL  = FACT(statut='f',max='**',
-            NOEUD       =     SIMP(statut='o',typ=no),
+            regles=(UN_PARMI('NOEUD','GROUP_NO'),
+                    EXCLUS('NOEUD','GROUP_NO'),),
+            NOEUD       =     SIMP(statut='f',typ=no),
+            GROUP_NO    =     SIMP(statut='f',typ=grno),
             SOUS_STRUC  =     SIMP(statut='f',typ='TXM'),
             NOM_CMP     =     SIMP(statut='f',typ='TXM'),
             RELATION    =     SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule),),),
 
-#       C.2.8 Force velocity relationship non linearity      
+#       C.2.8 Force velocity relationship non linearity
         RELA_EFFO_VITE  = FACT(statut='f',max='**',
-            NOEUD       =     SIMP(statut='o',typ=no),
+            regles=(UN_PARMI('NOEUD','GROUP_NO'),
+                    EXCLUS('NOEUD','GROUP_NO'),),
+            NOEUD       =     SIMP(statut='f',typ=no),
+            GROUP_NO    =     SIMP(statut='f',typ=grno),
             SOUS_STRUC  =     SIMP(statut='f',typ='TXM'),
             NOM_CMP     =     SIMP(statut='f',typ='TXM'),
             RELATION    =     SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule),),),
@@ -456,7 +464,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
 
 ##########################################################################################
 
-#       Diverse 
+#       Diverse
         TITRE           = SIMP(statut='f',typ='TXM',max='**'),
         INFO            = SIMP(statut='f',typ='I',into=(1,2),),
         b_impression    = BLOC(condition = "BASE_CALCUL=='GENE' and TYPE_CALCUL=='TRAN'",

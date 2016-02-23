@@ -1,7 +1,7 @@
 # person_in_charge: jean-michel.proix at edf.fr
 # TITRE PLAQUE EN FLEXION AVEC DIVERS ELANCEMENTS. MODELISATION SHB8 MAILLAGE REGULIER
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -573,43 +573,44 @@ CHARG35=AFFE_CHAR_MECA(MODELE=MODMEC35,
 # DANS CETTE CONFIGURATION LE PROBLEME DEVIENT TRES MAL CONDITIONNE (1.0E+15)
 # L/h=5000 ==> POUR TESTER LE VERROUILLAGE EN CISAILLEMENT
 # ON UTILISE MUMPS ET ON DESACTIVE LA DETECTION DE SINGULARITE
-RESU35=STAT_NON_LINE(MODELE=MODMEC35,
-                     CHAM_MATER=CHMAT35,
-                     EXCIT=_F(CHARGE=CHARG35,),
-                     COMPORTEMENT=(_F(RELATION='ELAS',),),
-                     INCREMENT=_F(LIST_INST=LIST,),
-                     SOLVEUR=_F(METHODE='MUMPS',
-                                NPREC=-1,
-                                ),
-                     NEWTON=_F(MATRICE='ELASTIQUE'),
-                     CONVERGENCE=_F(),
-                     );
+# On estime que ce cas d'utilisation avec SHB grand élancement n'est pas pertinent. 
+# Ce cas de figure ne sera donc plus testé. 
+#RESU35=STAT_NON_LINE(MODELE=MODMEC35,
+                     #CHAM_MATER=CHMAT35,
+                     #EXCIT=_F(CHARGE=CHARG35,),
+                     #COMPORTEMENT=(_F(RELATION='ELAS',),),
+                     #INCREMENT=_F(LIST_INST=LIST,),
+                     #SOLVEUR=_F(METHODE='MUMPS',
+                                #NPREC=-1,
+                                #),
+                     #NEWTON=_F(MATRICE='ELASTIQUE'),
+                     #CONVERGENCE=_F(),
+                     #);
 
-Iy = b * h**3 / 12.
+#Iy = b * h**3 / 12.
 
-Uz = F * L**3 / (3.0 * YG * Iy)
+#Uz = F * L**3 / (3.0 * YG * Iy)
 
-# La solution obtenue présente une petite variabilité entre machines qui découle
-# du mauvais conditionnement
-TEST_RESU(RESU=(_F(NUME_ORDRE=1,
-                   GROUP_NO='P7',
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=RESU35,
-                   NOM_CHAM='DEPL',
-                   NOM_CMP='DZ',
-                   VALE_CALC=0.249975815454,
-                   TOLE_MACHINE=1.E-4, #TODO TOLE_MACHINE
-                   VALE_REFE=Uz,),
-                _F(NUME_ORDRE=1,
-                   GROUP_NO='P8',
-                   REFERENCE='ANALYTIQUE',
-                   RESULTAT=RESU35,
-                   NOM_CHAM='DEPL',
-                   NOM_CMP='DZ',
-                   VALE_CALC=0.249975815549,
-                   TOLE_MACHINE=1.E-4, #TODO TOLE_MACHINE
-                   VALE_REFE=Uz,),
-                ),
-          )
+# La solution obtenue presente une certaine variabilite entre machines qui decoule
+# du mauvais conditionnement du probleme quand l'epaisseur est trop petite.
+# => l'usage du mot cle TOLE_MACHINE.
+#TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   #GROUP_NO='P7',
+                   #REFERENCE='ANALYTIQUE',
+                   #RESULTAT=RESU35,
+                   #NOM_CHAM='DEPL',
+                   #NOM_CMP='DZ',
+                   #VALE_CALC=0.249975815454,
+                   #VALE_REFE=Uz,),
+                #_F(NUME_ORDRE=1,
+                   #GROUP_NO='P8',
+                   #REFERENCE='ANALYTIQUE',
+                   #RESULTAT=RESU35,
+                   #NOM_CHAM='DEPL',
+                   #NOM_CMP='DZ',
+                   #VALE_CALC=0.249975815549,
+                   #VALE_REFE=Uz,),
+                #),
+          #)
 
 FIN();

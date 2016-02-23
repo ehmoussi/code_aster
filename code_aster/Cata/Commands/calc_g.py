@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -28,29 +28,23 @@ CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
             UIinfo={"groupes":("Post-traitements","Rupture",)},
 
          THETA          =FACT(statut='o',
-           THETA           =SIMP(statut='f',typ=(theta_geom,cham_no_sdaster),),
            FOND_FISS       =SIMP(statut='f',typ=fond_fiss,max=1),
            FISSURE         =SIMP(statut='f',position='global',typ=fiss_xfem,max=1),
            NB_POINT_FOND   =SIMP(statut='f',typ='I',val_min=2),
            regles=(
-                   UN_PARMI('THETA','FOND_FISS','FISSURE')
+                   UN_PARMI('FOND_FISS','FISSURE'),
+                   PRESENT_PRESENT('R_INF','R_SUP'),
+                   PRESENT_PRESENT('R_INF_FO','R_SUP_FO'),
                    ),
-          b_theta        =BLOC(condition="THETA == None",fr=tr("calcul de theta"),
-            regles=(PRESENT_PRESENT('R_INF','R_SUP'),
-                PRESENT_PRESENT('R_INF_FO','R_SUP_FO'), ),
-             NUME_FOND        =SIMP(statut='f',typ='I',defaut=1),
-             R_INF           =SIMP(statut='f',typ='R'),
-             R_SUP           =SIMP(statut='f',typ='R'),
-             MODULE          =SIMP(statut='f',typ='R',defaut=1.),
-             DIRE_THETA      =SIMP(statut='f',typ=cham_no_sdaster ),
-             DIRECTION       =SIMP(statut='f',typ='R',max=3,min=3),
-             R_INF_FO        =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
-             R_SUP_FO        =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
-             MODULE_FO       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
-             ),
-           b_no_fond_fiss      =BLOC(condition="FOND_FISS== None",
-             SYME            =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON") ),
-             ),
+           NUME_FOND       =SIMP(statut='f',typ='I',defaut=1),
+           R_INF           =SIMP(statut='f',typ='R'),
+           R_SUP           =SIMP(statut='f',typ='R'),
+           MODULE          =SIMP(statut='f',typ='R',defaut=1.),
+           DIRE_THETA      =SIMP(statut='f',typ=cham_no_sdaster ),
+           DIRECTION       =SIMP(statut='f',typ='R',max=3,min=3),
+           R_INF_FO        =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
+           R_SUP_FO        =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
+           MODULE_FO       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
             ),
 
          RESULTAT        =SIMP(statut='o',typ=(evol_elas,evol_noli,dyna_trans,mode_meca,mult_elas),),
@@ -117,27 +111,8 @@ CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
                                into=("CALC_G",
                                      "CALC_G_GLOB",
                                      "CALC_K_G",
-                                     "G_MAX",
-                                     "G_MAX_GLOB",
-                                     "G_BILI",
-                                     "G_BILI_GLOB",
-                                     "CALC_K_MAX",
                                      "CALC_GTP"),
                              ),
-
-         b_g_max    =BLOC(condition="(OPTION=='G_MAX') or (OPTION=='G_MAX_GLOB')",
-           BORNES          =FACT(statut='o',max='**',
-                NUME_ORDRE     =SIMP(statut='o',typ='I'),
-                VALE_MIN       =SIMP(statut='o',typ='R'),
-                VALE_MAX       =SIMP(statut='o',typ='R'),
-                                ),
-         ),
-         b_k_max    =BLOC(condition="(OPTION=='CALC_K_MAX')",
-           SIGNES          =FACT(statut='o',max=1,
-                CHARGE_S       =SIMP(statut='o',typ='I',validators=NoRepeat(),max='**'),
-                CHARGE_NS      =SIMP(statut='o',typ='I',validators=NoRepeat(),max='**'),
-                                ),
-         ),
 
         b_cal_contrainte =BLOC(condition="(COMPORTEMENT!=None and (OPTION=='CALC_G' or OPTION=='CALC_GTP' or OPTION=='CALC_G_GLOB'))",
           CALCUL_CONTRAINTE =SIMP(statut='f',typ='TXM',into=("NON",),),

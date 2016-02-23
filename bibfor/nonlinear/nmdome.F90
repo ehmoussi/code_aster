@@ -16,7 +16,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -56,7 +56,7 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: iexcit, n1, iret
+    integer :: iexcit, n1
     character(len=8) :: k8bid, k8bla
     character(len=8) :: cara, nomo, materi, repons
     character(len=16) :: nomcmd, typesd
@@ -104,15 +104,6 @@ implicit none
                 call utmess('F', 'CALCULEL3_50')
             endif
             modele = nomo
-        endif
-!
-! ------ LE MODELE NE DOIT PAS CONTENIR DE MAILLES TARDIVES POUR OP0070:
-!
-        call jeexin(modele(1:8)//'.MODELE    .NEMA', iret)
-        if (iret .gt. 0) then
-            if ((nomcmd.eq.'STAT_NON_LINE') .or. ( nomcmd.eq.'DYNA_NON_LINE')) then
-                call utmess('F', 'CALCULEL3_51', sk=nomcmd)
-            endif
         endif
 !
 ! ------ LE MATERIAU

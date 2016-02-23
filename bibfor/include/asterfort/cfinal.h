@@ -18,12 +18,12 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine cfinal(defico, resoco, reapre, reageo, nbliac,&
+    subroutine cfinal(ds_contact, l_first_geom, l_pair, nbliac,&
                       llf, llf1, llf2)
-        character(len=24) :: defico
-        character(len=24) :: resoco
-        aster_logical :: reapre
-        aster_logical :: reageo
+        use NonLin_Datastructure_type
+        type(NL_DS_Contact), intent(in) :: ds_contact
+        aster_logical, intent(in) :: l_first_geom
+        aster_logical, intent(in) :: l_pair
         integer :: nbliac
         integer :: llf
         integer :: llf1

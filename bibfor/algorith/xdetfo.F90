@@ -1,8 +1,8 @@
-subroutine xdetfo(cnsdet, cnsln, cnslt, jmafon, ndim,&
+subroutine xdetfo(cnsdet, cnsln, cnslt, ndim,&
                   nmafon, noma, nomfis, resuco)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -56,7 +56,7 @@ subroutine xdetfo(cnsdet, cnsln, cnslt, jmafon, ndim,&
 ! In/out cnsdet => cham_no_s pour fonction de détection
 ! In cnsln => cham_no_s level-set normale
 ! In cnslt => cham_no_s level-set tangente
-! In/out jmafon => mailles intersectées par l'iso-zéro
+! Out '&&XDETFO.MAFOND' => mailles intersectées par l'iso-zéro
 ! In ndim => dimension
 ! Out nmafon => nombre de mailles intersectées
 ! In noma => nom du maillage

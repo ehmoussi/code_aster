@@ -1,5 +1,5 @@
-subroutine nmible(cont_loop     , model   , mesh  , sdcont_defi, sdcont_solv,&
-                  list_func_acti, nume_dof, sdstat, sdtime     , ds_print)
+subroutine nmible(cont_loop     , model   , mesh  , ds_contact,&
+                  list_func_acti, nume_dof, sdstat, sdtime    , ds_print)
 !
 use NonLin_Datastructure_type
 !
@@ -32,8 +32,7 @@ implicit none
     integer, intent(inout) :: cont_loop
     character(len=24), intent(in) :: model
     character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: sdcont_defi
-    character(len=24), intent(in) :: sdcont_solv
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     integer, intent(in):: list_func_acti(*)
     character(len=24), intent(in) :: nume_dof
     character(len=24), intent(in) :: sdstat
@@ -55,8 +54,7 @@ implicit none
 !                        3 - Loop for geometry
 ! In  model            : name of model
 ! In  mesh             : name of mesh
-! In  sdcont_defi      : name of contact definition datastructure (from DEFI_CONTACT)
-! In  sdcont_solv      : name of contact solving datastructure
+! IO  ds_contact       : datastructure for contact management
 ! In  list_func_acti   : list of active functionnalities
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  sdstat           : datastructure for statistics
@@ -65,7 +63,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_loop_geom, i_loop_cont, i_loop_frot
+    integer :: loop_geom_count, loop_cont_count, loop_fric_count
     aster_logical :: l_loop_frot, l_loop_geom, l_loop_cont
     aster_logical :: l_pair
 !
@@ -77,12 +75,12 @@ implicit none
 !
 ! - Print geometric loop iteration
 !
-    call mmbouc(sdcont_solv, 'GEOM', 'READ', i_loop_geom)
-    call nmimci(ds_print   , 'BOUC_GEOM', i_loop_geom, .true._1)
+    call mmbouc(ds_contact, 'Geom', 'Read_Counter', loop_geom_count)
+    call nmimci(ds_print  , 'BOUC_GEOM', loop_geom_count, .true._1)
 !
 ! - No pairing at first iteration (see mminit/xminit)
 !
-    l_pair = (i_loop_geom .gt. 1)
+    l_pair = (loop_geom_count .gt. 1)
 !
 ! - Contact loops
 !
@@ -96,14 +94,14 @@ implicit none
         if (l_loop_geom) then
             cont_loop = 3
             if (l_pair) then
-                call nmctcg(model , mesh    , sdcont_defi, sdcont_solv, sdstat,&
-                            sdtime, nume_dof)
+                call nmctcg(model   , mesh, ds_contact, sdstat, sdtime,&
+                            nume_dof)
             endif
         endif
-        call mmbouc(sdcont_solv, 'FROT', 'INIT')
-        call mmbouc(sdcont_solv, 'FROT', 'INCR')
-        call mmbouc(sdcont_solv, 'FROT', 'READ', i_loop_frot)
-        call nmimci(ds_print   , 'BOUC_FROT', i_loop_frot, .true._1)
+        call mmbouc(ds_contact, 'Fric', 'Init_Counter')
+        call mmbouc(ds_contact, 'Fric', 'Incr_Counter')
+        call mmbouc(ds_contact, 'Fric', 'Read_Counter', loop_fric_count)
+        call nmimci(ds_print  , 'BOUC_FROT', loop_fric_count, .true._1)
     endif
 !
 ! - <2> - Friction loop
@@ -112,10 +110,10 @@ implicit none
         if (l_loop_frot) then
             cont_loop = 2
         endif
-        call mmbouc(sdcont_solv, 'CONT', 'INIT')
-        call mmbouc(sdcont_solv, 'CONT', 'INCR')
-        call mmbouc(sdcont_solv, 'CONT', 'READ', i_loop_cont)
-        call nmimci(ds_print   , 'BOUC_CONT', i_loop_cont, .true._1)
+        call mmbouc(ds_contact, 'Cont', 'Init_Counter')
+        call mmbouc(ds_contact, 'Cont', 'Incr_Counter')
+        call mmbouc(ds_contact, 'Cont', 'Read_Counter', loop_cont_count)
+        call nmimci(ds_print  , 'BOUC_CONT', loop_cont_count, .true._1)
     endif
 !
 ! - <1> - Contact loop

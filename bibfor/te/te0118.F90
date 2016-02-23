@@ -26,7 +26,7 @@ subroutine te0118(option, nomte)
 #include "asterfort/xnormv.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -144,7 +144,7 @@ subroutine te0118(option, nomte)
     ddls = ddld
     ddlm = ddld
 !
-! - initialisation temre classique
+! - initialisation terme classique
     tcla = 0.d0
 !
 ! - precision utilisee pour tester la nullite d'un reel
@@ -224,15 +224,19 @@ subroutine te0118(option, nomte)
         td1(j) = zr(igeom+ndim*(2-1)+j-1)- zr(igeom+ndim*(1-1)+j-1)
         td2(j) = zr(igeom+ndim*(3-1)+j-1)- zr(igeom+ndim*(1-1)+j-1)
     enddo
-    call provec(td1, td2, nd)
 !
 ! - calcul d'une base orthomormee 'Bprime' = (td1, td2, nd) 
-    call provec(nd, td1, td2)
+!   rq : on norme td1 et td2 avant de faire les produits vectoriels
+!        pour eviter les pb si on a des "petites" mailles
     call xnormv(ndim, td1, norme)
     ASSERT(norme .gt. r8pre)
     call xnormv(ndim, td2, norme)
     ASSERT(norme .gt. r8pre)
+    call provec(td1, td2, nd)
     call xnormv(ndim, nd, norme)
+    ASSERT(norme .gt. r8pre)
+    call provec(nd, td1, td2)
+    call xnormv(ndim, td2, norme)
     ASSERT(norme .gt. r8pre)
 !
 ! - origine 'oprim' du repere local (1er noeud)
@@ -346,6 +350,7 @@ subroutine te0118(option, nomte)
 !
 !               coordonnees polaires du point
                 rg = sqrt(lsng**2.d0+lstg**2.d0)
+                ASSERT(rg .gt. r8pre)
                 tg = zi(jheavt-1+ise) * abs(atan2(lsng,lstg))
 !
 !               fonctions d'enrichissment

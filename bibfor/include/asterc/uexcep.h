@@ -16,6 +16,15 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine uexcep()
+    subroutine uexcep(nexc, idmess, nk, valk, ni,&
+                      vali, nr, valr)
+        integer :: nexc
+        character(len=*) :: idmess
+        integer :: nk
+        character(len=*) :: valk(*)
+        integer :: ni
+        integer :: vali(*)
+        integer :: nr
+        real(kind=8) :: valr(*)
     end subroutine uexcep
 end interface

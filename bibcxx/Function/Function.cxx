@@ -7,6 +7,21 @@
 #include "astercxx.h"
 #include "Function/Function.h"
 
+FunctionInstance::FunctionInstance():
+    DataStructure( getNewResultObjectName(), "FONCTION" ),
+    _jeveuxName( getName() ),
+    _property( JeveuxVectorChar16( getName() + ".PROL           " ) ),
+    _value( JeveuxVectorDouble( getName() + ".VALE           " ) )
+{
+    // Create Jeveux vector ".PROL"
+    _property->allocate( Permanent, 6 );
+    (*_property)[0] = "FONCTION";
+    (*_property)[1] = "LIN LIN";
+    (*_property)[2] = "";
+    (*_property)[3] = "TOUTRESU";
+    (*_property)[4] = "EE";
+    (*_property)[5] = _jeveuxName;
+}
 
 FunctionInstance::FunctionInstance( const std::string jeveuxName = getNewResultObjectName()):
     DataStructure( jeveuxName, "FONCTION" ),

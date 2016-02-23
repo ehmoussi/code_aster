@@ -1,7 +1,7 @@
 subroutine typthm(axi, perman, vf, typvf, typmod,&
                   ndim)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -69,14 +69,14 @@ subroutine typthm(axi, perman, vf, typvf, typmod,&
 ! --- BUT : LA PARTIE HM EST-ELLE TRANSITOIRE OU PERMANENTE EN TEMPS ?
 ! =====================================================================
 !
-    if (lteatt('CODMOD','DHB')) then
+    if (lteatt('MODELI','DHB')) then
         perman = .true.
     else
         perman = .false.
     endif
 !
 !   -- MODELISATIONS SUSHI VOLUMES FINIS
-    if (lteatt('CODMOD','3AD').or.lteatt('CODMOD','2DA')) then
+    if (lteatt('MODELI','3AD').or.lteatt('MODELI','2DA')) then
         vf = .true.
         typvf=3
     else

@@ -290,11 +290,11 @@ TRAN_GE1=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        NORM_OBST = (1.,  0., 0.,),
                                        JEU = 1.E-4,
                                        RIGI_NOR = 1.E+8),
-                                 ARCHIVAGE=_F(INST=ARCHLIST, PAS_ARCH=1.E10)
+                                 ARCHIVAGE=_F(INST=ARCHLIST, PAS_ARCH=10000000)
                              )
 #
 TRAN_GE2=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                             SCHEMA_TEMPS=_F(SCHEMA='DEVOGE', TOLERANCE=1.E-8, PAS_MAXI=2.E-5),
+                             SCHEMA_TEMPS=_F(SCHEMA='DEVOGE', TOLERANCE=1.E-8, PAS_MAXI=1.E-5),
                              MATR_MASS=M_PROJ,
                              MATR_RIGI=K_PROJ,
                                 EXCIT=_F(VECT_ASSE_GENE = F_PROJ,
@@ -309,7 +309,7 @@ TRAN_GE2=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        NORM_OBST = (1., 0., 0.,),
                                        JEU = 1.E-4,
                                        RIGI_NOR = 1.E+8),
-                                 ARCHIVAGE=_F(INST=ARCHLIST, PAS_ARCH=1.E10)
+                                 ARCHIVAGE=_F(INST=ARCHLIST, PAS_ARCH=10000000)
                              )
 
 #
@@ -332,7 +332,7 @@ TRAN_GE3=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        NORM_OBST = (1., 0., 0.,),
                                        JEU = 1.E-4,
                                        RIGI_NOR = 1.E+8),
-                            ARCHIVAGE=_F( PAS_ARCH = 1.E10, INST=ARCHLIST),
+                            ARCHIVAGE=_F( PAS_ARCH=10000000, INST=ARCHLIST),
                              )
 
 
@@ -399,7 +399,7 @@ TEST_RESU(RESU=_F(INST=t_depl,
                   NOM_CHAM='DEPL',
                   NOEUD='NO12',
                   NOM_CMP='DY',
-                  VALE_CALC=-1.71882430863E-06,
+                  VALE_CALC=-1.71881962542E-06,
                   VALE_REFE=valref,
                   REFERENCE='AUTRE_ASTER',
                   PRECISION=9.0E-2,

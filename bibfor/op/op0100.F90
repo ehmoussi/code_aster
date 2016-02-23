@@ -1,6 +1,6 @@
 subroutine op0100()
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -61,14 +61,9 @@ subroutine op0100()
 #include "asterfort/jemarq.h"
 #include "asterfort/jerecu.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/mbilgl.h"
-#include "asterfort/mebilg.h"
 #include "asterfort/mecagl.h"
 #include "asterfort/mecalg.h"
 #include "asterfort/medomg.h"
-#include "asterfort/memaxg.h"
-#include "asterfort/mmaxgl.h"
-#include "asterfort/mmaxkl.h"
 #include "asterfort/rsadpa.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/rsmena.h"
@@ -78,35 +73,33 @@ subroutine op0100()
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/xcourb.h"
-    integer :: nbord, iord, ibid, i, iad, jnord, ivec, iret, nbpara
-    integer :: lnoff, jinst, ndeg, nbropt, iadrco, iadrno, j, ipuls, iord0
-    integer :: iord1, iord2, nborn, nbco, ibor, ig, nbval, iadfis, iadnoe
-    integer :: ndimte, ier, ndim, jopt
+    integer :: nbord, iord, i, iad, jnord, ivec, iret, nbpara
+    integer :: lnoff, jinst, ndeg, nbropt, iadrco, iadrno, ipuls, iord0
+    integer :: iadfis, iadnoe
+    integer :: ndimte, ndim, jopt
     integer :: nxpara
     parameter (nxpara = 15)
 !
-    real(kind=8) :: time, timeu, timev, dir(3), rinf, rsup, module, puls
+    real(kind=8) :: time, dir(3), rinf, rsup, module, puls
     character(len=6) :: nompro
     parameter  ( nompro = 'OP0100' )
     character(len=8) :: modele, resu, k8bid, calsig, resuc2
     character(len=8) :: nomfis, litypa(nxpara), symech, config
     character(len=8) :: table, noma, thetai, noeud, typfis, typfon
-    character(len=16) :: option, typsd, linopa(nxpara), cas, typco
-    character(len=16) :: optio2, nomcas, k16bid, typdis
+    character(len=16) :: option, typsd, linopa(nxpara), cas
+    character(len=16) :: nomcas, k16bid, typdis
     character(len=19) :: lischa, lisopt, vecord, grlt
     character(len=24) :: depla, mate, compor, chvite, chacce
     character(len=24) :: basfon, fonoeu, liss, taillr
     character(len=24) :: chfond, basloc, theta
     character(len=24) :: nomno, coorn, melord
     character(len=24) :: trav1, trav2, trav3, stok4
-    character(len=24) :: trav4, courb, depla1, depla2
+    character(len=24) :: trav4, courb
     character(len=24) :: norfon
     parameter  ( resuc2 = '&&MECALG' )
 !
     aster_logical :: exitim, thlagr, connex, glagr, milieu, direc
     aster_logical :: thlag2, pair, lncas, lmelas, incr, lmoda
-    real(kind=8), pointer :: abscur(:) => null()
-    character(len=8), pointer :: vnoeud(:) => null()
     integer, pointer :: ordr(:) => null()
 !
 !     ==============
@@ -206,26 +199,12 @@ subroutine op0100()
 !
 !     ON RECHERCHE LA PRESENCE DE SYMETRIE
     symech='NON'
-    call getvtx('THETA', 'SYME', iocc=1, scal=symech, nbret=ibid)
     if (typfis .eq. 'FONDFISS') then
         call dismoi('SYME', nomfis, 'FOND_FISS', repk=symech)
     endif
 !
-!     LE MOT-CLE THETA EST RENSEIGNE : ON CREE L'OBJET THETA (K24)
-    if (typfis .eq. 'THETA') then
-        call gettco(nomfis, typco)
-        ASSERT(typco.eq.'THETA_GEOM'.or.typco.eq.'CHAM_NO_SDASTER')
-        if (typco .eq. 'THETA_GEOM') then
-            call rsexch('F', nomfis, 'THETA', 0, theta,&
-                        ier)
-        else if (typco.eq.'CHAM_NO_SDASTER') then
-            theta=nomfis
-        endif
-    endif
-!
-!     LE MOT-CLE THETA N'EST PAS RENSEIGNE :
-!     IL VA FALLOIR CALCULER UN SEUL CHAMP THETA (2D OU 3D_GLOBAL)
-    if (typfis .ne. 'THETA' .and. cas .ne. '3D_LOCAL') then
+!     CALCUL DU CHAMP THETA (2D OU 3D_GLOBAL)
+    if (cas .ne. '3D_LOCAL') then
 !
         theta = table//'_CHAM_THETA'
 !
@@ -243,7 +222,7 @@ subroutine op0100()
 !
 !       THETA 2D (COURONNE)
         if (ndim .eq. 2) then
-            call gver2d(noma, 1, 'THETA', nomno, noeud,&
+            call gver2d(1, noeud,&
                         rinf, rsup, module)
             call gcou2d('V', theta, noma, nomno, noeud,&
                         zr(iadrco), rinf, rsup, module, direc,&
@@ -251,7 +230,7 @@ subroutine op0100()
 !       THETA 3D
         else if (ndim.eq.3) then
             call jeveuo(fonoeu, 'L', iadrno)
-            call gverig(noma, 1, fonoeu, taillr, config,&
+            call gverig(1, fonoeu, taillr, config,&
                         lnoff, nomno, coorn, trav1, trav2,&
                         trav3, trav4)
             call gcouro('V', theta, noma, nomno, coorn,&
@@ -362,124 +341,9 @@ subroutine op0100()
 !
 !!    ARRET POUR CONTROLE DEVELOPPEMENT DANS CGCRTB
 !    ASSERT(.false.)
-
-!
-    if (option(1:6) .eq. 'G_BILI' .or. option(1:5) .eq. 'G_MAX') then
-!
-!       --------------------------------------------------------------
-!       3.1. ==> CALCUL DE LA FORME BILINEAIRE DU TAUX DE RESTITUTION
-!       --------------------------------------------------------------
-!
-        do i = 1, nbord
-!
-            iord1 = zi(ivec-1+i)
-            call medomg(resu, iord1, modele, mate, lischa)
-            call rsexch(' ', resu, 'DEPL', iord1, depla1,&
-                        iret)
-!
-            if (lmelas) then
-                if (lncas) then
-                    if (.not.zl(jnord+i-1)) goto 311
-                endif
-                exitim = .false.
-                timeu=0.d0
-                timev=0.d0
-                call rsadpa(resu, 'L', 1, 'NOM_CAS', iord0,&
-                            0, sjv=iad, styp=k8bid)
-                nomcas=zk16(iad)
-            endif
-!
-            do j = 1, i
-                call jemarq()
-                call jerecu('V')
-                if (nbord .eq. 1) then
-                    iord2 = iord1
-                    depla2 = depla1
-                else
-                    iord2 = zi(ivec-1+j)
-                    call rsexch('F', resu, 'DEPL', iord2, depla2,&
-                                iret)
-                endif
-!
-                if (.not.lmelas) then
-                    call rsadpa(resu, 'L', 1, 'INST', iord1,&
-                                0, sjv=jinst, styp=k8bid)
-                    timeu = zr(jinst)
-                    call rsadpa(resu, 'L', 1, 'INST', iord2,&
-                                0, sjv=jinst, styp=k8bid)
-                    timev = zr(jinst)
-                    exitim = .true.
-                endif
-!
-                optio2 = 'G_BILI'
-                if (cas .eq. '3D_LOCAL') then
-                    call mbilgl(optio2, table, modele, depla1, depla2,&
-                                thetai, mate, lischa, symech, chfond,&
-                                lnoff, ndeg, liss,&
-                                milieu, ndimte, pair, exitim, timeu,&
-                                timev, i, j, nbpara, linopa,&
-                                lmelas, nomcas, fonoeu, connex)
-                else
-                    call mebilg(optio2, table, modele, depla1, depla2,&
-                                theta, mate, lischa, symech, timeu,&
-                                timev, i, j, nbpara, linopa)
-                endif
-!
-                call jedema()
-!
-            end do
-!
-311         continue
-        end do
 !
 !
-        if (option(1:5) .eq. 'G_MAX') then
-!
-!         ----------------------------------------------------
-!         3.2. ==> MAXIMISATION DU G SOUS CONTRAINTES BORNES
-!         ----------------------------------------------------
-!
-            call getfac('BORNES', nborn)
-            if (nborn .ne. 0) then
-                nbco = 2*nborn
-                call wkvect('&&'//nompro//'.COUPLES_BORNES', 'V V R8', nbco, ibor)
-                do i = 1, nborn
-                    call getvis('BORNES', 'NUME_ORDRE', iocc=i, scal=iord0, nbret=ier)
-                    call getvr8('BORNES', 'VALE_MIN', iocc=i, scal=zr(ibor+ 2*(iord0-1)),&
-                                nbret=ier)
-                    call getvr8('BORNES', 'VALE_MAX', iocc=i, scal=zr(ibor+ 2*(iord0-1)+1),&
-                                nbret=ier)
-                end do
-!
-                if (cas .eq. '3D_LOCAL') then
-                    call tbexve(table, 'G_BILI_LOCAL', '&&'//nompro// '.GBILIN', 'V', nbval,&
-                                k8bid)
-                    call jeveuo('&&'//nompro//'.GBILIN', 'L', ig)
-                    call tbexve(table, 'NOEUD', '&&'//nompro//'.NOEUD', 'V', nbval,&
-                                k8bid)
-                    call jeveuo('&&'//nompro//'.NOEUD', 'L', vk8=vnoeud)
-                    call tbexve(table, 'ABSC_CURV', '&&'//nompro// '.ABSCUR', 'V', nbval,&
-                                k8bid)
-                    call jeveuo('&&'//nompro//'.ABSCUR', 'L', vr=abscur)
-!
-                    call detrsd('TABLE', table)
-                    call mmaxgl(nbco, zr(ibor), zr(ig), vnoeud, abscur,&
-                                nbord, lnoff, table)
-                else
-                    call tbexve(table, 'G_BILIN', '&&'//nompro// '.GBILIN', 'V', nbval,&
-                                k8bid)
-                    call jeveuo('&&'//nompro//'.GBILIN', 'L', ig)
-                    call detrsd('TABLE', table)
-                    call memaxg(nbco, zr(ibor), zr(ig), nbord, table)
-                endif
-!
-            else
-                call utmess('F', 'RUPTURE0_92', sk=option)
-            endif
-        endif
-!
-!
-    else if (cas.eq.'3D_LOCAL'.and.option.eq.'CALC_K_G') then
+    if (cas.eq.'3D_LOCAL'.and.option.eq.'CALC_K_G') then
 !
 !       -------------------------------
 !       3.3. ==> CALCUL DE KG (3D LOC)
@@ -527,23 +391,6 @@ subroutine op0100()
 !
  33         continue
         end do
-!
-!
-    else if (option .eq.'CALC_K_MAX') then
-!
-!       ------------------------
-!       3.3.2. ==>OPTION CALC_K_MAX
-!       -----------------------
-!
-        basloc=nomfis//'.BASLOC'
-        call xcourb(basloc, noma, modele, courb)
-!
-        call mmaxkl(table, modele, thetai, mate, compor,&
-                    symech, chfond, lnoff, basloc, courb,&
-                    ndeg, liss, pair,&
-                    ndimte, nbpara, linopa, nomfis, nbord,&
-                    ivec, resu, lmelas, lncas, zl(jnord),&
-                    milieu, connex, lischa, iadfis, iadnoe)
 !
 !     -------------------------------
 !     3.5. ==> CALCUL DE G, K_G (2D)

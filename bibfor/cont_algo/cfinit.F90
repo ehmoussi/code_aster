@@ -1,4 +1,6 @@
-subroutine cfinit(sdcont_defi, sdcont_solv, nume_inst)
+subroutine cfinit(ds_contact, nume_inst)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
@@ -28,8 +30,7 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    character(len=24), intent(in) :: sdcont_defi
-    character(len=24), intent(in) :: sdcont_solv
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     integer, intent(in) :: nume_inst
 !
 ! --------------------------------------------------------------------------------------------------
@@ -40,57 +41,41 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  sdcont_defi      : name of contact definition datastructure (from DEFI_CONTACT)
-! In  sdcont_solv      : name of contact solving datastructure
+! IO  ds_contact       : datastructure for contact management
 ! In  nume_inst        : index of current step time
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_reac_geom(3)
-    character(len=24) :: sdcont_clreac
-    aster_logical, pointer :: v_sdcont_clreac(:) => null()
     character(len=24) :: sdcont_autoc1, sdcont_autoc2
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
-!
-! - Datastructure for contact solving
-!
-    sdcont_clreac = sdcont_solv(1:14)//'.REAL'
-    call jeveuo(sdcont_clreac, 'E', vl = v_sdcont_clreac)
-    sdcont_autoc1 = sdcont_solv(1:14)//'.REA1'
-    sdcont_autoc2 = sdcont_solv(1:14)//'.REA2'
+    sdcont_autoc1 = ds_contact%sdcont_solv(1:14)//'.REA1'
+    sdcont_autoc2 = ds_contact%sdcont_solv(1:14)//'.REA2'
 !
 ! - Geometric parameters
 !
-    l_reac_geom(1) = .true.
-    l_reac_geom(2) = .false.
-    l_reac_geom(3) = .true.
-    if (cfdisl(sdcont_defi,'REAC_GEOM_SANS')) then
+    call mmbouc(ds_contact, 'Geom', 'Set_Divergence')
+    ds_contact%l_wait_conv  = .false._1
+    ds_contact%l_first_geom = .true._1
+    if (cfdisl(ds_contact%sdcont_defi,'REAC_GEOM_SANS')) then
         if (nume_inst .ne. 1) then
-            l_reac_geom(1) = .false.
-            l_reac_geom(3) = .false.
+            call mmbouc(ds_contact, 'Geom', 'Set_Convergence')
+            ds_contact%l_first_geom = .false._1
         endif
     endif
 !
 ! - Geometric loop counter initialization
 !
-    call mmbouc(sdcont_solv, 'GEOM', 'INIT')
+    call mmbouc(ds_contact, 'Geom', 'Init_Counter')
 !
 ! - First geometric loop counter
 !    
-    call mmbouc(sdcont_solv, 'GEOM', 'INCR')
+    call mmbouc(ds_contact, 'Geom', 'Incr_Counter')
 !
 ! - Vector initialization for REAC_GEOM
 !
     call vtzero(sdcont_autoc1)
     call vtzero(sdcont_autoc2)
-!
-! - Save parameters
-!
-    v_sdcont_clreac(1) = l_reac_geom(1)
-    v_sdcont_clreac(2) = l_reac_geom(2)
-    v_sdcont_clreac(3) = l_reac_geom(3)
 !
 end subroutine

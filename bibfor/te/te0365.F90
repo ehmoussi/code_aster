@@ -16,7 +16,7 @@ subroutine te0365(option, nomte)
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! person_in_charge: mickael.abbas at edf.fr
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
     implicit none
 #include "asterf_types.h"
@@ -122,11 +122,11 @@ subroutine te0365(option, nomte)
 ! ----- CALCUL DES QUANTITES
 !
         call mmvppe(typmae, typmam, iresog, ndim, nne,&
-                    nnm, nnl, nbdm, laxis, ldyna,&
-                    lfovit, jeusup, ffe, ffm, ffl,&
-                    norm, tau1, tau2, mprojt, jacobi,&
-                    wpg, dlagrc, dlagrf, jeu, djeu,&
-                    djeut,coefaf,coefac)
+                             nnm, nnl, nbdm, laxis, ldyna,&
+                             lfovit,lpenac, jeusup, ffe, ffm, ffl,&
+                             norm, tau1, tau2, mprojt, jacobi,&
+                             wpg, dlagrc, dlagrf, jeu, djeu,&
+                             djeut)
 !
 ! ----- CHOIX DU LAGRANGIEN DE CONTACT
 !

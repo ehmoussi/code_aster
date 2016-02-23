@@ -1,6 +1,6 @@
 # TITRE CALCUL 3D DE G FISSURE CIRCULAIRE EN MILIEU INFINI
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -214,17 +214,14 @@ RAY_SUP1=DEFI_CONSTANTE(VALE=RSUP)
 
 MOD_T1=DEFI_CONSTANTE(   VALE=1.    )
 
-THETA1=CALC_THETA(  MODELE=MO,
-                    FOND_FISS=FISS,
-                    THETA_3D=_F(TOUT = 'OUI',
-                                MODULE_FO = MOD_T1,
-                                R_INF_FO = RAY_INF1,
-                                R_SUP_FO = RAY_SUP1)
-                    )
 
 G0=CALC_G (  OPTION='CALC_G_GLOB',
              RESULTAT=CHAMDEPL,
-             THETA=_F(THETA=THETA1),
+             THETA=_F(
+                      FOND_FISS=FISS,
+                      MODULE_FO=MOD_T1,
+                      R_SUP_FO=RAY_SUP1,
+                      R_INF_FO=RAY_INF1),
                        )
 
 # VALEUR DE REFERENCE MILIEU INFINI : G=145.6
@@ -241,18 +238,14 @@ TEST_TABLE(PRECISION=0.012,
 # POST_K1_K2_K3
 
 
-TABL_K1=POST_K1_K2_K3(  MODELISATION='3D',
-                        MATER=MAT,
-                        FOND_FISS = FISS,
+TABL_K1=POST_K1_K2_K3(  FOND_FISS = FISS,
                         RESULTAT = CHAMDEPL,
                       )
 
 IMPR_TABLE(TABLE=TABL_K1)
 
 
-TABL_KTO=POST_K1_K2_K3(  MODELISATION='3D',
-              MATER=MAT,
-              FOND_FISS = FISS,
+TABL_KTO=POST_K1_K2_K3(  FOND_FISS = FISS,
               RESULTAT=CHAMDEPL,
               PREC_VIS_A_VIS = 0.05,
            )
@@ -344,9 +337,7 @@ FISSM=DEFI_FOND_FISS(MAILLAGE=MA,
                      LEVRE_INF=_F(  GROUP_MA = 'LEVINF1'),
                     )
 
-TABL_KTM=POST_K1_K2_K3(MODELISATION='3D',
-                       MATER=MAT,
-                       FOND_FISS = FISSM,
+TABL_KTM=POST_K1_K2_K3(FOND_FISS = FISSM,
                        RESULTAT=CHAMDEPL,
                        PREC_VIS_A_VIS = 0.05,
            )
@@ -381,9 +372,7 @@ FISSN=DEFI_FOND_FISS(MAILLAGE=MA,
                      LEVRE_SUP=_F(GROUP_MA = 'LEVINFS'),
                      LEVRE_INF=_F(GROUP_MA = 'LEVINF1'),
                     )
-TABL_KTN=POST_K1_K2_K3(MODELISATION='3D',
-                       MATER=MAT,
-                       FOND_FISS = FISSN,
+TABL_KTN=POST_K1_K2_K3(FOND_FISS = FISSN,
                        RESULTAT=CHAMDEPL,
                        PREC_VIS_A_VIS = 0.05,
            )
@@ -407,9 +396,7 @@ MA=DEFI_GROUP( reuse=MA,   MAILLAGE=MA,
                               _F( NOEUD = ('N1388','N1346'),
                                  NOM = 'NOFF2'),),);
 
-TABL_K4=POST_K1_K2_K3(MODELISATION='3D',
-                      MATER=MAT,
-                      FOND_FISS = FISSN,
+TABL_K4=POST_K1_K2_K3(FOND_FISS = FISSN,
                       RESULTAT = CHAMDEPL,
                       GROUP_NO = ('NOFF1','NOFF2',),
                       PREC_VIS_A_VIS = 0.05,
@@ -428,9 +415,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 # POST_K1_K2_K3 : VALIDATION TYPE_MA = LIBRE
-TABL_K5=POST_K1_K2_K3(MODELISATION='3D',
-                      MATER=MAT,
-                      FOND_FISS = FISSN,
+TABL_K5=POST_K1_K2_K3(FOND_FISS = FISSN,
                       RESULTAT = CHAMDEPL,
                       TYPE_MAILLAGE = 'LIBRE',
                       NB_NOEUD_COUPE = 4,
@@ -450,9 +435,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 # POST_K1_K2_K3/LIBRE : VALIDATION INFORMATIQUE (SENS PROPA.)
-TABL_K6=POST_K1_K2_K3(MODELISATION='3D',
-                      MATER=MAT,
-                      FOND_FISS = FISSN,
+TABL_K6=POST_K1_K2_K3(FOND_FISS = FISSN,
                       RESULTAT = CHAMDEPL,
                       TYPE_MAILLAGE = 'LIBRE',
                       NB_NOEUD_COUPE = 4,

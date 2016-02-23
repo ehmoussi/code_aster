@@ -202,7 +202,7 @@ subroutine mecalr(newcal, tysd, knum, kcha, resuco,&
             iordr=zi(jordr+iaux-1)
             do j = 1, nbpara
                 call rsadpa(resuco, 'L', 1, zk16(jpa+j-1), iordr,&
-                            1, sjv=iadin, styp=type)
+                            1, sjv=iadin, styp=type, istop=0)
                 call rsadpa(leres1, 'E', 1, zk16(jpa+j-1), iordr,&
                             1, sjv=iadou, styp=type)
                 if (type(1:1) .eq. 'I') then
@@ -241,8 +241,7 @@ subroutine mecalr(newcal, tysd, knum, kcha, resuco,&
 !
 !         PASSAGE CALC_CHAMP
         call calcop(option, lesopt, resuco, resuc1, knum,&
-                    nbordr, kcha, nchar, ctyp, tysd,&
-                    iret)
+                    nbordr, ctyp, tysd, iret)
         if (iret .eq. 0) goto 660
 !
         nuord=zi(jordr)

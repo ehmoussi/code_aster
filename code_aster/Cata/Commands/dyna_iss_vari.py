@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -44,10 +44,10 @@ DYNA_ISS_VARI=MACRO(nom="DYNA_ISS_VARI",
          ISSF          =SIMP(statut='f',typ='TXM',into=("OUI","NON",),defaut="NON"),
          INTERF           =FACT(statut='o',
               GROUP_NO_INTERF =SIMP(statut='o',typ=grno,),
-              MODE_INTERF  =SIMP(statut='o',typ='TXM',into=("CORP_RIGI","TOUT","QUELCONQUE")),
+              MODE_INTERF  =SIMP(statut='o',typ='TXM',into=("CORP_RIGI", "TOUT", "QUELCONQUE")),
          ),
          MATR_COHE       =FACT(statut='o',
-              TYPE = SIMP(statut='o',typ='TXM' , into=("MITA_LUCO","ABRAHAMSON")   ),            
+              TYPE = SIMP(statut='o',typ='TXM' , into=("MITA_LUCO","ABRAHAMSON", "ABRA_ROCHER", "ABRA_SOLMOYEN")   ),            
               b_type_coh = BLOC(condition="TYPE=='MITA_LUCO' ",
                  VITE_ONDE       =SIMP(statut='o',typ='R', val_min=0.0 ),
                  PARA_ALPHA     =SIMP(statut='f',typ='R',defaut=0.1),),
