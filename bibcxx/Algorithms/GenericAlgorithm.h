@@ -57,7 +57,7 @@ class Algorithm
             {
                 try
                 {
-                    algo.prepareStep();
+                    algo.prepareStep( curVal );
                     algo.oneStep();
                 }
                 catch( AlgoException& exc )
