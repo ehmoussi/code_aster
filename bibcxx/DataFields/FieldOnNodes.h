@@ -143,4 +143,13 @@ typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
  */
 typedef boost::shared_ptr< FieldOnNodesDoubleInstance > FieldOnNodesDoublePtr;
 
+/** @typedef FieldOnNodesInstanceLong Instance d'une carte de long */
+typedef FieldOnNodesInstance< long > FieldOnNodesLongInstance;
+
+/**
+ * @typedef FieldOnNodesPtrLong
+ * @brief Definition d'un champ aux noeuds de long
+ */
+typedef boost::shared_ptr< FieldOnNodesLongInstance > FieldOnNodesLongPtr;
+
 #endif /* FIELDONNODES_H_ */
