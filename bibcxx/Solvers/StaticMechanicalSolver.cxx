@@ -38,7 +38,7 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
     _materialOnMesh( MaterialOnMeshPtr() ),
     _linearSolver( LinearSolverPtr() ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-    _timeStep( TimeStepperPtr( new TimeStepperInstance( Temporary ) ) )
+    _timeStep( TimeStepperPtr( new TimeStepperInstance( Permanent ) ) )
 {};
 
 ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )

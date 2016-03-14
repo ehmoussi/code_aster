@@ -50,6 +50,7 @@ class Algorithm
          */
         static bool runAllStepsOverAlgorithm( Stepper& timeStep, GenericUnitaryAlgorithm& algo )
         {
+            timeStep.update();
             typedef typename Stepper::const_iterator it;
             for( it curVal = timeStep.begin();
                 curVal != timeStep.end();
