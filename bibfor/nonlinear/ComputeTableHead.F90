@@ -9,7 +9,7 @@ implicit none
 #include "asterfort/PrepareTableLine.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -28,11 +28,11 @@ implicit none
 !
     type(NL_DS_Table), intent(in) :: table
     character(len=1), intent(in) :: col_sep
-    character(len=255), intent(out) :: table_head(3)
+    character(len=512), intent(out) :: table_head(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Print management
+! MECA_NON_LINE - Table management
 !
 ! Compute head of table
 !
@@ -57,9 +57,9 @@ implicit none
     nb_cols      = table%nb_cols
     title_height = table%title_height
     table_width  = table%width
-    ASSERT((title_height.gt.0).and.(title_height.le.3))
-    ASSERT(table_width.le.255)
-    ASSERT(nb_cols.le.table%nb_cols_maxi)
+    ASSERT((title_height .gt. 0).and.(title_height .le. 3))
+    ASSERT(table_width .le. 512)
+    ASSERT(nb_cols .le. table%nb_cols_maxi)
 !
 ! - Prepare heads of table with empty cols
 !
@@ -76,7 +76,7 @@ implicit none
     pos = 2
     do i_col = 1, nb_cols
         if (table%l_cols_acti(i_col)) then
-            col_width    = table%cols(i_col)%width
+            col_width    = 16
             col_title(1) = table%cols(i_col)%title(1)
             if (title_height .ge. 2) then
                 col_title(2) = table%cols(i_col)%title(2)
@@ -98,4 +98,3 @@ implicit none
     ASSERT(pos.eq.table_width+1)
 !
 end subroutine
-!

@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -20,6 +20,6 @@ interface
         use NonLin_Datastructure_type
         type(NL_DS_Table), intent(in) :: table
         character(len=1), intent(in) :: col_sep
-        character(len=255), intent(out) :: table_head(3)
+        character(len=512), intent(out) :: table_head(3)
     end subroutine ComputeTableHead
 end interface

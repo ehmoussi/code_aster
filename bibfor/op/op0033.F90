@@ -23,7 +23,6 @@ implicit none
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmcrcv.h"
-#include "asterfort/nmdcin.h"
 #include "asterfort/nmfinp.h"
 #include "asterfort/pmactn.h"
 #include "asterfort/pmat.h"
@@ -49,7 +48,7 @@ implicit none
 #include "blas/dscal.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -203,7 +202,6 @@ implicit none
 !        RECUPERATION DU NUMERO D'ORDRE ET DE L'INSTANT COURANTS
 !        DECOUPE INITIALE DU PAS DE TEMPS
 !
-    call nmdcin(sddisc, numins)
     instam = diinst(sddisc, numins-1)
     instap = diinst(sddisc, numins )
 !        CALCUL DES VARIABLES DE COMMANDE

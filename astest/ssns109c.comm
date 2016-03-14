@@ -1,6 +1,6 @@
 # TITRE POUTRE CONSOLE SOUMISE A UN EFFORT TRANCHANT
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -60,7 +60,7 @@ NONLIN=STAT_NON_LINE(MODELE=MODMECA,
                                   DEFORMATION='GROT_GDEP',
                                   TOUT='OUI',),
                      INCREMENT=_F(LIST_INST=LISTPILO,),
-                     NEWTON=_F(MATRICE='TANGENTE',),
+                     NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=0),
                      PILOTAGE=_F(TYPE='DDL_IMPO',
                                  COEF_MULT=1.0,
                                  GROUP_NO='P2',

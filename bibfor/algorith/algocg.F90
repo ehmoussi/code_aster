@@ -1,8 +1,8 @@
-subroutine algocg(sdstat, defico, resoco, solveu, matass,&
+subroutine algocg(ds_measure, defico, resoco, solveu, matass,&
                   ctccvg)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -17,7 +17,11 @@ subroutine algocg(sdstat, defico, resoco, solveu, matass,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8prem.h"
@@ -40,7 +44,7 @@ subroutine algocg(sdstat, defico, resoco, solveu, matass,&
 #include "asterfort/nmrvai.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
-    character(len=24) :: sdstat
+    type(NL_DS_Measure), intent(inout) :: ds_measure
     character(len=24) :: defico, resoco
     character(len=19) :: matass, solveu
     integer :: ctccvg
@@ -75,7 +79,7 @@ subroutine algocg(sdstat, defico, resoco, solveu, matass,&
 !      F = ( L - QT.SIG - BT.LAM  ) AU COURS D'UNE ITERATION DE NEWTON
 !          (           0          )
 !
-! IN  SDSTAT : SD STATISTIQUES
+! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  DEFICO : SD DE DEFINITION DU CONTACT
 ! IN  RESOCO : SD DE TRAITEMENT NUMERIQUE DU CONTACT
 ! IN  SOLVEU : SD SOLVEUR
@@ -113,8 +117,7 @@ subroutine algocg(sdstat, defico, resoco, solveu, matass,&
 ! --- AFFICHAGE
 !
     if (niv .ge. 2) then
-        write(ifm,*) '<CONTACT><CALC> ALGO_CONTACT   : GRADIENT '//&
-     &    'CONJUGUE PROJETE'
+        write(ifm,*) '<CONTACT><CALC> ALGO_CONTACT   : GRADIENT CONJUGUE PROJETE'
         write(ifm,*) '<CONTACT><CALC> ALGO_FROTTEMENT: SANS'
     endif
 !
@@ -306,15 +309,12 @@ subroutine algocg(sdstat, defico, resoco, solveu, matass,&
 !
 ! --- SAUVEGARDE DES INFOS DE DIAGNOSTIC
 !
-    call nmrvai(sdstat, 'CTCD_ALGO_ITER', 'E', iter)
-    call nmrvai(sdstat, 'CONT_NBLIAC', 'E', nbliac)
+    call nmrvai(ds_measure, 'Cont_Algo ', input_count = iter)
+    call nmrvai(ds_measure, 'Cont_NCont', input_count = nbliac)
 !
     call jedema()
 !
     9010 format (' <CONTACT><CALC> DEBUT DES ITERATIONS (MAX: ',i8,')')
     9020 format (' <CONTACT><CALC> FIN DES ITERATIONS (NBR: ',i8,')')
-!
-!
-    9060 format (' <CONTACT><CALC> NORME INFINIE DU RESIDU : ',&
-     &        1pe12.5,' (CRITERE: ',1pe12.5,')')
+    9060 format (' <CONTACT><CALC> NORME INFINIE DU RESIDU : ', 1pe12.5,' (CRITERE: ',1pe12.5,')')
 end subroutine

@@ -1,7 +1,7 @@
 subroutine quavro(quater, theta)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,6 +20,7 @@ subroutine quavro(quater, theta)
 ! aslint: disable=
     implicit none
 #include "asterc/r8prem.h"
+#include "asterc/r8pi.h"
 #include "blas/ddot.h"
     real(kind=8) :: quater(4), theta(3)
 !
@@ -48,7 +49,7 @@ subroutine quavro(quater, theta)
     zero = 0.d0
     epsil = r8prem( )**2
     deux = 2.d0
-    pi = 3.14159265d0
+    pi = r8pi()
 !
     prosca = ddot(3,quater,1,quater,1)
     anorx = sqrt(prosca)

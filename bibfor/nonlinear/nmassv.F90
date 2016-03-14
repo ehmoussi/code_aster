@@ -1,6 +1,6 @@
 subroutine nmassv(typvez  , modelz, lischa, mate  , carele,&
                   compor  , numedd, instam, instap, &
-                  sddyna, sdtime, valinc, comref,&
+                  sddyna  , ds_measure, valinc, comref,&
                   ds_inout, measse, vecelz, vecasz)
 !
 use NonLin_Datastructure_type
@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/nmviss.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -53,7 +53,8 @@ implicit none
     character(len=19) :: lischa
     real(kind=8) :: instap, instam
     character(len=19) :: sddyna
-    character(len=24) :: mate, carele, compor, numedd, comref, sdtime
+    character(len=24) :: mate, carele, compor, numedd, comref
+    type(NL_DS_Measure), intent(inout) :: ds_measure
     character(len=19) :: measse(*), valinc(*)
     type(NL_DS_InOut), intent(in) :: ds_inout
     character(len=*) :: vecasz, vecelz
@@ -77,7 +78,7 @@ implicit none
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  COMREF : VARI_COM DE REFERENCE
-! IN  SDTIME : SD TIMER
+! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_inout         : datastructure for input/output management
 ! IN  VECELE : VECT_ELEM A ASSEMBLER
 ! OUT VECASS : VECT_ASSE CALCULEE
@@ -135,14 +136,13 @@ implicit none
 ! --- AFFICHAGE
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><VECT> ASSEMBLAGE DES VECT_ELEM'&
-        // ' DE TYPE <',typvec,'>'
+        write (ifm,*) '<MECANONLINE><VECT> ASSEMBLAGE DES VECT_ELEM DE TYPE <',typvec,'>'
     endif
 !
-! --- MESURES
+! - Launch timer
 !
-    call nmtime(sdtime, 'INI', 'SECO_MEMB')
-    call nmtime(sdtime, 'RUN', 'SECO_MEMB')
+    call nmtime(ds_measure, 'Init'  , '2nd_Member')
+    call nmtime(ds_measure, 'Launch', '2nd_Member')
 !
 ! --- FORCES NODALES
 !
@@ -251,8 +251,11 @@ implicit none
 ! --- FORCES ISSUES DES VARIABLES DE COMMANDE (PAS DE VECT_ELEM)
 !
     else if (typvec.eq.'CNVCPR') then
-        call nmvcpr(modele, numedd, mate, carele, comref,&
-                    compor, valinc, vecass)
+        call nmvcpr(modele, mate  , carele, comref, compor, &
+                    valinc, nume_dof_ = numedd, base_ = 'V',&
+                    vect_elem_prev_ = '&&VEVCOM',&
+                    vect_elem_curr_ = '&&VEVCOP',&
+                    cnvcpr_ = vecass)
 !
 ! --- FORCE D'EQUILIBRE DYNAMIQUE (PAS DE VECT_ELEM)
 !
@@ -285,7 +288,9 @@ implicit none
         call nmdebg('VECT', vecass, ifm)
     endif
 !
-    call nmtime(sdtime, 'END', 'SECO_MEMB')
+! - Stop timer
+!
+    call nmtime(ds_measure, 'Stop', '2nd_Member')
 !
     call jedema()
 !

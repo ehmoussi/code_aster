@@ -3,7 +3,7 @@ subroutine nmtahe(fami, kpg, ksp, ndim, imate,&
                   deps, sigm, vim, option, sigp,&
                   vip, dsidep, iret)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -19,6 +19,7 @@ subroutine nmtahe(fami, kpg, ksp, ndim, imate,&
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
     implicit none
+#include "asterfort/assert.h"
 #include "asterfort/nmtaac.h"
 #include "asterfort/nmtacr.h"
 #include "asterfort/nmtadp.h"
@@ -79,8 +80,8 @@ subroutine nmtahe(fami, kpg, ksp, ndim, imate,&
 !
 !
 ! - INITIALISATION
-!
-!    DIMENSION DES TENSEURS ET MISE AUX NORMES
+    iret=0
+!   DIMENSION DES TENSEURS ET MISE AUX NORMES
     ndimsi = ndim*2
     rac2 = sqrt(2.d0)
     do 10 k = 4, ndimsi
@@ -105,8 +106,7 @@ subroutine nmtahe(fami, kpg, ksp, ndim, imate,&
         dp = 0.d0
         xi = 1.d0
         call nmtasp(ndimsi, crit, mat, sigel, vim,&
-                    epm, dp, sp, xi, f,&
-                    iret)
+                    epm, dp, sp, xi, f, iret)
         if (iret .eq. 1) goto 9999
 !
 !      CHARGE
@@ -178,8 +178,8 @@ subroutine nmtahe(fami, kpg, ksp, ndim, imate,&
             xi = 0.d0
             if (vim(9) .ne. 0.d0) then
                 call nmtasp(ndimsi, crit, mat, sigel, vim,&
-                            epm, dp, sp, xi, f,&
-                            iret)
+                            epm, dp, sp, xi, f, iret)
+                ASSERT(iret.eq.0)
             endif
 !
 !        DECHARGE CLASSIQUE

@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -25,7 +25,7 @@ interface
         character(len=19), intent(in) :: tabl_name
         character(len=4), intent(in) :: field_disc
         character(len=24), intent(in) :: field_type
-        character(len=80), intent(in) :: title
+        character(len=16), intent(in) :: title
         character(len=8), intent(in) :: type_extr
         character(len=8), intent(in) :: type_extr_cmp
         character(len=8), intent(in) :: type_extr_elem

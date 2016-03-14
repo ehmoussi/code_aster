@@ -8,7 +8,7 @@
 # ======================================================================
 # TITRE ETUDE  : ANALYSE TRANS1D-RUPT1D (VALIDATION POST_K_BETA)
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -726,15 +726,15 @@ for i in range(5) :
                           NOM_CHAM='SIGM_ELNO',
                           LIGN_COUPE=_F(TYPE='SEGMENT',
                                         NB_POINTS=Nb_points,
-                                        COOR_ORIG=(Pointe_A + Decalage[i],0.,0.),       # Pointe A
-                                        COOR_EXTR=(Pointe_B + Decalage[i],0.,0.)))      # Pointe B
+                                        COOR_ORIG=(Pointe_A + Decalage[i],0.),       # Pointe A
+                                        COOR_EXTR=(Pointe_B + Decalage[i],0.)))      # Pointe B
 
    TEMPG[i] = MACR_LIGN_COUPE(RESULTAT=TEMP,
                               NOM_CHAM='TEMP',
                               LIGN_COUPE=_F(TYPE='SEGMENT',
                                             NB_POINTS=Nb_points,
-                                            COOR_ORIG=(Pointe_A + Decalage[i],0.,0.),   # Pointe A
-                                            COOR_EXTR=(Pointe_B + Decalage[i],0.,0.)))  # Pointe B
+                                            COOR_ORIG=(Pointe_A + Decalage[i],0.),   # Pointe A
+                                            COOR_EXTR=(Pointe_B + Decalage[i],0.)))  # Pointe B
 
    KBETA[i] = POST_K_BETA (MAILLAGE  = MAIL,
                            MATER_REV = MAME_RE2,
