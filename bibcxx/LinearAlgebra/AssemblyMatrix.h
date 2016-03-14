@@ -203,8 +203,7 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
     std::string cumul( "ZERO" );
     long nbMatrElem = 1;
     CALL_ASMATR( &nbMatrElem, _elemMatrix->getName().c_str(), blanc.c_str(), _dofNum.getName().c_str(),
-                 solverName.c_str(), _listOfLoads->getName().c_str(), cumul.c_str(), "G", &type,
-                 getName().c_str() );
+                 _listOfLoads->getName().c_str(), cumul.c_str(), "G", &type, getName().c_str() );
     _isEmpty = false;
 
     return true;

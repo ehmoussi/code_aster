@@ -71,28 +71,32 @@ typedef VectorDouble::iterator VectorDoubleIter;
  */
 class SyntaxMapContainer
 {
-    public:
-        /** @brief Typedef definissant un map associant une chaine a divers types */
-        typedef std::map< std::string, boost::variant< int, std::string, double,
-                                                       VectorInt, VectorString, VectorDouble,
-                                                       ListSyntaxMapContainer > > SyntaxMap;
-        typedef SyntaxMap::iterator SyntaxMapIter;
+public:
+    /** @brief Typedef definissant un map associant une chaine a divers types */
+    typedef std::map< std::string, boost::variant< int, std::string, double,
+                                                   VectorInt, VectorString, VectorDouble,
+                                                   ListSyntaxMapContainer > > SyntaxMap;
+    typedef SyntaxMap::iterator SyntaxMapIter;
 
-        /** @brief Conteneur a proprement parler */
-        SyntaxMap container;
+    /** @brief Conteneur a proprement parler */
+    SyntaxMap container;
 
-    protected:
-        /**
-         * @brief Convertisseur du conteneur en dictionnaire python
-         * @return un dict python contenant la syntaxe valorisable par l'objet CommandSyntax
-         * @todo Probleme de refcounting : ajouter un objet wrapper qui se chargera de la destruction
-         * @todo seul CommandSyntaxCython et le cython devrait pouvoir appeler cette fonction ?
-         */
-        PyObject* convertToPythonDictionnary( PyObject* returnDict = NULL );
+protected:
+    /**
+        * @brief Convertisseur du conteneur en dictionnaire python
+        * @return un dict python contenant la syntaxe valorisable par l'objet CommandSyntax
+        * @todo Probleme de refcounting : ajouter un objet wrapper qui se chargera de la destruction
+        * @todo seul CommandSyntaxCython et le cython devrait pouvoir appeler cette fonction ?
+        */
+    PyObject* convertToPythonDictionnary( PyObject* returnDict = NULL );
 
-    private:
-        friend class CommandSyntaxCython;
-        friend class MaterialOnMeshInstance;
+private:
+    friend class CommandSyntaxCython;
+    friend class MaterialOnMeshInstance;
+    friend SyntaxMapContainer operator+( const SyntaxMapContainer&, const SyntaxMapContainer& );
 };
+
+
+SyntaxMapContainer operator+( const SyntaxMapContainer& toAdd1, const SyntaxMapContainer& toAdd2 );
 
 #endif /* SYNTAXDICTIONARY_H_ */
