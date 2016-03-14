@@ -52,5 +52,21 @@ mecaStatique.setSupportModel( monModel )
 mecaStatique.setMaterialOnMesh( affectMat )
 mecaStatique.setLinearSolver( monSolver )
 
+temps = [0., 0.5, 1.]
+timeList = code_aster.Studies.TimeStepManager()
+timeList.setTimeList( temps )
+
+error1 = code_aster.Studies.ConvergenceError()
+action1 = code_aster.Studies.SubstepingOnError()
+action1.setAutomatic( False )
+error1.setAction( action1 )
+timeList.addErrorManager( error1 )
+#error2 = code_aster.Studies.ContactDetectionError()
+#action2 = code_aster.Studies.SubstepingOnContact()
+#error2.setAction( action2 )
+#timeList.addErrorManager( error2 )
+timeList.build()
+timeList.debugPrint( 8 )
+
 resu = mecaStatique.execute()
 resu.debugPrint( 8 )
