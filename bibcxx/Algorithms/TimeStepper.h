@@ -143,6 +143,15 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
         {
             return _values->size();
         };
+
+        /**
+         * @brief Fonction permettant de mettre a jour le stepper
+         * @return true si tout s'est bien passé
+         */
+        bool update() const
+        {
+            return _values->updateValuePointer();
+        };
 };
 
 
