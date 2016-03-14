@@ -62,6 +62,8 @@ bool LinearSolverInstance::build()
     dict1.container[ "PRETRAITEMENTS" ] = "AUTO";
     dict1.container[ "ELIM_LAGR" ] = "LAGR2";
     dict1.container[ "GESTION_MEMOIRE" ] = "AUTO";
+    dict1.container[ "LOW_RANK_TAILLE" ] = -1.0;
+    dict1.container[ "LOW_RANK_SEUIL" ] = 0.0;
     listeSolver.push_back( dict1 );
     dict.container[ "SOLVEUR" ] = listeSolver;
     cmdSt.define( dict );

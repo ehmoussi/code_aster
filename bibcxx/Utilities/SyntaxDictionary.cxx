@@ -108,3 +108,11 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
     }
     return returnDict;
 };
+
+SyntaxMapContainer operator+( const SyntaxMapContainer& toAdd1, const SyntaxMapContainer& toAdd2 )
+{
+    SyntaxMapContainer retour;
+    retour.container.insert( toAdd1.container.begin(), toAdd1.container.end() );
+    retour.container.insert( toAdd2.container.begin(), toAdd2.container.end() );
+    return retour;
+};

@@ -173,11 +173,10 @@ void DEFSS(RCMFMC,rcmfmc, const char*, STRING_SIZE, const char*, STRING_SIZE);
 #define CALL_CRESOL_WRAP(a, b) CALLSS(CRESOL_WRAP, cresol_wrap, a, b)
 void DEFSS(CRESOL_WRAP,cresol_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE);
 
-#define CALL_NUMERO_WRAP(a, b, c, d, e, f, g) CALLSSSSSSS(NUMERO_WRAP, numero_wrap, a, b, c, d, e, f, g)
-void DEFSSSSSSS(NUMERO_WRAP,numero_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
-                                         const char*, STRING_SIZE, const char*, STRING_SIZE,
-                                         const char*, STRING_SIZE, const char*, STRING_SIZE,
-                                         const char*, STRING_SIZE);
+#define CALL_NUMERO_WRAP(a, b, c, d, e, f) CALLSSSSSS(NUMERO_WRAP, numero_wrap, a, b, c, d, e, f)
+void DEFSSSSSS(NUMERO_WRAP,numero_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                        const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                        const char*, STRING_SIZE, const char*, STRING_SIZE);
 
 #define CALL_GNOMSD(a, b, c, d) CALLSSPP(GNOMSD, gnomsd, a, b, c, d)
 void DEFSSPP(GNOMSD,gnomsd, const char*, STRING_SIZE, const char*, STRING_SIZE, INTEGER *, INTEGER *);
@@ -185,8 +184,8 @@ void DEFSSPP(GNOMSD,gnomsd, const char*, STRING_SIZE, const char*, STRING_SIZE, 
 #define CALL_NMDOCH_WRAP(a, b, c) CALLSPS(NMDOCH_WRAP, nmdoch_wrap, a, b, c)
 void DEFSPS(NMDOCH_WRAP,nmdoch_wrap, const char*, STRING_SIZE, INTEGER *, const char*, STRING_SIZE);
 
-#define CALL_ASMATR(a, b, c, d, e, f, g, h, i, j) CALLPSSSSSSSPS(ASMATR, asmatr, a, b, c, d, e, f, g, h, i, j)
-void DEFPSSSSSSSPS(ASMATR,asmatr, INTEGER *, const char*, STRING_SIZE, const char*, STRING_SIZE,
+#define CALL_ASMATR(a, b, c, d, e, f, g, h, i) CALLPSSSSSSPS(ASMATR, asmatr, a, b, c, d, e, f, g, h, i)
+void DEFPSSSSSSPS(ASMATR,asmatr, INTEGER *, const char*, STRING_SIZE,
                                   const char*, STRING_SIZE, const char*, STRING_SIZE,
                                   const char*, STRING_SIZE, const char*, STRING_SIZE,
                                   const char*, STRING_SIZE, INTEGER *, const char*, STRING_SIZE);
