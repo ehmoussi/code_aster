@@ -62,8 +62,8 @@ bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
         jvListOfLoads->updateValuePointer();
         long nbLoad = jvListOfLoads->size();
 
-        CALL_NUMERO_WRAP( getName().c_str(), _linearSolver->getName().c_str(), "VG", " ",
-                          " ", _supportModel->getName().c_str(), _listOfLoads->getName().c_str() );
+        CALL_NUMERO_WRAP( getName().c_str(), "VG", " ", " ",
+                          _supportModel->getName().c_str(), _listOfLoads->getName().c_str() );
     }
     else if ( ! _supportMatrix.use_count() == 0 )
     {
