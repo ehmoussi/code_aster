@@ -60,7 +60,7 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
 !-----------------------------------------------------------------------
 ! person_in_charge: jacques.pellet at edf.fr
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -291,15 +291,15 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
         call asmpi_info(rank=mrank, size=msize)
         rang = to_aster_int(mrank)
         nbproc = to_aster_int(msize)
-        call jeveuo(partit//'.PRTI', 'L', vi=prti)
-        if (prti(1) .ne. nbproc) then
-            vali(1)=prti(1)
-            vali(2)=nbproc
-            call utmess('F', 'CALCUL_35', ni=2, vali=vali)
-        endif
         call jeveuo(partit//'.PRTK', 'L', vk24=prtk)
         ldgrel=prtk(1).eq.'GROUP_ELEM'
         if (.not.ldgrel) then
+            call jeveuo(partit//'.PRTI', 'L', vi=prti)
+            if (prti(1) .gt. nbproc) then
+                vali(1)=prti(1)
+                vali(2)=nbproc
+                call utmess('F', 'CALCUL_35', ni=2, vali=vali)
+            endif
             call jeveuo(partit//'.NUPROC.MAILLE', 'L', jnumsd)
         endif
     endif

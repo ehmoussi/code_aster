@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -267,6 +267,8 @@ Conseils :
 Erreur utilisateur concernant le parallélisme des calculs élémentaires :
   La partition des éléments du modèle a été faite sur %(i1)d processeurs.
   Mais maintenant, le nombre de processeurs disponibles est de %(i2)d.
+  Certains éléments ne seront pas calculés, ce qui va entraîner des 
+  résultats faux.
 
 Conseil :
   Il faut utiliser la commande MODI_MODELE pour modifier la partition du modèle
