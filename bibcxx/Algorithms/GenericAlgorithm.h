@@ -27,6 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <iostream>
+#include "astercxx.h"
 
 #include "Algorithms/AlgorithmException.h"
 #include "Algorithms/GenericUnitaryAlgorithm.h"
@@ -39,36 +40,38 @@
 template< class GenericUnitaryAlgorithm >
 class Algorithm
 {
-    public:
-        /** @typedef Définition du Stepper */
-        typedef typename GenericUnitaryAlgorithm::AlgorithmStepper Stepper;
+public:
+    /** @typedef Définition du Stepper */
+    typedef typename GenericUnitaryAlgorithm::AlgorithmStepper Stepper;
 
-        /**
-         * @brief Réalisation de l'algorithme
-         * @param timeStep Objet sur lequel il faut itérer
-         * @param algo Algorithme à réaliser à chaque itération
-         */
-        static bool runAllStepsOverAlgorithm( Stepper& timeStep, GenericUnitaryAlgorithm& algo )
+    /**
+     * @brief Réalisation de l'algorithme
+     * @param timeStep Objet sur lequel il faut itérer
+     * @param algo Algorithme à réaliser à chaque itération
+     */
+    static bool runAllStepsOverAlgorithm( Stepper& timeStep, GenericUnitaryAlgorithm& algo )
+        throw ( std::runtime_error )
+    {
+        if ( ! timeStep.update() ) throw std::runtime_error( "Error with the Stepper" );
+
+        typedef typename Stepper::const_iterator it;
+        for( it curVal = timeStep.begin();
+            curVal != timeStep.end();
+            ++curVal )
         {
-            timeStep.update();
-            typedef typename Stepper::const_iterator it;
-            for( it curVal = timeStep.begin();
-                curVal != timeStep.end();
-                ++curVal )
+            try
             {
-                try
-                {
-                    algo.prepareStep( curVal );
-                    algo.oneStep();
-                }
-                catch( AlgoException& exc )
-                {
-                    std::cout << exc.what() << std::endl;
-                    break;
-                }
+                algo.prepareStep( curVal );
+                algo.oneStep();
             }
-            return true;
-        };
+            catch( AlgoException& exc )
+            {
+                std::cout << exc.what() << std::endl;
+                break;
+            }
+        }
+        return true;
+    };
 };
 
 #endif /* GENERICALGORITHM_H_ */
