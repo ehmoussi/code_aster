@@ -31,10 +31,11 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructure/DataStructure.h"
 #include "Studies/FailureConvergenceManager.h"
+#include "Utilities/GenericParameter.h"
 
 /**
  * @class TimeStepManagerInstance
- * @brief Cette classe permet de definir une étude au sens Aster
+ * @brief Cette classe permet de definir un gestionnaire de pas de temps
  * @author Nicolas Sellenet
  * @todo ajouter les mots cles manquants
  */
@@ -55,11 +56,17 @@ private:
 
     /** @brief Liste de pas de temps donnée par l'utilisateur */
     VectorDouble       _timeListVector;
-    /** @brief Liste de pas de temps donnée par l'utilisateur */
+    /** @brief Gestion automatique du pas de temps */
     bool               _isAutomatic;
     /** @brief Liste de comportement en cas d'erreurs */
     ListConvError      _listErrorManager;
     bool               _isEmpty;
+    /** @brief Pas de temps mini */
+    GenParam           _minimumTS;
+    /** @brief Pas de temps maxi */
+    GenParam           _maximumTS;
+    /** @brief Nombre maxi de pas de temps */
+    int                _nbMaxiOfTS;
 
 public:
     /**
@@ -73,7 +80,10 @@ public:
         _charFailureManagerInfo( JeveuxVectorChar16( getName() + ".ECHE.INFOK" ) ),
         _doubleFailureManagerInfo2( JeveuxVectorDouble( getName() + ".ECHE.SUBDR" ) ),
         _isAutomatic( false ),
-        _isEmpty( true )
+        _isEmpty( true ),
+        _minimumTS( "PAS_MINI" ),
+        _maximumTS( "PAS_MAXI" ),
+        _nbMaxiOfTS( 1000000 )
     {};
 
     ~TimeStepManagerInstance()
@@ -103,6 +113,33 @@ public:
     {
         _isAutomatic = isAuto;
         if ( _isAutomatic ) throw std::runtime_error( "Not yet implemented" );
+    };
+
+    /**
+     * @brief Function de définition du nombre maxi de pas
+     * @param max nombre maxi de pas
+     */
+    void setMaximumNumberOfTimeStep( const int& max )
+    {
+        _maximumTS = max;
+    };
+
+    /**
+     * @brief Function de définition du pas de temps maxi
+     * @param max pas de temps maxi
+     */
+    void setMaximumTimeStep( const double& max )
+    {
+        _maximumTS = max;
+    };
+
+    /**
+     * @brief Function de définition du pas de temps mini
+     * @param min pas de temps mini
+     */
+    void setMinimumTimeStep( const double& min )
+    {
+        _minimumTS = min;
     };
 
     /**

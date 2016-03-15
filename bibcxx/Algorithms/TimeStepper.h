@@ -130,6 +130,15 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
         };
 
         /**
+         * @brief Fonction permettant de mettre a jour le stepper
+         * @return true si tout s'est bien passé
+         */
+        bool operator=( const VectorDouble& vecDouble ) throw ( std::runtime_error )
+        {
+            return setValues( vecDouble );
+        };
+
+        /**
          * @brief Fonction permettant de fixer la liste de pas de temps
          * @param values Liste des valeurs
          */

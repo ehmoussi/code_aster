@@ -90,16 +90,20 @@ cdef class GenericSubstepingOnError( GenericAction ):
                 new GenericSubstepingOnErrorPtr ( new GenericSubstepingOnErrorInstance() )
 
     def setAutomatic( self, const bint& isAuto ):
+        """Set the management of time step splitting (automatic or not)"""
         (<GenericSubstepingOnErrorInstance* >self.getInstance()).setAutomatic( isAuto )
 
-    def setLevel( self, int isAuto ):
-        (<GenericSubstepingOnErrorInstance* >self.getInstance()).setLevel( isAuto )
+    def setLevel( self, int level ):
+        """Set the level of splitting"""
+        (<GenericSubstepingOnErrorInstance* >self.getInstance()).setLevel( level )
 
-    def setMinimumStep( self, double isAuto ):
-        (<GenericSubstepingOnErrorInstance* >self.getInstance()).setMinimumStep( isAuto )
+    def setMinimumStep( self, double minimum ):
+        """Set the minimum time step"""
+        (<GenericSubstepingOnErrorInstance* >self.getInstance()).setMinimumStep( minimum )
 
-    def setStep( self, double isAuto ):
-        (<GenericSubstepingOnErrorInstance* >self.getInstance()).setStep( isAuto )
+    def setStep( self, int number ):
+        """Set the number of splitting of time step"""
+        (<GenericSubstepingOnErrorInstance* >self.getInstance()).setStep( number )
 
 
 #### SubstepingOnError
@@ -125,8 +129,9 @@ cdef class AddIterationOnError( GenericSubstepingOnError ):
             self._cptr = <GenericActionPtr *>\
                 new AddIterationOnErrorPtr ( new AddIterationOnErrorInstance() )
 
-    def setPourcentageOfAddedIteration( self, double isAuto ):
-        (<AddIterationOnErrorInstance* >self.getInstance()).setPourcentageOfAddedIteration( isAuto )
+    def setPourcentageOfAddedIteration( self, double pcent ):
+        """Set the pourcentage of added iteration"""
+        (<AddIterationOnErrorInstance* >self.getInstance()).setPourcentageOfAddedIteration( pcent )
 
 
 #### SubstepingOnContact
@@ -140,11 +145,13 @@ cdef class SubstepingOnContact( GenericAction ):
             self._cptr = <GenericActionPtr *>\
                 new SubstepingOnContactPtr ( new SubstepingOnContactInstance() )
 
-    def setSubstepDuration( self, double isAuto ):
-        (<SubstepingOnContactInstance* >self.getInstance()).setSubstepDuration( isAuto )
+    def setSubstepDuration( self, double duration ):
+        """Set the duration of substeping"""
+        (<SubstepingOnContactInstance* >self.getInstance()).setSubstepDuration( duration )
 
-    def setTimeStepSubstep( self, double isAuto ):
-        (<SubstepingOnContactInstance* >self.getInstance()).setTimeStepSubstep( isAuto )
+    def setTimeStepSubstep( self, double time ):
+        """Set the time of substeping"""
+        (<SubstepingOnContactInstance* >self.getInstance()).setTimeStepSubstep( time )
 
 
 #### PilotageError
@@ -170,8 +177,9 @@ cdef class ChangePenalisationOnError( GenericAction ):
             self._cptr = <GenericActionPtr *>\
                 new ChangePenalisationOnErrorPtr ( new ChangePenalisationOnErrorInstance() )
 
-    def setMaximumPenalisationCoefficient( self, double isAuto ):
-        (<ChangePenalisationOnErrorInstance* >self.getInstance()).setMaximumPenalisationCoefficient( isAuto )
+    def setMaximumPenalisationCoefficient( self, double coefMax ):
+        """Set the maximum penalisation coefficient"""
+        (<ChangePenalisationOnErrorInstance* >self.getInstance()).setMaximumPenalisationCoefficient( coefMax )
 
 
 #### GenericConvergenceError
@@ -206,6 +214,7 @@ cdef class GenericConvergenceError:
         return self._cptr.get()
 
     def setAction( self, GenericAction action ):
+        """Set action on error"""
         self.getInstance().setAction( deref( action.getPtr() ) )
 
 #### ConvergenceError
@@ -242,6 +251,7 @@ cdef class IncrementOverboundError( GenericConvergenceError ):
                 new IncrementOverboundErrorPtr ( new IncrementOverboundErrorInstance() )
 
     def setValueToInspect( self, value, fieldName, component ):
+        """Set value increment to inspect"""
         (<IncrementOverboundErrorInstance* >self.getInstance()).setValueToInspect( value,
                                                                                    fieldName,
                                                                                    component )
@@ -269,6 +279,7 @@ cdef class InterpenetrationError( GenericConvergenceError ):
                 new InterpenetrationErrorPtr ( new InterpenetrationErrorInstance() )
 
     def setMaximalPenetration( self, value ):
+        """Set the value of maximal interpenetration"""
         (<InterpenetrationErrorInstance* >self.getInstance()).setMaximalPenetration( value )
 
 #### InstabilityError
