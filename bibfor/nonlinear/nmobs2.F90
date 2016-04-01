@@ -16,7 +16,7 @@ implicit none
 #include "asterfort/sdmpic.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -38,7 +38,7 @@ implicit none
     character(len=19), intent(in) :: sd_obsv
     character(len=19), intent(in) :: tabl_name
     real(kind=8), intent(in) :: time
-    character(len=80), intent(in) :: title
+    character(len=16), intent(in) :: title
     character(len=19), intent(in) :: field
     character(len=24), intent(in) :: field_type
     character(len=24), intent(in) :: field_s

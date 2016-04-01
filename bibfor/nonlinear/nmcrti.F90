@@ -1,7 +1,25 @@
-subroutine nmcrti(sdtime)
+subroutine nmcrti(list_func_acti, result, ds_contact, ds_measure)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterfort/assert.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/cfdisl.h"
+#include "asterfort/isfonc.h"
+#include "asterfort/ulopen.h"
+#include "asterfort/uttcpu.h"
+#include "asterfort/impfok.h"
+#include "asterfort/ActivateDevice.h"
+#include "asterfort/CreateTable.h"
+#include "asterfort/SetTablePara.h"
+#include "asterfort/SetTableColumn.h"
+#include "asterfort/ComputeTableHead.h"
+#include "asterfort/ComputeTableWidth.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -18,91 +36,178 @@ subroutine nmcrti(sdtime)
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "jeveux.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmtime.h"
-#include "asterfort/wkvect.h"
-    character(len=24) :: sdtime
+    integer, intent(in) :: list_func_acti(*)
+    character(len=8), intent(in) :: result
+    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Measure), intent(inout) :: ds_measure
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME - INITIALISATIONS)
+! MECA_NON_LINE - Measure and statistics management
 !
-! CREATION DE LA SD TIMER
+! Initializations for measure and statistics management
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  list_func_acti   : list of active functionnalities
+! In  result           : name of results datastructure
+! In  ds_contact       : datastructure for contact management
+! IO  ds_measure       : datastructure for measure and statistics management
 !
-! IN  SDTIME : SD TIMER
-!
-!
-!
-!
-    integer :: nbtime, nbmesu
-    parameter    (nbtime=6,nbmesu=17)
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: timpas, timite, timarc, timpst
-    integer :: jtpas, jtite, jtarc, jtpst
-    character(len=24) :: timdeb
-    integer :: jtdeb
-    character(len=24) :: timtm1, timtm2
-    integer :: jtmp1, jtmp2
-    character(len=24) :: timet, timep, timen
-    integer :: jtimet, jtimep, jtimen
+    integer :: i_timer, nb_timer, i_device, i_col, line_width, nb_cols_active
+    character(len=24) :: cpu_name
+    character(len=512) :: table_head(3)
+    aster_logical :: l_line_search
+    aster_logical :: l_cont, l_fric, l_cont_disc, l_cont_cont
+    aster_logical :: l_loop_cont, l_loop_fric, l_loop_geom, l_newt_geom
+    aster_logical :: l_all_verif, l_device_acti
+    type(NL_DS_Table) :: table
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CREATION SD TIMER'
+        write (ifm,*) '<MECANONLINE> ... Initializations for measure and statistics management'
     endif
 !
-! --- TIMERS: PAS/ITERATION/ARCHIVAGE/AUTRES
+! - Get active functionnalities
 !
-    timtm1 = sdtime(1:19)//'.TMP1'
-    timtm2 = sdtime(1:19)//'.TMP2'
-    timpas = sdtime(1:19)//'.TPAS'
-    timite = sdtime(1:19)//'.TITE'
-    timarc = sdtime(1:19)//'.TARC'
-    timpst = sdtime(1:19)//'.TPST'
-    call wkvect(timtm1, 'V V R', 4, jtmp1)
-    call wkvect(timtm2, 'V V R', 4, jtmp2)
-    call wkvect(timpas, 'V V R', 4, jtpas)
-    call wkvect(timite, 'V V R', 4, jtite)
-    call wkvect(timarc, 'V V R', 4, jtarc)
-    call wkvect(timpst, 'V V R', 4, jtpst)
+    l_all_verif   = .false.
+    l_fric        = .false.
+    l_line_search = isfonc(list_func_acti,'RECH_LINE')
+    l_cont        = isfonc(list_func_acti, 'CONTACT' )
+    l_cont_disc   = isfonc(list_func_acti, 'CONT_DISCRET')
+    l_cont_cont   = isfonc(list_func_acti, 'CONT_CONTINU')
+    l_loop_cont   = isfonc(list_func_acti, 'BOUCLE_EXT_CONT')
+    l_loop_fric   = isfonc(list_func_acti, 'BOUCLE_EXT_FROT')
+    l_loop_geom   = isfonc(list_func_acti, 'BOUCLE_EXT_GEOM')
+    l_newt_geom   = isfonc(list_func_acti, 'GEOM_NEWTON')
+    if (l_cont) then
+        l_all_verif = cfdisl(ds_contact%sdcont_defi, 'ALL_VERIF')    
+        l_fric      = cfdisl(ds_contact%sdcont_defi, 'FROTTEMENT')
+    endif
 !
-! --- STOCKAGE TEMPS INITIAL POUR LES TIMERS
+! - Activate devices (standard)
 !
-    timdeb = sdtime(1:19)//'.TDEB'
-    call wkvect(timdeb, 'V V R', nbtime, jtdeb)
+    call ActivateDevice(ds_measure, 'Compute')
+    call ActivateDevice(ds_measure, 'Time_Step')
+    call ActivateDevice(ds_measure, 'Newt_Iter')
+    call ActivateDevice(ds_measure, 'Integrate')
+    call ActivateDevice(ds_measure, 'Matr_Asse')
+    call ActivateDevice(ds_measure, 'Factor')
+    call ActivateDevice(ds_measure, '2nd_Member')
+    call ActivateDevice(ds_measure, 'Solve')
+    call ActivateDevice(ds_measure, 'Store')
+    call ActivateDevice(ds_measure, 'Post')
+    call ActivateDevice(ds_measure, 'Lost_Time')
+    call ActivateDevice(ds_measure, 'Other')
+    if (l_line_search) then
+        call ActivateDevice(ds_measure, 'LineSearch')
+    endif
 !
-! --- STOCKAGE MESURES - ITERATION DE NEWTON
+! - Activate devices for contact (10)
 !
-    timen = sdtime(1:19)//'.TIMN'
-    call wkvect(timen, 'V V R', nbmesu, jtimen)
+    if (l_cont .and. (.not.l_all_verif)) then
+        call ActivateDevice(ds_measure, 'Cont_NCont')
+        if (l_fric) then
+            call ActivateDevice(ds_measure, 'Cont_NFric')
+        endif
+        if (l_loop_geom .or. l_newt_geom) then
+            call ActivateDevice(ds_measure, 'Cont_Geom')
+        endif
+        if (l_cont_disc) then
+            call ActivateDevice(ds_measure, 'Cont_Algo')
+        endif
+        if (l_cont_cont) then
+            call ActivateDevice(ds_measure, 'Cont_Prep')
+            call ActivateDevice(ds_measure, 'Cont_Elem')
+            call ActivateDevice(ds_measure, 'Cont_Cycl1')
+            call ActivateDevice(ds_measure, 'Cont_Cycl2')
+            call ActivateDevice(ds_measure, 'Cont_Cycl3')
+            call ActivateDevice(ds_measure, 'Cont_Cycl4')
+        endif
+    endif
 !
-! --- STOCKAGE MESURES - PAS DE TEMPS
+! - Reset all timers
 !
-    timep = sdtime(1:19)//'.TIMP'
-    call wkvect(timep, 'V V R', nbmesu, jtimep)
+    nb_timer  = ds_measure%nb_timer
+    do i_timer = 1, nb_timer
+        cpu_name  = ds_measure%timer(i_timer)%cpu_name
+        call uttcpu(cpu_name, 'INIT', ' ')
+        ds_measure%timer(i_timer)%time_init = 0.d0
+    end do
 !
-! --- STOCKAGE MESURES - TOTAL TRANSITOIRE
+! - Create table
 !
-    timet = sdtime(1:19)//'.TIMT'
-    call wkvect(timet, 'V V R', nbmesu, jtimet)
+    if (ds_measure%l_table .or. ds_measure%table%l_csv) then
 !
-! --- INITIALISATION DE TOUS LES TIMERS
+! ----- Get table
 !
-    call nmtime(sdtime, 'INI', 'ALL')
+        table = ds_measure%table
 !
-    call jedema()
+! ----- First column: time
+!
+        i_col = 1
+        table%l_cols_acti(i_col) = .true._1
+        ASSERT(table%cols(i_col)%name(1:4) .eq. 'INST')
+!
+! ----- Loop on active devices to activate columns
+!
+        do i_device = 1, ds_measure%nb_device
+            l_device_acti = ds_measure%l_device_acti(i_device)
+            if (l_device_acti) then
+                i_col = ds_measure%indx_cols(2*(i_device-1)+1)
+                if (i_col .ne. 0) then
+                    table%l_cols_acti(i_col) = .true._1
+                    ASSERT(table%cols(i_col)%name(1:5) .eq. 'Time_')
+                endif
+                i_col = ds_measure%indx_cols(2*(i_device-1)+2)
+                if (i_col .ne. 0) then
+                    table%l_cols_acti(i_col) = .true._1
+                    ASSERT(table%cols(i_col)%name(1:6) .eq. 'Count_')
+                endif
+            endif   
+        end do
+!
+! ----- Activate state and memory
+!
+        if (table%l_csv) then
+            call SetTableColumn(table, 'State' , flag_acti_ = .true._1)
+            call SetTableColumn(table, 'Memory' , flag_acti_ = .true._1)
+        endif
+!
+! ----- Set table
+!
+        ds_measure%table  = table
+!
+! ----- Create list of parameters
+!
+        call SetTablePara(table)
+!
+! ----- Create table in results datastructure
+!
+        call CreateTable(result, table)
+!
+! ----- Prepare table in output CSV file
+!
+        call ComputeTableWidth(table, line_width, nb_cols_active)
+        table%width        = line_width
+!
+! ----- Print table head in output CSV file
+!
+        if (table%l_csv) then
+            call ulopen(table%unit_csv, ' ', ' ', 'NEW', 'O')
+            call ComputeTableHead(table, ',', table_head)
+            call impfok(table_head(1), table%width, table%unit_csv)
+            call impfok(table_head(2), table%width, table%unit_csv)
+        endif
+!
+! ----- Set table
+!
+        ds_measure%table  = table
+    endif
+!
 end subroutine

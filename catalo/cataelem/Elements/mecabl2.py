@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -29,6 +29,9 @@ from cataelem.Options.options import OP
 # Modes locaux :
 #----------------
 
+CCAORIE  = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
+    components=('ALPHA','BETA','GAMMA',))
+
 
 CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
     components=('RELCOM','DEFORM','INCELA',))
@@ -51,10 +54,11 @@ CFORCER  = LocatedComponents(phys=PHY.FORC_R, type='ELEM',
     components=('FX','FY','FZ','MX','MY',
           'MZ','REP',))
 
+CGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELEM',
+    components=('X','Y','Z',))
 
 NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
     components=('X','Y','Z',))
-
 
 EGGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
     components=('X','Y','Z',))
@@ -179,6 +183,16 @@ class MECABL2(Element):
             para_out=((SP.PEFGER, EEFGEGA), ),
         ),
 
+        OP.EFGE_ELNO(te=185,
+            para_in=((SP.PCACABL, LC.CCACABL), (OP.EFGE_ELNO.PCAORIE, CCAORIE),
+                     (OP.EFGE_ELNO.PCONTRR, EEFGEGA), (SP.PDEPLAR, DDL_MECA),
+                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (SP.PNONLIN, LC.ENONLIN), (OP.EFGE_ELNO.PVARCPR, LC.ZVARCPG),
+                     (SP.PVARCRR, LC.ZVARCPG), ),
+            para_out=((SP.PEFFORC, EEFGENC), (OP.EFGE_ELNO.PEFFORR, EEFGENO),
+                     ),
+        ),
+
         OP.FORC_NODA(te=164,
             para_in=((OP.FORC_NODA.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
@@ -250,6 +264,12 @@ class MECABL2(Element):
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
+        OP.REPERE_LOCAL(te=135,
+            para_in=((OP.REPERE_LOCAL.PCAORIE, CCAORIE), ),
+            para_out=((SP.PREPLO1, CGEOMER), (SP.PREPLO2, CGEOMER),
+                     (SP.PREPLO3, CGEOMER), ),
+        ),
+
         OP.RIGI_MECA(te=98,
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
@@ -282,6 +302,10 @@ class MECABL2(Element):
                      (OP.TOU_INI_ELGA.PNEUT_F, EGNEUT_F), (OP.TOU_INI_ELGA.PNEUT_R, EGNEUT_R),
                      (OP.TOU_INI_ELGA.PSIEF_R, EEFGEGA), (OP.TOU_INI_ELGA.PVARI_R, ZVARIPG),
                      ),
+        ),
+
+        OP.TOU_INI_ELEM(te=99,
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, CGEOMER), ),
         ),
 
         OP.TOU_INI_ELNO(te=99,

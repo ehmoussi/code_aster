@@ -1,7 +1,7 @@
-subroutine nmdata(model      , mesh    , mate      , carele, compor  ,&
-                  lischa     , solveu  , ds_conv   , carcri, sddyna  ,&
-                  sdpost     , sderro  , sdener    , sdcriq, ds_print,&
-                  ds_algopara, ds_inout, ds_contact)
+subroutine nmdata(model      , mesh    , mate      , carele    , compor  ,&
+                  lischa     , solveu  , ds_conv   , carcri    , sddyna  ,&
+                  sdpost     , sderro  , ds_energy , sdcriq    , ds_print,&
+                  ds_algopara, ds_inout, ds_contact, ds_measure)
 !
 use NonLin_Datastructure_type
 !
@@ -10,7 +10,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/getres.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/eninit.h"
+#include "asterfort/ReadEnergy.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/getvid.h"
 #include "asterfort/ndcrdy.h"
@@ -21,6 +21,7 @@ implicit none
 #include "asterfort/ReadContact.h"
 #include "asterfort/ReadPrint.h"
 #include "asterfort/ReadInOut.h"
+#include "asterfort/ReadMeasure.h"
 #include "asterfort/GetIOField.h"
 #include "asterfort/nmdomt.h"
 #include "asterfort/nmdomt_ls.h"
@@ -30,7 +31,7 @@ implicit none
 #include "asterfort/nmlect.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -47,7 +48,7 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    character(len=19) :: lischa, solveu, sddyna, sdpost, sdener
+    character(len=19) :: lischa, solveu, sddyna, sdpost
     character(len=24) :: mate, carele, compor
     character(len=24) :: carcri, sderro, sdcriq
     character(len=*), intent(out) :: model
@@ -57,6 +58,8 @@ implicit none
     type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
     type(NL_DS_InOut), intent(inout) :: ds_inout
     type(NL_DS_Contact), intent(inout) :: ds_contact
+    type(NL_DS_Energy), intent(inout) :: ds_energy
+    type(NL_DS_Measure), intent(inout) :: ds_measure
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,12 +83,13 @@ implicit none
 ! OUT SDPOST : SD POUR POST-TRAITEMENTS (CRIT_STAB ET MODE_VIBR)
 ! OUT SDERRO : SD ERREUR
 ! OUT SDCRIQ : SD CRITERE QUALITE
-! OUT SDENER : SD ENERGIES
+! IO  ds_energy        : datastructure for energy management
 ! IO  ds_print         : datastructure for printing parameters
 ! IO  ds_conv          : datastructure for convergence management
 ! IO  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_inout         : datastructure for input/output management
 ! IO  ds_contact       : datastructure for contact management
+! IO  ds_measure       : datastructure for measure and statistics management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -155,9 +159,13 @@ implicit none
 !
     call ReadContact(ds_contact)
 !
-! --- LECTURE INFOS ENERGIE
+! - Read parameters for energy management
 !
-    call eninit(sdener)
+    call ReadEnergy(ds_energy)
+!
+! - Read parameters for measure and statistic management
+!
+    call ReadMeasure(ds_measure)
 !
 ! --- LECTURE DES DONNEES GESTION ALGORITHME
 !

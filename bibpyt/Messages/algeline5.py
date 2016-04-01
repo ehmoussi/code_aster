@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -24,14 +24,18 @@ cata_msg = {
  La somme de matrices distribuées n'ayant pas le même profil est impossible
 """),
 
+    2: _(u"""
+ La matrice est symétrique.
+"""),
+    3: _(u"""
+ La matrice n'est pas symétrique.
+"""),
+
     4: _(u"""
  erreur LAPACK (ou BLAS) au niveau de la routine  %(k1)s
   le paramètre numéro  %(i1)d
   n'a pas une valeur cohérente %(i2)d
 """),
-
-
-
 
 
 

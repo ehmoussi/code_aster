@@ -1,7 +1,7 @@
 #
 # TITRE    ESSAI TRIAXIAL NON DRAINE AVEC LA LOI DE HUJEUX
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -164,7 +164,7 @@ COEF0=DEFI_FONCTION(NOM_PARA='INST',
 
 # ---- premier chargement isotrope en elastique jusqu'a 50kPa
 U0M=STAT_NON_LINE(MODELE    = MODELE,
-                 CHAM_MATER = CHMAT0,
+                 CHAM_MATER = CHMAT0,NEWTON=_F(REAC_ITER=0),
                  EXCIT=(_F(CHARGE    = CHAR_U1,
                            FONC_MULT = COEF0),
                         _F(CHARGE    = CHAR_U2,

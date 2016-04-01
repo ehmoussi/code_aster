@@ -10,7 +10,7 @@ implicit none
 #include "asterfort/ComputeTableHead.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -41,7 +41,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=255) :: sep_line, table_head(3)
+    character(len=512) :: sep_line, table_head(3)
     type(NL_DS_Table) :: table_cvg
     aster_logical :: l_tcvg_csv
     integer :: line_width, mesg_unit, tcvg_unit

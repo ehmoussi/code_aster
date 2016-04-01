@@ -26,7 +26,7 @@ subroutine ajlipa(modelz, base)
     character(len=*) :: modelz
     character(len=1) :: base
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -204,12 +204,7 @@ subroutine ajlipa(modelz, base)
             call utmess('F', 'PARTITION1_93', ni=2, vali=vali)
         endif
     else if (kdis.eq.'GROUP_ELEM') then
-!       IL FAUT AU MOINS UN GREL PAR PROC
-        if (nbgrel .lt. nbproc) then
-            vali(1) = nbgrel
-            vali(2) = nbproc
-            call utmess('F', 'PARTITION1_97', ni=2, vali=vali)
-        endif
+!       pas de contrainte particuliere ...
     else
         ASSERT(.false.)
     endif

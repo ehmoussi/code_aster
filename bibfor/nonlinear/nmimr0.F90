@@ -5,10 +5,10 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/SetCol.h"
+#include "asterfort/SetTableColumn.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -47,7 +47,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i_col, nb_cols
-    character(len=9) :: col_name
+    character(len=24) :: col_name
     type(NL_DS_Table) :: table_cvg
 !
 ! --------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ implicit none
         if (table_cvg%l_cols_acti(i_col)) then
             col_name = table_cvg%cols(i_col)%name
             if (loop_name .eq. col_name(1:4)) then
-                call SetCol(table_cvg, name_ = col_name, flag_affe_ = .false._1)
+                call SetTableColumn(table_cvg, name_ = col_name, flag_affe_ = .false._1)
             endif
         endif
     end do
