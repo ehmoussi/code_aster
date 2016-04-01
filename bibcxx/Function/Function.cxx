@@ -8,11 +8,16 @@
 #include "Function/Function.h"
 
 
-FunctionInstance::FunctionInstance( const std::string jeveuxName=getNewResultObjectName()):
+FunctionInstance::FunctionInstance( const std::string jeveuxName ):
     DataStructure( jeveuxName, "FONCTION" ),
     _jeveuxName( jeveuxName ),
     _property( JeveuxVectorChar16( jeveuxName + ".PROL           " ) ),
     _value( JeveuxVectorDouble( jeveuxName + ".VALE           " ) )
+{
+}
+
+FunctionInstance::FunctionInstance() :
+    FunctionInstance::FunctionInstance( getNewResultObjectName() )
 {
     // Create Jeveux vector ".PROL"
     _property->allocate( Permanent, 6 );
