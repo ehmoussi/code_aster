@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016 EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -69,9 +69,9 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
            CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
            CHARGE          =SIMP(statut='f',typ=char_meca),
 
-           b_cara_elem        =BLOC(condition="CARA_ELEM != None", fr=tr("impression des reperes locaux."),
-              REPERE_LOCAL    =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON")),
-              b_reploc        =BLOC(condition="REPERE_LOCAL == 'OUI'", fr=tr("impression des reperes locaux."),
+           b_cara_elem        =BLOC(condition="CARA_ELEM != None", fr=tr("impression des repères locaux."),
+              REPERE_LOCAL    =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","ELEM", "ELNO")),
+              b_reploc        =BLOC(condition="REPERE_LOCAL != 'NON'", fr=tr("impression des repères locaux."),
                  MODELE          =SIMP(statut='o',typ=modele_sdaster),
               ),
            ),

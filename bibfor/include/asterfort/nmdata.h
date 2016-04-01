@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,10 +16,10 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine nmdata(model      , mesh    , mate      , carele, compor  ,&
-                      lischa     , solveu  , ds_conv   , carcri, sddyna  ,&
-                      sdpost     , sderro  , sdener    , sdcriq, ds_print,&
-                      ds_algopara, ds_inout, ds_contact)
+    subroutine nmdata(model      , mesh    , mate      , carele    , compor  ,&
+                      lischa     , solveu  , ds_conv   , carcri    , sddyna  ,&
+                      sdpost     , sderro  , ds_energy , sdcriq    , ds_print,&
+                      ds_algopara, ds_inout, ds_contact, ds_measure)
         use NonLin_Datastructure_type
         character(len=*), intent(out) :: model
         character(len=*), intent(out) :: mesh
@@ -32,12 +32,13 @@ interface
         character(len=19) :: sddyna
         character(len=19) :: sdpost
         character(len=24) :: sderro
-        character(len=19) :: sdener
+        type(NL_DS_Energy), intent(inout) :: ds_energy
         character(len=24) :: sdcriq
         type(NL_DS_Print), intent(inout) :: ds_print
         type(NL_DS_Conv), intent(inout)  :: ds_conv
         type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
         type(NL_DS_InOut), intent(inout) :: ds_inout
         type(NL_DS_Contact), intent(inout) :: ds_contact
+        type(NL_DS_Measure), intent(inout) :: ds_measure
     end subroutine nmdata
 end interface

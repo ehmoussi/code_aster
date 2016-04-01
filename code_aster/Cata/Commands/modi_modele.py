@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -31,6 +31,8 @@ MODI_MODELE=OPER(nom="MODI_MODELE",op= 103,sd_prod=modele_sdaster,reentrant='o',
          PARTITION         =FACT(statut='d',
              PARALLELISME    =SIMP(statut='f',typ='TXM',defaut="GROUP_ELEM",
                                    into=("MAIL_CONTIGU","MAIL_DISPERSE","SOUS_DOMAINE","CENTRALISE","GROUP_ELEM")),
+             # remarque : "GROUP_ELEM" ne sert à rien : on ne modifie la distribution des éléments.
+             #            Mais on le conserve pour simplifier la programmation de calc_modes_multi_bandes.py
              b_dist_maille          =BLOC(condition = "PARALLELISME in ('MAIL_DISPERSE','MAIL_CONTIGU')",
                  CHARGE_PROC0_MA =SIMP(statut='f',typ='I',defaut=100,val_min=0),
              ),
