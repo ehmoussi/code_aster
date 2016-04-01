@@ -24,7 +24,7 @@ from code_aster.Cata.Commons.c_archivage import C_ARCHIVAGE
 from code_aster.Cata.Commons.c_relation import C_RELATION
 from code_aster.Cata.Commons.c_comportement import C_COMPORTEMENT
 from code_aster.Cata.Commons.c_convergence import C_CONVERGENCE
-from code_aster.Cata.Commons.c_etatinit import C_ETAT_INIT
+from code_aster.Cata.Commons.c_etat_init import C_ETAT_INIT
 from code_aster.Cata.Commons.c_increment import C_INCREMENT
 from code_aster.Cata.Commons.c_newton import C_NEWTON
 from code_aster.Cata.Commons.c_nom_cham_into import C_NOM_CHAM_INTO
@@ -37,3 +37,4 @@ from code_aster.Cata.Commons.c_solveur import C_SOLVEUR
 from code_aster.Cata.Commons.c_suivi_ddl import C_SUIVI_DDL
 from code_aster.Cata.Commons.c_test_reference import C_TEST_REFERENCE
 from code_aster.Cata.Commons.c_type_cham_into import C_TYPE_CHAM_INTO
+from code_aster.Cata.Commons.c_mesure import C_MESURE

@@ -51,19 +51,31 @@ cdef class TimeStepManager:
         return self._cptr.get()
 
     def addErrorManager( self, GenericConvergenceError cvError ):
-        """Add a Kinematics Load"""
+        """Add an Manager of convergence error"""
         self.getInstance().addErrorManager( deref( cvError.getPtr() ) )
 
     def build( self ):
-        """Add a Mechanical Load"""
+        """Build the TimeStepManager"""
         self.getInstance().build()
 
     def setAutomaticManagement( self, isAuto ):
-        """Add a Kinematics Load"""
+        """Set the management of the time list (manual ou automatic)"""
         self.getInstance().setAutomaticManagement( isAuto )
 
+    def setMaximumNumberOfTimeStep( self, maximum ):
+        """Set the maximum number of time stemp"""
+        self.getInstance().setMaximumNumberOfTimeStep( maximum )
+
+    def setMaximumTimeStep( self, maximum ):
+        """Set the maximum time step"""
+        self.getInstance().setMaximumTimeStep( maximum )
+
+    def setMinimumTimeStep( self, minimum ):
+        """Set the minimum time step"""
+        self.getInstance().setMinimumTimeStep( minimum )
+
     def setTimeList( self, doubleVector ):
-        """Add a Kinematics Load"""
+        """Set the time list"""
         self.getInstance().setTimeList( doubleVector )
 
     def debugPrint( self, logicalUnit=6 ):

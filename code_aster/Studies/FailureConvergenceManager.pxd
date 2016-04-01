@@ -73,7 +73,7 @@ cdef extern from "Studies/FailureConvergenceManager.h":
         void setAutomatic( const bint& isAuto )
         void setLevel( const int& level )
         void setMinimumStep( const double& minimumStep )
-        void setStep( const double& step )
+        void setStep( const int& step )
 
     cdef cppclass GenericSubstepingOnErrorPtr:
 
@@ -90,7 +90,7 @@ cdef extern from "Studies/FailureConvergenceManager.h":
         void setAutomatic( const bint& isAuto )
         void setLevel( const int& level )
         void setMinimumStep( const double& minimumStep )
-        void setStep( const double& step )
+        void setStep( const int& step )
 
     cdef cppclass SubstepingOnErrorPtr:
 
