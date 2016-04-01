@@ -78,7 +78,7 @@ implicit none
     integer :: nb_vari_cg(2), nume_comp_plas
     character(len=16) :: rela_comp_cg(2)
     character(len=16) :: kit_comp(4), type_matg, post_iter, mult_comp
-    integer :: nb_vari_exte, nume_comp(4), nb_vari_comp(4)
+    integer :: nb_vari_exte, nume_comp(4)=0, nb_vari_comp(4)=0
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -118,7 +118,7 @@ implicit none
 !
     call lcinfo(rela_comp_py, idummy, nb_vari_rela)
 !
-! - Get number of internal variables for composite comporment
+! - Get number of internal variables for composite comportment
 !
     call lcinfo(comp_elem_py, nume_comp(1), nb_vari)
 !
@@ -191,10 +191,10 @@ implicit none
     endif
 !
     if (present(nume_comp_)) then
-        nume_comp_(1:4) = nume_comp(1:4) 
+        nume_comp_(1:4) = nume_comp(1:4)
     endif
     if (present(nb_vari_comp_)) then
-        nb_vari_comp_(1:4) = nb_vari_comp(1:4) 
+        nb_vari_comp_(1:4) = nb_vari_comp(1:4)
     endif
 !
 end subroutine

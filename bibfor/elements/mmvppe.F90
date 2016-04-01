@@ -1,9 +1,9 @@
 subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
                   nnm, nnl, nbdm, laxis, ldyna,&
-                  lfovit, jeusup, ffe, ffm, ffl,&
+                  lfovit,lpenac, jeusup, ffe, ffm, ffl,&
                   norm, tau1, tau2, mprojt, jacobi,&
                   wpg, dlagrc, dlagrf, jeu, djeu,&
-                  djeut,coefaf,coefac)
+                  djeut)
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -21,7 +21,7 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! person_in_charge: mickael.abbas at edf.fr
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
 ! aslint: disable=W1504
     implicit none
@@ -46,9 +46,9 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     real(kind=8) :: tau1(3), tau2(3)
     real(kind=8) :: norm(3)
     real(kind=8) :: mprojt(3, 3)
-    aster_logical :: laxis, ldyna, lfovit
+    aster_logical :: laxis, ldyna, lfovit,lpenac
     real(kind=8) :: jacobi, wpg
-    real(kind=8) :: jeusup,coefaf,coefac
+    real(kind=8) :: jeusup
     real(kind=8) :: dlagrc, dlagrf(2)
     real(kind=8) :: jeu, djeu(3), djeut(3)
 !
@@ -204,31 +204,30 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     valmin =  sqrt(vec(1)+vec(2)+vec(3)) 
  
  ! Evaluation de la plus grande longueur de la maille
-    do  i = 3,9
-        vec(1) = (geomae(1,1) - geomae(i,1))**2 
-        vec(2) = (geomae(1,2) - geomae(i,2))**2
-        vec(3) = (geomae(1,3) - geomae(i,3))**2
-        tmp =  sqrt(vec(1)+vec(2)+vec(3))
-        
-        if (tmp .le. valmin)  then
-           valmin = tmp
-        elseif  (tmp .ge. valmin)  then
-           valmax = tmp 
-        endif
-    enddo
+     if (lpenac) then
+         do  i = 3,9
+             vec(1) = (geomae(1,1) - geomae(i,1))**2 
+             vec(2) = (geomae(1,2) - geomae(i,2))**2
+             vec(3) = (geomae(1,3) - geomae(i,3))**2
+             tmp =  sqrt(vec(1)+vec(2)+vec(3))
     
-
+             if (tmp .le. valmin)  then
+                 valmin = tmp
+             elseif  (tmp .ge. valmin)  then
+                 valmax = tmp 
+             endif
+         enddo
+         
+         if (valmin .lt. 1.d-10) then
+             tmp = jeu/valmax
+         else 
+             tmp = jeu/valmin
+         endif
     
-    if (valmin .lt. 1.d-10) then
-        tmp = jeu/valmax
-    else 
-        tmp = jeu/valmin
+         if ( (jeu .gt. valmin)  )  then 
+              call utmess('A', 'CONTACT_22',sr=tmp)
+         endif   
     endif
-                    
-    if ( (jeu .gt. valmin) )  then 
-       call utmess('A', 'CONTACT_22',sr=tmp)
-    endif   
-
 !
 ! --- CALCUL DU JEU EN VITESSE NORMALE
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,22 +20,12 @@
 cata_msg = {
 
 # Messages dans OP0019
-    1 : _(u"""AFFE_CARA_ELEM
-Le modèle contient des noeuds tardifs, ils ne sont pas autorisés dans cette commande.
-
-Les noeuds tardifs correspondent à des noeuds ou groupes de noeuds sur lesquels vous
-avez affecté un modèle avec la commande AFFE_MODELE/AFFE/NOEUD ou GROUP_NO.
-
-Solution : il faut créer un groupe de maille de POI1 correspondant à ces noeuds à l'aide
-           de la commande CREA_MAILLAGE/CREA_POI1 et ensuite affecter sur ce groupe de maille
-           un modèle avec la commande AFFE_MODELE/AFFE/GROUP_MA
-"""),
-
     2 : _(u"""AFFE_CARA_ELEM
 Aucune affectation n'est réalisée sur des GROUP_MA ou des MAILLES.
 
 Vérifiez vos données.
 """),
+
 
 # Messages dans ace_mass_rep
     10 : _(u"""AFFE_CARA_ELEM / <%(k1)s> / occurrence %(i1)d
@@ -136,7 +126,7 @@ TYPE=SURFACIQUE mais TYPE=LINEIQUE ou TOTALE.
 Vérifiez vos données.
 """),
 
-19 : _(u"""AFFE_CARA_ELEM / <%(k1)s> / occurrence %(i1)d
+    19 : _(u"""AFFE_CARA_ELEM / <%(k1)s> / occurrence %(i1)d
 Le noeud <%(k5)s> de la maille <%(k3)s> appartenant au GROUP_MA_POI1 <%(k2)s> est connecté
 avec un noeud d'une maille surfacique du GROUP_MA qui est déjà connecté à la maille
 <%(k4)s> du GROUP_MA_POI1.
@@ -146,6 +136,13 @@ Les noeuds des mailles de surface ne doivent être connecté qu'a un seul noeud 
 La relation doit être bijective.
 
 Vérifiez vos données.
+"""),
+
+    20 : _(u"""
+AFFE_CARA_ELEM. Il y a %(i1)d occurrences du mot clef facteur <%(k1)s>.
+Entre ces différentes occurrences les GROUP_MA_POI1 ont %(i2)d mailles en communs.
+La règle de surcharge est donc appliquée %(i2)d fois.
+
 """),
 
 }

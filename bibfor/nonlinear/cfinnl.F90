@@ -1,5 +1,13 @@
-subroutine cfinnl(defico, resoco, reageo, nbliac, llf,&
-                  llf1, llf2)
+subroutine cfinnl(ds_contact, l_pair, nbliac, llf,&
+                  llf1      , llf2)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/cfdisd.h"
+#include "asterfort/cfdisl.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -19,77 +27,69 @@ subroutine cfinnl(defico, resoco, reageo, nbliac, llf,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/cfdisd.h"
-#include "asterfort/cfdisl.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-    character(len=24) :: defico, resoco
-    integer :: nbliac, llf, llf1, llf2
-    aster_logical :: reageo
+    type(NL_DS_Contact), intent(in) :: ds_contact
+    aster_logical, intent(in) :: l_pair
+    integer, intent(out) :: nbliac
+    integer, intent(out) :: llf
+    integer, intent(out) :: llf1
+    integer, intent(out) :: llf2
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE CONTACT (METHODE DISCRETE - ALGORITHME)
+! Contact - Solve
 !
-! NOMBRE DE LIAISONS INITIALES
+! Discrete methods - Get total number of initial links
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  ds_contact       : datastructure for contact management
+! In  l_pair           : .true. if new pairing occurred
+! OUT NBLIAC           : NOMBRE DE LIAISONS ACTIVES
+! OUT LLF              : NOMBRE DE LIAISON DE FROTTEMENT (DEUX DIRECTIONS)
+! OUT LLF1             : NOMBRE DE LIAISON DE FROTTEMENT (1ERE DIRECTION )
+! OUT LLF2             : NOMBRE DE LIAISON DE FROTTEMENT (2EME DIRECTION )
 !
-! IN  DEFICO : SD DE DEFINITION DU CONTACT
-! IN  RESOCO : SD DE TRAITEMENT NUMERIQUE DU CONTACT
-! IN  REAGEO : .TRUE. SI ON VIENT DE FAIRE UN NOUVEL APPARIEMENT
-! OUT NBLIAC : NOMBRE DE LIAISONS ACTIVES
-! OUT LLF    : NOMBRE DE LIAISON DE FROTTEMENT (DEUX DIRECTIONS)
-! OUT LLF1   : NOMBRE DE LIAISON DE FROTTEMENT (1ERE DIRECTION )
-! OUT LLF2   : NOMBRE DE LIAISON DE FROTTEMENT (2EME DIRECTION )
+! --------------------------------------------------------------------------------------------------
 !
+    aster_logical :: l_pena_frot, l_lagr_cont
 !
+! --------------------------------------------------------------------------------------------------
 !
+    nbliac = 0
+    llf    = 0
+    llf1   = 0
+    llf2   = 0
 !
-    aster_logical :: lpenaf, llagrc
+! - Get contact parameters
 !
-! ----------------------------------------------------------------------
+    l_pena_frot = cfdisl(ds_contact%sdcont_defi,'FROT_PENA')
+    l_lagr_cont = cfdisl(ds_contact%sdcont_defi,'CONT_LAGR')
 !
-    call jemarq()
+! - Keep old links if possible (no new pairing)
 !
-! --- PARAMETRES
-!
-    lpenaf = cfdisl(defico,'FROT_PENA')
-    llagrc = cfdisl(defico,'CONT_LAGR')
-!
-! --- NOMBRE DE LIAISONS INITIALES
-! --- POUR LES METHODES PUREMENT LAGRANGIENNES, ON GARDE
-! --- LA MEMOIRE DES LIAISONS PRECEDEMMENT ACTIVES
-!
-    if (llagrc) then
-        if (reageo) then
+    if (l_lagr_cont) then
+        if (l_pair) then
             nbliac = 0
-            llf = 0
-            llf1 = 0
-            llf2 = 0
+            llf    = 0
+            llf1   = 0
+            llf2   = 0
         else
-            nbliac = cfdisd(resoco,'NBLIAC' )
-            if (lpenaf) then
+            nbliac = cfdisd(ds_contact%sdcont_solv,'NBLIAC' )
+            if (l_pena_frot) then
                 llf = 0
                 llf1 = 0
                 llf2 = 0
             else
-                llf = cfdisd(resoco,'LLF' )
-                llf1 = cfdisd(resoco,'LLF1' )
-                llf2 = cfdisd(resoco,'LLF2' )
+                llf = cfdisd(ds_contact%sdcont_solv,'LLF' )
+                llf1 = cfdisd(ds_contact%sdcont_solv,'LLF1' )
+                llf2 = cfdisd(ds_contact%sdcont_solv,'LLF2' )
             endif
         endif
     else
         nbliac = 0
-        llf = 0
-        llf1 = 0
-        llf2 = 0
+        llf    = 0
+        llf1   = 0
+        llf2   = 0
     endif
-!
-    call jedema()
 !
 end subroutine

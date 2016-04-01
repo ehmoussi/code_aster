@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -85,10 +85,7 @@ POST_RELEVE_T=OPER(nom="POST_RELEVE_T",op=51,sd_prod=table_sdaster,reentrant='f'
 
            b_autre   =BLOC(condition="aucun(OPERATION, ('EXTREMA', 'MOYENNE_ARITH'))",
                            fr=tr("extraction et moyenne"),
-                           regles=(AU_MOINS_UN('CHEMIN','GROUP_NO','NOEUD'),
-                                   EXCLUS('CHEMIN','GROUP_NO'),
-                                   EXCLUS('CHEMIN','NOEUD'),
-                                   PRESENT_ABSENT('CHEMIN','GROUP_MA','MAILLE'),
+                           regles=(AU_MOINS_UN('GROUP_NO','NOEUD'),
                                    UN_PARMI('TOUT_CMP','NOM_CMP','INVARIANT','ELEM_PRINCIPAUX','RESULTANTE'),
                                    PRESENT_PRESENT('TRAC_DIR','DIRECTION'),
                                    ENSEMBLE('MOMENT','POINT'),
@@ -97,7 +94,6 @@ POST_RELEVE_T=OPER(nom="POST_RELEVE_T",op=51,sd_prod=table_sdaster,reentrant='f'
                                    EXCLUS('TRAC_DIR','TRAC_NOR'),
                                    PRESENT_PRESENT('ORIGINE','AXE_Z'),),
 
-              CHEMIN          =SIMP(statut='f',typ=(courbe_sdaster,surface_sdaster) ),
               TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
               GROUP_MA        =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
               MAILLE          =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),

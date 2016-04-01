@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -341,7 +341,7 @@ Erreur utilisateur :
 
  Conseil :
    La ligne est peut-être une ligne fermée (sans extrémités).
-   Il faut alors utiliser les mots clés GROUP_NO_ORIG et GROUP_NO_EXTR
+   On peut alors utiliser les mots clés GROUP_NO_ORIG et GROUP_NO_EXTR
    (ou NOEUD_ORIG et NOEUD_EXTR).
 
 """),

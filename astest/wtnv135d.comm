@@ -40,7 +40,9 @@ KINT=DEFI_CONSTANTE(    VALE=1.E-18)
 #    MAILLAGE + MODELE
 #***********************************************************************
 
-MAILLAGE=LIRE_MAILLAGE(FORMAT='MED', )
+MAILLAGE=LIRE_MAILLAGE(FORMAT='MED')
+# Pour eviter les "TOLE MACHINE", on perturbe legerement la geometrie du maillage :
+MODI_MAILLAGE(reuse =MAILLAGE, MAILLAGE=MAILLAGE, DEFORME=_F(OPTION='TRAN', ALEA=1.e-8,),)
 
 MODELE=AFFE_MODELE(     MAILLAGE=MAILLAGE,
                              AFFE=_F(  TOUT = 'OUI',
@@ -205,7 +207,8 @@ U1=STAT_NON_LINE(
                 LIST_INST = TEMPS1,
                 ),
                        CONVERGENCE=_F(
-                RESI_GLOB_RELA = 1.E-6,
+                # on diminue la valeur de RESI_GLOB_RELA pour eviter les "TOLE MACHINE" (issue24538) :
+                RESI_GLOB_RELA = 1.E-10,
                 )
               )
 
@@ -291,7 +294,8 @@ U2=STAT_NON_LINE(
                 REAC_ITER_ELAS=50,
                 ),
                        CONVERGENCE=_F(
-                RESI_GLOB_RELA = 1.E-6,
+                # on diminue la valeur de RESI_GLOB_RELA pour eviter les "TOLE MACHINE" (issue24538) :
+                RESI_GLOB_RELA = 1.E-10,
                 ITER_GLOB_MAXI = 20,
                 ITER_GLOB_ELAS = 100,
                 )
@@ -316,8 +320,7 @@ TEST_RESU(RESU=_F(INST=1.3000E4,
                   NOM_CHAM='DEPL',
                   NOEUD='NO8',
                   NOM_CMP='DX',
-                  VALE_CALC=0.0301959410778,
-                  TOLE_MACHINE=5.E-4            # ajustement pour clap0f0q
+                  VALE_CALC=0.0219839832563,
                   ),
           )
 
@@ -326,8 +329,7 @@ TEST_RESU(RESU=_F(INST=1.3000E4,
                   NOM_CHAM='SIGM_NOEU',
                   NOEUD='NO8',
                   NOM_CMP='SIZZ',
-                  VALE_CALC=-11939920.6314,
-                  TOLE_MACHINE=1.E-4            # ajustement pour clap0f0q
+                  VALE_CALC=-12440706.5276,
                   ),
           )
 

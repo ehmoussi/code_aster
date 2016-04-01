@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -239,18 +239,9 @@ Erreur utilisateur (EXTR_RESU / RESTREINT) :
  La commande a besoin d'un nom de modèle.
 """),
 
-    51 : _(u"""
-  Erreur Utilisateur :
-    On essaie d'utiliser dans la commande %(k1)s
-    un modèle pour lequel des éléments finis ont été affectés directement
-    sur des noeuds (AFFE_MODELE / AFFE / GROUP_NO).
-    Ceci est interdit.
 
-  Conseils :
-    Il faut définir le modèle avec les mots clé GROUP_MA et MAILLE.
-    Pour cela, il faut créer dans le maillage des mailles de type POI1.
-    C'est possible avec la commande CREA_MAILLAGE / CREA_POI1.
-"""),
+
+
 
     52 : _(u"""
  le champ doit être un CHAM_ELEM.
@@ -326,10 +317,11 @@ supérieure à %(r7)g%% du "rayon" (Aire/Pi)^0.5 de la section.
 """),
 
     80 : _(u"""
- Utilisation de LIAISON_ELEM / OPTION='%(k1)s', occurrence %(i1)d :
-Le noeud "poutre" (GROUP_NO_2) n'est pas situé géométriquement au même endroit que
-le centre de gravité de la section (GROUP_MA_1). La distance entre les 2 noeuds est
-supérieure à %(r7)g%% du "rayon" (Aire/Pi)^0.5 de la section.
+Utilisation de LIAISON_ELEM / OPTION='%(k1)s', occurrence %(i1)d :
+Le noeud "poutre" (GROUP_NO_2 ou NOEUD_2) n'est pas situé géométriquement
+au même endroit que le centre de gravité de la section (GROUP_MA_1).
+La distance entre les deux points est supérieure à %(r7)g%% du "rayon" de la section.
+
    Position du centre de gravité de la section :
       %(r1)g   %(r2)g   %(r3)g
    Position du noeud "poutre" :
@@ -340,7 +332,7 @@ supérieure à %(r7)g%% du "rayon" (Aire/Pi)^0.5 de la section.
 Risque et conseils :
    Vérifiez la position du noeud "poutre".
    Rappel : on ne peut pas utiliser ce type de liaison pour relier une poutre avec
-   une section 3D qui ne serait que partiellement maillée (symétrie du maillage).
+   une section qui ne serait que partiellement maillée (symétrie du maillage).
 """),
 
     81 : _(u"""

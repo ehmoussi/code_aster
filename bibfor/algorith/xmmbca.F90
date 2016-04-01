@@ -1,5 +1,23 @@
-subroutine xmmbca(noma, nomo, mate, resoco, valinc,&
-                  mmcvca)
+subroutine xmmbca(mesh, model, mate, hval_incr, ds_contact)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterfort/calcul.h"
+#include "asterfort/copisd.h"
+#include "asterfort/dbgcal.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/inical.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/mesomm.h"
+#include "asterfort/mmbouc.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/xmchex.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -19,53 +37,34 @@ subroutine xmmbca(noma, nomo, mate, resoco, valinc,&
 ! ======================================================================
 ! person_in_charge: samuel.geniaut at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/calcul.h"
-#include "asterfort/copisd.h"
-#include "asterfort/dbgcal.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/inical.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/mesomm.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/xmchex.h"
-    aster_logical :: mmcvca
-    character(len=8) :: noma, nomo
-    character(len=24) :: resoco, mate
-    character(len=19) :: valinc(*)
+    character(len=8), intent(in) :: mesh
+    character(len=8), intent(in) :: model
+    character(len=24), intent(in) :: mate
+    character(len=19), intent(in) :: hval_incr(*)
+    type(NL_DS_Contact), intent(inout) :: ds_contact
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE XFEM (METHODE XFEM - ALGORITHME)
+! Contact - Solve
 !
-! MISE À JOUR DU STATUT DES POINTS DE CONTACT
-! RENVOIE MMCVCA (INDICE DE CONVERGENCE DE LA BOUCLE
-!                         SUR LES CONTRAINTES ACTIVES)
+! XFEM - Management of contact loop
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  mesh             : name of mesh
+! In  model            : name of model
+! In  mate             : name of material characteristics (field)
+! In  hval_incr        : hat-variable for incremental values fields
+! IO  ds_contact       : datastructure for contact management
 !
-! IN  NOMO   : NOM DE L'OBJET MODÈLE
-! IN  NOMA   : NOM DE L'OBJET MAILLAGE
-! IN  MATE   : SD MATERIAU
-! IN  RESOCO : SD CONTACT (RESOLUTION)
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! OUT MMCVCA : INDICE DE CONVERGENCE DE LA BOUCLE SUR LES C.A.
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-!
-    integer :: nbout, nbin
-    parameter    (nbout=4, nbin=20)
+    integer, parameter :: nbout = 4
+    integer, parameter :: nbin  = 20
     character(len=8) :: lpaout(nbout), lpain(nbin)
     character(len=19) :: lchout(nbout), lchin(nbin)
 !
-    integer :: sinco(1), nbma
+    integer :: sinco(1)
     integer :: jfiss
     character(len=19) :: xdonco, xindco, xmemco, xgliss, xcohes, ccohes
     character(len=16) :: option
@@ -75,9 +74,10 @@ subroutine xmmbca(noma, nomo, mate, resoco, valinc,&
     aster_logical :: debug, lcontx
     integer :: ifm, niv, ifmdbg, nivdbg
     character(len=19) :: oldgeo, depmoi, depplu
+    aster_logical :: loop_cont_conv
     integer, pointer :: xfem_cont(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call infdbg('XFEM', ifm, niv)
@@ -85,39 +85,38 @@ subroutine xmmbca(noma, nomo, mate, resoco, valinc,&
 !
 ! --- INITIALISATIONS
 !
-    oldgeo = noma(1:8)//'.COORDO'
-    ligrmo = nomo(1:8)//'.MODELE'
+    oldgeo = mesh(1:8)//'.COORDO'
+    ligrmo = model(1:8)//'.MODELE'
     cicoca = '&&XMMBCA.CICOCA'
     cindoo = '&&XMMBCA.INDOUT'
     cmemco = '&&XMMBCA.MEMCON'
     ccohes = '&&XMMBCA.COHES'
 !
-    xindco = resoco(1:14)//'.XFIN'
-    xdonco = resoco(1:14)//'.XFDO'
-    xmemco = resoco(1:14)//'.XMEM'
-    xgliss = resoco(1:14)//'.XFGL'
-    xcohes = resoco(1:14)//'.XCOH'
-    xcoheo = resoco(1:14)//'.XCOP'
+    xindco = ds_contact%sdcont_solv(1:14)//'.XFIN'
+    xdonco = ds_contact%sdcont_solv(1:14)//'.XFDO'
+    xmemco = ds_contact%sdcont_solv(1:14)//'.XMEM'
+    xgliss = ds_contact%sdcont_solv(1:14)//'.XFGL'
+    xcohes = ds_contact%sdcont_solv(1:14)//'.XCOH'
+    xcoheo = ds_contact%sdcont_solv(1:14)//'.XCOP'
 !
-    mmcvca = .false.
+    loop_cont_conv = .false.
     if (nivdbg .ge. 2) then
         debug = .true.
     else
         debug = .false.
     endif
-    call dismoi('NB_MA_MAILLA', noma, 'MAILLAGE', repi=nbma)
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
-    call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
+    call nmchex(hval_incr, 'VALINC', 'DEPMOI', depmoi)
+    call nmchex(hval_incr, 'VALINC', 'DEPPLU', depplu)
 !
 ! --- SI PAS DE CONTACT ALORS ON ZAPPE LA VÉRIFICATION
 !
-    call jeveuo(nomo(1:8)//'.XFEM_CONT', 'L', vi=xfem_cont)
+    call jeveuo(model(1:8)//'.XFEM_CONT', 'L', vi=xfem_cont)
     lcontx = xfem_cont(1) .ge. 1
     if (.not.lcontx) then
-        mmcvca = .true.
+        loop_cont_conv = .true.
         goto 999
     endif
 !
@@ -133,28 +132,29 @@ subroutine xmmbca(noma, nomo, mate, resoco, valinc,&
 !
 ! --- ACCES A LA SD FISS_XFEM
 !
-    call jeveuo(nomo(1:8)//'.FISS', 'L', jfiss)
+    call jeveuo(model(1:8)//'.FISS', 'L', jfiss)
 !
 ! --- RECUPERATION DES DONNEES XFEM
 !
-    ltno = nomo(1:8)//'.LTNO'
-    pinter = nomo(1:8)//'.TOPOFAC.OE'
-    ainter = nomo(1:8)//'.TOPOFAC.AI'
-    cface = nomo(1:8)//'.TOPOFAC.CF'
-    faclon = nomo(1:8)//'.TOPOFAC.LO'
-    baseco = nomo(1:8)//'.TOPOFAC.BA'
-    fissno = nomo(1:8)//'.FISSNO'
-    heavno = nomo(1:8)//'.HEAVNO'
-    heavfa = nomo(1:8)//'.TOPOFAC.HE'
-    hea_no = nomo(1:8)//'.TOPONO.HNO'
-    hea_fa = nomo(1:8)//'.TOPONO.HFA'
+    ltno = model(1:8)//'.LTNO'
+    pinter = model(1:8)//'.TOPOFAC.OE'
+    ainter = model(1:8)//'.TOPOFAC.AI'
+    cface = model(1:8)//'.TOPOFAC.CF'
+    faclon = model(1:8)//'.TOPOFAC.LO'
+    baseco = model(1:8)//'.TOPOFAC.BA'
+    fissno = model(1:8)//'.FISSNO'
+    heavno = model(1:8)//'.HEAVNO'
+    heavfa = model(1:8)//'.TOPOFAC.HE'
+    hea_no = model(1:8)//'.TOPONO.HNO'
+    hea_fa = model(1:8)//'.TOPONO.HFA'
 !
 ! --- CREATION DU CHAM_ELEM_S VIERGE  INDIC. CONTACT ET MEMOIRE CONTACT
 !
-    call xmchex(noma, nbma, xindco, cindoo)
-    call xmchex(noma, nbma, xmemco, cmemco)
-    if(xfem_cont(1).eq.1.or.xfem_cont(1).eq.3)&
-        call xmchex(noma, nbma, xcohes, ccohes)
+    call xmchex(mesh, xindco, cindoo)
+    call xmchex(mesh, xmemco, cmemco)
+    if (xfem_cont(1).eq.1.or.xfem_cont(1).eq.3) then
+        call xmchex(mesh, xcohes, ccohes)
+    endif
 !
 ! --- CREATION DES LISTES DES CHAMPS IN
 !
@@ -229,9 +229,9 @@ subroutine xmmbca(noma, nomo, mate, resoco, valinc,&
 ! --- SUPERIEUR A ZERO SUR UN ELEMENT ET DONC ON A PAS CONVERGÉ
 !
     if (sinco(1) .gt. 0) then
-        mmcvca = .false.
+        loop_cont_conv = .false.
     else
-        mmcvca = .true.
+        loop_cont_conv = .true.
     endif
 !
 ! --- ON COPIE CINDO DANS RESOCO.XFIN
@@ -244,6 +244,14 @@ subroutine xmmbca(noma, nomo, mate, resoco, valinc,&
     call copisd('CHAMP_GD', 'V', lchout(4), xcohes)
 !
 999 continue
+!
+! - Set loop values
+!
+    if (loop_cont_conv) then
+        call mmbouc(ds_contact, 'Cont', 'Set_Convergence')
+    else
+        call mmbouc(ds_contact, 'Cont', 'Set_Divergence')
+    endif
 !
     call jedema()
 end subroutine

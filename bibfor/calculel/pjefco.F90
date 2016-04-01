@@ -2,7 +2,7 @@ subroutine pjefco(moa1, moa2, corres, base)
     implicit none
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -101,9 +101,9 @@ subroutine pjefco(moa1, moa2, corres, base)
 !   Determination de dmax et l_dmax:
 !   --------------------------------------------------------
     dmax=0.d0
-    call getvr8(' ', 'DISTANCE_MAX', iocc=iocc, scal=dmax, nbret=n1)
+    call getvr8(' ', 'DISTANCE_MAX', scal=dmax, nbret=n1)
     l_dmax=n1.eq.1
-    call getvr8(' ', 'DISTANCE_ALARME', iocc=iocc, scal=dala, nbret=n1)
+    call getvr8(' ', 'DISTANCE_ALARME', scal=dala, nbret=n1)
     if (n1.eq.0) dala=-1.d0
 !
 !

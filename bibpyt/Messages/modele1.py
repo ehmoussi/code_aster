@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -27,17 +27,15 @@ Pour affecter une liste de modélisations, il faut qu'elles soient de même dime
 La maille %(k1)s de type %(k2)s n'a pas pu être affectée.
 """),
 
-    3 : _(u"""
-Le noeud %(k1)s n'a pas pu être affecté.
-"""),
+
+
 
     4 : _(u"""
 Sur les %(i1)d mailles du maillage %(k1)s, on a demandé l'affectation de %(i2)d, on a pu en affecter %(i3)d
 """),
 
-    5 : _(u"""
-Sur les %(i1)d noeuds du maillage %(k1)s, on a demandé l'affectation de %(i2)d, on a pu en affecter %(i3)d
-"""),
+
+
 
     6 : _(u"""
 Aucune maille du maillage %(k1)s n'a été affectée par des éléments finis.
@@ -60,9 +58,9 @@ Le modèle contient un mélange d'éléments finis 2D (plan Oxy) et 3D
      Parfois, cela empêche de faire le "bon choix".
 """),
 
-    20 : _(u""" Modélisation    Élément fini    Type maille     Nombre"""),
+    20 : _(u""" Modélisation     Type maille  Élément fini     Nombre"""),
 
-    21 : _(u""" %(k1)-16s%(k2)-16s%(k3)-16s%(i1)d"""),
+    21 : _(u""" %(k1)-16s %(k2)-12s %(k3)-16s %(i1)d"""),
 
     38 : _(u"""%(k1)-8s %(k2)-8s %(k3)-8s %(k4)-8s %(k5)-8s %(k6)-8s %(k7)-8s %(k8)-8s"""),
 

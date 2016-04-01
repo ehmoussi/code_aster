@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -435,8 +435,6 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
              SANS_MAILLE     =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
              SANS_GROUP_NO   =SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
              SANS_NOEUD      =SIMP(statut='f',typ=no  ,validators=NoRepeat(),max='**'),
-
-             TRAN            =SIMP(statut='f',typ='R',max=3 ),
              DIST_MIN        =SIMP(statut='f',typ='R'),
              NUME_LAGR       =SIMP(statut='f',typ='TXM',defaut="NORMAL",into=("NORMAL","APRES") ),
            ),
@@ -444,14 +442,16 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
          LIAISON_ELEM    =FACT(statut='f',max='**',
             fr=tr("Modélise le raccord : d'une partie massive 3D avec une poutre ou avec un tuyau, d'une coque "
                  "avec une poutre ou avec un tuyau, d'une plaque avec une poutre"),
-            regles      =(UN_PARMI('GROUP_MA_1','MAILLE_1'), UN_PARMI('GROUP_NO_2','NOEUD_2','GROUP_MA_2'),),
+            regles      =(UN_PARMI('GROUP_MA_1','MAILLE_1'), UN_PARMI('GROUP_NO_2','NOEUD_2','GROUP_MA_2','MAILLE_2'),),
             OPTION      =SIMP(statut='o',typ='TXM',into=("3D_TUYAU","3D_POU","3D_POU_ARLEQUIN","2D_POU","COQ_POU","COQ_TUYAU","PLAQ_POUT_ORTH") ),
 
             GROUP_MA_1  =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
             MAILLE_1    =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
-            GROUP_NO_2  =SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
-            NOEUD_2     =SIMP(statut='f',typ=no  ,validators=NoRepeat(),max='**'),
+            GROUP_NO_2  =SIMP(statut='f',typ=grno),
+            NOEUD_2     =SIMP(statut='f',typ=no  ),
+            # GROUP_MA_2 est une liste pour "3D_POU_ARLEQUIN" :
             GROUP_MA_2  =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
+            MAILLE_2    =SIMP(statut='f',typ=ma  ),
 
             b_3d_pou_arlequin =BLOC( condition = "OPTION == '3D_POU_ARLEQUIN'",
                CARA_ELEM      =SIMP(statut='o',typ=cara_elem ),

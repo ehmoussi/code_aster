@@ -2,7 +2,7 @@ subroutine nmtasp(ndimsi, crit, mat, sigel, vim,&
                   epm, dp, sp, xi, f,&
                   iret)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -54,7 +54,7 @@ subroutine nmtasp(ndimsi, crit, mat, sigel, vim,&
                 epm, dp, sp, xi, f,&
                 g, fds, gds, fdp, gdp,&
                 fdx, gdx, dpmax, sig, tang)
-    if (g .le. 0.d0) goto 9999
+    if (g .lt. mat(4)*crit(3)) goto 9999
     x(2) = sp
     y(2) = g
     ff(2) = f
@@ -66,7 +66,7 @@ subroutine nmtasp(ndimsi, crit, mat, sigel, vim,&
                 epm, dp, sp, xi, f,&
                 g, fds, gds, fdp, gdp,&
                 fdx, gdx, dpmax, sig, tang)
-    if (g .ge. 0.d0) goto 9999
+    if (g .gt. -mat(4)*crit(3)) goto 9999
     x(1) = mat(11)
     y(1) = g
     ff(1) = f
@@ -81,7 +81,7 @@ subroutine nmtasp(ndimsi, crit, mat, sigel, vim,&
     ff(4) = ff(2)
 !
     do 100 niter = 1, int(crit(1))
-        if (abs(y(4))/mat(4) .lt. crit(3)) goto 110
+        if (abs(y(4)) .lt. mat(4)*crit(3)) goto 110
         call zeroco(x, y)
         call nmtacr(1, ndimsi, mat, sigel, vim,&
                     epm, dp, x(4), xi, ff(4),&

@@ -16,27 +16,24 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine nmcoun(noma, fonact, solveu, numedz, matass,&
-                      defico, resoco, deficu, resocu, iterat,&
-                      valinc, solalg, veasse, instan, resigr,&
-                      sdtime, sdstat, ctccvg)
-        character(len=8) :: noma
-        integer :: fonact(*)
-        character(len=19) :: solveu
-        character(len=*) :: numedz
-        character(len=19) :: matass
-        character(len=24) :: defico
-        character(len=24) :: resoco
-        character(len=24) :: deficu
-        character(len=24) :: resocu
-        integer :: iterat
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: veasse(*)
-        real(kind=8) :: instan
-        real(kind=8) :: resigr
-        character(len=24) :: sdtime
-        character(len=24) :: sdstat
-        integer :: ctccvg
+    subroutine nmcoun(mesh          , list_func_acti, solver   , nume_dof_ , matr_asse  ,&
+                      iter_newt     , time_curr     , hval_incr, hval_algo , hval_veasse,&
+                      resi_glob_rela, sdtime        , sdstat   , ds_contact, ctccvg)
+        use NonLin_Datastructure_type
+        character(len=8), intent(in) :: mesh
+        integer, intent(in) :: list_func_acti(*)
+        character(len=19), intent(in) :: solver
+        character(len=*), intent(in) :: nume_dof_
+        character(len=19), intent(in) :: matr_asse
+        integer, intent(in) :: iter_newt
+        real(kind=8), intent(in) :: time_curr
+        character(len=19), intent(in) :: hval_incr(*)
+        character(len=19), intent(in) :: hval_algo(*)
+        character(len=19), intent(in) :: hval_veasse(*)
+        real(kind=8), intent(in) :: resi_glob_rela
+        character(len=24), intent(in) :: sdtime 
+        character(len=24), intent(in) :: sdstat
+        type(NL_DS_Contact), intent(inout) :: ds_contact 
+        integer, intent(out) :: ctccvg
     end subroutine nmcoun
 end interface

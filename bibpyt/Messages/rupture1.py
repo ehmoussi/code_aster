@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -80,10 +80,6 @@ de modélisation FEM avec une fissure en configuration décollée.
 Veuillez indiquer les mots-clés R_INF et R_SUP (ou R_INF_FO et R_SUP_FO).
 """),
 
-    8: _(u"""
-Le groupe %(k1)s n'appartient pas au maillage : %(k2)s
-"""),
-
     9: _(u"""
 Le fond de fissure n'est pas complet.
 -> Risque et Conseil :
@@ -105,16 +101,6 @@ Veuillez le renseigner.
 Le champ de contrainte initiale n'est pas du bon type.
 En FEM (fissure représentée dans le maillage), il doit être de type ELNO, NOEU, ou ELGA.
 En X-FEM (fissure non représentée dans le maillage), il doit être de type ELGA.
-"""),
-
-    13: _(u"""
-%(k1)s : prise en compte d'un état initial impossible avec cette option.
-"""),
-
-    14: _(u"""
-Nombre de bornes erroné.
--> Risque et Conseil :
-On doit en avoir autant que de numéros d'ordre.
 """),
 
     15: _(u"""
@@ -218,10 +204,6 @@ GROUP_MA du mot-clé facteur TRANCHE_3D, suivent les règles précisées dans
 la documentation U de CALC_GP.
 """),
 
-    28: _(u"""
-Le champ de nom symbolique %(k1)s existe déjà dans la SD RESULTAT  %(k1)s.
-"""),
-
     29: _(u"""
 Au moins une des mailles caractérisant les zones de calcul a une forme trop
 trapézoïdale.
@@ -229,13 +211,6 @@ trapézoïdale.
 Le calcul de la surface de sa face appartenant au plan de symétrie de
 l'entaille risque d'être altéré et par conséquent celui de GP également.
 Veuillez vérifier votre maillage.
-"""),
-
-    30: _(u"""
-Il faut donner 3 composantes de la direction.
--> Risque et Conseil :
-Si vous utilisez CALC_THETA/THETA_2D ou CALC_G/THETA en 2d, veuillez fournir
-une valeur nulle pour la 3ème composante.
 """),
 
     31: _(u"""

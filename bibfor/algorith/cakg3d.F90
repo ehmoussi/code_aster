@@ -5,7 +5,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
                   extim, time, nbprup, noprup, fiss,&
                   lmelas, nomcas, lmoda, puls, milieu,&
                   connex, coor, iadnoe, typdis)
-! aslint: disable=W1504
+
     implicit none
 !
 #include "asterf_types.h"
@@ -57,7 +57,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
     aster_logical :: extim, pair, lmelas, lmoda, milieu, connex
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -113,7 +113,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
     character(len=8) :: lpain(nbinmx), lpaout(nboumx)
     character(len=24) :: lchin(nbinmx), lchout(nboumx)
 !
-    integer :: i, j, ibid, iadrgk, iadgks, iret, jresu, nchin, ibid2
+    integer :: i, j, ibid, iadrgk, iadgks, iret, jresu, nchin
     integer :: nnoff, num, ino1, ino2, inga
 !     integer :: incr, nres
     integer :: ndeg, nsig, livi(nbmxpa),pbtype
@@ -121,7 +121,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
     real(kind=8) :: gkthi(8), time, livr(nbmxpa), diff2g, difrel
 !    real(kind=8) :: xi(nnoff-1), yi(nnoff-1), zi(nnoff-1)
     complex(kind=8) :: livc(nbmxpa)
-    aster_logical :: lfonc, lxfem, ltheta
+    aster_logical :: lfonc, lxfem
     character(len=2) :: codret
 !    character(len=8) :: resu
 !    character(len=24) :: chsig, chepsp, chvari, type
@@ -156,11 +156,6 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
     call getvid('THETA', 'FISSURE', iocc=1, scal=fiss, nbret=ibid)
     lxfem = .false.
     if (ibid .ne. 0) lxfem = .true.
-!   cas THETA
-    call getvid('THETA', 'THETA', iocc=1, scal=fiss, nbret=ibid2)
-    ltheta = .false.
-    if (ibid2 .ne. 0) ltheta = .true. 
-
 !
 !   RECUPERATION DU CHAMP GEOMETRIQUE
     call megeom(modele, chgeom)
@@ -476,7 +471,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
 !     3) CALCUL DE G(S), K1(S), K2(S) ET K3(S) LE LONG DU FOND
 !     ------------------------------------------------------------------
 !
-    call wkvect('&&CAKG3D.VALGK_S', 'V V R8', nnoff*6, iadgks)
+    call wkvect('&&CAKG3D.VALGK_S', 'V V R8', nnoff*5, iadgks)
 !
     if ((liss.eq.'LAGRANGE').or.(liss.eq.'LAGRANGE_NO_NO').or.(liss.eq.'LAGRANGE_REGU')) then
         if ((liss.eq.'LAGRANGE').or.(liss.eq.'LAGRANGE_NO_NO')) then
@@ -520,7 +515,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
 !
 !     IMPRESSION DE G(S), K1(S), K2(S) ET K3(S)
     if (niv .ge. 2) then
-        call gksimp(result, nnoff, zr(iadabs), iadrgk, num,&
+        call gksimp(result, nnoff, zr(iadabs), num,&
                     iadgks, ndeg, ndimte, iadgki, extim,&
                     time, iord, ifm)
     endif
@@ -528,9 +523,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
 !     ECRITURE DE LA TABLE DE G(S), K1(S), K2(S) ET K3(S)
     call getvis('THETA', 'NUME_FOND', iocc=1, scal=numfon, nbret=ibid)
 !
-    if (.not.ltheta) then
-        call tbajvi(result, nbprup, 'NUME_FOND', numfon, livi)
-    endif
+    call tbajvi(result, nbprup, 'NUME_FOND', numfon, livi)
     
     if (lmelas) then
         call tbajvi(result, nbprup, 'NUME_CAS', iord, livi)
@@ -554,16 +547,15 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
         call tbajvr(result, nbprup, 'COOR_X', zr(coor-1+4*(i-1)+1), livr)
         call tbajvr(result, nbprup, 'COOR_Y', zr(coor-1+4*(i-1)+2), livr)
         call tbajvr(result, nbprup, 'COOR_Z', zr(coor-1+4*(i-1)+3), livr)
-        call tbajvr(result, nbprup, 'K1', zr(iadgks-1+6*(i-1)+2), livr)
-        call tbajvr(result, nbprup, 'K2', zr(iadgks-1+6*(i-1)+3), livr)
-        call tbajvr(result, nbprup, 'K3', zr(iadgks-1+6*(i-1)+4), livr)
-        call tbajvr(result, nbprup, 'G', zr(iadgks-1+6*(i-1)+1), livr)
-        call tbajvr(result, nbprup, 'BETA', zr(iadgks-1+6*(i-1)+6), livr)
-        call tbajvr(result, nbprup, 'G_IRWIN', zr(iadgks-1+6*(i-1)+5), livr)
+        call tbajvr(result, nbprup, 'K1', zr(iadgks-1+5*(i-1)+2), livr)
+        call tbajvr(result, nbprup, 'K2', zr(iadgks-1+5*(i-1)+3), livr)
+        call tbajvr(result, nbprup, 'K3', zr(iadgks-1+5*(i-1)+4), livr)
+        call tbajvr(result, nbprup, 'G', zr(iadgks-1+5*(i-1)+1), livr)
+        call tbajvr(result, nbprup, 'G_IRWIN', zr(iadgks-1+5*(i-1)+5), livr)
         call tbajli(result, nbprup, noprup, livi, livr,&
                     livc, livk, 0)
-        if ((codret .eq. 'OK') .and. ( abs( zr(iadgks-1+6*(i-1)+1) ) .ge. 1.e-12 ) ) then
-            difrel= abs((zr(iadgks-1+6*(i-1)+1)- zr(iadgks-1+6*(i-1)+5))/zr(iadgks-1+6*(i-1)+1))
+        if ((codret .eq. 'OK') .and. ( abs( zr(iadgks-1+5*(i-1)+1) ) .ge. 1.e-12 ) ) then
+            difrel= abs((zr(iadgks-1+5*(i-1)+1)- zr(iadgks-1+5*(i-1)+5))/zr(iadgks-1+5*(i-1)+1))
             diff2g = diff2g + difrel
         endif
 !

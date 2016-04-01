@@ -1,7 +1,7 @@
 subroutine op0139()
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -146,8 +146,9 @@ subroutine op0139()
 !   IL S AGIT DU CHAMP CNSDET
 !
     cnsdet = '&&OP0049.CNSDET'
-    call xdetfo(cnsdet, cnsln, cnslt, jmafon, ndim,&
+    call xdetfo(cnsdet, cnsln, cnslt, ndim,&
                 nmafon, noma, nomfis, resuco)
+    call jeveuo('&&XDETFO.MAFOND', 'L',jmafon)
 !
 ! --- PREPARATION DETERMINATION DES POINTS DU FRONT
 !

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -1245,12 +1245,6 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              AC            =SIMP(statut='o',typ='R',min=8,max=8),
              GC            =SIMP(statut='o',typ='R',min=8,max=8),
 
-           ),
-           GATT_MONERIE    =FACT(statut='f',min=0,max=1,
-             D_GRAIN         =SIMP(statut='o',typ='R',val_min=0.E+0),
-             PORO_INIT       =SIMP(statut='o',typ='R',val_min=0.E+0),
-             EPSI_01         =SIMP(statut='o',typ='R',defaut= 2.7252E-10,val_min=0.E+0),
-             EPSI_02         =SIMP(statut='o',typ='R',defaut= 9.1440E-41,val_min=0.E+0),
            ),
            CORR_ACIER   =FACT(statut='f',min=0 ,max=1,
              D_CORR           =SIMP(statut='o',typ='R'),
@@ -3349,24 +3343,6 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                     TYPE_DP         =SIMP(statut='c',typ='R',defaut= 2.0,),
              ),
              DILAT           =SIMP(statut='f',typ='R',defaut=0.0),
-           ),
-
-           DRUCK_PRAGER_FO  =FACT(statut='f',
-             ALPHA           =SIMP(statut='o',typ=(fonction_sdaster,formule)),
-             SY              =SIMP(statut='o',typ=(fonction_sdaster,formule)),
-             P_ULTM          =SIMP(statut='o',typ=(fonction_sdaster,formule)),
-             ECROUISSAGE = SIMP(statut='o',typ='TXM',into=("LINEAIRE","PARABOLIQUE")),
-             b_lineaire =BLOC(condition="ECROUISSAGE=='LINEAIRE'",
-                                    fr=tr("Loi de comportement de type Drucker Prager avec un ecrouissage lineaire"),
-                    H               =SIMP(statut='o',typ=(fonction_sdaster,formule)),
-                    TYPE_DP         =SIMP(statut='c',typ='R',defaut= 1.0,),
-             ),
-             b_parabolique =BLOC(condition="ECROUISSAGE=='PARABOLIQUE'",
-                                    fr=tr("Loi de comportement de type Drucker Prager avec un ecrouissage parabolique"),
-                    SY_ULTM         =SIMP(statut='o',typ=(fonction_sdaster,formule)),
-                    TYPE_DP         =SIMP(statut='c',typ='R',defaut= 2.0,),
-             ),
-            DILAT           =SIMP(statut='f',typ='R',defaut=0.0),
            ),
 
            VISC_DRUC_PRAG          =FACT(statut='f',

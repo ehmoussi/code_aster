@@ -54,7 +54,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -297,15 +297,15 @@ implicit none
 !
 ! ----- LIAISON_MAIL
 !
-        call calirc(load, 'MECA')
+        call calirc('MECANIQUE', load, mesh)
 !
-! --- LIAISON_PROJ ---
+! ----- LIAISON_PROJ
 !
         call calipj(load)
 !
 ! ----- LIAISON_CYCL
 !
-        call calyrc(load)
+        call calyrc(load, mesh)
 !
 ! ----- LIAISON_ELEM
 !
@@ -380,10 +380,6 @@ implicit none
 ! ----- LIAISON_UNIF
 !
         call cagrou(load, mesh, vale_type, 'MECA')
-!
-! ----- LIAISON_SOLIDE
-!
-        call caliso(load, mesh, ligrmo, vale_type)
 !
 ! ----- LIAISON_COQUE
 !

@@ -1,7 +1,7 @@
-# person_in_charge: jean-michel.proix at edf.fr
-# TITRE TRACTIONS-ROTATIONS MULTIPLES GDEF_HYPOELAS CINEMATIQUE
+# person_in_charge: david.haboussa at edf.fr
+# TITRE TRACTIONS-ROTATIONS MULTIPLES GDEF_LOG EN 3D CINEMATIQUE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -17,17 +17,19 @@
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 
+from Contrib.veri_matr_tang import VERI_MATR_TANG
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',VISU_EFICAS='NON'),
-DEBUG=_F(SDVERI='NON',JXVERI='OUI'))
-# SDVERI='NON' car la verification est trop couteuse en CPU
+      DEBUG=_F(SDVERI='OUI'))
 
 
 compor=[]
-compor.append(['VMIS_CINE_LINE','GDEF_HYPO_ELAS'])
-compor.append(['VMIS_ECMI_LINE','GDEF_HYPO_ELAS'])
-compor.append(['VMIS_ECMI_TRAC','GDEF_HYPO_ELAS'])
-compor.append(['VMIS_CIN1_CHAB','GDEF_HYPO_ELAS'])
-compor.append(['VMIS_CIN2_CHAB','GDEF_HYPO_ELAS'])
+compor.append(['VMIS_CINE_LINE','GDEF_LOG'])
+compor.append(['VMIS_ECMI_LINE','GDEF_LOG'])
+compor.append(['VMIS_ECMI_TRAC','GDEF_LOG'])
+compor.append(['VMIS_CIN1_CHAB','GDEF_LOG'])
+compor.append(['VMIS_CIN2_CHAB','GDEF_LOG'])
+compor.append(['VMIS_CIN2_MEMO','GDEF_LOG'])
 
 
 #definir le materiau
@@ -42,6 +44,7 @@ ET=2000.
 PRAG=2./3.*E*ET/(E-ET)
 PRAG2=E*ET/(E-ET)
 SY=200.
+Q=0.
 acier=DEFI_MATERIAU(ELAS=_F(E=E,NU=0.3,),
                     TRACTION=_F(SIGM=A7),
                     ECRO_LINE=_F(D_SIGM_EPSI=ET,SY=SY),
@@ -56,6 +59,12 @@ acier=DEFI_MATERIAU(ELAS=_F(E=E,NU=0.3,),
                                  C2_I=PRAG2/2.,
                                  G1_0=0.,
                                  G2_0=0.,),
+                    MEMO_ECRO=_F(
+                                  MU =0.,
+                                  Q_M=Q,
+                                  Q_0=Q,
+                                  ETA=0.,
+                                 ),
                     );
 
 
@@ -120,13 +129,19 @@ epsg=[None]*len(compor)
 icl=-1
 for icomp,comp in enumerate(compor) :
 
-    resu[icomp]=STAT_NON_LINE(MODELE=modele,CHAM_MATER=mat,
-                   EXCIT=_F(CHARGE=clim_tra, FONC_MULT=F_trac,),
-                   COMPORTEMENT=_F(RELATION=comp[0],DEFORMATION=comp[1],
-                   ),
+    DEBUG(SDVERI='NON')
+    resu[icomp]=STAT_NON_LINE(MODELE=modele,
+                              CHAM_MATER=mat,
+                              EXCIT=_F(CHARGE=clim_tra,FONC_MULT=F_trac,),
+                              COMPORTEMENT=_F(RELATION=comp[0],
+                                           DEFORMATION=comp[1],
+                                           TYPE_MATR_TANG='VERIFICATION'),
                    INCREMENT=_F(LIST_INST=DEFLIST1),
                    NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1,PREDICTION='ELASTIQUE',),
                              );
+    DIFF_MAT=VERI_MATR_TANG()
+    DETRUIRE(CONCEPT=_F(NOM=(DIFF_MAT)),INFO=1)
+    DEBUG(SDVERI='OUI')
 
     # increments de rotation puis traction
     for incr in range(nbincr):
@@ -146,7 +161,7 @@ for icomp,comp in enumerate(compor) :
                            EXCIT=(_F(CHARGE=Rota2[icl],TYPE_CHARGE='DIDI',),
                                   _F(CHARGE=ClFixe),),
                            COMPORTEMENT=_F(RELATION=comp[0],DEFORMATION=comp[1],
-                                        ),
+                           ),
                            ETAT_INIT=_F(EVOL_NOLI=resu[icomp],),
                            INCREMENT=_F(LIST_INST=DEFLIST2,),
                            NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=reaciter,PREDICTION='ELASTIQUE',),
@@ -165,15 +180,19 @@ for icomp,comp in enumerate(compor) :
         Linst2=DEFI_LIST_REEL(DEBUT=tfinrot,INTERVALLE=_F(JUSQU_A=tfintrac,NOMBRE=npastrac),)
         DEFLIST2 = DEFI_LIST_INST(DEFI_LIST=_F(METHODE   ='MANUEL',LIST_INST = Linst2,))
 
+        DEBUG(SDVERI='NON')
         resu[icomp]=STAT_NON_LINE(reuse = resu[icomp],MODELE=modele,CHAM_MATER=mat,
                            EXCIT=(_F(CHARGE=Trac2[icl],TYPE_CHARGE='DIDI',FONC_MULT=Ftra2[icl]),),
                            COMPORTEMENT=_F(RELATION=comp[0], DEFORMATION=comp[1],
-                                        ),
+                                        TYPE_MATR_TANG='VERIFICATION'),
                            ETAT_INIT=_F(EVOL_NOLI=resu[icomp]),
                            INCREMENT=_F(LIST_INST=DEFLIST2,INST_FIN=tfintrac),
                            NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=reaciter,PREDICTION='ELASTIQUE',),
                                            );
+        DIFF_MAT=VERI_MATR_TANG()
+        DETRUIRE(CONCEPT=_F(NOM=(DIFF_MAT)),INFO=1)
         DETRUIRE(CONCEPT=_F(NOM=(Linst2,DEFLIST2)),INFO=1)
+        DEBUG(SDVERI='OUI')
 
 
     resu[icomp]=CALC_CHAMP(reuse=resu[icomp],RESULTAT=resu[icomp],CRITERES=('SIEQ_ELGA'),DEFORMATION=('EPSG_ELGA'))
@@ -183,29 +202,29 @@ for icomp,comp in enumerate(compor) :
                               NOM_CMP='VMIS',MAILLE='M2',POINT=1,);
     epsg[icomp]=RECU_FONCTION(RESULTAT=resu[icomp],NOM_CHAM='EPSG_ELGA',
                               NOM_CMP='EPZZ',MAILLE='M2',POINT=1,);
-    TEST_FONCTION(VALEUR=(_F(VALE_CALC=1126.42126829,
-                             VALE_REFE=1126.4000000000001,
+    TEST_FONCTION(VALEUR=(_F(VALE_CALC=1126.95682358,
+                             VALE_REFE=1126.95,
                              VALE_PARA=1.0,
                              REFERENCE='AUTRE_ASTER',
                              PRECISION=2.E-3,
                              NOM_PARA='INST',
                              FONCTION=vmis[icomp],),
-                          _F(VALE_CALC=1368.79650694,
-                             VALE_REFE=1368.8,
+                          _F(VALE_CALC=1412.70676219,
+                             VALE_REFE=1412.7070000000001,
                              VALE_PARA=2.0,
                              REFERENCE='AUTRE_ASTER',
                              PRECISION=1.E-3,
                              NOM_PARA='INST',
                              FONCTION=vmis[icomp],),
-                          _F(VALE_CALC=1557.3925662,
-                             VALE_REFE=1557.4000000000001,
+                          _F(VALE_CALC=1666.15807381,
+                             VALE_REFE=1666.1579999999999,
                              VALE_PARA=3.0,
                              REFERENCE='AUTRE_ASTER',
                              PRECISION=1.E-3,
                              NOM_PARA='INST',
                              FONCTION=vmis[icomp],),
-                          _F(VALE_CALC=1750.68785603,
-                             VALE_REFE=1750.7,
+                          _F(VALE_CALC=1893.83477424,
+                             VALE_REFE=1893.835,
                              VALE_PARA=4.0,
                              REFERENCE='AUTRE_ASTER',
                              PRECISION=1.E-3,
@@ -214,6 +233,32 @@ for icomp,comp in enumerate(compor) :
                           ),
                   )
 
+
+
+IMPR_RESU(RESU=_F(RESULTAT=resu[1],),FORMAT='MED');
+
+DEFI_FICHIER( UNITE=38, FICHIER='./REPE_OUT/courbes_vmis_cinematique.agr')
+IMPR_FONCTION(FORMAT='XMGRACE',UNITE=38,
+                  COURBE=(
+                   _F(FONCTION=vmis[0],LEGENDE=compor[0][0]+'_'+compor[0][1]),
+                   _F(FONCTION=vmis[1],LEGENDE=compor[1][0]+'_'+compor[1][1]),
+                   _F(FONCTION=vmis[2],LEGENDE=compor[2][0]+'_'+compor[2][1]),
+                   _F(FONCTION=vmis[3],LEGENDE=compor[3][0]+'_'+compor[2][1]),
+                   _F(FONCTION=vmis[4],LEGENDE=compor[4][0]+'_'+compor[2][1]),
+                   ),
+                  TITRE='courbes_vmis_cinematique');
+DEFI_FICHIER(ACTION='LIBERER',UNITE=38)
+
+
+DEFI_FICHIER( UNITE=38, FICHIER='./REPE_OUT/courbes_epsg_cinematique.agr')
+IMPR_FONCTION(FORMAT='XMGRACE',UNITE=38,
+                  COURBE=(
+                   _F(FONCTION=epsg[0],LEGENDE=compor[0][0]+'_'+compor[0][1]),
+                   _F(FONCTION=epsg[1],LEGENDE=compor[1][0]+'_'+compor[1][1]),
+                   _F(FONCTION=epsg[2],LEGENDE=compor[2][0]+'_'+compor[2][1]),
+                   ),
+                  TITRE='courbes_epsg_cinematique');
+DEFI_FICHIER(ACTION='LIBERER',UNITE=38)
 
 
 FIN()

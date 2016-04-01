@@ -1,6 +1,6 @@
 # TITRE TEST DES MESSAGES - INTERNATIONALISATION
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -69,16 +69,16 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', VISU_EFICAS='NON'))
 # du message incriminé ou bien mettre un ASSERT(condition) si cela concerne
 # uniquement le développeur.
 previous_errors = [
-    'ALCHML', 'AMDBAR', 'AMUMPS', 'ASCSEP',
+    'ALCHML', 'AMDBAR', 'AMUMPS',
     'CHARACTER', 'CHNO', 'CHPVER',
     'CINX', 'CLO', 'COMBU', 'CVRC', 'DEEQ', 'DELG',
-    'DEP', 'DEPSI', 'DEPSIMAX', 'DEUXMU', 'DISMOI', 'DLAHQR', 'DOMM', 'DPMAT',
+    'DEPSI', 'DEPSIMAX', 'DEUXMU', 'DISMOI', 'DLAHQR', 'DOMM', 'DPMAT',
     'DPMAX', 'DPSIDS', 'DRMAX', 'DTREVC', 'ECLAU', 'EDITGD', 'EFNEMA',
     'ELREFA', 'ELREFE', 'ETENCA', 'FATEMI', 'FINSF', 'FLAHQR',
     'FTREVC', 'GAMDEV', 'GERPAS', 'GILIRE', 'GL', 'GREL',
     'HDFCRF', 'HEXS', 'ICHIN', 'ICOEF', 'IDDL',
     'IM', 'INFOG', 'JECROC', 'JENONU', 'JENUNO', 'JEXNOM', 'JEXNUM', 'JM', 'JUVECA',
-    'KMOD', 'KSIB', 'LCDPPA', 'LIBRARY', 'LIGREL',
+    'KSIB', 'LCDPPA', 'LIBRARY', 'LIGREL',
     'LMAT', 'LONCUM', 'LONT', 'LTNT', 'Map', 'NBCMP', 'NBDDL',
     'NBMECA', 'NBPOIN', 'NBRUP', 'NBSIGM', 'NDDL', 'NDS',
     'NEMA', 'NEQUA', 'NMCOMP', 'NMCONV', 'NMHUJ', 'NMVPIR', 'NMXINS', 'NNOE', 'NOCART',
@@ -87,9 +87,9 @@ previous_errors = [
     'PARAMETER', 'PATH', 'PFACY', 'PHYSICAL', 'PMAX',
     'PREML', 'RAPH', 'RCVALA', 'READDR', 'RESUEL', 'RINF',
     'ROOT', 'RREUR', 'RSEXCH', 'RSUP', 'SCHUR', 'SECHM', 'SECHP', 'SIF', 'SIGMMO',
-    'SOCIE', 'SOLVE', 'SPD', 'SQRT', 'SSP', 'Scalar', 'TBLIVA', 'TGU', 'TGV',
+    'SOCIE', 'SOLVE', 'SPD', 'SQRT', 'SSP', 'Scalar', 'TBLIVA',
     'TYPB', 'TYPEKE', 'TYPL', 'TYPVF', 'UMC', 'UMOY',
-    'USASTE', 'UTTCPU', 'VCINE', 'VITG', 'VPSTOR', 'WORKD', 'WRITDR', 'XMIN',
+    'USASTE', 'UTTCPU', 'VCINE', 'VPSTOR', 'WORKD', 'WRITDR', 'XMIN',
     'XOUS', 'ZEDGAR', 'acearp', 'alchml', 'alfint', 'apetsc',
     'autor', 'breakdown','cagnba', 'cata', 'chckma', 'clcplq',
     'coefal', 'coefam', 'coefra', 'coefrl', 'cuon', 'cupn', 'cvon', 'cvpn',

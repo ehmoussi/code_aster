@@ -53,6 +53,10 @@ extern void DEFSSSPSSP(DISMOI, dismoi, char *,STRING_SIZE,
                        char *,STRING_SIZE, char *,STRING_SIZE, INTEGER *,
                        char *,STRING_SIZE, char *,STRING_SIZE, INTEGER *);
 
+#define CALL_POSTKUTIL(a,b,c,d) CALLSSSS(POSTKUTIL,postkutil,a,b,c,d)
+extern void DEFSSSS(POSTKUTIL,postkutil,char *,STRING_SIZE,char *,STRING_SIZE,
+                    char *,STRING_SIZE,char *,STRING_SIZE);
+
 #define CALL_MATFPE(a) CALLP(MATFPE,matfpe,a)
 extern void DEFP(MATFPE, matfpe, INTEGER *);
 
@@ -72,9 +76,6 @@ extern void DEFP(EXECOP,execop, INTEGER*);
 
 #define CALL_OPSEXE(a)  CALLP(OPSEXE,opsexe,a)
 extern void DEFP(OPSEXE,opsexe, INTEGER*) ;
-
-#define CALL_POST_OP() CALL0(POST_OP,post_op)
-extern void DEF0(POST_OP,post_op);
 
 #define CALL_IMPERS() CALL0(IMPERS,impers)
 extern void DEF0(IMPERS,impers);

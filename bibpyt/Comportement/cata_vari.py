@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -293,7 +293,6 @@ DICT_NOM_VARI = {
     "FH_X": _(u"flux hydraulique dans le repère global ( xxx_JOINT_HYME) composante 1"),
     "FH_Y": _(u"flux hydraulique dans le repère global ( xxx_JOINT_HYME) composante 2"),
     "FH_Z": _(u"flux hydraulique dans le repère global ( xxx_JOINT_HYME) composante 3"),
-    "FVOLPORO": _(u"fraction volumique de porosité"),
     "GAMMAECR": _(u"le paramètre d'écrouissage correspondant à la déformation irréversible majeure."),
     "GAMMAP": _(u"LETK : déformation déviatorique plastique"),
     "GAMMAVP": _(u"LETK : déformation déviatorique viscoplastique"),
@@ -454,15 +453,6 @@ DICT_NOM_VARI = {
     "SEUILDEP": _(u"CZM  seuil correspondant au plus grand saut de déplacement (en norme)"),
     "SEUILHYD": _(u"seuil hydrique"),
     "SEUILISO": _(u"seuil isotrope"),
-    "SH1": _(u"gdef_hypo_elas, variable interne 1"),
-    "SH2": _(u"gdef_hypo_elas, variable interne 2"),
-    "SH3": _(u"gdef_hypo_elas, variable interne 3"),
-    "SH4": _(u"gdef_hypo_elas, variable interne 4"),
-    "SH5": _(u"gdef_hypo_elas, variable interne 5"),
-    "SH6": _(u"gdef_hypo_elas, variable interne 6"),
-    "SH7": _(u"gdef_hypo_elas, variable interne 7"),
-    "SH8": _(u"gdef_hypo_elas, variable interne 8"),
-    "SH9": _(u"gdef_hypo_elas, variable interne 9"),
     "SIGM_N": _(u"contrainte normale"),
     "SIGM_T1": _(u"contrainte tangentielle"),
     "SIGMAPIC": _(u"contrainte de pic"),

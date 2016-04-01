@@ -1,7 +1,7 @@
 subroutine entete()
 ! person_in_charge: mathieu.courtois at edf.fr
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -17,6 +17,7 @@ subroutine entete()
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+    use superv_module, only: asthread_getmax
     implicit none
 ! ----------------------------------------------------------------------
 !     ECRITURE DE L'ENTETE
@@ -24,10 +25,10 @@ subroutine entete()
 #include "asterf_types.h"
 #include "asterf.h"
 #include "asterc/asmpi_comm.h"
+#include "asterc/gtopti.h"
 #include "asterc/lihdfv.h"
 #include "asterc/limedv.h"
 #include "asterc/liscov.h"
-#include "asterc/mlnbpr.h"
 #include "asterc/prhead.h"
 #include "asterfort/asmpi_info.h"
 #include "asterfort/utmess.h"
@@ -35,7 +36,7 @@ subroutine entete()
     integer :: vali(3)
 !
 #ifdef _USE_OPENMP
-    integer :: nbth
+    integer :: maxThreads
 #endif
 ! ----------------------------------------------------------------------
 ! --- INFORMATIONS GLOBALES
@@ -52,8 +53,8 @@ subroutine entete()
 #endif
 ! --- CONFIGURATION OPENMP
 #ifdef _USE_OPENMP
-    nbth = mlnbpr()
-    call utmess('I', 'SUPERVIS2_13', si=nbth)
+    maxThreads = asthread_getmax()
+    call utmess('I', 'SUPERVIS2_13', si=maxThreads)
 #endif
 ! --- LIBRARIES HDF5 ET MED
 #ifndef _DISABLE_HDF5

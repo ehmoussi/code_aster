@@ -1,6 +1,6 @@
 subroutine caliso(load, mesh, ligrmo, vale_type)
 !
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -11,13 +11,11 @@ subroutine caliso(load, mesh, ligrmo, vale_type)
 #include "asterfort/armin.h"
 #include "asterfort/assert.h"
 #include "asterfort/char_excl_keyw.h"
-#include "asterfort/char_read_tran.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/solide_tran.h"
 #include "asterfort/drz12d.h"
 #include "asterfort/drz13d.h"
-#include "asterfort/drzrot.h"
 #include "asterfort/exisdg.h"
 #include "asterfort/getnode.h"
 #include "asterfort/getvr8.h"
@@ -41,7 +39,7 @@ subroutine caliso(load, mesh, ligrmo, vale_type)
 #include "asterfort/detrsd.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -103,12 +101,6 @@ subroutine caliso(load, mesh, ligrmo, vale_type)
     integer :: cmp_index_dx, cmp_index_dy, cmp_index_dz
     integer :: cmp_index_drx, cmp_index_dry, cmp_index_drz
     aster_logical :: l_rota_2d, l_rota_3d
-    aster_logical :: l_tran
-    real(kind=8) :: tran(3)
-    aster_logical :: l_cent
-    real(kind=8) :: cent(3)
-    aster_logical :: l_angl_naut
-    real(kind=8) :: angl_naut(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -126,9 +118,7 @@ subroutine caliso(load, mesh, ligrmo, vale_type)
 !
 ! - Type
 !
-    if (vale_type .eq. 'COMP') then
-        ASSERT(.false.)
-    endif
+    ASSERT(vale_type .eq. 'REEL')
 !
 ! - Access to model
 !
@@ -217,23 +207,6 @@ subroutine caliso(load, mesh, ligrmo, vale_type)
             cycle
         endif
 !
-! ----- Read transformation
-!
-        call char_read_tran(keywordfact, iocc, ndim, l_tran, tran,&
-                            l_cent, cent, l_angl_naut, angl_naut)
-        ASSERT(.not.l_cent)
-        ASSERT(.not.l_angl_naut)
-!
-! ----- Apply translation
-!
-        if (l_tran) then
-!           -- a resorber ? (issue24272)
-            call drzrot(mesh, ligrmo, nb_node, list_node, type_lagr,&
-                        tran, list_rela)
-            type_rela = "LIN"
-            goto 998
-        endif
-!
 ! ----- Model: 2D
 !
         if (ndim .eq. 2) then
@@ -305,9 +278,6 @@ subroutine caliso(load, mesh, ligrmo, vale_type)
                 endif
             endif
         endif
-!
-!
-998     continue
 !
 !       - Final linear relation affectation
 !

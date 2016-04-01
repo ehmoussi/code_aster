@@ -5,7 +5,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 2091 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -45,14 +45,6 @@ implicit none
         vali = 13
         valk    = "PREDICTION='DEPL_CALCULE'"
 !
-    else if (algo .eq. 'GDEF_HYPO_ELAS') then
-        vali = 13
-        valk    = "DEFORMATION='GDEF_HYPO_ELAS'"
-!
-    else if (algo .eq. 'GDEF_HYPO_ELAS') then
-        vali = 13
-        valk    = "DEFORMATION='GDEF_HYPO_ELAS'"
-!
     else if (algo .eq. 'LAGR_CONT') then
         vali = 13
         valk    = "ALGO_CONT='LAGRANGIEN'"
@@ -60,26 +52,6 @@ implicit none
     else if (algo .eq. 'LAGR_FROT') then
         vali = 13
         valk    = "ALGO_CONT/ALGO_FROT='LAGRANGIEN'"
-!
-    else if (algo .eq. 'G_BILI') then
-        vali = 13
-        valk    = "CALC_G/OPTION='G_BILI'"
-!
-    else if (algo .eq. 'G_BILI_GLOB') then
-        vali = 13
-        valk    = "CALC_G/OPTION='G_BILI_GLOB'"
-!
-    else if (algo .eq. 'G_MAX') then
-        vali = 13
-        valk    = "CALC_G/OPTION='G_MAX'"
-!
-    else if (algo .eq. 'G_MAX_GLOB') then
-        vali = 13
-        valk    = "CALC_G/OPTION='G_MAX_GLOB'"
-!
-    else if (algo .eq. 'CALC_K_MAX') then
-        vali = 13
-        valk    = "CALC_G/OPTION='CALC_K_MAX'"
 !
     else if (algo .eq. 'CASTEM') then
         vali = 13
