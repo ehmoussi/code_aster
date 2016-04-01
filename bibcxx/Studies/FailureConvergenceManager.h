@@ -32,83 +32,149 @@
 #include "Utilities/GenericParameter.h"
 #include "Loads/PhysicalQuantity.h"
 
-enum ActionType { StopOnErrorType, SubstepingOnErrorType,
-                  SubstepingOnContactType, AddIterationOnErrorType, PilotageErrorType,
-                  ChangePenalisationOnErrorType, ContinueOnErrorType, NoActionType };
+/**
+ * @enum ActionTypeEnum
+ * @brief Types d'action pouvant être entreprises en cas d'erreur de convergence
+ * @author Nicolas Sellenet
+ */
+enum ActionTypeEnum { StopOnErrorType, SubstepingOnErrorType,
+                      SubstepingOnContactType, AddIterationOnErrorType, PilotageErrorType,
+                      ChangePenalisationOnErrorType, ContinueOnErrorType, NoActionType };
 
-const int nbActions = 8; 
+const int nbActions = 8;
+/**
+ * @var ActionNames
+ * @brief Nom au sens capy des actions
+ */
 extern const char* ActionNames[nbActions];
 
-enum ConnvergenceErrorType { ConvergenceErrorType, ResidualDivergenceErrorType,
-                             IncrementOverboundErrorType, ContactDetectionErrorType,
-                             InterpenetrationErrorType, InstabilityErrorType, NoErrorType };
+/**
+ * @enum ConvergenceErrorTypeEnum
+ * @brief Types d'action pouvant être détectées dans l'algo de STAT_NON_LINE
+ * @author Nicolas Sellenet
+ */
+enum ConvergenceErrorTypeEnum { ConvergenceErrorType, ResidualDivergenceErrorType,
+                                IncrementOverboundErrorType, ContactDetectionErrorType,
+                                InterpenetrationErrorType, InstabilityErrorType, NoErrorType };
 
-const int nbErrors = 7; 
+const int nbErrors = 7;
+/**
+ * @var ErrorNames
+ * @brief Nom au sens capy des erreurs
+ */
 extern const char* ErrorNames[nbErrors];
 
+/**
+ * @class GenericActionInstance
+ * @brief Cette classe définit une action générique en cas d'erreur détéctée
+ * @author Nicolas Sellenet
+ * @todo peut-être passer le type d'action en argument template
+ */
 class GenericActionInstance
 {
 private:
-    GenParam         _actionName;
-    const ActionType _type;
+    /** @brief Nom (capy) de l'action */
+    GenParam             _actionName;
+    /** @brief Type de l'erreur */
+    const ActionTypeEnum _type;
 
 protected:
-    ListGenParam     _listParam;
+    /** @brief Liste des paramètres liés à l'action */
+    ListGenParam         _listParam;
 
 public:
-    GenericActionInstance( ActionType type ): _actionName( "ACTION", std::string( ActionNames[ type ] ) ),
-                                              _type( type )
+    /**
+     * @brief Constructeur
+     * @param type Type de l'action
+     */
+    GenericActionInstance( ActionTypeEnum type ): _actionName( "ACTION",
+                                                               std::string( ActionNames[ type ] ) ),
+                                                  _type( type )
     {
         _listParam.push_back( &_actionName );
     };
 
+    /**
+     * @brief Constructeur par défaut (utile pour cython ?)
+     */
     GenericActionInstance(): _actionName( "ACTION",
                                           std::string( ActionNames[ NoActionType ], true ) ),
                              _type( NoActionType )
     {};
 
-    ListGenParam& getListOfParameters()
+    /**
+     * @brief Récupération de la liste des paramètres de l'action
+     * @return Liste constante des paramètres déclarés
+     */
+    const ListGenParam& getListOfParameters() const
     {
         return _listParam;
     };
 
-    const ActionType& getType() const
+    /**
+     * @brief Récupération du type d'action
+     * @return type ActionTypeEnum de l'action
+     */
+    const ActionTypeEnum& getType() const
     {
         return _type;
     };
 };
 
+/**
+ * @class StopOnErrorInstance
+ * @brief Classe correspondant à l'action "ARRET"
+ * @author Nicolas Sellenet
+ */
 class StopOnErrorInstance: public GenericActionInstance
 {
 public:
+    /** @brief Constructeur par défaut */
     StopOnErrorInstance(): GenericActionInstance( StopOnErrorType )
     {};
 };
 
+/**
+ * @class ContinueOnErrorInstance
+ * @brief Classe correspondant à l'action "CONTINUE"
+ * @author Nicolas Sellenet
+ */
 class ContinueOnErrorInstance: public GenericActionInstance
 {
 public:
+    /** @brief Constructeur par défaut */
     ContinueOnErrorInstance(): GenericActionInstance( ContinueOnErrorType )
     {};
 };
 
+/**
+ * @class GenericSubstepingOnErrorInstance
+ * @brief Classe correspondant à l'action générique "DECOUPE"
+ * @author Nicolas Sellenet
+ */
 class GenericSubstepingOnErrorInstance: public GenericActionInstance
 {
 private:
+    /** @brief Paramètre SUBD_METHODE */
     GenParam _isAuto;
+    /** @brief Paramètre SUBD_PAS */
     GenParam _step;
+    /** @brief Paramètre SUBD_NIVEAU */
     GenParam _level;
+    /** @brief Paramètre SUBD_PAS_MINI */
     GenParam _minimumStep;
 
 protected:
     /**
-     * @todo SUBD_METHODE devrait être aussi ailleurs
+     * @brief Constructeur appelable depuis les classes filles
+     * @param type ActionTypeEnum
      */
-    GenericSubstepingOnErrorInstance( ActionType type ): GenericActionInstance( type ),
-                                                         _isAuto( "SUBD_METHODE", std::string( "MANUEL" ) ),
-                                                         _step( "SUBD_PAS", 4. ),
-                                                         _level( "SUBD_NIVEAU", 3 ),
-                                                         _minimumStep( "SUBD_PAS_MINI", 0. )
+    GenericSubstepingOnErrorInstance( ActionTypeEnum type ):
+        GenericActionInstance( type ),
+        _isAuto( "SUBD_METHODE", std::string( "MANUEL" ) ),
+        _step( "SUBD_PAS", 4 ),
+        _level( "SUBD_NIVEAU", 3 ),
+        _minimumStep( "SUBD_PAS_MINI", 0. )
     {
         _listParam.push_back( &_isAuto );
         _listParam.push_back( &_step );
@@ -117,15 +183,17 @@ protected:
     };
 
 public:
-    /**
-     * @brief Constructeur
-     */
+    /** @brief Constructeur par défaut */
     GenericSubstepingOnErrorInstance(): GenericSubstepingOnErrorInstance( NoActionType )
     {};
 
     ~GenericSubstepingOnErrorInstance()
     {};
 
+    /**
+     * @brief Fixer la méthode de découpage du pas de temps
+     * @param isAuto true si SUBD_METHODE = "AUTO"
+     */
     void setAutomatic( const bool& isAuto )
     {
         if ( isAuto )
@@ -137,47 +205,60 @@ public:
         else
         {
             _isAuto = "MANUEL";
-            _step.setValueIfUnset( 4. );
+            _step.setValueIfUnset( 4 );
             _level.setValueIfUnset( 3 );
         }
     };
 
+    /**
+     * @brief Fixer le niveau de sous-découpage
+     * @param level niveau
+     */
     void setLevel( const int& level )
     {
         _level = level;
     };
 
+    /**
+     * @brief Fixer le pas minimum
+     * @param minimumStep valeur pour SUBD_PAS_MINI
+     */
     void setMinimumStep( const double& minimumStep )
     {
         _minimumStep = minimumStep;
     };
 
-    void setStep( const double& step )
+    /**
+     * @brief Fixer le nombre de découpage d'un pas de temps
+     */
+    void setStep( const int& step )
     {
         _step = step;
     };
 };
 
+/**
+ * @class SubstepingOnErrorInstance
+ * @brief Classe correspondant à l'action "DECOUPE"
+ * @author Nicolas Sellenet
+ */
 class SubstepingOnErrorInstance: public GenericSubstepingOnErrorInstance
 {
-protected:
-    /**
-     * @todo SUBD_METHODE devrait être aussi ailleurs
-     */
-    SubstepingOnErrorInstance( ActionType type ): GenericSubstepingOnErrorInstance( type )
-    {};
-
 public:
-    /**
-     * @brief Constructeur
-     */
-    SubstepingOnErrorInstance(): SubstepingOnErrorInstance( SubstepingOnErrorType )
+    /** @brief Constructeur */
+    SubstepingOnErrorInstance(): GenericSubstepingOnErrorInstance( SubstepingOnErrorType )
     {};
 };
 
+/**
+ * @class AddIterationOnErrorInstance
+ * @brief Classe correspondant à l'action générique "ITRE_SUPPL"
+ * @author Nicolas Sellenet
+ */
 class AddIterationOnErrorInstance: public GenericSubstepingOnErrorInstance
 {
 private:
+    /** @brief Paramètre PCENT_ITER_PLUS */
     GenParam _pcent;
 
 public:
@@ -190,26 +271,39 @@ public:
     ~AddIterationOnErrorInstance()
     {};
 
+    /**
+     * @brief Fixer PCENT_ITER_PLUS
+     * @param pcent double précisant le pourcentage
+     */
     void setPourcentageOfAddedIteration( const double& pcent )
     {
         _pcent = pcent;
     };
 };
 
+/**
+ * @class SubstepingOnContactInstance
+ * @brief Classe correspondant à l'action "DECOUPE" en situation de contact
+ * @author Nicolas Sellenet
+ */
 class SubstepingOnContactInstance: public GenericActionInstance
 {
 private:
+    /** @brief Paramètre SUBD_METHODE */
     GenParam _isAuto;
+    /** @brief Paramètre SUBD_PAS */
     GenParam _step;
+    /** @brief Paramètre SUBD_NIVEAU */
     GenParam _level;
+    /** @brief Paramètre SUBD_PAS_MINI */
     GenParam _minimumStep;
+    /** @brief Paramètre SUBD_INST */
     GenParam _timeStepSubstep;
+    /** @brief Paramètre SUBD_DUREE */
     GenParam _substepDuration;
 
 public:
-    /**
-     * @brief Constructeur
-     */
+    /** @brief Constructeur */
     SubstepingOnContactInstance(): GenericActionInstance( SubstepingOnContactType ),
                                    _isAuto( "SUBD_METHODE", std::string( "AUTO" ) ),
                                    _step( "SUBD_PAS" ),
@@ -218,7 +312,6 @@ public:
                                    _timeStepSubstep( "SUBD_INST", 0., true ),
                                    _substepDuration( "SUBD_DUREE", 0., true )
     {
-        std::cout << "Ici3" << std::endl;
         _listParam.push_back( &_isAuto );
         _listParam.push_back( &_step );
         _listParam.push_back( &_level );
@@ -230,6 +323,10 @@ public:
     ~SubstepingOnContactInstance()
     {};
 
+    /**
+     * @brief Fixer la méthode de découpage du pas de temps
+     * @param isAuto true si SUBD_METHODE = "AUTO"
+     */
     void setAutomatic( const bool& isAuto )
     {
         if ( isAuto )
@@ -247,7 +344,7 @@ public:
         {
             _isAuto = "MANUEL";
 
-            _step.setValueIfUnset( 4. );
+            _step.setValueIfUnset( 4 );
             _level.setValueIfUnset( 3 );
             _minimumStep.setValueIfUnset( 0. );
 
@@ -258,30 +355,50 @@ public:
         }
     };
 
+    /**
+     * @brief Fixer la durée du sous-découage
+     * @param duration double contenant la durée
+     */
     void setSubstepDuration( const double& duration )
     {
         _substepDuration = duration;
     };
 
+    /**
+     * @brief Fixer l'instant du sous-découpage
+     * @param time double contenant l'instant
+     */
     void setTimeStepSubstep( const double& time )
     {
         _timeStepSubstep = time;
     };
 };
 
+/**
+ * @class PilotageErrorInstance
+ * @brief Classe correspondant à l'action "AUTRE_PILOTAGE"
+ * @author Nicolas Sellenet
+ */
 class PilotageErrorInstance: public GenericSubstepingOnErrorInstance
 {
 public:
+    /** @brief Constructeur */
     PilotageErrorInstance(): GenericSubstepingOnErrorInstance( PilotageErrorType )
     {};
 };
 
+/**
+ * @class PilotageErrorInstance
+ * @brief Classe correspondant à l'action "ADAPT_COEF_PENA"
+ * @author Nicolas Sellenet
+ */
 class ChangePenalisationOnErrorInstance: public GenericActionInstance
 {
 private:
     GenParam _coefMax;
 
 public:
+    /** @brief Constructeur */
     ChangePenalisationOnErrorInstance(): GenericActionInstance( ChangePenalisationOnErrorType ),
                                          _coefMax( "COEF_MAXI", 1e12 )
     {
@@ -291,6 +408,7 @@ public:
     ~ChangePenalisationOnErrorInstance()
     {};
 
+    /** @brief Fixer COEF_MAXI */
     void setMaximumPenalisationCoefficient( const double& coef )
     {
         _coefMax = coef;
@@ -302,7 +420,7 @@ typedef boost::shared_ptr< GenericActionInstance > GenericActionPtr;
 
 /** @typedef Pointeur intelligent vers un StopOnErrorInstance */
 typedef boost::shared_ptr< StopOnErrorInstance > StopOnErrorPtr;
-/** @typedef Pointeur intelligent vers un SubstepingOnErrorInstance */
+/** @typedef Pointeur intelligent vers un GenericSubstepingOnErrorInstance */
 typedef boost::shared_ptr< GenericSubstepingOnErrorInstance > GenericSubstepingOnErrorPtr;
 /** @typedef Pointeur intelligent vers un SubstepingOnErrorInstance */
 typedef boost::shared_ptr< SubstepingOnErrorInstance > SubstepingOnErrorPtr;
@@ -327,25 +445,27 @@ typedef boost::shared_ptr< ContinueOnErrorInstance > ContinueOnErrorPtr;
 class GenericConvergenceErrorInstance
 {
 private:
+    /** @brief Action à réaliser en cas d'erreur */
     GenericActionPtr _actionOnError;
 
 protected:
+    /** @brief Paramètre EVENEMENT */
     GenParam         _eventName;
+    /** @brief Liste des Paramètres attachés à l'événement */
     ListGenParam     _listSyntaxParam;
 
-public:
     /**
      * @brief Constructeur
+     * @param type ConvergenceErrorTypeEnum décrivant le type de l'erreur
      */
-    GenericConvergenceErrorInstance( ConnvergenceErrorType type ): 
+    GenericConvergenceErrorInstance( ConvergenceErrorTypeEnum type ): 
                 _eventName( "EVENEMENT", std::string( ErrorNames[ type ] ), true )
     {
         _listSyntaxParam.push_back( &_eventName );
     };
 
-    /**
-     * @brief Constructeur
-     */
+public:
+    /** @brief Constructeur par défaut */
     GenericConvergenceErrorInstance(): _eventName( "EVENEMENT", NoErrorType, true )
     {};
 
@@ -353,6 +473,10 @@ public:
     {};
 
 private:
+    /**
+     * @brief Fonction virtuelle pure permettant de vérifier qu'une action est bien autorisée
+     * @param action Action a tester
+     */
     virtual void checkAllowedAction( const GenericActionPtr& action ) = 0;
 
 public:
@@ -365,7 +489,11 @@ public:
         return _actionOnError;
     };
 
-    ListGenParam& getListOfParameters()
+    /**
+     * @brief Fonction permettant de récupérer la liste des paramètres
+     * @return liste des paramètres de l'événement
+     */
+    const ListGenParam& getListOfParameters() const
     {
         return _listSyntaxParam;
     };
@@ -393,24 +521,26 @@ public:
 
 /**
  * @class ConvergenceErrorInstance
- * @brief 
+ * @brief Classe décriant l'événement ERREUR
  * @author Nicolas Sellenet
  */
 class ConvergenceErrorInstance: public GenericConvergenceErrorInstance
 {
 private:
+    /**
+     * @brief Fonction permettant de vérifier qu'une action est bien autorisée
+     * @param action Action a tester
+     */
     void checkAllowedAction( const GenericActionPtr& action ) throw ( std::runtime_error )
     {
-        const ActionType& type = action->getType();
+        const ActionTypeEnum& type = action->getType();
         if ( type != StopOnErrorType && type != SubstepingOnErrorType &&\
              type != AddIterationOnErrorType && type != PilotageErrorType )
             throw std::runtime_error( "Action not allowed" );
     }
 
 public:
-    /**
-     * @brief Constructeur
-     */
+    /** @brief Constructeur */
     ConvergenceErrorInstance(): GenericConvergenceErrorInstance( ConvergenceErrorType )
     {};
 
@@ -420,23 +550,25 @@ public:
 
 /**
  * @class ResidualDivergenceErrorInstance
- * @brief 
+ * @brief Classe décriant l'événement DIVE_RESI
  * @author Nicolas Sellenet
  */
 class ResidualDivergenceErrorInstance: public GenericConvergenceErrorInstance
 {
 private:
+    /**
+     * @brief Fonction permettant de vérifier qu'une action est bien autorisée
+     * @param action Action a tester
+     */
     void checkAllowedAction( const GenericActionPtr& action ) throw ( std::runtime_error )
     {
-        const ActionType& type = action->getType();
+        const ActionTypeEnum& type = action->getType();
         if ( type != SubstepingOnErrorType )
             throw std::runtime_error( "Action not allowed" );
     }
 
 public:
-    /**
-     * @brief Constructeur
-     */
+    /** @brief Constructeur */
     ResidualDivergenceErrorInstance(): GenericConvergenceErrorInstance( ResidualDivergenceErrorType )
     {};
 
@@ -446,27 +578,32 @@ public:
 
 /**
  * @class IncrementOverboundErrorInstance
- * @brief 
+ * @brief Classe décriant l'événement DELTA_GRANDEUR
  * @author Nicolas Sellenet
  */
 class IncrementOverboundErrorInstance: public GenericConvergenceErrorInstance
 {
 private:
+    /** @brief Paramètre VALE_REF */
     GenParam _value;
+    /** @brief Paramètre NOM_CHAM */
     GenParam _fieldName;
+    /** @brief Paramètre NOM_CMP */
     GenParam _component;
 
+    /**
+     * @brief Fonction permettant de vérifier qu'une action est bien autorisée
+     * @param action Action a tester
+     */
     void checkAllowedAction( const GenericActionPtr& action ) throw ( std::runtime_error )
     {
-        const ActionType& type = action->getType();
+        const ActionTypeEnum& type = action->getType();
         if ( type != StopOnErrorType && type != SubstepingOnErrorType )
             throw std::runtime_error( "Action not allowed" );
     }
 
 public:
-    /**
-     * @brief Constructeur
-     */
+    /** @brief Constructeur */
     IncrementOverboundErrorInstance(): GenericConvergenceErrorInstance( IncrementOverboundErrorType ),
                                        _value( "VALE_REF", true ),
                                        _fieldName( "NOM_CHAM", "", true ),
@@ -480,6 +617,12 @@ public:
     ~IncrementOverboundErrorInstance()
     {};
 
+    /**
+     * @brief Fixer la valeur à vérifier
+     * @param value Valeur de l'incrément
+     * @param fieldName Nom du champ
+     * @param component Nom de la composante
+     */
     void setValueToInspect( const double& value, const std::string& fieldName,
                             const PhysicalQuantityComponent& component )
     {
@@ -491,23 +634,25 @@ public:
 
 /**
  * @class ContactDetectionErrorInstance
- * @brief 
+ * @brief Classe décriant l'événement COLLISION
  * @author Nicolas Sellenet
  */
 class ContactDetectionErrorInstance: public GenericConvergenceErrorInstance
 {
 private:
+    /**
+     * @brief Fonction permettant de vérifier qu'une action est bien autorisée
+     * @param action Action a tester
+     */
     void checkAllowedAction( const GenericActionPtr& action ) throw ( std::runtime_error )
     {
-        const ActionType& type = action->getType();
+        const ActionTypeEnum& type = action->getType();
         if ( type != StopOnErrorType && type != SubstepingOnContactType )
             throw std::runtime_error( "Action not allowed" );
     }
 
 public:
-    /**
-     * @brief Constructeur
-     */
+    /** @brief Constructeur */
     ContactDetectionErrorInstance(): GenericConvergenceErrorInstance( ContactDetectionErrorType )
     {};
 
@@ -517,26 +662,28 @@ public:
 
 /**
  * @class InterpenetrationErrorInstance
- * @brief 
+ * @brief Classe décriant l'événement INTERPENETRATION
  * @author Nicolas Sellenet
- * @todo ajouter les mots-clés manquants
  */
 class InterpenetrationErrorInstance: public GenericConvergenceErrorInstance
 {
 private:
+    /** @brief Paramètre PENE_MAXI */
     GenParam _maxPenetration;
 
+    /**
+     * @brief Fonction permettant de vérifier qu'une action est bien autorisée
+     * @param action Action a tester
+     */
     void checkAllowedAction( const GenericActionPtr& action ) throw ( std::runtime_error )
     {
-        const ActionType& type = action->getType();
+        const ActionTypeEnum& type = action->getType();
         if ( type != StopOnErrorType && type != ChangePenalisationOnErrorType )
             throw std::runtime_error( "Action not allowed" );
     }
 
 public:
-    /**
-     * @brief Constructeur
-     */
+    /** @brief Constructeur */
     InterpenetrationErrorInstance(): GenericConvergenceErrorInstance( InterpenetrationErrorType ),
                                      _maxPenetration( "PENE_MAXI", true )
     {
@@ -546,6 +693,10 @@ public:
     ~InterpenetrationErrorInstance()
     {};
 
+    /**
+     * @brief Fixer la valeur maximale de l'interpénétration
+     * @param value Valeur maximale
+     */
     void setMaximalPenetration( const double& value )
     {
         _maxPenetration = value;
@@ -554,15 +705,19 @@ public:
 
 /**
  * @class InstabilityErrorInstance
- * @brief 
+ * @brief Classe décriant l'événement INSTABILITE
  * @author Nicolas Sellenet
  */
 class InstabilityErrorInstance: public GenericConvergenceErrorInstance
 {
 private:
+    /**
+     * @brief Fonction permettant de vérifier qu'une action est bien autorisée
+     * @param action Action a tester
+     */
     void checkAllowedAction( const GenericActionPtr& action ) throw ( std::runtime_error )
     {
-        const ActionType& type = action->getType();
+        const ActionTypeEnum& type = action->getType();
         if ( type != StopOnErrorType && type != ContinueOnErrorType )
             throw std::runtime_error( "Action not allowed" );
     }

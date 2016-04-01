@@ -97,6 +97,12 @@ private:
 };
 
 
+/**
+ * @brief Opérateur +
+ * @param toAdd1 SyntaxMapContainer à ajouter
+ * @param toAdd2 SyntaxMapContainer à ajouter
+ * @return SyntaxMapContainer résultat
+ */
 SyntaxMapContainer operator+( const SyntaxMapContainer& toAdd1, const SyntaxMapContainer& toAdd2 );
 
 #endif /* SYNTAXDICTIONARY_H_ */

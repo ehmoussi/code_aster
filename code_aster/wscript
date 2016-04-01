@@ -94,7 +94,7 @@ def build_wrappers_on_libaster(self):
     uses = env['all_dependencies']
 
     # Wrappers on C++ objects uses libaster
-    wrapper = get_srcs('**/*.pyx', excl=['Core/**/*.pyx', 'Supervis/**/*.pyx'])
+    wrapper = get_srcs('**/*.pyx', excl=['Supervis/**/*.pyx'])
     for cymodule in wrapper:
         path = cymodule.abspath()
         modname = osp.splitext(osp.basename(path))[0]

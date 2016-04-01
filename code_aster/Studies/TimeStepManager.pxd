@@ -32,6 +32,9 @@ cdef extern from "Studies/TimeStepManager.h":
         void addErrorManager( const GenericConvergenceErrorPtr& currentError ) except +
         void build()
         void setAutomaticManagement( const int& isAuto )
+        void setMaximumNumberOfTimeStep( const int& maximum )
+        void setMaximumTimeStep( const double& maximum )
+        void setMinimumTimeStep( const double& mini )
         void setTimeList( const VectorDouble& timeList )
         void setTimeListFromResultsContainer()
         void debugPrint( int logicalUnit )

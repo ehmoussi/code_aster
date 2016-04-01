@@ -49,15 +49,15 @@ class StaticMechanicalSolverInstance: public GenericSolver
         typedef ListKineLoad::iterator ListKineLoadIter;
 
         /** @brief Modele support */
-        ModelPtr          _supportModel;
+        ModelPtr           _supportModel;
         /** @brief Champ de materiau a utiliser */
-        MaterialOnMeshPtr _materialOnMesh;
+        MaterialOnMeshPtr  _materialOnMesh;
         /** @brief Solveur lineaire */
-        LinearSolverPtr   _linearSolver;
+        LinearSolverPtr    _linearSolver;
         /** @brief Liste des chargements */
-        ListOfLoadsPtr    _listOfLoads;
+        ListOfLoadsPtr     _listOfLoads;
         /** @brief Liste de pas de temps */
-        TimeStepperPtr    _timeStep;
+        TimeStepperPtr     _timeStep;
 
     public:
         /**
@@ -117,11 +117,11 @@ class StaticMechanicalSolverInstance: public GenericSolver
 
         /**
          * @brief Methode permettant de definir les pas de temps
-         * @param currentStepper Liste de pas de temps
+         * @param curVec Liste de pas de temps
          */
-        void setTimeStepper( const TimeStepperPtr& currentStepper )
+        void setTimeStepManager( const VectorDouble& curVec )
         {
-            _timeStep = currentStepper;
+            *_timeStep = curVec;
         };
 };
 
