@@ -1,7 +1,6 @@
-subroutine nmfonc(ds_conv       , ds_algopara, solver , model   , sdcont_defi,&
-                  list_load     , l_cont     , l_unil , sdnume  , sddyna     ,&
-                  sdcriq        , mate       , compor_, ds_inout, comp_para  ,&
-                  list_func_acti)
+subroutine nmfonc(ds_conv  , ds_algopara, solver   , model         , ds_contact,&
+                  list_load, sdnume     , sddyna   , sdcriq        , mate      ,&
+                  compor_  , ds_inout   , comp_para, list_func_acti)
 !
 use NonLin_Datastructure_type
 !
@@ -50,10 +49,8 @@ implicit none
     type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=19), intent(in) :: solver
     character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: sdcont_defi
+    type(NL_DS_Contact), intent(in) :: ds_contact
     character(len=19), intent(in) :: list_load
-    aster_logical, intent(in) :: l_cont
-    aster_logical, intent(in) :: l_unil
     character(len=19), intent(in) :: sdnume
     character(len=19), intent(in) :: sddyna
     character(len=24), intent(in) :: sdcriq
@@ -77,10 +74,8 @@ implicit none
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! In  solver           : datastructure for solver parameters
 ! In  model            : name of the model
-! In  sdcont_defi      : name of contact definition datastructure (from DEFI_CONTACT)
+! In  ds_contact       : datastructure for contact management
 ! In  list_load        : name of datastructure for list of loads
-! In  l_cont           : .true. if contact
-! In  l_unil           : .true. if unilateral condition
 ! In  sdnume           : datastructure for dof positions
 ! In  sddyna           : dynamic parameters datastructure
 ! In  sdcriq           : datastructure for quality indicators
@@ -104,14 +99,16 @@ implicit none
     character(len=24) :: solv_type, solv_precond, sdcriq_errt
     aster_logical :: l_stat, l_dyna
     aster_logical :: l_newt_cont, l_newt_frot, l_newt_geom
-    aster_logical :: l_dyna_expl
+    aster_logical :: l_dyna_expl, l_cont, l_unil
     integer :: ifm, niv
     integer :: nb_dof_stab
     character(len=24), pointer :: slvk(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    compor = compor_
+    compor      = compor_
+    l_cont      = ds_contact%l_meca_cont
+    l_unil      = ds_contact%l_meca_unil
 !
 ! - Print
 !
@@ -126,7 +123,6 @@ implicit none
     l_stat      = command(1:4).eq.'STAT'
     l_dyna      = command(1:4).eq.'DYNA'
     l_dyna_expl = ndynlo(sddyna,'EXPLICITE')
-
 !
 ! - Large rotations
 !
@@ -200,12 +196,12 @@ implicit none
 ! - Contact_friction
 !
     if (l_cont) then
-        i_cont_form = cfdisi(sdcont_defi,'FORMULATION')
+        i_cont_form = cfdisi(ds_contact%sdcont_defi,'FORMULATION')
         if (i_cont_form .eq. 2) then
             list_func_acti(5)  = 1
-            list_func_acti(17) = cfdisi(sdcont_defi,'ALL_INTERPENETRE')
+            list_func_acti(17) = cfdisi(ds_contact%sdcont_defi,'ALL_INTERPENETRE')
             list_func_acti(26) = 1
-            l_frot = cfdisl(sdcont_defi,'FROTTEMENT')
+            l_frot = cfdisl(ds_contact%sdcont_defi,'FROTTEMENT')
             if (l_frot) then
                 list_func_acti(10) = 1
                 list_func_acti(27) = 1
@@ -213,7 +209,7 @@ implicit none
         else if (i_cont_form.eq.3) then
             list_func_acti(9) = 1
             list_func_acti(26) = 1
-            l_frot = cfdisl(sdcont_defi,'FROTTEMENT')
+            l_frot = cfdisl(ds_contact%sdcont_defi,'FROTTEMENT')
             if (l_frot) then
                 list_func_acti(25) = 1
                 list_func_acti(27) = 1
@@ -221,7 +217,7 @@ implicit none
             list_func_acti(27) = 1
         else if (i_cont_form.eq.1) then
             list_func_acti(4) = 1
-            l_frot = cfdisl(sdcont_defi,'FROTTEMENT')
+            l_frot = cfdisl(ds_contact%sdcont_defi,'FROTTEMENT')
             if (l_frot) then
                 list_func_acti(3) = 1
             endif
@@ -233,7 +229,7 @@ implicit none
 ! - Contact: no computation
 !
     if (l_cont) then
-        l_all_verif = cfdisl(sdcont_defi,'ALL_VERIF')
+        l_all_verif = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
         if (l_all_verif) list_func_acti(38) = 1
     endif
 !
@@ -243,9 +239,9 @@ implicit none
         l_loop_geom = .false.
         l_loop_frot = .false.
         l_loop_cont = .false.
-        l_loop_geom = cfdisl(sdcont_defi,'GEOM_BOUCLE')
-        if (l_frot) l_loop_frot = cfdisl(sdcont_defi,'FROT_BOUCLE')
-        l_loop_cont = cfdisl(sdcont_defi,'CONT_BOUCLE')
+        l_loop_geom = cfdisl(ds_contact%sdcont_defi,'GEOM_BOUCLE')
+        if (l_frot) l_loop_frot = cfdisl(ds_contact%sdcont_defi,'FROT_BOUCLE')
+        l_loop_cont = cfdisl(ds_contact%sdcont_defi,'CONT_BOUCLE')
         if (l_all_verif) then
             l_loop_cont = .false.
             l_loop_geom = .false.
@@ -265,9 +261,9 @@ implicit none
 !
     if (l_cont) then
         if (i_cont_form .eq. 2) then
-            l_newt_geom = cfdisl(sdcont_defi,'GEOM_NEWTON')
-            l_newt_frot = cfdisl(sdcont_defi,'FROT_NEWTON')
-            l_newt_cont = cfdisl(sdcont_defi,'CONT_NEWTON')
+            l_newt_geom = cfdisl(ds_contact%sdcont_defi,'GEOM_NEWTON')
+            l_newt_frot = cfdisl(ds_contact%sdcont_defi,'FROT_NEWTON')
+            l_newt_cont = cfdisl(ds_contact%sdcont_defi,'CONT_NEWTON')
             if (l_newt_frot) list_func_acti(47) = 1
             if (l_newt_cont) list_func_acti(53) = 1
             if (l_newt_geom) list_func_acti(55) = 1

@@ -19,8 +19,8 @@
 !
 interface
     subroutine vpnorm(norm, para, lmatr, neq, nbmode,&
-                      ddlexc, vecpro, resufr, lmasin, xmastr,&
-                      isign, numddl, coef)
+                      ddlexc, vecpro, resufr, xmastr, isign,&
+                      numddl, coef)
         integer :: nbmode
         integer :: neq
         character(len=*) :: norm
@@ -29,8 +29,7 @@ interface
         integer :: ddlexc(*)
         real(kind=8) :: vecpro(neq, *)
         real(kind=8) :: resufr(nbmode, *)
-        aster_logical :: lmasin
-        real(kind=8) :: xmastr
+        real(kind=8) :: xmastr(3)
         integer :: isign
         integer :: numddl
         real(kind=8) :: coef(*)

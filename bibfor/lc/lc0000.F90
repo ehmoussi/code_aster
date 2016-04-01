@@ -6,11 +6,11 @@ subroutine lc0000(fami, kpg, ksp, ndim, typmod,&
                   sigp, vip, ndsde, dsidep, icomp,&
                   nvi, nwkout, wkout, codret)
 ! aslint: disable=W1501,W1504
-use calcul_module, only : ca_iactif_
+use calcul_module, only : calcul_status
 implicit none
 !       ================================================================
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -244,7 +244,7 @@ implicit none
 !
 !     NUMLC doit etre compris entre 1 et 100
 !
-    if (ca_iactif_ .ne. 2) then
+    if (calcul_status() .ne. 2) then
         if (option(1:9) .ne. 'RIGI_MECA') then
 !           DEFORMATION MECANIQUE ASSOCIEE A LA VARIABLE DE
 !           COMMANDE PTOT. CE CALCUL N'EST POSSIBLE QUE :

@@ -5,7 +5,7 @@ subroutine mltdrb(nbloc, ncbloc, decal, seq, nbsn,&
                   s)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,11 +21,11 @@ subroutine mltdrb(nbloc, ncbloc, decal, seq, nbsn,&
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! aslint: disable=W1304,W1504
+use superv_module
     implicit none
 #include "jeveux.h"
 !
 #include "asterc/llbloc.h"
-#include "asterc/mlnbpr.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jelibe.h"
 #include "asterfort/jemarq.h"
@@ -49,7 +49,7 @@ subroutine mltdrb(nbloc, ncbloc, decal, seq, nbsn,&
     nb=llbloc()
     call jemarq()
     optb=1
-    nproc=mlnbpr()
+    nproc=asthread_getmax()
     tranch = (nbsm + nproc - 1) /nproc
     seuil = nproc - mod(tranch*nproc-nbsm,nproc)
     do 130 ism = 1, nbsm

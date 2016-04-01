@@ -1,11 +1,12 @@
-subroutine mm_cycl_erase(sdcont_defi, sdcont_solv, cycl_type, point_curr)
+subroutine mm_cycl_erase(ds_contact, cycl_type, point_curr)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/cfdisi.h"
-#include "asterfort/cfdisl.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
@@ -28,8 +29,7 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    character(len=24), intent(in) :: sdcont_defi
-    character(len=24), intent(in) :: sdcont_solv
+    type(NL_DS_Contact), intent(in) :: ds_contact
     integer, intent(in) :: cycl_type
     integer, intent(in) :: point_curr
 !
@@ -41,8 +41,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  sdcont_solv      : name of contact solving datastructure
-! In  sdcont_defi      : name of contact definition datastructure (from DEFI_CONTACT)
+! In  ds_contact       : datastructure for contact management
 ! In  cycl_type        : type of cycling to erase
 !                     0 - for erasing for all cycles
 ! In  point_curr       : contact point to erasing
@@ -56,23 +55,18 @@ implicit none
     integer, pointer :: p_sdcont_cycnbr(:) => null()
     character(len=24) :: sdcont_cyceta
     integer, pointer :: p_sdcont_cyceta(:) => null()
-    integer :: nb_cont_poin, i_cont_poin
+    integer :: nt_cont_poin, i_cont_poin
     integer :: cycl_index
-    aster_logical :: lctcc
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    lctcc = cfdisl(sdcont_defi,'FORMUL_CONTINUE')
-    if (.not.lctcc) then
-        goto 99
-    endif
 !
 ! - Name of cycling objects
 !
-    sdcont_cyclis = sdcont_solv(1:14)//'.CYCLIS'
-    sdcont_cycnbr = sdcont_solv(1:14)//'.CYCNBR'
-    sdcont_cyceta = sdcont_solv(1:14)//'.CYCETA'
+    sdcont_cyclis = ds_contact%sdcont_solv(1:14)//'.CYCLIS'
+    sdcont_cycnbr = ds_contact%sdcont_solv(1:14)//'.CYCNBR'
+    sdcont_cyceta = ds_contact%sdcont_solv(1:14)//'.CYCETA'
 !
 ! - Access to cycling objects
 !
@@ -80,23 +74,23 @@ implicit none
     call jeveuo(sdcont_cycnbr, 'E', vi = p_sdcont_cycnbr)
     call jeveuo(sdcont_cyceta, 'E', vi = p_sdcont_cyceta)
 !
-! - Initializations
+! - Get contact parameters
 !
-    nb_cont_poin = cfdisi(sdcont_defi,'NTPC' )
+    nt_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC' )
 !
 ! - Erasing cycling information
 !
     if (cycl_type .eq. 0) then
         ASSERT(point_curr.eq.0)
         do cycl_index = 1, 4
-            do i_cont_poin = 1, nb_cont_poin
+            do i_cont_poin = 1, nt_cont_poin
                 p_sdcont_cyclis(4*(i_cont_poin-1)+cycl_index) = 0
                 p_sdcont_cycnbr(4*(i_cont_poin-1)+cycl_index) = 0
                 p_sdcont_cyceta(4*(i_cont_poin-1)+cycl_index) = 0
             enddo
         end do
     else if (cycl_type.gt.0) then
-        ASSERT(point_curr.le.nb_cont_poin)
+        ASSERT(point_curr.le.nt_cont_poin)
         ASSERT(point_curr.ge.1)
         ASSERT(cycl_type.ge.1)
         ASSERT(cycl_type.le.4)
@@ -108,8 +102,6 @@ implicit none
     else
         ASSERT(.false.)
     endif
-!
- 99 continue
 !
     call jedema()
 end subroutine

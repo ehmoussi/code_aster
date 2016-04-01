@@ -7,7 +7,6 @@ implicit none
 #include "asterc/getexm.h"
 #include "asterc/getfac.h"
 #include "asterc/mfront_get_nbvari.h"
-#include "asterfort/deprecated_algom.h"
 #include "asterfort/deprecated_behavior.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvid.h"
@@ -24,7 +23,7 @@ implicit none
 #include "asterfort/wkvect.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 2091 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -100,7 +99,6 @@ implicit none
 ! ----- Get DEFORMATION from command file
 !
         call getvtx(keywordfact, 'DEFORMATION', iocc = iocc, scal = defo_comp)
-        call deprecated_algom(defo_comp)
 !
 ! ----- Modified matrix
 !

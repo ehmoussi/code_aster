@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -773,7 +773,10 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, UNITE_MAILLAGE, LIGN_COUPE,
         elif nomgd[:6] == 'VARI_R':
             TYPE_RESU = 'EVOL_NOLI'
         elif nomgd[:6] == 'SIEF_R':
-            if NOM_CHAM[:4] == 'SIGM':
+            if not NOM_CHAM:
+                TYPE_RESU = 'EVOL_ELAS'
+                NOM_CHAM = 'DEPL'
+            elif NOM_CHAM[:4] == 'SIGM':
                 TYPE_RESU = 'EVOL_ELAS'
             elif NOM_CHAM[:4] == 'SIEF':
                 TYPE_RESU = 'EVOL_NOLI'
@@ -859,7 +862,8 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, UNITE_MAILLAGE, LIGN_COUPE,
 
             __mailla = DEFI_GROUP(reuse=__mailla, MAILLAGE=__mailla,
                                   DETR_GROUP_NO=_F(NOM=str(m['GROUP_MA'])),
-                                  CREA_GROUP_NO=_F(OPTION='NOEUD_ORDO', NOM=str(m['GROUP_MA']), GROUP_MA=m['GROUP_MA'], **argsup))
+                                  CREA_GROUP_NO=_F(OPTION='NOEUD_ORDO', NOM=str(m['GROUP_MA']), 
+                                                   GROUP_MA=m['GROUP_MA'], ORIGINE='SANS', **argsup))
 
             collgrno = aster.getcolljev(__mailla.nom.ljust(8) + '.GROUPENO')
             grpn = collgrno[str(m['GROUP_MA']).ljust(24)]

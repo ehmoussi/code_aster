@@ -4,7 +4,7 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
                   igthet, fno, nfiss, jheavn, incr)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -132,7 +132,8 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
         irese=0
     endif
 !    
-    typmod(2) = ' '
+    typmod = ' '
+    sigl=0.d0
     cp = .false.
     oprupt = 'RUPTURE'
     rac2 = sqrt(2.d0)
@@ -527,14 +528,13 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
 !           plasticite (en fait juste elasticite + comp_incr pour l'etat initial)
 
             ppg=0.d0
-!           bizarre, pas d'argument  idecpg comme pour nmelnl
             call nmplru('XFEM', kpg+idecpg, 1, '+', ndim,&
                         typmod, matcod, compor, ppg, eps,&
                         epsp, rp, energi)
                         
-            do 435 i = 1, 3
+            do i = 1, 3
                 sigl(i)= zr(isigm+idebs-1 + ncmp*(kpg-1) + i)
-435         continue
+            enddo
             sigl(4) = zr(isigm+idebs-1 + ncmp*(kpg-1) + 4) * rac2
             if (ndim .eq. 3) then
                 sigl(5) = zr(isigm+idebs-1 + ncmp*(kpg-1) + 5) * rac2
@@ -548,7 +548,7 @@ subroutine xgelem(elrefp, ndim, coorse, igeom, jheavt,&
             crit(9) = 300
             crit(8) = 1.d-3
 
-            call nmelnl('XFEM', kpg+idecpg, 1, 0, '+', ndim,&
+            call nmelnl('XFEM', kpg+idecpg, 1, '+', ndim,&
                         typmod, matcod, compor, crit, oprupt,&
                         eps, sigl, rbid, dsidep, energi) 
 

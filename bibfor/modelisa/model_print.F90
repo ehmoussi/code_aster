@@ -17,7 +17,7 @@ subroutine model_print(model)
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -47,7 +47,7 @@ subroutine model_print(model)
 ! --------------------------------------------------------------------------------------------------
 !
     integer ifm, niv
-    integer :: numvec, nbgrel, igrel, long_grel, nume_elem, nume_node
+    integer :: numvec, nbgrel, igrel, long_grel, nume_elem
     integer :: nume_type_poi1, jc, j,k, ibegin
     integer :: nume_type_elem, nume_type_geom
     integer :: iexi, nb_type_elem
@@ -61,8 +61,6 @@ subroutine model_print(model)
     integer, pointer :: p_nb_elem(:) => null()
     character(len=24) :: model_liel
     integer, pointer :: p_model_liel(:) => null()
-    character(len=24) :: model_nema
-    integer, pointer :: p_model_nema(:) => null()
     character(len=8), pointer :: p_type_geom(:) => null()
     character(len=16), pointer :: p_modeli(:) => null()
     character(len=16), pointer :: p_type_elem(:) => null()
@@ -87,7 +85,6 @@ subroutine model_print(model)
 !
     ligrel_model = model//'.MODELE'
     model_liel   = model//'.MODELE    .LIEL'
-    model_nema   = model//'.MODELE    .NEMA'
 !
 ! - Allocate
 !
@@ -110,10 +107,6 @@ subroutine model_print(model)
 !
 ! - Access to "late" elements
 !
-    call jeexin(model_nema, iexi)
-    if (iexi .gt. 0) then
-        call jeveuo(model_nema, 'L', vi = p_model_nema)
-    endif
 !
 ! - Each type: counting
 !
@@ -203,13 +196,8 @@ subroutine model_print(model)
                     j=ibegin-1+k
                     jc = jc+1
                     nume_elem = p_model_liel(j)
-                    if (nume_elem .lt. 0) then
-                        ASSERT(p_model_nema(1).ne.0)
-                        nume_node = p_model_nema((-nume_elem*2-1))
-                        call jenuno(jexnum(mesh//'.NOMNOE', nume_node), name_entity)
-                    else
-                        call jenuno(jexnum(mesh//'.NOMMAI', nume_elem), name_entity)
-                    endif
+                    ASSERT (nume_elem .gt. 0) 
+                    call jenuno(jexnum(mesh//'.NOMMAI', nume_elem), name_entity)
                     if (jc .le. 8) then
                         tabmai(jc) = name_entity
                     end if
@@ -217,7 +205,7 @@ subroutine model_print(model)
                         call utmess('I', 'MODELE1_38', nk = 8, valk = tabmai)
                         jc         = 0
                     endif
-                    if (k .eq. nb_elem_grel) then
+                    if (k .eq. nb_elem_grel .and. jc.gt.0) then
                         valk(1:8) = ' '
                         if (jc.le.7) then
                             valk(1:jc) = tabmai(1:jc)

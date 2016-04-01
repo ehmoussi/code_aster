@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -324,6 +324,21 @@ Erreur utilisateur dans la commande PROJ_CHAMP :
  Il n'est pas encore possible de découper le type_élément :  %(k1)s  en sous-éléments
     elrefa :  %(k2)s.
  Faites une demande d'évolution.
+"""),
+
+    79 : _(u"""
+Vous utilisez la commande PROJ_CHAMP (ou une fonctionnalité utilisant la 
+projection d'un maillage sur un autre).
+Pour des raisons de performance, les mailles du maillage à projeter sont
+placées dans une grille cartésienne régulière.
+
+Le maillage est tel que certaines cellules de la grille contiennent beaucoup
+plus de mailles que d'autres. 
+Dans ces conditions, les performances CPU de la projection sont dégradées.
+
+Nombre moyen de mailles dans une cellule   : %(i1)d
+Nombre maximal de mailles dans une cellule : %(i2)d
+
 """),
 
 

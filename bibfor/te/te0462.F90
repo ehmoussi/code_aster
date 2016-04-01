@@ -1,6 +1,6 @@
 subroutine te0462(option, nomte)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -52,15 +52,15 @@ subroutine te0462(option, nomte)
     data gm1 / 0.d0,0.d0,1.d0/
 ! ----------------------------------------------------------------------
 !
-    if (.not.(lteatt('CODMOD','DKT') .or. lteatt('CODMOD','GRC'))) then
+    if (.not.(lteatt('MODELI','DKT') .or. lteatt('MODELI','GRC'))) then
         ASSERT(.false.)
     endif
-    grille= lteatt('CODMOD','GRC')
+    grille= lteatt('MODELI','GRC')
 !
 !     NOMBRE DE NOEUDS
-    if (lteatt('CODTMA','QU4')) then
+    if (lteatt('TYPMA','QU4')) then
         nno = 4
-    else if (lteatt('CODTMA','TR3')) then
+    else if (lteatt('TYPMA','TR3')) then
         nno = 3
     else
         ASSERT(.false.)

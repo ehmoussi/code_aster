@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -30,7 +30,6 @@ class sd_modele(AsBase):
     nomj = SDNom(fin=8)
 
     MODELE = sd_ligrel()
-    NOEUD = Facultatif(AsVI())
     MAILLE = Facultatif(AsVI())
     PARTIT = Facultatif(AsVK8(lonmax=1))
 
@@ -44,12 +43,9 @@ class sd_modele(AsBase):
     def check_existence(self, checker):
         exi_liel = self.MODELE.LIEL.exists
         exi_maille = self.MAILLE.exists
-        exi_noeud = self.NOEUD.exists
-
-        # si .LIEL => .MAILLE et .NOEUD
+        # si .LIEL => .MAILLE 
         if exi_liel:
             assert exi_maille
-            assert exi_noeud
 
     def check_PARTIT(self, checker):
         if self.PARTIT.exists:

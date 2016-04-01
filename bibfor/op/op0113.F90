@@ -1,7 +1,7 @@
 subroutine op0113()
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -241,7 +241,7 @@ subroutine op0113()
 !
 !-----------------------------------------------------------------------
 !     5) DUPLICATION DU .NOMA, .NBNO
-!                ET DES .NEMA, .SSSA, .NOEUD S'ILS EXISTENT
+!                ET DES .NEMA, .SSSA S'ILS EXISTENT
 !        PUIS .REPE, .PRNM ET .PRNS AVEC CALL ADALIG CORMGI ET INITEL
 !-----------------------------------------------------------------------
 !
@@ -252,7 +252,6 @@ subroutine op0113()
 !
     call jedup1(mod1//'.NEMA', 'G', modelx//'.NEMA')
     call jedup1(mod1//'.SSSA', 'G', modelx//'.SSSA')
-    call jedup1(mod1//'.NOEUD', 'G', modelx//'.NOEUD')
 !
     call adalig(ligr2)
     call cormgi('G', ligr2)

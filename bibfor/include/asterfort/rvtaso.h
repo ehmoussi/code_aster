@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -15,20 +15,17 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-interface
-    subroutine rvtaso(releve, nomcmp, nbcmp, nbco, nbsp,&
-                      nomtab, iocc, ncheff, i1, ioc,&
-                      isd)
-        real(kind=8) :: releve(*)
-        character(len=8) :: nomcmp(*)
-        integer :: nbcmp
-        integer :: nbco
-        integer :: nbsp
-        character(len=19) :: nomtab
-        integer :: iocc
-        character(len=16) :: ncheff
-        integer :: i1
-        integer :: ioc
-        integer :: isd
-    end subroutine rvtaso
-end interface
+          interface 
+            subroutine rvtaso(releve,nomcmp,nbcmp,nbco,nbsp,nomtab,iocc,&
+     &ncheff,i1)
+              real(kind=8) :: releve(*)
+              character(len=8) :: nomcmp(*)
+              integer :: nbcmp
+              integer :: nbco
+              integer :: nbsp
+              character(len=19) :: nomtab
+              integer :: iocc
+              character(len=16) :: ncheff
+              integer :: i1
+            end subroutine rvtaso
+          end interface 

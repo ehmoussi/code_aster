@@ -16,13 +16,12 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine cfprep(noma, defico, resoco, matass, ddepla,&
-                      depdel)
-        character(len=8) :: noma
-        character(len=24) :: defico
-        character(len=24) :: resoco
-        character(len=19) :: matass
-        character(len=19) :: ddepla
-        character(len=19) :: depdel
+    subroutine cfprep(mesh, matr_asse, disp_iter, disp_cumu_inst, ds_contact)
+        use NonLin_Datastructure_type
+        character(len=8), intent(in) :: mesh
+        character(len=19), intent(in) :: matr_asse
+        character(len=19), intent(in) :: disp_iter
+        character(len=19), intent(in) :: disp_cumu_inst
+        type(NL_DS_Contact), intent(inout) :: ds_contact
     end subroutine cfprep
 end interface

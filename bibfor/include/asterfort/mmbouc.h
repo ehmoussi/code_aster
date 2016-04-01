@@ -16,10 +16,15 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine mmbouc(sdcont_solv, loop_name, operation, loop_value)
-        character(len=24), intent(in) :: sdcont_solv
-        character(len=4), intent(in) :: loop_name
-        character(len=4), intent(in) :: operation
-        integer, intent(out), optional :: loop_value
+    subroutine mmbouc(ds_contact   , loop_type  , operation_ ,&
+                      loop_counter_, loop_state_, loop_locus_, loop_vale_)
+        use NonLin_Datastructure_type
+        type(NL_DS_Contact), intent(inout) :: ds_contact
+        character(len=4), intent(in) :: loop_type
+        character(len=*), intent(in) :: operation_
+        integer, intent(out), optional :: loop_counter_
+        aster_logical, intent(out), optional :: loop_state_
+        character(len=16), intent(inout), optional :: loop_locus_
+        real(kind=8), intent(inout), optional :: loop_vale_
     end subroutine mmbouc
 end interface

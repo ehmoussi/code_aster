@@ -16,17 +16,17 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine cfmxpo(noma, modelz, defico, resoco, numins,&
-                      sddisc, sdstat, solalg, valinc, veasse)
-        character(len=8) :: noma
-        character(len=*) :: modelz
-        character(len=24) :: defico
-        character(len=24) :: resoco
-        integer :: numins
-        character(len=19) :: sddisc
-        character(len=24) :: sdstat
-        character(len=19) :: solalg(*)
-        character(len=19) :: valinc(*)
-        character(len=19) :: veasse(*)
+    subroutine cfmxpo(mesh  , model_    , ds_contact, nume_inst  , sddisc, &
+                      sdstat, hval_algo , hval_incr , hval_veasse)
+        use NonLin_Datastructure_type
+        character(len=8), intent(in) :: mesh
+        character(len=*), intent(in) :: model_
+        character(len=24), intent(in) :: sdstat
+        type(NL_DS_Contact), intent(in) :: ds_contact
+        integer, intent(in) :: nume_inst
+        character(len=19), intent(in) :: sddisc
+        character(len=19), intent(in) :: hval_algo(*)
+        character(len=19), intent(in) :: hval_incr(*)
+        character(len=19), intent(in) :: hval_veasse(*)
     end subroutine cfmxpo
 end interface

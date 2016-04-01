@@ -18,26 +18,21 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmbclc(noma  , nomo  , numedd  , iterat, numins,&
-                      sddisc, sddyna, ds_print, defico, resoco,&
-                      valinc, solalg, sdtime  , sdstat, mmcvca,&
-                      instan)
+    subroutine mmbclc(mesh     , model     , nume_dof, iter_newt, nume_inst,&
+                      sddisc   , sddyna    , sdtime  , sdstat   , hval_incr,&
+                      hval_algo, ds_contact)
         use NonLin_Datastructure_type
-        character(len=8), intent(in) :: noma
-        character(len=8), intent(in) :: nomo
-        character(len=24), intent(in) :: numedd
-        integer, intent(in) :: iterat
-        integer, intent(in) :: numins
+        character(len=8), intent(in) :: mesh
+        character(len=8), intent(in) :: model
+        character(len=24), intent(in) :: nume_dof
+        integer, intent(in) :: iter_newt
+        integer, intent(in) :: nume_inst
         character(len=19), intent(in) :: sddisc
         character(len=19), intent(in) :: sddyna
-        type(NL_DS_Print), intent(inout) :: ds_print
-        character(len=24), intent(in) :: defico
-        character(len=24), intent(in) :: resoco
-        character(len=19), intent(in) :: valinc(*)
-        character(len=19), intent(in) :: solalg(*)
         character(len=24), intent(in) :: sdtime
         character(len=24), intent(in) :: sdstat
-        aster_logical, intent(out) :: mmcvca
-        real(kind=8) :: instan
+        character(len=19), intent(in) :: hval_incr(*)
+        character(len=19), intent(in) :: hval_algo(*)
+        type(NL_DS_Contact), intent(inout) :: ds_contact
     end subroutine mmbclc
 end interface

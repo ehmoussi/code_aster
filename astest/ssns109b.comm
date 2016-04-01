@@ -1,6 +1,6 @@
 # TITRE POUTRE CONSOLE SOUMISE A UN EFFORT TRANCHANT
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -263,14 +263,14 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.00148738728845,
                          REFERENCE='SOURCE_EXTERNE',
                          PRECISION=1.0,
                          FONCTION=DIFFZ,),
-                      _F(VALE_CALC=0.0196033244343,
+                      _F(VALE_CALC=0.01960449535559,
                          VALE_REFE=0.0,
                          CRITERE='ABSOLU',
                          VALE_PARA=6.5880000000000001,
                          REFERENCE='SOURCE_EXTERNE',
                          PRECISION=1.0,
                          FONCTION=DIFFZ,),
-                      _F(VALE_CALC=0.0193781895908,
+                      _F(VALE_CALC=0.01937963593152,
                          VALE_REFE=0.0,
                          CRITERE='ABSOLU',
                          VALE_PARA=6.6980000000000004,
@@ -293,23 +293,9 @@ ABSDIFFZ  = CALC_FONCTION( ABS=_F(  FONCTION = DIFFZ)    )
 MXDIFFZ   = INFO_FONCTION( MAX=_F(  FONCTION = ABSDIFFZ)    )
 IMPR_TABLE(TABLE=MXDIFFZ)
 
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-3,
-           VALE_CALC=1.000000000,
-           VALE_REFE=1.0,
-           NOM_PARA='TOUTRESU',
-           TABLE=MXREFEZ,
-           FILTRE=(_F(NOM_PARA='FONCTION',
-                      VALE_K='ABSREFEZ',),
-                   _F(NOM_PARA='TYPE',
-                      VALE_K='MAXI',),
-                   ),
-           )
 
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-3,
-           VALE_CALC=0.025104945,
-           VALE_REFE=0.025100000000000001,
+TEST_TABLE(
+           VALE_CALC=0.0251053661408,
            NOM_PARA='ETA_PILO',
            TABLE=MXDIFFZ,
            FILTRE=(_F(NOM_PARA='FONCTION',
@@ -536,24 +522,9 @@ ABSDIFFX  = CALC_FONCTION( ABS=_F(  FONCTION = DIFFX)    )
 MXDIFFX   = INFO_FONCTION( MAX=_F(  FONCTION = ABSDIFFX)    )
 IMPR_TABLE(TABLE=MXDIFFX)
 
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-3,
-           VALE_CALC=1.000000000,
-           VALE_REFE=1.0,
-           NOM_PARA='TOUTRESU',
-           TABLE=MXREFEX,
-           FILTRE=(_F(NOM_PARA='FONCTION',
-                      VALE_K='ABSREFEX',),
-                   _F(NOM_PARA='TYPE',
-                      VALE_K='MAXI',),
-                   ),
-           )
 
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-3,
-
+TEST_TABLE(
            VALE_CALC=0.714143507,
-           VALE_REFE=0.71399999999999997,
            NOM_PARA='ETA_PILO',
            TABLE=MXDIFFX,
            FILTRE=(_F(NOM_PARA='FONCTION',
