@@ -3,7 +3,7 @@ P memory_limit 512
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist verification sequential
+P testlist asterxx verification sequential
 
 F comm xxLinearMechanics001a.py D 1
 F mmed test001f.mmed D 20
