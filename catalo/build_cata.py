@@ -1,6 +1,6 @@
 # coding=utf-8
 
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -27,17 +27,22 @@ import os.path as osp
 import shutil
 
 
-def build(target, debug):
+def build(target, debug, *args):
     """Create the jeveux object of the catalog"""
     from Execution.i18n import localization
     from Utilitai.as_timer import ASTER_TIMER
     from cataelem.elem import CataElem
     from cataelem.Tools.build_jeveux import impr_cata
+    if args:
+        from cataelem import __DEBUG_ELEMENTS__
+        __DEBUG_ELEMENTS__.extend(args)
     timer = ASTER_TIMER()
     timer.Start('T0')
     cel = CataElem()
     cel.build()
     timer.Stop('T0')
+    if args:
+        return
     debugdir = None
     if debug:
         debugdir = osp.join(osp.dirname(target), 'debug')
@@ -57,4 +62,4 @@ if __name__ == '__main__':
     opts, args = parser.parse_args()
     if not opts.ojb:
         parser.error('You must provide the destination file')
-    build(opts.ojb, opts.debug)
+    build(opts.ojb, opts.debug, *args)

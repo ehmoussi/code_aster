@@ -73,7 +73,7 @@ class BaseCataEntity(object):
         self._comment = None
 
     def __getIndex(self):
-        """Return the number of nodes"""
+        """Return the object index"""
         return self._idx
     idx = property(__getIndex)
 
@@ -170,7 +170,7 @@ class PhysicalQuantity(BaseCataEntity):
         a_creer_seulement_dans(self, ['physical_quantities'])
         assert type in ('R', 'I', 'C', 'K8', 'K16', 'K24'), type
         lcmp2 = expandComponents(components)
-        assert sans_doublon(lcmp2), lcmp2
+        assert noduplicates(lcmp2), "PhysicalQuantity: duplicated components: {0}".format(lcmp2)
         for cmp in lcmp2:
             verif_identificateur(cmp, 8)
         self._type = type
@@ -265,6 +265,7 @@ class SetOfNodes(BaseCataEntity):
         self._nodes = check_type(force_tuple(nodes), int)
         for node in nodes:
             assert node > 0 and node <= 54, node
+        assert noduplicates(nodes), "SetOfNodes: duplicated node id"
 
     def __getNodes(self):
         """Return the list of nodes"""
@@ -291,7 +292,7 @@ class LocatedComponents(BaseCataEntity):
             assert location is None, location
         if not diff:
             lcmp2 = expandComponents(components)
-            assert sans_doublon(lcmp2), lcmp2
+            assert noduplicates(lcmp2), "LocatedComponents: duplicated components: {0}".format(lcmp2)
             for cmp in lcmp2:
                 verif_identificateur(cmp, 8)
                 assert phys.hasComponent(cmp), (phys.name, cmp)
@@ -301,12 +302,16 @@ class LocatedComponents(BaseCataEntity):
             for setNodes, cmps in components:
                 check_type([setNodes], str)
                 lcmp2 = list(expandComponents(cmps))
-                assert sans_doublon(lcmp2), lcmp2
+                assert noduplicates(lcmp2), "LocatedComponents: duplicated components: {0}".format(lcmp2)
                 for cmp in lcmp2:
                     verif_identificateur(cmp, 8)
                     assert phys.hasComponent(cmp), (phys.name, cmp)
                 lcmp2.insert(0, setNodes)
                 self._components.append(tuple(lcmp2))
+            # checkings
+            setNodesNames = self.getSetOfNodesNames()
+            assert noduplicates(setNodesNames), \
+                "LocatedComponents: duplicated SetOfNodes names"
         self._phys = phys
         self._type = type
         self._diff = diff
@@ -336,6 +341,10 @@ class LocatedComponents(BaseCataEntity):
         """Return the location of integration for this mode"""
         return self._location
     location = property(__getLocation)
+
+    def getSetOfNodesNames(self):
+        """Return the names of the SetOfNodes"""
+        return [cmp[0] for cmp in self._components]
 
     def copy(self, components=None):
         """Return a new LocatedComponents object, allow to change the list of
@@ -378,7 +387,7 @@ class ArrayOfComponents(BaseCataEntity):
     physicalQuantity = property(__getPhys)
 
     def __getLocatedComponents(self):
-        """Return the underlying local mode"""
+        """Return the underlying located components"""
         return self._locCmp
     locatedComponents = property(__getLocatedComponents)
 
@@ -649,12 +658,12 @@ class Calcul(object):
 
     def __getParaIn(self):
         """Return the list of the couples input parameters, components"""
-        return self._para_in
+        return list(self._para_in)
     para_in = property(__getParaIn)
 
     def __getParaOut(self):
         """Return the list of the couples output parameters, components"""
-        return self._para_out
+        return list(self._para_out)
     para_out = property(__getParaOut)
 
     def setParaIn(self, para):
@@ -697,9 +706,21 @@ class Element(BaseCataEntity):
         super(Element, self).__init__()
         self.elrefe = force_tuple(self.elrefe)
         check_type([self.meshType], MeshType)
+        setNames = []
         if self.nodes:
             self.nodes = force_tuple(self.nodes)
             check_type(self.nodes, SetOfNodes)
+            setNames = [setNodes.name for setNodes in self.nodes]
+            assert noduplicates(setNames), "Element: duplicated SetOfNodes names: {0}".format(setNames)
+            ids = []
+            for setNodes in self.nodes:
+                ids.extend(setNodes.nodes)
+            assert noduplicates(ids), "Element: duplicated nodes ids between SetOfNodes"
+            allNodes = set(range(1, self.meshType.nbNodes + 1))
+            notUsed = allNodes.difference(ids)
+            assert not notUsed, "Element: nodes not in a SetOfNodes: {0}".format(tuple(notUsed))
+            tooMuch = set(ids).difference(allNodes)
+            assert not tooMuch, "Element: nodes do not belong to the Element: {0}".format(tuple(tooMuch))
         check_type(self.elrefe, ElrefeLoc)
         # check attributes
         assign = []
@@ -720,6 +741,7 @@ class Element(BaseCataEntity):
                     else:
                         self.modifyCalcul(calc)
         self.postInit()
+        self.checkSetOfNodes()
 
     def postInit(self):
         """Elements can define a post-initialization function to change its
@@ -762,15 +784,37 @@ class Element(BaseCataEntity):
             self._calculs[optname] = Calcul(calc.option, calc.te,
                                             para_in, para_out)
 
+    def checkSetOfNodes(self):
+        """Check the set of nodes usage in the LocatedComponents"""
+        def _getNodes(name):
+            """Return the nodes belonging to the set 'name'"""
+            for setN in self.nodes:
+                if setN.name == name:
+                    return setN.nodes
+            # assert False, "set {0!r} not defined in this element".format(name)
+            return []
+        allNodes = set(range(1, self.meshType.nbNodes + 1))
+        for locCmp in self.usedLocatedComponents():
+            if type(locCmp) is ArrayOfComponents or not locCmp.diff:
+                continue
+            defNodes = []
+            for name in locCmp.getSetOfNodesNames():
+                defNodes.extend(_getNodes(name))
+            notUsed = tuple(allNodes.difference(defNodes))
+            assert len(notUsed) == 0, "Element: components not defined on these nodes " \
+                "(located components! {1}): {0}".format(notUsed, locCmp.name)
+
     def usedLocatedComponents(self):
         """Return the LocatedComponents used by this element"""
-        loco = set()
+        loco = OrderedDict()
         for calc in self._calculs.values():
-            for _, loc_i in list(calc.para_in) + list(calc.para_out):
-                loco.add(loc_i)
+            for _, loc_i in calc.para_in + calc.para_out:
+                loco[id(loc_i)] = loc_i
                 if type(loc_i) is ArrayOfComponents:
-                    loco.update(loc_i.locatedComponents)
-        return list(loco)
+                    arr = loc_i
+                    for loc_i in arr.locatedComponents:
+                        loco[id(loc_i)] = loc_i
+        return loco.values()
 
     def changeComponents(self, locCmpName, components):
         """Modify the components of a LocatedComponents used in the element.
@@ -894,7 +938,7 @@ class AbstractEntityStore(object):
                 mod = __import__('cataelem.%s.%s' %
                                  (package, modname), globals(), locals(), [modname])
             except:
-                print("ERROR during import of {0}".format(modname))
+                error("ERROR during import of {0}".format(modname))
                 raise
             # store the entities and name the parameters
             for name in dir(mod):
@@ -909,7 +953,11 @@ class AbstractEntityStore(object):
             self._entities[name] = obj
         elif (type(obj) is type and obj not in self.entityType
               and issubclass(obj, self.entityType)):
-            self._entities[name] = obj()
+            try:
+                self._entities[name] = obj()
+            except AssertionError, exc:
+                error("ERROR during initialisation of {0}".format(name))
+                raise
         elif type(obj) in self.subTypes:
             obj.setName(name)
         elif type(obj) is dict:
@@ -957,6 +1005,10 @@ def checkAttr(attr, value):
                                  .format(attr.name, value))
     return attr
 
+def error(message):
+    """Print on stderr"""
+    sys.stderr.write(message)
+    sys.stderr.write(os.linesep)
 
 #===============================================================================================
 # utilitaires:
@@ -991,10 +1043,9 @@ def expandComponents(lcmp):
     return tuple(lcmp_resu)
 
 
-def sans_doublon(liste):
-#    -- retourne true si la liste n'a pas de doublons
-    s1 = set(liste)
-    return len(s1) == len(liste)
+def noduplicates(values):
+    """Tell if there are not duplicated values"""
+    return len(values) == len(set(values))
 
 
 def a_creer_seulement_dans(obj, l_autorises):

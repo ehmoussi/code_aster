@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -3430,15 +3430,6 @@ VALO_R   = PhysicalQuantity(type='R',
 """)
 
 
-VANL_R   = PhysicalQuantity(type='R',
-    components=(
-       'VANL',
-    ),
-    comment="""  VANL_R Type:R
-       VANL :
-""")
-
-
 VAR2_R   = PhysicalQuantity(type='R',
     components=(
        'V[100]',
@@ -3588,14 +3579,12 @@ MPRE_C   = ArrayOfQuantities(elem='MS', phys= PRES_C)
 MSIZ_R   = ArrayOfQuantities(elem='MS', phys= SIZZ_R)
 MTEM_R   = ArrayOfQuantities(elem='MS', phys= TEMP_R)
 MTNS_R   = ArrayOfQuantities(elem='MR', phys= TEMP_R)
-MVAR_R   = ArrayOfQuantities(elem='MS', phys= VANL_R)
 MZNS_R   = ArrayOfQuantities(elem='MR', phys= NEUT_R)
 VDEP_C   = ArrayOfQuantities(elem='V', phys= DEPL_C)
 VDEP_R   = ArrayOfQuantities(elem='V', phys= DEPL_R)
 VPRE_C   = ArrayOfQuantities(elem='V', phys= PRES_C)
 VSIZ_R   = ArrayOfQuantities(elem='V', phys= SIZZ_R)
 VTEM_R   = ArrayOfQuantities(elem='V', phys= TEMP_R)
-VVAR_R   = ArrayOfQuantities(elem='V', phys= VANL_R)
 
 
 # store all PhysicalQuantity & ElementaryQuantity objects

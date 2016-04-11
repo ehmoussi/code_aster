@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -438,11 +438,6 @@ NINFORR = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
 
 # Modes locaux de type ELNO :
 #----------------------------------
-DDL_NLOC = LocatedComponents(phys=PHY.VANL_R, type='ELNO', diff=True,
-                             components=(
-                             ('EN1', ('VANL',)),
-                             ('EN2', ()),))
-
 DDL_NOZ1 = LocatedComponents(phys=PHY.SIZZ_R, type='ELNO',
                              components=('SIZZ',))
 
@@ -647,6 +642,9 @@ G27NEUTR = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='RIGI',
 
 GGEOMER = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
                             components=('X', 'Y', 'Z',))
+
+ZVARCNO = LocatedComponents(phys=PHY.VARI_R, type='ELNO',
+                            components=('VARI',))
 
 ZVARCPG = LocatedComponents(phys=PHY.VARI_R, type='ELGA', location='MATER',
                             components=('VARI',))
