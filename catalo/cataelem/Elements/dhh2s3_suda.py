@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -32,7 +32,8 @@ from cataelem.Options.options import OP
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
                              components=(
-                             ('EN2', ('PRE[2]',)),))
+                                ('EN1', ()),
+                                ('EN2', ('PRE[2]',)),))
 
 
 CFLUXF = LocatedComponents(phys=PHY.FTHM_F, type='ELEM',
@@ -64,8 +65,8 @@ class DHH2S3_SUDA(Element):
     """Please document this element"""
     meshType = MT.SEG3
     nodes = (
-        SetOfNodes('EN2', (3,)),
         SetOfNodes('EN1', (1, 2,)),
+        SetOfNodes('EN2', (3,)),
     )
     elrefe = (
         ElrefeLoc(MT.SE3, gauss=('RIGI=FPG1',),),

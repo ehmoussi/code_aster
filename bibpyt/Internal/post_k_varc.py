@@ -15,25 +15,15 @@
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: mathieu.courtois@edf.fr
+# person_in_charge: sam.cuvilliez at edf.fr
 
-"""
-This package describes the physical quantities, the elementary calculations,
-the finite elements, ...
+from Cata.cata import OPER, SIMP, cham_no_sdaster, evol_noli, evol_elas
 
-Dependencies:
+POST_K_VARC = OPER(
+    nom="POST_K_VARC", op=48, sd_prod=cham_no_sdaster, reentrant='n',
+    UIinfo={"groupes": ("Post-traitements",)},
+    fr="Récuperation d'un champ de variable de commande a un instant donné à partir d'un résultat",
 
-phenomenons_modelisations -> Elements/*
-phenomenons_modelisations -> mesh_types
-Elements/* -> mesh_types
-Elements/* -> physical_quantities
-Elements/* -> located_components
-Elements/* -> parameters
-Elements/* -> Options/*
-Options/* -> physical_quantities
-Options/* -> parameters
-parameters -> physical_quantities
-located_components -> physical_quantities
-"""
-
-__DEBUG_ELEMENTS__ = []
+    RESULTAT=SIMP(statut='o', typ=(evol_elas,evol_noli)),
+    INST=SIMP(statut='o',typ='R'),
+)

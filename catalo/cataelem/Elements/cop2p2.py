@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -96,8 +96,8 @@ class COT3T3(COP2P2):
     """Please document this element"""
     meshType = MT.TRIA33
     nodes = (
-            SetOfNodes('EN1', (4,5,6,)),
             SetOfNodes('EN2', (1,2,3,)),
+            SetOfNodes('EN1', (4,5,6,)),
         )
 
 
@@ -387,7 +387,7 @@ class COS3T3(COP2P2):
     meshType = MT.SE3TR3
     nodes = (
             SetOfNodes('EN2', (1,2,3,)),
-            SetOfNodes('EN1', (3,4,5,)),
+            SetOfNodes('EN1', (4,5,6)),
         )
 
 
@@ -397,7 +397,7 @@ class COS3T6(COP2P2):
     meshType = MT.SE3TR6
     nodes = (
             SetOfNodes('EN2', (1,2,3,)),
-            SetOfNodes('EN1', (3,4,5,6,7,8,)),
+            SetOfNodes('EN1', (4,5,6,7,8,9)),
         )
 
 
@@ -407,7 +407,7 @@ class COS3Q4(COP2P2):
     meshType = MT.SE3QU4
     nodes = (
             SetOfNodes('EN2', (1,2,3,)),
-            SetOfNodes('EN1', (3,4,5,6,)),
+            SetOfNodes('EN1', (4,5,6,7)),
         )
 
 
@@ -417,7 +417,7 @@ class COS3Q8(COP2P2):
     meshType = MT.SE3QU8
     nodes = (
             SetOfNodes('EN2', (1,2,3,)),
-            SetOfNodes('EN1', (3,4,5,6,7,8,9,10,)),
+            SetOfNodes('EN1', (4,5,6,7,8,9,10,11)),
         )
 
 
@@ -427,5 +427,5 @@ class COS3Q9(COP2P2):
     meshType = MT.SE3QU9
     nodes = (
             SetOfNodes('EN2', (1,2,3,)),
-            SetOfNodes('EN1', (3,4,5,6,7,8,9,10,11,)),
+            SetOfNodes('EN1', (4,5,6,7,8,9,10,11,12)),
         )

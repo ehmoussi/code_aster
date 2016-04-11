@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -15,7 +15,7 @@
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jacques.pellet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
 """
 This module defines the main objects that contains all the informations
@@ -200,6 +200,7 @@ class CataElem(object):
         from cataelem.Commons.located_components import MODES
         from cataelem.Commons.parameters import INPUTS, OUTPUTS
         from cataelem.Options.options import OP
+        from cataelem import __DEBUG_ELEMENTS__
         # for registering in Jeveux
         self.registerAll(ATTRS)
         self.registerAll(ELREFS)
@@ -213,6 +214,8 @@ class CataElem(object):
         # subobjects must have been named
         from cataelem.Elements.elements import EL
         self.registerAll(EL.getDict())
+        if __DEBUG_ELEMENTS__:
+            return
         from cataelem.Commons.phenomenons_modelisations import PHEN
         self.registerAll(PHEN)
         # summary
