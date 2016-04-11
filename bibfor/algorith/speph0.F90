@@ -34,7 +34,7 @@ subroutine speph0(nomu, table)
     character(len=8) :: nomu, table
 !-----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -460,13 +460,35 @@ subroutine speph0(nomu, table)
         endif
         call rsexch('F', modsta, optch1, numod, cham19,&
                     iret)
+        
+        call dismoi('TYPE_SUPERVIS', cham19, 'CHAMP', repk=typcha)
 
-        call jeveuo(cham19(1:19)//'.VALE', 'L', isip)
+        if (typcha(1:7) .eq. 'CHAM_NO') then
+            call jeveuo(cham19(1:19)//'.VALE', 'L', isip)
+            do in = 1, nbn
+                noeud = noeud_rep(in)
+                cmp = nocmp_rep(in)
+                call posddl('CHAM_NO', cham19, noeud, cmp, inoeud,&
+                            iddl)
+                icham1 = icham + nbn* (imr-1) + in - 1
+                zr(icham1) = zr(isip+iddl-1)
+            end do
+        else if (typcha(1:9).eq.'CHAM_ELEM') then
+            call jeveuo(cham19(1:19)//'.CELV', 'L', isip)
+            call dismoi('NOM_MAILLA', cham19, 'CHAM_ELEM', repk=noma)
+            nupo = 0
+            ivari = 1
+            do i = 1, nbn
+                maille = maille_rep(i)
+                noeud = noeud_rep(i)
+                cmp = nocmp_rep(i)
+                call utchdl(cham19, noma, maille, noeud, nupo,&
+                            0, ivari, cmp, iddl)
+                icham1 = icham + nbn* (imr-1) + in - 1
+                zr(icham1) = zr(isip+iddl-1)
+            end do
+        endif
 
-        do in = 1, nbn
-            icham1 = icham + nbn* (imr-1) + in - 1
-            zr(icham1) = zr(isip+nume_ddl(in)-1)
-        end do
     end do
 !
     call dismoi('TYPE_BASE', modmec, 'RESU_DYNA', repk=typba, arret='C',&
@@ -513,6 +535,7 @@ subroutine speph0(nomu, table)
                     cmp = nocmp_rep(i)
                     call utchdl(cham19, noma, maille, noeud, nupo,&
                                 0, ivari, cmp, iddl)
+                    icham1 = icham + nbn* (imr-1) + in - 1
                     zr(icham1) = zr(isip+iddl-1)
                 end do
             endif

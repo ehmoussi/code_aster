@@ -1,7 +1,7 @@
 subroutine op0051()
 !     ------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -138,13 +138,19 @@ subroutine op0051()
     do iocc = 1, nbpost, 1
 !
         call getvtx('ACTION', 'OPERATION', iocc=iocc, scal=k16, nbret=iret)
-        if (k16(1:7) .eq. 'EXTREMA') then
+        if (k16 .eq. 'EXTREMA') then
             call rvmima(latabl, iocc)
             goto 3
         endif
-        if (k16(1:14) .eq. 'MOYENNE_ARITH') then
+        if (k16 .eq. 'MOYENNE_ARITH') then
             call rvmoye(latabl, iocc)
             goto 3
+        endif
+
+!       RESULTANTE n'a de sens que pour EXTRACTION et pour des forces nodales :
+        if (k16 .ne. 'EXTRACTION') then
+            call getvtx('ACTION', 'RESULTANTE', iocc=iocc, nbval=0, nbret=n1)
+            if (n1.ne.0) call utmess('F','POSTRELE_67')
         endif
 !
 ! 3.1. ==> VERIFICATION DE COHERENCE DES ARGUMENTS DE LA COMMANDE

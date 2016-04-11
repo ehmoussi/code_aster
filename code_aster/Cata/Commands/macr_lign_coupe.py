@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -90,7 +90,7 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
            NOM_CMP         =SIMP(statut='f',typ='TXM',max='**'),
            INVARIANT       =SIMP(statut='f',typ='TXM',into=("OUI",),),
            ELEM_PRINCIPAUX =SIMP(statut='f',typ='TXM',into=("OUI",),),
-           RESULTANTE      =SIMP(statut='f',typ='TXM',max='**'),
+           RESULTANTE      =SIMP(statut='f',typ='TXM',max='**', into=("DX","DY","DZ")),
            TRAC_NOR        =SIMP(statut='f',typ='TXM',into=("OUI",)),
            TRAC_DIR        =SIMP(statut='f',typ='TXM',into=("OUI",)),
            DIRECTION       =SIMP(statut='f',typ='R',max='**'),

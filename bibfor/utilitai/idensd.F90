@@ -10,7 +10,7 @@ function idensd(typesd, sd1, sd2)
     character(len=*) :: sd1, sd2, typesd
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -37,13 +37,10 @@ function idensd(typesd, sd1, sd2)
 !       IDENSD : .TRUE.    SI SD1 == SD2
 !                .FALSE.   SINON
 ! ----------------------------------------------------------------------
-! ----------------------------------------------------------------------
     aster_logical :: iden
     character(len=16) :: typ2sd
     character(len=19) :: pchn1, pchn2
-!
-! -DEB------------------------------------------------------------------
-!
+! ----------------------------------------------------------------------
     call jemarq()
     typ2sd = typesd
     idensd=.true.

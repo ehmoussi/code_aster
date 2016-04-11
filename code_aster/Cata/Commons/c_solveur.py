@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -229,7 +229,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 
    
 
-   _BlocLD['RENUM'] = SIMP(statut='f', typ='TXM', defaut="SANS", into=("SANS",), )
+   _BlocLD['RENUM'] = SIMP(statut='f', typ='TXM', defaut="RCMK", into=("RCMK",), )
 
    _BlocMU['RENUM'] = SIMP(statut='f', typ='TXM', defaut="AUTO", into=("AMD", "AMF", "PORD", "METIS", "QAMD", "SCOTCH", "AUTO", ), )
 
@@ -350,8 +350,8 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
-   _BlocGC_INC['RENUM'] = SIMP(statut='f', typ='TXM', defaut="SANS", into=("SANS",), )
-   _BlocPE_INC['RENUM'] = SIMP(statut='f', typ='TXM', defaut="SANS", into=("SANS",), )
+   _BlocGC_INC['RENUM'] = SIMP(statut='f', typ='TXM', defaut="RCMK", into=("RCMK",), )
+   _BlocPE_INC['RENUM'] = SIMP(statut='f', typ='TXM', defaut="RCMK", into=("RCMK",), )
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 

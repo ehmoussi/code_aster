@@ -1,7 +1,7 @@
 subroutine te0409(option, nomte)
 ! aslint: disable=W1501
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -65,7 +65,7 @@ subroutine te0409(option, nomte)
 !
     integer :: codret
     real(kind=8) :: pgl(3, 3), xyzl(3, 4)
-    real(kind=8) :: ul(6, 4), dul(6, 4), angmas(3)
+    real(kind=8) :: ul(6, 4)=0.d0, dul(6, 4)=0.d0, angmas(3)
     real(kind=8) :: matloc((6*4)*(6*4+1)/2), vecloc(6, 4)
     character(len=16) :: option, nomte, compor
 !
@@ -129,12 +129,12 @@ subroutine te0409(option, nomte)
 !
     real(kind=8) :: dff(3, 3), dmm(3, 3), dmff(3, 3), dcc(2, 2), dci(2, 2), dmc(3, 2), dfc(3, 2)
 !
-    real(kind=8) :: bf(3, 3*4), bm(3, 2*4), bmq(2, 3), bc(2, 3*4)
+    real(kind=8) :: bf(3, 3*4)=0.d0, bm(3, 2*4)=0.d0, bmq(2, 3)=0.d0, bc(2, 3*4)=0.d0
 !            BF :    MATRICE "B" (FLEXION)
 !            BM :    MATRICE "B" (MEMBRANE)
 !            BC :    MATRICE "B" (CISAILLEMENT)
-    real(kind=8) :: flex(3*4, 3*4), memb(2*4, 2*4), flexi(3*4, 3*4)
-    real(kind=8) :: mefl(2*4, 3*4), work(3, 3*4)
+    real(kind=8) :: flex(3*4, 3*4)=0.d0, memb(2*4, 2*4)=0.d0, flexi(3*4, 3*4)=0.d0
+    real(kind=8) :: mefl(2*4, 3*4)=0.d0, work(3, 3*4)=0.d0
 !           MEMB:    MATRICE DE RIGIDITE DE MEMBRANE
 !           FLEX:    MATRICE DE RIGIDITE DE FLEXION
 !           WORK:    TABLEAU DE TRAVAIL

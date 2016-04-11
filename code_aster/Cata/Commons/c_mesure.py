@@ -22,7 +22,7 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
 
-def C_MESURE() : return FACT(statut='f',max=1,
+def C_MESURE() : return FACT(statut='d',max=1,
         TABLE       = SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON")),
         UNITE       = SIMP(statut='f',typ='I',val_min=1),
        );
