@@ -1,7 +1,7 @@
 subroutine uttcp0(indi, para, nbv, temps)
     implicit none
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -40,10 +40,10 @@ subroutine uttcp0(indi, para, nbv, temps)
 !               PARA = 'DEBUT' LA MESURE DE TEMPS COMMENCE
 !               PARA = 'FIN'   LA MESURE DE TEMPS S'ARRETE
 ! IN  NBV     : NOMBRE DE VALEURS A RECUPERER
-! OUT TEMPS   : TEMPS(1) TEMPS CPU RESTANT EN SECONDES
+! OUT TEMPS   : TEMPS(1) TEMPS RESTANT EN SECONDES
 !               TEMPS(2) NOMBRE D'APPEL EFFECTUE AVEC L'INDICE INDI
 !               TEMPS(3) TEMPS CPU TOTAL POUR L'INDICE INDI
-!               TEMPS(4) TEMPS CPU MOYEN POUR L'INDICE INDI
+!               TEMPS(4) TEMPS ELAPSED MOYEN POUR L'INDICE INDI
 !               TEMPS(5) TEMPS CPU USER TOTAL POUR L'INDICE INDI
 !               TEMPS(6) TEMPS CPU SYSTEME TOTAL POUR L'INDICE INDI
 !               TEMPS(7) TEMPS ELAPSED POUR L'INDICE INDI
@@ -134,10 +134,10 @@ subroutine uttcp0(indi, para, nbv, temps)
         elaps (indi) = elaps (indi) + tcsm(3) - elapsi(indi)
         t(2) = nbappe(indi)
         t(3) = uscpu(indi) + sycpu(indi)
-        t(4) = t(3)/nbappe(indi)
         t(5) = uscpu(indi)
         t(6) = sycpu(indi)
         t(7) = elaps(indi)
+        t(4) = t(7)/nbappe(indi)
 !
     else
         call utmess('F', 'UTILITAI5_57', sk=kpara)
