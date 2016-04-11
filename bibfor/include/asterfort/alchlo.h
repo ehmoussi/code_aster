@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,11 +16,9 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine alchlo(opt, ligrel, nin, lpain, nout, lpaout)
+    subroutine alchlo(nin, lpain, nout, lpaout)
         integer :: nout
         integer :: nin
-        integer :: opt
-        character(len=19) :: ligrel
         character(len=8) :: lpain(nin)
         character(len=8) :: lpaout(nout)
     end subroutine alchlo

@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -153,7 +153,9 @@ Conseil :
 """),
 
     27 : _(u"""
- CHAM_ELEM à combiner incompatible
+Erreur d'utilisation (ou de programmation) :
+   On cherche à combiner deux champs par éléments qui n'ont pas la même "structure".
+   La programmation ne le permet pas actuellement.
 """),
 
     28 : _(u"""

@@ -1,4 +1,4 @@
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -17,14 +17,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine alrslt(iopt, ligrel, nout, lchout, lpaout,&
-                      base, ldist)
-        integer :: iopt
-        character(len=19) :: ligrel
+    subroutine alrslt(nout, lchout, lpaout, base)
         integer :: nout
         character(len=*) :: lchout(*)
         character(len=8) :: lpaout(*)
         character(len=*) :: base
-        aster_logical :: ldist
     end subroutine alrslt
 end interface

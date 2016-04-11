@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -56,6 +56,7 @@ from glob import glob
 from collections import OrderedDict
 
 # TODO do not return list/dict internal storage, should be treat before
+from cataelem.Tools.modifier import ChangeComponentsVisitor
 
 
 class BaseCataEntity(object):
@@ -190,6 +191,10 @@ class PhysicalQuantity(BaseCataEntity):
         """Tell if the quantity knows this component"""
         return cmp in self._components
 
+    def accept(self, visitor):
+        """Implements the visitor pattern"""
+        return visitor.visitPhysicalQuantity(self)
+
 
 class ArrayOfQuantities(BaseCataEntity):
 
@@ -218,6 +223,10 @@ class ArrayOfQuantities(BaseCataEntity):
         return self._elem
     dim = property(__getDim)
 
+    def accept(self, visitor):
+        """Implements the visitor pattern"""
+        return visitor.visitArrayOfQuantities(self)
+
 
 class Attribute(BaseCataEntity):
 
@@ -235,7 +244,7 @@ class Attribute(BaseCataEntity):
         self._auto = auto
 
     def __getValue(self):
-        """Return the dimension of the elementary quantity"""
+        """Return the list of authorized values"""
         return self._value
     value = property(__getValue)
 
@@ -256,11 +265,6 @@ class SetOfNodes(BaseCataEntity):
         self._nodes = check_type(force_tuple(nodes), int)
         for node in nodes:
             assert node > 0 and node <= 54, node
-
-    def __getName(self):
-        """Return the object name"""
-        return self._name
-    name = property(__getName)
 
     def __getNodes(self):
         """Return the list of nodes"""
@@ -333,6 +337,19 @@ class LocatedComponents(BaseCataEntity):
         return self._location
     location = property(__getLocation)
 
+    def copy(self, components=None):
+        """Return a new LocatedComponents object, allow to change the list of
+        components"""
+        new = LocatedComponents(self._phys, self._type,
+                                components or self._components[:],
+                                self._diff, self._location)
+        new.setName(self.name)
+        return new
+
+    def accept(self, visitor):
+        """Implements the visitor pattern"""
+        return visitor.visitLocatedComponents(self)
+
 
 class ArrayOfComponents(BaseCataEntity):
 
@@ -349,7 +366,7 @@ class ArrayOfComponents(BaseCataEntity):
         check_type(locatedComponents, LocatedComponents)
         size = len(locatedComponents)
         assert size in (1, 2), locatedComponents
-        self._locmod = locatedComponents
+        self._locCmp = locatedComponents
         if size == 1:
             self._type = 'VEC'
         else:
@@ -362,13 +379,25 @@ class ArrayOfComponents(BaseCataEntity):
 
     def __getLocatedComponents(self):
         """Return the underlying local mode"""
-        return self._locmod
+        return self._locCmp
     locatedComponents = property(__getLocatedComponents)
 
     def __getType(self):
         """Return the type of the physical quantity"""
         return self._type
     type = property(__getType)
+
+    def copy(self, locatedComponents=None):
+        """Return a new ArrayOfComponents object, allow to change the list of
+        the located components"""
+        new = ArrayOfComponents(self._phys,
+                                locatedComponents or self._locCmp[:])
+        new.setName(self.name)
+        return new
+
+    def accept(self, visitor):
+        """Implements the visitor pattern"""
+        return visitor.visitArrayOfComponents(self)
 
 
 class InputParameter(BaseCataEntity):
@@ -396,6 +425,10 @@ class InputParameter(BaseCataEntity):
         return self._container
     container = property(__getLocalisation)
 
+    def accept(self, visitor):
+        """Implements the visitor pattern"""
+        return visitor.visitInputParameter(self)
+
 
 class OutputParameter(BaseCataEntity):
 
@@ -422,6 +455,10 @@ class OutputParameter(BaseCataEntity):
         """Return the type of the output"""
         return self._type
     type = property(__getType)
+
+    def accept(self, visitor):
+        """Implements the visitor pattern"""
+        return visitor.visitOutputParameter(self)
 
 
 class Option(BaseCataEntity):
@@ -480,6 +517,10 @@ class Option(BaseCataEntity):
         """Define how to commpute this option for an element"""
         return Calcul(self, te, para_in, para_out)
 
+    def accept(self, visitor):
+        """Implements the visitor pattern"""
+        return visitor.visitOption(self)
+
 
 class CondCalcul(object):
 
@@ -517,12 +558,6 @@ class Elrefe(BaseCataEntity):
         super(Elrefe, self).__init__()
         a_creer_seulement_dans(self, ['mesh_types', ])
         self._locations = OrderedDict()
-        # self._meshType = None
-
-    # def setSupportMeshType(self, meshType):
-    #     """Register the type of mesh that supports this element"""
-    #     assert not self._meshType, 'a reference element can not have several mesh supports'
-    #     self._meshType = meshType
 
     def addLocation(self, location, nbpg):
         """Define a location with its size of storage"""
@@ -534,11 +569,6 @@ class Elrefe(BaseCataEntity):
         """Return all locations"""
         return self._locations
     locations = property(__getLocations)
-
-    # def __getMeshType(self):
-    #     """Return the underlying mesh type"""
-    #     return self._meshType
-    # meshType = property(__getMeshType)
 
 
 class ElrefeLoc(object):
@@ -593,15 +623,15 @@ class Calcul(object):
         check_type([te], int)
         assert (te > 0 and te <= 602) or te in (-1, -2), te
         if para_in is not None:
-            for param, moloc in para_in:
-                assert param.physicalQuantity.name == moloc.physicalQuantity.name
+            for param, locCmp in para_in:
+                assert param.physicalQuantity.name == locCmp.physicalQuantity.name
                 check_type([param], InputParameter)
-                check_type([moloc], (LocatedComponents, ArrayOfComponents))
+                check_type([locCmp], (LocatedComponents, ArrayOfComponents))
         if para_out is not None:
-            for param, moloc in para_out:
-                assert param.physicalQuantity.name == moloc.physicalQuantity.name
+            for param, locCmp in para_out:
+                assert param.physicalQuantity.name == locCmp.physicalQuantity.name
                 check_type([param], OutputParameter)
-                check_type([moloc], (LocatedComponents, ArrayOfComponents))
+                check_type([locCmp], (LocatedComponents, ArrayOfComponents))
         self._option = option
         self._te = te
         self._para_in = para_in or []
@@ -626,6 +656,18 @@ class Calcul(object):
         """Return the list of the couples output parameters, components"""
         return self._para_out
     para_out = property(__getParaOut)
+
+    def setParaIn(self, para):
+        """Set the input parameters, couples (param, locCmp))"""
+        self._para_in = para
+
+    def setParaOut(self, para):
+        """Set the output parameters, couples (param, locCmp))"""
+        self._para_out = para
+
+    def accept(self, visitor):
+        """Implements the visitor pattern"""
+        return visitor.visitCalcul(self)
 
 
 class Element(BaseCataEntity):
@@ -677,6 +719,12 @@ class Element(BaseCataEntity):
                         self.addCalcul(calc)
                     else:
                         self.modifyCalcul(calc)
+        self.postInit()
+
+    def postInit(self):
+        """Elements can define a post-initialization function to change its
+        definition from its parent elements for example."""
+        # use cataelem/Tools/modifier.py for this changes
 
     def getAttrs(self):
         """Return the attributes"""
@@ -723,6 +771,15 @@ class Element(BaseCataEntity):
                 if type(loc_i) is ArrayOfComponents:
                     loco.update(loc_i.locatedComponents)
         return list(loco)
+
+    def changeComponents(self, locCmpName, components):
+        """Modify the components of a LocatedComponents used in the element.
+        A new LocatedComponents object is created and replaces the existing one."""
+        self.accept( ChangeComponentsVisitor(locCmpName, components) )
+
+    def accept(self, visitor):
+        """Implements the visitor pattern"""
+        return visitor.visitElement(self)
 
 
 class Modelisation(object):
@@ -771,6 +828,10 @@ class Modelisation(object):
         return self._elements
     elements = property(__getElements)
 
+    def accept(self, visitor):
+        """Implements the visitor pattern"""
+        return visitor.visitModelisation(self)
+
 
 class Phenomenon(BaseCataEntity):
 
@@ -813,22 +874,25 @@ class AbstractEntityStore(object):
     entityType = None
     subTypes = None
 
-    def __init__(self, package, ignore_names=[]):
+    def __init__(self, package, ignore_names=[], only_mods=[]):
         """Initialisation: import all entities (of type `entityType`) available
-        in the `package` under `cataelem`, objects of `subTypes` are named."""
+        in the `package` under `cataelem`, objects of `subTypes` are named.
+        `only_mods` is useful for the unittests."""
         assert self.entityType, "must be subclassed!"
-        types = force_tuple(self.entityType)
-        pkgdir = osp.dirname(package)
-        pkg = osp.basename(pkgdir)
+        self.entityType = force_tuple(self.entityType)
+        cataelemdir = osp.dirname(osp.dirname(__file__))
         l_mod = [osp.splitext(osp.basename(modname))[0]
-                 for modname in glob(osp.join(pkgdir, '*.py'))]
-        l_mod = [modname for modname in l_mod if modname not in ('__init__',)]
+                 for modname in glob(osp.join(cataelemdir, package, '*.py'))]
+        l_mod = [modname for modname in l_mod \
+                 if modname not in ('__init__', 'options', 'elements')]
         l_mod.sort()
         self._entities = OrderedDict()
         for modname in l_mod:
+            if only_mods and modname not in only_mods:
+                continue
             try:
                 mod = __import__('cataelem.%s.%s' %
-                                 (pkg, modname), globals(), locals(), [modname])
+                                 (package, modname), globals(), locals(), [modname])
             except:
                 print("ERROR during import of {0}".format(modname))
                 raise
@@ -837,12 +901,22 @@ class AbstractEntityStore(object):
                 if name in ignore_names:
                     continue
                 obj = getattr(mod, name)
-                if type(obj) in types:
-                    self._entities[name] = obj
-                elif (type(obj) is type and obj not in types and issubclass(obj, types)):
-                    self._entities[name] = obj()
-                elif type(obj) in self.subTypes:
-                    obj.setName(name)
+                self._register(name, obj)
+
+    def _register(self, name, obj):
+        """Register the object if its type is supported"""
+        if type(obj) in self.entityType:
+            self._entities[name] = obj
+        elif (type(obj) is type and obj not in self.entityType
+              and issubclass(obj, self.entityType)):
+            self._entities[name] = obj()
+        elif type(obj) in self.subTypes:
+            obj.setName(name)
+        elif type(obj) is dict:
+            if name == '__builtins__':
+                return
+            for key, val in obj.items():
+                self._register(key, val)
 
     def getDict(self):
         """Return the elements dict"""
@@ -941,27 +1015,37 @@ def a_creer_seulement_dans(obj, l_autorises):
 
     OK = False
     for autor in l_autorises:
+        if l1[-2] in ("cataelem", "Tools"):
+            OK = True
+            break
         if autor == 'physical_quantities':
             if l1[-1] == "physical_quantities.py":
                 OK = True
+                break
         elif autor == 'attributes':
             if l1[-1] == "attributes.py":
                 OK = True
+                break
         elif autor == 'mesh_types':
             if l1[-1] == "mesh_types.py":
                 OK = True
+                break
         elif autor == 'parameters':
             if l1[-1] == "parameters.py":
                 OK = True
+                break
         elif autor == 'located_components':
             if l1[-1] == "located_components.py":
                 OK = True
+                break
         elif autor == 'Options':
             if l1[-2] == "Options":
                 OK = True
+                break
         elif autor == 'Elements':
             if l1[-2] == "Elements":
                 OK = True
+                break
         else:
             assert 0, ("non autorise : ", autor)
 
