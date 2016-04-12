@@ -16,10 +16,14 @@ subroutine apetsc(action, solvez, matasz, rsolu, vcinez,&
 ! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-
+!
+! aslint: disable=C1308
+! person_in_charge: natacha.bereux at edf.fr
+!
+use petsc_data_module
+use elim_lagr_comp_module
 !
     implicit none
-! person_in_charge: natacha.bereux at edf.fr
 !
 #include "asterf_types.h"
 #include "asterf.h"
@@ -30,7 +34,6 @@ subroutine apetsc(action, solvez, matasz, rsolu, vcinez,&
 #include "asterfort/asmpi_info.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/elg_apelim.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
@@ -81,18 +84,17 @@ subroutine apetsc(action, solvez, matasz, rsolu, vcinez,&
 !
 #ifdef _HAVE_PETSC
 #include "asterf_petsc.h"
-
 !
 !----------------------------------------------------------------
 !
 !     VARIABLES LOCALES
-    integer :: iprem, k, nglo, kdeb, jnequ
+    integer :: iprem, k, l, nglo, kdeb, jnequ
     integer ::  kptsc
     integer :: np
     real(kind=8) :: r8
-    PetscInt :: m, n
 !
-    character(len=19) :: solveu, matas, vcine
+    logical :: mat_not_recorded
+    character(len=19) :: solveu, matas, vcine, kbid
     character(len=14) :: nu
     character(len=4) :: etamat
     character(len=1) :: rouc
@@ -177,99 +179,49 @@ subroutine apetsc(action, solvez, matasz, rsolu, vcinez,&
 !   ----------------------------------------
     call jelira(matas//'.VALM', 'TYPE', cval=rouc)
     if (rouc .ne. 'R') call utmess('F', 'PETSC_2')
-
-
-!   2. On cherche si la matrice est dans le common :
-!   -------------------------------------------------
-!   On teste le nom de la matrice, celui du nume_ddl,
-!   et la taille des matrices aster et petsc
+!   nglo est le nombre total de degrés de liberté 
     call dismoi('NOM_NUME_DDL', matas, 'MATR_ASSE', repk=nu)
     call jeveuo(nu//'.NUME.NEQU', 'L', jnequ)
     nglo = zi(jnequ)
+
+!  2. On recherche l'identifiant de l'image PETSc 
+!  de la matrice matas 
+!   
+    kptsc = get_mat_id( matas ) 
+    mat_not_recorded = ( kptsc == 0 ) 
 !
-    kptsc=1
-    do k = 1, nmxins
-        if ((nomats(k).eq.matas) .and. (nonus (k).eq.nu )) then
-            ASSERT(ap(k).ne.0)
-            call MatGetSize(ap(k), m, n, ierr)
-            ASSERT(ierr.eq.0)
-            ASSERT(m.eq.n)
-            if (fictifs(k).eq.1) then
-                ASSERT(n.ge.nglo)
-                ASSERT(size(new_ieqs(k)%pi4).eq.nglo)
-                kptsc = k
-                goto 1
-            else
-                if (nglo .eq. n) then
-                    kptsc = k
-                    goto 1
-                endif
-            endif
-        endif
-    enddo
-!
-    if ( action == 'DETR_MAT' ) then
-! La matrice n'est pas stockée dans le tableau ap()
-! On ne fait rien   
+
+    if (action .eq. 'DETR_MAT') then
+       if ( mat_not_recorded ) then 
+! On n'a pas cree d'image PETSc de la matrice => rien à detruire !
+       else
+! L'image PETSc de la a matrice est stockée dans le tableau ap, 
+! a l'indice kptsc => on la détruit 
+          kbid = repeat(" ",19)
+          call apmain( action, kptsc, [0.d0], kbid, 0, iret )  
+       endif          
        goto 999
-    endif 
-    ASSERT(action.ne.'RESOUD')
-
- 
-
-!   Y-a-t-il encore une place libre dans le common ? Calcul de kptsc :
-!   ------------------------------------------------------------------
-    do k = 1, nmxins
-        if (nomats(k) .eq. ' ') then
-            kptsc = k
-            goto 1
-        endif
-    end do
-    call utmess('F', 'PETSC_3')
- 1  continue
-
-   if (action .eq. 'DETR_MAT') then
-! La matrice est stockée dans le tableau ap, à l'indice kptsc
-! on la détruit 
-      call apmain( action, kptsc, rsolu, vcine, istop, iret )  
-      goto 999
     endif
-
-
+!
 !   3. Quelques verifications et petites actions :
 !   ----------------------------------------------
 !
     if (action .eq. 'PRERES') then
-!        -- remplissage du commun
-        ASSERT(nomats(kptsc).eq.' ')
-        ASSERT(nosols(kptsc).eq.' ')
-        ASSERT(nonus(kptsc).eq.' ')
-        ASSERT(matas .ne.' ')
-        ASSERT(solveu.ne.' ')
-        ASSERT(nu .ne.' ')
-        nomats(kptsc) = matas
-        nonus(kptsc) = nu
-        nosols(kptsc) = solveu
+        call mat_record( matas, solveu, kptsc ) 
 !
     else if (action.eq.'RESOUD') then
+        kptsc = get_mat_id( matas ) 
         ASSERT(nbsol.ge.1)
         ASSERT((istop.eq.0).or.(istop.eq.2))
 
     else if (action.eq.'ELIM_LAGR') then
-!        -- remplissage du commun spetsc
-        nomats(kptsc) = matas
-        nonus(kptsc) = nu
-        nosols(kptsc) = solveu
-        tblocs(kptsc) = -1
-        fictifs(kptsc) = -1
-        new_ieqs(kptsc)%pi4 => null()
-        old_ieqs(kptsc)%pi4 => null()
-
+        call mat_record( matas, solveu, kptsc ) 
     endif
 
 
 !   4. Si LDLT_INC, il faut renumeroter la matrice (RCMK) :
 !   --------------------------------------------------------
+    
     call apldlt(kptsc,action,'PRE',rsolu,vcine,nbsol)
 
 
@@ -293,7 +245,7 @@ subroutine apetsc(action, solvez, matasz, rsolu, vcinez,&
         ASSERT(refa(3).ne.'ELIML')
 
     else if (action.eq.'ELIM_LAGR') then
-        call elg_apelim(kptsc)
+        call build_elim_lagr_context( nomat_courant )
         iret=0
         goto 999
     endif

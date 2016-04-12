@@ -12,7 +12,7 @@ subroutine rc32r1(nomres)
     character(len=8) :: nomres
 !     ------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -121,14 +121,14 @@ subroutine rc32r1(nomres)
 !
         valek(2) = lieu(im)
 !
-        call jeveuo('&&RC3200.RESULTAT  .'//lieu(im), 'L', jvale)
+        call jeveuo('&&RC3200.RESU.'//lieu(im), 'L', jvale)
 !
         call tbajli(nomres, npar6, nopar6, [ibid], zr(jvale),&
                     [c16b], valek, 0)
 !
-110  end do
+110  continue
 !
-    if (typtab .eq. 'VALE_MAX') goto 9999
+    if (typtab .eq. 'VALE_MAX') goto 999
 !
 !     -----------------------------------------------------------------
 !
@@ -212,7 +212,7 @@ subroutine rc32r1(nomres)
         do 112 im = 1, 2
             valek(2) = lieu(im)
 !
-            call jeveuo('&&RC3200.RESULTAT  .'//lieu(im), 'L', jvale)
+            call jeveuo('&&RC3200.RESU.'//lieu(im), 'L', jvale)
             utot = zr(jvale+10)
 !
             k24t = '&&RC3200.FACT_USAGE '//lieu(im)
@@ -240,6 +240,6 @@ subroutine rc32r1(nomres)
 112      continue
 100  continue
 !
-9999  continue
+999  continue
 !
 end subroutine

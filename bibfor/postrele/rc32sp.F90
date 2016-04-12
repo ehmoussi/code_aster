@@ -1,6 +1,6 @@
 subroutine rc32sp(typz, lieu, numsip, pi, mi,&
                   numsiq, pj, mj, seisme, mse,&
-                  spij, typeke, spmeca)
+                  spij, spmeca)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -12,14 +12,15 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
 #include "asterfort/rc32s0.h"
 #include "asterfort/rc32s2.h"
 #include "asterfort/rc32st.h"
+#include "asterfort/getvtx.h"
     integer :: numsip, numsiq
-    real(kind=8) :: pi, mi(*), pj, mj(*), mse(*), spij(2), typeke, spmeca(2)
+    real(kind=8) :: pi, mi(*), pj, mj(*), mse(*), spij(2), spmeca(2)
     aster_logical :: seisme
     character(len=4) :: lieu
     character(len=*) :: typz
 !     ------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -54,13 +55,15 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
 ! OUT : SPMECA : AMPLITUDE DE VARIATION DES CONTRAINTES MECANIQUES
 !
     integer :: icmp, jsigu, icmps, long, nbinst, nbthep, nbtheq
-    integer :: jthunq, i1, jthunp, jthun
+    integer :: jthunq, i1, jthunp, jthun, nb
     real(kind=8) :: pij, mij(12), sp, sij(6), sigu, sqma(6), sqmi(6)
     real(kind=8) :: sp1, sp2, spth(6), spqma(2), spqmi(2), sqth(6)
     character(len=4) :: typ2
-    character(len=8) :: type, knumes, knumet
+    character(len=8) :: type, knumes, knumet, typeke
 ! DEB ------------------------------------------------------------------
     type = typz
+!
+
 !
     spij(1) = 0.d0
     spij(2) = 0.d0
@@ -69,7 +72,7 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
     do 8 i1 = 1, 6
         sqma(i1) = 0.d0
         sqmi(i1) = 0.d0
-  8 end do
+  8 continue
 !
 ! --- CONTRAINTES LINEAIRISEES DUES AUX CHARGEMENTS UNITAIRES
 !
@@ -83,7 +86,7 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
 !
     do 10 icmp = 1, 12
         mij(icmp) = mi(icmp) - mj(icmp)
- 10 end do
+ 10 continue
 !
 ! --- CALCUL DES CONTRAINTES EN PEAU PAR COMBINAISON LINEAIRE
 !     POUR LE CHARGEMENT PIJ, MIJ
@@ -97,7 +100,7 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
 ! ----- PRESSION
         sigu = zr(jsigu-1+72+icmps)
         sij(icmps) = sij(icmps) + pij*sigu
- 30 end do
+ 30 continue
 !
 !
 ! CAS DE KE_MECA (PAS DE PARTITION MECANIQUE - THERMIQUE)
@@ -126,10 +129,10 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
             spij(1) = max(spij(1),sp)
             if (typ2 .eq. 'COMB') spij(2) = max(spij(2),sp)
         else
-            knumet = 'T       '
+            knumet = 'S       '
             call codent(numsip, 'D0', knumet(2:8))
-            call jelira(jexnom('&&RC3200.T .'//lieu, knumet), 'LONUTI', long)
-            call jeveuo(jexnom('&&RC3200.T .'//lieu, knumet), 'L', jthunp)
+            call jelira(jexnom('&&RC3200.TRANSIT.'//lieu, knumet), 'LONUTI', long)
+            call jeveuo(jexnom('&&RC3200.TRANSIT.'//lieu, knumet), 'L', jthunp)
             nbinst = 2
             typ2 = '????'
             if (type .eq. 'SP_COMB') then
@@ -187,10 +190,10 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
                 endif
             endif
         else
-            knumet = 'T       '
+            knumet = 'S       '
             call codent(numsiq, 'D0', knumet(2:8))
-            call jelira(jexnom('&&RC3200.T .'//lieu, knumet), 'LONUTI', long)
-            call jeveuo(jexnom('&&RC3200.T .'//lieu, knumet), 'L', jthunq)
+            call jelira(jexnom('&&RC3200.TRANSIT.'//lieu, knumet), 'LONUTI', long)
+            call jeveuo(jexnom('&&RC3200.TRANSIT.'//lieu, knumet), 'L', jthunq)
             nbinst = 2
             typ2 = '????'
             if (type .eq. 'SP_COMB') then
@@ -244,7 +247,8 @@ subroutine rc32sp(typz, lieu, numsip, pi, mi,&
 !
 ! CAS DE KE_MIXTE (PARTITION MECANIQUE - THERMIQUE)
 !
-    if (typeke .gt. 0.d0) then
+    call getvtx(' ', 'TYPE_KE', scal=typeke, nbret=nb)
+    if (typeke .eq. 'KE_MIXTE') then
 !
 ! --- CALCUL DE KE_MECA
         nbinst = 0

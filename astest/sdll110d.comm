@@ -1,6 +1,5 @@
-# TITRE SIMULATION DES ESSAIS ANL (TUBES LONGS) : POUTRE SOUMISE
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -438,7 +437,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.000640342435104,
+           VALE_CALC=0.000640340831202,
            TOLE_MACHINE=5.E-4,               # ajustement pour clap0f0q
            NOM_PARA='ECART',
            TABLE=DYN0_150,
@@ -450,7 +449,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.000786932168158,
+           VALE_CALC=0.000786930196926,
            TOLE_MACHINE=5.E-4,               # ajustement pour clap0f0q
            NOM_PARA='ECART',
            TABLE=DYN0_175,
@@ -462,7 +461,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.000946266667642,
+           VALE_CALC=0.000946264297291,
            TOLE_MACHINE=5.E-4,               # ajustement pour clap0f0q
            NOM_PARA='ECART',
            TABLE=DYN0_200,

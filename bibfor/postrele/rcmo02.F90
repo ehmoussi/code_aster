@@ -7,12 +7,13 @@ subroutine rcmo02(etat, numsit, vale)
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
+#include "asterfort/getvtx.h"
     integer :: numsit
     real(kind=8) :: vale(*)
     character(len=1) :: etat
 !     ------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -30,6 +31,7 @@ subroutine rcmo02(etat, numsit, vale)
 !     ------------------------------------------------------------------
 !     RECUPERATION DES MOMENTS POUR UN ETAT STABILISE
 !
+! IN  : TRANSIF: SI OUI B3200
 ! IN  : ETAT   : ETAT STABILISE "A" OU "B"
 !              : OU "S" SI SEISME
 ! IN  : NUMSIT : NUMERO DE LA SITUATION
@@ -48,19 +50,24 @@ subroutine rcmo02(etat, numsit, vale)
 !                VALE(12) = MZ_CORP
 !     ------------------------------------------------------------------
 !
-    integer :: i, j, numcha, jlcha, nbchar, jchar, iret
+    integer :: i, j, numcha, jlcha, nbchar, jchar, iret, n1
     character(len=1) :: etats
     character(len=8) ::  knumes, knumec
+    character(len=16) ::  typmec
 ! DEB ------------------------------------------------------------------
 !
     do 10 i = 1, 12
         vale(i) = 0.d0
-10  end do
+10  continue
 !
     knumes = 'S       '
     call codent(numsit, 'D0', knumes(2:8))
 !
 ! --- LISTE DES CHARGEMENTS POUR LE NUMERO DE SITUATION
+!
+    call getvtx(' ', 'TYPE_RESU_MECA', scal=typmec, nbret=n1)
+!
+    if (typmec .eq. 'B3200_T') goto 888
 !
     if ((etat.eq.'S') .or. (etat.eq.'A')) then
         etats = 'A'
@@ -69,7 +76,7 @@ subroutine rcmo02(etat, numsit, vale)
     endif
 !
     call jeexin(jexnom('&&RC3200.SITU_ETAT_'//etats, knumes), iret)
-    if (iret .eq. 0) goto 9999
+    if (iret .eq. 0) goto 999
 !
     call jelira(jexnom('&&RC3200.SITU_ETAT_'//etats, knumes), 'LONUTI', nbchar)
     call jeveuo(jexnom('&&RC3200.SITU_ETAT_'//etats, knumes), 'L', jlcha)
@@ -93,7 +100,7 @@ subroutine rcmo02(etat, numsit, vale)
 104          continue
         endif
 !
-100  end do
+100 continue
 !
     if (etat .eq. 'S') then
         do 106 j = 1, 12
@@ -101,6 +108,8 @@ subroutine rcmo02(etat, numsit, vale)
 106      continue
     endif
 !
-9999  continue
+999    continue
+!
+888 continue
 !
 end subroutine

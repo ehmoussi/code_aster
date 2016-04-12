@@ -1,4 +1,4 @@
-subroutine rc32r8(nomres, mater, symax)
+subroutine rc32r8(nomres, mater)
     implicit none
 #include "jeveux.h"
 #include "asterc/r8vide.h"
@@ -8,11 +8,11 @@ subroutine rc32r8(nomres, mater, symax)
 #include "asterfort/tbajli.h"
 #include "asterfort/tbajpa.h"
 #include "asterfort/utmess.h"
-    real(kind=8) :: symax
+#include "asterfort/getvr8.h"
     character(len=8) :: nomres, mater
 !     ------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -34,9 +34,9 @@ subroutine rc32r8(nomres, mater, symax)
 !
 !     ------------------------------------------------------------------
 !
-    integer :: ibid, npar1, im, jresu
+    integer :: ibid, npar1, im, jresu, n1
     parameter    ( npar1 = 7 )
-    real(kind=8) :: rbid, valer(npar1), valres(1)
+    real(kind=8) :: rbid, valer(npar1), valres(1), symax
     complex(kind=8) :: c16b
     integer :: icodre(1)
     character(len=4) :: lieu(2)
@@ -50,6 +50,9 @@ subroutine rc32r8(nomres, mater, symax)
     data typar1 / 'K8', 'K8', 'R', 'R', 'R', 'R', 'R' /
 ! DEB ------------------------------------------------------------------
 !
+    symax = r8vide()
+    call getvr8(' ', 'SY_MAX', scal=symax, nbret=n1)
+!
     rbid = 0.d0
     ibid=0
     c16b=(0.d0,0.d0)
@@ -62,7 +65,7 @@ subroutine rc32r8(nomres, mater, symax)
             symax = valres(1)
         else
             call utmess('A', 'POSTRCCM_4')
-            goto 9999
+            goto 999
         endif
     endif
 !
@@ -73,7 +76,7 @@ subroutine rc32r8(nomres, mater, symax)
 !
         valek(2) = lieu(im)
 !
-        call jeveuo('&&RC3200.RESULTAT  .'//lieu(im), 'L', jresu)
+        call jeveuo('&&RC3200.RESU.'//lieu(im), 'L', jresu)
 !
         valer(2) = zr(jresu+13)
         valer(3) = zr(jresu+12)
@@ -83,8 +86,8 @@ subroutine rc32r8(nomres, mater, symax)
         call tbajli(nomres, npar1, nopar1, [ibid], valer,&
                     [c16b], valek, 0)
 !
-10  end do
+10  continue
 !
-9999  continue
+999  continue
 !
 end subroutine

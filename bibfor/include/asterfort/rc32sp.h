@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -20,7 +20,7 @@
 interface
     subroutine rc32sp(typz, lieu, numsip, pi, mi,&
                       numsiq, pj, mj, seisme, mse,&
-                      spij, typeke, spmeca)
+                      spij, spmeca)
         character(len=*) :: typz
         character(len=4) :: lieu
         integer :: numsip
@@ -32,7 +32,6 @@ interface
         aster_logical :: seisme
         real(kind=8) :: mse(*)
         real(kind=8) :: spij(2)
-        real(kind=8) :: typeke
         real(kind=8) :: spmeca(2)
     end subroutine rc32sp
 end interface

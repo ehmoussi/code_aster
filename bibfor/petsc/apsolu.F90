@@ -1,6 +1,6 @@
 subroutine apsolu(kptsc, lmd, rsolu)
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,11 +16,15 @@ subroutine apsolu(kptsc, lmd, rsolu)
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-! aslint: disable=C1513
+! aslint: disable=C1513,C1308
 ! cf. issue23375
 !
-    implicit none
 ! person_in_charge: natacha.bereux at edf.fr
+!
+use petsc_data_module
+use saddle_point_module, only : update_double_lagrange
+
+    implicit none
 #include "asterf_types.h"
 #include "asterf.h"
 #include "jeveux.h"
@@ -53,7 +57,9 @@ subroutine apsolu(kptsc, lmd, rsolu)
     integer(kind=4), pointer :: old_ieq(:) => null()
 !
     character(len=14) :: nonu
-    character(len=19) :: nomat
+    character(len=19) :: nomat, nosolv
+    character(len=24) :: precon
+    character(len=24), dimension(:), pointer :: slvk => null()
 !
 !----------------------------------------------------------------
 !     Variables PETSc
@@ -70,8 +76,15 @@ subroutine apsolu(kptsc, lmd, rsolu)
 !     -- LECTURE DU COMMUN
     nomat = nomat_courant
     nonu = nonu_courant
+    nosolv = nosols(kptsc)
     bs = tblocs(kptsc)
     fictif = fictifs(kptsc)
+!
+    call jeveuo(nosolv//'.SLVK', 'L', vk24=slvk)
+    precon = slvk(2)
+    if ( precon == 'BLOC_LAGR' ) then 
+            call update_double_lagrange( x )
+    endif
 !
     call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
     neqg = zi(jnequ)

@@ -1,6 +1,6 @@
 subroutine apvsmb(kptsc, lmd, rsolu)
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -15,9 +15,14 @@ subroutine apvsmb(kptsc, lmd, rsolu)
 ! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-!
-    implicit none
+! 
 ! person_in_charge: natacha.bereux at edf.fr
+! aslint:disable=C1308
+use petsc_data_module
+use saddle_point_module, only : convert_rhs_to_saddle_point
+ 
+    implicit none
+   
 #include "asterf_types.h"
 #include "asterf.h"
 #include "jeveux.h"
@@ -57,8 +62,10 @@ subroutine apvsmb(kptsc, lmd, rsolu)
 !
     character(len=14) :: nonu
     character(len=19) :: nomat, nosolv
+    character(len=24) :: precon
 
     real(kind=8), dimension(:), pointer :: val => null()
+    character(len=24), dimension(:), pointer :: slvk => null()
 !
 !----------------------------------------------------------------
 !     Variables PETSc
@@ -82,6 +89,9 @@ subroutine apvsmb(kptsc, lmd, rsolu)
     ASSERT(bs.ge.1)
     nosolv = nosols(kptsc)
 
+!
+    call jeveuo(nosolv//'.SLVK', 'L', vk24=slvk)
+    precon = slvk(2)
 !
     if (lmd) then
         ASSERT(fictif.eq.0)
@@ -180,6 +190,9 @@ subroutine apvsmb(kptsc, lmd, rsolu)
 
     endif
 
+    if ( precon == 'BLOC_LAGR' ) then
+        call convert_rhs_to_saddle_point( b )
+    endif 
 
 
     call jedema()
