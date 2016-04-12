@@ -1,7 +1,8 @@
 subroutine apmain(action, kptsc, rsolu, vcine, istop,&
                   iret)
+use petsc_data_module
+use saddle_point_module
     implicit none
-! person_in_charge: natacha.bereux at edf.fr
 !
 ! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
@@ -18,6 +19,9 @@ subroutine apmain(action, kptsc, rsolu, vcine, istop,&
 ! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+!
+! person_in_charge: natacha.bereux at edf.fr
+! aslint:disable=C1308
 !
     character(len=*) :: action
     integer :: kptsc
@@ -172,7 +176,10 @@ subroutine apmain(action, kptsc, rsolu, vcine, istop,&
         ASSERT(ierr.eq.0)
         call MatAssemblyEnd(ap(kptsc), MAT_FINAL_ASSEMBLY, ierr)
         ASSERT(ierr.eq.0)
-       !call MatView(ap(kptsc),PETSC_VIEWER_DEFAULT,ierr)
+!
+        if ( precon == 'BLOC_LAGR' ) then 
+            call convert_mat_to_saddle_point( nomat, ap(kptsc) )
+        endif 
 !
 !        1.4 CREATION DU PRECONDITIONNEUR PETSc (EXTRAIT DU KSP) :
 !        ---------------------------------------------------------
@@ -256,6 +263,7 @@ subroutine apmain(action, kptsc, rsolu, vcine, istop,&
         ASSERT(ierr.eq.0)
         call KSPGetIterationNumber(ksp, its, ierr)
 
+        ASSERT(ierr.eq.0)
 
 !
 !       -- si LDLT_SP et its > maxits, on essaye une 2eme fois
@@ -324,9 +332,13 @@ subroutine apmain(action, kptsc, rsolu, vcine, istop,&
             else if (indic.eq.KSP_DIVERGED_INDEFINITE_PC) then
 !              PRECONDITIONNEUR NON DEFINI
                 call utmess('F', 'PETSC_10')
-!
+!  
+#ifdef ASTER_PETSC_VERSION_LEQ_33
+            else if (indic.eq.KSP_DIVERGED_NAN) then
+#else          
             else if (indic.eq.KSP_DIVERGED_NANORINF) then
-!               NANORINF
+#endif
+!               NANORINF 
                 if ( istop == 0 ) then
 !                  ERREUR <F>
                    call utmess('F', 'PETSC_8')
@@ -389,7 +401,7 @@ subroutine apmain(action, kptsc, rsolu, vcine, istop,&
         call apsolu(kptsc, lmd, rsolu)
 !
 !
-!         2.7 NETTOYAGE PETSc (VECTEURS) :
+!         2.8 NETTOYAGE PETSc (VECTEURS) :
 !         --------------------------------
 !
 !        -- EN CAS D'ERREUR DANS LES ITERATIONS DE KRYLOV ON SAUTE ICI
@@ -400,6 +412,18 @@ subroutine apmain(action, kptsc, rsolu, vcine, istop,&
         ASSERT(ierr.eq.0)
 !
 !        -- PRECONDITIONNEUR UTILISE
+!
+!        -- TRAITEMENT PARTICULIER DU PRECONDITIONNEUR LAGRANGIEN AUGMENTE 
+        if (precon .eq. 'BLOC_LAGR') then
+!
+!           ON STOCKE LE NOMBRE D'ITERATIONS DU KSP
+            call KSPGetIterationNumber(ksp, maxits, ierr)
+            ASSERT(ierr.eq.0)
+            nmaxit = maxits
+            call jeveuo(nosolv//'.SLVI', 'E', vi=slvi)
+            slvi(5) = nmaxit
+            write(*,*)'Nombre d iterations de Krylov ',nmaxit
+        endif
 !
 !        -- TRAITEMENT PARTICULIER DU PRECONDITIONNEUR LDLT_SP
         if (precon .eq. 'LDLT_SP') then

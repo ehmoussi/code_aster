@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,15 +18,14 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rc32rs(pmpb, sn, snet, fatigu, lrocht,&
-                      mater, symax, fatiguenv)
-        aster_logical :: pmpb
-        aster_logical :: sn
-        aster_logical :: snet
-        aster_logical :: fatigu
-        aster_logical :: lrocht
+    subroutine rc32rs(b3200, mater, lpmpb, lsn, lther,&
+                      lfat, lefat)
+        aster_logical :: b3200
         character(len=8) :: mater
-        real(kind=8) :: symax
-        aster_logical :: fatiguenv
+        aster_logical :: lpmpb
+        aster_logical :: lsn
+        aster_logical :: lther
+        aster_logical :: lfat
+        aster_logical :: lefat
     end subroutine rc32rs
 end interface

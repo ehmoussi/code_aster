@@ -14,7 +14,7 @@ subroutine rcZ2r0(nomres, sn, snet)
     aster_logical :: sn, snet
 !     ------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -87,24 +87,24 @@ subroutine rcZ2r0(nomres, sn, snet)
 !
         valek(2) = lieu(im)
 !
-        call jeveuo('&&RC3200.RESULTAT  .'//lieu(im), 'L', jvale)
+        call jeveuo('&&RC3200.RESU.'//lieu(im), 'L', jvale)
 !
         if (sn) then
-            valer(1) = zr(jvale+1)
+            valer(1) = zr(jvale+5)
         else
             valer(1) = r8vide()
         endif
         if (snet) then
-            valer(2) = zr(jvale+2)
+            valer(2) = zr(jvale+6)
         else
             valer(2) = r8vide()
         endif
 !
         call tbajli(nomres, npar1, nopar1, [ibid], valer,&
                     [c16b], valek, 0)
-130 end do
+130 continue
 !
-    if (typtab .eq. 'VALE_MAX') goto 9999
+    if (typtab .eq. 'VALE_MAX') goto 999
 !
 !     -----------------------------------------------------------------
 !
@@ -129,7 +129,7 @@ subroutine rcZ2r0(nomres, sn, snet)
                 ioc = zi(jnsg+is-1)
                 valei(2) = situ_numero(ioc)
 !
-                call tbajli(nomres, npar2, nopar2, valei, zr(jpmpba- 1+7*(is-1)+1),&
+                call tbajli(nomres, npar2, nopar2, valei, zr(jpmpba- 1+10*(is-1)+4),&
                             [c16b], valek, 0)
 204         continue
 !
@@ -138,12 +138,12 @@ subroutine rcZ2r0(nomres, sn, snet)
                 ioc = zi(jnsg+is-1)
                 valei(2) = situ_numero(ioc)
 !
-                call tbajli(nomres, npar2, nopar2, valei, zr(jpmpbs- 1+7*(is-1)+1),&
+                call tbajli(nomres, npar2, nopar2, valei, zr(jpmpbs- 1+10*(is-1)+4),&
                             [c16b], valek, 0)
 206         continue
 202     continue
 200 continue
 !
-9999 continue
+999 continue
 !
 end subroutine

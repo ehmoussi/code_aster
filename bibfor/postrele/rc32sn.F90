@@ -18,7 +18,7 @@ subroutine rc32sn(typz, lieu, numsip, pi, mi,&
     character(len=*) :: typz
 !     ------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -77,7 +77,7 @@ subroutine rc32sn(typz, lieu, numsip, pi, mi,&
 !
     do 10 icmp = 1, 12
         mij(icmp) = mi(icmp) - mj(icmp)
- 10 end do
+ 10 continue
 !
 ! --- CALCUL DES CONTRAINTES LINEAIRISEES PAR COMBINAISON LINEAIRE
 !     POUR LE CHARGEMENT PIJ, MIJ
@@ -91,7 +91,7 @@ subroutine rc32sn(typz, lieu, numsip, pi, mi,&
 ! ------ PRESSION
         sigu = zr(jsigu-1+78+72+icmps)
         sij(icmps) = sij(icmps) + pij*sigu
- 30 end do
+ 30 continue
 !
 ! --- ON BOUCLE SUR LES INSTANTS DU THERMIQUE DE P
 !
@@ -116,10 +116,10 @@ subroutine rc32sn(typz, lieu, numsip, pi, mi,&
             endif
             snij = max( snij , sn )
         else
-            knumet = 'T       '
+            knumet = 'S       '
             call codent(numsip, 'D0', knumet(2:8))
-            call jelira(jexnom('&&RC3200.T .'//lieu, knumet), 'LONUTI', long)
-            call jeveuo(jexnom('&&RC3200.T .'//lieu, knumet), 'L', jthun)
+            call jelira(jexnom('&&RC3200.TRANSIT.'//lieu, knumet), 'LONUTI', long)
+            call jeveuo(jexnom('&&RC3200.TRANSIT.'//lieu, knumet), 'L', jthun)
             nbinst = 2
             if (type .eq. 'SN_COMB') then
                 indicp = jthun + 6*nbinst
@@ -184,10 +184,10 @@ subroutine rc32sn(typz, lieu, numsip, pi, mi,&
                 snij = max( snij , sn )
             endif
         else
-            knumet = 'T       '
+            knumet = 'S       '
             call codent(numsiq, 'D0', knumet(2:8))
-            call jelira(jexnom('&&RC3200.T .'//lieu, knumet), 'LONUTI', long)
-            call jeveuo(jexnom('&&RC3200.T .'//lieu, knumet), 'L', jthun)
+            call jelira(jexnom('&&RC3200.TRANSIT.'//lieu, knumet), 'LONUTI', long)
+            call jeveuo(jexnom('&&RC3200.TRANSIT.'//lieu, knumet), 'L', jthun)
             nbinst = 2
             if (type .eq. 'SN_COMB') then
                 indicq = jthun + 6*nbinst
