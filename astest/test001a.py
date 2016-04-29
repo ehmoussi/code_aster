@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import code_aster
+test = code_aster.Test()
 
 # Creation du maillage
 mesh = code_aster.Mesh()
@@ -17,12 +18,16 @@ coord = mesh.getCoordinates()
 #help(coord)
 
 # Acces uniquement en lecture verifie !
-print "coord[3] ",coord[3]
+print "coord[3] ", coord[3]
+test.assertEqual( coord[3], 1.0 )
 
+fail = False
 try:
     coord[3] = 5.0
 except:
     print "coord is read-only"
+    fail = True
+test.assertTrue( fail )
 
 # Definition du modele Aster
 model = code_aster.Model()
@@ -44,7 +49,9 @@ except Exception as e:
 del mesh
 
 mesh2 = model.getSupportMesh()
-assert mesh2.hasGroupOfElements('Tout')
+test.assertTrue( mesh2.hasGroupOfElements('Tout') )
 
 # Vérification du debug
 mesh2.debugPrint()
+
+test.printSummary()

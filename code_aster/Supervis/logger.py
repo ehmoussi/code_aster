@@ -54,6 +54,7 @@ class PerLevelFormatter(logging.Formatter):
         self._adjust_format(lvl)
         return logging.Formatter.format(self, record)
 
+
 class PerLevelColorFormatter(PerLevelFormatter):
     """Formatter for messages"""
 
@@ -71,6 +72,7 @@ class PerLevelColorFormatter(PerLevelFormatter):
         lvl = record.levelno
         return self._adjust_color(lvl)(PerLevelFormatter.format(self, record))
 
+
 class HgStreamHandler(logging.StreamHandler):
     """StreamHandler switching between sys.stdout and sys.stderr
     like the mercurial ui does"""
@@ -87,6 +89,7 @@ class HgStreamHandler(logging.StreamHandler):
         """Enhance error and warning messages"""
         self._adjust_stream(record.levelno)
         return logging.StreamHandler.emit(self, record)
+
 
 def build_logger(level=logging.WARN):
     """Initialize the logger with its handlers"""
