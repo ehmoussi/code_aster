@@ -3,7 +3,7 @@
 # CATALOGUE DES ELEMENTS 3D HM-X-FEM MULTI HEAVISIDE SANS CONTACT
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -105,8 +105,6 @@ ENGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
                              components=('X', 'Y', 'Z',))
 
 
-CGEOMER = LocatedComponents(phys=PHY.GEOM_R, type='ELEM',
-                            components=('X', 'Y', 'Z',))
 
 
 CTEMPSR = LocatedComponents(phys=PHY.INST_R, type='ELEM',
@@ -587,7 +585,7 @@ class HM_HEXA20_XH1(Element):
                   ),
 
         OP.TOU_INI_ELEM(te=99,
-                        para_out=((OP.TOU_INI_ELEM.PGEOM_R, CGEOMER), ),
+                        para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
                         ),
 
         OP.TOU_INI_ELGA(te=99,

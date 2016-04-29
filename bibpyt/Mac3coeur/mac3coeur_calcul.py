@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -111,6 +111,7 @@ class Mac3CoeurCalcul(object):
         self._subdivis = 1
         self._use_archimede = None
         self.char_init = None
+        self.etat_init = None
 
         # cached properties
         self._init_properties()
@@ -125,6 +126,7 @@ class Mac3CoeurCalcul(object):
         self._cham_mater_contact = NULL
         self._cham_mater_free = NULL
         self._times = NULL
+        self._times_woSubd = NULL
         self._evol_temp = NULL
         self._evol_fluence = NULL
         self._rigid_load = NULL
@@ -148,7 +150,8 @@ class Mac3CoeurCalcul(object):
         # force the computation of the times to ensure it is done first
         # Note that times depends on niv_fluence and subdivis.
         self.times
-
+        self.fluence_cycle = self.keyw['FLUENCE_CYCLE']
+        
     def _run(self):
         """Run the calculation itself"""
         raise NotImplementedError('must be defined in a subclass')
@@ -265,6 +268,12 @@ class Mac3CoeurCalcul(object):
 
     @property
     @cached_property
+    def times_woSubd(self):
+        """Return the list of the time steps"""
+        return self.coeur.definition_time(self.niv_fluence, self.subdivis,1)
+
+    @property
+    @cached_property
     def evol_temp(self):
         """Return the evolution of temperature"""
         return self.coeur.definition_champ_temperature(self.mesh)
@@ -273,7 +282,9 @@ class Mac3CoeurCalcul(object):
     @cached_property
     def evol_fluence(self):
         """Return the evolution of the fluence fields"""
-        return self.coeur.definition_fluence(self.niv_fluence, self.mesh)
+        if self.etat_init :
+            assert (self.fluence_cycle == 0.)
+        return self.coeur.definition_fluence(self.niv_fluence, self.mesh,self.fluence_cycle)
 
     @property
     @cached_property
@@ -290,6 +301,12 @@ class Mac3CoeurCalcul(object):
         return self.coeur.definition_materiau(
             self.mesh, self.geofib, self.evol_fluence,
             self.evol_temp, CONTACT='OUI')
+
+    def cham_mater_contact_progressif(self,ratio):
+        """Return the field of material (with contact enabled)"""
+        return self.coeur.definition_materiau(
+            self.mesh, self.geofib, self.evol_fluence,
+            self.evol_temp, CONTACT='OUI',RATIO=ratio)
 
     # loadings
     @property
@@ -365,7 +382,8 @@ class Mac3CoeurCalcul(object):
             _F(CHARGE=thyc.chtr_nodal, FONC_MULT=fmult_tr,),
             _F(CHARGE=thyc.chtr_poutre, FONC_MULT=fmult_tr,),
         ]
-        
+        self._thyc_ax=(thyc.chax_nodal,thyc.chax_poutre)
+        self._thyc_tr=(thyc.chtr_nodal,thyc.chtr_poutre)
         return (load_ax,load_tr)
 
     @property
@@ -467,6 +485,7 @@ class Mac3CoeurCalcul(object):
                                 GROUP_MA='MAINTIEN',
                                 DEFORMATION='PETIT'),),
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
+            # 'CONVERGENCE' : _F(ITER_GLOB_MAXI=100),
             'NEWTON': _F(MATRICE='TANGENTE',
                          #PREDICTION='ELASTIQUE',
                          REAC_ITER=1,),
@@ -497,13 +516,12 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
     def __init__(self, macro, args,char_init=None):
         """Initialization"""
         super(Mac3CoeurDeformation, self).__init__(macro, args)
-        self.etat_init = None
         self.char_init=char_init
 
     def _prepare_data(self,noresu):
         """Prepare the data for the calculation"""
         self.niv_fluence = self.mcf['NIVE_FLUENCE']
-        if self.keyw['TYPE_COEUR'] == "MONO":
+        if self.keyw['TYPE_COEUR'][:4] == "MONO":
             self.subdivis = 5
         self.use_archimede = self.mcf['ARCHIMEDE']
         super(Mac3CoeurDeformation, self)._prepare_data(noresu)
@@ -590,10 +608,10 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
 
     def _run(self):
         """Run the main part of the calculation"""
-        from Cata.cata import STAT_NON_LINE
+        from Cata.cata import STAT_NON_LINE 
         
         coeur = self.coeur
-        if self.keyw['TYPE_COEUR'] == "MONO":
+        if self.keyw['TYPE_COEUR'][:4] == "MONO":
             chmat_contact = self.cham_mater_free
         else:
             chmat_contact = self.cham_mater_contact
@@ -637,14 +655,80 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                   ))
 
         else :
+                 
             constant_load += self.periodic_cond + self.rigid_load
+            loads = constant_load \
+                    + self.vessel_head_load \
+                    + self.thyc_load[0] + self.thyc_load[1]
+            keywords=[]
+            mater=[]
+            ratio = 1.
+            mater.append(self.cham_mater_contact_progressif(ratio))
+            print 'self.etat_init : ',self.etat_init
+            __RESULT = None
+            if (not self.etat_init) :
+                __RESULT = STAT_NON_LINE(**self.snl(CHAM_MATER=mater[-1],
+                                INCREMENT=_F(LIST_INST=self.times,
+                                             INST_FIN=0.),
+                                EXCIT=loads,
+                               ))
+                self.etat_init = _F(EVOL_NOLI=__RESULT,)
+            keywords.append(self.snl(CHAM_MATER=mater[-1],
+                                INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                             INST_FIN=coeur.temps_simu['T0b']),
+                                EXCIT=loads,
+                                ETAT_INIT=self.etat_init,
+                               ))
+            nb_test = 0
+            while nb_test < 5 :
+                try :
+                    nb = len(keywords)
+                    __res_int = [None]*nb
+                    for i in xrange(nb) :
+                        k = keywords[::-1][i]
+                        if i>0 :
+                            kwds = {
+                                'NEWTON': _F(MATRICE='TANGENTE',
+                                 PREDICTION='DEPL_CALCULE',
+                                 EVOL_NOLI = __res_int[i-1],
+                                 REAC_ITER=1,),
+                                }
+                            k.update(kwds)
+                        __res_int[i]=STAT_NON_LINE(**k)
+                    break
+                except aster.NonConvergenceError,e :
+                    ratio = ratio/10.
+                    mater.append(self.cham_mater_contact_progressif(ratio))
+                    keywords.append(self.snl(CHAM_MATER=mater[-1],
+                                    INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                                 INST_FIN=coeur.temps_simu['T0b']),
+                                    EXCIT=loads,
+                                    ETAT_INIT=self.etat_init,
+                                   ))
+                nb_test+=1
+            else :
+                raise 'no convergence'
+            keywords = self.snl(
+                                reuse=__RESULT,
+                                NEWTON= _F(MATRICE='TANGENTE',
+                                    PREDICTION='DEPL_CALCULE',
+                                    EVOL_NOLI = __res_int[-1],
+                                    REAC_ITER=1,),
+                                CHAM_MATER=self.cham_mater_contact,
+                                INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                             INST_FIN=coeur.temps_simu['T0b']),
+                                EXCIT=loads,
+                                ETAT_INIT=self.etat_init,
+                                )
+            __RESULT = STAT_NON_LINE(**keywords)
+
             __RESULT = STAT_NON_LINE(**self.snl(
+                                  reuse=__RESULT,
                                   CHAM_MATER=chmat_contact,
                                   INCREMENT=_F(LIST_INST=self.times,
                                                 INST_FIN=coeur.temps_simu['T8']),
-                                  EXCIT=constant_load + self.vessel_head_load + \
-                                      self.thyc_load[0] + self.thyc_load[1],
-                                  ETAT_INIT=self.etat_init,
+                                  EXCIT=loads,
+                                  ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                                   ))
 
             (LI2,F_EMB2)=self.dechargePSC(__RESULT)
@@ -656,14 +740,55 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                   EXCIT=constant_load+[_F(CHARGE=F_EMB2,FONC_MULT=LI2),],
                                   INCREMENT=_F(LIST_INST=self.times,INST_FIN=coeur.temps_simu['T8b']),
                                   ))
-            __RESULT = STAT_NON_LINE(**self.snl(
-                                  reuse=__RESULT,
-                                  CHAM_MATER=self.cham_mater_free,
-                                  ETAT_INIT=_F(EVOL_NOLI=__RESULT),
-                                  EXCIT=constant_load,
-                                  INCREMENT=_F(LIST_INST=self.times),
-                                  ))
 
+            keywords=[]
+            mater=[]
+            ratio = 1.e-8
+            mater.append(self.cham_mater_contact_progressif(ratio))
+            keywords.append(self.snl(CHAM_MATER=mater[-1],
+                                INCREMENT=_F(LIST_INST=self.times_woSubd,),
+                                EXCIT=constant_load,
+                                ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                               ))
+            nb_test = 0
+            while nb_test < 7 :
+                try :
+                    nb = len(keywords)
+                    __res_int = [None]*nb
+                    for i in xrange(nb) :
+                        k = keywords[::-1][i]
+                        if i>0 :
+                            kwds = {
+                                'NEWTON': _F(MATRICE='TANGENTE',
+                                 PREDICTION='DEPL_CALCULE',
+                                 EVOL_NOLI = __res_int[i-1],
+                                 REAC_ITER=1,),
+                                }
+                            k.update(kwds)
+                        __res_int[i]=STAT_NON_LINE(**k)
+                    break
+                except aster.NonConvergenceError,e :
+                    ratio = ratio*10.
+                    mater.append(self.cham_mater_contact_progressif(ratio))
+                    keywords.append(self.snl(CHAM_MATER=mater[-1],
+                                    INCREMENT=_F(LIST_INST=self.times_woSubd,),
+                                    EXCIT=constant_load,
+                                    ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                                   ))
+                nb_test+=1
+            else :
+                raise 'no convergence'
+            keywords = self.snl(reuse = __RESULT,
+                                NEWTON= _F(MATRICE='TANGENTE',
+                                    PREDICTION='DEPL_CALCULE',
+                                    EVOL_NOLI = __res_int[-1],
+                                    REAC_ITER=1,),
+                                CHAM_MATER=self.cham_mater_free,
+                                INCREMENT=_F(LIST_INST=self.times_woSubd,),
+                                EXCIT=constant_load,
+                                ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                                )
+            __RESULT = STAT_NON_LINE(**keywords)
 
 class Mac3CoeurLame(Mac3CoeurCalcul):
 
@@ -694,7 +819,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
     def deform_mesh_inverse(self, depl):
         """Use the displacement of the result to deform the mesh"""
         from Cata.cata import CREA_CHAMP, MODI_MAILLAGE
-        _depl_inv = CREA_CHAMP(OPERATION='COMB',
+        _depl_inv = CREA_CHAMP(OPERATION='COMB',                          
                           TYPE_CHAM='NOEU_DEPL_R',
                           COMB=_F(CHAM_GD=depl,COEF_R=-1.))
 
@@ -710,6 +835,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         """Use the displacement of the result to deform the mesh"""
         from Cata.cata import CREA_CHAMP, MODI_MAILLAGE
         _depl = CREA_CHAMP(OPERATION='EXTR',
+                           INST = self.coeur.temps_simu['T1'],
                            TYPE_CHAM='NOEU_DEPL_R',
                            NOM_CHAM='DEPL',
                            RESULTAT=resu)
@@ -798,29 +924,121 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
 
     def _run(self,tinit=None,tfin=None):
         """Run the main part of the calculation"""
-        from Cata.cata import STAT_NON_LINE, PERM_MAC3COEUR
+        from Cata.cata import STAT_NON_LINE, PERM_MAC3COEUR, DETRUIRE
         coeur = self.coeur
         # calcul de deformation d'apres DAMAC / T0 - T1
+
         _snl_lame = STAT_NON_LINE(**self.snl(
                                   INCREMENT=_F(LIST_INST=self.times,
                                                INST_FIN=coeur.temps_simu[
                                                    'T1']),
+                                  ARCHIVAGE=_F(INST=coeur.temps_simu['T1']),
                                   EXCIT=self.archimede_load + self.vessel_head_load +
                                   self.vessel_dilatation_load + self.gravity_load +
                                   self.layer_load + self.periodic_cond,
                                   ))
         _debug(_snl_lame, "result STAT_NON_LINE 1")
         # updated coeur
-        __resuf = PERM_MAC3COEUR(TYPE_COEUR=self.keyw['TYPE_COEUR'],
-                                 RESU_N=_snl_lame,
-                                 TABLE_N=self.keyw['TABLE_N'],
-                                 TABLE_NP1=self.mcf['TABLE_NP1'],
-                                 MAILLAGE_NP1=self.mcf['MAILLAGE_NP1'])
-        _debug(__resuf, "result PERM_MAC3COEUR")
-        self.update_coeur(__resuf, self.mcf['TABLE_NP1'])
+        # __resuf = PERM_MAC3COEUR(TYPE_COEUR_N=self.keyw['TYPE_COEUR'],
+        #                          TYPE_COEUR_P=self.keyw['TYPE_COEUR'],
+        #                          RESU_N=_snl_lame,
+        #                          TABLE_N=self.keyw['TABLE_N'],
+        #                          TABLE_NP1=self.mcf['TABLE_NP1'],
+        #                          MAILLAGE_NP1=self.mcf['MAILLAGE_NP1'])
+        # _debug(__resuf, "result PERM_MAC3COEUR")
+        self.update_coeur(_snl_lame, self.keyw['TABLE_N'])
         # WARNING: element characteristics and the most of the loadings must be
-        # computed on the initial (not deformed) mesh
-        keywords = self.snl(CHAM_MATER=self.cham_mater_contact,
+        # computed on the initial (not deformed) meshhg st
+        # please keep the call to deform_mesh after the computation of keywords
+        keywords=[]
+        mater=[]
+        ratio = 1.
+        mater.append(self.cham_mater_contact_progressif(ratio))
+        keywords.append(self.snl(CHAM_MATER=mater[-1],
+                            INCREMENT=_F(LIST_INST=self.times,
+                                         INST_FIN=0.),
+                            EXCIT=self.rigid_load + self.archimede_load +
+                            self.vessel_head_load +
+                            self.vessel_dilatation_load +
+                            self.gravity_load +
+                            self.symetric_cond + self.periodic_cond +
+                            self.thyc_load[0] + self.thyc_load[1],
+                           ))
+        depl_deformed = self.deform_mesh(_snl_lame)
+        __RESULT = STAT_NON_LINE(**keywords[-1])
+        kwds = {
+                    'ETAT_INIT' : _F(EVOL_NOLI=__RESULT),
+                    'INCREMENT' : _F(LIST_INST=self.times_woSubd,
+                             INST_FIN=coeur.temps_simu['T0b']),
+
+            }
+        keywords[-1].update(kwds)
+        nb_test = 0
+        while nb_test < 5 :
+            try :
+                nb = len(keywords)
+                __res_int = [None]*nb
+                for i in xrange(nb) :
+                    k = keywords[::-1][i]
+                    if i>0 :
+                        kwds = {
+                            'NEWTON': _F(MATRICE='TANGENTE',
+                             PREDICTION='DEPL_CALCULE',
+                             EVOL_NOLI = __res_int[i-1],
+                             REAC_ITER=1,),
+                            }
+                        k.update(kwds)
+                    print 
+                    # if i == nb-1 :
+                    #     __RESULT = STAT_NON_LINE(**k)
+                    # else :
+                    __res_int[i]=STAT_NON_LINE(**k)
+                break
+            except aster.NonConvergenceError,e :
+                # print 'erreur : %s'%e
+                # try :
+                # DETRUIRE(CONCEPT=_F(NOM=__RESULT))
+                # except :
+                #     print 'pas possible de detruire'
+                ratio = ratio/10.
+                mater.append(self.cham_mater_contact_progressif(ratio))
+                keywords.append(self.snl(CHAM_MATER=mater[-1],
+                                INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                             INST_FIN=coeur.temps_simu['T0b']),
+                                EXCIT=self.rigid_load + self.archimede_load +
+                                self.vessel_head_load +
+                                self.vessel_dilatation_load +
+                                self.gravity_load +
+                                self.symetric_cond + self.periodic_cond +
+                                self.thyc_load[0] + self.thyc_load[1],
+                               ))
+            nb_test+=1
+        else :
+            raise 'no convergence'
+
+
+        keywords = self.snl(
+                            reuse = __RESULT,
+                            ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                            NEWTON= _F(MATRICE='TANGENTE',
+                                PREDICTION='DEPL_CALCULE',
+                                EVOL_NOLI = __res_int[-1],
+                                REAC_ITER=1,),
+                            CHAM_MATER=self.cham_mater_contact,
+                            INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                         INST_FIN=coeur.temps_simu['T0b']),
+                            EXCIT=self.rigid_load + self.archimede_load +
+                            self.vessel_head_load +
+                            self.vessel_dilatation_load +
+                            self.gravity_load +
+                            self.symetric_cond + self.periodic_cond +
+                            self.thyc_load[0] + self.thyc_load[1],
+                            )
+        __RESULT = STAT_NON_LINE(**keywords)
+        keywords = self.snl(
+                            reuse = __RESULT,
+                            ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                            CHAM_MATER=self.cham_mater_contact,
                             INCREMENT=_F(LIST_INST=self.times,
                                          INST_FIN=coeur.temps_simu['T4']),
                             EXCIT=self.rigid_load + self.archimede_load +
@@ -830,7 +1048,6 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                             self.symetric_cond + self.periodic_cond +
                             self.thyc_load[0] + self.thyc_load[1],
                             )
-        depl_deformed = self.deform_mesh(__resuf)
         __RESULT = STAT_NON_LINE(**keywords)
         _debug(__RESULT, "result STAT_NON_LINE 2")
         
@@ -861,7 +1078,7 @@ class Mac3CoeurEtatInitial(Mac3CoeurLame):
     def _prepare_data(self,noresu):
         """Prepare the data for the calculation"""
         self.niv_fluence = self.mcf['NIVE_FLUENCE']
-        if self.keyw['TYPE_COEUR'] == "MONO":
+        if self.keyw['TYPE_COEUR'][:4] == "MONO":
             assert(False)
         super(Mac3CoeurEtatInitial, self)._prepare_data(noresu)
 

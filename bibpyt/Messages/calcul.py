@@ -267,12 +267,11 @@ Conseils :
 Erreur utilisateur concernant le parallélisme des calculs élémentaires :
   La partition des éléments du modèle a été faite sur %(i1)d processeurs.
   Mais maintenant, le nombre de processeurs disponibles est de %(i2)d.
-  Certains éléments ne seront pas calculés, ce qui va entraîner des 
-  résultats faux.
 
 Conseil :
-  Il faut utiliser la commande MODI_MODELE pour modifier la partition du modèle
-  afin qu'elle soit cohérente avec le nombre de processeurs disponibles pour les calculs.
+  Lors de la poursuite du calcul, il faut utiliser la commande MODI_MODELE 
+  pour modifier la partition du modèle afin qu'elle soit cohérente avec le nombre
+  de processeurs disponibles.
 """),
 
     36 : _(u"""

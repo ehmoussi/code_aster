@@ -49,7 +49,7 @@ INTEGER DEFP (MEMPID, mempid, INTEGER *val)
 
     numpro = getpid();
 
-# ifdef __FreeBSD__
+# if defined FREEBSD
 /*
 ** FreeBSD and some others without /proc ?
 */
@@ -85,6 +85,18 @@ INTEGER DEFP (MEMPID, mempid, INTEGER *val)
     val[3] = P2K((uintmax_t)kp->ki_rssize);
     /* VmStk */
     lmem = P2K((uintmax_t)kp->ki_ssize);
+
+# elif defined DARWIN
+
+/*
+OS X does not support retrieving memory consumptions through /proc or kvm library
+*/
+
+    val[0] = 0 ;
+    val[1] = 0 ;
+    val[2] = 0 ;
+    val[3] = 0 ;
+    lmem = 0 ;
 
 # else /* Linux */
 

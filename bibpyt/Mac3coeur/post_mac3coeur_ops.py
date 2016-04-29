@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -18,6 +18,9 @@
 # person_in_charge: samuel.geniaut at edf.fr
 import aster_core
 from mac3coeur_coeur import CoeurFactory
+from Utilitai.UniteAster import UniteAster
+
+UL=UniteAster()
 
 def NodePos(coeur,k):
     
@@ -88,7 +91,8 @@ def makeXMGRACEjeu(unit, post, coeur, valjeuac, valjeucu):
 
     POSITION = coeur.get_geom_coeur()
     
-    filename = './fort.%d' % (unit)
+    #filename = './fort.%d' % (unit)
+    filename = UL.Nom(unit)
 
     xmgrfile = open(filename, 'w')
     
@@ -174,7 +178,8 @@ def makeXMGRACEdef_amp(unit, post, coeur, valdefac):
 
         return (redF, greenF, blueF, size)
 
-    filename = './fort.%d' % (unit)
+    #filename = './fort.%d' % (unit)
+    filename = UL.Nom(unit)
 
     xmgrfile = open(filename, 'w')
     makeXMGRACE_entete(coeur,xmgrfile)
@@ -213,7 +218,8 @@ def makeXMGRACEdef_mod(unit, post, coeur, valdefac):
 
         return (redF, greenF, blueF, value)
 
-    filename = './fort.%d' % (unit)
+    filename = UL.Nom(unit)
+    #filename = './fort.%d' % (unit)
 
     xmgrfile = open(filename, 'w')
     makeXMGRACE_entete(coeur,xmgrfile)
@@ -263,7 +269,8 @@ def makeXMGRACEdef_vec(unit, post, coeur, valdefac, valdirYac, valdirZac):
 
         return (Xvec, Yvec, Rvec)
 
-    filename = './fort.%d' % (unit)
+    #filename = './fort.%d' % (unit)
+    filename = UL.Nom(unit)
 
     xmgrfile = open(filename, 'w')
     makeXMGRACE_entete(coeur,xmgrfile)
@@ -302,7 +309,8 @@ def makeXMGRACEdef_vec(unit, post, coeur, valdefac, valdirYac, valdirZac):
 
 def makeXMGRACEdeforme(unit, name, typeAC, coeur, valdefac):
     ac = coeur.factory.get(typeAC)(coeur.typ_coeur)
-    filename = './fort.%d' % (unit)
+    filename = UL.Nom(unit)
+    #filename = './fort.%d' % (unit)
 
     xmgrfile = open(filename, 'w')
     xmgrfile.write('@focus off\n@g0 on\n@with g0\n@kill s0\n@s0 symbol 9\n'
@@ -355,16 +363,24 @@ def post_mac3coeur_ops(self, **args):
     DEFI_FICHIER = self.get_cmd('DEFI_FICHIER')
     IMPR_TABLE = self.get_cmd('IMPR_TABLE')
 
+    datg = aster_core.get_option("repdex")
+    coeur_factory = CoeurFactory(datg)
+
     self.set_icmd(1)
     _RESU = self['RESULTAT']
     _typ_coeur = self['TYPE_COEUR']
     POST_LAME = self['LAME']
     POST_DEF = self['DEFORMATION']
     _inst = self['INST']
+    _TAB_N = self['TABLE']
 
-    datg = aster_core.get_option("repdex")
-    coeur_factory = CoeurFactory(datg)
-    _coeur = coeur_factory.get(_typ_coeur)('post', _typ_coeur, self, datg)
+    _table = _TAB_N.EXTR_TABLE()
+    name = _table.para[0]
+
+# et on renomme la colonne qui identifie les assemblages
+    _table.Renomme(name, 'idAC')
+    _coeur = coeur_factory.get(_typ_coeur)(name, _typ_coeur, self, datg)
+    _coeur.init_from_table(_table,mater=False)
 
     # "
     #                                          MOT-CLE FACTEUR LAME
@@ -461,7 +477,7 @@ def post_mac3coeur_ops(self, **args):
             _unit = attr['UNITE']
             _typ_post = attr['FORMAT']
 
-            DEFI_FICHIER(ACTION='LIBERER', UNITE=_unit)
+            #DEFI_FICHIER(ACTION='LIBERER', UNITE=_unit)
 
             if (_typ_post == 'GRACE'):
 
@@ -584,7 +600,7 @@ def post_mac3coeur_ops(self, **args):
             _unit = attr['UNITE']
             _typ_post = attr['FORMAT']
 
-            DEFI_FICHIER(ACTION='LIBERER', UNITE=_unit)
+            #DEFI_FICHIER(ACTION='LIBERER', UNITE=_unit)
 
             if (_typ_post == 'GRACE'):
 
@@ -610,7 +626,7 @@ def post_mac3coeur_ops(self, **args):
                     makeXMGRACEdeforme(_unit, name, typeAC, _coeur, valdefac)
 
             elif (_typ_post == 'TABLE'):
-
+                _format_standard = attr['FORMAT_R'] == 'STANDARD'
                 _nom_site = attr['NOM_SITE']
 
                 l_nom_AC = []
@@ -652,12 +668,15 @@ def post_mac3coeur_ops(self, **args):
                 l_T5 = []
                 l_T6 = []
 
-                for name in POSITION:
-                    name_AC_aster = name[0] + '_' + name[1]
+                #for name in POSITION:
+                for idAC in _coeur.collAC.keys() :
+                    AC = _coeur.collAC[idAC]
+                    name_AC_aster = AC.idAST
+                    #name_AC_aster = name[0] + '_' + name[1]
                     name_AC_damac = _coeur.position_todamac(name_AC_aster)
 
                     cycle = 1
-                    repere = 'non_renseigne'
+                    repere = AC.name
                     def_max = valrho[name_AC_aster]
                     XG1 = valdirYac[name_AC_aster][1 - 1]
                     XG2 = valdirYac[name_AC_aster][2 - 1]
@@ -667,8 +686,8 @@ def post_mac3coeur_ops(self, **args):
                     XG6 = valdirYac[name_AC_aster][6 - 1]
                     XG7 = valdirYac[name_AC_aster][7 - 1]
                     XG8 = valdirYac[name_AC_aster][8 - 1]
-                    XG9 = valdirYac[name_AC_aster][9 - 1]
-                    XG10 = valdirYac[name_AC_aster][10 - 1]
+                    # XG9 = valdirYac[name_AC_aster][9 - 1]
+                    # XG10 = valdirYac[name_AC_aster][10 - 1]
                     YG1 = valdirZac[name_AC_aster][1 - 1]
                     YG2 = valdirZac[name_AC_aster][2 - 1]
                     YG3 = valdirZac[name_AC_aster][3 - 1]
@@ -677,9 +696,19 @@ def post_mac3coeur_ops(self, **args):
                     YG6 = valdirZac[name_AC_aster][6 - 1]
                     YG7 = valdirZac[name_AC_aster][7 - 1]
                     YG8 = valdirZac[name_AC_aster][8 - 1]
-                    YG9 = valdirZac[name_AC_aster][9 - 1]
-                    YG10 = valdirZac[name_AC_aster][10 - 1]
-                    Milieu = 'non_renseigne'
+                    # YG9 = valdirZac[name_AC_aster][9 - 1]
+                    # YG10 = valdirZac[name_AC_aster][10 - 1]
+                    if (_typ_coeur == '900'):
+                        XG9 = 0.
+                        XG10 = 0.
+                        YG9 = 0.
+                        YG10 = 0.
+                    else :
+                        XG9 = valdirYac[name_AC_aster][9 - 1]
+                        XG10 = valdirYac[name_AC_aster][10 - 1]
+                        YG9 = valdirZac[name_AC_aster][9 - 1]
+                        YG10 = valdirZac[name_AC_aster][10 - 1]
+                    Milieu = AC.typeAC
                     MinX = min(valdirYac[name_AC_aster])
                     MaxX = max(valdirYac[name_AC_aster])
                     CCX = MaxX - MinX
@@ -780,9 +809,13 @@ def post_mac3coeur_ops(self, **args):
                                      )
 
                 # impression de la table de sortie
+                if _format_standard : 
+                    formt = 'E12.5'
+                else :
+                    formt = 'F5.1'
                 IMPR_TABLE(TABLE=_TABOUT,
                            TITRE='---',
-                           FORMAT_R='F5.1',
+                           FORMAT_R=formt,
                            UNITE=_unit,
                            COMMENTAIRE='',
                            SEPARATEUR='\t',

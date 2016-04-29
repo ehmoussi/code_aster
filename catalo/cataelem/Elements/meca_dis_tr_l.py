@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -84,8 +84,6 @@ NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
     components=('X','Y','Z',))
 
 
-CGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELEM',
-    components=('X','Y','Z',))
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
@@ -347,8 +345,8 @@ class MECA_DIS_TR_L(Element):
 
         OP.REPERE_LOCAL(te=135,
             para_in=((OP.REPERE_LOCAL.PCAORIE, CCAORIE), ),
-            para_out=((SP.PREPLO1, CGEOMER), (SP.PREPLO2, CGEOMER),
-                     (SP.PREPLO3, CGEOMER), ),
+            para_out=((SP.PREPLO1, LC.CGEOM3D), (SP.PREPLO2, LC.CGEOM3D),
+                     (SP.PREPLO3, LC.CGEOM3D), ),
         ),
 
         OP.RIGI_FLUI_STRU(te=41,
@@ -418,7 +416,7 @@ class MECA_DIS_TR_L(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PGEOM_R, CGEOMER), ),
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
         ),
 
         OP.TOU_INI_ELGA(te=99,

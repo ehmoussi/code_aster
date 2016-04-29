@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -32,11 +32,12 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
                        op=OPS("Mac3coeur.mac3coeur_calcul.calc_mac3coeur_ops"),
                        sd_prod=calc_mac3coeur_prod,
 
-         TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","TEST","900","1300","N4"),position='global' ),
+         TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4"),position='global' ),
          # TYPE DE COEUR A CONSIDERER
          TABLE_N      = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N
          MAILLAGE_N   = SIMP(statut='f',typ=maillage_sdaster),      # MAILLAGE EN ATTENDANT MIEUX ???
          RESU_DEF     = SIMP(statut='f',typ=CO,defaut=None),
+         FLUENCE_CYCLE = SIMP(statut='o',typ='R',validators=NoRepeat(),max=1,defaut=0.),
 
          ETAT_INITIAL = FACT(statut='f',max=1,
                           fr=tr("Estimation d'un etat initial a partir d un DAMAC"),
@@ -50,9 +51,7 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
 
          LAME = FACT(statut='f',max=1,
                      fr=tr("Estimation des lames d'eau entre AC"),
-               TABLE_NP1    = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N+1
-               MAILLAGE_NP1 = SIMP(statut='o',typ=maillage_sdaster),      # MAILLAGE EN ATTENDANT MIEUX ???
-               UNITE_THYC   = SIMP(statut='f',typ='I', max=1),            # Unite Logique du fichier THYC
+               UNITE_THYC   = SIMP(statut='o',typ='I', max=1),            # Unite Logique du fichier THYC
                      ),
 
          DEFORMATION  = FACT(statut='f',max=1,
@@ -62,7 +61,7 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
                UNITE_THYC      = SIMP(statut='o',typ='I', max=1),                   # Unite Logique du fichier THYC
 
                # choix du maintien dans le cas mono-assemblage
-               b_maintien_mono = BLOC(condition = "TYPE_COEUR == 'MONO'",
+               b_maintien_mono = BLOC(condition = "TYPE_COEUR[:4] == 'MONO'",
 
                     TYPE_MAINTIEN = SIMP(statut='o',typ='TXM',into=("FORCE","DEPL_PSC"), ),
 
@@ -73,21 +72,21 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
                                        ),
 
                # choix du maintien dans le cas d'un coeur à plusieurs assemblages
-               b_maintien_coeur = BLOC(condition = "TYPE_COEUR != 'MONO'",
+               b_maintien_coeur = BLOC(condition = "TYPE_COEUR[:4] != 'MONO'",
 
                     TYPE_MAINTIEN = SIMP(statut='f',typ='TXM',into=("DEPL_PSC",),defaut="DEPL_PSC" ),
 
                                        ),
 
                # choix de la poussée d'Archimède dans le cas mono-assemblage
-               b_archimede_mono = BLOC(condition = "TYPE_COEUR == 'MONO'",
+               b_archimede_mono = BLOC(condition = "TYPE_COEUR[:4] == 'MONO'",
 
                     ARCHIMEDE = SIMP(statut='o',typ='TXM',into=("OUI","NON"), ),
 
                                        ),
 
                # choix de la poussée d'Archimède dans le cas d'un coeur à plusieurs assemblages
-               b_archimede_coeur = BLOC(condition = "TYPE_COEUR != 'MONO'",
+               b_archimede_coeur = BLOC(condition = "TYPE_COEUR[:4] != 'MONO'",
 
                     ARCHIMEDE = SIMP(statut='f',typ='TXM',into=("OUI", ),defaut="OUI" ),
 

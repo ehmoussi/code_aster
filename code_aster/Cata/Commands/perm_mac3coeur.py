@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -27,8 +27,9 @@ PERM_MAC3COEUR = MACRO(nom="PERM_MAC3COEUR",
                        op=OPS("Mac3coeur.perm_mac3coeur_ops.perm_mac3coeur_ops"),
                        sd_prod=evol_noli,
 
-         TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","TEST","900","1300","N4")),
-         TABLE_N      = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N
-         RESU_N       = SIMP(statut='o',typ=evol_noli),             # RESULTAT A L INSTANT N A PERMUTER
+         TYPE_COEUR_N   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4")),
+         TYPE_COEUR_NP1 = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4")),
+         TABLE_N      = SIMP(statut='o',typ=table_sdaster,max='**'),         # TABLE INITIALE DES DAMAC A L INSTANT N
+         RESU_N       = SIMP(statut='o',typ=evol_noli,max='**'),             # RESULTAT A L INSTANT N A PERMUTER
          TABLE_NP1    = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N+1
          MAILLAGE_NP1 = SIMP(statut='o',typ=maillage_sdaster),);    # MAILLAGE A L INSTANT N+1
