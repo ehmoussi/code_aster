@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import sys
 import os.path as osp
 import optparse
 from functools import partial
@@ -23,7 +24,12 @@ def options(self):
 def configure(self):
     self.load('compiler_c')
     # preserve symbols in the dyn table for stdcalls
-    self.env.append_unique('LINKFLAGS', ['-Wl,--export-dynamic'])
+    if sys.platform != 'darwin':
+        self.env.append_unique('LINKFLAGS', ['-Wl,--export-dynamic'])
+    else:
+        # '--export-dynamic' is '-export_dynamic' in OS X linker
+        # http://stackoverflow.com/questions/21279036/what-is-clangs-equivalent-to-rdynamic-gcc-flag
+        self.env.append_unique('LINKFLAGS', ['-Wl,-export_dynamic'])
 
     if 'ifort' in self.env.FC_NAME.lower():
         self.env.append_value('LINKFLAGS_fcprogram', ['-nofor_main'])
@@ -43,7 +49,7 @@ PYMAIN = 'supervis/python.c'
 def build(self):
     # The build is splitted in 3 stages:
     # - compilation of C source files
-    # - link of the executable (embedded) or several shared libs (shared)
+    # - build of the shared lib (libaster)
     # - build and link the cython wrapper
     #
     get_srcs = self.path.get_src().ant_glob
@@ -52,7 +58,6 @@ def build(self):
 
     build_c_source(self, env, excl)
     build_libaster(self, env)
-    # build_module(self, env)
 
     self.add_group()
     # install headers
@@ -91,6 +96,12 @@ def build_libaster(self, shenv):
     if shenv.BUILD_MFRONT:
         uses.append('astermfront')
     # {bibfor, bibc, bibcxx}/*.o
+    if sys.platform != 'darwin':
+        libasterfor = ['asterbibfor']
+    else:
+        # OS X does not support more than 262144 bytes on a single command line (getconf ARG_MAX)
+        # To prevent "argument list too long" error (more than 7000 object files from Fortran), we need to split the archive
+        libasterfor = ['asterbibfor1' , 'asterbibfor2' , 'asterbibfor3']
     self(
         features = 'cxx cxxshlib',
             name = 'asterlib',
@@ -98,7 +109,7 @@ def build_libaster(self, shenv):
           source = PYMAIN,
          defines = '_MAIN_=_unused_main_', #'_WITHOUT_PYMOD_',
              env = shenv.derive(),
-             use = ['PYEMBED', 'NUMPY', 'asterbibfor', 'asterbibc',
+             use = ['PYEMBED', 'NUMPY'] + libasterfor + ['asterbibc',
                     'asterbibcxx', 'CODE_ASTER_CORE'] + uses + ['CXX'],
     install_path = shenv.ASTERLIBDIR,
     )

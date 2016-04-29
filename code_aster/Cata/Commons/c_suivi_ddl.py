@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,6 +23,7 @@ from code_aster.Cata.Commons import *
 # person_in_charge: mickael.abbas at edf.fr
 
 def C_SUIVI_DDL() : return FACT(statut='f',max=4,
+           regles   =(UN_PARMI('NOM_CMP','NOM_VARI',),),
 
            NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,
                                    into=("DEPL","VITE","ACCE",
@@ -32,7 +33,9 @@ def C_SUIVI_DDL() : return FACT(statut='f',max=4,
            EVAL_CHAM       =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=1,defaut='VALE',
                                    into=("MIN","MAX","MOY","MAXI_ABS","MINI_ABS","VALE",),),
 
-           NOM_CMP         =SIMP(statut='o',typ='TXM',max=20),
+           NOM_CMP         =SIMP(statut='f',typ='TXM',max=20),
+           NOM_VARI        =SIMP(statut='f',typ='TXM',max=20),
+
            EVAL_CMP        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=1,defaut='VALE',
                                    into=("VALE","FORMULE",),),
 

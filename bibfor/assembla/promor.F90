@@ -32,7 +32,7 @@ subroutine promor(nuz, base)
 !     ------------------------------------------------------------------
 ! person_in_charge: jacques.pellet at edf.fr
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -155,7 +155,7 @@ subroutine promor(nuz, base)
 !
 !---- QUEL TYPE DE PARTITION ?
 !     LDIST=.TRUE.  : LES CALCULS ELEMENTAIRES SONT DISTRIBUES
-!     LDGREL=.TRUE. : PARTITION DE TYPE 'GROUP_ELEM'
+!     LDGREL=.TRUE. : DISTRIBUTION DE TYPE 'GROUP_ELEM'
     call dismoi('NOM_LIGREL', mo, 'MODELE', repk=nomlig)
     call dismoi('PARTITION', nomlig, 'LIGREL', repk=partit)
     call asmpi_info(rank=mrank, size=msize)
@@ -166,7 +166,7 @@ subroutine promor(nuz, base)
     if (partit .ne. ' ') then
         ldist=.true.
         call jeveuo(partit//'.PRTK', 'L', vk24=prtk)
-        ldgrel=prtk(1).eq.'GROUP_ELEM'
+        ldgrel=prtk(1).eq.'SOUS_DOMAINE' .or. prtk(1).eq.'GROUP_ELEM'
         if (.not.ldgrel) then
             call jeveuo(partit//'.NUPROC.MAILLE', 'L', vi=maille)
         endif

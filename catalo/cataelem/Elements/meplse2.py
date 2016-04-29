@@ -2,7 +2,7 @@
 
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -65,8 +65,6 @@ EGGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
     components=('X','Y',))
 
 
-CGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELEM',
-    components=('X','Y',))
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
@@ -181,7 +179,7 @@ class MEPLSE2(Element):
         ),
 
         OP.CARA_SECT_POUT4(te=564,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PORIGIN, CGEOMER),
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PORIGIN, LC.CGEOM2D),
                      ),
             para_out=((SP.PVECTU1, MVECTUR), (SP.PVECTU2, MVECTUR),
                      ),

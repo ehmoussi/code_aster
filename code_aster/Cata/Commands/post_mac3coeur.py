@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -26,8 +26,9 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                        UIinfo={"groupes":("Outils-métier",)},
                        op=OPS("Mac3coeur.post_mac3coeur_ops.post_mac3coeur_ops"),
 
-           TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","TEST","900","1300","N4")),
+           TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4")),
            RESULTAT     = SIMP(statut='o',typ=evol_noli),                             # SD_RESULTAT
+           TABLE        = SIMP(statut='o',typ=table_sdaster),                         # TABLE DES DAMAC A L INSTANT N
            INST         = SIMP(statut='o',typ='R', max=1),                            # INSTANT
 
            LAME    = FACT(statut='f',max='**',
@@ -64,7 +65,9 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                                    ),
 
                  b_def_table  = BLOC(condition = "FORMAT == 'TABLE' ",fr=tr("Paramètres pour le format TABLE"),
-                       NOM_SITE     = SIMP(statut='o',typ='TXM', max=1),
+                        NOM_SITE     = SIMP(statut='o',typ='TXM', max=1),
+                        FORMAT_R     = SIMP(statut='f',typ='TXM', into=("DAMAC","STANDARD"), defaut="DAMAC")
+                       
                                    ),
 
 
