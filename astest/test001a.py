@@ -17,17 +17,12 @@ coord = mesh.getCoordinates()
 
 #help(coord)
 
-# Acces uniquement en lecture verifie !
+# Acces uniquement en lecture !
 print "coord[3] ", coord[3]
 test.assertEqual( coord[3], 1.0 )
 
-fail = False
-try:
+with test.assertRaises(TypeError):
     coord[3] = 5.0
-except:
-    print "coord is read-only"
-    fail = True
-test.assertTrue( fail )
 
 # Definition du modele Aster
 model = code_aster.Model()
@@ -39,11 +34,9 @@ model.build()
 # Definition du modele Aster
 model2 = code_aster.Model()
 model2.setSupportMesh(mesh)
-try:
-    model2.addElementaryModeling(code_aster.Thermal, code_aster.DKT)
-except Exception as e:
-    print e
 
+with test.assertRaisesRegexp(RuntimeError, 'not allowed'):
+    model2.addModelingOnAllMesh(code_aster.Thermal, code_aster.DKT)
 
 # Verification du comptage de référence sur le maillage
 del mesh
