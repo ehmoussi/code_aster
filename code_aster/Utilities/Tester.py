@@ -18,9 +18,11 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 import os.path as osp
+from functools import wraps
 import unittest
 from unittest.util import safe_repr
-from functools import wraps
+import unittest.case as case
+
 
 RESULT_FILE = "fort.8"
 
@@ -31,7 +33,7 @@ except ImportError:
     def writeInResu(text):
         print(text)
 
-# TODO assertRaises methods
+
 # TODO add more test methods
 # TODO use the logger object
 # TODO tell the RunManager to increase the exit status in case of failure
@@ -52,6 +54,26 @@ def addSuccess(method):
             inst.writeResult( True, method.__name__, kwds.get('msg') )
         return ret
     return wrapper
+
+
+class AssertRaisesContext(case._AssertRaisesContext):
+    """Wrap Context of TestCase object"""
+
+    def __init__(self, expected, test_case, expected_regexp=None):
+        self.writeResult = test_case.writeResult
+        super(AssertRaisesContext, self).__init__(expected, test_case, expected_regexp)
+
+    def __exit__(self, exc_type, exc_value, tb):
+        try:
+            ret = super(AssertRaisesContext, self).__exit__(exc_type, exc_value, tb)
+            if not ret:
+                raise AssertionError("unexpected exception raised "
+                                     "({0})".format(self.expected))
+        except AssertionError:
+            ret = False
+        self.writeResult( ret, self.expected.__name__, "not raised" )
+        # never fail
+        return True
 
 
 class Test( unittest.TestCase ):
@@ -100,7 +122,25 @@ class Test( unittest.TestCase ):
 
     @addSuccess
     def assertEqual(self, first, second, msg=None):
-         super(Test, self).assertEqual(first, second, msg)
+        super(Test, self).assertEqual(first, second, msg)
+
+    # just use a derivated context class
+    def assertRaises(self, excClass, callableObj=None, *args, **kwargs):
+        """Fail unless an exception of class excClass is raised"""
+        context = AssertRaisesContext(excClass, self)
+        if callableObj is None:
+            return context
+        with context:
+            callableObj(*args, **kwargs)
+
+    def assertRaisesRegexp(self, expected_exception, expected_regexp,
+                           callable_obj=None, *args, **kwargs):
+        """Asserts that the message in a raised exception matches a regexp."""
+        context = AssertRaisesContext(expected_exception, self, expected_regexp)
+        if callable_obj is None:
+            return context
+        with context:
+            callable_obj(*args, **kwargs)
 
 
 if __name__ == '__main__':
