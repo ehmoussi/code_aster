@@ -1,3 +1,6 @@
-# code_aster.Loads cython package
+# code_aster.Utilities cython package
 
-from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
+from .CppToFortranGlossary import FortranGlossary
+
+# Python modules
+from .Tester import Test

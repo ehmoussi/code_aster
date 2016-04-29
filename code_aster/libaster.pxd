@@ -61,7 +61,9 @@ cdef extern from "aster_fort.h":
                   char* string, INTEGER* pos, char* base, char* perm,
                   STRING_SIZE lstr, STRING_SIZE lbase, STRING_SIZE lperm )
 
-    # char functions: the first two arguments is the result
+    void affich_( char* fname, char* msg, STRING_SIZE lfname, STRING_SIZE lmsg )
+
+    # char functions: the first two arguments define the result
     void jexnum_( char* cret, STRING_SIZE lcret, char* coll, INTEGER* i,
                   STRING_SIZE lcoll )
     void jexnom_( char* cret, STRING_SIZE lcret, char* coll, char* obj,
@@ -101,3 +103,6 @@ cdef inline utimsd( INTEGER* unit, INTEGER* niv, INTEGER* lattr, INTEGER* lcont,
                     char* string, INTEGER* pos, char* base, char* perm ):
     utimsd_( unit, niv, lattr, lcont, string, pos, base, perm,
              len( string ), len( base ), len( perm ) )
+
+cdef inline void affich( char* fname, char* msg ):
+    affich_( fname, msg, len( fname ), len( msg ) )

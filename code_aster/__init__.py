@@ -33,6 +33,7 @@ if executionParameter.get( 'autostart' ):
 
 # import general purpose functions
 from code_aster.RunManager.saving import saveObjects
+from code_aster.Utilities.Tester import Test
 
 # import datastructures, physical quantities and constants
 # each package is responsible to export only the relevant objects
