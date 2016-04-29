@@ -102,6 +102,7 @@ def build_libaster(self, shenv):
         # OS X does not support more than 262144 bytes on a single command line (getconf ARG_MAX)
         # To prevent "argument list too long" error (more than 7000 object files from Fortran), we need to split the archive
         libasterfor = ['asterbibfor1' , 'asterbibfor2' , 'asterbibfor3']
+        # XXX try: OPTLIB_FLAGS="--whole-archive -llibbibfor1..."
     self(
         features = 'cxx cxxshlib',
             name = 'asterlib',
