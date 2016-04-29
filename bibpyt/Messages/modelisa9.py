@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -63,9 +63,17 @@ Risques et conseils :
    Il faut sans doute émettre une demande de correction du code.
 """),
 
+    4 : _(u"""
+Alarme de programmation :
+   Plusieurs matériaux ont été affectés.
+   Le programme cherche un paramètre matériel (%(k1)s) sans préciser le matériau.
+   On utilise le premier matériau de la liste affectée sur la maille.
 
-
-
+Risques et conseils :
+   Le comportement du code est dangereux car les résultats dépendent de l'ordre  
+   des matériaux affectés dans la commande AFFE_MATERIAU.
+   Il faut sans doute émettre une demande de correction du code.
+"""),
 
     5 : _(u"""
  Erreur utilisateur :
@@ -319,6 +327,15 @@ Risques et conseils :
 """),
 
 
+
+    73 : _(u"""
+Le matériau '%(k1)s' n'a pas été affecté.
+
+Conseil:
+    Vérifiez que le mot-clé facteur '%(k1)s' a bien été renseigné dans
+    DEFI_MATERIAU et que ce matériau a bien été affecté (par AFFE_MATERIAU)
+    sur cette partie du modèle.
+"""),
 
     74 : _(u"""
  comportement :%(k1)s non trouvé

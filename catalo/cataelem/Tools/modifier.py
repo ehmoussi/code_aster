@@ -57,8 +57,7 @@ class CataElemVisitor(object):
 
     def visitArrayOfComponents(self, array):
         """Visit a ArrayOfComponents object"""
-        for locCmp in array.locatedComponents:
-            locCmp.accept(self)
+        locCmp.locatedComponents.accept(self)
 
     def visitLocatedComponents(self, locCmp):
         """Visit a LocatedComponents object"""
@@ -115,12 +114,9 @@ class ChangeComponentsVisitor(CataElemVisitor):
         if created:
             array = created
         else:
-            new = []
-            changed = False
-            for locCmp in array.locatedComponents:
-                new.append( locCmp.accept(self) )
-                changed = changed or new[-1] != locCmp
-            if changed:
+            locCmp = array.locatedComponents
+            new = locCmp.accept(self)
+            if new != locCmp:
                 array = array.copy(new)
                 self._newObjects[array.name] = array
         return array

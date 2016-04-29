@@ -175,11 +175,11 @@ ZVARIPG  = LocatedComponents(phys=PHY.VARI_R, type='ELGA', location='RIGI',
     components=('VARI',))
 
 
-MVECTUR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=(DDL_MECA,))
+MVECTUR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=DDL_MECA)
 
-MVECTDR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=(NDEPLAR,))
+MVECTDR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=NDEPLAR)
 
-MMATUNS  = ArrayOfComponents(phys=PHY.MDNS_R, locatedComponents=(DDL_MECA,DDL_MECA))
+MMATUNS  = ArrayOfComponents(phys=PHY.MDNS_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
@@ -285,6 +285,15 @@ class MGDPTR3(Element):
                      (SP.PVARCRR, LC.ZVARCPG), (OP.ENEL_ELEM.PVARIPR, ZVARIPG),
                      ),
             para_out=((SP.PENERD1, EENERR), ),
+        ),
+
+        OP.ENTR_ELEM(te=490,
+            para_in=((OP.ENTR_ELEM.PCOMPOR, CCOMPOR), (OP.ENTR_ELEM.PCONTPR, ECONTPG),
+                     (SP.PDEPLR, DDL_MECA), (SP.PGEOMER, NGEOMER),
+                     (SP.PMATERC, LC.CMATERC), (OP.ENTR_ELEM.PVARCPR, LC.ZVARCPG),
+                     (SP.PVARCRR, LC.ZVARCPG), (OP.ENTR_ELEM.PVARIPR, ZVARIPG),
+                     ),
+            para_out=((SP.PENTRD1, EENERR), ),
         ),
 
         OP.ENEL_ELGA(te=575,
