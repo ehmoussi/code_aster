@@ -1,3 +1,3 @@
 # code_aster.NonLinear cython package
 
-from code_aster.NonLinear.NonLinearMethod import *
+from .NonLinearMethod import NonLinearMethod

@@ -1,7 +1,40 @@
 # code_aster.Loads cython package
 
-# from code_aster.Loads.KinematicsLoad import KinematicsLoad
+from .PhysicalQuantity import (
+    ForceDouble,
+    StructuralForceDouble,
+    LocalBeamForceDouble,
+    LocalShellForceDouble,
+    DisplacementDouble,
+    PressureDouble,
+    ImpedanceDouble,
+    NormalSpeedDouble,
+    HeatFluxDouble,
+    HydraulicFluxDouble,
+)
 
-from code_aster.Loads.PhysicalQuantity import *
-from code_aster.Loads.MechanicalLoad import *
-from code_aster.Loads.KinematicsLoad import *
+from .MechanicalLoad import (
+    NodalForceDouble,
+    NodalStructuralForceDouble,
+    ForceOnFaceDouble,
+    ForceOnEdgeDouble,
+    StructuralForceOnEdgeDouble,
+    LineicForceDouble,
+    InternalForceDouble,
+    StructuralForceOnBeamDouble,
+    LocalForceOnBeamDouble,
+    StructuralForceOnShellDouble,
+    LocalForceOnShellDouble,
+    PressureOnShellDouble,
+    PressureOnPipeDouble,
+    ImposedDisplacementDouble,
+    ImposedPressureDouble,
+    DistributedPressureDouble,
+    ImpedanceOnFaceDouble,
+    NormalSpeedOnFaceDouble,
+    WavePressureOnFaceDouble,
+    DistributedHeatFluxDouble,
+    DistributedHydraulicFluxDouble,
+)
+
+from .KinematicsLoad import KinematicsLoad
