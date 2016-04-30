@@ -3,4 +3,4 @@
 from .CppToFortranGlossary import FortranGlossary
 
 # Python modules
-from .Tester import Test
+from .Tester import TestCase

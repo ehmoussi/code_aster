@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import code_aster
-test = code_aster.Test()
+test = code_aster.TestCase()
 
 # Creation du maillage
 mesh = code_aster.Mesh()

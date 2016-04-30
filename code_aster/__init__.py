@@ -22,8 +22,8 @@
 # discourage import *
 __all__ = []
 
-from code_aster.Supervis import executionParameter
-from code_aster.RunManager import Initializer
+from .Supervis import executionParameter
+from .RunManager import Initializer
 
 executionParameter.parse_args()
 
@@ -32,23 +32,23 @@ if executionParameter.get( 'autostart' ):
     Initializer.init( executionParameter.get( 'buildelem' ) )
 
 # import general purpose functions
-from code_aster.RunManager.saving import saveObjects
-from code_aster.Utilities.Tester import Test
+from .RunManager.saving import saveObjects
+from .Utilities import TestCase
 
 # import datastructures, physical quantities and constants
 # each package is responsible to export only the relevant objects
-from code_aster.DataFields import *
-from code_aster.Function import *
-from code_aster.LinearAlgebra import *
-from code_aster.Materials import *
-from code_aster.Mesh import *
-from code_aster.Modeling import *
-from code_aster.Results import *
-from code_aster.Solvers import *
-from code_aster.Loads import *
-from code_aster.NonLinear import *
-from code_aster.Algorithms import *
-from code_aster.Studies import *
-from code_aster.Discretization import *
+from .DataFields import *
+from .Function import *
+from .LinearAlgebra import *
+from .Materials import *
+from .Mesh import *
+from .Modeling import *
+from .Results import *
+from .Solvers import *
+from .Loads import *
+from .NonLinear import *
+from .Algorithms import *
+from .Studies import *
+from .Discretization import *
 
-from code_aster.Cata import Commands
+from .Cata import Commands
