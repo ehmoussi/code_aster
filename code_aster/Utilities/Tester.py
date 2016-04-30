@@ -76,7 +76,7 @@ class AssertRaisesContext(case._AssertRaisesContext):
         return True
 
 
-class Test( unittest.TestCase ):
+class TestCase( unittest.TestCase ):
     """Similar to a unittest.TestCase
     Does not fail but print result OK/NOOK in the .resu file"""
 
@@ -84,7 +84,7 @@ class Test( unittest.TestCase ):
         """Initialization"""
         self._passed = 0
         self._failure = 0
-        super(Test, self).__init__('runTest')
+        super(TestCase, self).__init__('runTest')
 
     def runTest(self):
         """does nothing"""
@@ -118,11 +118,11 @@ class Test( unittest.TestCase ):
     @addSuccess
     def assertTrue(self, expr, msg=None):
         """Check that the expression is true."""
-        super(Test, self).assertTrue(expr, msg)
+        super(TestCase, self).assertTrue(expr, msg)
 
     @addSuccess
     def assertEqual(self, first, second, msg=None):
-        super(Test, self).assertEqual(first, second, msg)
+        super(TestCase, self).assertEqual(first, second, msg)
 
     # just use a derivated context class
     def assertRaises(self, excClass, callableObj=None, *args, **kwargs):

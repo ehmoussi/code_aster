@@ -20,6 +20,6 @@
 # install i18n function
 from Execution import i18n
 
-from code_aster.Supervis.libExecutionParameter import (
+from .libExecutionParameter import (
     executionParameter, setExecutionParameter,
 )
