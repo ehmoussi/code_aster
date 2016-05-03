@@ -14,10 +14,9 @@ mesh.readMedFile("test001a.mmed")
 #help(mesh)
 
 coord = mesh.getCoordinates()
-
 #help(coord)
 
-# Acces uniquement en lecture !
+# check readonly access
 print "coord[3] ", coord[3]
 test.assertEqual( coord[3], 1.0 )
 

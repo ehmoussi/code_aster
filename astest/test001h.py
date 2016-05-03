@@ -4,7 +4,11 @@
 # check the manual start using the '--no-start' option
 
 import code_aster
+test = code_aster.TestCase()
+
 from code_aster import executionParameter
+# default value (hard value in libExecutionParameter)
+test.assertEqual( executionParameter.get('memory'), 1000. )
 
 print ">>> code_aster imported but not started, change a parameter"
 executionParameter.set('memory', 2000.)
@@ -16,6 +20,6 @@ from code_aster.RunManager import Initializer
 Initializer.init(0)
 
 from code_aster import executionParameter
-assert executionParameter.get('memory') == 2000.
+test.assertEqual( executionParameter.get('memory'), 2000. )
 
-# bla bla bla...
+test.printSummary()
