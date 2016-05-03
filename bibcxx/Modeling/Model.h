@@ -31,6 +31,7 @@
 #include "DataStructure/DataStructure.h"
 #include "Mesh/Mesh.h"
 #include "Modeling/ElementaryModeling.h"
+#include "Modeling/XfemCrack.h"
 #include <map>
 
 #include "Loads/PhysicalQuantity.h"
@@ -68,6 +69,12 @@ class ModelInstance: public DataStructure
         bool              _isEmpty;
 
     public:
+
+        /**
+         * @brief Forward declaration for the XFEM enrichment
+         */
+        typedef boost::shared_ptr< ModelInstance > ModelPtr;
+
         /**
          * @brief Constructeur
          */
@@ -159,7 +166,15 @@ class ModelInstance: public DataStructure
                 throw std::runtime_error( "Support mesh of current model is empty" );
             return _supportMesh;
         };
+
+        /**
+         * @brief Definition du maillage support
+         * @param currentMesh objet MeshPtr sur lequel le modele reposera
+         */
+        ModelPtr enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::runtime_error );
+
 };
+
 
 /**
  * @typedef Model

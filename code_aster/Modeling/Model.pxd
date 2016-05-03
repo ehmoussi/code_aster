@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 
 from code_aster.Mesh.Mesh cimport MeshPtr
+from code_aster.Modeling.XfemCrack cimport XfemCrackPtr
 
 from PhysicsAndModeling cimport Physics, Modelings
 from PhysicsAndModeling cimport cMechanics, cThermal, cAcoustics
@@ -39,6 +40,7 @@ cdef extern from "Modeling/Model.h":
         bint build() except +
         MeshPtr getSupportMesh()
         const string getType()
+        ModelPtr enrichWithXfem(XfemCrackPtr xfemCrack) except +
         void debugPrint( int logicalUnit )
 
     cdef cppclass ModelPtr:

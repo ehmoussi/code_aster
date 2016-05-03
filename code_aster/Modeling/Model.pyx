@@ -21,6 +21,7 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from code_aster.Mesh.Mesh cimport Mesh
+from code_aster.Modeling.XfemCrack cimport XfemCrack
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
 
@@ -80,6 +81,13 @@ cdef class Model:
         mesh = Mesh()
         mesh.set( self.getInstance().getSupportMesh() )
         return mesh
+
+    def enrichWithXfem( self, XfemCrack xfemCrack ):
+        """Build new model with XFEM"""
+        instance = self.getInstance()
+        newModel = Model()
+        newModel.set( instance.enrichWithXfem( deref( xfemCrack.getPtr()  ) ) )
+        return newModel
 
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
