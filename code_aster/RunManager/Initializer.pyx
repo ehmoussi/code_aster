@@ -51,8 +51,7 @@ def init( int mode ):
             make_cata = _F( CATALOGUE=_F(FICHIER='CATAELEM',
                                          UNITE=4) )
         syntax = CommandSyntax( "DEBUT" )
-        syntax.define( _F( CODE=_F( NIV_PUB_WEB='NON' ),
-                           **make_cata )
+        syntax.define( _F( **make_cata )
                      )
         libaster.ibmain_()
         libaster.register_sh_jeveux_status( 1 )
