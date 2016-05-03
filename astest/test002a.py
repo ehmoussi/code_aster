@@ -1,6 +1,8 @@
 #!/usr/bin/python
+# coding: utf-8
 
 import code_aster
+test = code_aster.TestCase()
 
 monMaillage = code_aster.Mesh()
 monMaillage.readMedFile( "test001f.mmed" )
@@ -70,3 +72,7 @@ timeList.debugPrint( 8 )
 
 resu = mecaStatique.execute()
 resu.debugPrint( 8 )
+
+# at least it pass here!
+test.assertTrue( True )
+test.printSummary()

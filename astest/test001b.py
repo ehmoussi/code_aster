@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import code_aster
+test = code_aster.TestCase()
 
 acier = code_aster.Material()
 elas = code_aster.MaterialBehaviour.ElasMaterialBehaviour()
@@ -25,3 +26,7 @@ affectMat.addMaterialOnAllMesh( acier )
 affectMat.addMaterialOnGroupOfElements( acier, "Tout" )
 affectMat.build()
 affectMat.debugPrint( 8 )
+
+# just check it pass here!
+test.assertTrue( True )
+test.printSummary()
