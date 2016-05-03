@@ -3,7 +3,7 @@ P memory_limit 512
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist asterxx verification sequential asterxx
+P testlist asterxx verification sequential
 
 F comm test001a.py D 1
 F nom test001a.mmed D 0
