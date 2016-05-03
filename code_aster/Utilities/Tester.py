@@ -64,14 +64,20 @@ class AssertRaisesContext(case._AssertRaisesContext):
         super(AssertRaisesContext, self).__init__(expected, test_case, expected_regexp)
 
     def __exit__(self, exc_type, exc_value, tb):
+        comment = ""
         try:
             ret = super(AssertRaisesContext, self).__exit__(exc_type, exc_value, tb)
             if not ret:
-                raise AssertionError("unexpected exception raised "
-                                     "({0})".format(self.expected))
-        except AssertionError:
+                try:
+                    exc_name = exc_type.__name__
+                except AttributeError:
+                    exc_name = str(exc_type)
+                raise AssertionError("unexpected exception raised: "
+                                     "{0}".format(exc_name))
+        except AssertionError, exc:
             ret = False
-        self.writeResult( ret, self.expected.__name__, "not raised" )
+            comment = str(exc)
+        self.writeResult( ret, self.expected.__name__, comment )
         # never fail
         return True
 
@@ -80,8 +86,9 @@ class TestCase( unittest.TestCase ):
     """Similar to a unittest.TestCase
     Does not fail but print result OK/NOOK in the .resu file"""
 
-    def __init__(self):
+    def __init__(self, methodName='runTest', silent=False):
         """Initialization"""
+        self._silent = silent
         self._passed = 0
         self._failure = 0
         super(TestCase, self).__init__('runTest')
@@ -104,6 +111,8 @@ class TestCase( unittest.TestCase ):
     def writeResult(self, ok, funcTest, msg, exc=None):
         """Write a message in the result file"""
         # TODO ask ExecutionParameter for the working directory
+        if self._silent:
+            return
         wrkdir = "."
         exc = exc or ""
         msg = msg or exc
@@ -141,10 +150,3 @@ class TestCase( unittest.TestCase ):
             return context
         with context:
             callable_obj(*args, **kwargs)
-
-
-if __name__ == '__main__':
-    test = Test()
-    test.assertTrue( type(1) is int )
-    test.assertEqual( 1 , 1 )
-    test.assertEqual( 1 , 0 )
