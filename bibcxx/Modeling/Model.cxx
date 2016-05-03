@@ -92,3 +92,33 @@ bool ModelInstance::build() throw ( std::runtime_error )
 
     return true;
 };
+
+ModelPtr ModelInstance::enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::runtime_error )
+{
+    CommandSyntaxCython cmdSt( "MODI_MODELE_XFEM" );
+    ModelPtr newModelPtr(new ModelInstance());
+    cmdSt.setResult( newModelPtr->getName(), "MODELE" );
+
+    SyntaxMapContainer dict;
+
+    dict.container["MODELE_IN"] = this->getName();
+    if ( _isEmpty )
+        throw std::runtime_error("The Model must be built first");
+    dict.container["FISSURE"] = xfemCrack->getName();
+
+    cmdSt.define( dict );
+
+    // Call  OP00113
+    try
+    {
+        INTEGER op = 113;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+
+    return newModelPtr;
+
+};
