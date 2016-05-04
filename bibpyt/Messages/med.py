@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -458,8 +458,9 @@ cata_msg = {
 """),
 
     83 : _(u"""
-Le nombre de valeurs lues dans le fichier MED est différent du nombre de valeurs réellement
- affectées dans le champ :
+Le nombre de valeurs lues dans le fichier MED pour le champ  %(k1)s est différent du
+ nombre de valeurs réellement affectées dans le champ dans la structure de données
+ résultat :
   - valeurs lues dans le fichier        : %(i1)d
   - valeurs non affectées dans le champ : %(i2)d
 

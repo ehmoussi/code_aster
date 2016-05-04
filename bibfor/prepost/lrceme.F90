@@ -4,7 +4,7 @@ subroutine lrceme(chanom, nochmd, typech, nomamd, nomaas,&
                   inst, crit, prec, nrofic, option,&
                   param, nbpgma, nbpgmm, nbspmm, codret)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -121,6 +121,7 @@ subroutine lrceme(chanom, nochmd, typech, nomamd, nomaas,&
     character(len=8) :: saux08
     character(len=19) :: chames, ligrel
     character(len=64) :: nomcha
+    character(len=64) :: valk(1)
     character(len=200) :: nofimd
     character(len=255) :: kfic
 !
@@ -248,7 +249,8 @@ subroutine lrceme(chanom, nochmd, typech, nomamd, nomaas,&
  40     continue
         vali (1) = iaux
         vali (2) = nncp
-        call utmess('A', 'MED_83', ni=2, vali=vali)
+        valk (1) = nochmd
+        call utmess('A', 'MED_83', nk=1, valk=valk, ni=2, vali=vali)
     endif
 !
     call detrsd('CHAM_ELEM_S', chames)
