@@ -26,6 +26,13 @@
 const char* LinearSolverNames[nbSolvers] = { "MULT_FRONT", "LDLT", "MUMPS", "PETSC", "GCPC" };
 const char* RenumberingNames[nbRenumberings] = { "MD", "MDA", "METIS", "RCMK", "AMD",
                                                  "AMF", "PORD", "QAMD", "SCOTCH", "AUTO", "SANS" };
+const char* PreconditioningNames[nbPreconditionings] = { "LDLT_INC", "LDLT_SP", "JACOBI", "SOR",
+                                                         "ML", "BOOMER", "GAMG", "BLOC_LAGR", "SANS" };
+const char* MatrixTypeNames[nbMatrixTypes] = { "NONSYM", "SYMGEN", "SYMDEF", "AUTO" };
+
+const char* IterativeSolverAlgorithm[nbIterativeSolverAlgorithms] = { "CG", "CR", "GMRES", "GCR", "FGMRES" };
+const char* LagrangeTreatmentNames[nbLagrangeTreatments] = { "OUI", "NON", "LAGR2" };
+const char* MemoryManagementNames[nbMemoryManagements] = { "IN_CORE", "OUT_OF_CORE", "AUTO", "EVAL" };
 
 
 const Renumbering MultFrontRenumbering[nbRenumberingMultFront] = { MD, MDA, Metis };
@@ -37,3 +44,5 @@ const Renumbering MumpsRenumbering[nbRenumberingMumps] = { AMD, AMF, PORD, Metis
 const Renumbering PetscRenumbering[nbRenumberingPetsc] = { RCMK, Sans };
 
 const Renumbering GcpcRenumbering[nbRenumberingGcpc] = { RCMK, Sans };
+
+const Preconditioning GcpcPreconditioning[nbPreconditioningGcpc] = { IncompleteLdlt, SimplePrecisionLdlt, LagrBloc };

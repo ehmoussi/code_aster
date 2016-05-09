@@ -88,7 +88,8 @@ public:
      * @param type Type de l'action
      */
     GenericActionInstance( ActionTypeEnum type ): _actionName( "ACTION",
-                                                               std::string( ActionNames[ type ] ) ),
+                                                               std::string( ActionNames[ type ] ),
+                                                               true ),
                                                   _type( type )
     {
         _listParam.push_back( &_actionName );
@@ -98,7 +99,7 @@ public:
      * @brief Constructeur par défaut (utile pour cython ?)
      */
     GenericActionInstance(): _actionName( "ACTION",
-                                          std::string( ActionNames[ NoActionType ], true ) ),
+                                          std::string( ActionNames[ NoActionType ] ), true ),
                              _type( NoActionType )
     {};
 
@@ -171,10 +172,10 @@ protected:
      */
     GenericSubstepingOnErrorInstance( ActionTypeEnum type ):
         GenericActionInstance( type ),
-        _isAuto( "SUBD_METHODE", std::string( "MANUEL" ) ),
-        _step( "SUBD_PAS", 4 ),
-        _level( "SUBD_NIVEAU", 3 ),
-        _minimumStep( "SUBD_PAS_MINI", 0. )
+        _isAuto( "SUBD_METHODE", std::string( "MANUEL" ), false ),
+        _step( "SUBD_PAS", 4, false ),
+        _level( "SUBD_NIVEAU", 3, false ),
+        _minimumStep( "SUBD_PAS_MINI", 0., false )
     {
         _listParam.push_back( &_isAuto );
         _listParam.push_back( &_step );
@@ -252,7 +253,7 @@ public:
 
 /**
  * @class AddIterationOnErrorInstance
- * @brief Classe correspondant à l'action générique "ITRE_SUPPL"
+ * @brief Classe correspondant à l'action générique "ITER_SUPPL"
  * @author Nicolas Sellenet
  */
 class AddIterationOnErrorInstance: public GenericSubstepingOnErrorInstance
@@ -263,7 +264,7 @@ private:
 
 public:
     AddIterationOnErrorInstance(): GenericSubstepingOnErrorInstance( AddIterationOnErrorType ),
-                                   _pcent( "PCENT_ITER_PLUS", 50. )
+                                   _pcent( "PCENT_ITER_PLUS", 50., false )
     {
         _listParam.push_back( &_pcent );
     };
@@ -305,10 +306,10 @@ private:
 public:
     /** @brief Constructeur */
     SubstepingOnContactInstance(): GenericActionInstance( SubstepingOnContactType ),
-                                   _isAuto( "SUBD_METHODE", std::string( "AUTO" ) ),
-                                   _step( "SUBD_PAS" ),
-                                   _level( "SUBD_NIVEAU" ),
-                                   _minimumStep( "SUBD_PAS_MINI" ),
+                                   _isAuto( "SUBD_METHODE", std::string( "AUTO" ), false ),
+                                   _step( "SUBD_PAS", false ),
+                                   _level( "SUBD_NIVEAU", false ),
+                                   _minimumStep( "SUBD_PAS_MINI", false ),
                                    _timeStepSubstep( "SUBD_INST", 0., true ),
                                    _substepDuration( "SUBD_DUREE", 0., true )
     {
@@ -356,6 +357,32 @@ public:
     };
 
     /**
+     * @brief Fixer le niveau de sous-découpage
+     * @param level niveau
+     */
+    void setLevel( const int& level )
+    {
+        _level = level;
+    };
+
+    /**
+     * @brief Fixer le pas minimum
+     * @param minimumStep valeur pour SUBD_PAS_MINI
+     */
+    void setMinimumStep( const double& minimumStep )
+    {
+        _minimumStep = minimumStep;
+    };
+
+    /**
+     * @brief Fixer le nombre de découpage d'un pas de temps
+     */
+    void setStep( const int& step )
+    {
+        _step = step;
+    };
+
+    /**
      * @brief Fixer la durée du sous-découage
      * @param duration double contenant la durée
      */
@@ -400,7 +427,7 @@ private:
 public:
     /** @brief Constructeur */
     ChangePenalisationOnErrorInstance(): GenericActionInstance( ChangePenalisationOnErrorType ),
-                                         _coefMax( "COEF_MAXI", 1e12 )
+                                         _coefMax( "COEF_MAXI", 1e12, false )
     {
         _listParam.push_back( &_coefMax );
     };

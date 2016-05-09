@@ -59,4 +59,48 @@ extern const Renumbering PetscRenumbering[nbRenumberingPetsc];
 const int nbRenumberingGcpc = 2;
 extern const Renumbering GcpcRenumbering[nbRenumberingGcpc];
 
+/**
+ * @enum Preconditioning
+ * @author Nicolas Sellenet
+ */
+enum Preconditioning { IncompleteLdlt, SimplePrecisionLdlt, Jacobi, Sor, Ml,
+                       Boomer, Gamg, LagrBloc, Without };
+const int nbPreconditionings = 9;
+extern const char* PreconditioningNames[nbPreconditionings];
+
+const int nbPreconditioningGcpc = 3;
+extern const Preconditioning GcpcPreconditioning[nbPreconditioningGcpc];
+
+/**
+ * @enum IterativeSolverAlgorithm
+ * @author Nicolas Sellenet
+ */
+enum IterativeSolverAlgorithm { ConjugateGradiant, ConjugateResidual, GMRes, GCR, FGMRes };
+const int nbIterativeSolverAlgorithms = 5;
+extern const char* IterativeSolverAlgorithmNames[nbIterativeSolverAlgorithms];
+
+/**
+ * @enum LagrangeTreatment
+ * @author Nicolas Sellenet
+ */
+enum LagrangeTreatment { Eliminate, NotEliminate, DoubleLagrangeEliminate };
+const int nbLagrangeTreatments = 3;
+extern const char* LagrangeTreatmentNames[nbLagrangeTreatments];
+
+/**
+ * @enum MemoryManagement
+ * @author Nicolas Sellenet
+ */
+enum MemoryManagement { InCore, OutOfCore, Automatic, Evaluation };
+const int nbMemoryManagements = 4;
+extern const char* MemoryManagementNames[nbMemoryManagements];
+
+/**
+ * @enum MatrixType
+ * @author Nicolas Sellenet
+ */
+enum MatrixType { NonSymetric, Symetric, SymetricPositiveDefinite, Undefined };
+const int nbMatrixTypes = 4;
+extern const char* MatrixTypeNames[nbMatrixTypes];
+
 #endif /* ALLOWEDLINEARSOLVER_H_ */

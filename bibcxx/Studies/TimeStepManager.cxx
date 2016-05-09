@@ -47,7 +47,7 @@ void TimeStepManagerInstance::build() throw ( std::runtime_error )
             dictDEFI.container[ _minimumTS.getName() ] = _minimumTS.getValue();
         if ( _maximumTS.isSet() )
             dictDEFI.container[ _maximumTS.getName() ] = _maximumTS.getValue();
-        dictDEFI.container["NB_PAS_MAXI"] = _nbMaxiOfTS;
+        dictDEFI.container["NB_PAS_MAXI"] = _nbMaxiOfTS.getValue();
     }
     else
     {
