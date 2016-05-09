@@ -57,9 +57,9 @@ public:
      * @param isMandatory Permet de dire si le mot-clé est obligatoire
      */
     GenericParameter( const std::string name,
-                      const bool isMandatory = false ): _name( name ),
-                                                        _isSet( false ),
-                                                        _isMandatory( isMandatory )
+                      const bool isMandatory ): _name( name ),
+                                                _isSet( false ),
+                                                _isMandatory( isMandatory )
     {};
 
     /**
@@ -69,10 +69,10 @@ public:
      * @param isMandatory Permet de dire si le mot-clé est obligatoire
      */
     GenericParameter( const std::string name, const Type val,
-                      const bool isMandatory = false ): _name( name ),
-                                                        _valeur( val ),
-                                                        _isSet( true ),
-                                                        _isMandatory( isMandatory )
+                      const bool isMandatory ): _name( name ),
+                                                _valeur( val ),
+                                                _isSet( true ),
+                                                _isMandatory( isMandatory )
     {};
 
     /**

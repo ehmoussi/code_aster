@@ -32,6 +32,7 @@
 #include "DataStructure/DataStructure.h"
 #include "Studies/FailureConvergenceManager.h"
 #include "Utilities/GenericParameter.h"
+#include "Results/ResultsContainer.h"
 
 /**
  * @class TimeStepManagerInstance
@@ -66,7 +67,7 @@ private:
     /** @brief Pas de temps maxi */
     GenParam           _maximumTS;
     /** @brief Nombre maxi de pas de temps */
-    int                _nbMaxiOfTS;
+    GenParam           _nbMaxiOfTS;
 
 public:
     /**
@@ -81,9 +82,9 @@ public:
         _doubleFailureManagerInfo2( JeveuxVectorDouble( getName() + ".ECHE.SUBDR" ) ),
         _isAutomatic( false ),
         _isEmpty( true ),
-        _minimumTS( "PAS_MINI" ),
-        _maximumTS( "PAS_MAXI" ),
-        _nbMaxiOfTS( 1000000 )
+        _minimumTS( "PAS_MINI", false ),
+        _maximumTS( "PAS_MAXI", false ),
+        _nbMaxiOfTS( "NB_PAS_MAXI", 1000000, false )
     {};
 
     ~TimeStepManagerInstance()
@@ -121,7 +122,7 @@ public:
      */
     void setMaximumNumberOfTimeStep( const int& max )
     {
-        _maximumTS = max;
+         _nbMaxiOfTS = max;
     };
 
     /**

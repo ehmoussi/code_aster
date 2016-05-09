@@ -35,6 +35,7 @@
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Utilities/GenericParameter.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -160,10 +161,36 @@ class LinearSolverInstance: public DataStructure
         Renumbering         _renumber;
         /** @brief Le solveur est-il vide ? */
         bool                _isEmpty;
+        Preconditioning     _preconditioning;
 
         JeveuxVectorChar24  _charValues;
         JeveuxVectorDouble  _doubleValues;
         JeveuxVectorLong    _integerValues;
+
+        GenParam     _algo;
+        GenParam     _lagr;
+        GenParam     _matrFilter;
+        GenParam     _memory;
+        GenParam     _lowRankThreshold;
+        GenParam     _lowRankSize;
+        GenParam     _distMatrix;
+        GenParam     _method;
+        GenParam     _precision;
+        GenParam     _fillingLevel;
+        GenParam     _iterNumber;
+        GenParam     _nPrec;
+        GenParam     _pivotPourcent;
+        GenParam     _postPro;
+        GenParam     _precond;
+        GenParam     _prePro;
+        GenParam     _reac;
+        GenParam     _filling;
+        GenParam     _renum;
+        GenParam     _residual;
+        GenParam     _precondResidual;
+        GenParam     _stopSingular;
+        GenParam     _resolutionType;
+        ListGenParam _listOfParameters;
 
     public:
         /**
@@ -180,9 +207,103 @@ class LinearSolverInstance: public DataStructure
                     _isEmpty( true ),
                     _charValues( JeveuxVectorChar24( getName() + "           .SLVK" ) ),
                     _doubleValues( JeveuxVectorDouble( getName() + "           .SLVR" ) ),
-                    _integerValues( JeveuxVectorLong( getName() + "           .SLVI" ) )
+                    _integerValues( JeveuxVectorLong( getName() + "           .SLVI" ) ),
+                    _algo( "ALGORITHME", false ),
+                    _lagr( "ELIM_LAGR", false ),
+                    _matrFilter( "FILTRAGE_MATRICE", false ),
+                    _memory( "GESTION_MEMOIRE", false ),
+                    _lowRankThreshold( "LOW_RANK_SEUIL", false ),
+                    _lowRankSize( "LOW_RANK_TAILLE", false ),
+                    _distMatrix( "MATR_DISTRIBUEE", false ),
+                    _method( "METHODE", false ),
+                    _precision( "MIXER_PRECISION", false ),
+                    _fillingLevel( "NIVE_REMPLISSAGE", false ),
+                    _iterNumber( "NMAX_ITER", false ),
+                    _nPrec( "NPREC", false ),
+                    _pivotPourcent( "PCENT_PIVOT", false ),
+                    _postPro( "POSTTRAITEMENTS", false ),
+                    _precond( "PRE_COND", false ),
+                    _prePro( "PRETRAITEMENTS", false ),
+                    _reac( "REAC_PRECOND", false ),
+                    _filling( "REMPLISSAGE", false ),
+                    _renum( "RENUM", false ),
+                    _residual( "RESI_RELA", false ),
+                    _precondResidual( "RESI_RELA_PC", false ),
+                    _stopSingular( "STOP_SINGULIER", false ),
+                    _resolutionType( "TYPE_RESOL", false )
         {
             SolverChecker::isAllowedRenumberingForSolver( currentLinearSolver, currentRenumber );
+            _renum = RenumberingNames[ (int)_renumber ];
+
+            _method = std::string( LinearSolverNames[ (int)_linearSolver ] );
+            _lagr = "NON";
+            _preconditioning = Without;
+            if ( currentLinearSolver == Petsc )
+            {
+                _algo = "FGMRES";
+                _distMatrix = "NON";
+                _iterNumber = 0;
+                _preconditioning = SimplePrecisionLdlt;
+                _precond = PreconditioningNames[ (int)_preconditioning ];
+                _residual = 1.e-6;
+                _precondResidual = -1.0;
+            }
+            if ( currentLinearSolver == Mumps )
+            {
+                _lagr = "LAGR2";
+                _memory = "AUTO";
+                _lowRankThreshold = 0.;
+                _lowRankSize = -1.0;
+                _distMatrix = "NON";
+                _precision = "NON";
+                _nPrec = 8;
+                _pivotPourcent = 20;
+                _postPro = "AUTO";
+                _prePro = "AUTO";
+                _residual = -1.0;
+                _stopSingular = "OUI";
+                _resolutionType = "AUTO";
+            }
+            if ( currentLinearSolver == MultFront )
+            {
+                _nPrec = 8;
+                _stopSingular = "OUI";
+            }
+            if ( currentLinearSolver == Ldlt )
+            {
+                _nPrec = 8;
+                _stopSingular = "OUI";
+            }
+            if ( currentLinearSolver == Gcpc )
+            {
+                _iterNumber = 0;
+                _preconditioning = IncompleteLdlt;
+                _precond = PreconditioningNames[ (int)_preconditioning ];
+                _residual = 1.e-6;
+            }
+            _listOfParameters.push_back( &_algo );
+            _listOfParameters.push_back( &_lagr );
+            _listOfParameters.push_back( &_matrFilter );
+            _listOfParameters.push_back( &_memory );
+            _listOfParameters.push_back( &_lowRankThreshold );
+            _listOfParameters.push_back( &_lowRankSize );
+            _listOfParameters.push_back( &_distMatrix );
+            _listOfParameters.push_back( &_method );
+            _listOfParameters.push_back( &_precision );
+            _listOfParameters.push_back( &_fillingLevel );
+            _listOfParameters.push_back( &_iterNumber );
+            _listOfParameters.push_back( &_nPrec );
+            _listOfParameters.push_back( &_pivotPourcent );
+            _listOfParameters.push_back( &_postPro );
+            _listOfParameters.push_back( &_precond );
+            _listOfParameters.push_back( &_prePro );
+            _listOfParameters.push_back( &_reac );
+            _listOfParameters.push_back( &_filling );
+            _listOfParameters.push_back( &_renum );
+            _listOfParameters.push_back( &_residual );
+            _listOfParameters.push_back( &_precondResidual );
+            _listOfParameters.push_back( &_stopSingular );
+            _listOfParameters.push_back( &_resolutionType );
         };
 
         /**
@@ -190,6 +311,15 @@ class LinearSolverInstance: public DataStructure
          * @return vrai si tout s'est bien passé
          */
         bool build();
+
+        /**
+         * @brief Récupération de la liste des paramètres du solveur
+         * @return Liste constante des paramètres déclarés
+         */
+        const ListGenParam& getListOfParameters() const
+        {
+            return _listOfParameters;
+        };
 
         /**
          * @brief Recuperer le nom du solveur
@@ -245,6 +375,134 @@ class LinearSolverInstance: public DataStructure
                                                        const FieldOnNodesDoublePtr& kinematicsField,
                                                        const FieldOnNodesDoublePtr& currentRHS,
                                                        FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( "" ) ) ) const;
+
+        void disablePreprocessing() throw ( std::runtime_error )
+        {
+            if ( _linearSolver != Mumps )
+                throw std::runtime_error( "Algorithm only allowed with Mumps" );
+            _prePro = "SANS";
+        };
+
+        void setAlgorithm( IterativeSolverAlgorithm algo ) throw ( std::runtime_error )
+        {
+            if ( _linearSolver != Petsc )
+                throw std::runtime_error( "Algorithm only allowed with Petsc" );
+            _algo = std::string( IterativeSolverAlgorithmNames[ (int)algo ] );
+        };
+
+        void setDistributedMatrix( bool matDist ) throw ( std::runtime_error )
+        {
+            if ( _linearSolver != Petsc && _linearSolver != Mumps )
+                throw std::runtime_error( "Distributed matrix only allowed with Mumps or Petsc" );
+            if ( matDist )
+                _distMatrix = "OUI";
+            else
+                _distMatrix = "NON";
+        };
+
+        void setErrorOnMatrixSingularity( bool error )
+        {
+            if ( error )
+                _stopSingular = "OUI";
+            else
+                _stopSingular = "NON";
+        };
+
+        void setFillingLevel( int filLevel ) throw ( std::runtime_error )
+        {
+            if ( _linearSolver != Petsc && _linearSolver != Gcpc )
+                throw std::runtime_error( "Filling level only allowed with Gcpc or Petsc" );
+            if ( _preconditioning != IncompleteLdlt )
+                throw std::runtime_error( "Filling level only allowed with IncompleteLdlt" );
+            _fillingLevel = filLevel;
+        };
+
+        void setLagrangeElimination( LagrangeTreatment lagrTreat )
+        {
+            _lagr = std::string( LagrangeTreatmentNames[ (int)lagrTreat ] );
+        };
+
+        void setLowRankSize( double size )
+        {
+            _lowRankSize = size;
+        };
+
+        void setLowRankThreshold( double threshold )
+        {
+            _lowRankThreshold = threshold;
+        };
+
+        void setMatrixFilter( double filter )
+        {
+            _matrFilter = filter;
+        };
+
+        void setMatrixType( MatrixType matType )
+        {
+            _resolutionType = MatrixTypeNames[ (int)matType ];
+        };
+
+        void setMaximumNumberOfIteration( int number ) throw ( std::runtime_error )
+        {
+            if ( _linearSolver != Petsc && _linearSolver != Gcpc )
+                throw std::runtime_error( "Only allowed with Gcpc or Petsc" );
+            _iterNumber = number;
+        };
+
+        void setMemoryManagement( MemoryManagement memManagt )
+        {
+            _memory = MemoryManagementNames[ (int)memManagt ];
+        };
+
+        void setPrecisionMix( bool precMix ) throw ( std::runtime_error )
+        {
+            if ( _linearSolver != Petsc && _linearSolver != Mumps )
+                throw std::runtime_error( "Precision mixing only allowed with Mumps or Petsc" );
+            if ( precMix )
+                _precision = "OUI";
+            else
+                _precision = "NON";
+        };
+
+        void setPreconditioning( Preconditioning precond ) throw ( std::runtime_error )
+        {
+            if ( _linearSolver != Petsc && _linearSolver != Gcpc )
+                throw std::runtime_error( "Preconditionong only allowed with Gcpc or Petsc" );
+            _preconditioning = precond;
+            _precond = PreconditioningNames[ (int)_preconditioning ];
+            if ( _preconditioning == IncompleteLdlt )
+            {
+                _fillingLevel = 0;
+                if ( _linearSolver == Petsc )
+                    _filling = 1.0;
+            }
+            if ( _preconditioning == SimplePrecisionLdlt )
+            {
+                _pivotPourcent = 20;
+                _reac = 30;
+                _renumber = Sans;
+                _renum = std::string( RenumberingNames[ (int)Sans ] );
+            }
+        };
+
+        void setPreconditioningResidual( double residual )
+        {
+            _precondResidual = residual;
+        };
+
+        void setSolverResidual( double residual )
+        {
+            _residual = residual;
+        };
+
+        void setUpdatePreconditioningParameter( int value ) throw ( std::runtime_error )
+        {
+            if ( _linearSolver != Petsc && _linearSolver != Gcpc )
+                throw std::runtime_error( "Preconditionong only allowed with Gcpc or Petsc" );
+            if ( _preconditioning != SimplePrecisionLdlt )
+                throw std::runtime_error( "Update preconditioning parameter only allowed with IncompleteLdlt" );
+            _reac = value;
+        };
 };
 
 /**
