@@ -20,7 +20,7 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-
+NoShape, Ellipse, Square, Cylinder, Notch, HalfPlane, Segment, HalfLine, Line = cNoShape,  cEllipse, cSquare, cCylinder, cNotch, cHalfPlane, cSegment, cHalfLine, cLine
 
 cdef class CrackShape:
     """Python wrapper on the C++ CrackShape object"""

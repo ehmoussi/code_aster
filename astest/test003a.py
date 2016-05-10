@@ -13,7 +13,7 @@ mesh.readMedFile("zzzz255a.mmed")
 # Creation of the model
 model = code_aster.Model()
 model.setSupportMesh(mesh)
-model.addModelingOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
+model.addModelingOnGroupOfElements(code_aster.Mechanics, code_aster.Tridimensional,"ALL")
 model.build()
 
 # Creation of the crack
@@ -25,9 +25,10 @@ shape.setEllipseCrackShape(rayon, rayon, np.asarray((0., 0., 0.)), np.asarray((1
 
 crack.setCrackShape(shape)
 
-crack.setDiscontinuityType('Crack')
-
 crack.build()
 
 # New xfem model
 xmodel = model.enrichWithXfem(crack)
+
+
+

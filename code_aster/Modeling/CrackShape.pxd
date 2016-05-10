@@ -22,22 +22,19 @@ from libcpp.vector cimport vector
 
 from code_aster.Mesh.Mesh cimport MeshPtr
 
-#cdef enum Shape :
-#    NoShape,    Ellipse ,    Square ,    Cylinder ,    Notch ,    HalfPlane ,    Segment ,    HalfLine,    Line
-
 
 cdef extern from "Modeling/CrackShape.h":
 
     cdef enum Shape :
-        cNoShape "NoShape"
-        cEllipse "Ellipse"
-        cSquare "Square"
-        cCylinder "Cylinder"
-        cNotch "Notch"
-        cHalfPlane "HalfPlane"
-        cSegment "Segment"
-        cHalfLine "HalfLine"
-        cLine "Line"
+        cNoShape 	"NoShape"
+        cEllipse 	"Ellipse"
+        cSquare 	"Square"
+        cCylinder 	"Cylinder"
+        cNotch 		"Notch"
+        cHalfPlane 	"HalfPlane"
+        cSegment 	"Segment"
+        cHalfLine 	"HalfLine"
+        cLine 		"Line"
 
 
     ctypedef vector[ double ] VectorDouble

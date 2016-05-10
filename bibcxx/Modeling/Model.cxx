@@ -96,6 +96,8 @@ bool ModelInstance::build() throw ( std::runtime_error )
 ModelPtr ModelInstance::enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::runtime_error )
 {
     CommandSyntaxCython cmdSt( "MODI_MODELE_XFEM" );
+    
+    // Create empty model and get its name
     ModelPtr newModelPtr(new ModelInstance());
     cmdSt.setResult( newModelPtr->getName(), "MODELE" );
 
@@ -105,6 +107,11 @@ ModelPtr ModelInstance::enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::r
     if ( _isEmpty )
         throw std::runtime_error("The Model must be built first");
     dict.container["FISSURE"] = xfemCrack->getName();
+
+    // Set some default kwd values (TODO : support other values for the kwd)
+    dict.container["DECOUPE_FACETTE"] = "DEFAUT";
+    dict.container["CONTACT"] = "SANS";
+    dict.container["PRETRAITEMENTS"] = "AUTO";
 
     cmdSt.define( dict );
 
