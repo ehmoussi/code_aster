@@ -36,7 +36,6 @@ XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
     _supportMesh(supportMesh),
     _auxiliaryGrid(MeshPtr()),
     _existingCrackWithGrid(XfemCrackPtr()),
-    //_existingCrackWithGrid(NULL),
     _discontinuityType("Crack"),
     _crackLipsEntity(),
     _crackTipEntity(),
@@ -44,16 +43,16 @@ XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
     _tangentialLevelSetFunction(FunctionPtr()),
     _crackShape(CrackShapePtr()),
     _enrichedElements(),
-    _discontinuousField(std::string()),
+    _discontinuousField("DEPL"),
     _enrichmentType(std::string()),
     _enrichmentRadiusZone(0),
     _enrichedLayersNumber(0),
 
-    _tangentialLevelSetField(new FieldOnNodesDoubleInstance( _jeveuxName + "      .LTNO" ) ),
-    _normalLevelSetField(new FieldOnNodesDoubleInstance( _jeveuxName + "      .LNNO" ) ),
-    _tangentialLevelSetGradient(new FieldOnNodesDoubleInstance( _jeveuxName + "    .GRLTNO" ) ),
-    _normalLevelSetGradient(new FieldOnNodesDoubleInstance( _jeveuxName + "    .GRLNNO" ) ),
-    _localBasis(new FieldOnNodesDoubleInstance( _jeveuxName + "    .BASLOC" ) ),
+    _tangentialLevelSetField(new FieldOnNodesDoubleInstance( _jeveuxName + ".LTNO      " ) ),
+    _normalLevelSetField(new FieldOnNodesDoubleInstance( _jeveuxName + ".LNNO      " ) ),
+    _tangentialLevelSetGradient(new FieldOnNodesDoubleInstance( _jeveuxName + ".GRLTNO    " ) ),
+    _normalLevelSetGradient(new FieldOnNodesDoubleInstance( _jeveuxName + ".GRLNNO    " ) ),
+    _localBasis(new FieldOnNodesDoubleInstance( _jeveuxName + ".BASLOC    " ) ),
     _crackTipCoords(JeveuxVectorDouble( _jeveuxName + ".FONDFISS" ) ),
     _crackTipBasis(JeveuxVectorDouble( _jeveuxName + ".BASEFOND" ) ),
     _crackTipMultiplicity(JeveuxVectorLong( _jeveuxName + ".FONDMULT" ) ),
@@ -89,6 +88,8 @@ bool XfemCrackInstance::build() throw( std::runtime_error )
     if (_discontinuityType == "Crack")      dict.container["TYPE_DISCONTINUITE"] = "FISSURE";
     if (_discontinuityType == "Interface")  dict.container["TYPE_DISCONTINUITE"] = "INTERFACE";
     if (_discontinuityType == "Cohesive")   dict.container["TYPE_DISCONTINUITE"] = "COHESIVE";
+
+    dict.container["CHAM_DISCONTINUITE"] = _discontinuousField;
 
     SyntaxMapContainer dict2;
     if (_crackLipsEntity.size()!=0) {
@@ -194,6 +195,9 @@ bool XfemCrackInstance::build() throw( std::runtime_error )
     } catch( ... ) {
         throw;
     }
+    
+    
+    
     return true;
 };
 

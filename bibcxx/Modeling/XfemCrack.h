@@ -86,11 +86,11 @@ private:
     /** @brief Radius of th enriched zone */
     double                      _enrichmentRadiusZone;
     /** @brief Number of enriched elements layers */
-    int              _enrichedLayersNumber;
+    int                         _enrichedLayersNumber;
     /** @brief List of juncting cracks */
     std::vector< XfemCrackPtr > _junctingCracks;
     /** @brief Point to define juncting cracks */
-    std::vector< double >           _pointForJunctingCracks;
+    std::vector< double >       _pointForJunctingCracks;
 
 
     /** @brief Nodal Field named '.GRLTNO' */
@@ -262,6 +262,7 @@ public:
 
     FieldOnNodesDoublePtr getNormalLevelSetField() const
     {
+        _normalLevelSetField->updateValuePointers();
         return _normalLevelSetField;
     }
 
@@ -274,12 +275,13 @@ public:
         }
     }
 
-    FieldOnNodesDoublePtr getTangentialLevelSet() const
+    FieldOnNodesDoublePtr getTangentialLevelSetField() const
     {
+        _tangentialLevelSetField->updateValuePointers();
         return _tangentialLevelSetField;
     }
 
-    void setTangentialLevelSet(const FieldOnNodesDoublePtr &tangentialLevelSet)
+    void setTangentialLevelSetField(const FieldOnNodesDoublePtr &tangentialLevelSet)
     {
         _tangentialLevelSetField = tangentialLevelSet;
     }
@@ -349,7 +351,7 @@ public:
     {
         _pointForJunctingCracks = point;
     }
-
+    
     std::string getJeveuxName() const
     {
         return _jeveuxName;
