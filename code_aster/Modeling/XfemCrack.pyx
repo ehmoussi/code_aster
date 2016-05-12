@@ -136,13 +136,13 @@ cdef class XfemCrack:
     def setNormalLevelSetField(self, FieldOnNodesDouble normalLevelSetField):
         self.getInstance().setNormalLevelSetField(deref (normalLevelSetField.getPtr()))
 
-    def getTangentialLevelSet(self):
+    def getTangentialLevelSetField(self):
         field = FieldOnNodesDouble()
-        field.set( self.getInstance().getTangentialLevelSet() )
+        field.set( self.getInstance().getTangentialLevelSetField() )
         return field
 
-    def setTangentialLevelSet(self, FieldOnNodesDouble tangentialLevelSet):
-        self.getInstance().setTangentialLevelSet(deref (tangentialLevelSet.getPtr()))
+    def setTangentialLevelSetField(self, FieldOnNodesDouble tangentialLevelSet):
+        self.getInstance().setTangentialLevelSetField(deref (tangentialLevelSet.getPtr()))
 
     def getEnrichedElements(self):
         return self.getInstance().getEnrichedElements()

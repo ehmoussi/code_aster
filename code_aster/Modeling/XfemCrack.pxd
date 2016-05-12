@@ -82,9 +82,9 @@ cdef extern from "Modeling/XfemCrack.h":
 
         void setNormalLevelSetField( FieldOnNodesDoublePtr &normalLevelSetField)
 
-        FieldOnNodesDoublePtr getTangentialLevelSet()
+        FieldOnNodesDoublePtr getTangentialLevelSetField()
 
-        void setTangentialLevelSet( FieldOnNodesDoublePtr &tangentialLevelSet)
+        void setTangentialLevelSetField( FieldOnNodesDoublePtr &tangentialLevelSet)
 
         VectorString getEnrichedElements()
 
