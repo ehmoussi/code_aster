@@ -31,4 +31,16 @@ crack.build()
 xmodel = model.enrichWithXfem(crack)
 
 
+# Tests
+test=code_aster.TestCase()
+
+normalLevelSet=crack.getNormalLevelSetField()
+test.assertAlmostEqual(normalLevelSet[0],-50.)
+test.assertAlmostEqual(normalLevelSet[10000],-16.6666666666667)
+test.assertAlmostEqual(normalLevelSet[20000],33.3333333333333)
+
+tangentialLevelSet=crack.getTangentialLevelSetField()
+test.assertAlmostEqual(tangentialLevelSet[0],457.10678118654755)
+test.assertAlmostEqual(tangentialLevelSet[1000],36.744175568087485)
+test.assertAlmostEqual(tangentialLevelSet[10000],64.4660377352206)
 
