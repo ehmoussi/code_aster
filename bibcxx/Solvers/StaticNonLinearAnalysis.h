@@ -3,7 +3,7 @@
 
 /**
  * @file StaticNonLinearAnalysis.h
- * @brief Definition of the static mechanical solver
+ * @brief Definition of the static non linear analysis 
  * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
@@ -41,8 +41,8 @@
 
 
 /**
- @brief the StaticNonLinearAnalysis class is used to perform 
- a static analysis on the FE_Model.
+ @brief the StaticNonLinearAnalysis class is used to run
+ a static non linear analysis on the FE_Model.  
 */
 
 class StaticNonLinearAnalysisInstance: public GenericSolver
@@ -61,16 +61,16 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         ModelPtr          _supportModel;
         /** @brief Champ de materiau a utiliser */
         MaterialOnMeshPtr _materialOnMesh;
-        /** @brief Méthode nonlineaire */
-        NonLinearMethodPtr   _nonLinearMethod;
         /** @brief Liste des chargements */
         ListOfLoadsPtr    _listOfLoads;
         /** @brief Liste de pas de chargements */
         TimeStepperPtr    _loadStep;
         /** @brief NonLinear Behaviour */
-        BehaviourPtr _behaviour;
+        BehaviourPtr      _behaviour;
         /** @brief Initial State of the Analysis */
-        StatePtr _initialState;
+        StatePtr         _initialState;
+        /** @brief Méthode nonlineaire */
+        NonLinearMethodPtr  _nonLinearMethod;
     public:
         /**
          * @brief Constructeur
@@ -78,7 +78,7 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         StaticNonLinearAnalysisInstance();
 
         /**
-         * @brief Function d'ajout d'une charge cinematique
+         * @brief Add a kinematic load 
          * @param currentLoad charge a ajouter a la sd
          */
         void addKinematicsLoad( const KinematicsLoadPtr& currentLoad )
@@ -96,24 +96,21 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         };
 
         /**
-         * @brief Lancement de la resolution en appelant op0070 
-         */
-        bool execute_op70() throw ( std::runtime_error );
-         /**
          * @brief Run the analysis 
+         * This function wraps Code_Aster's legacy operator for nonlinear analysis
+         * (op0070) 
          */
         ResultsContainerPtr execute() throw ( std::runtime_error );
-        /**
-         * @brief 
-         * @param currentAnalysis Solveur lineaire
-         */
+        
+        /** @brief Define the nonlinear method 
+        */
         void setNonLinearMethod( const NonLinearMethodPtr& currentMethod )
         {
             _nonLinearMethod = currentMethod;
         };
 
         /**
-         * @brief Methode permettant de definir le champ de materiau
+         * @brief method to define the material set on mesh 
          * @param currentMaterial objet MaterialOnMeshPtr
          */
         void setMaterialOnMesh( const MaterialOnMeshPtr& currentMaterial )
@@ -122,37 +119,45 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         };
 
         /**
-         * @brief Methode permettant de definir le modele support
-         * @param currentModel Model support des matrices elementaires
+         * @brief method to define the finite element model 
+         * @param currentModel Model 
          */
         void setSupportModel( const ModelPtr& currentModel )
         {
-            _supportModel = currentModel;
+           _supportModel = currentModel; 
         };
 
         /**
-         * @brief Methode permettant de definir les pas de temps
-         * @param currentStepper Liste de pas de temps
+         * @brief Methode permettant de definir les pas de chargements 
+         * @param curVec Liste de pas de temps
          */
-        void setTimeStepper( const TimeStepperPtr& currentStepper )
+        void setLoadStepManager( const VectorDouble& curVec )
         {
-            _loadStep = currentStepper;
+            *_loadStep = curVec;
         };
         /**
-         * @brief Methode permettant de definir la méthode de recherche linéaire
+         * @brief method for the definition of the linear search method 
          * @param 
          */
         void setLineSearchMethod( const LineSearchMethodPtr& currentLineSearch )
         {
             _nonLinearMethod -> setLineSearchMethod(currentLineSearch);
         };
+       /**
+         * @brief method for the definition of the linear solver
+         * @param 
+         */
+        void setLinearSolver( const LinearSolverPtr& currentSolver )
+        {
+            _nonLinearMethod -> setLinearSolver(currentSolver);
+        };
         /**
         * @brief method for the definition of the initial state of the analysis 
         */
         void setInitialState( const StatePtr& currentState ) 
-            {
-                _initialState = currentState; 
-            }
+        {
+            _initialState = currentState; 
+        }
 };
 
 /**

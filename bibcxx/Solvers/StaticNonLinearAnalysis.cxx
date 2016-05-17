@@ -35,88 +35,54 @@ StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance():
     _materialOnMesh( MaterialOnMeshPtr() ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
     _loadStep( TimeStepperPtr( new TimeStepperInstance( Temporary ) ) ), 
-    _nonLinearMethod( NonLinearMethodPtr())
+    _nonLinearMethod( NonLinearMethodPtr( new NonLinearMethodInstance( ) ))
 {};
 
 
 ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runtime_error )
 {
-    ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "EVOL_NOLI" ) ) );
-    std::string nameOfSD = resultC->getName();
-    
-
-    if ( _loadStep->size() == 0 )
-        resultC->allocate( 1 );
-    else
-        resultC->allocate( _loadStep->size() );
-
-    // Define the study
-    StudyDescriptionPtr study( new StudyDescriptionInstance( _supportModel, _materialOnMesh ) );
-
-    // Add Loads to the study
-    const ListMecaLoad& mecaList = _listOfLoads->getListOfMechanicalLoads();
-    for ( ListMecaLoadCIter curIter = mecaList.begin();
-          curIter != mecaList.end();
-          ++curIter )
-        study->addMechanicalLoad( *curIter );
-    const ListKineLoad& kineList = _listOfLoads->getListOfKinematicsLoads();
-    for ( ListKineLoadCIter curIter = kineList.begin();
-          curIter != kineList.end();
-          ++curIter )
-        study->addKinematicsLoad( *curIter );
-    _listOfLoads->build();
-
-    // Define the discrete problem
-    DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
-    
-    // Define the nonlinear method 
-    _nonLinearMethod -> build(); 
-    // Définir le résultat pour le premier numéro d'ordre à partir de l'état initial 
-    _initialState-> setStep( resultC );
-
-    // préparer le NUME_DDL dans le probleme discret 
-    DOFNumberingPtr dofNum1 = resultC->getEmptyDOFNumbering();
-    dofNum1->setLinearSolver( _nonLinearMethod->getLinearSolver() );
-    dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
-    // Calculer l'état du système pour tous les pas de chargement 
-    typedef StaticNonLinearAlgorithm< TimeStepperInstance > SNLAlgo;
-    SNLAlgo unitaryAlgo( dProblem, _nonLinearMethod, resultC );
-    Algorithm< SNLAlgo > algoStatNonLine;
-    algoStatNonLine.runAllStepsOverAlgorithm( *_loadStep, unitaryAlgo );
-    return resultC;
-};
-
-
-/* On appelle op0070 */
-bool StaticNonLinearAnalysisInstance::execute_op70() throw ( std::runtime_error )
-{
-
-    std::cout << " Entrée dans execute_op70 " << std::endl; 
-    CommandSyntaxCython cmdSt( "STAT_NON_LINE");
-    cmdSt.setResult( getResultObjectName(), "STAT_NON_LINE" );
-
-    SyntaxMapContainer dict;
+    std::cout << " Entree dans execute()" << std::endl; 
+// cmdSNL is the command Syntax object associated to Code_Aster STAT_NON_LINE command 
+    CommandSyntaxCython cmdSNL( "STAT_NON_LINE");
+// Init name of result 
+    ResultsContainerPtr resultSNL( new ResultsContainerInstance ( std::string( "EVOL_NOLI" ) ) );
+    cmdSNL.setResult( resultSNL->getName(), "STAT_NON_LINE" );
+// Build a dictionnary of keywords/values used to define the command syntax object    
+   SyntaxMapContainer dict;
+//
     if ( ! _supportModel )
        throw std::runtime_error("Support model is undefined");
-    std::cout << " Modèle : " << _supportModel->getName() << std::endl ; 
     dict.container["MODELE"] = _supportModel->getName();
-    std::cout << " Matériau : " << _materialOnMesh->getName() << std::endl ; 
+    std::cout<< "Model: "<< _supportModel->getName() << " is a string of length "<< _supportModel->getName().length() << std::endl; 
+    if ( ! _materialOnMesh )
+       throw std::runtime_error("MaterialOnMesh is undefined");
     dict.container[ "CHAM_MATER" ] =  _materialOnMesh->getName();
+    std::cout<< "Cham_mater: "<< _materialOnMesh->getName() << " is a string of length "<< _materialOnMesh->getName().length() << std::endl;
    
     ListSyntaxMapContainer listExcit(_listOfLoads->buildListExcit()); 
     dict.container[ "EXCIT" ] = listExcit;
-    std::cout << " Après la liste des charges " << std::endl ; 
+
     ListSyntaxMapContainer listBehaviour; 
-    SyntaxMapContainer dict2; 
-    dict2.container["RELATION"] = "ELAS";
-    listBehaviour.push_back( dict2 );
+    SyntaxMapContainer dictBEHAV; 
+    dictBEHAV.container["RELATION"] = "ELAS";
+    listBehaviour.push_back( dictBEHAV );
     dict.container["COMPORTEMENT"] = listBehaviour; 
-    std::cout << " Après le comportement " << std::endl ; 
+
+    ListSyntaxMapContainer listINCR;
+    SyntaxMapContainer dictINCR;
+    dictINCR.container["LIST_INST"] = _loadStep-> getName();
+    listINCR.push_back( dictINCR );
+    dict.container["INCREMENT"] = listINCR;
+
     //ListSyntaxMapContainer listLineSearch( _lineSearchMethod->buildListLineSearch() );
     //dict.container[ "RECH_LINEAIRE" ] = listLineSearch;
     //std::cout << " Après la recherche linéaire " << std::endl ; 
-    cmdSt.define( dict );
-    std::cout << " Fin de la construction de l'objet CommandSyntax" << std::endl;
+// Build Command Syntax object 
+    cmdSNL.define( dict );
+    std::cout << " Appel de debugPrint pour CommandSyntax " << std::endl;
+    cmdSNL.debugPrint();
+ 
+//  Now op00070 may be called   
     try
     {
         INTEGER op = 70;
@@ -127,8 +93,9 @@ bool StaticNonLinearAnalysisInstance::execute_op70() throw ( std::runtime_error 
     {
         throw;
     }
-    
-    return true;
+// Return result 
+    resultSNL->debugPrint(8);
+    return resultSNL;
 };
 
 

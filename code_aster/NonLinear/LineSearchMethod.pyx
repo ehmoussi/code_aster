@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -20,34 +20,27 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 
+cdef class LineSearchMethod:
+    """Python wrapper on the C++ LineSearchMethod Object"""
 
-cdef class NonLinearMethod:
-    """Python wrapper on the C++ NonLinearMethod Object"""
-
-    def __cinit__( self, string curMethod ):
+    def __cinit__( self, string curMethod="CORDE", double rTol=1.e-1,  int nIterMax=3, double rhoMin=1.e-2, double rhoMax=1.e1, double rhoExcl=9.e-3 ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new NonLinearMethodPtr( new NonLinearMethodInstance( curMethod ) )
+        self._cptr = new LineSearchMethodPtr( new LineSearchMethodInstance( curMethod, rTol, nIterMax, rhoMin, rhoMax, rhoExcl ) )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, NonLinearMethodPtr other ):
+    cdef set( self, LineSearchMethodPtr other ):
         """Point to an existing object"""
-        self._cptr = new NonLinearMethodPtr( other )
+        self._cptr = new LineSearchMethodPtr( other )
 
-    cdef NonLinearMethodPtr* getPtr( self ):
+    cdef LineSearchMethodPtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef NonLinearMethodInstance* getInstance( self ):
+    cdef LineSearchMethodInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
-
-    def setLinearSolver( self, LinearSolver curLinSolv ):
-        """Set the linear solver"""
-        self.getInstance().setLinearSolver( deref( curLinSolv.getPtr() ) )
-

@@ -22,9 +22,11 @@ from libcpp.string cimport string
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
 from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
+from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethodPtr
 from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethodPtr
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
 from code_aster.Modeling.Model cimport ModelPtr
+from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverPtr
 
 
 cdef extern from "Solvers/StaticNonLinearAnalysis.h":
@@ -34,11 +36,12 @@ cdef extern from "Solvers/StaticNonLinearAnalysis.h":
         StaticNonLinearAnalysisInstance()
         void addKinematicsLoad( KinematicsLoadPtr& currentLoad )
         void addMechanicalLoad( GenericMechanicalLoadPtr& currentLoad )
-        bint execute_op70()
         ResultsContainerPtr execute()
         void setNonLinearMethod( NonLinearMethodPtr& curNonLinearMethod )
+        void setLineSearchMethod( LineSearchMethodPtr& curLineSearchMethod )
         void setMaterialOnMesh( MaterialOnMeshPtr& curMatOnMesh )
         void setSupportModel( ModelPtr& curModel )
+        void setLinearSolver( LinearSolverPtr& curSolver )
         const string getType()
 
     cdef cppclass StaticNonLinearAnalysisPtr:
