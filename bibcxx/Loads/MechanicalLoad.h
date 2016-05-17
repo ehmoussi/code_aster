@@ -386,7 +386,6 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
         dict.container["MODELE"] = _supportModel->getName();
         ListSyntaxMapContainer listeLoad;
         SyntaxMapContainer dict2;
-        //std::cout << "MODELE  " <<  _supportModel->getName() << std::endl;
         /* On itere sur les composantes de la "PhysicalQuantity" */
         typename PhysicalQuantityType::MapOfCompAndVal comp_val=_physicalQuantity-> getMap(); 
         for ( typename PhysicalQuantityType::MapIt curIter(comp_val.begin());
@@ -415,7 +414,8 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
         std::string kw = Traits::factorKeyword;
         dict.container[kw] = listeLoad;
         cmdSt.define( dict );
-
+        std::cout << " Appel de debug print pour Command Syntax  " << std::endl;
+        cmdSt.debugPrint(); 
         try
         {
             INTEGER op = 7;

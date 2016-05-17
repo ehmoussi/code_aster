@@ -102,6 +102,7 @@ cdef class CommandSyntax:
 
     def debugPrint( self ):
         """Representation of the command"""
+        print repr( self )
         logger.debug( "Command %r, returns %r <%r>\n` syntax: %r",
                       self._name, self._resultName, self._resultType,
                       self._definition )

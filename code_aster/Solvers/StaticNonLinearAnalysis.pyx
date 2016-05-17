@@ -23,6 +23,8 @@ from cython.operator cimport dereference as deref
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
 from code_aster.Results.ResultsContainer cimport ResultsContainer
+from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
+from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethod
 from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethod
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Modeling.Model cimport Model
@@ -63,10 +65,6 @@ cdef class StaticNonLinearAnalysis:
         """Add a Mechanical Load"""
         self.getInstance().addMechanicalLoad( deref( currentLoad.getPtr() ) )
 
-    def execute_op70( self ):
-        """Solve the problem"""
-        self.getInstance().execute_op70()
-
     def execute( self ):
         """Solve the problem"""
         results = ResultsContainer()
@@ -76,6 +74,14 @@ cdef class StaticNonLinearAnalysis:
     def setNonLinearMethod( self, NonLinearMethod curNonLinearMethod ):
         """Set the nonlinear method """
         self.getInstance().setNonLinearMethod( deref( curNonLinearMethod.getPtr() ) )
+
+    def setLinearSolver( self, LinearSolver curLinearSolver ):
+        """Set the linear solver """
+        self.getInstance().setLinearSolver( deref( curLinearSolver.getPtr() ) )
+   
+    def setLineSearchMethod( self, LineSearchMethod curLineSearchMethod ):
+        """Set the linesearch method """
+        self.getInstance().setLineSearchMethod( deref( curLineSearchMethod.getPtr() ) )
 
     def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
         """Set the base elementary matrix used to build the assembly matrix"""

@@ -31,8 +31,7 @@
 #include "NonLinear/NonLinearControl.h" 
 #include "NonLinear/LineSearchMethod.h"
 
-/** @todo définir un enum avec les méthodes nonlinéaires Newton, Newton-Krylov, Implex
-*/
+
 
 class NonLinearMethodInstance
 {
