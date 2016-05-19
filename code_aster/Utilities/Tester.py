@@ -133,6 +133,10 @@ class TestCase( unittest.TestCase ):
     def assertEqual(self, first, second, msg=None):
         super(TestCase, self).assertEqual(first, second, msg)
 
+    @addSuccess
+    def assertAlmostEqual(self, first, second, places=7, msg=None, delta=None):
+        super(TestCase, self).assertAlmostEqual(first, second, places, msg, delta)
+
     # just use a derivated context class
     def assertRaises(self, excClass, callableObj=None, *args, **kwargs):
         """Fail unless an exception of class excClass is raised"""
