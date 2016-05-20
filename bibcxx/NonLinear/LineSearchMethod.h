@@ -27,36 +27,94 @@
 /* person_in_charge: natacha.bereux at edf.fr */
 #include "astercxx.h"
 
-#include "LinearAlgebra/SolverControl.h" 
-#include "Utilities/SyntaxDictionary.h"
+#include "LinearAlgebra/SolverControl.h"
+#include "Utilities/GenericParameter.h"  
 
+enum LineSearchEnum { Corde, Mixte, Pilotage };
+const int nbLineSearch = 4;
+extern const char* LineSearchNames[nbLineSearch];
 
 class LineSearchMethodInstance
 {
     private:
-        /** @brief Name of the linesearch method */
-        std::string _name; 
+        /** @brief LineSearch Method */
+        LineSearchEnum _lineSearchMethod; 
         /** @brief Contrôle de la convergence de la méthode  */
         SolverControlPtr _control;
+        /** LineSearch method name */
+        GenParam _methode;
         /** Intervalle de recherche de rho */ 
-        double _rhoMin ;
-        double _rhoMax ; 
-        double _rhoExcl ; 
+        GenParam _rhoMin ;
+        GenParam _rhoMax ; 
+        GenParam _rhoExcl ; 
+        /** Control */
+        GenParam _resi_line_rela;
+        GenParam _iter_line_maxi; 
+        
+        ListGenParam _listOfParameters;
     public:
         /**
          * @brief Constructeur
          */
-        LineSearchMethodInstance( std::string name="CORDE", double rTol = 1.e-1, int nIterMax=3, double rhoMin=1.e-2, 
-            double rhoMax=1.e1, double rhoExcl=9.e-3 ): _name(name), 
-            _control( SolverControlPtr( new SolverControlInstance( rTol, nIterMax ))),
-            _rhoMin(rhoMin), _rhoMax(rhoMax), _rhoExcl(rhoExcl)
-            {};
-
-        std::string getName() const
+        LineSearchMethodInstance(  LineSearchEnum curLineSearch = Corde ):
+            _lineSearchMethod ( curLineSearch ), 
+            _control ( SolverControlPtr( new SolverControlInstance())), 
+            _methode( "METHODE", false),
+            _rhoMin( "RHO_MIN", false ),
+            _rhoMax( "RHO_MAX", false ),
+            _rhoExcl("RHO_EXCL", false ), 
+            _resi_line_rela( "RESI_LINE_RELA", false ), 
+            _iter_line_maxi( "ITER_LINE_MAXI", false )
         {
-            return _name; 
-        }
-        ListSyntaxMapContainer buildListLineSearch() throw ( std::runtime_error ); 
+            _control->setRelativeTolerance( 1.e-1 );   
+            _control->setMaximumNumberOfIterations( 3 );
+
+            _methode = std::string( LineSearchNames[ (int)curLineSearch ] );
+            _rhoMin = 1.e-2;
+            _rhoMax = 1.e1;
+            _rhoExcl = 9.e-3; 
+            
+            _resi_line_rela = _control->getRelativeTolerance();
+            _iter_line_maxi = _control->getMaximumNumberOfIterations();
+            
+            _listOfParameters.push_back( &_methode );
+            _listOfParameters.push_back( &_rhoMin );
+            _listOfParameters.push_back( &_rhoMax );
+            _listOfParameters.push_back( &_rhoExcl );
+            _listOfParameters.push_back( &_resi_line_rela );
+            _listOfParameters.push_back( &_iter_line_maxi ); 
+        };
+        
+        void setMinimumRhoValue( double rhoMin )
+        {
+            _rhoMin = rhoMin ;
+        }; 
+        void setMaximumRhoValue( double rhoMax )
+        {
+            _rhoMax = rhoMax ;
+        }; 
+        void setExclRhoValue( double rhoExcl )
+        {
+            _rhoExcl = rhoExcl;
+        };
+        void setMaximumNumberOfIterations( int nIterMax )
+        {
+            _iter_line_maxi = nIterMax;
+            _control->setMaximumNumberOfIterations( nIterMax );
+        };
+        void setRelativeTolerance( double reslin )
+        {
+            _resi_line_rela = reslin ; 
+            _control->setRelativeTolerance( reslin );
+        };
+        /**
+         * @brief Récupération de la liste des paramètres
+         * @return Liste constante des paramètres déclarés
+         */
+        const ListGenParam&  getListOfParameters()
+        {
+            return _listOfParameters;
+        };
 };
 
 /**

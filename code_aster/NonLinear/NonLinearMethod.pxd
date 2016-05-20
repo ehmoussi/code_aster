@@ -24,10 +24,21 @@ from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverPtr
 
 cdef extern from "NonLinear/NonLinearMethod.h":
 
+    cpdef enum NonLinearMethodEnum:
+        Newton, Implex, NewtonKrylov
+
+    cpdef enum PredictionEnum:
+       Tangente, Elastique, Extrapole, DeplCalcule
+  
+    cpdef enum MatrixEnum:
+       MatriceTangente, MatriceElastique
+
     cdef cppclass NonLinearMethodInstance:
 
-        NonLinearMethodInstance( const string curMethod  )
-        void setLinearSolver( LinearSolverPtr& curLinSolv )
+        NonLinearMethodInstance( NonLinearMethodEnum curNLMethod  )
+        void setPrediction( PredictionEnum curPred )
+        void setMatrix( MatrixEnum curMatrix )
+        void forceStiffnessSymetry ( bint force )
 
     cdef cppclass NonLinearMethodPtr:
 

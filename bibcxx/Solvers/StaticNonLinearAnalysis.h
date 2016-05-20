@@ -36,8 +36,11 @@
 #include "Materials/MaterialOnMesh.h"
 #include "Modeling/Model.h"
 #include "NonLinear/Behaviour.h"
+#include "NonLinear/LineSearchMethod.h"
+#include "NonLinear/NonLinearControl.h" 
 #include "NonLinear/State.h"
 #include "Solvers/GenericSolver.h"
+#include "Studies/TimeStepManager.h" 
 
 
 /**
@@ -64,13 +67,19 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         /** @brief Liste des chargements */
         ListOfLoadsPtr    _listOfLoads;
         /** @brief Liste de pas de chargements */
-        TimeStepperPtr    _loadStep;
+        TimeStepManagerPtr _loadStepManager;
         /** @brief NonLinear Behaviour */
-        BehaviourPtr      _behaviour;
-        /** @brief Initial State of the Analysis */
-        StatePtr         _initialState;
+       // BehaviourPtr      _behaviour;
+        ///** @brief Initial State of the Analysis */
+       // StatePtr         _initialState;
         /** @brief Méthode nonlineaire */
         NonLinearMethodPtr  _nonLinearMethod;
+        /** @brief Contrôle de la convergence de la méthode nonlineaire */
+        NonLinearControlPtr _control; 
+        /** @brief Solveur lineaire */
+        LinearSolverPtr    _linearSolver;
+        /** @brief Méthode de recherche linéaire */
+        LineSearchMethodPtr _lineSearch;
     public:
         /**
          * @brief Constructeur
@@ -131,9 +140,9 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
          * @brief Methode permettant de definir les pas de chargements 
          * @param curVec Liste de pas de temps
          */
-        void setLoadStepManager( const VectorDouble& curVec )
+        void setLoadStepManager( const TimeStepManagerPtr& curTimeStepManager )
         {
-            *_loadStep = curVec;
+            _loadStepManager = curTimeStepManager;
         };
         /**
          * @brief method for the definition of the linear search method 
@@ -141,23 +150,32 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
          */
         void setLineSearchMethod( const LineSearchMethodPtr& currentLineSearch )
         {
-            _nonLinearMethod -> setLineSearchMethod(currentLineSearch);
+            _lineSearch = currentLineSearch;
         };
+        
        /**
          * @brief method for the definition of the linear solver
          * @param 
          */
         void setLinearSolver( const LinearSolverPtr& currentSolver )
         {
-            _nonLinearMethod -> setLinearSolver(currentSolver);
+            _linearSolver = currentSolver;
         };
         /**
         * @brief method for the definition of the initial state of the analysis 
-        */
+        
         void setInitialState( const StatePtr& currentState ) 
         {
             _initialState = currentState; 
         }
+        */
+        /**
+         * @brief Methode retournant le solveur lineaire
+         */
+        LinearSolverPtr&  getLinearSolver()
+        {
+             return _linearSolver;
+        };
 };
 
 /**

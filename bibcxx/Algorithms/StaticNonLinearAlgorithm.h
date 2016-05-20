@@ -46,7 +46,7 @@ class StaticNonLinearAlgorithm: public GenericUnitaryAlgorithm< Stepper >
         /** @brief Problème discret */
         DiscreteProblemPtr  _discreteProblem;
         /** @brief Solveur non linéaire */
-        NonLinearMethodPtr  _nonLinearMethod;
+ //       NonLinearMethodPtr  _nonLinearMethod;
         /** @brief Sd de stockage des résultats */
         ResultsContainerPtr _results;
         /** @brief Chargements */
@@ -65,10 +65,10 @@ class StaticNonLinearAlgorithm: public GenericUnitaryAlgorithm< Stepper >
          * @param ResultContainerPtr Résultat pour le stockage des déplacements
          */
         StaticNonLinearAlgorithm( const DiscreteProblemPtr& curPb,
-                         const NonLinearMethodPtr nLMethod,
+ //                        const NonLinearMethodPtr nLMethod,
                          const ResultsContainerPtr container ):
             _discreteProblem( curPb ),
-            _nonLinearMethod( nLMethod ),
+  //          _nonLinearMethod( nLMethod ),
             _listOfLoads( _discreteProblem->getStudyDescription()->getListOfLoads() ),
             _results( container ),
             _loadStep( 0. )
@@ -101,14 +101,15 @@ class StaticNonLinearAlgorithm: public GenericUnitaryAlgorithm< Stepper >
 template< class Stepper >
 void StaticNonLinearAlgorithm< Stepper >::oneStep() throw( AlgoException& )
 {
+ /*
 
     // Préparation du pas courant 
     int nIter(0); 
     DOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
     // Reinit log 
-    _nonLinearMethod -> cleanLog(); 
+    //_nonLinearMethod -> cleanLog(); 
     // Linear Solver
-    LinearSolverPtr linSolv(_nonLinearMethod->getLinearSolver());
+   // LinearSolverPtr linSolv(_nonLinearMethod->getLinearSolver());
     // C'est dans le résultat qu'on trouve le 
     // champ aux noeuds contenant les déplacements 
     FieldOnNodesDoublePtr uField = _results->getEmptyFieldOnNodesDouble( "DEPL", _loadStep );
@@ -198,6 +199,7 @@ void StaticNonLinearAlgorithm< Stepper >::doPrediction( DiscreteProblemPtr dProb
 
     uField = linSolv->solveDoubleLinearSystem( aMatrix, kineLoadsFON,
                                                         chNoDir, uField );
+*/
 }
 
 

@@ -32,14 +32,11 @@
  * @author Natacha Béreux 
  */
 
-// TODO appeler le constructeur de la classe mère dès que le compilateur l'admettra 
-NonLinearControlInstance:: NonLinearControlInstance( double rTol, int nIterMax, 
+NonLinearControlInstance::NonLinearControlInstance( double rTol, int nIterMax, 
     double maxTol, double relMaxTol, double relTolCmp):
-    //SolveurControlInstance(rTol, nIterMax),
+     SolverControlInstance(rTol, nIterMax),
     _maxTol(maxTol), _relativeMaxTol(relMaxTol), _relativeTolByComponent(relTolCmp)
 {
-    _relativeTol = rTol;
-    _nIterMax    = nIterMax;
      std::vector<double> v(nIterMax,0.);
     _relResNorm=v;
 }

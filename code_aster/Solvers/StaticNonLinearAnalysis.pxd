@@ -17,16 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from libcpp.string cimport string
+from libcpp.string cimport string 
 
+from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverPtr
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
-from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
-from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethodPtr
-from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethodPtr
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
 from code_aster.Modeling.Model cimport ModelPtr
-from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverPtr
+from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethodPtr
+from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethodPtr
+from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
+from code_aster.Studies.TimeStepManager cimport TimeStepManagerPtr
 
 
 cdef extern from "Solvers/StaticNonLinearAnalysis.h":
@@ -42,6 +43,7 @@ cdef extern from "Solvers/StaticNonLinearAnalysis.h":
         void setMaterialOnMesh( MaterialOnMeshPtr& curMatOnMesh )
         void setSupportModel( ModelPtr& curModel )
         void setLinearSolver( LinearSolverPtr& curSolver )
+        void setLoadStepManager( TimeStepManagerPtr& curTimeStepManager ) 
         const string getType()
 
     cdef cppclass StaticNonLinearAnalysisPtr:

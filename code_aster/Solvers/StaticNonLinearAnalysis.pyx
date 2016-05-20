@@ -20,15 +20,15 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
-from code_aster.Results.ResultsContainer cimport ResultsContainer
-from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethod
 from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethod
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Modeling.Model cimport Model
-
+from code_aster.Results.ResultsContainer cimport ResultsContainer
+from code_aster.Studies.TimeStepManager cimport TimeStepManager 
 
 cdef class StaticNonLinearAnalysis:
 
@@ -86,6 +86,10 @@ cdef class StaticNonLinearAnalysis:
     def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
         """Set the base elementary matrix used to build the assembly matrix"""
         self.getInstance().setMaterialOnMesh( deref( curMatOnMesh.getPtr() ) )
+
+    def setLoadStepManager( self, TimeStepManager curTimeStepManager ):
+        """Set the base elementary matrix used to build the assembly matrix"""
+        self.getInstance().setLoadStepManager( deref( curTimeStepManager.getPtr() ) )
 
     def setSupportModel( self, Model curModel ):
         """Set the base elementary matrix used to build the assembly matrix"""

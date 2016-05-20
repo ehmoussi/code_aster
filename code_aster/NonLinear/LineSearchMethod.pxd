@@ -20,12 +20,18 @@
 from libcpp.string cimport string
 
 
-cdef extern from "NonLinear/LineSearchMethod.h":
+cdef extern from "NonLinear/LineSearchMethod.h": 
+    cpdef enum LineSearchEnum:
+           Corde, Mixte, Pilotage
 
     cdef cppclass LineSearchMethodInstance:
 
-        LineSearchMethodInstance( const string curMethod, const double rTol, 
-				  const int nIterMax, const double rhoMin, const double rhoMax, const double rhoExcl )
+        LineSearchMethodInstance( LineSearchEnum curMethod )
+        void setMinimumRhoValue( double rhoMin )
+        void setMaximumRhoValue( double rhoMax )
+        void setExclRhoValue( double rhoExcl )
+        void setMaximumNumberOfIterations( int nIterMax )
+        void setRelativeTolerance( double reslin )
 
     cdef cppclass LineSearchMethodPtr:
 

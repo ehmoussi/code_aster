@@ -1,5 +1,5 @@
 /**
- * @file LineSearchMethod.cxx
+ * @file NonLinearMethod.cxx
  * @brief Implementation of LineSearch 
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -25,8 +25,10 @@
 #include <typeinfo>
 #include "astercxx.h"
 
-#include "NonLinear/LineSearchMethod.h"
-const char* LineSearchNames[nbLineSearch] = { "CORDE", "MIXTE", "PILOTAGE" };
+#include "NonLinear/NonLinearMethod.h"
 
+const char* NonLinearMethodNames[nbMethod] = { "NEWTON", "IMPLEX", "NEWTON_KRYLOV" };
+const char* PredictionNames[nbPrediction] = { "TANGENTE", "ELASTIQUE", "EXTRAPOLE", "DEPL_CALCULE"}; 
+const char* MatrixNames[nbMatrix] = { "TANGENTE", "ELASTIQUE"}; 
 
 
