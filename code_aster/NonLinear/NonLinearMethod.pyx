@@ -26,7 +26,7 @@ from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 cdef class NonLinearMethod:
     """Python wrapper on the C++ NonLinearMethod Object"""
 
-    def __cinit__( self, string curMethod ):
+    def __cinit__( self, NonLinearMethodEnum curMethod ):
         """Initialization: stores the pointer to the C++ object"""
         self._cptr = new NonLinearMethodPtr( new NonLinearMethodInstance( curMethod ) )
 
@@ -46,8 +46,3 @@ cdef class NonLinearMethod:
     cdef NonLinearMethodInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
-
-    def setLinearSolver( self, LinearSolver curLinSolv ):
-        """Set the linear solver"""
-        self.getInstance().setLinearSolver( deref( curLinSolv.getPtr() ) )
-

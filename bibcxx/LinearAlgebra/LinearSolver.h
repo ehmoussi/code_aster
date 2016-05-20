@@ -199,8 +199,8 @@ class LinearSolverInstance: public DataStructure
          * @param currentRenumber Type de renumeroteur
          * @todo recuperer le code retour de isAllowedRenumberingForSolver
          */
-        LinearSolverInstance( const LinearSolverEnum currentLinearSolver,
-                              const Renumbering currentRenumber ):
+        LinearSolverInstance( const LinearSolverEnum currentLinearSolver = MultFront,
+                              const Renumbering currentRenumber = Metis):
                     DataStructure( getNewResultObjectName(), "SOLVEUR" ),
                     _linearSolver( currentLinearSolver ),
                     _renumber( currentRenumber ),

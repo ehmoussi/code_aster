@@ -34,8 +34,11 @@ StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance():
     _supportModel( ModelPtr() ),
     _materialOnMesh( MaterialOnMeshPtr() ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-    _loadStep( TimeStepperPtr( new TimeStepperInstance( Temporary ) ) ), 
-    _nonLinearMethod( NonLinearMethodPtr( new NonLinearMethodInstance( ) ))
+    _loadStepManager( TimeStepManagerPtr( ) ), 
+    _nonLinearMethod( NonLinearMethodPtr( new NonLinearMethodInstance() ) ),
+    _control( NonLinearControlPtr ( new NonLinearControlInstance() ) ),  
+    _linearSolver( LinearSolverPtr ( new LinearSolverInstance() ) ),
+    _lineSearch ( LineSearchMethodPtr() ) 
 {};
 
 
@@ -68,15 +71,34 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     listBehaviour.push_back( dictBEHAV );
     dict.container["COMPORTEMENT"] = listBehaviour; 
 
-    ListSyntaxMapContainer listINCR;
-    SyntaxMapContainer dictINCR;
-    dictINCR.container["LIST_INST"] = _loadStep-> getName();
-    listINCR.push_back( dictINCR );
-    dict.container["INCREMENT"] = listINCR;
+    ListSyntaxMapContainer listIncr;
+    SyntaxMapContainer dictIncr;
+    dictIncr.container["LIST_INST"] = _loadStepManager-> getName();
+    listIncr.push_back( dictIncr );
+    dict.container["INCREMENT"] = listIncr;
+   
+    ListSyntaxMapContainer listMethod; 
+    const ListGenParam& listParamMethod = _nonLinearMethod->getListOfMethodParameters();
+    SyntaxMapContainer dictMethod = buildSyntaxMapFromParamList( listParamMethod);
+    listMethod.push_back( dictMethod);
+    dict.container[ "METHODE" ] = listMethod;
+    std::cout << " Après le mot-clé Method " << std::endl ;
 
-    //ListSyntaxMapContainer listLineSearch( _lineSearchMethod->buildListLineSearch() );
-    //dict.container[ "RECH_LINEAIRE" ] = listLineSearch;
-    //std::cout << " Après la recherche linéaire " << std::endl ; 
+    ListSyntaxMapContainer listNewton; 
+    const ListGenParam& listParamNewton = _nonLinearMethod->getListOfNewtonParameters();
+    SyntaxMapContainer dictNewton = buildSyntaxMapFromParamList( listParamNewton );
+    listNewton.push_back( dictNewton);
+    dict.container[ "NEWTON" ] = listNewton;
+    std::cout << " Après le mot-clé Newton " << std::endl ;
+ 
+    if (_lineSearch != NULL )
+    	{ ListSyntaxMapContainer listLineSearch;
+    	const ListGenParam& listParamLineSearch = _lineSearch->getListOfParameters();
+    	SyntaxMapContainer dictLineSearch = buildSyntaxMapFromParamList( listParamLineSearch );
+    	listLineSearch.push_back( dictLineSearch );
+    	dict.container[ "RECH_LINEAIRE" ] = listLineSearch;
+    	std::cout << " Après la recherche linéaire " << std::endl ; 
+        }
 // Build Command Syntax object 
     cmdSNL.define( dict );
     std::cout << " Appel de debugPrint pour CommandSyntax " << std::endl;

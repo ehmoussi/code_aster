@@ -24,9 +24,9 @@ from cython.operator cimport dereference as deref
 cdef class LineSearchMethod:
     """Python wrapper on the C++ LineSearchMethod Object"""
 
-    def __cinit__( self, string curMethod="CORDE", double rTol=1.e-1,  int nIterMax=3, double rhoMin=1.e-2, double rhoMax=1.e1, double rhoExcl=9.e-3 ):
+    def __cinit__( self, LineSearchEnum curMethod ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new LineSearchMethodPtr( new LineSearchMethodInstance( curMethod, rTol, nIterMax, rhoMin, rhoMax, rhoExcl ) )
+        self._cptr = new LineSearchMethodPtr( new LineSearchMethodInstance( curMethod ) )
 
     def __dealloc__( self ):
         """Destructor"""
@@ -44,3 +44,4 @@ cdef class LineSearchMethod:
     cdef LineSearchMethodInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
+    

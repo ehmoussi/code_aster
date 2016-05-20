@@ -43,12 +43,11 @@ imposedPres1.setValue( code_aster.Loads.Pres, 1000. )
 charMeca2 = code_aster.DistributedPressureDouble()
 charMeca2.setSupportModel( monModel )
 charMeca2.setValue( imposedPres1, "Haut" )
-print " Construction de CharMeca2"
 charMeca2.build()
 
 monSolver = code_aster.LinearSolver( code_aster.Mumps, code_aster.Metis )
 # Define the nonlinear method that will be used
-lineSearch = code_aster.LineSearchMethod()
+lineSearch = code_aster.LineSearchMethod( code_aster.Corde )
 
 # Define a nonlinear Analysis
 statNonLine = code_aster.StaticNonLinearAnalysis()
@@ -57,7 +56,7 @@ statNonLine.addMechanicalLoad( charMeca2 )
 statNonLine.setSupportModel( monModel )
 statNonLine.setMaterialOnMesh( affectMat )
 statNonLine.setLinearSolver( monSolver )
-statNonLine.setLineSearchMethod( lineSearch )
+#statNonLine.setLineSearchMethod( lineSearch )
 
 
 temps = [0., 0.5, 1.]
@@ -74,8 +73,8 @@ timeList.addErrorManager( error1 )
 #error2.setAction( action2 )
 #timeList.addErrorManager( error2 )
 timeList.build()
-timeList.debugPrint( 6 )
-
+#timeList.debugPrint( 6 )
+statNonLine.setLoadStepManager( timeList ) 
 # Run the nonlinear analysis
 resu = statNonLine.execute()
 resu.debugPrint( 6 )

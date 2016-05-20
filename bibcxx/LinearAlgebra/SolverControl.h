@@ -45,19 +45,28 @@ class SolverControlInstance
 
     virtual ConvergenceState check( const double relativeResNorm, const int iter ) const;
 
-    double getRelativeTol() const
+    double getRelativeTolerance() const
     {
         return _relativeTol; 
     }
-    int getNIterMax() const
+    int getMaximumNumberOfIterations() const
     {
         return _nIterMax; 
+    }
+    void setRelativeTolerance( const double rTol ) 
+    {
+        _relativeTol=rTol; 
+    }
+    void setMaximumNumberOfIterations( const int nIterMax) 
+    {
+        _nIterMax=nIterMax ; 
     }
     protected: 
     /* iter_glob_maxi*/
     int _nIterMax;
     /* resi_rela*/
     double _relativeTol; 
+    
 };
 
 /**
