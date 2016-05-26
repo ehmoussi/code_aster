@@ -33,35 +33,3 @@
 
 #include "NonLinear/Behaviour.h"
 
-    bool BehaviourInstance::build() throw ( std::runtime_error )
-    {
-    // Construction du petit bout d'objet CommandSyntax correspondant au mot-clé COMPORTEMENT
-    CommandSyntaxCython cmdStNL( "STAT_NON_LINE" );
-    SyntaxMapContainer dict;
-    ListSyntaxMapContainer listeCompor;
-    SyntaxMapContainer dict2;
-    dict2.container["RELATION"] = _relation ;
-    dict2.container["DEFORMATION"] = _deformation ;
-    /* Caractéristiques du MeshEntity */
-    assert ( _supportMeshEntity->getType()  != GroupOfNodesType );
-    if ( _supportMeshEntity->getType() == AllMeshEntitiesType )
-    {
-      dict2.container["TOUT"] = "OUI";
-    }
-    else if ( _supportMeshEntity->getType()  ==  GroupOfElementsType )
-    {
-      dict2.container["GROUP_MA"] = _supportMeshEntity->getName();
-    }
-    listeCompor.push_back(dict2); 
-    dict.container["COMPORTEMENT"] = listeCompor ; 
-    // 
-    cmdStNL.define( dict );
-    long i_etat_init(1);
- /** TODO 
-    CALL_NMDORC_WRAP( _supportModel->getName().c_str(),  _supportMaterialOnMesh->getName().c_str(), 
-     &i_etat_init, " " , " " );
-*/
-    _isEmpty = false;
-    return true;
-    };
-

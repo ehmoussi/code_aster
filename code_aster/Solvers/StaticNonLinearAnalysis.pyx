@@ -23,6 +23,7 @@ from cython.operator cimport dereference as deref
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
+from code_aster.NonLinear.Behaviour cimport Behaviour
 from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethod
 from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethod
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
@@ -71,6 +72,10 @@ cdef class StaticNonLinearAnalysis:
         results.set( self.getInstance().execute() )
         return results
     
+    def addBehaviourOnElements( self, Behaviour curBehaviour, string nameOfGroup = ""  ):
+        """Set a nonlinear behaviour on a group of elements """
+        self.getInstance().addBehaviourOnElements( deref( curBehaviour.getPtr() ), nameOfGroup )
+
     def setNonLinearMethod( self, NonLinearMethod curNonLinearMethod ):
         """Set the nonlinear method """
         self.getInstance().setNonLinearMethod( deref( curNonLinearMethod.getPtr() ) )

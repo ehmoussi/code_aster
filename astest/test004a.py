@@ -57,7 +57,8 @@ statNonLine.setSupportModel( monModel )
 statNonLine.setMaterialOnMesh( affectMat )
 statNonLine.setLinearSolver( monSolver )
 #statNonLine.setLineSearchMethod( lineSearch )
-
+Elas = code_aster.Behaviour( code_aster.Elas, code_aster.SmallDeformation ); 
+statNonLine.addBehaviourOnElements( Elas );
 
 temps = [0., 0.5, 1.]
 timeList = code_aster.Studies.TimeStepManager()
