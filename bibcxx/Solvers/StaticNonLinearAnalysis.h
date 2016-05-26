@@ -59,6 +59,18 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         typedef std::list< KinematicsLoadPtr > ListKineLoad;
         /** @typedef Iterateur sur une std::list de KinematicsLoad */
         typedef ListKineLoad::iterator ListKineLoadIter;
+       
+        /** @typedef Smart pointer on a  VirtualMeshEntity */
+        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+        /** @typedef LocatedBehaviour is a Behaviour located on a MeshEntity */
+        typedef std::pair<BehaviourPtr, MeshEntityPtr> LocatedBehaviourInstance;
+        typedef boost::shared_ptr< LocatedBehaviourInstance> LocatedBehaviourPtr;
+
+        typedef std::list < LocatedBehaviourPtr > ListLocatedBehaviour; 
+        /** @typedef Iterator on a std::list of LocatedBehaviourPtr */
+        typedef ListLocatedBehaviour::iterator ListLocatedBehaviourIter;
+        /** @typedef Constant Iterator on a std::list of LocatedBehaviourPtr */
+        typedef ListLocatedBehaviour::const_iterator ListLocatedBehaviourCIter;
 
         /** @brief Modele support */
         ModelPtr          _supportModel;
@@ -69,7 +81,7 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         /** @brief Liste de pas de chargements */
         TimeStepManagerPtr _loadStepManager;
         /** @brief NonLinear Behaviour */
-       // BehaviourPtr      _behaviour;
+        ListLocatedBehaviour _listOfBehaviours ; 
         ///** @brief Initial State of the Analysis */
        // StatePtr         _initialState;
         /** @brief Méthode nonlineaire */
@@ -103,7 +115,31 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         {
             _listOfLoads->addMechanicalLoad( currentLoad );
         };
-
+  
+        void addBehaviourOnElements( const BehaviourPtr& behaviour, std::string nameOfGroup= "") throw ( std::runtime_error ) 
+        {
+             // Check that the pointer to the support model is not empty
+            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
+            throw std::runtime_error( "Model is empty" );
+            // Define the support Mesh Entity 
+            MeshEntityPtr supportMeshEntity; 
+            MeshPtr currentMesh= _supportModel->getSupportMesh();
+            // If the support MeshEntity is not given, the behaviour is set on the whole mesh
+            if ( nameOfGroup.size() == 0  )
+            {
+             supportMeshEntity = MeshEntityPtr( new  AllMeshEntities() ) ;
+            }
+            // otherwise, if nameOfGroup is the name of a group of elements in the support mesh 
+            else if ( currentMesh->hasGroupOfElements( nameOfGroup )  )
+            {
+            supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+            }
+            else
+            //  otherwise, throw an exception
+            throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the behaviour " );
+            // Insert the current behaviour with its support Mesh Entity in the list of behaviours 
+            _listOfBehaviours.push_back( LocatedBehaviourPtr ( new LocatedBehaviourInstance (behaviour,  supportMeshEntity) ) );
+         };       
         /**
          * @brief Run the analysis 
          * This function wraps Code_Aster's legacy operator for nonlinear analysis

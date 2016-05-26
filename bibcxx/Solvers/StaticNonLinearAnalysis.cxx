@@ -41,7 +41,7 @@ StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance():
     _lineSearch ( LineSearchMethodPtr() ) 
 {};
 
-
+/** @brief main routine to run a static, nonlinear analysis */
 ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runtime_error )
 {
     std::cout << " Entree dans execute()" << std::endl; 
@@ -90,6 +90,29 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     listNewton.push_back( dictNewton);
     dict.container[ "NEWTON" ] = listNewton;
     std::cout << " Après le mot-clé Newton " << std::endl ;
+
+    if ( _listOfBehaviours.size() != 0 )
+    {
+        ListSyntaxMapContainer listeComportement;
+        for ( ListLocatedBehaviourCIter curIter = _listOfBehaviours.begin();
+              curIter != _listOfBehaviours.end();
+              ++curIter )
+        {
+            BehaviourPtr& curBehaviour =  (*curIter)->first; 
+
+            const ListGenParam& listParam = curBehaviour->getListOfParameters();
+            SyntaxMapContainer dict2 = buildSyntaxMapFromParamList( listParam );
+
+            MeshEntityPtr& curMeshEntity = (*curIter) ->second;
+            if ( curMeshEntity->getType() == AllMeshEntitiesType )
+                dict2.container["TOUT"] = "OUI";
+            else if ( curMeshEntity->getType()  == GroupOfElementsType )
+                dict2.container["GROUP_MA"] = curMeshEntity->getName();
+
+            listeComportement.push_back( dict2 );
+        }
+        dict.container["COMPORTEMENT"] = listeComportement;
+    }
  
     if (_lineSearch != NULL )
     	{ ListSyntaxMapContainer listLineSearch;

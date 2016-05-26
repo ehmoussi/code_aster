@@ -24,6 +24,7 @@ from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
 from code_aster.Modeling.Model cimport ModelPtr
+from code_aster.NonLinear.Behaviour cimport BehaviourPtr
 from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethodPtr
 from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethodPtr
 from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
@@ -38,6 +39,7 @@ cdef extern from "Solvers/StaticNonLinearAnalysis.h":
         void addKinematicsLoad( KinematicsLoadPtr& currentLoad )
         void addMechanicalLoad( GenericMechanicalLoadPtr& currentLoad )
         ResultsContainerPtr execute()
+        void addBehaviourOnElements( BehaviourPtr& curBehaviour, string nameOfGroup ) except+ 
         void setNonLinearMethod( NonLinearMethodPtr& curNonLinearMethod )
         void setLineSearchMethod( LineSearchMethodPtr& curLineSearchMethod )
         void setMaterialOnMesh( MaterialOnMeshPtr& curMatOnMesh )

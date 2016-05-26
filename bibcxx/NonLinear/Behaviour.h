@@ -30,9 +30,10 @@
 #include "LinearAlgebra/SolverControl.h"
 #include "Materials/MaterialOnMesh.h"
 #include "Mesh/MeshEntities.h"
+#include "NonLinear/AllowedBehaviour.h"
 #include "Modeling/Model.h"
 #include "RunManager/CommandSyntaxCython.h"
-#include "Utilities/SyntaxDictionary.h"
+#include "Utilities/GenericParameter.h"
 
 
 class BehaviourInstance
@@ -41,54 +42,87 @@ class BehaviourInstance
         /**
          * @brief Constructeur
          */
-        BehaviourInstance( std::string relation="ELAS", std::string deformation="PETIT"): 
-          _relation(relation), _deformation(deformation), 
-          _control( SolverControlPtr( new SolverControlInstance())), _isEmpty(true)
-        {};
-        /**
-         * @brief Add model
-         */
-        void setSupportModel( ModelPtr currentModel)
+        BehaviourInstance( ConstitutiveLawEnum law = Elas, DeformationEnum deformation = SmallDeformation ): 
+		_constitutiveLaw( law ), 
+                _deformationType( deformation ), 
+                _relation("RELATION", true ), 
+                _relation_kit("RELATION_KIT", false), 
+                _deformation("DEFORMATION", false ),
+                _resi_cplan_maxi("RESI_CPLAN_MAXI", false ), 
+                _resi_cplan_rela("RESI_CPLAN_RELA", false ), 
+                _iter_cplan_maxi("ITER_CPLAN_MAXI", false ),
+                _parm_theta("PARM_THETA", false ),
+                _parm_alpha("PARM_ALPHA", false ), 
+                _resi_inte_maxi("RESI_INTE_MAXI", false ),
+                _resi_inte_rela("RESI_INTE_RELA", false ),
+                _iter_inte_maxi("ITER_INTE_MAXI", false ), 
+                _iter_inte_pas("ITER_INTE_PAS", false ), 
+                _algo_inte("ALGO_INTE", false ), 
+                _type_matr_tang("TYP_MATR_TANG", false ),
+                _seuil("SEUIL", false ),
+                _amplitude("AMPLITUDE", false ),
+                _taux_retour("TAUX_RETOUR",false),
+                _resi_radi_rela("RESI_RADI_RELA",false) 
         {
-          _supportModel=currentModel; 
-        };
-        /**
-        * @brief 
-        */
-        void setGroupOfElements( std::string nameOfGroup ) throw ( std::runtime_error )
-        {
-        if ( ! _supportModel ) throw std::runtime_error( "Support model is not defined" );
-        if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "is not a group of elements in support mesh" );
+        _relation = std::string( ConstitutiveLawNames[ (int)_constitutiveLaw ] );
+	_deformation = std::string( DeformationNames[ (int)_deformationType ] );
 
-        _supportMeshEntity =  MeshEntityPtr ( new GroupOfElements( nameOfGroup ) ) ;
+        _listOfParameters.push_back( &_relation );
+        _listOfParameters.push_back( &_relation_kit );
+        _listOfParameters.push_back( &_deformation );
+        _listOfParameters.push_back( &_resi_cplan_maxi );
+        _listOfParameters.push_back( &_resi_cplan_rela );
+        _listOfParameters.push_back( &_iter_cplan_maxi );
+        _listOfParameters.push_back( &_parm_theta );
+        _listOfParameters.push_back( &_parm_alpha );
+        _listOfParameters.push_back( &_resi_inte_maxi);
+        _listOfParameters.push_back( &_resi_inte_rela);
+        _listOfParameters.push_back( &_iter_inte_maxi);
+        _listOfParameters.push_back( &_iter_inte_pas);
+        _listOfParameters.push_back( &_algo_inte);
+        _listOfParameters.push_back( &_type_matr_tang);
+        _listOfParameters.push_back( &_seuil);
+        _listOfParameters.push_back( &_amplitude);
+        _listOfParameters.push_back( &_taux_retour);
+        _listOfParameters.push_back( &_resi_radi_rela);
         };
+  
         /**
-         * @brief Construction des cartes Compor, Carcri ... 
+         * @brief Récupération de la liste des paramètres du comportement
+         * @return Liste constante des paramètres déclarés
          */
-        bool build() throw ( std::runtime_error ); 
-        
+        const ListGenParam& getListOfParameters() const
+        {
+            return _listOfParameters;
+        };
      private:
-        /** @typedef Definition d'un pointeur intelligent sur un VirtualMeshEntity */
-        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
-        /** @brief Relation name*/
-        std::string _relation;
-        /** @brief Deformation name */
-        std::string _deformation;
+        /** @brief ConstitutiveLaw*/
+        ConstitutiveLawEnum _constitutiveLaw;
+        /** @brief Deformation  */
+        DeformationEnum _deformationType;
         /** @brief Contrôle de la convergence de la loi de comportement  */
         SolverControlPtr _control;
-        /** @brief MeshEntity sur lequel on définit la loi de comportement */
-        MeshEntityPtr _supportMeshEntity;
-        /** @brief Modèle sous-jacent */
-        ModelPtr _supportModel; 
-        /** @brief Matériaux sous-jacents */
-        MaterialOnMeshPtr _supportMaterialOnMesh;
-        /** @brief Nom de la carte COMPOR */
-        std::string _nameOfCompor;
-        /** @brief Nom de la carte CARCRI */
-        std::string _nameOfCarcri;
-        /** @brief flag indiquant si les cartes ont été construites */
-        bool _isEmpty;
+        //
+        GenParam _relation;
+        GenParam _relation_kit;
+        GenParam _deformation;
+        GenParam _resi_cplan_maxi;
+        GenParam _resi_cplan_rela;
+        GenParam _iter_cplan_maxi;
+        GenParam _parm_theta;
+        GenParam _parm_alpha; 
+        GenParam _resi_inte_maxi;
+        GenParam _resi_inte_rela;
+        GenParam _iter_inte_maxi;
+        GenParam _iter_inte_pas;
+        GenParam _algo_inte;
+        GenParam _type_matr_tang;
+        GenParam _seuil;
+        GenParam _amplitude; 
+        GenParam _taux_retour;
+        GenParam _resi_radi_rela; 
+ 
+        ListGenParam _listOfParameters;
 };
 
 /**
@@ -96,5 +130,6 @@ class BehaviourInstance
  * @brief Enveloppe d'un pointeur intelligent vers un BehaviourInstance
  */
 typedef boost::shared_ptr< BehaviourInstance > BehaviourPtr;
+
 
 #endif /* BEHAVIOUR_H_ */

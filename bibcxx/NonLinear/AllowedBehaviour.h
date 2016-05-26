@@ -1,7 +1,38 @@
-# code_aster.NonLinear cython package
+#ifndef ALLOWEDBEHAVIOUR_H_
+#define ALLOWEDBEHAVIOUR_H_
 
-from .Behaviour import (
-            Behaviour, 
+/**
+ * @file AllowedBehaviour.h
+ * @brief Auxiliary definitions for the constitutive equations 
+ * @author Natacha Béreux
+ * @section LICENCE
+ *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *
+ *   This file is part of Code_Aster.
+ *
+ *   Code_Aster is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Code_Aster is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/* person_in_charge: natacha.bereux at edf.fr */
+#include "astercxx.h"
+
+/**
+ * @enum ConstitutiveLawEnum
+ * @brief Enum contenant toutes les lois de comportement de Code_Aster
+ * @author Natacha Béreux 
+ */
+enum ConstitutiveLawEnum { 
             Elas,
             Elas_Vmis_Line,
             Elas_Vmis_Trac,
@@ -123,6 +154,7 @@ from .Behaviour import (
             Rouss_Pr,
             Rouss_Visc,
             Rupt_Frag,
+// Originellement Sans mais renommé Sans_Rel pour ne pas etre en conflit avec l'enum Renumbering
             Sans_Rel,
             Vendochab,
             Visc_Endo_Lema,
@@ -152,17 +184,22 @@ from .Behaviour import (
             Vmis_Isot_Trac,
             Vmis_John_Cook,
             Umat,
-            Mfront, 
-            SmallDeformation, PetitReac, LargeDeformationAndRotation, SimoMiehe, GdefLog, 
-            PerturbationMatrix, VerificationMatrix, TangentSecantMatrix, )
+            Mfront  };
 
+const int nbLaw = 151;
+extern const char* ConstitutiveLawNames[nbLaw];
 
-from .NonLinearMethod import ( 
-	NonLinearMethod,
-        Newton, Implex, NewtonKrylov,
-        Tangente, Elastique, Extrapole, DeplCalcule,
-        MatriceTangente, MatriceElastique, )
+/**
+ * @enum DeformationEnum
+ * @brief Enum contenant tous les types de deformations
+ * @author Natacha Béreux 
+ */
+enum DeformationEnum { SmallDeformation, PetitReac, LargeDeformationAndRotation, SimoMiehe, GdefLog }; 
+const int nbDeformation = 5;
+extern const char* DeformationNames[nbDeformation];
 
-from .LineSearchMethod import (
-        LineSearchMethod,
-        Corde, Mixte, Pilotage, )
+enum TangentMatrixEnum { PerturbationMatrix, VerificationMatrix, TangentSecantMatrix };
+const int nbTangMatr = 3;
+extern const char* TangentMatrixNames[nbTangMatr]; 
+
+#endif /* ALLOWEDBEHAVIOUR_H_ */
