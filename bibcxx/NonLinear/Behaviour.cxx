@@ -50,7 +50,7 @@
     }
     else if ( _supportMeshEntity->getType()  ==  GroupOfElementsType )
     {
-      dict2.container["GROUP_MA"] = _supportMeshEntity->getEntityName();
+      dict2.container["GROUP_MA"] = _supportMeshEntity->getName();
     }
     listeCompor.push_back(dict2); 
     dict.container["COMPORTEMENT"] = listeCompor ; 

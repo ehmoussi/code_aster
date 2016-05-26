@@ -163,7 +163,9 @@ public:
 };
 
 /** @typedef Definition d'un GenericParameter d'un type boost::variant */
-typedef GenericParameter< boost::variant< double, int, std::string > > GenParam;
+typedef GenericParameter< boost::variant< double, int, std::string,
+                                          std::vector< double >, std::vector< int >,
+                                          std::vector< std::string > > > GenParam;
 
 /** @typedef Definition d'une list de GenParam */
 typedef std::list< GenParam* > ListGenParam;
