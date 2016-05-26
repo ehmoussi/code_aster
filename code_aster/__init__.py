@@ -50,5 +50,6 @@ from .NonLinear import *
 from .Algorithms import *
 from .Studies import *
 from .Discretization import *
+from .Interaction import *
 
 from .Cata import Commands

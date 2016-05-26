@@ -64,7 +64,7 @@ class VirtualMeshEntity
          * @brief Obtenir le nom de l'entite
          * @return renvoit le nom de l'entite
          */
-        const std::string& getEntityName()
+        const std::string& getName()
         {
             return _name;
         };

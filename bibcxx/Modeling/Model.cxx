@@ -67,9 +67,9 @@ bool ModelInstance::build() throw ( std::runtime_error )
         else
         {
             if ( ( *(curIter->second) ).getType() == GroupOfNodesType )
-                dict2.container["GROUP_NO"] = (curIter->second)->getEntityName();
+                dict2.container["GROUP_NO"] = (curIter->second)->getName();
             else if ( ( *(curIter->second) ).getType() == GroupOfElementsType )
-                dict2.container["GROUP_MA"] = (curIter->second)->getEntityName();
+                dict2.container["GROUP_MA"] = (curIter->second)->getName();
         }
         listeAFFE.push_back( dict2 );
     }

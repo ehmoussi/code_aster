@@ -207,15 +207,15 @@ class PCFieldOnMeshInstance: public DataStructure
                 throw std::runtime_error( "Mesh is empty" );
             if ( ligrel != " " )
                 throw std::runtime_error( "Build a PCFieldOnMeshInstance with a ligrel not yet available" );
-            if ( ! _supportMesh->hasGroupOfElements( grp.getEntityName() ) )
-                throw std::runtime_error( "Group " + grp.getEntityName() + " not in mesh" );
+            if ( ! _supportMesh->hasGroupOfElements( grp.getName() ) )
+                throw std::runtime_error( "Group " + grp.getName() + " not in mesh" );
 
             const long code = 2;
             const std::string mode( " " );
             const long nbMa = 0;
             JeveuxVectorLong limanu( "empty" );
             limanu->allocate( Temporary, 1 );
-            fortranAddValues( code, grp.getEntityName(), mode, nbMa, limanu, ligrel, component, values );
+            fortranAddValues( code, grp.getName(), mode, nbMa, limanu, ligrel, component, values );
             return true;
         };
 

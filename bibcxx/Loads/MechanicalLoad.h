@@ -404,11 +404,11 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
         else
         {
             if ( _supportMeshEntity->getType()  == GroupOfNodesType )
-                {dict2.container["GROUP_NO"] = _supportMeshEntity->getEntityName();
-        //        std::cout << "GROUP_NO " <<  _supportMeshEntity->getEntityName() << std::endl;
+                {dict2.container["GROUP_NO"] = _supportMeshEntity->getName();
+        //        std::cout << "GROUP_NO " <<  _supportMeshEntity->getName() << std::endl;
                 } 
             else if ( _supportMeshEntity->getType()  ==  GroupOfElementsType )
-                dict2.container["GROUP_MA"] = _supportMeshEntity->getEntityName();
+                dict2.container["GROUP_MA"] = _supportMeshEntity->getName();
         }
         listeLoad.push_back( dict2 );
         //mot-clé facteur

@@ -68,9 +68,9 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
             else
             {
                 if ( tmp->getType() == GroupOfNodesType )
-                    dict2.container[ "GROUP_NO" ] = tmp->getEntityName();
+                    dict2.container[ "GROUP_NO" ] = tmp->getName();
                 else if ( tmp->getType() == GroupOfElementsType )
-                    dict2.container[ "GROUP_MA" ] = tmp->getEntityName();
+                    dict2.container[ "GROUP_MA" ] = tmp->getName();
             }
 
             const std::string nomComp = curIter->getAsterCoordinateName();
