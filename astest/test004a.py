@@ -58,6 +58,7 @@ statNonLine.setMaterialOnMesh( affectMat )
 statNonLine.setLinearSolver( monSolver )
 #statNonLine.setLineSearchMethod( lineSearch )
 Elas = code_aster.Behaviour( code_aster.Elas, code_aster.SmallDeformation ); 
+#Elas = code_aster.Behaviour();
 statNonLine.addBehaviourOnElements( Elas );
 
 temps = [0., 0.5, 1.]
@@ -78,7 +79,7 @@ timeList.build()
 statNonLine.setLoadStepManager( timeList ) 
 # Run the nonlinear analysis
 resu = statNonLine.execute()
-resu.debugPrint( 6 )
+#resu.debugPrint( 6 )
 
 # at least it pass here!
 test.assertTrue( True )

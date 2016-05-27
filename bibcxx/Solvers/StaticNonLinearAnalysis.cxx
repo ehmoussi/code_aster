@@ -113,7 +113,10 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
         }
         dict.container["COMPORTEMENT"] = listeComportement;
     }
- 
+    
+    if ( _linearSolver != NULL ) 
+        dict.container[ "SOLVEUR" ] = _linearSolver->buildListSyntax();
+
     if (_lineSearch != NULL )
     	{ ListSyntaxMapContainer listLineSearch;
     	const ListGenParam& listParamLineSearch = _lineSearch->getListOfParameters();

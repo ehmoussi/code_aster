@@ -66,6 +66,13 @@ class BehaviourInstance
         {
         _relation = std::string( ConstitutiveLawNames[ (int)_constitutiveLaw ] );
 	_deformation = std::string( DeformationNames[ (int)_deformationType ] );
+        _resi_cplan_rela=1.E-06;
+        _iter_cplan_maxi = 1;
+        _parm_theta = 1.0;
+        _parm_alpha= 1.0 ;
+        _iter_inte_maxi = 20; 
+        _resi_inte_rela = 1.E-06;
+        _iter_inte_pas = 0; 
 
         _listOfParameters.push_back( &_relation );
         _listOfParameters.push_back( &_relation_kit );
