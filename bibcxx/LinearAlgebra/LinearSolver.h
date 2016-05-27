@@ -305,7 +305,10 @@ class LinearSolverInstance: public DataStructure
             _listOfParameters.push_back( &_stopSingular );
             _listOfParameters.push_back( &_resolutionType );
         };
-
+        /** @brief Returns a ListSyntaxMapContainer object "listsyntax", 
+            ready to be inserted  in a CommandSyntax object with the key SOLVEUR 
+        */
+        ListSyntaxMapContainer buildListSyntax();
         /**
          * @brief Construction de la sd_solveur
          * @return vrai si tout s'est bien passé

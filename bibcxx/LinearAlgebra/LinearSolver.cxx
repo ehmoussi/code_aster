@@ -43,17 +43,11 @@ const std::set< Renumbering > WrapPetsc::setOfAllowedRenumbering( PetscRenumberi
 const std::set< Renumbering > WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering,
                                                             GcpcRenumbering + nbRenumberingGcpc );
 
-bool LinearSolverInstance::build()
+
+
+ListSyntaxMapContainer LinearSolverInstance::buildListSyntax()
 {
-    std::string newName( getName() );
-    newName.resize( 19, ' ' );
-
-    // Definition du bout de fichier de commande pour SOLVEUR
-    CommandSyntaxCython cmdSt( "SOLVEUR" );
-    cmdSt.setResult( getName(), getType() );
-
     ListSyntaxMapContainer listeSolver;
-    SyntaxMapContainer dict;
     SyntaxMapContainer dict1;
     dict1.container[ "METHODE" ] = getSolverName();
     dict1.container[ "RENUM" ] = getRenumberingName();
@@ -65,6 +59,21 @@ bool LinearSolverInstance::build()
     dict1.container[ "LOW_RANK_TAILLE" ] = -1.0;
     dict1.container[ "LOW_RANK_SEUIL" ] = 0.0;
     listeSolver.push_back( dict1 );
+    return listeSolver; 
+};
+
+bool LinearSolverInstance::build()
+{
+    std::string newName( getName() );
+    newName.resize( 19, ' ' );
+
+    // Definition du bout de fichier de commande pour SOLVEUR
+    CommandSyntaxCython cmdSt( "SOLVEUR" );
+    cmdSt.setResult( getName(), getType() );
+
+    SyntaxMapContainer dict;
+    ListSyntaxMapContainer listeSolver = this->buildListSyntax(); 
+   
     dict.container[ "SOLVEUR" ] = listeSolver;
     cmdSt.define( dict );
 
