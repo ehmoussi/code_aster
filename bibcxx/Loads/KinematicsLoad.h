@@ -72,8 +72,8 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedAcousticDOFOnElements( std::string nameOfGroup,
-                                              double value ) throw ( std::runtime_error )
+        bool addImposedAcousticDOFOnElements( const std::string& nameOfGroup,
+                                              const double& value ) throw ( std::runtime_error )
         {
             throw std::runtime_error( "Not yet implemented" );
         };
@@ -84,7 +84,7 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedAcousticDOFOnNodes( std::string nameOfGroup,
+        bool addImposedAcousticDOFOnNodes( const std::string& nameOfGroup,
                                            double value ) throw ( std::runtime_error )
         {
             throw std::runtime_error( "Not yet implemented" );
@@ -96,8 +96,9 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedMechanicalDOFOnElements( PhysicalQuantityComponent coordinate, double value,
-                                                std::string nameOfGroup ) throw ( std::runtime_error )
+        bool addImposedMechanicalDOFOnElements( const PhysicalQuantityComponent& coordinate,
+                                                const double& value,
+                                                const std::string& nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
@@ -118,8 +119,9 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedMechanicalDOFOnNodes( PhysicalQuantityComponent coordinate, double value,
-                                             std::string nameOfGroup ) throw ( std::runtime_error )
+        bool addImposedMechanicalDOFOnNodes( const PhysicalQuantityComponent& coordinate,
+                                             const double& value,
+                                             const std::string& nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
@@ -140,8 +142,9 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedThermalDOFOnElements( PhysicalQuantityComponent coordinate, double value,
-                                             std::string nameOfGroup ) throw ( std::runtime_error )
+        bool addImposedThermalDOFOnElements( const PhysicalQuantityComponent& coordinate,
+                                             const double& value,
+                                             const std::string& nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides
@@ -162,8 +165,9 @@ class KinematicsLoadInstance: public DataStructure
          * @param value Valeur imposee
          * @return Booleen indiquant que tout s'est bien passe
          */
-        bool addImposedThermalDOFOnNodes( PhysicalQuantityComponent coordinate, double value,
-                                          std::string nameOfGroup ) throw ( std::runtime_error )
+        bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent& coordinate,
+                                          const double& value,
+                                          const std::string& nameOfGroup ) throw ( std::runtime_error )
         {
             // On verifie que le pointeur vers le modele support ET que le modele lui-meme
             // ne sont pas vides

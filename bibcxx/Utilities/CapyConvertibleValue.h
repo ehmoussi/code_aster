@@ -205,9 +205,9 @@ public:
                                        Type >::type BaseType;
 
     /** @typedef Definition du type correspondant au type de base de Type (entier, double ou chaine) */
-    typedef typename std::conditional< std::is_same< BaseType, int >::value ||
-                                       std::is_same< BaseType, double >::value,
-                                       Type, std::string >::type BaseMatchingType;
+    typedef typename std::conditional< is_vector< MatchingType >::value,
+                                       typename is_vector< MatchingType >::value_type,
+                                       MatchingType >::type BaseMatchingType;
 
     typedef std::vector< BaseType > VectorOfBaseTypes;
     typedef typename VectorOfBaseTypes::const_iterator VectorOfBaseTypesCIter;
