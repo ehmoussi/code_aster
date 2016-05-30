@@ -427,8 +427,10 @@ class CapyConvertibleContainer
 private:
     /** @typedef Definition d'un map associant le nom d'un GenericCapyConvertibleValue à l'objet */
     typedef std::map< std::string, CapyValuePtr > MapOfCapyValuePtr;
-    /** @typedef Itérateur constant sur un MapOfCapyValuePtr */
+    /** @typedef Itérateur sur un MapOfCapyValuePtr */
     typedef MapOfCapyValuePtr::iterator MapOfCapyValuePtrIter;
+    /** @typedef Itérateur constant sur un MapOfCapyValuePtr */
+    typedef MapOfCapyValuePtr::const_iterator MapOfCapyValuePtrCIter;
     /** @typedef Map contenant les mots-clés */
     MapOfCapyValuePtr _container;
 
@@ -474,10 +476,10 @@ public:
      * @brief Permet de convertir le CapyConvertibleContainer en SyntaxMapContainer
      * @return Le SyntaxMapContainer résultat
      */
-    SyntaxMapContainer toSyntaxMapContainer()
+    SyntaxMapContainer toSyntaxMapContainer() const
     {
         ListGenParam lParam;
-        for( MapOfCapyValuePtrIter curIter = _container.begin();
+        for( MapOfCapyValuePtrCIter curIter = _container.begin();
              curIter != _container.end();
              ++curIter )
         {
@@ -495,6 +497,88 @@ public:
              ++curIter )
         {
             delete *curIter;
+        }
+        return toReturn;
+    };
+};
+
+class CapyConvertibleFactorKeyword
+{
+private:
+    typedef std::vector< CapyConvertibleContainer > VectorCCC;
+    typedef VectorCCC::const_iterator VectorCCCCIter;
+
+    std::string _name;
+    VectorCCC   _container;
+
+public:
+    CapyConvertibleFactorKeyword( std::string name ): _name( name )
+    {};
+
+    void addContainer( const CapyConvertibleContainer& toAdd )
+    {
+        _container.push_back( toAdd );
+    };
+
+    const std::string& getName() const
+    {
+        return _name;
+    };
+
+    /**
+     * @brief Permet de convertir le CapyConvertibleFactorKeyword en ListSyntaxMapContainer
+     * @return Le SyntaxMapContainer résultat
+     */
+    ListSyntaxMapContainer toSyntaxMapContainer() const
+    {
+        ListSyntaxMapContainer toReturn;
+        for( VectorCCCCIter curIter = _container.begin();
+             curIter != _container.end();
+             ++curIter )
+        {
+            toReturn.push_back( curIter->toSyntaxMapContainer() );
+        }
+        return toReturn;
+    };
+};
+
+typedef std::vector< CapyConvertibleFactorKeyword > VectorCCFK;
+typedef VectorCCFK::const_iterator VectorCCFKCIter;
+
+class CapyConvertibleSyntax
+{
+private:
+    CapyConvertibleContainer _skwContainer;
+    VectorCCFK               _fkwContainer;
+
+public:
+    CapyConvertibleSyntax()
+    {};
+
+    void addFactorKeywordValues( const CapyConvertibleFactorKeyword& toAdd )
+    {
+        _fkwContainer.push_back( toAdd );
+    };
+
+    void setSimpleKeywordValues( const CapyConvertibleContainer& toAdd )
+    {
+        _skwContainer = toAdd;
+    };
+
+    /**
+     * @brief Permet de convertir le CapyConvertibleSyntax en SyntaxMapContainer
+     * @return Le SyntaxMapContainer résultat
+     */
+    SyntaxMapContainer toSyntaxMapContainer()
+    {
+        SyntaxMapContainer toReturn = _skwContainer.toSyntaxMapContainer();
+
+        for( VectorCCFKCIter curIter = _fkwContainer.begin();
+             curIter != _fkwContainer.end();
+             ++curIter )
+        {
+            const std::string& iterName = curIter->getName();
+            toReturn.container[ iterName ] = curIter->toSyntaxMapContainer();
         }
         return toReturn;
     };
