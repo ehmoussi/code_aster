@@ -53,7 +53,7 @@ class ListOfLoadsInstance: public DataStructure
         JeveuxVectorChar24 _list;
         /** @brief .FCHA */
         JeveuxVectorChar24 _listOfFunctions;
-        /** @brief La matrice est elle vide ? */
+        /** @brief La chargement est-il vide ? */
         bool               _isEmpty;
 
     public:
