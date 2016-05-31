@@ -101,11 +101,5 @@ public:
  * @brief Pointeur intelligent vers un ThermalLoadInstance
  */
 typedef boost::shared_ptr< ThermalLoadInstance > ThermalLoadPtr;
-/** @typedef std::list de ThermalLoad */
-typedef std::list< ThermalLoadPtr > ListThermalLoad;
-/** @typedef Iterateur sur une std::list de ThermalLoad */
-typedef ListThermalLoad::iterator ListThermalLoadIter;
-/** @typedef Iterateur constant sur une std::list de ThermalLoad */
-typedef ListThermalLoad::const_iterator ListThermalLoadCIter;
 
 #endif /* THERMALLOAD_H_ */
