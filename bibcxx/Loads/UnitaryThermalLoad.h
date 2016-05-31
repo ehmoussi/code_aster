@@ -38,21 +38,35 @@
 class UnitaryThermalLoadInstance: public DataStructure
 {
 private:
-    /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
-    typedef std::vector< MeshEntityPtr > VectorMeshEntity;
-
-    VectorMeshEntity _entity;
 
 public:
     /**
      * @brief Constructeur
      */
-    UnitaryThermalLoadInstance();
+    UnitaryThermalLoadInstance()
+    {};
+};
+
+class ImposedTemperatureInstance: public UnitaryThermalLoadInstance
+{
+private:
+    /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
+    typedef boost::shared_ptr< GroupOfNodes > GroupOfNodesPtr;
+    typedef std::vector< GroupOfNodesPtr > VectorGroupOfNodes;
+
+    VectorGroupOfNodes _entity;
+
+public:
+    /**
+     * @brief Constructeur
+     */
+    ImposedTemperatureInstance()
+    {};
 
     void addGroupOfNodes( const std::string& nameOfGroup )
     {
-        _entity.push_back( MeshEntityPtr( new GroupOfNodes( nameOfGroup ) ) );
+        std::cout << "COUCOU" << std::endl;
+        _entity.push_back( GroupOfNodesPtr( new GroupOfNodes( nameOfGroup ) ) );
     };
 };
 
@@ -61,11 +75,12 @@ public:
  * @brief Pointeur intelligent vers un UnitaryThermalLoadInstance
  */
 typedef boost::shared_ptr< UnitaryThermalLoadInstance > UnitaryThermalLoadPtr;
+typedef boost::shared_ptr< ImposedTemperatureInstance > ImposedTemperaturePtr;
 /** @typedef std::list de UnitaryThermalLoad */
-typedef std::list< UnitaryThermalLoadPtr > ListKineLoad;
+typedef std::list< UnitaryThermalLoadPtr > ListThermalLoad;
 /** @typedef Iterateur sur une std::list de UnitaryThermalLoad */
-typedef ListKineLoad::iterator ListKineLoadIter;
+typedef ListThermalLoad::iterator ListThermalLoadIter;
 /** @typedef Iterateur constant sur une std::list de UnitaryThermalLoad */
-typedef ListKineLoad::const_iterator ListKineLoadCIter;
+typedef ListThermalLoad::const_iterator ListThermalLoadCIter;
 
 #endif /* UNITARYTHERMALLOAD_H_ */
