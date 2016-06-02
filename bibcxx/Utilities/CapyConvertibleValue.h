@@ -276,11 +276,12 @@ private:
      * @return Pointeur vers un GenParam
      * @warning la gestion du pointeur est déléguée à l'appelant !!
      */
-    template< typename T = Type >
-    typename std::enable_if< std::is_same< T, int >::value ||
+    template< typename T = Type, typename M = MatchingType >
+    typename std::enable_if< (std::is_same< T, int >::value ||
                              std::is_same< T, double>::value ||
                              std::is_same< T, std::vector< double > >::value ||
-                             std::is_same< T, std::vector< int > >::value, GenParam* >::type
+                             std::is_same< T, std::vector< int > >::value) &&
+                             !std::is_same< M, std::string >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
         if( _isSet )
@@ -289,12 +290,24 @@ private:
             return new GenParam( _name, _isMandatory );
     };
 
+    template< typename T = Type, typename M = MatchingType >
+    typename std::enable_if< ( std::is_same< T, int >::value ||
+                               std::is_same< T, double>::value ) &&
+                             std::is_same< M, std::string >::value, GenParam* >::type
+    virtualGetValueOfKeyWord() const throw ( std::runtime_error )
+    {
+        MapConstIterator curIter = _matchingValues.find( *_value );
+        if ( curIter == _matchingValues.end() )
+            throw std::runtime_error( "Programming error" );
+        return new GenParam( _name, (*curIter).second, _isMandatory );
+    };
+
     /**
      * @brief Traducteur du mot-clé dans le cas vecteur
      * @return Pointeur vers un GenParam
      * @warning la gestion du pointeur est déléguée à l'appelant !!
      */
-    template< typename T = Type >
+    template< typename T = Type, typename M = MatchingType >
     typename std::enable_if< is_vector< T >::value &&
                              !std::is_same< T, std::vector< double > >::value &&
                              !std::is_same< T, std::vector< int > >::value &&
@@ -325,7 +338,7 @@ private:
      * @return Pointeur vers un GenParam
      * @warning la gestion du pointeur est déléguée à l'appelant !!
      */
-    template< typename T = Type >
+    template< typename T = Type, typename M = MatchingType >
     typename std::enable_if< std::is_same< T, std::vector< DataStructurePtr > >::value ||
                              std::is_same< T, std::vector< MeshEntityPtr > >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
@@ -350,8 +363,9 @@ private:
      * @return Pointeur vers un GenParam
      * @warning la gestion du pointeur est déléguée à l'appelant !!
      */
-    template< typename T = Type >
-    typename std::enable_if< std::is_same< T, DataStructurePtr >::value, GenParam* >::type
+    template< typename T = Type, typename M = MatchingType >
+    typename std::enable_if< std::is_same< T, DataStructurePtr >::value ||
+                             std::is_same< T, MeshEntityPtr >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
         if( _isSet )
@@ -365,7 +379,7 @@ private:
      * @return Pointeur vers un GenParam
      * @warning la gestion du pointeur est déléguée à l'appelant !!
      */
-    template< typename T = Type >
+    template< typename T = Type, typename M = MatchingType >
     typename std::enable_if< !std::is_same< T, int >::value &&
                              !std::is_same< T, double>::value &&
                              !std::is_same< T, std::vector< double > >::value &&
@@ -373,10 +387,12 @@ private:
                              !is_vector< T >::value &&
                              !std::is_same< T, std::vector< DataStructurePtr > >::value &&
                              !std::is_same< T, std::vector< MeshEntityPtr > >::value &&
-                             !std::is_same< T, DataStructurePtr >::value, GenParam* >::type
+                             !std::is_same< T, DataStructurePtr >::value &&
+                             !std::is_same< T, MeshEntityPtr >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
         MapConstIterator curIter = _matchingValues.find( *_value );
+        std::cout << _name << ", curIter " << (*curIter).first << " " << (*curIter).second << std::endl;
         if ( curIter == _matchingValues.end() )
             throw std::runtime_error( "Programming error" );
         return new GenParam( _name, (*curIter).second, _isMandatory );
@@ -389,7 +405,7 @@ private:
      */
     GenParam* getValueOfKeyWord() const throw ( std::runtime_error )
     {
-        return virtualGetValueOfKeyWord< Type >();
+        return virtualGetValueOfKeyWord< Type, MatchingType >();
     };
 
 public:
@@ -569,7 +585,7 @@ public:
      * @brief Permet de convertir le CapyConvertibleSyntax en SyntaxMapContainer
      * @return Le SyntaxMapContainer résultat
      */
-    SyntaxMapContainer toSyntaxMapContainer()
+    SyntaxMapContainer toSyntaxMapContainer() const
     {
         SyntaxMapContainer toReturn = _skwContainer.toSyntaxMapContainer();
 

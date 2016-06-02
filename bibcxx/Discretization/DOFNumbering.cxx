@@ -68,7 +68,7 @@ bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
     else if ( ! _supportMatrix.use_count() == 0 )
     {
         CommandSyntaxCython cmdSt( "NUME_DDL" );
-        cmdSt.setResult( getResultObjectName(), getType() );
+        cmdSt.setResult( getName(), getType() );
 
         SyntaxMapContainer dict;
         if ( _supportMatrix->isEmpty() )

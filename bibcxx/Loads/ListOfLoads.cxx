@@ -106,11 +106,11 @@ FieldOnNodesDoublePtr ListOfLoadsInstance::buildKinematicsLoad( const ForwardDOF
     std::string dofNumName = curDOFNum.getName();
 
     std::string lLoadName = _list->getName();
-    lLoadName.resize(24);
+    lLoadName.resize(24, ' ');
     std::string infLoadName = _loadInformations->getName();
-    infLoadName.resize(24);
+    infLoadName.resize(24, ' ');
     std::string funcLoadName = _listOfFunctions->getName();
-    funcLoadName.resize(24);
+    funcLoadName.resize(24, ' ');
 
     CALL_ASCAVC( lLoadName.c_str(), infLoadName.c_str(), funcLoadName.c_str(),
                  dofNumName.c_str(), &time, resuName.c_str() );

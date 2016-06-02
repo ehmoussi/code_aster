@@ -214,10 +214,10 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
 {
     if ( _isEmpty )
         throw std::runtime_error( "Assembly matrix is empty" );
-    if ( ! _linSolv )
-        throw std::runtime_error( "Linear solver is missing" );
-    if ( _linSolv.isEmpty() )
-        throw std::runtime_error( "Linear solver is empty" );
+//     if ( ! _linSolv )
+//         throw std::runtime_error( "Linear solver is missing" );
+//     if ( _linSolv.isEmpty() )
+//         throw std::runtime_error( "Linear solver is empty" );
 
     CommandSyntaxCython cmdSt( "FACTORISER" );
     cmdSt.setResult( getName(), getType() );

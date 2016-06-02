@@ -59,6 +59,7 @@ class ElementaryVectorInstance: public DataStructure
 
         /** @brief Liste de charges */
         ListOfLoadsPtr     _listOfLoads;
+        VectorInt          _matchingVector;
 
     public:
         /**

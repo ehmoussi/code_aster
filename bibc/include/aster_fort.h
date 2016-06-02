@@ -237,6 +237,9 @@ void DEFSSSSPS(ASCAVC,ascavc, const char*, STRING_SIZE, const char*, STRING_SIZE
                               const char*, STRING_SIZE, const char*, STRING_SIZE,
                               const DOUBLE*, const char*, STRING_SIZE );
 
+#define CALL_CORICH(a, b, c, d) CALLSSPP(CORICH, corich, a, b, c, d)
+void DEFSSPP(CORICH,corich, const char*, STRING_SIZE, const char*, STRING_SIZE, INTEGER*, INTEGER*);
+
 #define CALL_DETRSD(a, b) CALLSS(DETRSD, detrsd, a, b)
 void DEFSS(DETRSD,detrsd, const char*, STRING_SIZE, const char*, STRING_SIZE);
 

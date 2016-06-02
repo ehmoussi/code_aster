@@ -47,9 +47,32 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
     if ( (! currentNumerotation ) || currentNumerotation->isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
 
-    FieldOnNodesDoublePtr vectTmp( new FieldOnNodesDoubleInstance( memType ) );
+    FieldOnNodesDoublePtr vectTmp( new FieldOnNodesDoubleInstance( Permanent ) );
     std::string name( " " );
-    name.resize( 24 );
+    name.resize( 24, ' ' );
+
+    /* Le bloc qui suit sert à appeler CORICH car ASASVE et ASCOVA attendent un objet
+       qui est construit par CORICH (tableau de correspondance resuelem <-> charge) */
+    // Il n'est pas nécessaire de faire le ménage c'est ASCOVA qui s'en occupe
+    _listOfLoads->build();
+    CommandSyntaxCython cmdSt( "ASSE_VECT_ELEM" );
+    cmdSt.setResult( vectTmp->getName(), vectTmp->getType() );
+    SyntaxMapContainer dict;
+    dict.container[ "OPTION" ] = "CHAR_MECA";
+    cmdSt.define( dict );
+    if( _listOfLoads->getListOfMechanicalLoads().size() != _matchingVector.size() )
+        throw std::runtime_error( "Programming error" );
+
+    _listOfElementaryResults->updateValuePointer();
+    for( long i = 1; i <= _matchingVector.size(); ++i )
+    {
+        std::string detr( "E" );
+        std::string vectElem( (*_listOfElementaryResults)[i-1].c_str() );
+        vectElem.resize( 24, ' ' );
+        long in;
+        CALL_CORICH( detr.c_str(), vectElem.c_str(), &i, &in);
+    }
+    /**/
 
     std::string typres( "R" );
     CALL_ASASVE( getName().c_str(), currentNumerotation->getName().c_str(), typres.c_str(),
@@ -61,10 +84,15 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
     if ( ! lOF.isEmpty() )
         fomult = lOF->getName();
     std::string param( "INST" );
+
+    JeveuxVectorChar24 vectTmp2( name );
+    vectTmp2->updateValuePointer();
+    std::string name2( (*vectTmp2)[0].toString(), 0, 19 );
+    FieldOnNodesDoublePtr vectTmp3( new FieldOnNodesDoubleInstance( name2 ) );
+    vectTmp->allocateFrom( *vectTmp3 );
+
     CALL_ASCOVA( detr.c_str(), name.c_str(), fomult.c_str(), param.c_str(), &time,
                  typres.c_str(), vectTmp->getName().c_str() );
-
-    _isEmpty = false;
 
     return vectTmp;
 };
@@ -90,10 +118,15 @@ bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_err
     if ( listOfMechanicalLoad.size() != 0 )
     {
         VectorString tmp;
+        int i = 0;
         for ( ListMecaLoadCIter curIter = listOfMechanicalLoad.begin();
               curIter != listOfMechanicalLoad.end();
               ++curIter )
+        {
             tmp.push_back( (*curIter)->getName() );
+            _matchingVector.push_back(i);
+            ++i;
+        }
         dict.container[ "CHARGE" ] = tmp;
     }
     cmdSt.define( dict );
@@ -108,6 +141,12 @@ bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_err
         throw;
     }
     _isEmpty = false;
+    std::cout << "Impression du ElementaryVector " << _listOfElementaryResults->size() << std::endl;
+    _listOfElementaryResults->updateValuePointer();
+//     for( int i = 0; i < _listOfElementaryResults->size(); ++i )
+//     {
+//         std::cout << "Occ " << i << " " << (*_listOfElementaryResults)[i] << std::endl;
+//     }
 
     return true;
 };
