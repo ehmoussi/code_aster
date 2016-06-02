@@ -18,17 +18,36 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+from libcpp.vector cimport vector
 
-#from code_aster.Mesh.Mesh cimport MeshPtr
+from code_aster.Function.Function cimport FunctionPtr
 
 
-cdef extern from "Interaction/ContactZone.h":
+cdef extern from "Interactions/ContactZone.h":
+
+    cdef enum NormTypeEnum:
+        cMasterNorm "MasterNorm"
+        cSlaveNorm "SlaveNorm"
+        cAverageNorm "AverageNorm"
+
+    ctypedef vector[ double] VectorDouble
 
     cdef cppclass ContactZoneInstance:
 
         ContactZoneInstance()
-        void addMasterGroupOfElements( string nameOfGroup ) except +
-        void addSlaveGroupOfElements( string nameOfGroup ) except +
+        void addBeamDescription() except +
+        void addPlateDescription() except +
+        void addMasterGroupOfElements(const string& nameOfGroup)
+        void addSlaveGroupOfElements(const string& nameOfGroup)
+        void disableResolution(const double& tolInterp)
+        void excludeGroupOfElementsFromSlave(const string& name)
+        void excludeGroupOfNodesFromSlave(const string& name)
+        void setFixMasterVector(const VectorDouble& absc)
+        void setMasterDistanceFunction(const FunctionPtr&)
+        void setSlaveDistanceFunction(const FunctionPtr&)
+        void setPairingVector(const VectorDouble& absc)
+        void setTangentMasterVector(const VectorDouble& absc)
+        void setNormType(const NormTypeEnum& normType)
         #void debugPrint( int logicalUnit )
 
     cdef cppclass ContactZonePtr:

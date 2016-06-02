@@ -27,15 +27,9 @@
 #include "Utilities/CapyConvertibleValue.h"
 
 #include "Modeling/Model.h"
-
-/**
- * @enum ContactFormulationEnum
- * @brief Tous les types de contact disponibles
- * @author Nicolas Sellenet
- */
-enum ContactFormulationEnum { Discretized, Continuous, Xfem, UnilateralConnexion };
-extern const std::vector< ContactFormulationEnum > allContactFormulation;
-extern const std::vector< std::string > allContactFormulationNames;
+#include "Interactions/ContactZone.h"
+#include "DataStructure/DataStructure.h"
+#include "RunManager/CommandSyntaxCython.h"
 
 /**
  * @enum FrictionEnum
@@ -80,9 +74,10 @@ extern const std::vector< std::string > allContactPrecondNames;
  * @author Nicolas Sellenet
  */
 template< ContactFormulationEnum formulation >
-class ContactDefinition
+class ContactDefinition: public DataStructure
 {
 private:
+    bool                             _isEmpty;
     /** @brief sd_model */
     ModelPtr                         _model;
     /** @brief Formulation du contact */
@@ -140,19 +135,26 @@ private:
     bool                             _normsVerification;
 
     /** @brief Conteneur des mots-clés avec traduction */
-    CapyConvertibleContainer _toCapyConverter;
+    CapyConvertibleContainer         _toCapyConverter;
+
+    typedef std::vector< GenericContactZonePtr > VectorContactZone;
+    typedef VectorContactZone::const_iterator VectorContactZoneIter;
+    VectorContactZone                _contactZones;
 
     /**
      * @brief Ajout de mots-clés généraux
      */
     bool addContactDefinition()
     {
+        _stopOnInterpenetrationDetection = false;
         _toCapyConverter.add( new CapyConvertibleValue< bool >
                                                       ( false, "STOP_INTERP", _stopOnInterpenetrationDetection,
                                                         { true, false }, { "OUI", "NON" } ) );
+        _normsSmooth = false;
         _toCapyConverter.add( new CapyConvertibleValue< bool >
                                                       ( false, "LISSAGE", _normsSmooth,
                                                         { true, false }, { "OUI", "NON" } ) );
+        _normsVerification = true;
         _toCapyConverter.add( new CapyConvertibleValue< bool >
                                                       ( false, "VERI_NORM", _normsVerification,
                                                         { true, false }, { "OUI", "NON" } ) );
@@ -285,7 +287,9 @@ public:
     /**
      * @brief Constructeur
      */
-    ContactDefinition(): _formulation( formulation ),
+    ContactDefinition(): DataStructure( getNewResultObjectName(), "CONTACT" ),
+                         _isEmpty( true ),
+                         _formulation( formulation ),
                          _friction( WithoutFriction )
     {
         _toCapyConverter.add( new CapyConvertibleValue< ContactFormulationEnum >
@@ -311,6 +315,20 @@ public:
 
 public:
     /**
+     * @brief Ajouter une zone de contact
+     * @todo Rajouter des verifs sur la présence des groupes de mailles, du frottement, ...
+     */
+    void addContactZone( const ContactZonePtr& zone )
+    {
+        _contactZones.push_back( zone );
+    };
+
+    /**
+     * @brief Construction de l'objet ContactDefinition
+     */
+    bool build() throw ( std::runtime_error );
+
+    /**
      * @brief Activer le frottement
      */
     template< ContactFormulationEnum form = formulation >
@@ -335,7 +353,7 @@ public:
      * @brief Ajout du modèle
      * @param model Pointeur vers un ModelInstance
      */
-    void setModel( ModelPtr& model )
+    void setModel( const ModelPtr& model )
     {
         _model = model;
     };
@@ -346,7 +364,8 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous || form == Discretized || form == Xfem, void>::type
-    setGeometricResolutionAlgorithm( GeometricResolutionAlgorithmEnum curAlgo ) throw( std::runtime_error )
+    setGeometricResolutionAlgorithm( const GeometricResolutionAlgorithmEnum& curAlgo )
+        throw( std::runtime_error )
     {
         if ( curAlgo == Newton && formulation != Continuous )
             throw std::runtime_error( "The Newton algorithm only allowed with the continuous contact" );
@@ -366,7 +385,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous || form == Discretized || form == Xfem, void>::type
-    setGeometricUpdate( GeometricUpdateEnum curUp ) throw( std::runtime_error )
+    setGeometricUpdate( const GeometricUpdateEnum& curUp ) throw( std::runtime_error )
     {
         _reacGeom = curUp;
         if ( _algoResoGeom != FixPoint )
@@ -403,7 +422,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous || form == Discretized || form == Xfem, void>::type
-    setMaximumNumberOfGeometricIteration( int value ) throw( std::runtime_error )
+    setMaximumNumberOfGeometricIteration( const int& value ) throw( std::runtime_error )
     {
         if ( _reacGeom != Auto )
             throw std::runtime_error( "Only available with automatic geometric update" );
@@ -416,7 +435,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous || form == Discretized || form == Xfem, void>::type
-    setGeometricResidual( double value ) throw( std::runtime_error )
+    setGeometricResidual( const double& value ) throw( std::runtime_error )
     {
         if ( _reacGeom != Auto )
             throw std::runtime_error( "Only available with automatic geometric update" );
@@ -429,7 +448,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous || form == Discretized || form == Xfem, void>::type
-    setNumberOfGeometricIteration( int value ) throw( std::runtime_error )
+    setNumberOfGeometricIteration( const int& value ) throw( std::runtime_error )
     {
         if ( _reacGeom != Controlled )
             throw std::runtime_error( "Only available with controlled geometric update" );
@@ -442,7 +461,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous || form == Discretized, void>::type
-    setNormsSmooth( bool curBool )
+    setNormsSmooth( const bool& curBool )
     {
         _normsSmooth = curBool;
     };
@@ -453,7 +472,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous || form == Discretized, void>::type
-    setNormsVerification( bool curBool )
+    setNormsVerification( const bool& curBool )
     {
         _normsSmooth = curBool;
     };
@@ -464,7 +483,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous || form == Discretized, void>::type
-    setStopOnInterpenetrationDetection( bool curBool )
+    setStopOnInterpenetrationDetection( const bool& curBool )
     {
         _stopOnInterpenetrationDetection = curBool;
     };
@@ -477,7 +496,8 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous, void>::type
-    setContactAlgorithm( GeometricResolutionAlgorithmEnum algo, int mode, int coef )
+    setContactAlgorithm( const GeometricResolutionAlgorithmEnum& algo,
+                         const int& mode, const int& coef )
         throw( std::runtime_error )
     {
         _algoContact = algo;
@@ -508,7 +528,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Discretized, void>::type
-    setContactAlgorithm( int coef )
+    setContactAlgorithm( const int& coef )
         throw( std::runtime_error )
     {
         _iterContMult = coef;
@@ -521,7 +541,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Xfem, void>::type
-    setContactAlgorithm( int mode, int coef )
+    setContactAlgorithm( const int& mode, const int& coef )
         throw( std::runtime_error )
     {
         if ( mode != 0 && mode != 1 )
@@ -547,7 +567,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous, void>::type
-    setFrictionAlgorithm( GeometricResolutionAlgorithmEnum algo )
+    setFrictionAlgorithm( const GeometricResolutionAlgorithmEnum& algo )
         throw( std::runtime_error )
     {
         _frictionAlgo = algo;
@@ -571,7 +591,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous || form == Xfem, void>::type
-    setFrictionResidual( double value )
+    setFrictionResidual( const double& value )
     {
         _resiFrot = value;
     };
@@ -582,7 +602,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Continuous || form == Xfem, void>::type
-    setNumberOfFrictionIteration( int value ) throw( std::runtime_error )
+    setNumberOfFrictionIteration( const int& value ) throw( std::runtime_error )
     {
         if ( formulation == Continuous && _frictionAlgo != FixPoint )
             throw std::runtime_error( "Number of friction iteration only available with fix point algorithm" );
@@ -595,7 +615,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Discretized, void>::type
-    enableContactMatrixSingularityDetection( bool value )
+    enableContactMatrixSingularityDetection( const bool& value )
     {
         _stopSingular = value;
     };
@@ -606,7 +626,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Discretized, void>::type
-    numberOfSolversForSchurComplement( int value )
+    numberOfSolversForSchurComplement( const int& value )
     {
         _nbResol = value;
     };
@@ -617,7 +637,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Discretized, void>::type
-    setResidualForGcp( double value )
+    setResidualForGcp( const double& value )
     {
         _resiAbso = value;
     };
@@ -628,7 +648,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Discretized, void>::type
-    allowOutOfBoundLinearSearch( bool value )
+    allowOutOfBoundLinearSearch( const bool& value )
     {
         _rechLin = value;
     };
@@ -639,7 +659,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Discretized, void>::type
-    setPreconditioning( ContactPrecondEnum value )
+    setPreconditioning( const ContactPrecondEnum& value )
     {
         _preCond = value;
         if ( _preCond == Dirichlet )
@@ -660,7 +680,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Discretized, void>::type
-    setThresholdOfPreconditioningActivation( double value ) throw( std::runtime_error )
+    setThresholdOfPreconditioningActivation( const double& value ) throw( std::runtime_error )
     {
         _coefResi = value;
         if ( _preCond !=  Dirichlet )
@@ -673,7 +693,7 @@ public:
      */
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Discretized, void>::type
-    setMaximumNumberOfPreconditioningIteration( int value ) throw( std::runtime_error )
+    setMaximumNumberOfPreconditioningIteration( const int& value ) throw( std::runtime_error )
     {
         _iterPreMaxi = value;
         if ( _preCond !=  Dirichlet )
@@ -681,22 +701,57 @@ public:
     };
 };
 
-class ContinuousContactDefinition: public ContactDefinition< Continuous >
+template< ContactFormulationEnum formulation >
+bool ContactDefinition< formulation >::build() throw ( std::runtime_error )
 {
-private:
+    if ( ! _model )
+        throw std::runtime_error( "Support Model not set" );
 
-public:
-    ContinuousContactDefinition(): ContactDefinition< Continuous >()
-    {};
-};
+    CommandSyntaxCython cmdSt( "DEFI_CONTACT" );
+    cmdSt.setResult( getResultObjectName(), "CONTACT" );
 
-class DiscretizedContactDefinition: public ContactDefinition< Discretized >
-{
-private:
+    CapyConvertibleSyntax syntax;
+    syntax.setSimpleKeywordValues( _toCapyConverter );
 
-public:
-    DiscretizedContactDefinition(): ContactDefinition< Discretized >()
-    {};
-};
+    CapyConvertibleFactorKeyword zoneFKW( "ZONE" );
+    for( VectorContactZoneIter curIter = _contactZones.begin();
+         curIter != _contactZones.end();
+         ++curIter )
+    {
+        CapyConvertibleContainer toAdd = (*curIter)->getCapyConvertibleContainer();
+        zoneFKW.addContainer( toAdd );
+    }
+    syntax.addFactorKeywordValues( zoneFKW );
+
+    SyntaxMapContainer test = syntax.toSyntaxMapContainer();
+    cmdSt.define( test );
+
+    // Maintenant que le fichier de commande est pret, on appelle OP0030
+    try
+    {
+        INTEGER op = 30;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    _isEmpty = false;
+    return true;
+}
+
+template class ContactDefinition< Discretized >;
+typedef ContactDefinition< Discretized > DiscretizedContactInstance;
+template class ContactDefinition< Continuous >;
+typedef ContactDefinition< Continuous > ContinuousContactInstance;
+template class ContactDefinition< Xfem >;
+typedef ContactDefinition< Xfem > XfemContactInstance;
+template class ContactDefinition< UnilateralConnexion >;
+typedef ContactDefinition< UnilateralConnexion > UnilateralConnexionInstance;
+
+typedef boost::shared_ptr< DiscretizedContactInstance > DiscretizedContactPtr;
+typedef boost::shared_ptr< ContinuousContactInstance > ContinuousContactPtr;
+typedef boost::shared_ptr< XfemContactInstance > XfemContactPtr;
+typedef boost::shared_ptr< UnilateralConnexionInstance > UnilateralConnexionPtr;
 
 #endif /* CONTACTDEFINITION_H_ */

@@ -17,11 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-#from code_aster.Mesh.Mesh cimport Mesh
+from code_aster.Function.Function cimport Function
 
+MasterNorm, SlaveNorm, AverageNorm = cMasterNorm, cSlaveNorm, cAverageNorm
 
 cdef class ContactZone:
     """Python wrapper on the C++ ContactZone object"""
@@ -48,13 +48,57 @@ cdef class ContactZone:
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
+    def addBeamDescription( self ):
+        """"""
+        self.getInstance().addBeamDescription(  )
+
+    def addPlateDescription( self ):
+        """"""
+        self.getInstance().addPlateDescription(  )
+
     def addMasterGroupOfElements( self, nameOfGroup ):
-        """Add a modeling on all the mesh"""
+        """"""
         self.getInstance().addMasterGroupOfElements( nameOfGroup )
 
     def addSlaveGroupOfElements( self, nameOfGroup ):
-        """Add a modeling on a group of elements"""
+        """"""
         self.getInstance().addSlaveGroupOfElements( nameOfGroup )
+
+    def disableResolution( self, tolInterp = 0. ):
+        """"""
+        self.getInstance().disableResolution( tolInterp )
+
+    def excludeGroupOfElementsFromSlave( self, name ):
+        """"""
+        self.getInstance().excludeGroupOfElementsFromSlave( name )
+
+    def excludeGroupOfNodesFromSlave( self, name ):
+        """"""
+        self.getInstance().excludeGroupOfNodesFromSlave( name )
+
+    def setFixMasterVector( self, absc ):
+        """"""
+        self.getInstance().setFixMasterVector( absc )
+
+    def setMasterDistanceFunction( self, Function func ):
+        """"""
+        self.getInstance().setMasterDistanceFunction( deref( func.getPtr() ) )
+
+    def setSlaveDistanceFunction( self, Function func ):
+        """"""
+        self.getInstance().setSlaveDistanceFunction( deref( func.getPtr() ) )
+
+    def setPairingVector( self, absc ):
+        """"""
+        self.getInstance().setPairingVector( absc )
+
+    def setTangentMasterVector( self, absc ):
+        """"""
+        self.getInstance().setTangentMasterVector( absc )
+
+    def setNormType( self, normType ):
+        """"""
+        self.getInstance().setNormType( normType )
 
     #def debugPrint( self, logicalUnit=6 ):
         #"""Print debug information of the content"""

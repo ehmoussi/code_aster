@@ -21,10 +21,24 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Interaction/ContactZone.h"
+#include "Interactions/ContactZone.h"
+
+const std::vector< ContactFormulationEnum > allContactFormulation = { Discretized, Continuous,
+                                                                      Xfem, UnilateralConnexion };
+const std::vector< std::string > allContactFormulationNames = { "DISCRETE", "CONTINUE",
+                                                                "XFEM", "LIAISON_UNIL" };
 
 const std::vector< NormTypeEnum > allNormType = { MasterNorm, SlaveNorm, AverageNorm };
 const std::vector< std::string > allNormTypeNames = { "MAIT", "ESCL", "MAIT_ESCL" };
 
 const std::vector< PairingEnum > allPairing = { NewtonPairing, FixPairing };
 const std::vector< std::string > allPairingNames = { "PROCHE", "FIXE" };
+
+const std::vector< ContactAlgorithmEnum > allContactAlgorithm = { ConstraintContact, PenalizationContact,
+                                                                  GcpContact, StandardContact,
+                                                                  CzmContact };
+const std::vector< std::string > allContactAlgorithmNames = { "CONTRAINTE", "PENALISATION", "GCP",
+                                                              "STANDARD", "CZM" };
+
+const std::vector< FrictionAlgorithmEnum > allFrictionAlgorithm = { FrictionPenalization, StandardFriction };
+const std::vector< std::string > allFrictionAlgorithmNames = { "PENALISATION", "STANDARD" };
