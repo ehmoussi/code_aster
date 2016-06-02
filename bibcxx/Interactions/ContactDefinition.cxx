@@ -21,11 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Interaction/ContactDefinition.h"
-
-const std::vector< ContactFormulationEnum > allContactFormulation = { Discretized, Continuous,
-                                                                      Xfem, UnilateralConnexion };
-const std::vector< std::string > allContactFormulationNames = { "DISCRET", "CONTINUE", "XFEM", "LIAISON_UNIL" };
+#include "Interactions/ContactDefinition.h"
 
 const std::vector< FrictionEnum > allFrictionParameters = { Coulomb, WithoutFriction };
 const std::vector< std::string > allFrictionParametersNames = { "COULOMB", "SANS" };

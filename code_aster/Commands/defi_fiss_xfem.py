@@ -48,19 +48,19 @@ def DEFI_FISS_XFEM( **kwargs ):
 
     if (shapeName=="ELLIPSE"):
         crackShape.setEllipseCrackShape(fkwDefi.get("DEMI_GRAND_AXE"), fkwDefi.get("DEMI_PETIT_AXE"), fkwDefi.get("CENTRE"), fkwDefi.get("VECT_X"), fkwDefi.get("VECT_Y"), fkwDefi.get("COTE_FISS"), )
-    else if (shapeName=="RECTANGLE"):
+    elif (shapeName=="RECTANGLE"):
         crackShape.setSquareCrackShape(fkwDefi.get("DEMI_GRAND_AXE"), fkwDefi.get("DEMI_PETIT_AXE"), fkwDefi.get("RAYON_CONGE"), fkwDefi.get("CENTRE"), fkwDefi.get("VECT_X"), fkwDefi.get("VECT_Y"), fkwDefi.get("COTE_FISS"), )
-    else if (shapeName=="CYLINDRE"):
+    elif (shapeName=="CYLINDRE"):
         crackShape.setCylinderCrackShape(fkwDefi.get("DEMI_GRAND_AXE"), fkwDefi.get("DEMI_PETIT_AXE"), fkwDefi.get("CENTRE"), fkwDefi.get("VECT_X"), fkwDefi.get("VECT_Y"), )
-    else if (shapeName=="ENTAILLE"):
+    elif (shapeName=="ENTAILLE"):
         crackShape.setNotchCrackShape(fkwDefi.get("DEMI_LONGUEUR"), fkwDefi.get("RAYON_CONGE"), fkwDefi.get("CENTRE"), fkwDefi.get("VECT_X"), fkwDefi.get("VECT_Y"), )
-    else if (shapeName=="DEMI_PLAN"):
+    elif (shapeName=="DEMI_PLAN"):
         crackShape.setHalfPlaneCrackShape(fkwDefi.get("PFON"), fkwDefi.get("DTAN"), fkwDefi.get("NORMALE"), )
-    else if (shapeName=="SEGMENT"):
+    elif (shapeName=="SEGMENT"):
         crackShape.setSegmentCrackShape(fkwDefi.get("PFON_ORIG"), fkwDefi.get("PFON_EXTR"), )
-    else if (shapeName=="DEMI_DROITE"):
+    elif (shapeName=="DEMI_DROITE"):
         crackShape.setHalfLineCrackShape(fkwDefi.get("PFON"), fkwDefi.get("DTAN"), )
-    else if (shapeName=="DROITE"):
+    elif (shapeName=="DROITE"):
         crackShape.setLineCrackShape(fkwDefi.get("POINT"), fkwDefi.get("DTAN"), )
 
     if (fkwDefi.get("FORM_FISS") != None):
@@ -87,11 +87,11 @@ def DEFI_FISS_XFEM( **kwargs ):
 
 
 
-    if (kwargs[ "MAILLAGE_GRILLE" ]) == None and kwargs[ "FISS_GRILLE" ] == None):
+    if (kwargs[ "MAILLAGE_GRILLE" ] == None and kwargs[ "FISS_GRILLE" ] == None):
         fkwJunction = kwargs.get( "JONCTION" )
         for junc in fkwJunction.get( "FISSURE"):
             crack.insertJunctingCracks(junc)
-        crack.setPointForJunction(fkwJunction.get( "POINT")
+        crack.setPointForJunction(fkwJunction.get( "POINT"))
 
         shapeName = fkwDefi.get("FORM_FISS")
 

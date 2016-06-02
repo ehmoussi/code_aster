@@ -29,6 +29,15 @@
 #include "Utilities/CapyConvertibleValue.h"
 
 /**
+ * @enum ContactFormulationEnum
+ * @brief Tous les types de contact disponibles
+ * @author Nicolas Sellenet
+ */
+enum ContactFormulationEnum { Discretized, Continuous, Xfem, UnilateralConnexion };
+extern const std::vector< ContactFormulationEnum > allContactFormulation;
+extern const std::vector< std::string > allContactFormulationNames;
+
+/**
  * @enum NormTypeEnum
  * @brief Tous les types de contact disponibles
  * @author Nicolas Sellenet
@@ -45,6 +54,25 @@ extern const std::vector< std::string > allNormTypeNames;
 enum PairingEnum { NewtonPairing, FixPairing };
 extern const std::vector< PairingEnum > allPairing;
 extern const std::vector< std::string > allPairingNames;
+
+/**
+ * @enum ContactAlgorithmEnum
+ * @brief Tous les types de contact disponibles
+ * @author Nicolas Sellenet
+ */
+enum ContactAlgorithmEnum { ConstraintContact, PenalizationContact, GcpContact,
+                            StandardContact, CzmContact };
+extern const std::vector< ContactAlgorithmEnum > allContactAlgorithm;
+extern const std::vector< std::string > allContactAlgorithmNames;
+
+/**
+ * @enum FrictionAlgorithmEnum
+ * @brief Tous les types d'algorithme de frottement disponibles
+ * @author Nicolas Sellenet
+ */
+enum FrictionAlgorithmEnum { FrictionPenalization, StandardFriction };
+extern const std::vector< FrictionAlgorithmEnum > allFrictionAlgorithm;
+extern const std::vector< std::string > allFrictionAlgorithmNames;
 
 class GenericContactZone
 {
@@ -63,8 +91,8 @@ class ContactZoneInstance: public GenericContactZone
     /** @brief Pointeur intelligent vers un VirtualMeshEntity */
     typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
     typedef std::vector< MeshEntityPtr > VectorOfMeshEntityPtr;
-    VectorOfMeshEntityPtr _master;
-    VectorOfMeshEntityPtr _slave;
+    MeshEntityPtr         _master;
+    MeshEntityPtr         _slave;
     NormTypeEnum          _normType;
     int                   _vectMait;
     VectorDouble          _masterVector;
@@ -83,6 +111,15 @@ class ContactZoneInstance: public GenericContactZone
     VectorOfMeshEntityPtr _nodesToExclude;
     bool                  _solve;
     double                _interpenetrationTol;
+    ContactAlgorithmEnum  _algoCont;
+    bool                  _glissiere;
+    double                _alarmeJeu;
+    double                _eN;
+    bool                  _appariement;
+    double                _coulomb;
+    double                _coefMatrFrot;
+    FrictionAlgorithmEnum _algoFrot;
+    double                _eT;
 
 public:
     ContactZoneInstance(): _normType( MasterNorm ),
@@ -95,11 +132,21 @@ public:
                            _pairingTolerance( -1.0 ),
                            _pairingMismatchProjectionTolerance( 0.5 ),
                            _solve( true ),
-                           _interpenetrationTol( 0. )
+                           _interpenetrationTol( 0. ),
+                           _algoCont( ConstraintContact ),
+                           _glissiere( false ),
+                           _alarmeJeu( 0. ),
+                           _appariement( true ),
+                           _coefMatrFrot( 0. ),
+                           _algoFrot( FrictionPenalization )
     {
-        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+        _toCapyConverter.add( new CapyConvertibleValue< bool >
+                                                      ( false, "APPARIEMENT", _appariement,
+                                                        { true, false }, { "MAIT_ESCL", "NODAL" }, true ) );
+
+        _toCapyConverter.add( new CapyConvertibleValue< MeshEntityPtr >
                                     ( true, "GROUP_MA_MAIT", _master, true ) );
-        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+        _toCapyConverter.add( new CapyConvertibleValue< MeshEntityPtr >
                                     ( true, "GROUP_MA_ESCL", _slave, true ) );
 
         _toCapyConverter.add( new CapyConvertibleValue< NormTypeEnum >
@@ -123,7 +170,8 @@ public:
                                     ( false, "ESCL_VECT_Y", _slaveVector, false ) );
 
         _toCapyConverter.add( new CapyConvertibleValue< PairingEnum >
-                                    ( false, "TYPE_APPA", _typeAppa, true ) );
+                                    ( false, "TYPE_APPA", _typeAppa,
+                                      allPairing, allPairingNames, true ) );
         _toCapyConverter.add( new CapyConvertibleValue< VectorDouble >
                                     ( false, "DIRE_APPA", _pairingVector, false ) );
 
@@ -156,8 +204,27 @@ public:
                                     ( false, "RESOLUTION", _solve,
                                       { true, false }, { "OUI", "NON" }, true ) );
         _toCapyConverter.add( new CapyConvertibleValue< double >
-                                    ( false, "TOLE_INTERP", _interpenetrationTol,
-                                      { true, false }, { "OUI", "NON" }, false ) );
+                                    ( false, "TOLE_INTERP", _interpenetrationTol, false ) );
+
+        _toCapyConverter.add( new CapyConvertibleValue< ContactAlgorithmEnum >
+                                    ( true, "ALGO_CONT", _algoCont,
+                                      allContactAlgorithm, allContactAlgorithmNames, true ) );
+        _toCapyConverter.add( new CapyConvertibleValue< bool >
+                                    ( false, "GLISSIERE", _glissiere,
+                                      {true, false}, {"OUI", "NON"}, true ) );
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                    ( false, "ALARME_JEU", _alarmeJeu, false ) );
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                    ( false, "E_N", _eN, false ) );
+
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                    ( false, "COULOMB", _coulomb, false ) );
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                    ( false, "COEF_MATR_FROT", _coefMatrFrot, false ) );
+        _toCapyConverter.add( new CapyConvertibleValue< FrictionAlgorithmEnum >
+                                    ( false, "ALGO_FROT", _algoFrot, false ) );
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                    ( false, "E_T", _eT, false ) );
     };
 
     void addBeamDescription() throw ( std::runtime_error )
@@ -168,20 +235,37 @@ public:
         throw std::runtime_error( "Not yet implemented" );
     };
 
+    void addFriction( const double& coulomb, const double& eT,
+                      const double& coefMatrFrot = 0. ) throw ( std::runtime_error )
+    {
+        _coulomb = coulomb;
+        _eT = eT;
+        _coefMatrFrot = coefMatrFrot;
+        _toCapyConverter[ "COULOMB" ]->enable();
+        _toCapyConverter[ "COULOMB" ]->setMandatory( true );
+        _toCapyConverter[ "E_T" ]->enable();
+        _toCapyConverter[ "E_T" ]->setMandatory( true );
+        _toCapyConverter[ "COEF_MATR_FROT" ]->enable();
+        _toCapyConverter[ "ALGO_FROT" ]->enable();
+        _toCapyConverter[ "ALGO_FROT" ]->setMandatory( true );
+    };
+
     void addPlateDescription() throw ( std::runtime_error )
     {
-        _beam = true;
+        _plate = true;
+        _toCapyConverter[ "CARA_ELEM" ]->enable();
+        _toCapyConverter[ "CARA_ELEM" ]->setMandatory( true );
         throw std::runtime_error( "Not yet implemented" );
     };
 
     void addMasterGroupOfElements( const std::string& name )
     {
-        _master.push_back( MeshEntityPtr( new GroupOfElements( name ) ) );
+        _master = MeshEntityPtr( new GroupOfElements( name ) );
     };
 
     void addSlaveGroupOfElements( const std::string& name )
     {
-        _slave.push_back( MeshEntityPtr( new GroupOfElements( name ) ) );
+        _slave = MeshEntityPtr( new GroupOfElements( name ) );
     };
 
     void disableResolution( const double tolInterp = 0. )
@@ -189,6 +273,13 @@ public:
         _solve = false;
         _interpenetrationTol = tolInterp;
         _toCapyConverter[ "TOLE_INTERP" ]->enable();
+    };
+
+    void enableBilateralContact( const double& gap = 0. )
+    {
+        _glissiere = true;
+        _alarmeJeu = gap;
+        _toCapyConverter[ "ALARME_JEU" ]->enable();
     };
 
     void excludeGroupOfElementsFromSlave( const std::string& name )
@@ -201,6 +292,22 @@ public:
     {
         _toCapyConverter[ "SANS_GROUP_NO" ]->enable();
         _nodesToExclude.push_back( MeshEntityPtr( new GroupOfElements( name ) ) );
+    };
+
+    void setContactAlgorithm( const ContactAlgorithmEnum& cont )
+    {
+        _algoCont = cont;
+        if( _algoCont == ConstraintContact )
+        {
+            _toCapyConverter[ "GLISSIERE" ]->enable();
+            _toCapyConverter[ "E_N" ]->disable();
+        }
+        else if( _algoCont == PenalizationContact )
+        {
+            _toCapyConverter[ "GLISSIERE" ]->disable();
+            _toCapyConverter[ "ALARME_JEU" ]->disable();
+            _toCapyConverter[ "E_N" ]->enable();
+        }
     };
 
     void setFixMasterVector( const VectorDouble& vec )
@@ -244,6 +351,7 @@ public:
     };
 };
 
+typedef boost::shared_ptr< GenericContactZone > GenericContactZonePtr;
 typedef boost::shared_ptr< ContactZoneInstance > ContactZonePtr;
 
 #endif /* CONTACTZONE_H_ */
