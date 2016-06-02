@@ -39,15 +39,15 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector( dou
 
     ModelPtr curModel = _study->getSupportModel();
     std::string modelName = curModel->getName();
-    modelName.resize(24);
+    modelName.resize(24, ' ');
 
     JeveuxVectorChar24 jvListOfLoads = _study->getListOfLoads()->getListVector();
     std::string nameLcha = jvListOfLoads->getName();
-    nameLcha.resize(24);
+    nameLcha.resize(24, ' ');
 
     JeveuxVectorLong jvInfo = _study->getListOfLoads()->getInformationVector();
     std::string nameInfc = jvInfo->getName();
-    nameInfc.resize(24);
+    nameInfc.resize(24, ' ');
 
     std::string typres( "R" );
     std::string resultName( retour->getName() );
@@ -66,15 +66,15 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryLaplaceVector()
 
     ModelPtr curModel = _study->getSupportModel();
     std::string modelName = curModel->getName();
-    modelName.resize(24);
+    modelName.resize(24, ' ');
 
     JeveuxVectorChar24 jvListOfLoads = _study->getListOfLoads()->getListVector();
     std::string nameLcha = jvListOfLoads->getName();
-    nameLcha.resize(24);
+    nameLcha.resize(24, ' ');
 
     JeveuxVectorLong jvInfo = _study->getListOfLoads()->getInformationVector();
     std::string nameInfc = jvInfo->getName();
-    nameInfc.resize(24);
+    nameInfc.resize(24, ' ');
 
     std::string blanc( " " );
     std::string resultName( retour->getName() );
@@ -132,9 +132,9 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
 
     std::string blanc( 24, ' ' );
     std::string modelName = curModel->getName();
-    modelName.resize(24);
+    modelName.resize(24, ' ');
     std::string materName = curMater->getName();
-    materName.resize(24);
+    materName.resize(24, ' ');
     std::string mate = blanc;
     CALL_RCMFMC( materName.c_str(), mate.c_str() );
 

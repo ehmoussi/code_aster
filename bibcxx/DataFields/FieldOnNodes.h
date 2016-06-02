@@ -111,6 +111,22 @@ class FieldOnNodesInstance: public DataStructure
         };
 
         /**
+         * @brief Allouer un champ au noeud à partir d'un autre
+         * @return renvoit true si l'addition s'est bien deroulée, false sinon
+         */
+        bool allocateFrom( const FieldOnNodesInstance< ValueType >& tmp )
+        {
+            this->_descriptor->deallocate();
+            this->_reference->deallocate();
+            this->_valuesList->deallocate();
+
+            this->_descriptor->allocate( getMemoryType(), tmp._descriptor->size() );
+            this->_reference->allocate( getMemoryType(), tmp._reference->size() );
+            this->_valuesList->allocate( getMemoryType(), tmp._valuesList->size() );
+            return true;
+        };
+
+        /**
          * @brief Mise a jour des pointeurs Jeveux
          * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
          */

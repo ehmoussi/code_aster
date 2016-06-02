@@ -43,13 +43,16 @@ class DataStructureNaming
         /**
          * @brief Function membre getNewName
          */
-        static std::string getNewName( JeveuxMemory memoryType, int lenghtName = 8 )
+        static std::string getNewName( JeveuxMemory memoryType, int lengthName = 8 )
             throw ( std::runtime_error )
         {
             if ( memoryType == Permanent )
-                return getNewResultObjectName();
+            {
+                std::string tmpName = getNewResultObjectName();
+                return std::string( tmpName + "                        ", 0, lengthName );
+            }
             else if ( memoryType == Temporary )
-                return TemporaryDataStructure::getNewTemporaryName( lenghtName );
+                return TemporaryDataStructure::getNewTemporaryName( lengthName );
             else
                 throw std::runtime_error( "Programming error" );
             return "";
