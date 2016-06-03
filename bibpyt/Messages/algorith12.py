@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -132,6 +132,27 @@ cata_msg = {
  arrêt sur manque arguments
  base modale donnée -->  %(k1)s
  INTERF_DYNA donnée -->  %(k2)s
+"""),
+
+    35 : _(u"""
+ un ddl non prévu est présent sur l'interface de liaison 
+ type du DDL  -->  %(k1)s
+ nom du noeud -->  %(k2)s
+ 
+ Il ne sera pas pris en compte dans le calcul des matrices réduites de liaison
+ Seules les composantes DX, DY, DZ, DRX, DRY, DRZ sont prévues
+ 
+"""),
+
+    36 : _(u"""
+ le PROF_CHNO pour le mode numéro %(i1)d de la base %(k1)s n'est pas
+ cohérent avec le NUME_DDL de la base
+ La trace de l'interface, déterminé par le NUME_DDL, ne correspond pas
+ Il est donc impossible d'extraire la trace de ce mode sur l'interface
+"""),
+
+    37 : _(u"""
+ arrêt sur problème cohérence PROF_CHNO
 """),
 
     38 : _(u"""

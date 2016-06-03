@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR   
@@ -34,6 +34,6 @@ NUME_DDL_GENE=OPER(nom="NUME_DDL_GENE",op= 127,sd_prod=nume_ddl_gene,
          BASE     =SIMP(statut='f',typ=(mode_meca,mode_gene ) ),
              b_base     =BLOC(condition = "BASE != None",
                STOCKAGE     =SIMP(statut='f',typ='TXM',defaut="PLEIN",into=("DIAG","PLEIN") ),
-               NB_VECT     =SIMP(statut='f',typ='I',defaut= 9999 ),
+               NB_VECT     =SIMP(statut='f',typ='I'),
                              ),
 )  ;
