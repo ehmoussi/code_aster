@@ -1,6 +1,4 @@
 # person_in_charge: patrick.massin at edf.fr
-# DATE   : 24/03/2000
-# AUTEUR : F. LEBOUVIER (DELTACAD)
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -29,10 +27,16 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 #
 MAILLAGE=LIRE_MAILLAGE(FORMAT='MED',);
 #
-MODELE=AFFE_MODELE(MAILLAGE=MAILLAGE,
+MAILLAGE=DEFI_GROUP( reuse=MAILLAGE,   MAILLAGE=MAILLAGE,
+  CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI'))
+
+MA=CREA_MAILLAGE(MAILLAGE=MAILLAGE,
+                 MODI_MAILLE=_F(TOUT='OUI',OPTION='QUAD8_9'),)
+
+MODELE=AFFE_MODELE(MAILLAGE=MA,
                    AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='D_PLAN',),);
+                           MODELISATION='COQUE_3D',),);
 #
 #---------------------------------------------------------------------
 #                     CARACTERISTIQUES ELEMENTAIRES
@@ -53,10 +57,12 @@ ACIER=DEFI_MATERIAU(ELAS=_F(E=200000000000.0,
 #
 #
 
-AFF_MAT=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
+AFF_MAT=AFFE_MATERIAU(MAILLAGE=MA,
                       AFFE=_F(TOUT='OUI',
                               MATER=ACIER,),);
 #
+CARA=AFFE_CARA_ELEM(MODELE=MODELE,COQUE=_F(GROUP_MA='TOUT',EPAIS=0.05),)
+
 #---------------------------------------------------------------------
 #                     RESOLUTION
 #---------------------------------------------------------------------
@@ -66,6 +72,7 @@ AFF_MAT=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
 
 
 MAT_EL_R=CALC_MATR_ELEM(OPTION='RIGI_MECA',
+                        CARA_ELEM=CARA,
                         MODELE=MODELE,
                         CHAM_MATER=AFF_MAT,);
 #
@@ -74,6 +81,7 @@ MAT_EL_R=CALC_MATR_ELEM(OPTION='RIGI_MECA',
 
 
 MAT_EL_M=CALC_MATR_ELEM(OPTION='MASS_MECA',
+                        CARA_ELEM=CARA,
                         MODELE=MODELE,
                         CHAM_MATER=AFF_MAT,);
 #
@@ -118,7 +126,8 @@ MODE=CALC_MODES(INFO=2,
                 )
 
 
-MODE=CALC_CHAMP(reuse=MODE,RESULTAT=MODE,CONTRAINTE=('SIEF_ELGA'),ENERGIE=('ETOT_ELEM','ETOT_ELGA','ETOT_ELNO'))
+MODE=CALC_CHAMP(reuse=MODE,RESULTAT=MODE,
+                CARA_ELEM=CARA, CONTRAINTE=('SIEF_ELGA'),)
 
 
 DEPL=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
@@ -136,7 +145,8 @@ ELAS=CREA_RESU(OPERATION='AFFE',
                CHAM_MATER=AFF_MAT,
                INST=0.0,),);
 
-ELAS=CALC_CHAMP(reuse=ELAS,RESULTAT=ELAS,CONTRAINTE=('SIEF_ELGA'),ENERGIE=('ETOT_ELGA','ETOT_ELNO','ETOT_ELEM'))
+ELAS=CALC_CHAMP(reuse=ELAS,RESULTAT=ELAS,
+                CARA_ELEM=CARA, CONTRAINTE=('SIEF_ELGA'),)
 
 
 #
@@ -146,91 +156,32 @@ ELAS=CALC_CHAMP(reuse=ELAS,RESULTAT=ELAS,CONTRAINTE=('SIEF_ELGA'),ENERGIE=('ETOT
 #
 
 TEST_RESU(RESU=(_F(PARA='FREQ',
-                   NUME_MODE=4,
+                   NUME_MODE=7,
                    RESULTAT=MODE,
-                   VALE_CALC=658.243248060,
-                   VALE_REFE=658.2432,
+                   VALE_CALC=628.354834568,
+                   VALE_REFE=628.354,
                    REFERENCE='NON_DEFINI',
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
                 _F(PARA='FREQ',
-                   NUME_MODE=5,
+                   NUME_MODE=9,
                    RESULTAT=MODE,
-                   VALE_CALC= 1.74934881E+03,
-                   VALE_REFE=1749.3488,
+                   VALE_CALC= 1672.82678476,
+                   VALE_REFE=1672.826,
                    REFERENCE='NON_DEFINI',
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
                 _F(PARA='FREQ',
-                   NUME_MODE=6,
+                   NUME_MODE=12,
                    RESULTAT=MODE,
-                   VALE_CALC= 3.22541618E+03,
-                   VALE_REFE=3225.4160999999999,
+                   VALE_CALC= 3090.35205089,
+                   VALE_REFE=3090.352,
                    REFERENCE='NON_DEFINI',
                    CRITERE='RELATIF',
                    PRECISION=1.E-2,),
                 ),
           )
 
-TEST_RESU(RESU=(_F(NUME_ORDRE=1,
-                   POINT=1,
-                   RESULTAT=ELAS,
-                   NOM_CHAM='ETOT_ELEM',
-                   NOM_CMP='TOTALE',
-                   VALE_CALC=2.227508550862E5,
-                   MAILLE='MA5',
-                   ),
-                _F(NUME_ORDRE=1,
-                   POINT=1,
-                   RESULTAT=ELAS,
-                   NOM_CHAM='ETOT_ELGA',
-                   NOM_CMP='TOTALE',
-                   VALE_CALC=9.5995307118465996E8,
-                   MAILLE='MA10',
-                   ),
-                _F(NUME_ORDRE=1,
-                   RESULTAT=ELAS,
-                   NOM_CHAM='ETOT_ELNO',
-                   NOEUD='NO100',
-                   NOM_CMP='TOTALE',
-                   VALE_CALC=5.0435078630760002E10,
-                   MAILLE='MA25',
-                   ),
-                ),
-          )
-
-TEST_RESU(RESU=(_F(NUME_ORDRE=1,
-                   REFERENCE='AUTRE_ASTER',
-                   POINT=1,
-                   RESULTAT=MODE,
-                   NOM_CHAM='ETOT_ELEM',
-                   NOM_CMP='TOTALE',
-                   VALE_CALC= 2.22750855E+05,
-                   VALE_REFE=2.227508550862E5,
-                   PRECISION=1.E-08,
-                   MAILLE='MA5',),
-                _F(NUME_ORDRE=1,
-                   REFERENCE='AUTRE_ASTER',
-                   POINT=1,
-                   RESULTAT=MODE,
-                   NOM_CHAM='ETOT_ELGA',
-                   NOM_CMP='TOTALE',
-                   VALE_CALC= 9.59953071E+08,
-                   VALE_REFE=9.5995307118465996E8,
-                   PRECISION=1.E-08,
-                   MAILLE='MA10',),
-                _F(NUME_ORDRE=1,
-                   REFERENCE='AUTRE_ASTER',
-                   RESULTAT=MODE,
-                   NOM_CHAM='ETOT_ELNO',
-                   NOEUD='NO100',
-                   NOM_CMP='TOTALE',
-                   VALE_CALC= 5.04350786E+10,
-                   VALE_REFE=5.0435078630760002E10,
-                   PRECISION=1.E-08,
-                   MAILLE='MA25',),
-                ),
-          )
 
 FIN();
 #

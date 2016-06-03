@@ -189,17 +189,15 @@ class PARAMETRES:
         if __salome__:
             from_salome = False
             try:
-                largs = sys.argv
-                i = largs.index('-ORBInitRef')
-                ns = largs[i + 1]
+                ns = aster_core.get_option('ORBInitRef')
                 machine_salome = ns.split(':')[-2]
                 machine_salome_port = ns.split(':')[-1]
                 self.dparam['machine_salome']['val'] = machine_salome
                 self.dparam['machine_salome_port']['val'] = machine_salome_port
-                print "Salome detecte, on fixe a : %s:%s" % (machine_salome, machine_salome_port)
+                UTMESS('I', 'STANLEY_30', valk=(machine_salome, machine_salome_port))
                 from_salome = True
             except Exception, e:
-                print "Salome non detecte..."
+                UTMESS('I', 'STANLEY_21')
                 # print e
 
         # Parametres utilises par la suite dans Stanley
@@ -3259,7 +3257,7 @@ class PRE_STANLEY:
 
        Methodes privees
         Action_evenement : actions consecutives au scan des evenements
-        Dessin     : creation des objets graphiques Tk de l'interface
+        Dessin     : creation des objets graphiques Tk
     """
 
     def __init__(self, FICHIER_VALID=None):

@@ -90,8 +90,17 @@ localement via ITER_INTE_PAS.
            on ne peut pas trouver le zéro de la fonction.
 """),
 
+   13 : _(u"""
+Les contraintes planes ou les modèles unidimensionnels avec la méthode DEBORST et les grandes déformations GDEF_LOG ou SIMO_MIEHE sont incompatibles. 
+Seules quelques lois de comportement qui ne nécessitent pas la méthode Deborst sont utilisables en grandes déformations. 
+"""),
+
     14: _(u"""
  HUJEUX : erreur dans le calcul de la matrice tangente
+"""),
+
+   15 : _(u"""
+Les contraintes planes ou les modèles unidimensionnels avec la méthode DEBORST ne sont pas utilisables avec MFront.
 """),
 
     16 : _(u"""
@@ -448,6 +457,12 @@ La donnée de l'énergie de fissuration initiale G_INIT est trop élevée. Elle 
     94 : _(u"""
 La largeur de bande est trop grande par rapport à la longueur de la zone cohésive si bien que
 m=%(r1)f et p=%(r2)f ne respectent pas la contrainte m>p+2.
-"""),
+"""),     
+
+    95 : _(u"""
+ITER_INTE_PAS ne peut admettre qu'une valeur positive pour un comportement MFRONT. 
+ """),
+
+
 
 }
