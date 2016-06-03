@@ -20,8 +20,10 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 
-cdef class LineSearchMethod:
+
+cdef class LineSearchMethod( DataStructure ):
     """Python wrapper on the C++ LineSearchMethod Object"""
 
     def __cinit__( self, LineSearchEnum curMethod ):
@@ -44,4 +46,3 @@ cdef class LineSearchMethod:
     cdef LineSearchMethodInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
-    

@@ -20,9 +20,11 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 #### ForceDouble
 
-cdef class ForceDouble:
+cdef class ForceDouble( DataStructure ):
     """Python wrapper on the C++ ForceDouble Object"""
 
     def __cinit__( self, bint init=True ):
@@ -58,7 +60,7 @@ cdef class ForceDouble:
 
 #####  StructuralForceDouble
 
-cdef class StructuralForceDouble:
+cdef class StructuralForceDouble( DataStructure ):
     """Python wrapper on the C++ StructuralForceDouble Object"""
 
     def __cinit__( self, bint init=True ):
@@ -93,7 +95,7 @@ cdef class StructuralForceDouble:
 
 #####  LocalBeamForceDouble
 
-cdef class LocalBeamForceDouble:
+cdef class LocalBeamForceDouble( DataStructure ):
     """Python wrapper on the C++ LocalBeamForceDouble Object"""
 
     def __cinit__( self, bint init=True ):
@@ -128,7 +130,7 @@ cdef class LocalBeamForceDouble:
 
 #####  LocalShellForceDouble
 
-cdef class LocalShellForceDouble:
+cdef class LocalShellForceDouble( DataStructure ):
     """Python wrapper on the C++ LocalShellForceDouble Object"""
 
     def __cinit__( self, bint init=True ):
@@ -163,7 +165,7 @@ cdef class LocalShellForceDouble:
 
 #####  DisplacementDouble
 
-cdef class DisplacementDouble:
+cdef class DisplacementDouble( DataStructure ):
     """Python wrapper on the C++ DisplacementDouble Object"""
 
     def __cinit__( self, bint init=True ):
@@ -199,7 +201,7 @@ cdef class DisplacementDouble:
 
 #####  PressureDouble
 
-cdef class PressureDouble:
+cdef class PressureDouble( DataStructure ):
     """Python wrapper on the C++ PressureDouble Object"""
 
     def __cinit__( self, bint init=True ):
@@ -234,7 +236,7 @@ cdef class PressureDouble:
 
 #####  ImpedanceDouble
 
-cdef class ImpedanceDouble:
+cdef class ImpedanceDouble( DataStructure ):
     """Python wrapper on the C++ ImpedanceDouble Object"""
 
     def __cinit__( self, bint init=True ):
@@ -269,7 +271,7 @@ cdef class ImpedanceDouble:
 
 #####  NormalSpeedDouble
 
-cdef class NormalSpeedDouble:
+cdef class NormalSpeedDouble( DataStructure ):
     """Python wrapper on the C++ NormalSpeedDouble Object"""
 
     def __cinit__( self, bint init=True ):
@@ -304,7 +306,7 @@ cdef class NormalSpeedDouble:
 
 #####  HeatFluxDouble
 
-cdef class HeatFluxDouble:
+cdef class HeatFluxDouble( DataStructure ):
     """Python wrapper on the C++ HeatFluxDouble Object"""
 
     def __cinit__( self, bint init=True ):
@@ -339,7 +341,7 @@ cdef class HeatFluxDouble:
 
 #####  HydraulicFluxDouble
 
-cdef class HydraulicFluxDouble:
+cdef class HydraulicFluxDouble( DataStructure ):
     """Python wrapper on the C++ HydraulicFluxDouble Object"""
 
     def __cinit__( self, bint init=True ):

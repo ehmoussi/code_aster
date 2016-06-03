@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Modeling.Model cimport ModelPtr
 from code_aster.Loads.PhysicalQuantity cimport ForceDoublePtr, StructuralForceDoublePtr, LocalBeamForceDoublePtr, LocalShellForceDoublePtr
 from code_aster.Loads.PhysicalQuantity cimport DisplacementDoublePtr, PressureDoublePtr
@@ -403,7 +404,7 @@ cdef extern from "Loads/MechanicalLoad.h":
 
 #### GenericMechanicalLoad
 
-cdef class GenericMechanicalLoad:
+cdef class GenericMechanicalLoad( DataStructure ):
     cdef GenericMechanicalLoadPtr* _cptr
     cdef set( self, GenericMechanicalLoadPtr other )
     cdef GenericMechanicalLoadPtr* getPtr( self )

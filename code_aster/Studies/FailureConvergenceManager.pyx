@@ -20,10 +20,11 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 
 #### GenericAction
 
-cdef class GenericAction:
+cdef class GenericAction( DataStructure ):
 
     """Python wrapper on the C++ GenericAction object"""
 

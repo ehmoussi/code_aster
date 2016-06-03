@@ -18,6 +18,8 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Materials.MaterialBehaviour cimport GeneralMaterialBehaviourPtr
 
 
@@ -37,7 +39,7 @@ cdef extern from "Materials/Material.h":
         MaterialInstance* get()
 
 
-cdef class Material:
+cdef class Material( DataStructure ):
 
     cdef MaterialPtr* _cptr
 

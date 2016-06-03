@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.LinearAlgebra.AssemblyMatrix cimport AssemblyMatrixDoublePtr
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 
@@ -45,7 +46,7 @@ cdef extern from "LinearAlgebra/LinearSolver.h":
 
 #### LinearSolver
 
-cdef class LinearSolver:
+cdef class LinearSolver( DataStructure ):
 
     cdef LinearSolverPtr* _cptr
 

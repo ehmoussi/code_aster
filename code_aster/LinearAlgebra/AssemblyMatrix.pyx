@@ -20,12 +20,13 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Discretization.DOFNumbering cimport DOFNumbering, ForwardDOFNumberingPtr
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrix
 
 
-cdef class AssemblyMatrixDouble:
+cdef class AssemblyMatrixDouble( DataStructure ):
 
     """Python wrapper on the C++ AssemblyMatrixDouble object"""
 

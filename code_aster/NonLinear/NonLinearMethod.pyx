@@ -20,10 +20,11 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 
 
-cdef class NonLinearMethod:
+cdef class NonLinearMethod( DataStructure ):
     """Python wrapper on the C++ NonLinearMethod Object"""
 
     def __cinit__( self, NonLinearMethodEnum curMethod ):

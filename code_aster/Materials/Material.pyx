@@ -20,10 +20,11 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Materials.MaterialBehaviour cimport GeneralMaterialBehaviour
 
 
-cdef class Material:
+cdef class Material( DataStructure ):
 
     """Python wrapper on the C++ Material object"""
 

@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.Materials.Material cimport Material
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
@@ -28,7 +29,7 @@ from code_aster.Supervis.logger import logger
 from code_aster.Supervis.libCommandSyntax import _F
 
 
-cdef class MaterialOnMesh:
+cdef class MaterialOnMesh( DataStructure ):
 
     """Python wrapper on the C++ MaterialOnMesh object"""
 

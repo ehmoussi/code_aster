@@ -19,6 +19,9 @@
 
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
+
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 from code_aster.Loads.PhysicalQuantity cimport ForceDouble, StructuralForceDouble, LocalBeamForceDouble, LocalShellForceDouble
 from code_aster.Loads.PhysicalQuantity cimport DisplacementDouble, PressureDouble
 from code_aster.Loads.PhysicalQuantity cimport ImpedanceDouble, NormalSpeedDouble, HeatFluxDouble, HydraulicFluxDouble
@@ -26,7 +29,7 @@ from code_aster.Modeling.Model cimport Model
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
 
-cdef class GenericMechanicalLoad:
+cdef class GenericMechanicalLoad( DataStructure ):
 
     """Python wrapper on the C++ GenericMechanicalLoad object"""
 

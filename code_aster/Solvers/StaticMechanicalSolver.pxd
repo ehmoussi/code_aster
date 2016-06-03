@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
 from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
@@ -49,7 +50,7 @@ cdef extern from "Solvers/StaticMechanicalSolver.h":
 
 #### StaticMechanicalSolver
 
-cdef class StaticMechanicalSolver:
+cdef class StaticMechanicalSolver( DataStructure ):
     cdef StaticMechanicalSolverPtr* _cptr
     cdef set( self, StaticMechanicalSolverPtr other )
     cdef StaticMechanicalSolverPtr* getPtr( self )
