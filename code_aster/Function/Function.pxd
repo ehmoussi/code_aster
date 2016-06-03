@@ -20,6 +20,8 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 
 cdef extern from "Function/Function.h":
 
@@ -47,7 +49,7 @@ cdef extern from "Function/Function.h":
         FunctionInstance* get()
 
 
-cdef class Function:
+cdef class Function( DataStructure ):
 
     cdef FunctionPtr* _cptr
 

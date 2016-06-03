@@ -19,11 +19,14 @@
 
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Function.Function cimport Function
+
 
 MasterNorm, SlaveNorm, AverageNorm = cMasterNorm, cSlaveNorm, cAverageNorm
 
-cdef class ContactZone:
+
+cdef class ContactZone( DataStructure ):
     """Python wrapper on the C++ ContactZone object"""
 
     def __cinit__( self, bint init=True ):

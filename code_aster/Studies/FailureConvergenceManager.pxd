@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Loads.PhysicalQuantity cimport PhysicalQuantityComponent
 
 
@@ -253,7 +254,7 @@ cdef extern from "Studies/FailureConvergenceManager.h":
 
 #### GenericAction
 
-cdef class GenericAction:
+cdef class GenericAction( DataStructure ):
     cdef GenericActionPtr* _cptr
     cdef set( self, GenericActionPtr other )
     cdef GenericActionPtr* getPtr( self )

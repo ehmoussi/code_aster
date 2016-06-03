@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 
 
@@ -42,7 +43,7 @@ cdef extern from "Mesh/Mesh.h":
         MeshInstance* get()
 
 
-cdef class Mesh:
+cdef class Mesh( DataStructure ):
 
     cdef MeshPtr* _cptr
 

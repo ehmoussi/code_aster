@@ -21,6 +21,8 @@ import cython
 from libcpp.string cimport string
 
 from code_aster.Supervis.libBaseUtils import resizeStr
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 
 # numpy implementation in cython currently generates a warning at compilation
 import numpy as np
@@ -28,7 +30,7 @@ cimport numpy as np
 np.import_array()
 
 
-cdef class Function:
+cdef class Function( DataStructure ):
     """Python wrapper on the C++ Function object"""
 
     def __cinit__( self, bint init=True, string jeveuxName=" " ):

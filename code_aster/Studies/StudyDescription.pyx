@@ -20,13 +20,14 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Modeling.Model cimport Model
 
 
-cdef class StudyDescription:
+cdef class StudyDescription( DataStructure ):
 
     """Python wrapper on the C++ StudyDescription object"""
 

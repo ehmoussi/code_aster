@@ -26,8 +26,75 @@ Their definitions are sufficient.
 
 # existing Cython objects
 from code_aster import (
-    Mesh, Model, Material, MaterialOnMesh,
+    AddIterationOnError,
+    AssemblyMatrixDouble,
+    Behaviour,
+    ChangePenalisationOnError,
+    ContactZone,
+    ContinueOnError,
+    ContinuousContact,
+    CrackShape,
+    DOFNumbering,
+    DataStructure,
+    DiscretizedContact,
+    DisplacementDouble,
+    DistributedHeatFluxDouble,
+    DistributedHydraulicFluxDouble,
+    DistributedPressureDouble,
+    ElementaryMatrix,
+    ElementaryVector,
+    FieldOnNodesDouble,
+    ForceDouble,
+    ForceOnEdgeDouble,
+    ForceOnFaceDouble,
     Function,
+    GenericSubstepingOnError,
+    HeatFluxDouble,
+    HydraulicFluxDouble,
+    ImpedanceDouble,
+    ImpedanceOnFaceDouble,
+    ImposedDisplacementDouble,
+    ImposedPressureDouble,
+    ImposedTemperature,
+    InternalForceDouble,
+    KinematicsLoad,
+    LineSearchMethod,
+    LinearSolver,
+    LineicForceDouble,
+    LocalBeamForceDouble,
+    LocalForceOnBeamDouble,
+    LocalForceOnShellDouble,
+    LocalShellForceDouble,
+    Material,
+    MaterialOnMesh,
+    Mesh,
+    Model,
+    NodalForceDouble,
+    NodalStructuralForceDouble,
+    NonLinearMethod,
+    NormalSpeedDouble,
+    NormalSpeedOnFaceDouble,
+    PilotageError,
+    PressureDouble,
+    PressureOnPipeDouble,
+    PressureOnShellDouble,
+    StaticMechanicalSolver,
+    StaticNonLinearAnalysis,
+    StopOnError,
+    StructuralForceDouble,
+    StructuralForceOnBeamDouble,
+    StructuralForceOnBeamDouble,
+    StructuralForceOnEdgeDouble,
+    StructuralForceOnShellDouble,
+    StudyDescription,
+    SubstepingOnContact,
+    SubstepingOnError,
+    TimeStepManager,
+    TimeStepper,
+    UnilateralConnexion,
+    WavePressureOnFaceDouble,
+    XfemContact,
+    XfemCrack,
 )
 
 # compatibility layer to avoid changing all the catalogs
@@ -38,10 +105,10 @@ mater_sdaster = Material
 modele_sdaster = Model
 
 
-# Objects provided by Noyau from Eficas
-class ASSD(object):
-    pass
+# backward compatibility
+ASSD = DataStructure
 
+# Objects provided by Noyau from Eficas
 class not_checked(ASSD):
     pass
 
@@ -68,7 +135,6 @@ class no(GEOM):
     pass
 
 # To be more consistent with new names
-DataStructure = ASSD
 MeshEntity = GEOM
 
 

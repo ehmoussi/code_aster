@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
 from code_aster.Results.ResultsContainer cimport ResultsContainer
@@ -28,7 +29,7 @@ from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Modeling.Model cimport Model
 
 
-cdef class StaticMechanicalSolver:
+cdef class StaticMechanicalSolver( DataStructure ):
     """Python wrapper on the C++ StaticMechanicalSolver object"""
 
     def __cinit__( self, bint init = True ):

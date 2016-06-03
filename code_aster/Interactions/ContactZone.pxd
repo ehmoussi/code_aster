@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Function.Function cimport FunctionPtr
 
 
@@ -57,7 +58,7 @@ cdef extern from "Interactions/ContactZone.h":
         ContactZoneInstance* get()
 
 
-cdef class ContactZone:
+cdef class ContactZone( DataStructure ):
 
     cdef ContactZonePtr* _cptr
 

@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Modeling.Model cimport Model
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrix
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
@@ -28,7 +29,7 @@ from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 
 #### DOFNumbering
 
-cdef class DOFNumbering:
+cdef class DOFNumbering( DataStructure ):
     """Python wrapper on the C++ DOFNumbering Object"""
 
     def __cinit__( self, bint init = True ):

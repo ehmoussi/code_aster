@@ -19,7 +19,7 @@
 
 from libcpp.string cimport string
 
-#from code_aster.Mesh.Mesh cimport MeshPtr
+from code_aster.DataStructure.DataStructure cimport DataStructure
 
 
 cdef extern from "Loads/UnitaryThermalLoad.h":
@@ -37,7 +37,7 @@ cdef extern from "Loads/UnitaryThermalLoad.h":
         ImposedTemperatureInstance* get()
 
 
-cdef class ImposedTemperature:
+cdef class ImposedTemperature( DataStructure ):
 
     cdef ImposedTemperaturePtr* _cptr
 

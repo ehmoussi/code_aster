@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 
 cdef extern from "Loads/PhysicalQuantity.h":
 
@@ -158,7 +160,7 @@ cdef extern from "Loads/PhysicalQuantity.h":
 
 #### ForceDouble
 
-cdef class ForceDouble:
+cdef class ForceDouble( DataStructure ):
 
     cdef ForceDoublePtr* _cptr
 
@@ -169,7 +171,7 @@ cdef class ForceDouble:
 
 #### StructuralForceDouble
 
-cdef class StructuralForceDouble:
+cdef class StructuralForceDouble( DataStructure ):
 
     cdef StructuralForceDoublePtr* _cptr
 
@@ -180,7 +182,7 @@ cdef class StructuralForceDouble:
 
 #### LocalBeamForceDouble
 
-cdef class LocalBeamForceDouble:
+cdef class LocalBeamForceDouble( DataStructure ):
 
     cdef LocalBeamForceDoublePtr* _cptr
 
@@ -190,7 +192,7 @@ cdef class LocalBeamForceDouble:
 
 #### LocalShellForceDouble
 
-cdef class LocalShellForceDouble:
+cdef class LocalShellForceDouble( DataStructure ):
 
     cdef LocalShellForceDoublePtr* _cptr
 
@@ -201,7 +203,7 @@ cdef class LocalShellForceDouble:
 
 #### DisplacementDouble
 
-cdef class DisplacementDouble:
+cdef class DisplacementDouble( DataStructure ):
 
     cdef DisplacementDoublePtr* _cptr
 
@@ -212,7 +214,7 @@ cdef class DisplacementDouble:
 
 #### PressureDouble
 
-cdef class PressureDouble:
+cdef class PressureDouble( DataStructure ):
 
     cdef PressureDoublePtr* _cptr
 
@@ -222,7 +224,7 @@ cdef class PressureDouble:
 
 #### ImpedanceDouble
 
-cdef class ImpedanceDouble:
+cdef class ImpedanceDouble( DataStructure ):
 
     cdef ImpedanceDoublePtr* _cptr
 
@@ -232,7 +234,7 @@ cdef class ImpedanceDouble:
 
 #### NormalSpeedDouble
 
-cdef class NormalSpeedDouble:
+cdef class NormalSpeedDouble( DataStructure ):
 
     cdef NormalSpeedDoublePtr* _cptr
 
@@ -242,7 +244,7 @@ cdef class NormalSpeedDouble:
 
 #### HeatFluxDouble
 
-cdef class HeatFluxDouble:
+cdef class HeatFluxDouble( DataStructure ):
 
     cdef HeatFluxDoublePtr* _cptr
 
@@ -252,7 +254,7 @@ cdef class HeatFluxDouble:
 
 #### HydraulicFluxDouble
 
-cdef class HydraulicFluxDouble:
+cdef class HydraulicFluxDouble( DataStructure ):
 
     cdef HydraulicFluxDoublePtr* _cptr
 

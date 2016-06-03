@@ -18,6 +18,8 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Modeling.Model cimport ModelPtr
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrixPtr
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverPtr
@@ -55,7 +57,7 @@ cdef extern from "Discretization/ForwardDOFNumbering.h":
 
 #### DOFNumbering
 
-cdef class DOFNumbering:
+cdef class DOFNumbering( DataStructure ):
 
     cdef DOFNumberingPtr* _cptr
 

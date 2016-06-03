@@ -28,8 +28,10 @@ from code_aster.Supervis.libFile cimport LogicalUnitFile
 from code_aster.Supervis.libCommandSyntax import _F
 from code_aster.Supervis.libFile import FileType, FileAccess
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 
-cdef class FieldOnNodesDouble:
+
+cdef class FieldOnNodesDouble( DataStructure ):
     """Python wrapper on the C++ FieldOnNodes object"""
 
     def __cinit__( self, string name="" ):

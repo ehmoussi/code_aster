@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Interactions.ContactZone cimport ContactZone
 from code_aster.Modeling.Model cimport Model
 
@@ -29,7 +30,7 @@ Auto, Controlled, WithoutGeometricUpdate = cAuto, cControlled, cWithoutGeometric
 Dirichlet, WithoutPrecond = cDirichlet, cWithoutPrecond
 
 
-cdef class DiscretizedContact:
+cdef class DiscretizedContact( DataStructure ):
     """Python wrapper on the C++ DiscretizedContact object"""
 
     def __cinit__( self, bint init=True ):
@@ -135,7 +136,7 @@ cdef class DiscretizedContact:
         self.getInstance().debugPrint( logicalUnit )
 
 
-cdef class ContinuousContact:
+cdef class ContinuousContact( DataStructure ):
     """Python wrapper on the C++ ContinuousContact object"""
 
     def __cinit__( self, bint init=True ):
@@ -169,7 +170,7 @@ cdef class ContinuousContact:
         #self.getInstance().debugPrint( logicalUnit )
 
 
-cdef class XfemContact:
+cdef class XfemContact( DataStructure ):
     """Python wrapper on the C++ XfemContact object"""
 
     def __cinit__( self, bint init=True ):
@@ -203,7 +204,7 @@ cdef class XfemContact:
         #self.getInstance().debugPrint( logicalUnit )
 
 
-cdef class UnilateralConnexion:
+cdef class UnilateralConnexion( DataStructure ):
     """Python wrapper on the C++ UnilateralConnexion object"""
 
     def __cinit__( self, bint init=True ):

@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Interactions.ContactZone cimport ContactZonePtr
 from code_aster.Modeling.Model cimport ModelPtr
 
@@ -73,7 +74,7 @@ cdef extern from "Interactions/ContactDefinition.h":
         DiscretizedContactInstance* get()
 
 
-cdef class DiscretizedContact:
+cdef class DiscretizedContact( DataStructure ):
 
     cdef DiscretizedContactPtr* _cptr
 
@@ -96,7 +97,7 @@ cdef extern from "Interactions/ContactDefinition.h":
         ContinuousContactInstance* get()
 
 
-cdef class ContinuousContact:
+cdef class ContinuousContact( DataStructure ):
 
     cdef ContinuousContactPtr* _cptr
 
@@ -119,7 +120,7 @@ cdef extern from "Interactions/ContactDefinition.h":
         XfemContactInstance* get()
 
 
-cdef class XfemContact:
+cdef class XfemContact( DataStructure ):
 
     cdef XfemContactPtr* _cptr
 
@@ -142,7 +143,7 @@ cdef extern from "Interactions/ContactDefinition.h":
         UnilateralConnexionInstance* get()
 
 
-cdef class UnilateralConnexion:
+cdef class UnilateralConnexion( DataStructure ):
 
     cdef UnilateralConnexionPtr* _cptr
 

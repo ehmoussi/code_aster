@@ -20,10 +20,10 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
-#from code_aster.Mesh.Mesh cimport Mesh
+from code_aster.DataStructure.DataStructure cimport DataStructure
 
 
-cdef class ImposedTemperature:
+cdef class ImposedTemperature( DataStructure ):
     """Python wrapper on the C++ ImposedTemperature object"""
 
     def __cinit__( self, bint init=True ):
