@@ -6,6 +6,9 @@ import numpy as np
 
 import code_aster
 
+
+test = code_aster.TestCase()
+
 fsin = code_aster.Function()
 fsin.setParameterName("INST")
 fsin.setResultName("TEMP")
@@ -22,11 +25,9 @@ fsin.debugPrint( 6 )
 from xxMultiSteps01a_imp import fcos
 fcos.debugPrint( 6 )
 
-code_aster.saveObjects()
+code_aster.saveObjects(delete=False)
 
-# after the backup Code_Aster objects must not available
-try:
-    print fsin
-    raise ValueError("object must not be available!")
-except NameError:
-    print "ok"
+# after the backup Code_Aster objects must be None
+test.assertIsNone( fsin )
+
+test.printSummary()

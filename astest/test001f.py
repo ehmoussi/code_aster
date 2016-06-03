@@ -3,6 +3,9 @@
 
 import code_aster
 
+
+test = code_aster.TestCase()
+
 monMaillage = code_aster.Mesh()
 monMaillage.readMedFile( "test001f.mmed" )
 
@@ -105,3 +108,7 @@ matrAsse.factorization()
 resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
 
 resu.printMEDFile( "test.med" )
+
+# at least check that it passes here
+test.assertTrue( True )
+test.printSummary()

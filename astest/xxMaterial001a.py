@@ -1,6 +1,11 @@
+#!/usr/bin/python
+# coding: utf-8
 
 import code_aster
 from code_aster.Commands import *
+
+
+test = code_aster.TestCase()
 
 mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
 
@@ -56,3 +61,7 @@ AFFMAT = AFFE_MATERIAU( MAILLAGE = mail1,
                                    MATER = ACIER, ), ), )
 
 AFFMAT.debugPrint()
+
+# at least check that it passes here
+test.assertTrue( True )
+test.printSummary()
