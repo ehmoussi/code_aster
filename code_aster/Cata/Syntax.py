@@ -350,7 +350,9 @@ class SyntaxCheckerVisitor(object):
         validType = []
         for i in currentType:
             pytypes = fromTypeName(i)
-            if not pytypes and issubclass(i, (DS.DataStructure, DS.MeshEntity)):
+            # accept all types
+            if not pytypes and (issubclass(i, (DS.DataStructure, DS.MeshEntity)) \
+                                or type(i) is type):
                 pytypes = [i]
             validType.extend( pytypes )
         if not validType:
