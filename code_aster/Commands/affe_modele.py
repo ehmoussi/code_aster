@@ -34,34 +34,33 @@ def AFFE_MODELE( **kwargs ):
     model.setSupportMesh( kwargs[ "MAILLAGE" ] )
 
     fkwAffe = kwargs.get( "AFFE" )
-    if fkwAffe != None:
-        if type( fkwAffe ) == tuple:
-            for curDict in fkwAffe:
-                physique = glossary.getPhysics( curDict.get( "PHENOMENE" ) )
-                modelisation = glossary.getModeling( curDict.get( "MODELISATION" ) )
+    if type( fkwAffe ) is tuple:
+        for curDict in fkwAffe:
+            physique = glossary.getPhysics( curDict.get( "PHENOMENE" ) )
+            modelisation = glossary.getModeling( curDict.get( "MODELISATION" ) )
 
-                kwTout = curDict.get( "TOUT" )
-                kwGroupMa = curDict.get( "GROUP_MA" )
-                kwGroupNo = curDict.get( "GROUP_NO" )
-                if kwTout != None:
-                    model.addModelingOnAllMesh( physique, modelisation )
-                elif kwGroupMa != None:
-                    model.addModelingOnGroupOfElements( physique, modelisation, kwGroupMa )
-                elif kwGroupMa != None:
-                    model.addModelingOnGroupOfNodes( physique, modelisation, kwGroupNo )
-        elif type( fkwAffe ) == dict:
-            physique = glossary.getPhysics( fkwAffe.get( "PHENOMENE" ) )
-            modelisation = glossary.getModeling( fkwAffe.get( "MODELISATION" ) )
-
-            kwTout = fkwAffe.get( "TOUT" )
-            kwGroupMa = fkwAffe.get( "GROUP_MA" )
-            kwGroupNo = fkwAffe.get( "GROUP_NO" )
+            kwTout = curDict.get( "TOUT" )
+            kwGroupMa = curDict.get( "GROUP_MA" )
+            kwGroupNo = curDict.get( "GROUP_NO" )
             if kwTout != None:
                 model.addModelingOnAllMesh( physique, modelisation )
             elif kwGroupMa != None:
                 model.addModelingOnGroupOfElements( physique, modelisation, kwGroupMa )
             elif kwGroupMa != None:
                 model.addModelingOnGroupOfNodes( physique, modelisation, kwGroupNo )
+    elif type( fkwAffe ) is dict:
+        physique = glossary.getPhysics( fkwAffe.get( "PHENOMENE" ) )
+        modelisation = glossary.getModeling( fkwAffe.get( "MODELISATION" ) )
+
+        kwTout = fkwAffe.get( "TOUT" )
+        kwGroupMa = fkwAffe.get( "GROUP_MA" )
+        kwGroupNo = fkwAffe.get( "GROUP_NO" )
+        if kwTout != None:
+            model.addModelingOnAllMesh( physique, modelisation )
+        elif kwGroupMa != None:
+            model.addModelingOnGroupOfElements( physique, modelisation, kwGroupMa )
+        elif kwGroupMa != None:
+            model.addModelingOnGroupOfNodes( physique, modelisation, kwGroupNo )
 
     model.build()
 
