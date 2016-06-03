@@ -134,6 +134,16 @@ class TestCase( unittest.TestCase ):
         super(TestCase, self).assertEqual(first, second, msg)
 
     @addSuccess
+    def assertIsNone(self, obj, msg=None):
+        """Check that the object is None."""
+        super(TestCase, self).assertIsNone(obj, msg)
+
+    @addSuccess
+    def assertIsNotNone(self, obj, msg=None):
+        """Check that the object is not None."""
+        super(TestCase, self).assertIsNotNone(obj, msg)
+
+    @addSuccess
     def assertAlmostEqual(self, first, second, places=7, msg=None, delta=None):
         super(TestCase, self).assertAlmostEqual(first, second, places, msg, delta)
 

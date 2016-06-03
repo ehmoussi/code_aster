@@ -5,22 +5,22 @@ import numpy as np
 
 import code_aster
 
+
+test = code_aster.TestCase()
+
 fsin = code_aster.Function()
 fsin.setParameterName("INST")
 fsin.setResultName("TEMP")
 fsin.setInterpolation("LIN LOG")
 
-try:
+with test.assertRaises(ValueError):
     fsin.setInterpolation("invalid")
-    raise AssertionError("invalid assignment should have failed")
-except ValueError:
-    pass
 
 fsin.setExtrapolation("CC")
 
 # check properties assignment
 prop = fsin.getProperties()
-assert prop[1:5] == ['LIN LOG', 'INST', 'TEMP', 'CC'], prop[1:5]
+test.assertEqual( prop[1:5], ['LIN LOG', 'INST', 'TEMP', 'CC'] )
 
 # values assignment
 n = 10
@@ -33,22 +33,19 @@ fsin.debugPrint( 6 )
 # check Function.abs()
 fabs = fsin.abs()
 arrabs = fabs.getValuesAsArray(copy=False)
-assert np.alltrue( arrabs[:, 1] ) >= 0., arrabs
+test.assertTrue( np.alltrue( arrabs[:, 1] >= 0. ) )
 
 values = fsin.getValuesAsArray()
-assert values.shape == ( n, 2 )
+test.assertEqual( values.shape, ( n, 2 ) )
 
 # read-only view
 view = fsin.getValuesAsArray(copy=False)
-try:
+with test.assertRaises(ValueError):
     view[1, 0] = 1.
-    raise AssertionError("assignment should have failed")
-except ValueError:
-    pass
 
 # change values of fsin that becomes fcos
 view = fsin.getValuesAsArray(copy=False, writeable=True)
-assert view.shape == ( n, 2 )
+test.assertEqual( view.shape, ( n, 2 ) )
 view[:, 1] = np.cos( valx )
 fcos = fsin
 del fsin
@@ -56,4 +53,6 @@ fcos.debugPrint( 6 )
 
 
 # view must not be used now, it points on invalid data
-assert values[0, 0] == 0.
+test.assertEqual( values[0, 0], 0. )
+
+test.printSummary()
