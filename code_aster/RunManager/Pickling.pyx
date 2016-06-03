@@ -66,13 +66,13 @@ class Pickler(object):
         for name, obj in ctxt.items():
             try:
                 cPickle.dump( obj, pick, -1 )
-            except TypeError:
+            except (cPickle.PicklingError, TypeError):
                 logger.warn("object can't be pickled: {0}".format(name))
                 continue
             objList.append( name )
-            # TODO should only delete Code_Aster objects, not all!
+            # TODO should only delete (set to None) Code_Aster objects, not all!
             if delete:
-                del self._ctxt[name]
+                self._ctxt[name] = None
         # add management objects on the stack
         cPickle.dump( objList, pick, -1 )
         cPickle.dump( resultNaming.getLastId(), pick, -1 )
