@@ -414,8 +414,7 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
         std::string kw = Traits::factorKeyword;
         dict.container[kw] = listeLoad;
         cmdSt.define( dict );
-        std::cout << " Appel de debug print pour Command Syntax  " << std::endl;
-        cmdSt.debugPrint(); 
+        //cmdSt.debugPrint(); 
         try
         {
             INTEGER op = 7;

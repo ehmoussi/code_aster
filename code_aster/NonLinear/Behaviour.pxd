@@ -145,9 +145,8 @@ cdef extern from "NonLinear/AllowedBehaviour.h":
             Rousselier,
             Rouss_Pr,
             Rouss_Visc,
-            Rupt_Frag,
-# Originellement Sans mais renommé Sans_Rel pour ne pas etre en conflit avec l'enum Renumbering
-            Sans_Rel,
+            Rupt_Frag, 
+            WithoutConstitutiveLaw
             Vendochab,
             Visc_Endo_Lema,
             Viscochab,
