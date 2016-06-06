@@ -19,43 +19,45 @@
 
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
+#### NonLinearEvolutionContainer
 
+cdef class NonLinearEvolutionContainer:
+    """Python wrapper on the C++ NonLinearEvolutionContainer Object"""
 
-cdef class NonLinearMethod( DataStructure ):
-    """Python wrapper on the C++ NonLinearMethod Object"""
-
-    def __cinit__( self, NonLinearMethodEnum curMethod ):
+    def __cinit__( self, bint init = True ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new NonLinearMethodPtr( new NonLinearMethodInstance( curMethod ) )
+        if init :
+            self._cptr = new NonLinearEvolutionContainerPtr( new NonLinearEvolutionContainerInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, NonLinearMethodPtr other ):
+    cdef set( self, NonLinearEvolutionContainerPtr other ):
         """Point to an existing object"""
-        self._cptr = new NonLinearMethodPtr( other )
-       
-    cdef NonLinearMethodPtr* getPtr( self ):
+        self._cptr = new NonLinearEvolutionContainerPtr( other )
+
+    cdef NonLinearEvolutionContainerPtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef NonLinearMethodInstance* getInstance( self ):
+    cdef NonLinearEvolutionContainerInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
-    
-    def setPrediction( self, PredictionEnum curPred ):
-        """Define prediction method"""
-        self.getInstance().setPrediction( curPred )
- 
-    def setMatrix( self, MatrixEnum curMatrix ):
-        """Define prediction method"""
-        self.getInstance().setMatrix( curMatrix )
 
-    def forceStiffnessSymetry ( self, force ):
-        """Force Stiffness Symetry"""
-        self.getInstance().forceStiffnessSymetry( force )
+    def debugPrint( self, logicalUnit=6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
+    def getRealFieldOnNodes( self, name, rank ):
+        """Get a real FieldOnNodes from name and rank"""
+        returnField = FieldOnNodesDouble()
+        returnField.set( self.getInstance().getRealFieldOnNodes( name, rank ) )
+        return returnField
+
+    def printMedFile( self, name ):
+        """Print MED file from NonLinearEvolutionContainer"""
+        return self.getInstance().printMedFile( name )
