@@ -26,28 +26,28 @@ from code_aster.Function.Function cimport Function
 MasterNorm, SlaveNorm, AverageNorm = cMasterNorm, cSlaveNorm, cAverageNorm
 
 
-cdef class ContactZone( DataStructure ):
-    """Python wrapper on the C++ ContactZone object"""
+cdef class DiscretizedContactZone( DataStructure ):
+    """Python wrapper on the C++ DiscretizedContactZone object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
         if init:
-            self._cptr = new ContactZonePtr( new ContactZoneInstance() )
+            self._cptr = new DiscretizedContactZonePtr( new DiscretizedContactZoneInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, ContactZonePtr other ):
+    cdef set( self, DiscretizedContactZonePtr other ):
         """Point to an existing object"""
-        self._cptr = new ContactZonePtr( other )
+        self._cptr = new DiscretizedContactZonePtr( other )
 
-    cdef ContactZonePtr* getPtr( self ):
+    cdef DiscretizedContactZonePtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef ContactZoneInstance* getInstance( self ):
+    cdef DiscretizedContactZoneInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 

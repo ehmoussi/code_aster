@@ -21,7 +21,7 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Interactions.ContactZone cimport ContactZone
+from code_aster.Interactions.ContactZone cimport DiscretizedContactZone
 from code_aster.Modeling.Model cimport Model
 
 Coulomb, WithoutFriction = cCoulomb, cWithoutFriction
@@ -55,7 +55,7 @@ cdef class DiscretizedContact( DataStructure ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
-    def addContactZone( self, ContactZone zone ):
+    def addContactZone( self, DiscretizedContactZone zone ):
         """"""
         self.getInstance().addContactZone( deref( zone.getPtr() ) )
 
