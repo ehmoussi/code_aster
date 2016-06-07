@@ -74,6 +74,26 @@ enum FrictionAlgorithmEnum { FrictionPenalization, StandardFriction };
 extern const std::vector< FrictionAlgorithmEnum > allFrictionAlgorithm;
 extern const std::vector< std::string > allFrictionAlgorithmNames;
 
+/**
+ * @enum IntegrationAlgorithmEnum
+ * @brief Tous les types d'algorithme de frottement disponibles
+ * @author Nicolas Sellenet
+ */
+enum IntegrationAlgorithmEnum { AutomaticIntegration, GaussIntegration,
+                                SimpsonIntegration, NewtonCotesIntegration };
+extern const std::vector< IntegrationAlgorithmEnum > allIntegrationAlgorithm;
+extern const std::vector< std::string > allIntegrationAlgorithmNames;
+
+/**
+ * @enum ContactInitializationEnum
+ * @brief Tous les types d'algorithme de frottement disponibles
+ * @author Nicolas Sellenet
+ */
+enum ContactInitializationEnum { ContactOnInitialization, Interpenetration,
+                                 NoContactOnInitialization };
+extern const std::vector< ContactInitializationEnum > allContactInitialization;
+extern const std::vector< std::string > allContactInitializationNames;
+
 class GenericContactZone
 {
 protected:
@@ -86,40 +106,104 @@ public:
     };
 };
 
+template< ContactFormulationEnum formulation >
 class ContactZoneInstance: public GenericContactZone
 {
+private:
     /** @brief Pointeur intelligent vers un VirtualMeshEntity */
     typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
     typedef std::vector< MeshEntityPtr > VectorOfMeshEntityPtr;
-    MeshEntityPtr         _master;
-    MeshEntityPtr         _slave;
-    NormTypeEnum          _normType;
-    int                   _vectMait;
-    VectorDouble          _masterVector;
-    int                   _vectEscl;
-    VectorDouble          _slaveVector;
-    PairingEnum           _typeAppa;
-    VectorDouble          _pairingVector;
-    bool                  _beam;
-    bool                  _plate;
-    int                   _caraElem;
-    FunctionPtr           _distMait;
-    FunctionPtr           _distEscl;
-    double                _pairingTolerance;
-    double                _pairingMismatchProjectionTolerance;
-    VectorOfMeshEntityPtr _elementsToExclude;
-    VectorOfMeshEntityPtr _nodesToExclude;
-    bool                  _solve;
-    double                _interpenetrationTol;
-    ContactAlgorithmEnum  _algoCont;
-    bool                  _glissiere;
-    double                _alarmeJeu;
-    double                _eN;
-    bool                  _appariement;
-    double                _coulomb;
-    double                _coefMatrFrot;
-    FrictionAlgorithmEnum _algoFrot;
-    double                _eT;
+    MeshEntityPtr             _master;
+    MeshEntityPtr             _slave;
+    NormTypeEnum              _normType;
+    int                       _vectMait;
+    VectorDouble              _masterVector;
+    int                       _vectEscl;
+    VectorDouble              _slaveVector;
+    PairingEnum               _typeAppa;
+    VectorDouble              _pairingVector;
+    bool                      _beam;
+    bool                      _plate;
+    int                       _caraElem;
+    FunctionPtr               _distMait;
+    FunctionPtr               _distEscl;
+    double                    _pairingTolerance;
+    double                    _pairingMismatchProjectionTolerance;
+    VectorOfMeshEntityPtr     _elementsToExclude;
+    VectorOfMeshEntityPtr     _nodesToExclude;
+    bool                      _solve;
+    double                    _interpenetrationTol;
+    ContactAlgorithmEnum      _algoCont;
+    bool                      _glissiere;
+    double                    _alarmeJeu;
+    double                    _eN;
+    bool                      _appariement;
+    double                    _coulomb;
+    double                    _coefMatrFrot;
+    FrictionAlgorithmEnum     _algoFrot;
+    double                    _eT;
+    IntegrationAlgorithmEnum  _integration;
+    int                       _ordreInt;
+    ContactInitializationEnum _contactInit;
+    double                    _coefCont;
+    double                    _coefPenaCont;
+    double                    _coefFrot;
+    double                    _coefPenaFrot;
+    double                    _seuilInit;
+    VectorOfGroupOfNodesPtr   _sansGroupNoFr;
+
+    void addContinuousParameters()
+    {
+        _algoCont = StandardContact;
+        _algoFrot = StandardFriction;
+
+        _integration = AutomaticIntegration;
+        _toCapyConverter.add( new CapyConvertibleValue< IntegrationAlgorithmEnum >
+                                                      ( false, "INTEGRATION", _integration,
+                                                        allIntegrationAlgorithm, allIntegrationAlgorithmNames,
+                                                        true ) );
+
+        _ordreInt = -1;
+        _toCapyConverter.add( new CapyConvertibleValue< int >
+                                                      ( false, "INTEGRATION", _ordreInt, false ) );
+
+        _contactInit = Interpenetration;
+        _toCapyConverter.add( new CapyConvertibleValue< ContactInitializationEnum >
+                                                      ( false, "CONTACT_INIT", _contactInit,
+                                                        allContactInitialization, allContactInitializationNames,
+                                                        true ) );
+
+        _coefCont = 100.;
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "COEF_CONT", _coefCont, true ) );
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "COEF_PENA_CONT", _coefPenaCont, false ) );
+
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "SEUIL_INIT", _seuilInit, false ) );
+        _coefFrot = 100.;
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "COEF_FROT", _coefFrot, true ) );
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "COEF_PENA_FROT", _coefPenaFrot, false ) );
+        _toCapyConverter.add( new CapyConvertibleValue< VectorOfGroupOfNodesPtr >
+                                                      ( false, "SANS_GROUP_NO_FR", _sansGroupNoFr, false ) );
+    };
+
+    void addDiscretizedParameters()
+    {
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                    ( false, "ALARME_JEU", _alarmeJeu, false ) );
+
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                    ( false, "E_N", _eN, false ) );
+
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                    ( false, "COEF_MATR_FROT", _coefMatrFrot, true ) );
+
+        _toCapyConverter.add( new CapyConvertibleValue< double >
+                                    ( false, "E_T", _eT, false ) );
+    };
 
 public:
     ContactZoneInstance(): _normType( MasterNorm ),
@@ -212,19 +296,16 @@ public:
         _toCapyConverter.add( new CapyConvertibleValue< bool >
                                     ( false, "GLISSIERE", _glissiere,
                                       {true, false}, {"OUI", "NON"}, true ) );
-        _toCapyConverter.add( new CapyConvertibleValue< double >
-                                    ( false, "ALARME_JEU", _alarmeJeu, false ) );
-        _toCapyConverter.add( new CapyConvertibleValue< double >
-                                    ( false, "E_N", _eN, false ) );
 
         _toCapyConverter.add( new CapyConvertibleValue< double >
                                     ( false, "COULOMB", _coulomb, false ) );
-        _toCapyConverter.add( new CapyConvertibleValue< double >
-                                    ( false, "COEF_MATR_FROT", _coefMatrFrot, false ) );
         _toCapyConverter.add( new CapyConvertibleValue< FrictionAlgorithmEnum >
                                     ( false, "ALGO_FROT", _algoFrot, false ) );
-        _toCapyConverter.add( new CapyConvertibleValue< double >
-                                    ( false, "E_T", _eT, false ) );
+
+        if( formulation == Continuous )
+            addContinuousParameters();
+        else if( formulation == Discretized )
+            addDiscretizedParameters();
     };
 
     void addBeamDescription() throw ( std::runtime_error )
@@ -235,8 +316,10 @@ public:
         throw std::runtime_error( "Not yet implemented" );
     };
 
-    void addFriction( const double& coulomb, const double& eT,
-                      const double& coefMatrFrot = 0. ) throw ( std::runtime_error )
+    template< ContactFormulationEnum form = formulation >
+    typename std::enable_if< form == Discretized, void>::type
+    addFriction( const double& coulomb, const double& eT,
+                 const double& coefMatrFrot = 0. ) throw ( std::runtime_error )
     {
         _coulomb = coulomb;
         _eT = eT;
@@ -248,6 +331,32 @@ public:
         _toCapyConverter[ "COEF_MATR_FROT" ]->enable();
         _toCapyConverter[ "ALGO_FROT" ]->enable();
         _toCapyConverter[ "ALGO_FROT" ]->setMandatory( true );
+    };
+
+    template< ContactFormulationEnum form = formulation >
+    typename std::enable_if< form == Continuous, void>::type
+    addFriction( const FrictionAlgorithmEnum& algoFrot, const double& coulomb,
+                 const double& seuilInit, const double& coefFrot )
+        throw ( std::runtime_error )
+    {
+        _algoFrot = algoFrot;
+        _coulomb = coulomb;
+        _seuilInit = seuilInit;
+        _toCapyConverter[ "COULOMB" ]->enable();
+        _toCapyConverter[ "COULOMB" ]->setMandatory( true );
+        _toCapyConverter[ "SEUIL_INIT" ]->enable();
+        _toCapyConverter[ "ALGO_FROT" ]->enable();
+        if( algoFrot == StandardFriction )
+        {
+            _toCapyConverter[ "COEF_FROT" ]->enable();
+            _coefFrot = coefFrot;
+        }
+        else
+        {
+            _toCapyConverter[ "COEF_PENA_FROT" ]->enable();
+            _toCapyConverter[ "COEF_PENA_FROT" ]->setMandatory( true );
+            _coefPenaFrot = coefFrot;
+        }
     };
 
     void addPlateDescription() throw ( std::runtime_error )
@@ -294,8 +403,14 @@ public:
         _nodesToExclude.push_back( MeshEntityPtr( new GroupOfElements( name ) ) );
     };
 
-    void setContactAlgorithm( const ContactAlgorithmEnum& cont )
+    template< ContactFormulationEnum form = formulation >
+    typename std::enable_if< form == Discretized, void>::type
+    setContactAlgorithm( const ContactAlgorithmEnum& cont )
+        throw ( std::runtime_error )
     {
+        if( _algoCont != ConstraintContact && _algoCont != PenalizationContact &&
+            _algoCont != GcpContact )
+            throw std::runtime_error( "Contact algorithm not available for discretized contact" );
         _algoCont = cont;
         if( _algoCont == ConstraintContact )
         {
@@ -307,6 +422,75 @@ public:
             _toCapyConverter[ "GLISSIERE" ]->disable();
             _toCapyConverter[ "ALARME_JEU" ]->disable();
             _toCapyConverter[ "E_N" ]->enable();
+        }
+    };
+
+    template< ContactFormulationEnum form = formulation >
+    typename std::enable_if< form == Continuous, void>::type
+    setContactAlgorithm( const ContactAlgorithmEnum& cont )
+        throw ( std::runtime_error )
+    {
+        if( _algoCont != StandardContact && _algoCont != PenalizationContact )
+            throw std::runtime_error( "Contact algorithm not available for discretized contact" );
+        _algoCont = cont;
+        if( _algoCont == StandardContact )
+        {
+            _toCapyConverter[ "COEF_CONT" ]->enable();
+            _toCapyConverter[ "COEF_PENA_CONT" ]->disable();
+        }
+        else if( _algoCont == PenalizationContact )
+        {
+            _toCapyConverter[ "COEF_CONT" ]->disable();
+            _toCapyConverter[ "COEF_PENA_CONT" ]->enable();
+            _toCapyConverter[ "COEF_PENA_CONT" ]->setMandatory( true );
+        }
+    };
+
+    void setContactAlgorithm( const double& value )
+    {
+        if( _algoCont == StandardContact )
+            _coefCont = value;
+        else if( _algoCont == PenalizationContact )
+            _coefPenaCont = value;
+    };
+
+    template< ContactFormulationEnum form = formulation >
+    typename std::enable_if< form == Continuous, void>::type
+    setIntegrationAlgorithm( const IntegrationAlgorithmEnum& integr, const int& ordre = -1 )
+        throw ( std::runtime_error )
+    {
+        _integration = integr;
+        if( ordre != -1 && integr == AutomaticIntegration )
+            throw std::runtime_error( "Integration ordre not available with AutomaticIntegration" );
+        if( _integration == GaussIntegration )
+        {
+            if( _ordreInt < 1 || _ordreInt > 6 )
+                throw std::runtime_error( "Integration ordre out of bound (must be in [1, 6]" );
+            if( ordre == -1 )
+                _ordreInt = 3;
+            else
+                _ordreInt = ordre;
+            _toCapyConverter[ "ORDRE_INT" ]->enable();
+        }
+        else if( _integration == SimpsonIntegration )
+        {
+            if( _ordreInt < 1 || _ordreInt > 4 )
+                throw std::runtime_error( "Integration ordre out of bound (must be in [1, 6]" );
+            if( ordre == -1 )
+                _ordreInt = 1;
+            else
+                _ordreInt = ordre;
+            _toCapyConverter[ "ORDRE_INT" ]->enable();
+        }
+        else if( _integration == NewtonCotesIntegration )
+        {
+            if( _ordreInt < 3 || _ordreInt > 8 )
+                throw std::runtime_error( "Integration ordre out of bound (must be in [1, 6]" );
+            if( ordre == -1 )
+                _ordreInt = 3;
+            else
+                _ordreInt = ordre;
+            _toCapyConverter[ "ORDRE_INT" ]->enable();
         }
     };
 
@@ -351,7 +535,11 @@ public:
     };
 };
 
+typedef ContactZoneInstance< Discretized > DiscretizedContactZoneInstance;
+typedef ContactZoneInstance< Continuous > ContinuousContactZoneInstance;
+
 typedef boost::shared_ptr< GenericContactZone > GenericContactZonePtr;
-typedef boost::shared_ptr< ContactZoneInstance > ContactZonePtr;
+typedef boost::shared_ptr< ContactZoneInstance< Discretized > > DiscretizedContactZonePtr;
+typedef boost::shared_ptr< ContactZoneInstance< Continuous > > ContinuousContactZonePtr;
 
 #endif /* CONTACTZONE_H_ */

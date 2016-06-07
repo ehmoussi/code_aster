@@ -20,7 +20,7 @@
 from libcpp.string cimport string
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Interactions.ContactZone cimport ContactZonePtr
+from code_aster.Interactions.ContactZone cimport DiscretizedContactZonePtr
 from code_aster.Modeling.Model cimport ModelPtr
 
 
@@ -46,7 +46,7 @@ cdef extern from "Interactions/ContactDefinition.h":
     cdef cppclass DiscretizedContactInstance:
 
         DiscretizedContactInstance()
-        void addContactZone(const ContactZonePtr& zone)
+        void addContactZone(const DiscretizedContactZonePtr& zone)
         bint build()
         void setModel(ModelPtr& model)
         void setGeometricResolutionAlgorithm(const GeometricResolutionAlgorithmEnum& curAlgo) except +
