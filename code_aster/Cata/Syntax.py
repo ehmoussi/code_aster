@@ -80,6 +80,23 @@ def checkMandatory(dictDefinition, dictSyntax):
                 _debug( "syntax =", dictSyntax )
                 raise KeyError("Keyword {} is mandatory".format(key))
 
+def isValidType(obj, expected):
+    """Check that `obj` has one of the `expected` type"""
+    if type(obj) in expected:
+        return True
+    # accept str for MeshEntity
+    if type(obj) is str and issubclass(expected[0], DS.MeshEntity):
+        assert len(expected) == 1, 'several types for MeshEntity ?!'
+        return True
+    try:
+        typname = obj.getType()
+        expectname = [i.getType() for i in expected if issubclass(i, DS.DataStructure)]
+        _debug( obj, typname, 'expecting:', expectname)
+        return typname in expectname
+    except AttributeError:
+        pass
+    return False
+
 def buildConditionContext(dictDefinition, dictSyntax):
     """Build the context to evaluate bloc conditions.
     The values given by the user (dictSyntax) preempt on the definition ones"""
@@ -343,7 +360,7 @@ class SyntaxCheckerVisitor(object):
             - the values are in [val_min, val_max],
             - the number of values is in [min, max]
         """
-        # Vérification du type
+        # Liste les types possibles
         currentType = step.definition["typ"]
         if type(currentType) not in (list, tuple):
             currentType = [currentType]
@@ -385,10 +402,7 @@ class SyntaxCheckerVisitor(object):
                     raise ValueError( "Value must be in {!r}".format(
                                       step.definition["into"]) )
             # type
-            #    and not (type(i) is type and issubclass(i, DS.DataStructure)) \
-            if type(i) not in validType \
-               and not isinstance(i, DS.DataStructure) \
-               and not (type(i) is str and issubclass(validType[0], DS.MeshEntity)):
+            if not isValidType(i, validType):
                 step._context(i)
                 raise TypeError('Unexpected type {}'.format(type(i)))
             # val_min/val_max

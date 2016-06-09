@@ -58,6 +58,10 @@ cdef class Mesh:
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
+
     def getCoordinates(self):
         """Return the coordinates as a FieldOnNodesDouble object"""
         coordinates = FieldOnNodesDouble()
