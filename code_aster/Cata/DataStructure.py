@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -21,11 +21,20 @@
 This package is only used to check the *legacy* syntax.
 
 It is not important to use the real class (defined in Cython).
-Their definitions are sufficient.
+Cython objects must defined a `getType()` function that is compared to
+the return of the class method `getType()` of datastructures.
+
+Ex.: maillage_sdaster.getType() = Mesh().getType() = "MAILLAGE"
 """
 
 class DataStructure(object):
     """Base class for all datastructures"""
+
+    @classmethod
+    def getType(cls):
+        """Return the type of DataStructure"""
+        # use for static checking (with fake datastructures)
+        return cls.__name__.replace("_sdaster", "").upper()
 
 # Objects provided by Noyau from Eficas
 # keep compatibility with old name ASSD

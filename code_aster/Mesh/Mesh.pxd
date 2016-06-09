@@ -29,6 +29,7 @@ cdef extern from "Mesh/Mesh.h":
         MeshInstance()
         const FieldOnNodesDoublePtr getCoordinates()
         string getName()
+        string getType()
         bint hasGroupOfElements( string name )
         bint hasGroupOfNodes( string name )
         bint isEmpty()
