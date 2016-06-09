@@ -13,6 +13,7 @@ monModel = code_aster.Model()
 monModel.setSupportMesh( monMaillage )
 monModel.addModelingOnAllMesh( code_aster.Mechanics, code_aster.Tridimensional )
 monModel.build()
+test.assertEqual( monModel.getType(), "MODELE" )
 
 YOUNG = 200000.0;
 POISSON = 0.3;
@@ -54,11 +55,13 @@ materViscochab.setDoubleValue( "A_k", 1.)
 acier.addMaterialBehaviour( materViscochab )
 acier.build()
 acier.debugPrint(6)
+test.assertEqual( acier.getType(), "MATER" )
 
 affectMat = code_aster.MaterialOnMesh()
 affectMat.setSupportMesh( monMaillage )
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.build()
+test.assertEqual( affectMat.getType(), "CHAM_MATER" )
 
 imposedDof1 = code_aster.DisplacementDouble()
 imposedDof1.setValue( code_aster.Loads.Dx, 0.0 )
@@ -68,6 +71,7 @@ CharMeca1 = code_aster.ImposedDisplacementDouble()
 CharMeca1.setSupportModel( monModel )
 CharMeca1.setValue( imposedDof1, "Bas" )
 CharMeca1.build()
+test.assertEqual( CharMeca1.getType(), "CHAR_MECA" )
 
 imposedPres1 = code_aster.PressureDouble()
 imposedPres1.setValue( code_aster.Loads.Pres, 1000. )
@@ -75,6 +79,7 @@ CharMeca2 = code_aster.DistributedPressureDouble()
 CharMeca2.setSupportModel( monModel )
 CharMeca2.setValue( imposedPres1, "Haut" )
 CharMeca2.build()
+test.assertEqual( CharMeca2.getType(), "CHAR_MECA" )
 
 matr_elem = code_aster.ElementaryMatrix()
 matr_elem.setSupportModel( monModel )
@@ -82,6 +87,7 @@ matr_elem.setMaterialOnMesh( affectMat )
 matr_elem.addMechanicalLoad( CharMeca1 )
 matr_elem.addMechanicalLoad( CharMeca2 )
 matr_elem.computeMechanicalRigidity()
+test.assertEqual( matr_elem.getType(), "MATR_ELEM_DEPL_R" )
 
 monSolver = code_aster.LinearSolver( code_aster.LinearAlgebra.Mumps, code_aster.LinearAlgebra.Metis )
 
@@ -90,12 +96,14 @@ numeDDL.setElementaryMatrix( matr_elem )
 numeDDL.setLinearSolver( monSolver )
 numeDDL.computeNumerotation()
 numeDDL.debugPrint(6)
+test.assertEqual( numeDDL.getType(), "NUME_DDL" )
 
 vectElem = code_aster.ElementaryVector()
 vectElem.addMechanicalLoad( CharMeca1 )
 vectElem.addMechanicalLoad( CharMeca2 )
 vectElem.computeMechanicalLoads()
 vectElem.debugPrint(6)
+test.assertEqual( vectElem.getType(), "VECT_ELEM_DEPL_R" )
 
 retour = vectElem.assembleVector( numeDDL )
 
@@ -104,6 +112,7 @@ matrAsse.setElementaryMatrix( matr_elem )
 matrAsse.setDOFNumbering( numeDDL )
 matrAsse.build()
 matrAsse.factorization()
+test.assertEqual( matrAsse.getType(), "MATR_ASSE_DEPL_R" )
 
 resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
 
