@@ -12,6 +12,7 @@ fsin = code_aster.Function()
 fsin.setParameterName("INST")
 fsin.setResultName("TEMP")
 fsin.setInterpolation("LIN LOG")
+test.assertEqual( fsin.getType(), "FONCTION" )
 
 with test.assertRaises(ValueError):
     fsin.setInterpolation("invalid")

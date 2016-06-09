@@ -19,6 +19,7 @@ monModel.build()
 charCine = code_aster.KinematicsLoad()
 charCine.setSupportModel(monModel)
 charCine.addImposedMechanicalDOFOnElements(code_aster.Dx, 0., "Bas")
+test.assertEqual( charCine.getType(), "CHAR_CINE" )
 
 # Impossible d'affecter un blocage en temperature sur un DEPL
 with test.assertRaises( RuntimeError ):
