@@ -28,6 +28,7 @@ cdef extern from "Algorithms/TimeStepper.h":
     cdef cppclass TimeStepperInstance:
         TimeStepperInstance()
         void setValues( const VectorDouble &absc ) except +
+        string getType()
 
     cdef cppclass TimeStepperPtr:
 

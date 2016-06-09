@@ -54,6 +54,10 @@ cdef class FieldOnNodesDouble:
         """Return the pointer on the c++ instance objet"""
         return self._cptr.get()
 
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
+
     def __getitem__( self, i ):
         """Return the value at the given index"""
         cdef double val = deref(self.getInstance())[i]

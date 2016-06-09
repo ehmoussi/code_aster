@@ -51,6 +51,10 @@ cdef class TimeStepper:
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
+
     def setValues( self, values ):
         """Define the values of the TimeStepper"""
         self.getInstance().setValues( values )

@@ -50,6 +50,10 @@ cdef class XfemCrack:
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
+
     def build( self ):
         """Build the XfemCrack"""
         instance = self.getInstance()
@@ -199,4 +203,3 @@ cdef class XfemCrack:
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
-

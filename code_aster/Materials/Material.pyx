@@ -49,6 +49,10 @@ cdef class Material:
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
+
     def addMaterialBehaviour( self, GeneralMaterialBehaviour behaviour ):
         """Add a material behaviour in the material definition"""
         self.getInstance().addMaterialBehaviour( deref( behaviour.getPtr() ) )
