@@ -26,6 +26,7 @@ cdef extern from "Materials/Material.h":
     cdef cppclass MaterialInstance:
 
         MaterialInstance()
+        string getType()
         void addMaterialBehaviour(GeneralMaterialBehaviourPtr& curMaterBehav) except +
         bint build() except +
         void debugPrint( int logicalUnit ) except +

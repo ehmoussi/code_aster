@@ -29,7 +29,7 @@ from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethod
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Modeling.Model cimport Model
 from code_aster.Results.ResultsContainer cimport ResultsContainer
-from code_aster.Studies.TimeStepManager cimport TimeStepManager 
+from code_aster.Studies.TimeStepManager cimport TimeStepManager
 
 cdef class StaticNonLinearAnalysis:
 
@@ -71,7 +71,7 @@ cdef class StaticNonLinearAnalysis:
         results = ResultsContainer()
         results.set( self.getInstance().execute() )
         return results
-    
+
     def addBehaviourOnElements( self, Behaviour curBehaviour, string nameOfGroup = ""  ):
         """Set a nonlinear behaviour on a group of elements """
         self.getInstance().addBehaviourOnElements( deref( curBehaviour.getPtr() ), nameOfGroup )
@@ -83,7 +83,7 @@ cdef class StaticNonLinearAnalysis:
     def setLinearSolver( self, LinearSolver curLinearSolver ):
         """Set the linear solver """
         self.getInstance().setLinearSolver( deref( curLinearSolver.getPtr() ) )
-   
+
     def setLineSearchMethod( self, LineSearchMethod curLineSearchMethod ):
         """Set the linesearch method """
         self.getInstance().setLineSearchMethod( deref( curLineSearchMethod.getPtr() ) )

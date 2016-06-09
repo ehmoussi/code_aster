@@ -53,6 +53,7 @@ cdef class LinearSolver:
     def solveDoubleLinearSystem( self, AssemblyMatrixDouble currentMatrix, FieldOnNodesDouble currentRHS ):
         """Assembly elementary vector"""
         result = FieldOnNodesDouble()
-        result.set( self.getInstance().solveDoubleLinearSystem( deref( currentMatrix.getPtr() ),
-                                                                deref( currentRHS.getPtr() ) ) )
+        result.set( self.getInstance().solveDoubleLinearSystem(
+                        deref( currentMatrix.getPtr() ),
+                        deref( currentRHS.getPtr() ) ) )
         return result
