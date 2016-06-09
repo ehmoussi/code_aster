@@ -75,6 +75,10 @@ cdef class KinematicsLoad:
         """Point to an existing object"""
         self._cptr = new KinematicsLoadPtr( other )
 
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
+
     def setSupportModel( self, Model model ):
         """Set the support model of the load"""
         return self.getInstance().setSupportModel( deref( model.getPtr() ) )

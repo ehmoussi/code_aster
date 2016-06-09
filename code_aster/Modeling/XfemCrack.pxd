@@ -114,6 +114,8 @@ cdef extern from "Modeling/XfemCrack.h":
 
         string getJeveuxName()
 
+        string getType()
+
         void debugPrint( int logicalUnit )
 
 

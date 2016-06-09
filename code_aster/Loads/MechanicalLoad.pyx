@@ -56,6 +56,9 @@ cdef class GenericMechanicalLoad:
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
 
 ###### NodalForceDouble
 

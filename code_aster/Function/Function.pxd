@@ -30,6 +30,7 @@ cdef extern from "Function/Function.h":
         FunctionInstance( string )
         bint build()
         string getName()
+        string getType()
         void setParameterName( string name ) except +
         void setResultName( string name ) except +
         void setInterpolation( string type ) except +

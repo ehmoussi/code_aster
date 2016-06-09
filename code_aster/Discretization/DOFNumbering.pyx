@@ -45,6 +45,10 @@ cdef class DOFNumbering:
         """Point to an existing object"""
         self._cptr = new DOFNumberingPtr( other )
 
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
+
     cdef DOFNumberingPtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr

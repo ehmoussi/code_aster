@@ -1985,648 +1985,647 @@ cdef class GeneralMaterialBehaviour:
 cdef class ElasMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasFluiMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasIstrMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasIstrFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasOrthMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasOrthFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasHyperMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasCoqueMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasCoqueFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasMembraneMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class Elas2ndgMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasGlrcMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasGlrcFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasDhrcMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class CableMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class VeriBorneMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class TractionMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EcroLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EndoHeterogeneMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EcroLineFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EcroPuisMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EcroPuisFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EcroCookMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EcroCookFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class BetonEcroLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class BetonReglePrMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EndoOrthBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class PragerMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class PragerFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class TaheriMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class TaheriFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class RousselierMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class RousselierFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ViscSinhMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ViscSinhFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class Cin1ChabMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class Cin1ChabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class Cin2ChabMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class Cin2ChabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class Cin2NradMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MemoEcroMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MemoEcroFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ViscochabMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ViscochabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class LemaitreMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class LemaitreIrraMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class LmarcIrraMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ViscIrraLogMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class GranIrraLogMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class LemaSeuilMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class LemaSeuilFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class Irrad3mMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class LemaitreFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MetaLemaAniMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MetaLemaAniFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ArmeMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class AsseCornMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class DisContactMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EndoScalaireMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EndoScalaireFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EndoFissExpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EndoFissExpFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class DisGricraMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class BetonDoubleDpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MazarsMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MazarsFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class JointBaMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class VendochabMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class VendochabFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class HayhurstMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ViscEndoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ViscEndoFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class PintoMenegottoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class BpelBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class BpelAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EtccBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EtccAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MohrCoulombMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class CamClayMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class BarceloneMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class CjsMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class HujeuxMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class EcroAsymLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class GrangerFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class GrangerFp_indtMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class VGrangerFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class BetonBurgerFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class BetonUmlvFpMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class BetonRagMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class PoroBetonMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class GlrcDmMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class DhrcMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class GattMonerieMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class CorrAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class CableGaineFrotMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class DisEcroCineMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class DisViscMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class DisBiliElasMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class TherNlMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class TherHydrMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class TherMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class TherFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class TherOrthMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class TherCoqueMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class TherCoqueFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class SechGrangerMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class SechMensiMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class SechBazantMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class SechNappeMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MetaAcierMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MetaZircMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class DurtMetaMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasMetaMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasMetaFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MetaEcroLineMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MetaTractionMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MetaViscFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MetaPtMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MetaReMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class FluideMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ThmGazMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ThmVapeGazMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ThmLiquMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class FatigueMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class DommaLemaitreMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class CisaPlanCritMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ThmRuptMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class WeibullMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class WeibullFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class NonLocalMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class RuptFragMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class RuptFragFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class CzmLabMixMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class RuptDuctMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class JointMecaRuptMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class JointMecaFrotMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class RccmMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class RccmFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class LaigleMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class LetkMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class DruckPragerFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class DruckPragerFoFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ViscDrucPragMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class HoekBrownMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class ElasGonfMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class JointBandisMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoVisc1MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoVisc2MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoIsot1MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoIsot2MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoCine1MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoCine2MaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoDdKrMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoDdCfcMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoDdCfcIrraMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoDdFatMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoDdCcMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class MonoDdCcIrraMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class UmatMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class UmatFoMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
+
 cdef class CritRuptMaterialBehaviour( GeneralMaterialBehaviour ):
 
     pass
-    
