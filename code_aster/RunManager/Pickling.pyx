@@ -66,13 +66,18 @@ class Pickler(object):
         for name, obj in ctxt.items():
             try:
                 cPickle.dump( obj, pick, -1 )
+                objList.append( name )
             except (cPickle.PicklingError, TypeError):
                 logger.warn("object can't be pickled: {0}".format(name))
                 continue
-            objList.append( name )
-            # TODO should only delete (set to None) Code_Aster objects, not all!
+            # delete (set to None) Code_Aster objects, not all!
             if delete:
-                self._ctxt[name] = None
+                # TODO: should inherit from DataStructure ?...
+                try:
+                    if type(obj.getType()) is str:
+                        self._ctxt[name] = None
+                except AttributeError:
+                    pass
         # add management objects on the stack
         cPickle.dump( objList, pick, -1 )
         cPickle.dump( resultNaming.getLastId(), pick, -1 )
