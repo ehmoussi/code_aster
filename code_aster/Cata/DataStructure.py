@@ -24,23 +24,12 @@ It is not important to use the real class (defined in Cython).
 Their definitions are sufficient.
 """
 
-# existing Cython objects
-from code_aster import (
-    Mesh, Model, Material, MaterialOnMesh,
-    Function,
-)
-
-# compatibility layer to avoid changing all the catalogs
-cham_mater = MaterialOnMesh
-fonction_sdaster = Function
-maillage_sdaster = Mesh
-mater_sdaster = Material
-modele_sdaster = Model
-
+class DataStructure(object):
+    """Base class for all datastructures"""
 
 # Objects provided by Noyau from Eficas
-class ASSD(object):
-    pass
+# keep compatibility with old name ASSD
+ASSD = DataStructure
 
 class not_checked(ASSD):
     pass
@@ -68,9 +57,7 @@ class no(GEOM):
     pass
 
 # To be more consistent with new names
-DataStructure = ASSD
 MeshEntity = GEOM
-
 
 # Copy of `allco.capy`.
 # It can not be used as is because ASSD is declared in `accas.capy`
@@ -100,6 +87,9 @@ class post_comp_cham_no :
     pass
 
 class post_comp_cham_el :
+    pass
+
+class cham_mater(ASSD):
     pass
 
 class char_acou(ASSD):
@@ -141,6 +131,9 @@ class fiss_xfem(ASSD):
 class fonction_class(ASSD):
     pass
 
+class fonction_sdaster(fonction_class):
+    pass
+
 class fonction_c(fonction_class):
     pass
 
@@ -174,10 +167,16 @@ class macr_elem_dyna(ASSD):
 class macr_elem_stat(ASSD):
     pass
 
+class maillage_sdaster(ASSD):
+    pass
+
 class grille_sdaster(maillage_sdaster):
     pass
 
 class squelette(maillage_sdaster):
+    pass
+
+class mater_sdaster(ASSD):
     pass
 
 class matr_asse(ASSD):
@@ -235,6 +234,9 @@ class mode_cycl(ASSD):
     pass
 
 class modele_gene(ASSD):
+    pass
+
+class modele_sdaster(ASSD):
     pass
 
 class nume_ddl_gene(ASSD):
