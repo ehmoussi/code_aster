@@ -39,10 +39,11 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
     std::string typSd;
     if ( _listOfDoubleImposedDisplacement.size() != 0 )
         typSd = getType() + "_MECA";
-    if ( _listOfDoubleImposedTemperature.size() != 0 )
+    else if ( _listOfDoubleImposedTemperature.size() != 0 )
         typSd = getType() + "_THER";
-    if ( _listOfDoubleImposedDisplacement.size() == 0 && _listOfDoubleImposedTemperature.size() == 0 )
+    else
         throw std::runtime_error( "KinematicsLoad empty" );
+    setType( typSd );
     CommandSyntaxCython cmdSt( "AFFE_CHAR_CINE" );
     cmdSt.setResult( getResultObjectName(), typSd );
 
