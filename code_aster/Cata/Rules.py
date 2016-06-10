@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -97,12 +97,3 @@ class AllTogether(Rule):
         super(AllTogether, self).check(dictSyntax)
         if sum( self._not_none(dictSyntax) ) not in ( 0, len(self.ruleArgs) ):
             raise ValueError("{} must be all defined or all undefined".format(self.ruleArgs))
-
-
-# compatibilty layer
-AU_MOINS_UN = AtLeastOne
-UN_PARMI = ExactlyOne
-EXCLUS = AtMostOne
-PRESENT_PRESENT = IfFirstAllPresent
-PRESENT_ABSENT = OnlyFirstPresent
-ENSEMBLE = AllTogether
