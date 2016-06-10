@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -20,7 +20,7 @@
 import os.path as osp
 from glob import glob
 
-from code_aster.Cata.Syntax import Command
+from code_aster.Cata.SyntaxObjects import Command
 from code_aster.Supervis import libCommandSyntax
 
 
