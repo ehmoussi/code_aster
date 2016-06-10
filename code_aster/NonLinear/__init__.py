@@ -123,7 +123,7 @@ from .Behaviour import (
             Rouss_Pr,
             Rouss_Visc,
             Rupt_Frag,
-            Sans_Rel,
+            WithoutConstitutiveLaw,
             Vendochab,
             Visc_Endo_Lema,
             Viscochab,
@@ -166,3 +166,6 @@ from .NonLinearMethod import (
 from .LineSearchMethod import (
         LineSearchMethod,
         Corde, Mixte, Pilotage, )
+
+from .State import (
+        State,  )

@@ -19,6 +19,8 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 
 cdef extern from "DataFields/FieldOnNodes.h":
 
@@ -40,7 +42,7 @@ cdef extern from "DataFields/FieldOnNodes.h":
 ctypedef FieldOnNodesInstance[ double ] FieldOnNodesDoubleInstance
 
 
-cdef class FieldOnNodesDouble:
+cdef class FieldOnNodesDouble( DataStructure ):
 
     cdef FieldOnNodesDoublePtr* _cptr
 

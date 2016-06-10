@@ -20,11 +20,12 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Modeling.Model cimport Model
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 
 
-cdef class KinematicsLoad:
+cdef class KinematicsLoad( DataStructure ):
     """Python wrapper on the C++ KinematicsLoad object"""
 
     def __cinit__( self, bint init=True ):

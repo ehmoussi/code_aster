@@ -136,4 +136,13 @@ class AllMeshEntities: public VirtualMeshEntity
         };
 };
 
+typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+typedef std::vector< MeshEntityPtr > VectorOfMeshEntityPtr;
+
+typedef boost::shared_ptr< GroupOfNodes > GroupOfNodesPtr;
+typedef std::vector< GroupOfNodesPtr > VectorOfGroupOfNodesPtr;
+
+typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+typedef std::vector< GroupOfElementsPtr > VectorOfGroupOfElementsPtr;
+
 #endif /* MESHENTITES_H_ */

@@ -318,7 +318,7 @@ public:
      * @brief Ajouter une zone de contact
      * @todo Rajouter des verifs sur la présence des groupes de mailles, du frottement, ...
      */
-    void addContactZone( const ContactZonePtr& zone )
+    void addContactZone( const GenericContactZonePtr& zone )
     {
         _contactZones.push_back( zone );
     };

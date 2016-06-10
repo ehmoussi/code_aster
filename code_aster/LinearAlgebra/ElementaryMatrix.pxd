@@ -18,6 +18,8 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Modeling.Model cimport ModelPtr
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
@@ -42,7 +44,7 @@ cdef extern from "LinearAlgebra/ElementaryMatrix.h":
         ElementaryMatrixInstance* get()
 
 
-cdef class ElementaryMatrix:
+cdef class ElementaryMatrix( DataStructure ):
 
     cdef ElementaryMatrixPtr* _cptr
 

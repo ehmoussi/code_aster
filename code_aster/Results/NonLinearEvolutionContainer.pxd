@@ -18,36 +18,32 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
-
-from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 
 
-cdef extern from "Mesh/Mesh.h":
+cdef extern from "Results/NonLinearEvolutionContainer.h":
 
-    cdef cppclass MeshInstance:
+    cdef cppclass NonLinearEvolutionContainerInstance:
 
-        MeshInstance()
-        const FieldOnNodesDoublePtr getCoordinates()
-        string getName()
-        string getType()
-        bint hasGroupOfElements( string name )
-        bint hasGroupOfNodes( string name )
-        bint isEmpty()
-        bint build()
+        NonLinearEvolutionContainerInstance()
+        const string getType()
         void debugPrint( int logicalUnit )
+        FieldOnNodesDoublePtr getRealFieldOnNodes( string name, int rank )
+        bint printMedFile( string fileName )
 
-    cdef cppclass MeshPtr:
+    cdef cppclass NonLinearEvolutionContainerPtr:
 
-        MeshPtr( MeshPtr& )
-        MeshPtr( MeshInstance* )
-        MeshInstance* get()
+        NonLinearEvolutionContainerPtr( NonLinearEvolutionContainerPtr& )
+        NonLinearEvolutionContainerPtr( NonLinearEvolutionContainerInstance* )
+        NonLinearEvolutionContainerInstance* get()
 
 
-cdef class Mesh( DataStructure ):
+#### NonLinearEvolutionContainer
 
-    cdef MeshPtr* _cptr
+cdef class NonLinearEvolutionContainer:
 
-    cdef set( self, MeshPtr other )
-    cdef MeshPtr* getPtr( self )
-    cdef MeshInstance* getInstance( self )
+    cdef NonLinearEvolutionContainerPtr* _cptr
+
+    cdef set( self, NonLinearEvolutionContainerPtr other )
+    cdef NonLinearEvolutionContainerPtr* getPtr( self )
+    cdef NonLinearEvolutionContainerInstance* getInstance( self )

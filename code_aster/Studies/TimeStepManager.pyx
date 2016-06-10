@@ -20,10 +20,11 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Studies.FailureConvergenceManager cimport GenericConvergenceError
 
 
-cdef class TimeStepManager:
+cdef class TimeStepManager( DataStructure ):
 
     """Python wrapper on the C++ TimeStepManager object"""
 

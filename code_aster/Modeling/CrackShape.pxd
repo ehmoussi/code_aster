@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Mesh.Mesh cimport MeshPtr
 
 
@@ -95,7 +96,7 @@ cdef extern from "Modeling/CrackShape.h":
         CrackShapeInstance* get()
 
 
-cdef class CrackShape:
+cdef class CrackShape( DataStructure ):
 
     cdef CrackShapePtr* _cptr
 

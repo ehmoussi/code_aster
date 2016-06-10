@@ -20,9 +20,12 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 NoShape, Ellipse, Square, Cylinder, Notch, HalfPlane, Segment, HalfLine, Line = cNoShape,  cEllipse, cSquare, cCylinder, cNotch, cHalfPlane, cSegment, cHalfLine, cLine
 
-cdef class CrackShape:
+
+cdef class CrackShape( DataStructure ):
     """Python wrapper on the C++ CrackShape object"""
 
     def __cinit__( self, bint init=True ):
@@ -112,6 +115,3 @@ cdef class CrackShape:
 
     def getStartingPoint(self):
         return self.getInstance().getStartingPoint()
-
-
-

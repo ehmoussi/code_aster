@@ -20,10 +20,11 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 
 
-cdef class NonLinearMethod:
+cdef class NonLinearMethod( DataStructure ):
     """Python wrapper on the C++ NonLinearMethod Object"""
 
     def __cinit__( self, NonLinearMethodEnum curMethod ):
@@ -38,7 +39,7 @@ cdef class NonLinearMethod:
     cdef set( self, NonLinearMethodPtr other ):
         """Point to an existing object"""
         self._cptr = new NonLinearMethodPtr( other )
-
+       
     cdef NonLinearMethodPtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
@@ -46,3 +47,15 @@ cdef class NonLinearMethod:
     cdef NonLinearMethodInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
+    
+    def setPrediction( self, PredictionEnum curPred ):
+        """Define prediction method"""
+        self.getInstance().setPrediction( curPred )
+ 
+    def setMatrix( self, MatrixEnum curMatrix ):
+        """Define prediction method"""
+        self.getInstance().setMatrix( curMatrix )
+
+    def forceStiffnessSymetry ( self, force ):
+        """Force Stiffness Symetry"""
+        self.getInstance().forceStiffnessSymetry( force )

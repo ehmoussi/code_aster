@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Mesh.Mesh cimport MeshPtr
 from code_aster.Modeling.XfemCrack cimport XfemCrackPtr
 
@@ -50,7 +51,7 @@ cdef extern from "Modeling/Model.h":
         ModelInstance* get()
 
 
-cdef class Model:
+cdef class Model( DataStructure ):
 
     cdef ModelPtr* _cptr
 

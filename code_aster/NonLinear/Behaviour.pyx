@@ -20,8 +20,10 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 
-cdef class Behaviour:
+
+cdef class Behaviour( DataStructure ):
     """Python wrapper on the C++ Behaviour Object"""
 
     def __cinit__( self, ConstitutiveLawEnum curLaw , DeformationEnum curDeformation ):

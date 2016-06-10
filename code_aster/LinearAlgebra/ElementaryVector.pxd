@@ -18,6 +18,8 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Mesh.Mesh cimport MeshPtr
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
@@ -44,7 +46,7 @@ cdef extern from "LinearAlgebra/ElementaryVector.h":
         ElementaryVectorInstance* get()
 
 
-cdef class ElementaryVector:
+cdef class ElementaryVector( DataStructure ):
 
     cdef ElementaryVectorPtr* _cptr
 

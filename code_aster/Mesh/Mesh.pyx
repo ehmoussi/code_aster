@@ -24,6 +24,7 @@ from cython.operator cimport dereference as deref
 
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 from code_aster.Supervis.libFile cimport LogicalUnitFile
 
@@ -33,7 +34,7 @@ from code_aster.Supervis.libCommandSyntax import _F
 from code_aster.Supervis.libFile import FileType, FileAccess
 
 
-cdef class Mesh:
+cdef class Mesh( DataStructure ):
     """Python wrapper on the C++ Mesh object"""
 
     def __cinit__( self, bint init=True ):

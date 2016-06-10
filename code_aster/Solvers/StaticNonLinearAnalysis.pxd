@@ -17,8 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from libcpp.string cimport string 
+from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverPtr
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
@@ -39,13 +40,13 @@ cdef extern from "Solvers/StaticNonLinearAnalysis.h":
         void addKinematicsLoad( KinematicsLoadPtr& currentLoad )
         void addMechanicalLoad( GenericMechanicalLoadPtr& currentLoad )
         ResultsContainerPtr execute()
-        void addBehaviourOnElements( BehaviourPtr& curBehaviour, string nameOfGroup ) except+ 
+        void addBehaviourOnElements( BehaviourPtr& curBehaviour, string nameOfGroup ) except+
         void setNonLinearMethod( NonLinearMethodPtr& curNonLinearMethod )
         void setLineSearchMethod( LineSearchMethodPtr& curLineSearchMethod )
         void setMaterialOnMesh( MaterialOnMeshPtr& curMatOnMesh )
         void setSupportModel( ModelPtr& curModel )
         void setLinearSolver( LinearSolverPtr& curSolver )
-        void setLoadStepManager( TimeStepManagerPtr& curTimeStepManager ) 
+        void setLoadStepManager( TimeStepManagerPtr& curTimeStepManager )
         const string getType()
 
     cdef cppclass StaticNonLinearAnalysisPtr:
@@ -57,7 +58,7 @@ cdef extern from "Solvers/StaticNonLinearAnalysis.h":
 
 #### StaticNonLinearAnalysis
 
-cdef class StaticNonLinearAnalysis:
+cdef class StaticNonLinearAnalysis( DataStructure ):
     cdef StaticNonLinearAnalysisPtr* _cptr
     cdef set( self, StaticNonLinearAnalysisPtr other )
     cdef StaticNonLinearAnalysisPtr* getPtr( self )

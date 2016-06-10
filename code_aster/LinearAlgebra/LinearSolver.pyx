@@ -20,11 +20,12 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.LinearAlgebra.AssemblyMatrix cimport AssemblyMatrixDouble
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 
 
-cdef class LinearSolver:
+cdef class LinearSolver( DataStructure ):
     """Python wrapper on the C++ LinearSolver Object"""
 
     def __cinit__( self, LinearSolverEnum curLinSolv, Renumbering curRenum,
