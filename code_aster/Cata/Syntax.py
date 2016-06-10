@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -303,16 +303,23 @@ class Command(PartOfSyntax):
     """
     Object Command qui représente toute la syntaxe d'une commande
     """
+    count = 0
 
     def accept(self, visitor, syntax=None):
         """Called by a Visitor"""
         visitor.visitCommand(self, syntax)
 
-    def checkSyntax(self, dictSyntax):
+    def checkSyntax(self, dictSyntax, printSyntax=True):
         """Check the syntax of a command
         `dictSyntax` contains the keywords filled by the user"""
+        from pprint import pformat
         if type(dictSyntax) != dict:
             raise TypeError("'dict' is expected")
+        if printSyntax:
+            Command.count += 1
+            print("{0:-^100}\n Command #{1:0>4}\n{0:-^100}\n".format("", Command.count))
+            print(" {0}({1})".format(
+                self.definition.get("nom", "COMMAND"), pformat(dictSyntax)))
 
         checker = SyntaxCheckerVisitor()
         self.accept( checker, dictSyntax )
