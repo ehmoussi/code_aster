@@ -19,6 +19,9 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
+
 cdef extern from "NonLinear/AllowedBehaviour.h":
 
     cpdef enum ConstitutiveLawEnum:
@@ -142,9 +145,8 @@ cdef extern from "NonLinear/AllowedBehaviour.h":
             Rousselier,
             Rouss_Pr,
             Rouss_Visc,
-            Rupt_Frag,
-# Originellement Sans mais renommé Sans_Rel pour ne pas etre en conflit avec l'enum Renumbering
-            Sans_Rel,
+            Rupt_Frag, 
+            WithoutConstitutiveLaw
             Vendochab,
             Visc_Endo_Lema,
             Viscochab,
@@ -173,15 +175,15 @@ cdef extern from "NonLinear/AllowedBehaviour.h":
             Vmis_Isot_Trac,
             Vmis_John_Cook,
             Umat,
-            Mfront  
+            Mfront
 
     cpdef enum DeformationEnum:
-        SmallDeformation, PetitReac, LargeDeformationAndRotation, SimoMiehe, GdefLog 
+        SmallDeformation, PetitReac, LargeDeformationAndRotation, SimoMiehe, GdefLog
 
     cpdef enum TangentMatrixEnum:
         PerturbationMatrix, VerificationMatrix, TangentSecantMatrix
 
-cdef extern from "NonLinear/Behaviour.h": 
+cdef extern from "NonLinear/Behaviour.h":
 
     cdef cppclass BehaviourInstance:
 
@@ -195,7 +197,7 @@ cdef extern from "NonLinear/Behaviour.h":
 
 #### Behaviour
 
-cdef class Behaviour:
+cdef class Behaviour( DataStructure ):
 
     cdef BehaviourPtr* _cptr
 

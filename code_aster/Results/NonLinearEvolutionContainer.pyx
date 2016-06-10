@@ -19,40 +19,34 @@
 
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
-
-from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 
-#### ResultsContainer
+#### NonLinearEvolutionContainer
 
-cdef class ResultsContainer( DataStructure ):
-    """Python wrapper on the C++ ResultsContainer Object"""
+cdef class NonLinearEvolutionContainer:
+    """Python wrapper on the C++ NonLinearEvolutionContainer Object"""
 
     def __cinit__( self, bint init = True ):
         """Initialization: stores the pointer to the C++ object"""
         if init :
-            self._cptr = new ResultsContainerPtr( new ResultsContainerInstance() )
+            self._cptr = new NonLinearEvolutionContainerPtr( new NonLinearEvolutionContainerInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, ResultsContainerPtr other ):
+    cdef set( self, NonLinearEvolutionContainerPtr other ):
         """Point to an existing object"""
-        self._cptr = new ResultsContainerPtr( other )
+        self._cptr = new NonLinearEvolutionContainerPtr( other )
 
-    cdef ResultsContainerPtr* getPtr( self ):
+    cdef NonLinearEvolutionContainerPtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef ResultsContainerInstance* getInstance( self ):
+    cdef NonLinearEvolutionContainerInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
-
-    def getType(self):
-        """Return the type of DataStructure"""
-        return self.getInstance().getType()
 
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
@@ -65,5 +59,5 @@ cdef class ResultsContainer( DataStructure ):
         return returnField
 
     def printMedFile( self, name ):
-        """Print MED file from ResultsContainer"""
+        """Print MED file from NonLinearEvolutionContainer"""
         return self.getInstance().printMedFile( name )

@@ -20,13 +20,15 @@
 import cython
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 # numpy implementation in cython currently generates a warning at compilation
 import numpy as np
 cimport numpy as np
 np.import_array()
 
 
-cdef class TimeStepper:
+cdef class TimeStepper( DataStructure ):
     """Python wrapper on the C++ TimeStepper object"""
 
     def __cinit__( self, bint init=True ):

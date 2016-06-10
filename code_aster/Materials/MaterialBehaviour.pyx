@@ -19,8 +19,10 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 
-cdef class GeneralMaterialBehaviour:
+
+cdef class GeneralMaterialBehaviour( DataStructure ):
 
     """Python wrapper on the C++ GeneralMaterialBehaviour object"""
 

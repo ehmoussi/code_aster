@@ -48,7 +48,7 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
 // cmdSNL is the command Syntax object associated to Code_Aster STAT_NON_LINE command 
     CommandSyntaxCython cmdSNL( "STAT_NON_LINE");
 // Init name of result 
-    ResultsContainerPtr resultSNL( new ResultsContainerInstance ( std::string( "EVOL_NOLI" ) ) );
+    NonLinearEvolutionContainerPtr resultSNL( new NonLinearEvolutionContainerInstance ( std::string( "EVOL_NOLI" ) ) );
     cmdSNL.setResult( resultSNL->getName(), "STAT_NON_LINE" );
 // Build a dictionnary of keywords/values used to define the command syntax object    
    SyntaxMapContainer dict;
@@ -91,6 +91,7 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     dict.container[ "NEWTON" ] = listNewton;
     std::cout << " Après le mot-clé Newton " << std::endl ;
 
+
     if ( _listOfBehaviours.size() != 0 )
     {
         ListSyntaxMapContainer listeComportement;
@@ -125,6 +126,14 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     	dict.container[ "RECH_LINEAIRE" ] = listLineSearch;
     	std::cout << " Après la recherche linéaire " << std::endl ; 
         }
+     if (_initialState != NULL )
+    	{ ListSyntaxMapContainer listInitialState;
+    	const ListGenParam& listParamInitialState = _initialState->getListOfParameters();
+    	SyntaxMapContainer dictInitialState = buildSyntaxMapFromParamList( listParamInitialState );
+    	listInitialState.push_back( dictInitialState );
+    	dict.container[ "ETAT_INIT" ] = listInitialState;
+    	std::cout << " Après la définition de l'état initial " << std::endl ; 
+        }
 // Build Command Syntax object 
     cmdSNL.define( dict );
     std::cout << " Appel de debugPrint pour CommandSyntax " << std::endl;
@@ -133,9 +142,9 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
 //  Now op00070 may be called   
     try
     {
-        INTEGER op = 70;
-        std::cout << " Appel d'op0070 " << std::endl;
-        CALL_EXECOP( &op );
+  //      INTEGER op = 70;
+  //      std::cout << " Appel d'op0070 " << std::endl;
+  //      CALL_EXECOP( &op );
     }
     catch( ... )
     {
@@ -143,7 +152,7 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     }
 // Return result 
     resultSNL->debugPrint(8);
-    return resultSNL;
+    return ResultsContainerPtr(resultSNL.get());
 };
 
 

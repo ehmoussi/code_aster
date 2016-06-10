@@ -25,9 +25,10 @@ fsin.debugPrint( 6 )
 from xxMultiSteps01a_imp import fcos
 fcos.debugPrint( 6 )
 
-code_aster.saveObjects(delete=True)
+code_aster.saveObjects()
 
 # after the backup Code_Aster objects must be None
+test.assertIsNone( fcos )
 test.assertIsNone( fsin )
 
 test.printSummary()

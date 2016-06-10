@@ -18,6 +18,8 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Mesh.Mesh cimport MeshPtr
 from code_aster.Materials.Material cimport MaterialPtr
 
@@ -44,7 +46,7 @@ cdef extern from "Materials/MaterialOnMesh.h":
         MaterialOnMeshInstance* get()
 
 
-cdef class MaterialOnMesh:
+cdef class MaterialOnMesh( DataStructure ):
 
     cdef MaterialOnMeshPtr* _cptr
 

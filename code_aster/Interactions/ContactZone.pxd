@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Function.Function cimport FunctionPtr
 
 
@@ -32,9 +33,9 @@ cdef extern from "Interactions/ContactZone.h":
 
     ctypedef vector[ double] VectorDouble
 
-    cdef cppclass ContactZoneInstance:
+    cdef cppclass DiscretizedContactZoneInstance:
 
-        ContactZoneInstance()
+        DiscretizedContactZoneInstance()
         void addBeamDescription() except +
         void addPlateDescription() except +
         void addMasterGroupOfElements(const string& nameOfGroup)
@@ -50,17 +51,17 @@ cdef extern from "Interactions/ContactZone.h":
         void setNormType(const NormTypeEnum& normType)
         #void debugPrint( int logicalUnit )
 
-    cdef cppclass ContactZonePtr:
+    cdef cppclass DiscretizedContactZonePtr:
 
-        ContactZonePtr( ContactZonePtr& )
-        ContactZonePtr( ContactZoneInstance* )
-        ContactZoneInstance* get()
+        DiscretizedContactZonePtr( DiscretizedContactZonePtr& )
+        DiscretizedContactZonePtr( DiscretizedContactZoneInstance* )
+        DiscretizedContactZoneInstance* get()
 
 
-cdef class ContactZone:
+cdef class DiscretizedContactZone( DataStructure ):
 
-    cdef ContactZonePtr* _cptr
+    cdef DiscretizedContactZonePtr* _cptr
 
-    cdef set( self, ContactZonePtr other )
-    cdef ContactZonePtr* getPtr( self )
-    cdef ContactZoneInstance* getInstance( self )
+    cdef set( self, DiscretizedContactZonePtr other )
+    cdef DiscretizedContactZonePtr* getPtr( self )
+    cdef DiscretizedContactZoneInstance* getInstance( self )

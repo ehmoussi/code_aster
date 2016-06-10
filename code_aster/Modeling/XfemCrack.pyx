@@ -20,12 +20,14 @@
 from libcpp.string cimport string
 from cython.operator cimport preincrement as inc, dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.Function.Function cimport Function
 from code_aster.Modeling.CrackShape cimport CrackShape
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 
-cdef class XfemCrack:
+
+cdef class XfemCrack( DataStructure ):
     """Python wrapper on the C++ XfemCrack object"""
 
     def __cinit__( self, Mesh supportMesh, bint init=True ):

@@ -20,6 +20,8 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 
 cdef extern from "Algorithms/TimeStepper.h":
 
@@ -37,7 +39,7 @@ cdef extern from "Algorithms/TimeStepper.h":
         TimeStepperInstance* get()
 
 
-cdef class TimeStepper:
+cdef class TimeStepper( DataStructure ):
 
     cdef TimeStepperPtr* _cptr
 

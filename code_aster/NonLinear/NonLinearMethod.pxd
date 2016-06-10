@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverPtr
 
 
@@ -29,7 +30,7 @@ cdef extern from "NonLinear/NonLinearMethod.h":
 
     cpdef enum PredictionEnum:
        Tangente, Elastique, Extrapole, DeplCalcule
-  
+
     cpdef enum MatrixEnum:
        MatriceTangente, MatriceElastique
 
@@ -48,7 +49,7 @@ cdef extern from "NonLinear/NonLinearMethod.h":
 
 #### NonLinearMethod
 
-cdef class NonLinearMethod:
+cdef class NonLinearMethod( DataStructure ):
 
     cdef NonLinearMethodPtr* _cptr
 

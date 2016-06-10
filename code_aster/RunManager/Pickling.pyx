@@ -25,6 +25,8 @@ import os.path as osp
 from code_aster.Supervis.logger import logger
 from code_aster.Supervis.libCommandSyntax cimport resultNaming
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 
 class Pickler(object):
 
@@ -71,13 +73,8 @@ class Pickler(object):
                 logger.warn("object can't be pickled: {0}".format(name))
                 continue
             # delete (set to None) Code_Aster objects, not all!
-            if delete:
-                # TODO: should inherit from DataStructure ?...
-                try:
-                    if type(obj.getType()) is str:
-                        self._ctxt[name] = None
-                except AttributeError:
-                    pass
+            if delete and isinstance(obj, DataStructure):
+                self._ctxt[name] = None
         # add management objects on the stack
         cPickle.dump( objList, pick, -1 )
         cPickle.dump( resultNaming.getLastId(), pick, -1 )

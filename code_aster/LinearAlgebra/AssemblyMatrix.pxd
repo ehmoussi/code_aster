@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 from code_aster.Discretization.DOFNumbering cimport ForwardDOFNumberingPtr
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrixPtr
@@ -45,7 +46,7 @@ cdef extern from "LinearAlgebra/AssemblyMatrix.h":
 
 #### AssemblyMatrixDouble
 
-cdef class AssemblyMatrixDouble:
+cdef class AssemblyMatrixDouble( DataStructure ):
     cdef AssemblyMatrixDoublePtr* _cptr
     cdef set( self, AssemblyMatrixDoublePtr other )
     cdef AssemblyMatrixDoublePtr* getPtr( self )

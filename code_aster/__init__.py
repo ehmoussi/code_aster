@@ -37,6 +37,7 @@ from .Utilities import TestCase
 
 # import datastructures, physical quantities and constants
 # each package is responsible to export only the relevant objects
+from .DataStructure import DataStructure
 from .DataFields import *
 from .Function import *
 from .LinearAlgebra import *

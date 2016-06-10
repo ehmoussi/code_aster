@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.Modeling.XfemCrack cimport XfemCrack
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
@@ -29,7 +30,7 @@ Mechanics, Thermal, Acoustics = cMechanics, cThermal, cAcoustics
 Axisymmetrical, Tridimensional, Planar, DKT = cAxisymmetrical, cTridimensional, cPlanar, cDKT
 
 
-cdef class Model:
+cdef class Model( DataStructure ):
     """Python wrapper on the C++ Model object"""
 
     def __cinit__( self, bint init=True ):

@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Studies.FailureConvergenceManager cimport GenericConvergenceErrorPtr
 
 
@@ -48,7 +49,7 @@ cdef extern from "Studies/TimeStepManager.h":
 
 #### TimeStepManager
 
-cdef class TimeStepManager:
+cdef class TimeStepManager( DataStructure ):
     cdef TimeStepManagerPtr* _cptr
     cdef set( self, TimeStepManagerPtr other )
     cdef TimeStepManagerPtr* getPtr( self )

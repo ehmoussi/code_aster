@@ -39,6 +39,7 @@
 #include "NonLinear/LineSearchMethod.h"
 #include "NonLinear/NonLinearControl.h" 
 #include "NonLinear/State.h"
+#include "Results/NonLinearEvolutionContainer.h"
 #include "Solvers/GenericSolver.h"
 #include "Studies/TimeStepManager.h" 
 
@@ -79,11 +80,11 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         /** @brief Liste des chargements */
         ListOfLoadsPtr    _listOfLoads;
         /** @brief Liste de pas de chargements */
-        TimeStepManagerPtr _loadStepManager;
+        TimeStepManagerPtr _loadStepManager;        
         /** @brief NonLinear Behaviour */
         ListLocatedBehaviour _listOfBehaviours ; 
         ///** @brief Initial State of the Analysis */
-       // StatePtr         _initialState;
+        StatePtr         _initialState;
         /** @brief Méthode nonlineaire */
         NonLinearMethodPtr  _nonLinearMethod;
         /** @brief Contrôle de la convergence de la méthode nonlineaire */
@@ -92,6 +93,7 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         LinearSolverPtr    _linearSolver;
         /** @brief Méthode de recherche linéaire */
         LineSearchMethodPtr _lineSearch;
+       
     public:
         /**
          * @brief Constructeur
@@ -115,12 +117,17 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         {
             _listOfLoads->addMechanicalLoad( currentLoad );
         };
-  
+        /**
+         * @brief Define a Constitutive Law on a MeshEntity 
+         * @param BehaviourPtr is the constitutive law
+         * @param nameOfGroup is the name of the group defining the support MeshEntity. 
+         * Default value corresponds to set the bahaviour on the whole mesh.
+        */
         void addBehaviourOnElements( const BehaviourPtr& behaviour, std::string nameOfGroup= "") throw ( std::runtime_error ) 
         {
              // Check that the pointer to the support model is not empty
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-            throw std::runtime_error( "Model is empty" );
+                throw std::runtime_error( "Model is empty" );
             // Define the support Mesh Entity 
             MeshEntityPtr supportMeshEntity; 
             MeshPtr currentMesh= _supportModel->getSupportMesh();
@@ -139,7 +146,11 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
             throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the behaviour " );
             // Insert the current behaviour with its support Mesh Entity in the list of behaviours 
             _listOfBehaviours.push_back( LocatedBehaviourPtr ( new LocatedBehaviourInstance (behaviour,  supportMeshEntity) ) );
-         };       
+         }; 
+        void addInitialState ( const StatePtr& state ) 
+        {
+            _initialState = state; 
+        };      
         /**
          * @brief Run the analysis 
          * This function wraps Code_Aster's legacy operator for nonlinear analysis
@@ -199,12 +210,12 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         };
         /**
         * @brief method for the definition of the initial state of the analysis 
-        
+        */
         void setInitialState( const StatePtr& currentState ) 
         {
             _initialState = currentState; 
         }
-        */
+        
         /**
          * @brief Methode retournant le solveur lineaire
          */

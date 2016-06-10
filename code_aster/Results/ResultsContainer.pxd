@@ -20,6 +20,8 @@
 from libcpp.string cimport string
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
 
 cdef extern from "Results/ResultsContainer.h":
 
@@ -40,7 +42,7 @@ cdef extern from "Results/ResultsContainer.h":
 
 #### ResultsContainer
 
-cdef class ResultsContainer:
+cdef class ResultsContainer( DataStructure ):
 
     cdef ResultsContainerPtr* _cptr
 

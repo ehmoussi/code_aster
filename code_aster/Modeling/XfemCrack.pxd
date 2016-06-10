@@ -20,12 +20,14 @@
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 from code_aster.Mesh.Mesh cimport MeshPtr
 from code_aster.Function.Function cimport FunctionPtr
 from code_aster.Modeling.CrackShape cimport CrackShapePtr
 
 from code_aster.Modeling.CrackShape import NoShape, Ellipse
+
 
 cdef extern from "Modeling/XfemCrack.h":
 
@@ -126,7 +128,7 @@ cdef extern from "Modeling/XfemCrack.h":
         XfemCrackInstance* get()
 
 
-cdef class XfemCrack:
+cdef class XfemCrack( DataStructure ):
 
     cdef XfemCrackPtr* _cptr
 

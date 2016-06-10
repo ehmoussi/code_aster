@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Mesh.Mesh cimport Mesh
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
@@ -27,7 +28,7 @@ from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
 from code_aster.Discretization.DOFNumbering cimport DOFNumbering
 
 
-cdef class ElementaryVector:
+cdef class ElementaryVector( DataStructure ):
 
     """Python wrapper on the C++ ElementaryVector object"""
 

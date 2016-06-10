@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Modeling.Model cimport ModelPtr
 from PhysicalQuantity cimport PhysicalQuantityComponent
 
@@ -44,7 +45,7 @@ cdef extern from "Loads/KinematicsLoad.h":
         KinematicsLoadInstance* get()
 
 
-cdef class KinematicsLoad:
+cdef class KinematicsLoad( DataStructure ):
 
     cdef KinematicsLoadPtr* _cptr
 

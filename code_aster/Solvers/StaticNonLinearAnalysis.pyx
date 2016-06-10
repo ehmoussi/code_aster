@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
@@ -31,7 +32,8 @@ from code_aster.Modeling.Model cimport Model
 from code_aster.Results.ResultsContainer cimport ResultsContainer
 from code_aster.Studies.TimeStepManager cimport TimeStepManager
 
-cdef class StaticNonLinearAnalysis:
+
+cdef class StaticNonLinearAnalysis( DataStructure ):
 
     """Python wrapper on the C++ StaticNonLinearAnalysis object"""
 

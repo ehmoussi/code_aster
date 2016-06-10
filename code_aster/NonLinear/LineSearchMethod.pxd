@@ -19,8 +19,10 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 
-cdef extern from "NonLinear/LineSearchMethod.h": 
+
+cdef extern from "NonLinear/LineSearchMethod.h":
     cpdef enum LineSearchEnum:
            Corde, Mixte, Pilotage
 
@@ -41,7 +43,7 @@ cdef extern from "NonLinear/LineSearchMethod.h":
 
 #### LineSearchMethod
 
-cdef class LineSearchMethod:
+cdef class LineSearchMethod( DataStructure ):
 
     cdef LineSearchMethodPtr* _cptr
 

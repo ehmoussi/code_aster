@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 
+from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
@@ -42,7 +43,7 @@ cdef extern from "Studies/StudyDescription.h":
 
 #### StudyDescription
 
-cdef class StudyDescription:
+cdef class StudyDescription( DataStructure ):
     cdef StudyDescriptionPtr* _cptr
     cdef set( self, StudyDescriptionPtr other )
     cdef StudyDescriptionPtr* getPtr( self )
