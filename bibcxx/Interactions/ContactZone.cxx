@@ -46,8 +46,10 @@ const std::vector< std::string > allFrictionAlgorithmNames = { "PENALISATION", "
 const std::vector< IntegrationAlgorithmEnum > allIntegrationAlgorithm = { AutomaticIntegration,
                                                                           GaussIntegration,
                                                                           SimpsonIntegration,
-                                                                          NewtonCotesIntegration };
-const std::vector< std::string > allIntegrationAlgorithmNames = { "AUTO", "GAUSS", "SIMPSON", "NCOTES" };
+                                                                          NewtonCotesIntegration,
+                                                                          NodesIntegration };
+const std::vector< std::string > allIntegrationAlgorithmNames = { "AUTO", "GAUSS", "SIMPSON",
+                                                                  "NCOTES", "NOEUD" };
 
 const std::vector< ContactInitializationEnum > allContactInitialization = { ContactOnInitialization,
                                                                             Interpenetration,

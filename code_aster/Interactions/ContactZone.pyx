@@ -26,83 +26,221 @@ from code_aster.Function.Function cimport Function
 MasterNorm, SlaveNorm, AverageNorm = cMasterNorm, cSlaveNorm, cAverageNorm
 
 
-cdef class DiscretizedContactZone( DataStructure ):
+cdef class GenericContactZone:
+    """Python wrapper on the C++ GenericContactZone object"""
+
+    def __cinit__(self):
+        """Initialization: stores the pointer to the C++ object"""
+        pass
+
+    def __dealloc__(self):
+        """Destructor"""
+        # subclassing, see https://github.com/cython/cython/wiki/WrappingSetOfCppClasses
+        cdef GenericContactZonePtr* tmp
+        if self._cptr is not NULL:
+            tmp = <GenericContactZonePtr *>self._cptr
+            del tmp
+            self._cptr = NULL
+
+    cdef set(self, GenericContactZonePtr other):
+        """Point to an existing object"""
+        # set must be subclassed if it is necessary
+        self._cptr = new GenericContactZonePtr(other)
+
+    cdef GenericContactZonePtr* getPtr(self):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef GenericContactZoneInstance* getInstance(self):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+
+cdef class DiscretizedContactZone(GenericContactZone):
     """Python wrapper on the C++ DiscretizedContactZone object"""
 
-    def __cinit__( self, bint init=True ):
+    def __cinit__(self, bint init=True):
         """Initialization: stores the pointer to the C++ object"""
         if init:
-            self._cptr = new DiscretizedContactZonePtr( new DiscretizedContactZoneInstance() )
+            self._cptr = <GenericContactZonePtr *>\
+                new DiscretizedContactZonePtr(new DiscretizedContactZoneInstance())
 
-    def __dealloc__( self ):
+    def __dealloc__(self):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, DiscretizedContactZonePtr other ):
-        """Point to an existing object"""
-        self._cptr = new DiscretizedContactZonePtr( other )
-
-    cdef DiscretizedContactZonePtr* getPtr( self ):
-        """Return the pointer on the c++ shared-pointer object"""
-        return self._cptr
-
-    cdef DiscretizedContactZoneInstance* getInstance( self ):
-        """Return the pointer on the c++ instance object"""
-        return self._cptr.get()
-
-    def addBeamDescription( self ):
+    def addBeamDescription(self):
         """"""
-        self.getInstance().addBeamDescription(  )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).addBeamDescription()
 
-    def addPlateDescription( self ):
+    def addFriction(self, double coulomb, double eT, double coefMatrFrot):
         """"""
-        self.getInstance().addPlateDescription(  )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).addFriction(coulomb, eT, coefMatrFrot)
 
-    def addMasterGroupOfElements( self, nameOfGroup ):
+    def addPlateDescription(self):
         """"""
-        self.getInstance().addMasterGroupOfElements( nameOfGroup )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).addPlateDescription()
 
-    def addSlaveGroupOfElements( self, nameOfGroup ):
+    def addMasterGroupOfElements(self, nameOfGroup):
         """"""
-        self.getInstance().addSlaveGroupOfElements( nameOfGroup )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).addMasterGroupOfElements(nameOfGroup)
 
-    def disableResolution( self, tolInterp = 0. ):
+    def addSlaveGroupOfElements(self, nameOfGroup):
         """"""
-        self.getInstance().disableResolution( tolInterp )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).addSlaveGroupOfElements(nameOfGroup)
 
-    def excludeGroupOfElementsFromSlave( self, name ):
+    def disableResolution(self, tolInterp = 0.):
         """"""
-        self.getInstance().excludeGroupOfElementsFromSlave( name )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).disableResolution(tolInterp)
 
-    def excludeGroupOfNodesFromSlave( self, name ):
+    def disableSlidingContact(self):
         """"""
-        self.getInstance().excludeGroupOfNodesFromSlave( name )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).disableSlidingContact()
 
-    def setFixMasterVector( self, absc ):
+    def enableBilateralContact(self, double gap):
         """"""
-        self.getInstance().setFixMasterVector( absc )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).enableBilateralContact(gap)
 
-    def setMasterDistanceFunction( self, Function func ):
+    def enableSlidingContact(self):
         """"""
-        self.getInstance().setMasterDistanceFunction( deref( func.getPtr() ) )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).enableSlidingContact()
 
-    def setSlaveDistanceFunction( self, Function func ):
+    def excludeGroupOfElementsFromSlave(self, name):
         """"""
-        self.getInstance().setSlaveDistanceFunction( deref( func.getPtr() ) )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).excludeGroupOfElementsFromSlave(name)
 
-    def setPairingVector( self, absc ):
+    def excludeGroupOfNodesFromSlave(self, name):
         """"""
-        self.getInstance().setPairingVector( absc )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).excludeGroupOfNodesFromSlave(name)
 
-    def setTangentMasterVector( self, absc ):
+    def setContactAlgorithm(self, absc):
         """"""
-        self.getInstance().setTangentMasterVector( absc )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).setContactAlgorithm(absc)
 
-    def setNormType( self, normType ):
+    def setFixMasterVector(self, absc):
         """"""
-        self.getInstance().setNormType( normType )
+        (<DiscretizedContactZoneInstance* >self.getInstance()).setFixMasterVector(absc)
 
-    #def debugPrint( self, logicalUnit=6 ):
-        #"""Print debug information of the content"""
-        #self.getInstance().debugPrint( logicalUnit )
+    def setMasterDistanceFunction(self, Function func):
+        """"""
+        (<DiscretizedContactZoneInstance* >self.getInstance()).setMasterDistanceFunction(deref(func.getPtr()))
+
+    def setPairingMismatchProjectionTolerance(self, double value):
+        """"""
+        (<DiscretizedContactZoneInstance* >self.getInstance()).setPairingMismatchProjectionTolerance(value)
+
+    def setPairingVector(self, absc):
+        """"""
+        (<DiscretizedContactZoneInstance* >self.getInstance()).setPairingVector(absc)
+
+    def setSlaveDistanceFunction(self, Function func):
+        """"""
+        (<DiscretizedContactZoneInstance* >self.getInstance()).setSlaveDistanceFunction(deref(func.getPtr()))
+
+    def setTangentMasterVector(self, absc):
+        """"""
+        (<DiscretizedContactZoneInstance* >self.getInstance()).setTangentMasterVector(absc)
+
+    def setNormType(self, normType):
+        """"""
+        (<DiscretizedContactZoneInstance* >self.getInstance()).setNormType(normType)
+
+
+cdef class ContinuousContactZone(GenericContactZone):
+    """Python wrapper on the C++ ContinuousContactZone object"""
+
+    def __cinit__(self, bint init=True):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = <GenericContactZonePtr *>\
+                new ContinuousContactZonePtr(new ContinuousContactZoneInstance())
+
+    def __dealloc__(self):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    def addBeamDescription(self):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).addBeamDescription()
+
+    def addFriction(self, algoFrot, double coulomb, double eT, double coefMatrFrot):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).addFriction(algoFrot, coulomb, eT, coefMatrFrot)
+
+    def addPlateDescription(self):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).addPlateDescription()
+
+    def addMasterGroupOfElements(self, nameOfGroup):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).addMasterGroupOfElements(nameOfGroup)
+
+    def addSlaveGroupOfElements(self, nameOfGroup):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).addSlaveGroupOfElements(nameOfGroup)
+
+    def disableResolution(self, tolInterp = 0.):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).disableResolution(tolInterp)
+
+    def disableSlidingContact(self):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).disableSlidingContact()
+
+    def enableBilateralContact(self, double gap):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).enableBilateralContact(gap)
+
+    def enableSlidingContact(self):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).enableSlidingContact()
+
+    def excludeGroupOfElementsFromSlave(self, name):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).excludeGroupOfElementsFromSlave(name)
+
+    def excludeGroupOfNodesFromSlave(self, name):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).excludeGroupOfNodesFromSlave(name)
+
+    def setContactAlgorithm(self, absc):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).setContactAlgorithm(absc)
+
+    def setContactParameter(self, double value):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).setContactParameter(value)
+
+    def setFixMasterVector(self, absc):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).setFixMasterVector(absc)
+
+    def setIntegrationAlgorithm(self, integr, ordre):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).setIntegrationAlgorithm(integr, ordre)
+
+    def setMasterDistanceFunction(self, Function func):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).setMasterDistanceFunction(deref(func.getPtr()))
+
+    def setPairingMismatchProjectionTolerance(self, double value):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).setPairingMismatchProjectionTolerance(value)
+
+    def setPairingVector(self, absc):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).setPairingVector(absc)
+
+    def setSlaveDistanceFunction(self, Function func):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).setSlaveDistanceFunction(deref(func.getPtr()))
+
+    def setTangentMasterVector(self, absc):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).setTangentMasterVector(absc)
+
+    def setNormType(self, normType):
+        """"""
+        (<ContinuousContactZoneInstance* >self.getInstance()).setNormType(normType)
