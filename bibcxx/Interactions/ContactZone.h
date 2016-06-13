@@ -80,7 +80,7 @@ extern const std::vector< std::string > allFrictionAlgorithmNames;
  * @author Nicolas Sellenet
  */
 enum IntegrationAlgorithmEnum { AutomaticIntegration, GaussIntegration,
-                                SimpsonIntegration, NewtonCotesIntegration };
+                                SimpsonIntegration, NewtonCotesIntegration, NodesIntegration };
 extern const std::vector< IntegrationAlgorithmEnum > allIntegrationAlgorithm;
 extern const std::vector< std::string > allIntegrationAlgorithmNames;
 
@@ -94,7 +94,7 @@ enum ContactInitializationEnum { ContactOnInitialization, Interpenetration,
 extern const std::vector< ContactInitializationEnum > allContactInitialization;
 extern const std::vector< std::string > allContactInitializationNames;
 
-class GenericContactZone
+class GenericContactZoneInstance
 {
 protected:
     CapyConvertibleContainer _toCapyConverter;
@@ -107,7 +107,7 @@ public:
 };
 
 template< ContactFormulationEnum formulation >
-class ContactZoneInstance: public GenericContactZone
+class ContactZoneInstance: public GenericContactZoneInstance
 {
 private:
     /** @brief Pointeur intelligent vers un VirtualMeshEntity */
@@ -128,7 +128,7 @@ private:
     FunctionPtr               _distMait;
     FunctionPtr               _distEscl;
     double                    _pairingTolerance;
-    double                    _pairingMismatchProjectionTolerance;
+    double                    _toleProjExt;
     VectorOfMeshEntityPtr     _elementsToExclude;
     VectorOfMeshEntityPtr     _nodesToExclude;
     bool                      _solve;
@@ -165,7 +165,7 @@ private:
 
         _ordreInt = -1;
         _toCapyConverter.add( new CapyConvertibleValue< int >
-                                                      ( false, "INTEGRATION", _ordreInt, false ) );
+                                                      ( false, "ORDRE_INT", _ordreInt, false ) );
 
         _contactInit = Interpenetration;
         _toCapyConverter.add( new CapyConvertibleValue< ContactInitializationEnum >
@@ -214,7 +214,7 @@ public:
                            _plate( false ),
                            _caraElem( 0 ),
                            _pairingTolerance( -1.0 ),
-                           _pairingMismatchProjectionTolerance( 0.5 ),
+                           _toleProjExt( 0.5 ),
                            _solve( true ),
                            _interpenetrationTol( 0. ),
                            _algoCont( ConstraintContact ),
@@ -276,7 +276,7 @@ public:
         _toCapyConverter.add( new CapyConvertibleValue< double >
                                     ( false, "TOLE_APPA", _pairingTolerance, true ) );
         _toCapyConverter.add( new CapyConvertibleValue< double >
-                                    ( false, "TOLE_PROJ_EXT", _pairingMismatchProjectionTolerance,
+                                    ( false, "TOLE_PROJ_EXT", _toleProjExt,
                                       true ) );
 
         _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
@@ -319,7 +319,7 @@ public:
     template< ContactFormulationEnum form = formulation >
     typename std::enable_if< form == Discretized, void>::type
     addFriction( const double& coulomb, const double& eT,
-                 const double& coefMatrFrot = 0. ) throw ( std::runtime_error )
+                 const double& coefMatrFrot = 0. )
     {
         _coulomb = coulomb;
         _eT = eT;
@@ -337,7 +337,6 @@ public:
     typename std::enable_if< form == Continuous, void>::type
     addFriction( const FrictionAlgorithmEnum& algoFrot, const double& coulomb,
                  const double& seuilInit, const double& coefFrot )
-        throw ( std::runtime_error )
     {
         _algoFrot = algoFrot;
         _coulomb = coulomb;
@@ -384,11 +383,21 @@ public:
         _toCapyConverter[ "TOLE_INTERP" ]->enable();
     };
 
+    void disableSlidingContact()
+    {
+        _glissiere = false;
+    };
+
     void enableBilateralContact( const double& gap = 0. )
     {
         _glissiere = true;
         _alarmeJeu = gap;
         _toCapyConverter[ "ALARME_JEU" ]->enable();
+    };
+
+    void enableSlidingContact()
+    {
+        _glissiere = true;
     };
 
     void excludeGroupOfElementsFromSlave( const std::string& name )
@@ -408,8 +417,8 @@ public:
     setContactAlgorithm( const ContactAlgorithmEnum& cont )
         throw ( std::runtime_error )
     {
-        if( _algoCont != ConstraintContact && _algoCont != PenalizationContact &&
-            _algoCont != GcpContact )
+        if( cont != ConstraintContact && cont != PenalizationContact &&
+            cont != GcpContact )
             throw std::runtime_error( "Contact algorithm not available for discretized contact" );
         _algoCont = cont;
         if( _algoCont == ConstraintContact )
@@ -430,7 +439,7 @@ public:
     setContactAlgorithm( const ContactAlgorithmEnum& cont )
         throw ( std::runtime_error )
     {
-        if( _algoCont != StandardContact && _algoCont != PenalizationContact )
+        if( cont != StandardContact && cont != PenalizationContact )
             throw std::runtime_error( "Contact algorithm not available for discretized contact" );
         _algoCont = cont;
         if( _algoCont == StandardContact )
@@ -446,12 +455,19 @@ public:
         }
     };
 
-    void setContactAlgorithm( const double& value )
+    template< ContactFormulationEnum form = formulation >
+    typename std::enable_if< form == Continuous, void>::type
+    setContactParameter( const double& value )
+        throw ( std::runtime_error )
     {
         if( _algoCont == StandardContact )
+        {
             _coefCont = value;
+        }
         else if( _algoCont == PenalizationContact )
+        {
             _coefPenaCont = value;
+        }
     };
 
     template< ContactFormulationEnum form = formulation >
@@ -464,32 +480,32 @@ public:
             throw std::runtime_error( "Integration ordre not available with AutomaticIntegration" );
         if( _integration == GaussIntegration )
         {
-            if( _ordreInt < 1 || _ordreInt > 6 )
-                throw std::runtime_error( "Integration ordre out of bound (must be in [1, 6]" );
             if( ordre == -1 )
                 _ordreInt = 3;
             else
                 _ordreInt = ordre;
+            if( _ordreInt < 1 || _ordreInt > 6 )
+                throw std::runtime_error( "Integration ordre out of bound (must be in [1, 6])" );
             _toCapyConverter[ "ORDRE_INT" ]->enable();
         }
         else if( _integration == SimpsonIntegration )
         {
-            if( _ordreInt < 1 || _ordreInt > 4 )
-                throw std::runtime_error( "Integration ordre out of bound (must be in [1, 6]" );
             if( ordre == -1 )
                 _ordreInt = 1;
             else
                 _ordreInt = ordre;
+            if( _ordreInt < 1 || _ordreInt > 4 )
+                throw std::runtime_error( "Integration ordre out of bound (must be in [1, 6])" );
             _toCapyConverter[ "ORDRE_INT" ]->enable();
         }
         else if( _integration == NewtonCotesIntegration )
         {
-            if( _ordreInt < 3 || _ordreInt > 8 )
-                throw std::runtime_error( "Integration ordre out of bound (must be in [1, 6]" );
             if( ordre == -1 )
                 _ordreInt = 3;
             else
                 _ordreInt = ordre;
+            if( _ordreInt < 3 || _ordreInt > 8 )
+                throw std::runtime_error( "Integration ordre out of bound (must be in [1, 6])" );
             _toCapyConverter[ "ORDRE_INT" ]->enable();
         }
     };
@@ -508,10 +524,9 @@ public:
         _toCapyConverter[ "DIST_MAIT" ]->enable();
     };
 
-    void setSlaveDistanceFunction( const FunctionPtr& func )
+    void setPairingMismatchProjectionTolerance( const double& value )
     {
-        _distEscl = func;
-        _toCapyConverter[ "DIST_ESCL" ]->enable();
+        _toleProjExt = value;
     };
 
     void setPairingVector( const VectorDouble& vec )
@@ -519,6 +534,12 @@ public:
         _pairingVector = vec;
         _typeAppa = FixPairing;
         _toCapyConverter[ "DIRE_APPA" ]->enable();
+    };
+
+    void setSlaveDistanceFunction( const FunctionPtr& func )
+    {
+        _distEscl = func;
+        _toCapyConverter[ "DIST_ESCL" ]->enable();
     };
 
     void setTangentMasterVector( const VectorDouble& vec )
@@ -538,7 +559,7 @@ public:
 typedef ContactZoneInstance< Discretized > DiscretizedContactZoneInstance;
 typedef ContactZoneInstance< Continuous > ContinuousContactZoneInstance;
 
-typedef boost::shared_ptr< GenericContactZone > GenericContactZonePtr;
+typedef boost::shared_ptr< GenericContactZoneInstance > GenericContactZonePtr;
 typedef boost::shared_ptr< ContactZoneInstance< Discretized > > DiscretizedContactZonePtr;
 typedef boost::shared_ptr< ContactZoneInstance< Continuous > > ContinuousContactZonePtr;
 

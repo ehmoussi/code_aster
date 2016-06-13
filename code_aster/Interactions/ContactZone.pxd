@@ -26,42 +26,112 @@ from code_aster.Function.Function cimport FunctionPtr
 
 cdef extern from "Interactions/ContactZone.h":
 
+    cdef cppclass GenericContactZoneInstance:
+
+        GenericContactZoneInstance()
+
+    cdef cppclass GenericContactZonePtr:
+
+        GenericContactZonePtr(GenericContactZonePtr&)
+        GenericContactZonePtr(GenericContactZoneInstance *)
+        GenericContactZoneInstance* get()
+
     cdef enum NormTypeEnum:
         cMasterNorm "MasterNorm"
         cSlaveNorm "SlaveNorm"
         cAverageNorm "AverageNorm"
 
-    ctypedef vector[ double] VectorDouble
+    cdef enum ContactAlgorithmEnum:
+        cConstraintContact "ConstraintContact"
+        cPenalizationContact "PenalizationContact"
+        cGcpContact "GcpContact"
+        cStandardContact "StandardContact"
+        cCzmContact "CzmContact"
 
-    cdef cppclass DiscretizedContactZoneInstance:
+    cdef enum FrictionAlgorithmEnum:
+        cFrictionPenalization "FrictionPenalization"
+        cStandardFriction "StandardFriction"
+
+    cdef enum IntegrationAlgorithmEnum:
+        cAutomaticIntegration "AutomaticIntegration"
+        cGaussIntegration "GaussIntegration"
+        cSimpsonIntegration "SimpsonIntegration"
+        cNewtonCotesIntegration "NewtonCotesIntegration"
+        cNodesIntegration "NodesIntegration"
+
+    ctypedef vector[double] VectorDouble
+
+    cdef cppclass DiscretizedContactZoneInstance(GenericContactZoneInstance):
 
         DiscretizedContactZoneInstance()
         void addBeamDescription() except +
+        void addFriction(const double& coulomb, const double& eT, const double& coefMatrFrot)
         void addPlateDescription() except +
         void addMasterGroupOfElements(const string& nameOfGroup)
         void addSlaveGroupOfElements(const string& nameOfGroup)
         void disableResolution(const double& tolInterp)
+        void disableSlidingContact()
+        void enableBilateralContact(const double& gap)
+        void enableSlidingContact()
         void excludeGroupOfElementsFromSlave(const string& name)
         void excludeGroupOfNodesFromSlave(const string& name)
+        void setContactAlgorithm(const ContactAlgorithmEnum& cont)
         void setFixMasterVector(const VectorDouble& absc)
         void setMasterDistanceFunction(const FunctionPtr&)
-        void setSlaveDistanceFunction(const FunctionPtr&)
+        void setPairingMismatchProjectionTolerance(const double& value)
         void setPairingVector(const VectorDouble& absc)
+        void setSlaveDistanceFunction(const FunctionPtr&)
         void setTangentMasterVector(const VectorDouble& absc)
         void setNormType(const NormTypeEnum& normType)
-        #void debugPrint( int logicalUnit )
 
     cdef cppclass DiscretizedContactZonePtr:
 
-        DiscretizedContactZonePtr( DiscretizedContactZonePtr& )
-        DiscretizedContactZonePtr( DiscretizedContactZoneInstance* )
+        DiscretizedContactZonePtr(DiscretizedContactZonePtr&)
+        DiscretizedContactZonePtr(DiscretizedContactZoneInstance*)
         DiscretizedContactZoneInstance* get()
 
+    cdef cppclass ContinuousContactZoneInstance(GenericContactZoneInstance):
 
-cdef class DiscretizedContactZone( DataStructure ):
+        ContinuousContactZoneInstance()
+        void addBeamDescription() except +
+        void addFriction(const FrictionAlgorithmEnum& algoFrot, const double& coulomb,
+                         const double& seuilInit, const double& coefFrot)
+        void addPlateDescription() except +
+        void addMasterGroupOfElements(const string& nameOfGroup)
+        void addSlaveGroupOfElements(const string& nameOfGroup)
+        void disableResolution(const double& tolInterp)
+        void disableSlidingContact()
+        void enableBilateralContact(const double& gap)
+        void enableSlidingContact()
+        void excludeGroupOfElementsFromSlave(const string& name)
+        void excludeGroupOfNodesFromSlave(const string& name)
+        void setContactAlgorithm(const ContactAlgorithmEnum& cont)
+        void setContactParameter(const double& value)
+        void setFixMasterVector(const VectorDouble& absc)
+        void setIntegrationAlgorithm(const IntegrationAlgorithmEnum& integr,
+                                     const int& ordre)
+        void setMasterDistanceFunction(const FunctionPtr&)
+        void setPairingMismatchProjectionTolerance(const double& value)
+        void setPairingVector(const VectorDouble& absc)
+        void setSlaveDistanceFunction(const FunctionPtr&)
+        void setTangentMasterVector(const VectorDouble& absc)
+        void setNormType(const NormTypeEnum& normType)
 
-    cdef DiscretizedContactZonePtr* _cptr
+    cdef cppclass ContinuousContactZonePtr:
 
-    cdef set( self, DiscretizedContactZonePtr other )
-    cdef DiscretizedContactZonePtr* getPtr( self )
-    cdef DiscretizedContactZoneInstance* getInstance( self )
+        ContinuousContactZonePtr(ContinuousContactZonePtr&)
+        ContinuousContactZonePtr(ContinuousContactZoneInstance*)
+        ContinuousContactZoneInstance* get()
+
+cdef class GenericContactZone(DataStructure):
+    cdef GenericContactZonePtr* _cptr
+    cdef set(self, GenericContactZonePtr other)
+    cdef GenericContactZonePtr* getPtr(self)
+    cdef GenericContactZoneInstance* getInstance(self)
+
+
+cdef class DiscretizedContactZone(GenericContactZone):
+    pass
+
+cdef class ContinuousContactZone(GenericContactZone):
+    pass

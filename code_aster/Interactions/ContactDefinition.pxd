@@ -20,7 +20,7 @@
 from libcpp.string cimport string
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Interactions.ContactZone cimport DiscretizedContactZonePtr
+from code_aster.Interactions.ContactZone cimport GenericContactZonePtr
 from code_aster.Modeling.Model cimport ModelPtr
 
 
@@ -46,7 +46,7 @@ cdef extern from "Interactions/ContactDefinition.h":
     cdef cppclass DiscretizedContactInstance:
 
         DiscretizedContactInstance()
-        void addContactZone(const DiscretizedContactZonePtr& zone)
+        void addContactZone(const GenericContactZonePtr& zone)
         bint build()
         void setModel(ModelPtr& model)
         void setGeometricResolutionAlgorithm(const GeometricResolutionAlgorithmEnum& curAlgo) except +
@@ -65,22 +65,22 @@ cdef extern from "Interactions/ContactDefinition.h":
         void setPreconditioning(const ContactPrecondEnum& value)
         void setThresholdOfPreconditioningActivation(const double& value) except +
         void setMaximumNumberOfPreconditioningIteration(const int& value) except +
-        void debugPrint( int logicalUnit )
+        void debugPrint(int logicalUnit)
 
     cdef cppclass DiscretizedContactPtr:
 
-        DiscretizedContactPtr( DiscretizedContactPtr& )
-        DiscretizedContactPtr( DiscretizedContactInstance* )
+        DiscretizedContactPtr(DiscretizedContactPtr&)
+        DiscretizedContactPtr(DiscretizedContactInstance*)
         DiscretizedContactInstance* get()
 
 
-cdef class DiscretizedContact( DataStructure ):
+cdef class DiscretizedContact(DataStructure):
 
     cdef DiscretizedContactPtr* _cptr
 
-    cdef set( self, DiscretizedContactPtr other )
-    cdef DiscretizedContactPtr* getPtr( self )
-    cdef DiscretizedContactInstance* getInstance( self )
+    cdef set(self, DiscretizedContactPtr other)
+    cdef DiscretizedContactPtr* getPtr(self)
+    cdef DiscretizedContactInstance* getInstance(self)
 
 
 cdef extern from "Interactions/ContactDefinition.h":
@@ -88,22 +88,22 @@ cdef extern from "Interactions/ContactDefinition.h":
     cdef cppclass ContinuousContactInstance:
 
         ContinuousContactInstance()
-        #void debugPrint( int logicalUnit )
+        #void debugPrint(int logicalUnit)
 
     cdef cppclass ContinuousContactPtr:
 
-        ContinuousContactPtr( ContinuousContactPtr& )
-        ContinuousContactPtr( ContinuousContactInstance* )
+        ContinuousContactPtr(ContinuousContactPtr&)
+        ContinuousContactPtr(ContinuousContactInstance*)
         ContinuousContactInstance* get()
 
 
-cdef class ContinuousContact( DataStructure ):
+cdef class ContinuousContact(DataStructure):
 
     cdef ContinuousContactPtr* _cptr
 
-    cdef set( self, ContinuousContactPtr other )
-    cdef ContinuousContactPtr* getPtr( self )
-    cdef ContinuousContactInstance* getInstance( self )
+    cdef set(self, ContinuousContactPtr other)
+    cdef ContinuousContactPtr* getPtr(self)
+    cdef ContinuousContactInstance* getInstance(self)
 
 
 cdef extern from "Interactions/ContactDefinition.h":
@@ -111,22 +111,22 @@ cdef extern from "Interactions/ContactDefinition.h":
     cdef cppclass XfemContactInstance:
 
         XfemContactInstance()
-        #void debugPrint( int logicalUnit )
+        #void debugPrint(int logicalUnit)
 
     cdef cppclass XfemContactPtr:
 
-        XfemContactPtr( XfemContactPtr& )
-        XfemContactPtr( XfemContactInstance* )
+        XfemContactPtr(XfemContactPtr&)
+        XfemContactPtr(XfemContactInstance*)
         XfemContactInstance* get()
 
 
-cdef class XfemContact( DataStructure ):
+cdef class XfemContact(DataStructure):
 
     cdef XfemContactPtr* _cptr
 
-    cdef set( self, XfemContactPtr other )
-    cdef XfemContactPtr* getPtr( self )
-    cdef XfemContactInstance* getInstance( self )
+    cdef set(self, XfemContactPtr other)
+    cdef XfemContactPtr* getPtr(self)
+    cdef XfemContactInstance* getInstance(self)
 
 
 cdef extern from "Interactions/ContactDefinition.h":
@@ -134,19 +134,19 @@ cdef extern from "Interactions/ContactDefinition.h":
     cdef cppclass UnilateralConnexionInstance:
 
         UnilateralConnexionInstance()
-        #void debugPrint( int logicalUnit )
+        #void debugPrint(int logicalUnit)
 
     cdef cppclass UnilateralConnexionPtr:
 
-        UnilateralConnexionPtr( UnilateralConnexionPtr& )
-        UnilateralConnexionPtr( UnilateralConnexionInstance* )
+        UnilateralConnexionPtr(UnilateralConnexionPtr&)
+        UnilateralConnexionPtr(UnilateralConnexionInstance*)
         UnilateralConnexionInstance* get()
 
 
-cdef class UnilateralConnexion( DataStructure ):
+cdef class UnilateralConnexion(DataStructure):
 
     cdef UnilateralConnexionPtr* _cptr
 
-    cdef set( self, UnilateralConnexionPtr other )
-    cdef UnilateralConnexionPtr* getPtr( self )
-    cdef UnilateralConnexionInstance* getInstance( self )
+    cdef set(self, UnilateralConnexionPtr other)
+    cdef UnilateralConnexionPtr* getPtr(self)
+    cdef UnilateralConnexionInstance* getInstance(self)
