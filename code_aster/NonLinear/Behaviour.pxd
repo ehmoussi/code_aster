@@ -188,6 +188,7 @@ cdef extern from "NonLinear/Behaviour.h":
     cdef cppclass BehaviourInstance:
 
         BehaviourInstance( ConstitutiveLawEnum curLaw, DeformationEnum curDeformation )
+        void setTangentMatrix( TangentMatrixEnum curMat ) 
 
     cdef cppclass BehaviourPtr:
 
