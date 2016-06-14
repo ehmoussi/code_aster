@@ -102,6 +102,9 @@ class BehaviourInstance
         {
             return _listOfParameters;
         };
+        /**
+        */
+        
      private:
         /** @brief ConstitutiveLaw*/
         ConstitutiveLawEnum _constitutiveLaw;

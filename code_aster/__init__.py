@@ -40,6 +40,7 @@ from .Utilities import TestCase
 from .DataStructure import DataStructure
 from .DataFields import *
 from .Function import *
+from .Geometry import * 
 from .LinearAlgebra import *
 from .Materials import *
 from .Mesh import *

@@ -51,7 +51,7 @@ const std::string PhysicalQuantityTraits <LocalShellForce>::name = "LocalShellFo
 const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<LocalShellForce>::components( LocalShellForceComponents, LocalShellForceComponents + nbLocalShellForceComponents );
 
 /* Displacement */
-const PhysicalQuantityComponent DisplacementComponents[nbDisplacementComponents] = { Dx, Dy, Dz, Dx, Dy, Dz };
+const PhysicalQuantityComponent DisplacementComponents[nbDisplacementComponents] = { Dx, Dy, Dz, Drx, Dry, Drz };
 const std::string PhysicalQuantityTraits <Displacement>::name = "Displacement"; 
 const std::set< PhysicalQuantityComponent > PhysicalQuantityTraits<Displacement>::components( DisplacementComponents, DisplacementComponents + nbDisplacementComponents );
 

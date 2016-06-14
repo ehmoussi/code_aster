@@ -26,6 +26,7 @@ from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
 from code_aster.Modeling.Model cimport ModelPtr
 from code_aster.NonLinear.Behaviour cimport BehaviourPtr
+from code_aster.NonLinear.Driving cimport DrivingPtr
 from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethodPtr
 from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethodPtr
 from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
@@ -47,6 +48,7 @@ cdef extern from "Solvers/StaticNonLinearAnalysis.h":
         void setSupportModel( ModelPtr& curModel )
         void setLinearSolver( LinearSolverPtr& curSolver )
         void setLoadStepManager( TimeStepManagerPtr& curTimeStepManager )
+        void setDriving( DrivingPtr& curDriving )
         const string getType()
 
     cdef cppclass StaticNonLinearAnalysisPtr:
