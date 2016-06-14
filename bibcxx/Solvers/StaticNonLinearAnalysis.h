@@ -36,6 +36,7 @@
 #include "Materials/MaterialOnMesh.h"
 #include "Modeling/Model.h"
 #include "NonLinear/Behaviour.h"
+#include "NonLinear/Driving.h"
 #include "NonLinear/LineSearchMethod.h"
 #include "NonLinear/NonLinearControl.h" 
 #include "NonLinear/State.h"
@@ -93,6 +94,8 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         LinearSolverPtr    _linearSolver;
         /** @brief Méthode de recherche linéaire */
         LineSearchMethodPtr _lineSearch;
+        /** @brief Méthode de pilotage */
+        DrivingPtr _driving;
        
     public:
         /**
@@ -223,6 +226,13 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         {
              return _linearSolver;
         };
+        /**
+        * @brief method for the definition of the driving method 
+        */
+        void setDriving( const DrivingPtr& currentDriving ) 
+        {
+            _driving = currentDriving; 
+        }
 };
 
 /**

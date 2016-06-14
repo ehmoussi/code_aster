@@ -25,6 +25,7 @@ from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
 from code_aster.NonLinear.Behaviour cimport Behaviour
+from code_aster.NonLinear.Driving cimport Driving 
 from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethod
 from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethod
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
@@ -101,3 +102,7 @@ cdef class StaticNonLinearAnalysis( DataStructure ):
     def setSupportModel( self, Model curModel ):
         """Set the base elementary matrix used to build the assembly matrix"""
         self.getInstance().setSupportModel( deref( curModel.getPtr() ) )
+
+    def setDriving( self, Driving curDriving ) :
+        """Set the driving method """
+        self.getInstance().setDriving( deref( curDriving.getPtr() ) )

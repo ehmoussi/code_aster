@@ -43,11 +43,11 @@ from .Behaviour import (
             Endo_Poro_Beton,
             Endo_Carre,
             Endo_Fiss_Exp,
-            Endo_Fragile,
-            Endo_Heterogene,
-            Endo_Isot_Beton,
-            Endo_Orth_Beton,
-            Endo_Scalaire,
+            BrittleDamage,
+            HeterogeneousDamage,
+            ConcreteIsotropicDamage,
+            ConcreteOrthotropicDamage,
+            ScalarDamage,
             Flua_Poro_Beton,
             Glrc_Damage,
             Glrc_Dm,
@@ -169,3 +169,8 @@ from .LineSearchMethod import (
 
 from .State import (
         State,  )
+
+from .Driving import (
+        Driving, DisplacementValue, DisplacementNorm, JumpOnCrackValue, 
+      JumpOnCrackNorm, LimitLoad, MonotonicDeformation,  ElasticityLimit,
+      SmallestDisplacementIncrement, SmallestAngleIncrement, SmallestResidual, MixedCriterion,  )

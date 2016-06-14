@@ -60,9 +60,9 @@ class LineSearchMethodInstance
             _lineSearchMethod ( curLineSearch ), 
             _control ( SolverControlPtr( new SolverControlInstance())), 
             _methode( "METHODE", false),
-            _rhoMin( "RHO_MIN", false ),
-            _rhoMax( "RHO_MAX", false ),
-            _rhoExcl("RHO_EXCL", false ), 
+            _rhoMin( "RHO_MIN", 1.e-2, false ),
+            _rhoMax( "RHO_MAX", 1.e1, false ),
+            _rhoExcl("RHO_EXCL", 9.e-3, false ), 
             _resi_line_rela( "RESI_LINE_RELA", false ), 
             _iter_line_maxi( "ITER_LINE_MAXI", false )
         {
@@ -70,9 +70,6 @@ class LineSearchMethodInstance
             _control->setMaximumNumberOfIterations( 3 );
 
             _methode = std::string( LineSearchNames[ (int)curLineSearch ] );
-            _rhoMin = 1.e-2;
-            _rhoMax = 1.e1;
-            _rhoExcl = 9.e-3; 
             
             _resi_line_rela = _control->getRelativeTolerance();
             _iter_line_maxi = _control->getMaximumNumberOfIterations();
