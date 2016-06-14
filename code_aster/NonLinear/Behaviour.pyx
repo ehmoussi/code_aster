@@ -46,3 +46,7 @@ cdef class Behaviour( DataStructure ):
     cdef BehaviourInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
+    
+    def setTangentMatrix( self, TangentMatrixEnum curMat) :
+        """ Set the type of tangent matrix """
+        self.getInstance().setTangentMatrix( curMat )
