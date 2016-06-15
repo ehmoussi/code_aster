@@ -93,6 +93,10 @@ bool LinearSolverInstance::matrixFactorization( const AssemblyMatrixDoublePtr cu
     const std::string matpre( " " );
     const std::string matass = currentMatrix->getName();
 
+    // AMUMPT appel getres
+    CommandSyntaxCython cmdSt( "AUTRE" );
+    cmdSt.setResult( "AUCUN", "AUCUN" );
+
     CALL_MATRIX_FACTOR( solverName.c_str(), base.c_str(), &cret, matpre.c_str(),
                         matass.c_str(), &npvneg, &istop );
 

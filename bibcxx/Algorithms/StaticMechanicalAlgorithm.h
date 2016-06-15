@@ -102,9 +102,6 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
     // Matrix factorization
     _linearSolver->matrixFactorization( aMatrix );
 
-    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
-    cmdSt.setResult( _results->getName(), _results->getType() );
-
     // Build Dirichlet loads
     ElementaryVectorPtr vectElem1 = _discreteProblem->buildElementaryDirichletVector( _time );
     FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1, _time, Temporary );
@@ -123,6 +120,9 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
 
     chNoDir->addFieldOnNodes( *chNoLap );
     chNoDir->addFieldOnNodes( *chNoNeu );
+
+    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    cmdSt.setResult( _results->getName(), _results->getType() );
 
     FieldOnNodesDoublePtr kineLoadsFON = _listOfLoads->buildKinematicsLoad( dofNum1, _time,
                                                                             Temporary );
