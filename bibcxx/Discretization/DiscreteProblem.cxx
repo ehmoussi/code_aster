@@ -138,10 +138,23 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     std::string mate = blanc;
     CALL_RCMFMC( materName.c_str(), mate.c_str() );
 
+    // MERIME appel getres
+    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    cmdSt.setResult( "AUCUN", "AUCUN" );
+
     long exiti0 = 0, nh = 0;
+
     CALL_MERIME_WRAP( modelName.c_str(), &nbLoad, jvListOfLoads->getDataPtr()->c_str(),
                       mate.c_str(), blanc.c_str(), &exiti0, &time,
                       blanc.c_str(), retour->getName().c_str(), &nh, "G" );
+//     try
+//     {
+//         testCythonException2();
+//     }
+//     catch(...)
+//     {
+//         throw;
+//     }
     retour->setEmpty( false );
     return retour;
 };

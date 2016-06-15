@@ -32,6 +32,14 @@ __PYX_EXTERN_C DL_IMPORT(void) deleteCommandSyntax(void);
 __PYX_EXTERN_C DL_IMPORT(void) setResultCommandSyntax(const char *, const char *);
 __PYX_EXTERN_C DL_IMPORT(void) defineCommandSyntax(PyObject *);
 __PYX_EXTERN_C DL_IMPORT(void) debugPrintCommandSyntax(void);
+// __PYX_EXTERN_C DL_IMPORT(int) testCythonException(void);
+// 
+// static void testCythonException2() throw( std::runtime_error )
+// {
+//     int retour = testCythonException();
+//     if( retour == -1 )
+//         throw std::runtime_error( "Cython error" );
+// };
 
 /**
  * @class CommandSyntaxCython
