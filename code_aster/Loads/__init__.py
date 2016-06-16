@@ -42,3 +42,4 @@ from .MechanicalLoad import (
 
 from .KinematicsLoad import KinematicsLoad
 from .UnitaryThermalLoad import ImposedTemperature
+

@@ -51,8 +51,8 @@ lineSearch = code_aster.LineSearchMethod( code_aster.Corde )
 
 # Define a nonlinear Analysis
 statNonLine = code_aster.StaticNonLinearAnalysis()
-statNonLine.addMechanicalLoad( charMeca1 )
-statNonLine.addMechanicalLoad( charMeca2 )
+statNonLine.addStandardExcitation( charMeca1 )
+statNonLine.addStandardExcitation( charMeca2 )
 statNonLine.setSupportModel( monModel )
 statNonLine.setMaterialOnMesh( affectMat )
 statNonLine.setLinearSolver( monSolver )

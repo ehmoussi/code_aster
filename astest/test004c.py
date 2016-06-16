@@ -69,8 +69,8 @@ timeList.build()
 
 # Analyse non-linéaire pour cette première phase 
 statNonLine1 = code_aster.StaticNonLinearAnalysis()
-statNonLine1.addMechanicalLoad( charMeca1 )
-statNonLine1.addMechanicalLoad( charMeca2 )
+statNonLine1.addStandardExcitation( charMeca1 )
+statNonLine1.addStandardExcitation( charMeca2 )
 statNonLine1.setSupportModel( monModel )
 statNonLine1.setMaterialOnMesh( affectMat )
 
@@ -92,8 +92,8 @@ timeList.build()
 
 # Analyse non-linéaire pour la seconde phase (avec pilotage)
 statNonLine2 = code_aster.StaticNonLinearAnalysis()
-statNonLine2.addMechanicalLoad( charMeca1 )
-statNonLine2.addMechanicalLoad( charMeca2 )
+statNonLine2.addStandardExcitation( charMeca1 )
+statNonLine2.addStandardExcitation( charMeca2 )
 statNonLine2.setSupportModel( monModel )
 statNonLine2.setMaterialOnMesh( affectMat )
 statNonLine2.addBehaviourOnElements( EndoOrthBeton )
