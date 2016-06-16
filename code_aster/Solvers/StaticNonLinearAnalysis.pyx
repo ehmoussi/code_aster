@@ -22,6 +22,7 @@ from cython.operator cimport dereference as deref
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolver
+from code_aster.Function.Function cimport Function 
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
 from code_aster.NonLinear.Behaviour cimport Behaviour
@@ -61,14 +62,6 @@ cdef class StaticNonLinearAnalysis( DataStructure ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
-    def addKinematicsLoad( self, KinematicsLoad currentLoad ):
-        """Add a Kinematics Load"""
-        self.getInstance().addKinematicsLoad( deref( currentLoad.getPtr() ) )
-
-    def addMechanicalLoad( self, GenericMechanicalLoad currentLoad ):
-        """Add a Mechanical Load"""
-        self.getInstance().addMechanicalLoad( deref( currentLoad.getPtr() ) )
-
     def execute( self ):
         """Solve the problem"""
         results = ResultsContainer()
@@ -106,3 +99,39 @@ cdef class StaticNonLinearAnalysis( DataStructure ):
     def setDriving( self, Driving curDriving ) :
         """Set the driving method """
         self.getInstance().setDriving( deref( curDriving.getPtr() ) )
+
+    def addStandardExcitation( self,  GenericMechanicalLoad currentLoad ):
+        """ Add standard excitation """
+        self.getInstance().addStandardExcitation( deref( currentLoad.getPtr() ) )
+    
+    def addStandardScaledExcitation( self, GenericMechanicalLoad currentLoad,  Function scalF ):
+        """ Add standard excitation, with a scaling time function """ 
+        self.getInstance().addStandardScaledExcitation( deref( currentLoad.getPtr() ), deref( scalF.getPtr() )  )
+   
+    def addStandardExcitation( self, KinematicsLoad currentLoad ):
+        """ Add standard excitation """ 
+        self.getInstance().addStandardExcitation( deref( currentLoad.getPtr() ) )
+
+    def addStandardScaledExcitation(self,  KinematicsLoad currentLoad,  Function scalF ):
+        """ Add standard scaled excitation """
+        self.getInstance().addStandardScaledExcitation( deref( currentLoad.getPtr() ), deref( scalF.getPtr() )  )
+
+    def addDrivenExcitation( self, GenericMechanicalLoad currentLoad ):
+        """ Add driven excitation """
+        self.getInstance().addDrivenExcitation(  deref( currentLoad.getPtr() ) )
+
+    def addExcitationOnUpdatedGeometry( self, GenericMechanicalLoad currentLoad ):
+        """ Add excitation on updated geometry """ 
+        self.getInstance().addExcitationOnUpdatedGeometry( deref( currentLoad.getPtr() ) )
+
+    def addScaledExcitationOnUpdatedGeometry( self, GenericMechanicalLoad currentLoad, Function scalF ):
+        """ Add scaled excitation on updated geometry, with a scaling time function """
+        self.getInstance().addScaledExcitationOnUpdatedGeometry( deref( currentLoad.getPtr() ),  deref( scalF.getPtr() )  )
+
+    def addIncrementalDirichletExcitation(  self,GenericMechanicalLoad currentLoad ):
+        """ Add incremental Dirichlet excitation """
+        self.getInstance().addIncrementalDirichletExcitation( deref( currentLoad.getPtr() ) )
+
+    def addIncrementalDirichletScaledExcitation( self, GenericMechanicalLoad currentLoad, Function scalF ): 
+        """ Add incremental Dirichlet excitation, with a scaling time function """
+        self.getInstance().addIncrementalDirichletScaledExcitation(  deref( currentLoad.getPtr() ),  deref( scalF.getPtr() )  )

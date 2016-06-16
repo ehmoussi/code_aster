@@ -49,8 +49,8 @@ monSolver = code_aster.LinearSolver( code_aster.Mumps, code_aster.Metis )
 
 # Define a first nonlinear Analysis
 statNonLine1 = code_aster.StaticNonLinearAnalysis()
-statNonLine1.addMechanicalLoad( charMeca1 )
-statNonLine1.addMechanicalLoad( charMeca2 )
+statNonLine1.addStandardExcitation( charMeca1 )
+statNonLine1.addStandardExcitation( charMeca2 )
 statNonLine1.setSupportModel( monModel )
 statNonLine1.setMaterialOnMesh( affectMat )
 statNonLine1.setLinearSolver( monSolver )
@@ -80,8 +80,8 @@ statNonLine1.setLoadStepManager( timeList )
 
 # Define a second nonlinear Analysis
 statNonLine2 = code_aster.StaticNonLinearAnalysis()
-statNonLine2.addMechanicalLoad( charMeca1 )
-statNonLine2.addMechanicalLoad( charMeca2 )
+statNonLine2.addStandardExcitation( charMeca1 )
+statNonLine2.addStandardExcitation( charMeca2 )
 statNonLine2.setSupportModel( monModel )
 statNonLine2.setMaterialOnMesh( affectMat )
 Elas = code_aster.Behaviour( code_aster.Elas, code_aster.SmallDeformation )

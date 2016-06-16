@@ -20,6 +20,7 @@
 from libcpp.string cimport string
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.Function.Function cimport FunctionPtr
 from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverPtr
 from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
@@ -38,8 +39,6 @@ cdef extern from "Solvers/StaticNonLinearAnalysis.h":
     cdef cppclass StaticNonLinearAnalysisInstance:
 
         StaticNonLinearAnalysisInstance()
-        void addKinematicsLoad( KinematicsLoadPtr& currentLoad )
-        void addMechanicalLoad( GenericMechanicalLoadPtr& currentLoad )
         ResultsContainerPtr execute()
         void addBehaviourOnElements( BehaviourPtr& curBehaviour, string nameOfGroup ) except+
         void setNonLinearMethod( NonLinearMethodPtr& curNonLinearMethod )
@@ -49,6 +48,15 @@ cdef extern from "Solvers/StaticNonLinearAnalysis.h":
         void setLinearSolver( LinearSolverPtr& curSolver )
         void setLoadStepManager( TimeStepManagerPtr& curTimeStepManager )
         void setDriving( DrivingPtr& curDriving )
+        void addStandardExcitation(  GenericMechanicalLoadPtr& currentLoad );
+        void addStandardScaledExcitation( GenericMechanicalLoadPtr& currentLoad,  FunctionPtr& scalF );
+        void addStandardExcitation(  KinematicsLoadPtr& currentLoad ); 
+        void addStandardScaledExcitation(  KinematicsLoadPtr& currentLoad,  FunctionPtr& scalF );
+        void addDrivenExcitation(  GenericMechanicalLoadPtr& currentLoad ); 
+        void addExcitationOnUpdatedGeometry(  GenericMechanicalLoadPtr& currentLoad ); 
+        void addScaledExcitationOnUpdatedGeometry(  GenericMechanicalLoadPtr& currentLoad, FunctionPtr& scalF );
+        void addIncrementalDirichletExcitation(  GenericMechanicalLoadPtr& currentLoad ); 
+        void addIncrementalDirichletScaledExcitation(  GenericMechanicalLoadPtr& currentLoad, FunctionPtr& scalF );
         const string getType()
 
     cdef cppclass StaticNonLinearAnalysisPtr:
