@@ -22,37 +22,262 @@ from cython.operator cimport dereference as deref
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
 
-
-cdef class ImposedTemperature( DataStructure ):
-    """Python wrapper on the C++ ImposedTemperature object"""
+cdef class DoubleImposedTemperature( DataStructure ):
+    """Python wrapper on the C++ DoubleImposedTemperature object"""
 
     def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
         if init:
-            self._cptr = new ImposedTemperaturePtr( new ImposedTemperatureInstance() )
+            self._cptr = new DoubleImposedTemperaturePtr( new DoubleImposedTemperatureInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, ImposedTemperaturePtr other ):
+    cdef set( self, DoubleImposedTemperaturePtr other ):
         """Point to an existing object"""
-        self._cptr = new ImposedTemperaturePtr( other )
+        self._cptr = new DoubleImposedTemperaturePtr( other )
 
-    cdef ImposedTemperaturePtr* getPtr( self ):
+    cdef DoubleImposedTemperaturePtr* getPtr( self ):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef ImposedTemperatureInstance* getInstance( self ):
+    cdef DoubleImposedTemperatureInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
     def addGroupOfNodes( self, nameOfGroup ):
         """Add a modeling on all the mesh"""
-        print "coucou2"
         self.getInstance().addGroupOfNodes( nameOfGroup )
 
-    #def debugPrint( self, logicalUnit=6 ):
-        #"""Print debug information of the content"""
-        #self.getInstance().debugPrint( logicalUnit )
+cdef class DoubleDistributedFlow( DataStructure ):
+    """Python wrapper on the C++ DoubleDistributedFlow object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = new DoubleDistributedFlowPtr( new DoubleDistributedFlowInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, DoubleDistributedFlowPtr other ):
+        """Point to an existing object"""
+        self._cptr = new DoubleDistributedFlowPtr( other )
+
+    cdef DoubleDistributedFlowPtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef DoubleDistributedFlowInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def addGroupOfElements( self, nameOfGroup ):
+        """Add a modeling on all the mesh"""
+        self.getInstance().addGroupOfElements( nameOfGroup )
+
+    def setLowerNormalFlow( self, flun_inf ):
+        """set value of lower normal flow """
+        self.getInstance().setLowerNormalFlow( flun_inf )
+ 
+    def setUpperNormalFlow( self, flun_sup ):
+        """set value of upper normal flow """
+        self.getInstance().setUpperNormalFlow( flun_sup )
+
+    def setFlowXYZ( self, fluxx, fluxy, fluxz ):
+        """set values of  x, y and z componant of flow """
+        self.getInstance().setFlowXYZ( fluxx, fluxy, fluxz )
+  
+cdef class DoubleNonLinearFlow( DataStructure ):
+    """Python wrapper on the C++ DoubleDistributedFlow object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = new DoubleNonLinearFlowPtr( new DoubleNonLinearFlowInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, DoubleNonLinearFlowPtr other ):
+        """Point to an existing object"""
+        self._cptr = new DoubleNonLinearFlowPtr( other )
+
+    cdef DoubleNonLinearFlowPtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef DoubleNonLinearFlowInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def addGroupOfElements( self, nameOfGroup ):
+        """Add a modeling on all the mesh"""
+        self.getInstance().addGroupOfElements( nameOfGroup )
+
+    def setFlow( self, flun ):
+        """set value of normal flow """
+        self.getInstance().setFlow( flun )
+ 
+cdef class DoubleExchange( DataStructure ):
+    """Python wrapper on the C++ DoubleExchange object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = new DoubleExchangePtr( new DoubleExchangeInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, DoubleExchangePtr other ):
+        """Point to an existing object"""
+        self._cptr = new DoubleExchangePtr( other )
+
+    cdef DoubleExchangePtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef DoubleExchangeInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def addGroupOfElements( self, nameOfGroup ):
+        """Add a modeling on all the mesh"""
+        self.getInstance().addGroupOfElements( nameOfGroup )
+     
+    def setExchangeCoefficient( self, coefH ) :
+        """set value of external temperature """
+        self.getInstance().setExchangeCoefficient( coefH )
+		 
+    def setExternalTemperature( self, tempExt ) :
+        """set value of external temperature """
+        self.getInstance().setExternalTemperature( tempExt )
+        
+    def setExchangeCoefficientInfSup( self, coefHInf, coefHSup ) :
+        """set value of external temperature """
+        self.getInstance().setExchangeCoefficientInfSup( coefHInf, coefHSup )
+		
+    def setExternalTemperatureInfSup( self, tempExtInf, tempExtSup ):
+        """set value of external temperature """
+        self.getInstance().setExternalTemperatureInfSup( tempExtInf, tempExtSup )
+        
+cdef class DoubleExchangeWall( DataStructure ):
+    """Python wrapper on the C++ DoubleExchange object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = new DoubleExchangeWallPtr( new DoubleExchangeWallInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, DoubleExchangeWallPtr other ):
+        """Point to an existing object"""
+        self._cptr = new DoubleExchangeWallPtr( other )
+
+    cdef DoubleExchangeWallPtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef DoubleExchangeWallInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def addGroupOfElements( self, nameOfGroup ):
+        """Add a modeling on all the mesh"""
+        self.getInstance().addGroupOfElements( nameOfGroup )
+     
+    def setExchangeCoefficient( self, coefH ) :
+        """set value of external temperature """
+        self.getInstance().setExchangeCoefficient( coefH )
+		 
+    def setTranslation( self, valx, valy, valz ) :
+        """set value of external temperature """
+        self.getInstance().setTranslation( valx, valy, valz )
+        
+cdef class DoubleThermalRadiation( DataStructure ):
+    """Python wrapper on the C++ DoubleThermalRadiation object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = new DoubleThermalRadiationPtr( new DoubleThermalRadiationInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, DoubleThermalRadiationPtr other ):
+        """Point to an existing object"""
+        self._cptr = new DoubleThermalRadiationPtr( other )
+
+    cdef DoubleThermalRadiationPtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef DoubleThermalRadiationInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def addGroupOfElements( self, nameOfGroup ):
+        """Add a modeling on all the mesh"""
+        self.getInstance().addGroupOfElements( nameOfGroup )
+        
+    def setExternalTemperature( self, tempExt ):
+        """set value of external temperature """
+        self.getInstance().setExternalTemperature( tempExt )
+
+    def setEpsilon ( self, epsilon ):
+         """set value of epsilon """
+         self.getInstance().setEpsilon( epsilon )
+    
+    def setSigma ( self, sigma ):
+         """set value of sigma """
+         self.getInstance().setSigma( sigma )
+        
+cdef class DoubleThermalGradient( DataStructure ):
+    """Python wrapper on the C++ DoubleThermalGradient object"""
+
+    def __cinit__( self, bint init=True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = new DoubleThermalGradientPtr( new DoubleThermalGradientInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, DoubleThermalGradientPtr other ):
+        """Point to an existing object"""
+        self._cptr = new DoubleThermalGradientPtr( other )
+
+    cdef DoubleThermalGradientPtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef DoubleThermalGradientInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def addGroupOfElements( self, nameOfGroup ):
+        """Add a modeling on all the mesh"""
+        self.getInstance().addGroupOfElements( nameOfGroup )
+
+    def setFlowXYZ( self, fluxx, fluxy, fluxz ):
+        """set values of  x, y and z componant of flow """
+        self.getInstance().setFlowXYZ( fluxx, fluxy, fluxz )
+
