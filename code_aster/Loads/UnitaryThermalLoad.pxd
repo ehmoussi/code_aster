@@ -24,23 +24,153 @@ from code_aster.DataStructure.DataStructure cimport DataStructure
 
 cdef extern from "Loads/UnitaryThermalLoad.h":
 
-    cdef cppclass ImposedTemperatureInstance:
+    cdef cppclass DoubleImposedTemperatureInstance:
 
-        ImposedTemperatureInstance()
+        DoubleImposedTemperatureInstance()
         void addGroupOfNodes( string nameOfGroup ) except +
         #void debugPrint( int logicalUnit )
 
-    cdef cppclass ImposedTemperaturePtr:
+    cdef cppclass DoubleImposedTemperaturePtr:
 
-        ImposedTemperaturePtr( ImposedTemperaturePtr& )
-        ImposedTemperaturePtr( ImposedTemperatureInstance* )
-        ImposedTemperatureInstance* get()
+        DoubleImposedTemperaturePtr( DoubleImposedTemperaturePtr& )
+        DoubleImposedTemperaturePtr( DoubleImposedTemperatureInstance* )
+        DoubleImposedTemperatureInstance* get()
 
+    cdef cppclass DoubleDistributedFlowInstance:
 
-cdef class ImposedTemperature( DataStructure ):
+        DoubleDistributedFlowInstance()
+        void addGroupOfElements( string nameOfElement ) except +
+        void setLowerNormalFlow( double )
+        void setUpperNormalFlow( double )
+        void setFlowXYZ( double, double, double )
+        #void debugPrint( int logicalUnit )
 
-    cdef ImposedTemperaturePtr* _cptr
+    cdef cppclass DoubleDistributedFlowPtr:
 
-    cdef set( self, ImposedTemperaturePtr other )
-    cdef ImposedTemperaturePtr* getPtr( self )
-    cdef ImposedTemperatureInstance* getInstance( self )
+        DoubleDistributedFlowPtr( DoubleDistributedFlowPtr& )
+        DoubleDistributedFlowPtr( DoubleDistributedFlowInstance* )
+        DoubleDistributedFlowInstance* get()
+
+    cdef cppclass DoubleNonLinearFlowInstance:
+
+        DoubleNonLinearFlowInstance()
+        void addGroupOfElements( string nameOfElement ) except +
+        void setFlow( double )
+
+    cdef cppclass DoubleNonLinearFlowPtr:
+
+        DoubleNonLinearFlowPtr( DoubleNonLinearFlowPtr& )
+        DoubleNonLinearFlowPtr( DoubleNonLinearFlowInstance* )
+        DoubleNonLinearFlowInstance* get()
+
+    cdef cppclass DoubleExchangeInstance:
+
+        DoubleExchangeInstance()
+        void addGroupOfElements( string nameOfElement ) except +
+        void setExternalTemperature( double )
+        void setExchangeCoefficient( double )
+        void setExternalTemperatureInfSup( double , double )
+        void setExchangeCoefficientInfSup( double , double )
+        #void debugPrint( int logicalUnit )
+
+    cdef cppclass DoubleExchangePtr:
+
+        DoubleExchangePtr( DoubleExchangePtr& )
+        DoubleExchangePtr( DoubleExchangeInstance* )
+        DoubleExchangeInstance* get()
+
+    cdef cppclass DoubleExchangeWallInstance:
+
+        DoubleExchangeWallInstance()
+        void addGroupOfElements( string nameOfElement ) except +
+        void setExchangeCoefficient( double )
+        void setTranslation( double , double , double)
+
+    cdef cppclass DoubleExchangeWallPtr:
+
+        DoubleExchangeWallPtr( DoubleExchangeWallPtr& )
+        DoubleExchangeWallPtr( DoubleExchangeWallInstance* )
+        DoubleExchangeWallInstance* get()
+        
+    cdef cppclass DoubleThermalRadiationInstance:
+
+        DoubleThermalRadiationInstance()
+        void addGroupOfElements( string nameOfElement ) except +
+        void setExternalTemperature( double )
+        void setEpsilon( double )
+        void setSigma( double )
+       #void debugPrint( int logicalUnit )
+
+    cdef cppclass DoubleThermalRadiationPtr:
+
+        DoubleThermalRadiationPtr( DoubleThermalRadiationPtr& )
+        DoubleThermalRadiationPtr( DoubleThermalRadiationInstance* )
+        DoubleThermalRadiationInstance* get()
+ 
+    cdef cppclass DoubleThermalGradientInstance:
+
+        DoubleThermalGradientInstance()   
+        void addGroupOfElements( string nameOfElement ) except +
+        void setFlowXYZ( double, double, double )     
+
+    cdef cppclass DoubleThermalGradientPtr:
+
+        DoubleThermalGradientPtr( DoubleThermalGradientPtr& )
+        DoubleThermalGradientPtr( DoubleThermalGradientInstance* )
+        DoubleThermalGradientInstance* get()
+
+cdef class DoubleImposedTemperature( DataStructure ):
+
+    cdef DoubleImposedTemperaturePtr* _cptr
+
+    cdef set( self, DoubleImposedTemperaturePtr other )
+    cdef DoubleImposedTemperaturePtr* getPtr( self )
+    cdef DoubleImposedTemperatureInstance* getInstance( self )
+
+cdef class DoubleDistributedFlow( DataStructure ):
+
+    cdef DoubleDistributedFlowPtr* _cptr
+
+    cdef set( self, DoubleDistributedFlowPtr other )
+    cdef DoubleDistributedFlowPtr* getPtr( self )
+    cdef DoubleDistributedFlowInstance* getInstance( self )
+
+cdef class DoubleNonLinearFlow( DataStructure ):
+
+    cdef DoubleNonLinearFlowPtr* _cptr
+
+    cdef set( self, DoubleNonLinearFlowPtr other )
+    cdef DoubleNonLinearFlowPtr* getPtr( self )
+    cdef DoubleNonLinearFlowInstance* getInstance( self )
+
+cdef class DoubleExchange( DataStructure ):
+
+    cdef DoubleExchangePtr* _cptr
+
+    cdef set( self, DoubleExchangePtr other )
+    cdef DoubleExchangePtr* getPtr( self )
+    cdef DoubleExchangeInstance* getInstance( self )
+    
+cdef class DoubleExchangeWall( DataStructure ):
+
+    cdef DoubleExchangeWallPtr* _cptr
+
+    cdef set( self, DoubleExchangeWallPtr other )
+    cdef DoubleExchangeWallPtr* getPtr( self )
+    cdef DoubleExchangeWallInstance* getInstance( self )
+
+cdef class DoubleThermalRadiation( DataStructure ):
+
+    cdef DoubleThermalRadiationPtr* _cptr
+
+    cdef set( self, DoubleThermalRadiationPtr other )
+    cdef DoubleThermalRadiationPtr* getPtr( self )
+    cdef DoubleThermalRadiationInstance* getInstance( self )
+
+cdef class DoubleThermalGradient( DataStructure ):
+
+    cdef DoubleThermalGradientPtr* _cptr
+
+    cdef set( self, DoubleThermalGradientPtr other )
+    cdef DoubleThermalGradientPtr* getPtr( self )
+    cdef DoubleThermalGradientInstance* getInstance( self )
