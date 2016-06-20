@@ -48,6 +48,17 @@ class JeveuxBidirectionalMapInstance
         {};
 
         /**
+         * @brief Destructeur
+         */
+        ~JeveuxBidirectionalMapInstance()
+        {
+            if ( _jeveuxName != "" )
+            {
+                CALL_JEDETR( _jeveuxName.c_str() );
+            }
+        };
+
+        /**
          * @brief Recuperation de la chaine correspondante a l'entier
          * @param elementNumber Numero de l'element demande
          * @return Chaine de caractere correspondante

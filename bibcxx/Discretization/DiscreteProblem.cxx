@@ -35,7 +35,7 @@
 
 ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector( double time )
 {
-    ElementaryVectorPtr retour( new ElementaryVectorInstance( Temporary ) );
+    ElementaryVectorPtr retour( new ElementaryVectorInstance( Permanent ) );
 
     ModelPtr curModel = _study->getSupportModel();
     std::string modelName = curModel->getName();
@@ -52,6 +52,10 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector( dou
     std::string typres( "R" );
     std::string resultName( retour->getName() );
 
+    // CORICH appel getres
+    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    cmdSt.setResult( resultName, "AUCUN" );
+
     CALL_VEDIME( modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), &time,
                  typres.c_str(), resultName.c_str() );
     retour->setEmpty( false );
@@ -62,7 +66,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryDirichletVector( dou
 
 ElementaryVectorPtr DiscreteProblemInstance::buildElementaryLaplaceVector()
 {
-    ElementaryVectorPtr retour( new ElementaryVectorInstance( Temporary ) );
+    ElementaryVectorPtr retour( new ElementaryVectorInstance( Permanent ) );
 
     ModelPtr curModel = _study->getSupportModel();
     std::string modelName = curModel->getName();
@@ -77,7 +81,11 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryLaplaceVector()
     nameInfc.resize(24, ' ');
 
     std::string blanc( " " );
-    std::string resultName( retour->getName() );
+    const std::string resultName( retour->getName() );
+
+    // CORICH appel getres
+    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    cmdSt.setResult( resultName, "AUCUN" );
 
     CALL_VELAME( modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), blanc.c_str(),
                  resultName.c_str() );
@@ -93,7 +101,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector( const
     if ( time.size() != 3 )
         throw std::runtime_error( "Invalid number of parameter" );
 
-    ElementaryVectorPtr retour( new ElementaryVectorInstance( Temporary ) );
+    ElementaryVectorPtr retour( new ElementaryVectorInstance( Permanent ) );
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
 
     ModelPtr curModel = _study->getSupportModel();
@@ -111,6 +119,10 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector( const
     std::string resultName( retour->getName() );
     std::string materName = curMater->getName();
 
+    // CORICH appel getres
+    CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
+    cmdSt.setResult( resultName, "AUCUN" );
+
     CALL_VECHME_WRAP( stop.c_str(), modelName.c_str(), nameLcha.c_str(), nameInfc.c_str(), &inst,
                       blanc.c_str(), materName.c_str(), retour->getName().c_str(), blanc.c_str() );
     retour->setEmpty( false );
@@ -121,7 +133,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector( const
 
 ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( double time )
 {
-    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( "DEPL_R", Temporary ) );
+    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( "DEPL_R", Permanent ) );
     ModelPtr curModel = _study->getSupportModel();
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
 

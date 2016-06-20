@@ -61,6 +61,8 @@ class ElementaryVectorInstance: public DataStructure
         ListOfLoadsPtr     _listOfLoads;
         VectorInt          _matchingVector;
 
+        JeveuxBidirectionalMap _corichRept;
+
     public:
         /**
          * @brief Constructeur
