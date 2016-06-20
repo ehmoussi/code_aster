@@ -1,5 +1,6 @@
-P time_limit 120
+P time_limit 180
 P memory_limit 256
 P testlist verification sequential
 F comm ssnp104b.comm D 1
 F mail ssnp104b.mmed D 20
+P ncpus 1

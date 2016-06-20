@@ -114,7 +114,7 @@ def detect_mkl(self):
         if opts:
             self.env.append_value(var, opts)
         try:
-            self.check_math_libs_call()
+            self.check_math_libs_call(color='YELLOW')
         except:
             self.env.revert()
             continue
@@ -135,8 +135,15 @@ def detect_math_lib(self):
     blaslibs, lapacklibs = self.get_mathlib_from_numpy()
     self.check_math_libs('blas', list(BLAS) + blaslibs, embed)
     # lapack
-    self.check_math_libs('lapack', list(LAPACK) + lapacklibs, embed,
-                         optional='openblas' in self.env.get_flat(varlib))
+    opt_lapack = False
+    if 'openblas' in self.env.get_flat(varlib):
+        try:
+            self.check_math_libs_call(color='YELLOW')
+            opt_lapack = True
+        except:
+            pass
+    if not opt_lapack:
+        self.check_math_libs('lapack', list(LAPACK) + lapacklibs, embed)
 
     def _scalapack():
         """Check scalapack"""
@@ -246,7 +253,7 @@ def _detect_libnames_in_ldd_line(line, libnames):
     return lib[3:]
 
 @Configure.conf
-def check_math_libs_call(self):
+def check_math_libs_call(self, color='RED'):
     """Compile and run a small blas/lapack program"""
     self.start_msg('Checking for a program using blas/lapack')
     try:
@@ -258,7 +265,7 @@ def check_math_libs_call(self):
             raise Errors.ConfigurationError('invalid result: %r (expecting %r)' % (values, ref))
     except Exception, exc:
         # the message must be closed
-        self.end_msg('no', color='RED')
+        self.end_msg('no', color=color)
         raise Errors.ConfigurationError(str(exc))
     else:
         self.end_msg('yes')
@@ -270,7 +277,7 @@ def check_math_libs_call(self):
                                 mandatory=True)
         except Exception, exc:
             # the message must be closed
-            self.end_msg('no', color='RED')
+            self.end_msg('no', color=color)
             raise Errors.ConfigurationError(str(exc))
         else:
             self.end_msg('yes')
@@ -285,7 +292,7 @@ def check_math_libs_call(self):
             raise ValueError("expected at least {0} thread(s)".format(nbThreads))
     except Exception, exc:
         # the message must be closed
-        self.end_msg('no', color='RED')
+        self.end_msg('no', color=color)
         raise Errors.ConfigurationError(str(exc))
     else:
         self.end_msg('yes (on {0} threads)'.format(nbThreads))
