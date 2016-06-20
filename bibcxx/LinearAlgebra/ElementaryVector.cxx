@@ -33,7 +33,8 @@ ElementaryVectorInstance::ElementaryVectorInstance( const JeveuxMemory memType )
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
                 _materialOnMesh( MaterialOnMeshPtr() ),
-                _listOfLoads( new ListOfLoadsInstance( memType ) )
+                _listOfLoads( new ListOfLoadsInstance( memType ) ),
+                _corichRept( JeveuxBidirectionalMap( "&&CORICH." + getName() + ".REPT" ) )
 {};
 
 FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberingPtr& currentNumerotation,
@@ -56,22 +57,22 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
     // Il n'est pas nécessaire de faire le ménage c'est ASCOVA qui s'en occupe
     _listOfLoads->build();
     CommandSyntaxCython cmdSt( "ASSE_VECT_ELEM" );
-    cmdSt.setResult( vectTmp->getName(), vectTmp->getType() );
+    cmdSt.setResult( getName(), getType() );
     SyntaxMapContainer dict;
     dict.container[ "OPTION" ] = "CHAR_MECA";
     cmdSt.define( dict );
-    if( _listOfLoads->getListOfMechanicalLoads().size() != _matchingVector.size() )
-        throw std::runtime_error( "Programming error" );
-
-    _listOfElementaryResults->updateValuePointer();
-    for( long i = 1; i <= _matchingVector.size(); ++i )
-    {
-        std::string detr( "E" );
-        std::string vectElem( (*_listOfElementaryResults)[i-1].c_str() );
-        vectElem.resize( 24, ' ' );
-        long in;
-        CALL_CORICH( detr.c_str(), vectElem.c_str(), &i, &in);
-    }
+//     if( _listOfLoads->getListOfMechanicalLoads().size() != _matchingVector.size() )
+//         throw std::runtime_error( "Programming error" );
+// 
+//     _listOfElementaryResults->updateValuePointer();
+//     for( long i = 1; i <= _matchingVector.size(); ++i )
+//     {
+//         std::string detr( "E" );
+//         std::string vectElem( (*_listOfElementaryResults)[i-1].c_str() );
+//         vectElem.resize( 24, ' ' );
+//         long in;
+//         CALL_CORICH( detr.c_str(), vectElem.c_str(), &i, &in);
+//     }
     /**/
 
     std::string typres( "R" );
