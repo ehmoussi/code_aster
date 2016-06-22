@@ -308,6 +308,9 @@ public:
             addDiscretizedParameters();
     };
 
+    ~ContactZoneInstance()
+    {};
+
     void addBeamDescription() throw ( std::runtime_error )
     {
         _beam = true;

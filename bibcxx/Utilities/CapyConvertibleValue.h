@@ -392,7 +392,6 @@ private:
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
         MapConstIterator curIter = _matchingValues.find( *_value );
-        std::cout << _name << ", curIter " << (*curIter).first << " " << (*curIter).second << std::endl;
         if ( curIter == _matchingValues.end() )
             throw std::runtime_error( "Programming error" );
         return new GenParam( _name, (*curIter).second, _isMandatory );

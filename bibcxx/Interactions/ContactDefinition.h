@@ -313,7 +313,12 @@ public:
         }
     };
 
-public:
+    /**
+     * @brief Destructeur
+     */
+    ~ContactDefinition()
+    {};
+
     /**
      * @brief Ajouter une zone de contact
      * @todo Rajouter des verifs sur la présence des groupes de mailles, du frottement, ...
@@ -714,13 +719,8 @@ bool ContactDefinition< formulation >::build() throw ( std::runtime_error )
     syntax.setSimpleKeywordValues( _toCapyConverter );
 
     CapyConvertibleFactorKeyword zoneFKW( "ZONE" );
-    for( VectorContactZoneIter curIter = _contactZones.begin();
-         curIter != _contactZones.end();
-         ++curIter )
-    {
-        CapyConvertibleContainer toAdd = (*curIter)->getCapyConvertibleContainer();
-        zoneFKW.addContainer( toAdd );
-    }
+    for( const auto& curZonePtr : _contactZones )
+        zoneFKW.addContainer( curZonePtr->getCapyConvertibleContainer() );
     syntax.addFactorKeywordValues( zoneFKW );
 
     SyntaxMapContainer test = syntax.toSyntaxMapContainer();
