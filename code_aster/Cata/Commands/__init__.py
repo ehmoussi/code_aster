@@ -32,14 +32,22 @@ def _init_command(ctx, debug):
              for modname in glob(osp.join(pkgdir, '*.py'))]
     curDict = {}
     for modname in l_mod:
+        if modname == '__init__':
+            continue
+        wrkctx = {}
         mod = __import__('code_aster.Cata.{}.{}'.format(pkg, modname),
-                         globals(), locals(), [modname])
+                         wrkctx, wrkctx, [modname])
         # liste des commandes définies dans le module
         for objname in dir(mod):
+            if curDict.get(objname) is not None:
+                if debug:
+                    print("DEBUG: Module {0}: {1} already seen, "
+                          "ignored!".format(modname, objname))
+                continue
             obj = getattr(mod, objname)
             if isinstance(obj, Command):
                 if debug:
-                    print '<Commande> Module "%s" - ajout "%s"' % (modname, objname)
+                    print("DEBUG: Module {0}: add {1}".format(modname, objname))
                 curDict[objname] = obj
     ctx.update(curDict)
     libCommandSyntax.commandsRegister(curDict)
