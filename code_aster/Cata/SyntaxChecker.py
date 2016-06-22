@@ -209,3 +209,23 @@ class SyntaxCheckerVisitor(object):
                     kw = dictTmp.get(key)
                     if kw:
                         kw.accept(self, value)
+
+
+# counter of 'printed' command
+_cmd_counter = 0
+
+def checkCommandSyntax(command, keywords, printSyntax=True):
+    """Check the syntax of a command
+    `keywords` contains the keywords filled by the user"""
+    global _cmd_counter
+    from pprint import pformat
+    if type(keywords) != dict:
+        raise TypeError("'dict' object is expected")
+    if printSyntax:
+        _cmd_counter += 1
+        print("{0:-^100}\n Command #{1:0>4}\n{0:-^100}\n".format("", _cmd_counter))
+        print(" {0}({1})".format(
+            command.definition.get("nom", "COMMAND"), pformat(keywords)))
+
+    checker = SyntaxCheckerVisitor()
+    command.accept( checker, keywords )

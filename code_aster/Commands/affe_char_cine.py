@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -21,6 +21,7 @@
 
 from code_aster import Mesh, Model, KinematicsLoad
 from code_aster.Cata import Commands
+from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
 
 
@@ -60,7 +61,7 @@ def _addLoad( load, fkwImpo, nameOfImpo ):
 
 def AFFE_CHAR_CINE( **kwargs ):
     """Opérateur d'affection d'un chargement cinématique"""
-    Commands.AFFE_CHAR_CINE.checkSyntax( kwargs )
+    checkCommandSyntax( Commands.AFFE_CHAR_CINE, kwargs )
 
     load = KinematicsLoad()
     load.setSupportModel( kwargs[ "MODELE" ] )

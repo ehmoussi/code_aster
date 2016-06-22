@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -22,11 +22,12 @@
 import numpy as np
 
 from code_aster.Cata import Commands
+from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 
 
 def DEFI_LIST_REEL( **kwargs ):
     """Définir une liste de réels strictement croissante"""
-    Commands.DEFI_LIST_REEL.checkSyntax( kwargs )
+    checkCommandSyntax( Commands.DEFI_LIST_REEL, kwargs )
 
     vale = kwargs.get('VALE')
     if vale is not None:

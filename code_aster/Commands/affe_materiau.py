@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -21,6 +21,7 @@
 
 from code_aster import Materials
 from code_aster.Cata import Commands
+from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 
 
 def _addMaterial( materOnMesh, fkw ):
@@ -36,7 +37,7 @@ def _addMaterial( materOnMesh, fkw ):
 
 def AFFE_MATERIAU( **kwargs ):
     """Opérateur d'affection d'un matériau"""
-    Commands.AFFE_MATERIAU.checkSyntax( kwargs )
+    checkCommandSyntax( Commands.AFFE_MATERIAU, kwargs )
 
     materOnMesh = Materials.MaterialOnMesh()
 

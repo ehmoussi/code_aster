@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -21,11 +21,12 @@
 
 from code_aster import Mesh
 from code_aster.Cata import Commands
+from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 
 
 def LIRE_MAILLAGE( **kwargs ):
     """Opérateur de relecture du maillage"""
-    Commands.LIRE_MAILLAGE.checkSyntax( kwargs )
+    checkCommandSyntax( Commands.LIRE_MAILLAGE, kwargs )
 
     retour = Commands.LIRE_MAILLAGE.getDefaultKeywords( kwargs )
 
