@@ -248,8 +248,10 @@ class Command(PartOfSyntax):
         visitor.visitCommand(self, syntax)
 
     def __call__(self, **args ):
-        """Simulate the command execution"""
-        self.checkSyntax( args )
+        """Simulate the command execution, only based on the command description"""
+        # just for unittests, introduces illogical import
+        from SyntaxChecker import checkCommandSyntax
+        checkCommandSyntax( self, args )
         resultType = self.definition.get('sd_prod')
         if resultType:
             if type(resultType) is types.FunctionType:
