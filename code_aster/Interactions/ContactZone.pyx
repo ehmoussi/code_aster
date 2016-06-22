@@ -24,7 +24,9 @@ from code_aster.Function.Function cimport Function
 
 
 MasterNorm, SlaveNorm, AverageNorm = cMasterNorm, cSlaveNorm, cAverageNorm
-
+ConstraintContact, PenalizationContact, GcpContact, StandardContact, CzmContact = cConstraintContact, cPenalizationContact, cGcpContact, cStandardContact, cCzmContact
+FrictionPenalization, StandardFriction = cFrictionPenalization, cStandardFriction
+AutomaticIntegration, GaussIntegration, SimpsonIntegration, NewtonCotesIntegration, NodesIntegration = cAutomaticIntegration, cGaussIntegration, cSimpsonIntegration, cNewtonCotesIntegration, cNodesIntegration
 
 cdef class GenericContactZone:
     """Python wrapper on the C++ GenericContactZone object"""
@@ -65,10 +67,10 @@ cdef class DiscretizedContactZone(GenericContactZone):
             self._cptr = <GenericContactZonePtr *>\
                 new DiscretizedContactZonePtr(new DiscretizedContactZoneInstance())
 
-    def __dealloc__(self):
-        """Destructor"""
-        if self._cptr is not NULL:
-            del self._cptr
+    #def __dealloc__(self):
+        #"""Destructor"""
+        #if self._cptr is not NULL:
+            #del self._cptr
 
     def addBeamDescription(self):
         """"""
@@ -156,10 +158,10 @@ cdef class ContinuousContactZone(GenericContactZone):
             self._cptr = <GenericContactZonePtr *>\
                 new ContinuousContactZonePtr(new ContinuousContactZoneInstance())
 
-    def __dealloc__(self):
-        """Destructor"""
-        if self._cptr is not NULL:
-            del self._cptr
+    #def __dealloc__(self):
+        #"""Destructor"""
+        #if self._cptr is not NULL:
+            #del self._cptr
 
     def addBeamDescription(self):
         """"""

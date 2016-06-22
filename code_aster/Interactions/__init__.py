@@ -1,4 +1,4 @@
 # code_aster.Modeling cython package
 
-from .ContactZone import DiscretizedContactZone
+from .ContactZone import DiscretizedContactZone, ContinuousContactZone
 from .ContactDefinition import DiscretizedContact, ContinuousContact, XfemContact, UnilateralConnexion
