@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -21,12 +21,13 @@
 
 from code_aster import Materials
 from code_aster.Cata import Commands
+from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
 
 
 def DEFI_MATERIAU( **kwargs ):
     """Opérateur de définition d'un matériau"""
-    Commands.DEFI_MATERIAU.checkSyntax( kwargs )
+    checkCommandSyntax( Commands.DEFI_MATERIAU, kwargs )
 
     import inspect
     dictMaterB = {}

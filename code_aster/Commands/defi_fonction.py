@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -23,6 +23,7 @@ import numpy as np
 
 from code_aster import Function
 from code_aster.Cata import Commands
+from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 
 
 funcParameterNames = (
@@ -35,7 +36,7 @@ funcParameterNames = (
 
 def DEFI_FONCTION( **kwargs ):
     """Définit une fonction réelle ou complexe d'une variable réelle"""
-    Commands.DEFI_FONCTION.checkSyntax( kwargs )
+    checkCommandSyntax( Commands.DEFI_FONCTION, kwargs )
 
     NOM_PARA = kwargs['NOM_PARA']
     assert NOM_PARA in funcParameterNames

@@ -28,7 +28,6 @@ of code_aster commands.
 """
 
 import types
-from .SyntaxChecker import SyntaxCheckerVisitor
 
 
 def _debug( *args ):
@@ -243,26 +242,10 @@ class Command(PartOfSyntax):
     """
     Object Command qui représente toute la syntaxe d'une commande
     """
-    count = 0
 
     def accept(self, visitor, syntax=None):
         """Called by a Visitor"""
         visitor.visitCommand(self, syntax)
-
-    def checkSyntax(self, dictSyntax, printSyntax=True):
-        """Check the syntax of a command
-        `dictSyntax` contains the keywords filled by the user"""
-        from pprint import pformat
-        if type(dictSyntax) != dict:
-            raise TypeError("'dict' is expected")
-        if printSyntax:
-            Command.count += 1
-            print("{0:-^100}\n Command #{1:0>4}\n{0:-^100}\n".format("", Command.count))
-            print(" {0}({1})".format(
-                self.definition.get("nom", "COMMAND"), pformat(dictSyntax)))
-
-        checker = SyntaxCheckerVisitor()
-        self.accept( checker, dictSyntax )
 
     def __call__(self, **args ):
         """Simulate the command execution"""
