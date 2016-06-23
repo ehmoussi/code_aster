@@ -265,5 +265,7 @@ typedef JeveuxVector< JeveuxChar24 > JeveuxVectorChar24;
 typedef JeveuxVector< JeveuxChar32 > JeveuxVectorChar32;
 /** @typedef Definition d'un vecteur JeveuxChar80 */
 typedef JeveuxVector< JeveuxChar80 > JeveuxVectorChar80;
+/** @typedef Definition d'un vecteur JeveuxLogical */
+typedef JeveuxVector< bool > JeveuxVectorLogical;
 
 #endif /* JEVEUXVECTOR_H_ */

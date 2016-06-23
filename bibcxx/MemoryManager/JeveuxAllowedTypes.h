@@ -27,6 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
+#include "asterc_config.h"
 #include "MemoryManager/JeveuxString.h"
 #include <complex>
 
@@ -45,12 +46,12 @@ static const char* JeveuxMemoryTypesNames[2] = { "G", "V" };
  * @enum JeveuxTypes
  * @brief Fournit tous les types autorises dans le gestionnaire memoire Jeveux
  */
-enum JeveuxTypes { Integer, Integer4, Double, Complex, Char8, Char16, Char24, Char32, Char80 };
+enum JeveuxTypes { Integer, Integer4, Double, Complex, Char8, Char16, Char24, Char32, Char80, Logical };
 /**
  * @def JeveuxTypesNames
  * @brief Fournit sous forme de chaine les types Jeveux existant
  */
-static const char* JeveuxTypesNames[9] = { "I", "I4", "R", "C", "K8", "K16", "K24", "K32", "K80" };
+static const char* JeveuxTypesNames[10] = { "I", "I4", "R", "C", "K8", "K16", "K24", "K32", "K80", "L" };
 
 /**
  * @struct AllowedJeveuxType
@@ -103,6 +104,15 @@ template<> struct AllowedJeveuxType< JeveuxChar32 >
 template<> struct AllowedJeveuxType< JeveuxChar80 >
 {
     static const unsigned short numTypeJeveux = Char80;
+};
+
+#if ASTER_LOGICAL_SIZE != 1
+#error Size for ASTER_LOGICAL_SIZE (!= 1) not allowed
+#endif
+
+template<> struct AllowedJeveuxType< bool >
+{
+    static const unsigned short numTypeJeveux = Logical;
 };
 
 #endif /* JEVEUXALLOWEDTYPES_H_ */
