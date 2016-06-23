@@ -67,11 +67,6 @@ cdef class DiscretizedContactZone(GenericContactZone):
             self._cptr = <GenericContactZonePtr *>\
                 new DiscretizedContactZonePtr(new DiscretizedContactZoneInstance())
 
-    #def __dealloc__(self):
-        #"""Destructor"""
-        #if self._cptr is not NULL:
-            #del self._cptr
-
     def addBeamDescription(self):
         """"""
         (<DiscretizedContactZoneInstance* >self.getInstance()).addBeamDescription()
@@ -157,11 +152,6 @@ cdef class ContinuousContactZone(GenericContactZone):
         if init:
             self._cptr = <GenericContactZonePtr *>\
                 new ContinuousContactZonePtr(new ContinuousContactZoneInstance())
-
-    #def __dealloc__(self):
-        #"""Destructor"""
-        #if self._cptr is not NULL:
-            #del self._cptr
 
     def addBeamDescription(self):
         """"""
