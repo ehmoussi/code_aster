@@ -243,6 +243,10 @@ void DEFSSPP(CORICH,corich, const char*, STRING_SIZE, const char*, STRING_SIZE, 
 #define CALL_DETRSD(a, b) CALLSS(DETRSD, detrsd, a, b)
 void DEFSS(DETRSD,detrsd, const char*, STRING_SIZE, const char*, STRING_SIZE);
 
+#define CALL_CNOCNS(a, b, c) CALLSSS(CNOCNS, cnocns, a, b, c)
+void DEFSSS(CNOCNS,cnocns, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                           const char*, STRING_SIZE);
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)

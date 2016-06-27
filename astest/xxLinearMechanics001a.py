@@ -2,6 +2,8 @@
 import code_aster
 from code_aster.Commands import *
 
+test = code_aster.TestCase()
+
 mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
 
 model = AFFE_MODELE( MAILLAGE = mail1,
@@ -32,3 +34,14 @@ resu = MECA_STATIQUE( MODELE = model,
                                     RENUM = "METIS", ), )
 
 resu.debugPrint()
+
+# Début du TEST_RESU
+MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)
+sfon = MyFieldOnNodes.exportToSimpleFieldOnNodes()
+#sfon.debugPrint()
+sfon.updateValuePointers()
+
+test.assertAlmostEqual(sfon.getValue(5, 3), -0.159403241003)
+
+test.printSummary()
+# Fin du TEST_RESU

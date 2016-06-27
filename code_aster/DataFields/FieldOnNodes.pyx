@@ -29,30 +29,31 @@ from code_aster.Supervis.libCommandSyntax import _F
 from code_aster.Supervis.libFile import FileType, FileAccess
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.DataFields.SimpleFieldOnNodes cimport SimpleFieldOnNodesDouble
 
 
-cdef class FieldOnNodesDouble( DataStructure ):
+cdef class FieldOnNodesDouble(DataStructure):
     """Python wrapper on the C++ FieldOnNodes object"""
 
-    def __cinit__( self, string name="" ):
+    def __cinit__(self, string name=""):
         """Initialization: stores the pointer to the C++ object"""
         if len(name) > 0:
-            self._cptr = new FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( name ) )
+            self._cptr = new FieldOnNodesDoublePtr(new FieldOnNodesDoubleInstance(name))
 
-    def __dealloc__( self ):
+    def __dealloc__(self):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, FieldOnNodesDoublePtr other ):
+    cdef set(self, FieldOnNodesDoublePtr other):
         """Point to an existing object"""
-        self._cptr = new FieldOnNodesDoublePtr( other )
+        self._cptr = new FieldOnNodesDoublePtr(other)
 
-    cdef FieldOnNodesDoublePtr* getPtr( self ):
+    cdef FieldOnNodesDoublePtr* getPtr(self):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef FieldOnNodesDoubleInstance* getInstance( self ):
+    cdef FieldOnNodesDoubleInstance* getInstance(self):
         """Return the pointer on the c++ instance objet"""
         return self._cptr.get()
 
@@ -60,28 +61,34 @@ cdef class FieldOnNodesDouble( DataStructure ):
         """Return the type of DataStructure"""
         return self.getInstance().getType()
 
-    def __getitem__( self, i ):
+    def exportToSimpleFieldOnNodes(self):
+        """Export the field to a SimpleFieldOnNodesDouble"""
+        returnField = SimpleFieldOnNodesDouble()
+        returnField.set( self.getInstance().exportToSimpleFieldOnNodes() )
+        return returnField
+
+    def __getitem__(self, i):
         """Return the value at the given index"""
         cdef double val = deref(self.getInstance())[i]
         return val
 
-    def printMEDFile( self, string filename ):
+    def printMEDFile(self, string filename):
         """Print the field using the MED format"""
         name = self.getInstance().getName()
         assert len(name.strip()) <= 8, \
             "TODO: field with name longer than 8 chars can not be directly printed"
 
-        syntax = CommandSyntax( "IMPR_RESU" )
-        medFile = LogicalUnitFile( filename, FileType.Binary, FileAccess.New )
-        syntax.define( _F( FORMAT="MED",
+        syntax = CommandSyntax("IMPR_RESU")
+        medFile = LogicalUnitFile(filename, FileType.Binary, FileAccess.New)
+        syntax.define(_F(FORMAT="MED",
                            UNITE=medFile.getLogicalUnit(),
-                           RESU=_F( CHAM_GD=name,
+                           RESU=_F(CHAM_GD=name,
                                     INFO_MAILLAGE="NON",
-                                    IMPR_NOM_VARI="NON", ), ), )
+                                    IMPR_NOM_VARI="NON",),),)
         cdef INTEGER numOp = 39
-        libaster.execop_( & numOp )
+        libaster.execop_(& numOp)
         syntax.free()
 
-    def debugPrint( self, logicalUnit = 6 ):
+    def debugPrint(self, logicalUnit = 6):
         """Print debug information of the content"""
-        self.getInstance().debugPrint( logicalUnit )
+        self.getInstance().debugPrint(logicalUnit)

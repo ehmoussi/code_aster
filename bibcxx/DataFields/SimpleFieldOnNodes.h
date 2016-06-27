@@ -54,6 +54,10 @@ private:
     JeveuxVector<ValueType> _values;
     /** @brief Vecteur Jeveux '.CNSL' */
     JeveuxVectorLogical     _allocated;
+    /** @brief Nombre de noeuds */
+    int                     _nbNodes;
+    /** @brief Nombre de composantes */
+    int                     _nbComp;
 
 public:
     /**
@@ -66,7 +70,9 @@ public:
                     _size( JeveuxVectorLong( getName() + ".CNSD" ) ),
                     _component( JeveuxVectorChar8( getName() + ".CNSC" ) ),
                     _values( JeveuxVector<ValueType>( getName() + ".CNSV" ) ),
-                    _allocated( JeveuxVectorLogical( getName() + ".CNSL" ) )
+                    _allocated( JeveuxVectorLogical( getName() + ".CNSL" ) ),
+                    _nbNodes( 0 ),
+                    _nbComp( 0 )
     {
         assert( name.size() == 19 );
     };
@@ -81,7 +87,9 @@ public:
                     _size( JeveuxVectorLong( getName() + ".CNSD" ) ),
                     _component( JeveuxVectorChar8( getName() + ".CNSC" ) ),
                     _values( JeveuxVector<ValueType>( getName() + ".CNSV" ) ),
-                    _allocated( JeveuxVectorLogical( getName() + ".CNSL" ) )
+                    _allocated( JeveuxVectorLogical( getName() + ".CNSL" ) ),
+                    _nbNodes( 0 ),
+                    _nbComp( 0 )
     {
         assert( getName().size() == 19 );
     };
@@ -104,17 +112,37 @@ public:
         return _values->operator[](i);
     };
 
+    const ValueType& getValue( int nodeNumber, int compNumber ) const
+#ifdef __DEBUG_GC__
+        throw( std::runtime_error )
+#endif
+    {
+#ifdef __DEBUG_GC__
+        if( _nbNodes == 0 || _nbComp == 0 )
+            throw std::runtime_error( "First call of updateValuePointers is mandatory" );
+#endif
+        const long position = nodeNumber*_nbComp + compNumber;
+        return (*_values)[ position ];
+    };
+
     /**
      * @brief Mise a jour des pointeurs Jeveux
      * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
      */
-    bool updateValuePointers()
+    bool updateValuePointers() throw( std::runtime_error )
     {
         bool retour = _descriptor->updateValuePointer();
         retour = ( retour && _size->updateValuePointer() );
         retour = ( retour && _component->updateValuePointer() );
         retour = ( retour && _values->updateValuePointer() );
         retour = ( retour && _allocated->updateValuePointer() );
+        if( retour )
+        {
+            _nbNodes = (*_size)[0];
+            _nbComp = (*_size)[1];
+            if( _values->size() != _nbNodes*_nbComp )
+                throw std::runtime_error( "Programming error" );
+        }
         return retour;
     };
 };

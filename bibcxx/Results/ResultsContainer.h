@@ -42,81 +42,102 @@
  */
 class ResultsContainerInstance: public DataStructure
 {
-    private:
-        /** @brief Pointeur de nom Jeveux '.DESC' */
-        JeveuxBidirectionalMap _symbolicNamesOfFields;
-        /** @brief Collection '.TACH' */
-        JeveuxCollectionChar24 _namesOfFields;
-        /** @brief Pointeur de nom Jeveux '.NOVA' */
-        JeveuxBidirectionalMap _accessVariables;
-        /** @brief Collection '.TAVA' */
-        JeveuxCollectionChar8  _calculationParameter;
-        /** @brief Vecteur Jeveux '.ORDR' */
-        JeveuxVectorLong       _serialNumber;
-        /** @brief Liste des champs */
-        std::vector< FieldOnNodesDoublePtr > _listOfFields;
-        /** @brief Liste des NUME_DDL */
-        std::vector< DOFNumberingPtr >       _listOfDOFNum;
+private:
+    typedef std::vector< FieldOnNodesDoublePtr > VectorOfFields;
 
-    public:
-        /**
-         * @brief Constructeur
-         */
-        ResultsContainerInstance( const std::string resuTyp = "???" ):
-                DataStructure( getNewResultObjectName(), resuTyp ),
-                _symbolicNamesOfFields( JeveuxBidirectionalMap( getName() + "           .DESC" ) ),
-                _namesOfFields( JeveuxCollectionChar24( getName() + "           .TACH" ) ),
-                _accessVariables( JeveuxBidirectionalMap( getName() + "           .NOVA" ) ),
-                _calculationParameter( JeveuxCollectionChar8( getName() + "           .TAVA" ) ),
-                _serialNumber( JeveuxVectorLong( getName() + "           .ORDR" ) )
-        {};
+    /** @typedef std::map d'une chaine et des pointers vers toutes les DataStructure */
+    typedef std::map< std::string, VectorOfFields > mapStrVOF;
+    /** @typedef Iterateur sur le std::map */
+    typedef mapStrVOF::iterator mapStrVOFIterator;
+    /** @typedef Valeur contenue dans mapStrVOF */
+    typedef mapStrVOF::value_type mapStrVOFValue;
 
-        /**
-         * @brief Allouer une sd_resultat
-         * @param nbRanks nombre de numéro d'ordre
-         * @return true si l'allocation s'est bien passée
-         */
-        bool allocate( int nbRanks ) throw ( std::runtime_error );
+    /** @brief Pointeur de nom Jeveux '.DESC' */
+    JeveuxBidirectionalMap _symbolicNamesOfFields;
+    /** @brief Collection '.TACH' */
+    JeveuxCollectionChar24 _namesOfFields;
+    /** @brief Pointeur de nom Jeveux '.NOVA' */
+    JeveuxBidirectionalMap _accessVariables;
+    /** @brief Collection '.TAVA' */
+    JeveuxCollectionChar8  _calculationParameter;
+    /** @brief Vecteur Jeveux '.ORDR' */
+    JeveuxVectorLong       _serialNumber;
+    /** @brief Nombre de numéros d'ordre */
+    int                    _nbRanks;
 
-        /**
-         * @brief Obtenir un DOFNumbering à remplir
-         * @return DOFNumbering à remplir
-         */
-        DOFNumberingPtr getEmptyDOFNumbering();
+    /** @brief Liste des champs */
+    mapStrVOF                            _dictOfVectorOfFields;
+    /** @brief Liste des NUME_DDL */
+    std::vector< DOFNumberingPtr >       _listOfDOFNum;
 
-        /**
-         * @brief Obtenir un champ aux noeuds réel vide à partir de son nom et de son numéro d'ordre
-         * @param name nom Aster du champ
-         * @param rank numéro d'ordre
-         * @return FieldOnNodesDoublePtr pointant vers le champ
-         */
-        FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const std::string name, const int rank );
+public:
+    /**
+     * @brief Constructeur
+     */
+    ResultsContainerInstance( const std::string resuTyp = "???" ):
+            DataStructure( getNewResultObjectName(), resuTyp ),
+            _symbolicNamesOfFields( JeveuxBidirectionalMap( getName() + "           .DESC" ) ),
+            _namesOfFields( JeveuxCollectionChar24( getName() + "           .TACH" ) ),
+            _accessVariables( JeveuxBidirectionalMap( getName() + "           .NOVA" ) ),
+            _calculationParameter( JeveuxCollectionChar8( getName() + "           .TAVA" ) ),
+            _serialNumber( JeveuxVectorLong( getName() + "           .ORDR" ) ),
+            _nbRanks( 0 )
+    {};
 
-        /**
-         * @brief Obtenir le dernier DOFNumbering
-         * @return Dernier DOFNumbering
-         */
-        DOFNumberingPtr getLastDOFNumbering() const
-        {
-            return _listOfDOFNum[ _listOfDOFNum.size() - 1 ];
-        };
+    /**
+     * @brief Allouer une sd_resultat
+     * @param nbRanks nombre de numéro d'ordre
+     * @return true si l'allocation s'est bien passée
+     */
+    bool allocate( int nbRanks ) throw ( std::runtime_error );
 
-        /**
-         * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
-         * @param name nom Aster du champ
-         * @param rank numéro d'ordre
-         * @return FieldOnNodesDoublePtr pointant vers le champ
-         */
-        FieldOnNodesDoublePtr getRealFieldOnNodes( const std::string name, const int rank ) const;
+    /**
+     * @brief Construire une sd_resultat à partir d'objet produit dans le Fortran
+     * @return true si l'allocation s'est bien passée
+     */
+    bool buildFromExisting() throw ( std::runtime_error );
 
-        /**
-         * @brief Impression de la sd au format MED
-         * @param fileName Nom du fichier MED à imprimer
-         * @return true
-         * @todo revoir la gestion des mot-clés par défaut (ex : TOUT_ORDRE)
-         * @todo revoir la gestion des unités logiques (notamment si fort.20 existe déjà)
-         */
-        bool printMedFile( std::string fileName ) const throw ( std::runtime_error );
+    /**
+     * @brief Obtenir un DOFNumbering à remplir
+     * @return DOFNumbering à remplir
+     */
+    DOFNumberingPtr getEmptyDOFNumbering();
+
+    /**
+     * @brief Obtenir un champ aux noeuds réel vide à partir de son nom et de son numéro d'ordre
+     * @param name nom Aster du champ
+     * @param rank numéro d'ordre
+     * @return FieldOnNodesDoublePtr pointant vers le champ
+     */
+    FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const std::string name, const int rank )
+        throw ( std::runtime_error );
+
+    /**
+     * @brief Obtenir le dernier DOFNumbering
+     * @return Dernier DOFNumbering
+     */
+    DOFNumberingPtr getLastDOFNumbering() const
+    {
+        return _listOfDOFNum[ _listOfDOFNum.size() - 1 ];
+    };
+
+    /**
+     * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
+     * @param name nom Aster du champ
+     * @param rank numéro d'ordre
+     * @return FieldOnNodesDoublePtr pointant vers le champ
+     */
+    FieldOnNodesDoublePtr getRealFieldOnNodes( const std::string name, const int rank ) const
+        throw ( std::runtime_error );
+
+    /**
+     * @brief Impression de la sd au format MED
+     * @param fileName Nom du fichier MED à imprimer
+     * @return true
+     * @todo revoir la gestion des mot-clés par défaut (ex : TOUT_ORDRE)
+     * @todo revoir la gestion des unités logiques (notamment si fort.20 existe déjà)
+     */
+    bool printMedFile( std::string fileName ) const throw ( std::runtime_error );
 };
 
 /**

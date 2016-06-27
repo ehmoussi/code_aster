@@ -34,6 +34,7 @@
 
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructure/DataStructure.h"
+#include "DataFields/SimpleFieldOnNodes.h"
 
 /**
  * @class FieldOnNodesInstance
@@ -43,106 +44,122 @@
 template< class ValueType >
 class FieldOnNodesInstance: public DataStructure
 {
-    private:
-        /** @brief Vecteur Jeveux '.DESC' */
-        JeveuxVectorLong        _descriptor;
-        /** @brief Vecteur Jeveux '.REFE' */
-        JeveuxVectorChar24      _reference;
-        /** @brief Vecteur Jeveux '.VALE' */
-        JeveuxVector<ValueType> _valuesList;
+private:
+    typedef SimpleFieldOnNodesInstance< ValueType > SimpleFieldOnNodesValueTypeInstance;
+    typedef boost::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesValueTypePtr;
+    /** @brief Vecteur Jeveux '.DESC' */
+    JeveuxVectorLong        _descriptor;
+    /** @brief Vecteur Jeveux '.REFE' */
+    JeveuxVectorChar24      _reference;
+    /** @brief Vecteur Jeveux '.VALE' */
+    JeveuxVector<ValueType> _valuesList;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param name Nom Jeveux du champ aux noeuds
-         */
-        FieldOnNodesInstance( const std::string name ):
-                        DataStructure( name, "CHAM_NO" ),
-                        _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
-                        _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-                        _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
-        {
-            assert( name.size() == 19 );
-        };
+public:
+    /**
+     * @brief Constructeur
+     * @param name Nom Jeveux du champ aux noeuds
+     */
+    FieldOnNodesInstance( const std::string name ):
+                    DataStructure( name, "CHAM_NO" ),
+                    _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+                    _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
+                    _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
+    {
+        assert( name.size() == 19 );
+    };
 
-        /**
-         * @brief Constructeur
-         * @param memType Mémoire d'allocation
-         */
-        FieldOnNodesInstance( const JeveuxMemory memType ):
-                        DataStructure( "CHAM_NO", memType, 19 ),
-                        _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
-                        _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-                        _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
-        {
-            assert( getName().size() == 19 );
-        };
+    /**
+     * @brief Constructeur
+     * @param memType Mémoire d'allocation
+     */
+    FieldOnNodesInstance( const JeveuxMemory memType ):
+                    DataStructure( "CHAM_NO", memType, 19 ),
+                    _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+                    _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
+                    _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
+    {
+        assert( getName().size() == 19 );
+    };
 
-        ~FieldOnNodesInstance()
-        {
+    ~FieldOnNodesInstance()
+    {
 #ifdef __DEBUG_GC__
-            std::cout << "FieldOnNodes.destr: " << this->getName() << std::endl;
+        std::cout << "FieldOnNodes.destr: " << this->getName() << std::endl;
 #endif
-        };
+    };
 
-        /**
-         * @brief Surcharge de l'operateur []
-         * @param i Indice dans le tableau Jeveux
-         * @return la valeur du tableau Jeveux a la position i
-         * @todo cython n'autorise pas la présence de 2 operator[] (un avec et l'autre sans const)
-         */
-        ValueType &operator[]( int i )
-        {
-            return _valuesList->operator[](i);
-        };
+    /**
+     * @brief Surcharge de l'operateur []
+     * @param i Indice dans le tableau Jeveux
+     * @return la valeur du tableau Jeveux a la position i
+     * @todo cython n'autorise pas la présence de 2 operator[] (un avec et l'autre sans const)
+     */
+    ValueType &operator[]( int i )
+    {
+        return _valuesList->operator[](i);
+    };
 
-        /**
-         * @brief Addition d'un champ aux noeuds
-         * @return renvoit true si l'addition s'est bien deroulée, false sinon
-         */
-        bool addFieldOnNodes( FieldOnNodesInstance< ValueType >& tmp )
-        {
-            bool retour = tmp.updateValuePointers();
-            retour = ( retour && _valuesList->updateValuePointer() );
-            int taille = _valuesList->size();
-            for ( int pos = 0; pos < taille; ++pos )
-                ( *this )[ pos ] = ( *this )[ pos ] + tmp[ pos ];
-            return retour;
-        };
+    /**
+     * @brief Addition d'un champ aux noeuds
+     * @return renvoit true si l'addition s'est bien deroulée, false sinon
+     */
+    bool addFieldOnNodes( FieldOnNodesInstance< ValueType >& tmp )
+    {
+        bool retour = tmp.updateValuePointers();
+        retour = ( retour && _valuesList->updateValuePointer() );
+        int taille = _valuesList->size();
+        for ( int pos = 0; pos < taille; ++pos )
+            ( *this )[ pos ] = ( *this )[ pos ] + tmp[ pos ];
+        return retour;
+    };
 
-        /**
-         * @brief Allouer un champ au noeud à partir d'un autre
-         * @return renvoit true si l'addition s'est bien deroulée, false sinon
-         */
-        bool allocateFrom( const FieldOnNodesInstance< ValueType >& tmp )
-        {
-            this->_descriptor->deallocate();
-            this->_reference->deallocate();
-            this->_valuesList->deallocate();
+    /**
+     * @brief Allouer un champ au noeud à partir d'un autre
+     * @return renvoit true si l'addition s'est bien deroulée, false sinon
+     */
+    bool allocateFrom( const FieldOnNodesInstance< ValueType >& tmp )
+    {
+        this->_descriptor->deallocate();
+        this->_reference->deallocate();
+        this->_valuesList->deallocate();
 
-            this->_descriptor->allocate( getMemoryType(), tmp._descriptor->size() );
-            this->_reference->allocate( getMemoryType(), tmp._reference->size() );
-            this->_valuesList->allocate( getMemoryType(), tmp._valuesList->size() );
-            return true;
-        };
+        this->_descriptor->allocate( getMemoryType(), tmp._descriptor->size() );
+        this->_reference->allocate( getMemoryType(), tmp._reference->size() );
+        this->_valuesList->allocate( getMemoryType(), tmp._valuesList->size() );
+        return true;
+    };
 
-        /**
-         * @brief Mise a jour des pointeurs Jeveux
-         * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
-         */
-        bool updateValuePointers()
-        {
-            bool retour = _descriptor->updateValuePointer();
-            retour = ( retour && _reference->updateValuePointer() );
-            retour = ( retour && _valuesList->updateValuePointer() );
-            return retour;
-        };
-    protected:
-        /**
-         * @brief Surcharge de l'operateur []
-         * @param i Indice dans le tableau Jeveux
-         * @return la valeur du tableau Jeveux a la position i
-         */
+    /**
+     * @brief 
+     * @return 
+     */
+    SimpleFieldOnNodesValueTypePtr exportToSimpleFieldOnNodes()
+    {
+        SimpleFieldOnNodesValueTypePtr toReturn( new SimpleFieldOnNodesValueTypeInstance( getMemoryType() ) );
+        const std::string resultName = toReturn->getName();
+        const std::string inName = getName();
+        CALL_CNOCNS( inName.c_str(), JeveuxMemoryTypesNames[ getMemoryType() ],
+                     resultName.c_str() );
+        return toReturn;
+    };
+
+    /**
+     * @brief Mise a jour des pointeurs Jeveux
+     * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
+     */
+    bool updateValuePointers()
+    {
+        bool retour = _descriptor->updateValuePointer();
+        retour = ( retour && _reference->updateValuePointer() );
+        retour = ( retour && _valuesList->updateValuePointer() );
+        return retour;
+    };
+protected:
+    /**
+     * @brief Surcharge de l'operateur []
+     * @param i Indice dans le tableau Jeveux
+     * @return la valeur du tableau Jeveux a la position i
+     */
 //         ValueType &operator[]( int i )
 //         {
 //             return _valuesList->operator[](i);

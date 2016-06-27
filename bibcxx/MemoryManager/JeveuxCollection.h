@@ -102,6 +102,8 @@ class JeveuxCollectionInstance
 
         /** @brief Nom de la collection */
         std::string                                    _name;
+        /** @brief La collection est-elle vide ? */
+        bool                                           _isEmpty;
         /** @brief Listes de objets de collection */
         std::list< JeveuxCollectionObject<ValueType> > _listObjects;
 
@@ -110,7 +112,8 @@ class JeveuxCollectionInstance
          * @brief Constructeur
          * @param name Chaine representant le nom de la collection
          */
-        JeveuxCollectionInstance( std::string name ): _name( name )
+        JeveuxCollectionInstance( std::string name ): _name( name ),
+                                                      _isEmpty( true )
         {};
 
         /**
@@ -167,6 +170,7 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
     }
     FreeStr( charval );
     FreeStr( collectionObjectName );
+    _isEmpty = false;
     return true;
 };
 
