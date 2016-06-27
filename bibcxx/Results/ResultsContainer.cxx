@@ -34,6 +34,17 @@ bool ResultsContainerInstance::allocate( int nbRanks ) throw ( std::runtime_erro
     std::string base( JeveuxMemoryTypesNames[ getMemoryType() ] );
     long nbordr = nbRanks;
     CALL_RSCRSD( base.c_str(), getName().c_str(), getType().c_str(), &nbordr );
+    _nbRanks = nbRanks;
+    return true;
+};
+
+bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
+{
+    _serialNumber->updateValuePointer();
+    _namesOfFields->buildFromJeveux();
+
+//     int taille = _symbolicNamesOfFields->size();
+    throw std::runtime_error( "Not yet implemented" );
     return true;
 };
 
@@ -50,7 +61,10 @@ DOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering()
 
 FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
                                                                             const int rank )
+    throw ( std::runtime_error )
 {
+    if( rank > _nbRanks )
+        throw std::runtime_error( "Order number out of range" );
     INTEGER retour;
     retour = 0;
     const INTEGER rankLong = rank;
@@ -59,21 +73,29 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( cons
     CALL_RSNOCH( getName().c_str(), name.c_str(), &rankLong );
     std::string bis( returnName.c_str(), 19 );
     FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
-    _listOfFields.push_back( result );
+
+    auto curIter = _dictOfVectorOfFields.find( name );
+    if( curIter == _dictOfVectorOfFields.end() )
+    {
+        _dictOfVectorOfFields[ name ] = VectorOfFields( _nbRanks );
+    }
+    _dictOfVectorOfFields[ name ][ rank ] = result;
     return result;
 };
 
 FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::string name,
                                                                      const int rank ) const
+    throw ( std::runtime_error )
 {
-    INTEGER retour;
-    retour = 0;
-    const INTEGER rankLong = rank;
-    std::string returnName( 19, ' ' );
-    CALL_RSEXCH( " ", getName().c_str(), name.c_str(), &rankLong, returnName.c_str(), &retour );
-    std::string bis( returnName.c_str(), 19 );
-    FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
-    return result;
+    if( rank > _nbRanks )
+        throw std::runtime_error( "Order number out of range" );
+
+    auto curIter = _dictOfVectorOfFields.find( name );
+    if( curIter == _dictOfVectorOfFields.end() )
+        throw std::runtime_error( "Field " + name + " unknown in the results container" );
+
+    FieldOnNodesDoublePtr toReturn = curIter->second[ rank ];
+    return toReturn;
 };
 
 bool ResultsContainerInstance::printMedFile( const std::string fileName ) const

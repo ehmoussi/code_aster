@@ -20,34 +20,31 @@
 from libcpp.string cimport string
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.DataFields.SimpleFieldOnNodes cimport SimpleFieldOnNodesDoublePtr
 
 
-cdef extern from "DataFields/FieldOnNodes.h":
+cdef extern from "DataFields/SimpleFieldOnNodes.h":
 
-    cdef cppclass FieldOnNodesInstance[ ValueType ]:
+    cdef cppclass SimpleFieldOnNodesInstance[ ValueType ]:
 
-        FieldOnNodesInstance( string name )
+        SimpleFieldOnNodesInstance( string name )
         ValueType& operator[]( int i )
-        SimpleFieldOnNodesDoublePtr exportToSimpleFieldOnNodes()
+        const ValueType& getValue( int nodeNumber, int compNumber )
         bint updateValuePointers()
-        string getName()
-        string getType()
         void debugPrint( int logicalUnit )
 
-    cdef cppclass FieldOnNodesDoublePtr:
+    cdef cppclass SimpleFieldOnNodesDoublePtr:
 
-        FieldOnNodesDoublePtr( FieldOnNodesDoublePtr& )
-        FieldOnNodesDoublePtr( FieldOnNodesInstance[ double ]* )
-        FieldOnNodesInstance[ double ]* get()
+        SimpleFieldOnNodesDoublePtr( SimpleFieldOnNodesDoublePtr& )
+        SimpleFieldOnNodesDoublePtr( SimpleFieldOnNodesInstance[ double ]* )
+        SimpleFieldOnNodesInstance[ double ]* get()
 
-ctypedef FieldOnNodesInstance[ double ] FieldOnNodesDoubleInstance
+ctypedef SimpleFieldOnNodesInstance[ double ] SimpleFieldOnNodesDoubleInstance
 
 
-cdef class FieldOnNodesDouble( DataStructure ):
+cdef class SimpleFieldOnNodesDouble( DataStructure ):
 
-    cdef FieldOnNodesDoublePtr* _cptr
+    cdef SimpleFieldOnNodesDoublePtr* _cptr
 
-    cdef set( self, FieldOnNodesDoublePtr other )
-    cdef FieldOnNodesDoublePtr* getPtr( self )
-    cdef FieldOnNodesDoubleInstance* getInstance( self )
+    cdef set( self, SimpleFieldOnNodesDoublePtr other )
+    cdef SimpleFieldOnNodesDoublePtr* getPtr( self )
+    cdef SimpleFieldOnNodesDoubleInstance* getInstance( self )
