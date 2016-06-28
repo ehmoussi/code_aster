@@ -82,6 +82,66 @@ struct is_vector< std::vector<T> >
 };
 
 /**
+ * @struct is_shared_ptr
+ * @brief Classe template permettant de savoir si un type est un boost::shared_ptr
+ * @tparam T1 Type à tester
+ */
+template< typename T1 >
+struct is_shared_ptr;
+
+/**
+ * @struct is_shared_ptr
+ * @brief Spécialisation du template dans le cas général
+ */
+template< class T >
+struct is_shared_ptr
+{
+    static bool const value = false;
+    typedef T value_type;
+};
+
+/**
+ * @struct is_shared_ptr
+ * @brief Spécialisation du template dans le cas boost::shared_ptr
+ */
+template< class T >
+struct is_shared_ptr< boost::shared_ptr<T> >
+{
+    static bool const value = true;
+    typedef T value_type;
+};
+
+/**
+ * @struct is_vector_of_shared_ptr
+ * @brief Classe template permettant de savoir si un type est un boost::shared_ptr
+ * @tparam T1 Type à tester
+ */
+template< typename T1 >
+struct is_vector_of_shared_ptr;
+
+/**
+ * @struct is_vector_of_shared_ptr
+ * @brief Spécialisation du template dans le cas général
+ */
+template< class T >
+struct is_vector_of_shared_ptr
+{
+    static bool const value = false;
+    typedef T value_type;
+};
+
+/**
+ * @struct is_vector_of_shared_ptr
+ * @brief Spécialisation du template dans le cas boost::shared_ptr
+ */
+template< class T >
+struct is_vector_of_shared_ptr< std::vector< boost::shared_ptr<T> > >
+{
+    static bool const value = true;
+    typedef T value_type;
+};
+
+/**
  * @struct GenericCapyConvertibleValue
  * @brief Classe générique décrivant un mot-clé traduisible (classe mère permettant le stockage des filles)
  */
@@ -245,11 +305,9 @@ public:
         if ( val1.size() != val2.size() )
             throw std::runtime_error( "Programming error" );
         VectorOfBaseMatchingTypesCIter curIter2 = val2.begin();
-        for ( VectorOfBaseTypesCIter curIter1 = val1.begin();
-              curIter1 != val1.end();
-              ++curIter1 )
+        for( const auto& curIter1 : val1 )
         {
-            _matchingValues[ *curIter1 ] = *curIter2;
+            _matchingValues[ curIter1 ] = *curIter2;
             ++curIter2;
         }
     };
@@ -318,11 +376,9 @@ private:
         typedef typename Type::value_type ValueType;
         typedef typename Type::const_iterator TypeCIter;
         MatchingType toReturn;
-        for( TypeCIter curIter = (*_value).begin();
-             curIter != (*_value).end();
-             ++curIter )
+        for( const auto& curIter : *_value )
         {
-            MapConstIterator curIter2 = _matchingValues.find( *curIter );
+            MapConstIterator curIter2 = _matchingValues.find( curIter );
             if ( curIter2 == _matchingValues.end() )
                 throw std::runtime_error( "Programming error" );
             toReturn.push_back( (*curIter2).second );
@@ -339,19 +395,19 @@ private:
      * @warning la gestion du pointeur est déléguée à l'appelant !!
      */
     template< typename T = Type, typename M = MatchingType >
-    typename std::enable_if< std::is_same< T, std::vector< DataStructurePtr > >::value ||
-                             std::is_same< T, std::vector< MeshEntityPtr > >::value, GenParam* >::type
+    typename std::enable_if< std::is_same< T, std::vector< MeshEntityPtr > >::value ||
+                             ( is_vector< T >::value &&
+                               std::is_base_of< DataStructure,
+                                                typename is_vector_of_shared_ptr< T >::value_type >::value ),
+                             GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
         typedef typename Type::value_type ValueType;
         typedef typename Type::const_iterator TypeCIter;
         MatchingType toReturn;
-        for( TypeCIter curIter = (*_value).begin();
-             curIter != (*_value).end();
-             ++curIter )
-        {
-            toReturn.push_back( (*curIter)->getName() );
-        }
+        for( const auto& curIter : *_value )
+            toReturn.push_back( (curIter)->getName() );
+
         if( _isSet )
             return new GenParam( _name, toReturn, _isMandatory );
         else
@@ -364,8 +420,11 @@ private:
      * @warning la gestion du pointeur est déléguée à l'appelant !!
      */
     template< typename T = Type, typename M = MatchingType >
-    typename std::enable_if< std::is_same< T, DataStructurePtr >::value ||
-                             std::is_same< T, MeshEntityPtr >::value, GenParam* >::type
+    typename std::enable_if< std::is_same< T, MeshEntityPtr >::value ||
+                             ( is_shared_ptr< T >::value &&
+                               std::is_base_of< DataStructure,
+                                                typename is_shared_ptr< T >::value_type >::value ),
+                             GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
         if( _isSet )
@@ -385,9 +444,13 @@ private:
                              !std::is_same< T, std::vector< double > >::value &&
                              !std::is_same< T, std::vector< int > >::value &&
                              !is_vector< T >::value &&
-                             !std::is_same< T, std::vector< DataStructurePtr > >::value &&
+                             !( is_vector< T >::value &&
+                               std::is_base_of< DataStructure,
+                                                typename is_vector_of_shared_ptr< T >::value_type >::value ) &&
                              !std::is_same< T, std::vector< MeshEntityPtr > >::value &&
-                             !std::is_same< T, DataStructurePtr >::value &&
+                             !( is_shared_ptr< T >::value &&
+                                std::is_base_of< DataStructure,
+                                                 typename is_shared_ptr< T >::value_type >::value ) &&
                              !std::is_same< T, MeshEntityPtr >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {

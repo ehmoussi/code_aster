@@ -268,10 +268,10 @@ public:
         _toCapyConverter.add( new CapyConvertibleValue< int >
                                     ( false, "CARA_ELEM", _caraElem, false ) );
 
-        _toCapyConverter.add( new CapyConvertibleValue< DataStructurePtr >
-                                    ( false, "DIST_MAIT", (DataStructurePtr&)_distMait, false ) );
-        _toCapyConverter.add( new CapyConvertibleValue< DataStructurePtr >
-                                    ( false, "DIST_ESCL", (DataStructurePtr&)_distEscl, false ) );
+        _toCapyConverter.add( new CapyConvertibleValue< FunctionPtr >
+                                    ( false, "DIST_MAIT", _distMait, false ) );
+        _toCapyConverter.add( new CapyConvertibleValue< FunctionPtr >
+                                    ( false, "DIST_ESCL", _distEscl, false ) );
 
         _toCapyConverter.add( new CapyConvertibleValue< double >
                                     ( false, "TOLE_APPA", _pairingTolerance, true ) );
