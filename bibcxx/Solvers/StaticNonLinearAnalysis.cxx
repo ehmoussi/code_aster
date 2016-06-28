@@ -60,13 +60,14 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     if ( ! _materialOnMesh )
        throw std::runtime_error("MaterialOnMesh is undefined");
     dict.container[ "CHAM_MATER" ] =  _materialOnMesh->getName();
-   
+  
+ 
     if ( _listOfExcitations.size() == 0  )
        throw std::runtime_error("Excitation is undefined");
-    ListSyntaxMapContainer listExcit; 
-    CapyConvertibleSyntax syntax;
+    
     CapyConvertibleFactorKeyword excitFKW( "EXCIT" );
-    for( ListExcitationIter curIter = _listOfExcitations.begin();
+    CapyConvertibleSyntax syntax;
+    for( ListExcitationCIter curIter = _listOfExcitations.begin();
          curIter != _listOfExcitations.end();
          ++curIter )
     {
@@ -74,13 +75,14 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
         excitFKW.addContainer( toAdd );
     }
     syntax.addFactorKeywordValues( excitFKW );
-
-    SyntaxMapContainer dictExcit = syntax.toSyntaxMapContainer();
-    listExcit.push_back( dictExcit ); 
-    dict.container[ "EXCIT" ] = listExcit;
+    SyntaxMapContainer test = syntax.toSyntaxMapContainer();
+    // On ajoute le SyntaxMapContainer résultant du parcours de la liste des
+    // excitations au SyntaxMapContainer qui servira à définir le CommandSyntax
+    dict += test ; 
     
     if ( _listOfBehaviours.size() == 0  )
        throw std::runtime_error("Behaviour is undefined");
+
     ListSyntaxMapContainer listBehaviour; 
     SyntaxMapContainer dictBEHAV; 
     dictBEHAV.container["RELATION"] = "ELAS";
@@ -153,9 +155,9 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
 //  Now Command syntax is ready, op00070 may be called   
     try
     {
-  //      INTEGER op = 70;
-  //      std::cout << " Appel d'op0070 " << std::endl;
-  //      CALL_EXECOP( &op );
+        INTEGER op = 70;
+        std::cout << " Appel d'op0070 " << std::endl;
+        CALL_EXECOP( &op );
     }
     catch( ... )
     {
@@ -173,11 +175,11 @@ void StaticNonLinearAnalysisInstance::addMechanicalExcitation( const GenericMech
                                       ExcitationEnum typeOfExcit, 
                                       const FunctionPtr& scalF)
         {
-            ExcitationInstance* curExcit( new ExcitationInstance(typeOfExcit) );
+            ExcitationPtr curExcit( new ExcitationInstance(typeOfExcit) );
             curExcit->setMechanicalLoad( currentLoad );
             if ( scalF  )
                 curExcit->setMultiplicativeFunction( scalF );
-             _listOfExcitations.push_back( ExcitationPtr( curExcit ) );
+             _listOfExcitations.push_back( curExcit  );
         };                             
 
 void StaticNonLinearAnalysisInstance::addKinematicExcitation( const KinematicsLoadPtr& currentLoad, 
@@ -189,7 +191,7 @@ void StaticNonLinearAnalysisInstance::addKinematicExcitation( const KinematicsLo
             if ( scalF )
                 curExcit->setMultiplicativeFunction( scalF );
              _listOfExcitations.push_back( ExcitationPtr( curExcit ) );
-        };  
+        }; 
         
 void StaticNonLinearAnalysisInstance::addStandardExcitation( const GenericMechanicalLoadPtr& currentLoad )
         {

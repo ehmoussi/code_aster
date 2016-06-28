@@ -18,18 +18,13 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
-from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
-
+from code_aster.Results.ResultsContainer cimport ResultsContainerInstance, ResultsContainer
 
 cdef extern from "Results/NonLinearEvolutionContainer.h":
 
-    cdef cppclass NonLinearEvolutionContainerInstance:
+    cdef cppclass NonLinearEvolutionContainerInstance ( ResultsContainerInstance ) :
 
         NonLinearEvolutionContainerInstance()
-        const string getType()
-        void debugPrint( int logicalUnit )
-        FieldOnNodesDoublePtr getRealFieldOnNodes( string name, int rank )
-        bint printMedFile( string fileName )
 
     cdef cppclass NonLinearEvolutionContainerPtr:
 
@@ -40,10 +35,6 @@ cdef extern from "Results/NonLinearEvolutionContainer.h":
 
 #### NonLinearEvolutionContainer
 
-cdef class NonLinearEvolutionContainer:
+cdef class NonLinearEvolutionContainer ( ResultsContainer ):
+    pass
 
-    cdef NonLinearEvolutionContainerPtr* _cptr
-
-    cdef set( self, NonLinearEvolutionContainerPtr other )
-    cdef NonLinearEvolutionContainerPtr* getPtr( self )
-    cdef NonLinearEvolutionContainerInstance* getInstance( self )

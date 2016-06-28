@@ -49,11 +49,11 @@ cdef class State:
     
     def setFromNonLinearEvolution( self, NonLinearEvolutionContainer evol_noli, sourceStep, precision = 1.E-06 ):
          """ Define current step from a previous nonlinear analysis"""
-         self.getInstance().setFromNonLinearEvolution(  deref( evol_noli.getPtr() ), sourceStep, precision )
+         self.getInstance().setFromNonLinearEvolution(  deref( <NonLinearEvolutionContainerPtr*>(evol_noli.getPtr())) , sourceStep, precision )
 
     def setFromNonLinearEvolution( self,  NonLinearEvolutionContainer evol_noli, sourceIndex ):
          """ Define current state from a previous nonlinear analysis"""
-         self.getInstance().setFromNonLinearEvolution(  deref( evol_noli.getPtr() ), sourceIndex )
+         self.getInstance().setFromNonLinearEvolution(  deref( <NonLinearEvolutionContainerPtr*>(evol_noli.getPtr())), sourceIndex )
     
     def setCurrentStep ( self, double step ):
          """ Define the value of the current time or load step"""

@@ -20,44 +20,20 @@
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
+from code_aster.Results.ResultsContainer cimport ResultsContainer, ResultsContainerPtr
 
 #### NonLinearEvolutionContainer
 
-cdef class NonLinearEvolutionContainer:
+cdef class NonLinearEvolutionContainer ( ResultsContainer ):
     """Python wrapper on the C++ NonLinearEvolutionContainer Object"""
 
     def __cinit__( self, bint init = True ):
         """Initialization: stores the pointer to the C++ object"""
         if init :
-            self._cptr = new NonLinearEvolutionContainerPtr( new NonLinearEvolutionContainerInstance() )
+            self._cptr = <ResultsContainerPtr *> \
+                 new NonLinearEvolutionContainerPtr( new NonLinearEvolutionContainerInstance() )
 
-    def __dealloc__( self ):
-        """Destructor"""
-        if self._cptr is not NULL:
-            del self._cptr
-
-    cdef set( self, NonLinearEvolutionContainerPtr other ):
-        """Point to an existing object"""
-        self._cptr = new NonLinearEvolutionContainerPtr( other )
-
-    cdef NonLinearEvolutionContainerPtr* getPtr( self ):
-        """Return the pointer on the c++ shared-pointer object"""
-        return self._cptr
-
-    cdef NonLinearEvolutionContainerInstance* getInstance( self ):
-        """Return the pointer on the c++ instance object"""
-        return self._cptr.get()
-
-    def debugPrint( self, logicalUnit=6 ):
-        """Print debug information of the content"""
-        self.getInstance().debugPrint( logicalUnit )
-
-    def getRealFieldOnNodes( self, name, rank ):
-        """Get a real FieldOnNodes from name and rank"""
-        returnField = FieldOnNodesDouble()
-        returnField.set( self.getInstance().getRealFieldOnNodes( name, rank ) )
-        return returnField
-
-    def printMedFile( self, name ):
-        """Print MED file from NonLinearEvolutionContainer"""
-        return self.getInstance().printMedFile( name )
+#    def __dealloc__( self ):
+#        """Destructor"""
+#        if self._cptr is not NULL:
+#            del self._cptr
