@@ -152,7 +152,7 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     std::cout << " Appel de debugPrint pour CommandSyntax " << std::endl;
     cmdSNL.debugPrint();
  
-//  Now Command syntax is ready, op00070 may be called   
+/*  Now Command syntax is ready, op00070 may be called   
     try
     {
         INTEGER op = 70;
@@ -163,6 +163,7 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     {
         throw;
     }
+*/
 // Return result 
     resultSNL->debugPrint(8);
     return ResultsContainerPtr(resultSNL.get());

@@ -63,8 +63,8 @@ public:
     ExcitationInstance( ExcitationEnum typeExcit= StandardExcitation ):
         _typeExcit( typeExcit )
     {
-        _toCapyConverter.add( new CapyConvertibleValue< DataStructurePtr > 
-                                                      (false, "FONC_MULT", (DataStructurePtr&)_multFunction, 
+        _toCapyConverter.add( new CapyConvertibleValue< FunctionPtr > 
+                                                      (false, "FONC_MULT", _multFunction, 
                                                        false ) );
         _toCapyConverter.add( new CapyConvertibleValue< ExcitationEnum >
                                                       ( true, "TYPE_CHARGE", _typeExcit,
@@ -77,8 +77,8 @@ public:
     void setKinematicLoad( const KinematicsLoadPtr& kineLoad )
     {
         _kinematicLoad = kineLoad;
-        _toCapyConverter.add( new CapyConvertibleValue< DataStructurePtr > 
-                                                      ( true, "CHARGE", (DataStructurePtr&)_kinematicLoad, 
+        _toCapyConverter.add( new CapyConvertibleValue< KinematicsLoadPtr > 
+                                                      ( true, "CHARGE", _kinematicLoad, 
                                                        true ) );
     };
     /** @function setMechanicalLoad
@@ -87,8 +87,8 @@ public:
     void setMechanicalLoad( const GenericMechanicalLoadPtr& mecaLoad )
     {
         _mecaLoad = mecaLoad;
-        _toCapyConverter.add( new CapyConvertibleValue< DataStructurePtr > 
-                                                      (true, "CHARGE", (DataStructurePtr&)_mecaLoad, 
+        _toCapyConverter.add( new CapyConvertibleValue< GenericMechanicalLoadPtr > 
+                                                      (true, "CHARGE", _mecaLoad, 
                                                        true ) );
     };
     /** @function setMultiplicativeFunction

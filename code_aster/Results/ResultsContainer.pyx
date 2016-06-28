@@ -35,8 +35,12 @@ cdef class ResultsContainer( DataStructure ):
 
     def __dealloc__( self ):
         """Destructor"""
+        # subclassing, see https://github.com/cython/cython/wiki/WrappingSetOfCppClasses
+        cdef ResultsContainerPtr* tmp
         if self._cptr is not NULL:
-            del self._cptr
+            tmp = <ResultsContainerPtr *>self._cptr
+            del tmp
+            self._cptr = NULL
 
     cdef set( self, ResultsContainerPtr other ):
         """Point to an existing object"""
