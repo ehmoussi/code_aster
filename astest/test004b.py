@@ -75,7 +75,7 @@ timeList.build()
 #timeList.debugPrint( 6 )
 statNonLine1.setLoadStepManager( timeList ) 
 # Run the nonlinear analysis
-resu = statNonLine1.execute()
+#resu = statNonLine1.execute()
 #resu.debugPrint( 6 )
 
 test.assertTrue( True )
