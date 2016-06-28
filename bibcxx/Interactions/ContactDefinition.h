@@ -300,8 +300,8 @@ public:
                                                       ( true, "FROTTEMENT", 
                                                         _friction, allFrictionParameters,
                                                         allFrictionParametersNames ) );
-        _toCapyConverter.add( new CapyConvertibleValue< DataStructurePtr >
-                                                      ( true, "MODELE", (DataStructurePtr&)_model ) );
+        _toCapyConverter.add( new CapyConvertibleValue< ModelPtr >
+                                                      ( true, "MODELE", _model ) );
 
         if ( formulation == Continuous || formulation == Discretized )
             addContactDefinition();

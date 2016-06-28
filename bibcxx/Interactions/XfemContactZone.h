@@ -80,8 +80,8 @@ public:
                            _coefCont( 100. ),
                            _seuilInit( 0. )
     {
-        _toCapyConverter.add( new CapyConvertibleValue< DataStructurePtr >
-                                    ( true, "FISS_MAIT", (DataStructurePtr&)_crack, false ) );
+        _toCapyConverter.add( new CapyConvertibleValue< XfemCrackPtr >
+                                    ( true, "FISS_MAIT", _crack, false ) );
         _toCapyConverter.add( new CapyConvertibleValue< double >
                                     ( false, "TOLE_PROJ_EXT", _toleProjExt, true ) );
 
