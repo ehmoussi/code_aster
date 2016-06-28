@@ -165,4 +165,4 @@ class ListOfLoadsInstance: public DataStructure
  */
 typedef boost::shared_ptr< ListOfLoadsInstance > ListOfLoadsPtr;
 
-#endif /* LISTOFLOAD_H_ */
+#endif /* LISTOFLOADS_H_ */

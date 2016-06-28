@@ -80,6 +80,17 @@ public:
 
     /** @brief Conteneur a proprement parler */
     SyntaxMap container;
+    
+    /**
+    * @brief Opérateur +=
+    * @param toAdd SyntaxMapContainer à ajouter
+    * @return reference to the current object 
+    */
+    SyntaxMapContainer&  operator+=( const SyntaxMapContainer& toAdd )
+    {
+         container.insert( toAdd.container.begin(), toAdd.container.end() );
+         return *this;
+    };
 
 protected:
     /**
@@ -104,5 +115,6 @@ private:
  * @return SyntaxMapContainer résultat
  */
 SyntaxMapContainer operator+( const SyntaxMapContainer& toAdd1, const SyntaxMapContainer& toAdd2 );
+
 
 #endif /* SYNTAXDICTIONARY_H_ */

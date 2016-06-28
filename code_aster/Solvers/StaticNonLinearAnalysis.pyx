@@ -100,21 +100,27 @@ cdef class StaticNonLinearAnalysis( DataStructure ):
         """Set the driving method """
         self.getInstance().setDriving( deref( curDriving.getPtr() ) )
 
-    def addStandardExcitation( self,  GenericMechanicalLoad currentLoad ):
-        """ Add standard excitation """
-        self.getInstance().addStandardExcitation( deref( currentLoad.getPtr() ) )
+    def addStandardExcitation( self,  currentLoad ):
+        """ Add standard excitation """  
+        cdef GenericMechanicalLoad mecaLoad
+        cdef KinematicsLoad kineLoad
+        if ( isinstance( currentLoad, GenericMechanicalLoad )):
+            mecaLoad = currentLoad
+            self.getInstance().addStandardExcitation( deref( mecaLoad.getPtr() ) )
+        if ( isinstance( currentLoad, KinematicsLoad )):
+            kineLoad = currentLoad
+            self.getInstance().addStandardExcitation( deref( kineLoad.getPtr() ) )
     
-    def addStandardScaledExcitation( self, GenericMechanicalLoad currentLoad,  Function scalF ):
+    def addStandardScaledExcitation( self, currentLoad,  Function scalF ):
         """ Add standard excitation, with a scaling time function """ 
-        self.getInstance().addStandardScaledExcitation( deref( currentLoad.getPtr() ), deref( scalF.getPtr() )  )
-   
-    def addStandardExcitation( self, KinematicsLoad currentLoad ):
-        """ Add standard excitation """ 
-        self.getInstance().addStandardExcitation( deref( currentLoad.getPtr() ) )
-
-    def addStandardScaledExcitation(self,  KinematicsLoad currentLoad,  Function scalF ):
-        """ Add standard scaled excitation """
-        self.getInstance().addStandardScaledExcitation( deref( currentLoad.getPtr() ), deref( scalF.getPtr() )  )
+        cdef GenericMechanicalLoad mecaLoad
+        cdef KinematicsLoad kineLoad
+        if ( isinstance( currentLoad, GenericMechanicalLoad )):
+            mecaLoad = currentLoad
+            self.getInstance().addStandardScaledExcitation( deref( mecaLoad.getPtr() ), deref( scalF.getPtr() )  )
+        if ( isinstance( currentLoad, KinematicsLoad )):
+            kineLoad = currentLoad
+            self.getInstance().addStandardScaledExcitation( deref( kineLoad.getPtr() ), deref( scalF.getPtr() ) )
 
     def addDrivenExcitation( self, GenericMechanicalLoad currentLoad ):
         """ Add driven excitation """

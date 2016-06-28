@@ -57,6 +57,8 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         typedef std::list< ExcitationPtr > ListExcitation;
         /** @typedef Iterator on a std::list of Excitation */
         typedef ListExcitation::iterator ListExcitationIter;
+        /** @typedef Const Iterator on a std::list of Excitation */
+        typedef ListExcitation::const_iterator ListExcitationCIter;
         /** @typedef Smart pointer on a  VirtualMeshEntity */
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
         /** @typedef LocatedBehaviour is a Behaviour located on a MeshEntity */
