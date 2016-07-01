@@ -47,43 +47,61 @@
 template< class ValueType >
 class JeveuxCollectionObject: private AllowedJeveuxType< ValueType >
 {
-    private:
-        /** @brief Nom Jeveux de la collection */
-        std::string _collectionName;
-        /** @brief Position dans la collection */
-        int         _numberInCollection;
-        /** @brief Nom de l'objet de collection */
-        std::string _nameOfObject;
-        /** @brief Pointeur vers le vecteur Jeveux */
-        ValueType*  _valuePtr;
+private:
+    /** @brief Nom Jeveux de la collection */
+    std::string _collectionName;
+    /** @brief Position dans la collection */
+    int         _numberInCollection;
+    /** @brief Nom de l'objet de collection */
+    std::string _nameOfObject;
+    /** @brief Pointeur vers le vecteur Jeveux */
+    ValueType*  _valuePtr;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param collectionName Nom de collection
-         * @param number Numero de l'objet dans la collection
-         * @param ptr Pointeur vers le vecteur Jeveux
-         */
-        JeveuxCollectionObject( std::string collectionName, int number,
-                                ValueType* ptr = NULL ): _collectionName(collectionName),
-                                                         _numberInCollection(number),
-                                                         _nameOfObject(""),
-                                                         _valuePtr(ptr)
-        {};
+public:
+    /**
+     * @brief Constructeur
+     * @param collectionName Nom de collection
+     * @param number Numero de l'objet dans la collection
+     * @param ptr Pointeur vers le vecteur Jeveux
+     */
+    JeveuxCollectionObject( std::string collectionName, int number,
+                            ValueType* ptr = NULL ): _collectionName(collectionName),
+                                                        _numberInCollection(number),
+                                                        _nameOfObject(""),
+                                                        _valuePtr(ptr)
+    {};
 
-        /**
-         * @brief Constructeur
-         * @param collectionName Nom de collection
-         * @param number Numero de l'objet dans la collection
-         * @param objectName Nom de l'objet de collection
-         * @param ptr Pointeur vers le vecteur Jeveux
-         */
-        JeveuxCollectionObject( std::string collectionName, int number, std::string objectName,
-                                ValueType* ptr = NULL ): _collectionName(collectionName),
-                                                         _numberInCollection(number),
-                                                         _nameOfObject(objectName),
-                                                         _valuePtr(ptr)
-        {};
+    /**
+     * @brief Constructeur
+     * @param collectionName Nom de collection
+     * @param number Numero de l'objet dans la collection
+     * @param objectName Nom de l'objet de collection
+     * @param ptr Pointeur vers le vecteur Jeveux
+     */
+    JeveuxCollectionObject( std::string collectionName, int number, std::string objectName,
+                            ValueType* ptr = NULL ): _collectionName(collectionName),
+                                                        _numberInCollection(number),
+                                                        _nameOfObject(objectName),
+                                                        _valuePtr(ptr)
+    {};
+
+    inline const ValueType &operator[]( int i ) const
+    {
+        return _valuePtr[i];
+    };
+
+    int size() const
+    {
+        const char* collName = _collectionName.c_str();
+        char* charJeveuxName = MakeBlankFStr(32);
+        long num = _numberInCollection;
+        CALL_JEXNUM( charJeveuxName, collName, &num );
+        long valTmp;
+        JeveuxChar8 param( "LONMAX" );
+        char* charval = MakeBlankFStr(32);
+        CALL_JELIRA( charJeveuxName, param.c_str(), &valTmp, charval );
+        return (int)valTmp;
+    };
 };
 
 /**
@@ -94,41 +112,64 @@ class JeveuxCollectionObject: private AllowedJeveuxType< ValueType >
 template< class ValueType >
 class JeveuxCollectionInstance
 {
-    private:
-        /** @brief Definition d'un objet de collection du type ValueType */
-        typedef JeveuxCollectionObject< ValueType > JeveuxCollObjValType;
-        /** @brief std::map associant une chaine a un JeveuxCollObjValType */
-        typedef std::map< std::string, JeveuxCollObjValType > mapStrCollectionObject;
+private:
+    /** @brief Definition d'un objet de collection du type ValueType */
+    typedef JeveuxCollectionObject< ValueType > JeveuxCollObjValType;
+    /** @brief std::map associant une chaine a un JeveuxCollObjValType */
+    typedef std::map< std::string, JeveuxCollObjValType > mapStrCollectionObject;
 
-        /** @brief Nom de la collection */
-        std::string                                    _name;
-        /** @brief La collection est-elle vide ? */
-        bool                                           _isEmpty;
-        /** @brief Listes de objets de collection */
-        std::list< JeveuxCollectionObject<ValueType> > _listObjects;
+    /** @brief Nom de la collection */
+    std::string                                        _name;
+    /** @brief La collection est-elle vide ? */
+    bool                                               _isEmpty;
+    /** @brief Listes de objets de collection */
+    std::vector< JeveuxCollectionObject< ValueType > > _listObjects;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param name Chaine representant le nom de la collection
-         */
-        JeveuxCollectionInstance( std::string name ): _name( name ),
-                                                      _isEmpty( true )
-        {};
+public:
+    /**
+     * @brief Constructeur
+     * @param name Chaine representant le nom de la collection
+     */
+    JeveuxCollectionInstance( const std::string& name ): _name( name ),
+                                                         _isEmpty( true )
+    {};
 
-        /**
-         * @brief Methode permettant de construire une collection a partir d'une collection
-         *   existante en memoire Jeveux
-         * @return Renvoit true si la construction s'est bien deroulee
-         */
-        bool buildFromJeveux();
+    /**
+     * @brief Methode permettant de construire une collection a partir d'une collection
+     *   existante en memoire Jeveux
+     * @return Renvoit true si la construction s'est bien deroulee
+     */
+    bool buildFromJeveux();
 
-        /**
-         * @brief Methode verifiant l'existance d'un objet de collection dans la collection
-         * @param name Chaine contenant le nom de l'objet
-         * @return Renvoit true si l'objet existe dans la collection
-         */
-        bool existsObject( std::string name );
+    /**
+     * @brief Methode verifiant l'existance d'un objet de collection dans la collection
+     * @param name Chaine contenant le nom de l'objet
+     * @return Renvoit true si l'objet existe dans la collection
+     */
+    bool existsObject( const std::string& name ) const;
+
+    const std::vector< JeveuxCollectionObject< ValueType > >& getVectorOfObjects() const
+    {
+        return _listObjects;
+    };
+
+    JeveuxCollectionObject< ValueType >& getObject( const int& position ) const
+        throw( std::runtime_error )
+    {
+        if( _isEmpty )
+            throw std::runtime_error( "Collection empty" );
+
+        if( position >= _listObjects.size() )
+            throw std::runtime_error( "Out of collection bound" );
+
+        return _listObjects[position];
+    };
+
+    int size() const
+    {
+        if( _isEmpty ) return -1;
+        return _listObjects.size();
+    };
 };
 
 template< class ValueType >
@@ -175,12 +216,12 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
 };
 
 template< class ValueType >
-bool JeveuxCollectionInstance< ValueType >::existsObject( std::string name )
+bool JeveuxCollectionInstance< ValueType >::existsObject( const std::string& name ) const
 {
     const char* collName = _name.c_str();
     char* charJeveuxName = MakeBlankFStr(32);
     long returnBool;
-    CALL_JEXNOM( charJeveuxName,collName, name.c_str() );
+    CALL_JEXNOM( charJeveuxName, collName, name.c_str() );
     CALL_JEEXIN( charJeveuxName, &returnBool );
     if ( returnBool == 0 ) return false;
     return true;

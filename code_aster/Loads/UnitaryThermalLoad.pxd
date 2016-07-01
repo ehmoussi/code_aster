@@ -16,15 +16,27 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
-
+from libcpp.vector cimport vector
 from libcpp.string cimport string
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-
+ 
 
 cdef extern from "Loads/UnitaryThermalLoad.h":
 
-    cdef cppclass DoubleImposedTemperatureInstance:
+    ctypedef vector[double] VectorDouble
+
+    cdef cppclass UnitaryThermalLoadInstance:
+
+        UnitaryThermalLoadInstance()
+
+    cdef cppclass UnitaryThermalLoadPtr:
+
+        UnitaryThermalLoadPtr(UnitaryThermalLoadPtr&)
+        UnitaryThermalLoadPtr(UnitaryThermalLoadInstance *)
+        UnitaryThermalLoadInstance* get()
+
+    cdef cppclass DoubleImposedTemperatureInstance(UnitaryThermalLoadInstance):
 
         DoubleImposedTemperatureInstance()
         void addGroupOfNodes( string nameOfGroup ) except +
@@ -36,10 +48,11 @@ cdef extern from "Loads/UnitaryThermalLoad.h":
         DoubleImposedTemperaturePtr( DoubleImposedTemperatureInstance* )
         DoubleImposedTemperatureInstance* get()
 
-    cdef cppclass DoubleDistributedFlowInstance:
+    cdef cppclass DoubleDistributedFlowInstance(UnitaryThermalLoadInstance):
 
-        DoubleDistributedFlowInstance()
+        DoubleDistributedFlowInstance( double )
         void addGroupOfElements( string nameOfElement ) except +
+        void setNormalFlow( double )
         void setLowerNormalFlow( double )
         void setUpperNormalFlow( double )
         void setFlowXYZ( double, double, double )
@@ -47,11 +60,11 @@ cdef extern from "Loads/UnitaryThermalLoad.h":
 
     cdef cppclass DoubleDistributedFlowPtr:
 
-        DoubleDistributedFlowPtr( DoubleDistributedFlowPtr& )
+        DoubleDistributedFlowPtr( DoubleDistributedFlowPtr& , double fluxn=0.0)
         DoubleDistributedFlowPtr( DoubleDistributedFlowInstance* )
         DoubleDistributedFlowInstance* get()
 
-    cdef cppclass DoubleNonLinearFlowInstance:
+    cdef cppclass DoubleNonLinearFlowInstance(UnitaryThermalLoadInstance):
 
         DoubleNonLinearFlowInstance()
         void addGroupOfElements( string nameOfElement ) except +
@@ -63,7 +76,7 @@ cdef extern from "Loads/UnitaryThermalLoad.h":
         DoubleNonLinearFlowPtr( DoubleNonLinearFlowInstance* )
         DoubleNonLinearFlowInstance* get()
 
-    cdef cppclass DoubleExchangeInstance:
+    cdef cppclass DoubleExchangeInstance(UnitaryThermalLoadInstance):
 
         DoubleExchangeInstance()
         void addGroupOfElements( string nameOfElement ) except +
@@ -79,12 +92,12 @@ cdef extern from "Loads/UnitaryThermalLoad.h":
         DoubleExchangePtr( DoubleExchangeInstance* )
         DoubleExchangeInstance* get()
 
-    cdef cppclass DoubleExchangeWallInstance:
+    cdef cppclass DoubleExchangeWallInstance(UnitaryThermalLoadInstance):
 
         DoubleExchangeWallInstance()
         void addGroupOfElements( string nameOfElement ) except +
         void setExchangeCoefficient( double )
-        void setTranslation( double , double , double)
+        void setTranslation( const VectorDouble& )
 
     cdef cppclass DoubleExchangeWallPtr:
 
@@ -92,7 +105,7 @@ cdef extern from "Loads/UnitaryThermalLoad.h":
         DoubleExchangeWallPtr( DoubleExchangeWallInstance* )
         DoubleExchangeWallInstance* get()
         
-    cdef cppclass DoubleThermalRadiationInstance:
+    cdef cppclass DoubleThermalRadiationInstance(UnitaryThermalLoadInstance):
 
         DoubleThermalRadiationInstance()
         void addGroupOfElements( string nameOfElement ) except +
@@ -107,7 +120,7 @@ cdef extern from "Loads/UnitaryThermalLoad.h":
         DoubleThermalRadiationPtr( DoubleThermalRadiationInstance* )
         DoubleThermalRadiationInstance* get()
  
-    cdef cppclass DoubleThermalGradientInstance:
+    cdef cppclass DoubleThermalGradientInstance(UnitaryThermalLoadInstance):
 
         DoubleThermalGradientInstance()   
         void addGroupOfElements( string nameOfElement ) except +
@@ -119,58 +132,29 @@ cdef extern from "Loads/UnitaryThermalLoad.h":
         DoubleThermalGradientPtr( DoubleThermalGradientInstance* )
         DoubleThermalGradientInstance* get()
 
-cdef class DoubleImposedTemperature( DataStructure ):
+cdef class UnitaryThermalLoad(DataStructure):
+    cdef UnitaryThermalLoadPtr* _cptr
+    cdef set(self, UnitaryThermalLoadPtr other)
+    cdef UnitaryThermalLoadPtr* getPtr(self)
+    cdef UnitaryThermalLoadInstance* getInstance(self)
 
-    cdef DoubleImposedTemperaturePtr* _cptr
+cdef class DoubleImposedTemperature( UnitaryThermalLoad ):
+    pass
 
-    cdef set( self, DoubleImposedTemperaturePtr other )
-    cdef DoubleImposedTemperaturePtr* getPtr( self )
-    cdef DoubleImposedTemperatureInstance* getInstance( self )
+cdef class DoubleDistributedFlow( UnitaryThermalLoad ):
+    pass
 
-cdef class DoubleDistributedFlow( DataStructure ):
+cdef class DoubleNonLinearFlow( UnitaryThermalLoad ):
+    pass
 
-    cdef DoubleDistributedFlowPtr* _cptr
-
-    cdef set( self, DoubleDistributedFlowPtr other )
-    cdef DoubleDistributedFlowPtr* getPtr( self )
-    cdef DoubleDistributedFlowInstance* getInstance( self )
-
-cdef class DoubleNonLinearFlow( DataStructure ):
-
-    cdef DoubleNonLinearFlowPtr* _cptr
-
-    cdef set( self, DoubleNonLinearFlowPtr other )
-    cdef DoubleNonLinearFlowPtr* getPtr( self )
-    cdef DoubleNonLinearFlowInstance* getInstance( self )
-
-cdef class DoubleExchange( DataStructure ):
-
-    cdef DoubleExchangePtr* _cptr
-
-    cdef set( self, DoubleExchangePtr other )
-    cdef DoubleExchangePtr* getPtr( self )
-    cdef DoubleExchangeInstance* getInstance( self )
+cdef class DoubleExchange( UnitaryThermalLoad ):
+    pass
     
-cdef class DoubleExchangeWall( DataStructure ):
+cdef class DoubleExchangeWall( UnitaryThermalLoad ):
+    pass
 
-    cdef DoubleExchangeWallPtr* _cptr
+cdef class DoubleThermalRadiation( UnitaryThermalLoad ):
+    pass
 
-    cdef set( self, DoubleExchangeWallPtr other )
-    cdef DoubleExchangeWallPtr* getPtr( self )
-    cdef DoubleExchangeWallInstance* getInstance( self )
-
-cdef class DoubleThermalRadiation( DataStructure ):
-
-    cdef DoubleThermalRadiationPtr* _cptr
-
-    cdef set( self, DoubleThermalRadiationPtr other )
-    cdef DoubleThermalRadiationPtr* getPtr( self )
-    cdef DoubleThermalRadiationInstance* getInstance( self )
-
-cdef class DoubleThermalGradient( DataStructure ):
-
-    cdef DoubleThermalGradientPtr* _cptr
-
-    cdef set( self, DoubleThermalGradientPtr other )
-    cdef DoubleThermalGradientPtr* getPtr( self )
-    cdef DoubleThermalGradientInstance* getInstance( self )
+cdef class DoubleThermalGradient( UnitaryThermalLoad ):
+    pass
