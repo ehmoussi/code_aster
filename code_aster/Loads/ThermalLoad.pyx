@@ -21,7 +21,6 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Loads.ThermalLoad cimport ThermalLoad
 from code_aster.Loads.UnitaryThermalLoad cimport UnitaryThermalLoad
 from code_aster.Modeling.Model cimport Model
 
@@ -66,4 +65,3 @@ cdef class ThermalLoad(DataStructure):
     def debugPrint(self, logicalUnit=6):
         """Print debug information of the content"""
         self.getInstance().debugPrint(logicalUnit)
-
