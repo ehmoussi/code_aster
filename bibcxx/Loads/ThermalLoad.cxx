@@ -36,5 +36,37 @@ ThermalLoadInstance::ThermalLoadInstance():
 
 bool ThermalLoadInstance::build() throw ( std::runtime_error )
 {
-    return false;
+    CapyConvertibleSyntax syntax;
+//    syntax.setSimpleKeywordValues( _toCapyConverter );
+
+    CapyConvertibleFactorKeyword echangeFKW( "ECHANGE" );
+//    for( auto curIter : _exchange )
+//    {
+//        CapyConvertibleContainer toAdd = (*curIter)->getCapyConvertibleContainer();
+//        echangeFKW.addContainer( toAdd );
+//    }
+    syntax.addFactorKeywordValues( echangeFKW );
+
+    SyntaxMapContainer test = syntax.toSyntaxMapContainer();
+//    cmdSt.define( test );
+    		
+//    
+// Maintenant que le fichier de commande est pret, on appelle OP0034
+// 
+
+    try
+    {
+        INTEGER op = 34;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    } 
+    _isEmpty = false; 
+    return true;
+
 };
+
+
+
