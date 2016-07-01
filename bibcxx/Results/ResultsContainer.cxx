@@ -28,6 +28,7 @@
 #include "Results/ResultsContainer.h"
 #include "RunManager/LogicalUnitManagerCython.h"
 #include "RunManager/CommandSyntaxCython.h"
+#include "Utilities/Tools.h"
 
 bool ResultsContainerInstance::allocate( int nbRanks ) throw ( std::runtime_error )
 {
@@ -42,9 +43,32 @@ bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
 {
     _serialNumber->updateValuePointer();
     _namesOfFields->buildFromJeveux();
+    const auto numberOfSerialNum = _serialNumber->size();
+    _nbRanks = numberOfSerialNum;
 
-//     int taille = _symbolicNamesOfFields->size();
-    throw std::runtime_error( "Not yet implemented" );
+    int cmpt = 1;
+    for( const auto curIter : _namesOfFields->getVectorOfObjects() )
+    {
+        auto nomSymb = trim( _symbolicNamesOfFields->findStringOfElement( cmpt ) );
+        if( numberOfSerialNum != curIter.size() )
+            throw std::runtime_error( "Programming error" );
+
+        auto curIter2 = _dictOfVectorOfFields.find( nomSymb );
+        if( curIter2 == _dictOfVectorOfFields.end() )
+            _dictOfVectorOfFields[ nomSymb ] = VectorOfFields( numberOfSerialNum );
+
+        for( int rank = 0; rank < curIter.size(); ++rank )
+        {
+            std::string name( trim( curIter[ rank ].toString() ) );
+            if( name != "" )
+            {
+                FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( name ) );
+                _dictOfVectorOfFields[ nomSymb ][ rank ] = result;
+            }
+        }
+        ++cmpt;
+    }
+
     return true;
 };
 
@@ -90,7 +114,7 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::
     if( rank > _nbRanks )
         throw std::runtime_error( "Order number out of range" );
 
-    auto curIter = _dictOfVectorOfFields.find( name );
+    auto curIter = _dictOfVectorOfFields.find( trim( name ) );
     if( curIter == _dictOfVectorOfFields.end() )
         throw std::runtime_error( "Field " + name + " unknown in the results container" );
 

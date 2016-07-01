@@ -27,23 +27,11 @@
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxString.h"
 #include "DataStructure/TemporaryDataStructureName.h"
+#include "Utilities/Tools.h"
 
 TemporaryDataStructure tempName = TemporaryDataStructure();
 
 mapStrSD mapNameDataStructure = mapStrSD();
-
-std::string trim( const std::string& str,
-                  const std::string& whitespace = " \t" )
-{
-    const int strBegin = str.find_first_not_of(whitespace);
-    if (strBegin == std::string::npos)
-        return ""; // no content
-
-    const int strEnd = str.find_last_not_of(whitespace);
-    const int strRange = strEnd - strBegin + 1;
-
-    return str.substr(strBegin, strRange);
-};
 
 DataStructure::DataStructure( const std::string name, const std::string type,
                               const JeveuxMemory memType ): _name( name ), _type( type ),
