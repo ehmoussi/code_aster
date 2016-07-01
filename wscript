@@ -472,6 +472,16 @@ class make_capy(Task.Task):
     ext_out = ['.py']
     banned = 'code_aster.Cata'
 
+    def keyword(self):
+        """Task label"""
+        return 'Gathering'
+
+    def __str__(self):
+        """String to display to the user"""
+        nbfiles = len(self.inputs)
+        output = osp.basename(self.outputs[0].abspath())
+        return '{0} capy files -> {1}'.format(nbfiles, output)
+
     def run(self):
         """Merge capy files to cata.py and install it."""
         # doing merge in python as it is multi-plateform
