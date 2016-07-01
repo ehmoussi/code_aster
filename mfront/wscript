@@ -306,11 +306,16 @@ def _capy_comport(comport, properties, typ, indent):
     lines.append('),')
     return [indent + k for k in lines]
 
-capy_header = """#
+capy_header = """# coding=utf-8
+
 # Automatically-generated file. Do not edit!
-#
+
 # COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
-#
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
 def C_MFRONT_OFFICIAL():
     keywords = {
 """
