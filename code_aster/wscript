@@ -1,6 +1,6 @@
 # coding=utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -34,7 +34,7 @@ def options(self):
 def configure(self):
     self.load('cython')
     self.start_msg('Checking for Cython version')
-    output = self.cmd_and_log([self.env['CYTHON'], '--version'], output=Context.STDERR)
+    output = self.cmd_and_log(self.env['CYTHON'] + ['--version'], output=Context.STDERR)
     self.end_msg(output.strip())
 
     if self.options.force_cython:

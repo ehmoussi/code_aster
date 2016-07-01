@@ -1,7 +1,7 @@
 subroutine getvr8(motfac, motcle, iocc, nbval, vect,&
                   scal, nbret, isdefault)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -28,6 +28,7 @@ subroutine getvr8(motfac, motcle, iocc, nbval, vect,&
     integer, intent(out), optional :: isdefault
 #include "asterc/getvr8_wrap.h"
 #include "asterfort/assert.h"
+#include "asterc/getres.h"
 !
 !   really used variables
     integer :: uioc, uisdef, unbret, umax
@@ -63,9 +64,9 @@ subroutine getvr8(motfac, motcle, iocc, nbval, vect,&
         call getvr8_wrap(motfac, motcle, uioc, uisdef, umax,&
                          vdummy, unbret)
     endif
-!   if the ".capy" can not ensure the at least 'umax' are provided, you must check
+!   if the ".capy" can not ensure that at least 'umax' are provided, you must check
 !   the number of values really read using the 'nbret' argument
-!    ASSERT(present(nbret) .or. (umax .eq. unbret) .or. (unbret < 0))
+    ASSERT(present(nbret) .or. umax .eq. unbret)
 !
     if (present(isdefault)) then
         isdefault = uisdef
