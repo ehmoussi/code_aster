@@ -413,18 +413,18 @@ def build_eficas_catalog(self):
     env = self.all_envs[self.variant]
     root = 'code_aster/Cata/'
     # catalog for eficas
-    mfront_capy = self.path.get_bld().find_or_declare('c_mfront_official.py')
+    # mfront_capy = self.path.get_bld().find_or_declare('c_mfront_official.py')
+    mfront_capy = self.path.find_or_declare('c_mfront_official.py')
     self(
         features = 'catapy py',
             name = 'catapy',
-          source = get_srcs(root + 'Commons/accas.capy') \
-                 + get_srcs(root + 'Commons/allco.capy') \
-                 + [mfront_capy] \
+          source = [mfront_capy] \
                  + get_srcs(root + 'Commons/*.py',
                             excl=[root + 'Commons/ops.py']) \
                  + get_srcs(root + 'Commands/*.py'),
           target = 'cata.py',
     install_from = '.',
+    # install_from = self.path.get_bld(),
     install_path = env.ASTERLIBDIR,
     )
     self(
@@ -437,6 +437,7 @@ def build_eficas_catalog(self):
         features = 'py',
             name = 'commonspy',
           source = mfront_capy,
+    install_from = self.path.get_bld(),
     install_path = osp.join(env.ASTERLIBDIR, root + 'Commons'),
     )
 
@@ -453,7 +454,7 @@ def make_cata(self):
     init = self.bld.bldnode.make_node('__init__.py')
     init.write('# init')
     init.sig = Utils.h_file(init.abspath())
-    tsk = self.create_task('make_capy', src=self.source, tgt=target)
+    self.create_task('make_capy', src=self.source, tgt=target)
     # self.process_py(target): not use because would use `install_from` argument
     def inst_py(ctx):
         install_pyfile(self, target, 'eficas')
@@ -464,7 +465,7 @@ def install_pyfile(self, node, subdir):
     """See waflib/Tools/python.py: Just ignore install_from argument"""
     from_node = node.parent
     dest = osp.join(self.install_path, subdir, node.path_from(from_node))
-    tsk = self.bld.install_as(dest, node, postpone=False)
+    self.bld.install_as(dest, node, postpone=False)
 
 class make_capy(Task.Task):
     color   = 'PINK'
