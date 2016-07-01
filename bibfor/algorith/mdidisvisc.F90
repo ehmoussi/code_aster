@@ -2,7 +2,7 @@ subroutine mdidisvisc(nomres, nbchoc, logcho, noecho, nbsauv, &
                       temps)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -24,12 +24,11 @@ subroutine mdidisvisc(nomres, nbchoc, logcho, noecho, nbsauv, &
     character(len=8) :: noecho(nbchoc,*)
     real(kind=8) :: temps(*)
 !
+#include "dtmdef.h"
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterfort/assert.h"
 #include "asterfort/getvis.h"
-#include "asterfort/getvtx.h"
-#include "asterfort/iunifi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jemarq.h"
@@ -46,7 +45,7 @@ subroutine mdidisvisc(nomres, nbchoc, logcho, noecho, nbsauv, &
 ! IN
 !   nomres  : nom du concept résultat
 !   nbchoc  : nombre de liaison non-linéaire
-!   logcho  : type de liaison : DIS_VISC => logcho(i,6)=1
+!   logcho  : type de liaison : DIS_VISC => logcho(i,6) = _NB_DIS_VISC
 !   noecho  : noms des noeuds de choc
 !   nbsauv  : nombre de pas sauvegardé
 !   temps   : instant de sauvegarde
@@ -78,12 +77,11 @@ subroutine mdidisvisc(nomres, nbchoc, logcho, noecho, nbsauv, &
         endif
 !
         do ii = 1 , nbchoc
-            if ( logcho(ii,6).ne.1 ) cycle
+            if ( logcho(ii,6).ne._NB_DIS_VISC ) cycle
 !           Noeuds du discret
             noeud1 = noecho(ii,1)
             noeud2 = noecho(ii,5)
 !           Impressions des variables internes dans l'ordre de stockage
-!                                    sigma, epsivisq, epsi, puiss
             write(ific,100) '#'
             write(ific,100) '#--------------------------------------------------'
             write(ific,100) '#RESULTAT '//nomres

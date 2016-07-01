@@ -15,7 +15,7 @@
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jacques.pellet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
 # --------------------------------------------------------------------------------
 #       impression des catalogues d'elements au format "jeveux" (ojb)
@@ -554,8 +554,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
 
             if nbpt == -999:
                 ERR.mess(
-                    'E', "Utilisation d'un nombre de points de Gauss indefini pour le mode_local: " + nomolo)
-                assert 0
+                    'F', "Utilisation d'un nombre de points de Gauss indefini pour le mode_local: " + nomolo)
 
             if not diff:
                 nbpt2 = nbpt
@@ -755,8 +754,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             if noop in opt_contrainte:
                 if noop not in opt_a_calculer[note]:
                     ERR.mess(
-                        'E', "L'option: " + noop + " NE DOIT PAS etre calculee par le TYPE_ELEM: " + note)
-                    raise
+                        'F', "L'option: " + noop + " NE DOIT PAS etre calculee par le TYPE_ELEM: " + note)
 
         timer.Stop('T7.8')
         timer.Start('T7.9')
@@ -916,17 +914,14 @@ def get_liattr(cel, cata):
                 if dimtma == d1:
                     dicattr[AT.PRINCIPAL] = 'OUI'
                     dicattr[AT.BORD] = '0'
+                elif dimtma == d1 - 1:
+                    dicattr[AT.BORD] = '-1'
+                elif dimtma == d1 - 2:
+                    dicattr[AT.BORD] = '-2'
+                elif dimtma == d1 - 3:
+                    dicattr[AT.BORD] = '-3'
                 else:
-                    if dimtma == d1 - 1:
-                        dicattr[AT.BORD] = '-1'
-                    elif dimtma == d1 - 2:
-                        dicattr[AT.BORD] = '-2'
-                    elif dimtma == d1 - 3:
-                        dicattr[AT.BORD] = '-3'
-                    elif dimtma == d1 + 1:
-                        dicattr[AT.BORD] = '+1'
-                    else:
-                        assert False, (mod, d1, dimtma)
+                    assert False, (modeli, modeli.code, d1, dimtma)
 
             for attr, val_attr in modeli.attrs or []:
                 if attr in lattr_AUTO:
