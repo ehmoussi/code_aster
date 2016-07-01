@@ -4,7 +4,7 @@ subroutine op9999()
 !     ------------------------------------------------------------------
 ! person_in_charge: j-pierre.lefebvre at edf.fr
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -61,7 +61,10 @@ subroutine op9999()
     call jemarq()
     info = 1
 
-    call getvis(' ', 'STATUT', scal=iret)
+    call getvis(' ', 'STATUT', scal=iret, nbret=i)
+    if (i .ne. 1) then
+        iret = 0
+    endif
     bool = iret == ST_ER .or. iret == ST_OK .or. iret == ST_ER_PR0 .or. &
            iret == ST_ER_OTH .or. iret == ST_UN_OTH .or. iret == ST_EXCEPT
     ASSERT(bool)
