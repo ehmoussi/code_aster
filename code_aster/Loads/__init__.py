@@ -51,3 +51,5 @@ from .UnitaryThermalLoad import (
     DoubleThermalRadiation,
     DoubleThermalGradient
 )
+
+from .ThermalLoad import ThermalLoad

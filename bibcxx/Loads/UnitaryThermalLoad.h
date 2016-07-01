@@ -54,7 +54,7 @@ private:
     typedef boost::shared_ptr< GroupOfNodes > GroupOfNodesPtr;
     typedef std::vector< GroupOfNodesPtr > VectorGroupOfNodes;
 
-    VectorGroupOfNodes _entity;
+    VectorOfMeshEntityPtr _entity;
     ValueType _value;
     /**
      * @brief Conteneur des mots-clé
@@ -74,9 +74,11 @@ public:
     void addGroupOfNodes( const std::string& nameOfGroup )
     {
         _entity.push_back( GroupOfNodesPtr( new GroupOfNodes( nameOfGroup ) ) );
+        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+                                    ( false, "GROUP_NO", _entity , false ) );
     };
 };
-
+ 
 template <class ValueType>
 class DistributedFlowInstance: public UnitaryThermalLoadInstance
 {
@@ -85,10 +87,11 @@ private:
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
-    VectorGroupOfElements _entity;
+    VectorOfMeshEntityPtr _entity;
     ValueType _fluxn, _fluxnInf, _fluxnSup;
     ValueType _fluxx, _fluxy, _fluxz;
-        
+    CapyConvertibleContainer _toCapyConverter;
+            
 public:
     /**
      * @brief Constructeur
@@ -96,22 +99,33 @@ public:
     DistributedFlowInstance(ValueType val=200.) :
     _fluxn(val)
     {
-	    std::cout << "Constructeur DistributedFlowInstance "<< _fluxn << std::endl;
+       _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUX_REP", _fluxn,  false ) );
+ 	    std::cout << "Constructeur DistributedFlowInstance "<< _fluxn << std::endl;
 	}; 
 
     void addGroupOfElements( const std::string& nameOfGroup )
     {
         _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+                                    ( false, "GROUP_MA", _entity , false ) );
+    };
+
+    void setNormalFlow( ValueType val=0.0 ) throw ( std::runtime_error )
+    {
+		_fluxn = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUX_REP", _fluxn,  false ) );
     };
 
     void setLowerNormalFlow( ValueType val=0.0 ) throw ( std::runtime_error )
     {
-        _fluxnInf = val;
+		_fluxnInf = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUN_INF", _fluxnInf,  false ) );
     };
   
     void setUpperNormalFlow( ValueType val=0.0 ) throw ( std::runtime_error )
     {
         _fluxnSup = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUN_SUP", _fluxnSup,  false ) );
     };
 
     void setFlowXYZ( ValueType valx=0.0, ValueType valy=0.0, ValueType valz=0.0) throw ( std::runtime_error )
@@ -120,6 +134,9 @@ public:
         _fluxy = valy;
         _fluxz = valz;
         std::cout << "FLUX_XYZ " << _fluxx << " " << _fluxy << " " << _fluxz << std::endl;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUX_X", _fluxx,  false ) );
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUX_Y", _fluxy,  false ) );
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUX_Z", _fluxz,  false ) );
     };
 
 };
@@ -132,9 +149,10 @@ private:
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
-    VectorGroupOfElements _entity;
+    VectorOfMeshEntityPtr _entity;
     ValueType _fluxn;
-        
+    CapyConvertibleContainer _toCapyConverter;
+            
 public:
     /**
      * @brief Constructeur
@@ -148,11 +166,14 @@ public:
     void addGroupOfElements( const std::string& nameOfGroup )
     {
         _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+                                    ( false, "GROUP_MA", _entity , false ) );
     };
 
     void setFlow( ValueType val=0.0 ) throw ( std::runtime_error )
     {
         _fluxn = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUX_NL", _fluxn,  false ) );
     };
 };
 
@@ -164,9 +185,10 @@ private:
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
-    VectorGroupOfElements _entity;
+    VectorOfMeshEntityPtr _entity;
     ValueType _coef_h, _temp_ext, _coef_h_inf, _temp_ext_inf, _coef_h_sup, _temp_ext_sup;
-        
+    CapyConvertibleContainer _toCapyConverter;      
+     
 public:
     /**
      * @brief Constructeur
@@ -177,33 +199,42 @@ public:
     {
 	    std::cout << "Constructeur ExchangeInstance " << _coef_h <<std::endl;
 	}; 
+ 
+    void addGroupOfElements( const std::string& nameOfGroup )
+    {
+        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+                                    ( false, "GROUP_MA", _entity , false ) );
+    };
 
     void setExchangeCoefficient ( ValueType val=0.0 ) throw ( std::runtime_error )
     {
         _coef_h = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (false, "COEF_H", _coef_h,  false ) );
     };
  
     void setExternalTemperature ( ValueType val=0.0 ) throw ( std::runtime_error )
     {
         _temp_ext = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (false, "TEMP_EXT", _temp_ext,  false ) );
     };
 
     void setExchangeCoefficientInfSup ( ValueType val1=0.0 , ValueType val2=0.0) throw ( std::runtime_error )
     {
         _coef_h_inf = val1;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (false, "COEF_H_INF", _coef_h_inf,  false ) );
         _coef_h_sup = val2;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (false, "COEF_H_SUP", _coef_h_sup,  false ) );
     };
     
-     void setExternalTemperatureInfSup ( ValueType val1=0.0 , ValueType val2=0.0 ) throw ( std::runtime_error )
+    void setExternalTemperatureInfSup ( ValueType val1=0.0 , ValueType val2=0.0 ) throw ( std::runtime_error )
     {
         _temp_ext_inf = val1;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (false, "TEMP_EXT_INF", _temp_ext_inf,  false ) );
         _temp_ext_sup = val2;
-   };
- 
-    void addGroupOfElements( const std::string& nameOfGroup )
-    {
-        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (false, "TEMP_EXT_SUP", _temp_ext_inf,  false ) );
     };
+
 };
 
 template <class ValueType>
@@ -214,10 +245,11 @@ private:
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
-    VectorGroupOfElements _entity;
+    VectorOfMeshEntityPtr _entity1 , _entity2 ;
     ValueType _coef_h;
-    double _tran[3];
-        
+    VectorDouble _tran;
+    CapyConvertibleContainer _toCapyConverter;
+            
 public:
     /**
      * @brief Constructeur
@@ -225,24 +257,101 @@ public:
     ExchangeWallInstance(ValueType val=20.0 ) :
     _coef_h(val)
     {
-	    std::cout << "Constructeur ExchangeWallInstance " << _coef_h <<std::endl;
+	    std::cout << "Constructeur ExchangeWallInstance " << _coef_h <<std::endl; 
 	}; 
 
     void setExchangeCoefficient ( ValueType val=0.0 ) throw ( std::runtime_error )
     {
         _coef_h = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "COEF_H", _coef_h,  false ) );
     };
  
-    void setTranslation ( double valx=0.0, double valy=0.0, double valz=0.0 ) throw ( std::runtime_error )
+    void setTranslation ( const VectorDouble& vec ) throw ( std::runtime_error )
     {
-        _tran[0] = valx;
-        _tran[1] = valy; 
-        _tran[2] = valz; 
+        _tran = vec;
+        _toCapyConverter.add( new CapyConvertibleValue< VectorDouble >  (false, "TRAN", _tran,  false ) ); 
+    };
+ 
+    void addGroupOfElements( const std::string& nameOfGroup )
+    {
+        _entity1.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+                                    ( false, "GROUP_MA_1", _entity1 , false ) );
+         _entity2.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+                                    ( false, "GROUP_MA_2", _entity2 , false ) );
+   }; 
+};
+
+template <class ValueType>
+class SourceInstance: public UnitaryThermalLoadInstance
+{
+private:
+    /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
+    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+    typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
+
+    VectorOfMeshEntityPtr _entity;
+    ValueType _source;
+    CapyConvertibleContainer _toCapyConverter;
+            
+public:
+    /**
+     * @brief Constructeur
+     */
+    SourceInstance(ValueType val=0.0 ) :
+    _source(val)
+    {
+	    std::cout << "Constructeur SourceInstance " << _source <<std::endl;
+	}; 
+
+    void setSource ( ValueType val=0.0 ) throw ( std::runtime_error )
+    {
+        _source = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "SOUR", _source,  false ) );    
     };
  
     void addGroupOfElements( const std::string& nameOfGroup )
     {
         _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+                                    ( false, "GROUP_MA", _entity , false ) );
+    };
+};
+
+template <class ValueType>
+class NonLinearSourceInstance: public UnitaryThermalLoadInstance
+{
+private:
+    /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
+    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+    typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
+
+    VectorOfMeshEntityPtr _entity;
+    ValueType _source;
+    CapyConvertibleContainer _toCapyConverter;
+            
+public:
+    /**
+     * @brief Constructeur
+     */
+    NonLinearSourceInstance(ValueType val=0.0 ) :
+    _source(val)
+    {
+	    std::cout << "Constructeur NonLinearSourceInstance " << _source <<std::endl;
+	}; 
+
+    void setSource ( ValueType val=0.0 ) throw ( std::runtime_error )
+    {
+        _source = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "SOUR", _source,  false ) );    
+    };
+ 
+    void addGroupOfElements( const std::string& nameOfGroup )
+    {
+        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+                                    ( false, "GROUP_MA", _entity , false ) );
     };
 };
 
@@ -254,9 +363,10 @@ private:
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
-    VectorGroupOfElements _entity;
+    VectorOfMeshEntityPtr _entity;
     ValueType _sigma, _epsilon, _temp_ext;
-        
+    CapyConvertibleContainer _toCapyConverter;
+            
 public:
     /**
      * @brief Constructeur
@@ -272,22 +382,27 @@ public:
     void setExternalTemperature ( ValueType val=20.0 ) throw ( std::runtime_error )
     {
         _temp_ext = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "TEMP_EXT", _temp_ext,  false ) );
     };
   
     void setEpsilon ( ValueType val=0.0 ) throw ( std::runtime_error )
     {
         _epsilon = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "EPSILON", _epsilon,  false ) );
     };
     
     void setSigma ( ValueType val=5.67e-8 ) throw ( std::runtime_error )
     {
         _sigma = val;
+        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "SIGMA", _sigma,  false ) );    
     };
     
     void addGroupOfElements( const std::string& nameOfGroup )
     {
         std::cout << "Charge ThermalRadiation" << std::endl;
-        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) ); 
+        _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >
+                                    ( false, "GROUP_MA", _entity , false ) );
     };
 };
 template <class ValueType>
@@ -298,9 +413,10 @@ private:
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
-    VectorGroupOfElements _entity;
+    VectorOfMeshEntityPtr _entity;
     ValueType _fluxx, _fluxy, _fluxz;
-        
+    CapyConvertibleContainer _toCapyConverter;
+            
 public:
     /**
      * @brief Constructeur

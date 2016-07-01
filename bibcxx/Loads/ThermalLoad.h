@@ -55,19 +55,21 @@ private:
     bool               _isEmpty;
     listOfLoads        _thermalLoads;
 
+    /** @brief Conteneur des mots-clés avec traduction */
+    CapyConvertibleContainer         _toCapyConverter;
+
 public:
     /**
      * @brief Constructeur
      */
-    ThermalLoadInstance();
-
+    ThermalLoadInstance() ;
     /**
      * @brief Ajout d'une valeur acoustique imposee sur un groupe de mailles
      * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addElementaryThermalLoad( const UnitaryThermalLoadPtr& toAdd ) throw ( std::runtime_error )
+    bool addUnitaryThermalLoad( const UnitaryThermalLoadPtr& toAdd ) throw ( std::runtime_error )
     {
 //         if ( ! _supportModel ) throw std::runtime_error( "Support model is not defined" );
 //         MeshPtr mesh = _supportModel->getSupportMesh();
@@ -87,7 +89,7 @@ public:
      * @brief Definition du modele support
      * @param currentMesh objet Model sur lequel la charge reposera
      */
-    bool setSupportModel( ModelPtr& currentModel )
+    bool setModel( ModelPtr& currentModel )
     {
         if ( currentModel->isEmpty() )
             throw std::runtime_error( "Model is empty" );
