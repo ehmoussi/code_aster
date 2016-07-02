@@ -28,9 +28,22 @@ def resizeStr( cstr, size ):
     """
     return '{:{size}}'.format( cstr[:size], size=size )
 
+
 def to_cstr( pystring, size ):
     """Convert a fortran string by removing the trailing spaces"""
     return pystring[:size].rstrip()
+
+
+def fstring_array_tolist( char* fstr_array, long nbstr, unsigned int lenstr ):
+    """Create a list of strings from an array of fortran strings
+    (a char* of length `nbstr * lenstr`).
+    Reverse of `to_fstring_array`."""
+    lstr = []
+    for i in range(nbstr):
+        substr = fstr_array[i * lenstr, (i + 1) * lenstr]
+        lstr.append(to_cstr(substr, lenstr))
+    return lstr
+
 
 cdef void copyToFStr( char* dest, pystring, unsigned int str_size ):
     """Copy a string into an existing Fortran string (already
