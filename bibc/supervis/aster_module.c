@@ -186,60 +186,6 @@ void DEFSSPPPPP(GETLTX,getltx,_IN char *motfac,_IN STRING_SIZE lfac,
 
 
 /* ------------------------------------------------------------------ */
-void DEFP(GETRAN,getran, _OUT DOUBLE *rval)
-{
-    /*
-      Procedure GETRAN pour le FORTRAN : recupere un réel aleatoire (loi uniforme 0-1)
-      du module python Random
-      Entrees :
-        neant
-      Retourne :
-        un reel tiré au hasard
-    */
-    fprintf(fileOut, "GETRAN\n");
-    INTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
-    PyObject *res  = (PyObject*)0 ;
-    PyObject *val  = (PyObject*)0 ;
-    int ok=0;
-
-    res=PyObject_CallMethod(get_sh_etape(),"getran","");
-    /*  si le retour est NULL : exception Python a transferer
-        normalement a l appelant mais FORTRAN ??? */
-    if (res == NULL)MYABORT("erreur dans la partie Python");
-
-    ok = PyArg_ParseTuple(res,"O",&val);
-    if(!ok)MYABORT("erreur dans la partie Python");
-
-    *rval=(DOUBLE)PyFloat_AsDouble(val);
-
-    Py_DECREF(res);                /*  decrement sur le refcount du retour */
-    return ;
-}
-
-/* ------------------------------------------------------------------ */
-void DEFP(INIRAN,iniran,_IN INTEGER *jump)
-{
-        /*
-          Procedure INIRAN pour le FORTRAN : recupere un réel aleatoire (loi uniforme 0-1)
-          du module python Random
-          avec un shift eventuel de jump termes
-        */
-    fprintf(fileOut, "INIRAN\n");
-    INTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
-        PyObject *res  = (PyObject*)0 ;
-
-        res=PyObject_CallMethod(get_sh_etape(),"iniran","i",(int)*jump);
-        Py_DECREF(res);                /*  decrement sur le refcount du retour */
-        return ;
-}
-
-/* ------------------------------------------------------------------ */
 /* TODO CommandSyntax */
 void DEFSS(GETTCO,gettco,_IN char *nomobj, _IN STRING_SIZE lnom,
                         _OUT char *typobj, _IN STRING_SIZE ltyp)

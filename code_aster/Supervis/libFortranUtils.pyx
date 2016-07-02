@@ -17,12 +17,27 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# install i18n function
-from Execution import i18n
+"""
+Utilities to be called for the Fortran subroutines
+"""
 
-from .libExecutionParameter import (
-    executionParameter, setExecutionParameter,
-)
+import random
 
-# to init global objects
-import libFortranUtils
+# Random number generator
+# NB: global objects must be created by an import of this modules (in __init__)
+randomGenerator = None
+
+
+cdef public void iniran_( long* number ):
+    """Reinitialize the random number generator"""
+    global randomGenerator
+    randomGenerator = random.Random(100)
+    randomGenerator.jumpahead( number[0] )
+
+
+cdef public void getran_( double* value ):
+    """Return a random number"""
+    global randomGenerator
+    if randomGenerator is None:
+        iniran_( [0] )
+    value[0] = randomGenerator.random()
