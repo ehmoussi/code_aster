@@ -24,9 +24,9 @@ The check is performed at execution of an operator. So, the user file can mix
 legacy operators and pure Python instructions.
 """
 
-import DataStructure as DS
-
 import numpy
+
+import DataStructure as DS
 
 
 def _debug( *args ):
@@ -221,9 +221,10 @@ def checkCommandSyntax(command, keywords, printSyntax=True):
     from pprint import pformat
     if type(keywords) != dict:
         raise TypeError("'dict' object is expected")
+    command.addDefaultKeywords(keywords)
     if printSyntax:
         _cmd_counter += 1
-        print("{0:-^100}\n Command #{1:0>4}\n{0:-^100}\n".format("", _cmd_counter))
+        print("\n{0:-^100}\n Command #{1:0>4}\n{0:-^100}".format("", _cmd_counter))
         print(" {0}({1})".format(
             command.definition.get("nom", "COMMAND"), pformat(keywords)))
 

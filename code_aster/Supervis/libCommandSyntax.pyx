@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -116,27 +116,7 @@ cdef class CommandSyntax:
         """Register the keywords values"""
         if self._commandCata != None:
             logger.debug( "define0 %r: %r", self._name, dictSyntax )
-            defaultKwds = self._commandCata.getDefaultKeywords( dictSyntax )
-            for key, value in defaultKwds.iteritems():
-                assert type( value ) != dict, \
-                    'unexpected type for value: {!r}'.format( value )
-                userValue = dictSyntax.get( key )
-                if userValue == None:
-                    dictSyntax[ key ] = value
-                    continue
-                if type( value ) == list:
-                    if type( userValue ) == dict:
-                        assert len( value ) == 1
-                        dictSyntax[ key ].update(value[0])
-                    else:
-                        assert len(userValue) == len(value)
-                        for i in range(len(value)):
-                            ret2 = value[i]
-                            ret3 = userValue[i]
-                            for key2, value2 in ret2.iteritems():
-                                ret4 = ret3.get( key2 )
-                                if ret4 == None:
-                                    ret3[ key2 ] = value2
+            self._commandCata.addDefaultKeywords( dictSyntax )
         self._definition = dictSyntax
         logger.debug( "define1 %r: %r", self._name, self._definition )
 

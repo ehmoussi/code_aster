@@ -27,23 +27,13 @@ from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 def LIRE_MAILLAGE( **kwargs ):
     """Opérateur de relecture du maillage"""
     checkCommandSyntax( Commands.LIRE_MAILLAGE, kwargs )
-
-    retour = Commands.LIRE_MAILLAGE.getDefaultKeywords( kwargs )
-
     mesh = Mesh()
-
-    unitFile = kwargs.get( "UNITE" )
-    if unitFile == None: unitFile = retour[ "UNITE" ]
-    fileName = "fort." + str( unitFile )
-
-    format = kwargs.get( "FORMAT" )
-    if format == None: format = retour[ "FORMAT" ]
-
+    fileName = "fort." + str( kwargs["UNITE"] )
+    format = kwargs["FORMAT"]
     if format == "MED":
         mesh.readMedFile( fileName )
     elif format == "GMSH":
         mesh.readGmshFile( fileName )
     elif format == "GIBI":
         mesh.readGibiFile( fileName )
-
     return mesh
