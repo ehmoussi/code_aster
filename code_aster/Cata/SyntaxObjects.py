@@ -99,52 +99,24 @@ class PartOfSyntax(object):
     # for compatibility (and avoid changing `pre_seisme_nonl`)
     entites = property(getEntites)
 
-    def inspectBlocs(self, dictSyntax):
-        """
-        Fonction membre inspectBlocs
-        Parcourt les blocs présents et produit un dictionnaire avec les mot-clés
-        à ajouter en fonction des conditions
-        """
-        ctxt = buildConditionContext(self.definition, dictSyntax)
-        # XXX il y a sans doute un risque qu'on mette dans dictTmp des mots-clés
-        #     qui sont à un niveau trop profond. Pas sûr car on ne traverse que
-        #     les blocs, pas les mcfact.
-        dictTmp = {}
-        # On évalue ensuite les conditions une après l'autre pour ajouter les
-        # mot-clés
-        for key, value in self.definition.iteritems():
-            if isinstance(value, Bloc):
-                dictTmp.update( value.inspectBlocs(dictSyntax) )
-                findCondition = False
-                currentCondition = value.getCondition()
-                try:
-                    findCondition = eval(currentCondition, ctxt)
-                except:
-                    pass
-                if findCondition:
-                    for key2, value2 in value.definition.iteritems():
-                        if isinstance(value2, SimpleKeyword):
-                            dictTmp[key2] = value2
-        return dictTmp
-
-    def addDefaultKeywords(self, userDict, in_place=True):
+    def addDefaultKeywords(self, userSyntax, in_place=True):
         """Return a new dict after adding the default keywords"""
-        self._addDefaultKeywords(userDict)
-        # XXX who adds __builtins__ ?!
+        self._addDefaultKeywords(userSyntax)
+        # XXX who adds `__builtins__` ? `import __builtin__` for _F ?
         try:
-            del userDict['__builtins__']
+            del userSyntax['__builtins__']
         except KeyError:
             pass
 
-    def _addDefaultKeywords(self, userDict):
+    def _addDefaultKeywords(self, userSyntax):
         """Add default keywords"""
-        if type(userDict) != dict:
+        if type(userSyntax) != dict:
             raise TypeError("'dict' is expected")
         for key, kwd in self.definition.iteritems():
             if isinstance(kwd, SimpleKeyword):
-                kwd._addDefaultKeywords(key, userDict)
+                kwd._addDefaultKeywords(key, userSyntax)
             elif isinstance(kwd, FactorKeyword):
-                userFact = userDict.get(key, {})
+                userFact = userSyntax.get(key, {})
                 # optional and not filled by user, ignore it
                 if kwd.isOptional() and not userFact:
                     continue
@@ -153,11 +125,38 @@ class PartOfSyntax(object):
                         kwd._addDefaultKeywords(userOcc)
                 else:
                     kwd._addDefaultKeywords(userFact)
-                userDict[key] = userFact
+                userSyntax[key] = userFact
             elif isinstance(kwd, Bloc):
-                if kwd.isEnabled(userDict):
-                    kwd._addDefaultKeywords(userDict)
+                if kwd.isEnabled(userSyntax):
+                    kwd._addDefaultKeywords(userSyntax)
             #else: sdprod, fr...
+
+    def checkMandatory(self, userSyntax):
+        """Check that the mandatory keywords are provided by the user"""
+        for key, kwd in self.definition.iteritems():
+            if isinstance(kwd, (SimpleKeyword, FactorKeyword)):
+                if kwd.isMandatory() and not userSyntax.has_key(key):
+                    _debug( "keyword =", key, ":", kwd )
+                    _debug( "syntax =", userSyntax )
+                    raise KeyError("Keyword {} is mandatory".format(key))
+            elif isinstance(kwd, Bloc):
+                if kwd.isEnabled(userSyntax):
+                    kwd.checkMandatory(userSyntax)
+            #else: sdprod, fr...
+
+    def getKeyword(self, userKeyword, userSyntax):
+        """Return the keyword in the current composite object"""
+        # search in keywords list
+        found = self.definition.get(userKeyword)
+        if not found:
+            # search in BLOC objects
+            for key, kwd in self.definition.iteritems():
+                if isinstance(kwd, Bloc) and kwd.isEnabled(userSyntax):
+                    found = kwd.getKeyword(userKeyword, userSyntax)
+                    if found:
+                        break
+                #else: sdprod, fr...
+        return found
 
 
 class SimpleKeyword(PartOfSyntax):
@@ -183,11 +182,11 @@ class SimpleKeyword(PartOfSyntax):
         """Return the default value or 'UNDEF'"""
         return self.definition.get("defaut", UNDEF)
 
-    def _addDefaultKeywords(self, key, userDict):
-        """Add the default value if not provided in userDict"""
-        value = userDict.get(key, self.defaultValue())
+    def _addDefaultKeywords(self, key, userSyntax):
+        """Add the default value if not provided in userSyntax"""
+        value = userSyntax.get(key, self.defaultValue())
         if value is not UNDEF:
-            userDict[key] = value
+            userSyntax[key] = value
 
 
 class FactorKeyword(PartOfSyntax):
