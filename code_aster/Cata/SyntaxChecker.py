@@ -51,17 +51,6 @@ def fromTypeName( typename ):
     # convTypes[DS.listis_sdaster] = convTypes['I']
     return convTypes.get(typename, [])
 
-def checkMandatory(dictDefinition, dictSyntax):
-    """Check that mandatory keywords are present in the given syntax"""
-    for key, value in dictDefinition.iteritems():
-        try:
-            required = value.isMandatory()
-            if required and not dictSyntax.has_key(key):
-                _debug( "keyword =", key, ":", value )
-                _debug( "syntax =", dictSyntax )
-                raise KeyError("Keyword {} is mandatory".format(key))
-        except AttributeError:
-            pass
 
 def isValidType(obj, expected):
     """Check that `obj` has one of the `expected` type"""
@@ -88,17 +77,17 @@ class SyntaxCheckerVisitor(object):
     def __init__(self):
         """Initialization"""
 
-    def visitCommand(self, step, syntax=None):
+    def visitCommand(self, step, userDict=None):
         """Visit a Command object"""
-        self._visitComposite(step, syntax)
+        self._visitComposite(step, userDict)
 
-    def visitBloc(self, step, syntax=None):
+    def visitBloc(self, step, userDict=None):
         """Visit a Bloc object"""
         pass
 
-    def visitFactorKeyword(self, step, syntax=None):
+    def visitFactorKeyword(self, step, userDict=None):
         """Visit a FactorKeyword object"""
-        self._visitComposite(step, syntax)
+        self._visitComposite(step, userDict)
 
     def visitSimpleKeyword(self, step, skwValue):
         """Visit a SimpleKeyword object
@@ -157,7 +146,7 @@ class SyntaxCheckerVisitor(object):
             if valMin != None and i < valMin:
                 raise ValueError('Value must be bigger than {}'.format(valMin))
 
-    def _visitComposite(self, step, syntax):
+    def _visitComposite(self, step, userDict):
         """Visit a composite object (containing BLOC, FACT and SIMP objects)
         Check that :
             - the number of occurences is as expected
@@ -166,49 +155,41 @@ class SyntaxCheckerVisitor(object):
         One walks the Bloc objects to add the keywords according to the
         conditions.
         """
-        if type(syntax) == dict:
-            syntax = [syntax]
-        elif type(syntax) in (list, tuple):
+        if type(userDict) == dict:
+            userDict = [userDict]
+        elif type(userDict) in (list, tuple):
             pass
         else:
             raise TypeError("Type 'dict' or 'tuple' is expected")
 
-        # Vérification du nombre de mots-clés facteurs
-        if len(syntax) < step.definition.get('min', 0):
+        # check the number of occurrences
+        if len(userDict) < step.definition.get('min', 0):
             raise ValueError("Too few factor keyword")
-        if len(syntax) > step.definition.get('max', 1000000000):
+        if len(userDict) > step.definition.get('max', 1000000000):
             raise ValueError("Too much factor keyword")
 
-        # Boucle sur toutes les occurences du mot-clé facteur
-        for dictSyntax in syntax:
-            # Vérification des règles de ce mot-clé
+        # loop on occurrences filled by the user
+        for userOcc in userDict:
+            # check rules
             if step.regles != None:
                 for rule in step.regles:
-                    rule.check(dictSyntax)
-
-            # On vérifie que les mots-clés simples qui doivent être présents le
-            # sont
-            checkMandatory(step.definition, dictSyntax)
-            # Pour les blocs aussi
-            dictTmp = step.inspectBlocs(dictSyntax)
-            checkMandatory(dictTmp, dictSyntax)
-
-            # On boucle sur la syntax de l'utilisateur vérifier les mots-clés
-            # simples
-            for key, value in dictSyntax.iteritems():
+                    rule.check(userOcc)
+            # check that the required keywords are provided by the user
+            step.checkMandatory(userOcc)
+            # loop on keywords provided by the user
+            for key, value in userOcc.iteritems():
+                # XXX who adds `__builtins__` ? `import __builtin__` for _F ?
+                if key == '__builtins__':
+                    continue
                 # print key, value
                 if key == "reuse":
                     if step.definition.get("reentrant") not in ("o", "f"):
                         raise KeyError("reuse is not allowed!")
-                elif not step.definition.has_key(key) and not dictTmp.has_key(key):
+                kwd = step.getKeyword(key, userOcc)
+                if kwd is None:
                     raise KeyError("Unauthorized keyword: {!r}".format(key))
                 else:
-                    kw = step.definition.get(key)
-                    if kw:
-                        kw.accept(self, value)
-                    kw = dictTmp.get(key)
-                    if kw:
-                        kw.accept(self, value)
+                    kwd.accept(self, value)
 
 
 # counter of 'printed' command

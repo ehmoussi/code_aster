@@ -88,7 +88,7 @@ with test.assertRaisesRegexp(RuntimeError, "length.*must be equal"):
                          ORDONNEE=np.arange( n - 1. ),
                          INTERPOL=("LIN", "LOG"),)
 
-with test.assertRaisesRegexp(TypeError, "str"):
+with test.assertRaisesRegexp(TypeError, "Unexpected type.*str"):
     bad_type = valy.tolist()
     bad_type[5] = "a"
     fsin = DEFI_FONCTION(NOM_PARA="INST",
