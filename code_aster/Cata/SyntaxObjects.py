@@ -27,7 +27,10 @@ This module defines the base objects that allow to use the legacy syntax
 of code_aster commands.
 """
 
+import copy
 import types
+
+from Utilitai.string_utils import force_list
 
 
 def _debug( *args ):
@@ -46,6 +49,8 @@ def buildConditionContext(dictDefinition, dictSyntax):
             ctxt[key] = value.defaultValue()
     ctxt.update(dictSyntax)
     return ctxt
+
+UNDEF = object()
 
 
 class PartOfSyntax(object):
@@ -77,7 +82,11 @@ class PartOfSyntax(object):
 
     def isMandatory(self):
         """Tell if this keyword is mandatory"""
-        return self.definition.get("statut", "n") == "o"
+        return self.definition.get("statut", "f") == "o"
+
+    def isOptional(self):
+        """Tell if this keyword is optional"""
+        return self.definition.get("statut", "f") == "f"
 
     def getEntites(self):
         """Retourne les "entités" composant l'objet (SIMP, FACT, BLOC)
@@ -106,7 +115,6 @@ class PartOfSyntax(object):
         for key, value in self.definition.iteritems():
             if isinstance(value, Bloc):
                 dictTmp.update( value.inspectBlocs(dictSyntax) )
-
                 findCondition = False
                 currentCondition = value.getCondition()
                 try:
@@ -119,69 +127,37 @@ class PartOfSyntax(object):
                             dictTmp[key2] = value2
         return dictTmp
 
-    def getDefaultKeywords(self, dictSyntax):
-        """Get default keywords of the PartOfSyntax"""
-        if type(dictSyntax) != dict:
+    def addDefaultKeywords(self, userDict, in_place=True):
+        """Return a new dict after adding the default keywords"""
+        self._addDefaultKeywords(userDict)
+        # XXX who adds __builtins__ ?!
+        try:
+            del userDict['__builtins__']
+        except KeyError:
+            pass
+
+    def _addDefaultKeywords(self, userDict):
+        """Add default keywords"""
+        if type(userDict) != dict:
             raise TypeError("'dict' is expected")
-
-        ctxt = buildConditionContext(self.definition, dictSyntax)
-
-        returnDict = {}
-        for key, value in self.definition.iteritems():
-            if isinstance(value, SimpleKeyword):
-                if not dictSyntax.has_key(key) and value.hasDefaultValue():
-                    returnDict[key] = value.defaultValue()
-            elif isinstance(value, FactorKeyword):
-                returnList = []
-                value2 = dictSyntax.get(key, {})
-
-                stat = 'f'
-                if value.definition.has_key('statut'): stat = value.definition['statut']
-                if stat == 'f' and value2 == {}: continue
-
-                if type(value2) not in (list, tuple): value2 = [value2]
-                if stat == 'd' or stat == 'o':
-                    for curDict in value2:
-                        return2 = value.getDefaultKeywords(curDict)
-                        returnDict3 = {}
-                        for key3, value3 in return2.iteritems():
-                            returnDict3[key3] = value3
-                        returnList.append(returnDict3)
+        for key, kwd in self.definition.iteritems():
+            if isinstance(kwd, SimpleKeyword):
+                kwd._addDefaultKeywords(key, userDict)
+            elif isinstance(kwd, FactorKeyword):
+                userFact = userDict.get(key, {})
+                # optional and not filled by user, ignore it
+                if kwd.isOptional() and not userFact:
+                    continue
+                if type(userFact) in (list, tuple):
+                    for userOcc in userFact:
+                        kwd._addDefaultKeywords(userOcc)
                 else:
-                    for val in value2: returnList.append({})
-
-                ind = 0
-                # Ce bloc est-il utile ???
-                for curDict in value2:
-                    return2 = value.inspectBlocs(curDict)
-                    returnDict2 = {}
-                    for key3, value3 in return2.iteritems():
-                        if isinstance(value3, SimpleKeyword):
-                            if not dictSyntax.has_key(key) and value3.hasDefaultValue():
-                                returnDict2[key3] = value3.defaultValue()
-                    returnList[ind].update(returnDict2)
-                    ind += 1
-
-                if len(returnList) == 1:
-                    if returnList[0] == {}: continue
-                if len(returnList) != 0:
-                    returnDict[key] = returnList
-            elif isinstance(value, Bloc):
-                value2 = dictSyntax.get(key, {})
-                dictTmp = value.inspectBlocs(value2)
-
-                findCondition = False
-                currentCondition = value.getCondition()
-                try:
-                    findCondition = eval(currentCondition, ctxt)
-                except:
-                    pass
-                if findCondition:
-                    for key2, value2 in value.definition.iteritems():
-                        if isinstance(value2, SimpleKeyword):
-                            if not dictSyntax.has_key(key) and value2.hasDefaultValue():
-                                returnDict[key2] = value2.defaultValue()
-        return returnDict
+                    kwd._addDefaultKeywords(userFact)
+                userDict[key] = userFact
+            elif isinstance(kwd, Bloc):
+                if kwd.isEnabled(userDict):
+                    kwd._addDefaultKeywords(userDict)
+            #else: sdprod, fr...
 
 
 class SimpleKeyword(PartOfSyntax):
@@ -196,15 +172,22 @@ class SimpleKeyword(PartOfSyntax):
 
     def _context(self, value):
         """Print contextual informations"""
-        print "CONTEXT: value={!r}, type={}".format(value, type(value))
-        print "CONTEXT: definition:", self
+        print("CONTEXT: value={!r}, type={}".format(value, type(value)))
+        print("CONTEXT: definition: {}".format(self))
 
     def hasDefaultValue(self):
-        undef = object()
-        return self.definition.get("defaut", undef) is not undef
+        """Tell if the keyword has a default value"""
+        return self.defaultValue() is not UNDEF
 
     def defaultValue(self):
-        return self.definition.get("defaut")
+        """Return the default value or 'UNDEF'"""
+        return self.definition.get("defaut", UNDEF)
+
+    def _addDefaultKeywords(self, key, userDict):
+        """Add the default value if not provided in userDict"""
+        value = userDict.get(key, self.defaultValue())
+        if value is not UNDEF:
+            userDict[key] = value
 
 
 class FactorKeyword(PartOfSyntax):
@@ -229,12 +212,20 @@ class Bloc(PartOfSyntax):
         visitor.visitBloc(self, syntax)
 
     def getCondition(self):
-        """
-        Récupération de la condition d'apparition d'un bloc
-        """
+        """Return the BLOC condition"""
         cond = self.definition.get('condition')
         assert cond is not None, "A bloc must have a condition!"
         return cond
+
+    def isEnabled(self, context):
+        """Tell if the block is enabled by the given context"""
+        try:
+            enabled = eval(self.getCondition(), context)
+        except AssertionError:
+            raise
+        except Exception:
+            enabled = False
+        return enabled
 
 
 class Command(PartOfSyntax):

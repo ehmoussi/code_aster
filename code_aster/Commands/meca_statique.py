@@ -42,8 +42,6 @@ def MECA_STATIQUE( **kwargs ):
     """Opérateur de résolution de mécanique statique linéaire"""
     checkCommandSyntax( Commands.MECA_STATIQUE, kwargs )
 
-    retour = Commands.MECA_STATIQUE.getDefaultKeywords( kwargs )
-
     mechaSolv = Solvers.StaticMechanicalSolver()
 
     model = kwargs[ "MODELE" ]
@@ -69,22 +67,17 @@ def MECA_STATIQUE( **kwargs ):
     methode = None
     renum = None
 
-    fkwSolv = kwargs.get( "SOLVEUR" )
-    if fkwSolv != None:
-        for key, value in fkwSolv.iteritems():
-            if key not in ( "METHODE", "RENUM" ):
-                raise NameError( "Not yet implemented" )
-        methode = fkwSolv[ "METHODE" ]
-        renum = fkwSolv.get( "RENUM" )
-        if renum == None: renum = retour[ "SOLVEUR" ][ "RENUM" ]
-    else:
-        methode = retour[ "SOLVEUR" ][ "METHODE" ]
-        renum = retour[ "SOLVEUR" ][ "RENUM" ]
+    fkwSolv = kwargs["SOLVEUR"]
+    for key, value in fkwSolv.iteritems():
+        if key not in ( "METHODE", "RENUM" ):
+            raise NameError( "Not yet implemented" )
+    methode = fkwSolv[ "METHODE" ]
+    renum = fkwSolv[ "RENUM" ]
 
     glossary = FortranGlossary()
     solverInt = glossary.getSolver( methode )
     renumInt = glossary.getRenumbering( renum )
-    print solverInt, renumInt
+    # print solverInt, renumInt
     currentSolver = LinearAlgebra.LinearSolver( solverInt, renumInt )
 
     mechaSolv.setLinearSolver( currentSolver )
