@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -78,6 +78,7 @@ class ExecutionParameter:
 
     def _on_command_line(self):
         """Initialize parameters that can be changed by the command line"""
+        self._args['abort'] = 0
         self._args['buildelem'] = 0
         self._args['autostart'] = 1
 
@@ -100,6 +101,8 @@ class ExecutionParameter:
                                 prog="Code_Aster{called by Python}")
         parser.add_argument('-g', '--debug', action='store_true',
             help="add debug informations")
+        parser.add_argument('--abort', action='store_true',
+            help="abort execution in case of error (testcase mode, by default raise exception)")
         parser.add_argument('--build-elem', dest='buildelem', action='store_true',
             default=False,
             help="enable specific starting mode to build the elements database")
@@ -115,6 +118,7 @@ class ExecutionParameter:
             setlevel()
         logger.debug( "Ignored arguments: %r", ignored )
         # assign parameter values
+        self.set( 'abort', int(args.abort) )
         self.set( 'buildelem', int(args.buildelem) )
         self.set( 'autostart', int(args.autostart) )
 
