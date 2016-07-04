@@ -66,7 +66,7 @@ subroutine getvc8(motfac, motcle, iocc, nbval, vect,&
     endif
 !   if the ".capy" can not ensure that at least 'umax' are provided, you must check
 !   the number of values really read using the 'nbret' argument
-!    ASSERT(present(nbret) .or. umax .eq. unbret)
+    ASSERT(present(nbret) .or. umax .eq. unbret)
 !
     if (present(isdefault)) then
         isdefault = uisdef
