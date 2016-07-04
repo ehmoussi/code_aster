@@ -29,6 +29,7 @@ of code_aster commands.
 
 import copy
 import types
+from UserDict import IterableUserDict
 
 from Utilitai.string_utils import force_list
 
@@ -43,7 +44,7 @@ def buildConditionContext(dictDefinition, dictSyntax):
     """Build the context to evaluate bloc conditions.
     The values given by the user (dictSyntax) preempt on the definition ones"""
     ctxt = {}
-    for key, value in dictDefinition.iteritems():
+    for key, value in dictDefinition.iterItemsByType():
         if isinstance(value, SimpleKeyword):
             # use the default or None
             ctxt[key] = value.defaultValue()
@@ -51,6 +52,22 @@ def buildConditionContext(dictDefinition, dictSyntax):
     return ctxt
 
 UNDEF = object()
+
+
+class CataDefinition(IterableUserDict):
+
+    """Dictionary to store the definition of syntax objects.
+    Iteration over the elements is ordered by type: SimpleKeyword, FactorKeyword and Bloc.
+    """
+
+    def iterItemsByType(self):
+        """Iterator over dictionary's pairs with respecting order:
+        SimpleKeyword, FactorKeyword and Bloc objects"""
+        keysR = [k for k, v in self.data.items() if type(v) is SimpleKeyword]
+        keysI = [k for k, v in self.data.items() if type(v) is FactorKeyword]
+        keysS = [k for k, v in self.data.items() if type(v) is Bloc]
+        for key in keysR + keysI + keysS:
+            yield (key, self[key])
 
 
 class PartOfSyntax(object):
@@ -66,7 +83,7 @@ class PartOfSyntax(object):
         """Initialization"""
         if type(curDict) != dict:
             raise TypeError("'dict' is expected")
-        self.definition = curDict
+        self.definition = CataDefinition(curDict)
         regles = curDict.get("regles")
         if regles and type(regles) not in (list, tuple):
             regles = (regles, )
@@ -103,7 +120,7 @@ class PartOfSyntax(object):
         """Add default keywords"""
         if type(userSyntax) != dict:
             raise TypeError("'dict' is expected")
-        for key, kwd in self.definition.iteritems():
+        for key, kwd in self.definition.iterItemsByType():
             if isinstance(kwd, SimpleKeyword):
                 kwd.addDefaultKeywords(key, userSyntax)
             elif isinstance(kwd, FactorKeyword):
@@ -124,7 +141,7 @@ class PartOfSyntax(object):
 
     def checkMandatory(self, userSyntax):
         """Check that the mandatory keywords are provided by the user"""
-        for key, kwd in self.definition.iteritems():
+        for key, kwd in self.definition.iterItemsByType():
             if isinstance(kwd, (SimpleKeyword, FactorKeyword)):
                 if kwd.isMandatory() and not userSyntax.has_key(key):
                     _debug( "keyword =", key, ":", kwd )
@@ -141,7 +158,7 @@ class PartOfSyntax(object):
         found = self.definition.get(userKeyword)
         if not found:
             # search in BLOC objects
-            for key, kwd in self.definition.iteritems():
+            for key, kwd in self.definition.iterItemsByType():
                 if isinstance(kwd, Bloc) and kwd.isEnabled(userSyntax):
                     found = kwd.getKeyword(userKeyword, userSyntax)
                     if found:
