@@ -27,8 +27,8 @@ from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
 
 def _addLoad( mechaSolv, fkw ):
     load = fkw[ "CHARGE" ]
-    if fkw.get( "FONC_MULT" ) != None:
-        raise NameError( "Not yet implemented" )
+    if fkw.get( "FONC_MULT" ):
+        raise NotImplementedError( "Unsupported keyword: {0}".format("FONC_MULT") )
 
     if isinstance( load, Loads.KinematicsLoad ):
         mechaSolv.addKinematicsLoad( load )
@@ -49,11 +49,10 @@ def MECA_STATIQUE( **kwargs ):
     mechaSolv.setSupportModel( model )
     mechaSolv.setMaterialOnMesh(matOnMesh  )
 
-    if kwargs.get( "CARA_ELEM" ) != None:
-        raise NameError( "Not yet implemented" )
-    if kwargs.get( "INST" ) != None or kwargs.get( "LIST_INST" ) != None or \
-        kwargs.get( "INST_FIN" ) != None:
-        raise NameError( "Not yet implemented" )
+    if kwargs.get( "CARA_ELEM" ):
+        raise NotImplementedError("Unsupported keyword: '{0}'".format("CARA_ELEM"))
+    if kwargs.get( "LIST_INST" ) != None or kwargs.get( "INST_FIN" ) != None:
+        raise NotImplementedError("Unsupported keywords: '{0}'".format(("LIST_INST", "INST_FIN")))
 
     fkw = kwargs[ "EXCIT" ]
     if type( fkw ) == dict:
@@ -70,7 +69,7 @@ def MECA_STATIQUE( **kwargs ):
     fkwSolv = kwargs["SOLVEUR"]
     for key, value in fkwSolv.iteritems():
         if key not in ( "METHODE", "RENUM" ):
-            raise NameError( "Not yet implemented" )
+            print(NotImplementedError("Not yet implemented: '{0}' is ignored".format(key)))
     methode = fkwSolv[ "METHODE" ]
     renum = fkwSolv[ "RENUM" ]
 
