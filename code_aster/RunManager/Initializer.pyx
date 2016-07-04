@@ -45,21 +45,23 @@ def init( int mode ):
     libaster.initAsterModules()
     # Is there any glob.* to reload ?
     pickler = Pickler()
+    # common keywords
+    keywords = {}
+    if executionParameter.get('abort'):
+        keywords['ERREUR'] = _F(ERREUR_F='ABORT')
     if mode or not pickler.canRestart():
         # Emulate the syntax of DEBUT (default values should be added)
-        make_cata = {}
         if mode == 1:
-            make_cata = _F( CATALOGUE=_F(FICHIER='CATAELEM',
-                                         UNITE=4) )
+            keywords['CATALOGUE'] = _F(FICHIER='CATAELEM', UNITE=4)
         syntax = CommandSyntax( "DEBUT" )
-        syntax.define( _F( **make_cata ) )
+        syntax.define( keywords )
         libaster.ibmain_()
         libaster.register_sh_jeveux_status( 1 )
         libaster.debut_()
     else:
         logger.info( "restarting from a previous execution..." )
         syntax = CommandSyntax( "POURSUITE" )
-        syntax.define( _F( CODE='OUI' ) )
+        syntax.define( keywords )
         libaster.ibmain_()
         libaster.register_sh_jeveux_status( 1 )
         libaster.poursu_()
