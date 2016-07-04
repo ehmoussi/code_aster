@@ -2,6 +2,8 @@
 import code_aster
 from code_aster.Commands import *
 
+test = code_aster.TestCase()
+
 MA = code_aster.Mesh()
 MA.readMedFile("xxContact001a.mmed")
 
@@ -19,3 +21,7 @@ cDef.setModel( MO )
 cDef.addContactZone( z1 )
 cDef.build()
 cDef.debugPrint(8)
+
+# just check it pass here!
+test.assertTrue( True )
+test.printSummary()
