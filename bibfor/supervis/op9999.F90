@@ -61,10 +61,7 @@ subroutine op9999()
     call jemarq()
     info = 1
 
-    call getvis(' ', 'STATUT', scal=iret, nbret=i)
-    if (i .ne. 1) then
-        iret = 0
-    endif
+    call getvis(' ', 'STATUT', scal=iret)
     bool = iret == ST_ER .or. iret == ST_OK .or. iret == ST_ER_PR0 .or. &
            iret == ST_ER_OTH .or. iret == ST_UN_OTH .or. iret == ST_EXCEPT
     ASSERT(bool)
