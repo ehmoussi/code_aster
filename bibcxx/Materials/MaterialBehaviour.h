@@ -280,7 +280,7 @@ class GeneralMaterialBehaviourInstance
             _listOfNameOfMaterialProperties.push_back( key );
             return true;
         };
- 
+
 };
 
 /**
@@ -292,7 +292,7 @@ class ElasMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasMaterialBehaviourInstance()
         {
@@ -307,6 +307,8 @@ class ElasMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
             this->addDoubleProperty( "Amor_alpha", ElementaryMaterialPropertyDouble( "AMOR_ALPHA" , false ) );
             this->addDoubleProperty( "Amor_beta", ElementaryMaterialPropertyDouble( "AMOR_BETA" , false ) );
             this->addDoubleProperty( "Amor_hyst", ElementaryMaterialPropertyDouble( "AMOR_HYST" , false ) );
+            this->addDoubleProperty( "Long_cara", ElementaryMaterialPropertyDouble( "LONG_CARA" , 0., false ) );
+            this->addDoubleProperty( "Coef_amor", ElementaryMaterialPropertyDouble( "COEF_AMOR" , 1., false ) );
         };
 };
 
@@ -323,7 +325,7 @@ class ElasFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasFoMaterialBehaviourInstance()
         {
@@ -359,7 +361,7 @@ class ElasFluiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasFluiMaterialBehaviourInstance()
         {
@@ -389,7 +391,7 @@ class ElasIstrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasIstrMaterialBehaviourInstance()
         {
@@ -421,7 +423,7 @@ class ElasIstrFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasIstrFoMaterialBehaviourInstance()
         {
@@ -455,7 +457,7 @@ class ElasOrthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasOrthMaterialBehaviourInstance()
         {
@@ -500,7 +502,7 @@ class ElasOrthFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasOrthFoMaterialBehaviourInstance()
         {
@@ -542,7 +544,7 @@ class ElasHyperMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasHyperMaterialBehaviourInstance()
         {
@@ -572,7 +574,7 @@ class ElasCoqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasCoqueMaterialBehaviourInstance()
         {
@@ -641,7 +643,7 @@ class ElasCoqueFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasCoqueFoMaterialBehaviourInstance()
         {
@@ -710,7 +712,7 @@ class ElasMembraneMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasMembraneMaterialBehaviourInstance()
         {
@@ -742,7 +744,7 @@ class Elas2ndgMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         Elas2ndgMaterialBehaviourInstance()
         {
@@ -771,7 +773,7 @@ class ElasGlrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasGlrcMaterialBehaviourInstance()
         {
@@ -806,7 +808,7 @@ class ElasGlrcFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasGlrcFoMaterialBehaviourInstance()
         {
@@ -842,7 +844,7 @@ class ElasDhrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasDhrcMaterialBehaviourInstance()
         {
@@ -892,7 +894,7 @@ class CableMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         CableMaterialBehaviourInstance()
         {
@@ -918,7 +920,7 @@ class VeriBorneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         VeriBorneMaterialBehaviourInstance()
         {
@@ -946,7 +948,7 @@ class TractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         TractionMaterialBehaviourInstance()
         {
@@ -971,7 +973,7 @@ class EcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EcroLineMaterialBehaviourInstance()
         {
@@ -999,7 +1001,7 @@ class EndoHeterogeneMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EndoHeterogeneMaterialBehaviourInstance()
         {
@@ -1028,7 +1030,7 @@ class EcroLineFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EcroLineFoMaterialBehaviourInstance()
         {
@@ -1054,7 +1056,7 @@ class EcroPuisMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EcroPuisMaterialBehaviourInstance()
         {
@@ -1081,7 +1083,7 @@ class EcroPuisFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EcroPuisFoMaterialBehaviourInstance()
         {
@@ -1108,7 +1110,7 @@ class EcroCookMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EcroCookMaterialBehaviourInstance()
         {
@@ -1140,7 +1142,7 @@ class EcroCookFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EcroCookFoMaterialBehaviourInstance()
         {
@@ -1172,7 +1174,7 @@ class BetonEcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         BetonEcroLineMaterialBehaviourInstance()
         {
@@ -1199,7 +1201,7 @@ class BetonReglePrMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         BetonReglePrMaterialBehaviourInstance()
         {
@@ -1228,7 +1230,7 @@ class EndoOrthBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EndoOrthBetonMaterialBehaviourInstance()
         {
@@ -1258,7 +1260,7 @@ class PragerMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         PragerMaterialBehaviourInstance()
         {
@@ -1283,7 +1285,7 @@ class PragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         PragerFoMaterialBehaviourInstance()
         {
@@ -1308,7 +1310,7 @@ class TaheriMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         TaheriMaterialBehaviourInstance()
         {
@@ -1340,7 +1342,7 @@ class TaheriFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         TaheriFoMaterialBehaviourInstance()
         {
@@ -1372,7 +1374,7 @@ class RousselierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         RousselierMaterialBehaviourInstance()
         {
@@ -1407,7 +1409,7 @@ class RousselierFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         RousselierFoMaterialBehaviourInstance()
         {
@@ -1442,7 +1444,7 @@ class ViscSinhMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ViscSinhMaterialBehaviourInstance()
         {
@@ -1469,7 +1471,7 @@ class ViscSinhFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ViscSinhFoMaterialBehaviourInstance()
         {
@@ -1496,7 +1498,7 @@ class Cin1ChabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         Cin1ChabMaterialBehaviourInstance()
         {
@@ -1528,7 +1530,7 @@ class Cin1ChabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         Cin1ChabFoMaterialBehaviourInstance()
         {
@@ -1560,7 +1562,7 @@ class Cin2ChabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         Cin2ChabMaterialBehaviourInstance()
         {
@@ -1594,7 +1596,7 @@ class Cin2ChabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         Cin2ChabFoMaterialBehaviourInstance()
         {
@@ -1628,7 +1630,7 @@ class Cin2NradMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         Cin2NradMaterialBehaviourInstance()
         {
@@ -1654,7 +1656,7 @@ class MemoEcroMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MemoEcroMaterialBehaviourInstance()
         {
@@ -1682,7 +1684,7 @@ class MemoEcroFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MemoEcroFoMaterialBehaviourInstance()
         {
@@ -1710,7 +1712,7 @@ class ViscochabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ViscochabMaterialBehaviourInstance()
         {
@@ -1759,7 +1761,7 @@ class ViscochabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ViscochabFoMaterialBehaviourInstance()
         {
@@ -1808,7 +1810,7 @@ class LemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         LemaitreMaterialBehaviourInstance()
         {
@@ -1835,7 +1837,7 @@ class LemaitreIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         LemaitreIrraMaterialBehaviourInstance()
         {
@@ -1867,7 +1869,7 @@ class LmarcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         LmarcIrraMaterialBehaviourInstance()
         {
@@ -1921,7 +1923,7 @@ class ViscIrraLogMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ViscIrraLogMaterialBehaviourInstance()
         {
@@ -1950,7 +1952,7 @@ class GranIrraLogMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         GranIrraLogMaterialBehaviourInstance()
         {
@@ -1980,7 +1982,7 @@ class LemaSeuilMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         LemaSeuilMaterialBehaviourInstance()
         {
@@ -2006,7 +2008,7 @@ class LemaSeuilFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         LemaSeuilFoMaterialBehaviourInstance()
         {
@@ -2032,7 +2034,7 @@ class Irrad3mMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         Irrad3mMaterialBehaviourInstance()
         {
@@ -2068,7 +2070,7 @@ class LemaitreFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         LemaitreFoMaterialBehaviourInstance()
         {
@@ -2095,7 +2097,7 @@ class MetaLemaAniMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MetaLemaAniMaterialBehaviourInstance()
         {
@@ -2153,7 +2155,7 @@ class MetaLemaAniFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MetaLemaAniFoMaterialBehaviourInstance()
         {
@@ -2211,7 +2213,7 @@ class ArmeMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ArmeMaterialBehaviourInstance()
         {
@@ -2240,7 +2242,7 @@ class AsseCornMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         AsseCornMaterialBehaviourInstance()
         {
@@ -2279,7 +2281,7 @@ class DisContactMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         DisContactMaterialBehaviourInstance()
         {
@@ -2311,7 +2313,7 @@ class EndoScalaireMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EndoScalaireMaterialBehaviourInstance()
         {
@@ -2342,7 +2344,7 @@ class EndoScalaireFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EndoScalaireFoMaterialBehaviourInstance()
         {
@@ -2373,7 +2375,7 @@ class EndoFissExpMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EndoFissExpMaterialBehaviourInstance()
         {
@@ -2405,7 +2407,7 @@ class EndoFissExpFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EndoFissExpFoMaterialBehaviourInstance()
         {
@@ -2437,7 +2439,7 @@ class DisGricraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         DisGricraMaterialBehaviourInstance()
         {
@@ -2478,7 +2480,7 @@ class BetonDoubleDpMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         BetonDoubleDpMaterialBehaviourInstance()
         {
@@ -2511,7 +2513,7 @@ class MazarsMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MazarsMaterialBehaviourInstance()
         {
@@ -2544,7 +2546,7 @@ class MazarsFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MazarsFoMaterialBehaviourInstance()
         {
@@ -2575,7 +2577,7 @@ class JointBaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         JointBaMaterialBehaviourInstance()
         {
@@ -2613,7 +2615,7 @@ class VendochabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         VendochabMaterialBehaviourInstance()
         {
@@ -2643,7 +2645,7 @@ class VendochabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         VendochabFoMaterialBehaviourInstance()
         {
@@ -2673,7 +2675,7 @@ class HayhurstMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         HayhurstMaterialBehaviourInstance()
         {
@@ -2710,7 +2712,7 @@ class ViscEndoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ViscEndoMaterialBehaviourInstance()
         {
@@ -2737,7 +2739,7 @@ class ViscEndoFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ViscEndoFoMaterialBehaviourInstance()
         {
@@ -2764,7 +2766,7 @@ class PintoMenegottoMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         PintoMenegottoMaterialBehaviourInstance()
         {
@@ -2800,7 +2802,7 @@ class BpelBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         BpelBetonMaterialBehaviourInstance()
         {
@@ -2826,7 +2828,7 @@ class BpelAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         BpelAcierMaterialBehaviourInstance()
         {
@@ -2855,7 +2857,7 @@ class EtccBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EtccBetonMaterialBehaviourInstance()
         {
@@ -2880,7 +2882,7 @@ class EtccAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EtccAcierMaterialBehaviourInstance()
         {
@@ -2908,7 +2910,7 @@ class MohrCoulombMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MohrCoulombMaterialBehaviourInstance()
         {
@@ -2935,7 +2937,7 @@ class CamClayMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         CamClayMaterialBehaviourInstance()
         {
@@ -2967,7 +2969,7 @@ class BarceloneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         BarceloneMaterialBehaviourInstance()
         {
@@ -3005,7 +3007,7 @@ class CjsMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         CjsMaterialBehaviourInstance()
         {
@@ -3043,7 +3045,7 @@ class HujeuxMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         HujeuxMaterialBehaviourInstance()
         {
@@ -3088,7 +3090,7 @@ class EcroAsymLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         EcroAsymLineMaterialBehaviourInstance()
         {
@@ -3116,7 +3118,7 @@ class GrangerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         GrangerFpMaterialBehaviourInstance()
         {
@@ -3157,7 +3159,7 @@ class GrangerFp_indtMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         GrangerFp_indtMaterialBehaviourInstance()
         {
@@ -3197,7 +3199,7 @@ class VGrangerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         VGrangerFpMaterialBehaviourInstance()
         {
@@ -3223,7 +3225,7 @@ class BetonBurgerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         BetonBurgerFpMaterialBehaviourInstance()
         {
@@ -3255,7 +3257,7 @@ class BetonUmlvFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         BetonUmlvFpMaterialBehaviourInstance()
         {
@@ -3287,7 +3289,7 @@ class BetonRagMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         BetonRagMaterialBehaviourInstance()
         {
@@ -3344,7 +3346,7 @@ class PoroBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         PoroBetonMaterialBehaviourInstance()
         {
@@ -3424,7 +3426,7 @@ class GlrcDmMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         GlrcDmMaterialBehaviourInstance()
         {
@@ -3455,7 +3457,7 @@ class DhrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         DhrcMaterialBehaviourInstance()
         {
@@ -3716,7 +3718,7 @@ class GattMonerieMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         GattMonerieMaterialBehaviourInstance()
         {
@@ -3744,7 +3746,7 @@ class CorrAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         CorrAcierMaterialBehaviourInstance()
         {
@@ -3772,7 +3774,7 @@ class CableGaineFrotMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         CableGaineFrotMaterialBehaviourInstance()
         {
@@ -3804,7 +3806,7 @@ class DisEcroCineMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         DisEcroCineMaterialBehaviourInstance()
         {
@@ -3852,7 +3854,7 @@ class DisViscMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         DisViscMaterialBehaviourInstance()
         {
@@ -3884,7 +3886,7 @@ class DisBiliElasMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         DisBiliElasMaterialBehaviourInstance()
         {
@@ -3917,7 +3919,7 @@ class TherNlMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         TherNlMaterialBehaviourInstance()
         {
@@ -3944,7 +3946,7 @@ class TherHydrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         TherHydrMaterialBehaviourInstance()
         {
@@ -3972,7 +3974,7 @@ class TherMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         TherMaterialBehaviourInstance()
         {
@@ -3998,7 +4000,7 @@ class TherFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         TherFoMaterialBehaviourInstance()
         {
@@ -4024,7 +4026,7 @@ class TherOrthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         TherOrthMaterialBehaviourInstance()
         {
@@ -4052,7 +4054,7 @@ class TherCoqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         TherCoqueMaterialBehaviourInstance()
         {
@@ -4092,7 +4094,7 @@ class TherCoqueFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         TherCoqueFoMaterialBehaviourInstance()
         {
@@ -4132,7 +4134,7 @@ class SechGrangerMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         SechGrangerMaterialBehaviourInstance()
         {
@@ -4160,7 +4162,7 @@ class SechMensiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         SechMensiMaterialBehaviourInstance()
         {
@@ -4186,7 +4188,7 @@ class SechBazantMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         SechBazantMaterialBehaviourInstance()
         {
@@ -4214,7 +4216,7 @@ class SechNappeMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         SechNappeMaterialBehaviourInstance()
         {
@@ -4239,7 +4241,7 @@ class MetaAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MetaAcierMaterialBehaviourInstance()
         {
@@ -4275,7 +4277,7 @@ class MetaZircMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MetaZircMaterialBehaviourInstance()
         {
@@ -4311,7 +4313,7 @@ class DurtMetaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         DurtMetaMaterialBehaviourInstance()
         {
@@ -4340,7 +4342,7 @@ class ElasMetaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasMetaMaterialBehaviourInstance()
         {
@@ -4383,7 +4385,7 @@ class ElasMetaFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasMetaFoMaterialBehaviourInstance()
         {
@@ -4427,7 +4429,7 @@ class MetaEcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MetaEcroLineMaterialBehaviourInstance()
         {
@@ -4456,7 +4458,7 @@ class MetaTractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MetaTractionMaterialBehaviourInstance()
         {
@@ -4485,7 +4487,7 @@ class MetaViscFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MetaViscFoMaterialBehaviourInstance()
         {
@@ -4529,7 +4531,7 @@ class MetaPtMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MetaPtMaterialBehaviourInstance()
         {
@@ -4561,7 +4563,7 @@ class MetaReMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MetaReMaterialBehaviourInstance()
         {
@@ -4593,7 +4595,7 @@ class FluideMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         FluideMaterialBehaviourInstance()
         {
@@ -4622,7 +4624,7 @@ class ThmInitMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ThmInitMaterialBehaviourInstance()
         {
@@ -4653,7 +4655,7 @@ class ThmAirDissMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ThmAirDissMaterialBehaviourInstance()
         {
@@ -4680,7 +4682,7 @@ class ThmDiffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ThmDiffuMaterialBehaviourInstance()
         {
@@ -4755,7 +4757,7 @@ class ThmLiquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ThmLiquMaterialBehaviourInstance()
         {
@@ -4785,7 +4787,7 @@ class ThmGazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ThmGazMaterialBehaviourInstance()
         {
@@ -4813,7 +4815,7 @@ class ThmVapeGazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ThmVapeGazMaterialBehaviourInstance()
         {
@@ -4840,7 +4842,7 @@ class FatigueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         FatigueMaterialBehaviourInstance()
         {
@@ -4876,7 +4878,7 @@ class DommaLemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         DommaLemaitreMaterialBehaviourInstance()
         {
@@ -4903,7 +4905,7 @@ class CisaPlanCritMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         CisaPlanCritMaterialBehaviourInstance()
         {
@@ -4936,7 +4938,7 @@ class ThmRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ThmRuptMaterialBehaviourInstance()
         {
@@ -4962,7 +4964,7 @@ class WeibullMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         WeibullMaterialBehaviourInstance()
         {
@@ -4990,7 +4992,7 @@ class WeibullFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         WeibullFoMaterialBehaviourInstance()
         {
@@ -5019,7 +5021,7 @@ class NonLocalMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         NonLocalMaterialBehaviourInstance()
         {
@@ -5048,7 +5050,7 @@ class RuptFragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         RuptFragMaterialBehaviourInstance()
         {
@@ -5079,7 +5081,7 @@ class RuptFragFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         RuptFragFoMaterialBehaviourInstance()
         {
@@ -5110,7 +5112,7 @@ class CzmLabMixMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         CzmLabMixMaterialBehaviourInstance()
         {
@@ -5140,7 +5142,7 @@ class RuptDuctMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         RuptDuctMaterialBehaviourInstance()
         {
@@ -5170,7 +5172,7 @@ class JointMecaRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         JointMecaRuptMaterialBehaviourInstance()
         {
@@ -5206,7 +5208,7 @@ class JointMecaFrotMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         JointMecaFrotMaterialBehaviourInstance()
         {
@@ -5243,7 +5245,7 @@ class RccmMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         RccmMaterialBehaviourInstance()
         {
@@ -5278,7 +5280,7 @@ class RccmFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         RccmFoMaterialBehaviourInstance()
         {
@@ -5312,7 +5314,7 @@ class LaigleMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         LaigleMaterialBehaviourInstance()
         {
@@ -5350,7 +5352,7 @@ class LetkMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         LetkMaterialBehaviourInstance()
         {
@@ -5401,7 +5403,7 @@ class DruckPragerMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         DruckPragerMaterialBehaviourInstance()
         {
@@ -5434,7 +5436,7 @@ class DruckPragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         DruckPragerFoMaterialBehaviourInstance()
         {
@@ -5467,7 +5469,7 @@ class ViscDrucPragMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ViscDrucPragMaterialBehaviourInstance()
         {
@@ -5505,7 +5507,7 @@ class HoekBrownMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         HoekBrownMaterialBehaviourInstance()
         {
@@ -5540,7 +5542,7 @@ class ElasGonfMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         ElasGonfMaterialBehaviourInstance()
         {
@@ -5566,7 +5568,7 @@ class JointBandisMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         JointBandisMaterialBehaviourInstance()
         {
@@ -5594,7 +5596,7 @@ class MonoVisc1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoVisc1MaterialBehaviourInstance()
         {
@@ -5622,7 +5624,7 @@ class MonoVisc2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoVisc2MaterialBehaviourInstance()
         {
@@ -5652,7 +5654,7 @@ class MonoIsot1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoIsot1MaterialBehaviourInstance()
         {
@@ -5687,7 +5689,7 @@ class MonoIsot2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoIsot2MaterialBehaviourInstance()
         {
@@ -5724,7 +5726,7 @@ class MonoCine1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoCine1MaterialBehaviourInstance()
         {
@@ -5750,7 +5752,7 @@ class MonoCine2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoCine2MaterialBehaviourInstance()
         {
@@ -5779,7 +5781,7 @@ class MonoDdKrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoDdKrMaterialBehaviourInstance()
         {
@@ -5820,7 +5822,7 @@ class MonoDdCfcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoDdCfcMaterialBehaviourInstance()
         {
@@ -5859,7 +5861,7 @@ class MonoDdCfcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoDdCfcIrraMaterialBehaviourInstance()
         {
@@ -5906,7 +5908,7 @@ class MonoDdFatMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoDdFatMaterialBehaviourInstance()
         {
@@ -5943,7 +5945,7 @@ class MonoDdCcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoDdCcMaterialBehaviourInstance()
         {
@@ -5989,7 +5991,7 @@ class MonoDdCcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         MonoDdCcIrraMaterialBehaviourInstance()
         {
@@ -6037,7 +6039,7 @@ class UmatMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         UmatMaterialBehaviourInstance()
         {
@@ -6259,7 +6261,7 @@ class UmatFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         UmatFoMaterialBehaviourInstance()
         {
@@ -6481,7 +6483,7 @@ class CritRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
     public:
         /**
-         * @brief Constructeur 
+         * @brief Constructeur
          */
         CritRuptMaterialBehaviourInstance()
         {
@@ -6497,12 +6499,12 @@ class CritRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 
 /** @typedef Pointeur intelligent vers un comportement materiau CritRupt */
 typedef boost::shared_ptr< CritRuptMaterialBehaviourInstance > CritRuptMaterialBehaviourPtr;
- 
- 
+
+
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */
 typedef boost::shared_ptr< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviourPtr;
- 
- 
- 
-  
+
+
+
+
 #endif

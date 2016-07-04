@@ -99,22 +99,13 @@ class PartOfSyntax(object):
     # for compatibility (and avoid changing `pre_seisme_nonl`)
     entites = property(getEntites)
 
-    def addDefaultKeywords(self, userSyntax, in_place=True):
-        """Return a new dict after adding the default keywords"""
-        self._addDefaultKeywords(userSyntax)
-        # XXX who adds `__builtins__` ? `import __builtin__` for _F ?
-        try:
-            del userSyntax['__builtins__']
-        except KeyError:
-            pass
-
-    def _addDefaultKeywords(self, userSyntax):
+    def addDefaultKeywords(self, userSyntax):
         """Add default keywords"""
         if type(userSyntax) != dict:
             raise TypeError("'dict' is expected")
         for key, kwd in self.definition.iteritems():
             if isinstance(kwd, SimpleKeyword):
-                kwd._addDefaultKeywords(key, userSyntax)
+                kwd.addDefaultKeywords(key, userSyntax)
             elif isinstance(kwd, FactorKeyword):
                 userFact = userSyntax.get(key, {})
                 # optional and not filled by user, ignore it
@@ -122,13 +113,13 @@ class PartOfSyntax(object):
                     continue
                 if type(userFact) in (list, tuple):
                     for userOcc in userFact:
-                        kwd._addDefaultKeywords(userOcc)
+                        kwd.addDefaultKeywords(userOcc)
                 else:
-                    kwd._addDefaultKeywords(userFact)
+                    kwd.addDefaultKeywords(userFact)
                 userSyntax[key] = userFact
             elif isinstance(kwd, Bloc):
                 if kwd.isEnabled(userSyntax):
-                    kwd._addDefaultKeywords(userSyntax)
+                    kwd.addDefaultKeywords(userSyntax)
             #else: sdprod, fr...
 
     def checkMandatory(self, userSyntax):
@@ -182,7 +173,7 @@ class SimpleKeyword(PartOfSyntax):
         """Return the default value or 'UNDEF'"""
         return self.definition.get("defaut", UNDEF)
 
-    def _addDefaultKeywords(self, key, userSyntax):
+    def addDefaultKeywords(self, key, userSyntax):
         """Add the default value if not provided in userSyntax"""
         value = userSyntax.get(key, self.defaultValue())
         if value is not UNDEF:
@@ -219,7 +210,7 @@ class Bloc(PartOfSyntax):
     def isEnabled(self, context):
         """Tell if the block is enabled by the given context"""
         try:
-            enabled = eval(self.getCondition(), context)
+            enabled = eval(self.getCondition(), {}, context)
         except AssertionError:
             raise
         except Exception:

@@ -19,40 +19,53 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
+import types
+
 from code_aster import Materials
 from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
+from code_aster.Materials import MaterialBehaviour
+
+
+def _byKeyword():
+    """Build the list of all objects of the given type"""
+    objects = {}
+    for name in dir(MaterialBehaviour):
+        obj = getattr(MaterialBehaviour, name)
+        if name == "GeneralMaterialBehaviour" or type(obj) is not type:
+            continue
+        if issubclass(obj, MaterialBehaviour.GeneralMaterialBehaviour):
+            keyword = obj().getAsterName()
+            objects[keyword] = obj
+    return objects
 
 
 def DEFI_MATERIAU( **kwargs ):
     """Opérateur de définition d'un matériau"""
     checkCommandSyntax( Commands.DEFI_MATERIAU, kwargs )
 
-    import inspect
-    dictMaterB = {}
-    for key, value in Materials.MaterialBehaviour.__dict__.iteritems():
-        if inspect.isclass( value ):
-            if issubclass( value, Materials.MaterialBehaviour.GeneralMaterialBehaviour ):
-                a = value()
-                name = a.getAsterName()
-                dictMaterB[ name ] = value
-
+    classByName = _byKeyword()
     mater = Materials.Material()
-
     for fkwName, fkw in kwargs.iteritems():
-        if type( fkw ) == list:
-            raise NameError( "Just on factor keywaord " + kwName + " allowed" )
-        matBTmp = dictMaterB[ fkwName ]()
+        # only see factor keyword
+        if type( fkw ) is not dict:
+            continue
+        klass = classByName.get(fkwName)
+        if not klass:
+            raise NotImplementedError("Unsupported behaviour: '{0}'".format(fkwName))
+        matBehav = klass()
         for skwName, skw in fkw.iteritems():
-            if type( skw ) == float:
-                newName = skwName[0] + skwName[1:].lower()
-                cRet = matBTmp.setDoubleValue( newName, skw )
+            if type( skw ) is float:
+                iName = skwName.capitalize()
+                cRet = matBehav.setDoubleValue( iName, skw )
                 if not cRet:
-                    raise NameError( "Problem with " + skwName + " keyword" )
+                    print ValueError("Can not assign keyword '{1}'/'{0}' (as '{3}'/'{2}') "
+                                     .format(skwName, fkwName, iName, klass.__name__))
             else:
-                raise NameError( "Not yet implemented" )
-        mater.addMaterialBehaviour( matBTmp )
+                raise NotImplementedError("Unsupported type for keyword: {0} <{1}>"
+                                          .format(skwName, type(skw)))
+        mater.addMaterialBehaviour( matBehav )
 
     mater.build()
 

@@ -178,9 +178,6 @@ class SyntaxCheckerVisitor(object):
             step.checkMandatory(userOcc)
             # loop on keywords provided by the user
             for key, value in userOcc.iteritems():
-                # XXX who adds `__builtins__` ? `import __builtin__` for _F ?
-                if key == '__builtins__':
-                    continue
                 # print key, value
                 if key == "reuse":
                     if step.definition.get("reentrant") not in ("o", "f"):
