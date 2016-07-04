@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -25,6 +25,9 @@ __all__ = []
 from .Supervis import executionParameter
 from .RunManager import Initializer
 
+# commands must be registered by libCommandSyntax before calling DEBUT.
+from .Cata import Commands
+
 executionParameter.parse_args()
 
 # automatic startup
@@ -40,7 +43,7 @@ from .Utilities import TestCase
 from .DataStructure import DataStructure
 from .DataFields import *
 from .Function import *
-from .Geometry import * 
+from .Geometry import *
 from .LinearAlgebra import *
 from .Materials import *
 from .Mesh import *
@@ -53,5 +56,3 @@ from .Algorithms import *
 from .Studies import *
 from .Discretization import *
 from .Interactions import *
-
-from .Cata import Commands

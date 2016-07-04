@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -37,6 +37,7 @@ def finalize():
     libaster.register_sh_jeveux_status( 0 )
     syntax.free()
 
+
 def init( int mode ):
     """Initialize Code_Aster & its memory manager"""
     # TODO: what future for aster modules?
@@ -51,8 +52,7 @@ def init( int mode ):
             make_cata = _F( CATALOGUE=_F(FICHIER='CATAELEM',
                                          UNITE=4) )
         syntax = CommandSyntax( "DEBUT" )
-        syntax.define( _F( **make_cata )
-                     )
+        syntax.define( _F( **make_cata ) )
         libaster.ibmain_()
         libaster.register_sh_jeveux_status( 1 )
         libaster.debut_()
@@ -67,6 +67,7 @@ def init( int mode ):
 
     syntax.free()
     atexit.register( finalize )
+
 
 def cataBuilder():
     """Build the elements catalog"""
