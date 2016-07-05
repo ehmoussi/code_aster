@@ -32,6 +32,7 @@ cdef extern from "LinearAlgebra/ElementaryMatrix.h":
         ElementaryMatrixInstance()
         void addMechanicalLoad( GenericMechanicalLoadPtr& currentLoad )
         bint computeMechanicalRigidity()
+        bint computeMechanicalMass()    
         void setMaterialOnMesh( MaterialOnMeshPtr& currentMat )
         void setSupportModel( ModelPtr& currentModel )
         const string getType()

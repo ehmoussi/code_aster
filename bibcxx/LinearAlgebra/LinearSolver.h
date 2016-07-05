@@ -200,7 +200,7 @@ class LinearSolverInstance: public DataStructure
          * @todo recuperer le code retour de isAllowedRenumberingForSolver
          */
         LinearSolverInstance( const LinearSolverEnum currentLinearSolver = MultFront,
-                              const Renumbering currentRenumber = Metis):
+                              const Renumbering currentRenumber = Metis ):
                     DataStructure( getNewResultObjectName(), "SOLVEUR" ),
                     _linearSolver( currentLinearSolver ),
                     _renumber( currentRenumber ),

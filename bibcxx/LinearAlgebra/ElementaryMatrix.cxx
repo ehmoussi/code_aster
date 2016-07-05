@@ -91,3 +91,50 @@ bool ElementaryMatrixInstance::computeMechanicalRigidity() throw ( std::runtime_
 
     return true;
 };
+
+bool ElementaryMatrixInstance::computeMechanicalMass() throw ( std::runtime_error )
+{
+    // Comme on calcul MASS_MECA, il faut preciser le type de la sd
+    setType( getType() + "_DEPL_R" );
+
+    // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
+    CommandSyntaxCython cmdSt( "CALC_MATR_ELEM" );
+    cmdSt.setResult( getResultObjectName(), getType() );
+
+    SyntaxMapContainer dict;
+    // Definition du mot cle simple OPTION
+    dict.container[ "OPTION" ] = "MASS_MECA";
+
+    // Definition du mot cle simple MODELE
+    if ( ( ! _supportModel ) || _supportModel->isEmpty() )
+        throw std::runtime_error( "Model is empty" );
+    dict.container[ "MODELE" ] = _supportModel->getName();
+
+    // Definition du mot cle simple CHAM_MATER
+    if ( ! _materialOnMesh )
+        throw std::runtime_error( "Material is empty" );
+    dict.container[ "CHAM_MATER" ] = _materialOnMesh->getName();
+
+    if ( _listOfMechanicalLoads.size() != 0 )
+    {
+        VectorString tmp;
+        for ( ListMecaLoadIter curIter = _listOfMechanicalLoads.begin();
+              curIter != _listOfMechanicalLoads.end();
+              ++curIter )
+            tmp.push_back( (*curIter)->getName() );
+        dict.container[ "CHARGE" ] = tmp;
+    }
+    cmdSt.define( dict );
+    try
+    {
+        INTEGER op = 9;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    _isEmpty = false;
+
+    return true;
+};

@@ -63,6 +63,10 @@ cdef class ElementaryMatrix( DataStructure ):
     def computeMechanicalRigidity( self ):
         """Compute the mechanical rigidity"""
         return self.getInstance().computeMechanicalRigidity()
+    
+    def computeMechanicalMass( self ):
+        """Compute the mechanical rigidity"""
+        return self.getInstance().computeMechanicalMass()
 
     def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
         """Set the material"""
