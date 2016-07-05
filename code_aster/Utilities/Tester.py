@@ -20,6 +20,7 @@
 import os.path as osp
 from functools import wraps
 import unittest
+import re
 from unittest.util import safe_repr
 import unittest.case as case
 
@@ -61,6 +62,9 @@ class AssertRaisesContext(case._AssertRaisesContext):
 
     def __init__(self, expected, test_case, expected_regexp=None):
         self.writeResult = test_case.writeResult
+        # these two lines already exist in __exit__ in python >= 2.7.9
+        if isinstance(expected_regexp, basestring):
+            expected_regexp = re.compile(expected_regexp)
         super(AssertRaisesContext, self).__init__(expected, test_case, expected_regexp)
 
     def __exit__(self, exc_type, exc_value, tb):
