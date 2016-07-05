@@ -28,7 +28,7 @@ from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
 cdef class LinearSolver( DataStructure ):
     """Python wrapper on the C++ LinearSolver Object"""
 
-    def __cinit__( self, LinearSolverEnum curLinSolv, Renumbering curRenum,
+    def __cinit__( self, LinearSolverEnum curLinSolv = MultFront, Renumbering curRenum = Metis,
                    bint init = True ):
         """Initialization: stores the pointer to the C++ object"""
         if init :

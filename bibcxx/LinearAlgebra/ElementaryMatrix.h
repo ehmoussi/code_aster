@@ -95,6 +95,12 @@ class ElementaryMatrixInstance: public DataStructure
         bool computeMechanicalRigidity() throw ( std::runtime_error );
 
         /**
+         * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
+         */
+        bool computeMechanicalMass() throw ( std::runtime_error );
+
+
+        /**
          * @brief Methode permettant de savoir si les matrices elementaires sont vides
          * @return true si les matrices elementaires sont vides
          */
