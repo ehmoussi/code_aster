@@ -135,6 +135,12 @@ class PCFieldOnMeshInstance: public DataStructure
         };
 
         /**
+         * @brief Destructeur
+         */
+        ~PCFieldOnMeshInstance()
+        {};
+
+        /**
          * @brief Allocation de la carte
          * @return true si l'allocation s'est bien deroulee, false sinon
          */
@@ -237,20 +243,31 @@ class PCFieldOnMeshInstance: public DataStructure
 
 /** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de double */
 typedef PCFieldOnMeshInstance< double > PCFieldOnMeshInstanceDouble;
+/** @typedef PCFieldOnMeshComplexInstance Instance d'une carte de complexe */
+typedef PCFieldOnMeshInstance< DoubleComplex > PCFieldOnMeshComplexInstance;
 /** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de char*8 */
 typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshInstanceChar8;
 /** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de char*16 */
 typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshInstanceChar16;
+
 /**
  * @typedef PCFieldOnMeshPtrDouble
  * @brief   Definition d'une carte de double
  */
 typedef boost::shared_ptr< PCFieldOnMeshInstanceDouble > PCFieldOnMeshPtrDouble;
+
+/**
+ * @typedef PCFieldOnMeshPtrComplex
+ * @brief   Definition d'une carte de complexe
+ */
+typedef boost::shared_ptr< PCFieldOnMeshComplexInstance > PCFieldOnMeshComplexPtr;
+
 /**
  * @typedef PCFieldOnMeshPtrChar8 Definition d'une carte de char[8]
  * @brief Pointeur intelligent vers un PCFieldOnMeshInstance
  */
 typedef boost::shared_ptr< PCFieldOnMeshInstanceChar8 > PCFieldOnMeshPtrChar8;
+
 /**
  * @typedef PCFieldOnMeshPtrChar16 Definition d'une carte de char[16]
  * @brief Pointeur intelligent vers un PCFieldOnMeshInstance
