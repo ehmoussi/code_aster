@@ -31,6 +31,7 @@
 #include <string>
 #include "astercxx.h"
 
+#include "Utilities/CapyConvertibleValue.h"
 
 /**
  * @enum PhysicalQuantityEnum
@@ -38,6 +39,14 @@
  * @todo attention confusion entre Pressure et Pres
  */
 enum PhysicalQuantityEnum { Force, StructuralForce, LocalBeamForce, LocalShellForce, Displacement, Pressure, Temperature, Impedance, NormalSpeed, HeatFlux, HydraulicFlux };
+
+const int nbPhysicalQuantities = 11;
+
+/**
+* @def PhysicalQuantityNames
+* @brief Aster names of the physical quantities
+*/
+extern const char* PhysicalQuantityNames[nbPhysicalQuantities];
 
 /**
  * @enum PhysicalQuantityComponent 
@@ -51,6 +60,10 @@ const int nbComponent = 31;
 * @brief Aster names of the components of the physical quantities
 */
 extern const char* ComponentNames[nbComponent];
+
+typedef std::vector< PhysicalQuantityComponent > VectorComponent;
+extern const VectorComponent allComponents;
+extern const VectorString allComponentsNames;
 
 /**
 * @class PhysicalQuantityTraits
@@ -89,6 +102,7 @@ template <> struct PhysicalQuantityTraits< Force >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 /****************************************/
@@ -116,6 +130,7 @@ template <> struct PhysicalQuantityTraits< StructuralForce >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 /****************************************/
@@ -142,6 +157,7 @@ template <> struct PhysicalQuantityTraits< LocalBeamForce >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 /****************************************/
@@ -168,6 +184,7 @@ template <> struct PhysicalQuantityTraits< LocalShellForce >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 
@@ -192,6 +209,7 @@ template <> struct PhysicalQuantityTraits< Displacement >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 /****************************************/
@@ -214,6 +232,7 @@ template <> struct PhysicalQuantityTraits< Pressure >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 /****************************************/
@@ -236,6 +255,7 @@ template <> struct PhysicalQuantityTraits< Temperature >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 /****************************************/
@@ -258,6 +278,7 @@ template <> struct PhysicalQuantityTraits< Impedance >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 /****************************************/
@@ -280,6 +301,7 @@ template <> struct PhysicalQuantityTraits< NormalSpeed >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 /****************************************/
@@ -302,6 +324,7 @@ template <> struct PhysicalQuantityTraits< HeatFlux >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 /****************************************/
@@ -324,6 +347,7 @@ template <> struct PhysicalQuantityTraits< HydraulicFlux >
 {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
+    static const PhysicalQuantityEnum type;
 };
 
 
@@ -335,6 +359,9 @@ template <> struct PhysicalQuantityTraits< HydraulicFlux >
 template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 class PhysicalQuantityInstance
 {
+    /** @brief Conteneur des mots-clés avec traduction */
+    CapyConvertibleContainer _toCapyConverter;
+
     public:
     /** @typedef Define the Traits type */
     typedef PhysicalQuantityTraits<PhysicalQuantity> Traits;
@@ -346,7 +373,8 @@ class PhysicalQuantityInstance
     typedef typename std::pair<PhysicalQuantityComponent, QuantityType> CompAndVal;
 
     /* @def  _compAndVal Components and Values  */
-    MapOfCompAndVal  _compAndVal;
+    MapOfCompAndVal          _compAndVal;
+    std::vector< ValueType > _values;
 
     /** 
     * @brief Constructor
@@ -370,6 +398,7 @@ class PhysicalQuantityInstance
     }
 
     void setValue( PhysicalQuantityComponent comp, QuantityType val )
+        throw( std::runtime_error )
     {
         if ( ! hasComponent( comp ) ) 
         {
@@ -383,6 +412,10 @@ class PhysicalQuantityInstance
             _compAndVal.erase( comp );
             _compAndVal.insert( CompAndVal( comp, val ) ); 
         }
+        _values.push_back( val );
+        _toCapyConverter.add( new CapyConvertibleValue< QuantityType >
+                                                      ( false, ComponentNames[ (int)comp ],
+                                                        _values[ _values.size()-1 ], true ) );
     }
 
     /**
@@ -412,7 +445,12 @@ class PhysicalQuantityInstance
      */
     const MapOfCompAndVal& getMap() const
     {
-        return _compAndVal; 
+        return _compAndVal;
+    };
+
+    const CapyConvertibleContainer& getCapyConvertibleContainer() const
+    {
+        return _toCapyConverter;
     };
 
     /**
@@ -459,20 +497,35 @@ template class PhysicalQuantityInstance< double, Pressure >;
 typedef PhysicalQuantityInstance< double, Pressure > PressureDoubleInstance;
 typedef boost::shared_ptr< PressureDoubleInstance > PressureDoublePtr; 
 
+/** @typedef PressureComplex Pression */
+template class PhysicalQuantityInstance< DoubleComplex, Pressure >; 
+typedef PhysicalQuantityInstance< DoubleComplex, Pressure > PressureComplexInstance;
+typedef boost::shared_ptr< PressureComplexInstance > PressureComplexPtr; 
+
 /** @typedef TemperatureDouble Temperature */
 template class PhysicalQuantityInstance< double, Temperature >; 
 typedef PhysicalQuantityInstance< double, Temperature > TemperatureDoubleInstance;
-typedef boost::shared_ptr< TemperatureDoubleInstance > TemperatureDoublePtr; 
+typedef boost::shared_ptr< TemperatureDoubleInstance > TemperatureDoublePtr;
 
 /** @typedef ImpedanceDouble Impedance */
 template class PhysicalQuantityInstance< double, Impedance >; 
 typedef PhysicalQuantityInstance< double, Impedance > ImpedanceDoubleInstance;
-typedef boost::shared_ptr< ImpedanceDoubleInstance > ImpedanceDoublePtr; 
+typedef boost::shared_ptr< ImpedanceDoubleInstance > ImpedanceDoublePtr;
+
+/** @typedef ImpedanceComplex Impedance */
+template class PhysicalQuantityInstance< DoubleComplex, Impedance >; 
+typedef PhysicalQuantityInstance< DoubleComplex, Impedance > ImpedanceComplexInstance;
+typedef boost::shared_ptr< ImpedanceComplexInstance > ImpedanceComplexPtr; 
 
 /** @typedef NormalSpeedDouble Normal Speed  */
 template class PhysicalQuantityInstance< double, NormalSpeed >; 
 typedef PhysicalQuantityInstance< double, NormalSpeed > NormalSpeedDoubleInstance;
 typedef boost::shared_ptr< NormalSpeedDoubleInstance > NormalSpeedDoublePtr; 
+
+/** @typedef NormalSpeedComplex Normal Speed  */
+template class PhysicalQuantityInstance< DoubleComplex, NormalSpeed >; 
+typedef PhysicalQuantityInstance< DoubleComplex, NormalSpeed > NormalSpeedComplexInstance;
+typedef boost::shared_ptr< NormalSpeedComplexInstance > NormalSpeedComplexPtr; 
 
 /** @typedef HeatFluxDouble Normal Speed  */
 template class PhysicalQuantityInstance< double, HeatFlux >; 

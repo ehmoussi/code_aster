@@ -31,3 +31,6 @@ const std::set< Modelings > WrapMechanics::setOfModelings( MechanicsModelings,
 
 const std::set< Modelings > WrapThermal::setOfModelings( ThermalModelings,
                                                          ThermalModelings + nbModelingsThermal );
+
+const std::set< Modelings > WrapAcoustics::setOfModelings( AcousticsModelings,
+                                                           AcousticsModelings + nbModelingsAcoustics );

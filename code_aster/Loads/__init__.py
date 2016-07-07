@@ -42,6 +42,8 @@ from .MechanicalLoad import (
 
 from .KinematicsLoad import KinematicsLoad
 
+from .AcousticsLoad import AcousticsLoad
+
 from .UnitaryThermalLoad import (
     DoubleImposedTemperature,
     DoubleDistributedFlow,

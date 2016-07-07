@@ -1,6 +1,6 @@
 /**
- * @file PhysicsAndModelings.cxx
- * @brief Initialisation des modelisations autorisees pour chaque physique
+ * @file CapyConvertibleValue.cxx
+ * @brief Implementation de CapyConvertibleContainer
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
@@ -21,16 +21,12 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PhysicsAndModelings.h"
+#include "Utilities/CapyConvertibleValue.h"
 
-const char* const PhysicNames[nbPhysics] = { "MECANIQUE", "THERMIQUE", "ACOUSTIQUE" };
-const char* const ModelingNames[nbModelings] = { "AXIS", "3D", "PLAN", "DKT" };
-
-
-const Modelings MechanicsModelings[nbModelingsMechanics] = { Axisymmetrical, Tridimensional,
-                                                             Planar, DKT };
-
-const Modelings ThermalModelings[nbModelingsThermal] = { Axisymmetrical, Tridimensional,
-                                                         Planar };
-
-const Modelings AcousticsModelings[nbModelingsAcoustics] = { Tridimensional, Planar };
+CapyConvertibleContainer operator+( const CapyConvertibleContainer& toAdd1,
+                                    const CapyConvertibleContainer& toAdd2 )
+{
+    CapyConvertibleContainer retour = toAdd1;
+    retour += toAdd2; 
+    return retour;
+};

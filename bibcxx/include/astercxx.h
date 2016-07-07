@@ -36,6 +36,7 @@ typedef std::complex< double > DoubleComplex;
 
 typedef std::vector< double > VectorDouble;
 typedef std::vector< int > VectorInt;
+typedef std::vector< std::string > VectorString;
 
 extern "C"
 {

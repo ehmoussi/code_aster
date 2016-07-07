@@ -36,7 +36,7 @@ resu = MECA_STATIQUE( MODELE = model,
 
 resu.debugPrint()
 
-# Début du TEST_RESU
+# Debut du TEST_RESU
 MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)
 sfon = MyFieldOnNodes.exportToSimpleFieldOnNodes()
 #sfon.debugPrint()

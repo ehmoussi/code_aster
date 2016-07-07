@@ -33,6 +33,7 @@
 #include <iostream>
 
 #include "Python.h"
+#include "astercxx.h"
 
 struct SyntaxMapContainer;
 
@@ -65,6 +66,13 @@ typedef std::vector< double > VectorDouble;
 typedef VectorDouble::iterator VectorDoubleIter;
 
 /**
+ * @typedef VectorDoubleComplex
+ * @brief Vecteur STL de doubles
+ */
+typedef std::vector< DoubleComplex > VectorDoubleComplex;
+typedef VectorDoubleComplex::iterator VectorDoubleComplexIter;
+
+/**
  * @class SyntaxMapContainer
  * @brief Cette struct decrit un dictionnaire permettant de contenir la syntaxe des commandes Aster
  * @author Nicolas Sellenet
@@ -73,20 +81,21 @@ class SyntaxMapContainer
 {
 public:
     /** @brief Typedef definissant un map associant une chaine a divers types */
-    typedef std::map< std::string, boost::variant< int, std::string, double,
+    typedef std::map< std::string, boost::variant< int, std::string, double, DoubleComplex,
                                                    VectorInt, VectorString, VectorDouble,
+                                                   VectorDoubleComplex,
                                                    ListSyntaxMapContainer > > SyntaxMap;
     typedef SyntaxMap::iterator SyntaxMapIter;
 
     /** @brief Conteneur a proprement parler */
     SyntaxMap container;
-    
+
     /**
     * @brief Opérateur +=
     * @param toAdd SyntaxMapContainer à ajouter
     * @return reference to the current object 
     */
-    SyntaxMapContainer&  operator+=( const SyntaxMapContainer& toAdd )
+    SyntaxMapContainer& operator+=( const SyntaxMapContainer& toAdd )
     {
          container.insert( toAdd.container.begin(), toAdd.container.end() );
          return *this;
@@ -107,7 +116,6 @@ private:
     friend SyntaxMapContainer operator+( const SyntaxMapContainer&, const SyntaxMapContainer& );
 };
 
-
 /**
  * @brief Opérateur +
  * @param toAdd1 SyntaxMapContainer à ajouter
@@ -115,6 +123,5 @@ private:
  * @return SyntaxMapContainer résultat
  */
 SyntaxMapContainer operator+( const SyntaxMapContainer& toAdd1, const SyntaxMapContainer& toAdd2 );
-
 
 #endif /* SYNTAXDICTIONARY_H_ */

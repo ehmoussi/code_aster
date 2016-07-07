@@ -75,6 +75,16 @@ cdef double* to_cdouble_array( list_dble ):
     return ret
 
 
+cdef double* to_ccomplex_array( list_cmplx ):
+    """Convert a list of doubles into a double*"""
+    cdef double *ret = <double*>malloc( 2* len( list_cmplx ) * sizeof( double ))
+    cdef int i
+    for i in range( len( list_cmplx ) ):
+        ret[2*i] = list_cmplx[i].real
+        ret[2*i+1] = list_cmplx[i].imag
+    return ret
+
+
 cdef long* to_clong_array( list_long ):
     """Convert a list of integers into a long*"""
     cdef long *ret = <long*>malloc( len( list_long ) * sizeof( long ))

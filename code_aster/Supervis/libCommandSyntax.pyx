@@ -302,11 +302,17 @@ cdef public int listeMotCleSimpleFromMotCleFacteur(
 
     types = []
     for value in dictFkw.values():
-        if type( value ) == str:
+        value2 = value
+        if type( value ) == list or  type( value ) == tuple:
+            value2 = value[0]
+
+        if type( value2 ) == str:
             typ = "TX"
-        elif type( value ) == float:
+        elif type( value2 ) == float:
             typ = "R8"
-        elif type( value ) == int:
+        elif type( value2 ) == complex:
+            typ = "C8"
+        elif type( value2 ) == int:
             typ ="IS"
         else:
             raise TypeError( "Unexpected type: {!r}".format(type(value)) )
@@ -364,6 +370,23 @@ cdef public double* getCommandKeywordValueDouble(
         except TypeError:
             raise TypeError( "float expected, got %s" % type( value[0] ) )
     cdef double* dbleArray = libBaseUtils.to_cdouble_array( value )
+    size[0] = len( value )
+    return dbleArray
+
+
+cdef public double* getCommandKeywordValueComplex(
+        char* factName, int occurrence,
+        char* simpName, int* size ) except *:
+    """Wrapper function to command.getValue() for double"""
+    if currentCommand is None:
+        raise ValueError( "there is no active command" )
+    value = currentCommand.getValue( factName, occurrence, simpName )
+    if len( value ) > 0:
+        try:
+            complex( value[0] )
+        except TypeError:
+            raise TypeError( "complex expected, got %s" % type( value[0] ) )
+    cdef double* dbleArray = libBaseUtils.to_ccomplex_array( value )
     size[0] = len( value )
     return dbleArray
 
