@@ -30,6 +30,8 @@
 #include "boost/variant.hpp"
 #include <iostream>
 
+#include "astercxx.h"
+
 #include "Utilities/SyntaxDictionary.h"
 
 /**
@@ -163,8 +165,9 @@ public:
 };
 
 /** @typedef Definition d'un GenericParameter d'un type boost::variant */
-typedef GenericParameter< boost::variant< double, int, std::string,
+typedef GenericParameter< boost::variant< double, int, std::string, DoubleComplex,
                                           std::vector< double >, std::vector< int >,
+                                          std::vector< DoubleComplex >,
                                           std::vector< std::string > > > GenParam;
 
 /** @typedef Definition d'une list de GenParam */

@@ -90,6 +90,27 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
             }
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(), listValues );
         }
+        else if ( (*curIter).second.type() == typeid( DoubleComplex ) )
+        {
+            DoubleComplex& tmp = boost::get< DoubleComplex >( (*curIter).second );
+            PyDict_SetItemString( returnDict, (*curIter).first.c_str(),
+                                  PyComplex_FromDoubles( tmp.real(), tmp.imag() ) );
+        }
+        else if ( (*curIter).second.type() == typeid( VectorDoubleComplex ) )
+        {
+            VectorDoubleComplex& currentList = boost::get< VectorDoubleComplex >( (*curIter).second );
+            PyObject* listValues = PyList_New( currentList.size() );
+            int count = 0;
+            for ( VectorDoubleComplexIter iter = currentList.begin();
+                  iter != currentList.end();
+                  ++iter )
+            {
+                PyList_SetItem( listValues, count,
+                                PyComplex_FromDoubles( iter->real(), iter->imag() ) );
+                ++count;
+            }
+            PyDict_SetItemString( returnDict, (*curIter).first.c_str(), listValues );
+        }
         else if ( (*curIter).second.type() == typeid( ListSyntaxMapContainer ) )
         {
             ListSyntaxMapContainer& tmp = boost::get< ListSyntaxMapContainer >( (*curIter).second );
@@ -112,7 +133,7 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
 SyntaxMapContainer operator+( const SyntaxMapContainer& toAdd1, const SyntaxMapContainer& toAdd2 )
 {
     SyntaxMapContainer retour = toAdd1;
-    retour+=toAdd2; 
+    retour += toAdd2; 
     return retour;
 };
 

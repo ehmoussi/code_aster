@@ -52,6 +52,15 @@ struct WrapThermal
 };
 
 /**
+ * @struct WrapAcoustics
+ * @brief Structure destinee a definir les modelisations autorisees en thermique
+ */
+struct WrapAcoustics
+{
+    static const std::set< Modelings > setOfModelings;
+};
+
+/**
  * @struct ModelingsChecker
  * @brief Structure template permettant de verifier qu'une modelisation est autoriser
           pour un physique donnee
@@ -75,6 +84,8 @@ struct ModelingsChecker
 typedef ModelingsChecker< WrapMechanics > MechanicsModelingsChecker;
 /** @typedef Definition du verificateur pour la thermique */
 typedef ModelingsChecker< WrapThermal > ThermalModelingsChecker;
+/** @typedef Definition du verificateur pour l'acoustic */
+typedef ModelingsChecker< WrapAcoustics > AcousticsModelingsChecker;
 
 /**
  * @struct PhysicsChecker
@@ -94,6 +105,8 @@ struct PhysicsChecker
                 return MechanicsModelingsChecker::isAllowedModeling( model );
             case Thermal:
                 return ThermalModelingsChecker::isAllowedModeling( model );
+            case Acoustics:
+                return AcousticsModelingsChecker::isAllowedModeling( model );
             default:
                 throw std::runtime_error( "Not a valid physics" );
         }

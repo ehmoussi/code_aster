@@ -12,6 +12,8 @@ cdef char** to_cstring_array( list_str )
 
 cdef double* to_cdouble_array( list_dble )
 
+cdef double* to_ccomplex_array( list_cmplx )
+
 cdef long* to_clong_array( list_long )
 
 cdef void to_fstring_array( list_str, int str_size, char* ret )

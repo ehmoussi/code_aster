@@ -81,6 +81,7 @@ struct is_vector< std::vector<T> >
     typedef T value_type;
 };
 
+
 /**
  * @struct is_shared_ptr
  * @brief Classe template permettant de savoir si un type est un boost::shared_ptr
@@ -110,6 +111,7 @@ struct is_shared_ptr< boost::shared_ptr<T> >
     static bool const value = true;
     typedef T value_type;
 };
+
 
 /**
  * @struct is_vector_of_shared_ptr
@@ -250,7 +252,9 @@ template< typename Type,
           typename MatchingType = typename
                     std::conditional< std::is_same< Type, int >::value ||
                                       std::is_same< Type, double >::value ||
+                                      std::is_same< Type, DoubleComplex >::value ||
                                       std::is_same< Type, std::vector< double > >::value ||
+                                      std::is_same< Type, std::vector< DoubleComplex > >::value ||
                                       std::is_same< Type, std::vector< int > >::value,
                                       Type, typename
                                             std::conditional< is_vector< Type >::value,
@@ -336,8 +340,10 @@ private:
      */
     template< typename T = Type, typename M = MatchingType >
     typename std::enable_if< (std::is_same< T, int >::value ||
-                             std::is_same< T, double>::value ||
+                             std::is_same< T, double >::value ||
+                             std::is_same< T, DoubleComplex >::value ||
                              std::is_same< T, std::vector< double > >::value ||
+                             std::is_same< T, std::vector< DoubleComplex > >::value ||
                              std::is_same< T, std::vector< int > >::value) &&
                              !std::is_same< M, std::string >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
@@ -368,13 +374,14 @@ private:
     template< typename T = Type, typename M = MatchingType >
     typename std::enable_if< is_vector< T >::value &&
                              !std::is_same< T, std::vector< double > >::value &&
+                             !std::is_same< T, std::vector< DoubleComplex > >::value &&
                              !std::is_same< T, std::vector< int > >::value &&
-                             !std::is_same< T, std::vector< DataStructurePtr > >::value &&
+                             !( is_vector< T >::value &&
+                               std::is_base_of< DataStructure,
+                                                typename is_vector_of_shared_ptr< T >::value_type >::value ) &&
                              !std::is_same< T, std::vector< MeshEntityPtr > >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
-        typedef typename Type::value_type ValueType;
-        typedef typename Type::const_iterator TypeCIter;
         MatchingType toReturn;
         for( const auto& curIter : *_value )
         {
@@ -402,8 +409,6 @@ private:
                              GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
-        typedef typename Type::value_type ValueType;
-        typedef typename Type::const_iterator TypeCIter;
         MatchingType toReturn;
         for( const auto& curIter : *_value )
             toReturn.push_back( (curIter)->getName() );
@@ -440,8 +445,10 @@ private:
      */
     template< typename T = Type, typename M = MatchingType >
     typename std::enable_if< !std::is_same< T, int >::value &&
-                             !std::is_same< T, double>::value &&
+                             !std::is_same< T, double >::value &&
+                             !std::is_same< T, DoubleComplex >::value &&
                              !std::is_same< T, std::vector< double > >::value &&
+                             !std::is_same< T, std::vector< DoubleComplex > >::value &&
                              !std::is_same< T, std::vector< int > >::value &&
                              !is_vector< T >::value &&
                              !( is_vector< T >::value &&
@@ -512,7 +519,21 @@ private:
     /** @typedef Map contenant les mots-clés */
     MapOfCapyValuePtr _container;
 
+    friend CapyConvertibleContainer operator+( const CapyConvertibleContainer&,
+                                               const CapyConvertibleContainer& );
+
 public:
+    /**
+    * @brief Opérateur +=
+    * @param toAdd SyntaxMapContainer à ajouter
+    * @return reference to the current object 
+    */
+    CapyConvertibleContainer& operator+=( const CapyConvertibleContainer& toAdd )
+    {
+         _container.insert( toAdd._container.begin(), toAdd._container.end() );
+         return *this;
+    };
+
     /**
      * @brief Fonction permettant d'ajouter un GenericCapyConvertibleValue*
      * @param valueToAdd Pointeur à ajouter
@@ -521,6 +542,15 @@ public:
     void add( GenericCapyConvertibleValue* valueToAdd )
     {
         _container[ valueToAdd->getNameOfKeyWord() ] = CapyValuePtr( valueToAdd );
+    };
+
+    /**
+     * @brief Fonction permettant d'ajouter un CapyValuePtr
+     * @param valueToAdd Smart pointeur à ajouter
+     */
+    void add( CapyValuePtr valueToAdd )
+    {
+        _container[ valueToAdd->getNameOfKeyWord() ] = valueToAdd;
     };
 
     /**
@@ -557,28 +587,26 @@ public:
     SyntaxMapContainer toSyntaxMapContainer() const
     {
         ListGenParam lParam;
-        for( MapOfCapyValuePtrCIter curIter = _container.begin();
-             curIter != _container.end();
-             ++curIter )
-        {
-            if ( (*curIter).second->isSet() )
-            {
-                GenParam* tmp = (*curIter).second->getValueOfKeyWord();
-                lParam.push_back( tmp );
-            }
-        }
+        for( const auto curIter : _container )
+            if ( curIter.second->isSet() )
+                lParam.push_back( curIter.second->getValueOfKeyWord() );
 
         SyntaxMapContainer toReturn = buildSyntaxMapFromParamList( lParam );
 
-        for( auto curIter = lParam.begin();
-             curIter != lParam.end();
-             ++curIter )
-        {
-            delete *curIter;
-        }
+        for( auto curIter : lParam )
+            delete curIter;
         return toReturn;
     };
 };
+
+/**
+ * @brief Opérateur +
+ * @param toAdd1 CapyConvertibleContainer à ajouter
+ * @param toAdd2 CapyConvertibleContainer à ajouter
+ * @return CapyConvertibleContainer résultat
+ */
+CapyConvertibleContainer operator+( const CapyConvertibleContainer& toAdd1,
+                                    const CapyConvertibleContainer& toAdd2 );
 
 class CapyConvertibleFactorKeyword
 {

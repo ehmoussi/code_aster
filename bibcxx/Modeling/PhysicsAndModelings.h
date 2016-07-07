@@ -59,4 +59,7 @@ extern const Modelings MechanicsModelings[nbModelingsMechanics];
 const int nbModelingsThermal = 3;
 extern const Modelings ThermalModelings[nbModelingsThermal];
 
+const int nbModelingsAcoustics = 2;
+extern const Modelings AcousticsModelings[nbModelingsAcoustics];
+
 #endif /* PHYSICSANDMODELISATIONS_H_ */

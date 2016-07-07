@@ -46,6 +46,7 @@ __PYX_EXTERN_C DL_IMPORT(void) getfac_(char *, long *, unsigned int);
 __PYX_EXTERN_C DL_IMPORT(int) existsCommandFactorAndSimpleKeyword(char *, int, char *);
 __PYX_EXTERN_C DL_IMPORT(char) **getCommandKeywordValueString(char *, int, char *, int *);
 __PYX_EXTERN_C DL_IMPORT(double) *getCommandKeywordValueDouble(char *, int, char *, int *);
+__PYX_EXTERN_C DL_IMPORT(double) *getCommandKeywordValueComplex(char *, int, char *, int *);
 __PYX_EXTERN_C DL_IMPORT(long) *getCommandKeywordValueInt(char *, int, char *, int *);
 
 /*
@@ -360,59 +361,35 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                si plus de valeur que mxval nbval <0 et valeur abs = nbre valeurs
                si moins de valeurs que mxval nbval>0 et egal au nombre retourne
         */
-    fprintf(fileOut, "GETVC8_WRAP\n");
-    INTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
-        PyObject *res  = (PyObject*)0 ;
-        PyObject *tup  = (PyObject*)0 ;
-        int ok         = 0 ;
-        int nval       = 0 ;
-        int idef       = 0 ;
-        int ioc        = 0 ;
-        char *mfc      = (char*)0 ;
-        char *mcs      = (char*)0 ;
-        mfc = MakeCStrFromFStr(motfac,lfac);
-                                                     DEBUG_ASSERT(mfc!=(char*)0);
-        mcs = MakeCStrFromFStr(motcle,lcle);
-        /*
-                VERIFICATION
-                Si le mot-cle simple est recherche sous un mot-cle facteur et uniquement dans ce
-                cas, le numero d'occurrence (*iocc) doit etre strictement positif.
-                Si le mot-cle simple est recherche sans un mot-cle facteur iocc n'est pas utilise
-
-        */
-        if( isalpha(mfc[0])&&(*iocc<=0) )
+    char* tmp = MakeCStrFromFStr(motfac, lfac);
+    char* tmp2 = MakeCStrFromFStr(motcle, lcle);
+    fprintf(fileOut, "GETVC8_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
+    if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
+    {
+        *nbval = 0;
+    }
+    else
+    {
+        double* retour = NULL;
+        int nbVal = 0;
+        retour = getCommandKeywordValueComplex(tmp, (int)*iocc - 1, tmp2, &nbVal);
+        *nbval = nbVal;
+        if ( (*nbval) > (*mxval) )
         {
-                printf( "<F> GETVC8 : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
-                printf( "             commande : %s\n",
-                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
-                printf( "             mot-cle facteur : %s\n",mfc) ;
-                printf( "             mot-cle simple  : %s\n",mcs) ;
-                MYABORT( "erreur d'utilisation detectee") ;
+            *nbval = -(*nbval);
         }
-
-        ioc=(int)*iocc ;
-        ioc=ioc-1 ;
-        res=PyObject_CallMethod(get_sh_etape(),"getvc8","ssii",mfc,mcs,ioc,(int)*mxval);
-
-        /*  si le retour est NULL : exception Python a transferer
-            normalement a l appelant mais FORTRAN ??? */
-        if (res == NULL)MYABORT("erreur dans la partie Python");
-                                                     DEBUG_ASSERT(PyTuple_Check(res)) ;
-        ok = PyArg_ParseTuple(res,"iOi",&nval,&tup,&idef);
-        if(!ok)MYABORT("erreur dans la partie Python");
-
-        *nbval = (INTEGER)nval;
-        if ( nval < 0 ) nval=(int)*mxval;
-        convc8(nval,tup,val);
-        *iarg = (INTEGER)idef;
-
-        Py_DECREF(res);
-        FreeStr(mfc);
-        FreeStr(mcs);
-        return ;
+        else
+        {
+            int i;
+            for ( i = 0; i < 2*(*nbval); ++i )
+            {
+                val[i] = retour[i];
+            }
+            free(retour);
+        }
+    }
+    FreeStr(tmp);
+    FreeStr(tmp2);
 }
 
 
@@ -442,9 +419,9 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
     fprintf(fileOut, "GETVR8_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
     if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
-        {
+    {
         *nbval = 0;
-        }
+    }
     else
     {
         double* retour = NULL;
