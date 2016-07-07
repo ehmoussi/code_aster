@@ -33,6 +33,8 @@
 #include "Loads/PhysicalQuantity.h"
 #include "Utilities/CapyConvertibleValue.h"
 #include "DataStructure/DataStructure.h"
+#include "MemoryManager/JeveuxVector.h"
+#include "DataFields/PCFieldOnMesh.h"
 
 extern const char SANS_GROUP_MA[];
 extern const char SANS_GROUP_NO[];
@@ -127,8 +129,22 @@ private:
     /** @brief Conteneur des mots-clés avec traduction */
     CapyConvertibleContainer                    _toCapyConverter;
 
+    JeveuxVectorChar8                           _modelName;
+    JeveuxVectorChar8                           _type;
+    PCFieldOnMeshComplexPtr                     _imposedValues;
+    PCFieldOnMeshComplexPtr                     _multiplier;
+    PCFieldOnMeshComplexPtr                     _impedanceValues;
+    PCFieldOnMeshComplexPtr                     _speedValues;
+
 public:
-    AcousticsLoadInstance()
+    AcousticsLoadInstance():
+        DataStructure( getNewResultObjectName(), "CHAR_ACOU" ),
+        _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),
+        _type( JeveuxVectorChar8( getName() + ".TYPE" ) ),
+        _imposedValues( PCFieldOnMeshComplexPtr( new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.CIMPO" ) ) ),
+        _multiplier( PCFieldOnMeshComplexPtr( new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.CMULT" ) ) ),
+        _impedanceValues( PCFieldOnMeshComplexPtr( new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.IMPED" ) ) ),
+        _speedValues( PCFieldOnMeshComplexPtr( new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.VITFA" ) ) )
     {
         _toCapyConverter.add( new CapyConvertibleValue< ModelPtr >
                                                       ( true, "MODELE", _supportModel, true ) );
