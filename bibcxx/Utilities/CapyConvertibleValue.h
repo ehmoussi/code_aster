@@ -27,6 +27,7 @@
 
 #include <type_traits>
 #include <typeinfo>
+#include <map>
 #include "astercxx.h"
 
 #include "DataStructure/DataStructure.h"
@@ -284,7 +285,7 @@ public:
 
 private:
     /** @brief Pointeur vers la valeur à traduire */
-    Type*                  _value;
+    Type&                  _value;
     /** @brief Dictionnaire permettant la traduction dans les cas non scalaires */
     MapOfTypeMatchingTypes _matchingValues;
 
@@ -304,7 +305,7 @@ public:
                           const VectorOfBaseTypes val1, const VectorOfBaseMatchingTypes val2,
                           bool isSet = true ) throw ( std::runtime_error ):
         GenericCapyConvertibleValue( isMandatory, keyword, isSet ),
-        _value( &value )
+        _value( value )
     {
         if ( val1.size() != val2.size() )
             throw std::runtime_error( "Programming error" );
@@ -328,7 +329,7 @@ public:
     CapyConvertibleValue( const bool isMandatory, const std::string keyword,
                           Type& value, bool isSet = true ):
         GenericCapyConvertibleValue( isMandatory, keyword, isSet ),
-        _value( &value )
+        _value( value )
     {};
 
 private:
@@ -349,7 +350,7 @@ private:
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
         if( _isSet )
-            return new GenParam( _name, *_value, _isMandatory );
+            return new GenParam( _name, _value, _isMandatory );
         else
             return new GenParam( _name, _isMandatory );
     };
@@ -360,7 +361,7 @@ private:
                              std::is_same< M, std::string >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
-        MapConstIterator curIter = _matchingValues.find( *_value );
+        MapConstIterator curIter = _matchingValues.find( _value );
         if ( curIter == _matchingValues.end() )
             throw std::runtime_error( "Programming error" );
         return new GenParam( _name, (*curIter).second, _isMandatory );
@@ -383,7 +384,7 @@ private:
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
         MatchingType toReturn;
-        for( const auto& curIter : *_value )
+        for( const auto& curIter : _value )
         {
             MapConstIterator curIter2 = _matchingValues.find( curIter );
             if ( curIter2 == _matchingValues.end() )
@@ -410,7 +411,7 @@ private:
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
         MatchingType toReturn;
-        for( const auto& curIter : *_value )
+        for( const auto& curIter : _value )
             toReturn.push_back( (curIter)->getName() );
 
         if( _isSet )
@@ -433,7 +434,7 @@ private:
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
         if( _isSet )
-            return new GenParam( _name, (*_value)->getName(), _isMandatory );
+            return new GenParam( _name, (_value)->getName(), _isMandatory );
         else
             return new GenParam( _name, _isMandatory );
     };
@@ -461,7 +462,7 @@ private:
                              !std::is_same< T, MeshEntityPtr >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
-        MapConstIterator curIter = _matchingValues.find( *_value );
+        MapConstIterator curIter = _matchingValues.find( _value );
         if ( curIter == _matchingValues.end() )
             throw std::runtime_error( "Programming error" );
         return new GenParam( _name, (*curIter).second, _isMandatory );
@@ -516,13 +517,25 @@ private:
     typedef MapOfCapyValuePtr::iterator MapOfCapyValuePtrIter;
     /** @typedef Itérateur constant sur un MapOfCapyValuePtr */
     typedef MapOfCapyValuePtr::const_iterator MapOfCapyValuePtrCIter;
+
     /** @typedef Map contenant les mots-clés */
     MapOfCapyValuePtr _container;
+
+    std::string       _nameOfFKW;
+    bool              _isFKW;
 
     friend CapyConvertibleContainer operator+( const CapyConvertibleContainer&,
                                                const CapyConvertibleContainer& );
 
 public:
+    CapyConvertibleContainer(): _nameOfFKW( "" ),
+                                _isFKW( false )
+    {};
+
+    CapyConvertibleContainer( const std::string& name ): _nameOfFKW( name ),
+                                                         _isFKW( true )
+    {};
+
     /**
     * @brief Opérateur +=
     * @param toAdd SyntaxMapContainer à ajouter
@@ -553,6 +566,16 @@ public:
         _container[ valueToAdd->getNameOfKeyWord() ] = valueToAdd;
     };
 
+    std::string getName() const
+    {
+        return _nameOfFKW;
+    };
+
+    bool isFactorKeyword() const
+    {
+        return _isFKW;
+    };
+
     /**
      * @brief Fonction permettant de récupérer un CapyValuePtr à partir de son nom
      * @param name Nom recherché
@@ -578,6 +601,12 @@ public:
             return false;
         _container.erase( curIter );
         return true;
+    };
+
+    std::string setName( const std::string& name )
+    {
+        _nameOfFKW = name;
+        _isFKW = true;
     };
 
     /**
@@ -638,24 +667,21 @@ public:
     ListSyntaxMapContainer toSyntaxMapContainer() const
     {
         ListSyntaxMapContainer toReturn;
-        for( VectorCCCCIter curIter = _container.begin();
-             curIter != _container.end();
-             ++curIter )
-        {
-            toReturn.push_back( curIter->toSyntaxMapContainer() );
-        }
+        for( auto curIter : _container )
+            toReturn.push_back( curIter.toSyntaxMapContainer() );
         return toReturn;
     };
 };
 
-typedef std::vector< CapyConvertibleFactorKeyword > VectorCCFK;
-typedef VectorCCFK::const_iterator VectorCCFKCIter;
+typedef std::map< std::string, CapyConvertibleFactorKeyword > MapStringCCFK;
+typedef MapStringCCFK::const_iterator MapStringCCFKCIter;
+typedef std::pair< std::string, CapyConvertibleFactorKeyword > PairStringCCFK;
 
 class CapyConvertibleSyntax
 {
 private:
     CapyConvertibleContainer _skwContainer;
-    VectorCCFK               _fkwContainer;
+    MapStringCCFK            _fkwContainer;
 
 public:
     CapyConvertibleSyntax()
@@ -663,12 +689,34 @@ public:
 
     void addFactorKeywordValues( const CapyConvertibleFactorKeyword& toAdd )
     {
-        _fkwContainer.push_back( toAdd );
+        _fkwContainer.insert( PairStringCCFK(toAdd.getName(), toAdd) );
     };
 
     void setSimpleKeywordValues( const CapyConvertibleContainer& toAdd )
     {
         _skwContainer = toAdd;
+    };
+
+    void addCapyConvertibleContainer( const CapyConvertibleContainer& toAdd )
+        throw( std::runtime_error )
+    {
+        if( ! toAdd.isFactorKeyword() )
+        {
+            _skwContainer += toAdd;
+        }
+        else
+        {
+            if( toAdd.getName() == "" )
+                throw std::runtime_error( "Programing error" );
+
+            if( _fkwContainer.find( toAdd.getName() ) == _fkwContainer.end() )
+            {
+                CapyConvertibleFactorKeyword newCCFK( toAdd.getName() );
+                _fkwContainer.insert( PairStringCCFK( toAdd.getName(), newCCFK ) );
+            }
+            auto iter = _fkwContainer.find( toAdd.getName() );
+            (*iter).second.addContainer( toAdd );
+        }
     };
 
     /**
@@ -679,13 +727,9 @@ public:
     {
         SyntaxMapContainer toReturn = _skwContainer.toSyntaxMapContainer();
 
-        for( VectorCCFKCIter curIter = _fkwContainer.begin();
-             curIter != _fkwContainer.end();
-             ++curIter )
-        {
-            const std::string& iterName = curIter->getName();
-            toReturn.container[ iterName ] = curIter->toSyntaxMapContainer();
-        }
+        for( auto curIter : _fkwContainer )
+            toReturn.container[ curIter.first ] = curIter.second.toSyntaxMapContainer();
+
         return toReturn;
     };
 };
