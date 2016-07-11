@@ -47,6 +47,7 @@ class FieldOnNodesInstance: public DataStructure
 private:
     typedef SimpleFieldOnNodesInstance< ValueType > SimpleFieldOnNodesValueTypeInstance;
     typedef boost::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesValueTypePtr;
+
     /** @brief Vecteur Jeveux '.DESC' */
     JeveuxVectorLong        _descriptor;
     /** @brief Vecteur Jeveux '.REFE' */

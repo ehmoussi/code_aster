@@ -33,6 +33,7 @@
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 #include "DataFields/FieldOnNodes.h"
+#include "DataFields/FieldOnElements.h"
 #include "Discretization/DOFNumbering.h"
 
 /**
@@ -43,14 +44,22 @@
 class ResultsContainerInstance: public DataStructure
 {
 private:
-    typedef std::vector< FieldOnNodesDoublePtr > VectorOfFields;
+    typedef std::vector< FieldOnNodesDoublePtr > VectorOfFieldsNodes;
+    typedef std::vector< FieldOnElementsDoublePtr > VectorOfFieldsElements;
 
     /** @typedef std::map d'une chaine et des pointers vers toutes les DataStructure */
-    typedef std::map< std::string, VectorOfFields > mapStrVOF;
+    typedef std::map< std::string, VectorOfFieldsNodes > mapStrVOFN;
     /** @typedef Iterateur sur le std::map */
-    typedef mapStrVOF::iterator mapStrVOFIterator;
-    /** @typedef Valeur contenue dans mapStrVOF */
-    typedef mapStrVOF::value_type mapStrVOFValue;
+    typedef mapStrVOFN::iterator mapStrVOFNIterator;
+    /** @typedef Valeur contenue dans mapStrVOFN */
+    typedef mapStrVOFN::value_type mapStrVOFNValue;
+
+    /** @typedef std::map d'une chaine et des pointers vers toutes les DataStructure */
+    typedef std::map< std::string, VectorOfFieldsElements > mapStrVOFE;
+    /** @typedef Iterateur sur le std::map */
+    typedef mapStrVOFE::iterator mapStrVOFEIterator;
+    /** @typedef Valeur contenue dans mapStrVOFE */
+    typedef mapStrVOFE::value_type mapStrVOFEValue;
 
     /** @brief Pointeur de nom Jeveux '.DESC' */
     JeveuxBidirectionalMap _symbolicNamesOfFields;
@@ -65,8 +74,10 @@ private:
     /** @brief Nombre de numéros d'ordre */
     int                    _nbRanks;
 
-    /** @brief Liste des champs */
-    mapStrVOF                            _dictOfVectorOfFields;
+    /** @brief Liste des champs aux noeuds */
+    mapStrVOFN                           _dictOfVectorOfFieldsNodes;
+    /** @brief Liste des champs aux éléments */
+    mapStrVOFE                           _dictOfVectorOfFieldsElements;
     /** @brief Liste des NUME_DDL */
     std::vector< DOFNumberingPtr >       _listOfDOFNum;
 
@@ -120,6 +131,15 @@ public:
     {
         return _listOfDOFNum[ _listOfDOFNum.size() - 1 ];
     };
+
+    /**
+     * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
+     * @param name nom Aster du champ
+     * @param rank numéro d'ordre
+     * @return FieldOnElementsDoublePtr pointant vers le champ
+     */
+    FieldOnElementsDoublePtr getRealFieldOnElements( const std::string name, const int rank ) const
+        throw ( std::runtime_error );
 
     /**
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
