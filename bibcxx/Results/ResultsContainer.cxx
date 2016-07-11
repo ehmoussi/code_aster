@@ -53,17 +53,42 @@ bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
         if( numberOfSerialNum != curIter.size() )
             throw std::runtime_error( "Programming error" );
 
-        auto curIter2 = _dictOfVectorOfFields.find( nomSymb );
-        if( curIter2 == _dictOfVectorOfFields.end() )
-            _dictOfVectorOfFields[ nomSymb ] = VectorOfFields( numberOfSerialNum );
+        auto curIter2 = _dictOfVectorOfFieldsNodes.find( nomSymb );
+        if( curIter2 == _dictOfVectorOfFieldsNodes.end() )
+            _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum );
 
         for( int rank = 0; rank < curIter.size(); ++rank )
         {
             std::string name( trim( curIter[ rank ].toString() ) );
             if( name != "" )
             {
-                FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( name ) );
-                _dictOfVectorOfFields[ nomSymb ][ rank ] = result;
+                const std::string questi( "TYPE_CHAMP" );
+                const std::string typeco( "CHAMP" );
+                long repi = 0, ier = 0;
+                char* repk = MakeBlankFStr(32);
+                const std::string arret( "C" );
+                const std::string questi2( "TYPE_SCA" );
+
+                CALL_DISMOI( questi2.c_str(), name.c_str(), typeco.c_str(),
+                             &repi, repk, arret.c_str(), &ier );
+                const std::string resu2( trim( repk ) );
+                if( resu2 != 'R' )
+                    throw std::runtime_error( "Not yet implemented" );
+
+                CALL_DISMOI( questi.c_str(), name.c_str(), typeco.c_str(),
+                             &repi, repk, arret.c_str(), &ier );
+                const std::string resu( trim( repk ) );
+
+                if( resu == "NOEU" )
+                {
+                    FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( name ) );
+                    _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ] = result;
+                }
+                else if( resu == "ELEM" || resu == "ELNO" || resu == "ELGA" )
+                {
+                    FieldOnElementsDoublePtr result( new FieldOnElementsDoubleInstance( name ) );
+                    _dictOfVectorOfFieldsElements[ nomSymb ][ rank ] = result;
+                }
             }
         }
         ++cmpt;
@@ -98,13 +123,28 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( cons
     std::string bis( returnName.c_str(), 19 );
     FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
 
-    auto curIter = _dictOfVectorOfFields.find( name );
-    if( curIter == _dictOfVectorOfFields.end() )
+    auto curIter = _dictOfVectorOfFieldsNodes.find( name );
+    if( curIter == _dictOfVectorOfFieldsNodes.end() )
     {
-        _dictOfVectorOfFields[ name ] = VectorOfFields( _nbRanks );
+        _dictOfVectorOfFieldsNodes[ name ] = VectorOfFieldsNodes( _nbRanks );
     }
-    _dictOfVectorOfFields[ name ][ rank ] = result;
+    _dictOfVectorOfFieldsNodes[ name ][ rank ] = result;
     return result;
+};
+
+FieldOnElementsDoublePtr ResultsContainerInstance::getRealFieldOnElements( const std::string name,
+                                                                           const int rank ) const
+    throw ( std::runtime_error )
+{
+    if( rank > _nbRanks )
+        throw std::runtime_error( "Order number out of range" );
+
+    auto curIter = _dictOfVectorOfFieldsElements.find( trim( name ) );
+    if( curIter == _dictOfVectorOfFieldsElements.end() )
+        throw std::runtime_error( "Field " + name + " unknown in the results container" );
+
+    FieldOnElementsDoublePtr toReturn = curIter->second[ rank ];
+    return toReturn;
 };
 
 FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::string name,
@@ -114,8 +154,8 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::
     if( rank > _nbRanks )
         throw std::runtime_error( "Order number out of range" );
 
-    auto curIter = _dictOfVectorOfFields.find( trim( name ) );
-    if( curIter == _dictOfVectorOfFields.end() )
+    auto curIter = _dictOfVectorOfFieldsNodes.find( trim( name ) );
+    if( curIter == _dictOfVectorOfFieldsNodes.end() )
         throw std::runtime_error( "Field " + name + " unknown in the results container" );
 
     FieldOnNodesDoublePtr toReturn = curIter->second[ rank ];

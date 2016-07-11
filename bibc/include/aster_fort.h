@@ -49,9 +49,9 @@ extern void DEFPSSSS(ULOPEN,ulopen,INTEGER *,char *,STRING_SIZE,char *,STRING_SI
 extern void DEFP(FCLOSE,fclose,INTEGER *);
 
 #define CALL_DISMOI(a,b,c,d,e,f,g) CALLSSSPSSP(DISMOI,dismoi,a,b,c,d,e,f,g)
-extern void DEFSSSPSSP(DISMOI, dismoi, char *,STRING_SIZE,
-                       char *,STRING_SIZE, char *,STRING_SIZE, INTEGER *,
-                       char *,STRING_SIZE, char *,STRING_SIZE, INTEGER *);
+extern void DEFSSSPSSP(DISMOI, dismoi, const char *,STRING_SIZE,
+                       const char *,STRING_SIZE, const char *,STRING_SIZE, INTEGER *,
+                       char *,STRING_SIZE, const char *,STRING_SIZE, INTEGER *);
 
 #define CALL_POSTKUTIL(a,b,c,d) CALLSSSS(POSTKUTIL,postkutil,a,b,c,d)
 extern void DEFSSSS(POSTKUTIL,postkutil,char *,STRING_SIZE,char *,STRING_SIZE,
@@ -245,6 +245,10 @@ void DEFSS(DETRSD,detrsd, const char*, STRING_SIZE, const char*, STRING_SIZE);
 
 #define CALL_CNOCNS(a, b, c) CALLSSS(CNOCNS, cnocns, a, b, c)
 void DEFSSS(CNOCNS,cnocns, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                           const char*, STRING_SIZE);
+
+#define CALL_CELCES(a, b, c) CALLSSS(CELCES, celces, a, b, c)
+void DEFSSS(CELCES,celces, const char*, STRING_SIZE, const char*, STRING_SIZE,
                            const char*, STRING_SIZE);
 
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
