@@ -72,7 +72,7 @@ bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
                 CALL_DISMOI( questi2.c_str(), name.c_str(), typeco.c_str(),
                              &repi, repk, arret.c_str(), &ier );
                 const std::string resu2( trim( repk ) );
-                if( resu2 != 'R' )
+                if( resu2 != "R" )
                     throw std::runtime_error( "Not yet implemented" );
 
                 CALL_DISMOI( questi.c_str(), name.c_str(), typeco.c_str(),
