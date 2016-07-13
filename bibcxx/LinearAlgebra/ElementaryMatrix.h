@@ -59,6 +59,11 @@ class ElementaryMatrixInstance: public DataStructure
         /** @brief Chargements Mecaniques */
         ListMecaLoad       _listOfMechanicalLoads;
 
+        /**
+         * @brief Calcul des matrices elementaires pour une option quelconque
+         */
+        bool computeMatrix( const std::string& optionName ) throw ( std::runtime_error );
+
     public:
         /**
          * @brief Constructeur
@@ -95,10 +100,9 @@ class ElementaryMatrixInstance: public DataStructure
         bool computeMechanicalRigidity() throw ( std::runtime_error );
 
         /**
-         * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
+         * @brief Calcul des matrices elementaires pour l'option MASS_MECA
          */
         bool computeMechanicalMass() throw ( std::runtime_error );
-
 
         /**
          * @brief Methode permettant de savoir si les matrices elementaires sont vides

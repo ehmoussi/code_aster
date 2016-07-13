@@ -63,6 +63,10 @@ cdef class Mesh( DataStructure ):
         """Return the type of DataStructure"""
         return self.getInstance().getType()
 
+    def addGroupOfNodesFromNodes(self, name, vec):
+        """Add a group of nodes from a list of nodes"""
+        return self.getInstance().addGroupOfNodesFromNodes(name, vec)
+
     def getCoordinates(self):
         """Return the coordinates as a FieldOnNodesDouble object"""
         coordinates = FieldOnNodesDouble()
