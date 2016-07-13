@@ -25,6 +25,7 @@
  */
 
 #include "Utilities/SyntaxDictionary.h"
+#include "Utilities/CapyConvertibleValue.h"
 
 /** @brief Déclarations des fonctions cython */
 __PYX_EXTERN_C DL_IMPORT(void) newCommandSyntax(const char *);
@@ -90,6 +91,18 @@ class CommandSyntaxCython
         void define( SyntaxMapContainer& syntax )
         {
             _dictCommand = syntax.convertToPythonDictionnary();
+            Py_INCREF( _dictCommand );
+            defineCommandSyntax( _dictCommand );
+        };
+
+        /**
+         * @brief Fonction permettant de definir la syntax
+         * @param syntax Objet de type CapyConvertibleSyntax
+         */
+        void define( const CapyConvertibleSyntax& syntax )
+        {
+            SyntaxMapContainer test = syntax.toSyntaxMapContainer();
+            _dictCommand = test.convertToPythonDictionnary();
             Py_INCREF( _dictCommand );
             defineCommandSyntax( _dictCommand );
         };

@@ -28,7 +28,8 @@
 // emulate_LIRE_MAILLAGE_MED.h is auto-generated and requires Mesh.h and Python.h
 #include "Python.h"
 #include "Mesh/Mesh.h"
-
+#include "Utilities/CapyConvertibleValue.h"
+#include "RunManager/CommandSyntaxCython.h"
 
 MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE" ),
                         _jeveuxName( getName() ),
@@ -46,7 +47,40 @@ MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE
     assert(_jeveuxName.size() == 8);
 };
 
-bool MeshInstance::build( )
+bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const VectorString& vec )
+    throw( std::runtime_error )
+{
+    CommandSyntaxCython cmdSt( "DEFI_GROUP" );
+    cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+
+    CapyConvertibleContainer toCapyConverter;
+    toCapyConverter.add( new CapyConvertibleValue< std::string >
+                                ( false, "MAILLAGE", getName(), true ) );
+
+    CapyConvertibleContainer toCapyConverter2( "CREA_GROUP_NO" );
+    toCapyConverter2.add( new CapyConvertibleValue< VectorString >
+                                ( false, "NOEUD", vec, true ) );
+    toCapyConverter2.add( new CapyConvertibleValue< std::string >
+                                ( false, "NOM", name, true ) );
+
+    CapyConvertibleSyntax syntax;
+    syntax.setSimpleKeywordValues( toCapyConverter );
+    syntax.addCapyConvertibleContainer( toCapyConverter2 );
+
+    cmdSt.define( syntax );
+    try
+    {
+        INTEGER op = 104;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    return true;
+};
+
+bool MeshInstance::build()
 {
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
     _dimensionInformations->updateValuePointer();

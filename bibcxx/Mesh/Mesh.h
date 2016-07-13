@@ -41,87 +41,95 @@
  */
 class MeshInstance: public DataStructure
 {
-    private:
-        /** @brief Nom Jeveux du maillage */
-        const std::string      _jeveuxName;
-        /** @brief Objet Jeveux '.DIME' */
-        JeveuxVectorLong       _dimensionInformations;
-        /** @brief Pointeur de nom Jeveux '.NOMNOE' */
-        JeveuxBidirectionalMap _nameOfNodes;
-        /** @brief Champ aux noeuds '.COORDO' */
-        FieldOnNodesDoublePtr  _coordinates;
-        /** @brief Collection Jeveux '.GROUPENO' */
-        JeveuxCollectionLong   _groupsOfNodes;
-        /** @brief Collection Jeveux '.CONNEX' */
-        JeveuxCollectionLong   _connectivity;
-        /** @brief Pointeur de nom Jeveux '.NOMMAIL' */
-        JeveuxBidirectionalMap _nameOfElements;
-        /** @brief Objet Jeveux '.TYPMAIL' */
-        JeveuxVectorLong       _elementsType;
-        /** @brief Objet Jeveux '.GROUPEMA' */
-        JeveuxCollectionLong   _groupsOfElements;
-        /** @brief Booleen indiquant si le maillage est vide */
-        bool                   _isEmpty;
+private:
+    /** @brief Nom Jeveux du maillage */
+    const std::string      _jeveuxName;
+    /** @brief Objet Jeveux '.DIME' */
+    JeveuxVectorLong       _dimensionInformations;
+    /** @brief Pointeur de nom Jeveux '.NOMNOE' */
+    JeveuxBidirectionalMap _nameOfNodes;
+    /** @brief Champ aux noeuds '.COORDO' */
+    FieldOnNodesDoublePtr  _coordinates;
+    /** @brief Collection Jeveux '.GROUPENO' */
+    JeveuxCollectionLong   _groupsOfNodes;
+    /** @brief Collection Jeveux '.CONNEX' */
+    JeveuxCollectionLong   _connectivity;
+    /** @brief Pointeur de nom Jeveux '.NOMMAIL' */
+    JeveuxBidirectionalMap _nameOfElements;
+    /** @brief Objet Jeveux '.TYPMAIL' */
+    JeveuxVectorLong       _elementsType;
+    /** @brief Objet Jeveux '.GROUPEMA' */
+    JeveuxCollectionLong   _groupsOfElements;
+    /** @brief Booleen indiquant si le maillage est vide */
+    bool                   _isEmpty;
 
-    public:
-        /**
-         * @brief Constructeur
-         */
-        MeshInstance();
+public:
+    /**
+     * @brief Constructeur
+     */
+    MeshInstance();
 
-        /**
-         * @brief Destructeur
-         */
-        ~MeshInstance()
-        {
+    /**
+     * @brief Destructeur
+     */
+    ~MeshInstance()
+    {
 #ifdef __DEBUG_GC__
-            std::cout << "Mesh.destr: " << this->getName() << std::endl;
+        std::cout << "Mesh.destr: " << this->getName() << std::endl;
 #endif
-        };
+    };
 
-        /**
-         * @brief Recuperation des coordonnees du maillage
-         * @return champ aux noeuds contenant les coordonnees des noeuds du maillage
-         */
-        const FieldOnNodesDoublePtr getCoordinates() const
-        {
-            return _coordinates;
-        };
+    /**
+     * @brief Ajout d'un groupe de noeuds au maillage en partant d'une liste noeuds
+     * @param name nom du groupe à créer
+     * @param vec liste des noeuds
+     * @return Retourne true si tout s'est bien déroulé
+     */
+    bool addGroupOfNodesFromNodes( const std::string& name,
+                                   const VectorString& vec ) throw( std::runtime_error );
 
-        /**
-         * @brief Teste l'existence d'un groupe de mailles dans le maillage
-         * @return true si le groupe existe
-         */
-        bool hasGroupOfElements( std::string name ) const
-        {
-            return _groupsOfElements->existsObject(name) ;
-        };
+    /**
+     * @brief Construction de l'objet Mesh
+         On met à jour les pointeurs vers les objets Jeveux.
+     * @return Retourne true si tout s'est bien déroulé
+     */
+    bool build();
 
-        /**
-         * @brief Teste l'existence d'un groupe de noeuds dans le maillage
-         * @return true si le groupe existe
-         */
-        bool hasGroupOfNodes( std::string name ) const
-        {
-            return _groupsOfNodes->existsObject(name) ;
-        };
+    /**
+     * @brief Recuperation des coordonnees du maillage
+     * @return champ aux noeuds contenant les coordonnees des noeuds du maillage
+     */
+    const FieldOnNodesDoublePtr getCoordinates() const
+    {
+        return _coordinates;
+    };
 
-        /**
-         * @brief Fonction permettant de savoir si un maillage est vide (non relu par exemple)
-         * @return retourne true si le maillage est vide
-         */
-        bool isEmpty() const
-        {
-            return _isEmpty;
-        };
+    /**
+     * @brief Teste l'existence d'un groupe de mailles dans le maillage
+     * @return true si le groupe existe
+     */
+    bool hasGroupOfElements( std::string name ) const
+    {
+        return _groupsOfElements->existsObject(name) ;
+    };
 
-        /**
-         * @brief Construction de l'objet Mesh
-                On met à jour les pointeurs vers les objets Jeveux.
-         * @return Retourne true si tout s'est bien déroulé
-         */
-        bool build( );
-        
+    /**
+     * @brief Teste l'existence d'un groupe de noeuds dans le maillage
+     * @return true si le groupe existe
+     */
+    bool hasGroupOfNodes( std::string name ) const
+    {
+        return _groupsOfNodes->existsObject(name) ;
+    };
+
+    /**
+     * @brief Fonction permettant de savoir si un maillage est vide (non relu par exemple)
+     * @return retourne true si le maillage est vide
+     */
+    bool isEmpty() const
+    {
+        return _isEmpty;
+    };
 };
 
 

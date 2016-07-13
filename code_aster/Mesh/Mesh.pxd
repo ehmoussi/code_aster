@@ -18,6 +18,7 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+from libcpp.vector cimport vector
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
@@ -25,29 +26,32 @@ from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 
 cdef extern from "Mesh/Mesh.h":
 
+    ctypedef vector[string] VectorString
+
     cdef cppclass MeshInstance:
 
         MeshInstance()
         const FieldOnNodesDoublePtr getCoordinates()
         string getName()
         string getType()
-        bint hasGroupOfElements( string name )
-        bint hasGroupOfNodes( string name )
+        bint addGroupOfNodesFromNodes(const string, const VectorString vec)
+        bint hasGroupOfElements(string name)
+        bint hasGroupOfNodes(string name)
         bint isEmpty()
         bint build()
-        void debugPrint( int logicalUnit )
+        void debugPrint(int logicalUnit)
 
     cdef cppclass MeshPtr:
 
-        MeshPtr( MeshPtr& )
-        MeshPtr( MeshInstance* )
+        MeshPtr(MeshPtr&)
+        MeshPtr(MeshInstance*)
         MeshInstance* get()
 
 
-cdef class Mesh( DataStructure ):
+cdef class Mesh(DataStructure):
 
     cdef MeshPtr* _cptr
 
-    cdef set( self, MeshPtr other )
-    cdef MeshPtr* getPtr( self )
-    cdef MeshInstance* getInstance( self )
+    cdef set(self, MeshPtr other)
+    cdef MeshPtr* getPtr(self)
+    cdef MeshInstance* getInstance(self)
