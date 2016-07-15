@@ -31,7 +31,7 @@ std::string JeveuxBidirectionalMapInstance::findStringOfElement( long elementNum
 {
     char* charJeveuxObjName = MakeBlankFStr(32);
     char* charName = MakeBlankFStr(32);
-    CALL_JEXNUM(charJeveuxObjName, _jeveuxName.c_str(),
+    CALL_JEXNUM(charJeveuxObjName, _name.c_str(),
                 &elementNumber);
     CALL_JENUNO(charJeveuxObjName, charName);
     return std::string(charName);
@@ -40,7 +40,7 @@ std::string JeveuxBidirectionalMapInstance::findStringOfElement( long elementNum
 long JeveuxBidirectionalMapInstance::findIntegerOfElement( std::string elementName )
 {
     char* charJeveuxObjName = MakeBlankFStr(32);
-    CALL_JEXNOM(charJeveuxObjName, _jeveuxName.c_str(), elementName.c_str() );
+    CALL_JEXNOM(charJeveuxObjName, _name.c_str(), elementName.c_str() );
     long resu = -1;
     CALL_JENONU(charJeveuxObjName, &resu);
     return resu;

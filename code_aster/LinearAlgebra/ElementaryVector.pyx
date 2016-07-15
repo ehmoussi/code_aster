@@ -68,14 +68,6 @@ cdef class ElementaryVector( DataStructure ):
         assemblyVector.set( self.getInstance().assembleVector( deref( currentNumerotation.getPtr() ) ) )
         return assemblyVector
 
-    def computeMechanicalLoads( self ):
-        """Compute mechanical load"""
-        return self.getInstance().computeMechanicalLoads()
-
-    def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
-        """Set the material"""
-        self.getInstance().setMaterialOnMesh( deref( curMatOnMesh.getPtr() ) )
-
     def debugPrint( self, logicalUnit = 6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )

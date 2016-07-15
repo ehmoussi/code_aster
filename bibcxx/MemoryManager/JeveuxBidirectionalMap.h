@@ -27,36 +27,30 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
+#include "MemoryManager/JeveuxObject.h"
 
 /**
  * @class JeveuxBidirectionalMapInstance
  * @brief Equivalent du pointeur de nom dans Jeveux
  * @author Nicolas Sellenet
  */
-class JeveuxBidirectionalMapInstance
+class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance
 {
     private:
-        /** @brief Nom Jeveux de l'objet */
-        std::string _jeveuxName;
 
     public:
         /**
          * @brief Constructeur
          * @param name Nom Jeveux de l'objet
          */
-        JeveuxBidirectionalMapInstance( std::string name ): _jeveuxName( name )
+        JeveuxBidirectionalMapInstance( std::string name ): JeveuxObjectInstance( name )
         {};
 
         /**
          * @brief Destructeur
          */
         ~JeveuxBidirectionalMapInstance()
-        {
-            if ( _jeveuxName != "" )
-            {
-                CALL_JEDETR( _jeveuxName.c_str() );
-            }
-        };
+        {};
 
         /**
          * @brief Recuperation de la chaine correspondante a l'entier

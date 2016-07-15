@@ -42,78 +42,83 @@
  */
 class DiscreteProblemInstance
 {
-    private:
-        /** @brief Etude definie par l'utilisateur */
-        StudyDescriptionPtr _study;
+private:
+    /** @brief Etude definie par l'utilisateur */
+    StudyDescriptionPtr _study;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param StudyDescriptionPtr Etude utilisateur
-         */
-        DiscreteProblemInstance( StudyDescriptionPtr& currentStudy ):
-            _study( currentStudy )
-        {};
+public:
+    /**
+     * @brief Constructeur
+     * @param StudyDescriptionPtr Etude utilisateur
+     */
+    DiscreteProblemInstance( StudyDescriptionPtr& currentStudy ):
+        _study( currentStudy )
+    {};
 
-        /**
-         * @brief Desctructeur
-         */
-        ~DiscreteProblemInstance()
-        {};
+    /**
+     * @brief Desctructeur
+     */
+    ~DiscreteProblemInstance()
+    {};
 
-        /**
-         * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
-                  chargements de Dirichlet
-         * @param time Instant de calcul
-         * @return Vecteur élémentaire
-         */
-        ElementaryVectorPtr buildElementaryDirichletVector( double time = 0. );
+    /**
+     * @brief Calcul des matrices elementaires pour l'option CHAR_MECA
+     */
+    ElementaryVectorPtr buildElementaryMechanicalLoadsVector() throw ( std::runtime_error );
 
-        /**
-         * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
-                  forces de Laplace
-         * @return Vecteur élémentaire
-         */
-        ElementaryVectorPtr buildElementaryLaplaceVector();
+    /**
+     * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
+              chargements de Dirichlet
+     * @param time Instant de calcul
+     * @return Vecteur élémentaire
+     */
+    ElementaryVectorPtr buildElementaryDirichletVector( double time = 0. );
 
-        /**
-         * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
-                  chargements de Neumann
-         * @param time Instants de calcul (vecteur de longueur 3 : instant courant, deltat, paramètre theta
-         * @return Vecteur élémentaire
-         */
-        ElementaryVectorPtr buildElementaryNeumannVector( const VectorDouble time )
-            throw ( std::runtime_error );
+    /**
+     * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
+              forces de Laplace
+     * @return Vecteur élémentaire
+     */
+    ElementaryVectorPtr buildElementaryLaplaceVector();
 
-        /**
-         * @brief Fonction permettant de calculer les matrices élémentaires de rigidité
-         * @param time Instant de calcul
-         * @return Vecteur élémentaire contenant la rigidité mécanique
-         */
-        ElementaryMatrixPtr buildElementaryRigidityMatrix( double time = 0. );
-        /**
-         * @brief Fonction permettant de calculer les matrices élémentaires pour la matrice tangente
-         * utilisée pour l'étape de prédiction de la méthode de Newton 
-         * @param time Instant de calcul
-         * @return Matrice élémentaire contenant la rigidité mécanique
-         */
-        ElementaryMatrixPtr buildElementaryTangentMatrix( double time = 0  );
+    /**
+     * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
+              chargements de Neumann
+     * @param time Instants de calcul (vecteur de longueur 3 : instant courant, deltat, paramètre theta
+     * @return Vecteur élémentaire
+     */
+    ElementaryVectorPtr buildElementaryNeumannVector( const VectorDouble time )
+        throw ( std::runtime_error );
 
-        ElementaryMatrixPtr buildElementaryJacobianMatrix( double time = 0. );
-        /**
-         * @brief Détermination de la numérotation de ddl
-         * @return Numérotation du problème discret
-         */
-        DOFNumberingPtr computeDOFNumbering( DOFNumberingPtr dofNum = DOFNumberingPtr( new DOFNumberingInstance("") ) );
+    /**
+     * @brief Fonction permettant de calculer les matrices élémentaires de rigidité
+     * @param time Instant de calcul
+     * @return Vecteur élémentaire contenant la rigidité mécanique
+     */
+    ElementaryMatrixPtr buildElementaryRigidityMatrix( double time = 0. );
+    /**
+     * @brief Fonction permettant de calculer les matrices élémentaires pour la matrice tangente
+     * utilisée pour l'étape de prédiction de la méthode de Newton 
+     * @param time Instant de calcul
+     * @return Matrice élémentaire contenant la rigidité mécanique
+     */
+    ElementaryMatrixPtr buildElementaryTangentMatrix( double time = 0  );
 
-        /**
-         * @brief Récupération de l'étude
-         * @return Numérotation du problème discret
-         */
-        StudyDescriptionPtr getStudyDescription()
-        {
-            return _study;
-        };
+    ElementaryMatrixPtr buildElementaryJacobianMatrix( double time = 0. );
+    /**
+     * @brief Détermination de la numérotation de ddl
+     * @return Numérotation du problème discret
+     */
+    DOFNumberingPtr computeDOFNumbering( DOFNumberingPtr dofNum = DOFNumberingPtr( new DOFNumberingInstance("") ) );
+
+    /**
+     * @brief Récupération de l'étude
+     * @return Numérotation du problème discret
+     */
+    StudyDescriptionPtr getStudyDescription()
+    {
+        return _study;
+    };
 };
 
 
