@@ -287,12 +287,14 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMatrix( const std::string& o
     return retour;
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalRigidity() throw ( std::runtime_error )
+ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalRigidityMatrix()
+    throw ( std::runtime_error )
 {
     return computeMatrix( "RIGI_MECA" );
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMass() throw ( std::runtime_error )
+ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMassMatrix()
+    throw ( std::runtime_error )
 {
     return computeMatrix( "RIGI_MECA" );
 };
