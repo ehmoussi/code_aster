@@ -22,6 +22,7 @@ from libcpp.string cimport string
 from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Studies.StudyDescription cimport StudyDescriptionPtr
 from code_aster.LinearAlgebra.ElementaryVector cimport ElementaryVectorPtr
+from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrixPtr
 
 
 cdef extern from "Discretization/DiscreteProblem.h":
@@ -30,6 +31,7 @@ cdef extern from "Discretization/DiscreteProblem.h":
 
         DiscreteProblemInstance(StudyDescriptionPtr& model)
         ElementaryVectorPtr buildElementaryMechanicalLoadsVector()
+        ElementaryMatrixPtr computeMechanicalRigidity()
 
     cdef cppclass DiscreteProblemPtr:
 

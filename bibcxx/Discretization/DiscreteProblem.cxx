@@ -238,3 +238,61 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryMechanicalLoadsVecto
 
     return retour;
 };
+
+ElementaryMatrixPtr DiscreteProblemInstance::computeMatrix( const std::string& optionName ) throw ( std::runtime_error )
+{
+    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( Permanent ) );
+
+    // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
+    retour->setType( retour->getType() + "_DEPL_R" );
+
+    // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
+    CommandSyntaxCython cmdSt( "CALC_MATR_ELEM" );
+    cmdSt.setResult( retour->getName(), retour->getType() );
+
+    SyntaxMapContainer dict;
+    // Definition du mot cle simple OPTION
+    dict.container[ "OPTION" ] = optionName;
+
+    // Definition du mot cle simple MODELE
+    if ( ( ! _study->getSupportModel() ) || _study->getSupportModel()->isEmpty() )
+        throw std::runtime_error( "Model is empty" );
+    dict.container[ "MODELE" ] = _study->getSupportModel()->getName();
+
+    // Definition du mot cle simple CHAM_MATER
+    if ( ! _study->getMaterialOnMesh() )
+        throw std::runtime_error( "Material is empty" );
+    dict.container[ "CHAM_MATER" ] = _study->getMaterialOnMesh()->getName();
+
+    ListMecaLoad listMecaLoad = _study->getListOfMechanicalLoads();
+    if ( listMecaLoad.size() != 0 )
+    {
+        VectorString tmp;
+        for ( const auto curIter : listMecaLoad )
+            tmp.push_back( curIter->getName() );
+        dict.container[ "CHARGE" ] = tmp;
+    }
+    cmdSt.define( dict );
+    try
+    {
+        INTEGER op = 9;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    retour->setEmpty( false );
+
+    return retour;
+};
+
+ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalRigidity() throw ( std::runtime_error )
+{
+    return computeMatrix( "RIGI_MECA" );
+};
+
+ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMass() throw ( std::runtime_error )
+{
+    return computeMatrix( "RIGI_MECA" );
+};

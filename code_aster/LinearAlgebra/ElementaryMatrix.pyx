@@ -56,26 +56,6 @@ cdef class ElementaryMatrix( DataStructure ):
         """Return the type of DataStructure"""
         return self.getInstance().getType()
 
-    def addMechanicalLoad( self, GenericMechanicalLoad load ):
-        """Add a mechanical load"""
-        self.getInstance().addMechanicalLoad( deref( load.getPtr() ) )
-
-    def computeMechanicalRigidity( self ):
-        """Compute the mechanical rigidity"""
-        return self.getInstance().computeMechanicalRigidity()
-    
-    def computeMechanicalMass( self ):
-        """Compute the mechanical rigidity"""
-        return self.getInstance().computeMechanicalMass()
-
-    def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
-        """Set the material"""
-        self.getInstance().setMaterialOnMesh( deref( curMatOnMesh.getPtr() ) )
-
-    def setSupportModel( self, Model curModel ):
-        """Set the support model"""
-        self.getInstance().setSupportModel( deref( curModel.getPtr() ) )
-
     def debugPrint( self, logicalUnit=6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )

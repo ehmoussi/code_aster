@@ -46,6 +46,12 @@ private:
     /** @brief Etude definie par l'utilisateur */
     StudyDescriptionPtr _study;
 
+    /**
+     * @brief Calcul des matrices elementaires pour une option quelconque
+     */
+    ElementaryMatrixPtr computeMatrix( const std::string& optionName )
+        throw ( std::runtime_error );
+
 public:
     /**
      * @brief Constructeur
@@ -110,6 +116,16 @@ public:
      * @return Numérotation du problème discret
      */
     DOFNumberingPtr computeDOFNumbering( DOFNumberingPtr dofNum = DOFNumberingPtr( new DOFNumberingInstance("") ) );
+
+    /**
+     * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
+     */
+    ElementaryMatrixPtr computeMechanicalRigidity() throw ( std::runtime_error );
+
+    /**
+     * @brief Calcul des matrices elementaires pour l'option MASS_MECA
+     */
+    ElementaryMatrixPtr computeMechanicalMass() throw ( std::runtime_error );
 
     /**
      * @brief Récupération de l'étude
