@@ -118,6 +118,4 @@ test.assertAlmostEqual(resu2.getValue(5, 3), 0.000757555469653289)
 
 resu.printMEDFile( "test.med" )
 
-# at least check that it passes here
-test.assertTrue( True )
 test.printSummary()

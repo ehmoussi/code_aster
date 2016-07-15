@@ -120,12 +120,12 @@ public:
     /**
      * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
      */
-    ElementaryMatrixPtr computeMechanicalRigidity() throw ( std::runtime_error );
+    ElementaryMatrixPtr computeMechanicalRigidityMatrix() throw ( std::runtime_error );
 
     /**
      * @brief Calcul des matrices elementaires pour l'option MASS_MECA
      */
-    ElementaryMatrixPtr computeMechanicalMass() throw ( std::runtime_error );
+    ElementaryMatrixPtr computeMechanicalMassMatrix() throw ( std::runtime_error );
 
     /**
      * @brief Récupération de l'étude
