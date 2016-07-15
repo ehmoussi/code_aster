@@ -81,12 +81,13 @@ CharMeca2.setValue( imposedPres1, "Haut" )
 CharMeca2.build()
 test.assertEqual( CharMeca2.getType(), "CHAR_MECA" )
 
-matr_elem = code_aster.ElementaryMatrix()
-matr_elem.setSupportModel( monModel )
-matr_elem.setMaterialOnMesh( affectMat )
-matr_elem.addMechanicalLoad( CharMeca1 )
-matr_elem.addMechanicalLoad( CharMeca2 )
-matr_elem.computeMechanicalRigidity()
+study = code_aster.StudyDescription(monModel, affectMat)
+study.addMechanicalLoad(CharMeca1)
+study.addMechanicalLoad(CharMeca2)
+dProblem = code_aster.DiscreteProblem(study)
+vectElem = dProblem.buildElementaryMechanicalLoadsVector()
+matr_elem = dProblem.computeMechanicalRigidity()
+
 test.assertEqual( matr_elem.getType(), "MATR_ELEM_DEPL_R" )
 
 monSolver = code_aster.LinearSolver( code_aster.LinearAlgebra.Mumps, code_aster.LinearAlgebra.Metis )
@@ -98,16 +99,6 @@ numeDDL.computeNumerotation()
 numeDDL.debugPrint(6)
 test.assertEqual( numeDDL.getType(), "NUME_DDL" )
 
-study = code_aster.StudyDescription(monModel, affectMat)
-study.addMechanicalLoad(CharMeca1)
-study.addMechanicalLoad(CharMeca2)
-dProblem = code_aster.DiscreteProblem(study)
-vectElem = dProblem.buildElementaryMechanicalLoadsVector()
-
-#vectElem = code_aster.ElementaryVector()
-#vectElem.addMechanicalLoad( CharMeca1 )
-#vectElem.addMechanicalLoad( CharMeca2 )
-#vectElem.computeMechanicalLoads()
 vectElem.debugPrint(6)
 test.assertEqual( vectElem.getType(), "VECT_ELEM_DEPL_R" )
 
@@ -121,6 +112,9 @@ matrAsse.factorization()
 test.assertEqual( matrAsse.getType(), "MATR_ASSE_DEPL_R" )
 
 resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
+resu2 = resu.exportToSimpleFieldOnNodes()
+resu2.updateValuePointers()
+test.assertAlmostEqual(resu2.getValue(5, 3), 0.000757555469653289)
 
 resu.printMEDFile( "test.med" )
 

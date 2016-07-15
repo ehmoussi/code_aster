@@ -23,6 +23,7 @@ from cython.operator cimport dereference as deref
 from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Studies.StudyDescription cimport StudyDescription
 from code_aster.LinearAlgebra.ElementaryVector cimport ElementaryVector
+from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrix
 
 
 cdef class DiscreteProblem(DataStructure):
@@ -57,3 +58,9 @@ cdef class DiscreteProblem(DataStructure):
         returnVector = ElementaryVector()
         returnVector.set( self.getInstance().buildElementaryMechanicalLoadsVector() )
         return returnVector
+
+    def computeMechanicalRigidity(self):
+        """Build mechanical loads"""
+        returnMatrix = ElementaryMatrix()
+        returnMatrix.set( self.getInstance().computeMechanicalRigidity() )
+        return returnMatrix
