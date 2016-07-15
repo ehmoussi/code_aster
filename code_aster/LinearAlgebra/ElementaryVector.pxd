@@ -34,8 +34,6 @@ cdef extern from "LinearAlgebra/ElementaryVector.h":
         ElementaryVectorInstance()
         void addMechanicalLoad( GenericMechanicalLoadPtr& currentLoad )
         FieldOnNodesDoublePtr assembleVector( DOFNumberingPtr& currentNumerotation )
-        bint computeMechanicalLoads()
-        void setMaterialOnMesh( MaterialOnMeshPtr& currentMat )
         const string getType()
         void debugPrint( int logicalUnit )
 

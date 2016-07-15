@@ -32,7 +32,6 @@ ElementaryVectorInstance::ElementaryVectorInstance( const JeveuxMemory memType )
                 _description( JeveuxVectorChar24( getName() + "           .RERR" ) ),
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
-                _materialOnMesh( MaterialOnMeshPtr() ),
                 _listOfLoads( new ListOfLoadsInstance( memType ) ),
                 _corichRept( JeveuxBidirectionalMap( "&&CORICH." + getName() + ".REPT" ) )
 {};
@@ -61,18 +60,18 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
     SyntaxMapContainer dict;
     dict.container[ "OPTION" ] = "CHAR_MECA";
     cmdSt.define( dict );
-//     if( _listOfLoads->getListOfMechanicalLoads().size() != _matchingVector.size() )
-//         throw std::runtime_error( "Programming error" );
-// 
-//     _listOfElementaryResults->updateValuePointer();
-//     for( long i = 1; i <= _matchingVector.size(); ++i )
-//     {
-//         std::string detr( "E" );
-//         std::string vectElem( (*_listOfElementaryResults)[i-1].c_str() );
-//         vectElem.resize( 24, ' ' );
-//         long in;
-//         CALL_CORICH( detr.c_str(), vectElem.c_str(), &i, &in);
-//     }
+    if( ! _corichRept->exists() )
+    {
+        _listOfElementaryResults->updateValuePointer();
+        for( long i = 1; i <= _listOfLoads->getListOfMechanicalLoads().size(); ++i )
+        {
+            std::string detr( "E" );
+            std::string vectElem( (*_listOfElementaryResults)[i-1].c_str() );
+            vectElem.resize( 24, ' ' );
+            long in;
+            CALL_CORICH( detr.c_str(), vectElem.c_str(), &i, &in);
+        }
+    }
     /**/
 
     std::string typres( "R" );
@@ -96,58 +95,4 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberi
                  typres.c_str(), vectTmp->getName().c_str() );
 
     return vectTmp;
-};
-
-bool ElementaryVectorInstance::computeMechanicalLoads() throw ( std::runtime_error )
-{
-    if ( ! _isEmpty )
-        throw std::runtime_error( "The MechanicalLoads is already compute" );
-
-    // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
-    setType( getType() + "_DEPL_R" );
-
-    CommandSyntaxCython cmdSt( "CALC_VECT_ELEM" );
-    cmdSt.setResult( getName(), getType() );
-
-    SyntaxMapContainer dict;
-    dict.container[ "OPTION" ] = "CHAR_MECA";
-
-    if ( _materialOnMesh )
-        dict.container[ "CHAM_MATER" ] = _materialOnMesh->getName();
-
-    const ListMechanicalLoad listOfMechanicalLoad = _listOfLoads->getListOfMechanicalLoads();
-    if ( listOfMechanicalLoad.size() != 0 )
-    {
-        VectorString tmp;
-        int i = 0;
-        for ( ListMecaLoadCIter curIter = listOfMechanicalLoad.begin();
-              curIter != listOfMechanicalLoad.end();
-              ++curIter )
-        {
-            tmp.push_back( (*curIter)->getName() );
-            _matchingVector.push_back(i);
-            ++i;
-        }
-        dict.container[ "CHARGE" ] = tmp;
-    }
-    cmdSt.define( dict );
-
-    try
-    {
-        INTEGER op = 8;
-        CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
-        throw;
-    }
-    _isEmpty = false;
-    std::cout << "Impression du ElementaryVector " << _listOfElementaryResults->size() << std::endl;
-    _listOfElementaryResults->updateValuePointer();
-//     for( int i = 0; i < _listOfElementaryResults->size(); ++i )
-//     {
-//         std::cout << "Occ " << i << " " << (*_listOfElementaryResults)[i] << std::endl;
-//     }
-
-    return true;
 };

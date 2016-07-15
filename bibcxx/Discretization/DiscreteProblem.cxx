@@ -195,3 +195,46 @@ DOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( DOFNumberingPtr do
 
     return dofNum;
 };
+
+ElementaryVectorPtr DiscreteProblemInstance::buildElementaryMechanicalLoadsVector()
+    throw ( std::runtime_error )
+{
+    ElementaryVectorPtr retour( new ElementaryVectorInstance( Permanent ) );
+
+    // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
+    retour->setType( retour->getType() + "_DEPL_R" );
+
+    CommandSyntaxCython cmdSt( "CALC_VECT_ELEM" );
+    cmdSt.setResult( retour->getName(), retour->getType() );
+
+    SyntaxMapContainer dict;
+    dict.container[ "OPTION" ] = "CHAR_MECA";
+
+    if( _study->getMaterialOnMesh() )
+        dict.container[ "CHAM_MATER" ] = _study->getMaterialOnMesh()->getName();
+
+    const ListMecaLoad listOfMechanicalLoad = _study->getListOfMechanicalLoads();
+    if( listOfMechanicalLoad.size() != 0 )
+    {
+        VectorString tmp;
+        for ( const auto curIter : listOfMechanicalLoad )
+            tmp.push_back( curIter->getName() );
+
+        dict.container[ "CHARGE" ] = tmp;
+    }
+    cmdSt.define( dict );
+    retour->setListOfLoads( _study->getListOfLoads() );
+
+    try
+    {
+        INTEGER op = 8;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    retour->setEmpty(false);
+
+    return retour;
+};
