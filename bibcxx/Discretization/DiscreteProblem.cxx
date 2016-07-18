@@ -239,7 +239,8 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryMechanicalLoadsVecto
     return retour;
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::computeMatrix( const std::string& optionName ) throw ( std::runtime_error )
+ElementaryMatrixPtr DiscreteProblemInstance::computeMatrix( const std::string& optionName )
+    throw ( std::runtime_error )
 {
     ElementaryMatrixPtr retour( new ElementaryMatrixInstance( Permanent ) );
 
