@@ -34,22 +34,39 @@ cdef extern from "LinearAlgebra/LinearSolver.h":
 
     cdef cppclass LinearSolverInstance:
 
-        LinearSolverInstance( LinearSolverEnum curLinSolv, Renumbering curRenum )
-        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
-                                                       const FieldOnNodesDoublePtr& currentRHS )
+        LinearSolverInstance(LinearSolverEnum curLinSolv, Renumbering curRenum)
+        FieldOnNodesDoublePtr solveDoubleLinearSystem(const AssemblyMatrixDoublePtr& currentMatrix,
+                                                       const FieldOnNodesDoublePtr& currentRHS)
+        void disablePreprocessing()
+        void setAlgorithm(IterativeSolverAlgorithm algo)
+        void setDistributedMatrix(bint matDist)
+        void setErrorOnMatrixSingularity(bint error)
+        void setFillingLevel(int filLevel)
+        void setLagrangeElimination(LagrangeTreatment lagrTreat)
+        void setLowRankSize(double size)
+        void setLowRankThreshold(double threshold)
+        void setMatrixFilter(double filter)
+        void setMatrixType(MatrixType matType)
+        void setMaximumNumberOfIteration(int number)
+        void setMemoryManagement(MemoryManagement memManagt)
+        void setPrecisionMix(bint precMix)
+        void setPreconditioning(Preconditioning precond)
+        void setPreconditioningResidual(double residual)
+        void setSolverResidual(double residual)
+        void setUpdatePreconditioningParameter(int value)
 
     cdef cppclass LinearSolverPtr:
 
-        LinearSolverPtr( LinearSolverPtr& )
-        LinearSolverPtr( LinearSolverInstance* )
+        LinearSolverPtr(LinearSolverPtr&)
+        LinearSolverPtr(LinearSolverInstance*)
         LinearSolverInstance* get()
 
 #### LinearSolver
 
-cdef class LinearSolver( DataStructure ):
+cdef class LinearSolver(DataStructure):
 
     cdef LinearSolverPtr* _cptr
 
-    cdef set( self, LinearSolverPtr other )
-    cdef LinearSolverPtr* getPtr( self )
-    cdef LinearSolverInstance* getInstance( self )
+    cdef set(self, LinearSolverPtr other)
+    cdef LinearSolverPtr* getPtr(self)
+    cdef LinearSolverInstance* getInstance(self)
