@@ -62,5 +62,5 @@ cdef class DiscreteProblem(DataStructure):
     def computeMechanicalRigidityMatrix(self):
         """Build mechanical loads"""
         returnMatrix = ElementaryMatrix()
-        returnMatrix.set( self.getInstance().computeMechanicalRigidity() )
+        returnMatrix.set( self.getInstance().computeMechanicalRigidityMatrix() )
         return returnMatrix

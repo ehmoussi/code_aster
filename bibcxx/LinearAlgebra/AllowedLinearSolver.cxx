@@ -30,7 +30,7 @@ const char* PreconditioningNames[nbPreconditionings] = { "LDLT_INC", "LDLT_SP", 
                                                          "ML", "BOOMER", "GAMG", "BLOC_LAGR", "SANS" };
 const char* MatrixTypeNames[nbMatrixTypes] = { "NONSYM", "SYMGEN", "SYMDEF", "AUTO" };
 
-const char* IterativeSolverAlgorithm[nbIterativeSolverAlgorithms] = { "CG", "CR", "GMRES", "GCR", "FGMRES" };
+const char* IterativeSolverAlgorithmNames[nbIterativeSolverAlgorithms] = { "CG", "CR", "GMRES", "GCR", "FGMRES" };
 const char* LagrangeTreatmentNames[nbLagrangeTreatments] = { "OUI", "NON", "LAGR2" };
 const char* MemoryManagementNames[nbMemoryManagements] = { "IN_CORE", "OUT_OF_CORE", "AUTO", "EVAL" };
 
