@@ -127,7 +127,7 @@ class AllMeshEntities: public VirtualMeshEntity
          * @brief Constructeur
          * @param name nom de l'entite
          */
-        AllMeshEntities(): VirtualMeshEntity( "TOUT", AllMeshEntitiesType )
+        AllMeshEntities(): VirtualMeshEntity( "OUI", AllMeshEntitiesType )
         {};
 
         EntityType getType() const

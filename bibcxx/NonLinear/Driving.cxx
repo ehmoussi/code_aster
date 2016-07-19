@@ -23,7 +23,7 @@
 
 #include "NonLinear/Driving.h"
 
-const std::vector< DrivingTypeEnum > allDrivingType = { DisplacementValue, DisplacementNorm, JumpOnCrackValue, JumpOnCrackNorm, LimitLoad, MonotonicDeformation,  ElasticityLimit };
+const std::vector< DrivingTypeEnum > allDrivingType = { DisplacementValue, DisplacementNorm, JumpOnCrackValue, JumpOnCrackNorm, LimitLoad, MonotonicStrain,  ElasticityLimit };
 const std::vector< std::string > allDrivingTypeNames = { "DDL_IMPO", "LONG_ARC", "SAUT_IMPO", "SAUT_LONG_ARC", "ANA_LIM", "DEFORMATION", "PRED_ELAS"  };
 
 

@@ -26,9 +26,9 @@ from code_aster.DataStructure.DataStructure cimport DataStructure
 cdef class Behaviour( DataStructure ):
     """Python wrapper on the C++ Behaviour Object"""
 
-    def __cinit__( self, ConstitutiveLawEnum curLaw , DeformationEnum curDeformation ):
+    def __cinit__( self, ConstitutiveLawEnum curLaw , StrainEnum curStrain ):
         """Initialization: stores the pointer to the C++ object"""
-        self._cptr = new BehaviourPtr( new BehaviourInstance( curLaw, curDeformation ) )
+        self._cptr = new BehaviourPtr( new BehaviourInstance( curLaw, curStrain ) )
 
     def __dealloc__( self ):
         """Destructor"""

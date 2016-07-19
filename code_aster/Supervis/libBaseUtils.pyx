@@ -40,7 +40,7 @@ def fstring_array_tolist( char* fstr_array, long nbstr, unsigned int lenstr ):
     Reverse of `to_fstring_array`."""
     lstr = []
     for i in range(nbstr):
-        substr = fstr_array[i * lenstr, (i + 1) * lenstr]
+        substr = fstr_array[i * lenstr: (i + 1) * lenstr]
         lstr.append(to_cstr(substr, lenstr))
     return lstr
 

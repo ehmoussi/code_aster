@@ -24,7 +24,7 @@ cdef extern from "NonLinear/Driving.h":
 
     cpdef enum DrivingTypeEnum :
       DisplacementValue, DisplacementNorm, JumpOnCrackValue, 
-      JumpOnCrackNorm, LimitLoad, MonotonicDeformation,  ElasticityLimit
+      JumpOnCrackNorm, LimitLoad, MonotonicStrain,  ElasticityLimit
 
     cpdef enum SelectionCriterionEnum :
         SmallestDisplacementIncrement, SmallestAngleIncrement, SmallestResidual, MixedCriterion

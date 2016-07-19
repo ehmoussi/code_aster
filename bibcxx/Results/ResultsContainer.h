@@ -105,6 +105,7 @@ public:
     /**
      * @brief Construire une sd_resultat à partir d'objet produit dans le Fortran
      * @return true si l'allocation s'est bien passée
+     * @todo revoir l'agrandissement de dictOfVectorOfFieldsNodes et dictOfVectorOfFieldsElements
      */
     bool buildFromExisting() throw ( std::runtime_error );
 

@@ -38,7 +38,7 @@
  * @author Natacha Béreux 
  */
 enum DrivingTypeEnum { DisplacementValue, DisplacementNorm, JumpOnCrackValue, 
-    JumpOnCrackNorm, LimitLoad, MonotonicDeformation,  ElasticityLimit};
+    JumpOnCrackNorm, LimitLoad, MonotonicStrain,  ElasticityLimit};
 extern const std::vector< DrivingTypeEnum > allDrivingType;
 extern const std::vector< std::string > allDrivingTypeNames;
 
@@ -102,7 +102,7 @@ public:
            ( type == JumpOnCrackValue ) ||  ( type == JumpOnCrackNorm ) )
         // La zone pilotée est un ensemble de noeuds
              zoneTypeName = "GROUP_NO";
-       if (( type == MonotonicDeformation ) || ( type == ElasticityLimit ))
+       if (( type == MonotonicStrain ) || ( type == ElasticityLimit ))
         // La zone pilotée est un ensemble de mailles 
        {
             zoneTypeName = "GROUP_MA";
@@ -145,7 +145,7 @@ public:
    */    
     void addObservationGroupOfNodes( const std::string& name ) throw ( std::runtime_error )
     {
-       if (( _type == MonotonicDeformation ) || ( _type == ElasticityLimit ))
+       if (( _type == MonotonicStrain ) || ( _type == ElasticityLimit ))
            throw std::runtime_error( "Group of Nodes are not allowed with this type of driving" );
         _zone = MeshEntityPtr( new GroupOfNodes( name ) );
         _toCapyConverter[ "GROUP_NO" ]->enable();
@@ -172,7 +172,7 @@ public:
     void setDrivingDirectionOnCrack( UnitVectorEnum dir ) throw ( std::runtime_error )
     {
       if (( _type == DisplacementValue ) ||  ( _type == DisplacementNorm ) || 
-	  (_type == MonotonicDeformation ))
+	  (_type == MonotonicStrain ))
 	  throw std::runtime_error( "Defining a driving direction is only allowed for XFEM modeling" ); 
       _direction = dir; 
       _toCapyConverter[ "DIRE_PILO" ]->enable(); 

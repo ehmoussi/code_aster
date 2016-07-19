@@ -60,15 +60,7 @@ function diinst(sddisc, numins)
     endif
     typeco = ' '
 !
-    call gettco(sddisc, typeco)
-!
-! --- ACCES SD LISTE D'INSTANTS
-!
-    if (typeco .eq. 'LISTR8_SDASTER') then
-        call jeveuo(sddisc(1:19)//'.VALE', 'L', jinst)
-    else if (typeco.eq.'LIST_INST') then
-        call jeveuo(sddisc(1:8)//'.LIST.DITR', 'L', jinst)
-    else
+ 
         tpsdit = sddisc(1:19)//'.DITR'
         call jeexin(tpsdit, iret)
         if (iret .eq. 0) then
@@ -77,7 +69,6 @@ function diinst(sddisc, numins)
         else
             call jeveuo(tpsdit, 'L', jinst)
         endif
-    endif
 !
 ! --- VALEUR DE L'INSTANT
 !

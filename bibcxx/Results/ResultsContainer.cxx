@@ -53,10 +53,6 @@ bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
         if( numberOfSerialNum != curIter.size() )
             throw std::runtime_error( "Programming error" );
 
-        auto curIter2 = _dictOfVectorOfFieldsNodes.find( nomSymb );
-        if( curIter2 == _dictOfVectorOfFieldsNodes.end() )
-            _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum );
-
         for( int rank = 0; rank < curIter.size(); ++rank )
         {
             std::string name( trim( curIter[ rank ].toString() ) );
@@ -72,8 +68,8 @@ bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
                 CALL_DISMOI( questi2.c_str(), name.c_str(), typeco.c_str(),
                              &repi, repk, arret.c_str(), &ier );
                 const std::string resu2( trim( repk ) );
-                if( resu2 != "R" )
-                    throw std::runtime_error( "Not yet implemented" );
+                /*if( resu2 != "R" )
+                    throw std::runtime_error( "Not yet implemented" );*/
 
                 CALL_DISMOI( questi.c_str(), name.c_str(), typeco.c_str(),
                              &repi, repk, arret.c_str(), &ier );
@@ -82,11 +78,19 @@ bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
                 if( resu == "NOEU" )
                 {
                     FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( name ) );
+
+                    auto curIter2 = _dictOfVectorOfFieldsNodes.find( nomSymb );
+                    if( curIter2 == _dictOfVectorOfFieldsNodes.end() )
+                        _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum );
                     _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ] = result;
                 }
                 else if( resu == "ELEM" || resu == "ELNO" || resu == "ELGA" )
                 {
                     FieldOnElementsDoublePtr result( new FieldOnElementsDoubleInstance( name ) );
+
+                    auto curIter2 = _dictOfVectorOfFieldsElements.find( nomSymb );
+                    if( curIter2 == _dictOfVectorOfFieldsElements.end() )
+                        _dictOfVectorOfFieldsElements[ nomSymb ] = VectorOfFieldsElements( numberOfSerialNum );
                     _dictOfVectorOfFieldsElements[ nomSymb ][ rank ] = result;
                 }
             }

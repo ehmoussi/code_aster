@@ -44,7 +44,6 @@ StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance():
  */
 ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runtime_error )
 {
-    std::cout << " Entree dans execute()" << std::endl; 
 // cmdSNL is the command Syntax object associated to Code_Aster STAT_NON_LINE command 
     CommandSyntaxCython cmdSNL( "STAT_NON_LINE");
 // Init name of result 
@@ -80,26 +79,18 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     // excitations au SyntaxMapContainer qui servira à définir le CommandSyntax
     dict += test ; 
     
-    if ( _listOfBehaviours.size() == 0  )
-       throw std::runtime_error("Behaviour is undefined");
-
-    ListSyntaxMapContainer listBehaviour; 
-    SyntaxMapContainer dictBEHAV; 
-    dictBEHAV.container["RELATION"] = "ELAS";
-    listBehaviour.push_back( dictBEHAV );
-    dict.container["COMPORTEMENT"] = listBehaviour; 
-
     ListSyntaxMapContainer listIncr;
     SyntaxMapContainer dictIncr;
     dictIncr.container["LIST_INST"] = _loadStepManager-> getName();
     listIncr.push_back( dictIncr );
     dict.container["INCREMENT"] = listIncr;
    
+    
     ListSyntaxMapContainer listMethod; 
     const ListGenParam& listParamMethod = _nonLinearMethod->getListOfMethodParameters();
     SyntaxMapContainer dictMethod = buildSyntaxMapFromParamList( listParamMethod);
-    listMethod.push_back( dictMethod);
-    dict.container[ "METHODE" ] = listMethod; 
+    dict+=dictMethod; 
+
 
     ListSyntaxMapContainer listNewton; 
     const ListGenParam& listParamNewton = _nonLinearMethod->getListOfNewtonParameters();
@@ -107,28 +98,25 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
     listNewton.push_back( dictNewton);
     dict.container[ "NEWTON" ] = listNewton;
 
+
+    CapyConvertibleFactorKeyword behaviourFKW( "COMPORTEMENT" );
+    CapyConvertibleSyntax behaviourSyntax;
     if ( _listOfBehaviours.size() != 0 )
     {
-        ListSyntaxMapContainer listeComportement;
         for ( ListLocatedBehaviourCIter curIter = _listOfBehaviours.begin();
               curIter != _listOfBehaviours.end();
               ++curIter )
         {
-            BehaviourPtr& curBehaviour =  (*curIter)->first; 
-
-            const ListGenParam& listParam = curBehaviour->getListOfParameters();
-            SyntaxMapContainer dict2 = buildSyntaxMapFromParamList( listParam );
-
-            MeshEntityPtr& curMeshEntity = (*curIter) ->second;
-            if ( curMeshEntity->getType() == AllMeshEntitiesType )
-                dict2.container["TOUT"] = "OUI";
-            else if ( curMeshEntity->getType()  == GroupOfElementsType )
-                dict2.container["GROUP_MA"] = curMeshEntity->getName();
-
-            listeComportement.push_back( dict2 );
+            CapyConvertibleContainer toAdd = (*curIter)->getCapyConvertibleContainer();
+            behaviourFKW.addContainer( toAdd ); 
         }
-        dict.container["COMPORTEMENT"] = listeComportement;
     }
+    //
+    behaviourSyntax.addFactorKeywordValues( behaviourFKW );
+    SyntaxMapContainer behaviourTest = behaviourSyntax.toSyntaxMapContainer();
+    // On ajoute le SyntaxMapContainer résultant du parcours de la liste des
+    // comportements au SyntaxMapContainer qui servira à définir le CommandSyntax
+    dict += behaviourTest ; 
     
     if ( _linearSolver != NULL ) 
         dict.container[ "SOLVEUR" ] = _linearSolver->buildListSyntax();
@@ -149,23 +137,20 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
         }
 // Build Command Syntax object 
     cmdSNL.define( dict );
-    std::cout << " Appel de debugPrint pour CommandSyntax " << std::endl;
-    cmdSNL.debugPrint();
  
-/*  Now Command syntax is ready, op00070 may be called   
+//  Now Command syntax is ready, call op00070    
     try
     {
         INTEGER op = 70;
-        std::cout << " Appel d'op0070 " << std::endl;
         CALL_EXECOP( &op );
     }
     catch( ... )
     {
         throw;
     }
-*/
 // Return result 
-    resultSNL->debugPrint(8);
+//    resultSNL->debugPrint(6);
+    resultSNL->buildFromExisting(); 
     return ResultsContainerPtr(resultSNL.get());
 };
 

@@ -53,18 +53,13 @@
 class StaticNonLinearAnalysisInstance: public GenericSolver
 {
     private:
-        /** @typedef std::list of Excitation */
+        /** @typedef std::list of Excitations */
         typedef std::list< ExcitationPtr > ListExcitation;
         /** @typedef Iterator on a std::list of Excitation */
         typedef ListExcitation::iterator ListExcitationIter;
         /** @typedef Const Iterator on a std::list of Excitation */
         typedef ListExcitation::const_iterator ListExcitationCIter;
-        /** @typedef Smart pointer on a  VirtualMeshEntity */
-        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
-        /** @typedef LocatedBehaviour is a Behaviour located on a MeshEntity */
-        typedef std::pair<BehaviourPtr, MeshEntityPtr> LocatedBehaviourInstance;
-        typedef boost::shared_ptr< LocatedBehaviourInstance> LocatedBehaviourPtr;
-        /** @typedef List of Excitations */
+        /** @typedef List of Behaviours */
         typedef std::list < LocatedBehaviourPtr > ListLocatedBehaviour; 
         /** @typedef Iterator on a std::list of LocatedBehaviourPtr */
         typedef ListLocatedBehaviour::iterator ListLocatedBehaviourIter;
@@ -130,12 +125,12 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
             // If the support MeshEntity is not given, the behaviour is set on the whole mesh
             if ( nameOfGroup.size() == 0  )
             {
-             supportMeshEntity = MeshEntityPtr( new  AllMeshEntities() ) ;
+                supportMeshEntity = MeshEntityPtr( new  AllMeshEntities() ) ;
             }
             // otherwise, if nameOfGroup is the name of a group of elements in the support mesh 
             else if ( currentMesh->hasGroupOfElements( nameOfGroup )  )
             {
-            supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+                supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
             }
             else
             //  otherwise, throw an exception
@@ -143,13 +138,7 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
             // Insert the current behaviour with its support Mesh Entity in the list of behaviours 
             _listOfBehaviours.push_back( LocatedBehaviourPtr ( new LocatedBehaviourInstance (behaviour,  supportMeshEntity) ) );
          }; 
-         /**
-          * @brief define  the initial state of the nonlinear analysis
-          * 
-        void addInitialState ( const StatePtr& state ) 
-        {
-            _initialState = state; 
-        };      
+         
         /**
          * @brief run the analysis 
          *        this function wraps Code_Aster's legacy operator for nonlinear analysis
