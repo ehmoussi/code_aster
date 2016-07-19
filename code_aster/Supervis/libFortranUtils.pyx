@@ -62,7 +62,7 @@ cdef public void lcalgo_( char* compor, char* algo,
                           unsigned int lcompor, unsigned int lalgo ):
     """Return the first integration algorithm"""
     sret = catalc.get_algo( to_cstr(compor, lcompor) )
-    copyToFStr( algo, sret, lalgo )
+    copyToFStr( algo, sret[0], lalgo )
 
 
 cdef public void lcinfo_( char* compor, long* numlc, long* nbvari,

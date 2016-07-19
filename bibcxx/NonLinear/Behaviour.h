@@ -38,95 +38,121 @@
 
 class BehaviourInstance
 {
-    public:
+private:
+        typedef std::vector< ConstitutiveLawEnum > VectorOfLaw;
+        /** @brief ConstitutiveLaw*/
+        ConstitutiveLawEnum _constitutiveLaw;
+        /** @brief Strain  */
+        StrainEnum _strain;
+        /** @brief RelationKit */
+        VectorOfLaw _laws; 
+        /** @brief  PlaneStress Residual Checking parameters*/
+        double _planeStressMaximumResidual;
+        double _planeStressRelativeResidual;
+        int _planeStressMaximumIteration;
+        double _theta;
+        double _alpha; 
+        /** @brief Integration Checking parameters */
+        double _integrationMaximumResidual;
+        double _integrationRelativeResidual;
+        int    _integrationMaximumIteration;
+        int    _integrationIterationStep;
+        IntegrationAlgoEnum _integrationAlgo;
+        // SolverControlPtr _control;
+        /** @brief Matrix used during the iterative process*/
+        TangentMatrixEnum _tangentMatrix;
+        
+        double _radialRelativeResidual; 
+        double _threshold; 
+        double _amplitude; 
+        double _returnRate; 
+        double _relativeLossValue; 
+ 
+        CapyConvertibleContainer _toCapyConverter;
+public:
         /**
          * @brief Constructeur
          */
-        BehaviourInstance( ConstitutiveLawEnum law = Elas, DeformationEnum deformation = SmallDeformation ): 
-		_constitutiveLaw( law ), 
-                _deformationType( deformation ), 
-                _relation("RELATION", std::string( ConstitutiveLawNames[ (int)_constitutiveLaw ] ), true ), 
-                _relation_kit("RELATION_KIT", false), 
-                _deformation("DEFORMATION",std::string( DeformationNames[ (int)_deformationType ] ), false ),
-                _resiCplanMaxi("RESI_CPLAN_MAXI", false ), 
-                _resiCplanRela("RESI_CPLAN_RELA", 1.E-06, false ), 
-                _iterCplanMaxi("ITER_CPLAN_MAXI", 1, false ),
-                _thetaParameter("PARM_THETA", 1.0, false ),
-                _alphaParameter("PARM_ALPHA", 1.0, false ), 
-                _resiInteMaxi("RESI_INTE_MAXI", false ),
-                _resiInteRela("RESI_INTE_RELA", 1.E-06,  false ),
-                _iterInteMaxi("ITER_INTE_MAXI", 20, false ), 
-                _iterIntePas("ITER_INTE_PAS", 0, false ), 
-                _integrationAlgorithm("ALGO_INTE", false ), 
-                _tangentMatrix("TYP_MATR_TANG", false ),
-                _threshold("SEUIL", false ),
-                _amplitude("AMPLITUDE", false ),
-                _tauxRetour("TAUX_RETOUR",false),
-                _resiRadiRela("RESI_RADI_RELA",false) 
-        {
-        _listOfParameters.push_back( &_relation );
-        _listOfParameters.push_back( &_relation_kit );
-        _listOfParameters.push_back( &_deformation );
-        _listOfParameters.push_back( &_resiCplanMaxi );
-        _listOfParameters.push_back( &_resiCplanRela );
-        _listOfParameters.push_back( &_iterCplanMaxi );
-        _listOfParameters.push_back( &_thetaParameter );
-        _listOfParameters.push_back( &_alphaParameter );
-        _listOfParameters.push_back( &_resiInteMaxi);
-        _listOfParameters.push_back( &_resiInteRela);
-        _listOfParameters.push_back( &_iterInteMaxi);
-        _listOfParameters.push_back( &_iterIntePas);
-        _listOfParameters.push_back( &_integrationAlgorithm);
-        _listOfParameters.push_back( &_tangentMatrix);
-        _listOfParameters.push_back( &_threshold);
-        _listOfParameters.push_back( &_amplitude);
-        _listOfParameters.push_back( &_tauxRetour);
-        _listOfParameters.push_back( &_resiRadiRela);
-        };
-  
+        BehaviourInstance( ConstitutiveLawEnum law = Elas, StrainEnum strain = SmallStrain ); 
+          
         /**
-         * @brief Récupération de la liste des paramètres du comportement
-         * @return Liste constante des paramètres déclarés
-         */
-        const ListGenParam& getListOfParameters() const
-        {
-            return _listOfParameters;
-        };
-        /**
-         * Choose a type of tangent matrix 
+         * @brief Choose a type of tangent matrix 
         */
-        void setTangentMatrix(  TangentMatrixEnum matrixType )
+        void setTangentMatrix(  TangentMatrixEnum matrix )
         {
-            _tangentMatrix = std::string( TangentMatrixNames[(int)matrixType] ); 
+            _tangentMatrix =  matrix; 
+            _toCapyConverter[ "TYP_MATR_TANG" ]->enable();
+            if ( matrix == TangentSecantMatrix ) 
+            {
+                _threshold= 3.0;
+                _toCapyConverter[ "SEUIL" ]->enable(); 
+                _amplitude = 1.5;
+                _toCapyConverter[ "AMPLITUDE" ]->enable(); 
+                _returnRate =0.05;
+                _toCapyConverter[ "TAUX_RETOUR" ]->enable();  
+	    };
         };
-     private:
-        /** @brief ConstitutiveLaw*/
-        ConstitutiveLawEnum _constitutiveLaw;
-        /** @brief Deformation  */
-        DeformationEnum _deformationType;
-        /** @brief Contrôle de la convergence de la loi de comportement  */
-        SolverControlPtr _control;
-        //
-        GenParam _relation;
-        GenParam _relation_kit;
-        GenParam _deformation;
-        GenParam _resiCplanMaxi;
-        GenParam _resiCplanRela;
-        GenParam _iterCplanMaxi;
-        GenParam _thetaParameter;
-        GenParam _alphaParameter; 
-        GenParam _resiInteMaxi;
-        GenParam _resiInteRela;
-        GenParam _iterInteMaxi;
-        GenParam _iterIntePas;
-        GenParam _integrationAlgorithm;
-        GenParam _tangentMatrix;
-        GenParam _threshold;
-        GenParam _amplitude; 
-        GenParam _tauxRetour;
-        GenParam _resiRadiRela; 
- 
-        ListGenParam _listOfParameters;
+        /** @brief Set theta parameter */
+        void setTheta( double theta ) throw ( std::runtime_error )
+        {
+            if ( ( theta >= 0.0 ) && ( theta <= 1.0 ) )
+	    {
+                 _theta = theta; 
+                 _toCapyConverter[ "PARM_THETA" ] ->enable(); 
+            }
+            else
+ 		throw std::runtime_error( "0 <= theta <= 1" ); 
+        };
+        /** @brief  Set alpha parameter */
+        void setAlpha( double alpha )
+        {
+	    _alpha = alpha;
+            _toCapyConverter[ "PARM_ALPHA" ] ->enable(); 
+        };
+        /** @brief define a radial relative residual */
+        void setRadialRelativeResidual ( double radialRelativeResidual )
+        {
+            _radialRelativeResidual = radialRelativeResidual; 
+            _toCapyConverter[ "RESI_RADI_RELA" ]->enable(); 
+            _toCapyConverter[ "TYP_MATR_TANG" ] ->disable(); 
+        };
+        /** @brief
+            @todo verifier que les lois sont compatibles  
+        */
+        
+        void setPlasticityCreepConstitutiveLaw( ConstitutiveLawEnum law1, ConstitutiveLawEnum law2 ) 
+        {
+	    _constitutiveLaw = Kit_Ddi;
+           
+            _laws.push_back( law1 );  
+            _laws.push_back( law2 ); 
+            _toCapyConverter.add( new CapyConvertibleValue< VectorOfLaw >
+                                    ( true, "RELATION_KIT", _laws, true ) );
+        };
+      /**@brief Plane Stress Management Parameters */
+      void setPlaneStressMaximumResidual( double planeStressMaximumResidual ) 
+      {
+          _planeStressMaximumResidual = planeStressMaximumResidual; 
+          _toCapyConverter[ "RESI_CPLAN_MAXI" ]-> enable(); 
+          _toCapyConverter[ "RESI_CPLAN_RELA" ]-> disable();
+      };
+      void setPlaneStressRelativeResidual( double planeStressRelativeResidual ) 
+      {
+          _planeStressRelativeResidual = planeStressRelativeResidual; 
+          _toCapyConverter[ "RESI_CPLAN_MAXI" ]-> disable(); 
+          _toCapyConverter[ "RESI_CPLAN_RELA" ]-> enable();
+      };
+      void setPlaneStressMaximumIteration( int maxIter ) 
+      {
+          _planeStressMaximumIteration = maxIter; 
+          _toCapyConverter[ "ITER_CPLAN_MAXI" ]-> enable(); 
+      };
+      /**
+      */
+     const CapyConvertibleContainer& getCapyConvertibleContainer() const
+     {
+        return _toCapyConverter;
+     };
 };
 
 /**
@@ -135,5 +161,45 @@ class BehaviourInstance
  */
 typedef boost::shared_ptr< BehaviourInstance > BehaviourPtr;
 
+/** @typedef Smart pointer on a  VirtualMeshEntity */
+typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+ 
+
+/** @typedef LocatedBehaviour is a Behaviour located on a MeshEntity */
+class LocatedBehaviourInstance 
+{
+private:
+    BehaviourPtr _behaviour;
+    MeshEntityPtr _entity; 
+    CapyConvertibleContainer _toCapyConverter;
+    
+public: 
+    
+    LocatedBehaviourInstance( BehaviourPtr behaviour, MeshEntityPtr entity ) :
+        _behaviour( behaviour ), _entity( entity )
+    {
+         std::cout <<" LocatedBehaviourInstance " << std::endl; 
+         std::string entityName; 
+         if (_entity->getType() == AllMeshEntitiesType )
+         { 
+             entityName = "TOUT"; 
+         }
+         else if ( _entity->getType() == GroupOfElementsType ) 
+         { 
+             entityName = "GROUP_MA"; 
+         } 
+         _toCapyConverter.add( new CapyConvertibleValue< MeshEntityPtr >
+                                          ( true, entityName, _entity, true ) );
+         _toCapyConverter+=_behaviour->getCapyConvertibleContainer();
+    };
+   /**
+    */
+    const CapyConvertibleContainer& getCapyConvertibleContainer() const
+    {
+        return _toCapyConverter;
+    };
+};
+
+typedef boost::shared_ptr< LocatedBehaviourInstance> LocatedBehaviourPtr;
 
 #endif /* BEHAVIOUR_H_ */

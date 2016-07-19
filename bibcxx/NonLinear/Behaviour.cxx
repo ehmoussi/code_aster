@@ -33,3 +33,92 @@
 
 #include "NonLinear/Behaviour.h"
 
+BehaviourInstance::BehaviourInstance( ConstitutiveLawEnum law, StrainEnum strain ): 
+		_constitutiveLaw( law ), 
+                _strain( strain )
+        {
+
+         _toCapyConverter.add( new CapyConvertibleValue< ConstitutiveLawEnum> 
+                                                      ( true, "RELATION", _constitutiveLaw, allConstitutiveLaw, 
+                                                      allConstitutiveLawNames , true ) ); 
+ 
+         _toCapyConverter.add( new CapyConvertibleValue< StrainEnum> 
+                                                      ( true, "DEFORMATION", _strain, allStrain, 
+                                                      allStrainNames , true ) ); 
+
+          _toCapyConverter.add( new CapyConvertibleValue< VectorOfLaw > 
+                                                      ( false, "RELATION_KIT", _laws, allConstitutiveLaw, 
+                                                       allConstitutiveLawNames , false ) );  
+         
+          _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "RESI_CPLAN_MAXI", _planeStressMaximumResidual, false) );
+   
+         _planeStressRelativeResidual =1.E-06; 
+         _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "RESI_CPLAN_RELA", _planeStressRelativeResidual, true ) );
+
+         _planeStressMaximumIteration = 1;
+         _toCapyConverter.add( new CapyConvertibleValue< int >
+                                                      ( false, "ITER_CPLAN_MAXI", _planeStressMaximumIteration, true ) );
+        
+         _theta = 1.0; 
+         _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "PARM_THETA", _theta, true ) );
+         _alpha = 1.0; 
+ 	 _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "PARM_ALPHA", _alpha, true ) );
+         
+         _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "RESI_INTE_MAXI", _integrationMaximumResidual, false ) );
+ 
+         _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "RESI_INTE_RELA", _integrationRelativeResidual, false ) );
+         
+         _toCapyConverter.add( new CapyConvertibleValue< int >
+                                                      ( false, "ITER_INTE_MAXI", _integrationMaximumIteration, false ) );
+
+                                              
+         if ( law != Mfront )
+         {
+             _integrationRelativeResidual = 1.E-06; 
+             _toCapyConverter[  "RESI_INTE_RELA" ] -> enable(); 
+             _toCapyConverter[  "RESI_INTE_MAXI" ] -> disable(); 
+             _integrationMaximumIteration = 20; 
+             _toCapyConverter[  "ITER_INTE_MAXI" ] -> enable(); 
+         }
+         else
+         {
+             _integrationMaximumResidual = 1.E-08; 
+             _toCapyConverter[  "RESI_INTE_MAXI" ] -> enable();
+             _toCapyConverter[  "RESI_INTE_RELA" ] -> disable();  
+             _integrationMaximumIteration = 100; 
+             _toCapyConverter[  "ITER_INTE_MAXI" ] -> enable(); 
+         }
+
+         _integrationIterationStep=0; 
+         _toCapyConverter.add( new CapyConvertibleValue< int >
+                                                      ( false, "ITER_INTE_PAS", _integrationIterationStep, true ) );
+
+         _toCapyConverter.add( new CapyConvertibleValue< IntegrationAlgoEnum> 
+                                                      ( false, "ALGO_INTE", _integrationAlgo, allIntegrationAlgo, 
+                                                       allIntegrationAlgoNames , false ) ); 
+
+
+         _toCapyConverter.add( new CapyConvertibleValue< TangentMatrixEnum> 
+                                                      ( false, "TYP_MATR_TANG", _tangentMatrix, allTangentMatrix, 
+                                                       allTangentMatrixNames , false ) ); 
+
+         _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "RESI_RADI_RELA", _radialRelativeResidual, false ) );
+   
+         _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "SEUIL", _threshold, false ) );
+         _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "AMPLITUDE", _amplitude, false ) );
+         _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "TAUX_RETOUR", _returnRate, false ) );
+         _toCapyConverter.add( new CapyConvertibleValue< double >
+                                                      ( false, "VALE_PERT_RELA", _relativeLossValue, false ) );
+
+        };
+  

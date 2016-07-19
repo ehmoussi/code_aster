@@ -153,7 +153,7 @@ from .Behaviour import (
             Vmis_John_Cook,
             Umat,
             Mfront, 
-            SmallDeformation, PetitReac, LargeDeformationAndRotation, SimoMiehe, GdefLog, 
+            SmallStrain, PetitReac, LargeStrainAndRotation, SimoMiehe, GdefLog, 
             PerturbationMatrix, VerificationMatrix, TangentSecantMatrix, )
 
 
@@ -172,5 +172,5 @@ from .State import (
 
 from .Driving import (
         Driving, DisplacementValue, DisplacementNorm, JumpOnCrackValue, 
-      JumpOnCrackNorm, LimitLoad, MonotonicDeformation,  ElasticityLimit,
+      JumpOnCrackNorm, LimitLoad, MonotonicStrain,  ElasticityLimit,
       SmallestDisplacementIncrement, SmallestAngleIncrement, SmallestResidual, MixedCriterion,  )

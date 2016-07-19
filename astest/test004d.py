@@ -53,7 +53,7 @@ statNonLine1.addStandardExcitation( kine2 )
 statNonLine1.setSupportModel( monModel )
 statNonLine1.setMaterialOnMesh( affectMat )
 statNonLine1.setLinearSolver( monSolver )
-Elas = code_aster.Behaviour( code_aster.Elas, code_aster.SmallDeformation )
+Elas = code_aster.Behaviour( code_aster.Elas, code_aster.SmallStrain )
 statNonLine1.addBehaviourOnElements( Elas );
 
 

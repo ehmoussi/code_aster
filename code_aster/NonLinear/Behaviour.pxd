@@ -177,8 +177,8 @@ cdef extern from "NonLinear/AllowedBehaviour.h":
             Umat,
             Mfront
 
-    cpdef enum DeformationEnum:
-        SmallDeformation, PetitReac, LargeDeformationAndRotation, SimoMiehe, GdefLog
+    cpdef enum StrainEnum:
+        SmallStrain, PetitReac, LargeStrainAndRotation, SimoMiehe, GdefLog
 
     cpdef enum TangentMatrixEnum:
         PerturbationMatrix, VerificationMatrix, TangentSecantMatrix
@@ -187,7 +187,7 @@ cdef extern from "NonLinear/Behaviour.h":
 
     cdef cppclass BehaviourInstance:
 
-        BehaviourInstance( ConstitutiveLawEnum curLaw, DeformationEnum curDeformation )
+        BehaviourInstance( ConstitutiveLawEnum curLaw, StrainEnum curStrain )
         void setTangentMatrix( TangentMatrixEnum curMat ) 
 
     cdef cppclass BehaviourPtr:

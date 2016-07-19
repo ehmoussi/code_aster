@@ -32,6 +32,8 @@
  * @brief Enum contenant toutes les lois de comportement de Code_Aster
  * @author Natacha Béreux 
  */
+
+
 enum ConstitutiveLawEnum { 
             Elas,
             Elas_Vmis_Line,
@@ -186,20 +188,38 @@ enum ConstitutiveLawEnum {
             Umat,
             Mfront  };
 
-const int nbLaw = 151;
-extern const char* ConstitutiveLawNames[nbLaw];
+extern const std::vector<ConstitutiveLawEnum> allConstitutiveLaw;
+extern const std::vector< std::string > allConstitutiveLawNames; 
+
 
 /**
- * @enum DeformationEnum
+ * @enum StrainEnum
  * @brief Enum contenant tous les types de deformations
  * @author Natacha Béreux 
  */
-enum DeformationEnum { SmallDeformation, PetitReac, LargeDeformationAndRotation, SimoMiehe, GdefLog }; 
-const int nbDeformation = 5;
-extern const char* DeformationNames[nbDeformation];
+enum StrainEnum { SmallStrain, PetitReac, LargeStrainAndRotation, SimoMiehe, GdefLog }; 
+extern const std::vector<StrainEnum> allStrain; 
+extern const std::vector< std::string > allStrainNames; 
 
+
+/**
+ * @enum TangentMatrixEnum
+ * @brief Enum contenant tous les types de matrices tangentes
+ * @author Natacha Béreux 
+ */
 enum TangentMatrixEnum { PerturbationMatrix, VerificationMatrix, TangentSecantMatrix };
-const int nbTangMatr = 3;
-extern const char* TangentMatrixNames[nbTangMatr]; 
+extern const std::vector<TangentMatrixEnum> allTangentMatrix; 
+extern const std::vector< std::string >  allTangentMatrixNames; 
+
+/**
+ * @enum IntegrationAlgoEnum
+ * @brief Enum contenant tous les algorithmes pour intégrer une loi de comportement
+ * @author Natacha Béreux 
+ */
+enum IntegrationAlgoEnum { AnalyticalAlgo, SecantAlgo, DekkerAlgo, Newton1DAlgo, BrentAlgo, NewtonAlgo, NewtonReliAlgo, 
+NewtonLossAlgo, RungeKuttaAlgo, ParticularAlgo, NoAlgo }; 
+extern const std::vector<IntegrationAlgoEnum> allIntegrationAlgo; 
+extern const std::vector< std::string >  allIntegrationAlgoNames; 
+
 
 #endif /* ALLOWEDBEHAVIOUR_H_ */

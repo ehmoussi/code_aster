@@ -54,7 +54,7 @@ statNonLine1.addStandardExcitation( charMeca2 )
 statNonLine1.setSupportModel( monModel )
 statNonLine1.setMaterialOnMesh( affectMat )
 statNonLine1.setLinearSolver( monSolver )
-Elas = code_aster.Behaviour( code_aster.Elas, code_aster.SmallDeformation )
+Elas = code_aster.Behaviour( code_aster.Elas, code_aster.SmallStrain )
 statNonLine1.addBehaviourOnElements( Elas );
 
 
@@ -75,7 +75,7 @@ timeList.build()
 #timeList.debugPrint( 6 )
 statNonLine1.setLoadStepManager( timeList ) 
 # Run the nonlinear analysis
-#resu = statNonLine1.execute()
+resu = statNonLine1.execute()
 #resu.debugPrint( 6 )
 
 test.assertTrue( True )
