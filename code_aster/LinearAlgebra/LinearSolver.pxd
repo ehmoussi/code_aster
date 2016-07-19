@@ -30,6 +30,21 @@ cdef extern from "LinearAlgebra/AllowedLinearSolver.h":
     cpdef enum Renumbering:
         MD, MDA, Metis, RCMK, AMD, AMF, PORD, QAMD, Scotch, Auto, Sans
 
+    cpdef enum Preconditioning:
+        IncompleteLdlt, SimplePrecisionLdlt, Jacobi, Sor, Ml, Boomer, Gamg, LagrBloc, Without
+
+    cpdef enum IterativeSolverAlgorithm:
+        ConjugateGradiant, ConjugateResidual, GMRes, GCR, FGMRes
+
+    cpdef enum LagrangeTreatment:
+        Eliminate, NotEliminate, DoubleLagrangeEliminate
+
+    cpdef enum MemoryManagement:
+         InCore, OutOfCore, Automatic, Evaluation
+
+    cpdef enum MatrixType:
+        NonSymetric, Symetric, SymetricPositiveDefinite, Undefined
+
 cdef extern from "LinearAlgebra/LinearSolver.h":
 
     cdef cppclass LinearSolverInstance:
