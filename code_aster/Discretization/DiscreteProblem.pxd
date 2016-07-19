@@ -31,6 +31,9 @@ cdef extern from "Discretization/DiscreteProblem.h":
 
         DiscreteProblemInstance(StudyDescriptionPtr& model)
         ElementaryVectorPtr buildElementaryMechanicalLoadsVector()
+        ElementaryMatrixPtr computeMechanicalDampingMatrix(const ElementaryMatrixPtr&,
+                                                           const ElementaryMatrixPtr&)
+        ElementaryMatrixPtr computeMechanicalMassMatrix()
         ElementaryMatrixPtr computeMechanicalRigidityMatrix()
 
     cdef cppclass DiscreteProblemPtr:

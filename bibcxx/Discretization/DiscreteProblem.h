@@ -47,9 +47,14 @@ private:
     StudyDescriptionPtr _study;
 
     /**
+     * @brief Production d'un CommandSyntaxCython pour CALC_MATR_ELEM
+     */
+    SyntaxMapContainer computeMatrixSyntax( const std::string& optionName );
+
+    /**
      * @brief Calcul des matrices elementaires pour une option quelconque
      */
-    ElementaryMatrixPtr computeMatrix( const std::string& optionName )
+    ElementaryMatrixPtr computeMechanicalMatrix( const std::string& optionName )
         throw ( std::runtime_error );
 
 public:
@@ -108,7 +113,7 @@ public:
      * @param time Instant de calcul
      * @return Matrice élémentaire contenant la rigidité mécanique
      */
-    ElementaryMatrixPtr buildElementaryTangentMatrix( double time = 0  );
+    ElementaryMatrixPtr buildElementaryTangentMatrix( double time = 0. );
 
     ElementaryMatrixPtr buildElementaryJacobianMatrix( double time = 0. );
     /**
@@ -116,6 +121,13 @@ public:
      * @return Numérotation du problème discret
      */
     DOFNumberingPtr computeDOFNumbering( DOFNumberingPtr dofNum = DOFNumberingPtr( new DOFNumberingInstance("") ) );
+
+    /**
+     * @brief Calcul des matrices elementaires pour l'option AMOR_MECA
+     */
+    ElementaryMatrixPtr computeMechanicalDampingMatrix( const ElementaryMatrixPtr& rigidity,
+                                                        const ElementaryMatrixPtr& mass )
+        throw ( std::runtime_error );
 
     /**
      * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
