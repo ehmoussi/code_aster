@@ -78,5 +78,21 @@ statNonLine1.setLoadStepManager( timeList )
 resu = statNonLine1.execute()
 #resu.debugPrint( 6 )
 
+# Define a second nonlinear Analysis
+statNonLine2 = code_aster.StaticNonLinearAnalysis()
+statNonLine2.addStandardExcitation( charMeca1 )
+statNonLine2.addStandardExcitation( charMeca2 )
+statNonLine2.setSupportModel( monModel )
+statNonLine2.setMaterialOnMesh( affectMat )
+Elas = code_aster.Behaviour( code_aster.Elas, code_aster.SmallStrain )
+statNonLine2.addBehaviourOnElements( Elas )
+# Define the initial state of the current analysis
+start = code_aster.State()
+# from the last computed step of the previous analysis
+start.setFromNonLinearEvolution( resu, 0.5 )
+#statNonLine2.setInitialState( start )
+#
+
+# at least it pass here!
 test.assertTrue( True )
 test.printSummary()

@@ -178,7 +178,6 @@ public:
     LocatedBehaviourInstance( BehaviourPtr behaviour, MeshEntityPtr entity ) :
         _behaviour( behaviour ), _entity( entity )
     {
-         std::cout <<" LocatedBehaviourInstance " << std::endl; 
          std::string entityName; 
          if (_entity->getType() == AllMeshEntitiesType )
          { 

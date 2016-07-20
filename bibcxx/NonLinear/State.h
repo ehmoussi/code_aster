@@ -91,56 +91,68 @@ class StateInstance
          */
         ~StateInstance()
         {};
-        
- 
+
         /** @brief define the state from the result of a previous nonlinear anaysis
             @todo réaliser l'extraction des champs depuis l'evol_noli et associer les pointeurs _depl etc 
         */
         void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli, 
-                                           double sourceStep, double precision=1.E-06 )
+                                        double sourceStep, double precision=1.E-06 )
         {
-             _evolParam =  evol_noli->getName();
-             _sourceStepParam = sourceStep;
-             _precisionParam = precision;
-         // set default value of currentStepParam & currentStepParam(INST_ETAT_INIT)
-            this-> setCurrentStep( sourceStep );
+            std::cout << "setFromNonLinearEvolution" << std::endl; 
+            //_evolParam =  evol_noli->getName();
+            _sourceStepParam = sourceStep;
+            _precisionParam = precision;
+         // set default value of currentStepParam (INST_ETAT_INIT)
+            //this-> setCurrentStep( sourceStep );
 	};
         /** @brief define the state from the result of a previous nonlinear anaysis
         */
+
         void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli, 
-                                           int sourceIndex )
+                                        int sourceIndex )
         {
-             _evolParam =  evol_noli->getName();
-             _sourceIndexParam = sourceIndex;
+            _evolParam =  evol_noli->getName();
+            _sourceIndexParam = sourceIndex;
             // set default value of currentStepParam & currentStepParam(INST_ETAT_INIT)
             //this-> setCurrentStep( sourceIndex );
-            //@todo qqch du genre 
-            // _depl = evol_noli->getRealFieldOnNodes(  , sourceIndex ) 
+            _depl = evol_noli->getRealFieldOnNodes( "DEPL" , sourceIndex ); 
 	};
-        
+        /**
+        * L'état est défini à partir d'evol_noli. Si on ne précise ni instant (sourceStep)
+        * ni numéro d'ordre (sourceIndex), l'état est initialisé à partir du dernier 
+        * calcul effectué (de numéro d'ordre lastIndex dans la sd evol_noli) 
+        */
+        void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli )
+        {
+            int lastIndex = evol_noli->getNumberOfRanks(); 
+            setFromNonLinearEvolution( evol_noli, lastIndex ); 
+	}
         /** @brief set the value of the current step 
         */ 
         void setCurrentStep ( double step )
         {
-	    _currentStep = step; 
+	        _currentStep = step; 
             _currentStepParam = step; 
-        }; 
-            
-      
+        };
+
         /**
         * @brief Define a displacement field as  state of an analysis
         */
-        void setDisplacement( FieldOnNodesDoublePtr depl ) 
+        void setDisplacement( FieldOnNodesDoublePtr depl )
         {
             _depl = depl; 
         };
         
         /** 
+        * @brief get current step 
         */
         double getStep() const 
         {
             return _currentStep; 
         }
+        /** 
+        * @brief get current index 
+        */
         int getIndex() const 
         {
             return _currentIndex; 

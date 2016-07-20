@@ -30,6 +30,7 @@ from code_aster.NonLinear.Behaviour cimport BehaviourPtr
 from code_aster.NonLinear.Driving cimport DrivingPtr
 from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethodPtr
 from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethodPtr
+from code_aster.NonLinear.State cimport StatePtr
 from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
 from code_aster.Studies.TimeStepManager cimport TimeStepManagerPtr
 
@@ -46,6 +47,7 @@ cdef extern from "Solvers/StaticNonLinearAnalysis.h":
         void setMaterialOnMesh( MaterialOnMeshPtr& curMatOnMesh )
         void setSupportModel( ModelPtr& curModel )
         void setLinearSolver( LinearSolverPtr& curSolver )
+        void setInitialState( StatePtr& curState )
         void setLoadStepManager( TimeStepManagerPtr& curTimeStepManager )
         void setDriving( DrivingPtr& curDriving )
         void addStandardExcitation(  GenericMechanicalLoadPtr& currentLoad );
