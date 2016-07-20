@@ -159,6 +159,15 @@ public:
      * @todo revoir la gestion des unités logiques (notamment si fort.20 existe déjà)
      */
     bool printMedFile( std::string fileName ) const throw ( std::runtime_error );
+
+    /**
+    * @brief Get the number of steps stored in the ResultContainer
+    * @return nbRanks
+    */
+    const int getNumberOfRanks() const
+    {
+        return _nbRanks;
+    }
 };
 
 /**

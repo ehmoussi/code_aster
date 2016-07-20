@@ -29,6 +29,7 @@ from code_aster.NonLinear.Behaviour cimport Behaviour
 from code_aster.NonLinear.Driving cimport Driving 
 from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethod
 from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethod
+from code_aster.NonLinear.State cimport State
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Modeling.Model cimport Model
 from code_aster.Results.ResultsContainer cimport ResultsContainer
@@ -79,6 +80,10 @@ cdef class StaticNonLinearAnalysis( DataStructure ):
     def setLinearSolver( self, LinearSolver curLinearSolver ):
         """Set the linear solver """
         self.getInstance().setLinearSolver( deref( curLinearSolver.getPtr() ) )
+
+    def setInitialState( self, State curState ):
+        """Set the initial state of the analysis """
+        self.getInstance().setInitialState( deref( curState.getPtr() ) )
 
     def setLineSearchMethod( self, LineSearchMethod curLineSearchMethod ):
         """Set the linesearch method """
