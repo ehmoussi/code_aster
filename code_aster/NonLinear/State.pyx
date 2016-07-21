@@ -21,7 +21,6 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
-from code_aster.Results.ResultsContainer cimport ResultsContainer
 from code_aster.Results.NonLinearEvolutionContainer cimport NonLinearEvolutionContainer 
 
 cdef class State:
@@ -48,13 +47,17 @@ cdef class State:
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
-    def setFromNonLinearEvolution( self, ResultsContainer evol_noli, double sourceStep, precision = 1.E-06 ):
-         """ Define current step from a previous nonlinear analysis"""
-         self.getInstance().setFromNonLinearEvolution(  deref( <NonLinearEvolutionContainerPtr*>(evol_noli.getPtr())) , sourceStep, precision )
-
-    def setFromNonLinearEvolution( self,  ResultsContainer evol_noli, int sourceIndex ):
-         """ Define current state from a previous nonlinear analysis"""
-         self.getInstance().setFromNonLinearEvolution(  deref( <NonLinearEvolutionContainerPtr*>(evol_noli.getPtr())), sourceIndex )
+    def setFromNonLinearEvolution( self, NonLinearEvolutionContainer evol_noli, sourceStep=None, precision=None, sourceIndex=None ):
+        """ Define current step from a previous nonlinear analysis"""
+        if  sourceStep is None:
+            if sourceIndex is None: 
+                self.getInstance().setFromNonLinearEvolution( deref( <NonLinearEvolutionContainerPtr*>(evol_noli.getPtr())))
+            else:
+                self.getInstance().setFromNonLinearEvolution( deref( <NonLinearEvolutionContainerPtr*>(evol_noli.getPtr())), sourceIndex )
+        else:
+            if precision is None: 
+                precision=1.E-06
+            self.getInstance().setFromNonLinearEvolution(  deref( <NonLinearEvolutionContainerPtr*>(evol_noli.getPtr())) , sourceStep, precision )
 
     def setCurrentStep ( self, double step ):
          """ Define the value of the current time or load step"""

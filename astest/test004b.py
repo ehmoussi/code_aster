@@ -90,8 +90,20 @@ statNonLine2.addBehaviourOnElements( Elas )
 start = code_aster.State()
 # from the last computed step of the previous analysis
 start.setFromNonLinearEvolution( resu, 0.5 )
-#statNonLine2.setInitialState( start )
+statNonLine2.setInitialState( start )
 #
+temps =[1.0, 1.5];
+timeList = code_aster.Studies.TimeStepManager()
+timeList.setTimeList( temps )
+
+error1 = code_aster.Studies.ConvergenceError()
+action1 = code_aster.Studies.SubstepingOnError()
+action1.setAutomatic( False )
+error1.setAction( action1 )
+timeList.addErrorManager( error1 )
+timeList.build()
+statNonLine2.setLoadStepManager( timeList ) 
+#statNonLine2.execute()
 
 # at least it pass here!
 test.assertTrue( True )

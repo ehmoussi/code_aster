@@ -42,7 +42,7 @@ StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance():
 
 /** @brief main routine to run a static, nonlinear analysis 
  */
-ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runtime_error )
+NonLinearEvolutionContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runtime_error )
 {
 // cmdSNL is the command Syntax object associated to Code_Aster STAT_NON_LINE command 
     CommandSyntaxCython cmdSNL( "STAT_NON_LINE");
@@ -151,7 +151,7 @@ ResultsContainerPtr StaticNonLinearAnalysisInstance::execute() throw ( std::runt
 // Return result 
 //    resultSNL->debugPrint(6);
     resultSNL->buildFromExisting(); 
-    return ResultsContainerPtr(resultSNL.get());
+    return resultSNL;
 };
 
 
