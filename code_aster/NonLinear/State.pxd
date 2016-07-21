@@ -28,9 +28,10 @@ cdef extern from "NonLinear/State.h":
 
         StateInstance( int index, double step )
         void setFromNonLinearEvolution( NonLinearEvolutionContainerPtr  evol_noli, 
-                                   double sourceStep, double precision )
+                                   double sourceStep, double precision  )
         void setFromNonLinearEvolution( NonLinearEvolutionContainerPtr  evol_noli, 
-                                   int sourceIndex )
+                                   int sourceIndex   )
+        void setFromNonLinearEvolution( NonLinearEvolutionContainerPtr  evol_noli) 
         void setCurrentStep ( double step )
         void setDisplacement ( FieldOnNodesDoublePtr depl ) 
 

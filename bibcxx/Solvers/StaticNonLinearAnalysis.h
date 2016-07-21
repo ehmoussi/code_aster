@@ -144,7 +144,7 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
          *        this function wraps Code_Aster's legacy operator for nonlinear analysis
          *        (op0070) 
          */
-        ResultsContainerPtr execute() throw ( std::runtime_error );
+        NonLinearEvolutionContainerPtr execute() throw ( std::runtime_error );
         
         /** @brief Define the nonlinear method 
         */

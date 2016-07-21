@@ -31,7 +31,7 @@ from code_aster.NonLinear.Driving cimport DrivingPtr
 from code_aster.NonLinear.LineSearchMethod cimport LineSearchMethodPtr
 from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethodPtr
 from code_aster.NonLinear.State cimport StatePtr
-from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
+from code_aster.Results.NonLinearEvolutionContainer cimport NonLinearEvolutionContainerPtr
 from code_aster.Studies.TimeStepManager cimport TimeStepManagerPtr
 
 
@@ -40,7 +40,7 @@ cdef extern from "Solvers/StaticNonLinearAnalysis.h":
     cdef cppclass StaticNonLinearAnalysisInstance:
 
         StaticNonLinearAnalysisInstance()
-        ResultsContainerPtr execute()
+        NonLinearEvolutionContainerPtr execute()
         void addBehaviourOnElements( BehaviourPtr& curBehaviour, string nameOfGroup ) except+
         void setNonLinearMethod( NonLinearMethodPtr& curNonLinearMethod )
         void setLineSearchMethod( LineSearchMethodPtr& curLineSearchMethod )

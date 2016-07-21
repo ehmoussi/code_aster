@@ -19,6 +19,7 @@
 
 from libcpp.string cimport string
 from code_aster.Results.ResultsContainer cimport ResultsContainerInstance, ResultsContainer
+from code_aster.Results.NonLinearEvolutionContainer cimport NonLinearEvolutionContainerInstance, NonLinearEvolutionContainer
 
 cdef extern from "Results/NonLinearEvolutionContainer.h":
 

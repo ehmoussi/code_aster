@@ -32,7 +32,8 @@ from code_aster.NonLinear.NonLinearMethod cimport NonLinearMethod
 from code_aster.NonLinear.State cimport State
 from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
 from code_aster.Modeling.Model cimport Model
-from code_aster.Results.ResultsContainer cimport ResultsContainer
+from code_aster.Results.ResultsContainer cimport ResultsContainer, ResultsContainerPtr
+from code_aster.Results.NonLinearEvolutionContainer cimport NonLinearEvolutionContainer
 from code_aster.Studies.TimeStepManager cimport TimeStepManager
 
 
@@ -65,8 +66,8 @@ cdef class StaticNonLinearAnalysis( DataStructure ):
 
     def execute( self ):
         """Solve the problem"""
-        results = ResultsContainer()
-        results.set( self.getInstance().execute() )
+        results = NonLinearEvolutionContainer()
+        results.set( <ResultsContainerPtr>(self.getInstance().execute() ))
         return results
 
     def addBehaviourOnElements( self, Behaviour curBehaviour, string nameOfGroup = ""  ):

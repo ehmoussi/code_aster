@@ -98,8 +98,7 @@ class StateInstance
         void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli, 
                                         double sourceStep, double precision=1.E-06 )
         {
-            std::cout << "setFromNonLinearEvolution" << std::endl; 
-            //_evolParam =  evol_noli->getName();
+            _evolParam =  evol_noli->getName();
             _sourceStepParam = sourceStep;
             _precisionParam = precision;
          // set default value of currentStepParam (INST_ETAT_INIT)
