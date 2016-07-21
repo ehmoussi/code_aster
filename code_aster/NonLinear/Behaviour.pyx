@@ -50,3 +50,31 @@ cdef class Behaviour( DataStructure ):
     def setTangentMatrix( self, TangentMatrixEnum curMat) :
         """ Set the type of tangent matrix """
         self.getInstance().setTangentMatrix( curMat )
+
+    def setAlpha( self, double alpha ):
+        """ Set alpha parameter """
+        self.getInstance().setAlpha( alpha )
+
+    def setTheta( self, double theta ): 
+        """ Set theta parameter """
+        self.getInstance().setTheta( theta )
+
+    def setRadialRelativeResidual ( self, double radialRelativeResidual ):
+        """ Set the Radial Relative Residual """
+        self.getInstance().setRadialRelativeResidual ( radialRelativeResidual )
+    
+    def setPlasticityCreepConstitutiveLaw( self,ConstitutiveLawEnum law1, ConstitutiveLawEnum law2 ):
+        """ Set Laws for plasticity ad creep """ 
+        self.getInstance().setPlasticityCreepConstitutiveLaw( law1, law2 ) 
+
+    def setPlaneStressMaximumResidual( self,double planeStressMaximumResidual ):
+        """ Set the Plane Stress Maximum Residual """ 
+        self.getInstance().setPlaneStressMaximumResidual( planeStressMaximumResidual )
+
+    def setPlaneStressRelativeResidual( self, double planeStressRelativeResidual ):
+        """ Set the Plane Stress Relative Residual """
+        self.getInstance().setPlaneStressRelativeResidual( planeStressRelativeResidual )
+
+    def setPlaneStressMaximumIteration( self, int maxIter ):
+        """ Set the maximum number of iterations for the integration of the constitutive law """
+        self.getInstance().setPlaneStressMaximumIteration( maxIter )

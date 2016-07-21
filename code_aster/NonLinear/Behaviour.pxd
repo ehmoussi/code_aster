@@ -189,6 +189,13 @@ cdef extern from "NonLinear/Behaviour.h":
 
         BehaviourInstance( ConstitutiveLawEnum curLaw, StrainEnum curStrain )
         void setTangentMatrix( TangentMatrixEnum curMat ) 
+        void setAlpha( double alpha )
+        void setTheta( double theta ) 
+        void setRadialRelativeResidual ( double radialRelativeResidual )
+        void setPlasticityCreepConstitutiveLaw( ConstitutiveLawEnum law1, ConstitutiveLawEnum law2 ) 
+        void setPlaneStressMaximumResidual( double planeStressMaximumResidual ) 
+        void setPlaneStressRelativeResidual( double planeStressRelativeResidual ) 
+        void setPlaneStressMaximumIteration( int maxIter ) 
 
     cdef cppclass BehaviourPtr:
 

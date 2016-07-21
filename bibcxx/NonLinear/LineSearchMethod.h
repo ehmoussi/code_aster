@@ -81,24 +81,38 @@ class LineSearchMethodInstance
             _listOfParameters.push_back( &_resi_line_rela );
             _listOfParameters.push_back( &_iter_line_maxi ); 
         };
-        
+        /**
+        @brief set minimum value of rho   
+        */
         void setMinimumRhoValue( double rhoMin )
         {
             _rhoMin = rhoMin ;
         }; 
+        /**
+        @brief set maximum value of rho   
+        */
         void setMaximumRhoValue( double rhoMax )
         {
             _rhoMax = rhoMax ;
         }; 
+        /**
+        @brief   
+        */
         void setExclRhoValue( double rhoExcl )
         {
             _rhoExcl = rhoExcl;
         };
+        /**
+        @brief set maximum number of iterations  
+        */
         void setMaximumNumberOfIterations( int nIterMax )
         {
             _iter_line_maxi = nIterMax;
             _control->setMaximumNumberOfIterations( nIterMax );
         };
+        /**
+        @brief set the relative tolerance 
+        */
         void setRelativeTolerance( double reslin )
         {
             _resi_line_rela = reslin ; 
