@@ -116,7 +116,8 @@ public:
             _toCapyConverter[ "RESI_RADI_RELA" ]->enable(); 
             _toCapyConverter[ "TYP_MATR_TANG" ] ->disable(); 
         };
-        /** @brief
+        /** @brief Kit_ddi modele de comportement pour le béton 
+                   combinant fluage et comportement elastoplastique ou endommageant.
             @todo verifier que les lois sont compatibles  
         */
         
