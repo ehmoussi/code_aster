@@ -1,5 +1,5 @@
 /**
- * @file StructureInterface.cxx
+ * @file ModalBasisDefinition.cxx
  * @brief
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -23,29 +23,25 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "LinearAlgebra/StructureInterface.h"
+#include "LinearAlgebra/ModalBasisDefinition.h"
 
-const std::vector< InterfaceTypeEnum > allInterfaceType = { MacNeal, CraigBampton,
-                                                            HarmonicalCraigBampton,
-                                                            NoInterfaceType };
-const std::vector< std::string > allInterfaceTypeNames = { "MNEAL", "CRAIGB",
-                                                           "CB_HARMO", "AUCUN" };
-
-bool StructureInterfaceInstance::build() throw( std::runtime_error )
+bool GenericModalBasisInstance::build() throw( std::runtime_error )
 {
-    CommandSyntaxCython cmdSt( "DEFI_INTERF_DYNA" );
-    cmdSt.setResult( getName(), "INTERF_DYNA_CLAS" );
+    CommandSyntaxCython cmdSt( "DEFI_BASE_MODALE" );
+    cmdSt.setResult( getName(), "MODE_MECA" );
 
     CapyConvertibleSyntax syntax;
-    syntax.setSimpleKeywordValues( _container );
-    for( const auto& iter : _interfDefs )
+    CapyConvertibleContainer solverSyntaxContainer( "SOLVEUR",
+                                                    _solver->getListOfParameters() );
+    syntax.addCapyConvertibleContainer( solverSyntaxContainer );
+    for( const auto& iter : _vectorOfModalBasis )
         syntax.addCapyConvertibleContainer( iter._container );
 
     cmdSt.define( syntax );
 
     try
     {
-        INTEGER op = 98;
+        INTEGER op = 99;
         CALL_EXECOP( &op );
     }
     catch( ... )
@@ -53,5 +49,6 @@ bool StructureInterfaceInstance::build() throw( std::runtime_error )
         throw;
     }
     _isEmpty = false;
+
     return true;
 };

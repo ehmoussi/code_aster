@@ -26,16 +26,14 @@
 SyntaxMapContainer buildSyntaxMapFromParamList( const ListGenParam& listParam ) throw ( std::runtime_error )
 {
     SyntaxMapContainer dict;
-    for ( ListGenParamCIter listIter = listParam.begin();
-        listIter != listParam.end();
-        ++listIter )
+    for( const auto& listIter : listParam )
     {
-        if ( ! (*listIter)->isSet() && (*listIter)->isMandatory() )
-            throw std::runtime_error( "Value of parameter " + (*listIter)->getName() + " is not set but mandatory" );
+        if ( ! listIter->isSet() && listIter->isMandatory() )
+            throw std::runtime_error( "Value of parameter " + listIter->getName() + " is not set but mandatory" );
 
-        if ( (*listIter)->isSet() )
+        if ( listIter->isSet() )
         {
-            dict.container[ (*listIter)->getName() ] = (*listIter)->getValue();
+            dict.container[ listIter->getName() ] = listIter->getValue();
         }
     }
     return dict;

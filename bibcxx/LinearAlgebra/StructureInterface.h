@@ -105,6 +105,7 @@ public:
      * @brief Constructeur
      */
     StructureInterfaceInstance( const DOFNumberingPtr& curDof ):
+        DataStructure( "INTERF_DYNA_CLAS", Permanent ),
         _dofNum( curDof ),
         _frequency( 1. ),
         _isEmpty( true ),
