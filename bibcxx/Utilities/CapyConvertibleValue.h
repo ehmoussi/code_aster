@@ -534,6 +534,7 @@ private:
 
     std::string       _nameOfFKW;
     bool              _isFKW;
+    ListGenParam      _toAdd;
 
     friend CapyConvertibleContainer operator+( const CapyConvertibleContainer&,
                                                const CapyConvertibleContainer& );
@@ -545,6 +546,12 @@ public:
 
     CapyConvertibleContainer( const std::string& name ): _nameOfFKW( name ),
                                                          _isFKW( true )
+    {};
+
+    CapyConvertibleContainer( const std::string& name, const ListGenParam& list ):
+        _nameOfFKW( name ),
+        _isFKW( true ),
+        _toAdd( list )
     {};
 
     /**
@@ -626,7 +633,7 @@ public:
      */
     SyntaxMapContainer toSyntaxMapContainer() const
     {
-        ListGenParam lParam;
+        ListGenParam lParam( _toAdd );
         for( const auto curIter : _container )
             if ( curIter.second->isSet() )
                 lParam.push_back( curIter.second->getValueOfKeyWord() );
