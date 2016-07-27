@@ -215,7 +215,7 @@ public:
                         const MechanicalModeContainerPtr& mechaMode,
                         const VectorInt& vecOfInt = {} )
     {
-        setModalBasis( structInterf, {mechaMode}, vecOfInt );
+        setModalBasis( structInterf, (VectorOfMechaModePtr){ mechaMode }, vecOfInt );
     };
 };
 
