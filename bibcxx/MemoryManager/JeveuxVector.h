@@ -30,6 +30,7 @@
 #include "aster_fort.h"
 
 #include "MemoryManager/JeveuxAllowedTypes.h"
+#include "MemoryManager/JeveuxObject.h"
 
 #include <string>
 
@@ -40,11 +41,9 @@
  * @todo rajouter un constructeur de nom jeveux pour que .NSLV soit bien placé (cf DOFNumbering.cxx)
  */
 template< typename ValueType >
-class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
+class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxType< ValueType >
 {
     private:
-        /** @brief Nom du vecteur Jeveux */
-        std::string _name;
         /** @brief Pointeur vers la premiere position du vecteur Jeveux */
         ValueType*  _valuePtr;
 
@@ -55,7 +54,8 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          *   Attention, le pointeur est mis a zero. Avant d'utiliser ce vecteur,
          *   il faut donc faire appel a JeveuxVectorInstance::updateValuePointer
          */
-        JeveuxVectorInstance( std::string nom ): _name( nom ), _valuePtr( NULL )
+        JeveuxVectorInstance( std::string nom ): JeveuxObjectInstance( nom ),
+                                                 _valuePtr( NULL )
         {};
 
         /**
@@ -63,10 +63,10 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          */
         ~JeveuxVectorInstance()
         {
-            if ( _name != "" )
-            {
-                CALL_JEDETR(  _name.c_str() );
-            }
+#ifdef __DEBUG_GC__
+            std::cout << "JeveuxVector.destr: " << _name << std::endl;
+#endif
+            _valuePtr = NULL;
         };
 
         /**
@@ -118,9 +118,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         void deallocate()
         {
             if ( _name != "" )
-            {
                 CALL_JEDETR(  _name.c_str() );
-            }
         };
 
         /**
@@ -145,14 +143,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          */
         bool isAllocated()
         {
-            // Si on n'a pas de nom, on sort
-            if ( _name == "" ) return false;
-
-            long boolRetour;
-            // Appel a jeexin pour verifier que le vecteur existe
-            CALL_JEEXIN( _name.c_str(), &boolRetour );
-            if ( boolRetour == 0 ) return false;
-            return true;
+            return exists();
         };
 
         /**
@@ -160,14 +151,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
          */
         long size() const
         {
-            if ( _name == "" )
-                return 0;
-
-            long boolRetour;
-            // Appel a jeexin pour verifier que le vecteur existe
-            CALL_JEEXIN( _name.c_str(), &boolRetour );
-            if ( boolRetour == 0 )
-                return 0;
+            if( ! exists() ) return 0;
 
             long vectSize;
             JeveuxChar8 param( "LONMAX" );
@@ -184,15 +168,7 @@ class JeveuxVectorInstance: private AllowedJeveuxType< ValueType >
         bool updateValuePointer()
         {
             _valuePtr = NULL;
-            // Si on n'a pas de nom, on sort
-            if ( _name == "" )
-                return false;
-
-            long boolRetour;
-            // Appel a jeexin pour verifier que le vecteur existe
-            CALL_JEEXIN( _name.c_str(), &boolRetour );
-            if ( boolRetour == 0 )
-                return false;
+            if( ! exists() ) return false;
 
             const char* tmp = "L";
             CALL_JEVEUOC( _name.c_str(), tmp, (void*)(&_valuePtr) );
