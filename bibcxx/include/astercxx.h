@@ -48,4 +48,6 @@ extern "C"
 } // extern "C"
 #endif
 
+#define __DEBUG_GC__
+
 #endif // ASTERCXX_H_
