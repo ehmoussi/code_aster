@@ -13,8 +13,8 @@ monModel = code_aster.Model()
 monModel.setSupportMesh( monMaillage )
 monModel.addModelingOnAllMesh( code_aster.Mechanics, code_aster.Tridimensional )
 monModel.build()
-# materiau 
-Young = 32000.0; 
+# materiau
+Young = 32000.0;
 Poisson = 0.2
 
 materElas = code_aster.MaterialBehaviour.ElasMaterialBehaviour()
@@ -41,7 +41,7 @@ affectMat.addMaterialOnAllMesh( beton )
 affectMat.build()
 
 
-# Chargement 
+# Chargement
 imposedDof1 = code_aster.DisplacementDouble()
 imposedDof1.setValue( code_aster.Loads.Dx, 0.0 )
 imposedDof1.setValue( code_aster.Loads.Dy, 0.0 )
@@ -51,7 +51,7 @@ charMeca1.setSupportModel( monModel )
 charMeca1.setValue( imposedDof1, "N0" )
 charMeca1.build()
 
-#TODO un chargement avec liaison_ddl 
+#TODO un chargement avec liaison_ddl
 
 imposedDof2 = code_aster.DisplacementDouble()
 imposedDof2.setValue( code_aster.Loads.Dx, 1.0 )
@@ -60,14 +60,14 @@ charMeca2.setSupportModel( monModel )
 charMeca2.setValue( imposedDof1, "N1" )
 charMeca2.build()
 
-# Instants de calcul pour la première phase de calcul  
+# Instants de calcul pour la première phase de calcul
 
 temps = [0.0, 1.0]
 timeList = code_aster.Studies.TimeStepManager()
 timeList.setTimeList( temps )
 timeList.build()
 
-# Analyse non-linéaire pour cette première phase 
+# Analyse non-linéaire pour cette première phase
 statNonLine1 = code_aster.StaticNonLinearAnalysis()
 statNonLine1.addStandardExcitation( charMeca1 )
 statNonLine1.addStandardExcitation( charMeca2 )
@@ -76,14 +76,14 @@ statNonLine1.setMaterialOnMesh( affectMat )
 
 statNonLine1.setLoadStepManager( timeList )
 
-EndoOrthBeton = code_aster.Behaviour( code_aster.ConcreteOrthotropicDamage, code_aster.SmallDeformation )
+EndoOrthBeton = code_aster.Behaviour( code_aster.ConcreteOrthotropicDamage, code_aster.SmallStrain )
 statNonLine1.addBehaviourOnElements( EndoOrthBeton )
 
 
 #resu1 = statNonLine1.execute()
 
-# Instants de calcul pour la seconde phase de calcul 
-temps=list(np.linspace(1.0,2.0,num=50)) 
+# Instants de calcul pour la seconde phase de calcul
+temps = np.linspace(1.0, 2.0, num=50)
 timeList = code_aster.Studies.TimeStepManager()
 timeList.setTimeList( temps )
 timeList.build()
@@ -111,10 +111,9 @@ pilotage.setLowerBoundOfDrivingParameter(0.0)
 pilotage.setUpperBoundOfDrivingParameter(1.0)
 pilotage.setMinimumValueOfDrivingParameter( 0.000001 )
 pilotage.setMultiplicativeCoefficient( 1.0 )
-statNonLine2.setDriving( pilotage ) 
+statNonLine2.setDriving( pilotage )
 
 #resu2 = statNonLine2.execute()
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
-
