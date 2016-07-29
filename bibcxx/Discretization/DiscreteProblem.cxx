@@ -239,20 +239,9 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryMechanicalLoadsVecto
     return retour;
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::computeMatrix( const std::string& optionName ) throw ( std::runtime_error )
+SyntaxMapContainer DiscreteProblemInstance::computeMatrixSyntax( const std::string& optionName )
 {
-    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( Permanent ) );
-
-    // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
-    retour->setType( retour->getType() + "_DEPL_R" );
-
-    // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
-    CommandSyntaxCython cmdSt( "CALC_MATR_ELEM" );
-    cmdSt.setResult( retour->getName(), retour->getType() );
-
     SyntaxMapContainer dict;
-    // Definition du mot cle simple OPTION
-    dict.container[ "OPTION" ] = optionName;
 
     // Definition du mot cle simple MODELE
     if ( ( ! _study->getSupportModel() ) || _study->getSupportModel()->isEmpty() )
@@ -272,6 +261,27 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMatrix( const std::string& o
             tmp.push_back( curIter->getName() );
         dict.container[ "CHARGE" ] = tmp;
     }
+
+    // Definition du mot cle simple OPTION
+    dict.container[ "OPTION" ] = optionName;
+
+    return dict;
+};
+
+ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMatrix( const std::string& optionName )
+    throw ( std::runtime_error )
+{
+    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( Permanent ) );
+
+    // Comme on calcul *_MECA, il faut preciser le type de la sd
+    retour->setType( retour->getType() + "_DEPL_R" );
+
+    // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
+    CommandSyntaxCython cmdSt( "CALC_MATR_ELEM" );
+    cmdSt.setResult( retour->getName(), retour->getType() );
+
+    SyntaxMapContainer dict = computeMatrixSyntax( optionName );
+
     cmdSt.define( dict );
     try
     {
@@ -287,14 +297,46 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMatrix( const std::string& o
     return retour;
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalRigidityMatrix()
+ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalDampingMatrix( const ElementaryMatrixPtr& rigidity,
+                                                                             const ElementaryMatrixPtr& mass )
     throw ( std::runtime_error )
 {
-    return computeMatrix( "RIGI_MECA" );
+    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( Permanent ) );
+
+    // Comme on calcul *_MECA, il faut preciser le type de la sd
+    retour->setType( retour->getType() + "_DEPL_R" );
+
+    // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
+    CommandSyntaxCython cmdSt( "CALC_MATR_ELEM" );
+    cmdSt.setResult( retour->getName(), retour->getType() );
+
+    SyntaxMapContainer dict = computeMatrixSyntax( "AMOR_MECA" );
+    dict.container[ "RIGI_MECA" ] = rigidity->getName();
+    dict.container[ "MASS_MECA" ] = mass->getName();
+
+    cmdSt.define( dict );
+    try
+    {
+        INTEGER op = 9;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    retour->setEmpty( false );
+
+    return retour;
 };
 
 ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMassMatrix()
     throw ( std::runtime_error )
 {
-    return computeMatrix( "RIGI_MECA" );
+    return computeMechanicalMatrix( "RIGI_MECA" );
+};
+
+ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalRigidityMatrix()
+    throw ( std::runtime_error )
+{
+    return computeMechanicalMatrix( "RIGI_MECA" );
 };

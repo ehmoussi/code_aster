@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -30,26 +30,58 @@ cdef extern from "LinearAlgebra/AllowedLinearSolver.h":
     cpdef enum Renumbering:
         MD, MDA, Metis, RCMK, AMD, AMF, PORD, QAMD, Scotch, Auto, Sans
 
+    cpdef enum Preconditioning:
+        IncompleteLdlt, SimplePrecisionLdlt, Jacobi, Sor, Ml, Boomer, Gamg, LagrBloc, Without
+
+    cpdef enum IterativeSolverAlgorithm:
+        ConjugateGradiant, ConjugateResidual, GMRes, GCR, FGMRes
+
+    cpdef enum LagrangeTreatment:
+        Eliminate, NotEliminate, DoubleLagrangeEliminate
+
+    cpdef enum MemoryManagement:
+         InCore, OutOfCore, Automatic, Evaluation
+
+    cpdef enum MatrixType:
+        NonSymetric, Symetric, SymetricPositiveDefinite, Undefined
+
 cdef extern from "LinearAlgebra/LinearSolver.h":
 
     cdef cppclass LinearSolverInstance:
 
-        LinearSolverInstance( LinearSolverEnum curLinSolv, Renumbering curRenum )
-        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
-                                                       const FieldOnNodesDoublePtr& currentRHS )
+        LinearSolverInstance(LinearSolverEnum curLinSolv, Renumbering curRenum)
+        FieldOnNodesDoublePtr solveDoubleLinearSystem(const AssemblyMatrixDoublePtr& currentMatrix,
+                                                       const FieldOnNodesDoublePtr& currentRHS)
+        void disablePreprocessing()
+        void setAlgorithm(IterativeSolverAlgorithm algo)
+        void setDistributedMatrix(bint matDist)
+        void setErrorOnMatrixSingularity(bint error)
+        void setFillingLevel(int filLevel)
+        void setLagrangeElimination(LagrangeTreatment lagrTreat)
+        void setLowRankSize(double size)
+        void setLowRankThreshold(double threshold)
+        void setMatrixFilter(double filter)
+        void setMatrixType(MatrixType matType)
+        void setMaximumNumberOfIteration(int number)
+        void setMemoryManagement(MemoryManagement memManagt)
+        void setPrecisionMix(bint precMix)
+        void setPreconditioning(Preconditioning precond)
+        void setPreconditioningResidual(double residual)
+        void setSolverResidual(double residual)
+        void setUpdatePreconditioningParameter(int value)
 
     cdef cppclass LinearSolverPtr:
 
-        LinearSolverPtr( LinearSolverPtr& )
-        LinearSolverPtr( LinearSolverInstance* )
+        LinearSolverPtr(LinearSolverPtr&)
+        LinearSolverPtr(LinearSolverInstance*)
         LinearSolverInstance* get()
 
 #### LinearSolver
 
-cdef class LinearSolver( DataStructure ):
+cdef class LinearSolver(DataStructure):
 
     cdef LinearSolverPtr* _cptr
 
-    cdef set( self, LinearSolverPtr other )
-    cdef LinearSolverPtr* getPtr( self )
-    cdef LinearSolverInstance* getInstance( self )
+    cdef set(self, LinearSolverPtr other)
+    cdef LinearSolverPtr* getPtr(self)
+    cdef LinearSolverInstance* getInstance(self)

@@ -56,11 +56,24 @@ cdef class DiscreteProblem(DataStructure):
     def buildElementaryMechanicalLoadsVector(self):
         """Build mechanical loads"""
         returnVector = ElementaryVector()
-        returnVector.set( self.getInstance().buildElementaryMechanicalLoadsVector() )
+        returnVector.set( self.getInstance().buildElementaryMechanicalLoadsVector())
         return returnVector
+
+    def computeMechanicalDampingMatrix(self, ElementaryMatrix rigidity, ElementaryMatrix mass):
+        """Build mechanical loads"""
+        returnMatrix = ElementaryMatrix()
+        returnMatrix.set(self.getInstance().computeMechanicalDampingMatrix(deref(rigidity.getPtr()),
+                                                                           deref(mass.getPtr())))
+        return returnMatrix
+
+    def computeMechanicalMassMatrix(self):
+        """Build mechanical loads"""
+        returnMatrix = ElementaryMatrix()
+        returnMatrix.set(self.getInstance().computeMechanicalMassMatrix())
+        return returnMatrix
 
     def computeMechanicalRigidityMatrix(self):
         """Build mechanical loads"""
         returnMatrix = ElementaryMatrix()
-        returnMatrix.set( self.getInstance().computeMechanicalRigidity() )
+        returnMatrix.set(self.getInstance().computeMechanicalRigidityMatrix())
         return returnMatrix

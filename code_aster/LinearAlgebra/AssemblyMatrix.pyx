@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -50,6 +50,63 @@ cdef class AssemblyMatrixDouble( DataStructure ):
         return self._cptr
 
     cdef AssemblyMatrixDoubleInstance* getInstance( self ):
+        """Return the pointer on the c++ instance object"""
+        return self._cptr.get()
+
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
+
+    def addKinematicsLoad( self, KinematicsLoad currentLoad ):
+        """ """
+        self.getInstance().addKinematicsLoad( deref( currentLoad.getPtr() ) )
+
+    def build( self ):
+        """Build the assembly matrix"""
+        return self.getInstance().build()
+
+    def factorization( self ):
+        """Factorization of the matrix"""
+        return self.getInstance().factorization()
+
+    def setDOFNumbering( self, DOFNumbering curDOFNumber ):
+        """Set the degree of freedom numbering"""
+        test = new ForwardDOFNumberingPtr( deref( curDOFNumber.getPtr() ) )
+        self.getInstance().setDOFNumbering( deref( test ) )
+
+    def setElementaryMatrix( self, ElementaryMatrix currentElemMatrix ):
+        """Set the base elementary matrix used to build the assembly matrix"""
+        self.getInstance().setElementaryMatrix( deref( currentElemMatrix.getPtr() ) )
+
+    def debugPrint( self, int logicalUnit = 6 ):
+        """Print debug information of the content"""
+        self.getInstance().debugPrint( logicalUnit )
+
+
+cdef class AssemblyMatrixComplex( DataStructure ):
+
+    """Python wrapper on the C++ AssemblyMatrixComplex object"""
+
+    def __cinit__( self, bint init = True ):
+        """Initialization: stores the pointer to the C++ object"""
+        if init:
+            self._cptr = new AssemblyMatrixComplexPtr( new AssemblyMatrixComplexInstance() )
+
+    def __dealloc__( self ):
+        """Destructor"""
+        if self._cptr is not NULL:
+            del self._cptr
+
+    cdef set( self, AssemblyMatrixComplexPtr other ):
+        """Point to an existing object"""
+        # set must be subclassed if it is necessary
+        self._cptr = new AssemblyMatrixComplexPtr( other )
+
+    cdef AssemblyMatrixComplexPtr* getPtr( self ):
+        """Return the pointer on the c++ shared-pointer object"""
+        return self._cptr
+
+    cdef AssemblyMatrixComplexInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
