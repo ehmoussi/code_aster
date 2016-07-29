@@ -34,6 +34,7 @@
 
 #include "MemoryManager/JeveuxAllowedTypes.h"
 #include "MemoryManager/JeveuxString.h"
+#include "MemoryManager/JeveuxObject.h"
 
 #include <string>
 #include <list>
@@ -110,7 +111,7 @@ public:
  * @author Nicolas Sellenet
  */
 template< class ValueType >
-class JeveuxCollectionInstance
+class JeveuxCollectionInstance: public JeveuxObjectInstance
 {
 private:
     /** @brief Definition d'un objet de collection du type ValueType */
@@ -118,8 +119,6 @@ private:
     /** @brief std::map associant une chaine a un JeveuxCollObjValType */
     typedef std::map< std::string, JeveuxCollObjValType > mapStrCollectionObject;
 
-    /** @brief Nom de la collection */
-    std::string                                        _name;
     /** @brief La collection est-elle vide ? */
     bool                                               _isEmpty;
     /** @brief Listes de objets de collection */
@@ -130,9 +129,15 @@ public:
      * @brief Constructeur
      * @param name Chaine representant le nom de la collection
      */
-    JeveuxCollectionInstance( const std::string& name ): _name( name ),
+    JeveuxCollectionInstance( const std::string& name ): JeveuxObjectInstance( name ),
                                                          _isEmpty( true )
     {};
+
+    ~JeveuxCollectionInstance()
+    {
+        // pas d'objet maître "distinct" pour une collection
+        _name = "";
+    };
 
     /**
      * @brief Methode permettant de construire une collection a partir d'une collection
@@ -179,7 +184,7 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
     long nbColObj, valTmp;
     const char* charName = _name.c_str();
     JeveuxChar8 param( "NMAXOC" );
-    char* charval = MakeBlankFStr(32); 
+    char* charval = MakeBlankFStr(32);
     long iret=0;
     CALL_JEEXIN( charName, &iret);
     if ( iret == 0) return false;
@@ -252,6 +257,7 @@ class JeveuxCollection
         JeveuxCollection& operator=( const JeveuxCollection< ValueType >& tmp )
         {
             _jeveuxCollectionPtr = tmp._jeveuxCollectionPtr;
+            return *this;
         };
 
         const JeveuxCollectionTypePtr& operator->() const
