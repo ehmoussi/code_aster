@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -67,14 +67,6 @@ cdef class ElementaryVector( DataStructure ):
         assemblyVector = FieldOnNodesDouble()
         assemblyVector.set( self.getInstance().assembleVector( deref( currentNumerotation.getPtr() ) ) )
         return assemblyVector
-
-    def computeMechanicalLoads( self ):
-        """Compute mechanical load"""
-        return self.getInstance().computeMechanicalLoads()
-
-    def setMaterialOnMesh( self, MaterialOnMesh curMatOnMesh ):
-        """Set the material"""
-        self.getInstance().setMaterialOnMesh( deref( curMatOnMesh.getPtr() ) )
 
     def debugPrint( self, logicalUnit = 6 ):
         """Print debug information of the content"""

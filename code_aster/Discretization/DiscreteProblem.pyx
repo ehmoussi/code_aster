@@ -21,41 +21,46 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Modeling.Model cimport Model
-from code_aster.Materials.MaterialOnMesh cimport MaterialOnMesh
-from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
+from code_aster.Studies.StudyDescription cimport StudyDescription
+from code_aster.LinearAlgebra.ElementaryVector cimport ElementaryVector
+from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrix
 
 
-cdef class ElementaryMatrix( DataStructure ):
+cdef class DiscreteProblem(DataStructure):
 
-    """Python wrapper on the C++ ElementaryMatrix object"""
+    """Python wrapper on the C++ DiscreteProblem object"""
 
-    def __cinit__( self, bint init=True ):
+    def __cinit__(self, StudyDescription study, bint init = True):
         """Initialization: stores the pointer to the C++ object"""
         if init:
-            self._cptr = new ElementaryMatrixPtr( new ElementaryMatrixInstance() )
+            self._cptr = new DiscreteProblemPtr(new DiscreteProblemInstance(deref(study.getPtr())))
 
-    def __dealloc__( self ):
+    def __dealloc__(self):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, ElementaryMatrixPtr other ):
+    cdef set(self, DiscreteProblemPtr other):
         """Point to an existing object"""
-        self._cptr = new ElementaryMatrixPtr( other )
+        # set must be subclassed if it is necessary
+        self._cptr = new DiscreteProblemPtr(other)
 
-    cdef ElementaryMatrixPtr* getPtr( self ):
+    cdef DiscreteProblemPtr* getPtr(self):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef ElementaryMatrixInstance* getInstance( self ):
+    cdef DiscreteProblemInstance* getInstance(self):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
-    def getType(self):
-        """Return the type of DataStructure"""
-        return self.getInstance().getType()
+    def buildElementaryMechanicalLoadsVector(self):
+        """Build mechanical loads"""
+        returnVector = ElementaryVector()
+        returnVector.set( self.getInstance().buildElementaryMechanicalLoadsVector() )
+        return returnVector
 
-    def debugPrint( self, logicalUnit=6 ):
-        """Print debug information of the content"""
-        self.getInstance().debugPrint( logicalUnit )
+    def computeMechanicalRigidityMatrix(self):
+        """Build mechanical loads"""
+        returnMatrix = ElementaryMatrix()
+        returnMatrix.set( self.getInstance().computeMechanicalRigidity() )
+        return returnMatrix

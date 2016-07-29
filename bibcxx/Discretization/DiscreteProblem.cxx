@@ -195,3 +195,106 @@ DOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( DOFNumberingPtr do
 
     return dofNum;
 };
+
+ElementaryVectorPtr DiscreteProblemInstance::buildElementaryMechanicalLoadsVector()
+    throw ( std::runtime_error )
+{
+    ElementaryVectorPtr retour( new ElementaryVectorInstance( Permanent ) );
+
+    // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
+    retour->setType( retour->getType() + "_DEPL_R" );
+
+    CommandSyntaxCython cmdSt( "CALC_VECT_ELEM" );
+    cmdSt.setResult( retour->getName(), retour->getType() );
+
+    SyntaxMapContainer dict;
+    dict.container[ "OPTION" ] = "CHAR_MECA";
+
+    if( _study->getMaterialOnMesh() )
+        dict.container[ "CHAM_MATER" ] = _study->getMaterialOnMesh()->getName();
+
+    const ListMecaLoad listOfMechanicalLoad = _study->getListOfMechanicalLoads();
+    if( listOfMechanicalLoad.size() != 0 )
+    {
+        VectorString tmp;
+        for ( const auto curIter : listOfMechanicalLoad )
+            tmp.push_back( curIter->getName() );
+
+        dict.container[ "CHARGE" ] = tmp;
+    }
+    cmdSt.define( dict );
+    retour->setListOfLoads( _study->getListOfLoads() );
+
+    try
+    {
+        INTEGER op = 8;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    retour->setEmpty(false);
+
+    return retour;
+};
+
+ElementaryMatrixPtr DiscreteProblemInstance::computeMatrix( const std::string& optionName ) throw ( std::runtime_error )
+{
+    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( Permanent ) );
+
+    // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
+    retour->setType( retour->getType() + "_DEPL_R" );
+
+    // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
+    CommandSyntaxCython cmdSt( "CALC_MATR_ELEM" );
+    cmdSt.setResult( retour->getName(), retour->getType() );
+
+    SyntaxMapContainer dict;
+    // Definition du mot cle simple OPTION
+    dict.container[ "OPTION" ] = optionName;
+
+    // Definition du mot cle simple MODELE
+    if ( ( ! _study->getSupportModel() ) || _study->getSupportModel()->isEmpty() )
+        throw std::runtime_error( "Model is empty" );
+    dict.container[ "MODELE" ] = _study->getSupportModel()->getName();
+
+    // Definition du mot cle simple CHAM_MATER
+    if ( ! _study->getMaterialOnMesh() )
+        throw std::runtime_error( "Material is empty" );
+    dict.container[ "CHAM_MATER" ] = _study->getMaterialOnMesh()->getName();
+
+    ListMecaLoad listMecaLoad = _study->getListOfMechanicalLoads();
+    if ( listMecaLoad.size() != 0 )
+    {
+        VectorString tmp;
+        for ( const auto curIter : listMecaLoad )
+            tmp.push_back( curIter->getName() );
+        dict.container[ "CHARGE" ] = tmp;
+    }
+    cmdSt.define( dict );
+    try
+    {
+        INTEGER op = 9;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    retour->setEmpty( false );
+
+    return retour;
+};
+
+ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalRigidityMatrix()
+    throw ( std::runtime_error )
+{
+    return computeMatrix( "RIGI_MECA" );
+};
+
+ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMassMatrix()
+    throw ( std::runtime_error )
+{
+    return computeMatrix( "RIGI_MECA" );
+};
