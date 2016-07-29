@@ -4,14 +4,15 @@
 import code_aster
 from code_aster.Commands import *
 
+
+test = code_aster.TestCase()
+
 MAT=DEFI_MATERIAU(ELAS = _F(RHO = 7.8E03,
                             NU = 0.3,
                             E = 2.1E11,
                             AMOR_ALPHA = 1.6E-5,
                             AMOR_BETA = 16.,),)
 
-MAYA=LIRE_MAILLAGE(FORMAT = 'MED',
-                   UNITE = 20,)
 MAYA=code_aster.Mesh()
 MAYA.readMedFile('xxModalMechanics001a.med')
 MAYA.addGroupOfNodesFromNodes("N26", ["N26"])
@@ -71,3 +72,8 @@ dProblem = code_aster.DiscreteProblem(study)
 K_ELEM1 = dProblem.computeMechanicalRigidityMatrix()
 M_ELEM1 = dProblem.computeMechanicalMassMatrix()
 A_ELEM1 = dProblem.computeMechanicalDampingMatrix(K_ELEM1, M_ELEM1)
+
+
+# at least it pass here!
+test.assertTrue( True )
+test.printSummary()
