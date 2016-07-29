@@ -40,105 +40,59 @@
  */
 class ElementaryMatrixInstance: public DataStructure
 {
-    private:
-        /** @typedef std::list de MechanicalLoad */
-        typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;
-        /** @typedef Iterateur sur une std::list de MechanicalLoad */
-        typedef ListMecaLoad::iterator ListMecaLoadIter;
+private:
+    /** @typedef std::list de MechanicalLoad */
+    typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;
+    /** @typedef Iterateur sur une std::list de MechanicalLoad */
+    typedef ListMecaLoad::iterator ListMecaLoadIter;
 
-        /** @brief Objet Jeveux '.RERR' */
-        JeveuxVectorChar24 _description;
-        /** @brief Objet Jeveux '.RELR' */
-        JeveuxVectorChar24 _listOfElementaryResults;
-        /** @brief Booleen indiquant si la sd est vide */
-        bool               _isEmpty;
-        /** @brief Modele support */
-        ModelPtr           _supportModel;
-        /** @brief Champ de materiau a utiliser */
-        MaterialOnMeshPtr  _materialOnMesh;
-        /** @brief Chargements Mecaniques */
-        ListMecaLoad       _listOfMechanicalLoads;
+    /** @brief Objet Jeveux '.RERR' */
+    JeveuxVectorChar24 _description;
+    /** @brief Objet Jeveux '.RELR' */
+    JeveuxVectorChar24 _listOfElementaryResults;
+    /** @brief Booleen indiquant si la sd est vide */
+    bool               _isEmpty;
 
-        /**
-         * @brief Calcul des matrices elementaires pour une option quelconque
-         */
-        bool computeMatrix( const std::string& optionName ) throw ( std::runtime_error );
+public:
+    /**
+     * @brief Constructeur
+     */
+    ElementaryMatrixInstance( const JeveuxMemory memType = Permanent );
 
-    public:
-        /**
-         * @brief Constructeur
-         */
-        ElementaryMatrixInstance( const JeveuxMemory memType = Permanent );
+    /**
+     * @brief Constructeur
+     */
+    ElementaryMatrixInstance( std::string type, const JeveuxMemory memType = Permanent );
 
-        /**
-         * @brief Constructeur
-         */
-        ElementaryMatrixInstance( std::string type, const JeveuxMemory memType = Permanent );
-
-        /**
-         * @brief Destructeur
-         */
-        ~ElementaryMatrixInstance()
-        {
+    /**
+     * @brief Destructeur
+     */
+    ~ElementaryMatrixInstance()
+    {
 #ifdef __DEBUG_GC__
-            std::cout << "ElementaryMatrixInstance.destr: " << this->getName() << std::endl;
+        std::cout << "ElementaryMatrixInstance.destr: " << this->getName() << std::endl;
 #endif
-        };
+    };
 
-        /**
-         * @brief Function d'ajout d'une charge mecanique
-         * @param currentLoad charge a ajouter a la sd
-         */
-        void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
-        {
-            _listOfMechanicalLoads.push_back( currentLoad );
-        };
+    /**
+     * @brief Methode permettant de savoir si les matrices elementaires sont vides
+     * @return true si les matrices elementaires sont vides
+     */
+    bool isEmpty()
+    {
+        return _isEmpty;
+    };
 
-        /**
-         * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
-         */
-        bool computeMechanicalRigidity() throw ( std::runtime_error );
+    /**
+     * @brief Methode permettant de changer l'état de remplissage
+     * @param bEmpty booleen permettant de dire que l'objet est vide ou pas
+     */
+    void setEmpty( bool bEmpty )
+    {
+        _isEmpty = bEmpty;
+    };
 
-        /**
-         * @brief Calcul des matrices elementaires pour l'option MASS_MECA
-         */
-        bool computeMechanicalMass() throw ( std::runtime_error );
-
-        /**
-         * @brief Methode permettant de savoir si les matrices elementaires sont vides
-         * @return true si les matrices elementaires sont vides
-         */
-        bool isEmpty()
-        {
-            return _isEmpty;
-        };
-
-        /**
-         * @brief Methode permettant de changer l'état de remplissage
-         * @param bEmpty booleen permettant de dire que l'objet est vide ou pas
-         */
-        void setEmpty( bool bEmpty )
-        {
-            _isEmpty = bEmpty;
-        };
-
-        /**
-         * @brief Methode permettant de definir le champ de materiau
-         * @param currentMaterial objet MaterialOnMeshPtr
-         */
-        void setMaterialOnMesh( const MaterialOnMeshPtr& currentMaterial )
-        {
-            _materialOnMesh = currentMaterial;
-        };
-
-        /**
-         * @brief Methode permettant de definir le modele support
-         * @param currentModel Model support des matrices elementaires
-         */
-        void setSupportModel( const ModelPtr& currentModel )
-        {
-            _supportModel = currentModel;
-        };
+    friend class DiscreteProblemInstance;
 };
 
 /**

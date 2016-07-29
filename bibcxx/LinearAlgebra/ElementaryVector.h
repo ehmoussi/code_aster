@@ -29,7 +29,6 @@
 #include "astercxx.h"
 #include "DataStructure/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/ListOfLoads.h"
 #include "DataFields/FieldOnNodes.h"
@@ -42,102 +41,87 @@
  */
 class ElementaryVectorInstance: public DataStructure
 {
-    private:
-        /** @typedef std::list de MechanicalLoad */
-        typedef std::list< GenericMechanicalLoadPtr > ListMechanicalLoad;
-        /** @typedef Iterateur sur une std::list de MechanicalLoad */
-        typedef ListMechanicalLoad::iterator ListMechanicalLoadIter;
+private:
+    /** @typedef std::list de MechanicalLoad */
+    typedef std::list< GenericMechanicalLoadPtr > ListMechanicalLoad;
+    /** @typedef Iterateur sur une std::list de MechanicalLoad */
+    typedef ListMechanicalLoad::iterator ListMechanicalLoadIter;
 
-        /** @brief Objet Jeveux '.RERR' */
-        JeveuxVectorChar24 _description;
-        /** @brief Objet Jeveux '.RELR' */
-        JeveuxVectorChar24 _listOfElementaryResults;
-        /** @brief Booleen indiquant si la sd est vide */
-        bool               _isEmpty;
-        /** @brief Champ de materiau a utiliser */
-        MaterialOnMeshPtr  _materialOnMesh;
+    /** @brief Objet Jeveux '.RERR' */
+    JeveuxVectorChar24 _description;
+    /** @brief Objet Jeveux '.RELR' */
+    JeveuxVectorChar24 _listOfElementaryResults;
+    /** @brief Booleen indiquant si la sd est vide */
+    bool               _isEmpty;
 
-        /** @brief Liste de charges */
-        ListOfLoadsPtr     _listOfLoads;
-        VectorInt          _matchingVector;
+    /** @brief Liste de charges */
+    ListOfLoadsPtr     _listOfLoads;
 
-        JeveuxBidirectionalMap _corichRept;
+    JeveuxBidirectionalMap _corichRept;
 
-    public:
-        /**
-         * @brief Constructeur
-         */
-        ElementaryVectorInstance( const JeveuxMemory memType = Permanent );
+public:
+    /**
+     * @brief Constructeur
+     */
+    ElementaryVectorInstance( const JeveuxMemory memType = Permanent );
 
-        /**
-         * @brief Destructeur
-         */
-        ~ElementaryVectorInstance()
-        {
+    /**
+     * @brief Destructeur
+     */
+    ~ElementaryVectorInstance()
+    {
 #ifdef __DEBUG_GC__
-            std::cout << "ElementaryVectorInstance.destr: " << this->getName() << std::endl;
+        std::cout << "ElementaryVectorInstance.destr: " << this->getName() << std::endl;
 #endif
-        };
+    };
 
-        /**
-         * @brief Ajouter une charge mecanique
-         * @param currentLoad objet MechanicalLoad
-         */
-        void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
-        {
-            _listOfLoads->addMechanicalLoad( currentLoad );
-        };
+    /**
+     * @brief Ajouter une charge mecanique
+     * @param currentLoad objet MechanicalLoad
+     */
+    void addMechanicalLoad( const GenericMechanicalLoadPtr& currentLoad )
+    {
+        _listOfLoads->addMechanicalLoad( currentLoad );
+    };
 
-        /**
-         * @brief Assembler les vecteurs elementaires en se fondant sur currentNumerotation
-         * @param currentNumerotation objet DOFNumbering
-         * @todo prendre en compte les fonctions multiplicatrices
-         */
-        FieldOnNodesDoublePtr assembleVector( const DOFNumberingPtr& currentNumerotation,
-                                              const double& time = 0.,
-                                              const JeveuxMemory memType = Permanent )
-            throw ( std::runtime_error );
+    /**
+     * @brief Assembler les vecteurs elementaires en se fondant sur currentNumerotation
+     * @param currentNumerotation objet DOFNumbering
+     * @todo prendre en compte les fonctions multiplicatrices
+     */
+    FieldOnNodesDoublePtr assembleVector( const DOFNumberingPtr& currentNumerotation,
+                                          const double& time = 0.,
+                                          const JeveuxMemory memType = Permanent )
+        throw ( std::runtime_error );
 
-        /**
-         * @brief Calcul des matrices elementaires pour l'option CHAR_MECA
-         */
-        bool computeMechanicalLoads() throw ( std::runtime_error );
+    /**
+     * @brief Methode permettant de savoir si les matrices elementaires sont vides
+     * @return true si les matrices elementaires sont vides
+     */
+    bool isEmpty()
+    {
+        return _isEmpty;
+    };
 
-        /**
-         * @brief Methode permettant de savoir si les matrices elementaires sont vides
-         * @return true si les matrices elementaires sont vides
-         */
-        bool isEmpty()
-        {
-            return _isEmpty;
-        };
+    /**
+     * @brief Methode permettant de changer l'état de remplissage
+     * @param bEmpty booleen permettant de dire que l'objet est vide ou pas
+     */
+    void setEmpty( bool bEmpty )
+    {
+        _isEmpty = bEmpty;
+    };
 
-        /**
-         * @brief Methode permettant de changer l'état de remplissage
-         * @param bEmpty booleen permettant de dire que l'objet est vide ou pas
-         */
-        void setEmpty( bool bEmpty )
-        {
-            _isEmpty = bEmpty;
-        };
+    /**
+     * @brief Methode permettant de definir la liste de charge
+     * @param currentList Liste charge
+     */
+    void setListOfLoads( const ListOfLoadsPtr& currentList  )
+    {
+        _listOfLoads = currentList;
+    };
 
-        /**
-         * @brief Methode permettant de definir la liste de charge
-         * @param currentList Liste charge
-         */
-        void setListOfLoads( const ListOfLoadsPtr& currentList  )
-        {
-            _listOfLoads = currentList;
-        };
-
-        /**
-         * @brief Methode permettant de definir le champ de materiau
-         * @param currentMaterial objet MaterialOnMeshPtr
-         */
-        void setMaterialOnMesh( const MaterialOnMeshPtr& currentMaterial )
-        {
-            _materialOnMesh = currentMaterial;
-        };
+    friend class DiscreteProblemInstance;
 };
 
 /**

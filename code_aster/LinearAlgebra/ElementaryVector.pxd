@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -34,8 +34,6 @@ cdef extern from "LinearAlgebra/ElementaryVector.h":
         ElementaryVectorInstance()
         void addMechanicalLoad( GenericMechanicalLoadPtr& currentLoad )
         FieldOnNodesDoublePtr assembleVector( DOFNumberingPtr& currentNumerotation )
-        bint computeMechanicalLoads()
-        void setMaterialOnMesh( MaterialOnMeshPtr& currentMat )
         const string getType()
         void debugPrint( int logicalUnit )
 
