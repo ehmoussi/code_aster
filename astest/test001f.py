@@ -22,9 +22,6 @@ materElas = code_aster.MaterialBehaviour.ElasMaterialBehaviour()
 materElas.setDoubleValue( "E", YOUNG )
 materElas.setDoubleValue( "Nu", POISSON )
 
-acier = code_aster.Material()
-acier.addMaterialBehaviour( materElas )
-
 Kinv= 3.2841e-4
 Kv=1./Kinv
 SY = 437.0;
@@ -52,6 +49,8 @@ materViscochab.setDoubleValue( "K_0", Kv * C_Pa)
 materViscochab.setDoubleValue( "N", 11)
 materViscochab.setDoubleValue( "A_k", 1.)
 
+acier = code_aster.Material()
+acier.addMaterialBehaviour( materElas )
 acier.addMaterialBehaviour( materViscochab )
 acier.build()
 acier.debugPrint(6)
@@ -86,7 +85,7 @@ study.addMechanicalLoad(CharMeca1)
 study.addMechanicalLoad(CharMeca2)
 dProblem = code_aster.DiscreteProblem(study)
 vectElem = dProblem.buildElementaryMechanicalLoadsVector()
-matr_elem = dProblem.computeMechanicalRigidity()
+matr_elem = dProblem.computeMechanicalRigidityMatrix()
 
 test.assertEqual( matr_elem.getType(), "MATR_ELEM_DEPL_R" )
 
