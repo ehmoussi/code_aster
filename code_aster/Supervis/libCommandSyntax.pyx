@@ -236,9 +236,8 @@ cdef public void debugPrintCommandSyntax():
     currentCommand.debugPrint()
 
 
-def _F( **kwargs ):
-    """For convenience of writing"""
-    return kwargs
+# For convenience of writing
+_F = dict
 
 
 #cdef public int testCythonException() except -1:
