@@ -27,6 +27,8 @@ from .RunManager import Initializer
 
 # commands must be registered by libCommandSyntax before calling DEBUT.
 from .Cata import Commands
+from code_aster.Supervis import libCommandSyntax
+libCommandSyntax.commandsRegister(Commands.commandStore)
 
 executionParameter.parse_args()
 
