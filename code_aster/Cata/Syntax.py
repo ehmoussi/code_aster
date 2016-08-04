@@ -41,10 +41,7 @@ from .Rules import (
 import __builtin__
 import types
 
-def _F(**args):
-    return args
-
-__builtin__._F = _F
+__builtin__._F = dict
 
 # TODO: replace by the i18n function (see old accas.capy)
 def _(args):
