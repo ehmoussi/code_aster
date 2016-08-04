@@ -21,7 +21,6 @@ import os.path as osp
 from glob import glob
 
 from code_aster.Cata.SyntaxObjects import Command
-from code_aster.Supervis import libCommandSyntax
 
 
 def _init_command(ctx, debug):
@@ -50,7 +49,7 @@ def _init_command(ctx, debug):
                     print("DEBUG: Module {0}: add {1}".format(modname, objname))
                 curDict[objname] = obj
     ctx.update(curDict)
-    libCommandSyntax.commandsRegister(curDict)
+    return curDict
 
-_init_command(ctx=globals(), debug=False)
+commandStore = _init_command(ctx=globals(), debug=False)
 del _init_command
