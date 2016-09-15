@@ -126,6 +126,8 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
                   'MACRO_BASCULE_SCHEMA',
                   'MECA_STATIQUE',
                   'STAT_NON_LINE',
+                  'THER_NON_LINE',
+                  'THER_LINEAIRE',
                   ):
       _dist = True
 
