@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -59,9 +59,9 @@ DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
    # Si SURF='NON' nombre de recepteurs decoupant les couches enfoncees
    NB_RECEPTEUR  =SIMP(statut='f', typ='I',into=(2,4,),defaut=2),
    # Unites de sortie
-   UNITE_TABLE_RESU =SIMP(statut='f', typ='I',),
-   UNITE_RESU_TRAN =SIMP(statut='f', typ='I', defaut=40,),
-   UNITE_RESU_SPEC =SIMP(statut='f', typ='I', defaut=55,),
+   UNITE_TABLE_RESU =SIMP(statut='f', typ='I', inout='out',),
+   UNITE_RESU_TRAN =SIMP(statut='f', typ='I', defaut=40, inout='out',),
+   UNITE_RESU_SPEC =SIMP(statut='f', typ='I', defaut=55, inout='out',),
    regles=(ENSEMBLE('TABLE_MATER_ELAS','TABLE_GEQUI_GMAX','TABLE_AMOR_EQUI') ,),
    TABLE_MATER_ELAS =SIMP(statut='f', typ=table_sdaster,),
    TABLE_GEQUI_GMAX =SIMP(statut='f', typ=table_sdaster,),

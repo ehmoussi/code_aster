@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -35,7 +35,7 @@ LIRE_CHAMP=OPER(nom="LIRE_CHAMP",op= 192,sd_prod=lire_champ_prod,
                 reentrant='n',
          MAILLAGE        =SIMP(statut='o',typ=maillage_sdaster,),
          FORMAT          =SIMP(statut='f',typ='TXM',defaut="MED",into=("MED",),),
-         UNITE           =SIMP(statut='f',typ='I',defaut= 81,),
+         UNITE           =SIMP(statut='f',typ='I',defaut= 81, inout='in',),
          b_format =BLOC(condition = "FORMAT == 'MED'",
          regles=( UN_PARMI('NOM_CMP_IDEM','NOM_CMP'),
                   PRESENT_PRESENT('NOM_CMP','NOM_CMP_MED' ),

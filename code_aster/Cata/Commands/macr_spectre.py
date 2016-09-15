@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -64,7 +64,7 @@ MACR_SPECTRE=MACRO(nom="MACR_SPECTRE",
            IMPRESSION    =FACT(statut='f',
                 TRI           =SIMP(statut='f',typ='TXM',defaut='AMOR_SPEC',into=("AMOR_SPEC","DIRECTION",),),
                 FORMAT        =SIMP(statut='f',typ='TXM',defaut='TABLEAU',into=("TABLEAU","XMGRACE",),),
-                UNITE         =SIMP(statut='f',typ='I',val_min=10,val_max=90,defaut=29,
+                UNITE         =SIMP(statut='f',typ='I',val_min=10,val_max=90,defaut=29, inout='out',
                                     fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit")),
                 b_pilote = BLOC(condition = "FORMAT == 'XMGRACE'",
                    PILOTE        =SIMP(statut='f',typ='TXM',defaut='',

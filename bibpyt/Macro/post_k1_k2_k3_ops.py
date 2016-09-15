@@ -1353,25 +1353,20 @@ def get_depl_sup(FOND_FISS, tabsupi, ndim, Lnofon, d_coor, ino, TYPE_MAILLAGE):
 
 #     ---  CAS FISSURE X-FEM ---
     else:
+# Bricolage temporaire pour post_k1_k2_k3 ::
+#   on néglige les termes singuliers en interpolant le champ de déplacement
+#   compte-tenu du shift des fonctions singulières, cela revient à mettre les termes
+#   singuliers à zéro
         H1 = getattr(tabsupi, 'H1X').values()
         nbval = len(H1)
         H1 = complete(H1)
-        E1 = getattr(tabsupi, 'E1X').values()
-        E1 = complete(E1)
-        dxs = 2 * (H1 + NP.sqrt(abscs) * E1)
-#         dxs = xcoef_he()*H1 + 2*NP.sqrt(abscs)*E1
+        dxs = 2. * (H1 + NP.zeros(nbval))
         H1 = getattr(tabsupi, 'H1Y').values()
-        E1 = getattr(tabsupi, 'E1Y').values()
         H1 = complete(H1)
-        E1 = complete(E1)
-        dys = 2 * (H1 + NP.sqrt(abscs) * E1)
-#         dys = xcoef_he()*H1 + 2*NP.sqrt(abscs)*E1
+        dys = 2. * (H1 + NP.zeros(nbval))
         H1 = getattr(tabsupi, 'H1Z').values()
-        E1 = getattr(tabsupi, 'E1Z').values()
         H1 = complete(H1)
-        E1 = complete(E1)
-        dzs = 2 * (H1 + NP.sqrt(abscs) * E1)
-#         dzs = xcoef_he()*H1 + 2*NP.sqrt(abscs)*E1
+        dzs = 2. * (H1 + NP.zeros(nbval))
         abscs = NP.array(abscs[:nbval])
 
     ds = NP.asarray([dxs, dys, dzs])
@@ -1449,12 +1444,16 @@ def get_pgl(syme_char, FISSURE, ino, VDIR, VNOR, dicVDIR, dicVNOR, Lnofon, ndim)
     v1 = normalize(v1)
     v2 = normalize(v2)
 
+    v3 = NP.cross(v1, v2)
+    v3 = normalize(v3)
+  # v2 = NP.cross(v3, v1)
+
     if ndim == 2:
         # on prend comme vecteur de direction de propa une rotation de -90 du
         # vecteur normal
         v2 = NP.array([v1[1], -v1[0], 0])
+        v3 = NP.cross(v1, v2)
 
-    v3 = NP.cross(v1, v2)
 
     pgl = NP.asarray([v1, v2, v3])
 
@@ -2005,7 +2004,15 @@ def post_k1_k2_k3_ops(self, FOND_FISS, FISSURE, RESULTAT,
             list_oper.remove("TEMP_DEF_ALPHA")
         except ValueError:
             pass
-
+        try:
+            list_oper.remove("COEF_AMOR")
+        except ValueError:
+            pass
+        try:
+            list_oper.remove("LONG_CARA")
+        except ValueError:
+            pass
+        
         nom_fonc_e = self.get_concept(list_fonc[list_oper.index("E")])
         nom_fonc_nu = self.get_concept(list_fonc[list_oper.index("NU")])
         nom_fonc_e_prol = nom_fonc_e.sdj.PROL.get()[0].strip()

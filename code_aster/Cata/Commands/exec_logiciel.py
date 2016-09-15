@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -52,7 +52,7 @@ EXEC_LOGICIEL = MACRO(nom="EXEC_LOGICIEL",
 
       MAILLAGE = FACT(statut='f',
          FORMAT     = SIMP(statut='o', typ='TXM', into=("GMSH", "GIBI", "SALOME")),
-         UNITE_GEOM = SIMP(statut='f', typ='I', val_min=10, val_max=90, defaut=16,
+         UNITE_GEOM = SIMP(statut='f', typ='I', val_min=10, val_max=90, defaut=16, inout='in',
                            fr=tr("Unité logique définissant le fichier (fort.N) "
                                  "contenant les données géométriques (datg)")),
       ),

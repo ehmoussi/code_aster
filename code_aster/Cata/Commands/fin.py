@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2001  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -60,7 +60,7 @@ FIN = PROC(nom="FIN",
             fr=tr("provoque l'impression des informations sur les structures de données"),
             statut='f', typ='TXM', defaut="OUI", into=("OUI", "NON",)),
         UNITE=SIMP(
-            statut='f', typ='I', defaut=6),
+            statut='f', typ='I', defaut=6, inout='out'),
         # hidden keyword used to ensure that the fortran knows that an error occurred
         # because when an exception is raised, the global status is reset by utmess.
         STATUT=SIMP(

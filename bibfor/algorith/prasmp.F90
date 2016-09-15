@@ -1,7 +1,7 @@
 subroutine prasmp(option, nugene, tminbl, nomprn, modgen,&
                   tmnobl, tmadbl, knombl, inumbl, ssmax)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 201666666  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -52,7 +52,7 @@ subroutine prasmp(option, nugene, tminbl, nomprn, modgen,&
 !               DANS LE  BLOC ASSEMBLE
 ! KNOMBL   /M/: VECTEUR DES NOM K24 DES OBJETS OU FAMILLE CONTENANT
 !               LES BLOCS ELEMENTAIRES
-! INUMBL   /M/: VECTEUR NUMERO  BLOCS ELEMNTAIRE DANS LEUR FAMILLE OU 0
+! INUMBL   /M/: VECTEUR NUMERO  BLOCS ELEMENTAIRE DANS LEUR FAMILLE OU 0
 !               LES BLOCS ELEMENTAIRES
 ! SSMAX    /M/: MAXIMUM DE LA VALEURS ABSOLUE DES TERMES TRAITES
 !
@@ -80,7 +80,7 @@ subroutine prasmp(option, nugene, tminbl, nomprn, modgen,&
 !
     character(len=8) :: modgen, nomprn, nommcl, kbid
     character(len=14) :: nugene
-    character(len=19) :: prgene, stolci
+    character(len=19) :: prgene, stomor
     character(len=9) :: rigopt, masopt, amoopt
     character(len=11) :: option, ricopt
     character(len=24) :: tmadbl, tmnobl, tminbl, knombl(*)
@@ -93,11 +93,10 @@ subroutine prasmp(option, nugene, tminbl, nomprn, modgen,&
     integer :: iad, ibid, ibl1, ieqc, inuc, inul, iret, i_ligr_ss
     integer :: j, lc, ll, llors, llprs, i_ligr
     integer :: ltadbl, ltinbl, ltnobl, nbcol, nblig, nbsst
-    integer :: ntail, ntprno, nusst
+    integer :: ntail, ntprno, nusst, ntria
     real(kind=8) :: ssmax
     integer, pointer :: nueq(:) => null()
-    integer, pointer :: scib(:) => null()
-    integer, pointer :: scdi(:) => null()
+    integer, pointer :: smdi(:) => null() 
 !-----------------------------------------------------------------------
     data rigopt,ricopt,masopt,amoopt/'RIGI_GENE','RIGI_GENE_C',&
      &                                 'MASS_GENE','AMOR_GENE'/
@@ -111,7 +110,7 @@ subroutine prasmp(option, nugene, tminbl, nomprn, modgen,&
 !------------------RECUPERATION DU NOMBRE DE SOUS-STRUCTURE-------------
     prgene=nugene//'.NUME'
     call nueq_chck(prgene)
-    stolci=nugene//'.SLCS'
+    stomor=nugene//'.SMOS'
     call jenonu(jexnom(prgene//'.LILI', '&SOUSSTR'), i_ligr_ss)
     call jelira(jexnum(prgene//'.PRNO', i_ligr_ss), 'LONMAX', nbsst)
     nbsst=nbsst/2
@@ -134,8 +133,7 @@ subroutine prasmp(option, nugene, tminbl, nomprn, modgen,&
 !
 !
     call jeveuo(prgene//'.NUEQ', 'L', vi=nueq)
-    call jeveuo(stolci//'.SCDI', 'L', vi=scdi)
-    call jeveuo(stolci//'.SCIB', 'L', vi=scib)
+    call jeveuo(stomor//'.SMDI', 'L', vi=smdi)
 !
     call jenonu(jexnom('&&ASSGEN.REP.NOM.PROF', nomprn), ibid)
     call jeveuo(jexnum(tminbl, ibid), 'L', ltinbl)
@@ -163,6 +161,7 @@ subroutine prasmp(option, nugene, tminbl, nomprn, modgen,&
         call mgutdm(modgen, kbid, nusst, 'NOM_MACR_ELEM', ibid,&
                     nommcl)
         knombl(ibl1)=nommcl//adnom//'_VALE'
+        call jelira(knombl(ibl1),'NMAXOC',ntria)
 !
 ! VERIFICATION DE L'EXISTENCE DE LA MATRICE D'AMORTISSEMENT ASSOCIEE
 ! AU MACRO-ELEMENT
@@ -178,9 +177,9 @@ subroutine prasmp(option, nugene, tminbl, nomprn, modgen,&
         inumbl(ibl1)=0
 ! TYPE DE LA MATRICE DU MACRO ELEMENT (IE REELLE OU COMPLEXE)
         if (option .eq. ricopt) then
-            call maxblc(nommcl//adnom//'_VALE           ', ssmax)
+            call maxblc(jexnum(nommcl//adnom//'_VALE           ', 1), ssmax)
         else
-            call maxblo(nommcl//adnom//'_VALE           ', ssmax)
+            call maxblo(jexnum(nommcl//adnom//'_VALE           ', 1), ssmax)
         endif
 !  RECUPERATION DIMENSIONS ET NUMERO PREMIERE EQUATION DANS NUEQ
         nblig=zi(llprs+(j-1)*2+1)
@@ -188,7 +187,7 @@ subroutine prasmp(option, nugene, tminbl, nomprn, modgen,&
         inul=zi(llprs+(j-1)*2)
         inuc=inul
 !
-! TAILLE BLOC MATRICE PROJETEE (STOCKAGE TRAINGLE SUPERIEUR)
+! TAILLE BLOC MATRICE PROJETEE (STOCKAGE TRIANGLE SUPERIEUR)
 !
         ntail=nbcol*(nbcol+1)/2
 !
@@ -207,9 +206,9 @@ subroutine prasmp(option, nugene, tminbl, nomprn, modgen,&
                 iad=(lc-1)*lc/2+ll
 !    NUMERO D'EQUATION DU TERME COURANT
                 ieqc=nueq(1+(inuc-1)+(lc-1))
+                 zi(ltnobl+iad-1)=1
+                 zi(ltadbl+iad-1)=smdi(ieqc)-(lc-ll)
 !
-                zi(ltnobl+iad-1)=scib(ieqc)
-                zi(ltadbl+iad-1)=scdi(ieqc)-(lc-ll)
             end do
         end do
         call jelibe(jexnum(tmnobl, ibl1))

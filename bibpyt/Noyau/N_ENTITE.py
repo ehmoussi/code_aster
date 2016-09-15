@@ -1,7 +1,7 @@
 # coding=utf-8
 # person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -273,3 +273,11 @@ class ENTITE:
                     self.cr.fatal(
                         _(u"La valeur de l'attribut 'defaut' n'est pas cohérente " \
                           u"avec le type %r : %r"), self.type, val)
+
+    def check_inout(self):
+        """Vérifie l'attribut inout."""
+        if self.inout not in ('in', 'out', 'inout'):
+            self.cr.fatal(
+                _(u"L'attribut 'inout' doit valoir 'in','out' ou 'inout' : %r"),
+                self.inout)
+

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -34,7 +34,7 @@ STANLEY=MACRO(nom="STANLEY",
          CHAM_MATER      =SIMP(statut='f',typ=cham_mater),
          CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
          DISPLAY         =SIMP(statut='f',typ='TXM'),
-         UNITE_VALIDATION=SIMP(statut='f',typ='I',val_min=10,val_max=90,
+         UNITE_VALIDATION=SIMP(statut='f',typ='I',val_min=10,val_max=90, inout='out',
                                fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit les md5")),
 
 )  ;

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR   
@@ -30,13 +30,13 @@ IMPR_MACR_ELEM=PROC(nom="IMPR_MACR_ELEM",op= 160,
                                into=("MISS_3D","IDEAS") ),
 
          b_ideas         =BLOC(condition = "FORMAT == 'IDEAS'",
-           UNITE           =SIMP(statut='f',typ='I',defaut=30),
+           UNITE           =SIMP(statut='f',typ='I',defaut=30, inout='out'),
            VERSION          =SIMP(statut='f',typ='I',defaut= 5,into=( 5 ,) ),
          ),             
 
          b_miss_3d       =BLOC(condition = "FORMAT == 'MISS_3D'",
            regles=(EXCLUS('AMOR_REDUIT','LIST_AMOR'),),
-           UNITE           =SIMP(statut='f',typ='I',defaut= 26 ),
+           UNITE           =SIMP(statut='f',typ='I',defaut= 26 , inout='out'),
            SOUS_TITRE      =SIMP(statut='f',typ='TXM',max='**'),
            AMOR_REDUIT     =SIMP(statut='f',typ='R'  ,max='**'),
            LIST_AMOR       =SIMP(statut='f',typ=listr8_sdaster ),

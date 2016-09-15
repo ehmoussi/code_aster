@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -44,7 +44,7 @@ DEFI_FICHIER=MACRO(nom="DEFI_FICHIER",
             b_associer    =BLOC(condition = "ACTION == 'ASSOCIER'",
                                 fr=tr("Paramètres pour l'ouverture du fichier"),
                                 regles=(AU_MOINS_UN('FICHIER','UNITE'),),
-               UNITE      =SIMP(statut='f',typ='I' ,val_min=1),
+               UNITE      =SIMP(statut='f',typ='I' ,val_min=1, inout='out'),
                FICHIER    =SIMP(statut='f',typ=('Fichier','','Sauvegarde'),validators=LongStr(1,255)),
                TYPE       =SIMP(statut='f',typ='TXM',into=("ASCII","BINARY","LIBRE"),defaut="ASCII"),
 
@@ -59,7 +59,7 @@ DEFI_FICHIER=MACRO(nom="DEFI_FICHIER",
             b_reserver    =BLOC(condition = "ACTION == 'RESERVER'",
                                 fr=tr("Paramètres pour la réservation de l'unité du fichier"),
                                 regles=(AU_MOINS_UN('FICHIER','UNITE'),),
-               UNITE      =SIMP(statut='f',typ='I' ,val_min=1),
+               UNITE      =SIMP(statut='f',typ='I' ,val_min=1, inout='out'),
                FICHIER    =SIMP(statut='f',typ=('Fichier','','Sauvegarde'),validators=LongStr(1,255)),
                TYPE       =SIMP(statut='f',typ='TXM',into=("ASCII",),defaut="ASCII"),
                ACCES      =SIMP(statut='f',typ='TXM',into=("APPEND",),defaut="APPEND"),
@@ -68,7 +68,7 @@ DEFI_FICHIER=MACRO(nom="DEFI_FICHIER",
             b_liberer    =BLOC(condition = "ACTION == 'LIBERER'",
                                fr=tr("Paramètres pour la fermeture du fichier"),
                                regles=(UN_PARMI('FICHIER','UNITE'),),
-                  UNITE         =SIMP(statut='f',typ='I' ,val_min=1),
+                  UNITE     =SIMP(statut='f',typ='I' ,val_min=1, inout='out'),
                   FICHIER   =SIMP(statut='f',typ=('Fichier','','Sauvegarde'),validators=LongStr(1,255)),
            ),
 
