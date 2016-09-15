@@ -31,6 +31,7 @@
 
 #ifdef _POSIX
 #include <dlfcn.h>
+#endif
 PyObject* get_dll_register_dict();
 
 
@@ -203,6 +204,8 @@ void DEFSSSSP(MFRONT_GET_INTERNAL_STATE_VARIABLES,
               char* txval, STRING_SIZE ltx, INTEGER* nbintvar)
 {
 #ifdef _POSIX
+#define MIN(A,B)  ((A) < (B) ? (A) : (B))
+
     /* MFRONT Wrapper
     */
     char *libname, *symbol, *model, *symbname=NULL;
@@ -553,7 +556,6 @@ int load_mfront_lib(const char* libname, const char* symbol)
     }
     return 0;
 }
-#endif
 
 char* test_mfront_symbol(const char* libname, char* name1, char* name2)
 {
