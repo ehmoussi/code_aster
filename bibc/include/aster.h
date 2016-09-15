@@ -27,6 +27,10 @@
 #include "definition.h"
 
 
+#ifndef MIN
+#define MIN(A,B)  ((A) < (B) ? (A) : (B))
+#endif
+
 /* pour indiquer le statut des arguments des fonctions. */
 
 #define _IN
