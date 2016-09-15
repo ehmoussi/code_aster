@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -25,7 +25,7 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
             UIinfo={"groupes":("Résolution","Thermique",)},
                    fr=tr("Résoudre un problème thermique non linéaire (conditions limites ou comportement matériau)"
                        " stationnaire ou transitoire"),
-         MODELE          =SIMP(statut='o',typ=(modele_sdaster) ),
+         MODELE          =SIMP(statut='o',typ=(modele_sdaster),),
          CHAM_MATER      =SIMP(statut='o',typ=(cham_mater) ),
          CARA_ELEM       =SIMP(statut='c',typ=(cara_elem) ),
          COMPORTEMENT    =FACT(statut='d',max='**',
@@ -47,6 +47,21 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
            CHARGE          =SIMP(statut='o',typ=char_ther),
            FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
          ),
+         METHODE         =SIMP(statut='d',typ='TXM',defaut="NEWTON",into=("NEWTON","MODELE_REDUIT")),
+         b_meth_newton = BLOC(condition = "METHODE == 'NEWTON'",
+                    NEWTON          =FACT(statut='d',
+                        REAC_ITER       =SIMP(statut='f',typ='I',defaut= 0 ,val_min=0),
+                        RESI_LINE_RELA  =SIMP(statut='f',typ='R',defaut= 1.0E-3 ),
+                        ITER_LINE_MAXI  =SIMP(statut='f',typ='I',defaut= 0 ),
+                    ),),
+         b_meth_rom = BLOC(condition = "METHODE == 'MODELE_REDUIT'",
+                    MODELE_REDUIT =FACT(statut='d',
+                        REAC_ITER       =SIMP(statut='f',typ='I',defaut= 0 ,val_min=0),
+                        BASE_PRIMAL     =SIMP(statut='o',typ=mode_empi,max=1),
+                        DOMAINE_REDUIT  =SIMP(statut='f',typ='TXM',defaut='NON',into=('OUI','NON'),),
+                        p_hr_cond   =BLOC(condition="(DOMAINE_REDUIT=='OUI')",
+                            GROUP_NO_INTERF=SIMP(statut='o',typ=grno,max=1),),
+                    ),),
 #-------------------------------------------------------------------
          INCREMENT       =C_INCREMENT('THERMIQUE'),
 #-------------------------------------------------------------------
@@ -65,11 +80,6 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
               PRECISION       =SIMP(statut='o',typ='R',),),
            INST_ETAT_INIT  =SIMP(statut='f',typ='R'),
          ),
-         NEWTON          =FACT(statut='d',
-           REAC_ITER       =SIMP(statut='f',typ='I',defaut= 0 ,val_min=0),
-           RESI_LINE_RELA  =SIMP(statut='f',typ='R',defaut= 1.0E-3 ),
-           ITER_LINE_MAXI  =SIMP(statut='f',typ='I',defaut= 0 ),
-         ),
          CONVERGENCE     =FACT(statut='d',
            RESI_GLOB_MAXI  =SIMP(statut='f',typ='R'),
            RESI_GLOB_RELA  =SIMP(statut='f',typ='R'),
@@ -79,7 +89,7 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
 #        Catalogue commun SOLVEUR
          SOLVEUR         =C_SOLVEUR('THER_NON_LINE'),
 #-------------------------------------------------------------------
-         PARM_THETA      =SIMP(statut='f',typ='R',defaut= 0.57 ),
+         PARM_THETA      =SIMP(statut='f',typ='R',defaut= 0.57 , val_min=0., val_max = 1.),
 #-------------------------------------------------------------------
          ARCHIVAGE       =C_ARCHIVAGE(),
 #-------------------------------------------------------------------

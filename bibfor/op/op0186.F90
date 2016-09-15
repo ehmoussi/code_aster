@@ -1,6 +1,7 @@
 subroutine op0186()
 !
 use NonLin_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -24,14 +25,17 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/medith.h"
+#include "asterfort/ntdata.h"
 #include "asterfort/ntarch.h"
 #include "asterfort/ntobsv.h"
+#include "asterfort/nxini0.h"
 #include "asterfort/nxacmv.h"
 #include "asterfort/nxinit.h"
 #include "asterfort/nxlect.h"
 #include "asterfort/nxnewt.h"
 #include "asterfort/nxpred.h"
 #include "asterfort/nxrech.h"
+#include "asterfort/romAlgoNLClean.h"
 #include "asterfort/rsinch.h"
 #include "asterfort/sigusr.h"
 #include "asterfort/titre.h"
@@ -40,7 +44,6 @@ implicit none
 #include "asterfort/uttcpu.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/vtzero.h"
-#include "asterfort/CreateInOutDS.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -68,42 +71,44 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: lostat, matcst, coecst, reasma, arret, conver, itemax, reasvc
-    aster_logical :: reasvt, reasmt, reasrg, reasms, lsecha, rechli, finpas, levol
-    aster_logical :: force, l_ther_nonl
-    integer :: ther_para_i(2), ther_crit_i(3), numins, k, icoret, nbcham, iterho
+    aster_logical :: l_stat, matcst, coecst, reasma, arret, conver, itemax
+    aster_logical :: l_dry, l_line_search, finpas, l_evol
+    aster_logical :: force, l_rom
+    integer :: ther_crit_i(3), numins, k, icoret, nbcham, iterho
     integer :: itmax, ifm, niv, neq, iterat, jtempp, jtemp
     integer :: itab(2)
-    real(kind=8) :: ther_para_r(2), tpsthe(6), deltat, timet, timtdt, tps1(7)
+    real(kind=8) :: tpsthe(6), deltat, timet, timtdt, tps1(7)
     real(kind=8) :: tps2(4), tps3(4), tpex, ther_crit_r(2), theta, khi, rho, testr
     real(kind=8) :: testm, para(2), instap, tconso
-    real(kind=8) :: rtab(2)
-    character(len=1) :: creas, base
+    real(kind=8) :: rtab(2), theta_read
+    character(len=1) :: base
     character(len=3) :: kreas
-    character(len=8) :: result, result_dry, mailla
+    character(len=8) :: result, result_dry, mesh
     character(len=19) :: sdobse
     character(len=16) :: tysd
     character(len=19) :: solver, maprec, sddisc, sdcrit, varc_curr, list_load
     character(len=24) :: model, mate, cara_elem
-    character(len=24) :: time, tmpchi, tmpchf, compor, vtemp, vtempm, vtempp
-    character(len=24) :: vtempr, vec2nd, vec2ni, nume_dof, mediri, matass, cndirp, cn2mbr
-    character(len=24) :: cnchci, cnresi, vabtla, vhydr, vhydrp
+    character(len=24) :: time, dry_prev, dry_curr, compor, vtemp, vtempm, vtempp
+    character(len=24) :: vtempr, cn2mbr_stat, cn2mbr_tran, nume_dof, mediri, matass, cndiri, cn2mbr
+    character(len=24) :: cncine, cnresi, vabtla, vhydr, vhydrp
     character(len=24) :: tpscvt
     character(len=76) :: fmt2, fmt3, fmt4
     character(len=85) :: fmt1
     real(kind=8), pointer :: crtr(:) => null()
     real(kind=8), pointer :: tempm(:) => null()
-    type(NL_DS_InOut) :: ds_inout
+!
+    type(NL_DS_InOut)     :: ds_inout
+    type(NL_DS_AlgoPara)  :: ds_algopara
+    type(ROM_DS_AlgoPara) :: ds_algorom
 !
     data sdcrit/'&&OP0186.CRITERE'/
     data maprec/'&&OP0186.MAPREC'/
-    data result/' '/
-    data cndirp/1*' '/
-    data cnchci/1*' '/
-    data vec2nd/'&&OP0186.2ND'/
-    data vec2ni/'&&OP0186.2NI'/
+    data cndiri/1*' '/
+    data cncine/1*' '/
+    data cn2mbr_stat/'&&OP0186.2ND'/
+    data cn2mbr_tran/'&&OP0186.2NI'/
     data cn2mbr/'&&OP0186.2MBRE'/
-    data tmpchi,tmpchf/'&&OP0186.TCHI','&&OP0186.TCHF'/
+    data dry_prev,dry_curr/'&&OP0186.TCHI','&&OP0186.TCHF'/
     data vhydr,vhydrp/'&&OP0186.HY','&&OP0186.HYP'/
     data mediri/' '/
     data matass/'&&MTHASS'/
@@ -112,7 +117,6 @@ implicit none
     data fmt3/'(A,16X,A,8X,A,6X,A,3X,A,6X,A,4X,A)'/
     data fmt4/'(A,12X,A,2X,A,17X,A,9X,A,4X,A)'/
     data sddisc            /'&&OP0186.PARTPS'/
-    data sdobse            /'&&OP0186.OBSER'/
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -120,48 +124,40 @@ implicit none
     call infmaj()
     call infniv(ifm, niv)
 !
+! - Initializations
+!
     solver    = '&&OP0186.SOLVER'
     list_load = '&&OP0186.LISCHA'
     varc_curr = '&&OP0186.CHVARC'
-!
-! - Create input/output management datastructure
-!
-    call CreateInOutDS('THER', ds_inout)
-!
-! - Read parameters
-!
-    l_ther_nonl = .true.
-    call nxlect(l_ther_nonl, list_load  , solver    , ther_para_i, ther_para_r,&
-                ther_crit_i, ther_crit_r, result_dry, matcst     , coecst     ,&
-                result     , model      , mate      , cara_elem  , compor     ,&
-                ds_inout)
-    para(1)    = ther_para_r(1)
-    itmax      = ther_crit_i(3)
-    rechli     = .false.
-!
-! EST-ON DANS UN CALCUL DE SECHAGE ?
-    if (result_dry(1:1) .ne. ' ') then
-        lsecha = .true.
-    else
-        lsecha = .false.
-    endif
 ! --- CE BOOLEEN ARRET EST DESTINE AUX DEVELOPPEUR QUI VOUDRAIENT
 ! --- FORCER LE CALCUL MEME SI ON N'A PAS CONVERGENCE (ARRET=TRUE)
     arret = .false.
-    if (ther_para_i(2) .gt. 0) rechli = .true.
 !
-! **********************************************************************
-!    INITIALISATIONS ET DUPLICATION DES STRUCTURES DE DONNEES
-! **********************************************************************
+! - Creation of datastructures
 !
-! --- INITIALISATIONS
+    call nxini0(ds_algopara, ds_inout, ds_algorom)
 !
-    call nxinit(model      , mate  , cara_elem, compor, list_load,&
-                para       , nume_dof , lostat, levol    ,&
-                l_ther_nonl, sddisc, ds_inout , vhydr , sdobse   ,&
-                mailla     , sdcrit, time  )
+! - Read parameters (linear)
 !
-    if (lostat) then
+    call ntdata(list_load, solver, matcst   , coecst  , result    ,&
+                model    , mate  , cara_elem, ds_inout, theta_read)
+    para(1)    = theta_read
+!
+! - Read parameters (non-linear)
+!
+    call nxlect(result       , model     , ther_crit_i, ther_crit_r, ds_inout,&
+                ds_algopara  , ds_algorom, result_dry , compor     , l_dry   ,&
+                l_line_search)
+    itmax      = ther_crit_i(3)
+!
+! - Initializations
+!
+    call nxinit(model , mate    , cara_elem , compor       , list_load,&
+                para  , nume_dof, l_stat    , l_evol       , l_rom    ,&
+                sddisc, ds_inout, vhydr     , sdobse       , mesh     ,&
+                sdcrit, time    , ds_algorom, l_line_search)
+!
+    if (l_stat) then
         numins=0
     else
         numins=1
@@ -175,18 +171,18 @@ implicit none
     vtempr='&&NXLECTVAR_INIT'
 
 
-    if (lostat) then
+    if (l_stat) then
         call vtcreb(vtempm, 'V', 'R', nume_ddlz = nume_dof)
         call vtcreb(vtempp, 'V', 'R', nume_ddlz = nume_dof)
         call vtcreb(vtempr, 'V', 'R', nume_ddlz = nume_dof)
-        call vtcreb(vec2nd, 'V', 'R', nume_ddlz = nume_dof)
-        call vtcreb(vec2ni, 'V', 'R', nume_ddlz = nume_dof)
+        call vtcreb(cn2mbr_stat, 'V', 'R', nume_ddlz = nume_dof)
+        call vtcreb(cn2mbr_tran, 'V', 'R', nume_ddlz = nume_dof)
     else
         call copisd('CHAMP_GD', 'V', vtemp, vtempm)
         call copisd('CHAMP_GD', 'V', vtemp, vtempp)
         call copisd('CHAMP_GD', 'V', vtemp, vtempr)
-        call copisd('CHAMP_GD', 'V', vtemp, vec2nd)
-        call copisd('CHAMP_GD', 'V', vtemp, vec2ni)
+        call copisd('CHAMP_GD', 'V', vtemp, cn2mbr_stat)
+        call copisd('CHAMP_GD', 'V', vtemp, cn2mbr_tran)
     endif
 
     call copisd('CHAMP_GD', 'V', vhydr, vhydrp)
@@ -195,7 +191,8 @@ implicit none
 !
     call copisd('CHAMP_GD', 'V', vtemp, cn2mbr)
 !
-! --- CALCUL DES MATRICES ELEMENTAIRES DES DIRICHLETS
+! - Elementary matrix for Dirichlet BC
+!
     call medith(model, list_load, mediri)
 !
 ! **********************************************************************
@@ -208,13 +205,11 @@ implicit none
     call uttcpu('CPU.OP0186.2', 'INIT', ' ')
     call uttcpu('CPU.OP0186.3', 'INIT', ' ')
     call uttcpr('CPU.OP0186.3', 4, tps3)
-    reasrg = .false.
-    reasms = .false.
 200 continue
 ! --- RECUPERATION DU PAS DE TEMPS ET DES PARAMETRES DE RESOLUTION
 !
-    if (lostat) then
-        if (.not.levol) then
+    if (l_stat) then
+        if (.not.l_evol) then
             instap=0.d0
             deltat=-1.d150
             theta=1.d0
@@ -228,7 +223,7 @@ implicit none
     else
         instap = diinst(sddisc, numins)
         deltat = instap-diinst(sddisc, numins-1)
-        theta=ther_para_r(1)
+        theta=theta_read
         khi=1.d0
     endif
     para(2) = deltat
@@ -262,7 +257,7 @@ implicit none
 !
 ! --- RECUPERATION DU CHAMP DE TEMPERATURE A T ET T+DT POUR LE SECHAGE
 !     LOIS SECH_GRANGER ET SECH_NAPPE
-    if (lsecha) then
+    if (l_dry) then
         call gettco(result_dry, tysd)
         if (tysd(1:9) .eq. 'EVOL_THER') then
             call dismoi('NB_CHAMP_UTI', result_dry, 'RESULTAT', repi=nbcham)
@@ -270,12 +265,12 @@ implicit none
                 timet = instap
                 timtdt = instap + deltat
                 base = 'V'
-                call rsinch(result_dry, 'TEMP', 'INST', timet, tmpchi,&
+                call rsinch(result_dry, 'TEMP', 'INST', timet, dry_prev,&
                             'CONSTANT', 'CONSTANT', 1, base, icoret)
                 if (icoret .ge. 10) then
                     call utmess('F', 'ALGORITH8_94', sk=result_dry, si=icoret, sr=timet)
                 endif
-                call rsinch(result_dry, 'TEMP', 'INST', timtdt, tmpchf,&
+                call rsinch(result_dry, 'TEMP', 'INST', timtdt, dry_curr,&
                             'CONSTANT', 'CONSTANT', 1, base, icoret)
                 if (icoret .ge. 10) then
                     call utmess('F', 'ALGORITH8_94', sk=result_dry, si=icoret, sr=timtdt)
@@ -285,28 +280,16 @@ implicit none
             endif
         endif
     endif
-! RE-ASSEMBLAGE DES SECONDS MEMBRES DE VECHTH/VECHNL
-    reasvc = .true.
-! RE-ASSEMBLAGE DES SECONDS MEMBRES DE VETNTH
-    reasvt = .true.
-! RE-ASSEMBLAGE DE LA MATRICE:
-    reasmt = .true.
 !
 ! ======================================================================
-!  ACTUALISATION DES MATRICES ET VECTEURS POUR LE NOUVEAU PAS DE TEMPS
+!  Compute second members and tangent matrix
 ! ======================================================================
 !
-! --- ACTUALISATION DU CHARGEMENT A TMOINS
-! ON ASSEMBLE LES SECONDS MEMBRES CHAR_THER_LINEAIRE+CHAR_THER_NONLIN+
-! CHAR_THER_EVOLNI EN BETA DANS VEC2ND (IDEM EN RHO_CP DANS VEC2NI)
-! ON ASSEMBLE LA MATRICE A = TANGENTE (MTAN_*) + DIRICHLET
-    call nxacmv(model , mate  , cara_elem, list_load, nume_dof,&
-                solver, lostat, time     , tpsthe   , reasvc  ,&
-                reasvt, reasmt, reasrg   , reasms   , creas   ,&
-                vtemp , vhydr , varc_curr, tmpchi   , tmpchf  ,&
-                vec2nd, vec2ni, matass   , maprec   , cndirp  ,&
-                cnchci, mediri, compor)
-
+    call nxacmv(model      , mate     , cara_elem , list_load, nume_dof   ,&
+                solver     , l_stat   , time      , tpsthe   , vtemp      ,&
+                vhydr      , varc_curr, dry_prev  , dry_curr , cn2mbr_stat,&
+                cn2mbr_tran, matass   , maprec    , cndiri   , cncine     ,&
+                mediri     , compor   , ds_algorom)   
 !
 ! ======================================================================
 !                        PHASE DE PREDICTION
@@ -316,14 +299,13 @@ implicit none
 !                  | DIRICHLET - B*TEMPERATURE INIT   |
 ! EN TRANSITOIRE : |            VEC2NI                |
 !                  |           DIRICHLET              |
-! SYSTEME LINEAIRE RESOLU:  A * (T+,1 - T-) = B
-! SOLUTION: VTEMP= T- ET VTEMPM = T+,1
 !
-    call nxpred(model , mate  , cara_elem, list_load, nume_dof,&
-                solver, lostat, tpsthe   , time     , matass  ,&
-                neq   , maprec, varc_curr, vtemp    , vtempm  ,&
-                cn2mbr, vhydr , vhydrp   , tmpchi   , tmpchf  ,&
-                compor, cndirp, cnchci   , vec2nd   , vec2ni  )
+    call nxpred(model     , mate  , cara_elem, list_load  , nume_dof   ,&
+                solver    , l_stat, tpsthe   , time       , matass     ,&
+                neq       , maprec, varc_curr, vtemp      , vtempm     ,&
+                cn2mbr    , vhydr , vhydrp   , dry_prev   , dry_curr   ,&
+                compor    , cndiri, cncine   , cn2mbr_stat, cn2mbr_tran,&
+                ds_algorom)
 
 !
 ! ======================================================================
@@ -345,8 +327,8 @@ implicit none
     reasma = .false.
     kreas = 'NON'
     if (iterat .ge. itmax) itemax = .true.
-    if ((ther_para_i(1).ne.0)) then
-        if (mod(iterat,ther_para_i(1)) .eq. 0) then
+    if ((ds_algopara%reac_iter.ne.0)) then
+        if (mod(iterat,ds_algopara%reac_iter) .eq. 0) then
             reasma = .true.
             kreas = 'OUI'
         endif
@@ -357,13 +339,13 @@ implicit none
 ! SYSTEME LINEAIRE RESOLU:  A * (T+,I+1 - T+,I) = B
 ! SOLUTION: VTEMPP = T+,I+1 - T+,I
 !
-    call nxnewt(model      , mate       , cara_elem  , list_load, nume_dof,&
-                solver     , tpsthe     , time       , matass   , cn2mbr  ,&
-                maprec     , cnchci     , varc_curr  , vtemp    , vtempm  ,&
-                vtempp     , vec2nd     , mediri     , conver   , vhydr   ,&
-                vhydrp     , tmpchi     , tmpchf     , compor   , vabtla  ,&
-                cnresi     , ther_crit_i, ther_crit_r, reasma   , testr   ,&
-                testm)
+    call nxnewt(model , mate       , cara_elem  , list_load, nume_dof,&
+                solver, tpsthe     , time       , matass   , cn2mbr  ,&
+                maprec, cncine     , varc_curr  , vtemp    , vtempm  ,&
+                vtempp, cn2mbr_stat, mediri     , conver   , vhydr   ,&
+                vhydrp, dry_prev   , dry_curr   , compor   , vabtla  ,&
+                cnresi, ther_crit_i, ther_crit_r, reasma   , testr   ,&
+                testm , ds_algorom)
 !
 ! --- SI NON CONVERGENCE ALORS RECHERCHE LINEAIRE
 !       (CALCUL DE RHO) SUR L INCREMENT VTEMPP
@@ -372,15 +354,12 @@ implicit none
     rho = 0.d0
     iterho = 0
     if (.not.conver) then
-        if (rechli) then
-!
-! ON CALCULE LE RHO/ VTEMPR = T+,I+1BIS = T+,1 + RHO * (T+,I+1 - T+,I)
-! MINIMISE VEC2ND - RESI_THER(T+,I+1BIS) - (BT)*LAGRANGE
-            call nxrech(model , mate  , cara_elem, list_load  , nume_dof   ,&
-                        tpsthe, time  , neq      , compor     , varc_curr  ,&
-                        vtempm, vtempp, vtempr   , vtemp      , vhydr      ,&
-                        vhydrp, tmpchi, tmpchf   , vec2nd     , vabtla     ,&
-                        cnresi, rho   , iterho   , ther_para_r, ther_para_i)
+        if (l_line_search) then
+            call nxrech(model , mate    , cara_elem, list_load  , nume_dof ,&
+                        tpsthe, time    , neq      , compor     , varc_curr,&
+                        vtempm, vtempp  , vtempr   , vtemp      , vhydr    ,&
+                        vhydrp, dry_prev, dry_curr , cn2mbr_stat, vabtla   ,&
+                        cnresi, rho     , iterho   , ds_algopara)
         else
             rho = 1.d0
         endif
@@ -470,18 +449,18 @@ implicit none
 !
 ! ------- ARCHIVAGE
 !
-    if (.not.levol) then
+    if (.not.l_evol) then
         force = .true.
     else
         force = .false.
     endif
-    call ntarch(numins, model , mate  , cara_elem, l_ther_nonl,&
-                para  , sddisc, sdcrit, ds_inout , force)
+    call ntarch(numins, model   , mate , cara_elem, para,&
+                sddisc, ds_inout, force, sdcrit   , ds_algorom)
 !
 ! - Make observation
 !
-    if (levol) then
-        call ntobsv(mailla, sdobse, numins, instap)
+    if (l_evol) then
+        call ntobsv(mesh, sdobse, numins, instap)
     endif
 !
 ! ------- VERIFICATION SI INTERRUPTION DEMANDEE PAR SIGNAL USR1
@@ -510,8 +489,8 @@ implicit none
     if (finpas) goto 500
 !
 !----- NOUVEAU PAS DE TEMPS
-    if (lostat) then
-        lostat=.false.
+    if (l_stat) then
+        l_stat=.false.
     endif
     numins = numins + 1
     goto 200
@@ -524,6 +503,10 @@ implicit none
 ! --- DESTRUCTION DE TOUTES LES MATRICES CREEES
 !
     call detmat()
+!
+    if (ds_algorom%l_rom) then
+        call romAlgoNLClean(ds_algorom)
+    endif
 !
     call jedema()
 !

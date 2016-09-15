@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,17 +18,16 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine ntarc0(result, modele, mate, carele, sdcrit,&
-                      lisch2, lnonl, para, numarc, instan)
-        character(len=8) :: result
-        character(len=24) :: modele
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=19) :: sdcrit
-        character(len=19) :: lisch2
-        aster_logical :: lnonl
-        real(kind=8) :: para(*)
-        integer :: numarc
-        real(kind=8) :: instan
+    subroutine ntarc0(result, model     , mate     , cara_elem   , list_load_resu,&
+                      para  , nume_store, time_curr, sdcrit_nonl_)
+        character(len=8), intent(in) :: result
+        integer, intent(in) :: nume_store
+        real(kind=8), intent(in) :: time_curr
+        real(kind=8), intent(in) :: para(*)
+        character(len=19), intent(in) :: list_load_resu
+        character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: cara_elem
+        character(len=19), optional, intent(in) :: sdcrit_nonl_
     end subroutine ntarc0
 end interface

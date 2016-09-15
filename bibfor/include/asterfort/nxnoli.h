@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,18 +18,19 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nxnoli(modele, mate, carele, lostat, lnonl   ,&
-                      levol , para, sddisc, sdcrit, ds_inout)
+    subroutine nxnoli(model , mate  , cara_elem, l_stat  , l_evol    ,&
+                      para  , sddisc, sdcrit   , ds_inout, ds_algorom)
         use NonLin_Datastructure_type
-        character(len=24) :: modele
-        character(len=24) :: mate
-        character(len=24) :: carele
-        aster_logical :: lostat
-        aster_logical :: lnonl
-        aster_logical :: levol
-        real(kind=8) :: para(*)
-        character(len=19) :: sddisc
-        character(len=19) :: sdcrit
+        use Rom_Datastructure_type
+        character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: cara_elem
+        aster_logical, intent(in) :: l_stat
+        aster_logical, intent(in) :: l_evol
+        real(kind=8), intent(in) :: para(*)
+        character(len=19), intent(in) :: sddisc
+        character(len=19), intent(in) :: sdcrit
         type(NL_DS_InOut), intent(inout) :: ds_inout
+        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     end subroutine nxnoli
 end interface
