@@ -17,7 +17,8 @@ implicit none
 #include "asterfort/ntarch.h"
 #include "asterfort/ntinit.h"
 #include "asterfort/ntreso.h"
-#include "asterfort/nxlect.h"
+#include "asterfort/ntini0.h"
+#include "asterfort/ntdata.h"
 #include "asterfort/sigusr.h"
 #include "asterfort/titre.h"
 #include "asterfort/utmess.h"
@@ -25,10 +26,9 @@ implicit none
 #include "asterfort/uttcpu.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/xthpos.h"
-#include "asterfort/CreateInOutDS.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -57,23 +57,23 @@ implicit none
     integer :: vali
     integer :: ifm, niv, iret
     integer :: nume_inst
-    integer :: ther_para_i(2), ther_crit_i(3)
-    real(kind=8) :: ther_para_r(2), ther_crit_r(2), para(2), valr(2)
+    real(kind=8) :: para(2), valr(2)
     real(kind=8) :: tpsthe(6), tps1(4), deltat, deltam
-    real(kind=8) :: theta, instap
-    aster_logical :: matcst, coecst, lostat, levol, asme, asms, finpas, l_ther_nonl
-    aster_logical :: reasvc, reasvt, reasmt, reasrg, reasms, force
-    character(len=1) :: creas
-    character(len=8) :: result, result_dry, mesh
-    character(len=19) :: maprec, solver, sddisc, sdcrit, list_load
+    real(kind=8) :: theta, instap, theta_read
+    aster_logical :: matcst, coecst, lostat, levol, asme, asms, finpas
+    aster_logical :: reasrg, reasms, force
+    character(len=8) :: result,  mesh
+    character(len=19) :: maprec, solver, sddisc, list_load
     character(len=24) :: model, cara_elem
     character(len=24) :: nume_dof
     character(len=24) :: mediri, matass
-    character(len=24) :: cndirp, cnchci, time
+    character(len=24) :: cndiri, cncine, time
     character(len=24) :: mate
     character(len=24) :: vec2nd
     character(len=24) :: compor
-    type(NL_DS_InOut) :: ds_inout
+!
+    type(NL_DS_AlgoPara) :: ds_algopara
+    type(NL_DS_InOut)    :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -91,48 +91,39 @@ implicit none
     vec2nd      = '&&OP0025.2ND_MEMBRE'
     matass      = '&&OP0025.MATR_ASSEM'
     result      = ' '
-    sdcrit      = '&&OP0025.CRIT.'
     mediri      = ' '
-    cndirp      = ' '
-    cnchci      = ' '
+    cndiri      = ' '
+    cncine      = ' '
+    compor      = ' '
     sddisc      = '&&OP0025.SDDISC'
 !
-! - Create input/output management datastructure
+! - Creation of datastructures
 !
-    call CreateInOutDS('THER', ds_inout)
+    call ntini0(ds_algopara, ds_inout)
 !
-! - Read parameters
+! - Read parameters (linear)
 !
-    l_ther_nonl = .false.
-    call nxlect(l_ther_nonl, list_load  , solver    , ther_para_i, ther_para_r,&
-                ther_crit_i, ther_crit_r, result_dry, matcst     , coecst     ,&
-                result     , model      , mate      , cara_elem  , compor     ,&
-                ds_inout)
-    para(1) = ther_para_r(1)
+    call ntdata(list_load, solver, matcst   , coecst  , result   ,&
+                model    , mate  , cara_elem, ds_inout, theta_read)
+    para(1) = theta_read
     para(2) = 0.d0
 !
 ! - Initial state and some parameters
 !
     call ntinit(model , mate    , cara_elem, list_load,&
-                para  , nume_dof, lostat   , levol    , l_ther_nonl,&
-                sddisc, ds_inout, mesh     , sdcrit   , time)
+                para  , nume_dof, lostat   , levol    ,&
+                sddisc, ds_inout, mesh     , time)
 !
 ! - Elementary matrix for Dirichlet BC
 !
     call medith(model, list_load, mediri)
 !
 ! 2.6. ==> PILOTAGE DES REACTUALISATIONS DES ASSEMBLAGES
-!     REASVT : INSTANTS, DIRICHLET, TERMES DU TRANSITOIRE
-!     REASVC : CHARGEMENTS (SOURCES, FLUX, ... )
 !     REASRG : MATRICE DE RIGIDITE
 !     REASMS : MATRICE DE MASSE
-!     REASMT : MATRICE TANGENTE POUR LE NON-LINEAIRE (SANS OBJET ICI)
 !
-    reasvt = .true.
-    reasvc = .true.
     reasrg = .false.
     reasms = .false.
-    reasmt = .false.
 !
 !
     if (lostat) then
@@ -179,7 +170,7 @@ implicit none
         instap = diinst(sddisc, nume_inst)
         deltam=deltat
         deltat = instap-diinst(sddisc, nume_inst-1)
-        theta=ther_para_r(1)
+        theta=theta_read
     endif
     para(2) = deltat
 ! --- MATRICE TANGENTE REACTUALISEE POUR UN NOUVEAU DT
@@ -198,13 +189,12 @@ implicit none
         asme = .false.
     endif
 !
-! 3.2.2.2. ==> RESOLUTION
+! - Solve system
 !
     call ntreso(model , mate  , cara_elem, list_load, nume_dof,&
-                solver, lostat, time     , tpsthe   , reasvc  ,&
-                reasvt, reasmt, reasrg   , reasms   , creas   ,&
-                vec2nd, matass, maprec   , cndirp   , cnchci  ,&
-                mediri, compor)
+                solver, lostat, time     , tpsthe   , reasrg  ,&
+                reasms, vec2nd, matass   , maprec   , cndiri  ,&
+                cncine, mediri, compor)
 !
     reasrg = .false.
     reasms = .false.
@@ -217,8 +207,8 @@ implicit none
     else
         force = .false.
     endif
-    call ntarch(nume_inst, model , mate  , cara_elem, l_ther_nonl,&
-                para     , sddisc, sdcrit, ds_inout , force)
+    call ntarch(nume_inst, model    , mate , cara_elem, para,&
+                sddisc   , ds_inout , force)
 !
 ! ------- VERIFICATION SI INTERRUPTION DEMANDEE PAR SIGNAL USR1
 !

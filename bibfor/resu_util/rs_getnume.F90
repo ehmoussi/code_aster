@@ -1,12 +1,12 @@
-subroutine rs_getnume(result_, inst, criter_, prec, nume,&
-                      iret)
+subroutine rs_getnume(result_, inst      , criter_, prec, nume,&
+                      iret   , vari_name_)
 !
 implicit none
 !
 #include "asterfort/rsorac.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -29,6 +29,7 @@ implicit none
     real(kind=8), intent(in) :: prec
     integer, intent(out) :: nume
     integer, intent(out) :: iret
+    character(len=*), optional, intent(in) :: vari_name_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,6 +51,7 @@ implicit none
 !                        
 ! --------------------------------------------------------------------------------------------------
 !
+    character(len=16) :: vari_name
     character(len=8) :: result, k8bid
     complex(kind=8) :: c16bid
     integer :: tnum(1), ibid, nb_find
@@ -59,8 +61,13 @@ implicit none
     result    = result_
     nume      = 0
     iret      = 0
-    call rsorac(result , 'INST', ibid   , inst, k8bid,&
-                c16bid , prec  , criter_, tnum, 1    ,&
+    if (present(vari_name_)) then
+        vari_name = vari_name_
+    else
+        vari_name = 'INST'
+    endif
+    call rsorac(result , vari_name, ibid   , inst, k8bid,&
+                c16bid , prec     , criter_, tnum, 1    ,&
                 nb_find)
     if (nb_find.lt.0) then
         iret = 2

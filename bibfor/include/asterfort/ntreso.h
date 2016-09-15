@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -15,37 +15,30 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
-! aslint: disable=W1504
-!
 #include "asterf_types.h"
 !
 interface
     subroutine ntreso(model , mate  , cara_elem, list_load, nume_dof,&
-                      solver, lostat, time     , tpsthe   , reasvc  ,&
-                      reasvt, reasmt, reasrg   , reasms   , creas   ,&
-                      vec2nd, matass, maprec   , cndirp   , cnchci  ,&
-                      mediri, compor)
-        character(len=24) :: model
-        character(len=24) :: mate
-        character(len=24) :: cara_elem
-        character(len=19) :: list_load
-        character(len=24) :: nume_dof
-        character(len=19) :: solver
-        aster_logical :: lostat
-        character(len=24) :: time
-        real(kind=8) :: tpsthe(6)
-        aster_logical :: reasvc
-        aster_logical :: reasvt
-        aster_logical :: reasmt
-        aster_logical :: reasrg
-        aster_logical :: reasms
-        character(len=1) :: creas
-        character(len=24) :: vec2nd
-        character(len=24) :: matass
-        character(len=19) :: maprec
-        character(len=24) :: cndirp
-        character(len=24) :: cnchci
-        character(len=24) :: mediri
-        character(len=24) :: compor
+                      solver, l_stat, time     , tpsthe   , reasrg  ,&
+                      reasms, cn2mbr, matass   , maprec   , cndiri  ,&
+                      cncine, mediri, compor)
+        character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: cara_elem
+        character(len=19), intent(in) :: list_load
+        character(len=24), intent(in) :: nume_dof
+        character(len=19), intent(in) :: solver
+        aster_logical, intent(in) :: l_stat
+        character(len=24), intent(in) :: time
+        real(kind=8), intent(in) :: tpsthe(6)
+        aster_logical, intent(in) :: reasrg
+        aster_logical, intent(in) :: reasms
+        character(len=24), intent(in) :: cn2mbr
+        character(len=24), intent(in) :: matass
+        character(len=19), intent(in) :: maprec
+        character(len=24), intent(in) :: cndiri
+        character(len=24), intent(out) :: cncine
+        character(len=24), intent(in) :: mediri
+        character(len=24), intent(in) :: compor
     end subroutine ntreso
 end interface

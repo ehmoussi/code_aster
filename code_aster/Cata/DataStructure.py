@@ -188,9 +188,6 @@ class compor_sdaster(ASSD):
 class corresp_2_mailla(ASSD):
     pass
 
-class courbe_sdaster(ASSD):
-    pass
-
 class entier(ASSD):
     pass
 
@@ -328,6 +325,7 @@ class fourier_elas(resultat_sdaster): pass
 class fourier_ther(resultat_sdaster): pass
 class mult_elas(resultat_sdaster): pass
 class theta_geom(resultat_sdaster): pass
+class mode_empi(resultat_sdaster): pass
 class evol_sdaster(resultat_sdaster): pass
 class evol_char(evol_sdaster): pass
 class evol_elas(evol_sdaster): pass
@@ -354,9 +352,6 @@ class sd_partit(ASSD):
     pass
 
 class spectre_sdaster(ASSD):
-    pass
-
-class surface_sdaster(ASSD):
     pass
 
 class table_sdaster(ASSD):
