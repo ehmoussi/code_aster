@@ -154,10 +154,10 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
 
-    long exiti0 = 0, nh = 0;
+    long nh = 0;
 
     CALL_MERIME_WRAP( modelName.c_str(), &nbLoad, jvListOfLoads->getDataPtr()->c_str(),
-                      mate.c_str(), blanc.c_str(), &exiti0, &time,
+                      mate.c_str(), blanc.c_str(), &time,
                       blanc.c_str(), retour->getName().c_str(), &nh, "G" );
 //     try
 //     {
@@ -171,13 +171,13 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     return retour;
 };
 
-// TODO calcul de la matrice tangente pour l'étape de prédiction de la méthode de Newton  
+// TODO calcul de la matrice tangente pour l'étape de prédiction de la méthode de Newton
 ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryTangentMatrix( double time )
 {
     return this-> buildElementaryRigidityMatrix( time );
 };
 
-// TODO calcul de la matrice jacobienne pour l'étape de correction de la méthode de Newton  
+// TODO calcul de la matrice jacobienne pour l'étape de correction de la méthode de Newton
 ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryJacobianMatrix( double time )
 {
     return this-> buildElementaryRigidityMatrix( time );

@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -19,14 +19,7 @@
 
 cata_msg = {
 
-    1: _(u"""
- Formule interdite pour définir ALPHA(TEMP) : la fonction soit être tabulée.
- Utilisez CALC_FONC_INTERP
-"""),
 
-    2: _(u"""
- resserrer le mot clé PRECISION pour le matériau ELAS_FO
-"""),
 
     3: _(u"""
  calcul de la tension le long du câble numéro %(k1)s  :
@@ -140,7 +133,9 @@ Erreur utilisateur :
  """),
 
     26: _(u"""
- erreur a l'appel de la routine ETENCA pour extension de la carte  %(k1)s .
+ erreur a l'appel de la routine pour extension de la carte  %(k1)s .
+Ce message est un message d'erreur développeur.
+Contactez le support technique.
 """),
 
     27: _(u"""
@@ -172,17 +167,6 @@ Erreur utilisateur :
  valeur inattendue:  %(k1)s
 """),
 
-    42: _(u"""
-Erreur Utilisateur :
- Le paramètre ALPHA (dilatation) du matériau est une fonction de la température.
- Cette fonction (%(k1)s) n'est définie que par un point.
- TEMP_DEF_ALPHA et TEMP_REF ne sont pas identiques.
- On ne peut pas faire le changement de variable TEMP_DEF_ALPHA -> TEMP_REF.
- On s'arrête donc.
-
-Risque & Conseil:
- Il faut définir la fonction ALPHA avec plus d'un point.
-"""),
 
 
 

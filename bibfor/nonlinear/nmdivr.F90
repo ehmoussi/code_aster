@@ -1,7 +1,13 @@
-subroutine nmdivr(sddisc, sderro, iterat)
+subroutine nmdivr(sddisc, sderro, iter_newt)
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/nmcrel.h"
+#include "asterfort/nmlere.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -18,23 +24,17 @@ subroutine nmdivr(sddisc, sderro, iterat)
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmcrel.h"
-#include "asterfort/nmlere.h"
-    integer :: iterat
-    character(len=19) :: sddisc
-    character(len=24) :: sderro
+    character(len=19), intent(in) :: sddisc
+    character(len=24), intent(in) :: sderro
+    integer, intent(in) :: iter_newt
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE
+! MECA_NON_LINE - Events
 !
-! EVALUATION DE LA DIVERGENCE DU RESIDU
+! Check if RESI_GLOB_MAXI increase
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! EVALUATION DE LA DIVERGENCE DU RESIDU :
 !    ON DIT QU'IL Y A DIVERGENCE DU RESIDU SSI :
@@ -44,51 +44,38 @@ subroutine nmdivr(sddisc, sderro, iterat)
 !       R(I-1) EST LE RESIDU A L'ITERATION MOINS 1
 !       R(I-2) EST LE RESIDU A L'ITERATION MOINS 2
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  sddisc           : datastructure for discretization
+! In  sderro           : datastructure for error management (events)
+! In  iter_newt        : index of current Newton iteration
 !
-! IN  SDDISC : SD DISCRETISATION TEMPORELLE
-! IN  SDERRO : GESTION DES ERREURS
-! IN  ITERAT : NUMERO ITERATION NEWTON
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: r(1), rm1(1), rm2(1)
-    aster_logical :: divres
+    aster_logical :: l_resi_dive
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
+    l_resi_dive = .false.
 !
-! --- INITIALISATIONS
+    if (iter_newt .ge. 3) then
 !
-    divres = .false.
+! ----- Get RESI_GLOB_MAXI
 !
-! --- DIVRES N'EST EVALUE QU'A PARTIR DE L'ITERATION 3
+        call nmlere(sddisc, 'L', 'VMAXI', iter_newt, r(1))
+        call nmlere(sddisc, 'L', 'VMAXI', iter_newt-1, rm1(1))
+        call nmlere(sddisc, 'L', 'VMAXI', iter_newt-2, rm2(1))
 !
-    if (iterat .lt. 3) goto 999
+! ----- Check evolution of RESI_GLOB_MAXI
 !
-! --- RESIDU GLOBAL (RESI_GLOB_MAXI) A L'ITERATION COURANTE
+        if (min(r(1),rm1(1)) .gt. rm2(1)) then
+            l_resi_dive = .true.
+        endif
+    endif
 !
-    call nmlere(sddisc, 'L', 'VMAXI', iterat, r(1))
+! - Save event
 !
-! --- RESIDU GLOBAL (RESI_GLOB_MAXI) A L'ITERATION "MOINS 1"
+    call nmcrel(sderro, 'DIVE_RESI', l_resi_dive)
 !
-    call nmlere(sddisc, 'L', 'VMAXI', iterat-1, rm1(1))
-!
-! --- RESIDU GLOBAL (RESI_GLOB_MAXI) A L'ITERATION "MOINS 2"
-!
-    call nmlere(sddisc, 'L', 'VMAXI', iterat-2, rm2(1))
-!
-! --- SI LE RESIDU N'EST PAS DIMINUE SUR UNE DES 2 ITERATIONS : DIV
-!
-    if (min(r(1),rm1(1)) .gt. rm2(1)) divres = .true.
-!
-999 continue
-!
-! --- SAUVEGARDE DES EVENEMENTS
-!
-    call nmcrel(sderro, 'DIVE_RESI', divres)
-!
-    call jedema()
 end subroutine

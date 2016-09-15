@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -32,7 +32,7 @@ On ne traite pas les déformations complexes.
 """),
 
     4 : _(u"""
-Le nombre de DATASET de type 58 est supérieur à NBNOEUD * NBCMP
+Le nombre de DATASET de type 58 est supérieur au produit du nombre de noeuds par le nombre de composantes.
 """),
 
     5 : _(u"""
@@ -113,16 +113,7 @@ On n'a pas trouvé le ddl DZ pour le noeud  %(k1)s .
 """),
 
     32 : _(u"""
- argument du mot-clé "SOUS_STRUC_1" n'est pas un nom de sous-structure
-"""),
-
-    33 : _(u"""
- calcul non-linéaire par sous-structuration entre 2 structures mobiles :
- le mot-clé SOUS_STRUC_2 est obligatoire
-"""),
-
-    34 : _(u"""
- l'argument du mot-clé "SOUS_STRUC_2" n'est pas un nom de sous-structure
+ argument du mot-clé "%(k1)s" n'est pas un nom de sous-structure
 """),
 
     35 : _(u"""
@@ -208,12 +199,8 @@ Le GROUP_NO %(k1)s ne doit pas contenir plus d'un noeud.
 """),
 
     79 : _(u"""
- KSIB non inversible
-"""),
-
-    81 : _(u"""
-  L'utilisation de %(k1)s avec DYNA_VIBRA n'est pas validée pour le schéma
-  d'intégration %(k2)s.
+Ce message est un message d'erreur développeur.
+Contactez le support technique.
 """),
 
     82 : _(u"""
@@ -228,7 +215,7 @@ Conseil :
 
     83 : _(u"""
 Vous réalisez une poursuite d'un calcul avec DYNA_VIBRA.
-La nature, les noeuds du ou des dispositifs de choc sont différents.
+La nature, les noeuds du des non-linéarités localisées sont différents.
 
               Avant     Maintenant
     Nature    %(k1)8s   %(k2)8s
