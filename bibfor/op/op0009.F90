@@ -18,7 +18,6 @@ implicit none
 #include "asterfort/meamgy.h"
 #include "asterfort/meamme.h"
 #include "asterfort/mecact.h"
-#include "asterfort/medome.h"
 #include "asterfort/meimme.h"
 #include "asterfort/memaac.h"
 #include "asterfort/memame.h"
@@ -178,7 +177,7 @@ implicit none
     else if (option.eq.'MASS_THER') then
         call mecact('V', chtime, 'MODELE', model//'.MODELE', 'INST_R',&
                     ncmp=nb_cmp, lnomcmp=list_cmp, vr=list_vale)
-        call memsth(model, cara_elem, mate, chtime, matr_elem, base)
+        call memsth(model, cara_elem, mate, chtime, matr_elem, base, time_ = time)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_ACOU') then
