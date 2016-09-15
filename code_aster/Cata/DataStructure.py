@@ -27,8 +27,12 @@ the return of the class method `getType()` of datastructures.
 Ex.: maillage_sdaster.getType() = Mesh().getType() = "MAILLAGE"
 """
 
+import UserDict
+
+
 class DataStructure(object):
     """Base class for all datastructures"""
+    _deepcopy_callback = None
 
     @classmethod
     def getType(cls):
@@ -36,9 +40,65 @@ class DataStructure(object):
         # use for static checking (with fake datastructures)
         return cls.__name__.replace("_sdaster", "").upper()
 
+    @classmethod
+    def register_deepcopy_callback(cls, callback):
+        """Register *callback* to be called in place of the default method.
+
+        Register *None* to revert to default.
+
+        Arguments:
+            callback (callable): Function to call with signature:
+                (*DataStructure* instance, ``memodict``).
+        """
+        cls._deepcopy_callback = callback
+
+    def __deepcopy__(self, memodict):
+        """Call the default *__deepcopy__* implementation or the previously
+        defined callback."""
+        if DataStructure._deepcopy_callback is not None:
+            copied = DataStructure._deepcopy_callback(self, memodict)
+        else:
+            from copy import deepcopy
+            copied = self.__class__()
+            memodict[id(self)] = copied
+            for (k, v) in self.__dict__.items():
+                copied.__dict__[k] = deepcopy(v, memodict)
+        return copied
+
+
+def AsType( obj ):
+    """Return the type of `obj`"""
+    # AsterStudy Command objects
+    if hasattr(obj, "gettype"):
+        try:
+            return obj.gettype()
+        except:
+            return
+    return type(obj)
+
+
+class PythonVariable(UserDict.UserDict, DataStructure):
+    """Generic type for all Python variables, for conversion only in AsterStudy.
+
+    Inheritance from dict allows to support item assignement,
+    indexing... often used for Python variable in a code_aster commands
+    file.
+    """
+    @classmethod
+    def getType(cls):
+        """A Python variable"""
+        return "misc"
+
+    def __hash__(self):
+        """Indexing support"""
+        return id(self)
+
 # Objects provided by Noyau from Eficas
 # keep compatibility with old name ASSD
 ASSD = DataStructure
+
+class CO(ASSD):
+    pass
 
 class not_checked(ASSD):
     pass

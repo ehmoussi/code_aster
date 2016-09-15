@@ -23,11 +23,16 @@ legacy operators.
 It mainly converts new objects to old ones for backward compatibility.
 """
 
+import __builtin__
+import types
+
 import DataStructure as DS
+from .DataStructure import AsType
 from .SyntaxChecker import SyntaxCheckerVisitor
 from .SyntaxObjects import (
     SimpleKeyword, FactorKeyword, Bloc,
     Operator, Macro, Procedure, Formule, Ops,
+    CataError,
 )
 from .Rules import (
     AtLeastOne,
@@ -38,14 +43,13 @@ from .Rules import (
     AllTogether,
 )
 
-import __builtin__
-import types
-
-__builtin__._F = dict
+_F = dict
+__builtin__._F = _F
 
 # TODO: replace by the i18n function (see old accas.capy)
-def _(args):
+def tr(args):
     return args
+_ = tr
 
 __builtin__._ = _
 
@@ -99,6 +103,8 @@ ops = Ops()
 class PROC_ETAPE(Procedure):
     pass
 
+# exception
+AsException = CataError
 
 # rules
 AU_MOINS_UN = AtLeastOne
@@ -110,13 +116,6 @@ ENSEMBLE = AllTogether
 # } Ok
 
 # NOOK {
-def AsType( obj ):
-    """Return the type of `obj`"""
-    return type(obj)
-
-def CO():
-    pass
-
 class assd(DS.ASSD):
     pass
 

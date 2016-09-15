@@ -171,8 +171,8 @@ class SyntaxCheckerVisitor(object):
         # loop on occurrences filled by the user
         for userOcc in userDict:
             # check rules
-            if step.regles != None:
-                for rule in step.regles:
+            if step.rules != None:
+                for rule in step.rules:
                     rule.check(userOcc)
             # check that the required keywords are provided by the user
             step.checkMandatory(userOcc)
@@ -192,7 +192,7 @@ class SyntaxCheckerVisitor(object):
 # counter of 'printed' command
 _cmd_counter = 0
 
-def checkCommandSyntax(command, keywords, printSyntax=True):
+def checkCommandSyntax(command, keywords, printSyntax=False):
     """Check the syntax of a command
     `keywords` contains the keywords filled by the user"""
     global _cmd_counter
