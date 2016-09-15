@@ -1,7 +1,7 @@
 subroutine op0194()
     implicit none
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -57,7 +57,7 @@ subroutine op0194()
 !
     complex(kind=8) :: c16b
     character(len=4) :: ctyp
-    character(len=8) :: k8b, crit, temper, modele, cara
+    character(len=8) :: k8b, crit, temper, temper2, modele, cara
     character(len=16) :: tysd, option
     character(len=19) :: kordre, kcha, compor
     character(len=24) :: chmeta, phasin, mate
@@ -80,7 +80,11 @@ subroutine op0194()
     call rsorac(temper, 'LONUTI', 0, r8b, k8b,&
                 c16b, r8b, k8b, tord, 1,&
                 ibid)
-    nbordr=tord(1)            
+    nbordr=tord(1)     
+
+    if (nbordr .lt. 2) then
+        call utmess('F', 'META1_1')
+    endif       
     call wkvect(kordre, 'V V I', nbordr, jordr)
     call rsorac(temper, 'TOUT_ORDRE', 0, r8b, k8b,&
                 c16b, r8b, k8b, zi(jordr), nbordr,&
@@ -112,7 +116,10 @@ subroutine op0194()
                 call chpver('F', chmeta(1:19), 'CART', 'VAR2_R', ier)
                 call copisd('CHAMP_GD', 'V', chmeta, phasin(1:19))
             else
-                call getvid('ETAT_INIT', 'EVOL_THER', iocc=1, scal=temper, nbret=n1)
+                call getvid('ETAT_INIT', 'EVOL_THER', iocc=1, scal=temper2, nbret=n1)
+                if (temper2 .ne. temper) then
+                    call utmess('F', 'META1_2')
+                endif
                 call getvis('ETAT_INIT', 'NUME_INIT', iocc=1, scal=num, nbret=n2)
                 if (n2 .eq. 0) then
                     call getvr8('ETAT_INIT', 'INST_INIT', iocc=1, scal=inst, nbret=n3)

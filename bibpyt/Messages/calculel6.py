@@ -19,20 +19,6 @@
 
 cata_msg = {
 
-    1: _(u"""
-Erreur utilisateur (dans la commande AFFE_MATERIAU) :
-  Dans le CHAM_MATER %(k1)s, vous avez affecté le matériau %(k2)s.
-  Dans ce matériau, il existe un coefficient de dilatation (ELAS/ALPHA)
-  qui est une fonction de la température.
-  Pour pouvoir utiliser cette fonction, il est nécessaire de transformer
-  cette fonction (changement de repère : "TEMP_DEF_ALPHA" -> "TEMP_REF").
-  Pour cela, l'utilisateur doit fournir une température de référence.
-
-Solution :
-  Vérifier que les mailles affectées par le matériau %(k2)s sont bien
-  toutes affectées par une température de référence
-  (mot clé AFFE_VARC/NOM_VARC='TEMP',VALE_REF=...).
-"""),
 
     2: _(u"""
   Problème d'extraction : Résultat généralisé %(k1)s
@@ -51,7 +37,8 @@ Solution :
 """),
 
     6: _(u"""
-  Erreur de Programmation: code retour de 'TBLIVA' inconnu.
+Ce message est un message d'erreur développeur.
+Contactez le support technique.
 """),
 
     7: _(u"""
@@ -180,15 +167,7 @@ Conseils :
 """),
 
 
-    56: _(u"""
- Erreur d'utilisation (rcmaco/alfint) :
- Un des matériaux du CHAM_MATER %(k1)s contient un coefficient de dilatation ALPHA=f(TEMP).
- Mais la température de référence n'est pas fournie sous AFFE_MATERIAU/AFFE_VARC/VALE_REF
 
- Conseil :
-   Renseignez la température de référence à l'aide de :
-     AFFE_MATERIAU/AFFE_VARC/NOM_VARC='TEMP'     + VALE_REF
-"""),
 
     57: _(u"""
  Erreur d'utilisation (préparation des variables de commande) :
@@ -209,13 +188,12 @@ Conseils :
 """),
 
     62: _(u"""
-    Erreur lors de l'interpolation de la fonction %(k1)s sur la maille %(k3)s,
-    il manque le paramètre %(k2)s
+Erreur lors de l'interpolation de la fonction %(k1)s sur la maille %(k3)s, il manque le paramètre %(k2)s
 """),
 
 
     63: _(u"""
- Erreur lors de l'interpolation (fointa) de la fonction %(k1)s :
+ Erreur lors de l'interpolation de la fonction %(k1)s :
  Code retour: %(i1)d
 """),
 
@@ -246,8 +224,10 @@ Conseils :
 
 
     68: _(u"""
- la liste des composantes fournies à NOCART est incorrecte.
+ la liste des composantes fournies est incorrecte.
  composantes dans catalogue:
+Ce message est un message d'erreur développeur.
+Contactez le support technique.
 """),
 
     69: _(u"""
@@ -255,7 +235,7 @@ Conseils :
 """),
 
     70: _(u"""
- composantes dans EDITGD:
+ composantes:
 """),
 
     71: _(u"""

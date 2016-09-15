@@ -1,10 +1,10 @@
 subroutine merime_wrap(modelz, nchar, lchar, mate, carelz,&
-                       exiti0, time, compoz, matelz, nh,&
+                       time, compoz, matelz, nh,&
                        basz)
 !
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -28,7 +28,6 @@ subroutine merime_wrap(modelz, nchar, lchar, mate, carelz,&
     character(len=*) :: modelz, carelz, matelz
     character(len=24) :: lchar(nchar)
     character(len=*) :: mate, basz, compoz
-    integer :: exiti0
 !
 ! ----------------------------------------------------------------------
 !
@@ -42,7 +41,6 @@ subroutine merime_wrap(modelz, nchar, lchar, mate, carelz,&
 ! IN  MATE   : CARTE DE MATERIAU
 ! IN  CARELE : CHAMP DE CARAC_ELEM
 ! IN  MATELZ : NOM DU MATR_ELEM RESULTAT
-! IN  EXITI0 : VRAI SI L'INSTANT EST DONNE
 ! IN  TIME   : INSTANT DE CALCUL
 ! IN  NH     : NUMERO D'HARMONIQUE DE FOURIER
 ! IN  BASE   : NOM DE LA BASE
@@ -50,12 +48,7 @@ subroutine merime_wrap(modelz, nchar, lchar, mate, carelz,&
 !
 ! ----------------------------------------------------------------------
 !
-    aster_logical :: exitim
-!
-! ----------------------------------------------------------------------
-!
-    exitim = int_to_logical(exiti0)
     call merime(modelz, nchar, lchar, mate, carelz,&
-                exitim, time, compoz, matelz, nh,&
+                time, compoz, matelz, nh,&
                 basz)
 end subroutine

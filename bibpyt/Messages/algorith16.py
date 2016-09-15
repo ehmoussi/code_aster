@@ -116,8 +116,16 @@ cata_msg = {
 
 """),
 
+
     21 : _(u"""
  taux de souplesse négligée : %(r1)f
+"""),
+
+
+    22 : _(u"""
+ La matrice de masse fournie est singulière, un pivot nul a été détecté, au moins pour le mode numéro %(i1)d.
+ Le calcul va poursuivre avec l'extrait diagonal de la matrice de masse. La dynamique associée aux modes
+ sans masses sera artificiellement supprimée en imposant une valeur critique de l'amortissement.  
 """),
 
     44 : _(u"""
@@ -287,7 +295,7 @@ Risques & conseils :
  """),
 
     96 : _(u"""
-  Comportement ZEDGAR : la dérivée est nulle.
+  Comportement pour le zirconium: la dérivée est nulle.
 """),
 
 
