@@ -23,6 +23,7 @@
 #include "aster.h"
 #include "asterc_debug.h"
 #include "aster_module.h"
+#include "RunManager/Exceptions.h"
 
 #define FatalError 18   /* kept for backward compatibility only */
 #define EOFError   19
