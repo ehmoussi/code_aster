@@ -317,11 +317,15 @@ implicit none
                     else if (nomlig(itych).eq.'.SIINT') then
                         info_type = 'NEUM_SIGM_INT'
                     else if (load_apply .eq. 'FIXE_PILO') then
-                        info_type = 'NEUM_PILO'
-                        if (nomlig(itych) .ne. '.VEASS') then
-                            call dismoi('PARA_INST', lchin(1:19), 'CARTE', repk=parcha)
-                            if (parcha(1:3) .eq. 'OUI') then
-                                call utmess('F', 'CHARGES_28')
+                        if (nomlig(itych) .eq. '.VEASS') then
+                            info_type = 'NEUM_PILO'
+                        else
+                            if (load_type(5:7) .eq. '_FT') then
+                                call utmess('F', 'CHARGES_28', sk=load_name)
+                            else if (load_type(5:7).eq.'_FO') then
+                                info_type = 'NEUM_PILO_F'
+                            else
+                                info_type = 'NEUM_PILO'
                             endif
                         endif
                     else if (load_apply .eq. 'SUIV') then
@@ -482,8 +486,8 @@ implicit none
 !
     if (l_diri_undead) then
         call load_unde_diri(list_load)
-    endif  
-    
+    endif
+
     AS_DEALLOCATE(vk8 = v_list_dble)
     call jedema()
 end subroutine

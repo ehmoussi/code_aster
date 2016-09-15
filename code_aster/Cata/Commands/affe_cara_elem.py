@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -837,15 +837,15 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         NOEUD_CENTRE    = SIMP(statut='f',typ=no),
         COOR_CENTRE     = SIMP(statut='f',typ='R',min=2,max=3),
         EUROPLEXUS      = SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="NON"),
-        UNITE           = SIMP(statut='f',typ='I',val_min=1),
-    ),
+        UNITE           = SIMP(statut='f',typ='I',val_min=1,inout='out'),
+     ),
 #
 # ==============================================================================
     RIGI_MISS_3D = FACT(statut='f',max='**',
         GROUP_MA_POI1   = SIMP(statut='o',typ=grma,max=1),
         GROUP_MA_SEG2   = SIMP(statut='f',typ=grma,max=1),
         FREQ_EXTR       = SIMP(statut='o',typ='R',max=1),
-        UNITE_RESU_IMPE = SIMP(statut='f',typ='I',defaut=30),
+        UNITE_RESU_IMPE = SIMP(statut='f',typ='I',defaut=30,inout='in'),
     ),
 #
 # ==============================================================================

@@ -1,7 +1,7 @@
 # coding=utf-8
 # person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -51,7 +51,7 @@ class SIMP(N_ENTITE.ENTITE):
     def __init__(self, typ, fr="", statut='f', into=None, defaut=None,
                  min=1, max=1, homo=1, position='local',
                  val_min='**', val_max='**', docu="", validators=None,
-                 sug=None):
+                 sug=None, inout='in'):
         """
             Un mot-clé simple est caractérisé par les attributs suivants :
             - type : cet attribut est obligatoire et indique le type de valeur attendue
@@ -67,6 +67,7 @@ class SIMP(N_ENTITE.ENTITE):
             - val_max : valeur maximale autorisée
             - docu : ?
             - sug : ?
+            - inout : statut de l'unité logique pour un fichier in ou out
         """
         N_ENTITE.ENTITE.__init__(self, validators)
         # Initialisation des attributs
@@ -86,11 +87,13 @@ class SIMP(N_ENTITE.ENTITE):
         self.val_max = val_max
         self.docu = docu
         self.sug = sug
+        self.inout = inout
 
     def verif_cata(self):
         """
             Cette methode sert à valider les attributs de l'objet de définition
             de la classe SIMP
+            La vérification est réalisée dans le test vocab01a
         """
         self.check_min_max()
         self.check_fr()
@@ -100,6 +103,7 @@ class SIMP(N_ENTITE.ENTITE):
         self.check_position()
         self.check_validators()
         self.check_defaut()
+        self.check_inout()
 
     def __call__(self, val, nom, parent=None):
         """

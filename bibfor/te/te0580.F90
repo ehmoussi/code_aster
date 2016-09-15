@@ -5,13 +5,14 @@ subroutine te0580(nomopt, nomte)
 #include "asterfort/utmess.h"
 #include "asterfort/fointe.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/rccoma.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/tecach.h"
 #include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
 !     ------------------------------------------------------------------
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -236,10 +237,17 @@ subroutine te0580(nomopt, nomte)
 !   -- le bloc if suivant sera a retirer apres la correction de issue23504
     if (nomopt.eq.'CALC_K_G_F') then
         if (nomte.eq.'MECA_XH_FACE4' .or. nomte.eq.'MECA_XHT_FACE4' &
-            .or. nomte.eq.'MECA_XT_FACE4') code='A'
+            .or. nomte.eq.'MECA_XT_FACE4' .or.&
+            nomte.eq.'MECA_XH_FACE8' .or. nomte.eq.'MECA_XHT_FACE8' &
+            .or. nomte.eq.'MECA_XT_FACE8') code='A'
     endif
-    call utmess(code, 'CALCUL_42',2,valk=valk)
-
+    
+    if (nomopt(1:14).eq.'CHAR_MECA_PRES' .and. &
+       (lteatt('GRILLE','OUI') .or.lteatt('MODELI','MMB')))then
+        call utmess(code, 'CALCUL_48')
+    else
+        call utmess(code, 'CALCUL_42',2,valk=valk)
+    endif
 
 !   -- sortie normale :
 999 continue

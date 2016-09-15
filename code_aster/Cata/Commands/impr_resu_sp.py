@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -45,5 +45,5 @@ IMPR_RESU_SP=MACRO(nom="IMPR_RESU_SP",
         NOM_CHAM =SIMP(statut='o',typ='TXM',into=("SIEF_ELGA","VARI_ELGA","SIGM_ELGA","SIEQ_ELGA")),
         NOM_CMP  =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max='**',),
     ),
-    UNITE =SIMP(statut='o',typ='I',max=1,min=1,fr=tr("Unité du fichier d'archive.")),
+    UNITE =SIMP(statut='o',typ='I',max=1,min=1, inout='out', fr=tr("Unité du fichier d'archive.")),
 )

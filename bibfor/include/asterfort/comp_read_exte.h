@@ -16,16 +16,18 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine comp_read_exte(keywordfact, iocc    , rela_comp    ,&
-                              l_umat     , l_mfront, l_mfront_offi,&
-                              libr_name  , subr_name)
-        character(len=16), intent(in) :: keywordfact
-        integer, intent(in) :: iocc
-        character(len=16), intent(in) :: rela_comp
+    subroutine comp_read_exte(rela_comp_  , kit_comp ,&
+                              l_umat      , l_mfront , l_mfront_offi,&
+                              libr_name   , subr_name,&
+                              keywordfact_, iocc_    )
+        character(len=16), intent(in) :: rela_comp_
+        character(len=16), intent(in) :: kit_comp(4)
         aster_logical, intent(out) :: l_umat
         aster_logical, intent(out) :: l_mfront
         aster_logical, intent(out) :: l_mfront_offi
         character(len=255), intent(out) :: libr_name
         character(len=255), intent(out) :: subr_name
+        character(len=16), optional, intent(in) :: keywordfact_
+        integer, optional, intent(in) :: iocc_
     end subroutine comp_read_exte
 end interface

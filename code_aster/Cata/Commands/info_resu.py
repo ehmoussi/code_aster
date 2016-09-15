@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -25,5 +25,5 @@ INFO_RESU=PROC(nom="INFO_RESU",op=40,
                UIinfo={"groupes":("Impression","Utilitaires",)},
                fr=tr("Imprimer tous les champs présents dans une structure de données résultat"),
                RESULTAT=SIMP(statut='f',typ=resultat_sdaster),
-               UNITE=SIMP(statut='f',typ='I',defaut=6),
+               UNITE=SIMP(statut='f',typ='I',defaut=6, inout='out'),
 );

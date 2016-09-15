@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -36,8 +36,8 @@ DEFI_FLUI_STRU=OPER(nom="DEFI_FLUI_STRU",op= 143,sd_prod=type_flui_stru,
            COEF_MASS_AJOU  =SIMP(statut='f',typ='R' ),
            TYPE_PAS        =SIMP(statut='f',typ='TXM',into=("CARRE_LIGN","TRIA_LIGN") ),
            TYPE_RESEAU     =SIMP(statut='f',typ='I' ),
-           UNITE_CD        =SIMP(statut='f',typ='I',defaut=70),
-           UNITE_CK        =SIMP(statut='f',typ='I',defaut=71),
+           UNITE_CD        =SIMP(statut='f',typ='I',defaut=70, inout='out'),
+           UNITE_CK        =SIMP(statut='f',typ='I',defaut=71, inout='out'),
            PAS             =SIMP(statut='f',typ='R' ),
            CSTE_CONNORS    =SIMP(statut='f',typ='R',min=2,max=2,val_min=0.E+00),
            NB_CONNORS      =SIMP(statut='f',typ='I',val_min=2,),
@@ -57,8 +57,8 @@ DEFI_FLUI_STRU=OPER(nom="DEFI_FLUI_STRU",op= 143,sd_prod=type_flui_stru,
            MODELE          =SIMP(statut='f',typ=modele_sdaster ),
            COEF_MASS_AJOU  =SIMP(statut='f',typ='R' ),
            RHO_FLUI        =SIMP(statut='f',typ='R' ),
-           UNITE_CA        =SIMP(statut='f',typ='I',defaut=70),
-           UNITE_KA        =SIMP(statut='f',typ='I',defaut=71),
+           UNITE_CA        =SIMP(statut='f',typ='I',defaut=70, inout='out'),
+           UNITE_KA        =SIMP(statut='f',typ='I',defaut=71, inout='out'),
          ),
          FAISCEAU_AXIAL  =FACT(statut='f',max='**',
            regles=(UN_PARMI('GROUP_MA','TRI_GROUP_MA'),

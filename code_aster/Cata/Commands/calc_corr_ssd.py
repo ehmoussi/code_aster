@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -27,7 +27,7 @@ CALC_CORR_SSD=OPER(nom="CALC_CORR_SSD",op=  91,sd_prod=table_container,
             UIinfo={"groupes":("Dynamique",)},
          MODELE_GENE    =SIMP(statut='o',typ=modele_gene),
          RESU_GENE      =SIMP(statut='o',typ=mode_gene ),
-         UNITE          =SIMP(statut='f',typ='I',defaut=6,),   
+         UNITE          =SIMP(statut='f',typ='I',defaut=6, inout='in'), 
          SHIFT          =SIMP(statut='f',typ='R',defaut= 1. ),
          VERIF          =FACT(statut='f',max='**',
            STOP_ERREUR     =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),

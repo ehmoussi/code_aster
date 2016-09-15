@@ -3,7 +3,7 @@
 
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -74,6 +74,8 @@ comment=""" PFISNO : CONNECTIVITE DES FISSURES ET DES DDL HEAVISIDE """)
 
 PHEA_NO  = InputParameter(phys=PHY.N120_I)
 
+PBASLOR  = InputParameter(phys=PHY.NEUT_R)
+
 
 CHAR_MECA_PESA_R = Option(
     para_in=(
@@ -104,6 +106,7 @@ CHAR_MECA_PESA_R = Option(
            PPMILTO,
            PSTANO,
            PVARCPR,
+           PBASLOR,
     ),
     para_out=(
         SP.PVECTUR,
@@ -113,10 +116,8 @@ CHAR_MECA_PESA_R = Option(
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.INTERFACE,'OUI'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.ABSO,'OUI'),)),
 
-#     les 5 modelisations suivantes n'ont pas de masse :
-      CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'3FL'),)),
-      CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'2FL'),)),
-      CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'2FP'),)),
+#     les modelisations suivantes n'ont pas de masse : 
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.FLUIDE,'OUI'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'D2D'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'D3D'),)),
     ),

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR   
@@ -25,7 +25,7 @@ IMPR_GENE=PROC(nom="IMPR_GENE",op= 157,
             fr=tr("Imprimer le résultat d'un calcul dynamique en variables généralisées au format RESULTAT"),
             UIinfo={"groupes":("Impression","Dynamique",)},
          FORMAT          =SIMP(statut='f',typ='TXM',defaut="RESULTAT",into=("RESULTAT",) ),
-         UNITE           =SIMP(statut='f',typ='I',defaut=8),  
+         UNITE           =SIMP(statut='f',typ='I',defaut=8, inout='out'),  
          GENE            =FACT(statut='o',max='**',
            regles=(EXCLUS('TOUT_ORDRE','NUME_ORDRE','INST','FREQ','NUME_MODE',
                           'LIST_INST','LIST_FREQ','TOUT_MODE','TOUT_INST','LIST_ORDRE'),

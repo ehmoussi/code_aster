@@ -703,9 +703,8 @@ list_cmp_depl=(
   'GRX',        'GLIS',       'PRES',       'PRE[2]',     'TEMP',       'PHI',
   'DH',         'H1X',        'H1Y',        'H1Z',        'H1PRE1',     'H2X',
   'H2Y',        'H2Z',        'H2PRE1',     'H3X',        'H3Y',        'H3Z',
-  'H3PRE1',     'H4X',        'H4Y',        'H4Z',        'LAGR',       'E1X',
-  'E1Y',        'E1Z',        'E2X',        'E2Y',        'E2Z',        'E3X',
-  'E3Y',        'E3Z',        'E4X',        'E4Y',        'E4Z',        'LAGS_C',
+  'H3PRE1',     'H4X',        'H4Y',        'H4Z',        'LAGR',       
+  'K1',         'K2',          'K3',        'LAGS_C',
   'LAGS_F[2]',  'LAG2_C',     'LAG2_F[2]',  'LAG3_C',     'LAG3_F[2]',  'LAG4_C',
   'LAG4_F[2]',  'UI2',        'VI2',        'WI2',        'UI3',        'VI3',
   'WI3',        'UI4',        'VI4',        'WI4',        'UI5',        'VI5',
@@ -738,10 +737,7 @@ comment_depl= """  DEPL_R/_C/_F  Deplacement reel, complexe ou fonction
                      H3PRE1 : DDLS HEAVYSIDE HM-XFEM
        LAGR : parametre de lagrange du a la dualisation des conditions aux
        limites
-       Pour X-FEM: E1X, E1Y, E1Z : DDLS enrichis (CRACKTIP1) X-FEM
-                   E2X, E2Y, E2Z : DDLS enrichis (CRACKTIP2) X-FEM
-                   E3X, E3Y, E3Z : DDLS enrichis (CRACKTIP3) X-FEM
-                   E4X, E4Y, E4Z : DDLS enrichis (CRACKTIP4) X-FEM
+       Pour X-FEM: K1, K2, K3 : DDLS enrichis vectoriels (CRACKTIP) X-FEM
        LAGS_C, LAG2_C, LAG3_C, LAG4_C :
        LAGS_F1, LAGS_F2, LAG2_F1, LAG2_F2, LAG3_F1, LAG3_F2, LAG4_F1, LAG4_F2 :
        HPRE1 : DDL de pression Heaviside pour la pression du massif (HM_XFEM)
@@ -1011,6 +1007,15 @@ EPSI_F   = PhysicalQuantity(type='K8',
        'EPXZ',
        'EPYZ',
        'DIVU',
+       'EXX',
+       'EYY',
+       'EXY',
+       'KXX',
+       'KYY',
+       'KXY',
+       'EPX',
+       'KY',
+       'KZ',
     ),
     comment="""  EPSI_F Type:K8 Deformation (fonction)
        EPXX : epsilon_xx deformation d'un milieu continu
@@ -1020,6 +1025,15 @@ EPSI_F   = PhysicalQuantity(type='K8',
        EPXZ : epsilon_xz deformation d'un milieu continu
        EPYZ : epsilon_yz deformation d'un milieu continu
        DIVU    : dilatation volumique (chainage HM)
+       EXX coque : deformations generalisees
+       EYY coque : deformations generalisees
+       EXY coque : deformations generalisees
+       KXX coque : deformations generalisees
+       KYY coque : deformations generalisees
+       KXY coque : deformations generalisees
+       EPX Poutre: elongation selon l'axe de la poutre
+       KY Poutre: courbure selon l'axe Y
+       KZ Poutre: courbure selon l'axe Z
 """)
 
 
@@ -1393,6 +1407,8 @@ FISS_R   = PhysicalQuantity(type='R',
     components=(
        'XA',
        'YA',
+       'XTAN',
+       'YTAN',
        'XNORM',
        'YNORM',
     ),
@@ -1400,6 +1416,8 @@ FISS_R   = PhysicalQuantity(type='R',
     (calcul du K1, K2 en 2D)
        XA : coordonnee 1 du noeud du fond de fissure
        YA : coordonnee 2 du noeud du fond de fissure
+       XTAN : composante 1 de la tangente a la fissure
+       YTAN : composante 2 de la tangente a la fissure
        XNORM : composante 1 de la normale a la fissure
        YNORM : composante 2 de la normale a la fissure
 """)

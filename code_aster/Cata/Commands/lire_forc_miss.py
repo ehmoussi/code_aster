@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -32,6 +32,6 @@ LIRE_FORC_MISS=OPER(nom="LIRE_FORC_MISS",op= 179,sd_prod=vect_asse_gene,
          NOM_CHAM        =SIMP(statut='f',typ='TXM',into=("DEPL","VITE","ACCE"),defaut="DEPL"),
          NUME_CHAR       =SIMP(statut='f',typ='I' ),
          ISSF            =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","OUI") ),
-         UNITE_RESU_FORC =SIMP(statut='f',typ='I',defaut=30),         
+         UNITE_RESU_FORC =SIMP(statut='f',typ='I',defaut=30, inout='in',),         
          NOM_RESU_FORC   =SIMP(statut='f',typ='TXM' ),         
 )  ;

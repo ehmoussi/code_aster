@@ -1,5 +1,5 @@
 subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
-                  jconx2, clsm, typdis)
+                  jconx2, clsm, typdis, critlst)
     implicit none
 #include "jeveux.h"
 #include "asterc/r8prem.h"
@@ -12,14 +12,16 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
+#include "asterfort/xajuls_stop.h"
 !
     integer :: nbma, jconx1, jconx2, clsm
     character(len=8) :: noma
     character(len=16) :: typdis
     character(len=19) :: cnslt, cnsln
+    real(kind=8), optional :: critlst
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -60,7 +62,7 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
     integer :: jma, ima, itypma, ar(12, 3), nbar, ia
     integer :: na, nb, nm, nunoa, nunob, nunom
     integer :: nmaabs, ndime, ndim
-    real(kind=8) :: d1, lsna, lsnb, crilsn, lsta, lstb, crilst, d2
+    real(kind=8) :: d1, lsna, lsnb, crilsn, lsta, lstb, crilst, d2, r8pre, crlst
     real(kind=8) :: lsnm, lstm, lsnmax, lstmax, penal, d3, fit_to_vertex(2)
     character(len=19) :: mai
     character(len=8) :: typma
@@ -68,7 +70,7 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
     real(kind=8), pointer :: ltsv(:) => null()
     aster_logical :: ajust
 !
-    parameter     (fit_to_vertex=(/1.d-6,1d-6/), crilst=1.d-3, penal=0.01)
+    parameter     (fit_to_vertex=(/1.d-6,1d-6/), crlst=1.d-6, penal=0.01)
 !
 !-----------------------------------------------------------------------
 !     DEBUT
@@ -78,7 +80,13 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
     call jeveuo(cnsln//'.CNSV', 'E', vr=lnsv)
     call jeveuo(cnslt//'.CNSV', 'E', vr=ltsv)
 !
+    r8pre=r8prem()
     d2=999.d0
+    if (present(critlst)) then 
+      crilst=critlst
+    else
+      crilst=crlst
+    endif
 !
 !     COMPTEUR DES LSN ET LST MODIFIÉES
     clsm=0
@@ -138,7 +146,7 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
 !         LA VALEUR D'UN LSN DIVISE PAR LA DIFFERENCE DES VALEURS AUX
 !         DEUX EXTREMITES SONT INFERIEURES D'UN CERTAINE NOMBRE, ON MET
 !         LES LSN A ZERO.
-            if (abs(lsna-lsnb) .gt. r8prem().and.(typdis.ne.'COHESIF'.or.lsna*lsnb.lt.0.d0)) then
+            if (abs(lsna-lsnb) .gt. r8pre.and.(typdis.ne.'COHESIF'.or.lsna*lsnb.lt.0.d0)) then
                 d1=lsna/(lsna-lsnb)
                 if (abs(d1) .le. crilsn) then
 !              REAJUSTEMENT DE LSNA
@@ -166,7 +174,7 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
 !         AUX DEUX EXTREMITES SONT INFERIEURES D'UN CERTAINE NOMBRE, ON
 !         MET LES LST A ZERO.
 !
-            if (abs(lsta-lstb) .gt. r8prem()) then
+            if (abs(lsta-lstb) .gt. r8pre) then
                 d1=lsta/(lsta-lstb)
                 if (abs(d1) .le. crilst) then
 !              REAJUSTEMENT DE LSTA
@@ -316,6 +324,14 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
 !
 !            REAJUSTEMENT DES CONFIGURATIONS RENTRANTES
                 if (lsta.eq.0.d0.and.lstb.eq.0.d0.and.lstm.ne.0.d0) then
+!                   dans le cas ou lstmax est nul, on court-circuite
+!                   (sous certaines conditions tres particulieres) 
+!                   l'iteration de la boucle sur les aretes pour eviter
+!                   une division par zero
+                    if (abs(lstmax) .lt. r8pre) then
+                       call xajuls_stop(noma, cnslt, jconx1, jconx2, ima)
+                       cycle
+                    endif
                     d1=lstm/lstmax
                     if (abs(d1) .le. penal) then
 !             REAJUSTEMENT A ZERO DE LSNM AUX NOEUDS MILIEUX,QUAND LA

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -29,7 +29,7 @@ LIRE_IMPE_MISS=OPER(nom="LIRE_IMPE_MISS",op= 164,sd_prod=matr_asse_gene_c,
          NUME_DDL_GENE   =SIMP(statut='o',typ=nume_ddl_gene ),
          FREQ_EXTR       =SIMP(statut='f',typ='R',max=1),
          INST_EXTR       =SIMP(statut='f',typ='R',max=1),
-         UNITE_RESU_IMPE =SIMP(statut='f',typ='I',defaut=30),
+         UNITE_RESU_IMPE =SIMP(statut='f',typ='I',defaut=30, inout='in'),
          ISSF            =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","OUI") ),
          TYPE            =SIMP(statut='f',typ='TXM',defaut="ASCII",into=("BINAIRE","ASCII") ),         
          SYME            =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","OUI") ),

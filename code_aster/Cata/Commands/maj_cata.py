@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR   
@@ -29,6 +29,6 @@ MAJ_CATA=PROC(nom="MAJ_CATA",op=20,
 
               ELEMENT     =FACT(statut='f',),
 
-              UNITE       =SIMP(statut='f',typ='I',defaut=8),       
+              UNITE       =SIMP(statut='f',typ='I',defaut=8, inout='out'),       
               TYPE_ELEM   =FACT(statut='f',),
 );
