@@ -58,13 +58,13 @@ FILE* fileOut;
 void TraiteMessageErreur( _IN char* ) ;
 
 
-INTEGER DEF0(ISJVUP, isjvup)
+ASTERINTEGER DEF0(ISJVUP, isjvup)
 {
    /* "is jeveux up ?" : retourne 1 si jeveux est démarré/initialisé, sinon 0. */
-   return (INTEGER)get_sh_jeveux_status();
+   return (ASTERINTEGER)get_sh_jeveux_status();
 }
 
-void DEFP(XFINI,xfini, _IN INTEGER *code)
+void DEFP(XFINI,xfini, _IN ASTERINTEGER *code)
 {
    /* XFINI est n'appelé que par JEFINI avec code=19 (=EOFError) */
    /* jeveux est fermé */
@@ -99,7 +99,7 @@ void DEFP(XFINI,xfini, _IN INTEGER *code)
 
 void TraiteMessageErreur( _IN char * message )
 {
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     fprintf(fileOut, "%s\n",message);
     if ( PyErr_Occurred() ) PyErr_Print();
     CALL_ASABRT( &ier );
@@ -140,15 +140,15 @@ void PRE_myabort( _IN const char *nomFichier , _IN const int numeroLigne , _IN c
 #define CALL_GETLTX(a,b,c,d,e,f,g) CALLSSPPPPP(GETLTX,getltx,a,b,c,d,e,f,g)
 
 void DEFSSPPPPP(GETLTX,getltx,_IN char *motfac,_IN STRING_SIZE lfac,
-                              _IN char *motcle,_IN STRING_SIZE lcle,_IN INTEGER *iocc,
-                              _IN INTEGER *taille,_IN INTEGER *mxval,
-                              _OUT INTEGER *isval, _OUT INTEGER *nbval )
+                              _IN char *motcle,_IN STRING_SIZE lcle,_IN ASTERINTEGER *iocc,
+                              _IN ASTERINTEGER *taille,_IN ASTERINTEGER *mxval,
+                              _OUT ASTERINTEGER *isval, _OUT ASTERINTEGER *nbval )
 {
         /*
         Procedure : getltx_ (appelee par le fortran sous le nom GETLTX)
         */
     fprintf(fileOut, "GETLTX\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 
@@ -176,7 +176,7 @@ void DEFSSPPPPP(GETLTX,getltx,_IN char *motfac,_IN STRING_SIZE lfac,
         ok = PyArg_ParseTuple(res,"iO",&nval,&tup);
         if (!ok)MYABORT("erreur dans la partie Python");
 
-        *nbval = (INTEGER)nval;
+        *nbval = (ASTERINTEGER)nval;
         if( nval < 0 ) nval=(int)*mxval;
         convert(nval,tup,isval);
         Py_DECREF(res);                /*  decrement sur le refcount du retour */
@@ -205,7 +205,7 @@ void DEFSS(GETTCO,gettco,_IN char *nomobj, _IN STRING_SIZE lnom,
 
 
 /* ------------------------------------------------------------------ */
-void DEFPS(GETMAT,getmat,_INOUT INTEGER *nbarg,_OUT char *motcle,_IN STRING_SIZE lcle)
+void DEFPS(GETMAT,getmat,_INOUT ASTERINTEGER *nbarg,_OUT char *motcle,_IN STRING_SIZE lcle)
 {
         /*
           Procedure GETMAT pour le FORTRAN
@@ -215,7 +215,7 @@ void DEFPS(GETMAT,getmat,_INOUT INTEGER *nbarg,_OUT char *motcle,_IN STRING_SIZE
             la liste de leur noms
         */
     fprintf(fileOut, "GETMAT\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 
@@ -237,7 +237,7 @@ void DEFPS(GETMAT,getmat,_INOUT INTEGER *nbarg,_OUT char *motcle,_IN STRING_SIZE
         if ( nval > 0 && *nbarg > 0 ){
                 converltx(nval,lnom,motcle,lcle); /* conversion  */
         }
-        *nbarg = (INTEGER)nval ;
+        *nbarg = (ASTERINTEGER)nval ;
 
         Py_DECREF(res);                /*  decrement sur le refcount du retour */
         return ;
@@ -246,9 +246,9 @@ void DEFPS(GETMAT,getmat,_INOUT INTEGER *nbarg,_OUT char *motcle,_IN STRING_SIZE
 
 /* ------------------------------------------------------------------ */
 void DEFSPPSSP(GETMJM,getmjm,_IN char *nomfac,_IN STRING_SIZE lfac,
-                             _IN INTEGER *iocc,_IN INTEGER *nbval,
+                             _IN ASTERINTEGER *iocc,_IN ASTERINTEGER *nbval,
                             _OUT char *motcle,_IN STRING_SIZE lcle,
-                            _OUT char *type,_IN STRING_SIZE ltyp, _OUT INTEGER *nbarg)
+                            _OUT char *type,_IN STRING_SIZE ltyp, _OUT ASTERINTEGER *nbarg)
 {
         /*
           Procedure GETMJM : emule la procedure equivalente ASTER
@@ -273,13 +273,13 @@ void DEFSPPSSP(GETMJM,getmjm,_IN char *nomfac,_IN STRING_SIZE lfac,
                                                    motcle, lcle,
                                                    type, ltyp, &nbMC );
     FreeStr(mcfact);
-    *nbarg = (INTEGER)nbMC;
+    *nbarg = (ASTERINTEGER)nbMC;
     return;
 }
 
 
 /* ------------------------------------------------------------------ */
-INTEGER DEFSS( GETEXM, getexm, _IN char *motfac,_IN STRING_SIZE lfac,
+ASTERINTEGER DEFSS( GETEXM, getexm, _IN char *motfac,_IN STRING_SIZE lfac,
                                _IN char *motcle,_IN STRING_SIZE lcle)
 {
         /*
@@ -303,14 +303,14 @@ INTEGER DEFSS( GETEXM, getexm, _IN char *motfac,_IN STRING_SIZE lfac,
 
 /* ------------------------------------------------------------------ */
 void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
-                        _INOUT INTEGER *nbval,
+                        _INOUT ASTERINTEGER *nbval,
                           _OUT char *txval,    _IN STRING_SIZE ltx)
 {
     /* Interface GETTYP
      * voir B_ETAPE.gettyp
      */
     fprintf(fileOut, "GETTYP\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 
@@ -328,7 +328,7 @@ void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
     if( !ok ) MYABORT("erreur dans la partie Python");
 
     if ( *nbval == 0 ) {
-        *nbval = (INTEGER)nval;
+        *nbval = (ASTERINTEGER)nval;
     } else {
         nval = nval > (int)*nbval ? (int)*nbval : nval;
         convertxt(nval, tup, txval, ltx);
@@ -341,9 +341,9 @@ void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
 
 /* ------------------------------------------------------------------ */
 void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
-                              _IN char *motcle,_IN STRING_SIZE lcle,_IN INTEGER *iocc,
-                              _IN INTEGER *iarg,_IN INTEGER *mxval,
-                           _INOUT DOUBLE *val,_OUT INTEGER *nbval)
+                              _IN char *motcle,_IN STRING_SIZE lcle,_IN ASTERINTEGER *iocc,
+                              _IN ASTERINTEGER *iarg,_IN ASTERINTEGER *mxval,
+                           _INOUT ASTERDOUBLE *val,_OUT ASTERINTEGER *nbval)
 {
         /*
           Procedure GETVC8 pour le FORTRAN : emule le fonctionnement
@@ -395,9 +395,9 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 
 /* ------------------------------------------------------------------ */
 void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
-                              _IN char *motcle,_IN STRING_SIZE lcle,_IN INTEGER *iocc,
-                              _IN INTEGER *iarg,_IN INTEGER *mxval,_INOUT DOUBLE *val,
-                              _OUT INTEGER *nbval)
+                              _IN char *motcle,_IN STRING_SIZE lcle,_IN ASTERINTEGER *iocc,
+                              _IN ASTERINTEGER *iarg,_IN ASTERINTEGER *mxval,_INOUT ASTERDOUBLE *val,
+                              _OUT ASTERINTEGER *nbval)
 {
         /*
           Procedure GETVR8 pour le FORTRAN : emule le fonctionnement
@@ -451,14 +451,14 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 #define CALL_FIINTF(a, b, c, d, e, f, g) CALLSPSPPSP(FIINTF,fiintf, a, b, c, d, e, f, g)
 
 void DEFSPSPPSP(FIINTF,fiintf,_IN char *nomfon,_IN STRING_SIZE lfon,
-                              _IN INTEGER *nbpu,_IN char *param,_IN STRING_SIZE lpara,
-                              _IN DOUBLE *val,
-                             _OUT INTEGER *iret,
+                              _IN ASTERINTEGER *nbpu,_IN char *param,_IN STRING_SIZE lpara,
+                              _IN ASTERDOUBLE *val,
+                             _OUT ASTERINTEGER *iret,
                               _IN char *coderr, _INOUT STRING_SIZE lcod,
-                             _OUT DOUBLE *resu)
+                             _OUT ASTERDOUBLE *resu)
 {
     fprintf(fileOut, "FIINTF\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 
@@ -485,14 +485,14 @@ void DEFSPSPPSP(FIINTF,fiintf,_IN char *nomfon,_IN STRING_SIZE lfon,
         piret = PyTuple_GetItem(tup2, 0);
         res   = PyTuple_GetItem(tup2, 1);
 
-        *iret = (INTEGER)PyInt_AsLong(piret);
-        *resu = (DOUBLE)0.;
+        *iret = (ASTERINTEGER)PyInt_AsLong(piret);
+        *resu = (ASTERDOUBLE)0.;
         if ( *iret == 0 ) {
            if (PyComplex_Check(res)) {
-               *resu    = (DOUBLE)PyComplex_RealAsDouble(res);
-               *(resu+1)= (DOUBLE)PyComplex_ImagAsDouble(res);
+               *resu    = (ASTERDOUBLE)PyComplex_RealAsDouble(res);
+               *(resu+1)= (ASTERDOUBLE)PyComplex_ImagAsDouble(res);
            } else if (PyFloat_Check(res) || PyLong_Check(res) || PyInt_Check(res)) {
-               *resu    = (DOUBLE)PyFloat_AsDouble(res);
+               *resu    = (ASTERDOUBLE)PyFloat_AsDouble(res);
            } else {
               *iret = 4;
            }
@@ -505,11 +505,11 @@ void DEFSPSPPSP(FIINTF,fiintf,_IN char *nomfon,_IN STRING_SIZE lfon,
 }
 
 void DEFSPSPPSP(FIINTFC,fiintfc,_IN char *nomfon,_IN STRING_SIZE lfon,
-                                _IN INTEGER *nbpu,_IN char *param,_IN STRING_SIZE lpara,
-                                _IN DOUBLE *val,
-                               _OUT INTEGER *iret,
+                                _IN ASTERINTEGER *nbpu,_IN char *param,_IN STRING_SIZE lpara,
+                                _IN ASTERDOUBLE *val,
+                               _OUT ASTERINTEGER *iret,
                                 _IN char *coderr, _INOUT STRING_SIZE lcod,
-                               _OUT DOUBLE *resuc)
+                               _OUT ASTERDOUBLE *resuc)
 {
     fprintf(fileOut, "FIINTFC\n");
     return DEFSPSPPSP(FIINTF,fiintf, nomfon, lfon, nbpu, param, lpara, val, iret,
@@ -519,11 +519,11 @@ void DEFSPSPPSP(FIINTFC,fiintfc,_IN char *nomfon,_IN STRING_SIZE lfon,
 /* ------------------------------------------------------------------ */
 void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                               _IN char *motcle,_IN STRING_SIZE lcle,
-                              _IN INTEGER *iocc,
-                              _IN INTEGER *iarg,
-                              _IN INTEGER *mxval,
-                           _INOUT INTEGER *val,
-                             _OUT INTEGER *nbval )
+                              _IN ASTERINTEGER *iocc,
+                              _IN ASTERINTEGER *iarg,
+                              _IN ASTERINTEGER *mxval,
+                           _INOUT ASTERINTEGER *val,
+                             _OUT ASTERINTEGER *nbval )
 {
         /*
           Procedure GETVIS pour le FORTRAN : emule le fonctionnement
@@ -563,7 +563,7 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
             int i;
             for ( i = 0; i < *nbval; ++i )
             {
-                val[i] = (INTEGER)retour[i];
+                val[i] = (ASTERINTEGER)retour[i];
             }
             free(retour);
         }
@@ -576,9 +576,9 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 #define CALL_GETVTX(a,b,c,d,e,f,g) CALLSSPPPSP(GETVTX_WRAP,getvtx_wrap,a,b,c,d,e,f,g)
 
 void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
-                              _IN char *motcle,_IN STRING_SIZE lcle,_IN INTEGER *iocc,
-                              _IN INTEGER *iarg,_IN INTEGER *mxval,
-                           _INOUT char *txval,_IN STRING_SIZE ltx,_OUT INTEGER *nbval)
+                              _IN char *motcle,_IN STRING_SIZE lcle,_IN ASTERINTEGER *iocc,
+                              _IN ASTERINTEGER *iarg,_IN ASTERINTEGER *mxval,
+                           _INOUT char *txval,_IN STRING_SIZE ltx,_OUT ASTERINTEGER *nbval)
 {
         /*
           Procedure GETVTX pour le FORTRAN : emule le fonctionnement
@@ -632,9 +632,9 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 
 /* ------------------------------------------------------------------ */
 void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
-                              _IN char *motcle,_IN STRING_SIZE lcle,_IN INTEGER *iocc,
-                              _IN INTEGER *iarg,_IN INTEGER *mxval,
-                           _INOUT char *txval,_IN STRING_SIZE ltx,_OUT INTEGER *nbval)
+                              _IN char *motcle,_IN STRING_SIZE lcle,_IN ASTERINTEGER *iocc,
+                              _IN ASTERINTEGER *iarg,_IN ASTERINTEGER *mxval,
+                           _INOUT char *txval,_IN STRING_SIZE ltx,_OUT ASTERINTEGER *nbval)
 {
         /*
           Procedure GETVID pour le FORTRAN : emule le fonctionnement
@@ -685,7 +685,7 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 
 
 /* ------------------------------------------------------------------ */
-void DEFP(PUTVIR,putvir, _IN INTEGER *ival)
+void DEFP(PUTVIR,putvir, _IN ASTERINTEGER *ival)
 {
    /*
       Entrees:
@@ -697,7 +697,7 @@ void DEFP(PUTVIR,putvir, _IN INTEGER *ival)
          de B_ETAPE.py
    */
     fprintf(fileOut, "PUTVIR\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 
@@ -710,7 +710,7 @@ void DEFP(PUTVIR,putvir, _IN INTEGER *ival)
    Py_DECREF(res);
 }
 
-void DEFP(PUTVRR,putvrr, _IN DOUBLE *rval)
+void DEFP(PUTVRR,putvrr, _IN ASTERDOUBLE *rval)
 {
    /*
       Entrees:
@@ -722,7 +722,7 @@ void DEFP(PUTVRR,putvrr, _IN DOUBLE *rval)
          de B_ETAPE.py
    */
     fprintf(fileOut, "PUTVRR\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 
@@ -738,7 +738,7 @@ void DEFP(PUTVRR,putvrr, _IN DOUBLE *rval)
 
 /* ------------------------------------------------------------------ */
 void DEFSSP(GCUCON,gcucon, _IN char *resul, STRING_SIZE lresul,
-                           _IN char *concep, STRING_SIZE lconcep, INTEGER *ier)
+                           _IN char *concep, STRING_SIZE lconcep, ASTERINTEGER *ier)
 {
    /*
             Entrees:
@@ -753,7 +753,7 @@ void DEFSSP(GCUCON,gcucon, _IN char *resul, STRING_SIZE lresul,
                resultats produits par les etapes precedentes
    */
     fprintf(fileOut, "GCUCON\n");
-    INTEGER ier2=SIGABRT;
+    ASTERINTEGER ier2=SIGABRT;
     CALL_ASABRT( &ier2 );
     /* TODO */
 
@@ -769,7 +769,7 @@ void DEFSSP(GCUCON,gcucon, _IN char *resul, STRING_SIZE lresul,
    if (res == NULL)
             MYABORT("erreur a l appel de gcucon dans la partie Python");
 
-   *ier = (INTEGER)PyInt_AsLong(res);
+   *ier = (ASTERINTEGER)PyInt_AsLong(res);
    Py_DECREF(res);
 }
 
@@ -813,11 +813,11 @@ PyObject *args;
         char *groups;
         PyObject *list;
         int inval=0;
-        INTEGER nval;
+        ASTERINTEGER nval;
         int long_nomcham=8;
         int long_nomgrp=24;
         int itopo;
-        INTEGER topo;
+        ASTERINTEGER topo;
 
         if (!PyArg_ParseTuple(args, "ssssiO:prepcompcham",
                               &nomce,&nomcs,&nomcmp,&ktype,&itopo,&list)) return NULL;
@@ -827,8 +827,8 @@ PyObject *args;
         Fcm = MakeFStrFromCStr(nomcmp, 8);
         Fty = MakeFStrFromCStr(ktype, 8);
         inval=PyList_Size(list);
-        nval=(INTEGER)inval;
-        topo=(INTEGER)itopo;
+        nval=(ASTERINTEGER)inval;
+        topo=(ASTERINTEGER)itopo;
         if (inval > 0) {
           groups = MakeTabFStr(inval, long_nomgrp);
           converltx(inval,list,groups,long_nomgrp); /* conversion  */
@@ -870,22 +870,22 @@ PyObject *args;
 {
     char *nomsd, *nomsd32;
     char *nomob;
-    DOUBLE *f;
-    INTEGER *l;
-    INTEGER4 *i4;
+    ASTERDOUBLE *f;
+    ASTERINTEGER *l;
+    ASTERINTEGER4 *i4;
     char *kvar;
     PyObject *tup=NULL;
-    INTEGER lcon, iob;
+    ASTERINTEGER lcon, iob;
     int ishf=0, ilng=0;
-    INTEGER shf;
-    INTEGER lng;
-    INTEGER ctype=0;
+    ASTERINTEGER shf;
+    ASTERINTEGER lng;
+    ASTERINTEGER ctype=0;
     int i, ksize=0;
     char *iaddr;
 
     if (!PyArg_ParseTuple(args, "s|ii:getvectjev",&nomsd,&ishf,&ilng)) return NULL;
-    shf = (INTEGER)ishf;
-    lng = (INTEGER)ilng;
+    shf = (ASTERINTEGER)ishf;
+    lng = (ASTERINTEGER)ilng;
     iob=0 ;
     nomsd32 = MakeFStrFromCStr(nomsd, 32);
     nomob = MakeBlankFStr(24);
@@ -908,7 +908,7 @@ PyObject *args;
         }
         else if(ctype == 1){
             /* REEL */
-            f = (DOUBLE *)iaddr;
+            f = (ASTERDOUBLE *)iaddr;
             tup = PyTuple_New( (Py_ssize_t)lcon ) ;
             for(i=0;i<lcon;i++){
                 PyTuple_SetItem( tup, i, PyFloat_FromDouble((double)f[i]) ) ;
@@ -916,7 +916,7 @@ PyObject *args;
         }
         else if(ctype == 2){
             /* ENTIER */
-            l = (INTEGER*)iaddr;
+            l = (ASTERINTEGER*)iaddr;
             tup = PyTuple_New( (Py_ssize_t)lcon ) ;
             for(i=0;i<lcon;i++){
                 PyTuple_SetItem( tup, i, PyInt_FromLong((long)l[i]) ) ;
@@ -924,7 +924,7 @@ PyObject *args;
         }
         else if(ctype == 9){
             /* ENTIER COURT */
-            i4 = (INTEGER4*)iaddr;
+            i4 = (ASTERINTEGER4*)iaddr;
             tup = PyTuple_New( (Py_ssize_t)lcon ) ;
             for(i=0; i<lcon; i++){
                 PyTuple_SetItem( tup, i, PyInt_FromLong((long)i4[i]) ) ;
@@ -932,7 +932,7 @@ PyObject *args;
         }
         else if(ctype == 3){
             /* COMPLEXE */
-            f = (DOUBLE *)iaddr;
+            f = (ASTERDOUBLE *)iaddr;
             tup = PyTuple_New( (Py_ssize_t)lcon ) ;
             for(i=0;i<lcon;i++){
                 PyTuple_SetItem( tup, i, PyComplex_FromDoubles((double)f[2*i], (double)f[2*i+1]) ) ;
@@ -979,15 +979,15 @@ PyObject *args;
 {
     char *nomsd, *nom, *nomsd32;
     char *nomob;
-    DOUBLE *f;
-    INTEGER *l;
-    INTEGER4 *i4;
+    ASTERDOUBLE *f;
+    ASTERINTEGER *l;
+    ASTERINTEGER4 *i4;
     char *kvar;
     PyObject *tup=NULL, *dico, *key;
-    INTEGER iob,j,ishf,ilng;
-    INTEGER lcon;
-    INTEGER ctype=0;
-    INTEGER *val, nbval;
+    ASTERINTEGER iob,j,ishf,ilng;
+    ASTERINTEGER lcon;
+    ASTERINTEGER ctype=0;
+    ASTERINTEGER *val, nbval;
     int i, ksize=0;
     char *iaddr;
 
@@ -997,7 +997,7 @@ PyObject *args;
     nbval = 1;
     nomsd32 = MakeFStrFromCStr(nomsd, 32);
     nomob = MakeBlankFStr(24);
-    val = (INTEGER *)malloc((nbval)*sizeof(INTEGER));
+    val = (ASTERINTEGER *)malloc((nbval)*sizeof(ASTERINTEGER));
     nom = MakeFStrFromCStr("LIST_COLLECTION", 24);
     CALL_JEMARQ();
     CALL_TAILSD(nom, nomsd32, val, &nbval);
@@ -1023,7 +1023,7 @@ PyObject *args;
                     break;
                 case 1 :
                     /* REEL */
-                    f = (DOUBLE *)iaddr;
+                    f = (ASTERDOUBLE *)iaddr;
                     tup = PyTuple_New( (Py_ssize_t)lcon ) ;
                     for(i=0;i<lcon;i++){
                        PyTuple_SetItem( tup, i, PyFloat_FromDouble((double)f[i]) ) ;
@@ -1032,7 +1032,7 @@ PyObject *args;
                     break;
                 case 2 :
                     /* ENTIER */
-                    l = (INTEGER*)iaddr;
+                    l = (ASTERINTEGER*)iaddr;
                     tup = PyTuple_New( (Py_ssize_t)lcon ) ;
                     for(i=0;i<lcon;i++){
                        PyTuple_SetItem( tup, i, PyInt_FromLong((long)l[i]) ) ;
@@ -1041,7 +1041,7 @@ PyObject *args;
                     break;
                 case 9 :
                     /* ENTIER COURT */
-                    i4 = (INTEGER4*)iaddr;
+                    i4 = (ASTERINTEGER4*)iaddr;
                     tup = PyTuple_New( (Py_ssize_t)lcon ) ;
                     for(i=0; i<lcon; i++){
                        PyTuple_SetItem( tup, i, PyInt_FromLong((long)i4[i]) ) ;
@@ -1050,7 +1050,7 @@ PyObject *args;
                     break;
                 case 3 :
                     /* COMPLEXE */
-                    f = (DOUBLE *)iaddr;
+                    f = (ASTERDOUBLE *)iaddr;
                     tup = PyTuple_New( (Py_ssize_t)lcon ) ;
                     for(i=0;i<lcon;i++){
                        PyTuple_SetItem(tup, i,
@@ -1129,25 +1129,25 @@ PyObject *args;
     PyObject *tupr  = (PyObject*)0 ;
     PyObject *tupc  = (PyObject*)0 ;
     char *nomsd, *nomsd32;
-    DOUBLE *valr;
-    DOUBLE *valc;
-    INTEGER *ind;
+    ASTERDOUBLE *valr;
+    ASTERDOUBLE *valc;
+    ASTERINTEGER *ind;
     int nind, inum;
-    INTEGER num;
-    INTEGER nbind;
+    ASTERINTEGER num;
+    ASTERINTEGER nbind;
     int ok        = 0 ;
-    INTEGER iret=0;
+    ASTERINTEGER iret=0;
 
     ok = PyArg_ParseTuple(args, "siOOOi",&nomsd,&nind,&tupi,&tupr,&tupc,&inum);
     if (!ok)MYABORT("erreur dans la partie Python");
     nomsd32 = MakeFStrFromCStr(nomsd, 32);
 
-    nbind=(INTEGER)nind;
-    num=(INTEGER)inum;
+    nbind=(ASTERINTEGER)nind;
+    num=(ASTERINTEGER)inum;
 
-    ind = (INTEGER *)malloc((size_t)nind*sizeof(INTEGER));
-    valr = (DOUBLE *)malloc((size_t)nind*sizeof(DOUBLE));
-    valc = (DOUBLE *)malloc((size_t)nind*sizeof(DOUBLE));
+    ind = (ASTERINTEGER *)malloc((size_t)nind*sizeof(ASTERINTEGER));
+    valr = (ASTERDOUBLE *)malloc((size_t)nind*sizeof(ASTERDOUBLE));
+    valc = (ASTERDOUBLE *)malloc((size_t)nind*sizeof(ASTERDOUBLE));
 
     if ( nind > 0 ){
         convert(nind,tupi,ind);
@@ -1193,24 +1193,24 @@ PyObject *args;
     PyObject *tupr  = (PyObject*)0 ;
     PyObject *tupc  = (PyObject*)0 ;
     char *nomsd, *nomsd32;
-    DOUBLE *valr;
-    DOUBLE *valc;
-    INTEGER *ind;
+    ASTERDOUBLE *valr;
+    ASTERDOUBLE *valc;
+    ASTERINTEGER *ind;
     int nind, inum;
-    INTEGER num;
-    INTEGER nbind;
+    ASTERINTEGER num;
+    ASTERINTEGER nbind;
     int ok        = 0 ;
-    INTEGER iret=0;
+    ASTERINTEGER iret=0;
 
     ok = PyArg_ParseTuple(args, "siOOOi",&nomsd,&nind,&tupi,&tupr,&tupc,&inum);
     if (!ok)MYABORT("erreur dans la partie Python");
     nomsd32 = MakeFStrFromCStr(nomsd, 32);
-    nbind=(INTEGER)nind;
-    num=(INTEGER)inum;
+    nbind=(ASTERINTEGER)nind;
+    num=(ASTERINTEGER)inum;
 
-    ind = (INTEGER *)malloc((size_t)nind*sizeof(INTEGER));
-    valr = (DOUBLE *)malloc((size_t)nind*sizeof(DOUBLE));
-    valc = (DOUBLE *)malloc((size_t)nind*sizeof(DOUBLE));
+    ind = (ASTERINTEGER *)malloc((size_t)nind*sizeof(ASTERINTEGER));
+    valr = (ASTERDOUBLE *)malloc((size_t)nind*sizeof(ASTERDOUBLE));
+    valc = (ASTERDOUBLE *)malloc((size_t)nind*sizeof(ASTERDOUBLE));
     if ( nind>0 ){
              convert(nind,tupi,ind);
              convr8(nind,tupr,valr);
@@ -1272,15 +1272,15 @@ PyObject *args;
 
 */
 {
-   INTEGER nbchmx, nbpamx, nbord, numch, numva, ier, nbcmp ;
-   INTEGER *liord, *ival;
-   INTEGER *val, nbval ;
-   DOUBLE *rval;
+   ASTERINTEGER nbchmx, nbpamx, nbord, numch, numva, ier, nbcmp ;
+   ASTERINTEGER *liord, *ival;
+   ASTERINTEGER *val, nbval ;
+   ASTERDOUBLE *rval;
    char *nomsd, *mode, *liscmp, *nom, *nomsd32, *cmp;
    char *kval, *kvar;
    char *nomch, *nomva;
    int i, lo, ksize=0, ksizemax=80, inbord;
-   INTEGER icode, ctype;
+   ASTERINTEGER icode, ctype;
    PyObject *dico=NULL, *liste, *key;
    char blanc[80];
 
@@ -1291,7 +1291,7 @@ PyObject *args;
 
 /* Identifiant de la SD resultat */
    nbval = 3;
-   val = (INTEGER *)malloc((nbval)*sizeof(INTEGER));
+   val = (ASTERINTEGER *)malloc((nbval)*sizeof(ASTERINTEGER));
    nom = MakeFStrFromCStr("LIST_RESULTAT", 24);
 
 /* Taille de la SD resultat : nbr champs, nbr paras, nbr numeros d'ordre */
@@ -1313,7 +1313,7 @@ PyObject *args;
 
     if (strcmp(mode,"CHAMPS") == 0 || strcmp(mode,"COMPOSANTES") == 0) {
 /* Construction du dictionnaire : cle d'acces = nom du champ */
-        liord  = (INTEGER *)malloc(inbord*sizeof(INTEGER));
+        liord  = (ASTERINTEGER *)malloc(inbord*sizeof(ASTERINTEGER));
         liscmp = MakeTabFStr(500, 8);
         dico = PyDict_New();
         for (numch=1; numch<=nbchmx; numch++) {
@@ -1355,8 +1355,8 @@ PyObject *args;
             icode = 0;
         }
 /* Extraction des paramètres ou variables d'accès */
-          ival = (INTEGER *)malloc(inbord*sizeof(INTEGER));
-          rval = (DOUBLE *)malloc(inbord*sizeof(DOUBLE) );
+          ival = (ASTERINTEGER *)malloc(inbord*sizeof(ASTERINTEGER));
+          rval = (ASTERDOUBLE *)malloc(inbord*sizeof(ASTERDOUBLE) );
           kval = MakeTabFStr(inbord, ksizemax);
 
           dico = PyDict_New();
@@ -1434,11 +1434,11 @@ PyObject *self; /* Not used */
 PyObject *args;
 {
         PyObject *temp;
-        INTEGER jxvrf=1 ; /* FORTRAN_TRUE */
+        ASTERINTEGER jxvrf=1 ; /* FORTRAN_TRUE */
         int ijxvrf;
 
         if (!PyArg_ParseTuple(args, "Oi",&temp,&ijxvrf)) return NULL;
-        jxvrf = (INTEGER)ijxvrf;
+        jxvrf = (ASTERINTEGER)ijxvrf;
         /* On empile le nouvel appel */
         register_sh_etape(append_etape(temp));
 
@@ -1475,11 +1475,11 @@ PyObject *self; /* Not used */
 PyObject *args;
 {
         PyObject *temp;
-        INTEGER oper=0 ;
+        ASTERINTEGER oper=0 ;
         int ioper=0;
 
         if (!PyArg_ParseTuple(args, "Oi",&temp,&ioper)) return NULL;
-        oper=(INTEGER)ioper;
+        oper=(ASTERINTEGER)ioper;
 
         /* On empile le nouvel appel */
         register_sh_etape(append_etape(temp));
@@ -1553,7 +1553,7 @@ PyObject *args;
          => retourne la valeur actuelle : 'ABORT' ou 'EXCEPTION'.
 */
       int len;
-      INTEGER lng=0;
+      ASTERINTEGER lng=0;
       char *tmp;
       char *comport;
       PyObject *res=NULL;
@@ -1589,10 +1589,10 @@ PyObject *args;
         char *acces;
         char *autor;
         int iunit=0;
-        INTEGER unit ;
+        ASTERINTEGER unit ;
 
         if (!PyArg_ParseTuple(args, "ssssi:ulopen",&fichie,&name,&acces,&autor,&iunit)) return NULL;
-        unit=(INTEGER)iunit;
+        unit=(ASTERINTEGER)iunit;
         CALL_ULOPEN (&unit,fichie,name,acces,autor);
 
         Py_INCREF( Py_None ) ;
@@ -1606,10 +1606,10 @@ PyObject *self; /* Not used */
 PyObject *args;
 {
         int iunit=0;
-        INTEGER unit ;
+        ASTERINTEGER unit ;
 
         if (!PyArg_ParseTuple(args, "i:fclose",&iunit)) return NULL;
-        unit=(INTEGER)iunit;
+        unit=(ASTERINTEGER)iunit;
         CALL_FCLOSE (&unit);
 
         Py_INCREF( Py_None ) ;
@@ -1663,10 +1663,10 @@ PyObject *args;
    PyObject *t_valres, *t_codret;
    PyObject *t_res;
    int inbres, inbpar;
-   INTEGER nbpar, nbres, stop;
+   ASTERINTEGER nbpar, nbres, stop;
    char *nompar, *nomres;
-   INTEGER *codret;
-   DOUBLE *valpar, *valres;
+   ASTERINTEGER *codret;
+   ASTERDOUBLE *valpar, *valres;
    int long_nompar = 8;       /* doivent impérativement correspondre aux  */
    int long_nomres = 16;       /* longueurs des chaines de caractères      */
    void *malloc(size_t size);
@@ -1676,22 +1676,22 @@ PyObject *args;
 
    /* Conversion en tableaux de chaines et réels */
    inbpar = PyTuple_Size(t_nompar);
-   nbpar = (INTEGER)inbpar;
+   nbpar = (ASTERINTEGER)inbpar;
    nompar = MakeTabFStr(inbpar, long_nompar);
    convertxt(inbpar, t_nompar, nompar, long_nompar);
 
-   valpar = (DOUBLE *)malloc(inbpar*sizeof(DOUBLE));
+   valpar = (ASTERDOUBLE *)malloc(inbpar*sizeof(ASTERDOUBLE));
    convr8(inbpar, t_valpar, valpar);
 
    inbres = PyTuple_Size(t_nomres);
-   nbres = (INTEGER)inbres;
-   stop = (INTEGER)istop;
+   nbres = (ASTERINTEGER)inbres;
+   stop = (ASTERINTEGER)istop;
    nomres = MakeTabFStr(inbres, long_nomres);
    convertxt(inbres, t_nomres, nomres, long_nomres);
 
    /* allocation des variables de sortie */
-   valres = (DOUBLE *)malloc(inbres*sizeof(DOUBLE));
-   codret = (INTEGER *)malloc(inbres*sizeof(INTEGER));
+   valres = (ASTERDOUBLE *)malloc(inbres*sizeof(ASTERDOUBLE));
+   codret = (ASTERINTEGER *)malloc(inbres*sizeof(ASTERINTEGER));
 
    CALL_RCVALE_WRAP(nommat, phenom, &nbpar, nompar, valpar, &nbres, nomres, valres, codret, &stop);
 
@@ -1732,7 +1732,7 @@ PyObject *args;
 {
     char *codmes, *question, *concept, *typeconcept;
     char *Fcod, *Fque, *Fcon, *Ftyc, *Fres;
-    INTEGER repi=0, iret;
+    ASTERINTEGER repi=0, iret;
     char *repk;
     PyObject *res;
 
@@ -1811,7 +1811,7 @@ PyObject *args;
 {
     char *Fopt, *Fres, *opt;
     int tmax = 100;  /* taille maximale dans OPTDEP/CCLIOP */
-    INTEGER nbopt;
+    ASTERINTEGER nbopt;
     PyObject *res;
 
     if (!PyArg_ParseTuple(args, "s", &opt))
@@ -1834,8 +1834,8 @@ PyObject *self; /* Not used */
 PyObject *args;
 {
         PyObject *temp = (PyObject*)0 ;
-        INTEGER lnomam=0;
-        INTEGER codret=0;
+        ASTERINTEGER lnomam=0;
+        ASTERINTEGER codret=0;
         char *nomast, *Fnom;
         char *nomamd;
 
@@ -1856,13 +1856,13 @@ PyObject *self; /* Not used */
 PyObject *args;
 {
     PyObject *temp = (PyObject*)0 ;
-    INTEGER lnochm=0;
-    INTEGER lresu ;
+    ASTERINTEGER lnochm=0;
+    ASTERINTEGER lresu ;
     int ilresu;
     char *noresu;
     char *nomsym;
     char *nopase;
-    INTEGER codret=0;
+    ASTERINTEGER codret=0;
     char *nochmd, *n1, *n2, *n3;
 
     if (!PyArg_ParseTuple(args, "isss",&ilresu,&noresu,&nomsym,&nopase)) return NULL;
@@ -1870,7 +1870,7 @@ PyObject *args;
     n1 = MakeFStrFromCStr(noresu, 32);
     n2 = MakeFStrFromCStr(nomsym, 16);
     n3 = MakeFStrFromCStr(nopase, 8);
-    lresu = (INTEGER)ilresu;
+    lresu = (ASTERINTEGER)ilresu;
     CALL_MDNOCH (nochmd,&lnochm,&lresu,n1,n2,n3,&codret);
     temp = PyString_FromStringAndSize(nochmd,FStrlen(nochmd, (Py_ssize_t)lnochm));
     FreeStr(nochmd);
@@ -1968,12 +1968,12 @@ static PyObject *aster_init(self, args)
 PyObject *self; /* Not used */
 PyObject *args;
 {
-   INTEGER ier=0 ;
+   ASTERINTEGER ier=0 ;
    int idbg=0;
-   INTEGER dbg ; /* FORTRAN_FALSE */
+   ASTERINTEGER dbg ; /* FORTRAN_FALSE */
 
    if (!PyArg_ParseTuple(args, "i",&idbg)) return NULL;
-   dbg = (INTEGER)idbg;
+   dbg = (ASTERINTEGER)idbg;
 
    fflush(stderr) ;
    fflush(stdout) ;
@@ -1989,7 +1989,7 @@ return PyInt_FromLong((long)ier);
 /* ------------------------------------------------------------------ */
 static PyObject *jeveux_getobjects( PyObject* self, PyObject* args)
 {
-    INTEGER nmax, total;
+    ASTERINTEGER nmax, total;
     char* base;
     PyObject* the_list, *pystr;
     char *dummy;
@@ -2029,7 +2029,7 @@ static PyObject *jeveux_getattr( PyObject* self, PyObject* args)
     PyObject *res;
     char *nomobj, *attr;
     char *charval;
-    INTEGER intval = 0;
+    ASTERINTEGER intval = 0;
 
     charval = MakeBlankFStr(32);
     if (!PyArg_ParseTuple(args, "ss",&nomobj,&attr))
@@ -2046,7 +2046,7 @@ static PyObject *jeveux_exists( PyObject* self, PyObject* args)
 {
     char *nomobj;
     char *tmpbuf;
-    INTEGER intval = 0;
+    ASTERINTEGER intval = 0;
 
     if (!PyArg_ParseTuple(args, "s",&nomobj))
         return NULL;
@@ -2074,7 +2074,7 @@ static PyObject *jeveux_exists( PyObject* self, PyObject* args)
 static PyObject *aster_argv( _UNUSED  PyObject *self, _IN PyObject *args )
 {
     fprintf(fileOut, "aster_argv\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 

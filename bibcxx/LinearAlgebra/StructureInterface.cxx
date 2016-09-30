@@ -45,7 +45,7 @@ bool StructureInterfaceInstance::build() throw( std::runtime_error )
 
     try
     {
-        INTEGER op = 98;
+        ASTERINTEGER op = 98;
         CALL_EXECOP( &op );
     }
     catch( ... )

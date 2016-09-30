@@ -109,6 +109,7 @@ CACOQU   = PhysicalQuantity(type='R',
        'CTOR',
        'EXCENT',
        'INERTIE',
+       'TENS',
     ),
     comment="""  CACOQU  Type:R  Caracteristiques des coques
        EP      : epaisseur de la coque
@@ -126,6 +127,9 @@ CACOQU   = PhysicalQuantity(type='R',
                  la direction perpendiculaire au plan tangent de l'element
        EXCENT  : excentrement du feuillet moyen
        INERTIE : prise en compte de l'inertie de rotation
+       TENS    : (réservé aux membranes) application d'une contrainte 
+                 initiale pour faire converger à la première iteration. 
+                 Elle disparait aux increments suivants
 """)
 
 
@@ -1947,6 +1951,14 @@ MATE_F   = PhysicalQuantity(type='K8',
     ),
     comment="""  MATE_F Type:K8 Materiau
        MATE : nom du materiau affecte a une maille
+""")
+
+MULTCOMP = PhysicalQuantity(type='K16',
+    components=(
+       'SD_COMP',
+    ),
+    comment=""" Comportement pour *CRISTAL
+       SD_COMP : nom de la SD issue de DEFI_COMPOR (MONOCRISTAL,..)
 """)
 
 

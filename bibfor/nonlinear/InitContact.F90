@@ -10,7 +10,9 @@ implicit none
 #include "asterfort/cfdisi.h"
 #include "asterfort/cfdisl.h"
 #include "asterfort/jeexin.h"
+#include "asterfort/jelira.h"
 #include "asterfort/xrela_elim.h"
+#include "asterfort/lac_rela.h"
 #include "asterfort/wkvect.h"
 !
 ! ======================================================================
@@ -52,11 +54,11 @@ implicit none
     integer :: ifm, niv
     integer :: cont_form
     character(len=8) :: sdcont
-    character(len=24) :: sdcont_defi, sdunil_defi
     character(len=24) :: iden_rela
     aster_logical :: l_cont, l_unil
     aster_logical :: l_form_disc, l_form_cont, l_form_xfem, l_form_lac
-    aster_logical :: l_cont_xfem_gg, l_edge_elim, l_all_verif
+    aster_logical :: l_cont_xfem_gg, l_edge_elim, l_all_verif, l_iden_rela
+    integer :: nt_patch
     integer :: i_exist
     character(len=8), pointer :: v_load_type(:) => null()
 !
@@ -72,6 +74,8 @@ implicit none
     l_form_cont = .false._1
     l_form_xfem = .false._1
     l_form_lac  = .false._1
+    l_iden_rela = .false._1
+    iden_rela   = '&&CFMXR0.IDEN_RELA'
 ! 
     if (ds_contact%l_contact) then
 !
@@ -83,16 +87,13 @@ implicit none
 !
 ! ----- Datastructure from DEFI_CONTACT
 !
-        sdcont = ds_contact%sdcont
-!
-! ----- Define datastructure names
-!
-        sdcont_defi = sdcont(1:8)//'.CONTACT'
-        sdunil_defi = sdcont(1:8)//'.UNILATE'
+        sdcont                 = ds_contact%sdcont
+        ds_contact%sdcont_defi = sdcont(1:8)//'.CONTACT'
+        ds_contact%sdunil_defi = sdcont(1:8)//'.UNILATE'
 !
 ! ----- Contact formulation
 ! 
-        cont_form      = cfdisi(sdcont_defi, 'FORMULATION')
+        cont_form      = cfdisi(ds_contact%sdcont_defi, 'FORMULATION')
         ASSERT(cont_form.ge.1 .and. cont_form.le.5)
         l_form_disc    = cont_form .eq. 1
         l_form_cont    = cont_form .eq. 2
@@ -100,16 +101,23 @@ implicit none
         l_unil         = cont_form .eq. 4
         l_form_lac     = cont_form .eq. 5
         l_cont         = cont_form .ne. 4
-        l_cont_xfem_gg = cfdisl(sdcont_defi, 'CONT_XFEM_GG')
-        l_edge_elim    = cfdisl(sdcont_defi, 'ELIM_ARETE')
-        l_all_verif    = cfdisl(sdcont_defi, 'ALL_VERIF')  
+        l_cont_xfem_gg = cfdisl(ds_contact%sdcont_defi, 'CONT_XFEM_GG')
+        l_edge_elim    = cfdisl(ds_contact%sdcont_defi, 'ELIM_ARETE')
+        l_all_verif    = cfdisl(ds_contact%sdcont_defi, 'ALL_VERIF')  
 !
-! ----- Field for CONT_NODE
+! ----- Fields for CONT_NODE
 !
         if (l_form_cont .or. l_form_disc .or. l_form_xfem) then
             ds_contact%field_cont_node  = '&&CFMXR0.CNOINR'
             ds_contact%fields_cont_node = '&&CFMXR0.CNSINR'
             ds_contact%field_cont_perc  = '&&CFMXR0.CNSPER'
+        endif
+!
+! ----- Fields for CONT_ELEM
+!
+        if (l_form_lac) then
+            ds_contact%field_cont_elem  = '&&CFMXR0.CEOINR'
+            ds_contact%fields_cont_elem = '&&CFMXR0.CESINR'
         endif
 !
 ! ----- Special for discrete contact
@@ -140,12 +148,7 @@ implicit none
         if (l_form_xfem) then
             ds_contact%field_input = ds_contact%sdcont_solv(1:14)//'.CHML'
             if (l_edge_elim) then
-                call xrela_elim(mesh, sdcont_defi, iden_rela)
-                call jeexin(iden_rela(1:19)//'.INFO', i_exist)
-                if (i_exist .gt. 0) then
-                    ds_contact%iden_rela   = iden_rela
-                    ds_contact%l_iden_rela = .true._1
-                endif
+                call xrela_elim(mesh, ds_contact, iden_rela, l_iden_rela)
             else
                 call jeexin(sdcont(1:8)//'.CHME.LIGRE.LGRF', i_exist)
                 ds_contact%l_dof_rela = i_exist .gt. 0
@@ -179,7 +182,26 @@ implicit none
 ! ----- Special for LAC contact
 !
         if (l_form_lac) then
-            ASSERT(.false.)
+            ds_contact%field_input      = ds_contact%sdcont_solv(1:14)//'.CHML'
+            ds_contact%l_elem_slav      = .true.
+            ds_contact%ligrel_elem_slav = sdcont
+            ds_contact%l_elem_cont      = .true.
+            ds_contact%ligrel_elem_cont = '&&LIGRCF.CHME.LIGRE'
+            call wkvect(ds_contact%ligrel_elem_cont(1:8)//'.TYPE', 'V V K8', 1, vk8 = v_load_type)
+            v_load_type(1) = 'ME'
+            call jelira(mesh//'.PATCH', 'NUTIOC', nt_patch)
+            nt_patch = nt_patch-1
+            ds_contact%nt_patch = nt_patch                   
+            call lac_rela(mesh, ds_contact, iden_rela, l_iden_rela)
+        endif
+!
+! ----- Identity relation
+!
+        ds_contact%l_iden_rela = l_iden_rela
+        if (l_iden_rela) then
+            ds_contact%iden_rela = iden_rela
+        else
+            ds_contact%iden_rela = ' '
         endif
 !
 ! ----- Flag for (re) numbering
@@ -191,6 +213,9 @@ implicit none
                 ds_contact%l_renumber = .true._1
             endif
         endif
+        if (l_form_lac) then
+            ds_contact%l_renumber = .true._1
+        endif
 !
 ! ----- Flag for pairing
 !
@@ -201,8 +226,6 @@ implicit none
 !
 ! ----- Save parameters
 !
-        ds_contact%sdcont_defi = sdcont(1:8)//'.CONTACT'
-        ds_contact%sdunil_defi = sdcont(1:8)//'.UNILATE'
         ds_contact%l_meca_cont = l_cont
         ds_contact%l_meca_unil = l_unil
         ds_contact%l_form_cont = l_form_cont

@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,14 +16,12 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine nmlect(result, modele, mate, carele, compor,&
-                      lischa, solveu)
-        character(len=8) :: result
-        character(len=24) :: modele
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=24) :: compor
-        character(len=19) :: lischa
-        character(len=19) :: solveu
+    subroutine nmlect(result, model, mate, cara_elem, list_load, solver_)
+        character(len=*), intent(out) :: result
+        character(len=*), intent(out) :: model
+        character(len=*), intent(out) :: mate
+        character(len=*), intent(out) :: cara_elem
+        character(len=*), intent(out) :: list_load
+        character(len=*), optional, intent(out) :: solver_
     end subroutine nmlect
 end interface

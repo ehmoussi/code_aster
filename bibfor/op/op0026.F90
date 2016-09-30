@@ -1,5 +1,7 @@
 subroutine op0026()
 !
+use NonLin_Datastructure_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -32,7 +34,7 @@ implicit none
 #include "asterfort/nmcha0.h"
 #include "asterfort/nmchai.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmdome.h"
+#include "asterfort/nmlect.h"
 #include "asterfort/nmdorc.h"
 #include "asterfort/nmvcle.h"
 #include "asterfort/nmvcre.h"
@@ -44,6 +46,8 @@ implicit none
 #include "asterfort/vefnme.h"
 #include "asterfort/vrcomp.h"
 #include "asterfort/nmvcpr.h"
+#include "asterfort/nonlinDSConstitutiveInit.h"
+#include "asterfort/nonlinDSConstitutiveCreate.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -79,16 +83,16 @@ implicit none
     character(len=24) :: newsd(nbomax)
     integer :: n1, nbopt, iterat, numins
     integer :: niv, ifm
-    integer :: iret, nuord, long
+    integer :: iret, long
     integer :: nbnobj
     real(kind=8) :: instam, instap, partps(3)
     character(len=8) :: result, newtab, oldtab
+    type(NL_DS_Constitutive) :: ds_constitutive
     character(len=16) :: lopt(4), option
-    character(len=19) :: lischa ='&&OP0026.LISCHA', k19bla = ' '
+    character(len=19) :: list_load ='&&OP0026.LISCHA', k19bla = ' '
     character(len=19) :: linst
-    character(len=24) :: modele, mate, carele = '&&OP0026.CARELE'
-    character(len=24) :: compor, carcri ='&&OP0026.CARCRI'
-    character(len=24) :: codere, ligrmo, k24bid
+    character(len=24) :: model, mate, cara_elem = '&&OP0026.CARELE'
+    character(len=24) :: ligrmo, k24bid
     character(len=24) :: comref = '&&OP0026.COMREF'
     character(len=19) :: commoi, complu, depplu
     character(len=19) :: depmoi, depdel, varplu, sigplu, varmoi, sigmoi
@@ -106,8 +110,7 @@ implicit none
 !
 ! - Initializations
 !
-    nuord         = 0
-    modele        = ' '
+    model         = ' '
     k19bla        = ' '
     fonact(1:100) = 0
     oldtab        = ' '
@@ -134,11 +137,10 @@ implicit none
 !
     call getvtx(' ', 'OPTION', nbval=6, vect=lopt, nbret=nbopt)
 !
-! - Model, material and loadings
+! - Get parameters from command file
 !
-    call nmdome(modele, mate, carele, lischa, result,&
-                nuord)
-    call dismoi('NOM_LIGREL', modele, 'MODELE', repk=ligrmo)
+    call nmlect(result, model, mate, cara_elem, list_load)
+    call dismoi('NOM_LIGREL', model, 'MODELE', repk=ligrmo)
 !
 ! - Get displacements
 !
@@ -165,9 +167,18 @@ implicit none
     call chpver('F', varmoi, 'ELGA', 'VARI_R', iret)
     call nmcha0('VALINC', 'VARMOI', varmoi, valinc)
 !
+! - Create constitutive laws management datastructure
+!
+    call nonlinDSConstitutiveCreate(ds_constitutive)
+!
 ! - Get comportment
 !
-    call nmdorc(modele(1:8), mate, l_etat_init, compor, carcri)
+    call nmdorc(model, mate, l_etat_init,&
+                ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp)
+!
+! - Initializations for constitutive laws
+!
+    call nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)
 !
 ! - Get current time
 !
@@ -183,18 +194,18 @@ implicit none
 !
     call nmchex(valinc, 'VALINC', 'COMMOI', commoi)
     call nmchex(valinc, 'VALINC', 'COMPLU', complu)
-    call nmvcle(modele, mate, carele, instap, complu)
-    call nmvcle(modele, mate, carele, instam, commoi)
+    call nmvcle(model, mate, cara_elem, instap, complu)
+    call nmvcle(model, mate, cara_elem, instam, commoi)
 !
 ! - Command variable reference creation
 !
-    call nmvcre(modele, mate, carele, comref)
+    call nmvcre(model, mate, cara_elem, comref)
 !
 ! - Checking number of internal variables
 !
-    call jeexin(compor(1:19)//'.CESD', iret)
+    call jeexin(ds_constitutive%compor(1:19)//'.CESD', iret)
     if (iret .gt. 0) then
-        call vrcomp(compor, varmoi, ligrmo, iret)
+        call vrcomp(ds_constitutive%compor, varmoi, ligrmo, iret)
         if (iret .eq. 1) then
             call utmess('F', 'CALCUL1_5')
         endif
@@ -208,7 +219,6 @@ implicit none
     call gcncon('_', vefint)
     call gcncon('_', mediri)
     call gcncon('_', vediri)
-    call gcncon('_', codere)
     call gcncon('_', veforc)
     call gcncon('_', vevarc_prev)
     call gcncon('_', vevarc_curr)
@@ -267,18 +277,18 @@ implicit none
 !
     if (l_merimo) then
         iterat=1
-        call merimo('G', modele, carele, mate, comref,&
-                    compor, carcri, iterat, fonact, k19bla,&
+        call merimo('G', model, cara_elem, mate, comref,&
+                    ds_constitutive, iterat, fonact, k19bla,&
                     valinc, solalg, merigi, vefint, option,&
-                    tabret, codere)
+                    tabret)
     endif
 !
 ! - Lagrange dof computation
 !
     if (l_medime) then
-        call medime('G', 'CUMU', modele, lischa, merigi)
-        call vebtla('G', modele, mate, carele, depplu,&
-                    lischa, vediri)
+        call medime('G', 'CUMU', model, list_load, merigi)
+        call vebtla('G', model, mate, cara_elem, depplu,&
+                    list_load, vediri)
     endif
 !
 ! - Nodal forces
@@ -292,19 +302,19 @@ implicit none
         vefori(2)=' '
 
         if (.not.l_merimo) call copisd('CHAMP_GD', 'V', sigmoi, sigplu)
-        call vefnme(option, 'G', modele, mate, carele,&
-                    compor, partps, 0, ligrmo, complu,&
+        call vefnme(option, 'G', model, mate, cara_elem,&
+                    ds_constitutive%compor, partps, 0, ligrmo, complu,&
                     sigplu, k24bid, depplu, ' ', vefori)
     endif
 !
 ! - State variables
 !
     if (l_varc_prev) then
-        call nmvcpr(modele, mate       , carele, comref     , compor   ,&
+        call nmvcpr(model, mate       , cara_elem, comref     , ds_constitutive%compor   ,&
                     valinc, base_ = 'G', vect_elem_prev_ = vevarc_prev)
     endif
     if (l_varc_curr) then
-        call nmvcpr(modele, mate       , carele, comref     , compor   ,&
+        call nmvcpr(model, mate       , cara_elem, comref     , ds_constitutive%compor   ,&
                     valinc, base_ = 'G', vect_elem_curr_ = vevarc_curr)
     endif
 !
@@ -333,7 +343,7 @@ implicit none
         nbnobj = nbnobj + 1
         ASSERT(nbnobj.le.nbomax)
         newobj(nbnobj) = 'CODE_RETOUR_INTE'
-        newsd(nbnobj) = codere
+        newsd(nbnobj) = ds_constitutive%comp_error
         if (lmatr) then
             nbnobj = nbnobj + 1
             ASSERT(nbnobj.le.nbomax)

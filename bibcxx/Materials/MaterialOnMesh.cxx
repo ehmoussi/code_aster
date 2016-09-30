@@ -82,7 +82,7 @@ bool MaterialOnMeshInstance::build() throw ( std::runtime_error )
     // Maintenant que le fichier de commande est pret, on appelle OP0018
     try
     {
-        INTEGER op = 6;
+        ASTERINTEGER op = 6;
         CALL_EXECOP( &op );
     }
     catch( ... )

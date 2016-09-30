@@ -79,7 +79,7 @@ void TimeStepManagerInstance::build() throw ( std::runtime_error )
 
     try
     {
-        INTEGER op = 28;
+        ASTERINTEGER op = 28;
         CALL_EXECOP( &op );
     }
     catch( ... )

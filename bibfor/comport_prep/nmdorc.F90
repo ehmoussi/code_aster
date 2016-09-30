@@ -1,9 +1,10 @@
-subroutine nmdorc(model, chmate, l_etat_init, compor, carcri)
+subroutine nmdorc(model, chmate, l_etat_init, compor, carcri, mult_comp_)
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/nmdocc.h"
+#include "asterfort/nmdocm.h"
 #include "asterfort/nmdocr.h"
 !
 ! ======================================================================
@@ -24,30 +25,43 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    character(len=8), intent(in) :: model
-    character(len=8), intent(in) :: chmate
+    character(len=*), intent(in) :: model
+    character(len=*), intent(in) :: chmate
     aster_logical, intent(in) :: l_etat_init
-    character(len=19), intent(out) :: compor
-    character(len=24), intent(out) :: carcri
+    character(len=*), intent(in) :: compor
+    character(len=*), intent(in) :: carcri
+    character(len=*), optional, intent(in) :: mult_comp_
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Preparation of comportment (mechanics)
 !
-! Prepare objects COMPOR <CARTE> and CARCRI <CARTE>
+! Read objects for constitutive laws
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model       : name of model
 ! In  chmate      : name of material field
 ! In  l_etat_init : .true. if initial state is defined
-! Out compor      : name of <CARTE> COMPOR
-! Out carcri      : name of <CARTE> CARCRI
+! In  compor      : name of <CARTE> COMPOR
+! In  carcri      : name of <CARTE> CARCRI
+! In  mult_comp   : name of <CARTE> MULT_COMP
 !
 ! --------------------------------------------------------------------------------------------------
 !
+!
+! - Get parameters from COMPORTEMENT keyword and prepare COMPOR <CARTE>
+!
     call nmdocc(model, chmate, l_etat_init, compor)
 !
+! - Get parameters from COMPORTEMENT keyword and prepare CARCRI <CARTE>
+!
     call nmdocr(model, carcri)
+!
+! - Get parameters from COMPORTEMENT keyword and prepare MULT_COMP <CARTE> (for crystals)
+!
+    if (present(mult_comp_)) then
+        call nmdocm(model, mult_comp_)
+    endif
 !
 end subroutine

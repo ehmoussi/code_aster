@@ -1,24 +1,15 @@
-subroutine apimpr(sdappa, ifm, mesh, sdcont_defi)
+subroutine apimpr(pair_category, ifm, mesh, ds_contact)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
-#include "jeveux.h"
-#include "asterfort/apcopt.h"
-#include "asterfort/apinfi.h"
-#include "asterfort/apinfr.h"
-#include "asterfort/apnomp.h"
-#include "asterfort/cfnumm.h"
-#include "asterfort/cfnumn.h"
-#include "asterfort/cfdisi.h"
-#include "asterfort/apvect.h"
-#include "asterfort/mminfi.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jenuno.h"
-#include "asterfort/jexnum.h"
+#include "asterfort/apimpr_c.h"
+#include "asterfort/apimpr_l.h"
+#include "asterfort/assert.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -35,10 +26,10 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    character(len=19), intent(in) :: sdappa
+    character(len=6), intent(in) :: pair_category
     integer, intent(in) :: ifm
     character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: sdcont_defi
+    type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,125 +39,19 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  sdappa           : name of pairing datastructure
+! In  pair_category    : type of pairing Segment_To_Segment or Node_To_Segment
 ! In  ifm              : unit for message
 ! In  mesh             : name of mesh
-! In  sdcont_defi      : name of contact definition datastructure (from DEFI_CONTACT)
+! In  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_cont_zone, ntpt, nbpt
-    integer :: typapp, entapp
-    real(kind=8) :: coorpt(3)
-    real(kind=8) :: dist, ksi1, ksi2, tau1(3), tau2(3)
-    character(len=16) :: nompt
-    integer :: i_zone, ip, k, i
-    integer :: numnom(1), elem_mast_nume
-    integer :: posnom(1), elem_mast_indx
-    character(len=8) :: nomnom, nommam
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call jemarq()
-!
-! --- INITIALISATIONS
-!
-    ip = 1
-    ntpt         = cfdisi(sdcont_defi,'NTPT'  )
-    nb_cont_zone = cfdisi(sdcont_defi,'NZOCO' )
-!
-! ----------------------------------------------------------------------
-! --- INFOS SUR LES ZONES
-! ----------------------------------------------------------------------
-!
-    write(ifm,*) '<APPARIEMENT> ------ ZONES ------ '
-!
-    write(ifm,100) nb_cont_zone
-    write(ifm,101) ntpt
-!
-100 format (' <APPARIEMENT> NOMBRE DE ZONES                   : ',i6)
-101 format (' <APPARIEMENT> NOMBRE MAX. DE POINTS A APPARIER  : ',i6)
-!
-! --- BOUCLE SUR LES ZONES
-!
-    do i_zone = 1, nb_cont_zone
-!
-! ----- INFORMATION SUR LA ZONE
-!
-        nbpt = mminfi(sdcont_defi, 'NBPT' , i_zone)
-!
-! ----- BOUCLE SUR LES POINTS
-!
-        do i = 1, nbpt
-!
-! ------- INFOS SUR LE POINT
-!
-            call apnomp(sdappa, ip, nompt)
-            write(ifm,400) ip,nompt
-            call apcopt(sdappa, ip, coorpt)
-!
-! ------- INFOS APPARIEMENT
-!
-            call apinfi(sdappa, 'APPARI_TYPE', ip, typapp)
-            call apinfi(sdappa, 'APPARI_ENTITE', ip, entapp)
-            call apinfr(sdappa, 'APPARI_PROJ_KSI1', ip, ksi1)
-            call apinfr(sdappa, 'APPARI_PROJ_KSI2', ip, ksi2)
-            call apinfr(sdappa, 'APPARI_DIST', ip, dist)
-            call apvect(sdappa, 'APPARI_TAU1', ip, tau1)
-            call apvect(sdappa, 'APPARI_TAU2', ip, tau2)
-!
-            if (typapp .eq. -1) then
-                write(ifm,501)
-            else if (typapp.eq.-2) then
-                write(ifm,502)
-            else if (typapp.eq.-3) then
-                write(ifm,503)
-            else if (typapp.eq.0) then
-                write(ifm,504)
-            else if (typapp.eq.1) then
-                write(ifm,401) coorpt(1),coorpt(2),coorpt(3)
-                posnom = entapp
-                call cfnumn(sdcont_defi, 1, posnom(1), numnom(1))
-                call jenuno(jexnum(mesh//'.NOMNOE', numnom(1)), nomnom)
-                write(ifm,601) nomnom
-                write(ifm,801) dist
-            else if (typapp.eq.2) then
-                write(ifm,401) coorpt(1),coorpt(2),coorpt(3)
-                elem_mast_indx = entapp
-                call cfnumm(sdcont_defi, elem_mast_indx, elem_mast_nume)
-                call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), nommam)
-                write(ifm,602) nommam
-                write(ifm,701) ksi1,ksi2
-                write(ifm,801) dist
-                write(ifm,901) (tau1(k),k=1,3)
-                write(ifm,902) (tau2(k),k=1,3)
-            else
-                write(ifm,504)
-            endif
-!
-! ------- POINT SUIVANT
-!
-            ip = ip + 1
-        end do
-    end do
-!
-400 format (' <APPARIEMENT> POINT            ',i6,' (',a16,')')
-401 format (' <APPARIEMENT> ** DE COORDONNEES ',1pe15.8,1pe15.8,1pe15.8)
-!
-501 format (' <APPARIEMENT> -> EXCLU - PAR SANS_NOEUD')
-502 format (' <APPARIEMENT> -> EXCLU - PAR TOLE_APPA')
-503 format (' <APPARIEMENT> -> EXCLU - PAR TOLE_PROJ_EXT')
-504 format (' <APPARIEMENT> -> NON APPARIE (ERREUR)')
-!
-!
-601 format (' <APPARIEMENT> -> APPARIEMENT AVEC NOEUD  ',a8)
-602 format (' <APPARIEMENT> -> APPARIEMENT AVEC MAILLE ',a8)
-!
-701 format (' <APPARIEMENT>      SUR POINT KSI1,KSI2: ',1pe15.8,1pe15.8)
-801 format (' <APPARIEMENT>      DISTANCE: ',1pe15.8)
-901 format (' <APPARIEMENT>      TANGENTE BRUTE  DIR. 1   : ',3(1pe15.8,2x))
-902 format (' <APPARIEMENT>      TANGENTE BRUTE  DIR. 2   : ',3(1pe15.8,2x))
-!
-    call jedema()
+    if (pair_category .eq. 'N_To_S') then
+        call apimpr_c(ifm, mesh, ds_contact)
+    elseif (pair_category .eq. 'S_To_S') then
+        call apimpr_l(ifm, mesh, ds_contact)
+    else
+        ASSERT(.false.)
+    endif
 !
 end subroutine

@@ -1,4 +1,4 @@
-subroutine cfappa(mesh, ds_contact, inst_curr)
+subroutine cfappa(mesh, ds_contact, time_curr)
 !
 use NonLin_Datastructure_type
 !
@@ -28,8 +28,8 @@ implicit none
 ! person_in_charge: mickael.abbas at edf.fr
 !
     character(len=8), intent(in) :: mesh
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    real(kind=8), intent(in) :: inst_curr
+    type(NL_DS_Contact), intent(inout) :: ds_contact
+    real(kind=8), intent(in) :: time_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -40,14 +40,12 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  mesh             : name of mesh
-! In  ds_contact       : datastructure for contact management
-! In  inst_curr        : current time
+! IO  ds_contact       : datastructure for contact management
+! In  time_curr        : current time
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: sdappa
-    character(len=19) :: newgeo
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,25 +54,16 @@ implicit none
         write (ifm,*) '<CONTACT> .. Pairing'
     endif
 !
-! - Pairing datastructure
-!
-    sdappa = ds_contact%sdcont_solv(1:14)//'.APPA'
-!
-! - New geometry name
-!
-    newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
-    newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
-!
 ! - Set pairing datastructure
 !
-    call cfpoin(mesh, ds_contact, newgeo, sdappa)
+    call cfpoin(mesh, ds_contact)
 !
 ! - Pairing
 !
-    call apcalc(sdappa, mesh, ds_contact%sdcont_defi, newgeo)
+    call apcalc('N_To_S', mesh, ds_contact)
 !
 ! - Save pairing in contact datastructures
 !
-    call cfapre(mesh, ds_contact, newgeo, sdappa, inst_curr)
+    call cfapre(mesh, ds_contact, time_curr)
 !
 end subroutine

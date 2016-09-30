@@ -44,7 +44,7 @@ PyObject* get_dll_register_dict();
 void DEFSSSSP(MFRONT_SET_DOUBLE_PARAMETER, mfront_set_double_parameter,
     char* nomlib, STRING_SIZE lnomlib, char* nomsub, STRING_SIZE lnomsub,
     char* nommod, STRING_SIZE lnommod,
-    char* nomparam, STRING_SIZE lnomparam, DOUBLE* value)
+    char* nomparam, STRING_SIZE lnomparam, ASTERDOUBLE* value)
 {
 #ifdef _POSIX
     /* MFRONT Wrapper : wrapper to the MFRONT set function through the function pointer
@@ -79,7 +79,7 @@ void DEFSSSSP(MFRONT_SET_DOUBLE_PARAMETER, mfront_set_double_parameter,
 void DEFSSSSP(MFRONT_SET_INTEGER_PARAMETER, mfront_set_integer_parameter,
     char* nomlib, STRING_SIZE lnomlib, char* nomsub, STRING_SIZE lnomsub,
     char* nommod, STRING_SIZE lnommod,
-    char* nomparam, STRING_SIZE lnomparam, INTEGER* value)
+    char* nomparam, STRING_SIZE lnomparam, ASTERINTEGER* value)
 {
 #ifdef _POSIX
     /* MFRONT Wrapper : wrapper to the MFRONT set function through the function pointer
@@ -113,8 +113,8 @@ void DEFSSSSP(MFRONT_SET_INTEGER_PARAMETER, mfront_set_integer_parameter,
 
 void DEFPPSP(MFRONT_GET_EXTERNAL_STATE_VARIABLE,
              mfront_get_external_state_variable,
-             INTEGER* pliesv, INTEGER* pnbesv,
-             char* txval, STRING_SIZE ltx, INTEGER* nbvarc)
+             ASTERINTEGER* pliesv, ASTERINTEGER* pnbesv,
+             char* txval, STRING_SIZE ltx, ASTERINTEGER* nbvarc)
 {
 #ifdef _POSIX
     /* MFRONT Wrapper
@@ -181,7 +181,7 @@ void DEFSSSP(MFRONT_GET_NUMBER_OF_INTERNAL_STATE_VARIABLES,
              char* nomlib, STRING_SIZE lnomlib,
              char* nomsub, STRING_SIZE lnomsub,
              char* nommod, STRING_SIZE lnommod,
-             INTEGER* nbvari)
+             ASTERINTEGER* nbvari)
 {
 #ifdef _POSIX
     /* MFRONT Wrapper
@@ -196,12 +196,88 @@ void DEFSSSP(MFRONT_GET_NUMBER_OF_INTERNAL_STATE_VARIABLES,
 #endif
 }
 
+void DEFSSSS(MFRONT_GET_INTERNAL_STATE_VARIABLES_TYPES,
+              mfront_get_internal_state_variables_types,
+              char* nomlib, STRING_SIZE lnomlib,
+              char* nomsub, STRING_SIZE lnomsub,
+              char* nommod, STRING_SIZE lnommod,
+              char* txval, STRING_SIZE ltx)
+{
+#ifdef _POSIX
+    /* MFRONT Wrapper
+    */
+    char *libname, *symbol, *model, *symbname=NULL;
+    char * name1;
+    int retour = 0;
+    PyObject* DLL_DICT;
+    DLL_DICT = get_dll_register_dict();
+
+    libname = MakeCStrFromFStr(nomlib, lnomlib);
+    symbol = MakeCStrFromFStr(nomsub, lnomsub);
+    model = MakeCStrFromFStr(nommod, lnommod);
+
+    mfront_name(libname, symbol, model, "_nInternalStateVariables", &symbname);
+    if ( symbname == NULL ) {
+        name1 = (char *)malloc(strlen(symbol) + strlen(model)
+                               + strlen("_nInternalStateVariables") + 1);
+        strcpy(name1, symbol);
+        strcat(name1, model);
+        strcat(name1, "_nInternalStateVariables");
+        error_symbol_not_found(libname, name1);
+    }
+    unsigned short* nb_int_var = (unsigned short*)libsymb_get_symbol(DLL_DICT, libname, symbname);
+
+    mfront_name(libname, symbol, model, "_InternalStateVariablesTypes", &symbname);
+    if ( symbname == NULL ) {
+        name1 = (char *)malloc(strlen(symbol) + strlen(model)
+                               + strlen("_InternalStateVariablesTypes") + 1);
+        strcpy(name1, symbol);
+        strcat(name1, model);
+        strcat(name1, "_InternalStateVariablesTypes");
+        error_symbol_not_found(libname, name1);
+    }
+
+    int* int_var = (int*)libsymb_get_symbol(DLL_DICT, libname, symbname);
+
+    unsigned short i;
+    for ( i = 0; i < *nb_int_var; ++i )
+    {
+        if ( int_var[i] == 0 )
+        {
+            SetTabFStr( txval, i, "scalar", ltx );
+        }
+        else if ( int_var[i] == 1 )
+        {
+            SetTabFStr( txval, i, "vector", ltx );
+        }
+        else if ( int_var[i] == 3 )
+        {
+            SetTabFStr( txval, i, "tensor", ltx );
+        }
+        else
+        {
+            AS_ASSERT( int_var[i] == 0 || int_var[i] == 1 || int_var[i] == 3);
+        }
+    }
+
+
+
+
+    FreeStr(libname);
+    FreeStr(symbol);
+    FreeStr(symbname);
+#else
+    printf("Not available under Windows.\n");
+    abort();
+#endif
+}
+
 void DEFSSSSP(MFRONT_GET_INTERNAL_STATE_VARIABLES,
               mfront_get_internal_state_variables,
               char* nomlib, STRING_SIZE lnomlib,
               char* nomsub, STRING_SIZE lnomsub,
               char* nommod, STRING_SIZE lnommod,
-              char* txval, STRING_SIZE ltx, INTEGER* nbintvar)
+              char* txval, STRING_SIZE ltx, ASTERINTEGER* nbintvar)
 {
 #ifdef _POSIX
 #define MIN(A,B)  ((A) < (B) ? (A) : (B))
@@ -256,8 +332,8 @@ void DEFSSSPPPPP(MFRONT_GET_POINTERS,
                  char* nomlib, STRING_SIZE lnomlib,
                  char* nomsub, STRING_SIZE lnomsub,
                  char* nommod, STRING_SIZE lnommod,
-                 INTEGER* pliesv, INTEGER* pnbesv, INTEGER* pfcmfr,
-                 INTEGER* pmatprop, INTEGER* pnbprop)
+                 ASTERINTEGER* pliesv, ASTERINTEGER* pnbesv, ASTERINTEGER* pfcmfr,
+                 ASTERINTEGER* pmatprop, ASTERINTEGER* pnbprop)
 {
 #ifdef _POSIX
     /* MFRONT Wrapper
@@ -279,7 +355,7 @@ void DEFSSSPPPPP(MFRONT_GET_POINTERS,
             error_symbol_not_found(libname, symbname);
         }
     }
-    *pfcmfr = (INTEGER)libsymb_get_symbol(DLL_DICT, libname, symbol);
+    *pfcmfr = (ASTERINTEGER)libsymb_get_symbol(DLL_DICT, libname, symbol);
 
     mfront_name(libname, symbol, model, "_ExternalStateVariables", &symbname);
     if ( symbname == NULL )
@@ -293,7 +369,7 @@ void DEFSSSPPPPP(MFRONT_GET_POINTERS,
     }
 
 //     char** test_char = libsymb_get_symbol(DLL_DICT, libname, symbname);
-    *pliesv = (INTEGER)libsymb_get_symbol(DLL_DICT, libname, symbname);
+    *pliesv = (ASTERINTEGER)libsymb_get_symbol(DLL_DICT, libname, symbname);
 
     mfront_name(libname, symbol, model, "_nExternalStateVariables", &symbname);
     if ( symbname == NULL ) {
@@ -305,14 +381,14 @@ void DEFSSSPPPPP(MFRONT_GET_POINTERS,
         error_symbol_not_found(libname, name1);
     }
 //     int* test_int = libsymb_get_symbol(DLL_DICT, libname, symbname);
-    *pnbesv = (INTEGER)libsymb_get_symbol(DLL_DICT, libname, symbname);
+    *pnbesv = (ASTERINTEGER)libsymb_get_symbol(DLL_DICT, libname, symbname);
     if ( symbname == NULL ) {
         error_symbol_not_found(libname, symbname);
     }
 
     // may be used for performance reason: pointers in a cache
-    *pmatprop = (INTEGER)0;
-    *pnbprop = (INTEGER)0;
+    *pmatprop = (ASTERINTEGER)0;
+    *pnbprop = (ASTERINTEGER)0;
 
     FreeStr(libname);
     FreeStr(model);
@@ -327,7 +403,7 @@ void DEFSSSPPPPP(MFRONT_GET_POINTERS,
 void DEFSSSP(MFRONT_SET_OUTOFBOUNDS_POLICY,
              mfront_set_outofbounds_policy,
     char* nomlib, STRING_SIZE lnomlib, char* nomsub, STRING_SIZE lnomsub,
-    char* nommod, STRING_SIZE lnommod, INTEGER* value)
+    char* nommod, STRING_SIZE lnommod, ASTERINTEGER* value)
 {
 #ifdef _POSIX
     char *libname, *symbol, *model, *symbname=NULL, *name1;
@@ -367,7 +443,7 @@ void DEFSSSP(MFRONT_SET_OUTOFBOUNDS_POLICY,
 void DEFSSSPP(MFRONT_GET_NBVARI, mfront_get_nbvari,
     char* nomlib, STRING_SIZE lnomlib, char* nomsub, STRING_SIZE lnomsub,
     char* nommod, STRING_SIZE lnommod,
-    INTEGER* ndim, INTEGER* nbvari)
+    ASTERINTEGER* ndim, ASTERINTEGER* nbvari)
 {
 #ifdef _POSIX
     /* MFRONT Wrapper
@@ -447,10 +523,12 @@ void DEFSSSPP(MFRONT_GET_NBVARI, mfront_get_nbvari,
 }
 
 void DEFPPPPPPPPPPPPPPPPPP(MFRONT_BEHAVIOUR, mfront_behaviour,
-    INTEGER* pfcmfr, DOUBLE* stress, DOUBLE* statev, DOUBLE* ddsdde, DOUBLE* stran,
-    DOUBLE* dstran, DOUBLE* dtime, DOUBLE* temp, DOUBLE* dtemp, DOUBLE* predef,
-    DOUBLE* dpred, INTEGER* ntens, INTEGER* nstatv, DOUBLE* props, INTEGER* nprops,
-    DOUBLE* drot, DOUBLE* pnewdt, INTEGER* nummod)
+    ASTERINTEGER* pfcmfr, ASTERDOUBLE* stress, ASTERDOUBLE* statev,
+    ASTERDOUBLE* ddsdde, ASTERDOUBLE* stran, ASTERDOUBLE* dstran,
+    ASTERDOUBLE* dtime, ASTERDOUBLE* temp, ASTERDOUBLE* dtemp,
+    ASTERDOUBLE* predef, ASTERDOUBLE* dpred, ASTERINTEGER* ntens,
+    ASTERINTEGER* nstatv, ASTERDOUBLE* props, ASTERINTEGER* nprops,
+    ASTERDOUBLE* drot, ASTERDOUBLE* pnewdt, ASTERINTEGER* nummod)
 {
 #ifdef _POSIX
     /* MFRONT Wrapper : wrapper to the MFRONT function through the function pointer
@@ -480,7 +558,7 @@ void DEFPPPPPPPPPPPPPPPPPP(MFRONT_BEHAVIOUR, mfront_behaviour,
 void DEFSPS(MFRONT_GET_MATER_PROP,
             mfront_get_mater_prop,
              _IN char* rela, STRING_SIZE lrela,
-            _OUT INTEGER* nbval,
+            _OUT ASTERINTEGER* nbval,
             _OUT char* txval, STRING_SIZE ltx)
 {
 #ifdef HAVE_MFRONT
@@ -498,7 +576,7 @@ void DEFSPS(MFRONT_GET_MATER_PROP,
         SetTabFStr( txval, i, props[i], 16 );
         free(props[i]);
     }
-    *nbval = (INTEGER)size;
+    *nbval = (ASTERINTEGER)size;
     free(props);
     FreeStr(crela);
 #else
@@ -512,8 +590,8 @@ int load_mfront_lib(const char* libname, const char* symbol)
     void *mfront_handle;
     char *error;
     char symbol_[256], *valk;
-    INTEGER ibid=0, n0=0, nk=0;
-    DOUBLE rbid=0.;
+    ASTERINTEGER ibid=0, n0=0, nk=0;
+    ASTERDOUBLE rbid=0.;
     FUNC_MFRONT(f_mfront) = NULL;
     PyObject* DLL_DICT;
     DLL_DICT = get_dll_register_dict();
@@ -616,8 +694,8 @@ void mfront_name(
 void error_symbol_not_found(const char* libname, const char* symbname)
 {
     char *valk;
-    INTEGER ibid=0, n0=0, nk=3;
-    DOUBLE rbid=0.;
+    ASTERINTEGER ibid=0, n0=0, nk=3;
+    ASTERDOUBLE rbid=0.;
     valk = MakeTabFStr(nk, VALK_SIZE);
     SetTabFStr(valk, 0, "MFRONT", VALK_SIZE);
     SetTabFStr(valk, 1, (char *)libname, VALK_SIZE);

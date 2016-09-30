@@ -81,7 +81,7 @@ bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
         cmdSt.define( dict );
 
         // Maintenant que le fichier de commande est pret, on appelle OP0011
-        INTEGER op = 11;
+        ASTERINTEGER op = 11;
         CALL_EXECOP( &op );
     }
     else

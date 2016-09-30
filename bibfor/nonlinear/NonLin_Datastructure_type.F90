@@ -209,12 +209,12 @@ implicit none
         character(len=8)  :: result
         aster_logical     :: l_temp_nonl
         integer           :: nb_field
-        integer           :: nb_field_maxi = 21
-        type(NL_DS_Field) :: field(21)
+        integer           :: nb_field_maxi = 22
+        type(NL_DS_Field) :: field(22)
         character(len=8)  :: stin_evol
         aster_logical     :: l_stin_evol
-        aster_logical     :: l_field_acti(21)
-        aster_logical     :: l_field_read(21)
+        aster_logical     :: l_field_acti(22)
+        aster_logical     :: l_field_read(22)
         aster_logical     :: l_state_init
         aster_logical     :: l_reuse
         integer           :: didi_nume
@@ -276,10 +276,13 @@ implicit none
         character(len=19) :: field_input
 ! ----- NUME_DOF for discrete friction methods 
         character(len=14) :: nume_dof_frot
-! ----- Field for CONT_NODE 
+! ----- Fields for CONT_NODE 
         character(len=19) :: field_cont_node
         character(len=19) :: fields_cont_node
         character(len=19) :: field_cont_perc
+! ----- Fields for CONT_ELEM 
+        character(len=19) :: field_cont_elem
+        character(len=19) :: fields_cont_elem
 ! ----- Loops
         integer           :: nb_loop
         integer           :: nb_loop_maxi = 3
@@ -294,6 +297,10 @@ implicit none
         aster_logical     :: l_first_geom
 ! ----- Flag for pairing
         aster_logical     :: l_pair
+! ----- Total number of patches (for LAC method)
+        integer           :: nt_patch
+! ----- Total number of contact pairs
+        integer           :: nb_cont_pair
     end type NL_DS_Contact
 !
 ! - Type: timer management
@@ -365,5 +372,106 @@ implicit none
 ! ----- Table in results datastructures
         type(NL_DS_Table)     :: table
     end type NL_DS_Energy
+!
+! - Type: for exterior comportement
+! 
+    type NL_DS_ComporExte
+        aster_logical      :: l_umat
+        aster_logical      :: l_mfront_proto
+        aster_logical      :: l_mfront_offi
+        character(len=255) :: subr_name
+        character(len=255) :: libr_name
+        character(len=16)  :: model_mfront
+        integer            :: model_dim
+        integer            :: nb_vari_umat
+    end type NL_DS_ComporExte
+!
+! - Type: for comportement
+! 
+    type NL_DS_Compor
+        character(len=16) :: rela_comp
+        character(len=16) :: defo_comp
+        character(len=16) :: type_comp
+        character(len=16) :: type_cpla
+        character(len=16) :: kit_comp(4)
+        character(len=16) :: mult_comp
+        character(len=16) :: type_matg
+        character(len=16) :: post_iter
+        integer           :: nb_vari
+        integer           :: nb_vari_comp(4)
+        integer           :: nume_comp(4)
+    end type NL_DS_Compor
+!
+! - Type: for preparation of comportment
+! 
+    type NL_DS_ComporPrep
+! ----- Number of comportements
+        integer                         :: nb_comp
+! ----- List of comportements
+        type(NL_DS_Compor), pointer     :: v_comp(:)
+! ----- List of external comportements
+        type(NL_DS_ComporExte), pointer :: v_exte(:)
+    end type NL_DS_ComporPrep
+!
+! - Type: pointer to external constitutive laws
+! 
+    type NL_DS_ComporPointer
+        integer      ::  nbvarext
+        integer      ::  namevarext
+        integer      ::  fct_ldc
+        integer      ::  matprop
+        integer      ::  nbprop
+    end type NL_DS_ComporPointer
+!
+! - Type: for parameters for constitutive laws
+! 
+    type NL_DS_ComporPara
+        integer      :: type_matr_t
+        real(kind=8) :: parm_alpha
+        real(kind=8) :: parm_theta
+        integer      :: iter_inte_pas
+        real(kind=8) :: vale_pert_rela
+        real(kind=8) :: resi_deborst_max
+        integer      :: iter_deborst_max
+        real(kind=8) :: seuil
+        real(kind=8) :: amplitude
+        real(kind=8) :: taux_retour
+        integer      :: post_iter
+        integer      :: post_incr
+        character(len=16)         :: rela_comp
+        character(len=16)         :: algo_inte
+        type(NL_DS_ComporPointer) :: c_pointer
+        type(NL_DS_ComporExte)    :: comp_exte
+    end type NL_DS_ComporPara
+!
+! - Type: for preparation of parameters for constitutive laws
+! 
+    type NL_DS_ComporParaPrep
+! ----- Number of comportements
+        integer                         :: nb_comp
+! ----- List of parameters
+        type(NL_DS_ComporPara), pointer :: v_para(:)
+    end type NL_DS_ComporParaPrep
+!
+! - Type: constitutive laws management
+! 
+    type NL_DS_Constitutive
+! ----- Name of field for constitutive laws
+        character(len=24)     :: compor
+! ----- Name of field for criteria of constitutive laws
+        character(len=24)     :: carcri
+! ----- Name of field for constitutive laws - Special crystal
+        character(len=24)     :: mult_comp
+! ----- Name of field for error field from constitutive laws
+        character(len=24)     :: comp_error
+! ----- Flag for De Borst algorithm
+        aster_logical         :: l_deborst
+! ----- Flag for DIS_CHOC
+        aster_logical         :: l_dis_choc
+! ----- Flag for POST_INCR
+        aster_logical         :: l_post_incr
+! ----- Flag for large strains in tangent matrix
+        aster_logical         :: l_matr_geom
+    end type NL_DS_Constitutive
 !
 end module

@@ -73,7 +73,7 @@ bool AcousticsLoadInstance::build()
     // Maintenant que le fichier de commande est pret, on appelle OP0030
     try
     {
-        INTEGER op = 68;
+        ASTERINTEGER op = 68;
         CALL_EXECOP( &op );
     }
     catch( ... )

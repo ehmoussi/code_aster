@@ -76,7 +76,7 @@ static PyObject* register_jdc(PyObject *self, PyObject *args)
 /*
  * Functions based on JDC object.
  */
-INTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
+ASTERINTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
 {
     /*
      * Permet de récupérer la valeur entière d'un attribut du jdc.
@@ -86,7 +86,7 @@ INTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
     /* TODO */
 
     PyObject *val;
-    INTEGER value;
+    ASTERINTEGER value;
 
     val = PyObject_CallMethod(get_sh_jdc(), "get_jdc_attr", "s#", attr, l_attr);
     if (val == NULL){
@@ -96,13 +96,13 @@ INTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
     if (! (PyInt_Check(val) || PyLong_Check(val)) )
         MYABORT("Seuls les attributs de type entier peuvent etre recuperes !");
 
-    value = (INTEGER)PyLong_AsLong(val);
+    value = (ASTERINTEGER)PyLong_AsLong(val);
 
     Py_XDECREF(val);
     return value;
 }
 
-void DEFSP(JDCSET,jdcset,char *attr, STRING_SIZE l_attr, INTEGER *value)
+void DEFSP(JDCSET,jdcset,char *attr, STRING_SIZE l_attr, ASTERINTEGER *value)
 {
     /*
      * Permet de positionner la valeur entière d'un attribut du jdc à `value`.
@@ -151,7 +151,7 @@ double get_tpmax()
     return _cache_tpmax;
 }
 
-void DEFP(RDTMAX, rdtmax, _IN DOUBLE *tsub)
+void DEFP(RDTMAX, rdtmax, _IN ASTERDOUBLE *tsub)
 {
     /*
      * Réduit le temps maximum de l'exécution : tpmax = tpmax - tsub
@@ -247,8 +247,8 @@ char* asterc_getopt_string(_IN char *option, _OUT int *iret)
 }
 
 void DEFSPP(GTOPTI,gtopti, _IN char *option, STRING_SIZE lopt,
-            _OUT INTEGER *vali,
-            _OUT INTEGER *iret)
+            _OUT ASTERINTEGER *vali,
+            _OUT ASTERINTEGER *iret)
 {
     /*
      * Interface C/Python pour récupérer une option de la ligne de commande.
@@ -268,8 +268,8 @@ void DEFSPP(GTOPTI,gtopti, _IN char *option, STRING_SIZE lopt,
 }
 
 void DEFSPP(GTOPTR,gtoptr, _IN char *option, STRING_SIZE lopt,
-            _OUT DOUBLE *valr,
-            _OUT INTEGER *iret)
+            _OUT ASTERDOUBLE *valr,
+            _OUT ASTERINTEGER *iret)
 {
     /*
      * Interface C/Python pour récupérer une option de la ligne de commande.
@@ -296,21 +296,21 @@ PyObject *args;
      */
     PyObject *t_valres, *t_res;
     int inbpar;
-    INTEGER nbpar, codret;
+    ASTERINTEGER nbpar, codret;
     char *nompar;
-    DOUBLE *valres;
+    ASTERDOUBLE *valres;
     /* doit impérativement correspondre aux longueurs des chaines de caractères fortran */
     STRING_SIZE long_nompar = 8;
     void *malloc(size_t size);
 
     /* Conversion en tableaux de chaines */
     inbpar = (int)PyTuple_Size(args);
-    nbpar = (INTEGER)inbpar;
+    nbpar = (ASTERINTEGER)inbpar;
     nompar = MakeTabFStr(inbpar, long_nompar);
     convertxt(inbpar, args, nompar, long_nompar);
 
     /* allocation des variables de sortie */
-    valres = (DOUBLE *)malloc(nbpar*sizeof(DOUBLE));
+    valres = (ASTERDOUBLE *)malloc(nbpar*sizeof(ASTERDOUBLE));
 
     CALL_UTGTME(&nbpar, nompar, valres, &codret);
 
@@ -342,9 +342,9 @@ PyObject *args;
     PyObject *tup_par, *tup_val;
     PyObject *res;
     int inbpar, inbval;
-    INTEGER nbpar, codret;
+    ASTERINTEGER nbpar, codret;
     char *nompar;
-    DOUBLE *values;
+    ASTERDOUBLE *values;
     /* doit impérativement correspondre aux longueurs des chaines de caractères fortran */
     STRING_SIZE long_nompar = 8;
     void *malloc(size_t size);
@@ -359,12 +359,12 @@ PyObject *args;
     }
 
     /* Conversion en tableaux de chaines */
-    nbpar = (INTEGER)inbpar;
+    nbpar = (ASTERINTEGER)inbpar;
     nompar = MakeTabFStr(inbpar, long_nompar);
     convertxt(inbpar, tup_par, nompar, long_nompar);
 
     /* allocation des valeurs des variables */
-    values = (DOUBLE *)malloc(inbval*sizeof(DOUBLE));
+    values = (ASTERDOUBLE *)malloc(inbval*sizeof(ASTERDOUBLE));
     convr8(inbval, tup_val, values);
 
     CALL_UTPTME(nompar, values, &codret);
@@ -382,11 +382,11 @@ PyObject *args;
  * Functions based on MessageLog object.
  */
 void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
-                                   _IN INTEGER *exc_typ,
+                                   _IN ASTERINTEGER *exc_typ,
                                    _IN char *idmess, _IN STRING_SIZE lidmess,
-                                   _IN INTEGER *nbk, _IN char *valk, _IN STRING_SIZE lvk,
-                                   _IN INTEGER *nbi, _IN INTEGER *vali,
-                                   _IN INTEGER *nbr, _IN DOUBLE *valr,
+                                   _IN ASTERINTEGER *nbk, _IN char *valk, _IN STRING_SIZE lvk,
+                                   _IN ASTERINTEGER *nbi, _IN ASTERINTEGER *vali,
+                                   _IN ASTERINTEGER *nbr, _IN ASTERDOUBLE *valr,
                                    _IN char *fname, _IN STRING_SIZE lfn)
 {
     /*
@@ -406,7 +406,7 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     if ( pModule == NULL )
     {
         fprintf(fileOut, "No module named 'Utilitai.Utmess'\n");
-        INTEGER ier=SIGABRT;
+        ASTERINTEGER ier=SIGABRT;
         CALL_ASABRT( &ier );
     }
 
@@ -465,7 +465,7 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     if ( res ) Py_DECREF(res);
 }
 
-void DEFPP(CHKMSG,chkmsg, _IN INTEGER *info_alarm, _OUT INTEGER *iret)
+void DEFPP(CHKMSG,chkmsg, _IN ASTERINTEGER *info_alarm, _OUT ASTERINTEGER *iret)
 {
     /*
      * Interface Fortran/Python pour la vérification que tout s'est bien
@@ -478,7 +478,7 @@ void DEFPP(CHKMSG,chkmsg, _IN INTEGER *info_alarm, _OUT INTEGER *iret)
      *    iret > 0   erreur
      */
     fprintf(fileOut, "CHKMSG ne fait rien ?\n");
-    /* INTEGER ier=SIGABRT;
+    /* ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
        TODO
 
@@ -486,7 +486,7 @@ void DEFPP(CHKMSG,chkmsg, _IN INTEGER *info_alarm, _OUT INTEGER *iret)
 
     res = PyObject_CallMethod(get_sh_msglog(), "check_counter", "i", (int)*info_alarm);
     if ( !res ) MYABORT("erreur lors de l'appel a la methode MessageLog.check_counter");
-    *iret = (INTEGER)PyLong_AsLong(res);
+    *iret = (ASTERINTEGER)PyLong_AsLong(res);
 
     Py_DECREF(res); */
 }
@@ -500,7 +500,7 @@ void DEFSS(UTALRM,utalrm, _IN char *bool, _IN STRING_SIZE lbool,
      * call utalrm('ON', 'CALCULEL5_7') == RetablirAlarme('CALCULEL5_7')
      */
     fprintf(fileOut, "UTALRM\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 
@@ -521,26 +521,26 @@ void DEFSS(UTALRM,utalrm, _IN char *bool, _IN STRING_SIZE lbool,
     FreeStr(s_id);
 }
 
-void DEFP(GTALRM,gtalrm, _OUT INTEGER *nb)
+void DEFP(GTALRM,gtalrm, _OUT ASTERINTEGER *nb)
 {
     /* Interface Fortran/Python pour obtenir si des alarmes ont été émises.
      */
     fprintf(fileOut, "GTALRM\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 
     PyObject *res;
     res = PyObject_CallMethod(get_sh_msglog(), "get_info_alarm_nb", "");
     if (!res) MYABORT("erreur lors de l'appel a la methode 'get_info_alarm'");
-    *nb = (INTEGER)PyLong_AsLong(res);
+    *nb = (ASTERINTEGER)PyLong_AsLong(res);
     Py_DECREF(res);
 }
 
 /*
  * Functions defined in aster_core
  */
-void DEFP(PRHEAD,prhead, _IN INTEGER *part)
+void DEFP(PRHEAD,prhead, _IN ASTERINTEGER *part)
 {
     /*
      * Interface Fortran/Python pour l'affichage des informations systèmes
@@ -548,7 +548,7 @@ void DEFP(PRHEAD,prhead, _IN INTEGER *part)
      * Voir help(aster_core.print_header)
      */
     fprintf(fileOut, "PRHEAD a ajouter ?\n");
-    /*INTEGER ier=SIGABRT;
+    /*ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );*/
     /* TODO */
 
@@ -560,7 +560,7 @@ void DEFP(PRHEAD,prhead, _IN INTEGER *part)
 
 void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,
                           _IN char *typsd,_IN STRING_SIZE ltyp,
-                          _OUT INTEGER *iret)
+                          _OUT ASTERINTEGER *iret)
 {
    /*
       Interface Fortran/C pour vérifier que la structure de données `nomsd`
@@ -570,7 +570,7 @@ void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,
          call cheksd('MA', 'sd_maillage', iret)
    */
     fprintf(fileOut, "CHEKSD\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 
@@ -578,7 +578,7 @@ void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,
 
    res = PyObject_CallMethod(get_sh_pymod(), "checksd", "s#s#", nomsd, lnom, typsd, ltyp);
    if (!res) MYABORT("erreur lors de l'appel a la methode CHECKSD");
-   *iret = (INTEGER)PyLong_AsLong(res);
+   *iret = (ASTERINTEGER)PyLong_AsLong(res);
 
    Py_DECREF(res);
 }
@@ -586,13 +586,13 @@ void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,
 void DEFSSPPPPPPPPPPPP(TESTRESU_PRINT,testresu_print,
             _IN char *refer, _IN STRING_SIZE lref,
             _IN char *legend, _IN STRING_SIZE lleg,
-            _IN INTEGER *llab, _IN INTEGER *skip, _IN INTEGER *rela,
-            _IN DOUBLE *tole,
-            _IN INTEGER *typ,
-            _IN DOUBLE *refr, _IN DOUBLE *valr,
-            _IN INTEGER *refi, _IN INTEGER *vali,
-            _IN DOUBLE *refc, _IN DOUBLE *valc,
-            _IN DOUBLE *compare)
+            _IN ASTERINTEGER *llab, _IN ASTERINTEGER *skip, _IN ASTERINTEGER *rela,
+            _IN ASTERDOUBLE *tole,
+            _IN ASTERINTEGER *typ,
+            _IN ASTERDOUBLE *refr, _IN ASTERDOUBLE *valr,
+            _IN ASTERINTEGER *refi, _IN ASTERINTEGER *vali,
+            _IN ASTERDOUBLE *refc, _IN ASTERDOUBLE *valc,
+            _IN ASTERDOUBLE *compare)
 {
     /*
         Interface Fortran/C pour imprimer le résultat d'un TEST_RESU
@@ -601,7 +601,7 @@ void DEFSSPPPPPPPPPPPP(TESTRESU_PRINT,testresu_print,
                            tole, ref, val, compare=1.):
     */
     fprintf(fileOut, "TESTRESU_PRINT\n");
-    INTEGER ier=SIGABRT;
+    ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
 
@@ -668,12 +668,12 @@ PyObject *args;
      * Interface Python d'appel à la routine matfpe.
      */
     int iactif;
-    INTEGER actif;
+    ASTERINTEGER actif;
 
     if (!PyArg_ParseTuple(args, "i:matfpe", &iactif)) return NULL;
 
     if (iactif >= -1  && iactif <= 1) {
-        actif = (INTEGER)iactif;
+        actif = (ASTERINTEGER)iactif;
         CALL_MATFPE(&actif);
     } else {
         MYABORT("Valeur incorrecte : seuls -1 et 1 sont valides.");
@@ -701,7 +701,7 @@ static PyObject* aster_mpi_warn(self, args)
 PyObject *self; /* Not used */
 PyObject *args;
 {
-    INTEGER iexc=1;
+    ASTERINTEGER iexc=1;
     /* call ASMPI_WARN */
     try {
         CALL_ASMPI_WARN(&iexc);
@@ -761,12 +761,12 @@ PyObject *args;
         item = PyTuple_GetItem(tupl, 0);
         if ( PyLong_Check(item) || PyInt_Check(item) ) {
             type = MPI_INTEGER8;
-            buff = (void *)malloc((size_t)count * sizeof(INTEGER));
-            convert(count, tupl, (INTEGER *)buff);
+            buff = (void *)malloc((size_t)count * sizeof(ASTERINTEGER));
+            convert(count, tupl, (ASTERINTEGER *)buff);
         } else if ( PyFloat_Check(item) ) {
             type = MPI_DOUBLE_PRECISION;
-            buff = (void *)malloc((size_t)count * sizeof(DOUBLE));
-            convr8(count, tupl, (DOUBLE *)buff);
+            buff = (void *)malloc((size_t)count * sizeof(ASTERDOUBLE));
+            convr8(count, tupl, (ASTERDOUBLE *)buff);
         } else {
             // unsupported type
             return NULL;
@@ -785,9 +785,9 @@ PyObject *args;
         return NULL;
     }
     if ( type == MPI_INTEGER8 ) {
-        res = MakeTupleInt(count, (INTEGER *)buff);
+        res = MakeTupleInt(count, (ASTERINTEGER *)buff);
     } else if ( type == MPI_DOUBLE_PRECISION ) {
-        res = MakeTupleFloat(count, (DOUBLE *)buff);
+        res = MakeTupleFloat(count, (ASTERDOUBLE *)buff);
     }
     return res;
 }

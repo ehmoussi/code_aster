@@ -127,7 +127,7 @@ FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystem(
 
     try
     {
-        INTEGER op = 15;
+        ASTERINTEGER op = 15;
         CALL_EXECOP( &op );
     }
     catch( ... )

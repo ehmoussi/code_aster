@@ -1,5 +1,5 @@
-subroutine nmnume(model   , result, compor, list_load, ds_contact,&
-                  nume_dof, sdnume)
+subroutine nmnume(model     , mesh    , result, compor, list_load, &
+                  ds_contact, nume_dof, sdnume)
 !
 use NonLin_Datastructure_type
 !
@@ -9,10 +9,11 @@ implicit none
 #include "asterfort/nmprof.h"
 #include "asterfort/nuendo.h"
 #include "asterfort/nunuco.h"
+#include "asterfort/nunuco_l.h"
 #include "asterfort/nurota.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -29,6 +30,7 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
+    character(len=8), intent(in) :: mesh
     character(len=24), intent(in) :: model
     character(len=8), intent(in) :: result
     character(len=24), intent(in) :: compor
@@ -45,6 +47,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  mesh             : name of mesh
 ! In  model            : name of model datastructure
 ! In  result           : name of result datastructure (EVOL_NOLI)
 ! In  compor           : name of <CARTE> COMPOR
@@ -81,6 +84,14 @@ implicit none
     sdnuco = sdnume(1:19)//'.NUCO'
     if (ds_contact%l_form_cont) then
         call nunuco(nume_dof, sdnuco)
+    endif
+!
+! - Get position of contact dof 
+!
+    sdnuco = sdnume(1:19)//'.NUCO'
+    if (ds_contact%l_form_lac) then
+        call nunuco(nume_dof, sdnuco)
+        call nunuco_l(mesh, ds_contact, nume_dof, sdnume)
     endif  
 !
 end subroutine

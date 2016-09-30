@@ -239,7 +239,7 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
 
     try
     {
-        INTEGER op = 14;
+        ASTERINTEGER op = 14;
         CALL_EXECOP( &op );
     }
     catch( ... )

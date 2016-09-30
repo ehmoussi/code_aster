@@ -70,7 +70,7 @@ bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const Vect
     cmdSt.define( syntax );
     try
     {
-        INTEGER op = 104;
+        ASTERINTEGER op = 104;
         CALL_EXECOP( &op );
     }
     catch( ... )

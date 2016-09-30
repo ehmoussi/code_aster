@@ -141,7 +141,7 @@ NonLinearEvolutionContainerPtr StaticNonLinearAnalysisInstance::execute() throw 
 //  Now Command syntax is ready, call op00070    
     try
     {
-        INTEGER op = 70;
+        ASTERINTEGER op = 70;
         CALL_EXECOP( &op );
     }
     catch( ... )

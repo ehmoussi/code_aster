@@ -1,6 +1,6 @@
 subroutine te0436(option, nomte)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -26,6 +26,7 @@ subroutine te0436(option, nomte)
 #include "asterfort/mbrigi.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
+#include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 !
@@ -47,13 +48,13 @@ subroutine te0436(option, nomte)
     character(len=4) :: fami
     integer :: nddl, nno, nnos, npg, ndim, ncomp
     integer :: i, j, n, c, cc, kpg, j1, j2, k
-    integer :: ipoids, ivf, idfde, jgano
-    integer :: igeom, icacoq, imate, idepl, icontp, inr, idefo, imass
-    real(kind=8) :: dff(2, 8), vff(8), b(3, 3, 8), jac
+    integer :: ipoids, ivf, idfde, jgano, iret
+    integer :: igeom, icacoq, imate, idepl, icontp, inr, idefo, imass, icompo
+    real(kind=8) :: dff(2, 9), vff(9), b(3, 3, 9), jac
     real(kind=8) :: alpha, beta, epot
     real(kind=8) :: epsm(3), epsg(3, 9), epsthe, sig(3), sigg(3, 9), rig(6, 6)
     real(kind=8) :: rho(1)
-    real(kind=8) :: x(8), y(8), z(8), surfac, cdg(3), ppg, xxi, yyi, zzi
+    real(kind=8) :: x(9), y(9), z(9), surfac, cdg(3), ppg, xxi, yyi, zzi
     real(kind=8) :: matine(6)
     real(kind=8) :: vro
 !----------------------------------------------------------------------------------
@@ -70,7 +71,7 @@ subroutine te0436(option, nomte)
                       npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
 
     if (option.eq.'EFGE_ELGA') then
-!       -- c'est facile : il n'y a qu'a recopier :
+! ---   c'est facile : il n'y a qu'a recopier :
         call jevech('PSIEFR', 'L', j1)
         call jevech('PEFGER', 'E', j2)
         do k=1,3*npg
@@ -118,12 +119,20 @@ subroutine te0436(option, nomte)
             call utmess('F', 'ELEMENTS5_45')
         endif
     endif
+    
+! - ON INTERDIT CERTAINES OPTIONS POUR LES GRANDES DEFORMATIONS
+    call tecach('NNO', 'PCOMPOR', 'L', iret, iad=icompo)
+    if (((option.eq.'EPSI_ELGA').or.(option.eq.'EPOT_ELEM')).and.&
+        (iret.eq. 0).and.(zk16 ( icompo + 2 )(1:9) .eq. 'GROT_GDEP')) then
+        call utmess('F', 'MEMBRANE_8', sk=option)
+    endif
+    
 !
 ! - LE VECTEUR NORME QUI DETERMINE LE REPERE LOCAL DE LA MEMBRANE
 !   (COMPORTEMENT ANISOTROPE)
 !
-    alpha = zr(icacoq) * r8dgrd()
-    beta = zr(icacoq+1) * r8dgrd()
+    alpha = zr(icacoq+1) * r8dgrd()
+    beta = zr(icacoq+2) * r8dgrd()
 !
 ! - COORDONNEES PHYSIQUES DES NOEUDS
 !
@@ -162,7 +171,7 @@ subroutine te0436(option, nomte)
 !
         if ((option.eq.'SIEF_ELGA') .or. (option.eq.'EPOT_ELEM')) then
 !
-!         CALCUL DE LA DEFORMATION MEMBRANAIRE DANS LE REPERE LOCAL
+! ------    CALCUL DE LA DEFORMATION MEMBRANAIRE DANS LE REPERE LOCAL
             call r8inir(3, 0.d0, epsm, 1)
             do n = 1, nno
                 do i = 1, nddl
@@ -172,13 +181,13 @@ subroutine te0436(option, nomte)
                 end do
             end do
 !
-!         RETRAIT DE LA DEFORMATION THERMIQUE
+! ------    RETRAIT DE LA DEFORMATION THERMIQUE
             call verift(fami, kpg, 1, '+', zi(imate),&
                         epsth_=epsthe)
             epsm(1) = epsm(1) - epsthe
             epsm(2) = epsm(2) - epsthe
 !
-!         CALCUL DE LA CONTRAINTE AU PG
+! ------    CALCUL DE LA CONTRAINTE AU PG
             call mbrigi(fami, kpg, imate, rig)
 !
             call r8inir(3, 0.d0, sig, 1)
@@ -202,7 +211,7 @@ subroutine te0436(option, nomte)
 !
         else if (option.eq.'EPSI_ELGA') then
 !
-!         CALCUL DE LA DEFORMATION MEMBRANAIRE DANS LE REPERE LOCAL
+! ------    CALCUL DE LA DEFORMATION MEMBRANAIRE DANS LE REPERE LOCAL
             do n = 1, nno
                 do i = 1, nddl
                     do c = 1, ncomp

@@ -56,7 +56,7 @@ bool ThermalLoadInstance::build() throw ( std::runtime_error )
 
     try
     {
-        INTEGER op = 34;
+        ASTERINTEGER op = 34;
         CALL_EXECOP( &op );
     }
     catch( ... )

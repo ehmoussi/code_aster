@@ -86,7 +86,7 @@ bool KinematicsLoadInstance::build() throw ( std::runtime_error )
 
     try
     {
-        INTEGER op = 101;
+        ASTERINTEGER op = 101;
         CALL_EXECOP( &op );
     }
     catch( ... )

@@ -5,7 +5,7 @@ subroutine inithm(imate, yachai, yamec, phi0, em,&
                   phenom)
 ! ======================================================================
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -81,7 +81,7 @@ subroutine inithm(imate, yachai, yamec, phi0, em,&
 !
         call rcvala(imate, ' ', 'ELAS', 1, 'TEMP',&
                     [t], 3, ncra1(1), elas( 1), icodre,&
-                    0)
+                    2)
 !
         young = elas(1)
         nu = elas(2)

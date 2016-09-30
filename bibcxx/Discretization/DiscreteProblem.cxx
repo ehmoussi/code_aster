@@ -227,7 +227,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryMechanicalLoadsVecto
 
     try
     {
-        INTEGER op = 8;
+        ASTERINTEGER op = 8;
         CALL_EXECOP( &op );
     }
     catch( ... )
@@ -285,7 +285,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMatrix( const std:
     cmdSt.define( dict );
     try
     {
-        INTEGER op = 9;
+        ASTERINTEGER op = 9;
         CALL_EXECOP( &op );
     }
     catch( ... )
@@ -317,7 +317,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalDampingMatrix( con
     cmdSt.define( dict );
     try
     {
-        INTEGER op = 9;
+        ASTERINTEGER op = 9;
         CALL_EXECOP( &op );
     }
     catch( ... )

@@ -41,7 +41,7 @@ bool GenericModalBasisInstance::build() throw( std::runtime_error )
 
     try
     {
-        INTEGER op = 99;
+        ASTERINTEGER op = 99;
         CALL_EXECOP( &op );
     }
     catch( ... )

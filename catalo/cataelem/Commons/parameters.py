@@ -738,6 +738,9 @@ PMATERC = InputParameter(phys=PHY.ADRSJEVE, container='CHMA!.MATE_CODE',
 PMEMCON = InputParameter(phys=PHY.NEUT_I,
                          comment="""""")
 
+PMULCOM  = InputParameter(phys=PHY.MULTCOMP,
+                          comment="""  Informations for non-linear comportment (*CRISTAL) """)
+
 PNEUK24 = InputParameter(phys=PHY.NEUT_K24,
                          comment="""""")
 
@@ -922,6 +925,10 @@ PSOURNL = InputParameter(phys=PHY.SOUR_F,
 
 PSOUSOP = InputParameter(phys=PHY.NEUT_K24,
                          comment="""""")
+
+PSNO = InputParameter(phys=PHY.GEOM_R, container='MAIL!.COORDO',
+                         comment="""  PSNO : Smooth normals at nodes for contact
+""")
 
 PSTADYN = InputParameter(phys=PHY.STAOUDYN,
                          comment=""" CHAMP POUR DYNAMIQUE NEWMARK (POU_D_TGD)

@@ -26,6 +26,7 @@ implicit none
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1501
 !
     character(len=24), intent(in) :: sdcont_defi
     character(len=*), intent(in) :: question_
@@ -115,7 +116,7 @@ implicit none
         call jeveuo(sdcont_methco, 'L', vi  = v_sdcont_methco)
         vale_l = v_sdcont_methco(zmeth*(i_zone-1)+2).eq.1
     else if (question.eq.'DIST_COQUE') then
-        call jeveuo(sdcont_methco, 'L', vi  = v_sdcont_methco)        
+        call jeveuo(sdcont_methco, 'L', vi  = v_sdcont_methco)
         vale_l = v_sdcont_methco(zmeth*(i_zone-1)+3).eq.1
     else if (question.eq.'DIST_MAIT') then
         call jeveuo(sdcont_jeufo1, 'L', vk8 = v_sdcont_jeufo1)
@@ -301,6 +302,9 @@ implicit none
         else
             ASSERT(.false.)
         endif
+    else if (question.eq.'TYPE_JACOBIEN') then
+        call jeveuo(sdcont_methco, 'L', vi  = v_sdcont_methco)
+        vale_i = v_sdcont_methco(zmeth*(i_zone-1)+23)
     else if (question.eq.'TOLE_PROJ_EXT') then
         if (cont_form .eq. 3) then
             call jeveuo(sdcont_caraxf, 'L', vr = v_sdcont_caraxf)
@@ -309,7 +313,10 @@ implicit none
             call jeveuo(sdcont_toleco, 'L', vr  = v_sdcont_toleco)
             vale_r = v_sdcont_toleco(ztole*(i_zone-1)+1)
         endif
-    else if (question.eq.'TOLE_APPA') then
+    else if (question.eq.'DIST_APPA') then
+        call jeveuo(sdcont_toleco, 'L', vr  = v_sdcont_toleco)
+        vale_r = v_sdcont_toleco(ztole*(i_zone-1)+2)
+    else if (question.eq.'RESI_APPA') then
         call jeveuo(sdcont_toleco, 'L', vr  = v_sdcont_toleco)
         vale_r = v_sdcont_toleco(ztole*(i_zone-1)+2)
     else if (question.eq.'TOLE_INTERP') then
@@ -324,8 +331,6 @@ implicit none
             call jeveuo(sdcont_caraxf, 'L', vr = v_sdcont_caraxf)
             vale_r = v_sdcont_caraxf(zcmxf*(i_zone-1)+11)
             vale_i = nint(vale_r)
-        else
-            ASSERT(.false.)
         endif
     else if (question.eq.'ALGO_CONT_PENA') then
         if (cont_form .eq. 2) then
@@ -417,9 +422,12 @@ implicit none
         if (cont_form .eq. 2) then
             call jeveuo(sdcont_caracf, 'L', vr = v_sdcont_caracf)
             vale_i = nint(v_sdcont_caracf(zcmcf*(i_zone-1)+1))
-        else if (cont_form.eq.3) then
+        else if (cont_form .eq. 3) then
             call jeveuo(sdcont_caraxf, 'L', vr = v_sdcont_caraxf)
             vale_i = nint(v_sdcont_caraxf(zcmxf*(i_zone-1)+1))
+        else if (cont_form .eq. 5) then
+            call jeveuo(sdcont_caracf, 'L', vr = v_sdcont_caracf)
+            vale_i = nint(v_sdcont_caracf(zcmcf*(i_zone-1)+1))
         else
             ASSERT(.false.)
         endif
@@ -502,6 +510,9 @@ implicit none
         endif
     else if (question.eq.'CONTACT_INIT') then
         if (cont_form .eq. 2) then
+            call jeveuo(sdcont_caracf, 'L', vr = v_sdcont_caracf)
+            vale_i = nint(v_sdcont_caracf(zcmcf*(i_zone-1)+8))
+        else if (cont_form .eq. 5) then
             call jeveuo(sdcont_caracf, 'L', vr = v_sdcont_caracf)
             vale_i = nint(v_sdcont_caracf(zcmcf*(i_zone-1)+8))
         else if (cont_form.eq.3) then

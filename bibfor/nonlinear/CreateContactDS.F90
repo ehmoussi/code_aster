@@ -112,6 +112,10 @@ implicit none
     ds_contact%fields_cont_node = ' '
     ds_contact%field_cont_perc  = ' '
 !
+! - Field for CONT_ELEM
+!
+    ds_contact%field_cont_elem  = ' '
+!
 ! - Flag for (re) numbering
 !
     ds_contact%l_renumber   = .false._1
@@ -131,5 +135,13 @@ implicit none
 ! - Flag for pairing
 !
     ds_contact%l_pair       = .false._1
+!
+! - Total number of patches (for LAC method)
+!
+    ds_contact%nt_patch     = 0
+!
+! - Total number of contact pairs
+!
+    ds_contact%nb_cont_pair = 0
 !
 end subroutine

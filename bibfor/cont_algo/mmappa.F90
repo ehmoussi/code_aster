@@ -1,4 +1,4 @@
-subroutine mmappa(mesh, nume_dof, ds_contact)
+subroutine mmappa(mesh, ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -6,12 +6,15 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/apcalc.h"
+#include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/mmapre.h"
 #include "asterfort/mmpoin.h"
+#include "asterfort/mmptch.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -29,7 +32,6 @@ implicit none
 ! person_in_charge: mickael.abbas at edf.fr
 !
     character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: nume_dof
     type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
@@ -41,14 +43,12 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  mesh             : name of mesh
-! In  nume_dof         : name of numbering object (NUME_DDL)
 ! IO  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: sdappa
-    character(len=19) :: newgeo
     integer :: ifm, niv
+    aster_logical :: l_cont_lac, l_cont_cont
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,24 +57,41 @@ implicit none
         write (ifm,*) '<CONTACT> .. Pairing'
     endif
 !
-! - Pairing datastructure
+! - Get parameters
 !
-    sdappa = ds_contact%sdcont_solv(1:14)//'.APPA'
-!
-! - New geometry name
-!
-    newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
-!
-! - Set pairing datastructure
-!
-    call mmpoin(mesh, ds_contact, newgeo, sdappa)
+    l_cont_cont  = cfdisl(ds_contact%sdcont_defi,'FORMUL_CONTINUE')
+    l_cont_lac   = cfdisl(ds_contact%sdcont_defi,'FORMUL_LAC')
 !
 ! - Pairing
 !
-    call apcalc(sdappa, mesh, ds_contact%sdcont_defi, newgeo)
+    if (l_cont_cont) then
 !
-! - Save pairing in contact datastructures
+! ----- Set pairing datastructure
 !
-    call mmapre(mesh, nume_dof, ds_contact, sdappa)
+        call mmpoin(mesh, ds_contact)
+!
+! ----- Pairing
+!
+        call apcalc('N_To_S', mesh, ds_contact)
+!
+! ----- Save pairing in contact datastructures
+!
+        call mmapre(mesh, ds_contact)
+    elseif (l_cont_lac) then
+!
+! ----- Set pairing datastructure (MPI)
+!
+        call mmptch(ds_contact)    
+!
+! ----- Pairing
+!
+        call apcalc('S_To_S', mesh, ds_contact)
+!
+! ----- Need new contact elements
+!
+        ds_contact%l_renumber = .true.
+    else
+        ASSERT(.false.)
+    endif
 !
 end subroutine

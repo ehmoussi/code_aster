@@ -9,9 +9,10 @@ implicit none
 #include "asterfort/dfc_read_cont.h"
 #include "asterfort/dfc_read_disc.h"
 #include "asterfort/dfc_read_xfem.h"
+#include "asterfort/dfc_read_lac.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -26,7 +27,7 @@ implicit none
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! person_in_charge: mickael.abbas at edf.fr
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
     character(len=8), intent(in) :: sdcont
     character(len=8), intent(in) :: mesh
@@ -50,7 +51,7 @@ implicit none
 ! In  model            : name of model
 ! In  mesh             : name of mesh
 ! In  model_ndim       : dimension of model
-! In  ligret           : special LIGREL for slaves elements (CONTINUE formulation)
+! In  ligret           : special LIGREL for slaves elements
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,15 +63,18 @@ implicit none
     sdcont_defi = sdcont(1:8)//'.CONTACT'
     cont_form   = cfdisi(sdcont_defi,'FORMULATION')
 !
-    if (cont_form.eq.1) then
+    if (cont_form .eq. 1) then
         call dfc_read_disc(sdcont      , keywf, mesh, model, model_ndim,&
                            nb_cont_zone)
-    elseif (cont_form.eq.2) then
+    elseif (cont_form .eq. 2) then
         call dfc_read_cont(sdcont, keywf       , mesh, model, model_ndim  ,&
                            ligret, nb_cont_zone)
-    elseif (cont_form.eq.3) then
+    elseif (cont_form .eq. 3) then
         call dfc_read_xfem(sdcont      , keywf, mesh, model, model_ndim,&
                            nb_cont_zone)
+    elseif (cont_form .eq. 5) then
+        call dfc_read_lac (sdcont, keywf       , mesh, model, model_ndim  ,&
+                           ligret, nb_cont_zone)                      
     else
         ASSERT(.false.)
     endif
