@@ -190,7 +190,7 @@ bool XfemCrackInstance::build() throw( std::runtime_error )
 
 
     try {
-        INTEGER op = 41;
+        ASTERINTEGER op = 41;
         CALL_EXECOP( &op );
     } catch( ... ) {
         throw;

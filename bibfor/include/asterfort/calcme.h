@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -17,7 +17,7 @@
 !
 interface 
     subroutine calcme(option, compor, thmc, meca, imate,&
-                      typmod, crit, instam, instap, tref,&
+                      typmod, carcri, instam, instap, tref,&
                       ndim, dimdef, dimcon, nvimec, yate,&
                       addeme, adcome, addete, defgem, congem,&
                       congep, vintm, vintp, addep1, addep2,&
@@ -33,7 +33,7 @@ interface
         character(len=16) :: meca
         integer :: imate
         character(len=8) :: typmod(2)
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         real(kind=8) :: instam
         real(kind=8) :: instap
         real(kind=8) :: tref

@@ -49,6 +49,7 @@ Comportement - Occurrence  %(i1)d"""),
 
     14: _(u"""
   La modélisation %(k1)s dans le modèle n'est pas utilisable avec MFront.
+  S'il s'agit d'éléments de type TUYAU ou PMF et que vous êtes en mode prototypage, vous devez activer ALGO_CPLAN='DEBORST' pour pouvoir l'utiliser.
 """),
 
     15: _(u"""
@@ -56,7 +57,7 @@ Comportement - Occurrence  %(i1)d"""),
 """),
 
     16: _(u"""
-  Pour les comportements externes (MFRONT ou UMAT), on n'a pas d'informations sur le nom des variables internes.
+  Pour les comportements externes prototypes (MFRONT ou UMAT), on n'a pas d'informations sur le nom des variables internes.
 """),
 
     20: _(u"""         V%(i1)d : %(k1)s"""),

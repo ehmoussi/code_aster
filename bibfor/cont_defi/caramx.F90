@@ -10,7 +10,7 @@ implicit none
 #include "asterfort/caracx.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -25,7 +25,7 @@ implicit none
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! person_in_charge: mickael.abbas at edf.fr
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
     character(len=8), intent(in) :: sdcont
     integer, intent(in) :: cont_form
@@ -45,30 +45,24 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_cont_mesh
-!
-! --------------------------------------------------------------------------------------------------
-!
-    l_cont_mesh = (cont_form.eq.1).or.(cont_form.eq.2)
 !
 ! - Datastructures for all formulations (Not depending on contact zone)
 !
     call caracp(sdcont)
 !
-! - Datastructures for meshed formulations (depending on contact zone)
-!
-    if (l_cont_mesh) then
-        call caracm(sdcont, nb_cont_zone)
-    endif
-!
 ! - Datastructures for formulations
 !
     if (cont_form .eq. 1) then
+        call caracm(sdcont, nb_cont_zone)
         call caracd(sdcont, nb_cont_zone)
-    else if (cont_form.eq.2) then
+    else if (cont_form .eq. 2) then
+        call caracm(sdcont, nb_cont_zone)
         call caracc(sdcont, nb_cont_zone)
-    else if (cont_form.eq.3) then
+    else if (cont_form .eq. 3) then
         call caracx(sdcont, nb_cont_zone)
+    else if (cont_form .eq. 5) then
+        call caracm(sdcont, nb_cont_zone)
+        call caracc(sdcont, nb_cont_zone)
     else
         ASSERT(.false.)
     endif

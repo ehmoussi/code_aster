@@ -1,4 +1,4 @@
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,7 +18,7 @@
 !
 interface
     subroutine redece(fami, kpg, ksp, ndim, typmod,&
-                      imate, compor, crit, instam, instap,&
+                      imate, compor, mult_comp, carcri, instam, instap,&
                       neps, epsdt, depst, nsig, sigd,&
                       vind, option, angmas, nwkin, wkin,&
                       cp, numlc, tempd, tempf, tref,&
@@ -36,7 +36,8 @@ interface
         character(len=8) :: typmod(*)
         integer :: imate
         character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
+        character(len=16), intent(in) :: mult_comp
+        real(kind=8) :: carcri(*)
         real(kind=8) :: instam
         real(kind=8) :: instap
         real(kind=8) :: epsdt(neps)

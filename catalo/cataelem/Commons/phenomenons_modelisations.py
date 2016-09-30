@@ -1841,7 +1841,94 @@ phen.add('CABLE_POULIE', Modelisation(dim=(1,3), code='CAP',
 # Modelisations sous-terraines pour le contact/frottement en methode "continue" :
 #------------------------------------------------------------------------------------
 
-phen.add('CF_CONT1', Modelisation(dim=(2,3), code='CC1',
+#-- Define SLAVE elements for CONTINUE method (in DEFI_CONTACT) - Contact
+
+phen.add('CONT_SL_2D', Modelisation(dim=(1,2), code='CT2',
+    elements=(
+        (MT.SEG2      , EL.COS2E2D),
+        (MT.SEG3      , EL.COS3E2D),
+    )))
+
+phen.add('CONT_SL_3D', Modelisation(dim=(2,3), code='CT3',
+    elements=(
+        (MT.TRIA3     , EL.COT3E3D),
+        (MT.QUAD4     , EL.COQ4E3D),
+        (MT.QUAD8     , EL.COQ8E3D),
+        (MT.TRIA6     , EL.COT6E3D),
+        (MT.QUAD9     , EL.COQ9E3D),
+        (MT.SEG2      , EL.COP2E3D),
+        (MT.SEG3      , EL.COP3E3D),
+    )))
+
+#-- Define SLAVE elements for LAC method (in DEFI_CONTACT) - Contact
+
+phen.add('CONT_LAC_SL_2D', Modelisation(dim=(1,2), code='LC2',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+    ),
+    elements=(
+        (MT.SEG2    , EL.LACS22D),
+        (MT.SEG3    , EL.LACS32D),
+    )))
+
+phen.add('CONT_LAC_SL_2DB', Modelisation(dim=(1,2), code='L2B',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+    ),
+    elements=(
+        (MT.SEG2    , EL.LACS22DB),
+    )))
+
+phen.add('CONT_LAC_SL_2DT', Modelisation(dim=(1,2), code='L2T',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+    ),
+    elements=(
+        (MT.SEG2    , EL.LACS22DT),
+    )))
+
+phen.add('CONT_LAC_SL_3D', Modelisation(dim=(2,3), code='LC3',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+    ),
+    elements=(
+        (MT.TRIA3    , EL.LACT33D),
+        (MT.TRIA6    , EL.LACT63D),
+        (MT.QUAD9    , EL.LACQ93D),
+        (MT.QUAD8    , EL.LACQ83D),
+        (MT.QUAD4    , EL.LACQ43D),
+    )))
+
+phen.add('CONT_LAC_SL_3DB', Modelisation(dim=(2,3), code='L3B',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+    ),
+    elements=(
+        (MT.QUAD8    , EL.LACQ83DB),
+        (MT.QUAD4    , EL.LACQ43DB),
+    )))
+
+#-- Define SLAVE elements for CONTINUE method (in DEFI_CONTACT) - Friction
+
+phen.add('FRIC_SL_2D', Modelisation(dim=(1,2), code='CF2',
+    elements=(
+        (MT.SEG2      , EL.CFS2E2D),
+        (MT.SEG3      , EL.CFS3E2D),
+    )))
+
+phen.add('FRIC_SL_3D', Modelisation(dim=(2,3), code='CF3',
+    elements=(
+        (MT.TRIA3     , EL.CFT3E3D),
+        (MT.QUAD4     , EL.CFQ4E3D),
+        (MT.QUAD8     , EL.CFQ8E3D),
+        (MT.TRIA6     , EL.CFT6E3D),
+        (MT.QUAD9     , EL.CFQ9E3D),
+        (MT.SEG2      , EL.CFP2E3D),
+    )))
+
+#-- Define CONTACT elements for CONTINUE method (in STAT_NON_LINE) - Contact
+
+phen.add('CONT_EL_3D1', Modelisation(dim=(2,3), code='CC1',
     attrs=(
         (AT.CONTACT,'OUI'),
     ),
@@ -1883,7 +1970,15 @@ phen.add('CF_CONT1', Modelisation(dim=(2,3), code='CC1',
         (MT.TRIA66    , EL.COT6T6),
     )))
 
-phen.add('CF_CONT2', Modelisation(dim=(1,2), code='CC2',
+phen.add('CONT_EL_3D2', Modelisation(dim=(1,2), code='CC4',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+    ),
+    elements=(
+        (MT.SEG22     , EL.COP2P2),
+    )))
+
+phen.add('CONT_EL_2D1', Modelisation(dim=(1,2), code='CC2',
     attrs=(
         (AT.CONTACT,'OUI'),
     ),
@@ -1894,7 +1989,7 @@ phen.add('CF_CONT2', Modelisation(dim=(1,2), code='CC2',
         (MT.SEG33     , EL.COS3S3),
     )))
 
-phen.add('CF_CONT3', Modelisation(dim=(1,2), code='CC3',
+phen.add('CONT_EL_2D2', Modelisation(dim=(1,2), code='CC3',
     attrs=(
         (AT.CONTACT,'OUI'),
         (AT.AXIS,'OUI'),
@@ -1906,15 +2001,9 @@ phen.add('CF_CONT3', Modelisation(dim=(1,2), code='CC3',
         (MT.SEG33     , EL.COS3S3A),
     )))
 
-phen.add('CF_CONT4', Modelisation(dim=(1,2), code='CC4',
-    attrs=(
-        (AT.CONTACT,'OUI'),
-    ),
-    elements=(
-        (MT.SEG22     , EL.COP2P2),
-    )))
+#-- Define CONTACT elements for CONTINUE method (in STAT_NON_LINE) - Friction
 
-phen.add('CF_CONT5', Modelisation(dim=(2,3), code='CC5',
+phen.add('FRIC_EL_3D1', Modelisation(dim=(2,3), code='CC5',
     attrs=(
         (AT.CONTACT,'OUI'),
         (AT.FROTTEMENT,'OUI'),
@@ -1957,7 +2046,16 @@ phen.add('CF_CONT5', Modelisation(dim=(2,3), code='CC5',
         (MT.TRIA66    , EL.CFT6T6),
     )))
 
-phen.add('CF_CONT6', Modelisation(dim=(1,2), code='CC6',
+phen.add('FRIC_EL_3D2', Modelisation(dim=(1,2), code='CC8',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+        (AT.FROTTEMENT,'OUI'),
+    ),
+    elements=(
+        (MT.SEG22     , EL.CFP2P2),
+    )))
+
+phen.add('FRIC_EL_2D1', Modelisation(dim=(1,2), code='CC6',
     attrs=(
         (AT.CONTACT,'OUI'),
         (AT.FROTTEMENT,'OUI'),
@@ -1969,7 +2067,7 @@ phen.add('CF_CONT6', Modelisation(dim=(1,2), code='CC6',
         (MT.SEG33     , EL.CFS3S3),
     )))
 
-phen.add('CF_CONT7', Modelisation(dim=(1,2), code='CC7',
+phen.add('FRIC_EL_2D2', Modelisation(dim=(1,2), code='CC7',
     attrs=(
         (AT.CONTACT,'OUI'),
         (AT.FROTTEMENT,'OUI'),
@@ -1982,13 +2080,121 @@ phen.add('CF_CONT7', Modelisation(dim=(1,2), code='CC7',
         (MT.SEG33     , EL.CFS3S3A),
     )))
 
-phen.add('CF_CONT8', Modelisation(dim=(1,2), code='CC8',
+#-- Define CONTACT elements for LAC method (in STAT_NON_LINE) - Contact
+
+phen.add('CONT_LAC_EL_2DC', Modelisation(dim=(1,2), code='L2C',
     attrs=(
         (AT.CONTACT,'OUI'),
-        (AT.FROTTEMENT,'OUI'),
     ),
     elements=(
-        (MT.SEG22     , EL.CFP2P2),
+        (MT.SEG22    , EL.LCS2S2C),
+        (MT.SEG33    , EL.LCS3S3C),
+        (MT.SEG23    , EL.LCS2S3C),
+        (MT.SEG32    , EL.LCS3S2C),
+    )))
+    
+
+phen.add('CONT_LAC_EL_2DD', Modelisation(dim=(1,2), code='L2D',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+    ),
+    elements=(
+        (MT.SEG22    , EL.LCS2S2D),
+        (MT.SEG23    , EL.LCS2S3D),
+    )))
+    
+
+phen.add('CONT_LAC_EL_2DE', Modelisation(dim=(1,2), code='L2E',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+    ),
+    elements=(
+        (MT.SEG22    , EL.LCS2S2E),
+        (MT.SEG23    , EL.LCS2S3E),
+    )))
+      
+phen.add('CONT_LAC_EL_2DF', Modelisation(dim=(1,2), code='L2F',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+        (AT.AXIS,'OUI'),
+    ),
+    elements=(
+        (MT.SEG22    , EL.LCS2S2CA),
+        (MT.SEG33    , EL.LCS3S3CA),
+        (MT.SEG23    , EL.LCS2S3CA),
+        (MT.SEG32    , EL.LCS3S2CA),
+    )))
+    
+
+phen.add('CONT_LAC_EL_2DG', Modelisation(dim=(1,2), code='L2G',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+        (AT.AXIS,'OUI'),
+    ),
+    elements=(
+        (MT.SEG22    , EL.LCS2S2DA),
+        (MT.SEG23    , EL.LCS2S3DA),
+    )))
+    
+
+phen.add('CONT_LAC_EL_2DH', Modelisation(dim=(1,2), code='L2H',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+        (AT.AXIS,'OUI'),
+    ),
+    elements=(
+        (MT.SEG22    , EL.LCS2S2EA),
+        (MT.SEG23    , EL.LCS2S3EA),
+    ))) 
+
+phen.add('CONT_LAC_EL_3DD', Modelisation(dim=(2,3), code='L3D',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+    ),
+    elements=(
+        (MT.QUAD44    , EL.LACQ4Q4D),
+        (MT.QU4TR3    , EL.LACQ4T3D),
+        (MT.QU4TR6    , EL.LACQ4T6D),
+        (MT.QU4QU8    , EL.LACQ4Q8D),
+        (MT.QU4QU9    , EL.LACQ4Q9D),
+        (MT.QUAD88    , EL.LACQ8Q8D),
+        (MT.QU8TR6    , EL.LACQ8T6D),
+        (MT.QU8TR3    , EL.LACQ8T3D),
+        (MT.QU8QU4    , EL.LACQ8Q4D),
+        (MT.QU8QU9    , EL.LACQ8Q9D),
+        (MT.TRIA33    , EL.LACT3T3D),
+        (MT.TR3TR6    , EL.LACT3T6D),
+        (MT.TR3QU4    , EL.LACT3Q4D),
+        (MT.TR3QU8    , EL.LACT3Q8D),
+        (MT.TR3QU9    , EL.LACT3Q9D),
+        (MT.TRIA66    , EL.LACT6T6D),
+        (MT.TR6TR3    , EL.LACT6T3D),
+        (MT.TR6QU4    , EL.LACT6Q4D),
+        (MT.TR6QU8    , EL.LACT6Q8D),
+        (MT.TR6QU9    , EL.LACT6Q9D),
+        (MT.QUAD99    , EL.LACQ9Q9D),
+        (MT.QU9TR3    , EL.LACQ9T3D),
+        (MT.QU9TR6    , EL.LACQ9T6D),
+        (MT.QU9QU4    , EL.LACQ9Q4D),
+        (MT.QU9QU8    , EL.LACQ9Q8D),
+    )))
+
+
+phen.add('CONT_LAC_EL_3DE', Modelisation(dim=(2,3), code='L3E',
+    attrs=(
+        (AT.CONTACT,'OUI'),
+    ),
+    elements=(
+        (MT.QUAD44    , EL.LACQ4Q4E),
+        (MT.QU4TR3    , EL.LACQ4T3E),
+        (MT.QU4TR6    , EL.LACQ4T6E),
+        (MT.QU4QU8    , EL.LACQ4Q8E),
+        (MT.QU4QU9    , EL.LACQ4Q9E),
+        (MT.QUAD88    , EL.LACQ8Q8E),
+        (MT.QU8TR6    , EL.LACQ8T6E),
+        (MT.QU8TR3    , EL.LACQ8T3E),
+        (MT.QU8QU4    , EL.LACQ8Q4E),
+        (MT.QU8QU9    , EL.LACQ8Q9E),
     )))
 
 #------------------------------------------------------------------------------------
@@ -2015,23 +2221,7 @@ phen.add('CL_FNODCQ2', Modelisation(dim=(0,2), code='CL6',
     elements=(
         (MT.POI1      , EL.FORCE_NOD_COQ2D),
     )))
-#------------------------------------------------------------------------------------
 
-phen.add('CONT_2D', Modelisation(dim=(1,2), code='CT2',
-    elements=(
-        (MT.SEG2      , EL.COS2E2D),
-        (MT.SEG3      , EL.COS3E2D),
-    )))
-
-phen.add('CONT_3D', Modelisation(dim=(2,3), code='CT3',
-    elements=(
-        (MT.TRIA3     , EL.COT3E3D),
-        (MT.QUAD4     , EL.COQ4E3D),
-        (MT.QUAD8     , EL.COQ8E3D),
-        (MT.TRIA6     , EL.COT6E3D),
-        (MT.QUAD9     , EL.COQ9E3D),
-        (MT.SEG2      , EL.COP2E3D),
-    )))
 #------------------------------------------------------------------------------------
 
 phen.add('COQUE_3D', Modelisation(dim=(2,3), code='CQ3',
@@ -3332,22 +3522,6 @@ phen.add('FLUI_STRU', Modelisation(dim=(3,3), code='FLS',
         (MT.QUAD9     , EL.MEFS_FACE9),
     )))
 
-phen.add('FROT_2D', Modelisation(dim=(1,2), code='CF2',
-    elements=(
-        (MT.SEG2      , EL.CFS2E2D),
-        (MT.SEG3      , EL.CFS3E2D),
-    )))
-
-phen.add('FROT_3D', Modelisation(dim=(2,3), code='CF3',
-    elements=(
-        (MT.TRIA3     , EL.CFT3E3D),
-        (MT.QUAD4     , EL.CFQ4E3D),
-        (MT.QUAD8     , EL.CFQ8E3D),
-        (MT.TRIA6     , EL.CFT6E3D),
-        (MT.QUAD9     , EL.CFQ9E3D),
-        (MT.SEG2      , EL.CFP2E3D),
-    )))
-
 phen.add('GRILLE_EXCENTRE', Modelisation(dim=(2,3), code='GRC',
     attrs=(
         (AT.GRILLE,'OUI'),
@@ -3382,8 +3556,10 @@ phen.add('MEMBRANE', Modelisation(dim=(2,3), code='MMB',
     elements=(
         (MT.TRIA3     , EL.MEMBTR3),
         (MT.TRIA6     , EL.MEMBTR6),
+        (MT.TRIA7     , EL.MEMBTR7),
         (MT.QUAD4     , EL.MEMBQU4),
         (MT.QUAD8     , EL.MEMBQU8),
+        (MT.QUAD9     , EL.MEMBQU9),
     )))
 
 phen.add('PLAN_ELDI', Modelisation(dim=(2,2), code='PDI',

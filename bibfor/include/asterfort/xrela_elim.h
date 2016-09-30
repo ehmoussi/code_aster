@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,9 +18,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine xrela_elim(mesh, sdcont_defi, sd_iden_rela)
+    subroutine xrela_elim(mesh, ds_contact, iden_rela, l_iden_rela)
+        use NonLin_Datastructure_type
         character(len=8), intent(in) :: mesh
-        character(len=24), intent(in) :: sdcont_defi
-        character(len=24), intent(out) :: sd_iden_rela
+        type(NL_DS_Contact), intent(in) :: ds_contact
+        character(len=24), intent(in) :: iden_rela
+        aster_logical, intent(out) :: l_iden_rela
     end subroutine xrela_elim
 end interface

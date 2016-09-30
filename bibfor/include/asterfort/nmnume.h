@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,9 +18,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmnume(model     , result  , compor, list_load, ds_contact,&
-                      nume_dof, sdnume)
+    subroutine nmnume(model     , mesh    , result, compor, list_load, &
+                      ds_contact, nume_dof, sdnume)
         use NonLin_Datastructure_type
+        character(len=8), intent(in) :: mesh
         character(len=24), intent(in) :: model
         character(len=8), intent(in) :: result
         character(len=24), intent(in) :: compor

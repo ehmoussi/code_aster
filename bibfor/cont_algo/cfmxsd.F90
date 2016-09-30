@@ -13,7 +13,9 @@ implicit none
 #include "asterfort/cfmmma.h"
 #include "asterfort/cfmxme.h"
 #include "asterfort/cfmxr0.h"
+#include "asterfort/cfmxr0_lac.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/lac_crsd.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/xxmxme.h"
 !
@@ -40,7 +42,7 @@ implicit none
     character(len=24), intent(in) :: nume_dof
     integer, intent(in) :: list_func_acti(*)
     character(len=19), intent(in) :: sddyna
-    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,14 +57,14 @@ implicit none
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  list_func_acti   : list of active functionnalities
 ! In  sddyna           : name of dynamic solving datastructure
-! In  ds_contact       : datastructure for contact management
+! IO  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     character(len=8) :: model, mesh
     integer :: nb_cont_zone
-    aster_logical :: l_cont_disc, l_cont_cont, l_cont_xfem, l_cont_allv
+    aster_logical :: l_cont_disc, l_cont_cont, l_cont_xfem, l_cont_allv, l_cont_lac
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -82,6 +84,7 @@ implicit none
     l_cont_xfem = cfdisl(ds_contact%sdcont_defi,'FORMUL_XFEM')
     l_cont_cont = cfdisl(ds_contact%sdcont_defi,'FORMUL_CONTINUE')
     l_cont_disc = cfdisl(ds_contact%sdcont_defi,'FORMUL_DISCRETE')
+    l_cont_lac  = cfdisl(ds_contact%sdcont_defi,'FORMUL_LAC')
     l_cont_allv = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
 !
 ! - Create CONT_NOEU datastructure
@@ -92,7 +95,7 @@ implicit none
 !
 ! - Create pairing datastructure
 !
-    if (l_cont_cont .or. l_cont_disc) then
+    if (l_cont_cont .or. l_cont_disc .or. l_cont_lac) then
         call cfmmap(mesh, ds_contact)
     endif
 !
@@ -118,11 +121,23 @@ implicit none
             call cfmxme(nume_dof, sddyna, ds_contact)
         endif
 !
+! ----- Create datastructures for LAC method
+!
+        if (l_cont_lac) then
+            call lac_crsd(ds_contact)
+        endif
+!
 ! ----- Create datastructures for XFEM method
 !
         if (l_cont_xfem) then
             call xxmxme(mesh, model, list_func_acti, ds_contact)
         endif
+    endif
+!
+! - Create CONT_ELEM datastructure
+!
+    if (l_cont_lac) then
+        call cfmxr0_lac(mesh, ds_contact)
     endif
 !
 end subroutine

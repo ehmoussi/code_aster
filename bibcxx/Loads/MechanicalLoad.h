@@ -417,7 +417,7 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
         //cmdSt.debugPrint(); 
         try
         {
-            INTEGER op = 7;
+            ASTERINTEGER op = 7;
             CALL_EXECOP( &op );
         }
         catch( ... )

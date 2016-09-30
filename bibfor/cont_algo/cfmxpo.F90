@@ -12,6 +12,7 @@ implicit none
 #include "asterfort/cfmxre.h"
 #include "asterfort/cfverl.h"
 #include "asterfort/mmdeco.h"
+#include "asterfort/mldeco.h"
 #include "asterfort/xmdeco.h"
 !
 ! ======================================================================
@@ -35,7 +36,7 @@ implicit none
     character(len=8), intent(in) :: mesh
     character(len=*), intent(in) :: model_
     type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     integer, intent(in) :: nume_inst
     character(len=19), intent(in) :: sddisc
     character(len=19), intent(in) :: hval_algo(*)
@@ -53,7 +54,7 @@ implicit none
 ! In  mesh             : name of mesh
 ! In  model            : name of model
 ! IO  ds_measure       : datastructure for measure and statistics management
-! In  ds_contact       : datastructure for contact management
+! IO  ds_contact       : datastructure for contact management
 ! In  nume_inst        : index of current time step
 ! In  sddisc           : datastructure for discretization
 ! In  hval_algo        : hat-variable for algorithms fields
@@ -69,8 +70,7 @@ implicit none
     l_cont_cont = cfdisl(ds_contact%sdcont_defi,'FORMUL_CONTINUE')
     l_cont_disc = cfdisl(ds_contact%sdcont_defi,'FORMUL_DISCRETE')
     l_cont_xfem = cfdisl(ds_contact%sdcont_defi,'FORMUL_XFEM')
-    l_cont_lac  = .false._1
-!   l_cont_lac  = cfdisl(ds_contact%sdcont_defi, 'FORMUL_LAC')
+    l_cont_lac  = cfdisl(ds_contact%sdcont_defi,'FORMUL_LAC')
     l_all_verif = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF') 
 !
 ! - Time step cut management
@@ -80,10 +80,10 @@ implicit none
             call cfdeco(ds_contact)
         else if (l_cont_cont) then
             call mmdeco(ds_contact)
+        else if (l_cont_lac) then
+            call mldeco(ds_contact)    
         else if (l_cont_xfem) then
             call xmdeco(ds_contact)
-        else if (l_cont_lac) then
-            ASSERT(.false.)
         endif
     endif
 !

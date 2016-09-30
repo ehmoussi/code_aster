@@ -1,18 +1,24 @@
-subroutine apcrsd(sdappa      , nt_poin     , nb_cont_elem, nb_cont_node,&
+subroutine apcrsd(ds_contact  , sdappa      ,&
+                  nt_poin     , nb_cont_elem, nb_cont_node,&
                   nt_elem_node, nb_node_mesh)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
-#include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/jecrec.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeecra.h"
+#include "asterfort/cfnben.h"
+#include "asterfort/jecroc.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/jexnum.h"
 #include "asterfort/wkvect.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -29,6 +35,7 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
+    type(NL_DS_Contact), intent(in) :: ds_contact
     character(len=19), intent(in) :: sdappa
     integer, intent(in) :: nt_poin
     integer, intent(in) :: nb_cont_elem
@@ -44,6 +51,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_contact       : datastructure for contact management
 ! In  sdappa           : name of pairing datastructure
 ! In  nt_poin          : total number of points (contact and non-contact)
 ! In  nb_cont_elem     : total number of contact elements
@@ -54,6 +62,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    integer :: i_cont_elem, longt, elem_indx, longc, elem_nbnode
     character(len=24) :: sdappa_poin
     real(kind=8), pointer :: v_sdappa_poin(:) => null()
     character(len=24) :: sdappa_infp
@@ -130,6 +139,16 @@ implicit none
     call jecrec(sdappa_tgel, 'V V R', 'NU', 'CONTIG', 'VARIABLE',&
                 nb_cont_elem)
     call jeecra(sdappa_tgel, 'LONT', 6*nt_elem_node)
+    longt = 0
+    do i_cont_elem = 1, nb_cont_elem
+        elem_indx = i_cont_elem
+        call cfnben(ds_contact%sdcont_defi, elem_indx, 'CONNEX', elem_nbnode)
+        longc = 6*elem_nbnode
+        call jeecra(jexnum(sdappa_tgel, i_cont_elem), 'LONMAX', ival=longc)
+        call jecroc(jexnum(sdappa_tgel, i_cont_elem))
+        longt = longt + longc
+    end do
+    ASSERT(longt.eq.6*nt_elem_node)
 !
 ! - Datastructure for check normals discontinuity
 !

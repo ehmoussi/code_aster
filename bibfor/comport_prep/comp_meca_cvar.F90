@@ -1,12 +1,12 @@
-subroutine comp_meca_cvar(p_info_comp_valk, p_info_comp_vali, p_info_comp_nvar)
+subroutine comp_meca_cvar(ds_compor_prep)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterc/getfac.h"
 #include "asterfort/assert.h"
-#include "asterfort/comp_meca_l.h"
-#include "asterfort/comp_meca_vari.h"
+#include "asterfort/comp_nbvari.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -26,9 +26,7 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    character(len=16), intent(in) :: p_info_comp_valk(:)
-    integer, intent(in) :: p_info_comp_vali(:)
-    integer, intent(out) :: p_info_comp_nvar(:)
+    type(NL_DS_ComporPrep), intent(inout) :: ds_compor_prep
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -38,26 +36,26 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  p_info_comp_valk : comportment informations (character)
-! In  p_info_comp_vali : comportment informations (integer)
-! Out p_info_comp_nvar : comportment informations (int. vari. count)
+! IO  ds_compor_prep   : datastructure to prepare comportement
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iocc, nbocc
+    integer :: i_comp, nb_comp
     character(len=16) :: keywordfact
     character(len=16) :: type_matg, post_iter
     character(len=16) :: rela_comp, defo_comp, mult_comp, kit_comp(4), type_cpla
-    integer :: nume_comp(4), nb_vari, nb_vari_comp(4), nb_vari_exte
+    integer :: nume_comp(4), nb_vari, nb_vari_comp(4), nb_vari_umat, model_dim
+    character(len=255) :: libr_name, subr_name
+    character(len=16) :: model_mfront
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    keywordfact = 'COMPORTEMENT'
-    call getfac(keywordfact, nbocc)
+    keywordfact    = 'COMPORTEMENT'
+    nb_comp        = ds_compor_prep%nb_comp
 !
 ! - Loop on occurrences of COMPORTEMENT
 !
-    do iocc = 1, nbocc
+    do i_comp = 1, nb_comp
 !
 ! ----- Init
 !
@@ -67,35 +65,31 @@ implicit none
 !
 ! ----- Options
 !
-        nb_vari_exte = p_info_comp_vali(1*(iocc-1) + 1)
-        rela_comp    = p_info_comp_valk(16*(iocc-1) + 1)
-        defo_comp    = p_info_comp_valk(16*(iocc-1) + 2)
-        type_cpla    = p_info_comp_valk(16*(iocc-1) + 4)
-        kit_comp(1)  = p_info_comp_valk(16*(iocc-1) + 5)
-        kit_comp(2)  = p_info_comp_valk(16*(iocc-1) + 6)
-        kit_comp(3)  = p_info_comp_valk(16*(iocc-1) + 7)
-        kit_comp(4)  = p_info_comp_valk(16*(iocc-1) + 8)
-        mult_comp    = p_info_comp_valk(16*(iocc-1) + 14)
-        type_matg    = p_info_comp_valk(16*(iocc-1) + 15)
-        post_iter    = p_info_comp_valk(16*(iocc-1) + 16)
+        rela_comp    = ds_compor_prep%v_comp(i_comp)%rela_comp
+        defo_comp    = ds_compor_prep%v_comp(i_comp)%defo_comp
+        type_cpla    = ds_compor_prep%v_comp(i_comp)%type_cpla
+        kit_comp(:)  = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
+        mult_comp    = ds_compor_prep%v_comp(i_comp)%mult_comp
+        type_matg    = ds_compor_prep%v_comp(i_comp)%type_matg
+        post_iter    = ds_compor_prep%v_comp(i_comp)%post_iter
+        libr_name    = ds_compor_prep%v_exte(i_comp)%libr_name
+        subr_name    = ds_compor_prep%v_exte(i_comp)%subr_name
+        nb_vari_umat = ds_compor_prep%v_exte(i_comp)%nb_vari_umat
+        model_mfront = ds_compor_prep%v_exte(i_comp)%model_mfront
+        model_dim    = ds_compor_prep%v_exte(i_comp)%model_dim
 !
 ! ----- Count internal variables
 !
-        call comp_meca_vari(rela_comp, defo_comp, type_cpla, nb_vari     , kit_comp    ,&
-                            type_matg, post_iter, mult_comp, nb_vari_exte, nb_vari_comp,&
-                            nume_comp)
+        call comp_nbvari(rela_comp   , defo_comp   , type_cpla   , kit_comp ,&
+                         type_matg   , post_iter   , mult_comp   , libr_name,&
+                         subr_name   , model_dim   , model_mfront, nb_vari  ,&
+                         nb_vari_umat, nb_vari_comp, nume_comp)
 !
 ! ----- Save informations
 !
-        p_info_comp_nvar(10*(iocc-1) + 1) = nb_vari
-        p_info_comp_nvar(10*(iocc-1) + 2) = nb_vari_comp(1)
-        p_info_comp_nvar(10*(iocc-1) + 3) = nb_vari_comp(2)
-        p_info_comp_nvar(10*(iocc-1) + 4) = nb_vari_comp(3)
-        p_info_comp_nvar(10*(iocc-1) + 5) = nb_vari_comp(4)
-        p_info_comp_nvar(10*(iocc-1) + 6) = nume_comp(1)
-        p_info_comp_nvar(10*(iocc-1) + 7) = nume_comp(2)
-        p_info_comp_nvar(10*(iocc-1) + 8) = nume_comp(3)
-        p_info_comp_nvar(10*(iocc-1) + 9) = nume_comp(4)
+        ds_compor_prep%v_comp(i_comp)%nb_vari         = nb_vari
+        ds_compor_prep%v_comp(i_comp)%nb_vari_comp(:) = nb_vari_comp(:)
+        ds_compor_prep%v_comp(i_comp)%nume_comp(:)    = nume_comp(:)
     end do
 !
 end subroutine

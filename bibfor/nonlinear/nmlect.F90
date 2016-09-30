@@ -1,8 +1,14 @@
-subroutine nmlect(result, modele, mate, carele, compor,&
-                  lischa, solveu)
+subroutine nmlect(result, model, mate, cara_elem, list_load, solver_)
+!
+implicit none
+!
+#include "asterc/getres.h"
+#include "asterfort/cresol.h"
+#include "asterfort/medomm.h"
+#include "asterfort/nmdoch.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -19,60 +25,53 @@ subroutine nmlect(result, modele, mate, carele, compor,&
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit     none
-#include "asterc/getres.h"
-#include "asterfort/cresol.h"
-#include "asterfort/nmdome.h"
-    character(len=8) :: result
-    character(len=19) :: lischa, solveu
-    character(len=24) :: modele, mate, carele, compor
+    character(len=*), intent(out) :: result
+    character(len=*), intent(out) :: model
+    character(len=*), intent(out) :: mate
+    character(len=*), intent(out) :: cara_elem
+    character(len=*), intent(out) :: list_load
+    character(len=*), optional, intent(out) :: solver_
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! COMMANDES MECA_STATIQUE & STAT_NON_LINE
+! Mechanics - Initializations
 !
-! LECTURE DES OPERANDES
+! Get parameters from command file
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! OUT RESULT : NOM UTILISATEUR DU RESULTAT DE STAT_NON_LINE
-! OUT MODELE : NOM DU MODELE
-! OUT MATE   : NOM DU CHAMP DE MATERIAU
-! OUT CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! OUT COMPOR : CARTE DECRIVANT LE TYPE DE COMPORTEMENT
-! OUT LISCHA : SD L_CHARGES
-! OUT SOLVEU : NOM DU SOLVEUR
+! Out result           : name of results datastructure
+! Out model            : name of model
+! Out mate             : name of material characteristics (field)
+! Out cara_elem        : name of elementary characteristics (field)
+! Out list_load        : name of datastructure for list of loads
+! Out solver           : name of datastructure for solver
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: ibid
-    character(len=16) :: k16bid, nomcmd
-    character(len=8) :: k8bla
+    character(len=16) :: k16dummy
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    k8bla = ' '
+    list_load = '&&OP00XX.LIST_LOAD'
 !
-! -- NOM UTILISATEUR DU CONCEPT RESULTAT CREE PAR LA COMMANDE
+! - Get results
 !
-    call getres(result, k16bid, nomcmd)
+    call getres(result, k16dummy, k16dummy)
 !
-! -- DONNEES MECANIQUES
+! - Get parameters from command file
 !
-    modele = ' '
-    call nmdome(modele, mate, carele, lischa, k8bla,&
-                ibid)
+    call medomm(model, mate, cara_elem)
 !
-! --- PARAMETRES DONNES APRES LE MOT-CLE FACTEUR SOLVEUR
+! - Get loads information and create datastructure
 !
-    call cresol(solveu)
+    call nmdoch(list_load, l_load_user = .true._1)
 !
-! --- DANS LE CAS MECA_STATIQUE ON UTILISE LA CARTE COMPOR
-!    STOCKEE DANS LE MATERIAU POUR LES POU_D_EM
-!    (PAS UTILISEE PAR LES AUTRES ELEMENTS)
+! - Get parameters for solver
 !
-    if (nomcmd(1:13) .eq. 'MECA_STATIQUE') then
-        compor = mate(1:8)//'.COMPOR'
+    if (present(solver_)) then
+        solver_   = '&&OP00XX.SOLVER'
+        call cresol(solver_)
     endif
 !
 end subroutine

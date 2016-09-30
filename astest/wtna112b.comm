@@ -90,6 +90,9 @@ ZERO=DEFI_CONSTANTE(VALE=0.0,);
 
 # ARGILITE
 BIOTARG = 0.6
+
+THMALP1 = DEFI_CONSTANTE(VALE=0.000100)
+
 MAT1=DEFI_MATERIAU(
 # LE MATERIAU EST ISOTROPE MAIS ON TESTE LES ROUTINES D'ORTHOROPIE
                      ELAS_ORTH=_F(
@@ -113,7 +116,7 @@ MAT1=DEFI_MATERIAU(
                       COMP_THM = 'LIQU_SATU',
                       THM_LIQU=_F(RHO=1000.0,
                                   UN_SUR_K=INV_K_EAU,
-                                  ALPHA=1.E-4,
+                                  ALPHA=THMALP1,
                                   CP=4180.0,
                                   VISC=VISCOLIQ,
                                   D_VISC_TEMP=DVISCOL,),

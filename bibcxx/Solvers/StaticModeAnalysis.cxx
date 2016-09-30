@@ -93,7 +93,7 @@ ResultsContainerPtr StaticModeDeplInstance::execute() throw ( std::runtime_error
     // Maintenant que le fichier de commande est pret, on appelle OP0093
     try
     {
-        INTEGER op = 93;
+        ASTERINTEGER op = 93;
         CALL_EXECOP( &op );
     }
     catch( ... )
@@ -162,7 +162,7 @@ ResultsContainerPtr StaticModeForcInstance::execute() throw ( std::runtime_error
     // Maintenant que le fichier de commande est pret, on appelle OP0093
     try
     {
-        INTEGER op = 93;
+        ASTERINTEGER op = 93;
         CALL_EXECOP( &op );
     }
     catch( ... )
@@ -237,7 +237,7 @@ ResultsContainerPtr StaticModePseudoInstance::execute() throw ( std::runtime_err
     // Maintenant que le fichier de commande est pret, on appelle OP0093
     try
     {
-        INTEGER op = 93;
+        ASTERINTEGER op = 93;
         CALL_EXECOP( &op );
     }
     catch( ... )
@@ -322,7 +322,7 @@ ResultsContainerPtr StaticModeInterfInstance::execute() throw ( std::runtime_err
     // Maintenant que le fichier de commande est pret, on appelle OP0093
     try
     {
-        INTEGER op = 93;
+        ASTERINTEGER op = 93;
         CALL_EXECOP( &op );
     }
     catch( ... )

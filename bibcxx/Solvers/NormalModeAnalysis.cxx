@@ -41,7 +41,7 @@ MechanicalModeContainerPtr NormalModeAnalysisInstance::execute()
 
     try
     {
-        INTEGER op = 45;
+        ASTERINTEGER op = 45;
         CALL_EXECOP( &op );
     }
     catch( ... )

@@ -1,5 +1,5 @@
-subroutine cont_init(mesh  , model     , ds_contact, nume_inst, ds_measure    ,&
-                     sddyna, hat_valinc, sdnume    , nume_dof , list_func_acti)
+subroutine cont_init(mesh  , model     , ds_contact, nume_inst     , ds_measure,&
+                     sddyna, hat_valinc, sdnume    , list_func_acti)
 !
 use NonLin_Datastructure_type
 !
@@ -9,6 +9,7 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/xminit.h"
 #include "asterfort/mminit.h"
+#include "asterfort/mminit_lac.h"
 #include "asterfort/cfinit.h"
 !
 ! ======================================================================
@@ -37,8 +38,7 @@ implicit none
     character(len=19), intent(in) :: hat_valinc(*)
     character(len=19), intent(in) :: sddyna
     integer, intent(in) :: list_func_acti(*)
-    character(len=19), intent(in) :: sdnume
-    character(len=24), intent(in) :: nume_dof    
+    character(len=19), intent(in) :: sdnume  
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,7 +53,6 @@ implicit none
 ! IO  ds_contact       : datastructure for contact management
 ! In  nume_inst        : index of current step time
 ! In  hat_valinc       : hat variable for algorithm fields
-! In  nume_dof         : name of numbering object (NUME_DDL)
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  sddyna           : datastructure for dynamic
 ! In  sdnume           : name of dof positions datastructure
@@ -61,13 +60,14 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_cont_disc, l_cont_allv, l_cont_cont, l_cont_xfem
+    aster_logical :: l_cont_disc, l_cont_allv, l_cont_cont, l_cont_xfem, l_cont_lac
 !
 ! --------------------------------------------------------------------------------------------------
 !
     l_cont_disc = isfonc(list_func_acti,'CONT_DISCRET')
     l_cont_cont = isfonc(list_func_acti,'CONT_CONTINU')
     l_cont_xfem = isfonc(list_func_acti,'CONT_XFEM')
+    l_cont_lac  = isfonc(list_func_acti,'CONT_LAC')
     l_cont_allv = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
 !    
     if (.not.l_cont_allv) then
@@ -81,8 +81,15 @@ implicit none
 ! ----- For continue contact
 !
         if (l_cont_cont) then
-            call mminit(mesh  , ds_contact, sddyna  , hat_valinc, ds_measure,&
-                        sdnume, nume_dof  , nume_inst)
+            call mminit(mesh  , ds_contact, sddyna, hat_valinc, ds_measure,&
+                        sdnume, nume_inst)
+        endif
+!
+! ----- For continue contact (LAC method)
+!
+        if (l_cont_lac) then
+            call mminit_lac(mesh     , ds_contact, hat_valinc, ds_measure, sdnume,&
+                            nume_inst)
         endif
 !
 ! ----- For XFEM contact

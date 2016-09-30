@@ -118,9 +118,9 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( cons
 {
     if( rank > _nbRanks )
         throw std::runtime_error( "Order number out of range" );
-    INTEGER retour;
+    ASTERINTEGER retour;
     retour = 0;
-    const INTEGER rankLong = rank;
+    const ASTERINTEGER rankLong = rank;
     std::string returnName( 19, ' ' );
     CALL_RSEXCH( " ", getName().c_str(), name.c_str(), &rankLong, returnName.c_str(), &retour );
     CALL_RSNOCH( getName().c_str(), name.c_str(), &rankLong );
@@ -188,7 +188,7 @@ bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
 
     try
     {
-        INTEGER op = 39;
+        ASTERINTEGER op = 39;
         CALL_EXECOP( &op );
     }
     catch( ... )

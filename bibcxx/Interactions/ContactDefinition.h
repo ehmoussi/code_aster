@@ -729,7 +729,7 @@ bool ContactDefinition< formulation >::build() throw ( std::runtime_error )
     // Maintenant que le fichier de commande est pret, on appelle OP0030
     try
     {
-        INTEGER op = 30;
+        ASTERINTEGER op = 30;
         CALL_EXECOP( &op );
     }
     catch( ... )

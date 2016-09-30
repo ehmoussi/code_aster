@@ -79,7 +79,7 @@ bool ModelInstance::build() throw ( std::runtime_error )
     // Maintenant que le fichier de commande est pret, on appelle OP0018
     try
     {
-        INTEGER op = 18;
+        ASTERINTEGER op = 18;
         CALL_EXECOP( &op );
     }
     catch( ... )
@@ -118,7 +118,7 @@ ModelPtr ModelInstance::enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::r
     // Call  OP00113
     try
     {
-        INTEGER op = 113;
+        ASTERINTEGER op = 113;
         CALL_EXECOP( &op );
     }
     catch( ... )

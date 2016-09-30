@@ -68,8 +68,8 @@ DataStructure::~DataStructure() throw ( std::runtime_error )
 
 void DataStructure::debugPrint( int logicalUnit ) const
 {
-    INTEGER unit, niveau, ipos, True, False;
-    unit = INTEGER( logicalUnit );
+    ASTERINTEGER unit, niveau, ipos, True, False;
+    unit = ASTERINTEGER( logicalUnit );
     niveau = 2;
     True = 1;
     False = 0;
