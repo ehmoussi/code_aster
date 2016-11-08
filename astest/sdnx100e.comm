@@ -352,8 +352,18 @@ freqspec = DEFI_LIST_REEL ( DEBUT = 0.1,
                                        ),
                                        ),
                            );
+                           
+                           
+labsr = DEFI_LIST_REEL ( VALE=(0.000001, 0.000005, 0.000015, 0.00005,
+                                 0.0001, 0.0004, 0.001, 0.004, 0.01),
+                           );
+                           
+lfreqc = DEFI_LIST_REEL(DEBUT=0.15,
+                          INTERVALLE=_F(PAS=0.15,
+                                        JUSQU_A=8.4,),
+                          )
 
-tabsol= DEFI_SOL_EQUI(MAILLAGE=mailcol,
+tabsol= DEFI_SOL_EQUI(#MAILLAGE=mailcol,
                        GROUP_MA_DROITE='DR8',GROUP_MA_GAUCHE='GA8',
                        GROUP_MA_COL='SURF',GROUP_MA_SUBSTR='BAS',
 
@@ -463,7 +473,7 @@ tabsol= DEFI_SOL_EQUI(MAILLAGE=mailcol,
                        FONC_SIGNAL=ACCEX,
                        RESI_RELA=0.05,
                        SURF='OUI',
-                       FREQ_COUP=35.,
+                       FREQ_COUP=9.5,
                        COEF_AMPL_ACCE=1.);
 
 IMPR_TABLE(TABLE=tabsol);
@@ -479,7 +489,7 @@ tmatela=LIRE_TABLE(UNITE=51);
 tmatgg=LIRE_TABLE(UNITE=52);
 tmatdg=LIRE_TABLE(UNITE=53);
 
-tabsol2= DEFI_SOL_EQUI(MAILLAGE=mailcol,
+tabsol2= DEFI_SOL_EQUI(#MAILLAGE=mailcol,
                        TITRE='DONNEES PAR TABLES',
                        GROUP_MA_DROITE='DR8',GROUP_MA_GAUCHE='GA8',
                        GROUP_MA_COL='SURF',GROUP_MA_SUBSTR='BAS',
@@ -492,13 +502,16 @@ tabsol2= DEFI_SOL_EQUI(MAILLAGE=mailcol,
                        #LIEU_SIGNAL='CHAMP_LIBRE',
                        LIEU_SIGNAL='AFFLEURANT',
                        FONC_SIGNAL=accexRA,
+                       LIST_FREQ=lfreqc,
                        RESI_RELA=0.05,
                        SURF='NON',
                        NIVE_COUCH_ENFO=32,
-                       FREQ_COUP=35.,
+                       FREQ_COUP=8.5,
                        COEF_AMPL_ACCE=1.);
 
 IMPR_TABLE(TABLE=tabsol2);
+
+#FIN( );
 
 tabsol3= DEFI_SOL_EQUI(MAILLAGE=mailcol,
                        GROUP_MA_DROITE='DR8',GROUP_MA_GAUCHE='GA8',
@@ -607,9 +620,12 @@ tabsol3= DEFI_SOL_EQUI(MAILLAGE=mailcol,
                           RHO=2710., AMOR_HYST=0.02, NUME_MATE=4,),
                             ),
                        LIEU_SIGNAL='CHAMP_LIBRE',
+                       NOM_CMP='DY',
                        CORR_AMOR='OUI',
                        FONC_SIGNAL=ACCEX,
-                       LIST_FREQ=freqspec,
+                       LIST_FREQ_SPEC_OSCI=freqspec,
+                       LIST_FREQ=lfreqc,
+                       LIST_EPSI=labsr,
                        UNITE_TABLE_RESU=24,
                        UNITE_RESU_TRAN =57,
                        UNITE_RESU_SPEC =58,
@@ -617,7 +633,7 @@ tabsol3= DEFI_SOL_EQUI(MAILLAGE=mailcol,
                        SURF='NON',
                        NIVE_COUCH_ENFO=32,
                        NB_RECEPTEUR =4,
-                       FREQ_COUP=35.,
+                       FREQ_COUP=8.5,
                        COEF_VARI_MATE=1.0,
                        COEF_AMPL_ACCE=1.);
 
@@ -960,6 +976,7 @@ CHSOL=AFFE_CHAR_MECA(MODELE=MODELB,
                              UNITE_RESU_AMOR=37,
                              UNITE_RESU_MASS=38,
                              #UNITE_RESU_FORC=36,
+                             #NB_PAS_MAXI=25,
                              ),
                       );
 
@@ -1204,7 +1221,7 @@ SBKY5=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=GABKRY, LIST_FREQ = freqspec,
 
 
 TEST_FONCTION(VALEUR=(
-                      _F(VALE_CALC=0.54069811289943,
+                      _F(VALE_CALC=0.54051534813639,
                          VALE_REFE=0.60,
                          VALE_PARA=(0.05, 2.6),
                          REFERENCE='SOURCE_EXTERNE',
@@ -1212,7 +1229,7 @@ TEST_FONCTION(VALEUR=(
                          TOLE_MACHINE=2.E-04,   # En attente issue24202 
                          NOM_PARA=('AMOR', 'FREQ'),
                          FONCTION=SRADBX5,),
-                      _F(VALE_CALC=0.58417216035021,
+                      _F(VALE_CALC=0.58335091709952,
                          VALE_REFE=0.687,
                          VALE_PARA=(0.05, 2.8),
                          REFERENCE='SOURCE_EXTERNE',
@@ -1220,7 +1237,7 @@ TEST_FONCTION(VALEUR=(
                          TOLE_MACHINE=3.E-06,   # En attente issue24202 
                          NOM_PARA=('AMOR', 'FREQ'),
                          FONCTION=SRADBY5,),
-                      _F(VALE_CALC=2.173157768332,
+                      _F(VALE_CALC=2.172962253268,
                          VALE_REFE=2.57,
                          VALE_PARA=(0.05, 1.5),
                          REFERENCE='SOURCE_EXTERNE',
@@ -1228,7 +1245,7 @@ TEST_FONCTION(VALEUR=(
                          TOLE_MACHINE=3.E-06,   # En attente issue24202 
                          NOM_PARA=('AMOR', 'FREQ'),
                          FONCTION=SBKX5,),
-                      _F(VALE_CALC=2.042033934792,
+                      _F(VALE_CALC=2.046884308296,
                          VALE_REFE=3.37,
                          VALE_PARA=(0.05, 1.3),
                          REFERENCE='SOURCE_EXTERNE',

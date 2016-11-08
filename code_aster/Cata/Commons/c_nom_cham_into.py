@@ -31,7 +31,7 @@ class NOM_CHAM_INTO:  #COMMUN#
         self.all_phenomenes = ('CONTRAINTE', 'DEFORMATION', 'ENERGIE', 'CRITERES',
                                'VARI_INTERNE', 'HYDRAULIQUE', 'THERMIQUE',
                                'ACOUSTIQUE', 'FORCE', 'ERREUR', 'DEPLACEMENT',
-                               'METALLURGIE', 'AUTRES')
+                               'METALLURGIE', 'AUTRES','PROPRIETES')
         d = {}
         d['CONTRAINTE'] = {
             "EFGE_ELGA":        ( ("lin", "nonlin",),
@@ -168,6 +168,12 @@ class NOM_CHAM_INTO:  #COMMUN#
                                  _(u"Déformations équivalentes aux noeuds par élément"), ),
             "EPEQ_NOEU":        ( ("lin", "nonlin",),
                                  _(u"Déformations équivalentes aux noeuds"), ),
+            "EPGQ_ELGA":        ( ("lin", "nonlin",),
+                                 _(u"Déformations équivalentes de Green-Lagrange aux points de Gauss"), ),
+            "EPGQ_ELNO":        ( ("lin", "nonlin",),
+                                 _(u"Déformations équivalentes de Green-Lagrange aux noeuds par élément"), ),
+            "EPGQ_NOEU":        ( ("lin", "nonlin",),
+                                 _(u"Déformations équivalentes de Green-Lagrange aux noeuds"), ),
             "EPMQ_ELGA":        ( ("lin", "nonlin",),
                                  _(u"Déformations mécaniques équivalentes aux points de Gauss"), ),
             "EPMQ_ELNO":        ( ("lin", "nonlin",),
@@ -357,6 +363,13 @@ class NOM_CHAM_INTO:  #COMMUN#
             "VITE_VENT":        ( (),
                                  _(u"Chargement vitesse du vent"), ),
         }
+        d['PROPRIETES'] = {
+            "MATE_ELGA":        ( ("lin", "nonlin",),
+                                 _(u"Valeurs des paramètres matériaux élastiques aux points de Gauss"), ),
+            "MATE_ELEM":        ( ("lin", "nonlin",),
+                                 _(u"Valeurs des paramètres matériaux élastiques par élément"), ),
+        }
+        
         for typ in ('ELGA', 'ELNO', 'ELEM', 'NOEU', 'CART'):
             for i in range(1, 11):
                 d['AUTRES']['UT%02d_%s' % (i, typ)]=( (),

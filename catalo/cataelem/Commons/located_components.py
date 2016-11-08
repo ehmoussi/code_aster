@@ -148,7 +148,7 @@ CONDPLA = LocatedComponents(phys=PHY.NEUT_K8, type='ELEM',
                             components=('Z[2]',))
 
 CONDPLR = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
-                            components=('X[5]',))
+                            components=('X[6]',))
 
 CPESANR = LocatedComponents(phys=PHY.PESA_R, type='ELEM',
                             components=('G', 'AG', 'BG', 'CG',))
@@ -202,6 +202,9 @@ CVENTCX = LocatedComponents(phys=PHY.VENTCX_F, type='ELEM',
 E102NEUT = LocatedComponents(phys=PHY.N816_R, type='ELEM',
                              components=('X[102]',))
 
+E120NEUT = LocatedComponents(phys=PHY.N816_R, type='ELEM',
+                             components=('X[120]',))
+
 E10NEUTI = LocatedComponents(phys=PHY.N120_I, type='ELEM',
                              components=('X[10]',))
 
@@ -228,6 +231,9 @@ E162NEUR = LocatedComponents(phys=PHY.N2448R, type='ELEM',
 
 E170NEUT = LocatedComponents(phys=PHY.N1360R, type='ELEM',
                              components=('X[170]',))
+
+E200NEUT = LocatedComponents(phys=PHY.N1360R, type='ELEM',
+                             components=('X[200]',))
 
 E18NEUI = LocatedComponents(phys=PHY.N120_I, type='ELEM',
                             components=('X[18]',))
@@ -264,6 +270,9 @@ E2NEUTR = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
 
 E306NEUT = LocatedComponents(phys=PHY.N2448R, type='ELEM',
                              components=('X[306]',))
+
+E360NEUT = LocatedComponents(phys=PHY.N2448R, type='ELEM',
+                             components=('X[360]',))
 
 E320NEUI = LocatedComponents(phys=PHY.N1280I, type='ELEM',
                              components=('X[320]',))
@@ -349,6 +358,9 @@ ECOURAN = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
 EDCEL_I = LocatedComponents(phys=PHY.DCEL_I, type='ELEM',
                             components=('NPG_DYN', 'NCMP_DYN',))
 
+EEMATE_R = LocatedComponents(phys=PHY.MATE_R, type='ELEM',
+                             components=('E','NU','RHO',))
+
 EENECNO = LocatedComponents(phys=PHY.ENER_R, type='ELEM',
                             components=('TOTALE', 'DX', 'DY', 'DZ', 'DRX',
                                         'DRY', 'DRZ',))
@@ -361,6 +373,9 @@ EERREURT = LocatedComponents(phys=PHY.ERRE_R, type='ELEM',
                                  'ERTABS', 'ERTREL', 'TERMNO', 'TERMVO', 'TERMV2',
                              'TERMV1', 'TERMSA', 'TERMS2', 'TERMS1', 'TERMFL',
                              'TERMF2', 'TERMF1', 'TERMEC', 'TERME2', 'TERME1',))
+
+EGMATE_R = LocatedComponents(phys=PHY.MATE_R, type='ELGA', location='RIGI',
+                             components=('E','NU','RHO',))
 
 EGTHETA = LocatedComponents(phys=PHY.G, type='ELEM',
                             components=('GTHETA',))

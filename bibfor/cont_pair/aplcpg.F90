@@ -1,6 +1,6 @@
 subroutine aplcpg(mesh        , newgeo        , sdappa      , i_zone        , pair_tole,&
                   nb_elem_mast, list_elem_mast, nb_elem_slav, list_elem_slav, &
-                  nb_pair_zone, list_pair_zone)
+                  nb_pair_zone, list_pair_zone, i_proc      , nb_proc, pair_method)
 !
 implicit none
 !
@@ -8,6 +8,8 @@ implicit none
 #include "jeveux.h"
 #include "asterc/r8nnem.h"
 #include "asterfort/jecrec.h"
+#include "asterfort/jexatr.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeecra.h"
@@ -23,12 +25,12 @@ implicit none
 #include "asterfort/clpoma.h"
 #include "asterfort/assert.h"
 #include "asterfort/apdcma.h"
+#include "asterfort/ap_infast.h"
 #include "asterfort/apprin.h"
 #include "asterfort/apdmae.h"
 #include "asterfort/aprtpe.h"
 #include "asterfort/cncinv.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/cnvois.h"
 #include "asterfort/codent.h"
 #include "asterfort/testvois.h"
 #include "asterfort/as_deallocate.h"
@@ -65,6 +67,9 @@ implicit none
     integer, intent(in) :: list_elem_slav(nb_elem_slav)
     integer, intent(inout) :: nb_pair_zone
     integer, pointer, intent(inout) :: list_pair_zone(:)
+    integer, intent(in) :: i_proc
+    integer, intent(in) :: nb_proc
+    character(len=24), intent(in) :: pair_method
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,7 +93,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: list_pair(nb_elem_mast), nbpatch_t
+    integer :: list_pair(nb_elem_mast), nbpatch_t, iret
     integer :: elem_slav_nbnode, elem_slav_nume, elem_slav_dime, elem_slav_indx
     integer :: elem_mast_nbnode, elem_mast_nume, elem_mast_dime, elem_mast_indx
     character(len=8) :: elem_mast_code, elem_slav_code
@@ -109,7 +114,7 @@ implicit none
     integer :: elem_start, elem_slav_start(nb_elem_slav), elem_mast_start(nb_elem_slav), elem_nume
     integer :: slav_indx_mini, mast_indx_mini, slav_indx_maxi, mast_indx_maxi
     integer :: elem_neigh_indx, mast_find_indx, elem_slav_neigh, elem_mast_neigh
-    aster_logical :: l_recup, debug, l_not_memory
+    aster_logical :: l_recup, debug
     integer, pointer :: mast_find_flag(:) => null()
     integer, pointer :: elem_mast_flag(:) => null()
     integer, pointer :: elem_slav_flag(:) => null()
@@ -122,13 +127,18 @@ implicit none
     integer :: inte_neigh(4), inte_neigh_aux(4)
     integer :: jv_geom, elem_type_nume
     real(kind=8) :: list_slav_weight(4), weight_test, tole_weight
-    character(len=24) :: sdappa_gapi, sdappa_coef
+    character(len=24) :: sdappa_gapi, sdappa_coef, njv_weight_c, njv_weight_t,njv_nb_pair_zmpi
     real(kind=8), pointer :: v_sdappa_gapi(:) => null()
     real(kind=8), pointer :: v_sdappa_coef(:) => null()
     real(kind=8), pointer :: patch_weight_t(:) => null()
     real(kind=8), pointer :: patch_weight_c(:) => null()
     integer, pointer :: v_mesh_comapa(:) => null()
     integer, pointer :: v_mesh_typmail(:) => null()
+    integer, pointer :: nb_pair_zmpi(:) => null()
+    integer, pointer :: list_pair_zmpi(:) => null()
+    integer, pointer :: v_mesh_connex(:)  => null()
+    integer, pointer :: v_connex_lcum(:)  => null()
+    character(len=16), pointer :: valk(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -142,8 +152,24 @@ implicit none
     list_slav_weight(1:4)          = 0.d0
     call jelira(mesh//'.PATCH','NUTIOC', nbpatch_t)
     nbpatch_t= nbpatch_t-1
-    AS_ALLOCATE(vr=patch_weight_c, size= nbpatch_t)
-    AS_ALLOCATE(vr=patch_weight_t, size= nbpatch_t)
+    njv_weight_c=sdappa(1:19)//'.PWC '
+    call wkvect(njv_weight_c, "V V R", nbpatch_t, vr=patch_weight_c)
+    njv_weight_t=sdappa(1:19)//'.PWT '
+    call wkvect(njv_weight_t, "V V R", nbpatch_t, vr=patch_weight_t)
+    njv_nb_pair_zmpi=sdappa(1:19)//'.NAPP'
+    call wkvect(njv_nb_pair_zmpi, "V V I", nb_proc, vi=nb_pair_zmpi)
+    call jeexin(sdappa(1:19)//'.MPID',iret)
+    if (iret .eq. 0) then
+        call wkvect(sdappa(1:19)//'.MPID','V V K16',1,vk16=valk)
+        valk(1)='MPI_INCOMPLET'
+        call wkvect(sdappa(1:19)//'.MPIE','V V K16',1,vk16=valk)
+        valk(1)='MPI_INCOMPLET'
+    else 
+        call jeveuo(sdappa(1:19)//'.MPID', 'E',vk16=valk)
+        valk(1)='MPI_INCOMPLET'
+        call jeveuo(sdappa(1:19)//'.MPIE', 'E',vk16=valk)
+        valk(1)='MPI_INCOMPLET'
+    endif   
     mast_indx_maxi = maxval(list_elem_mast)
     slav_indx_maxi = maxval(list_elem_slav)
     mast_indx_mini = minval(list_elem_mast)
@@ -155,6 +181,7 @@ implicit none
     sdappa_coef = sdappa(1:19)//'.COEF'
     call jeveuo(sdappa_gapi, 'E', vr = v_sdappa_gapi)
     call jeveuo(sdappa_coef, 'E', vr = v_sdappa_coef)
+    AS_ALLOCATE(vi=list_pair_zmpi, size= 3*nb_elem_slav*nb_elem_mast)
 !
 ! - Access to updated geometry
 !
@@ -164,6 +191,8 @@ implicit none
 !
     call jeveuo(mesh//'.TYPMAIL', 'L', vi = v_mesh_typmail)
     call jeveuo(mesh//'.COMAPA','L', vi = v_mesh_comapa)
+    call jeveuo(mesh//'.CONNEX', 'L', vi = v_mesh_connex)
+    call jeveuo(jexatr(mesh//'.CONNEX', 'LONCUM'), 'L', vi = v_connex_lcum)
 !
 ! - Objects for flags
 !
@@ -178,17 +207,42 @@ implicit none
     call codent(i_zone, 'G', knuzo)
     sdappa_mane = sdappa(1:19)//'.MAN'//knuzo(1:1)
     sdappa_slne = sdappa(1:19)//'.ESN'//knuzo(1:1)
+    call jeveuo(sdappa_mane, 'L', vi = v_sdappa_mane)
+    call jeveuo(sdappa_slne, 'L', vi = v_sdappa_slne)
 !
 ! - Find initial elements for pairing by PANG method
 !
+120 continue
     if (debug) then 
         write(*,*)'Recherche mailles de départ'
     end if
-    l_not_memory = .true.
-    call apprin(mesh           , newgeo       , pair_tole      , nb_elem_mast  ,&
-                list_elem_mast , nb_elem_slav , list_elem_slav , elem_mast_flag,&
-                elem_slav_flag , nb_mast_start, elem_mast_start, nb_slav_start ,&
-                elem_slav_start)
+    if (pair_method .eq. "RAPIDE") then
+        call ap_infast(mesh           , newgeo       , pair_tole      , nb_elem_mast  ,&
+                       list_elem_mast , nb_elem_slav , list_elem_slav ,elem_slav_flag ,&
+                       nb_mast_start, elem_mast_start, nb_slav_start  ,elem_slav_start,&
+                       sdappa, i_zone)
+    elseif (pair_method .eq. "ROBUSTE") then
+        call apprin(mesh           , newgeo       , pair_tole      , nb_elem_mast  ,&
+                    list_elem_mast , nb_elem_slav , list_elem_slav , elem_slav_flag ,&
+                    nb_mast_start, elem_mast_start, nb_slav_start  , elem_slav_start)
+    endif
+    if (debug) then
+        if (nb_slav_start .eq. 0) then
+            write(*,*) ". No more slave start element "
+        else
+            call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_start(1)), elem_slav_name)
+            write(*,*) ". Start slave element: ", elem_slav_name
+        endif
+        if (nb_mast_start .eq. 0) then
+            write(*,*) ". No more master start element "
+        else
+            call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_start(1)), elem_mast_name)
+            write(*,*) ". Start master element: ", elem_mast_name
+        endif     
+    endif
+    if (nb_slav_start.eq.0) then
+        goto 110
+    end if
 !
 ! - Pairing
 !
@@ -221,9 +275,10 @@ implicit none
 !
 ! ----- Get informations about slave element
 !
-        call apcoor(mesh          , jv_geom       , elem_slav_type  ,&
+        call apcoor(jv_geom       , elem_slav_type  ,&
                     elem_slav_nume, elem_slav_coor, elem_slav_nbnode,&
-                    elem_slav_code, elem_slav_dime)
+                    elem_slav_code, elem_slav_dime, v_mesh_connex   ,&
+                    v_connex_lcum)
         if (debug) then 
             write(*,*) "Current slave element: ", elem_slav_nume, elem_slav_name,&
                        '(type : ', elem_slav_code, ')' 
@@ -263,10 +318,9 @@ implicit none
 !
 ! ----- Access to neighbours
 !
-        call jeveuo(jexnum(sdappa_slne, elem_slav_indx), 'L', vi = v_sdappa_slne)
         if (debug) then
             do i_slav_neigh = 1, nb_slav_neigh
-                elem_nume = v_sdappa_slne(i_slav_neigh)
+                elem_nume = v_sdappa_slne((elem_slav_indx-1)*4+i_slav_neigh)
                 if (elem_nume .ne. 0) then
                     call jenuno(jexnum(mesh//'.NOMMAI', elem_nume), elem_name)
                 else
@@ -324,10 +378,9 @@ implicit none
 !
 ! --------- Access to neighbours
 !        
-            call jeveuo(jexnum(sdappa_mane, elem_mast_indx), 'L', vi = v_sdappa_mane)
             if (debug) then
                 do i_mast_neigh = 1, 4
-                    elem_nume = v_sdappa_mane(i_mast_neigh)
+                    elem_nume = v_sdappa_mane((elem_mast_indx-1)*4+i_mast_neigh)
                     if (elem_nume .ne. 0) then
                         call jenuno(jexnum(mesh//'.NOMMAI', elem_nume), elem_name)
                     else
@@ -346,9 +399,10 @@ implicit none
 !
 ! --------- Get informations about master element
 !
-            call apcoor(mesh          , jv_geom       , elem_mast_type  ,&
+            call apcoor(jv_geom       , elem_mast_type  ,&
                         elem_mast_nume, elem_mast_coor, elem_mast_nbnode,&
-                        elem_mast_code, elem_mast_dime)
+                        elem_mast_code, elem_mast_dime, v_mesh_connex   ,&
+                        v_connex_lcum)
 !
 ! --------- Cut master element in linearized sub-elements
 !
@@ -533,7 +587,7 @@ implicit none
 ! ------------- Prepare next master element
 !
                 do i_mast_neigh = 1, nb_mast_neigh
-                    elem_mast_neigh = v_sdappa_mane(i_mast_neigh)
+                    elem_mast_neigh = v_sdappa_mane((elem_mast_indx-1)*4+i_mast_neigh)
                     elem_neigh_indx = elem_mast_neigh+1-mast_indx_mini
                     if (elem_mast_neigh .ne. 0 .and.&
                         mast_find_flag(elem_neigh_indx) .eq. 0 ) then
@@ -546,16 +600,17 @@ implicit none
 ! ------------- Prepare next slave element: higher weight
 !  
                 do i_slav_neigh = 1, nb_slav_neigh
-                    elem_slav_neigh = v_sdappa_slne(i_slav_neigh) 
+                    elem_slav_neigh = v_sdappa_slne((elem_slav_indx-1)*4+i_slav_neigh) 
                     elem_neigh_indx = elem_slav_neigh+1-slav_indx_mini
                     if ( elem_slav_neigh .ne. 0 .and.&
                          inte_neigh(i_slav_neigh) .eq. 1 &
-                        .and.elem_slav_flag(elem_neigh_indx) .eq. 0 &
+                        .and.elem_slav_flag(elem_neigh_indx) .ne. 1 &
                         .and. list_slav_weight(i_slav_neigh) .lt. tole_weight) then
                         weight_test=0.d0
-                        call testvois(mesh          , jv_geom       , elem_slav_type,&
+                        call testvois(jv_geom       , elem_slav_type,&
                                       elem_mast_coor, elem_mast_code, elem_slav_nume,&
-                                      pair_tole     , weight_test)
+                                      pair_tole     , weight_test,    v_mesh_connex ,&
+                                      v_connex_lcum)
                         if (weight_test .gt. list_slav_weight(i_slav_neigh).and.&
                             weight_test .gt. pair_tole) then
                             list_slav_master(i_slav_neigh) = elem_mast_nume
@@ -572,7 +627,7 @@ implicit none
         if (nb_pair .ne. 0) then
             call apsave_pair(i_zone      , elem_slav_nume,&
                              nb_pair     , list_pair     ,&
-                             nb_pair_zone, list_pair_zone)
+                             nb_pair_zmpi(i_proc+1), list_pair_zmpi)
         end if
 !
 ! ----- Next elements
@@ -581,7 +636,7 @@ implicit none
             write(*,*)'Next elements - Nb: ',nb_slav_neigh
         endif
         do i_slav_neigh = 1, nb_slav_neigh
-            elem_slav_neigh = v_sdappa_slne(i_slav_neigh)
+            elem_slav_neigh = v_sdappa_slne((elem_slav_indx-1)*4+i_slav_neigh)
             elem_neigh_indx = elem_slav_neigh+1-slav_indx_mini
             if (debug) then 
                 write(*,*)'Next elements - Current: ',i_slav_neigh,elem_slav_neigh,&
@@ -589,7 +644,7 @@ implicit none
             end if  
             if (elem_slav_neigh .ne. 0  .and.&
                 list_slav_master(i_slav_neigh).ne. 0 .and.&
-                elem_slav_flag(elem_neigh_indx) .eq. 0 ) then
+                elem_slav_flag(elem_neigh_indx) .ne. 1 ) then
                 elem_slav_start(nb_slav_start+1) = elem_slav_neigh
                 nb_slav_start                    = nb_slav_start+1
                 elem_slav_flag(elem_neigh_indx)  = 1
@@ -601,8 +656,9 @@ implicit none
     end do
     if (debug) then 
         write(*,*)'Fin boucle appariement PANG'
-        write(*,*)'maille contact trouvee',nb_pair_zone
+        write(*,*)'maille contact trouvee',nb_pair_zmpi
     end if
+    goto 120
 110 continue
     if (debug) then 
         write(*,*)'Fin appariement PANG RAPIDE'
@@ -611,12 +667,18 @@ implicit none
 ! - Save values for patch
 !
     call apsave_patch(mesh          , sdappa        , i_zone, pair_tole,&
-                      patch_weight_c, patch_weight_t)
+                      patch_weight_c, patch_weight_t, nb_proc, list_pair_zmpi,&
+                      nb_pair_zmpi, list_pair_zone, nb_pair_zone, i_proc)
+    !write(*,*)"Fin APSAVE_PATCH", i_proc
+    !write(*,*)"NB_pair_zone: ",nb_pair_zone ,i_proc
+    !write(*,*)"list_pair_zone: ",list_pair_zone(:) ,i_proc
 !
     AS_DEALLOCATE(vi=mast_find_flag)
     AS_DEALLOCATE(vi=elem_slav_flag)
     AS_DEALLOCATE(vi=elem_mast_flag)
-    AS_DEALLOCATE(vr=patch_weight_t)
-    AS_DEALLOCATE(vr=patch_weight_c)
+    AS_DEALLOCATE(vi=list_pair_zmpi)
+    call jedetr(njv_weight_c)
+    call jedetr(njv_weight_t)
+    call jedetr(njv_nb_pair_zmpi)
     call jedema() 
 end subroutine

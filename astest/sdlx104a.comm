@@ -232,7 +232,8 @@ fmaxc = 8. ;
 fmaxc = 6. ;
 
 
-tabsol = DEFI_SOL_MISS(
+# Pour reference :
+tabsol0 = DEFI_SOL_MISS(
     TITRE="SOL STRATIFIE",
     MATERIAU=(
         _F(E=4.480000E+09,  NU=0.40, RHO=2.15e3, AMOR_HYST=0.08),
@@ -246,6 +247,18 @@ tabsol = DEFI_SOL_MISS(
         _F(EPAIS=38.5, NUME_MATE=3,),
         _F(SUBSTRATUM="OUI", NUME_MATE=4,),
     ),
+    INFO=2,
+);
+
+tabsol = DEFI_SOL_MISS(
+    TITRE="SOL STRATIFIE",
+    MATERIAU=(
+        _F(E=4.480000E+09,  NU=0.40, RHO=2.15e3, AMOR_HYST=0.08),
+        _F(E=1.421000E+09,  NU=0.45, RHO=2.07e3, AMOR_HYST=0.114),
+        _F(E=1.305000E+09,  NU=0.45, RHO=2.15e3, AMOR_HYST=0.16),
+        _F(E=6.000000E+09,  NU=0.45, RHO=2.40e3, AMOR_HYST=0.06),
+    ),
+    COUCHE_AUTO=_F(EPAIS_PHYS=(43.9,31.0,38.5),SURF='OUI',HOMOGENE='NON',NUME_MATE=(1,2,3),NUME_MATE_SUBSTRATUM=4,),
     INFO=2,
 );
 
@@ -266,11 +279,14 @@ CALC_MISS(
         TYPE='BINAIRE',
         Z0= -11.60,
         SURF='OUI',
-        ALGO = 'DEPL',
-        OFFSET_MAX=110,
-        OFFSET_NB=400,
-        #SPEC_MAX=0.12,
-        #SPEC_NB=16384,
+        AUTO='OUI',
+        COEF_OFFSET = 3,
+        # Valeurs en manuel :
+        #ALGO = 'DEPL',
+        #OFFSET_MAX=110,
+        #OFFSET_NB=400,
+        ##SPEC_MAX=0.12,
+        ##SPEC_NB=16384,
     ),
     INFO=1,
 )
@@ -495,35 +511,35 @@ TAB=MACR_SPECTRE(
 
 
 
-TEST_TABLE(VALE_CALC=0.410405026206,TOLE_MACHINE=4.E-6,  # En attente issue24202 
+TEST_TABLE(VALE_CALC=0.410364533936,TOLE_MACHINE=4.E-6,  # En attente issue24202 
            NOM_PARA='eH_0_SOMMET',
            TABLE=TAB,
            FILTRE=_F(NOM_PARA='FREQ',
                      VALE=3.525,),
            )
 
-TEST_TABLE(VALE_CALC=0.42293268426702,
+TEST_TABLE(VALE_CALC=0.422942897695,
            NOM_PARA='eH_0_SOMMET',
            TABLE=TAB,
            FILTRE=_F(NOM_PARA='FREQ',
                      VALE=4.1,),
            )
 
-TEST_TABLE(VALE_CALC=0.29380508292,TOLE_MACHINE=2.E-6,  # En attente issue24202 
+TEST_TABLE(VALE_CALC=0.293828606381,TOLE_MACHINE=2.E-6,  # En attente issue24202 
            NOM_PARA='eH_0_SOMMET',
            TABLE=TAB,
            FILTRE=_F(NOM_PARA='FREQ',
                      VALE=4.7,),
            )
 
-TEST_TABLE(VALE_CALC=0.29304335802367,
+TEST_TABLE(VALE_CALC=0.293009542858,
            NOM_PARA='eH_0_SOMMET',
            TABLE=TAB,
            FILTRE=_F(NOM_PARA='FREQ',
                      VALE=5.75,),
            )
 
-TEST_TABLE(VALE_CALC=0.36233510789174,
+TEST_TABLE(VALE_CALC=0.362307144296,
            NOM_PARA='eH_0_SOMMET',
            TABLE=TAB,
            FILTRE=_F(NOM_PARA='FREQ',

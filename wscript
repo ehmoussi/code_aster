@@ -21,7 +21,7 @@ import zlib
 import base64
 from functools import partial
 from itertools import chain
-from waflib import Configure, Utils, Build, TaskGen, Task
+from waflib import Configure, Logs, Utils, Build, TaskGen, Task
 
 
 def options(self):

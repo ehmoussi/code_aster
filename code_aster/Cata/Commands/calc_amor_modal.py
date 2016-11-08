@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: Georges-cc.devesa at edf.fr
+# person_in_charge: georges-cc.devesa at edf.fr
 CALC_AMOR_MODAL=OPER(nom="CALC_AMOR_MODAL",op= 172,sd_prod=listr8_sdaster,
                      fr=tr("Création d'une liste d'amortissements modaux calculés selon la règle du RCC-G"),
                      reentrant='n',
@@ -71,5 +71,9 @@ CALC_AMOR_MODAL=OPER(nom="CALC_AMOR_MODAL",op= 172,sd_prod=listr8_sdaster,
            FONC_AMOR_GEO   =SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule),max='**' ),
            HOMOGENE        =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
            SEUIL           =SIMP(statut='f',typ='R',defaut= 0.3 ),
+         ),
+         CORR_AMOR_NEGATIF    =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","IGNORE","OUI") ),
+         b_corr_amor   = BLOC(condition="CORR_AMOR_NEGATIF == 'OUI'",
+           COEF_CORR_AMOR  =SIMP(statut='o',typ='R',max=1,val_min=1.E-3, val_max=1.),
          ),
 )  ;

@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,8 +16,11 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine gettco(nomobj, typobj)
-        character(len=*) :: nomobj
-        character(len=*) :: typobj
-    end subroutine gettco
+    subroutine gt_linoma(mesh,list_elem,nb_elem,list_node,nb_node)
+        character(len=8), intent(in) :: mesh
+        integer, intent(in) :: nb_elem
+        integer, intent(in) :: list_elem(nb_elem)
+        integer, pointer, intent(inout) :: list_node(:)
+        integer, intent(out) :: nb_node       
+    end subroutine gt_linoma
 end interface
