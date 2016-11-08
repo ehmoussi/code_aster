@@ -27,7 +27,7 @@ subroutine te0510(option, nomte)
     character(len=16) :: option, nomte
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -301,13 +301,13 @@ subroutine te0510(option, nomte)
             nbtot = ndim
         endif
         if (nface*nptf .gt. ncompc) then
-           call utmess('F', 'XFEM_55')
+           call utmess('F', 'XFEM_55', sk='PCFACE', ni=2, vali=[ncompc,nface*nptf])
         endif
         if (ninter*ndim .gt. ncompp) then
-           call utmess('F', 'XFEM_55')
+           call utmess('F', 'XFEM_55', sk='PPINTER', ni=2, vali=[ncompp,ninter*ndim])
         endif
         if ((nfiss .gt. 1) .and. (nface*2 .gt. ncomph)) then
-           call utmess('F', 'XFEM_55')
+           call utmess('F', 'XFEM_55', sk='PHEAVFA', ni=2, vali=[ncomph,nface*2])
         endif
 !
         if (nfiss .gt. 1 .and. ninter .gt. 0) then

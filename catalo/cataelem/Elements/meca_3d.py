@@ -571,6 +571,16 @@ class MECA_HEXA20(Element):
             para_in=((OP.EPEQ_ELNO.PDEFORR, EDEFONO), ),
             para_out=((OP.EPEQ_ELNO.PDEFOEQ, LC.EDFEQNO), ),
         ),
+        
+        OP.EPGQ_ELGA(te=335,
+            para_in=((OP.EPGQ_ELGA.PDEFORR, EDEFOPG), ),
+            para_out=((OP.EPGQ_ELGA.PDEFOEQ, EDFEQPG), ),
+        ),
+
+        OP.EPGQ_ELNO(te=335,
+            para_in=((OP.EPGQ_ELNO.PDEFORR, EDEFONO), ),
+            para_out=((OP.EPGQ_ELNO.PDEFOEQ, LC.EDFEQNO), ),
+        ),
 
         OP.EPFD_ELGA(te=528,
             para_in=((OP.EPFD_ELGA.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
@@ -838,6 +848,18 @@ class MECA_HEXA20(Element):
         OP.MASS_ZZ1(te=293,
             para_in=((SP.PGEOMER, NGEOMER), ),
             para_out=((SP.PMATZZR, MMATZZR), ),
+        ),
+        
+        OP.MATE_ELGA(te=142,
+            para_in=((SP.PMATERC, LC.CMATERC),
+                     (OP.MATE_ELGA.PVARCPR, LC.ZVARCPG), ),
+            para_out=((OP.MATE_ELGA.PMATERR, LC.EGMATE_R), ),
+        ),
+        
+        OP.MATE_ELEM(te=142,
+            para_in=((SP.PMATERC, LC.CMATERC),
+                     (OP.MATE_ELEM.PVARCPR, LC.ZVARCPG), ),
+            para_out=((OP.MATE_ELEM.PMATERR, LC.EEMATE_R), ),
         ),
 
         OP.MECA_GYRO(te=159,

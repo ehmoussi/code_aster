@@ -247,26 +247,27 @@ subroutine pjxfem(correz, ch1z, ch2z, tychv, prfchz,&
         nfh=0
         nfe=0
         do i=1,ncmp
-        vide=.true.
-        do ino1 = 1, nbno1
+          vide=.true.
+          do ino1 = 1, nbno1
             nuno1 = pjef_nu(1+idecal-1+ino1)
             if (zl(jcns1l-1+(nuno1-1)*ncmp + i)) vide=.false.
-        enddo
-        if (cns1c(i)(1:1) .eq. 'D') then
+          enddo
+          if (cns1c(i)(1:2) .eq. 'DX' .or. cns1c(i)(1:2) .eq. 'DY' .or.&
+              cns1c(i)(1:2) .eq. 'DZ') then
             ipos = ipos +1
             cmp(ipos)=i
-        endif
-        if (cns1c(i)(1:1) .eq. 'H'.and.cns1c(i)(3:3).ne.'P') then
+          endif
+          if (cns1c(i)(1:1) .eq. 'H'.and.cns1c(i)(3:3).ne.'P') then
             ipos = ipos +1
             if (.not.vide) nfh = nfh +1
             cmp(ipos)=i
-        endif
-        if (cns1c(i)(1:2) .eq. 'K1' .or. cns1c(i)(1:2) .eq. 'K2' .or.&
-            cns1c(i)(1:2) .eq. 'K3') then
+          endif
+          if (cns1c(i)(1:2) .eq. 'K1' .or. cns1c(i)(1:2) .eq. 'K2' .or.&
+              cns1c(i)(1:2) .eq. 'K3') then
             ipos = ipos +1
             if (.not.vide) nfe = nfe +1
             cmp(ipos)=i
-        endif
+          endif
         enddo
         nfh=nfh/ndim
         nfe=nfe/ndim
@@ -357,7 +358,7 @@ subroutine pjxfem(correz, ch1z, ch2z, tychv, prfchz,&
 !         CALCUL DES FF LINEAIRE AU CAS OU ...
           ff2(:)=0.
           if (.not.iselli(elrefp)) then
-              call xellin(elrefp, nbno1, elrefp2, nnop2)
+              call xellin(elrefp, nbno1, elrefp2, nnop2) 
               call elrfvf(elrefp2, pjef_co((3*(ino2-1)+1):(3*(ino2-1)+ndim)),&
                           8, ff2, nnop2)
           endif

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,15 +20,15 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jerome.laverne at edf.fr
+# person_in_charge: kyrylo.kazymyrenko at edf.fr
 # ----------------------------------------------------------------------
-#  POST_CZM_FISS : 
+#  POST_CZM_FISS :
 #  ---------------
 #  OPTION = 'LONGUEUR'
 #    - CALCUL DE LA LONGUEUR DES FISSURES COHESIVES 2D
 #    - PRODUIT UNE TABLE
 #  OPTION = 'TRIAXIALITE'
-#    - CALCUL DE LA TRIAXIALITE DANS LES ELEMENTS MASSIFS CONNECTES A 
+#    - CALCUL DE LA TRIAXIALITE DANS LES ELEMENTS MASSIFS CONNECTES A
 #      L'INTERFACE COHESIVE
 #    - PRODUIT UNE CARTE
 # ----------------------------------------------------------------------

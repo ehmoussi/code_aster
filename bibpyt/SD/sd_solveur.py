@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -36,14 +36,14 @@ class sd_solveur(AsBase):
             assert slvk[1] in ('AUTO', 'SANS')
             assert slvk[2] in ('NONSYM', 'SYMGEN', 'SYMDEF', 'AUTO')
             assert slvk[3] in (
-                'AMD', 'AMF', 'PORD', 'METIS', 'QAMD', 'AUTO', 'SCOTCH')
+                'AMD', 'AMF', 'PORD', 'METIS', 'QAMD', 'AUTO', 'SCOTCH', 'PARMETIS', 'PTSCOTCH')
             assert slvk[5] in ('LAGR2', 'NON',), slvk
             assert slvk[6] in ('OUI', 'NON', 'XXXX')
             assert slvk[7] in ('OUI', 'NON', 'XXXX')
             assert slvk[8] in (
                 'IN_CORE', 'OUT_OF_CORE', 'AUTO', 'EVAL', 'XXXX')
             assert slvk[10] in ('SANS', 'AUTO', 'FORCE', 'XXXX', 'MINI')
-            assert slvk[11] in ('XXXX', '4.10.0', '5.0.1consortium', '5.0.1')
+            assert slvk[11] in ('XXXX', '5.0.1consortium', '5.0.1','5.0.2consortium', '5.0.2')
         elif method == 'MULT_FRONT':
             assert slvk[1] in ('XXXX')
             assert slvk[2] in ('XXXX')

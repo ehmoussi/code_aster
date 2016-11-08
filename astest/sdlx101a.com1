@@ -56,7 +56,8 @@ l_amor = (0.070000000000000000,0.070000000000000000,0.070000000000000000,
            0.070000000000000000,0.070000000000000000,)
 
 
-tabsol = DEFI_SOL_MISS(
+# Pour reference :
+tabsol0 = DEFI_SOL_MISS(
     TITRE="SOL HOMOGENE",
     MATERIAU=(
         _F(E=7.000000E+09,  NU=0.4, RHO=2.1e3, AMOR_HYST=0.10),
@@ -66,6 +67,13 @@ tabsol = DEFI_SOL_MISS(
         _F(EPAIS=113.4, NUME_MATE=1, RECEPTEUR="OUI", SOURCE="OUI"),
         _F(SUBSTRATUM="OUI", NUME_MATE=2,),
     ),
+    INFO=2,
+)
+
+tabsol = DEFI_SOL_MISS(
+    TITRE="SOL HOMOGENE",
+    MATERIAU=_F(E=7.000000E+09,  NU=0.4, RHO=2.1e3, AMOR_HYST=0.10),
+    COUCHE_AUTO=_F(EPAIS_PHYS=113.4, HOMOGENE='OUI',SURF='OUI',),
     INFO=2,
 )
 
@@ -89,9 +97,11 @@ CALC_MISS(
         TYPE='BINAIRE',
         Z0= -11.60,
         SURF='OUI',
-        ALGO = 'DEPL',
-        OFFSET_MAX=110,
-        OFFSET_NB=400,
+        AUTO='OUI',OPTION_DREF='NON', OPTION_RFIC='NON',COEF_OFFSET=3,
+        # Valeurs en manuel :
+        #ALGO = 'DEPL',
+        #OFFSET_MAX=110,
+        #OFFSET_NB=400,
         SPEC_MAX=0.12,
         SPEC_NB=16384,
     ),

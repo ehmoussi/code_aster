@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -35,4 +35,33 @@ On ne sait pas calculer les déformations plastiques avec de l'élasticité non-
     5 : _(u"""
 On ne peut pas utiliser le modèle 3D_SI avec un comportement élastique de type %(k1)s.
 """),
+
+    6 : _(u"""
+  -> Erreur de programmation :
+  -> L argument %(k1)s est manquant ou mal renseigné dans une routine élémentaire XFEM
+  -> Veuillez renseigner cette argument
+"""),
+
+    7 : _(u"""
+  -> Erreur de programmation :
+  -> L argument %(k1)s est manquant ou mal renseigné dans une routine élémentaire XFEM
+  -> Veuillez renseigner cette argument
+"""),
+
+    8 : _(u"""
+  -> Erreur de programmation :
+  -> En dimension %(i1)d, le calcul d'un tenseur de courbure n'est pas autorisé.
+"""),
+
+    9 : _(u"""
+  -> Erreur de programmation :
+  -> En dimension %(i1)d, le calcul d'une matrice de passage n'a pas de sens.
+"""),
+
+    10 : _(u"""
+  -> Erreur de programmation :
+  -> Au moins un des paramètres élastiques (module d'Young ou coefficient de poisson) n'a
+     pas été trouvé lors de l'évaluation des fonctions vectorielles XFEM
+"""),
+
 }

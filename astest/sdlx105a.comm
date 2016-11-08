@@ -147,7 +147,8 @@ bamo = DEFI_BASE_MODALE ( CLASSIQUE=_F (INTERF_DYNA= interdyn,
 mael = MACR_ELEM_DYNA (BASE_MODALE= bamo,
                       );
 
-TABSOL = DEFI_SOL_MISS(
+# pour reference :
+TABSOL0 = DEFI_SOL_MISS(
     TITRE="SOL MOU",
     MATERIAU=(
         _F(E=5.8080E+08,  NU=0.3333, RHO=2.e3, AMOR_HYST=0.10),
@@ -176,6 +177,25 @@ TABSOL = DEFI_SOL_MISS(
     INFO=2,
 )
 
+TABSOL = DEFI_SOL_MISS(
+    TITRE="SOL MOU",
+    MATERIAU=(
+        _F(E=5.8080E+08,  NU=0.3333, RHO=2.e3, AMOR_HYST=0.10),
+        _F(E=1.1616E+11,  NU=0.3333, RHO=2.e3, AMOR_HYST=0.10),
+    ),
+      COUCHE_AUTO=_F(
+               SURF='NON',HOMOGENE='NON',
+               EPAIS_PHYS=8.,
+               NUME_MATE=(1,),
+               NUME_MATE_SUBSTRATUM = 2,
+               GROUP_MA='SBASE',
+               NOMBRE_RECEPTEUR=4,
+               GROUP_MA_INTERF='SBASE',
+               MAILLAGE=MAILLAGE,
+                ),     
+    INFO=2,
+)
+
 CALC_MISS(
     TYPE_RESU='FICHIER',
     TABLE_SOL=TABSOL,
@@ -191,11 +211,12 @@ CALC_MISS(
         FREQ_MAX=35.,
         FREQ_PAS=1.0,
         Z0=0.,
-        DREF=1.,
-        RFIC = 1.,
-        ALGO = 'REGU',
-        OFFSET_MAX=10,
-        OFFSET_NB=200,
+        AUTO='OUI',OPTION_DREF = 'OUI', OPTION_RFIC = 'OUI', COEF_OFFSET = 3,
+        #DREF=1.,
+        #RFIC = 1.,
+        #ALGO = 'REGU',
+        #OFFSET_MAX=10,
+        #OFFSET_NB=200,
     ),
 )
 
@@ -289,7 +310,7 @@ TEST_FONCTION(VALEUR=(
                          REFERENCE='SOURCE_EXTERNE',
                          PRECISION=0.17,
                          FONCTION=KV,),
-                      _F(VALE_CALC=0.25769010,
+                      _F(VALE_CALC=0.25769508940819,
                          CRITERE='RELATIF',
                          VALE_PARA=35.0,
                          FONCTION=KV,),

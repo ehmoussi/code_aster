@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -56,12 +56,18 @@ class MissCmdeGenerator(object):
             "surf": "",
             "rfic": "",
         }
+        if self.param['AUTO'] == "OUI":
+            if self.param['OPTION_RFIC'] == 'OUI':
+                self.dinf["rfic"] = str(self.param['RFIC'])
+        else:
+            if self.param['RFIC'] != 0.:
+                self.dinf["rfic"] = str(self.param['RFIC'])
+        
         if self.param["TYPE"] == "BINAIRE":
             self.dinf["binaire"] = "BINA"
         if self.param["SURF"] == "OUI":
             self.dinf["surf"] = "SURF"
-        if self.param['RFIC'] != 0.:
-            self.dinf["rfic"] = str(self.param['RFIC'])
+
         self.domain = MissDomains(self.param['_hasPC'],
                                   self.param['ISSF'] == 'OUI')
         # lignes du fichier
@@ -422,7 +428,7 @@ class MissCmdeGenerator(object):
         return lines
 
     def _rfic(self):
-        """Retourne les paramètres si RFIC (résonnances fictives) est utilisé"""
+        """Retourne les paramètres si RFIC (résonances fictives) est utilisé"""
         line = ""
         if self.dinf['rfic']:
             line = " RFIC %s %s" % (self.dinf['rfic'], self.dinf['rfic'])
@@ -596,8 +602,13 @@ class TestMissCmde(unittest.TestCase):
             'OFFSET_MAX': None,
             'OFFSET_NB': None,
             'TYPE': 'ASCII',
+            'AUTO': 'NON',
+            'OPTION_DREF': 'NON',
+            'OPTION_RFIC': 'NON',
+            'COEF_OFFSET': 12,
             '_hasPC': False,
             '_nbPC': 0,
+            '_auto_first_LT': None,
         })
         self._write = False
 
