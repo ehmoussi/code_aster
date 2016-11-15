@@ -55,6 +55,10 @@ cdef class Model( DataStructure ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
+    def getName(self):
+        """Return the name of DataStructure"""
+        return self.getInstance().getName()
+
     def getType(self):
         """Return the type of DataStructure"""
         return self.getInstance().getType()
