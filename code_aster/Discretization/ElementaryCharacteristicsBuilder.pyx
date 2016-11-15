@@ -28,9 +28,6 @@ from code_aster.Discretization.ElementaryCharacteristics cimport ElementaryChara
 
 
 def AFFE_CARA_ELEM(**curDict):
-    for key, value in curDict.iteritems():
-        print key, value
-        print type(value)
     returnCaraElem = ElementaryCharacteristics()
     cdef string name = returnCaraElem.getInstance().getName()
     syntax = CommandSyntax("AFFE_CARA_ELEM")
