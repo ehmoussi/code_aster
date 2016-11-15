@@ -1,12 +1,13 @@
 # code_aster.Commands compatibility package
 
-__all__ = ['_F',             'AFFE_CHAR_CINE', 'AFFE_MATERIAU',  'AFFE_MODELE',    'DEFI_FONCTION',
-           'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'LIRE_MAILLAGE',  'MECA_STATIQUE',  'DEFI_FISS_XFEM',
-           'MODE_STATIQUE',
+__all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_MATERIAU',  'AFFE_MODELE',
+           'DEFI_FONCTION',  'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'LIRE_MAILLAGE',  'MECA_STATIQUE',
+           'DEFI_FISS_XFEM', 'MODE_STATIQUE',
           ]
 
 from code_aster.Cata.Syntax import _F
 
+from code_aster.Commands.affe_cara_elem import AFFE_CARA_ELEM
 from code_aster.Commands.affe_char_cine import AFFE_CHAR_CINE
 from code_aster.Commands.affe_materiau import AFFE_MATERIAU
 from code_aster.Commands.affe_modele import AFFE_MODELE

@@ -24,11 +24,11 @@
 #include "PhysicsAndModelings.h"
 
 const char* const PhysicNames[nbPhysics] = { "MECANIQUE", "THERMIQUE", "ACOUSTIQUE" };
-const char* const ModelingNames[nbModelings] = { "AXIS", "3D", "PLAN", "DKT" };
+const char* const ModelingNames[nbModelings] = { "AXIS", "3D", "PLAN", "DKT", "DKTG" };
 
 
 const Modelings MechanicsModelings[nbModelingsMechanics] = { Axisymmetrical, Tridimensional,
-                                                             Planar, DKT };
+                                                             Planar, DKT, DKTG };
 
 const Modelings ThermalModelings[nbModelingsThermal] = { Axisymmetrical, Tridimensional,
                                                          Planar };

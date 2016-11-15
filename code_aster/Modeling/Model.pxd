@@ -40,6 +40,7 @@ cdef extern from "Modeling/Model.h":
         bint setSupportMesh( MeshPtr& currentMesh )
         bint build() except +
         MeshPtr getSupportMesh()
+        const string getName()
         const string getType()
         ModelPtr enrichWithXfem(XfemCrackPtr xfemCrack) except +
         void debugPrint( int logicalUnit )

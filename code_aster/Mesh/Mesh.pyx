@@ -81,6 +81,25 @@ cdef class Mesh( DataStructure ):
         """Tell if a group of nodes exists in the mesh"""
         return self.getInstance().hasGroupOfNodes( name )
 
+    def readAsterMeshFile( self, string filename ):
+        """Read a MED Mesh file"""
+        assert self.getInstance().isEmpty(), "The mesh is already filled!"
+        medFile = LogicalUnitFile( filename, FileType.Ascii, FileAccess.Old )
+
+        syntax = CommandSyntax( "LIRE_MAILLAGE" )
+        curDict = _F ( FORMAT="ASTER",
+                       UNITE=medFile.getLogicalUnit(), )
+
+        # self.getInstance().getType()
+        syntax.setResult( resultNaming.getResultObjectName(), "MAILLAGE" )
+
+        syntax.define( curDict )
+        cdef INTEGER numOp = 1
+        libaster.execop_( &numOp )
+        ret = self.getInstance().build()
+        syntax.free()
+        return ret
+
     def readGibiFile( self, string filename ):
         """Read a Gibi mesh file"""
         assert self.getInstance().isEmpty(), "The mesh is already filled!"

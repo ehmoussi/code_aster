@@ -349,8 +349,14 @@ cdef public char** getCommandKeywordValueString(
     if currentCommand is None:
         raise ValueError( "there is no active command" )
     value = currentCommand.getValue( factName, occurrence, simpName )
+    # nsellenet
     if len( value ) > 0 and type( value[0] ) not in ( str, unicode ):
-        raise TypeError( "string expected for %r/%r, got %s" % ( factName, simpName, type(value[0]) ) )
+        try:
+            for i in range( len( value ) ):
+                value[i] = value[i].getName()
+        except:
+            raise TypeError( "string expected for %r/%r, got %s" % ( factName, simpName, type(value[0]) ) )
+    # nsellenet
     cdef char** strArray = libBaseUtils.to_cstring_array( value )
     size[0] = len( value )
     return strArray

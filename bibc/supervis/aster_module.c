@@ -188,7 +188,7 @@ void DEFSSPPPPP(GETLTX,getltx,_IN char *motfac,_IN STRING_SIZE lfac,
 
 /* ------------------------------------------------------------------ */
 /* TODO CommandSyntax */
-void DEFSS(GETTCO,gettco,_IN char *nomobj, _IN STRING_SIZE lnom,
+void DEFSS(GETTC2,gettc2,_IN char *nomobj, _IN STRING_SIZE lnom,
                         _OUT char *typobj, _IN STRING_SIZE ltyp)
 {
         /*
@@ -199,7 +199,7 @@ void DEFSS(GETTCO,gettco,_IN char *nomobj, _IN STRING_SIZE lnom,
     tmp[lnom] = '\0';
     char* nomCmdCp = getSDType(tmp);
     CopyCStrToFStr(typobj, nomCmdCp, ltyp);
-    fprintf(fileOut, "GETTCO %s\n", typobj);
+    fprintf(fileOut, "GETTC2 %s\n", typobj);
     FreeStr(tmp);
 }
 
@@ -601,13 +601,13 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
     fprintf(fileOut, "GETVTX_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
-    BlankStr(txval, ltx);
     if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
         {
         *nbval = 0;
         }
     else
         {
+        BlankStr(txval, ltx);
         char** retour = NULL;
         int nbVal = 0;
         retour = getCommandKeywordValueString(tmp, (int)*iocc - 1, tmp2, &nbVal);

@@ -243,6 +243,8 @@ class PCFieldOnMeshInstance: public DataStructure
 
 /** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de double */
 typedef PCFieldOnMeshInstance< double > PCFieldOnMeshInstanceDouble;
+/** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de double */
+typedef PCFieldOnMeshInstance< long > PCFieldOnMeshInstanceLong;
 /** @typedef PCFieldOnMeshComplexInstance Instance d'une carte de complexe */
 typedef PCFieldOnMeshInstance< DoubleComplex > PCFieldOnMeshComplexInstance;
 /** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de char*8 */
@@ -255,6 +257,12 @@ typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshInstanceChar16;
  * @brief   Definition d'une carte de double
  */
 typedef boost::shared_ptr< PCFieldOnMeshInstanceDouble > PCFieldOnMeshPtrDouble;
+
+/**
+ * @typedef PCFieldOnMeshLongPtr
+ * @brief   Definition d'une carte de double
+ */
+typedef boost::shared_ptr< PCFieldOnMeshInstanceLong > PCFieldOnMeshLongPtr;
 
 /**
  * @typedef PCFieldOnMeshPtrComplex
