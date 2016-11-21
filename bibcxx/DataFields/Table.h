@@ -56,10 +56,23 @@ public:
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
+    TableInstance( const std::string& name ) throw( std::runtime_error ):
+        DataStructure( name, "CHAM_NO" ),
+        _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
+        _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
+        _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) )
+    {
+        if( getName().size() != 19 )
+            throw std::runtime_error( "Bad name size" );
+    };
+
+    /**
+     * @brief Constructeur
+     */
     TableInstance(): DataStructure( getNewResultObjectName(), "CHAM_NO" ),
-                       _memoryLocation( JeveuxVectorChar8( getName() + ".DESC" ) ),
-                       _description( JeveuxVectorLong( getName() + ".REFE" ) ),
-                       _parameterDescription( JeveuxVectorChar24( getName() + ".VALE" ) )
+                     _memoryLocation( JeveuxVectorChar8( getName() + "           .TBBA" ) ),
+                     _description( JeveuxVectorLong( getName() + "           .TBNP" ) ),
+                     _parameterDescription( JeveuxVectorChar24( getName() + "           .TBLP" ) )
     {};
 
     ~TableInstance()
