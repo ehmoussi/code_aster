@@ -86,10 +86,13 @@ public:
     };
 };
 
+/** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de double */
+typedef ListOfLinearRelationsInstance< double > ListOfLinearRelationsDouble;
+
 /**
  * @typedef ListOfLinearRelationsDouble
  * @brief Pointeur intelligent vers un ListOfLinearRelationsInstance
  */
-typedef boost::shared_ptr< ListOfLinearRelationsInstance< double > > ListOfLinearRelationsDoublePtr;
+typedef boost::shared_ptr< ListOfLinearRelationsDouble > ListOfLinearRelationsDoublePtr;
 
 #endif /* LISTOFLINEARRELATIONS_H_ */

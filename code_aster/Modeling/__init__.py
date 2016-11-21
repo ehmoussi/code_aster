@@ -1,6 +1,7 @@
 # code_aster.Modeling cython package
 
 from .Model import Model
+from .PrestressingCableDefinition import PrestressingCableDefinition
 from .XfemCrack import XfemCrack
 from .CrackShape import CrackShape
 
