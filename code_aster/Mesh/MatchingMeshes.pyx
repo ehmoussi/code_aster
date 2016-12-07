@@ -17,46 +17,49 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+import tempfile
+
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
+from code_aster cimport libaster
+from code_aster.libaster cimport INTEGER
 from code_aster.DataStructure.DataStructure cimport DataStructure
 
 
-cdef class BehaviourDefinition( DataStructure ):
+cdef class MatchingMeshes(DataStructure):
+    """Python wrapper on the C++ MatchingMeshes object"""
 
-    """Python wrapper on the C++ BehaviourDefinition object"""
-
-    def __cinit__( self, bint init=True ):
+    def __cinit__(self, bint init=True):
         """Initialization: stores the pointer to the C++ object"""
         if init:
-            self._cptr = new BehaviourDefinitionPtr( new BehaviourDefinitionInstance() )
+            self._cptr = new MatchingMeshesPtr(new MatchingMeshesInstance())
 
-    def __dealloc__( self ):
+    def __dealloc__(self):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, BehaviourDefinitionPtr other ):
+    cdef set(self, MatchingMeshesPtr other):
         """Point to an existing object"""
-        self._cptr = new BehaviourDefinitionPtr( other )
+        self._cptr = new MatchingMeshesPtr(other)
 
-    cdef BehaviourDefinitionPtr* getPtr( self ):
+    cdef MatchingMeshesPtr* getPtr(self):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef BehaviourDefinitionInstance* getInstance( self ):
+    cdef MatchingMeshesInstance* getInstance(self):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 
     def getName(self):
-        """Return the type of DataStructure"""
+        """Return the name of DataStructure"""
         return self.getInstance().getName()
 
     def getType(self):
         """Return the type of DataStructure"""
         return self.getInstance().getType()
 
-    def debugPrint( self, logicalUnit=6 ):
+    def debugPrint(self, logicalUnit=6):
         """Print debug information of the content"""
-        self.getInstance().debugPrint( logicalUnit )
+        self.getInstance().debugPrint(logicalUnit)
