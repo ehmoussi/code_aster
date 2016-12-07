@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -18,35 +18,27 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
-from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDoublePtr
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.Results.ResultsContainer cimport ResultsContainer
 
 
-cdef extern from "Results/ResultsContainer.h":
+cdef extern from "Results/FourierCombination.h":
 
-    cdef cppclass ResultsContainerInstance:
+    cdef cppclass FourierCombinationInstance:
 
-        ResultsContainerInstance()
-        const string getName()
+        FourierCombinationInstance()
         const string getType()
         void debugPrint( int logicalUnit )
-        FieldOnNodesDoublePtr getRealFieldOnNodes( string name, int rank )
-        bint printMedFile( string fileName )
 
-    cdef cppclass ResultsContainerPtr:
+    cdef cppclass FourierCombinationPtr:
 
-        ResultsContainerPtr( ResultsContainerPtr& )
-        ResultsContainerPtr( ResultsContainerInstance* )
-        ResultsContainerInstance* get()
+        FourierCombinationPtr( FourierCombinationPtr& )
+        FourierCombinationPtr( FourierCombinationInstance* )
+        FourierCombinationInstance* get()
 
 
-#### ResultsContainer
+#### FourierCombination
 
-cdef class ResultsContainer( DataStructure ):
-
-    cdef ResultsContainerPtr* _cptr
-
-    cdef set( self, ResultsContainerPtr other )
-    cdef ResultsContainerPtr* getPtr( self )
-    cdef ResultsContainerInstance* getInstance( self )
+cdef class FourierCombination( ResultsContainer ):
+    pass
