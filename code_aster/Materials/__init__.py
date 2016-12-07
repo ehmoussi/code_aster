@@ -4,3 +4,4 @@ import types
 
 from .Material import Material
 from .MaterialOnMesh import MaterialOnMesh
+from .BehaviourDefinition import BehaviourDefinition
