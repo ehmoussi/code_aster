@@ -27,7 +27,7 @@ from code_aster.Mesh.Mesh cimport Mesh
 cdef class PCFieldOnMeshDouble(DataStructure):
     """Python wrapper on the C++ PCFieldOnMeshDouble object"""
 
-    def __cinit__(self,bint init = True):
+    def __cinit__(self, bint init = True):
         """Initialization: stores the pointer to the C++ object"""
         if init:
             self._cptr = new PCFieldOnMeshPtrDouble(new PCFieldOnMeshInstanceDouble())

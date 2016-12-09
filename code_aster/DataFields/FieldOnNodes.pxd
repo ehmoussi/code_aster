@@ -27,6 +27,7 @@ cdef extern from "DataFields/FieldOnNodes.h":
 
     cdef cppclass FieldOnNodesInstance[ ValueType ]:
 
+        FieldOnNodesInstance()
         FieldOnNodesInstance( string name )
         ValueType& operator[]( int i )
         SimpleFieldOnNodesDoublePtr exportToSimpleFieldOnNodes()

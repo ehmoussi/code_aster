@@ -35,10 +35,10 @@ from code_aster.DataFields.SimpleFieldOnNodes cimport SimpleFieldOnNodesDouble
 cdef class FieldOnNodesDouble(DataStructure):
     """Python wrapper on the C++ FieldOnNodes object"""
 
-    def __cinit__(self, string name=""):
+    def __cinit__(self, bint init = True):
         """Initialization: stores the pointer to the C++ object"""
-        if len(name) > 0:
-            self._cptr = new FieldOnNodesDoublePtr(new FieldOnNodesDoubleInstance(name))
+        if init:
+            self._cptr = new FieldOnNodesDoublePtr(new FieldOnNodesDoubleInstance())
 
     def __dealloc__(self):
         """Destructor"""
@@ -56,6 +56,10 @@ cdef class FieldOnNodesDouble(DataStructure):
     cdef FieldOnNodesDoubleInstance* getInstance(self):
         """Return the pointer on the c++ instance objet"""
         return self._cptr.get()
+
+    def getName(self):
+        """Return the name of DataStructure"""
+        return self.getInstance().getName()
 
     def getType(self):
         """Return the type of DataStructure"""
