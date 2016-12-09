@@ -19,32 +19,30 @@
 
 from libcpp.string cimport string
 from cython.operator cimport dereference as deref
-from code_aster cimport libaster
-from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Results.EvolutiveLoad cimport EvolutiveLoad
-from code_aster.Results.EvolutiveThermalLoad cimport EvolutiveThermalLoad
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
+from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
 
+#### EvolutiveThermalLoad
 
-def CREA_RESU(**curDict):
-    returnRC = None
-    if curDict["TYPE_RESU"] == "EVOL_CHAR":
-        returnRC = EvolutiveLoad()
-    elif curDict["TYPE_RESU"] == "EVOL_THER":
-        returnRC = EvolutiveThermalLoad()
-    else:
-        raise NameError("Not yet implemented")
-    cdef string name = returnRC.getName()
-    cdef string type = returnRC.getType()
+cdef class EvolutiveThermalLoad(ResultsContainer):
+    """Python wrapper on the C++ EvolutiveThermalLoad Object"""
 
-    syntax = CommandSyntax("CREA_RESU")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    def __cinit__(self, bint init = True):
+        """Initialization: stores the pointer to the C++ object"""
+        if init :
+            self._cptr = <ResultsContainerPtr *>\
+                new EvolutiveThermalLoadPtr(new EvolutiveThermalLoadInstance() )
 
-    cdef INTEGER numOp = 124
-    libaster.execop_(&numOp)
-    syntax.free()
+    def getName(self):
+        """Return the name of DataStructure"""
+        return self.getInstance().getName()
 
-    return returnRC
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
+
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()

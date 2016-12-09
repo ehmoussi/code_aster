@@ -1,9 +1,9 @@
-#ifndef EVOLUTIVELOAD_H_
-#define EVOLUTIVELOAD_H_
+#ifndef EVOLUTIVETHERMALLOAD_H_
+#define EVOLUTIVETHERMALLOAD_H_
 
 /**
- * @file EvolutiveLoad.h
- * @brief Fichier entete de la classe EvolutiveLoad
+ * @file EvolutiveThermalLoad.h
+ * @brief Fichier entete de la classe EvolutiveThermalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
@@ -32,26 +32,26 @@
 
 
 /**
- * @class EvolutiveLoadInstance
+ * @class EvolutiveThermalLoadInstance
  * @brief Cette classe correspond a un comb_fourier
  * @author Nicolas Sellenet
  */
-class EvolutiveLoadInstance: public ResultsContainerInstance
+class EvolutiveThermalLoadInstance: public ResultsContainerInstance
 {
 public:
     /**
      * @brief Constructeur
      */
-    EvolutiveLoadInstance(): 
+    EvolutiveThermalLoadInstance(): 
         ResultsContainerInstance( "EVOL_CHAR" )
     {};
 
 };
 
 /**
- * @typedef EvolutiveLoadPtr
- * @brief Pointeur intelligent vers un EvolutiveLoadInstance
+ * @typedef EvolutiveThermalLoadPtr
+ * @brief Pointeur intelligent vers un EvolutiveThermalLoadInstance
  */
-typedef boost::shared_ptr< EvolutiveLoadInstance > EvolutiveLoadPtr;
+typedef boost::shared_ptr< EvolutiveThermalLoadInstance > EvolutiveThermalLoadPtr;
 
-#endif /* EVOLUTIVELOAD_H_ */
+#endif /* EVOLUTIVETHERMALLOAD_H_ */

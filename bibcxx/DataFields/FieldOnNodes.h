@@ -73,7 +73,7 @@ public:
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    FieldOnNodesInstance( const JeveuxMemory memType ):
+    FieldOnNodesInstance( const JeveuxMemory memType = Permanent ):
                     DataStructure( "CHAM_NO", memType, 19 ),
                     _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),

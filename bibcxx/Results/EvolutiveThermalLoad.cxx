@@ -1,9 +1,6 @@
-#ifndef EVOLUTIVELOAD_H_
-#define EVOLUTIVELOAD_H_
-
 /**
- * @file EvolutiveLoad.h
- * @brief Fichier entete de la classe EvolutiveLoad
+ * @file EvolutiveThermalLoad.cxx
+ * @brief Implementation de EvolutiveThermalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
@@ -24,34 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: natacha.bereux at edf.fr */
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
-
-#include "Results/ResultsContainer.h"
-
-
-/**
- * @class EvolutiveLoadInstance
- * @brief Cette classe correspond a un comb_fourier
- * @author Nicolas Sellenet
- */
-class EvolutiveLoadInstance: public ResultsContainerInstance
-{
-public:
-    /**
-     * @brief Constructeur
-     */
-    EvolutiveLoadInstance(): 
-        ResultsContainerInstance( "EVOL_CHAR" )
-    {};
-
-};
-
-/**
- * @typedef EvolutiveLoadPtr
- * @brief Pointeur intelligent vers un EvolutiveLoadInstance
- */
-typedef boost::shared_ptr< EvolutiveLoadInstance > EvolutiveLoadPtr;
-
-#endif /* EVOLUTIVELOAD_H_ */
+#include "Results/EvolutiveThermalLoad.h"
