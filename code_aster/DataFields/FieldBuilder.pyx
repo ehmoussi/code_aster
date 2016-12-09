@@ -24,24 +24,24 @@ from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Mesh.MatchingMeshes cimport MatchingMeshes
+from code_aster.DataFields.PCFieldOnMesh cimport PCFieldOnMeshDouble
 
 
-def PROJ_CHAMP(**curDict):
-    returnProj = None
-    if not curDict.has_key("RESULTAT") and not curDict.has_key("CHAM_GD"):
-        returnProj = MatchingMeshes()
+def CREA_CHAMP(**curDict):
+    returnField = None
+    if curDict["TYPE_CHAM"][:5] == "CART_" and curDict["TYPE_CHAM"][10:] == "R":
+        returnField = PCFieldOnMeshDouble()
     else:
         raise NameError("Not yet implemented")
-    cdef string name = returnProj.getName()
-    cdef string type = returnProj.getType()
+    cdef string name = returnField.getName()
+    cdef string type = returnField.getType()
 
-    syntax = CommandSyntax("PROJ_CHAMP")
+    syntax = CommandSyntax("CREA_CHAMP")
     syntax.setResult(name, type)
     syntax.define(curDict)
 
-    cdef INTEGER numOp = 166
+    cdef INTEGER numOp = 195
     libaster.execop_(&numOp)
     syntax.free()
 
-    return returnProj
+    return returnField

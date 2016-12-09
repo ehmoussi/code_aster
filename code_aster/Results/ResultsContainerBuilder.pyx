@@ -24,24 +24,24 @@ from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Mesh.MatchingMeshes cimport MatchingMeshes
+from code_aster.Results.EvolutiveLoad cimport EvolutiveLoad
 
 
-def PROJ_CHAMP(**curDict):
-    returnProj = None
-    if not curDict.has_key("RESULTAT") and not curDict.has_key("CHAM_GD"):
-        returnProj = MatchingMeshes()
+def CREA_RESU(**curDict):
+    returnRC = None
+    if curDict["TYPE_RESU"] == "EVOL_CHAR":
+        returnRC = EvolutiveLoad()
     else:
         raise NameError("Not yet implemented")
-    cdef string name = returnProj.getName()
-    cdef string type = returnProj.getType()
+    cdef string name = returnRC.getName()
+    cdef string type = returnRC.getType()
 
-    syntax = CommandSyntax("PROJ_CHAMP")
+    syntax = CommandSyntax("CREA_RESU")
     syntax.setResult(name, type)
     syntax.define(curDict)
 
-    cdef INTEGER numOp = 166
+    cdef INTEGER numOp = 124
     libaster.execop_(&numOp)
     syntax.free()
 
-    return returnProj
+    return returnRC

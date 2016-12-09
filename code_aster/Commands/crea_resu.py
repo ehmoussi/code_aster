@@ -19,4 +19,4 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.Modeling.ModelBuilder import *
+from code_aster.Results.ResultsContainerBuilder import *
