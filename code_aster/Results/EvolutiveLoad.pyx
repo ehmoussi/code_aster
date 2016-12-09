@@ -21,33 +21,19 @@ from libcpp.string cimport string
 from cython.operator cimport dereference as deref
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Mesh.Mesh cimport Mesh
+from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
+from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
 
+#### EvolutiveLoad
 
-cdef class PCFieldOnMeshDouble(DataStructure):
-    """Python wrapper on the C++ PCFieldOnMeshDouble object"""
+cdef class EvolutiveLoad(ResultsContainer):
+    """Python wrapper on the C++ EvolutiveLoad Object"""
 
-    def __cinit__(self,bint init = True):
+    def __cinit__(self, bint init = True):
         """Initialization: stores the pointer to the C++ object"""
-        if init:
-            self._cptr = new PCFieldOnMeshPtrDouble(new PCFieldOnMeshInstanceDouble())
-
-    def __dealloc__(self):
-        """Destructor"""
-        if self._cptr is not NULL:
-            del self._cptr
-
-    cdef set(self, PCFieldOnMeshPtrDouble other):
-        """Point to an existing object"""
-        self._cptr = new PCFieldOnMeshPtrDouble(other)
-
-    cdef PCFieldOnMeshPtrDouble* getPtr(self):
-        """Return the pointer on the c++ shared-pointer object"""
-        return self._cptr
-
-    cdef PCFieldOnMeshInstanceDouble* getInstance(self):
-        """Return the pointer on the c++ instance object"""
-        return self._cptr.get()
+        if init :
+            self._cptr = <ResultsContainerPtr *>\
+                new EvolutiveLoadPtr(new EvolutiveLoadInstance() )
 
     def getName(self):
         """Return the name of DataStructure"""
@@ -57,6 +43,6 @@ cdef class PCFieldOnMeshDouble(DataStructure):
         """Return the type of DataStructure"""
         return self.getInstance().getType()
 
-    def setSupportMesh(self, Mesh mesh):
-        """Set the support mesh of the model"""
-        return self.getInstance().setSupportMesh(deref(mesh.getPtr()))
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()

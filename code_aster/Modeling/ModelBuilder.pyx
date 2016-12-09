@@ -24,24 +24,20 @@ from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Mesh.MatchingMeshes cimport MatchingMeshes
+from code_aster.Modeling.Model cimport Model
 
 
-def PROJ_CHAMP(**curDict):
-    returnProj = None
-    if not curDict.has_key("RESULTAT") and not curDict.has_key("CHAM_GD"):
-        returnProj = MatchingMeshes()
-    else:
-        raise NameError("Not yet implemented")
-    cdef string name = returnProj.getName()
-    cdef string type = returnProj.getType()
+def AFFE_MODELE(**curDict):
+    returnModel = Model()
+    cdef string name = returnModel.getName()
+    cdef string type = returnModel.getType()
 
-    syntax = CommandSyntax("PROJ_CHAMP")
+    syntax = CommandSyntax("AFFE_MODELE")
     syntax.setResult(name, type)
     syntax.define(curDict)
 
-    cdef INTEGER numOp = 166
+    cdef INTEGER numOp = 18
     libaster.execop_(&numOp)
     syntax.free()
 
-    return returnProj
+    return returnModel

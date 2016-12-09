@@ -40,6 +40,7 @@
  * @class PCFieldOnMeshInstance Piecewise Constant (PC) Field on Mesh template
  * @brief Cette classe permet de definir une carte (champ défini sur les mailles)
  * @author Natacha Bereux
+ * @todo Le template doit aussi prendre en argument la grandeur : CART_TEMP_R
  */
 template< class ValueType >
 class PCFieldOnMeshInstance: public DataStructure
@@ -120,7 +121,7 @@ class PCFieldOnMeshInstance: public DataStructure
          * @param name Nom Jeveux de la carte
          */
         PCFieldOnMeshInstance( std::string name ):
-                                            DataStructure( name, "CARTE" ),
+                                            DataStructure( name, "CART_" ),
                                             _meshName( JeveuxVectorChar8( name + ".NOMA" ) ),
                                             _descriptor( JeveuxVectorLong( name + ".DESC" ) ),
                                             _nameOfLigrels( JeveuxVectorChar24( name + ".NOLI" ) ),
@@ -132,6 +133,25 @@ class PCFieldOnMeshInstance: public DataStructure
                                             _valuesListTmp( name + ".VALV" )
         {
             assert( name.size() == 19 );
+        };
+
+        /**
+         * @brief Constructeur
+         * @param name Nom Jeveux de la carte
+         */
+        PCFieldOnMeshInstance( const JeveuxMemory memType = Permanent ):
+                                            DataStructure( "CART_", memType, 19 ),
+                                            _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
+                                            _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+                                            _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
+                                            _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
+                                            _valuesList( JeveuxVector<ValueType>( getName() + ".VALE" ) ),
+                                            _supportMesh( MeshPtr() ),
+                                            _isAllocated( false ),
+                                            _componentNames( getName() + ".NCMP" ),
+                                            _valuesListTmp( getName() + ".VALV" )
+        {
+            assert( getName().size() == 19 );
         };
 
         /**

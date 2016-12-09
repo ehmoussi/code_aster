@@ -26,14 +26,18 @@ from code_aster.Results.ResultsContainer cimport ResultsContainerPtr
 
 #### FourierCombination
 
-cdef class FourierCombination( ResultsContainer ):
+cdef class FourierCombination(ResultsContainer):
     """Python wrapper on the C++ FourierCombination Object"""
 
-    def __cinit__( self, bint init = True ):
+    def __cinit__(self, bint init = True):
         """Initialization: stores the pointer to the C++ object"""
         if init :
             self._cptr = <ResultsContainerPtr *>\
-                new FourierCombinationPtr( new FourierCombinationInstance() )
+                new FourierCombinationPtr(new FourierCombinationInstance())
+
+    def getName(self):
+        """Return the name of DataStructure"""
+        return self.getInstance().getName()
 
     def getType(self):
         """Return the type of DataStructure"""

@@ -1,9 +1,6 @@
-#ifndef FOURIERCOMBINATION_H_
-#define FOURIERCOMBINATION_H_
-
 /**
- * @file FourierCombination.h
- * @brief Fichier entete de la classe FourierCombination
+ * @file EvolutiveLoad.cxx
+ * @brief Implementation de EvolutiveLoad
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
@@ -24,33 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: natacha.bereux at edf.fr */
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
-
-#include "Results/ResultsContainer.h"
-
-/**
- * @class FourierCombinationInstance
- * @brief Cette classe correspond a un comb_fourier
- * @author Nicolas Sellenet
- */
-class FourierCombinationInstance: public ResultsContainerInstance
-{
-public:
-    /**
-     * @brief Constructeur
-     */
-    FourierCombinationInstance(): 
-        ResultsContainerInstance( "COMB_FOURIER" )
-    {};
-
-};
-
-/**
- * @typedef FourierCombinationPtr
- * @brief Pointeur intelligent vers un FourierCombinationInstance
- */
-typedef boost::shared_ptr< FourierCombinationInstance > FourierCombinationPtr;
-
-#endif /* FOURIERCOMBINATION_H_ */
+#include "Results/EvolutiveLoad.h"

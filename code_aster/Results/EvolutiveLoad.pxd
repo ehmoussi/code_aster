@@ -18,30 +18,28 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
-from cython.operator cimport dereference as deref
-from code_aster cimport libaster
-from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Mesh.MatchingMeshes cimport MatchingMeshes
+from code_aster.Results.ResultsContainer cimport ResultsContainer
 
 
-def PROJ_CHAMP(**curDict):
-    returnProj = None
-    if not curDict.has_key("RESULTAT") and not curDict.has_key("CHAM_GD"):
-        returnProj = MatchingMeshes()
-    else:
-        raise NameError("Not yet implemented")
-    cdef string name = returnProj.getName()
-    cdef string type = returnProj.getType()
+cdef extern from "Results/EvolutiveLoad.h":
 
-    syntax = CommandSyntax("PROJ_CHAMP")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    cdef cppclass EvolutiveLoadInstance:
 
-    cdef INTEGER numOp = 166
-    libaster.execop_(&numOp)
-    syntax.free()
+        EvolutiveLoadInstance()
+        const string getName()
+        const string getType()
+        void debugPrint(int logicalUnit)
 
-    return returnProj
+    cdef cppclass EvolutiveLoadPtr:
+
+        EvolutiveLoadPtr(EvolutiveLoadPtr&)
+        EvolutiveLoadPtr(EvolutiveLoadInstance*)
+        EvolutiveLoadInstance* get()
+
+
+#### EvolutiveLoad
+
+cdef class EvolutiveLoad(ResultsContainer):
+    pass

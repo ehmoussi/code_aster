@@ -2,4 +2,5 @@
 
 from .ResultsContainer import ResultsContainer
 from .FourierCombination import FourierCombination
+from .EvolutiveLoad import EvolutiveLoad
 from .NonLinearEvolutionContainer import NonLinearEvolutionContainer

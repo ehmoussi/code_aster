@@ -1,9 +1,9 @@
-#ifndef FOURIERCOMBINATION_H_
-#define FOURIERCOMBINATION_H_
+#ifndef EVOLUTIVLOAD_H_
+#define EVOLUTIVLOAD_H_
 
 /**
- * @file FourierCombination.h
- * @brief Fichier entete de la classe FourierCombination
+ * @file EvolutiveLoad.h
+ * @brief Fichier entete de la classe EvolutiveLoad
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
@@ -30,27 +30,28 @@
 
 #include "Results/ResultsContainer.h"
 
+
 /**
- * @class FourierCombinationInstance
+ * @class EvolutiveLoadInstance
  * @brief Cette classe correspond a un comb_fourier
  * @author Nicolas Sellenet
  */
-class FourierCombinationInstance: public ResultsContainerInstance
+class EvolutiveLoadInstance: public ResultsContainerInstance
 {
 public:
     /**
      * @brief Constructeur
      */
-    FourierCombinationInstance(): 
-        ResultsContainerInstance( "COMB_FOURIER" )
+    EvolutiveLoadInstance(): 
+        ResultsContainerInstance( "EVOL_CHAR" )
     {};
 
 };
 
 /**
- * @typedef FourierCombinationPtr
- * @brief Pointeur intelligent vers un FourierCombinationInstance
+ * @typedef EvolutiveLoadPtr
+ * @brief Pointeur intelligent vers un EvolutiveLoadInstance
  */
-typedef boost::shared_ptr< FourierCombinationInstance > FourierCombinationPtr;
+typedef boost::shared_ptr< EvolutiveLoadInstance > EvolutiveLoadPtr;
 
-#endif /* FOURIERCOMBINATION_H_ */
+#endif /* EVOLUTIVLOAD_H_ */
