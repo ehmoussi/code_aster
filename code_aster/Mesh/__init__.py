@@ -2,3 +2,4 @@
 
 from .Mesh import Mesh
 from .MatchingMeshes import MatchingMeshes
+from .Grid import Grid
