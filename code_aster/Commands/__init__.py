@@ -2,8 +2,9 @@
 
 __all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_MATERIAU',  'AFFE_MODELE',
            'COMB_FOURIER',   'CREA_CHAMP',     'CREA_RESU',      'CREA_TABLE',     'DEFI_COMPOR',
-           'DEFI_FISS_XFEM', 'DEFI_FONCTION',  'DEFI_FOND_FISS', 'DEFI_GEOM_FIBRE','DEFI_LIST_REEL',
-           'DEFI_MATERIAU',  'LIRE_MAILLAGE',  'MECA_STATIQUE',  'MODE_STATIQUE',  'PROJ_CHAMP',
+           'DEFI_FISS_XFEM', 'DEFI_FONCTION',  'DEFI_FOND_FISS', 'DEFI_GEOM_FIBRE','DEFI_GRILLE',
+           'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'LIRE_MAILLAGE',  'MECA_STATIQUE',  'MODE_STATIQUE',
+           'PROJ_CHAMP',
           ]
 
 from code_aster.Cata.Syntax import _F
@@ -20,6 +21,7 @@ from code_aster.Commands.defi_compor import DEFI_COMPOR
 from code_aster.Commands.defi_fonction import DEFI_FONCTION
 from code_aster.Commands.defi_fond_fiss import DEFI_FOND_FISS
 from code_aster.Commands.defi_geom_fibre import DEFI_GEOM_FIBRE
+from code_aster.Commands.defi_grille import DEFI_GRILLE
 from code_aster.Commands.defi_list_reel import DEFI_LIST_REEL
 from code_aster.Commands.defi_materiau import DEFI_MATERIAU
 from code_aster.Commands.lire_maillage import LIRE_MAILLAGE
