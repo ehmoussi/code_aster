@@ -27,10 +27,13 @@ from code_aster.Discretization.DOFNumbering cimport DOFNumbering
 cdef class StructureInterface(DataStructure):
     """Python wrapper on the C++ StructureInterface Object"""
 
-    def __cinit__(self, DOFNumbering dofNum, bint init = True):
+    def __cinit__(self, DOFNumbering dofNum = None, bint init = True):
         """Initialization: stores the pointer to the C++ object"""
         if init :
-            self._cptr = new StructureInterfacePtr(new StructureInterfaceInstance(deref(dofNum.getPtr())))
+            if dofNum == None:
+                self._cptr = new StructureInterfacePtr(new StructureInterfaceInstance())
+            else:
+                self._cptr = new StructureInterfacePtr(new StructureInterfaceInstance(deref(dofNum.getPtr())))
 
     def __dealloc__(self):
         """Destructor"""

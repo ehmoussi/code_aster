@@ -1,16 +1,17 @@
 # code_aster.Commands compatibility package
 
-__all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_MATERIAU',  'AFFE_MODELE',
-           'COMB_FOURIER',   'CREA_CHAMP',     'CREA_RESU',      'CREA_TABLE',     'DEFI_COMPOR',
-           'DEFI_FISS_XFEM', 'DEFI_FONCTION',  'DEFI_FOND_FISS', 'DEFI_GEOM_FIBRE','DEFI_GRILLE',
-           'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'LIRE_MAILLAGE',  'MECA_STATIQUE',  'MODE_STATIQUE',
-           'PROJ_CHAMP',
+__all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_CHAR_MECA', 'AFFE_MATERIAU',
+           'AFFE_MODELE',    'COMB_FOURIER',   'CREA_CHAMP',     'CREA_RESU',      'CREA_TABLE',
+           'DEFI_COMPOR',    'DEFI_FISS_XFEM', 'DEFI_FONCTION',  'DEFI_FOND_FISS', 'DEFI_GEOM_FIBRE',
+           'DEFI_GRILLE',    'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'LIRE_MAILLAGE',  'MECA_STATIQUE',
+           'MODE_STATIQUE',  'PROJ_CHAMP',
           ]
 
 from code_aster.Cata.Syntax import _F
 
 from code_aster.Commands.affe_cara_elem import AFFE_CARA_ELEM
 from code_aster.Commands.affe_char_cine import AFFE_CHAR_CINE
+from code_aster.Commands.affe_char_meca import AFFE_CHAR_MECA
 from code_aster.Commands.affe_materiau import AFFE_MATERIAU
 from code_aster.Commands.affe_modele import AFFE_MODELE
 from code_aster.Commands.comb_fourier import COMB_FOURIER

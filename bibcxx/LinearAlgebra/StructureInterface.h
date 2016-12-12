@@ -104,6 +104,23 @@ public:
     /**
      * @brief Constructeur
      */
+    StructureInterfaceInstance():
+        DataStructure( "INTERF_DYNA_CLAS", Permanent ),
+        _frequency( 1. ),
+        _isEmpty( true ),
+        _codingNumbers( JeveuxCollectionLong( getName() + ".IDC_DDAC" ) ),
+        _numbering( JeveuxVectorLong( getName() + ".IDC_DEFO" ) ),
+        _description( JeveuxVectorLong( getName() + ".IDC_DESC" ) ),
+        _nodes( JeveuxCollectionLong( getName() + ".IDC_LINO" ) ),
+        _names( JeveuxVectorChar8( getName() + ".IDC_NOMS" ) ),
+        _reference( JeveuxVectorChar24( getName() + ".IDC_REFE" ) ),
+        _types( JeveuxVectorChar8( getName() + ".IDC_TYPE" ) ),
+        _frequencyValue( JeveuxVectorDouble( getName() + ".IDC_DY_FREQ" ) )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
     StructureInterfaceInstance( const DOFNumberingPtr& curDof ):
         DataStructure( "INTERF_DYNA_CLAS", Permanent ),
         _dofNum( curDof ),

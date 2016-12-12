@@ -34,6 +34,7 @@ cdef extern from "Loads/MechanicalLoad.h":
 
         GenericMechanicalLoadInstance()
         bint setSupportModel( ModelPtr currentModel )
+        const string getName()
         const string getType()
         void debugPrint( int logicalUnit )
 
