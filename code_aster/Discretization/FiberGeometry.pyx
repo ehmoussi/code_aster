@@ -26,30 +26,30 @@ from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
 
 
-cdef class ElementaryCharacteristics(DataStructure):
+cdef class FiberGeometry(DataStructure):
 
-    """Python wrapper on the C++ ElementaryCharacteristics object"""
+    """Python wrapper on the C++ FiberGeometry object"""
 
     def __cinit__(self, bint init = True):
         """Initialization: stores the pointer to the C++ object"""
         if init:
-            self._cptr = new ElementaryCharacteristicsPtr(new ElementaryCharacteristicsInstance())
+            self._cptr = new FiberGeometryPtr(new FiberGeometryInstance())
 
     def __dealloc__(self):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set(self, ElementaryCharacteristicsPtr other):
+    cdef set(self, FiberGeometryPtr other):
         """Point to an existing object"""
         # set must be subclassed if it is necessary
-        self._cptr = new ElementaryCharacteristicsPtr(other)
+        self._cptr = new FiberGeometryPtr(other)
 
-    cdef ElementaryCharacteristicsPtr* getPtr(self):
+    cdef FiberGeometryPtr* getPtr(self):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef ElementaryCharacteristicsInstance* getInstance(self):
+    cdef FiberGeometryInstance* getInstance(self):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
 

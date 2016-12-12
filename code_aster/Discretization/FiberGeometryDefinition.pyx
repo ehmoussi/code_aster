@@ -18,30 +18,25 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+from cython.operator cimport dereference as deref
+from code_aster cimport libaster
+from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
+from code_aster.Discretization.FiberGeometry cimport FiberGeometry
 
 
-cdef extern from "Discretization/ElementaryCharacteristics.h":
+def DEFI_GEOM_FIBRE(**curDict):
+    returnFiberGeom = FiberGeometry()
+    cdef string name = returnFiberGeom.getInstance().getName()
+    syntax = CommandSyntax("DEFI_GEOM_FIBRE")
 
-    cdef cppclass ElementaryCharacteristicsInstance:
+    # self.getInstance().getType()
+    syntax.setResult(name, "MAILLAGE")
 
-        ElementaryCharacteristicsInstance()
-        string getName()
-        string getType()
-        void debugPrint( int logicalUnit )
-
-    cdef cppclass ElementaryCharacteristicsPtr:
-
-        ElementaryCharacteristicsPtr(ElementaryCharacteristicsPtr&)
-        ElementaryCharacteristicsPtr(ElementaryCharacteristicsInstance *)
-        ElementaryCharacteristicsInstance* get()
-
-
-#### ElementaryCharacteristics
-
-cdef class ElementaryCharacteristics(DataStructure):
-    cdef ElementaryCharacteristicsPtr* _cptr
-    cdef set(self, ElementaryCharacteristicsPtr other)
-    cdef ElementaryCharacteristicsPtr* getPtr(self)
-    cdef ElementaryCharacteristicsInstance* getInstance(self)
+    syntax.define(curDict)
+    cdef INTEGER numOp = 119
+    libaster.execop_(&numOp)
+    syntax.free()
+    return returnFiberGeom

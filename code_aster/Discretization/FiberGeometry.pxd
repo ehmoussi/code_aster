@@ -22,26 +22,26 @@ from libcpp.string cimport string
 from code_aster.DataStructure.DataStructure cimport DataStructure
 
 
-cdef extern from "Discretization/ElementaryCharacteristics.h":
+cdef extern from "Discretization/FiberGeometry.h":
 
-    cdef cppclass ElementaryCharacteristicsInstance:
+    cdef cppclass FiberGeometryInstance:
 
-        ElementaryCharacteristicsInstance()
+        FiberGeometryInstance()
         string getName()
         string getType()
         void debugPrint( int logicalUnit )
 
-    cdef cppclass ElementaryCharacteristicsPtr:
+    cdef cppclass FiberGeometryPtr:
 
-        ElementaryCharacteristicsPtr(ElementaryCharacteristicsPtr&)
-        ElementaryCharacteristicsPtr(ElementaryCharacteristicsInstance *)
-        ElementaryCharacteristicsInstance* get()
+        FiberGeometryPtr(FiberGeometryPtr&)
+        FiberGeometryPtr(FiberGeometryInstance *)
+        FiberGeometryInstance* get()
 
 
-#### ElementaryCharacteristics
+#### FiberGeometry
 
-cdef class ElementaryCharacteristics(DataStructure):
-    cdef ElementaryCharacteristicsPtr* _cptr
-    cdef set(self, ElementaryCharacteristicsPtr other)
-    cdef ElementaryCharacteristicsPtr* getPtr(self)
-    cdef ElementaryCharacteristicsInstance* getInstance(self)
+cdef class FiberGeometry(DataStructure):
+    cdef FiberGeometryPtr* _cptr
+    cdef set(self, FiberGeometryPtr other)
+    cdef FiberGeometryPtr* getPtr(self)
+    cdef FiberGeometryInstance* getInstance(self)
