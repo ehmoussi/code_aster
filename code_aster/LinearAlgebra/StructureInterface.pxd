@@ -34,6 +34,7 @@ cdef extern from "LinearAlgebra/StructureInterface.h":
 
     cdef cppclass StructureInterfaceInstance:
 
+        StructureInterfaceInstance()
         StructureInterfaceInstance(DOFNumberingPtr)
         void addInterface(const string name, const InterfaceTypeEnum typ,
                           const VectorString groupsOfNodes,

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -33,9 +33,10 @@ cdef class GenericMechanicalLoad( DataStructure ):
 
     """Python wrapper on the C++ GenericMechanicalLoad object"""
 
-    def __cinit__( self ):
+    def __cinit__( self, bint init=True ):
         """Initialization: stores the pointer to the C++ object"""
-        pass
+        if init:
+            self._cptr = new GenericMechanicalLoadPtr ( new GenericMechanicalLoadInstance() )
 
     def __dealloc__( self ):
         """Destructor"""
@@ -58,6 +59,10 @@ cdef class GenericMechanicalLoad( DataStructure ):
     cdef GenericMechanicalLoadInstance* getInstance( self ):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
+
+    def getName(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getName()
 
     def getType(self):
         """Return the type of DataStructure"""

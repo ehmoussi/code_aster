@@ -293,7 +293,7 @@ class GenericMechanicalLoadInstance: public DataStructure
             return true;
         };
 
-        virtual bool build() = 0;
+        virtual bool build(){};
 };
 
 /**
