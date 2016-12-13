@@ -24,19 +24,19 @@ from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Discretization.ElementaryCharacteristics cimport ElementaryCharacteristics
+from code_aster.LinearAlgebra.InterspectralMatrix cimport InterspectralMatrix
 
 
-def AFFE_CARA_ELEM(**curDict):
-    returnCaraElem = ElementaryCharacteristics()
-    cdef string name = returnCaraElem.getInstance().getName()
-    cdef string type = returnCaraElem.getInstance().getType()
-    syntax = CommandSyntax("AFFE_CARA_ELEM")
+def DEFI_INTE_SPEC(**curDict):
+    returnMatrix = InterspectralMatrix()
+    cdef string name = returnMatrix.getInstance().getName()
+    cdef string type = returnMatrix.getInstance().getType()
+    syntax = CommandSyntax("DEFI_INTE_SPEC")
 
     syntax.setResult(name, type)
 
     syntax.define(curDict)
-    cdef INTEGER numOp = 19
+    cdef INTEGER numOp = 115
     libaster.execop_(&numOp)
     syntax.free()
-    return returnCaraElem
+    return returnMatrix

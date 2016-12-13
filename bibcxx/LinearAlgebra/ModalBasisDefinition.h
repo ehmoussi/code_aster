@@ -48,7 +48,9 @@ public:
     /**
      * @brief Constructeur
      */
-    GenericModalBasisInstance(): _isEmpty( true )
+    GenericModalBasisInstance():
+        DataStructure( "MODE_MECA", Permanent ),
+        _isEmpty( true )
     {};
 
 protected:
