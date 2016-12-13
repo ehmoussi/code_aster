@@ -18,25 +18,30 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
-from cython.operator cimport dereference as deref
-from code_aster cimport libaster
-from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Discretization.ElementaryCharacteristics cimport ElementaryCharacteristics
 
 
-def AFFE_CARA_ELEM(**curDict):
-    returnCaraElem = ElementaryCharacteristics()
-    cdef string name = returnCaraElem.getInstance().getName()
-    cdef string type = returnCaraElem.getInstance().getType()
-    syntax = CommandSyntax("AFFE_CARA_ELEM")
+cdef extern from "LinearAlgebra/InterspectralMatrix.h":
 
-    syntax.setResult(name, type)
+    cdef cppclass InterspectralMatrixInstance:
 
-    syntax.define(curDict)
-    cdef INTEGER numOp = 19
-    libaster.execop_(&numOp)
-    syntax.free()
-    return returnCaraElem
+        InterspectralMatrixInstance()
+        string getName()
+        string getType()
+        void debugPrint(int logicalUnit) except +
+
+    cdef cppclass InterspectralMatrixPtr:
+
+        InterspectralMatrixPtr(InterspectralMatrixPtr&)
+        InterspectralMatrixPtr(InterspectralMatrixInstance*)
+        InterspectralMatrixInstance* get()
+
+
+cdef class InterspectralMatrix(DataStructure):
+
+    cdef InterspectralMatrixPtr* _cptr
+
+    cdef set(self, InterspectralMatrixPtr other)
+    cdef InterspectralMatrixPtr* getPtr(self)
+    cdef InterspectralMatrixInstance* getInstance(self)
