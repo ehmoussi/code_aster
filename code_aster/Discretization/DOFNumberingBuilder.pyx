@@ -18,33 +18,25 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
+from cython.operator cimport dereference as deref
+from code_aster cimport libaster
+from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Modeling.Model cimport ModelPtr
-from code_aster.Materials.MaterialOnMesh cimport MaterialOnMeshPtr
-from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoadPtr
+from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
+from code_aster.Discretization.DOFNumbering cimport DOFNumbering
 
 
-cdef extern from "LinearAlgebra/ElementaryMatrix.h":
+def NUME_DDL(**curDict):
+    returnDofNum = DOFNumbering()
+    cdef string name = returnDofNum.getInstance().getName()
+    cdef string type = returnDofNum.getInstance().getType()
+    syntax = CommandSyntax("NUME_DDL")
 
-    cdef cppclass ElementaryMatrixInstance:
+    syntax.setResult(name, type)
 
-        ElementaryMatrixInstance()
-        const string getName()
-        const string getType()
-        void debugPrint( int logicalUnit )
-
-    cdef cppclass ElementaryMatrixPtr:
-
-        ElementaryMatrixPtr( ElementaryMatrixPtr& )
-        ElementaryMatrixPtr( ElementaryMatrixInstance* )
-        ElementaryMatrixInstance* get()
-
-
-cdef class ElementaryMatrix( DataStructure ):
-
-    cdef ElementaryMatrixPtr* _cptr
-
-    cdef set( self, ElementaryMatrixPtr other )
-    cdef ElementaryMatrixPtr* getPtr( self )
-    cdef ElementaryMatrixInstance* getInstance( self )
+    syntax.define(curDict)
+    cdef INTEGER numOp = 11
+    libaster.execop_(&numOp)
+    syntax.free()
+    return returnDofNum

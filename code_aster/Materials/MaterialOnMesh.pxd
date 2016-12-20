@@ -36,6 +36,7 @@ cdef extern from "Materials/MaterialOnMesh.h":
         MeshPtr getSupportMesh()
         getCommandKeywords()
         bint build()
+        const string getName()
         const string getType()
         void debugPrint( int logicalUnit )
 

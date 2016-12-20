@@ -51,6 +51,7 @@
  * @brief Classe template definissant une sd_matr_asse.
  *        Cette classe est volontairement succinte car on n'en connait pas encore l'usage
  * @author Nicolas Sellenet
+ * @todo revoir le template pour prendre la grandeur en plus
  */
 template< class ValueType >
 class AssemblyMatrixInstance: public DataStructure
@@ -170,7 +171,7 @@ typedef boost::shared_ptr< AssemblyMatrixComplexInstance > AssemblyMatrixComplex
 
 template< class ValueType >
 AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const JeveuxMemory memType ):
-                DataStructure( "MATR_ASSE", memType ),
+                DataStructure( "MATR_ASSE_DEPL_R", memType ),
                 _description( JeveuxVectorChar24( getName() + "           .REFA" ) ),
                 _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
