@@ -37,6 +37,9 @@ cdef extern from "LinearAlgebra/ModalBasisDefinition.h":
     cdef cppclass GenericModalBasisInstance:
 
         GenericModalBasisInstance()
+        string getName()
+        string getType()
+        void debugPrint(int logicalUnit) except +
         bint build()
         void setLinearSolver(const LinearSolverPtr& solver)
 

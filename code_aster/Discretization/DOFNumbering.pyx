@@ -46,6 +46,10 @@ cdef class DOFNumbering( DataStructure ):
         """Point to an existing object"""
         self._cptr = new DOFNumberingPtr( other )
 
+    def getName(self):
+        """Return the name of DataStructure"""
+        return self.getInstance().getName()
+
     def getType(self):
         """Return the type of DataStructure"""
         return self.getInstance().getType()

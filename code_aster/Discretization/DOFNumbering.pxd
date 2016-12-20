@@ -38,6 +38,7 @@ cdef extern from "Discretization/DOFNumbering.h":
         void setElementaryMatrix( ElementaryMatrixPtr& curElemMat )
         void setLinearSolver( LinearSolverPtr& curLinSolv )
         void setSupportModel( ModelPtr& curModel )
+        const string getName()
         const string getType()
         void debugPrint( int logicalUnit )
 

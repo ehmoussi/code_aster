@@ -31,9 +31,10 @@ from code_aster.Discretization.DOFNumbering cimport DOFNumbering
 cdef class GenericModalBasis(DataStructure):
     """Python wrapper on the C++ GenericModalBasis Object"""
 
-    def __cinit__(self):
+    def __cinit__(self, bint init = True):
         """Initialization: stores the pointer to the C++ object"""
-        pass
+        if init :
+            self._cptr = new GenericModalBasisPtr(new GenericModalBasisInstance())
 
     def __dealloc__(self):
         """Destructor"""
@@ -51,6 +52,14 @@ cdef class GenericModalBasis(DataStructure):
     cdef GenericModalBasisInstance* getInstance(self):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
+
+    def getName(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getName()
+
+    def getType(self):
+        """Return the type of DataStructure"""
+        return self.getInstance().getType()
 
     def build(self):
         return self.getInstance().build()

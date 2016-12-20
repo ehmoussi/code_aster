@@ -35,6 +35,7 @@ cdef extern from "LinearAlgebra/AssemblyMatrix.h":
         bint factorization()
         void setDOFNumbering( ForwardDOFNumberingPtr& curDOFNumber )
         void setElementaryMatrix(  ElementaryMatrixPtr& currentElemMatrix )
+        const string getName()
         const string getType()
         void debugPrint( int logicalUnit )
 
