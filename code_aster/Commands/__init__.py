@@ -4,8 +4,8 @@ __all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_CHAR_MECA
            'AFFE_MODELE',    'ASSE_MATRICE',   'CALC_MATR_ELEM', 'COMB_FOURIER',
            'CREA_CHAMP',     'CREA_RESU',      'CREA_TABLE',     'DEFI_COMPOR',    'DEFI_FISS_XFEM',
            'DEFI_FONCTION',  'DEFI_FOND_FISS', 'DEFI_GEOM_FIBRE','DEFI_GRILLE',    'DEFI_INTE_SPEC',
-           'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'LIRE_MAILLAGE',  'MECA_STATIQUE',
-           'MODE_STATIQUE',  'NUME_DDL',       'PROJ_CHAMP',
+           'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'LIRE_MAILLAGE',  'MACR_ELEM_DYNA', 'MACR_ELEM_STAT',
+           'MECA_STATIQUE',  'MODE_STATIQUE',  'NUME_DDL',       'PROJ_CHAMP',
           ]
 
 from code_aster.Cata.Syntax import _F
@@ -30,6 +30,8 @@ from code_aster.Commands.defi_inte_spec import DEFI_INTE_SPEC
 from code_aster.Commands.defi_list_reel import DEFI_LIST_REEL
 from code_aster.Commands.defi_materiau import DEFI_MATERIAU
 from code_aster.Commands.lire_maillage import LIRE_MAILLAGE
+from code_aster.Commands.macr_elem_dyna import MACR_ELEM_DYNA
+from code_aster.Commands.macr_elem_stat import MACR_ELEM_STAT
 from code_aster.Commands.meca_statique import MECA_STATIQUE
 from code_aster.Commands.defi_fiss_xfem import DEFI_FISS_XFEM
 from code_aster.Commands.mode_statique import MODE_STATIQUE
