@@ -49,6 +49,7 @@ from .Geometry import *
 from .LinearAlgebra import *
 from .Materials import *
 from .Mesh import *
+from .Modal import *
 from .Modeling import *
 from .Results import *
 from .Solvers import *

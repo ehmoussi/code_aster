@@ -84,6 +84,10 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Constructeur
          */
         AssemblyMatrixInstance( const JeveuxMemory memType = Permanent );
+        /**
+         * @brief Constructeur
+         */
+        AssemblyMatrixInstance( const std::string& name );
 
         /**
          * @brief Destructeur
@@ -177,6 +181,16 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const JeveuxMemory 
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
                 _isEmpty( true ),
                 _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance( memType ) ) )
+{};
+
+template< class ValueType >
+AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const std::string& name ):
+                DataStructure( name, "MATR_ASSE_DEPL_R" ),
+                _description( JeveuxVectorChar24( getName() + "           .REFA" ) ),
+                _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
+                _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
+                _isEmpty( true ),
+                _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
 {};
 
 template< class ValueType >
