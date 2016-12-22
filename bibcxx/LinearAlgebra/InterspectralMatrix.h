@@ -53,13 +53,13 @@ private:
     JeveuxVectorLong       _numj;
     /** @brief Objet Jeveux '.NUME_ORDRE' */
     JeveuxVectorLong       _numeOrdre;
-    /** @brief Objet Jeveux '.NUMI' */
+    /** @brief Objet Jeveux '.NOEI' */
     JeveuxVectorChar8      _noei;
-    /** @brief Objet Jeveux '.NUMI' */
+    /** @brief Objet Jeveux '.NOEJ' */
     JeveuxVectorChar8      _noej;
-    /** @brief Objet Jeveux '.NUMI' */
+    /** @brief Objet Jeveux '.CMPI' */
     JeveuxVectorChar8      _cmpi;
-    /** @brief Objet Jeveux '.NUMI' */
+    /** @brief Objet Jeveux '.CMPJ' */
     JeveuxVectorChar8      _cmpj;
 
 public:
