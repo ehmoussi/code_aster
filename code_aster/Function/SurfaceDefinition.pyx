@@ -17,6 +17,26 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+from libcpp.string cimport string
+from cython.operator cimport dereference as deref
+from code_aster cimport libaster
+from code_aster.libaster cimport INTEGER
 
-from code_aster.Modal.StaticMacroElementBuilder import *
+from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
+from code_aster.Function.Surface cimport Surface
+
+
+def DEFI_NAPPE(**curDict):
+    returnSurface = Surface()
+    cdef string name = returnSurface.getInstance().getName()
+    cdef string type = returnSurface.getInstance().getType()
+    syntax = CommandSyntax("DEFI_NAPPE")
+
+    syntax.setResult(name, type)
+
+    syntax.define(curDict)
+    cdef INTEGER numOp = 4
+    libaster.execop_(&numOp)
+    syntax.free()
+    return returnSurface

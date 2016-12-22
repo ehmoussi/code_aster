@@ -352,9 +352,16 @@ cdef public char** getCommandKeywordValueString(
     # nsellenet
     if len( value ) > 0 and type( value[0] ) not in ( str, unicode ):
         try:
+            #print "Ici"
+            value2 = []
             for i in range( len( value ) ):
-                value[i] = value[i].getName()
+                #print "La2", len(value[i].getName())
+                value2.append(value[i].getName())
+                #print "La3", value[i].getName()
+                #value[i] = value[i].getName()
+            value = value2
         except:
+            #print "La"
             raise TypeError( "string expected for %r/%r, got %s" % ( factName, simpName, type(value[0]) ) )
     # nsellenet
     cdef char** strArray = libBaseUtils.to_cstring_array( value )

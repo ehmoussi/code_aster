@@ -4,6 +4,7 @@ from math import sin, pi
 import numpy as np
 
 import code_aster
+from code_aster.Commands import *
 
 
 test = code_aster.TestCase()
@@ -52,8 +53,23 @@ fcos = fsin
 del fsin
 fcos.debugPrint( 6 )
 
-
 # view must not be used now, it points on invalid data
 test.assertEqual( values[0, 0], 0. )
 
+DF1=DEFI_FONCTION(  NOM_PARA='INST',  NOM_RESU='DEPL',
+                         VERIF='CROISSANT',  PROL_DROITE='LINEAIRE',
+                         VALE_PARA=(0., 1., 2.),  VALE_FONC=(0., 1., 3.)             )
+
+DF2=DEFI_FONCTION(  NOM_PARA='INST',  NOM_RESU='DEPL',
+                         INTERPOL='LOG',
+                         PROL_GAUCHE='LINEAIRE',
+                         VALE=( 3., 3., 4., 4.,  5., 5., )               )
+print "getName", DF1.getName(), DF2.getName()
+DF1.debugPrint()
+
+DN1=DEFI_NAPPE( NOM_PARA='AMOR', NOM_RESU='ACCE',
+                VERIF='CROISSANT',  INTERPOL='LOG',
+                PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+                PARA=( 0.01,  0.02, ), FONCTION=( DF1,  DF2, ) )
+DN1.debugPrint()
 test.printSummary()

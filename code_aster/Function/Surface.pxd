@@ -17,6 +17,31 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+from libcpp.string cimport string
 
-from code_aster.Modal.StaticMacroElementBuilder import *
+from code_aster.DataStructure.DataStructure cimport DataStructure
+
+
+cdef extern from "Function/Surface.h":
+
+    cdef cppclass SurfaceInstance:
+
+        SurfaceInstance()
+        string getName()
+        string getType()
+        void debugPrint(int logicalUnit) except +
+
+    cdef cppclass SurfacePtr:
+
+        SurfacePtr(SurfacePtr&)
+        SurfacePtr(SurfaceInstance*)
+        SurfaceInstance* get()
+
+
+cdef class Surface(DataStructure):
+
+    cdef SurfacePtr* _cptr
+
+    cdef set(self, SurfacePtr other)
+    cdef SurfacePtr* getPtr(self)
+    cdef SurfaceInstance* getInstance(self)
