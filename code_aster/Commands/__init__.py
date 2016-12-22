@@ -1,12 +1,12 @@
 # code_aster.Commands compatibility package
 
 __all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_CHAR_MECA', 'AFFE_MATERIAU',
-           'AFFE_MODELE',    'ASSE_MATRICE',   'CALC_MATR_ELEM', 'COMB_FOURIER',
-           'CREA_CHAMP',     'CREA_RESU',      'CREA_TABLE',     'DEFI_COMPOR',    'DEFI_FISS_XFEM',
-           'DEFI_FONCTION',  'DEFI_FOND_FISS', 'DEFI_GEOM_FIBRE','DEFI_GRILLE',    'DEFI_INTE_SPEC',
-           'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'DEFI_MODELE_GENE','DEFI_NAPPE',    'LIRE_MAILLAGE',
-           'MACR_ELEM_DYNA', 'MACR_ELEM_STAT', 'MECA_STATIQUE',  'MODE_STATIQUE',  'NUME_DDL',
-           'NUME_DDL_GENE',  'PROJ_CHAMP',
+           'AFFE_MODELE',    'ASSE_MATRICE',   'ASSE_MATR_GENE', 'ASSE_VECT_GENE', 'CALC_MATR_ELEM',
+           'COMB_FOURIER',   'CREA_CHAMP',     'CREA_RESU',      'CREA_TABLE',     'DEFI_COMPOR',
+           'DEFI_FISS_XFEM', 'DEFI_FONCTION',  'DEFI_FOND_FISS', 'DEFI_GEOM_FIBRE','DEFI_GRILLE',
+           'DEFI_INTE_SPEC', 'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'DEFI_MODELE_GENE','DEFI_NAPPE',
+           'LIRE_MAILLAGE',  'MACR_ELEM_DYNA', 'MACR_ELEM_STAT', 'MECA_STATIQUE',  'MODE_STATIQUE',
+           'NUME_DDL',       'NUME_DDL_GENE',  'PROJ_CHAMP',
           ]
 
 from code_aster.Cata.Syntax import _F
@@ -17,6 +17,8 @@ from code_aster.Commands.affe_char_meca import AFFE_CHAR_MECA
 from code_aster.Commands.affe_materiau import AFFE_MATERIAU
 from code_aster.Commands.affe_modele import AFFE_MODELE
 from code_aster.Commands.asse_matrice import ASSE_MATRICE
+from code_aster.Commands.asse_matr_gene import ASSE_MATR_GENE
+from code_aster.Commands.asse_vect_gene import ASSE_VECT_GENE
 from code_aster.Commands.calc_matr_elem import CALC_MATR_ELEM
 from code_aster.Commands.comb_fourier import COMB_FOURIER
 from code_aster.Commands.crea_champ import CREA_CHAMP
