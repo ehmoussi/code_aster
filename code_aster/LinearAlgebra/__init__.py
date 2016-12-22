@@ -11,6 +11,7 @@ from .LinearSolver import (
 )
 
 from .AssemblyMatrix import AssemblyMatrixDouble
+from .GeneralizedAssemblyMatrix import GeneralizedAssemblyMatrixDouble, GeneralizedAssemblyMatrixComplex
 from .StructureInterface import (
     StructureInterface,
     MacNeal, CraigBampton, HarmonicalCraigBampton, NoInterfaceType
