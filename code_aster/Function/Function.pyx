@@ -30,60 +30,64 @@ cimport numpy as np
 np.import_array()
 
 
-cdef class Function( DataStructure ):
+cdef class Function(DataStructure):
     """Python wrapper on the C++ Function object"""
 
-    def __cinit__( self, bint init=True, string jeveuxName=" " ):
+    def __cinit__(self, bint init=True, string jeveuxName=" "):
         """Initialization: stores the pointer to the C++ object"""
         if init:
-            self._cptr = new FunctionPtr( new FunctionInstance() )
+            self._cptr = new FunctionPtr(new FunctionInstance())
         else:
-            self.attach( jeveuxName )
+            self.attach(jeveuxName)
 
     def __getnewargs__(self):
         """Define arguments to create an instance at unpickling and to attach it
         to its Jeveux object."""
-        return ( False, self.getInstance().getName() )
+        return (False, self.getInstance().getName())
 
-    def __dealloc__( self ):
+    def __dealloc__(self):
         """Destructor"""
         if self._cptr is not NULL:
             del self._cptr
 
-    cdef set( self, FunctionPtr other ):
+    cdef set(self, FunctionPtr other):
         """Point to an existing object"""
-        self._cptr = new FunctionPtr( other )
+        self._cptr = new FunctionPtr(other)
 
-    cpdef attach( self, string jeveuxName ):
+    cpdef attach(self, string jeveuxName):
         """Attach this function to an existing Jeveux object"""
-        jname = resizeStr( jeveuxName, 8 )
+        jname = resizeStr(jeveuxName, 8)
         if not jname:
             return
-        self._cptr = new FunctionPtr( new FunctionInstance( jname ) )
+        self._cptr = new FunctionPtr(new FunctionInstance(jname))
         ret = self.getInstance().build()
         assert ret, "can't attach Function to the Jeveux object >{0}<".format(jname)
 
-    cdef FunctionPtr* getPtr( self ):
+    cdef FunctionPtr* getPtr(self):
         """Return the pointer on the c++ shared-pointer object"""
         return self._cptr
 
-    cdef FunctionInstance* getInstance( self ):
+    cdef FunctionInstance* getInstance(self):
         """Return the pointer on the c++ instance object"""
         return self._cptr.get()
+
+    def getName(self):
+        """Return the name of DataStructure"""
+        return self.getInstance().getName()
 
     def getType(self):
         """Return the type of DataStructure"""
         return self.getInstance().getType()
 
-    def setParameterName( self, string name ):
+    def setParameterName(self, string name):
         """Set the name of the parameter"""
-        self.getInstance().setParameterName( name )
+        self.getInstance().setParameterName(name)
 
-    def setResultName( self, string name ):
+    def setResultName(self, string name):
         """Set the name of the parameter"""
-        self.getInstance().setResultName( name )
+        self.getInstance().setResultName(name)
 
-    def setInterpolation( self, typ ):
+    def setInterpolation(self, typ):
         """Set the type of interpolation"""
         typ = typ.strip()
         try:
@@ -94,10 +98,10 @@ cdef class Function( DataStructure ):
             assert spl[1] in ('LIN', 'LOG', 'NON')
             typ = " ".join(spl)
         except AssertionError:
-            raise ValueError( "Invalid interpolation type: '{}'".format( typ ) )
-        self.getInstance().setInterpolation( typ )
+            raise ValueError("Invalid interpolation type: '{}'".format(typ))
+        self.getInstance().setInterpolation(typ)
 
-    def setExtrapolation( self, typ ):
+    def setExtrapolation(self, typ):
         """Set the type of extrapolation"""
         typ = typ.strip()
         try:
@@ -105,23 +109,23 @@ cdef class Function( DataStructure ):
             assert typ[0] in ('E', 'C', 'L', 'I')
             assert typ[1] in ('E', 'C', 'L', 'I')
         except AssertionError:
-            raise ValueError( "Invalid extrapolation type: '{}'".format( typ ) )
-        self.getInstance().setExtrapolation( typ )
+            raise ValueError("Invalid extrapolation type: '{}'".format(typ))
+        self.getInstance().setExtrapolation(typ)
 
-    def setValues( self, abscissas, ordinates ):
+    def setValues(self, abscissas, ordinates):
         """Define the values of the function"""
-        self.getInstance().setValues( abscissas, ordinates )
+        self.getInstance().setValues(abscissas, ordinates)
 
-    def size( self ):
+    def size(self):
         """Return the number of points of the function"""
         return self.getInstance().size()
 
-    def getProperties( self ):
+    def getProperties(self):
         """Return the properties of the function"""
         return self.getInstance().getProperties()
 
     @cython.boundscheck(False)
-    def getValuesAsArray( self, copy=True, writeable=False ):
+    def getValuesAsArray(self, copy=True, writeable=False):
         """Return an array object of the values with (default) or without
         copying the data. Without copying you should delete the 'view' when
         the Function is removed."""
@@ -133,34 +137,34 @@ cdef class Function( DataStructure ):
         if copy:
             res = np.empty([size, 2], dtype=float)
             with nogil:
-                for i in range( size ):
+                for i in range(size):
                     res[i, 0] = data[2 * i]
                     res[i, 1] = data[2 * i + 1]
         else:
             shape[0] = <np.npy_intp> size
             shape[1] = 2
-            res = np.PyArray_SimpleNewFromData( 2, shape, np.NPY_DOUBLE, <void*> data )
+            res = np.PyArray_SimpleNewFromData(2, shape, np.NPY_DOUBLE, <void*> data)
             res.flags.writeable = writeable
         return res
 
-    def debugPrint( self, logicalUnit=6 ):
+    def debugPrint(self, logicalUnit=6):
         """Print debug information of the content"""
-        self.getInstance().debugPrint( logicalUnit )
+        self.getInstance().debugPrint(logicalUnit)
 
-    def copyProperties( self, other ):
+    def copyProperties(self, other):
         """Shortcut to copy the properties of another function"""
         prop = other.getProperties()
         self = Function()
-        self.setParameterName( prop[2] )
-        self.setResultName( prop[3] )
-        self.setInterpolation( prop[1] )
-        self.setExtrapolation( prop[4] )
+        self.setParameterName(prop[2])
+        self.setResultName(prop[3])
+        self.setInterpolation(prop[1])
+        self.setExtrapolation(prop[4])
 
     # operations on Functions
-    def abs( self ):
+    def abs(self):
         """Return the absolute value"""
         new = Function()
-        new.copyProperties( self )
+        new.copyProperties(self)
         values = self.getValuesAsArray()
-        new.setValues( values[:, 0], np.abs(values[:, 1]) )
+        new.setValues(values[:, 0], np.abs(values[:, 1]))
         return new

@@ -39,5 +39,6 @@ def AFFE_MODELE(**curDict):
     cdef INTEGER numOp = 18
     libaster.execop_(&numOp)
     syntax.free()
+    returnModel.setMesh(curDict["MAILLAGE"])
 
     return returnModel

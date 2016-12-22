@@ -9,10 +9,10 @@
 
 
 FunctionInstance::FunctionInstance( const std::string jeveuxName ):
-    DataStructure( jeveuxName, "FONCTION" ),
-    _jeveuxName( jeveuxName ),
-    _property( JeveuxVectorChar16( jeveuxName + ".PROL           " ) ),
-    _value( JeveuxVectorDouble( jeveuxName + ".VALE           " ) )
+    DataStructure( jeveuxName + "           ", "FONCTION" ),
+    _jeveuxName( getName() ),
+    _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
+    _value( JeveuxVectorDouble( getName() + ".VALE" ) )
 {
 }
 

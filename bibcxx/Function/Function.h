@@ -24,7 +24,7 @@ class FunctionInstance: public DataStructure
         /** @todo remettre le const */
         std::string  _jeveuxName;
         // Vecteur Jeveux '.PROL'
-        JeveuxVectorChar16 _property;
+        JeveuxVectorChar24 _property;
         // Vecteur Jeveux '.VALE'
         JeveuxVectorDouble _value;
 
