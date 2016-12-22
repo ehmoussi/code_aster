@@ -5,8 +5,8 @@ __all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_CHAR_MECA
            'COMB_FOURIER',   'CREA_CHAMP',     'CREA_RESU',      'CREA_TABLE',     'DEFI_COMPOR',
            'DEFI_FISS_XFEM', 'DEFI_FONCTION',  'DEFI_FOND_FISS', 'DEFI_GEOM_FIBRE','DEFI_GRILLE',
            'DEFI_INTE_SPEC', 'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'DEFI_MODELE_GENE','DEFI_NAPPE',
-           'LIRE_MAILLAGE',  'MACR_ELEM_DYNA', 'MACR_ELEM_STAT', 'MECA_STATIQUE',  'MODE_STATIQUE',
-           'NUME_DDL',       'NUME_DDL_GENE',  'PROJ_CHAMP',
+           'DEFI_SQUELETTE', 'LIRE_MAILLAGE',  'MACR_ELEM_DYNA', 'MACR_ELEM_STAT', 'MECA_STATIQUE',
+           'MODE_STATIQUE',  'NUME_DDL',       'NUME_DDL_GENE',  'PROJ_CHAMP',
           ]
 
 from code_aster.Cata.Syntax import _F
@@ -34,6 +34,7 @@ from code_aster.Commands.defi_list_reel import DEFI_LIST_REEL
 from code_aster.Commands.defi_materiau import DEFI_MATERIAU
 from code_aster.Commands.defi_modele_gene import DEFI_MODELE_GENE
 from code_aster.Commands.defi_nappe import DEFI_NAPPE
+from code_aster.Commands.defi_squelette import DEFI_SQUELETTE
 from code_aster.Commands.lire_maillage import LIRE_MAILLAGE
 from code_aster.Commands.macr_elem_dyna import MACR_ELEM_DYNA
 from code_aster.Commands.macr_elem_stat import MACR_ELEM_STAT
