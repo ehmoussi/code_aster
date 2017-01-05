@@ -24,21 +24,19 @@ from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Modeling.Model cimport Model
+from code_aster.Function.Function cimport Function
 
 
-def AFFE_MODELE(**curDict):
-    returnModel = Model()
-    cdef string name = returnModel.getName()
-    cdef string type = returnModel.getType()
+def DEFI_FONC_FLUI(**curDict):
+    returnFunction = Function()
+    cdef string name = returnFunction.getInstance().getName()
+    cdef string type = returnFunction.getInstance().getType()
+    syntax = CommandSyntax("DEFI_FONC_FLUI")
 
-    syntax = CommandSyntax("AFFE_MODELE")
     syntax.setResult(name, type)
-    syntax.define(curDict)
 
-    cdef INTEGER numOp = 18
+    syntax.define(curDict)
+    cdef INTEGER numOp = 142
     libaster.execop_(&numOp)
     syntax.free()
-    returnModel.setSupportMesh(curDict["MAILLAGE"])
-
-    return returnModel
+    return returnFunction

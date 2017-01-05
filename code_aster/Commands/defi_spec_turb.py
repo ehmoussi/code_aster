@@ -17,28 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from libcpp.string cimport string
-from cython.operator cimport dereference as deref
-from code_aster cimport libaster
-from code_aster.libaster cimport INTEGER
+# person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Modeling.Model cimport Model
-
-
-def AFFE_MODELE(**curDict):
-    returnModel = Model()
-    cdef string name = returnModel.getName()
-    cdef string type = returnModel.getType()
-
-    syntax = CommandSyntax("AFFE_MODELE")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
-
-    cdef INTEGER numOp = 18
-    libaster.execop_(&numOp)
-    syntax.free()
-    returnModel.setSupportMesh(curDict["MAILLAGE"])
-
-    return returnModel
+from code_aster.Flow.TurbulentSpectrumDefinition import *

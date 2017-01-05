@@ -28,6 +28,18 @@ class FunctionInstance: public DataStructure
         // Vecteur Jeveux '.VALE'
         JeveuxVectorDouble _value;
 
+        void propertyAllocate()
+        {
+            // Create Jeveux vector ".PROL"
+            _property->allocate( Permanent, 6 );
+            (*_property)[0] = "FONCTION";
+            (*_property)[1] = "LIN LIN";
+            (*_property)[2] = "";
+            (*_property)[3] = "TOUTRESU";
+            (*_property)[4] = "EE";
+            (*_property)[5] = _jeveuxName;
+        };
+
     public:
         /**
         * Constructeur
@@ -43,6 +55,8 @@ class FunctionInstance: public DataStructure
         */
         void setParameterName( const std::string name )
         {
+            if( !_property->isAllocated() )
+                propertyAllocate();
             (*_property)[2] = name.c_str();
         }
 
@@ -53,6 +67,8 @@ class FunctionInstance: public DataStructure
         */
         void setResultName( const std::string name )
         {
+            if( !_property->isAllocated() )
+                propertyAllocate();
             (*_property)[3] = name.c_str();
         }
 
@@ -64,6 +80,8 @@ class FunctionInstance: public DataStructure
         */
         void setInterpolation( const std::string type )
         {
+            if( !_property->isAllocated() )
+                propertyAllocate();
             (*_property)[1] = type.c_str();
         }
 
@@ -75,6 +93,8 @@ class FunctionInstance: public DataStructure
         */
         void setExtrapolation( const std::string type )
         {
+            if( !_property->isAllocated() )
+                propertyAllocate();
             (*_property)[4] = type.c_str();
         }
 

@@ -18,27 +18,30 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp.string cimport string
-from cython.operator cimport dereference as deref
-from code_aster cimport libaster
-from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
-from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Modeling.Model cimport Model
 
 
-def AFFE_MODELE(**curDict):
-    returnModel = Model()
-    cdef string name = returnModel.getName()
-    cdef string type = returnModel.getType()
+cdef extern from "Flow/TurbulentSpectrum.h":
 
-    syntax = CommandSyntax("AFFE_MODELE")
-    syntax.setResult(name, type)
-    syntax.define(curDict)
+    cdef cppclass TurbulentSpectrumInstance:
 
-    cdef INTEGER numOp = 18
-    libaster.execop_(&numOp)
-    syntax.free()
-    returnModel.setSupportMesh(curDict["MAILLAGE"])
+        TurbulentSpectrumInstance()
+        string getName()
+        string getType()
+        void debugPrint(int logicalUnit) except +
 
-    return returnModel
+    cdef cppclass TurbulentSpectrumPtr:
+
+        TurbulentSpectrumPtr(TurbulentSpectrumPtr&)
+        TurbulentSpectrumPtr(TurbulentSpectrumInstance*)
+        TurbulentSpectrumInstance* get()
+
+
+cdef class TurbulentSpectrum(DataStructure):
+
+    cdef TurbulentSpectrumPtr* _cptr
+
+    cdef set(self, TurbulentSpectrumPtr other)
+    cdef TurbulentSpectrumPtr* getPtr(self)
+    cdef TurbulentSpectrumInstance* getInstance(self)
