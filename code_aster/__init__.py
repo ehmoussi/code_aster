@@ -44,6 +44,7 @@ from .Utilities import TestCase
 # each package is responsible to export only the relevant objects
 from .DataStructure import DataStructure
 from .DataFields import *
+from .Flow import *
 from .Function import *
 from .Geometry import *
 from .LinearAlgebra import *

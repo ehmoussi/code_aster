@@ -2,6 +2,7 @@
 
 from .ElementaryMatrix import ElementaryMatrix
 from .ElementaryVector import ElementaryVector
+from .InterspectralMatrix import InterspectralMatrix
 
 from .LinearSolver import (
     LinearSolver,

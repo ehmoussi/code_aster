@@ -24,21 +24,19 @@ from code_aster.libaster cimport INTEGER
 
 from code_aster.DataStructure.DataStructure cimport DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Modeling.Model cimport Model
+from code_aster.Flow.TurbulentSpectrum cimport TurbulentSpectrum
 
 
-def AFFE_MODELE(**curDict):
-    returnModel = Model()
-    cdef string name = returnModel.getName()
-    cdef string type = returnModel.getType()
+def DEFI_SPEC_TURB(**curDict):
+    returnMatrix = TurbulentSpectrum()
+    cdef string name = returnMatrix.getInstance().getName()
+    cdef string type = returnMatrix.getInstance().getType()
+    syntax = CommandSyntax("DEFI_SPEC_TURB")
 
-    syntax = CommandSyntax("AFFE_MODELE")
     syntax.setResult(name, type)
-    syntax.define(curDict)
 
-    cdef INTEGER numOp = 18
+    syntax.define(curDict)
+    cdef INTEGER numOp = 145
     libaster.execop_(&numOp)
     syntax.free()
-    returnModel.setSupportMesh(curDict["MAILLAGE"])
-
-    return returnModel
+    return returnMatrix
