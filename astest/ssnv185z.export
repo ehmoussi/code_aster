@@ -1,9 +1,9 @@
 P time_limit 90
-P memory_limit 512
+P memory_limit 1024
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential
 
-F comm sslp114b.comm D 1
-F mmed sslp114b.mmed D 20
+F comm ssnv185z.comm D 1
+F mmed ssnv185z.mmed D 20
