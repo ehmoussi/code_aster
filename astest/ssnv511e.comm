@@ -1,5 +1,5 @@
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -80,7 +80,7 @@ CTXFEM = DEFI_CONTACT(MODELE         = MODELEK,
 
 
 E=100.0E6
-nu=0.0
+nu=0.3
 ACIER=DEFI_MATERIAU(ELAS=_F(E=E,
                             NU=nu,
                             RHO=7800.0));
@@ -265,30 +265,115 @@ DEPZON[4] = CALC_TABLE(TABLE = DEPPLY,
                                  NOM_PARA  = 'DX-DX',
                                  FORMULE = depl_x1)));
 
+#------------------------------------------------------------------------
+# POST-TRAITEMENT : CALCUL D'ERREURS EN TERME DE NORME EN ENERGIE ET
+#                   DE NORME L2 DU DEPLACEMENT
+#------------------------------------------------------------------------
+
+# solution analytique :
+
+#    - contraintes
+def Sxx(X,Y):
+    return -pression(Y)
+
+def Syy(X,Y):
+    return -pression(X)
+
+def Szz(X,Y):
+    return -nu*(pression(Y)+pression(X))
+
+SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)');
+SYY=FORMULE(NOM_PARA=('X','Y',),VALE='Syy(X,Y)');
+SZZ=FORMULE(NOM_PARA=('X','Y',),VALE='Szz(X,Y)');
+
+
+
+###    - deplacement
+
+# for D_PLAN
+c1 = 1 - nu**2
+c2 = -nu*(1+nu)
+
+def ux(X,Y):
+    if X<0:
+        # integration de -5 à X
+        return (5+X) * (c1*Sxx(X,Y)+c2*Syy(X,Y)) / E
+    # integration de -5 à 0 + integration de 0 à X
+    return  5 * (c1*Sxx(X-5,Y)+c2*Syy(X-5,Y)) / E  +  X * (c1*Sxx(X,Y)+c2*Syy(X,Y)) / E
+
+
+def uy(X,Y): 
+    if Y<0:
+        # integration de -5 à 0
+        return (5+Y) * (c1*Syy(X,Y)+c2*Sxx(X,Y)) / E
+    # integration de -5 à 0 + integration de 0 à Y
+    return  5 * (c1*Syy(X,Y-5)+c2*Sxx(X,Y-5)) / E  +  Y * (c1*Syy(X,Y)+c2*Sxx(X,Y)) / E
+
+
+UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)')
+UY=FORMULE(NOM_PARA=('X','Y',),VALE='uy(X,Y)')
+
+# calcul de l'erreur en terme de norme en energie
+Scal=CREA_CHAMP(OPERATION='EXTR',
+                TYPE_CHAM='ELGA_SIEF_R',
+                RESULTAT=UTOT1,
+                NOM_CHAM='SIEF_ELGA',
+                NUME_ORDRE=1)
+
+tabNRJ=POST_ERREUR(OPTION='ENER_RELA',
+                   CHAM_GD=Scal,
+                   MODELE=MODELEK,
+                   DEFORMATION='PETIT',
+                   CHAM_MATER=CHAMPMAT,
+                   GROUP_MA='SURF',
+                   SIXX=SXX,
+                   SIYY=SYY,
+                   SIZZ=SZZ
+                  )
+
+IMPR_TABLE(TABLE=tabNRJ)
+
+# calcul de l'erreur en terme de norme L2 du deplacement
+Ucal=CREA_CHAMP(OPERATION='EXTR',
+                TYPE_CHAM='NOEU_DEPL_R',
+                RESULTAT=UTOT1,
+                NOM_CHAM='DEPL',
+                NUME_ORDRE=1)
+
+tabL2=POST_ERREUR(OPTION='DEPL_RELA',
+                  CHAM_GD=Ucal,
+                  MODELE=MODELEK,
+                  GROUP_MA='SURF',
+                  DX=UX,
+                  DY=UY
+                 )
+
+IMPR_TABLE(TABLE=tabL2)
+
 #----------------------------------------------
 #                   TEST TABLE
 #----------------------------------------------
 
 vale = [0,0,0,0,0]
-preci = 0.05
+preci = 0.09
 
 VALE_CALC=[
- -4.9012670809188E-03,
- 6.1663350428778E-03,
- -0.013402933900156,
- -1.35247299633E-03,
- -4.0304236836902E-03,
- 3.4992427588236E-03,
- -2.4287048657202E-03,
- 6.0520272604908E-03,
- -4.9012670809188E-03,
- 0.015572918788175,
- -0.037834860919194,
- -9.0197967352343E-04,
- -4.0813894228574E-03,
- 0.010258526873416,
- -6.16590129926E-03,
- 0.011810299050314,
+    1.37205272051E-17,
+    0.0343022327179,
+    0.0149357821801,
+    0.0656091855336,
+    8.42869310435E-18,
+    0.0273262285184,
+    3.66913898989E-19,
+    0.0257899878078,
+    0.0238705601757,
+    0.0829990999519,
+    -0.00366873823762,
+    0.0613260381181,
+    0.0204198897448,
+    0.0677657087806,
+    3.66914292096E-19,
+    0.0353391929452
 ]
 
 for i in [1,2,3,4]: #Boucle sur les zones
@@ -323,5 +408,41 @@ for i in [1,2,3,4]: #Boucle sur les zones
              CRITERE='ABSOLU',
              PRECISION=preci,
              REFERENCE='ANALYTIQUE',);
+
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=1397500.0,
+           VALE_REFE=1397500.0,
+           NOM_PARA='REFERENCE',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='TOTAL'),
+           TABLE=tabNRJ,
+           );
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=0.187489120807,
+           NOM_PARA='ERREUR RELATIVE',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='TOTAL'),
+           TABLE=tabNRJ,
+           );
+
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.791204250915,
+           VALE_REFE=0.791204250915443,
+           NOM_PARA='REFERENCE',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='TOTAL'),
+           TABLE=tabL2,
+           );
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=0.0813163257325,
+           NOM_PARA='ERREUR RELATIVE',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='TOTAL'),
+           TABLE=tabL2,
+           );
 
 FIN();

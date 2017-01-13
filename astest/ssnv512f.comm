@@ -1,5 +1,5 @@
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -301,6 +301,91 @@ DEPZON[4] = CALC_TABLE(TABLE = DEPMLY,
                                  NOM_PARA  = 'DX-DX',
                                  FORMULE = depl_x1)));
 
+#------------------------------------------------------------------------
+# POST-TRAITEMENT : CALCUL D'ERREURS EN TERME DE NORME EN ENERGIE ET
+#                   DE NORME L2 DU DEPLACEMENT
+#------------------------------------------------------------------------
+
+# solution analytique :
+
+
+#    - contraintes
+def Sxx(X,Y):
+    return -pres_d(Y)
+
+def Syy(X,Y):
+    return -pres_h(X)
+
+def Szz(X,Y):
+    return -nu*(pres_d(Y)+pres_h(X))
+
+SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)');
+SYY=FORMULE(NOM_PARA=('X','Y',),VALE='Syy(X,Y)');
+SZZ=FORMULE(NOM_PARA=('X','Y',),VALE='Szz(X,Y)');
+
+
+
+###    - deplacement
+
+# for D_PLAN
+c1 = 1 - nu**2
+c2 = -nu*(1+nu)
+
+def ux(X,Y):
+    # integration de -5 à X
+    return (5+X) * (c1*Sxx(X,Y)+c2*Syy(X,Y)) / E
+
+
+def uy(X,Y): 
+    if Y<-2:
+        # integration de -5 à -2
+        return (5+Y) * (c1*Syy(X,Y)+c2*Sxx(X,Y)) / E
+    if Y<2:
+        # integration de -5 à -2 + integration de -2 à Y
+        return  3 * (c1*Syy(X,Y-4)+c2*Sxx(X,Y-4)) / E  +  (Y+2) * (c1*Syy(X,Y)+c2*Sxx(X,Y)) / E
+    # integration de -5 à -2 + integration de -2 à 2 + integration de 2 à Y
+    return  3 * (c1*Syy(X,Y-7)+c2*Sxx(X,Y-7)) / E  +  4 * (c1*Syy(X,Y-3)+c2*Sxx(X,Y-3)) / E +  (Y-2) * (c1*Syy(X,Y)+c2*Sxx(X,Y)) / E
+
+UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)')
+UY=FORMULE(NOM_PARA=('X','Y',),VALE='uy(X,Y)')
+
+# calcul de l'erreur en terme de norme en energie
+Scal=CREA_CHAMP(OPERATION='EXTR',
+                TYPE_CHAM='ELGA_SIEF_R',
+                RESULTAT=UTOT1,
+                NOM_CHAM='SIEF_ELGA',
+                NUME_ORDRE=1)
+
+tabNRJ=POST_ERREUR(OPTION='ENER_RELA',
+                   CHAM_GD=Scal,
+                   MODELE=MODELEK,
+                   DEFORMATION='PETIT',
+                   CHAM_MATER=CHAMPMAT,
+                   GROUP_MA='SURF',
+                   SIXX=SXX,
+                   SIYY=SYY,
+                   SIZZ=SZZ
+                  )
+
+IMPR_TABLE(TABLE=tabNRJ)
+
+# calcul de l'erreur en terme de norme L2 du deplacement
+Ucal=CREA_CHAMP(OPERATION='EXTR',
+                TYPE_CHAM='NOEU_DEPL_R',
+                RESULTAT=UTOT1,
+                NOM_CHAM='DEPL',
+                NUME_ORDRE=1)
+
+tabL2=POST_ERREUR(OPTION='DEPL_RELA',
+                  CHAM_GD=Ucal,
+                  MODELE=MODELEK,
+                  GROUP_MA='SURF',
+                  DX=UX,
+                  DY=UY
+                 )
+
+IMPR_TABLE(TABLE=tabL2)
+
 #----------------------------------------------
 #                   TEST TABLE
 #----------------------------------------------
@@ -359,4 +444,41 @@ for i in [1,2,3,4]: #Boucle sur les zones
              CRITERE='ABSOLU',
              PRECISION=preci,
              REFERENCE='ANALYTIQUE',);
+
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=1768000.0,
+           VALE_REFE=1768000.0,
+           NOM_PARA='REFERENCE',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='TOTAL'),
+           TABLE=tabNRJ,
+           );
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=0.0574240036145,
+           NOM_PARA='ERREUR RELATIVE',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='TOTAL'),
+           TABLE=tabNRJ,
+           );
+
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.933673961652,
+           VALE_REFE=0.933673961651853,
+           NOM_PARA='REFERENCE',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='TOTAL'),
+           TABLE=tabL2,
+           );
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=0.0102989828382,
+           NOM_PARA='ERREUR RELATIVE',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='TOTAL'),
+           TABLE=tabL2,
+           );
+
 FIN();
