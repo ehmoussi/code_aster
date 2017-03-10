@@ -589,6 +589,19 @@ class MECPQS8(Element):
             para_out=((SP.PDEFONO, EDEFONO), ),
         ),
 
+        OP.EPSL_ELGA(te=87,
+            para_in=((SP.PDEPLAR, DDL_MECA), (SP.PGEOMER, NGEOMER),
+                     (SP.PMATERC, LC.CMATERC), (SP.PTEMPSR, CTEMPSR),
+                     (OP.EPSL_ELGA.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
+                     ),
+            para_out=((OP.EPSL_ELGA.PDEFOPG, EDEFOPG), ),
+        ),
+
+        OP.EPSL_ELNO(te=4,
+            para_in=((OP.EPSL_ELNO.PDEFOPG, EDEFOPG), ),
+            para_out=((SP.PDEFONO, EDEFONO), ),
+        ),
+
         OP.EPSI_ELGA(te=87,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PDEPLAR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),

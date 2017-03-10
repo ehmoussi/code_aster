@@ -46,7 +46,7 @@ composantes de la déformation en grandes déformations.
 
 Conseil:
 Avec des déformations de type %(k1)s,
-il est préférable d'utiliser EPSG_%(k2)s
+il est préférable d'utiliser %(k2)s
 """),
 
 4 : _(u"""

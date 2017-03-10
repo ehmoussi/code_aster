@@ -112,6 +112,12 @@ subroutine te0004(option, nomte)
                     itab=itabin)
         call tecach('OOO', 'PDEFONO', 'E', iret, nval=7,&
                     itab=itabou)
+    else if (option.eq.'EPSL_ELNO') then
+        fami = 'RIGI'
+        call tecach('OOO', 'PDEFOPG', 'L', iret, nval=7,&
+                    itab=itabin)
+        call tecach('OOO', 'PDEFONO', 'E', iret, nval=7,&
+                    itab=itabou)
 !
     else if (option.eq.'EPSI_ELNO') then
         fami = 'RIGI'

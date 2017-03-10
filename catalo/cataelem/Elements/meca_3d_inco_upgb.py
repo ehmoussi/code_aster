@@ -415,6 +415,18 @@ class MBNC_HEXA20(Element):
             para_out=((SP.PDEFONO, EDEFONO), ),
         ),
 
+        OP.EPSL_ELGA(te=25,
+            para_in=((SP.PDEPLAR, NDEPLAR), (SP.PGEOMER, NGEOMER),
+                     (SP.PMATERC, LC.CMATERC), (OP.EPSL_ELGA.PVARCPR, LC.ZVARCPG),
+                     (SP.PVARCRR, LC.ZVARCPG), ),
+            para_out=((OP.EPSL_ELGA.PDEFOPG, EDEFOPG), ),
+        ),
+
+        OP.EPSL_ELNO(te=4,
+            para_in=((OP.EPSL_ELNO.PDEFOPG, EDEFOPG), ),
+            para_out=((SP.PDEFONO, EDEFONO), ),
+        ),
+
         OP.ERME_ELEM(te=375,
             para_in=((SP.PCONTNO, ECONTNO), (SP.PFFVOLU, CFORCEF),
                      (SP.PFORCE, LC.CREFERI), (SP.PFRVOLU, EFORCER),
