@@ -421,6 +421,17 @@ class MIUP_HEXA20(Element):
             para_out=((SP.PDEFONO, EDEFONO), ),
         ),
 
+        OP.EPSL_ELGA(te=25,
+            para_in=((SP.PDEPLAR, NDEPLAR), (SP.PGEOMER, NGEOMER),
+                     (SP.PMATERC, LC.CMATERC), (OP.EPSL_ELGA.PVARCPR, LC.ZVARCPG),
+                     (SP.PVARCRR, LC.ZVARCPG), ),
+            para_out=((OP.EPSL_ELGA.PDEFOPG, EDEFOPG), ),
+        ),
+
+        OP.EPSL_ELNO(te=4,
+            para_in=((OP.EPSL_ELNO.PDEFOPG, EDEFOPG), ),
+            para_out=((SP.PDEFONO, EDEFONO), ),
+        ),
 
         OP.EPSI_ELGA(te=453,
             para_in=((SP.PDEPLAR, NDEPLAR), (SP.PGEOMER, NGEOMER),
