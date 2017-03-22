@@ -34,6 +34,7 @@ def configure(self):
     else:
         self.define('_HAVE_PETSC', 1)
         self.define('HAVE_PETSC', 1)
+        self.check_petsc4py()
 
 ###############################################################################
 @Configure.conf
@@ -108,3 +109,14 @@ int main(void){
         raise
     else:
         self.end_msg(vers)
+
+@Configure.conf
+def check_petsc4py(self):
+    try:
+        self.check_python_module('petsc4py')
+    except Errors.ConfigurationError:
+        self.define('_DISABLE_PETSC4PY', 1)
+        self.undefine('_HAVE_PETSC4PY')
+    else:
+        self.undefine('_DISABLE_PETSC4PY')
+        self.define('_HAVE_PETSC4PY', 1)
