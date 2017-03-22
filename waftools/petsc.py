@@ -114,6 +114,9 @@ int main(void){
 def check_petsc4py(self):
     try:
         self.check_python_module('petsc4py')
+        pymodule_path = self.get_python_variables(['petsc4py.get_include()'],
+                                                  ['import petsc4py'])[0]
+        self.env.append_unique('CYTHONFLAGS', '-I{0}'.format(pymodule_path))
     except Errors.ConfigurationError:
         self.define('_DISABLE_PETSC4PY', 1)
         self.undefine('_HAVE_PETSC4PY')
