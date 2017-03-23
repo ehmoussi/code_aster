@@ -38,7 +38,9 @@
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/ListOfLoads.h"
 #include "RunManager/CommandSyntaxCython.h"
-
+#ifdef _HAVE_PETSC4PY
+#include <petscmat.h>
+#endif
 /**
  * @brief But de cette ligne : casser la reference circulaire
  * @todo Attention includes circulaires entre AssemblyMatrix, DOFNumbering et LinearSolver
@@ -119,6 +121,14 @@ class AssemblyMatrixInstance: public DataStructure
         */
         bool factorization() throw ( std::runtime_error );
 
+#ifdef _HAVE_PETSC4PY
+        /**
+         * @brief Conversion to petsc4py
+         * @return converted matrix
+        */
+        Mat toPetsc4py() throw ( std::runtime_error );
+#endif
+
         /**
          * @brief Methode permettant de savoir si la matrice est vide
          * @return true si vide
@@ -166,6 +176,7 @@ class AssemblyMatrixInstance: public DataStructure
 };
 
 /** @typedef Definition d'une matrice assemblee de double */
+template class AssemblyMatrixInstance< double >;
 typedef AssemblyMatrixInstance< double > AssemblyMatrixDoubleInstance;
 /** @typedef Definition d'une matrice assemblee de complexe */
 typedef AssemblyMatrixInstance< DoubleComplex > AssemblyMatrixComplexInstance;
@@ -223,6 +234,24 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
 
     return true;
 };
+
+#ifdef _HAVE_PETSC4PY
+
+template< class ValueType >
+Mat AssemblyMatrixInstance< ValueType >::toPetsc4py() throw ( std::runtime_error )
+{
+    Mat myMat;
+    PetscErrorCode ierr;
+    
+    if ( _isEmpty )
+        throw std::runtime_error( "Assembly matrix is empty" );
+    if ( getType() != "MATR_ASSE_DEPL_R_DEPL_R" ) throw std::runtime_error( "Not yet implemented" );
+
+    CALL_MATASS2PETSC( getName().c_str(), &myMat, &ierr );
+
+    return myMat;
+};
+#endif
 
 template< class ValueType >
 bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_error )

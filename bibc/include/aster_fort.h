@@ -20,6 +20,9 @@
 
 #include "aster.h"
 #include "aster_mpi.h"
+#ifdef _HAVE_PETSC
+#include "petscmat.h"
+#endif
 
 /* *********************************************************************
  *
@@ -208,6 +211,13 @@ void DEFPSSSSSSPS(ASMATR,asmatr, ASTERINTEGER *, const char*, STRING_SIZE,
                                   const char*, STRING_SIZE, const char*, STRING_SIZE,
                                   const char*, STRING_SIZE, ASTERINTEGER *,
                                   const char*, STRING_SIZE);
+
+#ifdef _HAVE_PETSC
+#define CALL_MATASS2PETSC(a, b, c) \
+    CALLSPP(MATASS2PETSC, matass2petsc, a, b, c )
+void DEFSPP(MATASS2PETSC,matass2petsc, const char*, STRING_SIZE,
+                                  Mat *, PetscErrorCode *);
+#endif
 
 #define CALL_MATRIX_FACTOR(a, b, c, d, e, f, g) \
     CALLSSPSSPP(MATRIX_FACTOR, matrix_factor, a, b, c, d, e, f, g)

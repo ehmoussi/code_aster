@@ -24,20 +24,41 @@ from code_aster.Loads.KinematicsLoad cimport KinematicsLoadPtr
 from code_aster.Discretization.DOFNumbering cimport ForwardDOFNumberingPtr
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrixPtr
 
+include "astercython_config.pxi"
+
+IF _HAVE_PETSC4PY == 1:
+    from petsc4py cimport PETSc
+    from petsc4py.PETSc cimport PetscMat
+    from petsc4py.PETSc cimport Mat
 
 cdef extern from "LinearAlgebra/AssemblyMatrix.h":
 
-    cdef cppclass AssemblyMatrixDoubleInstance:
-
-        AssemblyMatrixDoubleInstance()
-        void addKinematicsLoad( KinematicsLoadPtr& currentLoad )
-        bint build()
-        bint factorization()
-        void setDOFNumbering( ForwardDOFNumberingPtr& curDOFNumber )
-        void setElementaryMatrix(  ElementaryMatrixPtr& currentElemMatrix )
-        const string getName()
-        const string getType()
-        void debugPrint( int logicalUnit )
+    IF _HAVE_PETSC4PY == 1:
+        cdef cppclass AssemblyMatrixDoubleInstance:
+    
+            AssemblyMatrixDoubleInstance()
+            void addKinematicsLoad( KinematicsLoadPtr& currentLoad )
+            bint build()
+            bint factorization()
+            void setDOFNumbering( ForwardDOFNumberingPtr& curDOFNumber )
+            void setElementaryMatrix(  ElementaryMatrixPtr& currentElemMatrix )
+            const string getName()
+            const string getType()
+            void debugPrint( int logicalUnit )
+            PetscMat toPetsc4py()
+    ELSE:
+        cdef cppclass AssemblyMatrixDoubleInstance:
+    
+            AssemblyMatrixDoubleInstance()
+            void addKinematicsLoad( KinematicsLoadPtr& currentLoad )
+            bint build()
+            bint factorization()
+            void setDOFNumbering( ForwardDOFNumberingPtr& curDOFNumber )
+            void setElementaryMatrix(  ElementaryMatrixPtr& currentElemMatrix )
+            const string getName()
+            const string getType()
+            void debugPrint( int logicalUnit )
+            void toPetsc4py()
 
     cdef cppclass AssemblyMatrixDoublePtr:
 

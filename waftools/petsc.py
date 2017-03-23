@@ -1,9 +1,10 @@
 # coding=utf-8
 
 import os.path as osp
-import re
+import re, os
 from functools import partial
 from waflib import Options, Configure, Logs, Utils, Errors
+from shutil import copyfile
 
 def options(self):
     group = self.add_option_group("Petsc library options")
@@ -53,7 +54,7 @@ def check_petsc(self):
 
     self.check_petsc_headers()
     self.check_petsc_version()
-
+    
 @Configure.conf
 def check_petsc_libs(self, optlibs):
     opts = self.options
@@ -119,7 +120,7 @@ def check_petsc4py(self):
         self.env.append_unique('CYTHONFLAGS', '-I{0}'.format(pymodule_path))
     except Errors.ConfigurationError:
         self.define('_DISABLE_PETSC4PY', 1)
-        self.undefine('_HAVE_PETSC4PY')
+        self.define('_HAVE_PETSC4PY',0)
     else:
         self.undefine('_DISABLE_PETSC4PY')
         self.define('_HAVE_PETSC4PY', 1)
