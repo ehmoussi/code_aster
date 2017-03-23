@@ -40,8 +40,8 @@ DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
     ('EN1',('DX','DY','DZ','LAGS_C',)),
     ('EN2',('DX','DY','DZ',)),))
     
-ECNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELEM', 
-    components=('X[6]',))
+ECNEUT_R = LocatedComponents(phys=PHY.CONTALAC, type='ELEM', 
+    components=('PRES', 'JEU', 'CONT', 'COEFSURF', 'PRESCOOR'))
 
 
 #------------------------------------------------------------

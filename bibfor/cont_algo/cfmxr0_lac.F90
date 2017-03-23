@@ -55,7 +55,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: ncmp   = 6
+    integer, parameter :: ncmp   = 5
     integer, parameter :: nceld1 = 4
     integer, parameter :: nceld2 = 4
     integer, parameter :: nceld3 = 4 

@@ -38,8 +38,8 @@ from cataelem.Options.options import OP
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
     components=('DX','DY','LAGS_C',))
     
-ECNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELEM', 
-    components=('X[6]',))
+ECNEUT_R = LocatedComponents(phys=PHY.CONTALAC, type='ELEM', 
+    components=('PRES', 'JEU', 'CONT', 'COEFSURF', 'PRESCOOR'))
 ##------------------------------------------------------------
 class LACS22DT(Element):
     """
