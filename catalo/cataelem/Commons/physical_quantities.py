@@ -3635,6 +3635,22 @@ XCONTAC  = PhysicalQuantity(type='R',
 """)
 
 
+CONTALAC   = PhysicalQuantity(type='R',
+    components=(
+        'PRES',
+        'JEU',
+        'CONT',
+        'COEFSURF',
+        'PRESCOOR',
+    ),
+    comment="""  CONTALAC Type:R Contact LAC
+        PRES        : Pression de contact
+        JEU           : Gap intégré au sens LAC
+        CONT          : Indicateur de contact
+        COEFSURF      : Poids d'intersection
+        PRESCOOR      : Poids d'intersection*Pression de contact
+""")
+
 # Elementary Quantities
 MDEP_C   = ArrayOfQuantities(elem='MS', phys= DEPL_C)
 MDEP_R   = ArrayOfQuantities(elem='MS', phys= DEPL_R)
