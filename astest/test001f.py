@@ -107,6 +107,16 @@ matrAsse = code_aster.AssemblyMatrixDouble()
 matrAsse.setElementaryMatrix( matr_elem )
 matrAsse.setDOFNumbering( numeDDL )
 matrAsse.build()
+
+try:
+    import petsc4py
+except ImportError:
+    pass
+else:
+    A=matrAsse.toPetsc4py()
+    v=petsc4py.PETSc.Viewer.DRAW(A.comm)
+    A.view(v)
+
 matrAsse.factorization()
 test.assertEqual( matrAsse.getType(), "MATR_ASSE_DEPL_R" )
 

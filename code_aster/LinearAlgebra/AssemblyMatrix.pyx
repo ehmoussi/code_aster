@@ -25,6 +25,11 @@ from code_aster.Loads.KinematicsLoad cimport KinematicsLoad
 from code_aster.Discretization.DOFNumbering cimport DOFNumbering, ForwardDOFNumberingPtr
 from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrix
 
+include "astercython_config.pxi"
+
+IF _HAVE_PETSC4PY == 1:
+    from petsc4py cimport PETSc
+    from petsc4py.PETSc cimport Mat
 
 cdef class AssemblyMatrixDouble( DataStructure ):
 
@@ -85,6 +90,17 @@ cdef class AssemblyMatrixDouble( DataStructure ):
     def debugPrint( self, int logicalUnit = 6 ):
         """Print debug information of the content"""
         self.getInstance().debugPrint( logicalUnit )
+
+    def toPetsc4py( self ):
+        """Conversion to petsc4py"""
+        IF _HAVE_PETSC4PY == 1:
+            myMat = Mat()
+            myMat.mat=self.getInstance().toPetsc4py()
+            return myMat
+        ELSE:
+            print "You must install Petsc4py to call this method"
+
+
 
 
 cdef class AssemblyMatrixComplex( DataStructure ):
