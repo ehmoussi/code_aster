@@ -137,7 +137,7 @@ class ModelInstance: public DataStructure
          */
         bool isEmpty()
         {
-            return _isEmpty;
+            return ! _typeOfElements->exists();
         };
 
         /**
