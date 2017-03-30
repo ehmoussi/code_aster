@@ -30,6 +30,8 @@ def configure(self):
         self.env.revert()
         self.define('_DISABLE_PETSC', 1)
         self.undefine('HAVE_PETSC')
+        self.define('_DISABLE_PETSC4PY', 1)
+        self.define('_HAVE_PETSC4PY',0)
         if self.options.enable_petsc:
             raise
     else:

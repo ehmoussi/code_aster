@@ -39,7 +39,9 @@
 #include "Loads/ListOfLoads.h"
 #include "RunManager/CommandSyntaxCython.h"
 #ifdef _HAVE_PETSC4PY
+#if _HAVE_PETSC4PY == 1
 #include <petscmat.h>
+#endif
 #endif
 /**
  * @brief But de cette ligne : casser la reference circulaire
@@ -122,11 +124,13 @@ class AssemblyMatrixInstance: public DataStructure
         bool factorization() throw ( std::runtime_error );
 
 #ifdef _HAVE_PETSC4PY
+#if _HAVE_PETSC4PY == 1
         /**
          * @brief Conversion to petsc4py
          * @return converted matrix
         */
         Mat toPetsc4py() throw ( std::runtime_error );
+#endif
 #endif
 
         /**
@@ -236,6 +240,7 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
 };
 
 #ifdef _HAVE_PETSC4PY
+#if _HAVE_PETSC4PY == 1
 
 template< class ValueType >
 Mat AssemblyMatrixInstance< ValueType >::toPetsc4py() throw ( std::runtime_error )
@@ -251,6 +256,7 @@ Mat AssemblyMatrixInstance< ValueType >::toPetsc4py() throw ( std::runtime_error
 
     return myMat;
 };
+#endif
 #endif
 
 template< class ValueType >
