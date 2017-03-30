@@ -1,6 +1,6 @@
 subroutine crsmsp(solvbz, matasz, pcpiv)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -81,8 +81,8 @@ subroutine crsmsp(solvbz, matasz, pcpiv)
     endif
 !     RENUM
     zk24(jslvk-1+4) = 'AUTO'
-
-    zk24(jslvk-1+5) = 'XXXX'
+!     ACCELERATION
+    zk24(jslvk-1+5) = 'AUTO'
 !     ELIM_LAGR
     zk24(jslvk-1+6) = 'NON'
 !     MIXER_PRECISION
@@ -113,3 +113,4 @@ subroutine crsmsp(solvbz, matasz, pcpiv)
 !
     call jedema()
 end subroutine
+

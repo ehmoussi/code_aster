@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -46,16 +46,16 @@ DEFI_CABLE_BP=MACRO(nom="DEFI_CABLE_BP",
          TYPE_ANCRAGE    =SIMP(statut='o',typ='TXM',min=2,max=2,into=("ACTIF","PASSIF") ),
          TENSION_INIT    =SIMP(statut='o',typ='R',val_min=0.E+0 ),
          RECUL_ANCRAGE   =SIMP(statut='o',typ='R',val_min=0.E+0 ),
-         b_adherent=BLOC(condition="(ADHERENT=='OUI')",
+         b_adherent=BLOC(condition="""(equal_to("ADHERENT", 'OUI'))""",
             TYPE_RELAX      =SIMP(statut='o',typ='TXM',into=("SANS","BPEL","ETCC_DIRECT","ETCC_REPRISE"),defaut="SANS",),
-                b_relax_bpel  =BLOC(condition = "TYPE_RELAX =='BPEL'",
+                b_relax_bpel  =BLOC(condition = """equal_to("TYPE_RELAX", 'BPEL')""",
                        R_J   =SIMP(statut='o',typ='R',val_min=0.E+0),
                                                 ),
-                b_relax_etcc  =BLOC(condition = "((TYPE_RELAX=='ETCC_DIRECT') or (TYPE_RELAX=='ETCC_REPRISE'))",
+                b_relax_etcc  =BLOC(condition = """((equal_to("TYPE_RELAX", 'ETCC_DIRECT')) or (equal_to("TYPE_RELAX", 'ETCC_REPRISE')))""",
                       NBH_RELAX   =SIMP(statut='o',typ='R',val_min=0.E+0),
                        ),
 #         PERT_ELAS       =SIMP(statut='o',typ='TXM',into=("OUI","NON"),defaut="NON"),
-#           b_pert_elas   =BLOC(condition = "PERT_ELAS=='OUI'",
+#           b_pert_elas   =BLOC(condition = """equal_to("PERT_ELAS", 'OUI')""",
 #                  EP_BETON  = SIMP(statut='o',typ='R',val_min=0.E+0),
 #                  ESP_CABLE = SIMP(statut='o',typ='R',val_min=0.E+0)
 #                  ) ,
@@ -65,9 +65,9 @@ DEFI_CABLE_BP=MACRO(nom="DEFI_CABLE_BP",
                 PRESENT           =SIMP(statut='o',typ='TXM',min=2,max=2,into=("OUI","NON") ),
               ),
             ),
-         b_non_adherent=BLOC(condition="(ADHERENT=='NON')",
+         b_non_adherent=BLOC(condition="""(equal_to("ADHERENT", 'NON'))""",
             TYPE_RELAX      =SIMP(statut='c',typ='TXM',into=("SANS",),defaut="SANS",),
             ),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**' ),
+         TITRE           =SIMP(statut='f',typ='TXM' ),
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
 )  ;

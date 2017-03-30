@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,7 +18,7 @@
 interface 
     subroutine xalg40(ndim, elrefp, nnop, it, nnose, cnset, typma, ndime,&
                       geom, lsnelp, pmilie, ninter, ainter, ar, npts, nptm, &
-                      pmmax, nmilie, mfis, lonref, pinref, pintt, pmitt, jonc)
+                      pmmax, nmilie, mfis, lonref, pinref, pintt, pmitt, jonc, exit)
         integer :: ndim
         integer :: nnop
         integer :: it
@@ -44,5 +44,6 @@ interface
         real(kind=8) :: pintt(*)
         real(kind=8) :: pmitt(*)
         aster_logical :: jonc
+        integer :: exit(2)
     end subroutine xalg40
 end interface 

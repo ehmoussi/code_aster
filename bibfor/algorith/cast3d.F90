@@ -2,7 +2,7 @@ subroutine cast3d(proj, gamma, dh, def, nno,&
                   kpg, nub, nu, dsidep, calbn,&
                   bn, jac, matuu)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -46,31 +46,33 @@ subroutine cast3d(proj, gamma, dh, def, nno,&
 !
 !   CALCUL DE TERMES INTERMEDIAIRES
 !
-    do 1 i = 1, nno
+    do  i = 1, nno
         xf(i) = 0.d0
         yf(i) = 0.d0
         zf(i) = 0.d0
-  1 end do
+    end do
 !
-    do 2 ic = 1, 4
-        do 3 i = 1, nno
+    do  ic = 1, 4
+        do  i = 1, nno
             xf(i) = xf(i) + dh(ic,iadpg+1) * gamma(ic,i)
             yf(i) = yf(i) + dh(ic,iadpg+2) * gamma(ic,i)
             zf(i) = zf(i) + dh(ic,iadpg+3) * gamma(ic,i)
-  3     continue
-  2 end do
+        enddo
+    end do
 !
-    do 4 i = 1, 6
-        do 4 j = 1, 3
-            do 4 k = 1, nno
+    do  i = 1, 6
+        do  j = 1, 3
+            do  k = 1, nno
                 bn(i,j,k) =0.d0
-  4         continue
+            enddo
+         enddo
+    enddo
 !
 !         HEXAS8 SANS PROJECTION
 !         ----------------------
 !
     if (proj .eq. 0) then
-        do 5 i = 1, nno
+        do  i = 1, nno
             bn(1,1,i) = xf(i)
             bn(2,2,i) = yf(i)
             bn(3,3,i) = zf(i)
@@ -80,47 +82,47 @@ subroutine cast3d(proj, gamma, dh, def, nno,&
             bn(6,2,i) = zf(i)
             bn(5,3,i) = xf(i)
             bn(6,3,i) = yf(i)
-  5     continue
+        enddo
 !
     else if (proj.eq.1.or.proj.eq.2) then
-        do 100 i = 1, 8
+        do  i = 1, 8
             x12(i) = 0.d0
             y12(i) = 0.d0
             x13(i) = 0.d0
             z13(i) = 0.d0
             y23(i) = 0.d0
             z23(i) = 0.d0
-100     end do
+        end do
 !
 !   CALCUL DE X12 Y12 Y13 Z13 Y23 Z23
 !
-        do 6 ic = 1, 2
-            do 7 i = 1, nno
+        do  ic = 1, 2
+            do  i = 1, nno
                 x12(i) = x12(i) + dh(ic,iadpg+1) * gamma(ic,i)
                 y12(i) = y12(i) + dh(ic,iadpg+2) * gamma(ic,i)
-  7         continue
-  6     end do
+            enddo
+        end do
 !
-        do 8 ic = 1, 3, 2
-            do 9 i = 1, nno
+        do  ic = 1, 3, 2
+            do  i = 1, nno
                 x13(i) = x13(i) + dh(ic,iadpg+1) * gamma(ic,i)
                 z13(i) = z13(i) + dh(ic,iadpg+3) * gamma(ic,i)
-  9         continue
-  8     end do
+            enddo
+        end do
 !
-        do 10 ic = 2, 3
-            do 11 i = 1, nno
+        do   ic = 2, 3
+            do   i = 1, nno
                 y23(i) = y23(i) + dh(ic,iadpg+2) * gamma(ic,i)
                 z23(i) = z23(i) + dh(ic,iadpg+3) * gamma(ic,i)
- 11         continue
- 10     end do
+            enddo
+        end do
 !
 !    ADS
 !
         if (proj .eq. 1) then
             unt = 1.d0/3.d0
             deut = 2.d0/3.d0
-            do 12 i = 1, nno
+            do  i = 1, nno
                 bn(1,1,i) = deut * xf(i)
                 bn(2,2,i) = deut * yf(i)
                 bn(3,3,i) = deut * zf(i)
@@ -136,45 +138,45 @@ subroutine cast3d(proj, gamma, dh, def, nno,&
                 bn(5,3,i) = x13(i)
                 bn(6,2,i) = z23(i)
                 bn(6,3,i) = y23(i)
- 12         continue
+            enddo
 !
 !   ASQBI
 !
         else if (proj.eq.2) then
-            do 200 i = 1, 8
+            do  i = 1, 8
                 x14(i)= 0.d0
                 y24(i)= 0.d0
                 z34(i)= 0.d0
-200         end do
+            end do
 !
-            do 13 ic = 1, 4, 3
-                do 14 i = 1, nno
+            do  ic = 1, 4, 3
+                do  i = 1, nno
                     x14(i) = x14(i) + dh(ic,iadpg+1) * gamma(ic,i)
- 14             continue
- 13         continue
+                enddo
+            enddo
 !
-            do 15 ic = 2, 4, 2
-                do 16 i = 1, nno
+            do  ic = 2, 4, 2
+                do  i = 1, nno
                     y24(i) = y24(i) + dh(ic,iadpg+2) * gamma(ic,i)
- 16             continue
- 15         continue
+                enddo
+            enddo
 !
-            do 17 ic = 3, 4
-                do 18 i = 1, nno
+            do  ic = 3, 4
+                do  i = 1, nno
                     z34(i) = z34(i) + dh(ic,iadpg+3) * gamma(ic,i)
- 18             continue
- 17         end do
+                enddo
+            end do
 !
-            do 19 i = 1, nno
+            do  i = 1, nno
                 x2(i) = dh(2,iadpg+1) * gamma(2,i)
                 x3(i) = dh(3,iadpg+1) * gamma(3,i)
                 y1(i) = dh(1,iadpg+2) * gamma(1,i)
                 y3(i) = dh(3,iadpg+2) * gamma(3,i)
                 z1(i) = dh(1,iadpg+3) * gamma(1,i)
                 z2(i) = dh(2,iadpg+3) * gamma(2,i)
- 19         continue
+           enddo
 !
-            do 30 i = 1, nno
+            do  i = 1, nno
                 bn(1,1,i) = xf(i)
                 bn(2,1,i) = -nub * x3(i) - nu * x14(i)
                 bn(3,1,i) = -nub * x2(i) - nu * x14(i)
@@ -193,7 +195,7 @@ subroutine cast3d(proj, gamma, dh, def, nno,&
                 bn(4,3,i) = 0.0d0
                 bn(5,3,i) = x13(i)
                 bn(6,3,i) = y23(i)
- 30         continue
+          enddo
         endif
     endif
     if (.not.calbn) then

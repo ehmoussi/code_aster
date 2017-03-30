@@ -1,6 +1,9 @@
 subroutine apldlt(kptsc, action, prepost, rsolu, vcine, nbsol)
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+#include "asterf_types.h"
+#include "asterf_petsc.h"
+!
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -19,12 +22,8 @@ subroutine apldlt(kptsc, action, prepost, rsolu, vcine, nbsol)
 use petsc_data_module
     implicit none
 !
-! person_in_charge: jacques.pellet at edf.fr
-! aslint: disable=W0104
-! W0104 because of ifdef PETSc
+! person_in_charge: natacha.bereux@edf.fr
 
-#include "asterf_types.h"
-#include "asterf.h"
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
 #include "asterfort/asmpi_info.h"
@@ -57,7 +56,6 @@ use petsc_data_module
 !----------------------------------------------------------------
 !
 #ifdef _HAVE_PETSC
-#include "asterf_petsc.h"
 !----------------------------------------------------------------
     integer :: k,isol,neq
     character(len=24) :: precon,kperm
@@ -158,8 +156,12 @@ use petsc_data_module
     call jedema()
 
 #else
+    character(len=1) :: kdummy
+    real(kind=8) :: rdummy
     integer :: idummy
-    idummy = kptsc
+    kdummy = action(1:1) // prepost(1:1) // vcine(1:1)
+    rdummy = rsolu(1)
+    idummy = kptsc + nbsol
 #endif
 
 end subroutine

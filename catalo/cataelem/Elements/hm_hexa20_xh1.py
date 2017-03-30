@@ -241,7 +241,7 @@ class HM_HEXA20_XH1(Element):
         ElrefeLoc(MT.T10, gauss = ('XINT=FPG15', 'NOEU=NOEU',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'FPG4=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -249,14 +249,9 @@ class HM_HEXA20_XH1(Element):
     )
     calculs = (
 
-        OP.ADD_SIGM(te=581,
-                    para_in=((SP.PEPCON1, ECONTPG), (SP.PEPCON2, ECONTPG),
-                             ),
-                    para_out=((SP.PEPCON3, ECONTPG), ),
-                    ),
-
         OP.CHAR_MECA_PESA_R(te=588,
                             para_in=(
+                            (OP.CHAR_MECA_PESA_R.PBASLOR, LC.N9NEUT_R),
                             (OP.CHAR_MECA_PESA_R.PCNSETO, E1280NEI), (
                             OP.CHAR_MECA_PESA_R.PFISNO, LC.FISNO_I),
                             (SP.PGEOMER, NGEOMER), (
@@ -369,20 +364,13 @@ class HM_HEXA20_XH1(Element):
                      OP.FULL_MECA.PPMILTO, E792NEUT),
                      (OP.FULL_MECA.PSTANO, STANO_I), (SP.PVARCMR, LC.ZVARCPG),
                      (OP.FULL_MECA.PVARCPR, LC.ZVARCPG), (
-                     SP.PVARCRR, LC.ZVARCPG),
+                     SP.PVARCRR, LC.ZVARCPG), (SP.PHEAVNO, LC.FISNO_I),
                      (OP.FULL_MECA.PVARIMR, ZVARIPG), ),
                      para_out=(
                      (SP.PCODRET, LC.ECODRET), (OP.FULL_MECA.PCONTPR, ECONTPG),
                      (SP.PMATUNS, MMATUNS), (OP.FULL_MECA.PVARIPR, ZVARIPG),
                      (SP.PVECTUR, MVECTUR), ),
                      ),
-
-        OP.GRAD_NEUT9_R(te=398,
-                        para_in=(
-                            (SP.PGEOMER, NGEOMER), (SP.PNEUTER, LC.N9NEUT_R),
-                        ),
-                        para_out=((OP.GRAD_NEUT9_R.PGNEUTR, LC.G27NEUTR), ),
-                        ),
 
         OP.INIT_VARC(te=99,
                      para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), ),
@@ -397,61 +385,10 @@ class HM_HEXA20_XH1(Element):
                          (OP.INI_XFEM_ELNO.PSTANO, STANO_I), ),
                          ),
 
-        OP.MASS_INER(te=65,
-                     para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                              ),
-                     para_out=((SP.PMASSINE, LC.EMASSINE), ),
-                     ),
-
-        OP.MASS_MECA(te=12,
-                     para_in=(
-                     (OP.MASS_MECA.PBASLOR, LC.N9NEUT_R), (
-                     OP.MASS_MECA.PCNSETO, E1280NEI),
-                     (SP.PGEOMER, NGEOMER), (
-                     OP.MASS_MECA.PHEAVTO, LC.E128NEUI),
-                     (OP.MASS_MECA.PHEA_NO, LC.N5NEUTI), (
-                     OP.MASS_MECA.PLONCHA, LC.E10NEUTI),
-                     (OP.MASS_MECA.PLSN, LC.N1NEUT_R), (
-                     OP.MASS_MECA.PLST, LC.N1NEUT_R),
-                     (SP.PMATERC, LC.CMATERC), (
-                     OP.MASS_MECA.PPINTTO, E132NEUT),
-                     (OP.MASS_MECA.PSTANO, STANO_I), ),
-                     para_out=((SP.PMATUUR, MMATUUR), ),
-                     ),
-
-        OP.MASS_MECA_DIAG(te=12,
-                          para_in=(
-                              (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                          (OP.MASS_MECA_DIAG.PVARCPR, LC.ZVARCPG), ),
-                          para_out=((SP.PMATUUR, MMATUUR), ),
-                          ),
-
-        OP.MASS_MECA_EXPLI(te=12,
-                           para_in=(
-                               (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                           (OP.MASS_MECA_EXPLI.PVARCPR, LC.ZVARCPG), ),
-                           para_out=((SP.PMATUUR, MMATUUR), ),
-                           ),
-
-        OP.M_GAMMA(te=12,
-                   para_in=((SP.PACCELR, DDL_MECA), (SP.PGEOMER, NGEOMER),
-                            (SP.PMATERC, LC.CMATERC), (
-                            OP.M_GAMMA.PVARCPR, LC.ZVARCPG),
-                            ),
-                   para_out=((SP.PVECTUR, MVECTUR), ),
-                   ),
-
         OP.NSPG_NBVA(te=496,
                      para_in=((OP.NSPG_NBVA.PCOMPOR, LC.CCOMPO2), ),
                      para_out=((SP.PDCEL_I, LC.EDCEL_I), ),
                      ),
-
-        OP.PAS_COURANT(te=404,
-                       para_in=(
-                           (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                       (OP.PAS_COURANT.PVARCPR, LC.ZVARCPG),),
-                       para_out=((SP.PCOURAN, LC.ECOURAN), ),
-                       ),
 
         OP.RAPH_MECA(te=588,
                      para_in=(
@@ -550,9 +487,7 @@ class HM_HEXA20_XH1(Element):
                   para_out=(
                   (OP.TOPOFA.PAINTER, E340NEUT), (OP.TOPOFA.PBASECO, E612NEUT),
                   (OP.TOPOFA.PCFACE, E180NEUI), (SP.PGESCLA, E204NEUT),
-                  (OP.TOPOFA.PGESCLO, E204NEUT), (SP.PGMAITR, E204NEUT),
-                  (OP.TOPOFA.PHEAVFA, E60NEUI), (
-                  OP.TOPOFA.PLONGCO, LC.E3NEUTI),
+                  (OP.TOPOFA.PHEAVFA, E60NEUI), (OP.TOPOFA.PLONGCO, LC.E3NEUTI),
                   (OP.TOPOFA.PPINTER, E204NEUT), ),
                   ),
 
@@ -645,7 +580,7 @@ class HM_PENTA15_XH1(HM_HEXA20_XH1):
         ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9', 'MASS=FPG9',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'MASS=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -671,7 +606,7 @@ class HM_PYRAM13_XH1(HM_HEXA20_XH1):
         ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9', 'MASS=FPG9',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'MASS=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -694,7 +629,7 @@ class HM_TETRA10_XH1(HM_HEXA20_XH1):
         ElrefeLoc(MT.TE4, gauss = ('XINT=FPG15', 'MASS=FPG15',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'MASS=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -721,7 +656,7 @@ class HM_HEXA20_XH2(HM_HEXA20_XH1):
         ElrefeLoc(MT.T10, gauss = ('XINT=FPG15', 'NOEU=NOEU',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'FPG4=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -747,7 +682,7 @@ class HM_PENTA15_XH2(HM_HEXA20_XH1):
         ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9', 'MASS=FPG9',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'MASS=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -773,7 +708,7 @@ class HM_PYRAM13_XH2(HM_HEXA20_XH1):
         ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9', 'MASS=FPG9',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'MASS=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -796,7 +731,7 @@ class HM_TETRA10_XH2(HM_HEXA20_XH1):
         ElrefeLoc(MT.TE4, gauss = ('XINT=FPG15', 'MASS=FPG15',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'MASS=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -823,7 +758,7 @@ class HM_HEXA20_XH3(HM_HEXA20_XH1):
         ElrefeLoc(MT.T10, gauss = ('XINT=FPG15', 'NOEU=NOEU',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'FPG4=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -849,7 +784,7 @@ class HM_PENTA15_XH3(HM_HEXA20_XH1):
         ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9', 'MASS=FPG9',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'MASS=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -875,7 +810,7 @@ class HM_PYRAM13_XH3(HM_HEXA20_XH1):
         ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9', 'MASS=FPG9',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'MASS=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
@@ -898,7 +833,7 @@ class HM_TETRA10_XH3(HM_HEXA20_XH1):
         ElrefeLoc(MT.TE4, gauss = ('XINT=FPG15', 'MASS=FPG15',),),
         ElrefeLoc(
             MT.TR6, gauss = (
-                'RIGI=FPG6', 'MASS=FPG6', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
+                'RIGI=FPG6', 'MASS=FPG6', 'FPG4=FPG4' , 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),
         ElrefeLoc(
             MT.TR3, gauss = (
                 'MASS=FPG4', 'NOEU=NOEU', 'FPG6=FPG6', 'FPG7=FPG7', 'XCON=FPG12',),),

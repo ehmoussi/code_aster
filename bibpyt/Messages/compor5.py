@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -59,6 +59,10 @@ Erreur utilisateur :
   Le comportement ou l'élément concerné ne savent pas gérer ce cas.
 """),
 
+    11 : _(u"""
+  L'indicateur INDL_ELGA n'est pas possible avec le comportement %(k1)s.
+"""),
+
     12 : _(u"""
 Problème lors du calcul des déformations hydriques (retrait endogène).
 Il manque la définition du coefficient B_ENDOGE dans DEFI_MATERIAU.
@@ -95,6 +99,12 @@ La déformation est supposée nulle.
  Utilisez un autre type de déformations (cf. U4.51.11 et les documents R).
 """),
 
+    24: _(u"""
+ La modélisation doit être la même sur toutes les mailles d'une occurrence du mot-clef comportement.
+ Conseils:
+   Réutilisez les groupes définies dans AFFE_MODELE pour affecter le comportement.
+"""),
+
     30: _(u"""
   Pour les poutres multifibres, l'utilisation de lois de comportement via
   DEBORST nécessite d'avoir un seul matériau par poutre!
@@ -108,10 +118,6 @@ On ne peut donc pas calculer la déformation thermique.
     40 : _(u"""
 Les caractéristiques matériaux dans %(k1)s dépendent de la température mais elle n'est pas renseignée.
 Il faut une température dans AFFE_MATERIAU/AFFE_VARC.
-"""),
-
-    41 : _(u"""
-Le paramètre ALPHA a été fourni mais on ne peut pas calculer la déformation thermique car la température n'est pas renseignée.
 """),
 
     42 : _(u"""

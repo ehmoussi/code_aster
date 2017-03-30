@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,12 +16,11 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine me2mth(model_, nb_load, list_name_, mate_, cara_elem_,&
+    subroutine me2mth(model_, nb_load, list_name_, cara_elem_,&
                       time_ , temp_  , vect_elem_)
         character(len=*), intent(in) :: model_
         character(len=*), intent(in) :: temp_
         character(len=*), intent(in) :: cara_elem_
-        character(len=*), intent(in) :: mate_
         character(len=*), intent(in) :: vect_elem_
         character(len=*), intent(in) :: time_
         character(len=*), intent(in) :: list_name_(*)

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jacques.pellet at edf.fr
+# person_in_charge: mickael.abbas at edf.fr
 AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
                    fr=tr("Affecter des matériaux à des zones géométriques d'un maillage"),
                          reentrant='n',
@@ -59,10 +59,6 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
           regles=(PRESENT_ABSENT('TOUT','GROUP_MA','MAILLE'),
                   PRESENT_ABSENT('GROUP_MA','TOUT'),
                   PRESENT_ABSENT('MAILLE','TOUT'),
-                # La règle suivante permet de donner VALE_REF sans donner EVOL ni CHAM_GD
-                # Elle est nécessaire pour la THM (voir doc U4.43.03)
-                # Mais on ne peut plus l'écrire depuis de VALE_REF est dans un bloc
-                # AU_MOINS_UN('EVOL','CHAM_GD','VALE_REF'),
                   EXCLUS('EVOL','CHAM_GD'),
                   ),
 
@@ -75,7 +71,7 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
           CHAM_GD        =SIMP(statut='f',typ=cham_gd_sdaster,),
           EVOL            =SIMP(statut='f',typ=evol_sdaster,),
 
-          B_EVOL          =BLOC(condition="EVOL!=None",
+          B_EVOL          =BLOC(condition="""exists("EVOL")""",
               NOM_CHAM      =SIMP(statut='f',typ='TXM',into=("TEMP","CORR","IRRA","NEUT","GEOM",
                                                              "HYDR_ELNO","HYDR_NOEU",
                                                              "META_ELNO","META_NOEU",
@@ -86,7 +82,7 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
           ),
 
           # VALE_REF est nécessaire pour certaines VARC :
-          B_VALE_REF          =BLOC(condition="NOM_VARC in ('TEMP','SECH')",
+          B_VALE_REF          =BLOC(condition="""is_in("NOM_VARC", ('TEMP','SECH'))""",
                VALE_REF          =SIMP(statut='o',typ='R'),
           ),
 

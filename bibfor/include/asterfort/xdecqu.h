@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -20,7 +20,7 @@ interface
                       igeom, pinter, ninter, npts, ainter,&
                       pmilie, nmilie, mfis, tx, txlsn,&
                       pintt, pmitt, ifiss, nfiss, fisco,&
-                      nfisc, cut, coupe)
+                      nfisc, cut, coupe, exit, joncno)
         integer :: ndim
         integer :: nnose
         integer :: it
@@ -44,5 +44,7 @@ interface
         integer :: nfisc
         aster_logical :: cut
         integer :: coupe(nfiss)
+        integer :: exit(2)
+        integer :: joncno
     end subroutine xdecqu
 end interface

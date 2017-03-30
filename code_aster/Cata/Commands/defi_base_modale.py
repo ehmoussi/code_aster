@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -26,6 +26,7 @@ DEFI_BASE_MODALE=OPER(nom="DEFI_BASE_MODALE",op=  99,sd_prod=mode_meca,
                      fr=tr("Définit la base d'une sous-structuration dynamique ou d'une recombinaison modale"),
             UIinfo={"groupes":("Matrices et vecteurs","Dynamique",)},
          regles=(UN_PARMI('CLASSIQUE','RITZ','DIAG_MASS','ORTHO_BASE'),),
+         reuse=SIMP(statut='c', typ=CO),
          CLASSIQUE       =FACT(statut='f',
            INTERF_DYNA     =SIMP(statut='o',typ=interf_dyna_clas ),
            MODE_MECA       =SIMP(statut='o',typ=mode_meca,max='**' ),
@@ -38,13 +39,13 @@ DEFI_BASE_MODALE=OPER(nom="DEFI_BASE_MODALE",op=  99,sd_prod=mode_meca,
            BASE_MODALE     =SIMP(statut='f',typ=mode_meca ),
            MODE_INTF       =SIMP(statut='f',typ=(mode_meca,mult_elas),),
          ),
-         b_ritz          =BLOC(condition = "RITZ != None",
+         b_ritz          =BLOC(condition = """exists("RITZ")""",
            INTERF_DYNA     =SIMP(statut='f',typ=interf_dyna_clas ),
            NUME_REF        =SIMP(statut='f',typ=nume_ddl_sdaster ),
            ORTHO           =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON"),
                                fr=tr("Reorthonormalisation de la base de Ritz") ),
            LIST_AMOR       =SIMP(statut='f',typ=listr8_sdaster ),
-           b_ortho          =BLOC(condition = "ORTHO == 'OUI' ",
+           b_ortho          =BLOC(condition = """equal_to("ORTHO", 'OUI') """,
              MATRICE          =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_gene_r,matr_asse_pres_r ) ),
                ),
          ),
@@ -64,6 +65,6 @@ DEFI_BASE_MODALE=OPER(nom="DEFI_BASE_MODALE",op=  99,sd_prod=mode_meca,
 
 
 
-        TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+        TITRE           =SIMP(statut='f',typ='TXM'),
         INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
 )  ;

@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -225,7 +225,7 @@ PCOHES = InputParameter(phys=PHY.NEUT_R,
                         comment=""" XFEM
 """)
 
-PCONFR = InputParameter(phys=PHY.NEUT_R,
+PCONFR = InputParameter(phys=PHY.N120_R,
                         comment=""" INFORMATION AUX POINTS POUR LE CONTACT - VOIR MMCHML
 """)
 
@@ -1160,12 +1160,6 @@ XXXXXX = InputParameter(phys=PHY.SIEF_R, container='RESU!SIGM_ELNO!N',
 
 # Parametres 'Out' :
 # ------------------
-PBASESC = OutputParameter(phys=PHY.N2448R, type='ELEM',
-                          comment="""""")
-
-PBASMAI = OutputParameter(phys=PHY.N2448R, type='ELEM',
-                          comment="""""")
-
 PBIDON = OutputParameter(phys=PHY.NEUT_R, type='ELEM',
                          comment="""""")
 
@@ -1373,9 +1367,6 @@ PGAMIMA = OutputParameter(phys=PHY.SPMX_R, type='ELGA',
                           comment="""""")
 
 PGESCLA = OutputParameter(phys=PHY.N816_R, type='ELEM',
-                          comment="""""")
-
-PGMAITR = OutputParameter(phys=PHY.N816_R, type='ELEM',
                           comment="""""")
 
 PGTHETA = OutputParameter(phys=PHY.G, type='ELEM',

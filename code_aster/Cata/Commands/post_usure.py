@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,13 +20,14 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: irmela.zentner at edf.fr
+# person_in_charge: harinaivo.andriambololona at edf.fr
 POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,reentrant='f',
             UIinfo={"groupes":("Post-traitements",)},
                 fr=tr("Calcul des volumes d'usure et des profondeurs d'usure d'après la puissance d'usure"),
          regles=(UN_PARMI('TUBE_NEUF','RESU_GENE','PUIS_USURE'),
                  PRESENT_PRESENT('RESU_GENE','LOI_USURE'),
                  PRESENT_PRESENT('PUIS_USURE','LOI_USURE'),),
+         reuse=SIMP(statut='c', typ=CO),
          TUBE_NEUF       =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          ETAT_INIT       =FACT(statut='f',
            TABL_USURE      =SIMP(statut='f',typ=table_sdaster),
@@ -39,11 +40,11 @@ POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,reentrant='f',
          PUIS_USURE      =SIMP(statut='f',typ='R'),
          LOI_USURE       =SIMP(statut='f',typ='TXM',into=("ARCHARD","KWU_EPRI","EDF_MZ")),
 
-         b_resu_gene  =BLOC(condition = "RESU_GENE !=  None",
+         b_resu_gene  =BLOC(condition = """exists("RESU_GENE")""",
            regles=UN_PARMI('NOEUD','GROUP_NO'),
             NOEUD           =SIMP(statut='f',typ=no),
             GROUP_NO        =SIMP(statut='f',typ=grno),),
-         b_archard       =BLOC(condition = "LOI_USURE == 'ARCHARD'",
+         b_archard       =BLOC(condition = """equal_to("LOI_USURE", 'ARCHARD')""",
            regles=(UN_PARMI('MOBILE','MATER_USURE','SECTEUR'),
                    EXCLUS('MATER_USURE','OBSTACLE'),
                    EXCLUS('MOBILE','USURE_OBST'),),
@@ -62,7 +63,7 @@ POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,reentrant='f',
            MATER_USURE     =SIMP(statut='f',typ='TXM'),
            USURE_OBST      =SIMP(statut='f',typ='TXM',into=("OUI",)),
          ),
-         b_kwu_epri        =BLOC(condition = "LOI_USURE == 'KWU_EPRI'",
+         b_kwu_epri        =BLOC(condition = """equal_to("LOI_USURE", 'KWU_EPRI')""",
            regles=(UN_PARMI('MOBILE','MATER_USURE'),
                    EXCLUS('MATER_USURE','OBSTACLE'),
                    EXCLUS('MOBILE','USURE_OBST'),),
@@ -85,7 +86,7 @@ POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,reentrant='f',
            FNOR_MAXI       =SIMP(statut='f',typ='R' ),
            VTAN_MAXI       =SIMP(statut='f',typ='R' ),
          ),
-         b_edf_mz          =BLOC(condition = "LOI_USURE == 'EDF_MZ'",
+         b_edf_mz          =BLOC(condition = """equal_to("LOI_USURE", 'EDF_MZ')""",
            regles=(UN_PARMI('MOBILE','MATER_USURE'),
                    EXCLUS('MATER_USURE','OBSTACLE'),
                    EXCLUS('MOBILE','USURE_OBST'),),
@@ -104,7 +105,7 @@ POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,reentrant='f',
            MATER_USURE     =SIMP(statut='f',typ='TXM'),
            USURE_OBST      =SIMP(statut='f',typ='TXM',into=("OUI",)),
          ),
-         b_tube_neuf       =BLOC(condition = "TUBE_NEUF == 'OUI'",
+         b_tube_neuf       =BLOC(condition = """equal_to("TUBE_NEUF", 'OUI')""",
             TABL_USURE      =SIMP(statut='o',typ=table_sdaster),
          ),
          CONTACT         =SIMP(statut='f',typ='TXM',into=("TUBE_BAV","TUBE_ALESAGE","TUBE_4_ENCO",
@@ -120,5 +121,5 @@ POST_USURE=OPER(nom="POST_USURE",op=153,sd_prod=table_sdaster,reentrant='f',
          LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
          COEF_INST       =SIMP(statut='f',typ='R',defaut=1.0E+0),
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**' ),
+         TITRE           =SIMP(statut='f',typ='TXM' ),
 )  ;

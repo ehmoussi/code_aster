@@ -389,3 +389,13 @@ class vect_elem_pres_c(vect_elem):
 
 class vect_elem_temp_r(vect_elem):
     pass
+
+# Ce type doit être associé à tous les mots-clés devant recevoir un numéro
+# d'unité logique fortran. De base, il s'agit d'un simple entier.
+def UnitType(filter=None):
+    """Emulated type for *UNITE* keywords.
+    
+    Arguments:
+        filter (str): Can be used to pass a filter or an expected filetype.
+    """
+    return "I"

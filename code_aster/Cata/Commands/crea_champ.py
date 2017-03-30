@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jacques.pellet at edf.fr
+# person_in_charge: j-pierre.lefebvre at edf.fr
 
 def crea_champ_prod(TYPE_CHAM,**args):
   if TYPE_CHAM[0:5] == "CART_" :
@@ -37,6 +37,7 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                 fr=tr("Création d'un champ "),reentrant='f',
             UIinfo={"groupes":("Résultats et champs",)},
 
+         reuse=SIMP(statut='c', typ=CO),
        # TYPE_CHAM doit etre de la forme : CART_xx, NOEU_xx, ELEM_xx, ELGA_xx ou ELNO_xx
        # ou xx est le nom d'une grandeur définie dans le catalogue des grandeurs
          TYPE_CHAM       =SIMP(statut='o',typ='TXM',into=C_TYPE_CHAM_INTO()),
@@ -53,7 +54,7 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
 #        CE MOT CLE N'A DE SENS QUE DANS 2 CAS DE FIGURE :
 #          - POUR LES CHAM_ELEM (AVEC LE MOT CLE MODELE)
 #          - POUR LES CHAM_NO SI ON IMPOSE LEUR NUMEROTATION
-         b_prol_zero  =BLOC(condition = "NUME_DDL != None or CHAM_NO != None or (TYPE_CHAM != None and TYPE_CHAM[0:2] == 'EL')",
+         b_prol_zero  =BLOC(condition = """exists("NUME_DDL") or exists("CHAM_NO") or (exists("TYPE_CHAM") and TYPE_CHAM[0:2] == 'EL')""",
                  PROL_ZERO       =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON",)),),
 
 
@@ -76,14 +77,14 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
          OPERATION       =SIMP(statut='o',typ='TXM',into=("AFFE","ASSE","ASSE_DEPL","EVAL","EXTR","DISC","NORMALE","R2C","C2R","COMB") ),
 
 #        ------------------------------------------------------------------
-         b_norm          =BLOC(condition = "OPERATION == 'NORMALE'",
+         b_norm          =BLOC(condition = """equal_to("OPERATION", 'NORMALE')""",
                                regles=(AU_MOINS_UN('GROUP_MA','MAILLE',),),
              MODELE          =SIMP(statut='o',typ=(modele_sdaster) ),
              GROUP_MA        =SIMP(statut='f',typ=grma ,validators=NoRepeat(),max='**'),
              MAILLE          =SIMP(statut='f',typ=ma   ,validators=NoRepeat(),max='**'),
                              ),
 #        ------------------------------------------------------------------
-         b_affe          =BLOC(condition = "OPERATION == 'AFFE'",
+         b_affe          =BLOC(condition = """equal_to("OPERATION", 'AFFE')""",
              regles=(UN_PARMI('MAILLAGE','MODELE'),),
              MAILLAGE        =SIMP(statut='f',typ=(maillage_sdaster) ),
              MODELE          =SIMP(statut='f',typ=(modele_sdaster) ),
@@ -103,7 +104,7 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                                    ),
                              ),
 #        ------------------------------------------------------------------
-         b_asse          =BLOC(condition = "OPERATION == 'ASSE'",
+         b_asse          =BLOC(condition = """equal_to("OPERATION", 'ASSE')""",
              regles=(UN_PARMI('MAILLAGE','MODELE'),),
              MAILLAGE        =SIMP(statut='f',typ=(maillage_sdaster) ),
              MODELE          =SIMP(statut='f',typ=(modele_sdaster) ),
@@ -124,7 +125,7 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                                     ),
                              ),
 #        ------------------------------------------------------------------
-         b_comb          =BLOC(condition = "OPERATION == 'COMB'",
+         b_comb          =BLOC(condition = """equal_to("OPERATION", 'COMB')""",
                                fr=tr("Pour faire une combinaison linéaire de cham_no ayant meme profil"),
              COMB            =FACT(statut='o',max='**',
                 CHAM_GD         =SIMP(statut='o',typ=cham_no_sdaster),
@@ -132,32 +133,32 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                                    ),
                              ),
 #        ------------------------------------------------------------------
-         b_eval          =BLOC(condition = "OPERATION == 'EVAL'",
+         b_eval          =BLOC(condition = """equal_to("OPERATION", 'EVAL')""",
              CHAM_F          =SIMP(statut='o',typ=cham_gd_sdaster),
              CHAM_PARA       =SIMP(statut='o',typ=cham_gd_sdaster,max='**'),
                              ),
 #        ------------------------------------------------------------------
-         b_xfem          =BLOC(condition = "OPERATION == 'ASSE_DEPL'",
+         b_xfem          =BLOC(condition = """equal_to("OPERATION", 'ASSE_DEPL')""",
              CHAM_GD          =SIMP(statut='o',typ=cham_gd_sdaster),
              MODELE           =SIMP(statut='o',typ=(modele_sdaster) ),
              CHAM_MATER       =SIMP(statut='f',typ=cham_mater),
                              ),
 #        ------------------------------------------------------------------
-         b_r2c           =BLOC(condition = "OPERATION == 'R2C'",
+         b_r2c           =BLOC(condition = """equal_to("OPERATION", 'R2C')""",
              CHAM_GD          =SIMP(statut='o',typ=cham_gd_sdaster),
                              ),
 #        ------------------------------------------------------------------
-         b_c2r           =BLOC(condition = "OPERATION == 'C2R'",
+         b_c2r           =BLOC(condition = """equal_to("OPERATION", 'C2R')""",
              CHAM_GD          =SIMP(statut='o',typ=cham_gd_sdaster),
              PARTIE           =SIMP(statut='o',typ='TXM',into=('REEL','IMAG','MODULE','PHASE'),),
                              ),
 #        ------------------------------------------------------------------
-         b_disc          =BLOC(condition = "OPERATION == 'DISC'",
+         b_disc          =BLOC(condition = """equal_to("OPERATION", 'DISC')""",
              MODELE          =SIMP(statut='f',typ=(modele_sdaster) ),
              CHAM_GD         =SIMP(statut='o',typ=cham_gd_sdaster),
                              ),
 #        ------------------------------------------------------------------
-         b_extr          =BLOC(condition = "OPERATION == 'EXTR'",
+         b_extr          =BLOC(condition = """equal_to("OPERATION", 'EXTR')""",
              regles=(AU_MOINS_UN('MAILLAGE','FISSURE','RESULTAT','TABLE','CARA_ELEM','CHARGE'),
                      PRESENT_ABSENT('MAILLAGE','FISSURE','RESULTAT','CARA_ELEM','CHARGE'),
                      PRESENT_ABSENT('FISSURE','MAILLAGE','RESULTAT','TABLE','CARA_ELEM','CHARGE'),
@@ -172,18 +173,18 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
              TABLE           =SIMP(statut='f',typ=(table_sdaster),min=1,max=1),
              CARA_ELEM       =SIMP(statut='f',typ=(cara_elem),min=1,max=1),
              CHARGE          =SIMP(statut='f',typ=(char_meca),min=1,max=1),
-             b_extr_maillage =BLOC(condition = "MAILLAGE != None and TABLE == None",
+             b_extr_maillage =BLOC(condition = """exists("MAILLAGE") and not exists("TABLE")""",
                  NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=("GEOMETRIE","ABSC_CURV")),
              ),
 
-             b_extr_cara_elem =BLOC(condition = "CARA_ELEM != None",
+             b_extr_cara_elem =BLOC(condition = """exists("CARA_ELEM")""",
                  NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),
                  into=('.CARGENBA', '.CARMASSI', '.CARCABLE', '.CARCOQUE', '.CARGEOBA', '.CARDISCK',
                        '.CARARCPO', '.CARGENPO', '.CARDISCM', '.CARORIEN', '.CARDISCA', '.CVENTCXF',
                        '.CARPOUFL', '.CARGEOPO', '.CARDINFO', '.CAFIBR',   '.CANBSP',)),
              ),
 
-             b_extr_charge =BLOC(condition = "CHARGE != None",
+             b_extr_charge =BLOC(condition = """exists("CHARGE")""",
                  NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),
                  into=('.CHME.EPSIN', '.CHME.F1D1D', '.CHME.F1D2D', '.CHME.F1D3D', '.CHME.F2D2D',
                        '.CHME.F2D3D', '.CHME.F3D3D', '.CHME.FCO2D', '.CHME.FCO3D', '.CHME.FELEC',
@@ -192,21 +193,21 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                        '.CHME.ROTAT', '.CHME.SIGIN', '.CHME.SIINT', '.CHME.VNOR',)),
              ),
 
-             b_extr_fissure  = BLOC(condition = "FISSURE != None",
+             b_extr_fissure  = BLOC(condition = """exists("FISSURE")""",
                  NOM_CHAM=SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=("LTNO","LNNO",
                                "GRLTNO","GRLNNO","STNO","STNOR","BASLOC","GRI.LNNO","GRI.LTNO","GRI.GRLNNO","GRI.GRLTNO")),
 
              ),
 
-             b_extr_table    =BLOC(condition = "TABLE != None",
+             b_extr_table    =BLOC(condition = """exists("TABLE")""",
                       MODELE          =SIMP(statut='f',typ=(modele_sdaster),),
                  ),
-             b_extr_resultat =BLOC(condition = "RESULTAT != None",
+             b_extr_resultat =BLOC(condition = """exists("RESULTAT")""",
                  NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO()),
                  TYPE_MAXI       =SIMP(statut='f',typ='TXM',into=("MAXI","MINI","MAXI_ABS","MINI_ABS","NORM_TRAN",) ),
 
                  # si TYPE_MAXI, on spécifie en général plusieurs numéros d'ordre :
-                 b_type_maxi =BLOC(condition = "TYPE_MAXI != None",
+                 b_type_maxi =BLOC(condition = """exists("TYPE_MAXI")""",
                       TYPE_RESU       =SIMP(statut='o',typ='TXM',defaut="VALE",into=("VALE","INST",) ),
 
                       regles=(EXCLUS('TOUT_ORDRE','LIST_INST','LIST_FREQ','NUME_ORDRE','INST',
@@ -224,7 +225,7 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                  ),
 
                  # si .not. TYPE_MAXI, on ne doit spécifier qu'un seul numéro d'ordre :
-                 b_non_type_maxi =BLOC(condition = "TYPE_MAXI == None",
+                 b_non_type_maxi =BLOC(condition = """not exists("TYPE_MAXI")""",
                       regles=(EXCLUS('NUME_ORDRE','INST','FREQ','NUME_MODE','NOEUD_CMP','NOM_CAS','ANGLE'),),
                       NUME_ORDRE      =SIMP(statut='f',typ='I'),
                       INST            =SIMP(statut='f',typ='R'),
@@ -238,9 +239,9 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                  ),
 
                  CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",) ),
-                 b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+                 b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                      PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-                 b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+                 b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                      PRECISION       =SIMP(statut='o',typ='R',),),
 
          ),  # fin bloc b_extr
@@ -250,5 +251,5 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
 # FIN DU CATALOGUE : INFO,TITRE ET TYPAGE DU RESULTAT :
 #-----------------------------------------------------
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=(1,2,) ),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**' ),
+         TITRE           =SIMP(statut='f',typ='TXM' ),
 )  ;

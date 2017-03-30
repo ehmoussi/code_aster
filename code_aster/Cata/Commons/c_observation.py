@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -22,7 +22,7 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
 
-def C_OBSERVATION(PHYSIQUE) : 
+def C_OBSERVATION(PHYSIQUE) :
 
         assert PHYSIQUE in ('MECANIQUE','THERMIQUE')
         _meca = False
@@ -43,65 +43,59 @@ def C_OBSERVATION(PHYSIQUE) :
         _BlocElem['TOUT']       = SIMP(statut='d',typ='TXM',into=("OUI",) )
         _BlocElem['MAILLE']     = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**')
         _BlocElem['GROUP_MA']   = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**')
-        _BlocElem['EVAL_ELGA']  = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=1,defaut='VALE',into=("MIN","MAX","VALE",),)
 
 # All keywords
         _Keywords={}
         _Keywords['TITRE']          = SIMP(statut='f',typ='TXM',max=1)
         _Keywords['OBSE_ETAT_INIT'] = SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut='OUI' )
-        _Keywords['EVAL_CHAM']      = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=1,defaut='VALE',
+        _Keywords['EVAL_CHAM']      = SIMP(statut='f',typ='TXM',max=1,defaut='VALE',
                                                 into=("MIN","MAX","MOY","MAXI_ABS","MINI_ABS","VALE",),)
         _Keywords['NOM_CMP']        = SIMP(statut='f',typ='TXM',max=20)
         _Keywords['NOM_VARI']       = SIMP(statut='f',typ='TXM',max=20)
-        _Keywords['EVAL_CMP']       = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=1,defaut='VALE',
+        _Keywords['EVAL_CMP']       = SIMP(statut='f',typ='TXM',max=1,defaut='VALE',
                                                  into=("VALE","FORMULE",),)
         _Keywords['INST']           = SIMP(statut='f',typ='R',validators=NoRepeat(),max='**' )
         _Keywords['LIST_INST']      = SIMP(statut='f',typ=listr8_sdaster)
         _Keywords['PAS_OBSE']       = SIMP(statut='f',typ='I')
         _Keywords['CRITERE']        = SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") )
         if _meca :
-            _Keywords['NOM_CHAM'] = SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,
-                                   into=("CONT_NOEU","FORC_NODA",
+            _Keywords['NOM_CHAM'] = SIMP(statut='o',typ='TXM',max=1,
+                                   into=("CONT_NOEU","FORC_NODA","CONT_ELEM",
                                          "DEPL","VITE","ACCE",
                                          "SIEF_ELGA","VARI_ELGA","EPSI_ELGA",
                                          "DEPL_ABSOLU","VITE_ABSOLU","ACCE_ABSOLU",))
         if _ther :
-            _Keywords['NOM_CHAM'] = SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,
+            _Keywords['NOM_CHAM'] = SIMP(statut='o',typ='TXM',max=1,
                                    into=("TEMP",))
 
         mcfact = FACT(statut='f', max=99,
             regles   =(UN_PARMI('NOM_CMP','NOM_VARI',),),
 
 
-            b_formule       =BLOC(condition="(EVAL_CMP=='FORMULE')",
+            b_formule       =BLOC(condition="""(equal_to("EVAL_CMP", 'FORMULE'))""",
                                    FORMULE = SIMP(statut='o',typ=formule,max=1),),
 
-            b_cham_no       =BLOC(condition="(NOM_CHAM=='DEPL') or \
-                                        (NOM_CHAM=='VITE') or \
-                                        (NOM_CHAM=='ACCE') or \
-                                        (NOM_CHAM=='TEMP') or \
-                                        (NOM_CHAM=='FORC_NODA') or \
-                                        (NOM_CHAM=='CONT_NOEU') or \
-                                        (NOM_CHAM=='DEPL_ABSOLU') or \
-                                        (NOM_CHAM=='VITE_ABSOLU') or \
-                                        (NOM_CHAM=='ACCE_ABSOLU')",
+            b_cham_no       =BLOC(condition="""is_in("NOM_CHAM", ('DEPL','VITE','ACCE','TEMP','FORC_NODA','CONT_NOEU','DEPL_ABSOLU','VITE_ABSOLU','ACCE_ABSOLU'))""",
                              regles   =(UN_PARMI('NOEUD','GROUP_NO','GROUP_MA','MAILLE','TOUT')),
                              **_BlocNode
                             ),
 
-            b_cham_elga     =BLOC(condition="(NOM_CHAM=='SIEF_ELGA') or \
-                                        (NOM_CHAM=='EPSI_ELGA') or \
-                                        (NOM_CHAM=='VARI_ELGA')",
-                             regles          =(UN_PARMI('GROUP_MA','MAILLE','TOUT')), 
-                                 b_elga_vale     =BLOC(condition="(EVAL_ELGA=='VALE')",
+            b_cham_elga     =BLOC(condition="""is_in("NOM_CHAM", ('SIEF_ELGA','EPSI_ELGA','VARI_ELGA'))""",
+                             regles          =(UN_PARMI('GROUP_MA','MAILLE','TOUT')),
+                                 EVAL_ELGA       = SIMP(statut='f',typ='TXM',max=1,defaut='VALE',into=("MIN","MAX","VALE",),),
+                                 b_elga_vale     =BLOC(condition="""(equal_to("EVAL_ELGA", 'VALE'))""",
                                    POINT           =SIMP(statut='o',typ='I'  ,validators=NoRepeat(),max='**'),
                                    SOUS_POINT      =SIMP(statut='f',typ='I'  ,validators=NoRepeat(),max='**'),
                                  ),
                              **_BlocElem
                                 ),
-            b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+            b_cham_elem     =BLOC(condition="""(equal_to("NOM_CHAM", 'CONT_ELEM'))""",
+                             regles          =(UN_PARMI('GROUP_MA','MAILLE','TOUT')), 
+                             **_BlocElem
+                                ),
+            b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                              PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-            b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+            b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                              PRECISION       =SIMP(statut='o',typ='R',),),
             **_Keywords
             )

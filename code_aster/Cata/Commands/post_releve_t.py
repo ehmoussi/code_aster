@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -26,6 +26,7 @@ POST_RELEVE_T=OPER(nom="POST_RELEVE_T",op=51,sd_prod=table_sdaster,reentrant='f'
                " ou pour les exprimer dans d'autres repères"),
             docu="U4.81.21",UIinfo={"groupes":("Post-traitements","Résultats et champs",)},
 
+         reuse=SIMP(statut='c', typ=CO),
          ACTION          =FACT(statut='o',max='**',
                                regles=(UN_PARMI('RESULTAT','CHAM_GD'),),
 
@@ -37,7 +38,7 @@ POST_RELEVE_T=OPER(nom="POST_RELEVE_T",op=51,sd_prod=table_sdaster,reentrant='f'
                                                  cham_elem,),),
            RESULTAT        =SIMP(statut='f',typ=resultat_sdaster),
 
-           b_extrac        =BLOC(condition = "RESULTAT != None",fr=tr("extraction des résultats"),
+           b_extrac        =BLOC(condition = """exists("RESULTAT")""",fr=tr("extraction des résultats"),
                                  regles=(EXCLUS('TOUT_ORDRE','NUME_ORDRE','LIST_ORDRE','NUME_MODE','LIST_MODE',
                                                 'INST','LIST_INST','FREQ','LIST_FREQ','NOEUD_CMP','NOM_CAS'), ),
              NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO(),),
@@ -53,13 +54,13 @@ POST_RELEVE_T=OPER(nom="POST_RELEVE_T",op=51,sd_prod=table_sdaster,reentrant='f'
              INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
              LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
              CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
-             b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+             b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                  PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-             b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+             b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                  PRECISION       =SIMP(statut='o',typ='R',),),
            ),
 
-           b_extrema   =BLOC(condition="au_moins_un(OPERATION, 'EXTREMA')",
+           b_extrema   =BLOC(condition="""equal_to('OPERATION', 'EXTREMA')""",
                              fr=tr("recherche de MIN MAX"),
                              regles=(EXCLUS('TOUT_CMP','NOM_CMP'),),
               TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
@@ -71,7 +72,7 @@ POST_RELEVE_T=OPER(nom="POST_RELEVE_T",op=51,sd_prod=table_sdaster,reentrant='f'
               NOM_CMP         =SIMP(statut='f',typ='TXM',max='**'),
            ),
 
-           b_MOYENNE_ARITH   =BLOC(condition="au_moins_un(OPERATION, 'MOYENNE_ARITH')",
+           b_MOYENNE_ARITH   =BLOC(condition="""is_in('OPERATION', 'MOYENNE_ARITH')""",
                              fr=tr("moyenne sur des groupes"),
                              regles=(EXCLUS('TOUT_CMP','NOM_CMP'),),
               TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
@@ -83,7 +84,7 @@ POST_RELEVE_T=OPER(nom="POST_RELEVE_T",op=51,sd_prod=table_sdaster,reentrant='f'
               NOM_CMP         =SIMP(statut='f',typ='TXM',max='**'),
            ),
 
-           b_autre   =BLOC(condition="aucun(OPERATION, ('EXTREMA', 'MOYENNE_ARITH'))",
+           b_autre   =BLOC(condition="""not is_in('OPERATION', ('EXTREMA', 'MOYENNE_ARITH'))""",
                            fr=tr("extraction et moyenne"),
                            regles=(AU_MOINS_UN('GROUP_NO','NOEUD'),
                                    UN_PARMI('TOUT_CMP','NOM_CMP','INVARIANT','ELEM_PRINCIPAUX','RESULTANTE'),
@@ -127,5 +128,5 @@ POST_RELEVE_T=OPER(nom="POST_RELEVE_T",op=51,sd_prod=table_sdaster,reentrant='f'
 
          ),
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE           =SIMP(statut='f',typ='TXM'),
 )  ;

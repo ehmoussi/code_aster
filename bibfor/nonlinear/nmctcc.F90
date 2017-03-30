@@ -1,6 +1,6 @@
-subroutine nmctcc(mesh      , model_    , mate  , nume_inst, sddyna   ,&
+subroutine nmctcc(mesh      , model_    , mate  , nume_inst, &
                   sderro    , ds_measure, sddisc, hval_incr, hval_algo,&
-                  ds_contact)
+                  ds_contact, ds_constitutive   , list_func_acti)
 !
 use NonLin_Datastructure_type
 !
@@ -21,7 +21,7 @@ implicit none
 #include "asterfort/xmtbca.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -42,13 +42,14 @@ implicit none
     character(len=24), intent(in) :: model_
     character(len=24), intent(in) :: mate
     integer, intent(in) :: nume_inst
-    character(len=19), intent(in) :: sddyna
     character(len=24), intent(in) :: sderro
     type(NL_DS_Measure), intent(inout) :: ds_measure
     character(len=19), intent(in) :: sddisc
     character(len=19), intent(in) :: hval_incr(*)
     character(len=19), intent(in) :: hval_algo(*)
     type(NL_DS_Contact), intent(inout) :: ds_contact
+    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+    integer, intent(in) :: list_func_acti(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,13 +63,14 @@ implicit none
 ! In  model            : name of model
 ! In  mate             : name of material characteristics (field)
 ! In  nume_inst        : index of current time step
-! In  sddyna           : dynamic parameters datastructure
 ! In  sderro           : datastructure for errors during algorithm
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  sddisc           : datastructure for time discretization
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
 ! IO  ds_contact       : datastructure for contact management
+! In  list_func_acti   : list of active functionnalities
+! In  ds_constitutive  : datastructure for constitutive laws management
 ! Out loop_cont_conv   : .true. if contact loop converged
 ! Out loop_cont_node   : number of contact state changing
 !
@@ -122,10 +124,11 @@ implicit none
         if (l_cont_xfem_gg) then
             call xmtbca(mesh, hval_incr, mate, ds_contact)
         else
-            call xmmbca(mesh, model, mate, hval_incr, ds_contact)
+            call xmmbca(mesh, model, mate, hval_incr, ds_contact, ds_constitutive,&
+                        list_func_acti)
         endif
     else if (l_cont_cont) then
-        call mmstat(mesh  , iter_newt, nume_inst, sddyna    , ds_measure,&
+        call mmstat(mesh  , iter_newt, nume_inst,  ds_measure,&
                     sddisc, hval_incr, hval_algo, ds_contact)
     else
         ASSERT(.false.)

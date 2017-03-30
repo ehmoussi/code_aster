@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jean-michel.proix at edf.fr
+# person_in_charge: david.haboussa at edf.fr
 
 
 SIMU_POINT_MAT=MACRO(nom="SIMU_POINT_MAT",
@@ -49,7 +49,7 @@ SIMU_POINT_MAT=MACRO(nom="SIMU_POINT_MAT",
 
    SUPPORT= SIMP(statut='f',typ='TXM',max=1,into=("POINT","ELEMENT",),defaut=("POINT"),),
 
-   b_PM = BLOC(condition="SUPPORT ==  'POINT'",fr=tr("Simulation sans élément fini"),
+   b_PM = BLOC(condition="""equal_to("SUPPORT", 'POINT')""",fr=tr("Simulation sans élément fini"),
 
           FORMAT_TABLE  =SIMP(statut='f',typ='TXM',max=1,into=("CMP_COLONNE","CMP_LIGNE",),defaut=("CMP_COLONNE"),),
 
@@ -62,8 +62,8 @@ SIMU_POINT_MAT=MACRO(nom="SIMU_POINT_MAT",
                 PAS_ARCH        =SIMP(statut='f',typ='I' ),
                 PRECISION       =SIMP(statut='f',typ='R',defaut= 1.0E-6),
                                 ),
-                                
-                                
+
+
           ## ANGLE : rotation de ANGLE autour de Z uniquement, et seulement pour les déformations imposées. Utile pour tests compxxx
           ANGLE      =SIMP(statut='f',typ='R',max=1, defaut=0.),
 
@@ -120,14 +120,14 @@ SIMU_POINT_MAT=MACRO(nom="SIMU_POINT_MAT",
                                     ),
    ),
 
-   b_EF = BLOC(condition="SUPPORT ==  'ELEMENT'",fr=tr("Simulation sur un élément fini"),
+   b_EF = BLOC(condition="""equal_to("SUPPORT", 'ELEMENT')""",fr=tr("Simulation sur un élément fini"),
           MODELISATION  =SIMP(statut='f',typ='TXM',max=1,into=("3D","C_PLAN","D_PLAN",)),
           RECH_LINEAIRE   =C_RECH_LINEAIRE(),
           ARCHIVAGE       =C_ARCHIVAGE(),
           SUIVI_DDL       =C_SUIVI_DDL(),
 
-                                
-                                
+
+
           ## ANGLE : rotation de ANGLE autour de Z uniquement, et seulement pour les déformations imposées. Utile pour tests compxxx
           ANGLE      =SIMP(statut='f',typ='R',max=1, defaut=0.),
 
@@ -175,19 +175,19 @@ SIMU_POINT_MAT=MACRO(nom="SIMU_POINT_MAT",
       AFFE_VARC    = FACT(statut='f',max='**',
          NOM_VARC        =SIMP(statut='o',typ='TXM', into=("TEMP","CORR","IRRA","HYDR","SECH","M_ACIER","M_ZIRC","EPSA","NEUT1","NEUT2")),
          VALE_FONC   = SIMP(statut='f',typ=(fonction_sdaster,formule) ),
- 
-         B_VALE_REF          =BLOC(condition="NOM_VARC in ('TEMP', 'SECH')",
+
+         B_VALE_REF          =BLOC(condition="""is_in("NOM_VARC", ('TEMP', 'SECH'))""",
             VALE_REF         =SIMP(statut='o',typ='R'),
                                   ),
 
-             b_ZIRC = BLOC(condition="NOM_VARC=='M_ZIRC'",
+             b_ZIRC = BLOC(condition="""equal_to("NOM_VARC", 'M_ZIRC')""",
               V1   = SIMP(statut='o',typ=(fonction_sdaster,formule) ),
               V2   = SIMP(statut='o',typ=(fonction_sdaster,formule) ),
               V3   = SIMP(statut='o',typ=(fonction_sdaster,formule) ),
               V4   = SIMP(statut='o',typ=(fonction_sdaster,formule) ),
                           ),
 
-             b_ACIER = BLOC(condition="NOM_VARC=='M_ACIER'",
+             b_ACIER = BLOC(condition="""equal_to("NOM_VARC", 'M_ACIER')""",
               V1   = SIMP(statut='o',typ=(fonction_sdaster,formule) ),
               V2   = SIMP(statut='o',typ=(fonction_sdaster,formule) ),
               V3   = SIMP(statut='o',typ=(fonction_sdaster,formule) ),

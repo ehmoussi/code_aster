@@ -1,6 +1,9 @@
 subroutine apksp(kptsc)
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+#include "asterf_types.h"
+#include "asterf_petsc.h"
+!
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -17,11 +20,10 @@ subroutine apksp(kptsc)
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=C1308
+! aslint:disable=
 use petsc_data_module
 !
     implicit none
-#include "asterf.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
@@ -36,9 +38,6 @@ use petsc_data_module
 !----------------------------------------------------------------
 !
 #ifdef _HAVE_PETSC
-!
-#include "asterf_petsc.h"
-!----------------------------------------------------------------
 !
 !     VARIABLES LOCALES
     integer :: nmaxit, ifm, niv
@@ -56,10 +55,10 @@ use petsc_data_module
 !     Variables PETSc
     PetscErrorCode :: ierr
     PetscInt :: maxits
-    PetscReal :: rtol, atol, dtol, aster_petsc_default_real
+    PetscReal :: rtol, atol, dtol, aster_petsc_real
     Mat :: a
     KSP :: ksp
-#ifdef ASTER_PETSC_VERSION_LEQ_36
+#if PETSC_VERSION_LT(3,7,0)
 #else
     PetscViewerAndFormat :: vf
 #endif
@@ -68,10 +67,10 @@ use petsc_data_module
 !
     call infniv(ifm, niv)
 !
-#ifdef ASTER_PETSC_VERSION_LEQ_34
-    aster_petsc_default_real = PETSC_DEFAULT_DOUBLE_PRECISION
+#if PETSC_VERSION_LT(3,5,0)
+    aster_petsc_real = PETSC_DEFAULT_DOUBLE_PRECISION
 #else
-    aster_petsc_default_real = PETSC_DEFAULT_REAL
+    aster_petsc_real = PETSC_DEFAULT_REAL
 #endif
 !     -- LECTURE DU COMMUN
     nomat = nomat_courant
@@ -97,13 +96,17 @@ use petsc_data_module
         ASSERT(ierr.eq.0)
     else if (algo.eq.'GMRES') then
         call KSPSetType(ksp, KSPGMRES, ierr)
+    else if (algo.eq.'GMRES_LMP') then
+        call KSPSetType(ksp, KSPGMRES, ierr)
         ASSERT(ierr.eq.0)
+! On indique qu'on veut récupérer les Ritz à la fin de la résolution
+! afin de construire le préconditionneur de second niveau LMP
+        call KSPSetComputeRitz(ksp, petsc_true, ierr)
     else if (algo.eq.'GCR') then
         call KSPSetType(ksp, KSPGCR, ierr)
         ASSERT(ierr.eq.0)
     else if (algo.eq.'FGMRES') then
         call KSPSetType(ksp, KSPFGMRES, ierr)
-        ASSERT(ierr.eq.0)
     else
         ASSERT(.false.)
     endif
@@ -120,28 +123,34 @@ use petsc_data_module
     endif
 !
     rtol = resire
-    atol = aster_petsc_default_real
-    dtol = aster_petsc_default_real
+    atol = aster_petsc_real
+    dtol = aster_petsc_real
 !
     call KSPSetTolerances(ksp, rtol, atol, dtol, maxits, ierr)
     ASSERT(ierr.eq.0)
+
+    call KSPSetUp( ksp, ierr )
+    ASSERT( ierr == 0 )
 !
 !     - pour suivre les itérations de Krylov
 !     --------------------------------------
     if (niv .ge. 2) then
-#ifdef ASTER_PETSC_VERSION_LEQ_36
+#if PETSC_VERSION_LT(3,7,0)
         call KSPMonitorSet(ksp, KSPMonitorTrueResidualNorm, PETSC_NULL_OBJECT,&
                            PETSC_NULL_FUNCTION, ierr)
 #else
          call PetscViewerAndFormatCreate(PETSC_VIEWER_STDOUT_WORLD, PETSC_VIEWER_DEFAULT, vf,ierr)
          call KSPMonitorSet(ksp,KSPMonitorTrueResidualNorm, vf, PetscViewerAndFormatDestroy,&
                             ierr)
-#endif 
+#endif
         ASSERT(ierr.eq.0)
     endif
 !
     call jedema()
 !
+#else
+kptsc=0
+ASSERT(.false.)
 #endif
 !
 end subroutine

@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -20,10 +20,10 @@
 interface
     subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
                       nnm, nnl, nbdm, laxis, ldyna,&
-                      lfovit,lpenac, jeusup, ffe, ffm, ffl,&
+                      lpenac, jeusup, ffe, ffm, ffl,&
                       norm, tau1, tau2, mprojt, jacobi,&
                       wpg, dlagrc, dlagrf, jeu, djeu,&
-                      djeut)
+                      djeut, l_previous)
         character(len=8) :: typmae
         character(len=8) :: typmam
         integer :: iresog
@@ -34,7 +34,7 @@ interface
         integer :: nbdm
         aster_logical :: laxis
         aster_logical :: ldyna
-        aster_logical :: lfovit
+        aster_logical :: l_previous
         aster_logical :: lpenac
         real(kind=8) :: jeusup
         real(kind=8) :: ffe(9)

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -50,7 +50,7 @@ CALC_FONC_INTERP=OPER(nom="CALC_FONC_INTERP",op= 134,sd_prod=calc_fonc_interp_pr
          PROL_DROITE     =SIMP(statut='f',typ='TXM',into=("EXCLU","CONSTANT","LINEAIRE") ),
          PROL_GAUCHE     =SIMP(statut='f',typ='TXM',into=("EXCLU","CONSTANT","LINEAIRE") ),
          NOM_PARA_FONC   =SIMP(statut='f',typ='TXM'),
-         b_eval_nappe    =BLOC(condition = "NOM_PARA_FONC != None",
+         b_eval_nappe    =BLOC(condition = """exists("NOM_PARA_FONC")""",
             regles=(UN_PARMI('VALE_PARA_FONC','LIST_PARA_FONC'),),
             VALE_PARA_FONC  =SIMP(statut='f',typ='R',max='**'),
             LIST_PARA_FONC  =SIMP(statut='f',typ=listr8_sdaster ),
@@ -58,6 +58,6 @@ CALC_FONC_INTERP=OPER(nom="CALC_FONC_INTERP",op= 134,sd_prod=calc_fonc_interp_pr
             PROL_DROITE_FONC=SIMP(statut='f',typ='TXM',into=("EXCLU","CONSTANT","LINEAIRE") ),
             PROL_GAUCHE_FONC=SIMP(statut='f',typ='TXM',into=("EXCLU","CONSTANT","LINEAIRE") ),
          ),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE           =SIMP(statut='f',typ='TXM'),
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2 ) ),
 )  ;

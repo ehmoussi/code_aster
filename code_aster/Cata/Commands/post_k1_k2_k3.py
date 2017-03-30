@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -34,19 +34,19 @@ POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
 
          FOND_FISS     =SIMP(statut='f',typ=fond_fiss),
          FISSURE       =SIMP(statut='f',typ=fiss_xfem),
-         RESULTAT      =SIMP(statut='o',typ=(evol_elas,evol_noli,mode_meca),position='global',
+         RESULTAT      =SIMP(statut='o',typ=(evol_elas,evol_noli,mode_meca),
                              fr=tr("Déplacement des noeuds de la lèvre supérieure et inférieure")),
          MATER         =SIMP(statut='f',typ=mater_sdaster,
                              fr=tr("Matériau homogène et isotrope")),
          NB_NOEUD_COUPE=SIMP(statut='f',typ='I',defaut=5,val_min = 3),
 
 #        bloc correspondant a la donnee du fond de fissure pour les fissures maillees
-         b_fond_fiss   =BLOC (condition="FOND_FISS!= None",
+         b_fond_fiss   =BLOC (condition="""exists("FOND_FISS")""",
 
-              b_no_mod =BLOC (condition="AsType(RESULTAT)!= mode_meca",
+              b_no_mod =BLOC (condition="""is_type("RESULTAT")!= mode_meca""",
                         TYPE_MAILLAGE = SIMP(statut='f',typ='TXM',into=("LIBRE","REGLE"),defaut="REGLE"),
                              ),
-              b_mod    =BLOC (condition="AsType(RESULTAT)== mode_meca",
+              b_mod    =BLOC (condition="""is_type("RESULTAT")== mode_meca""",
                                   TYPE_MAILLAGE = SIMP(statut='f',typ='TXM',into=("REGLE",),defaut="REGLE"),
                              ),
 
@@ -60,7 +60,7 @@ POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
                          ),
 
 #        bloc correspondant a la donnee de la fissure pour les fissures X-FEM
-         b_fissure     =BLOC (condition="FISSURE!= None",
+         b_fissure     =BLOC (condition="""exists("FISSURE")""",
                          NB_POINT_FOND = SIMP(statut='f',typ='I' ,),
                          NUME_FOND     = SIMP(statut='f',typ='I',defaut=1),
                          ABSC_CURV_MAXI=SIMP(statut='f',typ='R',
@@ -71,7 +71,7 @@ POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
          
          PREC_VIS_A_VIS=SIMP(statut='f',typ='R',defaut=0.1),
 
-         b_mod_meca  =BLOC (condition="AsType(RESULTAT)== mode_meca ",      
+         b_mod_meca  =BLOC (condition="""is_type("RESULTAT")== mode_meca """,      
          TOUT_ORDRE    =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          NUME_ORDRE    =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
          LIST_ORDRE    =SIMP(statut='f',typ=listis_sdaster),
@@ -80,28 +80,28 @@ POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
          LIST_MODE       =SIMP(statut='f',typ=listis_sdaster),
          FREQ          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
          LIST_FREQ     =SIMP(statut='f',typ=listr8_sdaster),
-             b_acce_reel     =BLOC(condition="(FREQ!=None) or (LIST_FREQ!=None)",
+             b_acce_reel     =BLOC(condition="""(exists("FREQ")) or (exists("LIST_FREQ"))""",
                CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
-               b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+               b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                    PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-               b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+               b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                    PRECISION       =SIMP(statut='o',typ='R',),),
              ),
              ),
-         b_no_mod_meca  =BLOC (condition="AsType(RESULTAT)!= mode_meca ",
+         b_no_mod_meca  =BLOC (condition="""is_type("RESULTAT")!= mode_meca """,
          TOUT_ORDRE    =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          NUME_ORDRE    =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
          LIST_ORDRE    =SIMP(statut='f',typ=listis_sdaster),   
          INST          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
          LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
-             b_acce_reel     =BLOC(condition="(INST != None)or(LIST_INST != None)",
+             b_acce_reel     =BLOC(condition="""(exists("INST"))or(exists("LIST_INST"))""",
                CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
-               b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+               b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                    PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-               b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+               b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                    PRECISION       =SIMP(statut='o',typ='R',),),
              ),
              ),
          INFO          =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
-         TITRE         =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE         =SIMP(statut='f',typ='TXM'),
 )  ;

@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -136,9 +136,9 @@ Les champs réel et imaginaire à assembler ne contiennent pas la même grandeur
 """),
 
     25 : _(u"""
-Erreur utilisateur dans PROJ_SPEC_BASE :
- La commande n'accepte que le parallélisme de type METHODE='CENTRALISE'.
- Modèle impliqué : %(k1)s
+Erreur utilisateur :
+ Vous utilisez probablement la commande PROJ_SPEC_BASE ou le comportement ENDO_HETEROGENE.
+ Seul le parallélisme de type METHODE='CENTRALISE' est autorisé. Modèle concerné : %(k1)s
 
 Conseil :
  Dans la commande AFFE_MODELE (ou MODI_MODELE), il faut utiliser METHODE='CENTRALISE'
@@ -268,7 +268,73 @@ Conseil :
     41 : _(u"""  Maille : %(k1)s. Cette maille appartient aux GROUP_MA : %(k2)s %(k3)s %(k4)s %(k5)s
 """),
 
+    42 : _(u"""
+ Utilisation de COEF_RIGI_DRZ en mode rotation plane :
+   Vous avez affecté une valeur négative de COEF_RIGI_DRZ sur des mailles ou groupes de mailles TRIA3 et QUAD4. Ce mode d'utilisation est permis,
+   mais le mode rotation plane ne s'activera pas sur les triangles. Le rotation plane permet d'associer une signification 
+   physique à la troisième rotation contrairement aux modèles classiques des plaques minces.
+   Il s'agit peut-être d'une erreur d'affectation.
+ Conseils : 
+   On conseille que cette valeur soit -1.E-2 < COEF_RIGI_DRZ < -1.E-12.
 
+ Champ : '%(k1)s'
+ Commentaire sur ce champ : %(k2)s
+ Grandeur : %(k3)s   Composante non reconnue : %(k4)s
+
+ Ce problème concerne %(i1)d mailles
+ Les premières mailles concernées sont imprimées ci-dessous.
+ Type de l'élément affecté sur la première maille imprimée : %(k5)s
+"""),
+
+
+    43 : _(u"""
+ Utilisation de COEF_RIGI_DRZ en mode rotation plane :
+   Vous avez affecté une valeur négative de COEF_RIGI_DRZ sur des mailles uniquement TRIA3.
+   Le mode d'utilisation n'est pas possible actuellement pour ces types de mailles. Le rotation plane permet d'associer une signification 
+   physique à la troisième rotation contrairement aux modèles classiques des plaques minces.
+   Il s'agit peut-être d'une erreur d'affectation.
+ Conseils : 
+   On conseille que cette valeur soit -1.E-2 < COEF_RIGI_DRZ < -1.E-12.
+
+ Champ : '%(k1)s'
+ Commentaire sur ce champ : %(k2)s
+ Grandeur : %(k3)s   Composante non reconnue : %(k4)s
+
+ Ce problème concerne %(i1)d mailles
+ Les premières mailles concernées sont imprimées ci-dessous.
+ Type de l'élément affecté sur la première maille imprimée : %(k5)s
+"""),
+
+
+    44 : _(u"""
+ Utilisation de COEF_RIGI_DRZ en mode rotation plane :
+   Vous avez affecté une valeur négative de COEF_RIGI_DRZ.  Le rotation plane permet d'associer une signification physique à la troisième rotation 
+   contrairement aux modèles classiques des plaques minces.
+ Conseils : 
+   On conseille que cette valeur soit -1.E-2 < COEF_RIGI_DRZ < -1.E-12.
+
+ Champ : '%(k1)s'
+ Commentaire sur ce champ : %(k2)s
+ Grandeur : %(k3)s   Composante non reconnue : %(k4)s
+
+ Ce problème concerne %(i1)d mailles
+ Les premières mailles concernées sont imprimées ci-dessous.
+ Type de l'élément affecté sur la première maille imprimée : %(k5)s
+"""),
+
+
+    45 : _(u"""
+ Utilisation de COEF_RIGI_DRZ en mode rotation plane en non linéaire :
+   Cette option n'est pas possible actuellement
+
+ Champ : '%(k1)s'
+ Commentaire sur ce champ : %(k2)s
+ Grandeur : %(k3)s   Composante non reconnue : %(k4)s
+
+ Ce problème concerne %(i1)d mailles
+ Les premières mailles concernées sont imprimées ci-dessous.
+ Type de l'élément affecté sur la première maille imprimée : %(k5)s
+"""),
 
     47 : _(u"""
   le CHAM_ELEM:  %(k1)s  n'existe pas.

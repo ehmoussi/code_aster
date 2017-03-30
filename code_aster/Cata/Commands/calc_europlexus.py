@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -44,13 +44,16 @@ CALC_EUROPLEXUS = MACRO(nom="CALC_EUROPLEXUS",
                         fr=tr("Version d'EUROPLEXUS"),
                         ),
 
-        ETAT_INIT = FACT(statut='f',regles=(PRESENT_PRESENT('VARI_INT','CONTRAINTE'),),
-           RESULTAT    = SIMP(statut='o',typ=evol_noli),
+        ETAT_INIT = FACT(statut='f',
+           RESULTAT   = SIMP(statut='o', typ=evol_noli),
            CONTRAINTE = SIMP(statut='f', typ='TXM', defaut='NON',into=('OUI','NON')),
-           VARI_INT   = SIMP(statut='f', typ='TXM', defaut='NON',into=('OUI','NON')),
            EQUILIBRE  = SIMP(statut='f', typ='TXM', defaut='OUI',into=('OUI','NON')),
-           b_niter          =BLOC(condition = "CONTRAINTE == 'NON' ",
+           b_niter          =BLOC(condition = """equal_to("CONTRAINTE", 'NON') """,
                                  NITER = SIMP(statut='f',typ='I',defaut=1),
+                                 ),
+           b_cont          =BLOC(condition = """equal_to("CONTRAINTE", 'OUI') """,
+                                 VITESSE    = SIMP(statut='f', typ='TXM', defaut='NON',into=('OUI','NON')),
+                                 VARI_INT   = SIMP(statut='f', typ='TXM', defaut='NON',into=('OUI','NON')),
                                  ),
         ),
         MODELE     = SIMP(statut='f',typ=modele_sdaster),
@@ -80,12 +83,12 @@ CALC_EUROPLEXUS = MACRO(nom="CALC_EUROPLEXUS",
            INST_INIT            = SIMP(statut='o',typ='R'),
            NMAX                 = SIMP(statut='f',typ='R'),
 
-           b_auto =BLOC( condition = "TYPE_DISCRETISATION=='AUTO'",
+           b_auto =BLOC( condition = """equal_to("TYPE_DISCRETISATION", 'AUTO')""",
               CSTAB  = SIMP(statut='o',typ='R',defaut=0.3),
 #              DTMAX  = SIMP(statut='f',typ='R'),
                        ),
 
-           b_util =BLOC( condition = "TYPE_DISCRETISATION=='UTIL'",
+           b_util =BLOC( condition = """equal_to("TYPE_DISCRETISATION", 'UTIL')""",
               PASFIX   = SIMP(statut='o',typ='R'),
                        ),
            ),
@@ -126,14 +129,14 @@ CALC_EUROPLEXUS = MACRO(nom="CALC_EUROPLEXUS",
         COURBE  =  FACT(statut='f',max='**', regles=(UN_PARMI('GROUP_NO','GROUP_MA')),
             NOM_CHAM   = SIMP(statut='o',typ='TXM', into=('DEPL','VITE','ACCE','SIEF_ELGA','EPSI_ELGA','VARI_ELGA')),
             NOM_CMP    = SIMP(statut='o',typ='TXM'),
-            GROUP_NO   = SIMP(statut='f',typ=grno,validators=NoRepeat(),max=1),
-            GROUP_MA   = SIMP(statut='f',typ=grma,validators=NoRepeat(),max=1),
+            GROUP_NO   = SIMP(statut='f',typ=grno,max=1),
+            GROUP_MA   = SIMP(statut='f',typ=grma,max=1),
             NOM_COURBE = SIMP(statut='o',typ='TXM'),
 
-            b_maille = BLOC(condition = "GROUP_MA != None", regles=(AU_MOINS_UN('NUM_GAUSS')),
+            b_maille = BLOC(condition = """exists("GROUP_MA")""", regles=(AU_MOINS_UN('NUM_GAUSS')),
               NUM_GAUSS = SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),),
          ),
-        b_courbe = BLOC(condition = "COURBE != None",
+        b_courbe = BLOC(condition = """exists("COURBE")""",
                         regles=(AU_MOINS_UN('PAS_NBRE_COURBE','PAS_INST_COURBE','INST_COURBE','NUME_ORDRE_COURBE'),
                                 AU_MOINS_UN('TABLE_COURBE',)),
           PAS_INST_COURBE      = SIMP(statut='f',typ='R'),

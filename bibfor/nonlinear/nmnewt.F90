@@ -47,7 +47,7 @@ implicit none
 #include "asterfort/nmtimr.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -175,7 +175,7 @@ implicit none
 !
     call nmnpas(model     , mesh  , mate  , cara_elem , fonact    ,&
                 ds_print  , sddisc, sdsuiv, sddyna    , sdnume    ,&
-                ds_measure, numedd, numins, ds_contact, ds_algorom,&
+                ds_measure, numedd, numins, ds_contact,&
                 valinc    , solalg, solveu, ds_conv   , list_load )
 !
 ! --- CALCUL DES CHARGEMENTS CONSTANTS AU COURS DU PAS DE TEMPS
@@ -193,6 +193,7 @@ implicit none
 !
     iterat = 0
     nbiter = nbiter + 1
+    ds_contact%iteration_newton = iterat
 !
 ! --- GESTION DEBUT DE BOUCLE POINTS FIXES
 !
@@ -281,7 +282,7 @@ implicit none
 !
     call nmfcon(model, numedd, mate  , fonact, ds_contact,&
                 ds_measure, valinc, solalg,&
-                veelem, veasse)
+                veelem, veasse,  ds_constitutive)
 !
 ! - Evaluate events at current Newton iteration
 !
@@ -316,6 +317,7 @@ implicit none
 !
     iterat = iterat + 1
     nbiter = nbiter + 1
+    ds_contact%iteration_newton = iterat
 !
 ! --- CAS DU CONTACT DISCRET
 !
@@ -371,9 +373,9 @@ implicit none
 ! --- GESTION FIN DE BOUCLE POINTS FIXES
 !
     call nmtble(niveau, model, mesh    , mate  , ds_contact, &
-                fonact, ds_print, ds_measure, sddyna,&
+                fonact, ds_print, ds_measure, &
                 sderro, ds_conv , sddisc, numins, valinc,&
-                solalg)
+                solalg,  ds_constitutive)
 !
 ! --- ETAT DE LA CONVERGENCE POINT FIXE
 !

@@ -1,5 +1,6 @@
+# person_in_charge: mickael.abbas at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,7 +24,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 # DEFINITION DES CARACTERISTIQUES DU MATERIAU
 #
 
-MAIL=LIRE_MAILLAGE( )
+MAIL=LIRE_MAILLAGE(FORMAT="ASTER", )
 
 # -----------------------------------------------------------------------------
 # DONNEES DE MODELISATION
@@ -153,9 +154,7 @@ CTM=AFFE_MATERIAU(MAILLAGE=MAIL,
                                 EVOL=EPSA,
                                 NOM_VARC='EPSA',
                                 NOM_CHAM='EPSA_ELNO',),
-                             _F(TOUT='OUI',
-                                NOM_VARC='TEMP',
-                                VALE_REF=0.),),);
+                            ),);
 
 T0=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_R', MAILLAGE=MAIL,
                         AFFE=_F( TOUT = 'OUI', NOM_CMP = 'TEMP',
@@ -214,8 +213,8 @@ U2=STAT_NON_LINE(
                 ITER_GLOB_MAXI = 10)
               );
 
-IMPR_RESU(RESU=_F(RESULTAT=U));
-IMPR_RESU(RESU=_F(RESULTAT=U2));
+IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U));
+IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U2));
 # -----------------------------------------------------------------------------
 # TESTS
 # -----------------------------------------------------------------------------
@@ -414,7 +413,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=5,
                 ),
           )
 
-T_TOT=POST_ELEM(ENER_TOTALE=_F(TOUT='OUI',),CHARGE=CHMECA,RESULTAT=U,);
+T_TOT=POST_ELEM(ENER_TOTALE=_F(TOUT='OUI',),RESULTAT=U,);
 #
 IMPR_TABLE(TABLE=T_TOT);
 #
@@ -622,7 +621,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=5,
           )
 
 T_TOT2=POST_ELEM(ENER_TOTALE=_F(TOUT='OUI',),
-                CHARGE=CHMECA,RESULTAT=U2,);
+                 RESULTAT=U2,);
 #
 IMPR_TABLE(TABLE=T_TOT2);
 #

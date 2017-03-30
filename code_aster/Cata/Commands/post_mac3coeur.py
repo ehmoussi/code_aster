@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -24,6 +24,7 @@ from code_aster.Cata.Commons import *
 
 POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                        UIinfo={"groupes":("Outils-métier",)},
+                       sd_prod=table_sdaster,
                        op=OPS("Mac3coeur.post_mac3coeur_ops.post_mac3coeur_ops"),
 
            TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4")),
@@ -35,15 +36,15 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                           fr=tr("Post-traitement des lames d'eau, par grille ou valeurs min/max"),
 
                  FORMAT       = SIMP(statut='o',typ='TXM',into=("GRACE","TABLE")),
-                 UNITE        = SIMP(statut='o',typ='I', max=1, inout='out'),                   # NUMERO DE L'UNITE LOGIQUE POUR LE POST
+                 UNITE        = SIMP(statut='o',typ=UnitType(), max=1, inout='out'),                   # NUMERO DE L'UNITE LOGIQUE POUR LE POST
 
-                 b_lame_grace  = BLOC(condition = "FORMAT == 'GRACE' ",fr=tr("Paramètres pour le format GRACE"),
+                 b_lame_grace  = BLOC(condition = """equal_to("FORMAT", 'GRACE') """,fr=tr("Paramètres pour le format GRACE"),
                        regles = UN_PARMI('NUME_GRILLE','TYPE_RESU',),
                        NUME_GRILLE  = SIMP(statut='f',typ='I', max=1),                      # NUMERO DE LA GRILLE A POST-TRAITER
                        TYPE_RESU    = SIMP(statut='f',typ='TXM',into=("MINI","MAXI")),      # EXTREMA POUR LE POST
                                    ),
 
-                 b_lame_table  = BLOC(condition = "FORMAT == 'TABLE' ",fr=tr("Paramètres pour le format TABLE"),
+                 b_lame_table  = BLOC(condition = """equal_to("FORMAT", 'TABLE') """,fr=tr("Paramètres pour le format TABLE"),
                                    ),
 
 
@@ -52,10 +53,10 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
            DEFORMATION = FACT(statut='f',max='**',
                               fr=tr("Post-traitement des deformations, par grille ou valeurs min/max"),
 
-                 UNITE        = SIMP(statut='o',typ='I', max=1),
+                 UNITE        = SIMP(statut='o',typ=UnitType(), max=1),
                  FORMAT       = SIMP(statut='o',typ='TXM',into=("GRACE","TABLE")),
 
-                 b_def_grace  = BLOC(condition = "FORMAT == 'GRACE' ",fr=tr("Paramètres pour le format GRACE"),
+                 b_def_grace  = BLOC(condition = """equal_to("FORMAT", 'GRACE') """,fr=tr("Paramètres pour le format GRACE"),
                        regles=UN_PARMI('NUME_GRILLE','TYPE_RESU','POSITION'),
                        TYPE_VISU    = SIMP(statut='o',typ='TXM',into=("AMPLITUDE","MODULE","VECTEUR","DEFORME")),
                        TYPE_RESU    = SIMP(statut='f',typ='TXM',into=("MINI","MAXI")),
@@ -64,7 +65,7 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                        CONCEPTION   = SIMP(statut='f',typ='TXM', max=1),
                                    ),
 
-                 b_def_table  = BLOC(condition = "FORMAT == 'TABLE' ",fr=tr("Paramètres pour le format TABLE"),
+                 b_def_table  = BLOC(condition = """equal_to("FORMAT", 'TABLE') """,fr=tr("Paramètres pour le format TABLE"),
                         NOM_SITE     = SIMP(statut='o',typ='TXM', max=1),
                         FORMAT_R     = SIMP(statut='f',typ='TXM', into=("DAMAC","STANDARD"), defaut="DAMAC")
                        

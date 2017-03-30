@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -22,11 +22,16 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: jean-luc.flejou at edf.fr
 
+def force_tuple(obj):
+    """Force *obj* to be a tuple."""
+    if type(obj) not in (list, tuple):
+        obj = [obj, ]
+    return tuple(obj)
+
 
 def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                         GRILLE, MASS_REP, **args):
     """Fonction sdprod de AFFE_CARA_ELEM"""
-    from Noyau.N_types import force_tuple
     # phase de typage seul
     if args.get('__only_type__'):
         return cara_elem
@@ -54,24 +59,24 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
         for i in range(len(POUTRE)):
             i1 = i + 1
             mclf = POUTRE[i]
-            if mclf['SECTION'] == 'CERCLE':
+            if mclf.get('SECTION') == 'CERCLE':
                 cara = force_tuple( mclf['CARA'] )
                 vale = force_tuple( mclf['VALE'] )
                 check( len(cara) == len(vale), sizeErr, 'POUTRE', i1)
-                if mclf['VARI_SECT']=='CONSTANT':
+                if mclf.get('VARI_SECT')=='CONSTANT':
                     rayon = valeurCara('R',  cara, vale)
                     ep    = valeurCara('EP', cara, vale, rayon)
                     check( rayon > 0.0, defErr, 'POUTRE', i1, 'R')
                     check( 0 < ep <= rayon, defErr, 'POUTRE', i1, ('R', 'EP'))
-                elif mclf['VARI_SECT']=='HOMOTHETIQUE':
-                    if mclf['GROUP_MA'] :
+                elif mclf.get('VARI_SECT')=='HOMOTHETIQUE':
+                    if mclf.get('GROUP_MA') :
                         r_debut  = valeurCara('R_DEBUT',  cara, vale)
                         r_fin    = valeurCara('R_FIN',    cara, vale)
                         ep_debut = valeurCara('EP_DEBUT', cara, vale, r_debut)
                         ep_fin   = valeurCara('EP_FIN',   cara, vale, r_fin)
                         check( r_debut > 0.0, defErr, 'POUTRE', i1, 'R_DEBUT')
                         check( r_fin   > 0.0, defErr, 'POUTRE', i1, 'R_FIN')
-                    elif mclf['MAILLE'] :
+                    elif mclf.get('MAILLE') :
                         r_debut  = valeurCara('R1',  cara, vale)
                         r_fin    = valeurCara('R2',  cara, vale)
                         ep_debut = valeurCara('EP1', cara, vale, r_debut)
@@ -80,11 +85,11 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                         check( r_fin   > 0.0, defErr, 'POUTRE', i1, 'R2')
                     check( (0.0< ep_debut <= r_debut), defErr, 'POUTRE', i1, ('R1', 'EP1'))
                     check( (0.0< ep_fin   <= r_fin),   defErr, 'POUTRE', i1, ('R2', 'EP2'))
-            elif mclf['SECTION'] == 'RECTANGLE':
+            elif mclf.get('SECTION') == 'RECTANGLE':
                 cara = force_tuple( mclf['CARA'] )
                 vale = force_tuple( mclf['VALE'] )
                 check( len(cara) == len(vale), sizeErr, 'POUTRE', i1)
-                if mclf['VARI_SECT']=='CONSTANT':
+                if mclf.get('VARI_SECT')=='CONSTANT':
                     if 'H' in cara :
                         h  = valeurCara('H',  cara, vale)
                         ep = valeurCara('EP', cara, vale, h*0.5)
@@ -99,7 +104,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                         check( hz > 0.0, defErr, 'POUTRE', i1, 'HZ')
                         check( (0< epy <= hy*0.5), defErr, 'POUTRE', i1, ('HY', 'EPY'))
                         check( (0< epz <= hz*0.5), defErr, 'POUTRE', i1, ('HZ', 'EPZ'))
-                elif mclf['VARI_SECT']=='HOMOTHETIQUE':
+                elif mclf.get('VARI_SECT')=='HOMOTHETIQUE':
                     if 'H1' in cara :
                         h1  = valeurCara('H1',  cara, vale)
                         ep1 = valeurCara('EP1', cara, vale, h1*0.5)
@@ -126,7 +131,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                         check( (0< epy2 <= hy2*0.5), defErr, 'POUTRE', i1, 'EPY2')
                         check( (0< epz1 <= hz1*0.5), defErr, 'POUTRE', i1, 'EPZ1')
                         check( (0< epz2 <= hz2*0.5), defErr, 'POUTRE', i1, 'EPZ2')
-                elif mclf['VARI_SECT']=='AFFINE':
+                elif mclf.get('VARI_SECT')=='AFFINE':
                     hy   = valeurCara('HY',   cara, vale)
                     hz1  = valeurCara('HZ1',  cara, vale)
                     hz2  = valeurCara('HZ2',  cara, vale)
@@ -139,10 +144,9 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                     check( (0< epy  <= hy *0.5), defErr, 'POUTRE', i1, 'EPY')
                     check( (0< epz1 <= hz1*0.5), defErr, 'POUTRE', i1, 'EPZ1')
                     check( (0< epz2 <= hz2*0.5), defErr, 'POUTRE', i1, 'EPZ2')
-            elif mclf['SECTION'] == 'GENERALE':
-                if mclf['VARI_SECT']=='CONSTANT':
-                    tmp = mclf.cree_dict_toutes_valeurs()
-                    if 'CARA' in tmp.keys() :
+            elif mclf.get('SECTION') == 'GENERALE':
+                if mclf.get('VARI_SECT')=='CONSTANT':
+                    if mclf.get('CARA') is not None:
                         cara = force_tuple( mclf['CARA'] )
                         vale = force_tuple( mclf['VALE'] )
                         check( len(cara) == len(vale), sizeErr, 'POUTRE', i1)
@@ -154,7 +158,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                         check( iy > 0.0, defErr, 'POUTRE', i1, 'IY')
                         check( iz > 0.0, defErr, 'POUTRE', i1, 'IZ')
                         check( jx > 0.0, defErr, 'POUTRE', i1, 'JX')
-                elif mclf['VARI_SECT']=='HOMOTHETIQUE':
+                elif mclf.get('VARI_SECT')=='HOMOTHETIQUE':
                     cara = force_tuple( mclf['CARA'] )
                     vale = force_tuple( mclf['VALE'] )
                     check( len(cara) == len(vale), sizeErr, 'POUTRE', i1)
@@ -175,7 +179,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                     check( iz2 > 0.0, defErr, 'POUTRE', i1, 'IZ2')
                     check( jx2 > 0.0, defErr, 'POUTRE', i1, 'JX2')
             # Caractéristiques des coudes
-            elif mclf['SECTION'] == 'COUDE':
+            elif mclf.get('SECTION') == 'COUDE':
                 for caraCoude in ['INDI_SIGM','INDI_SIGM_XY','INDI_SIGM_XZ','COEF_FLEX','COEF_FLEX_XY','COEF_FLEX_XZ',]:
                     if ( caraCoude in mclf ):
                         vale =  mclf[caraCoude]
@@ -185,7 +189,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
         for i in range(len(BARRE)):
             i1 = i + 1
             mclf = BARRE[i]
-            if mclf['SECTION'] == 'CERCLE':
+            if mclf.get('SECTION') == 'CERCLE':
                 cara = force_tuple( mclf['CARA'] )
                 vale = force_tuple( mclf['VALE'] )
                 check( len(cara) == len(vale), sizeErr, 'BARRE', i1)
@@ -193,7 +197,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                 ep    = valeurCara('EP', cara, vale, rayon)
                 check( rayon > 0.0, defErr, 'BARRE', i1, 'R')
                 check( (0.0 < ep <= rayon), defErr, 'BARRE', i1, 'EP')
-            elif mclf['SECTION'] == 'RECTANGLE':
+            elif mclf.get('SECTION') == 'RECTANGLE':
                 cara = force_tuple( mclf['CARA'] )
                 vale = force_tuple( mclf['VALE'] )
                 check( len(cara) == len(vale), sizeErr, 'BARRE', i1)
@@ -211,9 +215,8 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
                     check( hz > 0.0, defErr, 'BARRE', i1, 'HZ')
                     check( (0< epy <= hy*0.5), defErr, 'BARRE', i1, 'EPY')
                     check( (0< epz <= hz*0.5), defErr, 'BARRE', i1, 'EPZ')
-            elif mclf['SECTION'] == 'GENERALE':
-                tmp = mclf.cree_dict_toutes_valeurs()
-                if 'CARA' in tmp.keys() :
+            elif mclf.get('SECTION') == 'GENERALE':
+                if mclf.get('CARA') is not None:
                     cara = force_tuple( mclf['CARA'] )
                     vale = force_tuple( mclf['VALE'] )
                     check( len(cara) == len(vale), sizeErr, 'BARRE', i1)
@@ -224,16 +227,16 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
         for i in range(len(COQUE)):
             i1 = i + 1
             mclf = COQUE[i]
-            if 'EPAIS' in mclf :
-                vale =  mclf['EPAIS']
+            if mclf['EPAIS'] is not None:
+                vale =  mclf['EPAIS']            
                 check( vale > 0.0, defErr, 'COQUE', i1, 'EPAIS')
-            if 'A_CIS' in mclf :
+            if mclf['A_CIS'] is not None:
                 vale =  mclf['A_CIS']
                 check( vale > 0.0, defErr, 'COQUE', i1, 'A_CIS')
-            if 'COEF_RIGI_DRZ' in mclf :
-                vale =  mclf['COEF_RIGI_DRZ']
-                check( vale > 0.0, defErr, 'COQUE', i1, 'COEF_RIGI_DRZ')
-            if 'COQUE_NCOU' in mclf :
+            #if mclf['COEF_RIGI_DRZ'] is not None:
+                #vale =  mclf['COEF_RIGI_DRZ']
+                #check( vale > 0.0, defErr, 'COQUE', i1, 'COEF_RIGI_DRZ')
+            if mclf['COQUE_NCOU'] is not None:
                 vale =  mclf['COQUE_NCOU']
                 check( vale > 0,   defErr, 'COQUE', i1, 'COQUE_NCOU')
     # - - - - - - - - - - - - - - -
@@ -266,7 +269,7 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
         for i in range(len(MASS_REP)):
             i1 = i + 1
             mclf = MASS_REP[i]
-            if 'VALE' in mclf :
+            if mclf['VALE'] is not None:
                 vale =  mclf['VALE']
                 check( vale>0.0, defErr, 'MASS_REP', i1, 'VALE')
     #
@@ -292,12 +295,12 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
 # ==============================================================================
     POUTRE  = FACT(statut= 'f',max= '**',
         SECTION = SIMP(statut= 'o',typ= 'TXM' ,into= ("GENERALE","RECTANGLE","CERCLE","COUDE") ),
-        b_generale = BLOC(condition = " SECTION == 'GENERALE'",
+        b_generale = BLOC(condition = """ equal_to("SECTION", 'GENERALE')""",
             regles = (UN_PARMI('MAILLE','GROUP_MA'),),
             MAILLE    = SIMP(statut= 'f',typ= ma  ,validators= NoRepeat(),max= '**'),
             GROUP_MA  = SIMP(statut= 'f',typ= grma,validators= NoRepeat(),max= '**'),
             VARI_SECT = SIMP(statut= 'f',typ= 'TXM',into= ("CONSTANT","HOMOTHETIQUE"),defaut= "CONSTANT"),
-            b_constant = BLOC(condition = "VARI_SECT == 'CONSTANT'",
+            b_constant = BLOC(condition = """equal_to("VARI_SECT", 'CONSTANT')""",
                 regles = (PRESENT_ABSENT('TABLE_CARA','CARA'),
                           PRESENT_PRESENT('TABLE_CARA','NOM_SEC'),
                           PRESENT_PRESENT('CARA','VALE'),),
@@ -309,7 +312,7 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
                     into= ("A","IY","IZ","AY","AZ","EY","EZ","JX","RY","RZ","RT","JG","IYR2","IZR2","AI") ),
                 VALE       = SIMP(statut= 'f',typ= 'R',min= 4 ,max= 15),
             ),
-            b_homothetique = BLOC(condition = "VARI_SECT == 'HOMOTHETIQUE'",
+            b_homothetique = BLOC(condition = """equal_to("VARI_SECT", 'HOMOTHETIQUE')""",
                 CARA = SIMP(statut= 'o',typ= 'TXM',min= 8 ,max= 30,
                     fr= tr("A1,A2,IY1,IY2,IZ1,IZ2,JX1,JX2 sont des paramètres obligatoires"),
                     validators= [NoRepeat(), Compulsory(['A1','A2','IY1','IY2','IZ1','IZ2','JX1','JX2'])],
@@ -318,12 +321,12 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
                 VALE = SIMP(statut= 'o',typ= 'R',min= 8 ,max= 30),
             ),
         ),
-        b_rectangle = BLOC(condition = "SECTION == 'RECTANGLE'",
+        b_rectangle = BLOC(condition = """equal_to("SECTION", 'RECTANGLE')""",
             regles = (UN_PARMI('MAILLE','GROUP_MA'),),
             MAILLE    = SIMP(statut= 'f',typ= ma  ,validators= NoRepeat(),max= '**'),
             GROUP_MA  = SIMP(statut= 'f',typ= grma,validators= NoRepeat(),max= '**'),
             VARI_SECT = SIMP(statut= 'f',typ= 'TXM',into= ("CONSTANT","HOMOTHETIQUE","AFFINE"),defaut= "CONSTANT"),
-            b_constant = BLOC(condition = "VARI_SECT == 'CONSTANT'",
+            b_constant = BLOC(condition = """equal_to("VARI_SECT", 'CONSTANT')""",
                 CARA   = SIMP(statut= 'o',typ= 'TXM',min= 1 ,max= 4,
                     validators = [NoRepeat(),
                                   OrVal( [AndVal( [Compulsory(['H']),Absent(['HY','HZ','EPY','EPZ'])] ),
@@ -331,7 +334,7 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
                     into= ("H","EP", "HY","HZ","EPY","EPZ"),),
                 VALE  = SIMP(statut= 'o',typ= 'R',min= 1 ,max= 4),
             ),
-            b_homothetique = BLOC(condition = "VARI_SECT == 'HOMOTHETIQUE'",
+            b_homothetique = BLOC(condition = """equal_to("VARI_SECT", 'HOMOTHETIQUE')""",
                 CARA  = SIMP(statut= 'o',typ= 'TXM',min= 2 ,max= 8,
                     validators = [NoRepeat(),
                                   OrVal( [AndVal( [Compulsory(['H1','H2']),Together(['EP1','EP2']),
@@ -342,16 +345,16 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
                            "H2","HZ2","HY2","EP2","EPY2","EPZ2") ),
                 VALE  = SIMP(statut= 'o',typ= 'R',min= 2 ,max= 8),
             ),
-            b_affine = BLOC(condition = "VARI_SECT == 'AFFINE'",
+            b_affine = BLOC(condition = """equal_to("VARI_SECT", 'AFFINE')""",
                 CARA = SIMP(statut= 'o',typ= 'TXM',min= 3 ,max= 6,
                     validators= [NoRepeat(), AndVal( [Compulsory(['HY','HZ1','HZ2']), Together(['EPY','EPZ1','EPZ2'])] )],
                     into= ("HY","EPY", "HZ1","EPZ1","HZ2","EPZ2") ),
                 VALE = SIMP(statut= 'o',typ= 'R',min= 3 ,max= 6),
             ),
         ),
-        b_cercle = BLOC(condition = " SECTION == 'CERCLE'",
+        b_cercle = BLOC(condition = """ equal_to("SECTION", 'CERCLE')""",
             VARI_SECT = SIMP(statut= 'f',typ= 'TXM',into= ("CONSTANT","HOMOTHETIQUE"),defaut= "CONSTANT"),
-            b_constant = BLOC(condition = "VARI_SECT == 'CONSTANT'",
+            b_constant = BLOC(condition = """equal_to("VARI_SECT", 'CONSTANT')""",
                 regles = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut= 'f',typ= ma  ,validators= NoRepeat(),max= '**'),
                 GROUP_MA = SIMP(statut= 'f',typ= grma,validators= NoRepeat(),max= '**'),
@@ -361,17 +364,17 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
                     into= ("R","EP") ),
                 VALE     = SIMP(statut= 'o',typ= 'R',min=1, max=2,),
             ),
-            b_homothetique = BLOC(condition = "VARI_SECT == 'HOMOTHETIQUE'",
+            b_homothetique = BLOC(condition = """equal_to("VARI_SECT", 'HOMOTHETIQUE')""",
                 regles = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut= 'f',typ= ma  ,validators= NoRepeat(),max= '**'),
                 GROUP_MA = SIMP(statut= 'f',typ= grma,validators= NoRepeat(),max= '**'),
-                b_maille = BLOC(condition = "MAILLE != None",
+                b_maille = BLOC(condition = """exists("MAILLE")""",
                     CARA = SIMP(statut= 'o',typ= 'TXM', min=2, max=4,
                         validators= [NoRepeat(), AndVal( [Compulsory(['R1','R2']), Together(['EP1','EP2'])] )],
                         fr= tr("R1, R2 sont des paramètres obligatoires"),
                         into= ("R1","R2","EP1","EP2") ),
                 ),
-                b_grma  = BLOC(condition = "GROUP_MA != None",
+                b_grma  = BLOC(condition = """exists("GROUP_MA")""",
                     CARA = SIMP(statut= 'o',typ= 'TXM', min=2, max= 4,
                         validators= [NoRepeat(), AndVal( [Compulsory(['R_DEBUT','R_FIN']), Together(['EP_DEBUT','EP_FIN'])] )],
                         fr= tr("R_DEBUT, R_FIN sont des paramètres obligatoires"),
@@ -384,7 +387,7 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
             TUYAU_NSEC    = SIMP(statut= 'f',typ= 'I',val_max= 32,defaut= 16),
             TUYAU_NCOU    = SIMP(statut= 'f',typ= 'I',val_max= 10,defaut= 3),
         ),
-        b_coude = BLOC(condition = " SECTION == 'COUDE'",
+        b_coude = BLOC(condition = """ equal_to("SECTION", 'COUDE')""",
             regles=(UN_PARMI('MAILLE','GROUP_MA'),
                     EXCLUS('COEF_FLEX','COEF_FLEX_XY'),
                     EXCLUS('COEF_FLEX','COEF_FLEX_XZ'),
@@ -409,7 +412,7 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
         GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
         SECTION  = SIMP(statut='o',typ='TXM',into=("GENERALE","RECTANGLE","CERCLE") ),
-        b_generale = BLOC(condition = "SECTION=='GENERALE'",
+        b_generale = BLOC(condition = """equal_to("SECTION", 'GENERALE')""",
             regles = (PRESENT_ABSENT('TABLE_CARA','CARA'),
                       PRESENT_PRESENT('TABLE_CARA','NOM_SEC'),
                       PRESENT_PRESENT('CARA','VALE')),
@@ -418,14 +421,14 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
             CARA       = SIMP(statut='f',typ='TXM',into=("A",) ),
             VALE       = SIMP(statut='f',typ='R',min=1,max=1 ),
         ),
-        b_rectangle = BLOC(condition = "SECTION=='RECTANGLE'",
+        b_rectangle = BLOC(condition = """equal_to("SECTION", 'RECTANGLE')""",
             CARA = SIMP(statut='o',typ='TXM', min=1, max=4,
                 validators = [NoRepeat(),
                               OrVal( [AndVal( [Compulsory(['H']),Absent(['HY','HZ','EPY','EPZ'])] ),
                                       AndVal( [Compulsory(['HY','HZ']),Together(['EPY','EPZ']),Absent(['H','EP'])] )] )],
                 into=("H","EP","HZ","HY","EPY","EPZ"), ),
             VALE = SIMP(statut='o',typ='R',min=1,max=4 ), ),
-        b_cercle = BLOC(condition = "SECTION=='CERCLE'",
+        b_cercle = BLOC(condition = """equal_to("SECTION", 'CERCLE')""",
             CARA = SIMP(statut='o',typ='TXM',validators=[NoRepeat(),Compulsory(['R'])],min=1,max=2,into=("R","EP") ),
             VALE = SIMP(statut='o',typ='R',min=1,max=2 ), ),
         FCX = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule) ),
@@ -469,81 +472,81 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         REPERE    = SIMP(statut='f',typ='TXM',into=("LOCAL","GLOBAL"), defaut="GLOBAL"),
         AMOR_HYST = SIMP(statut='f',typ='R' ),
         SYME      = SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON"),),
-        b_SYME_OUI = BLOC(condition="SYME=='OUI'",
+        b_SYME_OUI = BLOC(condition="""equal_to("SYME", 'OUI')""",
             fr=tr("SYMETRIQUE: Affectation de matrices de rigidité, de masse ou d'amortissement à des mailles"),
-            CARA = SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,defaut="None",
+            CARA = SIMP(statut='o',typ='TXM',max=1,defaut="None",
             into = ("K_T_D_N", "K_T_D_L", "K_TR_D_N", "K_TR_D_L", "K_T_N", "K_T_L", "K_TR_N", "K_TR_L",
                     "M_T_D_N", "M_T_D_L", "M_TR_D_N", "M_TR_D_L", "M_T_N", "M_T_L", "M_TR_N", "M_TR_L",
                     "A_T_D_N", "A_T_D_L", "A_TR_D_N", "A_TR_D_L", "A_T_N", "A_T_L", "A_TR_N", "A_TR_L",),),
             #  Affection des caractéristiques de RIGIDITE/AMORTISSEMENT/MASSE
-            b_AK_T_D_N = BLOC(condition = "((CARA=='K_T_D_N')or(CARA=='A_T_D_N'))",
+            b_AK_T_D_N = BLOC(condition = """((equal_to("CARA", 'K_T_D_N')or(equal_to("CARA", 'A_T_D_N'))))""",
                 fr       = tr("POI1: 3 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=3 ,max=3 ),),
-            b_AK_T_D_L = BLOC(condition = "((CARA=='K_T_D_L')or(CARA=='A_T_D_L'))",
+            b_AK_T_D_L = BLOC(condition = """((equal_to("CARA", 'K_T_D_L')or(equal_to("CARA", 'A_T_D_L'))))""",
                 fr       = tr("SEGMENT: 3 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=3 ,max=3 ),),
-            b_AK_TR_D_N  = BLOC(condition = "((CARA=='K_TR_D_N')or(CARA=='A_TR_D_N'))",
+            b_AK_TR_D_N  = BLOC(condition = """((equal_to("CARA", 'K_TR_D_N')or(equal_to("CARA", 'A_TR_D_N'))))""",
                 fr       = tr("POI1: 6 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=6 ,max=6 ),),
-            b_AK_TR_D_L = BLOC(condition = "((CARA=='K_TR_D_L')or(CARA=='A_TR_D_L'))",
+            b_AK_TR_D_L = BLOC(condition = """((equal_to("CARA", 'K_TR_D_L')or(equal_to("CARA", 'A_TR_D_L'))))""",
                 fr       = tr("SEGMENT: 6 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=6 ,max=6 ),),
-            b_MAK_T_N = BLOC(condition = "((CARA=='K_T_N')or(CARA=='A_T_N')or(CARA=='M_T_N'))",
+            b_MAK_T_N = BLOC(condition = """((equal_to("CARA", 'K_T_N')or(equal_to("CARA", 'A_T_N')or(equal_to("CARA", 'M_T_N')))))""",
                 fr       = tr("POI1: 6 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=6 ,max=6 ),),
-            b_MAK_T_L = BLOC(condition = "((CARA=='K_T_L')or(CARA=='A_T_L')or(CARA=='M_T_L'))",
+            b_MAK_T_L = BLOC(condition = """((equal_to("CARA", 'K_T_L')or(equal_to("CARA", 'A_T_L')or(equal_to("CARA", 'M_T_L')))))""",
                 fr       = tr("SEGMENT: 21 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=21,max=21),),
-            b_MAK_TR_N = BLOC(condition = "((CARA=='K_TR_N')or(CARA=='A_TR_N')or(CARA=='M_TR_N'))",
+            b_MAK_TR_N = BLOC(condition = """((equal_to("CARA", 'K_TR_N')or(equal_to("CARA", 'A_TR_N')or(equal_to("CARA", 'M_TR_N')))))""",
                 fr       = tr("POI1: 21 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=21,max=21),),
-            b_MAK_TR_L = BLOC(condition = "((CARA=='K_TR_L')or(CARA=='A_TR_L')or(CARA=='M_TR_L'))",
+            b_MAK_TR_L = BLOC(condition = """((equal_to("CARA", 'K_TR_L')or(equal_to("CARA", 'A_TR_L')or(equal_to("CARA", 'M_TR_L')))))""",
                 fr       = tr("SEGMENT: 78 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=78,max=78),),
             #  Affection des caractéristiques de MASSE
-            b_M_T_D_N = BLOC(condition = "(CARA=='M_T_D_N')",
+            b_M_T_D_N = BLOC(condition = """(equal_to("CARA", 'M_T_D_N'))""",
                 fr       = tr("POI1: 1 valeur de masse"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=1 ,max=1 ),),
-            b_M_T_D_L = BLOC(condition = "(CARA=='M_T_D_L')",
+            b_M_T_D_L = BLOC(condition = """(equal_to("CARA", 'M_T_D_L'))""",
                 fr       = tr("SEGMENT: 1 valeur de masse"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=1 ,max=1 ),),
-            b_M_TR_D_N = BLOC(condition = "(CARA=='M_TR_D_N')",
+            b_M_TR_D_N = BLOC(condition = """(equal_to("CARA", 'M_TR_D_N'))""",
                 fr       = tr("POI1: 1 valeur de masse, 6 valeurs du tenseur d'inertie, 3 composantes du vecteur d'excentrement"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=10,max=10),),
-            b_M_TR_D_L = BLOC(condition = "(CARA=='M_TR_D_L')",
+            b_M_TR_D_L = BLOC(condition = """(equal_to("CARA", 'M_TR_D_L'))""",
                 fr       = tr("SEGMENT: 1 valeur de masse, 3 valeurs du tenseur d'inertie"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
@@ -555,32 +558,32 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         #        b_MAK_T_L_NS       'K_T_L'     'A_T_L'    'M_T_L'
         #        b_MAK_TR_N_NS      'K_TR_N'    'A_TR_N'   'M_TR_N'
         #        b_MAK_TR_L_NS      'K_TR_L'    'A_TR_L'   'M_TR_L'
-        b_SYME_NON = BLOC(condition="SYME=='NON'",
+        b_SYME_NON = BLOC(condition="""equal_to("SYME", 'NON')""",
             fr   = tr("NON-SYMETRIQUE: Affectation de matrices de rigidité, de masse ou d'amortissement à des mailles"),
-            CARA = SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,defaut="None",
+            CARA = SIMP(statut='o',typ='TXM',max=1,defaut="None",
             into = ("K_T_N", "K_T_L", "K_TR_N", "K_TR_L",
                     "M_T_N", "M_T_L", "M_TR_N", "M_TR_L",
                     "A_T_N", "A_T_L", "A_TR_N", "A_TR_L",),),
             #  Affection des caractéristiques de RIGIDITE/AMORTISSEMENT/MASSE : NON-SYMETRIQUE
-            b_MAK_T_N_NS = BLOC(condition = "((CARA=='K_T_N')or(CARA=='A_T_N')or(CARA=='M_T_N'))",
+            b_MAK_T_N_NS = BLOC(condition = """((equal_to("CARA", 'K_T_N')or(equal_to("CARA", 'A_T_N')or(equal_to("CARA", 'M_T_N')))))""",
                 fr       = tr("POI1: 9 valeurs (matrice pleine par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=9 ,max=9 ),),
-            b_MAK_T_L_NS = BLOC(condition = "((CARA=='K_T_L')or(CARA=='A_T_L')or(CARA=='M_T_L'))",
+            b_MAK_T_L_NS = BLOC(condition = """((equal_to("CARA", 'K_T_L')or(equal_to("CARA", 'A_T_L')or(equal_to("CARA", 'M_T_L')))))""",
                 fr       = tr("SEGMENT: 36 valeurs (matrice pleine par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=36,max=36),),
-            b_MAK_TR_N_NS = BLOC(condition = "((CARA=='K_TR_N')or(CARA=='A_TR_N')or(CARA=='M_TR_N'))",
+            b_MAK_TR_N_NS = BLOC(condition = """((equal_to("CARA", 'K_TR_N')or(equal_to("CARA", 'A_TR_N')or(equal_to("CARA", 'M_TR_N')))))""",
                 fr       =tr("POI1: 36 valeurs (matrice pleine par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=36,max=36),),
-            b_MAK_TR_L_NS = BLOC(condition = "((CARA=='K_TR_L')or(CARA=='A_TR_L')or(CARA=='M_TR_L'))",
+            b_MAK_TR_L_NS = BLOC(condition = """((equal_to("CARA", 'K_TR_L')or(equal_to("CARA", 'A_TR_L')or(equal_to("CARA", 'M_TR_L')))))""",
                 fr       = tr("SEGMENT: 144 valeurs (matrice pleine par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
@@ -594,81 +597,81 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         REPERE    = SIMP(statut='f',typ='TXM',into=("LOCAL","GLOBAL"), defaut="GLOBAL"),
         AMOR_HYST = SIMP(statut='f',typ='R' ),
         SYME      = SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON"),),
-        b_SYME_OUI = BLOC(condition="SYME=='OUI'",
+        b_SYME_OUI = BLOC(condition="""equal_to("SYME", 'OUI')""",
             fr   = tr("SYMETRIQUE: Affectation de matrices de rigidité, de masse ou d'amortissement à des mailles"),
-            CARA = SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,defaut="None",
+            CARA = SIMP(statut='o',typ='TXM',max=1,defaut="None",
             into = ("K_T_D_N", "K_T_D_L", "K_TR_D_N", "K_TR_D_L", "K_T_N", "K_T_L", "K_TR_N", "K_TR_L",
                     "M_T_D_N", "M_T_D_L", "M_TR_D_N", "M_TR_D_L", "M_T_N", "M_T_L", "M_TR_N", "M_TR_L",
                     "A_T_D_N", "A_T_D_L", "A_TR_D_N", "A_TR_D_L", "A_T_N", "A_T_L", "A_TR_N", "A_TR_L",),),
             #  Affection des caractéristiques de RIGIDITE/AMORTISSEMENT/MASSE
-            b_AK_T_D_N = BLOC(condition = "((CARA=='K_T_D_N')or(CARA=='A_T_D_N'))",
+            b_AK_T_D_N = BLOC(condition = """((equal_to("CARA", 'K_T_D_N')or(equal_to("CARA", 'A_T_D_N'))))""",
                 fr       = tr("POI1: 2 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=2 ,max=2 ),),
-            b_AK_T_D_L = BLOC(condition = "((CARA=='K_T_D_L')or(CARA=='A_T_D_L'))",
+            b_AK_T_D_L = BLOC(condition = """((equal_to("CARA", 'K_T_D_L')or(equal_to("CARA", 'A_T_D_L'))))""",
                 fr       = tr("SEGMENT: 2 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=2 ,max=2 ),),
-            b_AK_TR_D_N  = BLOC(condition = "((CARA=='K_TR_D_N')or(CARA=='A_TR_D_N'))",
+            b_AK_TR_D_N  = BLOC(condition = """((equal_to("CARA", 'K_TR_D_N')or(equal_to("CARA", 'A_TR_D_N'))))""",
                 fr       = tr("POI1: 3 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=3 ,max=3 ),),
-            b_AK_TR_D_L = BLOC(condition = "((CARA=='K_TR_D_L')or(CARA=='A_TR_D_L'))",
+            b_AK_TR_D_L = BLOC(condition = """((equal_to("CARA", 'K_TR_D_L')or(equal_to("CARA", 'A_TR_D_L'))))""",
                 fr       = tr("SEGMENT: 3 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=3 ,max=3 ),),
-            b_MAK_T_N = BLOC(condition = "((CARA=='K_T_N')or(CARA=='A_T_N')or(CARA=='M_T_N'))",
+            b_MAK_T_N = BLOC(condition = """((equal_to("CARA", 'K_T_N')or(equal_to("CARA", 'A_T_N')or(equal_to("CARA", 'M_T_N')))))""",
                 fr       = tr("POI1: 3 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=3 ,max=3 ),),
-            b_MAK_T_L = BLOC(condition = "((CARA=='K_T_L')or(CARA=='A_T_L')or(CARA=='M_T_L'))",
+            b_MAK_T_L = BLOC(condition = """((equal_to("CARA", 'K_T_L')or(equal_to("CARA", 'A_T_L')or(equal_to("CARA", 'M_T_L')))))""",
                 fr       = tr("SEGMENT: 10 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=10,max=10),),
-            b_MAK_TR_N = BLOC(condition = "((CARA=='K_TR_N')or(CARA=='A_TR_N')or(CARA=='M_TR_N'))",
+            b_MAK_TR_N = BLOC(condition = """((equal_to("CARA", 'K_TR_N')or(equal_to("CARA", 'A_TR_N')or(equal_to("CARA", 'M_TR_N')))))""",
                 fr       = tr("POI1: 6 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=6 ,max=6),),
-            b_MAK_TR_L = BLOC(condition = "((CARA=='K_TR_L')or(CARA=='A_TR_L')or(CARA=='M_TR_L'))",
+            b_MAK_TR_L = BLOC(condition = """((equal_to("CARA", 'K_TR_L')or(equal_to("CARA", 'A_TR_L')or(equal_to("CARA", 'M_TR_L')))))""",
                 fr       = tr("SEGMENT: 21 valeurs (triangulaire supérieure par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=21,max=21),),
             #  Affection des caractéristiques de MASSE
-            b_M_T_D_N = BLOC(condition = "(CARA=='M_T_D_N')",
+            b_M_T_D_N = BLOC(condition = """(equal_to("CARA", 'M_T_D_N'))""",
                 fr       = tr("POI1: 1 valeur de masse"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=1 ,max=1 ),),
-            b_M_T_D_L = BLOC(condition = "(CARA=='M_T_D_L')",
+            b_M_T_D_L = BLOC(condition = """(equal_to("CARA", 'M_T_D_L'))""",
                 fr       = tr("SEGMENT: 1 valeur de masse"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=1 ,max=1 ),),
-            b_M_TR_D_N = BLOC(condition = "(CARA=='M_TR_D_N')",
+            b_M_TR_D_N = BLOC(condition = """(equal_to("CARA", 'M_TR_D_N'))""",
                 fr       = tr("POI1: 1 valeur de masse, 1 valeur d'inertie, 2 composantes du vecteur d'excentrement"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=4 ,max=4 ),),
-            b_M_TR_D_L = BLOC(condition = "(CARA=='M_TR_D_L')",
+            b_M_TR_D_L = BLOC(condition = """(equal_to("CARA", 'M_TR_D_L'))""",
                 fr       = tr("SEGMENT: 1 valeur de masse, 1 valeur d'inertie"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
@@ -680,32 +683,32 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         #        b_MAK_T_L_NS       'K_T_L'     'A_T_L'    'M_T_L'
         #        b_MAK_TR_N_NS      'K_TR_N'    'A_TR_N'   'M_TR_N'
         #        b_MAK_TR_L_NS      'K_TR_L'    'A_TR_L'   'M_TR_L'
-        b_SYME_NON = BLOC(condition="SYME=='NON'",
+        b_SYME_NON = BLOC(condition="""equal_to("SYME", 'NON')""",
             fr   = tr("NON-SYMETRIQUE: Affectation de matrices de rigidité, de masse ou d'amortissement à des mailles"),
-            CARA = SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,defaut="None",
+            CARA = SIMP(statut='o',typ='TXM',max=1,defaut="None",
             into = ("K_T_N", "K_T_L", "K_TR_N", "K_TR_L",
                     "M_T_N", "M_T_L", "M_TR_N", "M_TR_L",
                     "A_T_N", "A_T_L", "A_TR_N", "A_TR_L",),),
             #  Affection des caractéristiques de RIGIDITE/AMORTISSEMENT/MASSE : NON-SYMETRIQUE
-            b_MAK_T_N_NS = BLOC(condition = "((CARA=='K_T_N')or(CARA=='A_T_N')or(CARA=='M_T_N'))",
+            b_MAK_T_N_NS = BLOC(condition = """((equal_to("CARA", 'K_T_N')or(equal_to("CARA", 'A_T_N')or(equal_to("CARA", 'M_T_N')))))""",
                 fr       = tr("POI1: 4 valeurs (matrice pleine par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=4 ,max=4 ),),
-            b_MAK_T_L_NS = BLOC(condition = "((CARA=='K_T_L')or(CARA=='A_T_L')or(CARA=='M_T_L'))",
+            b_MAK_T_L_NS = BLOC(condition = """((equal_to("CARA", 'K_T_L')or(equal_to("CARA", 'A_T_L')or(equal_to("CARA", 'M_T_L')))))""",
                 fr       = tr("SEGMENT: 16 valeurs (matrice pleine par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=16,max=16),),
-            b_MAK_TR_N_NS = BLOC(condition = "((CARA=='K_TR_N')or(CARA=='A_TR_N')or(CARA=='M_TR_N'))",
+            b_MAK_TR_N_NS = BLOC(condition = """((equal_to("CARA", 'K_TR_N')or(equal_to("CARA", 'A_TR_N')or(equal_to("CARA", 'M_TR_N')))))""",
                 fr       = tr("POI1: 9 valeurs (matrice pleine par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA',),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                 VALE     = SIMP(statut='o',typ='R',min=9 ,max=9),),
-            b_MAK_TR_L_NS = BLOC(condition = "((CARA=='K_TR_L')or(CARA=='A_TR_L')or(CARA=='M_TR_L'))",
+            b_MAK_TR_L_NS = BLOC(condition = """((equal_to("CARA", 'K_TR_L')or(equal_to("CARA", 'A_TR_L')or(equal_to("CARA", 'M_TR_L')))))""",
                 fr       = tr("SEGMENT: 36 valeurs (matrice pleine par colonne)"),
                 regles   = (UN_PARMI('MAILLE','GROUP_MA'),),
                 MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
@@ -717,35 +720,35 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
 # ==============================================================================
     ORIENTATION = FACT(statut='f',max='**',
         CARA  = SIMP(statut='o',typ='TXM', into=("VECT_Y","ANGL_VRIL","VECT_X_Y","ANGL_NAUT","GENE_TUYAU"),),
-        b_cara_vect_y = BLOC(condition = "(CARA=='VECT_Y')", fr=tr("Maille de longueur non nulle."),
+        b_cara_vect_y = BLOC(condition = """(equal_to("CARA", 'VECT_Y'))""", fr=tr("Maille de longueur non nulle."),
             regles = (UN_PARMI('MAILLE','GROUP_MA',),),
             MAILLE    = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
             GROUP_MA  = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
             VALE      = SIMP(statut='o',typ='R',max=3,min=3, fr=tr("Vecteur dont la projection sur le plan normal à l'axe X local donne Y local."),),
             PRECISION = SIMP(statut='f',typ='R', fr=tr("valeur en-dessous de laquelle la maille est considérée comme de longueur nulle"),),
         ),
-        b_cara_angl_vril = BLOC(condition = "(CARA=='ANGL_VRIL')", fr=tr("Maille de longueur non nulle."),
+        b_cara_angl_vril = BLOC(condition = """(equal_to("CARA", 'ANGL_VRIL'))""", fr=tr("Maille de longueur non nulle."),
             regles = (UN_PARMI('MAILLE','GROUP_MA',),),
             MAILLE    = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
             GROUP_MA  = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
             VALE      = SIMP(statut='o',typ='R', fr=tr("Angle de rotation du repère autour de l'axe X local."),),
             PRECISION = SIMP(statut='f',typ='R', fr=tr("valeur en-dessous de laquelle la maille est considérée comme de longueur nulle")),
         ),
-        b_cara_vect_x_y = BLOC(condition = "(CARA=='VECT_X_Y')", fr=tr("Maille de longueur nulle."),
+        b_cara_vect_x_y = BLOC(condition = """(equal_to("CARA", 'VECT_X_Y'))""", fr=tr("Maille de longueur nulle."),
             regles = (UN_PARMI('MAILLE','GROUP_MA',),),
             MAILLE    = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
             GROUP_MA  = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
             VALE      = SIMP(statut='o',typ='R',max=6,min=6, fr=tr("Les 2 vecteurs formant les axes X et Y locaux."),),
             PRECISION = SIMP(statut='f',typ='R', fr=tr("valeur en-dessous de laquelle la maille est considérée comme de longueur nulle")),
         ),
-        b_cara_angl_naut = BLOC(condition = "(CARA=='ANGL_NAUT')", fr=tr("Maille de longueur nulle."),
+        b_cara_angl_naut = BLOC(condition = """(equal_to("CARA", 'ANGL_NAUT'))""", fr=tr("Maille de longueur nulle."),
             regles = (UN_PARMI('MAILLE','GROUP_MA',),),
             MAILLE    = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
             GROUP_MA  = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
             VALE      = SIMP(statut='o',typ='R',max=3,min=3, fr=tr("Les 3 angles nautiques alpha, beta, gamma.")),
             PRECISION = SIMP(statut='f',typ='R', fr=tr("valeur en-dessous de laquelle la maille est considérée comme de longueur nulle")),
         ),
-        b_cara_gene_tuyau = BLOC(condition = "(CARA=='GENE_TUYAU')", fr=tr("Orientation des tuyaux."),
+        b_cara_gene_tuyau = BLOC(condition = """(equal_to("CARA", 'GENE_TUYAU'))""", fr=tr("Orientation des tuyaux."),
             regles = (UN_PARMI('NOEUD','GROUP_NO',),),
             NOEUD     = SIMP(statut='f',typ=no  ,validators=NoRepeat(),max='**'),
             GROUP_NO  = SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
@@ -820,9 +823,9 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
                    UN_PARMI('GROUP_MA_POI1','GROUP_MA_SEG2'),),
         GROUP_MA      = SIMP(statut='o',typ=grma,validators=NoRepeat(),max='**',
                              fr=tr("Surface servant à répartir les caractéristiques des discrets")),
-        GROUP_MA_POI1 = SIMP(statut='f',typ=grma,validators=NoRepeat(),max=1,
+        GROUP_MA_POI1 = SIMP(statut='f',typ=grma,max=1,
                              fr=tr("Mailles de type point correspondant aux discrets")),
-        GROUP_MA_SEG2 = SIMP(statut='f',typ=grma,validators=NoRepeat(),max=1,
+        GROUP_MA_SEG2 = SIMP(statut='f',typ=grma,max=1,
                              fr=tr("Mailles de type seg2 correspondant aux discrets")),
         FONC_GROUP    = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule) ),
         COEF_GROUP    = SIMP(statut='f',typ='R',max='**'),
@@ -831,7 +834,7 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
             into = ("K_TR_D_N","K_T_D_N","K_TR_D_L","K_T_D_L",
                     "A_TR_D_N","A_T_D_N","A_TR_D_L","A_T_D_L"),
             fr = tr("Choix des types de discrets du tapis de ressorts.") ),
-        b_cara = BLOC(condition ="""CARA and (len(CARA)==1  or (len(CARA)==2 and CARA[0][2:]==CARA[1][2:]))""",
+        b_cara = BLOC(condition ="""exists("CARA") and (len(CARA)==1  or (len(CARA)==2 and CARA[0][2:]==CARA[1][2:]))""",
             fr   = tr("Valeurs pour les discrets du tapis de ressorts."),
             VALE = SIMP(statut='o',typ='R',max='**', fr=tr("Valeurs pour les discrets du tapis de ressorts."),),
         ),
@@ -839,7 +842,7 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         NOEUD_CENTRE    = SIMP(statut='f',typ=no),
         COOR_CENTRE     = SIMP(statut='f',typ='R',min=2,max=3),
         EUROPLEXUS      = SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="NON"),
-        UNITE           = SIMP(statut='f',typ='I',val_min=1,inout='out'),
+        UNITE           = SIMP(statut='f',typ=UnitType(),val_min=1,inout='out'),
      ),
 #
 # ==============================================================================
@@ -847,14 +850,14 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
         GROUP_MA_POI1   = SIMP(statut='o',typ=grma,max=1),
         GROUP_MA_SEG2   = SIMP(statut='f',typ=grma,max=1),
         FREQ_EXTR       = SIMP(statut='o',typ='R',max=1),
-        UNITE_RESU_IMPE = SIMP(statut='f',typ='I',defaut=30,inout='in'),
+        UNITE_RESU_IMPE = SIMP(statut='f',typ=UnitType(),defaut=30,inout='in'),
     ),
 #
 # ==============================================================================
     MASS_AJOU = FACT(statut='f',max='**',
-        GROUP_MA      = SIMP(statut='o',typ=grma,validators=NoRepeat(),max=1,
+        GROUP_MA      = SIMP(statut='o',typ=grma,max=1,
                              fr = tr("Surface servant à répartir les caractéristiques des discrets")),
-        GROUP_MA_POI1 = SIMP(statut='o',typ=grma,validators=NoRepeat(),max=1,
+        GROUP_MA_POI1 = SIMP(statut='o',typ=grma,max=1,
                              fr = tr("Mailles de type point correspondant aux discrets")),
         FONC_GROUP    = SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule) ),
     ),
@@ -862,9 +865,9 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
 # ==============================================================================
     MASS_REP = FACT(statut='f',max='**',
         fr = tr("Masse répartie sur des POI1, pondérée par la surface des mailles connectées."),
-        GROUP_MA         = SIMP(statut='o',typ=grma,validators=NoRepeat(),max=1,
+        GROUP_MA         = SIMP(statut='o',typ=grma,max=1,
                             fr = tr("Surface ou ligne servant à répartir la masse"),),
-        GROUP_MA_POI1    = SIMP(statut='o',typ=grma,validators=NoRepeat(),max=1,
+        GROUP_MA_POI1    = SIMP(statut='o',typ=grma,max=1,
                             fr = tr("Mailles de type POI1 correspondant aux masses."),),
         VALE             = SIMP(statut='o',typ='R',max=1,
                             fr = tr("Valeur de la masse à répartir sur les mailles de GROUP_MA."),),

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -22,19 +22,20 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: nicolas.sellenet at edf.fr
 def comb_matr_asse_prod(COMB_R,COMB_C,CALC_AMOR_GENE,**args):
-  if COMB_C != None:
+  if COMB_C:
     type_mat = AsType(COMB_C[0]['MATR_ASSE'])
     if type_mat in  (matr_asse_depl_c,matr_asse_depl_r) : return matr_asse_depl_c
     if type_mat in  (matr_asse_gene_c,matr_asse_gene_r) : return matr_asse_gene_c
     if type_mat in  (matr_asse_temp_c,matr_asse_temp_r) : return matr_asse_temp_c
     if type_mat in  (matr_asse_pres_c,matr_asse_pres_r) : return matr_asse_pres_c
-  elif COMB_R != None:
+  elif COMB_R:
     type_mat = AsType(COMB_R[0]['MATR_ASSE'])
     if type_mat in  (matr_asse_depl_c,matr_asse_depl_r) : return matr_asse_depl_r
     if type_mat in  (matr_asse_temp_c,matr_asse_temp_r) : return matr_asse_temp_r
     if type_mat in  (matr_asse_pres_c,matr_asse_pres_r) : return matr_asse_pres_r
     if type_mat in  (matr_asse_gene_c,matr_asse_gene_r) : return matr_asse_gene_r
-  elif CALC_AMOR_GENE != None: return matr_asse_gene_r
+  elif CALC_AMOR_GENE:
+    return matr_asse_gene_r
   raise AsException("type de concept resultat non prevu")
 
 COMB_MATR_ASSE=OPER(nom="COMB_MATR_ASSE",op=  31,sd_prod=comb_matr_asse_prod,
@@ -42,6 +43,7 @@ COMB_MATR_ASSE=OPER(nom="COMB_MATR_ASSE",op=  31,sd_prod=comb_matr_asse_prod,
                     reentrant='f',
             UIinfo={"groupes":("Matrices et vecteurs",)},
          regles=(UN_PARMI('COMB_R','COMB_C','CALC_AMOR_GENE' ),),
+         reuse=SIMP(statut='c', typ=CO),
          COMB_R          =FACT(statut='f',max='**',
            PARTIE          =SIMP(statut='f',typ='TXM',into=("REEL","IMAG") ),
            MATR_ASSE       =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,matr_asse_temp_c

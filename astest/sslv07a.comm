@@ -1,5 +1,5 @@
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -25,7 +25,7 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
-MA1=LIRE_MAILLAGE( UNITE = 19 )
+MA1=LIRE_MAILLAGE(FORMAT="ASTER", UNITE = 19 )
 
 DEFI_GROUP( reuse=MA1, MAILLAGE=MA1,
             CREA_GROUP_NO=(_F( NOM = 'B', NOEUD='N18'),
@@ -33,7 +33,7 @@ DEFI_GROUP( reuse=MA1, MAILLAGE=MA1,
                            _F( NOM = 'BX' ,
                                NOEUD=('N27','N46','N18'))))
 
-MA2=LIRE_MAILLAGE( UNITE = 23 )
+MA2=LIRE_MAILLAGE(FORMAT="ASTER", UNITE = 23 )
 
 DEFI_GROUP( reuse=MA2, MAILLAGE=MA2,
             CREA_GROUP_NO=(_F( NOM = 'E', NOEUD='N46'),
@@ -288,7 +288,75 @@ STATIQUE=MACRO_ELAS_MULT(MODELE=MO,
                          CAS_CHARGE=_F(NOM_CAS='VERIF VECT_ASSE',
                                        VECT_ASSE=FORCE,),);
 
-IMPR_RESU(RESU=_F(RESULTAT=STATIQUE,NOM_CHAM='DEPL',NOM_CMP='DX'),)
+
+
+DEPLFO = CREA_CHAMP(OPERATION='EXTR',
+                    TYPE_CHAM='NOEU_DEPL_R',
+                    RESULTAT=STATIQUE,
+                    NOM_CHAM='DEPL',
+                    )
+
+# Coupe selon le segment AB
+EXTRFO=MACR_LIGN_COUPE(CHAM_GD=DEPLFO,
+                   MODELE=MO,
+                   LIGN_COUPE=(_F(INTITULE='section1',
+                                  TYPE='SEGMENT',
+                                  NB_POINTS=3,
+                                  DISTANCE_MAX=0.001,
+                                  COOR_ORIG=(0.,0.,3.),
+                                  COOR_EXTR=(0.,0.,0.),),),);
+
+
+
+# Point E
+TEST_TABLE(TABLE=EXTRFO,
+           NOM_PARA='DZ',
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                   VALE=1.5,
+                   ),
+           VALE_CALC=-1.29126028088E-06,)
+
+# Point B
+TEST_TABLE(TABLE=EXTRFO,
+           NOM_PARA='DZ',
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                   VALE=3,
+                   ),
+           VALE_CALC=-1.72167375533E-06,)
+
+EXTRFR=MACR_LIGN_COUPE(RESULTAT=STATIQUE,
+                   NUME_ORDRE = 1,
+                   NOM_CHAM = 'DEPL',
+                   LIGN_COUPE=(_F(INTITULE='section1',
+                                  TYPE='SEGMENT',
+                                  NB_POINTS=3,
+                                  DISTANCE_MAX=0.001,
+                                  COOR_ORIG=(0.,0.,3.),
+                                  COOR_EXTR=(0.,0.,0.),),),);
+
+
+# Point E
+TEST_TABLE(TABLE=EXTRFO,
+           NOM_PARA='DZ',
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                   VALE=1.5,
+                   ),
+           VALE_CALC=-1.29126028088E-06,
+           VALE_REFE=-1.29126028088E-06,
+           REFERENCE='AUTRE_ASTER')
+
+# Point B
+TEST_TABLE(TABLE=EXTRFO,
+           NOM_PARA='DZ',
+           FILTRE=_F(NOM_PARA='ABSC_CURV',
+                   VALE=3,
+                   ),
+           VALE_CALC=-1.72167375533E-06,
+           VALE_REFE=-1.72167375533E-06,
+           REFERENCE='AUTRE_ASTER')
+
+
+IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=STATIQUE,NOM_CHAM='DEPL',NOM_CMP='DX'),)
 IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=STATIQUE,NOM_CHAM='DEPL',NOM_CMP='DX'),)
 
 TEST_RESU(RESU=(_F(RESULTAT=STATIQUE,

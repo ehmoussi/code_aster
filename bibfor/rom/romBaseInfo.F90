@@ -9,7 +9,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -27,6 +27,7 @@ implicit none
 ! person_in_charge: mickael.abbas at edf.fr
 !
     type(ROM_DS_Empi), intent(in) :: ds_empi
+!
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
@@ -39,6 +40,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call utmess('I', 'ROM7_8')
     call utmess('I', 'ROM3_1', sk = ds_empi%base)
     call utmess('I', 'ROM3_2', sk = ds_empi%model)
     call utmess('I', 'ROM3_3', sk = ds_empi%mesh)
@@ -47,6 +49,7 @@ implicit none
         call utmess('I', 'ROM3_10')
         call utmess('I', 'ROM3_11', sk = ds_empi%axe_line)
         call utmess('I', 'ROM3_12', sk = ds_empi%surf_num)
+        call utmess('I', 'ROM5_13', si = ds_empi%ds_lineic%nb_slice)
     else
         call utmess('I', 'ROM3_20')
     endif
@@ -54,5 +57,6 @@ implicit none
     call utmess('I', 'ROM3_6', si = ds_empi%nb_node)
     call utmess('I', 'ROM3_7', si = ds_empi%nb_equa)
     call utmess('I', 'ROM3_8', si = ds_empi%nb_cmp)
+    call utmess('I', 'ROM3_9', si = ds_empi%nb_snap)
 !
 end subroutine

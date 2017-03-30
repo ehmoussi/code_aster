@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -126,10 +126,9 @@ Conseils :
 
     48: _(u"""
 Solveur MUMPS :
-  Un opérateur a demandé à MUMPS d'activer la compression de rang faible. Or cette option n'est disponible
-  qu'a partir de la version 5.0.1consortium. Votre exécutable est lui lié a MUMPS v: %(k1)s. 
-  Pour continuer malgré tout le calcul, on a débranché cette option particulière de MUMPS et on a
-  demandé un calcul standard sans compression. Votre calcul risque juste d'être ralenti.
+  Une option d'accélération non disponible avec cette version de MUMPS a été activée.
+  Pour continuer malgré tout le calcul, on lui a substitué l'option %(k1)s.
+  Votre calcul risque juste d'être ralenti.
 """),
 
 
@@ -349,7 +348,7 @@ Solveur MUMPS :
 Solveur MUMPS :
   Votre exécutable Aster embarque la version de MUMPS: %(k1)s
   Les seules versions de MUMPS supportée dans Code_Aster sont:
-                  les 5.0.1/2 et la 5.0.1/2 consortium (usage EDF seulement)
+            les 5.0.2/5.1.0 et les 5.0.2consortium/5.1.0consortium (usage EDF seulement)
 
 Conseils :
   Télécharger, installer et relier à Code_Aster une version de MUMPS adéquate.

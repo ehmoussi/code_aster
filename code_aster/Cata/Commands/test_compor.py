@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jean-michel.proix at edf.fr
+# person_in_charge: david.haboussa at edf.fr
 
 TEST_COMPOR =MACRO(nom="TEST_COMPOR",
                    op=OPS('Macro.test_compor_ops.test_compor_ops'),
@@ -35,7 +35,7 @@ TEST_COMPOR =MACRO(nom="TEST_COMPOR",
          NEWTON          =C_NEWTON(),
          CONVERGENCE     =C_CONVERGENCE('SIMU_POINT_MAT'),
 
-         b_ther          =BLOC(condition = "OPTION == 'THER'",
+         b_ther          =BLOC(condition = """equal_to("OPTION", 'THER')""",
             regles=(EXCLUS('C_PRAG','D_SIGM_EPSI'),),
             MATER           =SIMP(statut='o',typ=mater_sdaster,max=1,fr=tr("materiau dependant de la temperature")),
             ALPHA           =SIMP(statut='o',typ=fonction_sdaster,
@@ -58,7 +58,7 @@ TEST_COMPOR =MACRO(nom="TEST_COMPOR",
             C_PRAG          =SIMP(statut='f',typ=fonction_sdaster,
                                   fr=tr("constante de Prager fonction de la temperature- VMIS_ECMI_*")),
                         ),
-         b_meca          =BLOC(condition = "OPTION == 'MECA'",
+         b_meca          =BLOC(condition = """equal_to("OPTION", 'MECA')""",
             LIST_MATER      =SIMP(statut='o',typ=mater_sdaster,max=2,min=2,
                                           fr=tr("liste des materiaux en Pa puis MPa ")),
             YOUNG           =SIMP(statut='o',typ='R',fr=tr("module d'Young")),

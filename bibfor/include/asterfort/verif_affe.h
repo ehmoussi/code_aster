@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,8 +16,9 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
           interface 
-            subroutine verif_affe(modele,sd)
+            subroutine verif_affe(modele,sd,non_lin)
               character(len=*), intent(in) :: modele
               character(len=*) ,optional, intent(in) :: sd
+              aster_logical, intent(in), optional ::  non_lin
             end subroutine verif_affe
           end interface 

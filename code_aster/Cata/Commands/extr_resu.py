@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -40,6 +40,7 @@ def extr_resu_prod(RESULTAT,**args):
 EXTR_RESU=OPER(nom="EXTR_RESU",op=176,sd_prod=extr_resu_prod,reentrant='f',
             UIinfo={"groupes":("Résultats et champs",)},
             fr=tr("Extraire des champs au sein d'une SD Résultat"),
+         reuse=SIMP(statut='c', typ=CO),
          RESULTAT        =SIMP(statut='o',typ=(evol_elas,dyna_trans,dyna_harmo,acou_harmo,mode_meca,
                                                mode_acou,evol_ther,evol_noli,evol_varc,
                                                mult_elas,fourier_elas,fourier_ther ) ),
@@ -53,9 +54,9 @@ EXTR_RESU=OPER(nom="EXTR_RESU",op=176,sd_prod=extr_resu_prod,reentrant='f',
            CHAM_EXCLU      =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**'),
            NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',into=C_NOM_CHAM_INTO()),
            CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
-           b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+           b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
               PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-           b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+           b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
               PRECISION       =SIMP(statut='o',typ='R',),),
            LIST_ARCH       =SIMP(statut='f',typ=listis_sdaster),
            PAS_ARCH        =SIMP(statut='f',typ='I'),
@@ -81,6 +82,6 @@ EXTR_RESU=OPER(nom="EXTR_RESU",op=176,sd_prod=extr_resu_prod,reentrant='f',
                fr=tr("le CARA_ELEM est nécessaire dès que le modèle contient des éléments de structure : coques, poutres, ..."),),
             ),
 
-         TITRE           =SIMP(statut='f',typ='TXM',max='**' ),
+         TITRE           =SIMP(statut='f',typ='TXM' ),
          INFO            =SIMP(statut='f',typ='I',into=(1,2),defaut=1),
 )  ;

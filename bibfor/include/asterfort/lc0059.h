@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,33 +16,34 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine lc0059(fami, kpg, ksp, ndim, imate,&
-                      compor, crit, instam, instap, epsm,&
-                      deps, sigm, vim, option, angmas,&
-                      sigp, vip, tampon, typmod, icomp,&
-                      nvi, dsidep, codret)
-        character(len=*) :: fami
-        integer :: kpg
-        integer :: ksp
-        integer :: ndim
-        integer :: imate
-        character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
-        real(kind=8) :: instam
-        real(kind=8) :: instap
-        real(kind=8) :: epsm(6)
-        real(kind=8) :: deps(6)
-        real(kind=8) :: sigm(6)
-        real(kind=8) :: vim(*)
-        character(len=16) :: option
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: sigp(6)
-        real(kind=8) :: vip(*)
-        real(kind=8) :: tampon(*)
-        character(len=8) :: typmod(*)
-        integer :: icomp
-        integer :: nvi
-        real(kind=8) :: dsidep(6, 6)
-        integer :: codret
+    subroutine lc0059(fami, kpg, ksp, imate,&
+                      compor, carcri, instam, instap, neps, epsm,&
+                      deps, nsig, sigm, nvi, vim, option, angmas,&
+                      sigp, vip,&
+                      typmod, icomp, dsidep, codret)
+        character(len=*), intent(in) :: fami
+        integer, intent(in) :: kpg
+        integer, intent(in) :: ksp
+        integer, intent(in) :: imate
+        character(len=16), intent(in) :: compor(*)
+        real(kind=8), intent(in) :: carcri(*)
+        real(kind=8), intent(in) :: instam
+        real(kind=8), intent(in) :: instap
+        integer, intent(in) :: neps
+        integer, intent(in) :: nsig
+        integer, intent(in) :: nvi
+        real(kind=8), intent(in) :: epsm(neps)
+        real(kind=8), intent(in) :: deps(neps)
+        real(kind=8), intent(in) :: sigm(nsig)
+        real(kind=8), intent(in) :: vim(nvi)
+        character(len=16), intent(in) :: option
+        real(kind=8), intent(in) :: angmas(3)
+        real(kind=8), intent(out) :: sigp(nsig)
+        real(kind=8), intent(out) :: vip(nvi)
+        character(len=8), intent(in) :: typmod(*)
+        integer, intent(in) :: icomp
+
+        real(kind=8), intent(out) :: dsidep(6, 6)
+        integer, intent(out) :: codret
     end subroutine lc0059
 end interface

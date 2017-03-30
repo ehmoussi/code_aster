@@ -1,7 +1,7 @@
 subroutine nmtble(cont_loop     , model   , mesh  , mate     , ds_contact,&
-                  list_func_acti, ds_print, ds_measure, sddyna    ,&
+                  list_func_acti, ds_print, ds_measure, &
                   sderro        , ds_conv , sddisc, nume_inst, hval_incr ,&
-                  hval_algo)
+                  hval_algo, ds_constitutive)
 !
 use NonLin_Datastructure_type
 !
@@ -23,7 +23,7 @@ implicit none
 #include "asterfort/nmtime.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -48,13 +48,13 @@ implicit none
     integer, intent(in) :: list_func_acti(*)
     type(NL_DS_Print), intent(inout) :: ds_print
     type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19), intent(in) :: sddyna
     character(len=24), intent(in) :: sderro
     type(NL_DS_Conv), intent(in) :: ds_conv
     character(len=19), intent(in) :: sddisc
     integer, intent(in) :: nume_inst
     character(len=19), intent(in) :: hval_incr(*)
     character(len=19), intent(in) :: hval_algo(*)
+    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,13 +76,13 @@ implicit none
 ! In  list_func_acti   : list of active functionnalities
 ! IO  ds_print         : datastructure for printing parameters
 ! IO  ds_measure       : datastructure for measure and statistics management
-! In  sddyna           : dynamic parameters datastructure
 ! In  sderro           : datastructure for errors during algorithm
 ! In  ds_conv          : datastructure for convergence management
 ! In  sddisc           : datastructure for time discretization
 ! In  nume_inst        : index of current step time
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
+! In  ds_constitutive  : datastructure for constitutive laws management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -127,9 +127,9 @@ implicit none
     if (cont_loop .le. 1) then
         if (l_loop_cont) then
             cont_loop = 1
-            call nmctcc(mesh      , model     , mate  , nume_inst, sddyna   ,&
+            call nmctcc(mesh      , model     , mate  , nume_inst, &
                         sderro    , ds_measure, sddisc, hval_incr, hval_algo,&
-                        ds_contact)
+                        ds_contact, ds_constitutive   , list_func_acti)
             call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
             call mmbouc(ds_contact, 'Cont', 'Get_Vale'      , loop_vale_  = loop_cont_vale)
             loop_cont_vali = nint(loop_cont_vale)

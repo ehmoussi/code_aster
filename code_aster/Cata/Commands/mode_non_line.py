@@ -5,27 +5,27 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
-# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
-# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
-# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
-# (AT YOUR OPTION) ANY LATER VERSION.                                                  
-#                                                                       
-# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT   
-# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF            
-# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU      
-# GENERAL PUBLIC LICENSE FOR MORE DETAILS.                              
-#                                                                       
-# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE     
-# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,         
-#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.        
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 MODE_NON_LINE=OPER(nom="MODE_NON_LINE",op=  61,sd_prod=table_container,
                      fr=tr("Calcul des modes non-linéaires"),
                      reentrant='f',
            UIinfo={"groupes":("Résolution","Dynamique",)},
 
-        reuse =SIMP(statut='f',typ='table_container'),
+        reuse =SIMP(statut='c',typ=CO),
 
         ETAT_INIT       =FACT(statut='o',max=1,
                 regles=( UN_PARMI('MODE_LINE','MODE_NON_LINE'),),
@@ -39,15 +39,15 @@ MODE_NON_LINE=OPER(nom="MODE_NON_LINE",op=  61,sd_prod=table_container,
         CHOC = FACT(statut='f',max='**',
                 regles=( UN_PARMI('NOEUD','GROUP_NO'),),
                     OBSTACLE = SIMP(statut='f',typ='TXM', into=("PLAN","BI_PLAN","CERCLE",)),
-                    b_cercle = BLOC(condition="OBSTACLE=='CERCLE'",
+                    b_cercle = BLOC(condition="""equal_to("OBSTACLE", 'CERCLE')""",
                                      NOM_CMP = SIMP(statut='o',typ='TXM',min=2,max=2,validators=NoRepeat(),
                                                     into=('DX','DY','DZ'),),
                                      ORIG_OBST = SIMP(statut='f',typ='R',defaut=(0.,0.,0.),min=3,max=3),
                                      ),
-                    b_bi_plan = BLOC(condition="OBSTACLE=='BI_PLAN'",
+                    b_bi_plan = BLOC(condition="""equal_to("OBSTACLE", 'BI_PLAN')""",
                                    NOM_CMP = SIMP(statut='o',typ='TXM',min=1,max=1,into=('DX','DY','DZ'),),
                                    ),
-                    b_plan = BLOC(condition="OBSTACLE=='PLAN'",
+                    b_plan = BLOC(condition="""equal_to("OBSTACLE", 'PLAN')""",
                                    NOM_CMP = SIMP(statut='o',typ='TXM',min=1,max=1,into=('DX','DY','DZ'),),
                                     ),
                     NOEUD = SIMP(statut='f', typ=no, max=1),
@@ -62,7 +62,7 @@ MODE_NON_LINE=OPER(nom="MODE_NON_LINE",op=  61,sd_prod=table_container,
 
         RESOLUTION = FACT(statut='o',max=1,
                        METHODE = SIMP(statut='f',typ='TXM',defaut="EHMAN",into=("EHMAN",)),
-                       b_ehman = BLOC(condition="METHODE=='EHMAN'",
+                       b_ehman = BLOC(condition="""equal_to("METHODE", 'EHMAN')""",
                                     NB_HARM_LINE = SIMP(statut='o',typ='I',val_min=1,),
                                     NB_HARM_NONL = SIMP(statut='f',typ='I',defaut=201,val_min=1,),
                                     NB_BRANCHE = SIMP(statut='o',typ='I',val_min=0),
@@ -77,7 +77,7 @@ MODE_NON_LINE=OPER(nom="MODE_NON_LINE",op=  61,sd_prod=table_container,
                        ),
 
         SOLVEUR = C_SOLVEUR('MODE_NON_LINE'),
-        
+
         INFO = SIMP(statut='f',typ='I',defaut=1),
 
 )  ;

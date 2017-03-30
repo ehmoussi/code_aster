@@ -12,7 +12,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -27,7 +27,7 @@ implicit none
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! person_in_charge: mickael.abbas at edf.fr
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
     character(len=8), intent(in) :: sdcont
     character(len=8), intent(in) :: model
@@ -56,7 +56,7 @@ implicit none
     aster_logical :: l_cont_gcp, l_newt_fr
     aster_logical :: l_cont_disc, l_cont_cont, l_cont_xfem, l_frot, l_cont_lac
     aster_logical :: l_xfem_mortar
-    character(len=16) :: lissage, coef_adap
+    character(len=16) :: lissage
     character(len=24) :: sdcont_paracr
     real(kind=8), pointer :: v_sdcont_paracr(:) => null()
     character(len=24) :: sdcont_paraci
@@ -135,6 +135,9 @@ implicit none
         else
             ASSERT(.false.)
         endif
+        if (l_cont_lac) then
+            call utmess('F', 'CONTACT4_1')
+        endif
     else if (algo_reso_geom .eq. 'NEWTON') then
         call getvr8(' ', 'RESI_GEOM', scal=geom_resi)
         v_sdcont_paraci(1) = 0
@@ -206,7 +209,7 @@ implicit none
     else if (l_cont_disc) then
         algo_reso_cont = 'POINT_FIXE'
     else if (l_cont_lac) then
-        call getvtx(' ', 'ALGO_RESO_GEOM', scal=algo_reso_cont)
+        call getvtx(' ', 'ALGO_RESO_CONT', scal=algo_reso_cont)
     else
         ASSERT(.false.)
     endif
@@ -241,6 +244,8 @@ implicit none
             call getvis(' ', 'ITER_CONT_MULT', scal=cont_mult)
             v_sdcont_paraci(5)  = cont_mult
             v_sdcont_paraci(10) = -1
+        else if (l_cont_lac) then
+            call utmess('F', 'CONTACT4_1')
         else
             ASSERT(.false.)
         endif
@@ -312,19 +317,6 @@ implicit none
         endif
     endif
 !
-! - Auto-adaptation
-!
-    if (l_newt_fr .and. l_cont_cont) then
-        call getvtx(' ', 'ADAPT_COEF', scal=coef_adap)
-        if (coef_adap .eq. 'NON') then
-            v_sdcont_paraci(20) = 0
-        else if (coef_adap .eq. 'OUI') then
-            v_sdcont_paraci(20) = 1
-        else
-            ASSERT(.false.)
-        endif
-    endif
-!
 ! - XFEM formulation
 !
     if (l_cont_xfem) then
@@ -353,14 +345,6 @@ implicit none
             v_sdcont_paraci(25) = 0
         else
             ASSERT(.false.)
-        endif
-    endif
-!
-! - Checks for LAC method
-!
-    if (l_cont_lac) then
-        if (algo_reso_cont .ne. 'NEWTON' .or. algo_reso_geom .ne. 'NEWTON') then
-            call utmess('F', 'CONTACT4_1')
         endif
     endif
 !

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -25,29 +25,25 @@ from code_aster.Cata.Commons import *
 def C_SUIVI_DDL() : return FACT(statut='f',max=4,
            regles   =(UN_PARMI('NOM_CMP','NOM_VARI',),),
 
-           NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,
+           NOM_CHAM        =SIMP(statut='o',typ='TXM',max=1,
                                    into=("DEPL","VITE","ACCE",
                                          "FORC_NODA",
                                          "SIEF_ELGA","VARI_ELGA","EPSI_ELGA",)),
 
-           EVAL_CHAM       =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=1,defaut='VALE',
+           EVAL_CHAM       =SIMP(statut='f',typ='TXM',max=1,defaut='VALE',
                                    into=("MIN","MAX","MOY","MAXI_ABS","MINI_ABS","VALE",),),
 
            NOM_CMP         =SIMP(statut='f',typ='TXM',max=20),
            NOM_VARI        =SIMP(statut='f',typ='TXM',max=20),
 
-           EVAL_CMP        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=1,defaut='VALE',
+           EVAL_CMP        =SIMP(statut='f',typ='TXM',max=1,defaut='VALE',
                                    into=("VALE","FORMULE",),),
 
-           b_formule       =BLOC(condition="(EVAL_CMP=='FORMULE')",
+           b_formule       =BLOC(condition="""(equal_to("EVAL_CMP", 'FORMULE'))""",
                                    FORMULE = SIMP(statut='o',typ=formule,max=1),
                                 ),
 
-           b_cham_no       =BLOC(condition="(NOM_CHAM=='DEPL') or \
-                                            (NOM_CHAM=='VITE') or \
-                                            (NOM_CHAM=='ACCE') or \
-                                            (NOM_CHAM=='FORC_NODA') or \
-                                            (NOM_CHAM=='CONT_NOEU')",
+           b_cham_no       =BLOC(condition="""is_in("NOM_CHAM", ('DEPL','VITE','ACCE','FORC_NODA','CONT_NOEU'))""",
                                  regles   =(UN_PARMI('NOEUD','GROUP_NO','GROUP_MA','MAILLE','TOUT')),
                                  TOUT            =SIMP(statut='d',typ='TXM',into=("OUI",) ),
                                  NOEUD           =SIMP(statut='f',typ=no  ,validators=NoRepeat(),max='**'),
@@ -56,20 +52,25 @@ def C_SUIVI_DDL() : return FACT(statut='f',max=4,
                                  GROUP_MA        =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                                 ),
 
-           b_cham_elga     =BLOC(condition="(NOM_CHAM=='SIEF_ELGA') or \
-                                            (NOM_CHAM=='EPSI_ELGA') or \
-                                            (NOM_CHAM=='VARI_ELGA')",
+           b_cham_elga     =BLOC(condition="""is_in("NOM_CHAM", ('SIEF_ELGA','EPSI_ELGA','VARI_ELGA'))""",
                                  regles          =(UN_PARMI('GROUP_MA','MAILLE','TOUT')),
                                  TOUT            =SIMP(statut='d',typ='TXM',into=("OUI",) ),
                                  MAILLE          =SIMP(statut='f',typ=ma   ,validators=NoRepeat(),max='**'),
                                  GROUP_MA        =SIMP(statut='f',typ=grma ,validators=NoRepeat(),max='**'),
-                                 EVAL_ELGA       =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=1,defaut='VALE',
+                                 EVAL_ELGA       =SIMP(statut='f',typ='TXM',max=1,defaut='VALE',
                                                         into=("MIN","MAX","VALE",),),
-                                 b_elga_vale     =BLOC(condition="(EVAL_ELGA=='VALE')",
+                                 b_elga_vale     =BLOC(condition="""(equal_to("EVAL_ELGA", 'VALE'))""",
                                    POINT           =SIMP(statut='o',typ='I'  ,validators=NoRepeat(),max='**'),
                                    SOUS_POINT      =SIMP(statut='f',typ='I'  ,validators=NoRepeat(),max='**'),
                                  ),
                                 ),
+           # a decommenter quand un champ ELEM sera disponible
+           #b_cham_elem    =BLOC(condition="(NOM_CHAM=='XXXX_ELEM')",
+                                 #regles          =(UN_PARMI('GROUP_MA','MAILLE','TOUT')),
+                                 #TOUT            =SIMP(statut='d',typ='TXM',into=("OUI",) ),
+                                 #MAILLE          =SIMP(statut='f',typ=ma   ,validators=NoRepeat(),max='**'),
+                                 #GROUP_MA        =SIMP(statut='f',typ=grma ,validators=NoRepeat(),max='**'),
+                                #),
 
            TITRE           =  SIMP(statut='f',typ='TXM',max=3),
 

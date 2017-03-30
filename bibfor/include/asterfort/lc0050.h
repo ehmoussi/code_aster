@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -15,15 +15,15 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
+! aslint: disable=W1504
+!
 interface
     subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
                       imate, compor, crit, instam, instap,&
                       neps, epsm, deps, nsig, sigm,&
-                      nvi, vim, option, angmas, nwkin,&
-                      wkin, icomp, stress, statev, ndsde,&
-                      dsidep, nwkout, wkout, codret)
-        integer :: nwkout
-        integer :: nwkin
+                      nvi, vim, option, angmas, &
+                      icomp, stress, statev, ndsde,&
+                      dsidep, codret)
         integer :: nvi
         character(len=*) :: fami
         integer :: kpg
@@ -43,13 +43,11 @@ interface
         real(kind=8) :: vim(*)
         character(len=16) :: option
         real(kind=8) :: angmas(*)
-        real(kind=8) :: wkin(nwkin)
         integer :: icomp
         real(kind=8) :: stress(6)
         real(kind=8) :: statev(nvi)
         integer :: ndsde
         real(kind=8) :: dsidep(6, 6)
-        real(kind=8) :: wkout(nwkout)
         integer :: codret
     end subroutine lc0050
 end interface

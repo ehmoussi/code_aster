@@ -4,7 +4,7 @@ subroutine lcafyd(comp, materd, materf, nbcomm, cpmono,&
 ! person_in_charge: jean-michel.proix at edf.fr
     implicit none
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -134,7 +134,7 @@ subroutine lcafyd(comp, materd, materf, nbcomm, cpmono,&
         yd(ndt+3) = vind(3)
 !        DEFORMATION DE GONFLEMENT
         yd(ndt+4) = vind(4)
-    else if (loi(1:15) .eq. 'BETON_BURGER_FP') then
+    else if (loi(1:12) .eq. 'BETON_BURGER') then
 ! ===    ============================================================
 !        CONSTRUCTION DES DEFORMATIONS IRREVERSIBLES DE FLUAGE PROPRE
 ! ===    ============================================================
@@ -170,6 +170,14 @@ subroutine lcafyd(comp, materd, materf, nbcomm, cpmono,&
         yd(ndt+2) = vind(1)
 ! --- INITIALISATION A XIVP
         yd(ndt+3) = vind(3)
+!
+    else if (loi(1:3).eq.'LKR') then
+! --- INITIALISATION A ZERO DU MULTIPLICATEUR PLASTIQUE
+        yd(ndt+1)=0.d0
+! --- INITIALISATION A XIP
+        yd(ndt+2)=vind(1)
+! --- INITIALISATION A XIVP
+        yd(ndt+3)=vind(3)
 !
     else if (loi .eq. 'HAYHURST') then
         call lcopil('ISOTROPE', mod, materd(1, 1), dkooh)

@@ -5,7 +5,7 @@ subroutine lcelpl(mod, loi, nmat, materd, materf,&
 ! aslint: disable=W1306
     implicit none
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -48,13 +48,14 @@ subroutine lcelpl(mod, loi, nmat, materd, materf,&
 !     YF     :  VECTEUR SOLUTION A T+DT
 !  OUT
 !     VINF   :  VARIABLES INTERNES A T+DT
-!     DRDY   :  MATRICE JACOBIENNE POUR BETON_BURGER_FP
+!     DRDY   :  MATRICE JACOBIENNE POUR BETON_BURGER
 ! ----------------------------------------------------------------
 !     ------------------------------------------------------------
 #include "asterfort/burjac.h"
 #include "asterfort/burlnf.h"
 #include "asterfort/irrlnf.h"
 #include "asterfort/lceqvn.h"
+#include "asterfort/srilnf.h"
     common /tdim/   ndt  , ndi
 !     ------------------------------------------------------------
     character(len=16) :: loi
@@ -67,7 +68,7 @@ subroutine lcelpl(mod, loi, nmat, materd, materf,&
 ! ----------------------------------------------------------------
     if (loi(1:7) .eq. 'IRRAD3M') then
         call irrlnf(nmat, materf, vind, 0.0d0, vinf)
-    else if (loi(1:15) .eq. 'BETON_BURGER_FP') then
+    else if (loi(1:12) .eq. 'BETON_BURGER') then
         dt = timef-timed
         call burlnf(nvi, vind, nmat, materd, materf,&
                     dt, nr, yd, yf, vinf,&
@@ -86,6 +87,16 @@ subroutine lcelpl(mod, loi, nmat, materd, materf,&
         vinf(5) = 0.d0
         vinf(6) = 0.d0
         vinf(7) = 0.d0
+    else if (loi(1:3).eq.'LKR') then
+        call lceqvn(4, vind, vinf)
+        vinf(5)=0.d0
+        vinf(6)=0.d0
+        vinf(7)=0.d0
+        vinf(9)=vind(9)-3.d0*materf(3,1)*(materf(7,1)-materf(6,1))
+        vinf(8)=vind(8)-deps(1)-deps(2)-deps(3)-(vinf(9)-vind(9))
+        vinf(10)=0.d0
+        vinf(11)=0.d0
+        vinf(12)=0
     else if (loi(1:6).eq.'HUJEUX') then
 ! --- PAS DE MODIFICATION PARTICULIERE
 ! --- CAS DIFFERENT DE LA GENERALITE

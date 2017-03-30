@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -29,11 +29,12 @@ def calc_champ_prod(RESULTAT,**args):
 CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
                 UIinfo={"groupes":("Post-traitements",)},
                 fr=tr("Completer ou creer un resultat en calculant des champs par elements ou aux noeuds"),
+     reuse=SIMP(statut='c', typ=CO),
      MODELE           = SIMP(statut='f',typ=modele_sdaster),
      CHAM_MATER       = SIMP(statut='f',typ=cham_mater),
      CARA_ELEM        = SIMP(statut='f',typ=cara_elem),
 
-     RESULTAT         = SIMP(statut='o',typ=resultat_sdaster,position='global',
+     RESULTAT         = SIMP(statut='o',typ=resultat_sdaster,
                              fr=tr("Resultat d'une commande globale")),
 
      regles=(EXCLUS('TOUT_ORDRE','NUME_ORDRE','INST','FREQ','NUME_MODE',
@@ -50,9 +51,9 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
      LIST_INST        = SIMP(statut='f',typ=listr8_sdaster),
      LIST_FREQ        = SIMP(statut='f',typ=listr8_sdaster),
      CRITERE          = SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",) ),
-     b_prec_rela = BLOC(condition="(CRITERE=='RELATIF')",
+     b_prec_rela = BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
           PRECISION   = SIMP(statut='f',typ='R',defaut= 1.E-6),),
-     b_prec_abso = BLOC(condition="(CRITERE=='ABSOLU')",
+     b_prec_abso = BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
           PRECISION   = SIMP(statut='o',typ='R'),),
      LIST_ORDRE       = SIMP(statut='f',typ=listis_sdaster),
 
@@ -78,8 +79,7 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
          TYPE_CHARGE  = SIMP(statut='f',typ='TXM',defaut="FIXE_CSTE",into=("FIXE_CSTE",),),),
 
      # Bloc lineaire
-     b_lineaire  = BLOC(condition = "AsType(RESULTAT) in (evol_elas,dyna_trans,dyna_harmo,mode_meca,\
-                                                          comb_fourier,mult_elas,fourier_elas,mode_flamb)",
+     b_lineaire  = BLOC(condition = """is_type("RESULTAT") in (evol_elas,dyna_trans,dyna_harmo,mode_meca,comb_fourier,mult_elas,fourier_elas,mode_flamb)""",
          CONTRAINTE   = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour le calcul de contraintes et efforts generalises"),
                              into=C_NOM_CHAM_INTO(phenomene='CONTRAINTE',categorie='lin'),),
@@ -105,7 +105,7 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
                      ),
 
      # Bloc non-lineaire
-     b_non_lin  = BLOC(condition = "AsType(RESULTAT) in (evol_noli,)",
+     b_non_lin  = BLOC(condition = """is_type("RESULTAT") in (evol_noli,)""",
          CONTRAINTE   = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour le calcul de contraintes et efforts generalises"),
                              into=C_NOM_CHAM_INTO(phenomene='CONTRAINTE',categorie='nonlin'),),
@@ -125,12 +125,12 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
          VARI_INTERNE = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour le calcul de variables internes"),
                              into=C_NOM_CHAM_INTO(phenomene='VARI_INTERNE',categorie='nonlin'),),
-         
+
          PROPRIETES   = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour le calcul de propriétés"),
                              into=C_NOM_CHAM_INTO(phenomene='PROPRIETES',categorie='nonlin'),),
 
-         b_nom_vari   = BLOC(condition = "au_moins_un(VARI_INTERNE, ('VAEX_ELNO','VAEX_ELGA','VAEX_NOEU'))",
+         b_nom_vari   = BLOC(condition = """is_in('VARI_INTERNE', ('VAEX_ELNO','VAEX_ELGA','VAEX_NOEU'))""",
              NOM_VARI = SIMP(statut='o',typ='TXM',min= 1,max='**',
                              fr=tr("nom de la variable a extraire"),
                              into=("DPORO","DRHOLQ","DPVP","SATLIQ","EVP","IND_ETA","D","IND_END","TEMP_MAX",
@@ -147,14 +147,14 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
                       ),
 
      # Bloc Thermique
-     b_ther = BLOC(condition = "AsType(RESULTAT) in (evol_ther,fourier_ther,)" ,
+     b_ther = BLOC(condition = """is_type("RESULTAT") in (evol_ther,fourier_ther,)""" ,
          THERMIQUE    = SIMP(statut='f',typ='TXM',validators=NoRepeat(), max='**',
                              fr=tr("Options pour le calcul de champs en thermique"),
                              into=C_NOM_CHAM_INTO(phenomene='THERMIQUE',),),
                   ),
 
      # Bloc acoustique
-     b_acou = BLOC(condition = "AsType(RESULTAT) in (acou_harmo,mode_acou,dyna_harmo)",
+     b_acou = BLOC(condition = """is_type("RESULTAT") in (acou_harmo,mode_acou,dyna_harmo)""",
          ACOUSTIQUE   = SIMP(statut='f',typ='TXM',validators=NoRepeat(), max='**',
                              fr=tr("Options pour le calcul de champs en acoustique"),
                              into=C_NOM_CHAM_INTO(phenomene='ACOUSTIQUE',),),
@@ -184,5 +184,5 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
 
      INFO             = SIMP(statut='f',typ='I',defaut= 1,into=(1,2)),
 
-     TITRE            = SIMP(statut='f',typ='TXM',max='**'),
+     TITRE            = SIMP(statut='f',typ='TXM'),
 );

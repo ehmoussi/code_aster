@@ -14,6 +14,7 @@ subroutine xdecou(ndim, elp, nnop, nnose, it,&
 #include "asterfort/reeref.h"
 #include "asterfort/vecini.h"
 #include "asterfort/xajpin.h"
+#include "asterfort/xinter.h"
 #include "asterfort/xxmmvd.h"
     real(kind=8) :: lsn(*), pintt(*), lonref, pinter(*), ainter(*)
     integer :: ndim, nnop, nnose, it, cnset(*), ninter, igeom, npts
@@ -21,7 +22,7 @@ subroutine xdecou(ndim, elp, nnop, nnose, it,&
     character(len=8) :: elp
 !     ------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -61,15 +62,15 @@ subroutine xdecou(ndim, elp, nnop, nnose, it,&
 !       PINTER   : COORDONNEES DES POINTS D'INTERSECTION
 !       NINTER   : NB DE POINTS D'INTERSECTION
 !       NPTS     : NB DE PTS D'INTERSECTION COINCIDANT AVEC UN NOEUD
-!       AINTER   : INFOS ARETE ASSOCIÃE AU POINTS D'INTERSECTION
+!       AINTER   : INFOS ARETE ASSOCIEES AU POINTS D'INTERSECTION
 !     ------------------------------------------------------------------
 !
-    real(kind=8) :: a(3), b(3), c(3), lsna, lsnb, tampor(4)
-    real(kind=8) :: lsnc, somlsn(nfisc+1), ff(nnop)
-    real(kind=8) :: rbid2(ndim)
-    integer :: ar(12, 3), nbar, nta, ntb, na, nb, ins
+    real(kind=8) :: a(3), b(3), c(3), lsna, lsnb, lsnm, tampor(4)
+    real(kind=8) :: somlsn(nfisc+1), ff(nnop), lsnelp(8)
+    real(kind=8) :: rbid2(ndim), cref(3)
+    integer :: ar(12, 3), nbar, nta, ntb, na, nb, nm, ins
     integer :: ia, i, j, ipt, ibid, pp, pd, k, ptmax
-    integer :: ndime, iter, a1, a2
+    integer :: ndime, a1, a2
     integer :: mxstac
     character(len=8) :: typma
     integer :: zxain
@@ -132,7 +133,7 @@ subroutine xdecou(ndim, elp, nnop, nnose, it,&
 !
 !     SOMME DES LSN SUR LES NOEUDS DU SE
     call vecini(nfisc+1, 0.d0, somlsn)
-    do 300 k = 1, nnose
+    do k = 1, nnose
         na=cnset(nnose*(it-1)+k)
         if (na .lt. 1000) then
             do 305 i = 1, nfisc
@@ -155,17 +156,17 @@ subroutine xdecou(ndim, elp, nnop, nnose, it,&
 325             continue
 320         continue
         endif
-300 end do
+    end do
 !  SI ON EST PAS DU COTÉ INTERSECTÉ, ON SORT
-    do 330 i = 1, nfisc
+    do i = 1, nfisc
         if (fisco(2*i)*somlsn(i) .gt. 0) goto 999
-330 end do
+    end do
 !
     call conare(typma, ar, nbar)
 !
 !     BOUCLE SUR LES ARETES POUR DETERMINER LES POINTS D'INTERSECTION
 !
-    do 100 ia = 1, nbar
+    do ia = 1, nbar
 !       NUM NO DU SOUS-ELEMENT
         nta=ar(ia,1)
         ntb=ar(ia,2)
@@ -231,30 +232,16 @@ subroutine xdecou(ndim, elp, nnop, nnose, it,&
             endif
             if (lsna .ne. 0 .and. lsnb .ne. 0) then
 !           INTERPOLATION DES COORDONNEES DE C
-888             continue
                 do 130 i = 1, ndim
                     c(i)=a(i)-lsna/(lsnb-lsna)*(b(i)-a(i))
 130             continue
-                if (nfiss .ge. 2) then
-!         CALCUL DES FF
-                    call reeref(elp, nnop, zr(igeom), c, ndim,&
-                                rbid2, ff)
-!         INTERPOLATION LSN
-                    lsnc=0
-                    iter = 0
-                    do 30 i = 1, nnop
-                        lsnc = lsnc + ff(i)*lsn((i-1)*nfiss+ifiss)
- 30                 continue
-                    if (abs(lsnc) .gt. lonref*1d-8) then
-                        iter = iter+1
-                        ASSERT(iter.lt.50)
-                        lsnb = lsnc
-                        do 140 i = 1, ndim
-                            b(i) = c(i)
-140                     continue
-                        goto 888
-                    endif
-                endif
+                nm=0
+                lsnm=(lsna+lsnb)/2.d0
+                do i = 1, nnop
+                   lsnelp(i)=lsn((i-1)*nfiss+ifiss)
+                end do
+                call xinter(ndim, ndime, elp, zr(igeom), lsnelp, na, nb,&
+                            nm, pintt, pintt, lsna, lsnb, lsnm, cref, c)
 !           POSITION DU PT D'INTERSECTION SUR L'ARETE
 !            ALPHA=PADIST(NDIM,A,C)
 !           ON AJOUTE A LA LISTE LE POINT C
@@ -263,7 +250,7 @@ subroutine xdecou(ndim, elp, nnop, nnose, it,&
                             0.d0, ajout)
             endif
         endif
-100 end do
+    end do
 !
 999 continue
     ninter=ipt
@@ -271,7 +258,7 @@ subroutine xdecou(ndim, elp, nnop, nnose, it,&
     ASSERT(ninter.ge.npts.and.ninter.le.ptmax)
 !
 !     TRI DES POINTS D'INTERSECTION PAR ORDRE CROISSANT DES ARETES
-    do 200 pd = 1, ninter-1
+    do pd = 1, ninter-1
         pp=pd
         do 201 i = pp, ninter
             if (ainter(zxain*(i-1)+1) .lt. ainter(zxain*(pp-1)+1)) pp=i
@@ -286,7 +273,7 @@ subroutine xdecou(ndim, elp, nnop, nnose, it,&
             pinter(ndim*(pp-1)+k)=pinter(ndim*(pd-1)+k)
             pinter(ndim*(pd-1)+k)=tampor(k)
 203     continue
-200 end do
+    end do
 !
 !      TRI DES POINTS POUR QUE LE POLYGONE IP1,IP2,IP3,IP4 SOIT CONVEXE
 !      IP1 IP2 ET IP3 ONT UN SOMMET EN COMMUN

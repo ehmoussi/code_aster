@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -37,6 +37,7 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
         UIinfo={"groupes":("Résultats et champs",)},
             fr=tr("Projeter des champs d'un maillage sur un autre"),
 
+     reuse=SIMP(statut='c', typ=CO),
      # faut-il projeter les champs ?
      PROJECTION      =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON",),),
 
@@ -48,7 +49,7 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
      #-----------------------------------------------------------------------------------------------------------
      # 1er cas : on fait tout d'un coup : creation de la sd_corresp_2_mailla + projection des champs
      #-----------------------------------------------------------------------------------------------
-     b_1_et_2   =BLOC(condition= "PROJECTION == 'OUI' and MATR_PROJECTION == None",
+     b_1_et_2   =BLOC(condition= """equal_to("PROJECTION", 'OUI') and not exists("MATR_PROJECTION")""",
          regles=(UN_PARMI('RESULTAT','CHAM_GD'),
                  UN_PARMI('MODELE_1','MAILLAGE_1'),
                  UN_PARMI('MODELE_2','MAILLAGE_2'),
@@ -68,14 +69,14 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
 
          # Cas de la projection NUAGE_DEG_0/1 :
          #--------------------------------------------
-         b_nuage         =BLOC(condition="METHODE in ('NUAGE_DEG_0','NUAGE_DEG_1')",
+         b_nuage         =BLOC(condition="""is_in("METHODE", ('NUAGE_DEG_0','NUAGE_DEG_1'))""",
              CHAM_NO_REFE    =SIMP(statut='o',typ=cham_no_sdaster),
          ),
 
 
          # Cas de la projection COLLOCATION :
          #--------------------------------------------
-         b_elem          =BLOC(condition="METHODE in ('COLLOCATION','ECLA_PG','AUTO')",
+         b_elem          =BLOC(condition="""is_in("METHODE", ('COLLOCATION','ECLA_PG','AUTO'))""",
              CAS_FIGURE      =SIMP(statut='f',typ='TXM',into=("2D","3D","2.5D","1.5D",),
                   fr=tr("Pour indiquer au programme le type de projection souhaité")),
              DISTANCE_MAX    =SIMP(statut='f',typ='R',
@@ -100,7 +101,7 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
 
          # Cas de la projection SOUS_POINT :
          #--------------------------------------------
-         b_sous_point         =BLOC(condition="METHODE == 'SOUS_POINT'" ,
+         b_sous_point         =BLOC(condition="""equal_to("METHODE", 'SOUS_POINT')""" ,
              CARA_ELEM    =SIMP(statut='o',typ=cara_elem),
              PROL_ZERO       =SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="NON",
                   fr=tr("Pour prolonger les champs par zéro là ou la projection ne donne pas de valeurs.")),
@@ -115,7 +116,7 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
 
          # Cas de la projection d'une sd_resultat :
          #--------------------------------------------
-         b_resultat      =BLOC(condition="RESULTAT != None",
+         b_resultat      =BLOC(condition="""exists("RESULTAT")""",
            regles=(EXCLUS('TOUT_ORDRE','NUME_ORDRE','INST','FREQ','LIST_INST','LIST_FREQ','LIST_ORDRE'),
                    EXCLUS('TOUT_CHAM','NOM_CHAM',),),
            NOM_PARA        =SIMP(statut='f',typ='TXM', max='**'),
@@ -135,11 +136,11 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
            NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**' ),
            NOEUD_CMP       =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**'),
 
-           b_acce_reel     =BLOC(condition="(FREQ != None)or(LIST_FREQ != None)or(INST != None)or(LIST_INST != None)",
+           b_acce_reel     =BLOC(condition="""(exists("FREQ"))or(exists("LIST_FREQ"))or(exists("INST"))or(exists("LIST_INST"))""",
               CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
-              b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+              b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                    PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-              b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+              b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                    PRECISION       =SIMP(statut='o',typ='R',),),
            ),
          ),
@@ -175,7 +176,7 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
      #-----------------------------------------------------------------------------------------------------------
      # 2eme cas : on s'arrete apres la creation de la sd_corresp_2_mailla
      #-----------------------------------------------------------------------------------------------
-     b_1   =BLOC(condition="PROJECTION == 'NON'",
+     b_1   =BLOC(condition="""equal_to("PROJECTION", 'NON')""",
 
          METHODE         =SIMP(statut='f',typ='TXM',defaut="COLLOCATION",
                                into=("COLLOCATION","COUPLAGE",) ),
@@ -192,7 +193,7 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
 
          # Cas de la projection COLLOCATION :
          #--------------------------------------------
-         b_elem          =BLOC(condition="METHODE in ('COLLOCATION',)",
+         b_elem          =BLOC(condition="""is_in("METHODE", ('COLLOCATION',))""",
              CAS_FIGURE      =SIMP(statut='f',typ='TXM',into=("2D","3D","2.5D","1.5D",),
                   fr=tr("Pour indiquer au programme le type de projection souhaité")),
              DISTANCE_MAX    =SIMP(statut='f',typ='R',
@@ -240,7 +241,7 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
      #-----------------------------------------------------------------------------------------------------------
      # 3eme cas : on projette les champs avec une sd_corresp_2_mailla déjé calculée
      #-----------------------------------------------------------------------------------------------
-     b_2   =BLOC(condition="MATR_PROJECTION != None",
+     b_2   =BLOC(condition="""exists("MATR_PROJECTION")""",
          regles=(UN_PARMI('RESULTAT','CHAM_GD'),),
          RESULTAT        =SIMP(statut='f',typ=resultat_sdaster),
          CHAM_GD         =SIMP(statut='f',typ=(cham_no_sdaster,cham_elem)),
@@ -261,7 +262,7 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
 
          # Cas de la projection d'une sd_resultat :
          #--------------------------------------------
-         b_resultat      =BLOC(condition="RESULTAT != None",
+         b_resultat      =BLOC(condition="""exists("RESULTAT")""",
            regles=(EXCLUS('TOUT_ORDRE','NUME_ORDRE','INST','FREQ','LIST_INST','LIST_FREQ','LIST_ORDRE'),
                    EXCLUS('TOUT_CHAM','NOM_CHAM',),),
 
@@ -280,11 +281,11 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
            NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**' ),
            NOEUD_CMP       =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**'),
 
-           b_acce_reel     =BLOC(condition="(FREQ != None)or(LIST_FREQ != None)or(INST != None)or(LIST_INST != None)",
+           b_acce_reel     =BLOC(condition="""(exists("FREQ"))or(exists("LIST_FREQ"))or(exists("INST"))or(exists("LIST_INST"))""",
               CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
-              b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+              b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                    PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-              b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+              b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                    PRECISION       =SIMP(statut='o',typ='R',),),
            ),
 
@@ -293,6 +294,6 @@ PROJ_CHAMP=OPER(nom="PROJ_CHAMP",op= 166,sd_prod=proj_champ_prod,reentrant='f',
 
 
 
-     TITRE           =SIMP(statut='f',typ='TXM',max='**' ),
+     TITRE           =SIMP(statut='f',typ='TXM' ),
      INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
 )  ;

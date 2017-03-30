@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -37,11 +37,11 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
 
          MAILLAGE    =SIMP(statut='f',typ=maillage_sdaster, fr=tr("Nom du concept maillage")),
          b_maillage  =BLOC(
-            condition = "MAILLAGE == None",
+            condition = """not exists("MAILLAGE")""",
             regles=( PRESENT_PRESENT('FORMAT','UNITE') ),
-            FORMAT   =SIMP(statut='f',typ='TXM',defaut="ASTER",into=("ASTER","MED"),
+            FORMAT   =SIMP(statut='f',typ='TXM',defaut="MED",into=("ASTER","MED"),
                            fr=tr("Format du fichier")),
-            UNITE    =SIMP(statut='f',typ='I',defaut= 20, inout='in',
+            UNITE    =SIMP(statut='f',typ=UnitType(),defaut= 20, inout='in',
                            fr=tr("Unite correspondant au format du fichier maillage")),
          ),
 
@@ -61,13 +61,13 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
                               fr=tr("Groupe(s) de mailles linéiques, bord(s) de(s) section(s)")),
 
          b_nom =BLOC(
-            condition = """(TABLE_CARA == 'OUI') and (GROUP_MA == None)""",
+            condition = """(equal_to("TABLE_CARA", 'OUI')) and (not exists("GROUP_MA"))""",
             NOM   =SIMP(statut='f',typ='TXM',max=1,validators=LongStr(1,8),
                         fr=tr("Nom de la section, 8 caractères maximum."))
          ),
 
          b_gma_bord  =BLOC(
-            condition = "GROUP_MA_BORD != None",
+            condition = """exists("GROUP_MA_BORD")""",
             fr=tr(" calcul des carac. mecaniques"),
             regles=(UN_PARMI('NOEUD','GROUP_NO')),
             NOEUD          =SIMP(statut='f',typ=no,max='**',
@@ -81,7 +81,7 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
           ),
 
          b_reseau = BLOC(
-            condition ="""(GROUP_MA_BORD != None) and (GROUP_MA != None)""",
+            condition ="""(exists("GROUP_MA_BORD")) and (exists("GROUP_MA"))""",
             fr=tr(" calcul des coef de cisaillement équivalents a un reseau de poutres"),
             regles=(ENSEMBLE('LONGUEUR','LIAISON','MATERIAU') ,),
             LONGUEUR =SIMP(statut='f',typ='R',

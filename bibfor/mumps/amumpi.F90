@@ -1,6 +1,6 @@
 subroutine amumpi(option, lquali, ldist, kxmps, type)
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -57,9 +57,10 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
     integer :: ifm, niv, i, isymm, isymv, isym, nbproc
     integer :: nprec, ibid
     mumps_int :: i4, icntl(nicntl)
-    real(kind=8) :: cntl(ncntl), rr4max, blreps, blrfront, keep488, keep490, keep491
-    aster_logical :: lbid, blrok
+    real(kind=8) :: cntl(ncntl), rr4max, blreps
+    aster_logical :: lbid
     character(len=4) :: typm, etam
+    character(len=8) :: kacmum
     character(len=12) :: k12bid
     character(len=14) :: nonu
     character(len=19) :: nomat, nosolv
@@ -99,9 +100,10 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
     call jeveuo(nosolv//'.SLVI', 'L', vi=slvi)
     nprec=slvi(1)
     call jeveuo(nosolv//'.SLVR', 'L', vr=slvr)
-    blrfront=slvr(3)
-    blrok=(blrfront.gt.0.d0)
+       
+    kacmum=trim(adjustl(slvk(5)))
     blreps=slvr(4)
+
 !
 !       -----------------------------------------------------
 !        INITIALISATION SYM, PAR ET JOB POUR MUMPS (CREATION)
@@ -212,64 +214,97 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
         call amumpu(3, type, kxmps, k12bid, ibid, lbid, kvers, ibid)
         kvers=trim(adjustl(kvers))
 
-! ---     BLR
-        if (blrok) then
-            if ((kvers(1:15).eq.'5.0.1consortium').or.(kvers(1:15).eq.'5.0.2consortium')) then
-                ! ok
-            else
-                call utmess('A', 'FACTOR_48', sk=kvers)
-                blrok=.false.
-            endif
-        endif
-        if (blrok) then
-            if (type .eq. 'S') then
-                smpsk%keep(486)=1
-                smpsk%dkeep(8)=blreps
-                smpsk%keep(488)=int(smpsk%keep(488)*blrfront,4)
-                smpsk%keep(490)=int(smpsk%keep(490)*blrfront,4)
-                smpsk%keep(491)=int(smpsk%keep(491)*blrfront,4)
-                keep488=smpsk%keep(488)
-                keep490=smpsk%keep(490)
-                keep491=smpsk%keep(491)
-            else if (type.eq.'C') then
-                cmpsk%keep(486)=1
-                cmpsk%dkeep(8)=blreps
-                cmpsk%keep(488)=int(cmpsk%keep(488)*blrfront,4)
-                cmpsk%keep(490)=int(cmpsk%keep(490)*blrfront,4)
-                cmpsk%keep(491)=int(cmpsk%keep(491)*blrfront,4)
-                keep488=cmpsk%keep(488)
-                keep490=cmpsk%keep(490)
-                keep491=cmpsk%keep(491)
-            else if (type.eq.'D') then
-                dmpsk%keep(486)=1
-                dmpsk%dkeep(8)=blreps
-                dmpsk%keep(488)=int(dmpsk%keep(488)*blrfront,4)
-                dmpsk%keep(490)=int(dmpsk%keep(490)*blrfront,4)
-                dmpsk%keep(491)=int(dmpsk%keep(491)*blrfront,4)
-                keep488=dmpsk%keep(488)
-                keep490=dmpsk%keep(490)
-                keep491=dmpsk%keep(491)
-            else if (type.eq.'Z') then
-                zmpsk%keep(486)=1
-                zmpsk%dkeep(8)=blreps
-                zmpsk%keep(488)=int(zmpsk%keep(488)*blrfront,4)
-                zmpsk%keep(490)=int(zmpsk%keep(490)*blrfront,4)
-                zmpsk%keep(491)=int(zmpsk%keep(491)*blrfront,4)
-                keep488=zmpsk%keep(488)
-                keep490=zmpsk%keep(490)
-                keep491=zmpsk%keep(491)
-            else
+! ---     OPTIONS AVANCEES (ACCELERATIONS)
+! ------     TEST DE COMPATIBILITE ACCELERATION/VERSIONS
+        if ((kvers(1:5).eq.'5.0.2')) then
+            select case(kacmum)
+            case('FR')
+                !ok
+            case('FR+','LR','LR+')
+                kacmum='FR'
+                call utmess('A', 'FACTOR_48', sk=kacmum)
+            case('AUTO')
+                kacmum='FR'
+            case default
                 ASSERT(.false.)
-            endif
-! ---  AFFICHAGE DE CONTROLE
-            if (niv .ge. 2) then
-                write(ifm,*)'**********************************************************'
-                write(ifm,*)'<AMUMPI> PARAMETRES LOW-RANK'
-                write(ifm,*)'DKEEP8=',blreps
-                write(ifm,*)'KEEP488/490/491=',keep488, keep490, keep491
-                write(ifm,*)'**********************************************************'
-            endif
+            end select
+        else if (kvers(1:6).eq.'5.1.0 ') then
+            select case(kacmum)
+            case('FR','LR')
+                !ok
+            case('FR+')
+                kacmum='FR'
+                call utmess('A', 'FACTOR_48', sk=kacmum)
+            case('LR+')
+                kacmum='LR'
+                call utmess('A', 'FACTOR_48', sk=kacmum)
+            case('AUTO')
+                kacmum='FR'
+            case default
+                ASSERT(.false.)
+            end select
+        else if (kvers(1:15).eq.'5.1.0consortium') then
+            select case(kacmum)
+            case('FR','FR+','LR','LR+')
+                !ok
+            case('AUTO')
+                kacmum='FR'
+            case default
+                ASSERT(.false.)
+            end select
+        else
+            ASSERT(.false.)
         endif
+! ------     API MUMPS ACCELERATION
+        select case(kacmum)
+        case('FR')
+! FR std
+            icntl(35)=0
+        case('FR+')
+! FR +  aggressive optimizations
+            icntl(35)=0
+            if (type .eq. 'S') then
+                smpsk%keep(370)=1
+                smpsk%keep(371)=1
+            else if (type.eq.'C') then
+                cmpsk%keep(370)=1
+                cmpsk%keep(371)=1
+            else if (type.eq.'D') then
+                dmpsk%keep(370)=1
+                dmpsk%keep(371)=1
+            else if (type.eq.'Z') then
+                zmpsk%keep(370)=1
+                zmpsk%keep(371)=1
+            endif
+        case('LR')
+! BLR std
+            icntl(35)=1
+            cntl(7)=blreps
+        case('LR+')
+! BLR+ + aggressive optimizations
+            icntl(35)=1
+            cntl(7)=blreps
+            if (type .eq. 'S') then
+                smpsk%keep(467)=1
+                smpsk%keep(370)=1
+                smpsk%keep(371)=1
+             else if (type.eq.'C') then
+                cmpsk%keep(467)=1
+                cmpsk%keep(370)=1
+                cmpsk%keep(371)=1
+            else if (type.eq.'D') then
+                dmpsk%keep(467)=1
+                dmpsk%keep(370)=1
+                dmpsk%keep(371)=1
+            else if (type.eq.'Z') then
+                zmpsk%keep(467)=1
+                zmpsk%keep(370)=1
+                zmpsk%keep(371)=1
+            endif
+        case default
+            ASSERT(.false.)
+        end select
+        
 !
 ! ---     MESSAGES/ALERTES MUMPS
         icntl(1) = to_mumps_int(ifm)
@@ -430,14 +465,6 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
 !
 ! ---     PAS DE CALCUL DU DETERMINANT
         icntl(33)=0
-!
-! ---     NON UTILISES
-        do i = 34, nicntl
-            icntl(i)=0
-        enddo
-        do i = 6, ncntl
-            cntl(i)=0.d0
-        enddo
 !
 ! ---   REMPLISSAGE DE DIFFERENTS OBJETS SUIVANT LE TYPE DU POINTEUR
 ! ---   DE MUMPS: DMUMPS_STRUC OU ZMUMPS_STRUC

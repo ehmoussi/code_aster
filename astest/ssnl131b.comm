@@ -1,5 +1,5 @@
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,7 +21,7 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),DEBUG=_F(SDVERI='OUI'))
 
-MA=LIRE_MAILLAGE(  )
+MA=LIRE_MAILLAGE(FORMAT="ASTER",  )
 
 MA=DEFI_GROUP(
    reuse =MA,
@@ -171,7 +171,7 @@ TEST_RESU(RESU=(_F(INST=0.10000000000000001,
                    NOM_CHAM='FORC_NODA',
                    NOEUD='N2',
                    NOM_CMP='DRX',
-                   VALE_CALC=1.50000015,
+                   VALE_CALC=1.500000075,
                    TOLE_MACHINE=1.E-3,
                    ),
                 _F(INST=1.0,
@@ -187,7 +187,7 @@ TEST_RESU(RESU=(_F(INST=0.10000000000000001,
                    NOM_CHAM='FORC_NODA',
                    NOEUD='N2',
                    NOM_CMP='DRX',
-                   VALE_CALC=2.000500675,
+                   VALE_CALC=1.6930006,
                    TOLE_MACHINE=1.E-3,
                    ),
                 ),

@@ -1,4 +1,4 @@
-subroutine dbr_save(ds_empi, nb_mode, s, v, v_nume_slice)
+subroutine dbr_save(ds_empi, nb_mode, nb_snap_redu, s, v, v_nume_slice)
 !
 use Rom_Datastructure_type
 !
@@ -12,12 +12,12 @@ implicit none
 #include "asterfort/jelibe.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/rsadpa.h"
-#include "asterfort/rscrsd.h"
+#include "asterfort/rsagsd.h"
 #include "asterfort/rsnoch.h"
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -36,6 +36,7 @@ implicit none
 !
     type(ROM_DS_Empi), intent(in) :: ds_empi
     integer, intent(in) :: nb_mode
+    integer, intent(in) :: nb_snap_redu
     real(kind=8), intent(in), pointer :: s(:)
     real(kind=8), intent(in), pointer :: v(:)
     integer, intent(in), pointer      :: v_nume_slice(:)
@@ -50,6 +51,7 @@ implicit none
 !
 ! In  ds_empi          : datastructure for empiric modes
 ! In  nb_mode          : number of empiric modes
+! In  nb_snap_redu     : number of snapshots used to construct empiric base
 ! In  s                : singular values
 ! In  v                : singular vectors
 ! In  v_nume_slice     : index of slices (for lineic bases)
@@ -79,23 +81,23 @@ implicit none
     base         = ds_empi%base
     model        = ds_empi%model
 !
-! - Create output datastructure
-!
-    call rscrsd('G', base, 'MODE_EMPI', nb_mode)
-!
 ! - Save modes
 !
     do i_mode = 1, nb_mode
         call rsexch(' ', base, field_type, i_mode, field_save, iret)
+        ASSERT(iret.eq.100 .or. iret.eq.0 .or. iret.eq.110)
+        if (iret .eq. 110) then
+            call rsagsd(base, 0)
+        endif
+        call rsexch(' ', base, field_type, i_mode, field_save, iret)
         ASSERT(iret.eq.100 .or. iret.eq.0)
-        if (iret .eq. 100) then
+        if (iret .ge. 100) then
             call copisd('CHAMP_GD', 'G', field_refe, field_save)
         endif
         call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
         do i_equa = 1, nb_equa
             v_field_save(i_equa) = v(nb_equa*(i_mode-1)+i_equa)
         end do
-        call rsnoch(base, field_type, i_mode)
         call rsadpa(base, 'E', 1, 'FREQ', i_mode, 0, sjv=jv_para)
         zr(jv_para)  = s(i_mode)
         call rsadpa(base, 'E', 1, 'MODELE', i_mode, 0, sjv=jv_para)
@@ -106,6 +108,9 @@ implicit none
         zi(jv_para) = v_nume_slice(i_mode)
         call rsadpa(base, 'E', 1, 'NUME_MODE', i_mode, 0, sjv=jv_para)
         zi(jv_para) = i_mode
+        call rsadpa(base, 'E', 1, 'NB_SNAP', i_mode, 0, sjv=jv_para)
+        zi(jv_para) = nb_snap_redu
+        call rsnoch(base, field_type, i_mode)
     end do
 !
 end subroutine

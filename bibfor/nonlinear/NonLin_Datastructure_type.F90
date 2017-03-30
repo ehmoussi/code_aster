@@ -5,7 +5,7 @@ implicit none
 #include "asterf_types.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -286,11 +286,14 @@ implicit none
 ! ----- Loops
         integer           :: nb_loop
         integer           :: nb_loop_maxi = 3
+        integer           :: iteration_newton = 0
+        integer           :: it_cycl_maxi = 0
         type(NL_DS_Loop)  :: loop(3)
 ! ----- Flag for (re) numbering
         aster_logical     :: l_renumber
 ! ----- Geometric loop control
         real(kind=8)      :: geom_maxi
+        real(kind=8)      :: arete_min
 ! ----- Get-off indicator
         aster_logical     :: l_getoff
 ! ----- First geometric loop
@@ -400,6 +403,7 @@ implicit none
         integer           :: nb_vari
         integer           :: nb_vari_comp(4)
         integer           :: nume_comp(4)
+        character(len=16) :: type_model2
     end type NL_DS_Compor
 !
 ! - Type: for preparation of comportment
@@ -411,6 +415,8 @@ implicit none
         type(NL_DS_Compor), pointer     :: v_comp(:)
 ! ----- List of external comportements
         type(NL_DS_ComporExte), pointer :: v_exte(:)
+! ----- Flag for IMPLEX method
+        aster_logical                   :: l_implex
     end type NL_DS_ComporPrep
 !
 ! - Type: pointer to external constitutive laws
@@ -426,18 +432,17 @@ implicit none
 ! - Type: for parameters for constitutive laws
 ! 
     type NL_DS_ComporPara
-        integer      :: type_matr_t
-        real(kind=8) :: parm_alpha
-        real(kind=8) :: parm_theta
-        integer      :: iter_inte_pas
-        real(kind=8) :: vale_pert_rela
-        real(kind=8) :: resi_deborst_max
-        integer      :: iter_deborst_max
-        real(kind=8) :: seuil
-        real(kind=8) :: amplitude
-        real(kind=8) :: taux_retour
-        integer      :: post_iter
-        integer      :: post_incr
+        integer       :: type_matr_t
+        real(kind=8)  :: parm_alpha
+        real(kind=8)  :: parm_theta
+        integer       :: iter_inte_pas
+        real(kind=8)  :: vale_pert_rela
+        real(kind=8)  :: resi_deborst_max
+        integer       :: iter_deborst_max
+        real(kind=8)  :: seuil
+        integer       :: post_iter
+        integer       :: post_incr
+        aster_logical :: l_matr_unsymm
         character(len=16)         :: rela_comp
         character(len=16)         :: algo_inte
         type(NL_DS_ComporPointer) :: c_pointer

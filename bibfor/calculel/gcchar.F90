@@ -15,7 +15,7 @@ subroutine gcchar(ichar, iprec, time, carteo, lfchar,&
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -60,7 +60,7 @@ subroutine gcchar(ichar, iprec, time, carteo, lfchar,&
 ! IN  LCCOMB : .TRUE.  SI LE CHARGEMENT EST COMBINABLE
 ! IN  LPCHAR : .TRUE.  SI C'EST LA PREMIERE FOIS QU'ON A UNE CHARGE DU STYLE COURANT
 ! IN  ICHAR  : INDICE DU CHARGEMENT
-! IN  OLDFON : LISTE DES TYPES DE CHARGEMENTS
+! I/O OLDFON : LISTE DES TYPES DE CHARGEMENTS
 ! IN  NOMFCT : NOM DE LA FONCTION MULTIPLICATRICE
 ! IN  TIME   : INSTANT
 ! I/O IPREC  : INDICE DU CHARGEMENT PRECEDENT DU MEME TYPE
@@ -102,8 +102,6 @@ subroutine gcchar(ichar, iprec, time, carteo, lfchar,&
         call detrsd('CHAMP_GD', carteo)
         if (lfmult) then
             call gcharm(lfchar, cartei, nomfct, newfct, time,&
-                        carteo)
-            call gcharm(lfchar, cartei, nomfct, newfct, time,&
                         chtmp2)
         endif
         fonc1 = zl(jfonci+iprec-1)
@@ -114,7 +112,7 @@ subroutine gcchar(ichar, iprec, time, carteo, lfchar,&
 ! ----- EFFECTUE LA FUSION DE 2 CHARGES DE MEME TYPE
 !
         call gcharf(ichar, fonc1, chtmp1, fonc2, chtmp2,&
-                    carteo)
+                    carteo, oldfon)
     endif
     iprec = ichar
     call detrsd('CHAMP_GD', chtmp1)

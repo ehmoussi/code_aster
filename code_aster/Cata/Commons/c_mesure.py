@@ -24,5 +24,5 @@ from code_aster.Cata.Commons import *
 
 def C_MESURE() : return FACT(statut='d',max=1,
         TABLE       = SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON")),
-        UNITE       = SIMP(statut='f',typ='I',val_min=1),
+        UNITE       = SIMP(statut='f',typ=UnitType(),val_min=1),
        );

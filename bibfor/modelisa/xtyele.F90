@@ -43,6 +43,7 @@ subroutine xtyele(model, trav, nfiss, fiss, contac,&
 #include "asterfort/jexnum.h"
 #include "asterfort/padist.h"
 #include "asterfort/panbno.h"
+#include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/xelfis_lists.h"
@@ -103,6 +104,7 @@ subroutine xtyele(model, trav, nfiss, fiss, contac,&
     do i = 1, 3
         indptf(i)=0
     end do
+    call r8inir(ndim, 0.d0, cmin, 1)
     clsn = '&&XTYELE.LSN'
     clst = '&&XTYELE.LST'
     do ifiss = 1, nfiss
@@ -456,10 +458,11 @@ subroutine xtyele(model, trav, nfiss, fiss, contac,&
                     else if (zi(jtab-1+5*(ima-1)+4).eq.0) then
 ! --- SI LA MAILLE EST VUE UNE DEUXIEME FOIS (MULTIFISSURATION)
 !
-                        if (contac .gt. 1) then
+                        call dismoi('EXI_THM', model, 'MODELE', repk=exithm)
+                        if (contac .gt. 1 .and. exithm.eq.'NON') then
+! --- SI CONTACT AUTRE QUE P1P1 POUR UN MODELE NON HM-XFEM
                             call utmess('F', 'XFEM_43', sk=nomail)
                         endif
-! --- SI CONTACT AUTRE QUE P1P1
                         if (kk .gt. 1 .or. abs(zi(jtab-1+5*(ima-1)+2)) .eq. 1 .or.&
                             abs(zi(jtab-1+5*(ima-1)+3)) .eq. 1) then
 ! --- SI UNE DES MAILLES CONTIENT DU CRACK-TIP
@@ -476,7 +479,11 @@ subroutine xtyele(model, trav, nfiss, fiss, contac,&
                         if (zi(jtab-1+5*(ima-1)+1) .gt. 0 .or. lcont) then
 ! --- SI AU MOINS UNE DES 2 FISSURES A DU CONTACT
 ! --- ALORS CONTACT POUR TOUTES LES FISSURES VUES PAR L ELEMENT
-                            zi(jtab-1+5*(ima-1)+kk) = nbheav
+                            if (contac.eq.2) then
+                               zi(jtab-1+5*(ima-1)+kk) = nbheav+4
+                            else
+                               zi(jtab-1+5*(ima-1)+kk) = nbheav
+                            endif
                         else
                             zi(jtab-1+5*(ima-1)+kk) = -1*nbheav
                         endif

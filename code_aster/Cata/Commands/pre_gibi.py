@@ -25,6 +25,6 @@ from code_aster.Cata.Commons import *
 PRE_GIBI=PROC(nom="PRE_GIBI",op=49,
             UIinfo={"groupes":("Gestion du travail",)},
               fr=tr("Conversion d'un fichier de maillage GIBI au format Aster"),
-         UNITE_GIBI      =SIMP(statut='f',typ='I',defaut=19, inout='in'),  
-         UNITE_MAILLAGE  =SIMP(statut='f',typ='I',defaut=20, inout='out'),  
+         UNITE_GIBI      =SIMP(statut='f',typ=UnitType(),defaut=19, inout='in'),  
+         UNITE_MAILLAGE  =SIMP(statut='f',typ=UnitType(),defaut=20, inout='out'),  
 )  ;

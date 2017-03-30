@@ -1,7 +1,7 @@
 # coding=utf-8
 # person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -204,20 +204,36 @@ class ENTITE:
             self.cr.fatal(
                 _(u"L'attribut 'reentrant' doit valoir 'o','n' ou 'f' : %r"),
                 self.reentrant)
+        if self.reentrant != 'n' and 'reuse' not in self.entites.keys():
+            self.cr.fatal(_(u"L'opérateur est réentrant, il faut ajouter "
+                            u"le mot-clé 'reuse'."))
 
     def check_statut(self, into=('o', 'f', 'c', 'd')):
         """Vérifie l'attribut statut."""
         if self.statut not in into:
             self.cr.fatal(_(u"L'attribut 'statut' doit être parmi %s : %r"),
                           into, self.statut)
+        if self.nom == 'reuse' and self.statut != 'c':
+            self.cr.fatal(_(u"L'attribut 'statut' doit être 'c' pour reuse."))
 
     def check_condition(self):
         """Vérifie l'attribut condition."""
+        from N_BLOC import block_utils
         if self.condition != None:
             if type(self.condition) is not str:
                 self.cr.fatal(
                     _(u"L'attribut 'condition' doit être une chaine de caractères : %r"),
                     self.condition)
+            from Cata import cata
+            try:
+                ctxt = {}
+                ctxt.update(cata.__dict__)
+                ctxt.update(block_utils({}))
+                eval(self.condition, ctxt)
+            except Exception as exc:
+                self.cr.fatal(
+                    _(u"L'attribut 'condition' ne peut être évalué : %r; Raison : %s"),
+                    self.condition, str(exc))
         else:
             self.cr.fatal(_(u"La condition ne doit pas valoir None !"))
 
@@ -257,9 +273,11 @@ class ENTITE:
 
     def check_position(self):
         """Vérifie l'attribut position."""
-        if self.position not in ('local', 'global', 'global_jdc'):
-            self.cr.fatal(_(u"L'attribut 'position' doit valoir 'local', 'global' "
-                            u"ou 'global_jdc' : %r"), self.position)
+        if self.position != None:
+            # a priori, 'global_jdc' est aussi autorisée mais ça ne me semble
+            # pas une bonne idée !
+            self.cr.fatal(_(u"l'attribut 'position' n'est plus autorisé"))
+            
 
     def check_defaut(self):
         """Vérifie l'attribut defaut."""
@@ -276,8 +294,22 @@ class ENTITE:
 
     def check_inout(self):
         """Vérifie l'attribut inout."""
+        if self.inout is None:
+            return
         if self.inout not in ('in', 'out', 'inout'):
             self.cr.fatal(
                 _(u"L'attribut 'inout' doit valoir 'in','out' ou 'inout' : %r"),
                 self.inout)
-
+        else:
+            # inout is defined == UNITE* keywords
+            from Cata.cata import UnitType
+            typ = self.type
+            if type(typ) in (list, tuple):
+                if len(typ) != 1:
+                    self.cr.fatal(
+                        _(u"L'attribut 'typ' doit valoir UnitType() : %r"),
+                        self.type)
+                typ = typ[0]
+            if typ != UnitType():
+                self.cr.fatal(
+                    _(u"L'attribut 'typ' doit valoir UnitType() : %r"), self.type)

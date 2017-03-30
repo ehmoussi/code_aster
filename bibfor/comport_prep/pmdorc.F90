@@ -24,7 +24,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -69,7 +69,7 @@ implicit none
     character(len=16) :: keywordfact
     character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp
     character(len=16) :: kit_comp(4), type_cpla, type_matg, post_iter
-    aster_logical :: l_kit_thm, l_etat_init
+    aster_logical :: l_kit_thm, l_etat_init, l_implex
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
     type(NL_DS_ComporPrep) :: ds_compor_prep
     type(NL_DS_ComporParaPrep) :: ds_compor_para
@@ -81,6 +81,7 @@ implicit none
     compor_info  = '&&PMDORC.LIST_VARI'
     keywordfact  = 'COMPORTEMENT'
     compor(1:20) = 'VIDE'
+    l_implex     = .false.
 !
 ! - Initial state
 !
@@ -91,7 +92,7 @@ implicit none
 !
 ! - Create datastructure to prepare comportement
 !
-    call comp_meca_info(ds_compor_prep)
+    call comp_meca_info(l_implex, ds_compor_prep)
     if (ds_compor_prep%nb_comp .eq. 0) then
         call utmess('F', 'COMPOR4_63')
     endif
@@ -166,7 +167,7 @@ implicit none
 !
 ! - Read informations from command file
 !
-    call carc_read(ds_compor_para)
+    call carc_read(ds_compor_para, l_implex_ = l_implex)
 !  
 ! - Save in list
 !
@@ -190,13 +191,15 @@ implicit none
     carcri(8)  = ds_compor_para%v_para(i_comp)%resi_deborst_max
     carcri(9)  = ds_compor_para%v_para(i_comp)%iter_deborst_max
     carcri(10) = ds_compor_para%v_para(i_comp)%seuil
-    carcri(11) = ds_compor_para%v_para(i_comp)%amplitude
-    carcri(12) = ds_compor_para%v_para(i_comp)%taux_retour
     carcri(13) = ds_compor_para%v_para(i_comp)%post_iter
     carcri(14) = ds_compor_para%v_para(i_comp)%c_pointer%nbvarext
     carcri(15) = ds_compor_para%v_para(i_comp)%c_pointer%namevarext
     carcri(16) = ds_compor_para%v_para(i_comp)%c_pointer%fct_ldc
-    carcri(17) = 1
+    if (ds_compor_para%v_para(i_comp)%l_matr_unsymm) then
+        carcri(17) = 1
+    else
+        carcri(17) = 0
+    endif
     carcri(18) = 0
     carcri(19) = ds_compor_para%v_para(i_comp)%c_pointer%matprop
     carcri(20) = ds_compor_para%v_para(i_comp)%c_pointer%nbprop

@@ -1,22 +1,22 @@
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
-# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
-# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
-# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
-# (AT YOUR OPTION) ANY LATER VERSION.                                                    
-#                                                                       
-# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT   
-# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF            
-# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU      
-# GENERAL PUBLIC LICENSE FOR MORE DETAILS.                              
-#                                                                       
-# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE     
-# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,         
-#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.        
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: daniele.colombo at ifpen.fr
+# person_in_charge: samuel.geniaut at edf.fr
 
-# MODELISATION D: METHODE GEOMETRIQUE
+# MODELISATION B: METHODE GEOMETRIQUE
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',VISU_EFICAS='NON'),DEBUG=_F(SDVERI='OUI'))
 
@@ -32,18 +32,18 @@ NPAS = 13
 DA = 3.5
 
 # RAYONS INFERIEUR ET SUPERIEUR DES COURONNES D'INTEGRATION POUR CALC_G
-RI = 3. 
+RI = 3.
 RS = 12.
 RP = 12.
 
 #longueur de fissure initiale
-xinit = 65. 
-yinit = 19. 
+xinit = 65.
+yinit = 19.
 
 #----------------------------------------------
 #                   MODELE
 #----------------------------------------------
-                    
+
 
 MODE = [None]*(NPAS+1)
 
@@ -81,7 +81,7 @@ FISS[0]=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                         TYPE_ENRI_FOND = 'GEOMETRIQUE',
                         RAYON_ENRI = 12.,
                        );
-         
+
 #----------------------------------------------
 #         PROPAGATION SUR 3 PAS DE TEMPS
 #----------------------------------------------
@@ -135,38 +135,38 @@ VAL_REFE=[
 -0.0723702325641,]
 
 VAL_CALC= [
-0.245841990011,
-0.0428344658903,
-0.292383014215,
-0.0046132429462957,
-0.335365402042,
--0.0001511330099,
-0.378064372056,
-0.00486959748033,
-0.438075761014,
-0.001326379680711,
-0.503628697114,
--0.00120586174031,
-0.580232027863,
--0.0070361931729,
-0.68239613137,
-0.0206206540995,
-0.798324853369,
--0.008957237996,
-0.983125836809,
--0.049543234016,
-1.19220276784,
-0.010768025306,
-1.5209409078,
-0.0070511881025,
-2.08588542015,
--0.162359149146,
+0.245841990741,
+0.0428344653326,
+0.292380011809,
+0.00460856662991,
+0.335365184606,
+-0.000154347428424,
+0.37806551024,
+0.0048805714334,
+0.438075738209,
+0.00132555018246,
+0.503629865786,
+-0.00120754760498,
+0.580316826383,
+-0.00700171449289,
+0.682310900592,
+0.0206122694518,
+0.798403511234,
+-0.00897546254666,
+0.983106557392,
+-0.0495808159092,
+1.19230131804,
+0.0106987246459,
+1.52103447768,
+0.00721504604238,
+2.08717280795,
+-0.162110848859,
 ]
 
 
-            
+
 for i in range(1,NPAS+1) :
-                                                  
+
     MODE[i]=MODI_MODELE_XFEM(MODELE_IN=MODEL,FISSURE=FISS[i-1],);
 
 
@@ -176,7 +176,7 @@ for i in range(1,NPAS+1) :
                                 MATER=ACIER,
                                 ),
                              );
-                                                                      
+
     CHRIG[i]=AFFE_CHAR_MECA(MODELE=MODE[i],
                       DDL_IMPO=( _F(GROUP_NO=('P1',), DX=0.0, DY=0.0),_F(GROUP_NO=('P2',), DY=0.0)),
                       FORCE_NODALE=_F(GROUP_NO=('P3',),FY=-1.,),
@@ -198,10 +198,10 @@ for i in range(1,NPAS+1) :
                          );
 
     IMPR_TABLE(TABLE=SIF[i]);
- 
-# TEST DE KI PAR RAPPORT A KI RERERENCE (MAILLAGE) 
+
+# TEST DE KI PAR RAPPORT A KI RERERENCE (MAILLAGE)
     TEST_TABLE(CRITERE='RELATIF',
-               REFERENCE='AUTRE_ASTER', 
+               REFERENCE='AUTRE_ASTER',
                PRECISION=0.05,
                VALE_CALC=VAL_CALC[(i-1)*2+0],
                VALE_REFE=VAL_REFE[(i-1)*2+0],
@@ -209,7 +209,7 @@ for i in range(1,NPAS+1) :
                TYPE_TEST='MAX',
                TABLE=SIF[i],)
 
-# TEST DE KII PAR RAPPORT A KII REFERENCE (MAILLAGE)  
+# TEST DE KII PAR RAPPORT A KII REFERENCE (MAILLAGE)
 # ON TESTE JUSTE SI KII NEST PAS TROP ELEVE PAR RAPPORT A KI (DE L ORDRE DE 1)
     TEST_TABLE(CRITERE='ABSOLU',
                REFERENCE='AUTRE_ASTER',
@@ -220,11 +220,11 @@ for i in range(1,NPAS+1) :
                TYPE_TEST='MAX',
                TABLE=SIF[i],)
 
-    FISS[i] = CO('FISS_%d'%(i)) 
- 
+    FISS[i] = CO('FISS_%d'%(i))
+
     if ( i != NPAS+1 ) :
-        
-        PROPA_FISS(METHODE_PROPA='SIMPLEXE',     
+
+        PROPA_FISS(METHODE_PROPA='SIMPLEXE',
                 MODELE=MODE[i],
                 FISSURE=_F(FISS_ACTUELLE=FISS[i-1],
                             FISS_PROPAGEE=FISS[i],
@@ -248,7 +248,7 @@ for i in range(1,NPAS+1) :
                            OPERATION='EXTR',
                            FISSURE=FISS[i],
                            NOM_CHAM='LTNO',);
-                           
+
 #      CHERR[0] = RAFF_XFEM(FISSURE=FISS[i+1])
 #      DETRUIRE(CONCEPT=_F(NOM=MODX[i],))
 #      DETRUIRE(CONCEPT=_F(NOM=ModH[i],))
@@ -267,7 +267,7 @@ for i in range(1,NPAS+1) :
     MOVIS[i]=AFFE_MODELE(MAILLAGE=MAXFE[i],
                          AFFE=_F(TOUT='OUI',
                                  PHENOMENE='MECANIQUE',
-                                 MODELISATION='D_PLAN',),) 
+                                 MODELISATION='D_PLAN',),)
 
     DEPL[i]=POST_CHAM_XFEM(
                           MODELE_VISU   = MOVIS[i],
@@ -278,6 +278,6 @@ for i in range(1,NPAS+1) :
     IMPR_RESU(   FORMAT='MED',
              UNITE=30,
              RESU=_F(RESULTAT=DEPL[i],),);
-             
+
 
 FIN();

@@ -1,6 +1,6 @@
 # ======================================================================
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -24,22 +24,18 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), )
 
-Npos = 3
-
 # Tested options for heat transfer
 lst_ichal = (0,1,2)
+Npos = len(lst_ichal)
 
 # Flow computed by Ecrevisse alone
 VQRECRE = (0.02447387, 0.004522061, 0.004453095)
 # Temperature computed by Ecrevisse alone, output file "pour_aster", abscissa s=0.475
 VTRECRE = (169.1976, 19.94819, 19.94827)
 
-## Non-Regression results : Flow
-#VQCALC  = (0.02447387,4.522061E-03,4.453095E-03,4.522061E-03,4.453095E-03 ,2.599126E-03,4.527313E-03,5.19487E-03,4.527313E-03)
-## Non-Regression results : Temperature
-#VTCALC  = (169.1971, 19.94819, 19.94827, 19.94819, 19.94827, 19.96295, 19.94114, 19.94013, 19.94114)
-
-VQCALC  = (0.024474010000000, 4.5221E-03, 4.453126E-03)
+# Non-Regression results : Flow
+VQCALC  = (0.02447401, 0.004520366, 0.004451243)
+# Non-Regression results : Temperature
 VTCALC  = (169.1964, 19.94818, 19.94826)
 
 # Pressure boundary conditions for Ecrevisse (Pa)
@@ -145,9 +141,7 @@ BETON = DEFI_MATERIAU(ELAS = _F(E      = young,
 CHMAT = AFFE_MATERIAU(MAILLAGE  = MAIL,
                       AFFE      = (_F(GROUP_MA = ('BETON','ENCASTRE','INTRADOS',
                                                 'EXTRADOS','BFISH','BFISB',),
-                                      MATER    = BETON,),),
-                      AFFE_VARC = (_F(NOM_VARC ='TEMP',
-                                      VALE_REF = temp_ref),),)
+                                      MATER    = BETON,),),)
 
 
 
@@ -238,6 +232,7 @@ for icalc in xrange(Npos):
                   TEMPER = CO('TEMPECR'),
                   #
                   CHAM_MATER  = CHMAT,
+                  TEMP_INIT   = temp_ref,
                   MODELE_MECA = MODMECA,
                   MODELE_THER = MODTHER,
                   EXCIT_MECA  = _F(CHARGE   = CONDMECA),
@@ -282,7 +277,7 @@ for icalc in xrange(Npos):
                         KGTEST         = 0.5,
                         ITER_GLOB_MAXI = 400,),
                   #
-                  VERSION     = '3.2.1',
+                  VERSION     = '3.2.2',
                   COURBES     = 'AUCUNE',
                   ENTETE      = titre,
                   IMPRESSION  = 'NON',
@@ -290,7 +285,6 @@ for icalc in xrange(Npos):
                   )
 
   TEST_TABLE(REFERENCE  = 'SOURCE_EXTERNE',
-              PRECISION = 1.E-5,
               VALE_CALC = VQCALC[icalc],
               VALE_REFE = VQRECRE[icalc],
               NOM_PARA  = 'DEBTOT',
@@ -300,7 +294,6 @@ for icalc in xrange(Npos):
                             VALE     = duree_inj,),),)
 
   TEST_TABLE(REFERENCE = 'SOURCE_EXTERNE',
-              PRECISION = 1.E-5,
               VALE_CALC = VTCALC[icalc],
               VALE_REFE = VTRECRE[icalc],
               NOM_PARA  = 'TEMP',

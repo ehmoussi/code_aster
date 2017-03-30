@@ -27,11 +27,10 @@ from code_aster.Cata.Commons import *
 def calc_gp_prod(self,TRANCHE_2D,GPMAX, **args):
   """Typage des sd_prod
   """
-  if TRANCHE_2D!=None:
+  if TRANCHE_2D:
     if TRANCHE_2D['ZONE_MAIL']== "NON":
-      for ss_cop in TRANCHE_2D:
-        if ss_cop['CHAMP_VISU']!= None:
-          self.type_sdprod(ss_cop['CHAMP_VISU'], cham_elem)
+        if TRANCHE_2D.get('CHAMP_VISU'):
+          self.type_sdprod(TRANCHE_2D['CHAMP_VISU'], cham_elem)
   if GPMAX !=None:
      self.type_sdprod(GPMAX, table_sdaster)
   return table_sdaster
@@ -52,11 +51,11 @@ CALC_GP =MACRO(nom="CALC_GP",
          CRITERE     = SIMP(statut='f',typ='TXM',defaut="ABSOLU",into=("RELATIF","ABSOLU") ),
          TRANCHE_2D  = FACT(statut='f',max = 1,
                            ZONE_MAIL     = SIMP(statut='o',typ='TXM',into=("NON","OUI") ),
-                           b_cop= BLOC(condition = "ZONE_MAIL=='OUI'",
+                           b_cop= BLOC(condition = """equal_to("ZONE_MAIL", 'OUI')""",
                                        fr=tr("Les copeaux sont mailles"),
                                  GROUP_MA  = SIMP(statut='o', typ=grma, validators=NoRepeat(), max='**'),
                                  TAILLE   =SIMP(statut='o',typ=listr8_sdaster),),
-                           b_ss_cop = BLOC(condition="ZONE_MAIL=='NON'",
+                           b_ss_cop = BLOC(condition="""equal_to("ZONE_MAIL", 'NON')""",
                                            fr=tr("Les copeaux ne sont pas mailles"),
                                  CENTRE           =SIMP(statut='o',typ='R',max=2),
                                  RAYON       =SIMP(statut='o',typ='R',max=1),
@@ -68,10 +67,10 @@ CALC_GP =MACRO(nom="CALC_GP",
          TRANCHE_3D  = FACT(statut='f',max ='**',
                            GROUP_MA  = SIMP(statut='o', typ=grma, validators=NoRepeat(), max='**'),
                              ),
-         b_tranche_2d = BLOC(condition="TRANCHE_2D!=None",
+         b_tranche_2d = BLOC(condition="""exists("TRANCHE_2D")""",
                  SYME            =SIMP(statut='o',typ='TXM',into=("NON","OUI"),
                       fr=tr("multiplication par 2 si SYME=OUI")),),
-         b_tranche_3d = BLOC(condition="TRANCHE_3D!=None",
+         b_tranche_3d = BLOC(condition="""exists("TRANCHE_3D")""",
                  FOND_FISS       =SIMP(statut='o',typ=fond_fiss,max=1,),),
          GPMAX           = SIMP(statut='f',typ=CO,),
            )

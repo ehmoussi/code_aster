@@ -1,22 +1,25 @@
 !
-! A saddle_point_context object is a container used to manage 
-! a saddle point linear system 
+! A saddle_point_context object is a container used to manage
+! a saddle point linear system
 ! ( k_mat c_mat^T ) (x_1) = (b_1)
 ! ( c_mat 0       ) (x_2)   (b_2)
 ! For simplicity the saddle point linear system is embedded
-! in the larger system 
+! in the larger system
 ! ( k_mat c_mat^T 0 ) (x_1) = (b_1)
 ! ( c_mat 0       0 ) (x_2)   (b_2)
 ! ( 0     0       Id) (x_3)   (b_3)
 !
-! It contains 
+! It contains
 ! - Index Sets necessary to extract data from the global (double Lagrange) Aster system
 ! - matrix data ( k_mat, c_mat )
 ! - vector workspace ( x_1, x_2, b_1, b_2 )
-! 
-module augmented_lagrangian_context_class
 !
-! COPYRIGHT (C) 2016 -  EDF R&D                WWW.CODE-ASTER.ORG
+module augmented_lagrangian_context_type
+!
+#include "asterf_types.h"
+#include "asterf_petsc.h"
+!
+! COPYRIGHT (C) 2016 - 2017 EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -33,16 +36,14 @@ module augmented_lagrangian_context_class
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint: disable=C1308
 !
 use matrasse_module
-use saddle_point_context_class
+use saddle_point_context_type
 !
-implicit none 
+implicit none
 !
-private 
+private
 #include "asterf.h"
-#include "asterf_petsc.h"
 #include "asterc/asmpi_comm.h"
 #include "asterfort/assert.h"
 #include "asterfort/asmpi_info.h"
@@ -50,41 +51,43 @@ private
 #include "asterfort/utmess.h"
 !
 !
-type, public :: augmented_lagrangian_context_type
+type, public :: augm_lagr_ctxt
     !
 #ifdef _HAVE_PETSC
-    type(saddle_point_context_type), pointer :: sp_ctxt =>null()
+    type(saddlepoint_ctxt), pointer :: sp_ctxt =>null()
     !
-    ! Preconditioner data section  
+    ! Preconditioner data section
     ! ===========================
     ! Matrix used to build block (1,1) of the preconditioner
     Mat :: m_mat
     ! Scaling coefficient
-    PetscReal :: gamma 
+    PetscReal :: gamma
     ! Preconditioner for the block of physical dofs
     PC :: pcphy
     !
-#endif    
-end type augmented_lagrangian_context_type
+#else
+    integer :: idummy
+#endif
+end type augm_lagr_ctxt
 !
 public :: new_augmented_lagrangian_context, free_augm_lagrangian_context
 !
-#ifdef _HAVE_PETSC 
+#ifdef _HAVE_PETSC
 PetscErrorCode :: ierr
 !
-contains 
+contains
 !
 !
 function new_augmented_lagrangian_context( sp_ctxt  ) result ( ctxt )
-    ! 
-    type(saddle_point_context_type), target         :: sp_ctxt    
-    type(augmented_lagrangian_context_type)         :: ctxt
-    ! 
+    !
+    type(saddlepoint_ctxt), target         :: sp_ctxt
+    type(augm_lagr_ctxt)         :: ctxt
+    !
     ! Local variables
     !
     ctxt%sp_ctxt => sp_ctxt
     !
-    ! Init data section 
+    ! Init data section
     call set_precond_data( ctxt )
     !
 end function new_augmented_lagrangian_context
@@ -94,9 +97,9 @@ end function new_augmented_lagrangian_context
 !
 subroutine set_precond_data( ctxt )
     !
-    ! Dummy arguments 
+    ! Dummy arguments
     !
-    type(augmented_lagrangian_context_type), intent(inout) :: ctxt
+    type(augm_lagr_ctxt), intent(inout) :: ctxt
     !
     !
     ! Local variables
@@ -105,22 +108,22 @@ subroutine set_precond_data( ctxt )
     mpi_int :: rang, nbproc
     PetscInt :: niremp
     PetscScalar :: fillp
-    PetscReal :: aster_petsc_default_real
-    type(saddle_point_context_type), pointer :: sp_ctxt =>null()
+    PetscReal :: aster_petsc_real
+    type(saddlepoint_ctxt), pointer :: sp_ctxt =>null()
     integer, parameter :: icc_pre =0, mumps_pre = 1
-    integer :: pre_type 
+    integer :: pre_type
     Mat :: f
     !
-#ifdef ASTER_PETSC_VERSION_LEQ_36
-    pre_type = icc_pre 
+#if PETSC_VERSION_LT(3,7,0)
+    pre_type = icc_pre
 #else
     pre_type = mumps_pre
-#endif 
-    ! TODO déterminer les bonnes valeurs 
+#endif
+    ! TODO déterminer les bonnes valeurs
     niremp=1
     fillp =1.0
     !
-    ! Notation 
+    ! Notation
     sp_ctxt=>ctxt%sp_ctxt
     !
     ! Récupération du communicateur MPI
@@ -128,20 +131,20 @@ subroutine set_precond_data( ctxt )
     !
     ctxt%gamma = sp_ctxt%alpha
     !
-    ! Compute block of physical dofs m_mat 
+    ! Compute block of physical dofs m_mat
     !
     ! m_mat = c^T c
-#ifdef ASTER_PETSC_VERSION_LEQ_34
-    aster_petsc_default_real = PETSC_DEFAULT_DOUBLE_PRECISION
+#if PETSC_VERSION_LT(3,5,0)
+    aster_petsc_real = PETSC_DEFAULT_DOUBLE_PRECISION
 #else
-    aster_petsc_default_real = PETSC_DEFAULT_REAL
+    aster_petsc_real = PETSC_DEFAULT_REAL
 #endif
     call MatTransposeMatMult(sp_ctxt%c_mat,sp_ctxt%c_mat,                  &
-   &   MAT_INITIAL_MATRIX,aster_petsc_default_real, ctxt%m_mat ,ierr)
+   &   MAT_INITIAL_MATRIX,aster_petsc_real, ctxt%m_mat ,ierr)
     ASSERT( ierr == 0 )
     ! m_mat <- k_mat + gamma*m_mat
     call MatAYPX(ctxt%m_mat,ctxt%gamma,sp_ctxt%k_mat,DIFFERENT_NONZERO_PATTERN,ierr)
-    ASSERT( ierr == 0 ) 
+    ASSERT( ierr == 0 )
     call MatSetOption(ctxt%m_mat,MAT_SPD,PETSC_TRUE,ierr)
     ASSERT( ierr == 0 )
     !
@@ -151,9 +154,9 @@ subroutine set_precond_data( ctxt )
     ASSERT( ierr == 0 )
     call PCSetOperators( ctxt%pcphy, ctxt%m_mat, ctxt%m_mat, ierr )
     ASSERT( ierr == 0 )
-    ! 
-    if ( pre_type == icc_pre ) then 
-    ! Attention, la factorisation ICC ne fonctionne qu'en séquentiel 
+    !
+    if ( pre_type == icc_pre ) then
+    ! Attention, la factorisation ICC ne fonctionne qu'en séquentiel
         call asmpi_info(rank=rang, size=nbproc)
         if (nbproc > 1 ) then
             call utmess( 'F', 'PETSC_20')
@@ -166,11 +169,11 @@ subroutine set_precond_data( ctxt )
         ASSERT(ierr.eq.0)
         call PCFactorSetMatOrderingType(ctxt%pcphy,MATORDERINGNATURAL,ierr)
         ASSERT(ierr.eq.0)
-#ifdef ASTER_PETSC_VERSION_LEQ_36
+#if PETSC_VERSION_LT(3,7,0)
 #else
-    else if ( pre_type == mumps_pre ) then 
+    else if ( pre_type == mumps_pre ) then
     ! Ou encore  mumps mais à partir du moment où petsc est compilée
-    ! avec support de l'interface MUMPS 
+    ! avec support de l'interface MUMPS
        call PCSetType(ctxt%pcphy, PCLU, ierr)
        ASSERT(ierr == 0)
        call PCFactorSetMatSolverPackage(ctxt%pcphy,MATSOLVERMUMPS,ierr)
@@ -179,25 +182,25 @@ subroutine set_precond_data( ctxt )
        ASSERT(ierr.eq.0)
        call PCFactorGetMatrix(ctxt%pcphy,F,ierr)
        ASSERT(ierr.eq.0)
- ! ICNTL(7) (sequential matrix ordering): 5 (METIS) 
-       call MatMumpsSetIcntl(F,7,5,ierr)
+ ! ICNTL(7) (sequential matrix ordering): 5 (METIS)
+       call MatMumpsSetIcntl(F,to_petsc_int(7),to_petsc_int(5),ierr)
        ASSERT(ierr.eq.0)
 !  ICNTL(22) (in-core/out-of-core facility): 0/1
-       call MatMumpsSetIcntl(F,22,1,ierr)
+       call MatMumpsSetIcntl(F,to_petsc_int(22),to_petsc_int(1),ierr)
        ASSERT(ierr.eq.0)
 !  ICNTL(24) (detection of null pivot rows): 1
-       call MatMumpsSetIcntl(F,24,1,ierr)
+       call MatMumpsSetIcntl(F,to_petsc_int(24),to_petsc_int(1),ierr)
        ASSERT(ierr.eq.0)
-!  ICNTL(14) (percentage increase in the estimated working space) 
-       call MatMumpsSetIcntl(F,14,50,ierr)
+!  ICNTL(14) (percentage increase in the estimated working space)
+       call MatMumpsSetIcntl(F,to_petsc_int(14),to_petsc_int(50),ierr)
        ASSERT(ierr.eq.0)
-!  CNTL(3) (absolute pivoting threshold):      1e-06 
-       call MatMumpsSetCntl(F,3,1.D-6,ierr)
+!  CNTL(3) (absolute pivoting threshold):      1e-06
+       call MatMumpsSetCntl(F,to_petsc_int(3),1.D-6,ierr)
        ASSERT(ierr.eq.0)
-#endif 
+#endif
     else
         ASSERT(.false.)
-    endif 
+    endif
     call PCSetUp(ctxt%pcphy,ierr)
     ASSERT(ierr.eq.0)
     !
@@ -205,31 +208,34 @@ end subroutine set_precond_data
 !
 subroutine free_augm_lagrangian_context( ctxt )
     !
-    ! Dummy argument 
+    ! Dummy argument
     !
-    type( augmented_lagrangian_context_type ), intent(inout) :: ctxt
+    type( augm_lagr_ctxt ), intent(inout) :: ctxt
     !
     call MatDestroy( ctxt%m_mat, ierr )
     ASSERT( ierr == 0 )
     call PCDestroy( ctxt%pcphy, ierr )
-    ASSERT( ierr == 0 ) 
-    ! TODO compteur de référence 
+    ASSERT( ierr == 0 )
+    ! TODO compteur de référence
     call free_saddle_point_context( ctxt%sp_ctxt )
-    nullify( ctxt%sp_ctxt ) 
+    nullify( ctxt%sp_ctxt )
     !
 end subroutine free_augm_lagrangian_context
 !
 #else
 !
-contains 
+contains
 !
 function new_augmented_lagrangian_context( sp_ctxt  ) result ( ctxt )
-    type(saddle_point_context_type), target         :: sp_ctxt    
-    type(augmented_lagrangian_context_type)         :: ctxt
+    integer :: sp_ctxt
+    type(augm_lagr_ctxt)         :: ctxt
+    ctxt%idummy = 0
+    sp_ctxt = 0
 end function new_augmented_lagrangian_context
 !
 subroutine free_augm_lagrangian_context( ctxt )
-    type( augmented_lagrangian_context_type ), intent(inout) :: ctxt
+    type( augm_lagr_ctxt ), intent(inout) :: ctxt
+    ctxt%idummy = 0
 end subroutine free_augm_lagrangian_context
-#endif 
-end module augmented_lagrangian_context_class
+#endif
+end module augmented_lagrangian_context_type

@@ -22,8 +22,8 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: irmela.zentner at edf.fr
 
-def dyna_iss_vari_prod(self, FONC_SIGNAL,**args):
-   if FONC_SIGNAL !=None :
+def dyna_iss_vari_prod(self, EXCIT_SOL,**args):
+   if EXCIT_SOL !=None :
        return tran_gene
    else:
       return  interspectre
@@ -36,10 +36,14 @@ DYNA_ISS_VARI=MACRO(nom="DYNA_ISS_VARI",
                          "sismique incoherente par decomposition spectrale"),
                     reentrant='n',
                     UIinfo={"groupes":("Outils-métier",)},
-         regles=(UN_PARMI('FONC_SIGNAL','NB_FREQ'),),
-         FONC_SIGNAL     =SIMP(statut='f',typ=(fonction_sdaster) ),
+         regles=(UN_PARMI('EXCIT_SOL','NB_FREQ'),),
+         EXCIT_SOL       =FACT(statut='f', max = 1,
+                          regles = (AU_MOINS_UN('ACCE_X','ACCE_Y','ACCE_Z'),),
+                               ACCE_X    = SIMP(statut='f', typ=fonction_sdaster,),
+                               ACCE_Y    = SIMP(statut='f', typ=fonction_sdaster,),
+                               ACCE_Z    = SIMP(statut='f', typ=fonction_sdaster,),
+                               ),
          NB_FREQ       =SIMP(statut='f',typ='I' ),
-         NOM_CMP       =SIMP(statut='o',typ='TXM',into=("DX","DY","DZ") ),
          PRECISION     =SIMP(statut='f',typ='R',defaut=0.999 ),
          ISSF          =SIMP(statut='f',typ='TXM',into=("OUI","NON",),defaut="NON"),
          INTERF           =FACT(statut='o',
@@ -48,13 +52,13 @@ DYNA_ISS_VARI=MACRO(nom="DYNA_ISS_VARI",
          ),
          MATR_COHE       =FACT(statut='o',
               TYPE = SIMP(statut='o',typ='TXM' , into=("MITA_LUCO","ABRAHAMSON", "ABRA_ROCHER", "ABRA_SOLMOYEN")   ),            
-              b_type_coh = BLOC(condition="TYPE=='MITA_LUCO' ",
+              b_type_coh = BLOC(condition="""equal_to("TYPE", 'MITA_LUCO') """,
                  VITE_ONDE       =SIMP(statut='o',typ='R', val_min=0.0 ),
                  PARA_ALPHA     =SIMP(statut='f',typ='R',defaut=0.1),),
          ),
 #        LIST_FREQ        =SIMP(statut='o',typ='liste' ),
-         UNITE_RESU_FORC = SIMP(statut='f',typ='I',defaut=33, inout='in'),
-         UNITE_RESU_IMPE  = SIMP(statut='f',typ='I',defaut=32, inout='in'),
+         UNITE_RESU_FORC = SIMP(statut='f',typ=UnitType(),defaut=33, inout='in'),
+         UNITE_RESU_IMPE  = SIMP(statut='f',typ=UnitType(),defaut=32, inout='in'),
          TYPE             = SIMP(statut='f',typ='TXM', into=("BINAIRE","ASCII"), defaut="ASCII"),
 #         NOM_CHAM        =SIMP(statut='f',typ='TXM',into=("DEPL","VITE","ACCE") , validators=NoRepeat(),max=3,defaut="DEPL" ),
 #
@@ -66,17 +70,18 @@ DYNA_ISS_VARI=MACRO(nom="DYNA_ISS_VARI",
 #
         INFO           =SIMP(statut='f',typ='I' ,defaut=1,into=( 1 , 2)),
 #
-         b_type_trans = BLOC(condition="FONC_SIGNAL !=None",
+         b_type_trans = BLOC(condition="""exists("EXCIT_SOL")""",
                         FREQ_MAX       =SIMP(statut='f',typ='R' ),
                         FREQ_PAS       =SIMP(statut='f',typ='R' ),
                         regles=( ENSEMBLE('FREQ_MAX','FREQ_PAS'),  )
 
                         ),
 
-        b_type_spec = BLOC(condition="NB_FREQ != None",
+        b_type_spec = BLOC(condition="""exists("NB_FREQ")""",
                        FREQ_INIT       =SIMP(statut='o',typ='R' ),
                        FREQ_PAS     =SIMP(statut='o',typ='R' ),
                        OPTION        = SIMP(statut='f',typ='TXM',into=("TOUT","DIAG"),defaut="TOUT"),
+                       NOM_CMP       =SIMP(statut='o',typ='TXM',into=("DX","DY","DZ") ),
                        ),
 
 

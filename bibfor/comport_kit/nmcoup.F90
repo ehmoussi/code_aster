@@ -14,10 +14,10 @@ implicit none
 #include "asterfort/lcumfp.h"
 #include "asterfort/nmcpla.h"
 #include "asterfort/utmess.h"
-#include "asterfort/lc0065.h"
+#include "asterfort/lc0165.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -111,7 +111,7 @@ implicit none
     rela_flua = compor(8)
     rela_plas = compor(9)
 !
-    if (rela_flua(1:10) .eq. 'GRANGER_FP') then
+    if (rela_flua(1:13) .eq. 'BETON_GRANGER') then
         if (rela_plas      .eq. 'ELAS'           .or.&
             rela_plas(1:9) .eq. 'VMIS_ISOT'      .or.&
             rela_plas      .eq. 'ROUSS_PR'       .or.&
@@ -128,7 +128,7 @@ implicit none
         else 
             call utmess('F', 'COMPOR3_2', sk=rela_plas)
         endif
-    else if (rela_flua.eq.'BETON_UMLV_FP') then
+    else if (rela_flua.eq.'BETON_UMLV') then
         if (rela_plas      .eq. 'ENDO_ISOT_BETON' .or.&
             rela_plas(1:6) .eq. 'MAZARS') then
             if (rela_plas(1:15) .eq. 'ENDO_ISOT_BETON') then
@@ -153,7 +153,7 @@ implicit none
                 call lcumfp(fami , kpg   , ksp  , ndim  , typmod   ,&
                             imat , compor, timed, timef , epsdt    ,&
                             depst, sigd  , vind , option, rela_plas,&
-                            sigf , vinf  , dsde , carcri)
+                            sigf , vinf  , dsde)
             endif
         else
             call utmess('F', 'COMPOR3_3', sk=rela_plas)
@@ -173,7 +173,7 @@ implicit none
 ! ----- For "KIT_RGI"
         if ((rela_plas(1:15) .eq. 'ENDO_PORO_BETON') .or.&
             (rela_flua(1:15) .eq. 'ENDO_PORO_BETON')) then
-            call lc0065(fami  , kpg , ksp  , ndim  , imat  ,&
+            call lc0165(fami  , kpg , ksp  , ndim  , imat  ,&
                         compor, carcri, timed, timef , epsdt ,&
                         depst , sigd, vind , option, angmas,&
                         sigf  , vinf, wkin , typmod, 1     ,&

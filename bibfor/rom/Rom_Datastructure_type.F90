@@ -5,7 +5,7 @@ implicit none
 #include "asterf_types.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -83,21 +83,67 @@ implicit none
         integer           :: nb_cmp
 ! ----- Number of modes in base
         integer           :: nb_mode
+! ----- Number of snapshots when created base
+        integer           :: nb_snap
 ! ----- Datastructure for lineic base numbering
         type(ROM_DS_LineicNumb) :: ds_lineic
     end type ROM_DS_Empi
 !
+! - Parameters for REST_REDUIT_COMPLET operator
+!
+    type ROM_DS_ParaRRC
+! ----- Phenomenon
+        character(len=16) :: type_resu
+! ----- Number of time steps
+        integer           :: nb_store
+! ----- Reduced results datastructure to read
+        character(len=8)  :: result_rom
+! ----- Model for reduced model
+        character(len=8)  :: model_rom
+! ----- Complete results datastructure to create
+        character(len=8)  :: result_dom
+! ----- Model for complete model
+        character(len=8)  :: model_dom
+! ----- Datastructure for empiric modes (primal)
+        type(ROM_DS_Empi) :: ds_empi_prim
+! ----- Datastructure for empiric modes (dual)
+        type(ROM_DS_Empi) :: ds_empi_dual
+! ----- Table for reduced coordinates
+        character(len=24) :: tabl_name
+        character(len=24) :: coor_redu
+    end type ROM_DS_ParaRRC
+!
 ! - Parameters for DEFI_BASE_REDUITE operator
 !
     type ROM_DS_ParaDBR
+! ----- Type of operation (POD, POD_INCR, ...)
+        character(len=16)       :: operation
+! ----- Type of reduced base
+        character(len=8)        :: base_type
+! ----- Direction of the linear model
+        character(len=8)        :: axe_line
+! ----- First section of the linear model
+        character(len=24)       :: surf_num
+! ----- Name of result datastructures to read
+        character(len=8)        :: result_in
+! ----- Name of empiric base to save
+        character(len=8)        :: result_out
+! ----- Name of field for (NOM_CHAM)
+        character(len=24)       :: field_name
 ! ----- Tolerance for SVD
         real(kind=8)            :: tole_svd
+! ----- Tolerance for incremental POD
+        real(kind=8)            :: tole_incr
 ! ----- Maximum number of modes
         integer                 :: nb_mode_maxi
 ! ----- Datastructure for empiric modes
         type(ROM_DS_Empi)       :: ds_empi
 ! ----- Datastructure for snapshot selection
         type(ROM_DS_Snap)       :: ds_snap
+! ----- Name of table to save reduced coordinates
+        character(len=19)       :: tabl_name
+! ----- If reuse
+        aster_logical           :: l_reuse
     end type ROM_DS_ParaDBR
 !
 ! - Parameters for DEFI_DOMAINE_REDUIT operator

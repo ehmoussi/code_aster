@@ -1,6 +1,6 @@
 subroutine crsint(solveu)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -55,7 +55,7 @@ subroutine crsint(solveu)
     zk24(islvk-1+2) = 'AUTO'
     zk24(islvk-1+3) = 'AUTO'
     zk24(islvk-1+4) = 'AUTO'
-    zk24(islvk-1+5) = 'XXXX'
+    zk24(islvk-1+5) = 'AUTO'
     zk24(islvk-1+6) = 'LAGR2'
     zk24(islvk-1+7) = 'NON'
     zk24(islvk-1+8) = 'NON'
@@ -116,3 +116,4 @@ subroutine crsint(solveu)
 
     call jedema()
 end subroutine
+

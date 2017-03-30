@@ -5,23 +5,22 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
-# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
-# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
-# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
-# (AT YOUR OPTION) ANY LATER VERSION.                                                  
-#                                                                       
-# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT   
-# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF            
-# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU      
-# GENERAL PUBLIC LICENSE FOR MORE DETAILS.                              
-#                                                                       
-# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE     
-# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,         
-#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.        
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: sylvie.granet at edf.fr
-#from Macro.chainage_thm_ops import chainage_thm_ops
 
 def chainage_thm_prod(self,TYPE_CHAINAGE,TYPE_RESU = None,**args) :
 
@@ -59,7 +58,7 @@ CHAINAGE_THM=MACRO(nom="CHAINAGE_THM",
 
          # Cas HYDR_MECA :
 
-         b_hydr_meca    = BLOC(condition = "TYPE_CHAINAGE == 'HYDR_MECA'",fr=tr("Chaînage hydraulique vers mécanique"),
+         b_hydr_meca    = BLOC(condition = """equal_to("TYPE_CHAINAGE", 'HYDR_MECA')""",fr=tr("Chaînage hydraulique vers mécanique"),
 
              RESU_HYDR       = SIMP(statut='o',typ=resultat_sdaster,fr=tr("Résultat hydraulique à chaîner") ),
              MODELE_MECA     = SIMP(statut='o',typ=modele_sdaster  ,fr=tr("Modèle d'arrivée mécanique")),
@@ -67,25 +66,25 @@ CHAINAGE_THM=MACRO(nom="CHAINAGE_THM",
              MATR_HM1        = SIMP(statut='o',typ=corresp_2_mailla,),
              MATR_HM2        = SIMP(statut='o',typ=corresp_2_mailla,),
 
-             b_type_resu     = BLOC(condition = "TYPE_RESU == 'EVOL_VARC'",fr=tr("Instant obligatoire si TYPE_RESU=EVOL_VARC"),
-                                   INST = SIMP(statut='o',typ='R',validators=NoRepeat(),min=1,max=1),
+             b_type_resu     = BLOC(condition = """equal_to("TYPE_RESU", 'EVOL_VARC')""",fr=tr("Instant obligatoire si TYPE_RESU=EVOL_VARC"),
+                                   INST = SIMP(statut='o',typ='R',max=1),
 
            ),),
 
          # Cas MECA_HYDR :
 
-         b_meca_hydr    = BLOC(condition = "TYPE_CHAINAGE == 'MECA_HYDR'",fr=tr("Chaînage mécanique vers hydraulique"),
+         b_meca_hydr    = BLOC(condition = """equal_to("TYPE_CHAINAGE", 'MECA_HYDR')""",fr=tr("Chaînage mécanique vers hydraulique"),
 
              RESU_MECA       = SIMP(statut='o',typ=resultat_sdaster,fr=tr("Résultat mécanique à chaîner") ),
              MODELE_HYDR     = SIMP(statut='o',typ=modele_sdaster  ,fr=tr("Modèle d'arrivée hydraulique")),
 
              MATR_MH         = SIMP(statut='o',typ=corresp_2_mailla,),
-             INST            = SIMP(statut='o',typ='R',validators=NoRepeat(),min=1,max=1),
+             INST            = SIMP(statut='o',typ='R',max=1),
            ),
 
          # Cas INIT :
 
-         b_init    = BLOC(condition = "TYPE_CHAINAGE == 'INIT'",fr=tr("Calcul des matrices de projection"),
+         b_init    = BLOC(condition = """equal_to("TYPE_CHAINAGE", 'INIT')""",fr=tr("Calcul des matrices de projection"),
 
              MODELE_MECA     = SIMP(statut='o',typ=modele_sdaster  ,fr=tr("Modèle mécanique")),
              MODELE_HYDR     = SIMP(statut='o',typ=modele_sdaster  ,fr=tr("Modèle hydraulique")),

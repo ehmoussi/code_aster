@@ -4,7 +4,7 @@ subroutine nm1vil(fami, kpg, ksp, icdmat, materi,&
                   defam, defap, angmas, sigp, vip,&
                   dsidep, iret, compo, nbvalc)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -77,11 +77,9 @@ subroutine nm1vil(fami, kpg, ksp, icdmat, materi,&
     common / nmpavp / dpc,sieleq,deuxmu,deltat,tschem,prec,theta,niter
     real(kind=8) :: dpc, sieleq, deuxmu, deltat, tschem, prec, theta, niter
 !     COMMON POUR LES PARAMETRES DES LOIS DE FLUAGE SOUS IRRADIATION
-!     VISC_IRRA_LOG: FLUPHI A      B      CTPS    ENER
-    common / nmpair / fluphi,&
-     &                  a,b,ctps,ener
-    real(kind=8) :: fluphi
-    real(kind=8) :: a, b, ctps, ener
+!     VISC_IRRA_LOG: A      B      CTPS    ENER
+    common / nmpair / a,b,ctps,ener
+    real(kind=8) :: a, b, c, ctps, ener
 ! PARAMETRES MATERIAUX
 ! ELASTIQUES
     real(kind=8) :: ep, nup, troikp, deumup
@@ -95,7 +93,8 @@ subroutine nm1vil(fami, kpg, ksp, icdmat, materi,&
     real(kind=8) :: t1, t2
     real(kind=8) :: degran, depsan, depsim, depsgr
     real(kind=8) :: coef1, coefb, expqt
-    data nomgil /'A','B','CSTE_TPS','ENER_ACT','FLUX_PHI'/
+    real(kind=8) :: fluphi
+    data nomgil /'A','B','CSTE_TPS','ENER_ACT', 'C'/
 !
     iret = 0
 !     PARAMETRE THETA D'INTEGRATION
@@ -148,9 +147,10 @@ subroutine nm1vil(fami, kpg, ksp, icdmat, materi,&
         b = coegil(2)
         ctps = coegil(3)
         ener = coegil(4)
-!
-        if (coegil(5) .ne. 1.d0) then
-            call utmess('A', 'ALGORITH6_56')
+        if (compo(1:10) .eq. 'GRAN_IRRA_') then
+          c = coegil(5)
+        else
+          c= 0.0d0
         endif
         if (fluphi .lt. -prec) then
             call utmess('F', 'ALGORITH6_57')
@@ -185,7 +185,10 @@ subroutine nm1vil(fami, kpg, ksp, icdmat, materi,&
 !
     expqt=exp(-ener/(tp+273.15d0))
 !
-    coefb=expqt*((a*ctps/(1.d0+ctps*irrap))+b)*(irrap-irram)
+!     coefb=expqt*((a*ctps/(1.d0+ctps*irrap))+b+c*ctps*exp(-ctps*irrap))*(irrap-irram)
+    coefb=expqt*(a*(log(1.d0+ctps*irrap)-log(1.d0+ctps*irram))+&
+                 b*(irrap-irram)+&
+                 c*(exp(-ctps*irram)-exp(-ctps*irrap)))
     coef1 = ep/(1.d0+ep*coefb)
 !
 ! CONTRAINTE ACTUALISEE

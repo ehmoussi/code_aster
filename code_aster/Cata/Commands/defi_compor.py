@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,8 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jean-michel.proix at edf.fr
+# person_in_charge: david.haboussa at edf.fr
+
 DEFI_COMPOR=OPER(nom="DEFI_COMPOR",op=59,sd_prod=compor_sdaster,
     fr=tr("Définir le comportement d'un monocristal, d'un polycristal ou de groupes de fibres"),
     reentrant='n',
@@ -39,43 +40,43 @@ DEFI_COMPOR=OPER(nom="DEFI_COMPOR",op=59,sd_prod=compor_sdaster,
                                 'MONO_DD_CC','MONO_DD_CC_IRRA','MONO_DD_FAT',),
                           fr=tr("Donner le nom du mot-clé facteur de DEFI_MATERIAU précisant le type d'écoulement viscoplastique")),
 #
-        b_non_dd = BLOC(condition="ECOULEMENT=='MONO_VISC1' or ECOULEMENT=='MONO_VISC2'",
+        b_non_dd = BLOC(condition="""equal_to("ECOULEMENT", 'MONO_VISC1') or equal_to("ECOULEMENT", 'MONO_VISC2')""",
             ECRO_ISOT = SIMP(statut='o', typ='TXM', max=1, into=('MONO_ISOT1','MONO_ISOT2',),
                              fr=tr("Donner le nom du mot-clé facteur de DEFI_MATERIAU précisant le type d'écrouissage isotrope")),
             ECRO_CINE = SIMP(statut='o', typ='TXM', max=1, into=('MONO_CINE1','MONO_CINE2',),
                              fr=tr("Donner le nom du mot-clé facteur de DEFI_MATERIAU précisant le type d'écrouissage cinématique")),
             FAMI_SYST_GLIS = SIMP(statut='f',typ='TXM', max=1, into=('OCTAEDRIQUE','BCC24','CUBIQUE1','CUBIQUE2','ZIRCONIUM','UNIAXIAL','UTILISATEUR'), ),
-            b_util = BLOC(condition="FAMI_SYST_GLIS=='UTILISATEUR'",
+            b_util = BLOC(condition="""equal_to("FAMI_SYST_GLIS", 'UTILISATEUR')""",
                 TABL_SYST_GLIS = SIMP(statut='f', typ=table_sdaster, max=1,),
             ),
         ),
 #
-        b_dd_kr = BLOC(condition="ECOULEMENT=='MONO_DD_KR'",
+        b_dd_kr = BLOC(condition="""equal_to("ECOULEMENT", 'MONO_DD_KR')""",
             FAMI_SYST_GLIS  = SIMP(statut='f', typ='TXM', max=1, into=('BCC24','UTILISATEUR'), defaut=('BCC24',),),
-            b_util = BLOC(condition="FAMI_SYST_GLIS=='UTILISATEUR' ",
+            b_util = BLOC(condition="""equal_to("FAMI_SYST_GLIS", 'UTILISATEUR') """,
                 TABL_SYST_GLIS = SIMP(statut='f', typ=table_sdaster, max=1,),
             ),
         ),
 #
-        b_ecp_cfc = BLOC(condition="ECOULEMENT=='MONO_DD_FAT'",
+        b_ecp_cfc = BLOC(condition="""equal_to("ECOULEMENT", 'MONO_DD_FAT')""",
             FAMI_SYST_GLIS = SIMP(statut='f', typ='TXM', max=1, into=('OCTAEDRIQUE',), defaut=('OCTAEDRIQUE',),),
         ),
 #
-        b_dd_cfc = BLOC(condition="ECOULEMENT=='MONO_DD_CFC' or ECOULEMENT=='MONO_DD_CFC_IRRA'",
+        b_dd_cfc = BLOC(condition="""equal_to("ECOULEMENT", 'MONO_DD_CFC') or equal_to("ECOULEMENT", 'MONO_DD_CFC_IRRA')""",
             FAMI_SYST_GLIS = SIMP(statut='f', typ='TXM', max=1, into=('OCTAEDRIQUE','UTILISATEUR',), defaut=('OCTAEDRIQUE',),),
-            b_util = BLOC(condition="FAMI_SYST_GLIS=='UTILISATEUR'",
+            b_util = BLOC(condition="""equal_to("FAMI_SYST_GLIS", 'UTILISATEUR')""",
                 TABL_SYST_GLIS = SIMP(statut='f', typ=table_sdaster, max=1,),
             ),
         ),
 #
-        b_dd_cc = BLOC(condition="ECOULEMENT=='MONO_DD_CC' or ECOULEMENT=='MONO_DD_CC_IRRA' ",
+        b_dd_cc = BLOC(condition="""equal_to("ECOULEMENT", 'MONO_DD_CC') or equal_to("ECOULEMENT", 'MONO_DD_CC_IRRA') """,
             FAMI_SYST_GLIS = SIMP(statut='f', typ='TXM', max=1, into=('CUBIQUE1','UTILISATEUR',), defaut=('CUBIQUE1',),),
-            b_util = BLOC(condition="FAMI_SYST_GLIS=='UTILISATEUR'",
+            b_util = BLOC(condition="""equal_to("FAMI_SYST_GLIS", 'UTILISATEUR')""",
                 TABL_SYST_GLIS = SIMP(statut='f', typ=table_sdaster, max=1,),
             ),
         ),
     ),
-    b_mono = BLOC(condition = "MONOCRISTAL!=None",
+    b_mono = BLOC(condition = """exists("MONOCRISTAL")""",
           MATR_INTER  = SIMP(statut='f', typ=table_sdaster, max=1,),
           ROTA_RESEAU = SIMP(statut='f', typ='TXM', max=1, into=('NON','POST','CALC'),defaut='NON',
                              fr=tr("rotation de réseau : NON, POST, CALC")),
@@ -89,11 +90,11 @@ DEFI_COMPOR=OPER(nom="DEFI_COMPOR",op=59,sd_prod=compor_sdaster,
         ANGL_REP    = SIMP(statut='f', typ='R', max=3,fr=tr("orientation du monocristal : 3 angles nautiques en degrés")),
         ANGL_EULER  = SIMP(statut='f', typ='R', max=3,fr=tr("orientation du monocristal : 3 angles d'Euler   en degrés")),
     ),
-    b_poly = BLOC( condition = "POLYCRISTAL!=None",
+    b_poly = BLOC( condition = """exists("POLYCRISTAL")""",
         MU_LOCA      = SIMP(statut='o', typ='R',   max=1),
         LOCALISATION = SIMP(statut='f', typ='TXM', max=1, into=('BZ', 'BETA',),
                             fr=tr("Donner le nom de la règle de localisation")),
-        b_beta = BLOC( condition = "LOCALISATION=='BETA'",
+        b_beta = BLOC( condition = """equal_to("LOCALISATION", 'BETA')""",
             DL = SIMP(statut='o', typ='R', max=1),
             DA = SIMP(statut='o', typ='R', max=1),
         ),

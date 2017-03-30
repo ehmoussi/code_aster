@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,10 +16,11 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine dbr_calc_save(ds_empi, nb_mode, s, v)
+    subroutine dbr_calc_save(ds_empi, nb_mode, nb_snap_redu, s, v)
         use Rom_Datastructure_type
         type(ROM_DS_Empi), intent(in) :: ds_empi
         integer, intent(in) :: nb_mode
+        integer, intent(in) :: nb_snap_redu
         real(kind=8), intent(in), pointer :: v(:)
         real(kind=8), intent(in), pointer :: s(:)
     end subroutine dbr_calc_save

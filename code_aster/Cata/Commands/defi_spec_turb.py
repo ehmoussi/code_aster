@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: andre.adobes at edf.fr
+# person_in_charge: hassan.berro at edf.fr
 DEFI_SPEC_TURB=OPER(nom="DEFI_SPEC_TURB",op= 145,sd_prod=spectre_sdaster,
                     fr=tr("Definition d'un spectre d'excitation turbulente"),
                     reentrant='n',
@@ -103,7 +103,7 @@ DEFI_SPEC_TURB=OPER(nom="DEFI_SPEC_TURB",op= 145,sd_prod=spectre_sdaster,
            GRAPPE_2        =SIMP(statut='f',typ='TXM',
                                  into=("ASC_CEN","ASC_EXC","DES_CEN","DES_EXC",) ),
 #  Quels sont les statuts des mots cles a l interieur des deux blocs qui suivent
-           b_inte_spec =BLOC(condition = "INTE_SPEC != None",
+           b_inte_spec =BLOC(condition = """exists("INTE_SPEC")""",
              regles=(UN_PARMI('NOEUD','GROUP_NO'),
                      EXCLUS('NOEUD','GROUP_NO'),),
              NATURE          =SIMP(statut='o',typ='TXM',max='**',into=("FORCE","MOMENT",) ),
@@ -111,7 +111,7 @@ DEFI_SPEC_TURB=OPER(nom="DEFI_SPEC_TURB",op= 145,sd_prod=spectre_sdaster,
              NOEUD           =SIMP(statut='f',typ=no,max='**'),
              GROUP_NO        =SIMP(statut='f',typ=grno,max='**'),
            ),
-           b_grappe_2      =BLOC(condition = "GRAPPE_2 != None",
+           b_grappe_2      =BLOC(condition = """exists("GRAPPE_2")""",
              regles=(UN_PARMI('NOEUD','GROUP_NO'),
                      EXCLUS('NOEUD','GROUP_NO'),),
              RHO_FLUI        =SIMP(statut='o',typ='R' ),
@@ -121,5 +121,5 @@ DEFI_SPEC_TURB=OPER(nom="DEFI_SPEC_TURB",op= 145,sd_prod=spectre_sdaster,
            CARA_ELEM       =SIMP(statut='o',typ=cara_elem ),
            MODELE          =SIMP(statut='o',typ=modele_sdaster ),
          ),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE           =SIMP(statut='f',typ='TXM'),
 );

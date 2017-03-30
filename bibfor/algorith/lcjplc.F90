@@ -9,7 +9,7 @@ subroutine lcjplc(loi, mod, angmas, imat, nmat,&
     implicit none
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -43,6 +43,7 @@ subroutine lcjplc(loi, mod, angmas, imat, nmat,&
 #include "asterfort/lcmmjp.h"
 #include "asterfort/lcoptg.h"
 #include "asterfort/lkijpl.h"
+#include "asterfort/srijpl.h"
     integer :: imat, nmat, nr, nvi, itmax, iret, nfs, nsg, ndt, ndi, n2
     integer :: kpg, ksp
     real(kind=8) :: dsde(6, 6), epsd(*), deps(*), toler, angmas(3)
@@ -70,11 +71,13 @@ subroutine lcjplc(loi, mod, angmas, imat, nmat,&
                     nsg, toutms, hsr, nr, nvi, sigd,&
                     itmax, toler, vinf, vind, dsde,&
                     drdy, option, iret)
-    else if (loi(1:15) .eq. 'BETON_BURGER_FP') then
+    else if (loi(1:12) .eq. 'BETON_BURGER') then
         call burjpl(nmat, mater, nr, drdy, dsde)
     else if (loi(1:4) .eq. 'LETK') then
         call lkijpl(nmat, mater, sigf, nr, drdy,&
                     dsde)
+    else if (loi(1:3) .eq. 'LKR') then
+        call srijpl(nmat,mater,sigf,nr,drdy,dsde)
     else if (loi.eq.'HAYHURST') then
         n2=nr-ndt
         call lcoptg(nmat, mater, nr, n2, drdy,&

@@ -18,7 +18,7 @@ implicit none
 #include "asterfort/wkvect.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -71,7 +71,7 @@ implicit none
     character(len=14) :: nume_ddl , nume_ddl_old, moloc
     character(len=24) :: sd_iden_rela
     character(len=3) :: matd
-    logical :: l_matr_dist
+    aster_logical :: l_matr_dist, verbose
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -92,7 +92,8 @@ implicit none
         sd_iden_rela = sd_iden_relaz
     endif
 !
-    call matdis(matd)
+    verbose=.false.
+    call matdis(matd, verbose)
     ASSERT(matd.eq.'OUI' .or. matd.eq.'NON')
     if (matd.eq.'OUI') then
         l_matr_dist = .true.

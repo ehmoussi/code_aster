@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -34,7 +34,7 @@ DEFI_SQUELETTE=OPER(nom="DEFI_SQUELETTE",op= 110,sd_prod=squelette,
            regles=(UN_PARMI('MODE_CYCL','MAILLAGE'),
                    PRESENT_PRESENT('NB_SECTEUR','MAILLAGE'),),
            MODE_CYCL       =SIMP(statut='f',typ=mode_cycl ),
-           NB_SECTEUR      =SIMP(statut='f',typ='I',validators=NoRepeat(),max=1 ),
+           NB_SECTEUR      =SIMP(statut='f',typ='I',max=1 ),
            MAILLAGE        =SIMP(statut='f',typ=maillage_sdaster ),
          ),
          MODELE_GENE     =SIMP(statut='f',typ=modele_gene ),
@@ -78,5 +78,5 @@ DEFI_SQUELETTE=OPER(nom="DEFI_SQUELETTE",op= 110,sd_prod=squelette,
            GROUP_MA        =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
            TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          ),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE           =SIMP(statut='f',typ='TXM'),
 )  ;

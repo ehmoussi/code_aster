@@ -24,7 +24,7 @@ implicit none
 #include "asterc/mfront_set_integer_parameter.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -64,7 +64,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=24) :: list_elem_affe
-    aster_logical :: l_affe_all
+    aster_logical :: l_affe_all, l_matr_unsymm
     integer :: nb_elem_affe, model_dim
     integer, pointer :: v_elem_affe(:) => null()
     character(len=16) :: keywordfact
@@ -73,7 +73,7 @@ implicit none
     character(len=16) :: algo_inte, rela_comp, model_mfront
     character(len=255) :: libr_name, subr_name
     real(kind=8) :: iter_inte_maxi, resi_inte_rela, parm_theta, vale_pert_rela, algo_inte_r
-    real(kind=8) :: resi_deborst_max, seuil, amplitude, taux_retour, parm_alpha
+    real(kind=8) :: resi_deborst_max, seuil, parm_alpha
     real(kind=8) :: post_iter, post_incr
     character(len=16) :: kit_comp(9) = (/' ',' ',' ',' ',' ',' ',' ',' ',' '/)
     integer :: type_matr_t, iter_inte_pas, iter_deborst_max
@@ -102,17 +102,17 @@ implicit none
         resi_deborst_max = ds_compor_para%v_para(i_comp)%resi_deborst_max
         iter_deborst_max = ds_compor_para%v_para(i_comp)%iter_deborst_max
         seuil            = ds_compor_para%v_para(i_comp)%seuil
-        amplitude        = ds_compor_para%v_para(i_comp)%amplitude
-        taux_retour      = ds_compor_para%v_para(i_comp)%taux_retour
         post_iter        = ds_compor_para%v_para(i_comp)%post_iter
         parm_alpha       = ds_compor_para%v_para(i_comp)%parm_alpha
         post_incr        = ds_compor_para%v_para(i_comp)%post_incr
         rela_comp        = ds_compor_para%v_para(i_comp)%rela_comp
         algo_inte        = ds_compor_para%v_para(i_comp)%algo_inte
+        l_matr_unsymm    = ds_compor_para%v_para(i_comp)%l_matr_unsymm
         libr_name        = ds_compor_para%v_para(i_comp)%comp_exte%libr_name
         subr_name        = ds_compor_para%v_para(i_comp)%comp_exte%subr_name
         model_mfront     = ds_compor_para%v_para(i_comp)%comp_exte%model_mfront
         model_dim        = ds_compor_para%v_para(i_comp)%comp_exte%model_dim
+
 !
 ! ----- Detection of specific cases
 !
@@ -172,8 +172,6 @@ implicit none
         p_carc_valv(8)  = resi_deborst_max
         p_carc_valv(9)  = iter_deborst_max
         p_carc_valv(10) = seuil
-        p_carc_valv(11) = amplitude
-        p_carc_valv(12) = taux_retour
         p_carc_valv(13) = post_iter
         p_carc_valv(21) = post_incr
 !       exte_comp UMAT / MFRONT
@@ -181,7 +179,12 @@ implicit none
         p_carc_valv(15) = ds_compor_para%v_para(i_comp)%c_pointer%namevarext
         p_carc_valv(16) = ds_compor_para%v_para(i_comp)%c_pointer%fct_ldc
 !       cf. CALC_POINT_MAT / PMDORC
-        p_carc_valv(17) = 0
+        if (l_matr_unsymm) then
+            p_carc_valv(17) = 1
+        else
+            p_carc_valv(17) = 0
+        endif
+!       For THM
         p_carc_valv(18) = parm_alpha
 !       exte_comp UMAT / MFRONT
         p_carc_valv(19) = ds_compor_para%v_para(i_comp)%c_pointer%matprop
