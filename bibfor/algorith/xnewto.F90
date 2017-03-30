@@ -1,11 +1,10 @@
 subroutine xnewto(elrefp, name, n, ndime, ptxx,&
                   ndim, tabco, tabls, ipp, ip,&
-                  itemax, epsmax, ksi, dekker)
+                  itemax, epsmax, ksi, exit, dekker)
     implicit none
 !
 #include "jeveux.h"
 #include "asterc/r8gaem.h"
-#include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vecini.h"
 #include "asterfort/xdelt0.h"
@@ -19,9 +18,10 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
     character(len=6) :: name
     character(len=8) :: elrefp
     real(kind=8), intent(in), optional :: dekker(4*ndime)
+    integer, intent(inout), optional :: exit(2)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -48,6 +48,8 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
 !       EPSMAX  : RESIDU POUR CONVERGENCE DE NEWTON
 !       N       : LES INDICES DES NOEUX D'UNE FACE DANS L'ELEMENT PARENT
 !       PMILIE  : LES COORDONNES DES POINTS MILIEUX
+!       EXIT    : RETOUR EVENTUEL A UNE DECOUPE PRIMAIRE DIFFERENTE EN CAS
+!                 D'ECHEC DU NEWTON
 !
 !     SORTIE
 !       KSI     : COORDONNEES DE REFERENCE DU POINT
@@ -113,11 +115,6 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
                     delta(1))
     endif
 !
-!   ON VERIFIE POUR XINTER QUE LE NEWTON RESTE SUR L ARETE
-    if (name .eq. 'XINTER') then
-       ASSERT((ksi2(1) .ge. 0.d0) .and. (ksi2(1) .le. 1.d0))
-    endif
-!
 ! --- ACTUALISATION
 !
     do i = 1, ndime
@@ -128,13 +125,20 @@ subroutine xnewto(elrefp, name, n, ndime, ptxx,&
 !
 !   ON VERIFIE POUR XMIFIS QUE LE NEWTON RESTE DANS LA FACE TRIA
 !   DE RECHERCHE, SINON ON ACTIVE LA METHODE DE DEKKER
-    if (name .eq. 'XMIFIS' .or. name .eq. 'XCENFI') then
+    if (name .eq. 'XMIFIS' .or. name .eq. 'XCENFI' .or. name .eq. 'XINTER') then
         if (present(dekker)) then
             if (iter.eq.itemax) then
 !   DANS CERTAINS CAS, IL EST IMPOSSIBLE DE TROUVER UN POINT MILIEU SUR LA
 !   FISSURE DANS LA FACE DU SOUS ELEMENT, ON EFFECTUE ALORS UNE APPROXIAMTION
 !   LINEAIRE DE LA FISSURE SUR CETTE FACE
-               ksi2(1) = 0.d0
+               if (name.eq.'XINTER') then
+                  ksi2(1) = ksi(1)
+               else
+                  ksi2(1) = 0.d0
+                  if (exit(1).le.1) then
+                     exit(1) = 1
+                  endif
+               endif
                goto 30
             endif
             if (ksi2(1) .gt. intsup) then

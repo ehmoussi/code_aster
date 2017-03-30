@@ -449,7 +449,9 @@ class MEDPTR3_XH1(Element):
                      (OP.RIGI_MECA.PLONCHA, LC.E10NEUTI), (OP.RIGI_MECA.PLSN, LC.N1NEUT_R),
                      (OP.RIGI_MECA.PLST, LC.N1NEUT_R), (SP.PMATERC, LC.CMATERC),
                      (OP.RIGI_MECA.PPINTTO, LC.E24NEUTR), (OP.RIGI_MECA.PPMILTO, LC.E22NEUTR),
-                     (OP.RIGI_MECA.PSTANO, STANO_I), ),
+                     (OP.RIGI_MECA.PSTANO, STANO_I),
+                     (OP.RIGI_MECA.PVARCPR, LC.ZVARCPG),
+                    ),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 
@@ -501,7 +503,6 @@ class MEDPTR3_XH1(Element):
                      ),
             para_out=((OP.TOPOFA.PAINTER, LC.E40NEUTR), (OP.TOPOFA.PBASECO, LC.E32NEUTR),
                      (OP.TOPOFA.PCFACE, E14NEUTI), (SP.PGESCLA, E16NEUTR),
-                     (OP.TOPOFA.PGESCLO, E16NEUTR), (SP.PGMAITR, E16NEUTR),
                      (OP.TOPOFA.PLONGCO, LC.E3NEUTI), (OP.TOPOFA.PPINTER, E16NEUTR),
                      ),
         ),

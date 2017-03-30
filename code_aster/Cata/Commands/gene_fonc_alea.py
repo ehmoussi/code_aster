@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR   
@@ -28,7 +28,7 @@ GENE_FONC_ALEA=OPER(nom="GENE_FONC_ALEA",op= 118,sd_prod=interspectre,
          INTE_SPEC       =SIMP(statut='o',typ=interspectre),
          NUME_VITE_FLUI  =SIMP(statut='f',typ='I' ),
          INTERPOL        =SIMP(statut='f',typ='TXM',defaut="OUI",into=("NON","OUI") ),
-         b_interpol_oui    =BLOC(condition = "INTERPOL == 'OUI' ",fr=tr("Parametres cas interpolation autorisee"),
+         b_interpol_oui    =BLOC(condition = """equal_to("INTERPOL", 'OUI') """,fr=tr("Parametres cas interpolation autorisee"),
            DUREE_TIRAGE    =SIMP(statut='f',typ='R' ),
            FREQ_INIT       =SIMP(statut='f',typ='R' ),
            FREQ_FIN        =SIMP(statut='f',typ='R' ),
@@ -37,5 +37,5 @@ GENE_FONC_ALEA=OPER(nom="GENE_FONC_ALEA",op= 118,sd_prod=interspectre,
          NB_TIRAGE       =SIMP(statut='f',typ='I',defaut= 1 ),
          INIT_ALEA       =SIMP(statut='f',typ='I'),
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE           =SIMP(statut='f',typ='TXM'),
 )  ;

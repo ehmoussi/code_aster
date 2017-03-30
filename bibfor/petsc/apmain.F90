@@ -1,10 +1,15 @@
 subroutine apmain(action, kptsc, rsolu, vcine, istop,&
                   iret)
+!
+#include "asterf_types.h"
+#include "asterf_petsc.h"
+
 use petsc_data_module
 use saddle_point_module
+use lmp_module, only : lmp_update
     implicit none
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -21,7 +26,7 @@ use saddle_point_module
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=C1308
+! aslint:disable=
 !
     character(len=*) :: action
     integer :: kptsc
@@ -46,10 +51,7 @@ use saddle_point_module
 ! IN  : ISTOP (I)  : COMPORTEMENT EN CAS D'ERREUR
 ! OUT : IRET  (I)  : CODE RETOUR
 !---------------------------------------------------------------
-#include "asterf.h"
 #include "jeveux.h"
-#include "asterf_types.h"
-#include "asterf_petsc.h"
 #include "asterc/asmpi_comm.h"
 #include "asterc/matfpe.h"
 #include "asterfort/apalmc.h"
@@ -81,8 +83,6 @@ use saddle_point_module
 #include "asterfort/uttcpu.h"
 !
 #ifdef _HAVE_PETSC
-
-!
 !----------------------------------------------------------------
 !
 !     VARIABLES LOCALES
@@ -92,7 +92,7 @@ use saddle_point_module
     mpi_int :: rang, nbproc
     mpi_int :: mpicomm
 !
-    character(len=24) :: precon
+    character(len=24) :: precon, algo, valk(2)
     character(len=24), dimension(:), pointer :: slvk  => null()
     character(len=19) :: nomat, nosolv
     character(len=14) :: nonu
@@ -116,6 +116,7 @@ use saddle_point_module
     KSPConvergedReason :: indic
     Mat :: a
     KSP :: ksp
+    PC :: pc
 !----------------------------------------------------------------
     cbid = dcmplx(0.d0, 0.d0)
     call jemarq()
@@ -143,8 +144,10 @@ use saddle_point_module
     else
         call jeveuo(nosolv//'.SLVK', 'L', vk24=slvk)
         precon = slvk(2)
+        algo = slvk(6)
         call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
         lmd = matd.eq.'OUI'
+!
     endif
 !
 !
@@ -177,9 +180,9 @@ use saddle_point_module
         call MatAssemblyEnd(ap(kptsc), MAT_FINAL_ASSEMBLY, ierr)
         ASSERT(ierr.eq.0)
 !
-        if ( precon == 'BLOC_LAGR' ) then 
+        if ( precon == 'BLOC_LAGR' ) then
             call convert_mat_to_saddle_point( nomat, ap(kptsc) )
-        endif 
+        endif
 !
 !        1.4 CREATION DU PRECONDITIONNEUR PETSc (EXTRAIT DU KSP) :
 !        ---------------------------------------------------------
@@ -187,7 +190,7 @@ use saddle_point_module
         call KSPCreate(mpicomm, kp(kptsc), ierr)
         ASSERT(ierr.eq.0)
         !
-#ifdef ASTER_PETSC_VERSION_LEQ_34
+#if PETSC_VERSION_LT(3,5,0)
         call KSPSetOperators( kp(kptsc), ap(kptsc), ap(kptsc), DIFFERENT_NONZERO_PATTERN, ierr)
 #else
         call KSPSetOperators( kp(kptsc), ap(kptsc), ap(kptsc), ierr )
@@ -262,7 +265,6 @@ use saddle_point_module
         call KSPGetConvergedReason(ksp, indic, ierr)
         ASSERT(ierr.eq.0)
         call KSPGetIterationNumber(ksp, its, ierr)
-
         ASSERT(ierr.eq.0)
 
 !
@@ -332,13 +334,13 @@ use saddle_point_module
             else if (indic.eq.KSP_DIVERGED_INDEFINITE_PC) then
 !              PRECONDITIONNEUR NON DEFINI
                 call utmess('F', 'PETSC_10')
-!  
-#ifdef ASTER_PETSC_VERSION_LEQ_33
+!
+#if PETSC_VERSION_LT(3,4,0)
             else if (indic.eq.KSP_DIVERGED_NAN) then
-#else          
+#else
             else if (indic.eq.KSP_DIVERGED_NANORINF) then
 #endif
-!               NANORINF 
+!               NANORINF
                 if ( istop == 0 ) then
 !                  ERREUR <F>
                    call utmess('F', 'PETSC_8')
@@ -400,6 +402,18 @@ use saddle_point_module
 !        ----------------------------
         call apsolu(kptsc, lmd, rsolu)
 !
+
+!        2.7 UTILISATION DU LMP EN 2ND NIVEAU
+!        -------------------------------------
+
+        call jeveuo(nosolv//'.SLVK', 'L', vk24=slvk)
+        algo = slvk(6)
+        if  ( algo == 'GMRES_LMP' ) then
+            call KSPGetPC( ksp, pc, ierr )
+            ASSERT( ierr == 0 )
+            call lmp_update( pc, ksp, ierr )
+            ASSERT( ierr == 0 )
+        endif
 !
 !         2.8 NETTOYAGE PETSc (VECTEURS) :
 !         --------------------------------
@@ -413,7 +427,7 @@ use saddle_point_module
 !
 !        -- PRECONDITIONNEUR UTILISE
 !
-!        -- TRAITEMENT PARTICULIER DU PRECONDITIONNEUR LAGRANGIEN AUGMENTE 
+!        -- TRAITEMENT PARTICULIER DU PRECONDITIONNEUR LAGRANGIEN AUGMENTE
         if (precon .eq. 'BLOC_LAGR') then
 !
 !           ON STOCKE LE NOMBRE D'ITERATIONS DU KSP
@@ -465,6 +479,7 @@ use saddle_point_module
         ASSERT(ierr.eq.0)
         call KSPDestroy(ksp, ierr)
         ASSERT(ierr.eq.0)
+
 !
 !        -- SUPRESSION DE L'INSTANCE PETSC
         nomats(kptsc) = ' '

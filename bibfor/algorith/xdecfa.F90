@@ -1,7 +1,7 @@
 subroutine xdecfa(elp, nno, igeom, jlsn, jlst, npi,npis,&
                   pinter, pinref, ainter, cooree, cooref, rainter,&
                   noeud, npts, nintar, lst ,lonref, ndim, zxain,&
-                  nnose, jgrlsn, mipos)
+                  jgrlsn, mipos)
     implicit none
 !
 #include "asterf_types.h"
@@ -21,7 +21,7 @@ subroutine xdecfa(elp, nno, igeom, jlsn, jlst, npi,npis,&
 #include "blas/ddot.h"
 !
     integer :: npi, noeud(9), npis
-    integer :: igeom, jlsn, jlst, zxain, nnose
+    integer :: igeom, jlsn, jlst, zxain
     integer :: nintar, npts, ndim, nno, jgrlsn
     real(kind=8) :: pinter(*), ainter(*), cooree(6,ndim), cooref(6,ndim)
     real(kind=8) :: rainter(3,4), lst(6), lonref, pinref(43*ndim)
@@ -81,7 +81,7 @@ subroutine xdecfa(elp, nno, igeom, jlsn, jlst, npi,npis,&
     real(kind=8) :: epsmax, cridist, a, b, c, ab(ndim), bc(ndim), gradlsn(ndim)
     real(kind=8) :: normfa(ndim), det, tempo, temp1(ndim), temp2(ndim), temp3(4)
     integer :: k, ii, jj, j, ni, kk, ibid, num(8), nbnomx
-    integer :: n(3), kkk, nn(4)
+    integer :: n(3), kkk, nn(4), exit(2)
     integer :: itemax
     aster_logical :: deja, jonc
     parameter   (nbnomx = 27)
@@ -399,7 +399,7 @@ subroutine xdecfa(elp, nno, igeom, jlsn, jlst, npi,npis,&
                            pinref((noeud(2)-1)*ndim+j))/2.d0
              end do
           endif
-!   ON RECHERCHE SUR LA MEDIATRICE DU SEGEMENT IP1IP2 PORTEE PAR GRADLST
+!   ON RECHERCHE SUR LA MEDIATRICE DU SEGMENT IP1IP2 PORTEE PAR GRADLST
           call vecini(ndim, 0.d0, vectn)
           call elrfdf(elp, xref, ndim*nbnomx, dff, nno, ndim)
           do ii = 1, ndim
@@ -470,8 +470,9 @@ subroutine xdecfa(elp, nno, igeom, jlsn, jlst, npi,npis,&
           endif
           nn(1:4) = 0
           jonc = .true.
+          exit(1:2) = 0
           call xcenfi(elp, ndim, ndim, nno, geom, zr(jlsn),&
-                      pinref, pinref, cenref, cenfi, jonc, nn, num)
+                      pinref, pinref, cenref, cenfi, nn, exit, jonc, num)
   !   ON ARCHIVE CE POINT
           npi = npi+1
           do j = 1, ndim

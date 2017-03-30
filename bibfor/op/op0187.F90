@@ -59,6 +59,7 @@ subroutine op0187()
     call jemarq()
     call infmaj()
     call infniv(ifm, niv)
+    pre1=.false.
 !
 !     ------------------------------------------------------------------
 !     1. RECUPERATION DES CONCEPTS UTILISATEURS
@@ -107,7 +108,7 @@ subroutine op0187()
                 k19b, k19b, k19b, k19b, k19b,&
                 ibid, k8b, nbnoc, nbmac, logrma,&
                 dirgrm, maxfem, ngfon, k19b, k19b,&
-                pre1)
+                pre1, mo)
 !
 !     ------------------------------------------------------------------
 !     4. TRAITEMENT DES MAILLES DE MAILC

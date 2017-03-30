@@ -18,7 +18,7 @@ implicit none
 #include "asterfort/sdmpic.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -79,7 +79,7 @@ implicit none
 ! In  time             : current time
 ! In  field            : name of field
 ! In  field_type       : type of field (name in results datastructure)
-! In  field_disc       : localization of field (discretization: NOEU or ELGA)
+! In  field_disc       : localization of field (discretization: NOEU, ELGA or ELEM)
 ! In  field_s          : name of reduced field (CHAM_ELEM_S)
 ! In  list_node        : name of object contains list of nodes
 ! In  nb_node          : number of nodes
@@ -130,7 +130,7 @@ implicit none
 !
 ! - Convert to reduced field
 !
-    if (field_disc .eq. 'ELGA') then
+    if (field_disc .eq. 'ELGA' .or. field_disc .eq. 'ELEM') then
         call jeexin(field_s, iret)
         if (iret .eq. 0) then
             call sdmpic('CHAM_ELEM', field)
@@ -157,7 +157,7 @@ implicit none
 !
 ! - Number of elements for loop
 !
-    if (field_disc .eq. 'ELGA') then
+    if (field_disc .eq. 'ELGA' .or. field_disc .eq. 'ELEM') then
         if (type_extr .eq. 'VALE') then
             nb_elem_r = nb_elem
         elseif ((type_extr.eq.'MIN').or.&
@@ -225,36 +225,42 @@ implicit none
 !
 ! - For element discretization
 !
-    if (field_disc .eq. 'ELGA') then
+    if (field_disc .eq. 'ELGA' .or. field_disc .eq. 'ELEM') then
         call jeveuo(work_elem, 'L', vr = v_work_elem)
         call jeveuo(list_elem, 'L', vi = v_list_elem)
         call jeveuo(list_poin, 'L', vi = v_list_poin)
         call jeveuo(list_spoi, 'L', vi = v_list_spoi)
 !
         do i_elem = 1, nb_elem_r
+        
+            if (type_extr .eq. 'VALE') then
 !
-! --------- Current element
+! ------------- Current element
 !
-            elem_nume = v_list_elem(i_elem)
-            call jenuno(jexnum(meshz(1:8)//'.NOMMAI', elem_nume), elem_name)
+                elem_nume = v_list_elem(i_elem)
+                call jenuno(jexnum(meshz(1:8)//'.NOMMAI', elem_nume), elem_name)
 !
-! --------- Real number of point/subpoint for current element
+! ------------- Real number of point/subpoint for current element
 !
-            nb_poin_elem = cesd(1+5+4*(elem_nume-1))
-            nb_spoi_elem = cesd(1+5+4*(elem_nume-1)+1)
+                nb_poin_elem = cesd(1+5+4*(elem_nume-1))
+                nb_spoi_elem = cesd(1+5+4*(elem_nume-1)+1)
 !
-! --------- Check
+! ------------- Check
 !
-            nb_poin_e = nb_poin
-            nb_spoi_e = nb_spoi
-            if (nb_poin_e .gt. nb_poin_elem) nb_poin_e = nb_poin_elem
-            if (nb_spoi_e .gt. nb_spoi_elem) nb_spoi_e = nb_spoi_elem
+                nb_poin_e = nb_poin
+                nb_spoi_e = nb_spoi
+                if (nb_poin_e .gt. nb_poin_elem) nb_poin_e = nb_poin_elem
+                if (nb_spoi_e .gt. nb_spoi_elem) nb_spoi_e = nb_spoi_elem
 !
-! --------- Number for points/subpoints for loop
+! ------------- Number for points/subpoints for loop
 !
-            if (type_extr_elem .eq. 'VALE') then
-                nb_poin_r = nb_poin_e
-                nb_spoi_r = nb_spoi_e
+                if (type_extr_elem .eq. 'VALE') then
+                    nb_poin_r = nb_poin_e
+                    nb_spoi_r = nb_spoi_e
+                else
+                    nb_poin_r = 1
+                    nb_spoi_r = 1
+                endif
             else
                 nb_poin_r = 1
                 nb_spoi_r = 1

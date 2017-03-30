@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -28,6 +28,7 @@ def calc_erreur_prod(RESULTAT,**args):
 CALC_ERREUR=OPER(nom="CALC_ERREUR",op=42,sd_prod=calc_erreur_prod,reentrant='f',
             UIinfo={"groupes":("Post-traitements","Résultats et champs",)},
             fr=tr("Compléter ou créer un résultat en calculant des champs d'erreur"),
+     reuse=SIMP(statut='c', typ=CO),
      MODELE          =SIMP(statut='f',typ=modele_sdaster),
      CHAM_MATER      =SIMP(statut='f',typ=cham_mater),
 
@@ -47,9 +48,9 @@ CALC_ERREUR=OPER(nom="CALC_ERREUR",op=42,sd_prod=calc_erreur_prod,reentrant='f',
      LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
      LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
      CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",) ),
-     b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+     b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
          PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6),),
-     b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+     b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
          PRECISION       =SIMP(statut='o',typ='R'),),
      LIST_ORDRE      =SIMP(statut='f',typ=listis_sdaster),
      TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",),defaut="OUI"),
@@ -68,10 +69,10 @@ CALC_ERREUR=OPER(nom="CALC_ERREUR",op=42,sd_prod=calc_erreur_prod,reentrant='f',
 
      OPTION =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max='**',into=C_NOM_CHAM_INTO(phenomene='ERREUR',),),
 
-     b_erre_qi =BLOC(condition = "au_moins_un(OPTION, ('QIRE_ELEM','QIZ1_ELEM','QIZ2_ELEM','QIRE_ELNO','QIRE_NOEU'))",
+     b_erre_qi =BLOC(condition = """is_in('OPTION', ('QIRE_ELEM','QIZ1_ELEM','QIZ2_ELEM','QIRE_ELNO','QIRE_NOEU'))""",
                      RESU_DUAL=SIMP(statut='o',typ=resultat_sdaster,fr=tr("Résultat du problème dual")),),
 
-     b_sing    =BLOC(condition= "au_moins_un(OPTION, 'SING_ELEM')",
+     b_sing    =BLOC(condition= """is_in('OPTION', 'SING_ELEM')""",
                     PREC_ERR=SIMP(statut='o',typ='R',val_min= 0.,
                                   fr=tr("Précision demandée pour calculer la carte de taille des éléments")),
                     TYPE_ESTI=SIMP(statut='f',typ='TXM',into=("ERME_ELEM","ERZ1_ELEM","ERZ2_ELEM",
@@ -84,5 +85,5 @@ CALC_ERREUR=OPER(nom="CALC_ERREUR",op=42,sd_prod=calc_erreur_prod,reentrant='f',
 #-------------------------------------------------------------------
 
      INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
-     TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+     TITRE           =SIMP(statut='f',typ='TXM'),
 ) ;

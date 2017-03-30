@@ -517,7 +517,9 @@ class MECA_XT_HEXA8(Element):
                      (OP.RIGI_MECA.PLONCHA, LC.E10NEUTI), (OP.RIGI_MECA.PLSN, LC.N1NEUT_R),
                      (OP.RIGI_MECA.PLST, LC.N1NEUT_R), (SP.PMATERC, LC.CMATERC),
                      (OP.RIGI_MECA.PPINTTO, E33NEUTR), (OP.RIGI_MECA.PPMILTO, LC.E198NEUT),
-                     (OP.RIGI_MECA.PSTANO, STANO_I), ),
+                     (OP.RIGI_MECA.PSTANO, STANO_I),
+                     (OP.RIGI_MECA.PVARCPR, LC.ZVARCPG),
+                    ),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 
@@ -598,7 +600,6 @@ class MECA_XT_HEXA8(Element):
                      ),
             para_out=((OP.TOPOFA.PAINTER, LC.E200NEUT), (OP.TOPOFA.PBASECO, LC.E360NEUT),
                      (OP.TOPOFA.PCFACE, LC.E90NEUTI), (SP.PGESCLA, LC.E120NEUT),
-                     (OP.TOPOFA.PGESCLO, LC.E102NEUT), (SP.PGMAITR, LC.E120NEUT),
                      (OP.TOPOFA.PLONGCO, LC.E3NEUTI), (OP.TOPOFA.PPINTER, LC.E120NEUT),
                      ),
         ),

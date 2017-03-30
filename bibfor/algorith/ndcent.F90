@@ -13,7 +13,7 @@ subroutine ndcent(igeom, ndim, lsn, nfiss, tx, txlsn, nnc)
     real(kind=8) :: tx(3, 7), lsn(*), txlsn(28)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -42,8 +42,8 @@ subroutine ndcent(igeom, ndim, lsn, nfiss, tx, txlsn, nnc)
 !
     integer :: nbnomx
     parameter     (nbnomx = 20)
-    integer :: i, j, nnop, ibid, ifiss, arint(7,2)
-    real(kind=8) :: ff(nbnomx), xlsn, xe(3), lsna, lsnb, lsnm
+    integer :: i, j, nnop, ibid, ifiss
+    real(kind=8) :: ff(nbnomx), xlsn, xe(3)
     character(len=8) :: elp
 !
 !
@@ -116,7 +116,7 @@ subroutine ndcent(igeom, ndim, lsn, nfiss, tx, txlsn, nnc)
 !.....................................................................
 !     CALCUL DE LA LSN DU MILIEU
 !
-    do 10 j = 1, nnc
+    do j = 1, nnc
         do 11 i = 1, ndim
             xe(i)=tx(i,j)
 11      continue
@@ -129,7 +129,7 @@ subroutine ndcent(igeom, ndim, lsn, nfiss, tx, txlsn, nnc)
 12         continue
            txlsn((j-1)*nfiss+ifiss)=xlsn
         end do
-10  end do
+    end do
 !
 !.....................................................................
 !      CALCUL DES COORDONNES DANS L ELEMENT REEL
@@ -141,62 +141,4 @@ subroutine ndcent(igeom, ndim, lsn, nfiss, tx, txlsn, nnc)
 21      continue
 20  continue
 !
-!.....................................................................
-!      AJUSTEMENT DES LEVEL SET POUR LES ARETES INTERNES
-!
-!      connectivite des aretes internes
-    do i = 1, 7
-       do j = 1, 2
-          arint(i,j) =0
-       end do
-    end do
-!
-    if (nnop .eq. 20) then
-       arint(1,1)=2
-       arint(1,2)=4
-       arint(2,1)=2
-       arint(2,2)=5
-       arint(3,1)=3
-       arint(3,2)=6
-       arint(4,1)=3
-       arint(4,2)=8
-       arint(5,1)=4
-       arint(5,2)=5
-       arint(6,1)=6
-       arint(6,2)=8
-       arint(7,1)=6
-       arint(7,2)=4
-    else if (nnop.eq.15) then
-       arint(1,1)=1
-       arint(1,2)=5
-       arint(2,1)=2
-       arint(2,2)=6
-       arint(3,1)=1
-       arint(3,2)=6
-    else if (nnop.eq.13) then
-       arint(1,1)=1
-       arint(1,2)=3
-    else if (nnop.eq.8) then
-       arint(1,1)=2
-       arint(1,2)=4
-    endif
-!
-   do ifiss = 1, nfiss
-      do j = 1, nnc
-         lsna = lsn((arint(j,1)-1)*nfiss+ifiss)
-         lsnb = lsn((arint(j,2)-1)*nfiss+ifiss)
-         lsnm = txlsn((j-1)*nfiss+ifiss)
-         if (lsna.eq.0.d0 .and. lsnb.eq.0.d0 .and. lsnm.ne.0.d0) then
-            txlsn((j-1)*nfiss+ifiss)=0.d0
-         elseif (lsna.eq.0.d0 .and. lsnb*lsnm.lt.0.d0) then
-            txlsn((j-1)*nfiss+ifiss)=0.d0
-         elseif (lsnb.eq.0.d0 .and. lsna*lsnm.lt.0.d0) then
-            txlsn((j-1)*nfiss+ifiss)=0.d0
-         elseif (lsnm.eq.0.d0 .and. lsna*lsnb.gt.0.d0) then
-            txlsn((j-1)*nfiss+ifiss)=(lsna+lsnb)/20.d0
-         elseif (lsnm*lsna.lt.0.d0 .and. lsnm*lsnb.lt.0.d0) then
-            txlsn((j-1)*nfiss+ifiss)=(lsna+lsnb)/20.d0
-         endif
-      end do
-   end do
 end subroutine

@@ -109,3 +109,6 @@ cdef public void lcsymb_( char* compor, char* name,
     """Return the name of the function to call in the MFront library"""
     sret = catalc.get_symbol( to_cstr( compor, lcompor ) )
     copyToFStr( name, sret, lname )
+
+cdef public void lcsymm_( char *compor, char *symm ):
+    assert False

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -63,13 +63,13 @@ REST_SOUS_STRUC=OPER(nom="REST_SOUS_STRUC",op=  77,sd_prod=rest_sous_struc_prod,
          FREQ            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**' ),  
          LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster ),
          CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("ABSOLU","RELATIF") ),
-         b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+         b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
              PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-         b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+         b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
              PRECISION       =SIMP(statut='o',typ='R',),),
          INTERPOL        =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","LIN") ),
          TOUT_CHAM       =SIMP(statut='f',typ='TXM',into=("OUI",) ),
-         b_nom_cham=BLOC(condition="TOUT_CHAM == None",
+         b_nom_cham=BLOC(condition="""not exists("TOUT_CHAM")""",
              NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=8,defaut="ACCE",into=("DEPL",
                                    "VITE","ACCE","ACCE_ABSOLU","EFGE_ELNO","SIPO_ELNO","SIGM_ELNO","FORC_NODA",) ),),
          GROUP_NO        =SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
@@ -77,8 +77,8 @@ REST_SOUS_STRUC=OPER(nom="REST_SOUS_STRUC",op=  77,sd_prod=rest_sous_struc_prod,
          GROUP_MA        =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
          MAILLE          =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
          CYCLIQUE    =FACT(statut='f',
-           NB_SECTEUR      =SIMP(statut='f',typ='I',validators=NoRepeat(),max=1 ),
-           NUME_DIAMETRE    =SIMP(statut='f',typ='I',validators=NoRepeat(),max=1 ),
+           NB_SECTEUR      =SIMP(statut='f',typ='I',max=1 ),
+           NUME_DIAMETRE    =SIMP(statut='f',typ='I',max=1 ),
            RESULTAT2       =SIMP(statut='f',typ=(evol_elas,evol_noli,dyna_trans,evol_char,
                                                mode_meca) ),
          ),
@@ -86,5 +86,5 @@ REST_SOUS_STRUC=OPER(nom="REST_SOUS_STRUC",op=  77,sd_prod=rest_sous_struc_prod,
          SQUELETTE       =SIMP(statut='f',typ=squelette ),
          SOUS_STRUC      =SIMP(statut='f',typ='TXM' ),  
          SECTEUR         =SIMP(statut='f',typ='I'),  
-         TITRE           =SIMP(statut='f',typ='TXM',max='**' ),  
+         TITRE           =SIMP(statut='f',typ='TXM' ),  
 )  ;

@@ -1,7 +1,7 @@
 # coding=utf-8
 # person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -108,6 +108,7 @@ NONE = None
         self.args.update(args)
         self.nstep = 0
         self.nsd = 0
+        self.tmpsd = -1
         self.par_lot = 'OUI'
         self.par_lot_user = None
         if definition:
@@ -134,10 +135,12 @@ NONE = None
         self.current_context = {}
         self.condition_context = {}
         self.index_etape_courante = 0
-        self.UserError = "UserError"
+        self.UserError = RuntimeError
         self.alea = None
         # permet transitoirement de conserver la liste des étapes
         self.hist_etape = False
+        # par défaut, les commandes filles sont affichées
+        self.show_children = True
 
     def compile(self):
         """
@@ -338,6 +341,11 @@ Causes possibles :
         self.nstep = self.nstep + 1
         idetape = etape.idracine + self.SEP + `self.nstep`
         return idetape
+
+    def get_new_id(self):
+        """Return a new id for temporary datastructures"""
+        self.tmpsd += 1
+        return self.tmpsd
 
     def create_sdprod(self, etape, nomsd):
         """

@@ -1,12 +1,12 @@
 subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
                   nnm, nnl, nbdm, laxis, ldyna,&
-                  lfovit,lpenac, jeusup, ffe, ffm, ffl,&
+                  lpenac, jeusup, ffe, ffm, ffl,&
                   norm, tau1, tau2, mprojt, jacobi,&
                   wpg, dlagrc, dlagrf, jeu, djeu,&
-                  djeut)
+                  djeut, l_previous)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -34,7 +34,6 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
 #include "asterfort/mmlagm.h"
 #include "asterfort/mmmjac.h"
 #include "asterfort/mmmjeu.h"
-#include "asterfort/mmmjev.h"
 #include "asterfort/mmreac.h"
 #include "asterfort/mmvitm.h"
 #include "asterfort/utmess.h"
@@ -46,7 +45,7 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     real(kind=8) :: tau1(3), tau2(3)
     real(kind=8) :: norm(3)
     real(kind=8) :: mprojt(3, 3)
-    aster_logical :: laxis, ldyna, lfovit,lpenac
+    aster_logical :: laxis, ldyna, lpenac,l_previous
     real(kind=8) :: jacobi, wpg
     real(kind=8) :: jeusup
     real(kind=8) :: dlagrc, dlagrf(2)
@@ -74,7 +73,6 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
 ! IN  NBDM   : NOMBRE DE COMPOSANTES/NOEUD DES DEPL+LAGR_C+LAGR_F
 ! IN  LAXIS  : .TRUE. SI AXISYMETRIE
 ! IN  LDYNA  : .TRUE. SI DYNAMIQUE
-! IN  LFOVIT : .TRUE. SI FORMULATION EN VITESSE
 ! IN  JEUSUP : JEU SUPPLEMENTAIRE PAR DIST_ESCL/DIST_MAIT
 ! OUT FFE    : FONCTIONS DE FORMES DEPL_ESCL
 ! OUT FFM    : FONCTIONS DE FORMES DEPL_MAIT
@@ -107,7 +105,7 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     real(kind=8) :: dffl(2, 9), ddffl(3, 9)
     real(kind=8) :: xpc, ypc, xpr, ypr
     real(kind=8) :: mprojn(3, 3)
-    real(kind=8) :: jeuvit,tmp,vec(3),valmax,valmin
+    real(kind=8) :: tmp,vec(3),valmax,valmin
 !
 ! ----------------------------------------------------------------------
 !
@@ -129,6 +127,26 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     ppe = 0.d0
     tmp=0.0
     valmax=0.0
+!
+! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
+!                      POUR AVOIR UNE MATRICE CONSISTANTE
+!     
+    if (l_previous) then 
+        if (iresog .eq. 1) then
+            xpc = zr(jpcf-1+38)
+            ypc = zr(jpcf-1+39)
+            xpr = zr(jpcf-1+40)
+            ypr = zr(jpcf-1+41)
+        endif
+        tau1(1) = zr(jpcf-1+32)
+        tau1(2) = zr(jpcf-1+33)
+        tau1(3) = zr(jpcf-1+34)
+        tau2(1) = zr(jpcf-1+35)
+        tau2(2) = zr(jpcf-1+36)
+        tau2(3) = zr(jpcf-1+37)
+        wpg = zr(jpcf-1+11)
+        ppe = 0.d0
+    endif
 !
 ! --- RECUPERATION DE LA GEOMETRIE ET DES CHAMPS DE DEPLACEMENT
 !
@@ -228,12 +246,27 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
               call utmess('A', 'CONTACT_22',sr=tmp)
          endif   
     endif
+
+
 !
-! --- CALCUL DU JEU EN VITESSE NORMALE
-!
-    if (lfovit) then
-        call mmmjev(ndim, norm, vitpe, vitpm, jeuvit)
+! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
+!                      POUR AVOIR UNE MATRICE CONSISTANTE
+!     
+    
+    if (l_previous) then 
+        jeu    = zr(jpcf-1+29)
+!       djeu(1)    = zr(jpcf-1+29)
+!       djeu(2)    = zr(jpcf-1+29)
+!       djeu(3)    = zr(jpcf-1+29)
+!       djeut(1)    = zr(jpcf-1+29)
+!       djeut(2)    = zr(jpcf-1+29)
+!       djeut(3)    = zr(jpcf-1+29)
+        dlagrc = zr(jpcf-1+26)
+!       dlagrf(1) = zr(jpcf-1+26)
+!       dlagrf(2) = zr(jpcf-1+26)
+        
     endif
+
 !
 !
 end subroutine

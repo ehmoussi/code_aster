@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -49,9 +49,9 @@ def C_ETAT_INIT( COMMAND, statut ) :  #COMMUN#
         mcfact = FACT(statut=statut,max='**',
                   regles=(AU_MOINS_UN('EVOL_NOLI','ACCE','VITE','DEPL','SIGM','VARI',),
                           EXCLUS('NUME_ORDRE','INST'), ),
-                  b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+                  b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                                    PRECISION       =SIMP(statut='d',typ='R',defaut= 1.E-6,),),
-                  b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+                  b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                                    PRECISION       =SIMP(statut='o',typ='R',),),
                     **kwargs
                  )
@@ -59,9 +59,9 @@ def C_ETAT_INIT( COMMAND, statut ) :  #COMMUN#
         mcfact = FACT(statut=statut,max='**',
                   regles=(AU_MOINS_UN('EVOL_NOLI','DEPL','SIGM','VARI','COHE',),
                           EXCLUS('NUME_ORDRE','INST'), ),
-                  b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+                  b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                                    PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-                  b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+                  b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                                    PRECISION       =SIMP(statut='o',typ='R',),),
                     **kwargs
                  )

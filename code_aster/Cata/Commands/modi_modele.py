@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -26,6 +26,7 @@ MODI_MODELE=OPER(nom="MODI_MODELE",op= 103,sd_prod=modele_sdaster,reentrant='o',
          UIinfo={"groupes":("Modélisation",)},
          fr=tr("Modifier la partition d'un modèle (parallélisme) "),
 
+         reuse=SIMP(statut='c', typ=CO),
          MODELE          =SIMP(statut='o',typ=modele_sdaster,min=1,max=1,),
 
          DISTRIBUTION  =FACT(statut='d',
@@ -34,10 +35,10 @@ MODI_MODELE=OPER(nom="MODI_MODELE",op= 103,sd_prod=modele_sdaster,reentrant='o',
                                          "SOUS_DOMAINE","GROUP_ELEM","SOUS_DOM.OLD")),
              # remarque : "GROUP_ELEM" et "SOUS_DOMAINE" ne servent à rien car on ne modifie la distribution des éléments.
              #            Mais on les acceptent pour simplifier la programmation de calc_modes_multi_bandes.py
-             b_dist_maille          =BLOC(condition = "METHODE in ('MAIL_DISPERSE','MAIL_CONTIGU')",
+             b_dist_maille          =BLOC(condition = """is_in("METHODE", ('MAIL_DISPERSE','MAIL_CONTIGU'))""",
                  CHARGE_PROC0_MA =SIMP(statut='f',typ='I',defaut=100,val_min=0),
              ),
-             b_partition  =BLOC(condition = "METHODE == 'SOUS_DOM.OLD' ",
+             b_partition  =BLOC(condition = """equal_to("METHODE", 'SOUS_DOM.OLD') """,
                  NB_SOUS_DOMAINE    =SIMP(statut='f',typ='I'), # par defaut : le nombre de processeurs
                  PARTITIONNEUR      =SIMP(statut='f',typ='TXM',into=("METIS","SCOTCH",), defaut="METIS" ),
                  CHARGE_PROC0_SD =SIMP(statut='f',typ='I',defaut=0,val_min=0),

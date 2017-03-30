@@ -59,7 +59,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
            MAILLE          =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
            PHENOMENE       =SIMP(statut='o',typ='TXM',
                                  into=("MECANIQUE","THERMIQUE","ACOUSTIQUE") ),
-                b_mecanique     =BLOC( condition = "PHENOMENE=='MECANIQUE'",
+                b_mecanique     =BLOC( condition = """equal_to("PHENOMENE", 'MECANIQUE')""",
                                         fr=tr("modélisations mécaniques"),
                     MODELISATION    =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=10,into=(
                                   "2D_DIS_T",        # person_in_charge: jean-luc.flejou at edf.fr
@@ -239,22 +239,22 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "AXIS_JHMS",       # person_in_charge: sylvie.granet at edf.fr
                                                                       )  )  ),
 
-                b_thermique     =BLOC( condition = "PHENOMENE=='THERMIQUE'",
+                b_thermique     =BLOC( condition = """equal_to("PHENOMENE", 'THERMIQUE')""",
                                         fr=tr("modélisations thermiques"),
                     MODELISATION    =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=10,into=(
-                                  "3D",              # person_in_charge: jessica.haelewyn at edf.fr
-                                  "3D_DIAG",         # person_in_charge: jessica.haelewyn at edf.fr
-                                  "AXIS",            # person_in_charge: jessica.haelewyn at edf.fr
-                                  "AXIS_DIAG",       # person_in_charge: jessica.haelewyn at edf.fr
-                                  "AXIS_FOURIER",    # person_in_charge: jessica.haelewyn at edf.fr
-                                  "COQUE",           # person_in_charge: jessica.haelewyn at edf.fr
-                                  "COQUE_AXIS",      # person_in_charge: jessica.haelewyn at edf.fr
-                                  "COQUE_PLAN",      # person_in_charge: jessica.haelewyn at edf.fr
-                                  "PLAN",            # person_in_charge: jessica.haelewyn at edf.fr
-                                  "PLAN_DIAG",       # person_in_charge: jessica.haelewyn at edf.fr
+                                  "3D",              # person_in_charge: mickael.abbas at edf.fr
+                                  "3D_DIAG",         # person_in_charge: mickael.abbas at edf.fr
+                                  "AXIS",            # person_in_charge: mickael.abbas at edf.fr
+                                  "AXIS_DIAG",       # person_in_charge: mickael.abbas at edf.fr
+                                  "AXIS_FOURIER",    # person_in_charge: mickael.abbas at edf.fr
+                                  "COQUE",           # person_in_charge: mickael.abbas at edf.fr
+                                  "COQUE_AXIS",      # person_in_charge: mickael.abbas at edf.fr
+                                  "COQUE_PLAN",      # person_in_charge: mickael.abbas at edf.fr
+                                  "PLAN",            # person_in_charge: mickael.abbas at edf.fr
+                                  "PLAN_DIAG",       # person_in_charge: mickael.abbas at edf.fr
                                                                       ),),),
 
-                b_acoustique    =BLOC( condition = "PHENOMENE=='ACOUSTIQUE'",
+                b_acoustique    =BLOC( condition = """equal_to("PHENOMENE", 'ACOUSTIQUE')""",
                                         fr=tr("modélisations acoustiques"),
                      MODELISATION    =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=10,into=(
                                   "3D",              # person_in_charge: mickael.abbas at edf.fr
@@ -267,15 +267,15 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
              METHODE    =SIMP(statut='f',typ='TXM',defaut="SOUS_DOMAINE",
                                    into=("MAIL_CONTIGU","MAIL_DISPERSE","CENTRALISE",
                                          "GROUP_ELEM","SOUS_DOMAINE","SOUS_DOM.OLD",)),
-             b_dist_maille          =BLOC(condition = "METHODE in ('MAIL_DISPERSE','MAIL_CONTIGU')",
+             b_dist_maille          =BLOC(condition = """is_in("METHODE", ('MAIL_DISPERSE','MAIL_CONTIGU'))""",
                  CHARGE_PROC0_MA =SIMP(statut='f',typ='I',defaut=100,val_min=0,val_max=100),
              ),
-             b_partition  =BLOC(condition = "METHODE in ('SOUS_DOMAINE', 'SOUS_DOM.OLD') ",
+             b_partition  =BLOC(condition = """is_in("METHODE", ('SOUS_DOMAINE', 'SOUS_DOM.OLD') )""",
                  NB_SOUS_DOMAINE  =SIMP(statut='f',typ='I'), # par defaut : le nombre de processeurs
                  PARTITIONNEUR    =SIMP(statut='f',typ='TXM',into=("METIS","SCOTCH",), defaut="METIS" ),
-                 b_sous_domaine  =BLOC(condition = "PARALLELISME == 'SOUS_DOM.OLD'",
-                     CHARGE_PROC0_SD =SIMP(statut='f',typ='I',defaut=0,val_min=0),
-                 ),
+             ),
+             b_sous_domaine  =BLOC(condition = "equal_to('METHODE', 'SOUS_DOM.OLD')",
+                CHARGE_PROC0_SD =SIMP(statut='f',typ='I',defaut=0,val_min=0),
              ),
          ),
 

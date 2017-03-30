@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -38,6 +38,7 @@ MACRO_ELAS_MULT=MACRO(nom="MACRO_ELAS_MULT",
                       fr=tr("Calculer les réponses statiques linéaires pour différents cas "
                            "de charges ou modes de Fourier"),
          regles=(UN_PARMI('CHAR_MECA_GLOBAL','LIAISON_DISCRET', ),),
+         reuse=SIMP(statut='c', typ=CO),
          MODELE          =SIMP(statut='o',typ=modele_sdaster),
          CHAM_MATER      =SIMP(statut='f',typ=cham_mater),
          CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
@@ -53,24 +54,24 @@ MACRO_ELAS_MULT=MACRO(nom="MACRO_ELAS_MULT",
            CHAR_MECA       =SIMP(statut='f',typ=(char_meca),validators=NoRepeat(),max='**'),
            OPTION          =SIMP(statut='f',typ='TXM',into=("SIEF_ELGA","SANS"),defaut="SIEF_ELGA",max=1,
                                  fr=tr("Contraintes aux points de Gauss."),),
-           SOUS_TITRE      =SIMP(statut='f',typ='TXM',max='**'),
+           SOUS_TITRE      =SIMP(statut='f',typ='TXM'),
            VECT_ASSE       =SIMP(statut='f',typ=cham_no_sdaster),
          ),
          SOLVEUR         =FACT(statut='d',
            METHODE         =SIMP(statut='f',typ='TXM',defaut="MULT_FRONT",into=("MULT_FRONT","LDLT") ),
-           b_mult_front    = BLOC ( condition = "METHODE == 'MULT_FRONT' ",
+           b_mult_front    = BLOC ( condition = """equal_to("METHODE", 'MULT_FRONT') """,
                                     fr=tr("Paramètres de la méthode multi frontale"),
              RENUM           =SIMP(statut='f',typ='TXM',defaut="METIS",into=("MD","MDA","METIS") ),
            ),
-           b_ldlt          =BLOC(condition = "METHODE == 'LDLT' ",fr=tr("Paramètres de la méthode LDLT"),
-             RENUM           =SIMP(statut='f',typ='TXM',defaut="SANS",into=("SANS",) ),
+           b_ldlt          =BLOC(condition = """equal_to("METHODE", 'LDLT') """,fr=tr("Paramètres de la méthode LDLT"),
+             RENUM           =SIMP(statut='f',typ='TXM',defaut="RCMK",into=("RCMK",) ),
             ),
-           b_ldlt_mult     =BLOC(condition = "METHODE == 'LDLT' or METHODE == 'MULT_FRONT' ",
+           b_ldlt_mult     =BLOC(condition = """equal_to("METHODE", 'LDLT') or equal_to("METHODE", 'MULT_FRONT') """,
                                    fr=tr("Paramètres relatifs à la non inversibilité de la matrice à factorise"),
              NPREC           =SIMP(statut='f',typ='I',defaut= 8 ),
              STOP_SINGULIER  =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
            ),
          ),
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=(1,2)),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE           =SIMP(statut='f',typ='TXM'),
 )  ;

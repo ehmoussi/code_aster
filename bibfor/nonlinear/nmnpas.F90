@@ -1,10 +1,9 @@
 subroutine nmnpas(modele    , noma  , mate  , carele    , fonact    ,&
                   ds_print  , sddisc, sdsuiv, sddyna    , sdnume    ,&
-                  ds_measure, numedd, numins, ds_contact, ds_algorom,&
+                  ds_measure, numedd, numins, ds_contact, &
                   valinc    , solalg, solveu, ds_conv   , lischa    )
 !
 use NonLin_Datastructure_type
-use Rom_Datastructure_type
 !
 implicit none
 !
@@ -27,10 +26,9 @@ implicit none
 #include "asterfort/nmnkft.h"
 #include "asterfort/nmvcle.h"
 #include "asterfort/SetResi.h"
-#include "asterfort/romAlgoNLReduCoorInit.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -57,7 +55,6 @@ implicit none
     type(NL_DS_Measure), intent(inout) :: ds_measure
     character(len=24) :: numedd
     type(NL_DS_Contact), intent(inout) :: ds_contact
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     character(len=19) :: solalg(*), valinc(*)
     type(NL_DS_Conv), intent(inout) :: ds_conv
     character(len=19), intent(in) :: lischa
@@ -83,7 +80,6 @@ implicit none
 ! IN  SDSUIV : SD SUIVI_DDL
 ! IN  SDNUME : NOM DE LA SD NUMEROTATION
 ! IO  ds_contact       : datastructure for contact management
-! In  ds_algorom       : datastructure for ROM parameters
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
@@ -92,7 +88,7 @@ implicit none
 ! ----------------------------------------------------------------------
 !
     aster_logical :: lgrot, ldyna, lnkry
-    aster_logical :: l_cont, l_cont_cont, l_diri_undead, scotch
+    aster_logical :: l_cont, l_cont_cont, l_diri_undead
     integer :: neq
     character(len=19) :: depmoi, varmoi
     character(len=19) :: depplu, varplu
@@ -106,7 +102,6 @@ implicit none
 ! ----------------------------------------------------------------------
 !
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
-    scotch = .false.
 !
 ! - Active functionnalites
 !
@@ -120,10 +115,6 @@ implicit none
 ! --- INSTANT COURANT
 !
     instan = diinst(sddisc,numins)
-!
-! - Print management - Initializations for new step time
-!
-    call nmimin(fonact, sddisc, sdsuiv, numins, ds_print)
 !
 ! --- POUTRES EN GRANDES ROTATIONS
 !
@@ -173,13 +164,8 @@ implicit none
 ! --- INITIALISATIONS EN DYNAMIQUE
 !
     if (ldyna) then
-        if (l_cont_cont) then
-            scotch = ds_contact%l_getoff
-        else
-            scotch = .false._1
-        endif
         call ndnpas(fonact, numedd, numins, sddisc, sddyna,&
-                    scotch, valinc, solalg)
+                    valinc, solalg)
     endif
 !
 ! --- NEWTON-KRYLOV : COPIE DANS LA SD SOLVEUR DE LA PRECISION DE LA
@@ -196,10 +182,8 @@ implicit none
                        sddyna, valinc, sdnume    , fonact)
     endif
 !
-! - Initializations of reduced coordinates (ROM)
+! - Print management - Initializations for new step time
 !
-    if (ds_algorom%l_rom) then
-        call romAlgoNLReduCoorInit(ds_algorom)
-    endif
+    call nmimin(fonact, sddisc, sdsuiv, numins, ds_print)
 !
 end subroutine

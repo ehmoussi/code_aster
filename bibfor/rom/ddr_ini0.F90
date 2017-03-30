@@ -5,12 +5,12 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/infniv.h"
-#include "asterfort/romBaseInit.h"
-#include "asterfort/romLineicBaseInit.h"
+#include "asterfort/romBaseDSInit.h"
+#include "asterfort/romLineicBaseDSInit.h"
 #include "asterfort/utmess.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -54,12 +54,12 @@ implicit none
 !
 ! - Creation of datastructure for lineic base numbering
 !
-    call romLineicBaseInit(ds_lineicnumb)
+    call romLineicBaseDSInit(ds_lineicnumb)
 !
 ! - Create datastructure for empiric modes
 !
-    call romBaseInit(ds_lineicnumb, empi_prim)
-    call romBaseInit(ds_lineicnumb, empi_dual)
+    call romBaseDSInit(ds_lineicnumb, empi_prim)
+    call romBaseDSInit(ds_lineicnumb, empi_dual)
 !
 ! - Create parameters datastructure
 !
@@ -70,4 +70,3 @@ implicit none
     ds_para%grnode_int    = ' '
 !
 end subroutine
-

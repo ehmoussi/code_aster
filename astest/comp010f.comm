@@ -1,7 +1,6 @@
-#======================================================================
-#
+# person_in_charge: david.haboussa at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -76,7 +75,6 @@ MATERI=DEFI_MATERIAU(ELAS_FO=_F(E=YOUN,
                      VISC_IRRA_LOG=_F( A        = 1.28E-1,
                                        B        = 0.01159,
                                        CSTE_TPS = 0.3540,
-                                       FLUX_PHI = 1.E-4,
                                        ENER_ACT=5000.)
                       );
 
@@ -154,7 +152,6 @@ for i in range(NCAL):
                      VISC_IRRA_LOG=_F( A        = 1.28E-1,
                                        B        = 0.01159,
                                        CSTE_TPS = 0.3540,
-                                       FLUX_PHI = 1.E-4,
                                        ENER_ACT=5000.)
                                  );
 

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -25,6 +25,7 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
             UIinfo={"groupes":("Résolution","Thermique",)},
                    fr=tr("Résoudre un problème thermique non linéaire (conditions limites ou comportement matériau)"
                        " stationnaire ou transitoire"),
+         reuse=SIMP(statut='c', typ=CO),
          MODELE          =SIMP(statut='o',typ=(modele_sdaster),),
          CHAM_MATER      =SIMP(statut='o',typ=(cham_mater) ),
          CARA_ELEM       =SIMP(statut='c',typ=(cara_elem) ),
@@ -48,18 +49,18 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
            FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
          ),
          METHODE         =SIMP(statut='d',typ='TXM',defaut="NEWTON",into=("NEWTON","MODELE_REDUIT")),
-         b_meth_newton = BLOC(condition = "METHODE == 'NEWTON'",
+         b_meth_newton = BLOC(condition = """equal_to("METHODE", 'NEWTON')""",
                     NEWTON          =FACT(statut='d',
                         REAC_ITER       =SIMP(statut='f',typ='I',defaut= 0 ,val_min=0),
                         RESI_LINE_RELA  =SIMP(statut='f',typ='R',defaut= 1.0E-3 ),
                         ITER_LINE_MAXI  =SIMP(statut='f',typ='I',defaut= 0 ),
                     ),),
-         b_meth_rom = BLOC(condition = "METHODE == 'MODELE_REDUIT'",
+         b_meth_rom = BLOC(condition = """equal_to("METHODE", 'MODELE_REDUIT')""",
                     MODELE_REDUIT =FACT(statut='d',
                         REAC_ITER       =SIMP(statut='f',typ='I',defaut= 0 ,val_min=0),
                         BASE_PRIMAL     =SIMP(statut='o',typ=mode_empi,max=1),
                         DOMAINE_REDUIT  =SIMP(statut='f',typ='TXM',defaut='NON',into=('OUI','NON'),),
-                        p_hr_cond   =BLOC(condition="(DOMAINE_REDUIT=='OUI')",
+                        p_hr_cond   =BLOC(condition="""(equal_to("DOMAINE_REDUIT", 'OUI'))""",
                             GROUP_NO_INTERF=SIMP(statut='o',typ=grno,max=1),),
                     ),),
 #-------------------------------------------------------------------
@@ -74,9 +75,9 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
            NUME_ORDRE      =SIMP(statut='f',typ='I'),
            INST            =SIMP(statut='f',typ='R'),
            CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
-           b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+           b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
               PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-           b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+           b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
               PRECISION       =SIMP(statut='o',typ='R',),),
            INST_ETAT_INIT  =SIMP(statut='f',typ='R'),
          ),
@@ -94,8 +95,8 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
          ARCHIVAGE       =C_ARCHIVAGE(),
 #-------------------------------------------------------------------
          OBSERVATION     =C_OBSERVATION('THERMIQUE'),
-#------------------------------------------------------------------- 
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+#-------------------------------------------------------------------
+         TITRE           =SIMP(statut='f',typ='TXM'),
          INFO            =SIMP(statut='f',typ='I',into=(1,2) ),
 
 )  ;

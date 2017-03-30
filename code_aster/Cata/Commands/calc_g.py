@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -27,9 +27,10 @@ CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
                     reentrant='f',
             UIinfo={"groupes":("Post-traitements","Rupture",)},
 
+         reuse=SIMP(statut='c', typ=CO),
          THETA          =FACT(statut='o',
            FOND_FISS       =SIMP(statut='f',typ=fond_fiss,max=1),
-           FISSURE         =SIMP(statut='f',position='global',typ=fiss_xfem,max=1),
+           FISSURE         =SIMP(statut='f',typ=fiss_xfem,max=1),
            NB_POINT_FOND   =SIMP(statut='f',typ='I',val_min=2),
            regles=(
                    UN_PARMI('FOND_FISS','FISSURE'),
@@ -48,8 +49,8 @@ CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
             ),
 
          RESULTAT        =SIMP(statut='o',typ=(evol_elas,evol_noli,dyna_trans,mode_meca,mult_elas),),
-                    
-         b_no_mult          =BLOC(condition="(AsType(RESULTAT) != mult_elas)",
+
+         b_no_mult          =BLOC(condition="""(is_type("RESULTAT") != mult_elas)""",
          regles=(EXCLUS('TOUT_ORDRE','NUME_ORDRE','LIST_ORDRE','INST','LIST_INST',
                   'TOUT_MODE','NUME_MODE','LIST_MODE','FREQ','LIST_FREQ'),),
 
@@ -64,20 +65,20 @@ CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
             LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
             FREQ            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
 
-           b_acce_reel     =BLOC(condition="(INST != None)or(LIST_INST != None)or(FREQ != None)or(LIST_FREQ != None)",
+           b_acce_reel     =BLOC(condition="""(exists("INST"))or(exists("LIST_INST"))or(exists("FREQ"))or(exists("LIST_FREQ"))""",
               CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
-                  b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+                  b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                       PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-                  b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+                  b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                       PRECISION       =SIMP(statut='o',typ='R'),),
             ),
          ),
 
-         b_mult_elas     =BLOC(condition="(AsType(RESULTAT) == mult_elas)",
+         b_mult_elas     =BLOC(condition="""(is_type("RESULTAT") == mult_elas)""",
             NOM_CAS         =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**' ),
          ),
 
-         b_no_mult_elas  =BLOC(condition="(AsType(RESULTAT) != mult_elas)",
+         b_no_mult_elas  =BLOC(condition="""(is_type("RESULTAT") != mult_elas)""",
             EXCIT           =FACT(statut='f',max='**',
                CHARGE          =SIMP(statut='f',typ=(char_meca,char_cine_meca)),
                FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -102,7 +103,7 @@ CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
            LISSAGE_THETA   =SIMP(statut='f',typ='TXM',defaut="LEGENDRE",into=("LEGENDRE","LAGRANGE"),),
            LISSAGE_G       =SIMP(statut='f',typ='TXM',defaut="LEGENDRE",into=("LEGENDRE","LAGRANGE",
                                  "LAGRANGE_NO_NO"),),
-                b_legen    =BLOC(condition="(LISSAGE_THETA=='LEGENDRE') or (LISSAGE_G=='LEGENDRE')",
+                b_legen    =BLOC(condition="""(equal_to("LISSAGE_THETA", 'LEGENDRE')) or (equal_to("LISSAGE_G", 'LEGENDRE'))""",
                   DEGRE           =SIMP(statut='f',typ='I',defaut=5,into=(0,1,2,3,4,5,6,7) ),
                 ),
          ),
@@ -114,11 +115,11 @@ CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
                                      "CALC_GTP"),
                              ),
 
-        b_cal_contrainte =BLOC(condition="(COMPORTEMENT!=None and (OPTION=='CALC_G' or OPTION=='CALC_GTP' or OPTION=='CALC_G_GLOB'))",
+        b_cal_contrainte =BLOC(condition="""(exists("COMPORTEMENT") and (equal_to("OPTION", 'CALC_G') or equal_to("OPTION", 'CALC_GTP') or equal_to("OPTION", 'CALC_G_GLOB')))""",
           CALCUL_CONTRAINTE =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON",),),
          ),
 
 
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE           =SIMP(statut='f',typ='TXM'),
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2) ),
 );

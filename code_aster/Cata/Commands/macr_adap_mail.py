@@ -72,7 +72,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 2.2. Si ce n'est pas une simple lecture :
 #
-  b_maillage = BLOC( condition = " (ADAPTATION != 'LECTURE') " ,
+  b_maillage = BLOC( condition = """ (not equal_to("ADAPTATION", 'LECTURE')) """ ,
                           fr=tr("Lectures de champs aux points de Gauss ou aux noeuds par element."),
 #
 # 2.2.1. Le concept du maillage final (sortie)
@@ -109,9 +109,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 4. Pour de l'adaptation libre, il faut un champ d'indicateur
 #
-  b_champ = BLOC( condition = " (ADAPTATION == 'RAFF_DERA') or \
-                                (ADAPTATION == 'RAFFINEMENT') or \
-                                (ADAPTATION == 'DERAFFINEMENT') " ,
+  b_champ = BLOC( condition = """is_in("ADAPTATION", ('RAFF_DERA','RAFFINEMENT','DERAFFINEMENT') )""" ,
                   fr=tr("Pour une adaptation libre, choix du champ définissant la région à raffiner/déraffiner"),
 #
     regles=(UN_PARMI('CHAM_GD','RESULTAT_N')),
@@ -130,7 +128,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
                       fr=tr("Concept résultat Code_Aster contenant le champ"),
                       ),
 #
-    b_champ_adaptation = BLOC(condition="(RESULTAT_N != None)",
+    b_champ_adaptation = BLOC(condition="""(exists("RESULTAT_N"))""",
       NOM_CHAM = SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO(),
                         fr=tr("Champ dans le résultat"),
                         ),
@@ -144,7 +142,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 4.1.5. Le paramètre temporel pour le champ
 #
-    b_parametre_temporel = BLOC(condition="(RESULTAT_N != None)",
+    b_parametre_temporel = BLOC(condition="""(exists("RESULTAT_N"))""",
                                 fr=tr("Choix éventuel du paramètre temporel pour le champ"),
 #
       regles=(EXCLUS('NUME_ORDRE','INST'),),
@@ -164,17 +162,17 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 4.1.5.2.2. La précision du choix de l'instant
 #
-      b_precision = BLOC(condition="(INST != None)",
+      b_precision = BLOC(condition="""(exists("INST"))""",
                          fr=tr("Choix de la précision du choix de l'instant"),
 
         CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF", "ABSOLU",),
                          fr=tr("Critère de précision sur le choix de l'instant associé"),
                          ),
-        b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+        b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
             PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,
                              fr=tr("Précision relative sur le choix de l'instant associé"),
                              ),),
-        b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+        b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
             PRECISION       =SIMP(statut='o',typ='R',
                              fr=tr("Précision absolue sur le choix de l'instant associé"),
                              ),),
@@ -207,8 +205,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #        absolu, relatif, en proportion d'entite
 # 5.1. Pour le raffinement :
 #
-  b_critere_de_raffinement = BLOC( condition = " (ADAPTATION == 'RAFF_DERA') or \
-                                                 (ADAPTATION == 'RAFFINEMENT') " ,
+  b_critere_de_raffinement = BLOC( condition = """is_in("ADAPTATION", ('RAFF_DERA','RAFFINEMENT') )""" ,
                                 fr=tr("Critère de raffinement."),
 
 #
@@ -230,8 +227,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 5.2. Pour le deraffinement :
 #
-  b_critere_de_deraffinement = BLOC( condition = " (ADAPTATION == 'RAFF_DERA') or \
-                                                   (ADAPTATION == 'DERAFFINEMENT') " ,
+  b_critere_de_deraffinement = BLOC( condition = """is_in("ADAPTATION", ('RAFF_DERA','DERAFFINEMENT'))""" ,
                                      fr=tr("Critère de déraffinement."),
 #
     regles=(UN_PARMI ( 'CRIT_DERA_ABS', 'CRIT_DERA_REL', 'CRIT_DERA_PE', 'CRIT_DERA_MS' ),),
@@ -252,7 +248,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 6. Pour de l'adaptation par zone, définitions des zones
 #
-  b_zone = BLOC( condition = " (ADAPTATION == 'RAFF_DERA_ZONE') " ,
+  b_zone = BLOC( condition = """ (equal_to("ADAPTATION", 'RAFF_DERA_ZONE')) """ ,
                  fr=tr("Pour une adaptation selon une zone à raffiner"),
 #
     ZONE = FACT(statut='o',min=1,max='**',
@@ -284,9 +280,6 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 # 6.3. Une boite rectangulaire ou parallelepipedique
 # 6.3.1. Incontournables
 #
-##gn      b_z_boiteXY = BLOC( condition = " (TYPE == 'RECTANGLE') or (TYPE == 'BOITE') " ,
-##gn                          fr=tr("X et Y mini/maxi pour un rectangle ou un parallelepipede."),
-##gn
       X_MINI = SIMP(statut='f',typ='R',
                     fr=tr("Abscisse minimum de la boite"),
                     ),
@@ -299,73 +292,49 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
       Y_MAXI = SIMP(statut='f',typ='R',
                       fr=tr("Abscisse maximum de la boite"),
                       ),
-##gn      ) ,
 #
 # 6.3.2. Complement pour une boite parallelepipedique
 #
-##gn      b_z_boiteZ = BLOC( condition = " (TYPE == 'BOITE') " ,
-##gn                         fr=tr("Z mini/maxi pour un parallelepipede."),
-##gn
       Z_MINI = SIMP(statut='f',typ='R',
                     fr=tr("Cote minimum de la boite"),
                     ),
       Z_MAXI = SIMP(statut='f',typ='R',
                     fr=tr("Cote maximum de la boite"),
                     ),
-##gn      ) ,
 #
 # 6.4. Rayon pour un disque, une sphere ou un cylindre
 #
-##gn      b_z_rayon = BLOC( condition = " (TYPE == 'DISQUE') or (TYPE == 'SPHERE') or (TYPE == 'CYLINDRE') " ,
-##gn                        fr=tr("Le rayon d'un disque, d'une sphere ou d'un cylindre."),
-##gn
       RAYON = SIMP(statut='f',typ='R',val_min=0.0,
                    fr=tr("Rayon"),
                    ),
-##gn      ) ,
 #
 # 6.5. Pour un disque plein ou perce, une sphere
 # 6.5.1. Incontournables
 #
-##gn      b_z_di_sp_XY = BLOC( condition = " (TYPE == 'DISQUE') or (TYPE == 'SPHERE') or (TYPE == 'DISQUE_PERCE') " ,
-##gn                           fr=tr("X et Y du centre d'un disque plein ou perce, d'une sphere."),
-##gn
       X_CENTRE = SIMP(statut='f',typ='R',
                       fr=tr("Abscisse du centre du disque ou de la sphère"),
                       ),
       Y_CENTRE = SIMP(statut='f',typ='R',
                       fr=tr("Ordonnée du centre du disque ou de la sphère"),
                       ),
-##gn      ) ,
 #
 # 6.5.2. Complement pour une sphere
 #
-##gn      b_z_sp_Z = BLOC( condition = " (TYPE == 'SPHERE') " ,
-##gn                       fr=tr("Cote du centre de la sphere."),
-##gn
        Z_CENTRE = SIMP(statut='f',typ='R',
                        fr=tr("Cote du centre de la sphère"),
                        ),
-##gn      ) ,
 #
 # 6.6. Rayons interieur et exterieur pour un disque perce ou un tuyau
 #
-##gn      b_z_rayon_int_ext = BLOC( condition = " (TYPE == 'DISQUE_PERCE') or (TYPE == 'TUYAU') " ,
-##gn                                fr=tr("Le rayon d'un disque perce ou d'un tuyau."),
-##gn
       RAYON_INT = SIMP(statut='f',typ='R',val_min=0.0,
                        fr=tr("Rayon intérieur"),
                        ),
       RAYON_EXT = SIMP(statut='f',typ='R',val_min=0.0,
                        fr=tr("Rayon extérieur"),
                        ),
-##gn      ) ,
 #
 # 6.7. Un cylindre ou un tuyau
 #
-##gn      b_z_cylindre_tuyau = BLOC( condition = " (TYPE == 'CYLINDRE') or (TYPE == 'TUYAU') " ,
-##gn                                 fr=tr("Pour un cylindre ou un tuyau."),
-##gn
       X_AXE = SIMP(statut='f',typ='R',
                    fr=tr("Abscisse du vecteur directeur de l'axe"),
                    ),
@@ -387,7 +356,6 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
       HAUTEUR = SIMP(statut='f',typ='R',val_min=0.0,
                      fr=tr("Hauteur"),
                      ),
-##gn     ) ,
 #
     ) ,
 #
@@ -396,10 +364,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 # 7. Les niveaux extremes pour le maillage adapte
 # 7.1. Pour le raffinement :
 #
-  b_niveau_maximum = BLOC( condition = " (ADAPTATION == 'RAFF_DERA') or \
-                                         (ADAPTATION == 'RAFF_DERA_ZONE') or \
-                                         (ADAPTATION == 'RAFFINEMENT') or \
-                                         (ADAPTATION == 'RAFFINEMENT_UNIFORME') " ,
+  b_niveau_maximum = BLOC( condition = """is_in("ADAPTATION", ('RAFF_DERA','RAFF_DERA_ZONE','RAFFINEMENT','RAFFINEMENT_UNIFORME') )""" ,
                            fr=tr("Profondeur maximale de raffinement"),
 #
     NIVE_MAX = SIMP(statut='f',typ='I',val_min=1,
@@ -414,10 +379,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 7.2. Pour le deraffinement :
 #
-  b_niveau_minimum = BLOC( condition = " (ADAPTATION == 'RAFF_DERA') or \
-                                         (ADAPTATION == 'RAFF_DERA_ZONE') or \
-                                         (ADAPTATION == 'DERAFFINEMENT') or \
-                                         (ADAPTATION == 'DERAFFINEMENT_UNIFORME') " ,
+  b_niveau_minimum = BLOC( condition = """is_in("ADAPTATION", ('RAFF_DERA','RAFF_DERA_ZONE','DERAFFINEMENT','DERAFFINEMENT_UNIFORME') )""" ,
                            fr=tr("Niveau minimum de profondeur de déraffinement"),
 
     NIVE_MIN = SIMP(statut='f',typ='I',val_min=0,
@@ -427,12 +389,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 8. Filtrage de l'adaptation par des groupes
 #
-  b_filtrage_par_des_groupes = BLOC( condition = " (ADAPTATION == 'RAFF_DERA') or \
-                                                   (ADAPTATION == 'RAFFINEMENT') or \
-                                                   (ADAPTATION == 'RAFFINEMENT_UNIFORME') or \
-                                                   (ADAPTATION == 'RAFF_DERA_ZONE') or \
-                                                   (ADAPTATION == 'DERAFFINEMENT') or \
-                                                   (ADAPTATION == 'DERAFFINEMENT_UNIFORME') " ,
+  b_filtrage_par_des_groupes = BLOC( condition = """is_in("ADAPTATION", ('RAFF_DERA','RAFFINEMENT','RAFFINEMENT_UNIFORME','RAFF_DERA_ZONE','DERAFFINEMENT','DERAFFINEMENT_UNIFORME') )""" ,
                                 fr=tr("Filtrage de l'adaptation par des groupes."),
 #
     GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**',
@@ -452,7 +409,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
                            fr=tr("Maillage de la frontière discrète à suivre"),
                            ),
 #
-  b_FRONTIERE = BLOC( condition = " MAILLAGE_FRONTIERE != None " ,
+  b_FRONTIERE = BLOC( condition = """ exists("MAILLAGE_FRONTIERE") """ ,
                       fr=tr("Information complémentaire sur la frontière discrète"),
 
 #
@@ -469,7 +426,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 9.2.1. Nom de la frontière
 #
-    NOM = SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,
+    NOM = SIMP(statut='o',typ='TXM',max=1,
                fr=tr("Nom de la frontière analytique"),
                ),
 #
@@ -482,7 +439,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 # 9.2.3. Pour une sphere, un cylindre, un cone defini par ses rayons ou un tore : rayon et centre
 #        Pour un tore, c'est le rayon de revolution
 #
-    b_fr_rayon = BLOC( condition = " (TYPE == 'SPHERE') or (TYPE == 'CYLINDRE') or (TYPE == 'CONE_R') or (TYPE == 'TORE') " ,
+    b_fr_rayon = BLOC( condition = """ (equal_to("TYPE", 'SPHERE')) or (equal_to("TYPE", 'CYLINDRE')) or (equal_to("TYPE", 'CONE_R')) or (equal_to("TYPE", 'TORE')) """ ,
                        fr=tr("Le rayon et le centre d'une sphère, d'un cylindre, d'un cone ou d'un tore."),
 
       RAYON = SIMP(statut='o',typ='R',val_min=0.0,
@@ -501,7 +458,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 9.2.4. Pour un cylindre, un cone defini par axe et angle ou un tore : axe
 #
-    b_fr_cylindre = BLOC( condition = " (TYPE == 'CYLINDRE') or (TYPE == 'CONE_A') or (TYPE == 'TORE') " ,
+    b_fr_cylindre = BLOC( condition = """ (equal_to("TYPE", 'CYLINDRE')) or (equal_to("TYPE", 'CONE_A')) or (equal_to("TYPE", 'TORE')) """ ,
                           fr=tr("Pour un cylindre, un cone ou un tore."),
 
       X_AXE = SIMP(statut='o',typ='R',
@@ -517,7 +474,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 9.2.5. Pour un cone defini par ses rayons : second couple (rayon et centre)
 #
-    b_fr_rayon2 = BLOC( condition = " (TYPE == 'CONE_R') " ,
+    b_fr_rayon2 = BLOC( condition = """ (equal_to("TYPE", 'CONE_R')) """ ,
                        fr=tr("Le second rayon et centre d'un cone."),
       RAYON2 = SIMP(statut='o',typ='R',val_min=0.,
                    fr=tr("Rayon numéro 2"),
@@ -535,7 +492,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 9.2.6. Pour un cone defini par axe et angle : centre et angle
 #
-    b_fr_angle = BLOC( condition = " (TYPE == 'CONE_A') " ,
+    b_fr_angle = BLOC( condition = """ (equal_to("TYPE", 'CONE_A')) """ ,
                        fr=tr("L'angle et le centre d'un cone."),
       ANGLE = SIMP(statut='o',typ='R',val_min=0.0,
                    fr=tr("Angle en degré"),
@@ -553,7 +510,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 9.2.7. Pour un tore : rayon primaire
 #
-    b_fr_rayon3 = BLOC( condition = " (TYPE == 'TORE') " ,
+    b_fr_rayon3 = BLOC( condition = """ (equal_to("TYPE", 'TORE')) """ ,
                        fr=tr("Le rayon primaire du tore."),
       RAYON2 = SIMP(statut='o',typ='R',val_min=0.0,
                    fr=tr("Rayon primaire"),
@@ -601,7 +558,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
                     fr=tr("Résultat contenant le champ à mettre à jour"),
                     ),
 #
-    b_nom_du_champ = BLOC(condition="(RESULTAT != None)",
+    b_nom_du_champ = BLOC(condition="""(exists("RESULTAT"))""",
                           fr=tr("Choix éventuel du nom du champ à interpoler"),
 #
       NOM_CHAM = SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO(),
@@ -618,7 +575,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 10.5. Le paramètre temporel pour le champ a interpoler
 #
-    b_parametre_temporel = BLOC(condition="(RESULTAT != None)",
+    b_parametre_temporel = BLOC(condition="""(exists("RESULTAT"))""",
                                 fr=tr("Choix éventuel du paramètre temporel pour le champ à interpoler"),
 #
       regles=(EXCLUS('NUME_ORDRE','INST'),),
@@ -638,17 +595,17 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 10.5.2.2. La précision du choix de l'instant
 #
-      b_precision = BLOC(condition="(INST != None)",
+      b_precision = BLOC(condition="""(exists("INST"))""",
                          fr=tr("Choix de la précision du choix de l'instant"),
 #
         CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF", "ABSOLU",),
                          fr=tr("Critère de précision sur le choix de l'instant associé"),
                          ),
-        b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+        b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
             PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,
                              fr=tr("Précision relative sur le choix de l'instant associé"),
                              ),),
-        b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+        b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
             PRECISION       =SIMP(statut='o',typ='R',
                              fr=tr("Précision absolue sur le choix de l'instant associé"),
                              ),),
@@ -667,7 +624,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 11. Les modifications
 #
-  b_modifications = BLOC( condition = " (ADAPTATION == 'MODIFICATION') " ,
+  b_modifications = BLOC( condition = """ (equal_to("ADAPTATION", 'MODIFICATION')) """ ,
                           fr=tr("Modification de maillage."),
 #
       #regles=(AU_MOINS_UN('DEGRE','JOINT'),),
@@ -688,7 +645,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 12. Le modele pour les lectures de champs aux points de Gauss ou aux noeuds par element
 #
-  b_lectures = BLOC( condition = " (ADAPTATION == 'LECTURE') " ,
+  b_lectures = BLOC( condition = """ (equal_to("ADAPTATION", 'LECTURE')) """ ,
                           fr=tr("Lectures de champs aux points de Gauss."),
 #
       MODELE        = SIMP(statut='o',typ=modele_sdaster,
@@ -699,7 +656,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 13. Les options d'analyse de maillage ; par defaut, on ne fait que les nombres
 #
-  b_analyses = BLOC( condition = " (ADAPTATION != 'LECTURE') " ,
+  b_analyses = BLOC( condition = """ (not equal_to("ADAPTATION", 'LECTURE')) """ ,
                      fr=tr("Analyse du maillage."),
 #
 # 13.1. Nombre de noeuds et mailles
@@ -767,14 +724,14 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 15. Unites logiques pour les historiques
 #
-  b_unite_hist = BLOC( condition = " (ADAPTATION != 'LECTURE') " ,
+  b_unite_hist = BLOC( condition = """ (not equal_to("ADAPTATION", 'LECTURE')) """ ,
                                 fr=tr("Gestions des historiques.",),
 #
-  UNITE_HIST_IN = SIMP(statut='f',typ='I',val_min=1, inout='in',
+  UNITE_HIST_IN = SIMP(statut='f',typ=UnitType(),val_min=1, inout='in',
                        fr=tr("Unite logique d'un historique en entrée" ),
                       ),
 #
-  UNITE_HIST_OUT = SIMP(statut='f',typ='I',val_min=1, inout='out',
+  UNITE_HIST_OUT = SIMP(statut='f',typ=UnitType(),val_min=1, inout='out',
                         fr=tr("Unite logique d'un historique en sortie"),
                        ),
 #
@@ -792,7 +749,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #       "HOMARD" : exclusivement les mailles pouvant etre decoupees (defaut)
 #       "IGNORE_PYRA" : elles sont ignorées
 #
-  b_autres_mailles = BLOC( condition = " (ADAPTATION != 'LECTURE') " ,
+  b_autres_mailles = BLOC( condition = """ (not equal_to("ADAPTATION", 'LECTURE')) """ ,
                            fr=tr("Gestion des pyramides."),
 #
     ELEMENTS_ACCEPTES = SIMP(statut='f',typ='TXM',defaut="HOMARD",into=("HOMARD", "IGNORE_PYRA"),
@@ -817,11 +774,10 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 17.2. Unite logique d'un fichier à ajouter à HOMARD.Configuration
 #
-  b_unite = BLOC( condition = " (VERSION_HOMARD == 'V11_N') or \
-                                (VERSION_HOMARD == 'V11_N_PERSO') " ,
+  b_unite = BLOC( condition = """is_in("VERSION_HOMARD", ('V11_N','V11_N_PERSO') )""" ,
                                 fr=tr("Fichier supplémentaire."),
 #
-  UNITE = SIMP(statut='f',typ='I',val_min=1, inout='in',
+  UNITE = SIMP(statut='f',typ=UnitType(),val_min=1, inout='in',
                fr=tr("Unite logique à ajouter à HOMARD.Configuration"),
                ),
 #

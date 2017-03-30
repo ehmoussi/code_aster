@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -34,8 +34,9 @@ def appl_cine_matr_prod(MATR_ASSE,**args):
 APPL_CINE_MATR=OPER(nom="APPL_CINE_MATR",op=158,sd_prod=appl_cine_matr_prod,
                fr=tr("Appliquer les C.L. cinématiques sur la matrice"),
                reentrant='f', UIinfo={"groupes":("Résolution",)},
+         reuse=SIMP(statut='c', typ=CO),
          MATR_ASSE       =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
                                                matr_asse_temp_c,matr_asse_pres_r,matr_asse_pres_c) ),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE           =SIMP(statut='f',typ='TXM'),
          INFO            =SIMP(statut='f',typ='I',into=(1,2) ),
 )  ;

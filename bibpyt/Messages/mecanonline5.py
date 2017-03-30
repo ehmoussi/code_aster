@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -90,10 +90,6 @@ en accélération est possible
  Pour un schéma de type NEWMARK, seules les formulations en accélération et en déplacement sont possibles
 """),
 
-    12 : _(u"""
- Pour un schéma de type THETA, seules les formulations en vitesse et en déplacement sont possibles
-"""),
-
     13 : _(u"""
  La matrice de masse diagonale (option MASS_DIAG) n'est pas utilisable avec un schéma implicite.
 """),
@@ -106,6 +102,10 @@ en accélération est possible
 
     15 : _(u"""
  Le calcul des énergies n'est pas disponible avec le contact en formulation continue ou XFEM.
+"""),
+
+    16 : _(u"""
+ Les modélisations de type THMS sont interdites en dynamique.
 """),
 
     19 : _(u"""
@@ -144,11 +144,6 @@ qu'en faibles rotations.
     25 : _(u"""
 Dynamique non-linéaire
 Le pilotage n'est pas possible.
-"""),
-
-    27 : _(u"""
-Dynamique non-linéaire avec schéma THETA
-Les poutres en grandes rotations POU_D_T_GD et POU_D_TGM sont interdits.
 """),
 
     28 : _(u"""

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -28,7 +28,7 @@ CALC_PRECONT=MACRO(nom="CALC_PRECONT",
                    sd_prod=evol_noli,
                    fr=tr("Imposer la tension définie par le BPEL dans les cables"),
                    reentrant='f',UIinfo={"groupes":("Modélisation",)},
-         reuse =SIMP(statut='f',typ='evol_noli'),
+         reuse =SIMP(statut='c',typ=CO),
          MODELE           =SIMP(statut='o',typ=modele_sdaster),
          CHAM_MATER       =SIMP(statut='o',typ=cham_mater),
          CARA_ELEM        =SIMP(statut='o',typ=cara_elem),
@@ -41,7 +41,7 @@ CALC_PRECONT=MACRO(nom="CALC_PRECONT",
          ETAT_INIT       =C_ETAT_INIT('STAT_NON_LINE','f'),
 #-------------------------------------------------------------------
          METHODE = SIMP(statut='d',typ='TXM',defaut="NEWTON",into=("NEWTON","IMPLEX")),
-         b_meth_newton = BLOC(condition = "METHODE == 'NEWTON'",
+         b_meth_newton = BLOC(condition = """equal_to("METHODE", 'NEWTON')""",
                            NEWTON = C_NEWTON(),
                         ),
          ENERGIE         =FACT(statut='f',max=1,
@@ -52,7 +52,7 @@ CALC_PRECONT=MACRO(nom="CALC_PRECONT",
          SOLVEUR         =C_SOLVEUR('CALC_PRECONT'),
 #-------------------------------------------------------------------
          INFO            =SIMP(statut='f',typ='I',into=(1,2) ),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**' ),
+         TITRE           =SIMP(statut='f',typ='TXM' ),
 
          EXCIT           =FACT(statut='o',max='**',
            CHARGE          =SIMP(statut='o',typ=char_meca),

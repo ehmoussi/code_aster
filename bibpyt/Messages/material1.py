@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -46,9 +46,14 @@ Erreur utilisateur :
  Il faut resserrer le mot clé PRECISION pour le matériau ELAS_FO.
 """),
 
+    4: _(u"""
+Erreur utilisateur :
+ Le paramètre ALPHA ne peut pas être une fonction en THM.
+"""),
+
     42: _(u"""
 Erreur utilisateur :
- Le coefficient de dilatation thermique ALPHA, du matériau est une fonction de la température.
+ Le coefficient de dilatation thermique ALPHA du matériau est une fonction de la température.
  Cette fonction (%(k1)s) n'est définie que par un point.
  TEMP_DEF_ALPHA et TEMP_REF ne sont pas identiques.
  On ne peut pas faire le changement de variable TEMP_DEF_ALPHA -> TEMP_REF.
@@ -56,6 +61,12 @@ Erreur utilisateur :
 
 Risque & Conseil:
  Il faut définir la fonction ALPHA avec plus d'un point.
+"""),
+
+    43: _(u"""
+ Le coefficient de dilatation thermique ALPHA du matériau est une fonction de la température.
+ Or vous ne fournissez pas de résultats thermiques dans AFFE_MATERIAU / AFFE_VARC.
+ Dans ce cas, TEMP_DEF_ALPHA et TEMP_REF doivent être identiques. 
 """),
 
     56: _(u"""

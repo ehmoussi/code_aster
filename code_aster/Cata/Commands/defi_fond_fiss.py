@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: samuel.geniaut at edf.fr
+# person_in_charge: sam.cuvilliez at edf.fr
 
 DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
                     op=55,
@@ -33,43 +33,43 @@ DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
 
     # definition du fond de fissure
     FOND_FISS = FACT(statut='o',max=2,
-    
+
                      TYPE_FOND = SIMP(statut='f',typ='TXM',into=("OUVERT","FERME","INF","SUP"),defaut="OUVERT"),
 
                      NOEUD    = SIMP(statut='f',typ=no  ,validators=NoRepeat(),max='**'),
-                     GROUP_NO = SIMP(statut='f',typ=grno,validators=NoRepeat(),max=1   ),
-                     GROUP_MA = SIMP(statut='f',typ=grma,validators=NoRepeat(),max=1   ),
+                     GROUP_NO = SIMP(statut='f',typ=grno,max=1   ),
+                     GROUP_MA = SIMP(statut='f',typ=grma,max=1   ),
                      MAILLE   = SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                      regles=(UN_PARMI('GROUP_NO','NOEUD','GROUP_MA','MAILLE'),),
 
                      # possibilite d'ordonnencement automatique du fond si groupe de mailles
-                     b_grma = BLOC(condition = "(GROUP_MA != None or MAILLE != None) and TYPE_FOND != 'FERME'",
+                     b_grma = BLOC(condition = """(exists("GROUP_MA") or exists("MAILLE")) and not equal_to("TYPE_FOND", 'FERME')""",
                                    NOEUD_ORIG    =SIMP(statut='f',typ=no,  max=1),
                                    GROUP_NO_ORIG =SIMP(statut='f',typ=grno,max=1),
                                    regles=(EXCLUS('NOEUD_ORIG','GROUP_NO_ORIG'),),
 
-                                   # si ordo 
-                                   b_ordo = BLOC(condition = "NOEUD_ORIG != None or GROUP_NO_ORIG != None",
+                                   # si ordo
+                                   b_ordo = BLOC(condition = """exists("NOEUD_ORIG") or exists("GROUP_NO_ORIG")""",
                                                  NOEUD_EXTR    = SIMP(statut='f',typ=no,  max=1),
                                                  GROUP_NO_EXTR = SIMP(statut='f',typ=grno,max=1),
                                                  regles=(EXCLUS('NOEUD_EXTR','GROUP_NO_EXTR'),),
                                                 ),
                                   ),
                      # possibilite d'ordonnencement automatique du fond si groupe de mailles
-                     b_grma_ferme= BLOC(condition = "(GROUP_MA != None or MAILLE != None) and TYPE_FOND == 'FERME'",
+                     b_grma_ferme= BLOC(condition = """(exists("GROUP_MA") or exists("MAILLE")) and equal_to("TYPE_FOND", 'FERME')""",
                                         NOEUD_ORIG    =SIMP(statut='f',typ=no,  max=1),
                                         GROUP_NO_ORIG =SIMP(statut='f',typ=grno,max=1),
                                         regles=(EXCLUS('NOEUD_ORIG','GROUP_NO_ORIG'),),
 
-                                        # si ordo 
-                                        b_ordo_ferme = BLOC(condition = "NOEUD_ORIG != None or GROUP_NO_ORIG != None",
+                                        # si ordo
+                                        b_ordo_ferme = BLOC(condition = """exists("NOEUD_ORIG") or exists("GROUP_NO_ORIG")""",
                                                             MAILLE_ORIG   = SIMP(statut='f',typ=ma,  max=1),
                                                             GROUP_MA_ORIG = SIMP(statut='f',typ=grma,  max=1),
                                                             regles=(UN_PARMI('MAILLE_ORIG','GROUP_MA_ORIG'),),
                                                            ),
                                        ),
                     # definition des directions des tangentes aux bords (uniquement pour les fonds non fermes)
-                    b_dtan = BLOC(condition = "TYPE_FOND != 'FERME'",
+                    b_dtan = BLOC(condition = """not equal_to("TYPE_FOND", 'FERME')""",
                                   DTAN_ORIG       =SIMP(statut='f',typ='R',max='**'),
                                   DTAN_EXTR       =SIMP(statut='f',typ='R',max='**'),
                                   VECT_GRNO_ORIG  =SIMP(statut='f',typ=grno,validators=NoRepeat(),max=2),
@@ -79,9 +79,9 @@ DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
                                  ),
                     ),
 
-    CONFIG_INIT  = SIMP(statut='f',typ='TXM',into=("COLLEE","DECOLLEE"), defaut="COLLEE",position='global'),
+    CONFIG_INIT  = SIMP(statut='f',typ='TXM',into=("COLLEE","DECOLLEE"), defaut="COLLEE"),
 
-    SYME         = SIMP(statut='f',typ='TXM',into=("OUI","NON"),         defaut="NON",   position='global'),
+    SYME         = SIMP(statut='f',typ='TXM',into=("OUI","NON"), defaut="NON"),
 
 #   remarque : dans le cas symetrique, il faut soit LEVRE_SUP, soit DTAN_ORIG
 #   mais impossible de faire une regle.
@@ -91,18 +91,18 @@ DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
                     GROUP_MA =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                     MAILLE   =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                     ),
-    
-    b_levre_inf  = BLOC(condition = "LEVRE_SUP != None and SYME == 'NON'",
+
+    b_levre_inf  = BLOC(condition = """exists("LEVRE_SUP") and equal_to("SYME", 'NON')""",
 
                         LEVRE_INF =FACT(statut='o',max=1,
                                         regles=(UN_PARMI('GROUP_MA','MAILLE'),),
                                         GROUP_MA =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                                         MAILLE   =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                                         ),
-                        ),  
+                        ),
 
     # dans le cas decolle
-    b_decolle    = BLOC(condition = "CONFIG_INIT == 'DECOLLEE'",
+    b_decolle    = BLOC(condition = """equal_to("CONFIG_INIT", 'DECOLLEE')""",
                      NORMALE   =SIMP(statut='o',typ='R',max=3),),
 
     PREC_NORM    = SIMP(statut='f',typ='R',defaut=0.1),

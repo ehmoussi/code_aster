@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -32,10 +32,11 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
                            "des lignes de coupe définies par deux points et un intervalle"),
             regles=(UN_PARMI("RESULTAT","CHAM_GD"),),
 
-         RESULTAT        =SIMP(statut='f',typ=(evol_elas,evol_noli,evol_ther,mode_meca) ),
+         RESULTAT        =SIMP(statut='f',typ=(evol_elas,evol_noli,evol_ther,mode_meca,
+                                               comb_fourier, mult_elas, fourier_elas) ),
          CHAM_GD         =SIMP(statut='f',typ=(cham_gd_sdaster)),
 
-         b_extrac        =BLOC(condition = "RESULTAT != None",fr=tr("extraction des résultats"),
+         b_extrac        =BLOC(condition = """exists("RESULTAT")""",fr=tr("extraction des résultats"),
                                  regles=(EXCLUS('NUME_ORDRE','NUME_MODE','LIST_ORDRE','INST','LIST_INST',), ),
              NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
              NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
@@ -43,17 +44,18 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
              INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
              LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
              CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
-             b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+             b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                  PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-             b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+             b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                  PRECISION       =SIMP(statut='o',typ='R',),),
            ),
 
 # extraction des résultats
-         b_meca        =BLOC(condition = "AsType(RESULTAT) in (evol_elas,evol_noli,mode_meca)",fr=tr("résultat mécanique"),
+         b_meca        =BLOC(condition = """is_type("RESULTAT") in (evol_elas,evol_noli,mode_meca, comb_fourier,
+                                            mult_elas, fourier_elas)""",fr=tr("résultat mécanique"),
            NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),defaut='SIGM_NOEU',into=C_NOM_CHAM_INTO(),),
          ),
-         b_ther        =BLOC(condition = "AsType(RESULTAT) in (evol_ther,)",fr=tr("résultat thermique"),
+         b_ther        =BLOC(condition = """is_type("RESULTAT") in (evol_ther,)""",fr=tr("résultat thermique"),
            NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),defaut='TEMP',into=("TEMP",
                                  "FLUX_ELGA","FLUX_ELNO","FLUX_NOEU",
                                  "META_ELNO","META_NOEU",
@@ -62,10 +64,10 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
                                  "DETE_ELNO","DETE_NOEU",
                                  "SOUR_ELGA","COMPORTHER",
                                  "ERTH_ELEM","ERTH_ELNO","ERTH_NOEU",),),),
-         b_cham       =BLOC(condition = "CHAM_GD!=None",
+         b_cham       =BLOC(condition = """exists("CHAM_GD")""",
            NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO(),),),
 
-         UNITE_MAILLAGE  =SIMP(statut='f',typ='I',defaut=25, inout='out'),
+         UNITE_MAILLAGE  =SIMP(statut='f',typ=UnitType(),defaut=25, inout='out'),
          MODELE          =SIMP(statut='f',typ=modele_sdaster ),
 
          VIS_A_VIS       =FACT(statut='f',max='**',
@@ -90,22 +92,22 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
            NOM_CMP         =SIMP(statut='f',typ='TXM',max='**'),
            INVARIANT       =SIMP(statut='f',typ='TXM',into=("OUI",),),
            ELEM_PRINCIPAUX =SIMP(statut='f',typ='TXM',into=("OUI",),),
-           RESULTANTE      =SIMP(statut='f',typ='TXM',max='**', into=("DX","DY","DZ")),
+           RESULTANTE      =SIMP(statut='f',typ='TXM',max='**',into=("DX","DY","DZ")),
            TRAC_NOR        =SIMP(statut='f',typ='TXM',into=("OUI",)),
            TRAC_DIR        =SIMP(statut='f',typ='TXM',into=("OUI",)),
            DIRECTION       =SIMP(statut='f',typ='R',max='**'),
 
 
-           b_local        =BLOC(condition = "REPERE=='LOCAL' ",
+           b_local        =BLOC(condition = """equal_to("REPERE", 'LOCAL') """,
              VECT_Y          =SIMP(statut='f',typ='R',min=2,max=3),),
 
-           b_utili        =BLOC(condition = "REPERE=='UTILISATEUR'",
+           b_utili        =BLOC(condition = """equal_to("REPERE", 'UTILISATEUR')""",
              ANGL_NAUT       =SIMP(statut='o',typ='R',min=3,max=3),),
 
-           b_grno          =BLOC(condition = "TYPE=='GROUP_NO'",
+           b_grno          =BLOC(condition = """equal_to("TYPE", 'GROUP_NO')""",
              GROUP_NO        =SIMP(statut='o',typ=grno, max=1),),
 
-           b_grma          =BLOC(condition = "TYPE=='GROUP_MA'",
+           b_grma          =BLOC(condition = """equal_to("TYPE", 'GROUP_MA')""",
                                  regles=(EXCLUS('NOEUD_ORIG','GROUP_NO_ORIG'),
                                          EXCLUS('NOEUD_EXTR','GROUP_NO_EXTR'),),
              GROUP_MA        =SIMP(statut='o',typ=grma, max=1),
@@ -120,19 +122,19 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
              VECT_ORIE       =SIMP(statut='f',typ='R',max=3),  # utilisé seulement si NOEUD_ORIG=NOEUD_EXTR
              ),
 
-           b_segment       =BLOC(condition = "TYPE=='SEGMENT'",
+           b_segment       =BLOC(condition = """equal_to("TYPE", 'SEGMENT')""",
              NB_POINTS       =SIMP(statut='o',typ='I',max=1),
              COOR_ORIG       =SIMP(statut='o',typ='R',min=2,max=3),
              COOR_EXTR       =SIMP(statut='o',typ='R',min=2,max=3),),
 
-           b_arc           =BLOC(condition = "TYPE=='ARC'",
+           b_arc           =BLOC(condition = """equal_to("TYPE", 'ARC')""",
              NB_POINTS       =SIMP(statut='o',typ='I',max=1),
              COOR_ORIG       =SIMP(statut='o',typ='R',min=2,max=3),
              CENTRE          =SIMP(statut='o',typ='R',min=2,max=3),
              ANGLE           =SIMP(statut='o',typ='R',max=1),
              DNOR            =SIMP(statut='f',typ='R',min=2,max=3),),
 
-           b_cylind       =BLOC(condition = ("REPERE=='CYLINDRIQUE' and TYPE!='ARC'"),
+           b_cylind       =BLOC(condition = """equal_to("REPERE", 'CYLINDRIQUE') and not equal_to("TYPE", 'ARC')""",
              ORIGINE         =SIMP(statut='f',typ='R',min=2,max=3),
              AXE_Z           =SIMP(statut='f',typ='R',min=3,max=3),),
 

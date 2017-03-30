@@ -1,5 +1,5 @@
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -54,8 +54,8 @@ list_t=DEFI_LIST_REEL(DEBUT=0.0,
                       INTERVALLE=_F(JUSQU_A=10.0,
                                     PAS=1.0,),);
 
-list_i=DEFI_LIST_INST(DEFI_LIST=_F(METHODE='MANUEL',
-                                   LIST_INST=list_t,),);
+list_i=DEFI_LIST_INST(METHODE='MANUEL', 
+                      DEFI_LIST=_F(LIST_INST=list_t,),);
 
 rampe=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.0,0.0,
                                           10.,1.,
@@ -173,6 +173,38 @@ redu=STAT_NON_LINE(MODELE=model,
 redu=CALC_CHAMP(reuse=redu,
                 RESULTAT=redu,
                 CONTRAINTE='SIEF_NOEU',);
+
+coor_red=RECU_TABLE(CO=redu,NOM_TABLE='COOR_REDUIT',);
+
+IMPR_TABLE(TABLE=coor_red)
+
+TEST_TABLE(
+           VALE_CALC = -9.92350E-03,
+           NOM_PARA  = 'COOR_REDUIT',
+           TABLE     = coor_red,
+           FILTRE    = (
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_MODE',
+                              VALE_I    = 1,),
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_ORDRE',
+                              VALE_I    = 1,),
+                       ),
+           )
+
+TEST_TABLE(
+           VALE_CALC = -0.00620775648739,
+           NOM_PARA  = 'COOR_REDUIT',
+           TABLE     = coor_red,
+           FILTRE    = (
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_MODE',
+                              VALE_I    = 2,),
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_ORDRE',
+                              VALE_I    = 10,),
+                       ),
+           )
 
 # Test du modèle réduit par rapport au modèle complet
 TEST_RESU(RESU=(

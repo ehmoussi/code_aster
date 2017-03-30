@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -33,12 +33,13 @@ NORM_MODE=OPER(nom="NORM_MODE",op=  37,sd_prod=norm_mode_prod,
                reentrant='f',
             UIinfo={"groupes":("Résolution","Dynamique",)},
          regles=(UN_PARMI('NORME','GROUP_NO','NOEUD','AVEC_CMP','SANS_CMP'),),
+         reuse=SIMP(statut='c', typ=CO),
          MODE       =SIMP(statut='o',typ=(mode_meca,mode_flamb) ),
          NORME      =SIMP(statut='f',typ='TXM',fr=tr("Norme prédéfinie : masse généralisée, euclidienne,..."),
                           into=("MASS_GENE","RIGI_GENE","EUCL","EUCL_TRAN","TRAN","TRAN_ROTA") ),
          NOEUD      =SIMP(statut='f',typ=no, fr=tr("Composante donnée d'un noeud spécifié égale à 1")),
          GROUP_NO   =SIMP(statut='f',typ=grno,fr=tr("Composante donnée d'un groupe contenant un seul noeud spécifié égale à 1")),
-         b_noeud    =BLOC(condition = "NOEUD != None or GROUP_NO != None",
+         b_noeud    =BLOC(condition = """exists("NOEUD") or exists("GROUP_NO")""",
            NOM_CMP    =SIMP(statut='o',typ='TXM' ),
          ),
          AVEC_CMP   =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**'),
@@ -55,6 +56,6 @@ NORM_MODE=OPER(nom="NORM_MODE",op=  37,sd_prod=norm_mode_prod,
          MASSE = SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_gene_r,matr_asse_pres_r ), ),
          RAIDE = SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_gene_r,matr_asse_pres_r ), ),
          AMOR  = SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_gene_r) ),
-         TITRE      =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE      =SIMP(statut='f',typ='TXM'),
          INFO       =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
 )  ;

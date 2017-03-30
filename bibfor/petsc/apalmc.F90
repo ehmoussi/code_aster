@@ -1,6 +1,9 @@
 subroutine apalmc(kptsc)
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+#include "asterf_types.h"
+#include "asterf_petsc.h"
+!
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -17,11 +20,10 @@ subroutine apalmc(kptsc)
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=C1308
+! aslint:disable=
 use petsc_data_module
     implicit none
-#include "asterf_types.h"
-#include "asterf.h"
+
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
 #include "asterfort/apbloc.h"
@@ -42,9 +44,6 @@ use petsc_data_module
 !----------------------------------------------------------------
 !
 #ifdef _HAVE_PETSC
-!
-#include "asterf_petsc.h"
-!----------------------------------------------------------------
 !
 !     VARIABLES LOCALES
     integer :: rang, nbproc
@@ -219,7 +218,7 @@ use petsc_data_module
                      ierr)
     ASSERT(ierr.eq.0)
 !
-#ifndef ASTER_PETSC_VERSION_LEQ_32
+#if PETSC_VERSION_GE(3,3,0)
 !   AVEC PETSc >= 3.3
 !   IL FAUT APPELER MATSETBLOCKSIZE *AVANT* MAT*SETPREALLOCATION
     call MatSetBlockSize(a, to_petsc_int(bs), ierr)
@@ -239,7 +238,7 @@ use petsc_data_module
         ASSERT(ierr.eq.0)
     endif
 !
-#ifdef ASTER_PETSC_VERSION_LEQ_32
+#if PETSC_VERSION_LT(3,3,0)
 !      LE BS DOIT ABSOLUMENT ETRE DEFINI ICI
     call MatSetBlockSize(a, to_petsc_int(bs), ierr)
     ASSERT(ierr.eq.0)

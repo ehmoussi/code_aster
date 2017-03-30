@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: samuel.geniaut at edf.fr
+# person_in_charge: sam.cuvilliez at edf.fr
 
 # determination du type de sd produite par la commande
 def raff_xfem_prod(self,TYPE,**args):
@@ -42,8 +42,8 @@ RAFF_XFEM=MACRO(nom="RAFF_XFEM",
                 TYPE   =SIMP(statut='f',typ='TXM',into=('DISTANCE','ZONE'),defaut='DISTANCE'),
                 FISSURE=SIMP(statut='o',typ=fiss_xfem,min=1,max='**',),
 
-                b_zone =BLOC(condition = "TYPE == 'ZONE' ",fr=tr("Paramètres de la zone"),
+                b_zone =BLOC(condition = """equal_to("TYPE", 'ZONE') """,fr=tr("Paramètres de la zone"),
                    RAYON =SIMP(statut='o',typ='R',val_min=0.),
                             ),
-                
+
                 )  ;

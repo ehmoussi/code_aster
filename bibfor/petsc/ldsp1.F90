@@ -1,6 +1,8 @@
 subroutine ldsp1(pc, ierr)
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+#include "asterf_petsc.h"
+!
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -19,9 +21,10 @@ subroutine ldsp1(pc, ierr)
 ! person_in_charge: natacha.bereux at edf.fr
 
 use petsc_data_module
+use lmp_module, only : lmp_destroy
 
     implicit none
-    
+
 !----------------------------------------------------------------
 !
 !  PRECONDITIONNEUR ISSU D'UNE FACTORISATION SIMPLE PRECISION
@@ -29,20 +32,22 @@ use petsc_data_module
 !----------------------------------------------------------------
 #include "asterf.h"
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/pcmump.h"
 #ifdef _HAVE_PETSC
-#include "asterf_petsc.h"
 !----------------------------------------------------------------
 !     Variables PETSc
 ! because of conditional (if _HAVE_PETSC) and external types
-     PC, intent(inout)           :: pc 
+     PC, intent(inout)           :: pc
      PetscErrorCode, intent(out) :: ierr
 !----------------------------------------------------------------
 !     VARIABLES LOCALES
     integer :: jrefa, iret
+    aster_logical :: new_facto
+    PC :: pc_lmp
 !----------------------------------------------------------------
 !
     call jemarq()
@@ -54,8 +59,14 @@ use petsc_data_module
     zk24(jrefa-1+8) = ' '
 !
 ! --  APPEL A LA ROUTINE DE FACTO SP POUR LE PRECONDITIONNEMENT
-    call pcmump(spmat, spsolv, iret)
+    call pcmump(spmat, spsolv, iret, new_facto )
 !
+! -- SI LE PRECONDITIONNEUR DE SECOND NIVEAU EST ACTIVE, ON DOIT LE DETRUIRE
+!    A CHAQUE RECONSTRUCTION DU LDLT_SP
+    if ( new_facto ) then
+       call lmp_destroy( pc_lmp, ierr )
+       ASSERT( ierr == 0 )
+    endif
     ierr = iret
 !
     call jedema()
@@ -64,6 +75,8 @@ use petsc_data_module
 !
 !      DECLARATION BIDON POUR ASSURER LA COMPILATION
     integer :: pc, ierr
+    ierr = -1
+    pc = -1
 !
 #endif
 !

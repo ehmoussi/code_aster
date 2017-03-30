@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -388,10 +388,15 @@ class Assemblage(object):
                CARA='M_T_D_N',
                VALE=self.m_gri / 4.,),
             # ressort pour blocage bas crayons
-             _F(GROUP_MA='CREI',
+              _F(GROUP_MA='CREI',
+                REPERE='GLOBAL',
+                CARA='K_T_D_L',
+                VALE=(1.e4,1.e4,1.e4)),
+             _F(GROUP_MA='ELAP',
                REPERE='GLOBAL',
                CARA='K_T_D_L',
-               VALE=(1.e4,1.e4,1.e4)),
+               VALE=(1.e6,1.e6,1.e6)),
+               # VALE=(0.,0.,0.)),
              _F(GROUP_MA='CREIC',
                REPERE='GLOBAL',
                CARA='K_T_D_L',

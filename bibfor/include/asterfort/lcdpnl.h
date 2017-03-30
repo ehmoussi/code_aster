@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,13 +16,11 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine lcdpnl(fami, kpg, ksp, typmod, ndim,&
+    subroutine lcdpnl(fami, typmod, ndim,&
                       option, compor, imate, sigm, deps,&
                       vim, vip, sig, dsidep, proj,&
                       iret)
         character(len=*) :: fami
-        integer :: kpg
-        integer :: ksp
         character(len=8) :: typmod(*)
         integer :: ndim
         character(len=16) :: option

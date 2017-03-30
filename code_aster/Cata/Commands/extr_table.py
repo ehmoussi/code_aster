@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -53,7 +53,7 @@ EXTR_TABLE=OPER(nom="EXTR_TABLE",
            CRIT_COMP       =SIMP(statut='f',typ='TXM',defaut="EQ",
                                  into=("EQ","LT","GT","NE","LE","GE","VIDE",
                                        "NON_VIDE","MAXI","MAXI_ABS","MINI","MINI_ABS") ),
-           b_vale          =BLOC(condition = "(CRIT_COMP in ('EQ','NE','GT','LT','GE','LE'))",
+           b_vale          =BLOC(condition = """(is_in("CRIT_COMP", ('EQ','NE','GT','LT','GE','LE')))""",
               regles=(UN_PARMI('VALE','VALE_I','VALE_K','VALE_C',),),
               VALE            =SIMP(statut='f',typ='R'),
               VALE_I          =SIMP(statut='f',typ='I'),
@@ -64,5 +64,5 @@ EXTR_TABLE=OPER(nom="EXTR_TABLE",
            PRECISION       =SIMP(statut='f',typ='R',defaut= 1.0E-3 ),
          ),
 
-         TITRE           =SIMP(statut='f',typ='TXM',max='**' ),
+         TITRE           =SIMP(statut='f',typ='TXM' ),
 )  ;

@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jacques.pellet at edf.fr
+# person_in_charge: jessica.haelewyn at edf.fr
 
 def calc_ferraillage_prod(RESULTAT,**args):
    if AsType(RESULTAT) != None : return AsType(RESULTAT)
@@ -31,6 +31,7 @@ CALC_FERRAILLAGE=OPER(nom="CALC_FERRAILLAGE",op=175,sd_prod=calc_ferraillage_pro
             UIinfo={"groupes":("Post-traitements","Outils-métier",)},
                  fr=tr("calcul de cartes de densité de ferraillage "),
 
+         reuse=SIMP(statut='c', typ=CO),
          RESULTAT        =SIMP(statut='o',typ=(evol_elas,evol_noli,dyna_trans,) ),
 
 
@@ -45,11 +46,11 @@ CALC_FERRAILLAGE=OPER(nom="CALC_FERRAILLAGE",op=175,sd_prod=calc_ferraillage_pro
          FREQ            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**' ),
          LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
 
-         b_acce_reel     =BLOC(condition="(FREQ != None)or(LIST_FREQ != None)or(INST != None)or(LIST_INST != None)",
+         b_acce_reel     =BLOC(condition="""(exists("FREQ"))or(exists("LIST_FREQ"))or(exists("INST"))or(exists("LIST_INST"))""",
             CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
-            b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+            b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                  PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-            b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+            b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                  PRECISION       =SIMP(statut='o',typ='R',),),
          ),
 

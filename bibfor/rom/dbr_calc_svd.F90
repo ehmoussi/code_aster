@@ -1,4 +1,4 @@
-subroutine dbr_calc_svd(ds_empi, ds_snap, q, s, v, nb_sing)
+subroutine dbr_calc_svd(ds_empi, ds_snap, q, s, v, nb_sing, nb_line_svd )
 !
 use Rom_Datastructure_type
 !
@@ -12,7 +12,7 @@ implicit none
 #include "asterfort/as_deallocate.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -33,8 +33,9 @@ implicit none
     type(ROM_DS_Snap), intent(in) :: ds_snap
     real(kind=8), pointer, intent(inout) :: q(:)
     real(kind=8), intent(out), pointer :: v(:)
-    real(kind=8), intent(out), pointer :: s(:)
+    real(kind=8), intent(out), pointer :: s(:)  
     integer, intent(out) :: nb_sing
+    integer, intent(out) :: nb_line_svd 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +49,8 @@ implicit none
 ! In  ds_snap          : datastructure for snapshot selection
 ! In  q                : pointer to [q] matrix
 ! Out s                : singular values 
-! Out v                : singular vectors 
+! Out v                : singular vectors
+! Out nb_line_svd      : number of lines for SVD 
 ! Out nb_sing          : total number of singular values
 !
 ! --------------------------------------------------------------------------------------------------
@@ -59,6 +61,7 @@ implicit none
     integer :: lda, lwork
     character(len=8)  :: base_type
     real(kind=8), pointer :: w(:) => null()
+    real(kind=8), pointer :: qq(:) => null()
     real(kind=8), pointer :: work(:) => null()
     integer(kind=4) :: info
 !
@@ -92,24 +95,34 @@ implicit none
         m      = nb_equa
         n      = nb_snap
     endif
-    lda     = max(1, m)
-    nb_sing = min(m, n)
-    lwork   = max(1,3*nb_sing+lda,5*nb_sing)
+    nb_line_svd = m
+    lda         = max(1, m)
+    nb_sing     = min(m, n)
+    lwork       = max(1,3*nb_sing+lda,5*nb_sing)
     AS_ALLOCATE(vr = v, size = m*nb_sing)
     AS_ALLOCATE(vr = s, size = nb_sing)
     AS_ALLOCATE(vr = work, size = lwork)
 !
+! - Use copy of Q matrix (because dgesvd change it ! )
+!
+    AS_ALLOCATE(vr = qq, size = m*n)
+    qq(1:m*n) = q(1:m*n)
+!
 ! - Compute SVD: Q = V S Wt
 !
-    call dgesvd('S', 'N', m, n, q,&
+    call dgesvd('S', 'N', m, n, qq,&
                 lda, s, v, m, w,&
                 1, work, lwork, info)
     if (info .ne. 0) then
         call utmess('F', 'ROM5_8')
     endif
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM7_10', si = 8*lwork)
+    endif
 !
 ! - Clean
 !
+    AS_DEALLOCATE(vr = qq)
     AS_DEALLOCATE(vr = work)
 !
 end subroutine

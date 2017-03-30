@@ -24,6 +24,8 @@ implicit none
 #include "asterfort/ReadInOut.h"
 #include "asterfort/ReadMeasure.h"
 #include "asterfort/GetIOField.h"
+#include "asterfort/verif_affe.h"
+#include "asterfort/gettco.h"
 #include "asterfort/nmdomt.h"
 #include "asterfort/nmdomt_ls.h"
 #include "asterfort/nmdopo.h"
@@ -32,7 +34,7 @@ implicit none
 #include "asterfort/nmlect.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -102,7 +104,8 @@ implicit none
     integer :: ifm, niv
     character(len=8) :: result
     character(len=16) :: k16bid, nomcmd
-    aster_logical :: l_etat_init, l_sigm
+    aster_logical :: l_etat_init, l_sigm, l_implex
+    character(len=24) :: typco
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -129,14 +132,14 @@ implicit none
     call nmlect(result, model, mate, cara_elem, list_load, solver)
     call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
 !
-! --- RELATION DE COMPORTEMENT ET CRITERES DE CONVERGENCE LOCAL
+! --- VERIFICATION DE CARA_ELEM : COEF_RIGI_DRZ INTERDIT EN NON-LINEAIRE
 !
-    call nmdorc(model, mate, l_etat_init,&
-                ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp)
-!
-! - Read parameters for convergence
-!
-    call nmdocn(ds_conv)
+    if (nomcmd(6:13) .eq. 'NON_LINE' ) then
+        call gettco(cara_elem, typco)
+        if (typco .eq. 'CARA_ELEM') then
+            call verif_affe(model,cara_elem, non_lin = .true._1)
+        endif
+    endif
 !
 ! - Read parameters for algorithm management
 !
@@ -145,6 +148,17 @@ implicit none
 ! - Read parameters for algorithm management (line search)
 !
     call nmdomt_ls(ds_algopara)
+!
+! - Read objects for constitutive laws
+!
+    l_implex = ds_algopara%method.eq.'IMPLEX'
+    call nmdorc(model, mate, l_etat_init,&
+                ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp,&
+                l_implex)
+!
+! - Read parameters for convergence
+!
+    call nmdocn(ds_conv)
 !
 ! --- CREATION SD DYNAMIQUE
 !
@@ -160,7 +174,7 @@ implicit none
 !
 ! - Read parameters for contact management
 !
-    call ReadContact(ds_contact)
+    call ReadContact(ds_contact,ds_conv%iter_glob_maxi)
 !
 ! - Read parameters for energy management
 !

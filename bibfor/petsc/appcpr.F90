@@ -1,6 +1,8 @@
 subroutine appcpr(kptsc)
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+#include "asterf_petsc.h"
+!
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -17,13 +19,14 @@ subroutine appcpr(kptsc)
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=C1308
+! aslint:disable=
 use petsc_data_module
 use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
     augmented_lagrangian_setup, augmented_lagrangian_destroy
+use lmp_module, only : lmp_apply_right, lmp_destroy
+use lmp_data_module, only : reac_lmp
 
-    implicit none
-#include "asterf_types.h"
+implicit none
 #include "asterf.h"
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
@@ -34,6 +37,8 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/ldsp1.h"
+#include "asterfort/ldsp2.h"
 #include "asterfort/utmess.h"
     integer :: kptsc
 !----------------------------------------------------------------
@@ -44,18 +49,16 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
 !----------------------------------------------------------------
 !
 #ifdef _HAVE_PETSC
-#include "asterfort/ldsp1.h"
-#include "asterfort/ldsp2.h"
 !----------------------------------------------------------------
 !
 !     VARIABLES LOCALES
     integer :: rang, nbproc
-    integer :: dimgeo, dimgeo_b, niremp, istat 
+    integer :: dimgeo, dimgeo_b, niremp, istat
     integer :: jnequ, jnequl
     integer :: nloc, neqg, ndprop, ieq, numno, icmp
     integer :: iret
     integer :: il, ix, iga_f, igp_f
-    integer :: fill
+    integer :: fill, reacpr
     integer, dimension(:), pointer :: slvi => null()
     integer, dimension(:), pointer :: prddl => null()
     integer, dimension(:), pointer :: deeq => null()
@@ -73,10 +76,10 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
     character(len=24), dimension(:), pointer :: slvk => null()
 !
     real(kind=8) :: fillin, val
-    real(kind=8), dimension(:), pointer :: coordo => null() 
+    real(kind=8), dimension(:), pointer :: coordo => null()
     real(kind=8), dimension(:), pointer :: slvr => null()
 !
-    aster_logical :: lmd
+    aster_logical :: lmd, lmp_is_active
 !
 !----------------------------------------------------------------
 !     Variables PETSc
@@ -84,8 +87,8 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
     PetscErrorCode ::  ierr
     PetscReal :: fillp
     PetscScalar :: xx_v(1)
-    PetscOffset :: xx_i  
-    
+    PetscOffset :: xx_i
+
     Mat :: a
     Vec :: coords
     KSP :: ksp
@@ -109,18 +112,24 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
     call jeveuo(nosolv//'.SLVR', 'L', vr=slvr)
     call jeveuo(nosolv//'.SLVI', 'L', vi=slvi)
     precon = slvk(2)
-    
+
     fillin = slvr(3)
     niremp = slvi(4)
     call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
     lmd = matd == 'OUI'
 !
+    lmp_is_active = slvk(6) =='GMRES_LMP'
+    if ( lmp_is_active .and. precon/= 'LDLT_SP' ) then
+       call utmess('F',  'PETSC_28')
+    endif
+    reacpr = slvi(6)
+!
     fill = niremp
     fillp = fillin
     bs = 1
-    
+
 !
-!   -- RECUPERE DES INFORMATIONS SUR LE MAILLAGE POUR 
+!   -- RECUPERE DES INFORMATIONS SUR LE MAILLAGE POUR
 !      LE CALCUL DES MODES RIGIDES
     call dismoi('NOM_MAILLA', nomat, 'MATR_ASSE', repk=nomail)
     call dismoi('DIM_GEOM_B', nomail, 'MAILLAGE', repi=dimgeo_b)
@@ -164,17 +173,17 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
         bs = abs(bs)
         endif
     endif
-    
-#ifdef ASTER_PETSC_VERSION_LEQ_34
+
+#if PETSC_VERSION_LT(3,5,0)
 #else
-    if (precon == 'GAMG') then 
+    if (precon == 'GAMG') then
 !       -- CREATION DES MOUVEMENTS DE CORPS RIGIDE --
 !           * VECTEUR RECEPTABLE DES COORDONNEES AVEC TAILLE DE BLOC
-!           
+!
 !       dimgeo = 3 signifie que le maillage est 3D et que les noeuds ne sont pas
 !       tous dans le plan z=0
 !       c'est une condition nécessaire au pré-calcul des modes de corps rigides
-        if ( dimgeo == 3 ) then 
+        if ( dimgeo == 3 ) then
         call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
         neqg=zi(jnequ)
         call jeveuo(nonu//'.NUME.DEEQ', 'L', vi=deeq)
@@ -189,9 +198,9 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
             ! Nb de ddls dont le proc courant est propriétaire (pour PETSc)
             ndprop = 0
             do il = 1, nloc
-               if (prddl(il) == rang ) then 
+               if (prddl(il) == rang ) then
                    ndprop = ndprop + 1
-               endif  
+               endif
             end do
 !
             call VecSetSizes(coords, to_petsc_int(ndprop), to_petsc_int(neqg), ierr)
@@ -201,7 +210,7 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
 !
         call VecSetType(coords, VECMPI, ierr)
 !           * REMPLISSAGE DU VECTEUR
-!             coords: vecteur PETSc des coordonnées des noeuds du maillage, 
+!             coords: vecteur PETSc des coordonnées des noeuds du maillage,
 !             dans l'ordre de la numérotation PETSc des équations
         if (lmd) then
           call jeveuo(nonu//'.NUML.NULG', 'L', vi=nulg)
@@ -211,9 +220,9 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
             igp_f = nlgp( il )
             ! Indice global Aster (F) correspondant à l'indice local il
             iga_f = nulg( il )
-            ! Noeud auquel est associé le ddl global Aster iga_f 
+            ! Noeud auquel est associé le ddl global Aster iga_f
             numno = deeq( (iga_f -1)* 2 +1 )
-            ! Composante (X, Y ou Z) à laquelle est associé 
+            ! Composante (X, Y ou Z) à laquelle est associé
             ! le ddl global Aster iga_f
             icmp  = deeq( (iga_f -1)* 2 +2 )
             ASSERT((numno .gt. 0) .and. (icmp .gt. 0))
@@ -222,25 +231,25 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
             ! On met à jour le vecteur PETSc des coordonnées
             nterm=1
             call VecSetValues( coords, nterm, [to_petsc_int(igp_f - 1)], [val], &
-              INSERT_VALUES, ierr ) 
+              INSERT_VALUES, ierr )
             ASSERT( ierr == 0 )
-          enddo 
-            call VecAssemblyBegin( coords, ierr ) 
+          enddo
+            call VecAssemblyBegin( coords, ierr )
             call VecAssemblyEnd( coords, ierr )
             ASSERT( ierr == 0 )
-        ! la matrice est centralisée 
+        ! la matrice est centralisée
         else
           call VecGetOwnershipRange(coords, low, high, ierr)
           call VecGetArray(coords,xx_v, xx_i, ierr)
           ix=0
           do ieq = low+1, high
-            ! Noeud auquel est associé le ddl Aster ieq 
+            ! Noeud auquel est associé le ddl Aster ieq
             numno = deeq( (ieq -1)* 2 +1 )
-            ! Composante (X, Y ou Z) à laquelle est associé 
+            ! Composante (X, Y ou Z) à laquelle est associé
             ! le ddl Aster ieq
             icmp  = deeq( (ieq -1)* 2 +2 )
             ASSERT((numno .gt. 0) .and. (icmp .gt. 0))
-            ix=ix+1 
+            ix=ix+1
             xx_v(xx_i+ ix) = coordo( dimgeo*(numno-1)+icmp )
           end do
          !
@@ -248,7 +257,7 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
           ASSERT(ierr==0)
         endif
         !
-        ! 
+        !
 !           * CALCUL DES MODES A PARTIR DES COORDONNEES
         if (bs.le.3) then
             call MatNullSpaceCreateRigidBody(coords, sp, ierr)
@@ -261,9 +270,9 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
         call VecDestroy(coords, ierr)
         ASSERT(ierr == 0)
         endif
-! Si dimgeo /= 3 on ne pré-calcule pas les modes de corps rigides 
-        endif 
-#endif    
+! Si dimgeo /= 3 on ne pré-calcule pas les modes de corps rigides
+        endif
+#endif
 
 !
 !     -- CHOIX DU PRECONDITIONNEUR :
@@ -286,16 +295,29 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
         ASSERT(ierr == 0)
         call PCSetType(pc,PCSHELL,ierr)
         ASSERT(ierr == 0)
-        call PCShellSetName(pc,"BLOC_LAGR Preconditionner", ierr )
-        ASSERT(ierr == 0)
-        call PCShellSetSetUp(pc,augmented_lagrangian_setup, ierr ) 
-        ASSERT(ierr == 0)
-        call PCShellSetApply(pc,augmented_lagrangian_apply,ierr)
+        call PCShellSetSetUp(pc,augmented_lagrangian_setup, ierr )
         ASSERT(ierr == 0)
         call PCShellSetContext(pc,kptsc,ierr)
         ASSERT(ierr == 0)
         call PCShellSetDestroy(pc, augmented_lagrangian_destroy, ierr )
         ASSERT( ierr == 0 )
+!       Si LMP, on définit un préconditionneur à gauche et à droite
+        if ( lmp_is_active ) then
+             ASSERT( ierr == 0 )
+             call PCShellSetName(pc,"Symmetric Preconditionner: Left BLOC_LAGR, right LMP", ierr )
+             ASSERT( ierr == 0 )
+             call PCShellSetApplySymmetricLeft(pc, augmented_lagrangian_apply, ierr)
+             ASSERT(ierr == 0)
+             call PCShellSetApplySymmetricRight(pc, lmp_apply_right,ierr)
+             ASSERT(ierr == 0)
+             call KSPSetPCSide(ksp,PC_SYMMETRIC,ierr)
+             ASSERT( ierr == 0 )
+        else
+             call PCShellSetName(pc,"BLOC_LAGR Preconditionner", ierr )
+             ASSERT(ierr == 0)
+             call PCShellSetApply(pc,augmented_lagrangian_apply,ierr)
+             ASSERT(ierr == 0)
+        endif
 !-----------------------------------------------------------------------
     else if (precon == 'LDLT_SP') then
         call PCSetType(pc, PCSHELL, ierr)
@@ -305,8 +327,24 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
 !       LDLT_SP FAIT APPEL A DEUX ROUTINES EXTERNES
         call PCShellSetSetUp(pc, ldsp1, ierr)
         ASSERT(ierr == 0)
-        call PCShellSetApply(pc, ldsp2, ierr)
-        ASSERT(ierr == 0)
+!       Si LMP, on définit un préconditionneur à gauche et à droite
+        if ( lmp_is_active ) then
+             ASSERT( ierr == 0 )
+             call PCShellSetName(pc,"Symmetric Preconditionner: Left LDLT_SP, right LMP", ierr )
+             ASSERT( ierr == 0 )
+             call PCShellSetApplySymmetricLeft(pc, ldsp2, ierr)
+             ASSERT(ierr == 0)
+             call PCShellSetApplySymmetricRight(pc, lmp_apply_right,ierr)
+             ASSERT(ierr == 0)
+             call KSPSetPCSide(ksp,PC_SYMMETRIC,ierr)
+             ASSERT( ierr == 0 )
+!       Pour le préconditionneur LDLT_SP, on définit reac_lmp à partir de reac_precond
+             reac_lmp = reacpr/2
+        else
+             call PCShellSetName(pc,"LDLT_SP Preconditionner", ierr )
+             call PCShellSetApply(pc, ldsp2, ierr)
+             ASSERT( ierr == 0 )
+        endif
 !
         ASSERT(spmat == ' ')
         spmat = nomat
@@ -328,7 +366,7 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
         endif
         ASSERT(ierr == 0)
 !        CHOIX DE LA RESTRICTION (UNCOUPLED UNIQUEMENT ACTUELLEMENT)
-#ifdef ASTER_PETSC_VERSION_LEQ_36
+#if PETSC_VERSION_LT(3,7,0)
         call PetscOptionsSetValue('-pc_ml_CoarsenScheme', 'Uncoupled', ierr)
         ASSERT(ierr == 0)
         call PetscOptionsSetValue('-pc_ml_PrintLevel', '0', ierr)
@@ -338,7 +376,7 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
         ASSERT(ierr == 0)
         call PetscOptionsSetValue(PETSC_NULL_OBJECT, '-pc_ml_PrintLevel', '0', ierr)
         ASSERT(ierr == 0)
-#endif 
+#endif
 !        APPEL OBLIGATOIRE POUR PRENDRE EN COMPTE LES AJOUTS CI-DESSUS
         call PCSetFromOptions(pc, ierr)
         ASSERT(ierr == 0)
@@ -348,7 +386,7 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
         if (ierr .ne. 0) then
             call utmess('F', 'PETSC_19', sk=precon)
         endif
-#ifdef ASTER_PETSC_VERSION_LEQ_36
+#if PETSC_VERSION_LT(3,7,0)
         call PetscOptionsSetValue('-pc_hypre_type', 'boomeramg', ierr)
         ASSERT(ierr == 0)
 !        CHOIX DE LA RESTRICTION (PMIS UNIQUEMENT ACTUELLEMENT)
@@ -373,13 +411,13 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
         call PetscOptionsSetValue(PETSC_NULL_OBJECT, &
              & '-pc_hypre_boomeramg_print_statistics', '0', ierr)
         ASSERT(ierr == 0)
-#endif 
+#endif
 !        APPEL OBLIGATOIRE POUR PRENDRE EN COMPTE LES AJOUTS CI-DESSUS
         call PCSetFromOptions(pc, ierr)
         ASSERT(ierr == 0)
 !-----------------------------------------------------------------------
-#ifdef ASTER_PETSC_VERSION_LEQ_32
-#else 
+#if PETSC_VERSION_LT(3,3,0)
+#else
      else if (precon == 'GAMG') then
         call PCSetType(pc, PCGAMG, ierr)
         if (ierr .ne. 0) then
@@ -393,7 +431,7 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
         call PCGAMGSetNSmooths(pc, nsmooth, ierr)
         ASSERT(ierr == 0)
 !
-#ifdef ASTER_PETSC_VERSION_LEQ_36
+#if PETSC_VERSION_LT(3,7,0)
         call PetscOptionsSetValue('-pc_gamg_verbose', '2', ierr)
 #else
         call PetscOptionsSetValue( PETSC_NULL_OBJECT,'-pc_gamg_verbose', '2', ierr)
@@ -402,7 +440,7 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
 !       APPEL OBLIGATOIRE POUR PRENDRE EN COMPTE LES AJOUTS CI-DESSUS
         call PCSetFromOptions(pc, ierr)
         ASSERT(ierr == 0)
-     
+
 #endif
 !-----------------------------------------------------------------------
     else if (precon == 'SANS') then
@@ -433,6 +471,7 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
 #else
     integer :: idummy
     idummy = kptsc
+    idummy = reac_lmp
 #endif
 !
 end subroutine

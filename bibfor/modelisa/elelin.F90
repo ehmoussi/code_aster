@@ -6,7 +6,7 @@ subroutine elelin(nconta, elref1, elref2, nnop, nnops)
     integer :: nnop, nnops, nconta
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -39,7 +39,7 @@ subroutine elelin(nconta, elref1, elref2, nnop, nnops)
     character(len=8) :: fapg(20)
 !
 !
-    if (nconta .eq. 3) then
+    if (nconta .ge. 2) then
         if (elref1 .eq. 'QU8') then
             elref2='QU4'
             nnop = 8
@@ -58,6 +58,10 @@ subroutine elelin(nconta, elref1, elref2, nnop, nnops)
             nnops= 8
         else if (elref1.eq.'P15') then
             elref2='PE6'
+            nnop = 15
+            nnops= 6
+        else if (elref1.eq.'S15') then
+            elref2='SH6'
             nnop = 15
             nnops= 6
         else if (elref1.eq.'P13') then

@@ -66,6 +66,7 @@ subroutine lcplnf(rela_comp, vind, nbcomm, nmat, cpmono,&
 #include "asterfort/lcprmv.h"
 #include "asterfort/lcprsv.h"
 #include "asterfort/lkilnf.h"
+#include "asterfort/srilnf.h"
     integer :: ndt, nvi, nmat, ndi, nbcomm(nmat, 3), iter, itmax, nr, codret
     integer :: nfs, nsg, indi(7), i
     real(kind=8) :: materd(nmat, 2), materf(nmat, 2), vins(nvi), timef
@@ -94,7 +95,7 @@ subroutine lcplnf(rela_comp, vind, nbcomm, nmat, cpmono,&
 !
     else if (rela_comp(1:7).eq.'IRRAD3M') then
         call irrlnf(nmat, materf, yf(ndt+1), 1.0d0, vinf)
-    else if (rela_comp(1:15) .eq. 'BETON_BURGER_FP') then
+    else if (rela_comp(1:12) .eq. 'BETON_BURGER') then
         call burlnf(nvi, vind, nmat, materd, materf,&
                     dt, nr, yd, yf, vinf,&
                     sigf)
@@ -102,6 +103,9 @@ subroutine lcplnf(rela_comp, vind, nbcomm, nmat, cpmono,&
         call lkilnf(nvi, vind, nmat, materf, dt,&
                     sigd, nr, yd, yf, deps,&
                     vinf)
+    else if (rela_comp(1:3).eq.'LKR') then
+        call srilnf(nvi,vind,nmat,materf,dt,&
+                    nr,yf,deps,vinf)
     else if (rela_comp .eq. 'HAYHURST') then
 !        DEFORMATION PLASTIQUE CUMULEE
         vinf(7) = yf(ndt+1)

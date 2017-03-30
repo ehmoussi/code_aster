@@ -38,7 +38,7 @@ MACR_RECAL = MACRO(nom="MACR_RECAL",
                     PRESENT_PRESENT('LIST_PARA','RESU_CALC'),
                     EXCLUS('LIST_POIDS','COURBE'),),
 
-         UNITE_ESCL      =SIMP(statut='o',typ='I', inout='in'),
+         UNITE_ESCL      =SIMP(statut='o',typ=UnitType(), inout='in'),
          RESU_EXP        =SIMP(statut='f',typ=not_checked,max='**'),
          COURBE          =FACT(statut='f',max='**',
               FONC_EXP        =SIMP(statut='o',typ=(fonction_sdaster),),
@@ -57,16 +57,16 @@ MACR_RECAL = MACRO(nom="MACR_RECAL",
          ),
          LIST_POIDS      =SIMP(statut='f',typ=not_checked,max='**'),
 
-         UNITE_RESU      =SIMP(statut='f',typ='I',defaut=91, inout='out'),
+         UNITE_RESU      =SIMP(statut='f',typ=UnitType(),defaut=91, inout='out'),
          PARA_DIFF_FINI  =SIMP(statut='f',typ='R',defaut=0.00001),
 
          GRAPHIQUE       =FACT(statut='f',
              FORMAT          =SIMP(statut='f',typ='TXM',defaut='XMGRACE',into=("XMGRACE","GNUPLOT"),),
              AFFICHAGE       =SIMP(statut='f',typ='TXM',defaut='TOUTE_ITERATION',into=("TOUTE_ITERATION","ITERATION_FINALE"),),
 
-             UNITE           =SIMP(statut='f',typ='I',val_min=10,val_max=90,defaut=29, inout='out',
+             UNITE           =SIMP(statut='f',typ=UnitType(),val_min=10,val_max=90,defaut=29, inout='out',
                             fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit")),
-             b_pilote = BLOC(condition = "FORMAT == 'XMGRACE'", fr=tr("Mots-clés propres à XMGRACE"),
+             b_pilote = BLOC(condition = """equal_to("FORMAT", 'XMGRACE')""", fr=tr("Mots-clés propres à XMGRACE"),
                  PILOTE          =SIMP(statut='f',typ='TXM',defaut='',
                                        into=('','POSTSCRIPT','EPS','MIF','SVG','PNM','PNG','JPEG','PDF','INTERACTIF', 'INTERACTIF_BG'),
                             fr=tr("Pilote de sortie, PNG/JPEG/PDF ne sont pas disponibles sur toutes les installations de xmgrace")),
@@ -79,7 +79,7 @@ MACR_RECAL = MACRO(nom="MACR_RECAL",
          METHODE         =SIMP(statut='f',typ='TXM',defaut='LEVENBERG',into=("LEVENBERG", "FMIN", "FMINBFGS", "FMINNCG",
                                                                              "GENETIQUE","HYBRIDE")),
 
-         b_genetique_options=BLOC(condition = "METHODE == 'GENETIQUE' or METHODE == 'HYBRIDE'" ,
+         b_genetique_options=BLOC(condition = """equal_to("METHODE", 'GENETIQUE') or equal_to("METHODE", 'HYBRIDE')""" ,
              NB_PARENTS       =SIMP(statut='f',typ='I',defaut=10),
              NB_FILS          =SIMP(statut='f',typ='I',defaut=5),
              ECART_TYPE       =SIMP(statut='f',typ='R',defaut=1.),
@@ -100,11 +100,11 @@ MACR_RECAL = MACRO(nom="MACR_RECAL",
 
          # Calculs des gradients
          # ---------------------
-         b_gradient =BLOC(condition = "METHODE == 'FMINBFGS' or METHODE == 'FMINNCG'" ,
+         b_gradient =BLOC(condition = """equal_to("METHODE", 'FMINBFGS') or equal_to("METHODE", 'FMINNCG')""" ,
              GRADIENT        =SIMP(statut='f',typ='TXM',defaut='NON_CALCULE', into=("NON_CALCULE", "NORMAL", "ADIMENSIONNE" )),
          ),
 
-         b_gradient_levenberg =BLOC(condition = "METHODE == 'LEVENBERG'" ,
+         b_gradient_levenberg =BLOC(condition = """equal_to("METHODE", 'LEVENBERG')""" ,
              GRADIENT        =SIMP(statut='f',typ='TXM',defaut='NORMAL', into=( "NORMAL", "ADIMENSIONNE" )),
          ),
 
@@ -116,8 +116,8 @@ MACR_RECAL = MACRO(nom="MACR_RECAL",
 
             LANCEMENT         =SIMP(statut='f', typ='TXM', defaut='INCLUSION',into=("DISTRIBUTION","INCLUSION"),),
 
-            b_eval_distrib =BLOC(condition = "LANCEMENT == 'DISTRIBUTION'",
-                UNITE_SUIVI   =SIMP(statut='f', typ='I',val_min=10,val_max=99,defaut=29, inout='out',
+            b_eval_distrib =BLOC(condition = """equal_to("LANCEMENT", 'DISTRIBUTION')""",
+                UNITE_SUIVI   =SIMP(statut='f', typ=UnitType(),val_min=10,val_max=99,defaut=29, inout='out',
                                   fr=tr("Affichage de l'output et/ou error des jobs esclaves dans ce fichier")),
                 MODE          =SIMP(statut='f', typ='TXM',      into=("INTERACTIF","BATCH"),),
                 MEMOIRE       =SIMP(statut='f', typ='I',            fr=tr("Memoire demandee pour les calculs esclaves (Mo)")),

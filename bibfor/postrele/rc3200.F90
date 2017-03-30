@@ -32,18 +32,19 @@ subroutine rc3200()
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 !     ------------------------------------------------------------------
-!     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE_ZE200 et B3200_T
+!     OPERATEUR POST_RCCM, TRAITEMENT DE FATIGUE_ZE200 et B3200
 !
     character(len=8) :: mater
-    integer :: n1, nbther, nbopt, iopt
+    integer :: n1, nbther, nbopt, iopt, nb
     character(len=16) :: typmec, kopt(3)
-    aster_logical :: b3200, lpmpb, lsn, lther, lfat, lefat
+    aster_logical :: lpmpb, lsn, lther, lfat, lefat, ze200, b32unit
 !
 ! DEB ------------------------------------------------------------------
 !
-    b3200 = .false.
+    ze200 = .false.
+    b32unit = .false.
     call getvtx(' ', 'TYPE_RESU_MECA', scal=typmec, nbret=n1)
-    if (typmec .eq. 'B3200_UNIT') b3200=.true.
+    if (typmec .eq. 'ZE200a' .or. typmec .eq. 'ZE200b') ze200=.true.
 
 !     ------------------------------------------------------------------
 !              TRAITEMENT DES SITUATIONS (GROUPES, PASSAGE...)
@@ -66,10 +67,11 @@ subroutine rc3200()
 ! 
 !     ------------------------------------------------------------------
 !              RECUPERATION DES CHARGES MECANIQUES
-!                        SOUS CHAR_MECA 
+!              (SOUS CHAR_MECA et RESU_MECA_UNIT) 
 !     ------------------------------------------------------------------
 !
     call rc32cm()
+    call rc32mu()
 !
 !     ------------------------------------------------------------------
 !                  RECUPERATION DES TRANSITOIRES :
@@ -86,6 +88,9 @@ subroutine rc3200()
 !     ------------------------------------------------------------------
 !
     call getvid(' ', 'MATER', scal=mater, nbret=n1)
+    call getfac('RESU_MECA_UNIT', nb)
+!-- si on est en ZE200 ou B3200_T
+    if (nb .ne. 0) b32unit=.true.
 !
     lpmpb = .false.
     lsn   = .false.
@@ -94,7 +99,7 @@ subroutine rc3200()
     lefat = .false.
 !
     call getfac('RESU_THER', nbther)
-    if (nbther .ne. 0) then
+    if (nbther .ne. 0 .and. nb .ne. 0) then
         lther = .true.
     endif
 !
@@ -103,32 +108,28 @@ subroutine rc3200()
     call getvtx(' ', 'OPTION', nbval=nbopt, vect=kopt, nbret=n1)
     do 20 iopt = 1, nbopt
         if (kopt(iopt) .eq. 'PM_PB') then
-            lpmpb = .true.
+            if (nb .ne. 0) lpmpb = .true.
         else if (kopt(iopt) .eq. 'SN') then
             lsn = .true.
         else if (kopt(iopt) .eq. 'FATIGUE') then
-            lpmpb = .true.
+            if (nb .ne. 0) lpmpb = .true.
             lfat = .true.
             lsn = .true.
         else if (kopt(iopt) .eq. 'EFAT') then
-            lpmpb = .true.
+            if (nb .ne. 0) lpmpb = .true.
             lfat = .true.
             lsn = .true.
             lefat = .true.
         endif
  20 continue
 !
-
-!
-    if (b3200) call rc32mu()
-!
-    call rc32ac(b3200, mater, lpmpb, lsn, lther, lfat, lefat)
+    call rc32ac(ze200, mater, lpmpb, lsn, lther, lfat, lefat)
 !
 !     ------------------------------------------------------------------
 !                       STOCKAGE DES RESULTATS
 !     ------------------------------------------------------------------
 !
-    call rc32rs(b3200, mater, lpmpb, lsn, lther,&
+    call rc32rs(mater, lpmpb, lsn, lther,&
                 lfat, lefat)
 !
     call jedetc('V', '&&RC3200', 1)

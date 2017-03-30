@@ -1,7 +1,7 @@
 subroutine lcumfp(fami, kpg, ksp, ndim, typmod,&
                   imate, compor, tinstm, tinstp, epsm,&
                   deps, sigm, vim, option, rela_plas,&
-                  sigp, vip, dsidep, crit)
+                  sigp, vip, dsidep)
 !
 implicit none
 !
@@ -20,11 +20,12 @@ implicit none
 #include "asterfort/sigela.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
+#include "asterfort/get_varc.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -51,7 +52,7 @@ implicit none
     character(len=*), intent(in) :: fami
     real(kind=8) :: tinstm, tinstp
     real(kind=8) :: epsm(*), deps(*), sigm(*), sigp(*), vim(*), vip(*)
-    real(kind=8) :: dsidep(6, 6), crit(*), tbid(36)
+    real(kind=8) :: dsidep(6, 6), tbid(36)
 !
 !---&s---1---------2---------3---------4---------5---------6---------7--
 ! IN  NDIM    : DIMENSION DE L'ESPACE
@@ -256,14 +257,10 @@ implicit none
 !
     isph = 1
 !
-! RECUPERATION DES VALEURS DE TEMPERATURE
+! - Get temperatures
 !
-    call rcvarc('F', 'TEMP', '-', fami, kpg,&
-                ksp, tm, iret)
-    call rcvarc('F', 'TEMP', '+', fami, kpg,&
-                ksp, tp, iret)
-    call rcvarc('F', 'TEMP', 'REF', fami, kpg,&
-                ksp, tref, iret)
+    call get_varc(fami, kpg, ksp ,'T',&
+                  tm  , tp , tref)
 !
 !
 !  ------- LECTURE DES CARACTERISTIQUES ELASTIQUES
@@ -369,7 +366,7 @@ implicit none
 !
     rbid = 0.0d0
     call rcvalb(fami, kpg, ksp, '+', imate,&
-                ' ', 'BETON_UMLV_FP', 0, ' ', [rbid],&
+                ' ', 'BETON_UMLV', 0, ' ', [rbid],&
                 7, nomres, valres, icodre, 2)
     krs = valres(1)
     etars = valres(2)
@@ -383,7 +380,7 @@ implicit none
 !
     nomres(8)='ETA_FD'
     call rcvalb(fami, kpg, ksp, '+', imate,&
-                ' ', 'BETON_UMLV_FP', 0, ' ', [rbid],&
+                ' ', 'BETON_UMLV', 0, ' ', [rbid],&
                 8, nomres, valres, icodre, 0)
 !     FLUAGE DE DESSICCATION NON ACTIVE
     if (icodre(8) .ne. 0) then
@@ -534,10 +531,10 @@ implicit none
         if (rela_plas .eq. 'ENDO_ISOT_BETON') then
             compoz(1)='ENDO_ISOT_BETON'
 !    MATRICE ELASTO-ENDOMMAGEE ET MISE A JOUR DE L ENDOMMAGEMENT
-            call lcldsb(fami, kpg, ksp, ndim, typmod,&
+            call lcldsb(fami, kpg, ksp, ndim,&
                         imate, compoz, epsm, deps, vim(22),&
-                        tm, tp, tref, 'RAPH_COUP       ', tbid,&
-                        vip(22), dep, crit)
+                        'RAPH_COUP       ', tbid,&
+                        vip(22), dep)
         else
 !    MATRICE D ELASTICITE DE HOOKE POUR MAZARS ET UMLV SANS COUPLAGE
             if (rela_plas .eq. 'MAZARS') then
@@ -602,7 +599,7 @@ implicit none
             option2='RAPH_COUP'
             call lcmaza(fami, kpg, ksp, ndim, typmod,&
                         imate, compor, epsm, deps, vim(22),&
-                        tm, tp, tref, option2, sigp,&
+                        option2, sigp,&
                         vip, tbid)
         endif
     endif
@@ -623,17 +620,17 @@ implicit none
             endif
             call lcmaza(fami, kpg, ksp, ndim, typmod,&
                         imate, compor, epsm, deps, vim(22),&
-                        tm, tp, tref, option2, tbid,&
+                        option2, tbid,&
                         vip, dsidep)
         else
             option2='RIGI_COUP'
             if (option(1:9) .eq. 'RIGI_MECA') then
                 if (rela_plas .eq. 'ENDO_ISOT_BETON') then
                     compoz(1)='ENDO_ISOT_BETON'
-                    call lcldsb(fami, kpg, ksp, ndim, typmod,&
+                    call lcldsb(fami, kpg, ksp, ndim,&
                                 imate, compoz, epsm, tbid, vim(22),&
-                                tm, tp, tref, option2, tbid,&
-                                tbid, dep, crit)
+                                option2, tbid,&
+                                tbid, dep)
                 else
                     call lcumme(youn, xnu, ifou, dep)
                 endif

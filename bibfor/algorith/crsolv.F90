@@ -1,4 +1,4 @@
-subroutine crsolv(method, renum, blrfront, blreps, solve, bas)
+subroutine crsolv(method, renum, kacmum, blreps, solve, bas)
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -7,11 +7,11 @@ subroutine crsolv(method, renum, blrfront, blreps, solve, bas)
 #include "asterfort/jevtbl.h"
 #include "asterfort/sdsolv.h"
 #include "asterfort/wkvect.h"
-    real(kind=8) :: blrfront, blreps
-    character(len=*) :: method, renum, solve, bas
+    real(kind=8) :: blreps
+    character(len=*) :: method, renum, solve, bas, kacmum
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -74,13 +74,14 @@ subroutine crsolv(method, renum, blrfront, blreps, solve, bas)
     endif
     if (method .eq. 'MUMPS') then
         zk24(islvk-1+3) = 'AUTO'
+        zk24(islvk-1+5) = kacmum
         zk24(islvk-1+6) = 'LAGR2'
     else
         zk24(islvk-1+3) = 'XXXX'
+        zk24(islvk-1+5) = 'XXXX'
         zk24(islvk-1+6) = 'XXXX'
     endif
     zk24(islvk-1+4) = renum
-    zk24(islvk-1+5) = 'XXXX'
     zk24(islvk-1+7) = 'XXXX'
     zk24(islvk-1+8) = 'XXXX'
     zk24(islvk-1+9) = 'XXXX'
@@ -92,7 +93,7 @@ subroutine crsolv(method, renum, blrfront, blreps, solve, bas)
     zr(islvr-1+1) = epsmat
     zr(islvr-1+2) = resire
     if (method .eq. 'MUMPS') then
-        zr(islvr-1+3) = blrfront
+        zr(islvr-1+3) = 0.d0
         zr(islvr-1+4) = blreps
     else
         zr(islvr-1+3) = jevtbl('TAILLE_BLOC')
@@ -111,3 +112,4 @@ subroutine crsolv(method, renum, blrfront, blreps, solve, bas)
     call jedema()
 !
 end subroutine
+

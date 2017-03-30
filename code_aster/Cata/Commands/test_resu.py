@@ -22,7 +22,7 @@ from code_aster.Cata.Commons import *
 #
 #
 # ======================================================================
-# person_in_charge: j-pierre.lefebvre at edf.fr
+# person_in_charge: mathieu.courtois at edf.fr
 TEST_RESU=PROC(nom="TEST_RESU",op=23,
             UIinfo={"groupes":("Résultats et champs","Utilitaires",)},
          fr=tr("Extraction d'une valeur d'une structure de donnée et comparaison à une valeur de référence"),
@@ -97,10 +97,10 @@ TEST_RESU=PROC(nom="TEST_RESU",op=23,
 
          GENE            =FACT(statut='f',max='**',
            RESU_GENE       =SIMP(statut='o',typ=(vect_asse_gene, tran_gene, mode_gene, harm_gene)),
-           b_vect_asse     =BLOC(condition = "AsType(RESU_GENE) == vect_asse_gene",
+           b_vect_asse     =BLOC(condition = """is_type("RESU_GENE") == vect_asse_gene""",
              NUME_CMP_GENE   =SIMP(statut='o',typ='I'),
            ),
-           b_mode          =BLOC(condition = "AsType(RESU_GENE) == mode_gene",
+           b_mode          =BLOC(condition = """is_type("RESU_GENE") == mode_gene""",
                             regles=(UN_PARMI('NUME_ORDRE','FREQ','NUME_MODE'),
                                     UN_PARMI('NOM_CHAM','PARA'),
                                     PRESENT_PRESENT('NOM_CHAM','NUME_CMP_GENE'),),
@@ -111,14 +111,14 @@ TEST_RESU=PROC(nom="TEST_RESU",op=23,
              NUME_MODE       =SIMP(statut='f',typ='I'),
              FREQ            =SIMP(statut='f',typ='R'),
            ),
-           b_harm          =BLOC(condition = "AsType(RESU_GENE) == harm_gene",
+           b_harm          =BLOC(condition = """is_type("RESU_GENE") == harm_gene""",
                             regles=(UN_PARMI('NUME_ORDRE','FREQ') ,),
              NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO()),
              NUME_CMP_GENE   =SIMP(statut='o',typ='I'),
              NUME_ORDRE      =SIMP(statut='f',typ='I'),
              FREQ            =SIMP(statut='f',typ='R'),
            ),
-           b_tran          =BLOC(condition = "AsType(RESU_GENE) == tran_gene",
+           b_tran          =BLOC(condition = """is_type("RESU_GENE") == tran_gene""",
                             regles=(UN_PARMI('NUME_ORDRE','INST') ,),
              NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO()),
              NUME_CMP_GENE   =SIMP(statut='o',typ='I'),
@@ -139,7 +139,7 @@ TEST_RESU=PROC(nom="TEST_RESU",op=23,
                                  into=('NB_MAILLE','NB_NOEUD','NB_GROUP_MA','NB_GROUP_NO','NB_MA_GROUP_MA','NB_NO_GROUP_NO',)),
            NOM_GROUP_MA    =SIMP(statut='f',typ=grma,max=1),
            NOM_GROUP_NO    =SIMP(statut='f',typ=grno,max=1),
-                            
+
            **C_TEST_REFERENCE('MAILLAGE', max=1)
          ),
 

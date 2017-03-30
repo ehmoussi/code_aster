@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+# person_in_charge: david.haboussa at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -15,13 +16,12 @@
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jean-michel.proix at edf.fr
 
 DEBUT(CODE=_F(
 NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'))
 # SDVERI='NON' car la verification est trop couteuse en CPU
 
-CUBE=LIRE_MAILLAGE();
+CUBE=LIRE_MAILLAGE(FORMAT="ASTER",);
 
 PRECIS=1.E-6
 
@@ -81,7 +81,7 @@ ACIER=DEFI_MATERIAU(ELAS=_F(E=145200.0,
                                   H4=0.0,
                                   ),
                     MONO_CINE1=_F(D=36.68,),);
-                    
+
 # test de la possibité de définir des matériaux différents
 # les valeurs sont identiques a celle de ACIER
 

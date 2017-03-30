@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,21 +20,21 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: harinaivo.andriambololona at edf.fr
+# person_in_charge: mathieu.corus at edf.fr
 
 
-def asse_elem_ssd_prod(self,RESU_ASSE_SSD,**args):
+def asse_elem_ssd_prod(self, RESU_ASSE_SSD, **args):
     MTYPES = {
         'MODELE' : modele_gene,
         'NUME_DDL_GENE' : nume_ddl_gene,
         'RIGI_GENE' : matr_asse_gene_r,
         'MASS_GENE' : matr_asse_gene_r,
-              }
-    for res in RESU_ASSE_SSD:
-        for mc, typ in MTYPES.items():
-            if res[mc]:
-                self.type_sdprod(res[mc], typ)
+    }
+    for mc, typ in MTYPES.items():
+        if RESU_ASSE_SSD.get(mc):
+            self.type_sdprod(RESU_ASSE_SSD[mc], typ)
     return None
+
 
 ASSE_ELEM_SSD=MACRO(nom="ASSE_ELEM_SSD",
                     op=OPS('Macro.asse_elem_ssd_ops.asse_elem_ssd_ops'),
@@ -44,7 +44,7 @@ ASSE_ELEM_SSD=MACRO(nom="ASSE_ELEM_SSD",
                     UIinfo={"groupes":("Matrices et vecteurs",)},
 
 # pour les concepts de sortie
-        RESU_ASSE_SSD = FACT( statut='o', max=1,
+        RESU_ASSE_SSD = FACT( statut='o',
                           regles=(PRESENT_PRESENT('RIGI_GENE','NUME_DDL_GENE'),
                                   PRESENT_PRESENT('MASS_GENE','NUME_DDL_GENE'),),
                               MODELE=SIMP(statut='o',typ=CO,defaut=None),

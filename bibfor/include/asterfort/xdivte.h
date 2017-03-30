@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,10 +16,11 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine xdivte(elp, cnset, nse, nnose)
+    subroutine xdivte(elp, cnset, nse, nnose, exit)
         character(len=8) :: elp
         integer :: cnset(*)
         integer :: nse
         integer :: nnose
+        integer :: exit(2)
     end subroutine xdivte
 end interface

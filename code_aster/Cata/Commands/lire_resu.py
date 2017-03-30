@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -54,7 +54,7 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
          FORMAT          =SIMP(statut='o',typ='TXM',into=("IDEAS","IDEAS_DS58","ENSIGHT","MED") ),
 
          INFO            =SIMP(statut='f',typ='I',into=(1,2) ),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE           =SIMP(statut='f',typ='TXM'),
 
          regles=(UN_PARMI('MAILLAGE','MODELE'),),
          MAILLAGE        =SIMP(statut='f',typ=maillage_sdaster),
@@ -66,24 +66,24 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
 
          CARA_ELEM       =SIMP(statut='f',typ=cara_elem,),
 
-          b_evol_elas  = BLOC(condition="TYPE_RESU=='EVOL_ELAS'",
+          b_evol_elas  = BLOC(condition="""equal_to("TYPE_RESU", 'EVOL_ELAS')""",
           EXCIT           =FACT(statut='f',max='**',
             CHARGE          =SIMP(statut='o',typ=(char_meca,char_cine_meca)),
             FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
             TYPE_CHARGE     =SIMP(statut='f',typ='TXM',defaut="FIXE_CSTE",into=("FIXE_CSTE",) ),),
            ),
 
-          b_evol_ther  = BLOC(condition="TYPE_RESU=='EVOL_THER'",
+          b_evol_ther  = BLOC(condition="""equal_to("TYPE_RESU", 'EVOL_THER')""",
           EXCIT           =FACT(statut='f',max='**',
             CHARGE          =SIMP(statut='o',typ=(char_ther,char_cine_ther)),
             FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),),
            ),
 
-          b_mode_empi  = BLOC(condition="TYPE_RESU=='MODE_EMPI'",
+          b_mode_empi  = BLOC(condition="""equal_to("TYPE_RESU", 'MODE_EMPI')""",
           NUME_PLAN         =SIMP(statut='f',typ='I', defaut=0 ),
            ),
 
-          b_evol_noli  = BLOC(condition="TYPE_RESU=='EVOL_NOLI'",
+          b_evol_noli  = BLOC(condition="""equal_to("TYPE_RESU", 'EVOL_NOLI')""",
           EXCIT           =FACT(statut='f',max='**',
            CHARGE          =SIMP(statut='o',typ=(char_meca,char_cine_meca)),
            FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -104,11 +104,10 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
 
 # 1-1 ideas dataset-58 :
 # ----------------------
-         b_dataset_58 = BLOC(condition="FORMAT=='IDEAS_DS58'",
-           UNITE           =SIMP(statut='f',typ='I',defaut= 19 , inout='in'),
+         b_dataset_58 = BLOC(condition="""equal_to("FORMAT", 'IDEAS_DS58')""",
+           UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 19 , inout='in'),
          ),
-         b_dataset_58_b = BLOC(condition="(FORMAT=='IDEAS_DS58') and ((TYPE_RESU=='DYNA_TRANS') or\
-                                        (TYPE_RESU=='DYNA_HARMO'))",
+         b_dataset_58_b = BLOC(condition="""equal_to("FORMAT", 'IDEAS_DS58') and is_in("TYPE_RESU", ('DYNA_TRANS', 'DYNA_HARMO'))""",
            NOM_CHAM=SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=("DEPL","VITE","ACCE","EPSI_NOEU","SIEF_NOEU",),max='**'),
            REDEFI_ORIENT=FACT(statut='f',max='**',
                               regles=(PRESENT_PRESENT('CODE_DIR','DIRECTION','NOEUD',),),
@@ -119,8 +118,8 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
 
 # 1-2 ideas  :
 # ---------
-         b_ideas         =BLOC(condition="FORMAT=='IDEAS'",
-           UNITE           =SIMP(statut='f',typ='I',defaut= 19 , inout='in'),
+         b_ideas         =BLOC(condition="""equal_to("FORMAT", 'IDEAS')""",
+           UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 19 , inout='in'),
 #           TEST            =SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="NON" ),
            NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max='**',into=l_nom_cham_pas_elga()),
            PROL_ZERO       =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON",),
@@ -143,15 +142,15 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
 
 # 1-3 ensight :
 # -------------
-         b_ensight       =BLOC(condition="FORMAT=='ENSIGHT'",
+         b_ensight       =BLOC(condition="""equal_to("FORMAT", 'ENSIGHT')""",
            NOM_FICHIER     =SIMP(statut='f',typ='TXM'),
            NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max='**',into=l_nom_cham_pas_elga()),
          ),
 
 # 1-4 med :
 # ---------
-         b_med           =BLOC(condition = "FORMAT == 'MED'",fr=tr("Nom du champ dans le fichier MED"),
-           UNITE           =SIMP(statut='f',typ='I',defaut= 81, inout='in', fr=tr("Le fichier est : fort.n."),),
+         b_med           =BLOC(condition = """equal_to("FORMAT", 'MED')""",fr=tr("Nom du champ dans le fichier MED"),
+           UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 81, inout='in', fr=tr("Le fichier est : fort.n."),),
            FORMAT_MED      =FACT(statut='o',max='**',
              regles=(ENSEMBLE('NOM_CMP','NOM_CMP_MED'),UN_PARMI('NOM_CHAM_MED','NOM_RESU'),),
              NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO(),),
@@ -166,7 +165,7 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
 
 # 2) blocs selon le type du resultat :
 #---------------------------------
-         b_mode_meca     =BLOC(condition="(TYPE_RESU=='MODE_MECA')or(TYPE_RESU=='MODE_MECA_C')",
+         b_mode_meca     =BLOC(condition="""(equal_to("TYPE_RESU", 'MODE_MECA')or(equal_to("TYPE_RESU", 'MODE_MECA_C')))""",
            # Ces mots cles sont stockes dans l'objet .REFD des mode_meca
            # Ces mots cles sont aussi utilises  pour imposer la numerotation des cham_no de DEPL_R
            MATR_RIGI        =SIMP(statut='f',typ=matr_asse_depl_r,max=1),
@@ -176,7 +175,7 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
 
 # 3) autres blocs :
 #---------------------------------
-         b_extrac        =BLOC(condition="1",fr=tr("acces a un champ dans la structure de donnees resultat"),
+         b_extrac        =BLOC(condition="""1""",fr=tr("acces a un champ dans la structure de donnees resultat"),
            regles=(UN_PARMI('TOUT_ORDRE','NUME_ORDRE','LIST_ORDRE','INST','LIST_INST','FREQ','LIST_FREQ'),),
            TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
            NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
@@ -186,11 +185,11 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
            FREQ            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
            LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
 
-           b_acce_reel     =BLOC(condition="(INST != None)or(LIST_INST != None)or(FREQ != None)or(LIST_FREQ != None)",
+           b_acce_reel     =BLOC(condition="""(exists("INST"))or(exists("LIST_INST"))or(exists("FREQ"))or(exists("LIST_FREQ"))""",
              CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
-             b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+             b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                  PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-             b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+             b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                  PRECISION       =SIMP(statut='o',typ='R',),),
            ),
          ),

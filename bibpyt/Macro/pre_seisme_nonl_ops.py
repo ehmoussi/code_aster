@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -612,7 +612,7 @@ class StatDyna(object):
         self.add_charge(_chsol)
 
         _lreel = DEFI_LIST_REEL( VALE = self.resu_snl.LIST_PARA()['INST'] );
-        _linst = DEFI_LIST_INST(DEFI_LIST=_F(METHODE ='AUTO', LIST_INST = _lreel,),);
+        _linst = DEFI_LIST_INST(METHODE ='AUTO', DEFI_LIST=_F(LIST_INST = _lreel,),);
 
         _ResuSNL = STAT_NON_LINE(**self.non_line(
                                   EXCIT = self.charges,
@@ -1171,5 +1171,5 @@ class Mesh(object):
             mail.dime_maillage[2] += 1
         mail.gma['MFICTIF'] = NP.array(gr_ma)
         unite = mail.ToAster()
-        _mail = LIRE_MAILLAGE(UNITE=unite)
+        _mail = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=unite)
         self.new_mesh = _mail

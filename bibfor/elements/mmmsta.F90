@@ -1,9 +1,9 @@
 subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
                   dlagrf, coefaf, tau1, tau2, lcont,&
-                  ladhe, lambda, rese, nrese)
+                  ladhe, lambda, rese, nrese, l_previous)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -18,7 +18,7 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! person_in_charge: mickael.abbas at edf.fr
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
     implicit none
 #include "asterf_types.h"
@@ -28,7 +28,7 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 !
     integer :: ndim
     real(kind=8) :: dlagrf(2), djeut(3)
-    aster_logical :: loptf, lpenaf, leltf
+    aster_logical :: loptf, lpenaf, leltf, l_previous
     real(kind=8) :: tau1(3), tau2(3)
     aster_logical :: lcont, ladhe
     real(kind=8) :: rese(3), nrese, lambda
@@ -52,9 +52,9 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 ! IN  COEFAF : COEF_AUGM_FROT
 ! IN  TAU1   : PREMIER VECTEUR TANGENT
 ! IN  TAU2   : SECOND VECTEUR TANGENT
+! IN LAMBDA : VALEUR DU MULT. DE CONTACT (SEUIL FIXE)
 ! OUT LCONT  : .TRUE. SI CONTACT (SU=1)
 ! OUT LADHE  : .TRUE. SI ADHERENCE
-! OUT LAMBDA : VALEUR DU MULT. DE CONTACT (SEUIL FIXE)
 ! OUT RESE   : SEMI-MULTIPLICATEUR GTK DE FROTTEMENT
 !               GTK = LAMBDAF + COEFAF*VITESSE
 ! OUT NRESE  : NORME DU SEMI-MULTIPLICATEUR GTK DE FROTTEMENT
@@ -64,6 +64,7 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 !
     integer :: jpcf
     integer :: indco
+    integer :: indadhe
 !
 ! ----------------------------------------------------------------------
 !
@@ -80,11 +81,16 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 ! --- RECUPERATION DES STATUTS
 !
     call jevech('PCONFR', 'L', jpcf)
-    indco = nint(zr(jpcf-1+12))
+    if (l_previous) then 
+        indco = nint(zr(jpcf-1+27))
+        indadhe = nint(zr(jpcf-1+44))
+    else 
+        indco = nint(zr(jpcf-1+12))   
+    endif
 !
 ! --- STATUT DU CONTACT
 !
-    lcont = indco.eq.1
+    lcont = (indco.eq.1) 
 !
 ! --- PAS DE FROTTEMENT SI CALCUL OPTION CONTACT
 !
@@ -96,14 +102,19 @@ subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
 !
 !
     if (loptf) then
-        if (lambda .eq. 0.d0) lcont = .false.
+! This test influence highly the NON_REGRESSION & CONVERGENCE 
+! ONE MUST HAVE ATTENTION WHEN MODIFYING    
+        if (lambda .eq. 0.d0) lcont = .false._1
+!        if ( abs(lambda) .lt. 1.d-100) lcont = .false._1
     endif
 !
 ! --- ETAT D'ADHERENCE DU POINT DE CONTACT
 !
+    
     if (loptf .and. lcont) then
         call mmtrpr(ndim, lpenaf, djeut, dlagrf, coefaf,&
                     tau1, tau2, ladhe, rese, nrese)
+        if (indadhe .eq. 1 .and. l_previous) ladhe = .true. 
     endif
 !
 !

@@ -13,7 +13,7 @@ subroutine xintva(name, dekker, ptxx, ndime, intinf, intsup)
     real(kind=8) :: ptxx(*), intinf, intsup, dekker(4*ndime)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -53,8 +53,14 @@ subroutine xintva(name, dekker, ptxx, ndime, intinf, intsup)
 !
     call jemarq()
 !
+    if (name.eq.'XINTER') then
+       intinf=0.d0
+       intsup=1.d0
+       goto 99
+    endif
+!
     intinf=0.d0
-    intsup =0.d0
+    intsup=0.d0
     cpt = 0
 !   RECUPERATION DES COORDONNEES DE REFERENCE DES NOEUDS SOMMETS DU SOUS ELEMENT
     do j = 1, ndime
@@ -226,6 +232,8 @@ subroutine xintva(name, dekker, ptxx, ndime, intinf, intsup)
     endif
 !
     ASSERT(cpt.ge.2)
+!
+99  continue
 !
     call jedema()
 end subroutine

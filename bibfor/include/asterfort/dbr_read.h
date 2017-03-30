@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,9 +16,8 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine dbr_read(ds_para, result)
+    subroutine dbr_read(ds_para)
         use Rom_Datastructure_type
         type(ROM_DS_ParaDBR), intent(inout) :: ds_para
-        character(len=8), intent(out) :: result
     end subroutine dbr_read
 end interface

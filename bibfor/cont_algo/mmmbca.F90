@@ -1,4 +1,4 @@
-subroutine mmmbca(mesh  , iter_newt, nume_inst, sddyna    , ds_measure,&
+subroutine mmmbca(mesh  , iter_newt, nume_inst,  ds_measure,&
                   sddisc, hval_incr, hval_algo, ds_contact)
 !
 use NonLin_Datastructure_type
@@ -40,7 +40,7 @@ implicit none
 #include "asterfort/mreacg.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -55,12 +55,11 @@ implicit none
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-! person_in_charge: mickael.abbas at edf.fr
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
     character(len=8), intent(in) :: mesh
     integer, intent(in) :: iter_newt
     integer, intent(in) :: nume_inst
-    character(len=19), intent(in) :: sddyna
     type(NL_DS_Measure), intent(inout) :: ds_measure
     character(len=19), intent(in) :: sddisc
     character(len=19), intent(in) :: hval_incr(*)
@@ -78,7 +77,6 @@ implicit none
 ! In  mesh             : name of mesh
 ! In  iter_newt        : index of current Newton iteration
 ! In  nume_inst        : index of current time step
-! In  sddyna           : dynamic parameters datastructure
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  sddisc           : datastructure for time discretization
 ! In  hval_incr        : hat-variable for incremental values fields
@@ -101,25 +99,28 @@ implicit none
     real(kind=8) :: lagr_cont_node(9), lagr_fro1_node(9), lagr_fro2_node(9)
     real(kind=8) :: elem_slav_coor(27)
     real(kind=8) :: lagr_cont_poin, time_curr
-    real(kind=8) :: gap, gap_speed, gap_user
+    real(kind=8) :: gap,  gap_user
     real(kind=8) :: pres_frot(3), gap_user_frot(3)
     real(kind=8) :: coef_cont, coef_frot, loop_cont_vale
     character(len=8) :: elem_slav_type
     character(len=19) :: cnscon, cnsfr1, cnsfr2
     character(len=19) :: oldgeo, newgeo
-    character(len=19) :: speed_field, chdepd
+    character(len=19) ::  chdepd
     character(len=19) :: depdel, depplu, vitplu
-    aster_logical :: l_glis, l_speed, scotch
-    aster_logical :: l_glis_init, l_veri, l_exis_glis, loop_cont_conv, l_coef_adap, l_loop_cont
+    aster_logical :: l_glis
+    aster_logical :: l_glis_init, l_veri, l_exis_glis, loop_cont_conv,  l_loop_cont
     aster_logical :: l_frot_zone, l_pena_frot, l_frot
     integer :: loop_geom_count, loop_fric_count, loop_cont_count
-    character(len=24) :: sdcont_cychis, sdcont_cyccoe
+    integer :: type_adap
+    character(len=24) :: sdcont_cychis, sdcont_cyccoe, sdcont_cyceta
     real(kind=8), pointer :: v_sdcont_cychis(:) => null()
     real(kind=8), pointer :: v_sdcont_cyccoe(:) => null()
+    integer, pointer :: v_sdcont_cyceta(:) => null()
     character(len=24) :: sdcont_tabfin, sdcont_jsupco, sdcont_apjeu
     real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
     real(kind=8), pointer :: v_sdcont_jsupco(:) => null()
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
+    aster_logical :: l_coef_adap
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -136,10 +137,10 @@ implicit none
 !
 ! - Parameters
 !
-    l_speed      = ndynlo(sddyna,'FORMUL_VITE')
+    
     l_exis_glis  = cfdisl(ds_contact%sdcont_defi,'EXIS_GLISSIERE')
     l_loop_cont  = cfdisl(ds_contact%sdcont_defi,'CONT_BOUCLE')
-    l_coef_adap  = cfdisl(ds_contact%sdcont_defi,'COEF_ADAPT')
+    type_adap    = cfdisi(ds_contact%sdcont_defi,'TYPE_ADAPT')
     model_ndim   = cfdisi(ds_contact%sdcont_defi,'NDIM' )
     nb_cont_zone = cfdisi(ds_contact%sdcont_defi,'NZOCO')
     l_frot       = cfdisl(ds_contact%sdcont_defi,'FROTTEMENT')
@@ -156,8 +157,10 @@ implicit none
 !
 ! - Acces to cycling objects
 !
+    sdcont_cyceta = ds_contact%sdcont_solv(1:14)//'.CYCETA'
     sdcont_cychis = ds_contact%sdcont_solv(1:14)//'.CYCHIS'
     sdcont_cyccoe = ds_contact%sdcont_solv(1:14)//'.CYCCOE'
+    call jeveuo(sdcont_cyceta, 'L', vi = v_sdcont_cyceta)
     call jeveuo(sdcont_cychis, 'E', vr = v_sdcont_cychis)
     call jeveuo(sdcont_cyccoe, 'E', vr = v_sdcont_cyccoe)
 !
@@ -171,23 +174,12 @@ implicit none
 !
     time_curr = diinst(sddisc, nume_inst)
 !
-! - Get off indicator for speed schemes
-!
-    scotch = ds_contact%l_getoff
 !
 ! - Geometric update
 !
     oldgeo = mesh//'.COORDO'
     newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
     call mreacg(mesh, ds_contact, field_update_ = depplu)
-!
-! - Create speed field
-!    
-    speed_field = '&&MMMBCA.ACTUVIT'
-    if (l_speed) then
-        call mmfield_prep(oldgeo, speed_field,&
-                          l_update_ = .true._1, field_update_ = vitplu)
-    endif
 !
 ! - Prepare displacement field to get contact Lagrangien multiplier
 !
@@ -292,18 +284,34 @@ implicit none
                 tau2(2) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+12)
                 tau2(3) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+13)
 !
+! ------------- Store current local basis :
+!               needed for previous cycling matrices and vectors computrations
+!
+                v_sdcont_cychis(60*(i_cont_poin-1)+13) = tau1(1) 
+                v_sdcont_cychis(60*(i_cont_poin-1)+14) = tau1(2) 
+                v_sdcont_cychis(60*(i_cont_poin-1)+15) = tau1(3) 
+                v_sdcont_cychis(60*(i_cont_poin-1)+16) = tau2(1) 
+                v_sdcont_cychis(60*(i_cont_poin-1)+17) = tau2(2) 
+                v_sdcont_cychis(60*(i_cont_poin-1)+18) = tau2(3) 
+                v_sdcont_cychis(60*(i_cont_poin-1)+19) = ksipc1 
+                v_sdcont_cychis(60*(i_cont_poin-1)+20) = ksipc2 
+                v_sdcont_cychis(60*(i_cont_poin-1)+22) = ksipr1
+                v_sdcont_cychis(60*(i_cont_poin-1)+23) = ksipr2 
+                v_sdcont_cychis(60*(i_cont_poin-1)+24) = elem_mast_nume
+
+!
 ! ------------- Compute gap and contact pressure
 !
                 call mmeval_prep(mesh   , time_curr  , model_ndim     , ds_contact,&
-                                 l_speed, speed_field, i_zone         ,&
+                                  i_zone         ,&
                                  ksipc1 , ksipc2     , ksipr1         , ksipr2    ,&
                                  tau1   , tau2       ,&
-                                 elem_slav_indx, elem_slav_nume, elem_slav_nbno,&
+                                 elem_slav_indx,  elem_slav_nbno,&
                                  elem_slav_type, elem_slav_coor,&
                                  elem_mast_nume,&
                                  lagr_cont_node,&
                                  norm   , &
-                                 gap    , gap_user, gap_speed, lagr_cont_poin)
+                                 gap    , gap_user,  lagr_cont_poin)
 !
 ! ------------- Previous status and coefficients
 !
@@ -311,8 +319,8 @@ implicit none
                 if (l_frot_zone) then
                     indi_frot_init = nint(v_sdcont_tabfin(ztabf*(i_cont_poin-1)+24))
                 endif
-                coef_cont = v_sdcont_cychis(25*(i_cont_poin-1)+2)
-                coef_frot = v_sdcont_cychis(25*(i_cont_poin-1)+6)
+                coef_cont = v_sdcont_cychis(60*(i_cont_poin-1)+2)
+                coef_frot = v_sdcont_cychis(60*(i_cont_poin-1)+6)
 !
 ! ------------- Initial bilateral contact ?
 !
@@ -350,11 +358,11 @@ implicit none
 !
 ! ------------- Status treatment
 !
-                call mmalgo(ds_contact, l_loop_cont, l_frot_zone, l_speed,&
-                            l_glis_init, l_coef_adap, i_zone, i_cont_poin, indi_cont_init,&
-                            indi_cont_eval, indi_frot_eval, gap, gap_speed, lagr_cont_poin,&
-                       gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, indi_cont_curr,&
-                            indi_frot_curr, loop_cont_vali, loop_cont_conv, scotch)
+                call mmalgo(ds_contact, l_loop_cont, l_frot_zone, &
+                            l_glis_init, type_adap, i_zone, i_cont_poin, &
+                            indi_cont_eval, indi_frot_eval, gap,  lagr_cont_poin,&
+                       gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, v_sdcont_cyceta,&
+                        indi_cont_curr,indi_frot_curr, loop_cont_vali, loop_cont_conv)
 !
  19             continue
 !
@@ -369,8 +377,8 @@ implicit none
 !
                 if (niv .ge. 2) then
                     call mmimp4(ifm, mesh, elem_slav_nume, i_poin_elem, indi_cont_prev,&
-                                indi_cont_curr, indi_frot_prev, indi_frot_curr, l_frot, l_speed,&
-                                l_glis, gap, gap_speed, lagr_cont_poin)
+                                indi_cont_curr, indi_frot_prev, indi_frot_curr, l_frot, &
+                                l_glis, gap,  lagr_cont_poin)
                 endif
 !
 ! ------------- Next contact point
@@ -393,6 +401,9 @@ implicit none
 !
 ! - Propagation of coefficient
 !
+    l_coef_adap = ((type_adap .eq. 1) .or. (type_adap .eq. 2)  .or.  &
+                  (type_adap .eq. 5) .or. (type_adap .eq. 6) )
+    
     if (l_coef_adap) then
         call mm_cycl_prop(ds_contact)
     endif
@@ -408,10 +419,7 @@ implicit none
     else
         call mmeven('FIN', ds_contact)
     endif
-!
-! - Get off indicator for speed schemes
-!
-    ds_contact%l_getoff = scotch
+
 !
 ! - Set loop values
 !
@@ -426,7 +434,6 @@ implicit none
 ! - Cleaning
 !
     call jedetr(newgeo)
-    call jedetr(speed_field)
     call jedetr(chdepd)
     call detrsd('CHAM_NO_S', cnscon)
     call detrsd('CHAM_NO_S', cnsfr1)

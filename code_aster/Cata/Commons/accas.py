@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -127,3 +127,34 @@ class grma(GEOM):
             return valeur.strip()
         raise ValueError(_(u'On attend une chaine de caractères (de longueur <= 24).'))
     __convert__ = classmethod(__convert__)
+
+
+# Ce type doit être associé à tous les mots-clés devant recevoir un numéro
+# d'unité logique fortran. De base, il s'agit d'un simple entier.
+def UnitType(filter=None):
+    """Emulated type for *UNITE* keywords.
+    
+    Arguments:
+        filter (str): Can be used to pass a filter or an expected filetype.
+    """
+    return "I"
+
+
+class FIN_ETAPE(PROC_ETAPE):
+    """Particularisation pour FIN"""
+    def Build_sd(self):
+        """Fonction Build_sd pour FIN"""
+        PROC_ETAPE.Build_sd(self)
+        if self.nom == 'FIN':
+            try:
+                from Noyau.N_Exception import InterruptParsingError
+                raise InterruptParsingError
+            except ImportError:
+                # eficas does not known this exception
+                pass
+        return None
+
+
+class FIN_PROC(PROC):
+    """Procédure FIN"""
+    class_instance = FIN_ETAPE

@@ -18,6 +18,7 @@ subroutine xfacxt(elp, jpint, jmilt, jnit, jcnset, pinter,&
 #include "asterfort/padist.h"
 #include "asterfort/provec.h"
 #include "asterfort/reeref.h"
+#include "asterfort/r8inir.h"
 #include "asterfort/tecael.h"
 #include "asterfort/vecini.h"
 #include "asterfort/xassfa.h"
@@ -132,6 +133,10 @@ subroutine xfacxt(elp, jpint, jmilt, jnit, jcnset, pinter,&
 !      COMPTEUR DU NOMBRE DE POINTS D'INTERSECTION AVEC LES ARETES DES SOUS ELEMENTS
     npis = 0
 !
+    call r8inir(20, 0.d0, ls, 1)
+    call r8inir(ndim, 0.d0, ksi, 1)
+    ibid = 0
+
     if (ndim .eq. 2) then
        if (.not. iselli(elp)) then
            nnose = 6
@@ -523,7 +528,7 @@ subroutine xfacxt(elp, jpint, jmilt, jnit, jcnset, pinter,&
                                  call vecini(ndim, 0.d0, m)
                                  do ii = 1, ndim
                                     do ino = 1, nno
-                                       m(ii) = m(ii) + zr(igeom-1+ndim*(ino-1)+ii) * ff(k)
+                                       m(ii) = m(ii) + zr(igeom-1+ndim*(ino-1)+ii) * ff(ino)
                                     end do
                                  end do
 !      ON ARCHIVE POUR LE POINT MILIEU
@@ -796,7 +801,7 @@ subroutine xfacxt(elp, jpint, jmilt, jnit, jcnset, pinter,&
                            call xdecfa(elp, nno, igeom, jlsn, jlst, npi, npis,&
                                        pinter, pinref, ainter, cooree, cooref, rainter,&
                                        noeud, npts, nintar, lst ,lonref, ndim, zxain,&
-                                       nnose, jgrlsn, mipos)
+                                       jgrlsn, mipos)
                            call xassfa(elp, npts, nintar, lst, noeud, cface, nface, pinter, jgrlsn)
                         endif
                      endif

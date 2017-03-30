@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -230,7 +230,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 #  RENUM
    _BlocMF['RENUM'] = SIMP(statut='f', typ='TXM', defaut="METIS", into=("MD", "MDA", "METIS", ), )
 
-   
+
 
    _BlocLD['RENUM'] = SIMP(statut='f', typ='TXM', defaut="RCMK", into=("RCMK",), )
 
@@ -279,7 +279,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
-   _BlocMU['LOW_RANK_TAILLE'] =SIMP(statut='f', typ='R', defaut=-1.0,)
+   _BlocMU['ACCELERATION'] =SIMP(statut='f', typ='TXM', defaut='AUTO',into=('AUTO','FR','FR+','LR','LR+'))
    _BlocMU['LOW_RANK_SEUIL']=SIMP(statut='f', typ='R', defaut=0.0, )
 
 # ----------------------------------------------------------------------------------------------------------------------------------
@@ -325,7 +325,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 #
 # ----------------------------------------------------------------------------------------------------------------------------------
 
-   _BlocPE['ALGORITHME'] = SIMP(statut='f', typ='TXM', defaut="FGMRES", into=("CG", "CR", "GMRES", "GCR", "FGMRES" ), )
+   _BlocPE['ALGORITHME'] = SIMP(statut='f', typ='TXM', defaut="FGMRES", into=("CG", "CR", "GMRES", "GCR", "FGMRES", "GMRES_LMP" ), )
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -398,59 +398,57 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 # ----------------------------------------------------------------------------------------------------------------------------------
 
    mcfact = FACT(statut='d',
-                 b_mult_front = BLOC(condition = "METHODE == 'MULT_FRONT' ",
+                 b_mult_front = BLOC(condition = """equal_to("METHODE", 'MULT_FRONT') """,
                                      fr=tr("Paramètres de la méthode multi frontale"),
                                      **_BlocMF
                                      ),
-                 b_ldlt       = BLOC(condition = "METHODE == 'LDLT' ",
+                 b_ldlt       = BLOC(condition = """equal_to("METHODE", 'LDLT') """,
                                      fr=tr("Paramètres de la méthode LDLT"),
                                      **_BlocLD
                                      ),
-                 b_mumps      = BLOC(condition = "METHODE == 'MUMPS' ",
+                 b_mumps      = BLOC(condition = """equal_to("METHODE", 'MUMPS') """,
                                      fr=tr("Paramètres de la méthode MUMPS"),
                                      **_BlocMU
                                      ),
-                 b_gcpc       = BLOC(condition = "METHODE == 'GCPC' ",
+                 b_gcpc       = BLOC(condition = """equal_to("METHODE", 'GCPC') """,
                                       fr=tr("Paramètres de la méthode du gradient conjugué"),
-                                     b_ldltinc    = BLOC(condition = "PRE_COND == 'LDLT_INC' ",
+                                     b_ldltinc    = BLOC(condition = """equal_to("PRE_COND", 'LDLT_INC') """,
                                                          fr=tr("Paramètres de la factorisation incomplète"),
                                                          **_BlocGC_INC
                                                          ),
-                                     b_simple     = BLOC(condition = "PRE_COND == 'LDLT_SP' ",
+                                     b_simple     = BLOC(condition = """equal_to("PRE_COND", 'LDLT_SP') """,
                                                          fr=tr("Paramètres de la factorisation simple précision"),
                                                          **_BlocXX_SP
                                                          ),
                                      **_BlocGC
                                      ),
-                 b_petsc      = BLOC(condition = "METHODE == 'PETSC' ",
+                 b_petsc      = BLOC(condition = """equal_to("METHODE", 'PETSC') """,
                                      fr=tr("Paramètres de la méthode PETSC"),
-                                     b_ldltinc    = BLOC(condition = "PRE_COND == 'LDLT_INC' ",
+                                     b_ldltinc    = BLOC(condition = """equal_to("PRE_COND", 'LDLT_INC') """,
                                                          fr=tr("Paramètres de la factorisation incomplète"),
                                                          **_BlocPE_INC
                                                          ),
-                                     b_simple     = BLOC(condition = "PRE_COND == 'LDLT_SP' ",
+                                     b_simple     = BLOC(condition = """equal_to("PRE_COND", 'LDLT_SP') """,
                                                          fr=tr("Paramètres de la factorisation simple précision"),
                                                          **_BlocXX_SP
                                                          ),
-                                     b_ml         = BLOC(condition = "PRE_COND == 'ML' ",
+                                     b_ml         = BLOC(condition = """equal_to("PRE_COND", 'ML') """,
                                                          fr=tr("Paramètres du multigrille algébrique ML"),
                                                          **_BlocPE_ML
                                                          ),
-                                     b_boomer      = BLOC(condition = "PRE_COND == 'BOOMER' ",
+                                     b_boomer      = BLOC(condition = """equal_to("PRE_COND", 'BOOMER') """,
                                                          fr=tr("Paramètres du multigrille algébrique HYPRE"),
                                                          **_BlocPE_BOOMER
                                                          ),
-                                     b_gamg        = BLOC(condition = "PRE_COND == 'GAMG' ",
+                                     b_gamg        = BLOC(condition = """equal_to("PRE_COND", 'GAMG') """,
                                                          fr=tr("Paramètres du multigrille algébrique GAMG"),
                                                          **_BlocPE_GAMG
                                                          ),
-                                     b_lagaug     = BLOC(condition = "PRE_COND == 'BLOC_LAGR' ",
+                                     b_lagaug     = BLOC(condition = """equal_to("PRE_COND", 'BLOC_LAGR') """,
                                                          fr=tr("Paramètres du préconditionneur Lagrangien Augmenté BLOC_LAGR"),
                                                          **_BlocPE_LAGAUG
                                                          ),
-                                     b_autres     = BLOC(condition = "PRE_COND == 'JACOBI' or \
-                                                                      PRE_COND == 'SOR'    or \
-                                                                      PRE_COND == 'SANS'",
+                                     b_autres     = BLOC(condition = """is_in("PRE_COND", ('JACOBI','SOR','SANS'))""",
                                                          **_BlocXX_Autres
                                                          ),
                                      **_BlocPE

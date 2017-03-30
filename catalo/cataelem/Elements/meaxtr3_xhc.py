@@ -355,8 +355,7 @@ class MEAXTR3_XHC(Element):
                              OP.GEOM_FAC.PPINTER, LC.E14NEUTR),
                              ),
                     para_out=(
-                        (SP.PBASESC, LC.E28NEUTR), (SP.PBASMAI, LC.E28NEUTR),
-                    (SP.PNEWGEM, LC.E14NEUTR), (SP.PNEWGES, LC.E14NEUTR),
+                        (SP.PNEWGEM, LC.E14NEUTR), (SP.PNEWGES, LC.E14NEUTR),
                     ),
                     ),
 
@@ -496,14 +495,6 @@ class MEAXTR3_XHC(Element):
                                ),
                      ),
 
-        OP.RIGI_MECA(te=81,
-                     para_in=((SP.PCAMASS, CCAMASS), (SP.PGEOMER, NGEOMER),
-                              (SP.PMATERC, LC.CMATERC), (
-                              OP.RIGI_MECA.PVARCPR, LC.ZVARCPG),
-                              ),
-                     para_out=((SP.PMATUUR, MMATUUR), ),
-                     ),
-
         OP.RIGI_MECA_TANG(te=539,
                           para_in=(
                           (OP.RIGI_MECA_TANG.PBASLOR, LC.N6NEUT_R), (
@@ -555,13 +546,9 @@ class MEAXTR3_XHC(Element):
                   OP.TOPOFA.PPMILTO, LC.E22NEUTR),
                   (SP.PTYPDIS, LC.E1NEUTI), ),
                   para_out=(
-                  (OP.TOPOFA.PAINTER, LC.E35NEUTR), (
-                  OP.TOPOFA.PBASECO, LC.E28NEUTR),
+                  (OP.TOPOFA.PAINTER, LC.E35NEUTR), (OP.TOPOFA.PBASECO, LC.E28NEUTR),
                   (OP.TOPOFA.PCFACE, LC.E9NEUTI), (SP.PGESCLA, LC.E14NEUTR),
-                  (OP.TOPOFA.PGESCLO, LC.E14NEUTR), (
-                  SP.PGMAITR, LC.E14NEUTR),
-                  (OP.TOPOFA.PLONGCO, LC.E3NEUTI), (
-                  OP.TOPOFA.PPINTER, LC.E14NEUTR),
+                  (OP.TOPOFA.PLONGCO, LC.E3NEUTI), (OP.TOPOFA.PPINTER, LC.E14NEUTR),
                   ),
                   ),
 

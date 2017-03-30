@@ -13,6 +13,8 @@ subroutine te0514(option, nomte)
 #include "asterfort/matini.h"
 #include "asterfort/ndcent.h"
 #include "asterfort/padist.h"
+#include "asterfort/provec.h"
+#include "asterfort/reeref.h"
 #include "asterfort/teattr.h"
 #include "asterfort/tecach.h"
 #include "asterfort/tecael.h"
@@ -23,6 +25,8 @@ subroutine te0514(option, nomte)
 #include "asterfort/xdecqu.h"
 #include "asterfort/xdecqv.h"
 #include "asterfort/xdivte.h"
+#include "asterfort/xelrex.h"
+#include "asterfort/xnormv.h"
 #include "asterfort/xxmmvd.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/ltequa.h"
@@ -30,7 +34,7 @@ subroutine te0514(option, nomte)
     character(len=16) :: option, nomte
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -59,7 +63,7 @@ subroutine te0514(option, nomte)
 !......................................................................
 !
 !
-    character(len=8) :: elp, noma, typma, enr, elrese(3), typsma
+    character(len=8) :: elp, noma, typma, enr, enr2, elrese(3), typsma
     integer :: igeom, jlsn, ifisc, nfisc, ptmaxi, pmmaxi
     integer :: jpintt, jcnset, jheavt, jlonch, jpmilt, zintmx, nfimax
     integer :: iadzi, iazk24, nno, nnn, jfisco, nsemax, jout6
@@ -68,18 +72,18 @@ subroutine te0514(option, nomte)
     integer :: ndim, ibid, ndime, iad, jtab(7), jtab2(2), vali(2)
     integer :: nnc, npm, nmilie, nmfis, nbar, ar(12,3)
     integer :: iret, nfiss, ifiss, ncomb, ninmax, nmmax, nbars, ars(12,3)
-    integer :: a1, a2, b1, b2, ncompm
+    integer :: a1, a2, b1, b2, ncompm, exit(2), joncno, jonact(8)
     parameter(ptmaxi=6,zintmx=5,pmmaxi=17,nsemax=6,nfimax=10)
     parameter(ninmax=44,nmmax=264)
     real(kind=8) :: nmil(3, 7), txlsn(28), ainter(ptmaxi*zintmx), rainter(4)
-    real(kind=8) :: newpt(3), p(3), lonref, pinter(3*ptmaxi)
-    real(kind=8) :: pmilie(3*pmmaxi), heav(nsemax*nfimax)
-    real(kind=8) :: xg(3), cridist
+    real(kind=8) :: newpt(3), p(3), lonref, pinter(3*ptmaxi), lsn(3)
+    real(kind=8) :: pmilie(3*pmmaxi), heav(nsemax*nfimax), u(3), v(3), normal(3)
+    real(kind=8) :: xg(3), cridist, xref(81), ff(27), ptref(3), norme
     parameter(cridist=1.d-9)
-    integer :: fisco(2*nfimax), fisc(2*nfimax), zxain, ai
+    integer :: fisco(2*nfimax), fisc(2*nfimax), zxain, ai, nnos
     integer :: ndoubl(ninmax*(2**nfimax)), ndoub2(ninmax*(2**nfimax))
     integer :: ndoub3(nmmax*(2**nfimax)), coupe(nfimax)
-    aster_logical :: deja, ajn, cut, lconnec_ok
+    aster_logical :: deja, ajn, cut, lconnec_ok, pre1, jonc
 !
     data            elrese /'SEG3','TRIA6','TETRA10'/
 !......................................................................
@@ -91,11 +95,11 @@ subroutine te0514(option, nomte)
 !
     ASSERT(option.eq.'TOPOSE')
     call vecini(51, 0.d0, pmilie)
-    call vecini(20, 0.d0, ainter)
+    call vecini(30, 0.d0, ainter)
     call vecini(4, 0.d0, rainter)
 !
     call elref1(elp)
-    call elrefe_info(fami='RIGI', ndim=ndime, nno=nno)
+    call elrefe_info(fami='RIGI', ndim=ndime, nno=nno, nnos=nnos)
 !
     call tecael(iadzi, iazk24, noms=0)
     noma=zk24(iazk24)(1:8)
@@ -118,6 +122,7 @@ subroutine te0514(option, nomte)
 !
     call teattr('S', 'XFEM', enr, ibid)
 !
+    ncompm = 0
     if ((ibid.eq.0) .and. ltequa(elp,enr)) then
          call jevech('PPMILTO', 'E', jpmilt)
          call tecach('OOO', 'PPMILTO', 'E', iret, nval=2,&
@@ -134,6 +139,17 @@ subroutine te0514(option, nomte)
     jout6 = 0
     if (ndim.eq.ndime) then
        call jevech('PAINTTO', 'E', jout6)
+    endif
+!
+!   Le modèle est-il HM-XFEM
+    call teattr('C', 'HYDR1', enr2, iret)
+    pre1 = (enr2.eq.'1' .or. enr2.eq.'2' )
+    joncno = 1
+    if (pre1 .and.(enr(1:4).eq.'XH2C'.or.enr(1:4).eq.'XH3C')) then
+       call jevech('PJONCNO', 'E', joncno)
+       do i = 1, 20
+          zi(joncno-1+i) = 0
+       end do
     endif
 !
     do 9 i = 1, nfimax
@@ -170,6 +186,9 @@ subroutine te0514(option, nomte)
                     nnc)
     end if
 !
+ exit(1:2) = 0
+ 73 continue
+!
     npi=0
     zxain = xxmmvd('ZXAIN')
     npm=0
@@ -180,7 +199,7 @@ subroutine te0514(option, nomte)
     call loncar(ndim, typma, zr(igeom), lonref)
 !
 !     ON SUBDIVISE L'ELEMENT PARENT EN NIT SOUS-ELEMENTS
-    call xdivte(elp, zi(jcnset), nit, nnose)
+    call xdivte(elp, zi(jcnset), nit, nnose, exit)
     cpt = nit
 !     PROBLEME DE DIMENSSIONNEMENT DANS LES CATALOGUES
         ASSERT(ncompc.ge.nnose*ncomph)
@@ -226,7 +245,8 @@ subroutine te0514(option, nomte)
                             igeom, pinter, ninter, npts, ainter,&
                             pmilie, nmilie, nmfis, nmil, txlsn,&
                             zr(jpintt), zr(jpmilt), ifiss, nfiss,&
-                            fisc, nfisc, cut, coupe)
+                            fisc, nfisc, cut, coupe, exit, joncno)
+                if (exit(1).eq.1) goto 73
 !
                 call xdecqv(nnose, it, zi(jcnset), zi(jheavt), zr(jlsn), igeom,&
                             ninter, npts, ndim, ainter, nse, cnse,&
@@ -284,28 +304,50 @@ subroutine te0514(option, nomte)
                        do k = 1, zxain
                           zr(jout6-1+zxain*(npi-1)+k)=0.d0
                        end do
+                       if (ifiss.gt.1) then
 !             MARQUAGE POINT DE JONCTION DE FISSURES
-                       if (rainter(4).eq.-1.d0) zr(jout6-1+zxain*(npi-1)+4)=-1.d0
+                          if (rainter(4).eq.-1.d0) zr(jout6-1+zxain*(npi-1)+4)=-1.d0
+                          call conare(typma, ar, nbar)
+                          call xelrex(elp, nno, xref)
+                          call reeref(elp, nno, zr(igeom), newpt, ndim,&
+                                      ptref, ff)
+                          call vecini(3, 0.d0, u)
+                          call vecini(3, 0.d0, v)
+                          call vecini(3, 0.d0, normal)
+                          do j = 1, nbar
+                             do k = 1, ndim
+                                u(k)=xref((ar(j,1)-1)*ndim+k)-xref((ar(j,2)-1)*ndim+k)
+                                v(k)=ptref(k)-xref((ar(j,2)-1)*ndim+k)
+                             end do
+                             call provec(u, v, normal)
+                             call xnormv(3, normal, norme)
+                             if (norme.lt.cridist) then
+                                zr(jout6-1+zxain*(npi-1)+1)=j
+                                zr(jout6-1+zxain*(npi-1)+3)=rainter(3)
+                                zr(jout6-1+zxain*(npi-1)+4)=rainter(4)
+                             endif
+                          end do
+                       else
+                          call conare(typma, ar, nbar)
+                          typsma = elrese(ndim)
+                          call conare(typsma, ars, nbars)
+                          b1=zi(jcnset+nnose*(it-1)+ars(nint(rainter(1)),1)-1)
+                          b2=zi(jcnset+nnose*(it-1)+ars(nint(rainter(1)),2)-1)
 !
-                       call conare(typma, ar, nbar)
-                       typsma = elrese(ndim)
-                       call conare(typsma, ars, nbars)
-                       b1=zi(jcnset+nnose*(it-1)+ars(nint(rainter(1)),1)-1)
-                       b2=zi(jcnset+nnose*(it-1)+ars(nint(rainter(1)),2)-1)
-!
-                       do j = 1, nbar
-                          a1 = ar(j,1)
-                          a2 = ar(j,2)
-                          if (a1.eq.b1.and.a2.eq.b2) then
-                             zr(jout6-1+zxain*(npi-1)+1)=j
-                             zr(jout6-1+zxain*(npi-1)+3)=rainter(3)
-                             zr(jout6-1+zxain*(npi-1)+4)=rainter(4)
-                          else if (a1.eq.b2.and.a2.eq.b1) then
-                             zr(jout6-1+zxain*(npi-1)+1)=j
-                             zr(jout6-1+zxain*(npi-1)+3)=rainter(3)
-                             zr(jout6-1+zxain*(npi-1)+4)=1.d0-rainter(4)
-                          endif
-                       end do
+                          do j = 1, nbar
+                             a1 = ar(j,1)
+                             a2 = ar(j,2)
+                             if (a1.eq.b1.and.a2.eq.b2) then
+                                zr(jout6-1+zxain*(npi-1)+1)=j
+                                zr(jout6-1+zxain*(npi-1)+3)=rainter(3)
+                                zr(jout6-1+zxain*(npi-1)+4)=rainter(4)
+                             else if (a1.eq.b2.and.a2.eq.b1) then
+                                zr(jout6-1+zxain*(npi-1)+1)=j
+                                zr(jout6-1+zxain*(npi-1)+3)=rainter(3)
+                                zr(jout6-1+zxain*(npi-1)+4)=1.d0-rainter(4)
+                             endif
+                          end do
+                       endif
                     endif
 !
 !             MISE A JOUR DU CNSE (TRANSFORMATION DES 100 EN 1000...)
@@ -407,6 +449,42 @@ subroutine te0514(option, nomte)
     endif
     zi(jlonch-1+1)=nit
 !
+!     REMPLISSAGE DE PJONCNO POUR LES ELEMENTS QUI CONTIENNENT LA JONCTION
+    jonc = .false.
+    do i = 1, 8
+       jonact(i)=0
+    end do
+    if (pre1 .and. (enr(1:4).eq.'XH2C'.or.enr(1:4).eq.'XH3C')) then
+       do i = 1, nnos
+          if (zi(joncno-1+i).eq.1) jonc=.true.
+       end do
+       if (jonc) then
+          call conare(typma, ar, nbar)
+          do i = 1, nbar
+             lsn(1)=zr(jlsn-1+(ar(i,1)-1)*nfiss+1)
+             lsn(2)=zr(jlsn-1+(ar(i,2)-1)*nfiss+1)
+             lsn(3)=zr(jlsn-1+(ar(i,3)-1)*nfiss+1)
+             if (lsn(1).eq.0.d0) then
+                jonact(ar(i,1))=1
+             elseif (lsn(2).eq.0.d0) then
+                jonact(ar(i,2))=1
+             elseif (lsn(3).eq.0.d0) then
+                jonact(ar(i,1))=1
+                jonact(ar(i,2))=1
+             elseif (lsn(1)*lsn(2).lt.0.d0) then
+                jonact(ar(i,1))=1
+                jonact(ar(i,2))=1
+             endif
+          end do
+          do i = 1, nnos
+             if (jonact(i).eq.0) zi(joncno-1+i) = 0
+          end do
+          do i = 1, nnos
+             if (zi(joncno-1+i).ge.1) zi(joncno-1+i) = jonact(i)
+          end do
+       endif
+    endif
+! 
 !     ARCHIVAGE DE LONCHAM POINTS D'INTERSECTION
     zi(jlonch-1+2)=npi
 !

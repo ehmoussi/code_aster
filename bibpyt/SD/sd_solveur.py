@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -30,20 +30,19 @@ class sd_solveur(AsBase):
         slvk = self.SLVK.get_stripped()
         method = slvk[0]
         assert slvk[12] in ('OUI', 'NON', '')
-        assert slvk[4] in ('XXXX')
         assert slvk[9] in ('XXXX')
         if method == 'MUMPS':
             assert slvk[1] in ('AUTO', 'SANS')
             assert slvk[2] in ('NONSYM', 'SYMGEN', 'SYMDEF', 'AUTO')
             assert slvk[3] in (
                 'AMD', 'AMF', 'PORD', 'METIS', 'QAMD', 'AUTO', 'SCOTCH', 'PARMETIS', 'PTSCOTCH')
-            assert slvk[5] in ('LAGR2', 'NON',), slvk
-            assert slvk[6] in ('OUI', 'NON', 'XXXX')
+            assert slvk[4] in ('AUTO', 'FR', 'FR+','LR','LR+')
+            assert slvk[5] in ('LAGR2', 'NON',)
             assert slvk[7] in ('OUI', 'NON', 'XXXX')
             assert slvk[8] in (
                 'IN_CORE', 'OUT_OF_CORE', 'AUTO', 'EVAL', 'XXXX')
             assert slvk[10] in ('SANS', 'AUTO', 'FORCE', 'XXXX', 'MINI')
-            assert slvk[11] in ('XXXX', '5.0.1consortium', '5.0.1','5.0.2consortium', '5.0.2')
+            assert slvk[11] in ('XXXX', '5.0.2consortium', '5.0.2', '5.1.0consortium', '5.1.0')
         elif method == 'MULT_FRONT':
             assert slvk[1] in ('XXXX')
             assert slvk[2] in ('XXXX')
@@ -57,7 +56,7 @@ class sd_solveur(AsBase):
         elif method == 'LDLT':
             assert slvk[1] in ('XXXX')
             assert slvk[2] in ('XXXX')
-            assert slvk[3] in ('SANS',)
+            assert slvk[3] in ('RCMK',)
             assert slvk[5] in ('XXXX')
             assert slvk[6] in ('XXXX')
             assert slvk[7] in ('XXXX')
@@ -66,7 +65,7 @@ class sd_solveur(AsBase):
             assert slvk[11] in ('XXXX')
         elif method == 'GCPC':
             assert slvk[1] in ('LDLT_INC', 'LDLT_SP', 'SANS')
-            assert slvk[3] in ('SANS',)
+            assert slvk[3] in ('SANS','RCMK')
             assert slvk[5] in ('XXXX')
             assert slvk[6] in ('XXXX')
             assert slvk[7] in ('XXXX')
@@ -76,7 +75,7 @@ class sd_solveur(AsBase):
         elif method == 'PETSC':
             assert slvk[1] in (
                 'LDLT_INC', 'LDLT_SP', 'JACOBI', 'SOR', 'ML', 'BOOMER', 'SANS')
-            assert slvk[3] in ('SANS',)
+            assert slvk[3] in ('SANS', 'RCMK')
             assert slvk[5] in ('CG', 'CR', 'GMRES', 'GCR')
             assert slvk[6] in ('XXXX')
             assert slvk[7] in ('XXXX')

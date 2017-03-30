@@ -26,7 +26,6 @@
 #include "aster.h"
 #include "aster_module.h"
 #include "aster_core_module.h"
-
 #include "shared_vars.h"
 #include "aster_mpi.h"
 #include "aster_fort.h"
@@ -396,7 +395,8 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
 /* ------------------------------------------------------------------ */
 void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
                               _IN char *motcle,_IN STRING_SIZE lcle,_IN ASTERINTEGER *iocc,
-                              _IN ASTERINTEGER *iarg,_IN ASTERINTEGER *mxval,_INOUT ASTERDOUBLE *val,
+                              _IN ASTERINTEGER *iarg,_IN ASTERINTEGER *mxval,
+                              _INOUT ASTERDOUBLE *val,
                               _OUT ASTERINTEGER *nbval)
 {
         /*

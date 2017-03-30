@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -24,10 +24,6 @@ cata_msg = {
  Il n'est pas possible d'utiliser les repères 'UTILISATEUR' et
  'CYLINDRIQUE' quand TYPE_CHAM vaut 'TENS_2D' ou 'TENS_3D' ou 'TORS_3D' et
  que le modèle contient des éléments plaques ou coques.
-"""),
-
-    8 : _(u"""
- élément non traité
 """),
 
     9 : _(u"""
@@ -156,15 +152,6 @@ Contactez le support technique.
     80 : _(u"""
  "NB_POIN" n est pas une puissance de 2
  on prend la puissance de 2 supérieure
-"""),
-
-    81 : _(u"""
- coefficient de dispersion trop grand
- consulter la documentation d'utilisation
-"""),
-
-    82 : _(u"""
- matrice moyenne non définie positive
 """),
 
     83 : _(u"""

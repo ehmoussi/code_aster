@@ -168,7 +168,7 @@ def check_mfront_obsolete_source(self):
     src = self.path.get_src().abspath()
     # clean obsolete behaviours (from a previous build)
     bld, mfront = osp.split(self.path.get_bld().abspath())
-    excl = ['libAsterBehaviour.so', 'libAsterBehaviourDebug.so',
+    excl = ['libAsterMFrOfficial.so', 'libAsterMFrOfficialDebug.so',
             'include', 'mfront_request']
     for variant in ('debug', 'release'):
         build = osp.join(bld, variant, mfront)
@@ -244,7 +244,7 @@ class mfront_capy(Task.Task):
     def run(self):
         """Create a .py file for the MFront behaviours"""
         req = self.inputs[0].abspath()
-        # open libAsterBehaviour.so
+        # open libAsterMFrOfficial.so
         libpath = self.inputs[1].abspath()
         lst = self.generator.lst
         target = self.outputs[0]
@@ -285,6 +285,7 @@ class fake_mfront_capy(Task.Task):
 ###############################################################################
 def getMaterialProperties(binary, libpath, behav):
     """Return the list of material properties"""
+    # TODO: add get_ld_paths output to LD_LIBRARY_PATH / or use Python bindings
     symb = 'aster%s' % behav.lower()
     try:
         out = subprocess.check_output([binary, "Tridimensional", libpath, symb])
@@ -306,12 +307,11 @@ def _capy_comport(comport, properties, typ, indent):
     lines.append('),')
     return [indent + k for k in lines]
 
-capy_header = """# coding=utf-8
-
+capy_header = """#
 # Automatically-generated file. Do not edit!
-
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
-
+#
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
+#
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *

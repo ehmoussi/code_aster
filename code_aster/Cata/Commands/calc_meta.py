@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -27,6 +27,7 @@ CALC_META=OPER(nom="CALC_META",op=194,sd_prod=evol_ther,reentrant='o',
 
      regles=(PRESENT_ABSENT('TOUT','GROUP_MA','MAILLE'),),
 
+     reuse=SIMP(statut='c', typ=CO),
      MODELE          =SIMP(statut='f',typ=modele_sdaster ),
      CHAM_MATER      =SIMP(statut='f',typ=cham_mater ),
      RESULTAT        =SIMP(statut='o',typ=evol_ther ),
@@ -39,20 +40,20 @@ CALC_META=OPER(nom="CALC_META",op=194,sd_prod=evol_ther,reentrant='o',
      MAILLE          =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**',
                            fr=tr("le calcul ne sera effectué que sur ces mailles là")),
 
-     b_meta =BLOC(condition= "au_moins_un(OPTION, ('META_ELNO','META_NOEU'))",
+     b_meta =BLOC(condition= """is_in('OPTION', ('META_ELNO','META_NOEU'))""",
        ETAT_INIT       =FACT(statut='o',
           regles=(UN_PARMI('EVOL_THER', 'META_INIT_ELNO'),),
           EVOL_THER       =SIMP(statut='f',typ=evol_ther ),
           META_INIT_ELNO  =SIMP(statut='f',typ=carte_sdaster ),
-          b_etat     =BLOC(condition="EVOL_THER != None",
+          b_etat     =BLOC(condition="""exists("EVOL_THER")""",
              regles=(UN_PARMI('NUME_INIT', 'INST_INIT',),),
              NUME_INIT       =SIMP(statut='f',typ='I'),
              INST_INIT       =SIMP(statut='f',typ='R'),
-             b_inst     =BLOC(condition="INST_INIT != None",
+             b_inst     =BLOC(condition="""exists("INST_INIT")""",
                 CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
-                b_prec_rela=BLOC(condition="(CRITERE=='RELATIF')",
+                b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
                     PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-                b_prec_abso=BLOC(condition="(CRITERE=='ABSOLU')",
+                b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                     PRECISION       =SIMP(statut='o',typ='R',),),
              ),
           ),

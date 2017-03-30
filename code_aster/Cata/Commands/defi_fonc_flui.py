@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,7 +20,7 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: andre.adobes at edf.fr
+# person_in_charge: hassan.berro at edf.fr
 DEFI_FONC_FLUI=OPER(nom="DEFI_FONC_FLUI",op= 142,sd_prod=fonction_sdaster,
                     reentrant='n',
             fr=tr("Définit un profil de vitesse d'écoulement fluide le long d'une poutre"),
@@ -44,5 +44,5 @@ DEFI_FONC_FLUI=OPER(nom="DEFI_FONC_FLUI",op= 142,sd_prod=fonction_sdaster,
          PROL_GAUCHE     =SIMP(statut='f',typ='TXM' ,defaut="EXCLU",
                                into=("CONSTANT","LINEAIRE","EXCLU") ),
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2 ) ),
-         TITRE           =SIMP(statut='f',typ='TXM',max='**'),
+         TITRE           =SIMP(statut='f',typ='TXM'),
 )  ;

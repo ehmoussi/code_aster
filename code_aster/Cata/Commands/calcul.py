@@ -5,7 +5,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -25,26 +25,28 @@ from code_aster.Cata.Commons import *
 CALCUL=OPER(nom="CALCUL",op=26,sd_prod=table_container,reentrant='f',
             UIinfo={"groupes":("Résolution",)},
             fr=tr("Calculer des objets élémentaires comme une matrice tangente, intégrer une loi de comportement, etc..."),
+     reuse=SIMP(statut='c', typ=CO),
      OPTION          =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max='**',defaut="COMPORTEMENT",
                            into=( "COMPORTEMENT","MATR_TANG_ELEM","FORC_INTE_ELEM","FORC_NODA_ELEM","FORC_VARC_ELEM_M","FORC_VARC_ELEM_P"),),
      MODELE          =SIMP(statut='o',typ=modele_sdaster),
      CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
      CHAM_MATER      =SIMP(statut='o',typ=cham_mater),
      TABLE           =SIMP(statut='f',typ=table_container),
-     EXCIT           =FACT(statut='o',max='**',
+     EXCIT           =FACT(statut='f',max='**',
        CHARGE          =SIMP(statut='o',typ=(char_meca,char_cine_meca)),
        FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
        TYPE_CHARGE     =SIMP(statut='f',typ='TXM',defaut="FIXE_CSTE",
                                  into=("FIXE_CSTE",)),
 
      ),
-     DEPL            =SIMP(statut='o',typ=cham_no_sdaster ),
-     INCR_DEPL       =SIMP(statut='o',typ=cham_no_sdaster ),
-     SIGM            =SIMP(statut='o',typ=cham_elem),
-     VARI            =SIMP(statut='o',typ=cham_elem),
+     DEPL            =SIMP(statut='f',typ=cham_no_sdaster ),
+     INCR_DEPL       =SIMP(statut='f',typ=cham_no_sdaster ),
+     SIGM            =SIMP(statut='f',typ=cham_elem),
+     VARI            =SIMP(statut='f',typ=cham_elem),
      INCREMENT       =FACT(statut='o',
           LIST_INST       =SIMP(statut='o',typ=listr8_sdaster),
           NUME_ORDRE      =SIMP(statut='o',typ='I'),),
      COMPORTEMENT       =C_COMPORTEMENT('CALCUL'),
+     MODE_FOURIER    =SIMP(statut='f',typ='I' ),
      INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
 ) ;

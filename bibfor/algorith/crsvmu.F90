@@ -27,7 +27,7 @@ subroutine crsvmu(motfac, solveu, istop, nprec,&
     character(len=16) :: motfac
     character(len=19) :: solveu
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -57,11 +57,10 @@ subroutine crsvmu(motfac, solveu, istop, nprec,&
 ! ----------------------------------------------------------
 !
     integer :: ibid, ifm, niv, i, pcpiv, nbproc, rang, iaux
-    integer :: monit(12), vali(2), compt
-    integer :: nbma
-    real(kind=8) :: eps, blreps, blrfront
+    integer :: monit(12), vali(2), compt, nbma
+    real(kind=8) :: eps, blreps
     character(len=5) :: klag2
-    character(len=8) :: ktypr, ktyps, ktyprn, ktypp, modele, partit, matra
+    character(len=8) :: ktypr, ktyps, ktyprn, ktypp, modele, partit, matra, kacmum
     character(len=12) :: kooc
     character(len=19) :: k19b
     character(len=24) :: kmonit(12)
@@ -213,7 +212,7 @@ subroutine crsvmu(motfac, solveu, istop, nprec,&
     ASSERT(ibid.eq.1)
     call getvtx(motfac, 'PRETRAITEMENTS', iocc=1, scal=ktyps, nbret=ibid)
     ASSERT(ibid.eq.1)
-    call getvr8(motfac, 'LOW_RANK_TAILLE', iocc=1, scal=blrfront, nbret=ibid)
+    call getvtx(motfac, 'ACCELERATION', iocc=1, scal=kacmum, nbret=ibid)
     ASSERT(ibid.eq.1)
     call getvr8(motfac, 'LOW_RANK_SEUIL', iocc=1, scal=blreps, nbret=ibid)
     ASSERT(ibid.eq.1)
@@ -249,7 +248,7 @@ subroutine crsvmu(motfac, solveu, istop, nprec,&
     slvk(2) = ktyps
     slvk(3) = ktypr
     slvk(4) = ktyprn
-    slvk(5) = 'XXXX'
+    slvk(5) = kacmum
     slvk(6) = klag2
     slvk(7) = mixpre
     slvk(8) = 'NON'
@@ -262,7 +261,7 @@ subroutine crsvmu(motfac, solveu, istop, nprec,&
 !
     slvr(1) = epsmat
     slvr(2) = eps
-    slvr(3) = blrfront
+    slvr(3) = 0.d0
     slvr(4) = blreps
 !
     slvi(1) = nprec
@@ -276,3 +275,4 @@ subroutine crsvmu(motfac, solveu, istop, nprec,&
 !
     call jedema()
 end subroutine
+
