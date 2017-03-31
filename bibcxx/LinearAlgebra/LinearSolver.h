@@ -151,6 +151,7 @@ struct SolverChecker
  * @class LinearSolverInstance
  * @brief Cette classe permet de definir un solveur lineaire
  * @author Nicolas Sellenet
+ * @todo verifier que tous les mots-clés sont modifiables par des set
  */
 class LinearSolverInstance: public DataStructure
 {
@@ -190,6 +191,7 @@ class LinearSolverInstance: public DataStructure
         GenParam     _precondResidual;
         GenParam     _stopSingular;
         GenParam     _resolutionType;
+        GenParam     _acceleration;
         ListGenParam _listOfParameters;
 
     public:
@@ -230,7 +232,8 @@ class LinearSolverInstance: public DataStructure
                     _residual( "RESI_RELA", false ),
                     _precondResidual( "RESI_RELA_PC", false ),
                     _stopSingular( "STOP_SINGULIER", false ),
-                    _resolutionType( "TYPE_RESOL", false )
+                    _resolutionType( "TYPE_RESOL", false ),
+                    _acceleration( "ACCELERATION", false )
         {
             SolverChecker::isAllowedRenumberingForSolver( currentLinearSolver, currentRenumber );
             _renum = RenumberingNames[ (int)_renumber ];
@@ -263,6 +266,7 @@ class LinearSolverInstance: public DataStructure
                 _residual = -1.0;
                 _stopSingular = "OUI";
                 _resolutionType = "AUTO";
+                _acceleration = "AUTO";
             }
             if ( currentLinearSolver == MultFront )
             {
@@ -304,11 +308,13 @@ class LinearSolverInstance: public DataStructure
             _listOfParameters.push_back( &_precondResidual );
             _listOfParameters.push_back( &_stopSingular );
             _listOfParameters.push_back( &_resolutionType );
+            _listOfParameters.push_back( &_acceleration );
         };
         /** @brief Returns a ListSyntaxMapContainer object "listsyntax", 
             ready to be inserted  in a CommandSyntax object with the key SOLVEUR 
         */
         ListSyntaxMapContainer buildListSyntax();
+
         /**
          * @brief Construction de la sd_solveur
          * @return vrai si tout s'est bien passé
