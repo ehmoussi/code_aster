@@ -13,7 +13,7 @@ def configure(self):
     self.check_cxx_compiler_flags()
     self.check_bibcxx_depends()
     self.load('boost')
-    self.check_boost() # lib='shared_ptr'... ?
+    self.check_boost(lib="python") # lib='shared_ptr'... ?
     cxxpath = self.path.get_src().abspath()
     self.env.append_value('INCLUDES', cxxpath)
 

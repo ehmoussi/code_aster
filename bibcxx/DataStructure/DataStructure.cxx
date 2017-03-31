@@ -52,7 +52,7 @@ DataStructure::DataStructure( const std::string type, const JeveuxMemory memType
         mapNameDataStructure.insert( mapStrSDValue( nameWithoutBlanks, this ) );
 };
 
-DataStructure::~DataStructure() throw ( std::runtime_error )
+DataStructure::~DataStructure()// throw ( std::runtime_error )
 {
 #ifdef __DEBUG_GC__
     std::cout << "DataStructure.destr: " << this->getName() << std::endl;

@@ -32,6 +32,7 @@
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 #include "DataFields/FieldOnNodes.h"
 #include "Mesh/MeshEntities.h"
+#include "RunManager/LogicalUnitManagerCython.h"
 #include <assert.h>
 
 /**
@@ -41,6 +42,8 @@
  */
 class MeshInstance: public DataStructure
 {
+public:
+
 private:
     /** @brief Nom Jeveux du maillage */
     const std::string      _jeveuxName;
@@ -63,7 +66,28 @@ private:
     /** @brief Booleen indiquant si le maillage est vide */
     bool                   _isEmpty;
 
+    /**
+     * @brief Read a Aster Mesh file
+     * @return retourne true si tout est ok
+     */
+    bool readMeshFile( const std::string& fileName, const std::string& format )
+        throw ( std::runtime_error );
+
 public:
+    /**
+     * @typedef MeshPtr
+     * @brief Pointeur intelligent vers un MeshInstance
+     */
+    typedef boost::shared_ptr< MeshInstance > MeshPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static MeshPtr create()
+    {
+        return MeshPtr( new MeshInstance );
+    };
+
     /**
      * @brief Constructeur
      */
@@ -72,7 +96,7 @@ public:
     /**
      * @brief Destructeur
      */
-    ~MeshInstance()
+    ~MeshInstance() throw ( std::runtime_error )
     {
 #ifdef __DEBUG_GC__
         std::cout << "Mesh.destr: " << this->getName() << std::endl;
@@ -130,9 +154,19 @@ public:
     {
         return _isEmpty;
     };
+
+    /**
+     * @brief Read a Aster Mesh file
+     * @return retourne true si tout est ok
+     */
+    bool readAsterMeshFile( const std::string& fileName ) throw ( std::runtime_error );
+
+    /**
+     * @brief Read a MED Mesh file
+     * @return retourne true si tout est ok
+     */
+    bool readMedFile( const std::string& fileName ) throw ( std::runtime_error );
 };
-
-
 
 /**
  * @typedef MeshPtr
