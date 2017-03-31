@@ -185,8 +185,9 @@ void DEFSPSSSPSSPS(MERIME_WRAP,merime_wrap, const char*, STRING_SIZE, ASTERINTEG
                    ASTERDOUBLE *, const char*, STRING_SIZE, const char*, STRING_SIZE,
                    ASTERINTEGER*, const char*, STRING_SIZE );
 
-#define CALL_RCMFMC(a, b) CALLSS(RCMFMC, rcmfmc, a, b)
-void DEFSS(RCMFMC,rcmfmc, const char*, STRING_SIZE, const char*, STRING_SIZE);
+#define CALL_RCMFMC_WRAP(a, b, c) CALLSSP(RCMFMC_WRAP, rcmfmc_wrap, a, b, c)
+void DEFSSP(RCMFMC_WRAP,rcmfmc_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                     ASTERINTEGER*);
 
 #define CALL_CRESOL_WRAP(a, b) CALLSS(CRESOL_WRAP, cresol_wrap, a, b)
 void DEFSS(CRESOL_WRAP,cresol_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE);

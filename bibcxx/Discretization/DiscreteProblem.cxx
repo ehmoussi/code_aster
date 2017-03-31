@@ -148,7 +148,8 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     std::string materName = curMater->getName();
     materName.resize(24, ' ');
     std::string mate = blanc;
-    CALL_RCMFMC( materName.c_str(), mate.c_str() );
+    long thm = 0;
+    CALL_RCMFMC_WRAP( materName.c_str(), mate.c_str(), &thm );
 
     // MERIME appel getres
     CommandSyntaxCython cmdSt( "MECA_STATIQUE" );

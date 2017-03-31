@@ -434,7 +434,7 @@ class Bloc(PartOfSyntax):
         from code_aster.Cata import DataStructure
         eval_context = {}
         eval_context.update(DataStructure.__dict__)
-        eval_context.update(block_utils())
+        eval_context.update(block_utils(context))
         eval_context.update(context)
         try:
             enabled = eval(self.getCondition(), {}, eval_context)
@@ -578,26 +578,78 @@ def mixedcopy(obj):
         new = obj
     return new
 
-def block_utils():
-    """Define some helper functions to write block conditions."""
-    def at_least_one(keyword, values):
+# Keep consistency with SyntaxUtils.block_utils from AsterStudy, AsterXX
+def block_utils(evaluation_context):
+    """Define some helper functions to write block conditions.
+
+    Arguments:
+        evaluation_context (dict): The context containing the keywords.
+    """
+
+    def exists(name):
+        """Tell if the keyword name exists in the context.
+        The context is set to the evaluation context. In the catalog, just
+        use: `exists("keyword")`"""
+        return evaluation_context.get(name) is not None
+
+    def is_in(name, values):
         """Checked if the/a value of 'keyword' is at least once in 'values'.
         Similar to the rule AtLeastOne, 'keyword' may contain several
         values."""
-        if type(keyword) not in (list, tuple):
-            keyword = [keyword,]
+        if type(name) not in (list, tuple):
+            name = [name, ]
         if type(values) not in (list, tuple):
-            values = [values,]
+            values = [values, ]
+        # convert name to keyword
+        keyword = []
+        for name_i in name:
+            if not exists(name_i):
+                return False
+            value_i = evaluation_context[name_i]
+            if type(value_i) not in (list, tuple):
+                value_i = [value_i, ]
+            keyword.extend(value_i)
         test = set(keyword)
         values = set(values)
         return not test.isdisjoint(values)
 
-    def none_of(keyword, values):
-        """Checked if none of the values of 'keyword' is in 'values'."""
-        return not at_least_one(keyword, values)
+    def value(name, default=""):
+        """Return the value of a keyword or the default value if it does
+        not exist.
+        The *default* default value is an empty string as it is the most
+        used type of keywords."""
+        return evaluation_context.get(name, default)
 
-    au_moins_un = at_least_one
-    aucun = none_of
+    def is_type(name):
+        """Return the type of a keyword."""
+        return AsType(value(name))
+
+    def length(name):
+        """Return the *length* of the keyword value, 0 if the length can not
+        be evaluated."""
+        try:
+            ret = len(value(name))
+        except AttributeError:
+            ret = 0
+        return ret
+
+    def less_than(name, number):
+        """Tell if the value of a keyword is less than *number*.
+        Return *False* if the value is not defined."""
+        val = value(name, None)
+        if val is None:
+            return False
+        return value(name, 0) < number
+
+    def greater_than(name, number):
+        """Tell if the value of a keyword is greter than *number*.
+        Return *False* if the value is not defined."""
+        val = value(name, None)
+        if val is None:
+            return False
+        return value(name, 0) > number
+
+    equal_to = is_in
 
     return locals()
 

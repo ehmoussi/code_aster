@@ -48,16 +48,7 @@ const std::set< Renumbering > WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering
 ListSyntaxMapContainer LinearSolverInstance::buildListSyntax()
 {
     ListSyntaxMapContainer listeSolver;
-    SyntaxMapContainer dict1;
-    dict1.container[ "METHODE" ] = getSolverName();
-    dict1.container[ "RENUM" ] = getRenumberingName();
-    dict1.container[ "PCENT_PIVOT" ] = 20;
-    dict1.container[ "TYPE_RESOL" ] = "AUTO";
-    dict1.container[ "PRETRAITEMENTS" ] = "AUTO";
-    dict1.container[ "ELIM_LAGR" ] = "LAGR2";
-    dict1.container[ "GESTION_MEMOIRE" ] = "AUTO";
-    dict1.container[ "LOW_RANK_TAILLE" ] = -1.0;
-    dict1.container[ "LOW_RANK_SEUIL" ] = 0.0;
+    SyntaxMapContainer dict1 = buildSyntaxMapFromParamList( _listOfParameters );
     listeSolver.push_back( dict1 );
     return listeSolver; 
 };
