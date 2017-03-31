@@ -30,6 +30,7 @@
 #include "Mesh/Mesh.h"
 #include "Utilities/CapyConvertibleValue.h"
 #include "RunManager/CommandSyntaxCython.h"
+#include "RunManager/LogicalUnitManagerCython.h"
 
 MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE" ),
                         _jeveuxName( getName() ),
@@ -90,6 +91,77 @@ bool MeshInstance::build()
     _elementsType->updateValuePointer();
     _groupsOfElements->buildFromJeveux();
     _isEmpty = false;
+
+    return true;
+};
+
+bool MeshInstance::readMeshFile( const std::string& fileName, const std::string& format )
+    throw ( std::runtime_error )
+{
+    LogicalUnitFileCython file1( fileName, Binary, Old );
+    // Fichier temporaire
+    LogicalUnitFileCython file2( fileName, Binary, Old );
+
+    ASTERINTEGER op = 0;
+    if( format == "GIBI" || format == "GMSH" )
+    {
+        throw;
+        std::string preCmd = "PRE_" + format;
+        ASTERINTEGER op = 47;
+        if( format == "GIBI" ) op = 49;
+
+        CommandSyntaxCython cmdSt2( preCmd );
+        SyntaxMapContainer syntax2;
+        syntax2.container[ "UNITE_" + format ] = file1.getLogicalUnit();
+        syntax2.container[ "UNITE_MAILLAGE" ] = file2.getLogicalUnit();
+        cmdSt2.define( syntax2 );
+
+        try
+        {
+            CALL_EXECOP( &op );
+        }
+        catch( ... )
+        {
+            throw;
+        }
+    }
+
+    CommandSyntaxCython cmdSt( "LIRE_MAILLAGE" );
+    cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+
+    SyntaxMapContainer syntax;
+    syntax.container[ "FORMAT" ] = format;
+    syntax.container[ "UNITE" ] = file2.getLogicalUnit();
+
+    cmdSt.define( syntax );
+
+    try
+    {
+        ASTERINTEGER op = 1;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+
+    build();
+
+    return true;
+};
+
+bool MeshInstance::readAsterMeshFile( const std::string& fileName )
+    throw ( std::runtime_error )
+{
+    readMeshFile( fileName, "ASTER" );
+
+    return true;
+};
+
+bool MeshInstance::readMedFile( const std::string& fileName )
+    throw ( std::runtime_error )
+{
+    readMeshFile( fileName, "MED" );
 
     return true;
 };

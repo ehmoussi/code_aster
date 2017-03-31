@@ -42,6 +42,7 @@
  * @class DataStructure
  * @brief Classe mere des classes representant des sd_aster
  * @author Nicolas Sellenet
+ * @todo rendre cette classe virtuelle pure ?
  */
 class DataStructure
 {
@@ -74,7 +75,7 @@ class DataStructure
         /**
          * @brief Destructeur
          */
-        ~DataStructure() throw ( std::runtime_error );
+        ~DataStructure();
 
         /**
          * @brief Function membre getMemoryType
