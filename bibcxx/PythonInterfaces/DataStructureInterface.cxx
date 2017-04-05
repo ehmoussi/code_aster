@@ -1,9 +1,6 @@
-#ifndef MESHINTERFACE_H_
-#define MESHINTERFACE_H_
-
 /**
- * @file MeshInterface.h
- * @brief Fichier entete de la classe MeshInterface
+ * @file DataStructureInterface.cxx
+ * @brief Interface python de DataStructure
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -26,10 +23,16 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
-#include "Mesh/Mesh.h"
-#include "DataStructure/DataStructureInterface.h"
+#include "PythonInterfaces/DataStructureInterface.h"
+#include <boost/python.hpp>
 
-void exportMeshToPython();
+void exportDataStructureToPython()
+{
+    using namespace boost::python;
 
-#endif /* MESHINTERFACE_H_ */
+    class_< DataStructure >( "DataStructure", init<>() )
+        .def( "getName", &DataStructure::getName, return_value_policy<return_by_value>() )
+        .def( "getType", &DataStructure::getType, return_value_policy<return_by_value>() )
+        .def( "debugPrint", &DataStructure::debugPrint )
+    ;
+};

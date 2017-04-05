@@ -1,6 +1,6 @@
 /**
- * @file LibAster.cxx
- * @brief Création de LibAster
+ * @file MeshInterface.cxx
+ * @brief Interface python de Mesh
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,16 +21,17 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include "PythonInterfaces/MeshInterface.h"
 #include <boost/python.hpp>
-#include "DataStructure/DataStructureInterface.h"
-#include "DataFields/FieldOnNodesInterface.h"
-#include "Mesh/MeshInterface.h"
 
-using namespace boost::python;
-
-BOOST_PYTHON_MODULE(libaster)
+void exportMeshToPython()
 {
-    exportDataStructureToPython();
-    exportFieldOnNodesToPython();
-    exportMeshToPython();
+    using namespace boost::python;
+    class_< MeshInstance, MeshInstance::MeshPtr, bases< DataStructure > >("Mesh", init<>())
+        .def( "__init__", &MeshInstance::create )
+        .def( "getCoordinates", &MeshInstance::getCoordinates )
+        .def( "readMedFile", &MeshInstance::readMedFile )
+    ;
 };
