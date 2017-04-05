@@ -1,6 +1,6 @@
 /**
- * @file FieldOnNodesInterface.cxx
- * @brief Interface python de FieldOnNodes
+ * @file LibAster.cxx
+ * @brief Création de LibAster
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,16 +21,16 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
-#include "DataStructure/DataStructureInterface.h"
-#include "DataFields/FieldOnNodesInterface.h"
 #include <boost/python.hpp>
+#include "PythonInterfaces/DataStructureInterface.h"
+#include "PythonInterfaces/FieldOnNodesInterface.h"
+#include "PythonInterfaces/MeshInterface.h"
 
-void exportFieldOnNodesToPython()
+using namespace boost::python;
+
+BOOST_PYTHON_MODULE(libaster)
 {
-    using namespace boost::python;
-    class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
-            bases< DataStructure > >("FieldOnNodesDouble", init<>())
-    ;
+    exportDataStructureToPython();
+    exportFieldOnNodesToPython();
+    exportMeshToPython();
 };

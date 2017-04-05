@@ -1,6 +1,6 @@
 /**
- * @file MeshInterface.cxx
- * @brief Interface python de Mesh
+ * @file FieldOnNodesInterface.cxx
+ * @brief Interface python de FieldOnNodes
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,15 +23,14 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Mesh/MeshInterface.h"
+#include "PythonInterfaces/DataStructureInterface.h"
+#include "PythonInterfaces/FieldOnNodesInterface.h"
 #include <boost/python.hpp>
 
-void exportMeshToPython()
+void exportFieldOnNodesToPython()
 {
     using namespace boost::python;
-    class_< MeshInstance, MeshInstance::MeshPtr, bases< DataStructure > >("Mesh", init<>())
-    .def( "__init__", &MeshInstance::create )
-    .def( "getCoordinates", &MeshInstance::getCoordinates )
-    .def( "readMedFile", &MeshInstance::readMedFile )
+    class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
+            bases< DataStructure > >("FieldOnNodesDouble", init<>())
     ;
 };
