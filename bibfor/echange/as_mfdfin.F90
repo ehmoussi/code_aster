@@ -2,7 +2,7 @@ subroutine as_mfdfin(fid, cha, ma, n, cunit,&
                      cname, cret)
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -22,8 +22,9 @@ subroutine as_mfdfin(fid, cha, ma, n, cunit,&
 #include "asterf_types.h"
 #include "asterf.h"
 #include "asterfort/utmess.h"
+#include "med/mfioex.h"
 #include "med/mfdfin.h"
-    aster_int :: fid, n, cret, lmesh, typen
+    aster_int :: fid, n, cret
     character(len=*) :: cha
     character(len=16) :: cunit, cname
     character(len=*) :: ma
@@ -34,14 +35,38 @@ subroutine as_mfdfin(fid, cha, ma, n, cunit,&
 !
 #if med_int_kind != aster_int_kind
     med_int :: fid4, n4, cret4, lmesh4, typen4
+    med_int :: oexist4, class4
     fid4 = fid
-    call mfdfin(fid4, cha, ma, lmesh4, typen4,&
-                cunit, cname, dtunit, n4, cret4)
-    n = n4
-    cret = cret4
+    ! class4 = 1 <=> field type
+    class4 = 1_4 
+    ! On verifie que le champ existe bien avant d'appeler mfdfin
+    ! pour eviter les "Erreur à l'ouverture du groupe" dans MED
+    call mfioex(fid4, class4, cha, oexist4, cret4)
+    if (oexist4.eq.1) then
+        call mfdfin(fid4, cha, ma, lmesh4, typen4,&
+                    cunit, cname, dtunit, n4, cret4)
+        n = n4
+        cret = cret4
+    else
+        n = 0
+        cret = -1
+    endif
+
 #else
-    call mfdfin(fid, cha, ma, lmesh, typen,&
-                cunit, cname, dtunit, n, cret)
+    aster_int :: lmesh, typen
+    aster_int :: oexist, class
+    ! class = 1 <=> field type
+    class = 1
+    ! On verifie que le champ existe bien avant d'appeler mfdfin
+    ! pour eviter les "Erreur à l'ouverture du groupe" dans MED
+    call mfioex(fid, class, cha, oexist, cret)
+    if (oexist.eq.1) then
+        call mfdfin(fid, cha, ma, lmesh, typen,&
+                    cunit, cname, dtunit, n, cret)
+    else
+        n = 0
+        cret = -1
+    endif
 #endif
 !
 #endif
