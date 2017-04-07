@@ -1,6 +1,6 @@
 /**
- * @file MeshInterface.cxx
- * @brief Interface python de Mesh
+ * @file DataStructureInterface.cxx
+ * @brief Interface python de DataStructure
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,15 +23,16 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/MeshInterface.h"
+#include "PythonBindings/DataStructureInterface.h"
 #include <boost/python.hpp>
 
-void exportMeshToPython()
+void exportDataStructureToPython()
 {
     using namespace boost::python;
-    class_< MeshInstance, MeshInstance::MeshPtr, bases< DataStructure > >("Mesh", init<>())
-        .def( "__init__", &MeshInstance::create )
-        .def( "getCoordinates", &MeshInstance::getCoordinates )
-        .def( "readMedFile", &MeshInstance::readMedFile )
+
+    class_< DataStructure >( "DataStructure", init<>() )
+        .def( "getName", &DataStructure::getName, return_value_policy<return_by_value>() )
+        .def( "getType", &DataStructure::getType, return_value_policy<return_by_value>() )
+        .def( "debugPrint", &DataStructure::debugPrint )
     ;
 };

@@ -1,6 +1,6 @@
 /**
- * @file GeneralizedDOFNumberingInterface.cxx
- * @brief Interface python de GeneralizedDOFNumbering
+ * @file FluidStructureInteractionInterface.cxx
+ * @brief Interface python de FluidStructureInteraction
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,15 +23,16 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/GeneralizedDOFNumberingInterface.h"
+#include "PythonBindings/FluidStructureInteractionInterface.h"
 #include <boost/python.hpp>
 
-void exportGeneralizedDOFNumberingToPython()
+void exportFluidStructureInteractionToPython()
 {
     using namespace boost::python;
 
-    class_< GeneralizedDOFNumberingInstance, GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
-            bases< DataStructure > > ( "GeneralizedDOFNumbering", no_init )
-        .def( "create", &GeneralizedDOFNumberingInstance::create )
+    class_< FluidStructureInteractionInstance,
+            FluidStructureInteractionInstance::FluidStructureInteractionPtr,
+            bases< DataStructure > > ( "FluidStructureInteraction", no_init )
+        .def( "create", &FluidStructureInteractionInstance::create )
     ;
 };

@@ -23,7 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/XfemContactZoneInterface.h"
+#include "PythonBindings/XfemContactZoneInterface.h"
 #include <boost/python.hpp>
 
 void exportXfemContactZoneToPython()

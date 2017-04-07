@@ -1,6 +1,6 @@
 /**
- * @file DataStructureInterface.cxx
- * @brief Interface python de DataStructure
+ * @file FiberGeometryInterface.cxx
+ * @brief Interface python de FiberGeometry
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,16 +23,15 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/DataStructureInterface.h"
+#include "PythonBindings/FiberGeometryInterface.h"
 #include <boost/python.hpp>
 
-void exportDataStructureToPython()
+void exportFiberGeometryToPython()
 {
     using namespace boost::python;
 
-    class_< DataStructure >( "DataStructure", init<>() )
-        .def( "getName", &DataStructure::getName, return_value_policy<return_by_value>() )
-        .def( "getType", &DataStructure::getType, return_value_policy<return_by_value>() )
-        .def( "debugPrint", &DataStructure::debugPrint )
+    class_< FiberGeometryInstance, FiberGeometryInstance::FiberGeometryPtr,
+            bases< DataStructure > > ( "FiberGeometry", no_init )
+        .def( "create", &FiberGeometryInstance::create )
     ;
 };

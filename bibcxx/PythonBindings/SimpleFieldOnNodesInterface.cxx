@@ -23,8 +23,8 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/DataStructureInterface.h"
-#include "PythonInterfaces/SimpleFieldOnNodesInterface.h"
+#include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/SimpleFieldOnNodesInterface.h"
 #include <boost/python.hpp>
 
 void exportSimpleFieldOnNodesToPython()

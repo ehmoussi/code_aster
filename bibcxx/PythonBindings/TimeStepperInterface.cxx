@@ -1,6 +1,6 @@
 /**
- * @file DOFNumberingInterface.cxx
- * @brief Interface python de DOFNumbering
+ * @file TimeStepperInterface.cxx
+ * @brief Interface python de TimeStepper
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,21 +23,20 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/DOFNumberingInterface.h"
+#include "PythonBindings/TimeStepperInterface.h"
+#include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/VectorUtilities.h"
 #include <boost/python.hpp>
 
-void exportDOFNumberingToPython()
+void exportTimeStepperToPython()
 {
     using namespace boost::python;
 
-    class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
-            bases< DataStructure > > ( "DOFNumbering", no_init )
-        .def( "create", &DOFNumberingInstance::create )
-        .def( "addKinematicsLoad", &DOFNumberingInstance::addKinematicsLoad )
-        .def( "addMechanicalLoad", &DOFNumberingInstance::addMechanicalLoad )
-        .def( "computeNumerotation", &DOFNumberingInstance::computeNumerotation )
-        .def( "setElementaryMatrix", &DOFNumberingInstance::setElementaryMatrix )
-        .def( "setLinearSolver", &DOFNumberingInstance::setLinearSolver )
-        .def( "setSupportModel", &DOFNumberingInstance::setSupportModel )
+    exportVectorUtilities< double >();
+
+    class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr,
+            bases< DataStructure > >( "TimeStepper", no_init )
+        .def( "create", &TimeStepperInstance::create )
+        .def( "setValues", &TimeStepperInstance::setValues )
     ;
 };

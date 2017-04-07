@@ -23,7 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/TurbulentSpectrumInterface.h"
+#include "PythonBindings/TurbulentSpectrumInterface.h"
 #include <boost/python.hpp>
 
 void exportTurbulentSpectrumToPython()

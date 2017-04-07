@@ -1,6 +1,6 @@
 /**
- * @file TableInterface.cxx
- * @brief Interface python de Table
+ * @file VectorUtilities.cxx
+ * @brief Utilitaires pour convertir un vector en list et inversement
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,18 +21,4 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
-#include "PythonInterfaces/TableInterface.h"
-#include "PythonInterfaces/DataStructureInterface.h"
-#include <boost/python.hpp>
-
-void exportTableToPython()
-{
-    using namespace boost::python;
-
-    class_< TableInstance, TableInstance::TablePtr,
-            bases< DataStructure > >( "Table", no_init )
-        .def( "create", &TableInstance::create )
-    ;
-};
+#include "PythonBindings/VectorUtilities.h"

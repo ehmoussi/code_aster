@@ -1,6 +1,6 @@
 /**
- * @file TimeStepperInterface.cxx
- * @brief Interface python de TimeStepper
+ * @file ElementaryMatrixInterface.cxx
+ * @brief Interface python de ElementaryMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,20 +23,15 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/TimeStepperInterface.h"
-#include "PythonInterfaces/DataStructureInterface.h"
-#include "PythonInterfaces/VectorUtilities.h"
+#include "PythonBindings/ElementaryMatrixInterface.h"
 #include <boost/python.hpp>
 
-void exportTimeStepperToPython()
+void exportElementaryMatrixToPython()
 {
     using namespace boost::python;
 
-    exportVectorUtilities< double >();
-
-    class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr,
-            bases< DataStructure > >( "TimeStepper", no_init )
-        .def( "create", &TimeStepperInstance::create )
-        .def( "setValues", &TimeStepperInstance::setValues )
+    class_< ElementaryMatrixInstance, ElementaryMatrixInstance::ElementaryMatrixPtr,
+            bases< DataStructure > > ( "ElementaryMatrix", no_init )
+        .def( "create", &ElementaryMatrixInstance::create )
     ;
 };

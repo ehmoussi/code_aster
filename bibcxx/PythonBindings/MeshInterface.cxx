@@ -1,9 +1,6 @@
-#ifndef MESHINTERFACE_H_
-#define MESHINTERFACE_H_
-
 /**
- * @file MeshInterface.h
- * @brief Fichier entete de la classe MeshInterface
+ * @file MeshInterface.cxx
+ * @brief Interface python de Mesh
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -26,10 +23,15 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
-#include "Mesh/Mesh.h"
-#include "PythonInterfaces/DataStructureInterface.h"
+#include "PythonBindings/MeshInterface.h"
+#include <boost/python.hpp>
 
-void exportMeshToPython();
-
-#endif /* MESHINTERFACE_H_ */
+void exportMeshToPython()
+{
+    using namespace boost::python;
+    class_< MeshInstance, MeshInstance::MeshPtr, bases< DataStructure > >("Mesh", init<>())
+        .def( "__init__", &MeshInstance::create )
+        .def( "getCoordinates", &MeshInstance::getCoordinates )
+        .def( "readMedFile", &MeshInstance::readMedFile )
+    ;
+};

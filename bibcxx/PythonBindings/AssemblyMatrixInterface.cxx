@@ -23,7 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/AssemblyMatrixInterface.h"
+#include "PythonBindings/AssemblyMatrixInterface.h"
 #include <boost/python.hpp>
 
 void exportAssemblyMatrixToPython()
