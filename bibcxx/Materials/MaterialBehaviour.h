@@ -313,7 +313,7 @@ class ElasMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Elas */
-typedef boost::shared_ptr< ElasMaterialBehaviourInstance > ElasMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasMaterialBehaviourInstance > ElasMaterialBehaviourPtr;
 
 
 /**
@@ -349,7 +349,7 @@ class ElasFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasFo */
-typedef boost::shared_ptr< ElasFoMaterialBehaviourInstance > ElasFoMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasFoMaterialBehaviourInstance > ElasFoMaterialBehaviourPtr;
 
 
 /**
@@ -379,7 +379,7 @@ class ElasFluiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasFlui */
-typedef boost::shared_ptr< ElasFluiMaterialBehaviourInstance > ElasFluiMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasFluiMaterialBehaviourInstance > ElasFluiMaterialBehaviourPtr;
 
 
 /**
@@ -411,7 +411,7 @@ class ElasIstrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasIstr */
-typedef boost::shared_ptr< ElasIstrMaterialBehaviourInstance > ElasIstrMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasIstrMaterialBehaviourInstance > ElasIstrMaterialBehaviourPtr;
 
 
 /**
@@ -445,7 +445,7 @@ class ElasIstrFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasIstrFo */
-typedef boost::shared_ptr< ElasIstrFoMaterialBehaviourInstance > ElasIstrFoMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasIstrFoMaterialBehaviourInstance > ElasIstrFoMaterialBehaviourPtr;
 
 
 /**
@@ -490,7 +490,7 @@ class ElasOrthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasOrth */
-typedef boost::shared_ptr< ElasOrthMaterialBehaviourInstance > ElasOrthMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasOrthMaterialBehaviourInstance > ElasOrthMaterialBehaviourPtr;
 
 
 /**
@@ -532,7 +532,7 @@ class ElasOrthFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasOrthFo */
-typedef boost::shared_ptr< ElasOrthFoMaterialBehaviourInstance > ElasOrthFoMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasOrthFoMaterialBehaviourInstance > ElasOrthFoMaterialBehaviourPtr;
 
 
 /**
@@ -562,7 +562,7 @@ class ElasHyperMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasHyper */
-typedef boost::shared_ptr< ElasHyperMaterialBehaviourInstance > ElasHyperMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasHyperMaterialBehaviourInstance > ElasHyperMaterialBehaviourPtr;
 
 
 /**
@@ -631,7 +631,7 @@ class ElasCoqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasCoque */
-typedef boost::shared_ptr< ElasCoqueMaterialBehaviourInstance > ElasCoqueMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasCoqueMaterialBehaviourInstance > ElasCoqueMaterialBehaviourPtr;
 
 
 /**
@@ -700,7 +700,7 @@ class ElasCoqueFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasCoqueFo */
-typedef boost::shared_ptr< ElasCoqueFoMaterialBehaviourInstance > ElasCoqueFoMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasCoqueFoMaterialBehaviourInstance > ElasCoqueFoMaterialBehaviourPtr;
 
 
 /**
@@ -732,7 +732,7 @@ class ElasMembraneMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasMembrane */
-typedef boost::shared_ptr< ElasMembraneMaterialBehaviourInstance > ElasMembraneMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasMembraneMaterialBehaviourInstance > ElasMembraneMaterialBehaviourPtr;
 
 
 /**
@@ -761,7 +761,7 @@ class Elas2ndgMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Elas2ndg */
-typedef boost::shared_ptr< Elas2ndgMaterialBehaviourInstance > Elas2ndgMaterialBehaviourPtr;
+typedef std::shared_ptr< Elas2ndgMaterialBehaviourInstance > Elas2ndgMaterialBehaviourPtr;
 
 
 /**
@@ -796,7 +796,7 @@ class ElasGlrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasGlrc */
-typedef boost::shared_ptr< ElasGlrcMaterialBehaviourInstance > ElasGlrcMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasGlrcMaterialBehaviourInstance > ElasGlrcMaterialBehaviourPtr;
 
 
 /**
@@ -832,7 +832,7 @@ class ElasGlrcFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasGlrcFo */
-typedef boost::shared_ptr< ElasGlrcFoMaterialBehaviourInstance > ElasGlrcFoMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasGlrcFoMaterialBehaviourInstance > ElasGlrcFoMaterialBehaviourPtr;
 
 
 /**
@@ -882,7 +882,7 @@ class ElasDhrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasDhrc */
-typedef boost::shared_ptr< ElasDhrcMaterialBehaviourInstance > ElasDhrcMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasDhrcMaterialBehaviourInstance > ElasDhrcMaterialBehaviourPtr;
 
 
 /**
@@ -907,7 +907,7 @@ class CableMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Cable */
-typedef boost::shared_ptr< CableMaterialBehaviourInstance > CableMaterialBehaviourPtr;
+typedef std::shared_ptr< CableMaterialBehaviourInstance > CableMaterialBehaviourPtr;
 
 
 /**
@@ -936,7 +936,7 @@ class VeriBorneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau VeriBorne */
-typedef boost::shared_ptr< VeriBorneMaterialBehaviourInstance > VeriBorneMaterialBehaviourPtr;
+typedef std::shared_ptr< VeriBorneMaterialBehaviourInstance > VeriBorneMaterialBehaviourPtr;
 
 
 /**
@@ -961,7 +961,7 @@ class TractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Traction */
-typedef boost::shared_ptr< TractionMaterialBehaviourInstance > TractionMaterialBehaviourPtr;
+typedef std::shared_ptr< TractionMaterialBehaviourInstance > TractionMaterialBehaviourPtr;
 
 
 /**
@@ -989,7 +989,7 @@ class EcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EcroLine */
-typedef boost::shared_ptr< EcroLineMaterialBehaviourInstance > EcroLineMaterialBehaviourPtr;
+typedef std::shared_ptr< EcroLineMaterialBehaviourInstance > EcroLineMaterialBehaviourPtr;
 
 
 /**
@@ -1018,7 +1018,7 @@ class EndoHeterogeneMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EndoHeterogene */
-typedef boost::shared_ptr< EndoHeterogeneMaterialBehaviourInstance > EndoHeterogeneMaterialBehaviourPtr;
+typedef std::shared_ptr< EndoHeterogeneMaterialBehaviourInstance > EndoHeterogeneMaterialBehaviourPtr;
 
 
 /**
@@ -1044,7 +1044,7 @@ class EcroLineFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EcroLineFo */
-typedef boost::shared_ptr< EcroLineFoMaterialBehaviourInstance > EcroLineFoMaterialBehaviourPtr;
+typedef std::shared_ptr< EcroLineFoMaterialBehaviourInstance > EcroLineFoMaterialBehaviourPtr;
 
 
 /**
@@ -1071,7 +1071,7 @@ class EcroPuisMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EcroPuis */
-typedef boost::shared_ptr< EcroPuisMaterialBehaviourInstance > EcroPuisMaterialBehaviourPtr;
+typedef std::shared_ptr< EcroPuisMaterialBehaviourInstance > EcroPuisMaterialBehaviourPtr;
 
 
 /**
@@ -1098,7 +1098,7 @@ class EcroPuisFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EcroPuisFo */
-typedef boost::shared_ptr< EcroPuisFoMaterialBehaviourInstance > EcroPuisFoMaterialBehaviourPtr;
+typedef std::shared_ptr< EcroPuisFoMaterialBehaviourInstance > EcroPuisFoMaterialBehaviourPtr;
 
 
 /**
@@ -1130,7 +1130,7 @@ class EcroCookMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EcroCook */
-typedef boost::shared_ptr< EcroCookMaterialBehaviourInstance > EcroCookMaterialBehaviourPtr;
+typedef std::shared_ptr< EcroCookMaterialBehaviourInstance > EcroCookMaterialBehaviourPtr;
 
 
 /**
@@ -1162,7 +1162,7 @@ class EcroCookFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EcroCookFo */
-typedef boost::shared_ptr< EcroCookFoMaterialBehaviourInstance > EcroCookFoMaterialBehaviourPtr;
+typedef std::shared_ptr< EcroCookFoMaterialBehaviourInstance > EcroCookFoMaterialBehaviourPtr;
 
 
 /**
@@ -1189,7 +1189,7 @@ class BetonEcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonEcroLine */
-typedef boost::shared_ptr< BetonEcroLineMaterialBehaviourInstance > BetonEcroLineMaterialBehaviourPtr;
+typedef std::shared_ptr< BetonEcroLineMaterialBehaviourInstance > BetonEcroLineMaterialBehaviourPtr;
 
 
 /**
@@ -1218,7 +1218,7 @@ class BetonReglePrMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonReglePr */
-typedef boost::shared_ptr< BetonReglePrMaterialBehaviourInstance > BetonReglePrMaterialBehaviourPtr;
+typedef std::shared_ptr< BetonReglePrMaterialBehaviourInstance > BetonReglePrMaterialBehaviourPtr;
 
 
 /**
@@ -1248,7 +1248,7 @@ class EndoOrthBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EndoOrthBeton */
-typedef boost::shared_ptr< EndoOrthBetonMaterialBehaviourInstance > EndoOrthBetonMaterialBehaviourPtr;
+typedef std::shared_ptr< EndoOrthBetonMaterialBehaviourInstance > EndoOrthBetonMaterialBehaviourPtr;
 
 
 /**
@@ -1273,7 +1273,7 @@ class PragerMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Prager */
-typedef boost::shared_ptr< PragerMaterialBehaviourInstance > PragerMaterialBehaviourPtr;
+typedef std::shared_ptr< PragerMaterialBehaviourInstance > PragerMaterialBehaviourPtr;
 
 
 /**
@@ -1298,7 +1298,7 @@ class PragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau PragerFo */
-typedef boost::shared_ptr< PragerFoMaterialBehaviourInstance > PragerFoMaterialBehaviourPtr;
+typedef std::shared_ptr< PragerFoMaterialBehaviourInstance > PragerFoMaterialBehaviourPtr;
 
 
 /**
@@ -1330,7 +1330,7 @@ class TaheriMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Taheri */
-typedef boost::shared_ptr< TaheriMaterialBehaviourInstance > TaheriMaterialBehaviourPtr;
+typedef std::shared_ptr< TaheriMaterialBehaviourInstance > TaheriMaterialBehaviourPtr;
 
 
 /**
@@ -1362,7 +1362,7 @@ class TaheriFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TaheriFo */
-typedef boost::shared_ptr< TaheriFoMaterialBehaviourInstance > TaheriFoMaterialBehaviourPtr;
+typedef std::shared_ptr< TaheriFoMaterialBehaviourInstance > TaheriFoMaterialBehaviourPtr;
 
 
 /**
@@ -1397,7 +1397,7 @@ class RousselierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Rousselier */
-typedef boost::shared_ptr< RousselierMaterialBehaviourInstance > RousselierMaterialBehaviourPtr;
+typedef std::shared_ptr< RousselierMaterialBehaviourInstance > RousselierMaterialBehaviourPtr;
 
 
 /**
@@ -1432,7 +1432,7 @@ class RousselierFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau RousselierFo */
-typedef boost::shared_ptr< RousselierFoMaterialBehaviourInstance > RousselierFoMaterialBehaviourPtr;
+typedef std::shared_ptr< RousselierFoMaterialBehaviourInstance > RousselierFoMaterialBehaviourPtr;
 
 
 /**
@@ -1459,7 +1459,7 @@ class ViscSinhMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ViscSinh */
-typedef boost::shared_ptr< ViscSinhMaterialBehaviourInstance > ViscSinhMaterialBehaviourPtr;
+typedef std::shared_ptr< ViscSinhMaterialBehaviourInstance > ViscSinhMaterialBehaviourPtr;
 
 
 /**
@@ -1486,7 +1486,7 @@ class ViscSinhFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ViscSinhFo */
-typedef boost::shared_ptr< ViscSinhFoMaterialBehaviourInstance > ViscSinhFoMaterialBehaviourPtr;
+typedef std::shared_ptr< ViscSinhFoMaterialBehaviourInstance > ViscSinhFoMaterialBehaviourPtr;
 
 
 /**
@@ -1518,7 +1518,7 @@ class Cin1ChabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Cin1Chab */
-typedef boost::shared_ptr< Cin1ChabMaterialBehaviourInstance > Cin1ChabMaterialBehaviourPtr;
+typedef std::shared_ptr< Cin1ChabMaterialBehaviourInstance > Cin1ChabMaterialBehaviourPtr;
 
 
 /**
@@ -1550,7 +1550,7 @@ class Cin1ChabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Cin1ChabFo */
-typedef boost::shared_ptr< Cin1ChabFoMaterialBehaviourInstance > Cin1ChabFoMaterialBehaviourPtr;
+typedef std::shared_ptr< Cin1ChabFoMaterialBehaviourInstance > Cin1ChabFoMaterialBehaviourPtr;
 
 
 /**
@@ -1584,7 +1584,7 @@ class Cin2ChabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Cin2Chab */
-typedef boost::shared_ptr< Cin2ChabMaterialBehaviourInstance > Cin2ChabMaterialBehaviourPtr;
+typedef std::shared_ptr< Cin2ChabMaterialBehaviourInstance > Cin2ChabMaterialBehaviourPtr;
 
 
 /**
@@ -1618,7 +1618,7 @@ class Cin2ChabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Cin2ChabFo */
-typedef boost::shared_ptr< Cin2ChabFoMaterialBehaviourInstance > Cin2ChabFoMaterialBehaviourPtr;
+typedef std::shared_ptr< Cin2ChabFoMaterialBehaviourInstance > Cin2ChabFoMaterialBehaviourPtr;
 
 
 /**
@@ -1644,7 +1644,7 @@ class Cin2NradMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Cin2Nrad */
-typedef boost::shared_ptr< Cin2NradMaterialBehaviourInstance > Cin2NradMaterialBehaviourPtr;
+typedef std::shared_ptr< Cin2NradMaterialBehaviourInstance > Cin2NradMaterialBehaviourPtr;
 
 
 /**
@@ -1672,7 +1672,7 @@ class MemoEcroMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MemoEcro */
-typedef boost::shared_ptr< MemoEcroMaterialBehaviourInstance > MemoEcroMaterialBehaviourPtr;
+typedef std::shared_ptr< MemoEcroMaterialBehaviourInstance > MemoEcroMaterialBehaviourPtr;
 
 
 /**
@@ -1700,7 +1700,7 @@ class MemoEcroFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MemoEcroFo */
-typedef boost::shared_ptr< MemoEcroFoMaterialBehaviourInstance > MemoEcroFoMaterialBehaviourPtr;
+typedef std::shared_ptr< MemoEcroFoMaterialBehaviourInstance > MemoEcroFoMaterialBehaviourPtr;
 
 
 /**
@@ -1749,7 +1749,7 @@ class ViscochabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Viscochab */
-typedef boost::shared_ptr< ViscochabMaterialBehaviourInstance > ViscochabMaterialBehaviourPtr;
+typedef std::shared_ptr< ViscochabMaterialBehaviourInstance > ViscochabMaterialBehaviourPtr;
 
 
 /**
@@ -1798,7 +1798,7 @@ class ViscochabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ViscochabFo */
-typedef boost::shared_ptr< ViscochabFoMaterialBehaviourInstance > ViscochabFoMaterialBehaviourPtr;
+typedef std::shared_ptr< ViscochabFoMaterialBehaviourInstance > ViscochabFoMaterialBehaviourPtr;
 
 
 /**
@@ -1825,7 +1825,7 @@ class LemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Lemaitre */
-typedef boost::shared_ptr< LemaitreMaterialBehaviourInstance > LemaitreMaterialBehaviourPtr;
+typedef std::shared_ptr< LemaitreMaterialBehaviourInstance > LemaitreMaterialBehaviourPtr;
 
 
 /**
@@ -1857,7 +1857,7 @@ class LemaitreIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau LemaitreIrra */
-typedef boost::shared_ptr< LemaitreIrraMaterialBehaviourInstance > LemaitreIrraMaterialBehaviourPtr;
+typedef std::shared_ptr< LemaitreIrraMaterialBehaviourInstance > LemaitreIrraMaterialBehaviourPtr;
 
 
 /**
@@ -1911,7 +1911,7 @@ class LmarcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau LmarcIrra */
-typedef boost::shared_ptr< LmarcIrraMaterialBehaviourInstance > LmarcIrraMaterialBehaviourPtr;
+typedef std::shared_ptr< LmarcIrraMaterialBehaviourInstance > LmarcIrraMaterialBehaviourPtr;
 
 
 /**
@@ -1940,7 +1940,7 @@ class ViscIrraLogMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ViscIrraLog */
-typedef boost::shared_ptr< ViscIrraLogMaterialBehaviourInstance > ViscIrraLogMaterialBehaviourPtr;
+typedef std::shared_ptr< ViscIrraLogMaterialBehaviourInstance > ViscIrraLogMaterialBehaviourPtr;
 
 
 /**
@@ -1970,7 +1970,7 @@ class GranIrraLogMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau GranIrraLog */
-typedef boost::shared_ptr< GranIrraLogMaterialBehaviourInstance > GranIrraLogMaterialBehaviourPtr;
+typedef std::shared_ptr< GranIrraLogMaterialBehaviourInstance > GranIrraLogMaterialBehaviourPtr;
 
 
 /**
@@ -1996,7 +1996,7 @@ class LemaSeuilMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau LemaSeuil */
-typedef boost::shared_ptr< LemaSeuilMaterialBehaviourInstance > LemaSeuilMaterialBehaviourPtr;
+typedef std::shared_ptr< LemaSeuilMaterialBehaviourInstance > LemaSeuilMaterialBehaviourPtr;
 
 
 /**
@@ -2022,7 +2022,7 @@ class LemaSeuilFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau LemaSeuilFo */
-typedef boost::shared_ptr< LemaSeuilFoMaterialBehaviourInstance > LemaSeuilFoMaterialBehaviourPtr;
+typedef std::shared_ptr< LemaSeuilFoMaterialBehaviourInstance > LemaSeuilFoMaterialBehaviourPtr;
 
 
 /**
@@ -2058,7 +2058,7 @@ class Irrad3mMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Irrad3m */
-typedef boost::shared_ptr< Irrad3mMaterialBehaviourInstance > Irrad3mMaterialBehaviourPtr;
+typedef std::shared_ptr< Irrad3mMaterialBehaviourInstance > Irrad3mMaterialBehaviourPtr;
 
 
 /**
@@ -2085,7 +2085,7 @@ class LemaitreFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau LemaitreFo */
-typedef boost::shared_ptr< LemaitreFoMaterialBehaviourInstance > LemaitreFoMaterialBehaviourPtr;
+typedef std::shared_ptr< LemaitreFoMaterialBehaviourInstance > LemaitreFoMaterialBehaviourPtr;
 
 
 /**
@@ -2143,7 +2143,7 @@ class MetaLemaAniMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaLemaAni */
-typedef boost::shared_ptr< MetaLemaAniMaterialBehaviourInstance > MetaLemaAniMaterialBehaviourPtr;
+typedef std::shared_ptr< MetaLemaAniMaterialBehaviourInstance > MetaLemaAniMaterialBehaviourPtr;
 
 
 /**
@@ -2201,7 +2201,7 @@ class MetaLemaAniFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaLemaAniFo */
-typedef boost::shared_ptr< MetaLemaAniFoMaterialBehaviourInstance > MetaLemaAniFoMaterialBehaviourPtr;
+typedef std::shared_ptr< MetaLemaAniFoMaterialBehaviourInstance > MetaLemaAniFoMaterialBehaviourPtr;
 
 
 /**
@@ -2230,7 +2230,7 @@ class ArmeMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Arme */
-typedef boost::shared_ptr< ArmeMaterialBehaviourInstance > ArmeMaterialBehaviourPtr;
+typedef std::shared_ptr< ArmeMaterialBehaviourInstance > ArmeMaterialBehaviourPtr;
 
 
 /**
@@ -2269,7 +2269,7 @@ class AsseCornMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau AsseCorn */
-typedef boost::shared_ptr< AsseCornMaterialBehaviourInstance > AsseCornMaterialBehaviourPtr;
+typedef std::shared_ptr< AsseCornMaterialBehaviourInstance > AsseCornMaterialBehaviourPtr;
 
 
 /**
@@ -2301,7 +2301,7 @@ class DisContactMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DisContact */
-typedef boost::shared_ptr< DisContactMaterialBehaviourInstance > DisContactMaterialBehaviourPtr;
+typedef std::shared_ptr< DisContactMaterialBehaviourInstance > DisContactMaterialBehaviourPtr;
 
 
 /**
@@ -2332,7 +2332,7 @@ class EndoScalaireMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EndoScalaire */
-typedef boost::shared_ptr< EndoScalaireMaterialBehaviourInstance > EndoScalaireMaterialBehaviourPtr;
+typedef std::shared_ptr< EndoScalaireMaterialBehaviourInstance > EndoScalaireMaterialBehaviourPtr;
 
 
 /**
@@ -2363,7 +2363,7 @@ class EndoScalaireFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EndoScalaireFo */
-typedef boost::shared_ptr< EndoScalaireFoMaterialBehaviourInstance > EndoScalaireFoMaterialBehaviourPtr;
+typedef std::shared_ptr< EndoScalaireFoMaterialBehaviourInstance > EndoScalaireFoMaterialBehaviourPtr;
 
 
 /**
@@ -2395,7 +2395,7 @@ class EndoFissExpMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EndoFissExp */
-typedef boost::shared_ptr< EndoFissExpMaterialBehaviourInstance > EndoFissExpMaterialBehaviourPtr;
+typedef std::shared_ptr< EndoFissExpMaterialBehaviourInstance > EndoFissExpMaterialBehaviourPtr;
 
 
 /**
@@ -2427,7 +2427,7 @@ class EndoFissExpFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EndoFissExpFo */
-typedef boost::shared_ptr< EndoFissExpFoMaterialBehaviourInstance > EndoFissExpFoMaterialBehaviourPtr;
+typedef std::shared_ptr< EndoFissExpFoMaterialBehaviourInstance > EndoFissExpFoMaterialBehaviourPtr;
 
 
 /**
@@ -2468,7 +2468,7 @@ class DisGricraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DisGricra */
-typedef boost::shared_ptr< DisGricraMaterialBehaviourInstance > DisGricraMaterialBehaviourPtr;
+typedef std::shared_ptr< DisGricraMaterialBehaviourInstance > DisGricraMaterialBehaviourPtr;
 
 
 /**
@@ -2501,7 +2501,7 @@ class BetonDoubleDpMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonDoubleDp */
-typedef boost::shared_ptr< BetonDoubleDpMaterialBehaviourInstance > BetonDoubleDpMaterialBehaviourPtr;
+typedef std::shared_ptr< BetonDoubleDpMaterialBehaviourInstance > BetonDoubleDpMaterialBehaviourPtr;
 
 
 /**
@@ -2534,7 +2534,7 @@ class MazarsMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Mazars */
-typedef boost::shared_ptr< MazarsMaterialBehaviourInstance > MazarsMaterialBehaviourPtr;
+typedef std::shared_ptr< MazarsMaterialBehaviourInstance > MazarsMaterialBehaviourPtr;
 
 
 /**
@@ -2565,7 +2565,7 @@ class MazarsFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MazarsFo */
-typedef boost::shared_ptr< MazarsFoMaterialBehaviourInstance > MazarsFoMaterialBehaviourPtr;
+typedef std::shared_ptr< MazarsFoMaterialBehaviourInstance > MazarsFoMaterialBehaviourPtr;
 
 
 /**
@@ -2603,7 +2603,7 @@ class JointBaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau JointBa */
-typedef boost::shared_ptr< JointBaMaterialBehaviourInstance > JointBaMaterialBehaviourPtr;
+typedef std::shared_ptr< JointBaMaterialBehaviourInstance > JointBaMaterialBehaviourPtr;
 
 
 /**
@@ -2633,7 +2633,7 @@ class VendochabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Vendochab */
-typedef boost::shared_ptr< VendochabMaterialBehaviourInstance > VendochabMaterialBehaviourPtr;
+typedef std::shared_ptr< VendochabMaterialBehaviourInstance > VendochabMaterialBehaviourPtr;
 
 
 /**
@@ -2663,7 +2663,7 @@ class VendochabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau VendochabFo */
-typedef boost::shared_ptr< VendochabFoMaterialBehaviourInstance > VendochabFoMaterialBehaviourPtr;
+typedef std::shared_ptr< VendochabFoMaterialBehaviourInstance > VendochabFoMaterialBehaviourPtr;
 
 
 /**
@@ -2700,7 +2700,7 @@ class HayhurstMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Hayhurst */
-typedef boost::shared_ptr< HayhurstMaterialBehaviourInstance > HayhurstMaterialBehaviourPtr;
+typedef std::shared_ptr< HayhurstMaterialBehaviourInstance > HayhurstMaterialBehaviourPtr;
 
 
 /**
@@ -2727,7 +2727,7 @@ class ViscEndoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ViscEndo */
-typedef boost::shared_ptr< ViscEndoMaterialBehaviourInstance > ViscEndoMaterialBehaviourPtr;
+typedef std::shared_ptr< ViscEndoMaterialBehaviourInstance > ViscEndoMaterialBehaviourPtr;
 
 
 /**
@@ -2754,7 +2754,7 @@ class ViscEndoFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ViscEndoFo */
-typedef boost::shared_ptr< ViscEndoFoMaterialBehaviourInstance > ViscEndoFoMaterialBehaviourPtr;
+typedef std::shared_ptr< ViscEndoFoMaterialBehaviourInstance > ViscEndoFoMaterialBehaviourPtr;
 
 
 /**
@@ -2790,7 +2790,7 @@ class PintoMenegottoMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau PintoMenegotto */
-typedef boost::shared_ptr< PintoMenegottoMaterialBehaviourInstance > PintoMenegottoMaterialBehaviourPtr;
+typedef std::shared_ptr< PintoMenegottoMaterialBehaviourInstance > PintoMenegottoMaterialBehaviourPtr;
 
 
 /**
@@ -2816,7 +2816,7 @@ class BpelBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BpelBeton */
-typedef boost::shared_ptr< BpelBetonMaterialBehaviourInstance > BpelBetonMaterialBehaviourPtr;
+typedef std::shared_ptr< BpelBetonMaterialBehaviourInstance > BpelBetonMaterialBehaviourPtr;
 
 
 /**
@@ -2845,7 +2845,7 @@ class BpelAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BpelAcier */
-typedef boost::shared_ptr< BpelAcierMaterialBehaviourInstance > BpelAcierMaterialBehaviourPtr;
+typedef std::shared_ptr< BpelAcierMaterialBehaviourInstance > BpelAcierMaterialBehaviourPtr;
 
 
 /**
@@ -2870,7 +2870,7 @@ class EtccBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EtccBeton */
-typedef boost::shared_ptr< EtccBetonMaterialBehaviourInstance > EtccBetonMaterialBehaviourPtr;
+typedef std::shared_ptr< EtccBetonMaterialBehaviourInstance > EtccBetonMaterialBehaviourPtr;
 
 
 /**
@@ -2898,7 +2898,7 @@ class EtccAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EtccAcier */
-typedef boost::shared_ptr< EtccAcierMaterialBehaviourInstance > EtccAcierMaterialBehaviourPtr;
+typedef std::shared_ptr< EtccAcierMaterialBehaviourInstance > EtccAcierMaterialBehaviourPtr;
 
 
 /**
@@ -2925,7 +2925,7 @@ class MohrCoulombMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MohrCoulomb */
-typedef boost::shared_ptr< MohrCoulombMaterialBehaviourInstance > MohrCoulombMaterialBehaviourPtr;
+typedef std::shared_ptr< MohrCoulombMaterialBehaviourInstance > MohrCoulombMaterialBehaviourPtr;
 
 
 /**
@@ -2957,7 +2957,7 @@ class CamClayMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau CamClay */
-typedef boost::shared_ptr< CamClayMaterialBehaviourInstance > CamClayMaterialBehaviourPtr;
+typedef std::shared_ptr< CamClayMaterialBehaviourInstance > CamClayMaterialBehaviourPtr;
 
 
 /**
@@ -2995,7 +2995,7 @@ class BarceloneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Barcelone */
-typedef boost::shared_ptr< BarceloneMaterialBehaviourInstance > BarceloneMaterialBehaviourPtr;
+typedef std::shared_ptr< BarceloneMaterialBehaviourInstance > BarceloneMaterialBehaviourPtr;
 
 
 /**
@@ -3033,7 +3033,7 @@ class CjsMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Cjs */
-typedef boost::shared_ptr< CjsMaterialBehaviourInstance > CjsMaterialBehaviourPtr;
+typedef std::shared_ptr< CjsMaterialBehaviourInstance > CjsMaterialBehaviourPtr;
 
 
 /**
@@ -3078,7 +3078,7 @@ class HujeuxMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Hujeux */
-typedef boost::shared_ptr< HujeuxMaterialBehaviourInstance > HujeuxMaterialBehaviourPtr;
+typedef std::shared_ptr< HujeuxMaterialBehaviourInstance > HujeuxMaterialBehaviourPtr;
 
 
 /**
@@ -3106,7 +3106,7 @@ class EcroAsymLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EcroAsymLine */
-typedef boost::shared_ptr< EcroAsymLineMaterialBehaviourInstance > EcroAsymLineMaterialBehaviourPtr;
+typedef std::shared_ptr< EcroAsymLineMaterialBehaviourInstance > EcroAsymLineMaterialBehaviourPtr;
 
 
 /**
@@ -3147,7 +3147,7 @@ class GrangerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau GrangerFp */
-typedef boost::shared_ptr< GrangerFpMaterialBehaviourInstance > GrangerFpMaterialBehaviourPtr;
+typedef std::shared_ptr< GrangerFpMaterialBehaviourInstance > GrangerFpMaterialBehaviourPtr;
 
 
 /**
@@ -3187,7 +3187,7 @@ class GrangerFp_indtMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau GrangerFp_indt */
-typedef boost::shared_ptr< GrangerFp_indtMaterialBehaviourInstance > GrangerFp_indtMaterialBehaviourPtr;
+typedef std::shared_ptr< GrangerFp_indtMaterialBehaviourInstance > GrangerFp_indtMaterialBehaviourPtr;
 
 
 /**
@@ -3213,7 +3213,7 @@ class VGrangerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau VGrangerFp */
-typedef boost::shared_ptr< VGrangerFpMaterialBehaviourInstance > VGrangerFpMaterialBehaviourPtr;
+typedef std::shared_ptr< VGrangerFpMaterialBehaviourInstance > VGrangerFpMaterialBehaviourPtr;
 
 
 /**
@@ -3245,7 +3245,7 @@ class BetonBurgerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonBurgerFp */
-typedef boost::shared_ptr< BetonBurgerFpMaterialBehaviourInstance > BetonBurgerFpMaterialBehaviourPtr;
+typedef std::shared_ptr< BetonBurgerFpMaterialBehaviourInstance > BetonBurgerFpMaterialBehaviourPtr;
 
 
 /**
@@ -3277,7 +3277,7 @@ class BetonUmlvFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonUmlvFp */
-typedef boost::shared_ptr< BetonUmlvFpMaterialBehaviourInstance > BetonUmlvFpMaterialBehaviourPtr;
+typedef std::shared_ptr< BetonUmlvFpMaterialBehaviourInstance > BetonUmlvFpMaterialBehaviourPtr;
 
 
 /**
@@ -3334,7 +3334,7 @@ class BetonRagMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonRag */
-typedef boost::shared_ptr< BetonRagMaterialBehaviourInstance > BetonRagMaterialBehaviourPtr;
+typedef std::shared_ptr< BetonRagMaterialBehaviourInstance > BetonRagMaterialBehaviourPtr;
 
 
 /**
@@ -3414,7 +3414,7 @@ class PoroBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau PoroBeton */
-typedef boost::shared_ptr< PoroBetonMaterialBehaviourInstance > PoroBetonMaterialBehaviourPtr;
+typedef std::shared_ptr< PoroBetonMaterialBehaviourInstance > PoroBetonMaterialBehaviourPtr;
 
 
 /**
@@ -3445,7 +3445,7 @@ class GlrcDmMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau GlrcDm */
-typedef boost::shared_ptr< GlrcDmMaterialBehaviourInstance > GlrcDmMaterialBehaviourPtr;
+typedef std::shared_ptr< GlrcDmMaterialBehaviourInstance > GlrcDmMaterialBehaviourPtr;
 
 
 /**
@@ -3706,7 +3706,7 @@ class DhrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Dhrc */
-typedef boost::shared_ptr< DhrcMaterialBehaviourInstance > DhrcMaterialBehaviourPtr;
+typedef std::shared_ptr< DhrcMaterialBehaviourInstance > DhrcMaterialBehaviourPtr;
 
 
 /**
@@ -3734,7 +3734,7 @@ class GattMonerieMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau GattMonerie */
-typedef boost::shared_ptr< GattMonerieMaterialBehaviourInstance > GattMonerieMaterialBehaviourPtr;
+typedef std::shared_ptr< GattMonerieMaterialBehaviourInstance > GattMonerieMaterialBehaviourPtr;
 
 
 /**
@@ -3762,7 +3762,7 @@ class CorrAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau CorrAcier */
-typedef boost::shared_ptr< CorrAcierMaterialBehaviourInstance > CorrAcierMaterialBehaviourPtr;
+typedef std::shared_ptr< CorrAcierMaterialBehaviourInstance > CorrAcierMaterialBehaviourPtr;
 
 
 /**
@@ -3794,7 +3794,7 @@ class CableGaineFrotMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau CableGaineFrot */
-typedef boost::shared_ptr< CableGaineFrotMaterialBehaviourInstance > CableGaineFrotMaterialBehaviourPtr;
+typedef std::shared_ptr< CableGaineFrotMaterialBehaviourInstance > CableGaineFrotMaterialBehaviourPtr;
 
 
 /**
@@ -3842,7 +3842,7 @@ class DisEcroCineMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DisEcroCine */
-typedef boost::shared_ptr< DisEcroCineMaterialBehaviourInstance > DisEcroCineMaterialBehaviourPtr;
+typedef std::shared_ptr< DisEcroCineMaterialBehaviourInstance > DisEcroCineMaterialBehaviourPtr;
 
 
 /**
@@ -3874,7 +3874,7 @@ class DisViscMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DisVisc */
-typedef boost::shared_ptr< DisViscMaterialBehaviourInstance > DisViscMaterialBehaviourPtr;
+typedef std::shared_ptr< DisViscMaterialBehaviourInstance > DisViscMaterialBehaviourPtr;
 
 
 /**
@@ -3907,7 +3907,7 @@ class DisBiliElasMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DisBiliElas */
-typedef boost::shared_ptr< DisBiliElasMaterialBehaviourInstance > DisBiliElasMaterialBehaviourPtr;
+typedef std::shared_ptr< DisBiliElasMaterialBehaviourInstance > DisBiliElasMaterialBehaviourPtr;
 
 
 /**
@@ -3934,7 +3934,7 @@ class TherNlMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherNl */
-typedef boost::shared_ptr< TherNlMaterialBehaviourInstance > TherNlMaterialBehaviourPtr;
+typedef std::shared_ptr< TherNlMaterialBehaviourInstance > TherNlMaterialBehaviourPtr;
 
 
 /**
@@ -3962,7 +3962,7 @@ class TherHydrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherHydr */
-typedef boost::shared_ptr< TherHydrMaterialBehaviourInstance > TherHydrMaterialBehaviourPtr;
+typedef std::shared_ptr< TherHydrMaterialBehaviourInstance > TherHydrMaterialBehaviourPtr;
 
 
 /**
@@ -3988,7 +3988,7 @@ class TherMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Ther */
-typedef boost::shared_ptr< TherMaterialBehaviourInstance > TherMaterialBehaviourPtr;
+typedef std::shared_ptr< TherMaterialBehaviourInstance > TherMaterialBehaviourPtr;
 
 
 /**
@@ -4014,7 +4014,7 @@ class TherFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherFo */
-typedef boost::shared_ptr< TherFoMaterialBehaviourInstance > TherFoMaterialBehaviourPtr;
+typedef std::shared_ptr< TherFoMaterialBehaviourInstance > TherFoMaterialBehaviourPtr;
 
 
 /**
@@ -4042,7 +4042,7 @@ class TherOrthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherOrth */
-typedef boost::shared_ptr< TherOrthMaterialBehaviourInstance > TherOrthMaterialBehaviourPtr;
+typedef std::shared_ptr< TherOrthMaterialBehaviourInstance > TherOrthMaterialBehaviourPtr;
 
 
 /**
@@ -4082,7 +4082,7 @@ class TherCoqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherCoque */
-typedef boost::shared_ptr< TherCoqueMaterialBehaviourInstance > TherCoqueMaterialBehaviourPtr;
+typedef std::shared_ptr< TherCoqueMaterialBehaviourInstance > TherCoqueMaterialBehaviourPtr;
 
 
 /**
@@ -4122,7 +4122,7 @@ class TherCoqueFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherCoqueFo */
-typedef boost::shared_ptr< TherCoqueFoMaterialBehaviourInstance > TherCoqueFoMaterialBehaviourPtr;
+typedef std::shared_ptr< TherCoqueFoMaterialBehaviourInstance > TherCoqueFoMaterialBehaviourPtr;
 
 
 /**
@@ -4150,7 +4150,7 @@ class SechGrangerMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau SechGranger */
-typedef boost::shared_ptr< SechGrangerMaterialBehaviourInstance > SechGrangerMaterialBehaviourPtr;
+typedef std::shared_ptr< SechGrangerMaterialBehaviourInstance > SechGrangerMaterialBehaviourPtr;
 
 
 /**
@@ -4176,7 +4176,7 @@ class SechMensiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau SechMensi */
-typedef boost::shared_ptr< SechMensiMaterialBehaviourInstance > SechMensiMaterialBehaviourPtr;
+typedef std::shared_ptr< SechMensiMaterialBehaviourInstance > SechMensiMaterialBehaviourPtr;
 
 
 /**
@@ -4204,7 +4204,7 @@ class SechBazantMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau SechBazant */
-typedef boost::shared_ptr< SechBazantMaterialBehaviourInstance > SechBazantMaterialBehaviourPtr;
+typedef std::shared_ptr< SechBazantMaterialBehaviourInstance > SechBazantMaterialBehaviourPtr;
 
 
 /**
@@ -4229,7 +4229,7 @@ class SechNappeMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau SechNappe */
-typedef boost::shared_ptr< SechNappeMaterialBehaviourInstance > SechNappeMaterialBehaviourPtr;
+typedef std::shared_ptr< SechNappeMaterialBehaviourInstance > SechNappeMaterialBehaviourPtr;
 
 
 /**
@@ -4265,7 +4265,7 @@ class MetaAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaAcier */
-typedef boost::shared_ptr< MetaAcierMaterialBehaviourInstance > MetaAcierMaterialBehaviourPtr;
+typedef std::shared_ptr< MetaAcierMaterialBehaviourInstance > MetaAcierMaterialBehaviourPtr;
 
 
 /**
@@ -4301,7 +4301,7 @@ class MetaZircMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaZirc */
-typedef boost::shared_ptr< MetaZircMaterialBehaviourInstance > MetaZircMaterialBehaviourPtr;
+typedef std::shared_ptr< MetaZircMaterialBehaviourInstance > MetaZircMaterialBehaviourPtr;
 
 
 /**
@@ -4330,7 +4330,7 @@ class DurtMetaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DurtMeta */
-typedef boost::shared_ptr< DurtMetaMaterialBehaviourInstance > DurtMetaMaterialBehaviourPtr;
+typedef std::shared_ptr< DurtMetaMaterialBehaviourInstance > DurtMetaMaterialBehaviourPtr;
 
 
 /**
@@ -4373,7 +4373,7 @@ class ElasMetaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasMeta */
-typedef boost::shared_ptr< ElasMetaMaterialBehaviourInstance > ElasMetaMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasMetaMaterialBehaviourInstance > ElasMetaMaterialBehaviourPtr;
 
 
 /**
@@ -4417,7 +4417,7 @@ class ElasMetaFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasMetaFo */
-typedef boost::shared_ptr< ElasMetaFoMaterialBehaviourInstance > ElasMetaFoMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasMetaFoMaterialBehaviourInstance > ElasMetaFoMaterialBehaviourPtr;
 
 
 /**
@@ -4446,7 +4446,7 @@ class MetaEcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaEcroLine */
-typedef boost::shared_ptr< MetaEcroLineMaterialBehaviourInstance > MetaEcroLineMaterialBehaviourPtr;
+typedef std::shared_ptr< MetaEcroLineMaterialBehaviourInstance > MetaEcroLineMaterialBehaviourPtr;
 
 
 /**
@@ -4475,7 +4475,7 @@ class MetaTractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaTraction */
-typedef boost::shared_ptr< MetaTractionMaterialBehaviourInstance > MetaTractionMaterialBehaviourPtr;
+typedef std::shared_ptr< MetaTractionMaterialBehaviourInstance > MetaTractionMaterialBehaviourPtr;
 
 
 /**
@@ -4519,7 +4519,7 @@ class MetaViscFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaViscFo */
-typedef boost::shared_ptr< MetaViscFoMaterialBehaviourInstance > MetaViscFoMaterialBehaviourPtr;
+typedef std::shared_ptr< MetaViscFoMaterialBehaviourInstance > MetaViscFoMaterialBehaviourPtr;
 
 
 /**
@@ -4551,7 +4551,7 @@ class MetaPtMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaPt */
-typedef boost::shared_ptr< MetaPtMaterialBehaviourInstance > MetaPtMaterialBehaviourPtr;
+typedef std::shared_ptr< MetaPtMaterialBehaviourInstance > MetaPtMaterialBehaviourPtr;
 
 
 /**
@@ -4583,7 +4583,7 @@ class MetaReMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaRe */
-typedef boost::shared_ptr< MetaReMaterialBehaviourInstance > MetaReMaterialBehaviourPtr;
+typedef std::shared_ptr< MetaReMaterialBehaviourInstance > MetaReMaterialBehaviourPtr;
 
 
 /**
@@ -4612,7 +4612,7 @@ class FluideMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Fluide */
-typedef boost::shared_ptr< FluideMaterialBehaviourInstance > FluideMaterialBehaviourPtr;
+typedef std::shared_ptr< FluideMaterialBehaviourInstance > FluideMaterialBehaviourPtr;
 
 
 /**
@@ -4643,7 +4643,7 @@ class ThmInitMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmInit */
-typedef boost::shared_ptr< ThmInitMaterialBehaviourInstance > ThmInitMaterialBehaviourPtr;
+typedef std::shared_ptr< ThmInitMaterialBehaviourInstance > ThmInitMaterialBehaviourPtr;
 
 
 /**
@@ -4669,7 +4669,7 @@ class ThmAirDissMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmAirDiss */
-typedef boost::shared_ptr< ThmAirDissMaterialBehaviourInstance > ThmAirDissMaterialBehaviourPtr;
+typedef std::shared_ptr< ThmAirDissMaterialBehaviourInstance > ThmAirDissMaterialBehaviourPtr;
 
 
 
@@ -4745,7 +4745,7 @@ class ThmDiffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmDiffu */
-typedef boost::shared_ptr< ThmDiffuMaterialBehaviourInstance > ThmDiffuMaterialBehaviourPtr;
+typedef std::shared_ptr< ThmDiffuMaterialBehaviourInstance > ThmDiffuMaterialBehaviourPtr;
 
 
 /**
@@ -4775,7 +4775,7 @@ class ThmLiquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmLiqu */
-typedef boost::shared_ptr< ThmLiquMaterialBehaviourInstance > ThmLiquMaterialBehaviourPtr;
+typedef std::shared_ptr< ThmLiquMaterialBehaviourInstance > ThmLiquMaterialBehaviourPtr;
 
 
 /**
@@ -4803,7 +4803,7 @@ class ThmGazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmGaz */
-typedef boost::shared_ptr< ThmGazMaterialBehaviourInstance > ThmGazMaterialBehaviourPtr;
+typedef std::shared_ptr< ThmGazMaterialBehaviourInstance > ThmGazMaterialBehaviourPtr;
 
 
 /**
@@ -4831,7 +4831,7 @@ class ThmVapeGazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmVapeGaz */
-typedef boost::shared_ptr< ThmVapeGazMaterialBehaviourInstance > ThmVapeGazMaterialBehaviourPtr;
+typedef std::shared_ptr< ThmVapeGazMaterialBehaviourInstance > ThmVapeGazMaterialBehaviourPtr;
 
 /**
  * @class FatigueMaterialBehaviourInstance
@@ -4866,7 +4866,7 @@ class FatigueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Fatigue */
-typedef boost::shared_ptr< FatigueMaterialBehaviourInstance > FatigueMaterialBehaviourPtr;
+typedef std::shared_ptr< FatigueMaterialBehaviourInstance > FatigueMaterialBehaviourPtr;
 
 
 /**
@@ -4893,7 +4893,7 @@ class DommaLemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DommaLemaitre */
-typedef boost::shared_ptr< DommaLemaitreMaterialBehaviourInstance > DommaLemaitreMaterialBehaviourPtr;
+typedef std::shared_ptr< DommaLemaitreMaterialBehaviourInstance > DommaLemaitreMaterialBehaviourPtr;
 
 
 /**
@@ -4926,7 +4926,7 @@ class CisaPlanCritMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau CisaPlanCrit */
-typedef boost::shared_ptr< CisaPlanCritMaterialBehaviourInstance > CisaPlanCritMaterialBehaviourPtr;
+typedef std::shared_ptr< CisaPlanCritMaterialBehaviourInstance > CisaPlanCritMaterialBehaviourPtr;
 
 
 /**
@@ -4952,7 +4952,7 @@ class ThmRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmRupt */
-typedef boost::shared_ptr< ThmRuptMaterialBehaviourInstance > ThmRuptMaterialBehaviourPtr;
+typedef std::shared_ptr< ThmRuptMaterialBehaviourInstance > ThmRuptMaterialBehaviourPtr;
 
 
 /**
@@ -4980,7 +4980,7 @@ class WeibullMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Weibull */
-typedef boost::shared_ptr< WeibullMaterialBehaviourInstance > WeibullMaterialBehaviourPtr;
+typedef std::shared_ptr< WeibullMaterialBehaviourInstance > WeibullMaterialBehaviourPtr;
 
 
 /**
@@ -5009,7 +5009,7 @@ class WeibullFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau WeibullFo */
-typedef boost::shared_ptr< WeibullFoMaterialBehaviourInstance > WeibullFoMaterialBehaviourPtr;
+typedef std::shared_ptr< WeibullFoMaterialBehaviourInstance > WeibullFoMaterialBehaviourPtr;
 
 
 /**
@@ -5038,7 +5038,7 @@ class NonLocalMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau NonLocal */
-typedef boost::shared_ptr< NonLocalMaterialBehaviourInstance > NonLocalMaterialBehaviourPtr;
+typedef std::shared_ptr< NonLocalMaterialBehaviourInstance > NonLocalMaterialBehaviourPtr;
 
 
 /**
@@ -5069,7 +5069,7 @@ class RuptFragMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau RuptFrag */
-typedef boost::shared_ptr< RuptFragMaterialBehaviourInstance > RuptFragMaterialBehaviourPtr;
+typedef std::shared_ptr< RuptFragMaterialBehaviourInstance > RuptFragMaterialBehaviourPtr;
 
 
 /**
@@ -5100,7 +5100,7 @@ class RuptFragFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau RuptFragFo */
-typedef boost::shared_ptr< RuptFragFoMaterialBehaviourInstance > RuptFragFoMaterialBehaviourPtr;
+typedef std::shared_ptr< RuptFragFoMaterialBehaviourInstance > RuptFragFoMaterialBehaviourPtr;
 
 
 /**
@@ -5130,7 +5130,7 @@ class CzmLabMixMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau CzmLabMix */
-typedef boost::shared_ptr< CzmLabMixMaterialBehaviourInstance > CzmLabMixMaterialBehaviourPtr;
+typedef std::shared_ptr< CzmLabMixMaterialBehaviourInstance > CzmLabMixMaterialBehaviourPtr;
 
 
 /**
@@ -5160,7 +5160,7 @@ class RuptDuctMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau RuptDuct */
-typedef boost::shared_ptr< RuptDuctMaterialBehaviourInstance > RuptDuctMaterialBehaviourPtr;
+typedef std::shared_ptr< RuptDuctMaterialBehaviourInstance > RuptDuctMaterialBehaviourPtr;
 
 
 /**
@@ -5196,7 +5196,7 @@ class JointMecaRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau JointMecaRupt */
-typedef boost::shared_ptr< JointMecaRuptMaterialBehaviourInstance > JointMecaRuptMaterialBehaviourPtr;
+typedef std::shared_ptr< JointMecaRuptMaterialBehaviourInstance > JointMecaRuptMaterialBehaviourPtr;
 
 
 /**
@@ -5233,7 +5233,7 @@ class JointMecaFrotMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau JointMecaFrot */
-typedef boost::shared_ptr< JointMecaFrotMaterialBehaviourInstance > JointMecaFrotMaterialBehaviourPtr;
+typedef std::shared_ptr< JointMecaFrotMaterialBehaviourInstance > JointMecaFrotMaterialBehaviourPtr;
 
 
 /**
@@ -5268,7 +5268,7 @@ class RccmMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Rccm */
-typedef boost::shared_ptr< RccmMaterialBehaviourInstance > RccmMaterialBehaviourPtr;
+typedef std::shared_ptr< RccmMaterialBehaviourInstance > RccmMaterialBehaviourPtr;
 
 
 /**
@@ -5302,7 +5302,7 @@ class RccmFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau RccmFo */
-typedef boost::shared_ptr< RccmFoMaterialBehaviourInstance > RccmFoMaterialBehaviourPtr;
+typedef std::shared_ptr< RccmFoMaterialBehaviourInstance > RccmFoMaterialBehaviourPtr;
 
 
 /**
@@ -5340,7 +5340,7 @@ class LaigleMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Laigle */
-typedef boost::shared_ptr< LaigleMaterialBehaviourInstance > LaigleMaterialBehaviourPtr;
+typedef std::shared_ptr< LaigleMaterialBehaviourInstance > LaigleMaterialBehaviourPtr;
 
 
 /**
@@ -5391,7 +5391,7 @@ class LetkMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Letk */
-typedef boost::shared_ptr< LetkMaterialBehaviourInstance > LetkMaterialBehaviourPtr;
+typedef std::shared_ptr< LetkMaterialBehaviourInstance > LetkMaterialBehaviourPtr;
 
 
 /**
@@ -5424,7 +5424,7 @@ class DruckPragerMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DruckPrager */
-typedef boost::shared_ptr< DruckPragerMaterialBehaviourInstance > DruckPragerMaterialBehaviourPtr;
+typedef std::shared_ptr< DruckPragerMaterialBehaviourInstance > DruckPragerMaterialBehaviourPtr;
 
 
 /**
@@ -5457,7 +5457,7 @@ class DruckPragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DruckPragerFo */
-typedef boost::shared_ptr< DruckPragerFoMaterialBehaviourInstance > DruckPragerFoMaterialBehaviourPtr;
+typedef std::shared_ptr< DruckPragerFoMaterialBehaviourInstance > DruckPragerFoMaterialBehaviourPtr;
 
 
 /**
@@ -5495,7 +5495,7 @@ class ViscDrucPragMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ViscDrucPrag */
-typedef boost::shared_ptr< ViscDrucPragMaterialBehaviourInstance > ViscDrucPragMaterialBehaviourPtr;
+typedef std::shared_ptr< ViscDrucPragMaterialBehaviourInstance > ViscDrucPragMaterialBehaviourPtr;
 
 
 /**
@@ -5530,7 +5530,7 @@ class HoekBrownMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau HoekBrown */
-typedef boost::shared_ptr< HoekBrownMaterialBehaviourInstance > HoekBrownMaterialBehaviourPtr;
+typedef std::shared_ptr< HoekBrownMaterialBehaviourInstance > HoekBrownMaterialBehaviourPtr;
 
 
 /**
@@ -5556,7 +5556,7 @@ class ElasGonfMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasGonf */
-typedef boost::shared_ptr< ElasGonfMaterialBehaviourInstance > ElasGonfMaterialBehaviourPtr;
+typedef std::shared_ptr< ElasGonfMaterialBehaviourInstance > ElasGonfMaterialBehaviourPtr;
 
 
 /**
@@ -5584,7 +5584,7 @@ class JointBandisMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau JointBandis */
-typedef boost::shared_ptr< JointBandisMaterialBehaviourInstance > JointBandisMaterialBehaviourPtr;
+typedef std::shared_ptr< JointBandisMaterialBehaviourInstance > JointBandisMaterialBehaviourPtr;
 
 
 /**
@@ -5612,7 +5612,7 @@ class MonoVisc1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoVisc1 */
-typedef boost::shared_ptr< MonoVisc1MaterialBehaviourInstance > MonoVisc1MaterialBehaviourPtr;
+typedef std::shared_ptr< MonoVisc1MaterialBehaviourInstance > MonoVisc1MaterialBehaviourPtr;
 
 
 /**
@@ -5642,7 +5642,7 @@ class MonoVisc2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoVisc2 */
-typedef boost::shared_ptr< MonoVisc2MaterialBehaviourInstance > MonoVisc2MaterialBehaviourPtr;
+typedef std::shared_ptr< MonoVisc2MaterialBehaviourInstance > MonoVisc2MaterialBehaviourPtr;
 
 
 /**
@@ -5677,7 +5677,7 @@ class MonoIsot1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoIsot1 */
-typedef boost::shared_ptr< MonoIsot1MaterialBehaviourInstance > MonoIsot1MaterialBehaviourPtr;
+typedef std::shared_ptr< MonoIsot1MaterialBehaviourInstance > MonoIsot1MaterialBehaviourPtr;
 
 
 /**
@@ -5714,7 +5714,7 @@ class MonoIsot2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoIsot2 */
-typedef boost::shared_ptr< MonoIsot2MaterialBehaviourInstance > MonoIsot2MaterialBehaviourPtr;
+typedef std::shared_ptr< MonoIsot2MaterialBehaviourInstance > MonoIsot2MaterialBehaviourPtr;
 
 
 /**
@@ -5740,7 +5740,7 @@ class MonoCine1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoCine1 */
-typedef boost::shared_ptr< MonoCine1MaterialBehaviourInstance > MonoCine1MaterialBehaviourPtr;
+typedef std::shared_ptr< MonoCine1MaterialBehaviourInstance > MonoCine1MaterialBehaviourPtr;
 
 
 /**
@@ -5769,7 +5769,7 @@ class MonoCine2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoCine2 */
-typedef boost::shared_ptr< MonoCine2MaterialBehaviourInstance > MonoCine2MaterialBehaviourPtr;
+typedef std::shared_ptr< MonoCine2MaterialBehaviourInstance > MonoCine2MaterialBehaviourPtr;
 
 
 /**
@@ -5810,7 +5810,7 @@ class MonoDdKrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoDdKr */
-typedef boost::shared_ptr< MonoDdKrMaterialBehaviourInstance > MonoDdKrMaterialBehaviourPtr;
+typedef std::shared_ptr< MonoDdKrMaterialBehaviourInstance > MonoDdKrMaterialBehaviourPtr;
 
 
 /**
@@ -5849,7 +5849,7 @@ class MonoDdCfcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoDdCfc */
-typedef boost::shared_ptr< MonoDdCfcMaterialBehaviourInstance > MonoDdCfcMaterialBehaviourPtr;
+typedef std::shared_ptr< MonoDdCfcMaterialBehaviourInstance > MonoDdCfcMaterialBehaviourPtr;
 
 
 /**
@@ -5896,7 +5896,7 @@ class MonoDdCfcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoDdCfcIrra */
-typedef boost::shared_ptr< MonoDdCfcIrraMaterialBehaviourInstance > MonoDdCfcIrraMaterialBehaviourPtr;
+typedef std::shared_ptr< MonoDdCfcIrraMaterialBehaviourInstance > MonoDdCfcIrraMaterialBehaviourPtr;
 
 
 /**
@@ -5933,7 +5933,7 @@ class MonoDdFatMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoDdFat */
-typedef boost::shared_ptr< MonoDdFatMaterialBehaviourInstance > MonoDdFatMaterialBehaviourPtr;
+typedef std::shared_ptr< MonoDdFatMaterialBehaviourInstance > MonoDdFatMaterialBehaviourPtr;
 
 
 /**
@@ -5979,7 +5979,7 @@ class MonoDdCcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoDdCc */
-typedef boost::shared_ptr< MonoDdCcMaterialBehaviourInstance > MonoDdCcMaterialBehaviourPtr;
+typedef std::shared_ptr< MonoDdCcMaterialBehaviourInstance > MonoDdCcMaterialBehaviourPtr;
 
 
 /**
@@ -6027,7 +6027,7 @@ class MonoDdCcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoDdCcIrra */
-typedef boost::shared_ptr< MonoDdCcIrraMaterialBehaviourInstance > MonoDdCcIrraMaterialBehaviourPtr;
+typedef std::shared_ptr< MonoDdCcIrraMaterialBehaviourInstance > MonoDdCcIrraMaterialBehaviourPtr;
 
 
 /**
@@ -6249,7 +6249,7 @@ class UmatMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Umat */
-typedef boost::shared_ptr< UmatMaterialBehaviourInstance > UmatMaterialBehaviourPtr;
+typedef std::shared_ptr< UmatMaterialBehaviourInstance > UmatMaterialBehaviourPtr;
 
 
 /**
@@ -6471,7 +6471,7 @@ class UmatFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau UmatFo */
-typedef boost::shared_ptr< UmatFoMaterialBehaviourInstance > UmatFoMaterialBehaviourPtr;
+typedef std::shared_ptr< UmatFoMaterialBehaviourInstance > UmatFoMaterialBehaviourPtr;
 
 
 /**
@@ -6498,11 +6498,11 @@ class CritRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau CritRupt */
-typedef boost::shared_ptr< CritRuptMaterialBehaviourInstance > CritRuptMaterialBehaviourPtr;
+typedef std::shared_ptr< CritRuptMaterialBehaviourInstance > CritRuptMaterialBehaviourPtr;
 
 
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */
-typedef boost::shared_ptr< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviourPtr;
+typedef std::shared_ptr< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviourPtr;
 
 
 

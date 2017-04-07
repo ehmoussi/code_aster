@@ -55,6 +55,20 @@ private:
 
 public:
     /**
+     * @typedef ElementaryMatrixPtr
+     * @brief Pointeur intelligent vers un ElementaryMatrix
+     */
+    typedef std::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static ElementaryMatrixPtr create()
+    {
+        return ElementaryMatrixPtr( new ElementaryMatrixInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     ElementaryMatrixInstance( const JeveuxMemory memType = Permanent );
@@ -99,6 +113,6 @@ public:
  * @typedef ElementaryMatrixPtr
  * @brief Pointeur intelligent vers un ElementaryMatrixInstance
  */
-typedef boost::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
+typedef std::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
 
 #endif /* ELEMENTARYMATRIX_H_ */

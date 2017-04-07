@@ -47,7 +47,7 @@ class ModelInstance: public DataStructure
         // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
         // dans la list
         /** @brief Pointeur intelligent vers un VirtualMeshEntity */
-        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+        typedef std::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
         /** @brief std::list de std::pair de ElementaryModeling et MeshEntityPtr */
         typedef std::vector< std::pair< ElementaryModeling, MeshEntityPtr > > listOfModsAndGrps;
         /** @brief Valeur contenue dans listOfModsAndGrps */
@@ -73,7 +73,7 @@ class ModelInstance: public DataStructure
         /**
          * @brief Forward declaration for the XFEM enrichment
          */
-        typedef boost::shared_ptr< ModelInstance > ModelPtr;
+        typedef std::shared_ptr< ModelInstance > ModelPtr;
 
         /**
          * @brief Constructeur
@@ -180,6 +180,6 @@ class ModelInstance: public DataStructure
  * @typedef Model
  * @brief Pointeur intelligent vers un ModelInstance
  */
-typedef boost::shared_ptr< ModelInstance > ModelPtr;
+typedef std::shared_ptr< ModelInstance > ModelPtr;
 
 #endif /* MODEL_H_ */

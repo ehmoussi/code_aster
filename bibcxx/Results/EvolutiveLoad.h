@@ -52,6 +52,6 @@ public:
  * @typedef EvolutiveLoadPtr
  * @brief Pointeur intelligent vers un EvolutiveLoadInstance
  */
-typedef boost::shared_ptr< EvolutiveLoadInstance > EvolutiveLoadPtr;
+typedef std::shared_ptr< EvolutiveLoadInstance > EvolutiveLoadPtr;
 
 #endif /* EVOLUTIVELOAD_H_ */

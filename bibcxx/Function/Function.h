@@ -42,6 +42,20 @@ class FunctionInstance: public DataStructure
 
     public:
         /**
+         * @typedef FunctionPtr
+         * @brief Pointeur intelligent vers un Function
+         */
+        typedef std::shared_ptr< FunctionInstance > FunctionPtr;
+
+        /**
+         * @brief Constructeur
+         */
+        static FunctionPtr create()
+        {
+            return FunctionPtr( new FunctionInstance );
+        };
+
+        /**
         * Constructeur
         */
         FunctionInstance();
@@ -153,6 +167,6 @@ class FunctionInstance: public DataStructure
 * @brief  Pointer to a FunctionInstance
 * @author Mathieu Courtois
 */
-typedef boost::shared_ptr< FunctionInstance > FunctionPtr;
+typedef std::shared_ptr< FunctionInstance > FunctionPtr;
 
 #endif /* FUNCTION_H_ */

@@ -80,6 +80,6 @@ public:
  * @typedef GeneralizedModelPtr
  * @brief Pointeur intelligent vers un GeneralizedModelInstance
  */
-typedef boost::shared_ptr< GeneralizedModelInstance > GeneralizedModelPtr;
+typedef std::shared_ptr< GeneralizedModelInstance > GeneralizedModelPtr;
 
 #endif /* GENERALIZEDMODEL_H_ */

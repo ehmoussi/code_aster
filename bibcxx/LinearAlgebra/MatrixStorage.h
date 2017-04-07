@@ -94,7 +94,7 @@ public:
  * @typedef LigneDeCielPtr
  * @brief Pointeur intelligent vers un LigneDeCielInstance
  */
-typedef boost::shared_ptr< LigneDeCielInstance > LigneDeCielPtr;
+typedef std::shared_ptr< LigneDeCielInstance > LigneDeCielPtr;
 
 /**
  * @class MorseStorageInstance
@@ -127,7 +127,7 @@ public:
  * @typedef MorseStoragePtr
  * @brief Pointeur intelligent vers un MorseStorageInstance
  */
-typedef boost::shared_ptr< MorseStorageInstance > MorseStoragePtr;
+typedef std::shared_ptr< MorseStorageInstance > MorseStoragePtr;
 
 /**
  * @class MultFrontStorageInstance
@@ -163,6 +163,6 @@ public:
  * @typedef MultFrontStoragePtr
  * @brief Pointeur intelligent vers un MultFrontStorageInstance
  */
-typedef boost::shared_ptr< MultFrontStorageInstance > MultFrontStoragePtr;
+typedef std::shared_ptr< MultFrontStorageInstance > MultFrontStoragePtr;
 
 #endif /* MATRIXSTORAGE_H_ */

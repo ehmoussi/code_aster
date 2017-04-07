@@ -132,6 +132,6 @@ class LineSearchMethodInstance
  * @typedef NonLinearMethodPtr
  * @brief Enveloppe d'un pointeur intelligent vers un LineSearchMethodInstance
  */
-typedef boost::shared_ptr< LineSearchMethodInstance > LineSearchMethodPtr;
+typedef std::shared_ptr< LineSearchMethodInstance > LineSearchMethodPtr;
 
 #endif /* LINESEARCHMETHOD_H_ */

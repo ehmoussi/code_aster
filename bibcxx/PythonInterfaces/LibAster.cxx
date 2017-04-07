@@ -22,15 +22,57 @@
  */
 
 #include <boost/python.hpp>
+
 #include "PythonInterfaces/DataStructureInterface.h"
+#include "PythonInterfaces/DiscreteProblemInterface.h"
+#include "PythonInterfaces/DOFNumberingInterface.h"
+#include "PythonInterfaces/ElementaryCharacteristicsInterface.h"
+#include "PythonInterfaces/FiberGeometryInterface.h"
+#include "PythonInterfaces/FieldOnElementsInterface.h"
 #include "PythonInterfaces/FieldOnNodesInterface.h"
 #include "PythonInterfaces/MeshInterface.h"
+#include "PythonInterfaces/PCFieldOnMeshInterface.h"
+#include "PythonInterfaces/SimpleFieldOnElementsInterface.h"
+#include "PythonInterfaces/SimpleFieldOnNodesInterface.h"
+#include "PythonInterfaces/TableInterface.h"
+#include "PythonInterfaces/TimeStepperInterface.h"
+#include "PythonInterfaces/VectorUtilities.h"
+#include "PythonInterfaces/GeneralizedDOFNumberingInterface.h"
+#include "PythonInterfaces/FluidStructureInteractionInterface.h"
+#include "PythonInterfaces/TurbulentSpectrumInterface.h"
+#include "PythonInterfaces/FunctionInterface.h"
+#include "PythonInterfaces/SurfaceInterface.h"
+#include "PythonInterfaces/ContactDefinitionInterface.h"
+#include "PythonInterfaces/ContactZoneInterface.h"
+#include "PythonInterfaces/XfemContactZoneInterface.h"
+#include "PythonInterfaces/AssemblyMatrixInterface.h"
+#include "PythonInterfaces/ElementaryMatrixInterface.h"
 
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(libaster)
 {
     exportDataStructureToPython();
-    exportFieldOnNodesToPython();
     exportMeshToPython();
+    exportDiscreteProblemToPython();
+    exportDOFNumberingToPython();
+    exportElementaryCharacteristicsToPython();
+    exportFiberGeometryToPython();
+    exportFieldOnElementsToPython();
+    exportFieldOnNodesToPython();
+    exportPCFieldOnMeshToPython();
+    exportSimpleFieldOnElementsToPython();
+    exportSimpleFieldOnNodesToPython();
+    exportTableToPython();
+    exportTimeStepperToPython();
+    exportGeneralizedDOFNumberingToPython();
+    exportFluidStructureInteractionToPython();
+    exportTurbulentSpectrumToPython();
+    exportFunctionToPython();
+    exportSurfaceToPython();
+    exportContactDefinitionToPython();
+    exportContactZoneToPython();
+    exportXfemContactZoneToPython();
+    exportAssemblyMatrixToPython();
+    exportElementaryMatrixToPython();
 };

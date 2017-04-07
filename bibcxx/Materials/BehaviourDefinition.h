@@ -56,6 +56,6 @@ class BehaviourDefinitionInstance: public DataStructure
  * @typedef BehaviourDefinitionPtr
  * @brief Pointeur intelligent vers un BehaviourDefinitionInstance
  */
-typedef boost::shared_ptr< BehaviourDefinitionInstance > BehaviourDefinitionPtr;
+typedef std::shared_ptr< BehaviourDefinitionInstance > BehaviourDefinitionPtr;
 
 #endif /* BEHAVIOURDEFINITION_H_ */

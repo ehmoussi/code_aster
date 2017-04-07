@@ -47,6 +47,7 @@ private:
     JeveuxVectorChar24 _refe;
 
 public:
+
     /**
      * @brief Constructeur
      */
@@ -91,6 +92,21 @@ private:
 
 public:
     /**
+     * @typedef GeneralizedAssemblyVectorPtr
+     * @brief Pointeur intelligent vers un GeneralizedAssemblyVector
+     */
+    typedef std::shared_ptr< GeneralizedAssemblyVectorInstance<ValueType> >
+            GeneralizedAssemblyVectorPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static GeneralizedAssemblyVectorPtr create()
+    {
+        return GeneralizedAssemblyVectorPtr( new GeneralizedAssemblyVectorInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     GeneralizedAssemblyVectorInstance():
@@ -109,18 +125,18 @@ typedef GeneralizedAssemblyVectorInstance< DoubleComplex > GeneralizedAssemblyVe
  * @typedef GenericGeneralizedAssemblyVectorPtr
  * @brief Pointeur intelligent vers un GenericGeneralizedAssemblyVectorInstance
  */
-typedef boost::shared_ptr< GenericGeneralizedAssemblyVectorInstance > GenericGeneralizedAssemblyVectorPtr;
+typedef std::shared_ptr< GenericGeneralizedAssemblyVectorInstance > GenericGeneralizedAssemblyVectorPtr;
 
 /**
  * @typedef GeneralizedAssemblyVectorDoublePtr
  * @brief Pointeur intelligent vers un GeneralizedAssemblyVectorDoubleInstance
  */
-typedef boost::shared_ptr< GeneralizedAssemblyVectorDoubleInstance > GeneralizedAssemblyVectorDoublePtr;
+typedef std::shared_ptr< GeneralizedAssemblyVectorDoubleInstance > GeneralizedAssemblyVectorDoublePtr;
 
 /**
  * @typedef GeneralizedAssemblyVectorComplexPtr
  * @brief Pointeur intelligent vers un GeneralizedAssemblyVectorComplexInstance
  */
-typedef boost::shared_ptr< GeneralizedAssemblyVectorComplexInstance > GeneralizedAssemblyVectorComplexPtr;
+typedef std::shared_ptr< GeneralizedAssemblyVectorComplexInstance > GeneralizedAssemblyVectorComplexPtr;
 
 #endif /* GENERALIZEDASSEMBLYVECTOR_H_ */

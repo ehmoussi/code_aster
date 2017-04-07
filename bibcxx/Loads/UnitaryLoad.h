@@ -38,7 +38,7 @@ class UnitaryLoad
 {
     private:
         /** @typedef Definition d'un pointeur intelligent sur un VirtualMeshEntity */
-        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+        typedef std::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
         /** @typedef Definition du type informatique de la grandeur sur laquelle porte la charge */
         typedef typename PhysicalQuantityType::QuantityType ValueType;

@@ -163,6 +163,6 @@ class ListOfLoadsInstance: public DataStructure
  * @typedef ListOfLoad
  * @brief Pointeur intelligent vers un ListOfLoadInstance
  */
-typedef boost::shared_ptr< ListOfLoadsInstance > ListOfLoadsPtr;
+typedef std::shared_ptr< ListOfLoadsInstance > ListOfLoadsPtr;
 
 #endif /* LISTOFLOADS_H_ */

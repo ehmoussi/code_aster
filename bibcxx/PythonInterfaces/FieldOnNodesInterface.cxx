@@ -31,6 +31,7 @@ void exportFieldOnNodesToPython()
 {
     using namespace boost::python;
     class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
-            bases< DataStructure > >("FieldOnNodesDouble", init<>())
+            bases< DataStructure > >("FieldOnNodesDouble", no_init)
+        .def( "create", &FieldOnNodesDoubleInstance::create )
     ;
 };

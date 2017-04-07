@@ -75,7 +75,7 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance
 class JeveuxBidirectionalMap
 {
     public:
-        typedef boost::shared_ptr< JeveuxBidirectionalMapInstance > JeveuxBidirectionalMapPtr;
+        typedef std::shared_ptr< JeveuxBidirectionalMapInstance > JeveuxBidirectionalMapPtr;
 
     private:
         JeveuxBidirectionalMapPtr _jeveuxBidirectionalMapPtr;

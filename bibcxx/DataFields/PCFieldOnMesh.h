@@ -117,6 +117,20 @@ class PCFieldOnMeshInstance: public DataStructure
 
     public:
         /**
+         * @typedef PCFieldOnMeshPtr
+         * @brief Pointeur intelligent vers un PCFieldOnMesh
+         */
+        typedef std::shared_ptr< PCFieldOnMeshInstance > PCFieldOnMeshPtr;
+
+        /**
+         * @brief Constructeur
+         */
+        static PCFieldOnMeshPtr create()
+        {
+            return PCFieldOnMeshPtr( new PCFieldOnMeshInstance );
+        };
+
+        /**
          * @brief Constructeur
          * @param name Nom Jeveux de la carte
          */
@@ -276,29 +290,29 @@ typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshInstanceChar16;
  * @typedef PCFieldOnMeshPtrDouble
  * @brief   Definition d'une carte de double
  */
-typedef boost::shared_ptr< PCFieldOnMeshInstanceDouble > PCFieldOnMeshPtrDouble;
+typedef std::shared_ptr< PCFieldOnMeshInstanceDouble > PCFieldOnMeshPtrDouble;
 
 /**
  * @typedef PCFieldOnMeshLongPtr
  * @brief   Definition d'une carte de double
  */
-typedef boost::shared_ptr< PCFieldOnMeshInstanceLong > PCFieldOnMeshLongPtr;
+typedef std::shared_ptr< PCFieldOnMeshInstanceLong > PCFieldOnMeshLongPtr;
 
 /**
  * @typedef PCFieldOnMeshPtrComplex
  * @brief   Definition d'une carte de complexe
  */
-typedef boost::shared_ptr< PCFieldOnMeshComplexInstance > PCFieldOnMeshComplexPtr;
+typedef std::shared_ptr< PCFieldOnMeshComplexInstance > PCFieldOnMeshComplexPtr;
 
 /**
  * @typedef PCFieldOnMeshPtrChar8 Definition d'une carte de char[8]
  * @brief Pointeur intelligent vers un PCFieldOnMeshInstance
  */
-typedef boost::shared_ptr< PCFieldOnMeshInstanceChar8 > PCFieldOnMeshPtrChar8;
+typedef std::shared_ptr< PCFieldOnMeshInstanceChar8 > PCFieldOnMeshPtrChar8;
 
 /**
  * @typedef PCFieldOnMeshPtrChar16 Definition d'une carte de char[16]
  * @brief Pointeur intelligent vers un PCFieldOnMeshInstance
  */
-typedef boost::shared_ptr< PCFieldOnMeshInstanceChar16 > PCFieldOnMeshPtrChar16;
+typedef std::shared_ptr< PCFieldOnMeshInstanceChar16 > PCFieldOnMeshPtrChar16;
 #endif /* PCFIELDONMESH_H_ */
