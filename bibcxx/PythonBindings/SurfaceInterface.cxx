@@ -23,7 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/SurfaceInterface.h"
+#include "PythonBindings/SurfaceInterface.h"
 #include <boost/python.hpp>
 
 void exportSurfaceToPython()

@@ -1,6 +1,6 @@
 /**
- * @file ElementaryMatrixInterface.cxx
- * @brief Interface python de ElementaryMatrix
+ * @file FunctionInterface.cxx
+ * @brief Interface python de Function
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,15 +23,23 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/ElementaryMatrixInterface.h"
+#include "PythonBindings/FunctionInterface.h"
 #include <boost/python.hpp>
 
-void exportElementaryMatrixToPython()
+void exportFunctionToPython()
 {
     using namespace boost::python;
 
-    class_< ElementaryMatrixInstance, ElementaryMatrixInstance::ElementaryMatrixPtr,
-            bases< DataStructure > > ( "ElementaryMatrix", no_init )
-        .def( "create", &ElementaryMatrixInstance::create )
+    class_< FunctionInstance, FunctionInstance::FunctionPtr,
+            bases< DataStructure > > ( "Function", no_init )
+        .def( "create", &FunctionInstance::create )
+//         .def( "__getnewargs__", &FunctionInstance::getnewargs )
+        .def( "setParameterName", &FunctionInstance::setParameterName )
+        .def( "setResultName", &FunctionInstance::setResultName )
+        .def( "setInterpolation", &FunctionInstance::setInterpolation )
+        .def( "setExtrapolation", &FunctionInstance::setExtrapolation )
+        .def( "setValues", &FunctionInstance::setValues )
+        .def( "size", &FunctionInstance::size )
+        .def( "getProperties", &FunctionInstance::getProperties )
     ;
 };

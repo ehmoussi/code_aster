@@ -1,6 +1,6 @@
 /**
- * @file FieldOnNodesInterface.cxx
- * @brief Interface python de FieldOnNodes
+ * @file PCFieldOnMeshInterface.cxx
+ * @brief Interface python de PCFieldOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,15 +23,15 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/DataStructureInterface.h"
-#include "PythonInterfaces/FieldOnNodesInterface.h"
+#include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/PCFieldOnMeshInterface.h"
 #include <boost/python.hpp>
 
-void exportFieldOnNodesToPython()
+void exportPCFieldOnMeshToPython()
 {
     using namespace boost::python;
-    class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
-            bases< DataStructure > >("FieldOnNodesDouble", no_init)
-        .def( "create", &FieldOnNodesDoubleInstance::create )
+    class_< PCFieldOnMeshInstanceDouble, PCFieldOnMeshPtrDouble,
+            bases< DataStructure > >("PCFieldOnMeshDouble", no_init)
+        .def( "create", &PCFieldOnMeshInstanceDouble::create )
     ;
 };

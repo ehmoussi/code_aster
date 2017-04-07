@@ -1,6 +1,6 @@
 /**
- * @file ElementaryVectorInterface.cxx
- * @brief Interface python de ElementaryVector
+ * @file FieldOnElementsInterface.cxx
+ * @brief Interface python de FieldOnElements
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,15 +23,15 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/ElementaryVectorInterface.h"
+#include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/FieldOnElementsInterface.h"
 #include <boost/python.hpp>
 
-void exportElementaryVectorToPython()
+void exportFieldOnElementsToPython()
 {
     using namespace boost::python;
-
-    class_< ElementaryVectorInstance, ElementaryVectorInstance::ElementaryVectorPtr,
-            bases< DataStructure > > ( "ElementaryVector", no_init )
-        .def( "create", &ElementaryVectorInstance::create )
+    class_< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr,
+            bases< DataStructure > >("FieldOnElementsDouble", no_init)
+        .def( "create", &FieldOnElementsDoubleInstance::create )
     ;
 };

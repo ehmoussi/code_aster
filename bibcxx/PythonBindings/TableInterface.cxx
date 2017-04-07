@@ -1,6 +1,6 @@
 /**
- * @file FiberGeometryInterface.cxx
- * @brief Interface python de FiberGeometry
+ * @file TableInterface.cxx
+ * @brief Interface python de Table
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,15 +23,16 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/FiberGeometryInterface.h"
+#include "PythonBindings/TableInterface.h"
+#include "PythonBindings/DataStructureInterface.h"
 #include <boost/python.hpp>
 
-void exportFiberGeometryToPython()
+void exportTableToPython()
 {
     using namespace boost::python;
 
-    class_< FiberGeometryInstance, FiberGeometryInstance::FiberGeometryPtr,
-            bases< DataStructure > > ( "FiberGeometry", no_init )
-        .def( "create", &FiberGeometryInstance::create )
+    class_< TableInstance, TableInstance::TablePtr,
+            bases< DataStructure > >( "Table", no_init )
+        .def( "create", &TableInstance::create )
     ;
 };

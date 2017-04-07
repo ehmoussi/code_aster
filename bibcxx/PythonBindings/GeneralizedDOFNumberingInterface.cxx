@@ -1,6 +1,6 @@
 /**
- * @file FieldOnElementsInterface.cxx
- * @brief Interface python de FieldOnElements
+ * @file GeneralizedDOFNumberingInterface.cxx
+ * @brief Interface python de GeneralizedDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,15 +23,15 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/DataStructureInterface.h"
-#include "PythonInterfaces/FieldOnElementsInterface.h"
+#include "PythonBindings/GeneralizedDOFNumberingInterface.h"
 #include <boost/python.hpp>
 
-void exportFieldOnElementsToPython()
+void exportGeneralizedDOFNumberingToPython()
 {
     using namespace boost::python;
-    class_< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr,
-            bases< DataStructure > >("FieldOnElementsDouble", no_init)
-        .def( "create", &FieldOnElementsDoubleInstance::create )
+
+    class_< GeneralizedDOFNumberingInstance, GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
+            bases< DataStructure > > ( "GeneralizedDOFNumbering", no_init )
+        .def( "create", &GeneralizedDOFNumberingInstance::create )
     ;
 };

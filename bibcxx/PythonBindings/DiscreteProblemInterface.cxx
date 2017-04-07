@@ -23,7 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/DiscreteProblemInterface.h"
+#include "PythonBindings/DiscreteProblemInterface.h"
 #include <boost/python.hpp>
 
 void exportDiscreteProblemToPython()

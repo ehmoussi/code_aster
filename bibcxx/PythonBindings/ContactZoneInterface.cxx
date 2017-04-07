@@ -23,7 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/ContactZoneInterface.h"
+#include "PythonBindings/ContactZoneInterface.h"
 #include <boost/python.hpp>
 
 void exportContactZoneToPython()

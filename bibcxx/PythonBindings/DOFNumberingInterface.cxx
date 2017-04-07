@@ -1,6 +1,6 @@
 /**
- * @file ElementaryCharacteristicsInterface.cxx
- * @brief Interface python de ElementaryCharacteristics
+ * @file DOFNumberingInterface.cxx
+ * @brief Interface python de DOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,15 +23,21 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/ElementaryCharacteristicsInterface.h"
+#include "PythonBindings/DOFNumberingInterface.h"
 #include <boost/python.hpp>
 
-void exportElementaryCharacteristicsToPython()
+void exportDOFNumberingToPython()
 {
     using namespace boost::python;
 
-    class_< ElementaryCharacteristicsInstance, ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
-            bases< DataStructure > > ( "ElementaryCharacteristics", no_init )
-        .def( "create", &ElementaryCharacteristicsInstance::create )
+    class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
+            bases< DataStructure > > ( "DOFNumbering", no_init )
+        .def( "create", &DOFNumberingInstance::create )
+        .def( "addKinematicsLoad", &DOFNumberingInstance::addKinematicsLoad )
+        .def( "addMechanicalLoad", &DOFNumberingInstance::addMechanicalLoad )
+        .def( "computeNumerotation", &DOFNumberingInstance::computeNumerotation )
+        .def( "setElementaryMatrix", &DOFNumberingInstance::setElementaryMatrix )
+        .def( "setLinearSolver", &DOFNumberingInstance::setLinearSolver )
+        .def( "setSupportModel", &DOFNumberingInstance::setSupportModel )
     ;
 };

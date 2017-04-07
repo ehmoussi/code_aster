@@ -1,6 +1,6 @@
 /**
- * @file FluidStructureInteractionInterface.cxx
- * @brief Interface python de FluidStructureInteraction
+ * @file ElementaryVectorInterface.cxx
+ * @brief Interface python de ElementaryVector
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,16 +23,15 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/FluidStructureInteractionInterface.h"
+#include "PythonBindings/ElementaryVectorInterface.h"
 #include <boost/python.hpp>
 
-void exportFluidStructureInteractionToPython()
+void exportElementaryVectorToPython()
 {
     using namespace boost::python;
 
-    class_< FluidStructureInteractionInstance,
-            FluidStructureInteractionInstance::FluidStructureInteractionPtr,
-            bases< DataStructure > > ( "FluidStructureInteraction", no_init )
-        .def( "create", &FluidStructureInteractionInstance::create )
+    class_< ElementaryVectorInstance, ElementaryVectorInstance::ElementaryVectorPtr,
+            bases< DataStructure > > ( "ElementaryVector", no_init )
+        .def( "create", &ElementaryVectorInstance::create )
     ;
 };

@@ -1,6 +1,9 @@
+#ifndef MESHINTERFACE_H_
+#define MESHINTERFACE_H_
+
 /**
- * @file PCFieldOnMeshInterface.cxx
- * @brief Interface python de PCFieldOnMesh
+ * @file MeshInterface.h
+ * @brief Fichier entete de la classe MeshInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,15 +26,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/DataStructureInterface.h"
-#include "PythonInterfaces/PCFieldOnMeshInterface.h"
-#include <boost/python.hpp>
+#include "astercxx.h"
+#include "Mesh/Mesh.h"
+#include "PythonBindings/DataStructureInterface.h"
 
-void exportPCFieldOnMeshToPython()
-{
-    using namespace boost::python;
-    class_< PCFieldOnMeshInstanceDouble, PCFieldOnMeshPtrDouble,
-            bases< DataStructure > >("PCFieldOnMeshDouble", no_init)
-        .def( "create", &PCFieldOnMeshInstanceDouble::create )
-    ;
-};
+void exportMeshToPython();
+
+#endif /* MESHINTERFACE_H_ */

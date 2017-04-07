@@ -1,6 +1,6 @@
 /**
- * @file FunctionInterface.cxx
- * @brief Interface python de Function
+ * @file ElementaryCharacteristicsInterface.cxx
+ * @brief Interface python de ElementaryCharacteristics
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,23 +23,15 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonInterfaces/FunctionInterface.h"
+#include "PythonBindings/ElementaryCharacteristicsInterface.h"
 #include <boost/python.hpp>
 
-void exportFunctionToPython()
+void exportElementaryCharacteristicsToPython()
 {
     using namespace boost::python;
 
-    class_< FunctionInstance, FunctionInstance::FunctionPtr,
-            bases< DataStructure > > ( "Function", no_init )
-        .def( "create", &FunctionInstance::create )
-//         .def( "__getnewargs__", &FunctionInstance::getnewargs )
-        .def( "setParameterName", &FunctionInstance::setParameterName )
-        .def( "setResultName", &FunctionInstance::setResultName )
-        .def( "setInterpolation", &FunctionInstance::setInterpolation )
-        .def( "setExtrapolation", &FunctionInstance::setExtrapolation )
-        .def( "setValues", &FunctionInstance::setValues )
-        .def( "size", &FunctionInstance::size )
-        .def( "getProperties", &FunctionInstance::getProperties )
+    class_< ElementaryCharacteristicsInstance, ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
+            bases< DataStructure > > ( "ElementaryCharacteristics", no_init )
+        .def( "create", &ElementaryCharacteristicsInstance::create )
     ;
 };

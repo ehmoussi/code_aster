@@ -1,6 +1,6 @@
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file FieldOnNodesInterface.cxx
+ * @brief Interface python de FieldOnNodes
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,4 +21,17 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonInterfaces/VectorUtilities.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/FieldOnNodesInterface.h"
+#include <boost/python.hpp>
+
+void exportFieldOnNodesToPython()
+{
+    using namespace boost::python;
+    class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
+            bases< DataStructure > >("FieldOnNodesDouble", no_init)
+        .def( "create", &FieldOnNodesDoubleInstance::create )
+    ;
+};
