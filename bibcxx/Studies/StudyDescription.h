@@ -140,6 +140,6 @@ class StudyDescriptionInstance
  * @typedef StudyDescriptionPtr
  * @brief Pointeur intelligent vers un StudyDescription
  */
-typedef boost::shared_ptr< StudyDescriptionInstance > StudyDescriptionPtr;
+typedef std::shared_ptr< StudyDescriptionInstance > StudyDescriptionPtr;
 
 #endif /* STUDYDESCRIPTION_H_ */

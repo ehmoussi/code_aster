@@ -34,7 +34,7 @@ extern const char GROUP_MA[];
 extern const char GROUP_NO[];
 
 typedef CapyConvertibleValue< VectorOfMeshEntityPtr > LocalizationCapyConvertibleValue;
-typedef boost::shared_ptr< LocalizationCapyConvertibleValue > LocalizationCapyConvertibleValuePtr;
+typedef std::shared_ptr< LocalizationCapyConvertibleValue > LocalizationCapyConvertibleValuePtr;
 
 class GenericLocalizationManager
 {

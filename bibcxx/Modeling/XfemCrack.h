@@ -45,11 +45,11 @@ public:
     /**
          * @brief kind of forward declaration
          */
-    typedef boost::shared_ptr< XfemCrackInstance > XfemCrackPtr;
+    typedef std::shared_ptr< XfemCrackInstance > XfemCrackPtr;
 
 private:
     /** @typedef Definition of a smart pointer on VirtualMeshEntity */
-    typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+    typedef std::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
     /** @brief Name of the JEVEUX Data Structure */
     const std::string           _jeveuxName;
@@ -362,7 +362,7 @@ public:
  * @typedef MaterialPtr
  * @brief Pointeur intelligent vers un XfemCrackInstance
  */
-typedef boost::shared_ptr< XfemCrackInstance > XfemCrackPtr;
+typedef std::shared_ptr< XfemCrackInstance > XfemCrackPtr;
 
 
 #endif /* XFEMCRACK_H_ */

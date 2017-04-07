@@ -46,6 +46,20 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
 
     public:
         /**
+         * @typedef TimeStepperPtr
+         * @brief Pointeur intelligent vers un TimeStepper
+         */
+        typedef std::shared_ptr< TimeStepperInstance > TimeStepperPtr;
+
+        /**
+         * @brief Constructeur
+         */
+        static TimeStepperPtr create()
+        {
+            return TimeStepperPtr( new TimeStepperInstance );
+        };
+
+        /**
          * @brief Constructeur
          */
         TimeStepperInstance( JeveuxMemory memType = Permanent ):
@@ -168,6 +182,6 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
  * @typedef TimeStepperPtr
  * @brief Pointeur intelligent vers un TimeStepper
  */
-typedef boost::shared_ptr< TimeStepperInstance > TimeStepperPtr;
+typedef std::shared_ptr< TimeStepperInstance > TimeStepperPtr;
 
 #endif /* TIMESTEPPER_H_ */

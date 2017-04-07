@@ -61,6 +61,20 @@ private:
 
 public:
     /**
+     * @typedef SimpleFieldOnNodesPtr
+     * @brief Pointeur intelligent vers un SimpleFieldOnNodes
+     */
+    typedef std::shared_ptr< SimpleFieldOnNodesInstance > SimpleFieldOnNodesPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static SimpleFieldOnNodesPtr create()
+    {
+        return SimpleFieldOnNodesPtr( new SimpleFieldOnNodesInstance );
+    };
+
+    /**
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
@@ -81,7 +95,7 @@ public:
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    SimpleFieldOnNodesInstance( const JeveuxMemory memType ):
+    SimpleFieldOnNodesInstance( const JeveuxMemory memType = Permanent ):
                     DataStructure( "CHAM_NO_S", memType, 19 ),
                     _descriptor( JeveuxVectorChar8( getName() + ".CNSK" ) ),
                     _size( JeveuxVectorLong( getName() + ".CNSD" ) ),
@@ -155,7 +169,7 @@ typedef SimpleFieldOnNodesInstance< double > SimpleFieldOnNodesDoubleInstance;
  * @typedef SimpleFieldOnNodesPtrDouble
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef boost::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesDoublePtr;
+typedef std::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesDoublePtr;
 
 /** @typedef SimpleFieldOnNodesInstanceLong Instance d'une carte de long */
 typedef SimpleFieldOnNodesInstance< long > SimpleFieldOnNodesLongInstance;
@@ -164,6 +178,6 @@ typedef SimpleFieldOnNodesInstance< long > SimpleFieldOnNodesLongInstance;
  * @typedef SimpleFieldOnNodesPtrLong
  * @brief Definition d'un champ aux noeuds de long
  */
-typedef boost::shared_ptr< SimpleFieldOnNodesLongInstance > SimpleFieldOnNodesLongPtr;
+typedef std::shared_ptr< SimpleFieldOnNodesLongInstance > SimpleFieldOnNodesLongPtr;
 
 #endif /* SIMPLEFIELDONNODES_H_ */

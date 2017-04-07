@@ -40,6 +40,8 @@ if executionParameter.get( 'autostart' ):
 from .RunManager.saving import saveObjects
 from .Utilities import TestCase
 
+import libaster
+
 # import datastructures, physical quantities and constants
 # each package is responsible to export only the relevant objects
 from .DataStructure import DataStructure

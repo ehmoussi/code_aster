@@ -70,6 +70,20 @@ private:
     double                   _coefPenaFrot;
 
 public:
+    /**
+     * @typedef ContactZonePtr
+     * @brief Pointeur intelligent vers un ContactZone
+     */
+    typedef std::shared_ptr< XfemContactZoneInstance > ContactZonePtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static ContactZonePtr create()
+    {
+        return ContactZonePtr( new XfemContactZoneInstance );
+    };
+
     XfemContactZoneInstance(): _toleProjExt( 0.5 ),
                            _integration( GaussIntegration ),
                            _ordreInt( 6 ),
@@ -250,6 +264,6 @@ public:
     };
 };
 
-typedef boost::shared_ptr< XfemContactZoneInstance > XfemContactZonePtr;
+typedef std::shared_ptr< XfemContactZoneInstance > XfemContactZonePtr;
 
 #endif /* XFEMCONTACTZONE_H_ */

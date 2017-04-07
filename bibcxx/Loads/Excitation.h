@@ -125,6 +125,6 @@ public:
  * @typedef 
  * @brief Pointeur intelligent vers une excitation 
  */
-typedef boost::shared_ptr< ExcitationInstance > ExcitationPtr;
+typedef std::shared_ptr< ExcitationInstance > ExcitationPtr;
 
 #endif /*EXCITATION_H_ */

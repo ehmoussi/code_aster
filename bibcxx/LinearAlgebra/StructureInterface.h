@@ -102,6 +102,20 @@ private:
 
 public:
     /**
+     * @typedef StructureInterfacePtr
+     * @brief Pointeur intelligent vers un StructureInterface
+     */
+    typedef std::shared_ptr< StructureInterfaceInstance > StructureInterfacePtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static StructureInterfacePtr create()
+    {
+        return StructureInterfacePtr( new StructureInterfaceInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     StructureInterfaceInstance():
@@ -155,6 +169,6 @@ public:
  * @typedef StructureInterfacePtr
  * @brief Enveloppe d'un pointeur intelligent vers un StructureInterfaceInstance
  */
-typedef boost::shared_ptr< StructureInterfaceInstance > StructureInterfacePtr;
+typedef std::shared_ptr< StructureInterfaceInstance > StructureInterfacePtr;
 
 #endif /* STRUCTUREINTERFACE_H_ */

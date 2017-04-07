@@ -35,7 +35,7 @@ cdef extern from "Interactions/ContactDefinition.h":
         cNewton "Newton"
 
     cdef enum GeometricUpdateEnum:
-        cAuto "Auto"
+        cAutoUpdate "AutoUpdate"
         cControlled "Controlled"
         cWithoutGeometricUpdate "WithoutGeometricUpdate"
 

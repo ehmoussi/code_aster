@@ -26,7 +26,7 @@ from code_aster.Modeling.Model cimport Model
 
 Coulomb, WithoutFriction = cCoulomb, cWithoutFriction
 FixPoint, Newton = cFixPoint, cNewton
-Auto, Controlled, WithoutGeometricUpdate = cAuto, cControlled, cWithoutGeometricUpdate
+AutoUpdate, Controlled, WithoutGeometricUpdate = cAutoUpdate, cControlled, cWithoutGeometricUpdate
 Dirichlet, WithoutPrecond = cDirichlet, cWithoutPrecond
 
 

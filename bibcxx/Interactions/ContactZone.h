@@ -111,7 +111,7 @@ class ContactZoneInstance: public GenericContactZoneInstance
 {
 private:
     /** @brief Pointeur intelligent vers un VirtualMeshEntity */
-    typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+    typedef std::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
     typedef std::vector< MeshEntityPtr > VectorOfMeshEntityPtr;
     MeshEntityPtr             _master;
     MeshEntityPtr             _slave;
@@ -206,6 +206,20 @@ private:
     };
 
 public:
+    /**
+     * @typedef ContactZonePtr
+     * @brief Pointeur intelligent vers un ContactZone
+     */
+    typedef std::shared_ptr< ContactZoneInstance< formulation > > ContactZonePtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static ContactZonePtr create()
+    {
+        return ContactZonePtr( new ContactZoneInstance );
+    };
+
     ContactZoneInstance(): _normType( MasterNorm ),
                            _vectMait( 0 ),
                            _vectEscl( 0 ),
@@ -562,8 +576,8 @@ public:
 typedef ContactZoneInstance< Discretized > DiscretizedContactZoneInstance;
 typedef ContactZoneInstance< Continuous > ContinuousContactZoneInstance;
 
-typedef boost::shared_ptr< GenericContactZoneInstance > GenericContactZonePtr;
-typedef boost::shared_ptr< ContactZoneInstance< Discretized > > DiscretizedContactZonePtr;
-typedef boost::shared_ptr< ContactZoneInstance< Continuous > > ContinuousContactZonePtr;
+typedef std::shared_ptr< GenericContactZoneInstance > GenericContactZonePtr;
+typedef std::shared_ptr< ContactZoneInstance< Discretized > > DiscretizedContactZonePtr;
+typedef std::shared_ptr< ContactZoneInstance< Continuous > > ContinuousContactZonePtr;
 
 #endif /* CONTACTZONE_H_ */

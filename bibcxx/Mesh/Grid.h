@@ -55,6 +55,6 @@ public:
  * @typedef GridPtr
  * @brief Pointeur intelligent vers un GridInstance
  */
-typedef boost::shared_ptr< GridInstance > GridPtr;
+typedef std::shared_ptr< GridInstance > GridPtr;
 
 #endif /* GRID_H_ */

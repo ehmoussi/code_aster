@@ -174,6 +174,6 @@ public:
  * @typedef ResultsContainerPtr
  * @brief Pointeur intelligent vers un ResultsContainerInstance
  */
-typedef boost::shared_ptr< ResultsContainerInstance > ResultsContainerPtr;
+typedef std::shared_ptr< ResultsContainerInstance > ResultsContainerPtr;
 
 #endif /* RESULTSCONTAINER_H_ */

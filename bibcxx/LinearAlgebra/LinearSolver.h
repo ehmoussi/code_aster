@@ -196,6 +196,20 @@ class LinearSolverInstance: public DataStructure
 
     public:
         /**
+         * @typedef LinearSolverPtr
+         * @brief Pointeur intelligent vers un LinearSolver
+         */
+        typedef std::shared_ptr< LinearSolverInstance > LinearSolverPtr;
+
+        /**
+         * @brief Constructeur
+         */
+        static LinearSolverPtr create()
+        {
+            return LinearSolverPtr( new LinearSolverInstance );
+        };
+
+        /**
          * @brief Constructeur
          * @param currentLinearSolver Type de solveur
          * @param currentRenumber Type de renumeroteur
@@ -518,6 +532,6 @@ class LinearSolverInstance: public DataStructure
  * @typedef LinearSolverPtr
  * @brief Enveloppe d'un pointeur intelligent vers un LinearSolverInstance
  */
-typedef boost::shared_ptr< LinearSolverInstance > LinearSolverPtr;
+typedef std::shared_ptr< LinearSolverInstance > LinearSolverPtr;
 
 #endif /* LINEARSOLVER_H_ */

@@ -51,7 +51,7 @@ class ImposedTemperatureInstance: public UnitaryThermalLoadInstance
 {
 private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfNodes > GroupOfNodesPtr;
+    typedef std::shared_ptr< GroupOfNodes > GroupOfNodesPtr;
     typedef std::vector< GroupOfNodesPtr > VectorGroupOfNodes;
 
     VectorOfMeshEntityPtr _entity;
@@ -84,7 +84,7 @@ class DistributedFlowInstance: public UnitaryThermalLoadInstance
 {
 private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+    typedef std::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
     VectorOfMeshEntityPtr _entity;
@@ -146,7 +146,7 @@ class NonLinearFlowInstance: public UnitaryThermalLoadInstance
 {
 private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+    typedef std::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
     VectorOfMeshEntityPtr _entity;
@@ -182,7 +182,7 @@ class ExchangeInstance: public UnitaryThermalLoadInstance
 {
 private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+    typedef std::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
     VectorOfMeshEntityPtr _entity;
@@ -242,7 +242,7 @@ class ExchangeWallInstance: public UnitaryThermalLoadInstance
 {
 private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+    typedef std::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
     VectorOfMeshEntityPtr _entity1 , _entity2 ;
@@ -288,7 +288,7 @@ class SourceInstance: public UnitaryThermalLoadInstance
 {
 private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+    typedef std::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
     VectorOfMeshEntityPtr _entity;
@@ -324,7 +324,7 @@ class NonLinearSourceInstance: public UnitaryThermalLoadInstance
 {
 private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+    typedef std::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
     VectorOfMeshEntityPtr _entity;
@@ -360,7 +360,7 @@ class ThermalRadiationInstance: public UnitaryThermalLoadInstance
 {
 private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+    typedef std::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
     VectorOfMeshEntityPtr _entity;
@@ -410,7 +410,7 @@ class ThermalGradientInstance: public UnitaryThermalLoadInstance
 {
 private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
+    typedef std::shared_ptr< GroupOfElements > GroupOfElementsPtr;
     typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
 
     VectorOfMeshEntityPtr _entity;
@@ -450,33 +450,33 @@ public:
  */
 template class ImposedTemperatureInstance< double >;
 typedef ImposedTemperatureInstance< double > DoubleImposedTemperatureInstance;
-typedef boost::shared_ptr< DoubleImposedTemperatureInstance > DoubleImposedTemperaturePtr;
+typedef std::shared_ptr< DoubleImposedTemperatureInstance > DoubleImposedTemperaturePtr;
 
 template class DistributedFlowInstance< double >;
 typedef DistributedFlowInstance< double > DoubleDistributedFlowInstance;
-typedef boost::shared_ptr< DoubleDistributedFlowInstance > DoubleDistributedFlowPtr;
+typedef std::shared_ptr< DoubleDistributedFlowInstance > DoubleDistributedFlowPtr;
 
 template class NonLinearFlowInstance< double >;
 typedef NonLinearFlowInstance< double > DoubleNonLinearFlowInstance;
-typedef boost::shared_ptr< DoubleNonLinearFlowInstance > DoubleNonLinearFlowPtr;
+typedef std::shared_ptr< DoubleNonLinearFlowInstance > DoubleNonLinearFlowPtr;
 
 template class ExchangeInstance< double >;
 typedef ExchangeInstance< double > DoubleExchangeInstance;
-typedef boost::shared_ptr< DoubleExchangeInstance > DoubleExchangePtr;
+typedef std::shared_ptr< DoubleExchangeInstance > DoubleExchangePtr;
 
 template class ExchangeWallInstance< double >;
 typedef ExchangeWallInstance< double > DoubleExchangeWallInstance;
-typedef boost::shared_ptr< DoubleExchangeWallInstance > DoubleExchangeWallPtr;
+typedef std::shared_ptr< DoubleExchangeWallInstance > DoubleExchangeWallPtr;
 
 template class ThermalRadiationInstance< double >;
 typedef ThermalRadiationInstance< double > DoubleThermalRadiationInstance;
-typedef boost::shared_ptr< DoubleThermalRadiationInstance > DoubleThermalRadiationPtr;
+typedef std::shared_ptr< DoubleThermalRadiationInstance > DoubleThermalRadiationPtr;
 
 template class ThermalGradientInstance< double >;
 typedef ThermalGradientInstance< double > DoubleThermalGradientInstance;
-typedef boost::shared_ptr< DoubleThermalGradientInstance > DoubleThermalGradientPtr;
+typedef std::shared_ptr< DoubleThermalGradientInstance > DoubleThermalGradientPtr;
 
-typedef boost::shared_ptr< UnitaryThermalLoadInstance > UnitaryThermalLoadPtr;
+typedef std::shared_ptr< UnitaryThermalLoadInstance > UnitaryThermalLoadPtr;
 /** @typedef std::list de UnitaryThermalLoad */
 typedef std::list< UnitaryThermalLoadPtr > ListThermalLoad;
 /** @typedef Iterateur sur une std::list de UnitaryThermalLoad */

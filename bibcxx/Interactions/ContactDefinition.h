@@ -54,7 +54,7 @@ extern const std::vector< std::string > allGeometricResolutionAlgorithmNames;
  * @brief Tous les types de mise à jour de la géométrie disponibles
  * @author Nicolas Sellenet
  */
-enum GeometricUpdateEnum { Auto, Controlled, WithoutGeometricUpdate };
+enum GeometricUpdateEnum { AutoUpdate, Controlled, WithoutGeometricUpdate };
 extern const std::vector< GeometricUpdateEnum > allGeometricUpdate;
 extern const std::vector< std::string > allGeometricUpdateNames;
 
@@ -205,7 +205,7 @@ private:
                                                       ( false, "ALGO_RESO_GEOM",
                                                         _algoResoGeom, allGeometricResolutionAlgorithm,
                                                         allGeometricResolutionAlgorithmNames ) );
-        _reacGeom = Auto;
+        _reacGeom = AutoUpdate;
         _toCapyConverter.add( new CapyConvertibleValue< GeometricUpdateEnum >
                                                       ( false, "REAC_GEOM", 
                                                         _reacGeom,
@@ -284,6 +284,20 @@ private:
     };
 
 public:
+    /**
+     * @typedef ContactDefinitionPtr
+     * @brief Pointeur intelligent vers un ContactDefinition
+     */
+    typedef std::shared_ptr< ContactDefinition< formulation > > ContactDefinitionPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static ContactDefinitionPtr create()
+    {
+        return ContactDefinitionPtr( new ContactDefinition );
+    };
+
     /**
      * @brief Constructeur
      */
@@ -409,7 +423,7 @@ public:
             _toCapyConverter.remove( "RESI_GEOM" );
             _toCapyConverter.remove( "NB_ITER_GEOM" );
         }
-        else if( curUp == Auto )
+        else if( curUp == AutoUpdate )
         {
             _toCapyConverter.remove( "REAC_GEOM" );
             _nbMaxGeomIter = 10;
@@ -429,7 +443,7 @@ public:
     typename std::enable_if< form == Continuous || form == Discretized || form == Xfem, void>::type
     setMaximumNumberOfGeometricIteration( const int& value ) throw( std::runtime_error )
     {
-        if ( _reacGeom != Auto )
+        if ( _reacGeom != AutoUpdate )
             throw std::runtime_error( "Only available with automatic geometric update" );
         _nbMaxGeomIter = value;
     };
@@ -442,7 +456,7 @@ public:
     typename std::enable_if< form == Continuous || form == Discretized || form == Xfem, void>::type
     setGeometricResidual( const double& value ) throw( std::runtime_error )
     {
-        if ( _reacGeom != Auto )
+        if ( _reacGeom != AutoUpdate )
             throw std::runtime_error( "Only available with automatic geometric update" );
         _geomResidual = value;
     };
@@ -749,9 +763,9 @@ typedef ContactDefinition< Xfem > XfemContactInstance;
 template class ContactDefinition< UnilateralConnexion >;
 typedef ContactDefinition< UnilateralConnexion > UnilateralConnexionInstance;
 
-typedef boost::shared_ptr< DiscretizedContactInstance > DiscretizedContactPtr;
-typedef boost::shared_ptr< ContinuousContactInstance > ContinuousContactPtr;
-typedef boost::shared_ptr< XfemContactInstance > XfemContactPtr;
-typedef boost::shared_ptr< UnilateralConnexionInstance > UnilateralConnexionPtr;
+typedef std::shared_ptr< DiscretizedContactInstance > DiscretizedContactPtr;
+typedef std::shared_ptr< ContinuousContactInstance > ContinuousContactPtr;
+typedef std::shared_ptr< XfemContactInstance > XfemContactPtr;
+typedef std::shared_ptr< UnilateralConnexionInstance > UnilateralConnexionPtr;
 
 #endif /* CONTACTDEFINITION_H_ */

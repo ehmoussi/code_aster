@@ -46,7 +46,7 @@ class FieldOnNodesInstance: public DataStructure
 {
 private:
     typedef SimpleFieldOnNodesInstance< ValueType > SimpleFieldOnNodesValueTypeInstance;
-    typedef boost::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesValueTypePtr;
+    typedef std::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesValueTypePtr;
 
     /** @brief Vecteur Jeveux '.DESC' */
     JeveuxVectorLong        _descriptor;
@@ -56,6 +56,20 @@ private:
     JeveuxVector<ValueType> _valuesList;
 
 public:
+    /**
+     * @typedef FieldOnNodesPtr
+     * @brief Pointeur intelligent vers un FieldOnNodes
+     */
+    typedef std::shared_ptr< FieldOnNodesInstance > FieldOnNodesPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static FieldOnNodesPtr create()
+    {
+        return FieldOnNodesPtr( new FieldOnNodesInstance );
+    };
+
     /**
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
@@ -175,7 +189,7 @@ typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
  * @typedef FieldOnNodesPtrDouble
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef boost::shared_ptr< FieldOnNodesDoubleInstance > FieldOnNodesDoublePtr;
+typedef std::shared_ptr< FieldOnNodesDoubleInstance > FieldOnNodesDoublePtr;
 
 /** @typedef FieldOnNodesInstanceLong Instance d'une carte de long */
 typedef FieldOnNodesInstance< long > FieldOnNodesLongInstance;
@@ -184,6 +198,6 @@ typedef FieldOnNodesInstance< long > FieldOnNodesLongInstance;
  * @typedef FieldOnNodesPtrLong
  * @brief Definition d'un champ aux noeuds de long
  */
-typedef boost::shared_ptr< FieldOnNodesLongInstance > FieldOnNodesLongPtr;
+typedef std::shared_ptr< FieldOnNodesLongInstance > FieldOnNodesLongPtr;
 
 #endif /* FIELDONNODES_H_ */

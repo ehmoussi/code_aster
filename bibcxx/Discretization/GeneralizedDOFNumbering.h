@@ -73,6 +73,20 @@ private:
 
 public:
     /**
+     * @typedef GeneralizedDOFNumberingPtr
+     * @brief Pointeur intelligent vers un GeneralizedDOFNumbering
+     */
+    typedef std::shared_ptr< GeneralizedDOFNumberingInstance > GeneralizedDOFNumberingPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static GeneralizedDOFNumberingPtr create()
+    {
+        return GeneralizedDOFNumberingPtr( new GeneralizedDOFNumberingInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     GeneralizedDOFNumberingInstance(): 
@@ -99,6 +113,6 @@ public:
  * @typedef GeneralizedDOFNumberingPtr
  * @brief Pointeur intelligent vers un GeneralizedDOFNumberingInstance
  */
-typedef boost::shared_ptr< GeneralizedDOFNumberingInstance > GeneralizedDOFNumberingPtr;
+typedef std::shared_ptr< GeneralizedDOFNumberingInstance > GeneralizedDOFNumberingPtr;
 
 #endif /* GENERALIZEDDOFNUMBERING_H_ */

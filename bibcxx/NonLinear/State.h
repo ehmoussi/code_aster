@@ -178,6 +178,6 @@ class StateInstance
  * @typedef StatePtr
  * @brief Pointeur intelligent vers un StateInstance
  */
-typedef boost::shared_ptr< StateInstance > StatePtr;
+typedef std::shared_ptr< StateInstance > StatePtr;
 
 #endif /* STATE_H_ */

@@ -71,6 +71,6 @@ public:
  * @typedef SkeletonPtr
  * @brief Pointeur intelligent vers un SkeletonInstance
  */
-typedef boost::shared_ptr< SkeletonInstance > SkeletonPtr;
+typedef std::shared_ptr< SkeletonInstance > SkeletonPtr;
 
 #endif /* SKELETON_H_ */

@@ -160,10 +160,10 @@ public:
  * @typedef BehaviourPtr
  * @brief Enveloppe d'un pointeur intelligent vers un BehaviourInstance
  */
-typedef boost::shared_ptr< BehaviourInstance > BehaviourPtr;
+typedef std::shared_ptr< BehaviourInstance > BehaviourPtr;
 
 /** @typedef Smart pointer on a  VirtualMeshEntity */
-typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+typedef std::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
  
 
 /** @typedef LocatedBehaviour is a Behaviour located on a MeshEntity */
@@ -200,6 +200,6 @@ public:
     };
 };
 
-typedef boost::shared_ptr< LocatedBehaviourInstance> LocatedBehaviourPtr;
+typedef std::shared_ptr< LocatedBehaviourInstance> LocatedBehaviourPtr;
 
 #endif /* BEHAVIOUR_H_ */

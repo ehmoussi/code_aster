@@ -61,6 +61,20 @@ private:
 
 public:
     /**
+     * @typedef FluidStructureInteractionPtr
+     * @brief Pointeur intelligent vers un FluidStructureInteraction
+     */
+    typedef std::shared_ptr< FluidStructureInteractionInstance > FluidStructureInteractionPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static FluidStructureInteractionPtr create()
+    {
+        return FluidStructureInteractionPtr( new FluidStructureInteractionInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     FluidStructureInteractionInstance(): 
@@ -81,6 +95,6 @@ public:
  * @typedef FluidStructureInteractionPtr
  * @brief Pointeur intelligent vers un FluidStructureInteractionInstance
  */
-typedef boost::shared_ptr< FluidStructureInteractionInstance > FluidStructureInteractionPtr;
+typedef std::shared_ptr< FluidStructureInteractionInstance > FluidStructureInteractionPtr;
 
 #endif /* FLUIDSTRUCTUREINTERACTION_H_ */

@@ -41,7 +41,7 @@ class ThermalLoadInstance: public DataStructure
 {
 private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+    typedef std::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
     /** @brief std::list de std::pair de UnitaryThermalLoadPtr et MeshEntityPtr */
     typedef std::vector< UnitaryThermalLoadPtr > listOfLoads;
     /** @brief Valeur contenue dans listOfLoads */
@@ -102,6 +102,6 @@ public:
  * @typedef ThermalLoad
  * @brief Pointeur intelligent vers un ThermalLoadInstance
  */
-typedef boost::shared_ptr< ThermalLoadInstance > ThermalLoadPtr;
+typedef std::shared_ptr< ThermalLoadInstance > ThermalLoadPtr;
 
 #endif /* THERMALLOAD_H_ */

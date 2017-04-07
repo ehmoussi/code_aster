@@ -46,6 +46,20 @@ class GenericModalBasisInstance: public DataStructure
 {
 public:
     /**
+     * @typedef GenericModalBasisPtr
+     * @brief Pointeur intelligent vers un GenericModalBasis
+     */
+    typedef std::shared_ptr< GenericModalBasisInstance > GenericModalBasisPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static GenericModalBasisPtr create()
+    {
+        return GenericModalBasisPtr( new GenericModalBasisInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     GenericModalBasisInstance():
@@ -54,7 +68,6 @@ public:
     {};
 
 protected:
-    typedef boost::shared_ptr< GenericModalBasisInstance > GenericModalBasisPtr;
     CapyConvertibleContainer _container;
     LinearSolverPtr          _solver;
     bool                     _isEmpty;
@@ -192,11 +205,25 @@ public:
  * @typedef ModalBasisDefinitionPtr
  * @brief Enveloppe d'un pointeur intelligent vers un GenericModalBasisInstance
  */
-typedef boost::shared_ptr< GenericModalBasisInstance > GenericModalBasisPtr;
+typedef std::shared_ptr< GenericModalBasisInstance > GenericModalBasisPtr;
 
 class StandardModalBasisInstance: public GenericModalBasisInstance
 {
 public:
+    /**
+     * @typedef StandardModalBasisPtr
+     * @brief Pointeur intelligent vers un StandardModalBasis
+     */
+    typedef std::shared_ptr< StandardModalBasisInstance > StandardModalBasisPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static StandardModalBasisPtr create()
+    {
+        return StandardModalBasisPtr( new StandardModalBasisInstance );
+    };
+
     /**
      * @brief Constructeur
      */
@@ -232,6 +259,20 @@ private:
     VectorDouble             _dampingVector;
 
 public:
+    /**
+     * @typedef RitzBasisPtr
+     * @brief Pointeur intelligent vers un RitzBasis
+     */
+    typedef std::shared_ptr< RitzBasisInstance > RitzBasisPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static RitzBasisPtr create()
+    {
+        return RitzBasisPtr( new RitzBasisInstance );
+    };
+
     /**
      * @brief Constructeur
      */
@@ -316,6 +357,32 @@ private:
 
 public:
     /**
+     * @typedef OrthonormalizedBasisPtr
+     * @brief Pointeur intelligent vers un OrthonormalizedBasis
+     */
+    typedef std::shared_ptr< OrthonormalizedBasisInstance > OrthonormalizedBasisPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static OrthonormalizedBasisPtr create( const MechanicalModeContainerPtr& basis,
+                                           const AssemblyMatrixDoublePtr& matr )
+    {
+        return OrthonormalizedBasisPtr( new OrthonormalizedBasisInstance( basis,
+                                                                          matr ) );
+    };
+
+    /**
+     * @brief Constructeur
+     */
+    static OrthonormalizedBasisPtr create( const MechanicalModeContainerPtr& basis,
+                                           const AssemblyMatrixComplexPtr& matr )
+    {
+        return OrthonormalizedBasisPtr( new OrthonormalizedBasisInstance( basis,
+                                                                          matr ) );
+    };
+
+    /**
      * @brief Constructeur
      */
     OrthonormalizedBasisInstance( const MechanicalModeContainerPtr& basis,
@@ -346,6 +413,22 @@ private:
 
 public:
     /**
+     * @typedef OrthogonalBasisWithoutMassPtr
+     * @brief Pointeur intelligent vers un OrthogonalBasisWithoutMass
+     */
+    typedef std::shared_ptr< OrthogonalBasisWithoutMassInstance > OrthogonalBasisWithoutMassPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static OrthogonalBasisWithoutMassPtr create( const MechanicalModeContainerPtr& basis,
+                                                 const VectorOfMechaModePtr& vec )
+    {
+        return OrthogonalBasisWithoutMassPtr( new OrthogonalBasisWithoutMassInstance( basis,
+                                                                                      vec ) );
+    };
+
+    /**
      * @brief Constructeur
      */
     OrthogonalBasisWithoutMassInstance( const MechanicalModeContainerPtr& basis,
@@ -357,9 +440,9 @@ public:
     };
 };
 
-typedef boost::shared_ptr< StandardModalBasisInstance > StandardModalBasisPtr;
-typedef boost::shared_ptr< RitzBasisInstance > RitzBasisPtr;
-typedef boost::shared_ptr< OrthonormalizedBasisInstance > OrthonormalizedBasisPtr;
-typedef boost::shared_ptr< OrthogonalBasisWithoutMassInstance > OrthogonalBasisWithoutMassPtr;
+typedef std::shared_ptr< StandardModalBasisInstance > StandardModalBasisPtr;
+typedef std::shared_ptr< RitzBasisInstance > RitzBasisPtr;
+typedef std::shared_ptr< OrthonormalizedBasisInstance > OrthonormalizedBasisPtr;
+typedef std::shared_ptr< OrthogonalBasisWithoutMassInstance > OrthogonalBasisWithoutMassPtr;
 
 #endif /* MODALBASISDEFINITION_H_ */

@@ -53,6 +53,20 @@ private:
 
 public:
     /**
+     * @typedef TablePtr
+     * @brief Pointeur intelligent vers un Table
+     */
+    typedef std::shared_ptr< TableInstance > TablePtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static TablePtr create()
+    {
+        return TablePtr( new TableInstance );
+    };
+
+    /**
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
@@ -102,6 +116,6 @@ public:
  * @typedef TablePtr
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef boost::shared_ptr< TableInstance > TablePtr;
+typedef std::shared_ptr< TableInstance > TablePtr;
 
 #endif /* TABLE_H_ */

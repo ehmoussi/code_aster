@@ -51,6 +51,20 @@ private:
 
 public:
     /**
+     * @typedef TurbulentSpectrumPtr
+     * @brief Pointeur intelligent vers un TurbulentSpectrum
+     */
+    typedef std::shared_ptr< TurbulentSpectrumInstance > TurbulentSpectrumPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static TurbulentSpectrumPtr create()
+    {
+        return TurbulentSpectrumPtr( new TurbulentSpectrumInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     TurbulentSpectrumInstance(): 
@@ -66,6 +80,6 @@ public:
  * @typedef TurbulentSpectrumPtr
  * @brief Pointeur intelligent vers un TurbulentSpectrumInstance
  */
-typedef boost::shared_ptr< TurbulentSpectrumInstance > TurbulentSpectrumPtr;
+typedef std::shared_ptr< TurbulentSpectrumInstance > TurbulentSpectrumPtr;
 
 #endif /* TURBULENTSPECTRUM_H_ */

@@ -78,7 +78,7 @@ public:
      * @typedef MeshPtr
      * @brief Pointeur intelligent vers un MeshInstance
      */
-    typedef boost::shared_ptr< MeshInstance > MeshPtr;
+    typedef std::shared_ptr< MeshInstance > MeshPtr;
 
     /**
      * @brief Constructeur
@@ -172,6 +172,6 @@ public:
  * @typedef MeshPtr
  * @brief Pointeur intelligent vers un MeshInstance
  */
-typedef boost::shared_ptr< MeshInstance > MeshPtr;
+typedef std::shared_ptr< MeshInstance > MeshPtr;
 
 #endif /* MESH_H_ */

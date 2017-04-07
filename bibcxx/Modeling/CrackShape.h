@@ -185,7 +185,7 @@ public:
  * @typedef CrackShapePtr
  * @brief Pointeur intelligent vers un CrackShapeInstance
  */
-typedef boost::shared_ptr< CrackShapeInstance > CrackShapePtr;
+typedef std::shared_ptr< CrackShapeInstance > CrackShapePtr;
 
 
 #endif /* CRACKSHAPE_H_ */

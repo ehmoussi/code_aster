@@ -59,6 +59,20 @@ private:
 
 public:
     /**
+     * @typedef DiscreteProblemPtr
+     * @brief Pointeur intelligent vers un DiscreteProblem
+     */
+    typedef std::shared_ptr< DiscreteProblemInstance > DiscreteProblemPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static DiscreteProblemPtr create( StudyDescriptionPtr& currentStudy )
+    {
+        return DiscreteProblemPtr( new DiscreteProblemInstance( currentStudy ) );
+    };
+
+    /**
      * @brief Constructeur
      * @param StudyDescriptionPtr Etude utilisateur
      */
@@ -154,6 +168,6 @@ public:
  * @typedef DiscreteProblemPtr
  * @brief Pointeur intelligent vers un DiscreteProblem
  */
-typedef boost::shared_ptr< DiscreteProblemInstance > DiscreteProblemPtr;
+typedef std::shared_ptr< DiscreteProblemInstance > DiscreteProblemPtr;
 
 #endif /* DISCRETEPROBLEM_H_ */

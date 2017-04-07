@@ -85,6 +85,20 @@ class AssemblyMatrixInstance: public DataStructure
 
     public:
         /**
+         * @typedef AssemblyMatrixPtr
+         * @brief Pointeur intelligent vers un AssemblyMatrix
+         */
+        typedef std::shared_ptr< AssemblyMatrixInstance<ValueType> > AssemblyMatrixPtr;
+
+        /**
+         * @brief Constructeur
+         */
+        static AssemblyMatrixPtr create()
+        {
+            return AssemblyMatrixPtr( new AssemblyMatrixInstance );
+        };
+
+        /**
          * @brief Constructeur
          */
         AssemblyMatrixInstance( const JeveuxMemory memType = Permanent );
@@ -185,8 +199,8 @@ typedef AssemblyMatrixInstance< double > AssemblyMatrixDoubleInstance;
 /** @typedef Definition d'une matrice assemblee de complexe */
 typedef AssemblyMatrixInstance< DoubleComplex > AssemblyMatrixComplexInstance;
 
-typedef boost::shared_ptr< AssemblyMatrixDoubleInstance > AssemblyMatrixDoublePtr;
-typedef boost::shared_ptr< AssemblyMatrixComplexInstance > AssemblyMatrixComplexPtr;
+typedef std::shared_ptr< AssemblyMatrixDoubleInstance > AssemblyMatrixDoublePtr;
+typedef std::shared_ptr< AssemblyMatrixComplexInstance > AssemblyMatrixComplexPtr;
 
 template< class ValueType >
 AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const JeveuxMemory memType ):

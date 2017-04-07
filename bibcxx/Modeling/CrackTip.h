@@ -90,6 +90,6 @@ public:
  * @typedef CrackTipPtr
  * @brief Pointeur intelligent vers un CrackTipInstance
  */
-typedef boost::shared_ptr< CrackTipInstance > CrackTipPtr;
+typedef std::shared_ptr< CrackTipInstance > CrackTipPtr;
 
 #endif /* CRACKTIP_H_ */

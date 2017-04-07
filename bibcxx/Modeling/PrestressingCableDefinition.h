@@ -75,6 +75,6 @@ public:
  * @typedef PrestressingCableDefinition
  * @brief Pointeur intelligent vers un PrestressingCableDefinitionInstance
  */
-typedef boost::shared_ptr< PrestressingCableDefinitionInstance > PrestressingCableDefinitionPtr;
+typedef std::shared_ptr< PrestressingCableDefinitionInstance > PrestressingCableDefinitionPtr;
 
 #endif /* PRESTRESSINGCABLEDEFINITION_H_ */

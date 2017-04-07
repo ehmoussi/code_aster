@@ -65,6 +65,20 @@ class DOFNumberingInstance: public DataStructure
 
     public:
         /**
+         * @typedef DOFNumberingPtr
+         * @brief Pointeur intelligent vers un DOFNumbering
+         */
+        typedef std::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
+
+        /**
+         * @brief Constructeur
+         */
+        static DOFNumberingPtr create()
+        {
+            return DOFNumberingPtr( new DOFNumberingInstance );
+        };
+
+        /**
          * @brief Constructeur
          */
         DOFNumberingInstance( const JeveuxMemory memType = Permanent );
@@ -181,6 +195,6 @@ class DOFNumberingInstance: public DataStructure
  * @brief Enveloppe d'un pointeur intelligent vers un DOFNumberingInstance
  * @author Nicolas Sellenet
  */
-typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
+typedef std::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
 
 #endif /* DOFNUMBERING_H_ */

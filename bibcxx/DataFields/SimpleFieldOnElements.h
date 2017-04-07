@@ -61,6 +61,20 @@ private:
 
 public:
     /**
+     * @typedef SimpleFieldOnElementsPtr
+     * @brief Pointeur intelligent vers un SimpleFieldOnElements
+     */
+    typedef std::shared_ptr< SimpleFieldOnElementsInstance > SimpleFieldOnElementsPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static SimpleFieldOnElementsPtr create()
+    {
+        return SimpleFieldOnElementsPtr( new SimpleFieldOnElementsInstance );
+    };
+
+    /**
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux éléments
      */
@@ -81,7 +95,7 @@ public:
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    SimpleFieldOnElementsInstance( const JeveuxMemory memType ):
+    SimpleFieldOnElementsInstance( const JeveuxMemory memType = Permanent ):
                     DataStructure( "CHAM_NO_S", memType, 19 ),
                     _descriptor( JeveuxVectorChar8( getName() + ".CESK" ) ),
                     _size( JeveuxVectorLong( getName() + ".CESD" ) ),
@@ -112,7 +126,7 @@ public:
         return _values->operator[](i);
     };
 
-    const ValueType& getValue( int nodeNumber, int compNumber ) const
+    ValueType const& getValue( int nodeNumber, int compNumber ) const
 #ifdef __DEBUG_GC__
         throw( std::runtime_error )
 #endif
@@ -155,7 +169,7 @@ typedef SimpleFieldOnElementsInstance< double > SimpleFieldOnElementsDoubleInsta
  * @typedef SimpleFieldOnElementsPtrDouble
  * @brief Definition d'un champ aux éléments de double
  */
-typedef boost::shared_ptr< SimpleFieldOnElementsDoubleInstance > SimpleFieldOnElementsDoublePtr;
+typedef std::shared_ptr< SimpleFieldOnElementsDoubleInstance > SimpleFieldOnElementsDoublePtr;
 
 /** @typedef SimpleFieldOnElementsInstanceLong Instance d'une carte de long */
 typedef SimpleFieldOnElementsInstance< long > SimpleFieldOnElementsLongInstance;
@@ -164,6 +178,6 @@ typedef SimpleFieldOnElementsInstance< long > SimpleFieldOnElementsLongInstance;
  * @typedef SimpleFieldOnElementsPtrLong
  * @brief Definition d'un champ aux éléments de long
  */
-typedef boost::shared_ptr< SimpleFieldOnElementsLongInstance > SimpleFieldOnElementsLongPtr;
+typedef std::shared_ptr< SimpleFieldOnElementsLongInstance > SimpleFieldOnElementsLongPtr;
 
 #endif /* SIMPLEFIELDONELEMENTS_H_ */

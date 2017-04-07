@@ -44,7 +44,7 @@ class MaterialOnMeshInstance: public DataStructure
         // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
         // dans la list
         /** @typedef Definition d'un pointeur intelligent sur un VirtualMeshEntity */
-        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+        typedef std::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
         /** @typedef std::list d'une std::pair de MeshEntityPtr */
         typedef std::list< std::pair< MaterialPtr, MeshEntityPtr > > listOfMatsAndGrps;
         /** @typedef Definition de la valeur contenue dans un listOfMatsAndGrps */
@@ -133,6 +133,6 @@ class MaterialOnMeshInstance: public DataStructure
  * @typedef MaterialOnMeshPtr
  * @brief Pointeur intelligent vers un MaterialOnMeshInstance
  */
-typedef boost::shared_ptr< MaterialOnMeshInstance > MaterialOnMeshPtr;
+typedef std::shared_ptr< MaterialOnMeshInstance > MaterialOnMeshPtr;
 
 #endif /* MATERIALONMESH_H_ */

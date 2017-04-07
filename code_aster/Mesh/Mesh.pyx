@@ -33,6 +33,7 @@ from code_aster.Supervis.libCommandSyntax cimport CommandSyntax, resultNaming
 from code_aster.Supervis.libCommandSyntax import _F
 from code_aster.Supervis.libFile import FileType, FileAccess
 
+from libaster import Mesh as MyMesh
 
 cdef class Mesh( DataStructure ):
     """Python wrapper on the C++ Mesh object"""
@@ -170,13 +171,15 @@ cdef class Mesh( DataStructure ):
         """Read a MED Mesh file"""
         assert self.getInstance().isEmpty(), "The mesh is already filled!"
         medFile = LogicalUnitFile( filename, FileType.Binary, FileAccess.Old )
+        print "Ici"
+        a = MyMesh()
 
         syntax = CommandSyntax( "LIRE_MAILLAGE" )
         curDict = _F ( FORMAT="MED",
                        UNITE=medFile.getLogicalUnit(), )
 
         # self.getInstance().getType()
-        syntax.setResult( resultNaming.getResultObjectName(), "MAILLAGE" )
+        syntax.setResult( self.getName(), "MAILLAGE" )
 
         syntax.define( curDict )
         cdef INTEGER numOp = 1
