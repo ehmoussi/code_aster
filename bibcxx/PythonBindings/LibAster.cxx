@@ -23,6 +23,7 @@
 
 #include <boost/python.hpp>
 
+#include "PythonBindings/VectorUtilities.h"
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/DiscreteProblemInterface.h"
 #include "PythonBindings/DOFNumberingInterface.h"
@@ -36,7 +37,6 @@
 #include "PythonBindings/SimpleFieldOnNodesInterface.h"
 #include "PythonBindings/TableInterface.h"
 #include "PythonBindings/TimeStepperInterface.h"
-#include "PythonBindings/VectorUtilities.h"
 #include "PythonBindings/GeneralizedDOFNumberingInterface.h"
 #include "PythonBindings/FluidStructureInteractionInterface.h"
 #include "PythonBindings/TurbulentSpectrumInterface.h"
@@ -47,11 +47,24 @@
 #include "PythonBindings/XfemContactZoneInterface.h"
 #include "PythonBindings/AssemblyMatrixInterface.h"
 #include "PythonBindings/ElementaryMatrixInterface.h"
+#include "PythonBindings/ElementaryVectorInterface.h"
+#include "PythonBindings/GeneralizedAssemblyMatrixInterface.h"
+#include "PythonBindings/GeneralizedAssemblyVectorInterface.h"
+#include "PythonBindings/InterspectralMatrixInterface.h"
+#include "PythonBindings/LinearSolverInterface.h"
+#include "PythonBindings/ModalBasisDefinitionInterface.h"
+#include "PythonBindings/StructureInterfaceInterface.h"
+#include "PythonBindings/AcousticsLoadInterface.h"
+#include "PythonBindings/KinematicsLoadInterface.h"
+#include "PythonBindings/MechanicalLoadInterface.h"
+#include "PythonBindings/PhysicalQuantityInterface.h"
+#include "PythonBindings/ThermalLoadInterface.h"
 
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(libaster)
 {
+    exportVectorUtilitiesToPython();
     exportDataStructureToPython();
     exportMeshToPython();
     exportDiscreteProblemToPython();
@@ -75,4 +88,15 @@ BOOST_PYTHON_MODULE(libaster)
     exportXfemContactZoneToPython();
     exportAssemblyMatrixToPython();
     exportElementaryMatrixToPython();
+    exportElementaryVectorToPython();
+    exportGeneralizedAssemblyMatrixToPython();
+    exportGeneralizedAssemblyVectorToPython();
+    exportInterspectralMatrixToPython();
+    exportLinearSolverToPython();
+    exportModalBasisDefinitionToPython();
+    exportStructureInterfaceToPython();
+    exportAcousticsLoadToPython();
+    exportKinematicsLoadToPython();
+    exportPhysicalQuantityToPython();
+    exportThermalLoadToPython();
 };

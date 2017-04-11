@@ -50,8 +50,8 @@ cdef extern from "LinearAlgebra/LinearSolver.h":
     cdef cppclass LinearSolverInstance:
 
         LinearSolverInstance(LinearSolverEnum curLinSolv, Renumbering curRenum)
-        FieldOnNodesDoublePtr solveDoubleLinearSystem(const AssemblyMatrixDoublePtr& currentMatrix,
-                                                       const FieldOnNodesDoublePtr& currentRHS)
+        FieldOnNodesDoublePtr solveDoubleLinearSystemMatrixRHS(const AssemblyMatrixDoublePtr& currentMatrix,
+             const FieldOnNodesDoublePtr& currentRHS)
         void disablePreprocessing()
         void setAlgorithm(IterativeSolverAlgorithm algo)
         void setDistributedMatrix(bint matDist)

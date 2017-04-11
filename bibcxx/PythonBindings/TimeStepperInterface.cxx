@@ -25,14 +25,11 @@
 
 #include "PythonBindings/TimeStepperInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
-#include "PythonBindings/VectorUtilities.h"
 #include <boost/python.hpp>
 
 void exportTimeStepperToPython()
 {
     using namespace boost::python;
-
-    exportVectorUtilities< double >();
 
     class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr,
             bases< DataStructure > >( "TimeStepper", no_init )

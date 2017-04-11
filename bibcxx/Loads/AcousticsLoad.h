@@ -137,6 +137,20 @@ private:
     PCFieldOnMeshComplexPtr                     _speedValues;
 
 public:
+    /**
+     * @typedef AcousticsLoadPtr
+     * @brief Pointeur intelligent vers un AcousticsLoad
+     */
+    typedef std::shared_ptr< AcousticsLoadInstance > AcousticsLoadPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static AcousticsLoadPtr create()
+    {
+        return AcousticsLoadPtr( new AcousticsLoadInstance );
+    };
+
     AcousticsLoadInstance():
         DataStructure( getNewResultObjectName(), "CHAR_ACOU" ),
         _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),

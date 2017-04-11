@@ -1,6 +1,9 @@
+#ifndef MECHANICALLOADINTERFACE_H_
+#define MECHANICALLOADINTERFACE_H_
+
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file MechanicalLoadInterface.h
+ * @brief Fichier entete de la classe MechanicalLoadInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,14 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilities.h"
-#include "Loads/PhysicalQuantity.h"
+#include "astercxx.h"
+#include "Loads/MechanicalLoad.h"
 
-void exportVectorUtilitiesToPython()
-{
-    using namespace boost::python;
+void exportMechanicalLoadToPython();
 
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
-};
+#endif /* MECHANICALLOADINTERFACE_H_ */

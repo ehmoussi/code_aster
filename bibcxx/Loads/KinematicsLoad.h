@@ -62,6 +62,20 @@ class KinematicsLoadInstance: public DataStructure
 
     public:
         /**
+         * @typedef KinematicsLoadPtr
+         * @brief Pointeur intelligent vers un KinematicsLoad
+         */
+        typedef std::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
+
+        /**
+         * @brief Constructeur
+         */
+        static KinematicsLoadPtr create()
+        {
+            return KinematicsLoadPtr( new KinematicsLoadInstance );
+        };
+
+        /**
          * @brief Constructeur
          */
         KinematicsLoadInstance();

@@ -1,6 +1,9 @@
+#ifndef THERMALLOADINTERFACE_H_
+#define THERMALLOADINTERFACE_H_
+
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file ThermalLoadInterface.h
+ * @brief Fichier entete de la classe ThermalLoadInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,14 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilities.h"
-#include "Loads/PhysicalQuantity.h"
+#include "astercxx.h"
+#include "Loads/ThermalLoad.h"
 
-void exportVectorUtilitiesToPython()
-{
-    using namespace boost::python;
+void exportThermalLoadToPython();
 
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
-};
+#endif /* THERMALLOADINTERFACE_H_ */

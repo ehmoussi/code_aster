@@ -118,6 +118,14 @@ public:
     /**
      * @brief Constructeur
      */
+    static StructureInterfacePtr create( const DOFNumberingPtr& curDof )
+    {
+        return StructureInterfacePtr( new StructureInterfaceInstance( curDof ) );
+    };
+
+    /**
+     * @brief Constructeur
+     */
     StructureInterfaceInstance():
         DataStructure( "INTERF_DYNA_CLAS", Permanent ),
         _frequency( 1. ),

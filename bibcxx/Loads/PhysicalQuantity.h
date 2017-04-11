@@ -363,6 +363,21 @@ class PhysicalQuantityInstance
     CapyConvertibleContainer _toCapyConverter;
 
     public:
+    /**
+     * @typedef PhysicalQuantityPtr
+     * @brief Pointeur intelligent vers un PhysicalQuantity
+     */
+    typedef std::shared_ptr< PhysicalQuantityInstance<ValueType,
+                                                      PhysicalQuantity> > PhysicalQuantityPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static PhysicalQuantityPtr create()
+    {
+        return PhysicalQuantityPtr( new PhysicalQuantityInstance );
+    };
+
     /** @typedef Define the Traits type */
     typedef PhysicalQuantityTraits<PhysicalQuantity> Traits;
     /** @typedef Value type of the physical quantity (double, function ...) */

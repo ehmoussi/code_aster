@@ -1,6 +1,6 @@
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file StructureInterfaceInterface.cxx
+ * @brief Interface python de StructureInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,14 +21,23 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilities.h"
-#include "Loads/PhysicalQuantity.h"
+#include "PythonBindings/StructureInterfaceInterface.h"
+#include <boost/python.hpp>
 
-void exportVectorUtilitiesToPython()
+void exportStructureInterfaceToPython()
 {
     using namespace boost::python;
 
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
+    StructureInterfaceInstance::StructureInterfacePtr
+        (*c1)(const DOFNumberingPtr& curDof) =
+            &StructureInterfaceInstance::create;
+    StructureInterfaceInstance::StructureInterfacePtr
+        (*c2)() = &StructureInterfaceInstance::create;
+
+    class_< StructureInterfaceInstance, StructureInterfaceInstance::StructureInterfacePtr,
+            bases< DataStructure > > ( "StructureInterface", no_init )
+        .def( "create", c1 )
+        .def( "create", c2 )
+        .staticmethod( "create" )
+    ;
 };

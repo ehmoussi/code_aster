@@ -48,6 +48,13 @@ private:
 
 public:
     /**
+     * @typedef GeneralizedAssemblyMatrixPtr
+     * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrix
+     */
+    typedef std::shared_ptr< GenericGeneralizedAssemblyMatrixInstance >
+            GenericGeneralizedAssemblyMatrixPtr;
+
+    /**
      * @brief Constructeur
      */
     GenericGeneralizedAssemblyMatrixInstance(): 

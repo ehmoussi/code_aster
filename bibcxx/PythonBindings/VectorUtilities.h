@@ -129,4 +129,6 @@ void exportVectorUtilities()
     Vector_from_python_list< T >();
 };
 
+void exportVectorUtilitiesToPython();
+
 #endif /* VECTORUTILITIES_H_ */

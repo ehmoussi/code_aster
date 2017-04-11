@@ -1,6 +1,6 @@
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file ThermalLoadInterface.cxx
+ * @brief Interface python de ThermalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,14 +21,21 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilities.h"
-#include "Loads/PhysicalQuantity.h"
+#include "PythonBindings/ThermalLoadInterface.h"
+#include <boost/python.hpp>
 
-void exportVectorUtilitiesToPython()
+void exportThermalLoadToPython()
 {
     using namespace boost::python;
 
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
+    class_< ThermalLoadInstance, ThermalLoadInstance::ThermalLoadPtr,
+            bases< DataStructure > > ( "ThermalLoad", no_init )
+        .def( "create", &ThermalLoadInstance::create )
+        .staticmethod( "create" )
+        .def( "addUnitaryThermalLoad",
+              &ThermalLoadInstance::addUnitaryThermalLoad )
+        .def( "build", &ThermalLoadInstance::build )
+        .def( "setModel",
+              &ThermalLoadInstance::setModel )
+    ;
 };
