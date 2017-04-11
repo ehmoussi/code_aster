@@ -46,6 +46,7 @@ public:
     UnitaryThermalLoadInstance()
     {};
 };
+
 template <class ValueType>
 class ImposedTemperatureInstance: public UnitaryThermalLoadInstance
 {

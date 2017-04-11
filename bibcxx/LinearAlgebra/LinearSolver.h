@@ -383,8 +383,9 @@ class LinearSolverInstance: public DataStructure
          * @param currentRHS Second membre
          * @return champ aux noeuds resultat
          */
-        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
-                                                       const FieldOnNodesDoublePtr& currentRHS ) const;
+        FieldOnNodesDoublePtr solveDoubleLinearSystemMatrixRHS
+            ( const AssemblyMatrixDoublePtr& currentMatrix,
+              const FieldOnNodesDoublePtr& currentRHS ) const;
 
         /**
          * @brief Inversion du systeme lineaire

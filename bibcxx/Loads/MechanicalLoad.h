@@ -270,6 +270,20 @@ class GenericMechanicalLoadInstance: public DataStructure
 
     public:
         /**
+         * @typedef MechanicalLoadPtr
+         * @brief Pointeur intelligent vers un MechanicalLoad
+         */
+        typedef std::shared_ptr< GenericMechanicalLoadInstance > GenericMechanicalLoadPtr;
+
+        /**
+         * @brief Constructeur
+         */
+        static GenericMechanicalLoadPtr create()
+        {
+            return GenericMechanicalLoadPtr( new GenericMechanicalLoadInstance );
+        };
+
+        /**
          * @brief Constructor
          */
         GenericMechanicalLoadInstance():
@@ -318,6 +332,20 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
     PhysicalQuantityPtr _physicalQuantity;
 
     public:
+    /**
+     * @typedef MechanicalLoadPtr
+     * @brief Pointeur intelligent vers un MechanicalLoad
+     */
+    typedef std::shared_ptr< MechanicalLoadInstance< PhysicalQuantity,
+                                                     Load > > MechanicalLoadPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static MechanicalLoadPtr create()
+    {
+        return MechanicalLoadPtr( new MechanicalLoadInstance );
+    };
 
     /**
      * @brief Constructor

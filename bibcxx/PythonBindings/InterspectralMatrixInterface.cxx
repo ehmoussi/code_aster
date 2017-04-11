@@ -1,6 +1,6 @@
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file InterspectralMatrixInterface.cxx
+ * @brief Interface python de InterspectralMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,14 +21,17 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilities.h"
-#include "Loads/PhysicalQuantity.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-void exportVectorUtilitiesToPython()
+#include "PythonBindings/InterspectralMatrixInterface.h"
+#include <boost/python.hpp>
+
+void exportInterspectralMatrixToPython()
 {
     using namespace boost::python;
 
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
+    class_< InterspectralMatrixInstance, InterspectralMatrixInstance::InterspectralMatrixPtr,
+            bases< DataStructure > > ( "InterspectralMatrix", no_init )
+        .def( "create", &InterspectralMatrixInstance::create )
+    ;
 };

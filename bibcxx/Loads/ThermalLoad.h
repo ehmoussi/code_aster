@@ -60,6 +60,20 @@ private:
 
 public:
     /**
+     * @typedef ThermalLoadPtr
+     * @brief Pointeur intelligent vers un ThermalLoad
+     */
+    typedef std::shared_ptr< ThermalLoadInstance > ThermalLoadPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static ThermalLoadPtr create()
+    {
+        return ThermalLoadPtr( new ThermalLoadInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     ThermalLoadInstance() ;

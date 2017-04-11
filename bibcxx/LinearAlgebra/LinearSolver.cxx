@@ -94,7 +94,7 @@ bool LinearSolverInstance::matrixFactorization( const AssemblyMatrixDoublePtr cu
     return true;
 };
 
-FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystem(
+FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystemMatrixRHS(
             const AssemblyMatrixDoublePtr& currentMatrix,
             const FieldOnNodesDoublePtr& currentRHS ) const
 {

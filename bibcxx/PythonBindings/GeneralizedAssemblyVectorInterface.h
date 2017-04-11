@@ -1,6 +1,9 @@
+#ifndef GENERALIZEDASSEMBLYVECTORINTERFACE_H_
+#define GENERALIZEDASSEMBLYVECTORINTERFACE_H_
+
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file GeneralizedAssemblyVectorInterface.h
+ * @brief Fichier entete de la classe GeneralizedAssemblyVectorInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,14 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilities.h"
-#include "Loads/PhysicalQuantity.h"
+#include "astercxx.h"
+#include "LinearAlgebra/GeneralizedAssemblyVector.h"
 
-void exportVectorUtilitiesToPython()
-{
-    using namespace boost::python;
+void exportGeneralizedAssemblyVectorToPython();
 
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
-};
+#endif /* GENERALIZEDASSEMBLYVECTORINTERFACE_H_ */
