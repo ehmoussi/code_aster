@@ -20,248 +20,119 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 # lecture maillage lineique
 MAPOU=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=20,);
 
-MOPOU=AFFE_MODELE(MAILLAGE=MAPOU,
-                  AFFE=_F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='TUYAU_3M',),);
+MODELE=AFFE_MODELE(
+    MAILLAGE=MAPOU,
+    AFFE=_F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='TUYAU_3M',),
+)
 
-BETON=DEFI_MATERIAU(ELAS=_F(E=3.7272000000E10, NU=0.0,  RHO=2400.0,),)
+# Caractéristique des tuyaux
+Ncou = 2; Nsect = 4; Rext = 10.0; Ep =1.0
 
-POUCA_0=AFFE_CARA_ELEM( MODELE=MOPOU,
-                        INFO=1,
-                        POUTRE=_F(  GROUP_MA=('POUTRE'),
-                                    SECTION='CERCLE',
-                                    CARA=('R','EP'),
-                                    VALE=(10.,1.),
-                                    TUYAU_NSEC = 4,
-                                    TUYAU_NCOU = 2,
-                                    ),
-                        );
-CHMAT=AFFE_MATERIAU(MAILLAGE=MAPOU,
-                    AFFE=_F(GROUP_MA='POUTRE', MATER=BETON,),
-                          );
-
-BLOCAGE=AFFE_CHAR_MECA( MODELE=MOPOU,
-                        DDL_IMPO=(_F(GROUP_NO='ENC', DX=0.0, DY=0.0, DZ=0.0, DRX=0.0, DRY=0.0, DRZ=0.0,),
-                                 ),);
-CHARGE=AFFE_CHAR_MECA(  MODELE=MOPOU,
-                        FORCE_NODALE=(_F(GROUP_NO='CHA',FX = 100,FY = 100,FZ = -100.)
-                                 ),);
-
-FOFO=DEFI_FONCTION(NOM_PARA='INST',
-                   VALE=(0.0,0.0,3.5,3.5),
-                   PROL_DROITE='EXCLU',
-                   PROL_GAUCHE='EXCLU',);
+CARA=AFFE_CARA_ELEM(
+    MODELE=MODELE,
+    INFO=1,
+    POUTRE=_F(GROUP_MA=('POUTRE','POUTRE0'), SECTION='CERCLE', CARA=('R','EP'),
+              VALE=(Rext,Ep), TUYAU_NSEC = Nsect, TUYAU_NCOU = Ncou, ),
+)
 
 
-LINST=DEFI_LIST_REEL(   DEBUT=0.0,
-                        INTERVALLE=(_F(JUSQU_A=0.1,  NOMBRE=2,),
-                                    _F(JUSQU_A=1.4,  NOMBRE=10,),
-                                    _F(JUSQU_A=2.84 ,  NOMBRE=9,),
-                                    _F(JUSQU_A=3. ,  NOMBRE=10,),
-                                    ),
-                    );
+#
+CSIEF=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R', OPERATION="AFFE", MODELE=MODELE,
+   AFFE_SP=_F( CARA_ELEM = CARA,),PROL_ZERO='OUI',
+   AFFE=_F(TOUT="OUI", NOM_CMP=('SIXX',), VALE= ( 0.0, ),),
+)
 
-U_0=STAT_NON_LINE(MODELE=MOPOU,
-                 CHAM_MATER=CHMAT,
-                 CARA_ELEM=POUCA_0,
-                 EXCIT=(_F(CHARGE=BLOCAGE,),
-                        _F(CHARGE=CHARGE,
-                           FONC_MULT=FOFO,),),
-                 COMPORTEMENT=(_F(RELATION='ELAS'),),
-                 INCREMENT=_F(LIST_INST=LINST,),
-                 NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1),
-                 CONVERGENCE=_F(RESI_GLOB_RELA=3.E-5,
-                                ITER_GLOB_MAXI=250,),
-                 );
+RESU=CREA_RESU(TYPE_RESU = "EVOL_NOLI", OPERATION ="AFFE", NOM_CHAM='SIEF_ELGA',
+   AFFE= _F(CHAM_GD = CSIEF, MODELE = MODELE, CARA_ELEM =CARA, INST =0.0,),
+)
 
 
-U_0=CALC_CHAMP(DEFORMATION=('EPSI_ELGA'),reuse=U_0,RESULTAT=U_0)
+TBEPS0=CREA_TABLE(RESU=_F(RESULTAT=RESU,GROUP_MA='POUTRE0',NOM_CHAM=('SIEF_ELGA'),
+                          TOUT_CMP='OUI',INST = 0.0))
+TBEPSI=CREA_TABLE(RESU=_F(RESULTAT=RESU,GROUP_MA='POUTRE', NOM_CHAM=('SIEF_ELGA'),
+                          TOUT_CMP='OUI',INST = 0.0))
 
-IMPR_RESU(FORMAT='MED',
-          RESU=_F(RESULTAT=U_0,
-                  CARA_ELEM=POUCA_0,),);
+"""
+IMPR_TABLE(TABLE=TBEPS0)
+IMPR_TABLE(TABLE=TBEPSI)
+"""
 
-TB_0=CREA_TABLE(RESU=_F(RESULTAT=U_0,GROUP_MA='POUTRE',NOM_CHAM='EPSI_ELGA',TOUT_CMP='OUI',NUME_ORDRE = 1))
-IMPR_TABLE(TABLE=TB_0)
+# Matrice de passage Axe_X vers Trisectrice
+import numpy as NP
+un3 = 1.0/pow(3.0,0.5)
+un2 = 1.0/pow(2.0,0.5)
+un6 = 1.0/pow(6.0,0.5)
+MatPass = NP.array( [[ un3, -un2,    -un6],
+                     [ un3,  un2,    -un6],
+                     [ un3,  0.0, 2.0*un6]] )
+#
+# Coordonnées des Points de Gauss  sur l'axe X
+LongPoutre = 2.0*pow(3.0,0.5)
+xpg = pow(3.0/5.0,0.5)
+Points={1: LongPoutre*(1.0-xpg)*0.5,
+        2: LongPoutre*0.5,
+        3: LongPoutre*(1.0+xpg)*0.5,}
+
+# Coordonnées des Sous-Points
+def CoordFibre(ifib):
+    Rint = Rext-Ep
+    # index des coordonnées
+    numAng = ((ifib-1)%(2*Nsect+1))/(2.0*Nsect)
+    numCou = ((ifib-1)/(2*Nsect+1))/(2.0*Ncou)
+    y =  (Rint+Ep*numCou)*NP.cos(2.0*NP.pi*numAng)
+    z = -(Rint+Ep*numCou)*NP.sin(2.0*NP.pi*numAng)
+    return y,z
 
 
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=-3.448831283,
-           VALE_REFE=-3.4488316139999999,
-           NOM_PARA='COOR_X',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=1,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=-3.448831283,
-           VALE_REFE=-3.4488316139999999,
-           NOM_PARA='COOR_Y',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=1,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=7.573872559,
-           VALE_REFE=7.5738722279999999,
-           NOM_PARA='COOR_Z',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=1,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=-6.872672881,
-           VALE_REFE=-6.8726732110000004,
-           NOM_PARA='COOR_X',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=2,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=2.127327119,
-           VALE_REFE=2.1273267890000001,
-           NOM_PARA='COOR_Y',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=2,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=5.421555753,
-           VALE_REFE=5.421555423,
-           NOM_PARA='COOR_Z',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=2,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=-6.138557700,
-           VALE_REFE=-6.1385580309999996,
-           NOM_PARA='COOR_X',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=3,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=6.589364361,
-           VALE_REFE=6.5893640309999997,
-           NOM_PARA='COOR_Y',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=3,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=0.225403331,
-           VALE_REFE=0.22540299999999999,
-           NOM_PARA='COOR_Z',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=3,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=-3.652955429,
-           VALE_REFE=-3.6529557590000001,
-           NOM_PARA='COOR_X',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=19,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=-3.652955429,
-           VALE_REFE=-3.6529557590000001,
-           NOM_PARA='COOR_Y',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=19,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=7.982120850,
-           VALE_REFE=7.9821205190000004,
-           NOM_PARA='COOR_Z',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=19,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=-6.492111091,
-           VALE_REFE=-6.4921114209999997,
-           NOM_PARA='COOR_X',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=21,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=6.942917752,
-           VALE_REFE=6.9429174209999998,
-           NOM_PARA='COOR_Y',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=21,),
-                   ),
-           )
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=0.225403331,
-           VALE_REFE=0.22540299999999999,
-           NOM_PARA='COOR_Z',
-           TABLE=TB_0,
-           FILTRE=(_F(NOM_PARA='POINT',
-                      VALE_I=1,),
-                   _F(NOM_PARA='SOUS_POINT',
-                      VALE_I=21,),
-                   ),
-           )
+Nbfibre = (2*Ncou+1)*(2*Nsect+1)
+for ipt in [1,2,3]:
+    xx = Points[ipt]
+    for ifib in range(1,Nbfibre+1):
+        yy,zz = CoordFibre(ifib)
+        # Tuyau suivant l'axe X
+        motclef = {}
+        if ( abs(xx) < 1.0E-16 ): motclef ={'ORDRE_GRANDEUR':1.0}
+        TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=xx, VALE_REFE=xx, NOM_PARA='COOR_X', TABLE=TBEPS0,
+           FILTRE=(_F(NOM_PARA='POINT',      VALE_I= ipt,),
+                   _F(NOM_PARA='SOUS_POINT', VALE_I=ifib,),),
+        **motclef)
+        motclef = {}
+        if ( abs(yy) < 1.0E-16 ): motclef ={'ORDRE_GRANDEUR':1.0}
+        TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=yy, VALE_REFE=yy, NOM_PARA='COOR_Y', TABLE=TBEPS0,
+           FILTRE=(_F(NOM_PARA='POINT',      VALE_I= ipt,),
+                   _F(NOM_PARA='SOUS_POINT', VALE_I=ifib,),),
+        **motclef)
+        motclef = {}
+        if ( abs(zz) < 1.0E-16 ): motclef ={'ORDRE_GRANDEUR':1.0}
+        TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=zz, VALE_REFE=zz, NOM_PARA='COOR_Z', TABLE=TBEPS0,
+           FILTRE=(_F(NOM_PARA='POINT',      VALE_I= ipt,),
+                   _F(NOM_PARA='SOUS_POINT', VALE_I=ifib,),),
+        **motclef)
+        # Suivant la Trisectrice
+        xxt,yyt,zzt = NP.dot( MatPass, NP.array( [xx,yy,zz ] ) )
+        motclef = {}
+        if ( abs(xxt) < 1.0E-16 ): motclef ={'ORDRE_GRANDEUR':1.0}
+        TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=xxt, VALE_REFE=xxt, NOM_PARA='COOR_X', TABLE=TBEPSI,
+           FILTRE=(_F(NOM_PARA='POINT',      VALE_I= ipt,),
+                   _F(NOM_PARA='SOUS_POINT', VALE_I=ifib,),),
+        **motclef)
+        motclef = {}
+        if ( abs(yyt) < 1.0E-16 ): motclef ={'ORDRE_GRANDEUR':1.0}
+        TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=yyt, VALE_REFE=yyt, NOM_PARA='COOR_Y', TABLE=TBEPSI,
+           FILTRE=(_F(NOM_PARA='POINT',      VALE_I= ipt,),
+                   _F(NOM_PARA='SOUS_POINT', VALE_I=ifib,),),
+        **motclef)
+        motclef = {}
+        if ( abs(zzt) < 1.0E-16 ): motclef ={'ORDRE_GRANDEUR':1.0}
+        TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=zzt, VALE_REFE=zzt, NOM_PARA='COOR_Z', TABLE=TBEPSI,
+           FILTRE=(_F(NOM_PARA='POINT',      VALE_I= ipt,),
+                   _F(NOM_PARA='SOUS_POINT', VALE_I=ifib,),),
+        **motclef)
 
 FIN()
