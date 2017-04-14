@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Materials.BehaviourDefinition cimport BehaviourDefinition
+from code_aster.libaster import BehaviourDefinition
 
 
 def DEFI_COMPOR(**curDict):
-    returnBD = BehaviourDefinition()
+    returnBD = BehaviourDefinition.create()
     cdef string name = returnBD.getInstance().getName()
     cdef string type = returnBD.getInstance().getType()
     syntax = CommandSyntax("DEFI_COMPOR")

@@ -25,7 +25,7 @@ import os.path as osp
 from code_aster.Supervis.logger import logger
 from code_aster.Supervis.libCommandSyntax cimport resultNaming
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from libaster import DataStructure
 
 
 class Pickler(object):

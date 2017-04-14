@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Loads.MechanicalLoad cimport GenericMechanicalLoad
+from code_aster.libaster import GenericMechanicalLoad
 
 
 def AFFE_CHAR_MECA(**curDict):
-    returnLoad = GenericMechanicalLoad()
+    returnLoad = GenericMechanicalLoad.create()
     cdef string name = returnLoad.getInstance().getName()
     cdef string type = returnLoad.getInstance().getType()
     syntax = CommandSyntax("AFFE_CHAR_MECA")

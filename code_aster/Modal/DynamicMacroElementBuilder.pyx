@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Modal.DynamicMacroElement cimport DynamicMacroElement
+from code_aster.libaster import DynamicMacroElement
 
 
 def MACR_ELEM_DYNA(**curDict):
-    returnMacroElement = DynamicMacroElement()
+    returnMacroElement = DynamicMacroElement.create()
     cdef string name = returnMacroElement.getInstance().getName()
     cdef string type = returnMacroElement.getInstance().getType()
     syntax = CommandSyntax("MACR_ELEM_DYNA")

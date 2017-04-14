@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Flow.FluidStructureInteraction cimport FluidStructureInteraction
+from code_aster.libaster import FluidStructureInteraction
 
 
 def DEFI_FLUI_STRU(**curDict):
-    returnFSD = FluidStructureInteraction()
+    returnFSD = FluidStructureInteraction.create()
     cdef string name = returnFSD.getInstance().getName()
     cdef string type = returnFSD.getInstance().getType()
     syntax = CommandSyntax("DEFI_FLUI_STRU")

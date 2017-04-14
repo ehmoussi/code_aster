@@ -22,18 +22,18 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.DataFields.PCFieldOnMesh cimport PCFieldOnMeshDouble
-from code_aster.DataFields.FieldOnNodes cimport FieldOnNodesDouble
+from code_aster.libaster import PCFieldOnMeshDouble
+from code_aster.libaster import FieldOnNodesDouble
 
 
 def CREA_CHAMP(**curDict):
     returnField = None
     if curDict["TYPE_CHAM"][:5] == "CART_" and curDict["TYPE_CHAM"][10:] == "R":
-        returnField = PCFieldOnMeshDouble()
+        returnField = PCFieldOnMeshDouble.create()
     elif curDict["TYPE_CHAM"][:5] == "NOEU_" and curDict["TYPE_CHAM"][10:] == "R":
-        returnField = FieldOnNodesDouble()
+        returnField = FieldOnNodesDouble.create()
     else:
         raise NameError("Not yet implemented")
     cdef string name = returnField.getName()

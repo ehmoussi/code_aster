@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Function.Surface cimport Surface
+from code_aster.libaster import Surface
 
 
 def DEFI_NAPPE(**curDict):
-    returnSurface = Surface()
+    returnSurface = Surface.create()
     cdef string name = returnSurface.getInstance().getName()
     cdef string type = returnSurface.getInstance().getType()
     syntax = CommandSyntax("DEFI_NAPPE")

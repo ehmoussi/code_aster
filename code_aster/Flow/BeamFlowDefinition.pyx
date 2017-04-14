@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Function.Function cimport Function
+from code_aster.libaster import Function
 
 
 def DEFI_FONC_FLUI(**curDict):
-    returnFunction = Function()
+    returnFunction = Function.create()
     cdef string name = returnFunction.getInstance().getName()
     cdef string type = returnFunction.getInstance().getType()
     syntax = CommandSyntax("DEFI_FONC_FLUI")

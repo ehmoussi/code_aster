@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Modeling.Model cimport Model
+from code_aster.libaster import Model
 
 
 def AFFE_MODELE(**curDict):
-    returnModel = Model()
+    returnModel = Model.create()
     cdef string name = returnModel.getName()
     cdef string type = returnModel.getType()
 

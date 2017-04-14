@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.DataFields.Table cimport Table
+from code_aster.libaster import Table
 
 
 def CREA_TABLE(**curDict):
-    returnTable = Table()
+    returnTable = Table.create()
     cdef string name = returnTable.getInstance().getName()
     syntax = CommandSyntax("CREA_TABLE")
 

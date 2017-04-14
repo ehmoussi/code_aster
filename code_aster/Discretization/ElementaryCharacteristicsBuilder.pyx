@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Discretization.ElementaryCharacteristics cimport ElementaryCharacteristics
+from code_aster.libaster import ElementaryCharacteristics
 
 
 def AFFE_CARA_ELEM(**curDict):
-    returnCaraElem = ElementaryCharacteristics()
+    returnCaraElem = ElementaryCharacteristics.create()
     cdef string name = returnCaraElem.getInstance().getName()
     cdef string type = returnCaraElem.getInstance().getType()
     syntax = CommandSyntax("AFFE_CARA_ELEM")

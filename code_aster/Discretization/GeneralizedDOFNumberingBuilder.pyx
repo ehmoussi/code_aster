@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Discretization.GeneralizedDOFNumbering cimport GeneralizedDOFNumbering
+from code_aster.libaster import GeneralizedDOFNumbering
 
 
 def NUME_DDL_GENE(**curDict):
-    returnDOFNum = GeneralizedDOFNumbering()
+    returnDOFNum = GeneralizedDOFNumbering.create()
     cdef string name = returnDOFNum.getInstance().getName()
     cdef string type = returnDOFNum.getInstance().getType()
     syntax = CommandSyntax("NUME_DDL_GENE")

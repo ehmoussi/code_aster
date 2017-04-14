@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Discretization.FiberGeometry cimport FiberGeometry
+from code_aster.libaster import FiberGeometry
 
 
 def DEFI_GRILLE(**curDict):
-    returnGrid = FiberGeometry()
+    returnGrid = FiberGeometry.create()
     cdef string name = returnGrid.getInstance().getName()
     cdef string type = returnGrid.getInstance().getType()
     syntax = CommandSyntax("DEFI_GRILLE")
