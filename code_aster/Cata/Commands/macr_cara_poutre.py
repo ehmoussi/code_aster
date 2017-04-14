@@ -41,7 +41,7 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
             FORMAT   =SIMP(statut='f',typ='TXM',defaut="MED",into=("ASTER","MED"),
                            fr=tr("Format du fichier")),
             UNITE    =SIMP(statut='f',typ=UnitType(),defaut= 20, inout='in',
-                           fr=tr("Unite correspondant au format du fichier maillage")),
+                           fr=tr("Unité correspondant au format du fichier maillage")),
          ),
 
          ORIG_INER      =SIMP(statut='f',typ='R',max=3,defaut=(0.E+0,0.E+0),
@@ -67,13 +67,13 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
 
          b_gma_bord  =BLOC(
             condition = """exists("GROUP_MA_BORD")""",
-            fr=tr(" calcul des carac. mecaniques"),
+            fr=tr(" calcul des carac. mécaniques"),
             regles=(UN_PARMI('NOEUD','GROUP_NO')),
             NOEUD          =SIMP(statut='c',typ=no,max='**',
                                  fr=tr("Simplement pour empecher des pivots nuls le cas echeant. "
                                       "Fournir un noeud quelconque")),
             GROUP_NO       =SIMP(statut='f',typ=grno,max='**',
-                                 fr=tr("Simplement pour empecher des pivots nuls le cas echeant. "
+                                 fr=tr("Simplement pour empêcher des pivots nuls le cas échéant. "
                                       "Fournir un noeud quelconque par GROUP_MA")),
             GROUP_MA_INTE  =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**',
                                  fr=tr("groupes de mailles linéiques bordant des trous dans la section")),
@@ -86,7 +86,7 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
             LONGUEUR =SIMP(statut='f',typ='R',
                            fr=tr("Longueur du réseau de poutres")),
             MATERIAU =SIMP(statut='f',typ=mater_sdaster,
-                           fr=tr("Materiau elastique lineaire du reseau")),
+                           fr=tr("Matériau élastique linéaire du réseau")),
             LIAISON  =SIMP(statut='f',typ='TXM',into=("ROTULE","ENCASTREMENT"),
                            fr=tr("type de conditions aux limites sur le plancher supérieur") ),
          ),
