@@ -22,18 +22,18 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Results.EvolutiveLoad cimport EvolutiveLoad
-from code_aster.Results.EvolutiveThermalLoad cimport EvolutiveThermalLoad
+from code_aster.libaster import EvolutiveLoad
+from code_aster.libaster import EvolutiveThermalLoad
 
 
 def CREA_RESU(**curDict):
     returnRC = None
     if curDict["TYPE_RESU"] == "EVOL_CHAR":
-        returnRC = EvolutiveLoad()
+        returnRC = EvolutiveLoad.create()
     elif curDict["TYPE_RESU"] == "EVOL_THER":
-        returnRC = EvolutiveThermalLoad()
+        returnRC = EvolutiveThermalLoad.create()
     else:
         raise NameError("Not yet implemented")
     cdef string name = returnRC.getName()

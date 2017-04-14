@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Mesh.Skeleton cimport Skeleton
+from code_aster.libaster import Skeleton
 
 
 def DEFI_SQUELETTE(**curDict):
-    returnSkeleton = Skeleton()
+    returnSkeleton = Skeleton.create()
     cdef string name = returnSkeleton.getInstance().getName()
     cdef string type = returnSkeleton.getInstance().getType()
     syntax = CommandSyntax("DEFI_SQUELETTE")

@@ -22,15 +22,15 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Mesh.MatchingMeshes cimport MatchingMeshes
+from code_aster.libaster import MatchingMeshes
 
 
 def PROJ_CHAMP(**curDict):
     returnProj = None
     if not curDict.has_key("RESULTAT") and not curDict.has_key("CHAM_GD"):
-        returnProj = MatchingMeshes()
+        returnProj = MatchingMeshes.create()
     else:
         raise NameError("Not yet implemented")
     cdef string name = returnProj.getName()

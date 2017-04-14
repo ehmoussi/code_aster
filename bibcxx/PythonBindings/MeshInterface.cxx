@@ -24,13 +24,16 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "PythonBindings/MeshInterface.h"
+#include "PythonBindings/SharedPtrUtilities.h"
 #include <boost/python.hpp>
 
 void exportMeshToPython()
 {
     using namespace boost::python;
-    class_< MeshInstance, MeshInstance::MeshPtr, bases< DataStructure > >("Mesh", init<>())
-        .def( "__init__", &MeshInstance::create )
+    class_< MeshInstance, MeshInstance::MeshPtr,
+            bases< DataStructure > >( "Mesh", no_init )
+        .def( "create", &createSharedPtr< MeshInstance > )
+        .staticmethod( "create" )
         .def( "getCoordinates", &MeshInstance::getCoordinates )
         .def( "readMedFile", &MeshInstance::readMedFile )
     ;

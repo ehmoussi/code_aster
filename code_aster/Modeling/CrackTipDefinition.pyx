@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Modeling.CrackTip cimport CrackTip
+from code_aster.libaster import CrackTip
 
 
 def DEFI_FOND_FISS(**curDict):
-    returnCrackDef = CrackTip()
+    returnCrackDef = CrackTip.create()
     cdef string name = returnCrackDef.getInstance().getName()
     cdef string type = returnCrackDef.getInstance().getType()
     syntax = CommandSyntax("DEFI_FOND_FISS")

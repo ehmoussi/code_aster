@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.Results.FourierCombination cimport FourierCombination
+from code_aster.libaster import FourierCombination
 
 
 def COMB_FOURIER(**curDict):
-    returnComb = FourierCombination()
+    returnComb = FourierCombination.create()
     cdef string name = returnComb.getInstance().getName()
     syntax = CommandSyntax("COMB_FOURIER")
 

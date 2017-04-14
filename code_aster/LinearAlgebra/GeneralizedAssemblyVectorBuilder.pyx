@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.LinearAlgebra.GeneralizedAssemblyVector cimport GeneralizedAssemblyVectorDouble
+from code_aster.libaster import GeneralizedAssemblyVectorDouble
 
 
 def ASSE_VECT_GENE(**curDict):
-    returnMatrix = GeneralizedAssemblyVectorDouble()
+    returnMatrix = GeneralizedAssemblyVectorDouble.create()
     cdef string name = returnMatrix.getInstance().getName()
     cdef string type = returnMatrix.getInstance().getType()
     syntax = CommandSyntax("ASSE_VECT_GENE")

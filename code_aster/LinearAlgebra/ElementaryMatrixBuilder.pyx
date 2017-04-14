@@ -22,13 +22,13 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.LinearAlgebra.ElementaryMatrix cimport ElementaryMatrix
+from code_aster.libaster import ElementaryMatrix
 
 
 def CALC_MATR_ELEM(**curDict):
-    returnMatrix = ElementaryMatrix()
+    returnMatrix = ElementaryMatrix.create()
     cdef string name = returnMatrix.getInstance().getName()
     cdef string type = returnMatrix.getInstance().getType()
     syntax = CommandSyntax("CALC_MATR_ELEM")

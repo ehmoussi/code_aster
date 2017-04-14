@@ -22,20 +22,20 @@ from cython.operator cimport dereference as deref
 from code_aster cimport libaster
 from code_aster.libaster cimport INTEGER
 
-from code_aster.DataStructure.DataStructure cimport DataStructure
+from code_aster.libaster import DataStructure
 from code_aster.Supervis.libCommandSyntax cimport CommandSyntax
-from code_aster.LinearAlgebra.GeneralizedAssemblyMatrix cimport GeneralizedAssemblyMatrixDouble
-from code_aster.LinearAlgebra.GeneralizedAssemblyMatrix cimport GeneralizedAssemblyMatrixComplex
+from code_aster.libaster import GeneralizedAssemblyMatrixDouble
+from code_aster.libaster import GeneralizedAssemblyMatrixComplex
 
 
 def ASSE_MATR_GENE(**curDict):
     returnMatrix = None
     if curDict["METHODE"] == "INITIAL":
-        returnMatrix = GeneralizedAssemblyMatrixDouble()
+        returnMatrix = GeneralizedAssemblyMatrixDouble.create()
     elif curDict['OPTION'] == "RIGI_GENE_C":
-        returnMatrix = GeneralizedAssemblyMatrixComplex()
+        returnMatrix = GeneralizedAssemblyMatrixComplex.create()
     else:
-        returnMatrix = GeneralizedAssemblyMatrixDouble()
+        returnMatrix = GeneralizedAssemblyMatrixDouble.create()
     cdef string name = returnMatrix.getInstance().getName()
     cdef string type = returnMatrix.getInstance().getType()
     syntax = CommandSyntax("ASSE_MATR_GENE")
