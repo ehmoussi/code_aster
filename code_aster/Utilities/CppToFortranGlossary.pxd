@@ -32,7 +32,7 @@ cdef extern from "Utilities/CppToFortranGlossary.h":
         Renumbering getRenumbering( string searchRenum ) except +
         LinearSolverEnum getSolver( string searchSol ) except +
 
-    cpdef Glossary* getGlossary()
+    cdef Glossary* getGlossary()
 
 cdef class FortranGlossary:
     cdef Glossary* _cptr

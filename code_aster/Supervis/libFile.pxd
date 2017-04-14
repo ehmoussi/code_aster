@@ -26,9 +26,9 @@ cdef class LogicalUnitManager:
     cdef object _freeLogicalUnit
     cdef object _usedLogicalUnit
 
-    cdef int getFreeLogicalUnit( self )
+    cdef int getFreeLogicalUnit( self ) except? 0
 
-    cdef bint releaseLogicalUnit( self, const int unitToRelease )
+    cdef bint releaseLogicalUnit( self, const int unitToRelease ) except? False
 
 cdef LogicalUnitManager logicalUnitManager
 
