@@ -80,6 +80,12 @@
 #include "PythonBindings/LineSearchMethodInterface.h"
 #include "PythonBindings/NonLinearMethodInterface.h"
 #include "PythonBindings/StateInterface.h"
+#include "PythonBindings/EvolutiveLoadInterface.h"
+#include "PythonBindings/EvolutiveThermalLoadInterface.h"
+#include "PythonBindings/FourierCombinationInterface.h"
+#include "PythonBindings/MechanicalModeContainerInterface.h"
+#include "PythonBindings/NonLinearEvolutionContainerInterface.h"
+#include "PythonBindings/ResultsContainerInterface.h"
 
 using namespace boost::python;
 
@@ -141,4 +147,10 @@ BOOST_PYTHON_MODULE(libaster)
     exportLineSearchMethodToPython();
     exportNonLinearMethodToPython();
     exportStateToPython();
+    exportResultsContainerToPython();
+    exportEvolutiveLoadToPython();
+    exportEvolutiveThermalLoadToPython();
+    exportFourierCombinationToPython();
+    exportMechanicalModeContainerToPython();
+    exportNonLinearEvolutionContainerToPython();
 };
