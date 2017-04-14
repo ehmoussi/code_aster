@@ -62,3 +62,8 @@ Glossary* getGlossary()
 {
     return &fortranGlossary;
 };
+
+const Glossary& getReferenceToGlossary()
+{
+    return fortranGlossary;
+};
