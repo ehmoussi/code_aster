@@ -19,15 +19,29 @@
 
 cata_msg = {
     1: _(u"""
-GROUP_MA et GROUP_MA_BORD incohérents.
+Problème lors de l'utilisation de MACR_CARA_POUTRE
+
+GROUP_MA et GROUP_MA_BORD doivent avoir le même nombre de groupes de mailles.
+À un GROUP_MA doit correspondre un GROUP_MA_BORD.
 """),
 
     2: _(u"""
-GROUP_MA et NOEUD incohérents.
+Problème lors de l'utilisation de MACR_CARA_POUTRE
+
+Vous avez renseigné NOEUD avec GROUP_MA et GROUP_MA_BORD.
+Le nombre de noeud doit être égal au nombre de groupes mailles donné à GROUP_MA et
+GROUP_MA_BORD.
+À un NOEUD doit correspondre un GROUP_MA et un GROUP_MA_BORD .
 """),
 
     3: _(u"""
-Il faut donner un noeud unique.
+Problème lors de l'utilisation de MACR_CARA_POUTRE
+
+Vous avez renseigné NOEUD ou GROUP_NO avec GROUP_MA_BORD.
+Il faut que NOEUD ou GROUP_NO contienne un noeud unique.
+
+Si vous avez des groupes de mailles disjoints, il faut également renseigner GROUP_MA.
+Et dans ce cas à un NOEUD doit correspondre un GROUP_MA et un GROUP_MA_BORD.
 """),
 
     4: _(u"""
@@ -53,8 +67,50 @@ Risques et conseil:
 """),
 
 
+    5: _(u"""
+Problème lors de l'utilisation de MACR_CARA_POUTRE
+
+Vous avez renseigné GROUP_NO avec GROUP_MA et GROUP_MA_BORD.
+Le nombre de noeud dans GROUP_NO doit être identique au nombre de groupe de mailles
+donné sous GROUP_MA et GROUP_MA_BORD.
+"""),
+
+
+    6: _(u"""
+Problème lors de l'utilisation de MACR_CARA_POUTRE
+
+Vous avez renseigné GROUP_MA et GROUP_MA_BORD avec plusieurs groupes de mailles.
+Vous devez renseigner 'LONGUEUR' 'MATERIAU' 'LIAISON', pour que l'on puisse calculer les
+caractéristiques de torsion en prenant en compte les facteurs de participation de chaque
+groupe de mailles.
+"""),
+
+
+    7: _(u"""
+Vous avez renseigné GROUP_MA et GROUP_MA_BORD avec un seul groupe de mailles par
+mot clef.
+Vous avez également renseigné 'LONGUEUR' 'MATERIAU' 'LIAISON', cela est inutile.
+Les valeurs sont ignorées.
+"""),
+
+
+    8: _(u"""
+Problème lors de l'utilisation de MACR_CARA_POUTRE
+
+Vous avez renseigné GROUP_NO. Le GROUP_NO %(k1)s n'existe pas dans le maillage.
+"""),
+
+
+    9: _(u"""
+Problème lors de l'utilisation de MACR_CARA_POUTRE
+
+Vous avez renseigné NOEUD. Le noeud %(k1)s n'existe pas dans le maillage.
+"""),
+
+
    10: _(u"""La caractéristique %(k1)8s est négative ou nulle %(r1)e
 """),
+
 
    11: _(u"""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
@@ -67,6 +123,7 @@ AFFE_CARA_ELEM / POUTRE avec TABLE_CARA, vous risquez d'avoir des résultats fau
 Conseil : La discrétisation de la section a un impact sur la qualité des résultats.
           Raffiner le maillage devrait permettre de lever cette erreur.
 """),
+
 
    12: _(u"""
 Les coordonnées du centre de gravité de la section sont G=(%(r1)e, %(r2)e)
@@ -82,6 +139,7 @@ Vous avez renseigné l'option TABLE_CARA='OUI'. Si vous utilisez les résultats 
                   / MULTIFIBRE
 Vous risquez d'avoir des résultats inattendus, si vous ne renseignez pas COOR_AXE_POUTRE.
 """),
+
 
    13: _(u"""
 Le repère principal d'inertie est tourné d'un angle de %(r1)f° par rapport aux axes du maillage.
@@ -105,5 +163,14 @@ Vous risquez d'avoir des résultats inattendus, si vous ne renseignez ni :
  - ANGLE dans DEFI_GEOM_FIBRE
  - ORIENTATION dans AFFE_CARA_ELEM
 """),
+
+
+   20: _(u"""
+Problème lors de l'utilisation de MACR_CARA_POUTRE
+
+Vous avez renseigné %(k2)s. Le GROUP_MA %(k1)s n'existe pas dans le maillage.
+"""),
+
+
 
 }
