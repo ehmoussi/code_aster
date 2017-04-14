@@ -41,6 +41,20 @@ private:
 
 public:
     /**
+     * @typedef UnitaryThermalLoadPtr
+     * @brief Pointeur intelligent vers un UnitaryThermalLoad
+     */
+    typedef std::shared_ptr< UnitaryThermalLoadInstance > UnitaryThermalLoadPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static UnitaryThermalLoadPtr create()
+    {
+        return UnitaryThermalLoadPtr( new UnitaryThermalLoadInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     UnitaryThermalLoadInstance()
@@ -64,6 +78,20 @@ private:
 
 public:
     /**
+     * @typedef ImposedTemperaturePtr
+     * @brief Pointeur intelligent vers un ImposedTemperature
+     */
+    typedef std::shared_ptr< ImposedTemperatureInstance > ImposedTemperaturePtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static ImposedTemperaturePtr create()
+    {
+        return ImposedTemperaturePtr( new ImposedTemperatureInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     ImposedTemperatureInstance(ValueType val=100.) :
@@ -79,7 +107,7 @@ public:
                                     ( false, "GROUP_NO", _entity , false ) );
     };
 };
- 
+
 template <class ValueType>
 class DistributedFlowInstance: public UnitaryThermalLoadInstance
 {
@@ -92,8 +120,22 @@ private:
     ValueType _fluxn, _fluxnInf, _fluxnSup;
     ValueType _fluxx, _fluxy, _fluxz;
     CapyConvertibleContainer _toCapyConverter;
-            
+
 public:
+    /**
+     * @typedef DistributedFlowPtr
+     * @brief Pointeur intelligent vers un DistributedFlow
+     */
+    typedef std::shared_ptr< DistributedFlowInstance > DistributedFlowPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static DistributedFlowPtr create()
+    {
+        return DistributedFlowPtr( new DistributedFlowInstance );
+    };
+
     /**
      * @brief Constructeur
      */
@@ -153,8 +195,22 @@ private:
     VectorOfMeshEntityPtr _entity;
     ValueType _fluxn;
     CapyConvertibleContainer _toCapyConverter;
-            
+
 public:
+    /**
+     * @typedef NonLinearFlowPtr
+     * @brief Pointeur intelligent vers un NonLinearFlow
+     */
+    typedef std::shared_ptr< NonLinearFlowInstance > NonLinearFlowPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static NonLinearFlowPtr create()
+    {
+        return NonLinearFlowPtr( new NonLinearFlowInstance );
+    };
+
     /**
      * @brief Constructeur
      */
@@ -191,6 +247,20 @@ private:
     CapyConvertibleContainer _toCapyConverter;      
      
 public:
+    /**
+     * @typedef ExchangePtr
+     * @brief Pointeur intelligent vers un Exchange
+     */
+    typedef std::shared_ptr< ExchangeInstance > ExchangePtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static ExchangePtr create()
+    {
+        return ExchangePtr( new ExchangeInstance );
+    };
+
     /**
      * @brief Constructeur
      */
@@ -253,6 +323,20 @@ private:
             
 public:
     /**
+     * @typedef ExchangeWallPtr
+     * @brief Pointeur intelligent vers un ExchangeWall
+     */
+    typedef std::shared_ptr< ExchangeWallInstance > ExchangeWallPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static ExchangeWallPtr create()
+    {
+        return ExchangeWallPtr( new ExchangeWallInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     ExchangeWallInstance(ValueType val=20.0 ) :
@@ -298,6 +382,20 @@ private:
             
 public:
     /**
+     * @typedef SourcePtr
+     * @brief Pointeur intelligent vers un Source
+     */
+    typedef std::shared_ptr< SourceInstance > SourcePtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static SourcePtr create()
+    {
+        return SourcePtr( new SourceInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     SourceInstance(ValueType val=0.0 ) :
@@ -334,6 +432,20 @@ private:
             
 public:
     /**
+     * @typedef NonLinearSourcePtr
+     * @brief Pointeur intelligent vers un NonLinearSource
+     */
+    typedef std::shared_ptr< NonLinearSourceInstance > NonLinearSourcePtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static NonLinearSourcePtr create()
+    {
+        return NonLinearSourcePtr( new NonLinearSourceInstance );
+    };
+
+    /**
      * @brief Constructeur
      */
     NonLinearSourceInstance(ValueType val=0.0 ) :
@@ -369,6 +481,20 @@ private:
     CapyConvertibleContainer _toCapyConverter;
             
 public:
+    /**
+     * @typedef ThermalRadiationPtr
+     * @brief Pointeur intelligent vers un ThermalRadiation
+     */
+    typedef std::shared_ptr< ThermalRadiationInstance > ThermalRadiationPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static ThermalRadiationPtr create()
+    {
+        return ThermalRadiationPtr( new ThermalRadiationInstance );
+    };
+
     /**
      * @brief Constructeur
      */
@@ -419,6 +545,20 @@ private:
     CapyConvertibleContainer _toCapyConverter;
             
 public:
+    /**
+     * @typedef ThermalGradientPtr
+     * @brief Pointeur intelligent vers un ThermalGradient
+     */
+    typedef std::shared_ptr< ThermalGradientInstance > ThermalGradientPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static ThermalGradientPtr create()
+    {
+        return ThermalGradientPtr( new ThermalGradientInstance );
+    };
+
     /**
      * @brief Constructeur
      */

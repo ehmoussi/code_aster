@@ -30,7 +30,7 @@
 #include "Utilities/GenericParameter.h"  
 
 
-enum NonLinearMethodEnum { Newton, Implex, NewtonKrylov };
+enum NonLinearMethodEnum { NewtonMethod, Implex, NewtonKrylov };
 const int nbMethod = 3;
 extern const char* NonLinearMethodNames[nbMethod];
 
@@ -69,7 +69,7 @@ class NonLinearMethodInstance
         /**
          * @brief Constructeur
          */
-        NonLinearMethodInstance( const NonLinearMethodEnum curNLMethod = Newton): 
+        NonLinearMethodInstance( const NonLinearMethodEnum curNLMethod = NewtonMethod): 
             _nonLinearMethod( curNLMethod ),
             _methode("METHODE", false), 
             _prediction( "PREDICTION", false), 
@@ -83,7 +83,7 @@ class NonLinearMethodInstance
             _methode = std::string( NonLinearMethodNames[ (int)_nonLinearMethod ] );
             _listOfMethodParameters.push_back( &_methode );
 
-            if ( ( _nonLinearMethod == Newton ) or (  _nonLinearMethod == NewtonKrylov ) )
+            if ( ( _nonLinearMethod == NewtonMethod ) or (  _nonLinearMethod == NewtonKrylov ) )
                 {
                 _prediction = "TANGENTE";
                 _matrice = "TANGENTE";

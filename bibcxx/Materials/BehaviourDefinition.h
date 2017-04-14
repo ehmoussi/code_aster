@@ -37,19 +37,33 @@
  */
 class BehaviourDefinitionInstance: public DataStructure
 {
-    private:
-        /** @brief Objet '.CPRK' */
-        JeveuxVectorChar24 _cprk;
-        /** @brief Objet '.CPRR' */
-        JeveuxVectorDouble _cprr;
-        /** @brief Objet '.CPRI' */
-        JeveuxVectorLong   _cpri;
+private:
+    /** @brief Objet '.CPRK' */
+    JeveuxVectorChar24 _cprk;
+    /** @brief Objet '.CPRR' */
+    JeveuxVectorDouble _cprr;
+    /** @brief Objet '.CPRI' */
+    JeveuxVectorLong   _cpri;
 
-    public:
-        /**
-         * @brief Constructeur
-         */
-        BehaviourDefinitionInstance();
+public:
+    /**
+     * @typedef BehaviourDefinitionPtr
+     * @brief Pointeur intelligent vers un BehaviourDefinition
+     */
+    typedef std::shared_ptr< BehaviourDefinitionInstance > BehaviourDefinitionPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static BehaviourDefinitionPtr create()
+    {
+        return BehaviourDefinitionPtr( new BehaviourDefinitionInstance );
+    };
+
+    /**
+     * @brief Constructeur
+     */
+    BehaviourDefinitionInstance();
 };
 
 /**

@@ -26,7 +26,7 @@ from code_aster.LinearAlgebra.LinearSolver cimport LinearSolverPtr
 cdef extern from "NonLinear/NonLinearMethod.h":
 
     cpdef enum NonLinearMethodEnum:
-        Newton, Implex, NewtonKrylov
+        NewtonMethod, Implex, NewtonKrylov
 
     cpdef enum PredictionEnum:
        Tangente, Elastique, Extrapole, DeplCalcule

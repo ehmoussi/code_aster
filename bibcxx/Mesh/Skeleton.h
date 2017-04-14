@@ -53,6 +53,12 @@ private:
 
 public:
     /**
+     * @typedef SkeletonPtr
+     * @brief Pointeur intelligent vers un SkeletonInstance
+     */
+    typedef std::shared_ptr< SkeletonInstance > SkeletonPtr;
+
+    /**
      * @brief Constructeur
      */
     SkeletonInstance(): 

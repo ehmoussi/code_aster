@@ -119,6 +119,12 @@ private:
 
 public:
     /**
+     * @typedef StaticMacroElementPtr
+     * @brief Pointeur intelligent vers un StaticMacroElementInstance
+     */
+    typedef std::shared_ptr< StaticMacroElementInstance > StaticMacroElementPtr;
+
+    /**
      * @brief Constructeur
      */
     StaticMacroElementInstance(): 

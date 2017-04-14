@@ -61,7 +61,19 @@ class MaterialOnMeshInstance: public DataStructure
         /** @brief Maillage sur lequel repose la sd_cham_mater */
         MeshPtr                _supportMesh;
 
+        /**
+         * @brief Return a SyntaxMapContainer to emulate the command keywords
+         * @return SyntaxMapContainer
+         */
+        SyntaxMapContainer getCppCommandKeywords() throw ( std::runtime_error );
+
     public:
+        /**
+         * @typedef MaterialOnMeshPtr
+         * @brief Pointeur intelligent vers un MaterialOnMeshInstance
+         */
+        typedef std::shared_ptr< MaterialOnMeshInstance > MaterialOnMeshPtr;
+
         /**
          * @brief Constructeur
          */
@@ -104,6 +116,12 @@ class MaterialOnMeshInstance: public DataStructure
          * @return booleen indiquant que la construction s'est bien deroulee
          */
         bool build() throw ( std::runtime_error );
+
+        /**
+         * @brief Construction (au sens Jeveux fortran) de la sd_cham_mater
+         * @return booleen indiquant que la construction s'est bien deroulee
+         */
+        bool build_deprecated() throw ( std::runtime_error );
 
         /**
          * @brief Definition du maillage support

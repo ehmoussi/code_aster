@@ -45,11 +45,16 @@ private:
 
 public:
     /**
+     * @typedef GridPtr
+     * @brief Pointeur intelligent vers un GridInstance
+     */
+    typedef std::shared_ptr< GridInstance > GridPtr;
+
+    /**
      * @brief Constructeur
      */
     GridInstance();
 };
-
 
 /**
  * @typedef GridPtr

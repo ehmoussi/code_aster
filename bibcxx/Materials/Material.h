@@ -59,6 +59,20 @@ class MaterialInstance: public DataStructure
 
     public:
         /**
+         * @typedef MaterialPtr
+         * @brief Pointeur intelligent vers un Material
+         */
+        typedef std::shared_ptr< MaterialInstance > MaterialPtr;
+
+        /**
+         * @brief Constructeur
+         */
+        static MaterialPtr create()
+        {
+            return MaterialPtr( new MaterialInstance );
+        };
+
+        /**
          * @brief Constructeur
          */
         MaterialInstance();
