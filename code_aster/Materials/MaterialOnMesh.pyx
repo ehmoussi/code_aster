@@ -96,7 +96,7 @@ cdef class MaterialOnMesh( DataStructure ):
 
         logger.debug( "AFFE_MATERIAU: %r", dictSyntax )
         syntax.define( dictSyntax )
-        iret = instance.build()
+        iret = instance.build_deprecated()
         syntax.free()
         return iret
 

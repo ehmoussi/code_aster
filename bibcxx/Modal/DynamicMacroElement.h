@@ -85,6 +85,12 @@ private:
 
 public:
     /**
+     * @typedef DynamicMacroElementPtr
+     * @brief Pointeur intelligent vers un DynamicMacroElementInstance
+     */
+    typedef std::shared_ptr< DynamicMacroElementInstance > DynamicMacroElementPtr;
+
+    /**
      * @brief Constructeur
      */
     DynamicMacroElementInstance(): 

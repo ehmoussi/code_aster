@@ -56,6 +56,12 @@ private:
 
 public:
     /**
+     * @typedef PrestressingCableDefinition
+     * @brief Pointeur intelligent vers un PrestressingCableDefinitionInstance
+     */
+    typedef std::shared_ptr< PrestressingCableDefinitionInstance > PrestressingCableDefinitionPtr;
+
+    /**
      * @brief Constructeur
      */
     PrestressingCableDefinitionInstance();

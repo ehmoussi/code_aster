@@ -63,6 +63,12 @@ private:
 
 public:
     /**
+     * @typedef MatchingMeshesPtr
+     * @brief Pointeur intelligent vers un MatchingMeshesInstance
+     */
+    typedef std::shared_ptr< MatchingMeshesInstance > MatchingMeshesPtr;
+
+    /**
      * @brief Constructeur
      */
     MatchingMeshesInstance();

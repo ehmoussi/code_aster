@@ -80,6 +80,12 @@ private:
 
 public:
     /**
+     * @typedef CrackTipPtr
+     * @brief Pointeur intelligent vers un CrackTipInstance
+     */
+    typedef std::shared_ptr< CrackTipInstance > CrackTipPtr;
+
+    /**
      * @brief Constructeur
      */
     CrackTipInstance();

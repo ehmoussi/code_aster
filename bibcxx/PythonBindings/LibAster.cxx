@@ -59,6 +59,27 @@
 #include "PythonBindings/MechanicalLoadInterface.h"
 #include "PythonBindings/PhysicalQuantityInterface.h"
 #include "PythonBindings/ThermalLoadInterface.h"
+#include "PythonBindings/UnitaryThermalLoadInterface.h"
+#include "PythonBindings/BehaviourDefinitionInterface.h"
+#include "PythonBindings/MaterialInterface.h"
+#include "PythonBindings/MaterialBehaviourInterface.h"
+#include "PythonBindings/MaterialOnMeshInterface.h"
+#include "PythonBindings/GridInterface.h"
+#include "PythonBindings/MatchingMeshesInterface.h"
+#include "PythonBindings/SkeletonInterface.h"
+#include "PythonBindings/DynamicMacroElementInterface.h"
+#include "PythonBindings/StaticMacroElementInterface.h"
+#include "PythonBindings/CrackShapeInterface.h"
+#include "PythonBindings/GeneralizedModelInterface.h"
+#include "PythonBindings/ModelInterface.h"
+#include "PythonBindings/PhysicsAndModelingsInterface.h"
+#include "PythonBindings/PrestressingCableDefinitionInterface.h"
+#include "PythonBindings/XfemCrackInterface.h"
+#include "PythonBindings/BehaviourInterface.h"
+#include "PythonBindings/DrivingInterface.h"
+#include "PythonBindings/LineSearchMethodInterface.h"
+#include "PythonBindings/NonLinearMethodInterface.h"
+#include "PythonBindings/StateInterface.h"
 
 using namespace boost::python;
 
@@ -99,4 +120,25 @@ BOOST_PYTHON_MODULE(libaster)
     exportKinematicsLoadToPython();
     exportPhysicalQuantityToPython();
     exportThermalLoadToPython();
+    exportUnitaryThermalLoadToPython();
+    exportBehaviourDefinitionToPython();
+    exportMaterialToPython();
+    exportMaterialBehaviourToPython();
+    exportMaterialOnMeshToPython();
+    exportGridToPython();
+    exportMatchingMeshesToPython();
+    exportSkeletonToPython();
+    exportDynamicMacroElementToPython();
+    exportStaticMacroElementToPython();
+    exportCrackShapeToPython();
+    exportGeneralizedModelToPython();
+    exportModelToPython();
+    exportPhysicsAndModelingsToPython();
+    exportPrestressingCableDefinitionToPython();
+    exportXfemCrackToPython();
+    exportBehaviourToPython();
+    exportDrivingToPython();
+    exportLineSearchMethodToPython();
+    exportNonLinearMethodToPython();
+    exportStateToPython();
 };

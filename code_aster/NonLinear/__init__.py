@@ -159,7 +159,7 @@ from .Behaviour import (
 
 from .NonLinearMethod import ( 
 	NonLinearMethod,
-        Newton, Implex, NewtonKrylov,
+        NewtonMethod, Implex, NewtonKrylov,
         Tangente, Elastique, Extrapole, DeplCalcule,
         MatriceTangente, MatriceElastique, )
 

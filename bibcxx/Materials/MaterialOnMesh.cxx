@@ -29,6 +29,7 @@
 
 #include "Materials/MaterialOnMesh.h"
 #include "Utilities/SyntaxDictionary.h"
+#include "RunManager/CommandSyntaxCython.h"
 
 
 MaterialOnMeshInstance::MaterialOnMeshInstance():
@@ -40,7 +41,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance():
                                 _supportMesh( MeshPtr() )
 {};
 
-PyObject* MaterialOnMeshInstance::getCommandKeywords() throw ( std::runtime_error )
+SyntaxMapContainer MaterialOnMeshInstance::getCppCommandKeywords() throw ( std::runtime_error )
 {
     SyntaxMapContainer dict;
 
@@ -72,6 +73,12 @@ PyObject* MaterialOnMeshInstance::getCommandKeywords() throw ( std::runtime_erro
         listeAFFE.push_back( dict2 );
     }
     dict.container["AFFE"] = listeAFFE;
+    return dict;
+};
+
+PyObject* MaterialOnMeshInstance::getCommandKeywords() throw ( std::runtime_error )
+{
+    SyntaxMapContainer dict = getCppCommandKeywords();
 
     PyObject* returnDict = dict.convertToPythonDictionnary();
     return returnDict;
@@ -79,7 +86,29 @@ PyObject* MaterialOnMeshInstance::getCommandKeywords() throw ( std::runtime_erro
 
 bool MaterialOnMeshInstance::build() throw ( std::runtime_error )
 {
-    // Maintenant que le fichier de commande est pret, on appelle OP0018
+    auto syntax = CommandSyntaxCython( "AFFE_MATERIAU" );
+    syntax.setResult( getName(), getType() );
+    auto keywords = getCppCommandKeywords();
+    syntax.define( keywords );
+    // Maintenant que le fichier de commande est pret, on appelle OP006
+    try
+    {
+        ASTERINTEGER op = 6;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+    // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
+    _listOfMaterials->updateValuePointers();
+
+    return true;
+};
+
+bool MaterialOnMeshInstance::build_deprecated() throw ( std::runtime_error )
+{
+    // Maintenant que le fichier de commande est pret, on appelle OP006
     try
     {
         ASTERINTEGER op = 6;

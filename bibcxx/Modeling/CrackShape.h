@@ -56,6 +56,12 @@ private:
 
 public:
     /**
+     * @typedef CrackShapePtr
+     * @brief Pointeur intelligent vers un CrackShapeInstance
+     */
+    typedef std::shared_ptr< CrackShapeInstance > CrackShapePtr;
+
+    /**
      * @brief Constructeur
      */
     CrackShapeInstance();

@@ -60,6 +60,12 @@ private:
 
 public:
     /**
+     * @typedef GeneralizedModelPtr
+     * @brief Pointeur intelligent vers un GeneralizedModelInstance
+     */
+    typedef std::shared_ptr< GeneralizedModelInstance > GeneralizedModelPtr;
+
+    /**
      * @brief Constructeur
      */
     GeneralizedModelInstance(): 
