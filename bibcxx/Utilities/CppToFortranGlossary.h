@@ -129,4 +129,6 @@ class Glossary
 
 Glossary* getGlossary();
 
+const Glossary& getReferenceToGlossary();
+
 #endif /* CPPTOFORTRANGLOSSARY_H_ */

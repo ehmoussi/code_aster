@@ -86,6 +86,14 @@
 #include "PythonBindings/MechanicalModeContainerInterface.h"
 #include "PythonBindings/NonLinearEvolutionContainerInterface.h"
 #include "PythonBindings/ResultsContainerInterface.h"
+#include "PythonBindings/NormalModeAnalysisInterface.h"
+#include "PythonBindings/StaticMechanicalSolverInterface.h"
+#include "PythonBindings/StaticModeAnalysisInterface.h"
+#include "PythonBindings/StaticNonLinearAnalysisInterface.h"
+#include "PythonBindings/FailureConvergenceManagerInterface.h"
+#include "PythonBindings/StudyDescriptionInterface.h"
+#include "PythonBindings/TimeStepManagerInterface.h"
+#include "PythonBindings/CppToFortranGlossaryInterface.h"
 
 using namespace boost::python;
 
@@ -153,4 +161,12 @@ BOOST_PYTHON_MODULE(libaster)
     exportFourierCombinationToPython();
     exportMechanicalModeContainerToPython();
     exportNonLinearEvolutionContainerToPython();
+    exportNormalModeAnalysisToPython();
+    exportStaticMechanicalSolverToPython();
+    exportStaticModeAnalysisToPython();
+    exportStaticNonLinearAnalysisToPython();
+    exportFailureConvergenceManagerToPython();
+    exportStudyDescriptionToPython();
+    exportTimeStepManagerToPython();
+    exportCppToFortranGlossaryToPython();
 };
