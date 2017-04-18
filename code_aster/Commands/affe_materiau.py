@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster import Materials
+from code_aster import MaterialOnMesh
 from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 
@@ -39,7 +39,7 @@ def AFFE_MATERIAU( **kwargs ):
     """Opérateur d'affection d'un matériau"""
     checkCommandSyntax( Commands.AFFE_MATERIAU, kwargs )
 
-    materOnMesh = Materials.MaterialOnMesh()
+    materOnMesh = MaterialOnMesh.create()
 
     if kwargs.get( "MODELE" ) != None:
         raise NameError( "A Mesh is required, not a Model (not yet implemented)" )

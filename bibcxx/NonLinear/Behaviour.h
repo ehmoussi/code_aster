@@ -29,7 +29,7 @@
 
 #include "LinearAlgebra/SolverControl.h"
 #include "Materials/MaterialOnMesh.h"
-#include "Mesh/MeshEntities.h"
+#include "Meshes/MeshEntities.h"
 #include "NonLinear/AllowedBehaviour.h"
 #include "Modeling/Model.h"
 #include "RunManager/CommandSyntaxCython.h"

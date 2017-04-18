@@ -33,7 +33,7 @@
 #include "aster_fort.h"
 
 #include "MemoryManager/JeveuxVector.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 
 /**
  * @class SimpleFieldOnElementsInstance

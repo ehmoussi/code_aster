@@ -22,16 +22,16 @@
 from code_aster import Mesh, XfemCrack, CrackShape
 from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
-from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
+from code_aster import getGlossary
 
 
 def DEFI_FISS_XFEM( **kwargs ):
     """Operator to define XFEM cracks"""
     checkCommandSyntax( Commands.DEFI_FISS_XFEM, kwargs )
 
-    glossary = FortranGlossary()
+    glossary = getGlossary()
 
-    crack = XfemCrack(kwargs[ "MAILLAGE" ])
+    crack = XfemCrack.create(kwargs[ "MAILLAGE" ])
 
     if kwargs[ "MAILLAGE_GRILLE" ] != None:
         crack.setAuxiliaryGrid(kwargs[ "MAILLAGE_GRILLE" ])
@@ -45,7 +45,7 @@ def DEFI_FISS_XFEM( **kwargs ):
     shapeName = fkwDefi.get("FORM_FISS")
 
     if fkwDefi.get("FORM_FISS") != None:
-        crackShape=CrackShape()
+        crackShape=CrackShape.create()
 
     if shapeName == "ELLIPSE":
         crackShape.setEllipseCrackShape(fkwDefi.get("DEMI_GRAND_AXE"), fkwDefi.get("DEMI_PETIT_AXE"), fkwDefi.get("CENTRE"), fkwDefi.get("VECT_X"), fkwDefi.get("VECT_Y"), fkwDefi.get("COTE_FISS"))

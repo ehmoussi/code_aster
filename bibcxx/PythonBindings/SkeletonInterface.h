@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "Mesh/Skeleton.h"
+#include "Meshes/Skeleton.h"
 
 void exportSkeletonToPython();
 

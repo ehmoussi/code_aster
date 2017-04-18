@@ -37,5 +37,6 @@ void exportCppToFortranGlossaryToPython()
         .def( "getSolver", &Glossary::getSolver )
     ;
 
-    def( "getGlossary", &getReferenceToGlossary, return_internal_reference<>() );
+    def( "getGlossary", &getReferenceToGlossary,
+         return_value_policy<reference_existing_object>() );
 };

@@ -6,7 +6,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 
 

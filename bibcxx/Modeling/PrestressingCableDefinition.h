@@ -28,7 +28,7 @@
 
 #include <stdexcept>
 #include "astercxx.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 
 #include "DataFields/Table.h"
 #include "Loads/ListOfLinearRelations.h"

@@ -28,8 +28,8 @@
 
 #include "astercxx.h"
 #include "DataFields/FieldOnNodes.h"
-#include "DataStructure/DataStructure.h"
-#include "Mesh/Mesh.h"
+#include "DataStructures/DataStructure.h"
+#include "Meshes/Mesh.h"
 #include "Function/Function.h"
 #include "Modeling/CrackShape.h"
 

@@ -25,7 +25,7 @@
  */
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 
 void exportDataStructureToPython();
 

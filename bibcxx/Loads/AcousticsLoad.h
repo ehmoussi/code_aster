@@ -29,10 +29,10 @@
 #include <string>
 #include "astercxx.h"
 #include "Modeling/Model.h"
-#include "Mesh/LocalizationManager.h"
+#include "Meshes/LocalizationManager.h"
 #include "Loads/PhysicalQuantity.h"
 #include "Utilities/CapyConvertibleValue.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "DataFields/PCFieldOnMesh.h"
 

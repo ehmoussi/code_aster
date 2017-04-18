@@ -27,7 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
-#include "Mesh/Mesh.h"
+#include "Meshes/Mesh.h"
 #include "PythonBindings/DataStructureInterface.h"
 
 void exportMeshToPython();

@@ -28,7 +28,7 @@
 
 #include "Modeling/Model.h"
 #include "Interactions/ContactZone.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "RunManager/CommandSyntaxCython.h"
 
 /**

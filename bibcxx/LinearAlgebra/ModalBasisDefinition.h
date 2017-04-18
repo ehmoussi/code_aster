@@ -26,7 +26,7 @@
 
 #include "astercxx.h"
 
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "LinearAlgebra/StructureInterface.h"
 #include "Utilities/CapyConvertibleValue.h"
 #include "LinearAlgebra/LinearSolver.h"

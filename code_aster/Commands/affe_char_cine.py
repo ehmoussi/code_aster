@@ -22,11 +22,11 @@
 from code_aster import Mesh, Model, KinematicsLoad
 from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
-from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
+from code_aster import getGlossary
 
 
 def _addLoad( load, fkwImpo, nameOfImpo ):
-    glossary = FortranGlossary()
+    glossary = getGlossary()
 
     kwTout = None
     kwGroupMa = None
@@ -63,7 +63,7 @@ def AFFE_CHAR_CINE( **kwargs ):
     """Opérateur d'affection d'un chargement cinématique"""
     checkCommandSyntax( Commands.AFFE_CHAR_CINE, kwargs )
 
-    load = KinematicsLoad()
+    load = KinematicsLoad.create()
     load.setSupportModel( kwargs[ "MODELE" ] )
 
     fkwMecaImpo = kwargs.get( "MECA_IMPO" )

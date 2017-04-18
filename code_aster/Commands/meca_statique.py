@@ -19,10 +19,10 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster import Solvers, Loads, LinearAlgebra
+from code_aster import LinearSolver, StaticMechanicalSolver
 from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
-from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
+from code_aster import getGlossary
 
 
 def _addLoad( mechaSolv, fkw ):
@@ -30,9 +30,9 @@ def _addLoad( mechaSolv, fkw ):
     if fkw.get( "FONC_MULT" ):
         raise NotImplementedError( "Unsupported keyword: {0}".format("FONC_MULT") )
 
-    if isinstance( load, Loads.KinematicsLoad ):
+    if isinstance( load, KinematicsLoad ):
         mechaSolv.addKinematicsLoad( load )
-    elif isinstance( load, Loads.MechanicalLoad ):
+    elif isinstance( load, MechanicalLoad ):
         mechaSolv.addMechanicalLoad( load )
     else:
         assert False
@@ -42,12 +42,12 @@ def MECA_STATIQUE( **kwargs ):
     """Opérateur de résolution de mécanique statique linéaire"""
     checkCommandSyntax( Commands.MECA_STATIQUE, kwargs )
 
-    mechaSolv = Solvers.StaticMechanicalSolver()
+    mechaSolv = StaticMechanicalSolver.create()
 
     model = kwargs[ "MODELE" ]
     matOnMesh = kwargs[ "CHAM_MATER" ]
     mechaSolv.setSupportModel( model )
-    mechaSolv.setMaterialOnMesh(matOnMesh  )
+    mechaSolv.setMaterialOnMesh( matOnMesh )
 
     if kwargs.get( "CARA_ELEM" ):
         raise NotImplementedError("Unsupported keyword: '{0}'".format("CARA_ELEM"))
@@ -73,11 +73,11 @@ def MECA_STATIQUE( **kwargs ):
     methode = fkwSolv[ "METHODE" ]
     renum = fkwSolv[ "RENUM" ]
 
-    glossary = FortranGlossary()
+    glossary = getGlossary()
     solverInt = glossary.getSolver( methode )
     renumInt = glossary.getRenumbering( renum )
     # print solverInt, renumInt
-    currentSolver = LinearAlgebra.LinearSolver( solverInt, renumInt )
+    currentSolver = LinearSolver.create( solverInt, renumInt )
 
     mechaSolv.setLinearSolver( currentSolver )
 

@@ -29,7 +29,7 @@
 #include "astercxx.h"
 
 #include "MemoryManager/JeveuxVector.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "Studies/FailureConvergenceManager.h"
 #include "Utilities/GenericParameter.h"
 #include "Results/ResultsContainer.h"

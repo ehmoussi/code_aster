@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "Mesh/MatchingMeshes.h"
+#include "Meshes/MatchingMeshes.h"
 
 void exportMatchingMeshesToPython();
 

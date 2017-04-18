@@ -74,7 +74,7 @@ def DEFI_FONCTION( **kwargs ):
     PROL_GAUCHE = kwargs.get("PROL_GAUCHE", "E")
     PROL_DROITE = kwargs.get("PROL_DROITE", "E")
 
-    func = Function()
+    func = Function.create()
     func.setParameterName( NOM_PARA )
     func.setResultName( NOM_RESU )
     func.setInterpolation( INTERPOL )

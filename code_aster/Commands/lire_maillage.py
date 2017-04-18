@@ -27,7 +27,7 @@ from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 def LIRE_MAILLAGE( **kwargs ):
     """Opérateur de relecture du maillage"""
     checkCommandSyntax( Commands.LIRE_MAILLAGE, kwargs )
-    mesh = Mesh()
+    mesh = Mesh.create()
     fileName = "fort." + str( kwargs["UNITE"] )
     format = kwargs["FORMAT"]
     if format == "MED":

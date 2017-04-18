@@ -32,7 +32,7 @@
 #include "astercxx.h"
 #include "aster_fort.h"
 
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
