@@ -29,7 +29,7 @@
 #include "RunManager/CommandSyntaxCython.h"
 #include "Discretization/DiscreteProblem.h"
 #include "Discretization/DOFNumbering.h"
-#include "DataStructure/TemporaryDataStructureName.h"
+#include "DataStructures/TemporaryDataStructureName.h"
 #include "Algorithms/GenericAlgorithm.h"
 #include "Algorithms/StaticMechanicalAlgorithm.h"
 

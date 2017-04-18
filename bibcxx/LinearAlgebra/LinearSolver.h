@@ -33,7 +33,7 @@
 #include "DataFields/FieldOnNodes.h"
 #include "LinearAlgebra/AllowedLinearSolver.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Utilities/GenericParameter.h"
 

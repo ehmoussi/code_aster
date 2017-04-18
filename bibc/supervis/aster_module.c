@@ -32,7 +32,7 @@
 #include "aster_utils.h"
 #include "aster_exceptions.h"
 
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 
 /*
  * Only an extract of #include "code_aster/Supervis/libCommandSyntax.h"

@@ -27,7 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "MemoryManager/JeveuxVector.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "Algorithms/GenericStepper.h"
 
 typedef std::vector< double > VectorDouble;

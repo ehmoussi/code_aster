@@ -30,7 +30,7 @@
 #include "astercxx.h"
 #include <string>
 
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "LinearAlgebra/LinearSolver.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"

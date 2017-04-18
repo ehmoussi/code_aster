@@ -45,14 +45,14 @@ from libaster import *
 
 # import datastructures, physical quantities and constants
 # each package is responsible to export only the relevant objects
-from .DataStructure import DataStructure
+from .DataStructures import *
 from .DataFields import *
 from .Flow import *
 from .Function import *
 from .Geometry import *
 from .LinearAlgebra import *
 from .Materials import *
-from .Mesh import *
+from .Meshes import *
 from .Modal import *
 from .Modeling import *
 from .Results import *

@@ -70,6 +70,7 @@
 #include "PythonBindings/DynamicMacroElementInterface.h"
 #include "PythonBindings/StaticMacroElementInterface.h"
 #include "PythonBindings/CrackShapeInterface.h"
+#include "PythonBindings/CrackTipInterface.h"
 #include "PythonBindings/GeneralizedModelInterface.h"
 #include "PythonBindings/ModelInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
@@ -132,6 +133,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportStructureInterfaceToPython();
     exportAcousticsLoadToPython();
     exportKinematicsLoadToPython();
+    exportMechanicalLoadToPython();
     exportPhysicalQuantityToPython();
     exportThermalLoadToPython();
     exportUnitaryThermalLoadToPython();
@@ -145,6 +147,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportDynamicMacroElementToPython();
     exportStaticMacroElementToPython();
     exportCrackShapeToPython();
+    exportCrackTipToPython();
     exportGeneralizedModelToPython();
     exportModelToPython();
     exportPhysicsAndModelingsToPython();

@@ -28,7 +28,7 @@
 
 #include <stdexcept>
 #include "astercxx.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "Modeling/Model.h"
 #include "Materials/Material.h"
 #include "DataFields/PCFieldOnMesh.h"

@@ -26,7 +26,7 @@
 
 #include "astercxx.h"
 
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Discretization/DOFNumbering.h"

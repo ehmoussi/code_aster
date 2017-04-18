@@ -28,8 +28,8 @@
 
 #include <stdexcept>
 #include "astercxx.h"
-#include "DataStructure/DataStructure.h"
-#include "Mesh/Mesh.h"
+#include "DataStructures/DataStructure.h"
+#include "Meshes/Mesh.h"
 #include "Modeling/ElementaryModeling.h"
 #include "Modeling/XfemCrack.h"
 #include <map>

@@ -21,21 +21,19 @@
 
 import types
 
-from code_aster import Materials
+from code_aster import Material
 from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
-from code_aster.Utilities.CppToFortranGlossary import FortranGlossary
-from code_aster.Materials import MaterialBehaviour
 
 
 def _byKeyword():
     """Build the list of all objects of the given type"""
     objects = {}
-    for name in dir(MaterialBehaviour):
-        obj = getattr(MaterialBehaviour, name)
+    for name in dir(code_aster.libaster):
+        obj = getattr(code_aster, name)
         if name == "GeneralMaterialBehaviour" or type(obj) is not type:
             continue
-        if issubclass(obj, MaterialBehaviour.GeneralMaterialBehaviour):
+        if issubclass(obj, code_aster.GeneralMaterialBehaviour):
             keyword = obj().getAsterName()
             objects[keyword] = obj
     return objects
@@ -46,7 +44,7 @@ def DEFI_MATERIAU( **kwargs ):
     checkCommandSyntax( Commands.DEFI_MATERIAU, kwargs )
 
     classByName = _byKeyword()
-    mater = Materials.Material()
+    mater = Material.create()
     for fkwName, fkw in kwargs.iteritems():
         # only see factor keyword
         if type( fkw ) is not dict:

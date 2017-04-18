@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 #include "definition.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 

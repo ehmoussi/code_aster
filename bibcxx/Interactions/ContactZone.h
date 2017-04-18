@@ -24,7 +24,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Mesh/Mesh.h"
+#include "Meshes/Mesh.h"
 #include "Function/Function.h"
 #include "Utilities/CapyConvertibleValue.h"
 

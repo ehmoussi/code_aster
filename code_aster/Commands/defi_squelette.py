@@ -19,4 +19,4 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.Mesh.SkeletonDefinition import *
+from code_aster.Meshes.SkeletonDefinition import *

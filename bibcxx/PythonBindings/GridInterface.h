@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "Mesh/Grid.h"
+#include "Meshes/Grid.h"
 
 void exportGridToPython();
 

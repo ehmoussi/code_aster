@@ -30,8 +30,8 @@
 #include <map>
 #include "astercxx.h"
 
-#include "DataStructure/DataStructure.h"
-#include "Mesh/Mesh.h"
+#include "DataStructures/DataStructure.h"
+#include "Meshes/Mesh.h"
 #include "Utilities/GenericParameter.h"
 
 /**

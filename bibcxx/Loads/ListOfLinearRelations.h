@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 
 /**
  * @class ListOfLinearRelationsInstance

@@ -27,9 +27,9 @@
 #include <stdexcept>
 #include <string> 
 #include "astercxx.h"
-#include "DataStructure/DataStructure.h"
+#include "DataStructures/DataStructure.h"
 #include "Loads/PhysicalQuantity.h"
-#include "Mesh/MeshEntities.h"
+#include "Meshes/MeshEntities.h"
 #include "Modeling/Model.h"
 
 #include "RunManager/CommandSyntaxCython.h"
