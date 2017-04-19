@@ -32,6 +32,8 @@ libCommandSyntax.commandsRegister(Commands.commandStore)
 
 executionParameter.parse_args()
 
+from code_aster.Supervis import libFile
+
 # automatic startup
 if executionParameter.get( 'autostart' ):
     Initializer.init( executionParameter.get( 'buildelem' ) )
