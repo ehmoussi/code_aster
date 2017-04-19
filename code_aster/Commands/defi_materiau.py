@@ -21,6 +21,7 @@
 
 import types
 
+import code_aster
 from code_aster import Material
 from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
@@ -31,11 +32,13 @@ def _byKeyword():
     objects = {}
     for name in dir(code_aster.libaster):
         obj = getattr(code_aster, name)
-        if name == "GeneralMaterialBehaviour" or type(obj) is not type:
+        if name == "GeneralMaterialBehaviour" or type(obj) is type:
             continue
-        if issubclass(obj, code_aster.GeneralMaterialBehaviour):
-            keyword = obj().getAsterName()
-            objects[keyword] = obj
+        try:
+            if issubclass(obj, code_aster.GeneralMaterialBehaviour):
+                keyword = obj.create().getAsterName()
+                objects[keyword] = obj
+        except: pass
     return objects
 
 
@@ -52,7 +55,7 @@ def DEFI_MATERIAU( **kwargs ):
         klass = classByName.get(fkwName)
         if not klass:
             raise NotImplementedError("Unsupported behaviour: '{0}'".format(fkwName))
-        matBehav = klass()
+        matBehav = klass.create()
         for skwName, skw in fkw.iteritems():
             if type( skw ) is float:
                 iName = skwName.capitalize()
