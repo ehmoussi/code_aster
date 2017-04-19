@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from code_aster.Supervis.libtest import python_execop
+from code_aster.Supervis.libAsterFortran import python_execop
 from code_aster.Supervis.libCommandSyntax import CommandSyntax
 from code_aster import DOFNumbering
 
