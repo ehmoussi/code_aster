@@ -162,6 +162,18 @@ public:
     bool readAsterMeshFile( const std::string& fileName ) throw ( std::runtime_error );
 
     /**
+     * @brief Read a Aster Mesh file
+     * @return retourne true si tout est ok
+     */
+    bool readGibiFile( const std::string& fileName ) throw ( std::runtime_error );
+
+    /**
+     * @brief Read a Aster Mesh file
+     * @return retourne true si tout est ok
+     */
+    bool readGmshFile( const std::string& fileName ) throw ( std::runtime_error );
+
+    /**
      * @brief Read a MED Mesh file
      * @return retourne true si tout est ok
      */

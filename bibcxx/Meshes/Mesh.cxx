@@ -99,16 +99,21 @@ bool MeshInstance::readMeshFile( const std::string& fileName, const std::string&
     throw ( std::runtime_error )
 {
     LogicalUnitFileCython file1( fileName, Binary, Old );
-    // Fichier temporaire
-    LogicalUnitFileCython file2( fileName, Binary, Old );
 
-    ASTERINTEGER op = 0;
+    CommandSyntaxCython cmdSt( "LIRE_MAILLAGE" );
+    cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
+
+    SyntaxMapContainer syntax;
+    syntax.container[ "FORMAT" ] = format;
+
     if( format == "GIBI" || format == "GMSH" )
     {
-        throw;
+        const std::string tmpFileName = getTemporaryFileName( "." );
+        // Fichier temporaire
+        LogicalUnitFileCython file2( tmpFileName, Binary, New );
         std::string preCmd = "PRE_" + format;
-        ASTERINTEGER op = 47;
-        if( format == "GIBI" ) op = 49;
+        ASTERINTEGER op2 = 47;
+        if( format == "GIBI" ) op2 = 49;
 
         CommandSyntaxCython cmdSt2( preCmd );
         SyntaxMapContainer syntax2;
@@ -118,20 +123,18 @@ bool MeshInstance::readMeshFile( const std::string& fileName, const std::string&
 
         try
         {
-            CALL_EXECOP( &op );
+            CALL_EXECOP( &op2 );
         }
         catch( ... )
         {
             throw;
         }
+        syntax.container[ "UNITE" ] = file2.getLogicalUnit();
     }
-
-    CommandSyntaxCython cmdSt( "LIRE_MAILLAGE" );
-    cmdSt.setResult( getResultObjectName(), "MAILLAGE" );
-
-    SyntaxMapContainer syntax;
-    syntax.container[ "FORMAT" ] = format;
-    syntax.container[ "UNITE" ] = file2.getLogicalUnit();
+    else
+    {
+        syntax.container[ "UNITE" ] = file1.getLogicalUnit();
+    }
 
     cmdSt.define( syntax );
 
@@ -154,6 +157,22 @@ bool MeshInstance::readAsterMeshFile( const std::string& fileName )
     throw ( std::runtime_error )
 {
     readMeshFile( fileName, "ASTER" );
+
+    return true;
+};
+
+bool MeshInstance::readGibiFile( const std::string& fileName )
+    throw ( std::runtime_error )
+{
+    readMeshFile( fileName, "GIBI" );
+
+    return true;
+};
+
+bool MeshInstance::readGmshFile( const std::string& fileName )
+    throw ( std::runtime_error )
+{
+    readMeshFile( fileName, "GMSH" );
 
     return true;
 };

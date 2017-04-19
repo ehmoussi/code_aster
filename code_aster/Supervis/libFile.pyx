@@ -24,6 +24,8 @@ from code_aster.Supervis.libCommandSyntax import getCurrentCommand, setCurrentCo
 
 from code_aster.Supervis.libCommandSyntax import _F
 
+from libcpp.string cimport string
+import tempfile
 
 cdef char* FileTypeName[3]
 FileTypeName[0] = "ASCII"
@@ -167,3 +169,8 @@ cdef public int getFileLogicalUnit( const char* name ):
     pyName = <bytes> name
     returnInt = cppFileDict[ pyName ].getLogicalUnit()
     return returnInt
+
+cdef public string getTemporaryFileName( const char* dir ):
+    dirPython = <bytes> dir
+    cdef string tmpfile = tempfile.NamedTemporaryFile( dir = dirPython ).name
+    return tmpfile

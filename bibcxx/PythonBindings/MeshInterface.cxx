@@ -35,6 +35,9 @@ void exportMeshToPython()
         .def( "create", &createSharedPtr< MeshInstance > )
         .staticmethod( "create" )
         .def( "getCoordinates", &MeshInstance::getCoordinates )
+        .def( "readAsterMeshFile", &MeshInstance::readAsterMeshFile )
+        .def( "readGibiFile", &MeshInstance::readGibiFile )
+        .def( "readGmshFile", &MeshInstance::readGmshFile )
         .def( "readMedFile", &MeshInstance::readMedFile )
     ;
 };
