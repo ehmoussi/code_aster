@@ -28,6 +28,7 @@
 __PYX_EXTERN_C DL_IMPORT(void) newLogicalUnitFile(const char *, const int, const int);
 __PYX_EXTERN_C DL_IMPORT(void) deleteLogicalUnitFile(const char *);
 __PYX_EXTERN_C DL_IMPORT(int) getFileLogicalUnit(const char *);
+__PYX_EXTERN_C DL_IMPORT(std::string) getTemporaryFileName(const char *);
 
 enum FileTypeCython { Ascii, Binary, Free };
 enum FileAccessCython { New, Append, Old };
@@ -42,6 +43,8 @@ class LogicalUnitFileCython
     private:
         /** @brief Nom de la commande */
         const std::string _fileName;
+        /** @brief Booleen pour savoir si un fichier est utilisable */
+        const bool _isUsable;
 
     public:
         /**
@@ -50,9 +53,21 @@ class LogicalUnitFileCython
          * @param type type du fichier
          * @param access Accés au fichier
          */
+        LogicalUnitFileCython():
+            _fileName( "" ),
+            _isUsable( false )
+        {};
+
+        /**
+         * @brief Constructeur
+         * @param name Nom du fichier
+         * @param type type du fichier
+         * @param access Accés au fichier
+         */
         LogicalUnitFileCython( const std::string name, const FileTypeCython type,
                                const FileAccessCython access ):
-            _fileName( name )
+            _fileName( name ),
+            _isUsable( true )
         {
             newLogicalUnitFile( name.c_str(), type, access );
         };
@@ -62,15 +77,26 @@ class LogicalUnitFileCython
          */
         ~LogicalUnitFileCython()
         {
-            deleteLogicalUnitFile( _fileName.c_str() );
+            if( _isUsable ) deleteLogicalUnitFile( _fileName.c_str() );
         };
 
         /**
          * @brief Recuperer le numéro d'unité logique correspondant
          * @return Unité logique
          */
-        int getLogicalUnit( void ) const
+        bool isUsable( void ) const
         {
+            return _isUsable;
+        };
+
+        /**
+         * @brief Recuperer le numéro d'unité logique correspondant
+         * @return Unité logique
+         */
+        int getLogicalUnit( void ) const throw( std::runtime_error )
+        {
+            if( !_isUsable )
+                throw std::runtime_error( "File not initialized" );
             return getFileLogicalUnit( _fileName.c_str() );
         };
 };
