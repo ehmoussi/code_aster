@@ -64,6 +64,16 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
     if ( curIter == mapNameDataStructure.end() )
         throw std::runtime_error( "Problem !!!" );
     mapNameDataStructure.erase( curIter );
+#ifdef _DEBUG_CXX
+    std::string base( "G" );
+    long pos = 1;
+    long nbval2 = 0;
+    long retour = 0;
+    std::string nothing( "" );
+    CALL_JELSTC( base.c_str(), _name.c_str(), &pos, &nbval2, nothing.c_str(), &retour );
+    if ( nbval2 != 0 )
+        throw std::runtime_error( "Remaining jeveux objects in " + _name );
+#endif
 };
 
 void DataStructure::debugPrint( int logicalUnit ) const

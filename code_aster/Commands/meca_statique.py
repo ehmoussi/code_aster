@@ -76,7 +76,6 @@ def MECA_STATIQUE( **kwargs ):
     glossary = getGlossary()
     solverInt = glossary.getSolver( methode )
     renumInt = glossary.getRenumbering( renum )
-    print solverInt, renumInt
     currentSolver = LinearSolver.create( solverInt, renumInt )
 
     mechaSolv.setLinearSolver( currentSolver )
