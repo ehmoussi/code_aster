@@ -145,6 +145,10 @@ extern void DEFSP(JENONU,jenonu, char*, STRING_SIZE, ASTERINTEGER* );
 #define CALL_JEVEUOC(a, b, c) CALLSSP(JEVEUOC, jeveuoc, a, b, c)
 void DEFSSP(JEVEUOC, jeveuoc, const char *, STRING_SIZE, const char *, STRING_SIZE, void*);
 
+#define CALL_JELSTC(a, b, c, d, e, f) CALLSSPPSP(JELSTC, jelstc, a, b, c, d, e, f)
+void DEFSSPPSP(JELSTC, jelstc, const char *, STRING_SIZE, const char *, STRING_SIZE, ASTERINTEGER*,
+                               ASTERINTEGER*, const char *, STRING_SIZE, ASTERINTEGER* );
+
 #define CALL_WKVECTC(a, b, c, d) CALLSSPP(WKVECTC, wkvectc, a, b, c, d)
 void DEFSSPP(WKVECTC, wkvectc, const char *, STRING_SIZE, const char *, STRING_SIZE,
              ASTERINTEGER*, void*);
