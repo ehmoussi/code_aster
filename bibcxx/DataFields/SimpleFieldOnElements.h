@@ -64,7 +64,7 @@ public:
      * @typedef SimpleFieldOnElementsPtr
      * @brief Pointeur intelligent vers un SimpleFieldOnElements
      */
-    typedef std::shared_ptr< SimpleFieldOnElementsInstance > SimpleFieldOnElementsPtr;
+    typedef boost::shared_ptr< SimpleFieldOnElementsInstance > SimpleFieldOnElementsPtr;
 
     /**
      * @brief Constructeur
@@ -169,7 +169,7 @@ typedef SimpleFieldOnElementsInstance< double > SimpleFieldOnElementsDoubleInsta
  * @typedef SimpleFieldOnElementsPtrDouble
  * @brief Definition d'un champ aux éléments de double
  */
-typedef std::shared_ptr< SimpleFieldOnElementsDoubleInstance > SimpleFieldOnElementsDoublePtr;
+typedef boost::shared_ptr< SimpleFieldOnElementsDoubleInstance > SimpleFieldOnElementsDoublePtr;
 
 /** @typedef SimpleFieldOnElementsInstanceLong Instance d'une carte de long */
 typedef SimpleFieldOnElementsInstance< long > SimpleFieldOnElementsLongInstance;
@@ -178,6 +178,6 @@ typedef SimpleFieldOnElementsInstance< long > SimpleFieldOnElementsLongInstance;
  * @typedef SimpleFieldOnElementsPtrLong
  * @brief Definition d'un champ aux éléments de long
  */
-typedef std::shared_ptr< SimpleFieldOnElementsLongInstance > SimpleFieldOnElementsLongPtr;
+typedef boost::shared_ptr< SimpleFieldOnElementsLongInstance > SimpleFieldOnElementsLongPtr;
 
 #endif /* SIMPLEFIELDONELEMENTS_H_ */

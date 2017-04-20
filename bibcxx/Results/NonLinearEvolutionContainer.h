@@ -54,6 +54,6 @@ class NonLinearEvolutionContainerInstance: public ResultsContainerInstance
  * @typedef NonLinearEvolutionContainerPtr
  * @brief Pointeur intelligent vers un NonLinearEvolutionContainerInstance
  */
-typedef std::shared_ptr< NonLinearEvolutionContainerInstance > NonLinearEvolutionContainerPtr;
+typedef boost::shared_ptr< NonLinearEvolutionContainerInstance > NonLinearEvolutionContainerPtr;
 
 #endif /* NONLINEAREVOLUTIONCONTAINER_H_ */

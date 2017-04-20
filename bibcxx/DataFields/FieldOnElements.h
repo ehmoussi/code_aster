@@ -46,7 +46,7 @@ class FieldOnElementsInstance: public DataStructure
 {
 private:
     typedef SimpleFieldOnElementsInstance< ValueType > SimpleFieldOnElementsValueTypeInstance;
-    typedef std::shared_ptr< SimpleFieldOnElementsDoubleInstance > SimpleFieldOnElementsValueTypePtr;
+    typedef boost::shared_ptr< SimpleFieldOnElementsDoubleInstance > SimpleFieldOnElementsValueTypePtr;
 
     /** @brief Vecteur Jeveux '.CELD' */
     JeveuxVectorLong        _descriptor;
@@ -60,7 +60,7 @@ public:
      * @typedef FieldOnElementsPtr
      * @brief Pointeur intelligent vers un FieldOnElements
      */
-    typedef std::shared_ptr< FieldOnElementsInstance > FieldOnElementsPtr;
+    typedef boost::shared_ptr< FieldOnElementsInstance > FieldOnElementsPtr;
 
     /**
      * @brief Constructeur
@@ -138,7 +138,7 @@ typedef FieldOnElementsInstance< double > FieldOnElementsDoubleInstance;
  * @typedef FieldOnElementsPtrDouble
  * @brief Definition d'un champ aux éléments de double
  */
-typedef std::shared_ptr< FieldOnElementsDoubleInstance > FieldOnElementsDoublePtr;
+typedef boost::shared_ptr< FieldOnElementsDoubleInstance > FieldOnElementsDoublePtr;
 
 /** @typedef FieldOnElementsInstanceLong Instance d'une carte de long */
 typedef FieldOnElementsInstance< long > FieldOnElementsLongInstance;
@@ -147,6 +147,6 @@ typedef FieldOnElementsInstance< long > FieldOnElementsLongInstance;
  * @typedef FieldOnElementsPtrLong
  * @brief Definition d'un champ aux éléments de long
  */
-typedef std::shared_ptr< FieldOnElementsLongInstance > FieldOnElementsLongPtr;
+typedef boost::shared_ptr< FieldOnElementsLongInstance > FieldOnElementsLongPtr;
 
 #endif /* FIELDONELEMENTS_H_ */

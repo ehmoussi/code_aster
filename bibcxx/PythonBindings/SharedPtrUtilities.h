@@ -31,9 +31,9 @@
  * @author Nicolas Sellenet
  */
 template< typename A, typename... Args >
-static std::shared_ptr<A> createSharedPtr( Args... args )
+static boost::shared_ptr<A> createSharedPtr( Args... args )
 {
-    return std::shared_ptr<A>( new A( args... ) );
+    return boost::shared_ptr<A>( new A( args... ) );
 };
 
 #endif /* SHAREDPTRUTILITIES_H_ */

@@ -30,7 +30,7 @@
 #include <map>
 #include <iostream>
 #include <complex>
-#include <memory>
+#include <boost/shared_ptr.hpp>
 
 typedef std::complex< double > DoubleComplex;
 

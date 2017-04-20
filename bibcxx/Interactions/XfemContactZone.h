@@ -74,7 +74,7 @@ public:
      * @typedef ContactZonePtr
      * @brief Pointeur intelligent vers un ContactZone
      */
-    typedef std::shared_ptr< XfemContactZoneInstance > ContactZonePtr;
+    typedef boost::shared_ptr< XfemContactZoneInstance > ContactZonePtr;
 
     /**
      * @brief Constructeur
@@ -264,6 +264,6 @@ public:
     };
 };
 
-typedef std::shared_ptr< XfemContactZoneInstance > XfemContactZonePtr;
+typedef boost::shared_ptr< XfemContactZoneInstance > XfemContactZonePtr;
 
 #endif /* XFEMCONTACTZONE_H_ */

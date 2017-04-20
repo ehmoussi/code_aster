@@ -73,7 +73,7 @@ class SolverControlInstance
  * @typedef SolverControlPtr
  * @brief Pointeur intelligent vers un SolverControl
  */
-typedef std::shared_ptr< SolverControlInstance > SolverControlPtr;
+typedef boost::shared_ptr< SolverControlInstance > SolverControlPtr;
 
 
 #endif

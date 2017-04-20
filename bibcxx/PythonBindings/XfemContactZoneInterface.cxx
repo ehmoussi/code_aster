@@ -50,6 +50,7 @@ void exportXfemContactZoneToPython()
             bases< GenericContactZoneInstance > >
         ( "XfemContactZone", no_init )
         .def( "create", &XfemContactZoneInstance::create )
+        .staticmethod( "create" )
         .def( "addFriction", &XfemContactZoneInstance::addFriction )
         .def( "disableSlidingContact",
               &XfemContactZoneInstance::disableSlidingContact )

@@ -129,6 +129,6 @@ class StaticMechanicalSolverInstance: public GenericSolver
  * @typedef StaticMechanicalSolverPtr
  * @brief Enveloppe d'un pointeur intelligent vers un StaticMechanicalSolverInstance
  */
-typedef std::shared_ptr< StaticMechanicalSolverInstance > StaticMechanicalSolverPtr;
+typedef boost::shared_ptr< StaticMechanicalSolverInstance > StaticMechanicalSolverPtr;
 
 #endif /* STATICMECHANICALSOLVER_H_ */

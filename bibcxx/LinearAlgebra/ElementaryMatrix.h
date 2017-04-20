@@ -58,7 +58,7 @@ public:
      * @typedef ElementaryMatrixPtr
      * @brief Pointeur intelligent vers un ElementaryMatrix
      */
-    typedef std::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
+    typedef boost::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
 
     /**
      * @brief Constructeur
@@ -113,6 +113,6 @@ public:
  * @typedef ElementaryMatrixPtr
  * @brief Pointeur intelligent vers un ElementaryMatrixInstance
  */
-typedef std::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
+typedef boost::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
 
 #endif /* ELEMENTARYMATRIX_H_ */

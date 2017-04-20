@@ -49,7 +49,7 @@ public:
      * @typedef GenericModalBasisPtr
      * @brief Pointeur intelligent vers un GenericModalBasis
      */
-    typedef std::shared_ptr< GenericModalBasisInstance > GenericModalBasisPtr;
+    typedef boost::shared_ptr< GenericModalBasisInstance > GenericModalBasisPtr;
 
     /**
      * @brief Constructeur
@@ -205,7 +205,7 @@ public:
  * @typedef ModalBasisDefinitionPtr
  * @brief Enveloppe d'un pointeur intelligent vers un GenericModalBasisInstance
  */
-typedef std::shared_ptr< GenericModalBasisInstance > GenericModalBasisPtr;
+typedef boost::shared_ptr< GenericModalBasisInstance > GenericModalBasisPtr;
 
 class StandardModalBasisInstance: public GenericModalBasisInstance
 {
@@ -214,7 +214,7 @@ public:
      * @typedef StandardModalBasisPtr
      * @brief Pointeur intelligent vers un StandardModalBasis
      */
-    typedef std::shared_ptr< StandardModalBasisInstance > StandardModalBasisPtr;
+    typedef boost::shared_ptr< StandardModalBasisInstance > StandardModalBasisPtr;
 
     /**
      * @brief Constructeur
@@ -263,7 +263,7 @@ public:
      * @typedef RitzBasisPtr
      * @brief Pointeur intelligent vers un RitzBasis
      */
-    typedef std::shared_ptr< RitzBasisInstance > RitzBasisPtr;
+    typedef boost::shared_ptr< RitzBasisInstance > RitzBasisPtr;
 
     /**
      * @brief Constructeur
@@ -360,7 +360,7 @@ public:
      * @typedef OrthonormalizedBasisPtr
      * @brief Pointeur intelligent vers un OrthonormalizedBasis
      */
-    typedef std::shared_ptr< OrthonormalizedBasisInstance > OrthonormalizedBasisPtr;
+    typedef boost::shared_ptr< OrthonormalizedBasisInstance > OrthonormalizedBasisPtr;
 
     /**
      * @brief Constructeur
@@ -416,7 +416,7 @@ public:
      * @typedef OrthogonalBasisWithoutMassPtr
      * @brief Pointeur intelligent vers un OrthogonalBasisWithoutMass
      */
-    typedef std::shared_ptr< OrthogonalBasisWithoutMassInstance > OrthogonalBasisWithoutMassPtr;
+    typedef boost::shared_ptr< OrthogonalBasisWithoutMassInstance > OrthogonalBasisWithoutMassPtr;
 
     /**
      * @brief Constructeur
@@ -440,9 +440,9 @@ public:
     };
 };
 
-typedef std::shared_ptr< StandardModalBasisInstance > StandardModalBasisPtr;
-typedef std::shared_ptr< RitzBasisInstance > RitzBasisPtr;
-typedef std::shared_ptr< OrthonormalizedBasisInstance > OrthonormalizedBasisPtr;
-typedef std::shared_ptr< OrthogonalBasisWithoutMassInstance > OrthogonalBasisWithoutMassPtr;
+typedef boost::shared_ptr< StandardModalBasisInstance > StandardModalBasisPtr;
+typedef boost::shared_ptr< RitzBasisInstance > RitzBasisPtr;
+typedef boost::shared_ptr< OrthonormalizedBasisInstance > OrthonormalizedBasisPtr;
+typedef boost::shared_ptr< OrthogonalBasisWithoutMassInstance > OrthogonalBasisWithoutMassPtr;
 
 #endif /* MODALBASISDEFINITION_H_ */

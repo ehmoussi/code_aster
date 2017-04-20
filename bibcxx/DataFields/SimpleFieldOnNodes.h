@@ -64,7 +64,7 @@ public:
      * @typedef SimpleFieldOnNodesPtr
      * @brief Pointeur intelligent vers un SimpleFieldOnNodes
      */
-    typedef std::shared_ptr< SimpleFieldOnNodesInstance > SimpleFieldOnNodesPtr;
+    typedef boost::shared_ptr< SimpleFieldOnNodesInstance > SimpleFieldOnNodesPtr;
 
     /**
      * @brief Constructeur
@@ -169,7 +169,7 @@ typedef SimpleFieldOnNodesInstance< double > SimpleFieldOnNodesDoubleInstance;
  * @typedef SimpleFieldOnNodesPtrDouble
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef std::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesDoublePtr;
+typedef boost::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesDoublePtr;
 
 /** @typedef SimpleFieldOnNodesInstanceLong Instance d'une carte de long */
 typedef SimpleFieldOnNodesInstance< long > SimpleFieldOnNodesLongInstance;
@@ -178,6 +178,6 @@ typedef SimpleFieldOnNodesInstance< long > SimpleFieldOnNodesLongInstance;
  * @typedef SimpleFieldOnNodesPtrLong
  * @brief Definition d'un champ aux noeuds de long
  */
-typedef std::shared_ptr< SimpleFieldOnNodesLongInstance > SimpleFieldOnNodesLongPtr;
+typedef boost::shared_ptr< SimpleFieldOnNodesLongInstance > SimpleFieldOnNodesLongPtr;
 
 #endif /* SIMPLEFIELDONNODES_H_ */

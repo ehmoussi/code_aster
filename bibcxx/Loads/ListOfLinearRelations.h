@@ -93,6 +93,6 @@ typedef ListOfLinearRelationsInstance< double > ListOfLinearRelationsDouble;
  * @typedef ListOfLinearRelationsDouble
  * @brief Pointeur intelligent vers un ListOfLinearRelationsInstance
  */
-typedef std::shared_ptr< ListOfLinearRelationsDouble > ListOfLinearRelationsDoublePtr;
+typedef boost::shared_ptr< ListOfLinearRelationsDouble > ListOfLinearRelationsDoublePtr;
 
 #endif /* LISTOFLINEARRELATIONS_H_ */

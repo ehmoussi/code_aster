@@ -33,5 +33,6 @@ void exportFieldOnElementsToPython()
     class_< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr,
             bases< DataStructure > >("FieldOnElementsDouble", no_init)
         .def( "create", &FieldOnElementsDoubleInstance::create )
+        .staticmethod( "create" )
     ;
 };

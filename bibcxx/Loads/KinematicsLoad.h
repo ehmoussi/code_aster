@@ -40,7 +40,7 @@ class KinematicsLoadInstance: public DataStructure
 {
     private:
         /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-        typedef std::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
         /** @typedef std::list de DoubleLoadDisplacement */
         typedef std::list< DoubleLoadDisplacement > ListDoubleDisp;
@@ -65,7 +65,7 @@ class KinematicsLoadInstance: public DataStructure
          * @typedef KinematicsLoadPtr
          * @brief Pointeur intelligent vers un KinematicsLoad
          */
-        typedef std::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
+        typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
 
         /**
          * @brief Constructeur
@@ -219,7 +219,7 @@ class KinematicsLoadInstance: public DataStructure
  * @typedef KinematicsLoad
  * @brief Pointeur intelligent vers un KinematicsLoadInstance
  */
-typedef std::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
+typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
 /** @typedef std::list de KinematicsLoad */
 typedef std::list< KinematicsLoadPtr > ListKineLoad;
 /** @typedef Iterateur sur une std::list de KinematicsLoad */

@@ -67,7 +67,7 @@ public:
      * @typedef InterspectralMatrixPtr
      * @brief Pointeur intelligent vers un InterspectralMatrix
      */
-    typedef std::shared_ptr< InterspectralMatrixInstance > InterspectralMatrixPtr;
+    typedef boost::shared_ptr< InterspectralMatrixInstance > InterspectralMatrixPtr;
 
     /**
      * @brief Constructeur
@@ -100,6 +100,6 @@ public:
  * @typedef InterspectralMatrixPtr
  * @brief Pointeur intelligent vers un InterspectralMatrixInstance
  */
-typedef std::shared_ptr< InterspectralMatrixInstance > InterspectralMatrixPtr;
+typedef boost::shared_ptr< InterspectralMatrixInstance > InterspectralMatrixPtr;
 
 #endif /* INTERSPECTRAL_H_ */

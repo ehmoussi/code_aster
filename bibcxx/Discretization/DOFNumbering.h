@@ -68,7 +68,7 @@ class DOFNumberingInstance: public DataStructure
          * @typedef DOFNumberingPtr
          * @brief Pointeur intelligent vers un DOFNumbering
          */
-        typedef std::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
+        typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
 
         /**
          * @brief Constructeur
@@ -195,6 +195,6 @@ class DOFNumberingInstance: public DataStructure
  * @brief Enveloppe d'un pointeur intelligent vers un DOFNumberingInstance
  * @author Nicolas Sellenet
  */
-typedef std::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
+typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
 
 #endif /* DOFNUMBERING_H_ */

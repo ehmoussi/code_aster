@@ -33,6 +33,7 @@ void exportDOFNumberingToPython()
     class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
             bases< DataStructure > > ( "DOFNumbering", no_init )
         .def( "create", &DOFNumberingInstance::create )
+        .staticmethod( "create" )
         .def( "addKinematicsLoad", &DOFNumberingInstance::addKinematicsLoad )
         .def( "addMechanicalLoad", &DOFNumberingInstance::addMechanicalLoad )
         .def( "computeNumerotation", &DOFNumberingInstance::computeNumerotation )

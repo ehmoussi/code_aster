@@ -51,6 +51,6 @@ public:
  * @typedef FourierCombinationPtr
  * @brief Pointeur intelligent vers un FourierCombinationInstance
  */
-typedef std::shared_ptr< FourierCombinationInstance > FourierCombinationPtr;
+typedef boost::shared_ptr< FourierCombinationInstance > FourierCombinationPtr;
 
 #endif /* FOURIERCOMBINATION_H_ */

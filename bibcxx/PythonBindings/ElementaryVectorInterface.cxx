@@ -33,5 +33,6 @@ void exportElementaryVectorToPython()
     class_< ElementaryVectorInstance, ElementaryVectorInstance::ElementaryVectorPtr,
             bases< DataStructure > > ( "ElementaryVector", no_init )
         .def( "create", &ElementaryVectorInstance::create )
+        .staticmethod( "create" )
     ;
 };

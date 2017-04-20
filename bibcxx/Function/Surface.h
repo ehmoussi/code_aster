@@ -53,7 +53,7 @@ public:
      * @typedef SurfacePtr
      * @brief Pointeur intelligent vers un Surface
      */
-    typedef std::shared_ptr< SurfaceInstance > SurfacePtr;
+    typedef boost::shared_ptr< SurfaceInstance > SurfacePtr;
 
     /**
      * @brief Constructeur
@@ -78,6 +78,6 @@ public:
  * @typedef SurfacePtr
  * @brief Pointeur intelligent vers un SurfaceInstance
  */
-typedef std::shared_ptr< SurfaceInstance > SurfacePtr;
+typedef boost::shared_ptr< SurfaceInstance > SurfacePtr;
 
 #endif /* SURFACE_H_ */

@@ -50,6 +50,6 @@ public:
  * @typedef MechanicalModeContainerPtr
  * @brief Pointeur intelligent vers un MechanicalModeContainerInstance
  */
-typedef std::shared_ptr< MechanicalModeContainerInstance > MechanicalModeContainerPtr;
+typedef boost::shared_ptr< MechanicalModeContainerInstance > MechanicalModeContainerPtr;
 
 #endif /* MECHANICALMODECONTAINER_H_ */

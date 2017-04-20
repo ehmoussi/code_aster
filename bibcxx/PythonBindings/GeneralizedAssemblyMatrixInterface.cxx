@@ -40,6 +40,7 @@ void exportGeneralizedAssemblyMatrixToPython()
             bases< GenericGeneralizedAssemblyMatrixInstance > >
             ( "GeneralizedAssemblyMatrixDouble", no_init )
         .def( "create", &GeneralizedAssemblyMatrixDoubleInstance::create )
+        .staticmethod( "create" )
     ;
 
     class_< GeneralizedAssemblyMatrixComplexInstance,
@@ -47,5 +48,6 @@ void exportGeneralizedAssemblyMatrixToPython()
             bases< GenericGeneralizedAssemblyMatrixInstance > >
             ( "GeneralizedAssemblyMatrixComplex", no_init )
         .def( "create", &GeneralizedAssemblyMatrixComplexInstance::create )
+        .staticmethod( "create" )
     ;
 };

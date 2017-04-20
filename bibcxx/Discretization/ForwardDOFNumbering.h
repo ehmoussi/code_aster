@@ -31,7 +31,7 @@
  * @todo A SUPPRIMER
  */
 class DOFNumberingInstance;
-typedef std::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
+typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
 
 /**
  * @class ForwardDOFNumberingPtr

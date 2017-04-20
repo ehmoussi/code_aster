@@ -34,5 +34,6 @@ void exportFluidStructureInteractionToPython()
             FluidStructureInteractionInstance::FluidStructureInteractionPtr,
             bases< DataStructure > > ( "FluidStructureInteraction", no_init )
         .def( "create", &FluidStructureInteractionInstance::create )
+        .staticmethod( "create" )
     ;
 };

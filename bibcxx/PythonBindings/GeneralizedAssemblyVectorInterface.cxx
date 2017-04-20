@@ -40,6 +40,7 @@ void exportGeneralizedAssemblyVectorToPython()
             bases< GenericGeneralizedAssemblyVectorInstance > >
             ( "GeneralizedAssemblyVectorDouble", no_init )
         .def( "create", &GeneralizedAssemblyVectorDoubleInstance::create )
+        .staticmethod( "create" )
     ;
 
     class_< GeneralizedAssemblyVectorComplexInstance,
@@ -47,5 +48,6 @@ void exportGeneralizedAssemblyVectorToPython()
             bases< GenericGeneralizedAssemblyVectorInstance > >
             ( "GeneralizedAssemblyVectorComplex", no_init )
         .def( "create", &GeneralizedAssemblyVectorComplexInstance::create )
+        .staticmethod( "create" )
     ;
 };

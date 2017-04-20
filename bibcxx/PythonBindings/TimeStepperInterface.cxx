@@ -34,6 +34,7 @@ void exportTimeStepperToPython()
     class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr,
             bases< DataStructure > >( "TimeStepper", no_init )
         .def( "create", &TimeStepperInstance::create )
+        .staticmethod( "create" )
         .def( "setValues", &TimeStepperInstance::setValues )
     ;
 };

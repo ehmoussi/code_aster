@@ -188,7 +188,7 @@ template<class ValueType>
 class JeveuxVector
 {
     public:
-        typedef std::shared_ptr< JeveuxVectorInstance< ValueType > > JeveuxVectorTypePtr;
+        typedef boost::shared_ptr< JeveuxVectorInstance< ValueType > > JeveuxVectorTypePtr;
 
     private:
         JeveuxVectorTypePtr _jeveuxVectorPtr;

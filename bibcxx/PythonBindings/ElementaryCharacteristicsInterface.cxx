@@ -33,5 +33,6 @@ void exportElementaryCharacteristicsToPython()
     class_< ElementaryCharacteristicsInstance, ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
             bases< DataStructure > > ( "ElementaryCharacteristics", no_init )
         .def( "create", &ElementaryCharacteristicsInstance::create )
+        .staticmethod( "create" )
     ;
 };

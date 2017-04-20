@@ -34,5 +34,6 @@ void exportTableToPython()
     class_< TableInstance, TableInstance::TablePtr,
             bases< DataStructure > >( "Table", no_init )
         .def( "create", &TableInstance::create )
+        .staticmethod( "create" )
     ;
 };

@@ -166,6 +166,6 @@ public:
  * @typedef TimeStepManagerPtr
  * @brief Pointeur intelligent vers un TimeStepManager
  */
-typedef std::shared_ptr< TimeStepManagerInstance > TimeStepManagerPtr;
+typedef boost::shared_ptr< TimeStepManagerInstance > TimeStepManagerPtr;
 
 #endif /* TIMESTEPMANAGER_H_ */

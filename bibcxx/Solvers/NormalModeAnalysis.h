@@ -80,6 +80,6 @@ public:
  * @typedef NormalModeAnalysisPtr
  * @brief Enveloppe d'un pointeur intelligent vers un NormalModeAnalysisInstance
  */
-typedef std::shared_ptr< NormalModeAnalysisInstance > NormalModeAnalysisPtr;
+typedef boost::shared_ptr< NormalModeAnalysisInstance > NormalModeAnalysisPtr;
 
 #endif /* NORMALMODEANALYSIS_H_ */

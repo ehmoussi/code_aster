@@ -83,6 +83,12 @@ private:
 
 public:
     /**
+     * @typedef ResultsContainerPtr
+     * @brief Pointeur intelligent vers un ResultsContainerInstance
+     */
+    typedef boost::shared_ptr< ResultsContainerInstance > ResultsContainerPtr;
+
+    /**
      * @brief Constructeur
      */
     ResultsContainerInstance( const std::string resuTyp = "???" ):
@@ -174,6 +180,6 @@ public:
  * @typedef ResultsContainerPtr
  * @brief Pointeur intelligent vers un ResultsContainerInstance
  */
-typedef std::shared_ptr< ResultsContainerInstance > ResultsContainerPtr;
+typedef boost::shared_ptr< ResultsContainerInstance > ResultsContainerPtr;
 
 #endif /* RESULTSCONTAINER_H_ */

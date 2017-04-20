@@ -33,6 +33,7 @@ void exportFunctionToPython()
     class_< FunctionInstance, FunctionInstance::FunctionPtr,
             bases< DataStructure > > ( "Function", no_init )
         .def( "create", &FunctionInstance::create )
+        .staticmethod( "create" )
 //         .def( "__getnewargs__", &FunctionInstance::getnewargs )
         .def( "setParameterName", &FunctionInstance::setParameterName )
         .def( "setResultName", &FunctionInstance::setResultName )

@@ -56,7 +56,7 @@ public:
      * @typedef TablePtr
      * @brief Pointeur intelligent vers un Table
      */
-    typedef std::shared_ptr< TableInstance > TablePtr;
+    typedef boost::shared_ptr< TableInstance > TablePtr;
 
     /**
      * @brief Constructeur
@@ -116,6 +116,6 @@ public:
  * @typedef TablePtr
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef std::shared_ptr< TableInstance > TablePtr;
+typedef boost::shared_ptr< TableInstance > TablePtr;
 
 #endif /* TABLE_H_ */
