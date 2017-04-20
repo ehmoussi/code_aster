@@ -288,7 +288,7 @@ public:
      * @typedef ContactDefinitionPtr
      * @brief Pointeur intelligent vers un ContactDefinition
      */
-    typedef std::shared_ptr< ContactDefinition< formulation > > ContactDefinitionPtr;
+    typedef boost::shared_ptr< ContactDefinition< formulation > > ContactDefinitionPtr;
 
     /**
      * @brief Constructeur
@@ -763,9 +763,9 @@ typedef ContactDefinition< Xfem > XfemContactInstance;
 template class ContactDefinition< UnilateralConnexion >;
 typedef ContactDefinition< UnilateralConnexion > UnilateralConnexionInstance;
 
-typedef std::shared_ptr< DiscretizedContactInstance > DiscretizedContactPtr;
-typedef std::shared_ptr< ContinuousContactInstance > ContinuousContactPtr;
-typedef std::shared_ptr< XfemContactInstance > XfemContactPtr;
-typedef std::shared_ptr< UnilateralConnexionInstance > UnilateralConnexionPtr;
+typedef boost::shared_ptr< DiscretizedContactInstance > DiscretizedContactPtr;
+typedef boost::shared_ptr< ContinuousContactInstance > ContinuousContactPtr;
+typedef boost::shared_ptr< XfemContactInstance > XfemContactPtr;
+typedef boost::shared_ptr< UnilateralConnexionInstance > UnilateralConnexionPtr;
 
 #endif /* CONTACTDEFINITION_H_ */

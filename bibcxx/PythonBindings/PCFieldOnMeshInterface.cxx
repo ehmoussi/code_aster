@@ -33,5 +33,6 @@ void exportPCFieldOnMeshToPython()
     class_< PCFieldOnMeshInstanceDouble, PCFieldOnMeshPtrDouble,
             bases< DataStructure > >("PCFieldOnMeshDouble", no_init)
         .def( "create", &PCFieldOnMeshInstanceDouble::create )
+        .staticmethod( "create" )
     ;
 };

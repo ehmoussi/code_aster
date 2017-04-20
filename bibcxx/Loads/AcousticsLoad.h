@@ -71,22 +71,22 @@ typedef CapyLocalizationManager< GroupOfElementsManager<>,
                                  GroupOfElementsManager< SANS_GROUP_MA >,
                                  GroupOfNodesManager< SANS_GROUP_NO > > AllNodesElementsWithoutLocalization;
 
-typedef std::shared_ptr< GenericUnitaryAcousticsLoadInstance > GenericAcousticsLoadPtr;
+typedef boost::shared_ptr< GenericUnitaryAcousticsLoadInstance > GenericAcousticsLoadPtr;
 
 template class UnitaryAcousticsLoadInstance< PressureComplexInstance, AllNodesElementsWithoutLocalization >;
 typedef UnitaryAcousticsLoadInstance< PressureComplexInstance,
                               AllNodesElementsWithoutLocalization > ImposedComplexPressureInstance;
-typedef std::shared_ptr< ImposedComplexPressureInstance > ImposedComplexPressurePtr;
+typedef boost::shared_ptr< ImposedComplexPressureInstance > ImposedComplexPressurePtr;
 
 template class UnitaryAcousticsLoadInstance< NormalSpeedComplexInstance, AllElementsLocalization >;
 typedef UnitaryAcousticsLoadInstance< NormalSpeedComplexInstance,
                                      AllElementsLocalization > ImposedComplexNormalSpeedInstance;
-typedef std::shared_ptr< ImposedComplexNormalSpeedInstance > ImposedComplexNormalSpeedPtr;
+typedef boost::shared_ptr< ImposedComplexNormalSpeedInstance > ImposedComplexNormalSpeedPtr;
 
 template class UnitaryAcousticsLoadInstance< ImpedanceComplexInstance, AllElementsLocalization >;
 typedef UnitaryAcousticsLoadInstance< ImpedanceComplexInstance,
                                      AllElementsLocalization > ComplexImpedanceInstance;
-typedef std::shared_ptr< ComplexImpedanceInstance > ComplexImpedancePtr;
+typedef boost::shared_ptr< ComplexImpedanceInstance > ComplexImpedancePtr;
 
 class UniformConnectionInstance
 {
@@ -115,7 +115,7 @@ public:
 template class UnitaryAcousticsLoadInstance< UniformConnectionInstance, AllElementsLocalization >;
 typedef UnitaryAcousticsLoadInstance< UniformConnectionInstance,
                                      NodesElementsLocalization > UniformConnection;
-typedef std::shared_ptr< UniformConnection > UniformConnectionPtr;
+typedef boost::shared_ptr< UniformConnection > UniformConnectionPtr;
 
 class AcousticsLoadInstance: public DataStructure
 {
@@ -141,7 +141,7 @@ public:
      * @typedef AcousticsLoadPtr
      * @brief Pointeur intelligent vers un AcousticsLoad
      */
-    typedef std::shared_ptr< AcousticsLoadInstance > AcousticsLoadPtr;
+    typedef boost::shared_ptr< AcousticsLoadInstance > AcousticsLoadPtr;
 
     /**
      * @brief Constructeur
@@ -263,6 +263,6 @@ public:
     };
 };
 
-typedef std::shared_ptr< AcousticsLoadInstance > AcousticsLoadPtr;
+typedef boost::shared_ptr< AcousticsLoadInstance > AcousticsLoadPtr;
 
 #endif /* ACOUSTICSLOAD_H_ */

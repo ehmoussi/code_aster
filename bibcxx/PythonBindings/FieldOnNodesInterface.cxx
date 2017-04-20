@@ -33,5 +33,7 @@ void exportFieldOnNodesToPython()
     class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
             bases< DataStructure > >("FieldOnNodesDouble", no_init)
         .def( "create", &FieldOnNodesDoubleInstance::create )
+        .staticmethod( "create" )
+        .def( "exportToSimpleFieldOnNodes", &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
     ;
 };

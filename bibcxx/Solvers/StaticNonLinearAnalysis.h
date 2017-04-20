@@ -235,6 +235,6 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
  * @typedef StaticNonLinearAnalysisPtr
  * @brief smart pointer to a StaticNonLinearAnalysisInstance
  */
-typedef std::shared_ptr< StaticNonLinearAnalysisInstance > StaticNonLinearAnalysisPtr;
+typedef boost::shared_ptr< StaticNonLinearAnalysisInstance > StaticNonLinearAnalysisPtr;
 
 #endif /* STATICNONLINEARANALYSIS_H_ */

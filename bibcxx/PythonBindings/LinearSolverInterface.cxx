@@ -95,6 +95,7 @@ void exportLinearSolverToPython()
     class_< LinearSolverInstance, LinearSolverInstance::LinearSolverPtr,
             bases< DataStructure > > ( "LinearSolver", no_init )
         .def( "create", &LinearSolverInstance::create )
+        .staticmethod( "create" )
         .def( "solveDoubleLinearSystem", &LinearSolverInstance::solveDoubleLinearSystemMatrixRHS )
         .def( "disablePreprocessing", &LinearSolverInstance::disablePreprocessing )
         .def( "setAlgorithm", &LinearSolverInstance::setAlgorithm )

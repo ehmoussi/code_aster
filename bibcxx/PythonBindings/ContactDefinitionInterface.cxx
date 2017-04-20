@@ -54,6 +54,7 @@ void exportContactDefinitionToPython()
     class_< DiscretizedContactInstance, DiscretizedContactPtr,
             bases< DataStructure > > ( "DiscretizedContact", no_init )
         .def( "create", &DiscretizedContactInstance::create )
+        .staticmethod( "create" )
         .def( "addContactZone", &DiscretizedContactInstance::addContactZone )
         .def( "build", &DiscretizedContactInstance::build )
         .def( "setModel", &DiscretizedContactInstance::setModel )
@@ -93,15 +94,18 @@ void exportContactDefinitionToPython()
     class_< ContinuousContactInstance, ContinuousContactPtr,
             bases< DataStructure > > ( "ContinuousContact", no_init )
         .def( "create", &ContinuousContactInstance::create )
+        .staticmethod( "create" )
     ;
 
     class_< XfemContactInstance, XfemContactPtr,
             bases< DataStructure > > ( "XfemContact", no_init )
         .def( "create", &XfemContactInstance::create )
+        .staticmethod( "create" )
     ;
 
     class_< UnilateralConnexionInstance, UnilateralConnexionPtr,
             bases< DataStructure > > ( "UnilateralConnexion", no_init )
         .def( "create", &UnilateralConnexionInstance::create )
+        .staticmethod( "create" )
     ;
 };

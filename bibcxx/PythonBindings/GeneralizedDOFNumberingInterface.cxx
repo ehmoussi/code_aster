@@ -33,5 +33,6 @@ void exportGeneralizedDOFNumberingToPython()
     class_< GeneralizedDOFNumberingInstance, GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
             bases< DataStructure > > ( "GeneralizedDOFNumbering", no_init )
         .def( "create", &GeneralizedDOFNumberingInstance::create )
+        .staticmethod( "create" )
     ;
 };

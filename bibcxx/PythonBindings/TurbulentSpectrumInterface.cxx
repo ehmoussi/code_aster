@@ -34,5 +34,6 @@ void exportTurbulentSpectrumToPython()
             TurbulentSpectrumInstance::TurbulentSpectrumPtr,
             bases< DataStructure > > ( "TurbulentSpectrum", no_init )
         .def( "create", &TurbulentSpectrumInstance::create )
+        .staticmethod( "create" )
     ;
 };

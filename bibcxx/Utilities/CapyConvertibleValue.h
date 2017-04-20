@@ -38,13 +38,13 @@
  * @typedef Definition d'un shared_ptr sur une DataStructure
  * @todo à déplacer dans DataStructure.h
  */
-typedef std::shared_ptr< DataStructure > DataStructurePtr;
+typedef boost::shared_ptr< DataStructure > DataStructurePtr;
 
 /**
  * @typedef Definition d'un shared_ptr sur une VirtualMeshEntity
  * @todo à déplacer dans MeshEntity.h
  */
-typedef std::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
 /**
  * @typedef Definition d'un std::vector sur un MeshEntityPtr
@@ -85,7 +85,7 @@ struct is_vector< std::vector<T> >
 
 /**
  * @struct is_shared_ptr
- * @brief Classe template permettant de savoir si un type est un std::shared_ptr
+ * @brief Classe template permettant de savoir si un type est un boost::shared_ptr
  * @tparam T1 Type à tester
  */
 template< typename T1 >
@@ -104,10 +104,10 @@ struct is_shared_ptr
 
 /**
  * @struct is_shared_ptr
- * @brief Spécialisation du template dans le cas std::shared_ptr
+ * @brief Spécialisation du template dans le cas boost::shared_ptr
  */
 template< class T >
-struct is_shared_ptr< std::shared_ptr<T> >
+struct is_shared_ptr< boost::shared_ptr<T> >
 {
     static bool const value = true;
     typedef T value_type;
@@ -116,7 +116,7 @@ struct is_shared_ptr< std::shared_ptr<T> >
 
 /**
  * @struct is_vector_of_shared_ptr
- * @brief Classe template permettant de savoir si un type est un std::shared_ptr
+ * @brief Classe template permettant de savoir si un type est un boost::shared_ptr
  * @tparam T1 Type à tester
  */
 template< typename T1 >
@@ -135,10 +135,10 @@ struct is_vector_of_shared_ptr
 
 /**
  * @struct is_vector_of_shared_ptr
- * @brief Spécialisation du template dans le cas std::shared_ptr
+ * @brief Spécialisation du template dans le cas boost::shared_ptr
  */
 template< class T >
-struct is_vector_of_shared_ptr< std::vector< std::shared_ptr<T> > >
+struct is_vector_of_shared_ptr< std::vector< boost::shared_ptr<T> > >
 {
     static bool const value = true;
     typedef T value_type;
@@ -513,7 +513,7 @@ private:
 };
 
 /** @typedef Definition d'un shared_ptr sur un GenericCapyConvertibleValue */
-typedef std::shared_ptr< GenericCapyConvertibleValue > CapyValuePtr;
+typedef boost::shared_ptr< GenericCapyConvertibleValue > CapyValuePtr;
 
 /**
  * @class CapyConvertibleContainer

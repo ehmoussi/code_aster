@@ -63,7 +63,7 @@ public:
      * @typedef FiberGeometryPtr
      * @brief Pointeur intelligent vers un FiberGeometry
      */
-    typedef std::shared_ptr< FiberGeometryInstance > FiberGeometryPtr;
+    typedef boost::shared_ptr< FiberGeometryInstance > FiberGeometryPtr;
 
     /**
      * @brief Constructeur
@@ -100,6 +100,6 @@ public:
  * @typedef FiberGeometryPtr
  * @brief Pointeur intelligent vers un FiberGeometryInstance
  */
-typedef std::shared_ptr< FiberGeometryInstance > FiberGeometryPtr;
+typedef boost::shared_ptr< FiberGeometryInstance > FiberGeometryPtr;
 
 #endif /* FIBERGEOMETRY_H_ */

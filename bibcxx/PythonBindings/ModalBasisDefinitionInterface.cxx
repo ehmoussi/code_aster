@@ -37,5 +37,6 @@ void exportModalBasisDefinitionToPython()
     class_< StandardModalBasisInstance, StandardModalBasisInstance::StandardModalBasisPtr,
             bases< DataStructure > > ( "StandardModalBasis", no_init )
         .def( "create", &StandardModalBasisInstance::create )
+        .staticmethod( "create" )
     ;
 };

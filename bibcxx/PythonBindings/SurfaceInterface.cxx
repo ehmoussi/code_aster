@@ -33,5 +33,6 @@ void exportSurfaceToPython()
     class_< SurfaceInstance, SurfaceInstance::SurfacePtr,
             bases< DataStructure > > ( "Surface", no_init )
         .def( "create", &SurfaceInstance::create )
+        .staticmethod( "create" )
     ;
 };

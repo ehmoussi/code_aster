@@ -76,5 +76,5 @@ class NonLinearControlInstance : public SolverControlInstance
  * @typedef NonLinearControlPtr
  * @brief Pointeur intelligent vers un NonLinearControl
  */
-typedef std::shared_ptr< NonLinearControlInstance > NonLinearControlPtr;
+typedef boost::shared_ptr< NonLinearControlInstance > NonLinearControlPtr;
 #endif

@@ -51,7 +51,7 @@ public:
      * @typedef GeneralizedAssemblyMatrixPtr
      * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrix
      */
-    typedef std::shared_ptr< GenericGeneralizedAssemblyMatrixInstance >
+    typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixInstance >
             GenericGeneralizedAssemblyMatrixPtr;
 
     /**
@@ -101,7 +101,7 @@ public:
      * @typedef GeneralizedAssemblyMatrixPtr
      * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrix
      */
-    typedef std::shared_ptr< GeneralizedAssemblyMatrixInstance<ValueType> >
+    typedef boost::shared_ptr< GeneralizedAssemblyMatrixInstance<ValueType> >
             GeneralizedAssemblyMatrixPtr;
 
     /**
@@ -131,18 +131,18 @@ typedef GeneralizedAssemblyMatrixInstance< DoubleComplex > GeneralizedAssemblyMa
  * @typedef GenericGeneralizedAssemblyMatrixPtr
  * @brief Pointeur intelligent vers un GenericGeneralizedAssemblyMatrixInstance
  */
-typedef std::shared_ptr< GenericGeneralizedAssemblyMatrixInstance > GenericGeneralizedAssemblyMatrixPtr;
+typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixInstance > GenericGeneralizedAssemblyMatrixPtr;
 
 /**
  * @typedef GeneralizedAssemblyMatrixDoublePtr
  * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixDoubleInstance
  */
-typedef std::shared_ptr< GeneralizedAssemblyMatrixDoubleInstance > GeneralizedAssemblyMatrixDoublePtr;
+typedef boost::shared_ptr< GeneralizedAssemblyMatrixDoubleInstance > GeneralizedAssemblyMatrixDoublePtr;
 
 /**
  * @typedef GeneralizedAssemblyMatrixComplexPtr
  * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixComplexInstance
  */
-typedef std::shared_ptr< GeneralizedAssemblyMatrixComplexInstance > GeneralizedAssemblyMatrixComplexPtr;
+typedef boost::shared_ptr< GeneralizedAssemblyMatrixComplexInstance > GeneralizedAssemblyMatrixComplexPtr;
 
 #endif /* GENERALIZEDASSEMBLYMATRIX_H_ */

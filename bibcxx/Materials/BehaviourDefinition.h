@@ -50,7 +50,7 @@ public:
      * @typedef BehaviourDefinitionPtr
      * @brief Pointeur intelligent vers un BehaviourDefinition
      */
-    typedef std::shared_ptr< BehaviourDefinitionInstance > BehaviourDefinitionPtr;
+    typedef boost::shared_ptr< BehaviourDefinitionInstance > BehaviourDefinitionPtr;
 
     /**
      * @brief Constructeur
@@ -70,6 +70,6 @@ public:
  * @typedef BehaviourDefinitionPtr
  * @brief Pointeur intelligent vers un BehaviourDefinitionInstance
  */
-typedef std::shared_ptr< BehaviourDefinitionInstance > BehaviourDefinitionPtr;
+typedef boost::shared_ptr< BehaviourDefinitionInstance > BehaviourDefinitionPtr;
 
 #endif /* BEHAVIOURDEFINITION_H_ */

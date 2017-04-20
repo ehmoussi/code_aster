@@ -33,6 +33,7 @@ void exportSimpleFieldOnNodesToPython()
     class_< SimpleFieldOnNodesDoubleInstance, SimpleFieldOnNodesDoublePtr,
             bases< DataStructure > >("SimpleFieldOnNodesDouble", no_init)
         .def( "create", &SimpleFieldOnNodesDoubleInstance::create )
+        .staticmethod( "create" )
         .def( "getValue", &SimpleFieldOnNodesDoubleInstance::getValue,
               return_value_policy< return_by_value >() )
         .def( "updateValuePointers", &SimpleFieldOnNodesDoubleInstance::updateValuePointers )

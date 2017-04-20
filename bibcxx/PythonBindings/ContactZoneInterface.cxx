@@ -84,6 +84,7 @@ void exportContactZoneToPython()
             bases< GenericContactZoneInstance > >
         ( "DiscretizedContactZone", no_init )
         .def( "create", &DiscretizedContactZoneInstance::create )
+        .staticmethod( "create" )
         .def( "addBeamDescription", &DiscretizedContactZoneInstance::addBeamDescription )
         .def( "addFriction", &DiscretizedContactZoneInstance::addFriction<Discretized> )
         .def( "addPlateDescription",
@@ -124,6 +125,7 @@ void exportContactZoneToPython()
             bases< GenericContactZoneInstance > >
         ( "ContinuousContactZone", no_init )
         .def( "create", &ContinuousContactZoneInstance::create )
+        .staticmethod( "create" )
         .def( "addBeamDescription", &ContinuousContactZoneInstance::addBeamDescription )
         .def( "addFriction", &ContinuousContactZoneInstance::addFriction<Continuous> )
         .def( "addPlateDescription",

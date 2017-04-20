@@ -56,6 +56,9 @@ class DataStructure
         JeveuxMemory _memoryType;
 
     public:
+        /** @typedef shared_ptr d'une DataStructure */
+        typedef boost::shared_ptr< DataStructure > DataStructurePtr;
+
         /**
          * @brief Constructeur
          * @param name Nom Jeveux de la sd
@@ -108,7 +111,15 @@ class DataStructure
          * @brief Function membre debugPrint
          * @param logicalUnit Unite logique d'impression
          */
-        void debugPrint( const int logicalUnit ) const;
+        void debugPrint( const int logicalUnit = 6 ) const;
+
+        /**
+         * @brief Function membre debugPrint
+         */
+        void debugPrint() const
+        {
+            debugPrint(6);
+        };
 
     protected:
         /**

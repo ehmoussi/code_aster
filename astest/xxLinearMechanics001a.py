@@ -34,7 +34,7 @@ resu = MECA_STATIQUE( MODELE = model,
                       SOLVEUR = _F( METHODE = "MUMPS",
                                     RENUM = "METIS", ), )
 
-resu.debugPrint()
+resu.debugPrint(6)
 
 # Debut du TEST_RESU
 MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 0)

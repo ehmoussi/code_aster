@@ -443,24 +443,24 @@ public:
 };
 
 /** @typedef Pointeur intelligent vers un GenericActionInstance */
-typedef std::shared_ptr< GenericActionInstance > GenericActionPtr;
+typedef boost::shared_ptr< GenericActionInstance > GenericActionPtr;
 
 /** @typedef Pointeur intelligent vers un StopOnErrorInstance */
-typedef std::shared_ptr< StopOnErrorInstance > StopOnErrorPtr;
+typedef boost::shared_ptr< StopOnErrorInstance > StopOnErrorPtr;
 /** @typedef Pointeur intelligent vers un GenericSubstepingOnErrorInstance */
-typedef std::shared_ptr< GenericSubstepingOnErrorInstance > GenericSubstepingOnErrorPtr;
+typedef boost::shared_ptr< GenericSubstepingOnErrorInstance > GenericSubstepingOnErrorPtr;
 /** @typedef Pointeur intelligent vers un SubstepingOnErrorInstance */
-typedef std::shared_ptr< SubstepingOnErrorInstance > SubstepingOnErrorPtr;
+typedef boost::shared_ptr< SubstepingOnErrorInstance > SubstepingOnErrorPtr;
 /** @typedef Pointeur intelligent vers un SubstepingOnContactInstance */
-typedef std::shared_ptr< SubstepingOnContactInstance > SubstepingOnContactPtr;
+typedef boost::shared_ptr< SubstepingOnContactInstance > SubstepingOnContactPtr;
 /** @typedef Pointeur intelligent vers un AddIterationOnErrorInstance */
-typedef std::shared_ptr< AddIterationOnErrorInstance > AddIterationOnErrorPtr;
+typedef boost::shared_ptr< AddIterationOnErrorInstance > AddIterationOnErrorPtr;
 /** @typedef Pointeur intelligent vers un PilotageErrorInstance */
-typedef std::shared_ptr< PilotageErrorInstance > PilotageErrorPtr;
+typedef boost::shared_ptr< PilotageErrorInstance > PilotageErrorPtr;
 /** @typedef Pointeur intelligent vers un ChangePenalisationOnErrorInstance */
-typedef std::shared_ptr< ChangePenalisationOnErrorInstance > ChangePenalisationOnErrorPtr;
+typedef boost::shared_ptr< ChangePenalisationOnErrorInstance > ChangePenalisationOnErrorPtr;
 /** @typedef Pointeur intelligent vers un ContinueOnErrorInstance */
-typedef std::shared_ptr< ContinueOnErrorInstance > ContinueOnErrorPtr;
+typedef boost::shared_ptr< ContinueOnErrorInstance > ContinueOnErrorPtr;
 
 
 /**
@@ -762,19 +762,19 @@ public:
 
 
 /** @typedef Pointeur intelligent vers un GenericConvergenceErrorInstance */
-typedef std::shared_ptr< GenericConvergenceErrorInstance > GenericConvergenceErrorPtr;
+typedef boost::shared_ptr< GenericConvergenceErrorInstance > GenericConvergenceErrorPtr;
 /** @typedef Pointeur intelligent vers un ConvergenceErrorInstance */
-typedef std::shared_ptr< ConvergenceErrorInstance > ConvergenceErrorPtr;
+typedef boost::shared_ptr< ConvergenceErrorInstance > ConvergenceErrorPtr;
 /** @typedef Pointeur intelligent vers un ResidualDivergenceErrorInstance */
-typedef std::shared_ptr< ResidualDivergenceErrorInstance > ResidualDivergenceErrorPtr;
+typedef boost::shared_ptr< ResidualDivergenceErrorInstance > ResidualDivergenceErrorPtr;
 /** @typedef Pointeur intelligent vers un IncrementOverboundErrorInstance */
-typedef std::shared_ptr< IncrementOverboundErrorInstance > IncrementOverboundErrorPtr;
+typedef boost::shared_ptr< IncrementOverboundErrorInstance > IncrementOverboundErrorPtr;
 /** @typedef Pointeur intelligent vers un ContactDetectionErrorInstance */
-typedef std::shared_ptr< ContactDetectionErrorInstance > ContactDetectionErrorPtr;
+typedef boost::shared_ptr< ContactDetectionErrorInstance > ContactDetectionErrorPtr;
 /** @typedef Pointeur intelligent vers un InterpenetrationErrorInstance */
-typedef std::shared_ptr< InterpenetrationErrorInstance > InterpenetrationErrorPtr;
+typedef boost::shared_ptr< InterpenetrationErrorInstance > InterpenetrationErrorPtr;
 /** @typedef Pointeur intelligent vers un InstabilityErrorInstance */
-typedef std::shared_ptr< InstabilityErrorInstance > InstabilityErrorPtr;
+typedef boost::shared_ptr< InstabilityErrorInstance > InstabilityErrorPtr;
 
 
 /** @typedef std::list de GenericConvergenceErrorPtr */

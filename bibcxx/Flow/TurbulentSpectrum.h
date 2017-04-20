@@ -54,7 +54,7 @@ public:
      * @typedef TurbulentSpectrumPtr
      * @brief Pointeur intelligent vers un TurbulentSpectrum
      */
-    typedef std::shared_ptr< TurbulentSpectrumInstance > TurbulentSpectrumPtr;
+    typedef boost::shared_ptr< TurbulentSpectrumInstance > TurbulentSpectrumPtr;
 
     /**
      * @brief Constructeur
@@ -80,6 +80,6 @@ public:
  * @typedef TurbulentSpectrumPtr
  * @brief Pointeur intelligent vers un TurbulentSpectrumInstance
  */
-typedef std::shared_ptr< TurbulentSpectrumInstance > TurbulentSpectrumPtr;
+typedef boost::shared_ptr< TurbulentSpectrumInstance > TurbulentSpectrumPtr;
 
 #endif /* TURBULENTSPECTRUM_H_ */

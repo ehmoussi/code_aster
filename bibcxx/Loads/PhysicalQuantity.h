@@ -367,7 +367,7 @@ class PhysicalQuantityInstance
      * @typedef PhysicalQuantityPtr
      * @brief Pointeur intelligent vers un PhysicalQuantity
      */
-    typedef std::shared_ptr< PhysicalQuantityInstance<ValueType,
+    typedef boost::shared_ptr< PhysicalQuantityInstance<ValueType,
                                                       PhysicalQuantity> > PhysicalQuantityPtr;
 
     /**
@@ -485,70 +485,70 @@ class PhysicalQuantityInstance
 /** @typedef ForceDouble FORC_R */
 template class PhysicalQuantityInstance< double, Force >; 
 typedef PhysicalQuantityInstance< double, Force > ForceDoubleInstance;
-typedef std::shared_ptr< ForceDoubleInstance > ForceDoublePtr; 
+typedef boost::shared_ptr< ForceDoubleInstance > ForceDoublePtr; 
 
 /** @typedef StructuralForceDouble  */
 template class PhysicalQuantityInstance< double, StructuralForce >; 
 typedef PhysicalQuantityInstance< double, StructuralForce > StructuralForceDoubleInstance;
-typedef std::shared_ptr< StructuralForceDoubleInstance > StructuralForceDoublePtr; 
+typedef boost::shared_ptr< StructuralForceDoubleInstance > StructuralForceDoublePtr; 
 
 /** @typedef LocalBeamForceDouble  */
 template class PhysicalQuantityInstance< double, LocalBeamForce >; 
 typedef PhysicalQuantityInstance< double, LocalBeamForce > LocalBeamForceDoubleInstance;
-typedef std::shared_ptr< LocalBeamForceDoubleInstance > LocalBeamForceDoublePtr; 
+typedef boost::shared_ptr< LocalBeamForceDoubleInstance > LocalBeamForceDoublePtr; 
 
 /** @typedef LocalShellForceDouble  */
 template class PhysicalQuantityInstance< double, LocalShellForce >; 
 typedef PhysicalQuantityInstance< double, LocalShellForce > LocalShellForceDoubleInstance;
-typedef std::shared_ptr< LocalShellForceDoubleInstance > LocalShellForceDoublePtr; 
+typedef boost::shared_ptr< LocalShellForceDoubleInstance > LocalShellForceDoublePtr; 
 
 /** @typedef DisplacementDouble DEPL_R */
 template class PhysicalQuantityInstance< double, Displacement >; 
 typedef PhysicalQuantityInstance< double, Displacement > DisplacementDoubleInstance;
-typedef std::shared_ptr< DisplacementDoubleInstance > DisplacementDoublePtr; 
+typedef boost::shared_ptr< DisplacementDoubleInstance > DisplacementDoublePtr; 
 
 /** @typedef PressureDouble Pression */
 template class PhysicalQuantityInstance< double, Pressure >; 
 typedef PhysicalQuantityInstance< double, Pressure > PressureDoubleInstance;
-typedef std::shared_ptr< PressureDoubleInstance > PressureDoublePtr; 
+typedef boost::shared_ptr< PressureDoubleInstance > PressureDoublePtr; 
 
 /** @typedef PressureComplex Pression */
 template class PhysicalQuantityInstance< DoubleComplex, Pressure >; 
 typedef PhysicalQuantityInstance< DoubleComplex, Pressure > PressureComplexInstance;
-typedef std::shared_ptr< PressureComplexInstance > PressureComplexPtr; 
+typedef boost::shared_ptr< PressureComplexInstance > PressureComplexPtr; 
 
 /** @typedef TemperatureDouble Temperature */
 template class PhysicalQuantityInstance< double, Temperature >; 
 typedef PhysicalQuantityInstance< double, Temperature > TemperatureDoubleInstance;
-typedef std::shared_ptr< TemperatureDoubleInstance > TemperatureDoublePtr;
+typedef boost::shared_ptr< TemperatureDoubleInstance > TemperatureDoublePtr;
 
 /** @typedef ImpedanceDouble Impedance */
 template class PhysicalQuantityInstance< double, Impedance >; 
 typedef PhysicalQuantityInstance< double, Impedance > ImpedanceDoubleInstance;
-typedef std::shared_ptr< ImpedanceDoubleInstance > ImpedanceDoublePtr;
+typedef boost::shared_ptr< ImpedanceDoubleInstance > ImpedanceDoublePtr;
 
 /** @typedef ImpedanceComplex Impedance */
 template class PhysicalQuantityInstance< DoubleComplex, Impedance >; 
 typedef PhysicalQuantityInstance< DoubleComplex, Impedance > ImpedanceComplexInstance;
-typedef std::shared_ptr< ImpedanceComplexInstance > ImpedanceComplexPtr; 
+typedef boost::shared_ptr< ImpedanceComplexInstance > ImpedanceComplexPtr; 
 
 /** @typedef NormalSpeedDouble Normal Speed  */
 template class PhysicalQuantityInstance< double, NormalSpeed >; 
 typedef PhysicalQuantityInstance< double, NormalSpeed > NormalSpeedDoubleInstance;
-typedef std::shared_ptr< NormalSpeedDoubleInstance > NormalSpeedDoublePtr; 
+typedef boost::shared_ptr< NormalSpeedDoubleInstance > NormalSpeedDoublePtr; 
 
 /** @typedef NormalSpeedComplex Normal Speed  */
 template class PhysicalQuantityInstance< DoubleComplex, NormalSpeed >; 
 typedef PhysicalQuantityInstance< DoubleComplex, NormalSpeed > NormalSpeedComplexInstance;
-typedef std::shared_ptr< NormalSpeedComplexInstance > NormalSpeedComplexPtr; 
+typedef boost::shared_ptr< NormalSpeedComplexInstance > NormalSpeedComplexPtr; 
 
 /** @typedef HeatFluxDouble Normal Speed  */
 template class PhysicalQuantityInstance< double, HeatFlux >; 
 typedef PhysicalQuantityInstance< double, HeatFlux > HeatFluxDoubleInstance;
-typedef std::shared_ptr< HeatFluxDoubleInstance > HeatFluxDoublePtr; 
+typedef boost::shared_ptr< HeatFluxDoubleInstance > HeatFluxDoublePtr; 
 
 /** @typedef HydraulicFluxDouble Normal Speed  */
 template class PhysicalQuantityInstance< double, HydraulicFlux >; 
 typedef PhysicalQuantityInstance< double, HydraulicFlux > HydraulicFluxDoubleInstance;
-typedef std::shared_ptr< HydraulicFluxDoubleInstance > HydraulicFluxDoublePtr; 
+typedef boost::shared_ptr< HydraulicFluxDoubleInstance > HydraulicFluxDoublePtr; 
 #endif /* PHYSICALQUANTITY_H_ */

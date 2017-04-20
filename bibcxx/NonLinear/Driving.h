@@ -68,7 +68,7 @@ class DrivingInstance
 {
 private:
     /** @brief Pointeur intelligent vers un VirtualMeshEntity */
-    typedef std::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+    typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
     DrivingTypeEnum _type; 
     double                    _coefMult;
     MeshEntityPtr             _zone;
@@ -239,6 +239,6 @@ public:
 
 
 
-typedef std::shared_ptr< DrivingInstance > DrivingPtr;
+typedef boost::shared_ptr< DrivingInstance > DrivingPtr;
 
 #endif /* DRIVING_H_ */

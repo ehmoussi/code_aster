@@ -64,7 +64,7 @@ public:
      * @typedef ElementaryVectorPtr
      * @brief Pointeur intelligent vers un ElementaryVector
      */
-    typedef std::shared_ptr< ElementaryVectorInstance > ElementaryVectorPtr;
+    typedef boost::shared_ptr< ElementaryVectorInstance > ElementaryVectorPtr;
 
     /**
      * @brief Constructeur
@@ -142,6 +142,6 @@ public:
  * @typedef ElementaryVectorPtr
  * @brief Pointeur intelligent vers un ElementaryVectorInstance
  */
-typedef std::shared_ptr< ElementaryVectorInstance > ElementaryVectorPtr;
+typedef boost::shared_ptr< ElementaryVectorInstance > ElementaryVectorPtr;
 
 #endif /* ELEMENTARYVECTOR_H_ */

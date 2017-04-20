@@ -33,5 +33,6 @@ void exportInterspectralMatrixToPython()
     class_< InterspectralMatrixInstance, InterspectralMatrixInstance::InterspectralMatrixPtr,
             bases< DataStructure > > ( "InterspectralMatrix", no_init )
         .def( "create", &InterspectralMatrixInstance::create )
+        .staticmethod( "create" )
     ;
 };

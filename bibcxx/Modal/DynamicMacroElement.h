@@ -88,7 +88,7 @@ public:
      * @typedef DynamicMacroElementPtr
      * @brief Pointeur intelligent vers un DynamicMacroElementInstance
      */
-    typedef std::shared_ptr< DynamicMacroElementInstance > DynamicMacroElementPtr;
+    typedef boost::shared_ptr< DynamicMacroElementInstance > DynamicMacroElementPtr;
 
     /**
      * @brief Constructeur
@@ -123,6 +123,6 @@ public:
  * @typedef DynamicMacroElementPtr
  * @brief Pointeur intelligent vers un DynamicMacroElementInstance
  */
-typedef std::shared_ptr< DynamicMacroElementInstance > DynamicMacroElementPtr;
+typedef boost::shared_ptr< DynamicMacroElementInstance > DynamicMacroElementPtr;
 
 #endif /* DYNAMICMACROELEMENT_H_ */

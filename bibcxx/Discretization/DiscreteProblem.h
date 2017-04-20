@@ -62,7 +62,7 @@ public:
      * @typedef DiscreteProblemPtr
      * @brief Pointeur intelligent vers un DiscreteProblem
      */
-    typedef std::shared_ptr< DiscreteProblemInstance > DiscreteProblemPtr;
+    typedef boost::shared_ptr< DiscreteProblemInstance > DiscreteProblemPtr;
 
     /**
      * @brief Constructeur
@@ -168,6 +168,6 @@ public:
  * @typedef DiscreteProblemPtr
  * @brief Pointeur intelligent vers un DiscreteProblem
  */
-typedef std::shared_ptr< DiscreteProblemInstance > DiscreteProblemPtr;
+typedef boost::shared_ptr< DiscreteProblemInstance > DiscreteProblemPtr;
 
 #endif /* DISCRETEPROBLEM_H_ */

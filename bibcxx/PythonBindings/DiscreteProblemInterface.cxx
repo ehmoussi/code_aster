@@ -33,6 +33,7 @@ void exportDiscreteProblemToPython()
     class_< DiscreteProblemInstance, DiscreteProblemInstance::DiscreteProblemPtr >
             ( "DiscreteProblem", no_init )
         .def( "create", &DiscreteProblemInstance::create )
+        .staticmethod( "create" )
         .def( "buildElementaryMechanicalLoadsVector",
               &DiscreteProblemInstance::buildElementaryMechanicalLoadsVector )
         .def( "buildElementaryDirichletVector",

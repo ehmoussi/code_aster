@@ -105,7 +105,7 @@ public:
      * @typedef StructureInterfacePtr
      * @brief Pointeur intelligent vers un StructureInterface
      */
-    typedef std::shared_ptr< StructureInterfaceInstance > StructureInterfacePtr;
+    typedef boost::shared_ptr< StructureInterfaceInstance > StructureInterfacePtr;
 
     /**
      * @brief Constructeur
@@ -177,6 +177,6 @@ public:
  * @typedef StructureInterfacePtr
  * @brief Enveloppe d'un pointeur intelligent vers un StructureInterfaceInstance
  */
-typedef std::shared_ptr< StructureInterfaceInstance > StructureInterfacePtr;
+typedef boost::shared_ptr< StructureInterfaceInstance > StructureInterfacePtr;
 
 #endif /* STRUCTUREINTERFACE_H_ */

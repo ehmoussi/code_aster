@@ -52,6 +52,6 @@ public:
  * @typedef EvolutiveThermalLoadPtr
  * @brief Pointeur intelligent vers un EvolutiveThermalLoadInstance
  */
-typedef std::shared_ptr< EvolutiveThermalLoadInstance > EvolutiveThermalLoadPtr;
+typedef boost::shared_ptr< EvolutiveThermalLoadInstance > EvolutiveThermalLoadPtr;
 
 #endif /* EVOLUTIVETHERMALLOAD_H_ */

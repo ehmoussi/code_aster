@@ -62,7 +62,7 @@ class MaterialInstance: public DataStructure
          * @typedef MaterialPtr
          * @brief Pointeur intelligent vers un Material
          */
-        typedef std::shared_ptr< MaterialInstance > MaterialPtr;
+        typedef boost::shared_ptr< MaterialInstance > MaterialPtr;
 
         /**
          * @brief Constructeur
@@ -110,7 +110,7 @@ class MaterialInstance: public DataStructure
  * @typedef MaterialPtr
  * @brief Pointeur intelligent vers un MaterialInstance
  */
-typedef std::shared_ptr< MaterialInstance > MaterialPtr;
+typedef boost::shared_ptr< MaterialInstance > MaterialPtr;
 
 
 #endif /* MATERIAL_H_ */

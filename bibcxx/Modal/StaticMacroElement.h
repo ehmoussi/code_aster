@@ -78,7 +78,7 @@ public:
  * @typedef ProjMesuInstancePtr
  * @brief Pointeur intelligent vers un ProjMesuInstance
  */
-typedef std::shared_ptr< ProjMesuInstance > ProjMesuPtr;
+typedef boost::shared_ptr< ProjMesuInstance > ProjMesuPtr;
 
 /**
  * @class StaticMacroElementInstance
@@ -122,7 +122,7 @@ public:
      * @typedef StaticMacroElementPtr
      * @brief Pointeur intelligent vers un StaticMacroElementInstance
      */
-    typedef std::shared_ptr< StaticMacroElementInstance > StaticMacroElementPtr;
+    typedef boost::shared_ptr< StaticMacroElementInstance > StaticMacroElementPtr;
 
     /**
      * @brief Constructeur
@@ -151,6 +151,6 @@ public:
  * @typedef StaticMacroElementPtr
  * @brief Pointeur intelligent vers un StaticMacroElementInstance
  */
-typedef std::shared_ptr< StaticMacroElementInstance > StaticMacroElementPtr;
+typedef boost::shared_ptr< StaticMacroElementInstance > StaticMacroElementPtr;
 
 #endif /* STATICMACROELEMENT_H_ */

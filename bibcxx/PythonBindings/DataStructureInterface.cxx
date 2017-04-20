@@ -30,9 +30,15 @@ void exportDataStructureToPython()
 {
     using namespace boost::python;
 
-    class_< DataStructure >( "DataStructure", init<>() )
+    void (DataStructure::*c1)(const int) const =
+            &DataStructure::debugPrint;
+    void (DataStructure::*c2)() const =
+            &DataStructure::debugPrint;
+
+    class_< DataStructure, DataStructure::DataStructurePtr >( "DataStructure", no_init )
         .def( "getName", &DataStructure::getName, return_value_policy<return_by_value>() )
         .def( "getType", &DataStructure::getType, return_value_policy<return_by_value>() )
-        .def( "debugPrint", &DataStructure::debugPrint )
+        .def( "debugPrint", c1 )
+        .def( "debugPrint", c2 )
     ;
 };

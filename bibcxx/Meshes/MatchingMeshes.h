@@ -66,7 +66,7 @@ public:
      * @typedef MatchingMeshesPtr
      * @brief Pointeur intelligent vers un MatchingMeshesInstance
      */
-    typedef std::shared_ptr< MatchingMeshesInstance > MatchingMeshesPtr;
+    typedef boost::shared_ptr< MatchingMeshesInstance > MatchingMeshesPtr;
 
     /**
      * @brief Constructeur
@@ -79,6 +79,6 @@ public:
  * @typedef MatchingMeshesPtr
  * @brief Pointeur intelligent vers un MatchingMeshesInstance
  */
-typedef std::shared_ptr< MatchingMeshesInstance > MatchingMeshesPtr;
+typedef boost::shared_ptr< MatchingMeshesInstance > MatchingMeshesPtr;
 
 #endif /* MATCHINGMESHES_H_ */

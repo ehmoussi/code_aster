@@ -29,7 +29,7 @@ void exportResultsContainerToPython()
 {
     using namespace boost::python;
 
-    class_< ResultsContainerInstance, ResultsContainerPtr,
+    class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
             bases< DataStructure > > ( "ResultsContainer", no_init )
         .def( "create", &createSharedPtr< ResultsContainerInstance > )
         .staticmethod( "create" )

@@ -33,5 +33,6 @@ void exportFiberGeometryToPython()
     class_< FiberGeometryInstance, FiberGeometryInstance::FiberGeometryPtr,
             bases< DataStructure > > ( "FiberGeometry", no_init )
         .def( "create", &FiberGeometryInstance::create )
+        .staticmethod( "create" )
     ;
 };

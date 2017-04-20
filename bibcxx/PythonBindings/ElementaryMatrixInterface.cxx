@@ -33,5 +33,6 @@ void exportElementaryMatrixToPython()
     class_< ElementaryMatrixInstance, ElementaryMatrixInstance::ElementaryMatrixPtr,
             bases< DataStructure > > ( "ElementaryMatrix", no_init )
         .def( "create", &ElementaryMatrixInstance::create )
+        .staticmethod( "create" )
     ;
 };

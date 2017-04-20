@@ -31,7 +31,7 @@
  * @todo A SUPPRIMER
  */
 class LinearSolverInstance;
-typedef std::shared_ptr< LinearSolverInstance > LinearSolverPtr;
+typedef boost::shared_ptr< LinearSolverInstance > LinearSolverPtr;
 
 /**
  * @class ForwardLinearSolverPtr

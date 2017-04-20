@@ -74,7 +74,7 @@ public:
      * @typedef ElementaryCharacteristicsPtr
      * @brief Pointeur intelligent vers un ElementaryCharacteristics
      */
-    typedef std::shared_ptr< ElementaryCharacteristicsInstance > ElementaryCharacteristicsPtr;
+    typedef boost::shared_ptr< ElementaryCharacteristicsInstance > ElementaryCharacteristicsPtr;
 
     /**
      * @brief Constructeur
@@ -111,6 +111,6 @@ public:
  * @typedef ElementaryCharacteristicsPtr
  * @brief Pointeur intelligent vers un ElementaryCharacteristicsInstance
  */
-typedef std::shared_ptr< ElementaryCharacteristicsInstance > ElementaryCharacteristicsPtr;
+typedef boost::shared_ptr< ElementaryCharacteristicsInstance > ElementaryCharacteristicsPtr;
 
 #endif /* ELEMENTARYCHARACTERISTICS_H_ */

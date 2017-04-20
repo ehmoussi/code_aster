@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster import LinearSolver, StaticMechanicalSolver
+from code_aster import LinearSolver, StaticMechanicalSolver, KinematicsLoad, GenericMechanicalLoad
 from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 from code_aster import getGlossary
@@ -32,7 +32,7 @@ def _addLoad( mechaSolv, fkw ):
 
     if isinstance( load, KinematicsLoad ):
         mechaSolv.addKinematicsLoad( load )
-    elif isinstance( load, MechanicalLoad ):
+    elif isinstance( load, GenericMechanicalLoad ):
         mechaSolv.addMechanicalLoad( load )
     else:
         assert False
@@ -76,7 +76,7 @@ def MECA_STATIQUE( **kwargs ):
     glossary = getGlossary()
     solverInt = glossary.getSolver( methode )
     renumInt = glossary.getRenumbering( renum )
-    # print solverInt, renumInt
+    print solverInt, renumInt
     currentSolver = LinearSolver.create( solverInt, renumInt )
 
     mechaSolv.setLinearSolver( currentSolver )

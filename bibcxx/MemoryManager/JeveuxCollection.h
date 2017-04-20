@@ -241,7 +241,7 @@ template< class ValueType >
 class JeveuxCollection
 {
     public:
-        typedef std::shared_ptr< JeveuxCollectionInstance< ValueType > > JeveuxCollectionTypePtr;
+        typedef boost::shared_ptr< JeveuxCollectionInstance< ValueType > > JeveuxCollectionTypePtr;
 
     private:
         JeveuxCollectionTypePtr _jeveuxCollectionPtr;

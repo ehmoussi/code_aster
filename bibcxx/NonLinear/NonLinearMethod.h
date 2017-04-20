@@ -153,6 +153,6 @@ class NonLinearMethodInstance
  * @typedef NonLinearMethodPtr
  * @brief Enveloppe d'un pointeur intelligent vers un NonLinearMethodInstance
  */
-typedef std::shared_ptr< NonLinearMethodInstance > NonLinearMethodPtr;
+typedef boost::shared_ptr< NonLinearMethodInstance > NonLinearMethodPtr;
 
 #endif /* NONLINEARMETHOD_H_ */

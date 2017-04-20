@@ -59,7 +59,7 @@ public:
      * @typedef CrackShapePtr
      * @brief Pointeur intelligent vers un CrackShapeInstance
      */
-    typedef std::shared_ptr< CrackShapeInstance > CrackShapePtr;
+    typedef boost::shared_ptr< CrackShapeInstance > CrackShapePtr;
 
     /**
      * @brief Constructeur
@@ -191,7 +191,7 @@ public:
  * @typedef CrackShapePtr
  * @brief Pointeur intelligent vers un CrackShapeInstance
  */
-typedef std::shared_ptr< CrackShapeInstance > CrackShapePtr;
+typedef boost::shared_ptr< CrackShapeInstance > CrackShapePtr;
 
 
 #endif /* CRACKSHAPE_H_ */

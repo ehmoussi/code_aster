@@ -262,9 +262,9 @@ class StaticModeInterfInstance: public StaticModeAnalysisInstance
  * @typedef StaticNonLinearAnalysisPtr
  * @brief Enveloppe d'un pointeur intelligent vers un StaticModeAnalysisInstance
  */
-typedef std::shared_ptr< StaticModeDeplInstance > StaticModeDeplPtr; 
-typedef std::shared_ptr< StaticModeForcInstance > StaticModeForcPtr;
-typedef std::shared_ptr< StaticModePseudoInstance > StaticModePseudoPtr;
-typedef std::shared_ptr< StaticModeInterfInstance > StaticModeInterfPtr;
+typedef boost::shared_ptr< StaticModeDeplInstance > StaticModeDeplPtr; 
+typedef boost::shared_ptr< StaticModeForcInstance > StaticModeForcPtr;
+typedef boost::shared_ptr< StaticModePseudoInstance > StaticModePseudoPtr;
+typedef boost::shared_ptr< StaticModeInterfInstance > StaticModeInterfPtr;
 
 #endif /* STATICMODEANALYSIS_H_ */
