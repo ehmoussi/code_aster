@@ -35,6 +35,7 @@ if not HAVE_ASTERSTUDY:
 
 else:
     from .Language.Syntax import *
+    from .Language.Syntax import _F
 
 
 class Translation(object):

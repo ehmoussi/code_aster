@@ -10,7 +10,7 @@ __all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_CHAR_MECA
            'MODI_MAILLAGE',  'NUME_DDL',       'NUME_DDL_GENE',  'PROJ_CHAMP',
           ]
 
-from code_aster.Cata.Syntax import _F
+from code_aster.Cata.Language.Syntax import _F
 
 from code_aster.Commands.affe_cara_elem import AFFE_CARA_ELEM
 from code_aster.Commands.affe_char_cine import AFFE_CHAR_CINE
