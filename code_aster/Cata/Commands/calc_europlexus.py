@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,6 +17,11 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: serguei.potapov at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def calc_europlexus_prod(self,COURBE=None,**args):
   if COURBE is not None:
       self.type_sdprod(args['TABLE_COURBE'],table_sdaster)
@@ -31,7 +31,6 @@ CALC_EUROPLEXUS = MACRO(nom="CALC_EUROPLEXUS",
                         op=OPS('Macro.calc_europlexus_ops.calc_europlexus_ops'),
                         sd_prod=calc_europlexus_prod,
                         reentrant='n',
-                        UIinfo={"groupes":("Outils-métier","Dynamique",)},
                         fr=tr("Chainage Code_Aster-Europlexus"),
                         regles=(UN_PARMI('ETAT_INIT','MODELE'),
                                 UN_PARMI('ETAT_INIT','CHAM_MATER'),

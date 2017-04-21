@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -20,6 +15,11 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,         
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.        
 # ======================================================================
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def rest_mode_nonl_prod(TYPE_RESU,**args):
     if TYPE_RESU == 'DYNA_TRANS' : return dyna_trans
     elif TYPE_RESU == 'MODE_MECA' : return mode_meca
@@ -28,7 +28,6 @@ def rest_mode_nonl_prod(TYPE_RESU,**args):
 REST_MODE_NONL=OPER(nom="REST_MODE_NONL", op=63,
          sd_prod=rest_mode_nonl_prod, reentrant='n',
          fr=tr("Post traitement de mode_non_line : récuperation résultats"),
-         UIinfo={"groupes":("Post-traitements",)},
 
          MODE_NON_LINE    =SIMP(statut='o',typ=table_container,max=1),
          TYPE_RESU    =SIMP(statut='o',typ='TXM',into=('MODE_MECA','DYNA_TRANS'),defaut='DYNA_TRANS',max=1),

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,8 +17,12 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 MODI_MODELE=OPER(nom="MODI_MODELE",op= 103,sd_prod=modele_sdaster,reentrant='o',
-         UIinfo={"groupes":("Modélisation",)},
          fr=tr("Modifier la partition d'un modèle (parallélisme) "),
 
          reuse=SIMP(statut='c', typ=CO),

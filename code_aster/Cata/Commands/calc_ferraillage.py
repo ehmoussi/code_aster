@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,13 +17,17 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: jessica.haelewyn at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def calc_ferraillage_prod(RESULTAT,**args):
    if AsType(RESULTAT) != None : return AsType(RESULTAT)
    raise AsException("type de concept resultat non prevu")
 
 
 CALC_FERRAILLAGE=OPER(nom="CALC_FERRAILLAGE",op=175,sd_prod=calc_ferraillage_prod, reentrant='o',
-            UIinfo={"groupes":("Post-traitements","Outils-métier",)},
                  fr=tr("calcul de cartes de densité de ferraillage "),
 
          reuse=SIMP(statut='c', typ=CO),

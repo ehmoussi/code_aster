@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,10 +16,14 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 AFFE_CHAR_MECA_F=OPER(nom="AFFE_CHAR_MECA_F",op=7,sd_prod=char_meca,
                       fr=tr("Affectation de charges et conditions aux limites mécaniques fonction d'un (ou plusieurs) paramètres"),
                       reentrant='n',
-            UIinfo={"groupes":("Chargements","Mécanique",)},
         regles=(AU_MOINS_UN('DDL_IMPO','FACE_IMPO','LIAISON_DDL','FORCE_NODALE',
                             'FORCE_FACE','FORCE_ARETE','FORCE_CONTOUR','FORCE_INTERNE',
                             'PRES_REP','FORCE_POUTRE','VITE_FACE','IMPE_FACE','ONDE_PLANE',
@@ -471,7 +470,7 @@ AFFE_CHAR_MECA_F=OPER(nom="AFFE_CHAR_MECA_F",op=7,sd_prod=char_meca,
            regles=(AU_MOINS_UN('GROUP_MA','MAILLE'),
                    PRESENT_ABSENT('GROUP_MA','MAILLE'),),
            DIRECTION       =SIMP(statut='o',typ='R',min=3, max=3),
-           DIST            =SIMP(statut='f',typ='R',defaut= 0.E+0 ),
+           DIST            =SIMP(statut='f',typ='R', ),
            DIST_REFLECHI   =SIMP(statut='f',typ='R', ),
            TYPE_ONDE       =SIMP(statut='o',typ='TXM', into=("S", "P", "SV", "SH",) ),
            FONC_SIGNAL     =SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule) ),

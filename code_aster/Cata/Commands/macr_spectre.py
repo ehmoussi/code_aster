@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -23,11 +18,15 @@ from code_aster.Cata.Commons import *
 # person_in_charge: francois.voldoire at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 MACR_SPECTRE=MACRO(nom="MACR_SPECTRE",
                    op=OPS('Macro.macr_spectre_ops.macr_spectre_ops'),
                    sd_prod=table_sdaster,
                    reentrant='n',
-                   UIinfo={"groupes":("Post-traitements","Outils-métier",)},
                    fr=tr("Calcul de spectre, post-traitement de séisme"),
          MAILLAGE      =SIMP(statut='f',typ=maillage_sdaster,),
          

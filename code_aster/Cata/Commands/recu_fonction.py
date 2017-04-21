@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: mathieu.courtois at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def recu_fonction_prod(RESULTAT=None,TABLE=None,RESU_GENE=None,
                        BASE_ELAS_FLUI=None,CHAM_GD=None,NAPPE=None,
                        INTE_SPEC=None,NOEUD_J=None,NUME_ORDRE_J=None,
@@ -39,7 +39,6 @@ def recu_fonction_prod(RESULTAT=None,TABLE=None,RESU_GENE=None,
 RECU_FONCTION=OPER(nom="RECU_FONCTION",op=90,sd_prod=recu_fonction_prod,
                    fr=tr("Extraire sous forme d'une fonction, l'évolution d'une grandeur en fonction d'une autre"),
                    reentrant='f',
-            UIinfo={"groupes":("Résultats et champs","Fonctions",)},
          regles=(UN_PARMI('CHAM_GD','RESULTAT','RESU_GENE','TABLE','BASE_ELAS_FLUI','NAPPE','INTE_SPEC'),),
 
          reuse=SIMP(statut='c', typ=CO),

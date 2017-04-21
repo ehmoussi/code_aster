@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -23,11 +18,16 @@ from code_aster.Cata.Commons import *
 # person_in_charge: sylvie.michel-ponnelle at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 CALC_PRECONT=MACRO(nom="CALC_PRECONT",
                    op=OPS('Macro.calc_precont_ops.calc_precont_ops'),
                    sd_prod=evol_noli,
                    fr=tr("Imposer la tension définie par le BPEL dans les cables"),
-                   reentrant='f',UIinfo={"groupes":("Modélisation",)},
+                   reentrant='f',
          reuse =SIMP(statut='c',typ=CO),
          MODELE           =SIMP(statut='o',typ=modele_sdaster),
          CHAM_MATER       =SIMP(statut='o',typ=cham_mater),
@@ -40,7 +40,7 @@ CALC_PRECONT=MACRO(nom="CALC_PRECONT",
 #-------------------------------------------------------------------
          ETAT_INIT       =C_ETAT_INIT('STAT_NON_LINE','f'),
 #-------------------------------------------------------------------
-         METHODE = SIMP(statut='d',typ='TXM',defaut="NEWTON",into=("NEWTON","IMPLEX")),
+         METHODE = SIMP(statut='f',typ='TXM',defaut="NEWTON",into=("NEWTON","IMPLEX")),
          b_meth_newton = BLOC(condition = """equal_to("METHODE", 'NEWTON')""",
                            NEWTON = C_NEWTON(),
                         ),

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,8 +16,12 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: sebastien.fayolle at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 DEFI_GLRC=OPER(nom="DEFI_GLRC",op=57,sd_prod=mater_sdaster,reentrant='f',
-               UIinfo={"groupes":("Modélisation",)},
                fr=tr("Déterminer les caractéristiques homogenéisées du béton armé à partir des propriétés du béton et des  "
                      " armatures"),
                reuse = SIMP(statut='c',typ=mater_sdaster),

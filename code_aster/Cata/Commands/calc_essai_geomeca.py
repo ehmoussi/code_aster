@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: sam.cuvilliez at edf.fr
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
 
 def calc_essai_geomeca_prod(self, **args):
     for key, fact in args.items():
@@ -40,7 +40,6 @@ def calc_essai_geomeca_prod(self, **args):
 CALC_ESSAI_GEOMECA = MACRO(nom="CALC_ESSAI_GEOMECA",
                      op=OPS('Macro.calc_essai_geomeca_ops.calc_essai_geomeca_ops'),
                      sd_prod=calc_essai_geomeca_prod,
-                     UIinfo={"groupes":("Mécanique",)},
                      reentrant='n',
                      MATER       = SIMP(statut='o',typ=mater_sdaster),
                      COMPORTEMENT   = C_COMPORTEMENT('CALC_ESSAI_GEOMECA'),

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,6 +17,11 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: mickael.abbas@edf.fr
 #
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def post_champ_prod(RESULTAT_REDUIT,**args):
     if (AsType(RESULTAT_REDUIT) == evol_noli):
         return evol_noli
@@ -31,7 +31,6 @@ def post_champ_prod(RESULTAT_REDUIT,**args):
 REST_REDUIT_COMPLET=OPER(nom="REST_REDUIT_COMPLET",op=54,
                          sd_prod=post_champ_prod,
                          reentrant='f',
-                         UIinfo={"groupes":("Post-traitements")},
     reuse = SIMP(statut='c', typ=CO),
     MODELE           = SIMP(statut='o',typ=modele_sdaster),
     RESULTAT_REDUIT  = SIMP(statut='o',typ=resultat_sdaster,max=1),

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: nicolas.sellenet at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def comb_matr_asse_prod(COMB_R,COMB_C,CALC_AMOR_GENE,**args):
   if COMB_C:
     type_mat = AsType(COMB_C[0]['MATR_ASSE'])
@@ -41,7 +41,6 @@ def comb_matr_asse_prod(COMB_R,COMB_C,CALC_AMOR_GENE,**args):
 COMB_MATR_ASSE=OPER(nom="COMB_MATR_ASSE",op=  31,sd_prod=comb_matr_asse_prod,
                     fr=tr("Effectuer la combinaison linéaire de matrices assemblées"),
                     reentrant='f',
-            UIinfo={"groupes":("Matrices et vecteurs",)},
          regles=(UN_PARMI('COMB_R','COMB_C','CALC_AMOR_GENE' ),),
          reuse=SIMP(statut='c', typ=CO),
          COMB_R          =FACT(statut='f',max='**',

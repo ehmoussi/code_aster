@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,6 +17,11 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def extr_resu_prod(RESULTAT,**args):
   if AsType(RESULTAT) == evol_elas    : return evol_elas
   if AsType(RESULTAT) == evol_noli    : return evol_noli
@@ -38,7 +38,6 @@ def extr_resu_prod(RESULTAT,**args):
   raise AsException("type de concept resultat non prevu")
 
 EXTR_RESU=OPER(nom="EXTR_RESU",op=176,sd_prod=extr_resu_prod,reentrant='f',
-            UIinfo={"groupes":("Résultats et champs",)},
             fr=tr("Extraire des champs au sein d'une SD Résultat"),
          reuse=SIMP(statut='c', typ=CO),
          RESULTAT        =SIMP(statut='o',typ=(evol_elas,dyna_trans,dyna_harmo,acou_harmo,mode_meca,

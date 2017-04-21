@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: j-pierre.lefebvre at edf.fr
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
 
 def lire_resu_prod(TYPE_RESU,**args):
   if TYPE_RESU == "EVOL_CHAR" :  return evol_char
@@ -40,7 +40,6 @@ def l_nom_cham_pas_elga() :
      return list(set(C_NOM_CHAM_INTO())-set(C_NOM_CHAM_INTO('ELGA',)))
 
 LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
-            UIinfo={"groupes":("Lecture","Résultats et champs",)},
                fr=tr("Lire dans un fichier, soit format IDEAS, soit au format ENSIGHT soit au format MED,"
                   " des champs et les stocker dans une SD résultat"),
 

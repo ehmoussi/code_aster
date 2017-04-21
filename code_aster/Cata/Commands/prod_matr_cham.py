@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR   
@@ -22,10 +17,14 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 PROD_MATR_CHAM=OPER(nom="PROD_MATR_CHAM",op= 156,sd_prod=cham_no_sdaster,
                     fr=tr("Effectuer le produit d'une matrice par un vecteur"),
                     reentrant='n',
-            UIinfo={"groupes":("Post-traitements","Matrices et vecteurs",)},
          MATR_ASSE       =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,matr_asse_pres_c ) ),
          CHAM_NO         =SIMP(statut='o',typ=cham_no_sdaster),
          TITRE           =SIMP(statut='f',typ='TXM'),

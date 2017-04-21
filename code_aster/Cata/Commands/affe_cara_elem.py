@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: jean-luc.flejou at edf.fr
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
 
 def force_tuple(obj):
     """Force *obj* to be a tuple."""
@@ -54,6 +54,9 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
             msg = unicode(fmt).format(**locals())
             raise AsException( msg )
 
+    # les messages doivent être courts pour être visibles dans eficas
+    sizeErr = tr(u"les cardinaux de CARA et VALE sont différents.")
+    defErr = tr(u"mauvaise définition de {prop!r}.")
     # - - - - - - - - - - - - - - -
     if POUTRE != None:
         for i in range(len(POUTRE)):
@@ -283,7 +286,6 @@ AFFE_CARA_ELEM=MACRO(nom="AFFE_CARA_ELEM",
    op=OPS('Macro.affe_cara_elem_ops.affe_cara_elem_ops'),
    fr=tr("Affectation de caractéristiques à des éléments de structure"),
    reentrant='n',
-   UIinfo ={"groupes":("Modélisation",)},
    regles = (AU_MOINS_UN('POUTRE','BARRE','COQUE','CABLE','DISCRET','DISCRET_2D','MASSIF',
                          'GRILLE','MEMBRANE','MULTIFIBRE','RIGI_PARASOL','MASS_REP',),
              PRESENT_PRESENT('MULTIFIBRE','GEOM_FIBRE'),

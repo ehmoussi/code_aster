@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,8 +16,12 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
-            UIinfo={"groupes":("Résolution","Thermique",)},
                    fr=tr("Résoudre un problème thermique non linéaire (conditions limites ou comportement matériau)"
                        " stationnaire ou transitoire"),
          reuse=SIMP(statut='c', typ=CO),
@@ -48,8 +47,8 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,reentrant='f',
            CHARGE          =SIMP(statut='o',typ=char_ther),
            FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
          ),
-         METHODE         =SIMP(statut='d',typ='TXM',defaut="NEWTON",into=("NEWTON","MODELE_REDUIT")),
-         b_meth_newton = BLOC(condition = """equal_to("METHODE", 'NEWTON')""",
+         METHODE         =SIMP(statut='f',typ='TXM',defaut="NEWTON",into=("NEWTON","MODELE_REDUIT","NEWTON_KRYLOV")),
+         b_meth_newton = BLOC(condition = """equal_to("METHODE", 'NEWTON') or equal_to("METHODE", 'NEWTON_KRYLOV')""",
                     NEWTON          =FACT(statut='d',
                         REAC_ITER       =SIMP(statut='f',typ='I',defaut= 0 ,val_min=0),
                         RESI_LINE_RELA  =SIMP(statut='f',typ='R',defaut= 1.0E-3 ),

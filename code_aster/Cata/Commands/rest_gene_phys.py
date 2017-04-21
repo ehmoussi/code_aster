@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,6 +18,11 @@ from code_aster.Cata.Commons import *
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def rest_gene_phys_prod(RESU_GENE,**args ):
   if AsType(RESU_GENE) == tran_gene : return dyna_trans
   if AsType(RESU_GENE) == mode_gene : return mode_meca
@@ -33,7 +33,6 @@ def rest_gene_phys_prod(RESU_GENE,**args ):
 REST_GENE_PHYS=OPER(nom="REST_GENE_PHYS",op=  75,sd_prod=rest_gene_phys_prod,
                     fr=tr("Restituer dans la base physique des résultats en coordonnées généralisées"),
                     reentrant='n',
-            UIinfo={"groupes":("Matrices et vecteurs",)},
         regles=(
                 EXCLUS('INST','LIST_INST','TOUT_INST',
                        'TOUT_ORDRE','NUME_ORDRE','NUME_MODE',),

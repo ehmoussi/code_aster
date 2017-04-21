@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -20,17 +15,16 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-# person_in_charge: jacques.pellet at edf.fr
+# person_in_charge: nicolas.sellenet at edf.fr
 
-APPL_CINE_SCMB=OPER(nom="APPL_CINE_SCMB",op=159,sd_prod=cham_no_sdaster,reentrant='f',
-               fr=tr("Application des C.L. cinématiques au second membre"),
-               UIinfo={"groupes":("Résolution",)},
-         reuse=SIMP(statut='c', typ=CO),
-         CHAM_NO        =SIMP(statut='o',typ=cham_no_sdaster),
-         MATR           =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
-                                               matr_asse_temp_c,matr_asse_pres_r,matr_asse_pres_c) ),
-         CHAM_CINE       =SIMP(statut='f',typ=cham_no_sdaster),
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
 
-         TITRE           =SIMP(statut='f',typ='TXM'),
-         INFO            =SIMP(statut='f',typ='I',into=(1,2) ),
-)  ;
+
+CREA_LIB_MFRONT=MACRO(nom="CREA_LIB_MFRONT",
+                      op=OPS('Macro.crea_lib_mfront_ops.crea_lib_mfront_ops'),
+                      reentrant='n',
+                      fr=tr("Compiler une loi de comportement MFront"),
+                      UNITE_MFRONT=SIMP(statut='o',typ=UnitType(),inout='in',),
+                      UNITE_LIBRAIRIE=SIMP(statut='o',typ=UnitType(), inout='out',),);

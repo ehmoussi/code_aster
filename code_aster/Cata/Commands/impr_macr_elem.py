@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR   
@@ -22,8 +17,12 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: mathieu.corus at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 IMPR_MACR_ELEM=PROC(nom="IMPR_MACR_ELEM",op= 160,
-                    UIinfo={"groupes":("Impression","Outils-métier",)},
          fr=tr("Impression d'une structure de données MACR_ELEM_DYNA au format IDEAS MISS3D"),
          MACR_ELEM_DYNA  =SIMP(statut='o',typ=macr_elem_dyna ),
          FORMAT          =SIMP(statut='f',typ='TXM',defaut="IDEAS",

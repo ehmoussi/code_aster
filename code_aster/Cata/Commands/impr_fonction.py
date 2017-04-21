@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,12 +17,16 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: mathieu.courtois at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 IMPR_FONCTION=MACRO(nom="IMPR_FONCTION",
                     op=OPS('Macro.impr_fonction_ops.impr_fonction_ops'),
                     sd_prod=None,
                     fr=tr("Imprime le contenu d'objets de type fonction ou liste de "
                          "réels dans un fichier destiné à un traceur de courbe"),
-                    UIinfo={"groupes":("Impression","Fonctions",)},
          FORMAT          =SIMP(statut='o',typ='TXM',defaut='TABLEAU',
                                into=("TABLEAU","AGRAF","XMGRACE",),),
          b_pilote = BLOC(condition = """equal_to("FORMAT", 'XMGRACE')""",

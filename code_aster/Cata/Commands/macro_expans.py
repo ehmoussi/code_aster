@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,6 +18,11 @@ from code_aster.Cata.Commons import *
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def macro_expans_prod(self, MODELE_MESURE, RESU_NX, RESU_EX, RESU_ET, RESU_RD, **args):
     RESU_EXP = MODELE_MESURE['MESURE']
     self.type_sdprod(RESU_NX, mode_meca)
@@ -38,7 +38,6 @@ MACRO_EXPANS=MACRO(nom="MACRO_EXPANS",
                    op=OPS('Macro.macro_expans_ops.macro_expans_ops'),
                    sd_prod=macro_expans_prod,
                    reentrant='n',
-                   UIinfo={"groupes":("Outils-métier","Dynamique",)},
                    fr=tr("Outil d'expansion de resultats exprimentaux sur une base definie sur un modele numerique"),
                         MODELE_CALCUL   = FACT(statut='o',
                            MODELE          = SIMP(statut='o',typ=(modele_sdaster) ),

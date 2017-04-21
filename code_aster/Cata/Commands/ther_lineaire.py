@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,8 +16,12 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 THER_LINEAIRE=OPER(nom="THER_LINEAIRE",op=25,sd_prod=evol_ther,reentrant='f',
-            UIinfo={"groupes":("Résolution","Thermique",)},
                    fr=tr("Résoudre un problème thermique linéaire stationnaire ou transitoire"),
          reuse=SIMP(statut='c', typ=CO),
          MODELE          =SIMP(statut='o',typ=modele_sdaster),
@@ -59,4 +58,7 @@ THER_LINEAIRE=OPER(nom="THER_LINEAIRE",op=25,sd_prod=evol_ther,reentrant='f',
 #-------------------------------------------------------------------
          TITRE           =SIMP(statut='f',typ='TXM'),
          INFO            =SIMP(statut='f',typ='I',into=(1,2)),
+         translation={
+            "THER_LINEAIRE": "Linear thermal analysis",
+         }
 )  ;

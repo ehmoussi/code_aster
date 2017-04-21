@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,8 +17,12 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: romeo.fernandes at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
-                       UIinfo={"groupes":("Outils-métier",)},
                        sd_prod=table_sdaster,
                        op=OPS("Mac3coeur.post_mac3coeur_ops.post_mac3coeur_ops"),
 
@@ -36,7 +35,8 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                           fr=tr("Post-traitement des lames d'eau, par grille ou valeurs min/max"),
 
                  FORMAT       = SIMP(statut='o',typ='TXM',into=("GRACE","TABLE")),
-                 UNITE        = SIMP(statut='o',typ=UnitType(), max=1, inout='out'),                   # NUMERO DE L'UNITE LOGIQUE POUR LE POST
+                 UNITE        = SIMP(statut='o',typ=UnitType(), inout='out',
+                                     fr=tr("Numéro de l'unité logique pour le post-traitement")),
 
                  b_lame_grace  = BLOC(condition = """equal_to("FORMAT", 'GRACE') """,fr=tr("Paramètres pour le format GRACE"),
                        regles = UN_PARMI('NUME_GRILLE','TYPE_RESU',),
@@ -53,7 +53,7 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
            DEFORMATION = FACT(statut='f',max='**',
                               fr=tr("Post-traitement des deformations, par grille ou valeurs min/max"),
 
-                 UNITE        = SIMP(statut='o',typ=UnitType(), max=1),
+                 UNITE        = SIMP(statut='o',typ=UnitType(), inout='out'),
                  FORMAT       = SIMP(statut='o',typ='TXM',into=("GRACE","TABLE")),
 
                  b_def_grace  = BLOC(condition = """equal_to("FORMAT", 'GRACE') """,fr=tr("Paramètres pour le format GRACE"),
@@ -68,7 +68,7 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                  b_def_table  = BLOC(condition = """equal_to("FORMAT", 'TABLE') """,fr=tr("Paramètres pour le format TABLE"),
                         NOM_SITE     = SIMP(statut='o',typ='TXM', max=1),
                         FORMAT_R     = SIMP(statut='f',typ='TXM', into=("DAMAC","STANDARD"), defaut="DAMAC")
-                       
+
                                    ),
 
 

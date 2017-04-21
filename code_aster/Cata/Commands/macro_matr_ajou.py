@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,6 +18,11 @@ from code_aster.Cata.Commons import *
 # person_in_charge: nicolas.greffet at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def macro_matr_ajou_prod(self,MATR_AMOR_AJOU,MATR_MASS_AJOU,MATR_RIGI_AJOU,FORC_AJOU,**args):
   self.type_sdprod(MATR_AMOR_AJOU,matr_asse_gene_r)
   self.type_sdprod(MATR_MASS_AJOU,matr_asse_gene_r)
@@ -36,7 +36,6 @@ def macro_matr_ajou_prod(self,MATR_AMOR_AJOU,MATR_MASS_AJOU,MATR_RIGI_AJOU,FORC_
 MACRO_MATR_AJOU=MACRO(nom="MACRO_MATR_AJOU",
                       op=OPS('Macro.macro_matr_ajou_ops.macro_matr_ajou_ops'),
                       sd_prod=macro_matr_ajou_prod,
-                      UIinfo={"groupes":("Résolution","Matrices et vecteurs",)},
                       fr=tr("Calculer de facon plus condensée qu'avec CALC_MATR_AJOU des "
                            "matrices de masse, d'amortissement ou de rigidité ajoutés"),
       regles=(AU_MOINS_UN('MODE_MECA','DEPL_IMPO','MODELE_GENE'),

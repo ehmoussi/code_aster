@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,12 +17,16 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: samuel.geniaut at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 POST_RUPTURE=MACRO(nom="POST_RUPTURE",
                    op=OPS("Macro.post_rupture_ops.post_rupture_ops"),
                    sd_prod=table_sdaster,
                    fr=tr("post-traitements en Rupture"),
                    reentrant='f',
-                   UIinfo={"groupes":("Résultats et champs","Rupture",)},
 
       reuse=SIMP(statut='c', typ=CO),
       TABLE     = SIMP(statut='o',typ=table_sdaster,max='**'),

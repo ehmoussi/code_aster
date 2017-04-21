@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: mathieu.courtois at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def calc_table_prod(self, TABLE, ACTION, **kargs):
    """Typage du concept produit.
    """
@@ -40,7 +40,6 @@ CALC_TABLE=MACRO(nom="CALC_TABLE",
                  op=OPS('Macro.calc_table_ops.calc_table_ops'),
                  sd_prod=calc_table_prod,
                  fr=tr("Opérations sur une table"),
-                 UIinfo={"groupes":("Tables",)},
                  reentrant='f',
    reuse=SIMP(statut='c', typ=CO),
    TABLE  = SIMP(statut='o',typ=table_sdaster),

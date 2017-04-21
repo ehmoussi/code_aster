@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,6 +16,10 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+
 
 def C_ETAT_INIT( COMMAND, statut ) :  #COMMUN#
 
@@ -43,14 +42,14 @@ def C_ETAT_INIT( COMMAND, statut ) :  #COMMUN#
     kwargs['INST']           = SIMP(statut='f',typ='R')
     kwargs['NUME_DIDI']      = SIMP(statut='f',typ='I')
     kwargs['INST_ETAT_INIT'] = SIMP(statut='f',typ='R')
-    kwargs['CRITERE']        = SIMP(statut='d',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU"))
+    kwargs['CRITERE']        = SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU"))
 
     if COMMAND == 'DYNA_NON_LINE':
         mcfact = FACT(statut=statut,max='**',
                   regles=(AU_MOINS_UN('EVOL_NOLI','ACCE','VITE','DEPL','SIGM','VARI',),
                           EXCLUS('NUME_ORDRE','INST'), ),
                   b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
-                                   PRECISION       =SIMP(statut='d',typ='R',defaut= 1.E-6,),),
+                                   PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
                   b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                                    PRECISION       =SIMP(statut='o',typ='R',),),
                     **kwargs

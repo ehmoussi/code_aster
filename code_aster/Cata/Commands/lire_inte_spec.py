@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,13 +18,17 @@ from code_aster.Cata.Commons import *
 # person_in_charge: irmela.zentner at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 LIRE_INTE_SPEC=MACRO(nom="LIRE_INTE_SPEC",
                      op=OPS('Macro.lire_inte_spec_ops.lire_inte_spec_ops'),
                      sd_prod=interspectre,
                      fr=tr("Lecture sur un fichier externe de fonctions complexes pour "
                           "créer une matrice interspectrale"),
                      reentrant='n',
-            UIinfo={"groupes":("Lecture","Fonctions",)},
          UNITE           =SIMP(statut='o',typ=UnitType(), inout='in'),
          FORMAT_C        =SIMP(statut='f',typ='TXM',defaut="MODULE_PHASE",into=("REEL_IMAG","MODULE_PHASE") ),
          FORMAT          =SIMP(statut='f',typ='TXM',defaut="ASTER",into=("ASTER","IDEAS") ),

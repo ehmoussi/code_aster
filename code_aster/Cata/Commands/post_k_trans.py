@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,12 +18,16 @@ from code_aster.Cata.Commons import *
 # person_in_charge: sam.cuvilliez at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 POST_K_TRANS=MACRO(nom="POST_K_TRANS",
                    op=OPS('Macro.post_k_trans_ops.post_k_trans_ops'),
                    sd_prod=table_sdaster,
                    fr=tr("Calcul des facteurs d intensite des contrainte par recombinaison modale"),
                    reentrant='n',
-                   UIinfo={"groupes":("Post-traitements","Rupture",)},
         RESU_TRANS      =SIMP(statut='o',typ=tran_gene),
         K_MODAL         =FACT(statut='o',
            TABL_K_MODA     =SIMP(statut='o',typ=table_sdaster,),

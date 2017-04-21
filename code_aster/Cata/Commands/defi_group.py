@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def defi_group_prod(MAILLAGE,GRILLE,**args):
   if ( MAILLAGE != None ) :
      if AsType(MAILLAGE) == maillage_sdaster : return maillage_sdaster
@@ -32,7 +32,6 @@ def defi_group_prod(MAILLAGE,GRILLE,**args):
 DEFI_GROUP=OPER(nom="DEFI_GROUP",op= 104,sd_prod=defi_group_prod,
                 fr=tr("Définition de nouveaux groupes de noeuds et/ou de mailles dans un concept maillage"),
                 reentrant='o',
-            UIinfo={"groupes":("Maillage",)},
          regles=(AU_MOINS_UN('CREA_GROUP_MA','CREA_GROUP_NO','DETR_GROUP_NO','DETR_GROUP_MA'),
                  UN_PARMI('MAILLAGE','GRILLE'),),
          reuse=SIMP(statut='c', typ=CO),

@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: georges-cc.devesa at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def rest_spec_temp_prod(RESU_GENE,RESULTAT,**args):
   if AsType(RESULTAT) == dyna_harmo    : return dyna_trans
   if AsType(RESU_GENE) == harm_gene    : return tran_gene
@@ -32,7 +32,6 @@ def rest_spec_temp_prod(RESU_GENE,RESULTAT,**args):
 REST_SPEC_TEMP=OPER(nom="REST_SPEC_TEMP",op=181,sd_prod=rest_spec_temp_prod,
               fr=tr("Transformée de Fourier d'un résultat"),
               reentrant='n',
-            UIinfo={"groupes":("Matrices et vecteurs",)},
          regles=UN_PARMI('RESU_GENE','RESULTAT'),
          RESU_GENE       =SIMP(statut='f',typ=(harm_gene,tran_gene,) ),
          RESULTAT        =SIMP(statut='f',typ=(dyna_harmo,dyna_trans,) ),

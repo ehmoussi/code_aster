@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: mathieu.courtois at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def defi_fonction_prod(VALE,VALE_PARA,VALE_C,NOEUD_PARA,ABSCISSE,**args):
   if VALE       != None  : return fonction_sdaster
   if VALE_C     != None  : return fonction_c
@@ -32,7 +32,6 @@ def defi_fonction_prod(VALE,VALE_PARA,VALE_C,NOEUD_PARA,ABSCISSE,**args):
 DEFI_FONCTION=OPER(nom="DEFI_FONCTION",op=3,sd_prod=defi_fonction_prod,
                    fr=tr("Définit une fonction réelle ou complexe d'une variable réelle"),
                    reentrant='n',
-            UIinfo={"groupes":("Fonctions",)},
          regles=(UN_PARMI('VALE','VALE_C','VALE_PARA','NOEUD_PARA','ABSCISSE'),),
          NOM_PARA        =SIMP(statut='o',typ='TXM',into=C_PARA_FONCTION() ),
          NOM_RESU        =SIMP(statut='f',typ='TXM',defaut="TOUTRESU"),
@@ -66,4 +65,16 @@ DEFI_FONCTION=OPER(nom="DEFI_FONCTION",op=3,sd_prod=defi_fonction_prod,
          VERIF           =SIMP(statut='f',typ='TXM',defaut="CROISSANT",into=("CROISSANT","NON") ),
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
          TITRE           =SIMP(statut='f',typ='TXM'),
+         translation={
+            "DEFI_FONCTION": "Define function",
+            "VERIF": "Check order",
+            "VALE_PARA": "List of X-coordinate",
+            "VALE_FONC": "List of Y-coordinate",
+            "NOEUD_PARA": "Nodes as X-coordinate",
+            "VALE_Y": "Y-coordinates",
+            "INTERPOL": "Interpolations",
+            "VALE": "Coordinates",
+            "VALE_C": "Complex coordinates",
+        
+         }
 )  ;

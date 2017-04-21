@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,12 +16,16 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: josselin.delmas at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def calc_erreur_prod(RESULTAT,**args):
    if AsType(RESULTAT) != None : return AsType(RESULTAT)
    raise AsException("type de concept resultat non prevu")
 
 CALC_ERREUR=OPER(nom="CALC_ERREUR",op=42,sd_prod=calc_erreur_prod,reentrant='f',
-            UIinfo={"groupes":("Post-traitements","Résultats et champs",)},
             fr=tr("Compléter ou créer un résultat en calculant des champs d'erreur"),
      reuse=SIMP(statut='c', typ=CO),
      MODELE          =SIMP(statut='f',typ=modele_sdaster),

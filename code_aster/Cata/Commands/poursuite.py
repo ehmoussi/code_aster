@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -22,13 +17,17 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 POURSUITE=MACRO(nom="POURSUITE",
-                op=OPS("Cata.ops.build_poursuite"),
+                op=OPS("code_aster.Cata.ops.build_poursuite"),
                 repetable='n',
                 fr=tr("Poursuite d'une étude à partir de la sauvegarde au format JEVEUX "
                      "ou HDF de sa base globale"),
                 sd_prod = ops.POURSUITE,
-                UIinfo={"groupes":("Gestion du travail",)},
                 op_init=ops.POURSUITE_context,
                 fichier_ini=1,
          FORMAT_HDF      =SIMP(fr=tr("sauvegarde de la base GLOBALE au format HDF"),statut='f',

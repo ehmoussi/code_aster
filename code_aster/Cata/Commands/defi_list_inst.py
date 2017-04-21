@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,7 +16,9 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
-
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
 
 
 # Bloc pour decoupe automatique
@@ -146,8 +143,12 @@ bloc_pene   =BLOC(fr                = tr("Action d' adaptation du coefficient de
                                            ),
                  )
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 DEFI_LIST_INST = OPER(nom="DEFI_LIST_INST",op=  28,sd_prod=list_inst,reentrant='n',
-                      UIinfo={"groupes":("Fonctions",)},
                       fr=tr("Définition de la gestion de la liste d'instants"),
 
 METHODE      = SIMP(fr = tr("Methode de definition de la liste d'instants"),
@@ -180,12 +181,12 @@ b_manuel = BLOC(fr = tr("Liste d'instants donnée par l'utilisateur"),
                                                                     max             = 1,
                                                                     val_min         = 1,
                                                                     ),
-  ), # end fkw_defi_list                                                                    
-), # end b_manuel                                                                    
+  ), # end fkw_defi_list
+), # end b_manuel
 b_auto =   BLOC(fr = tr("Gestion automatique de la liste d'instants"),
                 condition = """(equal_to("METHODE", 'AUTO')) """,
   DEFI_LIST   =FACT(fr = tr("Definition a priori de la liste d'instants"),
-                    statut = 'o', max = 1,               
+                    statut = 'o', max = 1,
                     regles=(UN_PARMI('LIST_INST','VALE',),),
                                            VALE              = SIMP(statut          = 'f',
                                                                     typ             = 'R',
@@ -208,8 +209,8 @@ b_auto =   BLOC(fr = tr("Gestion automatique de la liste d'instants"),
                                                                     val_max         = 1000000,
                                                                     defaut          = 1000000,
                                                                     ),
-  ), # end fkw_defi_list 
-), # end b_auto  
+  ), # end fkw_defi_list
+), # end b_auto
 # ----------------------------------------------------------------------------------------------------------------------------------
 # mot-cle pour le comportement en cas d'echec (on doit recommencer le meme instant)
 # ----------------------------------------------------------------------------------------------------------------------------------

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,12 +16,16 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: natacha.bereux at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def modi_repere_prod(RESULTAT,CHAM_GD,**args):
   if AsType(RESULTAT) != None : return AsType(RESULTAT)
   if AsType(CHAM_GD)  != None : return AsType(CHAM_GD)
 
 MODI_REPERE=OPER(nom="MODI_REPERE",op=191,sd_prod=modi_repere_prod,reentrant='f',
-                 UIinfo={"groupes":("Post-traitements","Résultats et champs",)},
                  fr="Calcule les champs dans un nouveau repère.",
 #
     regles=(UN_PARMI('CHAM_GD','RESULTAT',),),

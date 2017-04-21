@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,11 +16,15 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 LIRE_MAILLAGE=OPER(nom="LIRE_MAILLAGE",op=   1,sd_prod=maillage_sdaster,
                    fr=tr("Crée un maillage par lecture d'un fichier au format Aster ou Med"),
                    
                    reentrant='n',
-            UIinfo={"groupes":("Lecture","Maillage",)},
 
          UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 20 , inout='in'),
 
@@ -52,4 +51,12 @@ LIRE_MAILLAGE=OPER(nom="LIRE_MAILLAGE",op=   1,sd_prod=maillage_sdaster,
          ),
 
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=(1,2) ),
+         translation={
+            "LIRE_MAILLAGE": "Read a mesh",
+            "FORMAT": "Mesh file format",
+            "UNITE": "Mesh file location",
+            "VERI_MAIL": "Mesh check",
+            "VERIF": "Check",
+            "APLAT": "Flat criterion",
+         }
 )  ;

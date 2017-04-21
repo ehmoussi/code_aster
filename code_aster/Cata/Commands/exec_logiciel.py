@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,6 +17,11 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def exec_logiciel_prod(self, SALOME, MAILLAGE, **args):
     if SALOME != None:
         if len(SALOME['NOM_PARA'] or []) != len(SALOME['VALE'] or []):
@@ -35,7 +35,6 @@ EXEC_LOGICIEL = MACRO(nom="EXEC_LOGICIEL",
                       op=OPS('Macro.exec_logiciel_ops.exec_logiciel_ops'),
                       sd_prod=exec_logiciel_prod,
                       fr=tr("Exécute un logiciel ou une commande système depuis Aster"),
-                      UIinfo={"groupes":("Gestion du travail","Outils-métier",)},
 
       regles = ( AU_MOINS_UN('LOGICIEL', 'MAILLAGE', 'SALOME'),
                  EXCLUS('MAILLAGE','SALOME'),

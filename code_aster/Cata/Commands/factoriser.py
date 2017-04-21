@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,6 +17,11 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: natacha.bereux at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def factoriser_prod(MATR_ASSE,**args):
   if AsType(MATR_ASSE) == matr_asse_depl_r : return matr_asse_depl_r
   if AsType(MATR_ASSE) == matr_asse_depl_c : return matr_asse_depl_c
@@ -34,7 +34,7 @@ def factoriser_prod(MATR_ASSE,**args):
 FACTORISER=OPER(nom="FACTORISER",op=14,sd_prod=factoriser_prod,
                fr=tr("Factoriser une matrice assemblée en un produit de deux matrices triangulaires"
                   "ou construire une matrice de préconditionnement pour une résolution par gradient conjugué"),
-               reentrant='f', UIinfo={"groupes":("Résolution",)},
+               reentrant='f',
          reuse=SIMP(statut='c', typ=CO),
          MATR_ASSE       =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
                                                matr_asse_temp_c,matr_asse_pres_r,matr_asse_pres_c) ),
@@ -76,6 +76,7 @@ FACTORISER=OPER(nom="FACTORISER",op=14,sd_prod=factoriser_prod,
              RENUM           =SIMP(statut='f',typ='TXM',into=("RCMK",),defaut="RCMK"  ),
            ),
            b_ldlt_sp      =BLOC(condition = """equal_to("PRE_COND", 'LDLT_SP') """, fr=tr("Paramètres de la factorisation simple précision"),
+             GESTION_MEMOIRE     =SIMP(statut='f',typ='TXM',defaut="AUTO",into=("IN_CORE","AUTO")),
              PCENT_PIVOT         =SIMP(statut='f',typ='I',defaut=20,),
              REAC_PRECOND        =SIMP(statut='f',typ='I',defaut=30, ),
              RENUM               =SIMP(statut='f',typ='TXM',defaut="SANS",into=("SANS",) ),

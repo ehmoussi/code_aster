@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR   
@@ -22,10 +17,14 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: mathieu.corus at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 MACR_ELEM_DYNA=OPER(nom="MACR_ELEM_DYNA",op=  81,sd_prod=macr_elem_dyna,
                     fr=tr("Definition d'un macro element pour analyse modale ou harmonique par sous structuration dynamique"),
                     reentrant='n',
-            UIinfo={"groupes":("Matrices et vecteurs","Dynamique",)},
          regles=(
                  # AMOR_REDUIT et MATR_AMOR sont redondants
                  EXCLUS('MATR_AMOR','AMOR_REDUIT' ),

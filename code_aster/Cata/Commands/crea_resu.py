@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: j-pierre.lefebvre at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def crea_resu_prod(TYPE_RESU,**args):
     if TYPE_RESU == "EVOL_ELAS"    : return evol_elas
     if TYPE_RESU == "EVOL_NOLI"    : return evol_noli
@@ -37,7 +37,6 @@ def crea_resu_prod(TYPE_RESU,**args):
     raise AsException("type de concept resultat non prevu")
 
 CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
-               UIinfo={"groupes":("Résultats et champs",)},
                fr=tr("Creer ou enrichir une structure de donnees resultat a partir de champs aux noeuds"),
 
          reuse=SIMP(statut='c', typ=CO),

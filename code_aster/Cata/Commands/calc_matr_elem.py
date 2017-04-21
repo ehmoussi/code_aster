@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def calc_matr_elem_prod(OPTION,**args):
   if OPTION == "RIGI_MECA"        : return matr_elem_depl_r
   if OPTION == "RIGI_FLUI_STRU"   : return matr_elem_depl_r
@@ -45,7 +45,6 @@ def calc_matr_elem_prod(OPTION,**args):
 
 CALC_MATR_ELEM=OPER(nom="CALC_MATR_ELEM",op=   9,sd_prod=calc_matr_elem_prod
                     ,fr=tr("Calcul des matrices élémentaires"),reentrant='n',
-            UIinfo={"groupes":("Matrices et vecteurs",)},
 
          OPTION          =SIMP(statut='o',typ='TXM',
                                into=("RIGI_MECA","MASS_MECA","RIGI_GEOM","MASS_THER",

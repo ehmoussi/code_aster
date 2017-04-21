@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -23,11 +18,15 @@ from code_aster.Cata.Commons import *
 # person_in_charge: josselin.delmas at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
                       op=OPS('Macro.macr_lign_coupe_ops.macr_lign_coupe_ops'),
                       sd_prod=table_sdaster,
                       reentrant='n',
-                      UIinfo={"groupes":("Post-traitements","Résultats et champs",)},
                       fr=tr("Extraction des valeurs d'un résultat dans une ou plusieurs tables sur "
                            "des lignes de coupe définies par deux points et un intervalle"),
             regles=(UN_PARMI("RESULTAT","CHAM_GD"),),

@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -20,6 +15,11 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
 
 def dyna_visco_prod(self,TYPE_RESU,TYPE_MODE,**args):
     if (TYPE_RESU not in ['HARM','MODE']):
@@ -45,13 +45,12 @@ DYNA_VISCO=MACRO(nom="DYNA_VISCO",
                  op=OPS('Macro.dyna_visco_ops.dyna_visco_ops'),
                  sd_prod=dyna_visco_prod,
                  reentrant='n',
-                 UIinfo={"groupes":("Résolution","Dynamique",)},
                  fr="Calcul par projection sur modes réels des FRF avec dependance en fréquence de la matrice K",
-                  
+
                  # INPUT GENERAL DATA
                  MODELE          =SIMP(statut='o',typ=modele_sdaster),
                  CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
-                 
+
                  # ELASTIC MATERIALS WITH CONSTANT PROPERTIES
                  MATER_ELAS      =FACT(statut='f',max='**',
                          regles=(AU_MOINS_UN('MATER','E','AMOR_HYST','RHO','NU'),
@@ -73,9 +72,9 @@ DYNA_VISCO=MACRO(nom="DYNA_VISCO",
                          NU           =SIMP(statut='o',typ='R'),
                          GROUP_MA     =SIMP(statut='o',typ=grma,validators=NoRepeat(),max='**'),
                                       ),
-                 
-                 TYPE_RESU       =SIMP(statut='d',typ='TXM',defaut='HARM',into=('HARM','MODE') ),
- 
+
+                 TYPE_RESU       =SIMP(statut='f',typ='TXM',defaut='HARM',into=('HARM','MODE') ),
+
                  regles=(UN_PARMI('FREQ','LIST_FREQ')),
                  FREQ            =SIMP(statut='f',typ='R',validators=AndVal((OrdList('croissant'), NoRepeat())), min=2,max='**'),
                  LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
@@ -87,21 +86,21 @@ DYNA_VISCO=MACRO(nom="DYNA_VISCO",
 
 #               KEYWORDS FOR THE MODES COMPUTATION
             b_type_mode_mode=BLOC(condition="""equal_to("TYPE_RESU", 'MODE')""",
-                 TYPE_MODE        =SIMP(statut='d',typ='TXM',defaut='REEL',into=('REEL','BETA_REEL','COMPLEXE') ),
+                 TYPE_MODE        =SIMP(statut='f',typ='TXM',defaut='REEL',into=('REEL','BETA_REEL','COMPLEXE') ),
                                   ),
             b_type_mode_harm=BLOC(condition="""not equal_to("TYPE_RESU", 'MODE')""",
-                 TYPE_MODE        =SIMP(statut='d',typ='TXM',defaut='REEL',into=('REEL','BETA_REEL') ),
+                 TYPE_MODE        =SIMP(statut='f',typ='TXM',defaut='REEL',into=('REEL','BETA_REEL') ),
                                   ),
-                 RESI_RELA       =SIMP(statut='d',typ='R',defaut=1.e-3),
+                 RESI_RELA       =SIMP(statut='f',typ='R',defaut=1.e-3),
 
 
 #               KEYWORDS FOR THE FREQUENCY RESPONSE COMPUTATION
             b_harm          =BLOC(condition="""equal_to("TYPE_RESU", 'HARM')""", fr="calcul harmonique",
                  COEF_FREQ_MAX   =SIMP(statut='o',typ='R',val_min=1.5),
                  SOLVEUR         =C_SOLVEUR('DYNA_LINE_HARM','GENE'),
-                 NOM_CHAM        =SIMP(statut='d',typ='TXM',defaut='DEPL',into=('DEPL','VITE','ACCE'),max=3,validators=NoRepeat() ),
+                 NOM_CHAM        =SIMP(statut='f',typ='TXM',defaut='DEPL',into=('DEPL','VITE','ACCE'),max=3,validators=NoRepeat() ),
                  MODE_MECA       =SIMP(statut='f',typ= CO),
                                   ),
-                 
+
                  INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
 );

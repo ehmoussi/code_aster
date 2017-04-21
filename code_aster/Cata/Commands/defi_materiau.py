@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,10 +17,14 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                    fr=tr("Définition des paramètres décrivant le comportement d un matériau"),
                    reentrant='f',
-            UIinfo={"groupes":("Modélisation",)},
        regles=(EXCLUS('ELAS','ELAS_FO','ELAS_FLUI','ELAS_ISTR','ELAS_ISTR_FO','ELAS_ORTH',
                       'ELAS_ORTH_FO','ELAS_COQUE','ELAS_COQUE_FO',
                       'ELAS_HYPER','ELAS_2NDG','ELAS_GLRC','ELAS_DHRC'),
@@ -1244,7 +1243,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              NYT             =SIMP(statut='o',typ='R',val_min=0.E+0),
              NYC             =SIMP(statut='f',typ='R'),
              MYF             =SIMP(statut='o',typ='R',val_min=0.E+0),
-             ALPHA_C         =SIMP(statut='d',typ='R',val_min=1.E+0,defaut=1.E+0),
+             ALPHA_C         =SIMP(statut='f',typ='R',val_min=1.E+0,defaut=1.E+0),
            ),
            DHRC            =FACT(statut='f',
              NYD           =SIMP(statut='o',typ='R',min=2,max=2),
@@ -3690,5 +3689,17 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 #
 
            INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2) ),
+           
+           translation={
+              "DEFI_MATERIAU": "Define a material",
+              "ALPHA" : "Thermal expansion coeficient",
+              "AMOR_ALPHA": "Stiffness damping",
+              "AMOR_BETA": "Mass damping" ,
+              "ELAS": "Linear isotropic elasticity",
+              "THER": "Isotropic heat conduction",
+              "AMOR_HYST": "Hysteretic damping",
+              "LAMBDA": "Thermal conductivity",
+              "RHO_CP": "Volumetric heat capacity",
+           },
            **C_MFRONT_OFFICIAL()
 )

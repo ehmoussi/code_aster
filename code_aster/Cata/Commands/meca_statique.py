@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,9 +16,13 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 MECA_STATIQUE=OPER(nom="MECA_STATIQUE",op=46,sd_prod=evol_elas,
                    fr=tr("Résoudre un problème de mécanique statique linéaire"),reentrant='f',
-            UIinfo={"groupes":("Résolution","Mécanique",)},
          regles=(EXCLUS("INST","LIST_INST"),
                  AU_MOINS_UN('CHAM_MATER','CARA_ELEM',),),
          reuse=SIMP(statut='c', typ=CO),
@@ -40,7 +39,7 @@ MECA_STATIQUE=OPER(nom="MECA_STATIQUE",op=46,sd_prod=evol_elas,
            FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
            TYPE_CHARGE     =SIMP(statut='f',typ='TXM',defaut="FIXE_CSTE",into=("FIXE_CSTE",) ),
          ),
-         INST            =SIMP(statut='f',typ='R',defaut= 0.E+0 ),
+         INST            =SIMP(statut='f',typ='R'),
          LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
          INST_FIN        =SIMP(statut='f',typ='R'),
          OPTION          =SIMP(statut='f',typ='TXM',into=("SIEF_ELGA","SANS"),defaut="SIEF_ELGA",max=1,
@@ -52,4 +51,7 @@ MECA_STATIQUE=OPER(nom="MECA_STATIQUE",op=46,sd_prod=evol_elas,
          SOLVEUR         =C_SOLVEUR('MECA_STATIQUE'),
 #-------------------------------------------------------------------
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2) ),
+         translation={
+            "MECA_STATIQUE": "Static mechanical analysis",
+         }
 )  ;

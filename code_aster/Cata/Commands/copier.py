@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.        
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
 
 def copier_prod(CONCEPT,**args):
    return AsType(CONCEPT)
@@ -41,7 +41,6 @@ copier_ltyp=(
 )
 
 COPIER=OPER(nom="COPIER",op= 185,sd_prod=copier_prod,reentrant='f',
-            UIinfo={"groupes":("Gestion du travail",)},
             fr=tr("Copier un concept utilisateur sous un autre nom"),
 
             reuse=SIMP(statut='c', typ=CO),

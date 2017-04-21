@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def asse_matrice_prod(MATR_ELEM,**args):
   if AsType(MATR_ELEM) == matr_elem_depl_r : return matr_asse_depl_r
   if AsType(MATR_ELEM) == matr_elem_depl_c : return matr_asse_depl_c
@@ -30,7 +30,6 @@ def asse_matrice_prod(MATR_ELEM,**args):
 
 ASSE_MATRICE=OPER(nom="ASSE_MATRICE",op=12,sd_prod=asse_matrice_prod,
                   fr=tr("Construction d'une matrice assemblée"),reentrant='n',
-            UIinfo={"groupes":("Matrices et vecteurs",)},
          MATR_ELEM       =SIMP(statut='o',
                                typ=(matr_elem_depl_r,matr_elem_depl_c,matr_elem_temp_r,matr_elem_pres_c) ),
          NUME_DDL        =SIMP(statut='o',typ=nume_ddl_sdaster),

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,10 +17,14 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: sarah.plessis at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 POST_RCCM=OPER(nom="POST_RCCM",op= 165,sd_prod=table_sdaster,
                fr=tr("Vérification des critères de niveau 0 et certains critères de niveau A du RCC-M"),
                reentrant='n',
-            UIinfo={"groupes":("Post-traitements","Rupture",)},
          TYPE_RESU       =SIMP(statut='f',typ='TXM',defaut="VALE_MAX",into=("VALE_MAX","SYSTUS","DETAILS") ),
          INFO            =SIMP(statut='f',typ='I',into=(1,2) ),
          TITRE           =SIMP(statut='f',typ='TXM'),
@@ -227,7 +226,7 @@ POST_RCCM=OPER(nom="POST_RCCM",op= 165,sd_prod=table_sdaster,
             C3              =SIMP(statut='o',typ='R',fr=tr("indice de contraintes C3 du RCCM")),
             K3              =SIMP(statut='o',typ='R',fr=tr("indice de contraintes K3 du RCCM")),
                          ),
-         regles=(UN_PARMI('CHAR_MECA','RESU_MECA'),UN_PARMI('RESU_MECA_UNIT','RESU_MECA'),),
+         regles=(ENSEMBLE('CHAR_MECA','RESU_MECA_UNIT'),),
          CHAR_MECA   =FACT(statut='f',max='**',fr=tr("Chargements mécaniques"),
                            regles=(UN_PARMI('MX','MX_TUBU'),),
            NUME_CHAR     =SIMP(statut='o',typ='I',fr=tr("numéro du chargement") ),
@@ -298,7 +297,7 @@ POST_RCCM=OPER(nom="POST_RCCM",op= 165,sd_prod=table_sdaster,
              TABL_MZ_CORP  =SIMP(statut='o',typ=table_sdaster,
                                  fr=tr("table relevé des contraintes pour chargement unitaire MZ_CORP")),
            ),
-           TABL_PRES     =SIMP(statut='o',typ=table_sdaster,
+           TABL_PRES     =SIMP(statut='f',typ=table_sdaster,
                                fr=tr("table relevé des contraintes pour chargement unitaire de pression")),
                          ),
           RESU_THER   =FACT(statut='f',max='**',fr=tr("resultats thermiques"),
@@ -327,7 +326,8 @@ POST_RCCM=OPER(nom="POST_RCCM",op= 165,sd_prod=table_sdaster,
               NUME_RESU_THER   =SIMP(statut='f',typ='I',max=1,fr=tr("numero du transitoire thermique") ),
               regles=(UN_PARMI('CHAR_ETAT_A','NUME_RESU_MECA'),UN_PARMI('PRES_A','NUME_RESU_PRES'),
                       ENSEMBLE('PRES_A','PRES_B'),ENSEMBLE('CHAR_ETAT_A','CHAR_ETAT_B'),
-                       ENSEMBLE('TEMP_REF_A','TEMP_REF_B'),),
+                       PRESENT_PRESENT('TEMP_A','TABL_TEMP'), PRESENT_PRESENT('O_ETOILE','TABL_TEMP'),
+                       ENSEMBLE('TEMP_REF_A','TEMP_REF_B'), ENSEMBLE('TEMP_A','TEMP_B'),),
               NUME_RESU_PRES   =SIMP(statut='f',typ='I',max=1,fr=tr("numero du transitoire de pression") ),
               NUME_RESU_MECA   =SIMP(statut='f',typ='I',max=1,fr=tr("numero du transitoire dus aux efforts") ),
               CHAR_ETAT_A      =SIMP(statut='f',typ='I',max=1,fr=tr("numero du chargement etat A") ),
@@ -339,6 +339,8 @@ POST_RCCM=OPER(nom="POST_RCCM",op= 165,sd_prod=table_sdaster,
               O_ETOILE         =SIMP(statut='f',typ='R'),
               TABL_TEMP        =SIMP(statut='f',typ=table_sdaster,
                                  fr=tr("table relevé des températures pendant le transitoire") ),
+              TEMP_A       =SIMP(statut='f',typ='R',fr=tr("temperature de CHAR ETAT A")),
+              TEMP_B       =SIMP(statut='f',typ='R',fr=tr("temperature de CHAR ETAT B")),
                                ),
          ENVIRONNEMENT         =FACT(statut='f',max=1,fr=tr("Donnees pour le calcul du fen"),
               TABL_YOUNG        =SIMP(statut='o',typ=table_sdaster,
@@ -364,6 +366,8 @@ POST_RCCM=OPER(nom="POST_RCCM",op= 165,sd_prod=table_sdaster,
               NUME_SITU        =SIMP(statut='o',typ='I',fr=tr("numéro de la situation") ),
               NOM_SITU         =SIMP(statut='f',typ='TXM',fr=tr("nom de la situation") ),
               NUME_GROUPE      =SIMP(statut='o',typ='I',max=1,fr=tr("numéro du groupe du séisme") ),
+              regles=(UN_PARMI('CHAR_ETAT','TABL_MX'),
+                      ENSEMBLE('TABL_MX','TABL_MY','TABL_MZ'),),
               CHAR_ETAT        =SIMP(statut='f',typ='I',max=1,fr=tr("numero de chargement etat S") ),
               TABL_FX       =SIMP(statut='f',typ=table_sdaster,
                                  fr=tr("table relevé des contraintes pour séisme FX")),

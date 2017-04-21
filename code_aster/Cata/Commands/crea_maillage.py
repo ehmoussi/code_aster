@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,9 +16,13 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 CREA_MAILLAGE=OPER(nom="CREA_MAILLAGE",op= 167,sd_prod=maillage_sdaster,
             reentrant='n',fr=tr("Crée un maillage à partir d'un maillage existant"),
-            UIinfo={"groupes":("Maillage",)},
          regles=(UN_PARMI('COQU_VOLU', 'CREA_FISS', 'CREA_MAILLE', 'CREA_POI1',
                          'ECLA_PG', 'HEXA20_27', 'LINE_QUAD', 'MODI_MAILLE',
                         'QUAD_LINE', 'REPERE','RESTREINT','PENTA15_18','GEOM_FIBRE', 'DECOUPE_LAC'),),
@@ -140,6 +139,7 @@ CREA_MAILLAGE=OPER(nom="CREA_MAILLAGE",op= 167,sd_prod=maillage_sdaster,
          DECOUPE_LAC     =FACT(statut='f',fr="creation des patchs LAC pour le  contact",
            regles=(AU_MOINS_UN('GROUP_MA_ESCL' ),),
            GROUP_MA_ESCL        =SIMP(statut='o',typ=grma  ,validators=NoRepeat(),max='**'),
+           DECOUPE_HEXA         =SIMP(statut='f',typ='TXM' ,into=("PYRA","HEXA"),defaut="PYRA",validators=NoRepeat()),
          ),
          ECLA_PG         =FACT(statut='f',
                                fr=tr("Eclatement des mailles en petites mailles contenant chacune un seul point de gauss"),

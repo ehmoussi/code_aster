@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,10 +17,14 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
 #
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, reentrant = 'n',
                   fr        = tr("Définit les zones soumises à des conditions de contact unilatéral avec ou sans frottement"),
                   #en        = "Allows the definition of contact surfaces as well as unilateral conditions",
-                  UIinfo    = {"groupes":("Modélisation",)},
 # MODELE
          MODELE          =SIMP(statut='o',typ=modele_sdaster,),
          INFO            =SIMP(statut='f',typ='I',into=(1,2),),
@@ -465,8 +464,8 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                           TYPE_JACOBIEN   =SIMP(statut='f',typ='TXM',defaut="INITIAL", into=("INITIAL","ACTUALISE",),),
                                                           INTEGRATION     =SIMP(statut='f',typ='TXM',defaut="AUTO", into=("AUTO",),),
 
-                                                          GROUP_MA_MAIT   =SIMP(statut='f',typ=grma ,max=1),
-                                                          GROUP_MA_ESCL   =SIMP(statut='f',typ=grma ,max=1),
+                                                          GROUP_MA_MAIT   =SIMP(statut='o',typ=grma ,max=1),
+                                                          GROUP_MA_ESCL   =SIMP(statut='o',typ=grma ,max=1),
                                                           CONTACT_INIT    =SIMP(statut='f',typ='TXM',defaut="INTERPENETRE", into=("OUI","INTERPENETRE","NON"),),
                                           ), # fin b_pair_morta
 # --- Method for friction

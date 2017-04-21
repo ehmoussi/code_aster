@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,6 +17,11 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def norm_mode_prod(MODE,**args ):
   if AsType(MODE) == mode_meca   : return mode_meca
   if AsType(MODE) == mode_meca_c : return mode_meca_c
@@ -31,7 +31,6 @@ def norm_mode_prod(MODE,**args ):
 NORM_MODE=OPER(nom="NORM_MODE",op=  37,sd_prod=norm_mode_prod,
                fr=tr("Normer des modes propres en fonction d'un critère choisi par l'utilisateur"),
                reentrant='f',
-            UIinfo={"groupes":("Résolution","Dynamique",)},
          regles=(UN_PARMI('NORME','GROUP_NO','NOEUD','AVEC_CMP','SANS_CMP'),),
          reuse=SIMP(statut='c', typ=CO),
          MODE       =SIMP(statut='o',typ=(mode_meca,mode_flamb) ),

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -23,11 +18,15 @@ from code_aster.Cata.Commons import *
 # person_in_charge: jean-luc.flejou at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
                        op=OPS('Macro.macr_cara_poutre_ops.macr_cara_poutre_ops'),
                        sd_prod=table_sdaster,
                        reentrant='n',
-                       UIinfo={"groupes":("Modélisation",)},
                        fr=tr("Calculer les caractéristiques d'une section transversale de "
                             "poutre à partir d'un maillage 2D de la section"),
          regles=(

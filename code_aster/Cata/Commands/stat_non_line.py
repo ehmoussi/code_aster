@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,11 +17,15 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
 #
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 STAT_NON_LINE=OPER(nom="STAT_NON_LINE",op=70,sd_prod=evol_noli,
                    fr=tr("Calcul de l'évolution mécanique ou thermo-hydro-mécanique couplée, en quasi-statique,"
                       " d'une structure en non linéaire"),
                    reentrant='f',
-            UIinfo={"groupes":("Résolution","Mécanique",)},
          reuse=SIMP(statut='c', typ=CO),
 
          MODELE          =SIMP(statut='o',typ=modele_sdaster),
@@ -53,7 +52,7 @@ STAT_NON_LINE=OPER(nom="STAT_NON_LINE",op=70,sd_prod=evol_noli,
 #-------------------------------------------------------------------
          INCREMENT       =C_INCREMENT('MECANIQUE'),
 #-------------------------------------------------------------------
-         METHODE         =SIMP(statut='d',typ='TXM',defaut="NEWTON",into=("NEWTON","IMPLEX","NEWTON_KRYLOV","MODELE_REDUIT")),
+         METHODE         =SIMP(statut='f',typ='TXM',defaut="NEWTON",into=("NEWTON","IMPLEX","NEWTON_KRYLOV","MODELE_REDUIT")),
              b_meth_newton = BLOC(condition = """equal_to("METHODE", 'NEWTON') or equal_to("METHODE", 'NEWTON_KRYLOV')""",
                                   NEWTON = C_NEWTON(),
                                   ),

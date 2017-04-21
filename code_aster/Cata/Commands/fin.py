@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,30 +16,15 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: j-pierre.lefebvre at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
 
 
-class FIN_ETAPE(PROC_ETAPE):
-
-    """Particularisation pour FIN"""
-
-    def Build_sd(self):
-        """Fonction Build_sd pour FIN"""
-        PROC_ETAPE.Build_sd(self)
-        if self.nom == 'FIN':
-            try:
-                from Noyau.N_Exception import InterruptParsingError
-                raise InterruptParsingError
-            except ImportError:
-                # eficas does not known this exception
-                pass
-        return None
-
-
-FIN = PROC(nom="FIN",
+FIN = FIN_PROC(nom="FIN",
                op=9999,
                repetable='n',
                fr=tr("Fin d'une étude, fin du travail engagé par une des commandes DEBUT ou POURSUITE"),
-               UIinfo={"groupes": ("Gestion du travail",)},
 
         # FIN est appelé prématurément en cas d'exception ("SIGUSR1", ArretCPUError,
         # NonConvergenceError..., erreurs <S> ou erreurs <F> récupérées).
@@ -63,7 +43,7 @@ FIN = PROC(nom="FIN",
         PROC0=SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
 
         UNITE=SIMP(
-            statut='f', typ='I', defaut=6, inout='out'),                                 
+            statut='f', typ=UnitType(), defaut=6, inout='out'),
         # hidden keyword used to ensure that the fortran knows that an error occurred
         # because when an exception is raised, the global status is reset by utmess.
         STATUT=SIMP(

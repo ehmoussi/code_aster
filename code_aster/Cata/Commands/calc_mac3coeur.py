@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,13 +17,17 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: romeo.fernandes at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def calc_mac3coeur_prod(self,RESU_DEF,**args):
     if RESU_DEF:
         self.type_sdprod(RESU_DEF,evol_noli)
     return evol_noli
 
 CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
-                       UIinfo={"groupes":("Outils-métier",)},
                        op=OPS("Mac3coeur.mac3coeur_calcul.calc_mac3coeur_ops"),
                        sd_prod=calc_mac3coeur_prod,
 
