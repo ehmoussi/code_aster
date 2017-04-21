@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -32,8 +32,9 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     macro = 'IMPR_FONCTION'
     import pprint
     import aster
-    from Accas import _F
-    from Cata.cata import nappe_sdaster, fonction_c, formule, formule_c
+    from code_aster.Cata.Syntax import _F
+    from code_aster.Cata.DataStructure import (nappe_sdaster, fonction_c,
+                                               formule, formule_c)
     from Utilitai import Graph
     from Utilitai.Utmess import UTMESS
     from Utilitai.UniteAster import UniteAster
@@ -170,7 +171,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                     dic.update(ldicf[i])
 
                     if (interp or dCi.has_key('LIST_PARA')) and i > 0:
-                        
+
                         try:
                             __ftmp = CALC_FONC_INTERP(
                                 FONCTION=obj,
@@ -212,7 +213,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                             **dpar
                         )
                     except aster.error,err:
-                        
+
                             # on verifie que la bonne exception a ete levee
                             assert err.id_message == "FONCT0_9", 'unexpected id : %s' % err.id_message
                             continue

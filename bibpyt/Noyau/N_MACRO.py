@@ -1,7 +1,7 @@
 # coding=utf-8
 # person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -68,6 +68,8 @@ class MACRO(N_ENTITE.ENTITE):
 
      - fr   : commentaire associé en francais
 
+     - translation : traduction métier des mots-clés (en anglais)
+
      - docu : clé de documentation associée
 
      - regles : liste des règles associées
@@ -91,7 +93,8 @@ class MACRO(N_ENTITE.ENTITE):
 
     def __init__(
         self, nom, op, sd_prod=None, reentrant='n', repetable='o', fr="",
-            docu="", regles=(), op_init=None, niveau = None, fichier_ini=0, UIinfo=None, **args):
+            docu="", regles=(), op_init=None, niveau=None, fichier_ini=0,
+            translation=None, **args):
         """
            Méthode d'initialisation de l'objet MACRO. Les arguments sont utilisés pour initialiser
            les attributs de meme nom
@@ -113,8 +116,8 @@ class MACRO(N_ENTITE.ENTITE):
         self.sd_prod = sd_prod
         self.reentrant = reentrant
         self.fr = fr
-        assert args.get(
-            'ang') is None, '"ang" attribute does not exist anymore'
+        assert args.get('ang') is None, '"ang" does not exist anymore'
+        assert args.get('UIinfo') is None, '"UIinfo" does not exist anymore'
         self.repetable = repetable
         self.docu = docu
         if type(regles) == types.TupleType:
@@ -133,7 +136,6 @@ class MACRO(N_ENTITE.ENTITE):
         else:
             self.niveau = current_cata.get_niveau(niveau)
             self.niveau.enregistre(self)
-        self.UIinfo = UIinfo
         self.affecter_parente()
         self.check_definition(self.nom)
 
@@ -160,7 +162,7 @@ class MACRO(N_ENTITE.ENTITE):
             etape.McBuild()
         return etape
 
-    def verif_cata(self):
+    def verif_cata(self, dummy=None):
         """
             Méthode de vérification des attributs de définition
         """

@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -24,11 +24,11 @@ from Tkinter import Scrollbar, Label, Radiobutton, Button, Entry
 from Tkinter import Checkbutton, Listbox, Toplevel, Message
 import tkFont
 
-from Accas import _F
+from code_aster.Cata.Syntax import _F
 import aster
 from Macro.calc_spec_ops import FonctionError
-from Cata.cata import DETRUIRE, CREA_TABLE, RECU_FONCTION, IMPR_TABLE
-from Contrib.calc_spec import CALC_SPEC 
+from code_aster.Cata.Commands import DETRUIRE, CREA_TABLE, RECU_FONCTION, IMPR_TABLE
+from Contrib.calc_spec import CALC_SPEC
 from Calc_essai.cata_ce import InterSpectre, CreaTable, Tempo
 from Calc_essai.outils_ihm import MultiList, DispFRFDialogue, VisuSpectre
 from Utilitai.Utmess import UTMESS, MESSAGE_LOGGER
@@ -666,7 +666,7 @@ class InterfaceCalcSpec(Frame):
 
     def crea_tab_fonc(self):
 
-        from Cata.cata import CREA_TABLE
+        from code_aster.Cata.Commands import CREA_TABLE
         # recuperation des numeros d'ordre et de reference
 
         ind_mes = self.list_mes.curselection()

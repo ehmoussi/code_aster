@@ -6,6 +6,7 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/dbr_init_base_pod.h"
+#include "asterfort/dbr_init_base_rb.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -39,18 +40,13 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type(ROM_DS_Empi) :: ds_empi
-!
-! --------------------------------------------------------------------------------------------------
-!
-    if (ds_para%operation .eq. 'POD') then
-        ds_empi = ds_para%ds_empi
-        call dbr_init_base_pod(ds_para, ds_empi)
-        ds_para%ds_empi = ds_empi
-    elseif (ds_para%operation .eq. 'POD_INCR') then
-        ds_empi = ds_para%ds_empi
-        call dbr_init_base_pod(ds_para, ds_empi)
-        ds_para%ds_empi = ds_empi
+    if (ds_para%operation(1:3) .eq. 'POD') then
+        call dbr_init_base_pod(ds_para%result_out, ds_para%para_pod, ds_para%nb_mode_maxi,&
+                               ds_para%l_reuse   , ds_para%ds_empi)
+        ds_para%field_iden = ds_para%para_pod%field_name
+    elseif (ds_para%operation .eq. 'GLOUTON') then
+        call dbr_init_base_rb(ds_para%result_out, ds_para%para_rb, ds_para%nb_mode_maxi,&
+                              ds_para%ds_empi)
     else
         ASSERT(.false.)
     endif

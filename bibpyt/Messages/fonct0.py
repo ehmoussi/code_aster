@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -98,13 +98,17 @@ Il y a des doublons dans la liste des paramètres fournis :
 """),
 
     16 : _(u"""
-Les paramètres nécessaires sont :
+Les paramètres dont dépend la fonction sont :
    %(ktout)s
 """),
 
     17 : _(u"""
-Les paramètres fournis sont :
+Alors que les paramètres fournis pour réaliser l'interpolation sont :
    %(ktout)s
+
+L'interpolation n'est donc pas possible.
+Conseil : Modifier les paramètres dont la fonction dépend pour rendre possible
+l'interpolation.
 """),
 
     18 : _(u"""

@@ -8,16 +8,8 @@ import tempfile
 
 def getListOfCommands():
     """Build the list of operators"""
-    from Cata import cata
-    commands = []
-    for name, elem in cata.__dict__.items():
-        if isinstance(elem, OPER):
-            commands.append(elem)
-        elif isinstance(elem, PROC):
-            commands.append(elem)
-        elif isinstance(elem, MACRO):
-            commands.append(elem)
-    return commands
+    from code_aster.Cata.Commands import commandStore
+    return commandStore.values()
 
 def checkDefinition( commands ):
     """Check the definition of the catalog of the commands (see N_ENTITE.py)"""
@@ -50,30 +42,6 @@ def checkDocStrings( commands ):
             if getattr(entity, 'ang', None):
                 lang[id(entity)] = (entity.fr, entity.ang)
     assert len(lang) == 0, "'ang' is deprecated and not used anymore, please remove it"
-    print "    ok\n"
-
-def checkUIinfo( commands, authorized ):
-    """Extract and check the UIinfo values"""
-    print ">>> Vérification des champs UIinfo..."
-    for cmd in commands:
-        uiinfo = cmd.UIinfo
-        try:
-            groups = uiinfo['groupes']
-        except TypeError:
-            raise TypeError("UIinfo invalide ou manquant dans '{0}'"\
-                            .format(cmd.nom))
-        if type(groups) not in (list, tuple):
-            groups = [groups]
-        unknown = set(groups).difference(authorized)
-        if unknown:
-            print "Commande :", cmd.nom
-            print "Groupe(s) inconnu(s) :"
-            for gr in unknown:
-                print " " * 4, gr
-            print "À choisir parmi :"
-            for gr in authorized:
-                print " " * 4, gr
-            raise TypeError("Groupe invalide dans '{0}'".format(cmd.nom))
     print "    ok\n"
 
 def extractKeywords( commands ):
@@ -122,9 +90,9 @@ def printKeywordsUsage( commands, fileList=None ):
     return allKwd
 
 
-def vocab01_ops(self, EXISTANT, UIINFO, INFO, **kwargs):
+def vocab01_ops(self, EXISTANT, INFO, **kwargs):
     """Fake macro-command to check the catalog"""
-    from Cata.cata import CREA_TABLE, TEST_TABLE
+    from code_aster.Cata.Commands import CREA_TABLE, TEST_TABLE
     from Utilitai.Utmess import UTMESS
     self.set_icmd(1)
 
@@ -132,7 +100,6 @@ def vocab01_ops(self, EXISTANT, UIINFO, INFO, **kwargs):
     commands = getListOfCommands()
     checkDefinition( commands )
     checkDocStrings( commands )
-    checkUIinfo( commands, UIINFO )
 
     print ">>> Vérification des mots-clés..."
     fileList = None
@@ -183,6 +150,5 @@ def vocab01_ops(self, EXISTANT, UIINFO, INFO, **kwargs):
 
 VOCAB01 = MACRO(nom='VOCAB01', op=vocab01_ops,
                 EXISTANT = SIMP(statut='o', typ='TXM', max='**',),
-                UIINFO = SIMP(statut='o', typ='TXM', max='**',),
                 INFO = SIMP(statut='f',typ='I', defaut=1, into=(1, 2),),
 )

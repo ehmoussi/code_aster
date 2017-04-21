@@ -1,4 +1,4 @@
-subroutine cppagn(main, maout, nbma, lima, izone)
+subroutine cppagn(main, maout, nbma, lima, izone, typ_dec)
 !
 implicit none
 !
@@ -34,7 +34,9 @@ implicit none
 #include "asterfort/cpte04.h"
 #include "asterfort/cpte10.h"
 #include "asterfort/cphe08.h"
+#include "asterfort/cphe08_2.h"
 #include "asterfort/cphe20.h"
+#include "asterfort/cphe20_2.h"
 #include "asterfort/cphe27.h"
 #include "asterfort/cptr03.h"
 #include "asterfort/cptr06.h"
@@ -43,7 +45,7 @@ implicit none
 #include "asterfort/coppat.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -64,6 +66,7 @@ implicit none
     integer, intent(in) :: nbma
     integer, intent(in) :: lima(nbma)
     integer, intent(in) :: izone
+    integer, intent(in) :: typ_dec
 !
     
 ! -------------------------------------------------------------------------------------------------
@@ -74,7 +77,8 @@ implicit none
 ! IN/JXOUT  MAOUT  K8  NOM DU MAILLAGE TRANSFORME
 ! IN        NBMA    I  NOMBRE DE MAILLES A TRAITER
 ! IN        LIMA    I  NUMERO DES MAILLES A TRAITER
-! IN        IZONE   I  NUMERO DE LA ZONE DE CONTACT    
+! IN        IZONE   I  NUMERO DE LA ZONE DE CONTACT
+! IN        TYP_DEC I  TYPE DE DECOUPE POUR LES HEXA 1:PYRA 2:HEXA     
 ! -------------------------------------------------------------------------------------------------
     integer :: inc, patch, nbnot, nbmat, info, nma, nbno, ind1, nbnwma, nbpain
     integer :: jdim, jrefe, macou, macsu, jcninv, jcivax, jcoor, jgmao
@@ -118,12 +122,20 @@ implicit none
         select case (typmail)
 ! -------- CAS 2D
             case('TRIA3')
+                !nombre de noeuds du maillage maout
                 nbnot = nbnot + 1
+                !nombre de mailles du maillage maout
                 nbmat = nbmat + 2
+                !nombre d'elements à ajouter a la connectivité du maillage maout 
                 conlen = conlen + 1*2 + 1*3
+                !dimension de la connectivité locale de transfert
                 lenconloc = lenconloc + 2*3 + 2*2
+                !nombre de de la connectivité locale de transfert
                 cnlclg = cnlclg + 4
+                !dimension de la connectivité  ancienne nouvelle maille 
+                !(+ 1 pour le pacth sous jacent)
                 lenlimane = lenlimane + 3 + 2
+                !dimension du vecteur .patch
                 lenpat = lenpat + 2              
             case ('QUAD4')
                 nbnot = nbnot + 4
@@ -167,21 +179,41 @@ implicit none
                 lenlimane = lenlimane + 3 + 4
                 lenpat = lenpat + 2
             case ('HEXA8')
-                nbnot = nbnot + 8
-                nbmat = nbmat + 9
-                conlen = conlen + 4*4 + 5*8
-                lenconloc = lenconloc + 5*4 + 6*8
-                cnlclg = cnlclg + 11
-                lenlimane = lenlimane + 6 + 7
-                lenpat = lenpat + 5
+                if (typ_dec.eq.0) then
+                    nbnot = nbnot + 8
+                    nbmat = nbmat + 9
+                    conlen = conlen + 4*4 + 5*8
+                    lenconloc = lenconloc + 5*4 + 6*8
+                    cnlclg = cnlclg + 11
+                    lenlimane = lenlimane + 6 + 7
+                    lenpat = lenpat + 5
+                else
+                    nbnot = nbnot + 1
+                    nbmat = nbmat + 7
+                    conlen = conlen + 4*3-4 + 5*5-8
+                    lenconloc = lenconloc + 4*3 + 5*5
+                    cnlclg = cnlclg + 9
+                    lenlimane = lenlimane + 5 + 5
+                    lenpat = lenpat + 2
+                end if
             case ('HEXA20')
-                nbnot = nbnot + 28
-                nbmat = nbmat + 9
-                conlen = conlen + 4*8 + 5*20
-                lenconloc = lenconloc + 5*8 + 6*20
-                cnlclg = cnlclg + 11
-                lenlimane = lenlimane + 6 + 7
-                lenpat = lenpat + 5
+                if (typ_dec.eq.0) then
+                    nbnot = nbnot + 28
+                    nbmat = nbmat + 9
+                    conlen = conlen + 4*8 + 5*20
+                    lenconloc = lenconloc + 5*8 + 6*20
+                    cnlclg = cnlclg + 11
+                    lenlimane = lenlimane + 6 + 7
+                    lenpat = lenpat + 5
+                else
+                    nbnot = nbnot + 9
+                    nbmat = nbmat + 7
+                    conlen = conlen + 4*6-8 + 5*13-20
+                    lenconloc = lenconloc + 4*6 + 5*13
+                    cnlclg = cnlclg + 9
+                    lenlimane = lenlimane + 5 + 5
+                    lenpat = lenpat + 2
+                endif
             case ('HEXA27')
                 nbnot = nbnot + 0
                 nbmat = nbmat + 0
@@ -289,8 +321,13 @@ implicit none
                     call jeecra(jexnum(limane, inc), 'LONMAX', ival=4)
                     call jeecra(jexnum(limane, inc), 'LONUTI', ival=4)
                 case (12, 14)
-                    call jeecra(jexnum(limane, inc), 'LONMAX', ival=6)
-                    call jeecra(jexnum(limane, inc), 'LONUTI', ival=6)
+                    if (typ_dec.eq.0) then
+                        call jeecra(jexnum(limane, inc), 'LONMAX', ival=6)
+                        call jeecra(jexnum(limane, inc), 'LONUTI', ival=6)
+                    else
+                        call jeecra(jexnum(limane, inc), 'LONMAX', ival=5)
+                        call jeecra(jexnum(limane, inc), 'LONUTI', ival=5)
+                    end if
             end select 
         elseif (ntrou1 .eq. 1) then
             select case (zi(jtypma+inc-1))
@@ -307,8 +344,13 @@ implicit none
                     call jeecra(jexnum(limane, inc), 'LONMAX', ival=3)
                     call jeecra(jexnum(limane, inc), 'LONUTI', ival=3)
                 case (25, 26)
-                    call jeecra(jexnum(limane, inc), 'LONMAX', ival=7)
-                    call jeecra(jexnum(limane, inc), 'LONUTI', ival=7)
+                    if (typ_dec.eq.0) then
+                        call jeecra(jexnum(limane, inc), 'LONMAX', ival=7)
+                        call jeecra(jexnum(limane, inc), 'LONUTI', ival=7)
+                    else
+                        call jeecra(jexnum(limane, inc), 'LONMAX', ival=5)
+                        call jeecra(jexnum(limane, inc), 'LONUTI', ival=5)
+                    end if
             end select 
         elseif (ntrou1.eq.0 .and. ntrou .eq. 0) then
             call jeecra(jexnum(limane, inc), 'LONMAX', ival=1)
@@ -361,21 +403,34 @@ implicit none
        
 ! --- CAS HEXA 8 ----------------------------------------------------------------------------------
             case ('HEXA8')
-                call cphe08(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
-                            limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
-                            macsu , ind   , ind1)
+                if (typ_dec.eq.0) then
+                    call cphe08(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                macsu , ind   , ind1)
+                else
+                    call cphe08_2(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                  limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                  macsu , ind   , ind1)
+                end if
         
 ! --- CAS HEXA 20 ---------------------------------------------------------------------------------
            case ('HEXA20')
-                call cphe20(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
-                            limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
-                            macsu , ind   , ind1  )
+                if (typ_dec.eq.0) then
+                    call cphe20(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                macsu , ind   , ind1  )
+                else
+                    call cphe20_2(main  , maout , inc+nbpain   , jcoor , jcnnpa, conloc,&
+                                 limane, nomnoe, nbno  , jmacou, jmacsu, macou ,&
+                                 macsu , ind   , ind1  )
+                end if
         
 ! --- CAS HEXA 27 ---------------------------------------------------------------------------------
            case ('HEXA27')
                 call cphe27(maout , inc+nbpain, jcnnpa, conloc,&
                             limane, jmacou, jmacsu, macou ,&
                             macsu , ind   , ind1  )
+                
            case default
                 ASSERT(.false.)
         end select
@@ -450,13 +505,25 @@ implicit none
                    nbnoma = 6
                    idtpma = 9
                case ('QUAD4')
-                   nbnwma = 5
-                   nbnoma = 4
-                   idtpma = 12
+                   if (typ_dec.eq.0) then
+                       nbnwma = 5
+                       nbnoma = 4
+                       idtpma = 12
+                   else
+                       nbnwma = 4
+                       nbnoma = 3
+                       idtpma = 7
+                   endif
                case ('QUAD8')
-                   nbnwma = 5
-                   nbnoma = 8
-                   idtpma = 14
+                   if (typ_dec.eq.0) then
+                       nbnwma = 5
+                       nbnoma = 8
+                       idtpma = 14
+                   else
+                       nbnwma = 4
+                       nbnoma = 6
+                       idtpma = 9
+                   end if
                case ('QUAD9') 
                    nbnwma = 1
                    nbnoma = 9
@@ -492,14 +559,26 @@ implicit none
                    nbnwma = 3
                    nbnoma = 10
                    idtpma = 19
-               case ('HEXA8') 
-                   nbnwma = 6
-                   nbnoma = 8
-                   idtpma = 25
+               case ('HEXA8')
+                   if (typ_dec.eq.0) then 
+                       nbnwma = 6
+                       nbnoma = 8
+                       idtpma = 25
+                   else
+                       nbnwma = 5
+                       nbnoma = 5
+                       idtpma = 23
+                   end if
                case ('HEXA20')
-                   nbnwma = 6
-                   nbnoma = 20
-                   idtpma = 26
+                   if (typ_dec.eq.0) then
+                       nbnwma = 6
+                       nbnoma = 20
+                       idtpma = 26
+                   else
+                       nbnwma = 5
+                       nbnoma = 13
+                       idtpma = 24
+                   end if
                case ('HEXA27')
                    nbnwma = 1
                    nbnoma = 27
@@ -612,8 +691,12 @@ implicit none
                      nbnwma = nbnwma + 1
                  case ('TRIA3', 'TRIA6') 
                      nbnwma = nbnwma + 3
-                 case ('QUAD4', 'QUAD8') 
-                     nbnwma = nbnwma + 5
+                 case ('QUAD4', 'QUAD8')
+                     if (typ_dec.eq.0) then  
+                         nbnwma = nbnwma + 5
+                     else
+                         nbnwma = nbnwma + 4
+                     end if
                  case default
                      ASSERT(.false.)
              end select
@@ -629,7 +712,11 @@ implicit none
                  case ('TETRA4', 'TETRA10') 
                      nbnwma = nbnwma + 3
                  case ('HEXA8', 'HEXA20') 
-                     nbnwma = nbnwma + 6
+                     if (typ_dec.eq.0) then  
+                         nbnwma = nbnwma + 6
+                     else
+                         nbnwma = nbnwma + 5
+                     end if
                  case default
                      ASSERT(.false.)
              end select
@@ -666,7 +753,11 @@ implicit none
            case ('TRIA3', 'TRIA6') 
                nbnwma = 3
            case ('QUAD4', 'QUAD8') 
-               nbnwma = 5
+               if (typ_dec.eq.0) then  
+                   nbnwma =  5
+               else
+                   nbnwma =  4
+               end if
            case default
                ASSERT(.false.)
      end select
@@ -683,7 +774,11 @@ implicit none
             case ('TETRA4', 'TETRA10') 
                 nbnwma = 3
             case ('HEXA8', 'HEXA20')
-                nbnwma = 6
+                if (typ_dec.eq.0) then  
+                   nbnwma =  6
+               else
+                   nbnwma =  5
+               end if
             case default
                 ASSERT(.false.)
         end select

@@ -1,7 +1,7 @@
 # coding=utf-8
 # person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -114,9 +114,9 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         `mxval` : longueur maximale de la liste retournée.
         On passe mxval=0, pour savoir comment dimensionner le vecteur résultat.
         """
-        from Cata import cata
+        from code_aster.Cata import DataStructure
         lconcept = []
-        klass = getattr(cata, typaster.lower().strip(), None)
+        klass = getattr(DataStructure, typaster.lower().strip(), None)
         if klass:
             ctxt = self.parent.get_contexte_avant(self)
             lconcept = [(co.order, co.nom) for co in ctxt.values()
@@ -254,8 +254,6 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             B_utils.TraceGet('GETVTX', nom_motfac, iocc, nom_motcle, valeur)
             for k in valeur[1]:
                 assert is_str(k)
-        # il faut prendre en compte le catalogue : 'TXM' --> on retourne la chaine en majuscules,
-        # 'TX' --> on la retourne telle qu'elle est
         iarg = self.getdef(nom_motfac, nom_motcle, iocc)
         return valeur[0], valeur[1], iarg
 

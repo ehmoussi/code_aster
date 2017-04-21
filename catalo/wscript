@@ -21,7 +21,7 @@ def build(self):
 
     self(
         features = 'catalo',
-            name = 'catalo',
+            name = 'cataelem',
           target = 'elem.1',
              env = env,
             vars = ['CATALO_CMD'],
@@ -30,12 +30,10 @@ def build(self):
 
 @TaskGen.feature('catalo')
 @TaskGen.before('process_source')
-@TaskGen.after('catapy')
 def pre_build_catalo(self):
     catalo = self.path
     deps = catalo.ant_glob('**/*.py')
     catalo.get_bld().mkdir()
-    capy = self.path.get_bld().find_or_declare('cata.py')
     ojb = catalo.get_bld().make_node('cata_ele.ojb')
     self.create_task('printcata', src=[catalo] + deps, tgt=ojb)
     self.source = [ojb] # bypass the execution of process_source

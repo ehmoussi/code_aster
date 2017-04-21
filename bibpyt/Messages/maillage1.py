@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -43,6 +43,15 @@ très faiblement négative ( > -1.d-6 * X_MAX)
   * Vérifiez votre maillage.
   * Vous pouvez utiliser MODI_MAILLAGE / DEFORME pour repositionner votre maillage
     dans le demi espace  X >= 0
+"""),
+
+    4: _(u"""
+Il n'est pas possible de linéariser le maillage %(k1)s.
+Ce maillage possède des mailles dont certains noeuds linéaires reposent sur des
+noeuds quadratiques d'autres mailles. Exemple : le noeud %(k2)s.
+
+Il n'est donc pas possible de supprimer ces noeuds quadratiques sans compromettre
+l'intégrité du maillage.
 """),
 
 }

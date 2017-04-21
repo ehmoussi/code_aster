@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -15,7 +15,6 @@
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
-from Cata.cata import *
 
 import cPickle
 import string
@@ -164,7 +163,7 @@ def veri_matr_tang_ops(self, SYMETRIE, DIFFERENCE, PRECISION, PREC_ZERO, **args)
     """
     Ecriture de la macro verif_matrice_tangente_ops
     """
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
 
     # On importe les definitions des commandes a utiliser dans la macro
     CREA_TABLE = self.get_cmd('CREA_TABLE')
@@ -200,6 +199,10 @@ def veri_matr_tang_ops(self, SYMETRIE, DIFFERENCE, PRECISION, PREC_ZERO, **args)
             _F(PARA='MAT_DIFF', LISTE_R=liste_diff),))
     return 0
 
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
 
 VERI_MATR_TANG = MACRO(
     nom="VERI_MATR_TANG", op=veri_matr_tang_ops, sd_prod=table_sdaster,

@@ -9,6 +9,7 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 #include "asterfort/dbr_chck_pod.h"
+#include "asterfort/dbr_chck_rb.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -51,10 +52,10 @@ implicit none
         call utmess('I', 'ROM7_7')
     endif
 !
-    if (ds_para%operation .eq. 'POD') then
-        call dbr_chck_pod(ds_para)
-    elseif (ds_para%operation .eq. 'POD_INCR') then
-        call dbr_chck_pod(ds_para)
+    if (ds_para%operation(1:3) .eq. 'POD') then
+        call dbr_chck_pod(ds_para%operation, ds_para%para_pod, ds_para%ds_empi, ds_para%l_reuse)
+    elseif (ds_para%operation .eq. 'GLOUTON') then
+        call dbr_chck_rb(ds_para%operation, ds_para%para_rb, ds_para%l_reuse)
     else
         ASSERT(.false.)
     endif

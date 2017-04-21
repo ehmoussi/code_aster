@@ -15,7 +15,7 @@ implicit none
 #include "asterfort/get_patch_info.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -153,9 +153,9 @@ implicit none
 !
 ! ----- Get master and slaves elements of current zone
 !
-        call codent(i_cont_zone, 'G', knuzo)
-        sdappa_mast = sdappa(1:19)//'.MAS'//knuzo(1:1)
-        sdappa_slav = sdappa(1:19)//'.ESC'//knuzo(1:1)
+        call codent(i_cont_zone-1, 'G', knuzo)
+        sdappa_mast = sdappa(1:19)//'.MS'//knuzo(1:2)
+        sdappa_slav = sdappa(1:19)//'.EC'//knuzo(1:2)
         call jeveuo(sdappa_mast, 'L', vi = v_sdappa_mast)
         call jeveuo(sdappa_slav, 'L', vi = v_sdappa_slav)
 !

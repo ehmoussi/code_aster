@@ -1,4 +1,4 @@
-subroutine dbr_read_pod(ds_para)
+subroutine dbr_read_pod(operation, ds_para_pod)
 !
 use Rom_Datastructure_type
 !
@@ -31,7 +31,8 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+    character(len=16), intent(in) :: operation
+    type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,15 +42,18 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  operation        : type of POD method
 ! IO  ds_para_pod      : datastructure for parameters (POD)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nocc, ifm, niv
-    real(kind=8) :: tole_svd = 0.d0
-    integer :: nb_mode_maxi = 0
-    character(len=24) :: field_name = ' '
-    character(len=8)  :: axe_line = ' ', surf_num = ' ', base_type = ' ', result_in = ' '
+    real(kind=8) :: tole_svd = 0.d0, tole_incr = 0.d0
+    character(len=16) :: field_name = ' '
+    character(len=8)  :: axe_line = ' '
+    character(len=8)  :: surf_num = ' '
+    character(len=8)  :: base_type = ' '
+    character(len=8)  :: result_in = ' '
     type(ROM_DS_Snap) :: ds_snap
 !
 ! --------------------------------------------------------------------------------------------------
@@ -78,25 +82,24 @@ implicit none
 ! - Get parameters - For SVD selection
 !
     call getvr8(' ', 'TOLE_SVD', scal = tole_svd)
-    call getvis(' ', 'NB_MODE' , scal = nb_mode_maxi, nbret = nocc)
-    if (nocc .eq. 0) then
-        nb_mode_maxi = 0
+    if (operation .eq. 'POD_INCR') then
+        call getvr8(' ', 'TOLE', scal = tole_incr)
     endif
 !
 ! - Read parameters for snapshot selection
 !
-    ds_snap = ds_para%ds_snap
+    ds_snap = ds_para_pod%ds_snap
     call romSnapRead(result_in, ds_snap)
 !
 ! - Save parameters in datastructure
 !
-    ds_para%nb_mode_maxi = nb_mode_maxi
-    ds_para%ds_snap      = ds_snap
-    ds_para%tole_svd     = tole_svd
-    ds_para%field_name   = field_name
-    ds_para%result_in    = result_in
-    ds_para%base_type    = base_type
-    ds_para%axe_line     = axe_line
-    ds_para%surf_num     = surf_num
+    ds_para_pod%result_in    = result_in
+    ds_para_pod%field_name   = field_name
+    ds_para_pod%base_type    = base_type
+    ds_para_pod%axe_line     = axe_line
+    ds_para_pod%surf_num     = surf_num
+    ds_para_pod%tole_svd     = tole_svd
+    ds_para_pod%tole_incr    = tole_incr
+    ds_para_pod%ds_snap      = ds_snap
 !
 end subroutine

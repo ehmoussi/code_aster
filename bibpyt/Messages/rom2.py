@@ -23,7 +23,7 @@ cata_msg = {
 
     2 : _(u"""Lecture de la base empirique de nom %(k1)s."""),
 
-    3 : _(u"""Initialisation de la structure de données pour la base empirique."""),
+    3 : _(u"""Initialisation de la base empirique."""),
 
     4 : _(u"""Lecture des données pour sélectionner les clichés."""),
 
@@ -35,13 +35,90 @@ cata_msg = {
 
     8 : _(u"""Création de la liste des équations sur la base empirique %(k1)s."""),
 
-    9 : _(u"""Vous avez demandé %(i1)d clichés."""),
+    9 : _(u"""Base empirique créée à partir de %(i1)d clichés."""),
 
    10 : _(u"""Vous n'avez sélectionné aucun cliché."""),
 
    11 : _(u"""On n'a pas réussi à extraire les informations de la structure de données %(k1)s."""),
 
-   12 : _(u"""<*> Initialisations pour la base empirique."""),
+   12 : _(u"""Initialisation de la base empirique dans le cas d'une méthode POD."""),
 
-   13 : _(u"""La valeur 'POD' n'est pas possible pour enrichir une base existante."""),
+   13 : _(u"""On ne peut pas enrichir une base empirique avec la méthode %(k1)s."""),
+
+   14 : _(u"""La matrice du système sera complexe."""),
+
+   15 : _(u"""La matrice du système sera réelle."""),
+
+   16 : _(u"""Le second membre du système sera complexe."""),
+
+   17 : _(u"""Le second membre du système sera réel."""),
+
+   18 : _(u"""Échec lors de la résolution.
+              La matrice est presque singulière à la fréquence."""),
+
+   19 : _(u"""Initialisation pour le problème multi-paramétrique."""),
+
+   20 : _(u"""Lecture des données pour le calcul multi-paramétrique avec réduction de modèle."""),
+
+   21 : _(u"""Les matrices ne reposent pas toutes sur la même numérotation."""),
+
+   22 : _(u"""Les matrices doivent être symétriques."""),
+
+   23 : _(u"""Lecture des données pour la construction du système - Le second membre."""),
+
+   24 : _(u"""Lecture des données pour la variation des coefficients."""),
+
+   25 : _(u"""Lecture des données pour la construction du système - Les matrices."""),
+
+   26 : _(u"""Évaluation du type du système (réel ou complexe)."""),
+
+   27 : _(u"""Création des objets pour le système complet."""),
+
+   28 : _(u"""Initialisation de la base empirique dans le cas d'une méthode GLOUTON."""),
+
+   29 : _(u"""Le nombre de coefficients pour faire varier les fonctions n'est pas le même pour tous les paramètres."""),
+
+   30 : _(u"""Création du système pour le calcul multi-paramétrique avec réduction de modèle."""),
+
+   31 : _(u"""Le coefficient devant le second membre est une fonction et il n'y a aucune donnée sur la variation de cette fonction."""),
+
+   32 : _(u"""Initialisation des coefficients pour le problème multi-paramétrique."""),
+
+   33 : _(u"""Création des objets pour le système réduit."""),
+
+   34 : _(u"""Initialisation des produits matrices par mode."""),
+
+   35 : _(u"""Taille du système: %(i1)d."""),
+
+   36 : _(u"""Le système résultant sera complexe."""),
+
+   37 : _(u"""Le système résultant sera réel."""),
+
+   38 : _(u"""Pas de lecture des données pour la variation des coefficients."""),
+
+   40 : _(u"""Initialisation de l'algorithme pour les méthodes POD."""),
+
+   41 : _(u"""Initialisation de l'algorithme pour la méthode GLOUTON."""),
+
+   42 : _(u"""Initialisation pour l'algorithme GLOUTON."""),
+
+   43 : _(u"""Le calcul d'une base réduite pour le calcul multi-paramétrique avec réduction de modèle nécessite de faire varier les coefficients."""),
+
+   44 : _(u"""Résolution du système réduit."""),
+
+   45 : _(u"""Calcul des coefficients réduits."""),
+
+   46 : _(u"""Pour le coefficient %(i1)d."""),
+
+   49 : _(u"""Norme du résidu pour le coefficient %(i1)d: %(r1)19.12e."""),
+
+   50 : _(u"""Évaluation du résidu."""),
+
+   51 : _(u"""Calcul des coefficients réduits pour le paramètre %(i1)d."""),
+
+   52 : _(u"""Coefficient réduit pour le mode %(i1)d et le paramètre %(i2)d: (%(r1)19.12e,%(r2)19.12e)."""),
+
+   53 : _(u"""Évaluation du résidu initial."""),
+
+   54 : _(u"""Norme du résidu initial: %(r1)19.12e."""),
 }

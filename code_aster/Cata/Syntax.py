@@ -1,145 +1,66 @@
-# coding: utf-8
-
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# coding=utf-8
+# ======================================================================
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
 #
-# This file is part of Code_Aster.
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
 #
-# Code_Aster is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#
-# Code_Aster is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+# ======================================================================
+# person_in_charge: mathieu.courtois at edf.fr
 
 """
-This module defines the objects used in the description (old `.capy` files) of
-legacy operators.
-It mainly converts new objects to old ones for backward compatibility.
+Module Syntax
+-------------
+
+This module defines objects for the commands definition (SIMP, FACT, BLOC...).
+
+It works as a switch between the legacy supervisor and the next generation
+of the commands language (already used by AsterStudy).
 """
 
-import __builtin__
-import types
+from . import HAVE_ASTERSTUDY
 
-import DataStructure as DS
-from .DataStructure import AsType
-from .SyntaxChecker import SyntaxCheckerVisitor
-from .SyntaxObjects import (
-    SimpleKeyword, FactorKeyword, Bloc,
-    Operator, Macro, Procedure, Formule, Ops,
-    CataError,
-)
-from .Rules import (
-    AtLeastOne,
-    ExactlyOne,
-    AtMostOne,
-    IfFirstAllPresent,
-    OnlyFirstPresent,
-    AllTogether,
-)
+if not HAVE_ASTERSTUDY:
+    from .Legacy.Syntax import *
+    from .Legacy.Syntax import _F
 
-_F = dict
-__builtin__._F = _F
-
-# TODO: replace by the i18n function (see old accas.capy)
-def tr(args):
-    return args
-_ = tr
-
-__builtin__._ = _
+else:
+    from .Language.Syntax import *
 
 
-# Les fonctions definies dans la paire d'accolade Ok ont été correctement traitées
-# Les fonctions definies dans la paire d'accolade NOOK sont à revoir
-# Ok {
-def OPER(**kwargs):
-    return Operator(kwargs)
+class Translation(object):
+    """Class to dynamically assign a translation function.
 
+    The package Cata must stay independent. So the translation function will
+    be defined by code_aster or by AsterStudy.
+    """
 
-def SIMP(**kwargs):
-    return SimpleKeyword(kwargs)
+    def __init__(self):
+        self._func = lambda arg: arg
 
+    def set_translator(self, translator):
+        """Define the translator function.
 
-def FACT(**kwargs):
-    return FactorKeyword(kwargs)
+        Args:
+            translator (function): Function returning the translated string.
+        """
+        self._func = translator
 
+    def __call__(self, arg):
+        """Return the translated string"""
+        if type(arg) is unicode:
+            uarg = arg
+        else:
+            uarg = arg.decode('utf-8', 'replace')
+        return self._func(uarg)
 
-def BLOC(**kwargs):
-    return Bloc(kwargs)
-
-
-def MACRO(**kwargs):
-    return Macro(kwargs)
-
-
-def PROC(**kwargs):
-    return Procedure(kwargs)
-
-
-def FORM(**kwargs):
-    return Formule(kwargs)
-
-
-def tr(kwargs):
-    return kwargs
-
-
-def OPS(kwargs):
-    return kwargs
-
-
-class EMPTY_OPS(object):
-    pass
-
-
-ops = Ops()
-
-
-class PROC_ETAPE(Procedure):
-    pass
-
-# exception
-AsException = CataError
-
-# rules
-AU_MOINS_UN = AtLeastOne
-UN_PARMI = ExactlyOne
-EXCLUS = AtMostOne
-PRESENT_PRESENT = IfFirstAllPresent
-PRESENT_ABSENT = OnlyFirstPresent
-ENSEMBLE = AllTogether
-# } Ok
-
-# NOOK {
-class assd(DS.ASSD):
-    pass
-
-def NoRepeat():
-    return
-
-def LongStr(a, b):
-    pass
-
-def AndVal(*args):
-    pass
-
-def OrVal(*args):
-    pass
-
-def OrdList(args):
-    pass
-
-def Together(args):
-    pass
-
-def Absent(args):
-    pass
-
-def Compulsory(*args):
-    pass
-# } NOOK
+tr = Translation()

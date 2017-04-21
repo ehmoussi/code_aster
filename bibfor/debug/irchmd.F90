@@ -10,7 +10,7 @@ subroutine irchmd(ifichi, chanom, partie, nochmd, codret)
 !
     integer :: ifichi, codret
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -57,6 +57,6 @@ subroutine irchmd(ifichi, chanom, partie, nochmd, codret)
     call irchme(ifichi, chan19, partie, noch64, noresu,&
                 nomsym, typech, numord, 0, [' '],&
                 0, [0], 0, [0], .false._1,&
-                sdcarm, nopara, codret)
+                sdcarm, sdcarm, nopara, codret)
 !
 end subroutine
