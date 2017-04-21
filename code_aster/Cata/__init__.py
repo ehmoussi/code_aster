@@ -28,11 +28,7 @@ of the commands language (already used by AsterStudy).
 
 """
 
-try:
-    from common.session import AsterStudySession
-    HAVE_ASTERSTUDY = AsterStudySession.use_cata()
-except ImportError:
-    HAVE_ASTERSTUDY = False
+HAVE_ASTERSTUDY = True
 
 
 if not HAVE_ASTERSTUDY:
