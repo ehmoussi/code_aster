@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,6 +17,11 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: mathieu.courtois at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def crea_table_prod(TYPE_TABLE, **args):
    """Typage du concept résultat
    """
@@ -35,7 +35,6 @@ def crea_table_prod(TYPE_TABLE, **args):
 CREA_TABLE=OPER(nom="CREA_TABLE",op=36,sd_prod=crea_table_prod,
                 fr=tr("Création d'une table à partir d'une fonction ou de deux listes"),
                 reentrant='f',
-                UIinfo={"groupes":("Tables",)},
 
            regles=(EXCLUS('FONCTION','LISTE','RESU'),),
 

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -23,11 +18,15 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 CALC_SPECTRE_IPM=MACRO(nom="CALC_SPECTRE_IPM",
                     op=OPS('Macro.calc_spectre_ipm_ops.calc_spectre_ipm_ops'),
                     sd_prod=table_sdaster,
                     reentrant='n', 
-                    UIinfo={"groupes":("Post-traitements","Outils-métier",)},
                     fr="Calcul de spectre, post-traitement de séisme",
             MAILLAGE=SIMP(statut='f',typ=maillage_sdaster),  
             

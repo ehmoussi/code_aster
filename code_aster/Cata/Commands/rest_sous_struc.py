@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -22,6 +17,11 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 
 # person_in_charge: mathieu.corus at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def rest_sous_struc_prod(RESU_GENE,RESULTAT,**args ):
   if AsType(RESU_GENE) == tran_gene : return dyna_trans
   if AsType(RESU_GENE) == mode_gene : return mode_meca
@@ -35,7 +35,6 @@ def rest_sous_struc_prod(RESU_GENE,RESULTAT,**args ):
 REST_SOUS_STRUC=OPER(nom="REST_SOUS_STRUC",op=  77,sd_prod=rest_sous_struc_prod,
           fr=tr("Restituer dans la base physique des résultats obtenus par sous-structuration"),
                     reentrant='n',
-            UIinfo={"groupes":("Matrices et vecteurs",)},
         regles=(UN_PARMI('RESU_GENE','RESULTAT'),
 # ajout d'une regle de Ionel et Nicolas:
 #                UN_PARMI('NOM_CHAM','TOUT_CHAM'),

@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -33,6 +28,11 @@ from code_aster.Cata.Commons import *
 #    - PRODUIT UNE CARTE
 # ----------------------------------------------------------------------
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def post_czm_fiss_prod(self,OPTION,**args):
   if OPTION == 'LONGUEUR'    : return table_sdaster
   if OPTION == 'TRIAXIALITE' : return carte_sdaster
@@ -44,7 +44,6 @@ POST_CZM_FISS=MACRO(
   op=OPS('Macro.post_czm_fiss_ops.post_czm_fiss_ops'),
   sd_prod=post_czm_fiss_prod,
   reentrant='n',
-  UIinfo={"groupes":("Rupture",)},
   fr=tr("Post-Traiement scpécifiques aux modèles CZM"),
 
   OPTION = SIMP(statut='o',typ='TXM',max=1,into=("LONGUEUR","TRIAXIALITE"),),

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,11 +16,15 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 MODI_MAILLAGE=OPER(nom="MODI_MAILLAGE",op= 154,sd_prod=maillage_sdaster,
                    fr=tr("Effectuer des modifications sur un maillage existant: réorienter des mailles servant,"
                       " à l'application d'une pression, à la modélisation du contact,..."),
                    reentrant='o',
-            UIinfo={"groupes":("Maillage",)},
       regles=(AU_MOINS_UN('ORIE_FISSURE','DEFORME','ORIE_PEAU_2D',
                        'ORIE_PEAU_3D','ORIE_NORM_COQUE','MODI_MAILLE',
                        'TRANSLATION','ROTATION','MODI_BASE','ECHELLE',
@@ -138,4 +137,8 @@ MODI_MAILLAGE=OPER(nom="MODI_MAILLAGE",op= 154,sd_prod=maillage_sdaster,
            NOEUD_ORIG      =SIMP(statut='f',typ=no,max=1),
          ),
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
+         translation={
+            "MODI_MAILLAGE": "Modify a mesh",
+         }
+
 )  ;

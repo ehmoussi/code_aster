@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY  
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY  
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR     
@@ -22,10 +17,14 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 MAC_MODES=OPER(nom="MAC_MODES",op=  141,sd_prod=table_sdaster,
                fr=tr("Critere orthogonalite de modes propres"),
                reentrant='n',
-               UIinfo={"groupes":("Résolution","Dynamique",)},
                regles=(PRESENT_PRESENT('IERI','MATR_ASSE'),),
          BASE_1     =SIMP(statut='o',typ=(mode_meca,mode_meca_c,mode_flamb) ),
          BASE_2     =SIMP(statut='o',typ=(mode_meca,mode_meca_c,mode_flamb) ),

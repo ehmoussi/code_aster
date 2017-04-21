@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,11 +16,15 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: samuel.geniaut at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
             fr=tr("Calcul du taux de restitution d'énergie par la méthode theta en thermo-élasticité"
                   " et les facteurs d'intensité de contraintes."),
                     reentrant='f',
-            UIinfo={"groupes":("Post-traitements","Rupture",)},
 
          reuse=SIMP(statut='c', typ=CO),
          THETA          =FACT(statut='o',

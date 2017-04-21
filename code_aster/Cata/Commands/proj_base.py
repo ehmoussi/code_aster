@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: harinaivo.andriambololona at edf.fr
+
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
 
 
 def proj_base_prod(self,MATR_ASSE_GENE,VECT_ASSE_GENE,
@@ -42,7 +42,6 @@ def proj_base_prod(self,MATR_ASSE_GENE,VECT_ASSE_GENE,
 PROJ_BASE=MACRO(nom="PROJ_BASE",
                 op=OPS('Macro.proj_base_ops.proj_base_ops'),
                 regles=(AU_MOINS_UN('MATR_ASSE_GENE','VECT_ASSE_GENE','RESU_GENE')),
-                UIinfo={"groupes":("Matrices et vecteurs","Dynamique",)},
                 sd_prod=proj_base_prod,
          fr=tr("Projection des matrices et/ou vecteurs assembles sur une base (modale ou de RITZ)"),
          BASE            =SIMP(statut='o',typ=(mode_meca,mode_gene) ),

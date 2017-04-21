@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,10 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+
 
 def C_SUIVI_DDL() : return FACT(statut='f',max=4,
            regles   =(UN_PARMI('NOM_CMP','NOM_VARI',),),
@@ -45,7 +44,7 @@ def C_SUIVI_DDL() : return FACT(statut='f',max=4,
 
            b_cham_no       =BLOC(condition="""is_in("NOM_CHAM", ('DEPL','VITE','ACCE','FORC_NODA','CONT_NOEU'))""",
                                  regles   =(UN_PARMI('NOEUD','GROUP_NO','GROUP_MA','MAILLE','TOUT')),
-                                 TOUT            =SIMP(statut='d',typ='TXM',into=("OUI",) ),
+                                 TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
                                  NOEUD           =SIMP(statut='f',typ=no  ,validators=NoRepeat(),max='**'),
                                  GROUP_NO        =SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
                                  MAILLE          =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
@@ -54,7 +53,7 @@ def C_SUIVI_DDL() : return FACT(statut='f',max=4,
 
            b_cham_elga     =BLOC(condition="""is_in("NOM_CHAM", ('SIEF_ELGA','EPSI_ELGA','VARI_ELGA'))""",
                                  regles          =(UN_PARMI('GROUP_MA','MAILLE','TOUT')),
-                                 TOUT            =SIMP(statut='d',typ='TXM',into=("OUI",) ),
+                                 TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
                                  MAILLE          =SIMP(statut='f',typ=ma   ,validators=NoRepeat(),max='**'),
                                  GROUP_MA        =SIMP(statut='f',typ=grma ,validators=NoRepeat(),max='**'),
                                  EVAL_ELGA       =SIMP(statut='f',typ='TXM',max=1,defaut='VALE',
@@ -67,7 +66,7 @@ def C_SUIVI_DDL() : return FACT(statut='f',max=4,
            # a decommenter quand un champ ELEM sera disponible
            #b_cham_elem    =BLOC(condition="(NOM_CHAM=='XXXX_ELEM')",
                                  #regles          =(UN_PARMI('GROUP_MA','MAILLE','TOUT')),
-                                 #TOUT            =SIMP(statut='d',typ='TXM',into=("OUI",) ),
+                                 #TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
                                  #MAILLE          =SIMP(statut='f',typ=ma   ,validators=NoRepeat(),max='**'),
                                  #GROUP_MA        =SIMP(statut='f',typ=grma ,validators=NoRepeat(),max='**'),
                                 #),

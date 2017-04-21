@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: david.haboussa at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import C_RELATION
+
+
 def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
 
     assert COMMAND in ('MACR_ASCOUF_CALC','MACR_ASPIC_CALC','CALC_G','POST_GP','CALC_ESSAI_GEOMECA','CALC_EUROPLEXUS',
@@ -50,7 +50,9 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                                         'MFRONT')),
            b_mfront      = BLOC(condition = """equal_to('RELATION', 'MFRONT') """,
                                              fr=tr("Comportement utilisateur de type MFRONT"),
-                               LIBRAIRIE = SIMP(statut='o', typ='TXM',validators=LongStr(1,128),
+                               regles=(UN_PARMI('UNITE_LIBRAIRIE','LIBRAIRIE')),
+                               UNITE_LIBRAIRIE=SIMP(statut='f',typ=UnitType(), inout='in',),
+                               LIBRAIRIE = SIMP(statut='f', typ='TXM',validators=LongStr(1,128),
                                     fr=tr("Chemin vers la bibliothèque dynamique définissant le comportement MFRONT")),
                                NOM_ROUTINE = SIMP(statut='o', typ='TXM',
                                     fr=tr("Nom de la routine MFRONT dans la bibliothèque")),
@@ -82,7 +84,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
 
                 TYPE_MATR_TANG    =SIMP(statut='f',typ='TXM',into=("PERTURBATION","VERIFICATION",)),
 
-                SYME_MATR_TANG    =SIMP(statut='d',typ='TXM',into=("OUI","NON"), defaut = "OUI"),
+                SYME_MATR_TANG    =SIMP(statut='f',typ='TXM',into=("OUI","NON"), defaut = "OUI"),
 
                 b_perturb         =BLOC(condition = """ (exists("TYPE_MATR_TANG")) """,
                                    fr=tr("Calcul de la matrice tangente par perturbation, valeur de la perturbation"),
@@ -121,7 +123,9 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                               ),
             b_mfront    = BLOC( condition = """equal_to("RELATION", 'MFRONT') """,
                                 fr=tr("Comportement utilisateur de type MFRONT"),
-                                LIBRAIRIE       = SIMP(statut='o', typ='TXM',validators=LongStr(1,128),
+                                regles=(UN_PARMI('UNITE_LIBRAIRIE','LIBRAIRIE')),
+                                UNITE_LIBRAIRIE=SIMP(statut='f',typ=UnitType(), inout='in',),
+                                LIBRAIRIE       = SIMP(statut='f', typ='TXM',validators=LongStr(1,128),
                                 fr=tr("Chemin vers la bibliothèque dynamique pour MFRONT")),
                                 NOM_ROUTINE     = SIMP(statut='o', typ='TXM',
                                 fr=tr("Nom de la routine MFRONT dans la bibliothèque")),
@@ -214,7 +218,9 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                                      ),
                                 b_mfr_thm   = BLOC( condition = """'MFRONT' in value("RELATION_KIT")""",
                                     fr=tr("Comportement utilisateur meca THM de type MFRONT"),
-                                    LIBRAIRIE   = SIMP(statut='o', typ='TXM',
+                                    regles=(UN_PARMI('UNITE_LIBRAIRIE','LIBRAIRIE')),
+                                    UNITE_LIBRAIRIE=SIMP(statut='f',typ=UnitType(), inout='in',),
+                                    LIBRAIRIE   = SIMP(statut='f', typ='TXM',
                                     fr=tr("Chemin vers la bibliothèque dynamique définissant le comportement MFRONT"),
                                                        ),
                                     NOM_ROUTINE = SIMP(statut='o', typ='TXM',
@@ -288,7 +294,9 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                               ),
             b_mfront    = BLOC( condition = """equal_to("RELATION", 'MFRONT') """,
                                 fr=tr("Comportement utilisateur de type MFRONT"),
-                                LIBRAIRIE       = SIMP(statut='o', typ='TXM',validators=LongStr(1,128),
+                                regles=(UN_PARMI('UNITE_LIBRAIRIE','LIBRAIRIE')),
+                                UNITE_LIBRAIRIE=SIMP(statut='f',typ=UnitType(), inout='in',),
+                                LIBRAIRIE       = SIMP(statut='f', typ='TXM',validators=LongStr(1,128),
                                 fr=tr("Chemin vers la bibliothèque dynamique pour MFRONT")),
                                 NOM_ROUTINE     = SIMP(statut='o', typ='TXM',
                                 fr=tr("Nom de la routine MFRONT dans la bibliothèque")),
@@ -494,7 +502,9 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                                      ),
                                 b_mfr_thm   = BLOC( condition = """'MFRONT' in value("RELATION_KIT")""",
                                     fr=tr("Comportement utilisateur meca THM de type MFRONT"),
-                                    LIBRAIRIE   = SIMP(statut='o', typ='TXM',
+                                    regles=(UN_PARMI('UNITE_LIBRAIRIE','LIBRAIRIE')),
+                                    UNITE_LIBRAIRIE=SIMP(statut='f',typ=UnitType(), inout='in',),
+                                    LIBRAIRIE   = SIMP(statut='f', typ='TXM',
                                     fr=tr("Chemin vers la bibliothèque dynamique définissant le comportement MFRONT"),
                                                        ),
                                     NOM_ROUTINE = SIMP(statut='o', typ='TXM',
@@ -554,7 +564,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
 
             TYPE_MATR_TANG    =SIMP(statut='f',typ='TXM',into=("PERTURBATION","VERIFICATION",)),
 
-            SYME_MATR_TANG    =SIMP(statut='d',typ='TXM',into=("OUI","NON"), defaut = "OUI"),
+            SYME_MATR_TANG    =SIMP(statut='f',typ='TXM',into=("OUI","NON"), defaut = "OUI"),
 
             b_perturb         =BLOC(condition = """ (exists("TYPE_MATR_TANG")) """,
                                fr=tr("Calcul de la matrice tangente par perturbation, valeur de la perturbation"),

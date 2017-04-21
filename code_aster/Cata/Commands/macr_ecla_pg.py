@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,6 +18,11 @@ from code_aster.Cata.Commons import *
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def macr_ecla_pg_prod(self,RESULTAT,MAILLAGE,RESU_INIT,**args):
   self.type_sdprod(RESULTAT,AsType(RESU_INIT))
   self.type_sdprod(MAILLAGE,maillage_sdaster)
@@ -33,7 +33,6 @@ MACR_ECLA_PG=MACRO(nom="MACR_ECLA_PG",
                    op=OPS('Macro.macr_ecla_pg_ops.macr_ecla_pg_ops'),
                    sd_prod=macr_ecla_pg_prod,
                    reentrant='n',
-                   UIinfo={"groupes":("Post-traitements","Résultats et champs",)},
                    fr=tr("Permettre la visualisation des champs aux points de Gauss d'une "
                         "SD_RESULTAT sans lissage ni interpolation"),
 

@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: sarah.plessis at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def calc_fatigue_prod(TYPE_CALCUL,OPTION,**args):
   if TYPE_CALCUL == "CUMUL_DOMMAGE" : return cham_elem
   if TYPE_CALCUL == "FATIGUE_MULTI" and OPTION == "DOMA_ELGA": return cham_elem
@@ -31,7 +31,6 @@ def calc_fatigue_prod(TYPE_CALCUL,OPTION,**args):
 CALC_FATIGUE=OPER(nom="CALC_FATIGUE",op= 151,sd_prod=calc_fatigue_prod,reentrant='n',
                   fr=tr("Calculer un champ de dommage de fatigue subit par une structure et déterminer le plan critique"
                         " dans lequel le cisaillement est maximal."),
-            UIinfo={"groupes":("Post-traitements","Rupture",)},
 
          TYPE_CALCUL = SIMP(statut='o',typ='TXM',
                                into=("CUMUL_DOMMAGE","FATIGUE_MULTI","FATIGUE_VIBR") ),

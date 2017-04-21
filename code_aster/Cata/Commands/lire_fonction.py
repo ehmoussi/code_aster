@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,6 +18,11 @@ from code_aster.Cata.Commons import *
 # person_in_charge: mathieu.courtois at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def lire_fonction_prod(self,TYPE,**args):
   if   (TYPE == 'FONCTION')  : return fonction_sdaster
   elif (TYPE == 'FONCTION_C'): return fonction_c
@@ -35,7 +35,6 @@ LIRE_FONCTION=MACRO(nom="LIRE_FONCTION",
                     fr=tr("Lit les valeurs réelles dans un fichier de données représentant une "
                          "fonction et crée un concept de type fonction ou nappe"),
                     reentrant='n',
-                    UIinfo={"groupes":("Lecture","Fonctions",)},
          FORMAT          =SIMP(statut='f',typ='TXM',into=("LIBRE","NUMPY"),
                                defaut="LIBRE"  ),
          TYPE            =SIMP(statut='f',typ='TXM',into=("FONCTION","FONCTION_C","NAPPE"),defaut="FONCTION"  ),

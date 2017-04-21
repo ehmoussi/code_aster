@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,9 +17,13 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: mickael.abbas at edf.fr
 #
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 DYNA_NON_LINE=OPER(nom="DYNA_NON_LINE",op= 70,sd_prod=evol_noli,reentrant='f',
             fr=tr("Calcul de l'évolution dynamique d'une structure dont le matériau ou la géométrie ont un comportement non linéaire"),
-            UIinfo={"groupes":("Résolution","Dynamique",)},
          reuse=SIMP(statut='c', typ=CO),
          MODELE          =SIMP(statut='o',typ=modele_sdaster),
          CHAM_MATER      =SIMP(statut='o',typ=cham_mater),
@@ -110,7 +109,7 @@ DYNA_NON_LINE=OPER(nom="DYNA_NON_LINE",op= 70,sd_prod=evol_noli,reentrant='f',
                FORMULATION  =SIMP(statut='o',max=1,typ='TXM',into=("DEPLACEMENT","VITESSE","ACCELERATION"),),),
          ),
 #-------------------------------------------------------------------
-         METHODE        =SIMP(statut='d',typ='TXM',defaut="NEWTON",into=("NEWTON","NEWTON_KRYLOV")),
+         METHODE        =SIMP(statut='f',typ='TXM',defaut="NEWTON",into=("NEWTON","NEWTON_KRYLOV")),
          NEWTON          =C_NEWTON(),
 #-------------------------------------------------------------------
          RECH_LINEAIRE   =C_RECH_LINEAIRE(),

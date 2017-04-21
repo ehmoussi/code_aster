@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,8 +16,12 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: mathieu.courtois at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
-            UIinfo={"groupes":("Modélisation",)},
                  fr=tr("Définir le phénomène physique modélisé et le type d'éléments finis sur le maillage"),reentrant='n',
          regles=(AU_MOINS_UN('AFFE','AFFE_SOUS_STRUC'),),
          MAILLAGE        =SIMP(statut='o',typ=maillage_sdaster),
@@ -281,4 +280,12 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
 
          VERI_JACOBIEN  =SIMP(statut='f',typ='TXM',into=('OUI','NON'),defaut='OUI',
                               fr =tr("Vérification de la forme des mailles (jacobiens tous de meme signe)."),),
+         translation={
+            "AFFE_MODELE": "Assign finite element",
+            "AFFE": "Finite element assignement",
+            "AFFE_SOUS_STRUC": "Substructures assignement",
+            "VERI_JACOBIEN": "Jacobian check",
+            "DISTRIBUTION": "MPI distribution" ,
+            "TOUT": "Everywhere",  
+         }
 ) ;

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,10 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: olivier.boiteau at edf.fr
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+
 
 def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
 
@@ -370,6 +369,7 @@ def C_SOLVEUR( COMMAND, BASE=None ) :  #COMMUN#
    _BlocXX_SP['RENUM'] = SIMP(statut='f', typ='TXM', defaut="SANS", into=("SANS",), )
    _BlocXX_SP['REAC_PRECOND'] = SIMP(statut='f', typ='I', defaut=30, )
    _BlocXX_SP['PCENT_PIVOT' ] = SIMP(statut='f', typ='I', defaut=20, val_min=1, )
+   _BlocXX_SP['GESTION_MEMOIRE' ] = SIMP(statut='f', typ='TXM', defaut="AUTO", into=("IN_CORE", "AUTO"), )
 
 # ----------------------------------------------------------------------------------------------------------------------------------
 

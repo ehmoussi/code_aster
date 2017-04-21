@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -22,6 +17,11 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def crea_elem_ssd_prod(self,NUME_DDL,**args):
     if NUME_DDL:
         self.type_sdprod(NUME_DDL,nume_ddl_sdaster)
@@ -34,7 +34,6 @@ CREA_ELEM_SSD=MACRO(nom="CREA_ELEM_SSD",
                     fr=tr("Creation de macro-element dynamique en enchainant les commandes : "
                          "CALC_MATR_ELEM, NUME_DDL, ASSE_MATRICE, MODE_ITER_SIMULT, "
                          "DEFI_INTERF_DYNA, DEFI_BASE_MODALE et MACR_ELEM_DYNA"),
-                    UIinfo={"groupes":("Matrices et vecteurs",)},
 
 # pour CAL_MATR_ELEM + NUME_DDL + ASSE_MATRICE + MODE_ITER_SIMULT + MODE_STATIQUE
          MODELE          =SIMP(statut='o',typ=modele_sdaster),

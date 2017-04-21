@@ -1,6 +1,6 @@
-# coding: utf-8
+# coding=utf-8
 
-# Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -17,7 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from .c_mfront_official import C_MFRONT_OFFICIAL
+# c_mfront_official will only be available after installation
+from .c_mfront_official import C_MFRONT_OFFICIAL # pragma pylint: disable=import-error
 
 from .c_affichage import C_AFFICHAGE
 from .c_archivage import C_ARCHIVAGE

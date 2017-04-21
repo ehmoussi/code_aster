@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -20,11 +15,15 @@ from code_aster.Cata.Commons import *
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 CALC_STABILITE=MACRO(nom="CALC_STABILITE",sd_prod=table_container,
                op=OPS('Macro.calc_stabilite_ops.calc_stabilite_ops'),
                fr=tr("post-traitement modes non-linéaires : filtre resultats et calcul de stabilité"),
                reentrant='f',
-               UIinfo={"groupes":("Résolution","Dynamique",)},
 
                reuse =SIMP(statut='c',typ=CO),
 

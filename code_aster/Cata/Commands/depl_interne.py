@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: jacques.pellet at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def depl_interne_prod(DEPL_GLOBAL,**args ):
     if AsType(DEPL_GLOBAL)     == cham_no_sdaster: return cham_no_sdaster
     if AsType(DEPL_GLOBAL)     == evol_elas      : return evol_elas
@@ -31,7 +31,6 @@ def depl_interne_prod(DEPL_GLOBAL,**args ):
     raise AsException("type de concept resultat non prevu")
 
 DEPL_INTERNE=OPER(nom="DEPL_INTERNE",op=89,sd_prod=depl_interne_prod,reentrant='n',
-            UIinfo={"groupes":("Matrices et vecteurs",)},
                   fr=tr("Calculer le champ de déplacement à l'intérieur d'une sous-structure statique"),
          DEPL_GLOBAL     =SIMP(statut='o',typ=(cham_no_sdaster,mode_meca,mode_meca_c,evol_elas,dyna_trans,dyna_harmo),),
          SUPER_MAILLE    =SIMP(statut='o',typ=ma,),

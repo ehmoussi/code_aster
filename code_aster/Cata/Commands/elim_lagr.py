@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,13 +17,18 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: natacha.bereux at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def elim_lagr_prod(MATR_RIGI,**args):
   if AsType(MATR_RIGI) == matr_asse_depl_r : return matr_asse_depl_r
   raise AsException("type de concept resultat non prevu")
 
 ELIM_LAGR=OPER(nom="ELIM_LAGR",op=69,sd_prod=elim_lagr_prod,
                fr=tr("Créer une matrice en ayant éliminé les condition cinématiques dualisées."),
-               reentrant='f', UIinfo={"groupes":("Résolution",)},
+               reentrant='f',
 
          reuse=SIMP(statut='c', typ=CO),
          # Matrice de "rigidité" (celle qui contient les équations dualisées) :

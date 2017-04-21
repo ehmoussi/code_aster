@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,12 +18,17 @@ from code_aster.Cata.Commons import *
 # person_in_charge: sylvie.michel-ponnelle at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 DEFI_CABLE_BP=MACRO(nom="DEFI_CABLE_BP",
                     op=OPS('Macro.defi_cable_bp_ops.defi_cable_bp_ops'),
                     sd_prod=cabl_precont,
                     fr=tr("Calculer les profils initiaux de tension le long des cables "
                          "de précontrainte d'une structure en béton"),
-                    reentrant='n',UIinfo={"groupes":("Modélisation",)},
+                    reentrant='n',
          MODELE          =SIMP(statut='o',typ=modele_sdaster ),
          CHAM_MATER      =SIMP(statut='o',typ=cham_mater ),
          CARA_ELEM       =SIMP(statut='o',typ=cara_elem ),

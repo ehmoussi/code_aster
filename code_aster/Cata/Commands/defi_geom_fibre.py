@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -22,10 +17,15 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: jean-luc.flejou at edf.fr
 #
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 DEFI_GEOM_FIBRE=OPER(
     nom="DEFI_GEOM_FIBRE", op=119, sd_prod=gfibre_sdaster,
     fr=tr("Definition des groupes de fibres pour les elements multifibres"),
-    reentrant='n', UIinfo={"groupes":("Modélisation",)},
+    reentrant='n',
     regles=(AU_MOINS_UN('SECTION','FIBRE'),),
     INFO=SIMP(statut='f',typ='I', defaut= 1 ,into=(1,2)),
 # ============================================================================
@@ -40,6 +40,7 @@ DEFI_GEOM_FIBRE=OPER(
 
         MAILLAGE_SECT     =SIMP(statut='o',typ=maillage_sdaster),
         COOR_AXE_POUTRE   =SIMP(statut='o',typ='R',min=2,max=2),
+        ANGLE             =SIMP(statut='f',typ='R',max=1, defaut= 0.0 ),
     ),
 # ============================================================================
     FIBRE               =FACT(statut='f',max='**',
@@ -47,6 +48,7 @@ DEFI_GEOM_FIBRE=OPER(
         CARA              =SIMP(statut='f',typ='TXM',defaut='SURFACE',into=('SURFACE','DIAMETRE',)),
         VALE              =SIMP(statut='o',typ='R',max='**'),
         COOR_AXE_POUTRE   =SIMP(statut='o',typ='R',min=2,max=2),
+        ANGLE             =SIMP(statut='f',typ='R',max=1, defaut= 0.0 ),
     ),
 # ============================================================================
     ASSEMBLAGE_FIBRE    =FACT(statut='f',max='**',

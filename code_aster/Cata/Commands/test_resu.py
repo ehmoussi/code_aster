@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,8 +18,12 @@ from code_aster.Cata.Commons import *
 #
 # ======================================================================
 # person_in_charge: mathieu.courtois at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 TEST_RESU=PROC(nom="TEST_RESU",op=23,
-            UIinfo={"groupes":("Résultats et champs","Utilitaires",)},
          fr=tr("Extraction d'une valeur d'une structure de donnée et comparaison à une valeur de référence"),
          regles=(AU_MOINS_UN('CHAM_NO','CHAM_ELEM','CARTE','RESU','GENE','OBJET','TEST_NAN','MAILLAGE')),
 

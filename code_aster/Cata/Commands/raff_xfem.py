@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -23,6 +18,11 @@ from code_aster.Cata.Commons import *
 # person_in_charge: sam.cuvilliez at edf.fr
 
 # determination du type de sd produite par la commande
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def raff_xfem_prod(self,TYPE,**args):
   if TYPE == 'DISTANCE' :
      return cham_no_sdaster
@@ -37,7 +37,6 @@ RAFF_XFEM=MACRO(nom="RAFF_XFEM",
                 sd_prod=raff_xfem_prod,
                 fr=tr("Calcul d'un indicateur pour le raffinement"),
                 reentrant='n',
-                UIinfo={"groupes":("Résultats et champs","Rupture",)},
 
                 TYPE   =SIMP(statut='f',typ='TXM',into=('DISTANCE','ZONE'),defaut='DISTANCE'),
                 FISSURE=SIMP(statut='o',typ=fiss_xfem,min=1,max='**',),

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017 EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,12 +16,16 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: nicolas.sellenet at edf.fr
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
-            UIinfo={"groupes":("Impression","Résultats et champs",)},
                fr=tr("Imprimer un maillage et/ou les résultats d'un calcul (différents formats)"),
 
          FORMAT          =SIMP(statut='f',typ='TXM',defaut="MED",
-                                 into=("RESULTAT","IDEAS","ASTER","CASTEM","MED","GMSH") ),
+                                 into=("RESULTAT","IDEAS","ASTER","MED","GMSH") ),
 
          PROC0           =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
 
@@ -47,11 +46,6 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
            UNITE           =SIMP(statut='f',typ=UnitType(),defaut=26, inout='out'),
          ),
 
-         b_format_castem =BLOC(condition="""equal_to("FORMAT", 'CASTEM')""",fr=tr("unité logique d'impression et version CASTEM"),
-           UNITE           =SIMP(statut='f',typ=UnitType(),defaut=37, inout='out'),
-           NIVE_GIBI       =SIMP(statut='f',typ='I',defaut=10,into=(3,10)),
-         ),
-
          b_format_med  =BLOC(condition="""equal_to("FORMAT", 'MED')""",fr=tr("unité logique d'impression au format MED"),
            UNITE           =SIMP(statut='f',typ=UnitType(),defaut=80, inout='out'),
          ),
@@ -60,9 +54,6 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
            UNITE           =SIMP(statut='f',typ=UnitType(),defaut=37, inout='out'),
            VERSION         =SIMP(statut='f',typ='R',defaut=1.2,into=(1.0,1.2)),
          ),
-
-#         regles=(AU_MOINS_UN('CONCEPT','RESU',),),
-         regles=(AU_MOINS_UN('CONCEPT','b_fmt_med','b_fmt_resultat','b_fmt_gmsh','b_fmt_castem','b_fmt_ideas','b_fmt_aster',),),
 
          CONCEPT          =FACT(statut='f',max='**',
            fr=tr('Pour imprimer les champs de "données" à des fins de visualisation (controle des affectations).'),
@@ -79,10 +70,10 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
               ),
            ),
          ), # end fkw_concept
-          
+
          b_fmt_med = BLOC(condition="""equal_to("FORMAT", 'MED')""",
             RESU            =FACT(statut='f',max='**',
-   
+
               regles=(AU_MOINS_UN('CHAM_GD','RESULTAT','MAILLAGE',),
                       EXCLUS('CHAM_GD','RESULTAT'),
                       EXCLUS('TOUT_CMP','NOM_CMP'),),
@@ -91,12 +82,12 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
               CHAM_GD         =SIMP(statut='f',typ=cham_gd_sdaster),
               RESULTAT        =SIMP(statut='f',typ=resultat_sdaster),
               INFO_MAILLAGE   =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON") ),
-               
+
               b_partie        =BLOC(condition="""(is_type("RESULTAT") in (dyna_harmo, acou_harmo) or is_type("CHAM_GD") != carte_sdaster)""",
                 PARTIE          =SIMP(statut='f',typ='TXM',into=("REEL","IMAG") ),
               ),
               IMPR_NOM_VARI=SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="OUI",),
-   
+
               b_extrac        =BLOC(condition="""exists("RESULTAT")""",
                                     fr=tr("extraction d un champ de grandeur"),
                 regles=(EXCLUS('TOUT_CHAM','NOM_CHAM'),
@@ -104,7 +95,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                                'LIST_INST','LIST_FREQ','LIST_ORDRE','NOM_CAS','ANGLE'),),
                 TOUT_CHAM       =SIMP(statut='f',typ='TXM',into=("OUI","NON") ),
                 NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',into=C_NOM_CHAM_INTO()),
-   
+
                 TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
                 NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
                 NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
@@ -116,7 +107,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                 LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
                 INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
                 LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
-   
+
                 b_acce_reel     =BLOC(condition="""(exists("ANGLE"))or(exists("FREQ"))or(exists("LIST_FREQ"))or(exists("INST"))or(exists("LIST_INST"))""",
                    CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
                    b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
@@ -146,14 +137,14 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
               GROUP_NO        =SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
               MAILLE          =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
               GROUP_MA        =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
-   
+
               SOUS_TITRE      =SIMP(statut='f',typ='TXM'),
             ), # end fkw_resu
          ), # end b_fmt_med
-         
+
          b_fmt_resultat = BLOC(condition="""equal_to("FORMAT", 'RESULTAT')""",
             RESU            =FACT(statut='f',max='**',
-   
+
               regles=(AU_MOINS_UN('CHAM_GD','RESULTAT','MAILLAGE',),
                       EXCLUS('CHAM_GD','RESULTAT'),
                       EXCLUS('TOUT_PARA','NOM_PARA'),
@@ -169,7 +160,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                                'LIST_INST','LIST_FREQ','LIST_ORDRE','NOM_CAS','ANGLE'),),
                 TOUT_CHAM       =SIMP(statut='f',typ='TXM',into=("OUI","NON") ),
                 NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',into=C_NOM_CHAM_INTO()),
-   
+
                 TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
                 NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
                 NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
@@ -181,7 +172,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                 LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
                 INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
                 LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
-   
+
                 b_acce_reel     =BLOC(condition="""(exists("ANGLE"))or(exists("FREQ"))or(exists("LIST_FREQ"))or(exists("INST"))or(exists("LIST_INST"))""",
                    CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
                    b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
@@ -213,10 +204,10 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
               SOUS_TITRE      =SIMP(statut='f',typ='TXM'),
             ), # end fkw_resu
          ), # end b_fmt_resultat
- 
+
          b_fmt_gmsh = BLOC(condition="""equal_to("FORMAT", 'GMSH')""",
             RESU            =FACT(statut='f',max='**',
-   
+
               regles=(AU_MOINS_UN('CHAM_GD','RESULTAT','MAILLAGE',),
                       EXCLUS('CHAM_GD','RESULTAT'),),
               MAILLAGE        =SIMP(statut='f',typ=(maillage_sdaster,squelette)),
@@ -231,7 +222,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                                'LIST_INST','LIST_FREQ','LIST_ORDRE','NOM_CAS','ANGLE'),),
                 TOUT_CHAM       =SIMP(statut='f',typ='TXM',into=("OUI","NON") ),
                 NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',into=C_NOM_CHAM_INTO()),
-   
+
                 TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
                 NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
                 NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
@@ -243,7 +234,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                 LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
                 INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
                 LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
-   
+
                 b_acce_reel     =BLOC(condition="""(exists("ANGLE"))or(exists("FREQ"))or(exists("LIST_FREQ"))or(exists("INST"))or(exists("LIST_INST"))""",
                    CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
                    b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
@@ -266,59 +257,14 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                NOM_CMP         =SIMP(statut='o',typ='TXM',min=4,max=4 ),),
               b_tens_3d       =BLOC(condition = """equal_to("TYPE_CHAM", 'TENS_3D')""",
                NOM_CMP         =SIMP(statut='o',typ='TXM',min=6,max=6 ),),
-   
+
               SOUS_TITRE      =SIMP(statut='f',typ='TXM'),
             ), # end fkw_resu
          ), # end b_fmt_gmsh
-         
-         b_fmt_castem = BLOC(condition="""equal_to("FORMAT", 'CASTEM')""",
-            RESU            =FACT(statut='f',max='**',
-   
-              regles=(AU_MOINS_UN('CHAM_GD','RESULTAT','MAILLAGE',),
-                      EXCLUS('CHAM_GD','RESULTAT'),
-                      EXCLUS('TOUT_CMP','NOM_CMP'),),
-              MAILLAGE        =SIMP(statut='f',typ=(maillage_sdaster,squelette)),
-              CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
-              CHAM_GD         =SIMP(statut='f',typ=cham_gd_sdaster),
-              RESULTAT        =SIMP(statut='f',typ=resultat_sdaster),
-              PARTIE          =SIMP(statut='f',typ='TXM',into=("REEL","IMAG") ),
-              b_extrac        =BLOC(condition="""exists("RESULTAT")""",
-                                    fr=tr("extraction d un champ de grandeur"),
-                regles=(EXCLUS('TOUT_CHAM','NOM_CHAM'),
-                        EXCLUS('TOUT_ORDRE','NUME_ORDRE','INST','FREQ','NUME_MODE','NOEUD_CMP',
-                               'LIST_INST','LIST_FREQ','LIST_ORDRE','NOM_CAS','ANGLE'),),
-                TOUT_CHAM       =SIMP(statut='f',typ='TXM',into=("OUI","NON") ),
-                NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',into=C_NOM_CHAM_INTO()),
-   
-                TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
-                NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
-                NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
-                LIST_ORDRE      =SIMP(statut='f',typ=listis_sdaster),
-                NOEUD_CMP       =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**'),
-                NOM_CAS         =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**'),
-                ANGLE           =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
-                FREQ            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
-                LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
-                INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
-                LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
-   
-                b_acce_reel     =BLOC(condition="""(exists("ANGLE"))or(exists("FREQ"))or(exists("LIST_FREQ"))or(exists("INST"))or(exists("LIST_INST"))""",
-                   CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
-                   b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
-                        PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
-                   b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
-                        PRECISION       =SIMP(statut='o',typ='R',),),
-                ),
-              ),
-              TOUT_CMP        =SIMP(statut='f',typ='TXM',into=("OUI",) ),
-              NOM_CMP         =SIMP(statut='f',typ='TXM',max='**'),
-              SOUS_TITRE      =SIMP(statut='f',typ='TXM'),
-            ), # end fkw_resu
-         ), # end b_fmt_castem
-                 
+
          b_fmt_ideas = BLOC(condition="""equal_to("FORMAT", 'IDEAS')""",
             RESU            =FACT(statut='f',max='**',
-   
+
               regles=(AU_MOINS_UN('CHAM_GD','RESULTAT','MAILLAGE',),
                       EXCLUS('CHAM_GD','RESULTAT'),
                       EXCLUS('TOUT_CMP','NOM_CMP'),),
@@ -328,7 +274,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
               RESULTAT        =SIMP(statut='f',typ=resultat_sdaster),
               TOUT_CMP        =SIMP(statut='f',typ='TXM',into=("OUI",) ),
               NOM_CMP         =SIMP(statut='f',typ='TXM',max='**'),
-              
+
               b_extrac        =BLOC(condition="""exists("RESULTAT")""",
                                     fr=tr("extraction d un champ de grandeur"),
                 regles=(EXCLUS('TOUT_CHAM','NOM_CHAM'),
@@ -336,7 +282,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                                'LIST_INST','LIST_FREQ','LIST_ORDRE','NOM_CAS','ANGLE'),),
                 TOUT_CHAM       =SIMP(statut='f',typ='TXM',into=("OUI","NON") ),
                 NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',into=C_NOM_CHAM_INTO()),
-   
+
                 TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
                 NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
                 NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
@@ -348,7 +294,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                 LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
                 INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
                 LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
-   
+
                 b_acce_reel     =BLOC(condition="""(exists("ANGLE"))or(exists("FREQ"))or(exists("LIST_FREQ"))or(exists("INST"))or(exists("LIST_INST"))""",
                    CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
                    b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
@@ -365,21 +311,21 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                 MAILLE          =SIMP(statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
                 GROUP_MA        =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
               ),
-   
+
               SOUS_TITRE      =SIMP(statut='f',typ='TXM'),
             ), # end fkw_resu
          ), # end b_fmt_ideas
-         
+
          b_fmt_aster = BLOC(condition="""equal_to("FORMAT", 'ASTER')""",
             RESU            =FACT(statut='f',max='**',
-   
+
               regles=(AU_MOINS_UN('CHAM_GD','RESULTAT','MAILLAGE',),
                       EXCLUS('CHAM_GD','RESULTAT'),),
               MAILLAGE        =SIMP(statut='f',typ=(maillage_sdaster,squelette)),
               CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
               CHAM_GD         =SIMP(statut='f',typ=cham_gd_sdaster),
               RESULTAT        =SIMP(statut='f',typ=resultat_sdaster),
-   
+
               b_extrac        =BLOC(condition="""exists("RESULTAT")""",
                                     fr=tr("extraction d un champ de grandeur"),
                 regles=(EXCLUS('TOUT_CHAM','NOM_CHAM'),
@@ -387,7 +333,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                                'LIST_INST','LIST_FREQ','LIST_ORDRE','NOM_CAS','ANGLE'),),
                 TOUT_CHAM       =SIMP(statut='f',typ='TXM',into=("OUI","NON") ),
                 NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',into=C_NOM_CHAM_INTO()),
-   
+
                 TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
                 NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
                 NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
@@ -399,7 +345,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
                 LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster),
                 INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
                 LIST_INST       =SIMP(statut='f',typ=listr8_sdaster),
-   
+
                 b_acce_reel     =BLOC(condition="""(exists("ANGLE"))or(exists("FREQ"))or(exists("LIST_FREQ"))or(exists("INST"))or(exists("LIST_INST"))""",
                    CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",),),
                    b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
@@ -410,10 +356,15 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
               ),
 
               FORMAT_R        =SIMP(statut='f',typ='TXM',defaut="1PE21.14"),
-   
+
               SOUS_TITRE      =SIMP(statut='f',typ='TXM'),
             ), # end fkw_resu
          ), # end b_fmt_aster
-         
+
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2) ),
+         translation={
+            "IMPR_RESU": "Set output results",
+            "UNITE": "Result file location",
+        
+         }
 ) ;

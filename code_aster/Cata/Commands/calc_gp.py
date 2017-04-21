@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -24,6 +19,11 @@ from code_aster.Cata.Commons import *
 #Quoi qu'il en soit, on sort la table GP
 #Si on est sans copeau et que l'utilisateur souhaite verifier
 #les copeaux automatiquement crees, il peut grace a CHAMP_COP
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def calc_gp_prod(self,TRANCHE_2D,GPMAX, **args):
   """Typage des sd_prod
   """
@@ -40,7 +40,6 @@ CALC_GP =MACRO(nom="CALC_GP",
                    op=OPS('Macro.calc_gp_ops.calc_gp_ops'),
                    sd_prod=calc_gp_prod,
 #                   sd_prod=table_sdaster,
-                   UIinfo={"groupes":("Outils-métier","Rupture",)},
                    reentrant='n',
                    fr=tr("calcul du parametre de clivage energetique Gp en 2D et en 3D"),
                    regles=UN_PARMI('TRANCHE_2D','TRANCHE_3D'),

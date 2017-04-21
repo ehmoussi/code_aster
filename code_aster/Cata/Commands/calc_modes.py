@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -21,6 +16,11 @@ from code_aster.Cata.Commons import *
 #    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 # ======================================================================
 # person_in_charge: olivier.boiteau at edf.fr
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
 
 def calc_modes_prod( self, TYPE_RESU, **args) :
    if (TYPE_RESU not in ("DYNAMIQUE","MODE_FLAMB","GENERAL")):
@@ -47,16 +47,15 @@ def calc_modes_prod( self, TYPE_RESU, **args) :
    if (AsType(vale_rigi)== matr_asse_gene_c) : return mode_gene
 
    raise AsException("type de concept résultat non prevu")
-  
+
 CALC_MODES=MACRO(nom="CALC_MODES",
                  op=OPS('Modal.calc_modes_ops.calc_modes_ops'),
                  sd_prod=calc_modes_prod,
                  reentrant='n',
                  fr=tr("Calculer les modes propres ou de flambement d'une structure"),
-                 UIinfo={"groupes":("Résolution","Dynamique",)},
 
            TYPE_RESU    =SIMP(statut='f',typ='TXM',defaut="DYNAMIQUE", into=("DYNAMIQUE","MODE_FLAMB","GENERAL"), fr=tr("Type d'analyse")),
-           OPTION       =SIMP(statut='d',typ='TXM',defaut="PLUS_PETITE",into=("PLUS_PETITE","PLUS_GRANDE","BANDE","CENTRE","TOUT","SEPARE","AJUSTE","PROCHE"),
+           OPTION       =SIMP(statut='f',typ='TXM',defaut="PLUS_PETITE",into=("PLUS_PETITE","PLUS_GRANDE","BANDE","CENTRE","TOUT","SEPARE","AJUSTE","PROCHE"),
                                     fr=tr("Choix de la zone de recherche et par conséquent du shift du problème modal"),),
            STOP_BANDE_VIDE =SIMP(statut='f',typ='TXM',defaut="OUI" ,into=("OUI","NON") ),
            b_solveur_simult = BLOC( condition = """is_in("OPTION", ('PLUS_PETITE','PLUS_GRANDE','BANDE','CENTRE','TOUT'))""",
@@ -104,12 +103,12 @@ CALC_MODES=MACRO(nom="CALC_MODES",
           ), # fin b_solveur_inv
 #########################################################################################
 #  catalogue du cas DYNAMIQUE
-#########################################################################################                 
+#########################################################################################
           b_tout =BLOC(condition = """equal_to("TYPE_RESU", 'DYNAMIQUE') and equal_to("OPTION", 'TOUT')""",
                  MATR_RIGI  =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
                                                   matr_asse_gene_r,matr_asse_gene_c,matr_asse_pres_r ) ),
                  MATR_MASS  =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_gene_r,matr_asse_pres_r,matr_asse_temp_r ) ),
-                 MATR_AMOR  =SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_gene_r) ), 
+                 MATR_AMOR  =SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_gene_r) ),
                  CALC_FREQ  =FACT(statut='d',
                         NMAX_FREQ  =SIMP(statut='f',typ='I',defaut=10,val_min=0 ),
                         NMAX_ITER_SHIFT =SIMP(statut='f',typ='I',defaut= 3,val_min=0 ),
@@ -132,19 +131,19 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                           CRIT_EXTR       =SIMP(statut='f',typ='TXM',defaut="MASS_EFFE_UN", into=("MASS_EFFE_UN","MASS_GENE",) ),
                         ),
                   ), # fin b_dyn_phys_0
-          ), # fin b_tout 
+          ), # fin b_tout
           b_plus_petite =BLOC(condition = """equal_to("TYPE_RESU", 'DYNAMIQUE') and equal_to("OPTION", 'PLUS_PETITE')""",
                         fr=tr("Recherche des plus petites fréquences propres"),
                    MATR_RIGI  =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
                                                     matr_asse_gene_r,matr_asse_gene_c,matr_asse_pres_r ) ),
                    MATR_MASS  =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_gene_r,matr_asse_pres_r,matr_asse_temp_r ) ),
-                   MATR_AMOR  =SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_gene_r) ),                                
-                   CALC_FREQ  =FACT(statut='d',                                    
+                   MATR_AMOR  =SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_gene_r) ),
+                   CALC_FREQ  =FACT(statut='d',
                         NMAX_FREQ  =SIMP(statut='f',typ='I',defaut=10,val_min=0 ),
                         NMAX_ITER_SHIFT =SIMP(statut='f',typ='I',defaut= 3,val_min=0 ),
                         PREC_SHIFT      =SIMP(statut='f',typ='R',defaut= 5.E-2,val_min=0.E+0 ),
                         SEUIL_FREQ      =SIMP(statut='f',typ='R',defaut= 1.E-2,val_min=0.E+0 ),
-                   ), # fin mcf_calc_freq 
+                   ), # fin mcf_calc_freq
                    b_dyn_phys_1 =BLOC( condition= """is_type("MATR_RIGI") == matr_asse_depl_r""",
                         NORM_MODE  =FACT(statut='f',
                           NORME     =SIMP(statut='f',typ='TXM',defaut="TRAN_ROTA",
@@ -162,19 +161,19 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                         ),
                   ), # fin b_dyn_phys_1
 
-          ), # fin b_plus_petite 
-          b_plus_grande =BLOC(condition = """equal_to("TYPE_RESU", 'DYNAMIQUE') and equal_to("OPTION", 'PLUS_GRANDE')""",  
-                                fr=tr("Recherche des plus grandes fréquences propres"),  
+          ), # fin b_plus_petite
+          b_plus_grande =BLOC(condition = """equal_to("TYPE_RESU", 'DYNAMIQUE') and equal_to("OPTION", 'PLUS_GRANDE')""",
+                                fr=tr("Recherche des plus grandes fréquences propres"),
                    MATR_RIGI  =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
                                                     matr_asse_gene_r,matr_asse_gene_c,matr_asse_pres_r ) ),
                    MATR_MASS  =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_gene_r,matr_asse_pres_r,matr_asse_temp_r ) ),
                    MATR_AMOR  =SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_gene_r) ),
-                   CALC_FREQ  =FACT(statut='d', 
-                       NMAX_FREQ  =SIMP(statut='f',typ='I',defaut=1,val_min=0 ),        
+                   CALC_FREQ  =FACT(statut='d',
+                       NMAX_FREQ  =SIMP(statut='f',typ='I',defaut=1,val_min=0 ),
                        NMAX_ITER_SHIFT =SIMP(statut='f',typ='I',defaut= 3,val_min=0 ),
                        PREC_SHIFT      =SIMP(statut='f',typ='R',defaut= 5.E-2,val_min=0.E+0 ),
                        SEUIL_FREQ      =SIMP(statut='f',typ='R',defaut= 1.E-2,val_min=0.E+0 ),
-                   ), # fin mcf_calc_freq 
+                   ), # fin mcf_calc_freq
                    b_dyn_phys_2 =BLOC( condition= """is_type("MATR_RIGI") == matr_asse_depl_r""",
                         NORM_MODE  =FACT(statut='f',
                           NORME     =SIMP(statut='f',typ='TXM',defaut="TRAN_ROTA",
@@ -193,19 +192,19 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                   ), # fin b_dyn_phys_2
           ), # fin b_plus_grande
           b_centre      =BLOC(condition = """equal_to("TYPE_RESU", 'DYNAMIQUE') and equal_to("OPTION", 'CENTRE')""",
-                                fr=tr("Recherche des fréquences propres les plus proches d'une valeur donnée"), 
+                                fr=tr("Recherche des fréquences propres les plus proches d'une valeur donnée"),
                    MATR_RIGI  =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
                                                     matr_asse_gene_r,matr_asse_gene_c,matr_asse_pres_r ) ),
                    MATR_MASS  =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_gene_r,matr_asse_pres_r,matr_asse_temp_r ) ),
                    MATR_AMOR  =SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_gene_r) ),
-                   CALC_FREQ  =FACT(statut='d',     
+                   CALC_FREQ  =FACT(statut='d',
                        FREQ       =SIMP(statut='o',typ='R', fr=tr("Fréquence autour de laquelle on cherche les fréquences propres")),
                        AMOR_REDUIT=SIMP(statut='f',typ='R',),
                        NMAX_FREQ  =SIMP(statut='f',typ='I',defaut= 10,val_min=0 ),
                        NMAX_ITER_SHIFT =SIMP(statut='f',typ='I',defaut= 3,val_min=0 ),
                        PREC_SHIFT      =SIMP(statut='f',typ='R',defaut= 5.E-2,val_min=0.E+0 ),
                        SEUIL_FREQ      =SIMP(statut='f',typ='R',defaut= 1.E-2,val_min=0.E+0 ),
-                   ), # fin mcf_calc_freq 
+                   ), # fin mcf_calc_freq
                    b_dyn_phys_3 =BLOC( condition= """is_type("MATR_RIGI") == matr_asse_depl_r""",
                         NORM_MODE  =FACT(statut='f',
                           NORME     =SIMP(statut='f',typ='TXM',defaut="TRAN_ROTA",
@@ -239,7 +238,7 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                        NMAX_ITER_SHIFT =SIMP(statut='f',typ='I',defaut= 3,val_min=0 ),
                        PREC_SHIFT      =SIMP(statut='f',typ='R',defaut= 5.E-2,val_min=0.E+0 ),
                        SEUIL_FREQ      =SIMP(statut='f',typ='R',defaut= 1.E-2,val_min=0.E+0 ),
-                   ), # fin mcf_calc_freq  
+                   ), # fin mcf_calc_freq
                    b_dyn_phys_4 =BLOC( condition= """is_type("MATR_RIGI") == matr_asse_depl_r""",
                         NORM_MODE  =FACT(statut='f',
                           NORME     =SIMP(statut='f',typ='TXM',defaut="TRAN_ROTA",
@@ -255,8 +254,8 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                           CUMUL           =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
                           CRIT_EXTR       =SIMP(statut='f',typ='TXM',defaut="MASS_EFFE_UN", into=("MASS_EFFE_UN","MASS_GENE",) ),
                         ),
-                  ), # fin b_dyn_phys_4                   
-          ), # fin b_bande  
+                  ), # fin b_dyn_phys_4
+          ), # fin b_bande
           b_param_inv_dyn = BLOC( condition = """(equal_to("TYPE_RESU", 'DYNAMIQUE') and is_in("OPTION", ('SEPARE','AJUSTE','PROCHE')))""",
                    MATR_RIGI  =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
                                                     matr_asse_gene_r,matr_asse_gene_c,matr_asse_pres_r ) ),
@@ -269,7 +268,7 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                        NMAX_ITER_SHIFT =SIMP(statut='f',typ='I',defaut= 3,val_min=0 ),
                        PREC_SHIFT      =SIMP(statut='f',typ='R',defaut= 5.E-2,val_min=0.E+0 ),
                        SEUIL_FREQ      =SIMP(statut='f',typ='R',defaut= 1.E-2,val_min=0.E+0 ),
-                   ),# fin mcf_calc_freq 
+                   ),# fin mcf_calc_freq
                    b_dyn_phys_5 =BLOC( condition= """is_type("MATR_RIGI") == matr_asse_depl_r""",
                         NORM_MODE  =FACT(statut='f',
                           NORME     =SIMP(statut='f',typ='TXM',defaut="TRAN_ROTA",
@@ -285,7 +284,7 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                           CUMUL           =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
                           CRIT_EXTR       =SIMP(statut='f',typ='TXM',defaut="MASS_EFFE_UN", into=("MASS_EFFE_UN","MASS_GENE",) ),
                         ),
-                  ), # fin b_dyn_phys_5         
+                  ), # fin b_dyn_phys_5
           ), # fin b_param_inv_dyn
           # opérandes de post-traitement
           b_dyn_phys_1 =BLOC( condition= """is_type("MATR_RIGI") == matr_asse_depl_r""",
@@ -326,7 +325,7 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                   PREC_SHIFT     =SIMP(statut='f',typ='R',defaut= 5.E-2,val_min=0.E+0 ),
                   SEUIL_CHAR_CRIT=SIMP(statut='f',typ='R',defaut= 1.E-2,val_min=0.E+0 ),
             ), # fin mcf_calc_char_crit
-          ),# fin b_tout_flamb 
+          ),# fin b_tout_flamb
           b_plus_petite_flamb =BLOC(condition = """is_in("TYPE_RESU", ('MODE_FLAMB','GENERAL')) and equal_to("OPTION", 'PLUS_PETITE')""",
             CALC_CHAR_CRIT  =FACT(statut='d',
                               fr=tr("Recherche des plus petites valeurs propres"),
@@ -335,10 +334,10 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                   PREC_SHIFT     =SIMP(statut='f',typ='R',defaut= 5.E-2,val_min=0.E+0 ),
                   SEUIL_CHAR_CRIT=SIMP(statut='f',typ='R',defaut= 1.E-2,val_min=0.E+0 ),
             ), # fin mcf_calc_char_crit
-          ),# fin b_plus_petite_flamb 
+          ),# fin b_plus_petite_flamb
           b_centre_flamb    =BLOC(condition = """is_in("TYPE_RESU", ('MODE_FLAMB','GENERAL')) and equal_to("OPTION", 'CENTRE')""",
                             fr=tr("Recherche des valeurs propres les plus proches d'une valeur donnée"),
-            CALC_CHAR_CRIT  =FACT(statut='d',                  
+            CALC_CHAR_CRIT  =FACT(statut='d',
                   CHAR_CRIT      =SIMP(statut='o',typ='R', fr=tr("Charge critique autour de laquelle on cherche les charges critiques propres")),
                   NMAX_CHAR_CRIT =SIMP(statut='f',typ='I', defaut= 10,val_min=0 ),
                   NMAX_ITER_SHIFT=SIMP(statut='f',typ='I',defaut= 3,val_min=0 ),
@@ -348,7 +347,7 @@ CALC_MODES=MACRO(nom="CALC_MODES",
           ),# fin b_centre_flamb
           b_bande_flamb     =BLOC(condition = """is_in("TYPE_RESU", ('MODE_FLAMB','GENERAL')) and equal_to("OPTION", 'BANDE')""",
                             fr=tr("Recherche des valeurs propres dans une bande donnée"),
-            CALC_CHAR_CRIT  =FACT(statut='d',                  
+            CALC_CHAR_CRIT  =FACT(statut='d',
                   CHAR_CRIT      =SIMP(statut='o',typ='R',min=2,max=2,
                                        validators=AndVal((OrdList('croissant'), NoRepeat())),
                                        fr=tr("Valeur des deux charges critiques délimitant la bande de recherche")),
@@ -385,7 +384,7 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                PREC_SHIFT  =SIMP(statut='f',typ='R',defaut= 5.E-3,val_min=0.E+0 ),
                STURM       =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
              ), #fin mcf_veri_mode
-           ), # fin b_sturm_simult 
+           ), # fin b_sturm_simult
            b_sturm_bande =BLOC( condition = """equal_to("TYPE_RESU", 'DYNAMIQUE') and equal_to("OPTION", 'BANDE')""",
              VERI_MODE =FACT(statut='d',
                STOP_ERREUR =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
@@ -394,7 +393,7 @@ CALC_MODES=MACRO(nom="CALC_MODES",
                PREC_SHIFT  =SIMP(statut='f',typ='R',defaut= 5.E-3,val_min=0.E+0 ),
                STURM       =SIMP(statut='f',typ='TXM',defaut="GLOBAL",into=("GLOBAL","LOCAL","OUI","NON") ),
              ), #fin mcf_veri_mode
-           ), # fin b_sturm_bande     
+           ), # fin b_sturm_bande
          b_veri_mode_inv = BLOC( condition = """is_in("OPTION", ('SEPARE','AJUSTE','PROCHE'))""",
            VERI_MODE =FACT(statut='d',
              STOP_ERREUR =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
@@ -405,7 +404,7 @@ CALC_MODES=MACRO(nom="CALC_MODES",
 
 #########################################################################################
 #        Amélioration de la qualité des modes
-         AMELIORATION=SIMP(statut='d',typ='TXM',defaut="NON",into=("OUI","NON"), ),
+         AMELIORATION=SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON"), ),
 #########################################################################################
          INFO       =SIMP(statut='f',typ='I',defaut=1,into=(1,2) ),
          TITRE      =SIMP(statut='f',typ='TXM'),

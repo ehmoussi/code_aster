@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -22,13 +17,17 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: samuel.geniaut at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
                     op=OPS('Macro.post_k1_k2_k3_ops.post_k1_k2_k3_ops'),
                     sd_prod=table_sdaster,
                     fr=tr("Calcul des facteurs d'intensité de contraintes en 2D et en 3D par "
                          "extrapolation des sauts de déplacements sur les lèvres de la fissure"),
                     reentrant='n',
-                    UIinfo={"groupes":("Post-traitements","Rupture",)},
 
            regles=(UN_PARMI('FISSURE','FOND_FISS'),),
 

@@ -1,9 +1,4 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
 # COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
@@ -23,6 +18,11 @@ from code_aster.Cata.Commons import *
 # person_in_charge: marina.bottoni at edf.fr
 
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def macr_ecrevisse_prod(self,TABLE,TEMPER,DEBIT,**args):
     # On definit ici les concepts produits
     self.type_sdprod(TABLE,table_sdaster)
@@ -36,7 +36,6 @@ MACR_ECREVISSE=MACRO(nom="MACR_ECREVISSE",
                      op=OPS('Macro.macr_ecrevisse_ops.macr_ecrevisse_ops'),
                      sd_prod=macr_ecrevisse_prod,
                      reentrant='f',
-                     UIinfo={"groupes":("Résolution","Outils-métier",)},
                      fr=tr("Procedure de couplage avec Ecrevisse"),
 
        reuse  = SIMP(statut='c',typ=CO),

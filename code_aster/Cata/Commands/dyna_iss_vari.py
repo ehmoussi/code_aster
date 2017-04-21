@@ -1,11 +1,6 @@
 # coding=utf-8
-
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -22,6 +17,11 @@ from code_aster.Cata.Commons import *
 # ======================================================================
 # person_in_charge: irmela.zentner at edf.fr
 
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+
+
 def dyna_iss_vari_prod(self, EXCIT_SOL,**args):
    if EXCIT_SOL !=None :
        return tran_gene
@@ -35,7 +35,6 @@ DYNA_ISS_VARI=MACRO(nom="DYNA_ISS_VARI",
                     fr=tr("Calcul du spectre de réponse ou de la reponse temporelle "
                          "sismique incoherente par decomposition spectrale"),
                     reentrant='n',
-                    UIinfo={"groupes":("Outils-métier",)},
          regles=(UN_PARMI('EXCIT_SOL','NB_FREQ'),),
          EXCIT_SOL       =FACT(statut='f', max = 1,
                           regles = (AU_MOINS_UN('ACCE_X','ACCE_Y','ACCE_Z'),),
