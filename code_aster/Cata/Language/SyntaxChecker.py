@@ -310,7 +310,7 @@ class SyntaxCheckerVisitor(object):
 # counter of 'printed' command
 _cmd_counter = 0
 
-def checkCommandSyntax(command, keywords, printSyntax=False):
+def checkCommandSyntax(command, keywords, printSyntax=False, add_default=True):
     """Check the syntax of a command
     `keywords` contains the keywords filled by the user"""
     from pprint import pformat
@@ -329,3 +329,6 @@ def checkCommandSyntax(command, keywords, printSyntax=False):
 
     checker = SyntaxCheckerVisitor()
     command.accept(checker, keywords)
+    if add_default:
+        command.addDefaultKeywords(keywords)
+        remove_none(keywords)
