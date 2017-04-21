@@ -1,4 +1,4 @@
-subroutine dbr_init_algo_pod(ds_para)
+subroutine dbr_init_algo_pod(base, ds_empi, tabl_name)
 !
 use Rom_Datastructure_type
 !
@@ -7,6 +7,8 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbr_rnum.h"
 #include "asterfort/romTableCreate.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -26,7 +28,9 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+    character(len=8), intent(in) :: base
+    type(ROM_DS_Empi), intent(inout) :: ds_empi
+    character(len=19), intent(out) :: tabl_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -36,24 +40,29 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_para          : datastructure for parameters
+! In  base             : name of empiric base
+! IO  ds_empi          : datastructure for empiric modes
+! Out tabl_name        : name of table in results datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: tabl_name
+    integer :: ifm, niv
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM2_40')
+    endif
 !
 ! - Create numbering of nodes for the lineic model
 !
-    if (ds_para%ds_empi%base_type .eq. 'LINEIQUE') then
-        call dbr_rnum(ds_para%ds_empi)
+    if (ds_empi%base_type .eq. 'LINEIQUE') then
+        call dbr_rnum(ds_empi)
     endif
 !
 ! - Create table for the reduced coordinates in results datatructure
 !
-    call romTableCreate(ds_para%result_out, tabl_name)
-    ds_para%tabl_name    = tabl_name
+    call romTableCreate(base, tabl_name)
 !
 end subroutine

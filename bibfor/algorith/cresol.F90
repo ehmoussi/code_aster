@@ -24,7 +24,7 @@ subroutine cresol(solveu, basz)
     character(len=1), optional :: basz
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -152,8 +152,7 @@ subroutine cresol(solveu, basz)
 !
     else if (method.eq.'PETSC') then
 !     -----------------------------
-        call crsvpe(nomsol, solveu, istop, nprec,&
-                    epsmat, mixpre, kellag, kxfem)
+        call crsvpe(nomsol, solveu, kellag )
 !
     else if (method.eq.'LDLT') then
 !     -----------------------------

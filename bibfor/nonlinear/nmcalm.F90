@@ -1,7 +1,7 @@
 subroutine nmcalm(typmat         , modelz, lischa, mate      , carele,&
                   ds_constitutive, instam, instap, valinc    , solalg,&
                   optmaz         , base  , meelem, ds_contact, matele,&
-                  list_func_acti)
+                  l_xthm)
 !
 use NonLin_Datastructure_type
 !
@@ -9,7 +9,6 @@ implicit none
 !
 #include "jeveux.h"
 #include "asterfort/assert.h"
-#include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
@@ -17,11 +16,10 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/meamme.h"
-#include "asterfort/mecgm2.h"
 #include "asterfort/mecgme.h"
 #include "asterfort/medime.h"
 #include "asterfort/memame.h"
-#include "asterfort/memare.h"
+#include "asterfort/messtr.h"
 #include "asterfort/merige.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmvcex.h"
@@ -30,7 +28,7 @@ implicit none
 #include "asterfort/wkvect.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -58,7 +56,7 @@ implicit none
     character(len=1) :: base
     character(len=19) :: meelem(*), solalg(*), valinc(*)
     character(len=19) :: matele
-    integer, intent(in) :: list_func_acti(*)
+    aster_logical, intent(in) :: l_xthm
 !
 ! ----------------------------------------------------------------------
 !
@@ -89,6 +87,7 @@ implicit none
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! IN  OPTMAT : OPTION DE CALCUL POUR LA MATRICE
 ! OUT MATELE : MATRICE ELEMENTAIRE
+! In  l_xthm           : contact with THM and XFEM (!)
 !
 !
 !
@@ -105,7 +104,6 @@ implicit none
     character(len=24) :: charge, infoch
     character(len=8) :: mesh
     integer :: ifm, niv
-    character(len=24), pointer :: rerr(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
@@ -172,7 +170,6 @@ implicit none
 ! --- MATR_ELEM RIGIDITE GEOMETRIQUE
 !
     else if (typmat.eq.'MEGEOM') then
-        call detrsd('MATR_ELEM', matele)
         call merige(model(1:8), carele(1:8), sigplu, strplu, matele,&
                     'V', 0, mater=mate)
 !
@@ -195,29 +192,26 @@ implicit none
     else if (typmat.eq.'MESUIV') then
         call mecgme(model, carele, mate  , lischa, instap,&
                     disp_prev, disp_cumu_inst, instam, ds_constitutive%compor, matele)
-        call mecgm2(lischa, instap, matele)
 !
 ! --- MATR_ELEM DES SOUS-STRUCTURES
 !
     else if (typmat.eq.'MESSTR') then
-        call memare(base, matele, model(1:8), mate, carele,&
-                    optmat)
-        call jeveuo(matele//'.RERR', 'E', vk24=rerr)
-        rerr(3) = 'OUI_SOUS_STRUC'
+        call messtr(base  , optmat, model, carele, mate,&
+                    matele)
 !
 ! --- MATR_ELEM DES ELTS DE CONTACT (XFEM+CONTINUE)
 !
     else if (typmat.eq.'MEELTC') then
         call nmelcm('CONT'   , mesh     , model    , mate     , ds_contact    ,&
                     disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    matele   , time_prev, time_curr, ds_constitutive, list_func_acti)
+                    matele   , time_prev, time_curr, ds_constitutive, l_xthm)
 !
 ! --- MATR_ELEM DES ELTS DE FROTTEMENT (XFEM+CONTINUE)
 !
     else if (typmat.eq.'MEELTF') then
         call nmelcm('FROT'   , mesh     , model    , mate     , ds_contact    ,&
                     disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    matele   , time_prev, time_curr, ds_constitutive, list_func_acti)
+                    matele   , time_prev, time_curr, ds_constitutive, l_xthm)
     else
         ASSERT(.false.)
     endif

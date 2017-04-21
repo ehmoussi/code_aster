@@ -1,7 +1,7 @@
 # coding=utf-8
 # person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -63,6 +63,8 @@ class PROC(N_ENTITE.ENTITE):
 
      - fr   : commentaire associé en francais
 
+     - translation : traduction métier des mots-clés (en anglais)
+
      - docu : clé de documentation associée
 
      - regles : liste des règles associées
@@ -84,7 +86,8 @@ class PROC(N_ENTITE.ENTITE):
     label = 'PROC'
 
     def __init__(self, nom, op, reentrant='n', repetable='o', fr="",
-                 docu="", regles=(), op_init=None, niveau = None, UIinfo=None, **args):
+                 docu="", regles=(), op_init=None, niveau=None,
+                 translation=None, **args):
         """
            Méthode d'initialisation de l'objet PROC. Les arguments sont utilisés pour initialiser
            les attributs de meme nom
@@ -94,8 +97,8 @@ class PROC(N_ENTITE.ENTITE):
         self.reentrant = reentrant
         self.repetable = repetable
         self.fr = fr
-        assert args.get(
-            'ang') is None, '"ang" attribute does not exist anymore'
+        assert args.get('ang') is None, '"ang" does not exist anymore'
+        assert args.get('UIinfo') is None, '"UIinfo" does not exist anymore'
         self.docu = docu
         if type(regles) == types.TupleType:
             self.regles = regles
@@ -112,7 +115,6 @@ class PROC(N_ENTITE.ENTITE):
         else:
             self.niveau = current_cata.get_niveau(niveau)
             self.niveau.enregistre(self)
-        self.UIinfo = UIinfo
         self.affecter_parente()
         self.check_definition(self.nom)
 
@@ -137,7 +139,7 @@ class PROC(N_ENTITE.ENTITE):
             etape.McBuild()
         return etape
 
-    def verif_cata(self):
+    def verif_cata(self, dummy=None):
         """
             Méthode de vérification des attributs de définition
         """

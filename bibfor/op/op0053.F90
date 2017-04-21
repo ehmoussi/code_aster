@@ -9,8 +9,8 @@ implicit none
 #include "asterfort/titre.h"
 #include "asterfort/dbr_chck.h"
 #include "asterfort/dbr_DSInit.h"
-#include "asterfort/dbr_init_base.h"
 #include "asterfort/dbr_init_algo.h"
+#include "asterfort/dbr_init_base.h"
 #include "asterfort/dbr_para_info.h"
 #include "asterfort/dbr_read.h"
 #include "asterfort/dbr_main.h"
@@ -60,13 +60,13 @@ implicit none
 !
     call dbr_init_base(ds_para)
 !
-! - Check parameters
-!
-    call dbr_chck(ds_para)
-!
 ! - Init algorithm
 !
     call dbr_init_algo(ds_para)
+!
+! - Check parameters
+!
+    call dbr_chck(ds_para)
 !
 ! - Print informations
 !

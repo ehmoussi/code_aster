@@ -23,19 +23,15 @@ cata_msg = {
 
    2  : _(u"""Création d'une base empirique à partir de champs de type %(k1)s."""), 
 
-   3  : _(u"""Tolérance pour les valeurs singulières: %(r1)13.6G."""),   
+   3  : _(u"""Tolérance pour les valeurs singulières: %(r1)13.6G."""),
 
-   4  : _(u"""Les modes seront 3D."""),
+   6  : _(u"""Initialisation de l'algorithme."""),
 
-   5  : _(u"""Les modes seront linéiques selon l'axe %(k1)s et avec une section définie par %(k2)s."""),
+   7  : _(u"""Vérifications des paramètres."""),
 
-   6  : _(u"""<*> Initialisations de l'algorithme."""),
+   8  : _(u"""Paramètres de la base empirique."""),
 
-   7  : _(u"""<*> Vérifications."""),
-
-   8  : _(u"""<*> Paramètres de la base empirique."""),
-
-   9  : _(u"""<*> Calcul de la base empirique."""),
+   9  : _(u"""Calcul de la base empirique."""),
 
    10 : _(u"""Consommation mémoire de la SVD: %(i1)d octets."""),
 
@@ -47,5 +43,11 @@ cata_msg = {
 
    14 : _(u"""Nombre final de clichés retenus dans l'algorithme incrémental: %(i1)d."""), 
 
-   15 : _(u"""On va enrichir les modes empiriques contenus dans %(k1)s."""), 
+   15 : _(u"""Enrichissement de la base empirique %(k1)s."""), 
+
+   16 : _(u"""Création de nouveaux modes empiriques."""), 
+
+   20 : _(u"""Paramètres spécifiques à la méthode POD ou POD_INCR."""),
+
+   21 : _(u"""Paramètres spécifiques à la méthode GLOUTON."""),
 }

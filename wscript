@@ -179,10 +179,10 @@ def configure(self):
     self.env.append_value('INCLUDES', paths)
 
     self.recurse('bibfor')
-    self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('bibpyt')
+    self.recurse('code_aster')
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
@@ -219,15 +219,13 @@ def build(self):
 
     self.load('ext_aster', tooldir='waftools')
     self.recurse('bibfor')
-    self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('bibpyt')
+    self.recurse('code_aster')
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
-    # this task depends on generated files
-    build_eficas_catalog(self)
     lsub = ['materiau', 'datg', 'catalo']
     if self.env.install_tests:
         lsub.extend(['astest', '../validation/astest'])
@@ -466,95 +464,3 @@ def get_config_h(self, cfg):
             lst.append(cfg.undefine(x))
     lst.append("")
     return lst
-
-###############################################################################
-def build_eficas_catalog(self):
-    get_srcs = self.path.get_src().ant_glob
-    env = self.all_envs[self.variant]
-    root = 'code_aster/Cata/'
-    # catalog for eficas
-    # mfront_capy = self.path.get_bld().find_or_declare('c_mfront_official.py')
-    mfront_capy = self.path.find_or_declare('c_mfront_official.py')
-    self(
-        features = 'catapy py',
-            name = 'catapy',
-          source = [mfront_capy] \
-                 + get_srcs(root + 'Commons/*.py',
-                            excl=[root + 'Commons/ops.py']) \
-                 + get_srcs(root + 'Commands/*.py'),
-          target = 'cata.py',
-    install_from = '.',
-    # install_from = self.path.get_bld(),
-    install_path = env.ASTERLIBDIR,
-    )
-    self(
-        features = 'py',
-            name = 'opspy',
-          source = get_srcs(root + 'Commons/ops.py'),
-    install_path = osp.join(env.ASTERLIBDIR, 'eficas'),
-    )
-    self(
-        features = 'py',
-            name = 'commonspy',
-          source = mfront_capy,
-    install_from = self.path.get_bld(),
-    install_path = osp.join(env.ASTERLIBDIR, root + 'Commons'),
-    )
-
-# manage extension
-@TaskGen.extension('.capy')
-def capy(self, node):
-    pass
-
-@TaskGen.feature('catapy')
-@TaskGen.before('process_source')
-def make_cata(self):
-    """Create the cata.py"""
-    target = self.bld.bldnode.make_node(self.target)
-    init = self.bld.bldnode.make_node('__init__.py')
-    init.write('# init')
-    init.sig = Utils.h_file(init.abspath())
-    self.create_task('make_capy', src=self.source, tgt=target)
-    # self.process_py(target): not use because would use `install_from` argument
-    def inst_py(ctx):
-        install_pyfile(self, target, 'eficas')
-        install_pyfile(self, init, 'eficas')
-    self.bld.add_post_fun(inst_py)
-
-def install_pyfile(self, node, subdir):
-    """See waflib/Tools/python.py: Just ignore install_from argument"""
-    from_node = node.parent
-    dest = osp.join(self.install_path, subdir, node.path_from(from_node))
-    self.bld.install_as(dest, node, postpone=False)
-
-class make_capy(Task.Task):
-    color   = 'PINK'
-    ext_in = ['.capy']
-    ext_out = ['.py']
-    banned = 'code_aster.Cata'
-
-    def keyword(self):
-        """Task label"""
-        return 'Gathering'
-
-    def __str__(self):
-        """String to display to the user"""
-        nbfiles = len(self.inputs)
-        output = osp.basename(self.outputs[0].abspath())
-        return '{0} capy files -> {1}'.format(nbfiles, output)
-
-    def run(self):
-        """Merge capy files to cata.py and install it."""
-        # doing merge in python as it is multi-plateform
-        target = self.outputs[0]
-        cata = []
-        for node in self.inputs:
-            if osp.basename(node.abspath()) == '__init__.py':
-                continue
-            with open(node.abspath()) as subfid:
-                lines = [line for line in subfid.read().splitlines() \
-                         if self.banned not in line]
-                cata.extend(lines)
-        with open(target.abspath(), 'w') as fid:
-            fid.write(os.linesep.join(cata))
-        target.sig = Utils.h_file(target.abspath())

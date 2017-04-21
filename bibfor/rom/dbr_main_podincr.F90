@@ -1,15 +1,16 @@
-subroutine dbr_main_podincr(ds_para)
+subroutine dbr_main_podincr(l_reuse, nb_mode_maxi, ds_para_pod, field_iden, ds_empi)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 #include "asterfort/infniv.h"
-#include "asterfort/dbr_calc_q.h"
+#include "asterfort/dbr_calcpod_q.h"
 #include "asterfort/dbr_pod_incr.h"
-#include "asterfort/dbr_calc_save.h"
+#include "asterfort/dbr_calcpod_save.h"
 #include "asterfort/as_deallocate.h"
 !
 ! ======================================================================
@@ -30,7 +31,11 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    type(ROM_DS_ParaDBR), intent(in) :: ds_para
+    aster_logical, intent(in) :: l_reuse
+    integer, intent(in) :: nb_mode_maxi
+    type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
+    character(len=24), intent(in) :: field_iden
+    type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -40,7 +45,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para        : datastructure for parameters
+! In  l_reuse          : .true. if reuse
+! In  nb_mode_maxi     : maximum number of emprical modes
+! In  field_iden       : identificator of field (name in results datastructure)
+! In  ds_para_pod      : datastructure for parameters (POD)
+! IO  ds_empi          : datastructure for empiric modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,15 +64,16 @@ implicit none
 !
 ! - Create snapshots matrix Q
 !    
-    call dbr_calc_q(ds_para%ds_empi, ds_para%ds_snap, q)
+    call dbr_calcpod_q(ds_empi, ds_para_pod%ds_snap, q)
 !
 ! - Incremental POD method
 !
-    call dbr_pod_incr(ds_para, q, s, v, nb_mode, nb_snap_redu)
+    call dbr_pod_incr(l_reuse, nb_mode_maxi, ds_empi, ds_para_pod,&
+                      q, s, v, nb_mode, nb_snap_redu)
 !
 ! - Save empiric base
 !
-    call dbr_calc_save(ds_para%ds_empi, nb_mode, nb_snap_redu, s, v)
+    call dbr_calcpod_save(ds_empi, nb_mode, nb_snap_redu, field_iden, s, v)
 !
 ! - Cleaning
 !

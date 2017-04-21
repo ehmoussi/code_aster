@@ -1,4 +1,4 @@
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,7 +18,7 @@ interface
     subroutine irceme(ifi, nochmd, chanom, typech, modele,&
                       nbcmp, nomcmp, etiqcp, partie, numpt,&
                       instan, numord, nbmaec, limaec, sdcarm,&
-                      codret)
+                      carael, codret)
         integer :: ifi
         character(len=64) :: nochmd
         character(len=19) :: chanom
@@ -33,7 +33,7 @@ interface
         integer :: numord
         integer :: nbmaec
         integer :: limaec(*)
-        character(len=8) :: sdcarm
+        character(len=8) :: sdcarm, carael
         integer :: codret
     end subroutine irceme
 end interface

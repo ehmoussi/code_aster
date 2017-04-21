@@ -8,7 +8,8 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/romSnapInfo.h"
+#include "asterfort/dbr_para_info_pod.h"
+#include "asterfort/dbr_para_info_rb.h"
 #include "asterfort/romBaseInfo.h"
 !
 ! ======================================================================
@@ -45,60 +46,52 @@ implicit none
 !
     integer :: ifm, niv
     character(len=16) :: operation = ' '
-    character(len=24) :: field_name = ' ', surf_num = ' '
-    character(len=8)  :: result_out = ' ', result_in = ' '
-    character(len=8)  :: axe_line = ' ', base_type = ' '
+    character(len=8)  :: result_out = ' '
     integer :: nb_mode_maxi
-    real(kind=8) :: tole_svd, tole_incr
     aster_logical :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
 !
-! - Get parameters in datastructure
+! - Get parameters in datastructure - General for DBR
 !
     operation    = ds_para%operation
     result_out   = ds_para%result_out
-    result_in    = ds_para%result_in
     nb_mode_maxi = ds_para%nb_mode_maxi
-    tole_svd     = ds_para%tole_svd
-    field_name   = ds_para%field_name
-    base_type    = ds_para%base_type
-    axe_line     = ds_para%axe_line
-    surf_num     = ds_para%surf_num
-    tole_incr    = ds_para%tole_incr
     l_reuse      = ds_para%l_reuse
 !
-! - Print
+! - Print - General for DBR
 !
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_15')
-        call utmess('I', 'ROM3_1' , sk = result_out)
+        call utmess('I', 'ROM5_24')
         call utmess('I', 'ROM5_16', sk = operation)
-        if (operation .eq. 'POD_INCR') then
-            call utmess('I', 'ROM7_13' , sr = tole_incr)
-            if (l_reuse) then
-                call utmess('I', 'ROM7_15', sk = result_out)
-            endif
+        if (nb_mode_maxi .ne. 0) then
+            call utmess('I', 'ROM5_17', si = nb_mode_maxi)
         endif
-        call utmess('I', 'ROM7_1' , sk = result_in)
-        call utmess('I', 'ROM5_17', si = nb_mode_maxi)
-        call utmess('I', 'ROM7_3' , sr = tole_svd)
-        call utmess('I', 'ROM7_2' , sk = field_name)
-        if (base_type .eq. '3D') then
-            call utmess('I', 'ROM7_4')
-        elseif (base_type .eq. 'LINEIQUE') then
-            call utmess('I', 'ROM7_5', nk = 2, valk = [axe_line, surf_num])
+        if (l_reuse) then
+            call utmess('I', 'ROM7_15', sk = result_out)
+        else
+            call utmess('I', 'ROM7_16')
         endif
     endif
 !
-! - Print about snapshots selection
-!
-    call romSnapInfo(ds_para%ds_snap)
-!
 ! - Print about empiric base
 !
-    call romBaseInfo(ds_para%ds_empi)
+    if (niv .ge. 2) then
+        call romBaseInfo(ds_para%ds_empi)
+    endif
+!
+! - Print / method
+!
+    if (operation(1:3) .eq. 'POD') then
+        call dbr_para_info_pod(ds_para%para_pod)
+        
+    elseif (operation .eq. 'GLOUTON') then
+        call dbr_para_info_rb(ds_para%para_rb)
+
+    else
+        ASSERT(.false.)
+    endif
 !
 end subroutine

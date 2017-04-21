@@ -44,7 +44,7 @@ implicit none
     call utmess('I', 'ROM3_1', sk = ds_empi%base)
     call utmess('I', 'ROM3_2', sk = ds_empi%model)
     call utmess('I', 'ROM3_3', sk = ds_empi%mesh)
-    call utmess('I', 'ROM3_4', sk = ds_empi%field_type)
+    call utmess('I', 'ROM3_4', sk = ds_empi%field_name)
     if (ds_empi%base_type .eq. 'LINEIC') then
         call utmess('I', 'ROM3_10')
         call utmess('I', 'ROM3_11', sk = ds_empi%axe_line)
@@ -53,10 +53,14 @@ implicit none
     else
         call utmess('I', 'ROM3_20')
     endif
-    call utmess('I', 'ROM3_5', si = ds_empi%nb_mode)
+    if (ds_empi%nb_mode .ne. 0) then
+        call utmess('I', 'ROM3_5', si = ds_empi%nb_mode)
+    endif
     call utmess('I', 'ROM3_6', si = ds_empi%nb_node)
     call utmess('I', 'ROM3_7', si = ds_empi%nb_equa)
     call utmess('I', 'ROM3_8', si = ds_empi%nb_cmp)
-    call utmess('I', 'ROM3_9', si = ds_empi%nb_snap)
+    if (ds_empi%nb_snap .ne. 0) then
+        call utmess('I', 'ROM3_9', si = ds_empi%nb_snap)
+    endif
 !
 end subroutine

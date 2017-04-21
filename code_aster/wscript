@@ -19,6 +19,7 @@
 
 import os
 import os.path as osp
+from pprint import pformat
 import shutil
 
 from waflib import Context, Configure
@@ -52,10 +53,19 @@ def build(self):
     self(
         features = 'py',
             name = 'code_aster_py',
-          source = get_srcs('**/*.py',
-                            excl=['Cata/Commons/*.py', 'Cata/Commands/*.py']),
+          source = get_srcs('**/*.py'),
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, 'code_aster'),
+    )
+
+    self(
+        features = 'subst py',
+            name = 'aster_version',
+          source = 'aster_version.pytmpl',
+          target = 'aster_version.py',
+    install_path = osp.join(env.ASTERLIBDIR, "code_aster", "Cata"),
+             use = ['bibpyt'],
+    VERSION_INFO = pformat(env['ASTER_VERSION']),
     )
 
     build_libaster_dependencies(self)
@@ -113,3 +123,4 @@ def check_optimization_cython(self):
     self.setenv('debug')
     self.env.append_unique('CYTHONFLAGS', ["-a"])
     self.setenv('release')
+

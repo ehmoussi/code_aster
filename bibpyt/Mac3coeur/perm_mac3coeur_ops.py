@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -22,15 +22,15 @@ import string
 from pprint import pformat
 
 import aster_core
-from Cata.cata import MACRO, SIMP, table_sdaster
-from Cata.cata import modele_sdaster, maillage_sdaster
+from code_aster.Cata.DataStructure import (modele_sdaster, maillage_sdaster,
+    table_sdaster)
 from mac3coeur_coeur import CoeurFactory
 
 
 def perm_mac3coeur_ops(self, **args):
     """Corps principal de la macro pour la permutation des AC dans MAC3COEUR"""
     import aster
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     from mac3coeur_ac_permute import MACRO_AC_PERMUTE
     from Utilitai.UniteAster import UniteAster
     from Utilitai.Utmess import UTMESS
@@ -64,7 +64,7 @@ def perm_mac3coeur_ops(self, **args):
 
         _MA_N = self.get_concept_by_type(nom_ma, maillage_sdaster)
         _l_MA_N.append(_MA_N)
-    
+
     _l_coeur = []
     for _tabn1 in _l_tabn1 :
     # on recupere le nom du coeur
@@ -118,7 +118,7 @@ def perm_mac3coeur_ops(self, **args):
         _F(RELATION='ELAS',       GROUP_MA =(
            'EBOINF', 'EBOSUP', 'RIG', 'DIL',),),
         _F(RELATION='VMIS_ISOT_TRAC', GROUP_MA ='MAINTIEN', DEFORMATION='PETIT',), ]
-    
+
     self.DeclareOut('BIDON', self.sd)
     __BIDON = STAT_NON_LINE(MODELE=_MO_NP1,
                            CHAM_MATER=_AFSCNP1,
@@ -214,11 +214,11 @@ def perm_mac3coeur_ops(self, **args):
               AFFE=_F(CHAM_GD=__ASSVAR,
                       INST=0.0,
                       MODELE=_MO_NP1,))
-    nbresu = len(l_RESUI) 
+    nbresu = len(l_RESUI)
     assert (len(_l_coeur) == nbresu)
     assert (len(l_last_i) == nbresu)
     assert (len(_l_MA_N) == nbresu)
-    
+
     for nom in _coeurp1.nameAC.keys():
         for i in xrange(len(_l_coeur)) :
             _coeur = _l_coeur[i]

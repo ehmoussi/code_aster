@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -36,11 +36,10 @@ NOMPRO = 'MACR_RECAL'
 def Sortie(LIST_NOM_PARA, LIST_PARA, val, CALCUL_ASTER, Mess):
     """ Sortie de la macro, on renvoie les parametres obtenus """
 
-    import Cata
     import aster
     import Macro
-    from Cata.cata import DEFI_LIST_REEL
-    from Accas import _F
+    from code_aster.Cata.Commands import DEFI_LIST_REEL
+    from code_aster.Cata.Syntax import _F
     from Macro import reca_message
     from Macro import reca_algo
     from Macro import reca_interp
@@ -85,9 +84,10 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP, LIST_POIDS, LIST_PARA, RESU_CALC,
 
     import aster
     import Macro
-    from Cata import cata
-    from Cata.cata import DEFI_LIST_REEL, CREA_TABLE, TEST_TABLE, INCLUDE, INFO_EXEC_ASTER
-    from Cata.cata import OPER, MACRO
+    from code_aster.Cata.Commands import (DEFI_LIST_REEL, CREA_TABLE,
+        TEST_TABLE, INCLUDE, INFO_EXEC_ASTER)
+    from code_aster.Cata.Syntax import _F
+    from code_aster.Cata.Commands import commandStore
 
     from Macro import reca_message
     from Macro import reca_algo
@@ -107,10 +107,8 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP, LIST_POIDS, LIST_PARA, RESU_CALC,
     self.DeclareOut('nomres', self.sd)
 
     # Declaration de toutes les commandes Aster
-    for k, v in cata.__dict__.items():
-        if isinstance(v, (OPER, MACRO)):
-            self.current_context[k] = v
-    self.current_context['_F'] = cata.__dict__['_F']
+    self.current_context['_F'] = _F
+    self.current_context.update(commandStore)
 
     # Reecriture des mots-cles
     if COURBE:
@@ -197,16 +195,11 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
     from Utilitai.optimize import fmin, line_search, line_search_BFGS, approx_fprime, approx_fhess_p, fminBFGS, fminNCG
 
     import Macro
-    from Cata import cata
-    from Cata.cata import OPER, MACRO
-    from Accas import _F
-    # from Cata.cata import *
+    from code_aster.Cata.Syntax import _F
+    from code_aster.Cata.Commands import commandStore
     # Declaration de toutes les commandes Aster
-    for k, v in cata.__dict__.items():
-        if isinstance(v, (OPER, MACRO)):
-            self.current_context[k] = v
-    self.current_context['_F'] = cata.__dict__['_F']
-
+    self.current_context['_F'] = _F
+    self.current_context.update(commandStore)
     #_____________________________________________
     #
     # RECUPERATION DU PROFIL DU CALCUL MAITRE
@@ -285,12 +278,6 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         # On essaie d'importer Gnuplot -> PAS DE GRAPHIQUE
             try:
                 import Gnuplot
-#           from Cata.cata import INFO_EXEC_ASTER, DETRUIRE
-#           _UL=INFO_EXEC_ASTER(LISTE_INFO='UNITE_LIBRE')
-#           valul=_UL['UNITE_LIBRE',1]
-#           DETRUIRE(CONCEPT=(_F(NOM=_UL),))
-#           print "valul=", valul
-#           GRAPHIQUE['UNITE'] = int(valul)
             except ImportError:
                 GRAPHIQUE = None
                 UTMESS('A', 'RECAL0_3')
@@ -803,7 +790,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         print "ecart_para, TOLE_PARA=", ecart_para, TOLE_PARA, (ecart_para > TOLE_PARA)
 
     if (residu > RESI_GLOB_RELA):
-        from Cata.cata import CREA_TABLE, TEST_TABLE
+        from code_aster.Cata.Commands import CREA_TABLE, TEST_TABLE
         _tmp = []
         _tmp.append({'PARA': 'ITER_MAXI', 'LISTE_R': 0.0, })
         motscle = {'LISTE': _tmp}

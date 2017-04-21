@@ -32,7 +32,7 @@ implicit none
 #endif
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -122,31 +122,31 @@ implicit none
         pair_tole     = mminfr(ds_contact%sdcont_defi, 'RESI_APPA', i_zone)
         sdcont_methco = ds_contact%sdcont_defi(1:16)//'.METHCO'
         call jeveuo(sdcont_methco, 'L', vi = v_sdcont_methco)
-        if (v_sdcont_methco(zmeth*(i_zone-1)+7) .eq. 2) then 
-            pair_method  = 'ROBUSTE'        
-        else if (v_sdcont_methco(zmeth*(i_zone-1)+7) .eq. 3) then 
+        if (v_sdcont_methco(zmeth*(i_zone-1)+7) .eq. 2) then
+            pair_method  = 'ROBUSTE'
+        else if (v_sdcont_methco(zmeth*(i_zone-1)+7) .eq. 3) then
             pair_method  = 'RAPIDE'
         endif
 !
 ! ----- Generate name of objects
 !
-        ASSERT(i_zone .le. 9)
-        call codent(i_zone, 'G', knuzo)
-        sdappa_mast = sdappa(1:19)//'.MAS'//knuzo(1:1)
-        sdappa_slav = sdappa(1:19)//'.ESC'//knuzo(1:1)
+        ASSERT(i_zone .le. 100)
+        call codent(i_zone-1, 'G', knuzo)
+        sdappa_mast = sdappa(1:19)//'.MS'//knuzo(1:2)
+        sdappa_slav = sdappa(1:19)//'.EC'//knuzo(1:2)
 !
 ! ----- Get objects
 !
         call jelira(sdappa_mast, 'LONMAX', nb_elem_mast)
-        call jelira(sdappa_slav, 'LONMAX', nb_elem_slav) 
+        call jelira(sdappa_slav, 'LONMAX', nb_elem_slav)
         call jeveuo(sdappa_mast, 'L', vi = v_sdappa_mast)
         call jeveuo(sdappa_slav, 'L', vi = v_sdappa_slav)
 !
 ! ----- Pairing
-!       
+!
 !
 ! ----- MPI initialisation
-! 
+!
         call asmpi_comm('GET', mpicou)
         call asmpi_info(mpicou,rank=i_proc , size=nb_proc)
         nb_elem_mpi  = int(nb_elem_slav/nb_proc)
@@ -154,7 +154,7 @@ implicit none
         idx_start    = 1+(i_proc)*nb_elem_mpi
         idx_end      = idx_start+nb_elem_mpi-1+nbr_elem_mpi*int((i_proc+1)/nb_proc)
         !write(*,*)"Proc : ", i_proc, "idx_start", idx_start, "idx_end", idx_end
-        nb_el_slav_mpi = idx_end - idx_start + 1 
+        nb_el_slav_mpi = idx_end - idx_start + 1
         AS_ALLOCATE(vi=v_appa_slav_mpi, size=nb_el_slav_mpi)
         v_appa_slav_mpi(:)=v_sdappa_slav(idx_start:idx_end)
         !write(*,*)"I_PROC = ", i_proc

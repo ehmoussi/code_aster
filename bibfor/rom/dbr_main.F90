@@ -9,6 +9,7 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/dbr_main_pod.h"
 #include "asterfort/dbr_main_podincr.h"
+#include "asterfort/dbr_main_rb.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -28,7 +29,7 @@ implicit none
 ! ======================================================================
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    type(ROM_DS_ParaDBR), intent(in) :: ds_para
+    type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -38,7 +39,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para        : datastructure for parameters
+! IO  ds_para          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,9 +53,13 @@ implicit none
     endif
 !
     if (ds_para%operation .eq. 'POD') then
-        call dbr_main_pod(ds_para)
+        call dbr_main_pod(ds_para%nb_mode_maxi, ds_para%para_pod, ds_para%field_iden,&
+                          ds_para%ds_empi)
     elseif (ds_para%operation .eq. 'POD_INCR') then
-        call dbr_main_podincr(ds_para)
+        call dbr_main_podincr(ds_para%l_reuse   , ds_para%nb_mode_maxi, ds_para%para_pod,&
+                              ds_para%field_iden, ds_para%ds_empi)
+    elseif (ds_para%operation .eq. 'GLOUTON') then
+        call dbr_main_rb(ds_para%nb_mode_maxi, ds_para%para_rb, ds_para%ds_empi)
     else
         ASSERT(.false.)
     endif

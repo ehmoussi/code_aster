@@ -5,7 +5,8 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/romBaseClean.h"
+#include "asterfort/dbr_clean_pod.h"
+#include "asterfort/dbr_clean_rb.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -39,10 +40,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (ds_para%operation .eq. 'POD') then
-        call romBaseClean(ds_para%ds_empi)
-    elseif (ds_para%operation .eq. 'POD_INCR') then
-        call romBaseClean(ds_para%ds_empi)  
+    if (ds_para%operation(1:3) .eq. 'POD') then
+        call dbr_clean_pod(ds_para)
+    elseif (ds_para%operation .eq. 'GLOUTON') then
+        call dbr_clean_rb(ds_para)
     else
         ASSERT(.false.)
     endif
