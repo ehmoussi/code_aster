@@ -179,10 +179,10 @@ def configure(self):
     self.env.append_value('INCLUDES', paths)
 
     self.recurse('bibfor')
+    self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('bibpyt')
-    self.recurse('code_aster')
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
@@ -219,10 +219,10 @@ def build(self):
 
     self.load('ext_aster', tooldir='waftools')
     self.recurse('bibfor')
+    self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('bibpyt')
-    self.recurse('code_aster')
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
