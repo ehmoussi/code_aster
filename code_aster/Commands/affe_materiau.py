@@ -29,11 +29,14 @@ def _addMaterial( materOnMesh, fkw ):
     kwGrMa = fkw.get( "GROUP_MA" )
     mater = fkw[ "MATER" ]
 
-    if kwTout != None:
-        materOnMesh.addMaterialOnAllMesh( mater )
-    elif kwGrMa != None:
-        materOnMesh.addMaterialOnGroupOfElements( mater, kwGrMa )
-    else: assert False
+    for mater_i in mater:
+        if kwTout != None:
+            materOnMesh.addMaterialOnAllMesh( mater_i )
+        elif kwGrMa != None:
+            materOnMesh.addMaterialOnGroupOfElements( mater_i, kwGrMa )
+        else:
+            assert False
+
 
 def AFFE_MATERIAU( **kwargs ):
     """Opérateur d'affection d'un matériau"""
@@ -52,11 +55,11 @@ def AFFE_MATERIAU( **kwargs ):
     fkw = kwargs[ "AFFE" ]
     if type( fkw ) == dict:
         _addMaterial( materOnMesh, fkw )
-    elif type( fkw ) == tuple:
+    elif type( fkw ) in (list, tuple):
         for curDict in fkw:
             _addMaterial( materOnMesh,curDict  )
     else:
-        assert False
+        assert False, fkw
 
     materOnMesh.build()
 
