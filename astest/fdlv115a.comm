@@ -418,7 +418,7 @@ fRIGI_F = FORMULE(NOM_PARA='PULS',VALE = '''1.''' )
 
 
 RESH=DEFI_BASE_REDUITE(OPERATION='GLOUTON',
-                        INFO=1,
+                        INFO=2,
                         NB_VARI_COEF = 10,
                         VARI_PARA   = (_F(  
                                             NOM_PARA        = 'PULS',
