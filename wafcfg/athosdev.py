@@ -11,7 +11,6 @@ waf install -p
 
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
-
 YAMMROOT = ASTER_ROOT + '/public/default'
 
 import intel
@@ -29,13 +28,16 @@ def configure(self):
         '. /etc/profile.d/lmod.sh',
         'module loadifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047'])
 
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'
+    self.env.TFELHOME = TFELHOME
+
     self.env.append_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Hdf5-1814/lib',
         YAMMROOT + '/tools/Medfichier-321/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/lib',
-        YAMMROOT + '/prerequisites/Mfront-TFEL203/lib',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/lib',
+        TFELHOME + '/lib',
     ])
 
     self.env.append_value('INCLUDES', [
@@ -43,9 +45,9 @@ def configure(self):
         YAMMROOT + '/tools/Medfichier-321/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/include',
-        YAMMROOT + '/prerequisites/Mfront-TFEL203/include',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/include',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/include_seq',
+        TFELHOME + '/include',
     ])
 
     self.env.append_value('LIB', ('pthread', 'util'))

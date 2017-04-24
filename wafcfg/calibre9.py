@@ -17,16 +17,18 @@ def configure(self):
     opts = self.options
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
-
     self.env['ADDMEM'] = 350
+
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'
+    self.env.TFELHOME = TFELHOME
 
     self.env.append_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Hdf5-1814/lib',
         YAMMROOT + '/tools/Medfichier-321/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/lib',
-        YAMMROOT + '/prerequisites/Mfront-TFEL203/lib',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/lib',
+        TFELHOME + '/lib',
     ])
 
     self.env.append_value('INCLUDES', [
@@ -34,9 +36,9 @@ def configure(self):
         YAMMROOT + '/tools/Medfichier-321/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/include',
-        YAMMROOT + '/prerequisites/Mfront-TFEL203/include',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/include',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/include_seq',
+        TFELHOME + '/include',
     ])
 
     self.env.append_value('LIB', ('pthread', 'util'))

@@ -18,7 +18,8 @@ def options(self):
                     help='disable the MFRONT support')
     group.add_option('--enable-mfront', dest='enable_mfront',
                     default=None, action='store_true',
-                    help='force the MFRONT support')
+                    help='force the MFRONT support. The TFELHOME environment '
+                         'variable can be used to choose a prefered version.')
 
 def configure(self):
     opts = self.options
@@ -107,9 +108,16 @@ def check_mfront(self):
     if opts.enable_mfront == False:
         raise Errors.ConfigurationError('MFRONT disabled')
 
-    self.find_program('mfront')
-    self.find_program('tfel-config')
-    self.check_cfg(path='tfel-config',
+    self.add_os_flags('TFELHOME')
+    tfelhome = Utils.to_list(self.env.TFELHOME)
+    paths = self.environ.get('PATH', '').split(os.pathsep)
+    if tfelhome:
+        paths.insert(0, osp.join(tfelhome[0], 'bin'))
+    self.find_program('mfront', path_list=paths)
+    self.find_program('tfel-config', path_list=paths)
+    tfel_config = self.env.TFEL_CONFIG[0]
+    self.check_cfg(path=tfel_config,
+                   msg="Checking for '{0}'".format(osp.basename(tfel_config)),
                    args='--cppflags --includes --oflags0 ' \
                         '--libs --material --utilities --system',
                    package='', uselib_store='MFRONT', mandatory=True)
@@ -124,7 +132,7 @@ def check_mfront(self):
         self.safe_remove('CXXFLAGS_MFRONT', flag)
         # these options are not relevant for C
         self.env.append_value('CXXFLAGS_MFRONT_ONLY', flag)
-    self.check_mfront_version( (2, 0, 3) )
+    self.check_mfront_version( (3, 0, 0) )
     self.check_mfront_libs()
     self.check_cxx11_abi()
     self.check_mfront_obsolete_source()
@@ -156,7 +164,7 @@ def check_mfront_version(self, minver=None):
 
 @Configure.conf
 def check_mfront_libs(self):
-    _check = partial(self.check_cc, mandatory=True, uselib_store='MFRONT',
+    _check = partial(self.check_cxx, mandatory=True, uselib_store='MFRONT',
                      use='MFRONT')
     check_lib = lambda lib: _check(lib=lib)
     libs = ['AsterInterface', 'TFELSystem']

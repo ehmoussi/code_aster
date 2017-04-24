@@ -1,17 +1,16 @@
 # coding: utf-8
 
 """
-Configuration for aster5
+Configuration for eole
 
 . $HOME/dev/codeaster/devtools/etc/env_unstable.sh
 
-waf configure --use-config=aster5 --prefix=../install/std
+waf configure --use-config=eole --prefix=../install/std
 waf install -p
 """
 
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
-
 YAMMROOT = os.environ['ROOT_SALOME']
 
 import intel
@@ -24,13 +23,17 @@ def configure(self):
     self.env['ADDMEM'] = 600
     self.env.append_value('OPT_ENV', [
         'module load icc/2016.0.047 ifort/2016.0.047 mkl/2016.0.047'])
+
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'
+    self.env.TFELHOME = TFELHOME
+
     self.env.append_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Hdf5-1814/lib',
         YAMMROOT + '/tools/Medfichier-321/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/lib',
-        YAMMROOT + '/prerequisites/Mfront-TFEL203/lib',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/lib',
+        TFELHOME + '/lib',
     ])
 
     self.env.append_value('INCLUDES', [
@@ -38,9 +41,9 @@ def configure(self):
         YAMMROOT + '/tools/Medfichier-321/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/include',
-        YAMMROOT + '/prerequisites/Mfront-TFEL203/include',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/include',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/include_seq',
+        TFELHOME + '/include',
     ])
 
     self.env.append_value('LIB', ('pthread', 'util'))
