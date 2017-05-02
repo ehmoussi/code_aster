@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -829,6 +829,7 @@ def __fake__():
     UTMESS('I', 'CATAMESS_70')    # pour u2mesg.f via UTPRIN
     # message.info/error/warn
     UTMESS('I', 'SUPERVIS2_1')    # émis dans ops
+    UTMESS('I', 'FICHIER_2')      # émis dans ops
     # bibc/supervis/aster_mpi.c
     UTMESS('I', 'APPELMPI_5')
     # utilisé ici
