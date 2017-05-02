@@ -33,6 +33,7 @@ from Accas import ASSD
 from Noyau.ascheckers import CheckLog
 from Noyau.N_info import message, SUPERV
 from Noyau.N_types import force_list
+from Noyau.N_Exception import IncludeError
 
 try:
     import aster
@@ -358,11 +359,12 @@ def INCLUDE(self, UNITE, DONNEE, **args):
                 self.make_include(unite=UNITE)
             else:
                 self.make_include(fname=fname)
-    except Accas.AsException:
+    except Accas.AsException as exc:
         if aster_exists:
-            UTMESS('F+', 'FICHIER_1', valk=fname)
-            UTMESS('F', 'FICHIER_2')
-        raise
+            MessageLog('F', 'FICHIER_2', valk=(fname, str(exc)),
+                       exception=False)
+        # raise a specific exception because here we are under sdprod.
+        raise IncludeError
 
 
 def INCLUDE_context(self, d):

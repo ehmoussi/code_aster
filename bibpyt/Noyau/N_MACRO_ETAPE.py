@@ -35,7 +35,7 @@ from warnings import warn
 # Modules EFICAS
 import N_MCCOMPO
 import N_ETAPE
-from N_Exception import AsException
+from N_Exception import AsException, IncludeError
 import N_utils
 from N_utils import AsType
 from N_CO import CO
@@ -176,6 +176,9 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                 d['__only_type__'] = True
                 sd_prod = apply(sd_prod, (self,), d)
             except (EOFError, self.UserError):
+                raise
+            except IncludeError:
+                # INCLUDE is executed by sdprod. This exception allows to interrupt its execution.
                 raise
             except Exception, exc:
                 if CONTEXT.debug:
@@ -650,7 +653,11 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         d = self.g_context = self.macro_const_context
         globs = self.get_global_contexte()
         d.update(globs)
-        exec code in globs, d
+        try:
+            exec code in globs, d
+        except Exception as exc:
+            raise AsException(traceback.format_exc())
+
         # pour ne pas conserver des références sur tout
         self.macro_const_context = {}
 
