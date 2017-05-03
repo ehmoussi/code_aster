@@ -15,7 +15,7 @@ implicit none
 #include "asterfort/mmchml_l.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -88,7 +88,7 @@ implicit none
 ! - Create input field
 !
     l_new_pair = ds_contact%l_renumber
-    if (l_new_pair) then
+    if (l_new_pair .and. ds_contact%nb_cont_pair.ne.0) then
         call detrsd('CHAM_ELEM', chmlcf)
         call alchml(ligrcf, 'RIGI_CONT', 'PCONFR', 'V', chmlcf, iret, ' ')
         ASSERT(iret.eq.0)

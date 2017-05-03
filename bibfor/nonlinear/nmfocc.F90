@@ -140,7 +140,8 @@ implicit none
 !
 ! - Compute contact forces
 !
-    if (l_elem_cont .and. (.not.l_all_verif)) then
+    if (l_elem_cont .and. (.not.l_all_verif) .and. &
+        ((.not.l_cont_lac) .or. ds_contact%nb_cont_pair.ne.0)) then
         call nmtime(ds_measure, 'Init'  , 'Cont_Elem')
         call nmtime(ds_measure, 'Launch', 'Cont_Elem')
         call nmelcv('CONT'        , mesh     , model    , mate     , ds_contact    ,&

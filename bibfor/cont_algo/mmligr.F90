@@ -31,7 +31,7 @@ implicit none
 #include "asterfort/wkvect.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -132,6 +132,10 @@ implicit none
         call jeveuo(sdcont_tabfin, 'L', vr = v_sdcont_tabfin)
         ztabf = cfmmvd('ZTABF')
     else
+        nb_cont_pair = ds_contact%nb_cont_pair
+        if (nb_cont_pair.eq.0) then
+            go to 999
+        end if
         sdappa_apli = ds_contact%sdcont_solv(1:14)//'.APPA.APLI'
         call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
     endif
