@@ -14,7 +14,7 @@ implicit none
 #include "asterfort/as_allocate.h"  
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -56,14 +56,17 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    sdappa = ds_contact%sdcont_solv(1:14)//'.APPA'
-    sdappa_apli = sdappa(1:19)//'.APLI'
-    call jedetr(sdappa_apli)
-    call wkvect(sdappa_apli,'V V I', 3*nb_pair, vi = v_sdappa_apli)
-    do i_pair = 1, 3*nb_pair
-        v_sdappa_apli(i_pair) = list_pair(i_pair)        
-    end do
-    AS_DEALLOCATE(vi=list_pair)
-    ds_contact%nb_cont_pair = nb_pair
+    if (nb_pair.ne.0) then
+        sdappa = ds_contact%sdcont_solv(1:14)//'.APPA'
+        sdappa_apli = sdappa(1:19)//'.APLI'
+        call jedetr(sdappa_apli)
+        call wkvect(sdappa_apli,'V V I', 3*nb_pair, vi = v_sdappa_apli)
+        do i_pair = 1, 3*nb_pair
+            write(*,*)"pair",i_pair
+            v_sdappa_apli(i_pair) = list_pair(i_pair)        
+        end do
+        AS_DEALLOCATE(vi=list_pair)
+        ds_contact%nb_cont_pair = nb_pair
+    end if
     call jedema()
 end subroutine           

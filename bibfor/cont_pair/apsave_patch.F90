@@ -16,7 +16,7 @@ implicit none
 #include "asterfort/jedetr.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -99,40 +99,40 @@ implicit none
         do i_pair = 1, 3*nb_pair_init
             list_tmp(i_pair) = list_pair_zone(i_pair)    
         end do
-    end if
-    
+    end if    
     do i_proc2=1, nb_proc
         nb_pair_zone=nb_pair_zone+nb_pair_zmpi(i_proc2)
     end do
+    if (nb_pair_zone .ne. 0) then
 !
 ! - Re-allocate list of contact elements
 !    
-    AS_DEALLOCATE(vi = list_pair_zone)
-    AS_ALLOCATE(vi = list_pair_zone, size = 3*nb_pair_zone)
-    call wkvect(njv_aux,"V V I", 3*nb_pair_zone, vi=list_aux)
-
+        AS_DEALLOCATE(vi = list_pair_zone)
+        AS_ALLOCATE(vi = list_pair_zone, size = 3*nb_pair_zone)
+        call wkvect(njv_aux,"V V I", 3*nb_pair_zone, vi=list_aux)  
 !
 ! ----- Add new pairs
 !  
-    deca = 0
-    do i_proc2 = 1, i_proc
-        deca = deca + nb_pair_zmpi(i_proc2)
-    end do
-    idx_start = 1 + 3*(deca+nb_pair_init) 
-    idx_end   = 3*(nb_pair_zmpi(i_proc+1) + deca + nb_pair_init)
-    if (nb_pair_zmpi(i_proc+1).ne.0) then
-       ASSERT(idx_end-idx_start+1 .eq. 3*nb_pair_zmpi(i_proc+1))
-       list_aux(idx_start:idx_end)=list_pair_zmpi(1:3*nb_pair_zmpi(i_proc+1))
-    endif 
-    call sdmpic('SD_APPA_LAC2', sdappa)
+        deca = 0
+        do i_proc2 = 1, i_proc
+            deca = deca + nb_pair_zmpi(i_proc2)
+        end do
+        idx_start = 1 + 3*(deca+nb_pair_init) 
+        idx_end   = 3*(nb_pair_zmpi(i_proc+1) + deca + nb_pair_init)
+        if (nb_pair_zmpi(i_proc+1).ne.0) then
+           ASSERT(idx_end-idx_start+1 .eq. 3*nb_pair_zmpi(i_proc+1))
+           list_aux(idx_start:idx_end)=list_pair_zmpi(1:3*nb_pair_zmpi(i_proc+1))
+        endif 
+        call sdmpic('SD_APPA_LAC2', sdappa)
 
-    list_pair_zone(:)=list_aux(:)
+        list_pair_zone(:)=list_aux(:)
 !
 ! ----- Copy old pairs
 !
-    do i_pair = 1, 3*nb_pair_init
-        list_pair_zone(i_pair) = list_tmp(i_pair)    
-    end do
+        do i_pair = 1, 3*nb_pair_init
+           list_pair_zone(i_pair) = list_tmp(i_pair)    
+        end do
+    end if
 !
 ! - Access to pairing datastructures
 !
@@ -171,7 +171,9 @@ implicit none
             v_sdappa_poid(patch_indx) = patch_weight_c(patch_indx)
         end if          
     end do
-    call jedetr(njv_aux)
-    AS_DEALLOCATE(vi = list_tmp)
+    if (nb_pair_zone .ne. 0) then
+        call jedetr(njv_aux)
+        AS_DEALLOCATE(vi = list_tmp)
+    end if
 !
 end subroutine

@@ -10,10 +10,11 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmchex.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/matr_asse_syme.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -54,7 +55,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_matr_elem
+    integer :: nb_matr_elem, iexi
     character(len=19) :: merigi, mediri, meeltc, meeltf
     character(len=19) :: list_matr_elem(8)
     aster_logical :: l_cont_elem, l_frot_elem, l_cont_all_verif, lxthm
@@ -90,8 +91,11 @@ implicit none
     if (l_cont_elem) then
         if (.not.l_cont_all_verif) then
             call nmchex(hval_meelem, 'MEELEM', 'MEELTC', meeltc)
-            nb_matr_elem = nb_matr_elem + 1
-            list_matr_elem(nb_matr_elem) = meeltc
+            call jeexin(meeltc//".RERR", iexi)
+            if (iexi.ne.0) then
+                nb_matr_elem = nb_matr_elem + 1
+                list_matr_elem(nb_matr_elem) = meeltc
+            end if
             if (l_frot_elem.and.(.not.lxthm)) then
                 call nmchex(hval_meelem, 'MEELEM', 'MEELTF', meeltf)
                 nb_matr_elem = nb_matr_elem + 1

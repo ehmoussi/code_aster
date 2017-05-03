@@ -1,4 +1,4 @@
-subroutine nmelcm(phase    , mesh     , model    , mate     , ds_contact    ,&
+ subroutine nmelcm(phase    , mesh     , model    , mate     , ds_contact    ,&
                   disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
                   matr_elem, time_prev, time_curr, ds_constitutive, l_xthm)
 !
@@ -112,7 +112,7 @@ implicit none
     l_xfem_czm     = cfdisl(ds_contact%sdcont_defi,'EXIS_XFEM_CZM')
     l_all_verif    = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
     
-    if (.not.l_all_verif) then
+    if (.not.l_all_verif .and. ((.not.l_cont_lac) .or. ds_contact%nb_cont_pair.ne.0)) then
 !
 ! ----- Print
 !
