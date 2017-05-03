@@ -19,6 +19,31 @@
 
 # person_in_charge: sylvie.michel-ponnelle@edf.fr
 
+#def calc_etape(nb_etapes, list_inst):
+    #"""
+        #Répartition des instants disponibles dans les différentes étapes
+        #de calcul.
+        #Renvoie les instants finaux des nb_etapes -1
+    #"""
+    
+    #nb_inst_dispo = len(list_inst)-1
+    #if nb_inst_dispo < nb_etapes : return None
+    
+    #inst_out = []
+    #N = nb_inst_dispo
+    #ind = 0
+    #n_inst_etape = 0
+    #for d in range(nb_etapes,1, -1):
+        #a,b = divmod(N,d)
+        #n_inst_etape += a
+        #ind +=n_inst_etape
+        #inst_out.append(list_inst[ind])
+        #N = b
+
+    #return inst_out
+
+
+
 def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                      CABLE_BP, CABLE_BP_INACTIF,
                      COMPORTEMENT, ETAT_INIT, METHODE, ENERGIE,
@@ -43,6 +68,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
     DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
+    DEFI_LIST_INST = self.get_cmd('DEFI_LIST_INST')
     STAT_NON_LINE = self.get_cmd('STAT_NON_LINE')
     CALC_CHAMP = self.get_cmd('CALC_CHAMP')
     DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
@@ -111,6 +137,10 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     # Teste si INST_INIT est bien plus petit que INST_FIN
     if __TMAX <= __TMIN:
         UTMESS('F', 'CABLE0_1')
+        
+    for i in dIncrement.keys():
+            if dIncrement[i] == None:
+                del dIncrement[i]
 
     # Preparation de  la liste d'instant __L2 allant de __TMIN a __TMAX
     # et preparation des instants supplementaire __TINT et __TINT2
@@ -148,17 +178,17 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         __L2[-1:-1] = [__TINT]
 
         # __LST0 est la liste d'instants utilisée pour l'etape 1
-        __LST0 = DEFI_LIST_REEL(DEBUT=__TMIN,
+        __LSTR0 = DEFI_LIST_REEL(DEBUT=__TMIN,
                                 INTERVALLE=_F(JUSQU_A=__TMAX, NOMBRE=1),)
+        __LST0 = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__LSTR0),)
+        
 
         # __LST et __FCT sont utilisés pour les etapes 2 et 3
-        __LST = DEFI_LIST_REEL(VALE=__L2,)
+        __LSTR = DEFI_LIST_REEL(VALE=__L2,)
+        __LST  = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__LSTR),)
         __FCT = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
                               NOM_PARA='INST',
                               VALE=(__TMIN, 0.0, __TINT, 1.0, __TMAX, 1.0),)
-        for i in dIncrement.keys():
-            if dIncrement[i] == None:
-                del dIncrement[i]
         dIncrement['LIST_INST'] = __LST
         dIncrement['INST_FIN'] = __TINT
 
@@ -640,101 +670,163 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                     del dExcit[-1][i]
 
         assert(len(motscle3) > 0)
+        
+        
+        # determination des instants finaux de chaque étape
+        
+        nb_inst_dispo = len(__L2) -1
+        nb_etapes = 1
+        
+        if __ActifActif:
+            nb_etapes +=1
+        if __recul_exists:
+            nb_etapes +=1
+        
+        if nb_etapes == 1:
+            t_fin_etape1 = __TMAX
+            t_fin_etape2 = None
+            
+        elif nb_etapes == 2:
+            #if nb_inst_dispo < nb_etapes:
+                #__L2[-1:-1] = [__TINT]
+                #t_fin_etape1 = __TINT
+            #else:
+                #[t_fin_etape1]=calc_etape(nb_etapes, __L2)
+            #t_fin_etape2 = __TMAX
+            #t_fin_etape3 = None
+            
+            # -------------------
+            __L2[-1:-1] = [__TINT]
+            t_fin_etape1 = __TINT
+            t_fin_etape2 = __TMAX
+            t_fin_etape3 = None
+            #--------------------
+            
+        elif nb_etapes == 3:
+            #if nb_etapes - nb_inst_dispo == 2:
+                #__L2[-1:-1] = [__TINT, __TINT2]
+                #t_fin_etape1 = __TINT
+                #t_fin_etape2 = __TINT2
+            #elif nb_etapes - nb_inst_dispo == 1:
+                #t_fin_etape1 = __L2[-2]
+                #__L2[-1:-1] = [__TINT]
+                #t_fin_etape2 = __TINT
+            #else:
+                #[t_fin_etape1,t_fin_etape2]=calc_etape(nb_etapes, __L2)
+            #t_fin_etape3 = __TMAX
+            
+            #------------------------------
+            __L2[-1:-1] = [__TINT, __TINT2]
+            t_fin_etape1 = __TINT
+            t_fin_etape2 = __TINT2
+            t_fin_etape3 = __TMAX
+            #------------------------------
+            
+        __LSTR = DEFI_LIST_REEL(VALE=__L2,)
+        __LST  = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__LSTR),)
+        dIncrement['LIST_INST'] = __LST
+        
+        print 't_fin_etape1 ',t_fin_etape1
+        print 't_fin_etape2 ',t_fin_etape2
+        
+        # construction des fonctions multiplicatrices
+        
+        __FCT1 = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
+                              NOM_PARA='INST',
+                              VALE=(__TMIN, 0.0, t_fin_etape1, 1.0),)
+        if nb_etapes >=2:
+            __FCT2 = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
+                              NOM_PARA='INST',
+                              VALE=(t_fin_etape1, 0.0, t_fin_etape2, 1.0),)
+        if nb_etapes ==3:
+            __FCT3 = DEFI_FONCTION(INTERPOL=('LIN', 'LIN'),
+                              NOM_PARA='INST',
+                              VALE=(t_fin_etape2, 0.0, t_fin_etape3, 1.0),)
+        
+        if CABLE_BP_INACTIF:
+            _C_CI = AFFE_CHAR_MECA(MODELE=MODELE, **motscle6)
+            dExcit.append(_F(CHARGE=_C_CI,))
+        
+        # pour recul d'ancrage
+        _C_RA = AFFE_CHAR_MECA(MODELE=MODELE, **motscle5)
+        dExcit2 = copy.copy(dExcit)
+        
+        
         if __ActifActif:
             dExcit1a = copy.copy(dExcit)
             dExcit1b = copy.copy(dExcit)
-            if CABLE_BP_INACTIF:
-                _C_CI = AFFE_CHAR_MECA(MODELE=MODELE, **motscle6)
-                dExcit1a.append(_F(CHARGE=_C_CI,
-                                   ))
-                dExcit1b.append(_F(CHARGE=_C_CI,
-                                   ))
+            # force de tension + liaisons cables-béton (motscle2)
             __CH1a = CREA_CHAMP(
                 TYPE_CHAM='NOEU_DEPL_R', OPERATION='AFFE', MODELE=MODELE,
                           **motscle3a)
             __CH1b = CREA_CHAMP(
                 TYPE_CHAM='NOEU_DEPL_R', OPERATION='AFFE', MODELE=MODELE,
                           **motscle3b)
-            _C_CAc = AFFE_CHAR_MECA(
-                MODELE=MODELE, VECT_ASSE=__CH1a, **motscle2)
-            _C_CAd = AFFE_CHAR_MECA(
-                MODELE=MODELE, VECT_ASSE=__CH1b, **motscle2)
+            _C_CAc = AFFE_CHAR_MECA(MODELE=MODELE, VECT_ASSE=__CH1a,)
+            _C_CAd = AFFE_CHAR_MECA(MODELE=MODELE, VECT_ASSE=__CH1b,)
+            dExcit1a.append(_F(CHARGE=_C_CAc, FONC_MULT = __FCT1))
+            dExcit1b.append(_F(CHARGE=_C_CAd, FONC_MULT = __FCT2))
+            
+            _C_CAe = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2)
+            _C_CAf = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2)
+            dExcit1a.append(_F(CHARGE=_C_CAe,))
+            dExcit1b.append(_F(CHARGE=_C_CAf,))
+
+            # blocage glissement aux noeuds d'ancrage opposés
             _C_CAa = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2a)
             _C_CAb = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2b)
-            dExcit1a.append(_F(CHARGE=_C_CAa,
-                               TYPE_CHARGE='DIDI'
-                               ))
-            dExcit1b.append(_F(CHARGE=_C_CAb,
-                               TYPE_CHARGE='DIDI'))
-            dExcit1a.append(_F(CHARGE=_C_CAc))
-            dExcit1b.append(_F(CHARGE=_C_CAd))
-            __L2[-1:-1] = [__TINT]
+            dExcit1a.append(_F(CHARGE=_C_CAa,TYPE_CHARGE='DIDI'))
+            dExcit1b.append(_F(CHARGE=_C_CAb,TYPE_CHARGE='DIDI'))
+            
+            if __recul_exists:
+                dExcit2.append(_F(CHARGE=_C_RA, TYPE_CHARGE='DIDI',
+                                  FONC_MULT = __FCT3),)
+            
         else:
             dExcit1 = copy.copy(dExcit)
-            if CABLE_BP_INACTIF:
-                _C_CI = AFFE_CHAR_MECA(MODELE=MODELE, **motscle6)
-                dExcit1.append(_F(CHARGE=_C_CI,
-                                  ))
+            # force de tension
             __CH1 = CREA_CHAMP(
                 TYPE_CHAM='NOEU_DEPL_R', OPERATION='AFFE', MODELE=MODELE,
                           **motscle3)
-            _C_CA = AFFE_CHAR_MECA(MODELE=MODELE, VECT_ASSE=__CH1, **motscle2)
+            _C_CA1 = AFFE_CHAR_MECA(MODELE=MODELE, VECT_ASSE=__CH1,)
+            dExcit1.append(_F(CHARGE=_C_CA1, FONC_MULT = __FCT1),)
+            
+            # blocage glissement aux noeuds d'ancrage opposés
+            # et liaisons cables-béton
+            _C_CA = AFFE_CHAR_MECA(MODELE=MODELE, **motscle2)
             dExcit1.append(_F(CHARGE=_C_CA, TYPE_CHARGE='DIDI'),)
-
-        _C_RA = AFFE_CHAR_MECA(MODELE=MODELE, **motscle5)
-        dExcit2 = copy.copy(dExcit)
-        dExcit2.append(_F(CHARGE=_C_RA, TYPE_CHARGE='DIDI'),)
-        if CABLE_BP_INACTIF:
-            dExcit2.append(_F(CHARGE=_C_CI,
-                              ))
-
-        if __recul_exists:
-            __L2[-1:-1] = [__TINT2]
-            __LST = DEFI_LIST_REEL(VALE=__L2,)
-            for i in dIncrement.keys():
-                if dIncrement[i] == None:
-                    del dIncrement[i]
-            dIncrement['LIST_INST'] = __LST
-        else:
-            if __ActifActif:
-                __LST = DEFI_LIST_REEL(VALE=__L2,)
-                for i in dIncrement.keys():
-                    if dIncrement[i] == None:
-                        del dIncrement[i]
-                dIncrement['LIST_INST'] = __LST
-            else:
-                dIncrement = INCREMENT
-
-        if __ActifActif:
-            dIncrement['INST_FIN'] = __TINT
-            RES = STAT_NON_LINE(
-                MODELE=MODELE,
-                CARA_ELEM=CARA_ELEM,
-                CHAM_MATER=CHAM_MATER,
-                COMPORTEMENT=COMPORTEMENT,
-                # INCREMENT=INCREMENT,
-                INCREMENT=dIncrement,
-                NEWTON=_F(REAC_ITER=1),
-                ETAT_INIT=ETAT_INIT,
-                METHODE=METHODE,
-                CONVERGENCE=CONVERGENCE,
-                RECH_LINEAIRE=RECH_LINEAIRE,
-                SOLVEUR=SOLVEUR,
-                INFO=INFO,
-                TITRE=TITRE,
-                EXCIT=dExcit1a,
-                **motscle4)
+            
             if __recul_exists:
-                dIncrement['INST_FIN'] = __TINT2
-            else:
-                dIncrement['INST_FIN'] = __TMAX
+                dExcit2.append(_F(CHARGE=_C_RA, TYPE_CHARGE='DIDI',
+                                  FONC_MULT = __FCT2),)
+
+        dIncrement['INST_FIN'] = t_fin_etape1
+        if __ActifActif:
+            RES = STAT_NON_LINE(
+                                MODELE=MODELE,
+                                CARA_ELEM=CARA_ELEM,
+                                CHAM_MATER=CHAM_MATER,
+                                COMPORTEMENT=COMPORTEMENT,
+                                INCREMENT=dIncrement,
+                                NEWTON=_F(REAC_ITER=1),
+                                ETAT_INIT=ETAT_INIT,
+                                METHODE=METHODE,
+                                CONVERGENCE=CONVERGENCE,
+                                RECH_LINEAIRE=RECH_LINEAIRE,
+                                SOLVEUR=SOLVEUR,
+                                INFO=INFO,
+                                TITRE=TITRE,
+                                EXCIT=dExcit1a,
+                                **motscle4)
+            
+            dIncrement['INST_FIN'] = t_fin_etape2
+
             RES = STAT_NON_LINE(reuse=RES,
                                 ETAT_INIT=_F(EVOL_NOLI=RES),
                                 MODELE=MODELE,
                                 CARA_ELEM=CARA_ELEM,
                                 CHAM_MATER=CHAM_MATER,
                                 COMPORTEMENT=COMPORTEMENT,
-                                # INCREMENT=INCREMENT,
                                 INCREMENT=dIncrement,
                                 NEWTON=_F(REAC_ITER=1),
                                 METHODE=METHODE,
@@ -746,38 +838,36 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                                 EXCIT=dExcit1b,)
 
         else:
-            if __recul_exists:
-                dIncrement['INST_FIN'] = __TINT2
-
             RES = STAT_NON_LINE(
-                MODELE=MODELE,
-                CARA_ELEM=CARA_ELEM,
-                CHAM_MATER=CHAM_MATER,
-                COMPORTEMENT=COMPORTEMENT,
-                # INCREMENT=INCREMENT,
-                INCREMENT=dIncrement,
-                NEWTON=_F(REAC_ITER=1),
-                METHODE=METHODE,
-                ETAT_INIT=ETAT_INIT,
-                CONVERGENCE=CONVERGENCE,
-                RECH_LINEAIRE=RECH_LINEAIRE,
-                SOLVEUR=SOLVEUR,
-                INFO=INFO,
-                TITRE=TITRE,
-                EXCIT=dExcit1,
-                **motscle4)
+                                MODELE=MODELE,
+                                CARA_ELEM=CARA_ELEM,
+                                CHAM_MATER=CHAM_MATER,
+                                COMPORTEMENT=COMPORTEMENT,
+                                INCREMENT=dIncrement,
+                                NEWTON=_F(REAC_ITER=1),
+                                METHODE=METHODE,
+                                ETAT_INIT=ETAT_INIT,
+                                CONVERGENCE=CONVERGENCE,
+                                RECH_LINEAIRE=RECH_LINEAIRE,
+                                SOLVEUR=SOLVEUR,
+                                INFO=INFO,
+                                TITRE=TITRE,
+                                EXCIT=dExcit1,
+                                **motscle4)
+            
+            
         if __recul_exists:
+            
+            dIncrement['INST_FIN'] = __TMAX
+            
             RES = STAT_NON_LINE(reuse=RES,
                                 ETAT_INIT=_F(EVOL_NOLI=RES),
                                 MODELE=MODELE,
                                 CARA_ELEM=CARA_ELEM,
                                 CHAM_MATER=CHAM_MATER,
                                 COMPORTEMENT=COMPORTEMENT,
-                                # INCREMENT=INCREMENT,
-                                INCREMENT=_F(LIST_INST=__LST,
-                                             PRECISION=__prec),
+                                INCREMENT=dIncrement,
                                 NEWTON=_F(REAC_ITER=1),
-                                # ETAT_INIT = ETAT_INIT,
                                 METHODE=METHODE,
                                 CONVERGENCE=CONVERGENCE,
                                 RECH_LINEAIRE=RECH_LINEAIRE,
