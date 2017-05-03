@@ -144,12 +144,12 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
                 zr(jcoopt+postmp+1) = rmin*sin(theta)
                 zr(jcoopt+postmp+2) = (rmin+rmax)/2.d0*cos(theta)
                 zr(jcoopt+postmp+3) = (rmin+rmax)/2.d0*sin(theta)
-                postmp = postmp+4
                 if( icouch.eq.nbrcou ) then
                     zr(jcoopt+postmp+4) = rmax*cos(theta)
                     zr(jcoopt+postmp+5) = rmax*sin(theta)
                     postmp = postmp+2
                 endif
+                postmp = postmp+4
                 theta = theta+dtheta
             enddo
             verif = 2.d0*r8pi()+dtheta

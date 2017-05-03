@@ -134,6 +134,7 @@ subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
         exipmf = .true.
     endif
 !
+    nbgamm = 1
     if (exipmf) then
         call jeveuo(sdcarm//'.CARORIEN  .CESV', 'L', vr=ocesv)
         call jeveuo(sdcarm//'.CARORIEN  .CESL', 'L', jocesl)
@@ -179,11 +180,11 @@ subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
             endif
             if (exipmf.or.exituy) then
                 call wkvect('&&IRMAES.ORIE.'//nomtyp(ityp), 'V V R',&
-                            nmatyp(ityp), jorima(ityp))
+                            nbgamm*nmatyp(ityp), jorima(ityp))
             endif
             if (exituy) then
                 call wkvect('&&IRMAES.RMIN.'//nomtyp(ityp), 'V V R',&
-                            nbgamm*nmatyp(ityp), jrmin(ityp))
+                            nmatyp(ityp), jrmin(ityp))
                 call wkvect('&&IRMAES.RMAX.'//nomtyp(ityp), 'V V R',&
                             nmatyp(ityp), jrmax(ityp))
             endif

@@ -286,7 +286,7 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
             endif
         else if (nomasu(1:7).eq.notuya) then
 !         -- ATTRIBUT VARIABLE SCALE
-            call as_msevac(idfimd, nomasu, atepai, edtyre, 2,&
+            call as_msevac(idfimd, nomasu, atepai, edtyre, 4,&
                            codret)
             if (codret .ne. 0) then
                 saux08='msevac'
