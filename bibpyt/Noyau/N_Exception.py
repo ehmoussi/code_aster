@@ -42,8 +42,8 @@ class AsException(Exception):
         return unicode(self).encode(get_encoding())
 
 
-class IncludeError(AsException):
-    """Exception raised in case of error during INCLUDE."""
+class OpsError(AsException):
+    """Exception raised in case of error during OPS functions."""
 
 
 class InterruptParsingError(Exception):

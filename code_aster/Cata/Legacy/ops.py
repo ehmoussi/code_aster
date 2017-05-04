@@ -26,6 +26,7 @@ import cPickle as pickle
 import re
 from math import sqrt, pi, atan2, tan, log, exp
 from glob import glob
+from functools import partial
 
 # Modules Eficas
 import Accas
@@ -33,7 +34,7 @@ from Accas import ASSD
 from Noyau.ascheckers import CheckLog
 from Noyau.N_info import message, SUPERV
 from Noyau.N_types import force_list
-from Noyau.N_Exception import IncludeError
+from Noyau.N_Exception import OpsError
 
 try:
     import aster
@@ -44,7 +45,8 @@ try:
     import Build.B_CODE
     Build.B_CODE.CODE.codex = aster
 
-    from Utilitai.Utmess import UTMESS, MessageLog
+    from Utilitai.Utmess import UTMESS as utmess, MessageLog
+    UTMESS = partial(utmess, exc_typ=OpsError)
 except:
     aster_exists = False
 
@@ -216,8 +218,8 @@ def POURSUITE(self, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, LANG, INFO, 
                 UTMESS('A', 'SUPERVIS_69', valk=(savsign, newsign),
                        vali=self.jdc.jeveux_sysaddr)
             else:
-                UTMESS(
-                    'I', 'SUPERVIS_70', valk=newsign, vali=self.jdc.jeveux_sysaddr)
+                UTMESS('I', 'SUPERVIS_70', valk=newsign,
+                       vali=self.jdc.jeveux_sysaddr)
         from .DataStructure import entier
         from Noyau.N_CO import CO
         interrupt = []
@@ -362,8 +364,7 @@ def INCLUDE(self, UNITE, DONNEE, **args):
     except Accas.AsException as exc:
         if aster_exists:
             # raise a specific exception because here we are under sdprod.
-            UTMESS('F', 'FICHIER_2', valk=(fname, str(exc)),
-                   exc_typ=IncludeError)
+            UTMESS('F', 'FICHIER_2', valk=(fname, str(exc)))
 
 
 def INCLUDE_context(self, d):
