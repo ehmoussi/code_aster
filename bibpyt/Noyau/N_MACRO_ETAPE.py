@@ -35,7 +35,7 @@ from warnings import warn
 # Modules EFICAS
 import N_MCCOMPO
 import N_ETAPE
-from N_Exception import AsException, IncludeError
+from N_Exception import AsException, OpsError
 import N_utils
 from N_utils import AsType
 from N_CO import CO
@@ -177,7 +177,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                 sd_prod = apply(sd_prod, (self,), d)
             except (EOFError, self.UserError):
                 raise
-            except IncludeError:
+            except OpsError:
                 # INCLUDE is executed by sdprod. This exception allows to interrupt its execution.
                 raise
             except Exception, exc:
