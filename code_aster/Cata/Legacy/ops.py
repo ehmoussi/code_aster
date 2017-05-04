@@ -361,10 +361,9 @@ def INCLUDE(self, UNITE, DONNEE, **args):
                 self.make_include(fname=fname)
     except Accas.AsException as exc:
         if aster_exists:
-            MessageLog('F', 'FICHIER_2', valk=(fname, str(exc)),
-                       exception=False)
-        # raise a specific exception because here we are under sdprod.
-        raise IncludeError
+            # raise a specific exception because here we are under sdprod.
+            UTMESS('F', 'FICHIER_2', valk=(fname, str(exc)),
+                   exc_typ=IncludeError)
 
 
 def INCLUDE_context(self, d):

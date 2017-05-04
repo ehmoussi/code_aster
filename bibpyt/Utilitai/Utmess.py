@@ -129,7 +129,7 @@ class MESSAGE_LOGGER(Singleton):
         self.print_message(*args, **kwargs)
 
     def print_message(
-        self, code, idmess, valk=(), vali=(), valr=(), exc_num=None,
+        self, code, idmess, valk=(), vali=(), valr=(), exc_typ=None,
             exception=False, print_as=None, files=None, cc=True):
         """Appelé par la routine fortran U2MESG ou à la fonction python UTMESS
         pour afficher un message.
@@ -161,7 +161,7 @@ class MESSAGE_LOGGER(Singleton):
         if not self.update_counter(code, idmess):
             return
         # récupération du texte du message
-        dictmess = self.get_message(code, idmess, valk, vali, valr, exc_num)
+        dictmess = self.get_message(code, idmess, valk, vali, valr, exc_typ)
 
         # on le met dans le buffer
         self.add_to_buffer(dictmess)
@@ -211,7 +211,7 @@ class MESSAGE_LOGGER(Singleton):
 
         return dicarg
 
-    def get_message(self, code, idmess, valk=(), vali=(), valr=(), exc_num=None):
+    def get_message(self, code, idmess, valk=(), vali=(), valr=(), exc_typ=None):
         """Retourne le texte du message dans un dictionnaire dont les clés sont :
             'code', 'id_message', 'corps_message'
         """
@@ -307,9 +307,13 @@ Exception : %s
         dictmess['corps_message'] = cut_long_lines(
             dictmess['corps_message'], MAXLENGTH)
         # type d'exception
-        if exc_num:
-            dictmess['exc_name'], dictmess[
-                'exc_typ'] = ST.get_exception_name(exc_num)
+        if exc_typ:
+            if isinstance(exc_typ, int):
+                exc_args = ST.get_exception_name(exc_typ)
+            else:
+                # exc_typ is an Exception
+                exc_args = exc_typ.__class__.__name__, exc_typ
+            dictmess['exc_name'], dictmess['exc_typ'] = exc_args
         return dictmess
 
     def GetText(self, *args, **kwargs):
@@ -390,8 +394,8 @@ Exception : %s
             'liste_message': [],
             'liste_context': [],
         }
-        dglob['code'], dglob['exc_name'], dglob[
-            'exc_typ'] = self.get_current_code()
+        args = self.get_current_code()
+        dglob['code'], dglob['exc_name'], dglob['exc_typ'] = args
         for dictmess in self._buffer:
             dglob['liste_message'].append(dictmess['corps_message'])
             dglob['liste_context'].append(dictmess['context_info'])
@@ -760,7 +764,7 @@ MessageLog = MESSAGE_LOGGER()
 
 
 def UTMESS(code, idmess, valk=(), vali=(), valr=(),
-           exc_num=None, print_as=None, files=None, cc=True):
+           exc_typ=None, print_as=None, files=None, cc=True):
     """Utilitaire analogue à la routine fortran U2MESS/U2MESG avec les arguments
     optionnels.
         code   : 'A', 'E', 'S', 'F', 'I'
@@ -776,7 +780,7 @@ def UTMESS(code, idmess, valk=(), vali=(), valr=(),
             + appel à MessageLog
             + puis exception ou abort en fonction du niveau d'erreur.
     """
-    MessageLog(code, idmess, valk, vali, valr, exc_num=exc_num,
+    MessageLog(code, idmess, valk, vali, valr, exc_typ=exc_typ,
                exception=True, print_as=print_as, files=files, cc=cc)
 
 
