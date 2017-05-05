@@ -90,7 +90,7 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
     real(kind=8),pointer :: lstcoenoe(:)        => null()
 ! --------------------------------------------------------------------------------------------------
     integer           :: vmessi(4)
-    character(len=24) :: vmessk(5)
+    character(len=24) :: vmessk(6)
 ! --------------------------------------------------------------------------------------------------
 !
     if ( nbocc.eq.0 ) goto 999
@@ -105,13 +105,6 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
 !
 !   Pour les discrets c'est obligatoirement du 2d ou 3d
     ASSERT( (ndim.eq.2).or.(ndim.eq.3) )
-!   Dimension de l'appui
-    if (ndim .eq. 2) then
-        appui = 1
-    else
-!       Dimension pas encore déterminée
-        appui = -1
-    endif
 !
 !   Les cartes sont déjà construites : ace_crea_carte
     cartdi = infcarte(ACE_CAR_DINFO)%nom_carte
@@ -220,6 +213,13 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
     AS_DEALLOCATE(vi=lstnummaipoi1)
 !
     do iocc = 1, nbocc
+!       Dimension de l'appui pour cette occurrence
+        if (ndim .eq. 2) then
+            appui = 1
+        else
+!           En 3D la dimension n'est pas encore déterminée
+            appui = -1
+        endif
 !       Pour les messages
         vmessi(1) = iocc
         vmessk(1) = 'MASS_REP'
@@ -249,11 +249,35 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
                 endif
                 if (ntopo .ne. appui) then
                     vmessk(2) = grplmax(ii)
+!                   Maille courante qui va pas bien
                     call jenuno(jexnum(noma//'.NOMMAI', imail), vmessk(3) )
                     vmessk(4) = typm
                     vmessi(2) = appui
-                    vmessi(3) = ntopo
-                    call utmess('F', 'AFFECARAELEM_10',nk=4,valk=vmessk,ni=3,vali=vmessi)
+                    if ( ndim .eq. 3) then
+!                       Maille de définition de la topologie du groupe
+                        call jenuno(jexnum(noma//'.NOMMAI', zi(ldgm)), vmessk(5) )
+                        call jenuno(jexnum('&CATA.TM.NOMTM', zi(ltypmail-1+zi(ldgm))), vmessk(6))
+                        vmessi(3) = ntopo
+!                       vmessi(1) N°occurrence
+!                       vmessi(2) Topologie de la 1ère maille du groupe
+!                       vmessi(3) Topologie de la maille courante
+!                       vmessk(1) 'MASS_REP'
+!                       vmessk(2) Nom du groupe
+!                       vmessk(3) Nom de la maille courante
+!                       vmessk(4) Type de la maille courante
+!                       vmessk(5) Nom de la 1ère maille du groupe
+!                       vmessk(6) Type de la 1ère maille du groupe
+                        call utmess('F', 'AFFECARAELEM_23',nk=6,valk=vmessk,ni=3,vali=vmessi)
+                    else
+!                       vmessi(1) N°occurrence
+!                       vmessi(2) Topologie =1 on est en 2D
+!                       vmessi(3) Topologie de la maille courante
+!                       vmessk(1) 'MASS_REP'
+!                       vmessk(2) Nom du groupe
+!                       vmessk(3) Nom de la maille courante
+!                       vmessk(4) Type de la maille courante
+                        call utmess('F', 'AFFECARAELEM_10',nk=4,valk=vmessk,ni=3,vali=vmessi)
+                    endif
                 endif
 !               Noeuds de la maille
                 call jelira(jexnum(connex, imail), 'LONMAX', nm)
