@@ -2,10 +2,10 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
                   amoc, carac, masg, lnoe, nbm,&
                   vite, rho, abscur)
 !
-! aslint: disable=W1306
+! aslint: disable=W1306 
     implicit none
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -46,6 +46,7 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
 ! ---------
 #include "jeveux.h"
 #include "asterc/r8pi.h"
+#include "asterc/r8prem.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/extmod.h"
 #include "asterfort/jedema.h"
@@ -60,7 +61,7 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
     integer :: nbm
     integer :: nuor(nbm), lnoe
     real(kind=8) :: amoc(nbm), masg(nbm), carac(2), freq(nbm)
-    real(kind=8) :: vite(lnoe), abscur(lnoe)
+    real(kind=8) :: vite(lnoe), abscur(lnoe), epsi
     real(kind=8) :: rho(2*lnoe)
 !
 ! VARIABLES LOCALES
@@ -83,8 +84,58 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
     integer, pointer :: tempo(:) => null()
     data depla  /'DX      ','DY      ','DZ      '/
     data ldepl  /1,2,3,4,5,6/
+
 !-----------------------------------------------------------------------
+! Curvilinear abscissa
+#define x abscur(ima)
+#define x1 abscur(ima+1)
+#define dx (x1-x)
+!-----------------------------------------------------------------------
+! Fluid (cross-flow) velocity
+#define v vite(ima)
+#define dv (vite(ima+1)-v)
+!-----------------------------------------------------------------------
+! Modal deformation extracted along cross-flow direction
+#define phi mode(lnoe*(im-1)+ima)
+#define dphi (mode(lnoe*(im-1)+ima+1)-phi)
+!-----------------------------------------------------------------------
+! Internal (primary) fluid density
+#define rho_i rho(lnoe+ima)
+#define rho_i1 rho(lnoe+ima+1)
+#define drho_i (rho_i1-rho_i)
+!-----------------------------------------------------------------------
+! External (secondary) fluid density
+#define rho_e rho(ima)
+#define rho_e1 rho(ima+1)
+#define drho_e (rho_e1-rho_e)
+!===========================================================================
+! 1d : Gevibus method (filtered modes along cross-flow direction)
+! 3d : Alternative method using all 3 (x,y,z) components of the modes combined
+!      with the *scalar* flow velocity
+#define rho_v2_phi2_1d(izone,im) zr(iener-1+nbzex*(im-1)+izone)
+#define rho_v2_phi2_3d(izone,im) zr(iener-1+nbzex*(im-1)+izone+nbzex*nbm)
+!-----------------------------------------------------------------------
+! ven : Mean entraining velocity for mode "im"
+! vcr : Critical velocity for mode "im" and connor's constant "i"
+! rap : Instability ratio for mode "im" and connor's constant "i"
+#define ven_1d(im) zr(iven-1+im)
+#define vcr_1d(im,i) zr(ivcn-1+(im-1)*nbval+i)
+#define rap_1d(im,i) zr(irap-1+(im-1)*nbval+i)
+!-----------------------------------------------------------------------
+#define ven_3d(im) zr(iven-1+nbm+im)
+#define vcr_3d(im,i) zr(ivcn-1+(im-1)*nbval+i+nbm*nbval)
+#define rap_3d(im,i) zr(irap-1+(im-1)*nbval+i+nbm*nbval)
+!-----------------------------------------------------------------------
+! ki : Connor's constant per zone
+! conn_min, conn_max : Connor's constants range
+#define ki(izone) zr(icste-1+izone)
+#define conn_min zr(ifsvr+3+2*(j-1))
+#define conn_max zr(ifsvr+3+2*(j-1)+1)
+#define nbdisc(izone) zi(ifsvi+1+nbzex+izone)
+!-----------------------------------------------------------------------
+
     call jemarq()
+    epsi = r8prem()
 !
 !     CALCUL DES CONSTANTES INDEPENDANTES DE L ABSCISSE CURVILIGNE
 !     ------------------------------------------------------------
@@ -100,24 +151,24 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
 !
     call jeveuo('&&MDCONF.TEMPO', 'L', vi=tempo)
 !
-    de = carac(1)
-    di = carac(1)-2*carac(2)
+    de     = carac(1)
+    di     = carac(1)-2*carac(2)
     correl = zr(ifsvr)
-    pas = zr(ifsvr+1)
+    pas    = zr(ifsvr+1)
     rhotub = zr(ifsvr+2)
-    nbma = lnoe-1
-    nbzex = zi(ifsvi+1)
+    nbma   = lnoe-1
+    nbzex  = zi(ifsvi+1)
 !
-    nbval=1
-    do i = 1, nbzex
-        nbval=nbval*zi(ifsvi+1+nbzex+i)
+    nbval = 1
+    do izone = 1, nbzex
+        nbval = nbval*nbdisc(izone)
     end do
 !
-! =======================
-!     VECTEUR DE TRAVAIL CONTENANT POUR CHAQUE MODE ET CHAQUE ZONE
-!     LA VALEUR DE L ENERGIE DU AU FLUIDE
-!     PAR ORDRE ON DONNE POUR LE MODE 1 LES VALEURS SUR CHAQUE ZONE
-!     PUIS LE MODE 2 ET ETC
+! ==================================================================
+!   VECTEUR DE TRAVAIL CONTENANT POUR CHAQUE MODE ET CHAQUE ZONE
+!   LA VALEUR DE L ENERGIE DU AU FLUIDE
+!   PAR ORDRE ON DONNE POUR LE MODE 1 LES VALEURS SUR CHAQUE ZONE
+!   PUIS LE MODE 2 ET ETC
 !
     call wkvect('&&CONNOR.ENERGI', 'V V R', 2*nbzex*nbm, iener)
     call wkvect('&&CONNOR.CSTE', 'V V R', nbzex, icste)
@@ -128,50 +179,46 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
     call wkvect(melflu(1:8)//'.RAP', 'G V R', 2*nbval*nbm, irap)
 !
     mastub = 0.d0
-    rhos = 0.d0
-    ltube = abscur(lnoe)-abscur(1)
+    rhos   = 0.d0
+    ltube  = abscur(lnoe)-abscur(1)
 !
 !
-! ---      DIRECTION DANS LAQUELLE AGISSENT LES FORCES FLUIDELASTIQUES
+!   DIRECTION DANS LAQUELLE AGISSENT LES FORCES FLUIDELASTIQUES
     idep = 0
     depl = zk8(ifsvk+1)
     do ide = 1, 3
         if (depla(ide) .eq. depl) idep = ide
     end do
-! ---  DEFORMEES MODALES
-!
-!
+!   ============================================================
+!   DEFORMEES MODALES
+!   ============================================================
     call dismoi('REF_MASS_PREM', base, 'RESU_DYNA', repk=masse)
     call mtdscr(masse)
     call dismoi('NOM_NUME_DDL', masse, 'MATR_ASSE', repk=numddl)
     call dismoi('NB_EQUA', masse, 'MATR_ASSE', repi=neq)
 !
-!
 !     EXTRACTION DE LA COMPOSANTE SELON LA DIRECTION DE L ECOULEMENT DES
-!     DIFFERENTS MODES
+!     DIFFERENTS MODES (Gevibus method - 1d)
     call extmod(base, numddl, nuor, nbm, mode,&
                 neq, lnoe, [idep], 1)
 !
 !     EXTRACTION DES COMPOSANTES DE TRANSLATION DES  DIFFERENTS MODES
+!     (Alternative methode translation 3d)
     call extmod(base, numddl, nuor, nbm, modetr,&
                 neq, lnoe, ldepl, 3)
-!
+!   ============================================================
+
     rhoeq = 0.d0
-!
     do ima = 1, nbma
-!
-        rhoeq = rhoeq + (&
-                abscur(ima+1)-abscur(ima))* (rhotub+(di**2/( de**2-di**2))*((rho(ima+lnoe)+ rho(i&
-                &ma+lnoe+1))/2)+ (2*correl/ r8pi())*(de**2/(de**2-di**2))*((rho(ima)+ rho(ima+1))&
-                &/2)&
-                )
-        rhos = rhos + (abscur(ima+1)-abscur(ima))* ((rho(ima)+rho(ima+ 1))/2)
+        rhoeq = rhoeq + dx*(rhotub+(di**2/(de**2-di**2))*((rho_i+rho_i1)/2) + &
+                            (2*correl/r8pi())*(de**2/(de**2-di**2))*((rho_e+rho_e1)/2))
+        rhos  = rhos  + dx*((rho_e+rho_e1)/2)
     end do
 !
-    mastub = ((r8pi()/4)*(de**2-di**2)*rhoeq)/ltube
-    rhos = rhos/ltube
+    mastub     = ((r8pi()/4)*(de**2-di**2)*rhoeq)/ltube
+    rhos       = rhos/ltube
     zr(jconn ) = mastub
-    zr(jconn+1) = rhos
+    zr(jconn+1)= rhos
 !
 !
 !
@@ -179,88 +226,100 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
 !         ===============
 !
 !     CALCUL DE LA VITESSE CRITIQUE INTER TUBES POUR CHAQUE COMBINAISON
-!     DES CONSTANTE DE CONNORS ET POUR CHAQUE MODE
+!     DES CONSTANTES DE CONNORS ET POUR CHAQUE MODE
 !
+!   ----------------------------------------------------------------------
+!   ------ Calculation of rho_v2_phi2_1d(izone,im) : per mode and per zone
+!   ----------------------------------------------------------------------
     do im = 1, nbm
+
 !
         imode=nuor(im)
-!        LES LIGNES COMMENTARISEES CORRESPONDENT A
-!        UN AMORTISSEMENT MODAL CALCULE PAR LA FORMULE :
-!        AMORTISSEMENT/(4*PI*(MASSE GENERALISE*FREQUENCE)
+!       LES LIGNES COMMENTARISEES CORRESPONDENT A
+!       UN AMORTISSEMENT MODAL CALCULE PAR LA FORMULE :
+!       AMORTISSEMENT/(4*PI*(MASSE GENERALISE*FREQUENCE)
 !
-!        AMORED(IMODE)=AMOC(IMODE)/(4*R8PI()*MASG(IMODE)*FREQ(IMODE))
-!        DELTA(IMODE)=(2*R8PI()*AMORED(IMODE))/SQRT(1-AMORED(IMODE)**2)
+!       AMORED(IMODE)=AMOC(IMODE)/(4*R8PI()*MASG(IMODE)*FREQ(IMODE))
+!       DELTA(IMODE)=(2*R8PI()*AMORED(IMODE))/SQRT(1-AMORED(IMODE)**2)
 !
-        delta(im)=(2*r8pi()*amoc(im))/sqrt(1-amoc(im)**2)
-        coef(im)=freq(imode)*sqrt(mastub*delta(im)/rhos)
+        delta(im) = (2*r8pi()*amoc(im))/sqrt(1-amoc(im)**2)
+        coef(im)  = freq(imode)*sqrt(mastub*delta(im)/rhos)
 !
         do izone = 1, nbzex
 !
             nmamin=tempo(1+2*(izone-1)+1)
             nmamax=tempo(1+2*(izone-1)+2)-1
-!     RHO EST DE LA FORME A*S+B
-!     V   EST DE LA FORME C*S+D
-!     PHI EST DE LA FORME E*S+F
+
+!           RHO EST DE LA FORME A*S+B
+!           V   EST DE LA FORME C*S+D
+!           PHI EST DE LA FORME E*S+F
             do ima = nmamin, nmamax
-                a=(rho(ima+1)-rho(ima))/(abscur(ima+1)-abscur(ima))
-                b=rho(ima)-a*abscur(ima)
+                a = drho_e/dx
+                b = rho_e-a*x
 !
-                c=(vite(ima+1)-vite(ima))/(abscur(ima+1)-abscur(ima))
-                d=vite(ima)-c*abscur(ima)
+                c = dv/dx
+                d = v-c*x
 !
-                e=(mode(lnoe*(im-1)+ima+1)-mode(lnoe*(im-1)+ima))&
-                /(abscur(ima+1)-abscur(ima))
-                f=mode(lnoe*(im-1)+ima)-e*abscur(ima)
+                e = dphi/dx
+                f = phi-e*x
 !
-!    COEFFICIENT DU POLYNOME DU 5 DEGRES RESULTAT DE RHO*V**2*PHI**2
+!               COEFFICIENT DU POLYNOME DU 5 DEGRES RESULTAT DE RHO*V**2*PHI**2
 !
-                coeff1=a*c**2*e**2
-                coeff2=2*a*e*f*(c**2)+2*a*(e**2)*c*d+(c**2)*(e**2)*b
-                coeff3=a*(f**2)*(c**2)+4*a*e*f*c*d+a*(e**2)*(d**2)+&
-                2*e*f*(c**2)*b+2*(e**2)*c*d*b
-                coeff4=2*a*c*d*(f**2)+2*a*e*f*(d**2)+(f**2)*(c**2)*b+&
-                4*e*f*c*d*b+(e**2)*(d**2)*b
-                coeff5=2*c*d*(f**2)*b+2*e*f*(d**2)*b+(d**2)*(f**2)*a
-                coeff6=(d**2)*(f**2)*b
+                coeff1 = a*c**2*e**2
+                coeff2 = 2*a*e*f*(c**2)+2*a*(e**2)*c*d+(c**2)*(e**2)*b
+                coeff3 = a*(f**2)*(c**2)+4*a*e*f*c*d+a*(e**2)*(d**2)+&
+                         2*e*f*(c**2)*b+2*(e**2)*c*d*b
+                coeff4 = 2*a*c*d*(f**2)+2*a*e*f*(d**2)+(f**2)*(c**2)*b+&
+                         4*e*f*c*d*b+(e**2)*(d**2)*b
+                coeff5 = 2*c*d*(f**2)*b+2*e*f*(d**2)*b+(d**2)*(f**2)*a
+                coeff6 = (d**2)*(f**2)*b
 !
-                zr(iener-1+nbzex*(im-1)+izone)= zr(iener-1+nbzex*(im-&
-                1)+izone)+ (coeff1*(abscur(ima+1)**6-abscur(ima)**6))/&
-                6+ (coeff2*(abscur(ima+1)**5-abscur(ima)**5))/5+&
-                (coeff3*(abscur(ima+1)**4-abscur(ima)**4))/4+ (coeff4*&
-                (abscur(ima+1)**3-abscur(ima)**3))/3+ (coeff5*(abscur(&
-                ima+1)**2-abscur(ima)**2))/2+ coeff6*(abscur(ima+1)-&
-                abscur(ima))
+                rho_v2_phi2_1d(izone,im) = rho_v2_phi2_1d(izone,im) + &
+                                 (coeff1*(x1**6-x**6))/6 + &
+                                 (coeff2*(x1**5-x**5))/5 + &
+                                 (coeff3*(x1**4-x**4))/4 + &
+                                 (coeff4*(x1**3-x**3))/3 + &
+                                 (coeff5*(x1**2-x**2))/2 + &
+                                  coeff6*dx
             end do
         end do
     end do
 !
+!   --- For each combination (across zones) of connor's constants
     do i = 1, nbval
         modul=1
 !
+!       --- Calculate Ki, connor's constant per zone
         do j = 1, nbzex
             modul=1
             do k = (j+1), nbzex
-                modul=modul*zi(ifsvi+1+nbzex+k)
+                modul=modul*nbdisc(k)
             end do
             if (j .eq. 1) then
                 pas=dble((i-1)/modul)
             else
-                modul2=modul*zi(ifsvi+1+nbzex+j)
+                modul2=modul*nbdisc(j)
                 pas=dble(mod(i-1,modul2)/modul)
             endif
-            zr(icste-1+j)=zr(ifsvr+3+2*(j-1))+pas* (zr(ifsvr+3+2*(j-1)&
-            +1)-zr(ifsvr+3+2*(j-1))) /(zi(ifsvi+1+nbzex+j)-1)
+            ki(j) = conn_min + pas*(conn_max-conn_min)/(nbdisc(j)-1)
         end do
 !
         do im = 1, nbm
             numera(im)=0.d0
             denomi=0.d0
             do izone = 1, nbzex
-                numera(im) = numera(im)+ zr(iener-1+nbzex*(im-1)+ izone)
-                denomi = denomi+zr(icste-1+izone)**(-2)* zr(iener-1+ nbzex*(im-1)+izone)
+                numera(im) = numera(im) + rho_v2_phi2_1d(izone,im)
+                denomi = denomi+ki(izone)**(-2)*rho_v2_phi2_1d(izone,im)
             end do
-            zr(ivcn-1+(im-1)*nbval+i)= sqrt((numera(im)/denomi))*coef(&
-            im)
+            if ((numera(im) .lt. epsi)) then
+                denomi = 0.d0
+                do izone = 1, nbzex
+                    denomi = denomi + ki(izone)**(-2)
+                end do
+                vcr_1d(im,i) = sqrt((nbzex*1.d0)/denomi)*coef(im) 
+            else
+                vcr_1d(im,i) = sqrt(numera(im)/denomi)*coef(im)
+            end if
         end do
     end do
 !
@@ -274,32 +333,37 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
         mphi2(im)=0.d0
         do ima = 1, nbma
 !
-            a=(0.5d0*r8pi()*(di**2)*(rho(lnoe+ima+1)-rho(lnoe+ima))+&
-            correl*(de**2)*(rho(ima+1)-rho(ima)))/ (2*(abscur(ima+1)-&
-            abscur(ima)))
-            b=r8pi()*rhotub*(de**2-di**2)/4+r8pi()*(di**2)/4* (rho(&
-            lnoe+ima)-(rho(lnoe+ima+1)-rho(lnoe+ima))/ (abscur(ima+1)-&
-            abscur(ima))*abscur(ima))+ correl*(de**2)/2*(rho(ima)-(&
-            rho(ima+1)-rho(ima))/ (abscur(ima+1)-abscur(ima))*abscur(&
-            ima))
+            a = 0.5d0*r8pi()*(di**2) * drho_i + &
+                correl*(de**2)*drho_e/(2*dx)
+
+            b = r8pi()*rhotub*(de**2-di**2)/4        + &
+                r8pi()*(di**2)/4*(rho_i-drho_i/dx*x) + &
+                correl*(de**2)/2*(rho_e-drho_e/dx*x)
 !
-            c=(mode(lnoe*(im-1)+ima+1)-mode(lnoe*(im-1)+ima))/&
-            (abscur(ima+1)-abscur(ima))
-            d=mode(lnoe*(im-1)+ima)-c*abscur(ima)
+            c = dphi/dx
+            d = phi-c*x
 !
             coeff1 = a*(c**2)
             coeff2 = 2*c*d*a+(c**2)*b
             coeff3 = (d**2)*a+2*c*d*b
             coeff4 = (d**2)*b
-            mphi2(im) = mphi2(im)+ (coeff1*(abscur(ima+1)**4-abscur( ima)**4))/4+ (coeff2*(abscur&
-                        &(ima+1)**3-abscur(ima)**3))/3+ (coeff3*(abscur(ima+1)**2-abscur(ima)**2)&
-                        &)/2+ coeff4*( abscur(ima+1)-abscur(ima))
+
+            mphi2(im) = mphi2(im) + (coeff1*(x1**4-x**4))/4 + &
+                                    (coeff2*(x1**3-x**3))/3 + &
+                                    (coeff3*(x1**2-x**2))/2 + &
+                                     coeff4*dx
 !
         end do
 !
-        zr(iven-1+im) = sqrt((numera(im)*mastub) / (mphi2(im)*rhos))
+        if (numera(im) .lt. epsi) then
+            ven_1d(im) = 0.d0
+        else 
+            ven_1d(im) = sqrt((numera(im)*mastub) / (mphi2(im)*rhos))
+        end if
+        print *,"  >>vitesse entrainement = ", ven_1d(im)
         do i = 1, nbval
-            zr(irap-1+(im-1)*nbval+i) = zr(iven-1+im)/ zr(ivcn-1+(im- 1)*nbval+i)
+            rap_1d(im,i) = ven_1d(im)/vcr_1d(im,i)
+            print *,"  >>rapport d'instabilité, connor's constant # : ",i, " value =", rap_1d(im,i)
         end do
     end do
 !
@@ -312,29 +376,34 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
 !     CALCUL DE LA VITESSE CRITIQUE INTER TUBES POUR CHAQUE COMBINAISON
 !     DES CONSTANTE DE CONNORS ET POUR CHAQUE MODE
 !
+
+!   ----------------------------------------------------------------------
+!   ------ Calculation of rho_v2_phi2_3d(izone,im) : per mode and per zone
+!   ----------------------------------------------------------------------
     do im = 1, nbm
 !
         imode=nuor(im)
-!        LES LIGNES COMMENTARISEES CORRESPONDENT A
-!        UN AMORTISSEMENT MODAL CALCULE PAR LA FORMULE :
-!        AMORTISSEMENT/(4*PI*(MASSE GENERALISE*FREQUENCE)
+!       LES LIGNES COMMENTARISEES CORRESPONDENT A
+!       UN AMORTISSEMENT MODAL CALCULE PAR LA FORMULE :
+!       AMORTISSEMENT/(4*PI*(MASSE GENERALISE*FREQUENCE)
 !
-!        AMORED(IMODE)=AMOC(IMODE)/(4*R8PI()*MASG(IMODE)*FREQ(IMODE))
-!        DELTA(IMODE)=(2*R8PI()*AMORED(IMODE))/SQRT(1-AMORED(IMODE)**2)
+!       AMORED(IMODE)=AMOC(IMODE)/(4*R8PI()*MASG(IMODE)*FREQ(IMODE))
+!       DELTA(IMODE)=(2*R8PI()*AMORED(IMODE))/SQRT(1-AMORED(IMODE)**2)
 !
         do izone = 1, nbzex
 !
             nmamin=tempo(1+2*(izone-1)+1)
             nmamax=tempo(1+2*(izone-1)+2)-1
-!     RHO EST DE LA FORME A*S+B
-!     V   EST DE LA FORME C*S+D
-!     PHI EST DE LA FORME E*S+F
+
+!           RHO EST DE LA FORME A*S+B
+!           V   EST DE LA FORME C*S+D
+!           PHI EST DE LA FORME E*S+F
             do ima = nmamin, nmamax
-                a=(rho(ima+1)-rho(ima))/(abscur(ima+1)-abscur(ima))
-                b=rho(ima)-a*abscur(ima)
+                a=drho_e/dx
+                b=rho_e-a*x
 !
-                c=(vite(ima+1)-vite(ima))/(abscur(ima+1)-abscur(ima))
-                d=vite(ima)-c*abscur(ima)
+                c=dv/dx
+                d=v-c*x
 !
                 coeff1=0.d0
                 coeff2=0.d0
@@ -347,64 +416,69 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
 !
                 do id = 1, 3
                     increm = (lnoe*(im-1)+ima-1)*3+id
-                    e=(modetr(increm+3)-modetr(increm)) /(abscur(ima+&
-                    1)-abscur(ima))
-                    f=modetr(increm)-e*abscur(ima)
+                    e = (modetr(increm+3)-modetr(increm)) /  dx
+                    f =  modetr(increm)-e*x
 !
 !    COEFFICIENT DU POLYNOME DU 5 DEGRES RESULTAT DE RHO*V**2*PHI**2
 !
-                    coeff1=a*c**2*e**2+coeff1
-                    coeff2=2*a*e*f*(c**2)+2*a*(e**2)*c*d+(c**2)*(e**2)&
-                    *b+ coeff2
-                    coeff3=a*(f**2)*(c**2)+4*a*e*f*c*d+a*(e**2)*(d**2)&
-                    + 2*e*f*(c**2)*b+2*(e**2)*c*d*b+coeff3
-                    coeff4=2*a*c*d*(f**2)+2*a*e*f*(d**2)+(f**2)*(c**2)&
-                    *b+ 4*e*f*c*d*b+(e**2)*(d**2)*b+coeff4
-                    coeff5=2*c*d*(f**2)*b+2*e*f*(d**2)*b+(d**2)*(f**2)&
-                    *a+ coeff5
-                    coeff6=(d**2)*(f**2)*b+coeff6
-!
+                    coeff1 = coeff1 + a*c**2*e**2
+                    coeff2 = coeff2 + 2*a*e*f*(c**2) + 2*a*(e**2)*c*d + (c**2)*(e**2)*b
+                    coeff3 = coeff3 + a*(f**2)*(c**2) + 4*a*e*f*c*d+a*(e**2)*(d**2) + &
+                                      2*e*f*(c**2)*b + 2*(e**2)*c*d*b
+                    coeff4 = coeff4 + 2*a*c*d*(f**2) + 2*a*e*f*(d**2) + (f**2)*(c**2)*b + &
+                                      4*e*f*c*d*b+(e**2)*(d**2)*b
+                    coeff5 = coeff5 + 2*c*d*(f**2)*b + 2*e*f*(d**2)*b + (d**2)*(f**2)*a
+                    coeff6 = coeff6 + (d**2)*(f**2)*b
                 end do
 !
-                zr(iener-1+nbzex*(im-1)+izone+nbzex*nbm)= zr(iener-1+&
-                nbzex*(im-1)+izone+nbzex*nbm)+ (coeff1*(abscur(ima+1)&
-                **6-abscur(ima)**6))/6+ (coeff2*(abscur(ima+1)**5-&
-                abscur(ima)**5))/5+ (coeff3*(abscur(ima+1)**4-abscur(&
-                ima)**4))/4+ (coeff4*(abscur(ima+1)**3-abscur(ima)**3)&
-                )/3+ (coeff5*(abscur(ima+1)**2-abscur(ima)**2))/2+&
-                coeff6*(abscur(ima+1)-abscur(ima))
+                rho_v2_phi2_3d(izone,im) = rho_v2_phi2_3d(izone,im) + &
+                                 (coeff1*(x1**6-x**6))/6 +&
+                                 (coeff2*(x1**5-x**5))/5 +&
+                                 (coeff3*(x1**4-x**4))/4 +&
+                                 (coeff4*(x1**3-x**3))/3 +&
+                                 (coeff5*(x1**2-x**2))/2 +&
+                                  coeff6*dx
             end do
         end do
     end do
 !
+!
     do i = 1, nbval
         modul=1
 !
+!       --- Calculate Ki, connor's constant per zone
         do j = 1, nbzex
             modul=1
             do k = (j+1), nbzex
-                modul=modul*zi(ifsvi+1+nbzex+k)
+                modul=modul*nbdisc(k)
             end do
             if (j .eq. 1) then
                 pas=dble((i-1)/modul)
             else
-                modul2=modul*zi(ifsvi+1+nbzex+j)
+                modul2=modul*nbdisc(j)
                 pas=dble(mod(i-1,modul2)/modul)
             endif
-            zr(icste-1+j)=zr(ifsvr+3+2*(j-1))+pas* (zr(ifsvr+3+2*(j-1)&
-            +1)-zr(ifsvr+3+2*(j-1))) /(zi(ifsvi+1+nbzex+j)-1)
+            ki(j) = conn_min + pas*(conn_max-conn_min)/(nbdisc(j)-1)
         end do
 !
         do im = 1, nbm
-            numera(im)=0.d0
-            denomi=0.d0
+            numera(im)= 0.d0
+            denomi    = 0.d0
             do izone = 1, nbzex
-                numera(im) = numera(im)+ zr(iener-1+nbzex*(im-1)+ izone+nbzex*nbm)
-                denomi = denomi+zr(icste-1+izone)**(-2)* zr(iener-1+ nbzex*(im-1)+izone+nbzex*nbm&
-                         &)
+                numera(im) = numera(im)+ rho_v2_phi2_3d(izone,im)
+                denomi     = denomi    + ki(izone)**(-2) * rho_v2_phi2_3d(izone,im)
             end do
-            zr(ivcn-1+(im-1)*nbval+i+nbm*nbval)= sqrt((numera(im)/&
-            denomi))*coef(im)
+
+            if ((numera(im) .lt. epsi)) then
+                denomi = 0.d0
+                do izone = 1, nbzex
+                    denomi = denomi + ki(izone)**(-2)
+                end do
+                vcr_3d(im,i) = sqrt(nbzex*1.d0/denomi)*coef(im) 
+            else
+                vcr_3d(im,i) = sqrt(numera(im)/denomi)*coef(im)
+            end if
+            
         end do
     end do
 !
@@ -412,15 +486,16 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
 !
     do im = 1, nbm
 !
-!    LA MASSE GENERALISEE DU MODE IM
-!
+!       --- Modal (generalized) mass for mode "im"
         call rsadpa(base, 'L', 1, 'MASS_GENE', nuor(im),&
                     0, sjv=lmasg, styp=k8b)
         mass(im) = zr(lmasg)
-        zr(iven-1+nbm+im) = sqrt((numera(im)*mastub) / (mass(im)*rhos) )
+
+        ven_3d(im) = sqrt((numera(im)*mastub) / (mass(im)*rhos))
+        print *,"  >>vitesse entrainement = ", ven_3d(im)
         do i = 1, nbval
-            zr(irap-1+(im-1)*nbval+i+nbm*nbval) = zr(iven-1+nbm+im)/ zr(ivcn-1+(im-1)*nbval+i+nbm&
-                                                  &*nbval)
+            rap_3d(im,i) = ven_3d(im)/vcr_3d(im,i)
+            print *,"  >>rapport d'instabilité, connor's constant : ",i, " value =", rap_3d(im,i)
         end do
     end do
 !
