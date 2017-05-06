@@ -325,7 +325,8 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
 #       C.2.1 Chocs
         COMPORTEMENT    = FACT(statut='f',max='**',
             RELATION    =     SIMP(statut='o', typ='TXM', into=('DIS_CHOC', 'ROTOR_FISS', 'PALIER_EDYOS', 'FLAMBAGE', 'ANTI_SISM',
-                                                                'DIS_VISC', 'DIS_ECRO_TRAC', 'RELA_EFFO_DEPL', 'RELA_EFFO_VITE')),
+                                                                'DIS_VISC', 'DIS_ECRO_TRAC', 'RELA_EFFO_DEPL', 'RELA_EFFO_VITE',
+                                                                'YACS')),
             b_choc      =     BLOC(condition="""equal_to("RELATION", 'DIS_CHOC')""",
                                    regles=(UN_PARMI('MAILLE','GROUP_MA','NOEUD_1','GROUP_NO_1'),
                                            EXCLUS('NOEUD_2','GROUP_NO_2'),
@@ -384,8 +385,23 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
             UNITE       =     SIMP(statut='f',typ=UnitType(), inout='in'),
             GROUP_NO    =     SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
             NOEUD       =     SIMP(statut='c',typ=no),
-            TYPE_EDYOS  =     SIMP(statut='f',typ='TXM',into=("PAPANL","PAFINL","PACONL","PAHYNL",),),
-        ), # end b_lubrication
+            PAS_STOC_ED =     SIMP(statut='f',typ='R'),
+            TYPE_EDYOS  =     SIMP(statut='f',typ='TXM', into=("PAPANL", "PAFINL","PACONL", "PAHYNL"),),
+            ),
+
+#       C.2.3.2 Code coupling (Generic)
+        b_yacs_coupling = BLOC(condition="""equal_to("RELATION", 'YACS')""",
+                               regles=(
+                                        UN_PARMI('NOEUD','GROUP_NO'),
+                                      ),
+            NOEUD       =     SIMP(statut='c',typ=no),
+            GROUP_NO    =     SIMP(statut='f',typ=grno),
+            TYPE_CHAM   =     SIMP(statut='f',typ='TXM', into=("DEPL","VITE","FORCE"),),
+            NOM_CMP     =     SIMP(statut='f',typ='TXM', max='**' ),
+            PORT_YACS   =     SIMP(statut='f',typ='TXM', validators=NoRepeat()),
+            ),
+
+
 #       C.2.4 Buckling
         b_buckling      = BLOC(condition="""equal_to("RELATION", 'FLAMBAGE')""",
                                regles=(UN_PARMI('NOEUD_1','GROUP_NO_1'),

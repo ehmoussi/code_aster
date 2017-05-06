@@ -2,7 +2,7 @@ subroutine dtminit(sd_dtm_, sd_int_)
     implicit none
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -186,6 +186,8 @@ subroutine dtminit(sd_dtm_, sd_int_)
     nullify(buffint)
     call dtmbuff(sd_dtm, buffdtm)
     call intbuff(sd_int, buffint)
+
+
 
     if (.not.(reuse)) then
         call dtmacce(sd_dtm, sd_int, 1, buffdtm, buffint)

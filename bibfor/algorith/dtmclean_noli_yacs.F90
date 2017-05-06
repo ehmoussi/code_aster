@@ -1,4 +1,5 @@
-function nltype(inttyp)
+subroutine dtmclean_noli_yacs(sd_dtm_, sd_nl_)
+    use yacsnl_module , only : finalize
     implicit none
 !
 ! ======================================================================
@@ -15,22 +16,28 @@ function nltype(inttyp)
 !
 ! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+!    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
 !
-#include "nldef.h"
-#include "asterfort/assert.h"
+! person_in_charge: mohamed-amine.hassini@edf.fr
 !
-    integer :: inttyp
-    character(len=16) :: nltype
-    character(len=16) :: nltypes(_NL_NB_TYPES)
+! dtmclean_noli_yacs : clean everything related to YACS_NL
+!
+!
+! =======================================================================
 
-    data  nltypes /'DIS_CHOC        ', 'FLAMBAGE        ', 'ANTI_SISM       ',&
-                   'DIS_VISC        ', 'DIS_ECRO_TRAC   ', 'ROTOR_FISS      ',&
-                   'PALIER_EDYOS    ', 'RELA_EFFO_DEPL  ', 'RELA_EFFO_VITE  ',&
-                   'YACS            '/
-!
-!
-    ASSERT((inttyp.gt.0).and.(inttyp.le._NL_NB_TYPES))
-    nltype = nltypes(inttyp)
-end function
+!--
+
+#include "asterfort/jemarq.h"
+#include "asterfort/jedema.h"
+
+      character(len=*), intent(in):: sd_dtm_
+      character(len=*), intent(in):: sd_nl_
+
+      call jemarq()
+      
+      call finalize()
+      
+      call jedema()
+
+end subroutine
