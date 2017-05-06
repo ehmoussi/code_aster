@@ -2,7 +2,7 @@ subroutine dtmprep(sd_dtm_)
     implicit none
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -83,7 +83,7 @@ subroutine dtmprep(sd_dtm_)
     integer          :: jidesc, jnomfo, jnodep, jnovit, jnoacc
     integer          :: jpsdel, jgyog, jrgyg, ng2, jscdeg
     integer          :: descr, descm, desca, lagrcorr
-    integer          :: jrefa, nbnli, nbpas, nbpal
+    integer          :: jrefa, nbnli, nbpas
     integer          :: ibid, nbbas, nbmodi, piv
     integer          :: nbsst, j, jmas3, nbmody
     real(kind=8)     :: acrit, agene, valr(2), omeg2
@@ -583,6 +583,7 @@ subroutine dtmprep(sd_dtm_)
 !                        (7)    F(V) relationship   / RELA_EFFO_VITE
 !                        (8)    F(X) relationship   / RELA_EFFO_DEPL
 !                        (9)    Lubrication         / COUPLAGE_EDYOS
+!                        (10)   Generic coupling    / YACS_COUPLING
 !   --------------------------------------------------------------------------------------
 !
     call dtmprep_noli(sd_dtm)
@@ -593,10 +594,8 @@ subroutine dtmprep(sd_dtm_)
 !
     call dtmget(sd_dtm, _NB_NONLI, iscal=nbnli)
     lisins = '&&DTMPREP'
-    nbpal = 0
     if ((nbnli).gt.0) then
         call dtmget(sd_dtm, _SD_NONL  , kscal=sd_nl)
-        call nlget (sd_nl , _NB_PALIE, iscal=nbpal)
 
         ! call dtmget(sd_dtm, _CHO_DEPL, vr=chodep)
         ! call dtmget(sd_dtm, _CHO_PARA, vr=chopar)
@@ -622,19 +621,13 @@ subroutine dtmprep(sd_dtm_)
     AS_DEALLOCATE(vr=puls )
 !
 !
+
     call dtmsav(sd_dtm, _DT      , 1, rscal=dt)
     call dtmsav(sd_dtm, _DT_MIN  , 1, rscal=dtmin)
     call dtmsav(sd_dtm, _DT_MAX  , 1, rscal=dtmax)
     call dtmsav(sd_dtm, _INST_INI, 1, rscal=tinit)
     call dtmsav(sd_dtm, _INST_FIN, 1, rscal=tfin)
     call dtmsav(sd_dtm, _NB_STEPS, 1, iscal=nbpas)
-!
-!   --- If needed, initialiaze EDYOS coupling with time-step information
-    ! if (nbpal.ne.0) then
-    !     call dtmget(sd_dtm, _DT_EDYOS, rscal=dtedyo)
-    !     call inicou(nbpas, tinit, tfin, dt, dtedyo,&
-    !                 vrotat)
-    ! endif
 !
 !   --------------------------------------------------------------------------------------
 !   9 - Saving periodicity (ARCHIVAGE)
@@ -648,6 +641,8 @@ subroutine dtmprep(sd_dtm_)
 !   --------------------------------------------------------------------------------------
 !
     call dtmallo(sd_dtm)
+
+    
 !
     call jedema()
 end subroutine
