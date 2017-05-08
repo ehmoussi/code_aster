@@ -5,11 +5,11 @@ Configuration for aster5 + Intel MPI
 
 . $HOME/dev/codeaster/devtools/etc/env_unstable_mpi.sh
 
-waf_mpi configure --use-config=athosdev_mpi --prefix=../install/mpi
+waf_mpi configure --use-config=aster5_mpi --prefix=../install/mpi
 waf_mpi install -p
 """
 
-import athosdev
+import aster5
 ASTER_ROOT = aster5.ASTER_ROOT
 YAMMROOT = aster5.YAMMROOT
 
@@ -18,7 +18,7 @@ def configure(self):
 
     # parallel must be set before calling intel.configure() to use MPI wrappers
     opts.parallel = True
-    athosdev.configure(self)
+    aster5.configure(self)
     self.env['ADDMEM'] = 400
 
     self.env.append_value('OPT_ENV', [
