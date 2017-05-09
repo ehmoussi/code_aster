@@ -2,7 +2,7 @@ subroutine comdtm()
     implicit none
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -30,6 +30,7 @@ subroutine comdtm()
 #include "asterfort/jedetc.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/utimsd.h"
+#include "asterfort/dtmclean.h"
 !
     character(len=8) :: sd_dtm, sd_int
 !
@@ -58,5 +59,10 @@ subroutine comdtm()
 !   call dtmget(sd_dtm,'CALC_SD',kscal=nomres)
 !   call utimsd(6, 2, .false._1, .true._1, nomres, 1, 'G')
 !
+
+    ! clean
+    call dtmclean(sd_dtm)
+
+
     call jedema()
 end subroutine

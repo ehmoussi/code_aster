@@ -1,8 +1,9 @@
 subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
+    use yacsnl_module , only:  
     implicit none
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -33,6 +34,8 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 #include "asterfort/dtmforc_rede.h"
 #include "asterfort/dtmforc_revi.h"
 #include "asterfort/dtmforc_rotf.h"
+#include "asterfort/dtmforc_yacs.h"
+#include "asterfort/dtmforc_lub.h"
 #include "asterfort/dtmget.h"
 #include "asterfort/dtmsav.h"
 #include "asterfort/intget.h"
@@ -50,6 +53,7 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 #include "asterfort/utmess.h"
 #include "asterfort/vecini.h"
 
+
 !
 !   -0.1- Input/output arguments
     character(len=*) , intent(in) :: sd_dtm_
@@ -62,7 +66,7 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 !
 !   -0.2- Local variables
     aster_logical    :: instrum
-    integer          :: nbmode, ntotex, nbnli, ind
+    integer          :: nbmode, ntotex, nbnli, itime
     integer          :: iret, i, nlcase, nlacc, nl_type, inl
     real(kind=8)     :: temps, dt, r8b, tps(7)
     character(len=7) :: casek7
@@ -145,7 +149,7 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 
     call vecini(nbmode, 0.d0, fext)
 
-    call intget(sd_int, INDEX, iocc=index, iscal=ind  , buffer=buffint)
+    call intget(sd_int, INDEX, iocc=index, iscal=itime  , buffer=buffint)
     call intget(sd_int, TIME , iocc=index, rscal=temps, buffer=buffint)
     call intget(sd_int, STEP , iocc=index, rscal=dt   , buffer=buffint)
 !
@@ -160,12 +164,19 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
                     fext)
     end if
 !
+
+!        print *, "-----bfore FEXT----"
+!        print *, fext
+!        print *, "-------------"    
+
     if (nbnli.ne.0) then
         call dtmget(sd_dtm, _SD_NONL  , kscal=sd_nl, buffer=buffdtm)
         call dtmget(sd_dtm, _NL_BUFFER, vi=buffnl  , buffer=buffdtm)
 
         call nlget (sd_nl,  _F_TOT_WK , vr=fext_nl , buffer=buffnl)
         call nlget (sd_nl,  _F_TAN_WK , vr=fext_tgt, buffer=buffnl)
+
+    
 
         do inl = 1, nbnli
             call nlget(sd_nl, _NL_TYPE, iocc=inl, iscal=nl_type, buffer=buffnl)
@@ -208,8 +219,14 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
                     call dtmforc_rotf(inl,sd_dtm, sd_nl, buffdtm, buffnl,&
                                       temps, depl, fext)
     ! !
-    !             case(NL_LUBRICATION)
-    !                 call dtmprep_noli_pali(sd_dtm, sd_nl, icomp)
+                ! TODO: change the name to NL_YACS
+                case(NL_LUBRICATION)
+                     ! we will deal with it later
+                     continue
+!
+                case(NL_YACS)
+                    ! we will deal with it later
+                    continue
     ! 
                 case(NL_FX_RELATIONSHIP)
                     call dtmforc_rede(inl, sd_dtm, sd_nl, buffdtm, buffnl,&
@@ -224,6 +241,17 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
     !
             end select
         end do
+
+        ! we take care of everything
+!        print *, "calling dtmforc_lub"
+        call dtmforc_lub(sd_dtm, sd_nl, buffdtm, buffnl, temps, itime, dt, depl, vite, fext)
+!        print *, "end of calling dtmforc_lub"
+
+!        print *, "calling dtmforc_yacs"
+        call dtmforc_yacs (sd_dtm, sd_nl, itime, temps, dt, depl, vite, fext)
+!        print *, "end calling dtmforce_yacs"
+
+
 !
         if (nlcase.ne.0) then
 !           --- Implicit treatment of chocs, project the force to the new basis
@@ -243,5 +271,6 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
         call uttcpr('CPU.DTMFORC', 7, tps)
         write(*,*) "ELPSD DTMFORC : ", tps(7)
     end if
+
 
 end subroutine

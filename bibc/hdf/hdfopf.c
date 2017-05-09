@@ -1,5 +1,5 @@
 /* ================================================================== */
-/* COPYRIGHT (C) 1991 - 2015  EDF R&D              WWW.CODE-ASTER.ORG */
+/* COPYRIGHT (C) 1991 - 2017  EDF R&D              WWW.CODE-ASTER.ORG */
 /*                                                                    */
 /* THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR      */
 /* MODIFY IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS     */
@@ -43,6 +43,8 @@ ASTERINTEGER DEFS(HDFOPF, hdfopf, char *nomfic, STRING_SIZE ln)
   k=ln-1;
   while (nomf[k] == ' ') { k--;}
   nomf[k+1] = '\0';
+  // désactive les impressions HDF dans stdout
+  H5Eset_auto1(NULL,NULL);
   if ( (idfic = H5Fopen(nomf, H5F_ACC_RDONLY, H5P_DEFAULT)) >= 0) 
     iret = (ASTERINTEGER) idfic;
   free (nomf);

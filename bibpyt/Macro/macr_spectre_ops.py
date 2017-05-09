@@ -54,6 +54,8 @@ def macr_spectre_ops(
         dic_gpno = aster.getcolljev(MAILLAGE.nom.ljust(8) + ".GROUPENO")
         l_nodes = aster.getvectjev(MAILLAGE.nom.ljust(8) + ".NOMNOE")
     l_plancher = []
+    l_batiment = []
+    l_commentaire = []
     #
     dplancher = []
     for j in PLANCHER:
@@ -83,7 +85,9 @@ def macr_spectre_ops(
                         liste_no = liste_no + noms_no
         planch_nodes[plancher['NOM']] = liste_no
         l_plancher.append(plancher['NOM'])
-
+        l_batiment.append(plancher['BATIMENT'])
+        l_commentaire.append(plancher['COMMENTAIRE'])
+            
     if AMOR_SPEC != None and type(AMOR_SPEC) not in EnumType:
         AMOR_SPEC = (AMOR_SPEC,)
     #
@@ -442,16 +446,42 @@ def macr_spectre_ops(
     #
     # Etape6 : Renseignement de la table finale des résultats
     lListe = []
+    nb_amor = 0
     if NOM_CHAM == 'DEPL':
-        lListe.append(_F(LISTE_K=l_plancher, PARA='PLANCHER'))
         titre = 'Calcul des spectres enveloppes'
     elif NOM_CHAM == 'ACCE':
-        titre = 'Calcul des spectres enveloppes par planchers pour les amortissements numérotés :'
+        titre = 'Calcul des spectres enveloppes par planchers'
+        infos_amor={}
+        infos_amor['NUME_AMOR'] = []
+        infos_amor['AMOR'] = []
+        nb_amor = len(AMOR_SPEC)
         for i in range(len(AMOR_SPEC)):
-           titre=titre+' %d : %g '% (i, AMOR_SPEC[i])
+           infos_amor['NUME_AMOR'].append(i)
+           infos_amor['AMOR'].append(AMOR_SPEC[i])
+    
+    
+    nb_plancher = len(l_plancher)
     lkeys = dico_glob.keys()
     lkeys.sort()
     for key in lkeys:
-        lListe.append(_F(LISTE_R=dico_glob[key], PARA=key))
+        nb_lignes = len(dico_glob[key]) 
+        lListe.append(_F(LISTE_R=dico_glob[key], PARA=key, 
+                         NUME_LIGN=range(nb_amor+nb_plancher+1,nb_amor+nb_plancher+nb_lignes+1)))
+    if NOM_CHAM == 'ACCE':
+        lListe.append(_F(LISTE_I=infos_amor['NUME_AMOR'], PARA='NUME_AMOR',
+                         NUME_LIGN=range(nb_plancher+1,nb_plancher+nb_amor+1)))
+        lListe.append(_F(LISTE_R=infos_amor['AMOR'], PARA='AMOR',
+                         NUME_LIGN=range(nb_plancher+1,nb_plancher+nb_amor+1)))
+        
+    lListe.append(_F(LISTE_K=l_plancher, TYPE_K='K24', PARA='NOM'))
+    l_bat = [i for i in l_batiment if i != None]
+    l_com = [i for i in l_commentaire if i != None]
+    if l_bat != []:
+        l_bat2 = ['-' if i == None else i for i in l_batiment]
+        lListe.append(_F(LISTE_K=l_bat2,TYPE_K='K24', PARA='BATIMENT'))
+    if l_com !=[]:
+        l_com2 = ['-' if i == None else i for i in l_commentaire]
+        lListe.append(_F(LISTE_K=l_com2,TYPE_K='K24', PARA='COMMENTAIRE'))
+        
     tab = CREA_TABLE(LISTE=lListe, TITRE=titre)
     return ier

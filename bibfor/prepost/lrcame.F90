@@ -8,7 +8,7 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
 !
 ! person_in_charge: nicolas.sellenet at edf.fr
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -390,6 +390,13 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
         endif
 !
 !       RECUPERE LE NOMBRE DE MAILLES DE TYPE TYGEOM
+        
+        ! incompatibilite (tygeom==0 <=> MED_NONE) et (edmail==0 <=> MED_CELL)
+        ! => on saute pour eviter une Erreur d'appel de l'API dans MED
+        if (tygeom.eq.0.and.edmail.eq.0) then
+            cycle
+        endif
+        
         call as_mmhnme(idfimd, nomamd, edconn, edmail, tygeom,&
                        ednoda, nmatyp, codre2)
 !

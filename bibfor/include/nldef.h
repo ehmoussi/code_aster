@@ -1,6 +1,6 @@
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -95,7 +95,27 @@
 #define _SS2_NAME 72
 #define _STIF_NORMAL 73
 
-#define _NL_NB_TYPES     9
+#define _YACS_NOEUD 89
+#define _YACS_CHAM 90
+#define _YACS_CMP 91
+#define _YACS_DIR 92
+#define _YACS_ID 93
+#define _YACS_IDDL 94
+#define _YACS_N_DEPL 95
+#define _YACS_N_VIT 96
+#define _YACS_N_FORCE 97
+#define _YACS_VEC_DEPL 98
+#define _YACS_VEC_VIT 99
+#define _YACS_VEC_FORCE 100
+#define _YACS_INITIALIZED 101
+#define _YACS_PORT_NAME 102
+#define _NUM_PALIER 103
+
+
+
+
+
+#define _NL_NB_TYPES     10
 
 #define NL_CHOC            1
 #define NL_BUCKLING        2
@@ -106,6 +126,7 @@
 #define NL_LUBRICATION     7
 #define NL_FX_RELATIONSHIP 8
 #define NL_FV_RELATIONSHIP 9
+#define NL_YACS            10
 
 
 #define NBVARINT_CHOC 20
@@ -114,6 +135,7 @@
 #define NBVARINT_DVIS 11
 #define NBVARINT_DECR 12
 #define NBVARINT_ROTF 3
-#define NBVARINT_YACS 0
+#define NBVARINT_YACS 1
 #define NBVARINT_FXRL 3
 #define NBVARINT_FVRL 3
+#define NBVARINT_LUB  1

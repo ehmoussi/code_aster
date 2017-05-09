@@ -2,7 +2,7 @@ subroutine nlvint(sd_nl_)
     implicit none
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -58,11 +58,14 @@ subroutine nlvint(sd_nl_)
             case(NL_CRACKED_ROTOR)
                 add = NBVARINT_ROTF
             case(NL_LUBRICATION)
-                add = NBVARINT_YACS
-             case(NL_FX_RELATIONSHIP)
+                add = NBVARINT_LUB
+            case(NL_FX_RELATIONSHIP)
                 add = NBVARINT_FXRL
-             case(NL_FV_RELATIONSHIP)
+            case(NL_FV_RELATIONSHIP)
                 add = NBVARINT_FVRL
+            case(NL_YACS)
+                add = NBVARINT_YACS
+ 
             case default
                 ASSERT(.false.)
         end select
