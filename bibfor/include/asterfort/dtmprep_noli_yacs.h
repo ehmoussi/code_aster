@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,9 +16,10 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine rscrmo(iocc, nomsd, nomjv)
-        integer :: iocc
-        character(len=*) :: nomsd
-        character(len=*) :: nomjv
-    end subroutine rscrmo
+    subroutine dtmprep_noli_yacs(sd_dtm_, sd_nl_, icomp)
+        character(len=*), intent(in):: sd_dtm_
+        character(len=*), intent(in):: sd_nl_
+        integer,          intent(in):: icomp
+    end subroutine dtmprep_noli_yacs
 end interface
+

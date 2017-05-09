@@ -1,6 +1,6 @@
 subroutine as_mficom(nom, hdfok, medok, cret)
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -20,9 +20,12 @@ subroutine as_mficom(nom, hdfok, medok, cret)
 #include "asterf_types.h"
 #include "asterf.h"
 #include "asterfort/utmess.h"
+#include "asterfort/assert.h"
+#include "asterc/hdfopf.h"
+#include "asterc/hdfclf.h"
 #include "med/mficom.h"
 ! person_in_charge: nicolas.sellenet at edf.fr
-    aster_int :: cret, hdfok, medok
+    aster_int :: cret, hdfok, medok, fid
     character(len=*) :: nom
 #ifdef _DISABLE_MED
     call utmess('F', 'FERMETUR_2')
@@ -30,13 +33,29 @@ subroutine as_mficom(nom, hdfok, medok, cret)
 !
 #if med_int_kind != aster_int_kind
     med_int :: cret4, hdfok4, medok4
-    call mficom(nom, hdfok4, medok4, cret4)
-    cret = int(cret4, 8)
-    hdfok = int(hdfok4, 8)
-    medok = int(medok4, 8)
-#else
-    call mficom(nom, hdfok, medok, cret)
 #endif
+    cret = 0
+    ! On verifie par un appel à HDF que le fichier est bien de type hdf avant de vérifier
+    ! la compatibilite afin d'eviter les "Erreur à l'ouverture du fichier" dans MED
+    fid = hdfopf(nom)
+    if (fid.gt.0) then
+        cret = hdfclf(fid)
+        ASSERT(cret.eq.0)
+    else
+        cret = -1
+        hdfok = 0
+        medok = 0
+    endif
+    if (cret.eq.0) then
+#if med_int_kind != aster_int_kind
+        call mficom(nom, hdfok4, medok4, cret4)
+        cret = int(cret4, 8)
+        hdfok = int(hdfok4, 8)
+        medok = int(medok4, 8)
+#else
+        call mficom(nom, hdfok, medok, cret)
+#endif
+    endif
 !
 #endif
 end subroutine

@@ -2,7 +2,7 @@ subroutine dtmprep_noli(sd_dtm_)
     implicit none
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -52,6 +52,8 @@ subroutine dtmprep_noli(sd_dtm_)
 #include "asterfort/dtmprep_noli_revi.h"
 #include "asterfort/dtmprep_noli_rotf.h"
 #include "asterfort/dtmprep_verichoc.h"
+#include "asterfort/dtmprep_noli_lub.h"
+#include "asterfort/dtmprep_noli_yacs.h"
 #include "asterfort/dtmsav.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
@@ -84,7 +86,8 @@ subroutine dtmprep_noli(sd_dtm_)
 !
     data  nltypes /'DIS_CHOC        ', 'FLAMBAGE        ', 'ANTI_SISM       ',&
                    'DIS_VISC        ', 'DIS_ECRO_TRAC   ', 'ROTOR_FISS      ',&
-                   'PALIER_EDYOS    ', 'RELA_EFFO_DEPL  ', 'RELA_EFFO_VITE  '/
+                   'PALIER_EDYOS    ', 'RELA_EFFO_DEPL  ', 'RELA_EFFO_VITE  ',&
+                   'YACS            '/
 !
 #define base0(row,col) basev0((row-1)*nbmode+col)
 !
@@ -144,8 +147,13 @@ subroutine dtmprep_noli(sd_dtm_)
             case(NL_CRACKED_ROTOR)
                 call dtmprep_noli_rotf(sd_dtm, sd_nl, icomp)
 !
-!             case(NL_LUBRICATION)
-!                 call dtmprep_noli_pali(sd_dtm, sd_nl, icomp)
+
+            case(NL_LUBRICATION)
+                 call dtmprep_noli_lub(sd_dtm, sd_nl, icomp)
+!
+            case(NL_YACS)
+                 call dtmprep_noli_yacs(sd_dtm, sd_nl, icomp)
+
 ! 
              case(NL_FX_RELATIONSHIP)
                  call dtmprep_noli_rede(sd_dtm, sd_nl, icomp)

@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -16,19 +16,9 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine lcfrge(ndim, typmod, imate, epsm, deps,&
-                      vim, option, sig, vip, dsidpt,&
-                      proj)
-        integer :: ndim
-        character(len=8) :: typmod(*)
-        integer :: imate
-        real(kind=8) :: epsm(12)
-        real(kind=8) :: deps(12)
-        real(kind=8) :: vim(2)
-        character(len=16) :: option
-        real(kind=8) :: sig(6)
-        real(kind=8) :: vip(2)
-        real(kind=8) :: dsidpt(6, 6, 2)
-        real(kind=8) :: proj(6, 6)
-    end subroutine lcfrge
+    subroutine dtmclean_noli_lub(sd_dtm_, sd_nl_)
+        character(len=*), intent(in):: sd_dtm_
+        character(len=*), intent(in):: sd_nl_
+    end subroutine dtmclean_noli_lub
 end interface
+
