@@ -1,0 +1,153 @@
+#CALCULS THERMIQUES
+
+#MAILLAGE ET MODELE CALCUL THERMIQUE
+MA=LIRE_MAILLAGE(FORMAT='MED',UNITE=21,);
+
+MA=DEFI_GROUP(reuse =MA,
+              MAILLAGE=MA,
+                 CREA_GROUP_NO=_F(GROUP_MA='BASC',
+                                  OPTION='NOEUD_ORDO',
+                                  NOM='BASC',
+                                  GROUP_NO_ORIG='P1C',
+                                  GROUP_NO_EXTR='P2C',),);
+MA=DEFI_GROUP(reuse =MA,
+              MAILLAGE=MA,
+                 CREA_GROUP_NO=_F(GROUP_MA='BASD',
+                                  OPTION='NOEUD_ORDO',
+                                  NOM='BASD',
+                                  GROUP_NO_ORIG='P1D',
+                                  GROUP_NO_EXTR='P2D',),);
+
+MOTHER=AFFE_MODELE(MAILLAGE=MA,
+                   AFFE=_F(TOUT='OUI',
+                           PHENOMENE='THERMIQUE',
+                           MODELISATION='AXIS',),);
+
+MA=MODI_MAILLAGE(reuse =MA,
+                   MAILLAGE=MA,
+                   ORIE_PEAU_2D=_F(GROUP_MA=('ECHAND','ECHANC',),),
+                   )
+
+#DEFINITION DES MATERIAUX               
+MATHER=DEFI_MATERIAU(THER=_F(LAMBDA=46.594999999999999,
+                             RHO_CP=4.25E6,),);
+
+CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
+                    AFFE=_F(TOUT='OUI',
+                            MATER=MATHER,),);
+
+MATHER2=DEFI_MATERIAU(THER=_F(LAMBDA=46.369999999999997,
+                              RHO_CP=4.27E6,),);
+
+CHMAT2=AFFE_MATERIAU(MAILLAGE=MA,
+                     AFFE=_F(TOUT='OUI',
+                             MATER=MATHER2,),);
+
+#DEFINITION DES CHARGEMENTS
+COEFH=DEFI_CONSTANTE(VALE=3.E4,);
+
+TR2=DEFI_FONCTION(NOM_PARA='INST',
+                  VALE=(0.0,274.5,10.0,274.5,310.0,272.5,610.0,274.5,910.0,272.5,),);
+
+TR6=DEFI_FONCTION(NOM_PARA='INST',
+                  VALE=(0.0,272.0,11.0,272.0,20.0,290.0,40.0,290.0,),);
+
+CHTH2=AFFE_CHAR_THER_F(MODELE=MOTHER,
+                       ECHANGE=_F(GROUP_MA=('ECHAND','ECHANC',),
+                                  COEF_H=COEFH,
+                                  TEMP_EXT=TR2,),);
+
+CHTH6=AFFE_CHAR_THER_F(MODELE=MOTHER,
+                       ECHANGE=_F(GROUP_MA=('ECHAND','ECHANC',),
+                                  COEF_H=COEFH,
+                                  TEMP_EXT=TR6,),);
+
+LISTH2=DEFI_LIST_REEL(DEBUT=0.0,
+                      INTERVALLE=(_F(JUSQU_A=10.0,
+                                     PAS=10.0,),
+                                  _F(JUSQU_A=310.0,
+                                     PAS=10.0,),
+                                  _F(JUSQU_A=610.0,
+                                     PAS=10.0,),
+                                  _F(JUSQU_A=910.0,
+                                     PAS=10.0,),),);
+
+LISTH6=DEFI_LIST_REEL(DEBUT=0.0,
+                      INTERVALLE=(_F(JUSQU_A=11.0,
+                                     PAS=11.0,),
+                                  _F(JUSQU_A=20.0,
+                                     PAS=1.0,),
+                                  _F(JUSQU_A=40.0,
+                                     PAS=1.0,),),);
+
+#CALCULS THERMIQUES
+TEMP2=THER_LINEAIRE(SOLVEUR=_F(RENUM='MDA'),MODELE=MOTHER,
+                    CHAM_MATER=CHMAT,
+                    EXCIT=_F(CHARGE=CHTH2,),
+                    INCREMENT=_F(LIST_INST=LISTH2,),
+                    ETAT_INIT=_F(VALE=274.5,),);
+
+TEMP6=THER_LINEAIRE(SOLVEUR=_F(RENUM='MDA'),MODELE=MOTHER,
+                    CHAM_MATER=CHMAT2,
+                    EXCIT=_F(CHARGE=CHTH6,),
+                    INCREMENT=_F(LIST_INST=LISTH6,),
+                    ETAT_INIT=_F(VALE=272.0,),);
+
+#TRANSITOIRES THERMIQUES POUR LE CALCUL RCCM
+TABTH2D=POST_RELEVE_T(ACTION=_F(INTITULE='temp2',
+                                GROUP_NO='BASD',
+                                RESULTAT=TEMP2,
+                                NOM_CHAM='TEMP',
+                                NOM_CMP='TEMP',
+                                OPERATION='EXTRACTION',),);
+
+TABMO2D=POST_RELEVE_T(ACTION=_F(INTITULE='temp2',
+                                GROUP_NO='BASD',
+                                RESULTAT=TEMP2,
+                                NOM_CHAM='TEMP',
+                                NOM_CMP='TEMP',
+                                OPERATION='MOYENNE',),);
+
+TABTH6D=POST_RELEVE_T(ACTION=_F(INTITULE='temp6',
+                                GROUP_NO='BASD',
+                                RESULTAT=TEMP6,
+                                NOM_CHAM='TEMP',
+                                NOM_CMP='TEMP',
+                                OPERATION='EXTRACTION',),);
+
+TABMO6D=POST_RELEVE_T(ACTION=_F(INTITULE='temp6',
+                                GROUP_NO='BASD',
+                                RESULTAT=TEMP6,
+                                NOM_CHAM='TEMP',
+                                NOM_CMP='TEMP',
+                                OPERATION='MOYENNE',),);
+
+# SECTION DE COUDE
+TABTH2C=POST_RELEVE_T(ACTION=_F(INTITULE='temp2',
+                                GROUP_NO='BASC',
+                                RESULTAT=TEMP2,
+                                NOM_CHAM='TEMP',
+                                NOM_CMP='TEMP',
+                                OPERATION='EXTRACTION',),);
+
+TABMO2C=POST_RELEVE_T(ACTION=_F(INTITULE='temp2',
+                                GROUP_NO='BASC',
+                                RESULTAT=TEMP2,
+                                NOM_CHAM='TEMP',
+                                NOM_CMP='TEMP',
+                                OPERATION='MOYENNE',),);
+
+
+TABTH6C=POST_RELEVE_T(ACTION=_F(INTITULE='temp6',
+                                GROUP_NO='BASC',
+                                RESULTAT=TEMP6,
+                                NOM_CHAM='TEMP',
+                                NOM_CMP='TEMP',
+                                OPERATION='EXTRACTION',),);
+
+TABMO6C=POST_RELEVE_T(ACTION=_F(INTITULE='temp6',
+                                GROUP_NO='BASC',
+                                RESULTAT=TEMP6,
+                                NOM_CHAM='TEMP',
+                                NOM_CMP='TEMP',
+                                OPERATION='MOYENNE',),);

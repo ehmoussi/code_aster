@@ -1,6 +1,5 @@
-
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
-#
+# ======================================================================
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -13,126 +12,689 @@
 #
 # YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
 # ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-# 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+# ======================================================================
 
-POURSUITE(CODE='OUI',)
-# VALIDATION DE L'OPTION EFAT
+# VALIDATION DE L'OPERATEUR POST_RCCM
+# OPTION SN en B3200 AVEC TYPE_RESU='DETAILS'
+# PRISE EN COMPTE DU SEISME
 
-#  CONTRAINTES THERMIQUE (SITUATION 1)                 
-T_THER3 = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
-                      NUME_TABLE=7,)
+POURSUITE( CODE='OUI' )
 
-#  CONTRAINTES THERMIQUE (SITUATION 3)                 
-T_THER4 = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
-                      NUME_TABLE=8,)
-
-#  TEMPERATURE (SITUATION 1)                 
-T_TEMP = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
-                      NUME_TABLE=9,)
-
-#  TEMPERATURE (SITUATION 3)                 
-T_TEMP2 = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
-                      NUME_TABLE=10,)
-
-#  MODULE D'YOUNG FONCTION DE LA TEMPERATURE                
-T_YOUNG = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
-                      NUME_TABLE=11,)
-
-# VALIDATION DU CALCUL EN FATIGUE ENVIRONNNEMENTALE
-FAT13_BE = POST_RCCM( MATER=MAT,
+#--------------------------------------------------------------------------------
+# VALIDATION DE LA METHODE B3200 avec MOMENTS SOUS FORMAT UNITAIRE
+#--------------------------------------------------------------------------------
+# CALCUL DE SN/SN*/ROCHET POUR LA SITUATION 3 AVEC SEISME
+SN3s=POST_RCCM( MATER=MAT,
+                 TITRE='SN/SN*/ROCHET AVEC SEISME, SITUATION 3, UNITAIRE',
+                 METHODE='TOUT_INST',
                  TYPE_RESU='DETAILS',
                  TYPE_RESU_MECA='B3200',
-                 OPTION='EFAT',
-                 INFO=1,
-                 TYPE_KE='KE_MECA',
+                 OPTION='SN',
+                 INFO=2,
                  CHAR_MECA=(
-                  _F(NUME_CHAR=1,
-                     NOM_CHAR='ETAT A - SITU1',
-                     MX=1.0,  MY=0.5,  MZ=0.0,),
-                  _F(NUME_CHAR=2,
-                     NOM_CHAR='ETAT B - SITU1',
-                     MX=1.0,  MY=2.0,  MZ=3.0,),   
-                  _F(NUME_CHAR=3,
-                     NOM_CHAR='ETAT A - SITU2',
-                     MX=0.0,  MY=0.0,  MZ=0.0,),
-                  _F(NUME_CHAR=4,
-                     NOM_CHAR='ETAT B - SITU2',
-                     MX=2.0,  MY=0.5,  MZ=-1.0,),),
-                  RESU_MECA_UNIT=(
+                   _F(NUME_CHAR=11,
+                      NOM_CHAR='ETAT SEISME',
+                      MX=1.0,  MY=1.0,  MZ=1.0,),
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),),
+                 RESU_MECA_UNIT=(
                    _F(TABL_MX=T_MX,
                       TABL_MY=T_MY,
-                      TABL_MZ=T_MZ,
-                      TABL_PRES=T_PRES,),),
-                 RESU_THER= (_F(NUME_RESU_THER=1,
-                            TABL_RESU_THER=T_THER3, ), 
-                            _F(NUME_RESU_THER=2,
-                            TABL_RESU_THER=T_THER4, ), ),
-                 ENVIRONNEMENT=(_F(
-                     TABL_YOUNG       =T_YOUNG,
-                     FEN_INTEGRE      =50.0,
-                     CRIT_EPSI        =0.01,
-                     S_ETOILE         =1.0,
-                     SEUIL_EPSI_INF   =1.0,
-                     SEUIL_EPSI_SUP   =2.0,
-                     A_ENV            =0.0,
-                     B_ENV            =1.0,
-                     C_ENV            =0.0,
-                     SEUIL_T_INF      =100.0,
-                     SEUIL_T_SUP      =250.0,
-                     VALE_T_INF        =50.0,
-                     VALE_T_SUP        =300.0,
-                     VALE_T_MOY_NUM    =40.0,
-                     VALE_T_MOY_DEN    =50.0,
-                    ),),
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),),
                  SITUATION=(
                   _F(NB_OCCUR=1,
                      NUME_SITU=1,
-                     NOM_SITU='Situation 1',
-                     NUME_GROUPE=1,
-                     NUME_RESU_THER = 1,
-                     CHAR_ETAT_A=1,
-                     CHAR_ETAT_B=2,
-                     PRES_A=0,
-                     PRES_B=0,
-                     O_ETOILE         =1.0,
-                     TABL_TEMP        =T_TEMP,
-                     TEMP_REF_A=20.0,
-                     TEMP_REF_B=20.0,),
-                  _F(NB_OCCUR=1,
-                     NUME_SITU=3,
                      NOM_SITU='Situation 3',
                      NUME_GROUPE=1,
-                     CHAR_ETAT_A=3,
-                     CHAR_ETAT_B=4,
-                     NUME_RESU_THER = 2,
-                     PRES_A=0,
-                     PRES_B=0,
-                     O_ETOILE         =1.0,
-                     TABL_TEMP        =T_TEMP2,
-                     TEMP_REF_A=20.0,
-                     TEMP_REF_B=20.0,),),);
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),),
+                 SEISME=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=7,
+                     NB_CYCL_SEISME = 10, 
+                     NOM_SITU='Seisme',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT=11,),),);
 
-IMPR_TABLE(    TABLE=FAT13_BE,) 
+IMPR_TABLE(    TABLE=SN3s,) 
 
-#-------------------------------------------------------------------------------
-#   TEST (SOLUTION DE REFERENCE ANALYTIQUE)
+# CALCUL DE SN/SN*/ROCHET POUR LA SITUATION 3 AVEC SEISME (JONCTION CORPS/TUBU)
+SN3Js=POST_RCCM( MATER=MAT,
+                 TITRE='SN/SN*/ROCHET AVEC SEISME, SITUATION 3, UNITAIRE',
+                 METHODE='TOUT_INST',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 OPTION='SN',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=11,
+                      NOM_CHAR='ETAT SEISME',
+                      FX_CORP=0.25,  FY_CORP=0.25,  FZ_CORP=0.25,
+                      FX_TUBU=0.25,  FY_TUBU=0.25,  FZ_TUBU=0.25,
+                      MX_CORP=0.25,  MY_CORP=0.25,  MZ_CORP=0.25,
+                      MX_TUBU=0.25,  MY_TUBU=0.25,  MZ_TUBU=0.25,),
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      FX_CORP=0.5,  FY_CORP=2.0,  FZ_CORP=-0.5,
+                      FX_TUBU=0.2,  FY_TUBU=-2.0,  FZ_TUBU=0.0,
+                      MX_CORP=0.2,  MY_CORP=-1.0,  MZ_CORP=-0.5,
+                      MX_TUBU=0.1,  MY_TUBU=0.0,  MZ_TUBU=-0.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      FX_CORP=-5.0,  FY_CORP=0.25,  FZ_CORP=0.0,
+                      FX_TUBU=-4.0,  FY_TUBU=0.25,  FZ_TUBU=0.05,
+                      MX_CORP=-1.0,  MY_CORP=0.25,  MZ_CORP=0.0,
+                      MX_TUBU=0.0,  MY_TUBU=0.25,  MZ_TUBU=0.05,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_FX_TUBU=T_MX,
+                      TABL_FY_TUBU=T_MY,
+                      TABL_FZ_TUBU=T_MZ,
+                      TABL_MX_TUBU=T_MX,
+                      TABL_MY_TUBU=T_MY,
+                      TABL_MZ_TUBU=T_MZ,
+                      TABL_FX_CORP=T_MX,
+                      TABL_FY_CORP=T_MY,
+                      TABL_FZ_CORP=T_MZ,
+                      TABL_MX_CORP=T_MX,
+                      TABL_MY_CORP=T_MY,
+                      TABL_MZ_CORP=T_MZ,
+                      TABL_PRES=T_PRES,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=1,
+                     NOM_SITU='Situation 3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),),
+                 SEISME=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=7,
+                     NB_CYCL_SEISME = 10, 
+                     NOM_SITU='Seisme',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT=11,),),);
+
+IMPR_TABLE(    TABLE=SN3Js,) 
 #--------------------------------------------------------------------------------
-# FATIGUE ENVIRONNEMENTALE - SITUATION 1 + SITUATION 3
+# VALIDATION DE LA METHODE B3200 avec MOMENTS SOUS FORME DE TRANSITOIRES
+#--------------------------------------------------------------------------------
+# CALCUL DE SN/SN*/ROCHET POUR LA SITUATION 1 avec SEISME
+SN1s=POST_RCCM(TYPE_RESU_MECA='B3200',
+                OPTION='SN',
+                TYPE_RESU='DETAILS',
+                METHODE='TOUT_INST',
+                MATER=MAT,
+                TITRE='SN/SN*/ROCHET AVEC SEISME, SITUATION 1, B3200, MOMENTS TRANSITOIRES',
+                RESU_MECA = (_F(NUME_RESU_MECA = 1, 
+                                TABL_RESU_MECA = T_MEC1), 
+                            ),
+                RESU_PRES = (_F(NUME_RESU_PRES = 1, 
+                                TABL_RESU_PRES = T_PR1), 
+                            ),
+                RESU_THER = (_F(NUME_RESU_THER = 1, 
+                                TABL_RESU_THER = T_TH1), 
+                            ),
+                SITUATION=(_F(  NUME_SITU=1,
+                               NUME_GROUPE=1,
+                               NOM_SITU='Situ1',
+                               NB_OCCUR = 1,
+                               NUME_RESU_MECA = 1,
+                               NUME_RESU_PRES = 1,
+                               NUME_RESU_THER = 1,),),
+                 SEISME=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=7,
+                     NB_CYCL_SEISME = 10, 
+                     NOM_SITU='Seisme',
+                     NUME_GROUPE=1,
+                     TABL_MX=T_MX,
+                     TABL_MY=T_MY,
+                     TABL_MZ=T_MZ,
+                     TABL_FX=T_MX,
+                     TABL_FY=T_MY,
+                     TABL_FZ=T_MZ,
+                         ),),),
+
+IMPR_TABLE(    TABLE=SN1s,) 
+
+#--------------------------------------------------------------------------------
+# VALIDATION DE LA METHODE B3200 avec MOMENTS INTERPOLES SUR LA TEMPERATURE
+#--------------------------------------------------------------------------------
+# CALCUL DE SN/SN*/ROCHET POUR LA SITUATION 5 AVEC SEISME
+SN5s=POST_RCCM( MATER=MAT,
+                 TITRE='SN/SN*/ROCHET AVEC SEISME, SITUATION 5, MOMENTS (TEMPER.)',
+                 METHODE='TOUT_INST',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 OPTION='SN',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=11,
+                      NOM_CHAR='ETAT SEISME',
+                      MX=1.0,  MY=1.0,  MZ=1.0,),
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU5',
+                      MX=0.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU5',
+                      MX=-10.0,  MY=1.0,  MZ=0.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=1,
+                     NOM_SITU='Situation 5',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     TEMP_A=0.0,
+                     TEMP_B=400.0,
+                     TABL_TEMP = T_TEMP5,
+                     PRES_A=0.0,
+                     PRES_B=0.0,),),
+                 SEISME=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=7,
+                     NB_CYCL_SEISME = 10, 
+                     NOM_SITU='Seisme',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT=11,),),);
+
+IMPR_TABLE(    TABLE=SN5s,)  
+
+# CALCUL DE SN/SN*/ROCHET POUR LA SITUATION 5 AVEC SEISME (JONCTION CORPS/TUBU)
+SN5Js=POST_RCCM( MATER=MAT,
+                 TITRE='SN/SN*/ROCHET AVEC SEISME, SITUATION 5, MOMENTS (TEMPER.)',
+                 METHODE='TOUT_INST',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 OPTION='SN',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=11,
+                      NOM_CHAR='ETAT SEISME',
+                      FX_CORP=0.25,  FY_CORP=0.25,  FZ_CORP=0.25,
+                      FX_TUBU=0.25,  FY_TUBU=0.25,  FZ_TUBU=0.25,
+                      MX_CORP=0.25,  MY_CORP=0.25,  MZ_CORP=0.25,
+                      MX_TUBU=0.25,  MY_TUBU=0.25,  MZ_TUBU=0.25,),
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU5',
+                      FX_CORP=0.5,  FY_CORP=2.0,  FZ_CORP=-0.5,
+                      FX_TUBU=-0.5,  FY_TUBU=3.0,  FZ_TUBU=0.0,
+                      MX_CORP=0.2,  MY_CORP=4.0,  MZ_CORP=-0.5,
+                      MX_TUBU=-0.2,  MY_TUBU=-10.0,  MZ_TUBU=-0.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU5',
+                      FX_CORP=-5.0,  FY_CORP=0.25,  FZ_CORP=0.0,
+                      FX_TUBU=-4.0,  FY_TUBU=0.25,  FZ_TUBU=0.25,
+                      MX_CORP=-1.0,  MY_CORP=0.25,  MZ_CORP=0.0,
+                      MX_TUBU=0.0,  MY_TUBU=0.25,  MZ_TUBU=0.25,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_FX_TUBU=T_MX,
+                      TABL_FY_TUBU=T_MY,
+                      TABL_FZ_TUBU=T_MZ,
+                      TABL_MX_TUBU=T_MX,
+                      TABL_MY_TUBU=T_MY,
+                      TABL_MZ_TUBU=T_MZ,
+                      TABL_FX_CORP=T_MX,
+                      TABL_FY_CORP=T_MY,
+                      TABL_FZ_CORP=T_MZ,
+                      TABL_MX_CORP=T_MX,
+                      TABL_MY_CORP=T_MY,
+                      TABL_MZ_CORP=T_MZ,
+                      TABL_PRES=T_PRES,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=1,
+                     NOM_SITU='Situation 5',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     TEMP_A=0.0,
+                     TEMP_B=400.0,
+                     TABL_TEMP = T_TEMP5,
+                     PRES_A=0.0,
+                     PRES_B=0.0,),),
+                 SEISME=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=7,
+                     NB_CYCL_SEISME = 10, 
+                     NOM_SITU='Seisme',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT=11,),),);
+
+IMPR_TABLE(    TABLE=SN5Js,)  
+
+#--------------------------------------------------------------------------------
+#   TEST SUR UNITAIRE (SOLUTION DE REFERENCE ANALYTIQUE)
+#--------------------------------------------------------------------------------
+# SITUATION 3 avec SEISME
+# SN
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=0.108818820412,
-           VALE_REFE=0.1088,
-           NOM_PARA='FEN',
-           TABLE=FAT13_BE,
+           VALE_CALC=302.500000000,
+           VALE_REFE=302.5,
+           NOM_PARA='SN_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='ORIG',),
-           )
+           TABLE=SN3s,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=4.4408920985E-16,
-           VALE_REFE=4.44E-16,
-           NOM_PARA='FEN',
-           TABLE=FAT13_BE,
+           VALE_CALC=620.000000000,
+           VALE_REFE=620.0,
+           NOM_PARA='SN_MAX',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
-           )
+           TABLE=SN3s,)
+
+# SN*
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=340.000000000,
+           VALE_REFE=340.0,
+           NOM_PARA='SN*_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN3s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=520.000000000,
+           VALE_REFE=520.0,
+           NOM_PARA='SN*_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN3s,)
+
+#ROCHET THERMIQUE 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.000000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SIGM_M_PRES',
+           TYPE_TEST='MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN3s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.000000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SIGM_M_PRES',
+           TYPE_TEST='MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN3s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=300.000000000,
+           VALE_REFE=300.0,
+           NOM_PARA='VALE_MAXI_LINE',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN3s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=300.000000000,
+           VALE_REFE=300.0,
+           NOM_PARA='VALE_MAXI_LINE',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN3s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=62.500000000,
+           VALE_REFE=62.5,
+           NOM_PARA='SN_THER_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN3s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=200.000000000,
+           VALE_REFE=200.0,
+           NOM_PARA='SN_THER_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN3s,)
+
+# SITUATION 3 JONCTION avec SEISME
+# SN
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=302.500000000,
+           VALE_REFE=302.5,
+           NOM_PARA='SN_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN3Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=620.000000000,
+           VALE_REFE=620.0,
+           NOM_PARA='SN_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN3Js,)
+
+# SN*
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=340.000000000,
+           VALE_REFE=340.0,
+           NOM_PARA='SN*_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN3Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=520.000000000,
+           VALE_REFE=520.0,
+           NOM_PARA='SN*_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN3Js,)
+
+#ROCHET THERMIQUE 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.000000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SIGM_M_PRES',
+           TYPE_TEST='MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN3Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.000000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SIGM_M_PRES',
+           TYPE_TEST='MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN3Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=300.000000000,
+           VALE_REFE=300.0,
+           NOM_PARA='VALE_MAXI_LINE',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN3Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=300.000000000,
+           VALE_REFE=300.0,
+           NOM_PARA='VALE_MAXI_LINE',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN3s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=62.500000000,
+           VALE_REFE=62.5,
+           NOM_PARA='SN_THER_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN3Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=200.000000000,
+           VALE_REFE=200.0,
+           NOM_PARA='SN_THER_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN3Js,)
+
+#--------------------------------------------------------------------------------
+#   TEST SUR LES MOMENTS TRANSITOIRES (SOLUTION DE REFERENCE ANALYTIQUE)
+#--------------------------------------------------------------------------------
+# SITUATION 1 avec SEISME
+# SN
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=440.000000000,
+           VALE_REFE=440.0,
+           NOM_PARA='SN_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN1s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=685.000000000,
+           VALE_REFE=685.0,
+           NOM_PARA='SN_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN1s,)
+
+# SN*
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=490.000000000,
+           VALE_REFE=490.0,
+           NOM_PARA='SN*_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN1s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=660.000000000,
+           VALE_REFE=660.0,
+           NOM_PARA='SN*_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN1s,)
+
+#ROCHET THERMIQUE 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=52.500000000,
+           VALE_REFE=52.5,
+           NOM_PARA='SIGM_M_PRES',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN1s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=52.500000000,
+           VALE_REFE=52.5,
+           NOM_PARA='SIGM_M_PRES',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN1s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=761.904760000,
+           VALE_REFE=761.90476,
+           NOM_PARA='VALE_MAXI_LINE',
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=SN1s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=761.904760000,
+           VALE_REFE=761.90476,
+           NOM_PARA='VALE_MAXI_LINE',
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=SN1s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=50.000000000,
+           VALE_REFE=50.0,
+           NOM_PARA='SN_THER_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN1s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=112.500000000,
+           VALE_REFE=112.5,
+           NOM_PARA='SN_THER_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN1s,)
+
+#--------------------------------------------------------------------------------
+#   TEST SUR MOMENTS(TEMPERATURE) (SOLUTION DE REFERENCE ANALYTIQUE)
+#--------------------------------------------------------------------------------
+# SITUATION 5 avec SEISME
+# SN
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=550.000000000,
+           VALE_REFE=550.0,
+           NOM_PARA='SN_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN5s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=587.500000000,
+           VALE_REFE=587.5,
+           NOM_PARA='SN_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN5s,)
+
+# SN*
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=462.500000000,
+           VALE_REFE=462.5,
+           NOM_PARA='SN*_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN5s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=556.2500000000,
+           VALE_REFE=556.25,
+           NOM_PARA='SN*_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN5s,)
+
+#ROCHET THERMIQUE 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.000000000,
+           VALE_REFE=0.0,
+           ORDRE_GRANDEUR=1.0e-6, 
+           NOM_PARA='SIGM_M_PRES',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN5s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.000000000,
+           VALE_REFE=0.0,
+           ORDRE_GRANDEUR=1.0e-6, 
+           NOM_PARA='SIGM_M_PRES',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN5s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.000000000,
+           VALE_REFE=0.0,
+           ORDRE_GRANDEUR=1.0e-6, 
+           NOM_PARA='SN_THER_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN5s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=200.000000000,
+           VALE_REFE=200.0,
+           NOM_PARA='SN_THER_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN5s,)
+
+# SITUATION 5 avec SEISME JONCTION CORPS/TUBU
+# SN
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=550.000000000,
+           VALE_REFE=550.0,
+           NOM_PARA='SN_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN5Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=587.500000000,
+           VALE_REFE=587.5,
+           NOM_PARA='SN_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN5Js,)
+
+# SN*
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=462.500000000,
+           VALE_REFE=462.5,
+           NOM_PARA='SN*_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN5Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=556.2500000000,
+           VALE_REFE=556.25,
+           NOM_PARA='SN*_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN5Js,)
+
+#ROCHET THERMIQUE 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.000000000,
+           VALE_REFE=0.0,
+           ORDRE_GRANDEUR=1.0e-6, 
+           NOM_PARA='SIGM_M_PRES',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN5Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.000000000,
+           VALE_REFE=0.0,
+           ORDRE_GRANDEUR=1.0e-6, 
+           NOM_PARA='SIGM_M_PRES',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN5Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.000000000,
+           VALE_REFE=0.0,
+           ORDRE_GRANDEUR=1.0e-6, 
+           NOM_PARA='SN_THER_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=SN5Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=200.000000000,
+           VALE_REFE=200.0,
+           NOM_PARA='SN_THER_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=SN5Js,)
+
 FIN()

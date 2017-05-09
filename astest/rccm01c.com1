@@ -1,0 +1,2421 @@
+# ======================================================================
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+# ======================================================================
+
+# VALIDATION DE L'OPERATEUR POST_RCCM
+# OPTION FATIGUE en B3200 UNITAIRE
+
+POURSUITE( CODE='OUI' )
+
+#--------------------------------------------------------------------------------
+# VALIDATION DE LA METHODE B3200 avec MOMENTS SOUS FORMAT UNITAIRE
+#--------------------------------------------------------------------------------
+# CONTRAINTES "MX" UNITAIRES           
+T_MX = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
+                      NUME_TABLE=9,)
+
+# CONTRAINTES "MY" UNITAIRES                           
+T_MY = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
+                      NUME_TABLE=10,)
+                      
+# CONTRAINTES "MZ" UNITAIRES                            
+T_MZ = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
+                      NUME_TABLE=11,)
+
+# CONTRAINTES "PRES" UNITAIRES                            
+T_PRES = LIRE_TABLE (UNITE=35, FORMAT='ASTER',SEPARATEUR=' ',
+                      NUME_TABLE=12,)
+
+# CALCUL DE FATIGUE POUR LES SITUATIONS 3 et 4
+# METHODE TOUT_INST
+FAT34=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE, SITU 3-4,UNITAIRE,TOUT_INST,NOCC3=1,NOCC4=1',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU4',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU4',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=4,
+                     NOM_SITU='Situation4',
+                     NUME_GROUPE=1,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FAT34,) 
+
+# CALCUL DE FATIGUE POUR LES SITUATIONS 3 et 4
+# METHODE TOUT_INST, AFFICHAGE DES VALEURS MAXI UNIQUEMENT
+FAT34max=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE (MAXI), SITU 3-4,UNITAIRE,TOUT_INST,NOCC3=1,NOCC4=1',
+                 TYPE_RESU='VALE_MAX',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU4',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU4',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=4,
+                     NOM_SITU='Situation4',
+                     NUME_GROUPE=1,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FAT34max,)
+
+# CALCUL DE FATIGUE POUR LES SITUATIONS 3 et 4, JONCTION CORPS/TUBU
+# METHODE TOUT_INST
+FAT34J=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE JONCTION, SITU 3-4,UNITAIRE,TOUT_INST,NOCC3=1,NOCC4=1',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      FX_CORP=0.5,  FY_CORP=2.0,  FZ_CORP=-0.5,
+                      FX_TUBU=0.2,  FY_TUBU=-2.0,  FZ_TUBU=0.0,
+                      MX_CORP=0.2,  MY_CORP=-1.0,  MZ_CORP=-0.5,
+                      MX_TUBU=0.1,  MY_TUBU=0.0,  MZ_TUBU=-0.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      FX_CORP=-5.0,  FY_CORP=0.25,  FZ_CORP=0.0,
+                      FX_TUBU=-4.0,  FY_TUBU=0.25,  FZ_TUBU=0.05,
+                      MX_CORP=-1.0,  MY_CORP=0.25,  MZ_CORP=0.0,
+                      MX_TUBU=0.0,  MY_TUBU=0.25,  MZ_TUBU=0.05,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU4',
+                      FX_CORP=0.1,  FY_CORP=-50.0,  FZ_CORP=-0.2,
+                      FX_TUBU=0.1,  FY_TUBU=50.0,  FZ_TUBU=-0.3,
+                      MX_CORP=0.1,  MY_CORP=-10.0,  MZ_CORP=0.0,
+                      MX_TUBU=0.1,  MY_TUBU=10.0,  MZ_TUBU=-0.1,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU4',
+                      FX_CORP=0.25,  FY_CORP=-0.25,  FZ_CORP=-1.5,
+                      FX_TUBU=0.25,  FY_TUBU=-0.25,  FZ_TUBU=0.0,
+                      MX_CORP=0.25,  MY_CORP=-0.25,  MZ_CORP=0.0,
+                      MX_TUBU=0.25,  MY_TUBU=-0.25,  MZ_TUBU=0.0,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_FX_TUBU=T_MX,
+                      TABL_FY_TUBU=T_MY,
+                      TABL_FZ_TUBU=T_MZ,
+                      TABL_MX_TUBU=T_MX,
+                      TABL_MY_TUBU=T_MY,
+                      TABL_MZ_TUBU=T_MZ,
+                      TABL_FX_CORP=T_MX,
+                      TABL_FY_CORP=T_MY,
+                      TABL_FZ_CORP=T_MZ,
+                      TABL_MX_CORP=T_MX,
+                      TABL_MY_CORP=T_MY,
+                      TABL_MZ_CORP=T_MZ,
+                      TABL_PRES=T_PRES,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=4,
+                     NOM_SITU='Situation4',
+                     NUME_GROUPE=1,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FAT34J,) 
+
+# CALCUL DE FATIGUE POUR LES SITUATIONS 3 et 4
+# METHODE TOUT_INST, PRISE EN COMPTE DU SEISME
+FAT34s=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE AVEC SEISME, SITU 3-4,UNITAIRE,TOUT_INST,NOCC3=1,NOCC4=1',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=11,
+                      NOM_CHAR='ETAT SEISME',
+                      MX=1.0,  MY=1.0,  MZ=1.0,),
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU4',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU4',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=7,
+                     NUME_SITU=4,
+                     NOM_SITU='Situation4',
+                     NUME_GROUPE=1,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),
+                 SEISME=(
+                  _F(NB_OCCUR=18,
+                     NUME_SITU=7,
+                     NB_CYCL_SEISME = 10, 
+                     NOM_SITU='Seisme',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT=11,),),);
+
+IMPR_TABLE(    TABLE=FAT34s,) 
+
+# CALCUL DE FATIGUE POUR LES SITUATIONS 3 et 4, NOCCS DIFFERENTS
+# METHODE TOUT_INST
+FAT34b=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE, SITU 3-4,UNITAIRE,TOUT_INST,NOCC3=10,NOCC4=7',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU4',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU4',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=7,
+                     NUME_SITU=4,
+                     NOM_SITU='Situation4',
+                     NUME_GROUPE=1,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FAT34b,) 
+
+# CALCUL DE FATIGUE POUR LES SITUATIONS 3 et 4, NOCCS DIFFERENTS
+# METHODE TRESCA, LE SN* A L'ORIGINE EST SOUS-ESTIME
+FAT34c=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE, SITU 3-4,UNITAIRE,TRESCA,NOCC3=10,NOCC4=7',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TRESCA',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU4',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU4',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=7,
+                     NUME_SITU=4,
+                     NOM_SITU='Situation4',
+                     NUME_GROUPE=1,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FAT34c,) 
+
+# CALCUL DE FATIGUE POUR LES SITUATIONS 3 et 4, NOCCS DIFFERENTS
+# METHODE TOUT_INST
+# KE_MIXTE
+FAT34d=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE KE_MIXTE, SITU 3-4,UNITAIRE,TOUT_INST,NOCC3=1,NOCC4=1',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 TYPE_KE = 'KE_MIXTE',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU4',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU4',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=7,
+                     NUME_SITU=4,
+                     NOM_SITU='Situation4',
+                     NUME_GROUPE=1,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),);
+
+IMPR_TABLE(    TABLE=FAT34d,)
+
+# CALCUL DE FATIGUE POUR LES SITUATIONS 3 et 4, NOCCS DIFFERENTS
+# METHODE TOUT_INST
+# KE_MIXTE ET SEISME
+FAT34ds=POST_RCCM( MATER=MAT,
+                 TITRE='FATIGUE KE_MIXTE AVEC SEISME, SITU 3-4,UNITAIRE,TOUT_INST,NOCC3=1,NOCC4=1',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 METHODE='TOUT_INST',
+                 TYPE_KE = 'KE_MIXTE',
+                 OPTION='FATIGUE',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=11,
+                      NOM_CHAR='ETAT SEISME',
+                      MX=1.0,  MY=1.0,  MZ=1.0,),
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),
+                   _F(NUME_CHAR=3,
+                      NOM_CHAR='ETAT A - SITU4',
+                      MX=0.4,  MY=0.0,  MZ=-0.6,),
+                   _F(NUME_CHAR=4,
+                      NOM_CHAR='ETAT B - SITU4',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_PRES=T_PRES,
+                      TABL_MZ=T_MZ,),),
+                 RESU_THER=( _F(NUME_RESU_THER=1,
+                                TABL_RESU_THER=T_TH1,),
+                             _F(NUME_RESU_THER=2,
+                                TABL_RESU_THER=T_TH2,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=10,
+                     NUME_SITU=3,
+                     NOM_SITU='Situation3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     NUME_RESU_THER = 1,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),
+                  _F(NB_OCCUR=7,
+                     NUME_SITU=4,
+                     NOM_SITU='Situation4',
+                     NUME_GROUPE=1,
+                     NUME_RESU_THER = 2,
+                     CHAR_ETAT_A=3,
+                     CHAR_ETAT_B=4,
+                     PRES_A=0.4,
+                     PRES_B=1.0,),),
+                 SEISME=(
+                  _F(NB_OCCUR=18,
+                     NUME_SITU=7,
+                     NB_CYCL_SEISME = 10, 
+                     NOM_SITU='Seisme',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT=11,),),);
+
+IMPR_TABLE(    TABLE=FAT34ds,)
+
+#--------------------------------------------------------------------------------
+#   TEST SUR UNITAIRE (SOLUTION DE REFERENCE ANALYTIQUE)
+#--------------------------------------------------------------------------------
+# -------------------FAT34-----------------------
+# SITUATIONS 3 et 4, METHODE TOUT_INST
+# SN SITUATIONS NON COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.500000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=105.000000000,
+           VALE_REFE=105.0,
+           NOM_PARA='SN',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.000000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=307.500000000,
+           VALE_REFE=307.5,
+           NOM_PARA='SN',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+# SALT SITUATIONS NON COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=75.000000000,
+           VALE_REFE=75.0,
+           NOM_PARA='SALT',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=55.000000000,
+           VALE_REFE=55.0,
+           NOM_PARA='SALT',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=205.000000000,
+           VALE_REFE=205.0,
+           NOM_PARA='SALT',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=170.000000000,
+           VALE_REFE=170.0,
+           NOM_PARA='SALT',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+# SN SITUATIONS COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.500000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.000000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+# SN* SITUATIONS COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=165.000000000,
+           VALE_REFE=165.0,
+           NOM_PARA='SN*', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=295.000000000,
+           VALE_REFE=295.0,
+           NOM_PARA='SN*', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+# SALT SITUATIONS COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=75.000000000,
+           VALE_REFE=75.0,
+           NOM_PARA='SALT',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=55.000000000,
+           VALE_REFE=55.0,
+           NOM_PARA='SALT',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=205.000000000,
+           VALE_REFE=205.0,
+           NOM_PARA='SALT',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=170.000000000,
+           VALE_REFE=170.0,
+           NOM_PARA='SALT',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+# FU SITUATIONS COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00026000000,
+           VALE_REFE=0.00026,
+           NOM_PARA='FU_UNIT', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00075000000,
+           VALE_REFE=0.00075,
+           NOM_PARA='FU_UNIT', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+# SN SITUATIONS FACTEUR USAGE FINAL
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.500000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='FACT',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.000000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='FACT',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+# FU_UNIT SITUATIONS FACTEUR USAGE FINAL
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00026000000,
+           VALE_REFE=0.00026,
+           NOM_PARA='FU_UNIT', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='FACT',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00075000000,
+           VALE_REFE=0.00075,
+           NOM_PARA='FU_UNIT', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='FACT',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+# FU_UNIT SITUATIONS FACTEUR USAGE FINAL
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00026000000,
+           VALE_REFE=0.00026,
+           NOM_PARA='FU_PARTIEL', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='FACT',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00075000000,
+           VALE_REFE=0.00075,
+           NOM_PARA='FU_PARTIEL', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='FACT',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+#VALEURS MAX
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.50000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.00000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=165.00000000,
+           VALE_REFE=165.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=295.00000000,
+           VALE_REFE=295.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=150.00000000,
+           VALE_REFE=150.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=410.00000000,
+           VALE_REFE=410.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=75.00000000,
+           VALE_REFE=75.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=205.00000000,
+           VALE_REFE=205.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00026000000,
+           VALE_REFE=0.00026,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00075000000,
+           VALE_REFE=0.00075,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+#VALEURS ROCHET
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.00000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SIGM_M_PRES', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.00000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SIGM_M_PRES', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=62.500000000,
+           VALE_REFE=62.5,
+           NOM_PARA='SN_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=200.00000000,
+           VALE_REFE=200.0,
+           NOM_PARA='SN_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=300.000000000,
+           VALE_REFE=300.0,
+           NOM_PARA='VALE_MAXI_LINE', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=300.000000000,
+           VALE_REFE=300.0,
+           NOM_PARA='VALE_MAXI_LINE', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=50.000000000,
+           VALE_REFE=50.0,
+           NOM_PARA='SP_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=250.00000000,
+           VALE_REFE=250.0,
+           NOM_PARA='SP_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=390.000000000,
+           VALE_REFE=390.0,
+           NOM_PARA='VALE_MAXI_PARAB', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=390.000000000,
+           VALE_REFE=390.0,
+           NOM_PARA='VALE_MAXI_PARAB', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34,)
+
+# -------------------FAT34max-----------------------
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.50000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34max,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.00000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34max,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=165.00000000,
+           VALE_REFE=165.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34max,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=295.00000000,
+           VALE_REFE=295.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34max,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=150.00000000,
+           VALE_REFE=150.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34max,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=410.00000000,
+           VALE_REFE=410.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34max,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=75.00000000,
+           VALE_REFE=75.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34max,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=205.00000000,
+           VALE_REFE=205.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34max,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00026000000,
+           VALE_REFE=0.00026,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34max,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00075000000,
+           VALE_REFE=0.00075,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34max,)
+
+# -------------------FAT34J-----------------------
+# JONCTION 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.50000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34J,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.00000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34J,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=165.00000000,
+           VALE_REFE=165.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34J,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=295.00000000,
+           VALE_REFE=295.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34J,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=150.00000000,
+           VALE_REFE=150.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34J,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=410.00000000,
+           VALE_REFE=410.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34J,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=75.00000000,
+           VALE_REFE=75.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34J,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=205.00000000,
+           VALE_REFE=205.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34J,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00026000000,
+           VALE_REFE=0.00026,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34J,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00075000000,
+           VALE_REFE=0.00075,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34J,)
+
+# -------------------FAT34s-----------------------
+# PRISE EN COMPTE DU SEISME
+# SN SITUATIONS NON COMBINEES A L'ORIGINE
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.500000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=302.500000000,
+           VALE_REFE=302.5,
+           NOM_PARA='SN',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=105.000000000,
+           VALE_REFE=105.0,
+           NOM_PARA='SN',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=280.000000000,
+           VALE_REFE=280.0,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=175.000000000,
+           VALE_REFE=175.0,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=7,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+# SN SITUATIONS NON COMBINEES A L'EXTREMITE
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.000000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=620.000000000,
+           VALE_REFE=620.0,
+           NOM_PARA='SN',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=307.500000000,
+           VALE_REFE=307.5,
+           NOM_PARA='SN',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=532.500000000,
+           VALE_REFE=532.5,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=225.000000000,
+           VALE_REFE=225.0,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=7,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+# SN* SITUATIONS NON COMBINEES A L'ORIGINE
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=165.00000000,
+           VALE_REFE=165.0,
+           NOM_PARA='SN*',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=340.000000000,
+           VALE_REFE=340.0,
+           NOM_PARA='SN*',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=142.500000000,
+           VALE_REFE=142.5,
+           NOM_PARA='SN*',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=317.500000000,
+           VALE_REFE=317.5,
+           NOM_PARA='SN*', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=175.000000000,
+           VALE_REFE=175.0,
+           NOM_PARA='SN*', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=7,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+# SN* SITUATIONS NON COMBINEES A L'EXTREMITE
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=295.000000000,
+           VALE_REFE=295.0,
+           NOM_PARA='SN*',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=520.000000000,
+           VALE_REFE=520.0,
+           NOM_PARA='SN*',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=207.500000000,
+           VALE_REFE=207.5,
+           NOM_PARA='SN*',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=432.500000000,
+           VALE_REFE=432.5,
+           NOM_PARA='SN*', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=225.000000000,
+           VALE_REFE=225.0,
+           NOM_PARA='SN*', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=7,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+# SALT SITUATIONS NON COMBINEES A L'ORIGINE
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=75.00000000,
+           VALE_REFE=75.0,
+           NOM_PARA='SALT',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.000000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SALT',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=55.000000000,
+           VALE_REFE=55.0,
+           NOM_PARA='SALT',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=105.000000000,
+           VALE_REFE=105.0,
+           NOM_PARA='SALT', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=50.000000000,
+           VALE_REFE=50.0,
+           NOM_PARA='SALT', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=7,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+# SALT SITUATIONS NON COMBINEES A L'EXTREMITE
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=205.000000000,
+           VALE_REFE=205.0,
+           NOM_PARA='SALT',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=345.666666667,
+           VALE_REFE=345.666666667,
+           NOM_PARA='SALT',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=3,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=170.000000000,
+           VALE_REFE=170.0,
+           NOM_PARA='SALT',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=270.000000000,
+           VALE_REFE=270.0,
+           NOM_PARA='SALT',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=4,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=100.000000000,
+           VALE_REFE=100.0,
+           NOM_PARA='SALT',
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SIT1',
+                     VALE_I=7,),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+# SN SITUATIONS COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.500000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=302.500000000,
+           VALE_REFE=302.5,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.000000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=620.000000000,
+           VALE_REFE=620.0,
+           NOM_PARA='SN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+# SN* SITUATIONS COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=165.000000000,
+           VALE_REFE=165.0,
+           NOM_PARA='SN*', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=340.000000000,
+           VALE_REFE=340.0,
+           NOM_PARA='SN*', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=295.000000000,
+           VALE_REFE=295.0,
+           NOM_PARA='SN*', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=520.000000000,
+           VALE_REFE=520.0,
+           NOM_PARA='SN*', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+# FU SITUATIONS COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00026000000,
+           VALE_REFE=0.00026,
+           NOM_PARA='FU_UNIT', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00046000000,
+           VALE_REFE=0.00046,
+           NOM_PARA='FU_UNIT', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00075000000,
+           VALE_REFE=0.00075,
+           NOM_PARA='FU_UNIT', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.001303333,
+           VALE_REFE=0.001303333,
+           NOM_PARA='FU_UNIT', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='AVEC',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+#VALEURS MAX
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=302.50000000,
+           VALE_REFE=302.5,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=620.00000000,
+           VALE_REFE=620.0,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=340.00000000,
+           VALE_REFE=340.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=520.00000000,
+           VALE_REFE=520.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=250.00000000,
+           VALE_REFE=250.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=610.00000000,
+           VALE_REFE=610.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.00000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=345.666666667,
+           VALE_REFE=345.666666667,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00889000000,
+           VALE_REFE=0.00889,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0204146665059,
+           VALE_REFE=0.0204146665059,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+#VALEURS ROCHET
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.00000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SIGM_M_PRES', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.00000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SIGM_M_PRES', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=62.500000000,
+           VALE_REFE=62.5,
+           NOM_PARA='SN_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=200.00000000,
+           VALE_REFE=200.0,
+           NOM_PARA='SN_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=300.000000000,
+           VALE_REFE=300.0,
+           NOM_PARA='VALE_MAXI_LINE', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=300.000000000,
+           VALE_REFE=300.0,
+           NOM_PARA='VALE_MAXI_LINE', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=50.000000000,
+           VALE_REFE=50.0,
+           NOM_PARA='SP_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=250.00000000,
+           VALE_REFE=250.0,
+           NOM_PARA='SP_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=390.000000000,
+           VALE_REFE=390.0,
+           NOM_PARA='VALE_MAXI_PARAB', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=390.000000000,
+           VALE_REFE=390.0,
+           NOM_PARA='VALE_MAXI_PARAB', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34s,)
+
+# -------------------FAT34b-----------------------
+# NOCC DIFFERENTS
+# VALEURS MAX
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.50000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34b,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.00000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34b,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=165.00000000,
+           VALE_REFE=165.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34b,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=295.00000000,
+           VALE_REFE=295.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34b,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=150.00000000,
+           VALE_REFE=150.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34b,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=410.00000000,
+           VALE_REFE=410.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34b,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=75.00000000,
+           VALE_REFE=75.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34b,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=205.00000000,
+           VALE_REFE=205.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34b,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00227000000,
+           VALE_REFE=0.00227,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34b,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00648000000,
+           VALE_REFE=0.00648,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34b,)
+
+# -------------------FAT34c-----------------------
+# METHODE DE SELECTION DES INSTANTS TRESCA
+# VALEURS MAX
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.50000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34c,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.00000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34c,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=152.50000000,
+           VALE_REFE=152.5,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34c,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=295.00000000,
+           VALE_REFE=295.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34c,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=150.00000000,
+           VALE_REFE=150.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34c,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=410.00000000,
+           VALE_REFE=410.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34c,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=75.00000000,
+           VALE_REFE=75.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34c,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=205.00000000,
+           VALE_REFE=205.0,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34c,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00227000000,
+           VALE_REFE=0.00227,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34c,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.00648000000,
+           VALE_REFE=0.00648,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34c,)
+
+# -------------------FAT34d-----------------------
+# PRISE EN COMPTE DU KE_MIXTE
+# KE_THER, SALT SITUATIONS NON COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=76.260609358,
+           VALE_REFE=76.260609358,
+           NOM_PARA='SALT',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=1.050424374,
+           VALE_REFE=1.050424374,
+           NOM_PARA='KE_THER',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=55.218535469,
+           VALE_REFE=55.218535469,
+           NOM_PARA='SALT',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=1.008741419,
+           VALE_REFE=1.008741419,
+           NOM_PARA='KE_THER',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=248.538514443,
+           VALE_REFE=248.538514443,
+           NOM_PARA='SALT',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=204.786942924,
+           VALE_REFE=204.786942924,
+           NOM_PARA='SALT',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='SITU',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+#SALT SITUATIONS COMBINEES 
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=76.260609358,
+           VALE_REFE=76.260609358,
+           NOM_PARA='SALT',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=56.26060935,
+           VALE_REFE=56.26060935,
+           NOM_PARA='SALT',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=248.538514443,
+           VALE_REFE=248.538514443,
+           NOM_PARA='SALT',
+           TYPE_TEST='MAX', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=213.538514443,
+           VALE_REFE=213.538514443,
+           NOM_PARA='SALT',
+           TYPE_TEST='MIN', 
+           FILTRE=(_F(NOM_PARA='TYPE',
+                     VALE_K='COMB',),
+                   _F(NOM_PARA='SEISME',
+                     VALE_K='SANS',),
+                  _F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+#VALEURS MAX
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=127.50000000,
+           VALE_REFE=127.5,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=395.00000000,
+           VALE_REFE=395.0,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=165.00000000,
+           VALE_REFE=165.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=295.00000000,
+           VALE_REFE=295.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=150.00000000,
+           VALE_REFE=150.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=410.00000000,
+           VALE_REFE=410.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=76.260609358,
+           VALE_REFE=76.260609358,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=248.538514443,
+           VALE_REFE=248.538514443,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.002312861,
+           VALE_REFE=0.002312861,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.007960309,
+           VALE_REFE=0.007960309,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+#VALEURS ROCHET
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.00000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SIGM_M_PRES', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.00000000,
+           VALE_REFE=125.0,
+           NOM_PARA='SIGM_M_PRES', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=62.500000000,
+           VALE_REFE=62.5,
+           NOM_PARA='SN_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=200.00000000,
+           VALE_REFE=200.0,
+           NOM_PARA='SN_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=300.000000000,
+           VALE_REFE=300.0,
+           NOM_PARA='VALE_MAXI_LINE', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=300.000000000,
+           VALE_REFE=300.0,
+           NOM_PARA='VALE_MAXI_LINE', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=50.000000000,
+           VALE_REFE=50.0,
+           NOM_PARA='SP_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=250.00000000,
+           VALE_REFE=250.0,
+           NOM_PARA='SP_THER_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=390.000000000,
+           VALE_REFE=390.0,
+           NOM_PARA='VALE_MAXI_PARAB', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34d,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=390.000000000,
+           VALE_REFE=390.0,
+           NOM_PARA='VALE_MAXI_PARAB', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34d,)
+
+# -------------------FAT34ds-----------------------
+# PRISE EN COMPTE DU KE_MIXTE AVEC SEISME
+
+#VALEURS MAX
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=302.50000000,
+           VALE_REFE=302.5,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34ds,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=620.00000000,
+           VALE_REFE=620.0,
+           NOM_PARA='SN_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34ds,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=340.00000000,
+           VALE_REFE=340.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34ds,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=520.00000000,
+           VALE_REFE=520.0,
+           NOM_PARA='SN*_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34ds,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=250.00000000,
+           VALE_REFE=250.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34ds,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=610.00000000,
+           VALE_REFE=610.0,
+           NOM_PARA='SP_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34ds,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=131.842789598,
+           VALE_REFE=131.842789598,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34ds,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=387.655402185,
+           VALE_REFE=387.655402185,
+           NOM_PARA='SALT_MAX', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34ds,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.008986523,
+           VALE_REFE=0.008986523,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),),
+           TABLE=FAT34ds,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.022254331,
+           VALE_REFE=0.022254331,
+           NOM_PARA='FU_CUMU', 
+           FILTRE=(_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),),
+           TABLE=FAT34ds,)
+
+FIN()
