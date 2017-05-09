@@ -2,7 +2,7 @@ subroutine dgfsections(nboccsec, iinbgf, tousgroupesnom, tousgroupesnbf, maxmail
                        ulnbnoeuds, ulnbmailles, nbfibres1)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -106,6 +106,11 @@ subroutine dgfsections(nboccsec, iinbgf, tousgroupesnom, tousgroupesnbf, maxmail
                 call utmess('F', 'MODELISA6_27', nk=3, valk=valk)
             endif
         enddo
+        if ( nbmagr.eq.0 ) then
+            valk(1)=nomas
+            valk(2)='TRIA3, QUAD4'
+            call utmess('F', 'MODELISA6_14', nk=2, valk=valk)
+        endif
         maxmailgrp = max(maxmailgrp,nbmagr)
     enddo
 
