@@ -5,5 +5,5 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential
 
-F comm rccm01f.comm D 1
-F libr rccm01b.35 D 35
+F comm rccm13b.comm D 1
+F libr rccm13b.35 D 35

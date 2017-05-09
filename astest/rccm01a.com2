@@ -1,0 +1,277 @@
+# ======================================================================
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+# ======================================================================
+
+# VALIDATION DE L'OPERATEUR POST_RCCM
+# OPTION PM_PB en B3200 MOMENTS UNITAIRES AVEC TYPE_RESU='DETAILS'
+# PRISE EN COMPTE DU SEISME
+
+POURSUITE( CODE='OUI' )
+
+DETRUIRE ( CONCEPT=_F(NOM=(PMPB3,) ) )
+#--------------------------------------------------------------------------------
+# VALIDATION POUR UN COMPOSANT SIMPLE
+#--------------------------------------------------------------------------------
+# CALCUL DE PMPB POUR LA SITUATION 3 AVEC SEISME NUL
+PMPB3=POST_RCCM( MATER=MAT,
+                 TITRE='PM_PB AVEC SEISME NUL(DETAILS), SITUATION 3, UNITAIRE',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 OPTION='PM_PB',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=11,
+                      NOM_CHAR='ETAT SEISME',
+                      MX=0.0,  MY=0.0,  MZ=0.0,),
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_MZ=T_MZ,
+                      TABL_PRES=T_PRES,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=1,
+                     NOM_SITU='Situation 3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),),
+                 SEISME=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=7,
+                     NB_CYCL_SEISME = 10, 
+                     NOM_SITU='Seisme',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT=11,),),);
+
+IMPR_TABLE(    TABLE=PMPB3,) 
+
+# CALCUL DE PMPB POUR LA SITUATION 3 AVEC SEISME
+PMPB3s=POST_RCCM( MATER=MAT,
+                 TITRE='PM_PB AVEC SEISME (DETAILS), SITUATION 3, UNITAIRE',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 OPTION='PM_PB',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=11,
+                      NOM_CHAR='ETAT SEISME',
+                      MX=1.0,  MY=1.0,  MZ=1.0,),
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      MX=1.0,  MY=-1.0,  MZ=-1.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      MX=-10.0,  MY=1.0,  MZ=0.1,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_MX=T_MX,
+                      TABL_MY=T_MY,
+                      TABL_MZ=T_MZ,
+                      TABL_PRES=T_PRES,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=1,
+                     NOM_SITU='Situation 3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),),
+                 SEISME=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=7,
+                     NB_CYCL_SEISME = 10, 
+                     NOM_SITU='Seisme',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT=11,),),);
+
+IMPR_TABLE(    TABLE=PMPB3s,) 
+
+#--------------------------------------------------------------------------------
+# VALIDATION POUR UNE JONCTION DE TUYAUTERIE
+#--------------------------------------------------------------------------------
+# CALCUL DE PMPB POUR LA SITUATION 3JONC AVEC SEISME
+PMPB3Js=POST_RCCM( MATER=MAT,
+                 TITRE='PM_PB AVEC SEISME, SITUATION 3, UNITAIRE, CORPS/TUBU',
+                 TYPE_RESU='DETAILS',
+                 TYPE_RESU_MECA='B3200',
+                 OPTION='PM_PB',
+                 INFO=2,
+                 CHAR_MECA=(
+                   _F(NUME_CHAR=11,
+                      NOM_CHAR='ETAT SEISME',
+                      MX=1.0,  MY=1.0,  MZ=1.0,),
+                   _F(NUME_CHAR=1,
+                      NOM_CHAR='ETAT A - SITU3',
+                      FX_CORP=0.5,  FY_CORP=2.0,  FZ_CORP=-0.5,
+                      FX_TUBU=0.2,  FY_TUBU=-2.0,  FZ_TUBU=0.0,
+                      MX_CORP=0.2,  MY_CORP=-1.0,  MZ_CORP=-0.5,
+                      MX_TUBU=0.1,  MY_TUBU=0.0,  MZ_TUBU=-0.5,),
+                   _F(NUME_CHAR=2,
+                      NOM_CHAR='ETAT B - SITU3',
+                      FX_CORP=-5.0,  FY_CORP=0.25,  FZ_CORP=0.0,
+                      FX_TUBU=-4.0,  FY_TUBU=0.25,  FZ_TUBU=0.05,
+                      MX_CORP=-1.0,  MY_CORP=0.25,  MZ_CORP=0.0,
+                      MX_TUBU=0.0,  MY_TUBU=0.25,  MZ_TUBU=0.05,),),
+                 RESU_MECA_UNIT=(
+                   _F(TABL_FX_TUBU=T_MX,
+                      TABL_FY_TUBU=T_MY,
+                      TABL_FZ_TUBU=T_MZ,
+                      TABL_MX_TUBU=T_MX,
+                      TABL_MY_TUBU=T_MY,
+                      TABL_MZ_TUBU=T_MZ,
+                      TABL_FX_CORP=T_MX,
+                      TABL_FY_CORP=T_MY,
+                      TABL_FZ_CORP=T_MZ,
+                      TABL_MX_CORP=T_MX,
+                      TABL_MY_CORP=T_MY,
+                      TABL_MZ_CORP=T_MZ,
+                      TABL_PRES=T_PRES,),),
+                 SITUATION=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=1,
+                     NOM_SITU='Situation 3',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT_A=1,
+                     CHAR_ETAT_B=2,
+                     PRES_A=1.0,
+                     PRES_B=10.0,),),
+                 SEISME=(
+                  _F(NB_OCCUR=1,
+                     NUME_SITU=7,
+                     NB_CYCL_SEISME = 10, 
+                     NOM_SITU='Seisme',
+                     NUME_GROUPE=1,
+                     CHAR_ETAT=11,),),);
+
+IMPR_TABLE(    TABLE=PMPB3Js,) 
+
+#--------------------------------------------------------------------------------
+#   TEST SUR UNITAIRE (SOLUTION DE REFERENCE ANALYTIQUE)
+#--------------------------------------------------------------------------------
+# SITUATION 3 sans séisme
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=37.500000000,
+           VALE_REFE=37.5,
+           NOM_PARA='PM_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=PMPB3,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=125.000000000,
+           VALE_REFE=125.0,
+           NOM_PARA='PB_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=PMPB3,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=87.500000000,
+           VALE_REFE=87.5,
+           NOM_PARA='PMPB_MAX',
+           TABLE=PMPB3,
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=162.500000000,
+           VALE_REFE=162.5,
+           NOM_PARA='PMPB_MAX',
+           TABLE=PMPB3,
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           )
+
+# SITUATION 3 avec séisme
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=100.000000000,
+           VALE_REFE=100.0,
+           NOM_PARA='PM_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=PMPB3s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=200.000000000,
+           VALE_REFE=200.0,
+           NOM_PARA='PB_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=PMPB3s,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=175.000000000,
+           VALE_REFE=175.0,
+           NOM_PARA='PMPB_MAX',
+           TABLE=PMPB3s,
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=275.000000000,
+           VALE_REFE=275.0,
+           NOM_PARA='PMPB_MAX',
+           TABLE=PMPB3s,
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           )
+
+# SITUATION 3 JONCTION avec séisme
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=100.000000000,
+           VALE_REFE=100.0,
+           NOM_PARA='PM_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=PMPB3Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=200.000000000,
+           VALE_REFE=200.0,
+           NOM_PARA='PB_MAX',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           TABLE=PMPB3Js,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=175.000000000,
+           VALE_REFE=175.0,
+           NOM_PARA='PMPB_MAX',
+           TABLE=PMPB3Js,
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=275.000000000,
+           VALE_REFE=275.0,
+           NOM_PARA='PMPB_MAX',
+           TABLE=PMPB3Js,
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+           )
+
+FIN()
