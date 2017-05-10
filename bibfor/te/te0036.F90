@@ -2,7 +2,7 @@ subroutine te0036(option, nomte)
     implicit none
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -320,7 +320,7 @@ subroutine te0036(option, nomte)
 !
 !       FONCTION D'ENRICHISSEMENT AU POINT DE GAUSS ET LEURS DÉRIVÉES
             if (nfe .gt. 0) then
-              call xkamat(zi(imate), ndim, axi, ka, mu)
+              call xkamat(zi(imate), ndim, axi, ka, mu, famiz='XCON')
               call xcalfev_wrap(ndim, nnop, zr(jbaslo), zi(jstno), real(zi(jheavt-1+ise),8),&
                            zr(jlsn), zr(jlst), zr(igeom), ka, mu, ff, fk)
             endif
