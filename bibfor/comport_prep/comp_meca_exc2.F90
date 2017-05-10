@@ -1,4 +1,4 @@
-subroutine comp_meca_exc2(l_cristal, l_prot_comp,&
+subroutine comp_meca_exc2(l_cristal, l_prot_comp, l_pmf, &
                           l_excl   , vari_excl)
 !
 implicit none
@@ -6,7 +6,7 @@ implicit none
 #include "asterf_types.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -25,6 +25,7 @@ implicit none
 !
     aster_logical, intent(in) :: l_cristal
     aster_logical, intent(in) :: l_prot_comp
+    aster_logical, intent(in) :: l_pmf
     aster_logical, intent(out) :: l_excl
     character(len=16), intent(out) :: vari_excl
 !
@@ -38,6 +39,7 @@ implicit none
 !
 ! In  l_cristal        : .true. if *CRISTAL comportment
 ! In  l_prot_comp      : .true. if external computing for comportment (MFront, UMAT)
+! In  l_pmf            : .true. if PMF
 ! Out l_excl           : .true. if exception case (no names for internal variables)
 ! Out vari_excl        : name of internal variables if l_excl
 !
@@ -45,6 +47,13 @@ implicit none
 !
     l_excl    = .false.
     vari_excl = ' '
+!
+! - Multiple comportment (PMF)
+!
+    if (l_pmf) then
+        l_excl    = .true.
+        vari_excl = '&&MULT_COMP'
+    endif
 !
 ! - Multiple comportment
 !
