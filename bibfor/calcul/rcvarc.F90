@@ -74,7 +74,7 @@ implicit none
     character(len=8) :: varc_name
     integer :: nb2vrc
     integer :: varc_indx, ibid, nbsp, kpgvrc
-    integer :: iadzi, iazk24, kpgmat, vali(3)
+    integer :: iadzi, iazk24, kpgmat
     integer :: iprem = 0
     integer :: k, itabm(7), itabp(7), itabr(7)
     character(len=24) :: valk(4)
