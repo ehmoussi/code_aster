@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,10 +18,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine comp_meca_exc2(l_cristal, l_prot_comp,&
+    subroutine comp_meca_exc2(l_cristal, l_prot_comp, l_pmf,&
                               l_excl   , vari_excl)
         aster_logical, intent(in) :: l_cristal
         aster_logical, intent(in) :: l_prot_comp
+        aster_logical, intent(in) :: l_pmf
         aster_logical, intent(out) :: l_excl
         character(len=16), intent(out) :: vari_excl
     end subroutine comp_meca_exc2
