@@ -74,6 +74,8 @@ def AsType(obj):
             return obj.gettype()
         except:
             return
+    elif isinstance(obj, (list, tuple)) and len(obj) > 0:
+        return AsType(obj[0])
     return type(obj)
 
 

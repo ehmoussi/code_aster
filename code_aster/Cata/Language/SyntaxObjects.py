@@ -44,7 +44,8 @@ import copy
 import types
 from collections import OrderedDict
 
-from .SyntaxUtils import mixedcopy, sorted_dict, block_utils, debug_message2
+from .SyntaxUtils import (mixedcopy, sorted_dict, block_utils, debug_message2,
+                          enable_0key, disable_0key)
 from .DataStructure import UnitBaseType, DataStructure
 
 
@@ -614,7 +615,9 @@ class Command(PartOfSyntax):
 
     def build_sd_prod(self, sdprodFunc, ctxt):
         """Call the `sd_prod` function"""
+        enable_0key(ctxt)
         resultType = sdprodFunc(**ctxt)
+        disable_0key(ctxt)
         return resultType
 
 
@@ -629,7 +632,9 @@ class Macro(Command):
 
     def build_sd_prod(self, sdprodFunc, ctxt):
         """Call the `sd_prod` function"""
+        enable_0key(ctxt)
         resultType = sdprodFunc(self, **ctxt)
+        disable_0key(ctxt)
         return resultType
 
     def type_sdprod(self, result, astype):
