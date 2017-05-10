@@ -97,6 +97,10 @@ Seules quelques lois de comportement qui ne nécessitent pas la méthode Deborst
  HUJEUX : erreur dans le calcul de la matrice tangente
 """),
 
+    15: _(u"""On ne peut pas utiliser les contraintes planes en élasticité avec une déformation de type GROT_GDEP.
+    Conseil: utilisez une loi élastoplastique sur laquelle vous aurez mis une limite d'élasticité très grande.
+"""),
+
     16 : _(u"""
 Arrêt suite à l'échec de l'intégration de la loi de comportement.
 

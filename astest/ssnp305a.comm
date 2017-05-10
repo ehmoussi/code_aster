@@ -30,11 +30,11 @@ MODEL=AFFE_MODELE(    MAILLAGE=MAYA,
                          )
 
 ACIER1=DEFI_MATERIAU(         ELAS=_F(  E = 2.E7,
-                                      NU = 0.)
+                                      NU = 0.),ECRO_LINE=_F(D_SIGM_EPSI=1.0,SY=1E15),
                       )
 
 ACIER2=DEFI_MATERIAU(         ELAS=_F(  E = 200000.,
-                                      NU = 0.)
+                                      NU = 0.),ECRO_LINE=_F(D_SIGM_EPSI=1.0,SY=1E15),
                       )
 
 MATER=AFFE_MATERIAU(   MAILLAGE=MAYA,AFFE=(
@@ -72,7 +72,7 @@ CALCNL=STAT_NON_LINE(
                             MODELE=MODEL,
                         CHAM_MATER=MATER,
                          COMPORTEMENT=_F(
-                RELATION = 'ELAS',
+                RELATION = 'VMIS_ISOT_LINE',
                 DEFORMATION = 'GROT_GDEP'),
                          INCREMENT=_F(
                 LIST_INST = CAT),

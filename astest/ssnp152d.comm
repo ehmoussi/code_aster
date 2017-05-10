@@ -61,8 +61,9 @@ E2=1.0E8
 nu1=0.3
 nu2=0.2
 
-MAT1=DEFI_MATERIAU(ELAS = _F(E=E1,NU = nu1,));
-MAT2=DEFI_MATERIAU(ELAS = _F(E=E2,NU = nu2,));
+# False plastic material for large strains in elasticity (ticket #26286)
+MAT1=DEFI_MATERIAU(ELAS = _F(E=E1,NU = nu1,),ECRO_LINE=_F(D_SIGM_EPSI=1.0,SY=1E15),)
+MAT2=DEFI_MATERIAU(ELAS = _F(E=E2,NU = nu2,),ECRO_LINE=_F(D_SIGM_EPSI=1.0,SY=1E15),)
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MA,AFFE=(_F(GROUP_MA = 'C1',MATER = MAT1,),
                   _F(GROUP_MA = 'C2',MATER = MAT2,),),);
@@ -174,7 +175,7 @@ RESU1=STAT_NON_LINE(MODELE      = MO,
                     EXCIT       = (_F(CHARGE = CH1,),
                                    _F(CHARGE = CH2,),),
                     CONTACT     = CONT_N,
-                    COMPORTEMENT   = (_F(RELATION     = 'ELAS',
+                    COMPORTEMENT   = (_F(RELATION  = 'VMIS_ISOT_LINE',
                                       DEFORMATION  = 'GROT_GDEP',),),
                     NEWTON      = _F(REAC_INCR=1,REAC_ITER=1),
                     INCREMENT   = _F(LIST_INST=INSTS,),
@@ -189,7 +190,7 @@ RESU2=STAT_NON_LINE(MODELE=MO,
                     EXCIT       = (_F(CHARGE = CH1,),
                                    _F(CHARGE = CH2,),),
                     CONTACT     = CONT_G,
-                    COMPORTEMENT   = (_F(RELATION    = 'ELAS',
+                    COMPORTEMENT   = (_F(RELATION    = 'VMIS_ISOT_LINE',
                                      DEFORMATION = 'GROT_GDEP',),),
                     NEWTON      = _F(REAC_INCR=1,REAC_ITER=1),
                     INCREMENT   = _F(LIST_INST=INSTS,),
