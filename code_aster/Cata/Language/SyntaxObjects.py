@@ -481,7 +481,7 @@ class FactorKeyword(PartOfSyntax):
         If the keyword is present by default, its default value is {} if max=1
         or [] if max > 1.
         If the keyword does not exist by default, its default value is None."""
-        if self._def_status() != "d":
+        if self._def_status() not in ("c", "d"):
             return None
         if self.is_list():
             return []
@@ -578,7 +578,7 @@ class Command(PartOfSyntax):
         strict = args.pop("__strict__", ConversionLevel.Syntaxic)
         if strict & ConversionLevel.Syntaxic:
             from .SyntaxChecker import checkCommandSyntax
-            checkCommandSyntax(self, args)
+            checkCommandSyntax(self, args, add_default=False)
             resultType = self.get_type_sd_prod(**args)
         else:
             try:
