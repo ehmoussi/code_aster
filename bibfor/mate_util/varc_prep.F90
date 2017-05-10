@@ -1,6 +1,6 @@
 subroutine varc_prep(chmate, l_thm)
 !
-use calcul_module, only : ca_jvcnom_, ca_nbcvrc_, ca_ctempl_, ca_ctempr_, ca_ctempm_, ca_ctempp_
+use calcul_module, only : ca_jvcnom_, ca_nbcvrc_, ca_ctempr_, ca_ctempm_, ca_ctempp_
 !
 implicit none
 !
@@ -62,18 +62,15 @@ implicit none
     if (iret .ne. 0) then
         call jeveut(chmate//'.CVRCNOM', 'L', ca_jvcnom_)
         call jelira(chmate//'.CVRCNOM', 'LONMAX', ca_nbcvrc_)
-        ca_ctempl_ = 0
     else
         ca_nbcvrc_ = 0
         ca_jvcnom_ = ismaem()
-        ca_ctempl_ = 0
     endif
 !
 ! - For coupled problems (THM)
 !
     if (l_thm) then
         if (ca_nbcvrc_ .eq. 0) then
-            ca_ctempl_ = 1
             ca_ctempr_ = r8nnem()
             ca_ctempm_ = r8nnem()
             ca_ctempp_ = r8nnem()
@@ -82,7 +79,6 @@ implicit none
             if (varc_indx .ne. 0) then
                 call utmess('F', 'MATERIAL2_51')
             endif
-            ca_ctempl_ = 1
             ca_ctempr_ = r8nnem()
             ca_ctempm_ = r8nnem()
             ca_ctempp_ = r8nnem()
