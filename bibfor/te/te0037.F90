@@ -156,7 +156,7 @@ subroutine te0037(option, nomte)
         call jevech('PMATERC', 'L', imate)
         call jevech('PBASLOR', 'L', jbaslo)
         call jevech('PLSN', 'L', jlsn)
-        call xkamat(zi(imate), ndim, axi, ka, mu)
+        call xkamat(zi(imate), ndim, axi, ka, mu, famiz='XCON')
     endif
 !
     call tecael(iadzi, iazk24, noms=0)
