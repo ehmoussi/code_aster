@@ -63,6 +63,30 @@ def force_list(values):
         values = [values]
     return values
 
+def enable_0key(values):
+    """Emulate the legacy MCFACT behavior: MCFACT[0] returns MCFACT itself
+    to simulate a list of length 1.
+
+    **Note**: `disable_0key()` must be called after to restore the original
+    content of `values`.
+
+    Arguments:
+        dict: Dict of keywords changed in place.
+    """
+    for k, kw in values.items():
+        if isinstance(kw, dict):
+            kw[0] = kw
+
+def disable_0key(values):
+    """Restore the content of `values` after calling `enable_0key()`.
+
+    Arguments:
+        dict: Dict of keywords changed in place.
+    """
+    for k, kw in values.items():
+        if isinstance(kw, dict) and kw.has_key(0):
+            del kw[0]
+
 # Keep consistency with SyntaxUtils.block_utils from AsterStudy, AsterXX
 def block_utils(evaluation_context):
     """Define some helper functions to write block conditions.
