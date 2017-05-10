@@ -308,6 +308,8 @@ class PartOfSyntax(UIDMixing):
             _parent_ctxt (dict): contains the keywords as known in the parent.
                 This context is used to evaluate block conditions.
         """
+        if userSyntax is None:
+            return
         ctxt = _parent_ctxt.copy() if _parent_ctxt else {}
         for key, kwd in self.definition.iterItemsByType():
             if isinstance(kwd, SimpleKeyword):

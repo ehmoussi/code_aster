@@ -215,3 +215,25 @@ class Compulsory(Validator):
         if missing:
             raise ValueError("Missing values: {0}"
                              .format([str(i) for i in missing]))
+
+
+class NotEqualTo(Validator):
+    """Check that the value is not equal to something.
+
+    Usage:
+        NotEqualTo(value)
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(NotEqualTo, self).__init__(*args)
+        assert len(args) == 1, ("Exactly one argument is required "
+                                "for NotEqualTo.")
+
+    def check(self, values):
+        """Check values"""
+        ref = self.args[0]
+        values = force_list(values)
+        for val in values:
+            if val == ref:
+                raise ValueError("Unauthorized value: {0[0]}"
+                                 .format(self.args))

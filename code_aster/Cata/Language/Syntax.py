@@ -44,14 +44,15 @@ from .Rules import (
 )
 
 from .Validators import (
-    NoRepeat,
-    LongStr,
-    AndVal,
-    OrVal,
-    OrdList,
-    Together,
     Absent,
+    AndVal,
     Compulsory,
+    LongStr,
+    NoRepeat,
+    NotEqualTo,
+    OrdList,
+    OrVal,
+    Together,
 )
 
 _F = dict
