@@ -261,10 +261,7 @@ Contactez le support technique.
 
     32: _(u"""
  Erreur utilisateur :
-   Un calcul élémentaire nécessite une ou plusieurs variables de commande.
-   Sur la maille : %(k1)s, on ne trouve pas le bon nombre
-   On attend : %(i2)d ,  mais on n'en trouve que : %(i1)d
-
+   Un calcul élémentaire nécessite une ou plusieurs variables de commandes sur la maille %(k1)s
  Conseil :
    Vérifier les occurrences de AFFE_MATERIAU/AFFE_VARC pour la maille concernée.
 """),

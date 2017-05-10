@@ -194,37 +194,32 @@ implicit none
 !
     if (poum .eq. 'REF') then
         nb2vrc=itabr(6)
-        if (nb2vrc .ne. ca_nbcvrc_) goto 998
         nbsp=itabr(7)
         kpgvrc=(kpgmat-1)*nbsp+ksp
-        varc_vale=zr(itabr(1) -1 + (kpgvrc-1)*ca_nbcvrc_ + varc_indx)
+        varc_vale=zr(itabr(1) -1 + (kpgvrc-1)*nb2vrc + varc_indx)
 
     else if (poum.eq.'+' .and. ca_iredec_.eq.0) then
         nb2vrc=itabp(6)
-        if (nb2vrc .ne. ca_nbcvrc_) goto 998
         nbsp=itabp(7)
         kpgvrc=(kpgmat-1)*nbsp+ksp
-        varc_vale=zr(itabp(1) -1 + (kpgvrc-1)*ca_nbcvrc_ + varc_indx)
+        varc_vale=zr(itabp(1) -1 + (kpgvrc-1)*nb2vrc + varc_indx)
 
     else if (poum.eq.'-' .and. ca_iredec_.eq.0) then
         nb2vrc=itabm(6)
-        if (nb2vrc .ne. ca_nbcvrc_) goto 998
         nbsp=itabm(7)
         kpgvrc=(kpgmat-1)*nbsp+ksp
-        varc_vale=zr(itabm(1) -1 + (kpgvrc-1)*ca_nbcvrc_ + varc_indx)
+        varc_vale=zr(itabm(1) -1 + (kpgvrc-1)*nb2vrc + varc_indx)
 
     else if (ca_iredec_.eq.1) then
         nb2vrc=itabm(6)
-        if (nb2vrc .ne. ca_nbcvrc_) goto 998
         nbsp=itabm(7)
         kpgvrc=(kpgmat-1)*nbsp+ksp
-        valvrm=zr(itabm(1) -1 + (kpgvrc-1)*ca_nbcvrc_ + varc_indx)
+        valvrm=zr(itabm(1) -1 + (kpgvrc-1)*nb2vrc + varc_indx)
 
         nb2vrc=itabp(6)
-        if (nb2vrc .ne. ca_nbcvrc_) goto 998
         nbsp=itabp(7)
         kpgvrc=(kpgmat-1)*nbsp+ksp
-        valvrp=zr(itabp(1) -1 + (kpgvrc-1)*ca_nbcvrc_ + varc_indx)
+        valvrp=zr(itabp(1) -1 + (kpgvrc-1)*nb2vrc + varc_indx)
 
         if ((.not.isnan(valvrm)) .and. (.not.isnan(valvrp))) then
             if (poum .eq. '-') then
@@ -270,12 +265,10 @@ implicit none
         iret=1
     else
         call tecael(iadzi, iazk24)
-        vali(1)=nb2vrc
-        vali(2)=ca_nbcvrc_
         valk(1)=zk24(iazk24-1+3)
-        call utmess('F', 'CALCUL_32', sk=valk(1), ni=2, vali=vali)
+        call utmess('F', 'CALCUL_32', sk=valk(1))
     endif
 !
 999 continue
-
+!
 end subroutine

@@ -109,8 +109,8 @@ RESUTHER = CREA_RESU( OPERATION = 'AFFE',
 
 # MATERIAUX
 
-BETON=DEFI_MATERIAU(ELAS=_F(E=3.E10, NU=0.2, ALPHA=1.E-5))
-ACIER=DEFI_MATERIAU(ELAS=_F(E=2.E11, NU=0.3, ALPHA=2.E-5))
+BETON=DEFI_MATERIAU(ELAS=_F(E=3.E10, NU=0.2, ALPHA=1.E-5,))
+ACIER=DEFI_MATERIAU(ELAS=_F(E=2.E11, NU=0.3, ALPHA=2.E-5,))
 
 
 # CALCUL MECANIQUE 3D : REFERENCE
@@ -119,12 +119,21 @@ ACIER=DEFI_MATERIAU(ELAS=_F(E=2.E11, NU=0.3, ALPHA=2.E-5))
 MOD_3D=AFFE_MODELE(MAILLAGE=MATH,
                  AFFE=_F(GROUP_MA='POUTRE',PHENOMENE='MECANIQUE',MODELISATION='3D'))
 
+
+SECH=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_R', MAILLAGE=MATH,
+                        AFFE=_F( TOUT = 'OUI',
+                              NOM_CMP = 'TEMP',
+                              VALE = 0.))
+
 CHMA_3D=AFFE_MATERIAU(MAILLAGE=MATH,
                     AFFE=(_F(GROUP_MA='BAS' ,MATER=BETON),
                           _F(GROUP_MA='HAUT',MATER=BETON),
                           ),
-                    AFFE_VARC = _F( GROUP_MA = 'POUTRE', NOM_VARC = 'TEMP', EVOL=RESUTHER,VALE_REF=0.),
-                                  )
+                    AFFE_VARC = (
+                                _F( GROUP_MA = 'POUTRE', NOM_VARC = 'TEMP', EVOL=RESUTHER,VALE_REF=0.),
+                                _F( GROUP_MA = 'MOITIE', NOM_VARC = 'SECH', CHAM_GD=SECH,VALE_REF=0.),
+                               )
+                    )
 
 
 CL_3D=AFFE_CHAR_MECA(MODELE=MOD_3D,
