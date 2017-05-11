@@ -1,7 +1,7 @@
 subroutine op0042()
 ! ----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -30,6 +30,7 @@ subroutine op0042()
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getres.h"
+#include "asterfort/asmpi_info.h"
 #include "asterfort/gettco.h"
 #include "asterfort/ccvrpu.h"
 #include "asterfort/cresol.h"
@@ -62,6 +63,7 @@ subroutine op0042()
     character(len=19) :: knum, kcha, solveu
     character(len=24) :: mate
     aster_logical :: newcal
+    mpi_int :: msize
 !     ------------------------------------------------------------------
 !
     call jemarq()
@@ -76,6 +78,13 @@ subroutine op0042()
 ! --- PUIS ON PASSE DANS LE MODE "VALIDATION DU CONCEPT EN CAS D'ERREUR"
     call onerrf(' ', compex, ibid)
     call onerrf('EXCEPTION+VALID', k16bid, ibid)
+!
+! --- ON INTERDIT L'UTILISATION DE CALC_ERREUR EN PARALLELE 
+!
+    call asmpi_info(size=msize)
+    if ( msize > 1 ) then
+        call utmess('F', 'CALCULEL3_5', si=to_aster_int(msize))
+    endif 
 !
     call getres(resuc1, concep, nomcmd)
     call getvid(' ', 'RESULTAT', scal=resuco, nbret=n0)
