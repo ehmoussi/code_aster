@@ -26,7 +26,7 @@ def configure(self):
 
     self.env['ADDMEM'] = 600
     self.env.append_value('OPT_ENV', [
-        '. /etc/profile.d/003_modules.sh',
+        '. /etc/profile.d/lmod.sh',
         'module loadifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047'])
 
     self.env.append_value('LIBPATH', [
