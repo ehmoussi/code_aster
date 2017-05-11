@@ -1,7 +1,7 @@
 subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
                   cmperr, codret)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -87,23 +87,20 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
 !
     aster_logical :: llimai, lprobm
     integer, pointer :: dime(:) => null()
-    parameter    (maxtol = 8.7266463d-2)
+    parameter (maxtol = 8.7266463d-2)
 !
     call jemarq()
     codret = 0
     ligrmo = modele//'.MODELE'
     call jeveuo(ligrmo//'.REPE', 'L', jrepe)
 !
-!
-!     -- OBJETS QUI SERONT EVENTUELLEMNT CREES :
+!   OBJETS QUI SERONT EVENTUELLEMNT CREES :
     carsd = '&&CCVRRL.CARORIEN'
     carcc = '&&CCVRRL.CARCOQUE'
     cnxinv = '&&CCVRRL.CNCINV'
     vecsau = '&&CCVRRL.VECT'
 !
-!
-!
-!     DOIT ON REDUIRE LE CALCUL SUR UNE LISTE DE MAILLES
+!   DOIT ON REDUIRE LE CALCUL SUR UNE LISTE DE MAILLES
     call jeexin(mesmai, ier)
     if (ier .ne. 0) then
         call jeveuo(mesmai, 'L', jmai)
@@ -116,19 +113,18 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
     endif
     call jeveuo(chames//'.CESD', 'L', jcesdd)
 !
-!     CONVERSION DE LA CARTE D'ORIENTATION EN UN CHAM_ELEM_S
+!   CONVERSION DE LA CARTE D'ORIENTATION EN UN CHAM_ELEM_S
     carori = carael//'.CARORIEN  .VALE'
     call jeexin(carori, iexori)
     if (iexori .ne. 0) then
-        call carces(carael//'.CARORIEN', 'ELEM', ' ', 'V', carsd,&
-                    ' ', ier)
+        call carces(carael//'.CARORIEN', 'ELEM', ' ', 'V', carsd, ' ', ier)
         call jeveuo(carsd//'.CESD', 'L', jcesd)
         call jeveuo(carsd//'.CESL', 'L', jcesl)
         call jeveuo(carsd//'.CESV', 'L', jcesv)
         call jeveuo(carsd//'.CESC', 'L', jcesc)
         call jelira(carsd//'.CESC', 'LONMAX', ncmax)
         jalpha = indik8(zk8(jcesc),'ALPHA   ',1,ncmax)
-        jbeta = indik8(zk8(jcesc),'BETA    ',1,ncmax)
+        jbeta  = indik8(zk8(jcesc),'BETA    ',1,ncmax)
         jgamma = indik8(zk8(jcesc),'GAMMA   ',1,ncmax)
     else
         jcesd=0
@@ -137,13 +133,11 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
         jcesc=0
     endif
 !
-!     CONVERSION DE LA CARTE CARACTERISTIQUE DES COQUES
-!     EN UN CHAM_ELEM_S
+!   CONVERSION DE LA CARTE CARACTERISTIQUE DES COQUES EN UN CHAM_ELEM_S
     carcoq = carael//'.CARCOQUE  .VALE'
     call jeexin(carcoq, iexori)
     if (iexori .ne. 0) then
-        call carces(carael//'.CARCOQUE', 'ELEM', ' ', 'V', carcc,&
-                    ' ', ier)
+        call carces(carael//'.CARCOQUE', 'ELEM', ' ', 'V', carcc, ' ', ier)
         call jeveuo(carcc//'.CESD', 'L', jcesdc)
         call jeveuo(carcc//'.CESL', 'L', jceslc)
         call jeveuo(carcc//'.CESV', 'L', jcesvc)
@@ -151,7 +145,7 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
         call jelira(carcc//'.CESC', 'LONMAX', ncmax)
         iepais = indik8(zk8(jcescc),'EP      ',1,ncmax)
         ialpha = indik8(zk8(jcescc),'ALPHA   ',1,ncmax)
-        ibeta = indik8(zk8(jcescc),'BETA    ',1,ncmax)
+        ibeta  = indik8(zk8(jcescc),'BETA    ',1,ncmax)
     else
         jcesdc=0
         jceslc=0
@@ -159,15 +153,15 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
         jcescc=0
     endif
 !
-!     CREATION DE LA CONNECTIVITE INVERSE
+!   CREATION DE LA CONNECTIVITE INVERSE
     call cncinv(nommai, zi(jmai), nbma, 'V', cnxinv)
 !
     call jeveuo(nommai//'.DIME', 'L', vi=dime)
     nbmato = dime(3)
     call wkvect(vecsau, 'V V R', 6*nbmato, jvect)
-    do 80 i = 1, 6*nbmato
+    do i = 1, 6*nbmato
         zr(jvect+i-1) = 0.d0
- 80 end do
+    enddo
 !
     call jelira(cnxinv, 'NUTIOC', nbno)
 !
@@ -186,19 +180,16 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
     adcar2(3) = jcesvc
     lprobm = .false.
 !
-!     BOUCLE SUR TOUS LES NOEUDS DU MAILLAGE
+!   BOUCLE SUR TOUS LES NOEUDS DU MAILLAGE
     maxdif = 0.d0
-    do 10 ino = 1, nbno
-        nbma = zi(jconi2+ino)-zi(jconi2+ino-1)
+    do ino = 1, nbno
+        nbma  = zi(jconi2+ino)-zi(jconi2+ino-1)
         posit = zi(jconi2+ino-1)
 !
-!       GRACE A LA CONNECTIVITE INVERSE, ON TROUVE
-!       LES MAILLES LIEES
+!       GRACE A LA CONNECTIVITE INVERSE, ON TROUVE LES MAILLES LIEES
         do 20 ima = 1, nbma
             posma = zi(jconi1+posit+ima-2)
-!
-!         LE COMPORTEMENT DE CNCINV N'EST PAS LE MEME SUIVANT
-!         QU'ON DONNE OU NON MESMAI
+!           LE COMPORTEMENT DE CNCINV N'EST PAS LE MEME SUIVANT QU'ON DONNE OU NON MESMAI
             if (llimai) then
                 numma = zi(jmai+posma-1)
             else
@@ -206,10 +197,12 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
             endif
             if (numma .eq. 0) goto 20
 !
-            if ((zr(jvect+6*(numma-1)).eq.0.d0) .and. (zr(jvect+6*( numma-1)+1).eq.0.d0)&
-                .and. (zr(jvect+6*(numma-1)+2) .eq.0.d0) .and.&
-                (zr(jvect+6*(numma-1)+3).eq.0.d0) .and. (zr(jvect+6*(numma-1)+4).eq.0.d0)&
-                .and. (zr(jvect+6*(numma- 1)+5).eq.0.d0)) then
+            if ((zr(jvect+6*(numma-1))  .eq.0.d0).and. &
+                (zr(jvect+6*(numma-1)+1).eq.0.d0).and. &
+                (zr(jvect+6*(numma-1)+2).eq.0.d0).and. &
+                (zr(jvect+6*(numma-1)+3).eq.0.d0).and. &
+                (zr(jvect+6*(numma-1)+4).eq.0.d0).and. &
+                (zr(jvect+6*(numma-1)+5).eq.0.d0) ) then
 !
                 call cccmcr(jcesdd, numma, jrepe, jconx2, jconx1,&
                             jcoord, adcar1, adcar2, ialpha, ibeta,&
@@ -233,31 +226,23 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
                 vl(2) = 1.d0
                 vl(3) = 0.d0
                 call utpvlg(1, 3, pgl, vl, vg2)
-!
-!           SAUVEGARDE DE LA VALEUR TROUVEE SAUF POUR LES COQUES 3D
+!               sauvegarde de la valeur trouvee sauf pour les coques 3d
                 if (modeli .ne. 'CQ3') then
-                    do 40 idir = 1, 3
-                        zr(jvect+6*(numma-1)+idir-1) = vg1(idir)
- 40                 continue
-                    do 45 idir = 1, 3
+                    do idir = 1, 3
+                        zr(jvect  +6*(numma-1)+idir-1) = vg1(idir)
                         zr(jvect+3+6*(numma-1)+idir-1) = vg2(idir)
- 45                 continue
+                    enddo
                 endif
-!
             else
-                do 60 idir = 1, 3
-                    vg1(idir) = zr(jvect+6*(numma-1)+idir-1)
- 60             continue
-                do 65 idir = 1, 3
+                do idir = 1, 3
+                    vg1(idir) = zr(jvect+  6*(numma-1)+idir-1)
                     vg2(idir) = zr(jvect+3+6*(numma-1)+idir-1)
- 65             continue
+                enddo
             endif
 !
-!         ON COMPARE LES REPERES DES AUTRES MAILLES
-!         LIEES AU NOEUD INO
+!           Compare les repères des autres mailles liées au noeud ino
             do 30 ima2 = ima+1, nbma
                 posma = zi(jconi1+posit+ima2-2)
-!
                 if (llimai) then
                     numma2 = zi(jmai+posma-1)
                 else
@@ -265,12 +250,12 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
                 endif
                 if (numma2 .eq. 0) goto 30
 !
-                if ((zr(jvect+6*(numma2-1)).eq.0.d0) .and.&
-                    (zr(jvect+ 6*(numma2-1)+1).eq.0.d0) .and.&
-                    (zr(jvect+6*(numma2-1)+ 2).eq.0.d0) .and.&
-                    (zr(jvect+6*(numma2-1)+3).eq.0.d0) .and.&
-                    (zr(jvect+6*(numma2-1)+4).eq.0.d0) .and.&
-                    (zr( jvect+6*(numma2-1)+5).eq.0.d0)) then
+                if ((zr(jvect+6*(numma2-1))  .eq.0.d0).and. &
+                    (zr(jvect+6*(numma2-1)+1).eq.0.d0).and. &
+                    (zr(jvect+6*(numma2-1)+2).eq.0.d0).and. &
+                    (zr(jvect+6*(numma2-1)+3).eq.0.d0).and. &
+                    (zr(jvect+6*(numma2-1)+4).eq.0.d0).and. &
+                    (zr(jvect+6*(numma2-1)+5).eq.0.d0)) then
 !
                     call cccmcr(jcesdd, numma2, jrepe, jconx2, jconx1,&
                                 jcoord, adcar1, adcar2, ialpha, ibeta,&
@@ -294,24 +279,19 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
                     vl(2) = 1.d0
                     vl(3) = 0.d0
                     call utpvlg(1, 3, pgl, vl, vg4)
-!
-!             SAUVEGARDE DE LA VALEUR TROUVEE SAUF POUR LES COQUES3D
+!                   sauvegarde de la valeur trouvee sauf pour les coques3d
                     if (modeli .ne. 'COQUE_3D') then
-                        do 50 idir = 1, 3
-                            zr(jvect+6*(numma2-1)+idir-1) = vg3(idir)
- 50                     continue
-                        do 55 idir = 1, 3
+                        do idir = 1, 3
+                            zr(jvect+  6*(numma2-1)+idir-1) = vg3(idir)
                             zr(jvect+3+6*(numma2-1)+idir-1) = vg4( idir)
- 55                     continue
+                        enddo
                     endif
 !
                 else
-                    do 70 idir = 1, 3
-                        vg3(idir) = zr(jvect+6*(numma2-1)+idir-1)
- 70                 continue
-                    do 75 idir = 1, 3
+                    do idir = 1, 3
+                        vg3(idir) = zr(jvect+  6*(numma2-1)+idir-1)
                         vg4(idir) = zr(jvect+3+6*(numma2-1)+idir-1)
- 75                 continue
+                    enddo
                 endif
 !
                 call angvec(vg1, vg3, angle1)
@@ -324,11 +304,11 @@ subroutine ccvrrl(nommai, modele, carael, mesmai, chames,&
 !
  30         continue
  20     continue
- 10 end do
+    enddo
 !
     if (lprobm) then
         if (cmperr .ne. ' ') then
-            tabres(1) = 1.0d0*maxdif
+            tabres(1) = maxdif*180.0/3.14
             call utmess(cmperr, 'UTILITAI_4', sr=tabres(1))
         endif
         codret = 1
