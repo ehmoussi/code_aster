@@ -2,7 +2,7 @@ subroutine fluag3d(xmat, nmat, var0, varf, nvari,&
                    dt, depst, nstrs, sigf, mfr,&
                    erreur, teta1, teta2)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -385,7 +385,6 @@ subroutine fluag3d(xmat, nmat, var0, varf, nvari,&
     epsk01=unsek01**(-1)
 !     traitement de l incoherence des donnees  d hydratation
     if (erreur .ne. 0) then
-        print*,'Pb ds la prise en compte de l hydratation dans fluage3d'
         call utmess('F', 'COMPOR1_90')
     end if
 !
@@ -521,11 +520,6 @@ subroutine fluag3d(xmat, nmat, var0, varf, nvari,&
 !       dp=depst(nstrs)
         dpw=depst(nstrs)
 !       recup de la masse de fluide
-        if (vw0 .ne. vw1) then
-            print*,'fluag3d volume de fluide  init',vw0
-            print*,'fluag3d volume de fluide final',vw1
-            read*
-        end if
 !       b3d pm ne calcule que la pression de gel
     end if
 !     prise en compte de l ouverture de fissure dans le calcul de pression
@@ -588,9 +582,6 @@ subroutine fluag3d(xmat, nmat, var0, varf, nvari,&
 !     #  ,' dans fluag2d critere:',cci1p-cci0p
         cci0p=cci1p
         if (iter .gt. 200) then
-            print*,'iter max atteint ds fluag3d'
-            print*,'reduire la taille des pas'
-            print*,depst6,cci1p
             err_iter=.true.
             goto 20
         end if

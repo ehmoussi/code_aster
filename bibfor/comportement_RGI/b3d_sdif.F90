@@ -1,7 +1,7 @@
 subroutine b3d_sdif(ss6, young0, rt, epic, erreur,&
                     dt3, st3, vss33, vss33t, rapp3)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -69,7 +69,6 @@ subroutine b3d_sdif(ss6, young0, rt, epic, erreur,&
         if (dt3(i) .lt. 1.d0) then
             st3(i)=1.d0/(1.d0-dt3(i))
         else
-            print*,'dt3==1 ds b3d_sdif',dt3(i)
             erreur=1
         end if
     end do

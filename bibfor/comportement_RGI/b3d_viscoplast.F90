@@ -2,7 +2,7 @@ subroutine b3d_viscoplast(pg, etag, dt, epg0, dff3,&
                           xmg, bg, epsvpg, epspg6, epspfg6,&
                           vssd33, vssd33t, vplg33, vplg33t, dg3)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -76,7 +76,6 @@ subroutine b3d_viscoplast(pg, etag, dt, epg0, dff3,&
         if (bg .lt. 0.99) then
             dvgeff=pg/xmg/(1.d0-bg)
         else
-            print*,'bg>0.9999 dans b3d_viscoplast !'
             dvgeff=pg/xmg/0.0001d0
         end if
     else

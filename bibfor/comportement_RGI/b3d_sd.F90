@@ -5,7 +5,7 @@ subroutine b3d_sd(ss6, t33, n33, l3, vt33,&
                   local, e23, nfid1, rrr, rapp6,&
                   dpic0, istep)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -76,8 +76,6 @@ subroutine b3d_sd(ss6, t33, n33, l3, vt33,&
 !      pour une formulation non locale a deux longueurs internes
 !      remplacer la longueur de l element par la premiere longueur inter
 !      (l element devient la longueur non locale)
-        print*,'Cf modifs a effectuer b3d_sd pour&
-     & une utilisation en non local'
     else
 !      en formulation locale on va utiliser les tailles reelles des elem
 !      ecriture tensorielle des contraintes seuils
@@ -119,11 +117,6 @@ subroutine b3d_sd(ss6, t33, n33, l3, vt33,&
         if (dt3(i) .lt. 1.d0) then
             st3(i)=1.d0/(1.d0-dt3(i))
         else
-            print*,'dt3==1 ds b3d_sd',dt3(i)
-            print*,ss3(i),young0,epic,reg,rt,xnu0,dt3(i),&
-     &    e23(i),fr,beta1
-            print*,'ds b3d_sd'
-            print*,local,i,l3,e23,rt,beta1,epic,fr,gf,young0,dpic0
             erreur=1
         end if
     end do
