@@ -28,7 +28,11 @@ cata_msg = {
      2) Vous devriez peut-être utiliser le mot clé PROL_ZERO='OUI' .
 """),
 
-
+    2 : _(u"""
+CALC_CHAMP :
+ Vous demandez le calcul du champ %(k1)s aux noeuds.
+ Votre modèle contient des éléments de structure, il est recommandé de donner le CARA_ELEM.
+"""),
 
     4 : _(u"""
 Erreur :
@@ -40,7 +44,6 @@ Conseils :
   S'il s'agit de la commande CREA_CHAMP, vérifiez le mot clé TYPE_CHAM.
 
 """),
-
 
     6 : _(u"""
 Erreur utilisateur (ou programmeur) :
