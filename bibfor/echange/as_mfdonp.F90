@@ -65,10 +65,9 @@ subroutine as_mfdonp(fid, cha, numdt, numo, typent,&
     typge4 = typgeo
     iterm4 = iterma
     ! class4 = 1 <=> field type
-    class4 = 1_4 
+    class4 = 1_4
     call mfioex(fid4, class4, oname, oexist4, cret4)
     if (oexist4.eq.1) then
-        print*, cha, numdt4, numo4, typen4, typge4, iterm4
         call mfdonp(fid4, cha, numdt4, numo4, typen4,&
                     typge4, iterm4, noma, nompro, nomloc,&
                     n4, cret4)
@@ -80,7 +79,7 @@ subroutine as_mfdonp(fid, cha, numdt, numo, typent,&
     endif
 #else
     ! class = 1 <=> field type
-    class = 1 
+    class = 1
     call mfioex(fid, class, oname, oexist, cret)
     if (oexist.eq.1) then
         call mfdonp(fid, cha, numdt, numo, typent,&

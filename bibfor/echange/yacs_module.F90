@@ -194,14 +194,6 @@ module yacs_module
        end subroutine
 
 
-!--
-
-
-
-
-
-!--
-
        subroutine add_port(  name , direction, nvalues, typ)
            implicit none
            character(len=*), intent(in) :: name
@@ -213,11 +205,6 @@ module yacs_module
            ! for foundport
            type(port), pointer :: fport => null() 
 
-           
-
-
-           print *, "yacs_module : add_port ", name, direction, nvalues
-        
            if( .not. associated(first_port) ) then
               allocate(first_port)
               fport => first_port
@@ -247,13 +234,7 @@ module yacs_module
                    ASSERT(.false.)
               end select
            endif
-
-           print *, "port created"
-
-
        end subroutine
-
-!--
 
 
        subroutine is_port_exist(  name, exist, current )

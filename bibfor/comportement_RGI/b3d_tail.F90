@@ -1,7 +1,7 @@
 subroutine b3d_tail(xmat, nmat, ifou, mfr1, nmat0,&
                     nmat1, t33, n33, local)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -88,8 +88,5 @@ subroutine b3d_tail(xmat, nmat, ifou, mfr1, nmat0,&
             n33(3,1)=n33(1,3)
             n33(3,2)=n33(2,3)
         end if
-    else
-        print*,'ENDO3D non implante pour cette formulation'
-        read*
     end if
 end subroutine
