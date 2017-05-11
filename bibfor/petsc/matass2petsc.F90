@@ -1,4 +1,4 @@
-subroutine matass2petsc(matasz, petscMat, iret)
+subroutine matass2petsc(matasz, petscMatz, iret)
 !
 ! COPYRIGHT (C) 1991 - 2016  EDF R&D                WWW.CODE-ASTER.ORG
 !
@@ -19,12 +19,15 @@ subroutine matass2petsc(matasz, petscMat, iret)
 ! aslint: disable=C1308
 ! person_in_charge: natacha.bereux at edf.fr
 !
+#include "asterf_types.h"
+#ifdef _HAVE_PETSC
+#include "asterf_petsc.h"
+#endif
 use petsc_data_module
 use elim_lagr_comp_module
 !
     implicit none
 !
-#include "asterf_types.h"
 #include "asterf.h"
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
@@ -43,12 +46,9 @@ use elim_lagr_comp_module
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 #include "blas/dcopy.h"
-#ifdef _HAVE_PETSC
-#include "asterf_petsc.h"
-#else
-    integer :: petscMat, iret
+#ifndef _HAVE_PETSC
+    integer :: petscMatz, iret
 #endif
-
 !
     character(len=*) :: matasz
 !-----------------------------------------------------------------------
@@ -57,12 +57,11 @@ use elim_lagr_comp_module
 !
 ! IN  : MATASS   (K19) : NOM DE LA MATR_ASSE
 !                       (SI ACTION=PRERES/RESOUD)
-! OUT : petscMat   (I) : MATRICE PETSC
+! OUT : petscMatz   (I) : MATRICE PETSC
 ! OUT : IRET       (I) : CODE_RETOUR
 !-----------------------------------------------------------------------
 !
 #ifdef _HAVE_PETSC
-#include "asterf_petsc.h"
 !
 !----------------------------------------------------------------
 !
@@ -84,7 +83,7 @@ use elim_lagr_comp_module
 !
 !     Variables PETSc
     PetscErrorCode :: iret,ierr
-    Mat :: petscMat
+    Mat :: petscMatz
 
     call jemarq()
 !
@@ -99,7 +98,7 @@ use elim_lagr_comp_module
 
 !   -- Creation d'un solveur bidon
     solvbd='&&MAT2PET'
-    call crsmsp(solvbd, matas, 50)
+    call crsmsp(solvbd, matas, 50,'IN_CORE')
     call jeveuo(solvbd//'.SLVK', 'L', vk24=slvk)
     slvk(2)='SANS'
 
@@ -107,7 +106,7 @@ use elim_lagr_comp_module
     call apetsc('PRERES', solvbd, matas, [0.d0], ' ',&
                 0, ibid, ierror )
     k = get_mat_id( matas ) 
-    call MatDuplicate(ap(k), MAT_COPY_VALUES, petscMat, ierr)
+    call MatDuplicate(ap(k), MAT_COPY_VALUES, petscMatz, ierr)
     ASSERT(ierr.eq.0)
 
 !   -- Nettoyage
