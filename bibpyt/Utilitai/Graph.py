@@ -143,9 +143,9 @@ class Graph(object):
         bounding box +/- avec une 'marge'*(Max-Min)/2.
         x0,x1 permettent de modifier la bb.
         """
-        if x0 <> None:
+        if x0 != None:
             self.BBXmin = min([self.BBXmin, x0])
-        if x1 <> None:
+        if x1 != None:
             self.BBXmax = max([self.BBXmax, x1])
 
         dx = max(self.BBXmax - self.BBXmin, 0.01 * self.BBXmax)
@@ -162,9 +162,9 @@ class Graph(object):
         bounding box +/- avec une 'marge'*(Max-Min)/2.
         y0,y1 permettent de modifier la bb.
         """
-        if y0 <> None:
+        if y0 != None:
             self.BBYmin = min([self.BBYmin, y0])
-        if y1 <> None:
+        if y1 != None:
             self.BBYmax = max([self.BBYmax, y1])
 
         dy = max(self.BBYmax - self.BBYmin, 0.01 * self.BBYmax)
@@ -243,7 +243,7 @@ class Graph(object):
            len(Val[0]) == len(Val[1]) and (nbc == 2 or len(Val[0]) == len(Val[2]))):
             UTMESS('F', 'GRAPH0_1', valk='Val')
 
-        if len(Lab) <> nbc:
+        if len(Lab) != nbc:
             UTMESS('S', 'GRAPH0_2', valk='Lab')
 
         # ajout dans les données
@@ -309,11 +309,11 @@ class Graph(object):
             kargs = self.LastTraceArgs.copy()
             if FORMAT == None:
                 FORMAT = self.LastTraceFormat
-            if FICHIER <> None:
+            if FICHIER != None:
                 kargs['FICHIER'] = FICHIER
-            if dform <> None:
+            if dform != None:
                 kargs['dform'] = dform
-            if opts <> {}:
+            if opts != {}:
                 kargs['opts'] = opts
         if not FORMAT in para.keys():
             UTMESS('A', 'GRAPH0_3', valk=FORMAT)
@@ -377,7 +377,7 @@ class TraceGraph:
             self.NomFich = [None] * 2
         self.Fich = []
         for ff in self.NomFich:
-            if ff <> None:
+            if ff != None:
                 self.Fich.append(open(ff, fmod))
             else:
                 self.Fich.append(sys.stdout)
@@ -416,7 +416,7 @@ class TraceGraph:
             'formR': '%12.5E',  # réels
             'formI': '%12d'     # entiers
         }
-        if dform <> None and type(dform) == types.DictType:
+        if dform != None and type(dform) == types.DictType:
             self.DicForm.update(dform)
 
         # let's go
@@ -432,7 +432,7 @@ class TraceGraph:
     def _FermFich(self):
         """Fermeture du(des) fichier(s)"""
         for fp in self.Fich:
-            if fp <> sys.stdout:
+            if fp != sys.stdout:
                 fp.close()
 # ------------------------------------------------------------------------
 
@@ -490,9 +490,9 @@ class TraceTableau(TraceGraph):
             t0 = numpy.array(g.Courbe(0)['Abs'])
             max0 = max(abs(t0))
             for i in range(1, g.NbCourbe):
-                if g.Courbe(i)['NbPts'] <> g.Courbe(0)['NbPts']:
+                if g.Courbe(i)['NbPts'] != g.Courbe(0)['NbPts']:
                     msg.append("La courbe %d n'a pas le même "
-                               "nombre de points que la 1ère." % i)
+                               "nombre de points que la 1ère." % (i + 1))
                 else:
                     ti = numpy.array(g.Courbe(i)['Abs'])
                     if max(abs((ti - t0).ravel())) > self.EPSILON * max0:
@@ -1064,15 +1064,15 @@ GRAPHIQUE:
         if g.Titre == '':
             g.Titre = 'GRAPHIQUE CODE_ASTER'
         entete.append('Titre :' + ' '.join(g.Titre) + '\n')
-        if g.SousTitre <> '':
+        if g.SousTitre != '':
             entete.append('Commentaire :' + g.SousTitre + '\n')
         entete.append('Frequence Grille X :' + str(int(g.Grille_X)) + '\n')
         entete.append('Frequence Grille Y :' + str(int(g.Grille_Y)) + '\n')
         entete.append('Echelle X :' + dic_ech[g.Echelle_X] + '\n')
         entete.append('Echelle Y :' + dic_ech[g.Echelle_Y] + '\n')
-        if g.Legende_X <> '':
+        if g.Legende_X != '':
             entete.append('Legende X :' + g.Legende_X + '\n')
-        if g.Legende_Y <> '':
+        if g.Legende_Y != '':
             entete.append('Legende Y :' + g.Legende_Y + '\n')
         entete.append('Min X : ' + str(g.Min_X) + '\n')
         entete.append('Max X : ' + str(g.Max_X) + '\n')
@@ -1097,7 +1097,7 @@ GRAPHIQUE:
         descr.append('     Couleur :' + color + '\n')
         descr.append('     Marqueur :' + symbol + '\n')
         descr.append('     Frequence Marqueur :' + freqm + '\n')
-        if args['Leg'] <> '':
+        if args['Leg'] != '':
             descr.append('     Legende :' + args['Leg'] + '\n')
         descr.append('     Tri :' + args['Tri'] + '\n')
         descr.append(
@@ -1136,7 +1136,7 @@ GRAPHIQUE:
                     for lig in self.DescrCourbe(**dCi):
                         fdigr.write(lig)
                 # partie données (.dogr)
-                if dCi['Leg'] <> '':
+                if dCi['Leg'] != '':
                     leg = dCi['Leg']
                 else:
                     leg = 'COURBE_' + str(i)
@@ -1158,22 +1158,22 @@ class TraceMatplotlib(TraceGraph):
     def Entete(self):
         entete =' '
         return entete
-        
+
     def DescrCourbe(self, **args):
         desc=' '
         return desc
-                
-        
+
+
     def Trace(self):
         fichier = self.NomFich
         import matplotlib
         matplotlib.use('Agg')
         import matplotlib.pyplot as plt
         import numpy as np
-        
+
         l_color=['b','r','k','g']
-        g = self.Graph    
-            
+        g = self.Graph
+
         figsize, dpi = [160./2.54/2*1.35, 100./2.54*1.35], 160
         fig = plt.figure(1, figsize = figsize, dpi = dpi)
         fig.clear()
@@ -1189,28 +1189,28 @@ class TraceMatplotlib(TraceGraph):
             else:
                 stycol ='--b'
             ax1.plot(dCi['Abs'],dCi['Ord'][0],stycol, linewidth=2)
-            
-        if g.Echelle_X=='LOG':    
+
+        if g.Echelle_X=='LOG':
             ax1.set_xscale('log')
-        if g.Echelle_Y=='LOG':    
+        if g.Echelle_Y=='LOG':
             ax1.set_yscale('log')
-           
+
         plt.title(g.Titre[0], fontsize=32)
         if g.Min_X!=None and g.Max_X!=None:
             plt.xlim([g.Min_X,g.Max_X])
         if g.Min_Y!=None and g.Max_Y!=None:
-            plt.ylim([g.Min_Y,g.Max_Y]) 
-        plt.xlabel(g.Legende_X, fontsize=32) 
-        plt.ylabel(g.Legende_Y, fontsize=32)            
+            plt.ylim([g.Min_Y,g.Max_Y])
+        plt.xlabel(g.Legende_X, fontsize=32)
+        plt.ylabel(g.Legende_Y, fontsize=32)
         ax = plt.gca()
-        ax.xaxis.set_label_coords(0.5, 0.01)  
+        ax.xaxis.set_label_coords(0.5, 0.01)
         for lab in ax.xaxis.get_ticklabels():
             lab.set_fontsize(32)
         for lab in ax.yaxis.get_ticklabels():
-            lab.set_fontsize(32)                 
-        plt.grid('on',which='both')    
+            lab.set_fontsize(32)
+        plt.grid('on',which='both')
 
-        
+
         if len(liss_nappe)>0:
             tablefig = []
             listAmor = liss_nappe.keys()
@@ -1225,29 +1225,29 @@ class TraceMatplotlib(TraceGraph):
             labelc = ['Freq \n[Hz]']
             for amor in listAmor:
                 labelc.append('Damp \n %.1f'%(amor*100)+'%')
-            
-            agg = plt.table(cellText=tablefig, 
+
+            agg = plt.table(cellText=tablefig,
               colWidths=[0.06]*9,
               colColours=['white']*9,
               cellLoc='center',
-              colLabels=labelc, 
-              colLoc='center', 
+              colLabels=labelc,
+              colLoc='center',
               loc='bottom',
               alpha =1.0,
-              zorder=10, 
-              ) 
+              zorder=10,
+              )
             table_props = agg.properties()
             table_cells = table_props['child_artists']
             for cell in table_cells:
                 txt = cell.get_text().get_text()
                 if 'Freq' in txt or 'Damp' in txt:
-                    cell.set_height(0.03)  
+                    cell.set_height(0.03)
                 else:
-                    cell.set_height(0.018)   
+                    cell.set_height(0.018)
 
             agg.set_fontsize(28)
-            agg.scale(1.2, 1.2)     
-                        
+            agg.scale(1.2, 1.2)
+
         titre = g.Titre[0]
         sous_titre = g.SousTitre
         if ',' in sous_titre:
@@ -1259,22 +1259,22 @@ class TraceMatplotlib(TraceGraph):
             sous_titre_2 = ''
         legend = plt.table(
              cellText=[[titre],[sous_titre_1],[sous_titre_2]],
-             colWidths=[0.3]*1, 
+             colWidths=[0.3]*1,
              cellLoc='center',
-             rowLoc='center', 
+             rowLoc='center',
              loc='upper left',
-             zorder=10, fontsize=32) 
+             zorder=10, fontsize=32)
         table_props = legend.properties()
         table_cells = table_props['child_artists']
-        table_cells[2].set_height(0.05)      
-        table_cells[1].set_height(0.05)      
-        table_cells[0].set_height(0.1)  
-        legend.set_fontsize(40)    
+        table_cells[2].set_height(0.05)
+        table_cells[1].set_height(0.05)
+        table_cells[0].set_height(0.1)
+        legend.set_fontsize(40)
         legend.scale(1.3, 1.3)
-    
+
         plt.savefig(fichier[0], format='png',bbox_inches='tight')
-        
-    
+
+
 
 
 def ValCycl(val, vmin, vmax, vdef):
@@ -1340,38 +1340,38 @@ def IniGrace(fich):
     x1 = None
     y0 = None
     y1 = None
-    if os.path.exists(fich) and os.stat(fich).st_size <> 0:
+    if os.path.exists(fich) and os.stat(fich).st_size != 0:
         os.rename(fich, fich + '.prev')
         fpre = open(fich + '.prev', 'r')
         fnew = open(fich,         'w')
         for line in fpre:
             ikeep = True
             mat = re.search('@target g[0-9]+\.s([0-9]+)', line)
-            if mat <> None and int(mat.group(1)) > ns:
+            if mat != None and int(mat.group(1)) > ns:
                 ns = int(mat.group(1))
             mat = re.search('@[ ]+world[ ]+xmin[ ]+([\-\+\.0-9eEdD]+)', line)
-            if mat <> None:
+            if mat != None:
                 try:
                     x0 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
             mat = re.search('@[ ]+world[ ]+xmax[ ]+([\-\+\.0-9eEdD]+)', line)
-            if mat <> None:
+            if mat != None:
                 try:
                     x1 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
             mat = re.search('@[ ]+world[ ]+ymin[ ]+([\-\+\.0-9eEdD]+)', line)
-            if mat <> None:
+            if mat != None:
                 try:
                     y0 = float(mat.group(1))
                     ikeep = False
                 except ValueError:
                     pass
             mat = re.search('@[ ]+world[ ]+ymax[ ]+([\-\+\.0-9eEdD]+)', line)
-            if mat <> None:
+            if mat != None:
                 try:
                     y1 = float(mat.group(1))
                     ikeep = False

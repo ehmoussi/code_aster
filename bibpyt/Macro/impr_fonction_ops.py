@@ -170,7 +170,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                     dic = dico.copy()
                     dic.update(ldicf[i])
 
-                    if (interp or dCi.has_key('LIST_PARA')) and i > 0:
+                    if interp or dCi.has_key('LIST_PARA'):
 
                         try:
                             __ftmp = CALC_FONC_INTERP(
@@ -200,7 +200,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                     if typi == 'NAPPE':
                         dCi['LEGENDE'] = '%s %s=%g' % (Leg, dic['NOM_PARA'].strip(), p)
                     if typi == 'NAPPE_LISSEE':
-                        dCi['LEGENDE'] = 'NAPPE_LISSEE %s %s=%g' % (Leg, dic['NOM_PARA'].strip(), p)    
+                        dCi['LEGENDE'] = 'NAPPE_LISSEE %s %s=%g' % (Leg, dic['NOM_PARA'].strip(), p)
                     Graph.AjoutParaCourbe(dicC, args=dCi)
                     graph.AjoutCourbe(**dicC)
             else:
