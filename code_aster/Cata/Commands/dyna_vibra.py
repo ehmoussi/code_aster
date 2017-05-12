@@ -245,8 +245,8 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
 ##########################################################################################
 #       Definition of the external excitation
 #       A. Harmonic case
-        b_excit_harm    = BLOC(condition="""equal_to("TYPE_CALCUL", 'HARM')""",
-        EXCIT           = FACT(statut='o',max='**',regles=(UN_PARMI('VECT_ASSE','VECT_ASSE_GENE','CHARGE'),
+        b_excit_harm    = BLOC(condition="""equal_to("TYPE_CALCUL", 'HARM')""", regles=(AU_MOINS_UN('EXCIT', 'EXCIT_RESU',),),
+        EXCIT           = FACT(statut='f',max='**',regles=(UN_PARMI('VECT_ASSE','VECT_ASSE_GENE','CHARGE'),
                                                            UN_PARMI('FONC_MULT','FONC_MULT_C','COEF_MULT','COEF_MULT_C'),),
             VECT_ASSE   =     SIMP(statut='f',typ=cham_no_sdaster),
             VECT_ASSE_GENE=   SIMP(statut='f',typ=vect_asse_gene),
