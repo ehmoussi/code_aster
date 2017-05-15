@@ -142,7 +142,7 @@ Vérifiez vos données.
 AFFE_CARA_ELEM. Il y a %(i1)d occurrences du mot clef facteur <%(k1)s>.
 Entre ces différentes occurrences les GROUP_MA_POI1 ont %(i2)d mailles en communs.
 La règle de surcharge est donc appliquée %(i2)d fois.
-
+La liste des mailles surchargées est affichée avec INFO=2.
 """),
 
     21 : _(u"""
