@@ -28,6 +28,15 @@ MA1=CREA_MAILLAGE(MAILLAGE=MA10,
     ),
 )
 
+#Création de group_no à un seul noeud pour tester l'utilisation de GROUP_NO dans
+#REST_SPEC_PHYS
+MA1=DEFI_GROUP(reuse=MA1,
+                    MAILLAGE=MA1,
+                    CREA_GROUP_NO=(_F(NOEUD='P1',
+                                      NOM='P1S',),
+                                    _F(NOEUD='P2',
+                                      NOM='P2S',),
+                                   ),)
 
 #*********************************************************************#
 # *****AFFECTATION D ELEMENTS SUR LES MAILLES*************************#
@@ -186,7 +195,7 @@ INTER1=REST_SPEC_PHYS(         MODE_MECA=FREQ1,
                                         NOM_CMP = 'DX'),
                                    MOUVEMENT='ABSOLU',
                                     NOM_CHAM='ACCE',
-                                       NOEUD=( 'P1',   'P2'),
+                                       GROUP_NO=( 'P1S',   'P2S'),
                                      NOM_CMP=('DX', 'DX'),
                                       OPTION='TOUT_TOUT'   )
 
