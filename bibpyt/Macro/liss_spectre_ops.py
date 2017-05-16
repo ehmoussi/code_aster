@@ -338,7 +338,7 @@ def liss_spectre_ops(
             
             sous_titre = dico['plancher']+dico['direction']+', '+dico['commentaire']
             IMPR_FONCTION (FORMAT='LISS_ENVELOP',
-                           COURBE = _F(NAPPE_LISSEE = __Napver,),
+                           COURBE = _F(NAPPE_LISSEE = __Naplis,, NAPPE = __Napver,),
                            TITRE = dico['batiment'],
                            SOUS_TITRE =sous_titre,
                            UNITE = unite,
