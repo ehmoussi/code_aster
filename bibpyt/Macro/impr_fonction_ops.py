@@ -125,6 +125,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     #----------------------------------------------
     graph = Graph.Graph()
     iocc = -1
+    isnappelisse = 0
     for dCi in Courbe:
         iocc += 1
 
@@ -197,12 +198,14 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                     # ajoute la valeur du paramètre
                     dCi['LEGENDE'] = '%s %s=%g' % (
                         Leg, dic['NOM_PARA'].strip(), p)
-                    if typi == 'NAPPE':
+                    if typi == 'NAPPE' or (typi == 'NAPPE_LISSEE' and isnappelisse):
                         dCi['LEGENDE'] = '%s %s=%g' % (Leg, dic['NOM_PARA'].strip(), p)
-                    if typi == 'NAPPE_LISSEE':
+                    elif typi == 'NAPPE_LISSEE':
                         dCi['LEGENDE'] = 'NAPPE_LISSEE %s %s=%g' % (Leg, dic['NOM_PARA'].strip(), p)
                     Graph.AjoutParaCourbe(dicC, args=dCi)
                     graph.AjoutCourbe(**dicC)
+                if typi == 'NAPPE_LISSEE':
+                    isnappelisse=1
             else:
                 __ftmp = obj
                 dpar = __ftmp.Parametres()
