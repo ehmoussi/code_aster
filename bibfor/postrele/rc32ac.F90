@@ -118,20 +118,21 @@ subroutine rc32ac(ze200, mater, lpmpb, lsn,&
 !         9 : UPART
 !
 ! ------ POUR CHAQUE COMBINAISON, ON ARCHIVE :
-!         * 12 QUANTITES AVEC LA PRISE EN COMPTE DU SEISME
-!         * 12 QUANTITES SANS LA PRISE EN COMPTE DU SEISME
-!         8  : INST SN 1
-!         9  : INST SN 2
-!         1  : SN
-!         4  : KE_MECA
-!         5  : KE_THER
-!         10 : INST SP1 1
-!         11 : INST SP1 2
-!         12 : INST SP2 1
-!         13 : INST SP2 2
-!         6  : SALT1
-!         7  : SALT2
-!         14 : FU ELEMENTAIRE
+!         * 13 QUANTITES AVEC LA PRISE EN COMPTE DU SEISME
+!         * 13 QUANTITES SANS LA PRISE EN COMPTE DU SEISME
+!         1  : INST SN 1
+!         2  : INST SN 2
+!         3  : SN
+!         4  : SN*
+!         5  : KE_MECA
+!         6  : KE_THER
+!         7  : INST SP1 1
+!         8  : INST SP1 2
+!         9  : INST SP2 1
+!         10 : INST SP2 2
+!         11 : SALT1
+!         12 : SALT2
+!         13 : FU ELEMENTAIRE
 !
         k24as = '&&RC3200.AVEC_SEISME'//lieu(im)
         call jecrec(k24as, 'V V R', 'NU', 'DISPERSE', 'VARIABLE',&
@@ -208,7 +209,7 @@ subroutine rc32ac(ze200, mater, lpmpb, lsn,&
             call jeecra(jexnum(k24ss, ig), 'LONMAX', 9*nbsigr)
             call jeveuo(jexnum(k24ss, ig), 'E', jress)
 !
-            ndim = max(12,int(12*nbsigr*(nbsigr-1)/2))
+            ndim = max(13,int(13*nbsigr*(nbsigr-1)/2))
             call jecroc(jexnum(k24ca, ig))
             call jeecra(jexnum(k24ca, ig), 'LONMAX', ndim)
             call jeveuo(jexnum(k24ca, ig), 'E', jreca)
@@ -481,7 +482,7 @@ subroutine rc32ac(ze200, mater, lpmpb, lsn,&
             call jeecra(jexnum(k24ss, ig), 'LONMAX', 9*nbsigr)
             call jeveuo(jexnum(k24ss, ig), 'E', jress)
 !
-            ndim = max(12,12*nbsigr*(nbsigr-1)/2)
+            ndim = max(13,13*nbsigr*(nbsigr-1)/2)
             call jecroc(jexnum(k24ca, ig))
             call jeecra(jexnum(k24ca, ig), 'LONMAX', ndim)
             call jeveuo(jexnum(k24ca, ig), 'E', jreca)
