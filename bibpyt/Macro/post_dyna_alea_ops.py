@@ -256,6 +256,7 @@ def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):
         OPTION = INTERSPECTRE['OPTION']
         MOMENT = INTERSPECTRE['MOMENT']
         DUREE = INTERSPECTRE['DUREE']
+        FRACTILE = INTERSPECTRE['FRACTILE']
 
         # table résultat
         tabres = Table(titr='POST_DYNA_ALEA concept : %s' % self.sd.nom)
@@ -474,16 +475,20 @@ def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):
                 if DUREE != None:
                     Ts = DUREE
                     vop = sqrt(val_mom[2] / val_mom[0]) / (2. * pi)
-                    Nu = Ts * vop / (-log(0.5))
+                    Nu = Ts * vop / (-log(FRACTILE))
                     deltau = sqrt(
                         1. - val_mom[1] ** 2 / (val_mom[2] * val_mom[0]))
                     valNd = 2. * Nu * \
                         (1 - exp(-(deltau) ** 1.2 * sqrt(pi * log(2. * Nu))))
                     val_peak = sqrt(2. * log(valNd))
                     dlign[
-                        'FACT_PIC'] = val_peak   # -- facteur de peak (oour max moyen)
-                    dlign['MAX_MOY'] = val_peak * sqrt(
-                        val_mom[0])    # -- max moyen
+                        'FACT_PIC'] = val_peak   # -- facteur de peak 
+                    if FRACTILE == 0.5:
+                        Titre_lign = 'MAX_MOY'
+                    else :
+                        Titre_lign = 'MAX_FRACT'
+                    dlign[Titre_lign] = val_peak * sqrt(
+                        val_mom[0])    # -- fractile du max (mediane pour 0.5)
 
                 if abs(val_mom[2]) >= 1e-20:
                     dlign['NB_EXTREMA_P_S'] = 1. / \

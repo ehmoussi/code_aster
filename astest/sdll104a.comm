@@ -215,7 +215,18 @@ STADE=POST_DYNA_ALEA(INTERSPECTRE=_F(
                           NUME_ORDRE_I = 1,
                           DUREE =10.,),
                           INFO=2,
-                      )   
+                      ) 
+
+
+STADE_F=POST_DYNA_ALEA(INTERSPECTRE=_F(
+                          INTE_SPEC=INTKTJ1,
+                          NUME_ORDRE_J = 1,
+                          NUME_ORDRE_I = 1,
+                          DUREE =10., FRACTILE = 0.95),
+                          INFO=2,
+                      ) 
+
+  
                       
 STADEJ2=POST_DYNA_ALEA(INTERSPECTRE=_F(
                          INTE_SPEC=INTKTJ2,
@@ -236,6 +247,8 @@ STADECS=POST_DYNA_ALEA(INTERSPECTRE=_F(
                          DUREE =10.,),
                           INFO=2,
                       )   
+
+
                       
 TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=5.5220842862402,
@@ -300,6 +313,30 @@ TEST_TABLE(CRITERE='RELATIF',
                       VALE_I=1,),
                    ),
            )
+
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC= 22.5384604631,
+           NOM_PARA='MAX_FRACT',
+           TABLE=STADE_F,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE_I',
+                      VALE_I=1,),
+                   _F(NOM_PARA='NUME_ORDRE_J',
+                      VALE_I=1,),
+                   ),
+           )
+
+TEST_TABLE(CRITERE='RELATIF',
+           VALE_CALC=4.08151330093,
+           NOM_PARA='FACT_PIC',
+           TABLE=STADE_F,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE_I',
+                      VALE_I=1,),
+                   _F(NOM_PARA='NUME_ORDRE_J',
+                      VALE_I=1,),
+                   ),
+           )
+
+
 
 IMPR_TABLE(TABLE=STADE,
            UNITE=8,
