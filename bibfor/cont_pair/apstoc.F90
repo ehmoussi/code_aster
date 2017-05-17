@@ -11,7 +11,7 @@ implicit none
 #include "asterfort/jedetr.h"
 #include "asterfort/assert.h"
 #include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"  
+#include "asterfort/as_allocate.h"
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -44,7 +44,7 @@ implicit none
 !
 ! IO  ds_contact       : datastructure for contact management
 ! In  nb_pair          : number of pairs in contact zone
-! IO  list_pair        : list of pairs in contact zone  
+! IO  list_pair        : list of pairs in contact zone
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,11 +62,10 @@ implicit none
         call jedetr(sdappa_apli)
         call wkvect(sdappa_apli,'V V I', 3*nb_pair, vi = v_sdappa_apli)
         do i_pair = 1, 3*nb_pair
-            write(*,*)"pair",i_pair
             v_sdappa_apli(i_pair) = list_pair(i_pair)        
         end do
         AS_DEALLOCATE(vi=list_pair)
         ds_contact%nb_cont_pair = nb_pair
     end if
     call jedema()
-end subroutine           
+end subroutine
