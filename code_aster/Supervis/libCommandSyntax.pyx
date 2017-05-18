@@ -288,7 +288,6 @@ cdef public int listeMotCleSimpleFromMotCleFacteur(
     if currentCommand is None:
         raise ValueError( "there is no active command" )
     dictFkw = currentCommand._getFactorKeywordOccurrence( factKeyword, occurrence )
-    print "dictFkw", dictFkw
     if dictFkw is None:
         nbKeyword[0] = 0
         return 1
