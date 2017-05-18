@@ -26,12 +26,12 @@ It mainly converts new objects to old ones for backward compatibility.
 import __builtin__
 import types
 
-import DataStructure as DS
+from . import DataStructure as DS, ops
 from .DataStructure import AsType
 from .SyntaxChecker import SyntaxCheckerVisitor
 from .SyntaxObjects import (
     SimpleKeyword, FactorKeyword, Bloc,
-    Operator, Macro, Procedure, Formule, Ops,
+    Operator, Macro, Procedure, Formule,
     CataError,
 )
 from .Rules import (
@@ -97,7 +97,6 @@ class EMPTY_OPS(object):
     pass
 
 
-ops = Ops()
 assd = DS.ASSD
 
 
