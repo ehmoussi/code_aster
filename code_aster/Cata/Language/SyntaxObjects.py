@@ -44,8 +44,9 @@ import copy
 import types
 from collections import OrderedDict
 
-from .SyntaxUtils import (mixedcopy, sorted_dict, block_utils, debug_message2,
-                          enable_0key, disable_0key)
+from .SyntaxUtils import (block_utils, debug_message2, disable_0key,
+                          enable_0key, mixedcopy, sorted_dict,
+                          value_is_sequence)
 from .DataStructure import UnitBaseType, DataStructure
 
 
@@ -78,6 +79,7 @@ class ConversionLevel(object):
         Any: All conversion must pass.
         Partial: Allows to make a partial conversion (to be used with
             another level).
+        NoGraphical: Force to load all stages in text mode.
     """
     NoFail = 0x00
     Naming = 0x01
@@ -87,6 +89,7 @@ class ConversionLevel(object):
     Restore = 0x08
     Any = Syntaxic | Restore
     Partial = 0x10
+    NoGraphical = 0x20
 
 
 class CataDefinition(OrderedDict):
@@ -454,7 +457,7 @@ class SimpleKeyword(PartOfSyntax):
         """
         value = userSyntax.get(key, self.defaultValue())
         if self.is_list():
-            if value is not None and type(value) not in (list, tuple):
+            if value is not None and not value_is_sequence(value):
                 value = [value, ]
         userSyntax[key] = value
         _parent_ctxt[key] = userSyntax[key]
@@ -652,19 +655,6 @@ class Procedure(Command):
 class Formule(Macro):
 
     pass
-
-
-class Ops(object):
-
-    def __init__(self):
-        self.DEBUT = None
-        self.build_detruire = None
-        self.build_formule = None
-        self.build_gene_vari_alea = None
-        self.INCLUDE = None
-        self.INCLUDE_context = None
-        self.POURSUITE = None
-        self.POURSUITE_context = None
 
 
 class CataError(Exception):

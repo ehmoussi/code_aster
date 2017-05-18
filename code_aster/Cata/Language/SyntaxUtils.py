@@ -27,6 +27,9 @@ List of utilities for syntax objects.
 import os
 from functools import partial
 from collections import OrderedDict
+import math
+
+import numpy
 
 from .DataStructure import AsType
 
@@ -59,9 +62,24 @@ def remove_none(obj):
 
 def force_list(values):
     """Ensure `values` is a list or tuple."""
-    if type(values) not in (list, tuple):
+    if not value_is_sequence(values):
         values = [values]
     return values
+
+def value_is_sequence(value):
+    """Tell if *value* is a valid object if max > 1."""
+    return type(value) in (list, tuple, numpy.ndarray)
+
+# same function exist in asterstudy.datamodel.aster_parser
+def old_complex(value):
+    """Convert an old-style complex."""
+    if isinstance(value, (list, tuple)) and len(value) == 3:
+        if value[0] == 'RI':
+            value = complex(value[1], value[2])
+        elif value[0] == 'MP':
+            value = complex(value[1] * math.cos(value[2]),
+                            value[1] * math.sin(value[2]))
+    return value
 
 def enable_0key(values):
     """Emulate the legacy MCFACT behavior: MCFACT[0] returns MCFACT itself
