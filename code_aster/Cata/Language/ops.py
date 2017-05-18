@@ -21,9 +21,22 @@
 This module only exists for backward compatibility.
 """
 
-DEBUT = build_debut = \
-POURSUITE = build_poursuite = POURSUITE_context = \
-INCLUDE = build_include = INCLUDE_context = \
-DETRUIRE = build_detruire = \
-build_procedure = build_DEFI_FICHIER = \
+DEBUT = None
+build_debut = None
+
+POURSUITE = None
+build_poursuite = None
+POURSUITE_context = None
+
+INCLUDE = None
+build_include = None
+INCLUDE_context = None
+
+DETRUIRE = None
+build_detruire = None
+
+build_procedure = None
+
+build_DEFI_FICHIER = None
+
 build_formule = None
