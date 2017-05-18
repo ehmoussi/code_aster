@@ -28,6 +28,8 @@ import os
 from functools import partial
 from collections import OrderedDict
 
+import numpy
+
 from .DataStructure import AsType
 
 
@@ -59,9 +61,13 @@ def remove_none(obj):
 
 def force_list(values):
     """Ensure `values` is a list or tuple."""
-    if type(values) not in (list, tuple):
+    if not value_is_sequence(values):
         values = [values]
     return values
+
+def value_is_sequence(value):
+    """Tell if *value* is a valid object if max > 1."""
+    return type(value) in (list, tuple, numpy.ndarray)
 
 def enable_0key(values):
     """Emulate the legacy MCFACT behavior: MCFACT[0] returns MCFACT itself

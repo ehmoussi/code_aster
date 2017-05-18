@@ -36,7 +36,7 @@ funcParameterNames = (
 
 def DEFI_FONCTION( **kwargs ):
     """Définit une fonction réelle ou complexe d'une variable réelle"""
-    checkCommandSyntax( Commands.DEFI_FONCTION, kwargs )
+    checkCommandSyntax(Commands.DEFI_FONCTION, kwargs)
 
     NOM_PARA = kwargs['NOM_PARA']
     assert NOM_PARA in funcParameterNames
@@ -79,5 +79,5 @@ def DEFI_FONCTION( **kwargs ):
     func.setResultName( NOM_RESU )
     func.setInterpolation( INTERPOL )
     func.setExtrapolation( PROL_GAUCHE[0] + PROL_DROITE[0] )
-    func.setValues( absc, ordo )
+    func.setValues( list(absc), list(ordo) )
     return func

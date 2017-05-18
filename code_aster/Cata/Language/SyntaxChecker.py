@@ -27,7 +27,8 @@ legacy operators and pure Python instructions.
 import numpy
 
 import DataStructure as DS
-from .SyntaxUtils import force_list, mixedcopy, remove_none, debug_message2
+from .SyntaxUtils import (debug_message2, force_list, mixedcopy, remove_none,
+                          value_is_sequence)
 
 
 def fromTypeName(typename):
@@ -178,7 +179,7 @@ class SyntaxCheckerVisitor(object):
         valMin = step.definition.get('val_min')
         valMax = step.definition.get('val_max')
 
-        if type(skwValue) in (list, tuple, numpy.ndarray):
+        if value_is_sequence(skwValue):
             # Vérification du nombre de valeurs
             nbMin = step.definition.get('min')
             nbMax = step.definition.get('max')

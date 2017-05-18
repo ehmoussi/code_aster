@@ -44,8 +44,9 @@ import copy
 import types
 from collections import OrderedDict
 
-from .SyntaxUtils import (mixedcopy, sorted_dict, block_utils, debug_message2,
-                          enable_0key, disable_0key)
+from .SyntaxUtils import (block_utils, debug_message2, disable_0key,
+                          enable_0key, mixedcopy, sorted_dict,
+                          value_is_sequence)
 from .DataStructure import UnitBaseType, DataStructure
 
 
@@ -454,7 +455,7 @@ class SimpleKeyword(PartOfSyntax):
         """
         value = userSyntax.get(key, self.defaultValue())
         if self.is_list():
-            if value is not None and type(value) not in (list, tuple):
+            if value is not None and not value_is_sequence(value):
                 value = [value, ]
         userSyntax[key] = value
         _parent_ctxt[key] = userSyntax[key]
