@@ -1,6 +1,6 @@
     subroutine mat_proto(fami, kpg, ksp, poum, imate, itface, nprops, props)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -32,10 +32,11 @@
 #include "asterfort/r8inir.h"
 #include "asterfort/rcadlv.h"
 #include "asterfort/assert.h"
+#include "asterfort/rccoma.h"
 #include "asterfort/rcvarc.h"
+#include "asterfort/utmess.h"
 #include "asterfort/get_meta_phasis.h"
 #include "asterfort/get_meta_id.h"
-#include "asterfort/get_elas_id.h"
 
     character(len=*), intent(in) :: fami
     integer, intent(in)          :: kpg
@@ -52,7 +53,7 @@
 
 !
     real(kind=8) :: phase(5), zalpha
-    integer     :: elas_id, meta_id, nb_phasis
+    integer     :: meta_id, nb_phasis
     character(len=16) :: elas_keyword
 !----------------------------------------------------------------------------
     rundef=r8nnem()
@@ -65,9 +66,10 @@
     call r8inir(nprops, rundef, props, 1)
 
 !   -- recuperation des valeurs et recopie dans props :
-    call get_elas_id(imate, elas_id, elas_keyword)
+    call rccoma(imate, 'ELAS_META', 0, elas_keyword, icodre)
+    
 !    
-    if (elas_keyword.eq.'ELAS_META') then
+    if (icodre.eq.0) then
         call get_meta_id(meta_id, nb_phasis)
         call get_meta_phasis(fami     , poum  , kpg   , ksp , meta_id,&
                              nb_phasis, phase, zcold_ = zalpha)
