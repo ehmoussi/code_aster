@@ -655,19 +655,6 @@ class Formule(Macro):
     pass
 
 
-class Ops(object):
-
-    def __init__(self):
-        self.DEBUT = None
-        self.build_detruire = None
-        self.build_formule = None
-        self.build_gene_vari_alea = None
-        self.INCLUDE = None
-        self.INCLUDE_context = None
-        self.POURSUITE = None
-        self.POURSUITE_context = None
-
-
 class CataError(Exception):
     """Exception raised in case of error in the catalog."""
     pass

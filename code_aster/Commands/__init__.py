@@ -56,3 +56,7 @@ from code_aster.Commands.proj_champ import PROJ_CHAMP
 from code_aster.Commands.mode_iter_cycl import MODE_ITER_CYCL
 from code_aster.Commands.defi_interf_dyna import DEFI_INTERF_DYNA
 from code_aster.Commands.stat_non_line import STAT_NON_LINE
+
+from code_aster.Commands.macro_commands import (
+    ASSEMBLAGE, DEBUT, IMPR_FONCTION,
+)
