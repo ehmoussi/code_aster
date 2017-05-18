@@ -42,9 +42,9 @@ if executionParameter.get_option('autostart'):
 from .RunManager.saving import saveObjects
 from .Utilities import TestCase
 
+# import datastructures
 import libaster
 from libaster import *
 
-# import datastructures, physical quantities and constants
 # each package is responsible to export only the relevant objects
 from .LinearAlgebra import *
