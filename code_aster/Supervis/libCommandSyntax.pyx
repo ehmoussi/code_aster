@@ -288,19 +288,17 @@ cdef public int listeMotCleSimpleFromMotCleFacteur(
     if currentCommand is None:
         raise ValueError( "there is no active command" )
     dictFkw = currentCommand._getFactorKeywordOccurrence( factKeyword, occurrence )
+    print "dictFkw", dictFkw
     if dictFkw is None:
         nbKeyword[0] = 0
         return 1
 
-    keywords = dictFkw.keys()
-    size = len( keywords )
-    if nbval <= 0:
-        nbKeyword[0] = -size
-        return 0
-    nbKeyword[0] = size
-
+    keywords = []
     types = []
-    for value in dictFkw.values():
+    for key, value in dictFkw.iteritems():
+        if value == None:
+            continue
+        keywords.append(key)
         value2 = value
         if type( value ) == list or  type( value ) == tuple:
             value2 = value[0]
@@ -316,6 +314,13 @@ cdef public int listeMotCleSimpleFromMotCleFacteur(
         else:
             raise TypeError( "Unexpected type: {!r}".format(type(value)) )
         types.append( typ )
+
+    size = len( keywords )
+    if nbval <= 0:
+        nbKeyword[0] = -size
+        return 0
+    nbKeyword[0] = size
+
     # fill the fortran array
     logger.debug("getmjm: keywords = %r", keywords)
     logger.debug("getmjm: types = %r", types)
@@ -349,21 +354,14 @@ cdef public char** getCommandKeywordValueString(
     if currentCommand is None:
         raise ValueError( "there is no active command" )
     value = currentCommand.getValue( factName, occurrence, simpName )
-    # nsellenet
     if len( value ) > 0 and type( value[0] ) not in ( str, unicode ):
         try:
-            #print "Ici"
             value2 = []
             for i in range( len( value ) ):
-                #print "La2", len(value[i].getName())
                 value2.append(value[i].getName())
-                #print "La3", value[i].getName()
-                #value[i] = value[i].getName()
             value = value2
         except:
-            #print "La"
             raise TypeError( "string expected for %r/%r, got %s" % ( factName, simpName, type(value[0]) ) )
-    # nsellenet
     cdef char** strArray = libBaseUtils.to_cstring_array( value )
     size[0] = len( value )
     return strArray
