@@ -128,6 +128,22 @@ class KinematicsLoadInstance: public DataStructure
         };
 
         /**
+         * @brief Ajout d'une valeur mecanique imposee sur un groupe de mailles
+         * @param namesOfGroup Noms des groupes sur lequels imposer la valeur
+         * @param value Valeur imposee
+         * @return Booleen indiquant que tout s'est bien passe
+         */
+        bool addImposedMechanicalDOFOnElements( const PhysicalQuantityComponent& coordinate,
+                                                const double& value,
+                                                const std::vector< std::string >& namesOfGroup )
+            throw ( std::runtime_error )
+        {
+            for( const auto& nameOfGroup : namesOfGroup )
+                addImposedMechanicalDOFOnElements( coordinate, value, nameOfGroup );
+            return true;
+        };
+
+        /**
          * @brief Ajout d'une valeur mecanique imposee sur un groupe de noeuds
          * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
          * @param value Valeur imposee
@@ -147,6 +163,22 @@ class KinematicsLoadInstance: public DataStructure
             MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
             _listOfDoubleImposedDisplacement.push_back( resu );
+            return true;
+        };
+
+        /**
+         * @brief Ajout d'une valeur mecanique imposee sur un groupe de noeuds
+         * @param namesOfGroup Noms des groupe sur lequels imposer la valeur
+         * @param value Valeur imposee
+         * @return Booleen indiquant que tout s'est bien passe
+         */
+        bool addImposedMechanicalDOFOnNodes( const PhysicalQuantityComponent& coordinate,
+                                             const double& value,
+                                             const std::vector< std::string >& namesOfGroup )
+            throw ( std::runtime_error )
+        {
+            for( const auto& nameOfGroup : namesOfGroup )
+                addImposedMechanicalDOFOnNodes( coordinate, value, nameOfGroup );
             return true;
         };
 
@@ -174,6 +206,22 @@ class KinematicsLoadInstance: public DataStructure
         };
 
         /**
+         * @brief Ajout d'une valeur thermique imposee sur un groupe de mailles
+         * @param namesOfGroup Noms des groupe sur lequel imposer la valeur
+         * @param value Valeur imposee
+         * @return Booleen indiquant que tout s'est bien passe
+         */
+        bool addImposedThermalDOFOnElements( const PhysicalQuantityComponent& coordinate,
+                                             const double& value,
+                                             const std::vector< std::string >& namesOfGroup )
+            throw ( std::runtime_error )
+        {
+            for( const auto& nameOfGroup : namesOfGroup )
+                addImposedThermalDOFOnElements( coordinate, value, nameOfGroup );
+            return true;
+        };
+
+        /**
          * @brief Ajout d'une valeur thermique imposee sur un groupe de noeuds
          * @param nameOfGroup Nom du groupe sur lequel imposer la valeur
          * @param value Valeur imposee
@@ -193,6 +241,22 @@ class KinematicsLoadInstance: public DataStructure
             MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
             DoubleLoadTemperature resu( meshEnt, coordinate, value );
             _listOfDoubleImposedTemperature.push_back( resu );
+            return true;
+        };
+
+        /**
+         * @brief Ajout d'une valeur thermique imposee sur un groupe de noeuds
+         * @param namesOfGroup Noms des groupes sur lequels imposer la valeur
+         * @param value Valeur imposee
+         * @return Booleen indiquant que tout s'est bien passe
+         */
+        bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent& coordinate,
+                                          const double& value,
+                                          const std::vector< std::string >& namesOfGroup )
+            throw ( std::runtime_error )
+        {
+            for( const auto& nameOfGroup : namesOfGroup )
+                addImposedThermalDOFOnNodes( coordinate, value, nameOfGroup );
             return true;
         };
 
