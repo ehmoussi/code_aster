@@ -21,13 +21,12 @@
 
 import numpy as np
 
-from code_aster.Cata import Commands
-from code_aster.Cata.SyntaxChecker import checkCommandSyntax
+from code_aster.Cata import Commands, checkSyntax
 
 
 def DEFI_LIST_REEL( **kwargs ):
     """Définir une liste de réels strictement croissante"""
-    checkCommandSyntax( Commands.DEFI_LIST_REEL, kwargs )
+    checkSyntax( Commands.DEFI_LIST_REEL, kwargs )
 
     vale = kwargs.get('VALE')
     if vale is not None:

@@ -20,8 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from code_aster import MaterialOnMesh
-from code_aster.Cata import Commands
-from code_aster.Cata.SyntaxChecker import checkCommandSyntax
+from code_aster.Cata import Commands, checkSyntax
 
 
 def _addMaterial( materOnMesh, fkw ):
@@ -40,7 +39,7 @@ def _addMaterial( materOnMesh, fkw ):
 
 def AFFE_MATERIAU( **kwargs ):
     """Opérateur d'affection d'un matériau"""
-    checkCommandSyntax( Commands.AFFE_MATERIAU, kwargs )
+    checkSyntax( Commands.AFFE_MATERIAU, kwargs )
 
     materOnMesh = MaterialOnMesh.create()
 

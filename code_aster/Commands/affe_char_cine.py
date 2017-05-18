@@ -20,8 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from code_aster import Mesh, Model, KinematicsLoad
-from code_aster.Cata import Commands
-from code_aster.Cata.SyntaxChecker import checkCommandSyntax
+from code_aster.Cata import Commands, checkSyntax
 from code_aster import getGlossary
 
 
@@ -61,7 +60,7 @@ def _addLoad( load, fkwImpo, nameOfImpo ):
 
 def AFFE_CHAR_CINE( **kwargs ):
     """Opérateur d'affection d'un chargement cinématique"""
-    checkCommandSyntax( Commands.AFFE_CHAR_CINE, kwargs )
+    checkSyntax( Commands.AFFE_CHAR_CINE, kwargs )
 
     load = KinematicsLoad.create()
     load.setSupportModel( kwargs[ "MODELE" ] )
