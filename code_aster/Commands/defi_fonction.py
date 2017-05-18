@@ -22,8 +22,7 @@
 import numpy as np
 
 from code_aster import Function
-from code_aster.Cata import Commands
-from code_aster.Cata.SyntaxChecker import checkCommandSyntax
+from code_aster.Cata import Commands, checkSyntax
 
 
 funcParameterNames = (
@@ -36,7 +35,7 @@ funcParameterNames = (
 
 def DEFI_FONCTION( **kwargs ):
     """Définit une fonction réelle ou complexe d'une variable réelle"""
-    checkCommandSyntax(Commands.DEFI_FONCTION, kwargs)
+    checkSyntax(Commands.DEFI_FONCTION, kwargs)
 
     NOM_PARA = kwargs['NOM_PARA']
     assert NOM_PARA in funcParameterNames

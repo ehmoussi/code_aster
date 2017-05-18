@@ -20,13 +20,12 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from code_aster import Mesh
-from code_aster.Cata import Commands
-from code_aster.Cata.SyntaxChecker import checkCommandSyntax
+from code_aster.Cata import Commands, checkSyntax
 
 
 def LIRE_MAILLAGE( **kwargs ):
     """Opérateur de relecture du maillage"""
-    checkCommandSyntax( Commands.LIRE_MAILLAGE, kwargs )
+    checkSyntax( Commands.LIRE_MAILLAGE, kwargs )
     mesh = Mesh.create()
     fileName = "fort." + str( kwargs["UNITE"] )
     format = kwargs["FORMAT"]

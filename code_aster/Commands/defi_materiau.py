@@ -23,8 +23,7 @@ import types
 
 import code_aster
 from code_aster import Material
-from code_aster.Cata import Commands
-from code_aster.Cata.SyntaxChecker import checkCommandSyntax
+from code_aster.Cata import Commands, checkSyntax
 
 
 def _byKeyword():
@@ -44,7 +43,7 @@ def _byKeyword():
 
 def DEFI_MATERIAU( **kwargs ):
     """Opérateur de définition d'un matériau"""
-    checkCommandSyntax( Commands.DEFI_MATERIAU, kwargs )
+    checkSyntax( Commands.DEFI_MATERIAU, kwargs )
 
     classByName = _byKeyword()
     mater = Material.create()

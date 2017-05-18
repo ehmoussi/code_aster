@@ -20,14 +20,13 @@
 # person_in_charge: nicolas.tardieu@edf.fr
 
 from code_aster import Mesh, XfemCrack, CrackShape
-from code_aster.Cata import Commands
-from code_aster.Cata.SyntaxChecker import checkCommandSyntax
+from code_aster.Cata import Commands, checkSyntax
 from code_aster import getGlossary
 
 
 def DEFI_FISS_XFEM( **kwargs ):
     """Operator to define XFEM cracks"""
-    checkCommandSyntax( Commands.DEFI_FISS_XFEM, kwargs )
+    checkSyntax( Commands.DEFI_FISS_XFEM, kwargs )
 
     glossary = getGlossary()
 

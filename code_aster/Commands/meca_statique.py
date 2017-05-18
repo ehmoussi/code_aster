@@ -21,8 +21,7 @@
 
 from code_aster import MultFrontSolver, LdltSolver, MumpsSolver, PetscSolver, GcpcSolver
 from code_aster import StaticMechanicalSolver, KinematicsLoad, GenericMechanicalLoad
-from code_aster.Cata import Commands
-from code_aster.Cata.SyntaxChecker import checkCommandSyntax
+from code_aster.Cata import Commands, checkSyntax
 from code_aster import getGlossary
 
 
@@ -41,7 +40,7 @@ def _addLoad( mechaSolv, fkw ):
 
 def MECA_STATIQUE( **kwargs ):
     """Opérateur de résolution de mécanique statique linéaire"""
-    checkCommandSyntax( Commands.MECA_STATIQUE, kwargs )
+    checkSyntax( Commands.MECA_STATIQUE, kwargs )
 
     mechaSolv = StaticMechanicalSolver.create()
 

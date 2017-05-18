@@ -30,6 +30,13 @@ of the commands language (already used by AsterStudy).
 
 """
 
+from functools import partial
+
+from .Language import SyntaxChecker
+
+checkSyntax = partial(SyntaxChecker.checkCommandSyntax, printSyntax=True)
+
+
 HAVE_ASTERSTUDY = True
 
 
