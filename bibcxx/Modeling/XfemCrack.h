@@ -30,7 +30,7 @@
 #include "DataFields/FieldOnNodes.h"
 #include "DataStructures/DataStructure.h"
 #include "Meshes/Mesh.h"
-#include "Function/Function.h"
+#include "Functions/Function.h"
 #include "Modeling/CrackShape.h"
 
 

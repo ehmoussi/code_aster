@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "Function/Function.h"
+#include "Functions/Function.h"
 
 void exportFunctionToPython();
 

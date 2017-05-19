@@ -34,7 +34,7 @@
 #include "astercxx.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "aster_utils.h"
-#include "Function/Function.h"
+#include "Functions/Function.h"
 
 extern "C"
 {

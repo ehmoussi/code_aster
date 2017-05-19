@@ -23,4 +23,4 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Function/Surface.h"
+#include "Functions/Surface.h"

@@ -25,7 +25,7 @@
  */
 
 #include "Meshes/Mesh.h"
-#include "Function/Function.h"
+#include "Functions/Function.h"
 #include "Utilities/CapyConvertibleValue.h"
 
 /**
