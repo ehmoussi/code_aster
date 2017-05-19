@@ -215,13 +215,13 @@ class filtreExpand(filtre):
         # Enveloppe des spectres
         spr = enveloppe_spectres([spLower, spMid, spUpper])
         
-        # Filtre sur les frequences initiales
-        l_val=[]
-        for f,freq in enumerate(spr.listFreq):
-            if freq in sp.listFreq:
-                l_val.append(spr.dataVal[f])
-        sp.dataVal  = l_val
-        return sp
+        spf = spectre()
+        for i in range (0,len(spr.listFreq)):
+            if spr.listFreq[i] >= sp.listFreq[0] and spr.listFreq[i] <= sp.listFreq[-1]:
+                spf.listFreq.append(spr.listFreq[i])
+                spf.dataVal.append(spr.dataVal[i])
+                
+        return spf
 
         
 class spectre:
