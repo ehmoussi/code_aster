@@ -623,7 +623,7 @@ def enveloppe_nappe(l_nappe):
             try:
                 ind = (nappe.listAmor).index(amor)
                 spec = copy.copy(nappe.listSpec[ind])
-                spec.filtre(filterLogLog)
+                spec=spec.filtre(filterLogLog)
                 l_spec.append(spec)
                 l_freq+=spec.listFreq
             except:
@@ -637,7 +637,7 @@ def enveloppe_nappe(l_nappe):
             ynew = N.interp(l_freq, spec.listFreq, spec.dataVal)
             s_max = [ max(s_max[t], ynew[t]) for t in range(len(l_freq))]
         spec= spectre(listFreq=l_freq,dataVal=s_max)
-        spec.filtre(filterLinLin)
+        spec=spec.filtre(filterLinLin)
         l_spec_amor.append(spec)
         
     sp_nappe = copy.copy(nappe)
@@ -654,9 +654,9 @@ def enveloppe_spectres(listSpec):
     filterLogLog = filtreLogLog()
     filterLinLin = filtreLinLin()
     for spec in listSpec:
-        l_freq+=spec.listFreq
         specLL = copy.copy(spec)
-        specLL.filtre(filterLogLog)
+        specLL=specLL.filtre(filterLogLog)
+        l_freq+=specLL.listFreq
         l_spec.append(specLL)
     #Suppression doublons
     l_freq = list(set(l_freq))
@@ -667,7 +667,7 @@ def enveloppe_spectres(listSpec):
         ynew = N.interp(l_freq, spec.listFreq, spec.dataVal)
         s_max = [ max(s_max[t], ynew[t]) for t in range(len(l_freq))]
     spec= spectre(listFreq=l_freq,dataVal=s_max)
-    spec.filtre(filterLinLin)
+    spec=spec.filtre(filterLinLin)
     return spec
         
 def elargis_spectres(l_spectre,l_coef):
