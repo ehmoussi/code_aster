@@ -27,8 +27,8 @@ legacy operators and pure Python instructions.
 import numpy
 
 import DataStructure as DS
-from .SyntaxUtils import (debug_message2, force_list, mixedcopy, remove_none,
-                          value_is_sequence)
+from .SyntaxUtils import (debug_message2, force_list, mixedcopy, old_complex,
+                          remove_none, value_is_sequence)
 
 
 def fromTypeName(typename):
@@ -175,6 +175,10 @@ class SyntaxCheckerVisitor(object):
         if not validType:
             raise TypeError("Unsupported type: {0!r}".format(currentType))
 
+        # old complex notation
+        if complex in validType:
+            skwValue = old_complex(skwValue)
+
         # Vérification des valeurs max et min
         valMin = step.definition.get('val_min')
         valMax = step.definition.get('val_max')
@@ -196,6 +200,8 @@ class SyntaxCheckerVisitor(object):
 
         # Vérification du type et des bornes des valeurs
         for i in skwValue:
+            if complex in validType:
+                i = old_complex(i)
             # AsterStudy: for PythonVariable
             if isinstance(i, DS.PythonVariable):
                 # can not be checked now, it will be when it will become a Variable
