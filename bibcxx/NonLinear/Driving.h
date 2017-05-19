@@ -25,7 +25,7 @@
  */
 
 #include "Meshes/Mesh.h"
-#include "Function/Function.h"
+#include "Functions/Function.h"
 #include "Geometry/Geometry.h" 
 #include "Loads/PhysicalQuantity.h"
 #include "Modeling/XfemCrack.h"

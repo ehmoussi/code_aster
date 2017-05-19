@@ -50,7 +50,7 @@ from libaster import *
 from .DataStructures import *
 from .DataFields import *
 from .Flow import *
-from .Function import *
+from .Functions import *
 from .Geometry import *
 from .LinearAlgebra import *
 from .Materials import *

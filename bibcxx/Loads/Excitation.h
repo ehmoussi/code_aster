@@ -31,7 +31,7 @@
 #include <string>
 
 #include "astercxx.h"
-#include "Function/Function.h"
+#include "Functions/Function.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "Utilities/CapyConvertibleValue.h"

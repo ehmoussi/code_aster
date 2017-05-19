@@ -9,7 +9,7 @@ from code_aster.Commands import *
 
 test = code_aster.TestCase()
 
-fsin = code_aster.Function()
+fsin = code_aster.Function.create()
 fsin.setParameterName("INST")
 fsin.setResultName("TEMP")
 fsin.setInterpolation("LIN LOG")

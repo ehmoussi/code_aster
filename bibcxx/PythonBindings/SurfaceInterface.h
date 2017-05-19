@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "Function/Surface.h"
+#include "Functions/Surface.h"
 
 void exportSurfaceToPython();
 

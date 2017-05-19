@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "astercxx.h"
-#include "Function/Function.h"
+#include "Functions/Function.h"
 
 
 FunctionInstance::FunctionInstance( const std::string jeveuxName ):
