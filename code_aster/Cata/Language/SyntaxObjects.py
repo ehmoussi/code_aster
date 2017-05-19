@@ -79,6 +79,7 @@ class ConversionLevel(object):
         Any: All conversion must pass.
         Partial: Allows to make a partial conversion (to be used with
             another level).
+        NoGraphical: Force to load all stages in text mode.
     """
     NoFail = 0x00
     Naming = 0x01
@@ -88,6 +89,7 @@ class ConversionLevel(object):
     Restore = 0x08
     Any = Syntaxic | Restore
     Partial = 0x10
+    NoGraphical = 0x20
 
 
 class CataDefinition(OrderedDict):
