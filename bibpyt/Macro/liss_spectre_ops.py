@@ -109,7 +109,6 @@ def liss_spectre_ops(
             planchers = recu_val(tab, 'NOM', stop=1)
             nb_nappes += len(planchers)*len(directions)
     
-    print 'nb_nappes',nb_nappes
     __NAPPE=nb_nappes*[None]
     i_nappe = 0
     
@@ -149,16 +148,16 @@ def liss_spectre_ops(
             # boucle sur les planchers
             for ipl, pl in enumerate(planchers):
                 # boucle sur les directions
-                print pl
+                # print pl
                 for dire in directions:
-                    print dire
+                    # print dire
                     list_defi_fonc = [] 
                     # boucle sur les amortissements
                     for namo in nume_amor:
-                        print namo
+                        # print namo
                         para = 'e%s_%s_%s'%(dire, namo, pl)
                         para2 = 'E%s_%s_%s'%(dire, namo, pl)
-                        print para, para2
+                        # print para, para2
                         if para in tab.para:
                             l_vale = recu_val(tab, para)
                         elif para2 in tab.para:
@@ -171,7 +170,7 @@ def liss_spectre_ops(
                         dic_fonc = {'PROL_DROITE':'CONSTANT',
                                     'PROL_GAUCHE':'CONSTANT',
                                     'VALE': vale_fonc}
-                        print 'vale_fonc', vale_fonc
+                        # print 'vale_fonc', vale_fonc
                         list_defi_fonc.append(dic_fonc)
             
                     if list_defi_fonc != []:
@@ -306,12 +305,16 @@ def liss_spectre_ops(
             motscles['ZPA']=ZPA
         
         if OPTION == 'CONCEPTION':
+            nb_nappes = len(dico['liste_nappes'])
+            motscles['NB_FREQ_LISS']=[nb_freq_max*nb_nappes]
             __Napver=CALC_FONCTION (
                                 LISS_ENVELOP = _F(NAPPE=dico['liste_nappes'],
                                 OPTION = OPTION,
                                 **motscles
                                 ))
         else:
+            nb_nappes = len(dico['liste_nappes'])
+            motscles['NB_FREQ_LISS']=[nb_freq_max,nb_freq_max*3*nb_nappes]
             __Napver=CALC_FONCTION (
                                 LISS_ENVELOP = _F(NAPPE=dico['liste_nappes'],
                                 OPTION = OPTION,
@@ -338,7 +341,8 @@ def liss_spectre_ops(
             
             sous_titre = dico['plancher']+dico['direction']+', '+dico['commentaire']
             IMPR_FONCTION (FORMAT='LISS_ENVELOP',
-                           COURBE = _F(NAPPE_LISSEE = __Naplis,, NAPPE = __Napver,),
+                           COURBE = (_F(NAPPE_LISSEE = __Naplis), 
+                                    _F(NAPPE = __Napver,)),
                            TITRE = dico['batiment'],
                            SOUS_TITRE =sous_titre,
                            UNITE = unite,
