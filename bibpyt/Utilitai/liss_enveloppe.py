@@ -711,7 +711,7 @@ def liss_enveloppe(l_nappes ,option = 'CONCEPTION', nb_pts = 50, coef_elarg = No
             if len(nb_pts)>2:
                 UTMESS('A', 'FONCT0_75')
         else:    
-            nb_pts_1 = nb_pts_2 = nb_pts
+            nb_pts_1 = nb_pts_2 = nb_pts[0]
             
         # Lissage pour chaque nappe    
         l_liss_nappe = []
