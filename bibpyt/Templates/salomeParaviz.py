@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -174,7 +174,7 @@ if CHOIXF == 'ISO':
     if TYPE_CHAMP == "P1":
         pd = resu.PointData
     if TYPE_CHAMP == "GSSNE":
-        resu = ELNOMesh()
+        resu = ELNOfieldToSurface()
         pd = resu.PointData
 
     # Recuperation des informations du champ
@@ -198,7 +198,7 @@ if CHOIXF == 'GAUSS':
             NOM_CHAMP = nom
             break
 
-    resu = GaussPoints()
+    resu = ELGAfieldToPointSprite()
 
     nom = "ELGA@" + "0"
     resu.SelectSourceArray = ['CELLS', nom]
@@ -214,7 +214,7 @@ if CHOIXF == 'GAUSS':
 
     # Attributs de visualisation
     CMP = 'Component'
-    TYPE = 'Point Sprite'
+    TYPE = 'Points'
 
 
 if CHOIXF == 'DEPL':
@@ -289,7 +289,7 @@ if CHOIXF == 'ON_DEFORMED':
     if TYPE_CHAMP == "P1":
         pd = resu.PointData
     if TYPE_CHAMP == "GSSNE":
-        resu = ELNOMesh()
+        resu = ELNOfieldToSurface()
         pd = resu.PointData
 
     for i in range(len(pd)):
