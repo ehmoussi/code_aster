@@ -109,7 +109,7 @@ implicit none
 !
 ! --- TYPE DE CONTACT
 !
-    if (.not.l_all_verif) then
+    if (.not.l_all_verif .and. ((.not.l_cont_lac) .or. ds_contact%nb_cont_pair.ne.0)) then
 !
 ! ----- Print
 !

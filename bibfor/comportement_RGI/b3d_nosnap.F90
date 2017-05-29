@@ -3,7 +3,7 @@ subroutine b3d_nosnap(istep, fr, rtref, dpic, gf,&
                       xkweib, veq, rteff, errmesh, coeff3,&
                       coefft)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -49,11 +49,6 @@ subroutine b3d_nosnap(istep, fr, rtref, dpic, gf,&
 !       resistance probabiliste maxi
 !       rem: en deterministe veq=max(vi,vref)
         xwb=1.d0/xkweib
-        if (veq .le. 0.) then
-            print*,'donnee incoherente dans b3d_nosnap'
-            print*,'V equivalent ne peut etre < ou = a 0'
-            read*
-        end if
 !       en local veq=vref et coefft=1 -> Rtproba=Rtref
 !       coefft modifie l energie de fissuration egalement cf ci dessous
         rtproba=(rtref*coefft)*(vref/veq)**(xwb)

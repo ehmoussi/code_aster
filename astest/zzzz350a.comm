@@ -1,6 +1,6 @@
 #
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -39,7 +39,7 @@ Mesh=MODI_MAILLAGE(reuse =Mesh,
                    ORIE_PEAU_2D=_F(GROUP_MA='TopF2',),);
 
 Mat=DEFI_MATERIAU(ELAS=_F(E=E1,
-                          NU=.33,),);
+                          NU=.33,),ECRO_LINE=_F(D_SIGM_EPSI=1.0,SY=1E15),)
 
 EleMod=AFFE_MODELE(MAILLAGE=Mesh,
                    AFFE=_F(TOUT='OUI',
@@ -102,7 +102,7 @@ ResultsC=STAT_NON_LINE(MODELE=EleMod,
                       CHAM_MATER=Matmod,
                       EXCIT=_F(CHARGE=BC,),
                       CONTACT=ContactC,
-                      COMPORTEMENT=_F(RELATION='ELAS',
+                      COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',
                                    DEFORMATION='GROT_GDEP',),
                       INCREMENT=_F(LIST_INST=Time,),
                       NEWTON=_F(REAC_INCR=1,
@@ -112,7 +112,7 @@ ResultsD=STAT_NON_LINE(MODELE=EleMod,
                       CHAM_MATER=Matmod,
                       EXCIT=_F(CHARGE=BC,),
                       CONTACT=ContactD,
-                      COMPORTEMENT=_F(RELATION='ELAS',
+                      COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',
                                    DEFORMATION='GROT_GDEP',),
                       INCREMENT=_F(LIST_INST=Time,),
                       NEWTON=_F(REAC_INCR=1,

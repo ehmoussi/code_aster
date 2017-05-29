@@ -44,7 +44,7 @@ subroutine rc32r1(nomres, lefat)
     character(len=4) :: lieu(2)
     integer :: npar0, npar1, npar2, npar3, npar4, npar5, npar6, npar8, npar7
     parameter    ( npar0 = 38, npar1 = 24, npar2 = 11, npar3 = 4,&
-     &             npar4 = 14, npar5 = 12, npar6 = 21, npar7 = 7, npar8 = 9)
+     &             npar4 = 14, npar5 = 13, npar6 = 21, npar7 = 7, npar8 = 9)
     character(len=16) :: nopar0(npar0), nopar1(npar1), nopar2(npar2)
     character(len=16) :: nopar3(npar3), nopar4(npar4), nopar5(npar5)
     character(len=16) :: nopar6(npar6), nopar7(npar7), nopar8(npar8)
@@ -124,7 +124,7 @@ subroutine rc32r1(nomres, lefat)
 !
     data nopar5 / 'TYPE', 'SEISME', 'LIEU', 'SIT1',&
      &              'GROUPE_1','SIT2', 'INST_SN_1', 'INST_SN_2',  'SN' ,&
-     &              'KE_MECA', 'KE_THER', 'FU_UNIT' /
+     &              'SN*', 'KE_MECA', 'KE_THER', 'FU_UNIT' /
 !
     data nopar8 / 'TYPE', 'SEISME', 'LIEU',&
      &              'SIT1', 'GROUPE_1', 'SIT2', 'INST_SP_1', 'INST_SP_2',&
@@ -255,17 +255,18 @@ subroutine rc32r1(nomres, lefat)
                     valer(3)=zr(jreas+ii+2)
                     valer(4)=zr(jreas+ii+3)
                     valer(5)=zr(jreas+ii+4)
-                    valer(6)=zr(jreas+ii+11)
+                    valer(6)=zr(jreas+ii+5)
+                    valer(7)=zr(jreas+ii+12)
                     call tbajli(nomres, npar5, nopar5, valei, valer,&
                                 [c16b], valek, 0)
-                    valer(1)=zr(jreas+ii+5)
-                    valer(2)=zr(jreas+ii+6)
-                    valer(3)=zr(jreas+ii+9)
+                    valer(1)=zr(jreas+ii+6)
+                    valer(2)=zr(jreas+ii+7)
+                    valer(3)=zr(jreas+ii+10)
                     call tbajli(nomres, npar8, nopar8, valei, valer,&
                                 [c16b], valek, 0)
-                    valer(1)=zr(jreas+ii+7)
-                    valer(2)=zr(jreas+ii+8)
-                    valer(3)=zr(jreas+ii+10)
+                    valer(1)=zr(jreas+ii+8)
+                    valer(2)=zr(jreas+ii+9)
+                    valer(3)=zr(jreas+ii+11)
                     call tbajli(nomres, npar8, nopar8, valei, valer,&
                                 [c16b], valek, 0)
 !
@@ -275,21 +276,22 @@ subroutine rc32r1(nomres, lefat)
                     valer(3)=zr(jress+ii+2)
                     valer(4)=zr(jress+ii+3)
                     valer(5)=zr(jress+ii+4)
-                    valer(6)=zr(jress+ii+11)
+                    valer(6)=zr(jress+ii+5)
+                    valer(7)=zr(jress+ii+12)
                     call tbajli(nomres, npar5, nopar5, valei, valer,&
                                 [c16b], valek, 0)
-                    valer(1)=zr(jress+ii+5)
-                    valer(2)=zr(jress+ii+6)
-                    valer(3)=zr(jress+ii+9)
-                    call tbajli(nomres, npar8, nopar8, valei, valer,&
-                                [c16b], valek, 0)
-                    valer(1)=zr(jress+ii+7)
-                    valer(2)=zr(jress+ii+8)
+                    valer(1)=zr(jress+ii+6)
+                    valer(2)=zr(jress+ii+7)
                     valer(3)=zr(jress+ii+10)
                     call tbajli(nomres, npar8, nopar8, valei, valer,&
                                 [c16b], valek, 0)
+                    valer(1)=zr(jress+ii+8)
+                    valer(2)=zr(jress+ii+9)
+                    valer(3)=zr(jress+ii+11)
+                    call tbajli(nomres, npar8, nopar8, valei, valer,&
+                                [c16b], valek, 0)
 !
-                    ii = ii + 12
+                    ii = ii + 13
 124             continue
 122         continue
 120     continue

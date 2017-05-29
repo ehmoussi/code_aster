@@ -103,10 +103,10 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
     real(kind=8) :: s2pq(2), spq(2), trescapq(2), tresmepq(2), s2
     real(kind=8) :: mij1(12), mij2(12), mij3(12)
     real(kind=8) :: mij4(12), pij1, pij2, pij3, pij4, tresca1(4), tresme1(4)
-    integer :: ind1, ind2, indme1, indme2, inst1, inst2, instp1c(4), instq1c(4)
+    integer :: inst1, inst2, instp1c(4), instq1c(4)
     real(kind=8) :: seis(6), st11(6), st12(6), st13(6)
     real(kind=8) :: st14(6), sm11(6), sm12(6), sm13(6), sm14(6)
-    integer :: instp1, instq1, instp2, instq2, jinst1, jinst2, iret2p, n4(2)
+    integer :: instp1, instq1, instp2, instq2, iret2p, n4(2)
     real(kind=8) :: tres1, tres2, sc(6), sc1(6), sc2(6), tempa, tempb
     integer :: ndim2, jtempp, jtempa, jtempb, long, jtempq, iretq, iret2q
     real(kind=8) :: A1(12), B1(12), sbid(6), momp(12), momq(12)
@@ -561,15 +561,15 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                         instpmax = -1.0
                                       endif 
 !
-                                      sc(j) =  sc1(j) + sc2(j)
-                                      st(j) =  sb(j) + e0(i0)*sa(j) + e0(i0)*sc(j)  +&
+                                      sc(j) =  sc1(j)
+                                      st(j) =  sb(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)+&
                                                e0(i1)*seisfx(j)  +e0(i2)*seisfy(j)  +&
                                                e0(i3)*seisfz(j)  +e0(i4)*seismx(j)  +&
                                                e0(i5)*seismy(j)  +e0(i6)*seismz(j)  +&
                                                e0(i7)*seisfx2(j) +e0(i8)*seisfy2(j) +&
                                                e0(i9)*seisfz2(j) +e0(i10)*seismx2(j)+&
                                                e0(i11)*seismy2(j)+e0(i12)*seismz2(j)
-                                      spmec(j) =  spm(j)+e0(i0)*sa(j)+e0(i0)*sc(j)  +&
+                                      spmec(j) = spm(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)+&
                                                 e0(i1)*seisfx(j)  +e0(i2)*seisfy(j)  +&
                                                 e0(i3)*seisfz(j)  +e0(i4)*seismx(j)  +&
                                                 e0(i5)*seismy(j)  +e0(i6)*seismz(j)  +&
@@ -619,9 +619,9 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
                   instpmax = -1.0
                 endif 
 !
-                sc(j) =  sc1(j)+sc2(j)
-                st(j)  = sb(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
-                spmec(j)= spm(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
+                sc(j) =  sc1(j)
+                st(j)  = sb(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
+                spmec(j)= spm(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
 117         continue
             call rctres(st,tresca)
             if (tresca .gt. trescapp) then
@@ -860,15 +860,15 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                         instqmax = -1.0
                                       endif 
 !
-                                      sc(j) =  sc1(j) + sc2(j)
-                                      st(j) =  sb(j) + e0(i0)*sa(j) + e0(i0)*sc(j)  +&
+                                      sc(j) =  sc1(j)
+                                      st(j) =  sb(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)+&
                                                e0(i1)*seisfx(j)  +e0(i2)*seisfy(j)  +&
                                                e0(i3)*seisfz(j)  +e0(i4)*seismx(j)  +&
                                                e0(i5)*seismy(j)  +e0(i6)*seismz(j)  +&
                                                e0(i7)*seisfx2(j) +e0(i8)*seisfy2(j) +&
                                                e0(i9)*seisfz2(j) +e0(i10)*seismx2(j)+&
                                                e0(i11)*seismy2(j)+e0(i12)*seismz2(j)
-                                      spmec(j) =  spm(j)+e0(i0)*sa(j)+e0(i0)*sc(j)  +&
+                                      spmec(j) = spm(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)+&
                                                 e0(i1)*seisfx(j)  +e0(i2)*seisfy(j)  +&
                                                 e0(i3)*seisfz(j)  +e0(i4)*seismx(j)  +&
                                                 e0(i5)*seismy(j)  +e0(i6)*seismz(j)  +&
@@ -918,9 +918,9 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
                 instqmax = -1.0
               endif
 !
-              sc(j) =  sc1(j) + sc2(j)
-              st(j)  = sb(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
-              spmec(j)= spm(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
+              sc(j) =  sc1(j)
+              st(j)  = sb(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
+              spmec(j)= spm(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
 195         continue
             call rctres(st,tresca)
             if (tresca .gt. trescaqq) then
@@ -1002,7 +1002,7 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
             pij2 = propj(1)-proqj(1)
             pij3 = propi(1)-proqj(1)
             pij4 = propj(1)-proqi(1)
-            sigu = zr(jsigu-1+72+78+j)
+            sigu = zr(jsigu-1+72+j)
             spres1(j) = pij1*sigu
             spres2(j) = pij2*sigu
             spres3(j) = pij3*sigu
@@ -1038,7 +1038,7 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
                 mij3(icmp) = mij3(icmp)-proqj(1+icmp)
                 mij4(icmp) = mij4(icmp)-proqi(1+icmp)
             endif
-            sigu = zr(jsigu-1+78+6*(icmp-1)+j)
+            sigu = zr(jsigu-1+6*(icmp-1)+j)
             smom11(j) = smom11(j) + mij1(icmp)*sigu
             smom12(j) = smom12(j) + mij2(icmp)*sigu
             smom13(j) = smom13(j) + mij3(icmp)*sigu
@@ -1054,34 +1054,16 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
 211 continue
     if (np .ne. 0) then
         if (nq .ne. 0) then
-            ind1 = jsigp
-            ind2 = jsigq
-            indme1 = jmecap
-            indme2 = jmecaq
             inst1 = nbinst(1)
             inst2 = nbinst(2)
-            jinst1=jinst(1)
-            jinst2=jinst(2)
         else
-            ind1 = jsigp
-            ind2 = 1
-            indme1 = jmecap
-            indme2 = 1
             inst1 = nbinst(1)
             inst2 = 1
-            jinst1=jinst(1)
-            jinst2=1
         endif
     else
         if (nq .ne. 0) then
-            ind1 = 1
-            ind2 = jsigq
-            indme1 = 1
-            indme2 = jmecaq
             inst1 = 1
             inst2 = nbinst(2)
-            jinst1=1
-            jinst2=jinst(2)
         else
             inst1 = 1
             inst2 = 1
@@ -1116,14 +1098,30 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                 do 231 i11 = 1, 2
                                   do 232 i12 = 1, 2
                                     do 233 j = 1, 6
-                                      if (np+nq .ne. 0) then
-                                        sb(j)=zr(ind1+(i-1)*ncmp+j-1)-zr(ind2+(l-1)*ncmp+j-1)
-                                        smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
-                                        spm(j)=zr(indme1+(i-1)*ncmp+j-1)-zr(indme2+(l-1)*ncmp+j-1)
+                                      if (np .ne. 0) then
+                                        if(nq .ne. 0) then
+                                          sb(j)=zr(jsigp+(i-1)*ncmp+j-1)-zr(jsigq+(l-1)*ncmp+j-1)
+                                          smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-&
+                                                   zr(jtempq+(l-1)*ncmp+j-1)
+                                          spm(j)=zr(jmecap+(i-1)*ncmp+j-1)-zr(jmecaq+(l-1)*ncmp+j-1)
+                                        else
+                                          sb(j)=zr(jsigp+(i-1)*ncmp+j-1)
+                                          smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-&
+                                                   zr(jtempq+(l-1)*ncmp+j-1)
+                                          spm(j)=zr(jmecap+(i-1)*ncmp+j-1)
+                                        endif
                                       else
-                                        smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
-                                        sb(j)=0.d0
-                                        spm(j)=0.d0
+                                        if(nq .ne. 0) then
+                                          sb(j)=-zr(jsigq+(l-1)*ncmp+j-1)
+                                          smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-&
+                                                   zr(jtempq+(l-1)*ncmp+j-1)
+                                          spm(j)=-zr(jmecaq+(l-1)*ncmp+j-1)
+                                        else
+                                          sb(j)=0.d0
+                                          smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-&
+                                                   zr(jtempq+(l-1)*ncmp+j-1)
+                                          spm(j)=0.d0
+                                        endif
                                       endif
                                       seis(j)= e0(i1)*seisfx(j)+e0(i2)*seisfy(j)+&
                                                e0(i3)*seisfz(j)+e0(i4)*seismx(j)+&
@@ -1131,14 +1129,14 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                                e0(i7)*seisfx2(j)+e0(i8)*seisfy2(j)+&
                                                e0(i9)*seisfz2(j)+e0(i10)*seismx2(j)+&
                                                e0(i11)*seismy2(j)+e0(i12)*seismz2(j)
-                                      st11(j) = sb(j)+e0(i0)*(smom11(j)+smom2(j)+spres1(j))+seis(j)
-                                      st12(j) = sb(j)+e0(i0)*(smom12(j)+smom2(j)+spres2(j))+seis(j)
-                                      st13(j) = sb(j)+e0(i0)*(smom13(j)+smom2(j)+spres3(j))+seis(j)
-                                      st14(j) = sb(j)+e0(i0)*(smom14(j)+smom2(j)+spres4(j))+seis(j)
-                                      sm11(j) = spm(j)+e0(i0)*(smom11(j)+smom2(j)+spres1(j))+seis(j)
-                                      sm12(j) = spm(j)+e0(i0)*(smom12(j)+smom2(j)+spres2(j))+seis(j)
-                                      sm13(j) = spm(j)+e0(i0)*(smom13(j)+smom2(j)+spres3(j))+seis(j)
-                                      sm14(j) = spm(j)+e0(i0)*(smom14(j)+smom2(j)+spres4(j))+seis(j)
+                                      st11(j) = sb(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))+seis(j)
+                                      st12(j) = sb(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))+seis(j)
+                                      st13(j) = sb(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))+seis(j)
+                                      st14(j) = sb(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j))+seis(j)
+                                      sm11(j) = spm(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))+seis(j)
+                                      sm12(j) = spm(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))+seis(j)
+                                      sm13(j) = spm(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))+seis(j)
+                                      sm14(j) = spm(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j))+seis(j)
 233                                 continue
 !
                                     call rctres(st11,tresca)
@@ -1198,25 +1196,37 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
         do 235 l = 1, inst2
           do 236 i0 = 1, 2
             do 237 j=1,6
-                if (nq+np .ne. 0) then
-                  sb(j)=zr(ind1+(i-1)*ncmp+j-1)-zr(ind2+(l-1)*ncmp+j-1)
-                  smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
-                  spm(j)=zr(indme1+(i-1)*ncmp+j-1)-zr(indme2+(l-1)*ncmp+j-1)
+                if (np .ne. 0) then
+                  if (nq .ne. 0) then
+                    sb(j)=zr(jsigp+(i-1)*ncmp+j-1)-zr(jsigq+(l-1)*ncmp+j-1)
+                    smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
+                    spm(j)=zr(jmecap+(i-1)*ncmp+j-1)-zr(jmecaq+(l-1)*ncmp+j-1)
+                  else
+                    sb(j)=zr(jsigp+(i-1)*ncmp+j-1)
+                    smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
+                    spm(j)=zr(jmecap+(i-1)*ncmp+j-1)
+                  endif
                 else
-                  smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
-                  sb(j)=0.d0
-                  spm(j)=0.d0
-                  instsp(1) = -1.0
-                  instsp(2) = -1.0
+                  if (nq .ne. 0) then
+                    sb(j)=-zr(jsigq+(l-1)*ncmp+j-1)
+                    smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
+                    spm(j)=-zr(jmecaq+(l-1)*ncmp+j-1)
+                  else
+                    sb(j)=0.d0
+                    smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
+                    spm(j)=0.d0
+                    instsp(1) = -1.0
+                    instsp(2) = -1.0
+                  endif
                 endif
-                st11(j) = sb(j)+e0(i0)*(smom11(j)+smom2(j)+spres1(j))
-                st12(j) = sb(j)+e0(i0)*(smom12(j)+smom2(j)+spres2(j))
-                st13(j) = sb(j)+e0(i0)*(smom13(j)+smom2(j)+spres3(j))
-                st14(j) = sb(j)+e0(i0)*(smom14(j)+smom2(j)+spres4(j))
-                sm11(j) = sb(j)+e0(i0)*(smom11(j)+smom2(j)+spres1(j))
-                sm12(j) = sb(j)+e0(i0)*(smom12(j)+smom2(j)+spres2(j))
-                sm13(j) = sb(j)+e0(i0)*(smom13(j)+smom2(j)+spres3(j))
-                sm14(j) = sb(j)+e0(i0)*(smom14(j)+smom2(j)+spres4(j))
+                st11(j) = sb(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))
+                st12(j) = sb(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))
+                st13(j) = sb(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))
+                st14(j) = sb(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j))
+                sm11(j) = spm(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))
+                sm12(j) = spm(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))
+                sm13(j) = spm(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))
+                sm14(j) = spm(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j))
 237         continue
             call rctres(st11,tresca)
             if (tresca .gt. tresca1(1)) then
@@ -1306,12 +1316,22 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
     if(spq(1) .gt. sp(1)) then
         sp(1)  = spq(1)
         spme(1) = tresmepq(1)+s2pq(1)
-        if(np+nq .ne. 0) then
-            instsp(1) = zr(jinst1+instp1-1)
-            instsp(2) = zr(jinst2+instq1-1)
+        if(np .ne. 0) then
+          if(nq .ne. 0) then
+            instsp(1) = zr(jinst(1)+instp1-1)
+            instsp(2) = zr(jinst(2)+instq1-1)
+          else
+            instsp(1) = zr(jinst(1)+instp1-1)
+            instsp(2) = -1.d0
+          endif
         else
-            instsp(1)=-1.d0
-            instsp(2)=-1.d0
+          if(nq .ne. 0) then
+            instsp(1) = -1.d0
+            instsp(2) = zr(jinst(2)+instq1-1)
+          else
+            instsp(1) = -1.d0
+            instsp(2) = -1.d0
+          endif
         endif
     else
         goto 333
@@ -1413,14 +1433,14 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                              e0(i7)*seisfx2(j)+e0(i8)*seisfy2(j)+&
                                              e0(i9)*seisfz2(j)+e0(i10)*seismx2(j)+&
                                              e0(i11)*seismy2(j)+e0(i12)*seismz2(j)
-                                      st11(j) = sb(j)+e0(i0)*(smom11(j)+smom2(j)+spres1(j))+seis(j)
-                                      st12(j) = sb(j)+e0(i0)*(smom12(j)+smom2(j)+spres2(j))+seis(j)
-                                      st13(j) = sb(j)+e0(i0)*(smom13(j)+smom2(j)+spres3(j))+seis(j)
-                                      st14(j) = sb(j)+e0(i0)*(smom14(j)+smom2(j)+spres4(j))+seis(j)
-                                      sm11(j) = spm(j)+e0(i0)*(smom11(j)+smom2(j)+spres1(j))+seis(j)
-                                      sm12(j) = spm(j)+e0(i0)*(smom12(j)+smom2(j)+spres2(j))+seis(j)
-                                      sm13(j) = spm(j)+e0(i0)*(smom13(j)+smom2(j)+spres3(j))+seis(j)
-                                      sm14(j) = spm(j)+e0(i0)*(smom14(j)+smom2(j)+spres4(j))+seis(j)
+                                      st11(j) = sb(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))+seis(j)
+                                      st12(j) = sb(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))+seis(j)
+                                      st13(j) = sb(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))+seis(j)
+                                      st14(j) = sb(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j))+seis(j)
+                                      sm11(j) = spm(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))+seis(j)
+                                      sm12(j) = spm(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))+seis(j)
+                                      sm13(j) = spm(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))+seis(j)
+                                      sm14(j) = spm(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j))+seis(j)
 353                             continue
                                 call rctres(st11,tresca)
                                 if (tresca .gt. trescapq(2)) then
@@ -1458,14 +1478,14 @@ subroutine rc32sp1b(ze200, lieu, numsip, numsiq, seismeb32,&
     else
       do 354 i0 = 1, 2
         do 355 j = 1, 6
-            st11(j) = sb(j)+e0(i0)*(smom11(j)+smom2(j)+spres1(j))
-            st12(j) = sb(j)+e0(i0)*(smom12(j)+smom2(j)+spres2(j))
-            st13(j) = sb(j)+e0(i0)*(smom13(j)+smom2(j)+spres3(j))
-            st14(j) = sb(j)+e0(i0)*(smom14(j)+smom2(j)+spres4(j))
-            sm11(j) = spm(j)+e0(i0)*(smom11(j)+smom2(j)+spres1(j))
-            sm12(j) = spm(j)+e0(i0)*(smom12(j)+smom2(j)+spres2(j))
-            sm13(j) = spm(j)+e0(i0)*(smom13(j)+smom2(j)+spres3(j))
-            sm14(j) = spm(j)+e0(i0)*(smom14(j)+smom2(j)+spres4(j))
+            st11(j) = sb(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))
+            st12(j) = sb(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))
+            st13(j) = sb(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))
+            st14(j) = sb(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j))
+            sm11(j) = spm(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))
+            sm12(j) = spm(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))
+            sm13(j) = spm(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))
+            sm14(j) = spm(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j))
 355     continue
         call rctres(st11,tresca)
         if (tresca .gt. trescapq(2)) then

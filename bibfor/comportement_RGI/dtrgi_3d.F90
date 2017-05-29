@@ -4,7 +4,7 @@ subroutine dtrgi_3d(f, dtmin, dalsol, dssol, daft,&
                     sr, dalpha, sc, alc, dallib,&
                     dcash, dcsheff, csheff, vsr)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -158,14 +158,4 @@ subroutine dtrgi_3d(f, dtmin, dalsol, dssol, daft,&
     dtmin1=dmin1(dtalsol,dtssol,dtaft,dtallib,dtafm)
     dtmin=dmin1(dtsf,dtcash,dtcal,dtmin1)
 !     dtcsheff,
-    if ((dtmin.eq.0.) .and. (dtcal.ne.0.)) then
-        print*,'pb dans rsi_3d, choix du pas de temps'
-        print*,'choix dtmin',dtalsol,dtssol,dtaft,dtallib,dtafm,&
-     dtsf,dtcash,dtcal
-        print*
-        print*,'dalsol',dalsol,dallib,daft,dafm,alc,phi,sr,dalpha,alsol
-        print*
-        print*,'dssol',dssol,dsf,daft,dafm,sc,phi,sr,dalpha,ssol
-        read*
-    end if
 end subroutine

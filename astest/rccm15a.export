@@ -1,0 +1,12 @@
+P time_limit 100
+P memory_limit 512
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist validation sequential fatigue
+
+F comm rccm15a.comm D 1
+F mmed rccm15a.mmed D 20
+F libr rccm15a.21 D 21
+F libr rccm15a.38 D 38
+F libr rccm15a.39 D 39

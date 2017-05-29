@@ -6,4 +6,7 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm rccm01c.comm D 1
-F libr rccm01c.35 D 35
+F comm rccm01c.com0 D 1
+F comm rccm01c.com1 D 1
+F comm rccm01c.com2 D 1
+F libr rccm01a.35 D 35

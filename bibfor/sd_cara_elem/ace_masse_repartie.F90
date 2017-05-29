@@ -62,11 +62,11 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
 ! --------------------------------------------------------------------------------------------------
     integer :: iocc, ii, jj, kk, iret, nbgrp, nb, ldgm, nm, nb_mail_grp, nb_noeu_grp, ifm, irep
     integer :: ndim, appui, ltypmail, imail, ntopo, isym, iv
-    integer :: nfct, compte_maille, nb_noeud_uniq, ll, ncmp, nbsurchpoi1
+    integer :: nfct, compte_maille, nb_noeud_uniq, ll, ncmp, nbsurchpoi1, nbsurchpoi2
     integer :: ivr(4)
     real(kind=8) :: lamasse, valfongro, surfacetotale, zero(6)
     real(kind=8) :: eta, maillesurf(2), maillecdg(3)
-    character(len= 8) :: typm, fongro, discretm, discretk
+    character(len= 8) :: typm, fongro, discretm, discretk, nommaille
     character(len=24) :: magrma, connex
 
     integer :: jdc(3), jdv(3), dimcar
@@ -84,6 +84,7 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
     integer     ,pointer :: nummaisur(:)        => null()
     integer     ,pointer :: lstnumnoe(:)        => null()
     integer     ,pointer :: lstnummaipoi1(:)    => null()
+    integer     ,pointer :: lstpoi1surch(:)     => null()
     real(kind=8),pointer :: lstcoenoe(:)        => null()
 ! --------------------------------------------------------------------------------------------------
     integer           :: vmessi(4)
@@ -135,10 +136,10 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
     call jeveuo(noma//'.TYPMAIL', 'L', ltypmail)
     call jeveuo(noma//'.COORDO    .VALE', 'L', vr=coord)
 !
-!   Comptage des mailles POI1 communes entre les différentes occurences
+!   Comptage des mailles POI1 communes entre les différentes occurrences
     AS_ALLOCATE(vi=lstnummaipoi1, size=nbdisc)
     compte_maille = 0
-!   Les mailles de la 1ère occurence
+!   Les mailles de la 1ère occurrence
     call getvtx('MASS_REP','GROUP_MA_POI1', iocc=1, nbval=lmax, vect=grplmax, nbret=nbgrp)
 !   on éclate les GROUP_MA en mailles
     do ii = 1, nbgrp
@@ -157,9 +158,11 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
             lstnummaipoi1(compte_maille) = zi(jj)
         enddo
     enddo
-!   Les mailles des autres occurences
+!   Les mailles des autres occurrences
     if ( nbocc .ge. 2 ) then
+        AS_ALLOCATE(vi=lstpoi1surch, size=nbdisc)
         nbsurchpoi1 = 0
+        nbsurchpoi2 = 0
         do iocc = 2, nbocc
             call getvtx('MASS_REP','GROUP_MA_POI1',iocc=iocc,nbval=lmax,vect=grplmax,nbret=nbgrp)
 !           on éclate les GROUP_MA en mailles
@@ -170,6 +173,12 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
                 do jj = ldgm, ldgm+nb-1
                     imail = zi(jj)
                     if ( in_liste_entier(imail, lstnummaipoi1(1:compte_maille)) ) then
+                        if ( .not. in_liste_entier(imail, lstpoi1surch(1:nbsurchpoi2)) ) then
+                            if ( nbsurchpoi2 .lt. nbdisc ) then
+                                nbsurchpoi2 = nbsurchpoi2 + 1
+                                lstpoi1surch(nbsurchpoi2) = imail
+                            endif
+                        endif
                         nbsurchpoi1 = nbsurchpoi1 + 1
                     else
                         compte_maille = compte_maille + 1
@@ -191,7 +200,20 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
             vmessi(1) = nbocc
             vmessi(2) = nbsurchpoi1
             call utmess('I', 'AFFECARAELEM_20',nk=1,valk=vmessk,ni=2,vali=vmessi)
+            if ( ivr(3).eq.2 ) then
+                write(ifm,'(A,I3,A)') 'Liste des ',nbsurchpoi2,' mailles concernées :'
+                do ii = 1 , nbsurchpoi2
+                    call jenuno(jexnum(noma//'.NOMMAI', lstpoi1surch(ii)), nommaille )
+                    if ( mod(ii,8).eq.0 ) then
+                        write(ifm,'(A8)') nommaille
+                    else
+                        write(ifm,'(A8,2X)',advance="no") nommaille
+                    endif
+                enddo
+                write(ifm,*)
+            endif
         endif
+        AS_DEALLOCATE(vi=lstpoi1surch)
     endif
     AS_DEALLOCATE(vi=lstnummaipoi1)
 !
@@ -417,7 +439,7 @@ subroutine ace_masse_repartie(nbocc, infdonn, grplmax, lmax, infcarte, nbdisc, z
 !   Pour l'impression des valeurs affectées : Maille , Noeud , valeur
 100 format(/,'OCCURRENCE : ',i4,'. SURFACE TOTALE : ',1pe12.5 )
 110 format(  '   MAILLE : ',A8,'. NOEUD : ',A8, '. MASSE : ',1pe12.5)
-120 format(  '   POUR CETTE OCCURRENCE. MASSE TOTALE : ',1pe12.5)
+120 format(  '==>POUR CETTE OCCURRENCE. MASSE TOTALE : ',1pe12.5)
 !
 call jedema()
 !

@@ -114,7 +114,7 @@ subroutine rc3201(ze200, ig, lpmpb, lsn, lther, lfat, lefat,&
     real(kind=8) :: sp1combs(2), spmecomb(2)
     real(kind=8) :: spmecombs(2), snthem
     real(kind=8) :: propi(20), propj(20), proqi(20), tresth
-    real(kind=8) :: proqj(20), setbid, trescabid, trescapr, simpij2
+    real(kind=8) :: proqj(20), trescabid, trescapr, simpij2
 !
 ! DEB ------------------------------------------------------------------
     call jemarq()
@@ -513,6 +513,7 @@ subroutine rc3201(ze200, ig, lpmpb, lsn, lther, lfat, lefat,&
             resuas(9*(is1-1)+7) = kethes
             resuas(9*(is1-1)+8) = saltijs(1)
             matrice_fu_s(indi+1) = fuij(1)
+            samax = max(samax,saltijs(1))
         endif
 !
         spmax = max(spmax,sps(1),sp(1))
@@ -559,8 +560,27 @@ subroutine rc3201(ze200, ig, lpmpb, lsn, lther, lfat, lefat,&
             endif
             ug = dble( nocc ) / nadm(1)
         endif
-        if (seisme) resuas(9*(is1-1)+9) = ug
         resuss(9*(is1-1)+9) = ug
+!
+        if (.not. seisme) goto 999
+!
+        call limend(mater, saltijs(1), 'WOHLER', kbid, endur)
+        if (endur) then
+            ug=0.d0
+        else
+            call rcvale(mater, 'FATIGUE', 1, 'SIGM    ', saltijs(1),&
+                        1, 'WOHLER  ', nadm(1), icodre(1), 2)
+            if (nadm(1) .lt. 0) then
+                vale(1) = saltijs(1)
+                vale(2) = nadm(1)
+                call utmess('A', 'POSTRCCM_32', nr=2, valr=vale)
+            endif
+            ug = dble( nocc ) / nadm(1)
+        endif
+        resuas(9*(is1-1)+9) = ug
+!
+999     continue
+!
 ! ----------------------------------------------------------------------
 ! ----------------------------------------------------------------------
 !               ON TRAITE LA COMBINAISON DES SITUATIONS P ET Q
@@ -603,11 +623,13 @@ subroutine rc3201(ze200, ig, lpmpb, lsn, lther, lfat, lefat,&
 522         continue
 !
             snpq = 0.d0
+            snet = 0.d0
+            snets = 0.d0
             sp3 = 0.d0
             spmeca3 = 0.d0
             call rcZ2sn(ze200, lieu, nsitup, nsituq, 0, mse,&
                      propi, propj, proqi, proqj, instsn, snpq,&
-                     sp3, spmeca3, setbid, trescapr, tresth)
+                     sp3, spmeca3, snet, trescapr, tresth)
 !
 ! --------- Calcul du rochet thermique
             if (lther) then
@@ -645,8 +667,12 @@ subroutine rc3201(ze200, ig, lpmpb, lsn, lther, lfat, lefat,&
             icss = icss + 1
             resucs(icss) = snpq
             resuca(icss) = r8vide()
+            icss = icss + 1
+            resucs(icss) = snet
+            resuca(icss) = r8vide()
             snmax = max(snmax,snpq)
             snthem = max(snthem,tresth)
+            snemax = max(snet,snemax)
 !
 ! --------------------------------------------
 !               CALCUL DU SN AVEC SEISME
@@ -658,7 +684,7 @@ subroutine rc3201(ze200, ig, lpmpb, lsn, lther, lfat, lefat,&
 !---------- On maximise les parties B3200 et ZE200
                 call rcZ2sn(ze200, lieu, nsitup, nsituq, iocs, mse,&
                            propi, propj, proqi, proqj, instsns, snpqs,&
-                           sp3s, spmeca3s, setbid, trescabid, tresth)
+                           sp3s, spmeca3s, snets, trescabid, tresth)
 !
                 icas = icas + 1
                 if(instsns(1) .ge. 0) then
@@ -674,8 +700,11 @@ subroutine rc3201(ze200, ig, lpmpb, lsn, lther, lfat, lefat,&
                 endif
                 icas = icas + 1
                 resuca(icas) = snpqs
+                icas = icas + 1
+                resuca(icas) = snets
                 snmax = max(snmax,snpqs)
                 snthem = max(snthem,tresth)
+                snemax = max(snets,snemax)
             endif
 !
             if (niv .ge. 2) then
@@ -869,6 +898,8 @@ subroutine rc3201(ze200, ig, lpmpb, lsn, lther, lfat, lefat,&
                 resuca(icas) = fuij(1)+fuij(2)
                 matrice_fu_s(inds+1) = fuij(1)+fuij(2)
                 matrice_fu_s(indi+1) = fuij(1)+fuij(2)
+                samax = max(samax,saltijs(1))
+                samax = max(samax,saltijs(2))
             endif
 ! ----- Ajout de commentaires dans le fichier mess
             spmax = max(spmax,sps(1),spcomb(1),sps(2),spcomb(2))

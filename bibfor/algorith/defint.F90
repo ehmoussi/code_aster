@@ -1,6 +1,6 @@
 subroutine defint(mailla, nomres)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -33,7 +33,6 @@ subroutine defint(mailla, nomres)
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterfort/assert.h"
-#include "asterfort/compno.h"
 #include "asterfort/defdda.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvr8.h"
@@ -59,10 +58,10 @@ subroutine defint(mailla, nomres)
 !
 !-----------------------------------------------------------------------
     integer :: i, ibid, ideb, iec, ifin, ioc
-    integer :: iret, j, k, ldact, ldfreq, llnin, lltyp
+    integer :: iret, k, ldact, ldfreq, llnin, lltyp
     integer :: ltgui, ltlgr, ltlno, ltmas, maxgr, maxno, nball
-    integer :: nbbid, nbcmp, nbcou, nbec, nbecmx, nbgr, nbint
-    integer :: nbno, nbpre, nbtemp, nbuf, nbvag, nbval, nbvan
+    integer :: nbbid, nbcmp, nbec, nbecmx, nbgr, nbint
+    integer :: nbno, nbtemp, nbvag, nbval, nbvan
     integer :: numgd
     real(kind=8) :: freq
 !-----------------------------------------------------------------------
@@ -246,31 +245,31 @@ subroutine defint(mailla, nomres)
 !
         nbno=0
         ASSERT(ideb.eq.ifin)
-        
+!
         call getvtx(int, grno, iocc=ideb, nbval=maxgr, vect=zk24(ltlgr),&
                     nbret=nbvag)
         nbgr = nbvag
-        if (nbgr.gt.0) then
-            ! cas des groupes de no
+        if (nbgr .gt. 0) then
+! cas des groupes de no
             call jenonu(jexnom(mailla//'.GROUPENO', zk24(ltlgr+1-1)), ign1)
             call jelira(jexnum(mailla//'.GROUPENO', ign1), 'LONUTI', ili1)
             call jeveuo(jexnum(mailla//'.GROUPENO', ign1), 'L', iagm1)
             nbis = 2*ili1
             call wkvect('&&DEFINT.LII1', 'V V I', nbis, ialii1)
             call wkvect('&&DEFINT.LII2', 'V V I', nbis, ialii2)
-            
+!
             nbno = ili1
             do ii = 1, nbno
                 zi(ialii1-1+ii) = zi(iagm1-1+ii)
             enddo
-!       
+!
             do ign = 2, nbgr
                 call jenonu(jexnom(mailla//'.GROUPENO', zk24(ltlgr+ign-1)), ign2)
                 call jelira(jexnum(mailla//'.GROUPENO', ign2), 'LONUTI', ili2)
                 call jeveuo(jexnum(mailla//'.GROUPENO', ign2), 'L', iagm2)
                 call utlisi('UNION', zi(ialii1), nbno, zi(iagm2), ili2,&
                             zi( ialii2), nbis, ntrou)
-!       
+!
                 if (ntrou .lt. 0) then
                     nbis = -2*ntrou
                     call jedetr('&&DEFINT.LII2')
@@ -287,13 +286,12 @@ subroutine defint(mailla, nomres)
             enddo
             call jedetr('&&DEFINT.LII2')
         else
-            ! cas des noeuds
+! cas des noeuds
             call getvtx(int, no, iocc=ideb, nbval=maxno, vect=zk8(ltlno),&
                         nbret=nbvan)
             nbno = nbvan
-            print*, nbno
             call wkvect('&&DEFINT.LII1', 'V V I', nbno, ialii1)
-            do  ii = 1, nbno
+            do ii = 1, nbno
                 call jenonu(jexnom(mailla//'.NOMNOE', zk8(ltlno+ii-1)), nuno)
                 if (nuno .eq. 0) then
                     valk(1) = mailla

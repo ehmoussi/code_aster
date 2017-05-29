@@ -1,7 +1,7 @@
 # coding=utf-8
 # person_in_charge: mathieu.courtois at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -1159,6 +1159,28 @@ def validatorFactory(validator):
         return AndVal(do_liste(validator))
     else:
         return validator
+
+
+class NotEqualTo(ListVal):
+    """Vérifie que les valeurs fournies ne sont pas égales à."""
+
+    def __init__(self, value):
+        self._value = value
+
+    def info(self):
+        """Valeur attendue"""
+        return ufmt(_(u"valeur differente de %s"), self._value)
+
+    def convert_item(self, value):
+        """Vérifie si une valeur est valide"""
+        if value != self._value:
+            return value
+        raise ValError(ufmt(_(u"La valeur doit etre differente de: %s"),
+                            self._value))
+
+    def verif_item(self, value):
+        """Vérifie si une valeur est valide"""
+        return int(value != self._value)
 
 # Ci-dessous : exemples de validateur (peu testés)
 

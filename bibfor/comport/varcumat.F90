@@ -1,5 +1,5 @@
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -14,7 +14,7 @@
 ! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !   1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 ! ======================================================================
-    subroutine varcumat(fami, kpg, ksp, imate, ifm, niv, idbg,  temp, dtemp, &
+    subroutine varcumat(fami, kpg, ksp, imate, ifm, niv, idbg, temp, dtemp, &
                         predef, dpred, neps, epsth, depsth)
 !     but: variables de commande pour interface umat
 !       in   fami    famille de point de gauss (rigi,mass,...)
@@ -42,52 +42,64 @@
     character(len=*)  :: fami
     character(len=16) :: nomres(3)
     character(len=32) :: mcmate
+    logical           :: istemp
+    
     data lvarc/'SECH','HYDR','IRRA','NEUT1','NEUT2','CORR','ALPHPUR','ALPHBETA'/
     materi = ' '
 
-    call r8inir(neps, 0.d0, depsth, 1)
-    call r8inir(neps, 0.d0, epsth, 1)
+    epsth  = 0
+    depsth = 0
     call r8inir(npred, r8nnem(), predef, 1)
     call r8inir(npred, r8nnem(), dpred, 1)
 
 
 !   APPEL DE RCVARC POUR LE PASSAGE A UMAT DE LA TEMPERATURE
     call rcvarc(' ', 'TEMP', '-', fami, kpg, ksp, tm, iret)
-    if (iret .ne. 0) tm=0.d0
-    call rcvarc(' ', 'TEMP', 'REF', fami, kpg, ksp, tref, iret)
-    if (iret .ne. 0) tref=0.d0
-    call rcvarc(' ', 'TEMP', '+', fami, kpg,  ksp, tp, iret)
-    if (iret .ne. 0) tp=0.d0
+    istemp = (iret.eq.0)
+    if (istemp) then
+        call rcvarc(' ', 'TEMP', 'REF', fami, kpg, ksp, tref, iret)
+        if (iret .ne. 0) tref=0.d0
+        call rcvarc('F', 'TEMP', '+', fami, kpg,  ksp, tp, iret)
+    
+        call rccoma(imate, 'ELAS', 1, mcmate, iret2)
 
-    call rccoma(imate, 'ELAS', 1, mcmate, iret2)
-    ASSERT(iret2.eq.0)
-!
-    if (mcmate .eq. 'ELAS') then
-        nomres(1) = 'ALPHA'
-        nomres(2) = 'ALPHA'
-        nomres(3) = 'ALPHA'
-        ndimloc=3
-    else if (mcmate.eq.'ELAS_ORTH'.or.mcmate.eq.'ELAS_ISTR') then
-        nomres(1) = 'ALPHA_L'
-        nomres(2) = 'ALPHA_T'
-        nomres(3) = 'ALPHA_N'
-        ndimloc=3
-    else if (mcmate.eq.'ELAS_META') then
-        nomres(1) = 'C_ALPHA'
-!         nomres(2) = 'F_ALPHA' inutilise par META_LEMA_ANI
-        nomres(2) = 'C_ALPHA'
-        nomres(3) = 'C_ALPHA'
-        ndimloc=3
-    endif
-    call rcvalb(fami, kpg, ksp, '-', imate,materi, mcmate, 0, ' ', [0.d0],&
-             &  ndimloc, nomres, valrem, codret, 0)
-    call rcvalb(fami, kpg, ksp, '+', imate,materi, mcmate, 0, ' ', [0.d0],&
-             &  ndimloc, nomres, valres, codret, 0)
-
-    do i = 1, ndimloc
-        depsth(i) = valres(i)*(tp-tref)-valrem(i)*(tm- tref)
-        epsth(i)  = valrem(i)*(tm-tref)
-    enddo
+        if (iret2.eq.0) then
+            mcmate='ELAS' 
+            nomres(1) = 'ALPHA'
+            nomres(2) = 'ALPHA'
+            nomres(3) = 'ALPHA'
+            ndimloc=3
+        else if (mcmate .eq. 'ELAS') then
+            nomres(1) = 'ALPHA'
+            nomres(2) = 'ALPHA'
+            nomres(3) = 'ALPHA'
+            ndimloc=3
+        else if (mcmate.eq.'ELAS_ORTH'.or.mcmate.eq.'ELAS_ISTR') then
+            nomres(1) = 'ALPHA_L'
+            nomres(2) = 'ALPHA_T'
+            nomres(3) = 'ALPHA_N'
+            ndimloc=3
+        else if (mcmate.eq.'ELAS_META') then
+            nomres(1) = 'C_ALPHA'
+    !         nomres(2) = 'F_ALPHA' inutilise par META_LEMA_ANI
+            nomres(2) = 'C_ALPHA'
+            nomres(3) = 'C_ALPHA'
+            ndimloc=3
+        endif
+        call rcvalb(fami, kpg, ksp, '-', imate,materi, mcmate, 0, ' ', [0.d0],&
+                 &  ndimloc, nomres, valrem, codret, 1)
+            
+        call rcvalb(fami, kpg, ksp, '+', imate,materi, mcmate, 0, ' ', [0.d0],&
+                 &  ndimloc, nomres, valres, codret, 1)
+    
+        do i = 1, ndimloc
+            depsth(i) = valres(i)*(tp-tref)-valrem(i)*(tm- tref)
+            epsth(i)  = valrem(i)*(tm-tref)
+        enddo
+    else
+        tm = 0.d0
+        tp = 0.d0
+    end if
 !
 ! APPEL DE RCVARC POUR EXTRAIRE TOUTES LES VARIABLES DE COMMANDE
 !     SECHAGE

@@ -1,6 +1,6 @@
 subroutine rsi_3d(x0, x1, beton, dt)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -273,7 +273,6 @@ subroutine rsi_3d(x0, x1, beton, dt)
             f=0.2
         end if
         if (niter .eq. nitermax) then
-            print*,'niter max atteint dans rsi_3d',niter
 !       print*,'relachement momentane du critere a 0.1'
             conv_forcee=.true.
 !       on limite les vitesses de reactions pour atteindre

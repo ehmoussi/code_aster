@@ -7,7 +7,7 @@ subroutine b3d_srf(sigal6, vss33, spl6, long3, eps23,&
                    teta1, eafluage, dt, vm6, maj0,&
                    depst6, sigef06, xloc)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -405,7 +405,6 @@ subroutine b3d_srf(sigal6, vss33, spl6, long3, eps23,&
                         if (spl33(i,i) .lt. 0.d0) then
 !                   la fissure est totalement refermee
                             sigef33(i,i)=sigel33(i,i)
-                            print*,'on met spl a 0 ds b3d_srf'
                             spl33(i,i)=0.d0
                         end if
                     end if

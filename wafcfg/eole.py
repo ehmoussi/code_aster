@@ -24,12 +24,10 @@ def configure(self):
     # enable TEST_STRICT on the reference server
     self.env.append_value('DEFINES', ['TEST_STRICT'])
 
-    self.env['ADDMEM'] = 250
+    self.env['ADDMEM'] = 600
     self.env.append_value('OPT_ENV', [
         'module load icc/2016.0.047 ifort/2016.0.047 mkl/2016.0.047'])
     self.env.append_value('LIBPATH', [
-        '/usr/lib/atlas-base/atlas',                       # for NumPy, see issue18751
-        YAMMROOT + '/prerequisites/Python-273/lib',
         YAMMROOT + '/prerequisites/Hdf5-1814/lib',
         YAMMROOT + '/tools/Medfichier-321/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/lib',
@@ -39,7 +37,6 @@ def configure(self):
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Python-273/include/python2.7',
         YAMMROOT + '/prerequisites/Hdf5-1814/include',
         YAMMROOT + '/tools/Medfichier-321/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/include',

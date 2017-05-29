@@ -3,7 +3,7 @@ subroutine rgilin3d(xmat, nmat, var0, varf, nvari,&
                     errb3d, teta1, teta2, fl3d, ifour,&
                     istep)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -66,7 +66,6 @@ subroutine rgilin3d(xmat, nmat, var0, varf, nvari,&
 !     coeff de dilatation thermique
     alpha=xmat(3)
     if (xnu0 .gt. 0.49) then
-        print*,'Coeff de Poisson trop grand dans rgilin3d'
         errb3d=1
         call utmess('F', 'COMPOR1_90')
     end if
@@ -90,7 +89,6 @@ subroutine rgilin3d(xmat, nmat, var0, varf, nvari,&
     xnu1=xnu0
 !     test pb hydratation
     if (erreur .ne. 0) then
-        print*,'pb hydratation dans endo3d'
         errb3d=1
         call utmess('F', 'COMPOR1_90')
     end if
@@ -117,7 +115,6 @@ subroutine rgilin3d(xmat, nmat, var0, varf, nvari,&
             end if
         end if
     else
-        print*,'formulation poreux non achevee ds endo3d...'
         errb3d=1
         call utmess('F', 'COMPOR1_90')
     end if
@@ -367,7 +364,6 @@ subroutine rgilin3d(xmat, nmat, var0, varf, nvari,&
     end do
 !      read*
     if (erreur .ne. 0) then
-        print*,'erreur dans endo3d'
         errb3d=1
         call utmess('F', 'COMPOR1_90')
     end if

@@ -58,7 +58,7 @@ CALC_MATR_ELEM=OPER(nom="CALC_MATR_ELEM",op=   9,sd_prod=calc_matr_elem_prod
          # sans gener la commande ASSEMBLAGE
          #------------------------------------------------------------------
          INST=SIMP(statut='f',typ='R',defaut= 0.E+0 ),
-         INCR_INST=SIMP(statut='f',typ='R',defaut= 0.E+0 ),
+         INCR_INST=SIMP(statut='f', typ='R', validators=NotEqualTo(0.)),
 
          b_rigi_meca = BLOC( condition = """equal_to("OPTION", 'RIGI_MECA')""",
            CHAM_MATER      =SIMP(statut='f',typ=cham_mater ),

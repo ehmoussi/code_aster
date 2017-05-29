@@ -24,9 +24,9 @@ def configure(self):
     # enable TEST_STRICT on the reference server
     self.env.append_value('DEFINES', ['TEST_STRICT'])
 
-    self.env['ADDMEM'] = 250
+    self.env['ADDMEM'] = 600
     self.env.append_value('OPT_ENV', [
-        '. /etc/profile.d/003_modules.sh',
+        '. /etc/profile.d/lmod.sh',
         'module loadifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047'])
 
     self.env.append_value('LIBPATH', [

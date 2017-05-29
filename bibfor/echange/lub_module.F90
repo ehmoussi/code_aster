@@ -290,7 +290,6 @@ module lub_module
             integer, intent(in) :: itime
             real(kind=8), intent(in) :: time, dt
             type(bearing), pointer :: current => null()
-            integer i
 
 
             current => first_bearing
@@ -420,7 +419,7 @@ module lub_module
                 current%depvit_port%vr(9) = 0.0
                 current%depvit_port%vr(10) = current%omega*r8pi()/30.d0
                 current%depvit_port%vr(11) = current%dtsto
-                call com_port(current%depvit_port, 1, 0.0)
+                call com_port(current%depvit_port, 1, 0.0d0)
 
                 current => current%next
 

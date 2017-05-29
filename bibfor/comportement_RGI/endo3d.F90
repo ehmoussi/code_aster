@@ -3,7 +3,7 @@ subroutine endo3d(xmat, nmat, var0, varf, nvari,&
                   errb3d, teta1, teta2, fl3d, ifour,&
                   istep)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -278,7 +278,6 @@ subroutine endo3d(xmat, nmat, var0, varf, nvari,&
     end if
 !     test coeff de Poisson
     if (xnu00 .gt. 0.49) then
-        print*,'Coeff de Poisson trop grand dans endo13d'
         errb3d=1
         call utmess('F', 'COMPOR1_90')
     end if
@@ -362,7 +361,6 @@ subroutine endo3d(xmat, nmat, var0, varf, nvari,&
 !      print*,'e0 ds endo3d', e0
 !      read*
     if (erreur .ne. 0) then
-        print*,'pb hydratation dans endo3d'
         call utmess('F', 'COMPOR1_90')
     end if
 !     effet de l hydratation sur Poisson neglige (comme dans cendo3d car
@@ -972,7 +970,6 @@ subroutine endo3d(xmat, nmat, var0, varf, nvari,&
 !             print*,veq1
 !            limitation du volume equivalent au volume maxi
                 if (veq1 .gt. vmax0) then
-                    print*,'veq',veq1,' vmax',vmax0
                     veq=min(veq1,vmax0)
                 else
                     veq=veq1
@@ -1119,12 +1116,6 @@ subroutine endo3d(xmat, nmat, var0, varf, nvari,&
     end if
 !      controle de la valeur de la resistance a la traction
     if (rt0 .eq. 0.) then
-        print*,'Dans endo3d pb de donnees incoherentes pour Weibull'
-        print*,'istep',istep
-        print*,'rt0',rt0,'xwb1',xwb1,'xwb0',xwb0,'veq',veq,'vref',vref0
-        print*,'(vref/veq)**xb',(vref0/veq)**xb,'var0(nvar0+57) ',&
-        var0(nvar0+57)
-        read*
         call utmess('F', 'COMPOR1_90')
     end if
 !
@@ -1169,12 +1160,6 @@ subroutine endo3d(xmat, nmat, var0, varf, nvari,&
                 local, e23, nfid1, rrr, Rapp6,&
                 dpic0, 0)
     if (erreur .eq. 1) then
-        print*,'seuils poisson'
-        print*, ssp6
-        do i = 1, 6
-            print*,'sigat init(',i,')=',sigat6(i)
-        end do
-        print*,'d fluage',dflu0
         call utmess('F', 'COMPOR1_90')
     end if
     do i = 1, 3
@@ -1359,12 +1344,6 @@ subroutine endo3d(xmat, nmat, var0, varf, nvari,&
                 local, e2l3, nfid1, rrr, Rapp6,&
                 dpic0, 0)
     if (erreur .eq. 1) then
-        print*,'seuils localisation traction'
-        print*, ssl6
-        do i = 1, 6
-            print*,'sigat init(',i,')=',sigat6(i)
-        end do
-        print*,'d fluage',dflu0
         call utmess('F', 'COMPOR1_90')
     end if
     do i = 1, 3
@@ -1615,7 +1594,6 @@ subroutine endo3d(xmat, nmat, var0, varf, nvari,&
     end if
 !      read*
     if (erreur .ne. 0) then
-        print*,'erreur dans endo3d'
         errb3d=1
         call utmess('F', 'COMPOR1_90')
     end if

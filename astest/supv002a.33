@@ -367,15 +367,19 @@ def supv002_ops(self, ERREUR, **kwargs):
             do_check = False
             print "\n  <A> Problem detected ! supv002a can not run on this machine\n\n"
     if do_check:
-        aspell = AspellCall(get_personal_dict(), 'fr', ENCODING)
-        checker = Checker(aspell)
-        checker.set_ignored(ERREUR)
-        # check default/native messages
-        check_catamess(checker, 'fr', LCATA)
-        # check translated messages in english
-        check_catamess(checker, 'en', LCATA)
-        # close aspell
-        aspell.close()
+        try:
+            aspell = AspellCall(get_personal_dict(), 'fr', ENCODING)
+            checker = Checker(aspell)
+            checker.set_ignored(ERREUR)
+            # check default/native messages
+            check_catamess(checker, 'fr', LCATA)
+            # check translated messages in english
+            check_catamess(checker, 'en', LCATA)
+            # close aspell
+            aspell.close()
+        except OSError as exc:
+            checker = Checker(None)
+            checker.error("Can not start aspell: {0}".format(exc))
 
         nberr = checker.count_errors()
         errors = checker.get_errors() + """\nNumber of errors : %d""" % nberr

@@ -200,6 +200,9 @@ implicit none
 !
     write(ifm, 10)
     write(ifm, 200) nb_cont_pair
+    if (nb_cont_pair.ne.0) then
+        call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
+    end if
     do i_cont_pair = 1, nb_cont_pair
         elem_slav_nume = v_sdappa_apli(3*(i_cont_pair-1)+1)
         elem_mast_nume = v_sdappa_apli(3*(i_cont_pair-1)+2)   

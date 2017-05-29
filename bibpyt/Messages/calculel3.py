@@ -38,6 +38,14 @@ Il manque les accélérations.
  les structures de données résultat :  EVOL_ELAS, DYNA_TRANS, DYNA_HARMO
 """),
 
+    5 : _(u"""
+ Erreur d'utilisation :
+   On veut utiliser la commande CALC_ERREUR.
+   Il y a %(i1)d processeurs actifs.
+ Risques & conseils :
+   Cette commande doit être utilisée avec un seul processeur.
+"""),
+
     6 : _(u"""
  La composante %(k1)s n'existe pas dans le champ sur la maille spécifiée.
 """),

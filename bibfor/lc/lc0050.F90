@@ -4,6 +4,7 @@ subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
                   nvi, vim, option, angmas, &
                   icomp, stress, statev, ndsde,&
                   dsidep, codret)
+use calcul_module, only : ca_iactif_
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -63,11 +64,13 @@ subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
 #include "asterc/umatwp.h"
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
+#include "asterfort/jevech.h"
 #include "asterfort/lceqvn.h"
 #include "asterfort/lcicma.h"
 #include "asterfort/matrot.h"
 #include "asterfort/pmat.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/rcvarc.h"
 #include "asterfort/tecael.h"
 #include "asterfort/mat_proto.h"
 #include "asterfort/varcumat.h"
@@ -96,6 +99,9 @@ subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
     character(len=8) :: typmod(*)
     character(len=*) :: fami
     character(len=80) :: cmname
+    
+    integer:: jiterat, iadzi, iazk24, iretx,irety,iretz
+    
     common/tdim/  ntens  , ndi
     data idbg/1/
 !
@@ -114,6 +120,38 @@ subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
 !     IMPRESSIONS EVENTUELLES EN DEBUG
     call infniv(ifm, niv)
 
+!     SI ON NE TRAVAILLE PAS AVEC CALC_POINT_MAT, RECUPERATION DU NUM DE L'ITERATION ET DE LA MAILLE
+    if (ca_iactif_ .ne. 2) then 
+    
+    !   NUMERO DE L'ITERATION
+        if (option(1:9).eq.'RIGI_MECA') then
+            kinc=0
+        else
+            call jevech('PITERAT', 'L', jiterat)
+            kinc = nint(zr(jiterat))
+        end if
+
+    !   NUMERO DE LA MAILLE
+        call tecael(iadzi, iazk24, noms=0)
+        noel = zi(iadzi)    
+        
+    else 
+        kinc = 0
+        noel = 1
+    end if
+    
+    
+!   COORDONNEES DU POINT D'INTEGRATION (NaN si absent)
+    call rcvarc(' ', 'X', '+', fami, kpg,  ksp, coords(1), iretx)
+    call rcvarc(' ', 'Y', '+', fami, kpg,  ksp, coords(2), irety)
+    call rcvarc(' ', 'Z', '+', fami, kpg,  ksp, coords(3), iretz)
+    if (iretx.ne.0) then
+        coords = r8nnem()
+    else
+        coords(ndim+1:) = 0.d0
+    end if
+    
+    
 !   LECTURE DES PROPRIETES MATERIAU (MOT-CLE UMAT[_FO] DE DEFI_MATERIAU)
     call mat_proto(fami, kpg, ksp, '+', imate, compor(1), nprops, props)
 
@@ -155,7 +193,6 @@ subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
     dtime=instap-instam
     cmname=compor(1)
 !
-    call r8inir(3, r8nnem(), coords, 1)
     call matrot(angmas, drott)
 !
     do 100,i = 1,3
@@ -169,7 +206,7 @@ subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
     layer=1
     kspt=ksp
     kstep=icomp
-    kinc=1
+
 !     initialisations des arguments inutilises
     sse=0.d0
     spd=0.d0
