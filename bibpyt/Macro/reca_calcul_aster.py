@@ -1,7 +1,7 @@
 # coding=utf-8
 # person_in_charge: aimery.assire at edf.fr
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -398,16 +398,18 @@ class CALCUL_ASTER:
     # ------------------------------------------------------------------------
     def Creation_Temporaire_Esclave(self):
         """
-           Creation du repertoire temporaire d'execution du calcul esclace
+           Creation du repertoire temporaire d'execution du calcul esclave
         """
+        from asrun.run import AsRunFactory
+        run = AsRunFactory()
+        shared_tmp = run.get('shared_tmp')
+        if not shared_tmp:
+            shared_tmp = os.getcwd()
+
         # Creation du repertoire temporaire
-        tmp_macr_recal = os.getcwd() + os.sep + 'tmp_macr_recal'
-# tmp_macr_recal = Random_Tmp_Name( prefix = os.getenv('HOME') + os.sep +
-# 'tmp_macr_recal_' )
-        try:
-            os.mkdir(tmp_macr_recal)
-        except:
-            pass
+        tmp_macr_recal = tempfile.mkdtemp(dir=shared_tmp,
+                                          prefix='tmp_macr_recal')
+
         if not os.path.exists(tmp_macr_recal):
             UTMESS('F', 'RECAL0_82', valk=tmp_macr_recal)
         try:
@@ -426,7 +428,7 @@ class CALCUL_ASTER:
            Creation du fichier .export pour le calcul esclave
         """
 
-        from asrun.profil import ASTER_PROFIL
+        from asrun.profil import AsterProfil
         from asrun.common.sysutils import on_64bits
 
         # Recuperation du fichier .export
@@ -441,7 +443,7 @@ class CALCUL_ASTER:
             export = list_export[0]
 
         # On modifie le profil
-        prof = ASTER_PROFIL(export)
+        prof = AsterProfil(export)
 
         # En local
         user_mach = ''
