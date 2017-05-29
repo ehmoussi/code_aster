@@ -1232,7 +1232,7 @@ class TraceMatplotlib(TraceGraph):
               cellLoc='center',
               colLabels=labelc,
               colLoc='center',
-              loc='bottom',
+              loc='top',
               alpha =1.0,
               zorder=10,
               )
