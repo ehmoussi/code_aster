@@ -19,6 +19,8 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
+from functools import partial
+
 from .SyntaxUtils import force_list
 
 
@@ -113,6 +115,16 @@ class OrVal(Validator):
                 raise ValueError("No validator is valid: {0}".format(err))
 
 
+def ordlist_predicate(a, b, reverse):
+    """Predicate to check order of elements in a list."""
+    if None not in (a, b):
+        if not reverse:
+            return a <= b
+        else:
+            return a >= b
+    return True
+
+
 class OrdList(Validator):
     """Check that the values are ordered.
 
@@ -130,14 +142,7 @@ class OrdList(Validator):
         if len(args) == 1 and args[0] != 'croissant':
             reverse = True
 
-        def predicate(a, b):
-            if None not in (a, b):
-                if not reverse:
-                    return a <= b
-                else:
-                    return a >= b
-            return True
-        self._predicate = predicate
+        self._predicate = partial(ordlist_predicate, reverse=reverse)
 
     def check(self, values):
         """Check values"""
