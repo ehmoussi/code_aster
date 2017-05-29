@@ -212,8 +212,9 @@ class PARAMETRES:
         self.Detecte_Derniere_Config()
 
         # Si Salome est present, on le met en premier choix
-        if __salome__ and from_salome:
+        if __salome__ :
             self.para['MODE_GRAPHIQUE']['mode_graphique'] = 'Salome'
+            self.para['CONFIG']['mode'] = 'LOCAL' 
 
         # Si Salome n'est pas present, on l'enleve de la liste des choix
         # possibles
