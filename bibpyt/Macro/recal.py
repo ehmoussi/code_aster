@@ -755,7 +755,7 @@ class CALCULS_ASTER:
             run.options['debug_stderr'] = False  # pas d'output d'executions des esclaves dans l'output maitre
 
         # Master profile
-        prof = AsterProfil(filename=export)
+        prof = AsterProfil(run=run, filename=export)
         tmp_param = tempfile.mkdtemp()
         try:
             username = prof.param['username'][0]
