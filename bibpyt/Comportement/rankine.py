@@ -28,7 +28,7 @@ loi = LoiComportement(
     nom_vari       = ('EPSPVOL','EPSPEQ','INDIPLAS','EPSPXX','EPSPYY',
         'EPSPZZ','EPSPXY','EPSPXZ','EPSPYZ',),
     mc_mater       = ('ELAS','RANKINE',),
-    modelisation   = ('3D','AXIS','D_PLAN','CPLAN',),
+    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
     algo_inte      = ('ANALYTIQUE',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),

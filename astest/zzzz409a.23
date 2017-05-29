@@ -1,0 +1,321 @@
+# -*- coding: utf-8 -*-
+#
+# person_in_charge: astrid.billon at edf.fr
+# ======================================================================
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+# ======================================================================
+#
+#
+# PYTHON RESOLUTION OF THE UNIDIRECTIONNAL TENSILE TEST WITH TEMPERATURE
+# ON A SINGLE ELEMENT, USING AN ELASTOPLASTIC BEHAVIOUR LAW
+# WITH ISOTROPIC LINEAR HARDENING
+#
+# -> TO BE USED FOR COMPARISON PURPOSES WITH THE ZZZZ409 TEST RESULTS
+#    INVOLVING THE SAME BEHAVIOUR LAW IN UMAT
+# -> TO PERFORM THE COMPARISON, ADD THE FOLLOWING LINES AT THE END OF 
+#    bibfor/lc/lc0050.F90 :
+#
+#    write(6,*) 'option   = ', option(1:9)
+#    write(6,*) 'espm     = ', (epsm(i),i=1,ntens)
+#    write(6,*) 'deps     = ', (deps(i),i=1,ntens)
+#    write(6,*) 'epsp     = ', (epsm(i)+deps(i),i=1,ntens)
+#    if (option(1:9).eq. 'RIGI_MECA') then
+#        write(6,*) 'varintp  = ', (vim(i),i=1,nstatv)
+#        write(6,*) 'sigp     = ', (sigm(i), i=1,ntens)
+#    else
+#        write(6,*) 'varintp  = ', (statev(i),i=1,nstatv)
+#        write(6,*) 'sigp     = ', (stress(i), i=1,ntens)
+#    endif
+#    write(6,*) 'dsidep   = ', (dsidep(1,i), i=1,ntens)
+#    write(6,*) '           ', (dsidep(2,i), i=1,ntens)
+#    write(6,*) '           ', (dsidep(3,i), i=1,ntens)
+#    write(6,*) '           ', (dsidep(4,i), i=1,ntens)
+#    write(6,*) '           ', (dsidep(5,i), i=1,ntens)
+#    write(6,*) '           ', (dsidep(6,i), i=1,ntens)
+#    write(6,*) ' '
+#
+
+#
+# Rename zzzz409.23 as zzz409.23.py then use a Python interpreter 
+#
+
+
+import numpy as np
+
+idn = np.array([1.,1,1,0,0,0])
+C = np.array([1.,0,0,0,0,0])
+ID6 = np.eye(6)
+
+# ! Attention ! ajouter des facteurs sqrt(2) si des glissements sont considérés
+# (inutile ici car tous les termes de glissement sont nuls)
+rac_2 = np.array([1.,1,1,np.sqrt(2),np.sqrt(2),np.sqrt(2)])
+
+
+########################################################################
+
+
+class MATERIAU:
+    def __init__(self,E,k,al):
+        self.young=float(E)
+        self.k=float(k)
+        self.alpha=float(al)
+
+
+########################################################################
+
+
+def Deformation(i,mat): # Donne la solution analytique à l'instant i
+    eps=np.concatenate(([epsimp[i]],[mat.alpha*(Temperature[i]-T0)],[mat.alpha*(Temperature[i]-T0)],np.zeros(3)))
+    
+    assert type(eps) == np.ndarray
+    assert len(eps) == 6
+    assert type(Temperature[i]) == np.float64
+    
+    return eps
+
+
+########################################################################
+
+
+## Loi de comportement 
+
+def Endo(epsmec,mat,k,a10,a20): # Donne les variables internes a1 (endommagement) et a2
+
+    som=epsmec.dot(epsmec)
+    
+    a1 = a10
+    a2 = a20
+    
+    if (k >= 1):
+        a2 = 0
+        if (som >= 2*mat.k/mat.young*(1+2*a10)**2):
+            a1 = 0.5*(np.sqrt(mat.young*som/(2*mat.k))-1)
+            a2 = 1
+    return (a1,a2)
+
+
+def A(a):
+    return (1.+a)/(1+2*a)
+
+
+def LDC(eps,temp,mat,k): 
+    epsmec=eps-mat.alpha*(temp-T0)*idn
+    
+    sig = mat.young*A(Endo(epsmec,mat,k,a10,a20)[0])*epsmec
+
+    #Partie commune aux deux branches élastique & plastique
+    dsidep=A(Endo(epsmec,mat,k,a10,a20)[0])*mat.young*ID6
+    
+    #Partie supplémentaire en branche plastique
+    som=np.dot(epsmec,epsmec)
+    if Endo(epsmec,mat,k,a10,a20)[1] == 1 and (som >= 2*mat.k/mat.young*(1+2*Endo(epsmec,mat,k,a10,a20)[0])**2) :
+        dsidep=dsidep-mat.young*0.5/(1+2*Endo(epsmec,mat,k,a10,a20)[0])**2*np.sqrt(mat.young/(2*mat.k))*np.outer(epsmec,epsmec)/np.sqrt(som)
+        
+    return (sig,dsidep)
+
+
+########################################################################
+
+
+## Ecriture des équations
+
+def Force_int(sig,eps,lambd,mat): 
+
+    equp = sig+lambd*C
+    eqdown = np.dot(C,eps)
+    
+    Fint=np.concatenate((equp,np.array([eqdown])))
+    
+    return Fint
+
+
+def Force_ext(i):
+
+    Fext=np.concatenate((np.zeros(6),np.array([epsimp[i]]))) #Attention si on considère le pas de temps entre i et i+1, il faut considérer Force_ext(i+1)
+    
+    return Fext
+
+
+########################################################################
+
+
+## Prédiction pour le pas de temps de i à i+1
+
+def Prediction(i,mat,eps,lambd): 
+    #Incréments de déformation nul pour la prédiction : eps = eps-
+    #Incréments de lambda nul pour la prédiction : lambda = lambda-
+    temp = Temperature[i] # temp = T-
+    Dtemp = Temperature[i+1]-Temperature[i] #Incrément de température
+
+    sig = LDC(eps,temp,mat,0)[0]
+    dsidep = LDC(eps,temp,mat,0)[1]
+    
+    #Pour le MD : Fext - Fint - dFint/dT*DT
+    MD = Force_ext(i+1) - Force_int(sig,eps,lambd,mat) - np.array([-mat.alpha*mat.young,-mat.alpha*mat.young,-mat.alpha*mat.young,0,0,0,0])*Dtemp
+    
+    #Pour la matrice de rigi
+    K=np.zeros((7,7))
+    K[:6,:6]=dsidep
+    K[6,0]=1.
+    K[0,6]=1.
+     
+    #Solver
+    dx_init = np.linalg.solve(K,MD)
+    assert len(dx_init) == 7
+
+    #Déformation et multiplicateur à l'issue de la prédiction
+    deps_init = dx_init[:6]
+    dlambd_init = dx_init[6]
+    
+    
+    return (sig, dsidep, deps_init, dlambd_init) #Pour la prédiction pour le Newton entre i et i+1
+
+
+## Correction pour le pas de temps de i à i+1
+
+def Correction(i,mat,eps,lambd):
+    #Incrément de température nul pour la correction : on est déjà à T+
+    temp=Temperature[i+1]
+    
+    sig = LDC(eps,temp,mat,1)[0]
+    dsidep = LDC(eps,temp,mat,1)[1]
+    
+    #Résidu
+    if (np.amax(np.absolute(Force_ext(i+1))) >= 1.E-6) :
+        typres = 'RELA'
+        res = np.amax(np.absolute(Force_ext(i+1)- Force_int(sig,eps,lambd,mat)))/np.amax(np.absolute(Force_ext(i+1)))      #du type resi_glob_rela
+    else : 
+        typres = 'ABS'
+        res = np.amax(np.absolute(Force_ext(i+1)- Force_int(sig,eps,lambd,mat)))        #du type resi_glob_maxi si Fext devient trop petit
+    
+    #Pour le MD : Fext - Fint     (on est déjà en T+ et on y reste -> pas de dFint/dT*DT)
+    MD = Force_ext(i+1) - Force_int(sig,eps,lambd,mat)
+    
+    #Pour la matrice de rigi
+    K=np.zeros((7,7))
+    K[:6,:6]=dsidep
+    K[6,0]=1.
+    K[0,6]=1.
+    
+    #Solver
+    dx_new = np.linalg.solve(K,MD)
+    assert len(dx_new) == 7
+    
+    #Déformation et multiplicateur à l'issue de la correction
+    deps_new = dx_new[:6]
+    dlambd_new = dx_new[6]
+    
+    return (res, sig, dsidep, deps_new, dlambd_new, typres)
+
+ 
+########################################################################
+
+
+# Définition des propriétés matériau
+mat=MATERIAU(E=1,k=0.5,al=1.E-2)
+
+# Discrétisations temporelles
+T0  =  20.0
+DT1 = 100.0
+DT2 = 200.0
+DT3 = 300.0
+Instants=np.array([0., 0.5, 1.5, 2, 3, 4])
+Temperature=np.array([T0,T0+DT1/2,T0+(DT1+DT2)/2, T0+DT2, T0+DT3, T0])
+epsimp=np.array([0, 0.5+mat.alpha*DT1/2, 1.5+mat.alpha*(DT1+DT2)/2, 2+mat.alpha*DT2, 3+mat.alpha*DT3, 0])
+n=len(epsimp)
+
+# Etat initial du système avant le début du chargement
+eps0 = np.zeros(6)
+a10 = 0
+a20 = 0
+
+# Tolérance de convergence
+tol = 1.E-6
+
+# Nombre max d'itérations de Newton
+maxiter = 20
+
+
+########################################################################
+
+
+## MISE EN OEUVRE DU NEWTON ET ECRITURE DANS LE FICHIER MESS_PY.TXT
+
+messpy = open('mess_py.txt','w')
+messpy.write("VARIABLES AFFICHEES :\n\nepsm : déformation au début du pas de temps\ndeps : incrément de déformation sur le pas de temps\n")
+messpy.write("epsp = epsm+deps : déformation à l'issue du pas de temps\nlambda : multiplicateur de lagrange\n")
+messpy.write("varintp : variables internes à l'issue du pas de temps\nsigp : contraintes à l'issue du pas de temps\n")
+messpy.write("dsidep : opérateur tangent d sigma / d epsilon\n")
+
+for i in range(0,n-1):
+
+    messpy.write('\n========PAS DE TEMPS DE i = %s à %s========\n' %(Instants[i],Instants[i+1]))
+
+    #Initialisations des tableaux
+    deps = np.zeros((6,20))
+    lambd = np.zeros(20)
+    res = np.zeros(20)
+    sig = np.zeros((6,20))
+    dsidep = np.zeros((6,6,20))
+    
+    #Prediction
+    k = 0
+    deps[:,k] = np.zeros(6)
+    lambd[k] = 0.
+    sig[:,k] = Prediction(i,mat,eps0+deps[:,k],lambd[k])[0]
+    dsidep[:,:,k] = Prediction(i,mat,eps0+deps[:,k],lambd[k])[1]
+
+    messpy.write('\nPREDICTION : k = %s\n' %k)
+    messpy.write('epsm = %s, deps = %s, epsp = %s \n' %(eps0,deps[:,k],eps0+deps[:,k]))
+    messpy.write('lambda = %s \n' %lambd[k])
+    messpy.write('varintp = %s, %s \n' %Endo(eps0+deps[:,k]-mat.alpha*(Temperature[i+1]-T0)*idn,mat,k,a10,a20))
+    messpy.write('sigp = %s \n' %sig[:,k])
+    messpy.write('dsidep = %s \n' %dsidep[:,:,k])
+    
+    deps[:,k+1] = deps[:,k] + Prediction(i,mat,eps0+deps[:,k],lambd[k])[2]
+    lambd[k+1] = lambd[k] + Prediction(i,mat,eps0+deps[:,k],lambd[k])[3]
+
+    res[k] = 1.
+    #Corrections
+    while (res[k] > tol):
+        k = k+1
+        res[k] = Correction(i,mat,eps0+deps[:,k],lambd[k])[0]
+        typres = Correction(i,mat,eps0+deps[:,k],lambd[k])[5]
+        sig[:,k] = Correction(i,mat,eps0+deps[:,k],lambd[k])[1]
+        dsidep[:,:,k] = Correction(i,mat,eps0+deps[:,k],lambd[k])[2]
+
+        messpy.write('\nCORRECTION : k = %s\n' %k)
+        messpy.write('epsm = %s, deps = %s, epsp = %s \n' %(eps0,deps[:,k],eps0+deps[:,k]))
+        messpy.write('lambda = %s \n' %lambd[k])
+        messpy.write('varintp = %s, %s \n' %Endo(eps0+deps[:,k]-mat.alpha*(Temperature[i+1]-T0)*idn,mat,k,a10,a20))
+        messpy.write('sigp = %s \n' %sig[:,k])
+        messpy.write('dsidep = %s \n' %dsidep[:,:,k])
+        messpy.write('RESIDU %s = %s \n' %(typres,res[k]))
+        
+        if k == maxiter :
+            break
+        deps[:,k+1] = deps[:,k] + Correction(i,mat,eps0+deps[:,k],lambd[k])[3]
+        lambd[k+1] = lambd[k] + Correction(i,mat,eps0+deps[:,k],lambd[k])[4]
+    
+    (a10,a20) = Endo(eps0 + deps[:,k]-mat.alpha*(Temperature[i+1]-T0)*idn,mat,k,a10,a20)
+    eps0 = eps0 + deps[:,k]
+
+    messpy.write("\nSolution analytique à l'issue du pas de temps : epsp = %s\n" %Deformation(i+1,mat))
+
+messpy.close()
+
+
+

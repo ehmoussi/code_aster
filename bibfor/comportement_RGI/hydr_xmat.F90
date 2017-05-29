@@ -1,7 +1,7 @@
 subroutine hydr_xmat(xmat0, xmat1, hydra1, hydras, n,&
                      erreur)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -39,8 +39,6 @@ subroutine hydr_xmat(xmat0, xmat1, hydra1, hydras, n,&
             yy=(hydra1-hydras)/(1.d0-hydras)
             xmat1=xmat0*(yy**n)
         else
-            print*,'Donnees incoherentes pour l hydratation'
-            print*,'0<HYDR<10<HYDRS<1 cf hydr_xmat.eso'
             erreur=1
             call utmess('F', 'COMPOR1_90')
         end if

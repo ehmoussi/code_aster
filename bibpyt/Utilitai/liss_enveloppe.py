@@ -18,39 +18,8 @@
 
 import math,copy
 import numpy as N
-# from scipy import interpolate 
 from Utilitai.Utmess import UTMESS
-  
-def interpole(x2, x0, y0, x1, y1):
-    """
-        renvoie la valeur pour x2 interpolée (lineairement) entre x0 et x1
-    """
-    try:
-        a = (y1 - y0) / (x1 - x0)
-    except ZeroDivisionError:
-        return y0
-
-    return a * (x2 - x0) + y0
-    
-def interpolate(listx,listy,listxnew):
-    listynew=[]
-    id = 0
-    for x2 in listxnew:
-        upid = True
-        while upid:
-            if (listx[id]<=x2 and id==len(listx)-1):
-                y2 = interpole(x2, listx[id], listy[id], listx[id-1], listy[id-1])
-                listynew.append(y2)
-                upid = False
-            elif (listx[id]<=x2 and listx[id+1]>x2) :
-                y2 = interpole(x2, listx[id], listy[id], listx[id+1], listy[id+1])
-                listynew.append(y2)
-                upid = False
-            else:
-                id+=1
-    # assert(len(listynew)==len(listxnew))    
-    return listynew        
-    
+   
 class filtre:
 
     """
@@ -246,13 +215,13 @@ class filtreExpand(filtre):
         # Enveloppe des spectres
         spr = enveloppe_spectres([spLower, spMid, spUpper])
         
-        # Filtre sur les frequences initiales
-        l_val=[]
-        for f,freq in enumerate(spr.listFreq):
-            if freq in sp.listFreq:
-                l_val.append(spr.dataVal[f])
-        sp.dataVal  = l_val
-        return sp
+        spf = spectre()
+        for i in range (0,len(spr.listFreq)):
+            if spr.listFreq[i] >= sp.listFreq[0] and spr.listFreq[i] <= sp.listFreq[-1]:
+                spf.listFreq.append(spr.listFreq[i])
+                spf.dataVal.append(spr.dataVal[i])
+                
+        return spf
 
         
 class spectre:
@@ -654,7 +623,7 @@ def enveloppe_nappe(l_nappe):
             try:
                 ind = (nappe.listAmor).index(amor)
                 spec = copy.copy(nappe.listSpec[ind])
-                spec.filtre(filterLogLog)
+                spec=spec.filtre(filterLogLog)
                 l_spec.append(spec)
                 l_freq+=spec.listFreq
             except:
@@ -665,10 +634,10 @@ def enveloppe_nappe(l_nappe):
         l_freq = N.array(l_freq) 
         s_max = N.zeros(len(l_freq))
         for spec in l_spec:
-            ynew = interpolate(spec.listFreq, spec.dataVal,l_freq)
+            ynew = N.interp(l_freq, spec.listFreq, spec.dataVal)
             s_max = [ max(s_max[t], ynew[t]) for t in range(len(l_freq))]
         spec= spectre(listFreq=l_freq,dataVal=s_max)
-        spec.filtre(filterLinLin)
+        spec=spec.filtre(filterLinLin)
         l_spec_amor.append(spec)
         
     sp_nappe = copy.copy(nappe)
@@ -685,9 +654,9 @@ def enveloppe_spectres(listSpec):
     filterLogLog = filtreLogLog()
     filterLinLin = filtreLinLin()
     for spec in listSpec:
-        l_freq+=spec.listFreq
         specLL = copy.copy(spec)
-        specLL.filtre(filterLogLog)
+        specLL=specLL.filtre(filterLogLog)
+        l_freq+=specLL.listFreq
         l_spec.append(specLL)
     #Suppression doublons
     l_freq = list(set(l_freq))
@@ -695,10 +664,10 @@ def enveloppe_spectres(listSpec):
     l_freq = N.array(l_freq) 
     s_max = N.zeros(len(l_freq))
     for spec in l_spec:
-        ynew = interpolate(spec.listFreq, spec.dataVal,l_freq)
+        ynew = N.interp(l_freq, spec.listFreq, spec.dataVal)
         s_max = [ max(s_max[t], ynew[t]) for t in range(len(l_freq))]
     spec= spectre(listFreq=l_freq,dataVal=s_max)
-    spec.filtre(filterLinLin)
+    spec=spec.filtre(filterLinLin)
     return spec
         
 def elargis_spectres(l_spectre,l_coef):
@@ -742,7 +711,7 @@ def liss_enveloppe(l_nappes ,option = 'CONCEPTION', nb_pts = 50, coef_elarg = No
             if len(nb_pts)>2:
                 UTMESS('A', 'FONCT0_75')
         else:    
-            nb_pts_1 = nb_pts_2 = nb_pts
+            nb_pts_1 = nb_pts_2 = nb_pts[0]
             
         # Lissage pour chaque nappe    
         l_liss_nappe = []

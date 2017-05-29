@@ -1,0 +1,118 @@
+# person_in_charge: astrid.billon at edf.fr
+# ======================================================================
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
+# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
+# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
+# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
+# (AT YOUR OPTION) ANY LATER VERSION.
+#
+# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
+# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
+# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
+# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+#
+# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
+# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
+#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
+# ======================================================================
+#
+# UNIDIRECTIONNAL TENSILE TEST WITH TEMPERATURE ON A SINGLE ELEMENT, 
+# USING A UMAT ELASTOPLASTIC BEHAVIOUR LAW
+# WITH ISOTROPIC LINEAR HARDENING
+#
+#
+# ! See also zzzz409a.23 for a Python resolution of this problem !
+#
+
+
+
+import os
+from asrun.toolbox import make_shared
+
+os.rename("fort.22", "fort.22.f")
+make_shared("libumat.so", "fort.22.f")
+
+# Ou bien, on peut utiliser :
+#       as_run --make_shared -o libumat.so zzzz409a.22.f
+# avant de lancer l'etude.
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+E=1.
+k=0.5
+alpha = 1.E-2
+T0  =  20.0
+DT1 = 100.0
+DT2 = 200.0
+DT3 = 300.0
+
+
+L_INST = DEFI_LIST_REEL(VALE = (0.0, 0.5, 1.5, 2., 3., 4.),)
+
+
+TEMP = DEFI_FONCTION(
+    NOM_PARA = 'INST',
+    VALE     = (0,T0, 0.5,T0+DT1/2., 1.5, T0+(DT1+DT2)/2, 2,T0+DT2, 3,T0+DT3, 4, T0),
+    )
+
+     
+EPS = DEFI_FONCTION(
+    NOM_PARA='INST',
+    VALE    = (0,0, 0.5, 0.5+alpha*DT1/2., 1.5,1.5+alpha*(DT1+DT2)/2, 2,2+alpha*DT2, 3,3+alpha*DT3, 4, 0),
+    )
+ 
+
+UMAT = DEFI_MATERIAU(
+    ELAS=_F(ALPHA=alpha, E=1,NU=0),
+    UMAT=_F( LISTE_COEF = (E , k)), 
+    )
+
+
+RESUMAT = SIMU_POINT_MAT(MATER=UMAT,
+                      COMPORTEMENT =_F(RELATION = 'UMAT', 
+                                    NB_VARI = 2,
+                                    LIBRAIRIE = 'libumat.so',
+                                    NOM_ROUTINE = 'umat'),
+                      INCREMENT =_F(LIST_INST = L_INST),
+                      NEWTON    =_F(REAC_ITER = 1),
+                      SUPPORT='ELEMENT',
+                      MODELISATION='3D',
+                      EPSI_IMPOSE =_F(EPXX = EPS),
+                      AFFE_VARC   = _F(NOM_VARC='TEMP',VALE_REF=T0,VALE_FONC=TEMP),
+                        )
+
+IMPR_TABLE(TABLE=RESUMAT)
+
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=6.0000000000000000,
+           VALE_REFE=6.,
+           NOM_PARA='EPXX',
+           TABLE=RESUMAT,
+           FILTRE=_F(PRECISION=1.E-10,
+                     NOM_PARA='INST',
+                     VALE=3.0,),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=3.0000000004455578,
+           VALE_REFE=3.,
+           NOM_PARA='EPYY',
+           TABLE=RESUMAT,
+           FILTRE=_F(PRECISION=1.E-10,
+                     NOM_PARA='INST',
+                     VALE=3.0,),
+           )
+           
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=2.0000000000000000,
+           VALE_REFE=2.,
+           NOM_PARA='SIXX',
+           TABLE=RESUMAT,
+           FILTRE=_F(PRECISION=1.E-10,
+                     NOM_PARA='INST',
+                     VALE=3.0,),
+           )
+
+FIN()

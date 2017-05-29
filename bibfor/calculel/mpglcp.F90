@@ -1,7 +1,7 @@
 subroutine mpglcp(typecp, nbnolo, coordo, alpha, beta,&
                   gamma, pgl, iret)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -39,9 +39,14 @@ subroutine mpglcp(typecp, nbnolo, coordo, alpha, beta,&
 !    LOCAL DANS LE CAS DES COQUES ET DES POUTRES
 !
 ! IN  :
-!   TYPECP  K1   'P' OU 'C' POUR POUTRES OU COQUES
-!   NBNOLO  I    NOMBRE DE NOEUDS, CLASSIQUEMENT 2 POUR LES POUTRES
-!                  ET 3 OU 4 POUR LES COQUES
+!   TYPECP  K1   'P' POUR POUTRES
+!                'D' pour discrets à 2 noeuds (idem poutres)
+!                '1' pour les elements à 1 noeud (alpha,beta,gamma sont donnés)
+!                'C' POUR COQUES
+!   NBNOLO  I    NOMBRE DE NOEUDS.
+!                   2 pour les poutres
+!                   2 ou 1 pour les discrets
+!                   3 ou 4 pour les coques
 !   COORDO  R*   TABLEAU CONTENANT LES COORDOONEES DES NOEUDS
 !                  DIMENSIONNE A NBNOLO*3
 !   ALPHA   R    PREMIER ANGLE NAUTIQUE
@@ -61,21 +66,25 @@ subroutine mpglcp(typecp, nbnolo, coordo, alpha, beta,&
     real(kind=8) :: xd(3), angl(3), alphal, betal, t2iu(2, 2), t2ui(2, 2), c, s
     real(kind=8) :: mat1(3, 3), mat2(3, 3)
 !
-    if (typecp .eq. 'P') then
-!
-        ASSERT(nbnolo.eq.2)
-!
+    iret = 0
+    if ((typecp.eq.'P').or.(typecp.eq.'D')) then
+        ASSERT( (nbnolo.eq.2).or.(nbnolo.eq.3) )
 !       CALCUL DE ALPHA ET BETA
         call vdiff(3, coordo(1), coordo(4), xd)
         call angvx(xd, alphal, betal)
-!
         angl(1) = alphal
         angl(2) = betal
         angl(3) = gamma
         call matrot(angl, pgl)
 !
-    else if (typecp.eq.'C') then
+    else if (typecp .eq. '1') then
+        ASSERT(nbnolo.eq.1)
+        angl(1) = alpha
+        angl(2) = beta
+        angl(3) = gamma
+        call matrot(angl, pgl)
 !
+    else if (typecp.eq.'C') then
 !       CALCUL DE LA MATRICE DE PASSAGE GLOBAL -> INTRINSEQUE
         if (nbnolo .eq. 3) then
             call dxtpgl(coordo, pgl)
@@ -84,11 +93,8 @@ subroutine mpglcp(typecp, nbnolo, coordo, alpha, beta,&
         else
             ASSERT(.false.)
         endif
-!
-!       MODIFICATION DE LA MATRICE POUR PRENDRE EN COMPTE
-!       LA CARCOQUE UTILISATEUR
-        call coqrep(pgl, alpha, beta, t2iu, t2ui,&
-                    c, s)
+!       MODIFICATION DE LA MATRICE POUR PRENDRE EN COMPTE LA CARCOQUE UTILISATEUR
+        call coqrep(pgl, alpha, beta, t2iu, t2ui, c, s)
         mat1(1,1) = pgl(1,1)
         mat1(1,2) = pgl(2,1)
         mat1(1,3) = pgl(3,1)
@@ -108,7 +114,6 @@ subroutine mpglcp(typecp, nbnolo, coordo, alpha, beta,&
         mat2(3,2) = 0.d0
         mat2(3,3) = 1.d0
         call pmat(3, mat1, mat2, pgl)
-!
     endif
 !
 end subroutine

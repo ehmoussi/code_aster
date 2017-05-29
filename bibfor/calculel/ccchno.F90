@@ -30,7 +30,7 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
     character(len=24) :: lichou(2), mesmai, ligrel
     aster_logical :: ligmod
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -74,7 +74,7 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
     integer :: adobj(nmaxob), nbobj, nbsp
 !
     character(len=8) :: k8b, erdm
-    character(len=16) :: valk(4)
+    character(len=19) :: valk(4)
     character(len=19) :: optele, nochou, chams0, chams1
     character(len=24) :: chelem, noobj(nmaxob)
 !
@@ -96,11 +96,9 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
     call rsexc1(resuou, option, numord, nochou)
     lichou(1) = nochou
 !
-    call rsexch(' ', resuin, optele, numord, chelem,&
-                ier)
+    call rsexch(' ', resuin, optele, numord, chelem, ier)
     if (ier .ne. 0) then
-        call rsexch(' ', resuou, optele, numord, chelem,&
-                    ier)
+        call rsexch(' ', resuou, optele, numord, chelem, ier)
     endif
 !
     call exisd('CHAMP_GD', chelem, ier)
@@ -115,46 +113,41 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
     endif
     call celces(chelem, 'V', chams0)
     if (nbma .ne. 0) then
-        call cesred(chams0, nbma, zi(jmai), 0, [k8b],&
-                    'V', chams0)
+        call cesred(chams0, nbma, zi(jmai), 0, [k8b], 'V', chams0)
     endif
 !
-!     VERIFICATION DES REPERES LOCAUX
+!   VERIFICATION DES REPERES LOCAUX
     erdm = 'NON'
     call dismoi('EXI_RDM', ligrel, 'LIGREL', repk=erdm)
-!
-!     CETTE VERIFICATION NE DOIT ETRE FAITE QUE DANS LE CAS
-!     OU LE MODELE CONTIENT DE ELEMENTS DE STRUCTURE
-!     ET QUE POUR CERTAINS CHAMPS QUI SONT EN REPERE LOCAL
-    if ((erdm.eq.'OUI') .and.&
-        (&
-        (option(1:4).eq.'EPSI') .or. (option(1:4).eq.'SIGM') .or. (option(1:4).eq.'DEGE')&
-        .or. (option(1:4).eq.'EFGE')&
-        )) then
+!   cette vérification ne doit être faite que dans le cas ou le modèle contient des éléments
+!   de structure et que pour certains champs qui sont en repère local
+    if ((erdm.eq.'OUI').and. &
+        ((option(1:4).eq.'EPSI').or.(option(1:4).eq.'SIGM').or.&
+         (option(1:4).eq.'SIEF').or. &
+         (option(1:4).eq.'DEGE').or.(option(1:4).eq.'EFGE'))) then
         if (ligmod) then
-!
-!         POUR LES COQUES 3D CERTAINES INITIALISATIONS SONT
-!         NECESSAIRES POUR POUVOIR UTILISER LES ROUTINES
-!         DE CHANGEMENT DE REPERE PROPRES AUX COQUES 3D
+!           pour les coques 3d certaines initialisations sont nécessaires pour pouvoir utiliser
+!           les routines de changement de repère propres aux coques 3d
             call dismoi('EXI_COQ3D', ligrel, 'LIGREL', repk=erdm)
             if (erdm .eq. 'OUI' .and. ligmod) then
                 call jelira(ligrel(1:19)//'.LIEL', 'NUTIOC', ngr)
                 do igr = 1, ngr
-                    call inigrl(ligrel, igr, nmaxob, adobj, noobj,&
-                                nbobj)
-                end do
+                    call inigrl(ligrel, igr, nmaxob, adobj, noobj,nbobj)
+                enddo
             endif
         endif
-        if (carael .ne. ' ') call ccvrrl(nomail, modele, carael, mesmai, chams0,&
-                                         'A', codret)
+        if (carael .ne. ' ') then
+            call ccvrrl(nomail, modele, carael, mesmai, chams0,'A', codret)
+        else
+            valk(1) = option(1:4)
+            call utmess('A', 'CALCULEL4_2', nk=1, valk=valk)
+        endif
     endif
 !
-    call cescns(chams0, ' ', 'V', chams1, 'A',&
-                codret)
-    call cnscno(chams1, ' ', 'NON', basopt, nochou,&
-                ' ', iret)
+    call cescns(chams0, ' ', 'V', chams1, 'A', codret)
+    call cnscno(chams1, ' ', 'NON', basopt, nochou, ' ', iret)
 !
-!     VERIFICATION POUR LES CHAMPS A SOUS-POINT
+!   VERIFICATION POUR LES CHAMPS A SOUS-POINT
     call dismoi('MXNBSP', chelem, 'CHAM_ELEM', repi=nbsp)
     if ((nbsp.gt.1) .and. (iret.eq.1)) then
         valk(1)=optele
@@ -166,7 +159,6 @@ subroutine ccchno(option, numord, resuin, resuou, lichou,&
     call detrsd('CHAM_NO_S', chams1)
 !
 999 continue
-!
     call jedema()
 !
 end subroutine

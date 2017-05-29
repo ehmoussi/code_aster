@@ -1,6 +1,6 @@
 # coding=utf-8
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -36,7 +36,7 @@ cata_msg = {
 """),
 
     5 : _(u"""
- il manque le vecteur des composantes 
+ il manque le vecteur des composantes
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
@@ -84,7 +84,7 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
- 
+
 
     17 : _(u"""
  on ne traite que des champs de type "DEPL_R" pour un changement de repère
@@ -117,7 +117,7 @@ Contactez le support technique.
 """),
 
 
- 
+
 
 
 
@@ -392,6 +392,23 @@ Erreur utilisateur dans la commande POST_RELEVE_T :
 Erreur utilisateur dans la commande POST_RELEVE_T :
   Pour les mots clés ACTION / RESULTANTE (et MOMENT), on ne peut utiliser que le repère
  'GLOBAL' ou le repère 'UTILISATEUR' (avec ANGL_NAUT).
+"""),
+
+
+    70 : _(u"""
+Commande POST_RELEVE_T :
+Votre modèle contient des éléments de structures et :
+    - vous avez demandé le post-traitement du champ %(k1)s, qui n'a de signification que dans
+      le repère LOCAL des éléments.
+    - vous avez demandé le post-traitement dans un repère différent de LOCAL.
+
+Le mot clef REPERE est ignoré.
+Le post-traitement sera réalisé dans le repère LOCAL des éléments.
+
+Conseil :
+    Si vous avez précédemment utilisé la commande CALC_CHAMP et que les repères locaux des
+    éléments connectés à un même noeud sont différents, une alarme a été émise.
+    Dans ce cas les résultats obtenus aux noeuds ne sont pas pertinents.
 """),
 
 }

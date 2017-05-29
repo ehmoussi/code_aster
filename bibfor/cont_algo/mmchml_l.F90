@@ -86,6 +86,9 @@ implicit none
     r_smooth     = real(cfdisi(ds_contact%sdcont_defi,'LISSAGE'),kind=8)
     r_axi        = real(cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE'),kind=8)
     nb_cont_pair = ds_contact%nb_cont_pair
+    if (nb_cont_pair.eq.0) then
+        go to 80
+    end if
     nb_cont_zone = cfdisi(ds_contact%sdcont_defi, 'NZOCO')
     AS_ALLOCATE(vi=typ_jaco, size= nb_cont_zone)
     do i_zone=1, nb_cont_zone
@@ -168,6 +171,7 @@ implicit none
     ASSERT(nt_liel .eq. nb_cont_pair)
     AS_DEALLOCATE(vi=typ_jaco)
 !
+80  continue
     call jedema()
 !
 end subroutine

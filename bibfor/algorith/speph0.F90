@@ -34,7 +34,7 @@ subroutine speph0(nomu, table)
     character(len=8) :: nomu, table
 !-----------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -76,6 +76,7 @@ subroutine speph0(nomu, table)
     character(len=8), pointer :: maille_rep(:) => null()
     character(len=8), pointer :: nocmp_rep(:) => null()
     character(len=8), pointer :: noeud_rep(:) => null()
+    character(len=24), pointer :: group_noeud(:) => null()
     integer, pointer :: nume_ddl(:) => null()
     character(len=16), pointer :: refe(:) => null()
 !-----------------------------------------------------------------------
@@ -178,13 +179,14 @@ subroutine speph0(nomu, table)
                 call getvtx('EXCIT', 'GROUP_NO', iocc=1, nbval=0, nbret=nbgrno)
                 nbgrno = -nbgrno
                 call wkvect('&&SPEPH0.LISTENOEEXC', 'V V K8', nbgrno, ilnoex)
+                AS_ALLOCATE(nbgrno, vk24 = group_noeud)
+                call getvem(maillage, 'GROUP_NO', 'EXCIT', 'GROUP_NO', 1,&
+                                    iarg, nbgrno, group_noeud, iret)
                 do i = 1, nbgrno
-                    call getvem(maillage, 'NOEUD', 'EXCIT', 'GROUP_NO', i,&
-                                    iarg, 0, group, iret)
-                    call utnono(' ', maillage, 'NOEUD', group, noeud,&
+                    call utnono(' ', maillage, 'NOEUD', group_noeud(i), noeud,&
                                 iret)
                     if (iret.eq.10) then
-                        call utmess('F', 'ELEMENTS_67', sk=group)
+                        call utmess('F', 'ELEMENTS_67', sk=group_noeud(i))
                     else if (iret.eq.1) then
                         ASSERT(.false.)
                     else
@@ -192,6 +194,7 @@ subroutine speph0(nomu, table)
                     end if
                 end do
                 napexc = nbgrno
+                AS_DEALLOCATE(vk24 = group_noeud)
             else
                 napexc = -napexc
                 call wkvect('&&SPEPH0.LISTENOEEXC', 'V V K8', napexc, ilnoex)
@@ -307,13 +310,15 @@ subroutine speph0(nomu, table)
             call getvtx(' ', 'GROUP_NO', iocc=1, nbval=0, nbret=nbgrno)
             nbgrno = -nbgrno
             AS_ALLOCATE(nbgrno, vk8=noeud_rep)
+            AS_ALLOCATE(nbgrno, vk24 = group_noeud)
+            call getvem(maillage, 'GROUP_NO', '', 'GROUP_NO', 1,&
+                        iarg, nbgrno, group_noeud, iret)
             do i = 1, nbgrno
-                call getvem(maillage, 'GROUP_NO', ' ', 'GROUP_NO', i, &
-                            iarg, 0, group, iret)
-                call utnono(' ', maillage, 'NOEUD', group, noeud,&
+                call utnono(' ', maillage, 'NOEUD', group_noeud(i), noeud,&
                             iret)
+                !print*, "noeud" , noeud, i
                 if (iret.eq.10) then
-                    call utmess('F', 'ELEMENTS_67', sk=group)
+                    call utmess('F', 'ELEMENTS_67', sk=group_noeud(i))
                 else if (iret.eq.1) then
                     ASSERT(.false.)
                 else
@@ -321,6 +326,7 @@ subroutine speph0(nomu, table)
                 end if
             end do
             nbno = nbgrno
+            AS_DEALLOCATE(vk24 = group_noeud)
         else
             nbno = -nbno
             AS_ALLOCATE(nbno, vk8=noeud_rep)

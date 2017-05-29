@@ -102,21 +102,22 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
     real(kind=8) :: e0(2), sb(6), sbth(6), sbpr(6), sbme(6)
     real(kind=8) :: instpmin, instpmax, st(6), tresca, tresmec, trespr
     real(kind=8) :: sqq, s2qq, trescaqq, instqmin, instqmax
-    integer :: jsigq, jsithq, jsiprq, jsimeq, ind1, ind2, indth1, indth2
+    integer :: jsigq, jsithq, jsiprq, jsimeq
     real(kind=8) :: tresthqq, tresmecqq, tresprqq, s2pq, spq, trescapq, s2
     real(kind=8) :: mij1(12), mij2(12)
     real(kind=8) :: mij3(12), mij4(12), pij1, pij2, pij3, pij4, seis(6)
-    integer :: indpr1, indpr2, indme0, indme2, inst1, inst2, jinst1, jinst2
+    integer :: inst1, inst2
     real(kind=8) :: st11(6), st12(6), st13(6), st14(6), tresthpq, tresprpq
     real(kind=8) :: tresmecpq, k1, c1, k2, c2, k3, c3, tempa, tempb, A1(12)
     integer :: instp1, instq1, jvalin, jtempa, jtempb, jtempp, iret2p, long
     real(kind=8) :: B1(12), momp(12), sc(6), sbid(6), sc1(6), sc2(6)
     character(len=8) :: tabtemp(2)
     integer :: n4(2), ndim2, jtempq, iretq, iret2q, jflethp, jpremoyp, jpremoyq
-    real(kind=8) :: momq(12), siprmoy(6), siprmoyt(6), siprmoy11(6), siprmoy21(6)
+    real(kind=8) :: momq(12), siprmoy(6), siprmoyt(6), snetq
     real(kind=8) :: smom2(6), spres1(6), spres2(6), spres3(6), spres4(6)
     real(kind=8) :: smom11(6), smom12(6), smom13(6), smom14(6), sbet(6), stet(6)
-    real(kind=8) :: siprmoy31(6), siprmoy41(6)
+    integer :: jflethq
+    real(kind=8) :: sbet11(6), sbet12(6), sbet13(6), sbet14(6), snetpq
 
 !
 ! DEB ------------------------------------------------------------------
@@ -387,11 +388,19 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
         sb(j) = 0.d0
 65  continue
     ncmp=6
-    if(np+nq .ne. 0) then
+!
+    if(np .ne. 0) then
         AS_ALLOCATE(vr=contraintestot,  size=nbabsc(1))
         AS_ALLOCATE(vr=contraintesth,  size=nbabsc(1))
         AS_ALLOCATE(vr=contraintespr,  size=nbabsc(1))
         AS_ALLOCATE(vr=contraintesmec, size=nbabsc(1))
+    else
+        if(nq .ne. 0) then
+          AS_ALLOCATE(vr=contraintestot,  size=nbabsc(2))
+          AS_ALLOCATE(vr=contraintesth,  size=nbabsc(2))
+          AS_ALLOCATE(vr=contraintespr,  size=nbabsc(2))
+          AS_ALLOCATE(vr=contraintesmec, size=nbabsc(2))
+        endif
     endif
 ! 
     if (np .eq. 0) then
@@ -594,15 +603,15 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                         instpmax = -1.0
                                       endif 
 !
-                                      sc(j) =  sc1(j) + sc2(j)
-                                      st(j) =  sb(j) + e0(i0)*sa(j) + e0(i0)*sc(j)  +&
+                                      sc(j) =  sc1(j)
+                                      st(j) =  sb(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)  +&
                                                e0(i1)*seisfx(j)  +e0(i2)*seisfy(j)  +&
                                                e0(i3)*seisfz(j)  +e0(i4)*seismx(j)  +&
                                                e0(i5)*seismy(j)  +e0(i6)*seismz(j)  +&
                                                e0(i7)*seisfx2(j) +e0(i8)*seisfy2(j) +&
                                                e0(i9)*seisfz2(j) +e0(i10)*seismx2(j)+&
                                                e0(i11)*seismy2(j)+e0(i12)*seismz2(j)
-                                      stet(j) =  sbet(j) + e0(i0)*sa(j) + e0(i0)*sc(j)  +&
+                                      stet(j) = sbet(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)  +&
                                                e0(i1)*seisfx(j)  +e0(i2)*seisfy(j)  +&
                                                e0(i3)*seisfz(j)  +e0(i4)*seismx(j)  +&
                                                e0(i5)*seismy(j)  +e0(i6)*seismz(j)  +&
@@ -651,7 +660,7 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                   sbpr(j)=zr(jsiprp+(i-1)*ncmp+j-1)-zr(jsiprp+(l-1)*ncmp+j-1)
                   sbme(j)=zr(jsimep+(i-1)*ncmp+j-1)-zr(jsimep+(l-1)*ncmp+j-1)
                   sbet(j)=sb(j)- (zr(jflethp+(i-1)*ncmp+j-1)-zr(jflethp+(l-1)*ncmp+j-1))
-                  siprmoyt(j) = zr(jpremoyp+(i-1)*ncmp+j-1)-zr(jpremoyp+(l-1)*ncmp+j-1)
+                  siprmoyt(j) = zr(jpremoyp+(i-1)*ncmp+j-1)
                 else
                   sb(j)=0.d0
                   sc2(j)=zr(jtempp+(i-1)*ncmp+j-1)
@@ -664,9 +673,9 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                   instpmax = -1.0
                 endif 
 !
-                sc(j) =  sc1(j)+sc2(j)
-                st(j)  = sb(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
-                stet(j)  = sbet(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
+                sc(j) =  sc1(j)
+                st(j)  = sb(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
+                stet(j)  = sbet(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
 117         continue
             call rctres(st,tresca)
             if (tresca .gt. trescapp) then
@@ -681,10 +690,10 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
             endif
             call rctres(stet,tresca)
             trescappet = max(tresca, trescappet)
-            call rctres(siprmoyt,tresca)
-            trescapr = max(tresca, trescapr)
 116       continue
 115     continue
+        call rctres(siprmoyt,tresca)
+        trescapr = max(tresca, trescapr)
 114   continue
     endif
 !
@@ -700,7 +709,7 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
 41  continue
     if (iretp .ne. 0) then
         do 51 j = 1, 6
-            pij = propi(1)-propj(1)
+            pij = max(propi(1),propj(1))
             sigu = zr(jsigu-1+156+72+j)
             siprmoy(j) = pij*sigu
 51      continue
@@ -716,8 +725,10 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
 !--------------------------------------------------------------------
 !--------------------- CALCUL DE SN(Q,Q)-----------------------------
     sqq  = 0.d0
+    snetq = 0.d0
     s2qq = 0.d0
     trescaqq = -1.d0
+    trescappet = -1.d0
 !
 !-- partie ze200
     if (ze200) call rcZ2s2('SN', proqi, proqj, seismeze200, mse, s2qq)
@@ -754,6 +765,7 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
 !-- SB partie transitoire
     do 150 j = 1, 6
         sb(j) = 0.d0
+        sbet(j) = 0.d0
 150 continue
 !
     if (nq .eq. 0) then
@@ -765,6 +777,7 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
     call wkvect('&&RC3200.SITHQ', 'V V R', ndim, jsithq)
     call wkvect('&&RC3200.SIPRQ', 'V V R', ndim, jsiprq)
     call wkvect('&&RC3200.SIMEQ', 'V V R', ndim, jsimeq)
+    call wkvect('&&RC3200.FLETHQ', 'V V R', ndim, jflethq)
     call wkvect('&&RC3200.PREMOYQ', 'V V R', ndim, jpremoyq)
 !
     do 151 i = 1, nbinst(2)
@@ -828,11 +841,13 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
               zr(jsithq+(i-1)*ncmp+j-1) = momen0th - 0.5d0*momen1th
               zr(jsiprq+(i-1)*ncmp+j-1) = momen0pr - 0.5d0*momen1pr
               zr(jsimeq+(i-1)*ncmp+j-1) = momen0mec - 0.5d0*momen1mec
+              zr(jflethq+(i-1)*ncmp+j-1) = - 0.5d0*momen1th
           else
               zr(jsigq+(i-1)*ncmp+j-1) = momen0 + 0.5d0*momen1
               zr(jsithq+(i-1)*ncmp+j-1) = momen0th + 0.5d0*momen1th
               zr(jsiprq+(i-1)*ncmp+j-1) = momen0pr + 0.5d0*momen1pr
               zr(jsimeq+(i-1)*ncmp+j-1) = momen0mec + 0.5d0*momen1mec
+              zr(jflethq+(i-1)*ncmp+j-1) = 0.5d0*momen1th
           endif
 152     continue
 151 continue
@@ -933,18 +948,28 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                         sbth(j)=zr(jsithq+(i-1)*ncmp+j-1)-zr(jsithq+(l-1)*ncmp+j-1)
                                         sbpr(j)=zr(jsiprq+(i-1)*ncmp+j-1)-zr(jsiprq+(l-1)*ncmp+j-1)
                                         sbme(j)=zr(jsimeq+(i-1)*ncmp+j-1)-zr(jsimeq+(l-1)*ncmp+j-1)
+                                        sbet(j)=sb(j)-&
+                                            (zr(jflethq+(i-1)*ncmp+j-1)-zr(jflethq+(l-1)*ncmp+j-1))
                                       else
                                         sb(j)=0.d0
                                         sc2(j)=zr(jtempq+(i-1)*ncmp+j-1)
                                         sbth(j)=0.d0
                                         sbpr(j)=0.d0
                                         sbme(j)=0.d0
+                                        sbet(j)=0.d0
                                         instqmin = -1.0
                                         instqmax = -1.0
                                       endif 
 !
-                                      sc(j) =  sc1(j) + sc2(j)
-                                      st(j) =  sb(j) + e0(i0)*sa(j) + e0(i0)*sc(j)  +&
+                                      sc(j) =  sc1(j)
+                                      st(j) =  sb(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j) +&
+                                               e0(i1)*seisfx(j)  +e0(i2)*seisfy(j)  +&
+                                               e0(i3)*seisfz(j)  +e0(i4)*seismx(j)  +&
+                                               e0(i5)*seismy(j)  +e0(i6)*seismz(j)  +&
+                                               e0(i7)*seisfx2(j) +e0(i8)*seisfy2(j) +&
+                                               e0(i9)*seisfz2(j) +e0(i10)*seismx2(j)+&
+                                               e0(i11)*seismy2(j)+e0(i12)*seismz2(j)
+                                      stet(j) = sbet(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)+&
                                                e0(i1)*seisfx(j)  +e0(i2)*seisfy(j)  +&
                                                e0(i3)*seisfz(j)  +e0(i4)*seismx(j)  +&
                                                e0(i5)*seismy(j)  +e0(i6)*seismz(j)  +&
@@ -963,6 +988,8 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                         instqmax=zr(jinst(2)+l-1)
                                       endif
                                     endif
+                                    call rctres(stet,tresca)
+                                    trescappet = max(tresca, trescappet)
 192                               continue
 191                             continue
 190                           continue
@@ -990,20 +1017,23 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                 sbth(j)=zr(jsithq+(i-1)*ncmp+j-1)-zr(jsithq+(l-1)*ncmp+j-1)
                 sbpr(j)=zr(jsiprq+(i-1)*ncmp+j-1)-zr(jsiprq+(l-1)*ncmp+j-1)
                 sbme(j)=zr(jsimeq+(i-1)*ncmp+j-1)-zr(jsimeq+(l-1)*ncmp+j-1)
-                siprmoyt(j)=zr(jpremoyq+(i-1)*ncmp+j-1)-zr(jpremoyq+(l-1)*ncmp+j-1)
+                siprmoyt(j)=zr(jpremoyq+(i-1)*ncmp+j-1)
+                sbet(j)=sb(j)-(zr(jflethq+(i-1)*ncmp+j-1)-zr(jflethq+(l-1)*ncmp+j-1))
               else
                 sb(j)=0.d0
                 sc2(j)=zr(jtempq+(i-1)*ncmp+j-1)
                 sbth(j)=0.d0
                 sbpr(j)=0.d0
                 sbme(j)=0.d0
+                sbet(j)=0.d0
                 siprmoyt(j)=0.d0
                 instqmin = -1.0
                 instqmax = -1.0
               endif
 !
-              sc(j) =  sc1(j) + sc2(j)
-              st(j)  = sb(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
+              sc(j) =  sc1(j)
+              st(j)  = sb(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
+              stet(j)  = sbet(j)+sc2(j)+e0(i0)*sa(j)+e0(i0)*sc(j)
 195         continue
             call rctres(st,tresca)
             if (tresca .gt. trescaqq) then
@@ -1016,14 +1046,17 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                   instqmax=zr(jinst(2)+l-1)
               endif
             endif
-            call rctres(siprmoyt,tresca)
-            trescapr = max(tresca, trescapr)
+            call rctres(stet,tresca)
+            trescappet = max(trescappet,tresca)
 194       continue
 179     continue
+        call rctres(siprmoyt,tresca)
+        trescapr = max(tresca, trescapr)
 178   continue
     endif
 !
     sqq = trescaqq+s2qq
+    snetq = trescappet+s2qq
 !
 ! -- Comparaison de SN(P,P) et SN(Q,Q)
     if (sqq .gt. spp) then
@@ -1035,13 +1068,16 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
         instsn(2)= instqmax
     endif
 !
+!-- Pour le calcul du sn*
+    snet = max(snet, snetq)
+!
 !-- Pour le calcul du rochet thermique
     do 42 j = 1, 6
         siprmoy(j) = 0.d0
 42  continue
     if (iretq .ne. 0) then
         do 52 j = 1, 6
-            pij = proqi(1)-proqj(1)
+            pij = max(proqi(1),proqj(1))
             sigu = zr(jsigu-1+156+72+j)
             siprmoy(j) = pij*sigu
 52      continue
@@ -1052,7 +1088,9 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
 !--------------------- CALCUL DE SN(P,Q)-----------------------------
     s2pq = 0.d0
     spq = 0.d0
+    snetpq = 0.d0
     trescapq = 0.d0
+    trescappet = -1.d0    
 !
 !-- partie ze200
     if (ze200) then
@@ -1125,75 +1163,16 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
 !
 444 continue
 !
-!-- Pour le calcul du rochet thermique
-    do 43 j = 1, 6
-        siprmoy11(j) = 0.d0
-        siprmoy21(j) = 0.d0
-        siprmoy31(j) = 0.d0
-        siprmoy41(j) = 0.d0
-        siprmoy(j) = 0.d0
-43  continue
-    if (iretp .ne. 0 .or. iretq .ne. 0) then
-        do 53 j = 1, 6
-            sigu = zr(jsigu-1+156+72+j)
-            siprmoy11(j) = pij1*sigu
-            siprmoy21(j) = pij2*sigu
-            siprmoy31(j) = pij3*sigu
-            siprmoy41(j) = pij4*sigu
-53      continue
-    endif
-!
 !-- SB partie transitoire
     do 211 j = 1, 6
         sb(j) = 0.d0
+        sbet(j) = 0.d0
 211 continue
-    if (np .ne. 0) then
-        if (nq .ne. 0) then
-            ind1 = jsigp
-            ind2 = jsigq
-            indth1 = jsithp
-            indth2 = jsithq
-            indpr1 = jsiprp
-            indpr2 = jsiprq
-            indme0 = jsimep
-            indme2 = jsimeq
-            inst1 = nbinst(1)
-            inst2 = nbinst(2)
-            jinst1=jinst(1)
-            jinst2=jinst(2)
-        else
-            ind1 = jsigp
-            ind2 = 1
-            indth1 = jsithp
-            indth2 = 1
-            indpr1 = jsiprp
-            indpr2 = 1
-            indme0 = jsimep
-            indme2 = 1
-            inst1 = nbinst(1)
-            inst2 = 1
-            jinst1=jinst(1)
-            jinst2=1
-        endif
-    else
-        if (nq .ne. 0) then
-            ind1 = 1
-            ind2 = jsigq
-            indth1 = 1
-            indth2 = jsithq
-            indpr1 = 1
-            indpr2 = jsiprq
-            indme0 = 1
-            indme2 = jsimeq
-            inst1 = 1
-            inst2 = nbinst(2)
-            jinst1=1
-            jinst2=jinst(2)
-        else
-            inst1 = 1
-            inst2 = 1
-        endif
-    endif
+    !
+    inst1 = 1
+    inst2 = 1
+    if (np .ne. 0) inst1=nbinst(1)
+    if (nq .ne. 0) inst2=nbinst(2)
 !
 !-- on maximise sur les possibilités de signes
     if (seismeb32 .or. seismeunit) then
@@ -1213,18 +1192,46 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                 do 231 i11 = 1, 2
                                   do 232 i12 = 1, 2
                                     do 233 j = 1, 6
-                                      if (np+nq .ne. 0) then
-                                        sb(j)=zr(ind1+(i-1)*ncmp+j-1)-zr(ind2+(l-1)*ncmp+j-1)
-                                        smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
-                                        sbth(j)=zr(indth1+(i-1)*ncmp+j-1)-zr(indth2+(l-1)*ncmp+j-1)
-                                        sbpr(j)=zr(indpr1+(i-1)*ncmp+j-1)-zr(indpr2+(l-1)*ncmp+j-1)
-                                        sbme(j)=zr(indme0+(i-1)*ncmp+j-1)-zr(indme2+(l-1)*ncmp+j-1)
-                                      else
-                                        smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
-                                        sb(j)=0.d0
-                                        sbth(j)=0.d0
-                                        sbpr(j)=0.d0
-                                        sbme(j)=0.d0
+                                      if (np .ne. 0) then
+                                        if(nq .ne. 0) then
+                                          sb(j)=zr(jsigp+(i-1)*ncmp+j-1)-zr(jsigq+(l-1)*ncmp+j-1)
+                                          smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-&
+                                                   zr(jtempq+(l-1)*ncmp+j-1)
+                                          sbth(j)=zr(jsithp+(i-1)*ncmp+j-1)-& 
+                                                  zr(jsithq+(l-1)*ncmp+j-1)
+                                          sbpr(j)=zr(jsiprp+(i-1)*ncmp+j-1)-&
+                                                  zr(jsiprq+(l-1)*ncmp+j-1)
+                                          sbme(j)=zr(jsimep+(i-1)*ncmp+j-1)-&
+                                                  zr(jsimeq+(l-1)*ncmp+j-1)
+                                          sbet(j)=sb(j)-&
+                                            (zr(jflethp+(i-1)*ncmp+j-1)-zr(jflethq+(l-1)*ncmp+j-1))
+                                        else
+                                          sb(j)=zr(jsigp+(i-1)*ncmp+j-1)
+                                          smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-& 
+                                                   zr(jtempq+(l-1)*ncmp+j-1)
+                                          sbth(j)=zr(jsithp+(i-1)*ncmp+j-1)
+                                          sbpr(j)=zr(jsiprp+(i-1)*ncmp+j-1)
+                                          sbme(j)=zr(jsimep+(i-1)*ncmp+j-1)
+                                          sbet(j)=sb(j)-zr(jflethp+(i-1)*ncmp+j-1)
+                                        endif
+                                      else  
+                                        if(nq .ne. 0) then
+                                          sb(j)=-zr(jsigq+(l-1)*ncmp+j-1)
+                                          smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-&
+                                                   zr(jtempq+(l-1)*ncmp+j-1)
+                                          sbth(j)=-zr(jsithq+(l-1)*ncmp+j-1)
+                                          sbpr(j)=-zr(jsiprq+(l-1)*ncmp+j-1)
+                                          sbme(j)=-zr(jsimeq+(l-1)*ncmp+j-1)
+                                          sbet(j)=sb(j)+zr(jflethq+(l-1)*ncmp+j-1)
+                                        else
+                                          sb(j)=0.d0
+                                          smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-&
+                                                   zr(jtempq+(l-1)*ncmp+j-1)
+                                          sbth(j)=0.d0
+                                          sbpr(j)=0.d0
+                                          sbme(j)=0.d0
+                                          sbet(j)=0.d0
+                                        endif
                                       endif
                                       seis(j)= e0(i1)*seisfx(j)+e0(i2)*seisfy(j)+&
                                                e0(i3)*seisfz(j)+e0(i4)*seismx(j)+&
@@ -1232,10 +1239,18 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                                e0(i7)*seisfx2(j)+e0(i8)*seisfy2(j)+&
                                                e0(i9)*seisfz2(j)+e0(i10)*seismx2(j)+&
                                                e0(i11)*seismy2(j)+e0(i12)*seismz2(j)
-                                      st11(j) = sb(j)+e0(i0)*(smom11(j)+smom2(j)+spres1(j))+seis(j)
-                                      st12(j) = sb(j)+e0(i0)*(smom12(j)+smom2(j)+spres2(j))+seis(j)
-                                      st13(j) = sb(j)+e0(i0)*(smom13(j)+smom2(j)+spres3(j))+seis(j)
-                                      st14(j) = sb(j)+e0(i0)*(smom14(j)+smom2(j)+spres4(j))+seis(j)
+                                      st11(j) = sb(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))+seis(j)
+                                      st12(j) = sb(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))+seis(j)
+                                      st13(j) = sb(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))+seis(j)
+                                      st14(j) = sb(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j))+seis(j)
+                                      sbet11(j) = sbet(j)+smom2(j)+&
+                                                  e0(i0)*(smom11(j)+spres1(j))+seis(j)
+                                      sbet12(j) = sbet(j)+smom2(j)+&
+                                                  e0(i0)*(smom12(j)+spres2(j))+seis(j)
+                                      sbet13(j) = sbet(j)+smom2(j)+&
+                                                  e0(i0)*(smom13(j)+spres3(j))+seis(j)
+                                      sbet14(j) = sbet(j)+smom2(j)+&
+                                                  e0(i0)*(smom14(j)+spres4(j))+seis(j)
 233                                 continue
 !
                                     call rctres(st11,tresca)
@@ -1283,6 +1298,15 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                                       endif
                                     endif
 !
+                                    call rctres(sbet11,tresca)
+                                    trescappet = max(trescappet, tresca)
+                                    call rctres(sbet12,tresca)
+                                    trescappet = max(trescappet, tresca)
+                                    call rctres(sbet13,tresca)
+                                    trescappet = max(trescappet, tresca)
+                                    call rctres(sbet14,tresca)
+                                    trescappet = max(trescappet, tresca)
+!
 232                               continue
 231                             continue
 230                           continue
@@ -1303,48 +1327,47 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
         do 235 l = 1, inst2
           do 236 i0 = 1, 2
             do 237 j=1,6
-                if (nq+np .ne. 0) then
-                  sb(j)=zr(ind1+(i-1)*ncmp+j-1)-zr(ind2+(l-1)*ncmp+j-1)
-                  smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
-                  sbth(j)=zr(indth1+(i-1)*ncmp+j-1)-zr(indth2+(l-1)*ncmp+j-1)
-                  sbpr(j)=zr(indpr1+(i-1)*ncmp+j-1)-zr(indpr2+(l-1)*ncmp+j-1)
-                  sbme(j)=zr(indme0+(i-1)*ncmp+j-1)-zr(indme2+(l-1)*ncmp+j-1)
-                else
-                  smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
-                  sb(j)=0.d0
-                  sbth(j)=0.d0
-                  sbpr(j)=0.d0
-                  sbme(j)=0.d0
-                endif
-                st11(j) = sb(j)+e0(i0)*(smom11(j)+smom2(j)+spres1(j))
-                st12(j) = sb(j)+e0(i0)*(smom12(j)+smom2(j)+spres2(j))
-                st13(j) = sb(j)+e0(i0)*(smom13(j)+smom2(j)+spres3(j))
-                st14(j) = sb(j)+e0(i0)*(smom14(j)+smom2(j)+spres4(j))
                 if (np .ne. 0) then
-                    if (nq .ne. 0) then
-                        siprmoyt(j) = zr(jpremoyp+(i-1)*ncmp+j-1)-zr(jpremoyq+(l-1)*ncmp+j-1)
-                    else
-                        siprmoyt(j) = zr(jpremoyp+(i-1)*ncmp+j-1)
-                    endif
-                else
-                    if (nq .ne. 0) then
-                        siprmoyt(j) = zr(jpremoyq+(l-1)*ncmp+j-1)
-                    else
-                        siprmoyt(j) = 0.d0
-                    endif 
-                endif   
-                siprmoy(j) =  siprmoy11(j)-siprmoyt(j)  
-                call rctres (siprmoy, tresca)
-                trescapr = max (trescapr, tresca) 
-                siprmoy(j) =  siprmoy21(j)-siprmoyt(j)  
-                call rctres (siprmoy, tresca)
-                trescapr = max (trescapr, tresca)
-                siprmoy(j) =  siprmoy31(j)-siprmoyt(j)  
-                call rctres (siprmoy, tresca)
-                trescapr = max (trescapr, tresca)
-                siprmoy(j) =  siprmoy41(j)-siprmoyt(j)  
-                call rctres (siprmoy, tresca)
-                trescapr = max (trescapr, tresca)
+                  if(nq .ne. 0) then
+                    sb(j)=zr(jsigp+(i-1)*ncmp+j-1)-zr(jsigq+(l-1)*ncmp+j-1)
+                    smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
+                    sbth(j)=zr(jsithp+(i-1)*ncmp+j-1)-zr(jsithq+(l-1)*ncmp+j-1)
+                    sbpr(j)=zr(jsiprp+(i-1)*ncmp+j-1)-zr(jsiprq+(l-1)*ncmp+j-1)
+                    sbme(j)=zr(jsimep+(i-1)*ncmp+j-1)-zr(jsimeq+(l-1)*ncmp+j-1)
+                    sbet(j)=sb(j)-(zr(jflethp+(i-1)*ncmp+j-1)-zr(jflethq+(l-1)*ncmp+j-1))
+                  else
+                    sb(j)=zr(jsigp+(i-1)*ncmp+j-1)
+                    smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
+                    sbth(j)=zr(jsithp+(i-1)*ncmp+j-1)
+                    sbpr(j)=zr(jsiprp+(i-1)*ncmp+j-1)
+                    sbme(j)=zr(jsimep+(i-1)*ncmp+j-1)
+                    sbet(j)=sb(j)-zr(jflethp+(i-1)*ncmp+j-1)
+                  endif
+                else  
+                  if(nq .ne. 0) then
+                    sb(j)=-zr(jsigq+(l-1)*ncmp+j-1)
+                    smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
+                    sbth(j)=-zr(jsithq+(l-1)*ncmp+j-1)
+                    sbpr(j)=-zr(jsiprq+(l-1)*ncmp+j-1)
+                    sbme(j)=-zr(jsimeq+(l-1)*ncmp+j-1)
+                    sbet(j)=sb(j)+zr(jflethq+(l-1)*ncmp+j-1)
+                  else
+                    sb(j)=0.d0
+                    smom2(j)=zr(jtempp+(i-1)*ncmp+j-1)-zr(jtempq+(l-1)*ncmp+j-1)
+                    sbth(j)=0.d0
+                    sbpr(j)=0.d0
+                    sbme(j)=0.d0
+                    sbet(j)=0.d0
+                  endif
+                endif
+                st11(j) = sb(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))
+                st12(j) = sb(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))
+                st13(j) = sb(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))
+                st14(j) = sb(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j)) 
+                sbet11(j) = sbet(j)+smom2(j)+e0(i0)*(smom11(j)+spres1(j))
+                sbet12(j) = sbet(j)+smom2(j)+e0(i0)*(smom12(j)+spres2(j))
+                sbet13(j) = sbet(j)+smom2(j)+e0(i0)*(smom13(j)+spres3(j))
+                sbet14(j) = sbet(j)+smom2(j)+e0(i0)*(smom14(j)+spres4(j))  
 237         continue
             call rctres(st11,tresca)
             if (tresca .gt. trescapq) then
@@ -1391,26 +1414,49 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
                 endif
             endif
 !
+            call rctres(sbet11,tresca)
+            trescappet = max(trescappet, tresca)
+            call rctres(sbet12,tresca)
+            trescappet = max(trescappet, tresca)
+            call rctres(sbet13,tresca)
+            trescappet = max(trescappet, tresca)
+            call rctres(sbet14,tresca)
+            trescappet = max(trescappet, tresca)
+!
 236       continue
 235     continue
 234   continue
     endif
 !
     spq=trescapq+s2pq
+    snetpq=trescappet+s2pq
 !
     if(spq .gt. sn) then
         sn  = spq
         tresth=tresthpq
         tresmec = tresmecpq
         trespr = tresprpq
-        if(np+nq .ne. 0) then
-            instsn(1) = zr(jinst1+instp1-1)
-            instsn(2) = zr(jinst2+instq1-1)
+        if(np .ne. 0) then
+          if(nq .ne. 0) then
+            instsn(1) = zr(jinst(1)+instp1-1)
+            instsn(2) = zr(jinst(2)+instq1-1)
+          else
+            instsn(1) = zr(jinst(1)+instp1-1)
+            instsn(2) = -1.d0
+          endif
         else
-            instsn(1)=-1.d0
-            instsn(2)=-1.d0
+          if(nq .ne. 0) then
+            instsn(1) = -1.d0
+            instsn(2) = zr(jinst(2)+instq1-1)
+          else
+            instsn(1) = -1.d0
+            instsn(2) = -1.d0
+          endif
         endif
     endif
+!
+!-- Pour le calcul du sn*
+    snet = max(snet, snetpq)
 !
 666 continue
 !
@@ -1450,6 +1496,7 @@ subroutine rcZ2sn1b(ze200, lieu, numsip, numsiq, seismeb32,&
         call jedetr('&&RC3200.SIPRQ')
         call jedetr('&&RC3200.SIMEQ')
         call jedetr('&&RC3200.PREMOYQ')
+        call jedetr('&&RC3200.FLETHQ')
     endif
 !
     call jedetr('&&RC3200.TEMPP')

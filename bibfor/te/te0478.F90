@@ -1,7 +1,7 @@
 subroutine te0478(option, nomte)
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -145,8 +145,13 @@ subroutine te0478(option, nomte)
                 rayonsp = rayon-ep+(icou-1)*epcou
                 airesp  = rayonsp * epcou * alpha
                 do isec = 1, nbptsec
-                    yy=cos(-(isec-1)*alpha)
-                    zz=sin(-(isec-1)*alpha)
+!                   SUPER IMPORTANT SUPER IMPORTANT SUPER IMPORTANT
+!                   La convention des angles de vrilles entre les poutres et tuyaux est différente
+!                   Il y a un repère indirect pour les tuyaux ==> c'est pas bien
+!                       - On décale les angles de 90°.
+!                       - Quand tout sera dans l'ordre, il faudra calculer correctement yy et zz
+                    yy=cos(-(isec-1)*alpha - 0.5*r8pi() )
+                    zz=sin(-(isec-1)*alpha - 0.5*r8pi() )
 !                   Poids du sous-point en fonction du secteur
                     if ( (isec.eq.1).or.(isec.eq.nbptsec)) then
                         wspisec = 1.0d0/3.0d0

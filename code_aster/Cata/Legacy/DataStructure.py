@@ -81,7 +81,7 @@ from .DS.co_vect_asse_gene import vect_asse_gene
 from .DS.co_reel import reel
 
 
-from .Syntax import GEOM, formule, formule_c
+from .Syntax import CO, GEOM, formule, formule_c
 from code_aster.Cata.Syntax import tr
 
 # Types géométriques

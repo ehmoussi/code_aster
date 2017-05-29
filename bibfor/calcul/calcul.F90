@@ -8,11 +8,11 @@ use calcul_module, only : ca_iainel_, ca_ialiel_, ca_iaobtr_, ca_iaopds_,&
      ca_nbobj_, ca_nbobtr_, ca_nomte_, ca_nomtm_, ca_nute_,&
      ca_nuop_, ca_ligrel_, ca_option_, ca_iactif_,&
      ca_ldist_, ca_ldgrel_, ca_rang_, ca_nbproc_, ca_numsd_,&
-     ca_lparal_, ca_paral_, ca_iel_
+     ca_lparal_, ca_paral_, ca_iel_, ca_ctempl_
 implicit none
 
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -59,6 +59,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/kndoub.h"
 #include "asterfort/montee.h"
 #include "asterfort/nbelem.h"
@@ -113,7 +114,7 @@ implicit none
 !     sorties:
 !       allocation et calcul des objets correspondant aux champs "out"
 !-----------------------------------------------------------------------
-    aster_logical :: dbg
+    aster_logical :: dbg, l_thm
     character(len=8) :: lpain2(nin), lpaou2(nou)
     character(len=19) :: lchin2(nin), lchou2(nou)
     character(len=24) :: valk(2)
@@ -305,6 +306,8 @@ implicit none
     loop_grel : &
     do ca_igr_ = 1, ca_nbgr_
 
+        
+
 !       -- si methode='GROUP_ELEM' ou 'SOUS_DOMAINE' : on peut tout "sauter"
         if (ca_ldgrel_ .and. mod(ca_igr_,ca_nbproc_) .ne. ca_rang_) cycle loop_grel
 
@@ -322,9 +325,12 @@ implicit none
             ca_jcteat_=0
         endif
 
+
         numc=nucalc(ca_nuop_,ca_nute_,0)
         ASSERT(numc.ge.-10)
         ASSERT(numc.le.9999)
+
+        l_thm = lteatt('TYPMOD2','THM', typel = ca_nomte_)
 
         if (numc .gt. 0) then
 
@@ -373,6 +379,9 @@ implicit none
             if (dbg) write (6,*)'&&CALCUL OPTION= ',ca_option_,' ',ca_nomte_, ' ',numc
             call vrcdec()
             ca_iactif_=3
+
+            ca_ctempl_ = 0
+            if (l_thm) ca_ctempl_ = 1
             call te0000(numc, ca_nuop_, ca_nute_)
             ca_iactif_=1
 

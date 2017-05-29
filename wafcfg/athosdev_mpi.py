@@ -19,9 +19,10 @@ def configure(self):
     # parallel must be set before calling intel.configure() to use MPI wrappers
     opts.parallel = True
     athosdev.configure(self)
-    self.env['ADDMEM'] = 400
+    self.env['ADDMEM'] = 800
 
-    self.env.append_value('OPT_ENV', ['module load impi/2016.0.047'])
+    self.env.append_value('OPT_ENV', ['. /etc/profile.d/lmod.sh',
+                                      'module load impi/2016.0.047'])
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster/lib',

@@ -1,7 +1,7 @@
 # coding=utf-8
 
 # ======================================================================
-# COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 # THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 # IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 # THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -36,9 +36,14 @@ def proj_base_ops(self, BASE, NB_VECT,
     # et  creation du nume_ddl_gene
     numgen = NUME_DDL_GENE
     NUME_DDL_GENE = self.get_cmd('NUME_DDL_GENE')
-    if numgen is not None:
-        self.DeclareOut('_num', numgen)
-    _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
+    if numgen is None:
+        _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
+    else:
+        if numgen.is_typco():
+            self.DeclareOut('_num', numgen)
+            _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
+        else:
+            _num = numgen
 
     PROJ_MATR_BASE = self.get_cmd('PROJ_MATR_BASE')
     PROJ_VECT_BASE = self.get_cmd('PROJ_VECT_BASE')

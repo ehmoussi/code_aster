@@ -1,6 +1,6 @@
 subroutine mbrigi(fami, kpg, imate, rig)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -27,6 +27,7 @@ subroutine mbrigi(fami, kpg, imate, rig)
 ! ----------------------------------------------------------------------
 !
     implicit none
+#include "jeveux.h"
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/r8inir.h"
@@ -39,23 +40,6 @@ subroutine mbrigi(fami, kpg, imate, rig)
     character(len=32) :: phenom
     integer :: kpg, imate, codret
     real(kind=8) :: valres(7), rig(3, 3)
-!
-! --------- DEBUT DECLARATIONS NORMALISEES  JEVEUX ---------------------
-    integer :: zi
-    common /ivarje/zi(1)
-    real(kind=8) :: zr
-    common /rvarje/zr(1)
-    complex(kind=8) :: zc
-    common /cvarje/zc(1)
-    aster_logical :: zl
-    common /lvarje/zl(1)
-    character(len=8) :: zk8
-    character(len=16) :: zk16
-    character(len=24) :: zk24
-    character(len=32) :: zk32
-    character(len=80) :: zk80
-    common /kvarje/zk8(1),zk16(1),zk24(1),zk32(1),zk80(1)
-! --------- FIN  DECLARATIONS  NORMALISEES  JEVEUX ---------------------
 !
 ! - VERIFICATION DU COMPORTEMENT
 !

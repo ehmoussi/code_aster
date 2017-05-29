@@ -8,7 +8,7 @@ subroutine virhol(nbvari, vintm, vintp, advihy, vihrho,&
     real(kind=8) :: cliq, signe, alpliq, rho11, rho11m
 ! ======================================================================
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -29,8 +29,6 @@ subroutine virhol(nbvari, vintm, vintp, advihy, vihrho,&
 ! ======================================================================
     real(kind=8) :: varbio, epxmax
     parameter    (epxmax = 5.d0)
-! ======================================================================
-! --------- FIN  DECLARATIONS  NORMALISEES  JEVEUX ---------------------
 ! ======================================================================
 ! --- CALCUL DES ARGUMENTS EN EXPONENTIELS -----------------------------
 ! --- ET VERIFICATION DE LA COHERENCE ----------------------------------

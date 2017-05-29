@@ -19,15 +19,17 @@ implicit none
 #include "asterfort/jeecra.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/jenuno.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/jexatr.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/comp_meca_exc2.h"
 #include "asterfort/comp_meca_l.h"
+#include "asterfort/lteatt.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -82,7 +84,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_excl, l_kit_meta, l_cristal
+    aster_logical :: l_excl, l_kit_meta, l_cristal, l_pmf
     aster_logical :: l_umat, l_mfront_proto, l_mfront_offi, l_prot_comp
     aster_logical :: l_zone_read
     character(len=8) :: mesh
@@ -99,11 +101,11 @@ implicit none
     integer, pointer :: v_compor_lima_lc(:) => null()
     integer, pointer :: v_compor_ptma(:) => null()
     integer :: nb_vale, nb_cmp_max, nb_zone, nb_vari, nt_vari, nb_vari_maxi, nb_zone_acti, nb_zone2
-    integer :: i_zone, i_elem, nb_elem_mesh, iret
+    integer :: i_zone, i_elem, nb_elem_mesh, iret, nutyel
     character(len=16) :: type_matg, post_iter, vari_excl
     character(len=16) :: rela_comp, defo_comp, kit_comp(4), type_cpla, type_comp
     character(len=255) :: libr_name, subr_name
-    character(len=16) :: model_mfront
+    character(len=16) :: model_mfront, notype
     integer :: model_dim
     type(NL_DS_ComporExte), pointer :: v_exte(:) => null()
 !
@@ -239,6 +241,17 @@ implicit none
 !
             call comp_meca_l(rela_comp, 'KIT_META' , l_kit_meta)
             call comp_meca_l(rela_comp, 'CRISTAL'  , l_cristal)
+            if (present(compor_list_)) then
+                l_pmf = .false._1
+            else
+                nutyel = v_model_elem(i_elem)
+                if (nutyel .eq. 0) then
+                    l_pmf = .false._1
+                else
+                    call jenuno(jexnum('&CATA.TE.NOMTE', nutyel), notype)
+                    l_pmf = lteatt('TYPMOD2','PMF', typel = notype)
+                endif
+            endif
 !
 ! --------- Parameters for external constitutive laws
 !
@@ -253,7 +266,7 @@ implicit none
 !
 ! --------- Exception for name of internal variables
 !
-            call comp_meca_exc2(l_cristal, l_prot_comp,&
+            call comp_meca_exc2(l_cristal, l_prot_comp, l_pmf, &
                                 l_excl   , vari_excl)
 !
 ! --------- Save names of relation

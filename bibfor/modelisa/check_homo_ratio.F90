@@ -4,7 +4,7 @@ subroutine check_homo_ratio(cara, vale, nval)
     real(kind=8), intent(in) :: vale(*)
     integer, intent(in) :: nval
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -65,14 +65,14 @@ subroutine check_homo_ratio(cara, vale, nval)
         tval(4) = tval(2)
     endif
 #ifdef __DEBUG_ALL__
-    print *, MARKER, "POUT/CERCL/CARA:", tval(1), tval(2), tval(3), tval(4)
+    write(6,*) MARKER, "POUT/CERCL/CARA:", tval(1), tval(2), tval(3), tval(4)
 #endif
 !
     rratio = tval(2) / tval(1)
     eratio = tval(4) / tval(3)
     homo = abs((rratio - eratio) / rratio)
 #ifdef __DEBUG_ALL__
-    print *, MARKER, "POUT/CERCL/HOMO:", rratio, eratio, homo
+    write(6,*) MARKER, "POUT/CERCL/HOMO:", rratio, eratio, homo
 #endif
     if (homo .gt. 1.0d-2) then
         valr(1:4) = tval(1:4)

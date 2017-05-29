@@ -1,7 +1,7 @@
 subroutine op0051()
 !     ------------------------------------------------------------------
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -71,14 +71,13 @@ subroutine op0051()
 !
     real(kind=8) :: epsi
 !
-    character(len=2) :: codacc, dim
-    character(len=6) :: mcf
-    character(len=8) :: k8b, resuco, criter
+    character(len=2)  :: codacc, dim
+    character(len=6)  :: mcf
+    character(len=8)  :: k8b, resuco, criter, nommodele, erdm, repere
     character(len=16) :: nomcmd, concep, ncheff, nchsym, option, k16
-    character(len=19) :: latabl
-    character(len=19) :: nch19
+    character(len=19) :: latabl, nch19
     character(len=24) :: xnumcp, xnomcp, vnomch, vcodop, xnovar
-    character(len=24) :: naccis, naccr8, nch24, nlsmac, nlsnac
+    character(len=24) :: naccis, naccr8, nch24, nlsmac, nlsnac, valk(3)
     aster_logical :: trouve
 !     ------------------------------------------------------------------
 !
@@ -161,49 +160,56 @@ subroutine op0051()
 !
             call getvtx(mcf, 'MOYE_NOEUD', iocc=iocc, scal=k8b, nbret=n1)
 !
-!        --- EST-CE UN RESULTAT ? ---
-!
+!           EST-CE UN RESULTAT ? ---
             resuco = '        '
             call getvid(mcf, 'RESULTAT', iocc=iocc, scal=resuco, nbret=nbresu)
 !
-!
-!
-!        --- SAISIE DES CHAMPS EFFECTIFS A POST-TAITER ---
-!
+!           SAISIE DES CHAMPS EFFECTIFS A POST-TAITER ---
             if (nbresu .ne. 0) then
-!
-!           /* CAS D' UN RESULTAT */
-!
-                call getvtx(mcf, 'NOM_CHAM', iocc=iocc, scal=nchsym, nbret=n1)
-                call getvtx(mcf, 'CRITERE', iocc=iocc, scal=criter, nbret=n1)
-                call getvr8(mcf, 'PRECISION', iocc=iocc, scal=epsi, nbret=n1)
+!               CAS D' UN RESULTAT
+                call getvtx(mcf, 'NOM_CHAM',  iocc=iocc, scal=nchsym, nbret=n1)
+                call getvtx(mcf, 'CRITERE',   iocc=iocc, scal=criter, nbret=n1)
+                call getvr8(mcf, 'PRECISION', iocc=iocc, scal=epsi,   nbret=n1)
 !
                 call rvgacc(iocc, codacc, naccis, naccr8, nbacce)
 !
+!               Vérification sur la présence d'éléments de structure dans le modèle
+                call dismoi('MODELE',  resuco,    'RESULTAT', repk=nommodele)
+                if ( (nommodele.ne."#AUCUN").and.(nommodele.ne.'#PLUSIEURS') ) then
+                    erdm = 'NON'
+                    call dismoi('EXI_RDM', nommodele, 'MODELE',   repk=erdm)
+                    if ((erdm.eq.'OUI').and. &
+                        ((nchsym(1:9).eq.'EPSI_NOEU').or. &
+                        (nchsym(1:9).eq.'SIGM_NOEU').or. &
+                        (nchsym(1:9).eq.'SIEF_NOEU').or. &
+                        (nchsym(1:9).eq.'DEGE_NOEU').or. &
+                        (nchsym(1:9).eq.'EFGE_NOEU'))) then
+                        repere = '   '
+                        call getvtx(mcf, 'REPERE', iocc=iocc, scal=repere)
+                        if ( repere .ne. 'LOCAL' ) then
+                            valk(1) = nchsym
+                            call utmess('A', 'POSTRELE_70', nk=1, valk=valk)
+                        endif
+                    endif
+                endif
+
                 call jeveuo(naccis, 'L', jaccis)
                 call jeveuo(naccr8, 'L', jaccr8)
 !
                 call rvgchf(epsi, criter, resuco, nchsym, codacc,&
                             zi(jaccis), zr(jaccr8), nbacce, ncheff)
 !
-!
                 call jedetr(naccis)
                 call jedetr(naccr8)
 !
             else
-!
-!           /* CAS D' UN CHAMP DE GRANDEUR */
-!
+!               CAS D' UN CHAMP DE GRANDEUR
                 call wkvect(ncheff//'.TYPACCE', 'V V K8', 1, jacc)
-!
                 zk8(jacc) = 'DIRECT  '
-!
                 call wkvect(ncheff//'.VALACCE', 'V V I', 1, jacc)
-!
                 zi(jacc) = 1
 !
-                call jecrec(ncheff//'.LSCHEFF', 'V V K24', 'NU', 'DISPERSE', 'VARIABLE',&
-                            1)
+                call jecrec(ncheff//'.LSCHEFF', 'V V K24', 'NU', 'DISPERSE', 'VARIABLE', 1)
 !
                 call jecroc(jexnum(ncheff//'.LSCHEFF', 1))
                 call jeecra(jexnum(ncheff//'.LSCHEFF', 1), 'LONMAX', 1)

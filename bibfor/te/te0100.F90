@@ -158,6 +158,15 @@ subroutine te0100(option, nomte)
         call dcopy(npg1*4, zr(icontm), 1, zr(icontp), 1)
     endif
 !
+! - Check
+!
+
+    if (zk16(icompo-1+3) .eq.'GROT_GDEP') then
+        if (lteatt('C_PLAN','OUI') .and. zk16(icompo-1+1).eq.'ELAS') then
+            call utmess('F', 'COMPOR1_15')
+        endif
+    endif
+!
 !
 ! - HYPER-ELASTICITE
 !

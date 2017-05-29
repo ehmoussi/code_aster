@@ -13,7 +13,7 @@ implicit none
 #include "asterfort/load_neut_data.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -99,8 +99,7 @@ implicit none
         call load_list_info(load_empty, nb_load   , v_load_name, v_load_info,&
                             lload_name_, lload_info_)
     elseif (present(list_name_)) then
-        call load_list_info(load_empty, nb_load   , v_load_name, v_load_info,&
-                            list_nbload_ = list_nbload_, list_name_ = list_name_)
+        nb_load    = list_nbload_
     else
         ASSERT(.false.)
     endif
@@ -108,7 +107,11 @@ implicit none
 ! - Look for excluded loads
 !
     do i_load = 1, nb_load
-        load_name = v_load_name(i_load)(1:8)
+        if (present(list_name_)) then
+            load_name = list_name_(i_load)(1:8)
+        else
+            load_name = v_load_name(i_load)(1:8)
+        endif
         call load_neut_iden(nb_type_neum, load_name, list_load_keyw)
         do i_type_neum = 1, nb_type_neum
             if (list_load_keyw(i_type_neum)) then

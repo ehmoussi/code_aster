@@ -95,6 +95,9 @@ MAILLAGE=POUTRE,
                                _F(  NOEUD = 'NO11',
                                  NOM_CMP = 'DY',   VALE = -2.96786)) )
 
+NUMDDL_G=NUME_DDL_GENE(BASE=MODES,
+                       STOCKAGE='PLEIN',);
+
 PROJ_BASE(  BASE=MODES,
             STOCKAGE='DIAG',
             MATR_ASSE_GENE=(
@@ -107,7 +110,8 @@ PROJ_BASE(  BASE=MODES,
              VECT_ASSE_GENE=_F(
                              VECTEUR = CO("VITINI"),
                              VECT_ASSE = VITIPHYS,
-                             TYPE_VECT = 'VITE')
+                             TYPE_VECT = 'VITE'),
+             NUME_DDL_GENE=NUMDDL_G,
 )
 
 PLAN=DEFI_OBSTACLE(  TYPE='PLAN_Y' )

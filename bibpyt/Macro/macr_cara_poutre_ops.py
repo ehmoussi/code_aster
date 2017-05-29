@@ -30,8 +30,8 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
     #
     ier = 0
-    # On importe les definitions des commandes a utiliser dans la macro
-    # Le nom de la variable doit etre obligatoirement le nom de la commande
+    # On importe les définitions des commandes a utiliser dans la macro
+    # Le nom de la variable doit être obligatoirement le nom de la commande
     LIRE_MAILLAGE = self.get_cmd('LIRE_MAILLAGE')
     DEFI_GROUP = self.get_cmd('DEFI_GROUP')
     CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
@@ -55,7 +55,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     CREA_TABLE = self.get_cmd('CREA_TABLE')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
     DETRUIRE = self.get_cmd('DETRUIRE')
-    # La macro compte pour 1 dans la numerotation des commandes
+    # La macro compte pour 1 dans la numérotation des commandes
     self.set_icmd(1)
     # Le concept sortant (de type table_sdaster) est nommé 'nomres' dans le
     # contexte de la macro
@@ -90,9 +90,9 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     # L'utilisateur ne peut rien faire pour éviter ces "Alarmes" donc pas d'impression
     MasquerAlarme('CHARGES2_87')
     MasquerAlarme('CALCULEL_40')
-    # --------------------------------------------------------------
-    # --- CALCUL DES CARACTERISTIQUES GEOMETRIQUES DE LA SECTION
-    # --------------------------------------------------------------
+    #
+    #
+    # calcul des caractéristiques géométriques de la section
     motsimps = {}
     if GROUP_MA:
         motsimps['GROUP_MA'] = GROUP_MA
@@ -103,22 +103,39 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     motsimps['ORIG_INER'] = ORIG_INER
     mfact = _F(TOUT='OUI', **motsimps)
     __cageo = POST_ELEM(MODELE=__nomamo, CHAM_MATER=__nomama, CARA_GEOM=mfact)
-
-    # nb  :  si GROUP_MA n'existe pas, le mot clé est ignoré
     #
-    # =====================================================================
-    #  CALCUL DE LA CONSTANTE DE TORSION SUR TOUT LE MAILLAGE
-    #        OU DU  CENTRE DE TORSION/CISAILLEMENT
-    #           DES COEFFICIENTS DE CISAILLEMENT
-    #        ET DE L INERTIE DE GAUCHISSEMENT
-    #           DU RAYON DE TORSION SUR TOUT LE MAILLAGE
-    #  ON CREE UN MODELE PLAN 2D THERMIQUE REPRESENTANT LA SECTION
-    #  DE LA POUTRE CAR ON A A RESOUDRE DES E.D.P. AVEC DES LAPLACIENS
-    # =====================================================================
+    # Création d'un modèle plan 2D thermique représentant la section
+    # de la poutre car on doit résoudre des E.D.P. avec des laplaciens
+    #
+    # Calcul de la constante de torsion sur tout le maillage
+    # du centre de torsion/cisaillement des coefficients de cisaillement
+    # de l inertie de gauchissement
+    # du rayon de torsion
+    #
     if GROUP_MA_BORD and not GROUP_MA:
-        #------------------------------------------------------------
-        # TRANSFORMATION DES GROUP_MA EN GROUP_NO SUR-LESQUELS
-        # ON POURRA APPLIQUER DES CONDITIONS DE TEMPERATURE IMPOSEE :
+        # Transformation des GROUP_MA en GROUP_NO sur lesquels
+        # on pourra appliquer des conditions de température imposée
+        #
+        # les groupes doivent exister
+        collgrma = aster.getcolljev('%-8s.GROUPEMA' % __nomlma.nom)
+        collgrma = map( string.strip, collgrma)
+        if type(GROUP_MA_BORD) == types.StringType:
+            l_group_ma_bord = [ GROUP_MA_BORD,  ]
+        else:
+            l_group_ma_bord = GROUP_MA_BORD
+        for igr in l_group_ma_bord:
+            if ( not igr.strip() in collgrma):
+                UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_BORD'])
+        if args.has_key('GROUP_MA_INTE'):
+            if args['GROUP_MA_INTE'] != None:
+                if type(args['GROUP_MA_INTE']) == types.StringType:
+                    l_group_ma_inte = [args['GROUP_MA_INTE'], ]
+                else:
+                    l_group_ma_inte = args['GROUP_MA_INTE']
+                for igr in l_group_ma_inte:
+                    if ( not igr.strip() in collgrma):
+                        UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_INTE'])
+        #
         motscles = {}
         if type(GROUP_MA_BORD) == types.StringType:
             motscles['CREA_GROUP_NO'] = _F(GROUP_MA=GROUP_MA_BORD,)
@@ -129,32 +146,26 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
         #
         __nomlma = DEFI_GROUP(reuse=__nomlma, MAILLAGE=__nomlma, **motscles)
 
-        #------------------------------------------------------------
-        # CREATION D UN MAILLAGE IDENTIQUE AU PREMIER A CECI PRES
-        # QUE LES COORDONNEES SONT EXPRIMEES DANS LE REPERE PRINCIPAL
-        # D INERTIE DONT L ORIGINE EST LE CENTRE DE GRAVITE DE LA SECTION :
+
+        # Création d'un maillage identique au premier a ceci près
+        # que les coordonnées sont exprimées dans le repère principal
+        # d'inertie dont l'origine est le centre de gravite de la section
         __nomapi = CREA_MAILLAGE(
             MAILLAGE=__nomlma, REPERE=_F(TABLE=__cageo, NOM_ORIG='CDG', ), )
 
-        #------------------------------------------------------------
-        # AFFECTATION DU PHENOMENE 'THERMIQUE' AU MODELE EN VUE DE
-        # LA CONSTRUCTION D UN OPERATEUR LAPLACIEN SUR CE MODELE :
+        # Affectation du phénomène 'thermique' au modèle en vue de
+        # la construction d un opérateur laplacien sur ce modèle
         __nomoth = AFFE_MODELE(
             MAILLAGE=__nomapi,
             AFFE=_F(TOUT='OUI', PHENOMENE='THERMIQUE', MODELISATION='PLAN',), )
 
-        #------------------------------------------------------------
-        # POUR LA CONSTRUCTION DU LAPLACIEN, ON  DEFINIT UN
-        # PSEUDO-MATERIAU DONT LES CARACTERISTIQUES THERMIQUES SONT :
-        # LAMBDA = 1, RHO*CP = 0 :
+        # Pour la construction du laplacien, on définit un matériau dont les
+        # caractéristiques thermiques sont : lambda = 1, rho*cp = 0
         __nomath = DEFI_MATERIAU(THER=_F(LAMBDA=1.0, RHO_CP=0.,),)
 
-        # --- DEFINITION D UN CHAM_MATER A PARTIR DU MATERIAU PRECEDENT :
-        __chmath = AFFE_MATERIAU(
-            MAILLAGE=__nomapi,
-            AFFE=_F(TOUT='OUI', MATER=__nomath,),)
+        # Définition d'un CHAM_MATER à partir du matériau précédent
+        __chmath = AFFE_MATERIAU(MAILLAGE=__nomapi,AFFE=_F(TOUT='OUI', MATER=__nomath,),)
 
-        #------------------------------------------------------------
         # CALCUL DE LA CONSTANTE DE TORSION PAR RESOLUTION
         # D UN LAPLACIEN AVEC UN TERME SOURCE EGAL A -2
         # L INCONNUE ETANT NULLE SUR LE CONTOUR DE LA SECTION :
@@ -235,22 +246,32 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
         __fnsec0 = DEFI_CONSTANTE(VALE=0.,)
 
         #------------------------------------------------------------
-        # LE TERME SOURCE CONSTITUANT LE SECOND MEMBRE DE L EQUATION
-        # DE LAPLACE EST PRIS EGAL A Y DANS TOUTE LA SECTION :
+        # LE TERME SOURCE CONSTITUANT LE SECOND MEMBRE DE L ÉQUATION
+        # DE LAPLACE EST PRIS ÉGAL A Y DANS TOUTE LA SECTION :
         mctimpo = {}
         if args['NOEUD'] != None:
-            nthno = args['NOEUD']
-            if len(nthno) != 1:
+            if len( args['NOEUD'] ) != 1:
                 UTMESS('F', 'POUTRE0_3')
-            mctimpo['TEMP_IMPO'] = (_F(NOEUD=nthno[0], TEMP=__fnsec0))
+            nthno = string.strip(args['NOEUD'][0])
+            # nthno est-il dans le maillage ?
+            nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.nom)
+            nomnoe = map( string.strip, nomnoe)
+            if ( not nthno in nomnoe ):
+                UTMESS('F', 'POUTRE0_9',valk=nthno)
+
+            mctimpo['TEMP_IMPO'] = (_F(NOEUD=nthno, TEMP=__fnsec0))
         elif args['GROUP_NO'] != None:
-            grthno = args['GROUP_NO']
-            if len(grthno) != 1:
+            if len( args['GROUP_NO'] ) != 1:
                 UTMESS('F', 'POUTRE0_3')
-            grthno = grthno[0]
+            grthno = args['GROUP_NO'][0]
+            #grthno = grthno[0]
             collgrno = aster.getcolljev('%-8s.GROUPENO' % __nomapi.nom)
             nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomapi.nom)
-            l_no = collgrno[string.ljust(grthno, 24)]
+            # Plantage si grthno n'existe pas dans le maillage
+            try:
+                l_no = collgrno[string.ljust(grthno, 24)]
+            except:
+                UTMESS('F', 'POUTRE0_8',valk=grthno)
             if len(l_no) != 1:
                 UTMESS('F', 'POUTRE0_3')
             nthno = nomnoe[l_no[0] - 1]
@@ -367,12 +388,11 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
         if args.has_key('GROUP_MA_INTE'):
             lgmaint = args['GROUP_MA_INTE']
             if lgmaint != None:
-                motscles[
-                    'CARA_POUTRE'] = _F(CARA_GEOM=__cageo, LAPL_PHI=__tempe1, RT=__rt,
-                                        TOUT='OUI', OPTION='CARA_TORSION', GROUP_MA_INTE=args['GROUP_MA_INTE'],)
+                motscles['CARA_POUTRE'] = _F(CARA_GEOM=__cageo, LAPL_PHI=__tempe1, RT=__rt,
+                                        TOUT='OUI', OPTION='CARA_TORSION',
+                                        GROUP_MA_INTE=args['GROUP_MA_INTE'],)
             else:
-                motscles[
-                    'CARA_POUTRE'] = _F(CARA_GEOM=__cageo, LAPL_PHI=__tempe1, RT=__rt,
+                motscles['CARA_POUTRE'] = _F(CARA_GEOM=__cageo, LAPL_PHI=__tempe1, RT=__rt,
                                         TOUT='OUI', OPTION='CARA_TORSION', )
         #
         __cator = POST_ELEM(MODELE=__nomoth, CHAM_MATER=__chmath, **motscles)
@@ -383,7 +403,8 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
         __cacis = POST_ELEM(
             MODELE=__nomoth,
             CHAM_MATER=__chmath,
-            CARA_POUTRE=_F(CARA_GEOM=__cator, LAPL_PHI_Y=__tempe2, LAPL_PHI_Z=__tempe3, TOUT='OUI', OPTION='CARA_CISAILLEMENT',),)
+            CARA_POUTRE=_F(CARA_GEOM=__cator, LAPL_PHI_Y=__tempe2, LAPL_PHI_Z=__tempe3,
+                           TOUT='OUI', OPTION='CARA_CISAILLEMENT',),)
 
         #------------------------------------------------------------
         #  CALCUL DE L INERTIE DE GAUCHISSEMENT PAR RESOLUTION  DE  -
@@ -518,26 +539,64 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     # ==================================================================
     if GROUP_MA_BORD and GROUP_MA:
         # CALCUL DES CARACTERISTIQUES GEOMETRIQUES DE LA SECTION :
-
         l_group_ma_bord = GROUP_MA_BORD
         l_group_ma = GROUP_MA
         l_noeud = None
+        #
+        if len(l_group_ma) != len(l_group_ma_bord):
+            UTMESS('F', 'POUTRE0_1')
+        #
+        # les groupes doivent exister
+        collgrma = aster.getcolljev('%-8s.GROUPEMA' % __nomlma.nom)
+        collgrma = map( string.strip, collgrma)
+        for igr in l_group_ma_bord:
+            if ( not igr.strip() in collgrma):
+                UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_BORD'])
+        #
+        for igr in GROUP_MA:
+            if ( not igr.strip() in collgrma):
+                UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA'])
+        #
+        if args.has_key('GROUP_MA_INTE'):
+            if args['GROUP_MA_INTE'] != None:
+                if type(args['GROUP_MA_INTE']) == types.StringType:
+                    l_group_ma_inte = [args['GROUP_MA_INTE'], ]
+                else:
+                    l_group_ma_inte = args['GROUP_MA_INTE']
+                for igr in l_group_ma_inte:
+                    if ( not igr.strip() in collgrma):
+                        UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_INTE'])
 
         if args['NOEUD'] != None:
-            l_noeud = args['NOEUD']
-
+            l_noeud = map( string.strip, args['NOEUD'] )
+            if (len(l_group_ma) != len(l_noeud)):
+                UTMESS('F', 'POUTRE0_2')
+            # Les noeuds doivent faire partie du maillage
+            nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.nom)
+            nomnoe = map( string.strip, nomnoe)
+            for ino in l_noeud:
+                if ( not ino in nomnoe ):
+                    UTMESS('F', 'POUTRE0_9',valk=ino)
         elif args['GROUP_NO'] != None:
             collgrno = aster.getcolljev('%-8s.GROUPENO' % __nomlma.nom)
             nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.nom)
             l_nu_no = []
             for grno in args['GROUP_NO']:
-                l_nu_no.extend(collgrno[string.ljust(grno, 24)])
+                try:
+                    l_nu_no.extend(collgrno[string.ljust(grno, 24)])
+                except:
+                    UTMESS('F', 'POUTRE0_8',valk=grno)
             l_noeud = [nomnoe[no_i - 1] for no_i in l_nu_no]
+            if (len(l_group_ma) != len(l_noeud)): UTMESS('F', 'POUTRE0_5')
 
-        if len(l_group_ma) != len(l_group_ma_bord):
-            UTMESS('F', 'POUTRE0_1')
-        if l_noeud != None and (len(l_group_ma) != len(l_noeud)):
-            UTMESS('F', 'POUTRE0_2')
+        # Si len(l_group_ma_bord) > 1, alors il faut donner : 'LONGUEUR', 'MATERIAU', 'LIAISON'
+        if ( len(l_group_ma_bord) > 1 ):
+            if ( (args['LONGUEUR']==None) or (args['MATERIAU']==None) or (args['LIAISON']==None) ):
+                UTMESS('F', 'POUTRE0_6')
+        else:
+            if ( (args['LONGUEUR']!=None) or (args['MATERIAU']!=None) or (args['LIAISON']!=None) ):
+                UTMESS('A', 'POUTRE0_7')
+
 
         __catp2 = __cageo
         for i in range(0, len(l_group_ma_bord)):
@@ -704,36 +763,47 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
                 MODELE=__nomoth,
                 CHAM_MATER=__chmath,
                 CARA_POUTRE=_F(CARA_GEOM=__catp2, LAPL_PHI=__tempe1,
-                               RT=__rt, GROUP_MA=l_group_ma[
-                               i], OPTION='CARA_TORSION'),
+                               RT=__rt, GROUP_MA=l_group_ma[i], OPTION='CARA_TORSION'),
             )
 
             # CALCUL DES COEFFICIENTS DE CISAILLEMENT ET DES COORDONNEES DU
             # CENTRE DE CISAILLEMENT/TORSION :
-            __catp2 = POST_ELEM(
-                MODELE=__nomoth,
-                CHAM_MATER=__chmath,
-                CARA_POUTRE=_F(CARA_GEOM=__catp1,
+            if ( len(l_group_ma_bord) > 1 ):
+                __catp2 = POST_ELEM(
+                    MODELE=__nomoth,
+                    CHAM_MATER=__chmath,
+                    CARA_POUTRE=_F(CARA_GEOM=__catp1,
                                LAPL_PHI_Y=__tempe2, LAPL_PHI_Z=__tempe3,
                                GROUP_MA=l_group_ma[i],
-                               LONGUEUR=args[
-                               'LONGUEUR'], MATERIAU=args['MATERIAU'],
-                               LIAISON=args[
-                               'LIAISON'], OPTION='CARA_CISAILLEMENT',),
-            )
+                               LONGUEUR=args['LONGUEUR'],
+                               MATERIAU=args['MATERIAU'],
+                               LIAISON=args['LIAISON'],
+                               OPTION='CARA_CISAILLEMENT',),
+                )
+            else:
+                __nomtmp = DEFI_MATERIAU(ELAS=_F(E=1.0, NU=0.123, RHO=1.0),)
+                __catp2 = POST_ELEM(
+                    MODELE=__nomoth,
+                    CHAM_MATER=__chmath,
+                    CARA_POUTRE=_F(CARA_GEOM=__catp1,
+                               LAPL_PHI_Y=__tempe2, LAPL_PHI_Z=__tempe3,
+                               GROUP_MA =l_group_ma[i],
+                               LONGUEUR = 123.0,
+                               MATERIAU = __nomtmp,
+                               LIAISON  = 'ENCASTREMENT',
+                               OPTION   = 'CARA_CISAILLEMENT',),
+                )
             #
         #
         dprod = __catp2.EXTR_TABLE().dict_CREA_TABLE()
-        # On remplace dans le TITRE le nom du concept __catp2.nom par
-        # self.sd.nom
+        # On remplace dans le TITRE le nom du concept __catp2.nom par self.sd.nom
         if ('TITRE' in dprod.keys()):
             conceptOld = __catp2.nom
             conceptNew = self.sd.nom
             for ii in range(len(dprod['TITRE'])):
                 zz = dprod['TITRE'][ii]
                 if (conceptOld.strip() in zz):
-                    dprod['TITRE'][ii] = zz.replace(
-                        conceptOld.strip(), conceptNew.strip())
+                    dprod['TITRE'][ii] = zz.replace(conceptOld.strip(), conceptNew.strip())
         #
         nomres = CREA_TABLE(**dprod)
     #

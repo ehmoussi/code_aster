@@ -38,7 +38,7 @@
 # 1) Modal analysis of the beam
 # 2) Stability analysis using Connor's model for the fluid forces
 #-------------------------------------------------------------------
-# person_in_charge: hassan.berro at edf.fr
+# person_in_charge: yannick.tampango at edf.fr
 
 L = 1.000 # Tube length    = 1  m (used for velocity profile definition and 
 #                                  coherent with the associated mesh file)
@@ -169,8 +169,10 @@ VCRIT = RECU_FONCTION(BASE_ELAS_FLUI=MELES,
                      PARA_Y='VITE_CRIT',
                      NUME_MODE=1)
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=0.75484092377406,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=4.566804940706,
                         CRITERE='RELATIF',
                         VALE_PARA=4.5,
                         FONCTION=VCRIT))
+
+
 FIN()

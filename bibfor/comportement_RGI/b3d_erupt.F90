@@ -2,7 +2,7 @@ subroutine b3d_erupt(local, i, l3, e23, r,&
                      beta, epic, fr, gf, e,&
                      dpic)
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -40,9 +40,6 @@ subroutine b3d_erupt(local, i, l3, e23, r,&
     real(kind=8) :: li, t1, t2, t4, t10, t13, sef2
     if (local .or. (i.eq.1)) then
         li=l3(i)
-        if (li .eq. 0.) then
-            print*,'Il manque la taille ds la direction', i,' ds b3d_erupt'
-        end if
         t1 = r ** 2
         t2 = t1 * li
         t4 = gf * e
