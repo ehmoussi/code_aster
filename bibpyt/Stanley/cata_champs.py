@@ -23,7 +23,7 @@ from code_aster.Cata.Commands import CALC_CHAMP, CALC_ERREUR
 from code_aster.Cata.Commons import C_NOM_CHAM_INTO
 
 from Utilitai.Utmess import UTMESS
-
+import aster
 
 class CHAMP:
 
