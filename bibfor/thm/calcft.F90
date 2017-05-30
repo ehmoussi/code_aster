@@ -92,8 +92,7 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
     if (yamec .eq. 1) then
         call dilata(imate, phi, alphfi, t, anisof,&
                     angmas, tbiot)
-        call unsmfi(imate, phi, cs, t, tbiot,&
-                    anisof, ndim)
+        call unsmfi(imate, phi, t, tbiot, anisof, cs)
     else
 ! =====================================================================
 ! --- EN ABSENCE DE MECA ALPHA0 = 0 et 1/KS = 0 -----------------------

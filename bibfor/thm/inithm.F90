@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine inithm(imate, yachai, yamec, phi0, em,&
-                  cs, tbiot, t, epsv, depsv,&
+                  cs0, tbiot, t, epsv, depsv,&
                   epsvm, angmas, aniso, mdal, dalal,&
                   alphfi, cbiot, unsks, alpha0, ndim)
 !
@@ -43,7 +43,8 @@ implicit none
     integer :: icodre(nelas)
     aster_logical :: yachai
     integer :: imate, yamec, i, aniso
-    real(kind=8) :: phi0, em, cs, tbiot(6), epsvm, epsv, depsv
+    real(kind=8), intent(out) :: cs0
+    real(kind=8) :: phi0, em, tbiot(6), epsvm, epsv, depsv
     real(kind=8) :: angmas(3), t, eps, dalal, mdal(6), young, nu
     real(kind=8) :: alphfi, rbid(6, 6), cbiot, unsks, alpha0, k0
 !
@@ -80,8 +81,7 @@ implicit none
 ! =====================================================================
 ! --- CALCUL DES GRANDEURS MECANIQUES DANS LE CAS GENERAL -------------
 ! =====================================================================
-        call unsmfi(imate, phi0, cs, t, tbiot,&
-                    aniso, ndim)
+        call unsmfi(imate, phi0, t, tbiot, aniso, cs0)
         call dilata(imate, phi0, alphfi, t, aniso,&
                     angmas, tbiot)
         call calela(imate, angmas, mdal, dalal, t,&
@@ -96,7 +96,7 @@ implicit none
 ! --- CALCUL CAS ISOTROPE ---------------------------------------------
 ! =====================================================================
             alphfi = 0.0d0
-            cs = em
+            cs0 = em
             dalal = 0.d0
             alpha0 = 0.0d0
             unsks = em
@@ -119,7 +119,7 @@ implicit none
                 call utmess('F', 'ALGORITH17_38')
             endif
             alphfi = 0.0d0
-            cs = em
+            cs0 = em
             dalal = 0.d0
             do i = 1, 6
                 mdal(i) = 0.d0
@@ -139,7 +139,7 @@ implicit none
                 call utmess('F', 'ALGORITH17_37')
             endif
             alphfi = 0.0d0
-            cs = em
+            cs0 = em
             dalal = 0.d0
             do i = 1, 6
                 mdal(i) = 0.d0
