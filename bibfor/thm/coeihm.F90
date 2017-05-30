@@ -40,6 +40,8 @@ implicit none
 #include "asterfort/nvithm.h"
 #include "asterfort/thmlec.h"
 #include "asterfort/utmess.h"
+#include "asterfort/thmGetParaBiot.h"
+#include "asterfort/tebiot.h"
 !
     integer :: dimdef, dimcon, npg, kpi, npi, ndim
     integer :: nbvari, yamec, yate, yap1, yap2, imate
@@ -74,7 +76,7 @@ implicit none
     real(kind=8) :: klint(ndim-1, ndim-1), fick, viscg
     real(kind=8) :: dsde(dimcon, dimdef)
     real(kind=8) :: tlint, ouvh, deltat, unsurn
-    real(kind=8) :: valcen(14, 6), angbid(3)
+    real(kind=8) :: valcen(14, 6), angl_naut(3)
     integer :: maxfa
     parameter (maxfa=6)
     real(kind=8) :: valfac(maxfa, 14, 6)
@@ -186,6 +188,19 @@ implicit none
                 advith, advihy, advico, vihrho, vicphi,&
                 vicpvp, vicsat, vicpr1, vicpr2)
 !
+! - Get Biot parameters (for porosity evolution)
+!
+    call thmGetParaBiot(imate)
+!
+! - Compute Biot tensor
+!
+    angl_naut(:) = 0.d0
+    call tebiot(angl_naut, tbiot)
+!
+! - Temporaire: aniso n'est pas toujours lu dans le module pour l'instant
+!
+    aniso = ds_thm%ds_material%biot_type
+!
 ! - TEST LOI DE COMPORTEMENT
 !
     if ((meca.ne.'JOINT_BANDIS') .and. (meca.ne.'CZM_LIN_REG') .and.&
@@ -228,10 +243,6 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
 ! ======================================================================
-! INITIALISATION DE ANGMAS(3) À ZERO
-
-    angbid(:)=0.d0
-
 !
     call calcco(option, yachai, perman, meca, thmc,&
                 ther, hydr, imate, ndim-1, dimdef,&
@@ -244,7 +255,7 @@ implicit none
                 phi, pvp, pad, h11, h12,&
                 kh, rho11, sat,&
                 retcom, crit, tbiot, vihrho, vicphi,&
-                vicpvp, vicsat, instap, angbid, aniso,&
+                vicpvp, vicsat, instap, angl_naut, aniso,&
                 phenom)
 !
     if (retcom .ne. 0) then
@@ -262,7 +273,7 @@ implicit none
                 lambs, dlambs, viscl, dviscl, mamolg,&
                 tlambt, tdlamt, viscg, dviscg, mamovg,&
                 fickad, dfadt, tlamct, instap,&
-                angbid, ndim-1)
+                angl_naut, ndim-1)
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES -------------------------------------
 ! ======================================================================
