@@ -178,7 +178,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
     except:
         pass
     try:
-        from asrun.profil import ASTER_PROFIL
+        from asrun.profil import AsterProfil
     except Exception, e:
         print e
         UTMESS('F', 'RECAL0_2')
@@ -210,7 +210,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         UTMESS('F', 'RECAL0_4')
     elif len(list_export) > 1:
         UTMESS('F', 'RECAL0_5')
-    prof = ASTER_PROFIL(list_export[0])
+    prof = AsterProfil(list_export[0])
 
     #_____________________________________________
     #
