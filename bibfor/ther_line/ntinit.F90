@@ -15,9 +15,10 @@ implicit none
 #include "asterfort/ntnume.h"
 #include "asterfort/tiinit.h"
 #include "asterfort/utmess.h"
+#include "asterfort/ntload_chck.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -84,6 +85,10 @@ implicit none
 ! - Create numbering
 !
     call ntnume(model, list_load, result, nume_dof)
+!
+! - Check loads
+!
+    call ntload_chck(list_load)
 !
 ! - Create unknowns
 !
