@@ -21,6 +21,7 @@ implicit none
 #include "asterfort/ntnume.h"
 #include "asterfort/tiinit.h"
 #include "asterfort/utmess.h"
+#include "asterfort/ntload_chck.h"
 #include "asterfort/romAlgoNLInit.h"
 !
 ! ======================================================================
@@ -107,6 +108,10 @@ implicit none
 ! - Create numbering
 !
     call ntnume(model, list_load, result, nume_dof)
+!
+! - Check loads
+!
+    call ntload_chck(list_load)
 !
 ! --- CREATION DE LA SD POUR ARCHIVAGE DES INFORMATIONS DE CONVERGENCE
 !
