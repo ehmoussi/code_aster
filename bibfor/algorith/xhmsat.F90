@@ -187,8 +187,7 @@ implicit none
     if (yamec .eq. 1) then
         call dilata(imate, phi, alphfi, t, aniso,&
                     angl_naut, tbiot)
-        call unsmfi(imate, phi, cs, t, tbiot,&
-                    aniso, ndim)
+        call unsmfi(imate, phi, t, tbiot, aniso, cs)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************

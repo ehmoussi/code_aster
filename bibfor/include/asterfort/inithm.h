@@ -22,7 +22,7 @@
 !
 interface 
     subroutine inithm(imate, yachai, yamec, phi0, em,&
-                      cs, tbiot, t, epsv, depsv,&
+                      cs0, tbiot, t, epsv, depsv,&
                       epsvm, angmas, aniso, mdal, dalal,&
                       alphfi, cbiot, unsks, alpha0, ndim)
         integer :: imate
@@ -30,7 +30,7 @@ interface
         integer :: yamec
         real(kind=8) :: phi0
         real(kind=8) :: em
-        real(kind=8) :: cs
+        real(kind=8), intent(out) :: cs0
         real(kind=8) :: tbiot(6)
         real(kind=8) :: t
         real(kind=8) :: epsv

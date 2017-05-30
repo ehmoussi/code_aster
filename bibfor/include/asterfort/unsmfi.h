@@ -19,14 +19,12 @@
 !
 !
 interface 
-    subroutine unsmfi(imate, phi, cs, t, tbiot,&
-                      aniso, ndim)
-        integer :: imate
-        real(kind=8) :: phi
-        real(kind=8) :: cs
-        real(kind=8) :: t
-        real(kind=8) :: tbiot(6)
-        integer :: aniso
-        integer :: ndim
+    subroutine unsmfi(j_mater, phi, temp, tbiot, aniso, cs)
+        integer, intent(in) :: j_mater
+        real(kind=8), intent(in) :: phi
+        real(kind=8), intent(in) :: temp
+        real(kind=8), intent(in) :: tbiot(6)
+        integer, intent(in) :: aniso
+        real(kind=8), intent(out):: cs
     end subroutine unsmfi
 end interface 
