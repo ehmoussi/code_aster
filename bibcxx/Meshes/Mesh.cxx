@@ -33,19 +33,18 @@
 #include "RunManager/LogicalUnitManagerCython.h"
 
 MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE" ),
-                        _jeveuxName( getName() ),
-                        _dimensionInformations( JeveuxVectorLong( _jeveuxName + ".DIME      " ) ),
-                        _nameOfNodes( JeveuxBidirectionalMap( _jeveuxName + ".NOMNOE    " ) ),
+                        _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
+                        _nameOfNodes( JeveuxBidirectionalMap( getName() + ".NOMNOE    " ) ),
                         _coordinates( FieldOnNodesDoublePtr(
-                            new FieldOnNodesDoubleInstance( _jeveuxName + ".COORDO    " ) ) ),
-                        _groupsOfNodes( JeveuxCollectionLong( _jeveuxName + ".GROUPENO  " ) ),
-                        _connectivity( JeveuxCollectionLong( _jeveuxName + ".CONNEX    " ) ),
-                        _nameOfElements( JeveuxBidirectionalMap( _jeveuxName + ".NOMMAI    " ) ),
-                        _elementsType( JeveuxVectorLong( _jeveuxName + ".TYPMAIL   " ) ),
-                        _groupsOfElements( JeveuxCollectionLong( _jeveuxName + ".GROUPEMA  " ) ),
+                            new FieldOnNodesDoubleInstance( getName() + ".COORDO    " ) ) ),
+                        _groupsOfNodes( JeveuxCollectionLong( getName() + ".GROUPENO  " ) ),
+                        _connectivity( JeveuxCollectionLong( getName() + ".CONNEX    " ) ),
+                        _nameOfElements( JeveuxBidirectionalMap( getName() + ".NOMMAI    " ) ),
+                        _elementsType( JeveuxVectorLong( getName() + ".TYPMAIL   " ) ),
+                        _groupsOfElements( JeveuxCollectionLong( getName() + ".GROUPEMA  " ) ),
                         _isEmpty( true )
 {
-    assert(_jeveuxName.size() == 8);
+    assert(getName().size() == 8);
 };
 
 bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const VectorString& vec )
@@ -78,20 +77,6 @@ bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const Vect
     {
         throw;
     }
-    return true;
-};
-
-bool MeshInstance::build()
-{
-    // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
-    _dimensionInformations->updateValuePointer();
-    _coordinates->updateValuePointers();
-    _groupsOfNodes->buildFromJeveux();
-    _connectivity->buildFromJeveux();
-    _elementsType->updateValuePointer();
-    _groupsOfElements->buildFromJeveux();
-    _isEmpty = false;
-
     return true;
 };
 
@@ -147,8 +132,6 @@ bool MeshInstance::readMeshFile( const std::string& fileName, const std::string&
     {
         throw;
     }
-
-    build();
 
     return true;
 };
