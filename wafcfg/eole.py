@@ -21,9 +21,6 @@ def configure(self):
 
     intel.configure(self)
 
-    # enable TEST_STRICT on the reference server
-    self.env.append_value('DEFINES', ['TEST_STRICT'])
-
     self.env['ADDMEM'] = 600
     self.env.append_value('OPT_ENV', [
         'module load icc/2016.0.047 ifort/2016.0.047 mkl/2016.0.047'])
@@ -57,4 +54,3 @@ def configure(self):
     opts.enable_mfront = True
 
     opts.enable_petsc = False
-
