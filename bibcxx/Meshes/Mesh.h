@@ -45,8 +45,6 @@ class MeshInstance: public DataStructure
 public:
 
 private:
-    /** @brief Nom Jeveux du maillage */
-    const std::string      _jeveuxName;
     /** @brief Objet Jeveux '.DIME' */
     JeveuxVectorLong       _dimensionInformations;
     /** @brief Pointeur de nom Jeveux '.NOMNOE' */
@@ -113,13 +111,6 @@ public:
                                    const VectorString& vec ) throw( std::runtime_error );
 
     /**
-     * @brief Construction de l'objet Mesh
-         On met à jour les pointeurs vers les objets Jeveux.
-     * @return Retourne true si tout s'est bien déroulé
-     */
-    bool build();
-
-    /**
      * @brief Recuperation des coordonnees du maillage
      * @return champ aux noeuds contenant les coordonnees des noeuds du maillage
      */
@@ -177,7 +168,7 @@ public:
      * @brief Read a MED Mesh file
      * @return retourne true si tout est ok
      */
-    bool readMedFile( const std::string& fileName ) throw ( std::runtime_error );
+    virtual bool readMedFile( const std::string& fileName ) throw ( std::runtime_error );
 };
 
 /**
