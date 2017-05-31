@@ -48,10 +48,15 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: g
+    character(len=8) :: fami
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    if (ds_thm%ds_elem%l_weak_coupling) then
+        fami = 'RIGI'
+    else
+        fami = ' '
+    endif
 !
 ! - Get type of elasticity
 !
@@ -59,7 +64,7 @@ implicit none
 !
 ! - Read parameters
 !
-    call get_elas_para(' '     , j_mater, '+', kpi, 1, &
+    call get_elas_para(fami, j_mater, '+', kpi, 1, &
                        ds_thm%ds_material%elas_id , ds_thm%ds_material%elas_keyword,&
                        temp = temp,&
                        e = ds_thm%ds_material%e,&
