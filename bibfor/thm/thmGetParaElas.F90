@@ -27,6 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/get_elas_id.h"
 #include "asterfort/get_elas_para.h"
+#include "asterfort/get_elasth_para.h"
 #include "asterfort/utmess.h"
 !
 !
@@ -47,7 +48,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: g
+    real(kind=8) :: g, alpha(2)
     character(len=8) :: fami
 !
 ! --------------------------------------------------------------------------------------------------
@@ -81,6 +82,19 @@ implicit none
                        g  = g)
     if (ds_thm%ds_material%elas_id .eq. 3) then
         ds_thm%ds_material%g_ln = g
+    endif
+!
+! - Read parameters (dilatation)
+!
+    if (ds_thm%ds_elem%l_dof_ther) then
+        call get_elasth_para(fami, j_mater     , '+'   , kpi, 1, &
+                             ds_thm%ds_material%elas_id , ds_thm%ds_material%elas_keyword,&
+                             temp_vale_ = temp,&
+                             alpha   = alpha,&
+                             alpha_l = ds_thm%ds_material%alpha_l,&
+                             alpha_t = ds_thm%ds_material%alpha_t,&
+                             alpha_n = ds_thm%ds_material%alpha_n)
+        ds_thm%ds_material%alpha = alpha(1)
     endif
 !
 ! - Some checks: compatibility of elasticity with diffusion

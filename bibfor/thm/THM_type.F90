@@ -93,6 +93,8 @@ implicit none
         real(kind=8) :: e_l, e_t, e_n
         real(kind=8) :: nu_lt, nu_ln, nu_tn
         real(kind=8) :: g_lt, g_ln, g_tn
+        real(kind=8) :: alpha
+        real(kind=8) :: alpha_l, alpha_t, alpha_n
     end type THM_Material
 !
 end module
