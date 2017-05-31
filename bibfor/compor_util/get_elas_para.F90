@@ -129,16 +129,29 @@ implicit none
                 e  = 4.d0*(c10+c01)*(un+nu)
             endif
         else
-            nomres(1) = 'E'
-            nomres(2) = 'NU'
-            nbres     = 2
-            call rcvalb(fami, ipg, ispg, poum, j_mater,&
-                        ' ', elas_keyword, nb_para, para_name, [para_vale],&
-                        nbres, nomres, valres, icodre, 1)
-            if (present(e)) then
-                e  = valres(1)
+            if (elas_keyword .eq. 'ELAS_GONF') then
+                nomres(1) = 'E'
+                nomres(2) = 'NU'
+                nbres     = 2
+                call rcvalb(fami, ipg, ispg, poum, j_mater,&
+                            ' ', 'ELAS', nb_para, para_name, [para_vale],&
+                            nbres, nomres, valres, icodre, 1)
+                if (present(e)) then
+                    e  = valres(1)
+                endif
+                nu = valres(2)
+            else
+                nomres(1) = 'E'
+                nomres(2) = 'NU'
+                nbres     = 2
+                call rcvalb(fami, ipg, ispg, poum, j_mater,&
+                            ' ', elas_keyword, nb_para, para_name, [para_vale],&
+                            nbres, nomres, valres, icodre, 1)
+                if (present(e)) then
+                    e  = valres(1)
+                endif
+                nu = valres(2)
             endif
-            nu = valres(2)
         endif
         if (present(g)) then
             ASSERT(present(nu))
