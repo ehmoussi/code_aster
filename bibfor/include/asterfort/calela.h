@@ -19,13 +19,10 @@
 !
 !
 interface 
-    subroutine calela(imate, angmas, mdal, dalal, t,&
-                      aniso, d)
-        integer :: imate
+    subroutine calela(angmas, mdal, dalal, aniso, d)
         real(kind=8) :: angmas(3)
         real(kind=8) :: mdal(6)
         real(kind=8) :: dalal
-        real(kind=8) :: t
         integer :: aniso
         real(kind=8) :: d(6, 6)
     end subroutine calela

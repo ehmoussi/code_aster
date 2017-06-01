@@ -216,9 +216,8 @@ implicit none
 ! --- ACTUALISATION DE CS ET ALPHFI -----------------------------------
 ! =====================================================================
     if (yamec .eq. 1) then
-        call dilata(imate, phi, alphfi, t, aniso,&
-                    angmas, tbiot)
-       call unsmfi(imate, phi, t, tbiot, aniso, cs)
+        call dilata(angmas, phi, tbiot, alphfi)
+        call unsmfi(imate, phi, t, tbiot, aniso, cs)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************
