@@ -98,6 +98,8 @@ implicit none
                              alpha_t = ds_thm%ds_material%alpha_t,&
                              alpha_n = ds_thm%ds_material%alpha_n)
         ds_thm%ds_material%alpha = alpha(1)
+    else
+        ds_thm%ds_material%alpha = 0.d0
     endif
 !
 ! - Some checks: compatibility of elasticity with diffusion

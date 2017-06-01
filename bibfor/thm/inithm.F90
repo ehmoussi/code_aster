@@ -29,52 +29,32 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/calela.h"
 #include "asterfort/dilata.h"
-#include "asterfort/rccoma.h"
-#include "asterfort/rcvala.h"
 #include "asterfort/tebiot.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/utmess.h"
 !
 !
-    integer :: nelas
-    parameter    ( nelas=4 )
-    real(kind=8) :: elas(nelas)
-    character(len=16) :: ncra1(nelas)
-    integer :: icodre(nelas)
     aster_logical :: yachai
     integer :: imate, yamec, i, aniso
     real(kind=8), intent(out) :: cs0
     real(kind=8) :: phi0, em, tbiot(6), epsvm, epsv, depsv
-    real(kind=8) :: angmas(3), t, eps, dalal, mdal(6), young, nu
+    real(kind=8) :: angmas(3), t, dalal, mdal(6), young, nu
     real(kind=8) :: alphfi, rbid(6, 6), cbiot, unsks, alpha0, k0
-!
-    parameter  ( eps = 1.d-21 )
-! ======================================================================
-! --- DONNEES POUR RECUPERER LES CARACTERISTIQUES MECANIQUES -----------
-! ======================================================================
-    data ncra1/'E','NU','ALPHA','RHO'/
+    real(kind=8), parameter :: eps = 1.d-21
 !
 ! =====================================================================
 ! --- SI PRESENCE DE MECANIQUE OU DE CHAINAGE -------------------------
 ! =====================================================================
     if ((yamec.eq.1) .or. yachai) then
         if (aniso .eq. BIOT_TYPE_ISOT) then
-!
-
-! - Coefficients élastiques à température courante
-            call rcvala(imate, ' ', 'ELAS', 1, 'TEMP',&
-                        [t], 3, ncra1(1), elas( 1), icodre,&
-                        2)
-!
-            young = elas(1)
-            nu = elas(2)
-            alpha0 = elas(3)
-            cbiot = tbiot(1)
-            k0 = young / 3.d0 / (1.d0-2.d0*nu)
-            unsks = (1.0d0-cbiot) / k0
-!
+            young  = ds_thm%ds_material%e
+            nu     = ds_thm%ds_material%nu
+            alpha0 = ds_thm%ds_material%alpha
+            cbiot  = tbiot(1)
+            k0     = young / 3.d0 / (1.d0-2.d0*nu)
+            unsks  = (1.d0-cbiot) / k0
         else if (aniso .eq. BIOT_TYPE_ISTR) then
-        
+
         else if (aniso .eq. BIOT_TYPE_ORTH) then
 
         endif
@@ -82,10 +62,8 @@ implicit none
 ! --- CALCUL DES GRANDEURS MECANIQUES DANS LE CAS GENERAL -------------
 ! =====================================================================
         call unsmfi(imate, phi0, t, tbiot, aniso, cs0)
-        call dilata(imate, phi0, alphfi, t, aniso,&
-                    angmas, tbiot)
-        call calela(imate, angmas, mdal, dalal, t,&
-                    aniso, rbid)             
+        call dilata(angmas, phi0, tbiot, alphfi)
+        call calela(angmas, mdal, dalal, aniso, rbid)
 !
 ! =====================================================================
 ! --- SI ABSENCE DE MECANIQUE -----------------------------------------
@@ -95,7 +73,7 @@ implicit none
 ! =====================================================================
 ! --- CALCUL CAS ISOTROPE ---------------------------------------------
 ! =====================================================================
-            alphfi = 0.0d0
+            alphfi = 0.d0
             cs0 = em
             dalal = 0.d0
             alpha0 = 0.0d0
@@ -104,7 +82,7 @@ implicit none
                 mdal(i) = 0.d0
             end do
             if (em .lt. eps) then
-                cbiot =phi0
+                cbiot = phi0
                 ds_thm%ds_material%biot_coef = phi0
                 ds_thm%ds_material%biot_l    = phi0
                 ds_thm%ds_material%biot_t    = phi0

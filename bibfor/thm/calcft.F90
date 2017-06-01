@@ -90,8 +90,7 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ALPHAFI ET CS-----------
 ! =====================================================================
     if (yamec .eq. 1) then
-        call dilata(imate, phi, alphfi, t, anisof,&
-                    angmas, tbiot)
+        call dilata(angmas, phi, tbiot, alphfi)
         call unsmfi(imate, phi, t, tbiot, anisof, cs)
     else
 ! =====================================================================

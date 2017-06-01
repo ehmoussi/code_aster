@@ -15,9 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine calela(imate, angmas, mdal, dalal, t,&
-                  aniso, d)
+!
+subroutine calela(angmas, mdal, dalal, aniso, d)
 !
 use THM_type
 use THM_module
@@ -25,53 +24,26 @@ use THM_module
 implicit none
 !
 #include "asterc/r8dgrd.h"
+#include "asterfort/assert.h"
 #include "asterfort/dpassa.h"
 #include "asterfort/matini.h"
 #include "asterfort/matrot.h"
-#include "asterfort/rcvala.h"
 #include "asterfort/utbtab.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vecini.h"
     integer :: i, j, irep
     integer :: aniso
-    integer :: dim2, dim1, dim3, imate
-    parameter   ( dim1   =  4 )
-    parameter   ( dim2   =  8 )
-    parameter   ( dim3   =  11 )
-    integer :: icodr3(dim3)
-    integer :: icodr2(dim2)
-    integer :: icodr1(dim1)
-    real(kind=8) :: elas3(dim3)
-    real(kind=8) :: elas2(dim2)
-    real(kind=8) :: elas1(dim1)
-    real(kind=8) :: zero, un
+    real(kind=8) :: un, zero
     real(kind=8) :: young, nu, g
     real(kind=8) :: young1, young3, nu12, nu21, nu13, nu31, nu23, nu32
-    real(kind=8) :: young2, alpha1, alpha3, g13, g12
-    real(kind=8) :: d(6, 6), al(6), t, dorth(6, 6), c1, delta, repere(7)
-    real(kind=8) :: mdal(6), dalal, angmas(3), work(6, 6), bid(3)
-    real(kind=8) :: tetaro, phirot, passag(6, 6), pass(3, 3), tal(3, 3), talg(3, 3)
-    character(len=8) :: ncra2(dim2), ncra3(dim3)
-    character(len=8) :: ncra1(dim1)
+    real(kind=8) :: young2, g13, g12
+    real(kind=8) :: d(6, 6), al(6), dorth(6, 6), c1, delta, repere(7)
+    real(kind=8) :: mdal(6), dalal, angmas(3), work(6, 6)
+    real(kind=8) :: passag(6, 6), pass(3, 3), tal(3, 3), talg(3, 3)
 !
-! =====================================================================
-! --- DONNEES POUR RECUPERER LES CARACTERISTIQUES MECANIQUES ----------
-! =====================================================================
-    data ncra1 /'E','NU','ALPHA','RHO'/
-    data ncra2 /'E_L','E_N','NU_LT','NU_LN','G_LN',&
-     &            'ALPHA_L','ALPHA_N','RHO'/
-    data ncra3 /'E_L','E_N','E_T','NU_LT','NU_LN','NU_TN',&
-     &            'G_LT','ALPHA_L','ALPHA_T','ALPHA_N','RHO'/
-! ======================================================================
-! --- INITIALISATIONS --------------------------------------------------
-! ======================================================================
-    phirot = angmas(1)
-    tetaro = angmas(2)
+    zero = 0.d0
+    un   = 1.d0
 !
-    zero = 0.0d0
-    un = 1.0d0
-!
-    call vecini(3, zero, bid)
     call vecini(6, zero, mdal)
     call vecini(6, zero, al)
     call vecini(7, zero, repere)
@@ -106,17 +78,12 @@ implicit none
 ! --- CALCUL CAS ISOTROPE ----------------------------------------------
 ! ======================================================================
     if (aniso .eq. 0) then
-        call rcvala(imate, ' ', 'ELAS', 1, 'TEMP',&
-                    [t], 3, ncra1(1), elas1(1), icodr1,&
-                    0)
-        young = elas1(1)
-        nu = elas1(2)
-        g = young/(2.d0*(1.d0+nu))
-!        alpha1 = elas1(3)
-!        alpha3 = elas1(3)
-        al(1)  =elas1(3)
-        al(2)  =elas1(3)
-        al(3)  =elas1(3)
+        young  = ds_thm%ds_material%e
+        nu     = ds_thm%ds_material%nu
+        g      = young/(2.d0*(1.d0+nu))
+        al(1)  = ds_thm%ds_material%alpha
+        al(2)  = ds_thm%ds_material%alpha
+        al(3)  = ds_thm%ds_material%alpha
 !
         dorth(1,1) = young*(1.d0-nu)/ ((1.d0+nu)*(1.-2.d0*nu))
         dorth(2,2) = dorth(1,1)
@@ -136,40 +103,23 @@ implicit none
 ! --- CALCUL CAS ISOTROPE TRANSVERSE------------------------------------
 ! ======================================================================
     else if (aniso.eq.1) then
-        if (ds_thm%ds_material%elas_keyword .eq. 'ELAS') then
-            call rcvala(imate, ' ', 'ELAS', 1, 'TEMP',&
-                        [t], 3, ncra1(1), elas1(1), icodr1,&
-                        0)
-            young1 = elas1(1)
-            young3 = elas1(1)
-            nu12 = elas1(2)
-            nu13 = elas1(2)
-            g13 = young1/(2.d0*(1.d0+nu12))
-            alpha1 = elas1(3)
-            alpha3 = elas1(3)
-            al(1)  =elas1(3)
-            al(2)  =elas1(3)
-            al(3)  =elas1(3)
-!
-        else if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ISTR') then
-            call rcvala(imate, ' ', 'ELAS_ISTR', 1, 'TEMP',&
-                        [t], 7, ncra2(1), elas2(1), icodr2,&
-                        0)
-            young1 = elas2(1)
-            young3 = elas2(2)
-            nu12 = elas2(3)
-            nu13 = elas2(4)
-            g13 = elas2(5)
-            tal(1,1) = elas2(6)
-            tal(2,2) = elas2(6)
-            tal(3,3) = elas2(7)
-!            alpha3 = elas2(7)
+        if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ISTR') then
+            young1   = ds_thm%ds_material%e_l
+            young3   = ds_thm%ds_material%e_n
+            nu12     = ds_thm%ds_material%nu_lt
+            nu13     = ds_thm%ds_material%nu_ln
+            g13      = ds_thm%ds_material%g_ln
+            tal(1,1) = ds_thm%ds_material%alpha_l
+            tal(2,2) = ds_thm%ds_material%alpha_l
+            tal(3,3) = ds_thm%ds_material%alpha_n
             al(1) = talg(1,1)
             al(2) = talg(2,2)
             al(3) = talg(3,3)
             al(4) = talg(1,2)
             al(5) = talg(1,3)
             al(6) = talg(2,3)
+        else
+            ASSERT(.false.)
         endif
         nu31 = nu13*young3/young1
         c1 = young1/ (1.d0+nu12)
@@ -190,34 +140,17 @@ implicit none
 ! --- CALCUL CAS ORTHOTROPE 2D ------------------------------------
 ! ======================================================================
     else if (aniso.eq.2) then
-        if (ds_thm%ds_material%elas_keyword .eq. 'ELAS') then
-            call rcvala(imate, ' ', 'ELAS', 1, 'TEMP',&
-                        [t], 3, ncra1(1), elas1(1), icodr1,&
-                        0)
-            young1 = elas1(1)
-            young2 = elas1(1)
-            young3 = elas1(1)
-            nu12 = elas1(2)
-            nu13 = elas1(2)
-            nu23 = elas1(2)
-            g12 = young1/(2.d0*(1.d0+nu12))
-            al(1)  =elas1(3)
-            al(2)  =elas1(3)
-            al(3)  =elas1(3)
-        else if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ORTH') then
-            call rcvala(imate, ' ', 'ELAS_ORTH', 1, 'TEMP',&
-                        [t], 10, ncra3(1), elas3(1), icodr3,&
-                        0)
-            young1 = elas3(1)
-            young3 = elas3(2)
-            young2 = elas3(3)
-            nu12 = elas3(4)
-            nu13 = elas3(5)
-            nu23 = elas3(6)
-            g12 = elas3(7)
-            tal(1,1) = elas3(8)
-            tal(2,2) = elas3(9)
-            tal(3,3) = elas3(10)
+        if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ORTH') then
+            young1 = ds_thm%ds_material%e_l
+            young3 = ds_thm%ds_material%e_n
+            young2 = ds_thm%ds_material%e_t
+            nu12   = ds_thm%ds_material%nu_lt
+            nu13   = ds_thm%ds_material%nu_ln
+            nu23   = ds_thm%ds_material%nu_tn
+            g12    = ds_thm%ds_material%g_lt
+            tal(1,1) = ds_thm%ds_material%alpha_l
+            tal(2,2) = ds_thm%ds_material%alpha_t
+            tal(3,3) = ds_thm%ds_material%alpha_n
             call utbtab('ZERO', 3, 3, tal, pass,&
                         work, talg)
             al(1) = talg(1,1)
@@ -226,7 +159,8 @@ implicit none
             al(4) = talg(1,2)
             al(5) = talg(1,3)
             al(6) = talg(2,3)
-!
+        else
+            ASSERT(.false.)
         endif
         nu21 = nu12*young2/young1
         nu31 = nu13*young3/young1
@@ -267,12 +201,12 @@ implicit none
 ! --- CALCUL DES PRODUITS TENSORIELS D:AL:AL ET DE D:AL-----------------
 ! ======================================================================
     dalal= 0.d0
-    do 40 i = 1, 6
-        do 50 j = 1, 6
+    do i = 1, 6
+        do j = 1, 6
             mdal(i) = mdal(i) +d(i,j)*al(j)
-50      continue
-40  end do
-    do 60 i = 1, 6
+        end do
+    end do
+    do i = 1, 6
         dalal=dalal+mdal(i)*al(i)
-60  end do
+    end do
 end subroutine

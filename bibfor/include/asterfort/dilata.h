@@ -19,14 +19,10 @@
 !
 !
 interface 
-    subroutine dilata(imate, phi, alphfi, t, aniso,&
-                      angmas, tbiot)
-        integer :: imate
-        real(kind=8) :: phi
-        real(kind=8) :: alphfi
-        real(kind=8) :: t
-        integer :: aniso
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: tbiot(6)
+    subroutine dilata(angl_naut, phi, tbiot, alphfi)
+        real(kind=8), intent(in) :: angl_naut(3)
+        real(kind=8), intent(in) :: phi
+        real(kind=8), intent(in) :: tbiot(6)
+        real(kind=8), intent(out) :: alphfi
     end subroutine dilata
 end interface 
