@@ -19,4 +19,21 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.Flow.FluidStructureInteractionDefinition import *
+from code_aster.RunManager.AsterFortran import python_execop
+from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from code_aster import FluidStructureInteraction
+
+
+def DEFI_FLUI_STRU(**curDict):
+    returnFSD = FluidStructureInteraction.create()
+    name = returnFSD.getInstance().getName()
+    type = returnFSD.getInstance().getType()
+    syntax = CommandSyntax("DEFI_FLUI_STRU")
+
+    syntax.setResult(name, type)
+
+    syntax.define(curDict)
+    numOp = 143
+    python_execop(numOp)
+    syntax.free()
+    return returnFSD

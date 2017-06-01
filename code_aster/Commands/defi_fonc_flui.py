@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,4 +19,21 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.Flow.BeamFlowDefinition import *
+from code_aster.RunManager.AsterFortran import python_execop
+from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from code_aster import Function
+
+
+def DEFI_FONC_FLUI(**curDict):
+    returnFunction = Function.create()
+    name = returnFunction.getInstance().getName()
+    type = returnFunction.getInstance().getType()
+    syntax = CommandSyntax("DEFI_FONC_FLUI")
+
+    syntax.setResult(name, type)
+
+    syntax.define(curDict)
+    numOp = 142
+    python_execop(numOp)
+    syntax.free()
+    return returnFunction

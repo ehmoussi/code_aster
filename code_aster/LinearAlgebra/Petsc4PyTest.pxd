@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -17,21 +17,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster import Mesh
+from libcpp.string cimport string
 
+include "astercython_config.pxi"
 
-def MODI_MAILLAGE(**curDict):
-    returnMesh = curDict["MAILLAGE"]
-    name = returnMesh.getName()
-    type = returnMesh.getType()
-    syntax = CommandSyntax("MODI_MAILLAGE")
+IF _HAVE_PETSC4PY == 1:
+    from petsc4py cimport PETSc
+    from petsc4py.PETSc cimport Mat
+    from petsc4py.PETSc cimport PetscMat
 
-    syntax.setResult(name, type)
+cdef extern from "petscmat.h":
 
-    syntax.define(curDict)
-    numOp = 154
-    python_execop(numOp)
-    syntax.free()
-    return returnMesh
+    ctypedef int PetscErrorCode
+
+cdef extern from "aster_fort.h":
+
+    IF _HAVE_PETSC4PY == 1:
+        cdef void CALL_MATASS2PETSC(const char*, PetscMat*, PetscErrorCode*)

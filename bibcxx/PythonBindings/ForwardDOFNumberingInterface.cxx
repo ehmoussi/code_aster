@@ -1,6 +1,6 @@
 /**
- * @file ElementaryVectorInterface.cxx
- * @brief Interface python de ElementaryVector
+ * @file ForwardDOFNumberingInterface.cxx
+ * @brief Interface python de ForwardDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,22 +23,16 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ElementaryVectorInterface.h"
+#include "PythonBindings/ForwardDOFNumberingInterface.h"
 #include <boost/python.hpp>
+#include <boost/python/implicit.hpp>
 
-void exportElementaryVectorToPython()
+void exportForwardDOFNumberingToPython()
 {
     using namespace boost::python;
 
-    FieldOnNodesDoublePtr (ElementaryVectorInstance::*c1)(const DOFNumberingPtr&) =
-            &ElementaryVectorInstance::assembleVector;
-
-    class_< ElementaryVectorInstance, ElementaryVectorInstance::ElementaryVectorPtr,
-            bases< DataStructure > > ( "ElementaryVector", no_init )
-        .def( "create", &ElementaryVectorInstance::create )
-        .staticmethod( "create" )
-        .def( "addMechanicalLoad", &ElementaryVectorInstance::addMechanicalLoad )
-        .def( "assembleVector", c1 )
-        .def( "setListOfLoads", &ElementaryVectorInstance::setListOfLoads )
+    class_< ForwardDOFNumberingPtr > ( "ForwardDOFNumbering", no_init )
     ;
+
+    implicitly_convertible<DOFNumberingPtr, ForwardDOFNumberingPtr>();
 };

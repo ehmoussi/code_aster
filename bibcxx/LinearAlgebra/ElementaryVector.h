@@ -103,6 +103,17 @@ public:
      * @param currentNumerotation objet DOFNumbering
      * @todo prendre en compte les fonctions multiplicatrices
      */
+    FieldOnNodesDoublePtr assembleVector( const DOFNumberingPtr& currentNumerotation )
+        throw ( std::runtime_error )
+    {
+        return assembleVector( currentNumerotation, 0., Permanent );
+    };
+
+    /**
+     * @brief Assembler les vecteurs elementaires en se fondant sur currentNumerotation
+     * @param currentNumerotation objet DOFNumbering
+     * @todo prendre en compte les fonctions multiplicatrices
+     */
     FieldOnNodesDoublePtr assembleVector( const DOFNumberingPtr& currentNumerotation,
                                           const double& time = 0.,
                                           const JeveuxMemory memType = Permanent )

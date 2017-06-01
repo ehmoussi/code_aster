@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,4 +19,26 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.DataFields.FieldsProjection import *
+from code_aster.RunManager.AsterFortran import python_execop
+from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from code_aster import MatchingMeshes
+
+
+def PROJ_CHAMP(**curDict):
+    returnProj = None
+    if not curDict.has_key("RESULTAT") and not curDict.has_key("CHAM_GD"):
+        returnProj = MatchingMeshes.create()
+    else:
+        raise NameError("Not yet implemented")
+    name = returnProj.getName()
+    type = returnProj.getType()
+
+    syntax = CommandSyntax("PROJ_CHAMP")
+    syntax.setResult(name, type)
+    syntax.define(curDict)
+
+    numOp = 166
+    python_execop(numOp)
+    syntax.free()
+
+    return returnProj

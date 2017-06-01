@@ -27,6 +27,7 @@
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/DiscreteProblemInterface.h"
 #include "PythonBindings/DOFNumberingInterface.h"
+#include "PythonBindings/ForwardDOFNumberingInterface.h"
 #include "PythonBindings/ElementaryCharacteristicsInterface.h"
 #include "PythonBindings/FiberGeometryInterface.h"
 #include "PythonBindings/FieldOnElementsInterface.h"
@@ -105,6 +106,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportMeshToPython();
     exportDiscreteProblemToPython();
     exportDOFNumberingToPython();
+    exportForwardDOFNumberingToPython();
     exportElementaryCharacteristicsToPython();
     exportFiberGeometryToPython();
     exportFieldOnElementsToPython();

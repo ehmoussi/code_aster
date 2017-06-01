@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,5 +19,21 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.Results.FourierCombinationBuilder import *
+from code_aster.RunManager.AsterFortran import python_execop
+from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from code_aster import FourierCombination
 
+
+def COMB_FOURIER(**curDict):
+    returnComb = FourierCombination.create()
+    name = returnComb.getInstance().getName()
+    syntax = CommandSyntax("COMB_FOURIER")
+
+    # self.getInstance().getType()
+    syntax.setResult(name, "COMB_FOURIER")
+
+    syntax.define(curDict)
+    numOp = 161
+    python_execop(numOp)
+    syntax.free()
+    return returnComb
