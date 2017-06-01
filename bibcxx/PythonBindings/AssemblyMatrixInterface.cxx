@@ -40,11 +40,6 @@ void exportAssemblyMatrixToPython()
         .def( "factorization", &AssemblyMatrixDoubleInstance::factorization )
         .def( "setDOFNumbering", &AssemblyMatrixDoubleInstance::setDOFNumbering )
         .def( "setElementaryMatrix", &AssemblyMatrixDoubleInstance::setElementaryMatrix )
-#ifdef _HAVE_PETSC4PY
-#if _HAVE_PETSC4PY == 1
-        .def( "toPetsc4py", &AssemblyMatrixDoubleInstance::toPetsc4py )
-#endif
-#endif
     ;
 
     class_< AssemblyMatrixComplexInstance, AssemblyMatrixComplexPtr,

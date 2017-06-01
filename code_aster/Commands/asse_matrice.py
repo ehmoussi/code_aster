@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,4 +19,21 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.LinearAlgebra.AssemblyMatrixBuilder import *
+from code_aster.RunManager.AsterFortran import python_execop
+from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from code_aster import AssemblyMatrixDouble
+
+
+def ASSE_MATRICE(**curDict):
+    returnMatrix = AssemblyMatrixDouble.create()
+    name = returnMatrix.getInstance().getName()
+    type = returnMatrix.getInstance().getType()
+    syntax = CommandSyntax("ASSE_MATRICE")
+
+    syntax.setResult(name, type)
+
+    syntax.define(curDict)
+    numOp = 12
+    python_execop(numOp)
+    syntax.free()
+    return returnMatrix

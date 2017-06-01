@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -17,21 +17,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from code_aster.RunManager.AsterFortran import python_execop
-from code_aster.Supervis.libCommandSyntax import CommandSyntax
-from code_aster import Table
+include "astercython_config.pxi"
+
+IF _HAVE_PETSC4PY == 1:
+    from petsc4py cimport PETSc
+    from petsc4py.PETSc cimport Mat
+    from petsc4py.PETSc cimport PetscMat
 
 
-def CREA_TABLE(**curDict):
-    returnTable = Table.create()
-    name = returnTable.getInstance().getName()
-    syntax = CommandSyntax("CREA_TABLE")
-
-    # self.getInstance().getType()
-    syntax.setResult(name, "TABLE")
-
-    syntax.define(curDict)
-    numOp = 36
-    python_execop(numOp)
-    syntax.free()
-    return returnTable
+def AssemblyMatrixToPetsc4Py(assemblyMatrix):
+    IF _HAVE_PETSC4PY == 1:
+        name = assemblyMatrix.getName()
+        cdef char* charName = name
+        cdef PetscMat retour
+        cdef PetscErrorCode ier
+        CALL_MATASS2PETSC(charName, &retour, &ier)
+        myMat = Mat()
+        myMat.mat=retour
+        return myMat
+    ELSE:
+        print "You must install Petsc4py to call this method"

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,4 +19,29 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.DataFields.FieldBuilder import *
+from code_aster.RunManager.AsterFortran import python_execop
+from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from code_aster import PCFieldOnMeshDouble
+from code_aster import FieldOnNodesDouble
+
+
+def CREA_CHAMP(**curDict):
+    returnField = None
+    if curDict["TYPE_CHAM"][:5] == "CART_" and curDict["TYPE_CHAM"][10:] == "R":
+        returnField = PCFieldOnMeshDouble.create()
+    elif curDict["TYPE_CHAM"][:5] == "NOEU_" and curDict["TYPE_CHAM"][10:] == "R":
+        returnField = FieldOnNodesDouble.create()
+    else:
+        raise NameError("Not yet implemented")
+    name = returnField.getName()
+    type = returnField.getType()
+
+    syntax = CommandSyntax("CREA_CHAMP")
+    syntax.setResult(name, type)
+    syntax.define(curDict)
+
+    numOp = 195
+    python_execop(numOp)
+    syntax.free()
+
+    return returnField

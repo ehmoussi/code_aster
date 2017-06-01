@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,4 +19,29 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster.Results.ResultsContainerBuilder import *
+from code_aster.RunManager.AsterFortran import python_execop
+from code_aster.Supervis.libCommandSyntax import CommandSyntax
+from code_aster import EvolutiveLoad
+from code_aster import EvolutiveThermalLoad
+
+
+def CREA_RESU(**curDict):
+    returnRC = None
+    if curDict["TYPE_RESU"] == "EVOL_CHAR":
+        returnRC = EvolutiveLoad.create()
+    elif curDict["TYPE_RESU"] == "EVOL_THER":
+        returnRC = EvolutiveThermalLoad.create()
+    else:
+        raise NameError("Not yet implemented")
+    name = returnRC.getName()
+    type = returnRC.getType()
+
+    syntax = CommandSyntax("CREA_RESU")
+    syntax.setResult(name, type)
+    syntax.define(curDict)
+
+    numOp = 124
+    python_execop(numOp)
+    syntax.free()
+
+    return returnRC

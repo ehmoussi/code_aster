@@ -132,6 +132,7 @@ bool MeshInstance::readMeshFile( const std::string& fileName, const std::string&
     {
         throw;
     }
+    _isEmpty = false;
 
     return true;
 };

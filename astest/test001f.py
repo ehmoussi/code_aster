@@ -6,19 +6,19 @@ import code_aster
 
 test = code_aster.TestCase()
 
-monMaillage = code_aster.Mesh()
+monMaillage = code_aster.Mesh.create()
 monMaillage.readMedFile( "test001f.mmed" )
 
-monModel = code_aster.Model()
+monModel = code_aster.Model.create()
 monModel.setSupportMesh( monMaillage )
-monModel.addModelingOnAllMesh( code_aster.Mechanics, code_aster.Tridimensional )
+monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 monModel.build()
 test.assertEqual( monModel.getType(), "MODELE" )
 
 YOUNG = 200000.0;
 POISSON = 0.3;
 
-materElas = code_aster.MaterialBehaviour.ElasMaterialBehaviour()
+materElas = code_aster.ElasMaterialBehaviour.create()
 materElas.setDoubleValue( "E", YOUNG )
 materElas.setDoubleValue( "Nu", POISSON )
 
@@ -35,7 +35,7 @@ Gam1 = 341.0
 Gam2 = 341.0
 C_Pa = 1.e+6
 
-materViscochab = code_aster.MaterialBehaviour.ViscochabMaterialBehaviour()
+materViscochab = code_aster.ViscochabMaterialBehaviour.create()
 materViscochab.setDoubleValue( "K",  SY*C_Pa )
 materViscochab.setDoubleValue( "B",  b )
 materViscochab.setDoubleValue( "Mu", 10 )
@@ -49,49 +49,50 @@ materViscochab.setDoubleValue( "K_0", Kv * C_Pa)
 materViscochab.setDoubleValue( "N", 11)
 materViscochab.setDoubleValue( "A_k", 1.)
 
-acier = code_aster.Material()
+acier = code_aster.Material.create()
 acier.addMaterialBehaviour( materElas )
 acier.addMaterialBehaviour( materViscochab )
 acier.build()
 acier.debugPrint(6)
 test.assertEqual( acier.getType(), "MATER" )
 
-affectMat = code_aster.MaterialOnMesh()
+affectMat = code_aster.MaterialOnMesh.create()
 affectMat.setSupportMesh( monMaillage )
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.build()
 test.assertEqual( affectMat.getType(), "CHAM_MATER" )
 
-imposedDof1 = code_aster.DisplacementDouble()
-imposedDof1.setValue( code_aster.Loads.Dx, 0.0 )
-imposedDof1.setValue( code_aster.Loads.Dy, 0.0 )
-imposedDof1.setValue( code_aster.Loads.Dz, 0.0 )
-CharMeca1 = code_aster.ImposedDisplacementDouble()
+imposedDof1 = code_aster.DisplacementDouble.create()
+imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dx, 0.0 )
+imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dy, 0.0 )
+imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dz, 0.0 )
+CharMeca1 = code_aster.ImposedDisplacementDouble.create()
 CharMeca1.setSupportModel( monModel )
 CharMeca1.setValue( imposedDof1, "Bas" )
 CharMeca1.build()
 test.assertEqual( CharMeca1.getType(), "CHAR_MECA" )
 
-imposedPres1 = code_aster.PressureDouble()
-imposedPres1.setValue( code_aster.Loads.Pres, 1000. )
-CharMeca2 = code_aster.DistributedPressureDouble()
+imposedPres1 = code_aster.PressureDouble.create()
+imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1000. )
+CharMeca2 = code_aster.DistributedPressureDouble.create()
 CharMeca2.setSupportModel( monModel )
 CharMeca2.setValue( imposedPres1, "Haut" )
 CharMeca2.build()
 test.assertEqual( CharMeca2.getType(), "CHAR_MECA" )
 
-study = code_aster.StudyDescription(monModel, affectMat)
+study = code_aster.StudyDescription.create(monModel, affectMat)
 study.addMechanicalLoad(CharMeca1)
 study.addMechanicalLoad(CharMeca2)
-dProblem = code_aster.DiscreteProblem(study)
+dProblem = code_aster.DiscreteProblem.create(study)
 vectElem = dProblem.buildElementaryMechanicalLoadsVector()
 matr_elem = dProblem.computeMechanicalRigidityMatrix()
 
 test.assertEqual( matr_elem.getType(), "MATR_ELEM_DEPL_R" )
 
-monSolver = code_aster.LinearSolver( code_aster.LinearAlgebra.Mumps, code_aster.LinearAlgebra.Metis )
+monSolver = code_aster.LinearSolver.create( code_aster.LinearSolverName.Mumps,
+                                            code_aster.Renumbering.Metis )
 
-numeDDL = code_aster.DOFNumbering()
+numeDDL = code_aster.DOFNumbering.create()
 numeDDL.setElementaryMatrix( matr_elem )
 numeDDL.setLinearSolver( monSolver )
 numeDDL.computeNumerotation()
@@ -103,7 +104,7 @@ test.assertEqual( vectElem.getType(), "VECT_ELEM_DEPL_R" )
 
 retour = vectElem.assembleVector( numeDDL )
 
-matrAsse = code_aster.AssemblyMatrixDouble()
+matrAsse = code_aster.AssemblyMatrixDouble.create()
 matrAsse.setElementaryMatrix( matr_elem )
 matrAsse.setDOFNumbering( numeDDL )
 matrAsse.build()
@@ -113,7 +114,7 @@ try:
 except ImportError:
     pass
 else:
-    A=matrAsse.toPetsc4py()
+    A = code_aster.LinearAlgebra.AssemblyMatrixToPetsc4Py(matrAsse)
     v=petsc4py.PETSc.Viewer.DRAW(A.comm)
     A.view(v)
 
