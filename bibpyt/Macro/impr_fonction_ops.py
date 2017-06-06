@@ -39,6 +39,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     from Utilitai import Graph
     from Utilitai.Utmess import UTMESS
     from Utilitai.UniteAster import UniteAster
+    from Utilitai.utils import fmtF2PY
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
@@ -410,6 +411,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
             'ccpara': args['COMM_PARA'],
             'cdeb': args['DEBUT_LIGNE'],
             'cfin': args['FIN_LIGNE'],
+            'formR': fmtF2PY(args['FORMAT_R'])
         }
 
     # 2.2. au format AGRAF
