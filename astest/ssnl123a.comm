@@ -22,7 +22,7 @@
 #     precontrainte necessaires au 2 calculs de flambement.
 #
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', VISU_EFICAS='NON'), DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='OUI'))
 
 # Lecture du maillage
 MA = LIRE_MAILLAGE(FORMAT="ASTER",)

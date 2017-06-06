@@ -19,7 +19,7 @@ import aster
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
-              VISU_EFICAS='NON'),
+              ),
       ERREUR=_F(ERREUR_F='EXCEPTION',),
       IGNORE_ALARM='SUPERVIS_1',
       PAR_LOT='NON')

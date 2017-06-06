@@ -53,7 +53,6 @@ DEBUT=MACRO(nom="DEBUT",
          CODE            =FACT(fr=tr("paramètres réservés aux cas-tests"),
                                statut='f',min=1,max=1,
            NIV_PUB_WEB     =SIMP(statut='o',typ='TXM',into=('INTERNET','INTRANET')),
-           VISU_EFICAS     =SIMP(statut='f',typ='TXM',into=('OUI','NON'),defaut='OUI'),
          ),
 
          ERREUR          =FACT(fr=tr("comportement en cas d'erreur"),statut='f',min=1,max=1,

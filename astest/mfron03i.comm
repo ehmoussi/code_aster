@@ -21,7 +21,7 @@
 # Validation basée sur rho_5 et rho_8 en testant le maximum de la différence
 # entre Code_Aster et MFront
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',VISU_EFICAS='NON'),DEBUG=_F(SDVERI='OUI'));
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
 import os
 

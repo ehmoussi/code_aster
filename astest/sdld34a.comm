@@ -18,7 +18,7 @@
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
-VISU_EFICAS='OUI',),DEBUG=_F(SDVERI='NON'))
+),DEBUG=_F(SDVERI='NON'))
 # SDVERI='NON' car la verification est trop couteuse en CPU
 
 # MISE EN DONNEES

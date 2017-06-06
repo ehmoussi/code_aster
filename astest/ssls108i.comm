@@ -21,7 +21,7 @@
 #
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',
-              VISU_EFICAS='OUI',),)
+              ),)
 
 ma=LIRE_MAILLAGE(FORMAT='MED',INFO=2);
 mamixte=CREA_MAILLAGE(MAILLAGE=ma,

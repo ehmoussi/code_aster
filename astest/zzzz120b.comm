@@ -151,7 +151,7 @@ POST_GOUJ=MACRO(nom="POST_GOUJ",op=POST_GOUJ_ops,sd_prod=table_sdaster,reentrant
                 TABLE=SIMP(statut='o',typ=table_sdaster),)
 ########################################################################
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET',VISU_EFICAS='NON',),PAR_LOT='NON',
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET',),PAR_LOT='NON',
       DEBUG=_F(SDVERI='OUI'))
 #
 # CAS TEST : CALCUL D UN ASSEMBLAGE GOUJON-BRIDE

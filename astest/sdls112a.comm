@@ -16,7 +16,7 @@
 # ======================================================================
 #       TEST DU GARTEUR : BASE D'EXPANSION = MODES DYNAMIQUES
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',VISU_EFICAS='NON'),
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='NON'),
      )
 

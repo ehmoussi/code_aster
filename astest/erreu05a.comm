@@ -20,7 +20,7 @@ import aster
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
-              VISU_EFICAS='OUI',),
+              ),
       ERREUR=_F(ERREUR_F='EXCEPTION'),
 PAR_LOT='NON',IGNORE_ALARM='SUPERVIS_1',DEBUG=_F(SDVERI='OUI'))
 # ALARME 'SUPERVIS_1' : PAR_LOT necessaire pour intercepter l'exception

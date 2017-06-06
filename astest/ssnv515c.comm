@@ -111,7 +111,7 @@ def Defi_Xmcourbe(X=None,Y=None,FUNCTION=None,courbe=None,legend='X',color=0,mar
 #***********************************************************************
 
 # ======================================================================
-DEBUT(CODE   =_F(NIV_PUB_WEB='INTERNET',VISU_EFICAS='NON'),PAR_LOT='NON');
+DEBUT(CODE   =_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='NON');
 
 #***********************************************************************
 #
