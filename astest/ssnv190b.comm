@@ -19,7 +19,7 @@
 #
 # person_in_charge: jean-luc.flejou at edf.fr
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET',VISU_EFICAS='NON'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET',),DEBUG=_F(SDVERI='OUI'))
 
 
 UN    =DEFI_CONSTANTE(VALE = 1.0)

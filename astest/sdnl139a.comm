@@ -18,7 +18,7 @@
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
-              VISU_EFICAS='OUI',),PAR_LOT='NON',);
+              ),PAR_LOT='NON',);
 
 
 from Utilitai.partition import *

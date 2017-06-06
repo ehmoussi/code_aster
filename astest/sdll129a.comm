@@ -22,7 +22,7 @@ from Utilitai.Table import Table
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
-              VISU_EFICAS='OUI',),
+              ),
               PAR_LOT='OUI',
               DEBUG=_F(SDVERI='OUI'),);
 

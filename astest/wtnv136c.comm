@@ -17,7 +17,7 @@
 
 # 2 processeurs
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',VISU_EFICAS='NON',))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',))
 
 import sys
 import string

@@ -22,7 +22,7 @@
 # Validation basée sur SIZZ et V7 (variables internes MFront) en testant
 # le maximum de la différence relative entre Code_Aster et MFront
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',VISU_EFICAS='NON'),DEBUG=_F(SDVERI='OUI'));
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
 import numpy as NP
 from numpy.linalg import norm

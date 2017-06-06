@@ -314,7 +314,7 @@ print "Norme de sigma calculee =",norme
 #***********************************************************************
 #***********************************************************************
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',VISU_EFICAS='NON'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
 MAILLAGE=LIRE_MAILLAGE(FORMAT="ASTER",VERI_MAIL=_F(VERIF='OUI',),
                        INFO=2,);

@@ -17,7 +17,7 @@
 # ======================================================================
 #         DES ACIERS 300 SOUS IRRADIATIONS
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET',VISU_EFICAS='NON'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET',),DEBUG=_F(SDVERI='OUI'))
 
 MAIL=LIRE_MAILLAGE(FORMAT="ASTER",);
 

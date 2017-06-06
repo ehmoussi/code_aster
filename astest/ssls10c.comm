@@ -18,7 +18,7 @@
 # MODELISATION : Q4G
 # 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',
-              VISU_EFICAS='NON',),
+              ),
               DEBUG=_F(SDVERI='OUI'))
 
 MAIL=LIRE_MAILLAGE(FORMAT='MED',);
