@@ -108,11 +108,17 @@ def check_mfront(self):
     if opts.enable_mfront == False:
         raise Errors.ConfigurationError('MFRONT disabled')
 
-    self.add_os_flags('TFELHOME')
+    # takes TFELHOME from env (wafcfg) or environment
+    if not self.env.TFELHOME:
+        self.add_os_flags('TFELHOME')
     tfelhome = Utils.to_list(self.env.TFELHOME)
     paths = self.environ.get('PATH', '').split(os.pathsep)
     if tfelhome:
         paths.insert(0, osp.join(tfelhome[0], 'bin'))
+    self.env.TFELHOME = tfelhome
+    # export TFELHOME for future checkings
+    os.environ['TFELHOME'] = tfelhome[0]
+
     self.find_program('mfront', path_list=paths)
     self.find_program('tfel-config', path_list=paths)
     tfel_config = self.env.TFEL_CONFIG[0]
