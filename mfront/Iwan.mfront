@@ -137,69 +137,18 @@ nu.setGlossaryName("PoissonRatio");
     Dt = De*Je;
 }
 
-// Elastic prediction
-@Predictor{
-	real eps=1.e-12;
-    // Initial timestep
-    if (t0==0.){
-        eel=eto;
-        for (unsigned short i=0;i<Ns;i++){
-            X[i]=Stensor(0.);
-            pp[i]=0.;
-        }
-    }
-    else{
-        deel=deto;
-        Stensor sig0 = (lambda*trace(eel+deel)*Stensor::Id()+2.*mu*(eel+deel));
-        p=trace(sig0)/3.;
-        S=sig0-p*Stensor::Id();
-        real dev=trace(deel)/3.;
-        Stensor ded=deel-dev*Stensor::Id();
-
-        for (unsigned short i=0;i<Ns;i++){
-            qe[i]=sigmaeq(S-X[i]+2.*mu*ded/dt);
-            qn[i]=sigmaeq(S-X[i]);
-            if (qn[i]<1.e-6){
-                PSI[i]=Stensor(0.);
-                dpp[i]=0.;
-            }
-            else{
-                PSI[i]=1.5*(S-X[i])/qn[i];
-                fn[i]=qn[i]-Y[i];
-                
-                if (fn[i]<0.){
-                   dpp[i]=0.;
-                }       
-                else{
-                    if(C[i+1]<eps*qn[i]){
-                        dpp[i]=dt*(qe[i]-Y[i])/(1.5*(C[i]));
-                    }
-                    else{
-                        dpp[i]=dt*(qe[i]-Y[i])/(1.5*(C[i+1]));
-                    }
-                }
-            }
-        }
-        Stensor aux=Stensor(0.);
-        for (unsigned short i=0;i<Ns;i++){
-            aux = dpp[i]*PSI[i]+aux;
-        }
-        deel=deto-aux;
-    }
-}
 
 @ComputeStress{
     sig = (lambda*trace(eel)*Stensor::Id()+2.*mu*(eel));
 } 
 
 @Integrator{
-	real eps=1.e-12;
+    real eps=1.e-12;
     p=trace(sig)/3.;
     S=sig-p*Stensor::Id();
     real dev=trace(deel)/3.;
     Stensor ded=deel-dev*Stensor::Id();
     for (unsigned short i=0;i<Ns;i++){
-        qe[i]=sigmaeq(S-X[i]+2.*mu*ded/dt);
         qn[i]=sigmaeq(S-X[i]);
         if (qn[i]<1.e-6){
             PSI[i]=Stensor(0.);
@@ -213,10 +162,10 @@ nu.setGlossaryName("PoissonRatio");
         }       
         else{
             if(C[i+1]<eps*qn[i]){
-                fpp[i]=dpp[i]-dt*(qe[i]-Y[i])/(1.5*(C[i]));
+                fpp[i]=dpp[i]-(qn[i]-Y[i])/(1.5*(C[i]));
             }
             else{
-                fpp[i]=dpp[i]-dt*(qe[i]-Y[i])/(1.5*(C[i+1]));
+                fpp[i]=dpp[i]-(qn[i]-Y[i])/(1.5*(C[i+1]));
             }
         }
     }
