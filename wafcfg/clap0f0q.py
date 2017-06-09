@@ -17,9 +17,6 @@ def configure(self):
     opts = self.options
 
     self.env['ADDMEM'] = 300
-    self.env.append_value('OPT_ENV', [
-        '. ' + ASTER_ROOT + '/etc/codeaster/profile.sh',
-        '. ' + ASTER_ROOT + '/etc/codeaster/profile_gcc47.sh'])
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'
     self.env.TFELHOME = TFELHOME
