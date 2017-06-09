@@ -237,11 +237,10 @@ class MESSAGE_LOGGER(Singleton):
             # Utmess)
             if catamess != 'catamess':
                 code = 'A'
+                self.print_message(code, 'CATAMESS_57', valk=(catamess, str(msg)))
                 if in_testcase():
                     raise ImportError(
                         _(u"Fichier de messages non trouvé: {0}").format(str(msg)))
-                self.print_message(code, 'CATAMESS_57',
-                                   valk=(catamess, str(msg)))
             cata_msg = {}
 
         # corps du message
