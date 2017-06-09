@@ -47,6 +47,7 @@ implicit none
 #include "asterfort/tlambc.h"
 #include "asterfort/tpermh.h"
 #include "asterfort/utmess.h"
+#include "asterfort/thmEvalSatuInit.h"
     integer :: imate, retcom, ndim
     integer :: aniso1, aniso2, aniso3, aniso4
     real(kind=8) :: t, p1, p2, phi, pvp
@@ -76,21 +77,21 @@ implicit none
     integer :: dimpar
     integer :: dim36, dim37, dim38, dim40, dim41, dim42, dim43, dim39
     parameter   ( dimsat =  2 )
-    parameter   ( dim2   =  3 )
+    parameter   ( dim2   =  2 )
     parameter   ( dim3   =  4 )
-    parameter   ( dim4   =  4 )
+    parameter   ( dim4   =  3 )
     parameter   ( dim5   =  2 )
-    parameter   ( dim6   =  5 )
+    parameter   ( dim6   =  3 )
     parameter   ( dim7   =  4 )
     parameter   ( dim8   =  2 )
-    parameter   ( dim9   =  6 )
+    parameter   ( dim9   =  3 )
     parameter   ( dim10  =  4 )
     parameter   ( dim11  =  2 )
     parameter   ( dim12  =  2 )
-    parameter   ( dim13  =  6 )
+    parameter   ( dim13  =  3 )
     parameter   ( dim14  =  4 )
     parameter   ( dim15  =  2 )
-    parameter   ( dim16  =  5 )
+    parameter   ( dim16  =  2 )
     parameter   ( dim17  =  4 )
     parameter   ( dim18  = 22 )
     parameter   ( dim19  =  4 )
@@ -109,7 +110,7 @@ implicit none
     parameter   ( dim32  = 28 )
     parameter   ( dim33  =  4 )
 !
-    parameter   ( dim35  =  6 )
+    parameter   ( dim35  =  3 )
     parameter   ( dim36  =  4 )
     parameter   ( dim37  =  2 )
     parameter   ( dim38  =  2 )
@@ -128,7 +129,7 @@ implicit none
 !
     real(kind=8) :: val2(dim2), val3(dim3), val4(dim4)
     real(kind=8) :: val5(dim5), val6(dim6), val7(dim7), val8(dim8)
-    real(kind=8) :: val9(dim9+1), val10(dim10), val11(dim11), rbid1
+    real(kind=8) :: val9(dim9+1), val10(dim10), val11(dim11)
     real(kind=8) :: val12(dim12), val13(dim13+1), val14(dim14)
     real(kind=8) :: val15(dim15), val16(dim16+1), val17(dim17)
     real(kind=8) :: val18(dim18), val19(dim19), val20(dim20)
@@ -167,8 +168,7 @@ implicit none
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_SATU -----
 ! =====================================================================
     data ncra2  / 'RHO'      ,&
-     &              'CP'    ,&
-     &              'EMMAG' /
+     &              'CP'    /
     data ncra3  / 'RHO'      ,&
      &              'UN_SUR_K' ,&
      &              'ALPHA'    ,&
@@ -178,8 +178,7 @@ implicit none
 ! =====================================================================
     data ncra4  / 'R_GAZ'    ,&
      &              'RHO'      ,&
-     &              'CP' ,&
-     &              'EMMAG'   /
+     &              'CP' /
     data ncra5  / 'MASS_MOL' ,&
      &              'CP'       /
 ! =====================================================================
@@ -187,9 +186,7 @@ implicit none
 ! =====================================================================
     data ncra6  / 'R_GAZ'    ,&
      &              'RHO'      ,&
-     &              'CP'       ,&
-     &              'SATU_PRES' ,&
-     &              'EMMAG'  /
+     &              'CP'       /
     data ncra7  / 'RHO'      ,&
      &              'UN_SUR_K' ,&
      &              'ALPHA'    ,&
@@ -201,10 +198,7 @@ implicit none
 ! =====================================================================
     data ncra9  / 'R_GAZ'    ,&
      &              'RHO'      ,&        
-     &              'CP'       ,&
-     &              'SATU_PRES' ,&
-     &              'D_SATU_PRES' ,&
-     &              'EMMAG'    /
+     &              'CP'       /
     data ncra10 / 'RHO'      ,&
      &              'UN_SUR_K' ,&
      &              'ALPHA'    ,&
@@ -218,10 +212,7 @@ implicit none
 ! =====================================================================
     data ncra13 / 'R_GAZ'    ,&
      &              'RHO'      ,&
-     &              'CP'       ,&
-     &              'SATU_PRES' ,&
-     &              'D_SATU_PRES' ,&
-     &              'EMMAG' /
+     &              'CP'       /
     data ncra14 / 'RHO'      ,&
      &              'UN_SUR_K' ,&
      &              'ALPHA'    ,&
@@ -232,10 +223,7 @@ implicit none
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_GAZ_ATM --
 ! =====================================================================
     data ncra16 / 'RHO'      ,&
-     &              'CP'       ,&
-     &              'SATU_PRES' ,&
-     &              'D_SATU_PRES' ,&
-     &              'EMMAG' /
+     &              'CP'       /
     data ncra17 / 'RHO'      ,&
      &              'UN_SUR_K' ,&
      &              'ALPHA'    ,&
@@ -451,10 +439,7 @@ implicit none
 ! =====================================================================
     data ncra35  / 'R_GAZ'    ,&
      &              'RHO'      ,&
-     &              'CP'       ,&
-     &              'SATU_PRES' ,&
-     &              'D_SATU_PRES' ,&
-     &              'EMMAG' /
+     &              'CP'       /
     data ncra36 / 'RHO'      ,&
      &              'UN_SUR_K' ,&
      &              'ALPHA'    ,&
@@ -511,10 +496,7 @@ implicit none
 ! =====================================================================
     data crad35  / 'R_GAZ'    ,&
      &               'RHO'      ,&     
-     &               'CP'       ,&
-     &               'SATU_PRES' ,&
-     &               'D_SATU_PRES' ,&
-     &               'EMMAG' /
+     &               'CP'       /
     data crad36 / 'RHO'      ,&
      &               'UN_SUR_K' ,&
      &               'ALPHA'    ,&
@@ -618,13 +600,11 @@ implicit none
                             [t], 2, ncra3(3), val3(3), icodre,&
                             1)
             endif
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 1, ncra2(3), val2(3), icodre,&
-                        0,nan='NON')
+            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
+                                 satm  , satur, dsatur, em,&
+                                 retcom)
             rhod = val2(1)
             cpd = val2(2)
-            em = val2(3)
-            satur = 1.0d0
             rhol = val3(1)
             unsurk = val3(2)
             alpha = val3(3)
@@ -655,14 +635,12 @@ implicit none
                             [t], 1, ncra5(2), val5(2), icodre,&
                             1)
             endif
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 1, ncra4(3), val4(3), icodre,&
-                        0,nan='NON')
+            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
+                                 satm  , satur, dsatur, em,&
+                                 retcom)
             rgaz = val4(1)
             rhod = val4(2)
             cpd = val4(2)
-            em = val4(3)
-            satur = 1.0d0
             mamolg = val5(1)
             cpg = val5(2)
 !
@@ -697,21 +675,12 @@ implicit none
                             [t], 2, ncra7(3), val7(3), icodre,&
                             1)
             endif
-            if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call satuvg(p1m, val6(4), rbid1)
-            elseif (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1m], 1, ncra6(4), val6(4), icodre,&
-                            1)
-            endif
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 1, ncra6(5), val6(5), icodre,&
-                        0,nan='NON')
+            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
+                                 satm  , satur, dsatur, em,&
+                                 retcom)
             rgaz = val6(1)
             rhod = val6(2)
             cpd = val6(3)
-            satm = val6(4)
-            em = val6(5)
             rhol = val7(1)
             unsurk = val7(2)
             alpha = val7(3)
@@ -764,33 +733,12 @@ implicit none
                             [t], 1, ncra11(2), val11(2), icodre,&
                             1)
             endif
-            if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                satm  = 0.d0
-                satur = 0.d0
-                call satuvg( p1m, satm, rbid1)
-                call satuvg( p1, satur, dsatur)
-!
-            else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
-! SATU_PRES
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1m], 1, ncra9(4), val9(4), icodre,&
-                            1)
-                satm = val9(4)
-! SATU_PRES / D_SATU_PRES
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1], 2, ncra9(4), val9(4), icodre,&
-                            1)
-                satur = val9(4)
-                dsatur = val9(5)
-            endif
-! EMMAG
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 1, ncra9(6), val9(6), icodre,&
-                        0,nan='NON')
+            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
+                                 satm  , satur, dsatur, em,&
+                                 retcom)
             rgaz = val9(1)
             rhod = val9(2)
             cpd = val9(3)
-            em = val9(6)
             rhol = val10(1)
             unsurk = val10(2)
             alpha = val10(3)
@@ -856,38 +804,18 @@ implicit none
                             [t], 1, ncra37(2), val37(2), icodre,&
                             1)
             endif
-            if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                satm  = 0.d0
-                satur = 0.d0
-                call satuvg( p1m, satm, rbid1)
-                call satuvg( p1, satur, dsatur)
-            else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
-! SATU_PRES
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1m], 1, ncra35(4), val35(4), icodre,&
-                            1)
-                satm = val35(4)
-! SATU_PRES / D_SATU_PRES
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1], 2, ncra35(4), val35(4), icodre,&
-                            1)
-                satur = val35(4)
-                dsatur = val35(5)
-            endif
+            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
+                                 satm  , satur, dsatur, em,&
+                                 retcom)
             call rcvala(imate, ' ', 'THM_AIR_DISS', 0, ' ',&
                         [0.d0], 1, ncra39(1), val39(1), icodre,&
                         1)
             call rcvala(imate, ' ', 'THM_AIR_DISS', 1, 'TEMP',&
                         [t], 1, ncra39(2), val39(2), icodre,&
                         1)
-! EMMAG
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 1, ncra35(6), val35(6), icodre,&
-                        0,nan='NON')
             rgaz = val35(1)
             rhod = val35(2)
             cpd = val35(3)
-            em = val35(6)
             rhol = val36(1)
             unsurk = val36(2)
             alpha = val36(3)
@@ -948,37 +876,18 @@ implicit none
                             [t], 1, crad37(2), val37(2), icodre,&
                             1)
             endif
-            if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                satm  = 0.d0
-                satur = 0.d0
-                call satuvg( p1m, satm, rbid1)
-                call satuvg( p1, satur, dsatur)
-            else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
-! - SATU_PRES
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1m], 1, crad35(4), val35(4), icodre,&
-                            1)
-                satm = val35(4)
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1], 2, crad35(4), val35(4), icodre,&
-                            1)
-                satur = val35(4)
-                dsatur = val35(5)
-
-            endif
+            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
+                                 satm  , satur, dsatur, em,&
+                                 retcom)
             call rcvala(imate, ' ', 'THM_AIR_DISS', 0, ' ',&
                         [0.d0], 1, crad39(1), val39(1), icodre,&
                         1)
             call rcvala(imate, ' ', 'THM_AIR_DISS', 1, 'TEMP',&
                         [t], 1, crad39(2), val39(2), icodre,&
                         1)
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 1, crad35(6), val35(6), icodre,&
-                        0,nan='NON')
             rgaz = val35(1)
             rhod = val35(2)
             cpd = val35(3)
-            em = val35(6)
             rhol = val36(1)
             unsurk = val36(2)
             alpha = val36(3)
@@ -1032,29 +941,12 @@ implicit none
                             [t], 1, ncra15(2), val15(2), icodre,&
                             1)
             endif
-            if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                satm  = 0.d0
-                satur = 0.d0
-                call satuvg( p1m, satm, rbid1)
-                call satuvg( p1, satur, dsatur)
-            elseif (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1m], 1, ncra13(4), val13(4), icodre,&
-                            1)
-                satm = val13(4)
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1], 2, ncra13(4), val13(4), icodre,&
-                            1)
-                satur = val13(4)
-                dsatur = val13(5)
-            endif
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 1, ncra13(6), val13(6), icodre,&
-                        0,nan='NON')
+            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
+                                 satm  , satur, dsatur, em,&
+                                 retcom)
             rgaz = val13(1)
             rhod = val13(2)
             cpd = val13(3)
-            em = val13(6)
             rhol = val14(1)
             unsurk = val14(2)
             alpha = val14(3)
@@ -1097,23 +989,11 @@ implicit none
                             [t], 2, ncra17(3), val17(3), icodre,&
                             1)
             endif
-            if (hydr .eq. 'HYDR_UTIL' .or. hydr .eq. 'HYDR_ENDO') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1m], 1, ncra16(3), val16(3), icodre,&
-                            1)
-                satm = val16(3)
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1], 2, ncra16(3), val16(3), icodre,&
-                            1)
-                satur = val16(3)
-                dsatur = val16(4)
-            endif
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 1, ncra16(5), val16(5), icodre,&
-                        0,nan='NON')
+            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
+                                 satm  , satur, dsatur, em,&
+                                 retcom)
             rhod = val16(1)
             cpd = val16(2)
-            em = val16(5)
             rhol = val17(1)
             unsurk = val17(2)
             alpha = val17(3)
