@@ -48,6 +48,7 @@ implicit none
 #include "asterfort/tpermh.h"
 #include "asterfort/utmess.h"
 #include "asterfort/thmEvalSatuInit.h"
+#include "asterfort/thmEvalSatuMiddle.h"
     integer :: imate, retcom, ndim
     integer :: aniso1, aniso2, aniso3, aniso4
     real(kind=8) :: t, p1, p2, phi, pvp
@@ -68,7 +69,7 @@ implicit none
 ! =====================================================================
 ! --- VARIABLES LOCALES -----------------------------------------------
 ! =====================================================================
-    integer :: ii, dimsat
+    integer :: ii
     integer :: dim2, dim3, dim4, dim5, dim6, dim7, dim8
     integer :: dim9, dim10, dim11, dim12, dim13, dim14, dim15
     integer :: dim16, dim17, dim18, dim19, dim20, dim21, dim22
@@ -76,7 +77,6 @@ implicit none
     integer :: dim30, dim31, dim32, dim33, dim35
     integer :: dimpar
     integer :: dim36, dim37, dim38, dim40, dim41, dim42, dim43, dim39
-    parameter   ( dimsat =  2 )
     parameter   ( dim2   =  2 )
     parameter   ( dim3   =  4 )
     parameter   ( dim4   =  3 )
@@ -137,7 +137,7 @@ implicit none
     real(kind=8) :: val24(dim24), val25(dim25), val26(dim26)
     real(kind=8) :: val27(dim27), val28(dim28), val29(dim29)
     real(kind=8) :: val30(dim30), val31(dim31), val32(dim32)
-    real(kind=8) :: val33(dim33), valsat(dimsat)
+    real(kind=8) :: val33(dim33)
     real(kind=8) :: val35(dim35+1), val36(dim36), val37(dim37), val38(dim38)
     real(kind=8) :: val40(dim40), val41(dim41), val42(dim42), val43(dim43)
     real(kind=8) :: val39(dim39), valpar(dimpar)
@@ -163,7 +163,6 @@ implicit none
     character(len=16) :: crad35(dim35), crad36(dim36), crad37(dim37)
     character(len=16) :: crad39(dim39), crad40(dim40)
     character(len=16) :: crad41(dim41), crad42(dim42)
-    character(len=16) :: nsat(dimsat)
 ! =====================================================================
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_SATU -----
 ! =====================================================================
@@ -546,11 +545,6 @@ implicit none
     data crad42 / 'MASS_MOL' ,&
      &              'VISC'     ,&
      &              'D_VISC_TEMP' /
-! =====================================================================
-! --- DEFINITION SATURATION -------------------------------------------
-! =====================================================================
-    data nsat   / 'SATU_PRES' ,&
-     &              'D_SATU_PRES' /
 ! =====================================================================
 ! --- CAS DE L'INITIALISATION -----------------------------------------
 ! =====================================================================
@@ -1009,17 +1003,9 @@ implicit none
 !
         endif
     else if (etape.eq.'SATURATI') then
-        if (hydr .eq. 'HYDR_UTIL' .or. hydr .eq. 'HYDR_ENDO') then
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                        [p1], dimsat, nsat, valsat, icodre,&
-                        1)
-            satur = valsat(1)
-            dsatur = valsat(2)
-        else
-            call utmess('F', 'ALGORITH16_95')
-        endif
-        if (satur .gt. un .or. satur .lt. zero) then
-            retcom = 2
+        call thmEvalSatuMiddle(hydr , imate , p1    ,&
+                               satur, dsatur, retcom)
+        if (retcom .eq. 2) then
             goto 500
         endif
     else if (etape.eq.'FINALE') then
