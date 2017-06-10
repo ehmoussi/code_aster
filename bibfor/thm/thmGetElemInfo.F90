@@ -41,5 +41,17 @@ implicit none
     ds_thm%ds_elem%l_dof_meca  = lteatt('MECA','OUI')
     ds_thm%ds_elem%l_dof_hydr1 = .not. lteatt('HYDR1','0')
     ds_thm%ds_elem%l_dof_hydr2 = .not. lteatt('HYDR2','0')
+    if (lteatt('HYDR1','1')) then
+       ds_thm%ds_elem%nb_phase(1) = 1
+    endif
+    if (lteatt('HYDR1','2')) then
+       ds_thm%ds_elem%nb_phase(1) = 2
+    endif
+    if (lteatt('HYDR2','1')) then
+       ds_thm%ds_elem%nb_phase(2) = 1
+    endif
+    if (lteatt('HYDR2','2')) then
+       ds_thm%ds_elem%nb_phase(2) = 2
+    endif
 !
 end subroutine

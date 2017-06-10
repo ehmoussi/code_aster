@@ -50,24 +50,25 @@ contains
 !
 subroutine thmModuleInit()
 !
-   ds_thm%ds_parainit%temp_init = 0.d0
-   ds_thm%ds_parainit%pre1_init = 0.d0
-   ds_thm%ds_parainit%pre2_init = 0.d0
-   ds_thm%ds_parainit%poro_init = 0.d0
-   ds_thm%ds_parainit%prev_init = 0.d0
+    ds_thm%ds_parainit%temp_init = 0.d0
+    ds_thm%ds_parainit%pre1_init = 0.d0
+    ds_thm%ds_parainit%pre2_init = 0.d0
+    ds_thm%ds_parainit%poro_init = 0.d0
+    ds_thm%ds_parainit%prev_init = 0.d0
 ! Behaviour
-    ds_thm%ds_behaviour%rela_thmc  = ' '
-    ds_thm%ds_behaviour%rela_meca  = ' '
-    ds_thm%ds_behaviour%rela_ther  = ' '
-    ds_thm%ds_behaviour%rela_hydr  = ' '
+    ds_thm%ds_behaviour%rela_thmc     = ' '
+    ds_thm%ds_behaviour%rela_meca     = ' '
+    ds_thm%ds_behaviour%rela_ther     = ' '
+    ds_thm%ds_behaviour%rela_hydr     = ' '
     ds_thm%ds_behaviour%l_temp        = .false.
     ds_thm%ds_behaviour%nb_pres       = 0
     ds_thm%ds_behaviour%nb_phase(1:2) = 0
 !  Type of FE: which dof on element ?
-   ds_thm%ds_elem%l_dof_ther     = .false.
-   ds_thm%ds_elem%l_dof_meca     = .false.
-   ds_thm%ds_elem%l_dof_hydr1    = .false.
-   ds_thm%ds_elem%l_dof_hydr2    = .false.
+    ds_thm%ds_elem%l_dof_ther     = .false.
+    ds_thm%ds_elem%l_dof_meca     = .false.
+    ds_thm%ds_elem%l_dof_hydr1    = .false.
+    ds_thm%ds_elem%l_dof_hydr2    = .false.
+    ds_thm%ds_elem%nb_phase(1:2)  = 0
 
 end subroutine
 !
