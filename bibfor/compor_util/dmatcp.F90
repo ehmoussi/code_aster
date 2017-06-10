@@ -23,6 +23,7 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/get_elas_para.h"
+#include "asterfort/get_elas_id.h"
 #include "asterfort/matrHookePlaneStress.h"
 !
 !
@@ -54,18 +55,23 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: elas_type
+    integer :: elas_id
     real(kind=8) :: nu, nu12, nu13, nu23
     real(kind=8) :: e1, e2, e3, e
     real(kind=8) :: g1, g2, g3, g
+    character(len=16) :: elas_keyword
 !
 ! --------------------------------------------------------------------------------------------------
 !
 !
+! - Get type of elasticity (Isotropic/Orthotropic/Transverse isotropic)
+!
+    call get_elas_id(mater, elas_id, elas_keyword)
+!
 ! - Get elastic parameters
 !
     call get_elas_para(fami, mater    , poum, ipg, ispg, &
-                       elas_type,&
+                       elas_id  , elas_keyword,&
                        time = time,&
                        e = e      , nu = nu    , g = g,&
                        e1 = e1    , e2 = e2    , e3 = e3,& 
@@ -74,7 +80,7 @@ implicit none
 !
 ! - Compute Hooke matrix
 !
-    call matrHookePlaneStress(elas_type, repere,&
+    call matrHookePlaneStress(elas_id, repere,&
                               e , nu,&
                               e1, e2, nu12, g1,&
                               d)
