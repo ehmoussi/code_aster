@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lc2006(fami, kpg, ksp, ndim, imate,&
+subroutine lc2036(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, neps,&
                   epsm, deps, nsig, sigm, vim,&
                   option, angmas, sigp, vip,&

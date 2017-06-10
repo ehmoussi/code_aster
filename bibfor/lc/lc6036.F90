@@ -15,19 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lc5006(fami, kpg, ksp, ndim, imate,&
+! aslint: disable=W1504,W0104
+!
+subroutine lc6036(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, neps,&
                   epsm, deps, nsig, sigm, vim,&
-                  option, angmas, sigp, vip, nwkin,&
-                  wkin, typmod, icomp, nvi, ndsde,&
-                  dsidep, nwkout, wkout, codret)
+                  option, angmas, sigp, vip, &
+                  typmod, icomp, nvi, ndsde,&
+                  dsidep, codret)
 !
 implicit none
 !
-#include "asterfort/lcdsbe.h"
-!
-! aslint: disable=W1504,W0104
+#include "asterfort/lceigv.h"
 !
     character(len=*), intent(in) :: fami
     integer, intent(in) :: kpg
@@ -38,38 +37,34 @@ implicit none
     real(kind=8), intent(in) :: carcri(*)
     real(kind=8), intent(in) :: instam
     real(kind=8), intent(in) :: instap
-    integer, intent(in) :: neps
     real(kind=8), intent(in) :: epsm(*)
     real(kind=8), intent(in) :: deps(*)
-    integer, intent(in) :: nsig
     real(kind=8), intent(in) :: sigm(*)
     real(kind=8), intent(in) :: vim(*)
     character(len=16), intent(in) :: option
     real(kind=8), intent(in) :: angmas(*)
     real(kind=8), intent(out) :: sigp(*)
     real(kind=8), intent(out) :: vip(*)
-    integer, intent(in) :: nwkin
-    real(kind=8), intent(in) :: wkin(nwkin)
     character(len=8), intent(in) :: typmod(*)
-    integer, intent(in) :: nwkout
-    real(kind=8), intent(out) :: wkout(nwkout)
     integer, intent(in) :: icomp
     integer, intent(in) :: nvi
-    integer, intent(in) :: ndsde
     real(kind=8), intent(out) :: dsidep(*)
     integer, intent(out) :: codret
+    integer, intent(in) :: neps
+    integer, intent(in) :: nsig
+    integer, intent(in) :: ndsde
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Behaviour - Special GRADEPSI
+! Behaviour - Special GRADVARI
 !
 ! ENDO_ISOT_BETON
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    codret = 0
-    call lcdsbe(fami, ndim, typmod, imate, compor,&
-                epsm, deps, vim, option, sigp,&
-                vip, dsidep, wkout)
+    codret   = 0
+    call lceigv(fami, kpg, ksp, neps, imate,&
+                compor, epsm, deps, vim, option,&
+                sigp, vip, dsidep)
 !
 end subroutine
