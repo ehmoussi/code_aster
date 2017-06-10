@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine cgfint(ndim, nno1, nno2, npg, wref,&
                   vff1, vff2, dffr1, geom, tang,&
                   typmod, option, mat, compor, lgpg,&
@@ -23,8 +24,10 @@ subroutine cgfint(ndim, nno1, nno2, npg, wref,&
                   iu, iuc, im, a, sigm,&
                   vim, sigp, vip, matr, vect,&
                   codret)
-! aslint: disable=W1504
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterc/r8nnem.h"
@@ -107,18 +110,18 @@ subroutine cgfint(ndim, nno1, nno2, npg, wref,&
     nddl = nno1*(ndim+1) + nno2
 !
 !
-    ASSERT(compor(1).eq.'KIT_CG')
-    cmp2(1:16)=compor(8)
-    cmp1(1:16)=compor(9)
+    ASSERT(compor(NAME).eq.'KIT_CG')
+    cmp2(1:16)=compor(CABLE_NAME)
+    cmp1(1:16)=compor(SHEATH_NAME)
     do i = 1, 7
         compoz(i)=compor(i)
     end do
     compoz(1)=cmp1
-    write (compoz(6),'(I16)') 152
+    write (compoz(NUME),'(I16)') 152
     do g = 1, npg
         cod(g)=0
     end do
-    read (compor(2),'(I16)') nbvi
+    read (compor(NVAR),'(I16)') nbvi
     nbvifr = 2
     nbvica = nbvi - nbvifr
 !
@@ -146,20 +149,20 @@ subroutine cgfint(ndim, nno1, nno2, npg, wref,&
         epsm = 0.d0
         deps = 0.d0
         mu=0.d0
-        do 161 n = 1, nno1
-            do 160 j = 1, ndim
+        do n = 1, nno1
+            do j = 1, ndim
                 epsm = epsm + b(j,n)*ddlm(iu(j,n))
                 deps = deps + b(j,n)*ddld(iu(j,n))
-160         continue
+            end do
             gliss = gliss + l(n)*(ddlm(iuc(n))+ddld(iuc(n)))
             epsm = epsm + b(ndim+1,n)*ddlm(iuc(n))
             deps = deps + b(ndim+1,n)*ddld(iuc(n))
-161     continue
+        end do
 !
         mu = 0.d0
-        do 180 n = 1, nno2
+        do n = 1, nno2
             mu = mu + vff2(n,g)*(ddlm(im(n))+ddld(im(n)))
-180     continue
+        end do
 !
 !
 !      LOI DE COMPORTEMENT DU CABLE
@@ -220,7 +223,7 @@ subroutine cgfint(ndim, nno1, nno2, npg, wref,&
                     vim(nbvica+1, g), option, [0.d0], 2, wkin,&
                     de, vip(nbvica+1, g), 36, dde, 1,&
                     wkout, cod(g))
-        if (cod(g) .eq. 1) goto 9000
+        if (cod(g) .eq. 1) goto 999
 !
 !      FORCE INTERIEURE ET CONTRAINTES DE CAUCHY
 !
@@ -233,23 +236,23 @@ subroutine cgfint(ndim, nno1, nno2, npg, wref,&
             sigp( 3,g) = gliss-de(1)
 !
 !        VECTEUR FINT:U ET UC
-            do 300 n = 1, nno1
-                do 301 i = 1, ndim
+            do n = 1, nno1
+                do i = 1, ndim
                     kk = iu(i,n)
                     t1 = b(i,n)*sigp(1,g)
                     vect(kk) = vect(kk) + wg*t1
-301             continue
+                end do
                 kk=iuc(n)
                 t1=b(4,n)*sigp(1,g)+l(n)*sigp(2,g)
                 vect(kk)=vect(kk)+wg*t1
-300         continue
+            end do
 !
 !        VECTEUR FINT:M
-            do 350 n = 1, nno2
+            do n = 1, nno2
                 kk = im(n)
                 t1 = vff2(n,g)*sigp(3,g)
                 vect(kk) = vect(kk) + wg*t1
-350         continue
+            end do
 !
 !
         endif
@@ -262,63 +265,63 @@ subroutine cgfint(ndim, nno1, nno2, npg, wref,&
 !        MATRICE K:U(I,N),U(J,M)
             ddedt=dde(1)
             ddedn=a*dde(2)
-            do 500 n = 1, nno1
-                do 501 i = 1, ndim
-                    do 510 m = 1, nno1
-                        do 511 j = 1, ndim
+            do n = 1, nno1
+                do i = 1, ndim
+                    do m = 1, nno1
+                        do j = 1, ndim
                             kk=(iu(i,n)-1)*nddl+iu(j,m)
                             t1 = b(i,n)*b(j,m)*dsidep*a
                             matr(kk) = matr(kk) + wg*t1
-511                     continue
-510                 continue
-501             continue
-500         continue
+                        end do
+                    end do
+                end do
+            end do
 !
 !        MATRICE K:U(I,N),UC(M)
-            do 520 n = 1, nno1
-                do 521 i = 1, ndim
-                    do 522 m = 1, nno1
+            do n = 1, nno1
+                do i = 1, ndim
+                    do m = 1, nno1
                         t1= b(i,n)*b(4,m)*dsidep*a
                         kk=(iu(i,n)-1)*nddl+iuc(m)
                         matr(kk)=matr(kk)+wg*t1
                         t1=t1-r*l(m)*ddedn*dsidep*b(i,n)
                         kk=(iuc(m)-1)*nddl+iu(i,n)
                         matr(kk)=matr(kk)+wg*t1
-522                 continue
-521             continue
-520         continue
+                    end do
+                end do
+            end do
 !
 !
 !        MATRICES K:UC(N),UC(M)
-            do 620 n = 1, nno1
-                do 621 m = 1, nno1
+            do n = 1, nno1
+                do m = 1, nno1
                     t1=b(4,n)*b(4,m)*dsidep*a+r*l(n)*l(m)*(1.d0-r*&
                     ddedt) -r*l(n)*ddedn*dsidep*b(4,m)
                     kk=(iuc(n)-1)*nddl+iuc(m)
                     matr(kk) = matr(kk) + wg*t1
-621             continue
-620         continue
+                end do
+            end do
 !
 !        MATRICE K:UC(N),MU(M)
-            do 640 n = 1, nno1
-                do 642 m = 1, nno2
+            do n = 1, nno1
+                do m = 1, nno2
                     t1=l(n)*vff2(m,g)*(1.d0-r*ddedt)
                     kk=(iuc(n)-1)*nddl+im(m)
                     matr(kk)=matr(kk)+wg*t1
                     t1=t1-vff2(m,g)*ddedn*dsidep*b(4,n)
                     kk=(im(m)-1)*nddl+iuc(n)
                     matr(kk)=matr(kk)+wg*t1
-642             continue
-640         continue
+                end do
+            end do
 !
 !        MATRICES K:MU(N),MU(M)
-            do 700 n = 1, nno2
-                do 710 m = 1, nno2
+            do n = 1, nno2
+                do m = 1, nno2
                     t1 = - vff2(n,g)*ddedt*vff2(m,g)
                     kk=(im(n)-1)*nddl+im(m)
                     matr(kk) = matr(kk) + wg*t1
-710             continue
-700         continue
+                end do
+            end do
 !
 !        MATRICE K:U(N),MU(M)
             do n = 1, nno1
@@ -337,7 +340,7 @@ subroutine cgfint(ndim, nno1, nno2, npg, wref,&
 !
 ! - SYNTHESE DES CODES RETOUR
 !
-9000 continue
+999 continue
     call codere(cod, npg, codret)
 !
 end subroutine
