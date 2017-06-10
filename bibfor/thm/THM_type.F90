@@ -45,6 +45,8 @@ implicit none
         aster_logical :: l_dof_hydr2
 ! ----- Type of FE: element where dof PRE1 and PRE2 exist
         aster_logical :: l_dof_hydr
+! ----- Type of FE: number of phasis for each fluid
+        integer :: nb_phase(2)
     end type THM_Element
 
 ! - Behaviour

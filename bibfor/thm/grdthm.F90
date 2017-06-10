@@ -19,12 +19,13 @@
 subroutine grdthm(perman, vf, ndim,&
                   mecani, press1, press2, tempe)
 !
+use THM_module
+!
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
-#include "asterfort/lteatt.h"
 !
 !
     aster_logical, intent(in) :: perman
@@ -106,28 +107,20 @@ implicit none
 !
 ! - Main parameters: mechanic, thermic, hydraulic
 !
-    if (lteatt('MECA','OUI')) then
+    if (ds_thm%ds_elem%l_dof_meca) then
         mecani(1) = 1 
     endif
-    if (lteatt('THER','OUI')) then
+    if (ds_thm%ds_elem%l_dof_ther) then
         tempe(1)  = 1 
     endif
-    if (lteatt('HYDR1','1')) then
+    if (ds_thm%ds_elem%l_dof_hydr1) then
         press1(1) = 1
-        press1(2) = 1 
     endif
-    if (lteatt('HYDR2','1')) then
+    if (ds_thm%ds_elem%l_dof_hydr2) then
         press2(1) = 1
-        press2(2) = 1 
     endif
-    if (lteatt('HYDR1','2')) then
-        press1(1) = 1
-        press1(2) = 2 
-    endif
-    if (lteatt('HYDR2','2')) then
-        press2(1) = 1
-        press2(2) = 2 
-    endif
+    press1(2) = ds_thm%ds_elem%nb_phase(1)
+    press2(2) = ds_thm%ds_elem%nb_phase(2)
 !
 ! - Number of (generalized) stress/strain components - Mechanic
 !
