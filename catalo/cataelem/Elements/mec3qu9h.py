@@ -48,12 +48,6 @@ CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
           'INTLOC','PERTURB','TOLDEBO','ITEDEBO','TSSEUIL',
           'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',))
 
-
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',
-          'NUME_LC',))
-
-
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO', diff=True,
     components=(
     ('EN1',('DX','DY','DZ','DRX','DRY',
@@ -373,7 +367,7 @@ class TemplateElement(Element):
         ),
 
         OP.EFGE_ELNO(te=185,
-            para_in=((SP.PCACOQU, CCACOQU), (OP.EFGE_ELNO.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACOQU, CCACOQU), (OP.EFGE_ELNO.PCOMPOR, LC.CCOMPOR),
                      (OP.EFGE_ELNO.PCONTRR, ECONTPG), (SP.PDEPLAR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.EFGE_ELNO.PNBSP_I, ENBSP_I), (SP.PNONLIN, LC.ENONLIN),
@@ -426,7 +420,7 @@ class TemplateElement(Element):
         ),
 
         OP.FORC_NODA(te=416,
-            para_in=((SP.PCACOQU, CCACOQU), (OP.FORC_NODA.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACOQU, CCACOQU), (OP.FORC_NODA.PCOMPOR, LC.CCOMPOR),
                      (OP.FORC_NODA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.FORC_NODA.PNBSP_I, ENBSP_I), (OP.FORC_NODA.PVARCPR, LC.ZVARCPG),
@@ -436,7 +430,7 @@ class TemplateElement(Element):
 
         OP.FULL_MECA(te=414,
             para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
-                     (OP.FULL_MECA.PCOMPOR, CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
+                     (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDDEPLA, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -451,7 +445,7 @@ class TemplateElement(Element):
         ),
 
         OP.FULL_MECA_ELAS(te=414,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.FULL_MECA_ELAS.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCARCRI, CCARCRI), (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA_ELAS.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -477,7 +471,7 @@ class TemplateElement(Element):
         ),
 
         OP.MASS_MECA(te=406,
-            para_in=((SP.PCACOQU, CCACOQU), (OP.MASS_MECA.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACOQU, CCACOQU), (OP.MASS_MECA.PCOMPOR, LC.CCOMPOR),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.MASS_MECA.PVARCPR, LC.ZVARCPG), ),
             para_out=((SP.PMATUUR, MMATUUR), ),
@@ -516,7 +510,7 @@ class TemplateElement(Element):
 
         OP.RAPH_MECA(te=414,
             para_in=((OP.RAPH_MECA.PCACO3D, CCACO3D), (SP.PCACOQU, CCACOQU),
-                     (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, CCOMPOR),
+                     (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.RAPH_MECA.PCONTMR, ECONTPG), (SP.PDDEPLA, DDL_MECA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -531,7 +525,7 @@ class TemplateElement(Element):
         ),
 
         OP.REFE_FORC_NODA(te=416,
-            para_in=((SP.PCACOQU, CCACOQU), (OP.REFE_FORC_NODA.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACOQU, CCACOQU), (OP.REFE_FORC_NODA.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLMR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.REFE_FORC_NODA.PNBSP_I, ENBSP_I),
                      (SP.PREFCO, EREFCO), ),
@@ -580,7 +574,7 @@ class TemplateElement(Element):
 
         OP.RIGI_MECA_ELAS(te=414,
             para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
-                     (OP.RIGI_MECA_ELAS.PCOMPOR, CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),
+                     (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
                      (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
@@ -635,7 +629,7 @@ class TemplateElement(Element):
 
         OP.RIGI_MECA_TANG(te=414,
             para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
-                     (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
+                     (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDDEPLA, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -658,7 +652,7 @@ class TemplateElement(Element):
         ),
 
         OP.SIEF_ELNO(te=40,
-            para_in=((SP.PCACOQU, CCACOQU), (OP.SIEF_ELNO.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACOQU, CCACOQU), (OP.SIEF_ELNO.PCOMPOR, LC.CCOMPOR),
                      (OP.SIEF_ELNO.PCONTRR, ECONTPG), (SP.PDEPPLU, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (OP.SIEF_ELNO.PNBSP_I, ENBSP_I),
                      (OP.SIEF_ELNO.PVARCPR, LC.ZVARCPG), ),
@@ -683,7 +677,7 @@ class TemplateElement(Element):
         ),
 
         OP.SIGM_ELNO(te=40,
-            para_in=((SP.PCACOQU, CCACOQU), (OP.SIGM_ELNO.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACOQU, CCACOQU), (OP.SIGM_ELNO.PCOMPOR, LC.CCOMPOR),
                      (OP.SIGM_ELNO.PCONTRR, ECONTPG), (SP.PDEPLAR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (OP.SIGM_ELNO.PNBSP_I, ENBSP_I),
                      ),
@@ -709,7 +703,7 @@ class TemplateElement(Element):
         ),
 
         OP.VARI_ELNO(te=415,
-            para_in=((OP.VARI_ELNO.PCOMPOR, CCOMPOR), (OP.VARI_ELNO.PNBSP_I, ENBSP_I),
+            para_in=((OP.VARI_ELNO.PCOMPOR, LC.CCOMPOR), (OP.VARI_ELNO.PNBSP_I, ENBSP_I),
                      (SP.PVARIGR, ZVARIPG), ),
             para_out=((OP.VARI_ELNO.PVARINR, LC.ZVARINO), ),
         ),

@@ -30,9 +30,6 @@ from cataelem.Options.options import OP
 #----------------
 
 
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','DEFORM','INCELA',))
-
 
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('DX','DY','DZ',))
@@ -142,7 +139,7 @@ class MEPOULI(Element):
         ),
 
         OP.FULL_MECA(te=165,
-            para_in=((SP.PCACABL, LC.CCACABL), (OP.FULL_MECA.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACABL, LC.CCACABL), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.FULL_MECA.PVARCPR, LC.ZVARCPG),
@@ -169,7 +166,7 @@ class MEPOULI(Element):
         ),
 
         OP.RAPH_MECA(te=165,
-            para_in=((SP.PCACABL, LC.CCACABL), (OP.RAPH_MECA.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACABL, LC.CCACABL), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RAPH_MECA.PVARCPR, LC.ZVARCPG),
@@ -193,7 +190,7 @@ class MEPOULI(Element):
         ),
 
         OP.RIGI_MECA_TANG(te=165,
-            para_in=((SP.PCACABL, LC.CCACABL), (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCACABL, LC.CCACABL), (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
