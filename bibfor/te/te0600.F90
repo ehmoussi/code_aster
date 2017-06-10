@@ -20,6 +20,7 @@ subroutine te0600(option, nomte)
 !
 use THM_type
 use THM_module
+use Behaviour_type
 !
 implicit none
 !
@@ -469,8 +470,8 @@ implicit none
         call jevech('PVARINR', 'E', ichn)
 !
         call jevech('PCOMPOR', 'L', icompo)
-        read (zk16(icompo+1),'(I16)') ncmp
-        read (zk16(icompo-1+7+9+4),'(I16)') nvim
+        read (zk16(icompo-1+NVAR),'(I16)') ncmp
+        read (zk16(icompo-1+MECA_NVAR),'(I16)') nvim
         call tecach('OOO', 'PVARIGR', 'L', iret, nval=7,&
                     itab=jtab)
 !

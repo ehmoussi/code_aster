@@ -20,6 +20,7 @@ subroutine te0313(option, nomte)
 !
 use THM_type
 use THM_module
+use Behaviour_type
 !
 implicit none
 !
@@ -165,7 +166,7 @@ implicit none
 !
 !
 !
-        read (zk16(icompo-1+2),'(I16)') nbvari
+        read (zk16(icompo-1+NVAR),'(I16)') nbvari
 ! =====================================================================
 ! --- PARAMETRES EN SORTIE ISMAEM? ------------------------------------
 ! =====================================================================
@@ -286,8 +287,8 @@ implicit none
         ichn=itabou(1)
 !
         call jevech('PCOMPOR', 'L', icompo)
-        read (zk16(icompo+1),'(I16)') ncmp
-        read (zk16(icompo-1+7+9+4),'(I16)') nvim
+        read (zk16(icompo-1+NVAR),'(I16)') ncmp
+        read (zk16(icompo-1+MECA_NVAR),'(I16)') nvim
 !
         call poeihm(nomte, option, modint, jgano, nno1,&
                     nno2, ncmp, nvim, zr(ichg), zr(ichn))

@@ -68,11 +68,12 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_pmf
+    aster_logical :: l_pmf, l_kit_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call comp_meca_l(rela_comp, 'PMF'    , l_pmf)
+    call comp_meca_l(rela_comp, 'KIT_THM', l_kit_thm)
 !
     if (present(v_compor_)) then
         v_compor_(1:NB_COMP_MAXI) = 'VIDE'
@@ -85,17 +86,18 @@ implicit none
             write (v_compor_(NUME),'(I16)') nume_comp(1)
         endif
         v_compor_(MULTCOMP) = mult_comp
-        v_compor_(8) = kit_comp(1)
-        v_compor_(9) = kit_comp(2)
-        v_compor_(10) = kit_comp(3)
-        v_compor_(11) = kit_comp(4)
         v_compor_(POSTITER) = post_iter
-        write (v_compor_(15),'(I16)') nume_comp(2)
-        write (v_compor_(16),'(I16)') nume_comp(3)
-        write (v_compor_(17),'(I16)') nb_vari_comp(1)
-        write (v_compor_(18),'(I16)') nb_vari_comp(2)
-        write (v_compor_(19),'(I16)') nb_vari_comp(3)
-        write (v_compor_(20),'(I16)') nb_vari_comp(4)
+        if (l_kit_thm) then
+            v_compor_(THMC_NAME) = kit_comp(1)
+            v_compor_(THER_NAME) = kit_comp(2)
+            v_compor_(HYDR_NAME) = kit_comp(3)
+            v_compor_(MECA_NAME) = kit_comp(4)
+            write (v_compor_(MECA_NUME),'(I16)') nume_comp(2)
+            write (v_compor_(THMC_NVAR),'(I16)') nb_vari_comp(1)
+            write (v_compor_(THER_NVAR),'(I16)') nb_vari_comp(2)
+            write (v_compor_(HYDR_NVAR),'(I16)') nb_vari_comp(3)
+            write (v_compor_(MECA_NVAR),'(I16)') nb_vari_comp(4)
+        endif
     elseif (present(l_compor_)) then
         l_compor_(1:NB_COMP_MAXI) = 'VIDE'
         l_compor_(NAME) = rela_comp
