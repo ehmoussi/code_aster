@@ -583,12 +583,20 @@ COMPOR   = PhysicalQuantity(type='K16',
        'INCELA',
        'C_PLAN',
        'NUME_LC',
-       'SD_COMP',
-       'KIT[9]',
-       'NVI_C',
-       'NVI_T',
-       'NVI_H',
-       'NVI_M',
+       'MULTCOMP',
+       'POSTITER',
+       'KIT1NAME',
+       'KIT2NAME',
+       'KIT3NAME',
+       'KIT4NAME',
+       'KIT1NUME',
+       'KIT2NUME',
+       'KIT3NUME',
+       'KIT4NUME',
+       'KIT1NVAR',
+       'KIT2NVAR',
+       'KIT3NVAR',
+       'KIT4NVAR',
     ),
     comment="""  COMPOR Type:K16 Comportement materiel
        RELCOM : relation de comportement : 'ELAS' , 'VMIS_ISOT_LINE' , ...
@@ -597,20 +605,20 @@ COMPOR   = PhysicalQuantity(type='K16',
        INCELA : comp_incr ou comp_elas
        C_PLAN : type de contraintes planes : DEBORST ou analytique
        NUME_LC : numero de routine LC
-       SD_COMP : nom de la SD issue de DEFI_COMPOR (PMF, MONOCRISTAL,..)
-       KIT1 : pour la relation kit ....
-       KIT2 : pour la relation kit ....
-       KIT3 : pour la relation kit ....
-       KIT4 : pour la relation kit ....
-       KIT5 : pour la relation kit ....
-       KIT6 : pour la relation kit ....
-       KIT7 : pour la relation kit ....
-       KIT8 : pour la relation kit ....
-       KIT9 : pour la relation kit ....
-       NVI_C : nombre de variables internes associees a la relation de couplage
-       NVI_T : nombre de variables internes associees a la relation thermique
-       NVI_H : nombre de variables internes associees a la relation hydraulique
-       NVI_M : nombre de variables internes associees a la relation mecanique
+       MULTCOMP : nom de la SD issue de DEFI_COMPOR ( MONOCRISTAL,..)
+       POSTITER : parameter for POST_ITER option (CRIT_RUPT, ...)
+       KIT1NAME : behaviour name for kit (1)
+       KIT2NAME : behaviour name for kit (2)
+       KIT3NAME : behaviour name for kit (3)
+       KIT4NAME : behaviour name for kit (4)
+       KIT1NUME : behaviour index for kit (1)
+       KIT2NUME : behaviour index for kit (2)
+       KIT3NUME : behaviour index for kit (3)
+       KIT4NUME : behaviour index for kit (3)
+       KIT1NVAR : number of internal variables for kit (1)
+       KIT2NVAR : number of internal variables for kit (2)
+       KIT3NVAR : number of internal variables for (3)
+       KIT4NVAR : number of internal variables for (4)
 """)
 
 

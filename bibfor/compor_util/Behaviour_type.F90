@@ -42,39 +42,39 @@ implicit none
     integer, parameter :: PLANESTRESS  = 5
     integer, parameter :: NUME         = 6
     integer, parameter :: MULTCOMP     = 7
-    integer, parameter :: POSTITER     = 14
+    integer, parameter :: POSTITER     = 8
 !
 ! - Access in <COMPOR> - Behaviour field - KITs
 !
-    integer, parameter :: KIT1_NAME    = 8
-    integer, parameter :: KIT2_NAME    = 9
-    integer, parameter :: KIT3_NAME    = 10
-    integer, parameter :: KIT4_NAME    = 11
-    integer, parameter :: KIT1_NUME    = 15
-    integer, parameter :: KIT2_NUME    = 16
-    integer, parameter :: KIT1_NVAR    = 17
-    integer, parameter :: KIT2_NVAR    = 18
-    integer, parameter :: KIT3_NVAR    = 19
-    integer, parameter :: KIT4_NVAR    = 20
+    integer, parameter :: KIT1_NAME    = 9
+    integer, parameter :: KIT2_NAME    = 10
+    integer, parameter :: KIT3_NAME    = 11
+    integer, parameter :: KIT4_NAME    = 12
+    integer, parameter :: KIT1_NUME    = 13
+    integer, parameter :: KIT2_NUME    = 14
+    integer, parameter :: KIT1_NVAR    = 15
+    integer, parameter :: KIT2_NVAR    = 16
+    integer, parameter :: KIT3_NVAR    = 17
+    integer, parameter :: KIT4_NVAR    = 18
 !
 ! - Access in <COMPOR> - Behaviour field - KIT_THM
 !
-    integer, parameter :: THMC_NAME    = 8
-    integer, parameter :: THER_NAME    = 9
-    integer, parameter :: HYDR_NAME    = 10
-    integer, parameter :: MECA_NAME    = 11
-    integer, parameter :: MECA_NUME    = 15
-    integer, parameter :: THMC_NVAR    = 17
-    integer, parameter :: THER_NVAR    = 18
-    integer, parameter :: HYDR_NVAR    = 19
-    integer, parameter :: MECA_NVAR    = 20
+    integer, parameter :: THMC_NAME    = 9
+    integer, parameter :: THER_NAME    = 10
+    integer, parameter :: HYDR_NAME    = 11
+    integer, parameter :: MECA_NAME    = 12
+    integer, parameter :: MECA_NUME    = 13
+    integer, parameter :: THMC_NVAR    = 15
+    integer, parameter :: THER_NVAR    = 16
+    integer, parameter :: HYDR_NVAR    = 17
+    integer, parameter :: MECA_NVAR    = 18
 !
 ! - Access in <COMPOR> - Behaviour field - KIT_DDI
 !
-    integer, parameter :: CREEP_NAME   = 8
-    integer, parameter :: PLAS_NAME    = 9
-    integer, parameter :: COUPL_NAME   = 10
-    integer, parameter :: CPLA_NAME    = 11
+    integer, parameter :: CREEP_NAME   = 9
+    integer, parameter :: PLAS_NAME    = 10
+    integer, parameter :: COUPL_NAME   = 11
+    integer, parameter :: CPLA_NAME    = 12
     integer, parameter :: CREEP_NUME   = 16
     integer, parameter :: PLAS_NUME    = 15
     integer, parameter :: CREEP_NVAR   = 17
@@ -82,11 +82,11 @@ implicit none
 !
 ! - Access in <COMPOR> - Behaviour field - KIT_META
 !
-    integer, parameter :: META_NAME    = 8
+    integer, parameter :: META_NAME    = 9
 !
 ! - Access in <COMPOR> - Behaviour field - KIT_CG
 !
-    integer, parameter :: CABLE_NAME   = 8
-    integer, parameter :: SHEATH_NAME  = 9
+    integer, parameter :: CABLE_NAME   = 9
+    integer, parameter :: SHEATH_NAME  = 10
 !
 end module
