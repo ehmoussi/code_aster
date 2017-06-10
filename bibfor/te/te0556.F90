@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/xmulhm.h"
 #include "asterfort/matini.h"
 #include "asterfort/thmGetElemInfo.h"
+#include "asterfort/utmess.h"
 !
     character(len=16) :: option, nomte
 !
@@ -91,6 +92,9 @@ implicit none
 ! - Get parameters for finite element
 !
     call thmGetElemInfo()
+    if (ds_thm%ds_elem%l_weak_coupling) then
+        call utmess('F', 'CHAINAGE_12')
+    endif
     rela = 0.d0
     nbspg= 0
     

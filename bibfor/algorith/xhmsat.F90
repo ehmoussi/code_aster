@@ -85,7 +85,6 @@ implicit none
     real(kind=8) :: dsatp1
     real(kind=8) :: m11m, satm, mdal(6), dalal, alphfi, cbiot, unsks
     real(kind=8) :: deps(6)
-    aster_logical :: emmag
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
@@ -100,7 +99,7 @@ implicit none
     real(kind=8) :: dp2, signe, phi0
     real(kind=8) :: dmdeps(6), dsdp1(6), sigmp(6)
 !
-    aster_logical :: net, bishop
+    aster_logical :: net, bishop, emmag
 !
 ! =====================================================================
 ! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
@@ -145,7 +144,6 @@ implicit none
 ! =====================================================================
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
 ! =====================================================================
-    if (emmag .and. yachai) call utmess('F', 'CHAINAGE_5')
 !
     call inithm(imate, yachai, yamec, phi0, bid,&
                 cs, tbiot, t, epsv, depsv,&

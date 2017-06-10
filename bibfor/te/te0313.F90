@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/tecach.h"
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
+#include "asterfort/thmGetElemInfo.h"
     character(len=16) :: option, nomte
 !
 !
@@ -108,6 +109,16 @@ implicit none
 ! - Init THM module
 !
     call thmModuleInit()
+!
+! - Get parameters for finite element
+!
+    call thmGetElemInfo()
+    if (ds_thm%ds_elem%l_weak_coupling) then
+        call utmess('F', 'CHAINAGE_12')
+    endif
+!
+! - Preparation
+!
     call caeihm(nomte, axi, perman, mecani, press1,&
                 press2, tempe, dimdef, dimcon, ndim,&
                 nno1, nno2, npi, npg, dimuel,&

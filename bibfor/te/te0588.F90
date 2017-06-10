@@ -44,6 +44,7 @@ implicit none
 #include "asterfort/xhmddl.h"
 #include "asterfort/xhmini.h"
 #include "asterfort/xpeshm.h"
+#include "asterfort/utmess.h"
 #include "jeveux.h"
 #include "asterfort/thmGetElemInfo.h"
     character(len=16) :: option, nomte
@@ -152,6 +153,9 @@ implicit none
 ! - Get parameters for finite element
 !
     call thmGetElemInfo()
+    if (ds_thm%ds_elem%l_weak_coupling) then
+        call utmess('F', 'CHAINAGE_12')
+    endif
 ! INITIALISATION POUR XFEM
 !
     call xhmini(nomte, nfh, ddld, ddlm, ddlp, nfiss, ddlc, contac)

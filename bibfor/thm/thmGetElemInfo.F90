@@ -25,6 +25,8 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/lteatt.h"
+#include "asterfort/rcvarc.h"
+#include "asterfort/utmess.h"
 !
 !
 
@@ -34,6 +36,11 @@ implicit none
 ! THM
 !
 ! Get type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: iret1, iret2
+    real(kind=8) :: r8bid
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,6 +59,18 @@ implicit none
     endif
     if (lteatt('HYDR2','2')) then
        ds_thm%ds_elem%nb_phase(2) = 2
+    endif
+!
+! - Weak coupling
+!
+    call rcvarc(' ', 'DIVU', '-', 'RIGI', 1, 1, r8bid, iret1)
+    call rcvarc(' ', 'DIVU', '+', 'RIGI', 1, 1, r8bid, iret2)
+    ds_thm%ds_elem%l_weak_coupling = (iret1.eq.0) .and. (iret2.eq.0)
+    if ((ds_thm%ds_elem%l_dof_meca) .and. ds_thm%ds_elem%l_weak_coupling) then
+        call utmess('F', 'CHAINAGE_1')
+    endif
+    if ((ds_thm%ds_elem%l_weak_coupling) .and. (iret1.ne.iret2)) then
+        call utmess('F', 'CHAINAGE_2')
     endif
 !
 end subroutine
