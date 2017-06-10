@@ -27,6 +27,7 @@ implicit none
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/get_elas_para.h"
+#include "asterfort/get_elas_id.h"
 !
 !
     character(len=*), intent(in) :: fami
@@ -71,8 +72,9 @@ implicit none
     real(kind=8) :: m11(2), m22(2), m33(2), m44(2), m55(2), m66(2)
     real(kind=8) :: m12(2), m13(2), m23(2)
     real(kind=8) :: young, nu, youngm, num
-    integer :: icodre(27), elas_type
+    integer :: icodre(27), elas_id
     character(len=8) :: nomc(27)
+    character(len=16) :: elas_keyword
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,17 +82,23 @@ implicit none
     valres(1:27) = 0.d0
     icodre(1:27) = 0
 !
+! - Get type of elasticity (Isotropic/Orthotropic/Transverse isotropic)
+!
+    call get_elas_id(imat, elas_id, elas_keyword)
+!
 ! - Get elastic parameters (only isotropic elasticity)
 !
     call get_elas_para(fami, imat, '-', kpg, ksp,&
-                       elas_type, e = youngm, nu = num)
-    ASSERT(elas_type.eq.1)
+                       elas_id  , elas_keyword,&
+                       e = youngm, nu = num)
+    ASSERT(elas_id.eq.1)
     mum     = youngm/(2.d0*(1.d0+num))
     troiskm = youngm/(1.d0-2.d0*num)
 !
     call get_elas_para(fami, imat, c1, kpg, ksp,&
-                       elas_type, e = young, nu = nu)
-    ASSERT(elas_type.eq.1)
+                       elas_id  , elas_keyword,&
+                       e = young, nu = nu)
+    ASSERT(elas_id.eq.1)
     mu      = young/(2.d0*(1.d0+nu))
     troisk  = young/(1.d0-2.d0*nu)
 !

@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/meta_vpta_coef.h"
 #include "asterfort/get_meta_phasis.h"
 #include "asterfort/get_meta_id.h"
+#include "asterfort/get_elas_id.h"
 #include "asterfort/get_elas_para.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/tecach.h"
@@ -67,6 +68,7 @@ implicit none
     real(kind=8) :: zcold_curr
     real(kind=8) :: phas_prev(5), phas_curr(5), temp
     logical :: l_temp
+    character(len=16) :: elas_keyword
 !
     data kron  /1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/
 !
@@ -173,8 +175,9 @@ implicit none
 !
 ! ----- Get elastic parameters
 !
-        call get_elas_para(fami, j_mater , '+', ipg,&
-                           ispg, elas_id,&
+        call get_elas_id(j_mater, elas_id, elas_keyword)
+        call get_elas_para(fami, j_mater , '+', ipg, ispg,&
+                           elas_id  , elas_keyword,&
                            e  = young , nu = nu)
         ASSERT(elas_id.eq.1)
         deuxmu = young/(1.d0+nu)

@@ -164,8 +164,10 @@ implicit none
 !
 ! ----- Get elastic parameters (only isotropic elasticity)
 !
+        call get_elas_id(zi(imate), elas_id, elas_keyword)
         call get_elas_para('RIGI', zi(imate), '+', igau, 1,&
-                           elas_id, time = time, e = e, nu = nu)
+                           elas_id  , elas_keyword,&
+                           time = time, e = e, nu = nu)
         ASSERT(elas_id.eq.1)
 !
 ! ----- Compute creep strains (current Gauss point)

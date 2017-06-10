@@ -59,7 +59,7 @@ implicit none
     real(kind=8) :: epsi_creep(nbsgm)
     integer :: i, ndim, nno, nbsig, idsig
     integer :: npg, ipoids, ivf, idfde, igau, isig, igeom, idepl, itemps, imate
-    integer :: idefp, icompo, nbvari, ivari, nvi, nvif, ibid, jtab(7), iret
+    integer :: idefp, icompo, nbvari, ivari, nvi, nvif, ibid, jtab(7), iret, ibid2
     integer :: idim
     real(kind=8) :: c1, c2, trsig, xyz(3)
     real(kind=8) :: repere(7), nharm, e, nu, zero, un, tempg, time
@@ -160,7 +160,7 @@ implicit none
             epsi_creep(i) = zero
         end do
     else
-        call granvi(mod3d, ibid, ibid, nvif)
+        call granvi(mod3d, ibid, ibid2, nvif)
         l_creep = .true.
     endif
 !
@@ -200,8 +200,10 @@ implicit none
 !
 ! ----- Get elastic parameters (only isotropic elasticity)
 !
+        call get_elas_id(zi(imate), elas_id, elas_keyword)
         call get_elas_para('RIGI', zi(imate), '+', igau, 1,&
-                           elas_id, time = time, temp = tempg, e = e, nu = nu)
+                           elas_id  , elas_keyword,&
+                           time = time, temp = tempg, e = e, nu = nu)
         ASSERT(elas_id.eq.1)
 !
 ! ----- Compute creep strains (current Gauss point)

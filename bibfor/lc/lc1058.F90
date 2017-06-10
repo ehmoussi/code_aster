@@ -32,6 +32,7 @@ implicit none
 #include "asterc/r8nnem.h"
 #include "asterfort/assert.h"
 #include "asterfort/get_elas_para.h"
+#include "asterfort/get_elas_id.h"
 #include "asterfort/infniv.h"
 #include "asterfort/lceqvn.h"
 #include "asterfort/lcicma.h"
@@ -89,8 +90,8 @@ implicit none
 
 !
     integer ::      imate, ndim, kpg, ksp, codret, icomp, nvi, nprops, czm, nbvarc
-    integer ::      ntens, ndi, nshr, i, nstatv, npt, nume_elem, layer
-    integer ::      kspt, kstep, kinc, j, ifm, niv, elas_id
+    integer ::      ntens, ndi, nshr, i, nstatv, npt, nume_elem, layer, elas_id
+    integer ::      kspt, kstep, kinc, j, ifm, niv
     integer ::      pfcmfr
     integer ::      nummod
     integer :: idbg = 1
@@ -107,7 +108,7 @@ implicit none
     real(kind=8) :: ddsddt(6), drplde(6), stran(9), dsidep(6, 6)
     real(kind=8) :: dtime, temp, dtemp, coords(3), rpl, pnewdt, drpldt
     real(kind=8) :: depsth(6), epsth(6), rac2, usrac2, drott(3, 3),detf
-    character(len=16) :: compor(*), option
+    character(len=16) :: compor(*), option, elas_keyword
     character(len=8) :: typmod(*), lvarc(npred)
     character(len=*) :: fami
     common/tdim/  ntens  , ndi
@@ -276,12 +277,10 @@ implicit none
                               nprops, drot, pnewdt, nummod)
 !
     else if (option(1:9).eq. 'RIGI_MECA') then
-!        call mfront_behaviour(pfcmfr, sigm, vim, ddsdde, stran,&
-!                              dstran, dtime, temp, dtemp, predef,&
-!                              dpred, ntens, nstatv, props, nprops,&
-!                              drot, pnewdt, nummod)
-        call get_elas_para(fami     , imate, '-', kpg, ksp, elas_id,&
-                               e = young, nu = nu)
+        call get_elas_id(imate, elas_id, elas_keyword)
+        call get_elas_para(fami     , imate, '-', kpg, ksp, &
+                           elas_id  , elas_keyword,&
+                           e = young, nu = nu)
         call lcsmelas(stran, dstran , ddsdde,&
                       nmat = 0, young_ = young, nu_ = nu)
     endif
