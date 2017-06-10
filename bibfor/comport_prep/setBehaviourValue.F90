@@ -68,7 +68,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_pmf, l_kit_thm, l_kit_ddi, l_kit_meta
+    aster_logical :: l_pmf, l_kit_thm, l_kit_ddi, l_kit_meta, l_kit_cg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,6 +76,7 @@ implicit none
     call comp_meca_l(rela_comp, 'KIT_THM' , l_kit_thm)
     call comp_meca_l(rela_comp, 'KIT_DDI' , l_kit_ddi)
     call comp_meca_l(rela_comp, 'KIT_META', l_kit_meta)
+    call comp_meca_l(rela_comp, 'KIT_CG'  , l_kit_cg)
 !
     if (present(v_compor_)) then
         v_compor_(1:NB_COMP_MAXI) = 'VIDE'
@@ -114,6 +115,10 @@ implicit none
         if (l_kit_meta) then
             v_compor_(META_NAME)  = kit_comp(1)
         endif
+        if (l_kit_cg) then
+            v_compor_(CABLE_NAME)   = kit_comp(1)
+            v_compor_(SHEATH_NAME)  = kit_comp(2)
+        endif
     elseif (present(l_compor_)) then
         l_compor_(1:NB_COMP_MAXI) = 'VIDE'
         l_compor_(NAME) = rela_comp
@@ -139,6 +144,10 @@ implicit none
         l_compor_(KIT1_NAME) = kit_comp(1)
         if (l_kit_meta) then
             l_compor_(META_NAME)  = kit_comp(1)
+        endif
+        if (l_kit_cg) then
+            l_compor_(CABLE_NAME)   = kit_comp(1)
+            l_compor_(SHEATH_NAME)  = kit_comp(2)
         endif
     endif
 !
