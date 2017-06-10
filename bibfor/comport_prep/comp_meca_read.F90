@@ -137,7 +137,7 @@ implicit none
 ! ----- For KIT
 !
         if (l_kit) then
-            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
+            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp, l_etat_init)
         endif
 !
 ! ----- Get parameters for external programs (MFRONT/UMAT)

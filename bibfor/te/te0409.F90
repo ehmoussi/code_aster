@@ -52,7 +52,7 @@ subroutine te0409(option, nomte)
 #include "asterfort/jevech.h"
 #include "asterfort/jquad4.h"
 #include "asterfort/maglrc.h"
-#include "asterfort/nmcoup.h"
+#include "asterfort/kit_glrc_dm_vmis.h"
 #include "asterfort/pmrvec.h"
 #include "asterfort/q4gbc.h"
 #include "asterfort/r8inir.h"
@@ -154,7 +154,7 @@ subroutine te0409(option, nomte)
 !
     aster_logical :: t3g, q4g
     aster_logical :: leul, lrgm
-    aster_logical :: lbid, resi, rigi
+    aster_logical :: resi, rigi
     aster_logical :: q4gg
     aster_logical :: coupmf  = .false.
 !
@@ -170,7 +170,6 @@ subroutine te0409(option, nomte)
 !
     real(kind=8) :: delas(6, 6), dsidep(6, 6)
     real(kind=8) :: lambda, deuxmu, deumuf, lamf, gt, gc, gf, seuil, alphaf
-    real(kind=8) :: r8bid, win(1), wout(1)
     real(kind=8) :: alpha, beta
     real(kind=8) :: excen
 
@@ -186,7 +185,6 @@ subroutine te0409(option, nomte)
     real(kind=8) :: carat3(21), jacob(5), caraq4(25)
     real(kind=8) :: matr(50), sigm(8), alfmc
 !
-    character(len=8) :: k8bid
     character(len=16) :: comp3, mult_comp
     character(len=24) :: valk(2)
 !
@@ -652,12 +650,9 @@ subroutine te0409(option, nomte)
                 call coqgth(zi(imate), compor, 'RIGI', ipg, ep, epsm, deps)
 !               -- endommagement plus plasticite
                 call r8inir(3, r8vide(), angmas, 1)
-                call nmcoup('RIGI', ipg, 1, 3, k8bid,&
-                            zi(imate), zk16(icompo), mult_comp, lbid, zr(icarcr), r8bid,&
-                            r8bid, 6, epsm, deps, 6,&
-                            sigm, ecr, option, angmas, 1,&
-                            win, sig, ecrp, 36, dsidep,&
-                            1, wout, codret)
+                call kit_glrc_dm_vmis(zi(imate)  , zk16(icompo+9-1), epsm, deps, ecr,&
+                                      option, sigm     , sig , ecrp , dsidep,&
+                                      zr(icarcr)  , codret)
             else
                 valk(1) = compor
                 call utmess('F', 'ELEMENTS4_79', nk=1, valk=valk)

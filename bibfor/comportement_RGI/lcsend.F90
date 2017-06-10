@@ -15,13 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: etienne.grimal at edf.fr
+! aslint: disable=W1504
+!
 subroutine lcsend(fami, kpg, ksp, ndim, imate,&
                   compor, crit, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
-                  sigp, vip, tampon, typmod, icomp,&
-                  nvi, dsidep, codret)
-! person_in_charge: etienne.grimal at edf.fr
+                  sigp, vip, tampon, typmod, &
+                  dsidep, codret)
+
 !=====================================================================
 !  Gestion du module ENDO_PORO_BETON
 !=====================================================================
@@ -37,7 +39,7 @@ subroutine lcsend(fami, kpg, ksp, ndim, imate,&
 #include "asterfort/matini.h"
 !
 !
-    integer :: imate, ndim, kpg, ksp, codret, icomp, nvi, iret
+    integer :: imate, ndim, kpg, ksp, codret, iret
     real(kind=8) :: crit(*), angmas(*)
     real(kind=8) :: instam, instap, tampon(*)
     real(kind=8) :: epsm(6), deps(6)
@@ -183,7 +185,7 @@ subroutine lcsend(fami, kpg, ksp, ndim, imate,&
     nmtail = 12
 !
 ! --- TRAITEMENT DIFFERENT SI COUPLAGE FLUA3D-ENDO3D
-    if (compor(1) .eq. 'KIT_DDI') then
+    if (nint(tampon(1)) .eq. 1) then
         fl3d = .true.
         nvari = nvcom+nvflu+nvendo+nvtail
         nmat = nmelas+nmhydr+nmflu+nmendo+nmtail

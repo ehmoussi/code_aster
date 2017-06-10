@@ -179,10 +179,12 @@ implicit none
     ca_tf1_=instap
 !
 !
-    ipal = int(carcri(5))
-    codret=0
+    ipal   = nint(carcri(5))
+    codret = 0
 !
-    if (option(1:9) .eq. 'RIGI_MECA')  then
+! - No step cutting (elastic matrix or KIT_DDI behaviour)
+!
+    if (option(1:9) .eq. 'RIGI_MECA' .or. numlc .ge. 8000)  then
         ipal=0
     endif
 !

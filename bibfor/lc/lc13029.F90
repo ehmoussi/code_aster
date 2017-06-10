@@ -16,15 +16,18 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lc0021(fami, kpg, ksp, ndim, imate,&
-                  compor, carcri, instam, instap, epsm,&
-                  deps, sigm, vim, option, angmas,&
-                  sigp, vip, typmod, icomp,&
-                  nvi, dsidep, codret)
+subroutine lc13029(fami, kpg, ksp, ndim, imate,&
+                   compor, mult_comp, carcri, instam, instap, neps,&
+                   epsm, deps, nsig, sigm, vim,&
+                   option, angmas,sigp, nvi, vip, nwkin,&
+                   wkin, typmod,icomp, ndsde,&
+                   dsidep, nwkout, wkout, codret)
 !
 implicit none
 !
-#include "asterfort/lcumfp.h"
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/nmcomp.h"
 !
 ! aslint: disable=W1504,W0104
 !
@@ -34,43 +37,62 @@ implicit none
     integer, intent(in) :: ndim
     integer, intent(in) :: imate
     character(len=16), intent(in) :: compor(*)
+    character(len=16), intent(in) :: mult_comp
     real(kind=8), intent(in) :: carcri(*)
     real(kind=8), intent(in) :: instam
     real(kind=8), intent(in) :: instap
-    real(kind=8), intent(in) :: epsm(6)
-    real(kind=8), intent(in) :: deps(6)
-    real(kind=8), intent(in) :: sigm(6)
+    integer, intent(in) :: neps
+    real(kind=8), intent(in) :: epsm(*)
+    real(kind=8), intent(in) :: deps(*)
+    integer, intent(in) :: nsig
+    real(kind=8), intent(in) :: sigm(*)
     real(kind=8), intent(in) :: vim(*)
     character(len=16), intent(in) :: option
     real(kind=8), intent(in) :: angmas(*)
-    real(kind=8), intent(out) :: sigp(6)
-    real(kind=8), intent(out) :: vip(*)
-    character(len=8), intent(in) :: typmod(*)
-    integer, intent(in) :: icomp
+    real(kind=8), intent(out) :: sigp(*)
     integer, intent(in) :: nvi
-    real(kind=8), intent(out) :: dsidep(6, 6)
+    real(kind=8), intent(out) :: vip(*)
+    integer, intent(in) :: nwkin
+    real(kind=8), intent(in) :: wkin(nwkin)
+    character(len=8), intent(in) :: typmod(*)
+    integer, intent(in) :: nwkout
+    real(kind=8), intent(out) :: wkout(nwkout)
+    integer, intent(in) :: icomp
+    integer, intent(in) :: ndsde
+    real(kind=8), intent(out) :: dsidep(*)
     integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Behaviour
 !
-! Beton_UMLV
+! KIT_DDI: BETON_UMLV / MAZARS
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: rela_plas
+    character(len=16) :: rela_flua, rela_plas
+    character(len=16) :: compor_ext(20)
+    integer :: nume_flua, nvi_flua
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (compor(8) .eq. 'BETON_UMLV') then
-        rela_plas = compor(9)
-    else
-        rela_plas = ' '
-    endif
-    codret    = 0
-    call lcumfp(fami, kpg, ksp, ndim, typmod,&
-                imate, compor, instam, instap, epsm,&
-                deps, sigm, vim, option, rela_plas,&
-                sigp, vip, dsidep)
+    rela_flua   = compor(8)
+    rela_plas   = compor(9)
+    read (compor(17),'(I16)') nvi_flua
+    read (compor(16),'(I16)') nume_flua
+!
+    compor_ext(1) = rela_flua
+    write (compor_ext(2),'(I16)') nvi_flua
+    compor_ext(3) = compor(3)
+    write (compor_ext(6),'(I16)') nume_flua
+    compor_ext(8) = rela_flua
+    compor_ext(9) = rela_plas
+!
+    call nmcomp(fami, kpg, ksp, ndim, typmod,&
+                imate, compor_ext, carcri, instam, instap  ,&
+                neps, epsm, deps, nsig, sigm,&
+                vim, option, angmas, nwkin, wkin,&
+                sigp, vip, ndsde, dsidep, nwkout,&
+                wkout, codret)
+!
 end subroutine

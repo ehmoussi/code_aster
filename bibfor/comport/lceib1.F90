@@ -71,14 +71,6 @@ subroutine lceib1(fami, kpg, ksp, imate, compor,&
     t(3,2)=6
     t(3,3)=3
 !
-    if ((.not.( compor(1)(1:15) .eq. 'ENDO_ISOT_BETON')) .and.&
-        (.not.( compor(1)(1:6) .eq. 'KIT_HM')) .and.&
-        (.not.( compor(1)(1:7) .eq. 'KIT_HHM')) .and.&
-        (.not.( compor(1)(1:7) .eq. 'KIT_THM')) .and.&
-        (.not.( compor(1)(1:8) .eq. 'KIT_THHM')) .and.&
-        (.not.( compor(1)(1:7) .eq. 'KIT_DDI'))) then
-        call utmess('F', 'ALGORITH4_50', sk=compor(1))
-    endif
 !    LECTURE DES CARACTERISTIQUES DU MATERIAU
     nomres(1) = 'E'
     nomres(2) = 'NU'
