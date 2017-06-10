@@ -24,6 +24,7 @@ use THM_module
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/thmGetParaBehaviour.h"
 !
 !
@@ -83,6 +84,21 @@ implicit none
                 ds_thm%ds_behaviour%nb_phase(2) = 2
             endif
         endif  
+    endif
+!
+    if (rela_thmc .eq. 'LIQU_SATU'.or. &
+        rela_thmc .eq. 'GAZ') then
+        ds_thm%ds_behaviour%satur_type = SATURATED
+    elseif (rela_thmc .eq. 'LIQU_VAPE') then
+        ds_thm%ds_behaviour%satur_type = SATURATED_SPEC
+    elseif (rela_thmc .eq. 'LIQU_GAZ' .or. &
+            rela_thmc .eq. 'LIQU_VAPE_GAZ' .or. &
+            rela_thmc .eq. 'LIQU_GAZ_ATM' .or. & 
+            rela_thmc .eq. 'LIQU_AD_GAZ_VAPE' .or. &
+            rela_thmc .eq. 'LIQU_AD_GAZ') then
+        ds_thm%ds_behaviour%satur_type = UNSATURATED
+    else
+        ASSERT(.false.)
     endif
 !
 ! - For temperature

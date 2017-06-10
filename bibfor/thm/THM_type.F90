@@ -36,6 +36,10 @@ implicit none
     integer, parameter :: BIOT_TYPE_ISOT = 0
     integer, parameter :: BIOT_TYPE_ISTR = 1
     integer, parameter :: BIOT_TYPE_ORTH = 2
+! - Type of saturation
+    integer, parameter :: SATURATED         = 0
+    integer, parameter :: UNSATURATED       = 1
+    integer, parameter :: SATURATED_SPEC    = 2
 
 
 ! - Type of FE
@@ -67,6 +71,7 @@ implicit none
         aster_logical :: l_temp
         integer :: nb_pres
         integer :: nb_phase(2)
+        integer :: satur_type
     end type THM_Behaviour
 
 ! - Initial condition (THM_INIT)
