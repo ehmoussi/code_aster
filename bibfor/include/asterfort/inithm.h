@@ -24,8 +24,7 @@ interface
     subroutine inithm(imate, yachai, yamec, phi0, em,&
                       cs, tbiot, t, epsv, depsv,&
                       epsvm, angmas, aniso, mdal, dalal,&
-                      alphfi, cbiot, unsks, alpha0, ndim,&
-                      phenom)
+                      alphfi, cbiot, unsks, alpha0, ndim)
         integer :: imate
         aster_logical :: yachai
         integer :: yamec
@@ -46,6 +45,5 @@ interface
         real(kind=8) :: unsks
         real(kind=8) :: alpha0
         integer :: ndim
-        character(len=*) :: phenom
     end subroutine inithm
 end interface 

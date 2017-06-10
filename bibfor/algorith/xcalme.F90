@@ -15,12 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine xcalme(option, meca, imate, ndim, dimenr,&
                   dimcon, addeme, adcome, congep,&
                   dsde, deps, t,&
-                  idecpg, kpi, ang2, aniso, phenom)
-! person_in_charge: daniele.colombo at ifpen.fr
+                  ang2, aniso)
+!
 ! **********************************************************************
 ! ROUTINE CALC_MECA
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE MECANIQUES
@@ -30,10 +31,10 @@ subroutine xcalme(option, meca, imate, ndim, dimenr,&
 #   include "asterfort/calela.h"
 #   include "asterfort/tecael.h"
     integer :: ndim, dimenr, dimcon, addeme
-    integer :: adcome, imate, idecpg, kpi
+    integer :: adcome, imate
     real(kind=8) :: congep(dimcon)
     real(kind=8) :: dsde(dimcon, dimenr), rac2
-    character(len=16) :: option, meca, phenom
+    character(len=16) :: option, meca
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
@@ -46,7 +47,7 @@ subroutine xcalme(option, meca, imate, ndim, dimenr,&
     real(kind=8) :: d(6, 6), mdal(6), dalal
     character(len=8) :: ncra1(nelas), fami, poum
     integer :: icodre(nresma)
-    integer :: spt, ipi, kpg
+    integer :: spt, kpg
 !
     data ncra1 / 'E','NU','ALPHA','RHO' /
 ! ======================================================================
@@ -85,7 +86,7 @@ subroutine xcalme(option, meca, imate, ndim, dimenr,&
 !    CALCUL DE LA MATRICE DE HOOK DANS LE REPERE GLOBAL
 !
         call calela(imate, ang2, mdal, dalal, t,&
-                    aniso, d, ndim, phenom)
+                    aniso, d, ndim)
 !
         if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
             do i = 1, 3

@@ -31,7 +31,7 @@ interface
                       dsde, epsv, depsv, p1, dp1,&
                       t, dt, phi, rho11, &
                       sat, retcom, tbiot, rinstp, angmas,&
-                      deps, aniso, phenom)
+                      deps, aniso)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -73,6 +73,5 @@ interface
         real(kind=8) :: angmas(3)
         real(kind=8) :: deps(6)
         integer :: aniso
-        character(len=16) :: phenom
     end subroutine hmgazp
 end interface 

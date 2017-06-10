@@ -17,8 +17,13 @@
 ! --------------------------------------------------------------------
 
 subroutine calela(imate, angmas, mdal, dalal, t,&
-                  aniso, d, ndim, phenom)
-    implicit none
+                  aniso, d, ndim)
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterc/r8dgrd.h"
 #include "asterfort/dpassa.h"
 #include "asterfort/matini.h"
@@ -48,7 +53,6 @@ subroutine calela(imate, angmas, mdal, dalal, t,&
     real(kind=8) :: tetaro, phirot, passag(6, 6), pass(3, 3), tal(3, 3), talg(3, 3)
     character(len=8) :: ncra2(dim2), ncra3(dim3)
     character(len=8) :: ncra1(dim1)
-    character(len=16) :: phenom
 !
 ! =====================================================================
 ! --- DONNEES POUR RECUPERER LES CARACTERISTIQUES MECANIQUES ----------
@@ -132,7 +136,7 @@ subroutine calela(imate, angmas, mdal, dalal, t,&
 ! --- CALCUL CAS ISOTROPE TRANSVERSE------------------------------------
 ! ======================================================================
     else if (aniso.eq.1) then
-        if (phenom .eq. 'ELAS') then
+        if (ds_thm%ds_material%elas_keyword .eq. 'ELAS') then
             call rcvala(imate, ' ', 'ELAS', 1, 'TEMP',&
                         [t], 3, ncra1(1), elas1(1), icodr1,&
                         0)
@@ -147,7 +151,7 @@ subroutine calela(imate, angmas, mdal, dalal, t,&
             al(2)  =elas1(3)
             al(3)  =elas1(3)
 !
-        else if (phenom.eq.'ELAS_ISTR') then
+        else if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ISTR') then
             if (ndim .ne. 3) then
                 call utmess('F', 'ALGORITH17_35')
             endif
@@ -189,7 +193,7 @@ subroutine calela(imate, angmas, mdal, dalal, t,&
 ! --- CALCUL CAS ORTHOTROPE 2D ------------------------------------
 ! ======================================================================
     else if (aniso.eq.2) then
-        if (phenom .eq. 'ELAS') then
+        if (ds_thm%ds_material%elas_keyword .eq. 'ELAS') then
             call rcvala(imate, ' ', 'ELAS', 1, 'TEMP',&
                         [t], 3, ncra1(1), elas1(1), icodr1,&
                         0)
@@ -203,7 +207,7 @@ subroutine calela(imate, angmas, mdal, dalal, t,&
             al(1)  =elas1(3)
             al(2)  =elas1(3)
             al(3)  =elas1(3)
-        else if (phenom.eq.'ELAS_ORTH') then
+        else if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ORTH') then
             if (ndim .ne. 2) then
                 call utmess('F', 'ALGORITH17_36')
             endif

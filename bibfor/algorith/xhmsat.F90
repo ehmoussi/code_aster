@@ -26,7 +26,7 @@ subroutine xhmsat(yachai, option, meca, thmc, ther,&
                   vintp, dsde, epsv, depsv, p1,&
                   dp1, t, phi, rho11,&
                   sat, retcom, tbiot, rinstp, angl_naut,&
-                  aniso, phenom, yaenrh, adenhy, nfh)
+                  aniso, yaenrh, adenhy, nfh)
 !
 use THM_type
 use THM_module
@@ -47,7 +47,6 @@ implicit none
 #include "asterfort/unsmfi.h"
 #include "asterfort/viporo.h"
 #include "asterfort/virhol.h"
-#include "asterfort/thmGetParaBiot.h"
 #include "asterfort/tebiot.h"
 !
 ! person_in_charge: daniele.colombo at ifpen.fr
@@ -71,7 +70,7 @@ implicit none
     real(kind=8) :: epsv, depsv, p1, dp1, t, dt
     real(kind=8) :: phi, rho11, rac2
     real(kind=8) :: rinstp, angl_naut(3)
-    character(len=16) :: option, meca, ther, thmc, hydr, phenom
+    character(len=16) :: option, meca, ther, thmc, hydr
     aster_logical :: yachai
 !
 ! DECLARATION POUR XFEM
@@ -124,18 +123,7 @@ implicit none
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 bid, rbid50, rinstp, retcom,&
                 angl_naut, ndim)
-!
-! - Get Biot parameters (for porosity evolution)
-!
-    call thmGetParaBiot(imate)
-!
-! - Compute Biot tensor
-!
-    call tebiot(angl_naut, tbiot)
-!
-! - Temporaire: aniso n'est pas toujours lu dans le module pour l'instant
-!
-    aniso = ds_thm%ds_material%biot_type
+
 ! ======================================================================
 ! --- INITIALISATIONS --------------------------------------------------
 ! ======================================================================
@@ -162,8 +150,7 @@ implicit none
     call inithm(imate, yachai, yamec, phi0, bid,&
                 cs, tbiot, t, epsv, depsv,&
                 epsvm, angl_naut, aniso, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0, ndim,&
-                phenom)
+                alphfi, cbiot, unsks, alpha0, ndim)
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
 ! *********************************************************************
@@ -177,7 +164,7 @@ implicit none
                         phi0, deps, depsv, alphfi, dt,&
                         dp1, dp2, signe, sat, cs,&
                         tbiot, phi, phim, retcom, cbiot,&
-                        unsks, alpha0, aniso, phenom)
+                        unsks, alpha0, aniso)
         endif
 ! =====================================================================
 ! --- CALCUL DE LA VARIABLE INTERNE DE MASSE VOLUMIQUE DU FLUIDE ------
@@ -199,9 +186,9 @@ implicit none
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(imate, phi, alphfi, t, aniso,&
-                    angl_naut, tbiot, phenom)
+                    angl_naut, tbiot)
         call unsmfi(imate, phi, cs, t, tbiot,&
-                    aniso, ndim, phenom)
+                    aniso, ndim)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************
@@ -216,13 +203,12 @@ implicit none
         if (yamec .eq. 1) then
             call sigmap(net, bishop, sat, signe, tbiot,&
                         dp2, dp1, sigmp)
-            do 10 i = 1, 3
+            do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
- 10         continue
-            do 14 i = 4, 6
-                congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)*&
-                rac2
- 14         continue
+            end do
+            do i = 4, 6
+                congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)*rac2
+            end do
         endif
 ! ======================================================================
 ! --- CALCUL DES APPORTS MASSIQUES SELON FORMULE DOCR ------------------
@@ -243,22 +229,20 @@ implicit none
 ! ======================================================================
             call dspdp1(net, bishop, signe, tbiot, sat,&
                         dsdp1)
-            do 11 i = 1, 3
-                dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1)&
-                + dsdp1(i)
- 11         continue
+            do i = 1, 3
+                dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1) + dsdp1(i)
+            end do
 !
-            do 88 i = 4, 6
-                dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1)&
-                + dsdp1(i)*rac2
- 88         continue
+            do i = 4, 6
+                dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1) + dsdp1(i)*rac2
+            end do
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! ======================================================================
             call dmdepv(rho11, sat, tbiot, dmdeps)
-            do 12 i = 1, 6
+            do i = 1, 6
                 dsde(adcp11,addeme+ndim-1+i) = dsde(adcp11,addeme+ ndim-1+i) + dmdeps(i)
- 12         continue
+            end do
         endif
         if (yaenrh .eq. 1) then
 ! ======================================================================
@@ -279,15 +263,15 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! ======================================================================
-        dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmwdp1(rho11, signe,sat,dsatp1,phi,cs,cliq,1.&
-                              &0d0, emmag,bid)
+        dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
+                              dmwdp1(rho11, signe,sat,dsatp1,phi,cs,cliq,1.d0, emmag,bid)
         if (yaenrh.eq.1) then
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES AVEC XFEM --------------
 ! ======================================================================
           do ifh = 1, nfh
-            dsde(adcp11,adenhy+(ifh-1)*(ndim+1)) = dsde(adcp11,adenhy+(ifh-1)*(ndim+1))+dmwdp1(&
-                                             rho11, signe,sat,dsatp1,phi,cs,cliq,1.0d0, emmag,bid)
+            dsde(adcp11,adenhy+(ifh-1)*(ndim+1)) = dsde(adcp11,adenhy+(ifh-1)*(ndim+1))+&
+                dmwdp1(rho11, signe,sat,dsatp1,phi,cs,cliq,1.d0, emmag,bid)
           end do
         endif
     endif

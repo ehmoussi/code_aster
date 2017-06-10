@@ -26,8 +26,7 @@ subroutine hmlgat(yachai, option, meca, ther, hydr,&
                   vintm, vintp, dsde, epsv, depsv,&
                   p1, dp1, t, dt, phi,&
                   rho11, sat, retcom, thmc,&
-                  tbiot, rinstp, angmas, deps, aniso,&
-                  phenom)
+                  tbiot, rinstp, angmas, deps, aniso)
 !
 use THM_type
 use THM_module
@@ -81,7 +80,7 @@ implicit none
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
     real(kind=8) :: p1, dp1, t, dt, phi, rho11, phi0, rinstp
     real(kind=8) :: angmas(3)
-    character(len=16) :: option, meca, ther, hydr, thmc, phenom
+    character(len=16) :: option, meca, ther, hydr, thmc
     aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -167,8 +166,7 @@ implicit none
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, t, epsv, depsv,&
                 epsvm, angmas, aniso, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0, ndim,&
-                phenom)
+                alphfi, cbiot, unsks, alpha0, ndim)
 !
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
@@ -183,7 +181,7 @@ implicit none
                         phi0, deps, depsv, alphfi, dt,&
                         dp1, dp2, signe, sat, cs,&
                         tbiot, phi, phim, retcom, cbiot,&
-                        unsks, alpha0, aniso, phenom)
+                        unsks, alpha0, aniso)
         endif
         if (emmag) then
             call viemma(nbvari, vintm, vintp, advico, vicphi,&
@@ -214,9 +212,9 @@ implicit none
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(imate, phi, alphfi, t, aniso,&
-                    angmas, tbiot, phenom)
+                    angmas, tbiot)
         call unsmfi(imate, phi, cs, t, tbiot,&
-                    aniso, ndim, phenom)
+                    aniso, ndim)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************

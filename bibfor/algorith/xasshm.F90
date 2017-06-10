@@ -77,7 +77,7 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
     integer :: nnops, nnopm
     integer :: nno, ncomp
     integer :: heavt(*), enrmec(3), dimenr, enrhyd(3)
-    integer :: ise, yaenrm, adenme, nse, idecpg
+    integer :: ise, yaenrm, adenme, nse
     integer :: adenhy, yaenrh, ifiss, fisno(nnop, nfiss)
     integer :: lonch(10), ino, cnset(*)
     integer :: jpintt, jpmilt, igeom, iret , jtab(7)
@@ -293,10 +293,6 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
 512         continue
 511     continue
 !
-!     DECALAGE POUR ACCEDER AU 1ER POINT DE GAUSS DE LA FAMILLE 'XFEM'
-!     DU SOUS ELEMENT COURANT
-        idecpg=npi*(ise-1)
-!
 !     FONCTION HEAVYSIDE CSTE POUR CHAQUE FISSURE SUR LE SS-ELT
         call tecach('OOO', 'PHEAVTO', 'L', iret, nval=7,&
                     itab=jtab)
@@ -378,7 +374,7 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
                         vintm, defgep, congep,&
                         vintp, mecani, press1, press2, tempe,&
                         rinstp, dt, r, drds, dsde,&
-                        codret, idecpg, angmas, enrhyd, nfh)
+                        codret, angmas, enrhyd, nfh)
             do i = 1, nbvari
                 varim(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)=vintm(i)
                 varip(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)=vintp(i)

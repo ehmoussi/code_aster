@@ -20,7 +20,7 @@
 !
 interface 
     subroutine dilata(imate, phi, alphfi, t, aniso,&
-                      angmas, tbiot, phenom)
+                      angmas, tbiot)
         integer :: imate
         real(kind=8) :: phi
         real(kind=8) :: alphfi
@@ -28,6 +28,5 @@ interface
         integer :: aniso
         real(kind=8) :: angmas(3)
         real(kind=8) :: tbiot(6)
-        character(len=16) :: phenom
     end subroutine dilata
 end interface 

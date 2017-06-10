@@ -80,7 +80,7 @@ implicit none
     integer :: maxfa
     parameter (maxfa=6)
     real(kind=8) :: valfac(maxfa, 14, 6)
-    character(len=16) :: meca, thmc, ther, hydr, phenom
+    character(len=16) :: meca, thmc, ther, hydr
     aster_logical :: vf, yachai
 !
 ! =====================================================================
@@ -255,8 +255,7 @@ implicit none
                 phi, pvp, pad, h11, h12,&
                 kh, rho11, sat,&
                 retcom, crit, tbiot, vihrho, vicphi,&
-                vicpvp, vicsat, instap, angl_naut, aniso,&
-                phenom)
+                vicpvp, vicsat, instap, angl_naut, aniso)
 !
     if (retcom .ne. 0) then
         goto 999
