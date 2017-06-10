@@ -86,6 +86,13 @@ implicit none
         real(kind=8) :: biot_l
         real(kind=8) :: biot_n
         real(kind=8) :: biot_t
+! ----- For elasticity
+        integer :: elas_id
+        character(len=16) :: elas_keyword
+        real(kind=8) :: e, nu
+        real(kind=8) :: e_l, e_t, e_n
+        real(kind=8) :: nu_lt, nu_ln, nu_tn
+        real(kind=8) :: g_lt, g_ln, g_tn
     end type THM_Material
 !
 end module
