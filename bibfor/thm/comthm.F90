@@ -26,7 +26,10 @@ subroutine comthm(option, perman, vf, ifa, valfac,&
                   addep2, adcp21, adcp22, addete, adcote,&
                   defgem, defgep, congem, congep, vintm,&
                   vintp, dsde, pesa, retcom, kpi,&
-                  npg, angmas)
+                  npg, angl_naut)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
@@ -38,6 +41,11 @@ implicit none
 #include "asterfort/kitdec.h"
 #include "asterfort/nvithm.h"
 #include "asterfort/thmlec.h"
+#include "asterfort/thmGetParaBiot.h"
+#include "asterfort/tebiot.h"
+!
+! **********************************************************************
+!
 ! VERSION DU 07/06/99  ECRITE PAR PASCAL CHARLES
 ! ROUTINE COMTHM
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE AU POINT
@@ -131,7 +139,7 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: nvim, advime, advith, advihy, advico, anisof, aniso
+    integer :: nvim, advime, advith, advihy, advico, aniso
     integer :: vihrho, vicphi, vicpvp, vicsat, nvih, nvic, nvit
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, h11, h12, rho11, epsv, deps(6), depsv
@@ -144,7 +152,7 @@ implicit none
     real(kind=8) :: fickad, dfadt, kh, alpha
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: deltat
-    real(kind=8) :: angmas(3)
+    real(kind=8) :: angl_naut(3)
     character(len=16) :: meca, thmc, ther, hydr, phenom
 ! ======================================================================
 ! --- INITIALISATION ---------------------------------------------------
@@ -175,6 +183,18 @@ implicit none
         goto 999
     endif
 !
+! - Get Biot parameters (for porosity evolution)
+!
+    call thmGetParaBiot(imate)
+!
+! - Compute Biot tensor
+!
+    call tebiot(angl_naut, tbiot)
+!
+! - Temporaire: aniso n'est pas toujours lu dans le module pour l'instant
+!
+    aniso = ds_thm%ds_material%biot_type
+!
 ! - Compute coupling law
 !
     call calcco(option, yachai, perman, meca, thmc,&
@@ -188,7 +208,7 @@ implicit none
                 phi, pvp, pad, h11, h12,&
                 kh, rho11, sat,&
                 retcom, crit, tbiot, vihrho, vicphi,&
-                vicpvp, vicsat, instap, angmas, aniso,&
+                vicpvp, vicsat, instap, angl_naut, aniso,&
                 phenom)              
 !
     if (retcom .ne. 0) then
@@ -225,7 +245,7 @@ implicit none
                     congep, vintm, vintp, addep1, addep2,&
                     dsde, deps, p1, p2, t,&
                     dt, retcom, dp1, dp2, sat,&
-                    tbiot, angmas, aniso, phenom)
+                    tbiot, angl_naut, aniso, phenom)
         if (retcom .ne. 0) then
             goto 999
         endif
@@ -242,7 +262,7 @@ implicit none
                 lambs, dlambs, viscl, dviscl, mamolg,&
                 tlambt, tdlamt, viscg, dviscg, mamovg,&
                 fickad, dfadt, tlamct, instap,&
-                angmas, anisof, ndim)
+                angl_naut, ndim)
 !
 ! CONDUCTIVITES EN VF
 !
@@ -295,7 +315,7 @@ implicit none
                     rgaz, tbiot, satur, dsatur, lambp,&
                     dlambp, lambs, dlambs, tlambt, tdlamt,&
                     mamovg, tlamct, rho11, h11, h12,&
-                    angmas, anisof, phenom)
+                    angl_naut, aniso, phenom)
         if (retcom .ne. 0) then
             goto 999
         endif

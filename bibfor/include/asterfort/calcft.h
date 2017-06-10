@@ -26,7 +26,7 @@ interface
                       rgaz, tbiot, sat, dsatp1, lambp,&
                       dlambp, lambs, dlambs, tlambt, tdlamt,&
                       mamolv, tlamct, rho11, h11, h12,&
-                      angmas, aniso, phenom)
+                      angmas, anisof, phenom)
         integer :: dimcon
         integer :: dimdef
         integer :: ndim
@@ -63,7 +63,7 @@ interface
         real(kind=8) :: h11
         real(kind=8) :: h12
         real(kind=8) :: angmas(3)
-        integer :: aniso
+        integer, intent(in) :: anisof
         character(len=16) :: phenom
     end subroutine calcft
 end interface 

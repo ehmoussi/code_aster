@@ -22,7 +22,7 @@ interface
     subroutine thmrcp(etape, imate, thmc, meca, hydr,&
                       ther, t, p1, p1m, p2,&
                       phi, endo, pvp, rgaz, rhod,&
-                      cpd, tbiot, satm, satur, dsatur,&
+                      cpd, satm, satur, dsatur,&
                       pesa, tperm, permli, dperml, permgz,&
                       dperms, dpermp, fick, dfickt, dfickg,&
                       lambp, dlambp, rhol, unsurk, alpha,&
@@ -31,7 +31,7 @@ interface
                       dviscg, mamolv, cpvg, viscvg, dvisvg,&
                       fickad, dfadt, cpad, kh, pad,&
                       em, tlamct, instap, retcom,&
-                      angmas, aniso, ndim)
+                      angmas, ndim)
         integer :: ndim
         character(len=8) :: etape
         integer :: imate
@@ -54,7 +54,6 @@ interface
         real(kind=8) :: rgaz
         real(kind=8) :: rhod
         real(kind=8) :: cpd
-        real(kind=8) :: tbiot(6)
         real(kind=8) :: satm
         real(kind=8) :: satur
         real(kind=8) :: dsatur
@@ -98,6 +97,5 @@ interface
         real(kind=8) :: instap
         integer :: retcom
         real(kind=8) :: angmas(3)
-        integer :: aniso
     end subroutine thmrcp
 end interface 

@@ -23,6 +23,7 @@ use THM_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterc/r8vide.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -38,6 +39,7 @@ type THM_DS
     type(THM_ParaInit)  :: ds_parainit
     type(THM_Behaviour) :: ds_behaviour
     type(THM_Element)   :: ds_elem
+    type(THM_Material)  :: ds_material
 end type THM_DS
 
 ! Main variable    
@@ -49,13 +51,13 @@ public :: thmModuleInit
 contains
 !
 subroutine thmModuleInit()
-!
+!   Initial parameters
     ds_thm%ds_parainit%temp_init = 0.d0
     ds_thm%ds_parainit%pre1_init = 0.d0
     ds_thm%ds_parainit%pre2_init = 0.d0
     ds_thm%ds_parainit%poro_init = 0.d0
     ds_thm%ds_parainit%prev_init = 0.d0
-! Behaviour
+!   Behaviour
     ds_thm%ds_behaviour%rela_thmc     = ' '
     ds_thm%ds_behaviour%rela_meca     = ' '
     ds_thm%ds_behaviour%rela_ther     = ' '
@@ -63,14 +65,19 @@ subroutine thmModuleInit()
     ds_thm%ds_behaviour%l_temp        = .false.
     ds_thm%ds_behaviour%nb_pres       = 0
     ds_thm%ds_behaviour%nb_phase(1:2) = 0
-!  Type of FE: which dof on element ?
+!   Type of FE: which dof on element ?
     ds_thm%ds_elem%l_dof_ther      = .false.
     ds_thm%ds_elem%l_dof_meca      = .false.
     ds_thm%ds_elem%l_dof_hydr1     = .false.
     ds_thm%ds_elem%l_dof_hydr2     = .false.
     ds_thm%ds_elem%nb_phase(1:2)   = 0
     ds_thm%ds_elem%l_weak_coupling = .false.
-
+!   Material parameters
+    ds_thm%ds_material%biot_type   = BIOT_TYPE_ISOT
+    ds_thm%ds_material%biot_coef   = r8vide()
+    ds_thm%ds_material%biot_l      = r8vide()
+    ds_thm%ds_material%biot_t      = r8vide()
+    ds_thm%ds_material%biot_n      = r8vide()
 end subroutine
 !
 end module

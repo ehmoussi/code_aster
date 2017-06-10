@@ -31,7 +31,7 @@ interface
                       addep2, adcp21, adcp22, addete, adcote,&
                       defgem, defgep, congem, congep, vintm,&
                       vintp, dsde, pesa, retcom, kpi,&
-                      npg, angmas)
+                      npg, angl_naut)
         integer, parameter :: maxfa=6
         integer :: nbvari
         integer :: dimcon
@@ -74,6 +74,6 @@ interface
         integer :: retcom
         integer :: kpi
         integer :: npg
-        real(kind=8) :: angmas(3)
+        real(kind=8) :: angl_naut(3)
     end subroutine comthm
 end interface 

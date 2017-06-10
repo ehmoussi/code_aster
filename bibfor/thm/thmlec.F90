@@ -25,7 +25,7 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                   lambs, dlambs, viscl, dviscl, mamolg,&
                   tlambt, tdlamt, viscg, dviscg, mamolv,&
                   fickad, dfadt, tlamct, instap,&
-                  angmas, aniso, ndim)
+                  angmas, ndim)
 ! person_in_charge: sylvie.granet at edf.fr
 ! =====================================================================
 ! =====================================================================
@@ -33,7 +33,8 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
 ! =====================================================================
     implicit none
 #include "asterfort/thmrcp.h"
-    integer :: imate, retcom, aniso, ndim
+#include "asterfort/tebiot.h"
+    integer :: imate, retcom, ndim
     real(kind=8) :: t, p1, p2, phi, pvp
     real(kind=8) :: rgaz, tbiot(6), satur, dsatur, pesa(3)
     real(kind=8) :: tperm(ndim, ndim), permli, dperml, permgz, dperms, dpermp
@@ -109,7 +110,7 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
                     ther, t, rbid6, rbid41, rbid7,&
                     phi, end, rbid11, rbid12, rbid13,&
-                    rbid14, tbiot, rbid16, rbid17, rbid18,&
+                    rbid14, rbid16, rbid17, rbid18,&
                     pesa, tperm, rbid19, rbid20, rbid21,&
                     rbid22, rbid23, rbid24, rbid25, rbid26,&
                     lambp, dlambp, rbid27, unsurk, alpha,&
@@ -118,12 +119,12 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     rbid36, rbid37, rbid38, rbid39, rbid40,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct, instap, retcom,&
-                    angmas, aniso, ndim)
+                    angmas, ndim)
     else if (thmc.eq.'GAZ') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
                     ther, t, rbid6, rbid44, rbid7,&
                     phi, end, rbid11, rgaz, rbid13,&
-                    rbid14, tbiot, rbid16, rbid17, rbid18,&
+                    rbid14, rbid16, rbid17, rbid18,&
                     pesa, tperm, rbid19, rbid20, rbid21,&
                     rbid22, rbid23, rbid24, rbid25, rbid26,&
                     lambp, dlambp, rbid27, rbid42, rbid43,&
@@ -132,12 +133,12 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     dviscg, rbid37, rbid38, rbid39, rbid40,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct,  instap, retcom,&
-                    angmas, aniso, ndim)
+                    angmas, ndim)
     else if (thmc.eq.'LIQU_VAPE') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, end, pvp, rgaz, rbid8,&
-                    rbid9, tbiot, rbid11, satur, dsatur,&
+                    rbid9, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, permgz,&
                     dperms, dpermp, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
@@ -146,12 +147,12 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     rbid24, mamolv, rbid25, viscg, dviscg,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct, instap, retcom,&
-                    angmas, aniso, ndim)
+                    angmas, ndim)
     else if (thmc.eq.'LIQU_VAPE_GAZ') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, end, pvp, rgaz, rbid8,&
-                    rbid9, tbiot, rbid11, satur, dsatur,&
+                    rbid9, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, permgz,&
                     dperms, dpermp, fick, dfickt, dfickg,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
@@ -160,12 +161,12 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     dviscg, mamolv, rbid25, rbid26, rbid27,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct,  instap, retcom,&
-                    angmas, aniso, ndim)
+                    angmas, ndim)
     else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, end, rbid28, rgaz, rbid8,&
-                    rbid9, tbiot, rbid11, satur, dsatur,&
+                    rbid9, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, permgz,&
                     dperms, dpermp, fick, dfickt, dfickg,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
@@ -174,13 +175,13 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     dviscg, mamolv, rbid25, rbid26, rbid27,&
                     fickad, dfadt, rbid47, rbid48, pad,&
                     rbid50, tlamct,  instap, retcom,&
-                    angmas, aniso, ndim)
+                    angmas, ndim)
 !
     else if (thmc.eq.'LIQU_AD_GAZ') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, end, rbid28, rgaz, rbid8,&
-                    rbid9, tbiot, rbid11, satur, dsatur,&
+                    rbid9, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, permgz,&
                     dperms, dpermp, rbid50, rbid50, rbid50,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
@@ -189,12 +190,12 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     dviscg, rbid50, rbid25, rbid26, rbid27,&
                     fickad, dfadt, rbid47, rbid48, pad,&
                     rbid50, tlamct,  instap, retcom,&
-                    angmas, aniso, ndim)
+                    angmas, ndim)
     else if (thmc.eq.'LIQU_GAZ') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, end, rbid28, rgaz, rbid8,&
-                    rbid9, tbiot, rbid11, satur, dsatur,&
+                    rbid9, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, permgz,&
                     dperms, dpermp, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
@@ -203,12 +204,12 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     dviscg, mamolv, rbid25, rbid26, rbid27,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct,  instap, retcom,&
-                    angmas, aniso, ndim)
+                    angmas, ndim)
     else if (thmc.eq.'LIQU_GAZ_ATM') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, end, rbid28, rbid29, rbid8,&
-                    rbid9, tbiot, rbid11, satur, dsatur,&
+                    rbid9, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, rbid30,&
                     rbid31, rbid32, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
@@ -217,7 +218,12 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     rbid24, mamolv, rbid25, rbid26, rbid27,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct, instap, retcom,&
-                    angmas, aniso, ndim)
+                    angmas, ndim)
     endif
+!
+! - (re)-compute Biot tensor
+!
+    call tebiot(angmas, tbiot)
+
 ! =====================================================================
 end subroutine

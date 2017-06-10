@@ -112,7 +112,7 @@ implicit none
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid32(ndim, ndim)
     real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38, rbid20
-    real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid37(6)
+    real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43
     real(kind=8) :: rbid51, rbid52, rbid53, rbid54
     real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid56
     real(kind=8) :: rbid57(ndim, ndim), rbid55
@@ -135,7 +135,7 @@ implicit none
     call thmrcp('INTERMED', imate, thmc, meca, hydr,&
                 ther, t, rbid40, pvpm-p1+dp1, rbid6,&
                 rbid7, rbid8, rbid10, r, rho0,&
-                csigm, tbiot, satm, rbid42, rbid43,&
+                csigm, satm, rbid42, rbid43,&
                 rbid14, rbid15, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
@@ -144,7 +144,8 @@ implicit none
                 rbid35, mamolv, cp12, rbid38, rbid39,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 em, rbid57,  rinstp, retcom,&
-                angmas, aniso, ndim)
+                angmas, ndim)
+
 ! ======================================================================
 ! --- POUR EVITER DES PB AVEC OPTIMISEUR ON MET UNE VALEUR DANS CES ----
 ! --- VARIABES POUR QU ELLES AIENT UNE VALEUR MEME DANS LES CAS OU -----
@@ -216,7 +217,7 @@ implicit none
     call thmrcp('SATURATI', imate, thmc, meca, hydr,&
                 ther, rbid9, pvp-p1, rbid41, rbid6,&
                 rbid7, rbid8, rbid10, rbid51, rbid52,&
-                rbid53, rbid37, rbid41, sat, dsatp1,&
+                rbid53, rbid41, sat, dsatp1,&
                 rbid14, rbid15, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, rbid53, rbid52,&
@@ -225,7 +226,8 @@ implicit none
                 rbid35, rbid54, rbid55, rbid38, rbid39,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 rbid56, rbid57,  rinstp, retcom,&
-                angmas, aniso, ndim)
+                angmas, ndim)
+
     if ((option.eq.'RAPH_MECA') .or. (option.eq.'FORC_NODA') .or.&
         (option(1:9).eq.'FULL_MECA')) then
 ! =====================================================================

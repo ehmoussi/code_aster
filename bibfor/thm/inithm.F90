@@ -21,7 +21,11 @@ subroutine inithm(imate, yachai, yamec, phi0, em,&
                   epsvm, angmas, aniso, mdal, dalal,&
                   alphfi, cbiot, unsks, alpha0, ndim,&
                   phenom)
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/calela.h"
@@ -32,6 +36,7 @@ subroutine inithm(imate, yachai, yamec, phi0, em,&
 #include "asterfort/unsmfi.h"
 #include "asterfort/utmess.h"
 !
+!
     integer :: nelas, ndim, iret
     parameter    ( nelas=4 )
     real(kind=8) :: elas(nelas)
@@ -41,7 +46,7 @@ subroutine inithm(imate, yachai, yamec, phi0, em,&
     integer :: imate, yamec, i, aniso
     real(kind=8) :: phi0, em, cs, tbiot(6), epsvm, epsv, depsv
     real(kind=8) :: angmas(3), t, eps, dalal, mdal(6), young, nu
-    real(kind=8) :: alphfi, rbid(6, 6), biot(4), cbiot, unsks, alpha0, k0
+    real(kind=8) :: alphfi, rbid(6, 6), cbiot, unsks, alpha0, k0
     character(len=*) :: phenom
 !
     parameter  ( eps = 1.d-21 )
@@ -57,10 +62,11 @@ subroutine inithm(imate, yachai, yamec, phi0, em,&
 ! =====================================================================
 ! --- CALCUL CAS ISOTROPE (POUR LA ROUTINE VIPORO) --------------------
 ! =====================================================================
-999 if (aniso.eq.0) then
+999 if (aniso.eq. BIOT_TYPE_ISOT) then
 !
         call rccoma(imate, 'ELAS', 0, phenom, iret)
         if (iret .eq. 0) then
+! on a trouvé un mot-clef ELAS_*
             if (phenom .eq. 'ELAS_ISTR') then
                 call utmess('F', 'ALGORITH17_33')
             else if (phenom.eq.'ELAS_ORTH') then
@@ -79,7 +85,7 @@ subroutine inithm(imate, yachai, yamec, phi0, em,&
             phenom = 'ELAS'
 !
         endif
-!
+! - Coefficients élastiques à température courante
         call rcvala(imate, ' ', 'ELAS', 1, 'TEMP',&
                     [t], 3, ncra1(1), elas( 1), icodre,&
                     2)
@@ -91,16 +97,18 @@ subroutine inithm(imate, yachai, yamec, phi0, em,&
         k0 = young / 3.d0 / (1.d0-2.d0*nu)
         unsks = (1.0d0-cbiot) / k0
 !
-    else if (aniso.eq.1) then
+    else if (aniso.eq. BIOT_TYPE_ISTR) then
         call rccoma(imate, 'ELAS_ISTR', 0, phenom, iret)
         if (iret .eq. 1) then
-            aniso=0
+            aniso=0 
+! on prend les caractéristiqus élastiques isotropes
             goto 999
         endif
-    else if (aniso.eq.2) then
+    else if (aniso .eq. BIOT_TYPE_ORTH) then
         call rccoma(imate, 'ELAS_ORTH', 0, phenom, iret)
 !
         if (iret .eq. 1) then
+! on prend les caractéristiqus élastiques isotropes
             aniso=0
             goto 999
         endif
@@ -121,7 +129,7 @@ subroutine inithm(imate, yachai, yamec, phi0, em,&
 ! --- SI ABSENCE DE MECANIQUE -----------------------------------------
 ! =====================================================================
 else
-    if (aniso .eq. 0) then
+    if (aniso .eq. BIOT_TYPE_ISOT) then
 ! =====================================================================
 ! --- CALCUL CAS ISOTROPE ---------------------------------------------
 ! =====================================================================
@@ -135,12 +143,13 @@ else
  20     continue
         if (em .lt. eps) then
             cbiot =phi0
-            biot(1)=phi0
-            biot(2)=phi0
-            biot(3)=phi0
-            call tebiot(angmas, biot, tbiot, 0, ndim)
+            ds_thm%ds_material%biot_coef = phi0
+            ds_thm%ds_material%biot_l    = phi0
+            ds_thm%ds_material%biot_t    = phi0
+            ds_thm%ds_material%biot_t    = phi0
+            call tebiot(angmas, tbiot)
         endif
-    else if (aniso.eq.1) then
+    else if (aniso.eq. BIOT_TYPE_ISTR) then
 ! =====================================================================
 ! --- CALCUL CAS ISOTROPE TRANSVERSE-----------------------------------
 ! =====================================================================
@@ -154,13 +163,13 @@ else
             mdal(i) = 0.d0
  30     continue
         if (em .lt. eps) then
-            biot(1)=phi0
-            biot(2)=phi0
-            biot(3)=phi0
-            biot(4)=phi0
-            call tebiot(angmas, biot, tbiot, 1, ndim)
+            ds_thm%ds_material%biot_coef = phi0
+            ds_thm%ds_material%biot_l    = phi0
+            ds_thm%ds_material%biot_t    = phi0
+            ds_thm%ds_material%biot_t    = phi0
+            call tebiot(angmas, tbiot)
         endif
-    else if (aniso.eq.2) then
+    else if (aniso .eq. BIOT_TYPE_ORTH) then
 ! =====================================================================
 ! --- CALCUL CAS ORTHO 2D-----------------------------------
 ! =====================================================================
@@ -174,11 +183,11 @@ else
             mdal(i) = 0.d0
  40     continue
         if (em .lt. eps) then
-            biot(1)=phi0
-            biot(2)=phi0
-            biot(3)=phi0
-            biot(4)=phi0
-            call tebiot(angmas, biot, tbiot, 2, ndim)
+            ds_thm%ds_material%biot_coef = phi0
+            ds_thm%ds_material%biot_l    = phi0
+            ds_thm%ds_material%biot_t    = phi0
+            ds_thm%ds_material%biot_t    = phi0
+            call tebiot(angmas, tbiot)
         endif
     endif
 endif

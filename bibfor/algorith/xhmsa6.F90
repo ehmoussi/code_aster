@@ -67,12 +67,12 @@ subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
 !
 !
 !
-    integer :: i, ibid, rbid54
+    integer :: i, ibid
     real(kind=8) :: vim(9), vip(9)
     real(kind=8) ::  dsid2d(6, 6), dam(3)
     real(kind=8) :: sigma(6), cliq, varbio
     real(kind=8) :: rbid2, rbid3, rbid4, rbid5, rbid6
-    real(kind=8) :: rbid8, rbid9, rbid10, rbid11, rbid12(6), rbid13, rbid14
+    real(kind=8) :: rbid8, rbid9, rbid10, rbid11, rbid13, rbid14
     real(kind=8) :: rbid15(3), rbid16(3, 3), rbid17, rbid18, rbid19, rbid20
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid29, rbid30, rbid31, rbid32
@@ -102,7 +102,7 @@ subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
     call thmrcp('INTERMED', imate, thmc, meca, hydr,&
                 zkbid, t, rbid2, rbid3, rbid4,&
                 rbid5, rbid6, rbid8, rbid9, rbid10,&
-                rbid11, rbid12, rbid13, rbid53, rbid14,&
+                rbid11, rbid13, rbid53, rbid14,&
                 rbid15, rbid16, rbid17, rbid18, rbid19,&
                 rbid20, rbid21, rbid22, rbid23, rbid24,&
                 rbid25, rbid26, rho110, cliq, rbid29,&
@@ -111,7 +111,7 @@ subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
                 rbid40, rbid41, rbid42, rbid43, rbid44,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 rbid50, rbid51, rbid52, ibid,&
-                r7bid, rbid54, ndim)
+                r7bid, ndim)
 !
     rho11 = cohes(4) + rho110
     rho11m = cohes(4) + rho110

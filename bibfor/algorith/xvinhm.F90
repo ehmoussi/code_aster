@@ -42,13 +42,13 @@ subroutine xvinhm(jmate, thmc, meca, hydr, ndim,&
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: jmate, ndim, i, rbid54, ibid, ipgf
+    integer :: jmate, ndim, i, ibid, ipgf
     real(kind=8) :: cliq, vim(2), vip(2), cohes(5), rho11, rho11m
     real(kind=8) :: dsidep(6, 6), delta(6), eps, vim2(9), vip2(9), rela
     real(kind=8) :: w11, w11m, varbio, dpf, psp, psm, saut(3), lamb(3)
     real(kind=8) :: sautm(3), alpha(5), nd(3), t, rho110, r, pf, am(3)
     real(kind=8) :: rbid2, rbid3, rbid4, rbid5, rbid6
-    real(kind=8) :: rbid8, rbid9, rbid10, rbid11, rbid12(6), rbid13, rbid14
+    real(kind=8) :: rbid8, rbid9, rbid10, rbid11, rbid13, rbid14
     real(kind=8) :: rbid15(3), rbid16(3, 3), rbid17, rbid18, rbid19, rbid20
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid29, rbid30, rbid31, rbid32
@@ -73,7 +73,7 @@ subroutine xvinhm(jmate, thmc, meca, hydr, ndim,&
     call thmrcp('INTERMED', jmate, thmc, meca, hydr,&
                 zkbid, t, rbid2, rbid3, rbid4,&
                 rbid5, rbid6, rbid8, rbid9, rbid10,&
-                rbid11, rbid12, rbid13, rbid53, rbid14,&
+                rbid11, rbid13, rbid53, rbid14,&
                 rbid15, rbid16, rbid17, rbid18, rbid19,&
                 rbid20, rbid21, rbid22, rbid23, rbid24,&
                 rbid25, rbid26, rho110, cliq, rbid29,&
@@ -82,7 +82,7 @@ subroutine xvinhm(jmate, thmc, meca, hydr, ndim,&
                 rbid40, rbid41, rbid42, rbid43, rbid44,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 rbid50, rbid51, rbid52, ibid,&
-                r7bid, rbid54, ndim)
+                r7bid, ndim)
 !
 !   INITIALISATION DE LA VARIABLE INTERNE
 !

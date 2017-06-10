@@ -25,7 +25,7 @@ subroutine xhmsat(yachai, option, meca, thmc, ther,&
                   addep1, adcp11, congem, congep, vintm,&
                   vintp, dsde, epsv, depsv, p1,&
                   dp1, t, phi, rho11,&
-                  sat, retcom, tbiot, rinstp, angmas,&
+                  sat, retcom, tbiot, rinstp, angl_naut,&
                   aniso, phenom, yaenrh, adenhy, nfh)
 !
 use THM_type
@@ -47,6 +47,8 @@ implicit none
 #include "asterfort/unsmfi.h"
 #include "asterfort/viporo.h"
 #include "asterfort/virhol.h"
+#include "asterfort/thmGetParaBiot.h"
+#include "asterfort/tebiot.h"
 !
 ! person_in_charge: daniele.colombo at ifpen.fr
 ! ROUTINE HMLISA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
@@ -68,7 +70,7 @@ implicit none
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
     real(kind=8) :: epsv, depsv, p1, dp1, t, dt
     real(kind=8) :: phi, rho11, rac2
-    real(kind=8) :: rinstp, angmas(3)
+    real(kind=8) :: rinstp, angl_naut(3)
     character(len=16) :: option, meca, ther, thmc, hydr, phenom
     aster_logical :: yachai
 !
@@ -112,7 +114,7 @@ implicit none
     call thmrcp('INTERMED', imate, thmc, meca, hydr,&
                 ther, t, p1, rbid40, rbid6,&
                 rbid7, rbid8, rbid10, rbid11, rho0,&
-                csigm, tbiot, rbid12, sat, rbid13,&
+                csigm, rbid12, sat, rbid13,&
                 rbid14, rbid15, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
@@ -121,7 +123,19 @@ implicit none
                 rbid35, rbid36, rbid37, rbid38, rbid39,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 bid, rbid50, rinstp, retcom,&
-                angmas, aniso, ndim)
+                angl_naut, ndim)
+!
+! - Get Biot parameters (for porosity evolution)
+!
+    call thmGetParaBiot(imate)
+!
+! - Compute Biot tensor
+!
+    call tebiot(angl_naut, tbiot)
+!
+! - Temporaire: aniso n'est pas toujours lu dans le module pour l'instant
+!
+    aniso = ds_thm%ds_material%biot_type
 ! ======================================================================
 ! --- INITIALISATIONS --------------------------------------------------
 ! ======================================================================
@@ -147,7 +161,7 @@ implicit none
 !
     call inithm(imate, yachai, yamec, phi0, bid,&
                 cs, tbiot, t, epsv, depsv,&
-                epsvm, angmas, aniso, mdal, dalal,&
+                epsvm, angl_naut, aniso, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0, ndim,&
                 phenom)
 ! *********************************************************************
@@ -185,7 +199,7 @@ implicit none
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(imate, phi, alphfi, t, aniso,&
-                    angmas, tbiot, phenom)
+                    angl_naut, tbiot, phenom)
         call unsmfi(imate, phi, cs, t, tbiot,&
                     aniso, ndim, phenom)
     endif

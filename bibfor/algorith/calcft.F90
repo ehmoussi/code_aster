@@ -23,7 +23,7 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
                   rgaz, tbiot, sat, dsatp1, lambp,&
                   dlambp, lambs, dlambs, tlambt, tdlamt,&
                   mamolv, tlamct, rho11, h11, h12,&
-                  angmas, aniso, phenom)
+                  angmas, anisof, phenom)
 ! ======================================================================
 ! ======================================================================
 ! person_in_charge: sylvie.granet at edf.fr
@@ -36,7 +36,8 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
 #include "asterfort/dilata.h"
 #include "asterfort/matini.h"
 #include "asterfort/unsmfi.h"
-    integer :: ndim, dimdef, dimcon, imate, aniso
+    integer, intent(in) :: anisof
+    integer :: ndim, dimdef, dimcon, imate
     integer :: yamec, yap1, yap2
     integer :: addete, addeme, addep1, addep2, adcote
     real(kind=8) :: congep(1:dimcon)
@@ -58,14 +59,14 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
 ! =====================================================================
 ! --- DEFINITION DU SYMBOLE DE KRONECKER ------------------------------
 ! =====================================================================
-    do 10 i = 1, ndim
-        do 20 j = 1, ndim
+    do i = 1, ndim
+        do j = 1, ndim
             kron(i,j) = 0.d0
-20      continue
-10  end do
-    do 30 i = 1, ndim
+        end do
+    end do
+    do i = 1, ndim
         kron(i,i) = 1.d0
-30  end do
+    end do
 !
     call matini(ndim, ndim, 0.d0, lamdt1)
     call matini(ndim, ndim, 0.d0, lamdt2)
@@ -89,10 +90,10 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ALPHAFI ET CS-----------
 ! =====================================================================
     if (yamec .eq. 1) then
-        call dilata(imate, phi, alphfi, t, aniso,&
+        call dilata(imate, phi, alphfi, t, anisof,&
                     angmas, tbiot, phenom)
         call unsmfi(imate, phi, cs, t, tbiot,&
-                    aniso, ndim, phenom)
+                    anisof, ndim, phenom)
     else
 ! =====================================================================
 ! --- EN ABSENCE DE MECA ALPHA0 = 0 et 1/KS = 0 -----------------------
@@ -116,8 +117,8 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
 ! =====================================================================
     if (thmc .eq. 'LIQU_VAPE') then
         rho12=mamolv*pvp/rgaz/t
-        do 35 i = 1, ndim
-            do 36 j = 1, ndim
+        do i = 1, ndim
+            do j = 1, ndim
                 lamdt1(i,j) =lamdt1(i,j)+lambs*lambp*tlambt(i,j)&
                 + tlamct(i,j)
                 lamdt2(i,j) =lamdt2(i,j)+(biot(i,j)-phi*kron(i,j))&
@@ -130,11 +131,11 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
                 +(-3.d0*alphfi+cs*(1.d0-sat)* rho12*(h12-h11)/t)*&
                 dlambp*lambs* tlambt(i,j) +lambp*dlambs*tlambt(i,j)*&
                 dsatp1*rho12* (h12-h11)/t
-36          continue
-35      continue
+            end do
+        end do
     else
-        do 50 i = 1, ndim
-            do 51 j = 1, ndim
+        do i = 1, ndim
+            do j = 1, ndim
                 lamdt1(i,j) =lamdt1(i,j)+lambs*lambp*tlambt(i,j)&
                 + tlamct(i,j)
                 lamdt2(i,j) =lamdt2(i,j)+(biot(i,j)-phi*kron(i,j))&
@@ -144,50 +145,50 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
                 lamdt4(i,j) =lamdt4(i,j)+ cs*dlambp*lambs*tlambt(i,j)
                 lamdt5(i,j) =lamdt5(i,j)+ lambs*lambp*tdlamt(i,j)&
                 -3.d0*alphfi*dlambp*lambs*tlambt(i,j)
-51          continue
-50      continue
+            end do
+        end do
     endif
 !
 ! =====================================================================
 ! --- CALCUL DU FLUX THERMIQUE ----------------------------------------
 ! =====================================================================
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        do 100 i = 1, ndim
-            do 101 j = 1, ndim
+        do i = 1, ndim
+            do j = 1, ndim
                 dsde(adcote+i,addete+j)=dsde(adcote+i,addete+j)-&
                 lamdt1(i,j)
                 dsde(adcote+i,addete)=dsde(adcote+i,addete)- lamdt5(i,&
                 j)*grat(j)
-101          continue
+            end do
             if (yamec .eq. 1) then
-                do 110 j = 1, 6
-                    do 111 k = 1, ndim
+                do j = 1, 6
+                    do k = 1, ndim
                         dsde(adcote+i,addeme+ndim-1+j)= dsde(adcote+i,&
                         addeme+ndim-1+j)-lamdt2(i,k)*grat(k)
-111                  continue
-110              continue
+                    end do
+                end do
             endif
             if (yap1 .eq. 1) then
-                do 112 j = 1, ndim
+                do j = 1, ndim
                     dsde(adcote+i,addep1)=dsde(adcote+i,addep1)&
                     - lamdt3(i,j)*grat(j)
-112              continue
+                end do
                 if (yap2 .eq. 1) then
-                    do 113 j = 1, ndim
+                    do j = 1, ndim
                         dsde(adcote+i,addep2)=dsde(adcote+i,addep2)&
                         -lamdt4(i,j)*grat(j)
-113                  continue
+                    end do
                 endif
             endif
-100      continue
+        end do
     endif
     if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        do 102 i = 1, ndim
+        do i = 1, ndim
             congep(adcote+i)=0.d0
-            do 103 j = 1, ndim
+            do j = 1, ndim
                 congep(adcote+i)=congep(adcote+i)-lamdt1(i,j)*grat(j)
-103          continue
-102      continue
+            end do
+        end do
     endif
 ! =====================================================================
 end subroutine

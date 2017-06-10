@@ -32,6 +32,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! - Type of Biot coefficients
+    integer, parameter :: BIOT_TYPE_ISOT = 0
+    integer, parameter :: BIOT_TYPE_ISTR = 1
+    integer, parameter :: BIOT_TYPE_ORTH = 2
+
 
 ! - Type of FE
     type THM_Element
@@ -72,5 +77,15 @@ implicit none
         real(kind=8) :: poro_init
         real(kind=8) :: prev_init
     end type THM_ParaInit
+
+! - Material parameters
+    type THM_Material
+! ----- For Biot coefficient (evolution of porosity)
+        integer :: biot_type
+        real(kind=8) :: biot_coef
+        real(kind=8) :: biot_l
+        real(kind=8) :: biot_n
+        real(kind=8) :: biot_t
+    end type THM_Material
 !
 end module
