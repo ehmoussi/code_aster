@@ -22,7 +22,7 @@ interface
     subroutine xcalme(option, meca, imate, ndim, dimenr,&
                       dimcon, addeme, adcome, congep,&
                       dsde, deps, t,&
-                      idecpg, kpi, ang2, aniso, phenom)
+                      ang2, aniso)
         integer :: dimcon
         integer :: dimenr
         character(len=16) :: option
@@ -35,10 +35,7 @@ interface
         real(kind=8) :: dsde(dimcon, dimenr)
         real(kind=8) :: deps(6)
         real(kind=8) :: t
-        integer :: idecpg
-        integer :: kpi
         real(kind=8) :: ang2(3)
         integer :: aniso
-        character(len=16) :: phenom
     end subroutine xcalme
 end interface 

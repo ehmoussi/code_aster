@@ -17,18 +17,22 @@
 ! --------------------------------------------------------------------
 
 subroutine dilata(imate, phi, alphfi, t, aniso,&
-                  angmas, tbiot, phenom)
+                  angmas, tbiot)
 !
-    implicit none
-! ======================================================================
+use THM_type
+use THM_module
 !
-! --- CALCUL DE ALPHAFI ------------------------------------------------
-! ======================================================================
+implicit none
+!
 #include "asterc/r8pi.h"
 #include "asterfort/matini.h"
 #include "asterfort/matrot.h"
 #include "asterfort/rcvala.h"
 #include "asterfort/utbtab.h"
+!
+! --- CALCUL DE ALPHAFI ------------------------------------------------
+! ======================================================================
+
     integer :: nelas2
     integer :: nelas1, nelas3
     parameter  ( nelas1=1 )
@@ -42,7 +46,6 @@ subroutine dilata(imate, phi, alphfi, t, aniso,&
     integer :: imate, aniso, i, anisoi
     real(kind=8) :: phi, t, tbiot(6), alpha(6)
     real(kind=8) :: kron(6), angmas(3), alphfi
-    character(len=16) :: phenom
     real(kind=8) :: talpha(3, 3), talphal(3, 3)
     real(kind=8) :: passag(3, 3), work(3, 3)
 ! =====================================================================
@@ -88,17 +91,17 @@ subroutine dilata(imate, phi, alphfi, t, aniso,&
 ! --- CALCUL CAS ISOTROPE TRANSVERSE 3D-------------------------------
 ! =====================================================================
     else if (anisoi.gt.0) then
-        if (phenom .eq. 'ELAS') then
+        if (ds_thm%ds_material%elas_keyword .eq. 'ELAS') then
             anisoi=0
             goto 999
-        else if ((phenom.eq.'ELAS_ISTR')) then
+        else if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ISTR') then
             call rcvala(imate, ' ', 'ELAS_ISTR', 1, 'TEMP',&
                         [t], 2, ncra2(1), elas2(1), icodre2,&
                         0)
             talpha(1,1)=elas2(1)
             talpha(2,2)=elas2(1)
             talpha(3,3)=elas2(2)
-        else if (phenom.eq.'ELAS_ORTH') then
+        else if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ORTH') then
             call rcvala(imate, ' ', 'ELAS_ORTH', 1, 'TEMP',&
                         [t], 3, ncra3(1), elas3(1), icodre3,&
                         0)
@@ -128,7 +131,7 @@ subroutine dilata(imate, phi, alphfi, t, aniso,&
 ! --- DEFINITION DU COEFFICIENT DE DILATATION DIFFERENTIEL ------------
 ! =====================================================================
     alphfi = 0.d0
-    do 40 i = 1, 6
+    do i = 1, 6
         alphfi = alphfi+(tbiot(i)-phi*kron(i))*alpha(i)/3.d0
-40  enddo
+    enddo
 end subroutine

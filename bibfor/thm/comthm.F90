@@ -154,7 +154,7 @@ implicit none
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: deltat
     real(kind=8) :: angl_naut(3)
-    character(len=16) :: meca, thmc, ther, hydr, phenom
+    character(len=16) :: meca, thmc, ther, hydr
 ! ======================================================================
 ! --- INITIALISATION ---------------------------------------------------
 ! ======================================================================
@@ -215,8 +215,7 @@ implicit none
                 phi, pvp, pad, h11, h12,&
                 kh, rho11, sat,&
                 retcom, crit, tbiot, vihrho, vicphi,&
-                vicpvp, vicsat, instap, angl_naut, aniso,&
-                phenom)              
+                vicpvp, vicsat, instap, angl_naut, aniso)              
 !
     if (retcom .ne. 0) then
         goto 999
@@ -252,7 +251,7 @@ implicit none
                     congep, vintm, vintp, addep1, addep2,&
                     dsde, deps, p1, p2, t,&
                     dt, retcom, dp1, dp2, sat,&
-                    tbiot, angl_naut, aniso, phenom)
+                    tbiot, angl_naut, aniso)
         if (retcom .ne. 0) then
             goto 999
         endif
@@ -322,7 +321,7 @@ implicit none
                     rgaz, tbiot, satur, dsatur, lambp,&
                     dlambp, lambs, dlambs, tlambt, tdlamt,&
                     mamovg, tlamct, rho11, h11, h12,&
-                    angl_naut, aniso, phenom)
+                    angl_naut, aniso)
         if (retcom .ne. 0) then
             goto 999
         endif

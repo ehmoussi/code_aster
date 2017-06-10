@@ -25,7 +25,7 @@ interface
                       congem, vintm, defgep, congep, vintp,&
                       mecani, press1, press2, tempe,&
                       rinstp, dt, r, drds,&
-                      dsde, retcom, idecpg, angmas, enrhyd, nfh)
+                      dsde, retcom, angmas, enrhyd, nfh)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -55,7 +55,6 @@ interface
         real(kind=8) :: drds(dimenr, dimcon)
         real(kind=8) :: dsde(dimcon, dimenr)
         integer :: retcom
-        integer :: idecpg
         real(kind=8) :: angmas(3)
         integer :: enrhyd(3)
         integer :: nfh

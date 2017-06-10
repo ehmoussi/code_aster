@@ -23,7 +23,7 @@ subroutine xequhm(imate, option, ta, ta1, ndim,&
                   congem, vintm, defgep, congep, vintp,&
                   mecani, press1, press2, tempe,&
                   rinstp, dt, r, drds,&
-                  dsde, retcom, idecpg, angmas, enrhyd, nfh)
+                  dsde, retcom, angmas, enrhyd, nfh)
 !
 implicit none
 !
@@ -75,7 +75,7 @@ implicit none
 !
 ! DECLARATIONS POUR XFEM
     integer :: dimenr, enrmec(3), enrhyd(3)
-    integer :: yaenrm, adenme, idecpg
+    integer :: yaenrm, adenme
     integer :: yaenrh, adenhy, ifh
     real(kind=8) :: r(dimenr), drds(dimenr, dimcon)
     real(kind=8) :: dsde(dimcon, dimenr)
@@ -142,7 +142,7 @@ implicit none
                 defgep, congem, congep, vintm,&
                 vintp, dsde, pesa, retcom, kpi,&
                 npg, dimenr,&
-                idecpg, angmas, yaenrh, adenhy, nfh)
+                angmas, yaenrh, adenhy, nfh)
 !
     if (retcom .ne. 0) then
         goto 900

@@ -34,7 +34,7 @@ interface
                       dt, phi, padp, h11, h12,&
                       kh, rho11, sat, retcom,&
                       thmc, tbiot, rinstp, angmas, deps,&
-                      aniso, phenom)
+                      aniso)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -90,6 +90,5 @@ interface
         real(kind=8) :: angmas(3)
         real(kind=8) :: deps(6)
         integer :: aniso
-        character(len=16) :: phenom
     end subroutine hmladg
 end interface 

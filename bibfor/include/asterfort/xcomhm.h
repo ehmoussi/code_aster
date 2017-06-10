@@ -26,7 +26,7 @@ interface
                       defgep, congem, congep, vintm,&
                       vintp, dsde, pesa, retcom, kpi,&
                       npg, dimenr,&
-                      idecpg, angmas, yaenrh, adenhy, nfh)
+                      angl_naut, yaenrh, adenhy, nfh)
         integer :: dimenr
         integer :: nbvari
         integer :: dimcon
@@ -58,7 +58,7 @@ interface
         integer :: kpi
         integer :: npg
         integer :: idecpg
-        real(kind=8) :: angmas(3)
+        real(kind=8) :: angl_naut(3)
         integer :: yaenrh
         integer :: adenhy
         integer :: nfh

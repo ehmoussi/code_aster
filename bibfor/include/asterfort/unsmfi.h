@@ -20,7 +20,7 @@
 !
 interface 
     subroutine unsmfi(imate, phi, cs, t, tbiot,&
-                      aniso, ndim, phenom)
+                      aniso, ndim)
         integer :: imate
         real(kind=8) :: phi
         real(kind=8) :: cs
@@ -28,6 +28,5 @@ interface
         real(kind=8) :: tbiot(6)
         integer :: aniso
         integer :: ndim
-        character(len=16) :: phenom
     end subroutine unsmfi
 end interface 

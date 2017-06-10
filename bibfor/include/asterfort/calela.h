@@ -20,7 +20,7 @@
 !
 interface 
     subroutine calela(imate, angmas, mdal, dalal, t,&
-                      aniso, d, ndim, phenom)
+                      aniso, d, ndim)
         integer :: imate
         real(kind=8) :: angmas(3)
         real(kind=8) :: mdal(6)
@@ -29,6 +29,5 @@ interface
         integer :: aniso
         real(kind=8) :: d(6, 6)
         integer :: ndim
-        character(len=16) :: phenom
     end subroutine calela
 end interface 

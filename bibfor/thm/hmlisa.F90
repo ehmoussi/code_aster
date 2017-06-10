@@ -26,8 +26,7 @@ subroutine hmlisa(perman, yachai, option, meca, thmc,&
                   congep, vintm, vintp, dsde, epsv,&
                   depsv, p1, dp1, t, dt,&
                   phi, rho11, sat, retcom,&
-                  tbiot, rinstp, angmas, deps, aniso,&
-                  phenom)
+                  tbiot, rinstp, angmas, deps, aniso)
 !
 use THM_type
 use THM_module
@@ -84,7 +83,7 @@ implicit none
     real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, t, dt
     real(kind=8) :: phi, rho11, phi0, rac2
     real(kind=8) :: rinstp, angmas(3)
-    character(len=16) :: option, meca, ther, thmc, hydr, phenom
+    character(len=16) :: option, meca, ther, thmc, hydr
     aster_logical :: perman, yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -174,8 +173,7 @@ implicit none
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, t, epsv, depsv,&
                 epsvm, angmas, aniso, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0, ndim,&
-                phenom)
+                alphfi, cbiot, unsks, alpha0, ndim)
 !
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
@@ -190,7 +188,7 @@ implicit none
                         phi0, deps, depsv, alphfi, dt,&
                         dp1, dp2, signe, sat, cs,&
                         tbiot, phi, phim, retcom, cbiot,&
-                        unsks, alpha0, aniso, phenom)
+                        unsks, alpha0, aniso)
         else if (yamec .eq. 2) then
             phi = vintp(advico+vicphi)
         endif
@@ -219,9 +217,9 @@ implicit none
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(imate, phi, alphfi, t, aniso,&
-                    angmas, tbiot, phenom)
+                    angmas, tbiot)
         call unsmfi(imate, phi, cs, t, tbiot,&
-                    aniso, ndim, phenom)
+                    aniso, ndim)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************

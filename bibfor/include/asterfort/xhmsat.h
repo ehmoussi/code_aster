@@ -31,7 +31,7 @@ interface
                       vintp, dsde, epsv, depsv, p1,&
                       dp1, t, phi, rho11,&
                       sat, retcom, tbiot, rinstp,&
-                      angl_naut, aniso, phenom, yaenrh, adenhy, nfh)
+                      angl_naut, aniso, yaenrh, adenhy, nfh)
         integer :: nbvari
         integer :: dimcon
         integer :: dimenr
@@ -70,7 +70,6 @@ interface
         real(kind=8) :: rinstp
         real(kind=8) :: angl_naut(3)
         integer :: aniso
-        character(len=16) :: phenom
         integer :: yaenrh
         integer :: adenhy
         integer :: nfh

@@ -23,7 +23,7 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
                   rgaz, tbiot, sat, dsatp1, lambp,&
                   dlambp, lambs, dlambs, tlambt, tdlamt,&
                   mamolv, tlamct, rho11, h11, h12,&
-                  angmas, anisof, phenom)
+                  angmas, anisof)
 ! ======================================================================
 ! ======================================================================
 ! person_in_charge: sylvie.granet at edf.fr
@@ -55,7 +55,7 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
     real(kind=8) :: lamdt1(ndim, ndim), lamdt2(ndim, ndim)
     real(kind=8) :: lamdt3(ndim, ndim)
     real(kind=8) :: lamdt4(ndim, ndim), lamdt5(ndim, ndim)
-    character(len=16) :: option, thmc, phenom
+    character(len=16) :: option, thmc
 ! =====================================================================
 ! --- DEFINITION DU SYMBOLE DE KRONECKER ------------------------------
 ! =====================================================================
@@ -91,9 +91,9 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(imate, phi, alphfi, t, anisof,&
-                    angmas, tbiot, phenom)
+                    angmas, tbiot)
         call unsmfi(imate, phi, cs, t, tbiot,&
-                    anisof, ndim, phenom)
+                    anisof, ndim)
     else
 ! =====================================================================
 ! --- EN ABSENCE DE MECA ALPHA0 = 0 et 1/KS = 0 -----------------------

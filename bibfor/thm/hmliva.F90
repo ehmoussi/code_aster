@@ -28,7 +28,7 @@ subroutine hmliva(yachai, option, meca, ther, hydr,&
                   dt, phi, pvp, h11, h12,&
                   rho11, sat, retcom,&
                   thmc, tbiot, rinstp, angmas, deps,&
-                  aniso, phenom)
+                  aniso)
 !
 use THM_type
 use THM_module
@@ -90,7 +90,7 @@ implicit none
     real(kind=8) :: phi, pvp, h11, h12, rho11
     real(kind=8) :: phi0, pvp0
     real(kind=8) :: ums, phids, rinstp, angmas(3)
-    character(len=16) :: option, meca, ther, hydr, thmc, phenom
+    character(len=16) :: option, meca, ther, hydr, thmc
     aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -180,8 +180,7 @@ implicit none
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, t, epsv, depsv,&
                 epsvm, angmas, aniso, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0, ndim,&
-                phenom)
+                alphfi, cbiot, unsks, alpha0, ndim)
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
 ! *********************************************************************

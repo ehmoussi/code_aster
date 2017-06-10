@@ -17,13 +17,19 @@
 ! --------------------------------------------------------------------
 
 subroutine unsmfi(imate, phi, cs, t, tbiot,&
-                  aniso, ndim, phenom)
+                  aniso, ndim)
 !
-    implicit none
-! --- CALCUL DU MODULE DE BIOT CS --------------------------------------
-! ======================================================================
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterfort/rcvala.h"
 #include "asterfort/utmess.h"
+!
+! --- CALCUL DU MODULE DE BIOT CS --------------------------------------
+! ======================================================================
+
     integer :: nelas2, nelas1, nelas3, nelas4, ndim
     integer :: dim3
     parameter  ( dim3=3 )
@@ -47,7 +53,6 @@ subroutine unsmfi(imate, phi, cs, t, tbiot,&
     integer :: imate, aniso, i, j
     real(kind=8) :: phi, cs, t, tbiot(6), kron(6), skron(6)
     real(kind=8) :: m11, m12, m13, ks
-    character(len=16) :: phenom
     parameter  ( eps = 1.d-21 )
 ! =====================================================================
 ! --- DONNEES POUR RECUPERER LES CARACTERISTIQUES MECANIQUES ----------
@@ -89,7 +94,7 @@ subroutine unsmfi(imate, phi, cs, t, tbiot,&
 ! =====================================================================
 ! --- CALCUL CAS ISOTROPE TRANSVERSE ----------------------------------
 ! =====================================================================
-            if (phenom .eq. 'ELAS') then
+            if (ds_thm%ds_material%elas_keyword .eq. 'ELAS') then
                 vt(1)=t
                 call rcvala(imate, ' ', 'ELAS', 1, 'TEMP',&
                             vt, 2, ncra1(1), elas1(1), icodr1,&
@@ -99,7 +104,7 @@ subroutine unsmfi(imate, phi, cs, t, tbiot,&
                 nu12 = elas1(2)
                 nu13 = elas1(2)
                 g13 = young1/(2*(1.d0+nu12))
-            else if (phenom.eq.'ELAS_ISTR') then
+            else if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ISTR') then
                 vt(1)=t
                 call rcvala(imate, ' ', 'ELAS_ISTR', 1, 'TEMP',&
                             vt, 5, ncra2(1), elas2(1), icodr2,&
@@ -151,7 +156,7 @@ subroutine unsmfi(imate, phi, cs, t, tbiot,&
 ! =====================================================================
 ! --- CALCUL CAS ORTHOTROPIE 2D ----------------------------------
 ! =====================================================================
-            if (phenom .eq. 'ELAS') then
+            if (ds_thm%ds_material%elas_keyword .eq. 'ELAS') then
                 vt(1)=t
                 call rcvala(imate, ' ', 'ELAS', 1, 'TEMP',&
                             vt, 2, ncra1(1), elas1(1), icodr1,&
@@ -163,7 +168,7 @@ subroutine unsmfi(imate, phi, cs, t, tbiot,&
                 nu13 = elas1(2)
                 nu23 = elas1(2)
                 g12 = young1/(2*(1.d0+nu12))
-            else if (phenom.eq.'ELAS_ORTH') then
+            else if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ORTH') then
                 vt(1)=t        
                 call rcvala(imate, ' ', 'ELAS_ORTH', 1, 'TEMP',&
                             vt, 7, ncra4(1), elas4(1), icodr4,&

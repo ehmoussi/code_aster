@@ -23,7 +23,7 @@ subroutine calcme(option, compor, thmc, meca, imate,&
                   congep, vintm, vintp, addep1, addep2,&
                   dsde, deps, p1, p2, t,&
                   dt, retcom, dp1, dp2, sat,&
-                  tbiot, ang2, aniso, phenom)
+                  tbiot, ang2, aniso)
 !
 implicit none
 !
@@ -71,7 +71,7 @@ implicit none
     real(kind=8) :: vintm(nvimec), vintp(nvimec)
     real(kind=8) :: dsde(dimcon, dimdef), rac2
     character(len=8) :: typmod(2)
-    character(len=16) :: option, compor(*), meca, thmc, phenom, mult_comp
+    character(len=16) :: option, compor(*), meca, thmc, mult_comp
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
@@ -159,7 +159,7 @@ implicit none
 !    CALCUL DE LA MATRICE DE HOOK DANS LE REPERE GLOBAL
 !
         call calela(imate, ang2, mdal, dalal, t,&
-                    aniso, d, ndim, phenom)
+                    aniso, d, ndim)
 !
         if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
             do i = 1, 3

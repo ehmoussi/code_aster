@@ -26,7 +26,25 @@ subroutine xcomhm(option, imate, compor,instap,&
                   defgep, congem, congep, vintm,&
                   vintp, dsde, pesa, retcom, kpi,&
                   npg, dimenr,&
-                  idecpg, angmas, yaenrh, adenhy, nfh)
+                  angl_naut, yaenrh, adenhy, nfh)
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/kitdec.h"
+#include "asterfort/nvithm.h"
+#include "asterfort/thmlec.h"
+#include "asterfort/xcalfh.h"
+#include "asterfort/xcalme.h"
+#include "asterfort/xhmsat.h"
+#include "asterfort/assert.h"
+#include "asterfort/thmGetParaBiot.h"
+#include "asterfort/thmGetParaElas.h"
+#include "asterfort/tebiot.h"
+!
 ! ======================================================================
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE AU POINT
 ! DE GAUSS SUIVANT LES OPTIONS DEFINIES
@@ -68,17 +86,8 @@ subroutine xcomhm(option, imate, compor,instap,&
 ! ======================================================================
 ! VARIABLES IN / OUT
 ! ======================================================================
-    implicit none
-!
-! aslint: disable=W1306
-#include "asterf_types.h"
-#include "asterfort/kitdec.h"
-#include "asterfort/nvithm.h"
-#include "asterfort/thmlec.h"
-#include "asterfort/xcalfh.h"
-#include "asterfort/xcalme.h"
-#include "asterfort/xhmsat.h"
-#include "asterfort/assert.h"
+
+
     aster_logical :: yachai
     integer :: retcom, kpi, npg, vicpr1, vicpr2, nfh
     integer :: ndim, dimdef, dimcon, nbvari, imate, yamec, yap1
@@ -90,7 +99,7 @@ subroutine xcomhm(option, imate, compor,instap,&
     character(len=16) :: compor(*), option
 !
 ! DECLARATION POUR XFEM
-    integer :: dimenr, idecpg
+    integer :: dimenr
     integer :: yaenrh, adenhy
     real(kind=8) :: dsde(1:dimcon, 1:dimenr)
 ! ======================================================================
@@ -108,8 +117,8 @@ subroutine xcomhm(option, imate, compor,instap,&
     real(kind=8) :: viscg, dviscg, mamolg
     real(kind=8) :: fickad, dfadt, alpha
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
-    real(kind=8) :: angmas(3)
-    character(len=16) :: meca, thmc, ther, hydr, phenom
+    real(kind=8) :: angl_naut(3)
+    character(len=16) :: meca, thmc, ther, hydr
 ! ======================================================================
 ! --- INITIALISATION ---------------------------------------------------
 ! ======================================================================
@@ -138,6 +147,23 @@ subroutine xcomhm(option, imate, compor,instap,&
     if (retcom .ne. 0) then
         goto 900
     endif
+!
+! - Get Biot parameters (for porosity evolution)
+!
+    call thmGetParaBiot(imate)
+!
+! - Compute Biot tensor
+!
+    call tebiot(angl_naut, tbiot)
+!
+! - Temporaire: aniso n'est pas toujours lu dans le module pour l'instant
+!
+    aniso = ds_thm%ds_material%biot_type
+!
+! - Get elastic parameters
+!
+    call thmGetParaElas(imate, kpi, t)
+
 ! ======================================================================
 ! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
 ! ======================================================================
@@ -149,7 +175,7 @@ subroutine xcomhm(option, imate, compor,instap,&
                 vintp, dsde, epsv, depsv, p1,&
                 dp1, t, phi, rho11,&
                 sat, retcom, tbiot, instap,&
-                angmas, aniso, phenom, yaenrh, adenhy, nfh)
+                angl_naut, aniso, yaenrh, adenhy, nfh)
     if (retcom .ne. 0) then
         goto 900
     endif
@@ -161,8 +187,8 @@ subroutine xcomhm(option, imate, compor,instap,&
     if (yamec .eq. 1 .and. kpi .le. npg) then
         call xcalme(option, meca, imate, ndim, dimenr,&
                     dimcon, addeme, adcome, congep,&
-                    dsde, deps, t, idecpg,&
-                    kpi, angmas, aniso, phenom)
+                    dsde, deps, t,&
+                    angl_naut, aniso)
         if (retcom .ne. 0) then
             goto 900
         endif
@@ -179,7 +205,7 @@ subroutine xcomhm(option, imate, compor,instap,&
                 lambs, dlambs, viscl, dviscl, mamolg,&
                 tlambt, tdlamt, viscg, dviscg, mamovg,&
                 fickad, dfadt, tlamct, instap,&
-                angmas, ndim)
+                angl_naut, ndim)
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
 ! ======================================================================

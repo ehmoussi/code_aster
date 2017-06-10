@@ -34,8 +34,7 @@ interface
                       phi, pvp, pad, h11, h12,&
                       kh, rho11, sat,&
                       retcom, carcri, tbiot, vihrho, vicphi,&
-                      vicpvp, vicsat, rinstp, angmas, aniso,&
-                      phenom)
+                      vicpvp, vicsat, rinstp, angmas, aniso)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -94,6 +93,5 @@ interface
         real(kind=8) :: rinstp
         real(kind=8) :: angmas(3)
         integer :: aniso
-        character(len=16) :: phenom
     end subroutine calcco
 end interface 

@@ -29,8 +29,7 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                   phi, pvp, pad, h11, h12,&
                   kh, rho11, sat,&
                   retcom, carcri, tbiot, vihrho, vicphi,&
-                  vicpvp, vicsat, rinstp, angmas, aniso,&
-                  phenom)
+                  vicpvp, vicsat, rinstp, angmas, aniso)
 !
 implicit none
 !
@@ -68,7 +67,7 @@ implicit none
     real(kind=8) :: phi, pvp, pad, h11, h12, kh, rho11
     real(kind=8) :: sat, rinstp
     real(kind=8) :: angmas(3)
-    character(len=16) :: option, meca, thmc, ther, hydr, phenom
+    character(len=16) :: option, meca, thmc, ther, hydr
     aster_logical :: perman, yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES POUR BARCELONE-------------------------------
@@ -93,8 +92,7 @@ implicit none
                     congep, vintm, vintp, dsde, epsv,&
                     depsv, p1, dp1, t, dt,&
                     phi, rho11, sat, retcom,&
-                    tbiot, rinstp, angmas, deps, aniso,&
-                    phenom)
+                    tbiot, rinstp, angmas, deps, aniso)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE GAZ ----------------------------
 ! ======================================================================
@@ -107,7 +105,7 @@ implicit none
                     dsde, epsv, depsv, p1, dp1,&
                     t, dt, phi, rho11, &
                     sat, retcom, tbiot, rinstp, angmas,&
-                    deps, aniso, phenom)
+                    deps, aniso)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE ----------------------
 ! ======================================================================
@@ -122,7 +120,7 @@ implicit none
                     dt, phi, pvp, h11, h12,&
                     rho11, sat, retcom,&
                     thmc, tbiot, rinstp, angmas, deps,&
-                    aniso, phenom)
+                    aniso)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE_GAZ ------------------
 ! ======================================================================
@@ -138,7 +136,7 @@ implicit none
                     dt, phi, pvp, h11, h12,&
                     rho11, sat, retcom,&
                     thmc, carcri, tbiot, rinstp, angmas,&
-                    aniso, phenom)
+                    aniso)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ -----------------------
 ! ======================================================================
@@ -152,8 +150,7 @@ implicit none
                     deps, epsv, depsv, p1, p2,&
                     dp1, dp2, t, dt, phi,&
                     rho11, sat, retcom, thmc,&
-                    carcri, tbiot, rinstp, angmas, aniso,&
-                    phenom)
+                    carcri, tbiot, rinstp, angmas, aniso)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM -------------------
 ! ======================================================================
@@ -166,8 +163,7 @@ implicit none
                     vintm, vintp, dsde, epsv, depsv,&
                     p1, dp1, t, dt, phi,&
                     rho11, sat, retcom, thmc,&
-                    tbiot, rinstp, angmas, deps, aniso,&
-                    phenom)
+                    tbiot, rinstp, angmas, deps, aniso)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
@@ -183,7 +179,7 @@ implicit none
                     dt, phi, pad, pvp, h11,&
                     h12, kh, rho11, &
                     sat, retcom, thmc, tbiot, rinstp,&
-                    angmas, deps, aniso, phenom)
+                    angmas, deps, aniso)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
@@ -199,7 +195,7 @@ implicit none
                     dt, phi, pad, h11, h12,&
                     kh, rho11,sat, retcom,&
                     thmc, tbiot, rinstp, angmas, deps,&
-                    aniso, phenom)
+                    aniso)
 ! ======================================================================
     endif
 ! ======================================================================

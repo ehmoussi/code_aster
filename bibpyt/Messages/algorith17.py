@@ -146,14 +146,7 @@ cata_msg = {
   Le calcul des masses effectives est impossible. Ne pas en tenir
   compte dans les calculs postérieurs.
 """),
-    33 : _(u"""
-  Attention le comportement isotrope transverse ELAS_ISTR 3D doit être compatible avec un comportement
-   isotrope (L,N) transverse dans THM_DIFFU et réciproquement.
-"""),
-    34 : _(u"""
-  Attention le comportement ELAS_ORTH 2D doit être compatible avec un comportement orthotrope 2D (L,T)
-  dans THM_DIFFU et réciproquement.
-"""),
+
     35 : _(u"""
   Attention, en THM le comportement ELAS_ISTR n'est valable qu'en 3D, pour 2D passer en ELAS_ORTH
 """),

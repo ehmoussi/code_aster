@@ -23,7 +23,7 @@ interface
                       phi0, deps, depsv, alphfi, dt,&
                       dp1, dp2, signe, sat, cs,&
                       tbiot, phi, phim, retcom, cbiot,&
-                      unsks, alpha0, aniso, phenom)
+                      unsks, alpha0, aniso)
         integer :: nbvari
         real(kind=8) :: vintm(nbvari)
         real(kind=8) :: vintp(nbvari)
@@ -47,6 +47,5 @@ interface
         real(kind=8) :: unsks
         real(kind=8) :: alpha0
         integer :: aniso
-        character(len=16) :: phenom
     end subroutine viporo
 end interface 

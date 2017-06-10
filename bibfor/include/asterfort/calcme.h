@@ -28,7 +28,7 @@ interface
                       congep, vintm, vintp, addep1, addep2,&
                       dsde, deps, p1, p2,&
                       t, dt, retcom, dp1, dp2,&
-                      sat, tbiot, ang2, aniso, phenom)
+                      sat, tbiot, ang2, aniso)
         integer :: nvimec
         integer :: dimcon
         integer :: dimdef
@@ -66,6 +66,5 @@ interface
         real(kind=8) :: tbiot(6)
         real(kind=8) :: ang2(3)
         integer :: aniso
-        character(len=16) :: phenom
     end subroutine calcme
 end interface 
