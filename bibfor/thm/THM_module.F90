@@ -22,8 +22,9 @@ use THM_type
 !
 implicit none
 !
+private :: r8nnem
 #include "asterf_types.h"
-#include "asterc/r8vide.h"
+#include "asterc/r8nnem.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -72,12 +73,27 @@ subroutine thmModuleInit()
     ds_thm%ds_elem%l_dof_hydr2     = .false.
     ds_thm%ds_elem%nb_phase(1:2)   = 0
     ds_thm%ds_elem%l_weak_coupling = .false.
-!   Material parameters
+!   Material parameters (porosity)
     ds_thm%ds_material%biot_type   = BIOT_TYPE_ISOT
-    ds_thm%ds_material%biot_coef   = r8vide()
-    ds_thm%ds_material%biot_l      = r8vide()
-    ds_thm%ds_material%biot_t      = r8vide()
-    ds_thm%ds_material%biot_n      = r8vide()
+    ds_thm%ds_material%biot_coef   = r8nnem()
+    ds_thm%ds_material%biot_l      = r8nnem()
+    ds_thm%ds_material%biot_t      = r8nnem()
+    ds_thm%ds_material%biot_n      = r8nnem()
+!   Material parameters (elasticity)
+    ds_thm%ds_material%elas_id      = 0
+    ds_thm%ds_material%elas_keyword = ' '
+    ds_thm%ds_material%e            = r8nnem()
+    ds_thm%ds_material%nu           = r8nnem()
+    ds_thm%ds_material%e_l          = r8nnem()
+    ds_thm%ds_material%e_t          = r8nnem()
+    ds_thm%ds_material%e_n          = r8nnem()
+    ds_thm%ds_material%nu_lt        = r8nnem()
+    ds_thm%ds_material%nu_ln        = r8nnem()
+    ds_thm%ds_material%nu_tn        = r8nnem()
+    ds_thm%ds_material%g_lt         = r8nnem()
+    ds_thm%ds_material%g_ln         = r8nnem()
+    ds_thm%ds_material%g_tn         = r8nnem()
+!
 end subroutine
 !
 end module

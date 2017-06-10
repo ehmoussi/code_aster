@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/nvithm.h"
 #include "asterfort/thmlec.h"
 #include "asterfort/thmGetParaBiot.h"
+#include "asterfort/thmGetParaElas.h"
 #include "asterfort/tebiot.h"
 !
 ! **********************************************************************
@@ -194,6 +195,12 @@ implicit none
 ! - Temporaire: aniso n'est pas toujours lu dans le module pour l'instant
 !
     aniso = ds_thm%ds_material%biot_type
+!
+! - Get elastic parameters
+!
+    if (ds_thm%ds_elem%l_dof_meca) then
+        call thmGetParaElas(imate, kpi, t)
+    endif
 !
 ! - Compute coupling law
 !
