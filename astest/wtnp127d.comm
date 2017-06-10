@@ -109,10 +109,11 @@ MODELT=AFFE_MODELE(MAILLAGE=MAIL,
 THMALP1 = DEFI_CONSTANTE(VALE=0.000100)
 
 MATERIAU=DEFI_MATERIAU(
-   ELAS=_F(E=5.E8,
-           NU=0.2,
-           RHO=2600.0,
-           ALPHA=0.0),
+ELAS_ORTH=_F(E_L=5.E8,E_T=5.E8,E_N=5.E8,
+                               NU_LT=0.2, NU_LN=0.2, NU_TN=0.2,
+                                G_LT = 5.E8/(2.*(1.+0.2)),G_LN = 5.E8/(2.*(1.+0.2)),G_TN = 5.E8/(2.*(1.+0.2)),
+                                ALPHA_L=0.,ALPHA_T=0.,ALPHA_N=0.,
+                              RHO=2600.0,),
    THM_LIQU=_F(
          RHO = 1.,
          UN_SUR_K = UN_SUR_K,
@@ -127,9 +128,9 @@ MATERIAU=DEFI_MATERIAU(
             R_GAZ      = 8.315,
             EMMAG      = EMMAG,
             RHO        = 1.,
-            BIOT_L     = 1.,
-            BIOT_T     = 1.,
-            BIOT_N= 1.,
+            BIOT_T=1.0,
+            BIOT_L=1.0,
+            BIOT_N=1.0,
             PESA_X     = 0.0,
             PESA_Y     = 0.,
             PESA_Z     = 0.,

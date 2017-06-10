@@ -57,6 +57,7 @@ implicit none
 ! - Type of elasticity (Isotropic/Orthotropic/Transverse isotropic)
 !
     if (elas_keyword_in.eq.'ELAS'.or.&
+        elas_keyword_in.eq.'ELAS_GONF'.or.&
         elas_keyword_in.eq.'ELAS_HYPER'.or.&
         elas_keyword_in.eq.'ELAS_MEMBRANE'.or.&
         elas_keyword_in.eq.'ELAS_META'.or.&

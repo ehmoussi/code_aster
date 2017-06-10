@@ -26,7 +26,9 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8nnem.h"
 #include "asterfort/assert.h"
+#include "asterfort/get_elas_id.h"
 #include "asterfort/rcvala.h"
+#include "asterfort/utmess.h"
 !
     integer, intent(in) :: j_mater
 !
@@ -42,6 +44,8 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    character(len=16) :: elas_keyword
+    integer :: elas_id
     integer, parameter :: nb_para =  4
     integer :: icodre(nb_para)
     real(kind=8) :: para_vale(nb_para)
@@ -75,6 +79,32 @@ implicit none
             ds_thm%ds_material%biot_type = BIOT_TYPE_ORTH
         else
             ds_thm%ds_material%biot_type = BIOT_TYPE_ISTR
+        endif
+    endif
+!
+! - Get type of elasticity
+!
+    if (ds_thm%ds_elem%l_dof_meca) then
+        call get_elas_id(j_mater, elas_id, elas_keyword)
+    endif
+!
+! - Some checks: compatibility of elasticity with diffusion
+!
+    if (ds_thm%ds_elem%l_dof_meca) then
+        if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISOT) then
+            if (elas_id .ne. 1) then
+                call utmess('F', 'THM1_2', sk = elas_keyword)
+            endif
+        elseif (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISTR) then
+            if (elas_id .ne. 3) then
+                call utmess('F', 'THM1_2', sk = elas_keyword)
+            endif
+        elseif (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ORTH) then
+            if (elas_id .ne. 2) then
+                call utmess('F', 'THM1_2', sk = elas_keyword)
+            endif
+        else
+            ASSERT(.false.)
         endif
     endif
 !

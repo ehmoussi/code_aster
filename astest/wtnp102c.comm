@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='NON'))
 
 ####################################
@@ -204,16 +205,13 @@ MATERBO=DEFI_MATERIAU(ELAS=_F(E=5.15000000E8,
                       THM_DIFFU=_F(R_GAZ=8.315,
                                    RHO=2200.0,
                                    CP=1050.0,
-                                   BIOT_L=1.0,
-                                   BIOT_T=1.0,
-                                   BIOT_N=1.0,
+                                   BIOT_COEF=1.0,
                                    SATU_PRES=SATUBO,
                                    D_SATU_PRES=DSATBO,
                                    PESA_X=0.0,
                                    PESA_Y=0.0,
                                    PESA_Z=0.0,
-                                   PERMIN_L=KINTBO,
-                                   PERMIN_T=KINTBO,
+                                   PERM_IN=KINTBO,
                                    PERM_LIQU=UN,
                                    D_PERM_LIQU_SATU=ZERO,
                                    PERM_GAZ=UN,
@@ -221,12 +219,10 @@ MATERBO=DEFI_MATERIAU(ELAS=_F(E=5.15000000E8,
                                    D_PERM_PRES_GAZ=ZERO,
                                    FICKV_T=DM8,
                                    FICKV_PV=FVPPV,
-                                   LAMB_TL=LAMBT,
-                                   LAMB_TT=LAMBT,
+                                   LAMB_T=LAMBT,
                                    LAMB_S=LAMBS,
                                    D_LB_S=DLS,
-                                   LAMB_C_L=0.5,
-                                   LAMB_C_T=0.5,
+                                   LAMB_CT=0.5,
         ),);
 
 CHMAT0=AFFE_MATERIAU(MAILLAGE=MAIL,
