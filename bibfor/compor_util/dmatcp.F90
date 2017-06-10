@@ -22,9 +22,8 @@ subroutine dmatcp(fami, mater, time, poum, ipg,&
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/dpao2d.h"
 #include "asterfort/get_elas_para.h"
-#include "asterfort/utbtab.h"
+#include "asterfort/matrHookePlaneStress.h"
 !
 !
     character(len=*), intent(in) :: fami
@@ -55,23 +54,13 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: irep, i, j
     integer :: elas_type
-    real(kind=8) :: zero, undemi, un
-    real(kind=8) :: passag(4, 4), dorth(4, 4), work(4, 4)
-    real(kind=8) :: nu, nu12, nu21, nu13, nu23
+    real(kind=8) :: nu, nu12, nu13, nu23
     real(kind=8) :: e1, e2, e3, e
     real(kind=8) :: g1, g2, g3, g
-    real(kind=8) :: c1, delta
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    zero       = 0.0d0
-    undemi     = 0.5d0
-    un         = 1.0d0
-    d(:,:)     = 0.d0
-    dorth(:,:) = 0.d0
-    work(:,:)  = 0.d0
 !
 ! - Get elastic parameters
 !
@@ -85,60 +74,9 @@ implicit none
 !
 ! - Compute Hooke matrix
 !
-    if (elas_type.eq.1) then
-!
-! ----- Isotropic matrix
-!
-        d(1,1) = e/(un-nu*nu)
-        d(1,2) = d(1,1)*nu
-        d(2,1) = d(1,2)
-        d(2,2) = d(1,1)
-        d(4,4) = undemi*e/ (un+nu)
-!
-    else if (elas_type.eq.2) then
-!
-! ----- Orthotropic matrix
-!
-        nu21  = e2*nu12/e1
-        delta = un-nu12*nu21
-        dorth(1,1) = e1/delta
-        dorth(1,2) = nu12*e2/delta
-        dorth(2,2) = e2/delta
-        dorth(2,1) = dorth(1,2)
-        dorth(4,4) = g1
-!
-! ----- Matrix from orthotropic basis to global 3D basis
-!
-        call dpao2d(repere, irep, passag)
-!
-! ----- Hooke matrix in global 3D basis
-!
-        ASSERT((irep.eq.1).or.(irep.eq.0))
-        if (irep .eq. 1) then
-            call utbtab('ZERO', 4, 4, dorth, passag,&
-                        work, d)
-        else if (irep.eq.0) then
-            do i = 1, 4
-                do j = 1, 4
-                    d(i,j) = dorth(i,j)
-                end do
-            end do
-        endif
-    else if (elas_type.eq.3) then
-        e = e1
-        nu = nu12
-!
-! ----- Transverse isotropic matrix
-!
-        c1 = e/ (un+nu)
-        delta = un - nu*nu
-        d(1,1) = e/delta
-        d(1,2) = nu*d(1,1)
-        d(2,1) = d(1,2)
-        d(2,2) = d(1,1)
-        d(4,4) = undemi*c1
-    else
-        ASSERT(.false.)
-    endif
+    call matrHookePlaneStress(elas_type, repere,&
+                              e , nu,&
+                              e1, e2, nu12, g1,&
+                              d)
 !
 end subroutine
