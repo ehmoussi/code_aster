@@ -131,17 +131,10 @@ implicit none
 !
 ! - Mechanic - Weak coupled
 !
-    call rcvarc(' ', 'DIVU', '-', 'RIGI', kpi, 1, epsvm, iret1)
-    call rcvarc(' ', 'DIVU', '+', 'RIGI', kpi, 1, epsvp, iret2)
-!
-    yachai = (iret1.eq.0).and.(iret2.eq.0)
-!
-    if ((yamec.ne.0) .and. yachai) then
-        call utmess('F', 'CHAINAGE_1')
-    else if (iret1.ne.iret2) then
-        call utmess('F', 'CHAINAGE_2')
-    endif
+    yachai = ds_thm%ds_elem%l_weak_coupling
     if (yachai) then
+        call rcvarc(' ', 'DIVU', '-', 'RIGI', kpi, 1, epsvm, iret1)
+        call rcvarc(' ', 'DIVU', '+', 'RIGI', kpi, 1, epsvp, iret2)
         depsv = epsvp - epsvm
         epsv  = epsvp
     endif

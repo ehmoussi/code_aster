@@ -47,6 +47,10 @@ implicit none
         aster_logical :: l_dof_hydr
 ! ----- Type of FE: number of phasis for each fluid
         integer :: nb_phase(2)
+! ----- Flag for weak coupling
+        aster_logical :: l_weak_coupling
+        real(kind=8) :: divu_prev
+        real(kind=8) :: divu_curr
     end type THM_Element
 
 ! - Behaviour

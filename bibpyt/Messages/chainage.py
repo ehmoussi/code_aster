@@ -78,4 +78,8 @@ instant trouvé dans la SD résultat %(k1)s.
   On a trouvé une évolution de variable de commandes PTOT incomplète. Il manque un instant.
 """),
 
+    12 : _(u"""
+Vous cherchez à faire du chaînage HM dans une modélisation qui ne le permet pas.
+"""),
+
 }

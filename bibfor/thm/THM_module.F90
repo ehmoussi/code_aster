@@ -64,11 +64,12 @@ subroutine thmModuleInit()
     ds_thm%ds_behaviour%nb_pres       = 0
     ds_thm%ds_behaviour%nb_phase(1:2) = 0
 !  Type of FE: which dof on element ?
-    ds_thm%ds_elem%l_dof_ther     = .false.
-    ds_thm%ds_elem%l_dof_meca     = .false.
-    ds_thm%ds_elem%l_dof_hydr1    = .false.
-    ds_thm%ds_elem%l_dof_hydr2    = .false.
-    ds_thm%ds_elem%nb_phase(1:2)  = 0
+    ds_thm%ds_elem%l_dof_ther      = .false.
+    ds_thm%ds_elem%l_dof_meca      = .false.
+    ds_thm%ds_elem%l_dof_hydr1     = .false.
+    ds_thm%ds_elem%l_dof_hydr2     = .false.
+    ds_thm%ds_elem%nb_phase(1:2)   = 0
+    ds_thm%ds_elem%l_weak_coupling = .false.
 
 end subroutine
 !
