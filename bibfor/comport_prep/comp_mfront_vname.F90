@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine comp_mfront_vname(nb_vari    , &
-                             defo_comp  , type_cpla, type_matg   , post_iter,&
+                             defo_comp  , type_cpla, post_iter,&
                              libr_name  , subr_name, model_mfront, model_dim,&
                              v_vari_name)
 !
@@ -42,7 +42,6 @@ implicit none
     integer, intent(in) :: nb_vari
     character(len=16), intent(in) :: defo_comp
     character(len=16), intent(in) :: type_cpla
-    character(len=16), intent(in) :: type_matg
     character(len=16), intent(in) :: post_iter
     character(len=255), intent(in) :: libr_name
     character(len=255), intent(in) :: subr_name
@@ -84,7 +83,6 @@ implicit none
                                                        model_mfront, nb_vari_type)
     call comp_meca_code(defo_comp_   = defo_comp,&
                         type_cpla_   = type_cpla,&
-                        type_matg_   = type_matg,&
                         post_iter_   = post_iter,&
                         comp_code_py = comp_code_py)
     if ( nb_vari .ne. 0 ) then

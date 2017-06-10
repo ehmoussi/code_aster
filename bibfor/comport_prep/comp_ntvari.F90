@@ -77,7 +77,7 @@ implicit none
     integer :: i_zone, codret, iret, i_elem, posit
     integer :: type_affe, indx_affe, elem_type_nume, elem_nume, model_dim
     character(len=16) :: elem_type_name
-    character(len=16) :: type_matg, post_iter
+    character(len=16) :: post_iter
     character(len=16) :: rela_comp, defo_comp, mult_comp, kit_comp(4), type_cpla
     character(len=16) :: model_mfront
     character(len=255) :: libr_name, subr_name
@@ -140,7 +140,6 @@ implicit none
             kit_comp(2) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT2_NAME)
             kit_comp(3) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT3_NAME)
             kit_comp(4) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT4_NAME)
-            type_matg   = v_compor_vale(nb_cmp_max*(i_zone-1)+TYPEMATG)
             post_iter   = v_compor_vale(nb_cmp_max*(i_zone-1)+POSTITER)
         else
             rela_comp   = compor_list_(NAME)
@@ -151,7 +150,6 @@ implicit none
             kit_comp(2) = compor_list_(KIT2_NAME)
             kit_comp(3) = compor_list_(KIT3_NAME)
             kit_comp(4) = compor_list_(KIT4_NAME)
-            type_matg   = compor_list_(TYPEMATG)
             post_iter   = compor_list_(POSTITER)
         endif
 !

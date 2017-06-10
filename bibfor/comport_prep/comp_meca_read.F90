@@ -61,7 +61,7 @@ implicit none
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp, model_dim, iret
     character(len=16) :: defo_comp, rela_comp, type_cpla, mult_comp, type_comp
-    character(len=16) :: type_matg, post_iter, model_mfront, type_model2
+    character(len=16) :: post_iter, model_mfront, type_model2
     character(len=16) :: kit_comp(4)
     character(len=255) :: libr_name, subr_name
     integer :: unit_comp, nb_vari_umat
@@ -96,7 +96,6 @@ implicit none
         mult_comp      = ' '
         type_cpla      = 'VIDE'
         libr_name      = ' '
-        type_matg      = ' '
         post_iter      = ' '
         kit_comp(1:4)  = 'VIDE'
         type_model2    = 'VIDE'
@@ -115,15 +114,6 @@ implicit none
 ! ----- Get DEFORMATION from command file
 !
         call getvtx(keywordfact, 'DEFORMATION', iocc = i_comp, scal = defo_comp)
-!
-! ----- Modified matrix
-!
-        if (getexm(keywordfact,'TYPE_MATR_TANG') .eq. 1) then
-            call getvtx(keywordfact, 'TYPE_MATR_TANG', iocc = i_comp, scal=type_matg, nbret=iret)
-            if (iret .eq. 0) then
-                type_matg = ' '
-            endif
-        endif
 !
 ! ----- Damage post-treatment
 !
@@ -173,7 +163,6 @@ implicit none
         ds_compor_prep%v_comp(i_comp)%type_cpla      = type_cpla
         ds_compor_prep%v_comp(i_comp)%kit_comp(:)    = kit_comp(:)
         ds_compor_prep%v_comp(i_comp)%mult_comp      = mult_comp
-        ds_compor_prep%v_comp(i_comp)%type_matg      = type_matg
         ds_compor_prep%v_comp(i_comp)%post_iter      = post_iter
         ds_compor_prep%v_comp(i_comp)%type_model2    = type_model2
         ds_compor_prep%v_exte(i_comp)%l_umat         = l_umat

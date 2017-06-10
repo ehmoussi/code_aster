@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine comp_nbvari(rela_comp    , defo_comp , type_cpla    , kit_comp_ ,&
-                       type_matg_   , post_iter_, mult_comp_   , libr_name_,&
+                       post_iter_   , mult_comp_, libr_name_   ,&
                        subr_name_   , model_dim_, model_mfront_, nb_vari_  ,&
                        nb_vari_umat_, l_implex_ , type_model2_ ,&
                        nb_vari_comp_, nume_comp_)
@@ -37,7 +37,6 @@ implicit none
     character(len=16), intent(in) :: defo_comp
     character(len=16), intent(in) :: type_cpla
     character(len=16), optional, intent(in) :: kit_comp_(4)
-    character(len=16), optional, intent(in) :: type_matg_
     character(len=16), optional, intent(in) :: post_iter_
     character(len=16), optional, intent(in) :: mult_comp_
     character(len=255), optional, intent(in) :: libr_name_
@@ -64,7 +63,6 @@ implicit none
 ! In  type_cpla        : plane stress method
 ! Out nb_vari          : number of internal variables
 ! In  kit_comp         : KIT comportment
-! In  type_matg        : type of tangent matrix
 ! In  post_iter        : type of post_treatment
 ! In  mult_comp        : multi-comportment
 ! In  nb_vari_umat     : number of internal variables for UMAT
@@ -83,7 +81,7 @@ implicit none
     aster_logical :: l_cristal, l_kit_meta, l_kit_thm, l_kit_ddi, l_kit_cg, l_exte_comp
     aster_logical :: l_kit, l_meca_mfront
     aster_logical :: l_mfront_proto, l_mfront_offi, l_umat, l_implex
-    character(len=16) :: kit_comp(4), type_matg, post_iter, mult_comp, type_model2
+    character(len=16) :: kit_comp(4), post_iter, mult_comp, type_model2
     integer :: nb_vari_exte, nume_comp(4)=0, nb_vari_comp(4)=0
     integer :: nb_vari_umat, model_dim
     character(len=255) :: libr_name, subr_name
@@ -92,7 +90,6 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     kit_comp(1:4) = 'VIDE'
-    type_matg     = 'VIDE'
     post_iter     = 'VIDE'
     mult_comp     = 'VIDE'
     type_model2   = 'VIDE'
@@ -102,9 +99,6 @@ implicit none
     l_implex      = .false.
     if (present(kit_comp_)) then
         kit_comp(1:4) = kit_comp_(1:4)
-    endif
-    if (present(type_matg_)) then
-        type_matg = type_matg_
     endif
     if (present(post_iter_)) then
         post_iter = post_iter_
@@ -150,7 +144,7 @@ implicit none
 ! - Get number of internal variables for standard laws
 !
     call comp_nbvari_std(rela_comp, defo_comp   , type_cpla  , nb_vari  ,&
-                         kit_comp , type_matg   , post_iter  , mult_comp,&
+                         kit_comp , post_iter   , mult_comp,&
                          l_cristal, l_implex    , type_model2, &
                          nume_comp, nb_vari_rela)
 !

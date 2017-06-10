@@ -105,7 +105,7 @@ implicit none
     integer, pointer :: v_compor_ptma(:) => null()
     integer :: nb_vale, nb_cmp_max, nb_zone, nb_vari, nt_vari, nb_vari_maxi, nb_zone_acti, nb_zone2
     integer :: i_zone, i_elem, nb_elem_mesh, iret, nutyel
-    character(len=16) :: type_matg, post_iter, vari_excl
+    character(len=16) :: post_iter, vari_excl
     character(len=16) :: rela_comp, defo_comp, kit_comp(4), type_cpla, type_comp
     character(len=255) :: libr_name, subr_name
     character(len=16) :: model_mfront, notype
@@ -223,7 +223,6 @@ implicit none
                 kit_comp(2) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT2_NAME)
                 kit_comp(3) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT3_NAME)
                 kit_comp(4) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT4_NAME)
-                type_matg   = v_compor_vale(nb_cmp_max*(i_zone-1)+TYPEMATG)
                 post_iter   = v_compor_vale(nb_cmp_max*(i_zone-1)+POSTITER)
                 read (v_compor_vale(nb_cmp_max*(i_zone-1)+NVAR),'(I16)') nb_vari
             else
@@ -235,7 +234,6 @@ implicit none
                 kit_comp(2) = compor_list_(KIT2_NAME)
                 kit_comp(3) = compor_list_(KIT3_NAME)
                 kit_comp(4) = compor_list_(KIT4_NAME)
-                type_matg   = compor_list_(TYPEMATG)
                 post_iter   = compor_list_(POSTITER)
                 read (compor_list_(NVAR),'(I16)') nb_vari
             endif
@@ -285,7 +283,7 @@ implicit none
             call comp_meca_name(nb_vari    , l_excl       , vari_excl,&
                                 l_kit_meta , l_mfront_offi, &
                                 rela_comp  , defo_comp    , kit_comp ,&
-                                type_cpla  , type_matg    , post_iter,&
+                                type_cpla  , post_iter,&
                                 libr_name  , subr_name    , model_mfront, model_dim   ,&
                                 v_vari)
 !

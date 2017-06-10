@@ -22,13 +22,12 @@
 !
 interface
     subroutine comp_mfront_vname(nb_vari    , &
-                                 defo_comp  , type_cpla, type_matg   , post_iter,&
+                                 defo_comp  , type_cpla, post_iter   ,&
                                  libr_name  , subr_name, model_mfront, model_dim,&
                                  v_vari_name)
         integer, intent(in) :: nb_vari
         character(len=16), intent(in) :: defo_comp
         character(len=16), intent(in) :: type_cpla
-        character(len=16), intent(in) :: type_matg
         character(len=16), intent(in) :: post_iter
         character(len=255), intent(in) :: libr_name
         character(len=255), intent(in) :: subr_name

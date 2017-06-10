@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine comp_nbvari_std(rela_comp , defo_comp , type_cpla   , nb_vari   ,&
-                           kit_comp_ , type_matg_, post_iter_  , mult_comp_,&
+                           kit_comp_ , post_iter_, mult_comp_,&
                            l_cristal_, l_implex_ , type_model2_,&
                            nume_comp_, nb_vari_rela_)
 !
@@ -37,7 +37,6 @@ implicit none
     character(len=16), intent(in) :: type_cpla
     integer, intent(out) :: nb_vari
     character(len=16), optional, intent(in) :: kit_comp_(4)
-    character(len=16), optional, intent(in) :: type_matg_
     character(len=16), optional, intent(in) :: post_iter_
     character(len=16), optional, intent(in) :: mult_comp_
     aster_logical, optional, intent(in) :: l_cristal_
@@ -58,7 +57,6 @@ implicit none
 ! In  defo_comp        : DEFORMATION comportment
 ! In  type_cpla        : plane stress method
 ! In  kit_comp         : KIT comportment
-! In  type_matg        : type of tangent matrix
 ! In  post_iter        : type of post_treatment
 ! In  mult_comp        : multi-comportment
 ! In  l_cristal        : .true. if *CRISTAL comportment
@@ -70,7 +68,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: kit_comp(4), type_matg, post_iter, mult_comp, type_model2
+    character(len=16) :: kit_comp(4), post_iter, mult_comp, type_model2
     aster_logical :: l_cristal, l_implex
     integer :: nb_vari_rela, nume_comp(4)
     character(len=16) :: comp_elem_py, rela_comp_py
@@ -84,10 +82,6 @@ implicit none
     kit_comp(:) = 'VIDE'
     if (present(kit_comp_)) then
         kit_comp(:) = kit_comp_(:)
-    endif
-    type_matg = 'VIDE'
-    if (present(type_matg_)) then
-        type_matg = type_matg_
     endif
     post_iter = 'VIDE'
     if (present(post_iter_)) then
@@ -115,7 +109,7 @@ implicit none
 !
 ! - Coding composite comportment (Python)
 !
-    call comp_meca_code(rela_comp   , defo_comp   , type_cpla  , kit_comp, type_matg,&
+    call comp_meca_code(rela_comp   , defo_comp   , type_cpla  , kit_comp,&
                         post_iter   , l_implex    , type_model2,&
                         comp_elem_py, rela_comp_py)
 !

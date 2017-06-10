@@ -44,7 +44,7 @@ implicit none
 !
     integer :: i_comp, nb_comp
     character(len=16) :: keywordfact
-    character(len=16) :: type_matg, post_iter, type_model2
+    character(len=16) :: post_iter, type_model2
     character(len=16) :: rela_comp, defo_comp, mult_comp, kit_comp(4), type_cpla
     integer :: nume_comp(4), nb_vari, nb_vari_comp(4), nb_vari_umat, model_dim
     character(len=255) :: libr_name, subr_name
@@ -73,7 +73,6 @@ implicit none
         type_cpla    = ds_compor_prep%v_comp(i_comp)%type_cpla
         kit_comp(:)  = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
         mult_comp    = ds_compor_prep%v_comp(i_comp)%mult_comp
-        type_matg    = ds_compor_prep%v_comp(i_comp)%type_matg
         post_iter    = ds_compor_prep%v_comp(i_comp)%post_iter
         type_model2  = ds_compor_prep%v_comp(i_comp)%type_model2
         libr_name    = ds_compor_prep%v_exte(i_comp)%libr_name
@@ -86,7 +85,7 @@ implicit none
 ! ----- Count internal variables
 !
         call comp_nbvari(rela_comp   , defo_comp, type_cpla   , kit_comp ,&
-                         type_matg   , post_iter, mult_comp   , libr_name,&
+                         post_iter   , mult_comp, libr_name,&
                          subr_name   , model_dim, model_mfront, nb_vari  ,&
                          nb_vari_umat, l_implex , type_model2 ,&
                          nb_vari_comp, nume_comp)

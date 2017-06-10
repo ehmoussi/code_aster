@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine comp_meca_code(rela_comp_  , defo_comp_   , type_cpla_   , kit_comp_, type_matg_,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine comp_meca_code(rela_comp_  , defo_comp_   , type_cpla_   , kit_comp_,&
                           post_iter_  , l_implex_    , type_model2_ ,&
                           comp_code_py, rela_code_py_, meta_code_py_)
 !
@@ -26,13 +27,10 @@ implicit none
 #include "asterc/lccree.h"
 #include "asterfort/comp_meca_l.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
     character(len=16), optional, intent(in) :: rela_comp_
     character(len=16), optional, intent(in) :: defo_comp_
     character(len=16), optional, intent(in) :: type_cpla_
     character(len=16), optional, intent(in) :: kit_comp_(4)
-    character(len=16), optional, intent(in) :: type_matg_
     character(len=16), optional, intent(in) :: post_iter_
     aster_logical, optional, intent(in) :: l_implex_
     character(len=16), optional, intent(in) :: type_model2_
@@ -52,7 +50,6 @@ implicit none
 ! In  defo_comp        : DEFORMATION comportment
 ! In  type_cpla        : plane stress method
 ! In  kit_comp         : KIT comportment
-! In  type_matg        : type of tangent matrix
 ! In  post_iter        : type of post_treatment
 ! In  l_implex         : .true. if IMPLEX method
 ! In  type_model2      : type of modelization (TYPMOD2)
@@ -66,7 +63,7 @@ implicit none
     character(len=16) :: rela_thmc, rela_hydr, rela_meca, rela_ther
     character(len=16) :: comp_elem(20), rela_meta, meta_code_py, rela_code_py
     aster_logical :: l_kit_meta, l_kit_thm, l_implex
-    character(len=16) :: type_matg, post_iter, type_model2
+    character(len=16) :: post_iter, type_model2
     character(len=16) :: rela_comp, defo_comp, kit_comp(4), type_cpla
 !
 ! --------------------------------------------------------------------------------------------------
@@ -86,10 +83,6 @@ implicit none
     kit_comp(1:4) = 'VIDE'
     if (present(kit_comp_)) then
         kit_comp(:) = kit_comp_(:)
-    endif
-    type_matg = 'VIDE'
-    if (present(type_matg_)) then
-        type_matg = type_matg_
     endif
     post_iter = 'VIDE'
     if (present(post_iter_)) then
@@ -121,10 +114,6 @@ implicit none
         nb_comp_elem = nb_comp_elem + 1
         comp_elem(nb_comp_elem) = kit_comp(ikit)
     enddo
-    if (type_matg.ne.' ') then
-        nb_comp_elem = nb_comp_elem + 1
-        comp_elem(nb_comp_elem) = type_matg
-    endif
     if (post_iter.ne.' ') then
         nb_comp_elem = nb_comp_elem + 1
         comp_elem(nb_comp_elem) = post_iter

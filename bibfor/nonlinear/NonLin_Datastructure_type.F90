@@ -400,7 +400,6 @@ implicit none
         character(len=16) :: type_cpla
         character(len=16) :: kit_comp(4)
         character(len=16) :: mult_comp
-        character(len=16) :: type_matg
         character(len=16) :: post_iter
         integer           :: nb_vari
         integer           :: nb_vari_comp(4)

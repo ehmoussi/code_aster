@@ -79,7 +79,7 @@ implicit none
     integer :: i_comp, nb_comp
     character(len=16), pointer :: v_compor_valv(:) => null()
     character(len=16) :: defo_comp, rela_comp, type_comp, type_cpla, mult_comp
-    character(len=16) :: kit_comp(4), type_matg, post_iter
+    character(len=16) :: kit_comp(4), post_iter
     aster_logical :: l_cristal, l_pmf, l_is_pmf
     integer :: nb_vari, nb_vari_comp(4), elem_nume, nume_comp(4)
 !
@@ -114,7 +114,6 @@ implicit none
         type_cpla       = ds_compor_prep%v_comp(i_comp)%type_cpla
         kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
         mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
-        type_matg       = ds_compor_prep%v_comp(i_comp)%type_matg
         post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
 !
 ! ----- Detection of specific cases
@@ -154,7 +153,7 @@ implicit none
 ! ----- Set in <CARTE>
 !
         call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                               mult_comp, type_matg   , post_iter, kit_comp ,&
+                               mult_comp, post_iter   , kit_comp ,&
                                nb_vari  , nb_vari_comp, nume_comp,&
                                v_compor_ = v_compor_valv) 
 !

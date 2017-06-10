@@ -42,7 +42,6 @@ implicit none
     integer, parameter :: PLANESTRESS  = 5
     integer, parameter :: NUME         = 6
     integer, parameter :: MULTCOMP     = 7
-    integer, parameter :: TYPEMATG     = 13
     integer, parameter :: POSTITER     = 14
 !
 ! - Access in <COMPOR> - Behaviour field - KITs
