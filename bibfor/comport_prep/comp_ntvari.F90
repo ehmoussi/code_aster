@@ -20,6 +20,7 @@ subroutine comp_ntvari(model_ , compor_cart_, compor_list_, compor_info,&
                        nt_vari, nb_vari_maxi, nb_zone     , v_exte)
 !
 use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
@@ -131,27 +132,27 @@ implicit none
 ! ----- Get parameters
 !
         if (present(compor_cart_)) then
-            rela_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+1)
-            defo_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+3)
-            type_cpla   = v_compor_vale(nb_cmp_max*(i_zone-1)+5)
-            mult_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+7)
-            kit_comp(1) = v_compor_vale(nb_cmp_max*(i_zone-1)+8)
-            kit_comp(2) = v_compor_vale(nb_cmp_max*(i_zone-1)+9)
-            kit_comp(3) = v_compor_vale(nb_cmp_max*(i_zone-1)+10)
-            kit_comp(4) = v_compor_vale(nb_cmp_max*(i_zone-1)+11)
-            type_matg   = v_compor_vale(nb_cmp_max*(i_zone-1)+13)
-            post_iter   = v_compor_vale(nb_cmp_max*(i_zone-1)+14)
+            rela_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+NAME)
+            defo_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+DEFO)
+            type_cpla   = v_compor_vale(nb_cmp_max*(i_zone-1)+PLANESTRESS)
+            mult_comp   = v_compor_vale(nb_cmp_max*(i_zone-1)+MULTCOMP)
+            kit_comp(1) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT1_NAME)
+            kit_comp(2) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT2_NAME)
+            kit_comp(3) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT3_NAME)
+            kit_comp(4) = v_compor_vale(nb_cmp_max*(i_zone-1)+KIT4_NAME)
+            type_matg   = v_compor_vale(nb_cmp_max*(i_zone-1)+TYPEMATG)
+            post_iter   = v_compor_vale(nb_cmp_max*(i_zone-1)+POSTITER)
         else
-            rela_comp   = compor_list_(1)
-            defo_comp   = compor_list_(3)
-            type_cpla   = compor_list_(5)
-            mult_comp   = compor_list_(7)
-            kit_comp(1) = compor_list_(8)
-            kit_comp(2) = compor_list_(9)
-            kit_comp(3) = compor_list_(10)
-            kit_comp(4) = compor_list_(11)
-            type_matg   = compor_list_(13)
-            post_iter   = compor_list_(14)
+            rela_comp   = compor_list_(NAME)
+            defo_comp   = compor_list_(DEFO)
+            type_cpla   = compor_list_(PLANESTRESS)
+            mult_comp   = compor_list_(MULTCOMP)
+            kit_comp(1) = compor_list_(KIT1_NAME)
+            kit_comp(2) = compor_list_(KIT2_NAME)
+            kit_comp(3) = compor_list_(KIT3_NAME)
+            kit_comp(4) = compor_list_(KIT4_NAME)
+            type_matg   = compor_list_(TYPEMATG)
+            post_iter   = compor_list_(POSTITER)
         endif
 !
 ! ----- Find right TYPELEM

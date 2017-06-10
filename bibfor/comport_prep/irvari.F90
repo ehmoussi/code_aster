@@ -116,7 +116,6 @@ implicit none
     character(len=64) :: nomres
     real(kind=8), pointer :: v_elgr_cesv(:) => null()
     real(kind=8), pointer :: v_elga_cesv(:) => null()
-    character(len=16), pointer :: v_compor_vale(:) => null()
     integer, pointer :: v_compor_desc(:) => null()
     integer, pointer :: v_compor_lima(:) => null()
     integer, pointer :: v_compor_lima_lc(:) => null()
@@ -167,7 +166,6 @@ implicit none
 ! - Access to <CARTE> COMPOR
 !
     call jeveuo(compor//'.DESC', 'L', vi   = v_compor_desc)
-    call jeveuo(compor//'.VALE', 'L', vk16 = v_compor_vale)
     call jeveuo(jexnum(compor//'.LIMA', 1), 'L', vi = v_compor_lima)
     call jeveuo(jexatr(compor//'.LIMA', 'LONCUM'), 'L', vi = v_compor_lima_lc)
 !
