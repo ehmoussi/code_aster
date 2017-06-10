@@ -218,7 +218,7 @@ TEST_FICHIER(FICHIER="./REPE_OUT/CHMAT.concept",
              VALE_CALC_I=2107671,
              NB_VALE=0,
              VALE_CALC=0.0000000000,
-             VALE_CALC_K="9c71f126ff0549032b58b85eb2ea4072",
+             VALE_CALC_K="b26cd6abd93735d23e30b34875ea4ecf",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 
