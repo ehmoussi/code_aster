@@ -44,7 +44,7 @@ CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
 
 CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
     components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',
-          'NUME_LC','SD_COMP','KIT[9]',))
+          'NUME_LC','SD_COMP','KIT[9]','NVI_C','NVI_T','NVI_H','NVI_M',))
 
 
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',

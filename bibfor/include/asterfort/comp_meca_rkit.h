@@ -18,11 +18,14 @@
 
 !
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine comp_meca_rkit(keywordfact, iocc, rela_comp, kit_comp)
+    subroutine comp_meca_rkit(keywordfact, iocc, rela_comp, kit_comp, l_etat_init_)
         character(len=16), intent(in) :: keywordfact
         integer, intent(in) :: iocc
         character(len=16), intent(in) :: rela_comp
         character(len=16), intent(out) :: kit_comp(4)
+        aster_logical, optional, intent(in) :: l_etat_init_
     end subroutine comp_meca_rkit
 end interface

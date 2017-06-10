@@ -157,8 +157,8 @@ implicit none
 ! - Get number of internal variables for KIT
 !
     if (l_kit) then
-        call comp_nbvari_kit(kit_comp  , defo_comp   , nb_vari_rela, &
-                             l_kit_meta, l_kit_thm   , l_kit_ddi   , l_kit_cg,&
+        call comp_nbvari_kit(kit_comp  , defo_comp   , type_model2 , nb_vari_rela ,&
+                             l_kit_meta, l_kit_thm   , l_kit_ddi   , l_kit_cg     ,&
                              nb_vari   , nb_vari_comp, nume_comp   , l_meca_mfront)
         if (l_meca_mfront) then
             l_mfront_proto = .true._1

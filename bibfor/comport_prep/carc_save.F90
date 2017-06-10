@@ -35,7 +35,6 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmdocv.h"
 #include "asterfort/nocart.h"
-#include "asterfort/comp_meca_rkit.h"
 #include "asterfort/comp_read_mesh.h"
 #include "asterfort/utlcal.h"
 #include "asterc/mfront_set_double_parameter.h"
@@ -77,7 +76,6 @@ implicit none
     real(kind=8) :: iter_inte_maxi, resi_inte_rela, parm_theta, vale_pert_rela, algo_inte_r
     real(kind=8) :: resi_deborst_max, seuil, parm_alpha
     real(kind=8) :: post_iter, post_incr
-    character(len=16) :: kit_comp(9) = (/' ',' ',' ',' ',' ',' ',' ',' ',' '/)
     integer :: type_matr_t, iter_inte_pas, iter_deborst_max
     aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi, l_kit_thm, l_kit
 !
@@ -138,12 +136,6 @@ implicit none
             endif
         endif
         call utlcal('NOM_VALE', algo_inte, algo_inte_r)
-!
-! ----- For KIT
-!
-        if (l_kit) then
-            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
-        endif
 !
 ! ----- Get RESI_INTE_RELA/ITER_INTE_MAXI
 !

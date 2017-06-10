@@ -19,16 +19,20 @@
 !
 !
 interface
-    subroutine ddi_kit_nvar(rela_flua   , rela_plas   , rela_cpla   , rela_coup     , nb_vari_flua,&
-                            nb_vari_plas, nb_vari_cpla, nb_vari_coup, nume_comp_plas)
+    subroutine ddi_kit_nvar(rela_flua     , rela_plas   , rela_cpla   , rela_coup   ,&
+                            type_model2   ,&
+                            nb_vari_flua  , nb_vari_plas, nb_vari_cpla, nb_vari_coup,&
+                            nume_comp_plas, nume_comp_flua)
         character(len=16), intent(in) :: rela_flua
         character(len=16), intent(in) :: rela_plas
         character(len=16), intent(in) :: rela_cpla
         character(len=16), intent(in) :: rela_coup
+        character(len=16), intent(in) :: type_model2
         integer, intent(out) :: nb_vari_flua
         integer, intent(out) :: nb_vari_plas
         integer, intent(out) :: nb_vari_cpla
         integer, intent(out) :: nb_vari_coup
         integer, intent(out) :: nume_comp_plas
+        integer, intent(out) :: nume_comp_flua
     end subroutine ddi_kit_nvar
 end interface

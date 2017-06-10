@@ -44,7 +44,7 @@ implicit none
     call lcsend(fami, kpg, ksp, ndim, imate,&
                 compor, carcri, instam, instap, epsm,&
                 deps, sigm, vim, option, angmas,&
-                sigp, vip, wkin, typmod, icomp,&
-                nvi, dsidep, codret)
+                sigp, vip, wkin, typmod,&
+                dsidep, codret)
 !
 end subroutine

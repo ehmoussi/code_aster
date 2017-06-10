@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine comp_nbvari_kit(kit_comp  , defo_comp   , nb_vari_rela, &
-                           l_kit_meta, l_kit_thm   , l_kit_ddi   , l_kit_cg,&
-                           nb_vari   , nb_vari_comp, nume_comp   , l_meca_mfront)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine comp_nbvari_kit(kit_comp  , defo_comp   , type_model2, nb_vari_rela ,&
+                           l_kit_meta, l_kit_thm   , l_kit_ddi  , l_kit_cg     ,&
+                           nb_vari   , nb_vari_comp, nume_comp  , l_meca_mfront)
 !
 implicit none
 !
@@ -30,10 +31,9 @@ implicit none
 #include "asterfort/thm_kit_nvar.h"
 #include "asterfort/meta_kit_nvar.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
     character(len=16), intent(in) :: kit_comp(4)
     character(len=16), intent(in) :: defo_comp
+    character(len=16), intent(in) :: type_model2
     integer, intent(in) :: nb_vari_rela
     aster_logical, intent(in) :: l_kit_meta
     aster_logical, intent(in) :: l_kit_thm
@@ -54,6 +54,7 @@ implicit none
 !
 ! In  kit_comp         : KIT comportment
 ! In  defo_comp        : DEFORMATION comportment
+! In  type_model2      : type of modelization (TYPMOD2)
 ! In  nb_vari_rela     : number of internal variables for RELATION
 ! In  l_kit_meta       : .true. if kit metallurgy
 ! In  l_kit_thm        : .true. if kit THM
@@ -72,7 +73,7 @@ implicit none
     integer :: nb_vari_flua, nb_vari_plas, nb_vari_cpla, nb_vari_coup
     character(len=16) :: rela_comp_cg(2)
     integer :: nb_vari_cg(2)
-    integer :: nume_comp_plas, nume_comp_meca
+    integer :: nume_comp_plas, nume_comp_meca, nume_comp_flua
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -123,14 +124,16 @@ implicit none
         rela_plas = kit_comp(2)
         rela_cpla = kit_comp(3)
         rela_coup = kit_comp(4)
-        call ddi_kit_nvar(rela_flua   , rela_plas   , rela_cpla   , rela_coup     , nb_vari_flua,&
-                          nb_vari_plas, nb_vari_cpla, nb_vari_coup, nume_comp_plas)
+        call ddi_kit_nvar(rela_flua     , rela_plas   , rela_cpla   , rela_coup   ,&
+                          type_model2   ,&
+                          nb_vari_flua  , nb_vari_plas, nb_vari_cpla, nb_vari_coup,&
+                          nume_comp_plas, nume_comp_flua)
         nb_vari_comp(1) = nb_vari_flua
         nb_vari_comp(2) = nb_vari_plas
         nb_vari_comp(3) = nb_vari_cpla
         nb_vari_comp(4) = nb_vari_coup
         nume_comp(2)    = nume_comp_plas
-        nume_comp(3)    = nb_vari_plas
+        nume_comp(3)    = nume_comp_flua
     endif
 !
 ! - Number of internal variables for KIT CG

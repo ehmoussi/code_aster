@@ -130,6 +130,7 @@ implicit none
 #include "asterfort/lc5007.h"
 #include "asterfort/lc5008.h"
 #include "asterfort/lc5016.h"
+#include "asterfort/lc5021.h"
 #include "asterfort/lc5036.h"
 #include "asterfort/lc6036.h"
 #include "asterfort/lc6046.h"
@@ -146,6 +147,15 @@ implicit none
 #include "asterfort/lc7051.h"
 #include "asterfort/lc7056.h"
 #include "asterfort/lc7058.h"
+#include "asterfort/lc8027.h"
+#include "asterfort/lc8028.h"
+#include "asterfort/lc8029.h"
+#include "asterfort/lc8056.h"
+#include "asterfort/lc8057.h"
+#include "asterfort/lc8146.h"
+#include "asterfort/lc8331.h"
+#include "asterfort/lc13029.h"
+#include "asterfort/lc13057.h"
 #include "asterfort/lc9999.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcpto.h"
@@ -793,7 +803,7 @@ implicit none
         call lc0165(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, wkin, typmod, &
                     nvi, dsidep, codret)
     case (166)
 !     ENDO_PORO_BETON
@@ -950,6 +960,13 @@ implicit none
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, wkout, typmod, icomp,&
                     nvi, dsidep, codret)
+    case (5021)
+!     BETON_UMLV
+        call lc5021(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, epsm,&
+                    deps, sigm, vim, option, angmas,&
+                    sigp, vip, wkout, typmod, icomp,&
+                    nvi, dsidep, codret)
     case (5036)
 !     ENDO_ISOT_BETON
         call lc5036(fami, kpg, ksp, ndim, imate,&
@@ -1070,6 +1087,82 @@ implicit none
                     nvi, vim, option, angmas, &
                     icomp, sigp, vip, dsidep,&
                     codret)
+!
+! --------------------------------------------------------------------------------------------------
+! - For KIT_DDI
+! --------------------------------------------------------------------------------------------------
+!
+    case (8027)
+        call lc8027(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8028)
+        call lc8028(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8029)
+        call lc8029(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8056)
+        call lc8056(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8057)
+        call lc8057(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8146)
+        call lc8146(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (8331)
+        call lc8331(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (13029)
+        call lc13029(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
+!
+    case (13057)
+        call lc13057(fami, kpg, ksp, ndim, imate,&
+                    compor, mult_comp, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                    dsidep, nwkout, wkout, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - Error

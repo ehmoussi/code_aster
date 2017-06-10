@@ -17,11 +17,13 @@
 ! --------------------------------------------------------------------
 
 subroutine nmcpla(fami, kpg   , ksp  , ndim  , typmod,&
-                  imat, compor, mult_comp, carcri , timed , timef ,&
+                  imat, compor_plas, compor_creep, carcri , timed , timef ,&
                   neps, epsdt , depst, nsig  , sigd  ,&
                   vind, option, nwkin, wkin  , sigf  ,&
                   vinf, ndsde , dsde , nwkout, wkout ,&
                   iret)
+!
+use calcul_module, only : ca_ctempl_, ca_ctempr_, ca_ctempm_, ca_ctempp_
 !
 implicit none
 !
@@ -31,6 +33,7 @@ implicit none
 #include "asterfort/granvi.h"
 #include "asterfort/lcopil.h"
 #include "asterfort/lcprmv.h"
+#include "asterfort/nmcomp.h"
 #include "asterfort/nmgran.h"
 #include "asterfort/nmisot.h"
 #include "asterfort/rcvalb.h"
@@ -43,8 +46,8 @@ implicit none
 !
     integer :: imat, ndim, kpg, ksp, iret
     integer :: neps, nsig, nwkin, nwkout, ndsde
-    character(len=16), intent(in) :: compor(*)
-    character(len=16), intent(in) :: mult_comp
+    character(len=16), intent(in) :: compor_plas(*)
+    character(len=16), intent(in) :: compor_creep(*)
     real(kind=8), intent(in) :: carcri(*)
     real(kind=8) :: timed, timef, tempd, tempf, tref
     real(kind=8) :: wkin(*), wkout(*)
@@ -60,7 +63,7 @@ implicit none
 !
 ! Comportment management
 !
-! KIT_DDI with GRANGER
+! KIT_DDI with creeping = GRANGER
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -123,12 +126,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ndt, ndi, nvi_flua, ire2, nvi_tot
-    integer :: nvi_plas, idx_vi_plas, i, retcom
+    integer :: ndt_local, ndi_local
+    integer :: ndt, ndi
+    integer :: nvi_flua, nvi_plas, idx_vi_plas
+    integer :: i, retcom, ire2, iret1, iret2, iret3
+    integer :: nume_plas, nume_flua
+    integer :: k, iter, itemax
     integer :: cerr(5)
     character(len=8) :: elem_model, nomc(5)
     character(len=16) :: rela_flua, rela_plas
-    character(len=16) :: compor_creep(3), compor_plas(3)
     real(kind=8) :: nu, angmas(3)
     real(kind=8) :: espi_creep(6), epsfld(6), epsflf(6), depsfl(6)
     real(kind=8) :: deps(6), kooh(6, 6)
@@ -136,58 +142,37 @@ implicit none
     real(kind=8) :: epsicv, toler, ndsig, nsigf
     real(kind=8) :: dsigf(6), hydrd, hydrf, sechd, sechf, sref
     real(kind=8) :: epseld(6), epself(6), epsthe
-    integer :: k, iter, itemax, iret1, iret2, iret3, nume_plas
     real(kind=8) :: sigf2(6)
     real(kind=8) :: tmpdmx, tmpfmx, epsth
     real(kind=8) :: alphad, alphaf, bendod, bendof, kdessd, kdessf
-    aster_logical :: cp, l_inte_forc
+    aster_logical :: l_inte_forc
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    common /tdim/   ndt  , ndi
+    common /tdim/   ndt, ndi
 !
 ! --------------------------------------------------------------------------------------------------
 !
     l_inte_forc = option .eq. 'RAPH_MECA' .or. option .eq. 'FULL_MECA'
-    read (compor(2),'(I16)') nvi_tot
-    rela_flua   = compor(8)
-    rela_plas   = compor(9)
+    rela_flua   = compor_creep(1)
+    rela_plas   = compor_plas(1)
     elem_model  = typmod(1)
-    read (compor(16),'(I16)') nvi_plas
-    read (compor(15),'(I16)') nume_plas
-!
-! - Number of internal variables in Granger (take maximum from 3D)
-!
-    call granvi('3D', nvi_ = nvi_flua)
-!
-! - Prepare COMPOR <CARTE> for Granger
-!
-    compor_creep(1) = rela_flua
-    write (compor_creep(2),'(I16)') nvi_flua
-    compor_creep(3) = compor(3)
+    read (compor_creep(2),'(I16)') nvi_flua
+    read (compor_plas(2) ,'(I16)') nvi_plas
+    read (compor_plas(6) ,'(I16)') nume_plas
+    read (compor_creep(6),'(I16)') nume_flua
     ASSERT(compor_creep(1)(1:13) .eq. 'BETON_GRANGER')
-
 !
-! - Number of internal variables
+! - Get size for tensors
 !
-    call granvi(elem_model, ndt, ndi)
-    idx_vi_plas = nvi_flua + 1
-    ASSERT(nvi_tot .eq. (nvi_flua + nvi_plas))
-!
-! - Prepare COMPOR <CARTE> for plasticity
-!
-    compor_plas(1) = rela_plas
-    write (compor_plas(2),'(I16)') nvi_plas
-    compor_plas(3) = compor(3)
+    ndt_local = 2*ndim
+    ndi_local = 3
 !
 ! - Get temperatures
 !
-    call rcvarc(' ', 'TEMP', '-', fami, kpg,&
-                ksp, tempd, iret1)
-    call rcvarc(' ', 'TEMP', '+', fami, kpg,&
-                ksp, tempf, iret2)
-    call rcvarc(' ', 'TEMP', 'REF', fami, kpg,&
-                ksp, tref, iret3)
+    call rcvarc(' ', 'TEMP', '-', fami, kpg, ksp, tempd, iret1)
+    call rcvarc(' ', 'TEMP', '+', fami, kpg, ksp, tempf, iret2)
+    call rcvarc(' ', 'TEMP', 'REF', fami, kpg, ksp, tref, iret3)
 !
 ! - Get maximum temperature during load (for BETON_DOUBLE_DP)
 !
@@ -203,6 +188,13 @@ implicit none
             endif
         endif
     endif
+!
+! - Set temperature access
+!
+    ca_ctempl_ = 1
+    ca_ctempm_ = tmpdmx
+    ca_ctempp_ = tmpfmx
+    ca_ctempr_ = tref
 !
 ! - Get convergence criteria
 !
@@ -222,10 +214,12 @@ implicit none
 !
 ! ----- Solve creep law
 !
-        call nmgran(fami        , kpg  , ksp    , typmod, imat  ,&
-                    compor_creep, timed, timef  , tmpdmx, tmpfmx,&
-                    depst2      , sigd , vind(1), option, sigf2 ,&
-                    vinf(1)     , dsde)
+        call nmcomp(fami, kpg, ksp, ndim, typmod,&
+                    imat, compor_creep, carcri, timed, timef  ,&
+                    neps, epsdt, depst2, nsig, sigd,&
+                    vind, option, angmas, nwkin, wkin,&
+                    sigf2, vinf, ndsde, dsde, nwkout,&
+                    wkout, iret)
 !
 ! ----- Get material parameters
 !
@@ -245,10 +239,10 @@ implicit none
 !
 ! ----- Creep strains - At beginning of step
 !
-        do k = 1, ndt
-            espi_creep(k) = vind(8*ndt+k)
+        do k = 1, ndt_local
+            espi_creep(k) = vind(8*ndt_local+k)
             do i = 1, 8
-                espi_creep(k) = espi_creep(k) - vind((i-1) * ndt+k)
+                espi_creep(k) = espi_creep(k) - vind((i-1) * ndt_local+k)
             enddo
         enddo
         call lcopil('ISOTROPE', elem_model, materd, kooh)
@@ -256,10 +250,10 @@ implicit none
 !
 ! ----- Creep strains - At end of step
 !
-        do k = 1, ndt
-            espi_creep(k) = vinf(8*ndt+k)
+        do k = 1, ndt_local
+            espi_creep(k) = vinf(8*ndt_local+k)
             do i = 1, 8
-                espi_creep(k) = espi_creep(k) - vinf((i-1) * ndt+k)
+                espi_creep(k) = espi_creep(k) - vinf((i-1) * ndt_local+k)
             enddo
         enddo
         call lcopil('ISOTROPE', elem_model, materf, kooh)
@@ -267,41 +261,45 @@ implicit none
 !
 ! ----- Creep strain increment
 !
-        do k = 1, ndt
+        do k = 1, ndt_local
             depsfl(k) = epsflf(k) - epsfld(k)
         enddo
     endif
 !
+! - Unset temperature access
+!
+    ca_ctempl_ = 0
+!
 ! - Total strains
 !
     if (l_inte_forc) then
-        do k = 1, ndt
+        do k = 1, ndt_local
             deps(k) = depst(k) - depsfl(k)
         enddo
     else
-        do k = 1, ndt
+        do k = 1, ndt_local
             deps(k) = depst(k)
         enddo
     endif
 !
 ! - Solve plasticity law
 !
-    if (rela_plas(1:9) .eq. 'VMIS_ISOT' .or. rela_plas(1:14) .eq. 'VMIS_ISOT_LINE') then
-        call nmisot(fami             , kpg      , ksp , ndim             , typmod,&
-                    imat             , rela_plas, carcri, deps             , sigd  ,&
-                    vind(idx_vi_plas), option   , sigf, vinf(idx_vi_plas), dsde  ,&
-                    iret)
-    else if (rela_plas(1:8).eq. 'ROUSS_PR' .or. rela_plas(1:15).eq.'BETON_DOUBLE_DP') then
-        call redece(fami             , kpg              , ksp   , ndim , typmod,&
-                    imat             , compor_plas      , mult_comp, carcri  , timed, timef ,&
-                    neps             , epsdt            , deps  , nsig , sigd  ,&
-                    vind(idx_vi_plas), option           , angmas, nwkin, wkin  ,&
-                    cp               , nume_plas        , &
-                    sigf             , vinf(idx_vi_plas), ndsde , dsde , nwkout,&
-                    wkout            , retcom)
-    else
-        ASSERT(.false.)
+    idx_vi_plas = nvi_flua + 1
+    call nmcomp(fami, kpg, ksp, ndim, typmod,&
+                imat, compor_plas, carcri, timed, timef  ,&
+                neps, epsdt, deps, nsig, sigd,&
+                vind(idx_vi_plas), option, angmas, nwkin, wkin,&
+                sigf, vinf(idx_vi_plas), ndsde, dsde, nwkout,&
+                wkout, retcom)
+    if (retcom .eq. 1) then
+        iret = 1
+        goto 999
     endif
+!
+! - Change in common
+!
+    ndt = 2*ndim
+    ndi = 3
 !
 ! - Coupling algorithm
 !
@@ -328,7 +326,7 @@ implicit none
         call lcprmv(kooh, sigd, epseld)
         call lcopil('ISOTROPE', elem_model, materf, kooh)
         call lcprmv(kooh, sigf, epself)
-        do k = 1, ndt
+        do k = 1, ndt_local
             depsel(k) = epself(k) - epseld(k)
         enddo
 !
@@ -374,23 +372,22 @@ implicit none
             depsel(3)=-nu / (1.d0-nu) * (depsel(1)+depsel(2)) +(1.d0+nu) / (1.d0-nu) * epsth
         endif
 !
-!
 ! ---    CALCUL DE L'INCREMENT DE DEFORMATION EN ENTREE DU CALCUL
 ! ---    DE FLUAGE POR L'ITERATION SUIVANTE
 !
-        do k = 1, ndt
+        do k = 1, ndt_local
             depst2(k) = depst2(k) + depsel(k) + depsfl(k) - depst2(k)
         enddo
 !
 ! ---    CRITERE DE CONVERGENCE - NORME DE SIGF2 - SIGF
 !
-        do k = 1, ndt
+        do k = 1, ndt_local
             dsigf(k) = sigf2(k) - sigf(k)
         enddo
 !
         ndsig = 0.d0
         nsigf = 0.d0
-        do k = 1, ndt
+        do k = 1, ndt_local
             ndsig = ndsig + dsigf(k) * dsigf(k)
             nsigf = nsigf + sigf(k) * sigf(k)
         enddo

@@ -17,35 +17,45 @@
 ! --------------------------------------------------------------------
 
 !
+!
 ! aslint: disable=W1504
 !
 interface
-    subroutine lc0165(fami, kpg, ksp, ndim, imate,&
-                      compor, carcri, instam, instap, epsm,&
-                      deps, sigm, vim, option, angmas,&
-                      sigp, vip, wkin, typmod, &
-                      nvi, dsidep, codret)
+    subroutine lc8056(fami, kpg, ksp, ndim, imate,&
+                  compor, mult_comp, carcri, instam, instap, neps,&
+                  epsm, deps, nsig, sigm, vim,&
+                  option, angmas,sigp, nvi, vip, nwkin,&
+                    wkin, typmod,icomp, ndsde,&
+                  dsidep, nwkout, wkout, codret)
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
         integer, intent(in) :: ksp
         integer, intent(in) :: ndim
         integer, intent(in) :: imate
         character(len=16), intent(in) :: compor(*)
+        character(len=16), intent(in) :: mult_comp
         real(kind=8), intent(in) :: carcri(*)
         real(kind=8), intent(in) :: instam
         real(kind=8), intent(in) :: instap
-        real(kind=8), intent(in) :: epsm(6)
-        real(kind=8), intent(in) :: deps(6)
-        real(kind=8), intent(in) :: sigm(6)
+        integer, intent(in) :: neps
+        real(kind=8), intent(in) :: epsm(*)
+        real(kind=8), intent(in) :: deps(*)
+        integer, intent(in) :: nsig
+        real(kind=8), intent(in) :: sigm(*)
         real(kind=8), intent(in) :: vim(*)
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: angmas(*)
-        real(kind=8), intent(out) :: sigp(6)
+        real(kind=8), intent(out) :: sigp(*)
         real(kind=8), intent(out) :: vip(*)
-        real(kind=8), intent(out) :: wkin(*)
+        integer, intent(in) :: nwkin
+        real(kind=8), intent(in) :: wkin(nwkin)
         character(len=8), intent(in) :: typmod(*)
+        integer, intent(in) :: nwkout
+        real(kind=8), intent(out) :: wkout(nwkout)
+        integer, intent(in) :: icomp
         integer, intent(in) :: nvi
-        real(kind=8), intent(out) :: dsidep(6,6)
+        integer, intent(in) :: ndsde
+        real(kind=8), intent(out) :: dsidep(*)
         integer, intent(out) :: codret
-    end subroutine lc0165
+    end subroutine lc8056
 end interface

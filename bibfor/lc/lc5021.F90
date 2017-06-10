@@ -16,17 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lc0165(fami, kpg, ksp, ndim, imate,&
+subroutine lc5021(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
-                  sigp, vip, wkin, typmod, &
+                  sigp, vip, wkin, typmod, icomp,&
                   nvi, dsidep, codret)
 !
 implicit none
 !
-#include "asterfort/lcsflu.h"
+#include "asterfort/lcumfe.h"
 !
-! person_in_charge: etienne.grimal at edf.fr
 ! aslint: disable=W1504,W0104
 !
     character(len=*), intent(in) :: fami
@@ -38,32 +37,33 @@ implicit none
     real(kind=8), intent(in) :: carcri(*)
     real(kind=8), intent(in) :: instam
     real(kind=8), intent(in) :: instap
-    real(kind=8), intent(in) :: epsm(6)
-    real(kind=8), intent(in) :: deps(6)
-    real(kind=8), intent(in) :: sigm(6)
+    real(kind=8), intent(in) :: epsm(*)
+    real(kind=8), intent(in) :: deps(*)
+    real(kind=8), intent(in) :: sigm(*)
     real(kind=8), intent(in) :: vim(*)
     character(len=16), intent(in) :: option
     real(kind=8), intent(in) :: angmas(*)
-    real(kind=8), intent(out) :: sigp(6)
+    real(kind=8), intent(out) :: sigp(*)
     real(kind=8), intent(out) :: vip(*)
-    real(kind=8), intent(out) :: wkin(*)
+    real(kind=8), intent(in) :: wkin(*)
     character(len=8), intent(in) :: typmod(*)
+    integer, intent(in) :: icomp
     integer, intent(in) :: nvi
-    real(kind=8), intent(out) :: dsidep(6,6)
+    real(kind=8), intent(out) :: dsidep(*)
     integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Behaviour
+! Behaviour - Special GRADEPSI
 !
-! FLUA_PORO_BETON
+! BETON_UMLV
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call lcsflu(fami, kpg, ksp, ndim, imate,&
-                compor, carcri, instam, instap, epsm,&
-                deps, sigm, vim, option, angmas,&
-                sigp, vip, wkin, typmod, &
-                nvi, dsidep, codret)
+    codret = 0
+    call lcumfe(fami, kpg  , ksp   , ndim     , typmod,&
+                imate, instam, instap , epsm    , deps ,&
+                sigm, vim , option, compor(9), sigp  ,&
+                vip, dsidep , wkin)
 !
 end subroutine
