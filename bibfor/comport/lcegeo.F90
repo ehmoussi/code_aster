@@ -20,8 +20,10 @@ subroutine lcegeo(nno, npg, ipoids, ivf, idfde,&
                   geom, typmod, compor, ndim, dfdi,&
                   deplm, ddepl, elgeom)
 !
+use Behaviour_type
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -85,37 +87,34 @@ subroutine lcegeo(nno, npg, ipoids, ivf, idfde,&
 ! --- BETON_DOUBLE_DP
 !
     if (compor(1)(1:15) .eq. 'BETON_DOUBLE_DP' .or.&
-        ( compor(1)(1:7) .eq. 'KIT_DDI' .and. compor(9)(1:15) .eq. 'BETON_DOUBLE_DP' )) then
-!
+        (compor(1)(1:7) .eq. 'KIT_DDI' .and. compor(PLAS_NAME)(1:15) .eq. 'BETON_DOUBLE_DP' )) then
         if (typmod(1)(1:2) .eq. '3D') then
-!
             volume = 0.d0
-            do 10 kpg = 1, npg
+            do kpg = 1, npg
                 call dfdm3d(nno, kpg, ipoids, idfde, geom,&
                             poids, dfdx, dfdy, dfdz)
                 volume = volume + poids
- 10         continue
+            end do
             if (npg .ge. 9) then
                 lc = volume ** 0.33333333333333d0
             else
                 lc = rac2 * volume ** 0.33333333333333d0
             endif
-            elseif(typmod(1)(1:6).eq.'D_PLAN' .or.typmod(1)(1:4)&
-        .eq.'AXIS')then
+        elseif(typmod(1)(1:6).eq.'D_PLAN' .or.typmod(1)(1:4).eq.'AXIS')then
             surfac = 0.d0
-            do 40 kpg = 1, npg
+            do kpg = 1, npg
                 k = (kpg-1)*nno
                 call dfdm2d(nno, kpg, ipoids, idfde, geom,&
                             poids, dfdx, dfdy)
                 if (laxi) then
                     r = 0.d0
-                    do 30 i = 1, nno
+                    do i = 1, nno
                         r = r + geom(1,i)*zr(ivf+i+k-1)
- 30                 continue
+                    end do
                     poids = poids*r
                 endif
                 surfac = surfac + poids
- 40         continue
+            end do
 !
             if (npg .ge. 5) then
                 lc = surfac ** 0.5d0
@@ -130,31 +129,31 @@ subroutine lcegeo(nno, npg, ipoids, ivf, idfde,&
             ASSERT(.false.)
         endif
 !
-        do 50 kpg = 1, npg
+        do kpg = 1, npg
             elgeom(1,kpg) = lc
- 50     continue
+        end do
     endif
 !
 ! --- ELEMENTS GEOMETRIQUES POUR META_LEMA_INI
 !
     if (compor(1)(1:13) .eq. 'META_LEMA_ANI') then
         if (laxi) then
-            do 130 kpg = 1, npg
+            do kpg = 1, npg
                 elgeom(1,kpg) = 0.d0
                 elgeom(2,kpg) = 0.d0
                 elgeom(3,kpg) = 0.d0
-130         continue
+            end do
         else
-            do 100 kpg = 1, npg
+            do kpg = 1, npg
                 elgeom(1,kpg) = 0.d0
                 elgeom(2,kpg) = 0.d0
                 elgeom(3,kpg) = 0.d0
-                do 110 i = 1, ndim
-                    do 120 k = 1, nno
+                do i = 1, ndim
+                    do k = 1, nno
                         elgeom(i,kpg) = elgeom(i,kpg) + geom(i,k)*zr( ivf-1+nno*(kpg-1)+k)
-120                 continue
-110             continue
-100         continue
+                    end do
+                end do
+            end do
         endif
     endif
 !
@@ -169,7 +168,7 @@ subroutine lcegeo(nno, npg, ipoids, ivf, idfde,&
         call dcopy(nddl, deplm, 1, deplp, 1)
         call daxpy(nddl, 1.d0, ddepl, 1, deplp,&
                    1)
-        do 200 kpg = 1, npg
+        do kpg = 1, npg
             call nmgeom(ndim, nno, .false._1, .true._1, geom,&
                         kpg, ipoids, ivf, idfde, deplp,&
                         .true._1, r8bid, dfdi, f, epsbid,&
@@ -182,28 +181,28 @@ subroutine lcegeo(nno, npg, ipoids, ivf, idfde,&
                        1)
             call matinv('S', 3, f, fmm, r8bid)
             call pmat(3, df, fmm, l)
-            do 272 i = 1, 3
-                do 273 j = 1, 3
+            do i = 1, 3
+                do j = 1, 3
                     elgeom(3*(i-1)+j,kpg)=l(i,j)
-273             continue
-272         continue
-200     continue
+                end do
+            end do
+        end do
     endif
 !
     if ((compor(1) .eq. 'ENDO_PORO_BETON') .or.&
         (&
         (compor(1) .eq. 'KIT_DDI') .and.&
-        ((compor(8).eq.'ENDO_PORO_BETON').or. (compor(9).eq.'ENDO_PORO_BETON'))&
+        ((compor(CREEP_NAME).eq.'ENDO_PORO_BETON').or. (compor(PLAS_NAME).eq.'ENDO_PORO_BETON'))&
         )) then
 !
         if (typmod(1)(1:2) .eq. '3D') then
 !
-            do 300 kpg = 1, npg
-                do 310 i = 1, 3
+            do kpg = 1, npg
+                do i = 1, 3
                     l(1,i) = 0.d0
                     l(2,i) = 0.d0
                     l(3,i) = 0.d0
-                    do 320 j = 1, nno
+                    do  j = 1, nno
                         k = 3*nno*(kpg-1)
                         jj = 3*(j-1)
                         de = zr(idfde-1+k+jj+1)
@@ -212,26 +211,26 @@ subroutine lcegeo(nno, npg, ipoids, ivf, idfde,&
                         l(1,i) = l(1,i) + de*geom(i,j)
                         l(2,i) = l(2,i) + dn*geom(i,j)
                         l(3,i) = l(3,i) + dk*geom(i,j)
-320                 continue
-310             continue
+                    end do
+                end do
 !
 ! --------- inversion de la matrice l
                 iret = 0
                 det = 0.d0
                 call r8inir(9, 0.d0, inv, 1)
-                do 11 i = 1, 3
+                do i = 1, 3
                     inv(i,i) = 1.d0
- 11             continue
+                end do
 !
                 call mgauss('NCVP', l, inv, 3, 3,&
                             3, det, iret)
 !
-                do 330 i = 1, 3
-                    do 340 j = 1, 3
+                do i = 1, 3
+                    do j = 1, 3
                         elgeom(3*(i-1)+j,kpg)=inv(i,j)
-340                 continue
-330             continue
-300         continue
+                    end do
+                end do
+            end do
 !
         else
             call utmess('F', 'COMPOR1_92')

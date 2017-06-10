@@ -18,6 +18,8 @@
 
 subroutine te0333(option, nomte)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -121,9 +123,9 @@ implicit none
 ! - Comportment
 !
     call jevech('PCOMPOR', 'L', icompo)
-    rela_comp  = zk16(icompo)
-    kit_comp_1 = zk16(icompo+7)
-    kit_comp_2 = zk16(icompo+8)
+    rela_comp  = zk16(icompo-1+NAME)
+    kit_comp_1 = zk16(icompo-1+CREEP_NAME)
+    kit_comp_2 = zk16(icompo-1+PLAS_NAME)
 !
 ! - Internal variables
 !

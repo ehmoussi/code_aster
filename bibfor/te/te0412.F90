@@ -17,6 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine te0412(option, nomte)
+use Behaviour_type
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -99,7 +100,7 @@ subroutine te0412(option, nomte)
     integer :: multic
     integer :: jcara
 !
-    character(len=16) :: valk(3), optio2
+    character(len=16) :: valk(3), optio2, rela_comp, rela_flua
     aster_logical :: dkq, dkg, lkit, coupmf
 !
     nbsig = 6
@@ -160,12 +161,14 @@ subroutine te0412(option, nomte)
 !
     if (iret .eq. 0) then
 !
-        lkit = zk16(icompo)(1:7).eq.'KIT_DDI'
+        rela_comp = zk16(icompo-1+NAME)
+        rela_flua = zk16(icompo-1+CREEP_NAME)
+        lkit = rela_comp(1:7).eq.'KIT_DDI'
 !
-        if (zk16(icompo)(1:4) .eq. 'ELAS' .or. zk16(icompo)(1:4) .eq. 'ENDO' .or.&
-            zk16(icompo)(1:6) .eq. 'MAZARS' .or. zk16(icompo)(1:7) .eq. 'GLRC_DM' .or.&
-            zk16(icompo)(1:11) .eq. 'GLRC_DAMAGE' .or.&
-            (lkit .and. zk16(icompo+7)(1:7) .eq.'GLRC_DM')) then
+        if (rela_comp(1:4) .eq. 'ELAS' .or. rela_comp(1:4) .eq. 'ENDO' .or.&
+            rela_comp(1:6) .eq. 'MAZARS' .or. rela_comp(1:7) .eq. 'GLRC_DM' .or.&
+            rela_comp(1:11) .eq. 'GLRC_DAMAGE' .or.&
+            (lkit .and. rela_flua .eq.'GLRC_DM')) then
 !
             if (option .eq. 'ENEL_ELGA') then
                 call jevech('PDEPLAR', 'L', jdepm)
@@ -190,7 +193,7 @@ subroutine te0412(option, nomte)
 !
             if (dkg .and.&
                 (&
-                lkit .or. zk16(icompo)(1:11) .eq. 'GLRC_DAMAGE' .or. zk16(icompo)(1:4) .eq.&
+                lkit .or. rela_comp(1:11) .eq. 'GLRC_DAMAGE' .or. rela_comp(1:4) .eq.&
                 'ELAS'&
                 )) then
                 if (option .eq. 'ENEL_ELGA') then
@@ -259,7 +262,7 @@ subroutine te0412(option, nomte)
                 endif
 !
                 if (dkg .and. lkit) then
-                    read (zk16(icompo-1+2),'(I16)') nbvar
+                    read (zk16(icompo-1+NVAR),'(I16)') nbvar
                     ivpg = jvari + (ipg-1)*nbvar + 13
                     do isig = 1, nbsm
                         eps(isig) = zr(ivpg + isig )
@@ -274,8 +277,8 @@ subroutine te0412(option, nomte)
                     call pmrvec('ZERO', 3, 3*nnoel, bf, uf,&
                                 khi)
 !
-                    if (zk16(icompo)(1:11) .eq. 'GLRC_DAMAGE') then
-                        read (zk16(icompo-1+2),'(I16)') nbvar
+                    if (rela_comp(1:11) .eq. 'GLRC_DAMAGE') then
+                        read (zk16(icompo-1+NVAR),'(I16)') nbvar
                         ivpg = jvari + (ipg-1)*nbvar - 1
                         do isig = 1, nbsm
                             eps(isig) = eps(isig) - zr(ivpg + isig )
@@ -452,7 +455,7 @@ subroutine te0412(option, nomte)
 !      =====================
         valk(1) = option
         valk(2) = nomte
-        valk(3) = zk16(icompo)
+        valk(3) = rela_comp
         call utmess('F', 'ELEMENTS_88', nk=3, valk=valk)
     endif
 !

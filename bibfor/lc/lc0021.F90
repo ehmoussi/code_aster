@@ -22,6 +22,8 @@ subroutine lc0021(fami, kpg, ksp, ndim, imate,&
                   sigp, vip, typmod, icomp,&
                   nvi, dsidep, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterfort/lcumfp.h"
@@ -63,8 +65,8 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (compor(8) .eq. 'BETON_UMLV') then
-        rela_plas = compor(9)
+    if (compor(CREEP_NAME) .eq. 'BETON_UMLV') then
+        rela_plas = compor(PLAS_NAME)
     else
         rela_plas = ' '
     endif

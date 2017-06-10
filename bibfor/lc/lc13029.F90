@@ -23,6 +23,8 @@ subroutine lc13029(fami, kpg, ksp, ndim, imate,&
                    wkin, typmod,icomp, ndsde,&
                    dsidep, nwkout, wkout, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -76,17 +78,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    rela_flua   = compor(8)
-    rela_plas   = compor(9)
-    read (compor(17),'(I16)') nvi_flua
-    read (compor(16),'(I16)') nume_flua
-!
-    compor_ext(1) = rela_flua
-    write (compor_ext(2),'(I16)') nvi_flua
-    compor_ext(3) = compor(3)
-    write (compor_ext(6),'(I16)') nume_flua
-    compor_ext(8) = rela_flua
-    compor_ext(9) = rela_plas
+    rela_flua   = compor(CREEP_NAME)
+    rela_plas   = compor(PLAS_NAME)
+    read (compor(CREEP_NVAR),'(I16)') nvi_flua
+    read (compor(CREEP_NUME),'(I16)') nume_flua
+    compor_ext(NAME) = rela_flua
+    write (compor_ext(NVAR),'(I16)') nvi_flua
+    compor_ext(DEFO) = compor(DEFO)
+    write (compor_ext(NUME),'(I16)') nume_flua
+    compor_ext(CREEP_NAME) = rela_flua
+    compor_ext(PLAS_NAME) = rela_plas
 !
     call nmcomp(fami, kpg, ksp, ndim, typmod,&
                 imate, compor_ext, carcri, instam, instap  ,&

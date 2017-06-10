@@ -185,7 +185,7 @@ subroutine lcsend(fami, kpg, ksp, ndim, imate,&
     nmtail = 12
 !
 ! --- TRAITEMENT DIFFERENT SI COUPLAGE FLUA3D-ENDO3D
-    if (nint(tampon(1)) .eq. 1) then
+    if (nint(tampon(10)) .eq. 1) then
         fl3d = .true.
         nvari = nvcom+nvflu+nvendo+nvtail
         nmat = nmelas+nmhydr+nmflu+nmendo+nmtail
