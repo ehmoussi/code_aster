@@ -66,6 +66,7 @@ subroutine thmModuleInit()
     ds_thm%ds_behaviour%l_temp        = .false.
     ds_thm%ds_behaviour%nb_pres       = 0
     ds_thm%ds_behaviour%nb_phase(1:2) = 0
+    ds_thm%ds_behaviour%satur_type    = SATURATED
 !   Type of FE: which dof on element ?
     ds_thm%ds_elem%l_dof_ther      = .false.
     ds_thm%ds_elem%l_dof_meca      = .false.
