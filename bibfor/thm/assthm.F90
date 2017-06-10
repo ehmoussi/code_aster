@@ -31,6 +31,7 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 !
 use THM_type
 use THM_module
+use Behaviour_type
 !
 implicit none
 !
@@ -58,7 +59,7 @@ implicit none
     integer :: yamec, yap1, yap2, yate
     integer :: addeme, addep1, addep2, addete, ii, jj
     integer :: kpi, ipi
-    integer :: i, j, n, k, kji, nbcomp
+    integer :: i, j, n, k, kji
     real(kind=8) :: dfdi(nno, 3), dfdi2(nnos, 3)
     real(kind=8) :: geom(ndim, nno), crit(*), poids, poids2
     real(kind=8) :: deplp(dimuel), deplm(dimuel)
@@ -398,8 +399,7 @@ implicit none
                     do i = 1, 6
                         contp((kpi-1)*dimcon+i) = contp((kpi-npg-1)* dimcon+i)
                     end do
-                    nbcomp = 9 + 7
-                    read (compor(nbcomp+4),'(I16)') nvim
+                    read (compor(MECA_NVAR),'(I16)') nvim
                     do i = 1, nvim
                         varip((kpi-1)*nbvari+i) = varip((kpi-npg-1)* nbvari+i)
                     end do

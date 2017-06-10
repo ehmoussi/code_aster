@@ -21,6 +21,8 @@ subroutine thmGetParaBehaviour(compor,&
                                nvim_ , nvic_, nvit_, nvih_,&
                                nume_meca_)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -59,14 +61,14 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (present(thmc_)) thmc_ = compor( 8)
-    if (present(ther_)) ther_ = compor( 9)
-    if (present(hydr_)) hydr_ = compor(10)
-    if (present(meca_)) meca_ = compor(11)
-    if (present(nvic_)) read (compor(17),'(I16)') nvic_
-    if (present(nvit_)) read (compor(18),'(I16)') nvit_
-    if (present(nvih_)) read (compor(19),'(I16)') nvih_
-    if (present(nvim_)) read (compor(20),'(I16)') nvim_
-    if (present(nume_meca_)) read (compor(15),'(I16)') nume_meca_
+    if (present(thmc_)) thmc_ = compor(THMC_NAME)
+    if (present(ther_)) ther_ = compor(THER_NAME)
+    if (present(hydr_)) hydr_ = compor(HYDR_NAME)
+    if (present(meca_)) meca_ = compor(MECA_NAME)
+    if (present(nvic_)) read (compor(THMC_NVAR),'(I16)') nvic_
+    if (present(nvit_)) read (compor(THER_NVAR),'(I16)') nvit_
+    if (present(nvih_)) read (compor(HYDR_NVAR),'(I16)') nvih_
+    if (present(nvim_)) read (compor(MECA_NVAR),'(I16)') nvim_
+    if (present(nume_meca_)) read (compor(MECA_NUME),'(I16)') nume_meca_
 !
 end subroutine

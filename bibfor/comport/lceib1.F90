@@ -20,7 +20,11 @@ subroutine lceib1(fami, kpg, ksp, imate, compor,&
                   ndim, epsm, sref, sechm, hydrm,&
                   t, lambda, deuxmu, epsthe, kdess,&
                   bendo, gamma, seuil)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
@@ -85,7 +89,7 @@ subroutine lceib1(fami, kpg, ksp, imate, compor,&
              (compor(1)(1:7) .eq. 'KIT_THM').or. (compor(1)(1:8) .eq. 'KIT_THHM')&
            )&
           .and. &
-          (compor(11)(1:15) .eq. 'ENDO_ISOT_BETON')&
+          (compor(MECA_NAME)(1:15) .eq. 'ENDO_ISOT_BETON')&
          )&
        ) then
 !

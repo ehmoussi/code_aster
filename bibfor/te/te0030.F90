@@ -17,7 +17,11 @@
 ! --------------------------------------------------------------------
 
 subroutine te0030(option, nomte)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -42,17 +46,18 @@ subroutine te0030(option, nomte)
 ! =====================================================================
     aster_logical :: logthm
     integer :: imate, icompo, ivarip, icontp, ilocal, ibid
-    integer :: nbvari, nbrac4, rindic, kpg, ii, nbsig
+    integer :: nbvari, nbrac4, kpg, ii, nbsig
     integer :: icode, iret, tabthm(3), dimmax, npgu
     integer :: ndim, nno, nnos, npg, ipoids, ivf, idfde, jgano
     real(kind=8) :: vbifur, racine(4), dsde(6, 6)
     character(len=8) :: mod, alias8
     character(len=16) :: relcom
+    integer, parameter :: rindic = 5
 ! =====================================================================
 ! --- RINDIC EST LE NOMBRE DE PARAMETRE DE LOCALISATION DEFINIT -------
 ! --- SOUS LE MOT-CLE INDL_R DANS GRANDEUR_SIMPLE.CATA --------------
 ! =====================================================================
-    parameter ( rindic  = 5 )
+
 ! =====================================================================
     call teattr('S', 'ALIAS8', alias8, ibid)
     if (option .eq. 'INDL_ELGA') then
@@ -79,8 +84,8 @@ subroutine te0030(option, nomte)
             logthm = .true.
             if (alias8(3:5) .eq. 'AH2') then
                 mod(1:4) = 'AXIS'
-                else if ((alias8(3:5).eq.'DH2').or. (alias8(3:5).eq.'DR1')&
-            .or. (alias8(3:5).eq.'DM1')) then
+            else if ((alias8(3:5).eq.'DH2').or. (alias8(3:5).eq.'DR1').or.&
+                     (alias8(3:5).eq.'DM1'))then
                 mod(1:6) = 'D_PLAN'
             else
 ! =====================================================================
@@ -121,15 +126,15 @@ subroutine te0030(option, nomte)
 ! --- DANS LE CADRE DE LA THM ON RECUPERE DIRECTEMENT LA RELATION -----
 ! --- DE COMPORTEMENT DE TYPE MECANIQUE -------------------------------
 ! =====================================================================
-            relcom = zk16(icompo-1+11)
+            relcom = zk16(icompo-1+MECA_NAME)
         else
             call jevech('PCONTPR', 'L', icontp)
-            relcom = zk16(icompo-1+ 1)
+            relcom = zk16(icompo-1+NAME)
         endif
 ! =====================================================================
 ! --- NOMBRE DE VARIABLES INTERNES ASSOCIE A LA LOI DE COMPORTEMENT ---
 ! =====================================================================
-        read (zk16(icompo-1+2),'(I16)') nbvari
+        read (zk16(icompo-1+NVAR),'(I16)') nbvari
 ! =====================================================================
 ! --- PARAMETRES EN SORTIE --------------------------------------------
 ! =====================================================================

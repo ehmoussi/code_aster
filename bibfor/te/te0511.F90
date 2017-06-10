@@ -17,9 +17,11 @@
 ! --------------------------------------------------------------------
 
 subroutine te0511(option, nomte)
-! person_in_charge: alexandre.foucault at edf.fr
-! =====================================================================
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -42,18 +44,19 @@ subroutine te0511(option, nomte)
 ! =====================================================================
     aster_logical :: logthm
     integer :: imate, icompo, ivarip, icontp, ilocal, ic, iv
-    integer :: nbvari, rindic, kpg, nbsig, imat, ibid
+    integer :: nbvari, kpg, nbsig, imat, ibid
     integer :: icode, iret, tabthm(3), dimmax, npgu
     integer :: ndim, nno, nnos, npg, ipoids, ivf, idfde, jgano
     real(kind=8) :: module, sig(6)
     real(kind=8) :: vin(100)
     character(len=8) :: mod, alias8
     character(len=16) :: relcom
+    integer, parameter :: rindic = 1
 ! =====================================================================
 ! --- RINDIC EST LE NOMBRE DE PARAMETRE DE LOCALISATION DEFINIT -------
 ! --- SOUS LE MOT-CLE INDL_R DANS GRANDEUR_SIMPLE.CATA --------------
 ! =====================================================================
-    parameter ( rindic  = 1 )
+
 ! =====================================================================
     call teattr('S', 'ALIAS8', alias8, ibid)
     if (option .eq. 'PDIL_ELGA') then
@@ -80,8 +83,8 @@ subroutine te0511(option, nomte)
             logthm = .true.
             if (alias8(3:5) .eq. 'AH2') then
                 mod(1:4) = 'AXIS'
-                else if ((alias8(3:5).eq.'DH2').or. (alias8(3:5).eq.'DR1')&
-            .or. (alias8(3:5).eq.'DM1'))then
+            else if ((alias8(3:5).eq.'DH2').or. (alias8(3:5).eq.'DR1').or.&
+                     (alias8(3:5).eq.'DM1'))then
                 mod(1:6) = 'D_PLAN'
             else
 ! =====================================================================
@@ -122,15 +125,15 @@ subroutine te0511(option, nomte)
 ! --- DANS LE CADRE DE LA THM ON RECUPERE DIRECTEMENT LA RELATION -----
 ! --- DE COMPORTEMENT DE TYPE MECANIQUE -------------------------------
 ! =====================================================================
-            relcom = zk16(icompo-1+11)
+            relcom = zk16(icompo-1+MECA_NAME)
         else
             call jevech('PCONTPR', 'L', icontp)
-            relcom = zk16(icompo-1+ 1)
+            relcom = zk16(icompo-1+NAME)
         endif
 ! =====================================================================
 ! --- NOMBRE DE VARIABLES INTERNES ASSOCIE A LA LOI DE COMPORTEMENT ---
 ! =====================================================================
-        read (zk16(icompo-1+2),'(I16)') nbvari
+        read (zk16(icompo-1+NVAR),'(I16)') nbvari
 ! =====================================================================
 ! --- PARAMETRES EN SORTIE --------------------------------------------
 ! =====================================================================
@@ -138,7 +141,7 @@ subroutine te0511(option, nomte)
 ! =====================================================================
 ! --- BOUCLE SUR LES POINTS DE GAUSS ----------------------------------
 ! =====================================================================
-        do 10 kpg = 1, npg
+        do kpg = 1, npg
 ! =====================================================================
 ! --- INITIALISATIONS -------------------------------------------------
 ! =====================================================================
@@ -146,12 +149,12 @@ subroutine te0511(option, nomte)
 ! =====================================================================
 ! --- CALCUL DU MODULE DE RIGIDITE DE MICRO-DILTATION -----------------
 ! =====================================================================
-            do 20 ic = 1, nbsig
+            do ic = 1, nbsig
                 sig(ic) = zr(icontp-1+(kpg-1)*nbsig+ic )
- 20         continue
-            do 30 iv = 1, nbvari
+            end do
+            do iv = 1, nbvari
                 vin(iv) = zr(ivarip-1+(kpg-1)*nbvari+iv )
- 30         continue
+            end do
             imat = zi(imate)
             call evala1('RIGI', kpg, 1, mod, relcom,&
                         sig, vin, imat, module, icode)
@@ -159,7 +162,7 @@ subroutine te0511(option, nomte)
 ! --- SURCHARGE DE L'INDICATEUR DE LOCALISATION -----------------------
 ! =====================================================================
             zr(ilocal-1+1+(kpg-1)*rindic) = module
- 10     continue
+        end do
     else
 !C OPTION DE CALCUL INVALIDE
         ASSERT(.false.)

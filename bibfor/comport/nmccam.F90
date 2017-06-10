@@ -21,6 +21,8 @@ subroutine nmccam(fami, kpg, ksp, ndim,&
                   deps, sigm, pcrm, option, sigp,&
                   pcrp, dsidep, retcom)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -182,7 +184,7 @@ implicit none
     endif
     if (((compor(1)(1:6) .eq. 'KIT_HM') .or. (compor(1)(1:7) .eq. 'KIT_HHM') .or.&
         (compor(1)(1:7) .eq. 'KIT_THM') .or. (compor(1)(1:8) .eq. 'KIT_THHM')).and.&
-        (compor(11)(1:9) .eq. 'CAM_CLAY ')) then
+        (compor(MECA_NAME)(1:9) .eq. 'CAM_CLAY ')) then
 !
         call rcvala(imate, ' ', 'ELAS', 1, nompar,&
                     valpam, 1, nomres(1), valres(1), icodre(1),&

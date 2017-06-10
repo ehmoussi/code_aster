@@ -27,6 +27,7 @@ subroutine calcme(option, compor, thmc, meca, imate,&
 !
 use THM_type
 use THM_module
+use Behaviour_type
 !
 implicit none
 !
@@ -313,10 +314,11 @@ implicit none
         mectru = .false.
     else
         mectru    = .false.
-        complg(1) = meca
-        write (complg(2),'(I16)') nvimec
-        complg(3) = compor(3)
+        complg(NAME) = meca
+        write (complg(NVAR),'(I16)') nvimec
+        complg(DEFO) = compor(DEFO)
         call thmGetParaBehaviour(compor, nume_meca_ = numlc)
+        write (complg(NUME),'(I16)') numlc
         if (numlc .ge. 100) then
             call utmess('F', 'THM1_1', sk = meca)
         endif
