@@ -18,7 +18,7 @@
 
 subroutine comp_meca_name(nb_vari    , l_excl       , vari_excl,&
                           l_kit_meta , l_mfront_offi, &
-                          rela_comp  , defo_comp  , kit_comp, type_cpla, type_matg, post_iter,&
+                          rela_comp  , defo_comp  , kit_comp, type_cpla, post_iter,&
                           libr_name  , subr_name    , model_mfront, model_dim   ,&
                           v_vari_name)
 !
@@ -43,7 +43,6 @@ implicit none
     character(len=16), intent(in) :: defo_comp
     character(len=16), intent(in) :: kit_comp(4)
     character(len=16), intent(in) :: type_cpla
-    character(len=16), intent(in) :: type_matg
     character(len=16), intent(in) :: post_iter
     character(len=255), intent(in) :: libr_name
     character(len=255), intent(in) :: subr_name
@@ -64,7 +63,6 @@ implicit none
 ! In  vari_excl        : name of internal variables if l_excl
 ! In  l_kit_meta       : .true. if metallurgy
 ! In  defo_comp        : DEFORMATION comportment
-
 ! In  v_vari_name      : pointer to names of internal variables
 !
 ! --------------------------------------------------------------------------------------------------
@@ -80,7 +78,7 @@ implicit none
     if (l_excl) then
         v_vari_name(1:nb_vari) = vari_excl
     else
-        call comp_meca_code(rela_comp, defo_comp, type_cpla   , kit_comp    , type_matg,&
+        call comp_meca_code(rela_comp, defo_comp, type_cpla   , kit_comp    ,&
                             post_iter, l_implex_ = .false._1,&
                             comp_code_py = comp_code_py,&
                             rela_code_py_ = rela_code_py,&
@@ -129,7 +127,7 @@ implicit none
             call lcdiscard(meta_code_py)
         elseif (l_mfront_offi) then
             call comp_mfront_vname(nb_vari    , &
-                                   defo_comp  , type_cpla, type_matg   , post_iter,&
+                                   defo_comp  , type_cpla, post_iter   ,&
                                    libr_name  , subr_name, model_mfront, model_dim,&
                                    v_vari_name)
         else

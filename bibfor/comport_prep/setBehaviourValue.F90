@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                             mult_comp, type_matg   , post_iter, kit_comp ,&
+                             mult_comp, post_iter   , kit_comp ,&
                              nb_vari  , nb_vari_comp, nume_comp,&
                              l_compor_, v_compor_)
 !
@@ -37,7 +37,6 @@ implicit none
     character(len=16), intent(in) :: type_comp
     character(len=16), intent(in) :: type_cpla
     character(len=16), intent(in) :: mult_comp
-    character(len=16), intent(in) :: type_matg
     character(len=16), intent(in) :: post_iter
     character(len=16), intent(in) :: kit_comp(4)
     integer, intent(in)  :: nb_vari
@@ -59,7 +58,6 @@ implicit none
 ! In  type_comp        : type of comportment (INCR/ELAS)
 ! In  type_cpla        : plane stress method
 ! In  mult_comp        : multi-comportment (DEFI_COMPOR for PMF)
-! In  type_matg        : type of tangent matrix
 ! In  post_iter        : type of post_treatment POST_ITER
 ! In  kit_comp         : KIT comportment
 ! In  nb_vari          : number of internal variables
@@ -91,7 +89,6 @@ implicit none
         v_compor_(9) = kit_comp(2)
         v_compor_(10) = kit_comp(3)
         v_compor_(11) = kit_comp(4)
-        v_compor_(TYPEMATG) = type_matg
         v_compor_(POSTITER) = post_iter
         write (v_compor_(15),'(I16)') nume_comp(2)
         write (v_compor_(16),'(I16)') nume_comp(3)
@@ -114,7 +111,6 @@ implicit none
         l_compor_(9) = kit_comp(2)
         l_compor_(10) = kit_comp(3)
         l_compor_(11) = kit_comp(4)
-        l_compor_(TYPEMATG) = type_matg
         l_compor_(POSTITER) = post_iter
         write (l_compor_(15),'(I16)') nume_comp(2)
         write (l_compor_(16),'(I16)') nume_comp(3)

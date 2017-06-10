@@ -71,7 +71,7 @@ implicit none
     integer :: nbocc1, nbocc2, nbocc3
     character(len=16) :: keywordfact
     character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp
-    character(len=16) :: kit_comp(4), type_cpla, type_matg, post_iter
+    character(len=16) :: kit_comp(4), type_cpla, post_iter
     aster_logical :: l_kit_thm, l_etat_init, l_implex
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
     type(NL_DS_ComporPrep) :: ds_compor_prep
@@ -120,7 +120,6 @@ implicit none
     type_cpla       = ds_compor_prep%v_comp(i_comp)%type_cpla
     kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
     mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
-    type_matg       = ds_compor_prep%v_comp(i_comp)%type_matg
     post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
     call comp_meca_l(rela_comp, 'KIT_THM'  , l_kit_thm)
     if (l_kit_thm) then
@@ -137,7 +136,7 @@ implicit none
 ! - Save in list
 !
     call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                           mult_comp, type_matg   , post_iter, kit_comp ,&
+                           mult_comp, post_iter   , kit_comp ,&
                            nb_vari  , nb_vari_comp, nume_comp,&
                            l_compor_ = compor)
 !

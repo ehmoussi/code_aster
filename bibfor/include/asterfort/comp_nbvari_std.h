@@ -22,7 +22,7 @@
 !
 interface
     subroutine comp_nbvari_std(rela_comp , defo_comp    , type_cpla   , nb_vari   ,&
-                               kit_comp_ , type_matg_   , post_iter_  , mult_comp_,&
+                               kit_comp_ , post_iter_  , mult_comp_,&
                                l_cristal_, l_implex_    , type_model2_,&
                                nume_comp_, nb_vari_rela_)
         character(len=16), intent(in) :: rela_comp
@@ -30,7 +30,6 @@ interface
         character(len=16), intent(in) :: type_cpla
         integer, intent(out) :: nb_vari
         character(len=16), optional, intent(in) :: kit_comp_(4)
-        character(len=16), optional, intent(in) :: type_matg_
         character(len=16), optional, intent(in) :: post_iter_
         character(len=16), optional, intent(in) :: mult_comp_
         aster_logical, optional, intent(in) :: l_cristal_

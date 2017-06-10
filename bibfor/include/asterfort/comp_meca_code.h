@@ -21,14 +21,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine comp_meca_code(rela_comp_  , defo_comp_   , type_cpla_   , kit_comp_, type_matg_,&
+    subroutine comp_meca_code(rela_comp_  , defo_comp_   , type_cpla_   , kit_comp_,&
                               post_iter_  , l_implex_    , type_model2_ ,&
                               comp_code_py, rela_code_py_, meta_code_py_)
         character(len=16), optional, intent(in) :: rela_comp_
         character(len=16), optional, intent(in) :: defo_comp_
         character(len=16), optional, intent(in) :: type_cpla_
         character(len=16), optional, intent(in) :: kit_comp_(4)
-        character(len=16), optional, intent(in) :: type_matg_
         character(len=16), optional, intent(in) :: post_iter_
         aster_logical, optional, intent(in) :: l_implex_
         character(len=16), optional, intent(in) :: type_model2_

@@ -59,7 +59,7 @@ implicit none
     integer :: nb_elem_affe
     integer :: iocc, nocc
     character(len=16) :: rela_comp, defo_comp, type_comp, type_cpla, mult_comp, kit_comp(4)
-    character(len=16) :: post_iter, type_matg
+    character(len=16) :: post_iter
     integer :: nb_vari, nume_comp(4), nb_vari_exte, unit_comp, nb_vari_comp(4)
     character(len=16) :: keywordfact
     character(len=16), pointer :: v_compor_valv(:) => null()
@@ -96,7 +96,6 @@ implicit none
         kit_comp(3)  = v_info_valk(16*(iocc-1)+ 7)
         kit_comp(4)  = v_info_valk(16*(iocc-1)+ 8)
         mult_comp    = v_info_valk(16*(iocc-1)+ 14) 
-        type_matg    = v_info_valk(16*(iocc-1)+ 15)
         post_iter    = v_info_valk(16*(iocc-1)+ 16)
 !
 ! ----- Set options in COMPOR <CARTE>
@@ -112,7 +111,6 @@ implicit none
         v_compor_valv(KIT2_NAME) = kit_comp(2)
         v_compor_valv(KIT3_NAME) = kit_comp(3)
         v_compor_valv(KIT4_NAME) = kit_comp(4)
-        v_compor_valv(TYPEMATG) = type_matg
         v_compor_valv(POSTITER) = post_iter
         write (v_compor_valv(KIT1_NUME),'(I16)') nume_comp(2)
         write (v_compor_valv(KIT2_NUME),'(I16)') nume_comp(3)
