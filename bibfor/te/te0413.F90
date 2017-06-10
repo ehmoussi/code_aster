@@ -17,7 +17,11 @@
 ! --------------------------------------------------------------------
 
 subroutine te0413(option, nomte)
-    implicit none
+!
+use Behaviour_type
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/dxqpgl.h"
@@ -85,9 +89,10 @@ subroutine te0413(option, nomte)
         call dxqpgl(zr(jgeom), pgl, 'S', iret)
     endif
 !
-    lkit = zk16(icompo)(1:7).eq.'KIT_DDI'
+    lkit = zk16(icompo-1+NAME)(1:7).eq.'KIT_DDI'
 !
-    if ((zk16(icompo)(1:7).eq.'GLRC_DM') .or. (lkit.and.(zk16(icompo+7)(1:7).eq.'GLRC_DM'))) then
+    if ((zk16(icompo-1+NAME)(1:7).eq.'GLRC_DM') .or.&
+       (lkit.and.(zk16(icompo-1+CREEP_NAME)(1:7).eq.'GLRC_DM'))) then
 !
         call jevech('PCACOQU', 'L', icacoq)
 !
@@ -99,7 +104,7 @@ subroutine te0413(option, nomte)
             call gtria3(xyzl, cara)
         endif
 !
-        read (zk16(icompo-1+2),'(I16)') nbvar
+        read (zk16(icompo-1+NVAR),'(I16)') nbvar
         ep = zr(icacoq)
 !
         if (option .eq. 'DISS_ELGA') then
@@ -159,7 +164,7 @@ subroutine te0413(option, nomte)
         else if (option.eq.'DISS_ELEM') then
             zr(idener-1+1) = dse
         endif
-    elseif ( zk16(icompo)(1:4) .eq. 'DHRC' ) then
+    elseif ( zk16(icompo-1+NAME)(1:4) .eq. 'DHRC' ) then
         call jevech('PCACOQU', 'L', icacoq)
         call utpvgl(nno, 3, pgl, zr(jgeom), xyzl)
         if (dkq) then
@@ -168,7 +173,7 @@ subroutine te0413(option, nomte)
             call gtria3(xyzl, cara)
         endif
 !
-        read (zk16(icompo-1+2),'(I16)') nbvar
+        read (zk16(icompo-1+NVAR),'(I16)') nbvar
 !
         if (option .eq. 'DISS_ELGA') then
             call jevech('PVARIGR', 'L', jvari)
@@ -226,7 +231,7 @@ subroutine te0413(option, nomte)
     else
 !      RELATION NON PROGRAMMEE
         valk(1) = option
-        valk(2) = zk16(icompo)(1:7)
+        valk(2) = zk16(icompo-1+NAME)(1:7)
         call utmess('A', 'ELEMENTS4_63', nk=2, valk=valk)
     endif
 !

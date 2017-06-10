@@ -24,6 +24,7 @@ subroutine nmcpla(fami, kpg   , ksp  , ndim  , typmod,&
                   iret)
 !
 use calcul_module, only : ca_ctempl_, ca_ctempr_, ca_ctempm_, ca_ctempp_
+use Behaviour_type
 !
 implicit none
 !
@@ -154,14 +155,14 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     l_inte_forc = option .eq. 'RAPH_MECA' .or. option .eq. 'FULL_MECA'
-    rela_flua   = compor_creep(1)
-    rela_plas   = compor_plas(1)
+    rela_flua   = compor_creep(NAME)
+    rela_plas   = compor_plas(NAME)
     elem_model  = typmod(1)
-    read (compor_creep(2),'(I16)') nvi_flua
-    read (compor_plas(2) ,'(I16)') nvi_plas
-    read (compor_plas(6) ,'(I16)') nume_plas
-    read (compor_creep(6),'(I16)') nume_flua
-    ASSERT(compor_creep(1)(1:13) .eq. 'BETON_GRANGER')
+    read (compor_creep(NVAR),'(I16)') nvi_flua
+    read (compor_plas(NVAR) ,'(I16)') nvi_plas
+    read (compor_plas(NUME) ,'(I16)') nume_plas
+    read (compor_creep(NUME),'(I16)') nume_flua
+    ASSERT(compor_creep(NAME)(1:13) .eq. 'BETON_GRANGER')
 !
 ! - Get size for tensors
 !

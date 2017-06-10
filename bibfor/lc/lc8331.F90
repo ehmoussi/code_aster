@@ -28,6 +28,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/nmcomp.h"
+#include "asterfort/kitPrepBehaviour.h"
 !
 ! aslint: disable=W1504,W0104
 !
@@ -71,41 +72,15 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: wkinp(10)
-    character(len=16) :: rela_flua, rela_plas
     character(len=16) :: compor_creep(20), compor_plas(20)
-    integer :: nume_plas, nume_flua
-    integer :: nvi_tot, nvi_flua, nvi_plas
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    read (compor(2),'(I16)') nvi_tot
-    rela_flua   = compor(8)
-    rela_plas   = compor(9)
-    read (compor(17),'(I16)') nvi_flua
-    read (compor(18),'(I16)') nvi_plas
-    read (compor(15),'(I16)') nume_plas
-    read (compor(16),'(I16)') nume_flua
-!
-! - Check number of internal variables
-!
-    ASSERT(nvi_tot .eq. (nvi_flua + nvi_plas))
-!
-! - Prepare COMPOR <CARTE> for creeping
-!
-    compor_creep(1) = rela_flua
-    write (compor_creep(2),'(I16)') nvi_flua
-    compor_creep(3) = compor(3)
-    write (compor_creep(6),'(I16)') nume_flua
-!
-! - Prepare COMPOR <CARTE> for plasticity
-!
-    compor_plas(1) = rela_plas
-    write (compor_plas(2),'(I16)') nvi_plas
-    compor_plas(3) = compor(3)
-    write (compor_plas(6),'(I16)') nume_plas
+    call kitPrepBehaviour(compor, compor_creep, compor_plas)
 !
     if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-        wkinp(1) = 1.d0
+        wkinp(1:9) = wkin(1:9)
+        wkinp(10)  = 1.d0
         call nmcomp(fami, kpg, ksp, ndim, typmod,&
                     imate, compor_creep, carcri, instam, instap  ,&
                     neps, epsm, deps, nsig, sigm,&
@@ -119,7 +94,8 @@ implicit none
                     sigp, vip, ndsde, dsidep, nwkout,&
                     wkout, codret)
     else if (option(1:9).eq.'RIGI_MECA') then
-        wkinp(1) = 1.d0
+        wkinp(1:9) = wkin(1:9)
+        wkinp(10)  = 1.d0
         call nmcomp(fami, kpg, ksp, ndim, typmod,&
                     imate, compor_creep, carcri, instam, instap  ,&
                     neps, epsm, deps, nsig, sigm,&

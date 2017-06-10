@@ -15,18 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504,W0104
+!
 subroutine lc5021(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
                   sigp, vip, wkin, typmod, icomp,&
                   nvi, dsidep, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterfort/lcumfe.h"
-!
-! aslint: disable=W1504,W0104
 !
     character(len=*), intent(in) :: fami
     integer, intent(in) :: kpg
@@ -60,10 +61,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    character(len=16) :: rela_plas
+!
+! --------------------------------------------------------------------------------------------------
+!
     codret = 0
+    rela_plas = compor(PLAS_NAME)
     call lcumfe(fami, kpg  , ksp   , ndim     , typmod,&
                 imate, instam, instap , epsm    , deps ,&
-                sigm, vim , option, compor(9), sigp  ,&
+                sigm, vim , option, rela_plas, sigp  ,&
                 vip, dsidep , wkin)
 !
 end subroutine
