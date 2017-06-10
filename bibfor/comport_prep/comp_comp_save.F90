@@ -18,6 +18,8 @@
 
 subroutine comp_comp_save(mesh, compor, nb_cmp, v_info_valk, v_info_vali)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -99,25 +101,25 @@ implicit none
 !
 ! ----- Set options in COMPOR <CARTE>
 !
-        v_compor_valv(1) = rela_comp
-        write (v_compor_valv(2),'(I16)') nb_vari
-        v_compor_valv(3) = defo_comp
-        v_compor_valv(4) = type_comp
-        v_compor_valv(5) = type_cpla
-        write (v_compor_valv(6),'(I16)') nume_comp(1)
-        v_compor_valv(7) = mult_comp
-        v_compor_valv(8) = kit_comp(1)
-        v_compor_valv(9) = kit_comp(2)
-        v_compor_valv(10) = kit_comp(3)
-        v_compor_valv(11) = kit_comp(4)
-        v_compor_valv(13) = type_matg
-        v_compor_valv(14) = post_iter
-        write (v_compor_valv(15),'(I16)') nume_comp(2)
-        write (v_compor_valv(16),'(I16)') nume_comp(3)
-        write (v_compor_valv(17),'(I16)') nb_vari_comp(1)
-        write (v_compor_valv(18),'(I16)') nb_vari_comp(2)
-        write (v_compor_valv(19),'(I16)') nb_vari_comp(3)
-        write (v_compor_valv(20),'(I16)') nb_vari_comp(4)
+        v_compor_valv(NAME) = rela_comp
+        write (v_compor_valv(NVAR),'(I16)') nb_vari
+        v_compor_valv(DEFO) = defo_comp
+        v_compor_valv(INCRELAS) = type_comp
+        v_compor_valv(PLANESTRESS) = type_cpla
+        write (v_compor_valv(NUME),'(I16)') nume_comp(1)
+        v_compor_valv(MULTCOMP) = mult_comp
+        v_compor_valv(KIT1_NAME) = kit_comp(1)
+        v_compor_valv(KIT2_NAME) = kit_comp(2)
+        v_compor_valv(KIT3_NAME) = kit_comp(3)
+        v_compor_valv(KIT4_NAME) = kit_comp(4)
+        v_compor_valv(TYPEMATG) = type_matg
+        v_compor_valv(POSTITER) = post_iter
+        write (v_compor_valv(KIT1_NUME),'(I16)') nume_comp(2)
+        write (v_compor_valv(KIT2_NUME),'(I16)') nume_comp(3)
+        write (v_compor_valv(KIT1_NVAR),'(I16)') nb_vari_comp(1)
+        write (v_compor_valv(KIT2_NVAR),'(I16)') nb_vari_comp(2)
+        write (v_compor_valv(KIT3_NVAR),'(I16)') nb_vari_comp(3)
+        write (v_compor_valv(KIT4_NVAR),'(I16)') nb_vari_comp(4)
 !
 ! ----- Get list of elements where comportment is defined
 !

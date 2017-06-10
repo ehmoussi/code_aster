@@ -18,6 +18,8 @@
 
 subroutine sele_elem_comp(modelz, compor, defo_comp, list_elem_comp)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterfort/assert.h"
@@ -103,7 +105,7 @@ implicit none
                 idx_cmp     = comp_desc(3+2*nb_gd_max+idx_gd)
                 ASSERT(exisdg([idx_cmp], 1))
                 if (exisdg([idx_cmp], 1)) then
-                    defo_comp_f = comp_vale((idx_gd-1)*nb_cmp_max+3)
+                    defo_comp_f = comp_vale((idx_gd-1)*nb_cmp_max+DEFO)
                     if (defo_comp .eq. defo_comp_f) then
                         list_elem_comp(nume_elem) = 1
                     endif

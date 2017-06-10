@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/nmdocv.h"
 #include "asterfort/utlcal.h"
 #include "asterfort/utmess.h"
+#include "asterfort/setBehaviourValue.h"
 !
 ! aslint: disable=W1003
 ! person_in_charge: mickael.abbas at edf.fr
@@ -135,25 +136,10 @@ implicit none
 !  
 ! - Save in list
 !
-    compor(1)  = rela_comp
-    write (compor(2),'(I16)') nb_vari
-    compor(3)  = defo_comp
-    compor(4)  = type_comp
-    write (compor(6),'(I16)') nume_comp(1)
-    compor(7)  = ' '
-    compor(8)  = kit_comp(1)
-    compor(9)  = kit_comp(2)
-    compor(10) = kit_comp(3)
-    compor(11) = kit_comp(4)
-    write (compor(12),'(I16)') i_comp
-    compor(13) = type_matg
-    compor(14) = post_iter
-    write (compor(15),'(I16)') nume_comp(2)
-    write (compor(16),'(I16)') nume_comp(3)
-    write (compor(17),'(I16)') nb_vari_comp(1)
-    write (compor(18),'(I16)') nb_vari_comp(2)
-    write (compor(19),'(I16)') nb_vari_comp(3)
-    write (compor(20),'(I16)') nb_vari_comp(4)
+    call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
+                           mult_comp, type_matg   , post_iter, kit_comp ,&
+                           nb_vari  , nb_vari_comp, nume_comp,&
+                           l_compor_ = compor)
 !
 ! - Prepare informations about internal variables
 !
