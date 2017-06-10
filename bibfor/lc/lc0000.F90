@@ -35,7 +35,6 @@ implicit none
 #include "asterfort/lc0003.h"
 #include "asterfort/lc0004.h"
 #include "asterfort/lc0005.h"
-#include "asterfort/lc0006.h"
 #include "asterfort/lc0007.h"
 #include "asterfort/lc0008.h"
 #include "asterfort/lc0009.h"
@@ -61,6 +60,7 @@ implicit none
 #include "asterfort/lc0033.h"
 #include "asterfort/lc0034.h"
 #include "asterfort/lc0035.h"
+#include "asterfort/lc0036.h"
 #include "asterfort/lc0038.h"
 #include "asterfort/lc0039.h"
 #include "asterfort/lc0042.h"
@@ -123,15 +123,15 @@ implicit none
 #include "asterfort/lc2001.h"
 #include "asterfort/lc2002.h"
 #include "asterfort/lc2005.h"
-#include "asterfort/lc2006.h"
+#include "asterfort/lc2036.h"
 #include "asterfort/lc2038.h"
 #include "asterfort/lc3053.h"
 #include "asterfort/lc4047.h"
-#include "asterfort/lc5006.h"
 #include "asterfort/lc5007.h"
 #include "asterfort/lc5008.h"
 #include "asterfort/lc5016.h"
-#include "asterfort/lc6006.h"
+#include "asterfort/lc5036.h"
+#include "asterfort/lc6036.h"
 #include "asterfort/lc6046.h"
 #include "asterfort/lc6057.h"
 #include "asterfort/lc7010.h"
@@ -309,14 +309,6 @@ implicit none
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
-    case (6)
-!     ENDO_ISOT_BETON
-        call lc0006(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas, sigp, vip,&
-                    typmod, icomp, nvi, ndsde,&
-                    dsidep, codret)
     case (7)
 !     ENDO_ORTH_BETON
         call lc0007(fami, kpg, ksp, ndim, imate,&
@@ -473,6 +465,14 @@ implicit none
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
+    case (36)
+!     ENDO_ISOT_BETON
+        call lc0036(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas, sigp, vip,&
+                    typmod, icomp, nvi, ndsde,&
+                    dsidep, codret)
     case (38)
         call lc0038(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
@@ -883,9 +883,9 @@ implicit none
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
 
-    case (2006)
+    case (2036)
 !     ENDO_ISOT_BETON
-        call lc2006(fami, kpg, ksp, ndim, imate,&
+        call lc2036(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas, sigp, vip, &
@@ -929,14 +929,6 @@ implicit none
 ! - With GRADEPSI
 ! --------------------------------------------------------------------------------------------------
 !
-    case (5006)
-!     ENDO_ISOT_BETON
-        call lc5006(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas, sigp, vip, nwkin,&
-                    wkin, typmod, icomp, nvi, ndsde,&
-                    dsidep, nwkout, wkout, codret)
     case (5007)
 !     ENDO_ORTH_BETON
         call lc5007(fami, kpg, ksp, ndim, imate,&
@@ -958,14 +950,22 @@ implicit none
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, wkout, typmod, icomp,&
                     nvi, dsidep, codret)
+    case (5036)
+!     ENDO_ISOT_BETON
+        call lc5036(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, vim,&
+                    option, angmas, sigp, vip, nwkin,&
+                    wkin, typmod, icomp, nvi, ndsde,&
+                    dsidep, nwkout, wkout, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - With GRADVARI
 ! --------------------------------------------------------------------------------------------------
 !
-    case (6006)
+    case (6036)
 !     ENDO_ISOT_BETON
-        call lc6006(fami, kpg, ksp, ndim, imate,&
+        call lc6036(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps,&
                     epsm, deps, nsig, sigm, vim,&
                     option, angmas, sigp, vip,&

@@ -21,7 +21,7 @@
 ! aslint: disable=W1504
 !
 interface
-    subroutine lc6006(fami, kpg, ksp, ndim, imate,&
+    subroutine lc6036(fami, kpg, ksp, ndim, imate,&
                       compor, carcri, instam, instap, neps,&
                       epsm, deps, nsig, sigm, vim,&
                       option, angmas, sigp, vip, &
@@ -52,5 +52,5 @@ interface
         integer, intent(in) :: neps
         integer, intent(in) :: nsig
         integer, intent(in) :: ndsde
-    end subroutine lc6006
+    end subroutine lc6036
 end interface

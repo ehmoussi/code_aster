@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lc6006(fami, kpg, ksp, ndim, imate,&
+subroutine lc0036(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, neps,&
                   epsm, deps, nsig, sigm, vim,&
                   option, angmas, sigp, vip, &
@@ -25,7 +25,7 @@ subroutine lc6006(fami, kpg, ksp, ndim, imate,&
 !
 implicit none
 !
-#include "asterfort/lceigv.h"
+#include "asterfort/lcldsb.h"
 !
 ! aslint: disable=W1504,W0104
 !
@@ -57,15 +57,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Behaviour - Special GRADVARI
+! Behaviour
 !
 ! ENDO_ISOT_BETON
 !
 ! --------------------------------------------------------------------------------------------------
 !
     codret   = 0
-    call lceigv(fami, kpg, ksp, neps, imate,&
-                compor, epsm, deps, vim, option,&
-                sigp, vip, dsidep)
+    call lcldsb(fami, kpg, ksp, ndim,&
+                imate, compor, epsm, deps, vim,&
+                option, sigp,&
+                vip, dsidep)
 !
 end subroutine
