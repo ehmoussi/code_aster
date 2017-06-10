@@ -27,7 +27,7 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                        compor, jmate, ndim, idepm, idepd, pla,&
                        algocr, rela, jheavn, ncompn, ifiss, nfiss,&
                        nfh, jheafa, ncomph, pos)
-    implicit none 
+implicit none 
     
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
@@ -50,6 +50,7 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/xmofhm.h"
 #include "asterfort/xsautl.h"
 #include "asterfort/xvinhm.h"
+#include "asterfort/thmGetParaBiot.h"
 !
 ! ======================================================================
 !
@@ -96,7 +97,11 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
 !   RECUPERATION DES DIFFERENTES RELATIONS DE COMPORTEMENT
     thmc = compor( 8)
     hydr = compor(10)
-    meca = compor(11)     
+    meca = compor(11)    
+!
+! - Get Biot parameters (for porosity evolution)
+!
+    call thmGetParaBiot(zi(jmate)) 
 !
     call matini(nnops, 3, 0.d0, dfdic)
     call matini(16, 3, 0.d0, dffc)
@@ -271,7 +276,7 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                             rbid24, rbid25, viscl, rbid26, rbid27,&     
                             rbid28, rbid29, rbid30, rbid31, rbid32,&    
                             rbid33, rbid34, rbid35, rbid37,&            
-                            rbid38, ibid, ndim)                         
+                            rbid38, ndim)                         
 !
                 call xvecha(ndim, pla, nnops, saut,&
                             sautm, nd, ffc, w11, w11m, jac,&

@@ -51,6 +51,7 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/xvinhm.h"
 #include "asterfort/matini.h"
 #include "asterfort/vecini.h"
+#include "asterfort/thmGetParaBiot.h"
 !
 ! ======================================================================
 !
@@ -97,6 +98,10 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
     thmc = compor( 8)
     hydr = compor(10)
     meca = compor(11)  
+!
+! - Get Biot parameters (for porosity evolution)
+!
+    call thmGetParaBiot(zi(jmate))
 
 !   INITIALISATION DE LA DIMENSION DE LA MATRICE DE TRAVAIL
 !
@@ -261,7 +266,7 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
                        rbid24, rbid25, viscl, rbid26, rbid27,&
                        rbid28, rbid29, rbid30, rbid31, rbid32,&
                        rbid33, rbid34, rbid35, rbid37,&
-                       rbid38, ibid, ndim)
+                       rbid38, ndim)
 !
            call xmmatc(ndim, nnops, nddls, nddlm, ffc,&
                        pla, jac, ffp2, matri,&

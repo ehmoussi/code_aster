@@ -28,7 +28,7 @@ interface
                       lambs, dlambs, viscl, dviscl, mamolg,&
                       tlambt, tdlamt, viscg, dviscg, mamolv,&
                       fickad, dfadt, tlamct, instap,&
-                      angmas, aniso, ndim)
+                      angmas, ndim)
         integer :: ndim
         integer :: imate
         character(len=16) :: thmc
@@ -75,6 +75,5 @@ interface
         real(kind=8) :: tlamct(ndim, ndim)
         real(kind=8) :: instap
         real(kind=8) :: angmas(3)
-        integer :: aniso
     end subroutine thmlec
 end interface 

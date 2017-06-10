@@ -96,7 +96,7 @@ subroutine xcomhm(option, imate, compor,instap,&
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: nvim, advime, advith, advihy, advico, anisof, aniso
+    integer :: nvim, advime, advith, advihy, advico, aniso
     integer :: vihrho, vicphi, vicpvp, vicsat, nvih, nvic, nvit
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, rho11, epsv, deps(6), depsv
@@ -179,7 +179,7 @@ subroutine xcomhm(option, imate, compor,instap,&
                 lambs, dlambs, viscl, dviscl, mamolg,&
                 tlambt, tdlamt, viscg, dviscg, mamovg,&
                 fickad, dfadt, tlamct, instap,&
-                angmas, anisof, ndim)
+                angmas, ndim)
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
 ! ======================================================================

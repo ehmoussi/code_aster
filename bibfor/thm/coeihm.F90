@@ -60,7 +60,7 @@ implicit none
 !
 ! - VARIABLES LOCALES
     integer :: nvim, nvit, nvih, nvic, advime, advith, advihy, advico
-    integer :: i, j, f, aniso, anisof
+    integer :: i, j, f, aniso
     integer :: vihrho, vicphi, vicpvp, vicsat
     integer :: ifa, vicpr1, vicpr2
     real(kind=8) :: depsv, epsv, deps(6)
@@ -262,7 +262,7 @@ implicit none
                 lambs, dlambs, viscl, dviscl, mamolg,&
                 tlambt, tdlamt, viscg, dviscg, mamovg,&
                 fickad, dfadt, tlamct, instap,&
-                angbid, anisof, ndim-1)
+                angbid, ndim-1)
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES -------------------------------------
 ! ======================================================================

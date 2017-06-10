@@ -153,7 +153,7 @@ implicit none
     call thmrcp('INTERMED', imate, thmc, meca, hydr,&
                 ther, t, p1, p1-dp1, rbid6,&
                 rbid7, rbid8, rbid10, r, rho0,&
-                csigm, tbiot, satm, sat, dsatp1,&
+                csigm, satm, sat, dsatp1,&
                 rbid14, rbid15, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
@@ -162,7 +162,8 @@ implicit none
                 rbid35, mamolv, cp12, rbid38, rbid39,&
                 rbid45, rbid46, cp22, kh, rbid49,&
                 em, rbid50, rinstp, retcom,&
-                angmas, aniso, ndim)
+                angmas, ndim)
+
 ! ======================================================================
 ! --- INITIALISATIONS --------------------------------------------------
 ! ======================================================================

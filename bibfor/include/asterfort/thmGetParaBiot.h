@@ -19,8 +19,7 @@
 !
 !
 interface 
-    subroutine tebiot(angl_naut, tbiot)
-        real(kind=8), intent(in) :: angl_naut(3)
-        real(kind=8), intent(out) :: tbiot(6)
-    end subroutine tebiot
+    subroutine thmGetParaBiot(j_mater)
+        integer, intent(in) :: j_mater
+    end subroutine thmGetParaBiot
 end interface 

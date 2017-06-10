@@ -47,7 +47,7 @@ subroutine xmathm(jmate, thmc, meca, hydr, t, ndim,&
     real(kind=8) :: dffc(16, 3), unsurk, rho11, viscl
     real(kind=8) :: gradpf(3), dsidep(6,6), p(3,3), r
 !
-    integer :: ibid, jmate
+    integer :: jmate
     real(kind=8) :: rbid1, rbid2, rbid3, rbid4, rbid5, rbid6, rbid7
     real(kind=8) :: rbid9, rbid10, rbid11(3), rbid12(3,3)
     real(kind=8) :: rbid13, rbid14, rbid15, rbid16, rbid17, rbid18
@@ -68,7 +68,7 @@ subroutine xmathm(jmate, thmc, meca, hydr, t, ndim,&
                 rbid24, rbid25, viscl, rbid26, rbid27,&
                 rbid28, rbid29, rbid30, rbid31, rbid32,&
                 rbid33, rbid34, rbid35, rbid37,&
-                rbid38, ibid, ndim)
+                rbid38, ndim)
 !
     call xmmatu(ndim, nnop, nnops, nddls, nddlm, pla,&
                 dsidep, p, r, ffp, jac, ffc, nd, mmat,&
