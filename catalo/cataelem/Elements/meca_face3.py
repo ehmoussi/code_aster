@@ -31,11 +31,6 @@ import cataelem.Commons.attributes as AT
 #----------------
 
 
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',
-          'NUME_LC','SD_COMP','KIT[9]',))
-
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
     components=('DX','DY','DZ',))
 
@@ -203,7 +198,7 @@ class MECA_FACE3(Element):
         ),
 
         OP.CALC_K_G(te=311,
-            para_in=((OP.CALC_K_G.PBASLOR, LC.N9NEUT_R), (OP.CALC_K_G.PCOMPOR, CCOMPOR),
+            para_in=((OP.CALC_K_G.PBASLOR, LC.N9NEUT_R), (OP.CALC_K_G.PCOMPOR, LC.CCOMPOR),
                      (SP.PCOURB, LC.G27NEUTR), (SP.PDEPLAR, DDL_MECA),
                      (SP.PEPSINR, CEPSINR), (SP.PFR2D3D, NFORCER),
                      (SP.PFRVOLU, NFORCER), (SP.PGEOMER, NGEOMER),
@@ -217,7 +212,7 @@ class MECA_FACE3(Element):
         ),
 
         OP.CALC_K_G_F(te=311,
-            para_in=((OP.CALC_K_G_F.PBASLOR, LC.N9NEUT_R), (OP.CALC_K_G_F.PCOMPOR, CCOMPOR),
+            para_in=((OP.CALC_K_G_F.PBASLOR, LC.N9NEUT_R), (OP.CALC_K_G_F.PCOMPOR, LC.CCOMPOR),
                      (SP.PCOURB, LC.G27NEUTR), (SP.PDEPLAR, DDL_MECA),
                      (SP.PEPSINF, CEPSINF), (SP.PFF2D3D, CFORCEF),
                      (SP.PFFVOLU, CFORCEF), (SP.PGEOMER, NGEOMER),

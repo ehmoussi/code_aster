@@ -42,13 +42,6 @@ CCARCRI = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
                             'TSAMPL', 'TSRETOUR', 'POSTITER', 'LC_EXT[3]', 'MODECALC',
                             'ALPHA', 'LC_EXT2[2]',))
 
-
-CCOMPOR = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-                            components=(
-                                'RELCOM', 'NBVARI', 'DEFORM', 'INCELA', 'C_PLAN',
-                            'NUME_LC', 'SD_COMP', 'KIT[9]',))
-
-
 NDEPLAC = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
                             components=('DX', 'DY', 'DZ',))
 
@@ -258,7 +251,7 @@ class MECA_SHB8(Element):
 
         OP.FORC_NODA(te=484,
                      para_in=(
-                     (OP.FORC_NODA.PCOMPOR, CCOMPOR), (
+                     (OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (
                      OP.FORC_NODA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (
@@ -269,7 +262,7 @@ class MECA_SHB8(Element):
 
         OP.FULL_MECA(te=477,
                      para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
-                              (OP.FULL_MECA.PCOMPOR, CCOMPOR), (
+                              (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.FULL_MECA.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                               (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -348,7 +341,7 @@ class MECA_SHB8(Element):
 
         OP.RAPH_MECA(te=477,
                      para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
-                              (OP.RAPH_MECA.PCOMPOR, CCOMPOR), (
+                              (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.RAPH_MECA.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                               (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -398,7 +391,7 @@ class MECA_SHB8(Element):
         OP.RIGI_MECA_TANG(te=477,
                           para_in=(
                               (SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
-                          (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (
+                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                           OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                           (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),

@@ -38,11 +38,6 @@ CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
           'ALPHA','LC_EXT2[2]',))
 
 
-CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-    components=('RELCOM','NBVARI','DEFORM','INCELA','C_PLAN',
-          'NUME_LC','SD_COMP','KIT[9]',))
-
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
     components=('DX','DY','DZ',))
 
@@ -131,7 +126,7 @@ class MEFI_HEXA8(Element):
         ),
 
         OP.FULL_MECA(te=206,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -145,7 +140,7 @@ class MEFI_HEXA8(Element):
         ),
 
         OP.FULL_MECA_ELAS(te=206,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.FULL_MECA_ELAS.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCARCRI, CCARCRI), (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA_ELAS.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -169,7 +164,7 @@ class MEFI_HEXA8(Element):
 
         OP.PILO_PRED_ELAS(te=208,
             para_in=((SP.PBORNPI, LC.CBORNPI), (SP.PCDTAU, LC.CCDTAU),
-                     (OP.PILO_PRED_ELAS.PCOMPOR, CCOMPOR), (OP.PILO_PRED_ELAS.PCONTMR, ECONTPG),
+                     (OP.PILO_PRED_ELAS.PCOMPOR, LC.CCOMPOR), (OP.PILO_PRED_ELAS.PCONTMR, ECONTPG),
                      (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA),
                      (SP.PDEPL1R, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
@@ -179,7 +174,7 @@ class MEFI_HEXA8(Element):
         ),
 
         OP.RAPH_MECA(te=206,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.RAPH_MECA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -192,7 +187,7 @@ class MEFI_HEXA8(Element):
         ),
 
         OP.RIGI_MECA_ELAS(te=206,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_ELAS.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -204,7 +199,7 @@ class MEFI_HEXA8(Element):
         ),
 
         OP.RIGI_MECA_TANG(te=206,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR),
+            para_in=((SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
                      (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),

@@ -39,10 +39,6 @@ from cataelem.Options.options import OP
 #----------------
 
 
-CCOMPOR = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
-                            components=('RELCOM', 'NBVARI', 'DEFORM', 'INCELA', 'C_PLAN',))
-
-
 NDEPLAC = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
                             components=('PHI', 'DH',))
 
@@ -95,7 +91,7 @@ class MEFP_FACE3(Element):
 
         OP.FULL_MECA(te=370,
                      para_in=(
-                         (OP.FULL_MECA.PCOMPOR, CCOMPOR), (
+                         (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
                              SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), ),
@@ -123,7 +119,7 @@ class MEFP_FACE3(Element):
 
         OP.RAPH_MECA(te=370,
                      para_in=(
-                         (OP.RAPH_MECA.PCOMPOR, CCOMPOR), (
+                         (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                              SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), ),
@@ -146,7 +142,7 @@ class MEFP_FACE3(Element):
 
         OP.RIGI_MECA_TANG(te=370,
                           para_in=(
-                          (OP.RIGI_MECA_TANG.PCOMPOR, CCOMPOR), (
+                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                               SP.PDEPLMR, DDL_MECA),
                           (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                           (SP.PMATERC, LC.CMATERC), ),
