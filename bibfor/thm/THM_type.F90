@@ -101,6 +101,13 @@ implicit none
         real(kind=8) :: alpha
         real(kind=8) :: alpha_l, alpha_t, alpha_n
         real(kind=8) :: d(6,6)
+! ----- For hydraulic
+        real(kind=8) :: n
+        real(kind=8) :: pr
+        real(kind=8) :: sr
+        real(kind=8) :: smax
+        real(kind=8) :: satuma
+        real(kind=8) :: emmag
     end type THM_Material
 !
 end module

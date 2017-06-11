@@ -100,6 +100,13 @@ subroutine thmModuleInit()
     ds_thm%ds_material%alpha_t      = r8nnem()
     ds_thm%ds_material%alpha_n      = r8nnem()
     ds_thm%ds_material%d(:,:)       = r8nnem()
+!   Material parameters (hydraulic)
+    ds_thm%ds_material%n            = r8nnem()
+    ds_thm%ds_material%pr           = r8nnem()
+    ds_thm%ds_material%sr           = r8nnem()
+    ds_thm%ds_material%smax         = r8nnem()
+    ds_thm%ds_material%satuma       = r8nnem()
+    ds_thm%ds_material%emmag        = r8nnem()
 !
 end subroutine
 !

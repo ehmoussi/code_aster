@@ -713,7 +713,7 @@ implicit none
                 if (icodre(1) .eq. 1) then
                     call utmess('F', 'ALGORITH16_94')
                 endif
-                call satuvg(vg, p1m, val6(4), rbid1)
+                call satuvg(p1m, val6(4), rbid1)
             elseif (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
                             [p1m], 1, ncra6(4), val6(4), icodre,&
@@ -788,8 +788,8 @@ implicit none
                 endif
                 satm  = 0.d0
                 satur = 0.d0
-                call satuvg(vg, p1m, satm, rbid1)
-                call satuvg(vg, p1, satur, dsatur)
+                call satuvg( p1m, satm, rbid1)
+                call satuvg( p1, satur, dsatur)
 !
             else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
 ! SATU_PRES
@@ -887,8 +887,8 @@ implicit none
                 endif
                 satm  = 0.d0
                 satur = 0.d0
-                call satuvg(vg, p1m, satm, rbid1)
-                call satuvg(vg, p1, satur, dsatur)
+                call satuvg( p1m, satm, rbid1)
+                call satuvg( p1, satur, dsatur)
             else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
 ! SATU_PRES
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
@@ -985,8 +985,8 @@ implicit none
                 endif
                 satm  = 0.d0
                 satur = 0.d0
-                call satuvg(vg, p1m, satm, rbid1)
-                call satuvg(vg, p1, satur, dsatur)
+                call satuvg( p1m, satm, rbid1)
+                call satuvg( p1, satur, dsatur)
             else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
 ! - SATU_PRES
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
@@ -1075,8 +1075,8 @@ implicit none
                 endif
                 satm  = 0.d0
                 satur = 0.d0
-                call satuvg(vg, p1m, satm, rbid1)
-                call satuvg(vg, p1, satur, dsatur)
+                call satuvg( p1m, satm, rbid1)
+                call satuvg( p1, satur, dsatur)
             elseif (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
                             [p1m], 1, ncra13(4), val13(4), icodre,&
@@ -1760,7 +1760,7 @@ implicit none
                 if (icodre(1) .eq. 1) then
                     call utmess('F', 'ALGORITH16_94')
                 endif
-                call satuvg(vg, pvp-p1, val22(22), val22(23))
+                call satuvg( pvp-p1, val22(22), val22(23))
                 if (hydr .eq. 'HYDR_VGM') then
                     call permvg(vg, val22(22), val22(24), val22(25), val22(26),&
                                 val22(27))
@@ -2028,7 +2028,7 @@ implicit none
                 if (icodre(1) .eq. 1) then
                     call utmess('F', 'ALGORITH16_94')
                 endif
-                call satuvg(vg, p1, val25(22), val25(23))
+                call satuvg( p1, val25(22), val25(23))
                 if (hydr .eq. 'HYDR_VGM') then
                     call permvg(vg, val25(22), val25(24), val25(25), val25(26),&
                                 val25(27))
@@ -2336,7 +2336,7 @@ implicit none
                 if (icodre(1) .eq. 1) then
                     call utmess('F', 'ALGORITH16_94')
                 endif
-                call satuvg(vg, p1, val40(22), val40(23))
+                call satuvg( p1, val40(22), val40(23))
                 if (hydr .eq. 'HYDR_VGM') then
                     call permvg(vg, val40(22), val40(24), val40(25), val40(26),&
                                 val40(27))
@@ -2668,7 +2668,7 @@ implicit none
                 if (icodre(1) .eq. 1) then
                     call utmess('F', 'ALGORITH16_94')
                 endif
-                call satuvg(vg, p1, val40(22), val40(23))
+                call satuvg( p1, val40(22), val40(23))
                 if (hydr .eq. 'HYDR_VGM') then
                     call permvg(vg, val40(22), val40(24), val40(25), val40(26),&
                                 val40(27))
@@ -2974,7 +2974,7 @@ implicit none
                 if (icodre(1) .eq. 1) then
                     call utmess('F', 'ALGORITH16_94')
                 endif
-                call satuvg(vg, p1, val29(22), val29(23))
+                call satuvg( p1, val29(22), val29(23))
                 if (hydr .eq. 'HYDR_VGM') then
                     call permvg(vg, val29(22), val29(24), val29(25), val29(26),&
                                 val29(27))
