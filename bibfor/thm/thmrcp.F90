@@ -38,6 +38,7 @@ use THM_module
 implicit none
 !
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/permvc.h"
 #include "asterfort/permvg.h"
 #include "asterfort/rcvala.h"
@@ -49,6 +50,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/thmEvalSatuInit.h"
 #include "asterfort/thmEvalSatuMiddle.h"
+#include "asterfort/thmEvalSatuFinal.h"
     integer :: imate, retcom, ndim
     integer :: aniso1, aniso2, aniso3, aniso4
     real(kind=8) :: t, p1, p2, phi, pvp
@@ -141,7 +143,7 @@ implicit none
     real(kind=8) :: val35(dim35+1), val36(dim36), val37(dim37), val38(dim38)
     real(kind=8) :: val40(dim40), val41(dim41), val42(dim42), val43(dim43)
     real(kind=8) :: val39(dim39), valpar(dimpar)
-    real(kind=8) :: vg(5), fpesa(1), un, zero
+    real(kind=8) :: fpesa(1), un, zero, vg(5)
 !
 !
     integer :: icodre(nresma)
@@ -167,7 +169,7 @@ implicit none
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_SATU -----
 ! =====================================================================
     data ncra2  / 'RHO'      ,&
-     &              'CP'    /
+     &              'CP'   /
     data ncra3  / 'RHO'      ,&
      &              'UN_SUR_K' ,&
      &              'ALPHA'    ,&
@@ -309,7 +311,7 @@ implicit none
      &              'LAMB_CT'  ,&
      &              'LAMB_C_L',&
      &              'LAMB_C_N',&
-     &              'SATU_PRES' ,'D_SATU_PRES'  ,&
+     &              'TOTO' ,'TOTO'  ,&
      &              'PERM_LIQU' , 'D_PERM_LIQU_SATU' ,&
      &              'PERM_GAZ' , 'D_PERM_SATU_GAZ' ,&
      &              'D_PERM_PRES_GAZ',&
@@ -344,7 +346,7 @@ implicit none
      &              'LAMB_CT'   ,&
      &              'LAMB_C_L',&
      &              'LAMB_C_N',&
-     &              'SATU_PRES' ,'D_SATU_PRES' ,&
+     &              'TOTO' ,'TOTO' ,&
      &              'PERM_LIQU' ,'D_PERM_LIQU_SATU' ,&
      &              'PERM_GAZ' ,'D_PERM_SATU_GAZ' ,&
      &              'D_PERM_PRES_GAZ' ,'FICKV_T'  ,&
@@ -385,8 +387,8 @@ implicit none
      &              'LAMB_CT'  ,&
      &              'LAMB_C_L',&
      &              'LAMB_C_N',&
-     &              'SATU_PRES' ,&
-     &              'D_SATU_PRES' ,'PERM_LIQU' ,&
+     &              'TOTO' ,&
+     &              'TOTO' ,'PERM_LIQU' ,&
      &              'D_PERM_LIQU_SATU' ,'PERM_GAZ' ,&
      &              'D_PERM_SATU_GAZ' ,'D_PERM_PRES_GAZ',&
      &              'PERMIN_T',&
@@ -423,7 +425,7 @@ implicit none
      &              'LAMB_CT'   ,&
      &              'LAMB_C_L',&
      &              'LAMB_C_N',&
-     &              'SATU_PRES','D_SATU_PRES' ,&
+     &              'TOTO','TOTO' ,&
      &              'PERM_LIQU','D_PERM_LIQU_SATU',&
      &              'PERMIN_T',&
      &              'LAMB_TT',&
@@ -447,8 +449,7 @@ implicit none
      &              'CP'       /
     data ncra38 / 'MASS_MOL' ,&
      &              'CP'       /
-    data ncra39 / 'CP'        ,&
-     &               'COEF_HENRY' /
+    data ncra39 / 'CP'        , 'COEF_HENRY' /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_AD_GAZ_VAPE -----
 ! =====================================================================
@@ -469,7 +470,7 @@ implicit none
      &               'LAMB_CT'    ,&
      &               'LAMB_C_L',&
      &               'LAMB_C_N',&
-     &               'SATU_PRES' ,'D_SATU_PRES' ,&
+     &               'TOTO' ,'TOTO' ,&
      &               'PERM_LIQU' ,'D_PERM_LIQU_SATU' ,&
      &               'PERM_GAZ' ,'D_PERM_SATU_GAZ' ,&
      &               'D_PERM_PRES_GAZ' ,'FICKV_T'  ,&
@@ -525,7 +526,7 @@ implicit none
      &                'LAMB_CT'    ,&
      &                'LAMB_C_L',&
      &                'LAMB_C_N',&
-     &                'SATU_PRES' ,'D_SATU_PRES' ,&
+     &                'TOTO' ,'TOTO' ,&
      &                'PERM_LIQU' ,'D_PERM_LIQU_SATU' ,&
      &                'PERM_GAZ' ,'D_PERM_SATU_GAZ' ,&
      &                'D_PERM_PRES_GAZ' ,'FICKV_T'  ,&
@@ -681,8 +682,7 @@ implicit none
             cpl = val7(4)
             mamolv = val8(1)
             cpvg = val8(2)
-            if (satm .gt. un .or. satm .lt. zero) then
-                retcom = 2
+            if (retcom .eq. 2) then
                 goto 500
             endif
 !
@@ -741,12 +741,7 @@ implicit none
             cpg = val11(2)
             mamolv = val12(1)
             cpvg = val12(2)
-            if (satm .gt. un .or. satm .lt. zero) then
-                retcom = 2
-                goto 500
-            endif
-            if (satur .gt. un .or. satur .lt. zero) then
-                retcom = 2
+            if (retcom .eq. 2) then
                 goto 500
             endif
 !
@@ -820,12 +815,7 @@ implicit none
             cpvg = val38(2)
             cpad = val39(1)
             kh = val39(2)
-            if (satm .gt. un .or. satm .lt. zero) then
-                retcom = 2
-                goto 500
-            endif
-            if (satur .gt. un .or. satur .lt. zero) then
-                retcom = 2
+            if (retcom .eq. 2) then
                 goto 500
             endif
 !
@@ -891,12 +881,7 @@ implicit none
             cpad = val39(1)
             kh = val39(2)
 !
-            if (satm .gt. un .or. satm .lt. zero) then
-                retcom = 2
-                goto 500
-            endif
-            if (satur .gt. un .or. satur .lt. zero) then
-                retcom = 2
+            if (retcom .eq. 2) then
                 goto 500
             endif
 !
@@ -947,12 +932,7 @@ implicit none
             cpl = val14(4)
             mamolg = val15(1)
             cpg = val15(2)
-            if (satm .gt. un .or. satm .lt. zero) then
-                retcom = 2
-                goto 500
-            endif
-            if (satur .gt. un .or. satur .lt. zero) then
-                retcom = 2
+            if (retcom .eq. 2) then
                 goto 500
             endif
 !
@@ -992,12 +972,7 @@ implicit none
             unsurk = val17(2)
             alpha = val17(3)
             cpl = val17(4)
-            if (satm .gt. un .or. satm .lt. zero) then
-                retcom = 2
-                goto 500
-            endif
-            if (satur .gt. un .or. satur .lt. zero) then
-                retcom = 2
+            if (retcom .eq. 2) then
                 goto 500
             endif
 !
@@ -1198,12 +1173,12 @@ implicit none
             lambct(4) = val18(22)
             lambs = 1.0d0
             dlambs = 0.0d0
-            satur = 1.0d0
-            dsatur = 0.0d0
             unsurk = val19(1)
             viscl = val19(2)
             dviscl = val19(3)
             alpha = val19(4)
+            call thmEvalSatuFinal(hydr , imate , p1    ,&
+                                  satur, dsatur, retcom)
 !
 ! CALCUL DU TENSEUR DE PERMEABILITE
             call tpermh(angmas, permfh, tperm, aniso1, ndim)
@@ -1236,10 +1211,6 @@ implicit none
 !       INITIALISATION POUR L'ANISOTROPIE
 !
             val20(5) = 1.0d0
-!
-!            CALL RCVALA(IMATE,' ', 'THM_DIFFU', 0, ' ', 0.0D0,
-!     &                       DIM20-7, NCRA20(1), VAL20(1), ICODRE, 0)
-!
             call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
                         [0.d0], 4, ncra20(1), val20(1), icodre,&
                         0,nan='NON')
@@ -1403,8 +1374,8 @@ implicit none
             lambct(4) = val20(23)
             lambs = 1.0d0
             dlambs = 0.0d0
-            satur = 1.0d0
-            dsatur = 0.0d0
+            call thmEvalSatuFinal(hydr , imate , p1    ,&
+                                  satur, dsatur, retcom)
             mamolg = val21( 1)
             viscg = val21( 2)
             dviscg = val21( 3)
@@ -1579,30 +1550,27 @@ implicit none
                             [t], dim23-3, ncra23(4), val23(4), icodre,&
                             1)
             endif
+
+            call thmEvalSatuFinal(hydr , imate , pvp-p1,&
+                                  satur, dsatur, retcom)
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call satuvg( pvp-p1, val22(22), val22(23))
                 vg(1) = ds_thm%ds_material%n
                 vg(2) = ds_thm%ds_material%pr
                 vg(3) = ds_thm%ds_material%sr
                 vg(4) = ds_thm%ds_material%smax
                 vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(vg, val22(22), val22(24), val22(25), val22(26),&
+                    call permvg(vg, satur, val22(24), val22(25), val22(26),&
                                 val22(27))
                 else
-                    call permvc(vg, val22(22), val22(24), val22(25), val22(26),&
+                    call permvc(vg, satur, val22(24), val22(25), val22(26),&
                                 val22(27))
                 endif
                 val22(28) = 0.d0
-                elseif (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO')&
-            then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [pvp-p1], 2, ncra22(22), val22(22), icodre,&
-                            1)
             endif
             nompar(1) = 'SAT'
             nompar(2) = 'PGAZ'
-            valpar(1) = val22(22)
+            valpar(1) = satur
             valpar(2) = p2
             if ((hydr.ne.'HYDR_VGM') .and. (hydr.ne.'HYDR_VGC')) then
                 call rcvala(imate, ' ', 'THM_DIFFU', 2, nompar,&
@@ -1650,8 +1618,6 @@ implicit none
             lambct(2) = val22(20)
             lambct(3) = val22(21)
             lambct(4) = val22(32)
-            satur = val22(22)
-            dsatur = val22(23)
             permli = val22(24)
             dperml = val22(25)
             permgz = val22(26)
@@ -1846,31 +1812,27 @@ implicit none
                             [t], 1, ncra26(4), val26(4), icodre,&
                             1)
             endif
+            call thmEvalSatuFinal(hydr , imate , p1    ,&
+                                  satur, dsatur, retcom)
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call satuvg( p1, val25(22), val25(23))
                 vg(1) = ds_thm%ds_material%n
                 vg(2) = ds_thm%ds_material%pr
                 vg(3) = ds_thm%ds_material%sr
                 vg(4) = ds_thm%ds_material%smax
                 vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(vg, val25(22), val25(24), val25(25), val25(26),&
+                    call permvg(vg, satur, val25(24), val25(25), val25(26),&
                                 val25(27))
                 else
-                    call permvc(vg, val25(22), val25(24), val25(25), val25(26),&
+                    call permvc(vg, satur, val25(24), val25(25), val25(26),&
                                 val25(27))
                 endif
                 val25(28) = 0.d0
-                else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO')&
-            then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1], 2, ncra25(22), val25(22), icodre,&
-                            1)
             endif
             nompar(1) = 'SAT'
             nompar(2) = 'PGAZ'
             nompar(3) = 'TEMP'
-            valpar(1) = val25(22)
+            valpar(1) = satur
             valpar(2) = p2
             valpar(3) = t
             if ((hydr.ne.'HYDR_VGM') .and. (hydr.ne.'HYDR_VGC')) then
@@ -1897,7 +1859,7 @@ implicit none
             nompar(3) = 'SAT'
             valpar(1) = pvp
             valpar(2) = p2
-            valpar(3) = val25(22)
+            valpar(3) = satur
 !
 ! INITIALISATION DES AUTRES COMPOSANTES FICKIENNES
 !
@@ -1952,8 +1914,6 @@ implicit none
             lambct(2) = val25(20)
             lambct(3) = val25(21)
             lambct(4) = val25(38)
-            satur = val25(22)
-            dsatur = val25(23)
             permli = val25(24)
             dperml = val25(25)
             permgz = val25(26)
@@ -2153,32 +2113,27 @@ implicit none
                             [t], dim41-3, ncra41(4), val41(4), icodre,&
                             1)
             endif
+            call thmEvalSatuFinal(hydr , imate , p1    ,&
+                                  satur, dsatur, retcom)
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call satuvg( p1, val40(22), val40(23))
                 vg(1) = ds_thm%ds_material%n
                 vg(2) = ds_thm%ds_material%pr
                 vg(3) = ds_thm%ds_material%sr
                 vg(4) = ds_thm%ds_material%smax
                 vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(vg, val40(22), val40(24), val40(25), val40(26),&
+                    call permvg(vg, satur, val40(24), val40(25), val40(26),&
                                 val40(27))
                 else
-                    call permvc(vg, val40(22), val40(24), val40(25), val40(26),&
+                    call permvc(vg, satur, val40(24), val40(25), val40(26),&
                                 val40(27))
                 endif
                 val40(28) = 0.d0
-!
-!
-            else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1], 2, ncra40(22), val40(22), icodre,&
-                            1)
             endif
             nompar(1) = 'SAT'
             nompar(2) = 'PGAZ'
             nompar(3) = 'TEMP'
-            valpar(1) = val40(22)
+            valpar(1) = satur
             valpar(2) = p2
             valpar(3) = t
             if ((hydr.ne.'HYDR_VGM') .and. (hydr.ne.'HYDR_VGC')) then
@@ -2211,7 +2166,7 @@ implicit none
             nompar(3) = 'SAT'
             valpar(1) = pvp
             valpar(2) = p2
-            valpar(3) = val40(22)
+            valpar(3) = satur
 !
 !
 !           DERIVEE PAR RAPPORT A S MISE 0 0 PAR DEFAUT
@@ -2237,7 +2192,7 @@ implicit none
             valpar(1) = t
             valpar(2) = pad
             valpar(3) = p2-p1
-            valpar(4) = val40(22)
+            valpar(4) = satur
 !
 ! INITIALISATION DES AUTRES COMPOSANTES FICKIENNES
 !
@@ -2286,8 +2241,6 @@ implicit none
             lambct(2) = val40(20)
             lambct(3) = val40(21)
             lambct(4) = val40(43)
-            satur = val40(22)
-            dsatur = val40(23)
             permli = val40(24)
             dperml = val40(25)
             permgz = val40(26)
@@ -2484,32 +2437,27 @@ implicit none
                             [t], dim41-3, crad41(4), val41(4), icodre,&
                             1)
             endif
+            call thmEvalSatuFinal(hydr , imate , p1    ,&
+                                  satur, dsatur, retcom)
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call satuvg( p1, val40(22), val40(23))
                 vg(1) = ds_thm%ds_material%n
                 vg(2) = ds_thm%ds_material%pr
                 vg(3) = ds_thm%ds_material%sr
                 vg(4) = ds_thm%ds_material%smax
                 vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(vg, val40(22), val40(24), val40(25), val40(26),&
+                    call permvg(vg, satur, val40(24), val40(25), val40(26),&
                                 val40(27))
                 else
-                    call permvc(vg, val40(22), val40(24), val40(25), val40(26),&
+                    call permvc(vg, satur, val40(24), val40(25), val40(26),&
                                 val40(27))
                 endif
                 val40(28) = 0.d0
-!
-!
-            else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1], 2, crad40(22), val40(22), icodre,&
-                            1)
             endif
             nompar(1) = 'SAT'
             nompar(2) = 'PGAZ'
             nompar(3) = 'TEMP'
-            valpar(1) = val40(22)
+            valpar(1) = satur
             valpar(2) = p2
             valpar(3) = t
             if ((hydr.ne.'HYDR_VGM') .and. (hydr.ne.'HYDR_VGC')) then
@@ -2528,7 +2476,7 @@ implicit none
             nompar(3) = 'SAT'
             valpar(1) = pvp
             valpar(2) = p2
-            valpar(3) = val40(22)
+            valpar(3) = satur
 !
 !
 !
@@ -2543,7 +2491,7 @@ implicit none
             valpar(1) = t
             valpar(2) = pad
             valpar(3) = p2-p1
-            valpar(4) = val40(22)
+            valpar(4) = satur
 !
 ! INITIALISATION DES AUTRES COMPOSANTES FICKIENNES
 !
@@ -2592,8 +2540,6 @@ implicit none
             lambct(2) = val40(20)
             lambct(3) = val40(21)
             lambct(4) = val40(43)
-            satur = val40(22)
-            dsatur = val40(23)
             permli = val40(24)
             dperml = val40(25)
             permgz = val40(26)
@@ -2789,30 +2735,26 @@ implicit none
                             [t], dim30-3, ncra30(4), val30(4), icodre,&
                             1)
             endif
+            call thmEvalSatuFinal(hydr , imate , p1    ,&
+                                  satur, dsatur, retcom)
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call satuvg( p1, val29(22), val29(23))
                 vg(1) = ds_thm%ds_material%n
                 vg(2) = ds_thm%ds_material%pr
                 vg(3) = ds_thm%ds_material%sr
                 vg(4) = ds_thm%ds_material%smax
                 vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(vg, val29(22), val29(24), val29(25), val29(26),&
+                    call permvg(vg, satur, val29(24), val29(25), val29(26),&
                                 val29(27))
                 else
-                    call permvc(vg, val29(22), val29(24), val29(25), val29(26),&
+                    call permvc(vg, satur, val29(24), val29(25), val29(26),&
                                 val29(27))
                 endif
                 val29(28) = 0.d0
-                else if (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO')&
-            then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1], 2, ncra29(22), val29(22), icodre,&
-                            1)
             endif
             nompar(1) = 'SAT'
             nompar(2) = 'PGAZ'
-            valpar(1) = val29(22)
+            valpar(1) = satur
             valpar(2) = p2
             if ((hydr.ne.'HYDR_VGM') .and. (hydr.ne.'HYDR_VGC')) then
                 call rcvala(imate, ' ', 'THM_DIFFU', 2, nompar,&
@@ -2859,8 +2801,6 @@ implicit none
             lambct(2) = val29(20)
             lambct(3) = val29(21)
             lambct(4) = val29(32)
-            satur = val29(22)
-            dsatur = val29(23)
             permli = val29(24)
             dperml = val29(25)
             permgz = val29(26)
@@ -2960,7 +2900,7 @@ implicit none
                 endif
                 else if ((hydr.eq.'HYDR_VGM').or.(hydr.eq.'HYDR_VGC'))&
             then
-                call utmess('F', 'ALGORITH16_95')
+                ASSERT(.false.)
             endif
             call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
                         [t], 3, ncra33, val33, icodre,&
@@ -3045,14 +2985,12 @@ implicit none
                             [t], dim33-3, ncra33(4), val33(4), icodre,&
                             1)
             endif
-            if (hydr .eq. 'HYDR_UTIL' .or. hydr .eq. 'HYDR_ENDO') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
-                            [p1], 2, ncra32(21), val32(21), icodre,&
-                            1)
-            endif
+            call thmEvalSatuFinal(hydr , imate , p1    ,&
+                                  satur, dsatur, retcom)
+            ASSERT(hydr .eq. 'HYDR_UTIL' .or. hydr .eq. 'HYDR_ENDO') 
             nompar(1) = 'SAT'
             nompar(2) = 'PGAZ'
-            valpar(1) = val32(21)
+            valpar(1) = satur
             valpar(2) = p2
             call rcvala(imate, ' ', 'THM_DIFFU', 2, nompar,&
                         valpar, 2, ncra32(23), val32(23), icodre,&
@@ -3096,8 +3034,6 @@ implicit none
             lambct(2) = val32(19)
             lambct(3) = val32(20)
             lambct(4) = val32(28)
-            satur = val32(21)
-            dsatur = val32(22)
             permli = val32(23)
             dperml = val32(24)
             unsurk = val33( 1)
