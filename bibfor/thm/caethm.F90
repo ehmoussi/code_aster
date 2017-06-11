@@ -15,42 +15,41 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine caethm(axi, perman, vf, typvf,&
-                  typmod, modint, mecani, press1, press2,&
+! person_in_charge: sylvie.granet at edf.fr
+! aslint: disable=W1504
+!
+subroutine caethm(l_axi, l_steady, l_vf, type_vf,&
+                  type_elem, inte_type, mecani, press1, press2,&
                   tempe, dimdep, dimdef, dimcon, nddl_meca,&
                   nddl_p1, nddl_p2, ndim, nno, nnos,&
                   nnom, nface, npi, npg, nddls,&
-                  nddlm, nddlfa, nddlk, dimuel, ipoids,&
-                  ivf, idfde, ipoid2, ivf2, idfde2,&
-                  npi2, jgano)
+                  nddlm, nddlfa, nddlk, dimuel, jv_poids,&
+                  jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2,&
+                  npi2, jv_gano)
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/grdthm.h"
+#include "asterfort/thmGetGene.h"
 #include "asterfort/itgthm.h"
-#include "asterfort/modthm.h"
-#include "asterfort/typthm.h"
+#include "asterfort/thmGetParaIntegration.h"
+#include "asterfort/thmGetElemModel.h"
 #include "asterfort/thmGetElemDime.h"
 !
-! aslint: disable=W1504
-! person_in_charge: sylvie.granet at edf.fr
-!
-    aster_logical, intent(in) :: axi
-    aster_logical, intent(in) :: perman
-    aster_logical, intent(in) :: vf
-    integer, intent(in)  :: ndim
-    integer, intent(out) :: mecani(5)
-    integer, intent(out) :: press1(7)
-    integer, intent(out) :: press2(7)
-    integer, intent(out) :: tempe(5)
-    integer, intent(out) :: dimdep
-    integer, intent(out) :: dimdef
-    integer, intent(out) :: dimcon
-    integer, intent(out) :: nddl_meca
-    integer, intent(out) :: nddl_p1
-    integer, intent(out) :: nddl_p2
+    aster_logical, intent(out) :: l_axi, l_steady, l_vf
+    integer, intent(out) :: ndim
+    integer, intent(out) :: mecani(5), press1(7), press2(7), tempe(5)
+    integer, intent(out) :: type_vf
+    character(len=3), intent(out) :: inte_type
+    integer, intent(out) :: dimdep, dimdef, dimcon, dimuel
+    integer, intent(out) :: nddl_meca, nddl_p1, nddl_p2
+    integer, intent(out) :: nno, nnos, nnom, nface
+    integer, intent(out) :: npi, npi2, npg
+    integer, intent(out) :: nddls, nddlm, nddlfa, nddlk
+    integer, intent(out) :: jv_poids, jv_poids2
+    integer, intent(out) :: jv_func, jv_dfunc, jv_func2, jv_dfunc2
+    integer, intent(out) :: jv_gano
+    character(len=8), intent(out) :: type_elem(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -103,49 +102,33 @@ implicit none
 ! CORPS DU PROGRAMME
 
 
-    integer :: typvf
-    integer :: dimuel
-    integer :: nno, nnos, nnom
-    integer :: npg, npi, nddls, nddlm, nddlk, ipoids, ivf, idfde
-    integer :: ipoid2, ivf2, idfde2, npi2, jgano, nface, nddlfa
-    character(len=3) :: modint
-    character(len=8) :: typmod(2)
 !
-! --- INITIALISATIONS --------------------------------------------------
-! ======================================================================
-    typmod(2) = '        '
-! ======================================================================
-! --- TYPE DE MODELISATION? AXI/DPLAN/3D ET HM TRANSI/PERM -------------
-! ======================================================================
-    call typthm(axi, perman, vf, typvf, typmod,&
-                ndim)
-! ======================================================================
-! --- SELECTION DU TYPE D'INTEGRATION ----------------------------------
-! ======================================================================
-    if (.not.vf) then
-        call modthm(modint)
-    else
-        modint = 'CLA'
-    endif
-! ======================================================================
-! --- INITIALISATION DES GRANDEURS GENERALISEES SELON MODELISATION -----
-! ======================================================================
-    call grdthm(perman, vf, ndim,&
-                mecani, press1, press2, tempe)
+! - Get model of finite element
+!
+    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim, type_elem)
+!
+! - Get type of integration
+!
+    call thmGetParaIntegration(l_vf, inte_type)     
+!
+! - Get generalized coordinates
+!
+    call thmGetGene(l_steady, l_vf, ndim,&
+                    mecani, press1, press2, tempe)
 !
 ! - Get definition of element
 !
-    call itgthm(ndim    , vf       , typvf  , modint,&
+    call itgthm(ndim    , l_vf     , type_vf  , inte_type,&
                 nno     , nnos     , nnom   , nface ,&
                 npi     , npi2     , npg    ,&
-                ipoids  , ipoid2   ,&
-                ivf     , ivf2     ,&
-                idfde   , idfde2   ,&
-                jgano )
+                jv_poids, jv_poids2,&
+                jv_func , jv_func2 ,&
+                jv_dfunc, jv_dfunc2,&
+                jv_gano )
 !
 ! - Get dimensions about element
 !
-    call thmGetElemDime(vf       , typvf,&
+    call thmGetElemDime(l_vf     , type_vf,&
                         ndim     , nnos   , nnom  , nface,&
                         mecani   , press1 , press2 , tempe ,&
                         nddls    , nddlm  , nddlk  , nddlfa,&

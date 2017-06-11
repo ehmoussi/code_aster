@@ -15,15 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine caeihm(nomte, axi, perman, mecani, press1,&
                   press2, tempe, dimdef, dimcon, ndim,&
                   nno1, nno2, npi, npg, dimuel,&
                   iw, ivf1, idf1, ivf2, idf2,&
                   jgano1, iu, ip, ipf, iq,&
-                  modint)
+                  inte_type)
 !
+implicit none
 !
+#include "asterf_types.h"
+#include "asterfort/elref2.h"
+#include "asterfort/elrefe_info.h"
+#include "asterfort/greihm.h"
+#include "asterfort/lteatt.h"
+#include "asterfort/thmGetParaIntegration.h"
+!
+    character(len=3), intent(out) :: inte_type
 !
 ! ======================================================================
 ! --- BUT : PREPARATION DU CALCUL SUR UN ELEMENT DE JOINT HM -----------
@@ -57,17 +67,7 @@ subroutine caeihm(nomte, axi, perman, mecani, press1,&
 ! OUT IQ     : DECALAGE D'INDICE POUR ACCEDER AUX DDL DE LAGRANGE HYDRO
 ! OUT MODINT : MODE D'INTEGRATION
 !
-! CORPS DU PROGRAMME
-! aslint: disable=W1504
-    implicit none
-!
-! DECLARATION PARAMETRES D'APPELS
-#include "asterf_types.h"
-#include "asterfort/elref2.h"
-#include "asterfort/elrefe_info.h"
-#include "asterfort/greihm.h"
-#include "asterfort/lteatt.h"
-#include "asterfort/modthm.h"
+
     aster_logical :: axi, perman
     integer :: mecani(8), press1(9), press2(9), tempe(5), dimuel
     integer :: ndim, nnos, nno1, nno2, ntrou
@@ -75,10 +75,13 @@ subroutine caeihm(nomte, axi, perman, mecani, press1,&
     integer :: npg, npi, n, i
     integer :: ivf1, idf1, ivf2, idf2, jgano1, jgano2, iw
     integer :: iu(3, 18), ip(2, 9), ipf(2, 2, 9), iq(2, 2, 9)
-    integer :: f1q8(6), f2q8(2), f3q8(2), f4q8(2)
-    character(len=3) :: modint
+    integer, parameter :: f1q8(6) = (/1,2,5,4,3,7/)
+    integer, parameter :: f2q8(2) = (/8,6/)
+    integer, parameter :: f3q8(2) = (/1,2/)
+    integer, parameter :: f4q8(2) = (/4,3/)
     character(len=8) :: lielrf(10)
     character(len=16) :: nomte
+
 !
 ! --- INITIALISATIONS --------------------------------------------------
 !
@@ -91,8 +94,9 @@ subroutine caeihm(nomte, axi, perman, mecani, press1,&
     call greihm(perman, ndim, mecani, press1, press2,&
                 tempe, dimdef, dimcon)
 !
+! - Get type of integration
 !
-    call modthm(modint)
+    call thmGetParaIntegration(l_vf = .false._1, inte_type = inte_type)
 !
     if (lteatt('AXIS','OUI')) then
         axi = .true.
@@ -107,10 +111,10 @@ subroutine caeihm(nomte, axi, perman, mecani, press1,&
     call elrefe_info(elrefe=lielrf(2), fami='RIGI', ndim=ndim, nno=nno2, nnos=nnos,&
                      npg=npi, jpoids=iw, jvf=ivf2, jdfde=idf2, jgano=jgano2)
 !
-    if (modint .eq. 'RED') then
+    if (inte_type .eq. 'RED') then
         npg= npi-nnos
     endif
-    if (modint .eq. 'CLA') then
+    if (inte_type .eq. 'CLA') then
         npg= npi
     endif
 !
@@ -120,33 +124,25 @@ subroutine caeihm(nomte, axi, perman, mecani, press1,&
 ! --- DETERMINATION DES DECALAGES D'INDICE POUR ACCEDER AUX DDL --------
 ! ======================================================================
 !
-    data f1q8  /1,2,5,4,3,7/
-    data f2q8 /8,6/
-    data f3q8 /1,2/
-    data f4q8 /4,3/
-!
     if ((nomte.eq.'HM_J_DPQ8S') .or. (nomte.eq.'HM_J_AXQ8S')) then
         dimuel = 2*nno1*ndim+nno2*3*(press1(1)+press2(1))+2
-        do 10 n = 1, 5
-            do 11 i = 1, 2
+        do n = 1, 5
+            do i = 1, 2
                 iu(i,n) = i + (f1q8(n)-1)*3
- 11         continue
- 10     continue
-        do 12 i = 1, 2
+            end do
+        end do
+        do i = 1, 2
             iu(i,6) = iu(i,3) + 4
- 12     continue
-!
-        do 20 n = 1, 2
+        end do
+        do n = 1, 2
             ip(1,n) = 16 + (f2q8(n)-6)*2
- 20     continue
-!
-        do 30 n = 1, 2
+        end do
+        do n = 1, 2
             ipf(1,1,n) = 3+(f4q8(n)-1)*3
- 30     continue
-!
-        do 40 n = 1, 2
+        end do
+        do n = 1, 2
             ipf(1,2,n) = 3+(f3q8(n)-1)*3
- 40     continue
+        end do
         iq(1,1,1)=iu(2,6)+1
         iq(1,2,1)=iu(2,3)+1
     endif

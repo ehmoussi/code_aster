@@ -3337,7 +3337,7 @@ phen.add('D_PLAN_HMS', Modelisation(dim=(2,2), code='DR1',
 phen.add('D_PLAN_HM_P', Modelisation(dim=(2,2), code='DHB',
     attrs=(
         (AT.TYPMOD2,'THM'),
-        (AT.TYPMOD3,'THM_P'),
+        (AT.TYPMOD3,'STEADY'),
         (AT.MECA   ,'OUI'),
         (AT.THER   ,'NON'),
         (AT.HYDR1  ,'1'),

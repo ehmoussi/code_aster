@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmGetElemModel()
+subroutine thmGetElemModel(l_axi_, l_vf_, type_vf_, l_steady_, ndim_, type_elem_)
 !
 use THM_type
 use THM_module
@@ -24,9 +24,15 @@ use THM_module
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
+#include "asterfort/thmGetParaIntegration.h"
+!
+aster_logical, optional, intent(out) :: l_axi_, l_steady_, l_vf_
+integer, optional, intent(out) :: ndim_, type_vf_
+character(len=8), optional, intent(out) :: type_elem_(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -36,10 +42,31 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret1, iret2
-    real(kind=8) :: r8bid
+! Out l_axi        : flag is axisymmetric model
+! Out l_vf         : flag for finite volume
+! Out type_vf      : type for finite volume
+! Out l_steady     : .true. for steady state
+! Out ndim         : dimension of element (2 ou 3)
+! Out type_elem    : type of element
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    integer :: iret1, iret2
+    real(kind=8) :: r8bid
+    aster_logical :: l_axi, l_steady, l_vf
+    integer :: ndim, type_vf
+    character(len=8) :: type_elem(2)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    l_axi        = .false.
+    ndim         = 0
+    type_vf      = 0
+    type_elem(:) = ' '
+    l_steady     = .false.
+    l_vf         = .false.
+!
+! - Get dof in finite element
 !
     ds_thm%ds_elem%l_dof_ther  = lteatt('THER','OUI')
     ds_thm%ds_elem%l_dof_meca  = lteatt('MECA','OUI')
@@ -68,6 +95,53 @@ implicit none
     endif
     if ((ds_thm%ds_elem%l_weak_coupling) .and. (iret1.ne.iret2)) then
         call utmess('F', 'CHAINAGE_2')
+    endif
+!
+! - Get general model
+!
+    l_axi = .false.
+    if (lteatt('AXIS','OUI')) then
+        l_axi        = .true.
+        type_elem(1) = 'AXIS'
+        ndim         = 2
+    else if (lteatt('D_PLAN','OUI')) then
+        type_elem(1) = 'D_PLAN'
+        ndim         = 2
+    else
+        type_elem(1) = '3D'
+        ndim         = 3
+    endif
+!
+! - Steady problem ?
+!
+    l_steady = lteatt('TYPMOD3','STEADY')
+!
+! - Finite volume
+!
+    l_vf = lteatt('TYPMOD3','SUSHI')
+    if (l_vf) then
+        type_vf = 3
+    endif
+!
+! - Copy
+!
+    if (present(l_axi_)) then
+        l_axi_ = l_axi
+    endif
+    if (present(l_vf_)) then
+        l_vf_  = l_vf
+    endif
+    if (present(type_vf_)) then
+        type_vf_ = type_vf
+    endif
+    if (present(l_steady_)) then
+        l_steady_ = l_steady
+    endif
+    if (present(ndim_)) then
+        ndim_ = ndim
+    endif
+    if (present(type_elem_)) then
+        type_elem_ = type_elem
     endif
 !
 end subroutine

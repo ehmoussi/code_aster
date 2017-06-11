@@ -20,8 +20,10 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface 
-    subroutine xcaehm(nomte, axi, perman, typmod, modint,&
+    subroutine xcaehm(nomte, axi, perman, typmod, inte_type,&
                       mecani, press1, press2, tempe, dimdef,&
                       dimcon, nmec, np1, np2, ndim,&
                       nno, nnos, nnom, npi, npg,&
@@ -32,7 +34,7 @@ interface
         aster_logical :: axi
         aster_logical :: perman
         character(len=8) :: typmod(2)
-        character(len=3) :: modint
+        character(len=3), intent(out) :: inte_type
         integer :: mecani(5)
         integer :: press1(7)
         integer :: press2(7)

@@ -15,9 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine grdthm(perman, vf, ndim,&
-                  mecani, press1, press2, tempe)
+!
+subroutine thmGetGene(l_steady, l_vf  , ndim,&
+                      mecani  , press1, press2, tempe)
 !
 use THM_module
 !
@@ -28,8 +28,8 @@ implicit none
 #include "asterfort/utmess.h"
 !
 !
-    aster_logical, intent(in) :: perman
-    aster_logical, intent(in) :: vf
+    aster_logical, intent(in) :: l_steady
+    aster_logical, intent(in) :: l_vf
     integer, intent(in)  :: ndim
     integer, intent(out) :: mecani(5)
     integer, intent(out) :: press1(7)
@@ -40,63 +40,38 @@ implicit none
 !
 ! THM - Initializations
 !
-! Get dimensions
+! Get generalized coordinates
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!   TABLEAU MECANI :
-!   MECANI(1) = 1 : IL Y A UNE EQUATION MECANIQUE
-!               0 : SINON
-!   MECANI(2) = ADRESSE DANS LES TABLEAUX DES DEFORMATIONS
-!               GENERALISEES AU POINT DE GAUSS DES
-!               DEFORMATIONS CORRESPONDANT A LA MECANIQUE
-!   MECANI(3) = ADRESSE DANS LES TABLEAUX DES CONTRAINTES
-!               GENERALISEES AU POINT DE GAUSS DES
-!               CONTRAINTES CORRESPONDANT A LA MECANIQUE
-!   MECANI(4) = NOMBRE DE DEFORMATIONS MECANIQUES
-!   MECANI(5) = NOMBRE DE CONTRAINTES MECANIQUES
-!
-!   TABLEAU PRESS1 :
-!   PRESS1(1) = 1 : IL Y A UNE EQUATION SUR LA PREMIERE PRESSION
-!               0 : SINON
-!   PRESS1(2) = NOMBRE DE PHASES POUR LE CONSTITUANT 1
-!   PRESS1(3) = ADRESSE DANS LES TABLEAUX DES DEFORMATIONS
-!               GENERALISEES AU POINT DE GAUSS
-!   PRESS1(4) = ADRESSE DANS LES TABLEAUX DES CONTRAINTES
-!               GENERALISEES AU POINT DE GAUSS DES CONTRAINTES
-!               CORRESPONDANT A LA PREMIERE PHASE DU 1ER CONSTITUANT
-!   PRESS1(5) = ADRESSE DANS LES TABLEAUX DES CONTRAINTES
-!               GENERALISEES AU POINT DE GAUSS DES CONTRAINTES
-!               CORRESPONDANT A LA DEUXIEME PHASE DU 1ER CONSTITUANT
-!   PRESS1(6) = NOMBRE DE DEFORMATIONS PRESSION
-!   PRESS1(7) = NOMBRE DE CONTRAINTES POUR CHAQUE PHASE DU CONSTITUANT 1
-!
-!   TABLEAU PRESS2 :
-!   PRESS2(1) = 1 : IL Y A UNE EQUATION SUR LA SECONDE PRESSION
-!               0 : SINON
-!   PRESS2(2) = NOMBRE DE PHASES POUR LE CONSTITUANT 2
-!   PRESS2(3) = ADRESSE DANS LES TABLEAUX DES DEFORMATIONS
-!               GENERALISEES AU POINT DE GAUSS
-!   PRESS2(4) = ADRESSE DANS LES TABLEAUX DES CONTRAINTES
-!               GENERALISEES AU POINT DE GAUSS DES CONTRAINTES
-!               CORRESPONDANT A LA PREMIERE PHASE DU 2ND CONSTITUANT
-!   PRESS2(5) = ADRESSE DANS LES TABLEAUX DES CONTRAINTES
-!               GENERALISEES AU POINT DE GAUSS DES CONTRAINTES
-!               CORRESPONDANT A LA DEUXIEME PHASE DU 2ND CONSTITUANT
-!   PRESS2(6) = NOMBRE DE DEFORMATIONS PRESSION
-!   PRESS2(7) = NOMBRE DE CONTRAINTES POUR CHAQUE PHASE DU CONSTITUANT 2
-!
-!   TABLEAU TEMPE :
-!   TEMPE(1)  = 1 : IL Y A UNE EQUATION THERMIQUE
-!               0 : SINON
-!   TEMPE(2)  = ADRESSE DANS LES TABLEAUX DES DEFORMATIONS
-!               GENERALISEES AU POINT DE GAUSS DES
-!               DEFORMATIONS CORRESPONDANT A LA THERMIQUE
-!   TEMPE(3)  = ADRESSE DANS LES TABLEAUX DES CONTRAINTES
-!               GENERALISEES AU POINT DE GAUSS DES
-!               CONTRAINTES CORRESPONDANT A LA THERMIQUE
-!   TEMPE(4)  = NOMBRE DE DEFORMATIONS THERMIQUES
-!   TEMPE(5)  = NOMBRE DE CONTRAINTES THERMIQUES
+! Out mecani       : parameters for mechanic
+!                    (1) - Flag if physic exists (1 if exists)
+!                    (2) - Adress of first component in generalized strain vector
+!                    (3) - Adress of first component in generalized stress vector
+!                    (4) - Number of components for strains
+!                    (5) - Number of components for stresses
+! Out press1       : parameters for hydraulic (first pressure)
+!                    (1) - Flag if physic exists (1 if exists)
+!                    (2) - Number of phases
+!                    (3) - Adress of first component in generalized strain vector
+!                    (4) - Adress of first component in vector of gen. stress for first phase 
+!                    (5) - Adress of first component in vector of gen. stress for second phase
+!                    (6) - Number of components for strains
+!                    (7) - Number of components for stresses (for each phase)
+! Out press1       : parameters for hydraulic (second pressure)
+!                    (1) - Flag if physic exists (1 if exists)
+!                    (2) - Number of phases
+!                    (3) - Adress of first component in generalized strain vector
+!                    (4) - Adress of first component in vector of gen. stress for first phase 
+!                    (5) - Adress of first component in vector of gen. stress for second phase
+!                    (6) - Number of components for strains
+!                    (7) - Number of components for stresses (for each phase)
+! Out tempe        : parameters for thermic
+!                    (1) - Flag if physic exists (1 if exists)
+!                    (2) - Adress of first component in generalized strain vector
+!                    (3) - Adress of first component in generalized stress vector
+!                    (4) - Number of components for strains
+!                    (5) - Number of components for stresses
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -140,7 +115,7 @@ implicit none
 !
     if (press1(1) .eq. 1) then
         press1(6) = 1 + ndim
-        if (perman) then
+        if (l_steady) then
             press1(7) = ndim
         else
             press1(7) = ndim + 1
@@ -151,7 +126,7 @@ implicit none
     endif
     if (press2(1) .eq. 1) then
         press2(6) = 1 + ndim
-        if (perman) then
+        if (l_steady) then
             press2(7) = ndim
         else
             press2(7) = ndim + 1
@@ -160,7 +135,7 @@ implicit none
             press2(7) = press2(7) + 1
         endif
     endif
-    if (vf) then
+    if (l_vf) then
         press1(7) = 2
         press2(7) = 2
     endif
