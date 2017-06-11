@@ -18,8 +18,8 @@
 
 subroutine caethm(axi, perman, vf, typvf,&
                   typmod, modint, mecani, press1, press2,&
-                  tempe, dimdep, dimdef, dimcon, nmec,&
-                  np1, np2, ndim, nno, nnos,&
+                  tempe, dimdep, dimdef, dimcon, nddl_meca,&
+                  nddl_p1, nddl_p2, ndim, nno, nnos,&
                   nnom, nface, npi, npg, nddls,&
                   nddlm, nddlfa, nddlk, dimuel, ipoids,&
                   ivf, idfde, ipoid2, ivf2, idfde2,&
@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/itgthm.h"
 #include "asterfort/modthm.h"
 #include "asterfort/typthm.h"
+#include "asterfort/thmGetElemDime.h"
 !
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
@@ -47,9 +48,9 @@ implicit none
     integer, intent(out) :: dimdep
     integer, intent(out) :: dimdef
     integer, intent(out) :: dimcon
-    integer, intent(out) :: nmec
-    integer, intent(out) :: np1
-    integer, intent(out) :: np2
+    integer, intent(out) :: nddl_meca
+    integer, intent(out) :: nddl_p1
+    integer, intent(out) :: nddl_p2
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -131,39 +132,24 @@ implicit none
 ! ======================================================================
     call grdthm(perman, vf, ndim,&
                 mecani, press1, press2, tempe)
-    dimdep = 0
-    dimdef = 0
-    dimcon = 0
-    nmec = 0
-    np1 = 0
-    np2 = 0
-    if (mecani(1) .eq. 1) then
-        nmec      = ndim
-    endif
-    if (.not. vf) then
-        if (press1(1) .eq. 1) then
-            np1 = 1
-        endif
-        if (press2(1) .eq. 1) then
-            np2 = 1
-        endif
-    endif
 !
-! - Total of dimensions
+! - Get definition of element
 !
-    dimdep = ndim*mecani(1) + press1(1) + press2(1) + tempe(1)
-    dimdef = mecani(4) + press1(6) + press2(6) + tempe(4)
-    dimcon = mecani(5) + press1(2)*press1(7) + press2(2)*press2(7) + tempe(5)
-
-! ======================================================================
-! --- ADAPTATION AU MODE D'INTEGRATION ---------------------------------
-! --- DEFINITION DE L'ELEMENT (NOEUDS, SOMMETS, POINTS DE GAUSS) -------
-! ======================================================================
-    call itgthm(vf, typvf, modint, mecani, press1,&
-                press2, tempe, ndim, nno, nnos,&
-                nnom, nface, npi, npg, nddls,&
-                nddlk, nddlm, nddlfa, dimuel, ipoids,&
-                ivf, idfde, ipoid2, ivf2, idfde2,&
-                npi2, jgano)
-! ======================================================================
+    call itgthm(ndim    , vf       , typvf  , modint,&
+                nno     , nnos     , nnom   , nface ,&
+                npi     , npi2     , npg    ,&
+                ipoids  , ipoid2   ,&
+                ivf     , ivf2     ,&
+                idfde   , idfde2   ,&
+                jgano )
+!
+! - Get dimensions about element
+!
+    call thmGetElemDime(vf       , typvf,&
+                        ndim     , nnos   , nnom  , nface,&
+                        mecani   , press1 , press2 , tempe ,&
+                        nddls    , nddlm  , nddlk  , nddlfa,&
+                        nddl_meca, nddl_p1, nddl_p2,&
+                        dimdep   , dimdef , dimcon , dimuel)
+!
 end subroutine
