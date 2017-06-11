@@ -48,6 +48,7 @@ implicit none
 #include "asterfort/thmCompRefeForcNoda.h"
 #include "asterfort/thmCompForcNoda.h"
 #include "asterfort/thmCompLoad.h"
+#include "asterfort/thmCompGravity.h"
 #include "asterfort/Behaviour_type.h"
 
     character(len=16) :: option, nomte
@@ -64,16 +65,15 @@ implicit none
 !
     integer :: retloi
     integer :: ipoids, ivf, idfde, igeom
-    integer :: iinstp, ideplm, ideplp, icompo, icarcr, ipesa
+    integer :: iinstp, ideplm, ideplp, icompo, icarcr
     integer :: icontm, ivarip, ivarim, ivectu, icontp
 ! =====================================================================
 ! =====================================================================
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
-    integer :: dimdep, dimdef, dimcon, nbvari, nddls, nddlm, ii
+    integer :: dimdep, dimdef, dimcon, nbvari, nddls, nddlm
     integer :: nmec, np1, np2, i, nnos
     integer :: nnom
-    real(kind=8) :: defgep(21), defgem(21), poids
-    real(kind=8) :: dfdbid1(27), dfdbid2(27), dfdbid3(27)
+    real(kind=8) :: defgep(21), defgem(21)
     real(kind=8) :: dfdi(20, 3), dfdi2(20, 3), b(21, 120)
     real(kind=8) :: drds(22, 31+5), drdsr(21, 31+5), dsde(31+5, 21)
     real(kind=8) :: r(22), sigbar(21), c(21), ck(21), cs(21)
@@ -81,12 +81,9 @@ implicit none
     real(kind=8) :: work1(31+5, 120), work2(21, 120)
     character(len=3) :: modint
     character(len=8) :: typmod(2)
-    character(len=16) :: phenom
 ! =====================================================================
-    integer :: li, kp, j, l, k, ibid, typvf, idim
-    real(kind=8) :: rho(1), coef, rx
-    integer :: icodre(1)
-    aster_logical :: axi, perman
+    integer :: li, ibid, typvf, idim
+    aster_logical :: axi, perman, vf
 ! =====================================================================
 !  CETTE ROUTINE FAIT UN CALCUL EN THHM , HM , HHM , THH
 !  21 = 9 DEF MECA + 4 POUR P1 + 4 POUR P2 + 4 POUR T
@@ -142,7 +139,7 @@ implicit none
 ! IVF       FONCTIONS DE FORMES QUADRATIQUES
 ! IVF2      FONCTIONS DE FORMES LINEAIRES
 ! =====================================================================
-    aster_logical :: vf
+
 !
 ! - Init THM module
 !
@@ -286,90 +283,8 @@ implicit none
 ! --- 3. OPTION : CHAR_MECA_PESA_R ------------------------------------
 ! =====================================================================
     if (option .eq. 'CHAR_MECA_PESA_R') then
-        call jevech('PGEOMER', 'L', igeom)
-        call jevech('PMATERC', 'L', imate)
-        call jevech('PPESANR', 'L', ipesa)
-        call jevech('PVECTUR', 'E', ivectu)
-        call rccoma(zi(imate), 'THM_DIFFU', 1, phenom, icodre(1))
-        call rcvalb('FPG1', 1, 1, '+', zi(imate),&
-                    ' ', phenom, 0, ' ', [0.d0],&
-                    1, 'RHO', rho, icodre, 1)
-        if (ndim .eq. 3) then
-! =====================================================================
-! --- CAS 3D ----------------------------------------------------------
-! =====================================================================
-            do 40 i = 1, dimuel
-                zr(ivectu+i-1) = 0.0d0
- 40         continue
-! =====================================================================
-! --- BOUCLE SUR LES POINTS DE GAUSS ----------------------------------
-! =====================================================================
-            do 70 kp = 1, npg
-                l = (kp-1)*nno
-                call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
-                            poids, dfdbid1, dfdbid2, dfdbid3)
-                coef = rho(1)*poids*zr(ipesa)
-                do 60 i = 1, nnos
-                    ii = nddls* (i-1)
-                    do 50 j = 1, 3
-                        zr(ivectu+ii+j-1) = zr(ivectu+ii+j-1) + coef*zr(ivf+l+i-1)*zr(ipesa+j)
- 50                 continue
- 60             continue
-                do 65 i = 1, nnom
-                    ii = nnos*nddls+nddlm*(i-1)
-                    do 55 j = 1, 3
-                        zr(ivectu+ii+j-1) = zr(ivectu+ii+j-1) + coef*zr(ivf+l+i+nnos-1)*zr(ipesa+&
-                                            &j)
- 55                 continue
- 65             continue
- 70         continue
-        else
-! =====================================================================
-! --- CAS 2D ----------------------------------------------------------
-! =====================================================================
-            do 110 kp = 1, npg
-                k = (kp-1)*nno
-                call dfdm2d(nno, kp, ipoids, idfde, zr(igeom),&
-                            poids, dfdbid1, dfdbid2)
-                poids = poids*rho(1)*zr(ipesa)
-                if (axi) then
-                    rx = 0.d0
-                    do 80 i = 1, nno
-                        rx = rx + zr(igeom+2*i-2)*zr(ivf+k+i-1)
- 80                 continue
-                    poids = poids*rx
-                    do 90 i = 1, nnos
-                        zr(ivectu+nddls*(i-1)+1)=zr(ivectu+nddls*(i-1)&
-                        +1) +poids*zr(ipesa+2)*zr(ivf+k+i-1)
- 90                 continue
-                    do 95 i = 1, nnom
-                        zr(ivectu+nddls*nnos+nddlm*(i-1)+1) = zr(&
-                                                              ivectu+nddls*nnos+nddlm*(i-1)+1) + &
-                                                              &poids*zr( ipesa+2)*zr(ivf+k+i+nnos&
-                                                              &-1&
-                                                              )
- 95                 continue
-                else
-!
-                    do 100 i = 1, nnos
-                        zr(ivectu+nddls*(i-1)) = zr(&
-                                                 ivectu+nddls*(i-1) ) +poids*zr(ipesa+1)*zr(ivf+k&
-                                                 &+i-1&
-                                                 )
-                        zr(ivectu+nddls*(i-1)+1)=zr(ivectu+nddls*(i-1)&
-                        +1) +poids*zr(ipesa+2)*zr(ivf+k+i-1)
-100                 continue
-                    do 400 i = 1, nnom
-                        zr(ivectu+nddls*nnos+nddlm*(i-1))= zr(ivectu+&
-                        nddls*nnos+nddlm*(i-1)) + poids*zr(ipesa+1)*&
-                        zr(ivf+k+i+nnos-1)
-                        zr(ivectu+nddls*nnos+nddlm*(i-1)+1)= zr(&
-                        ivectu+nddls*nnos+nddlm*(i-1)+1) + poids*zr(&
-                        ipesa+2)*zr(ivf+k+i+nnos-1)
-400                 continue
-                endif
-110         continue
-        endif
+        call thmCompGravity(modint, axi , vf  , typvf, ndim,&
+                            mecani, press1, press2, tempe)
     endif
 !
 ! =====================================================================
