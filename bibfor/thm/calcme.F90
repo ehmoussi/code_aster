@@ -223,11 +223,11 @@ implicit none
                 end do
             endif
         endif
-    elseif (meca .eq. 'ELAS_GONF') then
+    elseif (meca .eq. 'GONF_ELAS') then
 ! ======================================================================
-! --- LOI ELAS_GONF ----------------------------------------------------
+! --- LOI GONF_ELAS ----------------------------------------------------
 ! ======================================================================
-        complg(1) = 'ELAS_GONF'
+        complg(1) = 'GONF_ELAS'
         write (complg(2),'(I16)') nvimec
         complg(3) = compor(3)
         sipm=congem(adcome+6)

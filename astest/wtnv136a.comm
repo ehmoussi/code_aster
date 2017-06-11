@@ -173,7 +173,7 @@ MATAGO=DEFI_MATERIAU(ELAS=_F(
                                     NU  = 0.3,
                                     RHO = 2085.,
                                     ALPHA       = 1.E-5),
-                     ELAS_GONF = _F(
+                     GONF_ELAS = _F(
                                     BETAM   =   0.1142,
                                     PREF   =   1.E6,
                                     ),
@@ -334,7 +334,7 @@ U2=STAT_NON_LINE(
                         COMPORTEMENT=_F(
                          RELATION='KIT_HHM',
                            RELATION_KIT=(
-                                'ELAS_GONF','LIQU_AD_GAZ_VAPE','HYDR_VGM'),
+                                'GONF_ELAS','LIQU_AD_GAZ_VAPE','HYDR_VGM'),
                          ),
 
 

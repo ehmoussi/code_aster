@@ -74,7 +74,7 @@ subroutine thm_kit_read(keywordfact, iocc, rela_comp, rela_thmc, rela_hydr,&
                   'CAM_CLAY'        ,'BARCELONE'       ,'LAIGLE'          ,&
                   'LETK'            ,'VISC_DRUC_PRAG'  ,'HOEK_BROWN_EFF'  ,&
                   'HOEK_BROWN_TOT'  ,'MAZARS'          ,'ENDO_ISOT_BETON' ,&
-                  'ELAS_GONF'       ,'DRUCK_PRAGER'    ,'DRUCK_PRAG_N_A'  ,&
+                  'GONF_ELAS'       ,'DRUCK_PRAGER'    ,'DRUCK_PRAG_N_A'  ,&
                   'JOINT_BANDIS'    ,'CZM_LIN_REG'     ,'CZM_EXP_REG'     ,&
                   'MOHR_COULOMB'    ,'MFRONT'          ,'LKR'/
 !

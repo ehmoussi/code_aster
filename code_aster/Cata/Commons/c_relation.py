@@ -95,7 +95,7 @@ def C_RELATION( COMMAND ):
                                         "DIS_ECRO_TRAC",
                                         "DRUCK_PRAGER",
                                         "DRUCK_PRAG_N_A",
-                                        "ELAS_GONF",
+                                        "GONF_ELAS",
                                         "ELAS_HYPER",
                                         "ELAS_MEMBRANE_NH",
                                         "ELAS_MEMBRANE_SV",
