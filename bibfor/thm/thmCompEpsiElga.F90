@@ -1,0 +1,143 @@
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+
+subroutine thmCompEpsiElga(l_vf  , l_axi , inte_type, ndim ,&
+                           mecani, press1, press2   , tempe)
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterfort/assert.h"
+#include "asterfort/jevech.h"
+#include "asterfort/thmGetElemInfo.h"
+#include "asterfort/thmGetParaPhysic.h"
+#include "asterfort/thmGetElemDime.h"
+#include "asterfort/epsthm.h"
+#include "asterfort/thmGetElemRefe.h"
+!
+!
+    aster_logical, intent(in) :: l_axi, l_vf
+    character(len=3), intent(in) :: inte_type
+    integer, intent(in) :: ndim
+    integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM - Compute
+!
+! EPSI_ELGA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  l_axi        : flag is axisymmetric model
+! In  l_vf         : flag for finite volume
+! In  inte_type    : type of integration - classical, lumped (D), reduced (R)
+! In  ndim         : dimension of element (2 ou 3)
+! In  mecani       : parameters for mechanic
+! In  press1       : parameters for hydraulic (first pressure)
+! In  press1       : parameters for hydraulic (second pressure)
+! In  tempe        : parameters for thermic
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=8) :: elrefe, elref2
+    integer :: type_vf
+    integer :: addeme, addep1, addep2, addete
+    integer :: yamec, yate, yap1, yap2
+    integer :: ipg, i_cmp
+    integer :: jv_geom, jv_disp, jv_strain
+    real(kind=8) :: epsm(6, 27)
+    integer :: nno, nnos, nnom, nface
+    integer :: npi, npi2, npg
+    integer :: jv_poids, jv_poids2
+    integer :: jv_func, jv_func2, jv_dfunc, jv_dfunc2, jv_gano
+    integer :: nddls, nddlm, nddlk, nddlfa
+    integer :: nddl_meca, nddl_p1, nddl_p2
+    integer :: dimdep, dimdef, dimcon, dimuel
+!
+! --------------------------------------------------------------------------------------------------
+!
+
+
+!
+! - Cannot compute for finite volume
+!
+    ASSERT(.not.l_vf)
+    type_vf = 0
+!
+! - Get reference elements
+!
+    call thmGetElemRefe(l_vf, elrefe, elref2)
+!
+! - Get informations about element
+!
+    call thmGetElemInfo(l_vf, type_vf, inte_type, elrefe, elref2,&
+                        nno, nnos, nnom, &
+                        npi, npi2, npg,&
+                        jv_gano, jv_poids, jv_poids2,&
+                        jv_func, jv_func2, jv_dfunc, jv_dfunc2)
+    ASSERT(npi .le. 27)
+    ASSERT(nno .le. 20)
+!
+! - Get parameters for physics
+!
+    call thmGetParaPhysic(mecani, press1, press2, tempe ,&
+                          yamec , addeme, yate  , addete,&
+                          yap1  , addep1, yap2  , addep2)
+!
+! - Get dimensions about element
+!
+    call thmGetElemDime(l_vf     , type_vf,&
+                        ndim     , nnos   , nnom   , nface,&
+                        mecani   , press1 , press2 , tempe ,&
+                        nddls    , nddlm  , nddlk  , nddlfa,&
+                        nddl_meca, nddl_p1, nddl_p2,&
+                        dimdep   , dimdef , dimcon , dimuel)
+!
+! - Input fields
+!
+    call jevech('PGEOMER', 'L', jv_geom)
+    call jevech('PDEPLAR', 'L', jv_disp)
+!
+! - Compute strains
+!
+    call epsthm(l_axi    , ndim       ,& 
+                yamec    , yap1       , yap2    , yate     ,&
+                addeme   , addep1     , addep2  , addete   ,&
+                nno      , nnos       , nnom    , &
+                dimuel   , dimdef     , nddls   , nddlm    ,&
+                nddl_meca, nddl_p1    , nddl_p2 ,&
+                npi      , zr(jv_geom), zr(jv_disp),&
+                jv_poids , jv_poids2  ,&
+                jv_func  , jv_func2   , jv_dfunc, jv_dfunc2,&
+                epsm)
+!
+! - Output field
+!
+    call jevech('PDEFOPG', 'E', jv_strain)
+    do ipg = 1, npg
+        do i_cmp = 1, 6
+            zr(jv_strain+6*(ipg-1)+i_cmp-1) = epsm(i_cmp, ipg)
+        end do
+    end do
+!
+end subroutine

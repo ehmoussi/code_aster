@@ -45,6 +45,7 @@ implicit none
 #include "asterfort/thmevc.h"
 #include "asterfort/vecini.h"
 #include "asterfort/thmGetElemModel.h"
+#include "asterfort/thmCompEpsiElga.h"
 #include "asterfort/Behaviour_type.h"
 
     character(len=16) :: option, nomte
@@ -61,18 +62,18 @@ implicit none
     integer :: idfde2, npi, npg, nvim
 !
     integer :: retloi, iret, iretp, iretm
-    integer :: ipoids, ivf, idfde, igeom, idefo
-    integer :: iinstp, ideplm, ideplp, idepla, icompo, icarcr, ipesa
+    integer :: ipoids, ivf, idfde, igeom
+    integer :: iinstp, ideplm, ideplp, icompo, icarcr, ipesa
     integer :: icontm, ivarip, ivarim, ivectu, icontp
 ! =====================================================================
 ! =====================================================================
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
     integer :: dimdep, dimdef, dimcon, nbvari, nddls, nddlm, ii
     integer :: nmec, np1, np2, i, ncmp, nnos, ichg, ichn
-    integer :: jtab(7), igau, isig, nnom
+    integer :: jtab(7), nnom
     real(kind=8) :: defgep(21), defgem(21), poids
     real(kind=8) :: dfdbid1(27), dfdbid2(27), dfdbid3(27)
-    real(kind=8) :: dfdi(20, 3), dfdi2(20, 3), b(21, 120), epsm(405)
+    real(kind=8) :: dfdi(20, 3), dfdi2(20, 3), b(21, 120)
     real(kind=8) :: drds(22, 31+5), drdsr(21, 31+5), dsde(31+5, 21)
     real(kind=8) :: r(22), sigbar(21), c(21), ck(21), cs(21)
     real(kind=8) :: angmas(7), coor(3), angnau(3), angleu(3)
@@ -482,21 +483,8 @@ implicit none
 ! --- 9. OPTION : EPSI_ELGA --------------------------------------------
 ! ======================================================================
     if (option .eq. 'EPSI_ELGA') then
-        call jevech('PGEOMER', 'L', igeom)
-        call jevech('PDEPLAR', 'L', idepla)
-        call jevech('PDEFOPG', 'E', idefo)
-        call epsthm(nddls, nddlm, nno, nnos, nnom,&
-                    nmec, dimdef, dimuel, ndim, npi,&
-                    ipoids, ipoid2, ivf, ivf2, idfde,&
-                    idfde2, dfdi, dfdi2, b, zr(igeom),&
-                    zr(idepla), mecani, press1, press2, tempe,&
-                    np1, np2, axi, epsm)
-!
-        do 200 igau = 1, npi
-            do 210 isig = 1, 6
-                zr(idefo+6*(igau-1)+isig-1) = epsm(6*(igau-1)+isig)
-210         continue
-200     continue
+        call thmCompEpsiElga(vf, axi, modint, ndim,&
+                             mecani, press1, press2, tempe)
     endif
 ! ======================================================================
 end subroutine
