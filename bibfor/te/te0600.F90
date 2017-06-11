@@ -50,6 +50,7 @@ implicit none
 #include "asterfort/thmCompSiefElno.h"
 #include "asterfort/thmCompVariElno.h"
 #include "asterfort/thmCompRefeForcNoda.h"
+#include "asterfort/thmCompForcNoda.h"
 #include "asterfort/Behaviour_type.h"
 
     character(len=16) :: option, nomte
@@ -64,7 +65,7 @@ implicit none
     integer :: ipoid2, ivf2
     integer :: idfde2, npi, npg
 !
-    integer :: retloi, iretp, iretm
+    integer :: retloi
     integer :: ipoids, ivf, idfde, igeom
     integer :: iinstp, ideplm, ideplp, icompo, icarcr, ipesa
     integer :: icontm, ivarip, ivarim, ivectu, icontp
@@ -144,8 +145,7 @@ implicit none
 ! IVF       FONCTIONS DE FORMES QUADRATIQUES
 ! IVF2      FONCTIONS DE FORMES LINEAIRES
 ! =====================================================================
-    aster_logical :: fnoevo, vf
-    real(kind=8) :: dt
+    aster_logical :: vf
 !
 ! - Init THM module
 !
@@ -387,38 +387,8 @@ implicit none
 ! --- 5. OPTION : FORC_NODA --------------------------------------------
 ! ======================================================================
     if (option .eq. 'FORC_NODA') then
-! ======================================================================
-! --- PARAMETRES EN ENTREE ---------------------------------------------
-! ======================================================================
-        call jevech('PGEOMER', 'L', igeom)
-        call jevech('PCONTMR', 'L', icontm)
-        call jevech('PMATERC', 'L', imate)
-! ======================================================================
-! --- SI LES TEMPS PLUS ET MOINS SONT PRESENTS -------------------------
-! --- C EST QUE L ON APPELLE DEPUIS STAT NON LINE ET -------------------
-! --- ALORS LES TERMES DEPENDANT DE DT SONT EVALUES --------------------
-! ======================================================================
-        call tecach('ONO', 'PINSTMR', 'L', iretm, iad=iinstm)
-        call tecach('ONO', 'PINSTPR', 'L', iretp, iad=iinstp)
-        if (iretm .eq. 0 .and. iretp .eq. 0) then
-            dt = zr(iinstp) - zr(iinstm)
-            fnoevo = .true.
-        else
-            fnoevo = .false.
-            dt = 0.d0
-        endif
-! ======================================================================
-! --- PARAMETRES EN SORTIE ---------------------------------------------
-! ======================================================================
-        call jevech('PVECTUR', 'E', ivectu)
-        call fnothm(zi(imate), ndim     , axi    , perman , fnoevo ,&
-                      mecani   , press1   , press2   , tempe    ,&
-                      nno      , nnos     , nnom     , npi      , npg    ,&
-                      zr(igeom), dt   , dimdef   , dimcon   , dimuel ,&
-                      ipoids, ipoid2,&
-                      ivf, ivf2, idfde, idfde2,&
-                      nddls    , nddlm    , nmec, np1, np2,&
-                      zr(icontm), b        , r        ,zr(ivectu) )
+        call thmCompForcNoda(axi   , modint, vf    , typvf, perman, ndim ,&
+                             mecani, press1, press2, tempe)
     endif
 ! ======================================================================
 ! --- 6. OPTION : REFE_FORC_NODA ---------------------------------------
