@@ -15,9 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine thmCompRefeForcNoda(l_axi , inte_type, l_vf   , type_vf, l_steady, ndim ,&
-                               mecani, press1   , press2 , tempe)
+!
+subroutine thmCompRefeForcNoda()
 !
 use THM_type
 use THM_module
@@ -33,13 +32,9 @@ implicit none
 #include "asterfort/thmGetElemDime.h"
 #include "asterfort/thmGetElemRefe.h"
 #include "asterfort/thmGetElemInfo.h"
-!
-!
-    aster_logical, intent(in) :: l_axi, l_vf, l_steady
-    integer, intent(in) :: type_vf
-    character(len=3), intent(in) :: inte_type
-    integer, intent(in) :: ndim
-    integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+#include "asterfort/thmGetElemModel.h"
+#include "asterfort/thmGetGene.h"
+#include "asterfort/thmGetParaIntegration.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,16 +44,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_axi        : flag is axisymmetric model
-! In  inte_type    : type of integration - classical, lumped (D), reduced (R)
-! In  l_vf         : flag for finite volume
-! In  type_vf      : type for finite volume
-! In  l_steady     : .true. for steady state
-! In  ndim         : dimension of element (2 ou 3)
-! In  mecani       : parameters for mechanic
-! In  press1       : parameters for hydraulic (first pressure)
-! In  press1       : parameters for hydraulic (second pressure)
-! In  tempe        : parameters for thermic
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,11 +59,29 @@ implicit none
     integer :: nddls, nddlm, nddlk, nddlfa
     integer :: nddl_meca, nddl_p1, nddl_p2
     integer :: dimdep, dimdef, dimcon, dimuel
+    aster_logical :: l_axi, l_vf, l_steady
+    integer :: type_vf
+    character(len=3) :: inte_type
+    integer :: ndim
+    integer :: mecani(5), press1(7), press2(7), tempe(5)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     dt     = 1.0d0
     fnoevo = .true.
+!
+! - Get model of finite element
+!
+    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim)
+!
+! - Get type of integration
+!
+    call thmGetParaIntegration(l_vf, inte_type)
+!
+! - Get generalized coordinates
+!
+    call thmGetGene(l_steady, l_vf  , ndim  ,&
+                    mecani  , press1, press2, tempe)
 !
 ! - Get reference elements
 !

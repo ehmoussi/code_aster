@@ -21,9 +21,6 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine thmCompSiefElno(l_vf, inte_type, mecani, press1, press2, tempe)
-        aster_logical, intent(in) :: l_vf
-        character(len=3), intent(in) :: inte_type
-        integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+    subroutine thmCompSiefElno()
     end subroutine thmCompSiefElno
 end interface

@@ -25,9 +25,6 @@ use THM_module
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/thmGetElemModel.h"
-#include "asterfort/thmGetGene.h"
-#include "asterfort/thmGetParaIntegration.h"
 #include "asterfort/thmCompEpsiElga.h"
 #include "asterfort/thmCompSiefElno.h"
 #include "asterfort/thmCompVariElno.h"
@@ -52,32 +49,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_axi, l_steady, l_vf
-    integer :: ndim, type_vf
-    integer :: mecani(5), press1(7), press2(7), tempe(5)
-    character(len=3) :: inte_type
-!
-! --------------------------------------------------------------------------------------------------
-!
-
-!
-! - Init THM module
-!
     call thmModuleInit()
-!
-! - Get model of finite element
-!
-    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim)
-!
-! - Get type of integration
-!
-    call thmGetParaIntegration(l_vf, inte_type)
-!
-! - Get generalized coordinates
-!
-    call thmGetGene(l_steady, l_vf, ndim,&
-                    mecani, press1, press2, tempe)
-
 ! =====================================================================
 ! --- 2. OPTIONS : RIGI_MECA_TANG , FULL_MECA , RAPH_MECA -------------
 ! =====================================================================
@@ -89,50 +61,43 @@ implicit none
 ! --- 3. OPTION : CHAR_MECA_PESA_R ------------------------------------
 ! =====================================================================
     if (option .eq. 'CHAR_MECA_PESA_R') then
-        call thmCompGravity(inte_type, l_axi , l_vf  , type_vf, ndim,&
-                            mecani, press1, press2, tempe)
+        call thmCompGravity()
     endif
-!
 ! =====================================================================
 ! --- 4. OPTIONS : CHAR_MECA_FR2D2D OU CHAR_MECA_FR3D3D ---------------
 ! =====================================================================
     if (option .eq. 'CHAR_MECA_FR3D3D' .or. option .eq. 'CHAR_MECA_FR2D2D') then
-        call thmCompLoad(option, nomte,&
-                         l_axi   , inte_type, l_vf    , type_vf, ndim,&
-                         mecani, press1, press2, tempe)
+        call thmCompLoad(option, nomte)
     endif
 ! ======================================================================
 ! --- 5. OPTION : FORC_NODA --------------------------------------------
 ! ======================================================================
     if (option .eq. 'FORC_NODA') then
-        call thmCompForcNoda(l_axi   , inte_type, l_vf    , type_vf, l_steady, ndim ,&
-                             mecani, press1, press2, tempe)
+        call thmCompForcNoda()
     endif
 ! ======================================================================
 ! --- 6. OPTION : REFE_FORC_NODA ---------------------------------------
 ! ======================================================================
     if (option .eq. 'REFE_FORC_NODA') then
-        call thmCompRefeForcNoda(l_axi   , inte_type, l_vf    , type_vf, l_steady, ndim ,&
-                                 mecani, press1, press2, tempe)
+        call thmCompRefeForcNoda()
     endif
 ! ======================================================================
 ! --- 7. OPTION : SIEF_ELNO --------------------------------------------
 ! ======================================================================
-    if (option .eq. 'SIEF_ELNO  ') then
-        call thmCompSiefElno(l_vf, inte_type, mecani, press1, press2, tempe)
+    if (option .eq. 'SIEF_ELNO') then
+        call thmCompSiefElno()
     endif
 ! ======================================================================
 ! --- 8. OPTION : VARI_ELNO --------------------------------------------
 ! ======================================================================
-    if (option .eq. 'VARI_ELNO  ') then
-        call thmCompVariElno(l_vf, inte_type)
+    if (option .eq. 'VARI_ELNO') then
+        call thmCompVariElno()
     endif
 ! ======================================================================
 ! --- 9. OPTION : EPSI_ELGA --------------------------------------------
 ! ======================================================================
     if (option .eq. 'EPSI_ELGA') then
-        call thmCompEpsiElga(l_vf, l_axi, inte_type, ndim,&
-                             mecani, press1, press2, tempe)
+        call thmCompEpsiElga()
     endif
 !
 end subroutine

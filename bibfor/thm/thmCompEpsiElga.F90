@@ -15,9 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine thmCompEpsiElga(l_vf  , l_axi , inte_type, ndim ,&
-                           mecani, press1, press2   , tempe)
+!
+subroutine thmCompEpsiElga()
 !
 use THM_type
 use THM_module
@@ -33,12 +32,9 @@ implicit none
 #include "asterfort/thmGetElemDime.h"
 #include "asterfort/epsthm.h"
 #include "asterfort/thmGetElemRefe.h"
-!
-!
-    aster_logical, intent(in) :: l_axi, l_vf
-    character(len=3), intent(in) :: inte_type
-    integer, intent(in) :: ndim
-    integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+#include "asterfort/thmGetElemModel.h"
+#include "asterfort/thmGetGene.h"
+#include "asterfort/thmGetParaIntegration.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,19 +44,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_axi        : flag is axisymmetric model
-! In  l_vf         : flag for finite volume
-! In  inte_type    : type of integration - classical, lumped (D), reduced (R)
-! In  ndim         : dimension of element (2 ou 3)
-! In  mecani       : parameters for mechanic
-! In  press1       : parameters for hydraulic (first pressure)
-! In  press1       : parameters for hydraulic (second pressure)
-! In  tempe        : parameters for thermic
 !
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: elrefe, elref2
-    integer :: type_vf
     integer :: addeme, addep1, addep2, addete
     integer :: yamec, yate, yap1, yap2
     integer :: ipg, i_cmp
@@ -73,11 +60,28 @@ implicit none
     integer :: nddls, nddlm, nddlk, nddlfa
     integer :: nddl_meca, nddl_p1, nddl_p2
     integer :: dimdep, dimdef, dimcon, dimuel
+    aster_logical :: l_axi, l_vf, l_steady
+    integer :: type_vf
+    character(len=3) :: inte_type
+    integer :: ndim
+    integer :: mecani(5), press1(7), press2(7), tempe(5)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 
-
+!
+! - Get model of finite element
+!
+    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim)
+!
+! - Get type of integration
+!
+    call thmGetParaIntegration(l_vf, inte_type)
+!
+! - Get generalized coordinates
+!
+    call thmGetGene(l_steady, l_vf  , ndim  ,&
+                    mecani  , press1, press2, tempe)
 !
 ! - Cannot compute for finite volume
 !

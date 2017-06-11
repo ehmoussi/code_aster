@@ -23,7 +23,7 @@
 ! aslint: disable=W1504
 !
 interface 
-    subroutine xcaehm(nomte, axi, perman, typmod, inte_type,&
+    subroutine xcaehm(nomte, l_axi, l_steady, type_elem, inte_type,&
                       mecani, press1, press2, tempe, dimdef,&
                       dimcon, nmec, np1, np2, ndim,&
                       nno, nnos, nnom, npi, npg,&
@@ -31,9 +31,6 @@ interface
                       idfde, ddld, ddlm, ddlp, enrmec, nenr,&
                       dimenr, nnop, nnops, nnopm, enrhyd, ddlc, nfh)
         character(len=16) :: nomte
-        aster_logical :: axi
-        aster_logical :: perman
-        character(len=8) :: typmod(2)
         character(len=3), intent(out) :: inte_type
         integer :: mecani(5)
         integer :: press1(7)
@@ -44,7 +41,6 @@ interface
         integer :: nmec
         integer :: np1
         integer :: np2
-        integer :: ndim
         integer :: nno
         integer :: nnos
         integer :: nnom
@@ -68,5 +64,8 @@ interface
         integer :: enrhyd(3)
         integer :: ddlc
         integer :: nfh
+        aster_logical, intent(out) :: l_axi, l_steady
+        integer, intent(out) :: ndim
+        character(len=8), intent(out) :: type_elem(2)
     end subroutine xcaehm
 end interface 
