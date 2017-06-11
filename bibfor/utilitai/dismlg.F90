@@ -239,7 +239,7 @@ subroutine dismlg(questi, nomobz, repi, repkz, ierd)
                     if (typmod2 .eq. 'THM') then
                         repk='OUI'
                         call teattr('C', 'TYPMOD3', typmod3, iret, typel=nomte)
-                        if (typmod3 .eq. 'THM_P') then
+                        if (typmod3 .eq. 'STEADY') then
                             repk='OUI_P'
                         endif
                     endif

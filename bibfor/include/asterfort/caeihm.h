@@ -20,13 +20,15 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface
     subroutine caeihm(nomte, axi, perman, mecani, press1,&
                       press2, tempe, dimdef, dimcon, ndim,&
                       nno1, nno2, npi, npg, dimuel,&
                       iw, ivf1, idf1, ivf2, idf2,&
                       jgano1, iu, ip, ipf, iq,&
-                      modint)
+                      inte_type)
         character(len=16) :: nomte
         aster_logical :: axi
         aster_logical :: perman
@@ -52,6 +54,6 @@ interface
         integer :: ip(2, 9)
         integer :: ipf(2, 2, 9)
         integer :: iq(2, 2, 9)
-        character(len=3) :: modint
+        character(len=3), intent(out) :: inte_type
     end subroutine caeihm
 end interface

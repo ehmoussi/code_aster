@@ -18,7 +18,12 @@
 
 !
 !
+#include "asterf_types.h"
+!
 interface 
-    subroutine thmGetElemModel()
+    subroutine thmGetElemModel(l_axi_, l_vf_, type_vf_, l_steady_, ndim_, type_elem_)
+        aster_logical, optional, intent(out) :: l_axi_, l_steady_, l_vf_
+        integer, optional, intent(out) :: ndim_, type_vf_
+        character(len=8), optional, intent(out) :: type_elem_(2)
     end subroutine thmGetElemModel
 end interface 

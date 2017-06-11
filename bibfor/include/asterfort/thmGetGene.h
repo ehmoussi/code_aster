@@ -18,8 +18,17 @@
 
 !
 !
-interface
-    subroutine modthm(modint)
-        character(len=3), intent(out)  :: modint
-    end subroutine modthm
-end interface
+#include "asterf_types.h"
+!
+interface 
+    subroutine thmGetGene(l_steady, l_vf, ndim,&
+                      mecani, press1, press2, tempe)
+        aster_logical, intent(in) :: l_steady
+        aster_logical, intent(in) :: l_vf
+        integer, intent(in) :: ndim
+        integer, intent(out) :: mecani(5)
+        integer, intent(out) :: press1(7)
+        integer, intent(out) :: press2(7)
+        integer, intent(out) :: tempe(5)
+    end subroutine thmGetGene
+end interface 

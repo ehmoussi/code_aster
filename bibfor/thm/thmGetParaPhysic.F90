@@ -49,33 +49,9 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  mecani       : parameters for mechanic
-!                    (1) - Flag if physic exists (1 if exists)
-!                    (2) - Adress of first component in generalized strain vector
-!                    (3) - Adress of first component in generalized stress vector
-!                    (4) - Number of components for strains
-!                    (5) - Number of components for stresses
 ! In  press1       : parameters for hydraulic (first pressure)
-!                    (1) - Flag if physic exists (1 if exists)
-!                    (2) - Number of phases
-!                    (3) - Adress of first component in generalized strain vector
-!                    (4) - Adress of first component in vector of gen. stress for first phase 
-!                    (5) - Adress of first component in vector of gen. stress for second phase
-!                    (6) - Number of components for strains
-!                    (7) - Number of components for stresses (for each phase)
 ! In  press1       : parameters for hydraulic (second pressure)
-!                    (1) - Flag if physic exists (1 if exists)
-!                    (2) - Number of phases
-!                    (3) - Adress of first component in generalized strain vector
-!                    (4) - Adress of first component in vector of gen. stress for first phase 
-!                    (5) - Adress of first component in vector of gen. stress for second phase
-!                    (6) - Number of components for strains
-!                    (7) - Number of components for stresses (for each phase)
 ! In  tempe        : parameters for thermic
-!                    (1) - Flag if physic exists (1 if exists)
-!                    (2) - Adress of first component in generalized strain vector
-!                    (3) - Adress of first component in generalized stress vector
-!                    (4) - Number of components for strains
-!                    (5) - Number of components for stresses
 ! Out yamec        : 1 if mechanic , 0 otherwise
 ! Out addeme       : adress of first mechanic component in generalized strain vector
 ! Out yate         : 1 if thermic, 0 otherwise

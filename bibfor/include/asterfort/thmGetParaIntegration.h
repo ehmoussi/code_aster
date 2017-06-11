@@ -20,15 +20,9 @@
 !
 #include "asterf_types.h"
 !
-interface 
-    subroutine grdthm(perman, vf, ndim,&
-                      mecani, press1, press2, tempe)
-        aster_logical, intent(in) :: perman
-        aster_logical, intent(in) :: vf
-        integer, intent(in) :: ndim
-        integer, intent(out) :: mecani(5)
-        integer, intent(out) :: press1(7)
-        integer, intent(out) :: press2(7)
-        integer, intent(out) :: tempe(5)
-    end subroutine grdthm
-end interface 
+interface
+    subroutine thmGetParaIntegration(l_vf, inte_type)
+        aster_logical, intent(in) :: l_vf
+        character(len=3), intent(out)  :: inte_type
+    end subroutine thmGetParaIntegration
+end interface
