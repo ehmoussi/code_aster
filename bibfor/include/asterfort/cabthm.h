@@ -20,46 +20,33 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface
     subroutine cabthm(nddls, nddlm, nno, nnos, nnom,&
-                      dimuel, dimdef, ndim, kpi, ipoids,&
-                      ipoid2, ivf, ivf2, idfde, idfde2,&
-                      dfdi, dfdi2, geom, poids, poids2,&
-                      b, nmec, yamec, addeme, yap1,&
+                      dimuel, dimdef, ndim, kpi,&
+                      jv_poids, jv_poids2,&
+                      jv_func, jv_func2, jv_dfunc, jv_dfunc2,&
+                      dfdi, dfdi2, node_coor, poids, poids2,&
+                      b, nddl_meca, yamec, addeme, yap1,&
                       addep1, yap2, addep2, yate, addete,&
-                      np1, np2, axi)
-        integer :: ndim
-        integer :: dimdef
-        integer :: dimuel
-        integer :: nnos
-        integer :: nno
-        integer :: nddls
-        integer :: nddlm
-        integer :: nnom
-        integer :: kpi
-        integer :: ipoids
-        integer :: ipoid2
-        integer :: ivf
-        integer :: ivf2
-        integer :: idfde
-        integer :: idfde2
-        real(kind=8) :: dfdi(nno, 3)
-        real(kind=8) :: dfdi2(nnos, 3)
-        real(kind=8) :: geom(ndim, nno)
-        real(kind=8) :: poids
-        real(kind=8) :: poids2
-        real(kind=8) :: b(dimdef, dimuel)
-        integer :: nmec
-        integer :: yamec
-        integer :: addeme
-        integer :: yap1
-        integer :: addep1
-        integer :: yap2
-        integer :: addep2
-        integer :: yate
-        integer :: addete
-        integer :: np1
-        integer :: np2
-        aster_logical :: axi
+                      nddl_p1, nddl_p2, l_axi)
+        integer, intent(in) :: nddls, nddlm
+        integer, intent(in) :: nno, nnos, nnom
+        integer, intent(in) :: dimuel, dimdef
+        integer, intent(in) :: ndim
+        integer, intent(in) :: kpi
+        integer, intent(in) :: jv_poids, jv_poids2
+        integer, intent(in) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
+        real(kind=8), intent(out) :: dfdi(nno, 3), dfdi2(nnos, 3)
+        real(kind=8), intent(in) :: node_coor(ndim, nno)
+        real(kind=8), intent(out) :: poids, poids2
+        real(kind=8), intent(out) :: b(dimdef, dimuel)
+        integer, intent(in) :: nddl_meca, yamec,addeme
+        integer, intent(in) :: yap1, addep1
+        integer, intent(in) :: yap2, addep2
+        integer, intent(in) :: yate, addete
+        integer, intent(in) :: nddl_p1, nddl_p2
+        aster_logical, intent(in) :: l_axi
     end subroutine cabthm
 end interface
