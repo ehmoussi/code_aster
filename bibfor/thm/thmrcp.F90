@@ -67,7 +67,7 @@ implicit none
 ! =====================================================================
 ! --- VARIABLES LOCALES -----------------------------------------------
 ! =====================================================================
-    integer :: ii, dimsat, dimvg
+    integer :: ii, dimsat
     integer :: dim2, dim3, dim4, dim5, dim6, dim7, dim8
     integer :: dim9, dim10, dim11, dim12, dim13, dim14, dim15
     integer :: dim16, dim17, dim18, dim19, dim20, dim21, dim22
@@ -76,7 +76,6 @@ implicit none
     integer :: dimpar
     integer :: dim36, dim37, dim38, dim40, dim41, dim42, dim43, dim39
     parameter   ( dimsat =  2 )
-    parameter   ( dimvg  =  5 )
     parameter   ( dim2   =  3 )
     parameter   ( dim3   =  4 )
     parameter   ( dim4   =  4 )
@@ -141,7 +140,7 @@ implicit none
     real(kind=8) :: val35(dim35+1), val36(dim36), val37(dim37), val38(dim38)
     real(kind=8) :: val40(dim40), val41(dim41), val42(dim42), val43(dim43)
     real(kind=8) :: val39(dim39), valpar(dimpar)
-    real(kind=8) :: vg(dimvg), fpesa(1), un, zero
+    real(kind=8) :: vg(5), fpesa(1), un, zero
 !
 !
     integer :: icodre(nresma)
@@ -163,7 +162,7 @@ implicit none
     character(len=16) :: crad35(dim35), crad36(dim36), crad37(dim37)
     character(len=16) :: crad39(dim39), crad40(dim40)
     character(len=16) :: crad41(dim41), crad42(dim42)
-    character(len=16) :: nsat(dimsat), nvg(dimvg)
+    character(len=16) :: nsat(dimsat)
 ! =====================================================================
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_SATU -----
 ! =====================================================================
@@ -571,14 +570,6 @@ implicit none
     data nsat   / 'SATU_PRES' ,&
      &              'D_SATU_PRES' /
 ! =====================================================================
-! --- DEFINITION PARAMETRES MUALEM VAN GENUCHTEN ----------------------
-! =====================================================================
-    data nvg    / 'VG_N' ,&
-     &               'VG_PR' ,&
-     &               'VG_SR' ,&
-     &               'VG_SMAX',&
-     &               'VG_SATUR' /
-! =====================================================================
 ! --- CAS DE L'INITIALISATION -----------------------------------------
 ! =====================================================================
 !
@@ -707,12 +698,6 @@ implicit none
                             1)
             endif
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                            [0.d0], 5, nvg(1), vg(1), icodre,&
-                            1)
-                if (icodre(1) .eq. 1) then
-                    call utmess('F', 'ALGORITH16_94')
-                endif
                 call satuvg(p1m, val6(4), rbid1)
             elseif (hydr.eq.'HYDR_UTIL' .or. hydr.eq.'HYDR_ENDO') then
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PCAP',&
@@ -780,12 +765,6 @@ implicit none
                             1)
             endif
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                            [0.d0], 5, nvg(1), vg(1), icodre,&
-                            1)
-                if (icodre(1) .eq. 1) then
-                    call utmess('F', 'ALGORITH16_94')
-                endif
                 satm  = 0.d0
                 satur = 0.d0
                 call satuvg( p1m, satm, rbid1)
@@ -878,13 +857,6 @@ implicit none
                             1)
             endif
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-! SATU_PRES
-                call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                            [0.d0], 5, nvg(1), vg(1), icodre,&
-                            1)
-                if (icodre(1) .eq. 1) then
-                    call utmess('F', 'ALGORITH16_94')
-                endif
                 satm  = 0.d0
                 satur = 0.d0
                 call satuvg( p1m, satm, rbid1)
@@ -977,12 +949,6 @@ implicit none
                             1)
             endif
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                            [0.d0], 5, nvg(1), vg(1), icodre,&
-                            1)
-                if (icodre(1) .eq. 1) then
-                    call utmess('F', 'ALGORITH16_94')
-                endif
                 satm  = 0.d0
                 satur = 0.d0
                 call satuvg( p1m, satm, rbid1)
@@ -1067,12 +1033,6 @@ implicit none
                             1)
             endif
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                            [0.d0], 5, nvg(1), vg(1), icodre,&
-                            1)
-                if (icodre(1) .eq. 1) then
-                    call utmess('F', 'ALGORITH16_94')
-                endif
                 satm  = 0.d0
                 satur = 0.d0
                 call satuvg( p1m, satm, rbid1)
@@ -1754,13 +1714,12 @@ implicit none
                             1)
             endif
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                            [0.d0], 5, nvg(1), vg(1), icodre,&
-                            1)
-                if (icodre(1) .eq. 1) then
-                    call utmess('F', 'ALGORITH16_94')
-                endif
                 call satuvg( pvp-p1, val22(22), val22(23))
+                vg(1) = ds_thm%ds_material%n
+                vg(2) = ds_thm%ds_material%pr
+                vg(3) = ds_thm%ds_material%sr
+                vg(4) = ds_thm%ds_material%smax
+                vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
                     call permvg(vg, val22(22), val22(24), val22(25), val22(26),&
                                 val22(27))
@@ -2022,13 +1981,12 @@ implicit none
                             1)
             endif
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                            [0.d0], 5, nvg(1), vg(1), icodre,&
-                            1)
-                if (icodre(1) .eq. 1) then
-                    call utmess('F', 'ALGORITH16_94')
-                endif
                 call satuvg( p1, val25(22), val25(23))
+                vg(1) = ds_thm%ds_material%n
+                vg(2) = ds_thm%ds_material%pr
+                vg(3) = ds_thm%ds_material%sr
+                vg(4) = ds_thm%ds_material%smax
+                vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
                     call permvg(vg, val25(22), val25(24), val25(25), val25(26),&
                                 val25(27))
@@ -2330,13 +2288,12 @@ implicit none
                             1)
             endif
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                            [0.d0], 5, nvg(1), vg(1), icodre,&
-                            1)
-                if (icodre(1) .eq. 1) then
-                    call utmess('F', 'ALGORITH16_94')
-                endif
                 call satuvg( p1, val40(22), val40(23))
+                vg(1) = ds_thm%ds_material%n
+                vg(2) = ds_thm%ds_material%pr
+                vg(3) = ds_thm%ds_material%sr
+                vg(4) = ds_thm%ds_material%smax
+                vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
                     call permvg(vg, val40(22), val40(24), val40(25), val40(26),&
                                 val40(27))
@@ -2662,13 +2619,12 @@ implicit none
                             1)
             endif
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                            [0.d0], 5, nvg(1), vg(1), icodre,&
-                            1)
-                if (icodre(1) .eq. 1) then
-                    call utmess('F', 'ALGORITH16_94')
-                endif
                 call satuvg( p1, val40(22), val40(23))
+                vg(1) = ds_thm%ds_material%n
+                vg(2) = ds_thm%ds_material%pr
+                vg(3) = ds_thm%ds_material%sr
+                vg(4) = ds_thm%ds_material%smax
+                vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
                     call permvg(vg, val40(22), val40(24), val40(25), val40(26),&
                                 val40(27))
@@ -2968,13 +2924,12 @@ implicit none
                             1)
             endif
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                            [0.d0], 5, nvg(1), vg(1), icodre,&
-                            1)
-                if (icodre(1) .eq. 1) then
-                    call utmess('F', 'ALGORITH16_94')
-                endif
                 call satuvg( p1, val29(22), val29(23))
+                vg(1) = ds_thm%ds_material%n
+                vg(2) = ds_thm%ds_material%pr
+                vg(3) = ds_thm%ds_material%sr
+                vg(4) = ds_thm%ds_material%smax
+                vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
                     call permvg(vg, val29(22), val29(24), val29(25), val29(26),&
                                 val29(27))
