@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: sylvie.granet at edf.fr
+!
 subroutine te0600(option, nomte)
 !
 use THM_type
@@ -48,11 +49,11 @@ implicit none
 #include "asterfort/thmCompEpsiElga.h"
 #include "asterfort/thmCompSiefElno.h"
 #include "asterfort/thmCompVariElno.h"
+#include "asterfort/thmCompRefeForcNoda.h"
 #include "asterfort/Behaviour_type.h"
 
     character(len=16) :: option, nomte
 ! =====================================================================
-! person_in_charge: sylvie.granet at edf.fr
 !    - FONCTION REALISEE:  CALCUL DES OPTIONS NON-LINEAIRES MECANIQUES
 !                          ELEMENTS THHM, HM ET HH
 !    - ARGUMENTS:
@@ -410,49 +411,21 @@ implicit none
 ! --- PARAMETRES EN SORTIE ---------------------------------------------
 ! ======================================================================
         call jevech('PVECTUR', 'E', ivectu)
-        call fnothm(fnoevo, dt, perman, nno, nnos,&
-                    nnom, npi, npg, ipoids, ipoid2,&
-                    ivf, ivf2, idfde, idfde2, zr(igeom),&
-                    zr(icontm), b, dfdi, dfdi2, r,&
-                    zr(ivectu), zi(imate), mecani, press1, press2,&
-                    tempe, dimdef, dimcon, nddls, nddlm,&
-                    dimuel, nmec, np1, np2, ndim,&
-                    axi)
+        call fnothm(zi(imate), ndim     , axi    , perman , fnoevo ,&
+                      mecani   , press1   , press2   , tempe    ,&
+                      nno      , nnos     , nnom     , npi      , npg    ,&
+                      zr(igeom), dt   , dimdef   , dimcon   , dimuel ,&
+                      ipoids, ipoid2,&
+                      ivf, ivf2, idfde, idfde2,&
+                      nddls    , nddlm    , nmec, np1, np2,&
+                      zr(icontm), b        , r        ,zr(ivectu) )
     endif
 ! ======================================================================
 ! --- 6. OPTION : REFE_FORC_NODA ---------------------------------------
 ! ======================================================================
     if (option .eq. 'REFE_FORC_NODA') then
-! ======================================================================
-! --- ON RAPPELLE QUE LES PARAMETRES DU CRITERE DE CONVERGENCE SONT ----
-! --- STOCKES DE LA FACON SUIVANTE : (1) : SIGM_REFE -------------------
-! ---------------------------------- (3) : FLUX_THER_REFE --------------
-! ---------------------------------- (4) : FLUX_HYD1_REFE --------------
-! ---------------------------------- (5) : FLUX_HYD2_REFE --------------
-! ======================================================================
-! --- INITIALISATION ---------------------------------------------------
-! ======================================================================
-        dt = 1.0d0
-        fnoevo = .true.
-! ======================================================================
-! --- PARAMETRES EN ENTREE ---------------------------------------------
-! ======================================================================
-        call jevech('PGEOMER', 'L', igeom)
-        call jevech('PMATERC', 'L', imate)
-! ======================================================================
-! --- PARAMETRES EN SORTIE ---------------------------------------------
-! ======================================================================
-        call jevech('PVECTUR', 'E', ivectu)
-! ======================================================================
-! --- APPEL A LA ROUTINE SUR LES CRITERES DE CONVERGENCE ---------------
-! ======================================================================
-        call refthm(fnoevo, dt, perman, nno, nnos,&
-                    nnom, npi, npg, ipoids, ipoid2,&
-                    ivf, ivf2, idfde, idfde2, zr(igeom),&
-                    b, dfdi, dfdi2, r, zr( ivectu),&
-                    zi(imate), mecani, press1, press2, tempe,&
-                    dimdef, dimcon, dimuel, nddls, nddlm,&
-                    nmec, np1, np2, ndim, axi)
+        call thmCompRefeForcNoda(axi   , modint, vf    , typvf, perman, ndim ,&
+                                 mecani, press1, press2, tempe)
     endif
 ! ======================================================================
 ! --- 7. OPTION : SIEF_ELNO --------------------------------------------

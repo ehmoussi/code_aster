@@ -20,19 +20,13 @@
 !
 #include "asterf_types.h"
 !
-interface 
-    subroutine fonoda(jv_mater, ndim  , l_steady, fnoevo,&
-                      mecani  , press1, press2  , tempe ,&
-                      dimdef  , dimcon, dt      , congem,&
-                      r)
-        integer, intent(in) :: jv_mater
+interface
+    subroutine thmCompRefeForcNoda(l_axi , inte_type, l_vf   , type_vf, l_steady, ndim ,&
+                                   mecani, press1   , press2 , tempe)
+        aster_logical, intent(in) :: l_axi, l_vf, l_steady
+        integer, intent(in) :: type_vf
+        character(len=3), intent(in) :: inte_type
         integer, intent(in) :: ndim
-        aster_logical, intent(in) :: fnoevo
-        aster_logical, intent(in) :: l_steady
         integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
-        integer, intent(in) :: dimdef, dimcon
-        real(kind=8), intent(in) :: dt
-        real(kind=8), intent(inout) :: congem(dimcon)
-        real(kind=8), intent(out) :: r(dimdef+1)
-    end subroutine fonoda
-end interface 
+    end subroutine thmCompRefeForcNoda
+end interface

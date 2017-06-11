@@ -81,11 +81,6 @@ cata_msg = {
  redécoupage global.
 """),
 
-    40 : _(u"""
-Vecteur nul entraînant une division par zéro.
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
 
     41 : _(u"""
  incohérence de A ou H

@@ -20,50 +20,35 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface
-    subroutine fnothm(fnoevo, deltat, perman, nno, nnos,&
-                      nnom, npi, npg, ipoids, ipoid2,&
-                      ivf, ivf2, idfde, idfde2, geom,&
-                      congem, b, dfdi, dfdi2, r,&
-                      vectu, imate, mecani, press1, press2,&
-                      tempe, dimdef, dimcon, nddls, nddlm,&
-                      dimuel, nmec, np1, np2, ndim,&
-                      axi)
-        integer :: ndim
-        integer :: dimuel
-        integer :: dimcon
-        integer :: dimdef
-        integer :: npi
-        integer :: nnos
-        integer :: nno
-        aster_logical :: fnoevo
-        real(kind=8) :: deltat
-        aster_logical :: perman
-        integer :: nnom
-        integer :: npg
-        integer :: ipoids
-        integer :: ipoid2
-        integer :: ivf
-        integer :: ivf2
-        integer :: idfde
-        integer :: idfde2
-        real(kind=8) :: geom(ndim, nno)
-        real(kind=8) :: congem(1:npi*dimcon)
-        real(kind=8) :: b(dimdef, dimuel)
-        real(kind=8) :: dfdi(nno, 3)
-        real(kind=8) :: dfdi2(nnos, 3)
-        real(kind=8) :: r(1:dimdef+1)
-        real(kind=8) :: vectu(dimuel)
-        integer :: imate
-        integer :: mecani(5)
-        integer :: press1(7)
-        integer :: press2(7)
-        integer :: tempe(5)
-        integer :: nddls
-        integer :: nddlm
-        integer :: nmec
-        integer :: np1
-        integer :: np2
-        aster_logical :: axi
+    subroutine fnothm(jv_mater , ndim     , l_axi    , l_steady , fnoevo ,&
+                      mecani   , press1   , press2   , tempe    ,&
+                      nno      , nnos     , nnom     , npi      , npg    ,&
+                      elem_coor, deltat   , dimdef   , dimcon   , dimuel ,&
+                      jv_poids , jv_poids2,&
+                      jv_func  , jv_func2 , jv_dfunc , jv_dfunc2,&
+                      nddls    , nddlm    , nddl_meca, nddl_p1  , nddl_p2,&
+                      congem   , b        , r        , vectu )
+        integer, intent(in) :: jv_mater
+        integer, intent(in) :: ndim
+        aster_logical, intent(in) :: l_axi
+        aster_logical, intent(in) :: l_steady
+        aster_logical, intent(in) :: fnoevo
+        integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+        integer, intent(in) :: nno, nnos, nnom
+        integer, intent(in) :: npi, npg
+        real(kind=8) :: elem_coor(ndim, nno)
+        real(kind=8), intent(in) :: deltat
+        integer, intent(in) :: dimuel, dimdef, dimcon
+        integer, intent(in) :: jv_poids, jv_poids2
+        integer, intent(in) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
+        integer, intent(in) :: nddls, nddlm
+        integer, intent(in) :: nddl_meca, nddl_p1, nddl_p2
+        real(kind=8), intent(inout) :: congem(1:npi*dimcon)
+        real(kind=8), intent(inout) :: b(dimdef, dimuel)
+        real(kind=8), intent(inout) :: r(1:dimdef+1)
+        real(kind=8), intent(out) :: vectu(dimuel)
     end subroutine fnothm
 end interface
