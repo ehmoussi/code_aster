@@ -20,25 +20,10 @@
 !
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
 interface
-    subroutine itgthm(ndim    , l_vf     , type_vf, inte_type,&
-                      nno     , nnos     , nnom   , nface    ,&
-                      npi     , npi2     , npg    ,&
-                      jv_poids, jv_poids2,&
-                      jv_func , jv_func2 ,&
-                      jv_dfunc, jv_dfunc2,&
-                      jv_gano )
-        integer, intent(in) :: ndim
+    subroutine thmGetElemRefe(l_vf, elrefe, elref2)
         aster_logical, intent(in) :: l_vf
-        integer, intent(in) :: type_vf
-        character(len=3), intent(in) :: inte_type
-        integer, intent(out) :: nno, nnos, nnom
-        integer, intent(out) :: npi, npi2, npg
-        integer, intent(out) :: nface
-        integer, intent(out) :: jv_gano
-        integer, intent(out) :: jv_poids, jv_poids2
-        integer, intent(out) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
-    end subroutine itgthm
+        character(len=8), intent(out) :: elrefe
+        character(len=8), intent(out) :: elref2
+    end subroutine thmGetElemRefe
 end interface

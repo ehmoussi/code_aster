@@ -20,11 +20,13 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface
     subroutine caethm(axi, perman, vf, typvf,&
                       typmod, modint, mecani, press1, press2,&
-                      tempe, dimdep, dimdef, dimcon, nmec,&
-                      np1, np2, ndim, nno, nnos,&
+                      tempe, dimdep, dimdef, dimcon, nddl_meca,&
+                      nddl_p1, nddl_p2, ndim, nno, nnos,&
                       nnom, nface, npi, npg, nddls,&
                       nddlm, nddlfa, nddlk, dimuel, ipoids,&
                       ivf, idfde, ipoid2, ivf2, idfde2,&
@@ -43,9 +45,9 @@ interface
         integer, intent(out) :: dimdep
         integer, intent(out) :: dimdef
         integer, intent(out) :: dimcon
-        integer, intent(out) :: nmec
-        integer, intent(out) :: np1
-        integer, intent(out) :: np2
+        integer, intent(out) :: nddl_meca
+        integer, intent(out) :: nddl_p1
+        integer, intent(out) :: nddl_p2
         integer :: nno
         integer :: nnos
         integer :: nnom

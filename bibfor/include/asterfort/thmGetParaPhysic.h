@@ -18,27 +18,23 @@
 
 !
 !
-#include "asterf_types.h"
-!
-! aslint: disable=W1504
-!
 interface
-    subroutine itgthm(ndim    , l_vf     , type_vf, inte_type,&
-                      nno     , nnos     , nnom   , nface    ,&
-                      npi     , npi2     , npg    ,&
-                      jv_poids, jv_poids2,&
-                      jv_func , jv_func2 ,&
-                      jv_dfunc, jv_dfunc2,&
-                      jv_gano )
-        integer, intent(in) :: ndim
-        aster_logical, intent(in) :: l_vf
-        integer, intent(in) :: type_vf
-        character(len=3), intent(in) :: inte_type
-        integer, intent(out) :: nno, nnos, nnom
-        integer, intent(out) :: npi, npi2, npg
-        integer, intent(out) :: nface
-        integer, intent(out) :: jv_gano
-        integer, intent(out) :: jv_poids, jv_poids2
-        integer, intent(out) :: jv_func, jv_func2, jv_dfunc, jv_dfunc2
-    end subroutine itgthm
+    subroutine thmGetParaPhysic(mecani, press1, press2, tempe,&
+                                yamec_, addeme_,&
+                                yate_, addete_,&
+                                yap1_, addep1_,&
+                                yap2_, addep2_)
+        integer, intent(in) :: mecani(5)
+        integer, intent(in) :: press1(7)
+        integer, intent(in) :: press2(7)
+        integer, intent(in) :: tempe(5)
+        integer, optional, intent(out) :: yamec_
+        integer, optional, intent(out) :: addeme_
+        integer, optional, intent(out) :: yate_
+        integer, optional, intent(out) :: addete_
+        integer, optional, intent(out) :: yap1_
+        integer, optional, intent(out) :: addep1_
+        integer, optional, intent(out) :: yap2_
+        integer, optional, intent(out) :: addep2_
+    end subroutine thmGetParaPhysic
 end interface
