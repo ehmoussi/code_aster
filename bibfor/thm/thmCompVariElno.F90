@@ -15,8 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine thmCompVariElno(l_vf, inte_type)
+!
+subroutine thmCompVariElno()
 !
 use Behaviour_type
 !
@@ -29,10 +29,10 @@ implicit none
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/posthm.h"
+#include "asterfort/thmGetElemModel.h"
+#include "asterfort/thmGetGene.h"
+#include "asterfort/thmGetParaIntegration.h"
 #include "asterfort/Behaviour_type.h"
-!
-aster_logical, intent(in) :: l_vf
-character(len=3), intent(in) :: inte_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,20 +42,29 @@ character(len=3), intent(in) :: inte_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_vf         : flag for finite volume
-! In  inte_type    : type of integration - classical, lumped (D), reduced (R)
-! In  ndim         : dimension of element (2 ou 3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=16) :: option
     character(len=8) :: elrefe, elref2
     integer :: jv_gano, jv_compo, jv_varielga, jv_varielno
-    integer :: ncmp, nvim, ndim
+    integer :: ncmp, nvim
+    aster_logical :: l_axi, l_vf, l_steady
+    integer :: type_vf
+    character(len=3) :: inte_type
+    integer :: ndim
 !
 ! --------------------------------------------------------------------------------------------------
 !
     option = 'VARI_ELNO'
+!
+! - Get model of finite element
+!
+    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim)
+!
+! - Get type of integration
+!
+    call thmGetParaIntegration(l_vf, inte_type)
 !
 ! - Get reference elements
 !

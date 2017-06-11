@@ -48,11 +48,12 @@ character(len=16), intent(in) :: option
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: codret
-    integer :: ibid, i_dimuel
+    integer :: ibid, i_dimuel, ibid2, ibid3, ibid4
     real(kind=8) :: angl_naut(3)
+    integer :: jv_sigm, jv_vari, jv_disp
     integer :: jv_geom, jv_matr, jv_vect, jv_sigmm, jv_varim, jv_cret
     integer :: jv_mater, jv_instm, jv_instp, jv_dispm
-    integer :: jv_dispp, jv_compor, jv_carcri, jv_varip, jv_sigmp, jv_disp
+    integer :: jv_dispp, jv_compor, jv_carcri, jv_varip, jv_sigmp
     aster_logical :: l_axi, l_steady, l_vf
     integer :: type_vf
     character(len=3) :: inte_type
@@ -81,9 +82,9 @@ character(len=16), intent(in) :: option
                 tempe, dimdep, dimdef, dimcon, nddl_meca,&
                 nddl_p1, nddl_p2, ndim, nno, nnos,&
                 nnom, ibid, npi, npg, nddls,&
-                nddlm, ibid, ibid, dimuel, jv_poids,&
+                nddlm, ibid2, ibid3, dimuel, jv_poids,&
                 jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2,&
-                ibid, jv_gano)
+                ibid4, jv_gano)
 !
 ! - Input fields
 !
@@ -125,11 +126,15 @@ character(len=16), intent(in) :: option
 !
     if (option(1:9) .eq. 'RIGI_MECA') then
         jv_disp = jv_dispm
+        jv_sigm = jv_sigmm
+        jv_vari = jv_varim
     else
         do i_dimuel = 1, dimuel
             zr(jv_dispp+i_dimuel-1) = zr(jv_dispm+i_dimuel-1) + zr(jv_dispp+i_dimuel-1)
         end do
         jv_disp = jv_dispp
+        jv_sigm = jv_sigmp
+        jv_vari = jv_varip
     endif
 !
 ! - Number of (total) internal variables
@@ -141,7 +146,7 @@ character(len=16), intent(in) :: option
     call assthm(nno, nnos, nnom, npg, npi,&
                 jv_poids, jv_poids2, jv_func, jv_func2, jv_dfunc,&
                 jv_dfunc2, zr(jv_geom), zr(jv_carcri), zr(jv_dispm), zr(jv_disp),&
-                zr(jv_sigmm), zr(jv_sigmp), zr(jv_varim), zr(jv_varip), defgem,&
+                zr(jv_sigmm), zr(jv_sigm), zr(jv_varim), zr(jv_vari), defgem,&
                 defgep, drds, drdsr, dsde, b,&
                 dfdi, dfdi2, r, sigbar, c,&
                 ck, cs, zr(jv_matr), zr(jv_vect), zr(jv_instm),&

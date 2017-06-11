@@ -21,12 +21,6 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine thmCompRefeForcNoda(l_axi , inte_type, l_vf   , type_vf, l_steady, ndim ,&
-                                   mecani, press1   , press2 , tempe)
-        aster_logical, intent(in) :: l_axi, l_vf, l_steady
-        integer, intent(in) :: type_vf
-        character(len=3), intent(in) :: inte_type
-        integer, intent(in) :: ndim
-        integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
+    subroutine thmCompRefeForcNoda()
     end subroutine thmCompRefeForcNoda
 end interface

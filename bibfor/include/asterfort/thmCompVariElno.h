@@ -21,8 +21,6 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine thmCompVariElno(l_vf, inte_type)
-        aster_logical, intent(in) :: l_vf
-        character(len=3), intent(in) :: inte_type
+    subroutine thmCompVariElno()
     end subroutine thmCompVariElno
 end interface

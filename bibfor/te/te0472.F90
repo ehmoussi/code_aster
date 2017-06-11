@@ -20,7 +20,8 @@ subroutine te0472(option, nomte)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterfort/borthm.h"
+#include "asterfort/thmGetElemModel.h"
+#include "asterfort/dimthm.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/fointe.h"
 #include "asterfort/jevech.h"
@@ -50,20 +51,21 @@ subroutine te0472(option, nomte)
 ! NPG      NB DE POINTS DE GAUSS DE L'ELEMENT DE BORD
 ! ======================================================================
 ! ======================================================================
-    aster_logical :: axi, perman, vf
+    aster_logical :: l_axi, l_steady, l_vf
     integer :: nno, nno2, nnos, kp, npg, ndim, jgano, jgano2, napre1, napre2
     integer :: ipoids, ipoid2, ivf, ivf2, idfde, idfde2, igeom, natemp
     integer :: ipres, k, kk, i, l, ires, iflux, itemps, iopt, ipresf, ndlnm
     integer :: ifluxf, iret, ndlno
     real(kind=8) :: poids, r, z, tx, ty, nx, ny, valpar(3), deltat, tplus
     real(kind=8) :: pres, presf, poids2, nx2, ny2, flu1, flu2, fluth
-    character(len=8) :: nompar(3), typmod(2)
-    integer :: typvf
-! ======================================================================
-! --- CARACTERISTIQUES DE LA MODELISATION ------------------------------
-! ======================================================================
-    call borthm(axi, vf, perman, typvf, typmod,&
-                ndim, ndlno, ndlnm)
+    character(len=8) :: nompar(3), type_elem(2)
+    integer :: type_vf
+!
+! - Get model of finite element
+!
+    call thmGetElemModel(l_axi, l_vf, type_vf, l_steady, ndim, type_elem)
+    call dimthm(ndlno, ndlnm, ndim)
+
 ! ======================================================================
 ! --- DEFINITION DE L'ELEMENT (NOEUDS, SOMMETS, POINTS DE GAUSS) -------
 ! ======================================================================
@@ -140,7 +142,7 @@ subroutine te0472(option, nomte)
 ! ======================================================================
 ! --- MODIFICATION DU POIDS POUR LES CAS AXI ---------------------------
 ! ======================================================================
-        if (axi) then
+        if (l_axi) then
             r = 0.d0
             z = 0.d0
             do i = 1, nno
@@ -325,7 +327,7 @@ subroutine te0472(option, nomte)
                 endif
                 do i = 1, nno2
                     l = 3* (i-1) - 1
-                    if (.not.perman) then
+                    if (.not.l_steady) then
                         zr(ires+l+3) = zr(ires+l+3) - poids*deltat* flu1*zr(ivf2+kk+i-1)
                     else
                         zr(ires+l+3) = zr(ires+l+3) - poids*flu1*zr( ivf2+kk+i-1)

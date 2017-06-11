@@ -21,14 +21,7 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine thmCompLoad(option, nomte,&
-                           l_axi , inte_type, l_vf  , type_vf, ndim ,&
-                           mecani, press1   , press2, tempe)
+    subroutine thmCompLoad(option, nomte)
         character(len=16), intent(in) :: option, nomte
-        aster_logical, intent(in) :: l_axi, l_vf
-        integer, intent(in) :: type_vf
-        character(len=3), intent(in) :: inte_type
-        integer, intent(in) :: ndim
-        integer, intent(in) :: mecani(5), press1(7), press2(7), tempe(5)
     end subroutine thmCompLoad
 end interface
