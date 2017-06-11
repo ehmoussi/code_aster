@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/tecach.h"
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
-#include "asterfort/thmGetElemInfo.h"
+#include "asterfort/thmGetElemModel.h"
 #include "asterfort/Behaviour_type.h"
     character(len=16) :: option, nomte
 !
@@ -111,9 +111,9 @@ implicit none
 !
     call thmModuleInit()
 !
-! - Get parameters for finite element
+! - Get model of finite element
 !
-    call thmGetElemInfo()
+    call thmGetElemModel()
     if (ds_thm%ds_elem%l_weak_coupling) then
         call utmess('F', 'CHAINAGE_12')
     endif

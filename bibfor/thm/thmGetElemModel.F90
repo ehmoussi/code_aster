@@ -15,8 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine thmGetElemInfo()
+!
+subroutine thmGetElemModel()
 !
 use THM_type
 use THM_module
@@ -28,14 +28,11 @@ implicit none
 #include "asterfort/rcvarc.h"
 #include "asterfort/utmess.h"
 !
-!
-
-!
 ! --------------------------------------------------------------------------------------------------
 !
-! THM
+! THM - Parameters
 !
-! Get type of finite element
+! Get model of finite element
 !
 ! --------------------------------------------------------------------------------------------------
 !

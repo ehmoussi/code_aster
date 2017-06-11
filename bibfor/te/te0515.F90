@@ -31,7 +31,7 @@ implicit none
 #include "asterfort/caethm.h"
 #include "asterfort/fnoesu.h"
 #include "asterfort/jevech.h"
-#include "asterfort/thmGetElemInfo.h"
+#include "asterfort/thmGetElemModel.h"
     character(len=16) :: option, nomte
 !    - FONCTION REALISEE:  CALCUL DES OPTIONS NON-LINEAIRES MECANIQUES
 !                          ELEMENTS HH2_SUDA, (SUSHI DECENTRE ARRETE)
@@ -118,9 +118,9 @@ implicit none
 !
     call thmModuleInit()
 !
-! - Get parameters for finite element
+! - Get model of finite element
 !
-    call thmGetElemInfo()
+    call thmGetElemModel()
 !
     call caethm(axi, perman, vf, typvf,&
                 typmod, modint, mecani, press1, press2,&
