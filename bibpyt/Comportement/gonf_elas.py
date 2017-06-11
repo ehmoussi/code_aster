@@ -22,14 +22,14 @@
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
-    nom            = 'ELAS_GONF',
+    nom            = 'GONF_ELAS',
     doc            =   """Relation décrivant le comportement mécanique élasto-plastique des sols non saturés
             pour des argiles gonflantes. Modèle reliant la pression de gonflement a la succion.
             Ce modèle doit être utilisé dans des relations KIT_HHM ou KIT_THHM."""      ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,
-    mc_mater       = ('ELAS','ELAS_GONF',),
+    mc_mater       = ('ELAS','GONF_ELAS',),
     modelisation   = ('KIT_HHM','KIT_THHM',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
     algo_inte      = ('ANALYTIQUE',),

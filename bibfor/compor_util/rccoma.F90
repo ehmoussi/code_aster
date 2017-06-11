@@ -43,7 +43,6 @@ subroutine rccoma(jmat, mater_typez, iarret, mater_keyword, icodre)
 !      mater_type/mater_keyword
 !      'ELAS' -> / 'ELAS'
 !                / 'ELAS_ISTR'
-!                / 'ELAS_GONF'
 !                / ...
 !      'ECRO' -> / 'ECRO_PUIS'
 !                / 'ECRO_LINE'
@@ -85,8 +84,7 @@ subroutine rccoma(jmat, mater_typez, iarret, mater_keyword, icodre)
                     mater_keyword=zk32(zi(imat)+icomp-1)
                     icodre_in = 0
                 else
-                    if (mater_keyword.ne.zk32(zi(imat)+icomp-1) .and.&
-                        mater_keyword .ne. 'ELAS_GONF') then
+                    if (mater_keyword.ne.zk32(zi(imat)+icomp-1)) then
                         if (iarret .eq. 1) then
                             call utmess('F', 'COMPOR5_56', sk=mater_type)
                         else

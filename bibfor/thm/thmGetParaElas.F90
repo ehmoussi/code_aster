@@ -108,18 +108,15 @@ implicit none
 ! - Some checks: compatibility of elasticity with diffusion
 !
     if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISOT) then
-        if (ds_thm%ds_material%elas_id .ne. 1 .and.&
-            ds_thm%ds_material%elas_keyword .ne. 'ELAS_GONF') then
+        if (ds_thm%ds_material%elas_id .ne. 1 ) then
             call utmess('F', 'THM1_2', sk = ds_thm%ds_material%elas_keyword)
         endif
     elseif (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISTR) then
-        if (ds_thm%ds_material%elas_id .ne. 3 .and.&
-            ds_thm%ds_material%elas_keyword .ne. 'ELAS_GONF') then
+        if (ds_thm%ds_material%elas_id .ne. 3 ) then
             call utmess('F', 'THM1_2', sk = ds_thm%ds_material%elas_keyword)
         endif
     elseif (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ORTH) then
-        if (ds_thm%ds_material%elas_id .ne. 2 .and.&
-            ds_thm%ds_material%elas_keyword .ne. 'ELAS_GONF') then
+        if (ds_thm%ds_material%elas_id .ne. 2 ) then
             call utmess('F', 'THM1_2', sk = ds_thm%ds_material%elas_keyword)
         endif
     else

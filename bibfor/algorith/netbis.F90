@@ -18,13 +18,13 @@
 
 subroutine netbis(meca, net, bishop)
 ! ROUTINE NETBIS
-! ON PASSE EN CONTRAINTE NETTE DANS LE CAS ELAS_GONF (SINON BISHOP)
+! ON PASSE EN CONTRAINTE NETTE DANS LE CAS GONF_ELAS (SINON BISHOP)
 ! ======================================================================
     implicit none
 #include "asterf_types.h"
     aster_logical :: net, bishop
     character(len=16) :: meca
-    if (meca .eq. 'ELAS_GONF') then
+    if (meca .eq. 'GONF_ELAS') then
         net=.true.
         bishop=.false.
     else

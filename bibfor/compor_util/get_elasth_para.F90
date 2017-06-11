@@ -139,25 +139,14 @@ implicit none
                 deps_ch_tref_ = deps_ch_tref
             endif
         else
-            if (elas_keyword .eq. 'ELAS_GONF') then
-                nbres     = 1
-                nomres(1) = 'ALPHA'
-                call rcvalb(fami  , ipg, ispg, poum, j_mater,&
-                            materi, 'ELAS', nb_para, para_name, [para_vale],&
-                            nbres , nomres, valres, icodre, 1)
-                alpha_a   = valres(1)
-                alpha(1)  = alpha_a
-                alpha(2)  = 0.d0
-            else
-                nbres     = 1
-                nomres(1) = 'ALPHA'
-                call rcvalb(fami  , ipg, ispg, poum, j_mater,&
-                            materi, elas_keyword, nb_para, para_name, [para_vale],&
-                            nbres , nomres, valres, icodre, 1)
-                alpha_a   = valres(1)
-                alpha(1)  = alpha_a
-                alpha(2)  = 0.d0
-            endif
+            nbres     = 1
+            nomres(1) = 'ALPHA'
+            call rcvalb(fami  , ipg, ispg, poum, j_mater,&
+                        materi, elas_keyword, nb_para, para_name, [para_vale],&
+                        nbres , nomres, valres, icodre, 1)
+            alpha_a   = valres(1)
+            alpha(1)  = alpha_a
+            alpha(2)  = 0.d0
         endif
     elseif (elas_type.eq.2) then
         nbres     = 3
