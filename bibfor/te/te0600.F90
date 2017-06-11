@@ -32,18 +32,14 @@ implicit none
 #include "asterfort/caethm.h"
 #include "asterfort/dfdm2d.h"
 #include "asterfort/dfdm3d.h"
-#include "asterfort/epsthm.h"
 #include "asterfort/eulnau.h"
 #include "asterfort/fnothm.h"
 #include "asterfort/jevech.h"
 #include "asterfort/naueul.h"
-#include "asterfort/posthm.h"
 #include "asterfort/rcangm.h"
 #include "asterfort/rccoma.h"
 #include "asterfort/rcvalb.h"
-#include "asterfort/refthm.h"
 #include "asterfort/tecach.h"
-#include "asterfort/thmevc.h"
 #include "asterfort/vecini.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/thmCompEpsiElga.h"
@@ -51,6 +47,7 @@ implicit none
 #include "asterfort/thmCompVariElno.h"
 #include "asterfort/thmCompRefeForcNoda.h"
 #include "asterfort/thmCompForcNoda.h"
+#include "asterfort/thmCompLoad.h"
 #include "asterfort/Behaviour_type.h"
 
     character(len=16) :: option, nomte
@@ -378,11 +375,11 @@ implicit none
 ! =====================================================================
 ! --- 4. OPTIONS : CHAR_MECA_FR2D2D OU CHAR_MECA_FR3D3D ---------------
 ! =====================================================================
-!
-    call thmevc(option, nomte, axi, nno, npg,&
-                ipoids, ivf, idfde, nddls, nnos,&
-                nddlm, nnom)
-!
+    if (option .eq. 'CHAR_MECA_FR3D3D' .or. option .eq. 'CHAR_MECA_FR2D2D') then
+        call thmCompLoad(option, nomte,&
+                         axi   , modint, vf    , typvf, ndim,&
+                         mecani, press1, press2, tempe)
+    endif
 ! ======================================================================
 ! --- 5. OPTION : FORC_NODA --------------------------------------------
 ! ======================================================================
