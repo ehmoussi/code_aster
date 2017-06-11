@@ -16,16 +16,28 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine reguh1(x0, y0, y0p, b, c)
+subroutine reguh1(x0, y0, y0p,&
+                  b, c)
 !
-! REGUP2 :
-!  CALCULE UNE  HYPERBOLE Y DU PREMIER DEGRE TELLE QUE
-!  Y(X)=1-B/(C-X) AVEC
-!  Y(X0)=Y0, DYDX(X0)=Y0P
 !
-    implicit none
-    real(kind=8) :: x0, y0, y0p, b, c
+implicit none
+!
+    real(kind=8), intent(in) :: x0, y0, y0p
+    real(kind=8), intent(out) :: b, c
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM - Saturation
+!
+! Regularization by first order hyperbola
+!
+! --------------------------------------------------------------------------------------------------
+!
+!  Y(X)  = 1-B/(C-X) with Y(X0) = Y0 and DYDX(X0)=Y0P
+!
+! --------------------------------------------------------------------------------------------------
 !
     b=-((1.d0-y0)**2.d0)/y0p
     c= x0-(1.d0-y0)/y0p
+!
 end subroutine

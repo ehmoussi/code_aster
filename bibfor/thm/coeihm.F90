@@ -41,6 +41,7 @@ implicit none
 #include "asterfort/thmlec.h"
 #include "asterfort/utmess.h"
 #include "asterfort/thmGetParaBiot.h"
+#include "asterfort/thmGetParaHydr.h"
 #include "asterfort/tebiot.h"
 !
     integer :: dimdef, dimcon, npg, kpi, npi, ndim
@@ -200,6 +201,10 @@ implicit none
 ! - Temporaire: aniso n'est pas toujours lu dans le module pour l'instant
 !
     aniso = ds_thm%ds_material%biot_type
+!
+! - Get hydraulic parameters
+!
+    call thmGetParaHydr(hydr, imate)
 !
 ! - TEST LOI DE COMPORTEMENT
 !

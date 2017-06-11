@@ -16,16 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine satfvg(sr, pr, n, m, pc,&
-                  s, dsdpc)
 !
-! SATFVG : CALCUL DE LA SAT PAR FORMULE DE VAN-GENUCHTEN
-    implicit none
-! IN
-    real(kind=8) :: sr, pr, n, m, pc
-! OUT
-    real(kind=8) :: s, dsdpc
-    s=sr+(1-sr)*((pc/pr)**n+1.d0)**(-m)
-    dsdpc=-n*m*((1.d0-sr)/pr)*(((pc/pr)**n+1.d0)**(-m-1.d0))*&
-     &   ((pc/pr)**(n-1.d0))
-end subroutine
+!
+interface 
+    subroutine thmGetParaHydr(hydr, j_mater)
+        character(len=16), intent(in) :: hydr
+        integer, intent(in) :: j_mater
+    end subroutine thmGetParaHydr
+end interface 

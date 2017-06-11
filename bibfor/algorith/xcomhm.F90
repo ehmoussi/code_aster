@@ -44,6 +44,7 @@ implicit none
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaElas.h"
 #include "asterfort/thmGetParaTher.h"
+#include "asterfort/thmGetParaHydr.h"
 #include "asterfort/thmMatrHooke.h"
 #include "asterfort/tebiot.h"
 !
@@ -166,6 +167,10 @@ implicit none
 !
     call thmGetParaElas(imate, kpi, t, ndim)
     call thmMatrHooke(angl_naut)
+!
+! - Get hydraulic parameters
+!
+    call thmGetParaHydr(hydr, imate)
 !
 ! - Get thermic parameters
 !

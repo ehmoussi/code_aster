@@ -16,25 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine pcapvg(sr, pr, usm, usn, s1,&
-                  pc, dpcds, d2pcds)
 !
-! PCAPVG : CALCUL DE LA PCAP PAR FORMULE DE VAN-GENUCHTEN
-    implicit none
-! IN
-    real(kind=8) :: sr, pr, usm, usn, s1
-! OUT
-    real(kind=8) :: pc, dpcds, d2pcds
-! LOCAL
-    real(kind=8) :: umsr, usumsr, a
-    umsr=(1.d0-sr)
-    usumsr=1.d0/umsr
-    pc=pr*((s1**(-usm)-1.d0)**(usn))
-    dpcds=-pr*usn*((usm)/(1.d0-sr))*&
-     &              ((s1**(-usm)-1.d0)**(usn-1.d0))*&
-     &              (s1**(-usm-1.d0))
-    a=s1**(-usm)-1.d0
-    d2pcds=pr*usumsr*usumsr*(usn*usm*usm*(usn-1.d0)*&
-     &         (a**(usn-2.d0))*(s1**(-2.d0-2.d0*usm))&
-     &         +usn*usm*(1.d0+usm)*(a**(usn-1.d0))*(s1**(-2.d0-usm)))
-end subroutine
+!
+interface 
+    subroutine thmEvalSatuInit(hydr  , j_mater, p1m   , p1   ,&
+                               satm  , satur  , dsatur, emmag,&
+                               retcom)
+        character(len=16), intent(in) :: hydr
+        integer, intent(in) :: j_mater
+        real(kind=8), intent(in) :: p1m, p1
+        real(kind=8), intent(out) :: satm, satur, dsatur, emmag
+        integer, intent(out) :: retcom
+    end subroutine thmEvalSatuInit
+end interface 

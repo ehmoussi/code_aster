@@ -19,14 +19,9 @@
 !
 !
 interface
-    subroutine satfvg(sr, pr, n, m, pc,&
-                      s, dsdpc)
-        real(kind=8) :: sr
-        real(kind=8) :: pr
-        real(kind=8) :: n
-        real(kind=8) :: m
-        real(kind=8) :: pc
-        real(kind=8) :: s
-        real(kind=8) :: dsdpc
+    subroutine satfvg(sr , pr, n, m, pc,&
+                      satur, dsatur)
+        real(kind=8), intent(in) :: sr, pr, n, m, pc
+        real(kind=8), intent(out) :: satur, dsatur
     end subroutine satfvg
 end interface
