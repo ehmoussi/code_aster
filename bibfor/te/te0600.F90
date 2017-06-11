@@ -44,7 +44,7 @@ implicit none
 #include "asterfort/tecach.h"
 #include "asterfort/thmevc.h"
 #include "asterfort/vecini.h"
-#include "asterfort/thmGetElemInfo.h"
+#include "asterfort/thmGetElemModel.h"
 #include "asterfort/Behaviour_type.h"
 
     character(len=16) :: option, nomte
@@ -147,9 +147,9 @@ implicit none
 !
     call thmModuleInit()
 !
-! - Get parameters for finite element
+! - Get model of finite element
 !
-    call thmGetElemInfo()
+    call thmGetElemModel()
 
 ! =====================================================================
 ! --- 1. INITIALISATIONS ----------------------------------------------

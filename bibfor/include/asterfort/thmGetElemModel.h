@@ -19,6 +19,6 @@
 !
 !
 interface 
-    subroutine thmGetElemInfo()
-    end subroutine thmGetElemInfo
+    subroutine thmGetElemModel()
+    end subroutine thmGetElemModel
 end interface 
