@@ -153,6 +153,13 @@ implicit none
     else
         qi(1:nb_equa) = q(1:nb_equa)
         call norm_frobenius(nb_equa, qi, norm_q)
+        if (norm_q .eq. 0) then
+            norm_q = 1.d-16*sqrt(nb_equa*1.d0)
+            vt(1:nb_equa)=1.d0/sqrt(nb_equa*1.d0)
+        else
+            vt(1:nb_equa)=qi(1:nb_equa)/norm_q
+        endif
+
         vt(1:nb_equa) = qi(1:nb_equa)/norm_q
         gt(1)   = norm_q
     endif
