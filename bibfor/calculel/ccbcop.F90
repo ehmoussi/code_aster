@@ -41,6 +41,7 @@ subroutine ccbcop(resuin, resuou, lisord, nbordr, lisopt,&
 #include "asterfort/rsnopa.h"
 #include "asterfort/titre.h"
 #include "asterfort/utmess.h"
+#include "asterfort/deprecated_option.h"
     integer :: nbordr, nbropt
     character(len=8) :: resuou, resuin
     character(len=19) :: lisord, lisopt
@@ -173,6 +174,8 @@ subroutine ccbcop(resuin, resuou, lisord, nbordr, lisopt,&
     do iopt = 1, nbropt
 !
         option=zk16(jopt+iopt-1)
+        call deprecated_option(option)
+
         if (option .eq. ' ') goto 20
 !
         if ((option.eq.'FORC_NODA') .or. (option.eq.'REAC_NODA')) then

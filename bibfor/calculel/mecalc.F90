@@ -17,12 +17,11 @@
 ! --------------------------------------------------------------------
 
 subroutine mecalc(option, modele, chdepl, chgeom, chmate,&
-                  chcara, chtemp, chtref, chtime, chnumc,&
+                  chcara, chtemp, chtref, chtime,&
                   chharm, chsig, cheps, chfreq, chmass,&
                   chmeta, charge, typcoe, alpha, calpha,&
                   chdynr, suropt, chelem, chelex, ligrel,&
                   base, ch1, ch2, chvari, compor,&
-                  chtese, chdese, nopase, typese, chacse,&
                   chstrx, codret)
 !
 !     - FONCTION REALISEE : APPEL A "CALCUL"
@@ -66,16 +65,17 @@ subroutine mecalc(option, modele, chdepl, chgeom, chmate,&
 #include "asterfort/jeexin.h"
 #include "asterfort/mecact.h"
 #include "asterfort/meceuc.h"
+#include "asterfort/deprecated_option.h"
 #include "asterfort/mechpo.h"
 #include "asterfort/utmess.h"
     character(len=*) :: option, modele, chdepl, chdynr, suropt, chelem, compor
     character(len=*) :: chgeom, chmate, chcara(*), chfreq, chmass, chsig, chtemp
-    character(len=*) :: chtref, chtime, chnumc, chharm, charge, cheps, chmeta
-    character(len=*) :: typcoe, ligrel, base, ch1, ch2, chvari, chacse, chelex
-    character(len=*) :: chdese, chtese, nopase, chstrx
+    character(len=*) :: chtref, chtime, chharm, charge, cheps, chmeta
+    character(len=*) :: typcoe, ligrel, base, ch1, ch2, chvari, chelex
+    character(len=*) :: chstrx
     real(kind=8) :: alpha
     complex(kind=8) :: calpha
-    integer :: typese, codret
+    integer :: codret
     character(len=6) :: nompro
     parameter (nompro='MECALC')
 !
@@ -245,6 +245,7 @@ subroutine mecalc(option, modele, chdepl, chgeom, chmate,&
      &               optio2.eq.'SIEF_ELGA_DPGE') then
                 lpaout(1) = 'PCONTRR'
             else if (optio2.eq.'VAEX_ELGA') then
+                call deprecated_option(optio2)
                 noma=chgeom(1:8)
                 call getvtx(' ', 'NOM_VARI', scal=vari, nbret=ibid)
                 call mecact('V', chnova, 'MAILLA', noma, 'NEUT_K24',&
@@ -256,6 +257,7 @@ subroutine mecalc(option, modele, chdepl, chgeom, chmate,&
                 lchin(2) = chnova
                 nbin =2
             else if (optio2.eq.'VAEX_ELNO') then
+                call deprecated_option(optio2)
                 noma=chgeom(1:8)
                 call getvtx(' ', 'NOM_VARI', scal=vari, nbret=ibid)
                 call mecact('V', chnova, 'MAILLA', noma, 'NEUT_K24',&

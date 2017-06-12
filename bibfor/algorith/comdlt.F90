@@ -437,12 +437,11 @@ implicit none
         if (iret .eq. 0) goto 62
         ibid = 0
         call mecalc('STRX_ELGA', modele, chamgd, chgeom, mate,&
-                    chcara, k24bla, k24bla, chtime, k24bla,&
+                    chcara, k24bla, k24bla, chtime,&
                     chharm, ' ', ' ', ' ', ' ',&
                     k24bla, charep, typcoe, alpha, calpha,&
                     k24bla, k24bla, chstru, k24bla, ligrel,&
                     base, chvarc, chvref, k24bla, compor,&
-                    k24bla, k24bla, k8b, ibid, k24bla,&
                     k24bla, iret)
 !
         call rsnoch(result, 'STRX_ELGA', iordr)

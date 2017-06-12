@@ -216,12 +216,11 @@ implicit none
 !         -- SI LE CHAMP A DEJE ETE CALCULE :
             if (iret .eq. 0) goto 62
             call mecalc('STRX_ELGA', nomode, chamgd, chgeom, mate,&
-                        chcara, k24bla, k24bla, chtime, k24bla,&
+                        chcara, k24bla, k24bla, chtime,&
                         chharm, k24bla, k24bla, k24bla, k24bla,&
                         k24bla, charep, typcoe, alpha, calpha,&
                         k24bla, k24bla, chstrx, k24bla, ligrel,&
                         base, chvarc, chvref, k24bla, compor,&
-                        k24bla, k24bla, k8bla, ibid, k24bla,&
                         k24bla, iret)
 !
             call rsnoch(result, 'STRX_ELGA', iordr)
@@ -234,12 +233,11 @@ implicit none
             if (iret .eq. 0) goto 13
             ibid = 0
             call mecalc(nosy, nomode, chamgd, chgeom, mate,&
-                        chcara, k24bla, k24bla, chtime, k24bla,&
+                        chcara, k24bla, k24bla, chtime,&
                         chharm, k24bla, k24bla, k24bla, k24bla,&
                         k24bla, charep, typcoe, alpha, calpha,&
                         k24bla, k24bla, chamel, k24bla, ligrel,&
                         base, chvarc, chvref, k24bla, compor,&
-                        k24bla, k24bla, k8bla, ibid, k24bla,&
                         chstrx, iret)
             call rsnoch(result, nosy, iordr)
         endif

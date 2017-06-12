@@ -43,9 +43,9 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (algo .eq. 'CASTEM') then
-        vali = 13
-        valk = "IMPR_RESU/FORMAT='CASTEM'"
+    if (algo .eq. 'ENSIGHT') then
+        vali = 14
+        valk = "LIRE_RESU/FORMAT='ENSIGHT'"
     else
         goto 999
     endif

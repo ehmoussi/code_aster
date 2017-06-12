@@ -68,6 +68,7 @@ subroutine op0150()
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
 #include "asterfort/uttrii.h"
+#include "asterfort/deprecated_algom.h"
 #include "asterfort/wkvect.h"
 !
     character(len=6) :: nompro
@@ -282,6 +283,7 @@ subroutine op0150()
         endif
     end do
 !
+    call deprecated_algom(form)
 !
 !
     if (form .eq. 'IDEAS') then
