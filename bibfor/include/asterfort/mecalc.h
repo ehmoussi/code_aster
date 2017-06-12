@@ -19,12 +19,11 @@
 !
 interface
     subroutine mecalc(option, modele, chdepl, chgeom, chmate,&
-                      chcara, chtemp, chtref, chtime, chnumc,&
+                      chcara, chtemp, chtref, chtime,&
                       chharm, chsig, cheps, chfreq, chmass,&
                       chmeta, charge, typcoe, alpha, calpha,&
                       chdynr, suropt, chelem, chelex, ligrel,&
                       base, ch1, ch2, chvari, compor,&
-                      chtese, chdese, nopase, typese, chacse,&
                       chstrx, codret)
         character(len=*) :: option
         character(len=*) :: modele
@@ -35,7 +34,6 @@ interface
         character(len=*) :: chtemp
         character(len=*) :: chtref
         character(len=*) :: chtime
-        character(len=*) :: chnumc
         character(len=*) :: chharm
         character(len=*) :: chsig
         character(len=*) :: cheps
@@ -56,11 +54,6 @@ interface
         character(len=*) :: ch2
         character(len=*) :: chvari
         character(len=*) :: compor
-        character(len=*) :: chtese
-        character(len=*) :: chdese
-        character(len=*) :: nopase
-        integer :: typese
-        character(len=*) :: chacse
         character(len=*) :: chstrx
         integer :: codret
     end subroutine mecalc

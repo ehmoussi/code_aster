@@ -78,7 +78,7 @@ subroutine peecin(resu, modele, mate, cara, nh,&
     character(len=8) :: valk(2), nomgd
     character(len=16) :: typres, option, optio2, noparr(nbparr), nopard(nbpard), optmas, tabtyp(3)
     character(len=19) :: chelem, knum, kins, depla, ligrel, chvarc, chvref
-    character(len=24) :: chmasd, chfreq, chamgd, chnumc, typcha, chtime, k24b, chgeom, chcara(18)
+    character(len=24) :: chmasd, chfreq, chamgd, typcha, chtime, k24b, chgeom, chcara(18)
     character(len=24) :: chtemp, opt, mlggma, mlgnma, chharm, nomgrm, valk2(2)
     aster_logical :: exitim
     complex(kind=8) :: c16b, calpha
@@ -218,7 +218,6 @@ subroutine peecin(resu, modele, mate, cara, nh,&
         call tbajpa(resu, nbparr, noparr, typarr)
     endif
 !
-    call mechnc(noma, ' ', 0, chnumc)
     chmasd = '&&PEECIN.MASD'
     call mecact('V', chmasd, 'MAILLA', noma, 'POSI',&
                 ncmp=1, nomcmp='POS', si=inume)
@@ -299,12 +298,11 @@ subroutine peecin(resu, modele, mate, cara, nh,&
         chelem = '&&PEECIN.CHAM_ELEM'
         ibid = 0
         call mecalc(optio2, modele, chamgd, chgeom, mate,&
-                    chcara, chtemp, k24b, chtime, chnumc,&
+                    chcara, chtemp, k24b, chtime,&
                     k24b, k24b, k24b, chfreq, chmasd,&
                     k24b, k24b, k24b, alpha, calpha,&
                     k24b, k24b, chelem, k24b, ligrel,&
                     base, chvarc, chvref, k24b, k24b,&
-                    k24b, k24b, k8b, ibid, k24b,&
                     k24b, iret)
  30     continue
 !

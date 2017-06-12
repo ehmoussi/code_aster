@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine deprecated_material(mater)
+subroutine deprecated_option(option)
 !
 implicit none
 #include "asterfort/assert.h"
@@ -24,17 +24,17 @@ implicit none
 !
 ! person_in_charge: josselin.delmas at edf.fr
 !
-    character(len=*), intent(in) :: mater
+    character(len=*), intent(in) :: option
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEPRECATED FEATURES
 !
-! Warning for deprecated material
+! Warning for deprecated option
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  mater : name of deprecated material
+! In  option : name of deprecated option
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,18 +43,19 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!    Replace XXX by deprecated material name
-    if (mater .eq. 'XXX') then
-        vali = 13
-        valk    = "Le materiau 'XXX'"
-
+    if (option .eq. 'VAEX_ELNO') then
+        vali = 14
+        valk    = "OPTION='VAEX_ELNO'"
+    else if (option .eq. 'VAEX_ELGA') then
+        vali = 14
+        valk    = "OPTION='VAEX_ELGA'"
     else
-         goto 999
-
+        goto 999
+!
     endif
-
+!
     call utmess('A', 'SUPERVIS_9', sk = valk, si = vali)
-
+!
 999 continue
 !
 end subroutine

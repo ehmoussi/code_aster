@@ -75,7 +75,7 @@ subroutine peepot(resu, modele, mate, cara, nh,&
     character(len=8) :: nomgd
     character(len=16) :: typres, option, optio2, noparr(nbparr), nopard(nbpard)
     character(len=19) :: chelem, knum, kins, depla, ligrel, tabtyp(3), chvarc, chvref
-    character(len=24) :: chtime, chnumc, chamgd, typcha, chgeom, chcara(18), chtemp, chharm
+    character(len=24) :: chtime, chamgd, typcha, chgeom, chcara(18), chtemp, chharm
     character(len=24) :: compor, mlggma, mlgnma, k24b, nomgrm, valk2(2)
 !
     aster_logical :: exitim
@@ -133,7 +133,6 @@ subroutine peepot(resu, modele, mate, cara, nh,&
     noma = chgeom(1:8)
     mlgnma = noma//'.NOMMAI'
     mlggma = noma//'.GROUPEMA'
-    call mechnc(noma, ' ', 0, chnumc)
 !
     call exlim3('ENER_POT', 'V', modele, ligrel)
 !
@@ -241,12 +240,11 @@ subroutine peepot(resu, modele, mate, cara, nh,&
         compor = mate(1:8)//'.COMPOR'
         ibid = 0
         call mecalc(optio2, modele, chamgd, chgeom, mate,&
-                    chcara, chtemp, k24b, chtime, chnumc,&
+                    chcara, chtemp, k24b, chtime,&
                     chharm, k24b, k24b, k24b, k24b,&
                     k24b, k24b, k24b, alpha, calpha,&
                     k24b, k24b, chelem, k24b, ligrel,&
                     base, chvarc, chvref, k24b, compor,&
-                    k24b, k24b, k8b, ibid, k24b,&
                     k24b, iret)
  30     continue
 !

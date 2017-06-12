@@ -354,12 +354,11 @@ subroutine bamo78(nomres, trange, typres)
                 ibid = 0
                 nosy='SIEF_ELGA'
                 call mecalc(nosy, modele, chamgd, chgeom, mate,&
-                            chcara, k24bla, k24bla, chtime, k24bla,&
+                            chcara, k24bla, k24bla, chtime, &
                             chharm, k24bla, k24bla, k24bla, k24bla,&
                             k24bla, k24bla, typcoe, alpha, calpha,&
                             k24bla, k24bla, chel2, k24bla, ligrel,&
                             'V', chvarc, chvref, k24bla, compor,&
-                            k24bla, k24bla, k8bla, ibid, k24bla,&
                             k24bla, iret)
                 call celces(chel2, 'V', ches2)
                 nc = 2
