@@ -54,24 +54,24 @@ implicit none
 #include "asterfort/romAlgoNLMecaResidual.h"
 #include "asterfort/romAlgoNLCorrEFMecaResidual.h"
 !
-character(len=8) :: noma
-character(len=24) :: numedd
-type(NL_DS_Contact), intent(in) :: ds_contact
-type(NL_DS_Conv), intent(inout) :: ds_conv
-type(NL_DS_Print), intent(inout) :: ds_print
-character(len=24) :: mate
-integer :: numins
-character(len=19) :: sddyna, sdnume
-character(len=19) :: measse(*), veasse(*)
-character(len=19) :: valinc(*), solalg(*)
-character(len=19) :: matass
-character(len=24) :: comref
-integer :: fonact(*)
-real(kind=8) :: eta
-type(NL_DS_InOut), intent(in) :: ds_inout
-real(kind=8), intent(out) :: vchar
-real(kind=8), intent(out) :: vresi
-type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+    character(len=8) :: noma
+    character(len=24) :: numedd
+    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Conv), intent(inout) :: ds_conv
+    type(NL_DS_Print), intent(inout) :: ds_print
+    character(len=24) :: mate
+    integer :: numins
+    character(len=19) :: sddyna, sdnume
+    character(len=19) :: measse(*), veasse(*)
+    character(len=19) :: valinc(*), solalg(*)
+    character(len=19) :: matass
+    character(len=24) :: comref
+    integer :: fonact(*)
+    real(kind=8) :: eta
+    type(NL_DS_InOut), intent(in) :: ds_inout
+    real(kind=8), intent(out) :: vchar
+    real(kind=8), intent(out) :: vresi
+    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -102,8 +102,9 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jccid=0, jdiri=0, jvcfo=0, jiner=0
+    integer :: jdiri=0, jvcfo=0, jiner=0
     integer :: ifm=0, niv=0
+    integer, pointer :: v_ccid(:) => null()
     integer :: neq=0
     character(len=8) :: noddlm=' '
     aster_logical :: ldyna, lstat, lcine, l_cont_cont, l_cont_lac, l_rom
@@ -158,7 +159,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     iresi = 0
     ichar = 0
     icomp = 0
-    jccid = 0
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
 !
 ! --- FONCTIONNALITES ACTIVEES
@@ -207,7 +207,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
     if (lcine) then
         call nmpcin(matass)
-        call jeveuo(matass(1:19)//'.CCID', 'L', jccid)
+        call jeveuo(matass(1:19)//'.CCID', 'L', vi = v_ccid)
     endif
 !
 ! --- REPERAGE DDL LAGRANGE DE CONTACT
@@ -272,7 +272,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! ----- SI CHARGEMENT CINEMATIQUE: ON IGNORE LA VALEUR DU RESIDU
 !
         if (lcine) then
-            if (zi(jccid+ieq-1) .eq. 1) then
+            if (v_ccid(ieq) .eq. 1) then
                 goto 20
             endif
         endif
@@ -327,7 +327,8 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! - Evaluate residuals in applying HYPER-REDUCTION
 !
     if (l_rom .and. ds_algorom%phase .eq. 'HROM') then
-        call romAlgoNLMecaResidual(fint, fext, ds_algorom, vresi)
+        call romAlgoNLMecaResidual(fint, fext, ds_algorom, lcine, v_ccid,&
+                                   vresi)
     endif
     if (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
         call romAlgoNLCorrEFMecaResidual()
@@ -354,7 +355,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         call mmconv(noma , ds_contact, valinc, solalg, vfrot,&
                     nfrot, vgeom     , ngeom)
     endif
-
 !
 ! - Save informations about residuals into convergence datastructure
 !

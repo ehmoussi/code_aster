@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romAlgoNLMecaResidual(v_fint, v_fext, ds_algorom, resi)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romAlgoNLMecaResidual(v_fint, v_fext, ds_algorom, l_cine, v_ccid, resi)
 !
 use Rom_Datastructure_type
 !
@@ -30,12 +31,12 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "blas/ddot.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    real(kind=8), intent(in), pointer :: v_fint(:)
-    real(kind=8), intent(in), pointer :: v_fext(:)
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-    real(kind=8), intent(out) :: resi
+real(kind=8), intent(in), pointer :: v_fint(:)
+real(kind=8), intent(in), pointer :: v_fext(:)
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+aster_logical, intent(in) :: l_cine
+integer, intent(in), pointer :: v_ccid(:)
+real(kind=8), intent(out) :: resi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,6 +49,8 @@ implicit none
 ! In  v_fint           : pointer to internal forces
 ! In  v_fint           : pointer to external forces
 ! In  ds_algorom       : datastructure for ROM parameters
+! In  l_cine           . .true. if AFFE_CHAR_CINE
+! In  v_ccid           : pointer to CCID object (AFFE_CHAR_CINE)
 ! Out resi             : value for residual
 !
 ! --------------------------------------------------------------------------------------------------
@@ -86,11 +89,15 @@ implicit none
 !
     AS_ALLOCATE(vr=v_resi, size=nb_equa)
     do i_equa = 1, nb_equa
-        v_resi(i_equa) = v_fint(i_equa) - v_fext(i_equa)
+        if (l_cine) then
+            if (v_ccid(i_equa) .ne. 1) then
+                v_resi(i_equa) = v_fint(i_equa) - v_fext(i_equa)
+            endif
+        endif
     enddo
 !
 ! - Truncation of residual
-!    
+!
     if (l_hrom) then
         do i_equa = 1, nb_equa
             if (ds_algorom%v_equa_int(i_equa) .eq. 1) then
@@ -100,7 +107,7 @@ implicit none
     endif
 !
 ! - Compute norm
-!  
+!
     do i_mode = 1, nb_mode
         call rsexch(' ', base, field_name, i_mode, mode, iret)
         call jeveuo(mode(1:19)//'.VALE', 'E', vr = v_mode)
