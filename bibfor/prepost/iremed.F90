@@ -291,7 +291,7 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
             call irchme(ifichi, cham19, partie, nochmd, noresu,&
                         nosy16, typech, numord, nbrcmp, zk8(jnocmp),&
                         nbnoec, linoec, nbmaec, limaec, lvarie,&
-                        sdcarm, carael, linopa, codret)
+                        sdcarm, linopa, codret)
 !
 999         continue
 !

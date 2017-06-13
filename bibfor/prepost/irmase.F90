@@ -23,7 +23,6 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8pi.h"
-#include "asterc/r8prem.h"
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mfiope.h"
 #include "asterfort/as_mmhcow.h"
@@ -68,7 +67,7 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
     character(len=64) :: nomasu
     character(len=200) :: desmed
 !
-    real(kind=8) :: xmin, xmax, delta, rmin, rmax, theta, dtheta, verif
+    real(kind=8) :: xmin, xmax, delta, rmin, rmax, theta, dtheta
 !
     aster_logical :: lmstro
     real(kind=8), pointer :: cesv(:) => null()
@@ -96,7 +95,7 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
     lmstro = .false.
     if (nbmasu .ne. 0) then
         call wkvect('&&IRMASE.MAIL_SUPP', 'V V K80', nbmasu, jmasup)
-        do imasup = 1, nbmasu
+        do 40 imasup = 1, nbmasu
             call as_msmsmi(idfimd, imasup, nomasu, ndim, desmed,&
                            edcar2, nocoo2, uncoo2, codret)
             if (codret .ne. 0) then
@@ -104,7 +103,7 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
                 call utmess('F', 'DVP_97', sk=saux08, si=codret)
             endif
             if (nomasu .eq. nomase) lmstro = .true.
-        enddo
+ 40     continue
         call jedetr('&&IRMASE.MAIL_SUPP')
         if (lmstro) goto 9999
     endif
@@ -118,49 +117,42 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
         delta = 2.d0/nbrcou
         xmin = -1.d0
         xmax = -1.d0+delta
-        do ipoint = 1, nbrcou
+        do 10 ipoint = 1, nbrcou
             zr(jcoopt+(ipoint-1)*3)=xmin
             zr(jcoopt+(ipoint-1)*3+1)=(xmax+xmin)/2.d0
             zr(jcoopt+(ipoint-1)*3+2)=xmax
             xmin = xmin+delta
             xmax = xmax+delta
-        enddo
+ 10     continue
 !
     else if (typsec.eq.'TUYAU') then
 !
         ndim = 2
-        nbrayo = (2*nbsect+1)
-        nbpoin = nbrayo*(2*nbrcou+1)
+        nbrayo = (nbsect*2)+1
+        nbpoin = 3*nbrayo*nbrcou
         call wkvect('&&IRMASE.COOR_PTS', 'V V R', 2*nbpoin, jcoopt)
 !
         dtheta = r8pi()/nbsect
         theta = 0.d0
 !
-        delta = 0.5d0/nbrcou
         rmin = 0.5d0
-        rmax = 0.5d0 + delta
+        rmax = 1.d0
         postmp = 0
-        do icouch = 1, nbrcou
-            do irayon = 1, nbrayo
+        do 20 icouch = 1, nbrcou
+            do 30 irayon = 1, nbrayo
                 zr(jcoopt+postmp) = rmin*cos(theta)
                 zr(jcoopt+postmp+1) = rmin*sin(theta)
                 zr(jcoopt+postmp+2) = (rmin+rmax)/2.d0*cos(theta)
                 zr(jcoopt+postmp+3) = (rmin+rmax)/2.d0*sin(theta)
-                postmp = postmp+4
-                if( icouch.eq.nbrcou ) then
-                    zr(jcoopt+postmp+4) = rmax*cos(theta)
-                    zr(jcoopt+postmp+5) = rmax*sin(theta)
-                    postmp = postmp+2
-                endif
+                zr(jcoopt+postmp+4) = rmax*cos(theta)
+                zr(jcoopt+postmp+5) = rmax*sin(theta)
+                postmp = postmp+6
                 theta = theta+dtheta
-            enddo
-            verif = 2.d0*r8pi()+dtheta
-            verif = theta - verif
-            ASSERT(abs(verif).le.10.d0*r8prem())
-            rmin = rmin+delta
-            rmax = rmax+delta
+ 30         continue
+            rmin = rmin+0.5d0
+            rmax = rmax+0.5d0
             theta = 0.d0
-        enddo
+ 20     continue
         ASSERT(postmp.eq.2*nbpoin)
 !
     else if (typsec.eq.'PMF') then
@@ -183,14 +175,14 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
         ASSERT(cesc(7).eq.'NUMGR   ')
 !
         postmp = 0
-        do isp = 1, nbpoin
-            do icmp = 1, 2
+        do 50 isp = 1, nbpoin
+            do 60 icmp = 1, 2
                 call cesexi('S', jcesd, jcesl, nummai, 1,&
                             isp, icmp, iad)
                 zr(jcoopt+postmp) = cesv(iad)
                 postmp = postmp+1
-            enddo
-        enddo
+ 60         continue
+ 50     continue
 !
     else
         ASSERT(.false.)

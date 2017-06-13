@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
-                  nomamd, nbimpr, caimpi, caimpk, sdcarm,&
-                  carael)
+                  nomamd, nbimpr, caimpi, caimpk, sdcarm)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -46,7 +45,7 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
-    character(len=8) :: nomaas, typech, sdcarm, carael
+    character(len=8) :: nomaas, typech, sdcarm
     character(len=*) :: nofimd
     character(len=19) :: chanom
     character(len=64) :: nomamd, nochmd
@@ -72,7 +71,7 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
 !
 !
     integer :: inimpr, nbcouc, nbsect, nummai, lgmax, ntypef, codret
-    integer :: nbnoso, nbnoto, nbrepg, ndim, nbfamx, nbelr, nbgamm
+    integer :: nbnoso, nbnoto, nbrepg, ndim, nbfamx, nbelr
     integer :: edleaj, idfimd, edcart, edfuin, ntymax, nbtyp, nnomax
     integer :: edmail, ednoda, edtyre, medcel, nbmssu, nbattc, prespr
     parameter    (edleaj = 1)
@@ -94,15 +93,12 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
     character(len=8) :: lielrf(nbfamx), saux08, nomtyp(ntymax)
     character(len=16) :: nomtef, nomfpg, nocoor(3), uncoor(3)
     character(len=16) :: nocoo2(3), uncoo2(3)
-    character(len=64) :: nomasu, atepai, atangv, nomaes
-    character(len=64) :: nocoqu, nompmf, notuya
-    character(len=64) :: nomas2
+    character(len=64) :: nomasu, atepai, atangv, atrmax, atrmin, nomaes
     character(len=200) :: desmed
-    parameter    (atepai = 'SCALE')
-    parameter    (atangv = 'ANGLE')
-    parameter    (nocoqu = 'SP_SHELL')
-    parameter    (nompmf = 'SP_BEAM')
-    parameter    (notuya = 'SP_PIPE')
+    parameter    (atepai = 'EPAISSEUR')
+    parameter    (atangv = 'ANGLE DE VRILLE')
+    parameter    (atrmin = 'RAYON MIN')
+    parameter    (atrmax = 'RAYON MAX')
 !
     real(kind=8) :: refcoo(3*lgmax), gscoo(3*lgmax), wg(lgmax)
 !
@@ -133,7 +129,7 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
     call wkvect('&&IRELST.MAIL_SUPP', 'V V K80', nbmsmx, jmasup)
     AS_ALLOCATE(vi=nv_type_med, size=nbmsmx)
     if (nbmasu .ne. 0) then
-        do imasup = 1, nbmasu
+        do 40 imasup = 1, nbmasu
             call as_msmsmi(idfimd, imasup, nomasu, ndim, desmed,&
                            edcar2, nocoo2, uncoo2, codret)
             if (codret .ne. 0) then
@@ -150,7 +146,7 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
                 call utmess('F', 'DVP_97', sk=saux08, si=codret)
             endif
             nv_type_med(imasup) = nvtymd
-        enddo
+ 40     continue
     endif
 !
     desmed = ' '
@@ -162,7 +158,7 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
 !        UN ELEMENT DE STRUCTURE EST DEFINIT PAR UNE PAIRE :
 !         TYPE ELEMENT (COQUE, TUYAU, ...) + TYPE MAILLE
     newest = .false.
-    do inimpr = 1, nbimpr
+    do 10 inimpr = 1, nbimpr
         ntypef = caimpi(1,inimpr)
         nbcouc = caimpi(4,inimpr)
         nbsect = caimpi(5,inimpr)
@@ -180,52 +176,38 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
                     gscoo, wg, nochmd, codret)
 !
         nomasu = ' '
-        nomas2 = ' '
         if (nbcouc .ne. 0 .and. nbsect .eq. 0) then
 !         -- CAS D'UNE COQUE
-            nomasu(1:8) = nocoqu
-            nomas2(1:8) = nocoqu
+            nomasu(1:8) = 'COQUE   '
         else if (nbcouc.ne.0.and.nbsect.ne.0) then
 !         -- CAS D'UN TUYAU
-            nomasu(1:8) = notuya
-            nomas2(1:8) = notuya
-            nbgamm = 0
-            if( nomfpg(1:3).eq.'SE3' ) then
-                nbgamm = 3
-                nomas2(8:10) = '_3'
-            elseif( nomfpg(1:3).eq.'SE4' ) then
-                nbgamm = 4
-                nomas2(8:10) = '_4'
-            else
-                ASSERT(.false.)
-            endif
+            nomasu(1:8) = 'TUYAU   '
         else if (nummai.ne.0) then
 !         -- CAS D'UNE PMF
-            nomasu(1:8) = nompmf
-            nomas2(1:8) = nompmf
+            nomasu(1:8) = 'PMF     '
         else if (nbcouc.eq.0.and.nbsect.eq.0.and.nummai.eq.0) then
             goto 50
         else
             ASSERT(.false.)
         endif
         nomasu(9:12) = nomfpg(1:3)
-        do inimp2 = 1, nbimpr
+        do 70 inimp2 = 1, nbimpr
             if (caimpk(3,inimp2) .eq. nomasu) then
                 caimpk(3,inimpr) = nomasu
                 caimpi(9,inimpr) = caimpi(9,inimp2)
                 goto 50
             endif
-        enddo
-        do imasup = 1, nbmasu
+ 70     continue
+        do 60 imasup = 1, nbmasu
             if (zk80(jmasup+imasup-1) .eq. nomasu) then
                 caimpk(3,inimpr) = zk80(jmasup+imasup-1)
                 caimpi(9,inimpr) = nv_type_med(imasup)
                 goto 50
             endif
-        enddo
+ 60     continue
 !
 !       -- DEFINITION DU MAILLAGE SUPPORT MED
-        call as_msmcre(idfimd, nomas2, ndim, desmed, edcart,&
+        call as_msmcre(idfimd, nomasu, ndim, desmed, edcart,&
                        nocoor, uncoor, codret)
         if (codret .ne. 0) then
             saux08='msmcre'
@@ -233,7 +215,7 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
         endif
 !
 !       -- DEFINITION DES NOEUDS DU MAILLAGE SUPPORT MED
-        call as_mmhcow(idfimd, nomas2, refcoo, edfuin, nbnoto,&
+        call as_mmhcow(idfimd, nomasu, refcoo, edfuin, nbnoto,&
                        codret)
         if (codret .ne. 0) then
             saux08='mmhcow'
@@ -243,17 +225,17 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
 !       -- CREATION DE LA CONNECTIVITE
         ASSERT(nbnoto.le.9)
         if (modnum(tymaas) .eq. 0) then
-            do ino = 1, nbnoto
+            do 20 ino = 1, nbnoto
                 connex(ino) = ino
-            enddo
+ 20         continue
         else
-            do ino = 1, nbnoto
+            do 30 ino = 1, nbnoto
                 connex(ino) = nuanom(tymaas,ino)
-            enddo
+ 30         continue
         endif
 !
 !       -- DEFINITION DE LA MAILLE DU MAILLAGE SUPPORT
-        call as_mmhcyw(idfimd, nomas2, connex, nbnoto, edfuin,&
+        call as_mmhcyw(idfimd, nomasu, connex, nbnoto, edfuin,&
                        1, edmail, tymamd, ednoda, codret)
         if (codret .ne. 0) then
             saux08='mmhcyw'
@@ -270,7 +252,7 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
         zk80(jmasup+nbmasu-1) = nomasu
 !
         nvtymd = -9999
-        call as_msecre(idfimd, nomasu, ndim, nomas2, edmail,&
+        call as_msecre(idfimd, nomasu, ndim, nomasu, edmail,&
                        tymamd, nvtymd, codret)
         ASSERT(nvtymd.ne.-9999)
         if (codret .ne. 0) then
@@ -278,7 +260,7 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
             call utmess('F', 'DVP_97', sk=saux08, si=codret)
         endif
 !
-        if (nomasu(1:8) .eq. nocoqu) then
+        if (nomasu(1:5) .eq. 'COQUE') then
 !         -- ATTRIBUT VARIABLE EPAISSEUR
             call as_msevac(idfimd, nomasu, atepai, edtyre, 1,&
                            codret)
@@ -286,22 +268,29 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
                 saux08='msevac'
                 call utmess('F', 'DVP_97', sk=saux08, si=codret)
             endif
-        else if (nomasu(1:7).eq.notuya) then
-!         -- ATTRIBUT VARIABLE SCALE
-            call as_msevac(idfimd, nomasu, atepai, edtyre, 2,&
+        else if (nomasu(1:5).eq.'TUYAU') then
+!         -- ATTRIBUT VARIABLE RAYON MIN
+            call as_msevac(idfimd, nomasu, atrmin, edtyre, 1,&
+                           codret)
+            if (codret .ne. 0) then
+                saux08='msevac'
+                call utmess('F', 'DVP_97', sk=saux08, si=codret)
+            endif
+!         -- ATTRIBUT VARIABLE RAYON MAX
+            call as_msevac(idfimd, nomasu, atrmax, edtyre, 1,&
                            codret)
             if (codret .ne. 0) then
                 saux08='msevac'
                 call utmess('F', 'DVP_97', sk=saux08, si=codret)
             endif
 !         -- ATTRIBUT VARIABLE ANGLE DE VRILLE
-            call as_msevac(idfimd, nomasu, atangv, edtyre, nbgamm,&
+            call as_msevac(idfimd, nomasu, atangv, edtyre, 1,&
                            codret)
             if (codret .ne. 0) then
                 saux08='msevac'
                 call utmess('F', 'DVP_97', sk=saux08, si=codret)
             endif
-        else if (nomasu(1:7).eq.nompmf) then
+        else if (nomasu(1:3).eq.'PMF') then
 !         -- ATTRIBUT VARIABLE ANGLE DE VRILLE
             call as_msevac(idfimd, nomasu, atangv, edtyre, 1,&
                            codret)
@@ -320,13 +309,12 @@ subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
 !
  50     continue
 !
-    enddo
+ 10 end do
 !
 !     -- AJOUT DES MAILLES "STRUCTURES" AU MAILLAGE
     if (newest) then
         call irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
-                    modnum, nuanom, nomtyp, nnotyp, sdcarm,&
-                    carael)
+                    modnum, nuanom, nomtyp, nnotyp, sdcarm)
     endif
 !
     call as_mficlo(idfimd, codret)
