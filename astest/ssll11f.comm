@@ -155,53 +155,67 @@ CH=AFFE_CHAR_MECA(    MODELE=MOD,
 #
 # CALCUL ELEMENTS FINIS RESOLUTION
 #
-'''
-U=MECA_STATIQUE( MODELE=MOD,  CHAM_MATER=CHMAT,  CARA_ELEM=CAREL,
-                      EXCIT=_F( CHARGE = CH))
 
-U1=CREA_CHAMP( OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
-RESULTAT=U, NOM_CHAM='DEPL', NUME_ORDRE=1)
+LT=DEFI_LIST_REEL(  DEBUT=0.0, INTERVALLE=_F(  JUSQU_A = 1.0, PAS = 1.0))
 
-#---------------------------------------------------------------------
+U=STAT_NON_LINE( MODELE=MOD,  CHAM_MATER=CHMAT,  CARA_ELEM=CAREL,
+                      EXCIT=_F( CHARGE = CH),INCREMENT=_F(LIST_INST=LT,),COMPORTEMENT=_F(RELATION='MULTIFIBRE',))
 
-TEST_RESU(CHAM_NO=(
-            _F(  CHAM_GD = U1,       CRITERE = 'RELATIF',   PRECISION = 3.E-4,
-              NOEUD = 'C3',       NOM_CMP = 'DX',            VALE = 2.6517E-4, REFERENCE = 'ANALYTIQUE'),
-            _F(  CHAM_GD = U1,       CRITERE = 'RELATIF',   PRECISION = 3.E-4,
-              NOEUD = 'C3',       NOM_CMP = 'DY',            VALE = 0.8839E-4, REFERENCE = 'ANALYTIQUE'),
-            _F(  CHAM_GD = U1,       CRITERE = 'RELATIF',   PRECISION = 3.E-4,
-              NOEUD = 'D3',       NOM_CMP = 'DX',            VALE = 3.47902E-3, REFERENCE = 'ANALYTIQUE'),
-            _F(  CHAM_GD = U1,       CRITERE = 'RELATIF',   PRECISION = 3.E-4,
-              NOEUD = 'D4',       NOM_CMP = 'DY',            VALE = -5.60084E-3, REFERENCE = 'ANALYTIQUE'))
-            )
+U=CALC_CHAMP(reuse=U,RESULTAT=U,CRITERES=('SIEQ_ELNO'),)
 
 #---------------------------------------------------------------------
 
-#---POUR TESTER D'AUTRES MOT CLEF DE MECA_STATIQUE : -----------------
+TEST_RESU(RESU=(_F(VALE_CALC=0.000264894003834,
+                   VALE_REFE=2.6517E-4,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='C3',
+                   NOM_CMP='DX',
+                   INST=1.0,
+                   PRECISION=0.005,),
+                _F(VALE_CALC=8.82980012781E-05,
+                   VALE_REFE=0.8839E-4,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='C3',
+                   NOM_CMP='DY',
+                   INST=1.0,
+                   PRECISION=0.005,),
+                _F(VALE_CALC=0.00349370460624,
+                   VALE_REFE=3.47902E-3,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='D3',
+                   NOM_CMP='DX',
+                   INST=1.0,
+                   PRECISION=0.005,),
+                _F(VALE_CALC=-0.00562559346514,
+                   VALE_REFE=-5.60084E-3,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=U,
+                   NOM_CHAM='DEPL',
+                   NOEUD='D3',
+                   NOM_CMP='DY',
+                   INST=1.0,
+                   PRECISION=0.005,),
+                _F(VALE_CALC=0.408248290464,
+                   VALE_REFE=4.082482905E-01,
+                   REFERENCE='AUTRE_ASTER',
+                   RESULTAT=U,
+                   NOM_CHAM='SIEQ_ELNO',
+                   MAILLE='AC',
+                   NOEUD='A1',
+                   SOUS_POINT=1,
+                   NOM_CMP='TRIAX',
+                   INST=1.0,),
+                ),)
 
-F1=DEFI_FONCTION(   NOM_PARA='INST',
-                 VALE=(0.,0., 10.,10.,))
 
-LT=DEFI_LIST_REEL(  DEBUT=0.5, INTERVALLE=_F(  JUSQU_A = 1.5, PAS = 0.5))
+#---------------------------------------------------------------------
 
-V=MECA_STATIQUE( MODELE=MOD,   CHAM_MATER=CHMAT,   CARA_ELEM=CAREL,
-                      LIST_INST=LT,
-                      EXCIT=_F( CHARGE = CH, FONC_MULT = F1))
-
-V1=CREA_CHAMP( OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
-RESULTAT=V, NOM_CHAM='DEPL', NUME_ORDRE=2)
-
-TEST_RESU(CHAM_NO=(
-            _F(  CHAM_GD = V1,       CRITERE = 'RELATIF',   PRECISION = 3.E-4,
-              NOEUD = 'C3',       NOM_CMP = 'DX',            VALE = 2.6517E-4, REFERENCE = 'ANALYTIQUE'),
-            _F(  CHAM_GD = V1,       CRITERE = 'RELATIF',   PRECISION = 3.E-4,
-              NOEUD = 'C3',       NOM_CMP = 'DY',            VALE = 0.8839E-4, REFERENCE = 'ANALYTIQUE'),
-            _F(  CHAM_GD = V1,       CRITERE = 'RELATIF',   PRECISION = 3.E-4,
-              NOEUD = 'D3',       NOM_CMP = 'DX',            VALE = 3.47902E-3, REFERENCE = 'ANALYTIQUE'),
-            _F(  CHAM_GD = V1,       CRITERE = 'RELATIF',   PRECISION = 3.E-4,
-              NOEUD = 'D4',       NOM_CMP = 'DY',            VALE = -5.60084E-3, REFERENCE = 'ANALYTIQUE'))
-            )
-'''
 #======================================================================
 #                 CHARGE  REELLE : NOTRE REFERENCE
 #======================================================================
@@ -270,7 +284,7 @@ DYNHAR0=DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS',
                    EXCIT=_F(  COEF_MULT = 1.,
                               VECT_ASSE = VECTASS)   )
 
-TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
+TEST_RESU(RESU=(_F(VALE_CALC_C=-1.64396617939E-05-9.09481837359E-06j,
                    VALE_REFE_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAR0,
@@ -278,7 +292,7 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    NOEUD='D4',
                    NOM_CMP='DX',
                    FREQ=100.0,),
-                _F(VALE_CALC_C= 2.5185847510601E-05+1.7838648127607E-05j,
+                _F(VALE_CALC_C=2.51858475106E-05+1.78386481276E-05j,
                    VALE_REFE_C=2.5185847510602E-05+1.7838648127607E-05j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAR0,
@@ -286,7 +300,7 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    NOEUD='D4',
                    NOM_CMP='DY',
                    FREQ=100.0,),
-                _F(VALE_CALC_C= 5.7144429176427E-03-0.010329344143872j,
+                _F(VALE_CALC_C=0.00571444291764-0.0103293441439j,
                    VALE_REFE_C=5.7144429176427E-03-0.010329344143873j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAR0,
@@ -294,7 +308,7 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    NOEUD='D4',
                    NOM_CMP='DX',
                    FREQ=100.0,),
-                _F(VALE_CALC_C=-0.011208353181533+0.015824734702747j,
+                _F(VALE_CALC_C=-0.0112083531815+0.0158247347027j,
                    VALE_REFE_C=-0.011208353181533+0.015824734702748j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAR0,
@@ -302,7 +316,7 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    NOEUD='D4',
                    NOM_CMP='DY',
                    FREQ=100.0,),
-                _F(VALE_CALC_C=6.4901183357578+3.5904903778849j,
+                _F(VALE_CALC_C=6.49011833576+3.59049037788j,
                    VALE_REFE_C=6.4901183357582+3.5904903778849j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAR0,
@@ -310,7 +324,7 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    NOEUD='D4',
                    NOM_CMP='DX',
                    FREQ=100.0,),
-                _F(VALE_CALC_C=-9.9429740574316-7.0424160027887j,
+                _F(VALE_CALC_C=-9.94297405743-7.04241600279j,
                    VALE_REFE_C=-9.942974057432-7.0424160027887j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAR0,
@@ -387,7 +401,7 @@ DYNHAC0=DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS',
                              EXCIT=_F(  COEF_MULT_C = 1.+0.j,
                                      CHARGE = CHARGEC)   )
 
-TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
+TEST_RESU(RESU=(_F(VALE_CALC_C=-1.64396617939E-05-9.09481837359E-06j,
                    VALE_REFE_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAC0,
@@ -395,7 +409,7 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    NOEUD='D4',
                    NOM_CMP='DX',
                    FREQ=100.0,),
-                _F(VALE_CALC_C= 2.5185847510601E-05+1.7838648127607E-05j,
+                _F(VALE_CALC_C=2.51858475106E-05+1.78386481276E-05j,
                    VALE_REFE_C=2.5185847510602E-05+1.7838648127607E-05j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAC0,
@@ -403,7 +417,7 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    NOEUD='D4',
                    NOM_CMP='DY',
                    FREQ=100.0,),
-                _F(VALE_CALC_C= 5.7144429176427E-03-0.010329344143872j,
+                _F(VALE_CALC_C=0.00571444291764-0.0103293441439j,
                    VALE_REFE_C=5.7144429176427E-03-0.010329344143873j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAC0,
@@ -411,7 +425,7 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    NOEUD='D4',
                    NOM_CMP='DX',
                    FREQ=100.0,),
-                _F(VALE_CALC_C=-0.011208353181533+0.015824734702747j,
+                _F(VALE_CALC_C=-0.0112083531815+0.0158247347027j,
                    VALE_REFE_C=-0.011208353181533+0.015824734702748j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAC0,
@@ -419,7 +433,7 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    NOEUD='D4',
                    NOM_CMP='DY',
                    FREQ=100.0,),
-                _F(VALE_CALC_C=6.4901183357578+3.5904903778849j,
+                _F(VALE_CALC_C=6.49011833576+3.59049037788j,
                    VALE_REFE_C=6.4901183357582+3.5904903778849j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAC0,
@@ -427,7 +441,7 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.6439661793946E-05-9.0948183735931E-06j,
                    NOEUD='D4',
                    NOM_CMP='DX',
                    FREQ=100.0,),
-                _F(VALE_CALC_C=-9.9429740574316-7.0424160027887j,
+                _F(VALE_CALC_C=-9.94297405743-7.04241600279j,
                    VALE_REFE_C=-9.942974057432-7.0424160027887j,
                    REFERENCE='AUTRE_ASTER',
                    RESULTAT=DYNHAC0,
