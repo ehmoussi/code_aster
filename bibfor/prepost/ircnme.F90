@@ -18,8 +18,7 @@
 
 subroutine ircnme(ifi, nochmd, chanom, typech, modele,&
                   nbcmp, nomcmp, partie, numpt, instan,&
-                  numord, nbnoec, linoec, sdcarm, carael,&
-                  codret)
+                  numord, nbnoec, linoec, sdcarm, codret)
 !_______________________________________________________________________
 ! person_in_charge: nicolas.sellenet at edf.fr
 !        IMPRESSION DU CHAMP CHANOM NOEUD ENTIER/REEL
@@ -57,7 +56,7 @@ subroutine ircnme(ifi, nochmd, chanom, typech, modele,&
 !
 ! 0.1. ==> ARGUMENTS
 !
-    character(len=8) :: typech, modele, sdcarm, carael
+    character(len=8) :: typech, modele, sdcarm
     character(len=19) :: chanom
     character(len=64) :: nochmd
     character(len=*) :: nomcmp(*), partie
@@ -110,7 +109,7 @@ subroutine ircnme(ifi, nochmd, chanom, typech, modele,&
                 nbcmp, nomcmp, ' ', partie, numpt,&
                 instan, numord, jcnsk, jcnsd, jcnsc,&
                 jcnsv, jcnsl, nbnoec, linoec, sdcarm,&
-                carael, codret)
+                codret)
 !
 !====
 ! 3. ON NETTOIE

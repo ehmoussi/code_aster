@@ -20,8 +20,7 @@
 !
 interface
     subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
-                      modnum, nuanom, nomtyp, nnotyp, sdcarm,&
-                      carael)
+                      modnum, nuanom, nomtyp, nnotyp, sdcarm)
         integer, parameter :: ntymax=69
         integer :: nbimpr
         integer :: idfimd
@@ -32,6 +31,6 @@ interface
         integer :: nuanom(ntymax, *)
         character(len=8) :: nomtyp(*)
         integer :: nnotyp(*)
-        character(len=8) :: sdcarm, carael
+        character(len=8) :: sdcarm
     end subroutine irmaes
 end interface

@@ -112,7 +112,7 @@ subroutine w039c4(carte, ifi, form)
     call ircame(ifi, nommed, chels1, typech, k8bid,&
                 0, k8bid, k8bid, k8bid, 0,&
                 0.0d0, 0, jcesk, jcesd, jcesc,&
-                jcesv, jcesl, 0, [0], k8bid, k8bid,&
+                jcesv, jcesl, 0, [0], k8bid,&
                 iret)
 !
     ASSERT(iret.eq.0)
