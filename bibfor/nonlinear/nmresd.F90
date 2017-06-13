@@ -36,7 +36,8 @@ implicit none
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/romAlgoNLSystemSolve.h"
-#include "asterfort/romAlgoNLCorrEFSystemSolve.h"
+#include "asterfort/romAlgoNLCorrEFMatrixModify.h"
+#include "asterfort/romAlgoNLCorrEFResiduModify.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -116,7 +117,11 @@ implicit none
             vect24 = cndonn
             call romAlgoNLSystemSolve(mata24, vect24, ds_algorom_, depso1)
         elseif (ds_algorom_%phase .eq. 'CORR_EF') then
-            call romAlgoNLCorrEFSystemSolve()  
+            vect24 = cndonn
+            call romAlgoNLCorrEFMatrixModify(numedd, matass, ds_algorom_)
+            call romAlgoNLCorrEFResiduModify(vect24, ds_algorom_)
+            call nmreso(fonact, vect24, cnpilo, cncine, solveu,&
+                        maprec, matass, depso1, depso2, rescvg)
         else
             ASSERT(.false.)
         endif

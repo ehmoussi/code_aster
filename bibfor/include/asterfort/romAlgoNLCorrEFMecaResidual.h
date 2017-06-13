@@ -19,8 +19,14 @@
 !
 !
 interface 
-    subroutine romAlgoNLCorrEFMecaResidual()
+    subroutine romAlgoNLCorrEFMecaResidual(v_fint, v_fext, ds_algorom, l_cine, v_ccid,&
+                                           resi)
         use Rom_Datastructure_type
-
+        real(kind=8), intent(in), pointer :: v_fint(:)
+        real(kind=8), intent(in), pointer :: v_fext(:)
+        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+        aster_logical, intent(in) :: l_cine
+        integer, intent(in), pointer :: v_ccid(:)
+        real(kind=8), intent(out) :: resi
     end subroutine romAlgoNLCorrEFMecaResidual
-end interface 
+end interface

@@ -165,8 +165,8 @@ implicit none
             call copisd('CHAMP_GD', 'V', temp_prev, chsol)
             call romAlgoNLSystemSolve(matass, cn2mbr, ds_algorom, chsol)
         else if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
-            call romAlgoNLCorrEFMatrixModify()
-            call romAlgoNLCorrEFResiduModify()
+            call romAlgoNLCorrEFMatrixModify(nume_dof, matass, ds_algorom)
+            call romAlgoNLCorrEFResiduModify(cn2mbr, ds_algorom)
             call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
                         chsol)
         else
@@ -194,8 +194,8 @@ implicit none
             call copisd('CHAMP_GD', 'V', temp_prev, chsol)
             call romAlgoNLSystemSolve(matass, cn2mbr, ds_algorom, chsol)
         else if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
-            call romAlgoNLCorrEFMatrixModify()
-            call romAlgoNLCorrEFResiduModify()
+            call romAlgoNLCorrEFMatrixModify(nume_dof, matass, ds_algorom)
+            call romAlgoNLCorrEFResiduModify(cn2mbr, ds_algorom)
             call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
                         chsol)
         else

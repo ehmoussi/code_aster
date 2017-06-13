@@ -331,7 +331,8 @@ implicit none
                                    vresi)
     endif
     if (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
-        call romAlgoNLCorrEFMecaResidual()
+        call romAlgoNLCorrEFMecaResidual(fint, fext, ds_algorom, lcine, v_ccid,&
+                                         vresi)
     endif
 !
 ! --- SYNTHESE DES RESULTATS
