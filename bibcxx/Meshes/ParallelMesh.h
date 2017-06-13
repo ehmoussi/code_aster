@@ -1,3 +1,6 @@
+
+#include "astercxx.h"
+
 #ifdef _USE_MPI
 
 #ifndef PARALLELMESH_H_

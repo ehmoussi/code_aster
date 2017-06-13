@@ -26,11 +26,12 @@ IF _HAVE_PETSC4PY == 1:
     from petsc4py.PETSc cimport Mat
     from petsc4py.PETSc cimport PetscMat
 
-cdef extern from "petscmat.h":
+IF _HAVE_PETSC4PY == 1:
+    cdef extern from "petscmat.h":
 
-    ctypedef int PetscErrorCode
+        ctypedef int PetscErrorCode
 
-cdef extern from "aster_fort.h":
+    cdef extern from "aster_fort.h":
 
-    IF _HAVE_PETSC4PY == 1:
-        cdef void CALL_MATASS2PETSC(const char*, PetscMat*, PetscErrorCode*)
+        IF _HAVE_PETSC4PY == 1:
+            cdef void CALL_MATASS2PETSC(const char*, PetscMat*, PetscErrorCode*)

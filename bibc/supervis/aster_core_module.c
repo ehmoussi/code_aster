@@ -526,15 +526,14 @@ void DEFP(GTALRM,gtalrm, _OUT ASTERINTEGER *nb)
     /* Interface Fortran/Python pour obtenir si des alarmes ont été émises.
      */
     fprintf(fileOut, "GTALRM\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
+    *nb = 0;
     /* TODO */
 
-    PyObject *res;
-    res = PyObject_CallMethod(get_sh_msglog(), "get_info_alarm_nb", "");
-    if (!res) MYABORT("erreur lors de l'appel a la methode 'get_info_alarm'");
-    *nb = (ASTERINTEGER)PyLong_AsLong(res);
-    Py_DECREF(res);
+//     PyObject *res;
+//     res = PyObject_CallMethod(get_sh_msglog(), "get_info_alarm_nb", "");
+//     if (!res) MYABORT("erreur lors de l'appel a la methode 'get_info_alarm'");
+//     *nb = (ASTERINTEGER)PyLong_AsLong(res);
+//     Py_DECREF(res);
 }
 
 /*

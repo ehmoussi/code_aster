@@ -1,3 +1,6 @@
+
+#include "astercxx.h"
+
 #ifdef _USE_MPI
 
 #ifndef PARALLELMESHINTERFACE_H_
@@ -28,7 +31,6 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
 #include "Meshes/ParallelMesh.h"
 #include "PythonBindings/DataStructureInterface.h"
 

@@ -23,11 +23,11 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#ifdef _USE_MPI
-
-#include "astercxx.h"
-
 #include "Meshes/ParallelMesh.h"
+#include "ParallelUtilities/MPIInfos.h"
+#include "aster_fort.h"
+
+#ifdef _USE_MPI
 
 ParallelMeshInstance::ParallelMeshInstance()
 {};
@@ -35,7 +35,12 @@ ParallelMeshInstance::ParallelMeshInstance()
 bool ParallelMeshInstance::readMedFile( const std::string& fileName )
     throw ( std::runtime_error )
 {
-    MeshInstance::readMedFile( fileName );
+    std::string completeFileName = fileName + "/" + std::to_string( getMPIRank() ) + ".med";
+    MeshInstance::readMedFile( completeFileName );
+
+//     LogicalUnitFileCython file1( completeFileName, Binary, Old );
+//     std::string fortFileName = "fort." + std::to_string( file1.getLogicalUnit() ); 
+    CALL_LRMJOI_WRAP( getName().c_str(), completeFileName.c_str() );
 
     return true;
 };

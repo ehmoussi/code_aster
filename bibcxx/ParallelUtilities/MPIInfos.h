@@ -1,6 +1,14 @@
+
+#include "astercxx.h"
+
+#ifdef _USE_MPI
+
+#ifndef MPIINFOS_H_
+#define MPIINFOS_H_
+
 /**
- * @file ParallelMeshInterface.cxx
- * @brief Interface python de ParallelMesh
+ * @file MPIInfos.h
+ * @brief Fichier entete des fonctions informations MPI
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,22 +31,12 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ParallelMeshInterface.h"
+/** @brief Get MPI number of procs */
+int getMPINumberOfProcs() throw( std::runtime_error );
 
-#ifdef _USE_MPI
+/** @brief Get MPI rank */
+int getMPIRank() throw( std::runtime_error );
 
-#include "PythonBindings/SharedPtrUtilities.h"
-#include <boost/python.hpp>
-
-void exportParallelMeshToPython()
-{
-    using namespace boost::python;
-    class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
-            bases< MeshInstance > >( "ParallelMesh", no_init )
-        .def( "create", &createSharedPtr< ParallelMeshInstance > )
-        .staticmethod( "create" )
-        .def( "readMedFile", &ParallelMeshInstance::readMedFile )
-    ;
-};
+#endif /* MPIINFOS_H_ */
 
 #endif /* _USE_MPI */

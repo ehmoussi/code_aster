@@ -2,7 +2,7 @@
 #define ASTERCXX_H_
 
 /* ==================================================================== */
-/* Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org */
+/* Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org */
 /*                                                                      */
 /* This file is part of Code_Aster.                                     */
 /*                                                                      */
@@ -21,6 +21,8 @@
 /* ==================================================================== */
 
 /* person_in_charge: mathieu.courtois@edf.fr */
+
+#include "asterc_config.h"
 
 #ifdef __cplusplus
 
