@@ -18,8 +18,6 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: philippe.de-bonnieres at edf.fr
-#       DE LEMAITRE
-
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
