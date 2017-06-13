@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-﻿# coding=utf-8
-
 from Noyau.N_types import force_list
 from Noyau.N_utils import AsType
 import numpy as NP

@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-﻿
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI',),)
 
 # ON TESTE LA METHODE SOUS_POINT DE PROJ_CHAMP POUR DES ELEMENTS POU_D_EM
