@@ -38,8 +38,6 @@ bool ParallelMeshInstance::readMedFile( const std::string& fileName )
     std::string completeFileName = fileName + "/" + std::to_string( getMPIRank() ) + ".med";
     MeshInstance::readMedFile( completeFileName );
 
-//     LogicalUnitFileCython file1( completeFileName, Binary, Old );
-//     std::string fortFileName = "fort." + std::to_string( file1.getLogicalUnit() ); 
     CALL_LRMJOI_WRAP( getName().c_str(), completeFileName.c_str() );
 
     return true;
