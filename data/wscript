@@ -97,6 +97,8 @@ def env2dict(self, src):
     flags = [' '.join(env[i]) for i in env.keys() if i.startswith('FCFLAGS')]
     dico['FCFLAGS'] = ' '.join(flags)
     dico['OPT_ENV'] = env['OPT_ENV'] and os.linesep.join(env['OPT_ENV']) or ''
+    dico['OPT_ENV_FOOTER'] = env['OPT_ENV_FOOTER'] \
+        and os.linesep.join(env['OPT_ENV_FOOTER']) or ''
     try:
         addmem = env['ADDMEM']
         if addmem and type(addmem) in (list, tuple):

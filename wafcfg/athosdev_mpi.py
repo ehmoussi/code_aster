@@ -38,8 +38,9 @@ def configure(self):
     athosdev.configure(self)
     self.env['ADDMEM'] = 800
 
-    self.env.append_value('OPT_ENV', ['. /etc/profile.d/lmod.sh',
-                                      'module load impi/2016.0.047'])
+    self.env.append_value('OPT_ENV_FOOTER', [
+        '. /etc/profile.d/lmod.sh',
+        'module load impi/2016.3.068'])
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster/lib',

@@ -28,7 +28,7 @@ waf_mpi install -p
 
 import eole
 ASTER_ROOT = eole.ASTER_ROOT
-YAMMROOT = eole.YAMMROOT 
+YAMMROOT = eole.YAMMROOT
 
 def configure(self):
     opts = self.options
@@ -38,7 +38,7 @@ def configure(self):
     eole.configure(self)
     self.env['ADDMEM'] = 400
 
-    self.env.append_value('OPT_ENV', [
+    self.env.append_value('OPT_ENV_FOOTER', [
         'module load impi/2016.3.068'])
 
     self.env.prepend_value('LIBPATH', [
@@ -62,5 +62,5 @@ def configure(self):
     # allow to compile the elements catalog using the executable on one processor
     self.env['CATALO_CMD'] = 'I_MPI_FABRICS=shm'
     # produce an executable file with symbols for INTEL16 with mpiifort wrapper
-    self.env.append_value('LINKFLAGS', ('-nostrip')) 
+    self.env.append_value('LINKFLAGS', ('-nostrip'))
     self.env.prepend_value('LINKFLAGS', ('-L/opt/intel/2016.0.047/impi/5.1.1.109/lib64'))
