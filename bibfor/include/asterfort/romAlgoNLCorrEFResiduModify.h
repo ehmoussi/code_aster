@@ -19,7 +19,9 @@
 !
 !
 interface 
-    subroutine romAlgoNLCorrEFResiduModify()
+    subroutine romAlgoNLCorrEFResiduModify(vect_2mbr, ds_algorom)
         use Rom_Datastructure_type
+        character(len=24)    , intent(in) :: vect_2mbr
+        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     end subroutine romAlgoNLCorrEFResiduModify
 end interface

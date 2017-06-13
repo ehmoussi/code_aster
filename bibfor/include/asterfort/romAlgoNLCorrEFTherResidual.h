@@ -21,8 +21,18 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romAlgoNLCorrEFTherResidual()
+    subroutine romAlgoNLCorrEFTherResidual(ther_crit_i, ther_crit_r, vec2nd   , cnvabt, cnresi    ,&
+                                           cn2mbr     , resi_rela  , resi_maxi, conver, ds_algorom)
         use ROM_Datastructure_type
-
+        integer, intent(in) :: ther_crit_i(*)
+        real(kind=8), intent(in) :: ther_crit_r(*)
+        character(len=24), intent(in) :: vec2nd
+        character(len=24), intent(in) :: cnvabt
+        character(len=24), intent(in) :: cnresi
+        character(len=24), intent(in) :: cn2mbr
+        real(kind=8)     , intent(out):: resi_rela
+        real(kind=8)     , intent(out):: resi_maxi
+        aster_logical    , intent(out):: conver
+        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     end subroutine romAlgoNLCorrEFTherResidual
 end interface

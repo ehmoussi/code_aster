@@ -15,12 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
 !
 interface 
-    subroutine romAlgoNLCorrEFMatrixModify()
+    subroutine romAlgoNLCorrEFMatrixModify(nume_dof, matr_asse, ds_algorom)
         use Rom_Datastructure_type
-
+        character(len=24)    , intent(in) :: nume_dof
+        character(len=19)    , intent(in) :: matr_asse
+        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     end subroutine romAlgoNLCorrEFMatrixModify
 end interface 

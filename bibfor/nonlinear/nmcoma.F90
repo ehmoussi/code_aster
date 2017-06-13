@@ -296,7 +296,7 @@ implicit none
             call mtdscr(matass)
         elseif (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
             call mtdscr(matass)
-            call romAlgoNLCorrEFMatrixModify()
+            call romAlgoNLCorrEFMatrixModify(numedd, matass, ds_algorom)
             call preres(solveu, 'V', faccvg, maprec, matass,&
                         ibid, -9999)
         else

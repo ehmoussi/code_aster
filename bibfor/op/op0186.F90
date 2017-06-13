@@ -360,7 +360,7 @@ implicit none
                 vtempp, cn2mbr_stat, mediri     , conver   , vhydr   ,&
                 vhydrp, dry_prev   , dry_curr   , compor   , vabtla  ,&
                 cnresi, ther_crit_i, ther_crit_r, reasma   , testr,&
-                testm , vnorm(1), ds_algorom )
+                testm , vnorm(1)   , ds_algorom )
 !
     vrela(1) = testr 
     vmaxi(1) = testm

@@ -138,7 +138,8 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
             call romAlgoNLTherResidual(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi    ,&
                                        cn2mbr     , testr      , testm , conver, ds_algorom)
         else if (ds_algorom%phase .eq. 'CORR_EF') then
-            call romAlgoNLCorrEFTherResidual()
+            call romAlgoNLCorrEFTherResidual(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi    ,&
+                                             cn2mbr     , testr      , testm , conver, ds_algorom)
         endif
     else
         call nxresi(ther_crit_i, ther_crit_r, vec2nd, cnvabt, cnresi,&
@@ -194,8 +195,8 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         call copisd('CHAMP_GD', 'V', temp_prev, chsol)
         call romAlgoNLSystemSolve(matass, cn2mbr, ds_algorom, chsol)
     else if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
-        call romAlgoNLCorrEFMatrixModify()
-        call romAlgoNLCorrEFResiduModify()
+        call romAlgoNLCorrEFMatrixModify(nume_dof, matass, ds_algorom)
+        call romAlgoNLCorrEFResiduModify(cn2mbr, ds_algorom)
         call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
                     chsol)
     else
