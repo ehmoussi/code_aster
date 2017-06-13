@@ -23,6 +23,8 @@
 
 #include <boost/python.hpp>
 
+#include "astercxx.h"
+
 #include "PythonBindings/VectorUtilities.h"
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/DiscreteProblemInterface.h"
@@ -96,6 +98,8 @@
 #include "PythonBindings/StudyDescriptionInterface.h"
 #include "PythonBindings/TimeStepManagerInterface.h"
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
+#include "PythonBindings/ParallelMeshInterface.h"
+#include "PythonBindings/MPIInfosInterface.h"
 
 using namespace boost::python;
 
@@ -174,4 +178,9 @@ BOOST_PYTHON_MODULE(libaster)
     exportStudyDescriptionToPython();
     exportTimeStepManagerToPython();
     exportCppToFortranGlossaryToPython();
+
+#ifdef _USE_MPI
+    exportParallelMeshToPython();
+    exportMPIInfosToPython();
+#endif /* _USE_MPI */
 };

@@ -1,6 +1,11 @@
+#ifdef _USE_MPI
+
+#ifndef MPIINFOSINTERFACE_H_
+#define MPIINFOSINTERFACE_H_
+
 /**
- * @file ParallelMeshInterface.cxx
- * @brief Interface python de ParallelMesh
+ * @file MPIInfosInterface.h
+ * @brief Fichier entete des utilitaires MPI en python
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,22 +28,11 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ParallelMeshInterface.h"
+#include "astercxx.h"
+#include "ParallelUtilities/MPIInfos.h"
 
-#ifdef _USE_MPI
+void exportMPIInfosToPython();
 
-#include "PythonBindings/SharedPtrUtilities.h"
-#include <boost/python.hpp>
-
-void exportParallelMeshToPython()
-{
-    using namespace boost::python;
-    class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
-            bases< MeshInstance > >( "ParallelMesh", no_init )
-        .def( "create", &createSharedPtr< ParallelMeshInstance > )
-        .staticmethod( "create" )
-        .def( "readMedFile", &ParallelMeshInstance::readMedFile )
-    ;
-};
+#endif /* MPIINFOSINTERFACE_H_ */
 
 #endif /* _USE_MPI */

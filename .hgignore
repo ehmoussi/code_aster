@@ -13,6 +13,7 @@ syntax: regexp
 ^waf_.*
 .*~$
 .*%$
-fort\.*
+^.*/fort\.*
+^fort\.*
 glob\.*
 vola\.*

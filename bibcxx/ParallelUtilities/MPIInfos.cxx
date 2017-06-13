@@ -1,6 +1,6 @@
 /**
- * @file ParallelMeshInterface.cxx
- * @brief Interface python de ParallelMesh
+ * @file MPIInfos.cxx
+ * @brief Implementation de ParallelMeshInstance
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,22 +23,34 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ParallelMeshInterface.h"
+#include "astercxx.h"
 
 #ifdef _USE_MPI
 
-#include "PythonBindings/SharedPtrUtilities.h"
-#include <boost/python.hpp>
+#include "ParallelUtilities/MPIInfos.h"
 
-void exportParallelMeshToPython()
+extern "C" struct aster_comm_t;
+extern "C" aster_comm_t* aster_get_comm_world();
+extern "C" void aster_get_mpi_info(aster_comm_t *, int *, int *);
+
+int getMPINumberOfProcs() throw( std::runtime_error )
 {
-    using namespace boost::python;
-    class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
-            bases< MeshInstance > >( "ParallelMesh", no_init )
-        .def( "create", &createSharedPtr< ParallelMeshInstance > )
-        .staticmethod( "create" )
-        .def( "readMedFile", &ParallelMeshInstance::readMedFile )
-    ;
+    int rank = -1, nbProcs = -1;
+    aster_comm_t* comm = aster_get_comm_world();
+    aster_get_mpi_info(comm, &rank, &nbProcs);
+    if( rank == -1 || nbProcs == -1 )
+        throw std::runtime_error( "Error with MPI Infos" );
+    return nbProcs;
+};
+
+int getMPIRank() throw( std::runtime_error )
+{
+    int rank = -1, nbProcs = -1;
+    aster_comm_t* comm = aster_get_comm_world();
+    aster_get_mpi_info(comm, &rank, &nbProcs);
+    if( rank == -1 || nbProcs == -1 )
+        throw std::runtime_error( "Error with MPI Infos" );
+    return rank;
 };
 
 #endif /* _USE_MPI */
