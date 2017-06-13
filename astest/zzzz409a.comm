@@ -19,15 +19,13 @@
 
 # person_in_charge: astrid.billon at edf.fr
 #
-# UNIDIRECTIONNAL TENSILE TEST WITH TEMPERATURE ON A SINGLE ELEMENT, 
+# UNIDIRECTIONNAL TENSILE TEST WITH TEMPERATURE ON A SINGLE ELEMENT,
 # USING A UMAT ELASTOPLASTIC BEHAVIOUR LAW
 # WITH ISOTROPIC LINEAR HARDENING
 #
 #
 # ! See also zzzz409a.23 for a Python resolution of this problem !
 #
-
-
 
 import os
 from asrun.toolbox import make_shared
@@ -59,21 +57,21 @@ TEMP = DEFI_FONCTION(
     VALE     = (0,T0, 0.5,T0+DT1/2., 1.5, T0+(DT1+DT2)/2, 2,T0+DT2, 3,T0+DT3, 4, T0),
     )
 
-     
+
 EPS = DEFI_FONCTION(
     NOM_PARA='INST',
     VALE    = (0,0, 0.5, 0.5+alpha*DT1/2., 1.5,1.5+alpha*(DT1+DT2)/2, 2,2+alpha*DT2, 3,3+alpha*DT3, 4, 0),
     )
- 
+
 
 UMAT = DEFI_MATERIAU(
     ELAS=_F(ALPHA=alpha, E=1,NU=0),
-    UMAT=_F( LISTE_COEF = (E , k)), 
+    UMAT=_F( LISTE_COEF = (E , k)),
     )
 
 
 RESUMAT = SIMU_POINT_MAT(MATER=UMAT,
-                      COMPORTEMENT =_F(RELATION = 'UMAT', 
+                      COMPORTEMENT =_F(RELATION = 'UMAT',
                                     NB_VARI = 2,
                                     LIBRAIRIE = 'libumat.so',
                                     NOM_ROUTINE = 'umat'),
@@ -107,7 +105,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      NOM_PARA='INST',
                      VALE=3.0,),
            )
-           
+
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=2.0000000000000000,
            VALE_REFE=2.,

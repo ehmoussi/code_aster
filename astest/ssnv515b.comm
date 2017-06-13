@@ -17,13 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# Subroutines
-# ------------------------------------------------------------------------------  
 def rankine_traction(YOUNG,POISSON,SIGMA_T,SIG0,epsizz_max,N_pas=100,):
   """
   Auteur :: Marc Kham
   Date   :: 2 novembre 2016
-  
+
   INPUT:
   ------
   * SIG0       :: Contrainte initiale (<0. en compression)
@@ -32,13 +30,13 @@ def rankine_traction(YOUNG,POISSON,SIGMA_T,SIG0,epsizz_max,N_pas=100,):
   """
 
   from numpy import array
-  
+
   K  =YOUNG/3./(1.-2.*POISSON)
   G  =YOUNG/2./(1.+POISSON)
   A  =K+4./3.*G
   B  =K-2./3.*G
   C  =2.*(K+G/3.)
-  
+
   depzz    = epsizz_max/N_pas
   epzz     = [depzz*i for i in range(1,N_pas)]
   sixx     = [SIG0]
@@ -47,44 +45,44 @@ def rankine_traction(YOUNG,POISSON,SIGMA_T,SIG0,epsizz_max,N_pas=100,):
   epxx_ela = [0.]
   epsvp    = [0.]
   epsdp    = [0.]
-  
+
   for i,e in enumerate(epzz):
-  
+
     # increment de deformation laterale totale
     #
     depxx = (SIG0-sixx[i]-B*depzz) /C
-  
+
     # prediction elastique de l'increment de contrainte axiale
     #
     dsixx = B*depzz + C*depxx
     sixx_pred = sixx[i] + dsixx
     # donne dsixx = 0. et sixx_pred=SIG0
-    
+
     dsizz = A*depzz + 2.*B*depxx
     sizz_pred = sizz[i] + dsizz
-  
+
     residu = sizz_pred-SIGMA_T
-    
+
     dlambda= max(residu,0.)/A
-    
+
     depsvp = dlambda
-    
+
     depsdp = 2./3.*dlambda
-    
+
     depxx_ela = depxx + B*dlambda /C
-    
+
     sixx.append(sixx[i]+dsixx-B*dlambda)
-    
+
     sizz.append(sizz[i]+dsizz-A*dlambda)
-    
+
     epxx.append(epxx[i]+depxx)
-    
+
     epxx_ela.append(epxx_ela[i]+depxx_ela)
-    
+
     epsvp.append(epsvp[i]+depsvp)
-    
+
     epsdp.append(epsdp[i]+depsdp)
-    
+
   return sixx,sizz,epxx_ela,epxx,epsvp,epsdp
 # Fin
 
@@ -136,7 +134,7 @@ ltemps    =[dtemps*i for i in range(npas+1)]
 TEMPS=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=(_F(JUSQU_A =tarret   , NOMBRE =2,),
                                  _F(JUSQU_A =temps_max, NOMBRE =npas,),),);
-                                 
+
 #***********************************************************************
 #
 #    DONNEES MATERIAU
@@ -181,7 +179,7 @@ EPZZ=.03
 SIGLAT=AFFE_CHAR_MECA(MODELE=MODELE,
                        PRES_REP=_F(GROUP_MA=('DROIT','ARRIERE',),
                                    PRES    =P0,),);
-                     
+
 DEPTOP=AFFE_CHAR_MECA(MODELE=MODELE,
                 DDL_IMPO=(_F(GROUP_MA='APPUI', DZ=1.,),),);
 
@@ -189,7 +187,7 @@ DEPL_1=AFFE_CHAR_CINE(MODELE=MODELE,
                 MECA_IMPO=(_F(GROUP_MA='BAS',   DZ = 0.,),
                            _F(GROUP_MA='GAUCHE',DX = 0.,),
                            _F(GROUP_MA='DEVANT',DY = 0.,),),);
-                     
+
 COEF2=DEFI_FONCTION(NOM_PARA='INST',
                     PROL_DROITE='CONSTANT',
                     VALE=(  0., 0.,
@@ -209,7 +207,7 @@ SIG0=CREA_CHAMP(INFO=2,
                 AFFE=_F(GROUP_MA='ECHAN',
                         NOM_CMP=('SIXX','SIYY','SIZZ'),
                         VALE=(-P0,-P0,-P0,),),);
-  
+
 #***********************************************************************
 #
 #    ESSAI TRIAXIAL DRAINE
@@ -217,30 +215,30 @@ SIG0=CREA_CHAMP(INFO=2,
 #***********************************************************************
 U1=STAT_NON_LINE(MODELE    =MODELE,
                  CHAM_MATER=CHMAT,
-                 
+
                  EXCIT=(_F(CHARGE = DEPTOP, FONC_MULT = COEF2,),
                         _F(CHARGE = SIGLAT,),
                         _F(CHARGE = DEPL_1,),),
-                        
+
                  ETAT_INIT=_F(SIGM=SIG0,),
-                 
+
                  COMPORTEMENT=_F(RELATION='RANKINE',),
-                 
+
                  NEWTON=_F(MATRICE   = 'TANGENTE',
                            REAC_ITER =1,),
-                           
+
                  CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                 ITER_GLOB_MAXI = 10,
                                 ARRET='NON',),
-                                
+
                  ARCHIVAGE =_F(LIST_INST=TEMPS,),
-                 
+
                  SOLVEUR=_F(METHODE='MUMPS',),
-                 
+
                  INCREMENT=_F(LIST_INST=TEMPS,
                               INST_INIT=0.,
                               INST_FIN =tfin,),);
-                              
+
 # ================================================================
 #
 #     TEST_RESU AU POINT C
@@ -252,20 +250,20 @@ U1=CALC_CHAMP(reuse       =U1,
               VARI_INTERNE='VARI_NOEU',
               DEFORMATION ='EPSI_NOEU',
               RESULTAT    =U1);
-              
+
 fsizz = RECU_FONCTION(RESULTAT = U1,
                    NOM_CHAM = 'SIGM_NOEU',
                    GROUP_MA = 'ECHAN',
                    GROUP_NO = 'C',
                    NOM_CMP  = 'SIZZ',
                    INFO     = 1,);
-              
+
 fepxx = RECU_FONCTION(RESULTAT = U1,
                    NOM_CHAM = 'EPSI_NOEU',
                    GROUP_MA = 'ECHAN',
                    GROUP_NO = 'C',
                    NOM_CMP  = 'EPXX');
-              
+
 fepdp = RECU_FONCTION(RESULTAT = U1,
                    NOM_CHAM = 'VARI_NOEU',
                    GROUP_MA = 'ECHAN',
@@ -285,21 +283,21 @@ REFSIZZ  =DEFI_FONCTION(NOM_PARA  ='INST',
                       ORDONNEE   =sizz,
                       PROL_DROITE='CONSTANT',
                       PROL_GAUCHE='CONSTANT',);
-                      
+
 REFEPXX  =DEFI_FONCTION(NOM_PARA  ='INST',
                       NOM_RESU   ='EPXX',
                       ABSCISSE   =linst,
                       ORDONNEE   =epxx,
                       PROL_DROITE='CONSTANT',
                       PROL_GAUCHE='CONSTANT',);
-                      
+
 REFEPDP =DEFI_FONCTION(NOM_PARA  ='INST',
                       NOM_RESU   ='V2',
                       ABSCISSE   =linst,
                       ORDONNEE   =epsdp,
                       PROL_DROITE='CONSTANT',
                       PROL_GAUCHE='CONSTANT',);
-                      
+
 refsizz=CALC_FONC_INTERP(FONCTION =REFSIZZ,
                          NOM_PARA ='INST',
                          LIST_PARA=TEMPS,);
@@ -315,15 +313,15 @@ refepdp=CALC_FONC_INTERP(FONCTION =REFEPDP,
 npas   =20
 dtemps =temps_max/npas
 linst  =[dtemps*i for i in range(npas)]
-                      
+
 DSIZZ = CALC_FONCTION(INFO=2,
                       COMB=(_F(FONCTION=fsizz,   COEF = 1.),
                             _F(FONCTION=refsizz, COEF =-1.),),);
-                      
+
 DEPXX = CALC_FONCTION(INFO=1,
                       COMB=(_F(FONCTION=fepxx,   COEF = 1.),
                             _F(FONCTION=refepxx, COEF =-1.),),);
-                      
+
 DEPDP = CALC_FONCTION(INFO=1,
                       COMB=(_F(FONCTION=fepdp,   COEF = 1.),
                             _F(FONCTION=refepdp, COEF =-1.),),);
@@ -333,7 +331,7 @@ TABDSIZZ = CREA_TABLE(FONCTION=_F(FONCTION=DSIZZ),);
 TABDEPXX = CREA_TABLE(FONCTION=_F(FONCTION=DEPXX),);
 
 TABDEPDP = CREA_TABLE(FONCTION=_F(FONCTION=DEPDP),);
-                        
+
 TEST_TABLE(NOM_PARA ='SIZZ',
            TABLE    =TABDSIZZ,
            TYPE_TEST='MAX',
@@ -341,11 +339,11 @@ TEST_TABLE(NOM_PARA ='SIZZ',
            CRITERE  ='ABSOLU',
            # Valeur calculee (non-regression)
            VALE_CALC   =9.09494701773E-12,
-           
+
            REFERENCE='ANALYTIQUE',
            PRECISION=1.e-8,
            VALE_REFE=0.,);
-           
+
 TEST_TABLE(NOM_PARA ='EPXX',
            TABLE    =TABDEPXX,
            TYPE_TEST='MAX',
@@ -353,11 +351,11 @@ TEST_TABLE(NOM_PARA ='EPXX',
            CRITERE  ='ABSOLU',
            # Valeur calculee (non-regression)
            VALE_CALC   =3.E-05,
-           
+
            REFERENCE='ANALYTIQUE',
            PRECISION=1.e-4,
            VALE_REFE=0.,);
-           
+
 TEST_TABLE(NOM_PARA ='V2',
            TABLE    =TABDEPDP,
            TYPE_TEST='MAX',
@@ -365,7 +363,7 @@ TEST_TABLE(NOM_PARA ='V2',
            CRITERE  ='ABSOLU',
            # Valeur calculee (non-regression)
            VALE_CALC   =1.33333333333E-05,
-           
+
            REFERENCE='ANALYTIQUE',
            PRECISION=1.e-4,
            VALE_REFE=0.,);
