@@ -46,6 +46,8 @@ implicit none
 #include "asterfort/vecini.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/thmCompEpsiElga.h"
+#include "asterfort/thmCompSiefElno.h"
+#include "asterfort/thmCompVariElno.h"
 #include "asterfort/Behaviour_type.h"
 
     character(len=16) :: option, nomte
@@ -59,9 +61,9 @@ implicit none
 ! =====================================================================
     integer :: jgano, nno, imatuu, ndim, imate, iinstm, jcret
     integer :: ipoid2, ivf2
-    integer :: idfde2, npi, npg, nvim
+    integer :: idfde2, npi, npg
 !
-    integer :: retloi, iret, iretp, iretm
+    integer :: retloi, iretp, iretm
     integer :: ipoids, ivf, idfde, igeom
     integer :: iinstp, ideplm, ideplp, icompo, icarcr, ipesa
     integer :: icontm, ivarip, ivarim, ivectu, icontp
@@ -69,8 +71,8 @@ implicit none
 ! =====================================================================
     integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
     integer :: dimdep, dimdef, dimcon, nbvari, nddls, nddlm, ii
-    integer :: nmec, np1, np2, i, ncmp, nnos, ichg, ichn
-    integer :: jtab(7), nnom
+    integer :: nmec, np1, np2, i, nnos
+    integer :: nnom
     real(kind=8) :: defgep(21), defgem(21), poids
     real(kind=8) :: dfdbid1(27), dfdbid2(27), dfdbid3(27)
     real(kind=8) :: dfdi(20, 3), dfdi2(20, 3), b(21, 120)
@@ -456,28 +458,13 @@ implicit none
 ! --- 7. OPTION : SIEF_ELNO --------------------------------------------
 ! ======================================================================
     if (option .eq. 'SIEF_ELNO  ') then
-        ncmp = dimcon
-        call jevech('PCONTRR', 'L', ichg)
-        call jevech('PSIEFNOR', 'E', ichn)
-        nvim = mecani(5)
-        call posthm(option, modint, jgano, ncmp, nvim,&
-                    zr(ichg), zr(ichn))
+        call thmCompSiefElno(vf, modint, mecani, press1, press2, tempe)
     endif
 ! ======================================================================
 ! --- 8. OPTION : VARI_ELNO --------------------------------------------
 ! ======================================================================
     if (option .eq. 'VARI_ELNO  ') then
-        call jevech('PVARIGR', 'L', ichg)
-        call jevech('PVARINR', 'E', ichn)
-!
-        call jevech('PCOMPOR', 'L', icompo)
-        read (zk16(icompo-1+NVAR),'(I16)') ncmp
-        read (zk16(icompo-1+MECA_NVAR),'(I16)') nvim
-        call tecach('OOO', 'PVARIGR', 'L', iret, nval=7,&
-                    itab=jtab)
-!
-        call posthm(option, modint, jgano, ncmp, nvim,&
-                    zr(ichg), zr(ichn))
+        call thmCompVariElno(vf, modint)
     endif
 ! ======================================================================
 ! --- 9. OPTION : EPSI_ELGA --------------------------------------------

@@ -28,6 +28,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
+#include "asterfort/thmGetGeneDime.h"
 !
 ! aslint: disable=W1504
 ! 
@@ -71,10 +72,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
-!
-! --------------------------------------------------------------------------------------------------
-!
     dimdep    = 0
     dimdef    = 0
     dimcon    = 0
@@ -93,11 +90,11 @@ implicit none
         endif
     endif
 !
-! - Total of dimensions
+! - Get dimensions of generalized vectors
 !
-    dimdep = ndim*mecani(1) + press1(1) + press2(1) + tempe(1)
-    dimdef = mecani(4) + press1(6) + press2(6) + tempe(4)
-    dimcon = mecani(5) + press1(2)*press1(7) + press2(2)*press2(7) + tempe(5)
+    call thmGetGeneDime(ndim     ,&
+                        mecani   , press1 , press2 , tempe ,&
+                        dimdep   , dimdef , dimcon )
 !
 ! - Count dof
 !
