@@ -475,8 +475,7 @@ class PARTITION:
         self.OPTIONS = {'NB_PART': '',
                         'ALGO': '',
                         'INFO': '',
-                        'rep_metis': aster_core.get_option('repout'),
-                        'exe_metis': os.path.join(aster_core.get_option('repout'), 'pmetis'),
+                        'exe_metis': aster_core.get_option('prog:pmetis'),
                         'fichier_in': 'fort.66',
                         'fichier_out': 'fort.68',
                         'elimine_bords': 'OUI',
@@ -540,8 +539,7 @@ class PARTITION:
         self.t00 = time.clock()
 
         if METHODE:
-            self.OPTIONS['exe_metis'] = os.path.join(
-                aster_core.get_option('repout'), METHODE.lower())
+            self.OPTIONS['exe_metis'] = aster_core.get_option('prog:' + METHODE.lower())
         elif LOGICIEL:
             self.OPTIONS['exe_metis'] = LOGICIEL
 

@@ -136,8 +136,7 @@ class CalculMiss(object):
 
         copie_fichier(self._fichier_tmp("in"),
                       osp.join(self.param['_WRKDIR'], "MISS.IN"))
-        cmd = osp.join(aster_core.get_option('repout'), "run_miss3d") + \
-            " " + self.param['VERSION']
+        cmd = aster_core.get_option("prog:run_miss3d") + " " + self.param['VERSION']
         iret = 4
         try:
             os.chdir(self.param['_WRKDIR'])

@@ -155,10 +155,8 @@ def Affiche_Param(para, val):
 def make_include_files(UNITE_INCLUDE, calcul, parametres):
     """  Module permettant de generer les fichiers a inclure (mode INCLUSION)
     """
-
+    ASTER_ROOT = os.environ['ASTER_ROOT']
     try:
-        ASTER_ROOT = os.path.join(aster_core.get_option('repout'), '..')
-        sys.path.append(os.path.join(ASTER_ROOT, 'ASTK', 'ASTK_SERV', 'lib'))
         sys.path.append(os.path.join(ASTER_ROOT, 'lib', 'python%s.%s' % (sys.version_info[0], sys.version_info[1] ), 'site-packages'))
     except:
         pass
@@ -721,7 +719,7 @@ class CALCULS_ASTER:
         # ----------------------------------------------------------------------------
         if not ASTER_ROOT:
             try:
-                ASTER_ROOT = os.path.join(aster_core.get_option('repout'), '..')
+                ASTER_ROOT = os.environ['ASTER_ROOT']
             except:
                 pass
         try:
@@ -1042,11 +1040,10 @@ class CALCULS_ASTER:
         """
         if not self.ASTER_ROOT:
             try:
-                ASTER_ROOT = os.path.join(aster_core.get_option('repout'), '..')
+                ASTER_ROOT = os.environ['ASTER_ROOT']
             except:
                 pass
         try:
-            sys.path.append(os.path.join(ASTER_ROOT, 'ASTK', 'ASTK_SERV', 'lib'))
             sys.path.append(os.path.join(ASTER_ROOT, 'lib', 'python%s.%s' % (sys.version_info[0], sys.version_info[1] ), 'site-packages'))
         except:
             pass

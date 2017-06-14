@@ -80,7 +80,7 @@ import ihm_parametres
 from code_aster.Cata.Commands import (AFFE_MODELE, MODI_MODELE, COPIER, CREA_MAILLAGE,
     CREA_RESU, DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, IMPR_RESU,
     INFO_EXEC_ASTER, POST_RELEVE_T, PROJ_CHAMP, STANLEY)
-from code_aster.Cata.Language import DataStructure 
+from code_aster.Cata.Language import DataStructure
 from code_aster.Cata.Syntax import _F
 
 from Macro.test_fichier_ops import test_file
@@ -216,7 +216,7 @@ class PARAMETRES:
         # Si Salome est present, on le met en premier choix
         if __salome__ :
             self.para['MODE_GRAPHIQUE']['mode_graphique'] = 'Salome'
-            self.para['CONFIG']['mode'] = 'LOCAL' 
+            self.para['CONFIG']['mode'] = 'LOCAL'
 
         # Si Salome n'est pas present, on l'enleve de la liste des choix
         # possibles
@@ -478,7 +478,7 @@ class PARAMETRES:
             },
             'machine_salome_runscript': {
                 'label':  _(u"Lanceur salome"),
-                'val': os.path.join(aster_core.get_option('repout'), 'salome'),
+                'val': aster_core.get_option('prog:salome'),
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Salome'],
@@ -3083,8 +3083,7 @@ class DRIVER_GRACE(DRIVER_COURBES):
             # Ouverture ou rafraichissement du terminal si necessaire
             xmgrace_exe = self.stan.parametres['grace']
             if not xmgrace_exe.strip():
-                xmgrace_exe = os.path.join(
-                    aster_core.get_option('repout'), 'xmgrace')
+                xmgrace_exe = aster_core.get_option('prog:xmgrace')
 
             if not self.terminal:
                 self.terminal = xmgrace.Xmgr(xmgrace=xmgrace_exe)

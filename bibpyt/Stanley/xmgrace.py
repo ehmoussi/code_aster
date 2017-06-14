@@ -36,7 +36,7 @@ class Xmgr:
 
     DEJA_ACTIF = 'Terminal xmgrace deja actif'
 
-    def __init__(self, gr_max=10, options=None, xmgrace=os.path.join(aster_core.get_option('repout'), 'xmgrace')):
+    def __init__(self, gr_max=10, options=None, xmgrace=aster_core.get_option('prog:xmgrace')):
 
         # Declaration
         global TERMINAL

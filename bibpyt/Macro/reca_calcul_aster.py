@@ -181,12 +181,7 @@ class CALCUL_ASTER:
             self.Creation_Fichier_Export_Esclave(tmp_macr_recal)
 
             # Code_Aster installation
-            if os.environ.has_key('ASTER_ROOT'):
-                ASTER_ROOT = os.environ['ASTER_ROOT']
-            else:
-                import aster
-                ASTER_ROOT = os.path.join(
-                    aster_core.get_option('repout'), '..')
+            ASTER_ROOT = os.environ['ASTER_ROOT']
             as_run = os.path.join(ASTER_ROOT, 'bin', 'as_run')
 
             # General
@@ -403,7 +398,7 @@ class CALCUL_ASTER:
            Creation du repertoire temporaire d'execution du calcul esclave
         """
         from Utilitai.utils import get_shared_tmpdir
-        
+
         # Creation du repertoire temporaire
         tmp_macr_recal = get_shared_tmpdir('tmp_macr_recal')
 
