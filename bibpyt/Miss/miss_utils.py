@@ -33,6 +33,7 @@ import re
 import pprint
 from math import log
 import shutil
+import tempfile
 
 import numpy as NP
 
@@ -46,7 +47,7 @@ except ImportError:
 from Noyau.N_types import force_list
 from Utilitai.Utmess import UTMESS, ASSERT
 from Utilitai.transpose import transpose
-from Utilitai.utils import _printDBG
+from Utilitai.utils import get_shared_tmpdir, _printDBG
 
 dict_format = {
     'R': "15.6E",
@@ -83,7 +84,7 @@ class MISS_PARAMETER(object):
         # defauts hors du mot-clé PARAMETRE
         self._defaults = {
             '_INIDIR': initial_dir,
-            '_WRKDIR': osp.join(initial_dir, 'tmp_miss3d'),
+            '_WRKDIR': get_shared_tmpdir('tmp_miss3d', initial_dir),
             '_NBM_DYN': None,
             '_NBM_STAT': None,
             '_exec_Miss': False,
@@ -317,7 +318,7 @@ def l_coor_sort(l_coor):
                 for coor2 in l_coor_xyz1:
                     if abs(coor-coor2) < tole:
                         verif_tole = verif_tole and False
-                if  verif_tole:  
+                if  verif_tole:
                     l_coor_xyz1.append(coor)
         l_coor_xyz.append(l_coor_xyz1)
 
@@ -354,8 +355,8 @@ def verif_sol_homogene(tab):
             young = row['E']
             nu = row['NU']
             rho = row['RHO']
-            hyst = row['AMOR_HYST']            
+            hyst = row['AMOR_HYST']
         else:
             sol_homogene = sol_homogene and (row['E'] == young) and (row['NU'] == nu) and (row['RHO'] == rho) and (row['AMOR_HYST'] == hyst)
     vs = (young/(2.*(1.+nu)*rho))**.5
-    return sol_homogene, vs   
+    return sol_homogene, vs

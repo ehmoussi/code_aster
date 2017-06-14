@@ -402,15 +402,10 @@ class CALCUL_ASTER:
         """
            Creation du repertoire temporaire d'execution du calcul esclave
         """
-        from asrun.run import AsRunFactory
-        run = AsRunFactory()
-        shared_tmp = run.get('shared_tmp')
-        if not shared_tmp:
-            shared_tmp = os.getcwd()
-
+        from Utilitai.utils import get_shared_tmpdir
+        
         # Creation du repertoire temporaire
-        tmp_macr_recal = tempfile.mkdtemp(dir=shared_tmp,
-                                          prefix='tmp_macr_recal')
+        tmp_macr_recal = get_shared_tmpdir('tmp_macr_recal')
 
         if not os.path.exists(tmp_macr_recal):
             UTMESS('F', 'RECAL0_82', valk=tmp_macr_recal)
