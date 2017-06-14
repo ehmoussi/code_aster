@@ -25,8 +25,9 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/rcvala.h"
+#include "asterfort/THM_type.h"
 !
-    integer, intent(in) :: j_mater
+integer, intent(in) :: j_mater
 !
 ! --------------------------------------------------------------------------------------------------
 !

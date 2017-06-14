@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine thmGetBehaviour(compor)
 !
 use THM_type
@@ -26,9 +26,9 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/THM_type.h"
 !
-!
-    character(len=16), intent(in) :: compor(*)
+character(len=16), intent(in) :: compor(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !

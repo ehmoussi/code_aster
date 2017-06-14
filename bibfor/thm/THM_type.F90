@@ -15,16 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 module THM_type
 !
 implicit none
 !
 #include "asterf_types.h"
-!
-! person_in_charge: mickael.abbas at edf.fr
-!
-
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -32,15 +29,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! - Type of Biot coefficients
-    integer, parameter :: BIOT_TYPE_ISOT = 0
-    integer, parameter :: BIOT_TYPE_ISTR = 1
-    integer, parameter :: BIOT_TYPE_ORTH = 2
-! - Type of saturation
-    integer, parameter :: SATURATED         = 0
-    integer, parameter :: UNSATURATED       = 1
-    integer, parameter :: SATURATED_SPEC    = 2
-
 
 ! - Type of FE
     type THM_Element
