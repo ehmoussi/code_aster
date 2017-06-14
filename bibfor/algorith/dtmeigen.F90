@@ -23,7 +23,7 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 !
 ! dtmeigen : Calculate the new eigen values for the modified matrices in the
 !            implicit treatment of non linearities
-! 
+!
 #include "jeveux.h"
 #include "asterfort/crsmos.h"
 #include "asterfort/detrsd.h"
@@ -74,7 +74,7 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
     character(len=7)      :: casek7, case0k7
     character(len=8)      :: sd_dtm, sd_int, modmec, typrof, modes
     character(len=14)     :: nugene, nopara(9)
-    character(len=16)     :: option   
+    character(len=16)     :: option
     character(len=19)     :: matmass, matrigi, matamor
     character(len=24)     :: stomor, solver, base_jv, kvali, kvalr, kvalk, add_jv
 !
@@ -100,12 +100,12 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 
 
 !
-#define mat(row,col) mat_v((row-1)*nbmode+col)
-#define m(row,col) mgen((row-1)*nbmode+col)
-#define k(row,col) kgen((row-1)*nbmode+col)
-#define a(row,col) agen((row-1)*nbmode+col)
+#define mat(row,col) mat_v((col-1)*nbmode+row)
+#define m(row,col) mgen((col-1)*nbmode+row)
+#define k(row,col) kgen((col-1)*nbmode+row)
+#define a(row,col) agen((col-1)*nbmode+row)
 
-#define a2(row,col) aful2((row-1)*nbmode+col)
+#define a2(row,col) aful2((col-1)*nbmode+row)
 
 !
     data  nopara /&
@@ -369,7 +369,7 @@ subroutine dtmeigen(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 
         AS_DEALLOCATE(vr=coefr)
 
-!       --- At this point, the new eigen vectors are given as function of the 
+!       --- At this point, the new eigen vectors are given as function of the
 !           preceding basis
 
 !       --- If the preceding case is not <0> (i.e. corresponding to no chocs at all)

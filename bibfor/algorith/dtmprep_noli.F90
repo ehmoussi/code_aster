@@ -91,7 +91,7 @@ subroutine dtmprep_noli(sd_dtm_)
                    'PALIER_EDYOS    ', 'RELA_EFFO_DEPL  ', 'RELA_EFFO_VITE  ',&
                    'YACS            '/
 !
-#define base0(row,col) basev0((row-1)*nbmode+col)
+#define base0(row,col) basev0((col-1)*nbmode+row)
 !
 !
 !   -0.3- Initializations
@@ -99,7 +99,7 @@ subroutine dtmprep_noli(sd_dtm_)
     sd_dtm = sd_dtm_
 !
     call getfac('COMPORTEMENT', nbcomp)
-    if (nbcomp.eq.0) then 
+    if (nbcomp.eq.0) then
         call dtmsav(sd_dtm, _NB_NONLI, 1, iscal=0)
         call dtmsav(sd_dtm, _NL_TREAT, 1, iscal=0)
         goto 999
@@ -156,10 +156,10 @@ subroutine dtmprep_noli(sd_dtm_)
             case(NL_YACS)
                  call dtmprep_noli_yacs(sd_dtm, sd_nl, icomp)
 
-! 
+!
              case(NL_FX_RELATIONSHIP)
                  call dtmprep_noli_rede(sd_dtm, sd_nl, icomp)
-! 
+!
              case(NL_FV_RELATIONSHIP)
                  call dtmprep_noli_revi(sd_dtm, sd_nl, icomp)
 !

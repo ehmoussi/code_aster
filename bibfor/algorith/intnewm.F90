@@ -23,7 +23,7 @@ subroutine intnewm(sd_dtm_, sd_int_, buffdtm, buffint)
 !
 ! intnewm : Integrate from t_i to t_i+1 the differential equations of motion
 !           using the NEWMARK integration method.
-! 
+!
 #include "jeveux.h"
 #include "blas/dcopy.h"
 #include "asterc/r8prem.h"
@@ -49,7 +49,7 @@ subroutine intnewm(sd_dtm_, sd_int_, buffdtm, buffint)
     integer           :: i, nbequ, ind1, iret
     integer           :: upmat
     real(kind=8)      :: t1, dt, bet, gam, coeff, epsi
-    real(kind=8)      :: dtold   
+    real(kind=8)      :: dtold
     character(len=8)  :: sd_dtm, sd_int
 
     real(kind=8)    , pointer :: depl1(:)    => null()
@@ -72,8 +72,8 @@ subroutine intnewm(sd_dtm_, sd_int_, buffdtm, buffint)
     real(kind=8)    , pointer :: ftild3(:)  => null()
 
 #define a(k) par(k)
-#define norm_coef par(9) 
-#define beta par(10) 
+#define norm_coef par(9)
+#define beta par(10)
 #define gamma par(11)
 #define mdiag_r par(12)
 #define kdiag_r par(13)
@@ -83,14 +83,14 @@ subroutine intnewm(sd_dtm_, sd_int_, buffdtm, buffint)
 #define kdiag (nint(kdiag_r).eq.1)
 #define cdiag (nint(cdiag_r).eq.1)
 
-#define m(row,col) mgen((row-1)*nbequ+col) 
-#define k(row,col) kgen((row-1)*nbequ+col) 
-#define c(row,col) agen((row-1)*nbequ+col) 
+#define m(row,col) mgen((col-1)*nbequ+row)
+#define k(row,col) kgen((col-1)*nbequ+row)
+#define c(row,col) agen((col-1)*nbequ+row)
 
-#define kt(row,col) ktilda((row-1)*nbequ+col) 
-#define ft1(row,col) ftild1((row-1)*nbequ+col) 
-#define ft2(row,col) ftild2((row-1)*nbequ+col) 
-#define ft3(row,col) ftild3((row-1)*nbequ+col) 
+#define kt(row,col) ktilda((col-1)*nbequ+row)
+#define ft1(row,col) ftild1((col-1)*nbequ+row)
+#define ft2(row,col) ftild2((col-1)*nbequ+row)
+#define ft3(row,col) ftild3((col-1)*nbequ+row)
 
 !
 !   0 - Initializations
@@ -114,7 +114,7 @@ subroutine intnewm(sd_dtm_, sd_int_, buffdtm, buffint)
     call intget(sd_int, DEPL, iocc=2, lonvec=iret, buffer=buffint)
     if (iret.eq.0) then
 !
-!       2.1 - Algorithm initialization : 
+!       2.1 - Algorithm initialization :
 !                   - Retrieval and saving the scheme's parameters : beta and gamma
 !                   - Calculating all necessary coefficients and operators
 
@@ -122,7 +122,7 @@ subroutine intnewm(sd_dtm_, sd_int_, buffdtm, buffint)
         call getvr8('SCHEMA_TEMPS', 'GAMMA', iocc=1, scal=gam)
 
 !       --- Algorithm parameters :
-!       [1-8] 
+!       [1-8]
         call intinivec(sd_int, PARAMS, 14, vr=par)
 !
         beta  = bet
@@ -174,7 +174,7 @@ subroutine intnewm(sd_dtm_, sd_int_, buffdtm, buffint)
 !           --- Operator ktilda is diagonal
             call intinivec(sd_int, WORK1, nbequ, vr=ktilda)
         else
-!           --- Operator ktilda is full           
+!           --- Operator ktilda is full
             call intinivec(sd_int, WORK1, nbequ*nbequ, vr=ktilda)
         endif
 
@@ -321,7 +321,7 @@ subroutine intnewm(sd_dtm_, sd_int_, buffdtm, buffint)
     call intsav(sd_int, TIME , 1, iocc=2, rscal=t1+dt, buffer=buffint)
     call intsav(sd_int, STEP , 1, iocc=2, rscal=dt, buffer=buffint)
     call intsav(sd_int, INDEX, 1, iocc=2, iscal=ind1+1, buffer=buffint)
-    
+
     call dtmforc(sd_dtm, sd_int, 2, buffdtm, buffint)
 
 !   7 - Preparing the algorithm for the next step, copy index 2 in 1
