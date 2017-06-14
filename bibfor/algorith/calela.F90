@@ -90,7 +90,7 @@ subroutine calela(imate, angmas, mdal, dalal, t,&
     repere(4) = angmas(3)
 !
 !
-    call dpassa(bid, repere, irep, passag)
+    call dpassa(repere, irep, passag)
 ! ======================================================================
 ! --- ON CALCUL DANS UN PREMIERS TEMPS LA MATRICE DE COMPLAISANCE ET ---
 ! --- LE TENSEUR DE DILATATION TERMIQUE DANS LE REPERE LOCAL ----------

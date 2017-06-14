@@ -59,7 +59,7 @@ implicit none
 !
     integer :: irep, i, j
     integer :: elas_type
-    real(kind=8) :: passag(6, 6), dorth(6, 6), work(6, 6)
+    real(kind=8) :: matr_orth(6, 6), dorth(6, 6), work(6, 6)
     real(kind=8) :: nu, nu12, nu21, nu13, nu31, nu23, nu32
     real(kind=8) :: zero, undemi, un, deux
     real(kind=8) :: e1, e2, e3, e
@@ -128,14 +128,13 @@ implicit none
 !
 ! ----- Matrix from orthotropic basis to global 3D basis
 !
-        call dpassa(xyzgau, repere, irep, passag)
+        call dpassa(repere, irep, matr_orth, xyzgau)
 !
 ! ----- Hooke matrix in global 3D basis
 !
         ASSERT((irep.eq.1).or.(irep.eq.0))
         if (irep .eq. 1) then
-            call utbtab('ZERO', 6, 6, dorth, passag,&
-                        work, d)
+            call utbtab('ZERO', 6, 6, dorth, matr_orth, work, d)
         else if (irep.eq.0) then
             do i = 1, 6
                 do j = 1, 6
@@ -166,14 +165,13 @@ implicit none
 !
 ! ----- Matrix from transverse isotropic basis to global 3D basis
 !
-        call dpassa(xyzgau, repere, irep, passag)
+        call dpassa(repere, irep, matr_orth, xyzgau)
 !
 ! ----- Hooke matrix in global 3D basis
 !
         ASSERT((irep.eq.1).or.(irep.eq.0))
         if (irep .eq. 1) then
-            call utbtab('ZERO', 6, 6, dorth, passag,&
-                        work, d)
+            call utbtab('ZERO', 6, 6, dorth, matr_orth, work, d)
         else if (irep.eq.0) then
             do i = 1, 6
                 do j = 1, 6
