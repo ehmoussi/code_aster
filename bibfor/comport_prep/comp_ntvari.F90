@@ -20,7 +20,6 @@ subroutine comp_ntvari(model_ , compor_cart_, compor_list_, compor_info,&
                        nt_vari, nb_vari_maxi, nb_zone     , v_exte)
 !
 use NonLin_Datastructure_type
-use Behaviour_type
 !
 implicit none
 !
@@ -35,6 +34,7 @@ implicit none
 #include "asterfort/comp_mfront_modelem.h"
 #include "asterfort/comp_read_exte.h"
 #include "asterfort/teattr.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1003
 ! person_in_charge: mickael.abbas at edf.fr

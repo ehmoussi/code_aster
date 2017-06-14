@@ -25,8 +25,6 @@ subroutine cgfint(ndim, nno1, nno2, npg, wref,&
                   vim, sigp, vip, matr, vect,&
                   codret)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
@@ -39,6 +37,7 @@ implicit none
 #include "asterfort/nmiclg.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
+#include "asterfort/Behaviour_type.h"
     character(len=8) :: typmod(*)
     character(len=16) :: option, compor(*), compoz(7)
 !

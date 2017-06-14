@@ -18,14 +18,13 @@
 
 subroutine comp_meca_elas(comp_elas, nb_cmp, l_etat_init)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nocart.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !

@@ -31,7 +31,6 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 !
 use THM_type
 use THM_module
-use Behaviour_type
 !
 implicit none
 !
@@ -47,6 +46,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/nvithm.h"
 #include "asterfort/thmGetBehaviour.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr

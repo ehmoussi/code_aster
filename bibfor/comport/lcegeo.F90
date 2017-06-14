@@ -20,8 +20,6 @@ subroutine lcegeo(nno, npg, ipoids, ivf, idfde,&
                   geom, typmod, compor, ndim, dfdi,&
                   deplm, ddepl, elgeom)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
@@ -37,6 +35,7 @@ implicit none
 #include "asterfort/mgauss.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
     integer :: nno, npg, ipoids, ivf, idfde, ndim, iret, jj
     character(len=8) :: typmod(2)

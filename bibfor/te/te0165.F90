@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine te0165(option, nomte)
-    use Behaviour_type
+!
     implicit none
 #include "jeveux.h"
 #include "asterfort/fpouli.h"
@@ -27,6 +27,7 @@ subroutine te0165(option, nomte)
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 #include "blas/ddot.h"
+#include "asterfort/Behaviour_type.h"
 !
     character(len=16) :: option, nomte
 ! ......................................................................

@@ -18,8 +18,6 @@
 
 subroutine sele_elem_comp(modelz, compor, defo_comp, list_elem_comp)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterfort/assert.h"
@@ -35,6 +33,7 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/etenca.h"
+#include "asterfort/Behaviour_type.h"
 !
 !
     character(len=*), intent(in) :: modelz

@@ -18,8 +18,6 @@
 
 subroutine te0333(option, nomte)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
@@ -38,6 +36,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/granvi.h"
 #include "asterfort/ortrep.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W0104
 ! person_in_charge: mickael.abbas at edf.fr
