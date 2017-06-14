@@ -29,12 +29,12 @@ implicit none
 #include "asterfort/get_elas_para.h"
 #include "asterfort/get_elasth_para.h"
 #include "asterfort/utmess.h"
+#include "asterfort/THM_type.h"
 !
-!
-    integer, intent(in) :: j_mater
-    integer, intent(in) :: kpi
-    real(kind=8), intent(in) :: temp
-    integer, intent(in) :: ndim
+integer, intent(in) :: j_mater
+integer, intent(in) :: kpi
+real(kind=8), intent(in) :: temp
+integer, intent(in) :: ndim
 !
 ! --------------------------------------------------------------------------------------------------
 !

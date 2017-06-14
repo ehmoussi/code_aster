@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 module THM_module
 !
 use THM_type
@@ -25,10 +26,7 @@ implicit none
 private :: r8nnem
 #include "asterf_types.h"
 #include "asterc/r8nnem.h"
-!
-! person_in_charge: mickael.abbas at edf.fr
-!
-
+#include "asterfort/THM_type.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !

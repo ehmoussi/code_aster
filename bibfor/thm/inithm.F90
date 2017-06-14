@@ -32,15 +32,15 @@ implicit none
 #include "asterfort/tebiot.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/utmess.h"
+#include "asterfort/THM_type.h"
 !
-!
-    aster_logical :: yachai
-    integer :: imate, yamec, i, aniso
-    real(kind=8), intent(out) :: cs0
-    real(kind=8) :: phi0, em, tbiot(6), epsvm, epsv, depsv
-    real(kind=8) :: angmas(3), t, dalal, mdal(6), young, nu
-    real(kind=8) :: alphfi, cbiot, unsks, alpha0, k0
-    real(kind=8), parameter :: eps = 1.d-21
+aster_logical :: yachai
+integer :: imate, yamec, i, aniso
+real(kind=8), intent(out) :: cs0
+real(kind=8) :: phi0, em, tbiot(6), epsvm, epsv, depsv
+real(kind=8) :: angmas(3), t, dalal, mdal(6), young, nu
+real(kind=8) :: alphfi, cbiot, unsks, alpha0, k0
+real(kind=8), parameter :: eps = 1.d-21
 !
 ! =====================================================================
 ! --- SI PRESENCE DE MECANIQUE OU DE CHAINAGE -------------------------

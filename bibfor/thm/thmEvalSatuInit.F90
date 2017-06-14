@@ -15,11 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine thmEvalSatuInit(hydr  , j_mater, p1m   , p1   ,&
                            satm  , satur  , dsatur, emmag,&
                            retcom)
-!
 !
 use THM_type
 use THM_module
@@ -31,6 +30,7 @@ implicit none
 #include "asterfort/rcvala.h"
 #include "asterfort/satuvg.h"
 #include "asterfort/utmess.h"
+#include "asterfort/THM_type.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !

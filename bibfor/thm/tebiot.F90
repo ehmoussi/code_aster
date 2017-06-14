@@ -28,10 +28,10 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/matrot.h"
 #include "asterfort/utbtab.h"
+#include "asterfort/THM_type.h"
 !
-!
-    real(kind=8), intent(in) :: angl_naut(3)
-    real(kind=8), intent(out) :: tbiot(6)
+real(kind=8), intent(in) :: angl_naut(3)
+real(kind=8), intent(out) :: tbiot(6)
 !
 ! --------------------------------------------------------------------------------------------------
 !

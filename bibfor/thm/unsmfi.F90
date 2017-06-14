@@ -26,13 +26,14 @@ implicit none
 #include "asterfort/rcvala.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
+#include "asterfort/THM_type.h"
 !
-    integer, intent(in) :: j_mater
-    real(kind=8), intent(in) :: phi
-    real(kind=8), intent(in) :: temp
-    real(kind=8), intent(in) :: tbiot(6)
-    integer, intent(in) :: aniso
-    real(kind=8), intent(out):: cs
+integer, intent(in) :: j_mater
+real(kind=8), intent(in) :: phi
+real(kind=8), intent(in) :: temp
+real(kind=8), intent(in) :: tbiot(6)
+integer, intent(in) :: aniso
+real(kind=8), intent(out):: cs
 !
 ! --------------------------------------------------------------------------------------------------
 !
