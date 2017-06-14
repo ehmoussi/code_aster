@@ -30,7 +30,6 @@ subroutine te0160(option, nomte)
 ! --------------------------------------------------------------------------------------------------
 !
 ! aslint: disable=W0104
-    use Behaviour_type
     implicit none
     character(len=16) :: option, nomte
 !
@@ -43,6 +42,7 @@ subroutine te0160(option, nomte)
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
+#include "asterfort/Behaviour_type.h"
 !
     integer ::          icodre(2)
     real(kind=8) ::     valres(2)

@@ -19,7 +19,6 @@
 subroutine comp_meca_pvar(model_, compor_cart_, compor_list_, compor_info)
 !
 use NonLin_Datastructure_type
-use Behaviour_type
 !
 implicit none
 !
@@ -46,6 +45,7 @@ implicit none
 #include "asterfort/comp_meca_exc2.h"
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/lteatt.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1003
 ! person_in_charge: mickael.abbas at edf.fr

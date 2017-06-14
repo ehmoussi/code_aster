@@ -18,8 +18,6 @@
 
 subroutine te0358(option, nomte)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "jeveux.h"
@@ -35,6 +33,7 @@ implicit none
 #include "asterfort/rcvarc.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !

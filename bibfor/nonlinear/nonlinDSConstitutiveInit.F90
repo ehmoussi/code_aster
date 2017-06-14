@@ -19,7 +19,6 @@
 subroutine nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)
 !
 use NonLin_Datastructure_type
-use Behaviour_type
 !
 implicit none
 !
@@ -30,6 +29,7 @@ implicit none
 #include "asterfort/nmcpqu.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !

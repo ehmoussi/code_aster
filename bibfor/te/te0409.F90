@@ -19,8 +19,6 @@
 !
 subroutine te0409(option, nomte)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
@@ -66,6 +64,7 @@ implicit none
 #include "asterfort/utpvgl.h"
 #include "asterfort/utpvlg.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! TOUTES LES VARIABLES EN DEHORS 
 ! DE LA BOUCLE SUR LES POINTS DE GAUSS PEUVENT ETRE

@@ -27,7 +27,6 @@ subroutine calcme(option, compor, thmc, meca, imate,&
 !
 use THM_type
 use THM_module
-use Behaviour_type
 !
 implicit none
 !
@@ -41,6 +40,7 @@ implicit none
 #include "asterfort/lcidbg.h"
 #include "asterfort/thmTherElas.h"
 #include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr

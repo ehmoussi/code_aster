@@ -20,7 +20,6 @@ subroutine te0600(option, nomte)
 !
 use THM_type
 use THM_module
-use Behaviour_type
 !
 implicit none
 !
@@ -46,6 +45,7 @@ implicit none
 #include "asterfort/thmevc.h"
 #include "asterfort/vecini.h"
 #include "asterfort/thmGetElemInfo.h"
+#include "asterfort/Behaviour_type.h"
 
     character(len=16) :: option, nomte
 ! =====================================================================

@@ -18,8 +18,6 @@
 
 subroutine te0030(option, nomte)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
@@ -34,6 +32,7 @@ implicit none
 #include "asterfort/teattr.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
     character(len=16) :: option, nomte
 ! =====================================================================
 !    - FONCTION REALISEE:  CALCUL DE L'OPTIONS INDL_ELGA

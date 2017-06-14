@@ -21,14 +21,13 @@ subroutine lceib1(fami, kpg, ksp, imate, compor,&
                   t, lambda, deuxmu, epsthe, kdess,&
                   bendo, gamma, seuil)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
+#include "asterfort/Behaviour_type.h"
     character(len=16) :: compor(*)
     character(len=*) :: fami
     integer :: imate, ndim, t(3, 3), kpg, ksp

@@ -21,8 +21,6 @@ subroutine nmccam(fami, kpg, ksp, ndim,&
                   deps, sigm, pcrm, option, sigp,&
                   pcrp, dsidep, retcom)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
@@ -36,6 +34,7 @@ implicit none
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
 #include "asterfort/get_varc.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1501
 !

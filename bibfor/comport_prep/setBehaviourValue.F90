@@ -21,14 +21,13 @@ subroutine setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
                              nb_vari  , nb_vari_comp, nume_comp,&
                              l_compor_, v_compor_)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 #include "asterfort/comp_meca_l.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !

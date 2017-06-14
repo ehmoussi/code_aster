@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine te0412(option, nomte)
-use Behaviour_type
+!
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -49,6 +49,7 @@ use Behaviour_type
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 #include "asterfort/utpvgl.h"
+#include "asterfort/Behaviour_type.h"
     character(len=16) :: option, nomte
 !
 !

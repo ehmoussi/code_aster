@@ -21,12 +21,11 @@ subroutine thmGetParaBehaviour(compor,&
                                nvim_ , nvic_, nvit_, nvih_,&
                                nume_meca_)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/Behaviour_type.h"
 !
 !
     character(len=16), intent(in) :: compor(*)

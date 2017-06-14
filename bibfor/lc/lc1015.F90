@@ -22,14 +22,13 @@ subroutine lc1015(fami, kpg, ksp, ndim, imate,&
                   sigp, vip, typmod, icomp,&
                   nvi, dsidep, codret)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/lcgdpm.h"
 #include "asterfort/nzgdzi.h"
 #include "asterfort/postsm.h"
+#include "asterfort/Behaviour_type.h"
 
 ! aslint: disable=W1504,W0104
 !

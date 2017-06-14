@@ -20,7 +20,6 @@ subroutine te0313(option, nomte)
 !
 use THM_type
 use THM_module
-use Behaviour_type
 !
 implicit none
 !
@@ -37,6 +36,7 @@ implicit none
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
 #include "asterfort/thmGetElemInfo.h"
+#include "asterfort/Behaviour_type.h"
     character(len=16) :: option, nomte
 !
 !

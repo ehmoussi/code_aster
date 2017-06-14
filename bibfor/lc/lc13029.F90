@@ -23,13 +23,12 @@ subroutine lc13029(fami, kpg, ksp, ndim, imate,&
                    wkin, typmod,icomp, ndsde,&
                    dsidep, nwkout, wkout, codret)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/nmcomp.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1504,W0104
 !

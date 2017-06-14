@@ -23,11 +23,10 @@ subroutine lc5021(fami, kpg, ksp, ndim, imate,&
                   sigp, vip, wkin, typmod, icomp,&
                   nvi, dsidep, codret)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterfort/lcumfe.h"
+#include "asterfort/Behaviour_type.h"
 !
     character(len=*), intent(in) :: fami
     integer, intent(in) :: kpg

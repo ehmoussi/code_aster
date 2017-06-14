@@ -24,7 +24,6 @@ subroutine nmcpla(fami, kpg   , ksp  , ndim  , typmod,&
                   iret)
 !
 use calcul_module, only : ca_ctempl_, ca_ctempr_, ca_ctempm_, ca_ctempp_
-use Behaviour_type
 !
 implicit none
 !
@@ -42,6 +41,7 @@ implicit none
 #include "asterfort/redece.h"
 #include "asterfort/rslnvi.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1504
 !

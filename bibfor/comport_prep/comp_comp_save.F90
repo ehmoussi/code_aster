@@ -18,8 +18,6 @@
 
 subroutine comp_comp_save(mesh, compor, nb_cmp, v_info_valk, v_info_vali)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
@@ -29,6 +27,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/nocart.h"
 #include "asterfort/comp_read_mesh.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !

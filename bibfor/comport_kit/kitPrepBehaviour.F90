@@ -18,17 +18,15 @@
 
 subroutine kitPrepBehaviour(compor, compor_creep, compor_plas)
 !
-use Behaviour_type
-!
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/Behaviour_type.h"
 !
-!
-    character(len=16), intent(in) :: compor(*)
-    character(len=16), intent(out) :: compor_creep(*)
-    character(len=16), intent(out) :: compor_plas(*)
+character(len=16), intent(in) :: compor(*)
+character(len=16), intent(out) :: compor_creep(*)
+character(len=16), intent(out) :: compor_plas(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
