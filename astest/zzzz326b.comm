@@ -69,7 +69,9 @@ STA1=MECA_STATIQUE(MODELE=MO,
 
 IMPR_RESU(FORMAT='MED',
           RESU=_F(RESULTAT=STA1,
-                  CARA_ELEM=EP,),);
+                  #~ À rétablir en même temps que issue26562
+                  #~ CARA_ELEM=EP,
+                  ),);
 
 IMPR_RESU(FORMAT='MED',
           UNITE=81,

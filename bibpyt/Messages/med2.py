@@ -52,7 +52,7 @@ format MED.
 """),
 
     7 : _(u"""
-  Il n'a pas été possible d'imprimer le champ %(k1)s en utilisant IMPR_NOM_VARI='OUI'. 
+  Il n'a pas été possible d'imprimer le champ %(k1)s en utilisant IMPR_NOM_VARI='OUI'.
   Cela est dû au fait que certains comportements  dans votre modèle ne sont pas imprimables avec cette option:
   - Le comportement a été défini avec MFRONT ou UMAT en mode prototype
   - Le comportement contient a été défini sur une poutre multifibres
@@ -73,6 +73,15 @@ format MED.
   Cette impression n'est pas possible au format MED.
 """),
 
+    10 : _(u"""
+  Vous demandez l'impression d'un champ aux sous-points pour des éléments "tuyaux".
+
+  Cette impression n'est actuellement pas possible au format MED.
+
+  Conseils :
+    - si vous avez besoin de visualiser les champs aux sous-points sur d'autres éléments, utilisez le mot-clé GROUP_MA ;
+    - pour imprimer le champ sans les sous-points, retirez le mot-clé CARA_ELEM.
+"""),
 
     11 : _(u"""
   Votre champ repose sur un modèle comportant des éléments joints
