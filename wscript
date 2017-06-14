@@ -124,6 +124,7 @@ def options(self):
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
+    self.load('external_programs', tooldir='waftools')
 
 def configure(self):
     self.setenv('default')
@@ -202,6 +203,7 @@ def configure(self):
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
+    self.load('external_programs', tooldir='waftools')
     # keep compatibility for as_run
     if self.get_define('HAVE_MPI'):
         self.env.ASRUN_MPI_VERSION = 1
