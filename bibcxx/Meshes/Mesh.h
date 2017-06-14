@@ -71,17 +71,18 @@ protected:
     bool readMeshFile( const std::string& fileName, const std::string& format )
         throw ( std::runtime_error );
 
+    /**
+     * @brief Constructeur
+     * @param type jeveux de l'objet
+     */
+    BaseMeshInstance( const std::string& type );
+
 public:
     /**
      * @typedef BaseMeshPtr
      * @brief Pointeur intelligent vers un BaseMeshInstance
      */
     typedef boost::shared_ptr< BaseMeshInstance > BaseMeshPtr;
-
-    /**
-     * @brief Constructeur
-     */
-    BaseMeshInstance();
 
     /**
      * @brief Destructeur
@@ -151,6 +152,12 @@ public:
      * @brief Pointeur intelligent vers un MeshInstance
      */
     typedef boost::shared_ptr< MeshInstance > MeshPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    MeshInstance(): BaseMeshInstance( "MAILLAGE" )
+    {};
 
     /**
      * @brief Constructeur

@@ -40,7 +40,7 @@
  * @brief Cette classe decrit un maillage Aster parallèle
  * @author Nicolas Sellenet
  */
-class ParallelMeshInstance: public MeshInstance
+class ParallelMeshInstance: public BaseMeshInstance
 {
 private:
 
