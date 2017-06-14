@@ -32,7 +32,8 @@
 #include "RunManager/CommandSyntaxCython.h"
 #include "RunManager/LogicalUnitManagerCython.h"
 
-BaseMeshInstance::BaseMeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE" ),
+BaseMeshInstance::BaseMeshInstance( const std::string& type ):
+                        DataStructure( getNewResultObjectName(), type ),
                         _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
                         _nameOfNodes( JeveuxBidirectionalMap( getName() + ".NOMNOE    " ) ),
                         _coordinates( FieldOnNodesDoublePtr(

@@ -34,7 +34,7 @@ void exportParallelMeshToPython()
 {
     using namespace boost::python;
     class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
-            bases< MeshInstance > >( "ParallelMesh", no_init )
+            bases< BaseMeshInstance > >( "ParallelMesh", no_init )
         .def( "create", &createSharedPtr< ParallelMeshInstance > )
         .staticmethod( "create" )
         .def( "readMedFile", &ParallelMeshInstance::readMedFile )

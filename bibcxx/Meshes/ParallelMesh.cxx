@@ -29,14 +29,14 @@
 
 #ifdef _USE_MPI
 
-ParallelMeshInstance::ParallelMeshInstance()
+ParallelMeshInstance::ParallelMeshInstance(): BaseMeshInstance( "MAILLAGE_P" )
 {};
 
 bool ParallelMeshInstance::readMedFile( const std::string& fileName )
     throw ( std::runtime_error )
 {
     std::string completeFileName = fileName + "/" + std::to_string( getMPIRank() ) + ".med";
-    MeshInstance::readMedFile( completeFileName );
+    BaseMeshInstance::readMedFile( completeFileName );
 
     CALL_LRMJOI_WRAP( getName().c_str(), completeFileName.c_str() );
 

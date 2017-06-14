@@ -39,7 +39,7 @@ class ParallelModelInstance: public BaseModelInstance
 {
 private:
     /** @brief Maillage sur lequel repose la modelisation */
-    MeshPtr _supportMesh;
+    ParallelMeshPtr _supportMesh;
 
 public:
     /**
