@@ -34,7 +34,7 @@ subroutine creagm(nbmato, nbpart, ma, masd)
 !               NOMSDM : NOM DES GROUP_MA
 !
 !----------------------------------------------------------------------
-! person_in_charge: aimery.assire at edf.fr
+! person_in_charge: mathieu.courtois@edf.fr
 !
 ! CORPS DU PROGRAMME
     implicit none
