@@ -305,7 +305,7 @@ TEST_RESU(RESU=(_F(INST=700000.0,
                    NOEUD='N4',
                    NOM_CMP='DX',
                    VALE_CALC=0.0299427586642,
-                   TOLE_MACHINE=2.E-5,                 # TODO TOLE_MACHINE
+                   TOLE_MACHINE=3.E-5,                 # TODO TOLE_MACHINE
                    ),
                 ),
           )
