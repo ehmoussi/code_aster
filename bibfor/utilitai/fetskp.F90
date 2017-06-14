@@ -225,14 +225,12 @@ subroutine fetskp(mod,meth,nbpart)
         call lxcadr(ktmp2)
         jnom(2)='fort.'//ktmp2
         jnom(3)=ktmp
-         call gtoptk('repout', rep, iret)
-         if (iret .ne. 0) then
-             vali(1) = len(rep)
-             call utmess('F', 'EXECLOGICIEL0_24', si=vali(1))
-         endif
-         lrep = lxlgut(rep)
-         if (meth .eq. 'METIS  ') then
-             jnom(1)=rep(1:lrep)//'/gpmetis'
+        if (meth .eq. 'METIS  ') then
+            call gtoptk('prog:gpmetis', jnom(1), iret)
+            if (iret .ne. 0) then
+                vali(1) = len(rep)
+                call utmess('F', 'EXECLOGICIEL0_24', sk='gpmetis', si=vali(1))
+            endif
          endif
          call aplext(niv-1, 3, jnom, err)
     endif
