@@ -28,15 +28,19 @@ Ces fonctions sont indépendantes des étapes (sinon elles seraient dans
 B_ETAPE/E_ETAPE) et des concepts/ASSD.
 """
 
-import sys
+from optparse import OptionParser
 import os
 import os.path as osp
-from warnings import warn, simplefilter
 import platform
-from optparse import OptionParser
+import re
+import sys
+from warnings import warn, simplefilter
+
 import aster_pkginfo
 import aster
 import aster_core
+import aster_external_programs
+
 from Execution.i18n import localization
 from Execution.strfunc import convert
 
@@ -199,7 +203,9 @@ class CoreOptions(object):
     def get_option(self, option, default=None):
         """Retourne la valeur d'une option ou d'une information de base."""
         assert self.opts, 'options not initialized!'
-        if hasattr(self.opts, option):
+        if option.startswith("prog:"):
+            value = get_program_path(re.sub('^prog:', '', option))
+        elif hasattr(self.opts, option):
             value = getattr(self.opts, option)
         else:
             value = self.info.get(option, default)
@@ -208,6 +214,15 @@ class CoreOptions(object):
         if self._dbg:
             print("<CoreOptions.get_option> option={0!r} value={1!r}".format(option, value))
         return value
+
+
+def get_program_path(program):
+    """Return the path to *program* as stored by 'waf configure'.
+
+    Returns:
+        str: Path stored during configuration or *program* itself otherwise.
+    """
+    return aster_external_programs.EXTERNAL_PROGRAMS.get(program, program)
 
 
 def getargs(argv=None):
