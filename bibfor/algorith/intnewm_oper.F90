@@ -28,7 +28,7 @@ subroutine intnewm_oper(nbequ, par, mgen, kgen, agen, &
 !           kt (i,j) = a1*m(i,j) + k(i,j) + a2*c(i,j)
 !           ft1(i,j) = a3*m(i,j) + a5*c(i,j)
 !           ft2(i,j) = a1*m(i,j) + a2*c(i,j)
-!           ft3(i,j) = a4*m(i,j) + a6*c(i,j) 
+!           ft3(i,j) = a4*m(i,j) + a6*c(i,j)
 !
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -45,8 +45,8 @@ subroutine intnewm_oper(nbequ, par, mgen, kgen, agen, &
 
 !   --------------------------------------------------------------------------
 #define a(k) par(k)
-#define norm_coef par(9) 
-#define beta par(10) 
+#define norm_coef par(9)
+#define beta par(10)
 #define gamma par(11)
 #define mdiag_r par(12)
 #define kdiag_r par(13)
@@ -56,14 +56,14 @@ subroutine intnewm_oper(nbequ, par, mgen, kgen, agen, &
 #define kdiag (nint(kdiag_r).eq.1)
 #define cdiag (nint(cdiag_r).eq.1)
 
-#define m(row,col) mgen((row-1)*nbequ+col) 
-#define k(row,col) kgen((row-1)*nbequ+col) 
-#define c(row,col) agen((row-1)*nbequ+col) 
+#define m(row,col) mgen((col-1)*nbequ+row)
+#define k(row,col) kgen((col-1)*nbequ+row)
+#define c(row,col) agen((col-1)*nbequ+row)
 
-#define kt(row,col) ktilda((row-1)*nbequ+col) 
-#define ft1(row,col) ftild1((row-1)*nbequ+col) 
-#define ft2(row,col) ftild2((row-1)*nbequ+col) 
-#define ft3(row,col) ftild3((row-1)*nbequ+col) 
+#define kt(row,col) ktilda((col-1)*nbequ+row)
+#define ft1(row,col) ftild1((col-1)*nbequ+row)
+#define ft2(row,col) ftild2((col-1)*nbequ+row)
+#define ft3(row,col) ftild3((col-1)*nbequ+row)
 
 !       --- M is diagonal
     if (mdiag) then
@@ -73,7 +73,7 @@ subroutine intnewm_oper(nbequ, par, mgen, kgen, agen, &
                     ftild2(i) = a(1)*mgen(i) + a(2)*agen(i)*mgen(i)
                     ktilda(i) = ftild2(i) + kgen(i)
                     ftild1(i) = a(3)*mgen(i) + a(5)*agen(i)*mgen(i)
-                    ftild3(i) = a(4)*mgen(i) + a(6)*agen(i)*mgen(i)                           
+                    ftild3(i) = a(4)*mgen(i) + a(6)*agen(i)*mgen(i)
                 end do
             else
                 do i = 1, nbequ
@@ -99,7 +99,7 @@ subroutine intnewm_oper(nbequ, par, mgen, kgen, agen, &
                     ftild2(i) = a(1)*mgen(i) + a(2)*agen(i)*mgen(i)
                     kt  (i,i) = ftild2(i) + k(i,i)
                     ftild1(i) = a(3)*mgen(i) + a(5)*agen(i)*mgen(i)
-                    ftild3(i) = a(4)*mgen(i) + a(6)*agen(i)*mgen(i) 
+                    ftild3(i) = a(4)*mgen(i) + a(6)*agen(i)*mgen(i)
                     do j = i+1, nbequ
                         kt (i,j) = k(i,j)
                         kt (j,i) = k(j,i)
@@ -132,7 +132,7 @@ subroutine intnewm_oper(nbequ, par, mgen, kgen, agen, &
                 ft2(i,i) = a(1)*m(i,i) + a(2)*agen(i)*m(i,i)
                 kt (i,i) = ft2(i,i) + k(i,i)
                 ft1(i,i) = a(3)*m(i,i) + a(5)*agen(i)*m(i,i)
-                ft3(i,i) = a(4)*m(i,i) + a(6)*agen(i)*m(i,i) 
+                ft3(i,i) = a(4)*m(i,i) + a(6)*agen(i)*m(i,i)
                 do j = i+1, nbequ
                     ft2(i,j) = a(1)*m(i,j)
                     ft2(j,i) = a(1)*m(j,i)
@@ -149,7 +149,7 @@ subroutine intnewm_oper(nbequ, par, mgen, kgen, agen, &
                 ft2(i,i) = a(1)*m(i,i) + a(2)*c(i,i)
                 kt (i,i) = ft2(i,i) + k(i,i)
                 ft1(i,i) = a(3)*m(i,i) + a(5)*c(i,i)
-                ft3(i,i) = a(4)*m(i,i) + a(6)*c(i,i) 
+                ft3(i,i) = a(4)*m(i,i) + a(6)*c(i,i)
                 do j = i+1, nbequ
                     ft2(i,j) = a(1)*m(i,j) + a(2)*c(i,j)
                     ft2(j,i) = a(1)*m(j,i) + a(2)*c(j,i)
