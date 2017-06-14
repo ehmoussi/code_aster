@@ -412,10 +412,4 @@ pour préciser les orientations des couches
 """),
 
 
-    93 : _(u"""
-  Avertissement :
-  Le comportement  %(k1)s que vous utilisez les propriétés matériaux (membrane, flexion) dans le repère
-  intrinsèque de la coque. Vous devez donc vous assurez des valeurs entrées sinon utilisez ELAS_ORTH et DEFI_COMPOSITE
-  s'il s'agit d'une coque multi couche.
-"""),
 }

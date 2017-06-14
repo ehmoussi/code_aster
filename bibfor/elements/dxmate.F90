@@ -157,7 +157,7 @@ subroutine dxmate(fami, df, dm, dmf, dc,&
         nomres(6) = 'BT2'
 
     else if (phenom.eq.'ELAS_COQUE') then
-        call utmess('A', 'ELEMENTS_93', sk=phenom)
+!        call utmess('A', 'ELEMENTS_93', sk=phenom)
 !       -- on remplit nomres plus tard ...
 
     else if (phenom.eq.'ELAS_DHRC') then
