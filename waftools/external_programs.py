@@ -17,6 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+"""
+Checking for external programs called from code_aster.
+"""
+
 import os
 import os.path as osp
 from waflib import Configure, Errors
@@ -26,28 +30,28 @@ def options(self):
     group = self.add_option_group('External programs options')
     group.add_option('--with-prog-metis', action='store_true', default=None,
                     dest='with_prog_metis',
-                    help='Fails if metis program is not found')
+                    help='Force support of metis program')
     group.add_option('--with-prog-gmsh', action='store_true', default=None,
                     dest='with_prog_gmsh',
-                    help='Fails if gmsh program is not found')
+                    help='Force support of gmsh program')
     group.add_option('--with-prog-salome', action='store_true', default=None,
                     dest='with_prog_salome',
-                    help='Fails if salome program is not found')
+                    help='Force support of salome program')
     group.add_option('--with-prog-europlexus', action='store_true', default=None,
                     dest='with_prog_europlexus',
-                    help='Fails if europlexus program is not found')
+                    help='Force support of europlexus program')
     group.add_option('--with-prog-miss3d', action='store_true', default=None,
                     dest='with_prog_miss3d',
-                    help='Fails if miss3d program is not found')
+                    help='Force support of miss3d program')
     group.add_option('--with-prog-homard', action='store_true', default=None,
                     dest='with_prog_homard',
-                    help='Fails if homard program is not found')
+                    help='Force support of homard program')
     group.add_option('--with-prog-ecrevisse', action='store_true', default=None,
                     dest='with_prog_ecrevisse',
-                    help='Fails if ecrevisse program is not found')
+                    help='Force support of ecrevisse program')
     group.add_option('--with-prog-xmgrace', action='store_true', default=None,
                     dest='with_prog_xmgrace',
-                    help='Fails if xmgrace program is not found')
+                    help='Force support of xmgrace program')
 
 
 def configure(self):
@@ -91,7 +95,7 @@ def _check_prog(self, name, programs, add_paths=None):
         paths = to_check.pop(0)
         for prog in programs:
             try:
-                self.find_program(prog, var='PROG_' + name.upper(),
+                self.find_program(prog, var='PROG_' + prog.upper(),
                                   path_list=add_paths + paths)
             except Errors.ConfigurationError:
                 success = False

@@ -34,8 +34,8 @@ from waflib import Configure, Utils, Logs, Errors
 
 
 def options(self):
-    group = self.get_option_group("Code_Aster options")
-    # default=False in libaster, True in Code_Aster
+    group = self.get_option_group("code_aster options")
+    # default=False in libaster, True in code_aster
     group.add_option('--legacy', dest='legacy',
                     default=True, action='store_true',
                     help='create some legacy files')
