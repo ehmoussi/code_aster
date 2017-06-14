@@ -23,6 +23,8 @@ Checking for external programs called from code_aster.
 
 import os
 import os.path as osp
+import re
+
 from waflib import Configure, Errors
 
 
@@ -80,6 +82,14 @@ def configure(self):
 
     _check_prog(self, 'xmgrace', ['xmgrace', 'gracebat'])
 
+    dict_ext = {}
+    for key in self.env.keys():
+        if not key.startswith('PROG_'):
+            continue
+        prog = re.sub('^PROG_', '', key)
+        dict_ext[prog] = self.env[key][0]
+    self.env['EXTERNAL_PROGRAMS'] = dict_ext
+
 
 def _check_prog(self, name, programs, add_paths=None):
     opts = self.options
@@ -95,7 +105,7 @@ def _check_prog(self, name, programs, add_paths=None):
         paths = to_check.pop(0)
         for prog in programs:
             try:
-                self.find_program(prog, var='PROG_' + prog.upper(),
+                self.find_program(prog, var='PROG_' + prog,
                                   path_list=add_paths + paths)
             except Errors.ConfigurationError:
                 success = False
