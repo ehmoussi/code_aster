@@ -2185,17 +2185,13 @@ class CalcEssaiXmgr(Xmgr):
     avec la version Stanley)."""
 
     def __init__(self, xmgr_idx, gr_max=10, options=None,
-                 xmgrace=os.path.join(aster_core.get_option('repout'), 'xmgrace')):
+                 xmgrace=aster_core.get_option('prog:xmgrace')):
 
         self.gr_max = gr_max        # nombre de graphes
         self.gr_act = 0             # numero du graphe actif
         self.sets = [0] * gr_max    # nombre de sets par graphe
         self.nom_pipe = 'xmgr%i.pipe' % xmgr_idx  # nom du pipe de communication
-        if xmgrace == "/xmgrace":
-            print "Pbl with aster repout ", aster_core.get_option('repout')
-            self.xmgrace = "/usr/bin/xmgrace"
-        else:
-            self.xmgrace = xmgrace
+        self.xmgrace = xmgrace
 
         # Ouverture du pipe de communication avec xmgrace
         if os.path.exists(self.nom_pipe):

@@ -275,7 +275,7 @@ def macr_ecre_calc_ops(
         else:
             chemin_executable = str(LOGICIEL)
     else:
-        chemin_executable = os.path.join(aster_core.get_option('repout'), 'ecrevisse')
+        chemin_executable = aster_core.get_option('prog:ecrevisse')
         # chemin_executable =
         # os.path.join(aster_core.get_option('repout'),version,'ecrevisse')
         if debug:

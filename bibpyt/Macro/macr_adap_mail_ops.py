@@ -1132,7 +1132,6 @@ def macr_adap_mail_ops(self,
     LIRE_MAILLAGE = self.get_cmd("LIRE_MAILLAGE")
     LIRE_CHAMP = self.get_cmd("LIRE_CHAMP")
 #
-    repertoire_outils = aster_core.get_option('repout')
     Rep_Calc_ASTER = os.getcwd()
     if (INFO >= 3):
         print "Contenu du répertoire de calcul d'Aster", Rep_Calc_ASTER
@@ -1593,7 +1592,7 @@ def macr_adap_mail_ops(self,
         if (LOGICIEL != None):
             homard = str(LOGICIEL)
         else:
-            homard = os.path.join(repertoire_outils, "homard")
+            homard = aster_core.get_option("prog:homard")
         if not os.path.isfile(str(homard)):
             UTMESS('F', 'HOMARD0_10', valk=homard)
 #
