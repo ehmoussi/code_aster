@@ -31,8 +31,6 @@ import os.path as osp
 import copy
 import tempfile
 import aster_core
-import uuid
-import getpass
 import socket
 import shutil
 
@@ -44,8 +42,7 @@ try:
     from Utilitai.partition import MAIL_PY
     from Utilitai.Utmess import UTMESS
     from Calc_epx.calc_epx_utils import tolist
-    from Utilitai.utils import encode_str, decode_str, send_file
-    from asrun.run import AsRunFactory
+    from Utilitai.utils import decode_str, encode_str, get_shared_tmpdir, send_file
 except:
     pass
 
@@ -115,13 +112,7 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     rank, np = aster_core.MPI_CommRankSize()
 
     # Creation d'un repertoire commun pour les echanges de donnees entre procs
-    user=getpass.getuser()
-    name_tmp = uuid.uuid4()
-
-    run = AsRunFactory()
-
-    os.mkdir('%s/EPX_%s'%(run['shared_tmp'],name_tmp))
-    rep_tmp='%s/EPX_%s'%(run['shared_tmp'],name_tmp)
+    rep_tmp = get_shared_tmpdir('EPX_')
 
     #
     # TRADUCTION DES INFORMATIONS

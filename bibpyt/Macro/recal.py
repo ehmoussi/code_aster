@@ -786,33 +786,17 @@ class CALCULS_ASTER:
                     resudir = None
         if not resudir:
             # Par defaut, dans un sous-repertoire du repertoire d'execution
-            shared_tmp = None
             pref = 'tmp_macr_recal_'
             # On cherche s'il y a un fichier hostfile pour placer les fichiers dans un repertoire partage
             l_fr = getattr(prof, 'data')
             l_tmp = l_fr[:]
             for dico in l_tmp:
                 if dico['type'] == 'hostfile':
-                    shared_tmp = run.get('shared_tmp')
-                    if not shared_tmp:
-                        shared_tmp = os.path.join( os.environ['HOME'], 'tmp_macr_recal')
-                    pref = shared_tmp + os.sep + 'tmp_macr_recal_'
+                    pref = get_shared_tmpdir('tmp_macr_recal_')
                     break
             # Si batch alors on place les fichiers dans un repertoire partage
             if prof['mode'][0] == 'batch':
-                shared_tmp = run.get('shared_tmp')
-                if not shared_tmp:
-                    shared_tmp = os.path.join( os.environ['HOME'], 'tmp_macr_recal')
-                pref = shared_tmp + os.sep + 'tmp_macr_recal1_'
-
-            # Creation du repertoire temporaire racine de macr_recal
-            if shared_tmp:
-                if not os.path.isdir(shared_tmp):
-                    try:
-                        os.mkdir(shared_tmp)
-                    except:
-                        if info >= 1:
-                            UTMESS('F', 'RECAL0_82', valk=shared_tmp)
+                pref = get_shared_tmpdir('tmp_macr_recal1_')
 
             resudir = tempfile.mkdtemp(prefix=pref)
         flashdir = os.path.join(resudir, 'flash')

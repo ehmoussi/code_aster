@@ -29,6 +29,7 @@ import re
 import time
 from functools import partial
 from subprocess import Popen
+import tempfile
 
 from Utilitai.string_utils import maximize_lines
 from Execution.strfunc import convert
@@ -180,6 +181,21 @@ def get_time():
     ct =  time.time()
     msec = (ct - long(ct)) * 1000
     return time.strftime('%H:%M:%S') + '.%03d' % msec
+
+def get_shared_tmpdir(prefix, default_dir=None):
+    """Return a shared temporary directory.
+
+    If asrun shared tmpdir is not known, use *default_dir*.
+    """
+    if getattr(get_shared_tmpdir, 'cache_run', None) is None:
+        from asrun.run import AsRunFactory
+        get_shared_tmpdir.cache_run = AsRunFactory()
+    run = get_shared_tmpdir.cache_run
+
+    shared_tmp = run.get('shared_tmp') or default_dir or os.getcwd()
+
+    tmpdir = tempfile.mkdtemp(dir=shared_tmp, prefix=prefix)
+    return tmpdir
 
 
 if __name__ == '__main__':
