@@ -1,6 +1,6 @@
 /**
- * @file MeshInterface.cxx
- * @brief Interface python de Mesh
+ * @file ParallelModelInterface.cxx
+ * @brief Interface python de ParallelModel
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,27 +21,24 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
+#include "PythonBindings/ParallelModelInterface.h"
 
-#include "PythonBindings/MeshInterface.h"
+#ifdef _USE_MPI
+
 #include "PythonBindings/SharedPtrUtilities.h"
 #include <boost/python.hpp>
 
-void exportMeshToPython()
+void exportParallelModelToPython()
 {
     using namespace boost::python;
-    class_< BaseMeshInstance, BaseMeshInstance::BaseMeshPtr,
-            bases< DataStructure > >( "BaseMesh", no_init )
-        .def( "getCoordinates", &MeshInstance::getCoordinates )
-    ;
 
-    class_< MeshInstance, MeshInstance::MeshPtr,
-            bases< BaseMeshInstance > >( "Mesh", no_init )
-        .def( "create", &createSharedPtr< MeshInstance > )
+    class_< ParallelModelInstance, ParallelModelInstance::ParallelModelPtr,
+            bases< BaseModelInstance > > ( "ParallelModel", no_init )
+        .def( "create", &createSharedPtr< ParallelModelInstance > )
         .staticmethod( "create" )
-        .def( "readAsterMeshFile", &MeshInstance::readAsterMeshFile )
-        .def( "readGibiFile", &MeshInstance::readGibiFile )
-        .def( "readGmshFile", &MeshInstance::readGmshFile )
-        .def( "readMedFile", &MeshInstance::readMedFile )
+        .def( "build", &ParallelModelInstance::build )
+        .def( "setSupportMesh", &ParallelModelInstance::setSupportMesh )
     ;
 };
+
+#endif /* _USE_MPI */

@@ -29,14 +29,29 @@ void exportModelToPython()
 {
     using namespace boost::python;
 
+//     enum_< ModelSiplitingMethod >( "ModelSiplitingMethod" )
+//         .value( "Centralized", Centralized )
+//         .value( "SubDomain", SubDomain )
+//         .value( "GroupOfElements", GroupOfElements )
+//         ;
+// 
+//     enum_< GraphPartitioner >( "GraphPartitioner" )
+//         .value( "Scotch", ScotchPartitioner )
+//         .value( "Metis", MetisPartitioner )
+//         ;
+
+    class_< BaseModelInstance, BaseModelInstance::BaseModelPtr,
+            bases< DataStructure > > ( "BaseModel", no_init )
+        .def( "addModelingOnAllMesh", &BaseModelInstance::addModelingOnAllMesh )
+        .def( "addModelingOnGroupOfElements", &BaseModelInstance::addModelingOnGroupOfElements )
+        .def( "addModelingOnGroupOfNodes", &BaseModelInstance::addModelingOnGroupOfNodes )
+    ;
+
     class_< ModelInstance, ModelInstance::ModelPtr,
-            bases< DataStructure > > ( "Model", no_init )
+            bases< BaseModelInstance > > ( "Model", no_init )
         .def( "create", &createSharedPtr< ModelInstance > )
         .staticmethod( "create" )
-        .def( "addModelingOnAllMesh", &ModelInstance::addModelingOnAllMesh )
-        .def( "addModelingOnGroupOfElements", &ModelInstance::addModelingOnGroupOfElements )
-        .def( "addModelingOnGroupOfNodes", &ModelInstance::addModelingOnGroupOfNodes )
-        .def( "build", &ModelInstance::build )
+        .def( "build", &BaseModelInstance::build )
         .def( "enrichWithXfem", &ModelInstance::enrichWithXfem )
         .def( "getSupportMesh", &ModelInstance::getSupportMesh )
         .def( "setSupportMesh", &ModelInstance::setSupportMesh )

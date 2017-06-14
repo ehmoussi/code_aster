@@ -1,6 +1,6 @@
 /**
- * @file MeshInterface.cxx
- * @brief Interface python de Mesh
+ * @file Model.cxx
+ * @brief Implementation de ModelInstance
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -23,25 +23,17 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/MeshInterface.h"
-#include "PythonBindings/SharedPtrUtilities.h"
-#include <boost/python.hpp>
+#include "Modeling/ParallelModel.h"
 
-void exportMeshToPython()
+bool ParallelModelInstance::build() throw ( std::runtime_error )
 {
-    using namespace boost::python;
-    class_< BaseMeshInstance, BaseMeshInstance::BaseMeshPtr,
-            bases< DataStructure > >( "BaseMesh", no_init )
-        .def( "getCoordinates", &MeshInstance::getCoordinates )
-    ;
+    SyntaxMapContainer dict = buildModelingsSyntaxMapContainer();
 
-    class_< MeshInstance, MeshInstance::MeshPtr,
-            bases< BaseMeshInstance > >( "Mesh", no_init )
-        .def( "create", &createSharedPtr< MeshInstance > )
-        .staticmethod( "create" )
-        .def( "readAsterMeshFile", &MeshInstance::readAsterMeshFile )
-        .def( "readGibiFile", &MeshInstance::readGibiFile )
-        .def( "readGmshFile", &MeshInstance::readGmshFile )
-        .def( "readMedFile", &MeshInstance::readMedFile )
-    ;
+    ListSyntaxMapContainer listeDISTRIBUTION;
+    SyntaxMapContainer dict2;
+    dict2.container["METHODE"] = ModelSiplitingMethodNames[ (int)Centralized ];
+    listeDISTRIBUTION.push_back( dict2 );
+    dict.container["DISTRIBUTION"] = listeDISTRIBUTION;
+
+    return buildWithSyntax( dict );
 };

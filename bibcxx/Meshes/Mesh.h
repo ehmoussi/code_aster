@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Mesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,15 +36,15 @@
 #include <assert.h>
 
 /**
- * @class MeshInstance
+ * @class BaseMeshInstance
  * @brief Cette classe decrit un maillage Aster
  * @author Nicolas Sellenet
  */
-class MeshInstance: public DataStructure
+class BaseMeshInstance: public DataStructure
 {
 public:
 
-private:
+protected:
     /** @brief Objet Jeveux '.DIME' */
     JeveuxVectorLong       _dimensionInformations;
     /** @brief Pointeur de nom Jeveux '.NOMNOE' */
@@ -73,42 +73,25 @@ private:
 
 public:
     /**
-     * @typedef MeshPtr
-     * @brief Pointeur intelligent vers un MeshInstance
+     * @typedef BaseMeshPtr
+     * @brief Pointeur intelligent vers un BaseMeshInstance
      */
-    typedef boost::shared_ptr< MeshInstance > MeshPtr;
+    typedef boost::shared_ptr< BaseMeshInstance > BaseMeshPtr;
 
     /**
      * @brief Constructeur
      */
-    static MeshPtr create()
-    {
-        return MeshPtr( new MeshInstance );
-    };
-
-    /**
-     * @brief Constructeur
-     */
-    MeshInstance();
+    BaseMeshInstance();
 
     /**
      * @brief Destructeur
      */
-    ~MeshInstance() throw ( std::runtime_error )
+    ~BaseMeshInstance() throw ( std::runtime_error )
     {
 #ifdef __DEBUG_GC__
         std::cout << "Mesh.destr: " << this->getName() << std::endl;
 #endif
     };
-
-    /**
-     * @brief Ajout d'un groupe de noeuds au maillage en partant d'une liste noeuds
-     * @param name nom du groupe à créer
-     * @param vec liste des noeuds
-     * @return Retourne true si tout s'est bien déroulé
-     */
-    bool addGroupOfNodesFromNodes( const std::string& name,
-                                   const VectorString& vec ) throw( std::runtime_error );
 
     /**
      * @brief Recuperation des coordonnees du maillage
@@ -123,18 +106,20 @@ public:
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */
-    bool hasGroupOfElements( std::string name ) const
+    virtual bool hasGroupOfElements( std::string name ) const
     {
-        return _groupsOfElements->existsObject(name) ;
+        throw std::runtime_error( "Not allowed" );
+        return _groupsOfElements->existsObject(name);
     };
 
     /**
      * @brief Teste l'existence d'un groupe de noeuds dans le maillage
      * @return true si le groupe existe
      */
-    bool hasGroupOfNodes( std::string name ) const
+    virtual bool hasGroupOfNodes( std::string name ) const
     {
-        return _groupsOfNodes->existsObject(name) ;
+        throw std::runtime_error( "Not allowed" );
+        return _groupsOfNodes->existsObject(name);
     };
 
     /**
@@ -144,6 +129,62 @@ public:
     bool isEmpty() const
     {
         return _isEmpty;
+    };
+
+    /**
+     * @brief Read a MED Mesh file
+     * @return retourne true si tout est ok
+     */
+    virtual bool readMedFile( const std::string& fileName ) throw ( std::runtime_error );
+};
+
+/**
+ * @class MeshInstance
+ * @brief Cette classe decrit un maillage Aster
+ * @author Nicolas Sellenet
+ */
+class MeshInstance: public BaseMeshInstance
+{
+public:
+    /**
+     * @typedef MeshPtr
+     * @brief Pointeur intelligent vers un MeshInstance
+     */
+    typedef boost::shared_ptr< MeshInstance > MeshPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static MeshPtr create()
+    {
+        return MeshPtr( new MeshInstance );
+    };
+
+    /**
+     * @brief Ajout d'un groupe de noeuds au maillage en partant d'une liste noeuds
+     * @param name nom du groupe à créer
+     * @param vec liste des noeuds
+     * @return Retourne true si tout s'est bien déroulé
+     */
+    bool addGroupOfNodesFromNodes( const std::string& name,
+                                   const VectorString& vec ) throw( std::runtime_error );
+
+    /**
+     * @brief Teste l'existence d'un groupe de mailles dans le maillage
+     * @return true si le groupe existe
+     */
+    bool hasGroupOfElements( std::string name ) const
+    {
+        return _groupsOfElements->existsObject(name);
+    };
+
+    /**
+     * @brief Teste l'existence d'un groupe de noeuds dans le maillage
+     * @return true si le groupe existe
+     */
+    bool hasGroupOfNodes( std::string name ) const
+    {
+        return _groupsOfNodes->existsObject(name);
     };
 
     /**
@@ -163,13 +204,13 @@ public:
      * @return retourne true si tout est ok
      */
     bool readGmshFile( const std::string& fileName ) throw ( std::runtime_error );
-
-    /**
-     * @brief Read a MED Mesh file
-     * @return retourne true si tout est ok
-     */
-    virtual bool readMedFile( const std::string& fileName ) throw ( std::runtime_error );
 };
+
+/**
+ * @typedef BaseMeshPtr
+ * @brief Pointeur intelligent vers un BaseMeshInstance
+ */
+typedef boost::shared_ptr< BaseMeshInstance > BaseMeshPtr;
 
 /**
  * @typedef MeshPtr
