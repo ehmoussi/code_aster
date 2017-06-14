@@ -19,8 +19,8 @@
 !
 !
 interface
-    subroutine matrot(angl, pgl)
-        real(kind=8) :: angl(*)
-        real(kind=8) :: pgl(3, 3)
+    subroutine matrot(angl_naut, pgl)
+        real(kind=8), intent(in) :: angl_naut(*)
+        real(kind=8), intent(out) :: pgl(3, 3)
     end subroutine matrot
 end interface
