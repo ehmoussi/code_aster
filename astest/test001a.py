@@ -5,7 +5,7 @@ import code_aster
 test = code_aster.TestCase()
 
 # Creation du maillage
-mesh = code_aster.Mesh()
+mesh = code_aster.Mesh.create()
 test.assertEqual( mesh.getType(), 'MAILLAGE' )
 
 # Relecture du fichier MED
@@ -26,7 +26,7 @@ with test.assertRaises(TypeError):
     coord[3] = 5.0
 
 # Definition du modele Aster
-model = code_aster.Model()
+model = code_aster.Model.create()
 test.assertEqual( model.getType(), "MODELE" )
 model.setSupportMesh(mesh)
 model.addModelingOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
@@ -34,7 +34,7 @@ model.addModelingOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
 model.build()
 
 # Definition du modele Aster
-model2 = code_aster.Model()
+model2 = code_aster.Model.create()
 model2.setSupportMesh(mesh)
 
 with test.assertRaisesRegexp(RuntimeError, 'not allowed'):

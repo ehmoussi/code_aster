@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Model
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,15 +35,42 @@
 #include <map>
 
 #include "Loads/PhysicalQuantity.h"
+#include "Utilities/SyntaxDictionary.h"
 
 /**
- * @class ModelInstance
+ * @enum ModelSiplitingMethod
+ * @brief Methodes de partitionnement du modèle
+ * @author Nicolas Sellenet
+ */
+enum ModelSiplitingMethod { Centralized, SubDomain, GroupOfElementsSplit };
+const int nbModelSiplitingMethod = 3;
+/**
+ * @var ModelSiplitingMethodNames
+ * @brief Nom Aster des differents partitionnement
+ */
+extern const char* const ModelSiplitingMethodNames[nbModelSiplitingMethod];
+
+/**
+ * @enum GraphPartitioner
+ * @brief Partitionneur de graph
+ * @author Nicolas Sellenet
+ */
+enum GraphPartitioner { ScotchPartitioner, MetisPartitioner };
+const int nbGraphPartitioner = 2;
+/**
+ * @var GraphPartitionerNames
+ * @brief Nom Aster des differents partitionneur de graph
+ */
+extern const char* const GraphPartitionerNames[nbGraphPartitioner];
+
+/**
+ * @class BaseModelInstance
  * @brief Produit une sd identique a celle produite par AFFE_MODELE
  * @author Nicolas Sellenet
  */
-class ModelInstance: public DataStructure
+class BaseModelInstance: public DataStructure
 {
-    private:
+    protected:
         // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
         // dans la list
         /** @brief Pointeur intelligent vers un VirtualMeshEntity */
@@ -54,31 +81,48 @@ class ModelInstance: public DataStructure
         typedef listOfModsAndGrps::value_type listOfModsAndGrpsValue;
         /** @brief Iterateur sur un listOfModsAndGrps */
         typedef listOfModsAndGrps::iterator listOfModsAndGrpsIter;
+        /** @brief Iterateur constant sur un listOfModsAndGrps */
+        typedef listOfModsAndGrps::const_iterator listOfModsAndGrpsCIter;
 
         /** @brief Vecteur Jeveux '.MAILLE' */
-        JeveuxVectorLong  _typeOfElements;
+        JeveuxVectorLong     _typeOfElements;
         /** @brief Vecteur Jeveux '.NOEUD' */
-        JeveuxVectorLong  _typeOfNodes;
+        JeveuxVectorLong     _typeOfNodes;
         /** @brief Vecteur Jeveux '.PARTIT' */
-        JeveuxVectorChar8 _partition;
+        JeveuxVectorChar8    _partition;
         /** @brief Liste contenant les modelisations ajoutees par l'utilisateur */
-        listOfModsAndGrps _modelisations;
+        listOfModsAndGrps    _modelisations;
         /** @brief Maillage sur lequel repose la modelisation */
-        MeshPtr           _supportMesh;
+        BaseMeshPtr          _supportBaseMesh;
+        /** @brief Méthode de parallélisation du modèle */
+        ModelSiplitingMethod _splitMethod;
+        /** @brief Graph partitioning */
+        GraphPartitioner     _graphPartitioner;
         /** @brief Booleen indiquant si la sd a deja ete remplie */
-        bool              _isEmpty;
+        bool                 _isEmpty;
+
+        /**
+         * @brief Ajout d'une nouvelle modelisation sur tout le maillage
+         * @return SyntaxMapContainer contenant la syntaxe pour AFFE et les mc obligatoires
+         */
+        SyntaxMapContainer buildModelingsSyntaxMapContainer() const;
+
+        /**
+         * @brief Construction (au sens Jeveux fortran) de la sd_modele
+         * @return booleen indiquant que la construction s'est bien deroulee
+         */
+        bool buildWithSyntax( SyntaxMapContainer& ) throw ( std::runtime_error );
 
     public:
-
         /**
          * @brief Forward declaration for the XFEM enrichment
          */
-        typedef boost::shared_ptr< ModelInstance > ModelPtr;
+        typedef boost::shared_ptr< BaseModelInstance > BaseModelPtr;
 
         /**
          * @brief Constructeur
          */
-        ModelInstance();
+        BaseModelInstance();
 
         /**
          * @brief Ajout d'une nouvelle modelisation sur tout le maillage
@@ -100,8 +144,8 @@ class ModelInstance: public DataStructure
         void addModelingOnGroupOfElements( Physics phys, Modelings mod,
                                            std::string nameOfGroup ) throw ( std::runtime_error )
         {
-            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
-            if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
+            if ( ! _supportBaseMesh ) throw std::runtime_error( "Support mesh is not defined" );
+            if ( ! _supportBaseMesh->hasGroupOfElements( nameOfGroup ) )
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
@@ -117,8 +161,8 @@ class ModelInstance: public DataStructure
         void addModelingOnGroupOfNodes( Physics phys, Modelings mod,
                                         std::string nameOfGroup ) throw ( std::runtime_error )
         {
-            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
-            if ( ! _supportMesh->hasGroupOfNodes( nameOfGroup ) )
+            if ( ! _supportBaseMesh ) throw std::runtime_error( "Support mesh is not defined" );
+            if ( ! _supportBaseMesh->hasGroupOfNodes( nameOfGroup ) )
                 throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
@@ -129,7 +173,7 @@ class ModelInstance: public DataStructure
          * @brief Construction (au sens Jeveux fortran) de la sd_modele
          * @return booleen indiquant que la construction s'est bien deroulee
          */
-        bool build() throw ( std::runtime_error );
+        virtual bool build() throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant de savoir si le modele est vide
@@ -143,36 +187,63 @@ class ModelInstance: public DataStructure
         /**
          * @brief Definition de la methode de partition
          */
-        void setSplittingMethod() throw ( std::runtime_error )
+        void setSplittingMethod( ModelSiplitingMethod split, GraphPartitioner partitioner )
         {
-            throw std::runtime_error( "Not yet implemented" );
+            _splitMethod = split;
+            _graphPartitioner = partitioner;
         };
 
         /**
-         * @brief Definition du maillage support
-         * @param currentMesh objet MeshPtr sur lequel le modele reposera
+         * @brief Definition de la methode de partition
          */
-        bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
+        void setSplittingMethod( ModelSiplitingMethod split )
         {
-            if ( currentMesh->isEmpty() )
-                throw std::runtime_error( "Mesh is empty" );
-            _supportMesh = currentMesh;
-            return true;
+            _splitMethod = split;
         };
+};
 
-        MeshPtr getSupportMesh() throw ( std::runtime_error )
-        {
-            if ( ( ! _supportMesh ) || _supportMesh->isEmpty() )
-                throw std::runtime_error( "Support mesh of current model is empty" );
-            return _supportMesh;
-        };
+/**
+ * @class ModelInstance
+ * @brief Produit une sd identique a celle produite par AFFE_MODELE
+ * @author Nicolas Sellenet
+ */
+class ModelInstance: public BaseModelInstance
+{
+private:
+    /** @brief Maillage sur lequel repose la modelisation */
+    MeshPtr _supportMesh;
 
-        /**
-         * @brief Definition du maillage support
-         * @param currentMesh objet MeshPtr sur lequel le modele reposera
-         */
-        ModelPtr enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::runtime_error );
+public:
+    /**
+     * @brief Forward declaration for the XFEM enrichment
+     */
+    typedef boost::shared_ptr< ModelInstance > ModelPtr;
 
+    /**
+     * @brief Definition du maillage support
+     * @param currentMesh objet MeshPtr sur lequel le modele reposera
+     */
+    ModelPtr enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::runtime_error );
+
+    MeshPtr getSupportMesh() throw ( std::runtime_error )
+    {
+        if ( ( ! _supportMesh ) || _supportMesh->isEmpty() )
+            throw std::runtime_error( "Support mesh of current model is empty" );
+        return _supportMesh;
+    };
+
+    /**
+     * @brief Definition du maillage support
+     * @param currentMesh objet MeshPtr sur lequel le modele reposera
+     */
+    bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
+    {
+        if ( currentMesh->isEmpty() )
+            throw std::runtime_error( "Mesh is empty" );
+        _supportMesh = currentMesh;
+        _supportBaseMesh = currentMesh;
+        return true;
+    };
 };
 
 

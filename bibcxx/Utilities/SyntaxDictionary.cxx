@@ -23,25 +23,25 @@
 
 #include "Utilities/SyntaxDictionary.h"
 
-PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
+PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict ) const
 {
     if ( returnDict == NULL ) returnDict = PyDict_New();
 
-    for( SyntaxMapIter curIter = container.begin();
+    for( SyntaxMapCIter curIter = container.begin();
          curIter != container.end();
          ++curIter )
     {
         if ( (*curIter).second.type() == typeid( int ) )
         {
-            int& tmp = boost::get< int >( (*curIter).second );
+            const int& tmp = boost::get< int >( (*curIter).second );
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(), PyLong_FromLong( tmp ) );
         }
         else if ( (*curIter).second.type() == typeid( VectorInt ) )
         {
-            VectorInt& currentList = boost::get< VectorInt >( (*curIter).second );
+            const VectorInt& currentList = boost::get< VectorInt >( (*curIter).second );
             PyObject* listValues = PyList_New( currentList.size() );
             int count = 0;
-            for ( VectorIntIter iter = currentList.begin();
+            for ( VectorIntCIter iter = currentList.begin();
                   iter != currentList.end();
                   ++iter )
             {
@@ -52,16 +52,16 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
         }
         else if ( (*curIter).second.type() == typeid( std::string ) )
         {
-            std::string& tmp = boost::get< std::string >( (*curIter).second );
+            const std::string& tmp = boost::get< std::string >( (*curIter).second );
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(),
                                   PyString_FromString( tmp.c_str() ) );
         }
         else if ( (*curIter).second.type() == typeid( VectorString ) )
         {
-            VectorString& currentList = boost::get< VectorString >( (*curIter).second );
+            const VectorString& currentList = boost::get< VectorString >( (*curIter).second );
             PyObject* listValues = PyList_New( currentList.size() );
             int count = 0;
-            for ( VectorStringIter iter = currentList.begin();
+            for ( VectorStringCIter iter = currentList.begin();
                   iter != currentList.end();
                   ++iter )
             {
@@ -73,15 +73,15 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
         }
         else if ( (*curIter).second.type() == typeid( double ) )
         {
-            double& tmp = boost::get< double >( (*curIter).second );
+            const double& tmp = boost::get< double >( (*curIter).second );
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(), PyFloat_FromDouble( tmp ) );
         }
         else if ( (*curIter).second.type() == typeid( VectorDouble ) )
         {
-            VectorDouble& currentList = boost::get< VectorDouble >( (*curIter).second );
+            const VectorDouble& currentList = boost::get< VectorDouble >( (*curIter).second );
             PyObject* listValues = PyList_New( currentList.size() );
             int count = 0;
-            for ( VectorDoubleIter iter = currentList.begin();
+            for ( VectorDoubleCIter iter = currentList.begin();
                   iter != currentList.end();
                   ++iter )
             {
@@ -92,16 +92,16 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
         }
         else if ( (*curIter).second.type() == typeid( DoubleComplex ) )
         {
-            DoubleComplex& tmp = boost::get< DoubleComplex >( (*curIter).second );
+            const DoubleComplex& tmp = boost::get< DoubleComplex >( (*curIter).second );
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(),
                                   PyComplex_FromDoubles( tmp.real(), tmp.imag() ) );
         }
         else if ( (*curIter).second.type() == typeid( VectorDoubleComplex ) )
         {
-            VectorDoubleComplex& currentList = boost::get< VectorDoubleComplex >( (*curIter).second );
+            const VectorDoubleComplex& currentList = boost::get< VectorDoubleComplex >( (*curIter).second );
             PyObject* listValues = PyList_New( currentList.size() );
             int count = 0;
-            for ( VectorDoubleComplexIter iter = currentList.begin();
+            for ( VectorDoubleComplexCIter iter = currentList.begin();
                   iter != currentList.end();
                   ++iter )
             {
@@ -113,10 +113,10 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
         }
         else if ( (*curIter).second.type() == typeid( ListSyntaxMapContainer ) )
         {
-            ListSyntaxMapContainer& tmp = boost::get< ListSyntaxMapContainer >( (*curIter).second );
+            const ListSyntaxMapContainer& tmp = boost::get< ListSyntaxMapContainer >( (*curIter).second );
             PyObject* list_F = PyList_New( tmp.size() );
             int count = 0;
-            for ( ListSyntaxMapContainerIter iter2 = tmp.begin();
+            for ( ListSyntaxMapContainerCIter iter2 = tmp.begin();
                   iter2 != tmp.end();
                   ++iter2 )
             {

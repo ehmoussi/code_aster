@@ -99,6 +99,7 @@
 #include "PythonBindings/TimeStepManagerInterface.h"
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
 #include "PythonBindings/ParallelMeshInterface.h"
+#include "PythonBindings/ParallelModelInterface.h"
 #include "PythonBindings/MPIInfosInterface.h"
 
 using namespace boost::python;
@@ -181,6 +182,7 @@ BOOST_PYTHON_MODULE(libaster)
 
 #ifdef _USE_MPI
     exportParallelMeshToPython();
+    exportParallelModelToPython();
     exportMPIInfosToPython();
 #endif /* _USE_MPI */
 };

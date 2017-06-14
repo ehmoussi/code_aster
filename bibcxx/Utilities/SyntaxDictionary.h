@@ -43,6 +43,7 @@ struct SyntaxMapContainer;
  */
 typedef std::list< SyntaxMapContainer > ListSyntaxMapContainer;
 typedef ListSyntaxMapContainer::iterator ListSyntaxMapContainerIter;
+typedef ListSyntaxMapContainer::const_iterator ListSyntaxMapContainerCIter;
 
 /**
  * @typedef VectorInt
@@ -50,6 +51,7 @@ typedef ListSyntaxMapContainer::iterator ListSyntaxMapContainerIter;
  */
 typedef std::vector< int > VectorInt;
 typedef VectorInt::iterator VectorIntIter;
+typedef VectorInt::const_iterator VectorIntCIter;
 
 /**
  * @typedef VectorString
@@ -57,6 +59,7 @@ typedef VectorInt::iterator VectorIntIter;
  */
 typedef std::vector< std::string > VectorString;
 typedef VectorString::iterator VectorStringIter;
+typedef VectorString::const_iterator VectorStringCIter;
 
 /**
  * @typedef VectorDouble
@@ -64,6 +67,7 @@ typedef VectorString::iterator VectorStringIter;
  */
 typedef std::vector< double > VectorDouble;
 typedef VectorDouble::iterator VectorDoubleIter;
+typedef VectorDouble::const_iterator VectorDoubleCIter;
 
 /**
  * @typedef VectorDoubleComplex
@@ -71,6 +75,7 @@ typedef VectorDouble::iterator VectorDoubleIter;
  */
 typedef std::vector< DoubleComplex > VectorDoubleComplex;
 typedef VectorDoubleComplex::iterator VectorDoubleComplexIter;
+typedef VectorDoubleComplex::const_iterator VectorDoubleComplexCIter;
 
 /**
  * @class SyntaxMapContainer
@@ -86,6 +91,7 @@ public:
                                                    VectorDoubleComplex,
                                                    ListSyntaxMapContainer > > SyntaxMap;
     typedef SyntaxMap::iterator SyntaxMapIter;
+    typedef SyntaxMap::const_iterator SyntaxMapCIter;
 
     /** @brief Conteneur a proprement parler */
     SyntaxMap container;
@@ -107,8 +113,9 @@ protected:
         * @return un dict python contenant la syntaxe valorisable par l'objet CommandSyntax
         * @todo Probleme de refcounting : ajouter un objet wrapper qui se chargera de la destruction
         * @todo seul CommandSyntaxCython et le cython devrait pouvoir appeler cette fonction ?
+        * @todo ajouter un const pour this
         */
-    PyObject* convertToPythonDictionnary( PyObject* returnDict = NULL );
+    PyObject* convertToPythonDictionnary( PyObject* returnDict = NULL ) const;
 
 private:
     friend class CommandSyntaxCython;

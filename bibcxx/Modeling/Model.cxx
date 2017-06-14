@@ -1,9 +1,9 @@
 /**
  * @file Model.cxx
- * @brief Implementation de ModelInstance
+ * @brief Implementation de BaseModelInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,28 +31,32 @@
 
 #include "RunManager/CommandSyntaxCython.h"
 
-ModelInstance::ModelInstance(): DataStructure( getNewResultObjectName(), "MODELE" ),
+const char* const ModelSiplitingMethodNames[nbModelSiplitingMethod] = { "CENTRALISE",
+                                                                        "SOUS_DOMAINE",
+                                                                        "GROUP_ELEM" };
+const char* const GraphPartitionerNames[nbGraphPartitioner] = { "SCOTCH", "METIS" };
+
+BaseModelInstance::BaseModelInstance(): DataStructure( getNewResultObjectName(), "MODELE" ),
                                 _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
                                 _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
                                 _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
-                                _supportMesh( MeshPtr() ),
+                                _supportBaseMesh( MeshPtr() ),
+                                _splitMethod( SubDomain ),
+                                _graphPartitioner( MetisPartitioner ),
                                 _isEmpty( true )
 {};
 
-bool ModelInstance::build() throw ( std::runtime_error )
+SyntaxMapContainer BaseModelInstance::buildModelingsSyntaxMapContainer() const
 {
-    CommandSyntaxCython cmdSt( "AFFE_MODELE" );
-    cmdSt.setResult( getResultObjectName(), "MODELE" );
-
     SyntaxMapContainer dict;
 
     dict.container["VERI_JACOBIEN"] = "OUI";
-    if ( ! _supportMesh )
+    if ( ! _supportBaseMesh )
         throw std::runtime_error("Support mesh is undefined");
-    dict.container["MAILLAGE"] = _supportMesh->getName();
+    dict.container["MAILLAGE"] = _supportBaseMesh->getName();
 
     ListSyntaxMapContainer listeAFFE;
-    for ( listOfModsAndGrpsIter curIter = _modelisations.begin();
+    for ( listOfModsAndGrpsCIter curIter = _modelisations.begin();
           curIter != _modelisations.end();
           ++curIter )
     {
@@ -74,6 +78,14 @@ bool ModelInstance::build() throw ( std::runtime_error )
         listeAFFE.push_back( dict2 );
     }
     dict.container["AFFE"] = listeAFFE;
+    return dict;
+};
+
+bool BaseModelInstance::buildWithSyntax( SyntaxMapContainer& dict )
+    throw ( std::runtime_error )
+{
+    CommandSyntaxCython cmdSt( "AFFE_MODELE" );
+    cmdSt.setResult( getResultObjectName(), "MODELE" );
     cmdSt.define( dict );
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
@@ -93,10 +105,17 @@ bool ModelInstance::build() throw ( std::runtime_error )
     return true;
 };
 
+bool BaseModelInstance::build() throw ( std::runtime_error )
+{
+    SyntaxMapContainer dict = buildModelingsSyntaxMapContainer();
+
+    return buildWithSyntax( dict );
+};
+
 ModelPtr ModelInstance::enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::runtime_error )
 {
     CommandSyntaxCython cmdSt( "MODI_MODELE_XFEM" );
-    
+
     // Create empty model and get its name
     ModelPtr newModelPtr(new ModelInstance());
     cmdSt.setResult( newModelPtr->getName(), "MODELE" );

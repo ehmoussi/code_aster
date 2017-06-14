@@ -1,9 +1,9 @@
 /**
  * @file Mesh.cxx
- * @brief Implementation de MeshInstance
+ * @brief Implementation de BaseMeshInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,7 +32,7 @@
 #include "RunManager/CommandSyntaxCython.h"
 #include "RunManager/LogicalUnitManagerCython.h"
 
-MeshInstance::MeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE" ),
+BaseMeshInstance::BaseMeshInstance(): DataStructure( getNewResultObjectName(), "MAILLAGE" ),
                         _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
                         _nameOfNodes( JeveuxBidirectionalMap( getName() + ".NOMNOE    " ) ),
                         _coordinates( FieldOnNodesDoublePtr(
@@ -80,7 +80,7 @@ bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const Vect
     return true;
 };
 
-bool MeshInstance::readMeshFile( const std::string& fileName, const std::string& format )
+bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::string& format )
     throw ( std::runtime_error )
 {
     LogicalUnitFileCython file1( fileName, Binary, Old );
@@ -161,7 +161,7 @@ bool MeshInstance::readGmshFile( const std::string& fileName )
     return true;
 };
 
-bool MeshInstance::readMedFile( const std::string& fileName )
+bool BaseMeshInstance::readMedFile( const std::string& fileName )
     throw ( std::runtime_error )
 {
     readMeshFile( fileName, "MED" );
