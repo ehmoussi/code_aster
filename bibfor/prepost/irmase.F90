@@ -127,6 +127,9 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
 !
     else if (typsec.eq.'TUYAU') then
 !
+
+        call utmess('F', 'MED2_10')
+
         ndim = 2
         nbrayo = (nbsect*2)+1
         nbpoin = 3*nbrayo*nbrcou
