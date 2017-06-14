@@ -64,9 +64,9 @@ def check_scotch(self):
             # default or SCOTCH_VERSION >= 5
             opts.scotch_libs = 'esmumps scotch scotcherr'
 
-    # Code_Aster v11.0.1: FICHE 016627
+    # code_aster v11.0.1: FICHE 016627
     if 'scotchmetis' in opts.scotch_libs:
-        raise Errors.ConfigurationError('scotchmetis variant library is not compatible with Code_Aster')
+        raise Errors.ConfigurationError('scotchmetis variant library is not compatible with code_aster')
 
     if opts.scotch_libs:
         self.check_scotch_libs()

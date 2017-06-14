@@ -24,7 +24,7 @@ from waflib import TaskGen, Configure, Logs, Utils, Errors
 
 def options(self):
     self.load('compiler_c')
-    group = self.get_option_group("Code_Aster options")
+    group = self.get_option_group("code_aster options")
     group.add_option('-e', '--build-executable', dest='embed_aster',
                     default=False, action='store_true',
                     help='build aster as an executable: it is an alias for --embed-aster')
@@ -65,7 +65,7 @@ def check_bibc_depends(self):
     self.check_cc(uselib_store='SYS', lib='dl')
 
 def build(self):
-    # We split Code_Aster byte code:
+    # We split code_aster byte code:
     #
     # - libaster.so: a shared library that store symbols
     # - *aster*.so: python C-extension that contains python bindings
