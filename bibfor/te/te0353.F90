@@ -18,6 +18,8 @@
 
 subroutine te0353(option, nomte)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -99,7 +101,7 @@ implicit none
 ! - Comportement
 !
     call jevech('PCOMPOR', 'L', j_compor)
-    rela_comp = zk16(j_compor)
+    rela_comp = zk16(j_compor-1+NAME)
 !
 ! - Cannot evaluate command variables effect for Mfront behaviors
 !
@@ -110,7 +112,7 @@ implicit none
 !
 ! - Get type of phasis
 !
-    type_phas = zk16(j_compor+7)
+    type_phas = zk16(j_compor-1+META_NAME)
     call get_meta_id(meta_id, nb_phasis)
     ASSERT(nb_phasis.le.5)
     if ((meta_id.eq.0).or.(rela_comp.eq.'META_LEMA_ANI')) then
@@ -119,7 +121,6 @@ implicit none
 !
 ! - Check type of phasis
 !
-    type_phas = zk16(j_compor+7)
     valk(1) = type_phas
     if (type_phas.eq.'ACIER') then
         if (meta_id.ne.1) then

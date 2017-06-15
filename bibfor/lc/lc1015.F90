@@ -22,6 +22,8 @@ subroutine lc1015(fami, kpg, ksp, ndim, imate,&
                   sigp, vip, typmod, icomp,&
                   nvi, dsidep, codret)
 !
+use Behaviour_type
+!
 implicit none
 !
 #include "asterfort/assert.h"
@@ -62,12 +64,12 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (compor(8) .eq. 'ACIER') then
+    if (compor(META_NAME) .eq. 'ACIER') then
         call lcgdpm(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, sigp,&
                     vip, dsidep, codret)
-    else if (compor(8).eq.'ZIRC') then
+    else if (compor(META_NAME) .eq. 'ZIRC') then
         call nzgdzi(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, sigp,&
