@@ -44,6 +44,7 @@ try:
     import aster
     import Macro
     from code_aster.Cata.Syntax import _F
+    from Utilitai.utils import get_shared_tmpdir
 except ImportError:
     pass
 
