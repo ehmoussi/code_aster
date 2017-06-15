@@ -68,13 +68,14 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_pmf, l_kit_thm, l_kit_ddi
+    aster_logical :: l_pmf, l_kit_thm, l_kit_ddi, l_kit_meta
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call comp_meca_l(rela_comp, 'PMF'    , l_pmf)
-    call comp_meca_l(rela_comp, 'KIT_THM', l_kit_thm)
-    call comp_meca_l(rela_comp, 'KIT_DDI', l_kit_ddi)
+    call comp_meca_l(rela_comp, 'PMF'     , l_pmf)
+    call comp_meca_l(rela_comp, 'KIT_THM' , l_kit_thm)
+    call comp_meca_l(rela_comp, 'KIT_DDI' , l_kit_ddi)
+    call comp_meca_l(rela_comp, 'KIT_META', l_kit_meta)
 !
     if (present(v_compor_)) then
         v_compor_(1:NB_COMP_MAXI) = 'VIDE'
@@ -109,6 +110,10 @@ implicit none
             write (v_compor_(CREEP_NVAR),'(I16)') nb_vari_comp(1)
             write (v_compor_(PLAS_NVAR),'(I16)')  nb_vari_comp(2)
         endif
+        v_compor_(KIT1_NAME) = kit_comp(1)
+        if (l_kit_meta) then
+            v_compor_(META_NAME)  = kit_comp(1)
+        endif
     elseif (present(l_compor_)) then
         l_compor_(1:NB_COMP_MAXI) = 'VIDE'
         l_compor_(NAME) = rela_comp
@@ -130,6 +135,10 @@ implicit none
             write (l_compor_(PLAS_NUME),'(I16)')  nume_comp(2)
             write (l_compor_(CREEP_NVAR),'(I16)') nb_vari_comp(1)
             write (l_compor_(PLAS_NVAR),'(I16)')  nb_vari_comp(2)
+        endif
+        l_compor_(KIT1_NAME) = kit_comp(1)
+        if (l_kit_meta) then
+            l_compor_(META_NAME)  = kit_comp(1)
         endif
     endif
 !
