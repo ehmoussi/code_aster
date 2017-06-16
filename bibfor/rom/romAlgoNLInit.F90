@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romAlgoNLInit(phenom        , mesh, nume_dof, result, ds_algorom,&
                          l_line_search_)
 !
@@ -33,14 +34,12 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=4), intent(in) :: phenom
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: nume_dof
-    character(len=8), intent(in) :: result
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
-    aster_logical, intent(in), optional :: l_line_search_
+character(len=4), intent(in) :: phenom
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: nume_dof
+character(len=8), intent(in) :: result
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+aster_logical, intent(in), optional :: l_line_search_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -86,15 +85,15 @@ implicit none
 ! - Prepare the list of equations at interface
 !
     if (l_hrom) then
-        call romEquationListCreate(ds_algorom%ds_empi   , nume_dof, ds_algorom%grnode_int,&
-                                   ds_algorom%v_equa_int)
+        call romEquationListCreate(ds_algorom%ds_empi, ds_algorom%v_equa_int, nume_dof,&
+                                   grnode_ = ds_algorom%grnode_int)
     endif
 !
 ! - Prepare the list of equation of internal interface
 !
     if (l_hrom_corref) then
-        call romEquationListCreate(ds_algorom%ds_empi   , nume_dof, ds_algorom%grnode_sub,&
-                                   ds_algorom%v_equa_sub)
+        call romEquationListCreate(ds_algorom%ds_empi, ds_algorom%v_equa_sub, nume_dof,&
+                                   grnode_ = ds_algorom%grnode_sub)
     endif
 !
 ! - Truncation of empirical modes on RID
