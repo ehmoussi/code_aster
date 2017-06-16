@@ -16,27 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine romModeSave(base        , i_mode     , model  ,&
-                           field_name  , field_iden , field_refe , nb_equa,&
-                           mode_vectr_ ,&
-                           mode_vectc_ ,&
-                           mode_freq_  ,&
-                           nume_slice_ ,&
-                           nb_snap_)
+    subroutine romModeParaRead(base  , i_mode     ,&
+                               model_, field_name_, mode_freq_, nume_slice_, nb_snap_)
         character(len=8), intent(in) :: base
         integer, intent(in) :: i_mode
-        character(len=8), intent(in) :: model
-        character(len=24), intent(in) :: field_name
-        character(len=24), intent(in) :: field_iden
-        character(len=24), intent(in) :: field_refe
-        integer, intent(in) :: nb_equa
-        real(kind=8), optional, intent(in) :: mode_vectr_(nb_equa)
-        complex(kind=8), optional, intent(in) :: mode_vectc_(nb_equa)
-        integer, optional, intent(in)     :: nume_slice_
-        real(kind=8), optional, intent(in) :: mode_freq_
-        integer, optional, intent(in)     :: nb_snap_
-    end subroutine romModeSave
+        character(len=8), optional, intent(out)  :: model_
+        character(len=24), optional, intent(out) :: field_name_
+        integer, optional, intent(out)           :: nume_slice_
+        real(kind=8), optional, intent(out)      :: mode_freq_
+        integer, optional, intent(out)           :: nb_snap_
+    end subroutine romModeParaRead
 end interface
