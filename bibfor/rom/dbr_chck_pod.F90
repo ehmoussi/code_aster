@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_chck_pod(operation, ds_para_pod, ds_empi, l_reuse)
 !
 use Rom_Datastructure_type
@@ -35,12 +36,10 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/rs_paraonce.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: operation
-    type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-    type(ROM_DS_Empi), intent(in) :: ds_empi
-    aster_logical, intent(in) :: l_reuse
+character(len=16), intent(in) :: operation
+type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
+type(ROM_DS_Empi), intent(in) :: ds_empi
+aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,7 +107,7 @@ implicit none
 ! - Check model
 !
     call dismoi('MODELISATION', model, 'MODELE', repk=modeli)
-    if (modeli .ne. '3D') then
+    if (modeli .ne. '3D' .and. modeli .ne. '3D_DIAG' .and. modeli .ne. '3D_SI') then
         call utmess('F','ROM5_20')
     endif
 !
