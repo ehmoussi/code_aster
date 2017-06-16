@@ -17,13 +17,15 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine load_list_getp(phenom      , l_load_user, v_llresu_info, v_llresu_name, v_list_dble,&
-                          l_apply_user, i_load     , nb_load      , i_excit      , load_name  ,&
-                          load_type   , ligrch     , load_apply_  )
+subroutine load_list_getp(phenom     , l_load_user , v_llresu_info, v_llresu_name,&
+                          v_list_dble, load_keyword, i_load       , nb_load      ,&
+                          i_excit    , load_name   , load_type    , ligrch       ,&
+                          load_apply_)
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterc/getexm.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvid.h"
@@ -37,9 +39,9 @@ aster_logical, intent(in) :: l_load_user
 character(len=8), pointer, intent(in) :: v_list_dble(:)
 integer, intent(in), pointer :: v_llresu_info(:)
 character(len=24), intent(in), pointer :: v_llresu_name(:)
+character(len=16), intent(in) :: load_keyword
 integer, intent(in) :: i_load
 integer, intent(in) :: nb_load
-aster_logical, intent(in) :: l_apply_user
 integer, intent(inout) :: i_excit
 character(len=8), intent(out) :: load_name
 character(len=8), intent(out) :: load_type
@@ -59,10 +61,12 @@ character(len=16), optional, intent(out) :: load_apply_
 ! In  v_llresu_info  : pointer for loads infos for list of loads from result datastructure
 ! In  v_llresu_name  : pointer for loads names for list of loads from result datastructure
 ! In  v_list_dble    : pointer to list of loads (to avoid same loads)
-! In  l_apply_user   : .true. if applying load option by user
-! In  i_load         : index in list
+! In  load_keyword   : factor keyword to read loads
+!                      'None' => no load to read
+!                      'EXCIT' or ' ' => depending on command
+! In  i_load         : index in list of loads
 ! In  nb_load        : number of loads for list of loads
-! IO  i_excit        : index in EXCIT factor keyword
+! IO  i_excit        : index in factor keyword for current load
 ! Out load_name      : name of load
 ! Out load_type      : type of load
 ! Out load_apply     : how to apply load
@@ -70,47 +74,52 @@ character(len=16), optional, intent(out) :: load_apply_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: keywf, load_apply, load_pheno
+    character(len=16) :: load_apply, load_pheno
     integer :: i_load_dble, nocc
     character(len=8), pointer :: list_load(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
     load_name  = ' '
+    load_type  = ' '
     load_apply = 'FIXE_CSTE'
-    keywf      = 'EXCIT'
-    keywf      = ' '
+    ligrch     = ' '
+    ASSERT(load_keyword .ne. 'None')
+!
+! - Current index to read load
 !
     if (l_load_user) then
         i_excit = i_excit + 1
 30      continue
-        call getvid(keywf, 'CHARGE', iocc=i_excit, nbval=0, nbret=nocc)
+        call getvid(load_keyword, 'CHARGE', iocc = i_excit, nbval=0, nbret=nocc)
         if (nocc .eq. 0) then
             i_excit = i_excit + 1
             goto 30
+        endif
+    endif
+!
+! - Get name of current load
+!
+    if (l_load_user) then
+        if (load_keyword .eq. ' ') then
+            AS_ALLOCATE(vk8 = list_load, size = nb_load)
+            call getvid(load_keyword, 'CHARGE', nbval = nb_load, vect=list_load)
+            load_name = list_load(i_load)
+            AS_DEALLOCATE(vk8 = list_load)
         else
-            if (keywf .eq. ' ') then
-                AS_ALLOCATE(vk8 = list_load, size = nb_load)
-                call getvid(keywf, 'CHARGE', nbval=nb_load, vect=list_load)
-                load_name = list_load(i_load)
-                do i_load_dble = 1, nb_load
-                    if (load_name .eq. v_list_dble(i_load_dble)) then
-                        call utmess('F', 'CHARGES_1', sk=load_name)
-                    endif
-                end do
-                AS_DEALLOCATE(vk8 = list_load)
-            else
-                call getvid(keywf, 'CHARGE', iocc=i_excit, scal=load_name)
-                do i_load_dble = 1, nb_load
-                    if (load_name .eq. v_list_dble(i_load_dble)) then
-                        call utmess('F', 'CHARGES_1', sk=load_name)
-                    endif
-                end do
-            endif
+            call getvid(load_keyword, 'CHARGE', iocc = i_excit, scal=load_name)
         endif
     else
         load_name = v_llresu_name(i_load)(1:8)
     endif
+!
+! - Only one load in the list
+!
+    do i_load_dble = 1, nb_load
+        if (load_name .eq. v_list_dble(i_load_dble)) then
+            call utmess('F', 'CHARGES_1', sk=load_name)
+        endif
+    end do
 !
 ! - Save load name
 !
@@ -150,13 +159,13 @@ character(len=16), optional, intent(out) :: load_apply_
     if (phenom.eq.'MECA') then
         ASSERT(present(load_apply_))
         if (l_load_user) then
-            if (l_apply_user) then
-                call getvtx(keywf, 'TYPE_CHARGE', iocc=i_excit, scal=load_apply)
+            if (getexm(load_keyword,'TYPE_CHARGE') .eq. 1) then            
+                call getvtx(load_keyword, 'TYPE_CHARGE', iocc=i_excit, scal=load_apply)
             else
                 load_apply = 'FIXE_CSTE'
             endif
         else
-            if (l_apply_user) then
+            if (load_keyword .eq. ' ') then
                 load_apply = 'FIXE_CSTE'
             else
                 if (v_llresu_info(i_load+1) .eq. 4 .or.&
