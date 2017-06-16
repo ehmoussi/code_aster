@@ -212,7 +212,7 @@ redu=THER_NON_LINE(MODELE=model_r,
                     METHODE='MODELE_REDUIT',
                     MODELE_REDUIT=_F(
                     REAC_ITER=1,
-                    BASE_PRIMAL     = base_p,
+                    BASE_PRIMAL     = base_t,
                     DOMAINE_REDUIT  = 'OUI',
                     GROUP_NO_INTERF = 'INF',
                     ),

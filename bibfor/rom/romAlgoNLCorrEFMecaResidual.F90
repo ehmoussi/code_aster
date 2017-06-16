@@ -55,7 +55,6 @@ real(kind=8), intent(out) :: resi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type(ROM_DS_Empi) :: ds_empi
     aster_logical :: l_hrom
     character(len=8) :: base
     character(len=24) :: field_name
@@ -68,19 +67,11 @@ real(kind=8), intent(out) :: resi
 !
 ! - Get parameters
 !
-    l_hrom = ds_algorom%l_hrom
-!
-! - Get empirical basis
-!
-    if (l_hrom) then
-        ds_empi = ds_algorom%ds_empi_rid
-    else
-        ds_empi = ds_algorom%ds_empi
-    endif
-    base       = ds_empi%base
-    nb_equa    = ds_empi%nb_equa
-    nb_mode    = ds_empi%nb_mode
-    field_name = ds_empi%field_name
+    l_hrom     = ds_algorom%l_hrom
+    base       = ds_algorom%ds_empi%base
+    nb_equa    = ds_algorom%ds_empi%nb_equa
+    nb_mode    = ds_algorom%ds_empi%nb_mode
+    field_name = ds_algorom%ds_empi%field_name
 !
 ! - Compute equilibrium residual
 !

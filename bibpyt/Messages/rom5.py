@@ -116,6 +116,8 @@ cata_msg = {
 
    48 : _(u"""Valeur du coefficient complexe pour la matrice de nom %(k1)s : (%(r1)19.12e,%(r2)19.12e)."""),
 
+   49 : _(u"""La base empirique ne repose pas sur le même modèle sur le calcul non-linéaire."""),
+
    50 : _(u"""Initialisation de la structure de données pour résoudre le système %(k1)s."""),
 
    51 : _(u"""Valeur des paramètres pour la variation d'indice %(i1)d."""),
