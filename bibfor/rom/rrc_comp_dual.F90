@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_comp_dual(ds_para)
 !
 use Rom_Datastructure_type
@@ -36,10 +37,9 @@ implicit none
 #include "blas/dgesv.h"
 #include "asterfort/rsnoch.h"
 #include "asterfort/copisd.h"
+#include "asterfort/romBaseCreateMatrix.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,9 +58,8 @@ implicit none
     integer :: iret, i_mode, i_equa, i_store, nume_store
     integer(kind=4) :: info
     character(len=8) :: result_rom, result_dom
-    character(len=24) :: sigm_rom, mode
+    character(len=24) :: sigm_rom
     integer, pointer :: v_noeu_rid(:) => null()
-    real(kind=8), pointer :: v_mode(:) => null()
     real(kind=8), pointer :: v_dual(:) => null()
     real(kind=8), pointer :: v_dual_rom(:) => null()
     real(kind=8), pointer :: v_sigm_rom(:) => null()
@@ -96,19 +95,18 @@ implicit none
     call jelira(sigm_rom(1:19)//'.VALE', 'LONMAX', nb_equa_rom)
     call select_dof_3(sigm_rom, nb_cmp, v_noeu_rid)
 !
-! - Get dual base
+! - Create [PHI] matrix for dual base
 !
-    AS_ALLOCATE(vr = v_dual, size = nb_equa*nb_mode)
+    call romBaseCreateMatrix(ds_para%ds_empi_dual, v_dual)
+!
+! - Reduce on RID
+!
     AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_rom*nb_mode)
     do i_mode = 1, nb_mode
-        call rsexch(' ', ds_para%ds_empi_dual%base, ds_para%ds_empi_dual%field_name,&
-                    i_mode, mode, iret)
-        ASSERT(iret .eq. 0)
-        call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
         do i_equa = 1, nb_equa
-            v_dual(i_equa+nb_equa*(i_mode-1)) = v_mode(i_equa)
             if (v_noeu_rid(i_equa) .ne. 0) then
-                v_dual_rom(v_noeu_rid(i_equa)+nb_equa_rom*(i_mode-1)) = v_mode(i_equa)
+                v_dual_rom(v_noeu_rid(i_equa)+nb_equa_rom*(i_mode-1)) = &
+                  v_dual(i_equa+nb_equa*(i_mode-1))
             endif 
         end do
     end do
