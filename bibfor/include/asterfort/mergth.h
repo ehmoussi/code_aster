@@ -15,20 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mergth(model    , lload_name, lload_info, cara_elem, mate,&
-                      time_curr, time      , varc_curr , matr_elem)
-        character(len=24), intent(in) :: model
-        character(len=24), intent(in) :: lload_name
-        character(len=24), intent(in) :: lload_info
+    subroutine mergth(model_   , list_load_, cara_elem_, mate_, chtime_,&
+                      matr_elem, base,&
+                      time_curr, varc_curr_, nh_)
+        character(len=*), intent(in) :: model_
+        character(len=*), intent(in) :: list_load_
+        character(len=*), intent(in) :: cara_elem_
+        character(len=*), intent(in) :: mate_
+        character(len=*), intent(in) :: chtime_
+        character(len=24), intent(in) :: matr_elem
+        character(len=1), intent(in) :: base
         real(kind=8), intent(in) :: time_curr
-        character(len=24), intent(in) :: time
-        character(len=24), intent(in) :: mate
-        character(len=24), intent(in) :: cara_elem
-        character(len=19), intent(in) :: varc_curr
-        character(len=24), intent(inout) :: matr_elem
+        character(len=19), optional, intent(in) :: varc_curr_
+        integer, optional, intent(in) :: nh_
     end subroutine mergth
 end interface

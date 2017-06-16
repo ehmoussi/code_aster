@@ -15,9 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ther_mrig(model    , mate     , time, cara_elem, varc_curr,&
-                     resu_elem, matr_elem)
+!
+subroutine ther_mrig(model, mate     , time, cara_elem, varc_curr, nh,&
+                     base , resu_elem, matr_elem)
 !
 implicit none
 !
@@ -32,14 +32,15 @@ implicit none
 #include "asterfort/xajcin.h"
 #include "asterfort/inical.h"
 !
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: time
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: varc_curr
-    character(len=19), intent(in) :: resu_elem   
-    character(len=24), intent(in) :: matr_elem
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: time
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: varc_curr
+integer, intent(in) :: nh
+character(len=1), intent(in) :: base
+character(len=19), intent(in) :: resu_elem   
+character(len=24), intent(in) :: matr_elem
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,21 +55,22 @@ implicit none
 ! In  time             : time (<CARTE>)
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  varc_curr        : command variable for current time
+! In  base             : JEVEUX base to create matr_elem
 ! In  resu_elem        : name of resu_elem
 ! In  matr_elem        : name of matr_elem result
+! In  nh               : Fourier mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_in_maxi, nbout
-    parameter (nb_in_maxi = 16, nbout = 1)
+    integer, parameter :: nb_in_maxi = 16
+    integer, parameter :: nbout = 1
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
-!
-    character(len=1) :: base, stop_calc
+    character(len=1) :: stop_calc
     character(len=16) :: option
     character(len=24) :: ligrel_model
     character(len=24) :: chgeom, chcara(18), chharm
-    integer :: nbin, iret, nh
+    integer :: nbin, iret
     aster_logical :: l_xfem
 !
 ! --------------------------------------------------------------------------------------------------
@@ -77,7 +79,6 @@ implicit none
 ! - Initializations
 !
     stop_calc    = 'S'
-    base         = 'V'
     option       = 'RIGI_THER'
     ligrel_model = model(1:8)//'.MODELE'
     call exixfe(model, iret)
@@ -98,7 +99,6 @@ implicit none
 !
 ! - Fourier field
 !
-    nh = -1
     call meharm(model, nh, chharm)
 !
 ! - Input fields

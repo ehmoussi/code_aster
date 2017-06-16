@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine op0025()
 !
 use NonLin_Datastructure_type
@@ -44,11 +45,6 @@ implicit none
 #include "asterfort/uttcpu.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/xthpos.h"
-!
-! person_in_charge: mickael.abbas at edf.fr
-!
-
-
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -93,7 +89,7 @@ implicit none
     vec2nd      = '&&OP0025.2ND_MEMBRE'
     matass      = '&&OP0025.MATR_ASSEM'
     result      = ' '
-    mediri      = ' '
+    mediri      = '&&MEDIRI'
     cndiri      = ' '
     cncine      = ' '
     compor      = ' '
@@ -118,7 +114,7 @@ implicit none
 !
 ! - Elementary matrix for Dirichlet BC
 !
-    call medith(model, list_load, mediri)
+    call medith('V', 'ZERO', model, list_load, mediri)
 !
 ! 2.6. ==> PILOTAGE DES REACTUALISATIONS DES ASSEMBLAGES
 !     REASRG : MATRICE DE RIGIDITE

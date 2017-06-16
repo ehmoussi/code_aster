@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine nttcmv(model , mate  , cara_elem, list_load, nume_dof,&
                   solver, time  , tpsthe   , tpsnp1   , reasvt  ,&
                   reasmt, creas , vtemp    , vtempm   , vec2nd  ,&
@@ -42,21 +42,20 @@ implicit none
 #include "asterfort/vechth.h"
 #include "asterfort/vedith.h"
 !
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: nume_dof
-    character(len=19), intent(in) :: solver
-    character(len=24), intent(in) :: time
-    aster_logical :: reasvt, reasmt
-    real(kind=8) :: tpsthe(6), tpsnp1
-    character(len=1) :: creas
-    character(len=19) :: maprec
-    character(len=24) :: time_move
-    character(len=24) :: vtemp, vtempm, vec2nd
-    character(len=24) :: matass, cndirp, cnchci, cnchtp
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: solver
+character(len=24), intent(in) :: time
+aster_logical :: reasvt, reasmt
+real(kind=8) :: tpsthe(6), tpsnp1
+character(len=1) :: creas
+character(len=19) :: maprec
+character(len=24) :: time_move
+character(len=24) :: vtemp, vtempm, vec2nd
+character(len=24) :: matass, cndirp, cnchci, cnchtp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,7 +77,7 @@ implicit none
     character(len=24) :: vediri, vechtp, vadirp, vachtp, metrnl
     character(len=19) :: resu_elem
     real(kind=8) :: time_curr
-    character(len=24), pointer :: p_relr(:) => null()
+    character(len=24), pointer :: v_resu_elem(:) => null()
     real(kind=8), pointer :: chtp(:) => null()
     real(kind=8), pointer :: dirp(:) => null()
     character(len=24) :: lload_name, lload_info, lload_func
@@ -86,7 +85,7 @@ implicit none
     data typres /'R'/
     data nomcmp /'INST    ','DELTAT  ','THETA   ','KHI     ',&
                  'R       ','RHO     '/
-    data mediri        /'&&METDIR           .RELR'/
+    data mediri        /'&&MEDIRI           .RELR'/
     data metrnl        /'&&METNTH           .RELR'/
     data vediri        /'&&VETDIR           .RELR'/
     data vechtp        /'&&VETCHA           .RELR'/
@@ -167,8 +166,7 @@ implicit none
 !
 ! --- (RE)CALCUL DE LA MATRICE DES DIRICHLET POUR L'ASSEMBLER
 !
-        call medith(model, list_load, mediri)
-        call jeveuo(mediri, 'L', jmed)
+        call medith('V', 'ZERO', model, list_load, mediri)
 !
 ! ----- Elementary matrix for transport (volumic and surfacic terms)
 !
@@ -182,8 +180,8 @@ implicit none
                     vtempm, metrnl)
 !
         nbmat = 0
-        call jeveuo(merigi(1:19)//'.RELR', 'L', vk24 = p_relr)
-        resu_elem = p_relr(1)(1:19)
+        call jeveuo(merigi(1:19)//'.RELR', 'L', vk24 = v_resu_elem)
+        resu_elem = v_resu_elem(1)(1:19)
         if (resu_elem .ne. ' ') then
             nbmat = nbmat + 1
             tlimat(nbmat) = merigi
@@ -198,9 +196,13 @@ implicit none
             endif
         endif
 !
-        if (zk24(jmed)(1:8) .ne. '        ') then
-            nbmat = nbmat + 1
-            tlimat(nbmat) =mediri(1:19)
+        call jeexin(mediri(1:8)//'           .RELR', iret)
+        if (iret .gt. 0) then
+            call jeveuo(mediri(1:8)//'           .RELR', 'L', vk24 = v_resu_elem)
+            if (v_resu_elem(1) .ne. ' ') then
+                nbmat = nbmat + 1
+                tlimat(nbmat) = mediri(1:19)
+            endif
         endif
 !
 ! --- ASSEMBLAGE DE LA MATRICE

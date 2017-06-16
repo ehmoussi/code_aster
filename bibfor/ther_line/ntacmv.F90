@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine ntacmv(model , mate  , cara_elem, list_load, nume_dof,&
                   l_stat, time  , tpsthe   , reasrg   , reasms  ,&
                   vtemp , vhydr , varc_curr, dry_prev , dry_curr,&
@@ -49,30 +51,27 @@ implicit none
 #include "asterfort/vetnth.h"
 #include "asterfort/vrcins.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: nume_dof
-    aster_logical, intent(in) :: l_stat
-    character(len=24), intent(in) :: time
-    real(kind=8), intent(in) :: tpsthe(6)
-    aster_logical, intent(in) :: reasrg
-    aster_logical, intent(in) :: reasms
-    character(len=24), intent(in) :: vtemp
-    character(len=24), intent(in) :: vhydr
-    character(len=19), intent(in) :: varc_curr
-    character(len=24), intent(in) :: dry_prev
-    character(len=24), intent(in) :: dry_curr
-    character(len=24), intent(in) :: cn2mbr
-    character(len=24), intent(in) :: matass
-    character(len=24), intent(in) :: cndiri
-    character(len=24), intent(out) :: cncine
-    character(len=24), intent(in) :: mediri
-    character(len=24), intent(in) :: compor
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: nume_dof
+aster_logical, intent(in) :: l_stat
+character(len=24), intent(in) :: time
+real(kind=8), intent(in) :: tpsthe(6)
+aster_logical, intent(in) :: reasrg
+aster_logical, intent(in) :: reasms
+character(len=24), intent(in) :: vtemp
+character(len=24), intent(in) :: vhydr
+character(len=19), intent(in) :: varc_curr
+character(len=24), intent(in) :: dry_prev
+character(len=24), intent(in) :: dry_curr
+character(len=24), intent(in) :: cn2mbr
+character(len=24), intent(in) :: matass
+character(len=24), intent(in) :: cndiri
+character(len=24), intent(out) :: cncine
+character(len=24), intent(in) :: mediri
+character(len=24), intent(in) :: compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -209,8 +208,9 @@ implicit none
         endif
 
         if (reasrg) then
-            call mergth(model    , lload_name, lload_info, cara_elem, mate,&
-                        time_curr, time      , varc_curr , merigi)
+            call mergth(model    , list_load, cara_elem, mate, time,&
+                        merigi   , 'V',&
+                        time_curr, varc_curr)
         endif
 
         nb_matr = 0

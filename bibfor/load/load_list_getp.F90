@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine load_list_getp(phenom      , l_load_user, v_llresu_info, v_llresu_name, v_list_dble,&
                           l_apply_user, i_load     , nb_load      , i_excit      , load_name  ,&
                           load_type   , ligrch     , load_apply_  )
@@ -28,22 +29,22 @@ implicit none
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/utmess.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=4), intent(in) :: phenom
-    aster_logical, intent(in) :: l_load_user
-    character(len=8), pointer, intent(in) :: v_list_dble(:)
-    integer, intent(in), pointer :: v_llresu_info(:)
-    character(len=24), intent(in), pointer :: v_llresu_name(:)
-    integer, intent(in) :: i_load
-    integer, intent(in) :: nb_load
-    aster_logical, intent(in) :: l_apply_user
-    integer, intent(inout) :: i_excit
-    character(len=8), intent(out) :: load_name
-    character(len=8), intent(out) :: load_type
-    character(len=19), intent(out) :: ligrch
-    character(len=16), optional, intent(out) :: load_apply_
+character(len=4), intent(in) :: phenom
+aster_logical, intent(in) :: l_load_user
+character(len=8), pointer, intent(in) :: v_list_dble(:)
+integer, intent(in), pointer :: v_llresu_info(:)
+character(len=24), intent(in), pointer :: v_llresu_name(:)
+integer, intent(in) :: i_load
+integer, intent(in) :: nb_load
+aster_logical, intent(in) :: l_apply_user
+integer, intent(inout) :: i_excit
+character(len=8), intent(out) :: load_name
+character(len=8), intent(out) :: load_type
+character(len=19), intent(out) :: ligrch
+character(len=16), optional, intent(out) :: load_apply_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,12 +72,14 @@ implicit none
 !
     character(len=16) :: keywf, load_apply, load_pheno
     integer :: i_load_dble, nocc
+    character(len=8), pointer :: list_load(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
     load_name  = ' '
     load_apply = 'FIXE_CSTE'
     keywf      = 'EXCIT'
+    keywf      = ' '
 !
     if (l_load_user) then
         i_excit = i_excit + 1
@@ -86,12 +89,24 @@ implicit none
             i_excit = i_excit + 1
             goto 30
         else
-            call getvid(keywf, 'CHARGE', iocc=i_excit, scal=load_name)
-            do i_load_dble = 1, nb_load
-                if (load_name .eq. v_list_dble(i_load_dble)) then
-                    call utmess('F', 'CHARGES_1', sk=load_name)
-                endif
-            end do
+            if (keywf .eq. ' ') then
+                AS_ALLOCATE(vk8 = list_load, size = nb_load)
+                call getvid(keywf, 'CHARGE', nbval=nb_load, vect=list_load)
+                load_name = list_load(i_load)
+                do i_load_dble = 1, nb_load
+                    if (load_name .eq. v_list_dble(i_load_dble)) then
+                        call utmess('F', 'CHARGES_1', sk=load_name)
+                    endif
+                end do
+                AS_DEALLOCATE(vk8 = list_load)
+            else
+                call getvid(keywf, 'CHARGE', iocc=i_excit, scal=load_name)
+                do i_load_dble = 1, nb_load
+                    if (load_name .eq. v_list_dble(i_load_dble)) then
+                        call utmess('F', 'CHARGES_1', sk=load_name)
+                    endif
+                end do
+            endif
         endif
     else
         load_name = v_llresu_name(i_load)(1:8)
