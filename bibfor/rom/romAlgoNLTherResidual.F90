@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romAlgoNLTherResidual(ther_crit_i, ther_crit_r, vec2nd   , cnvabt, cnresi    ,&
                                  cn2mbr     , resi_rela  , resi_maxi, conver, ds_algorom)
 !
@@ -31,18 +32,16 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "blas/ddot.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: ther_crit_i(*)
-    real(kind=8), intent(in) :: ther_crit_r(*)
-    character(len=24), intent(in) :: vec2nd
-    character(len=24), intent(in) :: cnvabt
-    character(len=24), intent(in) :: cnresi
-    character(len=24), intent(in) :: cn2mbr
-    real(kind=8)     , intent(out):: resi_rela
-    real(kind=8)     , intent(out):: resi_maxi
-    aster_logical    , intent(out):: conver
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+integer, intent(in) :: ther_crit_i(*)
+real(kind=8), intent(in) :: ther_crit_r(*)
+character(len=24), intent(in) :: vec2nd
+character(len=24), intent(in) :: cnvabt
+character(len=24), intent(in) :: cnresi
+character(len=24), intent(in) :: cn2mbr
+real(kind=8)     , intent(out):: resi_rela
+real(kind=8)     , intent(out):: resi_maxi
+aster_logical    , intent(out):: conver
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,7 +64,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type(ROM_DS_Empi) :: ds_empi
     aster_logical :: l_hrom
     character(len=8) :: base
     character(len=19) :: mode
@@ -92,19 +90,11 @@ implicit none
 !
 ! - Get parameters
 !
-    l_hrom = ds_algorom%l_hrom
-!
-! - Get empirical basis
-!
-    if (l_hrom) then
-        ds_empi = ds_algorom%ds_empi_rid
-    else
-        ds_empi = ds_algorom%ds_empi
-    endif
-    base       = ds_empi%base
-    nb_equa    = ds_empi%nb_equa
-    nb_mode    = ds_empi%nb_mode
-    field_name = ds_empi%field_name
+    l_hrom     = ds_algorom%l_hrom
+    base       = ds_algorom%ds_empi%base
+    nb_equa    = ds_algorom%ds_empi%nb_equa
+    nb_mode    = ds_algorom%ds_empi%nb_mode
+    field_name = ds_algorom%ds_empi%field_name
 !
 ! - Access to vectors
 !

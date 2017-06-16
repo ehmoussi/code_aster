@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romAlgoNLDSCreate(ds_algorom)
 !
 use Rom_Datastructure_type
@@ -28,9 +29,7 @@ implicit none
 #include "asterfort/romLineicBaseDSInit.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
+type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,7 +46,6 @@ implicit none
     integer :: ifm, niv
     type(ROM_DS_LineicNumb) :: ds_lineicnumb
     type(ROM_DS_Empi) :: ds_empi
-    type(ROM_DS_Empi) :: ds_empi_rid
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,19 +58,14 @@ implicit none
 !
     call romLineicBaseDSInit(ds_lineicnumb)
 !
-! - Initialization of DSdatastructure for empiric modes
+! - Initialization of datastructure for empiric modes
 !
-    call romBaseDSInit(ds_lineicnumb, ds_empi)
-!
-! - Initialization of datastructure for truncated empiric modes
-!
-    call romBaseDSInit(ds_lineicnumb, ds_empi_rid)    
+    call romBaseDSInit(ds_lineicnumb, ds_empi)   
 !
 ! - General parameters
 !
     ds_algorom%l_rom         = .false._1
     ds_algorom%ds_empi       = ds_empi
-    ds_algorom%ds_empi_rid   = ds_empi_rid
     ds_algorom%l_hrom        = .false._1
     ds_algorom%l_hrom_corref = .false._1
     ds_algorom%grnode_int    = ' '

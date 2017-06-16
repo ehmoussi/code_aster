@@ -19,10 +19,11 @@
 !
 !
 interface
-    subroutine romAlgoNLInit(phenom        , mesh, nume_dof, result, ds_algorom,&
+    subroutine romAlgoNLInit(phenom        , model, mesh, nume_dof, result, ds_algorom,&
                              l_line_search_)
         use Rom_Datastructure_type
         character(len=4), intent(in) :: phenom
+        character(len=24), intent(in) :: model
         character(len=8), intent(in) :: mesh
         character(len=24), intent(in) :: nume_dof
         character(len=8), intent(in) :: result

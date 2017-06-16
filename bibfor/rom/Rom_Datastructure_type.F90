@@ -322,8 +322,6 @@ implicit none
     type ROM_DS_AlgoPara
 ! ----- Empiric modes
         type(ROM_DS_Empi) :: ds_empi
-! ----- Empiric modes (on RID)
-        type(ROM_DS_Empi) :: ds_empi_rid
 ! ----- Pointer to list of equations for interface nodes
         integer, pointer  :: v_equa_int(:)
 ! ----- Pointer to list of equation for internal interface nodes

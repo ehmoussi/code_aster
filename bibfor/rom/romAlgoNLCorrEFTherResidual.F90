@@ -62,7 +62,6 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type(ROM_DS_Empi) :: ds_empi
     aster_logical :: l_hrom
     integer :: i_equa, nb_equa
     real(kind=8) :: vnorm
@@ -81,16 +80,8 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! - Get parameters
 !
-    l_hrom = ds_algorom%l_hrom
-!
-! - Get empirical basis
-!
-    if (l_hrom) then
-        ds_empi = ds_algorom%ds_empi_rid
-    else
-        ds_empi = ds_algorom%ds_empi
-    endif
-    nb_equa    = ds_empi%nb_equa
+    l_hrom     = ds_algorom%l_hrom
+    nb_equa    = ds_algorom%ds_empi%nb_equa
 !
 ! - Access to vectors
 !

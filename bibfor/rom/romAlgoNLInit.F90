@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romAlgoNLInit(phenom        , mesh, nume_dof, result, ds_algorom,&
+subroutine romAlgoNLInit(phenom        , model, mesh, nume_dof, result, ds_algorom,&
                          l_line_search_)
 !
 use Rom_Datastructure_type
@@ -27,14 +27,13 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
 #include "asterfort/romEquationListCreate.h"
-#include "asterfort/romBaseCopy.h"
-#include "asterfort/romBaseTruncation.h"
 #include "asterfort/romAlgoNLCheck.h"
 #include "asterfort/romAlgoNLTableCreate.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
 character(len=4), intent(in) :: phenom
+character(len=24), intent(in) :: model
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: nume_dof
 character(len=8), intent(in) :: result
@@ -50,6 +49,7 @@ aster_logical, intent(in), optional :: l_line_search_
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  phenom           : phenomenon (MECA/THER)
+! In  model            : name of model
 ! In  mesh             : name of mesh
 ! In  nume_dof         : name of numbering (NUME_DDL)
 ! In  result           : name of datastructure for results
@@ -61,7 +61,6 @@ aster_logical, intent(in), optional :: l_line_search_
     integer :: ifm, niv
     aster_logical :: l_hrom, l_hrom_corref
     integer :: nb_mode
-    character(len=8) :: base_rid
     character(len=24) :: gamma = ' '
     real(kind=8), pointer :: v_gamma(:) => null()   
 !
@@ -80,7 +79,7 @@ aster_logical, intent(in), optional :: l_line_search_
 !
 ! - Check ROM algorithm datastructure
 !
-    call romAlgoNLCheck(phenom, mesh, ds_algorom, l_line_search_)
+    call romAlgoNLCheck(phenom, model, mesh, ds_algorom, l_line_search_)
 !
 ! - Prepare the list of equations at interface
 !
@@ -94,14 +93,6 @@ aster_logical, intent(in), optional :: l_line_search_
     if (l_hrom_corref) then
         call romEquationListCreate(ds_algorom%ds_empi, ds_algorom%v_equa_sub, nume_dof,&
                                    grnode_ = ds_algorom%grnode_sub)
-    endif
-!
-! - Truncation of empirical modes on RID
-!
-    if (l_hrom) then
-        base_rid = '&&TRUNC'
-        call romBaseCopy(ds_algorom%ds_empi, base_rid, ds_algorom%ds_empi_rid)
-        call romBaseTruncation(ds_algorom%ds_empi, nume_dof, 'V', ds_algorom%ds_empi_rid)
     endif
 !
 ! - Initializations for EF correction

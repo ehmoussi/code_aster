@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romAlgoNLSystemSolve(matr_asse, vect_2mbr, ds_algorom, vect_solu)
 !
 use Rom_Datastructure_type
@@ -38,12 +39,10 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/ddot.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: matr_asse
-    character(len=24), intent(in) :: vect_2mbr
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-    character(len=19), intent(in) :: vect_solu
+character(len=24), intent(in) :: matr_asse
+character(len=24), intent(in) :: vect_2mbr
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=19), intent(in) :: vect_solu
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,6 +87,10 @@ implicit none
     l_rom       = ds_algorom%l_rom
     l_hrom      = ds_algorom%l_hrom
     gamma       = ds_algorom%gamma
+    base        = ds_algorom%ds_empi%base
+    nb_mode     = ds_algorom%ds_empi%nb_mode
+    nb_equa     = ds_algorom%ds_empi%nb_equa
+    field_name  = ds_algorom%ds_empi%field_name
     ASSERT(l_rom)
 !
 ! - Access to reduced coordinates
@@ -98,26 +101,12 @@ implicit none
 !
     call jeveuo(vect_2mbr(1:19)//'.VALE', 'E'     , vr = v_vect_2mbr)
     call jelira(vect_2mbr(1:19)//'.VALE', 'LONMAX', nb_equa_2mbr)
+    ASSERT(nb_equa .eq. nb_equa_2mbr)
 !
 ! - Access to matrix
 !
     call jeveuo(matr_asse(1:19)//'.&INT', 'L', jv_matr)
     call dismoi('NB_EQUA', matr_asse, 'MATR_ASSE', repi = nb_equa_matr)
-!
-! - Select empiric base (RID or not ? )
-!
-    if (l_hrom) then
-        base       = ds_algorom%ds_empi_rid%base
-        nb_mode    = ds_algorom%ds_empi_rid%nb_mode
-        nb_equa    = ds_algorom%ds_empi_rid%nb_equa
-        field_name = ds_algorom%ds_empi_rid%field_name
-    else
-        base       = ds_algorom%ds_empi%base
-        nb_mode    = ds_algorom%ds_empi%nb_mode
-        nb_equa    = ds_algorom%ds_empi%nb_equa
-        field_name = ds_algorom%ds_empi%field_name
-    endif
-    ASSERT(nb_equa .eq. nb_equa_2mbr)
     ASSERT(nb_equa .eq. nb_equa_matr)
 !
 ! - Truncation of second member
