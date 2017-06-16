@@ -15,28 +15,31 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine medith(model, list_load, matr_elem)
+!
+subroutine medith(base, cumul, model_, list_load, matr_elem)
 !
 implicit none
 !
-#include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/calcul.h"
 #include "asterfort/codent.h"
+#include "asterfort/inical.h"
 #include "asterfort/exisd.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jeecra.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/memare.h"
-#include "asterfort/wkvect.h"
+#include "asterfort/reajre.h"
+#include "asterfort/jedetr.h"
+#include "asterfort/load_list_info.h"
 !
-!
-    character(len=24), intent(in) :: model
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(inout) :: matr_elem
+character(len=1), intent(in) :: base
+character(len=4), intent(in) :: cumul
+character(len=*), intent(in) :: model_
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: matr_elem
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,72 +49,112 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  base             : JEVEUX base to create vect_elem
+! In  cumul            : option to add/erase matr_elem
+!                      'ZERO' - Erase old matr_elem
+!                      'CUMU' - Add matr_elem to old ones
 ! In  model            : name of model
 ! In  list_load        : name for list of loads
-! IO  matr_elem        : elementary matrix
+! In  matr_elem        : elementary matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: nomcha, lpain(1), lpaout(1)
+    integer, parameter :: nbin = 1
+    integer, parameter :: nbout = 1
+    character(len=8) :: lpaout(nbout), lpain(nbin)
+    character(len=19) :: lchout(nbout), lchin(nbin)
+!
+    character(len=8) :: load_name, model
     character(len=16) :: option
-    character(len=24) :: ligrch, lchin(1), lchout(1)
-    integer :: iret, nb_load, ilires, jmed, i_load, jchar, jinf
-    character(len=24) :: lload_name, lload_info
+    character(len=24) :: ligrch
+    integer :: iret, i_resu_elem, load_nume
+    character(len=19) :: resu_elem
+    integer :: nb_load, i_load
+    character(len=24), pointer :: v_load_name(:) => null()
+    integer, pointer :: v_load_info(:) => null()
+    aster_logical :: load_empty
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    lload_name = list_load(1:19)//'.LCHA'
-    lload_info = list_load(1:19)//'.INFC'
-    call jeexin(lload_name, iret)
-    if (iret .eq. 0) then
+!
+! - Initializations
+!
+    model     = model_
+    option    = 'THER_DDLM_R'
+    resu_elem = matr_elem(1:8)//'.???????'
+!
+! - Init fields
+!
+    call inical(nbin, lpain, lchin, nbout, lpaout, lchout)
+!
+! - Loads
+!
+    call load_list_info(load_empty, nb_load    , v_load_name, v_load_info,&
+                        list_load_ = list_load)
+    if (load_empty) then
         goto 99
     endif
-    call jelira(lload_name, 'LONMAX', nb_load)
-    call jeveuo(lload_name, 'L', jchar)
 !
-    call jeexin(matr_elem, iret)
-    if (iret .eq. 0) then
-        matr_elem = '&&METDIR           .RELR'
-        call memare('V', matr_elem, model(1:8), ' ', ' ',&
-                    'RIGI_THER')
-        call wkvect(matr_elem, 'V V K24', nb_load, jmed)
-    else
-        call jeveuo(matr_elem, 'E', jmed)
+! - Prepare MATR_ELEM
+!
+    if (cumul .eq. 'ZERO') then
+        call jedetr(matr_elem(1:19)//'.RELR')
+        call memare(base, matr_elem, model, ' ', ' ', 'RIGI_THER')
+        call reajre(matr_elem, resu_elem, base)
     endif
+!
+! - Prepare RESU_ELEM
+!
+    if (cumul .eq. 'ZERO') then
+        i_resu_elem = 0
+    else if (cumul.eq.'CUMU') then
+        call jelira(matr_elem(1:19)//'.RELR', 'LONUTI', i_resu_elem)
+        i_resu_elem = i_resu_elem + 1
+    else
+        ASSERT(.false.)
+    endif
+!
+! - Output field
 !
     lpaout(1) = 'PMATTTR'
-    lchout(1) = matr_elem(1:8)//'.ME001'
 !
-    if (zk24(jchar) .ne. '        ') then
-        ilires = 0
-        call jeveuo(lload_info, 'L', jinf)
-        do i_load = 1, nb_load
-            if (zi(jinf+i_load) .ne. 0) then
-                nomcha = zk24(jchar+i_load-1) (1:8)
-                ligrch = nomcha//'.CHTH.LIGRE'
+! - Loop on loads
 !
-                call jeexin(nomcha//'.CHTH.LIGRE.LIEL', iret)
-                if (iret .le. 0) goto 10
-                lchin(1) = nomcha//'.CHTH.CMULT'
-                call exisd('CHAMP_GD', nomcha//'.CHTH.CMULT', iret)
-                if (iret .le. 0) goto 10
+    do i_load = 1, nb_load
+        load_name = v_load_name(i_load)(1:8)
+        load_nume = v_load_info(i_load+1)
+        if (load_nume .ne. 0) then
+            ligrch = load_name(1:8)//'.CHTH.LIGRE'
+            call jeexin(ligrch(1:19)//'.LIEL', iret)
+            if (iret .le. 0) cycle
+            call exisd('CHAMP_GD', load_name(1:8)//'.CHTH.CMULT', iret)
+            if (iret .le. 0) cycle
 !
-                lpain(1) = 'PDDLMUR'
-                call codent(ilires+1, 'D0', lchout(1) (12:14))
-                option = 'THER_DDLM_R'
-                call calcul('S', option, ligrch, 1, lchin,&
-                            lpain, 1, lchout, lpaout, 'V',&
-                            'OUI')
-                zk24(jmed+ilires) = lchout(1)
-                ilires = ilires + 1
-            endif
-10          continue
-        end do
-        call jeecra(matr_elem, 'LONUTI', ilires)
-    endif
+! --------- Input field
 !
-99  continue
+            lpain(1) = 'PDDLMUR'
+            lchin(1) = load_name//'.CHTH.CMULT'
+!
+! --------- Generate new RESU_ELEM name
+!
+            ASSERT(i_resu_elem .le. 9999999)
+            call codent(i_resu_elem, 'D0', resu_elem(10:16))
+            lchout(1) = resu_elem
+!
+! --------- Computation
+!
+            call calcul('S'  , option, ligrch, nbin, lchin,&
+                        lpain, nbout, lchout, lpaout, base,&
+                        'OUI')
+!
+! --------- Save RESU_ELEM
+!
+            call reajre(matr_elem, lchout(1), base)
+            i_resu_elem = i_resu_elem + 1
+        endif
+    end do
+ 99 continue
 !
     call jedema()
 end subroutine

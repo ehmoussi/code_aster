@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/merxth.h"
 #include "asterfort/nxresi.h"
 #include "asterfort/romAlgoNLTherResidual.h"
@@ -85,7 +86,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ibid
-    integer :: jmed, jmer, nbmat, ierr
+    integer :: jmed, jmer, nbmat, ierr, iret
     real(kind=8) :: r8bid
     character(len=1) :: typres
     character(len=19) :: chsol
@@ -160,17 +161,23 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         call merxth(model    , lload_name, lload_info, cara_elem, mate     ,&
                     time_curr, time      , temp_iter , compor   , varc_curr,&
                     dry_prev , dry_curr  , merigi)
-        call jeveuo(merigi, 'L', jmer)
-        call jeveuo(mediri, 'L', jmed)
-!
+
         nbmat = 0
-        if (zk24(jmer)(1:8) .ne. '        ') then
-            nbmat = nbmat + 1
-            tlimat(nbmat) =merigi(1:19)
+        call jeexin(merigi(1:19)//'.RELR', iret)
+        if (iret .ne. 0) then
+            call jeveuo(merigi(1:19)//'.RELR', 'L', jmer)
+            if (zk24(jmer)(1:8) .ne. '        ') then
+                nbmat = nbmat + 1
+                tlimat(nbmat) =merigi(1:19)
+            endif
         endif
-        if (zk24(jmed)(1:8) .ne. '        ') then
-            nbmat = nbmat + 1
-            tlimat(nbmat) =mediri(1:19)
+        call jeexin(mediri(1:19)//'.RELR', iret)
+        if (iret .ne. 0) then
+            call jeveuo(mediri(1:19)//'.RELR', 'L', jmed)
+            if (zk24(jmed)(1:8) .ne. '        ') then
+                nbmat = nbmat + 1
+                tlimat(nbmat) =mediri(1:19)
+            endif
         endif
 !
 ! --- ASSEMBLAGE DE LA MATRICE

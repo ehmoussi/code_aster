@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine ntdoch(list_load, l_load_user_, list_load_resu)
 !
 implicit none
@@ -39,8 +40,6 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
-!
-! person_in_charge: mickael.abbas at edf.fr
 !
     character(len=19), intent(in) :: list_load
     aster_logical, optional, intent(in) :: l_load_user_
@@ -71,7 +70,7 @@ implicit none
     aster_logical :: l_func_mult, l_load_user, l_apply_user
     integer :: nb_info_type
     character(len=24) :: info_type
-    integer :: nb_load, n1, i_load, i_type_neum, iret, i_excit
+    integer :: nb_load, n1, i_load, i_type_neum, iret, i_excit, nocc
     character(len=24) :: ligrch, const_func
     character(len=10) :: load_obje(2)
     character(len=19) :: cart_name
@@ -98,7 +97,8 @@ implicit none
 ! - Number of loads
 !
     if (l_load_user) then
-        call getfac('EXCIT', nb_load)
+        call getvid(' ', 'CHARGE', nbval=0, nbret=nocc)
+        nb_load = -nocc
     else
         call jeveuo(list_load_resu//'.INFC', 'L', vi   = v_llresu_info)
         nb_load = v_llresu_info(1)
@@ -178,7 +178,8 @@ implicit none
             l_func_mult = .false.
             load_func   = const_func
             if (l_load_user) then
-                call getvid('EXCIT', 'FONC_MULT', iocc=i_load, scal=load_func, nbret=n1)
+                !call getvid('EXCIT', 'FONC_MULT', iocc=i_load, scal=load_func, nbret=n1)
+                n1 = 0
                 l_func_mult = n1.gt.0
                 if (n1 .eq. 0) then
                     rcoef = 1.d0
