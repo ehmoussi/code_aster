@@ -26,6 +26,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbr_init_base_pod.h"
 #include "asterfort/dbr_init_base_rb.h"
+#include "asterfort/dbr_init_base_tr.h"
 !
 type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
@@ -48,6 +49,10 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
     elseif (ds_para%operation .eq. 'GLOUTON') then
         call dbr_init_base_rb(ds_para%result_out, ds_para%para_rb,&
                               ds_para%ds_empi)
+    elseif (ds_para%operation .eq. 'TRONCATURE') then
+        call dbr_init_base_tr(ds_para%result_out, ds_para%para_tr,&
+                              ds_para%l_reuse   , ds_para%ds_empi)
+        ds_para%field_iden = ds_para%para_tr%ds_empi_init%field_name
     else
         ASSERT(.false.)
     endif

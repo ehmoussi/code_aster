@@ -243,6 +243,27 @@ implicit none
         integer                 :: nb_mode_maxi
     end type ROM_DS_ParaDBR_RB
 !
+! - Parameters for DEFI_BASE_REDUITE operator (TRUNCATION)
+!
+    type ROM_DS_ParaDBR_TR
+! ----- Base to truncate
+        character(len=8)        :: base_init
+! ----- Datastructure for empiric modes
+        type(ROM_DS_Empi)       :: ds_empi_init
+! ----- Model for truncation
+        character(len=8)        :: model_rom
+! ----- List of equations into RID
+        integer, pointer        :: v_equa_rom(:)
+! ----- Numbering for truncation
+        character(len=14)       :: nume_rom
+! ----- Profile of nodal field 
+        character(len=24)       :: prof_chno_rom
+! ----- Reduced mode (reference)
+        character(len=24)       :: mode_rom
+! ----- Number of equation for RID
+        integer                 :: nb_equa_rom
+    end type ROM_DS_ParaDBR_TR
+!
 ! - Parameters for DEFI_BASE_REDUITE operator
 !
     type ROM_DS_ParaDBR
@@ -256,6 +277,8 @@ implicit none
         type(ROM_DS_ParaDBR_POD) :: para_pod
 ! ----- Parameters for RB method
         type(ROM_DS_ParaDBR_RB ) :: para_rb
+! ----- Parameters for truncation method
+        type(ROM_DS_ParaDBR_TR ) :: para_tr
 ! ----- Datastructure for empiric modes
         type(ROM_DS_Empi)        :: ds_empi
 ! ----- If operator is "reuse"

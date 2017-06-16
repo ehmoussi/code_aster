@@ -17,13 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_paraDSInit(ds_empi, ds_para_pod, ds_para_rb, ds_para_tr,&
-                              ds_para)
+    subroutine dbr_clean_tr(ds_para)
         use Rom_Datastructure_type
-        type(ROM_DS_Empi), intent(in) :: ds_empi
-        type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-        type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
-        type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
-        type(ROM_DS_ParaDBR), intent(out) :: ds_para
-    end subroutine dbr_paraDSInit
+        type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+    end subroutine dbr_clean_tr
 end interface

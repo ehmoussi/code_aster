@@ -52,4 +52,8 @@ cata_msg = {
    20 : _(u"""Paramètres spécifiques à la méthode POD ou POD_INCR."""),
 
    21 : _(u"""Paramètres spécifiques à la méthode GLOUTON."""),
+
+   22 : _(u"""Paramètres spécifiques à la méthode de troncature."""),
+
+   23 : _(u"""On tronque la base empirique %(k1)s sur le modèle %(k2)s."""),
 }

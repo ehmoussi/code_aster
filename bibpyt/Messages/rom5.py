@@ -74,6 +74,10 @@ cata_msg = {
 
    27 : _(u"""Lecture des paramètres pour la méthode GLOUTON."""),
 
+   28 : _(u"""Initialisation des structures de données pour les paramètres de troncature."""),
+
+   29 : _(u"""Lecture des paramètres pour la méthode de troncature."""),
+
    30 : _(u"""Vérification des paramètres pour le calcul non-linéaire avec réduction de modèle."""),
 
    31 : _(u"""La base empirique ne repose pas sur le même maillage sur le calcul non-linéaire."""),
@@ -133,6 +137,8 @@ cata_msg = {
    66 : _(u"""Calcul du second membre du système réduit."""),
 
    67 : _(u"""Calcul de la matrice du système réduit."""),
+
+   68 : _(u"""Troncature de la base empirique."""),
 
    81 : _(u"""Initialisation de la structure de données pour la variation des coefficients pour le calcul multi-paramétrique."""),
 

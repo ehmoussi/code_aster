@@ -41,6 +41,10 @@ cata_msg = {
 
    11 : _(u"""Le résultat sur le modèle réduit contient %(i1)d numéros d'ordre."""), 
 
+   12 : _(u"""La base empirique est construite sur le maillage %(k1)s alors que le modèle repose sur le maillage %(k2)s. Ce n'est pas possible."""), 
+
+   13 : _(u"""Les deux modèles sont identiques, on ne peut rien tronquer !"""), 
+
    20 : _(u"""Reconstruction des champs sur tout le domaine."""),
  
    21 : _(u"""Reconstruction du champ primal."""),

@@ -17,81 +17,61 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info(ds_para)
+subroutine dbr_init_base_tr(base, ds_para_tr, l_reuse, ds_empi)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dbr_para_info_pod.h"
-#include "asterfort/dbr_para_info_rb.h"
-#include "asterfort/dbr_para_info_tr.h"
-#include "asterfort/romBaseInfo.h"
+#include "asterfort/romBaseRead.h"
+#include "asterfort/rscopi.h"
+#include "asterfort/romBaseCopy.h"
 !
-type(ROM_DS_ParaDBR), intent(in) :: ds_para
+character(len=8), intent(in) :: base
+type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
+aster_logical, intent(in) :: l_reuse
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Informations about DEFI_BASE_REDUITE parameters
+! Prepare datastructure for empiric modes - For POD methods
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters
+! In  base             : name of empiric base
+! IO  ds_para_tr       : datastructure for truncation parameters
+! In  l_reuse          : .true. if reuse
+! IO  ds_empi          : datastructure for empiric modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=16) :: operation = ' '
-    character(len=8)  :: result_out = ' '
-    aster_logical :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
-!
-! - Get parameters in datastructure - General for DBR
-!
-    operation    = ds_para%operation
-    result_out   = ds_para%result_out
-    l_reuse      = ds_para%l_reuse
-!
-! - Print - General for DBR
-!
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_24')
-        call utmess('I', 'ROM5_16', sk = operation)
-        if (l_reuse) then
-            call utmess('I', 'ROM7_15', sk = result_out)
-        else
-            call utmess('I', 'ROM7_16')
-        endif
+        call utmess('I', 'ROM2_39')
     endif
 !
-! - Print about empiric base
+! - Read empiric base to modify
 !
-    if (niv .ge. 2) then
-        call romBaseInfo(ds_para%ds_empi)
-    endif
-!
-! - Print / method
-!
-    if (operation(1:3) .eq. 'POD') then
-        call dbr_para_info_pod(ds_para%para_pod)
-        
-    elseif (operation .eq. 'GLOUTON') then
-        call dbr_para_info_rb(ds_para%para_rb)
-
-    elseif (operation .eq. 'TRONCATURE') then
-        call dbr_para_info_tr(ds_para%para_tr)
-
+    if (l_reuse) then
+        call romBaseRead(base, ds_empi)
     else
-        ASSERT(.false.)
+        call romBaseRead(ds_para_tr%base_init, ds_para_tr%ds_empi_init)
+    endif
+!
+! - Create empiric base
+!
+    if (.not. l_reuse) then
+        call rscopi('G', ds_para_tr%base_init, base)
+        call romBaseCopy(ds_para_tr%ds_empi_init, base, ds_empi)
     endif
 !
 end subroutine

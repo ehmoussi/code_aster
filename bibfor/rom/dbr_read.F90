@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbr_read_pod.h"
 #include "asterfort/dbr_read_rb.h"
+#include "asterfort/dbr_read_tr.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/infniv.h"
@@ -77,6 +78,8 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
         call dbr_read_pod(operation, ds_para%para_pod)
     elseif (operation .eq. 'GLOUTON') then
         call dbr_read_rb(ds_para%para_rb)
+    elseif (operation .eq. 'TRONCATURE') then
+        call dbr_read_tr(ds_para%para_tr)
     else
         ASSERT(.false.)
     endif
