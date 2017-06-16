@@ -53,4 +53,6 @@ cata_msg = {
 
    30 : _(u"""Construction de la matrice des modes. Dimensions: [%(i1)d,%(i2)d]."""),
 
+   33 : _(u"""Le mode empirique de numéro d'ordre %(i1)d dans la base %(k1)s est mis à zéro."""),
+
 }

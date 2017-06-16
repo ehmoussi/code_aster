@@ -38,6 +38,7 @@ implicit none
 #include "asterfort/rsnoch.h"
 #include "asterfort/copisd.h"
 #include "asterfort/romBaseCreateMatrix.h"
+#include "asterfort/romResultSetZero.h"
 !
 type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
@@ -136,14 +137,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Initial state
 !
     nume_store = 0
-    call rsexch(' ', result_dom, ds_para%ds_empi_dual%field_name,&
-                nume_store, field_save, iret)
-    ASSERT(iret .eq. 100)
-    call copisd('CHAMP_GD', 'G', ds_para%ds_empi_dual%field_refe, field_save)
-    call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
-    v_field_save(1:nb_equa) = 0.d0
-    call rsnoch(result_dom, ds_para%ds_empi_dual%field_name,&
-                nume_store)
+    call romResultSetZero(result_dom, nume_store, ds_para%ds_empi_dual)
 !
 ! - Compute new field
 !
