@@ -216,6 +216,8 @@ implicit none
         type(ROM_DS_Snap)       :: ds_snap
 ! ----- Name of table to save reduced coordinates
         character(len=19)       :: tabl_name
+! ----- Maximum number of modes
+        integer                 :: nb_mode_maxi
     end type ROM_DS_ParaDBR_POD
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (RB)
@@ -237,6 +239,8 @@ implicit none
         type(ROM_DS_Solve)      :: solveDOM
 ! ----- Datastructure for multiparametric reduced problem
         type(ROM_DS_MultiPara)  :: multipara
+! ----- Maximum number of modes
+        integer                 :: nb_mode_maxi
     end type ROM_DS_ParaDBR_RB
 !
 ! - Parameters for DEFI_BASE_REDUITE operator
@@ -248,8 +252,6 @@ implicit none
         character(len=8)         :: result_out
 ! ----- Identificator for field in result datastructure
         character(len=24)        :: field_iden
-! ----- Maximum number of modes
-        integer                  :: nb_mode_maxi
 ! ----- Parameters for POD/POD_INCR method
         type(ROM_DS_ParaDBR_POD) :: para_pod
 ! ----- Parameters for RB method

@@ -15,17 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine dbr_init_base_pod(base, ds_para_pod, nb_mode_maxi, l_reuse, ds_empi)
+    subroutine dbr_init_base_pod(base, ds_para_pod, l_reuse, ds_empi)
         use Rom_Datastructure_type
         character(len=8), intent(in) :: base
         type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-        integer, intent(in) :: nb_mode_maxi
         aster_logical, intent(in) :: l_reuse
         type(ROM_DS_Empi), intent(inout) :: ds_empi
     end subroutine dbr_init_base_pod

@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dbr_init_base_pod(base, ds_para_pod, nb_mode_maxi, l_reuse, ds_empi)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine dbr_init_base_pod(base, ds_para_pod, l_reuse, ds_empi)
 !
 use Rom_Datastructure_type
 !
@@ -30,13 +31,10 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "asterfort/rscrsd.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: base
-    type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-    integer, intent(in) :: nb_mode_maxi
-    aster_logical, intent(in) :: l_reuse
-    type(ROM_DS_Empi), intent(inout) :: ds_empi
+character(len=8), intent(in) :: base
+type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
+aster_logical, intent(in) :: l_reuse
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +46,6 @@ implicit none
 !
 ! In  base             : name of empiric base
 ! In  ds_para_pod      : datastructure for parameters (POD)
-! In  nb_mode_maxi     : maximum number of emprical modes
 ! In  l_reuse          : .true. if reuse
 ! IO  ds_empi          : datastructure for empiric modes
 !
@@ -56,7 +53,7 @@ implicit none
 !
     integer :: ifm, niv
     integer :: iret, nume_first
-    integer :: nb_equa = 0, nb_node = 0, nb_mode_crea = 0
+    integer :: nb_equa = 0, nb_node = 0, nb_mode_crea = 0, nb_mode_maxi = 0
     character(len=8)  :: model = ' ', mesh = ' '
     character(len=16) :: field_name = ' '
     character(len=8)  :: axe_line = ' ', surf_num = ' ', base_type = ' ', result_in = ' '
@@ -76,6 +73,7 @@ implicit none
     base_type    = ds_para_pod%base_type
     axe_line     = ds_para_pod%axe_line
     surf_num     = ds_para_pod%surf_num(1:8)
+    nb_mode_maxi = ds_para_pod%nb_mode_maxi
 !
 ! - Get information about model
 !

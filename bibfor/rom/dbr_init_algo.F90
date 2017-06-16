@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_init_algo(ds_para)
 !
 use Rom_Datastructure_type
@@ -28,9 +29,7 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,7 +56,7 @@ implicit none
         call dbr_init_algo_pod(ds_para%result_out, ds_para%ds_empi,&
                                ds_para%para_pod%tabl_name)
     elseif (ds_para%operation .eq. 'GLOUTON') then
-        call dbr_init_algo_rb(ds_para%nb_mode_maxi, ds_para%para_rb)
+        call dbr_init_algo_rb(ds_para%para_rb)
     else
         ASSERT(.false.)
     endif

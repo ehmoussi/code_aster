@@ -15,15 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine dbr_init_algo_rb(nb_mode, ds_para_rb)
+    subroutine dbr_init_algo_rb(ds_para_rb)
         use Rom_Datastructure_type
-        integer, intent(in) :: nb_mode
         type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
     end subroutine dbr_init_algo_rb
 end interface

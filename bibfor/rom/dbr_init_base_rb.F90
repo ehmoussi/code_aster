@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dbr_init_base_rb(base, ds_para_rb, nb_mode, ds_empi)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine dbr_init_base_rb(base, ds_para_rb, ds_empi)
 !
 use Rom_Datastructure_type
 !
@@ -27,12 +28,9 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/rscrsd.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: base
-    type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
-    integer, intent(in) :: nb_mode
-    type(ROM_DS_Empi), intent(inout) :: ds_empi
+character(len=8), intent(in) :: base
+type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,13 +42,12 @@ implicit none
 !
 ! In  base             : name of empiric base
 ! In  ds_para_rb       : datastructure for parameters (RB)
-! In  nb_mode          : number of modes to compute
 ! IO  ds_empi          : datastructure for empiric modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_equa = 0, nb_node = 0
+    integer :: nb_equa = 0, nb_node = 0, nb_mode = 0
     character(len=8)  :: model = ' ', mesh = ' ', matr_name = ' '
     character(len=24) :: field_refe
     character(len=24) :: field_name = ' '
@@ -64,6 +61,7 @@ implicit none
 !
 ! - Get "representative" matrix
 !
+    nb_mode   = ds_para_rb%nb_mode_maxi
     matr_name = ds_para_rb%multipara%matr_name(1)
 !
 ! - Get information about model
