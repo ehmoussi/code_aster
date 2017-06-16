@@ -51,4 +51,6 @@ cata_msg = {
 
    22 : _(u"""Reconstruction du champ dual."""),
 
+   30 : _(u"""Construction de la matrice des modes. Dimensions: [%(i1)d,%(i2)d]."""),
+
 }

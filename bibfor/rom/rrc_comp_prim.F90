@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_comp_prim(ds_para)
 !
 use Rom_Datastructure_type
@@ -37,10 +38,9 @@ implicit none
 #include "asterfort/copisd.h"
 #include "asterfort/rsnoch.h"
 #include "blas/dgemm.h"
+#include "asterfort/romBaseCreateMatrix.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,12 +57,10 @@ implicit none
     integer :: ifm, niv
     integer :: iret, jv_para
     integer :: nb_mode, nb_equa, nb_store
-    integer :: i_mode, i_equa, i_store
+    integer :: i_equa, i_store
     integer :: nume_store
     character(len=8) :: result_rom, result_dom
     real(kind=8), pointer :: v_prim(:) => null()
-    character(len=24) :: mode
-    real(kind=8), pointer :: v_mode(:) => null()
     real(kind=8), pointer :: v_cohr(:) => null()
     real(kind=8), pointer :: v_depl(:) => null()
     character(len=24) :: field_save
@@ -88,18 +86,9 @@ implicit none
     model_dom  = ds_para%model_dom
     call jeveuo(ds_para%coor_redu, 'L', vr = v_cohr)
 !
-! - Get primal base
+! - Create [PHI] matrix for primal base
 !
-    AS_ALLOCATE(vr = v_prim, size = nb_equa*nb_mode)
-    do i_mode = 1, nb_mode
-        call rsexch(' ', ds_para%ds_empi_prim%base, ds_para%ds_empi_prim%field_name,&
-                    i_mode, mode, iret)
-        ASSERT(iret .eq. 0)
-        call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
-        do i_equa = 1, nb_equa
-            v_prim(i_equa+nb_equa*(i_mode-1)) = v_mode(i_equa)    
-        end do
-    end do
+    call romBaseCreateMatrix(ds_para%ds_empi_prim, v_prim)
 !
 ! - Initial state
 !
