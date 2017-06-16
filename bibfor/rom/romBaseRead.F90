@@ -15,14 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romBaseRead(base, ds_empi)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
@@ -31,15 +31,13 @@ implicit none
 #include "asterfort/jexnom.h"
 #include "asterfort/utmess.h"
 #include "asterfort/romBaseInfo.h"
-#include "asterfort/rsadpa.h"
+#include "asterfort/romModeParaRead.h"
 #include "asterfort/rs_getfirst.h"
 #include "asterfort/rs_get_liststore.h"
 #include "asterfort/rsexch.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in)     :: base
-    type(ROM_DS_Empi), intent(inout) :: ds_empi
+character(len=8), intent(in)     :: base
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +53,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: iret, nume_first, jv_para, nume_pl, nb_snap
+    integer :: iret, nume_first, nume_pl, nb_snap, i_mode
     integer :: nb_equa = 0, nb_mode = 0, nb_node = 0, nb_cmp = 0
     character(len=8)  :: mesh = ' ', model = ' ', base_type = ' ', axe_line = ' '
     character(len=24) :: surf_num = ' ', field_refe = ' ', field_name = ' '
@@ -70,14 +68,12 @@ implicit none
 ! - Get informations about empiric modes - Parameters
 !
     call rs_get_liststore(base, nb_mode)
-    call rsadpa(base, 'L', 1, 'NOM_CHAM', 1, 0, sjv = jv_para)
-    field_name   = zk24(jv_para)
-    call rsadpa(base, 'L', 1, 'MODELE'  , 1, 0, sjv = jv_para)
-    model        = zk8(jv_para)
-    call rsadpa(base, 'L', 1, 'NUME_PLAN', 1, 0, sjv = jv_para)
-    nume_pl      = zi(jv_para)
-    call rsadpa(base, 'L', 1, 'NB_SNAP', 1, 0, sjv = jv_para)
-    nb_snap      = zi(jv_para)
+    i_mode = 1
+    call romModeParaRead(base  , i_mode     ,&
+                         model_      = model,&
+                         field_name_ = field_name, &
+                         nume_slice_ = nume_pl,&
+                         nb_snap_    = nb_snap)
     base_type    = ' '
     if (nume_pl .ne. 0) then
         base_type = 'LINEIQUE'
