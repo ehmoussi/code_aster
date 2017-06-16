@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_main(ds_para)
 !
 use Rom_Datastructure_type
@@ -29,9 +30,7 @@ implicit none
 #include "asterfort/dbr_main_podincr.h"
 #include "asterfort/dbr_main_rb.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,13 +54,12 @@ implicit none
     endif
 !
     if (ds_para%operation .eq. 'POD') then
-        call dbr_main_pod(ds_para%nb_mode_maxi, ds_para%para_pod, ds_para%field_iden,&
-                          ds_para%ds_empi)
+        call dbr_main_pod(ds_para%para_pod, ds_para%field_iden, ds_para%ds_empi)
     elseif (ds_para%operation .eq. 'POD_INCR') then
-        call dbr_main_podincr(ds_para%l_reuse   , ds_para%nb_mode_maxi, ds_para%para_pod,&
+        call dbr_main_podincr(ds_para%l_reuse   , ds_para%para_pod,&
                               ds_para%field_iden, ds_para%ds_empi)
     elseif (ds_para%operation .eq. 'GLOUTON') then
-        call dbr_main_rb(ds_para%nb_mode_maxi, ds_para%para_rb, ds_para%ds_empi)
+        call dbr_main_rb(ds_para%para_rb, ds_para%ds_empi)
     else
         ASSERT(.false.)
     endif

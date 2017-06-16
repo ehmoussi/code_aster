@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_para_info(ds_para)
 !
 use Rom_Datastructure_type
@@ -30,9 +31,7 @@ implicit none
 #include "asterfort/dbr_para_info_rb.h"
 #include "asterfort/romBaseInfo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDBR), intent(in) :: ds_para
+type(ROM_DS_ParaDBR), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,7 +48,6 @@ implicit none
     integer :: ifm, niv
     character(len=16) :: operation = ' '
     character(len=8)  :: result_out = ' '
-    integer :: nb_mode_maxi
     aster_logical :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
@@ -60,7 +58,6 @@ implicit none
 !
     operation    = ds_para%operation
     result_out   = ds_para%result_out
-    nb_mode_maxi = ds_para%nb_mode_maxi
     l_reuse      = ds_para%l_reuse
 !
 ! - Print - General for DBR
@@ -68,9 +65,6 @@ implicit none
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_24')
         call utmess('I', 'ROM5_16', sk = operation)
-        if (nb_mode_maxi .ne. 0) then
-            call utmess('I', 'ROM5_17', si = nb_mode_maxi)
-        endif
         if (l_reuse) then
             call utmess('I', 'ROM7_15', sk = result_out)
         else

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_para_info_rb(ds_para_rb)
 !
 use Rom_Datastructure_type
@@ -29,9 +30,7 @@ implicit none
 #include "asterfort/romSolveInfo.h"
 #include "asterfort/romMultiParaInfo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
+type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,6 +45,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    integer :: nb_mode_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,9 +54,16 @@ implicit none
         call utmess('I', 'ROM7_21')
     endif
 !
+! - Get parameters in datastructure - General for POD
+!
+    nb_mode_maxi = ds_para_rb%nb_mode_maxi
+!
 ! - Print - General for RB
 !
     if (niv .ge. 2) then
+        if (nb_mode_maxi .ne. 0) then
+            call utmess('I', 'ROM5_17', si = nb_mode_maxi)
+        endif
         call utmess('I', 'ROM3_39')
         call romMultiParaInfo(ds_para_rb%multipara)
         call utmess('I', 'ROM3_37')
