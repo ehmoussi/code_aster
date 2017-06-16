@@ -17,81 +17,44 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info(ds_para)
+subroutine dbr_chck_tr(ds_para_tr)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
-#include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dbr_para_info_pod.h"
-#include "asterfort/dbr_para_info_rb.h"
-#include "asterfort/dbr_para_info_tr.h"
-#include "asterfort/romBaseInfo.h"
+#include "asterfort/dismoi.h"
 !
-type(ROM_DS_ParaDBR), intent(in) :: ds_para
+type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Informations about DEFI_BASE_REDUITE parameters
+! Some checks - Truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters
+! In  ds_para_tr       : datastructure for truncation parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    character(len=16) :: operation = ' '
-    character(len=8)  :: result_out = ' '
-    aster_logical :: l_reuse
+    character(len=8) :: model_rom, model_init
+    character(len=8) :: mesh_rom, mesh_init
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-!
-! - Get parameters in datastructure - General for DBR
-!
-    operation    = ds_para%operation
-    result_out   = ds_para%result_out
-    l_reuse      = ds_para%l_reuse
-!
-! - Print - General for DBR
-!
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_24')
-        call utmess('I', 'ROM5_16', sk = operation)
-        if (l_reuse) then
-            call utmess('I', 'ROM7_15', sk = result_out)
-        else
-            call utmess('I', 'ROM7_16')
-        endif
+    model_init = ds_para_tr%ds_empi_init%model
+    model_rom  = ds_para_tr%model_rom
+    mesh_init  = ds_para_tr%ds_empi_init%mesh
+    call dismoi('NOM_MAILLA', model_rom, 'MODELE'  , repk = mesh_rom)
+    if (mesh_init .ne. mesh_rom) then
+        call utmess('F', 'ROM6_12', nk = 2, valk = [mesh_init, mesh_rom])
     endif
-!
-! - Print about empiric base
-!
-    if (niv .ge. 2) then
-        call romBaseInfo(ds_para%ds_empi)
-    endif
-!
-! - Print / method
-!
-    if (operation(1:3) .eq. 'POD') then
-        call dbr_para_info_pod(ds_para%para_pod)
-        
-    elseif (operation .eq. 'GLOUTON') then
-        call dbr_para_info_rb(ds_para%para_rb)
-
-    elseif (operation .eq. 'TRONCATURE') then
-        call dbr_para_info_tr(ds_para%para_tr)
-
-    else
-        ASSERT(.false.)
+    if (model_init .eq. model_rom) then
+        call utmess('F', 'ROM6_13')
     endif
 !
 end subroutine

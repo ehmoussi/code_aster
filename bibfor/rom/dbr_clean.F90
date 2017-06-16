@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_clean(ds_para)
 !
 use Rom_Datastructure_type
@@ -25,10 +26,9 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbr_clean_pod.h"
 #include "asterfort/dbr_clean_rb.h"
+#include "asterfort/dbr_clean_tr.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,6 +46,8 @@ implicit none
         call dbr_clean_pod(ds_para)
     elseif (ds_para%operation .eq. 'GLOUTON') then
         call dbr_clean_rb(ds_para)
+    elseif (ds_para%operation .eq. 'TRONCATURE') then
+        call dbr_clean_tr(ds_para)
     else
         ASSERT(.false.)
     endif

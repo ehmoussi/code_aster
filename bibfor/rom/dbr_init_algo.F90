@@ -26,6 +26,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dbr_init_algo_pod.h"
 #include "asterfort/dbr_init_algo_rb.h"
+#include "asterfort/dbr_init_algo_tr.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
@@ -57,6 +58,8 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
                                ds_para%para_pod%tabl_name)
     elseif (ds_para%operation .eq. 'GLOUTON') then
         call dbr_init_algo_rb(ds_para%para_rb)
+    elseif (ds_para%operation .eq. 'TRONCATURE') then
+        call dbr_init_algo_tr(ds_para%para_tr)
     else
         ASSERT(.false.)
     endif

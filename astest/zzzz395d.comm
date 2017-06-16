@@ -190,13 +190,19 @@ chg_th_r=AFFE_CHAR_THER_F(MODELE=model_r,
                                     TEMP_EXT=T_im,),),);
 
 
+
 base_p=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                  FORMAT     = 'MED',
-                 MODELE     = model_r,
+                 MODELE     = model,
                  UNITE      = 70,
                  FORMAT_MED =_F(NOM_CHAM_MED = 'base_p__TEMP',
                                 NOM_CHAM     = 'TEMP',),
                  TOUT_ORDRE = 'OUI',);
+
+base_t=DEFI_BASE_REDUITE(OPERATION='TRONCATURE',
+                         MODELE_REDUIT = model_r, 
+                         BASE = base_p,
+                         INFO=2)
 
 redu=THER_NON_LINE(MODELE=model_r,
                     CHAM_MATER=chmat,

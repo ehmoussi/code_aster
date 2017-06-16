@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine dbr_chck_rb(operation, ds_para_rb, l_reuse)
 !
 use Rom_Datastructure_type
@@ -26,11 +27,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/romMultiParaChck.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: operation
-    type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
-    aster_logical, intent(in) :: l_reuse
+character(len=16), intent(in) :: operation
+type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
+aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !

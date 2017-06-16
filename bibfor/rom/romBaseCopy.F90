@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romBaseCopy(ds_empi_in, base, ds_empi_out)
 !
 use Rom_Datastructure_type
@@ -27,11 +28,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/romBaseDSInit.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Empi), intent(in)  :: ds_empi_in
-    character(len=8), intent(in)   :: base
-    type(ROM_DS_Empi), intent(out) :: ds_empi_out
+type(ROM_DS_Empi), intent(in)  :: ds_empi_in
+character(len=8), intent(in)   :: base
+type(ROM_DS_Empi), intent(out) :: ds_empi_out
 !
 ! --------------------------------------------------------------------------------------------------
 !

@@ -17,81 +17,60 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info(ds_para)
+subroutine dbr_paraTRDSInit(ds_para_tr)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dbr_para_info_pod.h"
-#include "asterfort/dbr_para_info_rb.h"
-#include "asterfort/dbr_para_info_tr.h"
-#include "asterfort/romBaseInfo.h"
+#include "asterfort/romLineicBaseDSInit.h"
+#include "asterfort/romBaseDSInit.h"
 !
-type(ROM_DS_ParaDBR), intent(in) :: ds_para
+type(ROM_DS_ParaDBR_TR), intent(out) :: ds_para_tr
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_BASE_REDUITE - Initializations
 !
-! Informations about DEFI_BASE_REDUITE parameters
+! Initialization of datastructures for parameters - Truncation
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters
+! Out ds_para_tr       : datastructure for truncation parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=16) :: operation = ' '
-    character(len=8)  :: result_out = ' '
-    aster_logical :: l_reuse
+    type(ROM_DS_Empi) :: ds_empi_init
+    type(ROM_DS_LineicNumb)  :: ds_lineicnumb
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
-!
-! - Get parameters in datastructure - General for DBR
-!
-    operation    = ds_para%operation
-    result_out   = ds_para%result_out
-    l_reuse      = ds_para%l_reuse
-!
-! - Print - General for DBR
-!
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_24')
-        call utmess('I', 'ROM5_16', sk = operation)
-        if (l_reuse) then
-            call utmess('I', 'ROM7_15', sk = result_out)
-        else
-            call utmess('I', 'ROM7_16')
-        endif
+        call utmess('I', 'ROM5_28')
     endif
 !
-! - Print about empiric base
+! - Initialization of datastructure for lineic base numbering
 !
-    if (niv .ge. 2) then
-        call romBaseInfo(ds_para%ds_empi)
-    endif
+    call romLineicBaseDSInit(ds_lineicnumb)
 !
-! - Print / method
+! - Initialization of datastructure for empiric modes
 !
-    if (operation(1:3) .eq. 'POD') then
-        call dbr_para_info_pod(ds_para%para_pod)
-        
-    elseif (operation .eq. 'GLOUTON') then
-        call dbr_para_info_rb(ds_para%para_rb)
-
-    elseif (operation .eq. 'TRONCATURE') then
-        call dbr_para_info_tr(ds_para%para_tr)
-
-    else
-        ASSERT(.false.)
-    endif
+    call romBaseDSInit(ds_lineicnumb, ds_empi_init)
+!
+! - General initialisations of datastructure
+!
+    ds_para_tr%base_init     = ' '
+    ds_para_tr%model_rom     = ' '
+    ds_para_tr%ds_empi_init  = ds_empi_init
+    ds_para_tr%v_equa_rom    => null()
+    ds_para_tr%nume_rom      = ' '
+    ds_para_tr%prof_chno_rom = ' '
+    ds_para_tr%nb_equa_rom   = 0
+    ds_para_tr%mode_rom      = '&&OP0053.MODE_ROM'
 !
 end subroutine

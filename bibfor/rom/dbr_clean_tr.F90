@@ -15,15 +15,33 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! person_in_charge: mickael.abbas at edf.fr
 !
-interface
-    subroutine dbr_paraDSInit(ds_empi, ds_para_pod, ds_para_rb, ds_para_tr,&
-                              ds_para)
-        use Rom_Datastructure_type
-        type(ROM_DS_Empi), intent(in) :: ds_empi
-        type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-        type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
-        type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
-        type(ROM_DS_ParaDBR), intent(out) :: ds_para
-    end subroutine dbr_paraDSInit
-end interface
+subroutine dbr_clean_tr(ds_para)
+!
+use Rom_Datastructure_type
+!
+implicit none
+!
+#include "asterfort/romBaseClean.h"
+#include "asterfort/assert.h"
+#include "asterfort/as_deallocate.h"
+!
+type(ROM_DS_ParaDBR), intent(inout) :: ds_para
+!
+! --------------------------------------------------------------------------------------------------
+!
+! DEFI_BASE_REDUITE
+!
+! Clean datastructures for truncation
+!
+! --------------------------------------------------------------------------------------------------
+!
+! IO  ds_para           : datastructure for parameters 
+!
+! --------------------------------------------------------------------------------------------------
+!
+    call romBaseClean(ds_para%ds_empi)
+    AS_DEALLOCATE(vi = ds_para%para_tr%v_equa_rom)
+!
+end subroutine

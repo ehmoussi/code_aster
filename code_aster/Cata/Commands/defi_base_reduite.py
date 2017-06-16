@@ -31,7 +31,7 @@ DEFI_BASE_REDUITE=OPER(
     reentrant='f',
     reuse=SIMP(statut='c', typ=CO),
 
-    OPERATION = SIMP(statut='f',typ='TXM',defaut="POD",into=("POD","POD_INCR",'GLOUTON',)),
+    OPERATION = SIMP(statut='f',typ='TXM',defaut="POD",into=("POD","POD_INCR",'GLOUTON','TRONCATURE',)),
 
     b_pod  = BLOC(condition ="""(equal_to("OPERATION", 'POD'))""",
         RESULTAT        =SIMP(statut='o',typ=resultat_sdaster),
@@ -93,7 +93,12 @@ DEFI_BASE_REDUITE=OPER(
         SOLVEUR         =C_SOLVEUR('DYNA_LINE_HARM'),
         NB_MODE         =SIMP(statut='f',typ='I'),
     ),
-    
+ 
+    b_tronca       =BLOC(condition ="""(equal_to("OPERATION", 'TRONCATURE'))""",
+        BASE          = SIMP(statut='f',typ=mode_empi),
+        MODELE_REDUIT = SIMP(statut='o',typ=modele_sdaster),
+    ),
+   
     INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
     TITRE           =SIMP(statut='f',typ='TXM'),
 ) ;
