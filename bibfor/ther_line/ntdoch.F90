@@ -22,18 +22,16 @@ subroutine ntdoch(list_load, l_load_user_, list_load_resu)
 implicit none
 !
 #include "asterf_types.h"
-#include "asterc/getfac.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exisd.h"
 #include "asterfort/focste.h"
-#include "asterfort/getvid.h"
-#include "asterfort/getvr8.h"
-#include "asterfort/getvtx.h"
 #include "asterfort/liscad.h"
 #include "asterfort/lisccr.h"
+#include "asterfort/nmdoch_nbload.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/load_list_getp.h"
+#include "asterfort/lislfc.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/load_neut_iden.h"
 #include "asterfort/load_neut_data.h"
@@ -41,9 +39,9 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 !
-    character(len=19), intent(in) :: list_load
-    aster_logical, optional, intent(in) :: l_load_user_
-    character(len=19), optional, intent(in) :: list_load_resu
+character(len=19), intent(in) :: list_load
+aster_logical, optional, intent(in) :: l_load_user_
+character(len=19), optional, intent(in) :: list_load_resu
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,24 +57,21 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_info_maxi
-    parameter   (nb_info_maxi=99)
+    integer, parameter :: nb_info_maxi = 99
     character(len=24) :: list_info_type(nb_info_maxi)
-!
-    integer :: nb_type_neum
-    parameter   (nb_type_neum = 10)
+    integer, parameter :: nb_type_neum  = 10
     aster_logical :: list_load_keyw(nb_type_neum)
-!
-    aster_logical :: l_func_mult, l_load_user, l_apply_user
+    aster_logical :: l_func_mult, l_load_user, l_zero_allowed
+    aster_logical :: l_func_c
     integer :: nb_info_type
     character(len=24) :: info_type
-    integer :: nb_load, n1, i_load, i_type_neum, iret, i_excit, nocc
-    character(len=24) :: ligrch, const_func
+    integer :: nb_load, i_load, i_type_neum, iret, i_excit
+    character(len=24) :: ligrch
     character(len=10) :: load_obje(2)
     character(len=19) :: cart_name
-    character(len=8) :: load_name
-    character(len=24) :: load_type, load_para, load_func, load_keyw
-    real (kind=8) :: rcoef
+    character(len=8) :: load_name, const_func, load_func
+    character(len=16) :: load_keyword
+    character(len=24) :: load_type, load_para, load_keyw
     character(len=16) :: load_opti_f
     integer, pointer :: v_llresu_info(:) => null()
     character(len=24), pointer :: v_llresu_name(:) => null()
@@ -85,26 +80,31 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_load      = 0
-    i_excit      = 0
-    const_func   = '&&NTDOCH'
-    l_load_user  = .true.
-    l_apply_user = .true. 
+    nb_load        = 0
+    i_excit        = 0
+    const_func     = '&&NTDOCH'
+    l_func_c       = .false.
+    l_load_user    = .true.
+    l_zero_allowed = .true.
     if (present(l_load_user_)) then
         l_load_user = l_load_user_
     endif
 !
-! - Number of loads
+! - Get number of loads for loads datastructure
 !
-    if (l_load_user) then
-        call getvid(' ', 'CHARGE', nbval=0, nbret=nocc)
-        nb_load = -nocc
-    else
-        call jeveuo(list_load_resu//'.INFC', 'L', vi   = v_llresu_info)
-        nb_load = v_llresu_info(1)
+    call nmdoch_nbload(l_load_user , list_load_resu, l_zero_allowed, nb_load,&
+                       load_keyword)
+!
+! - Access to saved list of loads datastructure
+!
+    if (.not.l_load_user) then
+        call jeveuo(list_load_resu(1:19)//'.INFC', 'L', vi   = v_llresu_info)
+        call jeveuo(list_load_resu(1:19)//'.LCHA', 'L', vk24 = v_llresu_name)
+        call jeveuo(list_load_resu(1:19)//'.FCHA', 'L', vk24 = v_llresu_func)
     endif
 !
     if (nb_load .ne. 0) then
+        ASSERT(load_keyword .ne. 'None')
 !
 ! ----- Create list of loads 
 !
@@ -114,14 +114,6 @@ implicit none
 !
         AS_ALLOCATE(vk8 = v_list_dble, size = nb_load)
 !
-! ----- Access to saved list of loads datastructure
-!
-        if (.not.l_load_user) then
-            call jeveuo(list_load_resu(1:19)//'.INFC', 'L', vi   = v_llresu_info)
-            call jeveuo(list_load_resu(1:19)//'.LCHA', 'L', vk24 = v_llresu_name)
-            call jeveuo(list_load_resu(1:19)//'.FCHA', 'L', vk24 = v_llresu_func)
-        endif
-!
 ! ----- Loop on loads
 !
         do i_load = 1 , nb_load
@@ -129,7 +121,7 @@ implicit none
 ! --------- Get parameters for construct list of loads
 !
             call load_list_getp('THER'      , l_load_user , v_llresu_info, v_llresu_name,&
-                                v_list_dble , l_apply_user, i_load       , nb_load      ,&
+                                v_list_dble , load_keyword, i_load       , nb_load      ,&
                                 i_excit     , load_name   , load_type    , ligrch)
 !
 ! --------- Dirichlet loads (AFFE_CHAR_CINE)
@@ -173,25 +165,12 @@ implicit none
                 list_info_type(nb_info_type) = info_type
             endif
 !
-! --------- Multiplicative function
+! --------- Get function applied to load
 !
-            l_func_mult = .false.
-            load_func   = const_func
-            if (l_load_user) then
-                !call getvid('EXCIT', 'FONC_MULT', iocc=i_load, scal=load_func, nbret=n1)
-                n1 = 0
-                l_func_mult = n1.gt.0
-                if (n1 .eq. 0) then
-                    rcoef = 1.d0
-                    call focste(const_func, 'TOUTRESU', rcoef, 'V')
-                endif
-            else
-                call jeveuo(list_load_resu//'.FCHA', 'L', vk24=v_llresu_func)
-                load_func = v_llresu_func(i_load)
-                if (load_func(1:2) .ne. '&&') then
-                    l_func_mult = .true.
-                endif
-            endif
+            call lislfc(list_load_resu, i_load      , i_excit   , l_load_user,&
+                        l_func_c      , load_keyword, const_func, load_func)
+            ASSERT(load_func .ne. ' ')
+            l_func_mult = load_func(1:2) .ne. '&&'
 !
 ! --------- Identify type of Neumann loads 
 !
@@ -199,7 +178,7 @@ implicit none
 !
 ! --------- Add Neuman loads
 !
-            do i_type_neum = 1 ,nb_type_neum
+            do i_type_neum = 1, nb_type_neum
                 info_type = 'RIEN'
                 if (list_load_keyw(i_type_neum)) then
                     call load_neut_data(i_type_neum, nb_type_neum, '2MBR',&
@@ -207,7 +186,7 @@ implicit none
                                         load_obje_   = load_obje,&
                                         load_keyw_   = load_keyw)
                     cart_name  = load_name(1:8)//'.CHTH'//load_obje(1)
-                    if ((load_opti_f.eq.'No_load') .and. l_func_mult) then
+                    if ((load_opti_f .eq. 'No_load') .and. l_func_mult) then
                         call utmess('F', 'CHARGES_20', sk=load_name)
                     endif
                     if (load_keyw.eq.'ECHANGE') then
