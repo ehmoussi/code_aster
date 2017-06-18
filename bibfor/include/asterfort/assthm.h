@@ -20,7 +20,7 @@
 !
 #include "asterf_types.h"
 !
-interface 
+interface
     subroutine assthm(nno, nnos, nnom, npg, npi,&
                       ipoids, ipoid2, ivf, ivf2, idfde,&
                       idfde2, geom, crit, deplm, deplp,&
@@ -32,7 +32,7 @@ interface
                       press2, tempe, dimdef, dimcon, dimuel,&
                       nbvari, nddls, nddlm, nmec, np1,&
                       np2, ndim, compor, typmod, axi,&
-                      perman, modint, codret, angmas)
+                      perman, modint, codret, angmas, work1, work2)
         integer :: ndim
         integer :: nbvari
         integer :: dimuel
@@ -92,5 +92,7 @@ interface
         character(len=3) :: modint
         integer :: codret
         real(kind=8) :: angmas(3)
+        real(kind=8) :: work1(dimcon, dimuel)
+        real(kind=8) :: work2(dimdef, dimuel)
     end subroutine assthm
-end interface 
+end interface

@@ -68,6 +68,7 @@ subroutine te0600(option, nomte)
     real(kind=8) :: drds(22, 31+5), drdsr(21, 31+5), dsde(31+5, 21)
     real(kind=8) :: r(22), sigbar(21), c(21), ck(21), cs(21)
     real(kind=8) :: angmas(7), coor(3), angnau(3), angleu(3)
+    real(kind=8) :: work1(31+5, 120), work2(21, 120)
     character(len=3) :: modint
     character(len=8) :: typmod(2)
     character(len=16) :: phenom
@@ -242,7 +243,7 @@ subroutine te0600(option, nomte)
                         press2, tempe, dimdef, dimcon, dimuel,&
                         nbvari, nddls, nddlm, nmec, np1,&
                         np2, ndim, zk16(icompo), typmod, axi,&
-                        perman, modint, retloi, angnau)
+                        perman, modint, retloi, angnau, work1, work2)
         else
             do 30 li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
@@ -258,7 +259,7 @@ subroutine te0600(option, nomte)
                         press2, tempe, dimdef, dimcon, dimuel,&
                         nbvari, nddls, nddlm, nmec, np1,&
                         np2, ndim, zk16(icompo), typmod, axi,&
-                        perman, modint, retloi, angnau)
+                        perman, modint, retloi, angnau, work1, work2)
             zi(jcret) = retloi
         endif
     endif
