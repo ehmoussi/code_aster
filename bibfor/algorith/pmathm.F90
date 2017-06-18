@@ -17,44 +17,40 @@
 ! --------------------------------------------------------------------
 
 subroutine pmathm(dimmat, dimdef, dimcon, dimuel, dsde,&
-                  drds, ck, b, poids, matri)
-! aslint: disable=W1306
+                  drds, ck, b, poids, work1, work2, matri)
     implicit   none
+#include "blas/dgemm.h"
     integer :: dimdef, dimcon, dimuel, dimmat
     real(kind=8) :: dsde(dimcon, dimdef), drds(dimdef, dimcon), poids
-    real(kind=8) :: ck(dimdef), b(dimdef, dimuel), matri(dimmat, dimmat)
+    real(kind=8) :: ck(dimdef), b(dimdef, dimuel)
+    real(kind=8) :: work1(dimcon, dimuel), work2(dimdef, dimuel)
+    real(kind=8) :: matri(dimmat, dimmat)
 ! ======================================================================
 ! --- BUT : PRODUIT DES MATRICES BT,C,DRDS,D,DSDE,F,B*POIDS ------------
 ! ---       CONTRIBUTION DU POINT D'INTEGRATION A DF -------------------
 ! ---       C,F,D SONT DIAGONALES --------------------------------------
 ! ======================================================================
-    integer :: i, j, k
-    real(kind=8) :: g(dimcon, dimuel), h(dimdef, dimuel)
+    integer :: i, j
 ! ======================================================================
-! --- ON FAIT LE CALCUL EN TROIS FOIS ----------------------------------
+! --- ON FAIT LE CALCUL EN QUATRE FOIS ---------------------------------
 ! ======================================================================
-    do 10 i = 1, dimcon
-        do 20 j = 1, dimuel
-            g(i,j) = 0.d0
-            do 30 k = 1, dimdef
-                g(i,j) = g(i,j) + dsde(i,k)*b(k,j)
-30          continue
-20      continue
-10  continue
-    do 40 i = 1, dimdef
-        do 50 j = 1, dimuel
-            h(i,j)= 0.d0
-            do 60 k = 1, dimcon
-                h(i,j) = h(i,j) + ck(i)*drds(i,k)*g(k,j)
-60          continue
-50      continue
-40  continue
-    do 70 i = 1, dimuel
-        do 80 j = 1, dimuel
-            do 90 k = 1, dimdef
-                matri(i,j) = matri(i,j) + b(k,i)*h(k,j)*poids
-90          continue
-80      continue
-70  continue
+!   WORK1 = DSDE x B
+    call dgemm('N', 'N', dimcon, dimuel, dimdef, 1.d0,&
+               dsde, dimcon, b, dimdef, 0.d0,&
+               work1, dimcon)
+!   WORK2 = DRDS x WORK1
+    call dgemm('N', 'N', dimdef, dimuel, dimcon, 1.d0,&
+               drds, dimdef, work1, dimcon, 0.d0,&
+               work2, dimdef)
+!   WORK2 = CK x WORK2
+    do j = 1, dimuel
+        do i = 1, dimdef
+            work2(i,j) = ck(i)*work2(i,j)
+        end do
+    end do
+!   MATRI = MATRI + POIDS x Bt x WORK2
+    call dgemm('T', 'N', dimuel, dimuel, dimdef, poids,&
+               b, dimdef, work2, dimdef, 1.d0,&
+               matri, dimmat)
 ! ======================================================================
 end subroutine

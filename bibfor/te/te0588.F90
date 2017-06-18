@@ -65,6 +65,7 @@ subroutine te0588(option, nomte)
     real(kind=8) :: drds(25, 11+5), drdsr(25, 11+5), dsde(11+5, 25)
     real(kind=8) :: r(25), sigbar(25), c(25), ck(25), cs(25)
     real(kind=8) :: angmas(7), coor(3), angnau(3), angleu(3)
+    real(kind=8) :: work1(11+5, 52*20), work2(25, 52*20)
     character(len=3) :: modint
     character(len=8) :: typmod(2)
     character(len=16) :: phenom, elref
@@ -158,7 +159,7 @@ subroutine te0588(option, nomte)
     call jevech('PSTANO', 'L', jstno)
     call elref1(elref)
     call teattr('S', 'XFEM', enr, ibid)
-    ASSERT(enr(1:2).eq. 'XH') 
+    ASSERT(enr(1:2).eq. 'XH')
     call jevech('PHEA_NO', 'L', jheavn)
 !
 ! PARAMÈTRES PROPRES AUX ÉLÉMENTS 1D ET 2D QUADRATIQUES
@@ -262,7 +263,8 @@ subroutine te0588(option, nomte)
                         np1, ndim, zk16(icompo), axi, modint,&
                         retloi, nnop, nnops, nnopm, enrmec,&
                         dimenr, zi(jheavt), zi( jlonch), zi(jcnset), jpintt,&
-                        jpmilt, jheavn, angnau,dimmat, enrhyd, nfiss, nfh, jfisno)
+                        jpmilt, jheavn, angnau,dimmat, enrhyd, nfiss, nfh, jfisno,&
+                        work1, work2)
         else
             do 30 li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
@@ -279,7 +281,8 @@ subroutine te0588(option, nomte)
                         np1, ndim, zk16(icompo), axi, modint,&
                         retloi, nnop, nnops, nnopm, enrmec,&
                         dimenr, zi(jheavt), zi( jlonch), zi(jcnset), jpintt,&
-                        jpmilt, jheavn, angnau,dimmat, enrhyd, nfiss, nfh, jfisno)
+                        jpmilt, jheavn, angnau,dimmat, enrhyd, nfiss, nfh, jfisno,&
+                        work1, work2)
             zi(jcret) = retloi
         endif
 ! =====================================================================

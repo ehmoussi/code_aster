@@ -27,7 +27,7 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
                   press2, tempe, dimdef, dimcon, dimuel,&
                   nbvari, nddls, nddlm, nmec, np1,&
                   np2, ndim, compor, typmod, axi,&
-                  perman, modint, codret, angmas)
+                  perman, modint, codret, angmas, work1, work2)
 ! ======================================================================
 ! person_in_charge: sylvie.granet at edf.fr
     implicit none
@@ -65,6 +65,7 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
     real(kind=8) :: r(dimdef+1), sigbar(dimdef), c(dimdef)
     real(kind=8) :: dt, ta, ta1, rthmc(1), ck(dimdef), cs(dimdef)
     real(kind=8) :: angmas(3)
+    real(kind=8) :: work1(dimcon, dimuel), work2(dimdef, dimuel)
     aster_logical :: axi, perman
     integer :: codmes(1)
     character(len=3) :: modint
@@ -212,10 +213,10 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 ! =====================================================================
 ! --- INITIALISATION --------------------------------------------------
 ! =====================================================================
-    do 201 i = 1, dimdef
+    do i = 1, dimdef
         c(i) = 1.d0
         cs(i) = 1.d0
-201 end do
+    end do
     a(1)= 1.d0
     a(2)= 1.d0
     as(1) = 1.d0
@@ -306,7 +307,7 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 ! =====================================================================
 ! --- BOUCLE SUR LES POINTS D'INTEGRATION -----------------------------
 ! =====================================================================
-    do 10 ipi = 1, npi
+    do ipi = 1, npi
         kpi = ipi
 ! =====================================================================
 ! --- CALCUL DE LA MATRICE B AU POINT D'INTEGRATION -------------------
@@ -420,7 +421,7 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 ! --- ON ASSEMBLE: DF=BT.CK.DRDSR.DK.DSDE.FK.B.POIDS -------------------
 ! ======================================================================
             call pmathm(dimmat, dimdef, dimcon, dimuel, dsde,&
-                        drdsr, ck, b, poids, matri)
+                        drdsr, ck, b, poids, work1, work2, matri)
 !
         endif
 ! ======================================================================
@@ -447,7 +448,7 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 118             continue
 117         continue
         endif
- 10 end do
+    end do
 ! ======================================================================
 ! --- SORTIE DE BOUCLE SUR LES POINTS D'INTEGRATION --------------------
 ! ======================================================================

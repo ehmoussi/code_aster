@@ -29,7 +29,7 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
                   codret, nnop, nnops, nnopm, enrmec,&
                   dimenr, heavt, lonch, cnset, jpintt,&
                   jpmilt, jheavn, angmas,dimmat, enrhyd,&
-                  nfiss, nfh, jfisno)
+                  nfiss, nfh, jfisno, work1, work2)
 ! ======================================================================
 ! person_in_charge: daniele.colombo at ifpen.fr
     implicit none
@@ -92,6 +92,7 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
     real(kind=8) :: ck(dimenr), cs(dimenr)
     real(kind=8) :: contm(*), contp(*), vintm(nbvari) , vintp(nbvari)
     real(kind=8) :: varim(*), varip(*)
+    real(kind=8) :: work1(dimcon, dimuel), work2(dimenr, dimuel)
     character(len=8) :: elrefp, elref2
 !
 ! =====================================================================
@@ -181,7 +182,7 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
     do 201 i = 1, dimenr
         c(i) = 1.d0
         cs(i) = 1.d0
-201 continue 
+201 continue
 ! =====================================================================
 ! --- SI INTEGRATION REDUITE, ON MET A 0 CERTAINS COEFFICIENTS --------
 ! =====================================================================
@@ -445,7 +446,7 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
 ! --- ON ASSEMBLE: DF=BT.CK.DRDSR.DSDE.B.POIDS -------------------------
 ! ======================================================================
                 call pmathm(dimmat, dimenr, dimcon, dimuel, dsde,&
-                            drdsr, ck, b, poids, matri)
+                            drdsr, ck, b, poids, work1, work2, matri)
             endif
 ! ======================================================================
 ! --- CALCUL DE VECTUU -------------------------------------------------
