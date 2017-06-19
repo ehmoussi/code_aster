@@ -253,7 +253,7 @@ def _bwc_arguments(argv):
         return argv
     long_opts = (
         'commandes', 'num_job', 'mode',
-        'rep_outils', 'rep_mat', 'rep_dex', 'rep_vola', 'rep_glob',
+        'rep_mat', 'rep_dex', 'rep_vola', 'rep_glob',
         'memjeveux', 'tpmax', 'memory', 'max_base', 'ORBInitRef',
     )
     # boolean options
@@ -262,7 +262,7 @@ def _bwc_arguments(argv):
     )
     # removed options
     long_opts_rm = ('rep', 'mem', 'mxmemdy', 'memory_stat', 'memjeveux_stat',
-                    'type_alloc', 'taille', 'partition',
+                    'type_alloc', 'taille', 'partition', 'rep_outils',
                     'origine', 'eficas_path')
     # renamed options
     long_opts_mv = {
@@ -274,7 +274,10 @@ def _bwc_arguments(argv):
     buffer = ''
     while len(orig) > 0:
         arg = orig.pop(0)
-        opt = arg.startswith('-') and arg.replace('-', '')
+        larg = arg.lstrip('-').split('=', 1)
+        opt = larg.pop(0)
+        if len(larg) > 0:
+            orig.insert(0, larg.pop(0))
         opt2 = long_opts_mv.get(opt, opt)
         if opt in long_opts:
             val = orig.pop(0)
