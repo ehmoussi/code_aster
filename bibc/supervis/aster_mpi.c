@@ -246,6 +246,19 @@ int aster_mpi_gather(void *sendbuf, int sendcnt, MPI_Datatype sendtype,
     return 0;
 }
 
+int aster_mpi_allgather(void *sendbuf, int sendcnt, MPI_Datatype sendtype,
+                        void *recvbuf, int recvcnt, MPI_Datatype recvtype,
+                        aster_comm_t *node) {
+    /*! Gathers together values from a group of processes */
+#ifdef _USE_MPI
+    DEBUG_MPI("MPI_Gather: %d gathered values by all %d\n", sendcnt, -1);
+    AS_ASSERT(MPI_Allgather(sendbuf, sendcnt, sendtype,
+                            recvbuf, recvcnt, recvtype,
+                            node->id) == MPI_SUCCESS);
+#endif
+    return 0;
+}
+
 int aster_mpi_gatherv(void *sendbuf, int sendcnt, MPI_Datatype sendtype,
                       void *recvbuf, int *recvcnt, int *displ, MPI_Datatype recvtype,
                       int root, aster_comm_t *node) {

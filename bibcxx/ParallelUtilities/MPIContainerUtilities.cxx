@@ -27,27 +27,11 @@
 
 #ifdef _USE_MPI
 
-#include "ParallelUtilities/MPIInfos.h"
-#include "aster_fort.h"
+#include "ParallelUtilities/MPIContainerUtilities.h"
 
-int getMPINumberOfProcs() throw( std::runtime_error )
-{
-    int rank = -1, nbProcs = -1;
-    aster_comm_t* comm = aster_get_comm_world();
-    aster_get_mpi_info(comm, &rank, &nbProcs);
-    if( rank == -1 || nbProcs == -1 )
-        throw std::runtime_error( "Error with MPI Infos" );
-    return nbProcs;
-};
-
-int getMPIRank() throw( std::runtime_error )
-{
-    int rank = -1, nbProcs = -1;
-    aster_comm_t* comm = aster_get_comm_world();
-    aster_get_mpi_info(comm, &rank, &nbProcs);
-    if( rank == -1 || nbProcs == -1 )
-        throw std::runtime_error( "Error with MPI Infos" );
-    return rank;
-};
+MPIContainerUtilities::MPIContainerUtilities(): _nbProcs( getMPINumberOfProcs() ),
+                                                _rank( getMPIRank() ),
+                                                _commWorld( aster_get_comm_world() )
+{};
 
 #endif /* _USE_MPI */

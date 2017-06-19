@@ -107,7 +107,7 @@ public:
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */
-    virtual bool hasGroupOfElements( std::string name ) const
+    virtual bool hasGroupOfElements( const std::string& name ) const
     {
         throw std::runtime_error( "Not allowed" );
         return _groupsOfElements->existsObject(name);
@@ -117,7 +117,7 @@ public:
      * @brief Teste l'existence d'un groupe de noeuds dans le maillage
      * @return true si le groupe existe
      */
-    virtual bool hasGroupOfNodes( std::string name ) const
+    virtual bool hasGroupOfNodes( const std::string& name ) const
     {
         throw std::runtime_error( "Not allowed" );
         return _groupsOfNodes->existsObject(name);
@@ -180,7 +180,7 @@ public:
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */
-    bool hasGroupOfElements( std::string name ) const
+    bool hasGroupOfElements( const std::string& name ) const
     {
         return _groupsOfElements->existsObject(name);
     };
@@ -189,7 +189,7 @@ public:
      * @brief Teste l'existence d'un groupe de noeuds dans le maillage
      * @return true si le groupe existe
      */
-    bool hasGroupOfNodes( std::string name ) const
+    bool hasGroupOfNodes( const std::string& name ) const
     {
         return _groupsOfNodes->existsObject(name);
     };

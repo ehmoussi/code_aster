@@ -240,12 +240,18 @@ public:
     {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-        _supportMesh = currentMesh;
         _supportBaseMesh = currentMesh;
+        _supportMesh = currentMesh;
         return true;
     };
 };
 
+
+/**
+ * @typedef BaseModel
+ * @brief Pointeur intelligent vers un BaseModelInstance
+ */
+typedef boost::shared_ptr< BaseModelInstance > BaseModelPtr;
 
 /**
  * @typedef Model

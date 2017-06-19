@@ -75,7 +75,7 @@ class JeveuxString
          */
         inline JeveuxString( const JeveuxString< length >& chaine )
         {
-            memcpy( &currentValue, chaine, sizeof( char )*length );
+            memcpy( &currentValue, chaine.c_str(), sizeof( char )*length );
         };
 
         /**

@@ -32,13 +32,13 @@
 #include "Loads/UnitaryLoad.h"
 
 /**
- * @class KinematicsLoadInstance
+ * @class BaseKinematicsLoadInstance
  * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
  * @author Nicolas Sellenet
  */
-class KinematicsLoadInstance: public DataStructure
+class BaseKinematicsLoadInstance: public DataStructure
 {
-    private:
+    protected:
         /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
         typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
@@ -62,23 +62,9 @@ class KinematicsLoadInstance: public DataStructure
 
     public:
         /**
-         * @typedef KinematicsLoadPtr
-         * @brief Pointeur intelligent vers un KinematicsLoad
-         */
-        typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
-
-        /**
          * @brief Constructeur
          */
-        static KinematicsLoadPtr create()
-        {
-            return KinematicsLoadPtr( new KinematicsLoadInstance );
-        };
-
-        /**
-         * @brief Constructeur
-         */
-        KinematicsLoadInstance();
+        BaseKinematicsLoadInstance();
 
         /**
          * @brief Ajout d'une valeur acoustique imposee sur un groupe de mailles
@@ -268,7 +254,7 @@ class KinematicsLoadInstance: public DataStructure
 
         /**
          * @brief Definition du modele support
-         * @param currentMesh objet Model sur lequel la charge reposera
+         * @param currentModel objet Model sur lequel la charge reposera
          */
         bool setSupportModel( ModelPtr& currentModel )
         {
@@ -277,6 +263,29 @@ class KinematicsLoadInstance: public DataStructure
             _supportModel = currentModel;
             return true;
         };
+};
+
+/**
+ * @class KinematicsLoadInstance
+ * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
+ * @author Nicolas Sellenet
+ */
+class KinematicsLoadInstance: public BaseKinematicsLoadInstance
+{
+public:
+    /**
+     * @typedef KinematicsLoadPtr
+     * @brief Pointeur intelligent vers un KinematicsLoad
+     */
+    typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static KinematicsLoadPtr create()
+    {
+        return KinematicsLoadPtr( new KinematicsLoadInstance );
+    };
 };
 
 /**

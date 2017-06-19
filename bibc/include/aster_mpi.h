@@ -54,6 +54,9 @@
 #define MAX_CHILDS  10
 #define NAME_LENGTH 16
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 typedef struct aster_comm_t aster_comm_t;
 
 struct aster_comm_t {
@@ -84,6 +87,8 @@ extern int aster_set_mpi_barrier(aster_comm_t *);
 extern int aster_mpi_bcast(void *, int, MPI_Datatype, int, aster_comm_t *);
 extern int aster_mpi_gather(void *, int, MPI_Datatype, void *, int, MPI_Datatype,
                             int, aster_comm_t *);
+extern int aster_mpi_allgather(void *, int, MPI_Datatype, void *, int, MPI_Datatype,
+                               aster_comm_t *);
 extern int aster_mpi_gatherv(void *, int, MPI_Datatype,
                              void *, int *, int *, MPI_Datatype,
                              int, aster_comm_t *);
@@ -104,6 +109,9 @@ extern aster_comm_t* _search_id(aster_comm_t *, MPI_Comm *);
 aster_comm_t* get_node_by_id(MPI_Comm *);
 #ifdef UNITTEST
 extern void _unittest_aster_mpi();
+#endif
+#ifdef __cplusplus
+}
 #endif
 
 #endif

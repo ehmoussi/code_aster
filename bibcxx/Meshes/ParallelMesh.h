@@ -34,6 +34,7 @@
 #include "astercxx.h"
 #include "definition.h"
 #include "Meshes/Mesh.h"
+#include <set>
 
 /**
  * @class ParallelMeshInstance
@@ -43,6 +44,18 @@
 class ParallelMeshInstance: public BaseMeshInstance
 {
 private:
+    typedef std::set< std::string > SetOfString;
+    typedef SetOfString::iterator SetOfStringIter;
+    typedef SetOfString::const_iterator SetOfStringCIter;
+
+    /** @brief All groups of nodes (parallel mesh) */
+    JeveuxVectorChar32 _allGroupOfNodes;
+    /** @brief Set of all groups of nodes (parallel mesh) */
+    SetOfString        _setOfAllGON;
+    /** @brief All groups of elements (parallel mesh) */
+    JeveuxVectorChar32 _allGroupOfEements;
+    /** @brief Set of all groups of elements (parallel mesh) */
+    SetOfString        _setOfAllGOE;
 
 public:
     /**
@@ -72,6 +85,30 @@ public:
 #ifdef __DEBUG_GC__
         std::cout << "ParallelMesh.destr: " << this->getName() << std::endl;
 #endif
+    };
+
+    /**
+     * @brief Teste l'existence d'un groupe de mailles dans le maillage
+     * @return true si le groupe existe
+     */
+    bool hasParallelGroupOfElements( const std::string& name ) const
+    {
+        SetOfStringCIter curIter = _setOfAllGOE.find( name );
+        if( curIter != _setOfAllGOE.end() )
+            return true;
+        return false;
+    };
+
+    /**
+     * @brief Teste l'existence d'un groupe de noeuds dans le maillage
+     * @return true si le groupe existe
+     */
+    bool hasParallelGroupOfNodes( const std::string& name ) const
+    {
+        SetOfStringCIter curIter = _setOfAllGON.find( name );
+        if( curIter != _setOfAllGON.end() )
+            return true;
+        return false;
     };
 
     /**
