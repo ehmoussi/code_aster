@@ -28,13 +28,13 @@
 #include "Loads/KinematicsLoad.h"
 #include "RunManager/CommandSyntaxCython.h"
 
-KinematicsLoadInstance::KinematicsLoadInstance():
+BaseKinematicsLoadInstance::BaseKinematicsLoadInstance():
                     DataStructure( getNewResultObjectName(), "CHAR_CINE" ),
                     _supportModel( ModelPtr() ),
                     _isEmpty( true )
 {};
 
-bool KinematicsLoadInstance::build() throw ( std::runtime_error )
+bool BaseKinematicsLoadInstance::build() throw ( std::runtime_error )
 {
     std::string typSd;
     if ( _listOfDoubleImposedDisplacement.size() != 0 )

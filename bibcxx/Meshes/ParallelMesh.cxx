@@ -25,11 +25,14 @@
 
 #include "Meshes/ParallelMesh.h"
 #include "ParallelUtilities/MPIInfos.h"
-#include "aster_fort.h"
+#include "ParallelUtilities/MPIContainerUtilities.h"
+#include "Utilities/Tools.h"
 
 #ifdef _USE_MPI
 
-ParallelMeshInstance::ParallelMeshInstance(): BaseMeshInstance( "MAILLAGE_P" )
+ParallelMeshInstance::ParallelMeshInstance(): BaseMeshInstance( "MAILLAGE_P" ),
+                                              _allGroupOfNodes( getName() + ".PAR_GRPNOE" ),
+                                              _allGroupOfEements( getName() + ".PAR_GRPMAI" )
 {};
 
 bool ParallelMeshInstance::readMedFile( const std::string& fileName )
@@ -39,6 +42,35 @@ bool ParallelMeshInstance::readMedFile( const std::string& fileName )
     BaseMeshInstance::readMedFile( completeFileName );
 
     CALL_LRMJOI_WRAP( getName().c_str(), completeFileName.c_str() );
+
+    MPIContainerUtilities util;
+    _groupsOfNodes->buildFromJeveux();
+    auto gONNames = _groupsOfNodes->getObjectNames();
+    auto allgONNames = util.gatheringVectorsOnAllProcs( gONNames );
+
+    for( auto& nameOfGrp : allgONNames )
+        _setOfAllGON.insert( nameOfGrp.toString() );
+    _allGroupOfNodes->allocate( Permanent, _setOfAllGON.size() );
+    int num = 0;
+    for( auto& nameOfGrp : _setOfAllGON )
+    {
+        (*_allGroupOfNodes)[ num ] = nameOfGrp;
+        ++num;
+    }
+
+    _groupsOfElements->buildFromJeveux();
+    auto gOENames = _groupsOfElements->getObjectNames();
+    auto allgOENames = util.gatheringVectorsOnAllProcs( gOENames );
+
+    for( auto& nameOfGrp : gOENames )
+        _setOfAllGOE.insert( nameOfGrp.toString() );
+    _allGroupOfEements->allocate( Permanent, _setOfAllGOE.size() );
+    num = 0;
+    for( auto& nameOfGrp : _setOfAllGOE )
+    {
+        (*_allGroupOfEements)[ num ] = nameOfGrp;
+        ++num;
+    }
 
     return true;
 };

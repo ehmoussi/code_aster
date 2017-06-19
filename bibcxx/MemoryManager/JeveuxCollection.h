@@ -65,11 +65,11 @@ public:
      * @param number Numero de l'objet dans la collection
      * @param ptr Pointeur vers le vecteur Jeveux
      */
-    JeveuxCollectionObject( std::string collectionName, int number,
+    JeveuxCollectionObject( const std::string& collectionName, const int& number,
                             ValueType* ptr = NULL ): _collectionName(collectionName),
-                                                        _numberInCollection(number),
-                                                        _nameOfObject(""),
-                                                        _valuePtr(ptr)
+                                                     _numberInCollection(number),
+                                                     _nameOfObject(""),
+                                                     _valuePtr(ptr)
     {};
 
     /**
@@ -79,16 +79,22 @@ public:
      * @param objectName Nom de l'objet de collection
      * @param ptr Pointeur vers le vecteur Jeveux
      */
-    JeveuxCollectionObject( std::string collectionName, int number, std::string objectName,
+    JeveuxCollectionObject( const std::string& collectionName, const int& number,
+                            const std::string& objectName,
                             ValueType* ptr = NULL ): _collectionName(collectionName),
-                                                        _numberInCollection(number),
-                                                        _nameOfObject(objectName),
-                                                        _valuePtr(ptr)
+                                                     _numberInCollection(number),
+                                                     _nameOfObject(objectName),
+                                                     _valuePtr(ptr)
     {};
 
     inline const ValueType &operator[]( int i ) const
     {
         return _valuePtr[i];
+    };
+
+    JeveuxChar32 getName() const
+    {
+        return JeveuxChar32( _nameOfObject.c_str() );
     };
 
     int size() const
@@ -121,6 +127,8 @@ private:
 
     /** @brief La collection est-elle vide ? */
     bool                                               _isEmpty;
+    /** @brief La collection est-elle nommée ? */
+    bool                                               _isNamed;
     /** @brief Listes de objets de collection */
     std::vector< JeveuxCollectionObject< ValueType > > _listObjects;
 
@@ -130,6 +138,7 @@ public:
      * @param name Chaine representant le nom de la collection
      */
     JeveuxCollectionInstance( const std::string& name ): JeveuxObjectInstance( name ),
+                                                         _isNamed( false ),
                                                          _isEmpty( true )
     {};
 
@@ -152,6 +161,12 @@ public:
      * @return Renvoit true si l'objet existe dans la collection
      */
     bool existsObject( const std::string& name ) const;
+
+    /**
+     * @brief Methode permettant d'obtenir la liste des objets nommés dans la collection
+     * @return vecteur de noms d'objet de collection
+     */
+    std::vector< JeveuxChar32 > getObjectNames() const;
 
     const std::vector< JeveuxCollectionObject< ValueType > >& getVectorOfObjects() const
     {
@@ -195,8 +210,8 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
     std::string resu( charval, 2 );
     FreeStr( charval );
 
-    bool named = false;
-    if ( resu == "NO" ) named = true;
+    bool _isNamed = false;
+    if ( resu == "NO" ) _isNamed = true;
 
     const char* tmp = "L";
     charval = MakeBlankFStr(32);
@@ -205,10 +220,12 @@ bool JeveuxCollectionInstance< ValueType >::buildFromJeveux()
     {
         ValueType* valuePtr;
         CALL_JEXNUM( charval, charName, &i );
-        if ( named )
+        CALL_JEEXIN( charval, &iret);
+        if( iret == 0 ) continue;
+        if ( _isNamed )
             CALL_JENUNO( charval, collectionObjectName );
         CALL_JEVEUOC( charval, tmp, (void*)(&valuePtr) );
-        if ( named )
+        if ( _isNamed )
             _listObjects.push_back( JeveuxCollObjValType( charName, i,
                                                           collectionObjectName, valuePtr ) );
         else
@@ -230,6 +247,16 @@ bool JeveuxCollectionInstance< ValueType >::existsObject( const std::string& nam
     CALL_JEEXIN( charJeveuxName, &returnBool );
     if ( returnBool == 0 ) return false;
     return true;
+};
+
+template< class ValueType >
+std::vector< JeveuxChar32 > JeveuxCollectionInstance< ValueType >::getObjectNames() const
+{
+    std::vector< JeveuxChar32 > toReturn;
+
+    for( auto curObject : _listObjects )
+        toReturn.push_back( curObject.getName() );
+    return toReturn;
 };
 
 /**

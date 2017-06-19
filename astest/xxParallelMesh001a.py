@@ -35,4 +35,9 @@ acier.addMaterialBehaviour( elas )
 acier.build()
 acier.debugPrint( 8 )
 
+charCine = code_aster.KinematicsLoad.create()
+charCine.setSupportModel(model)
+charCine.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dx, 0., "Bas")
+charCine.build()
+
 test.printSummary()
