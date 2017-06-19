@@ -77,15 +77,6 @@ def build(self):
              use = ['bibpyt'],
     VERSION_INFO = pformat(env['ASTER_VERSION']),
     )
-    self(
-        features = 'subst py',
-            name = 'aster_external_programs',
-          source = 'aster_external_programs.pytmpl',
-          target = 'aster_external_programs.py',
-    install_path = env.ASTERLIBDIR,
-             use = ['bibpyt'],
-EXTERNAL_PROGRAMS = pformat(env['EXTERNAL_PROGRAMS']),
-    )
 
 
 def check_aster_version(self):
