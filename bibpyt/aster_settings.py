@@ -33,13 +33,13 @@ import os
 import os.path as osp
 import platform
 import re
+import json
 import sys
 from warnings import warn, simplefilter
 
 import aster_pkginfo
 import aster
 import aster_core
-import aster_external_programs
 
 from Execution.i18n import localization
 from Execution.strfunc import convert
@@ -222,7 +222,15 @@ def get_program_path(program):
     Returns:
         str: Path stored during configuration or *program* itself otherwise.
     """
-    return aster_external_programs.EXTERNAL_PROGRAMS.get(program, program)
+    if getattr(get_program_path, "_cache", None) is None:
+        prog_cfg = {}
+        fname = osp.join(os.environ["ASTER_DATADIR"], "external_programs.js")
+        if osp.isfile(fname):
+            prog_cfg = json.load(open(fname, "rb"))
+        get_program_path._cache = prog_cfg
+
+    programs = get_program_path._cache
+    return programs.get(program, program)
 
 
 def getargs(argv=None):

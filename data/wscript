@@ -22,6 +22,7 @@ Build some data files (dest: share/aster)
 
 - 'profile.sh': environment script
 - 'config.txt': needed by as_run
+- 'external_programs.js': definition of external programs called from code_aster
 """
 
 import sys
@@ -29,6 +30,8 @@ import os
 import os.path as osp
 from itertools import chain
 import cPickle
+import json
+import re
 
 from waflib import Configure, Utils, Logs, Errors
 
@@ -43,16 +46,50 @@ def options(self):
                     action='store_false',
                     help='do not create legacy files')
 
+    group = self.add_option_group('External programs options')
+    group.add_option('--with-prog-metis', action='store_true', default=None,
+                    dest='with_prog_metis',
+                    help='Force support of metis program')
+    group.add_option('--with-prog-gmsh', action='store_true', default=None,
+                    dest='with_prog_gmsh',
+                    help='Force support of gmsh program')
+    group.add_option('--with-prog-salome', action='store_true', default=None,
+                    dest='with_prog_salome',
+                    help='Force support of salome program')
+    group.add_option('--with-prog-europlexus', action='store_true', default=None,
+                    dest='with_prog_europlexus',
+                    help='Force support of europlexus program')
+    group.add_option('--with-prog-miss3d', action='store_true', default=None,
+                    dest='with_prog_miss3d',
+                    help='Force support of miss3d program')
+    group.add_option('--with-prog-homard', action='store_true', default=None,
+                    dest='with_prog_homard',
+                    help='Force support of homard program')
+    group.add_option('--with-prog-ecrevisse', action='store_true', default=None,
+                    dest='with_prog_ecrevisse',
+                    help='Force support of ecrevisse program')
+    group.add_option('--with-prog-xmgrace', action='store_true', default=None,
+                    dest='with_prog_xmgrace',
+                    help='Force support of xmgrace program')
+
+
 def configure(self):
     self.add_os_flags('ADDMEM')
     self.env.legacy = self.options.legacy
     dict_conv = self.env2dict(osp.dirname(self.path.abspath()))
     self.env['ASTER_ENVIRON'] = cPickle.dumps(dict_conv)
+
     self.getAsrunTmp()
 
+    self.check_external_programs()
+
+
 def build(self):
-    if not self.env.legacy:
-        return
+    src = ['CTestTestfile.cmake.tmpl', 'external_programs.js.tmpl']
+    tgt = ['CTestTestfile.cmake', 'external_programs.js']
+    if self.env.legacy:
+        src.extend(['config.txt.tmpl', 'profile.sh.tmpl'])
+        tgt.extend(['config.txt', 'profile.sh'])
     try:
         dict_conv = cPickle.loads(self.env['ASTER_ENVIRON'])
     except:
@@ -62,12 +99,15 @@ def build(self):
     self(
         features = 'subst',
             name = 'data_files',
-          source = ('config.txt.tmpl', 'profile.sh.tmpl', 'CTestTestfile.cmake.tmpl'),
-          target = ('config.txt', 'profile.sh', 'CTestTestfile.cmake'),
-    install_path = '${ASTERDATADIR}',
-            vars = ['ASTER_ENVIRON', 'install_tests'],
+          source = src,
+          target = tgt,
+    install_path = self.env.ASTERDATADIR,
+            vars = ['ASTER_ENVIRON', 'EXTERNAL_PROGRAMS', 'install_tests'],
+   PROGRAMS_JSON = json.dumps(self.env['EXTERNAL_PROGRAMS'], sort_keys=True,
+							  indent=4, separators=(',', ': ')),
      **dict_conv
     )
+
 
 SRCTEST_TMPL = """SRCTEST        | src     | -     | %s"""
 
@@ -125,10 +165,12 @@ def env2dict(self, src):
     self.end_msg("yes")
     return dico
 
+
 def change_tests(dico, install_tests):
     """Because install_tests can be added at build stage"""
     if install_tests:
         dico['srctest'] = SRCTEST_TMPL % '$ASTER_VERSION_DIR/tests'
+
 
 @Configure.conf
 def getAsrunTmp(self):
@@ -141,3 +183,65 @@ def getAsrunTmp(self):
     self.end_msg(tmpdir)
     self.env.ASRUN_TMPDIR = tmpdir
     return tmpdir
+
+
+@Configure.conf
+def check_external_programs(self):
+    _check_prog(self, 'metis', ['gpmetis'],
+                add_paths=[osp.join('${METISDIR}', 'bin')])
+
+    _check_prog(self, 'gmsh', ['gmsh'])
+
+    _check_prog(self, 'gibi', ['gibi_aster.py'],
+                add_paths=['${GIBI_DIR}'])
+
+    _check_prog(self, 'salome', ['salome'],
+                add_paths=['${ABSOLUTE_APPLI_PATH}'])
+
+    _check_prog(self, 'europlexus', ['europlexus'],
+                add_paths=['${ABSOLUTE_APPLI_PATH}'])
+
+    _check_prog(self, 'miss3d', ['run_miss3d'],
+                add_paths=['${MISS3D_DIR}'])
+
+    _check_prog(self, 'homard', ['homard'],
+                add_paths=['${HOMARD_ASTER_ROOT_DIR}'])
+
+    _check_prog(self, 'ecrevisse', ['ecrevisse'],
+                add_paths=['${ECREVISSE_ROOT_DIR}'])
+
+    _check_prog(self, 'xmgrace', ['xmgrace', 'gracebat'])
+
+    dict_ext = {}
+    for key in self.env.keys():
+        if not key.startswith('PROG_'):
+            continue
+        prog = re.sub('^PROG_', '', key)
+        dict_ext[prog] = self.env[key][0]
+    self.env['EXTERNAL_PROGRAMS'] = dict_ext
+
+
+def _check_prog(self, name, programs, add_paths=None):
+    opts = self.options
+    paths0 = self.environ.get('PATH', '').split(os.pathsep)
+    paths1 = [i for i in paths0 if 'outils' not in i]
+    # try first without 'outils' in $PATH
+    to_check = [paths1, paths0]
+    add_paths = [osp.expandvars(i) for i in add_paths or []]
+    with_prog = getattr(opts, 'with_prog_' + name, None)
+
+    while to_check:
+        success = True
+        paths = to_check.pop(0)
+        for prog in programs:
+            try:
+                self.find_program(prog, var='PROG_' + prog,
+                                  path_list=add_paths + paths)
+            except Errors.ConfigurationError:
+                success = False
+                break
+        if success:
+            break
+    if not success and with_prog:
+        raise Errors.ConfigurationError("not found in $PATH: {0}"
+                                        .format(programs))
