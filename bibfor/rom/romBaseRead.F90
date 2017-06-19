@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/rs_getfirst.h"
 #include "asterfort/rs_get_liststore.h"
 #include "asterfort/rsexch.h"
+#include "asterfort/modelNodeEF.h"
 !
 character(len=8), intent(in)     :: base
 type(ROM_DS_Empi), intent(inout) :: ds_empi
@@ -90,7 +91,13 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
     call dismoi('NB_EQUA'     , field_refe, 'CHAM_NO' , repi = nb_equa)
     call dismoi('NOM_MAILLA'  , model     , 'MODELE'  , repk = mesh)
-    call dismoi('NB_NO_MAILLA', mesh      , 'MAILLAGE', repi = nb_node)
+!
+! - Get number of nodes affected by model
+!
+    call modelNodeEF(model, nb_node)
+    if (mod(nb_equa, nb_node) .ne. 0) then
+        call utmess('I', 'ROM5_53')
+    endif
     nb_cmp = nb_equa/nb_node
 !
 ! - Save informations about empiric modes

@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/rs_getfirst.h"
+#include "asterfort/modelNodeEF.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/rscrsd.h"
 !
@@ -53,7 +54,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
     integer :: ifm, niv
     integer :: iret, nume_first
-    integer :: nb_equa = 0, nb_node = 0, nb_mode_crea = 0, nb_mode_maxi = 0
+    integer :: nb_equa = 0, nb_node = 0, nb_mode_crea = 0, nb_mode_maxi = 0, nb_cmp = 0
     character(len=8)  :: model = ' ', mesh = ' '
     character(len=16) :: field_name = ' '
     character(len=8)  :: axe_line = ' ', surf_num = ' ', base_type = ' ', result_in = ' '
@@ -88,7 +89,14 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     endif
     call dismoi('NB_EQUA'     , field_refe, 'CHAM_NO' , repi = nb_equa) 
     call dismoi('NOM_MAILLA'  , field_refe, 'CHAM_NO' , repk = mesh)
-    call dismoi('NB_NO_MAILLA', mesh      , 'MAILLAGE', repi = nb_node)
+!
+! - Get number of nodes affected by model
+!
+    call modelNodeEF(model, nb_node)
+    if (mod(nb_equa, nb_node) .ne. 0) then
+        call utmess('I', 'ROM5_53')
+    endif
+    nb_cmp = nb_equa/nb_node
 !
 ! - Create empiric base
 !
@@ -116,7 +124,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     ds_empi%surf_num     = surf_num
     ds_empi%nb_equa      = nb_equa
     ds_empi%nb_node      = nb_node
-    ds_empi%nb_cmp       = nb_equa/nb_node
+    ds_empi%nb_cmp       = nb_cmp
     ds_empi%nb_mode      = 0
 !
 end subroutine
