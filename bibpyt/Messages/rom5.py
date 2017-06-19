@@ -124,6 +124,8 @@ cata_msg = {
 
    52 : _(u"""Le paramètre %(k1)s vaut %(r1)19.12e."""),
 
+   53 : _(u"""Le nombre de composantes dans le modèle est incorrect. Vérifiez que vous n'avez pas de chargements de Dirichlet appliqués avec AFFE_CHAR_MECA."""),
+
    60 : _(u"""Calcul par la méthode GLOUTON."""),
 
    61 : _(u"""Calcul du mode empirique %(i1)d."""),

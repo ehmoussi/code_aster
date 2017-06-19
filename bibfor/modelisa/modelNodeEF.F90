@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1003
 !
-subroutine modelNodeEF(modelz, nb_node, v_list_node)
+subroutine modelNodeEF(modelz, nb_node, v_list_node_)
 !
 implicit none
 !
@@ -29,7 +29,7 @@ implicit none
 !
 character(len=*), intent(in) :: modelz
 integer, intent(out) :: nb_node
-integer, pointer, intent(out) :: v_list_node(:)
+integer, pointer, optional, intent(out) :: v_list_node_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,16 +78,18 @@ integer, pointer, intent(out) :: v_list_node(:)
 !
 ! - Create final list
 !
-    idx = 0
-    allocate(v_list_node(nb_node))
-    v_list_node(1:nb_node) = 0
-    do i_node = 1, nb_node_mesh
-        if (idx_node(i_node) .ne. 0) then
-            idx = idx + 1
-            ASSERT(idx .le. nb_node)
-            v_list_node(idx) = i_node
-        endif
-    end do
+    if (present(v_list_node_)) then
+        idx = 0
+        allocate(v_list_node_(nb_node))
+        v_list_node_(1:nb_node) = 0
+        do i_node = 1, nb_node_mesh
+            if (idx_node(i_node) .ne. 0) then
+                idx = idx + 1
+                ASSERT(idx .le. nb_node)
+                v_list_node_(idx) = i_node
+            endif
+        end do
+    endif
 !
     AS_DEALLOCATE(vi=idx_node)
 !

@@ -27,6 +27,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/rscrsd.h"
+#include "asterfort/modelNodeEF.h"
 !
 character(len=8), intent(in) :: base
 type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
@@ -47,7 +48,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_equa = 0, nb_node = 0, nb_mode = 0
+    integer :: nb_equa = 0, nb_node = 0, nb_mode = 0, nb_cmp = 0
     character(len=8)  :: model = ' ', mesh = ' ', matr_name = ' '
     character(len=24) :: field_refe
     character(len=24) :: field_name = ' '
@@ -72,7 +73,17 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
     call dismoi('NB_EQUA'     , matr_name, 'MATR_ASSE', repi = nb_equa) 
     call dismoi('NOM_MAILLA'  , model    , 'MODELE'   , repk = mesh)
-    call dismoi('NB_NO_MAILLA', mesh     , 'MAILLAGE' , repi = nb_node)
+!
+! - Get number of nodes affected by model
+!
+    call modelNodeEF(model, nb_node)
+    if (mod(nb_equa, nb_node) .ne. 0) then
+        call utmess('I', 'ROM5_53')
+    endif
+    nb_cmp = nb_equa/nb_node
+!
+! - For greedy algorithm: only displacements
+!
     field_name = 'DEPL'
     field_refe = ds_para_rb%solveDOM%syst_solu
 !
@@ -89,7 +100,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     ds_empi%nb_node      = nb_node
     ds_empi%nb_mode      = 0
     ds_empi%nb_equa      = nb_equa
-    ds_empi%nb_cmp       = nb_equa/nb_node
+    ds_empi%nb_cmp       = nb_cmp
 !
 ! - Create output datastructure
 !

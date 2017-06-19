@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine modelNodeEF(modelz, nb_node, v_list_node)
+    subroutine modelNodeEF(modelz, nb_node, v_list_node_)
         character(len=*), intent(in) :: modelz
         integer, intent(out) :: nb_node
-        integer, pointer, intent(out) :: v_list_node(:)
+        integer, pointer, optional, intent(out) :: v_list_node_(:)
     end subroutine modelNodeEF
 end interface
