@@ -30,8 +30,13 @@ import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
 YAMMROOT = os.environ['ROOT_SALOME']
 
+import official_programs
+
+
 def configure(self):
     opts = self.options
+
+    official_programs.configure(self)
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env['ADDMEM'] = 350

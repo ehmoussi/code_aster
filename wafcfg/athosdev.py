@@ -31,11 +31,16 @@ ASTER_ROOT = os.environ['ASTER_ROOT']
 YAMMROOT = ASTER_ROOT + '/public/default'
 
 import intel
+import official_programs
+
 
 def configure(self):
     opts = self.options
 
     intel.configure(self)
+    official_programs.configure(self)
+    opts.with_prog_salome = True
+    opts.with_prog_europlexus = True
 
     # enable TEST_STRICT on the reference server
     self.env.append_value('DEFINES', ['TEST_STRICT'])
@@ -43,7 +48,7 @@ def configure(self):
     self.env['ADDMEM'] = 600
     self.env.append_value('OPT_ENV', [
         '. /etc/profile.d/lmod.sh',
-        'module loadifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047'])
+        'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047'])
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'
     self.env.TFELHOME = TFELHOME

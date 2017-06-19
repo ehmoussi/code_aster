@@ -31,11 +31,16 @@ ASTER_ROOT = os.environ['ASTER_ROOT']
 YAMMROOT = os.environ['ROOT_SALOME']
 
 import intel
+import official_programs
+
 
 def configure(self):
     opts = self.options
 
     intel.configure(self)
+    official_programs.configure(self)
+    opts.with_prog_salome = True
+    opts.with_prog_europlexus = True
 
     self.env['ADDMEM'] = 600
     self.env.append_value('OPT_ENV', [
