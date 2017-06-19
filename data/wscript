@@ -205,7 +205,7 @@ def check_external_programs(self):
                 add_paths=['${MISS3D_DIR}'])
 
     _check_prog(self, 'homard', ['homard'],
-                add_paths=['${HOMARD_ASTER_ROOT_DIR}'])
+                add_paths=[osp.join('${HOMARD_ASTER_ROOT_DIR}', 'ASTER_HOMARD')])
 
     _check_prog(self, 'ecrevisse', ['ecrevisse'],
                 add_paths=['${ECREVISSE_ROOT_DIR}'])
