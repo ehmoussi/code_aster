@@ -198,8 +198,7 @@ def check_external_programs(self):
     _check_prog(self, 'salome', ['salome'],
                 add_paths=['${ABSOLUTE_APPLI_PATH}'])
 
-    _check_prog(self, 'europlexus', ['europlexus'],
-                add_paths=['${ABSOLUTE_APPLI_PATH}'])
+    _check_prog(self, 'europlexus', ['europlexus'])
 
     _check_prog(self, 'miss3d', ['run_miss3d'],
                 add_paths=['${MISS3D_DIR}'])
