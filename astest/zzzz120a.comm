@@ -168,9 +168,7 @@ H_HAUT_BRID  = 200.0
 macr_gouj2e_mail(TYPE,VARIANTE,NB_FILET,H_CORP_BRID,R_EXT_BRID,
                  H_HAUT_BRID,H_BAS_BRID,FILET_ABST,)
 
-loc_outils = aster_core.get_option("repout")
-
-EXEC_LOGICIEL(LOGICIEL=os.path.join(loc_outils, 'gibi'),
+EXEC_LOGICIEL(LOGICIEL=aster_core.get_option('prog:gibi'),
               ARGUMENT=('fort.70', 'fort.19'), );
 
 PRE_GIBI()
