@@ -169,7 +169,7 @@ C_TEMP=CALC_TRANSFERT(NOM_CHAM='ACCE',
                               );
 
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
-          VALE_CALC=5.08741E+01,
+          VALE_CALC=50.874056397,
           VALE_REFE=5.08741E+01,
           NOM_PARA='Re_FX',
           TABLE=TABLE01,
@@ -177,7 +177,7 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
                     VALE=1.0E+01,),
           )
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
-          VALE_CALC=-1.91601E+01,
+          VALE_CALC=-19.1601110076,
           VALE_REFE=-1.91601E+01,
           NOM_PARA='Im_FX',
           TABLE=TABLE01,
@@ -263,25 +263,25 @@ C_TEMP3=CALC_TRANSFERT(NOM_CHAM='ACCE',
                               TABLE_RESU=CO("TABLE03"),),
                               );
 
-TEST_TABLE(VALE_CALC=555.484403015,
+TEST_TABLE(VALE_CALC=555.484543524,
           NOM_PARA='Re_FX',
           TABLE=TABLE_A,
           FILTRE=_F(NOM_PARA='FREQ',
                     VALE=1.0E+01,),
           )
-TEST_TABLE(VALE_CALC=-156.905211161 ,
+TEST_TABLE(VALE_CALC=-156.905105329 ,
           NOM_PARA='Im_FX',
           TABLE=TABLE_A,
           FILTRE=_F(NOM_PARA='FREQ',
                     VALE=1.0E+01,),
           )
-TEST_TABLE(VALE_CALC=555.484403015 ,
+TEST_TABLE(VALE_CALC=555.484543524 ,
           NOM_PARA='Re_FX',
           TABLE=TABLE03,
           FILTRE=_F(NOM_PARA='FREQ',
                     VALE=1.0E+01,),
           )
-TEST_TABLE(VALE_CALC=-156.905211161 ,
+TEST_TABLE(VALE_CALC=-156.905105329 ,
           NOM_PARA='Im_FX',
           TABLE=TABLE03,
           FILTRE=_F(NOM_PARA='FREQ',
@@ -289,4 +289,4 @@ TEST_TABLE(VALE_CALC=-156.905211161 ,
           )
 
 
-FIN();
+FIN()
