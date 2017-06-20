@@ -153,7 +153,7 @@ C_FREQ=CALC_TRANSFERT(NOM_CHAM='ACCE',
                               );
 
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
-          VALE_CALC=6.26352E+00,
+          VALE_CALC=6.26351677499,
           VALE_REFE=6.26352E+00,
           NOM_PARA='Re_FX',
           TABLE=TABLE00,
@@ -161,7 +161,7 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
                     VALE=1.09726E+01,),
           )
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
-          VALE_CALC=8.87646E+00,
+          VALE_CALC=8.87646265273,
           VALE_REFE=8.87646E+00,
           NOM_PARA='Im_FX',
           TABLE=TABLE00,
@@ -176,4 +176,4 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC_C=(6.263458+8.874698j),
                         FONCTION=F_ACC_X,),
               )
 
-FIN();
+FIN()
