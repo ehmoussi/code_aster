@@ -40,7 +40,7 @@ def configure(self):
 
     self.env.append_value('OPT_ENV_FOOTER', [
         '. /etc/profile.d/lmod.sh',
-        'module load impi/2016.3.068'])
+        'module load impi/2016.0.047'])
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster/lib',
