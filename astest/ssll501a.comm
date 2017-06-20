@@ -64,27 +64,15 @@ import aster_core
 
 def include_maillage(MAILLAGE):
     """Fonction une macro qui indique que le chemin pour chercher le maillage confidentiel"""
-    fname  = MAILLAGE
     repdex = aster_core.get_option('repdex')
-    fname  = osp.join(repdex, fname)
-    return fname
+    return osp.join(repdex, MAILLAGE)
 
-maillage=include_maillage('ssll501a.mail.datg')
-nom_maillage = '%s' % maillage
-unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=nom_maillage,ACCES='NEW',UNITE=20)
-
-#print "nom_restitue",maillage
-
-#INCLUDE(DONNEE='ssll501a.mail.datg')
-#maillage=INCLUDE(DONNEE='ssnv212.mater.datg')
+nom_maillage = include_maillage('ssll501a.mail.datg')
+unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=nom_maillage, ACCES='NEW', UNITE=20)
 
 MAILL=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='ASTER',UNITE=unite,  )
 
 DEFI_FICHIER(ACTION='LIBERER', UNITE=20)
-
-#PRE_GIBI(UNITE_GIBI = 16)
-#MAILL=LIRE_MAILLAGE(FORMAT="ASTER",VERI_MAIL=_F(VERIF='OUI'),)
-#IMPR_RESU(UNITE = 45, FORMAT = 'MED', RESU=_F(MAILLAGE=MAILL))
 
 # CREATION DES GROUPES DE NOEUDS **************************
 
