@@ -2,8 +2,8 @@
 #define DOFNUMBERING_H_
 
 /**
- * @file DOFNumbering.h
- * @brief Fichier entete de la classe DOFNumbering
+ * @file BaseDOFNumbering.h
+ * @brief Fichier entete de la classe BaseDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
@@ -31,7 +31,6 @@
 #include <string>
 
 #include "DataStructures/DataStructure.h"
-#include "LinearAlgebra/LinearSolver.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
@@ -41,12 +40,12 @@
 #include "DataFields/FieldOnNodes.h"
 
 /**
- * @class DOFNumberingInstance
+ * @class BaseDOFNumberingInstance
  * @brief Class definissant un nume_ddl
  *        Cette classe est volontairement succinte car on n'en connait pas encore l'usage
  * @author Nicolas Sellenet
  */
-class DOFNumberingInstance: public DataStructure
+class BaseDOFNumberingInstance: public DataStructure
 {
     private:
         // !!! Classe succinte car on ne sait pas comment elle sera utiliser !!!
@@ -58,46 +57,40 @@ class DOFNumberingInstance: public DataStructure
         ElementaryMatrixPtr      _supportMatrix;
         /** @brief Chargements */
         ListOfLoadsPtr           _listOfLoads;
-        /** @brief Solveur lineaire */
-        LinearSolverPtr          _linearSolver;
         /** @brief Booleen permettant de preciser sur la sd est vide */
         bool                     _isEmpty;
 
+    protected:
+        /**
+         * @brief Constructeur
+         */
+        BaseDOFNumberingInstance( const std::string& type,
+                                  const JeveuxMemory memType = Permanent );
+
+        /**
+         * @brief Constructeur
+         * @param name nom souhaité de la sd (utile pour le BaseDOFNumberingInstance d'une sd_resu)
+         */
+        BaseDOFNumberingInstance( const std::string name,
+                                  const std::string& type,
+                                  const JeveuxMemory memType = Permanent );
+
     public:
-        /**
-         * @typedef DOFNumberingPtr
-         * @brief Pointeur intelligent vers un DOFNumbering
-         */
-        typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
-
-        /**
-         * @brief Constructeur
-         */
-        static DOFNumberingPtr create()
-        {
-            return DOFNumberingPtr( new DOFNumberingInstance );
-        };
-
-        /**
-         * @brief Constructeur
-         */
-        DOFNumberingInstance( const JeveuxMemory memType = Permanent );
-
-        /**
-         * @brief Constructeur
-         * @param name nom souhaité de la sd (utile pour le DOFNumberingInstance d'une sd_resu)
-         */
-        DOFNumberingInstance( const std::string name, const JeveuxMemory memType = Permanent );
-
         /**
          * @brief Destructeur
          */
-        ~DOFNumberingInstance()
+        ~BaseDOFNumberingInstance()
         {
 #ifdef __DEBUG_GC__
-            std::cout << "DOFNumberingInstance.destr: " << this->getName() << std::endl;
+            std::cout << "BaseDOFNumberingInstance.destr: " << this->getName() << std::endl;
 #endif
         };
+
+        /**
+         * @typedef BaseDOFNumberingPtr
+         * @brief Pointeur intelligent vers un BaseDOFNumbering
+         */
+        typedef boost::shared_ptr< BaseDOFNumberingInstance > BaseDOFNumberingPtr;
 
         /**
          * @brief Function d'ajout d'une charge cinematique
@@ -123,20 +116,11 @@ class DOFNumberingInstance: public DataStructure
         bool computeNumerotation() throw ( std::runtime_error );
 
         /**
-         * @brief Methode permettant d'obtenir un champ aux noeuds construit sur le DOFNumberingInstance
+         * @brief Methode permettant d'obtenir un champ aux noeuds construit sur le BaseDOFNumberingInstance
          * @return Champ aux noeuds vide
          */
         FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const JeveuxMemory memType = Permanent ) const
             throw ( std::runtime_error );
-
-        /**
-         * @brief Methode permettant d'obtenir le solveur
-         * @return _linearSolver
-         */
-        LinearSolverPtr getLinearSolver()
-        {
-            return _linearSolver;
-        };
 
         /**
          * @brief Methode permettant de savoir si la numerotation est vide
@@ -151,7 +135,8 @@ class DOFNumberingInstance: public DataStructure
          * @brief Methode permettant de definir les matrices elementaires
          * @param currentMatrix objet ElementaryMatrix
          */
-        void setElementaryMatrix( const ElementaryMatrixPtr& currentMatrix ) throw ( std::runtime_error )
+        virtual void setElementaryMatrix( const ElementaryMatrixPtr& currentMatrix )
+            throw ( std::runtime_error )
         {
             if ( _supportModel )
                 throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
@@ -168,27 +153,87 @@ class DOFNumberingInstance: public DataStructure
         };
 
         /**
-         * @brief Methode permettant de definir le solveur
-         * @param currentModel Model support de la numerotation
-         */
-        void setLinearSolver( const LinearSolverPtr& currentSolver ) throw ( std::runtime_error )
-        {
-            if ( ! _isEmpty )
-                throw std::runtime_error( "It is too late to set the linear solver" );
-            _linearSolver = currentSolver;
-        };
-
-        /**
          * @brief Methode permettant de definir le modele support
          * @param currentModel Model support de la numerotation
          */
-        void setSupportModel( const ModelPtr& currentModel ) throw ( std::runtime_error )
+        virtual void setSupportModel( const ModelPtr& currentModel )
+            throw ( std::runtime_error )
         {
             if ( ! _supportMatrix.use_count() == 0 )
                 throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
             _supportModel = currentModel;
         };
 };
+
+/**
+ * @class DOFNumberingInstance
+ * @brief Class definissant un nume_ddl
+ * @author Nicolas Sellenet
+ */
+class DOFNumberingInstance: public BaseDOFNumberingInstance
+{
+public:
+    /**
+     * @typedef DOFNumberingPtr
+     * @brief Pointeur intelligent vers un DOFNumbering
+     */
+    typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static DOFNumberingPtr create()
+    {
+        return DOFNumberingPtr( new DOFNumberingInstance );
+    };
+
+    /**
+     * @brief Constructeur
+     */
+    DOFNumberingInstance( const JeveuxMemory memType = Permanent ):
+        BaseDOFNumberingInstance( "NUME_DDL", memType )
+    {};
+
+    /**
+     * @brief Constructeur
+     * @param name nom souhaité de la sd (utile pour le BaseDOFNumberingInstance d'une sd_resu)
+     */
+    DOFNumberingInstance( const std::string name, const JeveuxMemory memType = Permanent ):
+        BaseDOFNumberingInstance( name, "NUME_DDL", memType )
+    {};
+
+    /**
+     * @brief Methode permettant de definir les matrices elementaires
+     * @param currentMatrix objet ElementaryMatrix
+     */
+    void setElementaryMatrix( const ElementaryMatrixPtr& currentMatrix )
+        throw ( std::runtime_error )
+    {
+        if( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+            throw std::runtime_error( "Support mesh must not be parallel" );
+        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+    };
+
+    /**
+     * @brief Methode permettant de definir le modele support
+     * @param currentModel Model support de la numerotation
+     */
+    void setSupportModel( const ModelPtr& currentModel )
+        throw ( std::runtime_error )
+    {
+        if( currentModel->getSupportMesh()->isParallel() )
+            throw std::runtime_error( "Support mesh must not be parallel" );
+        BaseDOFNumberingInstance::setSupportModel( currentModel );
+    };
+};
+
+/**
+ * @typedef BaseDOFNumberingPtr
+ * @brief Enveloppe d'un pointeur intelligent vers un BaseDOFNumberingInstance
+ * @author Nicolas Sellenet
+ */
+typedef boost::shared_ptr< BaseDOFNumberingInstance > BaseDOFNumberingPtr;
+
 
 /**
  * @typedef DOFNumberingPtr

@@ -7,6 +7,9 @@ subroutine numero(nume_ddlz, base,&
 implicit none
 !
 #include "asterfort/as_deallocate.h"
+#include "asterfort/crnulg.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/gettco.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/numer2.h"
@@ -69,6 +72,9 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nb_ligr
+    character(len=8) :: nommai
+    character(len=14) :: nume_ddl
+    character(len=16) :: typsd
     character(len=24) :: modeloc, old_nume_ddl
     character(len=24), pointer :: list_ligr(:) => null()
     character(len=24) :: sd_iden_rela
@@ -108,6 +114,13 @@ implicit none
 !
     call numer2(nb_ligr, list_ligr, base, nume_ddlz,&
                 old_nume_ddl, modeloc  , sd_iden_rela)
+!
+    call dismoi('NOM_MAILLA', modelz, 'MODELE', repk=nommai)
+    call gettco(nommai, typsd)
+    if( typsd.eq.'MAILLAGE_P' ) then
+        nume_ddl = nume_ddlz
+        call crnulg(nume_ddl)
+    endif
 !
     AS_DEALLOCATE(vk24 = list_ligr)
     call uttcpu('CPU.RESO.1', 'FIN', ' ')

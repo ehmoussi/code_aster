@@ -29,7 +29,6 @@
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/DiscreteProblemInterface.h"
 #include "PythonBindings/DOFNumberingInterface.h"
-#include "PythonBindings/ForwardDOFNumberingInterface.h"
 #include "PythonBindings/ElementaryCharacteristicsInterface.h"
 #include "PythonBindings/FiberGeometryInterface.h"
 #include "PythonBindings/FieldOnElementsInterface.h"
@@ -99,6 +98,7 @@
 #include "PythonBindings/TimeStepManagerInterface.h"
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
 #include "PythonBindings/ParallelMeshInterface.h"
+#include "PythonBindings/ParallelDOFNumberingInterface.h"
 #include "PythonBindings/MPIInfosInterface.h"
 
 using namespace boost::python;
@@ -110,7 +110,6 @@ BOOST_PYTHON_MODULE(libaster)
     exportMeshToPython();
     exportDiscreteProblemToPython();
     exportDOFNumberingToPython();
-    exportForwardDOFNumberingToPython();
     exportElementaryCharacteristicsToPython();
     exportFiberGeometryToPython();
     exportFieldOnElementsToPython();
@@ -181,6 +180,7 @@ BOOST_PYTHON_MODULE(libaster)
 
 #ifdef _USE_MPI
     exportParallelMeshToPython();
+    exportParallelDOFNumberingToPython();
     exportMPIInfosToPython();
 #endif /* _USE_MPI */
 };

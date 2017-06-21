@@ -74,7 +74,6 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     _linearSolver->build();
 
     DOFNumberingPtr dofNum1 = resultC->getEmptyDOFNumbering();
-    dofNum1->setLinearSolver( _linearSolver );
     dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
     FieldOnNodesDoublePtr vecass = dofNum1->getEmptyFieldOnNodesDouble( Temporary );
 

@@ -135,6 +135,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
 {
     ElementaryMatrixPtr retour( new ElementaryMatrixInstance( "DEPL_R", Permanent ) );
     ModelPtr curModel = _study->getSupportModel();
+    retour->setSupportModel( curModel );
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
 
     _study->buildListOfLoads();
@@ -160,14 +161,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     CALL_MERIME_WRAP( modelName.c_str(), &nbLoad, jvListOfLoads->getDataPtr()->c_str(),
                       mate.c_str(), blanc.c_str(), &time,
                       blanc.c_str(), retour->getName().c_str(), &nh, "G" );
-//     try
-//     {
-//         testCythonException2();
-//     }
-//     catch(...)
-//     {
-//         throw;
-//     }
+
     retour->setEmpty( false );
     return retour;
 };
@@ -182,6 +176,35 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryTangentMatrix( doubl
 ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryJacobianMatrix( double time )
 {
     return this-> buildElementaryRigidityMatrix( time );
+};
+
+FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad( const DOFNumberingPtr& curDOFNum,
+                                                                    const double& time,
+                                                                    const JeveuxMemory& memType )
+    const throw ( std::runtime_error )
+{
+    const auto& _listOfLoad = _study->getListOfLoads();
+    const auto& _list = _listOfLoad->getListVector();
+    const auto& _loadInformations = _listOfLoad->getListVector();
+    const auto& _listOfFunctions = _listOfLoad->getListOfFunctions();
+    if ( _listOfLoad->isEmpty() )
+        throw std::runtime_error( "ListOfLoads is empty" );
+
+    FieldOnNodesDoublePtr retour( new FieldOnNodesDoubleInstance( memType ) );
+    std::string resuName = retour->getName();
+    std::string dofNumName = curDOFNum->getName();
+
+    std::string lLoadName = _list->getName();
+    lLoadName.resize(24, ' ');
+    std::string infLoadName = _loadInformations->getName();
+    infLoadName.resize(24, ' ');
+    std::string funcLoadName = _listOfFunctions->getName();
+    funcLoadName.resize(24, ' ');
+
+    CALL_ASCAVC( lLoadName.c_str(), infLoadName.c_str(), funcLoadName.c_str(),
+                 dofNumName.c_str(), &time, resuName.c_str() );
+
+    return retour;
 };
 
 
@@ -274,6 +297,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMatrix( const std:
     throw ( std::runtime_error )
 {
     ElementaryMatrixPtr retour( new ElementaryMatrixInstance( Permanent ) );
+    retour->setSupportModel( _study->getSupportModel() );
 
     // Comme on calcul *_MECA, il faut preciser le type de la sd
     retour->setType( retour->getType() + "_DEPL_R" );
@@ -304,6 +328,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalDampingMatrix( con
     throw ( std::runtime_error )
 {
     ElementaryMatrixPtr retour( new ElementaryMatrixInstance( Permanent ) );
+    retour->setSupportModel( rigidity->getSupportModel() );
 
     // Comme on calcul *_MECA, il faut preciser le type de la sd
     retour->setType( retour->getType() + "_DEPL_R" );

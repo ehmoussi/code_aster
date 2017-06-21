@@ -92,28 +92,3 @@ ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() throw ( std::runtim
     }
     return listeExcit;
 };
-
-FieldOnNodesDoublePtr ListOfLoadsInstance::buildKinematicsLoad( const ForwardDOFNumberingPtr& curDOFNum,
-                                                                const double& time,
-                                                                const JeveuxMemory& memType )
-    const throw ( std::runtime_error )
-{
-    if ( _isEmpty )
-        throw std::runtime_error( "ListOfLoads is empty" );
-
-    FieldOnNodesDoublePtr retour( new FieldOnNodesDoubleInstance( memType ) );
-    std::string resuName = retour->getName();
-    std::string dofNumName = curDOFNum.getName();
-
-    std::string lLoadName = _list->getName();
-    lLoadName.resize(24, ' ');
-    std::string infLoadName = _loadInformations->getName();
-    infLoadName.resize(24, ' ');
-    std::string funcLoadName = _listOfFunctions->getName();
-    funcLoadName.resize(24, ' ');
-
-    CALL_ASCAVC( lLoadName.c_str(), infLoadName.c_str(), funcLoadName.c_str(),
-                 dofNumName.c_str(), &time, resuName.c_str() );
-
-    return retour;
-};

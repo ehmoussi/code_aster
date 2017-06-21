@@ -1,9 +1,9 @@
 /**
- * @file ForwardLinearSolver.cxx
- * @brief Implementation de ForwardLinearSolver
+ * @file ParallelDOFNumberingInterface.cxx
+ * @brief Interface python de ParallelDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -21,19 +21,18 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdexcept>
-#include "astercxx.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "LinearAlgebra/ForwardLinearSolver.h"
-#include "LinearAlgebra/LinearSolver.h"
+#include "PythonBindings/ParallelDOFNumberingInterface.h"
+#include <boost/python.hpp>
 
-bool ForwardLinearSolverPtr::isEmpty() const
+void exportParallelDOFNumberingToPython()
 {
-    if ( _curLinSolv.use_count() == 0 ) return true;
-    return false;
-};
+    using namespace boost::python;
 
-std::string ForwardLinearSolverPtr::getName() const
-{
-    return _curLinSolv->getName();
+    class_< ParallelDOFNumberingInstance, ParallelDOFNumberingInstance::ParallelDOFNumberingPtr,
+            bases< BaseDOFNumberingInstance > > ( "ParallelDOFNumbering", no_init )
+        .def( "create", &ParallelDOFNumberingInstance::create )
+        .staticmethod( "create" )
+    ;
 };

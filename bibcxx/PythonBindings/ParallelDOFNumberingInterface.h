@@ -1,6 +1,9 @@
+#ifndef PARALLELDOFNUMBERINGINTERFACE_H_
+#define PARALLELDOFNUMBERINGINTERFACE_H_
+
 /**
- * @file ForwardDOFNumberingInterface.cxx
- * @brief Interface python de ForwardDOFNumbering
+ * @file ParallelDOFNumberingInterface.h
+ * @brief Fichier entete de la classe ParallelDOFNumberingInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -21,18 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
+#include "astercxx.h"
+#include "Discretization/ParallelDOFNumbering.h"
 
-#include "PythonBindings/ForwardDOFNumberingInterface.h"
-#include <boost/python.hpp>
-#include <boost/python/implicit.hpp>
+void exportParallelDOFNumberingToPython();
 
-void exportForwardDOFNumberingToPython()
-{
-    using namespace boost::python;
-
-    class_< ForwardDOFNumberingPtr > ( "ForwardDOFNumbering", no_init )
-    ;
-
-    implicitly_convertible<DOFNumberingPtr, ForwardDOFNumberingPtr>();
-};
+#endif /* PARALLELDOFNUMBERINGINTERFACE_H_ */

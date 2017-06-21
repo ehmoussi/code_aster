@@ -33,7 +33,6 @@
 #include "Loads/KinematicsLoad.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "DataFields/FieldOnNodes.h"
-#include "Discretization/ForwardDOFNumbering.h"
 
 /**
  * @class ListOfLoadInstance
@@ -93,16 +92,7 @@ class ListOfLoadsInstance: public DataStructure
          * STAT_NON_LINE . C'est une méthode temporaire 
          * @return listExcit 
          */
-        ListSyntaxMapContainer buildListExcit() throw ( std::runtime_error ); 
-
-        /**
-         * @brief Construction d'un vecteur de chargement cinématique
-         * @return Booleen indiquant que tout s'est bien passe
-         */
-        FieldOnNodesDoublePtr buildKinematicsLoad( const ForwardDOFNumberingPtr& curDOFNum,
-                                                   const double& time,
-                                                   const JeveuxMemory& memType = Permanent )
-            const throw ( std::runtime_error );
+        ListSyntaxMapContainer buildListExcit() throw ( std::runtime_error );
 
         /**
          * @brief Function de récupération des informations des charges
@@ -147,6 +137,15 @@ class ListOfLoadsInstance: public DataStructure
         const JeveuxVectorChar24 getListVector() const
         {
             return _list;
+        };
+
+        /**
+         * @brief Methode permettant de savoir si la matrice est vide
+         * @return true si vide
+         */
+        bool isEmpty()
+        {
+            return _isEmpty;
         };
 
         /**
