@@ -95,6 +95,15 @@ def options(self):
     group.add_option('--prefix', dest='prefix', default=None,
                      help='installation prefix [default: %r]' % default_prefix)
 
+    group = self.get_option_group("Configuration options")
+    group.add_option('--with-data', dest='with_data',
+                    action='store', default='../data',
+                    help='location of the data repository (default: ../data)')
+    group.add_option('--with-validation', dest='with_validation',
+                    action='store', default='../validation',
+                    help='location of the validation repository '
+                         '(default: ../validation)')
+
     group = self.add_option_group('code_aster options')
 
     self.load('parallel', tooldir='waftools')
@@ -147,6 +156,8 @@ def configure(self):
     self.load('use_config')
     self.load('gnu_dirs')
     self.env['BIBPYTPATH'] = self.path.find_dir('bibpyt').abspath()
+    self.env.data_path = self.options.with_data
+    self.env.validation_path = self.options.with_validation
 
     self.env.ASTER_EMBEDS = []
 
@@ -203,6 +214,7 @@ def configure(self):
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
+
     # keep compatibility for as_run
     if self.get_define('HAVE_MPI'):
         self.env.ASRUN_MPI_VERSION = 1
@@ -242,9 +254,12 @@ def build(self):
     self.recurse('code_aster')
     self.recurse('mfront')
     self.recurse('i18n')
-    lsub = ['materiau', 'datg', 'catalo']
+    self.recurse('catalo')
+
+    lsub = [osp.join(self.env.data_path or '', 'materiau'),
+            osp.join(self.env.data_path or '', 'datg')]
     if self.env.install_tests:
-        lsub.extend(['astest', '../validation/astest'])
+        lsub.extend(['astest', osp.join(self.env.validation_path, 'astest')])
     for optional in lsub:
         if osp.exists(osp.join(optional, 'wscript')):
             self.recurse(optional)
