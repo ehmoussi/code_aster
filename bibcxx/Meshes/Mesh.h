@@ -133,6 +133,15 @@ public:
     };
 
     /**
+     * @brief Fonction permettant de savoir si un maillage est parallel
+     * @return retourne true si le maillage est parallel
+     */
+    virtual bool isParallel() const
+    {
+        return false;
+    };
+
+    /**
      * @brief Read a MED Mesh file
      * @return retourne true si tout est ok
      */

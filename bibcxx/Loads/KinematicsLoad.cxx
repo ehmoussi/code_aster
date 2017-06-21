@@ -28,19 +28,19 @@
 #include "Loads/KinematicsLoad.h"
 #include "RunManager/CommandSyntaxCython.h"
 
-BaseKinematicsLoadInstance::BaseKinematicsLoadInstance():
+KinematicsLoadInstance::KinematicsLoadInstance():
                     DataStructure( getNewResultObjectName(), "CHAR_CINE" ),
                     _supportModel( ModelPtr() ),
                     _isEmpty( true )
 {};
 
-bool BaseKinematicsLoadInstance::build() throw ( std::runtime_error )
+bool KinematicsLoadInstance::build() throw ( std::runtime_error )
 {
-    std::string typSd;
+    std::string typSd = getType();
     if ( _listOfDoubleImposedDisplacement.size() != 0 )
-        typSd = getType() + "_MECA";
+        typSd.insert( 9, "_MECA" );
     else if ( _listOfDoubleImposedTemperature.size() != 0 )
-        typSd = getType() + "_THER";
+        typSd.insert( 9, "_THER");
     else
         throw std::runtime_error( "KinematicsLoad empty" );
     setType( typSd );

@@ -46,6 +46,6 @@ subroutine getvem(noma, typent, motfac, motcle, iocc,&
                 nbret=nbval)
     if (mxval .ne. 0) then
         mm=min(mxval,abs(nbval))
-        call verima(noma, vk, mm, typent)
+        call verima(noma, vk, mm, typent, nbval)
     endif
 end subroutine

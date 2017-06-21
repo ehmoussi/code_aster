@@ -16,12 +16,14 @@ pMesh = code_aster.ParallelMesh.create()
 pMesh.readMedFile("xxParallelMesh001a")
 pMesh.debugPrint(rank+30)
 
-model = code_aster.ParallelModel.create()
+model = code_aster.Model.create()
 test.assertEqual( model.getType(), "MODELE" )
 model.setSupportMesh(pMesh)
 model.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                            code_aster.Modelings.Tridimensional)
 model.build()
+testMesh = model.getSupportMesh()
+test.assertEqual( testMesh.getType(), "MAILLAGE_P" )
 
 model.debugPrint(rank+30)
 
@@ -35,9 +37,24 @@ acier.addMaterialBehaviour( elas )
 acier.build()
 acier.debugPrint( 8 )
 
+affectMat = code_aster.MaterialOnMesh.create()
+affectMat.setSupportMesh( pMesh )
+
+testMesh2 = affectMat.getSupportMesh()
+test.assertEqual( testMesh2.getType(), "MAILLAGE_P" )
+
+affectMat.addMaterialOnAllMesh( acier )
+affectMat.build()
+
 charCine = code_aster.KinematicsLoad.create()
 charCine.setSupportModel(model)
-charCine.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dx, 0., "Bas")
+charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "COTE_B")
 charCine.build()
+
+study = code_aster.StudyDescription.create(model, affectMat)
+study.addKinematicsLoad(charCine)
+dProblem = code_aster.DiscreteProblem.create(study)
+#vectElem = dProblem.buildElementaryMechanicalLoadsVector()
+matr_elem = dProblem.computeMechanicalRigidityMatrix()
 
 test.printSummary()

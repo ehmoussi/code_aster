@@ -32,6 +32,7 @@
 #include "Modeling/Model.h"
 #include "Materials/Material.h"
 #include "DataFields/PCFieldOnMesh.h"
+#include "Meshes/ParallelMesh.h"
 
 /**
  * @class MaterialOnMeshInstance
@@ -59,7 +60,7 @@ class MaterialOnMeshInstance: public DataStructure
         /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
         listOfMatsAndGrps      _materialsOnMeshEntity;
         /** @brief Maillage sur lequel repose la sd_cham_mater */
-        MeshPtr                _supportMesh;
+        BaseMeshPtr            _supportMesh;
 
         /**
          * @brief Return a SyntaxMapContainer to emulate the command keywords
@@ -125,9 +126,21 @@ class MaterialOnMeshInstance: public DataStructure
 
         /**
          * @brief Definition du maillage support
-         * @param currentMesh objet MeshPtr sur lequel le modele reposera
+         * @param currentMesh objet MeshPtr sur lequel le materiau reposera
          */
         bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
+        {
+            if ( currentMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+            _supportMesh = currentMesh;
+            return true;
+        };
+
+        /**
+         * @brief Definition du maillage support
+         * @param currentMesh objet ParallelMeshPtr sur lequel le materiau reposera
+         */
+        bool setSupportMesh( ParallelMeshPtr& currentMesh ) throw ( std::runtime_error )
         {
             if ( currentMesh->isEmpty() )
                 throw std::runtime_error( "Mesh is empty" );
@@ -139,7 +152,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @brief Obtenir le maillage support
          * @return Maillage support du champ de materiau
          */
-        MeshPtr getSupportMesh() throw ( std::runtime_error )
+        BaseMeshPtr getSupportMesh() throw ( std::runtime_error )
         {
             if ( _supportMesh->isEmpty() )
                 throw std::runtime_error( "support mesh of current model is empty" );

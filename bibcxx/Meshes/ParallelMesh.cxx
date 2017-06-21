@@ -49,7 +49,7 @@ bool ParallelMeshInstance::readMedFile( const std::string& fileName )
     auto allgONNames = util.gatheringVectorsOnAllProcs( gONNames );
 
     for( auto& nameOfGrp : allgONNames )
-        _setOfAllGON.insert( nameOfGrp.toString() );
+        _setOfAllGON.insert( trim( nameOfGrp.toString() ) );
     _allGroupOfNodes->allocate( Permanent, _setOfAllGON.size() );
     int num = 0;
     for( auto& nameOfGrp : _setOfAllGON )
@@ -63,7 +63,7 @@ bool ParallelMeshInstance::readMedFile( const std::string& fileName )
     auto allgOENames = util.gatheringVectorsOnAllProcs( gOENames );
 
     for( auto& nameOfGrp : gOENames )
-        _setOfAllGOE.insert( nameOfGrp.toString() );
+        _setOfAllGOE.insert( trim( nameOfGrp.toString() ) );
     _allGroupOfEements->allocate( Permanent, _setOfAllGOE.size() );
     num = 0;
     for( auto& nameOfGrp : _setOfAllGOE )
