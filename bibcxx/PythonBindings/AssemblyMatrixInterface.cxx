@@ -30,6 +30,11 @@ void exportAssemblyMatrixToPython()
 {
     using namespace boost::python;
 
+    void (AssemblyMatrixDoubleInstance::*c1)(const DOFNumberingPtr&) =
+            &AssemblyMatrixDoubleInstance::setDOFNumbering;
+    void (AssemblyMatrixDoubleInstance::*c2)(const ParallelDOFNumberingPtr&) =
+            &AssemblyMatrixDoubleInstance::setDOFNumbering;
+
     class_< AssemblyMatrixDoubleInstance, AssemblyMatrixDoublePtr,
             bases< DataStructure > >
         ( "AssemblyMatrixDouble", no_init )
@@ -38,9 +43,15 @@ void exportAssemblyMatrixToPython()
         .def( "addKinematicsLoad", &AssemblyMatrixDoubleInstance::addKinematicsLoad )
         .def( "build", &AssemblyMatrixDoubleInstance::build )
         .def( "factorization", &AssemblyMatrixDoubleInstance::factorization )
-        .def( "setDOFNumbering", &AssemblyMatrixDoubleInstance::setDOFNumbering )
+        .def( "setDOFNumbering", c1 )
+        .def( "setDOFNumbering", c2 )
         .def( "setElementaryMatrix", &AssemblyMatrixDoubleInstance::setElementaryMatrix )
     ;
+
+    void (AssemblyMatrixComplexInstance::*c3)(const DOFNumberingPtr&) =
+            &AssemblyMatrixComplexInstance::setDOFNumbering;
+    void (AssemblyMatrixComplexInstance::*c4)(const ParallelDOFNumberingPtr&) =
+            &AssemblyMatrixComplexInstance::setDOFNumbering;
 
     class_< AssemblyMatrixComplexInstance, AssemblyMatrixComplexPtr,
             bases< DataStructure > >
@@ -50,7 +61,8 @@ void exportAssemblyMatrixToPython()
         .def( "addKinematicsLoad", &AssemblyMatrixComplexInstance::addKinematicsLoad )
         .def( "build", &AssemblyMatrixComplexInstance::build )
         .def( "factorization", &AssemblyMatrixComplexInstance::factorization )
-        .def( "setDOFNumbering", &AssemblyMatrixComplexInstance::setDOFNumbering )
+        .def( "setDOFNumbering", c3 )
+        .def( "setDOFNumbering", c4 )
         .def( "setElementaryMatrix", &AssemblyMatrixComplexInstance::setElementaryMatrix )
     ;
 };

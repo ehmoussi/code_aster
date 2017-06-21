@@ -130,6 +130,16 @@ public:
     ElementaryMatrixPtr buildElementaryTangentMatrix( double time = 0. );
 
     ElementaryMatrixPtr buildElementaryJacobianMatrix( double time = 0. );
+
+    /**
+     * @brief Construction d'un vecteur de chargement cinématique
+     * @return Booleen indiquant que tout s'est bien passe
+     */
+    FieldOnNodesDoublePtr buildKinematicsLoad( const DOFNumberingPtr& curDOFNum,
+                                               const double& time,
+                                               const JeveuxMemory& memType = Permanent )
+        const throw ( std::runtime_error );
+
     /**
      * @brief Détermination de la numérotation de ddl
      * @return Numérotation du problème discret

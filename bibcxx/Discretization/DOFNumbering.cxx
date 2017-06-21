@@ -27,17 +27,19 @@
 #include "Discretization/DOFNumbering.h"
 #include "RunManager/CommandSyntaxCython.h"
 
-DOFNumberingInstance::DOFNumberingInstance( const JeveuxMemory memType ):
-            DataStructure( getNewResultObjectName(), "NUME_DDL", memType ),
+BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string& type,
+                                                    const JeveuxMemory memType ):
+            DataStructure( getNewResultObjectName(), type, memType ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + "      .NSLV" ) ),
             _supportModel( ModelPtr() ),
-            _linearSolver( new LinearSolverInstance( MultFront, Metis ) ),
             _listOfLoads( new ListOfLoadsInstance() ),
             _isEmpty( true )
 {};
 
-DOFNumberingInstance::DOFNumberingInstance( const std::string name, const JeveuxMemory memType ):
-            DataStructure( name, "NUME_DDL", memType ),
+BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name,
+                                                    const std::string& type,
+                                                    const JeveuxMemory memType ):
+            DataStructure( name, type, memType ),
             _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
             _supportModel( ModelPtr() ),
             _listOfLoads( new ListOfLoadsInstance() ),
@@ -47,15 +49,12 @@ DOFNumberingInstance::DOFNumberingInstance( const std::string name, const Jeveux
         throw std::runtime_error( "Catastrophic error" );
 };
 
-bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
+bool BaseDOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
 {
     if ( _supportModel )
     {
         if ( _supportModel->isEmpty() )
             throw std::runtime_error( "Support Model is empty" );
-
-        if ( ! _linearSolver )
-            throw std::runtime_error( "Linear solver is undefined" );
 
         _listOfLoads->build();
         JeveuxVectorChar24 jvListOfLoads = _listOfLoads->getListVector();
@@ -75,8 +74,6 @@ bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
             throw std::runtime_error( "Support ElementaryMatrix is empty" );
 
         dict.container[ "MATR_RIGI" ] = _supportMatrix->getName();
-        dict.container[ "METHODE" ] = _linearSolver->getSolverName();
-        dict.container[ "RENUM" ] = _linearSolver->getRenumberingName();
 
         cmdSt.define( dict );
 
@@ -91,7 +88,7 @@ bool DOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
     return true;
 };
 
-FieldOnNodesDoublePtr DOFNumberingInstance::getEmptyFieldOnNodesDouble( const JeveuxMemory memType ) const
+FieldOnNodesDoublePtr BaseDOFNumberingInstance::getEmptyFieldOnNodesDouble( const JeveuxMemory memType ) const
     throw ( std::runtime_error )
 {
     FieldOnNodesDoublePtr retour( new FieldOnNodesDoubleInstance( memType ) );

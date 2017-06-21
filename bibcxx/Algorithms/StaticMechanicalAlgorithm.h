@@ -96,7 +96,6 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
     aMatrix->setElementaryMatrix( matrElem );
     aMatrix->setDOFNumbering( dofNum1 );
     aMatrix->setListOfLoads( _listOfLoads );
-    aMatrix->setLinearSolver( _linearSolver );
     aMatrix->build();
 
     // Matrix factorization
@@ -124,8 +123,8 @@ void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
     CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( _results->getName(), _results->getType() );
 
-    FieldOnNodesDoublePtr kineLoadsFON = _listOfLoads->buildKinematicsLoad( dofNum1, _time,
-                                                                            Temporary );
+    FieldOnNodesDoublePtr kineLoadsFON = _discreteProblem->buildKinematicsLoad( dofNum1, _time,
+                                                                                Temporary );
 
     FieldOnNodesDoublePtr resultField = _results->getEmptyFieldOnNodesDouble( "DEPL", 0 );
 

@@ -47,8 +47,8 @@
  * @brief But de cette ligne : casser la reference circulaire
  * @todo Attention includes circulaires entre AssemblyMatrix, DOFNumbering et LinearSolver
  */
-#include "Discretization/ForwardDOFNumbering.h"
-#include "LinearAlgebra/ForwardLinearSolver.h"
+#include "Discretization/DOFNumbering.h"
+#include "Discretization/ParallelDOFNumbering.h"
 
 /**
  * @class AssemblyMatrixInstance
@@ -75,9 +75,7 @@ class AssemblyMatrixInstance: public DataStructure
         /** @brief ElementaryMatrix sur lesquelles sera construit la matrice */
         ElementaryMatrixPtr           _elemMatrix;
         /** @brief Objet nume_ddl */
-        ForwardDOFNumberingPtr        _dofNum;
-        /** @brief Objet sd_solver */
-        ForwardLinearSolverPtr        _linSolv;
+        BaseDOFNumberingPtr           _dofNum;
         /** @brief La matrice est elle vide ? */
         bool                          _isEmpty;
         /** @brief Liste de charges cinematiques */
@@ -158,9 +156,18 @@ class AssemblyMatrixInstance: public DataStructure
 
         /**
          * @brief Methode permettant de definir la numerotation
-         * @param currentNum objet ForwardDOFNumbering
+         * @param currentNum objet DOFNumbering
          */
-        void setDOFNumbering( const ForwardDOFNumberingPtr& currentNum )
+        void setDOFNumbering( const DOFNumberingPtr& currentNum )
+        {
+            _dofNum = currentNum;
+        };
+
+        /**
+         * @brief Methode permettant de definir la numerotation
+         * @param currentNum objet ParallelDOFNumbering
+         */
+        void setDOFNumbering( const ParallelDOFNumberingPtr& currentNum )
         {
             _dofNum = currentNum;
         };
@@ -172,15 +179,6 @@ class AssemblyMatrixInstance: public DataStructure
         void setElementaryMatrix( const ElementaryMatrixPtr& currentElemMatrix )
         {
             _elemMatrix = currentElemMatrix;
-        };
-
-        /**
-         * @brief Methode permettant de definir le solveur linéaire
-         * @param currentLS objet ForwardLinearSolver
-         */
-        void setLinearSolver( const ForwardLinearSolverPtr& currentLS )
-        {
-            _linSolv = currentLS;
         };
 
         /**
@@ -236,18 +234,15 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
     else
         throw std::runtime_error( "Not yet implemented" );
 
-    if ( _dofNum.isEmpty() )
+    if ( _dofNum->isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
-
-    std::string solverName( " " );
-    if ( ! _linSolv.isEmpty() )
-        solverName = _linSolv.getName();
 
     std::string blanc( " " );
     std::string cumul( "ZERO" );
     long nbMatrElem = 1;
-    CALL_ASMATR( &nbMatrElem, _elemMatrix->getName().c_str(), blanc.c_str(), _dofNum.getName().c_str(),
-                 _listOfLoads->getName().c_str(), cumul.c_str(), "G", &type, getName().c_str() );
+    CALL_ASMATR( &nbMatrElem, _elemMatrix->getName().c_str(), blanc.c_str(),
+                 _dofNum->getName().c_str(), _listOfLoads->getName().c_str(),
+                 cumul.c_str(), "G", &type, getName().c_str() );
     _isEmpty = false;
 
     return true;
@@ -278,10 +273,6 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
 {
     if ( _isEmpty )
         throw std::runtime_error( "Assembly matrix is empty" );
-//     if ( ! _linSolv )
-//         throw std::runtime_error( "Linear solver is missing" );
-//     if ( _linSolv.isEmpty() )
-//         throw std::runtime_error( "Linear solver is empty" );
 
     CommandSyntaxCython cmdSt( "FACTORISER" );
     cmdSt.setResult( getName(), getType() );

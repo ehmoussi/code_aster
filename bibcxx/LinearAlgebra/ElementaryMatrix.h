@@ -52,6 +52,8 @@ private:
     JeveuxVectorChar24 _listOfElementaryResults;
     /** @brief Booleen indiquant si la sd est vide */
     bool               _isEmpty;
+    /** @brief Modele support */
+    ModelPtr           _supportModel;
 
 public:
     /**
@@ -89,6 +91,14 @@ public:
     };
 
     /**
+     * @brief Obtenir le modèle de l'étude
+     */
+    ModelPtr getSupportModel() const
+    {
+        return _supportModel;
+    };
+
+    /**
      * @brief Methode permettant de savoir si les matrices elementaires sont vides
      * @return true si les matrices elementaires sont vides
      */
@@ -104,6 +114,15 @@ public:
     void setEmpty( bool bEmpty )
     {
         _isEmpty = bEmpty;
+    };
+
+    /**
+     * @brief Methode permettant de definir le modele support
+     * @param currentModel Model support de la numerotation
+     */
+    void setSupportModel( const ModelPtr& currentModel )
+    {
+        _supportModel = currentModel;
     };
 
     friend class DiscreteProblemInstance;

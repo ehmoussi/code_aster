@@ -1,9 +1,6 @@
-#ifndef FORWARDDOFNUMBERINGINTERFACE_H_
-#define FORWARDDOFNUMBERINGINTERFACE_H_
-
 /**
- * @file ForwardDOFNumberingInterface.h
- * @brief Fichier entete de la classe ForwardDOFNumberingInterface
+ * @file ParallelDOFNumbering.cxx
+ * @brief Implementation de ParallelDOFNumberingInstance
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -24,9 +21,10 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "astercxx.h"
-#include "Discretization/ForwardDOFNumbering.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-void exportForwardDOFNumberingToPython();
+#include "Discretization/ParallelDOFNumbering.h"
 
-#endif /* FORWARDDOFNUMBERINGINTERFACE_H_ */
+#ifdef _USE_MPI
+
+#endif /* _USE_MPI */

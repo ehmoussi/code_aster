@@ -240,15 +240,6 @@ cdef public void debugPrintCommandSyntax():
 _F = dict
 
 
-#cdef public int testCythonException() except -1:
-    #cdef string name
-    #try:
-        #a = "%d       "%1
-        #name = a[:8]
-        #return 0
-    #except:
-        #raise
-
 cdef public string getNewResultObjectName():
     """Return a new result name
     The first one is "0       ", then "1       ", etc.
