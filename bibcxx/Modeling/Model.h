@@ -30,6 +30,7 @@
 #include "astercxx.h"
 #include "DataStructures/DataStructure.h"
 #include "Meshes/Mesh.h"
+#include "Meshes/ParallelMesh.h"
 #include "Modeling/ElementaryModeling.h"
 #include "Modeling/XfemCrack.h"
 #include <map>
@@ -64,11 +65,11 @@ const int nbGraphPartitioner = 2;
 extern const char* const GraphPartitionerNames[nbGraphPartitioner];
 
 /**
- * @class BaseModelInstance
+ * @class ModelInstance
  * @brief Produit une sd identique a celle produite par AFFE_MODELE
  * @author Nicolas Sellenet
  */
-class BaseModelInstance: public DataStructure
+class ModelInstance: public DataStructure
 {
     protected:
         // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
@@ -117,12 +118,12 @@ class BaseModelInstance: public DataStructure
         /**
          * @brief Forward declaration for the XFEM enrichment
          */
-        typedef boost::shared_ptr< BaseModelInstance > BaseModelPtr;
+        typedef boost::shared_ptr< ModelInstance > ModelPtr;
 
         /**
          * @brief Constructeur
          */
-        BaseModelInstance();
+        ModelInstance();
 
         /**
          * @brief Ajout d'une nouvelle modelisation sur tout le maillage
@@ -146,7 +147,7 @@ class BaseModelInstance: public DataStructure
         {
             if ( ! _supportBaseMesh ) throw std::runtime_error( "Support mesh is not defined" );
             if ( ! _supportBaseMesh->hasGroupOfElements( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+                throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
                                             MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
@@ -163,7 +164,7 @@ class BaseModelInstance: public DataStructure
         {
             if ( ! _supportBaseMesh ) throw std::runtime_error( "Support mesh is not defined" );
             if ( ! _supportBaseMesh->hasGroupOfNodes( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+                throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
             _modelisations.push_back( listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
                                             MeshEntityPtr( new GroupOfNodes(nameOfGroup) ) ) );
@@ -174,6 +175,19 @@ class BaseModelInstance: public DataStructure
          * @return booleen indiquant que la construction s'est bien deroulee
          */
         virtual bool build() throw ( std::runtime_error );
+
+        /**
+         * @brief Definition du maillage support
+         * @param currentMesh objet MeshPtr sur lequel le modele reposera
+         */
+        ModelPtr enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::runtime_error );
+
+        BaseMeshPtr getSupportMesh() throw ( std::runtime_error )
+        {
+            if ( ( ! _supportBaseMesh ) || _supportBaseMesh->isEmpty() )
+                throw std::runtime_error( "Support mesh of current model is empty" );
+            return _supportBaseMesh;
+        };
 
         /**
          * @brief Methode permettant de savoir si le modele est vide
@@ -200,58 +214,31 @@ class BaseModelInstance: public DataStructure
         {
             _splitMethod = split;
         };
+
+        /**
+         * @brief Definition du maillage support
+         * @param currentMesh objet MeshPtr sur lequel le modele reposera
+         */
+        bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
+        {
+            if ( currentMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+            _supportBaseMesh = currentMesh;
+            return true;
+        };
+
+        /**
+         * @brief Definition du maillage support
+         * @param currentMesh objet MeshPtr sur lequel le modele reposera
+         */
+        bool setSupportMesh( ParallelMeshPtr& currentMesh ) throw ( std::runtime_error )
+        {
+            if ( currentMesh->isEmpty() )
+                throw std::runtime_error( "Mesh is empty" );
+            _supportBaseMesh = currentMesh;
+            return true;
+        };
 };
-
-/**
- * @class ModelInstance
- * @brief Produit une sd identique a celle produite par AFFE_MODELE
- * @author Nicolas Sellenet
- */
-class ModelInstance: public BaseModelInstance
-{
-private:
-    /** @brief Maillage sur lequel repose la modelisation */
-    MeshPtr _supportMesh;
-
-public:
-    /**
-     * @brief Forward declaration for the XFEM enrichment
-     */
-    typedef boost::shared_ptr< ModelInstance > ModelPtr;
-
-    /**
-     * @brief Definition du maillage support
-     * @param currentMesh objet MeshPtr sur lequel le modele reposera
-     */
-    ModelPtr enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::runtime_error );
-
-    MeshPtr getSupportMesh() throw ( std::runtime_error )
-    {
-        if ( ( ! _supportMesh ) || _supportMesh->isEmpty() )
-            throw std::runtime_error( "Support mesh of current model is empty" );
-        return _supportMesh;
-    };
-
-    /**
-     * @brief Definition du maillage support
-     * @param currentMesh objet MeshPtr sur lequel le modele reposera
-     */
-    bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
-    {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Mesh is empty" );
-        _supportBaseMesh = currentMesh;
-        _supportMesh = currentMesh;
-        return true;
-    };
-};
-
-
-/**
- * @typedef BaseModel
- * @brief Pointeur intelligent vers un BaseModelInstance
- */
-typedef boost::shared_ptr< BaseModelInstance > BaseModelPtr;
 
 /**
  * @typedef Model

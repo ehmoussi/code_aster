@@ -373,7 +373,7 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
             throw std::runtime_error( "Model is empty" );
 
         // Get the type of MeshEntity
-        MeshPtr currentMesh= _supportModel->getSupportMesh();
+        BaseMeshPtr currentMesh= _supportModel->getSupportMesh();
         // If the support MeshEntity is not given, the quantity is set on the whole mesh
         if ( nameOfGroup.size() == 0  && Traits::isAllowedOnWholeMesh )
         {

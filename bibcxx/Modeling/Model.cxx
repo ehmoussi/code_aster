@@ -1,6 +1,6 @@
 /**
  * @file Model.cxx
- * @brief Implementation de BaseModelInstance
+ * @brief Implementation de ModelInstance
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -36,7 +36,7 @@ const char* const ModelSiplitingMethodNames[nbModelSiplitingMethod] = { "CENTRAL
                                                                         "GROUP_ELEM" };
 const char* const GraphPartitionerNames[nbGraphPartitioner] = { "SCOTCH", "METIS" };
 
-BaseModelInstance::BaseModelInstance(): DataStructure( getNewResultObjectName(), "MODELE" ),
+ModelInstance::ModelInstance(): DataStructure( getNewResultObjectName(), "MODELE" ),
                                 _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
                                 _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
                                 _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
@@ -46,7 +46,7 @@ BaseModelInstance::BaseModelInstance(): DataStructure( getNewResultObjectName(),
                                 _isEmpty( true )
 {};
 
-SyntaxMapContainer BaseModelInstance::buildModelingsSyntaxMapContainer() const
+SyntaxMapContainer ModelInstance::buildModelingsSyntaxMapContainer() const
 {
     SyntaxMapContainer dict;
 
@@ -81,7 +81,7 @@ SyntaxMapContainer BaseModelInstance::buildModelingsSyntaxMapContainer() const
     return dict;
 };
 
-bool BaseModelInstance::buildWithSyntax( SyntaxMapContainer& dict )
+bool ModelInstance::buildWithSyntax( SyntaxMapContainer& dict )
     throw ( std::runtime_error )
 {
     CommandSyntaxCython cmdSt( "AFFE_MODELE" );
@@ -105,9 +105,17 @@ bool BaseModelInstance::buildWithSyntax( SyntaxMapContainer& dict )
     return true;
 };
 
-bool BaseModelInstance::build() throw ( std::runtime_error )
+bool ModelInstance::build() throw ( std::runtime_error )
 {
     SyntaxMapContainer dict = buildModelingsSyntaxMapContainer();
+    if( _supportBaseMesh->isParallel() )
+    {
+        ListSyntaxMapContainer listeDISTRIBUTION;
+        SyntaxMapContainer dict2;
+        dict2.container["METHODE"] = ModelSiplitingMethodNames[ (int)Centralized ];
+        listeDISTRIBUTION.push_back( dict2 );
+        dict.container["DISTRIBUTION"] = listeDISTRIBUTION;
+    }
 
     return buildWithSyntax( dict );
 };

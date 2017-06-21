@@ -91,7 +91,7 @@ public:
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */
-    bool hasParallelGroupOfElements( const std::string& name ) const
+    bool hasGroupOfElements( const std::string& name ) const
     {
         SetOfStringCIter curIter = _setOfAllGOE.find( name );
         if( curIter != _setOfAllGOE.end() )
@@ -103,12 +103,21 @@ public:
      * @brief Teste l'existence d'un groupe de noeuds dans le maillage
      * @return true si le groupe existe
      */
-    bool hasParallelGroupOfNodes( const std::string& name ) const
+    bool hasGroupOfNodes( const std::string& name ) const
     {
         SetOfStringCIter curIter = _setOfAllGON.find( name );
         if( curIter != _setOfAllGON.end() )
             return true;
         return false;
+    };
+
+    /**
+     * @brief Fonction permettant de savoir si un maillage est parallel
+     * @return retourne true si le maillage est parallel
+     */
+    virtual bool isParallel() const
+    {
+        return true;
     };
 
     /**

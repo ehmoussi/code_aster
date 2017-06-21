@@ -22,6 +22,7 @@
  */
 
 #include "PythonBindings/KinematicsLoadInterface.h"
+#include "PythonBindings/SharedPtrUtilities.h"
 #include <boost/python.hpp>
 
 void exportKinematicsLoadToPython()
@@ -66,7 +67,7 @@ void exportKinematicsLoadToPython()
 
     class_< KinematicsLoadInstance, KinematicsLoadInstance::KinematicsLoadPtr,
             bases< DataStructure > > ( "KinematicsLoad", no_init )
-        .def( "create", &KinematicsLoadInstance::create )
+        .def( "create", &createSharedPtr< KinematicsLoadInstance > )
         .staticmethod( "create" )
         .def( "addImposedMechanicalDOFOnElements", c1 )
         .def( "addImposedMechanicalDOFOnElements", c2 )

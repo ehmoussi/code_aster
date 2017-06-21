@@ -29,6 +29,12 @@ void exportMaterialOnMeshToPython()
 {
     using namespace boost::python;
 
+    bool (MaterialOnMeshInstance::*c1)( MeshPtr& currentMesh ) =
+            &MaterialOnMeshInstance::setSupportMesh;
+
+    bool (MaterialOnMeshInstance::*c2)( ParallelMeshPtr& currentMesh ) =
+            &MaterialOnMeshInstance::setSupportMesh;
+
     class_< MaterialOnMeshInstance, MaterialOnMeshInstance::MaterialOnMeshPtr,
             bases< DataStructure > > ( "MaterialOnMesh", no_init )
         .def( "create", &createSharedPtr< MaterialOnMeshInstance > )
@@ -36,7 +42,8 @@ void exportMaterialOnMeshToPython()
         .def( "addMaterialOnAllMesh", &MaterialOnMeshInstance::addMaterialOnAllMesh )
         .def( "addMaterialOnGroupOfElements",
               &MaterialOnMeshInstance::addMaterialOnGroupOfElements )
-        .def( "setSupportMesh", &MaterialOnMeshInstance::setSupportMesh )
+        .def( "setSupportMesh", c1 )
+        .def( "setSupportMesh", c2 )
         .def( "getSupportMesh", &MaterialOnMeshInstance::getSupportMesh )
         .def( "build", &MaterialOnMeshInstance::build )
     ;

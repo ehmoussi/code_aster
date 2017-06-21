@@ -62,7 +62,7 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
         return;
     mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
     if ( curIter == mapNameDataStructure.end() )
-        throw std::runtime_error( "Problem !!!" );
+        throw std::runtime_error( "Problem !!! " + nameWithoutBlanks );
     mapNameDataStructure.erase( curIter );
 #ifdef _DEBUG_CXX
     std::string base( " " );
@@ -102,6 +102,6 @@ char* getSDType( char* nom )
     std::string nameWithoutBlanks = trim( nom );
     mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
     if ( curIter == mapNameDataStructure.end() )
-        throw std::runtime_error( "Problem !!!" );
+        throw std::runtime_error( "SD not registered: " + nameWithoutBlanks + " T" );
     return const_cast< char* >( curIter->second->getType().c_str() );
 };

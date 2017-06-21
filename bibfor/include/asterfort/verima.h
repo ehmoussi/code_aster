@@ -16,10 +16,11 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine verima(nomz, limanz, lonlim, typz)
+    subroutine verima(nomz, limanz, lonlim, typz, nbval)
         integer :: lonlim
-        character(len=*) :: nomz
-        character(len=*) :: limanz(lonlim)
-        character(len=*) :: typz
+        integer, optional :: nbval
+        character(*) :: nomz
+        character(*) :: limanz(lonlim)
+        character(*) :: typz
     end subroutine verima
 end interface

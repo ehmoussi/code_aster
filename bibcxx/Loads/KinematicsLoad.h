@@ -32,11 +32,11 @@
 #include "Loads/UnitaryLoad.h"
 
 /**
- * @class BaseKinematicsLoadInstance
+ * @class KinematicsLoadInstance
  * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
  * @author Nicolas Sellenet
  */
-class BaseKinematicsLoadInstance: public DataStructure
+class KinematicsLoadInstance: public DataStructure
 {
     protected:
         /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
@@ -64,7 +64,13 @@ class BaseKinematicsLoadInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        BaseKinematicsLoadInstance();
+        KinematicsLoadInstance();
+
+        /**
+         * @typedef KinematicsLoadPtr
+         * @brief Pointeur intelligent vers un KinematicsLoad
+         */
+        typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
 
         /**
          * @brief Ajout d'une valeur acoustique imposee sur un groupe de mailles
@@ -105,7 +111,7 @@ class BaseKinematicsLoadInstance: public DataStructure
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw std::runtime_error( "The support model is empty" );
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+                throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
@@ -143,8 +149,8 @@ class BaseKinematicsLoadInstance: public DataStructure
             // ne sont pas vides
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw std::runtime_error( "The support model is empty" );
-            if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+            if ( ! _supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
+                throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
             DoubleLoadDisplacement resu( meshEnt, coordinate, value );
@@ -183,7 +189,7 @@ class BaseKinematicsLoadInstance: public DataStructure
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw std::runtime_error( "The support model is empty");
             if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+                throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
             DoubleLoadTemperature resu( meshEnt, coordinate, value );
@@ -221,8 +227,8 @@ class BaseKinematicsLoadInstance: public DataStructure
             // ne sont pas vides
             if ( ( ! _supportModel ) || _supportModel->isEmpty() )
                 throw std::runtime_error( "The support model is empty" );
-            if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+            if ( ! _supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
+                throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
             MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
             DoubleLoadTemperature resu( meshEnt, coordinate, value );
@@ -266,27 +272,10 @@ class BaseKinematicsLoadInstance: public DataStructure
 };
 
 /**
- * @class KinematicsLoadInstance
- * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
- * @author Nicolas Sellenet
+ * @typedef KinematicsLoad
+ * @brief Pointeur intelligent vers un KinematicsLoadInstance
  */
-class KinematicsLoadInstance: public BaseKinematicsLoadInstance
-{
-public:
-    /**
-     * @typedef KinematicsLoadPtr
-     * @brief Pointeur intelligent vers un KinematicsLoad
-     */
-    typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
-
-    /**
-     * @brief Constructeur
-     */
-    static KinematicsLoadPtr create()
-    {
-        return KinematicsLoadPtr( new KinematicsLoadInstance );
-    };
-};
+typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
 
 /**
  * @typedef KinematicsLoad

@@ -121,7 +121,7 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
                 throw std::runtime_error( "Model is empty" );
             // Define the support Mesh Entity 
             MeshEntityPtr supportMeshEntity; 
-            MeshPtr currentMesh= _supportModel->getSupportMesh();
+            BaseMeshPtr currentMesh= _supportModel->getSupportMesh();
             // If the support MeshEntity is not given, the behaviour is set on the whole mesh
             if ( nameOfGroup.size() == 0  )
             {

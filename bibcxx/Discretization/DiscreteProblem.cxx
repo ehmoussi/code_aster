@@ -210,6 +210,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryMechanicalLoadsVecto
 
     SyntaxMapContainer dict;
     dict.container[ "OPTION" ] = "CHAR_MECA";
+    dict.container[ "MODELE" ] = _study->getSupportModel()->getName();
 
     if( _study->getMaterialOnMesh() )
         dict.container[ "CHAM_MATER" ] = _study->getMaterialOnMesh()->getName();

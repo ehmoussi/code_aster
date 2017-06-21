@@ -40,20 +40,22 @@ void exportModelToPython()
 //         .value( "Metis", MetisPartitioner )
 //         ;
 
-    class_< BaseModelInstance, BaseModelInstance::BaseModelPtr,
-            bases< DataStructure > > ( "BaseModel", no_init )
-        .def( "addModelingOnAllMesh", &BaseModelInstance::addModelingOnAllMesh )
-        .def( "addModelingOnGroupOfElements", &BaseModelInstance::addModelingOnGroupOfElements )
-        .def( "addModelingOnGroupOfNodes", &BaseModelInstance::addModelingOnGroupOfNodes )
-    ;
+    bool (ModelInstance::*c1)(MeshPtr&) =
+            &ModelInstance::setSupportMesh;
+    bool (ModelInstance::*c2)(ParallelMeshPtr&) =
+            &ModelInstance::setSupportMesh;
 
     class_< ModelInstance, ModelInstance::ModelPtr,
-            bases< BaseModelInstance > > ( "Model", no_init )
+            bases< DataStructure > > ( "Model", no_init )
         .def( "create", &createSharedPtr< ModelInstance > )
         .staticmethod( "create" )
-        .def( "build", &BaseModelInstance::build )
+        .def( "addModelingOnAllMesh", &ModelInstance::addModelingOnAllMesh )
+        .def( "addModelingOnGroupOfElements", &ModelInstance::addModelingOnGroupOfElements )
+        .def( "addModelingOnGroupOfNodes", &ModelInstance::addModelingOnGroupOfNodes )
+        .def( "build", &ModelInstance::build )
         .def( "enrichWithXfem", &ModelInstance::enrichWithXfem )
         .def( "getSupportMesh", &ModelInstance::getSupportMesh )
-        .def( "setSupportMesh", &ModelInstance::setSupportMesh )
+        .def( "setSupportMesh", c1 )
+        .def( "setSupportMesh", c2 )
     ;
 };
