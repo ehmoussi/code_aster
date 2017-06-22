@@ -1,0 +1,288 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# CAS_TEST__:SDLL126E
+#
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'), PAR_LOT='NON')
+
+MAIL=LIRE_MAILLAGE(FORMAT="ASTER",);
+
+MODELE=AFFE_MODELE(MAILLAGE=MAIL,
+                   AFFE=(_F(GROUP_MA='ROTOR',
+                            PHENOMENE='MECANIQUE',
+                            MODELISATION='POU_D_T',),
+                         _F(GROUP_MA=('PALIER_A','PALIER_E','DISQUE1','DISQUE2','DISQUE3',),
+                            PHENOMENE='MECANIQUE',
+                            MODELISATION='DIS_TR',),),);
+
+ACIER=DEFI_MATERIAU(ELAS=_F(E=2.0E11,
+                            NU=0.3,
+                            RHO=7800.0,),);
+
+CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(GROUP_MA='ROTOR',
+                            MATER=ACIER,),);
+
+CARELEM=AFFE_CARA_ELEM(MODELE=MODELE,
+                       POUTRE=_F(GROUP_MA='ROTOR',
+                                 SECTION='CERCLE',
+                                 CARA='R',
+                                 VALE=.05,
+                                 ),
+                       DISCRET=(_F(CARA='K_TR_D_N',
+                                   GROUP_MA='PALIER_A',
+                                   REPERE='LOCAL',
+                                   VALE=(0.,5.E7,7.E7,0.,0.,0.,),),
+                                _F(CARA='M_TR_D_N',
+                                   GROUP_MA='PALIER_A',
+                                   REPERE='LOCAL',
+                                   VALE=(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),
+                                _F(CARA='K_TR_D_N',
+                                   GROUP_MA='PALIER_E',
+                                   REPERE='LOCAL',
+                                   VALE=(0.,5.E7,7.E7,0.,0.,0.,),),
+                                _F(CARA='M_TR_D_N',
+                                   GROUP_MA='PALIER_E',
+                                   REPERE='LOCAL',
+                                   VALE=(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),
+                                _F(CARA='A_TR_D_N',
+                                   GROUP_MA='PALIER_A',
+                                   REPERE='LOCAL',
+                                   VALE=(0.,5000.,7000.,0.,0.,0.,),),
+                                _F(CARA='A_TR_D_N',
+                                   GROUP_MA='PALIER_E',
+                                   REPERE='LOCAL',
+                                   VALE=(0.,5000.,7000.,0.,0.,0.,),),
+                                _F(CARA='M_TR_D_N',
+                                   GROUP_MA='DISQUE1',
+                                   REPERE='LOCAL',
+                                   VALE=(14.580130,0.1232021,0.06463858,0.06463858,0.,0.,0.,0.,0.,0.,),),
+                                _F(CARA='M_TR_D_N',
+                                   GROUP_MA='DISQUE2',
+                                   REPERE='LOCAL',
+                                   VALE=(45.945793,0.97634809,0.4977460,0.4977460,0.,0.,0.,0.,0.,0.,),),
+                                _F(CARA='M_TR_D_N',
+                                   GROUP_MA='DISQUE3',
+                                   REPERE='LOCAL',
+                                   VALE=(55.134951,1.1716177,0.6023493,0.6023493,0.,0.,0.,0.,0.,0.,),),),
+                      ORIENTATION=_F(GROUP_MA=('DISQUE1','DISQUE2','DISQUE3','PALIER_A','PALIER_E'),
+                                      CARA='ANGL_NAUT',
+                                      VALE=(0.,-90.,0.,),),);
+
+BLOQUAGE=AFFE_CHAR_MECA(MODELE=MODELE,
+                        DDL_IMPO=(_F(GROUP_NO='PALIER_A',
+                                     DZ=0.0,),
+                                  _F(GROUP_MA='ROTOR',
+                                     DRZ=0.0,),
+                                  _F(NOEUD='N1',DX=0.0,DY=0.0,),
+                                  _F(NOEUD='N14',DX=0.0,DY=0.0,),
+                                     ),);
+
+balou = 0.05;
+
+
+FUN=DEFI_CONSTANTE(VALE=1.0,);
+NTRIM = 15000.0;
+
+FREQ = (NTRIM / 60.0);
+
+OM = ((FREQ * 2) * pi);
+
+bal_FY=AFFE_CHAR_MECA(MODELE=MODELE,
+                      FORCE_NODALE=_F(GROUP_NO='N_DIS2',
+                                      FY=(balou * (OM ** 2)),),);
+
+bal_FX=AFFE_CHAR_MECA(MODELE=MODELE,
+                      FORCE_NODALE=_F(GROUP_NO='N_DIS2',
+                                      FX=(balou * (OM ** 2)),),);
+ASSEMBLAGE(MODELE=MODELE,
+                CHAM_MATER=CHMAT,
+                CARA_ELEM=CARELEM,
+                CHARGE=BLOQUAGE,
+                NUME_DDL=CO('NUMEDDL'),
+                MATR_ASSE=(_F(MATRICE=CO('RIGIDITE'),
+                              OPTION='RIGI_MECA',),
+                           _F(MATRICE=CO('MASSE'),
+                              OPTION='MASS_MECA',),
+                           _F(MATRICE=CO('MASDIAG'),
+                              OPTION='MASS_MECA_DIAG',),
+                           _F(MATRICE=CO('GYRO'),
+                              OPTION='MECA_GYRO',),
+                           _F(MATRICE=CO('AMOR'),
+                              OPTION='AMOR_MECA',),),
+                VECT_ASSE=(_F(VECTEUR=CO("bal_Yass"),
+                              OPTION='CHAR_MECA',
+                              CHARGE=bal_FY),
+                           _F(VECTEUR=CO("bal_Xass"),
+                              OPTION='CHAR_MECA',
+                              CHARGE=bal_FX),
+                           ),
+            );
+
+
+
+AMOGYRO=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=GYRO,
+                                  COEF_R=OM,),
+                               _F(MATR_ASSE=AMOR,
+                                  COEF_R=1.0,),),);
+
+
+BASE=CALC_MODES(MATR_RIGI=RIGIDITE,
+                MATR_MASS=MASSE,
+                MATR_AMOR=AMOGYRO,
+                   OPTION='CENTRE',
+                CALC_FREQ=_F(NMAX_FREQ=10,FREQ=250.,),);
+
+
+
+tabm=RECU_TABLE(CO=BASE,NOM_PARA=('NUME_MODE', 'FREQ'),);
+tab=tabm.EXTR_TABLE()
+freq=tab.FREQ
+nb_mode=len(freq);
+CHMOD  = [None]*nb_mode
+BR  = [None]*nb_mode
+BI  = [None]*nb_mode
+for k in range(nb_mode):
+    CHMOD[k]=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_C',RESULTAT=BASE,NOM_CHAM='DEPL',NUME_ORDRE=k+1)
+    BR[k]=CREA_CHAMP(OPERATION='C2R', TYPE_CHAM='NOEU_DEPL_R', CHAM_GD=CHMOD[k], PARTIE='REEL');
+    BI[k]=CREA_CHAMP(OPERATION='C2R', TYPE_CHAM='NOEU_DEPL_R', CHAM_GD=CHMOD[k], PARTIE='IMAG');
+
+champr = []
+champi = []
+for k in range(nb_mode):
+    champr.append({ 'CHAM_GD':BR[k],
+                    'NUME_MODE': k+1,
+                     })
+    champi.append({ 'CHAM_GD':BI[k],
+                    'NUME_MODE': k+1,
+                     })
+
+BASER = CREA_RESU(OPERATION='AFFE',TYPE_RESU='MODE_MECA',AFFE=champr,NOM_CHAM='DEPL',)
+BASEI = CREA_RESU(OPERATION='AFFE',TYPE_RESU='MODE_MECA',AFFE=champi,NOM_CHAM='DEPL',)
+
+MDST1=MODE_STATIQUE(MATR_RIGI=RIGIDITE,
+                   MATR_MASS=MASSE,
+                   MODE_STAT=_F(NOEUD='N1',AVEC_CMP=('DX','DY'),),
+                   SOLVEUR=_F(RENUM='METIS',
+                              STOP_SINGULIER='NON',
+                              NPREC=8,
+                              METHODE='MULT_FRONT',),
+                                );
+
+
+MDST2=MODE_STATIQUE(MATR_RIGI=RIGIDITE,
+                   MATR_MASS=MASSE,
+                   MODE_STAT=_F(NOEUD='N14',AVEC_CMP=('DX','DY'),),
+                   SOLVEUR=_F(RENUM='METIS',
+                              STOP_SINGULIER='NON',
+                              NPREC=8,
+                              METHODE='MULT_FRONT',),
+                                );
+
+
+BASET=DEFI_BASE_MODALE(RITZ=(
+                              _F(MODE_MECA=(BASER,BASEI,MDST1,MDST2),
+                                 NMAX_MODE=(999,999,2,2),),
+                            ),
+                      NUME_REF=NUMEDDL,
+                      ORTHO='OUI',MATRICE=MASSE,
+                      INFO=1,);
+
+NUMGE=NUME_DDL_GENE(BASE=BASET,STOCKAGE='PLEIN',);
+
+
+
+MG=PROJ_MATR_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,MATR_ASSE=MASSE,);
+KG=PROJ_MATR_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,MATR_ASSE=RIGIDITE,);
+CG=PROJ_MATR_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,MATR_ASSE=AMOGYRO,);
+
+FHGX=PROJ_VECT_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,VECT_ASSE=bal_Xass,);
+FHGY=PROJ_VECT_BASE(BASE=BASET,NUME_DDL_GENE=NUMGE,VECT_ASSE=bal_Yass,);
+
+GHAM=DYNA_VIBRA(TYPE_CALCUL='HARM',
+                BASE_CALCUL='GENE',
+                  MATR_MASS=MG,
+                  MATR_RIGI=KG,
+                  MATR_AMOR=CG,
+                       FREQ=FREQ,
+                      EXCIT=(_F(VECT_ASSE_GENE=FHGX,COEF_MULT=1,PHAS_DEG=0.0,),
+                             _F(VECT_ASSE_GENE=FHGY,COEF_MULT=1,PHAS_DEG=-90.0,),
+                                   ),
+                              );
+
+
+DHAM=REST_GENE_PHYS(RESU_GENE=GHAM,NOM_CHAM='DEPL');
+
+
+DX_DIS2=RECU_FONCTION(RESULTAT=DHAM,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   GROUP_NO='N_DIS2',);
+
+DY_DIS2=RECU_FONCTION(RESULTAT=DHAM,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   GROUP_NO='N_DIS2',);
+
+MOD_X_D2=CALC_FONCTION(EXTRACTION=_F(FONCTION=DX_DIS2,
+                                     PARTIE='MODULE',),);
+
+MOD_Y_D2=CALC_FONCTION(EXTRACTION=_F(FONCTION=DY_DIS2,
+                                     PARTIE='MODULE',),);
+
+PHA_X_D2=CALC_FONCTION(EXTRACTION=_F(FONCTION=DX_DIS2,
+                                     PARTIE='PHASE',),);
+
+PHA_Y_D2=CALC_FONCTION(EXTRACTION=_F(FONCTION=DY_DIS2,
+                                     PARTIE='PHASE',),);
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=5.719758862700E-04,
+                        VALE_REFE=5.7209999999999997E-4,
+                        VALE_PARA=250.0,
+                        REFERENCE='AUTRE_ASTER',
+                        FONCTION=MOD_Y_D2,
+                        TOLE_MACHINE=3.0E-5,), #TODO TOLE_MACHINE
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=7.021222336860E-04,
+                        VALE_REFE=7.0229999999999999E-4,
+                        VALE_PARA=250.0,
+                        REFERENCE='AUTRE_ASTER',
+                        FONCTION=MOD_X_D2,
+                        TOLE_MACHINE=7.0E-5,), #TODO TOLE_MACHINE
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=97.91353304649,
+                        VALE_REFE=97.920000000000002,
+                        VALE_PARA=250.0,
+                        REFERENCE='AUTRE_ASTER',
+                        FONCTION=PHA_Y_D2,
+                        TOLE_MACHINE=5.0E-5,), #TODO TOLE_MACHINE
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=-173.9231999123,
+                        VALE_REFE=-173.91,
+                        VALE_PARA=250.0,
+                        REFERENCE='AUTRE_ASTER',
+                        FONCTION=PHA_X_D2,
+                        TOLE_MACHINE=3.0E-5,), #TODO TOLE_MACHINE
+              )
+
+FIN()
