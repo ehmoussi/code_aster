@@ -1,4 +1,21 @@
-# coding: utf-8
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
 """
 Configuration for athosdev + Intel MPI
@@ -11,7 +28,7 @@ waf_mpi install -p
 
 import eole
 ASTER_ROOT = eole.ASTER_ROOT
-YAMMROOT = eole.YAMMROOT 
+YAMMROOT = eole.YAMMROOT
 
 def configure(self):
     opts = self.options
@@ -19,9 +36,9 @@ def configure(self):
     # parallel must be set before calling intel.configure() to use MPI wrappers
     opts.parallel = True
     eole.configure(self)
-    self.env['ADDMEM'] = 400
+    self.env['ADDMEM'] = 800
 
-    self.env.append_value('OPT_ENV', [
+    self.env.append_value('OPT_ENV_FOOTER', [
         'module load impi/2016.3.068'])
 
     self.env.prepend_value('LIBPATH', [
@@ -45,6 +62,5 @@ def configure(self):
     # allow to compile the elements catalog using the executable on one processor
     self.env['CATALO_CMD'] = 'I_MPI_FABRICS=shm'
     # produce an executable file with symbols for INTEL16 with mpiifort wrapper
-    self.env.append_value('LINKFLAGS', ('-nostrip')) 
+    self.env.append_value('LINKFLAGS', ('-nostrip'))
     self.env.prepend_value('LINKFLAGS', ('-L/opt/intel/2016.0.047/impi/5.1.1.109/lib64'))
-

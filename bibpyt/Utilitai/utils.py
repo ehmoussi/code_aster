@@ -1,20 +1,22 @@
 # coding=utf-8
-# ======================================================================
-# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
-# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-# (AT YOUR OPTION) ANY LATER VERSION.
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
 #
-# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-# ======================================================================
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
 # person_in_charge: mathieu.courtois at edf.fr
 
 """
@@ -27,6 +29,7 @@ import re
 import time
 from functools import partial
 from subprocess import Popen
+import tempfile
 
 from Utilitai.string_utils import maximize_lines
 from Execution.strfunc import convert
@@ -178,6 +181,21 @@ def get_time():
     ct =  time.time()
     msec = (ct - long(ct)) * 1000
     return time.strftime('%H:%M:%S') + '.%03d' % msec
+
+def get_shared_tmpdir(prefix, default_dir=None):
+    """Return a shared temporary directory.
+
+    If asrun shared tmpdir is not known, use *default_dir*.
+    """
+    if getattr(get_shared_tmpdir, 'cache_run', None) is None:
+        from asrun.run import AsRunFactory
+        get_shared_tmpdir.cache_run = AsRunFactory()
+    run = get_shared_tmpdir.cache_run
+
+    shared_tmp = run.get('shared_tmp') or default_dir or os.getcwd()
+
+    tmpdir = tempfile.mkdtemp(dir=shared_tmp, prefix=prefix)
+    return tmpdir
 
 
 if __name__ == '__main__':

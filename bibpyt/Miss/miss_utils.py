@@ -1,20 +1,22 @@
 # coding=utf-8
-# ======================================================================
-# COPYRIGHT (C) 1991 - 2016  EDF R&D                  WWW.CODE-ASTER.ORG
-# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-# (AT YOUR OPTION) ANY LATER VERSION.
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
 #
-# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-# ======================================================================
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
 # person_in_charge: mathieu.courtois at edf.fr
 
 """Module d'utilitaires pour la gestion des calculs Miss3D.
@@ -31,6 +33,7 @@ import re
 import pprint
 from math import log
 import shutil
+import tempfile
 
 import numpy as NP
 
@@ -44,7 +47,7 @@ except ImportError:
 from Noyau.N_types import force_list
 from Utilitai.Utmess import UTMESS, ASSERT
 from Utilitai.transpose import transpose
-from Utilitai.utils import _printDBG
+from Utilitai.utils import get_shared_tmpdir, _printDBG
 
 dict_format = {
     'R': "15.6E",
@@ -81,7 +84,7 @@ class MISS_PARAMETER(object):
         # defauts hors du mot-clé PARAMETRE
         self._defaults = {
             '_INIDIR': initial_dir,
-            '_WRKDIR': osp.join(initial_dir, 'tmp_miss3d'),
+            '_WRKDIR': get_shared_tmpdir('tmp_miss3d', initial_dir),
             '_NBM_DYN': None,
             '_NBM_STAT': None,
             '_exec_Miss': False,
@@ -315,7 +318,7 @@ def l_coor_sort(l_coor):
                 for coor2 in l_coor_xyz1:
                     if abs(coor-coor2) < tole:
                         verif_tole = verif_tole and False
-                if  verif_tole:  
+                if  verif_tole:
                     l_coor_xyz1.append(coor)
         l_coor_xyz.append(l_coor_xyz1)
 
@@ -352,8 +355,8 @@ def verif_sol_homogene(tab):
             young = row['E']
             nu = row['NU']
             rho = row['RHO']
-            hyst = row['AMOR_HYST']            
+            hyst = row['AMOR_HYST']
         else:
             sol_homogene = sol_homogene and (row['E'] == young) and (row['NU'] == nu) and (row['RHO'] == rho) and (row['AMOR_HYST'] == hyst)
     vs = (young/(2.*(1.+nu)*rho))**.5
-    return sol_homogene, vs   
+    return sol_homogene, vs

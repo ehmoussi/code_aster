@@ -1,28 +1,28 @@
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+
 subroutine mecalc(option, modele, chdepl, chgeom, chmate,&
-                  chcara, chtemp, chtref, chtime, chnumc,&
+                  chcara, chtemp, chtref, chtime,&
                   chharm, chsig, cheps, chfreq, chmass,&
                   chmeta, charge, typcoe, alpha, calpha,&
                   chdynr, suropt, chelem, chelex, ligrel,&
                   base, ch1, ch2, chvari, compor,&
-                  chtese, chdese, nopase, typese, chacse,&
                   chstrx, codret)
-! ----------------------------------------------------------------------
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
-!
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
-!
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
 !
 !     - FONCTION REALISEE : APPEL A "CALCUL"
 !                           CALCUL DES CONTRAINTES ELEMENTAIRES
@@ -65,16 +65,17 @@ subroutine mecalc(option, modele, chdepl, chgeom, chmate,&
 #include "asterfort/jeexin.h"
 #include "asterfort/mecact.h"
 #include "asterfort/meceuc.h"
+#include "asterfort/deprecated_option.h"
 #include "asterfort/mechpo.h"
 #include "asterfort/utmess.h"
     character(len=*) :: option, modele, chdepl, chdynr, suropt, chelem, compor
     character(len=*) :: chgeom, chmate, chcara(*), chfreq, chmass, chsig, chtemp
-    character(len=*) :: chtref, chtime, chnumc, chharm, charge, cheps, chmeta
-    character(len=*) :: typcoe, ligrel, base, ch1, ch2, chvari, chacse, chelex
-    character(len=*) :: chdese, chtese, nopase, chstrx
+    character(len=*) :: chtref, chtime, chharm, charge, cheps, chmeta
+    character(len=*) :: typcoe, ligrel, base, ch1, ch2, chvari, chelex
+    character(len=*) :: chstrx
     real(kind=8) :: alpha
     complex(kind=8) :: calpha
-    integer :: typese, codret
+    integer :: codret
     character(len=6) :: nompro
     parameter (nompro='MECALC')
 !
@@ -244,6 +245,7 @@ subroutine mecalc(option, modele, chdepl, chgeom, chmate,&
      &               optio2.eq.'SIEF_ELGA_DPGE') then
                 lpaout(1) = 'PCONTRR'
             else if (optio2.eq.'VAEX_ELGA') then
+                call deprecated_option(optio2)
                 noma=chgeom(1:8)
                 call getvtx(' ', 'NOM_VARI', scal=vari, nbret=ibid)
                 call mecact('V', chnova, 'MAILLA', noma, 'NEUT_K24',&
@@ -255,6 +257,7 @@ subroutine mecalc(option, modele, chdepl, chgeom, chmate,&
                 lchin(2) = chnova
                 nbin =2
             else if (optio2.eq.'VAEX_ELNO') then
+                call deprecated_option(optio2)
                 noma=chgeom(1:8)
                 call getvtx(' ', 'NOM_VARI', scal=vari, nbret=ibid)
                 call mecact('V', chnova, 'MAILLA', noma, 'NEUT_K24',&

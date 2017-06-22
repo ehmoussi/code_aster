@@ -1,21 +1,21 @@
 # coding=utf-8
-# ======================================================================
-# COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
-# THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-# IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-# THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-# (AT YOUR OPTION) ANY LATER VERSION.
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
 #
-# THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-# WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-# MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-# GENERAL PUBLIC LICENSE FOR MORE DETAILS.
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-# ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-#    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-# ======================================================================
-
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
 #___________________________________________________________________________
 #
@@ -44,6 +44,7 @@ try:
     import aster
     import Macro
     from code_aster.Cata.Syntax import _F
+    from Utilitai.utils import get_shared_tmpdir
 except ImportError:
     pass
 
@@ -755,7 +756,7 @@ class CALCULS_ASTER:
             run.options['debug_stderr'] = False  # pas d'output d'executions des esclaves dans l'output maitre
 
         # Master profile
-        prof = AsterProfil(filename=export)
+        prof = AsterProfil(run=run, filename=export)
         tmp_param = tempfile.mkdtemp()
         try:
             username = prof.param['username'][0]
@@ -786,33 +787,17 @@ class CALCULS_ASTER:
                     resudir = None
         if not resudir:
             # Par defaut, dans un sous-repertoire du repertoire d'execution
-            shared_tmp = None
             pref = 'tmp_macr_recal_'
             # On cherche s'il y a un fichier hostfile pour placer les fichiers dans un repertoire partage
             l_fr = getattr(prof, 'data')
             l_tmp = l_fr[:]
             for dico in l_tmp:
                 if dico['type'] == 'hostfile':
-                    shared_tmp = run.get('shared_tmp')
-                    if not shared_tmp:
-                        shared_tmp = os.path.join( os.environ['HOME'], 'tmp_macr_recal')
-                    pref = shared_tmp + os.sep + 'tmp_macr_recal_'
+                    pref = get_shared_tmpdir('tmp_macr_recal_')
                     break
             # Si batch alors on place les fichiers dans un repertoire partage
             if prof['mode'][0] == 'batch':
-                shared_tmp = run.get('shared_tmp')
-                if not shared_tmp:
-                    shared_tmp = os.path.join( os.environ['HOME'], 'tmp_macr_recal')
-                pref = shared_tmp + os.sep + 'tmp_macr_recal1_'
-
-            # Creation du repertoire temporaire racine de macr_recal
-            if shared_tmp:
-                if not os.path.isdir(shared_tmp):
-                    try:
-                        os.mkdir(shared_tmp)
-                    except:
-                        if info >= 1:
-                            UTMESS('F', 'RECAL0_82', valk=shared_tmp)
+                pref = get_shared_tmpdir('tmp_macr_recal1_')
 
             resudir = tempfile.mkdtemp(prefix=pref)
         flashdir = os.path.join(resudir, 'flash')
