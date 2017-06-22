@@ -1,4 +1,21 @@
-# coding: utf-8
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
 """
 Configuration for aster5
@@ -11,7 +28,6 @@ waf install -p
 
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
-
 YAMMROOT = ASTER_ROOT + '/public/default'
 
 import intel
@@ -29,13 +45,16 @@ def configure(self):
         '. /etc/profile.d/lmod.sh',
         'module loadifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047'])
 
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL300'
+    self.env.TFELHOME = TFELHOME
+
     self.env.append_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Hdf5-1814/lib',
         YAMMROOT + '/tools/Medfichier-321/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/lib',
-        YAMMROOT + '/prerequisites/Mfront-TFEL203/lib',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/lib',
+        TFELHOME + '/lib',
     ])
 
     self.env.append_value('INCLUDES', [
@@ -43,9 +62,9 @@ def configure(self):
         YAMMROOT + '/tools/Medfichier-321/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster1/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster6/SEQ/include',
-        YAMMROOT + '/prerequisites/Mfront-TFEL203/include',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/include',
         YAMMROOT + '/prerequisites/Mumps-511_consortium_aster/SEQ/include_seq',
+        TFELHOME + '/include',
     ])
 
     self.env.append_value('LIB', ('pthread', 'util'))
