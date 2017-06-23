@@ -140,7 +140,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! ----- BT LAMBDA - CALCUL ET ASSEMBLAGE
 !
         call vethbt(model, lload_name, lload_info, cara_elem, mate,&
-                    temp_prev, vebtla)
+                    temp_prev, vebtla, 'V')
         call asasve(vebtla, nume_dof, typres, vabtla)
         call ascova('D', vabtla, bidon, 'INST', rbid,&
                     typres, cnvabt)

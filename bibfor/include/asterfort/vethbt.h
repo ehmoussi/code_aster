@@ -15,18 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine vethbt(modele, charge, infcha, carele, mate,&
-                      chtni, vebtla)
-        character(len=24) :: modele
-        character(len=24) :: charge
-        character(len=24) :: infcha
-        character(len=24) :: carele
-        character(len=24) :: mate
-        character(len=24) :: chtni
-        character(len=24) :: vebtla
+    subroutine vethbt(model    , lload_name, lload_info, cara_elem, mate,&
+                      temp_iter, vect_elem , base)
+        character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: lload_name
+        character(len=24), intent(in) :: lload_info
+        character(len=24), intent(in) :: cara_elem
+        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: temp_iter
+        character(len=24), intent(in) :: vect_elem
+        character(len=1), intent(in) :: base
     end subroutine vethbt
 end interface

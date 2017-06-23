@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nxrech(model    , mate    , cara_elem, list_load  , nume_dof   ,&
                   tpsthe   , time    , lonch    , compor     , varc_curr  ,&
                   temp_iter, vtempp  , vtempr   , temp_prev  , hydr_prev  ,&
@@ -36,22 +38,19 @@ implicit none
 #include "asterfort/verstp.h"
 #include "asterfort/vethbt.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: nume_dof
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    real(kind=8) :: tpsthe(6)
-    character(len=24), intent(in) :: time
-    character(len=19), intent(in) :: varc_curr
-    integer :: lonch
-    real(kind=8) :: rho
-    character(len=24) :: temp_prev, vtempr, vtempp, temp_iter, cnvabt, cnresi, vec2nd
-    character(len=24) :: hydr_prev, hydr_curr, compor, dry_prev, dry_curr
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: nume_dof
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+real(kind=8) :: tpsthe(6)
+character(len=24), intent(in) :: time
+character(len=19), intent(in) :: varc_curr
+integer :: lonch
+real(kind=8) :: rho
+character(len=24) :: temp_prev, vtempr, vtempp, temp_iter, cnvabt, cnresi, vec2nd
+character(len=24) :: hydr_prev, hydr_curr, compor, dry_prev, dry_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -132,7 +131,7 @@ implicit none
 ! --- BT LAMBDA - CALCUL ET ASSEMBLAGE
 !
         call vethbt(model, lload_name, lload_info, cara_elem, mate,&
-                    vtempr, vebtla)
+                    vtempr, vebtla, 'V')
         call asasve(vebtla, nume_dof, typres, vabtla)
         call ascova('D', vabtla, bidon, 'INST', r8bid,&
                     typres, cnvabt)
