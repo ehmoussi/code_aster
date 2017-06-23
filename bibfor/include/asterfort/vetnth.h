@@ -17,22 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
-                      chtnz, compoz, tpchiz, tpchfz, chhyz,&
-                      vecelz, veceiz, varc_curr, base_)
-        character(len=*) :: optioz
-        character(len=*) :: modelz
-        character(len=*) :: carelz
-        character(len=*) :: matcdz
-        character(len=*) :: instz
-        character(len=*) :: chtnz
-        character(len=*) :: compoz
-        character(len=*) :: tpchiz
-        character(len=*) :: tpchfz
-        character(len=*) :: chhyz
-        character(len=*) :: vecelz
-        character(len=*) :: veceiz
+    subroutine vetnth(model    , cara_elem, mate     , time ,&
+                      temp_iter, varc_curr, vect_elem, base)
+        character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: cara_elem
+        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: time
+        character(len=24), intent(in) :: temp_iter
         character(len=19), intent(in) :: varc_curr
-        character(len=1), optional, intent(in) :: base_
+        character(len=24), intent(in) :: vect_elem
+        character(len=1), intent(in) :: base
     end subroutine vetnth
 end interface
