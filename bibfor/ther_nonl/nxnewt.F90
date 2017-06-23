@@ -161,7 +161,8 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
         call merxth(model    , lload_name, lload_info, cara_elem, mate     ,&
                     time_curr, time      , temp_iter , compor   , varc_curr,&
-                    dry_prev , dry_curr  , merigi)
+                    merigi   , 'V',&
+                    dry_prev , dry_curr)
 
         nbmat = 0
         call jeexin(merigi(1:19)//'.RELR', iret)
