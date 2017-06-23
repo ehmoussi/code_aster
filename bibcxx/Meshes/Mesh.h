@@ -30,7 +30,7 @@
 #include "definition.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
-#include "DataFields/FieldOnNodes.h"
+#include "DataFields/MeshCoordinatesField.h"
 #include "Meshes/MeshEntities.h"
 #include "RunManager/LogicalUnitManagerCython.h"
 #include <assert.h>
@@ -46,23 +46,23 @@ public:
 
 protected:
     /** @brief Objet Jeveux '.DIME' */
-    JeveuxVectorLong       _dimensionInformations;
+    JeveuxVectorLong        _dimensionInformations;
     /** @brief Pointeur de nom Jeveux '.NOMNOE' */
-    JeveuxBidirectionalMap _nameOfNodes;
+    JeveuxBidirectionalMap  _nameOfNodes;
     /** @brief Champ aux noeuds '.COORDO' */
-    FieldOnNodesDoublePtr  _coordinates;
+    MeshCoordinatesFieldPtr _coordinates;
     /** @brief Collection Jeveux '.GROUPENO' */
-    JeveuxCollectionLong   _groupsOfNodes;
+    JeveuxCollectionLong    _groupsOfNodes;
     /** @brief Collection Jeveux '.CONNEX' */
-    JeveuxCollectionLong   _connectivity;
+    JeveuxCollectionLong    _connectivity;
     /** @brief Pointeur de nom Jeveux '.NOMMAIL' */
-    JeveuxBidirectionalMap _nameOfElements;
+    JeveuxBidirectionalMap  _nameOfElements;
     /** @brief Objet Jeveux '.TYPMAIL' */
-    JeveuxVectorLong       _elementsType;
+    JeveuxVectorLong        _elementsType;
     /** @brief Objet Jeveux '.GROUPEMA' */
-    JeveuxCollectionLong   _groupsOfElements;
+    JeveuxCollectionLong    _groupsOfElements;
     /** @brief Booleen indiquant si le maillage est vide */
-    bool                   _isEmpty;
+    bool                    _isEmpty;
 
     /**
      * @brief Read a Aster Mesh file
@@ -98,7 +98,7 @@ public:
      * @brief Recuperation des coordonnees du maillage
      * @return champ aux noeuds contenant les coordonnees des noeuds du maillage
      */
-    const FieldOnNodesDoublePtr getCoordinates() const
+    const MeshCoordinatesFieldPtr getCoordinates() const
     {
         return _coordinates;
     };

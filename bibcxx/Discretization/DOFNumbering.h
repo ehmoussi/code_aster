@@ -37,7 +37,6 @@
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
-#include "DataFields/FieldOnNodes.h"
 
 /**
  * @class BaseDOFNumberingInstance
@@ -50,15 +49,15 @@ class BaseDOFNumberingInstance: public DataStructure
     private:
         // !!! Classe succinte car on ne sait pas comment elle sera utiliser !!!
         /** @brief Objet Jeveux '.NSLV' */
-        JeveuxVectorChar24       _nameOfSolverDataStructure;
+        JeveuxVectorChar24  _nameOfSolverDataStructure;
         /** @brief Modele support */
-        ModelPtr                 _supportModel;
+        ModelPtr            _supportModel;
         /** @brief Matrices elementaires */
-        ElementaryMatrixPtr      _supportMatrix;
+        ElementaryMatrixPtr _supportMatrix;
         /** @brief Chargements */
-        ListOfLoadsPtr           _listOfLoads;
+        ListOfLoadsPtr      _listOfLoads;
         /** @brief Booleen permettant de preciser sur la sd est vide */
-        bool                     _isEmpty;
+        bool                _isEmpty;
 
     protected:
         /**
@@ -114,13 +113,6 @@ class BaseDOFNumberingInstance: public DataStructure
          * @brief Determination de la numerotation
          */
         bool computeNumerotation() throw ( std::runtime_error );
-
-        /**
-         * @brief Methode permettant d'obtenir un champ aux noeuds construit sur le BaseDOFNumberingInstance
-         * @return Champ aux noeuds vide
-         */
-        FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const JeveuxMemory memType = Permanent ) const
-            throw ( std::runtime_error );
 
         /**
          * @brief Methode permettant de savoir si la numerotation est vide

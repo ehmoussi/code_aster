@@ -42,8 +42,10 @@ void exportModelToPython()
 
     bool (ModelInstance::*c1)(MeshPtr&) =
             &ModelInstance::setSupportMesh;
+#ifdef _USE_MPI
     bool (ModelInstance::*c2)(ParallelMeshPtr&) =
             &ModelInstance::setSupportMesh;
+#endif /* _USE_MPI */
 
     class_< ModelInstance, ModelInstance::ModelPtr,
             bases< DataStructure > > ( "Model", no_init )
@@ -53,9 +55,10 @@ void exportModelToPython()
         .def( "addModelingOnGroupOfElements", &ModelInstance::addModelingOnGroupOfElements )
         .def( "addModelingOnGroupOfNodes", &ModelInstance::addModelingOnGroupOfNodes )
         .def( "build", &ModelInstance::build )
-        .def( "enrichWithXfem", &ModelInstance::enrichWithXfem )
         .def( "getSupportMesh", &ModelInstance::getSupportMesh )
         .def( "setSupportMesh", c1 )
+#ifdef _USE_MPI
         .def( "setSupportMesh", c2 )
+#endif /* _USE_MPI */
     ;
 };

@@ -33,8 +33,28 @@
 #include "aster_fort.h"
 
 #include "MemoryManager/JeveuxVector.h"
+#include "MemoryManager/JeveuxAllowedTypes.h"
 #include "DataStructures/DataStructure.h"
 #include "DataFields/SimpleFieldOnNodes.h"
+#include "Discretization/DOFNumbering.h"
+
+/**
+ * @struct AllowedFieldType
+ * @brief Structure template permettant de limiter le type instanciable de JeveuxVectorInstance
+ * @tparam T Type autorise
+ */
+template< typename T >
+struct AllowedFieldType; // undefined for bad types!
+
+template<> struct AllowedFieldType< long >
+{
+    static const unsigned short numTypeJeveux = Integer;
+};
+
+template<> struct AllowedFieldType< double >
+{
+    static const unsigned short numTypeJeveux = Double;
+};
 
 /**
  * @class FieldOnNodesInstance
@@ -42,7 +62,7 @@
  * @author Nicolas Sellenet
  */
 template< class ValueType >
-class FieldOnNodesInstance: public DataStructure
+class FieldOnNodesInstance: public DataStructure, private AllowedFieldType< ValueType >
 {
 private:
     typedef SimpleFieldOnNodesInstance< ValueType > SimpleFieldOnNodesValueTypeInstance;
@@ -54,6 +74,8 @@ private:
     JeveuxVectorChar24      _reference;
     /** @brief Vecteur Jeveux '.VALE' */
     JeveuxVector<ValueType> _valuesList;
+    /** @brief Numérotation attachée au FieldOnNodes */
+    DOFNumberingPtr         _dofNum;
 
 public:
     /**
@@ -130,7 +152,7 @@ public:
 
     /**
      * @brief Allouer un champ au noeud à partir d'un autre
-     * @return renvoit true si l'addition s'est bien deroulée, false sinon
+     * @return renvoit true
      */
     bool allocateFrom( const FieldOnNodesInstance< ValueType >& tmp )
     {
@@ -145,8 +167,24 @@ public:
     };
 
     /**
-     * @brief 
-     * @return 
+     * @brief Allouer un champ au noeud à partir d'un DOFNumbering
+     * @return renvoit true
+     */
+    bool allocateFromDOFNumering( const DOFNumberingPtr& dofNum )
+    {
+        _dofNum = dofNum;
+        if ( _dofNum->isEmpty() ) throw std::runtime_error( "DOFNumering is empty" );
+        std::string base( JeveuxMemoryTypesNames[ getMemoryType() ] );
+        const int intType = AllowedFieldType< ValueType >::numTypeJeveux;
+        std::string type( JeveuxTypesNames[ intType ] );
+        CALL_VTCREB_WRAP( getName().c_str(), base.c_str(), type.c_str(),
+                          _dofNum->getName().c_str() );
+        return true;
+    };
+
+    /**
+     * @brief Renvoit un champ aux noeuds simple (carré de taille nb_no*nbcmp)
+     * @return SimpleFieldOnNodesValueTypePtr issu du FieldOnNodes
      */
     SimpleFieldOnNodesValueTypePtr exportToSimpleFieldOnNodes()
     {
@@ -169,16 +207,6 @@ public:
         retour = ( retour && _valuesList->updateValuePointer() );
         return retour;
     };
-protected:
-    /**
-     * @brief Surcharge de l'operateur []
-     * @param i Indice dans le tableau Jeveux
-     * @return la valeur du tableau Jeveux a la position i
-     */
-//         ValueType &operator[]( int i )
-//         {
-//             return _valuesList->operator[](i);
-//         };
 };
 
 

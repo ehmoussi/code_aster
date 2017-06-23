@@ -32,7 +32,6 @@
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "DataFields/FieldOnNodes.h"
 
 /**
  * @class ListOfLoadInstance

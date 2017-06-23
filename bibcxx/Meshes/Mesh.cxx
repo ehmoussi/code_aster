@@ -36,8 +36,7 @@ BaseMeshInstance::BaseMeshInstance( const std::string& type ):
                         DataStructure( getNewResultObjectName(), type ),
                         _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
                         _nameOfNodes( JeveuxBidirectionalMap( getName() + ".NOMNOE    " ) ),
-                        _coordinates( FieldOnNodesDoublePtr(
-                            new FieldOnNodesDoubleInstance( getName() + ".COORDO    " ) ) ),
+                        _coordinates( new MeshCoordinatesFieldInstance( getName() + ".COORDO    " ) ),
                         _groupsOfNodes( JeveuxCollectionLong( getName() + ".GROUPENO  " ) ),
                         _connectivity( JeveuxCollectionLong( getName() + ".CONNEX    " ) ),
                         _nameOfElements( JeveuxBidirectionalMap( getName() + ".NOMMAI    " ) ),

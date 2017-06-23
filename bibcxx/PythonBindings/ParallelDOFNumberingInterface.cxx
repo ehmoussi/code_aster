@@ -24,6 +24,9 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
+
+#ifdef _USE_MPI
+
 #include <boost/python.hpp>
 
 void exportParallelDOFNumberingToPython()
@@ -36,3 +39,5 @@ void exportParallelDOFNumberingToPython()
         .staticmethod( "create" )
     ;
 };
+
+#endif /* _USE_MPI */

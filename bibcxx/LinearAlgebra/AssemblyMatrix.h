@@ -43,10 +43,7 @@
 #include <petscmat.h>
 #endif
 #endif
-/**
- * @brief But de cette ligne : casser la reference circulaire
- * @todo Attention includes circulaires entre AssemblyMatrix, DOFNumbering et LinearSolver
- */
+
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
 
@@ -167,10 +164,12 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Methode permettant de definir la numerotation
          * @param currentNum objet ParallelDOFNumbering
          */
+#ifdef _USE_MPI
         void setDOFNumbering( const ParallelDOFNumberingPtr& currentNum )
         {
             _dofNum = currentNum;
         };
+#endif /* _USE_MPI */
 
         /**
          * @brief Methode permettant de definir les matrices elementaires

@@ -75,7 +75,8 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
 
     DOFNumberingPtr dofNum1 = resultC->getEmptyDOFNumbering();
     dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
-    FieldOnNodesDoublePtr vecass = dofNum1->getEmptyFieldOnNodesDouble( Temporary );
+    FieldOnNodesDoublePtr vecass( new FieldOnNodesDoubleInstance( Temporary ) );
+    vecass->allocateFromDOFNumering( dofNum1 );
 
     typedef StaticMechanicalAlgorithm< TimeStepperInstance > MSAlgo;
     MSAlgo unitaryAlgo( dProblem, _linearSolver, resultC );

@@ -87,16 +87,3 @@ bool BaseDOFNumberingInstance::computeNumerotation() throw ( std::runtime_error 
 
     return true;
 };
-
-FieldOnNodesDoublePtr BaseDOFNumberingInstance::getEmptyFieldOnNodesDouble( const JeveuxMemory memType ) const
-    throw ( std::runtime_error )
-{
-    FieldOnNodesDoublePtr retour( new FieldOnNodesDoubleInstance( memType ) );
-
-    std::string base( JeveuxMemoryTypesNames[ retour->getMemoryType() ] );
-    std::string type( "R" );
-    CALL_VTCREB_WRAP( retour->getName().c_str(), base.c_str(), type.c_str(),
-                      getName().c_str() );
-
-    return retour;
-};

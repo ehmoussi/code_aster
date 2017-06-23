@@ -30,6 +30,7 @@
 #include "DataFields/FieldOnNodes.h"
 #include "DataStructures/DataStructure.h"
 #include "Meshes/Mesh.h"
+#include "Modeling/Model.h"
 #include "Functions/Function.h"
 #include "Modeling/CrackShape.h"
 
@@ -136,6 +137,12 @@ public:
          */
     bool build() throw ( std::runtime_error );
 
+    /**
+     * @brief Enrichissement d'un ModelPtr avec la fissure XFEM
+     * @param baseModel modèle à enrichir
+     * @return Modèle enrichi
+     */
+    ModelPtr enrichModelWithXfem( ModelPtr &baseModel ) throw ( std::runtime_error );
 
     /**
          * @brief Series of getters and setters that check the syntax rules
