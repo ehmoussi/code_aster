@@ -45,7 +45,7 @@ FIN = FIN_PROC(nom="FIN",
         PROC0=SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
 
         UNITE=SIMP(
-            statut='f', typ=UnitType(), defaut=6, inout='out'),
+            statut='c', typ=UnitType(), defaut=6, inout='out'),
         # hidden keyword used to ensure that the fortran knows that an error occurred
         # because when an exception is raised, the global status is reset by utmess.
         STATUT=SIMP(
