@@ -175,12 +175,6 @@ class CoreOptions(object):
         self.info['versionD0'] = '%d.%02d.%02d' % version
         self.info['versLabel'] = aster_pkginfo.get_version_desc()
 
-    def set_info(self, key, value):
-        """Définit la valeur d'une information générale."""
-        assert self.info.has_key(
-            key), "general information '%s' not defined" % key
-        self.info[key] = value
-
     def default_values(self):
         """Définit les valeurs par défaut pour certaines options."""
         locale_dir = aster_pkginfo.locale_dir
@@ -214,6 +208,15 @@ class CoreOptions(object):
         if self._dbg:
             print("<CoreOptions.get_option> option={0!r} value={1!r}".format(option, value))
         return value
+
+    def set_option(self, option, value):
+        """Définit la valeur d'une option ou d'une information de base."""
+        assert hasattr(self.opts, option) or self.info.has_key(option), (
+            "unexisting option or information: '{0}'".format(option))
+        if hasattr(self.opts, option):
+            setattr(self.opts, option, value)
+        else:
+            self.info[option] = value
 
 
 def get_program_path(program):
