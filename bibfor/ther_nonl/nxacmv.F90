@@ -53,6 +53,7 @@ implicit none
 #include "asterfort/vechth.h"
 #include "asterfort/vedith.h"
 #include "asterfort/vetnth.h"
+#include "asterfort/vetnth_nonl.h"
 #include "asterfort/vrcins.h"
 !
 character(len=24), intent(in) :: model
@@ -101,7 +102,6 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
     character(len=8), parameter :: nomcmp(6) = (/'INST    ','DELTAT  ',&
                                                  'THETA   ','KHI     ',&
                                                  'R       ','RHO     '/)
-    character(len=16) :: option
     character(len=24) :: ligrmo
     character(len=24) :: vadiri, vachtp, vatntp, vatnti, vachtn
     character(len=24) :: merigi = '&&METRIG           .RELR'
@@ -169,16 +169,16 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 ! - Compute CHAR_THER_EVOLNI
 !
     if (.not.l_stat) then
-        option = 'CHAR_THER_EVOLNI'
-        call vetnth(option   , model , cara_elem, mate    , time ,&
-                    temp_iter, compor, dry_prev , dry_curr, vhydr,&
-                    vetntp   , vetnti, varc_curr)
-        call asasve(vetntp, nume_dof, 'R', vatntp)
-        call jeveuo(vatntp, 'L', jtn)
-        cntntp = zk24(jtn)
+        call vetnth_nonl(model    , cara_elem, mate    , time , compor,&
+                         temp_iter, varc_curr,&
+                         vetntp   , vetnti   , 'V',&
+                         dry_prev , dry_curr , vhydr)
         call asasve(vetnti, nume_dof, 'R', vatnti)
         call jeveuo(vatnti, 'L', jtn)
         cntnti = zk24(jtn)
+        call asasve(vetntp, nume_dof, 'R', vatntp)
+        call jeveuo(vatntp, 'L', jtn)
+        cntntp = zk24(jtn)
     endif
 !
 ! - Compute Neumann loads (second member) - Linear part

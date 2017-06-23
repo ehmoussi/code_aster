@@ -68,7 +68,6 @@ implicit none
     character(len=24) :: cndiri, cncine, time
     character(len=24) :: mate
     character(len=24) :: vec2nd
-    character(len=24) :: compor
 !
     type(NL_DS_AlgoPara) :: ds_algopara
     type(NL_DS_InOut)    :: ds_inout
@@ -92,7 +91,6 @@ implicit none
     mediri      = '&&MEDIRI'
     cndiri      = ' '
     cncine      = ' '
-    compor      = ' '
     sddisc      = '&&OP0025.SDDISC'
 !
 ! - Creation of datastructures
@@ -192,7 +190,7 @@ implicit none
     call ntreso(model , mate  , cara_elem, list_load, nume_dof,&
                 solver, lostat, time     , tpsthe   , reasrg  ,&
                 reasms, vec2nd, matass   , maprec   , cndiri  ,&
-                cncine, mediri, compor)
+                cncine, mediri)
 !
     reasrg = .false.
     reasms = .false.

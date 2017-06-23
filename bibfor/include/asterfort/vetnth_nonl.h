@@ -18,29 +18,23 @@
 
 !
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine ntacmv(model , mate  , cara_elem, list_load, nume_dof,&
-                      l_stat, time  , tpsthe   , reasrg   , reasms  ,&
-                      vtemp , varc_curr,&
-                      cn2mbr, matass, cndiri   , cncine   , mediri)
+    subroutine vetnth_nonl(model      , cara_elem   , mate    , time , compor   ,&
+                           temp_iter  , varc_curr,&
+                           vect_elem_l, vect_elem_nl, base,&
+                           dry_prev_  , dry_curr_   , hydr_prev_)
         character(len=24), intent(in) :: model
-        character(len=24), intent(in) :: mate
         character(len=24), intent(in) :: cara_elem
-        character(len=19), intent(in) :: list_load
-        character(len=24), intent(in) :: nume_dof
-        aster_logical, intent(in) :: l_stat
+        character(len=24), intent(in) :: mate
         character(len=24), intent(in) :: time
-        real(kind=8), intent(in) :: tpsthe(6)
-        aster_logical, intent(in) :: reasrg
-        aster_logical, intent(in) :: reasms
-        character(len=24), intent(in) :: vtemp
+        character(len=24), intent(in) :: compor
+        character(len=24), intent(in) :: temp_iter
         character(len=19), intent(in) :: varc_curr
-        character(len=24), intent(in) :: cn2mbr
-        character(len=24), intent(in) :: matass
-        character(len=24), intent(in) :: cndiri
-        character(len=24), intent(out) :: cncine
-        character(len=24), intent(in) :: mediri
-    end subroutine ntacmv
+        character(len=24), intent(in) :: vect_elem_l
+        character(len=24), intent(in) :: vect_elem_nl
+        character(len=1),  intent(in) :: base
+        character(len=24), optional,intent(in) :: dry_prev_
+        character(len=24), optional,intent(in) :: dry_curr_
+        character(len=24), optional,intent(in) :: hydr_prev_
+    end subroutine vetnth_nonl
 end interface

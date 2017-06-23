@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
-subroutine vetnth(model    , cara_elem, mate     , time ,&
-                  temp_iter, varc_curr, vect_elem, base)
+
+subroutine vetnth_nonl(model      , cara_elem   , mate      , time , compor   ,&
+                       temp_iter  , varc_curr,&
+                       vect_elem_l, vect_elem_nl, base,&
+                       dry_prev_  , dry_curr_   , hydr_prev_)
 !
 implicit none
 !
@@ -25,35 +27,34 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/calcul.h"
 #include "asterfort/corich.h"
-#include "asterfort/exisd.h"
-#include "asterfort/exixfe.h"
+#include "asterfort/inical.h"
 #include "asterfort/gcnco2.h"
-#include "asterfort/infniv.h"
-#include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/mecara.h"
 #include "asterfort/megeom.h"
 #include "asterfort/memare.h"
 #include "asterfort/reajre.h"
-#include "asterfort/xajcin.h"
-#include "asterfort/inical.h"
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: cara_elem
 character(len=24), intent(in) :: mate
 character(len=24), intent(in) :: time
+character(len=24), intent(in) :: compor
 character(len=24), intent(in) :: temp_iter
 character(len=19), intent(in) :: varc_curr
-character(len=24), intent(in) :: vect_elem
-character(len=1), intent(in) :: base
+character(len=24), intent(in) :: vect_elem_l
+character(len=24), intent(in) :: vect_elem_nl
+character(len=1),  intent(in) :: base
+character(len=24), optional,intent(in) :: dry_prev_
+character(len=24), optional,intent(in) :: dry_curr_
+character(len=24), optional,intent(in) :: hydr_prev_
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Thermic - Residuals
 ! 
-! Evolution for non-linear (CHAR_THER_EVOL)
+! Evolution for non-linear (CHAR_THER_EVOLNI)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,52 +62,72 @@ character(len=1), intent(in) :: base
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  mate             : name of material characteristics (field)
 ! In  time             : time (<CARTE>)
+! In  compor           : name of <CARTE> COMPOR
 ! In  temp_iter        : temperature field at current Newton iteration
 ! In  varc_curr        : command variable for current time
-! In  vect_elem        : name of vect_elem result
+! In  vect_elem_l      : name of vect_elem result (linear part)
+! In  vect_elem_nl     : name of vect_elem result (non linear part)
 ! In  base             : JEVEUX base for object
+! In  dry_prev         : previous drying
+! In  dry_curr         : current drying
+! In  hydr_prev        : previous hydratation
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer , parameter :: nb_in_maxi = 24 
-    integer , parameter :: nbout = 1
-    character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
-    character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
-    integer :: iret, ibid, nbin
+    integer , parameter :: nbin = 10
+    integer , parameter :: nbout = 2
+    character(len=8) :: lpain(nbin), lpaout(nbout)
+    character(len=19) :: lchin(nbin), lchout(nbout)
+    integer :: iret, ibid
     character(len=8) :: newnom
     character(len=16) :: option
     character(len=24) :: ligrmo
-    character(len=19) :: resu_elem
+    character(len=19) :: resu_elem_l, resu_elem_nl
     character(len=24) :: chgeom, chcara(18)
-    aster_logical :: l_xfem
+    character(len=24) :: hydr_prev, dry_prev, dry_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resu_elem = vect_elem(1:8)//'.0000000'
-    newnom    = '.0000000'
-    option    = 'CHAR_THER_EVOL'
-    ligrmo    = model(1:8)//'.MODELE'
-    call exixfe(model, iret)
-    l_xfem = (iret .ne. 0)
+    resu_elem_l  = vect_elem_l(1:8)//'.0000000'
+    resu_elem_nl = vect_elem_nl(1:8)//'.0000000'
+    newnom       = '.0000000'
+    option       = 'CHAR_THER_EVOLNI'
+    ligrmo       = model(1:8)//'.MODELE'
+!
+! - Get fields
+!
+    hydr_prev = ' '
+    if (present(hydr_prev_)) then
+        hydr_prev = hydr_prev_
+    endif
+    dry_prev = ' '
+    if (present(dry_prev_)) then
+        dry_prev = dry_prev_
+    endif
+    dry_curr = ' '
+    if (present(dry_curr_)) then
+        dry_curr = dry_curr_
+    endif
 !
 ! - Init fields
 !
-    call inical(nb_in_maxi, lpain, lchin, nbout, lpaout, lchout)
+    call inical(nbin, lpain, lchin, nbout, lpaout, lchout)
 !
 ! - Prepare VECT_ELEM
 !
-    call jeexin(vect_elem(1:19)//'.RELR', iret)
+    call jeexin(vect_elem_l(1:19)//'.RELR', iret)
     if (iret .eq. 0) then
-        call memare(base, vect_elem, model, mate, cara_elem, 'MASS_THER')
+        call memare(base, vect_elem_l, model, mate, cara_elem, 'MASS_THER')
     else
-        call jedetr(vect_elem(1:19)//'.RELR')
+        call jedetr(vect_elem_l(1:19)//'.RELR')
     endif
-!
-! - Generate new RESU_ELEM name
-!
-    newnom = resu_elem(10:16)
-    call gcnco2(newnom)
-    resu_elem(10:16) = newnom(2:8)
+    call jeexin(vect_elem_nl(1:19)//'.RELR', iret)
+    if (iret .eq. 0) then
+        call memare(base, vect_elem_nl, model, mate, cara_elem,&
+                    'MASS_THER')
+    else
+        call jedetr(vect_elem_nl(1:19)//'.RELR')
+    endif
 !
 ! - Geometry field
 !
@@ -130,19 +151,38 @@ character(len=1), intent(in) :: base
     lchin(5)  = chcara(7)(1:19)
     lpain(6)  = 'PVARCPR'
     lchin(6)  = varc_curr(1:19)
-    lpain(7)  = 'PCAMASS'
-    lchin(7)  = chcara(12)(1:19)
-    nbin = 7
-    if (l_xfem) then
-        call xajcin(model, option, nb_in_maxi, lchin, lpain,&
-                    nbin)
-    endif
+    lpain(7)  = 'PHYDRPM'
+    lchin(7)  = hydr_prev(1:19)
+    lpain(8)  = 'PCOMPOR'
+    lchin(8)  = compor(1:19)
+    lpain(9)  = 'PTMPCHI'
+    lchin(9)  = dry_prev(1:19)
+    lpain(10) = 'PTMPCHF'
+    lchin(10) = dry_curr(1:19)
+!
+! - Generate new RESU_ELEM name
+!
+    newnom = resu_elem_nl(10:16)
+    call gcnco2(newnom)
+    resu_elem_nl(10:16) = newnom(2:8)
 !
 ! - Output fields
 !
-    lpaout(1) = 'PVECTTR'
-    lchout(1) = resu_elem
+    lpaout(1) = 'PVECTTI'
+    lchout(1) = resu_elem_nl
     call corich('E', lchout(1), -1, ibid)
+!
+! - Generate new RESU_ELEM name
+!
+    newnom = resu_elem_l(10:16)
+    call gcnco2(newnom)
+    resu_elem_l(10:16) = newnom(2:8)
+!
+! - Output fields
+!
+    lpaout(2) = 'PVECTTR'
+    lchout(2) = resu_elem_l
+    call corich('E', lchout(2), -1, ibid)
 !
 ! - Compute
 !
@@ -152,6 +192,7 @@ character(len=1), intent(in) :: base
 !
 ! - Add RESU_ELEM in VECT_ELEM
 !
-    call reajre(vect_elem, lchout(1), base)
+    call reajre(vect_elem_nl, lchout(1), base)
+    call reajre(vect_elem_l , lchout(2), base)
 !
 end subroutine

@@ -24,7 +24,7 @@ interface
     subroutine ntreso(model , mate  , cara_elem, list_load, nume_dof,&
                       solver, l_stat, time     , tpsthe   , reasrg  ,&
                       reasms, cn2mbr, matass   , maprec   , cndiri  ,&
-                      cncine, mediri, compor)
+                      cncine, mediri)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: mate
         character(len=24), intent(in) :: cara_elem
@@ -42,6 +42,5 @@ interface
         character(len=24), intent(in) :: cndiri
         character(len=24), intent(out) :: cncine
         character(len=24), intent(in) :: mediri
-        character(len=24), intent(in) :: compor
     end subroutine ntreso
 end interface
