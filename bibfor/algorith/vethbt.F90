@@ -15,96 +15,119 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine vethbt(modele, charge, infcha, carele, mate,&
-                  chtni, vebtla)
-    implicit none
-#include "jeveux.h"
+!
+subroutine vethbt(model    , lload_name, lload_info, cara_elem, mate,&
+                  temp_iter, vect_elem , base)
+!
+implicit none
+!
+#include "asterf_types.h"
 #include "asterfort/calcul.h"
 #include "asterfort/corich.h"
-#include "asterfort/gcncon.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jeecra.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jemarq.h"
+#include "asterfort/gcnco2.h"
+#include "asterfort/inical.h"
+#include "asterfort/load_list_info.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/memare.h"
-#include "asterfort/wkvect.h"
-    character(len=24) :: modele, charge, infcha, carele, mate, chtni, vebtla
-! ----------------------------------------------------------------------
-! CALCUL DES TERMES DE DIRICHLET EN THERMIQUE NON LINEAIRE
+#include "asterfort/reajre.h"
+#include "asterfort/detrsd.h"
 !
-! IN  MODELE  : NOM DU MODELE
-! IN  CHARGE  : LISTE DES CHARGES
-! IN  INFCHA  : INFORMATIONS SUR LES CHARGEMENTS
-! IN  CARELE  : CHAMP DE CARA_ELEM
-! IN  MATE    : MATERIAU CODE
-! IN  CHTNI   : IEME ITEREE DU CHAMP DE TEMPERATURE
-! OUT VEBTLA  : VECTEURS ELEMENTAIRES PROVENANT DE BT LAMBDA
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: lload_name
+character(len=24), intent(in) :: lload_info
+character(len=24), intent(in) :: cara_elem
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: temp_iter
+character(len=24), intent(in) :: vect_elem
+character(len=1), intent(in) :: base
 !
+! --------------------------------------------------------------------------------------------------
 !
+! Compute Dirichlet loads
 !
-    character(len=8) :: nomcha, lpain(2), lpaout(1), newnom
+! For Lagrange elements (AFFE_CHAR_THER) - BT . LAMBDA (reaction loads)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  model            : name of the model
+! In  lload_name       : name of object for list of loads name
+! In  lload_info       : name of object for list of loads info
+! In  mate             : name of material characteristics (field)
+! In  cara_elem        : name of elementary characteristics (field)
+! In  temp_iter        : temperature field at current Newton iteration
+! In  vect_elem        : name of vect_elem result
+! In  base             : JEVEUX base for object
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer , parameter :: nbin = 2 
+    integer , parameter :: nbout = 1
+    character(len=8) :: lpain(nbin), lpaout(nbout)
+    character(len=19) :: lchin(nbin), lchout(nbout)
     character(len=16) :: option
-    character(len=19) :: vecel
-    character(len=24) :: lchin(2), lchout(1), ligrch
-    integer :: iret, nchar, icha, jchar, jinf
-!-----------------------------------------------------------------------
-    integer :: ibid, jdir, ndir
-!-----------------------------------------------------------------------
-    call jemarq()
-    call jeexin(charge, iret)
-    if (iret .ne. 0) then
-        call jelira(charge, 'LONMAX', nchar)
-        call jeveuo(charge, 'L', jchar)
-    else
-        nchar = 0
-    endif
+    character(len=24) :: ligrch
+    character(len=8) :: load_name, newnom
+    character(len=19) :: resu_elem
+    integer :: load_nume, ibid
+    aster_logical :: load_empty
+    integer :: i_load, nb_load
+    character(len=24), pointer :: v_load_name(:) => null()
+    integer, pointer :: v_load_info(:) => null()
 !
-    call jeexin(vebtla, iret)
-    vecel = '&&VETBTL           '
-    if (iret .eq. 0) then
-        vebtla = vecel//'.RELR'
-        call memare('V', vecel, modele(1:8), mate, carele,&
-                    'CHAR_THER')
-        call wkvect(vebtla, 'V V K24', nchar, jdir)
-    else
-        call jeveuo(vebtla, 'E', jdir)
-    endif
-    call jeecra(vebtla, 'LONUTI', 0)
+! --------------------------------------------------------------------------------------------------
 !
-    if (nchar .gt. 0) then
-        call jeveuo(infcha, 'L', jinf)
-        ndir = 0
-        do 10 icha = 1, nchar
+    newnom    = '.0000000'
+    option    = 'THER_BTLA_R'
+    resu_elem = vect_elem(1:8)//'.0000000'
 !
-! ------- CALCUL DES TERMES DE DIRICHLET SOUS-OPTION BT LAMBDA
+! - Init fields
 !
-            option = 'THER_BTLA_R'
-            if (zi(jinf+icha) .gt. 0) then
-                nomcha = zk24(jchar+icha-1) (1:8)
-                ligrch = nomcha//'.CHTH.LIGRE'
-                lpain(1) = 'PDDLMUR'
-                lchin(1) = nomcha//'.CHTH.CMULT'
-                lpain(2) = 'PLAGRAR'
-                lchin(2) = chtni
-                lpaout(1) = 'PVECTTR'
-                lchout(1) = '&&VETHBT.???????'
-                call gcncon('.', newnom)
-                lchout(1) (10:16) = newnom(2:8)
-                call corich('E', lchout(1), -1, ibid)
-                call calcul('S', option, ligrch, 2, lchin,&
-                            lpain, 1, lchout, lpaout, 'V',&
+    call inical(nbin, lpain, lchin, nbout, lpaout, lchout)    
+!
+! - Loads
+!
+    call load_list_info(load_empty, nb_load   , v_load_name, v_load_info,&
+                        lload_name, lload_info)
+!
+! - Allocate result
+!
+    call detrsd('VECT_ELEM', vect_elem)
+    call memare(base, vect_elem, model, mate, cara_elem, 'CHAR_THER')
+    call reajre(vect_elem, ' ', base)
+!
+! - Input fields
+!
+    lpain(1) = 'PLAGRAR'
+    lchin(1) = temp_iter(1:19)
+!
+! - Output field
+!
+    lpaout(1) = 'PVECTTR'
+!
+! - Computation
+!
+    if (nb_load .gt. 0) then
+        do i_load = 1, nb_load
+            load_name = v_load_name(i_load)(1:8)
+            load_nume = v_load_info(i_load+1)         
+            if (load_nume .gt. 0) then
+                ligrch   = load_name//'.CHTH.LIGRE'
+! ------------- Input field
+                lpain(2) = 'PDDLMUR'
+                lchin(2) = load_name//'.CHTH.CMULT'
+! ------------- Generate new RESU_ELEM name
+                call gcnco2(newnom)
+                resu_elem(10:16) = newnom(2:8)
+                call corich('E', resu_elem, -1, ibid)
+                lchout(1) = resu_elem
+! ------------- Computation
+                call calcul('S'  , option, ligrch, nbin  , lchin,&
+                            lpain, nbout , lchout, lpaout, base ,&
                             'OUI')
-                ndir = ndir + 1
-                zk24(jdir+ndir-1) = lchout(1)
+! ------------- Copying output field
+                call reajre(vect_elem, lchout(1), 'V')
             endif
-!
-10      continue
-        call jeecra(vebtla, 'LONUTI', ndir)
-!
+        end do
     endif
-! FIN ------------------------------------------------------------------
-    call jedema()
+!
 end subroutine

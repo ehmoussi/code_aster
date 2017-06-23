@@ -128,7 +128,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! - Dirichlet - BT LAMBDA 
 !
     call vethbt(model, lload_name, lload_info, cara_elem, mate,&
-                temp_iter, vebtla)
+                temp_iter, vebtla, 'V')
     call asasve(vebtla, nume_dof, typres, vabtla)
     call ascova('D', vabtla, bidon, 'INST', r8bid,&
                 typres, cnvabt)
