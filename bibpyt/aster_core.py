@@ -37,7 +37,6 @@ import aster_pkginfo
 import _aster_core
 # methods and attributes of C implementation of the module
 from _aster_core import (
-    register,
     matfpe,
     get_mem_stat,
     set_mem_stat,
@@ -78,8 +77,8 @@ def get_version():
     return __version__
 
 
-def set_info(option, value):
-    '''modify the setting parameter value.
+def set_option(option, value):
+    '''modify a setting parameter value.
 
     :option: a string containing the option name
     :value: the value to be affected

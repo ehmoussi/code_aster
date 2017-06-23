@@ -62,9 +62,6 @@ static PyObject* register_jdc(PyObject *self, PyObject *args)
     val = PyObject_GetAttrString(coreopts, "get_option");
     if ( PyObject_SetAttrString(aster_core, "get_option", val) < 0 )
         MYABORT("erreur lors de l'initialisation de 'aster_core.get_option'.");
-    val = PyObject_GetAttrString(coreopts, "set_info");
-    if ( PyObject_SetAttrString(aster_core, "set_info", val) < 0 )
-        MYABORT("erreur lors de l'initialisation de 'aster_core.set_info'.");
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -121,11 +118,20 @@ PyObject* GetJdcAttr(_IN char *attribut)
 
 static double _cache_tpmax = -1.;
 
+void _reset_tpmax()
+{
+    /*
+     * Reset le cache de tpmax.
+     * La valeur est mise en cache pour éviter le passage au Python à chaque
+     * appel de uttrst/uttcp0/uttcpu.
+     */
+    _cache_tpmax = -1;
+}
+
 double get_tpmax()
 {
-    /* Retourne le temps maximum autorisé pour l'exécution
-     * (on met la valeur en cache pour éviter le passage au Python à chaque appel de
-     *  uttrst/uttcp0/uttcpu)
+    /*
+     * Retourne le temps maximum autorisé pour l'exécution
      */
     int iret;
     double tpmax;
@@ -149,7 +155,7 @@ void DEFP(RDTMAX, rdtmax, _IN ASTERDOUBLE *tsub)
     if (res == NULL)
         MYABORT("erreur dans RDTMAX");
     // reset du cache
-    _cache_tpmax = -1;
+    _reset_tpmax();
     return;
 }
 
@@ -173,6 +179,42 @@ PyObject* asterc_getopt(_IN char *option)
 
     return res;
 }
+
+static PyObject* asterc_setopt(self, args)
+PyObject *self; /* Not used */
+PyObject *args;
+{
+    /*
+     * Interface Fortran/Python pour définir une option de la ligne de commande.
+     * Retourne :
+     *  iret = 0 : tout est ok
+     *  iret > 0   erreur
+     *      iret = 1 : longueur de valk insuffisante, valeur tronquée
+     *      iret = 4 : option inexistante, type incorrect.
+     */
+    PyObject *res, *option, *value;
+    char *sopt;
+
+    if ( !PyArg_ParseTuple(args, "OO:set_option", &option, &value) )
+        return NULL;
+
+    res = PyObject_CallMethodObjArgs(get_sh_coreopts(),
+                                     PyString_FromString("set_option"),
+                                     option, value, NULL);
+    if ( !res ) MYABORT("erreur lors de l'appel a la methode CoreOptions.set_option");
+    sopt = PyString_AsString(option);
+    if (! strcmp(sopt, "tpmax")) {
+        _reset_tpmax();
+    }
+
+    Py_DECREF(option);
+    Py_DECREF(value);
+    Py_DECREF(res);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 
 long asterc_getopt_long(_IN char *option, _OUT int *iret)
 {
@@ -875,13 +917,13 @@ static PyMethodDef methods[] = {
     { "matfpe",         asterc_matfpe,       METH_VARARGS, matfpe_doc },
     { "get_mem_stat",   asterc_get_mem_stat, METH_VARARGS, get_mem_stat_doc },
     { "set_mem_stat",   asterc_set_mem_stat, METH_VARARGS, set_mem_stat_doc },
-    { "MPI_CommRankSize", aster_mpi_info,    METH_VARARGS},
-    { "MPI_Warn",       aster_mpi_warn,      METH_VARARGS},
-    { "MPI_Barrier",    aster_mpi_barrier,   METH_VARARGS},
-    { "MPI_Bcast",      aster_mpi_bcast_py,  METH_VARARGS, aster_mpi_bcast_doc},
+    { "MPI_CommRankSize", aster_mpi_info,    METH_VARARGS },
+    { "MPI_Warn",       aster_mpi_warn,      METH_VARARGS },
+    { "MPI_Barrier",    aster_mpi_barrier,   METH_VARARGS },
+    { "MPI_Bcast",      aster_mpi_bcast_py,  METH_VARARGS, aster_mpi_bcast_doc },
     { "MPI_GatherStr",  aster_mpi_gather_str, METH_VARARGS, aster_mpi_gather_str_doc },
+    { "set_option",     asterc_setopt,       METH_VARARGS },
     // { "get_option",  ... } : method added in register_jdc
-    // { "set_info",  ... } : method added in register_jdc
     { NULL, NULL, 0, NULL }
 };
 
