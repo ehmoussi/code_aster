@@ -37,13 +37,18 @@ else
     echo "already set"
 fi
 
+args="${@}"
+
 # call waf.engine or another program?
 if [ $# -lt 1 ]; then
     # no argument: use waf
     true
-elif [[ $1 =~ ^\- ]]; then
+elif [[ "$1" =~ ^\- ]]; then
     # start with hiphen: suppose to be a waf option
     true
+elif [ "$1" = "reconfigure" ]; then
+    args=$(python -c "$(grep WAFCMDLINE build/c4che/release_cache.py | sed -e 's/WAFCMDLINE =/print /')")
+    echo "executing previous command: waf ${args}"
 else
     # is the first argument a waf command ?
     wafcmd=(build buildelem clean configure dist distcheck distclean \
@@ -60,11 +65,11 @@ else
     done
     if [ ${found} -eq 0 ]; then
         # not a waf command, call passed command line
-        "${@}"
+        ${args}
         exit $?
     fi
 fi
 
 # execute waf
-${0}.engine "${@}"
+${0}.engine ${args}
 exit $?
