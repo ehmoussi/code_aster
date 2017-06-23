@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nxacmv(model      , mate     , cara_elem, list_load, nume_dof   ,&
                   solver     , l_stat   , time     , tpsthe   , temp_iter  ,&
                   vhydr      , varc_curr, dry_prev , dry_curr , cn2mbr_stat,&
@@ -53,32 +55,29 @@ implicit none
 #include "asterfort/vetnth.h"
 #include "asterfort/vrcins.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: nume_dof
-    character(len=19), intent(in) :: solver
-    character(len=24), intent(in) :: time
-    character(len=19), intent(in) :: varc_curr
-    aster_logical, intent(in) :: l_stat
-    real(kind=8), intent(in) :: tpsthe(6)
-    character(len=24), intent(in) :: temp_iter
-    character(len=24), intent(in) :: vhydr
-    character(len=24), intent(in) :: dry_prev
-    character(len=24), intent(in) :: dry_curr
-    character(len=24), intent(in) :: cn2mbr_stat
-    character(len=24), intent(in) :: cn2mbr_tran
-    character(len=24), intent(in) :: matass
-    character(len=19), intent(in) :: maprec
-    character(len=24), intent(in) :: cndiri
-    character(len=24), intent(out) :: cncine
-    character(len=24), intent(in) :: mediri
-    character(len=24), intent(in) :: compor
-    type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: solver
+character(len=24), intent(in) :: time
+character(len=19), intent(in) :: varc_curr
+aster_logical, intent(in) :: l_stat
+real(kind=8), intent(in) :: tpsthe(6)
+character(len=24), intent(in) :: temp_iter
+character(len=24), intent(in) :: vhydr
+character(len=24), intent(in) :: dry_prev
+character(len=24), intent(in) :: dry_curr
+character(len=24), intent(in) :: cn2mbr_stat
+character(len=24), intent(in) :: cn2mbr_tran
+character(len=24), intent(in) :: matass
+character(len=19), intent(in) :: maprec
+character(len=24), intent(in) :: cndiri
+character(len=24), intent(out) :: cncine
+character(len=24), intent(in) :: mediri
+character(len=24), intent(in) :: compor
+type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -241,7 +240,8 @@ implicit none
 !
     call merxth(model    , lload_name, lload_info, cara_elem, mate     ,&
                 time_curr, time      , temp_iter , compor   , varc_curr,&
-                dry_prev , dry_curr  , merigi)
+                merigi   , 'V',&
+                dry_prev , dry_curr)
     nb_matr = 0
     call jeexin(merigi(1:8)//'           .RELR', iret)
     if (iret .gt. 0) then
