@@ -201,3 +201,40 @@ bool XfemCrackInstance::build() throw( std::runtime_error )
     return true;
 };
 
+ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) throw ( std::runtime_error )
+{
+    CommandSyntaxCython cmdSt( "MODI_MODELE_XFEM" );
+
+    // Create empty model and get its name
+    ModelPtr newModelPtr(new ModelInstance());
+    cmdSt.setResult( newModelPtr->getName(), "MODELE" );
+
+    SyntaxMapContainer dict;
+
+    dict.container["MODELE_IN"] = baseModel->getName();
+    if ( baseModel->isEmpty() )
+        throw std::runtime_error("The Model must be built first");
+    dict.container["FISSURE"] = this->getName();
+
+    // Set some default kwd values (TODO : support other values for the kwd)
+    dict.container["DECOUPE_FACETTE"] = "DEFAUT";
+    dict.container["CONTACT"] = "SANS";
+    dict.container["PRETRAITEMENTS"] = "AUTO";
+
+    cmdSt.define( dict );
+
+    // Call  OP00113
+    try
+    {
+        ASTERINTEGER op = 113;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+
+    return newModelPtr;
+
+};
+

@@ -136,6 +136,7 @@ class MaterialOnMeshInstance: public DataStructure
             return true;
         };
 
+#ifdef _USE_MPI
         /**
          * @brief Definition du maillage support
          * @param currentMesh objet ParallelMeshPtr sur lequel le materiau reposera
@@ -147,6 +148,7 @@ class MaterialOnMeshInstance: public DataStructure
             _supportMesh = currentMesh;
             return true;
         };
+#endif /* _USE_MPI */
 
         /**
          * @brief Obtenir le maillage support

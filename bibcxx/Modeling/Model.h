@@ -32,7 +32,6 @@
 #include "Meshes/Mesh.h"
 #include "Meshes/ParallelMesh.h"
 #include "Modeling/ElementaryModeling.h"
-#include "Modeling/XfemCrack.h"
 #include <map>
 
 #include "Loads/PhysicalQuantity.h"
@@ -176,12 +175,6 @@ class ModelInstance: public DataStructure
          */
         virtual bool build() throw ( std::runtime_error );
 
-        /**
-         * @brief Definition du maillage support
-         * @param currentMesh objet MeshPtr sur lequel le modele reposera
-         */
-        ModelPtr enrichWithXfem( XfemCrackPtr &xfemCrack ) throw ( std::runtime_error );
-
         BaseMeshPtr getSupportMesh() throw ( std::runtime_error )
         {
             if ( ( ! _supportBaseMesh ) || _supportBaseMesh->isEmpty() )
@@ -231,6 +224,7 @@ class ModelInstance: public DataStructure
          * @brief Definition du maillage support
          * @param currentMesh objet MeshPtr sur lequel le modele reposera
          */
+#ifdef _USE_MPI
         bool setSupportMesh( ParallelMeshPtr& currentMesh ) throw ( std::runtime_error )
         {
             if ( currentMesh->isEmpty() )
@@ -238,6 +232,7 @@ class ModelInstance: public DataStructure
             _supportBaseMesh = currentMesh;
             return true;
         };
+#endif /* _USE_MPI */
 };
 
 /**

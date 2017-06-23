@@ -1,3 +1,8 @@
+
+#include "astercxx.h"
+
+#ifdef _USE_MPI
+
 #ifndef PARALLELDOFNUMBERINGINTERFACE_H_
 #define PARALLELDOFNUMBERINGINTERFACE_H_
 
@@ -30,3 +35,5 @@
 void exportParallelDOFNumberingToPython();
 
 #endif /* PARALLELDOFNUMBERINGINTERFACE_H_ */
+
+#endif /* _USE_MPI */
