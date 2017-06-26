@@ -78,7 +78,7 @@ from graphiqueTk import *
 import ihm_parametres
 
 from code_aster.Cata.Commands import (AFFE_MODELE, MODI_MODELE, COPIER, CREA_MAILLAGE,
-    CREA_RESU, DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, IMPR_RESU,
+    CREA_RESU, DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, IMPR_RESU, DEFI_GROUP,
     INFO_EXEC_ASTER, POST_RELEVE_T, PROJ_CHAMP, STANLEY)
 from code_aster.Cata.Language import DataStructure
 from code_aster.Cata.Syntax import _F
