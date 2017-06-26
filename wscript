@@ -139,7 +139,7 @@ def configure(self):
     self.setenv('default')
     # store arguments for reconfigure
     import sys
-    self.env.WAFCMDLINE = " ".join(sys.argv[1:])
+    self.env.WAFCMDLINE = sys.argv[1:]
 
     # compute default prefix
     if not self.env.PREFIX:
