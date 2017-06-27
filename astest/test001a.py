@@ -29,7 +29,7 @@ with test.assertRaises(TypeError):
 model = code_aster.Model.create()
 test.assertEqual( model.getType(), "MODELE" )
 model.setSupportMesh(mesh)
-model.addModelingOnAllMesh(code_aster.Mechanics, code_aster.Tridimensional)
+model.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 
 model.build()
 
@@ -38,7 +38,7 @@ model2 = code_aster.Model.create()
 model2.setSupportMesh(mesh)
 
 with test.assertRaisesRegexp(RuntimeError, 'not allowed'):
-    model2.addModelingOnAllMesh(code_aster.Thermal, code_aster.DKT)
+    model2.addModelingOnAllMesh(code_aster.Physics.Thermal, code_aster.Modelings.DKT)
 
 # Verification du comptage de référence sur le maillage
 del mesh
