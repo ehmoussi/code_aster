@@ -26,8 +26,8 @@ from code_aster import GenericMechanicalLoad
 
 def AFFE_CHAR_MECA(**curDict):
     returnLoad = GenericMechanicalLoad.create()
-    name = returnLoad.getInstance().getName()
-    type = returnLoad.getInstance().getType()
+    name = returnLoad.getName()
+    type = returnLoad.getType()
     syntax = CommandSyntax("AFFE_CHAR_MECA")
 
     syntax.setResult(name, type)
