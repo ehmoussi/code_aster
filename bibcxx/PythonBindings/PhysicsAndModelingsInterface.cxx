@@ -38,7 +38,10 @@ void exportPhysicsAndModelingsToPython()
         .value( "Axisymmetrical", Axisymmetrical )
         .value( "Tridimensional", Tridimensional )
         .value( "Planar", Planar )
+        .value( "PlaneStrain", PlaneStrain )
+        .value( "PlaneStress", PlaneStress )
         .value( "DKT", DKT )
         .value( "DKTG", DKTG )
+        .value( "PlanarBar", PlanarBar )
         ;
 };
