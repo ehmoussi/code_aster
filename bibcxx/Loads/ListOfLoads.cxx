@@ -64,7 +64,11 @@ bool ListOfLoadsInstance::build() throw ( std::runtime_error )
     dict.container[ "EXCIT" ] = listeExcit;
     cmdSt.define( dict );
     long iexcit = 1;
-    CALL_NMDOCH_WRAP( getName().c_str(), &iexcit, " " );
+    std::string name( getName().c_str() );
+    name.resize( 19, ' ' );
+    std::string blank( " " );
+    blank.resize( 19, ' ' );
+    CALL_NMDOCH_WRAP( name.c_str(), &iexcit, blank.c_str() );
     _isEmpty = false;
     return true;
 };

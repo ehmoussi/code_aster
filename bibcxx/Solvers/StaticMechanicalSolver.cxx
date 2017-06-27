@@ -65,7 +65,7 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
           curIter != kineList.end();
           ++curIter )
         study->addKinematicsLoad( *curIter );
-    _listOfLoads->build();
+//     _listOfLoads->build();
 
     // Define the discrete problem
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );

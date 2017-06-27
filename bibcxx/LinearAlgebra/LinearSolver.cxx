@@ -76,7 +76,7 @@ bool LinearSolverInstance::build()
 
 bool LinearSolverInstance::matrixFactorization( const AssemblyMatrixDoublePtr currentMatrix ) const
 {
-    const std::string solverName = getName();
+    const std::string solverName( getName() + "           " );
     std::string base( "V" );
     if ( currentMatrix->getMemoryType() == Permanent )
         base = std::string( "G" );

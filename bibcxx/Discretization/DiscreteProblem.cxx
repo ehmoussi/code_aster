@@ -115,9 +115,9 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector( const
 
     const double& inst = time[0];
     std::string stop( "S" );
-    std::string blanc( " " );
+    std::string blanc( "        " );
     std::string resultName( retour->getName() );
-    std::string materName = curMater->getName();
+    std::string materName( curMater->getName() + "                " );
 
     // CORICH appel getres
     CommandSyntaxCython cmdSt( "MECA_STATIQUE" );
@@ -184,9 +184,9 @@ FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad( const DOFNum
     const throw ( std::runtime_error )
 {
     const auto& _listOfLoad = _study->getListOfLoads();
-    const auto& _list = _listOfLoad->getListVector();
-    const auto& _loadInformations = _listOfLoad->getListVector();
-    const auto& _listOfFunctions = _listOfLoad->getListOfFunctions();
+    const auto& list = _listOfLoad->getListVector();
+    const auto& loadInformations = _listOfLoad->getInformationVector();
+    const auto& listOfFunctions = _listOfLoad->getListOfFunctions();
     if ( _listOfLoad->isEmpty() )
         throw std::runtime_error( "ListOfLoads is empty" );
 
@@ -194,11 +194,11 @@ FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad( const DOFNum
     std::string resuName = retour->getName();
     std::string dofNumName = curDOFNum->getName();
 
-    std::string lLoadName = _list->getName();
+    std::string lLoadName = list->getName();
     lLoadName.resize(24, ' ');
-    std::string infLoadName = _loadInformations->getName();
+    std::string infLoadName = loadInformations->getName();
     infLoadName.resize(24, ' ');
-    std::string funcLoadName = _listOfFunctions->getName();
+    std::string funcLoadName = listOfFunctions->getName();
     funcLoadName.resize(24, ' ');
 
     CALL_ASCAVC( lLoadName.c_str(), infLoadName.c_str(), funcLoadName.c_str(),
