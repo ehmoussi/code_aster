@@ -70,12 +70,14 @@ use lmp_module, only : lmp_update
 #include "asterfort/asmpi_info.h"
 #include "asterfort/assert.h"
 #include "asterfort/csmbgg.h"
+#include "asterfort/cpysol.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exisd.h"
 #include "asterfort/filter_smd.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
+#include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
@@ -84,18 +86,22 @@ use lmp_module, only : lmp_update
 #include "asterfort/mtdscr.h"
 #include "asterfort/utmess.h"
 #include "asterfort/uttcpu.h"
+#include "asterfort/wkvect.h"
 !
 #ifdef _HAVE_PETSC
 !----------------------------------------------------------------
 !
 !     VARIABLES LOCALES
-    integer :: ifm, niv, ierd, nmaxit, ptserr
-    integer :: lmat, idvalc, icode
+    integer :: ifm, niv, ierd, ibid, nmaxit, ptserr, jnequ
+    integer :: lmat, idvalc, jslvi, jslvk, jslvr, jindic, jcoll, icode
+    integer :: jnugll, jprddl, nloc, tbloc, jvaleu, ndprop
+    mpi_int :: mrank, msize
     integer, dimension(:), pointer :: slvi => null()
+    integer(kind=4) :: ndprop4, iterm, nglo
     mpi_int :: rang, nbproc
     mpi_int :: mpicomm
 !
-    character(len=24) :: precon, algo, valk(2)
+    character(len=24) :: precon, algo
     character(len=24), dimension(:), pointer :: slvk  => null()
     character(len=19) :: nomat, nosolv
     character(len=14) :: nonu
@@ -106,16 +112,20 @@ use lmp_module, only : lmp_update
     real(kind=8), dimension(:), pointer :: slvr => null()
     complex(kind=8) :: cbid
 !
-    aster_logical :: lmd, dbg=.false.
+    aster_logical :: lmd, lmhpc, dbg=.false.
 !
 !----------------------------------------------------------------
 !     Variables PETSc
 !
     PetscInt :: its, maxits
     PetscErrorCode ::  ierr
+    PetscInt :: neq, i, low, high, ndpro2
+    PetscInt :: bs
     PetscReal :: rtol, atol, dtol
     Vec :: r
-    PetscScalar :: ires, fres
+    PetscScalar :: xx(1), ires, fres
+    PetscOffset :: xidx
+    VecScatter :: ctx
     KSPConvergedReason :: indic
     Mat :: a
     KSP :: ksp
@@ -150,6 +160,9 @@ use lmp_module, only : lmp_update
         algo = slvk(6)
         call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
         lmd = matd.eq.'OUI'
+        call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=matd)
+        lmhpc = matd.eq.'OUI'
+        if (lmhpc) ASSERT(.not.lmd)
 !
     endif
 !
@@ -160,19 +173,27 @@ use lmp_module, only : lmp_update
 !        1.1 CREATION ET PREALLOCATION DE LA MATRICE PETSc :
 !        ---------------------------------------------------
 !
-        if (lmd) then
-            call apalmd(kptsc)
+        if (.not.lmhpc) then
+            if (lmd) then
+                call apalmd(kptsc)
+            else
+                call apalmc(kptsc)
+            endif
         else
-            call apalmc(kptsc)
+            call apalmh(kptsc)
         endif
 !
 !        1.2 COPIE DE LA MATRICE ASTER VERS LA MATRICE PETSc :
 !        -----------------------------------------------------
 !
-        if (lmd) then
-            call apmamd(kptsc)
+        if (.not.lmhpc) then
+            if (lmd) then
+                call apmamd(kptsc)
+            else
+                call apmamc(kptsc)
+            endif
         else
-            call apmamc(kptsc)
+            call apmamh(kptsc)
         endif
 !
 !        1.3 ASSEMBLAGE DE LA MATRICE PETSc :
@@ -238,8 +259,51 @@ use lmp_module, only : lmp_update
 !        2.2 CREATION DU VECTEUR SECOND MEMBRE PETSc :
 !        ---------------------------------------------
 !
-        call apvsmb(kptsc, lmd, rsolu)
-!
+        if (.not.lmhpc) then
+            call apvsmb(kptsc, lmd, rsolu)
+        else
+            bs = tblocs(kptsc)
+            call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
+            call jeveuo(nonu//'.NUME.NULG', 'L', jnugll)
+            call jeveuo(nonu//'.NUME.PDDL', 'L', jprddl)
+            nloc = zi(jnequ)
+            nglo = zi(jnequ + 1)
+            ndprop = 0
+            do jcoll = 0, nloc - 1
+                if ( zi(jprddl + jcoll) .eq. rang ) ndprop = ndprop + 1
+            end do
+            ndprop4 = ndprop
+            call VecCreate(mpicomm, b, ierr)
+            ASSERT(ierr .eq. 0)
+            call VecSetBlockSize(b, to_petsc_int(bs), ierr)
+            ASSERT(ierr .eq. 0)
+            call VecSetSizes(b, ndprop4, nglo, ierr)
+            ASSERT(ierr .eq. 0)
+            call VecSetType(b, VECMPI, ierr)
+            ASSERT(ierr .eq. 0)
+            call wkvect('&&APMAIN.INDICES', 'V V S', ndprop, jindic)
+            call wkvect('&&APMAIN.VALEURS', 'V V R', ndprop, jvaleu)
+            iterm = 0
+            do jcoll = 0, nloc - 1
+                if ( zi(jprddl + jcoll) .eq. rang ) then
+                    zi4(jindic + iterm) = zi(jnugll + jcoll)
+                    zr(jvaleu + iterm) = rsolu(jcoll + 1)
+                    iterm = iterm + 1
+! nsellenet
+!                 write(19,*)zi(jnugll+jcoll),rsolu(jcoll+1)
+! nsellenet
+                endif
+            end do
+            call VecSetValues(b, iterm, zi4(jindic), zr(jvaleu), &
+                              INSERT_VALUES, ierr)
+            call jedetr('&&APMAIN.INDICES')
+            call jedetr('&&APMAIN.VALEURS')
+            call VecAssemblyBegin(b, ierr)
+            ASSERT(ierr .eq. 0)
+            call VecAssemblyEnd(b, ierr)
+            ASSERT(ierr .eq. 0)
+        endif
+
 !        2.3 PARAMETRES DU KSP :
 !        -----------------------
 !
@@ -403,8 +467,22 @@ use lmp_module, only : lmp_update
 !
 !        2.6 RECOPIE DE LA SOLUTION :
 !        ----------------------------
-        call apsolu(kptsc, lmd, rsolu)
+        if (.not.lmhpc) then
+            call apsolu(kptsc, lmd, rsolu)
+        else
+            call VecGetOwnershipRange(x, low, high, ierr)
+            ASSERT(ierr.eq.0)
 !
+!        -- RECOPIE DE DANS RSOLU
+            call VecGetArray(x, xx, xidx, ierr)
+            ASSERT(ierr.eq.0)
+!
+            ndpro2 = high - low
+            call cpysol(nonu, rsolu, low, xx(xidx+1), ndpro2)
+!
+            call VecRestoreArray(x, xx, xidx, ierr)
+            ASSERT(ierr.eq.0)
+        endif
 
 !        2.7 UTILISATION DU LMP EN 2ND NIVEAU
 !        -------------------------------------

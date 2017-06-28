@@ -27,6 +27,7 @@ subroutine dismms(questi, nomobz, repi, repkz, ierd)
 #include "asterfort/dismme.h"
 #include "asterfort/dismnu.h"
 #include "asterfort/jedema.h"
+#include "asterfort/gettco.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
@@ -55,6 +56,8 @@ subroutine dismms(questi, nomobz, repi, repkz, ierd)
 !-----------------------------------------------------------------------
     integer :: i, ibid, ier
     integer ::  nblime
+    character(len=14) :: numedd
+    character(len=16) :: typeco
     character(len=24), pointer :: lime(:) => null()
     character(len=24), pointer :: refa(:) => null()
     character(len=24), pointer :: slvk(:) => null()
@@ -90,6 +93,15 @@ subroutine dismms(questi, nomobz, repi, repkz, ierd)
         call dismnu(questi, refa(2)(1:14), repi, repk, ierd)
         if (repk.eq.'OUI') then
             ASSERT (refa(11) .eq. 'MATR_DISTR')
+        endif
+
+    else if (questi.eq.'MATR_HPC') then
+        numedd=refa(2)(1:14)
+        call gettco(numedd, typeco)
+        if (typeco .eq. 'NUME_DDL_P') then
+            repk = 'OUI'
+        else
+            repk = 'NON'
         endif
 
     else if (questi.eq.'SOLVEUR') then
