@@ -1,9 +1,9 @@
-#ifndef FIELDONNODESINTERFACE_H_
-#define FIELDONNODESINTERFACE_H_
+#ifndef CONSTVIEWERUTILITIES_H_
+#define CONSTVIEWERUTILITIES_H_
 
 /**
- * @file FieldOnNodesInterface.h
- * @brief Fichier entete de la classe FieldOnNodesInterface
+ * @file ConstViewerUtilities.h
+ * @brief Utilitaires pour convertir un vector en list et inversement
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -24,24 +24,17 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
 #include "astercxx.h"
-#include "DataFields/FieldOnNodes.h"
 #include <boost/python.hpp>
 
-struct MeshCoordinatesFieldToFieldOnNodes
+template< typename T >
+struct ConstViewer
 {
-    static PyObject* convert( MeshCoordinatesFieldPtr toConvert )
-    {
-        using namespace boost::python;
-        using namespace boost;
-        return boost::python::incref(
-            boost::python::object( FieldOnNodesDoublePtr(
-                new FieldOnNodesDoubleInstance( toConvert ) ) ).ptr() );
-    }
+    ConstViewer( boost::shared_ptr< const T > p ):
+        ptr(p)
+    {};
+
+    boost::shared_ptr< const T > ptr;
 };
 
-void exportFieldOnNodesToPython();
-
-#endif /* FIELDONNODESINTERFACE_H_ */
+#endif /* CONSTVIEWERUTILITIES_H_ */

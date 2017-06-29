@@ -15,6 +15,7 @@ mesh.readMedFile("test001a.mmed")
 #help(mesh)
 
 coord = mesh.getCoordinates()
+coord.updateValuePointers()
 test.assertEqual( coord.getType(), "CHAM_NO" )
 #help(coord)
 

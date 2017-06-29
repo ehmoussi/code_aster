@@ -25,15 +25,42 @@
 
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/FieldOnNodesInterface.h"
+#include "DataFields/MeshCoordinatesField.h"
+#include "PythonBindings/ConstViewerUtilities.h"
 #include <boost/python.hpp>
 
 void exportFieldOnNodesToPython()
 {
     using namespace boost::python;
+
+//     class_< ConstViewer< MeshCoordinatesFieldInstance > >
+//         ( "MeshCoordinatesFieldConst", no_init )
+// //         .def( "__getitem__", &MeshCoordinatesFieldInstance::operator[] )
+//         .def( "__getitem__", +[](const ConstViewer< MeshCoordinatesFieldInstance >& v, int i)
+//         {
+//             const auto& o = *(v.ptr);
+//             return o.operator[](i);
+//         })
+//         .def( "updateValuePointers", +[](const ConstViewer< MeshCoordinatesFieldInstance >& v)
+//         {
+//             const auto& o = *(v.ptr);
+//             return o.updateValuePointers();
+//         })
+//     ;
+
     class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
             bases< DataStructure > >("FieldOnNodesDouble", no_init)
         .def( "create", &FieldOnNodesDoubleInstance::create )
         .staticmethod( "create" )
         .def( "exportToSimpleFieldOnNodes", &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
+//         .def( "__getitem__", &FieldOnNodesDoubleInstance::operator[] )
+        .def( "__getitem__", +[](const FieldOnNodesDoubleInstance& v, int i)
+        {
+            return v.operator[](i);
+        })
+        .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers )
     ;
+
+    to_python_converter< MeshCoordinatesFieldPtr,
+                         MeshCoordinatesFieldToFieldOnNodes >();
 };

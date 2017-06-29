@@ -53,12 +53,11 @@ charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx,
 charCine.build()
 
 study = code_aster.StudyDescription.create(model, affectMat)
-study.addKinematicsLoad(charCine)
 dProblem = code_aster.DiscreteProblem.create(study)
 matr_elem = dProblem.computeMechanicalRigidityMatrix()
 
 monSolver = code_aster.LinearSolver.create(code_aster.LinearSolverName.Mumps,
-                                            code_aster.Renumbering.Metis)
+                                           code_aster.Renumbering.Metis)
 
 numeDDL = code_aster.ParallelDOFNumbering.create()
 numeDDL.setElementaryMatrix(matr_elem)
@@ -68,6 +67,8 @@ numeDDL.debugPrint(rank+30)
 matrAsse = code_aster.AssemblyMatrixDouble.create()
 matrAsse.setElementaryMatrix(matr_elem)
 matrAsse.setDOFNumbering(numeDDL)
+matrAsse.addKinematicsLoad(charCine)
 matrAsse.build()
+matrAsse.debugPrint(rank+30)
 
 test.printSummary()
