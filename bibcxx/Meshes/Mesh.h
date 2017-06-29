@@ -98,7 +98,7 @@ public:
      * @brief Recuperation des coordonnees du maillage
      * @return champ aux noeuds contenant les coordonnees des noeuds du maillage
      */
-    const MeshCoordinatesFieldPtr getCoordinates() const
+    MeshCoordinatesFieldPtr getCoordinates() const
     {
         return _coordinates;
     };

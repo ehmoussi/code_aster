@@ -37,6 +37,7 @@
 #include "DataStructures/DataStructure.h"
 #include "DataFields/SimpleFieldOnNodes.h"
 #include "Discretization/DOFNumbering.h"
+#include "DataFields/MeshCoordinatesField.h"
 
 /**
  * @struct AllowedFieldType
@@ -118,6 +119,16 @@ public:
         assert( getName().size() == 19 );
     };
 
+    /**
+     * @brief Constructeur from a MeshCoordinatesFieldPtr&
+     */
+    FieldOnNodesInstance( MeshCoordinatesFieldPtr& toCopy ):
+                    DataStructure( "CHAM_NO", toCopy->getMemoryType() ),
+                    _descriptor( toCopy->_descriptor ),
+                    _reference( toCopy->_reference ),
+                    _valuesList( toCopy->_valuesList )
+    {};
+
     ~FieldOnNodesInstance()
     {
 #ifdef __DEBUG_GC__
@@ -132,6 +143,17 @@ public:
      * @todo cython n'autorise pas la présence de 2 operator[] (un avec et l'autre sans const)
      */
     ValueType &operator[]( int i )
+    {
+        return _valuesList->operator[](i);
+    };
+
+    /**
+     * @brief Surcharge de l'operateur []
+     * @param i Indice dans le tableau Jeveux
+     * @return la valeur du tableau Jeveux a la position i
+     * @todo cython n'autorise pas la présence de 2 operator[] (un avec et l'autre sans const)
+     */
+    const ValueType &operator[]( int i ) const
     {
         return _valuesList->operator[](i);
     };

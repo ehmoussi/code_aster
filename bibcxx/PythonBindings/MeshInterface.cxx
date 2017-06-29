@@ -25,6 +25,7 @@
 
 #include "PythonBindings/MeshInterface.h"
 #include "PythonBindings/SharedPtrUtilities.h"
+#include "PythonBindings/ConstViewerUtilities.h"
 #include <boost/python.hpp>
 
 void exportMeshToPython()
@@ -32,13 +33,19 @@ void exportMeshToPython()
     using namespace boost::python;
     class_< BaseMeshInstance, BaseMeshInstance::BaseMeshPtr,
             bases< DataStructure > >( "BaseMesh", no_init )
-        .def( "getCoordinates", &MeshInstance::getCoordinates )
+//         .def( "getCoordinates", +[](const BaseMeshInstance& v)
+//         {
+//             return ConstViewer<MeshCoordinatesFieldInstance>( v.getCoordinates() );
+//         })
+        .def( "getCoordinates", &BaseMeshInstance::getCoordinates );
     ;
 
     class_< MeshInstance, MeshInstance::MeshPtr,
             bases< BaseMeshInstance > >( "Mesh", no_init )
         .def( "create", &createSharedPtr< MeshInstance > )
         .staticmethod( "create" )
+        .def( "hasGroupOfElements", &MeshInstance::hasGroupOfElements )
+        .def( "hasGroupOfNodes", &MeshInstance::hasGroupOfNodes )
         .def( "readAsterMeshFile", &MeshInstance::readAsterMeshFile )
         .def( "readGibiFile", &MeshInstance::readGibiFile )
         .def( "readGmshFile", &MeshInstance::readGmshFile )

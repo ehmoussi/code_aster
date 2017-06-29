@@ -31,6 +31,12 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructures/DataStructure.h"
 
+/** @brief Forward declaration of FieldOnNodesInstance */
+template< class ValueType >
+class FieldOnNodesInstance;
+
+typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
+
 /**
  * @class MeshCoordinatesFieldInstance
  * @brief Cette classe template permet de definir un champ aux noeuds Aster
@@ -45,6 +51,8 @@ private:
     JeveuxVectorChar24 _reference;
     /** @brief Vecteur Jeveux '.VALE' */
     JeveuxVectorDouble _valuesList;
+
+    friend FieldOnNodesDoubleInstance;
 
 public:
     /**
@@ -70,9 +78,8 @@ public:
      * @brief Surcharge de l'operateur []
      * @param i Indice dans le tableau Jeveux
      * @return la valeur du tableau Jeveux a la position i
-     * @todo cython n'autorise pas la présence de 2 operator[] (un avec et l'autre sans const)
      */
-    double &operator[]( int i )
+    const double operator[]( int i ) const
     {
         return _valuesList->operator[](i);
     };
@@ -81,7 +88,7 @@ public:
      * @brief Mise a jour des pointeurs Jeveux
      * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
      */
-    bool updateValuePointers()
+    bool updateValuePointers() const
     {
         bool retour = _descriptor->updateValuePointer();
         retour = ( retour && _reference->updateValuePointer() );
@@ -92,9 +99,15 @@ public:
 
 
 /**
- * @typedef MeshCoordinatesFieldPtrDouble
+ * @typedef MeshCoordinatesFieldPtr
  * @brief Definition d'un champ aux noeuds de double
  */
 typedef boost::shared_ptr< MeshCoordinatesFieldInstance > MeshCoordinatesFieldPtr;
+
+/**
+ * @typedef MeshCoordinatesFieldPtr
+ * @brief Definition d'un champ aux noeuds de double
+ */
+typedef boost::shared_ptr< const MeshCoordinatesFieldInstance > ConstMeshCoordinatesFieldPtr;
 
 #endif /* MESHCOORDINATESFIELD_H_ */
