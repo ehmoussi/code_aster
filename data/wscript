@@ -190,7 +190,8 @@ def check_external_programs(self):
     _check_prog(self, 'metis', ['gpmetis'],
                 add_paths=[osp.join('${METISDIR}', 'bin')])
 
-    _check_prog(self, 'gmsh', ['gmsh'])
+    _check_prog(self, 'gmsh', ['gmsh'],
+                add_paths=['${GMSH_BIN_DIR}'])
 
     _check_prog(self, 'gibi', ['gibi_aster.py'],
                 add_paths=['${GIBI_DIR}'])
