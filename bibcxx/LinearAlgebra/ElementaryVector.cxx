@@ -36,7 +36,7 @@ ElementaryVectorInstance::ElementaryVectorInstance( const JeveuxMemory memType )
                 _corichRept( JeveuxBidirectionalMap( "&&CORICH." + getName() + ".REPT" ) )
 {};
 
-FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const DOFNumberingPtr& currentNumerotation,
+FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const BaseDOFNumberingPtr& currentNumerotation,
                                                                 const double& time,
                                                                 const JeveuxMemory memType )
     throw ( std::runtime_error )
