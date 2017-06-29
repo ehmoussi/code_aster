@@ -8,7 +8,7 @@ import numpy as N
 test = code_aster.TestCase()
 
 MAIL = code_aster.ParallelMesh.create()
-MAIL.readMedFile("Carre")
+MAIL.readMedFile("xxParallelMesh002a")
 #MAIL.debugPrint()
 
 MATER=DEFI_MATERIAU(ELAS=_F(E=10000.0,
