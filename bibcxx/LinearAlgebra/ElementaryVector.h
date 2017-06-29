@@ -33,6 +33,7 @@
 #include "Loads/ListOfLoads.h"
 #include "DataFields/FieldOnNodes.h"
 #include "Discretization/DOFNumbering.h"
+#include "Discretization/ParallelDOFNumbering.h"
 
 /**
  * @class ElementaryVectorInstance
@@ -114,7 +115,18 @@ public:
      * @param currentNumerotation objet DOFNumbering
      * @todo prendre en compte les fonctions multiplicatrices
      */
-    FieldOnNodesDoublePtr assembleVector( const DOFNumberingPtr& currentNumerotation,
+    FieldOnNodesDoublePtr assembleVector( const ParallelDOFNumberingPtr& currentNumerotation )
+        throw ( std::runtime_error )
+    {
+        return assembleVector( currentNumerotation, 0., Permanent );
+    };
+
+    /**
+     * @brief Assembler les vecteurs elementaires en se fondant sur currentNumerotation
+     * @param currentNumerotation objet DOFNumbering
+     * @todo prendre en compte les fonctions multiplicatrices
+     */
+    FieldOnNodesDoublePtr assembleVector( const BaseDOFNumberingPtr& currentNumerotation,
                                           const double& time = 0.,
                                           const JeveuxMemory memType = Permanent )
         throw ( std::runtime_error );

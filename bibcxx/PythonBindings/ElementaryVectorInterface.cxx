@@ -32,6 +32,10 @@ void exportElementaryVectorToPython()
 
     FieldOnNodesDoublePtr (ElementaryVectorInstance::*c1)(const DOFNumberingPtr&) =
             &ElementaryVectorInstance::assembleVector;
+#ifdef _USE_MPI
+    FieldOnNodesDoublePtr (ElementaryVectorInstance::*c2)(const ParallelDOFNumberingPtr&) =
+            &ElementaryVectorInstance::assembleVector;
+#endif /* _USE_MPI */
 
     class_< ElementaryVectorInstance, ElementaryVectorInstance::ElementaryVectorPtr,
             bases< DataStructure > > ( "ElementaryVector", no_init )
@@ -39,6 +43,7 @@ void exportElementaryVectorToPython()
         .staticmethod( "create" )
         .def( "addMechanicalLoad", &ElementaryVectorInstance::addMechanicalLoad )
         .def( "assembleVector", c1 )
+        .def( "assembleVector", c2 )
         .def( "setListOfLoads", &ElementaryVectorInstance::setListOfLoads )
     ;
 };
