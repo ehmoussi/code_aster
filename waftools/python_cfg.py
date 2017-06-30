@@ -28,7 +28,7 @@ from waflib import Options, Configure, Errors, Utils
 
 def options(self):
     self.load('python')    # --nopyc/--nopyo are enabled below
-    group = self.add_option_group('Code_Aster options')
+    group = self.add_option_group('code_aster options')
     group.add_option('--embed-python', dest='embed_python',
                     default=False, action='store_true',
                     help='Embed python as static libraries (experimental, '

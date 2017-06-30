@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 """
-Internationalization of Code_Aster messages
+Internationalization of code_aster messages
 -------------------------------------------
 
 Content of src/i18n
@@ -69,7 +69,7 @@ Build steps
 
       cp -r build/release/i18n_updated/* i18n/
       hg add i18n/*/*.po
-      hg ci -m '[i18n] update translations from Crowdin Code_Aster project' i18n
+      hg ci -m '[i18n] update translations from Crowdin code_aster project' i18n
 
   - pushed to crowdin the ``aster_messages.pot`` file
 
@@ -82,7 +82,7 @@ from glob import glob
 from waflib import Configure, TaskGen, Task, Errors, Logs
 
 def options(self):
-    group = self.get_option_group('Code_Aster options')
+    group = self.get_option_group('code_aster options')
     group.add_option('--install-i18n', dest='install_i18n',
                     action='store_true', default=None,
                     help='If the option is enabled, configure fails if a tool '
@@ -172,7 +172,7 @@ def update_gettext(self):
 
 class xgettext(CaptureTask):
     """Build the .pot file from a list of source files"""
-    run_str = '${XGETTEXT} -o ${TGT[0].abspath()} --from-code=utf-8 --package-name=Code_Aster --package-version=default ${I18NFILES}'
+    run_str = '${XGETTEXT} -o ${TGT[0].abspath()} --from-code=utf-8 --package-name=code_aster --package-version=default ${I18NFILES}'
     color   = 'BLUE'
 
 class merge_po(CaptureTask):

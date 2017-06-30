@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 """
-Build script for Code_Aster
+Build script for code_aster
 
 
 Note:
@@ -95,7 +95,16 @@ def options(self):
     group.add_option('--prefix', dest='prefix', default=None,
                      help='installation prefix [default: %r]' % default_prefix)
 
-    group = self.add_option_group('Code_Aster options')
+    group = self.get_option_group("Configuration options")
+    group.add_option('--with-data', dest='with_data',
+                    action='store', default='../data',
+                    help='location of the data repository (default: ../data)')
+    group.add_option('--with-validation', dest='with_validation',
+                    action='store', default='../validation',
+                    help='location of the validation repository '
+                         '(default: ../validation)')
+
+    group = self.add_option_group('code_aster options')
 
     self.load('parallel', tooldir='waftools')
     self.load('python_cfg', tooldir='waftools')
@@ -126,8 +135,12 @@ def options(self):
     self.recurse('i18n')
     self.recurse('data')
 
+
 def configure(self):
     self.setenv('default')
+    # store arguments for reconfigure
+    import sys
+    self.env.WAFCMDLINE = sys.argv[1:]
 
     # compute default prefix
     if not self.env.PREFIX:
@@ -147,6 +160,8 @@ def configure(self):
     self.load('use_config')
     self.load('gnu_dirs')
     self.env['BIBPYTPATH'] = self.path.find_dir('bibpyt').abspath()
+    self.env.data_path = self.options.with_data
+    self.env.validation_path = self.options.with_validation
 
     self.env.ASTER_EMBEDS = []
 
@@ -203,6 +218,7 @@ def configure(self):
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
+
     # keep compatibility for as_run
     if self.get_define('HAVE_MPI'):
         self.env.ASRUN_MPI_VERSION = 1
@@ -242,13 +258,16 @@ def build(self):
     self.recurse('bibpyt')
     self.recurse('mfront')
     self.recurse('i18n')
-    self.recurse('data')
-    lsub = ['materiau', 'datg', 'catalo']
+    self.recurse('catalo')
+
+    lsub = [osp.join(self.env.data_path or '', 'materiau'),
+            osp.join(self.env.data_path or '', 'datg')]
     if self.env.install_tests:
-        lsub.extend(['astest', '../validation/astest'])
+        lsub.extend(['astest', osp.join(self.env.validation_path, 'astest')])
     for optional in lsub:
         if osp.exists(osp.join(optional, 'wscript')):
             self.recurse(optional)
+    self.recurse('data')
 
 def build_elements(self):
     self.recurse('catalo')
@@ -273,8 +292,8 @@ def all(self):
     Options.commands = lst + Options.commands
 
 class BuildElementContext(Build.BuildContext):
-    """execute the build for elements catalog only using an installed Aster (also performed at install)"""
-    cmd = 'buildelem'
+    """execute the build for elements catalog only using an installed Aster (also performed at install, for internal use only)"""
+    cmd = '_buildelem'
     fun = 'build_elements'
 
 def runtest(self):
@@ -320,7 +339,7 @@ def uncompress64(self, compressed):
 @Configure.conf
 def check_platform(self):
     self.start_msg('Getting platform')
-    # convert to Code_Aster terminology
+    # convert to code_aster terminology
     os_name = self.env.DEST_OS
     if os_name == 'cygwin':
         os_name = 'linux'
@@ -366,7 +385,6 @@ def check_variant_vars(self):
 # but defines are not removed from `env`
 # XXX see write_config_header(remove=True/False) + format Fortran ?
 from waflib.Tools.c_config import DEFKEYS
-
 class ConfigHelper(object):
 
     def __init__(self, language):

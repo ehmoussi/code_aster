@@ -44,7 +44,7 @@ from waflib import Context, Configure
 
 def options(self):
     self.load('cython')
-    group = self.get_option_group("Code_Aster options")
+    group = self.get_option_group("code_aster options")
     group.add_option('--force-cython', action='store_true',
                     dest='force_cython', default=False,
                     help='Force rebuild of all Cython source files')

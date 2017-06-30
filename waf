@@ -41,9 +41,12 @@ fi
 if [ $# -lt 1 ]; then
     # no argument: use waf
     true
-elif [[ $1 =~ ^\- ]]; then
+elif [[ "$1" =~ ^\- ]]; then
     # start with hiphen: suppose to be a waf option
     true
+elif [ "$1" = "reconfigure" ]; then
+    python -c "from subprocess import call ; $(grep WAFCMDLINE build/c4che/release_cache.py) ; call(['waf'] + WAFCMDLINE)"
+    exit $?
 else
     # is the first argument a waf command ?
     wafcmd=(build buildelem clean configure dist distcheck distclean \
