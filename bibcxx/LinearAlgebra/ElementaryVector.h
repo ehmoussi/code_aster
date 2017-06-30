@@ -115,11 +115,13 @@ public:
      * @param currentNumerotation objet DOFNumbering
      * @todo prendre en compte les fonctions multiplicatrices
      */
+#ifdef _USE_MPI
     FieldOnNodesDoublePtr assembleVector( const ParallelDOFNumberingPtr& currentNumerotation )
         throw ( std::runtime_error )
     {
         return assembleVector( currentNumerotation, 0., Permanent );
     };
+#endif /* _USE_MPI */
 
     /**
      * @brief Assembler les vecteurs elementaires en se fondant sur currentNumerotation

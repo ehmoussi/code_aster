@@ -10,6 +10,7 @@ syntax: regexp
 ^\.waf\-.*/
 ^\.lock\-.*
 ^\.hgignore
+^\.yamm/
 ^waf_.*
 .*~$
 .*%$
