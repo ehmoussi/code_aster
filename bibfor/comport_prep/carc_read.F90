@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine carc_read(ds_compor_para, model_, l_implex_)
 !
 use NonLin_Datastructure_type
@@ -31,7 +32,6 @@ implicit none
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterc/lcalgo.h"
-#include "asterc/lccree.h"
 #include "asterc/lctest.h"
 #include "asterc/lcsymm.h"
 #include "asterfort/jeveuo.h"
@@ -42,14 +42,14 @@ implicit none
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_meca_rkit.h"
 #include "asterfort/comp_read_exte.h"
+#include "asterfort/comp_meca_code.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/deprecated_algom.h"
 !
-!
-    type(NL_DS_ComporParaPrep), intent(inout) :: ds_compor_para
-    character(len=8), intent(in), optional :: model_
-    aster_logical, intent(in), optional :: l_implex_
+type(NL_DS_ComporParaPrep), intent(inout) :: ds_compor_para
+character(len=8), intent(in), optional :: model_
+aster_logical, intent(in), optional :: l_implex_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,11 +76,11 @@ implicit none
     integer :: type_matr_t=0, iter_inte_pas=0, iter_deborst_max=0
     integer :: ipostiter=0, ipostincr=0
     character(len=8) :: mesh = ' '
-    character(len=16) :: rela_comp=' ', rela_comp_py=' '
-    character(len=16) :: defo_comp=' ', defo_comp_py=' '
+    character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
     character(len=16) :: veri_b=' '
-    character(len=16) :: kit_comp(9) = (/' ',' ',' ',' ',' ',' ',' ',' ',' '/)
-    character(len=16):: rela_thmc=' ', rela_hydr=' ', rela_ther=' ', rela_meca=' ', rela_meca_py=' '
+    character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
+    character(len=16) :: defo_comp=' ',  rela_comp=' '
+    character(len=16) :: thmc_comp=' ', hydr_comp=' ', ther_comp=' ', meca_comp=' '
     aster_logical :: l_kit_thm=.false._1, l_mfront_proto=.false._1, l_kit_ddi = .false._1
     aster_logical :: l_mfront_offi=.false._1, l_umat=.false._1, l_kit = .false._1, l_matr_unsymm
     aster_logical :: l_implex
@@ -120,34 +120,43 @@ implicit none
         call comp_meca_l(rela_comp, 'KIT_THM', l_kit_thm)
         call comp_meca_l(rela_comp, 'KIT_DDI', l_kit_ddi)
 !
-! ----- Coding comportment (Python)
+! ----- For KIT
 !
-        call lccree(1, rela_comp, rela_comp_py)
-        call lccree(1, defo_comp, defo_comp_py)
+        if (l_kit) then
+            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
+        endif
 !
 ! ----- Get mechanics part
 !
         if (l_kit_thm) then
-            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
-            rela_thmc = kit_comp(1)
-            rela_ther = kit_comp(2)
-            rela_hydr = kit_comp(3)
-            rela_meca = kit_comp(4)
+            thmc_comp = kit_comp(1)
+            ther_comp = kit_comp(2)
+            hydr_comp = kit_comp(3)
+            meca_comp = kit_comp(4)
         elseif (l_kit_ddi) then
-            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
-            rela_meca = kit_comp(1)
+            meca_comp = kit_comp(1)
         else
-            rela_meca = rela_comp
+            meca_comp = rela_comp
         endif
-        call lccree(1, rela_meca, rela_meca_py)
+!
+! ----- Coding comportment (Python)
+!
+        call comp_meca_code(rela_comp_    = rela_comp   ,&
+                            defo_comp_    = defo_comp   ,&
+                            kit_comp_     = kit_comp    ,&
+                            meca_comp_    = meca_comp   ,&
+                            comp_code_py_ = comp_code_py,&
+                            rela_code_py_ = rela_code_py,&
+                            defo_code_py_ = defo_code_py,&
+                            meca_code_py_ = meca_code_py)
 !
 ! ----- Get ALGO_INTE
 !
         call getvtx(keywordfact, 'ALGO_INTE', iocc = i_comp, scal = algo_inte, nbret = iret)
         if (iret .eq. 0) then
-            call lcalgo(rela_comp_py, algo_inte)
+            call lcalgo(rela_code_py, algo_inte)
         else  
-            call lctest(rela_meca_py, 'ALGO_INTE', algo_inte, iret)
+            call lctest(meca_code_py, 'ALGO_INTE', algo_inte, iret)
             if (iret .eq. 0) then
                 texte(1) = algo_inte
                 texte(2) = 'ALGO_INTE'
@@ -159,17 +168,16 @@ implicit none
 ! ----- Symmetric or not ?
 !
         l_matr_unsymm = .false.
-        call lcsymm(rela_comp_py, answer)
+        call lcsymm(rela_code_py, answer)
         l_matr_unsymm = l_matr_unsymm .or. answer .eq. 'No'
-        call lcsymm(rela_meca_py, answer)
+        call lcsymm(meca_code_py, answer)
         l_matr_unsymm = l_matr_unsymm .or. answer .eq. 'No'
-        call lcsymm(defo_comp_py, answer)
+        call lcsymm(defo_code_py, answer)
         l_matr_unsymm = l_matr_unsymm .or. answer .eq. 'No'
         call getvtx(keywordfact, 'SYME_MATR_TANG', iocc = i_comp, scal = answer, nbret = iret)
         if (iret .ne. 0) then
             l_matr_unsymm = l_matr_unsymm .or. answer .eq. 'NON'
         endif
-        call lcdiscard(rela_meca_py)
 !
 ! ----- Get ITER_INTE_PAS
 !
@@ -210,7 +218,7 @@ implicit none
             else
                 ASSERT(.false.)
             endif
-            call lctest(rela_comp_py, 'TYPE_MATR_TANG', type_matr_tang, iret)
+            call lctest(rela_code_py, 'TYPE_MATR_TANG', type_matr_tang, iret)
             if (iret .eq. 0) then
                 texte(1) = type_matr_tang
                 texte(2) = rela_comp
@@ -229,7 +237,7 @@ implicit none
             else
                 type_matr_t = 9
             endif
-            call lctest(rela_comp_py, 'TYPE_MATR_TANG', method, iret)
+            call lctest(rela_code_py, 'TYPE_MATR_TANG', method, iret)
             if ((iret.eq.0) .and. (rela_comp.ne.'SANS')) then
                 texte(1) = type_matr_tang
                 texte(2) = method
@@ -284,12 +292,6 @@ implicit none
             endif
         endif
 !
-! ----- For KIT
-!
-        if (l_kit) then
-            call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp)
-        endif
-!
 ! ----- Get parameters for external programs (MFRONT/UMAT)
 !
         call comp_read_exte(rela_comp  , kit_comp ,&
@@ -340,7 +342,12 @@ implicit none
             end if
         end if
 !
-        call lcdiscard(rela_comp_py)
+! ----- Discard
+!
+        call lcdiscard(meca_code_py)
+        call lcdiscard(rela_code_py)
+        call lcdiscard(defo_code_py)
+        call lcdiscard(comp_code_py)
 !
 ! ----- Save options in list
 !

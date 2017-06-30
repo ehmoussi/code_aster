@@ -151,7 +151,7 @@ implicit none
             call mfront_set_integer_parameter(libr_name, subr_name, model_mfront,&
                                               "iterMax", int(iter_inte_maxi))
         else
-            call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_RELA', resi_inte_rela)
+            call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_RELA', resi_inte_rela) 
         endif
 !
 ! ----- Set in <CARTE>
