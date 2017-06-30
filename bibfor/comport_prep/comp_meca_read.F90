@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_meca_read(l_etat_init, ds_compor_prep, model)
 !
 use NonLin_Datastructure_type
@@ -32,16 +33,13 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/comp_meca_incr.h"
-#include "asterfort/comp_read_typmod.h"
+#include "asterfort/getExternalBehaviourPara.h"
 #include "asterfort/comp_meca_rkit.h"
-#include "asterfort/comp_read_exte.h"
 #include "asterfort/comp_meca_l.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    aster_logical, intent(in) :: l_etat_init
-    type(NL_DS_ComporPrep), intent(inout) :: ds_compor_prep
-    character(len=8), intent(in), optional :: model
+aster_logical, intent(in) :: l_etat_init
+type(NL_DS_ComporPrep), intent(inout) :: ds_compor_prep
+character(len=8), intent(in), optional :: model
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,7 +63,8 @@ implicit none
     character(len=16) :: kit_comp(4)
     character(len=255) :: libr_name, subr_name
     integer :: unit_comp, nb_vari_umat
-    aster_logical :: l_cristal, l_umat, l_mfront_proto, l_mfront_offi, l_kit_thm, l_kit
+    aster_logical :: l_cristal, l_kit
+    aster_logical :: l_comp_external
     integer, pointer :: v_model_elem(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -108,7 +107,6 @@ implicit none
 ! ----- Detection of specific cases
 !
         call comp_meca_l(rela_comp, 'KIT'    , l_kit)
-        call comp_meca_l(rela_comp, 'KIT_THM', l_kit_thm)
         call comp_meca_l(rela_comp, 'CRISTAL', l_cristal)
 !
 ! ----- Get DEFORMATION from command file
@@ -130,26 +128,18 @@ implicit none
             call comp_meca_rkit(keywordfact, i_comp, rela_comp, kit_comp, l_etat_init)
         endif
 !
-! ----- Get parameters for external programs (MFRONT/UMAT)
-!
-        call comp_read_exte(rela_comp  , kit_comp      ,&
-                            l_umat     , l_mfront_proto, l_mfront_offi,&
-                            libr_name  , subr_name     ,&
-                            keywordfact, i_comp        , nb_vari_umat)
-!
 ! ----- Get multi-comportment *CRISTAL
 !
         if (l_cristal) then
             call getvid(keywordfact, 'COMPOR', iocc = i_comp, scal = mult_comp)
         endif
 !
-! ----- Get model for MFRONT
+! ----- Get parameters for external programs (MFRONT/UMAT)
 !
-        if (l_mfront_proto .or. l_mfront_offi) then
-            call comp_read_typmod(mesh       , v_model_elem,&
-                                  keywordfact, i_comp      , rela_comp,&
-                                  model_dim  , model_mfront, type_cpla)
-        endif
+        call getExternalBehaviourPara(mesh           , v_model_elem, rela_comp, kit_comp,&
+                                      l_comp_external, ds_compor_prep%v_exte(i_comp),&
+                                      keywordfact    , i_comp,&
+                                      type_cpla_out_ = type_cpla)
 !
 ! ----- Select type of comportment (incremental or total)
 !
@@ -165,14 +155,6 @@ implicit none
         ds_compor_prep%v_comp(i_comp)%mult_comp      = mult_comp
         ds_compor_prep%v_comp(i_comp)%post_iter      = post_iter
         ds_compor_prep%v_comp(i_comp)%type_model2    = type_model2
-        ds_compor_prep%v_exte(i_comp)%l_umat         = l_umat
-        ds_compor_prep%v_exte(i_comp)%l_mfront_proto = l_mfront_proto
-        ds_compor_prep%v_exte(i_comp)%l_mfront_offi  = l_mfront_offi
-        ds_compor_prep%v_exte(i_comp)%libr_name      = libr_name 
-        ds_compor_prep%v_exte(i_comp)%subr_name      = subr_name
-        ds_compor_prep%v_exte(i_comp)%nb_vari_umat   = nb_vari_umat
-        ds_compor_prep%v_exte(i_comp)%model_mfront   = model_mfront
-        ds_compor_prep%v_exte(i_comp)%model_dim      = model_dim
     end do
 !
 end subroutine

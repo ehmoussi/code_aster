@@ -16,19 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine comp_read_typmod(mesh     , v_model_elem, elem_type    ,&
-                                keywf    , i_comp      , rela_comp    , type_cpla_in,&
-                                model_dim, model_mfront, type_cpla_out)
-        character(len=8), intent(in) :: mesh
-        integer, intent(in), pointer :: v_model_elem(:)
-        integer, intent(in) :: elem_type 
+    subroutine getMFrontPlaneStress(keywf, i_comp, rela_comp, l_mfront_cp)
         character(len=16), intent(in) :: keywf
         integer, intent(in) :: i_comp
         character(len=16), intent(in) :: rela_comp
-        character(len=16), intent(in) :: type_cpla_in
-        character(len=16), intent(out) :: model_mfront
-        integer, intent(out) :: model_dim
-        character(len=16), intent(out) :: type_cpla_out
-    end subroutine comp_read_typmod
+        aster_logical, intent(out) :: l_mfront_cp
+    end subroutine getMFrontPlaneStress
 end interface

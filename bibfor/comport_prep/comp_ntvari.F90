@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1003
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_ntvari(model_ , compor_cart_, compor_list_, compor_info,&
                        nt_vari, nb_vari_maxi, nb_zone     , v_exte)
 !
@@ -31,22 +33,18 @@ implicit none
 #include "asterfort/jenuno.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/jexatr.h"
-#include "asterfort/comp_mfront_modelem.h"
-#include "asterfort/comp_read_exte.h"
+#include "asterfort/getExternalBehaviourPara.h"
 #include "asterfort/teattr.h"
 #include "asterfort/Behaviour_type.h"
 !
-! aslint: disable=W1003
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), optional, intent(in) :: model_
-    character(len=19), optional, intent(in) :: compor_cart_
-    character(len=16), optional, intent(in) :: compor_list_(20)
-    character(len=19), intent(in) :: compor_info
-    integer, intent(out) :: nt_vari
-    integer, intent(out) :: nb_vari_maxi
-    integer, intent(out) :: nb_zone
-    type(NL_DS_ComporExte), pointer, intent(out) :: v_exte(:)
+character(len=8), optional, intent(in) :: model_
+character(len=19), optional, intent(in) :: compor_cart_
+character(len=16), optional, intent(in) :: compor_list_(20)
+character(len=19), intent(in) :: compor_info
+integer, intent(out) :: nt_vari
+integer, intent(out) :: nb_vari_maxi
+integer, intent(out) :: nb_zone
+type(NL_DS_ComporExte), pointer, intent(out) :: v_exte(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,7 +64,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_mfront_cp, l_mfront_proto, l_umat, l_mfront_offi
+    aster_logical :: l_comp_external
     integer, pointer :: v_model_elem(:) => null()
     character(len=16), pointer :: v_compor_vale(:) => null()
     integer, pointer :: v_zone(:) => null()
@@ -74,7 +72,7 @@ implicit none
     integer, pointer :: v_compor_lima(:) => null()
     integer, pointer :: v_compor_lima_lc(:) => null()
     integer :: nb_vale, nb_cmp_max, nb_vari, nb_elem, nb_elem_mesh
-    integer :: i_zone, codret, iret, i_elem, posit
+    integer :: i_zone, iret, i_elem, posit
     integer :: type_affe, indx_affe, elem_type_nume, elem_nume, model_dim
     character(len=16) :: elem_type_name
     character(len=16) :: post_iter
@@ -198,39 +196,10 @@ implicit none
 !
 ! ----- Get parameters for external programs (MFRONT/UMAT)
 !
-        call comp_read_exte(rela_comp, kit_comp ,&
-                            l_umat   , l_mfront_proto , l_mfront_offi,&
-                            libr_name, subr_name)
-        l_mfront_cp = type_cpla .eq. 'ANALYTIQUE' .and. (l_mfront_proto .or. l_mfront_offi)
-!
-! ----- Get number of internal variables for MFRONT
-!
-        if (l_mfront_offi) then
-            if (present(model_)) then
-                elem_type_nume = v_model_elem(elem_nume)
-                if (elem_type_nume .ne. 0 .and. libr_name .ne. ' ') then
-                    call jenuno(jexnum('&CATA.TE.NOMTE', elem_type_nume), elem_type_name)
-                    call comp_mfront_modelem(elem_type_name, l_mfront_cp ,&
-                                             model_dim     , model_mfront,&
-                                             codret)
-                    ASSERT(codret .eq. 0)
-                endif
-            else
-                model_dim    = 3
-                model_mfront = '_Tridimensional'
-            endif
-        endif
-!
-! ----- Save parameters for external constitutive laws
-!
-        v_exte(i_zone)%l_umat         = l_umat
-        v_exte(i_zone)%l_mfront_proto = l_mfront_proto
-        v_exte(i_zone)%l_mfront_offi  = l_mfront_offi
-        v_exte(i_zone)%subr_name      = subr_name
-        v_exte(i_zone)%libr_name      = libr_name
-        v_exte(i_zone)%model_mfront   = model_mfront
-        v_exte(i_zone)%model_dim      = model_dim
-        v_exte(i_zone)%nb_vari_umat   = 0
+        call getExternalBehaviourPara(mesh           , v_model_elem  ,&
+                                      rela_comp      , kit_comp      ,&
+                                      l_comp_external, v_exte(i_zone), elem_type_ = elem_type_nume,&
+                                      type_cpla_in_   = type_cpla)
 !
 ! ----- Get number of internal variables
 !
