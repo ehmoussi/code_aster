@@ -44,6 +44,7 @@ implicit none
 #include "asterfort/pmathm.h"
 #include "asterfort/rcvala.h"
 #include "asterfort/utmess.h"
+#include "asterfort/nvithm.h"
 #include "asterfort/thmGetBehaviour.h"
 !
 ! aslint: disable=W1504
@@ -57,7 +58,7 @@ implicit none
     integer :: yamec, yap1, yap2, yate
     integer :: addeme, addep1, addep2, addete, ii, jj
     integer :: kpi, ipi
-    integer :: i, j, n, k, kji, nvim, nbcomp
+    integer :: i, j, n, k, kji, nbcomp
     real(kind=8) :: dfdi(nno, 3), dfdi2(nnos, 3)
     real(kind=8) :: geom(ndim, nno), crit(*), poids, poids2
     real(kind=8) :: deplp(dimuel), deplm(dimuel)
@@ -78,6 +79,10 @@ implicit none
     character(len=8) :: typmod(2)
     character(len=16) :: option, compor(*), loi
     character(len=24) :: valk(2)
+    character(len=16) :: meca, thmc, ther, hydr
+    integer :: nvit , nvih, nvic, nvim
+    integer :: advihy, advico, advime, advith
+    integer :: vihrho, vicphi, vicpvp, vicsat, vicpr1, vicpr2
 !
 ! =====================================================================
 !
@@ -190,6 +195,15 @@ implicit none
     if (dimuel .gt. dimmat) then
         call utmess('F', 'ALGORITH_33')
     endif
+! ======================================================================
+! --- MISE AU POINT POUR LES VARIABLES INTERNES ------------------------
+! --- DEFINITION DES POINTEURS POUR LES DIFFERENTES RELATIONS DE -------
+! --- COMPORTEMENTS ET POUR LES DIFFERENTES COMPOSANTES ----------------
+! ======================================================================
+    call nvithm(compor, meca, thmc, ther, hydr,&
+                nvim, nvit, nvih, nvic, advime,&
+                advith, advihy, advico, vihrho, vicphi,&
+                vicpvp, vicsat, vicpr1, vicpr2)
 !
 ! - Get parameters for coupling
 !
@@ -351,7 +365,9 @@ implicit none
                         defgem, contm((kpi-1)*dimcon+1), varim((kpi-1)*nbvari+1), defgep,&
                         contp((kpi-1)*dimcon+1), varip((kpi-1)*nbvari+1), mecani, press1, press2,&
                         tempe, crit, rinstm, rinstp, r,&
-                        drds, dsde, codret, angmas)
+                        drds, dsde, codret, angmas,&
+                        meca, thmc, ther, hydr, nvim,&
+                        advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         else
             call equthm(imate, option, ta, ta1, ndim,&
                         compor, typmod, kpi, npg, dimdef,&
@@ -359,7 +375,9 @@ implicit none
                         varim((kpi-1)*nbvari+1), defgep, contp((kpi-1)* dimcon+1),&
                         varip((kpi-1)*nbvari+1), mecani, press1, press2, tempe,&
                         crit, rinstm, rinstp, dt, r,&
-                        drds, dsde, codret, angmas)
+                        drds, dsde, codret, angmas,&
+                        meca, thmc, ther, hydr, nvim,&
+                        advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 ! ======================================================================
 ! --- ATTENTION CI-DESSOUS IL N'Y A PAS D'IMPACT DE CALCUL -------------
 ! --- ON RECOPIE POUR LA METHODE D'INTEGRATION SELECTIVE LES CONTRAINTES

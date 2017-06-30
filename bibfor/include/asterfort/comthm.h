@@ -31,7 +31,9 @@ interface
                       addep2, adcp21, adcp22, addete, adcote,&
                       defgem, defgep, congem, congep, vintm,&
                       vintp, dsde, pesa, retcom, kpi,&
-                      npg, angl_naut)
+                      npg, angl_naut,&
+                      meca, thmc, ther, hydr, nvim,&
+                      advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         integer, parameter :: maxfa=6
         integer :: nbvari
         integer :: dimcon
@@ -75,5 +77,16 @@ interface
         integer :: kpi
         integer :: npg
         real(kind=8) :: angl_naut(3)
+        character(len=16), intent(in) :: meca
+        character(len=16), intent(in) :: thmc
+        character(len=16), intent(in) :: ther
+        character(len=16), intent(in) :: hydr
+        integer, intent(in) :: nvim
+        integer, intent(in) :: advihy
+        integer, intent(in) :: advico
+        integer, intent(in) :: vihrho
+        integer, intent(in) :: vicphi
+        integer, intent(in) :: vicpvp
+        integer, intent(in) :: vicsat
     end subroutine comthm
 end interface 

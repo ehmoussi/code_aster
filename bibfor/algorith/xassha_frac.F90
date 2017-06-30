@@ -42,6 +42,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/xmofhm.h"
 #include "asterfort/xsautl.h"
 #include "asterfort/xvinhm.h"
+#include "asterfort/thmGetParaBehaviour.h"
 !
 ! person_in_charge: daniele.colombo at ifpen.fr
 ! ======================================================================
@@ -73,9 +74,8 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
     character(len=16):: compor(*), thmc, hydr, meca 
      
 !   RECUPERATION DES DIFFERENTES RELATIONS DE COMPORTEMENT
-    thmc = compor( 8)
-    hydr = compor(10)
-    meca = compor(11)     
+    call thmGetParaBehaviour(compor,&
+                             meca_ = meca, thmc_ = thmc, hydr_ = hydr)   
 !
     call matini(nnops, 3, 0.d0, dfdic)
     call matini(16, 3, 0.d0, dffc)

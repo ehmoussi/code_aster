@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501,W1504
+!
 subroutine assesu(nno, nnos, nface, geom, crit,&
                   deplm, deplp, congem, congep, vintm,&
                   vintp, defgem, defgep, dsde, matuu,&
@@ -23,9 +24,8 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
                   mecani, press1, press2, tempe, dimdef,&
                   dimcon, dimuel, nbvari, ndim, compor,&
                   typmod, typvf, axi, perman)
-    implicit none
 !
-! aslint: disable=W1501,W1504
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -330,7 +330,15 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
     call rcvalb(fami, kpg, spt, poum, imate,&
                 ' ', 'THM_INIT', 0, ' ', [0.d0],&
                 1, 'COMP_THM', rthmc, codmes, 1)
-    thmc = compor(8)
+! ======================================================================
+! --- MISE AU POINT POUR LES VARIABLES INTERNES ------------------------
+! --- DEFINITION DES POINTEURS POUR LES DIFFERENTES RELATIONS DE -------
+! --- COMPORTEMENTS ET POUR LES DIFFERENTES COMPOSANTES ----------------
+! ======================================================================
+    call nvithm(compor, meca, thmc, ther, hydr,&
+                nvim, nvit, nvih, nvic, advime,&
+                advith, advihy, advico, vihrho, vicphi,&
+                vicpvp, vicsat, vicpr1, vicpr2)
     if ((rthmc(1)-1.0d0) .lt. r8prem()) then
         loi = 'LIQU_SATU'
     else if ((rthmc(1)-2.0d0).lt.r8prem()) then
@@ -478,7 +486,9 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
                 addep2, adcp21, adcp22, addete, adcote,&
                 defgem, defgep, congem, congep, vintm(1, 1),&
                 vintp(1, 1), dsde, pesa, retcom, 1,&
-                1, angbid)
+                1, angbid,&
+                meca, thmc, ther, hydr, nvim,&
+                advihy, advico, vihrho, vicphi, vicpvp, vicsat)
     if (retcom .ne. 0) then
         call utmess('F', 'COMPOR1_9')
     endif
@@ -517,7 +527,9 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
                     addep2, adcp21, adcp22, addete, adcote,&
                     defgem, defgep, congem, congep, vintm(1, fa+1),&
                     vintp(1, fa+1), dsde, pesa, retcom, 1,&
-                    1, angbid)
+                    1, angbid,&
+                    meca, thmc, ther, hydr, nvim,&
+                    advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         if (retcom .ne. 0) then
             call utmess('F', 'COMPOR1_9')
         endif
@@ -559,16 +571,12 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
                 d)
     pcp = deplp(iadp1k)
     pgp = deplp(iadp2k)
-    if (loi .eq. 'LIQU_AD_GAZ') then
 !
 ! ON STOCK PC ET PG DU CENTRE SUR TOUS LES POINTS DE GAUSS
 ! EN VUE DE POST TRAITEMENT
 ! CECI EST PROVISOIRE
 !
-        call nvithm(compor, meca, thmc, ther, hydr,&
-                    nvim, nvit, nvih, nvic, advime,&
-                    advith, advihy, advico, vihrho, vicphi,&
-                    vicpvp, vicsat, vicpr1, vicpr2)
+    if (thmc .eq. 'LIQU_AD_GAZ') then
         do ipg = 1, nface+1
             vintp(advico+vicpr1,ipg) = pcp
             vintp(advico+vicpr2,ipg) = pgp

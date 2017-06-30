@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface 
     subroutine equthp(imate, option, ndim, compor, typmod,&
@@ -24,7 +23,9 @@ interface
                       defgem, congem, vintm, defgep, congep,&
                       vintp, mecani, press1, press2, tempe,&
                       crit, rinstm, rinstp, r, drds,&
-                      dsde, retcom, angmas)
+                      dsde, retcom, angmas,&
+                meca, thmc, ther, hydr, nvim,&
+                advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -53,5 +54,16 @@ interface
         real(kind=8) :: dsde(1:dimcon, 1:dimdef)
         integer :: retcom
         real(kind=8) :: angmas(3)
+        character(len=16), intent(in) :: meca
+        character(len=16), intent(in) :: thmc
+        character(len=16), intent(in) :: ther
+        character(len=16), intent(in) :: hydr
+        integer, intent(in) :: nvim
+        integer, intent(in) :: advihy
+        integer, intent(in) :: advico
+        integer, intent(in) :: vihrho
+        integer, intent(in) :: vicphi
+        integer, intent(in) :: vicpvp
+        integer, intent(in) :: vicsat
     end subroutine equthp
 end interface 

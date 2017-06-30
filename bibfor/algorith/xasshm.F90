@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine xasshm(nno, npg, npi, ipoids, ivf,&
                   idfde, igeom, geom, crit, deplm,&
                   deplp, contm, contp, varim, varip,&
@@ -30,9 +32,8 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
                   dimenr, heavt, lonch, cnset, jpintt,&
                   jpmilt, jheavn, angmas,dimmat, enrhyd,&
                   nfiss, nfh, jfisno, work1, work2)
-! ======================================================================
-! person_in_charge: daniele.colombo at ifpen.fr
-    implicit none
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -50,6 +51,7 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
 #include "asterfort/xdefhm.h"
 #include "asterfort/xequhm.h"
 #include "asterfort/xlinhm.h"
+#include "asterfort/thmGetParaBehaviour.h"
     integer :: dimmat, npg, dimuel
 !     DIMENSION DE LA MATRICE DE RIGIDITE DIMMAT=NDDLS*NNOP
 !    parameter    (dimmat=8*5)
@@ -182,7 +184,7 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
     do 201 i = 1, dimenr
         c(i) = 1.d0
         cs(i) = 1.d0
-201 continue
+201 continue 
 ! =====================================================================
 ! --- SI INTEGRATION REDUITE, ON MET A 0 CERTAINS COEFFICIENTS --------
 ! =====================================================================
@@ -230,7 +232,7 @@ subroutine xasshm(nno, npg, npi, ipoids, ivf,&
     call rcvala(imate, ' ', 'THM_INIT', 0, ' ',&
                 [0.d0], 1, 'COMP_THM', rthmc(1), codmes,&
                 1)
-    thmc = compor(8)
+    call thmGetParaBehaviour(compor, thmc_ = thmc)
     if ((rthmc(1)-1.0d0) .lt. r8prem()) then
         loi = 'LIQU_SATU'
     endif

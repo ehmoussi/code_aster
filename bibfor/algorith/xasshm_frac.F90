@@ -52,6 +52,7 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/matini.h"
 #include "asterfort/vecini.h"
 #include "asterfort/thmGetParaBiot.h"
+#include "asterfort/thmGetParaBehaviour.h"
 !
 ! ======================================================================
 !
@@ -95,9 +96,9 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
     ta1 = 1.d0-ta
     
 !   RECUPERATION DES DIFFERENTES RELATIONS DE COMPORTEMENT
-    thmc = compor( 8)
-    hydr = compor(10)
-    meca = compor(11)  
+    call thmGetParaBehaviour(compor,&
+                             meca_ = meca, thmc_ = thmc, hydr_ = hydr)  
+
 !
 ! - Get Biot parameters (for porosity evolution)
 !
@@ -147,7 +148,7 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
                        ffp, ffc, dffc, saut, gradpf,&
                        q1, q2, dpf, q1m, q2m, sautm,&
                        gradpfm, pf, ffp2, psup, pinf,&
-                       job, zi(jmate), &
+                       job, zi(jmate),&
                        t, dimuel, lamb, jheavn, ncompn, ifiss,&
                        nfiss, nfh, ifa, jheafa, ncomph,&
                        contac)
