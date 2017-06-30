@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_mfront_vname(nb_vari    , &
                              defo_comp  , type_cpla, post_iter,&
                              libr_name  , subr_name, model_mfront, model_dim,&
@@ -37,17 +38,15 @@ implicit none
 #include "asterc/mfront_get_internal_state_variables.h"
 #include "asterc/mfront_get_internal_state_variables_types.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: nb_vari
-    character(len=16), intent(in) :: defo_comp
-    character(len=16), intent(in) :: type_cpla
-    character(len=16), intent(in) :: post_iter
-    character(len=255), intent(in) :: libr_name
-    character(len=255), intent(in) :: subr_name
-    character(len=16), intent(in) :: model_mfront
-    integer, intent(in) :: model_dim
-    character(len=16), pointer, intent(in) :: v_vari_name(:)
+integer, intent(in) :: nb_vari
+character(len=16), intent(in) :: defo_comp
+character(len=16), intent(in) :: type_cpla
+character(len=16), intent(in) :: post_iter
+character(len=255), intent(in) :: libr_name
+character(len=255), intent(in) :: subr_name
+character(len=16), intent(in) :: model_mfront
+integer, intent(in) :: model_dim
+character(len=16), pointer, intent(in) :: v_vari_name(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -81,10 +80,10 @@ implicit none
 !
     call mfront_get_number_of_internal_state_variables(libr_name   , subr_name,&
                                                        model_mfront, nb_vari_type)
-    call comp_meca_code(defo_comp_   = defo_comp,&
-                        type_cpla_   = type_cpla,&
-                        post_iter_   = post_iter,&
-                        comp_code_py = comp_code_py)
+    call comp_meca_code(defo_comp_    = defo_comp,&
+                        type_cpla_    = type_cpla,&
+                        post_iter_    = post_iter,&
+                        comp_code_py_ = comp_code_py)
     if ( nb_vari .ne. 0 ) then
         AS_ALLOCATE(vk80 = v_varim_name, size = nb_vari_type)
         AS_ALLOCATE(vk80 = v_varim_type, size = nb_vari_type)
