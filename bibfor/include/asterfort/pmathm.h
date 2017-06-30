@@ -20,7 +20,7 @@
 !
 interface
     subroutine pmathm(dimmat, dimdef, dimcon, dimuel, dsde,&
-                      drds, ck, b, poids, matri)
+                      drds, ck, b, poids, work1, work2, matri)
         integer :: dimuel
         integer :: dimcon
         integer :: dimdef
@@ -30,6 +30,8 @@ interface
         real(kind=8) :: ck(dimdef)
         real(kind=8) :: b(dimdef, dimuel)
         real(kind=8) :: poids
+        real(kind=8) :: work1(dimcon, dimuel)
+        real(kind=8) :: work2(dimdef, dimuel)
         real(kind=8) :: matri(dimmat, dimmat)
     end subroutine pmathm
 end interface

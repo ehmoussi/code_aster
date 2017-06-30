@@ -93,7 +93,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
     real(kind=8), pointer :: rgygen(:) => null()
     real(kind=8), pointer :: kgen(:)   => null()
     real(kind=8), pointer :: agen(:)   => null()
-   
+
     real(kind=8), pointer :: nlsav1(:)    => null()
     real(kind=8), pointer :: nlsav2(:)    => null()
     real(kind=8), pointer :: depl2(:)      => null()
@@ -119,15 +119,15 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
     real(kind=8), pointer :: fext(:)      => null()
     real(kind=8), pointer :: amor_temp(:)      => null()
 !
-#define m0(row,col) mgen0((row-1)*nbmode+col)
-#define k(row,col) kgen((row-1)*nbmode+col)
-#define k0(row,col) kgen0((row-1)*nbmode+col)
-#define k_a(row,col) k_add((row-1)*nbmode+col)
-#define k_a0(row,col) k_add0((row-1)*nbmode+col)
-#define k_a_f(row,col) k_add_fact((row-1)*nbdof+col)
-#define c(row,col) agen((row-1)*nbmode+col)
-#define c0(row,col) agen0((row-1)*nbmode+col)
-#define c_a(row,col) c_add((row-1)*nbmode+col)
+#define m0(row,col) mgen0((col-1)*nbmode+row)
+#define k(row,col) kgen((col-1)*nbmode+row)
+#define k0(row,col) kgen0((col-1)*nbmode+row)
+#define k_a(row,col) k_add((col-1)*nbmode+row)
+#define k_a0(row,col) k_add0((col-1)*nbmode+row)
+#define k_a_f(row,col) k_add_fact((col-1)*nbdof+row)
+#define c(row,col) agen((col-1)*nbmode+row)
+#define c0(row,col) agen0((col-1)*nbmode+row)
+#define c_a(row,col) c_add((col-1)*nbmode+row)
 
 !
 !   0 - Initializations
@@ -138,7 +138,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
     if (present(reinteg)) reinteg = 0
 !
 !   1 - Update the stiffness matrix in the event of a change in state of some
-!       non linearity 
+!       non linearity
     if (present(nlcase)) then
         call intget(sd_int, DEPL, iocc=1, lonvec=nbmode, buffer=buffint)
 !       --- Check whether this nl-case has already been calculated
@@ -153,14 +153,14 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
             call jeveuo(kadd_jv,'E', vr=k_add)
             call jeveuo(fadd_jv,'E', vr=f_add)
             call jeveuo(cadd_jv,'E', vr=c_add)
-        else 
+        else
             call wkvect(kadd_jv,'V V R', nbmode*nbmode, vr=k_add)
             call wkvect(fadd_jv,'V V R', nbmode, vr=f_add)
             call wkvect(cadd_jv,'V V R', nbmode*nbmode, vr=c_add)
             if (nlcase.eq.0) then
                 call vecini(nbmode*nbmode, 0.d0, k_add)
                 call vecini(nbmode, 0.d0, f_add)
-                call vecini(nbmode*nbmode, 0.d0, c_add)               
+                call vecini(nbmode*nbmode, 0.d0, c_add)
             end if
         end if
 
@@ -184,7 +184,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
             call dtmget(sd_dtm, _NL_BUFFER, vi=buffnl, buffer=buffdtm)
             call nlget (sd_nl , _INTERNAL_VARS, vr=nlsav2, buffer=buffnl)
             call nlget (sd_nl , _INTERNAL_VARS, rvect=nlsav1, buffer=buffnl)
-   
+
             dt = min(1.d-10,dt0*1.d-4)
 
             AS_ALLOCATE(vr=vite1, size=nbmode)
@@ -199,13 +199,13 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
             nr = 0
 10          continue
             ! write(*,*) 'dt=', dt
-    
+
             do i = 1, nbmode
                 vite2(i) = vite1(i) + ( dt * acce2(i) )
                 depl2(i) = depl1(i) + ( dt * vite2(i) )
             enddo
-    
-!           --- Insure that the change in displacements and velocities is larger than 
+
+!           --- Insure that the change in displacements and velocities is larger than
 !               the machine's precision
             delta20 = 0.d0
             do i =1, nbmode
@@ -261,7 +261,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
 !               --- Double check linearity for the diagonal terms
                 if (abs(k_a(i,i)).gt.(1.d5*epsi)) then
                     df = fext1(i)-fext2(i)
-!                   --- Increment mode #i with just 0.5*ddepl 
+!                   --- Increment mode #i with just 0.5*ddepl
 !                       (by decrementing the already incremented state 2)
                     depl2(i) = depl2(i)-0.5d0*ddepl(i)
 !                   --- Calculate the resulting force with this -half- incrementation
@@ -274,7 +274,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
                 end if
                 call dcopy(nbmode, nlsav1, 1, nlsav2, 1)
             end do
-            AS_DEALLOCATE(vr=ddepl)            
+            AS_DEALLOCATE(vr=ddepl)
 
 !           --- Calculation of the added damping
             call dcopy(nbmode, depl1, 1, depl2, 1)
@@ -301,7 +301,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
 !               --- Double check linearity for the diagonal terms
                 if (abs(c_a(i,i)).gt.(1.d5*epsi)) then
                     df = fext1(i)-fext2(i)
-!                   --- Increment mode #i with just 0.5*dvite 
+!                   --- Increment mode #i with just 0.5*dvite
 !                       (by decrementing the already incremented state 2)
                     vite2(i) = vite2(i)-0.5d0*dvite(i)
 !                   --- Calculate the resulting force with this -half- incrementation
@@ -327,7 +327,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
                             k_a(i,j) = 0.5d0*(k_a(i,j)+k_a(j,i))
                             k_a(j,i) = k_a(i,j)
                         end if
-                    else 
+                    else
                         k_a(i,j) = 0.d0
                         k_a(j,i) = k_a(i,j)
                     end if
@@ -340,7 +340,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
                             c_a(i,j) = 0.5d0*(c_a(i,j)+c_a(j,i))
                             c_a(j,i) = c_a(i,j)
                         end if
-                    else 
+                    else
                         c_a(i,j) = 0.d0
                         c_a(j,i) = c_a(i,j)
                     end if
@@ -365,30 +365,30 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
             AS_DEALLOCATE(vr=vite1)
             AS_DEALLOCATE(vr=fext1)
         end if
-    
+
         ! write(*,*) 'k_add = ', k_add
         ! write(*,*) 'f_add = ', f_add
         ! write(*,*) 'c_add = ', c_add
 
 !       --- Calculate the critical coordinate of the point of non-linearity state change
 !         * Calculate Xc where (K_add-K_add0) x Xc = (F_add-F_add0)
-!         * K_add0 and F_add0 represent the stiffness and static force for the 
-!           previous non-linear state   
+!         * K_add0 and F_add0 represent the stiffness and static force for the
+!           previous non-linear state
 !         * Xc is saved temporarly in depl0, then copied to depl1
         AS_ALLOCATE(vr=depl0     , size=nbmode)
         AS_ALLOCATE(vi=dk_add_ind, size=nbmode)
         AS_ALLOCATE(vr=k_add_fact, size=nbmode*nbmode)
 
-        call dtmget(sd_dtm, _NL_CASE, iscal=nlcase0, buffer=buffdtm) 
+        call dtmget(sd_dtm, _NL_CASE, iscal=nlcase0, buffer=buffdtm)
         call dtmcase_coder(nlcase0 , casek7)
         kadd_jv = sd_dtm // '.ADDED_K.'//casek7
         fadd_jv = sd_dtm // '.ADDED_F.'//casek7
-        cadd_jv = sd_dtm // '.ADDED_C.'//casek7       
+        cadd_jv = sd_dtm // '.ADDED_C.'//casek7
         call jeexin(kadd_jv, iret)
         if (iret.gt.0) then
             call jeveuo(kadd_jv,'L',vr=k_add0)
             call jeveuo(fadd_jv,'L',vr=f_add0)
-        else 
+        else
             call wkvect(kadd_jv, 'V V R', nbmode*nbmode, vr=k_add0)
             call wkvect(fadd_jv, 'V V R', nbmode, vr=f_add0)
             call wkvect(cadd_jv, 'V V R', nbmode*nbmode, vr=c_add0)
@@ -409,16 +409,16 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
                 dk_add_ind(nbdof) = i
                 depl0(i) = df
             end if
-        end do 
+        end do
 
-!       --- Special treatment if the origin is the critical point 
+!       --- Special treatment if the origin is the critical point
         if (nbdof.eq.0) then
             call vecini(nbmode, 0.d0, depl1)
             goto 20
         end if
 
 !       --- Remove the dof's that do not contribute to this nonlinearity, otherwise
-!           the matrix k_add is extremely badly conditioned and thus non-reversible       
+!           the matrix k_add is extremely badly conditioned and thus non-reversible
         do i = 1, nbdof
             ii = dk_add_ind(i)
             do j = i, nbdof
@@ -442,7 +442,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
             end if
         end do
 
-20      continue    
+20      continue
         AS_DEALLOCATE(vr=depl0)
         AS_DEALLOCATE(vi=dk_add_ind)
         AS_DEALLOCATE(vr=k_add_fact)
@@ -455,14 +455,14 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
 
 !       --- Calculate the projection of vector (01) on vector (02) in R^(nbmode)
 !       --- First determine a scaling coefficient in order to avoid numerical errors
-!           when manipulating differences in displacements for the projection 
+!           when manipulating differences in displacements for the projection
         delta10 = 0.d0
         do i =1, nbmode
             delta10 = max(delta10,abs(depl1(i)-depl0(i)))
         end do
         if (delta10.le.1.d5*epsi) then
             ratio = 1.d0
-        else 
+        else
             coeff = 1.d0/delta10
 
             magsq = 0.d0
@@ -479,7 +479,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
         if (ratio.gt.1.d0) ratio = 1.d0
         ! write(*,*) 'ratio = ', ratio
 
-        prec = 1.d-2 
+        prec = 1.d-2
         if    (((ratio.gt.epsi).and.(abs(ratio-1.d0).gt.prec)) &
             .and.((dt0*ratio).gt.1.d-10)) then
 
@@ -537,11 +537,11 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
             call intget(sd_int, AMOR_DIA, iocc=1, vr=agen, buffer=buffint)
             kgen(1) = kgen0(1) + k_a(1,1)
             agen(1) = mgen0(1)*agen0(1) + c_a(1,1)
-        else 
+        else
             call intget(sd_int, RIGI_FUL, iocc=1, lonvec=iret, buffer=buffint)
             if (iret.eq.0) then
                 call intinivec(sd_int, RIGI_FUL, nbmode*nbmode, iocc=1, vr=kgen)
-            else 
+            else
                 call intget(sd_int, RIGI_FUL, iocc=1, vr=kgen, buffer=buffint)
             end if
 
@@ -549,7 +549,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
             if (iret.eq.0) then
                 call intinivec(sd_int, AMOR_FUL, nbmode*nbmode, iocc=1, vr=agen)
                 call intget(sd_int, IND_ARCH, iscal=lev)
-            else 
+            else
                 call intget(sd_int, AMOR_FUL, iocc=1, vr=agen, buffer=buffint)
             end if
 
@@ -583,7 +583,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
                             c(j,i) = c_a(j,i)
                         end do
                     end do
-                else 
+                else
                     do i = 1, nbmode
                         c(i,i) = agen0(i)*m0(i,i) + c_a(i,i)
                         do j = i+1, nbmode
@@ -611,7 +611,7 @@ subroutine dtmupmat(sd_dtm_, sd_int_, buffdtm, buffint, nlcase,&
     end if
 
 !   --------------------------------------------------------------------------------------
-!   1 - First determine whether a full update is needed, or just a referral of 
+!   1 - First determine whether a full update is needed, or just a referral of
 !       the matrices from a preceding step
 !   --------------------------------------------------------------------------------------
 

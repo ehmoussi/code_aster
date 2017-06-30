@@ -22,8 +22,8 @@ subroutine dtmproj(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 ! person_in_charge: hassan.berro at edf.fr
 !
 ! dtmproj : Project the integration state onto the basis for the non-linear case
-!           in sd_dtm/NL_CASE, given that the preceding case is oldcase 
-! 
+!           in sd_dtm/NL_CASE, given that the preceding case is oldcase
+!
 #include "jeveux.h"
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
@@ -81,7 +81,7 @@ subroutine dtmproj(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
     real(kind=8), pointer :: phi1t_phi1_f(:)     => null()
     real(kind=8), pointer :: phi1t_phi1_f_inv(:) => null()
 
-#define ptpi(row,col) phi1t_phi1_f_inv((row-1)*nbmode+col)
+#define ptpi(row,col) phi1t_phi1_f_inv((col-1)*nbmode+row)
 
 !
 !   0 - Initializations
@@ -130,7 +130,7 @@ subroutine dtmproj(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
         call rrlds(phi1t_phi1_f, nbmode, nbmode, phi1t_phi1_f_inv, nbmode)
         call prmama(4, phi1t_phi1_f_inv, nbmode, nbmode, nbmode,&
                     phi1_v, nbmode, nbmode, nbmode, mat_a,&
-                    nbmode, nbmode, nbmode, iret) 
+                    nbmode, nbmode, nbmode, iret)
         AS_DEALLOCATE(vr=phi1t_phi1_f)
         AS_DEALLOCATE(vr=phi1t_phi1_f_inv)
     else
@@ -191,7 +191,7 @@ subroutine dtmproj(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
 
         call intget(sd_int, ACCE, iocc=i, rvect=field, buffer=buffint)
         call intget(sd_int, ACCE, iocc=i, vr=resfield, buffer=buffint)
-        call pmavec('ZERO', nbmode, transd_v, field, resfield)    
+        call pmavec('ZERO', nbmode, transd_v, field, resfield)
         ! nullify(resfield)
 
         call intget(sd_int, FORCE_EX, iocc=i, rvect=field, buffer=buffint)
@@ -233,7 +233,7 @@ subroutine dtmproj(sd_dtm_, sd_int_, oldcase, buffdtm, buffint)
             call intget(sd_int, AMOR_FUL, iocc=1, savejv=mat_jv, lonvec=iret, buffer=buffint)
             if (iret.gt.0) call jedetr(mat_jv)
         end if
-    else 
+    else
         call intget(sd_int, AMOR_FUL, iocc=1, savejv=mat_jv, lonvec=iret, buffer=buffint)
         if (iret.gt.0) call jedetr(mat_jv)
 

@@ -27,7 +27,7 @@ subroutine fgequi(tz, typz, ndim, equi)
     integer :: ndim
     real(kind=8) :: tz(*), equi(*)
     character(len=*) :: typz
-! person_in_charge: josselin.delmas at edf.fr
+! person_in_charge: thomas.de-soza at edf.fr
 !
 !     BUT:
 !       CALCULER LES GRANDEURS EQUIVALENTES SUIVANTES
@@ -80,19 +80,19 @@ subroutine fgequi(tz, typz, ndim, equi)
     endif
 !
     call r8inir(6, 0.d0, t, 1)
-    do 30 i = 1, nt
+    do i = 1, nt
         t(i) = tz(i)
-30  end do
+    end do
 !
 ! --- TENSEUR TN = (XX YY ZZ RAC2.XY RAC2.XZ RAC2.YZ) (POUR LCIV2E)
 !
     rac2 = sqrt (2.d0)
-    do 10 i = 1, nd
+    do i = 1, nd
         tn(i) = t(i)
-10  end do
-    do 12 i = nd+1, nt
+    end do
+    do i = nd+1, nt
         tn(i) = rac2 * t(i)
-12  end do
+    end do
 !
 ! --- MATRICE TR = (XX XY XZ YY YZ ZZ) (POUR JACOBI)
 !
@@ -115,11 +115,11 @@ subroutine fgequi(tz, typz, ndim, equi)
 ! --- VALEURS PRINCIPALES
     nbvec = 3
 !
-    do 20 i = 1, nbvec
-        do 22 j = 1, nbvec
+    do i = 1, nbvec
+        do j = 1, nbvec
             vecp(j,i) = 0.0d0
-22      continue
-20  end do
+        end do
+    end do
 !
 ! --- DEFORMATIONS
 !
@@ -147,11 +147,11 @@ subroutine fgequi(tz, typz, ndim, equi)
 ! -      DANS L ORDRE LES COORDONNEES DU VECTEUR PUIS PASSAGE
 ! -      A L AUTRE VECTEUR
         if (typ(5:8) .eq. '_DIR') then
-            do 100 i = 1, nbvec
-                do 102 j = 1, nbvec
+            do i = 1, nbvec
+                do j = 1, nbvec
                     equi(5+((i-1)*nbvec)+j) = vecp(j,i)
-102              continue
-100          continue
+                end do
+            end do
         endif
 !
 ! --- CONTRAINTES
@@ -184,19 +184,19 @@ subroutine fgequi(tz, typz, ndim, equi)
 ! -      DANS L ORDRE LES COORDONNEES DU VECTEUR PUIS PASSAGE
 ! -      A L AUTRE VECTEUR
         if (typ(5:8) .eq. '_DIR') then
-            do 200 i = 1, nbvec
-                do 202 j = 1, nbvec
+            do i = 1, nbvec
+                do j = 1, nbvec
                     equi(6+((i-1)*nbvec)+j) = vecp(j,i)
-202              continue
-200          continue
+                end do
+            end do
 !
 ! ------    TRACE DES CONTRAINTES : TRSIG
-            equi(16) = t(1)+t(2)+t(3)
+            equi(16) = 3.d0*hyd
 !
 ! ------    TRIAXIALITE DES CONTRAINTES : TRIAX
 !
             if (equi(1) .gt. tol*abs(equi(16))) then
-                equi(17) = equi(16)/3.d0/equi(1)
+                equi(17) = hyd/equi(1)
             else
                 equi(17) = 0.d0
             endif

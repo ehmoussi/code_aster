@@ -31,16 +31,7 @@ import numpy
 
 from Utilitai.Utmess import UTMESS
 
-# try/except pour utiliser hors aster
-try:
-    import aster_core
-    import aster
-except ImportError:
-    class fake_aster:
-
-        def repout(self):
-            return '/opt/aster/outils'
-    aster = fake_aster()
+import aster_core
 
 
 if not sys.modules.has_key('Table'):
@@ -955,7 +946,7 @@ class TraceXmgrace(TraceGraph):
             self.Fich[0].write('\n'.join(content))
             self._FermFich()
         else:
-            xmgr = os.path.join(aster_core.get_option('repout'), 'xmgrace')
+            xmgr = aster_core.get_option('prog:xmgrace')
             nfwrk = self.NomFich[0] + '.wrk'
             open(nfwrk, 'w').write('\n'.join(content))
             nfhard = self.NomFich[0] + '.hardcopy'
@@ -975,9 +966,8 @@ class TraceXmgrace(TraceGraph):
                     UTMESS('I', 'GRAPH0_7')
                 UTMESS('I', 'GRAPH0_8', valk=os.environ['DISPLAY'])
             else:
-                if os.path.exists(os.path.join(aster_core.get_option('repout'), 'gracebat')):
-                    xmgr = os.path.join(
-                        aster_core.get_option('repout'), 'gracebat')
+                if aster_core.get_option('prog:gracebat') != 'gracebat':
+                    xmgr = aster_core.get_option('prog:gracebat')
                 lcmde = '%s -hdevice %s -hardcopy -printfile %s %s' % (
                     xmgr, pilo, nfhard, nfwrk)
             # appel xmgrace

@@ -115,7 +115,7 @@ subroutine dxmath(fami, epais, df, dm, dmf, pgl, multic, indith, t2iu, t2ui, t1v
         nomres(4) = 'NU_F'
         nomres(5) = 'ALPHA'
     else if (phenom.eq.'ELAS_COQUE') then
-        call utmess('A', 'ELEMENTS_93', sk=phenom)
+!        call utmess('A', 'ELEMENTS_93', sk=phenom)
 !
         call coqrep(pgl, alpha, beta, t2iu, t2ui, c, s)
 !

@@ -18,10 +18,9 @@
 # --------------------------------------------------------------------
 
 import os.path as osp
-import re, os
+import re
 from functools import partial
 from waflib import Options, Configure, Logs, Utils, Errors
-from shutil import copyfile
 
 def options(self):
     group = self.add_option_group("Petsc library options")
@@ -73,7 +72,7 @@ def check_petsc(self):
 
     self.check_petsc_headers()
     self.check_petsc_version()
-    
+
 @Configure.conf
 def check_petsc_libs(self, optlibs):
     opts = self.options

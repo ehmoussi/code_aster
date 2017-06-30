@@ -28,15 +28,19 @@ waf install -p
 
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
-
 YAMMROOT = ASTER_ROOT + '/public/default'
 
 import intel
+import official_programs
+
 
 def configure(self):
     opts = self.options
 
     intel.configure(self)
+    official_programs.configure(self)
+    opts.with_prog_salome = True
+    opts.with_prog_europlexus = True
 
     # enable TEST_STRICT on the reference server
     self.env.append_value('DEFINES', ['TEST_STRICT'])

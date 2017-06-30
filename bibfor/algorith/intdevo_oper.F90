@@ -53,16 +53,16 @@ subroutine intdevo_oper(nbequ, par, mgen, kgen, agen, &
 #define nbnlsav par(9)
 #define nbsavnl nint(par(9))
 
-#define m(row,col) mgen((row-1)*nbequ+col) 
-#define k(row,col) kgen((row-1)*nbequ+col) 
-#define c(row,col) agen((row-1)*nbequ+col) 
+#define m(row,col) mgen((col-1)*nbequ+row)
+#define k(row,col) kgen((col-1)*nbequ+row)
+#define c(row,col) agen((col-1)*nbequ+row)
 
-#define im_c(row,col) invm_c((row-1)*nbequ+col)
-#define im_k(row,col) invm_k((row-1)*nbequ+col)
-#define h1(row,col) op_h1((row-1)*nbequ+col)
-#define h2(row,col) op_h2((row-1)*nbequ+col)
-#define k(row,col) kgen((row-1)*nbequ+col)
-#define c(row,col) agen((row-1)*nbequ+col) 
+#define im_c(row,col) invm_c((col-1)*nbequ+row)
+#define im_k(row,col) invm_k((col-1)*nbequ+row)
+#define h1(row,col) op_h1((col-1)*nbequ+row)
+#define h2(row,col) op_h2((col-1)*nbequ+row)
+#define k(row,col) kgen((col-1)*nbequ+row)
+#define c(row,col) agen((col-1)*nbequ+row)
 
 !   --------------------------------------------------------------------------------
 !   --- Calculation of the operators invm_c, h0, h1, and h2
@@ -72,7 +72,7 @@ subroutine intdevo_oper(nbequ, par, mgen, kgen, agen, &
             invm_c(i)= agen(i)
             op_h1(i) = 4.d0 + dt*invm_c(i)
             op_h2(i) = 6.d0 + dt*invm_c(i)
-        end do            
+        end do
     else
 !       --- C is a full matrix
         if (mdiag) then
@@ -89,7 +89,7 @@ subroutine intdevo_oper(nbequ, par, mgen, kgen, agen, &
                     h1(j,i)  =  dt*im_c(j,i)
                     h2(j,i)  =  dt*im_c(j,i)
                 end do
-            end do            
+            end do
         else
             call dcopy(nbequ*nbequ, agen, 1, invm_c, 1)
             call rrlds(mgen, nbequ, nbequ, invm_c, nbequ)
@@ -102,7 +102,7 @@ subroutine intdevo_oper(nbequ, par, mgen, kgen, agen, &
                     h1(j,i)  =  dt*im_c(j,i)
                     h2(j,i)  =  dt*im_c(j,i)
                 end do
-            end do 
+            end do
         end if
         call trlds(op_h1, nbequ, nbequ, iret)
         call trlds(op_h2, nbequ, nbequ, iret)
@@ -114,7 +114,7 @@ subroutine intdevo_oper(nbequ, par, mgen, kgen, agen, &
         if (kdiag) then
             do i = 1, nbequ
                 invm_k(i) = kgen(i)/mgen(i)
-            end do 
+            end do
         else
             do i = 1, nbequ
                 invm = 1.d0/mgen(i)
@@ -123,7 +123,7 @@ subroutine intdevo_oper(nbequ, par, mgen, kgen, agen, &
                     im_k(i,j) = invm*k(i,j)
                     im_k(j,i) = invm*k(j,i)
                 end do
-            end do 
+            end do
         end if
     else
         do i = 1, nbequ
@@ -140,7 +140,7 @@ subroutine intdevo_oper(nbequ, par, mgen, kgen, agen, &
                     im_k(j,i) = k(j,i)
                 end do
             end if
-        end do 
+        end do
         call rrlds(mgen, nbequ, nbequ, invm_k, nbequ)
     end if
 

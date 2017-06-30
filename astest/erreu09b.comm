@@ -23,15 +23,11 @@
 import aster
 import aster_core
 
-DEBUT(CODE=_F(
-              NIV_PUB_WEB='INTERNET',
-              ),
-PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
-
-print "timit limit is actually set to:", aster_core.get_option('tpmax')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
+      PAR_LOT='NON',
+      DEBUG=_F(SDVERI='OUI'))
 
 MA=LIRE_MAILLAGE(FORMAT='MED',);
-
 
 MA=DEFI_GROUP(reuse=MA,
               MAILLAGE=MA,
@@ -107,6 +103,12 @@ F=DEFI_FONCTION(NOM_PARA='INST',
                       1.0,  0.98),
                       );
 
+
+tpmax = aster_core.get_option("tpmax")
+tpsnl = 7.
+print("Decrease time limit from {0} to {1} s to force STAT_NON_LINE to "
+      "interrupt.".format(tpmax, tpsnl))
+aster_core.set_option("tpmax", tpsnl)
 is_ok = 0
 try:
   RESU=STAT_NON_LINE(
@@ -132,6 +134,10 @@ try:
                      ARCHIVAGE=_F(LIST_INST=L_INST,),);
 except aster.ArretCPUError, msg:
    is_ok = 1
+
+print "Restore time limit to {0} s".format(tpmax)
+aster_core.set_option("tpmax", tpmax)
+
 
 TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                      _F(PARA='BOOLEEN',LISTE_I=is_ok,),

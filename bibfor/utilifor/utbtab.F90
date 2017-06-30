@@ -44,17 +44,21 @@ subroutine utbtab(raz, na, mb, a, b,&
     raz2=raz
 !
     call r8inir(na*mb, 0.0d0, xab, 1)
-    do 15 i = 1, na
-        do 15 k = 1, na
-            do 15 j = 1, mb
+    do j = 1, mb
+        do k = 1, na
+            do i = 1, na
                 xab(i,j) = xab(i,j) + a(i,k) * b(k,j)
-15          continue
+            end do
+        end do
+    end do
 !
     if (raz2 .eq. 'ZERO') call r8inir(mb*mb, 0.0d0, btab, 1)
 !
-    do 25 i = 1, mb
-        do 25 k = 1, na
-            do 25 j = 1, mb
+    do j = 1, mb
+        do i = 1, mb
+            do k = 1, na
                 btab(i,j) = btab(i,j) + b(k,i) * xab(k,j)
-25          continue
+            end do
+        end do
+    end do
 end subroutine

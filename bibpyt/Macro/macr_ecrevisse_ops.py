@@ -81,7 +81,7 @@ def macr_ecrevisse_ops(self, reuse,
     DETRUIRE = self.get_cmd("DETRUIRE")
     AFFE_MATERIAU = self.get_cmd("AFFE_MATERIAU")
     STAT_NON_LINE = self.get_cmd("STAT_NON_LINE")
-    from Contrib.calc_ecrevisse import CALC_ECREVISSE    
+    from Contrib.calc_ecrevisse import CALC_ECREVISSE
     CO = self.get_cmd("CO")
     CREA_TABLE = self.get_cmd("CREA_TABLE")
 
@@ -112,8 +112,7 @@ def macr_ecrevisse_ops(self, reuse,
         dEtatInit = None
 
     # Valeur par defaut du mot cle LOGICIEL
-    # if not LOGICIEL: LOGICIEL =
-    # os.path.join(aster_core.get_option('repout'), 'ecrevisse')
+    # if not LOGICIEL: LOGICIEL = aster_core.get_option('prog:ecrevisse')
 
     # RECUPERATION DES MOTS-CLES FACTEURS
 
@@ -335,7 +334,7 @@ def macr_ecrevisse_ops(self, reuse,
                 # Set external state variables
                 motclefmater['AFFE_VARC'] = []
                 motclefmater['AFFE_VARC'] = [_F(NOM_VARC = 'TEMP', VALE_REF = TEMP_INIT, EVOL = _RTHMPJ)]
-                
+
                 __MATMEC = AFFE_MATERIAU(
                     **motclefmater
                 )

@@ -28,15 +28,19 @@ Ces fonctions sont indépendantes des étapes (sinon elles seraient dans
 B_ETAPE/E_ETAPE) et des concepts/ASSD.
 """
 
-import sys
+from optparse import OptionParser
 import os
 import os.path as osp
-from warnings import warn, simplefilter
 import platform
-from optparse import OptionParser
+import re
+import json
+import sys
+from warnings import warn, simplefilter
+
 import aster_pkginfo
 import aster
 import aster_core
+
 from Execution.i18n import localization
 from Execution.strfunc import convert
 
@@ -171,12 +175,6 @@ class CoreOptions(object):
         self.info['versionD0'] = '%d.%02d.%02d' % version
         self.info['versLabel'] = aster_pkginfo.get_version_desc()
 
-    def set_info(self, key, value):
-        """Définit la valeur d'une information générale."""
-        assert self.info.has_key(
-            key), "general information '%s' not defined" % key
-        self.info[key] = value
-
     def default_values(self):
         """Définit les valeurs par défaut pour certaines options."""
         locale_dir = aster_pkginfo.locale_dir
@@ -199,7 +197,9 @@ class CoreOptions(object):
     def get_option(self, option, default=None):
         """Retourne la valeur d'une option ou d'une information de base."""
         assert self.opts, 'options not initialized!'
-        if hasattr(self.opts, option):
+        if option.startswith("prog:"):
+            value = get_program_path(re.sub('^prog:', '', option))
+        elif hasattr(self.opts, option):
             value = getattr(self.opts, option)
         else:
             value = self.info.get(option, default)
@@ -208,6 +208,32 @@ class CoreOptions(object):
         if self._dbg:
             print("<CoreOptions.get_option> option={0!r} value={1!r}".format(option, value))
         return value
+
+    def set_option(self, option, value):
+        """Définit la valeur d'une option ou d'une information de base."""
+        assert hasattr(self.opts, option) or self.info.has_key(option), (
+            "unexisting option or information: '{0}'".format(option))
+        if hasattr(self.opts, option):
+            setattr(self.opts, option, value)
+        else:
+            self.info[option] = value
+
+
+def get_program_path(program):
+    """Return the path to *program* as stored by 'waf configure'.
+
+    Returns:
+        str: Path stored during configuration or *program* itself otherwise.
+    """
+    if getattr(get_program_path, "_cache", None) is None:
+        prog_cfg = {}
+        fname = osp.join(os.environ["ASTER_DATADIR"], "external_programs.js")
+        if osp.isfile(fname):
+            prog_cfg = json.load(open(fname, "rb"))
+        get_program_path._cache = prog_cfg
+
+    programs = get_program_path._cache
+    return programs.get(program, program)
 
 
 def getargs(argv=None):
@@ -230,7 +256,7 @@ def _bwc_arguments(argv):
         return argv
     long_opts = (
         'commandes', 'num_job', 'mode',
-        'rep_outils', 'rep_mat', 'rep_dex', 'rep_vola', 'rep_glob',
+        'rep_mat', 'rep_dex', 'rep_vola', 'rep_glob',
         'memjeveux', 'tpmax', 'memory', 'max_base', 'ORBInitRef',
     )
     # boolean options
@@ -239,7 +265,7 @@ def _bwc_arguments(argv):
     )
     # removed options
     long_opts_rm = ('rep', 'mem', 'mxmemdy', 'memory_stat', 'memjeveux_stat',
-                    'type_alloc', 'taille', 'partition',
+                    'type_alloc', 'taille', 'partition', 'rep_outils',
                     'origine', 'eficas_path')
     # renamed options
     long_opts_mv = {
@@ -251,7 +277,10 @@ def _bwc_arguments(argv):
     buffer = ''
     while len(orig) > 0:
         arg = orig.pop(0)
-        opt = arg.startswith('-') and arg.replace('-', '')
+        larg = arg.lstrip('-').split('=', 1)
+        opt = larg.pop(0)
+        if len(larg) > 0:
+            orig.insert(0, larg.pop(0))
         opt2 = long_opts_mv.get(opt, opt)
         if opt in long_opts:
             val = orig.pop(0)

@@ -70,7 +70,7 @@ matrAsse.build()
 retour = vect_elem.assembleVector( numeDDL )
 
 
-#resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
+resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
 #resu.debugPrint(6)
 
 try:

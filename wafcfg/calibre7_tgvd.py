@@ -64,10 +64,6 @@ def configure(self):
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster1/include',
     ])
 
-    self.env['OPTLIB_FLAGS_MATH'] = [
-        '-Wl,--start-group', '-lmkl_mc3', '-lmkl_def',
-        '-lmkl_intel_lp64', '-lmkl_core', '-Wl,--end-group']
-
     # to fail if not found
     opts.enable_hdf5 = True
     opts.enable_med = True

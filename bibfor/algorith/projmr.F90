@@ -193,21 +193,21 @@ subroutine projmr(matras, nomres, basemo, nugene, nu,&
         ASSERT(n1bloc.eq.1)
         ASSERT(n2bloc.eq.nueq)
 !
-        do i = 1, nueq
-            hc = smdi(i)
-            if (i .gt. 1) hc = hc - smdi(i-1)
-            nbj=i-hc+1
+        do j = 1, nueq
+            hc = smdi(j)
+            if (j .gt. 1) hc = hc - smdi(j-1)
+            nbj=j-hc+1
             ASSERT(nbj.eq.1)
-            call mrmult('ZERO', imatra, zr(idbase+(i-1)*neq), vectass2, 1,&
+            call mrmult('ZERO', imatra, zr(idbase+(j-1)*neq), vectass2, 1,&
                         .true._1)
             call zerlag(neq, deeq, vectr=vectass2)
-            do j = 1, nueq
-                pij=ddot(neq,zr(idbase+(j-1)*neq),1,vectass2,1)
+            do i = 1, nueq
+                pij=ddot(neq,zr(idbase+(i-1)*neq),1,vectass2,1)
                 if (j .ge. i) then
-                    zr(ldblo1+smdi(j)+i-j-1)=pij
+                    zr(ldblo1+smdi(j)-j+i-1)=pij
                 endif
                 if (j .le. i) then
-                    zr(ldblo2+smdi(i)+j-i-1)=pij
+                    zr(ldblo2+smdi(i)-i+j-1)=pij
                 endif
             end do
         end do

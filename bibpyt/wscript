@@ -28,7 +28,7 @@ from waflib import TaskGen, Utils, Errors, Logs
 
 
 def configure(self):
-    self.start_msg('Getting Code_Aster version')
+    self.start_msg('Getting code_aster version')
     try:
         values = check_aster_version(self)
     except Exception, exc:

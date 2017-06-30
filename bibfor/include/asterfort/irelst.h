@@ -20,8 +20,7 @@
 !
 interface
     subroutine irelst(nofimd, chanom, nochmd, typech, nomaas,&
-                      nomamd, nbimpr, caimpi, caimpk, sdcarm,&
-                      carael)
+                      nomamd, nbimpr, caimpi, caimpk, sdcarm)
         integer :: nbimpr
         character(len=*) :: nofimd
         character(len=19) :: chanom
@@ -30,6 +29,6 @@ interface
         character(len=64) :: nomamd, nochmd
         integer :: caimpi(10, nbimpr)
         character(len=80) :: caimpk(3, nbimpr)
-        character(len=8) :: sdcarm, carael
+        character(len=8) :: sdcarm
     end subroutine irelst
 end interface

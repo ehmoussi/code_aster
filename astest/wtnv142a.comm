@@ -432,8 +432,8 @@ TEST_TABLE ( TABLE    =TAB_SIG,
              VALE_REFE=-30777.314632,
              REFERENCE='AUTRE_ASTER',
              PRECISION=3.e-4,
-             VALE_CALC=-30771.9950872,
-             TOLE_MACHINE=1.e-4);
+             VALE_CALC=-30772.7978057,
+             TOLE_MACHINE=1.e-4); #TODO TOLE_MACHINE
 
 TEST_TABLE ( TABLE    =TAB_SIG,
              FILTRE=_F(NOM_PARA ='EPZZ',
@@ -442,8 +442,8 @@ TEST_TABLE ( TABLE    =TAB_SIG,
              VALE_REFE=-19226.5841711,
              REFERENCE='AUTRE_ASTER',
              PRECISION=5.e-4,
-             VALE_CALC=-19227.2858783,
-             TOLE_MACHINE=4.e-4);  
+             VALE_CALC=-19233.3099508,
+             TOLE_MACHINE=4.e-4); #TODO TOLE_MACHINE
 
 TEST_TABLE ( TABLE    =TAB_VARI,
              FILTRE=_F(NOM_PARA ='EPZZ',
@@ -451,7 +451,7 @@ TEST_TABLE ( TABLE    =TAB_VARI,
              NOM_PARA ='V1',
              VALE_REFE=1.2623784436E-05,
              REFERENCE='AUTRE_ASTER',
-             VALE_CALC=1.26587231587E-05,
+             VALE_CALC=1.26576057393E-05,
              CRITERE  ='ABSOLU',);
 
 TEST_TABLE ( TABLE    =TAB_VARI,
@@ -460,7 +460,7 @@ TEST_TABLE ( TABLE    =TAB_VARI,
              NOM_PARA ='V2',
              VALE_REFE=2.27005791191E-05,
              REFERENCE='AUTRE_ASTER',
-             VALE_CALC=2.37096063172E-05,
+             VALE_CALC=2.37477612354E-05,
              CRITERE  ='ABSOLU',);
 
 FIN();
