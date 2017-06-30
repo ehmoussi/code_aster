@@ -18,29 +18,23 @@
 # --------------------------------------------------------------------
 
 """
-Configuration for athosdev + Intel MPI
+Configuration for Calibre 9  MPI
 
 . $HOME/dev/codeaster/devtools/etc/env_unstable_mpi.sh
 
-waf_mpi configure --use-config=athosdev_mpi --prefix=../install/mpi
+waf_mpi configure --use-config=calibre9_mpi --prefix=../install/mpi
 waf_mpi install -p
 """
 
-import athosdev
-ASTER_ROOT = athosdev.ASTER_ROOT
-YAMMROOT = athosdev.YAMMROOT
+import calibre9
+YAMMROOT = calibre9.YAMMROOT
 
 def configure(self):
     opts = self.options
 
-    # parallel must be set before calling intel.configure() to use MPI wrappers
     opts.parallel = True
-    athosdev.configure(self)
-    self.env['ADDMEM'] = 800
-
-    self.env.append_value('OPT_ENV_FOOTER', [
-        '. /etc/profile.d/lmod.sh',
-        'module load impi/2016.0.047'])
+    calibre9.configure(self)
+    self.env['ADDMEM'] = 500
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster/lib',
@@ -59,9 +53,3 @@ def configure(self):
     opts.enable_petsc = True
     self.env.append_value('LIB_METIS', ('parmetis'))
     self.env.append_value('LIB_SCOTCH', ('ptscotch','ptscotcherr','ptscotcherrexit'))
-
-    # allow to compile the elements catalog using the executable on one processor
-    self.env['CATALO_CMD'] = 'I_MPI_FABRICS=shm'
-    # produce an executable file with symbols for INTEL16 with mpiifort wrapper
-    self.env.append_value('LINKFLAGS', ('-nostrip'))
-    self.env.prepend_value('LINKFLAGS', ('-L/opt/intel/2016.0.047/impi/5.1.1.109/lib64'))

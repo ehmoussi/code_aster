@@ -30,8 +30,13 @@ import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
 YAMMROOT = ASTER_ROOT + '/public/default'
 
+import official_programs
+
+
 def configure(self):
     opts = self.options
+
+    official_programs.configure(self)
 
     self.env['ADDMEM'] = 300
 

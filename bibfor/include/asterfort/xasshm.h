@@ -20,7 +20,7 @@
 !
 #include "asterf_types.h"
 !
-interface 
+interface
     subroutine xasshm(nno, npg, npi, ipoids, ivf,&
                       idfde, igeom, geom, crit, deplm,&
                       deplp, contm, contp, varim,&
@@ -35,7 +35,7 @@ interface
                       nnop, nnops, nnopm, enrmec,&
                       dimenr, heavt, lonch, cnset, jpintt,&
                       jpmilt, jheavn, angmas,dimmat, enrhyd,&
-                      nfiss, nfh, jfisno)
+                      nfiss, nfh, jfisno, work1, work2)
         integer :: dimmat
         integer :: dimenr
         integer :: nnops
@@ -104,5 +104,7 @@ interface
         integer :: nfiss
         integer :: nfh
         integer :: jfisno
+        real(kind=8) :: work1(dimcon, dimuel)
+        real(kind=8) :: work2(dimenr, dimuel)
     end subroutine xasshm
-end interface 
+end interface

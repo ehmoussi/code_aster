@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: aimery.assire at edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
 import os
 import sys
@@ -168,10 +168,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
                GRAPHIQUE, METHODE, INFO, **args):
 
     from Utilitai.Utmess import UTMESS
-    if os.environ.has_key('ASTER_ROOT'):
-        ASTER_ROOT = os.environ['ASTER_ROOT']
-    else:
-        ASTER_ROOT = os.path.join(aster_core.get_option('repout'), '..')
+    ASTER_ROOT = os.environ['ASTER_ROOT']
 
     try:
         sys.path.append(os.path.join(ASTER_ROOT, 'ASTK', 'ASTK_SERV', 'lib'))

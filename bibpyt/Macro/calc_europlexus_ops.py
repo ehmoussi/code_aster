@@ -317,14 +317,13 @@ class EUROPLEXUS:
         self.REPE_tmp=REPE_tmp
 
         # Commande d'execution de Europlexus
-        tooldir = aster_core.get_option('repout')
         epxExec = EXEC
         if not epxExec:
             epxExec = os.environ.get('ASTER_EUROPLEXUS')
             if epxExec:
                 UTMESS('I', 'PLEXUS_13', valk=epxExec)
             else:
-                epxExec = osp.join(tooldir, 'europlexus')
+                epxExec = aster_core.get_option('prog:europlexus')
         self.EXEC = epxExec
 
         # COURBE

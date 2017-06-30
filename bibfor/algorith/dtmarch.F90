@@ -72,7 +72,7 @@ subroutine dtmarch(sd_dtm_, sd_int_, buffdtm, buffint)
     real(kind=8)    , pointer :: accgen(:)   => null()
     real(kind=8)    , pointer :: depl0(:)    => null()
     real(kind=8)    , pointer :: vite0(:)    => null()
-    real(kind=8)    , pointer :: acce0(:)    => null()   
+    real(kind=8)    , pointer :: acce0(:)    => null()
     real(kind=8)    , pointer :: phi(:)      => null()
     real(kind=8)    , pointer :: temsto(:)   => null()
     real(kind=8)    , pointer :: passto(:)   => null()
@@ -82,8 +82,6 @@ subroutine dtmarch(sd_dtm_, sd_int_, buffdtm, buffint)
     real(kind=8)    , pointer :: vint(:)     => null()
     real(kind=8)    , pointer :: vintsto(:)     => null()
     integer         , pointer :: buffnl(:)   => null()
-!
-#define saucho(m,n) saucho_v((m-1)*nbsaves+n)
 !
 !   0 - Initializations
     call jemarq()
@@ -112,7 +110,7 @@ subroutine dtmarch(sd_dtm_, sd_int_, buffdtm, buffint)
         call dtmget(sd_dtm, _CALC_SD, kscal=nomres, buffer=buffdtm)
         call dtmget(sd_dtm, _ARCH_NB, iscal=nbsauv, buffer=buffdtm)
         if (isto(1).ge.(nbsauv)) then
-            ASSERT(.false.)         
+            ASSERT(.false.)
         end if
     end if
 
@@ -129,7 +127,7 @@ subroutine dtmarch(sd_dtm_, sd_int_, buffdtm, buffint)
             call intget(sd_int, VITE ,iocc=index, vr=vitgen, buffer=buffint)
             call intget(sd_int, ACCE ,iocc=index, vr=accgen, buffer=buffint)
         else
-!           --- Implicit treatment of chocs, project the acceleration to the 
+!           --- Implicit treatment of chocs, project the acceleration to the
 !               previous basis : [Phi] x ACCE
 !               Same treatment is done for displacement and velocity
 !
@@ -140,7 +138,7 @@ subroutine dtmarch(sd_dtm_, sd_int_, buffdtm, buffint)
             call intget(sd_int, ACCE , iocc=index , vr=acce0, buffer=buffint)
             call dtmget(sd_dtm, _IMP_DEPL, vr=depgen, buffer=buffdtm)
             call dtmget(sd_dtm, _IMP_VITE, vr=vitgen, buffer=buffdtm)
-            call dtmget(sd_dtm, _IMP_ACCE, vr=accgen, buffer=buffdtm)           
+            call dtmget(sd_dtm, _IMP_ACCE, vr=accgen, buffer=buffdtm)
             call pmavec('ZERO', nbmode, phi, depl0, depgen)
             call pmavec('ZERO', nbmode, phi, vite0, vitgen)
             call pmavec('ZERO', nbmode, phi, acce0, accgen)
@@ -152,7 +150,7 @@ subroutine dtmarch(sd_dtm_, sd_int_, buffdtm, buffint)
 !
     call dtmget(sd_dtm, _IND_ALOC, vi=allocs,buffer=buffdtm)
 !
-!   [jordr, jdisc, jptem, jdepl , jvite, jacce,  
+!   [jordr, jdisc, jptem, jdepl , jvite, jacce,
 !    jfcho, jdcho, jvcho, jadcho, jredc, jredd,
 !    jrevc, jrevv, jvint                       ]
 

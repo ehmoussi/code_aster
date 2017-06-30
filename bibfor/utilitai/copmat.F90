@@ -43,7 +43,7 @@ subroutine copmat(mat_in, mat_out)
     aster_logical :: lsym
     integer :: neq, jsmhc, nbnonz, nvale, jvale
     integer :: nlong, jval2, kterm, jcoll, iligl
-    integer :: i, j, col
+    integer :: i, j
 
     character(len=1)  :: ktyp
     character(len=14) :: nonu
@@ -53,7 +53,8 @@ subroutine copmat(mat_in, mat_out)
     integer, pointer           :: smde(:) => null()
     integer, pointer           :: smdi(:) => null()
 !
-#define m_out(i,j) mat_out((i-1)*neq+j)
+! Column-major index storage
+#define m_out(i,j) mat_out((j-1)*neq+i)
 !
     call jemarq()
 
@@ -101,17 +102,13 @@ subroutine copmat(mat_in, mat_out)
         i = iligl
         j = jcoll
 
-        if ((.not.lsym) .and. (i.ge.j)) then
-            col = j
-            j = i
-            i = col
-        endif
-
         m_out(i,j) = zr(jvale-1+kterm)
-        m_out(j,i) = zr(jvale-1+kterm)
-
-        if ((.not.lsym) .and. (i.ne.j)) then
-            m_out(j,i) = zr(jval2-1+kterm)
+        if (lsym) then
+            m_out(j,i) = zr(jvale-1+kterm)
+        else
+            if (i.ne.j) then
+                m_out(j,i) = zr(jval2-1+kterm)
+            endif
         endif
       end do
 

@@ -335,9 +335,9 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
         mphi2(im)=0.d0
         do ima = 1, nbma
 !
-            a = 0.5d0*r8pi()*(di**2) * drho_i + &
-                correl*(de**2)*drho_e/(2*dx)
-
+            a = (0.5d0*r8pi()*(di**2) * drho_i + &
+                correl*(de**2)*drho_e)/(2*dx)
+!
             b = r8pi()*rhotub*(de**2-di**2)/4        + &
                 r8pi()*(di**2)/4*(rho_i-drho_i/dx*x) + &
                 correl*(de**2)/2*(rho_e-drho_e/dx*x)
@@ -362,10 +362,8 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
         else 
             ven_1d(im) = sqrt((numera(im)*mastub) / (mphi2(im)*rhos))
         end if
-!        print *,"  >>vitesse entrainement = ", ven_1d(im)
         do i = 1, nbval
             rap_1d(im,i) = ven_1d(im)/vcr_1d(im,i)
-!            print *,"  >>rapport d'instabilité, connor's constant # : ",i, " value =", rap_1d(im,i)
         end do
     end do
 !
@@ -494,10 +492,8 @@ subroutine connor(melflu, typflu, freq, base, nuor,&
         mass(im) = zr(lmasg)
 
         ven_3d(im) = sqrt((numera(im)*mastub) / (mass(im)*rhos))
-!        print *,"  >>vitesse entrainement = ", ven_3d(im)
         do i = 1, nbval
             rap_3d(im,i) = ven_3d(im)/vcr_3d(im,i)
-!            print *,"  >>rapport d'instabilité, connor's constant : ",i, " value =", rap_3d(im,i)
         end do
     end do
 !

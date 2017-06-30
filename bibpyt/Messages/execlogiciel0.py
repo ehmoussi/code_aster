@@ -60,13 +60,8 @@ Le fichier %(k1)s n'existe pas.
 """),
 
     24 : _(u"""
-Le nom du répertoire contenant les outils externes est trop long pour être stocké
+Le chemin d'accès au programme '%(k1)s' est trop long pour être stocké
 dans la variable prévue (de longueur %(i1)d).
-
-Conseil :
-    - Vous pouvez déplacer/copier les outils dans un autre répertoire de nom plus court
-      et utiliser l'argument optionnel "-rep_outils /nouveau/chemin" pour contourner
-      le problème.
 """),
 
 }

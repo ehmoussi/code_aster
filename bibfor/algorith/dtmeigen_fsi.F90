@@ -66,7 +66,7 @@ subroutine dtmeigen_fsi(sd_dtm_, buffdtm)
     real(kind=8), pointer :: codim(:)      => null()
     real(kind=8), pointer :: poids(:)      => null()
 
-#define a(row,col) aful((row-1)*nbmode+col)
+#define a(row,col) aful((col-1)*nbmode+row)
 
 !
 !   0 - Initializations
@@ -89,7 +89,7 @@ subroutine dtmeigen_fsi(sd_dtm_, buffdtm)
     call dtmget(sd_dtm, _FSI_VGAP, rscal=vgap , buffer=buffdtm)
     call dtmget(sd_dtm, _FSI_CPLD, vi=icoupled, buffer=buffdtm)
     call dtmget(sd_dtm, _FSI_ITYP, vi=itypfl  , buffer=buffdtm)
-    call dtmget(sd_dtm, _FSI_ZET0, vr=c_flu   , buffer=buffdtm)           
+    call dtmget(sd_dtm, _FSI_ZET0, vr=c_flu   , buffer=buffdtm)
     if (itypfl(1).eq.1) then
         call jeveuo(sd_dtm // '.PRJ_BAS.'// casek7, 'L', vr=phi_v)
         call dtmget(sd_dtm, _FSI_IRES, vi=ires , buffer=buffdtm)

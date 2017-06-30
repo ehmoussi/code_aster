@@ -37,17 +37,21 @@ SET(SHARED_TESTS
     forma01c
     mumps01a
     mfron01a
+    zzzz151a
     zzzz200b
+    zzzz218a
     zzzz401a)
 
 FOREACH(testname ${GOOD_TESTS})
-   SET(TEST_NAME ASTER_@ASTER_TAG@_${testname})
-   SET(TEST_DIR ${RESUTEST_DIR}/${testname})
-   ADD_TEST(${TEST_NAME} as_run --vers=@ASTERDATADIR@ --test ${testname} ${TEST_DIR} --run_params=facmtps=3)
-   LIST(FIND SHARED_TESTS "${testname}" isShared)
-   IF(isShared EQUAL -1)
-      SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES LABELS "${COMPONENT_NAME}")
-   ELSE()
-      SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES LABELS "${COMPONENT_NAME},SMECA_INTEGR")
-   ENDIF()
+    IF(NOT (testname MATCHES "^(erreu06a|plexu|supv002a)"))
+        SET(TEST_NAME ASTER_@ASTER_TAG@_${testname})
+        SET(TEST_DIR ${RESUTEST_DIR}/${testname})
+        ADD_TEST(${TEST_NAME} as_run --vers=@ASTERDATADIR@ --test ${testname} ${TEST_DIR} --run_params=facmtps=3)
+        LIST(FIND SHARED_TESTS "${testname}" isShared)
+        IF(isShared EQUAL -1)
+            SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES LABELS "${COMPONENT_NAME}")
+        ELSE()
+            SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES LABELS "${COMPONENT_NAME},SMECA_INTEGR")
+        ENDIF()
+    ENDIF()
 ENDFOREACH()
