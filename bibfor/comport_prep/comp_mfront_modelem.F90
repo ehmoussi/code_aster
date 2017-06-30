@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_mfront_modelem(elem_type_name, l_mfront_cp ,&
                                model_dim     , model_mfront,&
-                               codret        , type_cpla_)
+                               codret        , type_cpla)
 !
 implicit none
 !
@@ -27,14 +28,12 @@ implicit none
 #include "asterfort/teattr.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: elem_type_name
-    aster_logical, intent(in) :: l_mfront_cp
-    integer, intent(out) :: model_dim
-    character(len=16), intent(out) :: model_mfront
-    integer, intent(out) :: codret
-    character(len=16), optional, intent(out) :: type_cpla_
+character(len=16), intent(in) :: elem_type_name
+aster_logical, intent(in) :: l_mfront_cp
+integer, intent(out) :: model_dim
+character(len=16), intent(out) :: model_mfront
+integer, intent(out) :: codret
+character(len=16), intent(out) :: type_cpla
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,7 +57,7 @@ implicit none
 !
     integer :: iret
     character(len=1) :: model_dim_s
-    character(len=16) :: principal, model_thm, model_type, type_cpla
+    character(len=16) :: principal, model_thm, model_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -109,10 +108,6 @@ implicit none
 !
     if (model_dim .le. 1) then
         codret = 2
-    endif
-!
-    if (present(type_cpla_)) then
-        type_cpla_ = type_cpla
     endif
 !
 end subroutine

@@ -24,7 +24,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/comp_read_typmod.h"
+#include "asterfort/getExternalBehaviourPara.h"
 #include "asterfort/dismoi.h"
 #include "asterc/getexm.h"
 #include "asterfort/assert.h"
@@ -41,7 +41,6 @@ implicit none
 #include "asterc/mfront_set_outofbounds_policy.h"
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_meca_rkit.h"
-#include "asterfort/comp_read_exte.h"
 #include "asterfort/comp_meca_code.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
@@ -66,7 +65,7 @@ aster_logical, intent(in), optional :: l_implex_
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=16) :: keywordfact=' ', answer
-    integer :: i_comp=0, iret=0, nb_comp=0, model_dim=0
+    integer :: i_comp=0, iret=0, nb_comp=0
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
     integer :: cptr_matprop=0, cptr_nbprop=0, nbval = 0
     character(len=16) :: algo_inte=' ', type_matr_tang=' ', method=' ', post_iter=' ', post_incr=' '
@@ -292,22 +291,18 @@ aster_logical, intent(in), optional :: l_implex_
 !
 ! ----- Get parameters for external programs (MFRONT/UMAT)
 !
-        call comp_read_exte(rela_comp  , kit_comp ,&
-                            l_umat     , l_mfront_proto , l_mfront_offi,&
-                            libr_name  , subr_name,&
-                            keywordfact, i_comp   )
-!
-! ----- Get model for MFRONT
-!
-        if (l_mfront_proto .or. l_mfront_offi) then
-            call comp_read_typmod(mesh       , v_model_elem,&
-                                  keywordfact, i_comp      , rela_comp,&
-                                  model_dim  , model_mfront)
-        endif
-        l_comp_external = l_mfront_proto .or. l_mfront_offi .or. l_umat
+        call getExternalBehaviourPara(mesh           , v_model_elem, rela_comp, kit_comp,&
+                                      l_comp_external, ds_compor_para%v_para(i_comp)%comp_exte,&
+                                      keywordfact    , i_comp)
 !
 ! ----- Get function pointers for external programs (MFRONT/UMAT)
 !
+        l_mfront_offi   = ds_compor_para%v_para(i_comp)%comp_exte%l_mfront_offi
+        l_mfront_proto  = ds_compor_para%v_para(i_comp)%comp_exte%l_mfront_proto
+        l_umat          = ds_compor_para%v_para(i_comp)%comp_exte%l_umat
+        libr_name       = ds_compor_para%v_para(i_comp)%comp_exte%libr_name 
+        subr_name       = ds_compor_para%v_para(i_comp)%comp_exte%subr_name
+        model_mfront    = ds_compor_para%v_para(i_comp)%comp_exte%model_mfront
         cptr_nbvarext   = 0
         cptr_namevarext = 0
         cptr_fct_ldc    = 0
@@ -369,14 +364,6 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%v_para(i_comp)%rela_comp                = rela_comp
         ds_compor_para%v_para(i_comp)%algo_inte                = algo_inte
         ds_compor_para%v_para(i_comp)%l_matr_unsymm            = l_matr_unsymm
-        ds_compor_para%v_para(i_comp)%comp_exte%libr_name      = libr_name 
-        ds_compor_para%v_para(i_comp)%comp_exte%subr_name      = subr_name
-        ds_compor_para%v_para(i_comp)%comp_exte%model_mfront   = model_mfront
-        ds_compor_para%v_para(i_comp)%comp_exte%model_dim      = 0
-        ds_compor_para%v_para(i_comp)%comp_exte%nb_vari_umat   = 0
-        ds_compor_para%v_para(i_comp)%comp_exte%l_umat         = l_umat
-        ds_compor_para%v_para(i_comp)%comp_exte%l_mfront_proto = l_mfront_proto
-        ds_compor_para%v_para(i_comp)%comp_exte%l_mfront_offi  = l_mfront_offi
     end do
 !
 end subroutine
