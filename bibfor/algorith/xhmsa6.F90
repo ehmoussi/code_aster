@@ -80,7 +80,7 @@ subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
     real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid44
     real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid50
     real(kind=8) :: rbid52, rbid53, rbid38(3, 3), rbid51(3, 3)
-    real(kind=8) :: r7bid(3), rbid
+    real(kind=8) :: r7bid(3)
     real(kind=8) :: rho110, t
     character(len=16) :: option, zkbid, thmc, meca, hydr
 !
@@ -100,8 +100,7 @@ subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
 !
     zkbid = 'VIDE'
     call thmrcp('INTERMED', imate, thmc, meca, hydr,&
-                zkbid, rbid, rbid, rbid, rbid,&
-                rbid, t, rbid2, rbid3, rbid4,&
+                zkbid, t, rbid2, rbid3, rbid4,&
                 rbid5, rbid6, rbid8, rbid9, rbid10,&
                 rbid11, rbid12, rbid13, rbid53, rbid14,&
                 rbid15, rbid16, rbid17, rbid18, rbid19,&

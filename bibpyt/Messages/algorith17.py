@@ -69,14 +69,6 @@ cata_msg = {
   initiale.
 """),
 
-    12 : _(u"""
-  La température de référence (exprimée en Kelvin) doit toujours être strictement supérieure à zéro.
-"""),
-
-    13 : _(u"""
-  La pression de gaz de référence doit toujours être différente de zéro.
-"""),
-
     14 : _(u"""
   Les mots clés PRES_FLUIDE et PRES_CLAVAGE/SCIAGE sont incompatibles avec les modélisations xxx_JOINT_HYME
 """),

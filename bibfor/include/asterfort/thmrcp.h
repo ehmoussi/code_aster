@@ -20,8 +20,7 @@
 !
 interface 
     subroutine thmrcp(etape, imate, thmc, meca, hydr,&
-                      ther, t0, p10, p20, phi0,&
-                      pvp0, t, p1, p1m, p2,&
+                      ther, t, p1, p1m, p2,&
                       phi, endo, pvp, rgaz, rhod,&
                       cpd, tbiot, satm, satur, dsatur,&
                       pesa, tperm, permli, dperml, permgz,&

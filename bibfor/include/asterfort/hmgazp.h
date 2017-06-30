@@ -20,6 +20,8 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface 
     subroutine hmgazp(yachai, option, meca, thmc, ther,&
                       hydr, imate, ndim, dimdef, dimcon,&
@@ -27,7 +29,7 @@ interface
                       advico, vicphi, addep1, adcp11, addete,&
                       adcote, congem, congep, vintm, vintp,&
                       dsde, epsv, depsv, p1, dp1,&
-                      t, dt, phi, rho11, phi0,&
+                      t, dt, phi, rho11, &
                       sat, retcom, tbiot, rinstp, angmas,&
                       deps, aniso, phenom)
         integer :: nbvari
@@ -64,7 +66,6 @@ interface
         real(kind=8) :: dt
         real(kind=8) :: phi
         real(kind=8) :: rho11
-        real(kind=8) :: phi0
         real(kind=8) :: sat
         integer :: retcom
         real(kind=8) :: tbiot(6)

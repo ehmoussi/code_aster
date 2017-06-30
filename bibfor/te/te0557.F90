@@ -17,7 +17,11 @@
 ! --------------------------------------------------------------------
 
 subroutine te0557(option, nomte)
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
 !
 #include "asterf_types.h"    
 #include "jeveux.h"
@@ -37,6 +41,7 @@ subroutine te0557(option, nomte)
 #include "asterfort/xhmddl.h"
 #include "asterfort/xmulhm.h"
 #include "asterfort/xminte.h"
+#include "asterfort/thmGetElemInfo.h"
 !
     character(len=16) :: option, nomte
 !
@@ -77,6 +82,14 @@ subroutine te0557(option, nomte)
 !......................................................................
 !
     call jemarq()
+!
+! - Init THM module
+!
+    call thmModuleInit()
+!
+! - Get parameters for finite element
+!
+    call thmGetElemInfo()
     rela = 0.d0
     nbspg= 0
     
@@ -101,7 +114,7 @@ subroutine te0557(option, nomte)
 !
 !   RECUPERATION DU TYPE DE MAILLE POUR LA SELECTION DES LAGRANGES ACTIFS
     call tecael(iadzi, iazk24, noms=0)
-    typma=zk24(iazk24-1+3+zi(iadzi-1+2)+3)
+    typma=zk24(iazk24-1+3+zi(iadzi-1+2)+3)(1:8)
 !
     if (nfh.gt.0) then
         call jevech('PHEA_NO', 'L', jheavn)
@@ -152,7 +165,7 @@ subroutine te0557(option, nomte)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
     call jevech('PVECTUR', 'E', ivect)
-    call jevech('PSTANO', 'L', jstno) 
+    call jevech('PSTANO', 'L', jstno)
 !
 !     NB COMPOSANTES DES MODES LOCAUX
 !     ASSOCIES AUX CHAMPS DANS LE CATALOGUE

@@ -15,32 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine xhmsat(yachai, option, meca, thmc, ther,&
                   hydr, imate, ndim, dimenr,&
                   dimcon, nbvari, yamec, addeme,&
                   adcome, advihy, advico, vihrho, vicphi,&
                   addep1, adcp11, congem, congep, vintm,&
                   vintp, dsde, epsv, depsv, p1,&
-                  dp1, t, phi, rho11, phi0,&
+                  dp1, t, phi, rho11,&
                   sat, retcom, tbiot, rinstp, angmas,&
                   aniso, phenom, yaenrh, adenhy, nfh)
-! ======================================================================
-! person_in_charge: daniele.colombo at ifpen.fr
-! ROUTINE HMLISA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
-!   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
-!   NE SONT PAS DES GRANDEURS DE MECANIQUE PURE OU DES FLUX PURS
-!   DANS LE CAS OU THMC = 'LIQU_SATU'
-! ======================================================================
-! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
-! COMMENTAIRE DE NMCONV :
-!                       = 0 OK
-!                       = 1 ECHEC DANS L'INTEGRATION : PAS DE RESULTAT
-!                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
-! ======================================================================
-    implicit none
 !
-! aslint: disable=W1306
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/appmas.h"
 #include "asterfort/dmdepv.h"
@@ -55,13 +47,27 @@ subroutine xhmsat(yachai, option, meca, thmc, ther,&
 #include "asterfort/unsmfi.h"
 #include "asterfort/viporo.h"
 #include "asterfort/virhol.h"
+!
+! person_in_charge: daniele.colombo at ifpen.fr
+! ROUTINE HMLISA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
+!   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
+!   NE SONT PAS DES GRANDEURS DE MECANIQUE PURE OU DES FLUX PURS
+!   DANS LE CAS OU THMC = 'LIQU_SATU'
+! ======================================================================
+! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
+! COMMENTAIRE DE NMCONV :
+!                       = 0 OK
+!                       = 1 ECHEC DANS L'INTEGRATION : PAS DE RESULTAT
+!                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
+! ======================================================================
+!
     integer :: ndim, dimcon, nbvari, imate, yamec
     integer :: adcome, adcp11, vihrho, vicphi, nfh
     integer :: addeme, addep1, advihy, advico, retcom
     real(kind=8) :: congem(dimcon), congep(dimcon)
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
     real(kind=8) :: epsv, depsv, p1, dp1, t, dt
-    real(kind=8) :: phi, rho11, phi0, rac2
+    real(kind=8) :: phi, rho11, rac2
     real(kind=8) :: rinstp, angmas(3)
     character(len=16) :: option, meca, ther, thmc, hydr, phenom
     aster_logical :: yachai
@@ -83,7 +89,7 @@ subroutine xhmsat(yachai, option, meca, thmc, ther,&
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
-    real(kind=8) :: rbid1, rbid2, rbid3, rbid4, rbid5, rbid6, rbid7
+    real(kind=8) :: rbid6, rbid7
     real(kind=8) :: rbid8, rbid10, rbid11, rbid12, rbid13, rbid14(3)
     real(kind=8) :: rbid15(ndim, ndim), rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
@@ -91,7 +97,7 @@ subroutine xhmsat(yachai, option, meca, thmc, ther,&
     real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid36, rbid37
     real(kind=8) :: rbid39, rbid40, rbid45, rbid46, rbid47, rbid48, rbid49
     real(kind=8) :: rbid50(ndim, ndim), rbid20, rbid32(ndim, ndim)
-    real(kind=8) :: dp2, signe
+    real(kind=8) :: dp2, signe, phi0
     real(kind=8) :: dmdeps(6), dsdp1(6), sigmp(6)
 !
     aster_logical :: net, bishop
@@ -103,9 +109,9 @@ subroutine xhmsat(yachai, option, meca, thmc, ther,&
     rac2 = sqrt(2.d0)
 !
     call netbis(meca, net, bishop)
+    phi0 = ds_thm%ds_parainit%poro_init
     call thmrcp('INTERMED', imate, thmc, meca, hydr,&
-                ther, rbid1, rbid2, rbid3, rbid4,&
-                rbid5, t, p1, rbid40, rbid6,&
+                ther, t, p1, rbid40, rbid6,&
                 rbid7, rbid8, rbid10, rbid11, rho0,&
                 csigm, tbiot, rbid12, sat, rbid13,&
                 rbid14, rbid15, rbid16, rbid17, rbid18,&

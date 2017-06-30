@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: sylvie.granet at edf.fr
+! aslint: disable=W1504, W1306
+!
 subroutine comthm(option, perman, vf, ifa, valfac,&
                   valcen, imate, typmod, compor, crit,&
                   instam, instap, ndim, dimdef, dimcon,&
@@ -24,12 +26,18 @@ subroutine comthm(option, perman, vf, ifa, valfac,&
                   addep2, adcp21, adcp22, addete, adcote,&
                   defgem, defgep, congem, congep, vintm,&
                   vintp, dsde, pesa, retcom, kpi,&
-                  npg, p10, p20, angmas)
-! ======================================================================
+                  npg, angmas)
 !
-! ======================================================================
-! person_in_charge: sylvie.granet at edf.fr
+implicit none
 !
+#include "asterf_types.h"
+#include "asterfort/calcco.h"
+#include "asterfort/calcfh.h"
+#include "asterfort/calcft.h"
+#include "asterfort/calcme.h"
+#include "asterfort/kitdec.h"
+#include "asterfort/nvithm.h"
+#include "asterfort/thmlec.h"
 ! VERSION DU 07/06/99  ECRITE PAR PASCAL CHARLES
 ! ROUTINE COMTHM
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE AU POINT
@@ -95,18 +103,7 @@ subroutine comthm(option, perman, vf, ifa, valfac,&
 ! ======================================================================
 ! VARIABLES IN / OUT
 ! ======================================================================
-! aslint: disable=W1504
-    implicit none
-!
-! aslint: disable=W1306
-#include "asterf_types.h"
-#include "asterfort/calcco.h"
-#include "asterfort/calcfh.h"
-#include "asterfort/calcft.h"
-#include "asterfort/calcme.h"
-#include "asterfort/kitdec.h"
-#include "asterfort/nvithm.h"
-#include "asterfort/thmlec.h"
+
     aster_logical :: yachai
     real(kind=8) :: valcen(14, 6)
     integer :: maxfa
@@ -115,12 +112,8 @@ subroutine comthm(option, perman, vf, ifa, valfac,&
     integer :: masse, dmasp1, dmasp2
     integer :: eau, air
     integer :: vkint, kxx, kyy, kzz, kxy, kyz, kzx
-!      PARAMETER(CON=1,DCONP1=2,DCONP2=3,DIFFU=4,DDIFP1=5,DDIFP2=6)
-!      PARAMETER(MOB=7,DMOBP1=8,DMOBP2=9,MASSE=10,DMASP1=11,DMASP2=12)
-!      PARAMETER(RHOGA=1,RHOLQ=2,RHOGA1=3,RHOGA2=4,RHOLQ1=5,RHOLQ2=6)
     parameter     (masse=10,dmasp1=11,dmasp2=12)
     parameter     (vkint=13)
-!      PARAMETER(DENSIT=14)
     parameter     (kxx=1,kyy=2,kzz=3,kxy=4,kyz=5,kzx=6)
     parameter     (eau=1,air=2)
     integer :: retcom, kpi, npg
@@ -142,7 +135,7 @@ subroutine comthm(option, perman, vf, ifa, valfac,&
     integer :: vihrho, vicphi, vicpvp, vicsat, nvih, nvic, nvit
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, h11, h12, rho11, epsv, deps(6), depsv
-    real(kind=8) :: t0, p10, p20, phi0, pvp0, sat, mamovg
+    real(kind=8) :: sat, mamovg
     real(kind=8) :: rgaz, tbiot(6), satur, dsatur, pesa(3)
     real(kind=8) :: tperm(ndim, ndim), permli, dperml, permgz, dperms, dpermp
     real(kind=8) :: dfickt, dfickg, lambp, dlambp, unsurk, fick
@@ -166,23 +159,23 @@ subroutine comthm(option, perman, vf, ifa, valfac,&
                 nvim, nvit, nvih, nvic, advime,&
                 advith, advihy, advico, vihrho, vicphi,&
                 vicpvp, vicsat, vicpr1, vicpr2)
-! ======================================================================
-! --- RECUPERATION DES DONNEES INITIALES -------------------------------
-! ======================================================================
-    call kitdec(kpi, yachai, yamec, yate, yap1,&
-                yap2, meca, thmc, ther, hydr,&
-                imate, defgem, defgep, addeme, addep1,&
-                addep2, addete, ndim, t0, p10,&
-                p20, phi0, pvp0, depsv, epsv,&
-                deps, t, p1, p2, dt,&
-                dp1, dp2, grat, grap1, grap2,&
-                retcom, instap)
+!
+! - Update unknowns
+!
+    call kitdec(kpi   , imate  , ndim  , &
+                yachai, yamec  , yate  , yap1  , yap2,&
+                defgem, defgep ,&
+                addeme, addep1 , addep2, addete,&
+                depsv , epsv   , deps  ,&
+                t     , dt     , grat  ,&
+                p1    , dp1    , grap1 ,&
+                p2    , dp2    , grap2 ,&
+                retcom)
     if (retcom .ne. 0) then
         goto 999
     endif
-! ======================================================================
-! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
-! ======================================================================
+!
+! - Compute coupling law
 !
     call calcco(option, yachai, perman, meca, thmc,&
                 ther, hydr, imate, ndim, dimdef,&
@@ -193,7 +186,7 @@ subroutine comthm(option, perman, vf, ifa, valfac,&
                 dsde, deps, epsv, depsv, p1,&
                 p2, dp1, dp2, t, dt,&
                 phi, pvp, pad, h11, h12,&
-                kh, rho11, phi0, pvp0, sat,&
+                kh, rho11, sat,&
                 retcom, crit, tbiot, vihrho, vicphi,&
                 vicpvp, vicsat, instap, angmas, aniso,&
                 phenom)              
@@ -207,22 +200,14 @@ subroutine comthm(option, perman, vf, ifa, valfac,&
     if (vf .and. (ifa.eq.0)) then
         deltat=instap-instam
         if ((option(1:9).eq.'FULL_MECA') .or. (option(1:9) .eq.'RAPH_MECA')) then
-!
-            valcen(masse ,eau)=( congep(adcp11)+congep(adcp12)&
-            -congem(adcp11)-congem(adcp12))/deltat
-            valcen(masse ,air)=( congep(adcp21)+congep(adcp22)&
-            -congem(adcp21)-congem(adcp22))/deltat
-!
+            valcen(masse,eau)=( congep(adcp11)+congep(adcp12)-congem(adcp11)-congem(adcp12))/deltat
+            valcen(masse,air)=( congep(adcp21)+congep(adcp22)-congem(adcp21)-congem(adcp22))/deltat
         endif
         if ((option(1:9) .eq. 'RIGI_MECA') .or. (option(1:9) .eq. 'FULL_MECA')) then
-            valcen(dmasp1,eau)= (dsde(adcp11,addep1)+ dsde(adcp12,&
-            addep1))/deltat
-            valcen(dmasp2,eau)= (dsde(adcp11,addep2)+ dsde(adcp12,&
-            addep2))/deltat
-            valcen(dmasp1,air)= (dsde(adcp22,addep1)+ dsde(adcp21,&
-            addep1))/deltat
-            valcen(dmasp2,air)= (dsde(adcp22,addep2)+ dsde(adcp21,&
-            addep2))/deltat
+            valcen(dmasp1, eau)= (dsde(adcp11, addep1)+ dsde(adcp12, addep1))/deltat
+            valcen(dmasp2, eau)= (dsde(adcp11, addep2)+ dsde(adcp12, addep2))/deltat
+            valcen(dmasp1, air)= (dsde(adcp22, addep1)+ dsde(adcp21, addep1))/deltat
+            valcen(dmasp2, air)= (dsde(adcp22, addep2)+ dsde(adcp21, addep2))/deltat
         endif
 !
     endif

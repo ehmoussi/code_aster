@@ -18,7 +18,10 @@
 
 subroutine te0313(option, nomte)
 !
-    implicit none
+use THM_type
+use THM_module
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -101,6 +104,10 @@ subroutine te0313(option, nomte)
 ! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
 ! =====================================================================
 !
+!
+! - Init THM module
+!
+    call thmModuleInit()
     call caeihm(nomte, axi, perman, mecani, press1,&
                 press2, tempe, dimdef, dimcon, ndim,&
                 nno1, nno2, npi, npg, dimuel,&

@@ -17,29 +17,35 @@
 ! --------------------------------------------------------------------
 
 subroutine te0588(option, nomte)
-    implicit none
-#   include "asterf_types.h"
-#   include "asterfort/assert.h"
-#   include "asterfort/eulnau.h"
-#   include "asterc/r8dgrd.h"
-#   include "asterfort/elref1.h"
-#   include "asterfort/iselli.h"
-#   include "asterc/ismaem.h"
-#   include "asterfort/jevech.h"
-#   include "asterfort/naueul.h"
-#   include "asterfort/rcangm.h"
-#   include "asterfort/rccoma.h"
-#   include "asterfort/rcvalb.h"
-#   include "asterfort/teattr.h"
-#   include "asterfort/tecach.h"
-#   include "asterfort/vecini.h"
-#   include "asterfort/xasshm.h"
-#   include "asterfort/xcaehm.h"
-#   include "asterfort/xfnohm.h"
-#   include "asterfort/xhmddl.h"
-#   include "asterfort/xhmini.h"
-#   include "asterfort/xpeshm.h"
-#   include "jeveux.h"
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/assert.h"
+#include "asterfort/eulnau.h"
+#include "asterc/r8dgrd.h"
+#include "asterfort/elref1.h"
+#include "asterfort/iselli.h"
+#include "asterc/ismaem.h"
+#include "asterfort/jevech.h"
+#include "asterfort/naueul.h"
+#include "asterfort/rcangm.h"
+#include "asterfort/rccoma.h"
+#include "asterfort/rcvalb.h"
+#include "asterfort/teattr.h"
+#include "asterfort/tecach.h"
+#include "asterfort/vecini.h"
+#include "asterfort/xasshm.h"
+#include "asterfort/xcaehm.h"
+#include "asterfort/xfnohm.h"
+#include "asterfort/xhmddl.h"
+#include "asterfort/xhmini.h"
+#include "asterfort/xpeshm.h"
+#include "jeveux.h"
+#include "asterfort/thmGetElemInfo.h"
     character(len=16) :: option, nomte
 !     ------------------------------------------------------------------
 ! =====================================================================
@@ -138,6 +144,14 @@ subroutine te0588(option, nomte)
 ! --- RECUPERATION DE LA GEOMETRIE ET POIDS DES POINTS D'INTEGRATION --
 ! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
 ! =====================================================================
+!
+! - Init THM module
+!
+    call thmModuleInit()
+!
+! - Get parameters for finite element
+!
+    call thmGetElemInfo()
 ! INITIALISATION POUR XFEM
 !
     call xhmini(nomte, nfh, ddld, ddlm, ddlp, nfiss, ddlc, contac)
@@ -164,10 +178,13 @@ subroutine te0588(option, nomte)
 !
 ! PARAMÈTRES PROPRES AUX ÉLÉMENTS 1D ET 2D QUADRATIQUES
 !
-    if ((ibid.eq.0) .and. (enr(1:2).eq.'XH') .and. .not. iselli(elref)) call jevech('PPMILTO', 'L',&
-                                                                               jpmilt)
+    if ((ibid.eq.0) .and. (enr(1:2).eq.'XH') .and. .not. iselli(elref)) then
+        call jevech('PPMILTO', 'L',jpmilt)
+    endif
 ! PARAMETRE PROPRE AU MULTI-HEAVISIDE
-    if (nfiss .gt. 1) call jevech('PFISNO', 'L', jfisno)
+    if (nfiss .gt. 1) then
+        call jevech('PFISNO', 'L', jfisno)
+    endif
 ! =====================================================================
 ! --- DEBUT DES DIFFERENTES OPTIONS -----------------------------------
 ! =====================================================================
@@ -188,7 +205,6 @@ subroutine te0588(option, nomte)
         call jevech('PCARCRI', 'L', icarcr)
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PCONTMR', 'L', icontm)
-!        call jevech('PVARIMP', 'L',
         read (zk16(icompo-1+2),'(I16)') nbvari
 ! =====================================================================
 ! ----RECUPERATION DES ANGLES NAUTIQUES/EULER DEFINIS PAR AFFE_CARA_ELEM

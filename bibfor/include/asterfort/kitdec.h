@@ -20,51 +20,44 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface 
-    subroutine kitdec(kpi, yachai, yamec, yate, yap1,&
-                      yap2, meca, thmc, ther, hydr,&
-                      imate, defgem, defgep, addeme, addep1,&
-                      addep2, addete, ndim, t0, p10,&
-                      p20, phi0, pvp0, depsv, epsv,&
-                      deps, t, p1, p2, dt,&
-                      dp1, dp2, grat, grap1, grap2,&
-                      retcom, rinstp)
-        integer :: kpi
-        aster_logical :: yachai
-        integer :: yamec
-        integer :: yate
-        integer :: yap1
-        integer :: yap2
-        character(len=16) :: meca
-        character(len=16) :: thmc
-        character(len=16) :: ther
-        character(len=16) :: hydr
-        integer :: imate
-        real(kind=8) :: defgem(*)
-        real(kind=8) :: defgep(*)
-        integer :: addeme
-        integer :: addep1
-        integer :: addep2
-        integer :: addete
-        integer :: ndim
-        real(kind=8) :: t0
-        real(kind=8) :: p10
-        real(kind=8) :: p20
-        real(kind=8) :: phi0
-        real(kind=8) :: pvp0
-        real(kind=8) :: depsv
-        real(kind=8) :: epsv
-        real(kind=8) :: deps(6)
-        real(kind=8) :: t
-        real(kind=8) :: p1
-        real(kind=8) :: p2
-        real(kind=8) :: dt
-        real(kind=8) :: dp1
-        real(kind=8) :: dp2
-        real(kind=8) :: grat(3)
-        real(kind=8) :: grap1(3)
-        real(kind=8) :: grap2(3)
-        integer :: retcom
-        real(kind=8) :: rinstp
+    subroutine kitdec(kpi   , j_mater, ndim  ,&
+                      yachai, yamec  , yate  , yap1  , yap2,&
+                      defgem, defgep ,&
+                      addeme, addep1 , addep2, addete,&
+                      depsv , epsv   , deps  ,&
+                      t     , dt     , grat  ,&
+                      p1    , dp1    , grap1 ,&
+                      p2    , dp2    , grap2 ,&
+                      retcom)
+        integer, intent(in) :: kpi
+        integer, intent(in) :: j_mater
+        integer, intent(in) :: ndim
+        aster_logical, intent(out) :: yachai
+        integer, intent(in) :: yamec
+        integer, intent(in) :: yate
+        integer, intent(in) :: yap1
+        integer, intent(in) :: yap2
+        real(kind=8), intent(in) :: defgem(*)
+        real(kind=8), intent(in) :: defgep(*)
+        integer, intent(in) :: addeme
+        integer, intent(in) :: addep1
+        integer, intent(in) :: addep2
+        integer, intent(in) :: addete
+        real(kind=8), intent(out) :: depsv
+        real(kind=8), intent(out) :: epsv
+        real(kind=8), intent(out) :: deps(6)
+        real(kind=8), intent(out) :: t
+        real(kind=8), intent(out) :: dt
+        real(kind=8), intent(out) :: grat(ndim)
+        real(kind=8), intent(out) :: p1
+        real(kind=8), intent(out) :: dp1
+        real(kind=8), intent(out) :: grap1(ndim)
+        real(kind=8), intent(out) :: p2
+        real(kind=8), intent(out) :: dp2
+        real(kind=8), intent(out) :: grap2(ndim)
+        integer, intent(out) :: retcom
     end subroutine kitdec
 end interface 

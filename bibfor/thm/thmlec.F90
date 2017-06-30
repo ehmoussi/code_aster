@@ -107,8 +107,7 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
     retcom=0
     if (thmc .eq. 'LIQU_SATU') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
-                    ther, rbid1, rbid2, rbid3, rbid4,&
-                    rbid5, t, rbid6, rbid41, rbid7,&
+                    ther, t, rbid6, rbid41, rbid7,&
                     phi, end, rbid11, rbid12, rbid13,&
                     rbid14, tbiot, rbid16, rbid17, rbid18,&
                     pesa, tperm, rbid19, rbid20, rbid21,&
@@ -122,8 +121,7 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     angmas, aniso, ndim)
     else if (thmc.eq.'GAZ') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
-                    ther, rbid1, rbid2, rbid3, rbid4,&
-                    rbid5, t, rbid6, rbid44, rbid7,&
+                    ther, t, rbid6, rbid44, rbid7,&
                     phi, end, rbid11, rgaz, rbid13,&
                     rbid14, tbiot, rbid16, rbid17, rbid18,&
                     pesa, tperm, rbid19, rbid20, rbid21,&
@@ -137,8 +135,7 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     angmas, aniso, ndim)
     else if (thmc.eq.'LIQU_VAPE') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
-                    ther, rbid1, rbid2, rbid3, rbid4,&
-                    rbid5, t, p1, rbid6, p2,&
+                    ther, t, p1, rbid6, p2,&
                     phi, end, pvp, rgaz, rbid8,&
                     rbid9, tbiot, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, permgz,&
@@ -152,8 +149,7 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     angmas, aniso, ndim)
     else if (thmc.eq.'LIQU_VAPE_GAZ') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
-                    ther, rbid1, rbid2, rbid3, rbid4,&
-                    rbid5, t, p1, rbid6, p2,&
+                    ther, t, p1, rbid6, p2,&
                     phi, end, pvp, rgaz, rbid8,&
                     rbid9, tbiot, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, permgz,&
@@ -167,8 +163,7 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     angmas, aniso, ndim)
     else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
-                    ther, rbid1, rbid2, rbid3, rbid4,&
-                    rbid5, t, p1, rbid6, p2,&
+                    ther, t, p1, rbid6, p2,&
                     phi, end, rbid28, rgaz, rbid8,&
                     rbid9, tbiot, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, permgz,&
@@ -183,8 +178,7 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
 !
     else if (thmc.eq.'LIQU_AD_GAZ') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
-                    ther, rbid1, rbid2, rbid3, rbid4,&
-                    rbid5, t, p1, rbid6, p2,&
+                    ther, t, p1, rbid6, p2,&
                     phi, end, rbid28, rgaz, rbid8,&
                     rbid9, tbiot, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, permgz,&
@@ -198,8 +192,7 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     angmas, aniso, ndim)
     else if (thmc.eq.'LIQU_GAZ') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
-                    ther, rbid1, rbid2, rbid3, rbid4,&
-                    rbid5, t, p1, rbid6, p2,&
+                    ther, t, p1, rbid6, p2,&
                     phi, end, rbid28, rgaz, rbid8,&
                     rbid9, tbiot, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, permgz,&
@@ -213,8 +206,7 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     angmas, aniso, ndim)
     else if (thmc.eq.'LIQU_GAZ_ATM') then
         call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
-                    ther, rbid1, rbid2, rbid3, rbid4,&
-                    rbid5, t, p1, rbid6, p2,&
+                    ther, t, p1, rbid6, p2,&
                     phi, end, rbid28, rbid29, rbid8,&
                     rbid9, tbiot, rbid11, satur, dsatur,&
                     pesa, tperm, permli, dperml, rbid30,&

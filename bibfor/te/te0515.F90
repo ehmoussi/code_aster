@@ -17,7 +17,12 @@
 ! --------------------------------------------------------------------
 
 subroutine te0515(option, nomte)
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/ismaem.h"
@@ -107,6 +112,10 @@ subroutine te0515(option, nomte)
 ! --- RECUPERATION DE LA GEOMETRIE ET POIDS DES POINTS D'INTEGRATION --
 ! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
 ! =====================================================================
+!
+! - Init THM module
+!
+    call thmModuleInit()
     call caethm(axi, perman, vf, typvf,&
                 typmod, modint, mecani, press1, press2,&
                 tempe, dimdep, dimdef, dimcon, nmec,&

@@ -195,11 +195,6 @@ Contactez le support technique.
  le seul comportement élastique valide est ELAS
  """),
 
-    90 : _(u"""
- la définition de la température est obligatoire
- pour une loi de couplage de type  %(k1)s
-"""),
-
     91 : _(u"""
  Loi de séchage %(k1)s : le coefficient de diffusion atteint des valeurs trop élevées %(r1)f. Il se peut que cela soit dû à la stabilité du thêta-schéma qui empêche la convergence du calcul non linéaire. 
  Conseils :

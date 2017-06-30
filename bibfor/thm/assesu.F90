@@ -41,6 +41,7 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vfcfks.h"
+#include "asterfort/thmGetBehaviour.h"
     integer, parameter :: maxfa=6
 !
     integer :: nno, nnos, nface
@@ -108,7 +109,7 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
     integer :: ipg, retcom, fa, i, j
 !
     real(kind=8) :: pesa(3), kintvf(6)
-    real(kind=8) :: rthmc(1), p10, p20
+    real(kind=8) :: rthmc(1)
     real(kind=8) :: valcen(14, 6), valfac(maxfa, 14, 6)
 !
     aster_logical :: tange, cont, bool
@@ -352,6 +353,10 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
         valk(2) = thmc
         call utmess('F', 'ALGORITH_34', nk=2, valk=valk)
     endif
+!
+! - Get parameters for coupling
+!
+    call thmGetBehaviour(compor)
 ! ====================================================================
 ! DECLARATION DE DEUX LOGIQUES POUR SAVOIR CE QUE L ON DOIT CALCULER
 ! TANGE => CALCUL OPERATEUR TANGENT => MATUU
@@ -473,7 +478,7 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
                 addep2, adcp21, adcp22, addete, adcote,&
                 defgem, defgep, congem, congep, vintm(1, 1),&
                 vintp(1, 1), dsde, pesa, retcom, 1,&
-                1, p10, p20, angbid)
+                1, angbid)
     if (retcom .ne. 0) then
         call utmess('F', 'COMPOR1_9')
     endif
@@ -512,7 +517,7 @@ subroutine assesu(nno, nnos, nface, geom, crit,&
                     addep2, adcp21, adcp22, addete, adcote,&
                     defgem, defgep, congem, congep, vintm(1, fa+1),&
                     vintp(1, fa+1), dsde, pesa, retcom, 1,&
-                    1, p10, p20, angbid)
+                    1, angbid)
         if (retcom .ne. 0) then
             call utmess('F', 'COMPOR1_9')
         endif

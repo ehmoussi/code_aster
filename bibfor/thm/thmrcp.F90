@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine thmrcp(etape, imate, thmc, meca, hydr,&
-                  ther, t0, p10, p20, phi0,&
-                  pvp0, t, p1, p1m, p2,&
+                  ther, t, p1, p1m, p2,&
                   phi, endo, pvp, rgaz, rhod,&
                   cpd, tbiot, satm, satur, dsatur,&
                   pesa, tperm, permli, dperml, permgz,&
@@ -52,7 +51,7 @@ subroutine thmrcp(etape, imate, thmc, meca, hydr,&
 #include "asterfort/utmess.h"
     integer :: imate, retcom, ndim
     integer :: aniso, aniso1, aniso2, aniso3, aniso4
-    real(kind=8) :: t0, p10, p20, phi0, pvp0, t, p1, p2, phi, pvp
+    real(kind=8) :: t, p1, p2, phi, pvp
     real(kind=8) :: rgaz, rhod, cpd, satm, satur, dsatur, pesa(3)
     real(kind=8) :: permli, dperml, permgz, dperms, dpermp
     real(kind=8) :: fick, dfickt, dfickg, lambp, dlambp, rhol
@@ -72,7 +71,7 @@ subroutine thmrcp(etape, imate, thmc, meca, hydr,&
 ! --- VARIABLES LOCALES -----------------------------------------------
 ! =====================================================================
     integer :: ii, dimsat, dimvg
-    integer :: dim1, dim2, dim3, dim4, dim5, dim6, dim7, dim8
+    integer :: dim2, dim3, dim4, dim5, dim6, dim7, dim8
     integer :: dim9, dim10, dim11, dim12, dim13, dim14, dim15
     integer :: dim16, dim17, dim18, dim19, dim20, dim21, dim22
     integer :: dim23, dim24, dim25, dim26, dim27, dim28, dim29
@@ -81,7 +80,6 @@ subroutine thmrcp(etape, imate, thmc, meca, hydr,&
     integer :: dim36, dim37, dim38, dim40, dim41, dim42, dim43, dim39
     parameter   ( dimsat =  2 )
     parameter   ( dimvg  =  5 )
-    parameter   ( dim1   =  5 )
     parameter   ( dim2   =  7 )
     parameter   ( dim3   =  4 )
     parameter   ( dim4   =  8 )
@@ -132,7 +130,7 @@ subroutine thmrcp(etape, imate, thmc, meca, hydr,&
 !      PARAMETER ( NRESMA = 34 )
     parameter ( nresma = 40 )
 !
-    real(kind=8) :: val1(dim1), val2(dim2), val3(dim3), val4(dim4)
+    real(kind=8) :: val2(dim2), val3(dim3), val4(dim4)
     real(kind=8) :: val5(dim5), val6(dim6), val7(dim7), val8(dim8)
     real(kind=8) :: val9(dim9+1), val10(dim10), val11(dim11), rbid1
     real(kind=8) :: val12(dim12), val13(dim13+1), val14(dim14)
@@ -151,7 +149,7 @@ subroutine thmrcp(etape, imate, thmc, meca, hydr,&
 !
     integer :: icodre(nresma)
     character(len=4) :: nompar(dimpar)
-    character(len=16) :: ncra1(dim1), ncra2(dim2), ncra3(dim3), ncra4(dim4)
+    character(len=16) :: ncra2(dim2), ncra3(dim3), ncra4(dim4)
     character(len=16) :: ncra5(dim5), ncra6(dim6), ncra7(dim7), ncra8(dim8)
     character(len=16) :: ncra9(dim9), ncra10(dim10), ncra11(dim11)
     character(len=16) :: ncra12(dim12), ncra13(dim13), ncra14(dim14)
@@ -169,14 +167,6 @@ subroutine thmrcp(etape, imate, thmc, meca, hydr,&
     character(len=16) :: crad39(dim39), crad40(dim40)
     character(len=16) :: crad41(dim41), crad42(dim42)
     character(len=16) :: nsat(dimsat), nvg(dimvg)
-! =====================================================================
-! --- DEFINITION DES DONNEES INITIALES --------------------------------
-! =====================================================================
-    data ncra1  / 'TEMP'     ,&
-     &              'PRE1'     ,&
-     &              'PRE2'     ,&
-     &              'PORO'     ,&
-     &              'PRES_VAPE' /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_SATU -----
 ! =====================================================================
@@ -645,42 +635,7 @@ subroutine thmrcp(etape, imate, thmc, meca, hydr,&
         dlambt(ii)=0.d0
     end do
 !
-    if (etape .eq. 'INITIALI') then
-        do ii = 1, dim1
-            val1(ii) = 0.0d0
-        end do
-        val1(1) = r8vide()
-        call rcvala(imate, ' ', 'THM_INIT', 0, ' ',&
-                    [0.d0], dim1, ncra1, val1, icodre,&
-                    0,nan='NON')
-        t0 = val1(1)
-        p10 = val1(2)
-        p20 = val1(3)
-        phi0 = val1(4)
-        pvp0 = val1(5)
-!
-! VERIFICATION TEMPERATURE DE REFERENCE
-        if ((thmc.eq.'GAZ') .or. (thmc.eq.'LIQU_VAPE') .or. ( thmc.eq.'LIQU_VAPE_GAZ') .or.&
-            (thmc.eq.'LIQU_AD_GAZ_VAPE') .or. (thmc.eq.'LIQU_AD_GAZ') .or.&
-            (thmc.eq.'LIQU_GAZ')) then
-            if (t0 .eq. r8vide()) then
-                call utmess('F', 'ALGORITH10_90', sk=thmc)
-            endif
-            if (t0 .le. r8prem()) then
-                call utmess('F', 'ALGORITH17_12')
-            endif
-        endif
-        if (t0 .eq. r8vide()) t0 = 0.0d0
-! VERIFICATION PRESSION DE GAZ DE REFERENCE NON NULLE
-        if ((thmc.eq.'LIQU_VAPE_GAZ') .or. ( thmc.eq.'LIQU_AD_GAZ_VAPE') .or.&
-            (thmc.eq.'LIQU_AD_GAZ') .or. (thmc.eq.'LIQU_GAZ')) then
-            if (abs(p20) .le. r8prem()) then
-                call utmess('F', 'ALGORITH17_13')
-            endif
-        endif
-!
-!
-    else if (etape.eq.'INTERMED') then
+    if (etape.eq.'INTERMED') then
 ! =====================================================================
 ! --- CAS INTERMEDIAIRE -----------------------------------------------
 ! =====================================================================

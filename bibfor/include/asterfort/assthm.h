@@ -20,7 +20,9 @@
 !
 #include "asterf_types.h"
 !
-interface
+! aslint: disable=W1504
+!
+interface 
     subroutine assthm(nno, nnos, nnom, npg, npi,&
                       ipoids, ipoid2, ivf, ivf2, idfde,&
                       idfde2, geom, crit, deplm, deplp,&

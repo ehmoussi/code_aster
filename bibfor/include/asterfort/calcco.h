@@ -20,6 +20,8 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface 
     subroutine calcco(option, yachai, perman, meca, thmc,&
                       ther, hydr, imate, ndim, dimdef,&
@@ -30,8 +32,8 @@ interface
                       dsde, deps, epsv, depsv, p1,&
                       p2, dp1, dp2, t, dt,&
                       phi, pvp, pad, h11, h12,&
-                      kh, rho11, phi0, pvp0, sat,&
-                      retcom, crit, tbiot, vihrho, vicphi,&
+                      kh, rho11, sat,&
+                      retcom, carcri, tbiot, vihrho, vicphi,&
                       vicpvp, vicsat, rinstp, angmas, aniso,&
                       phenom)
         integer :: nbvari
@@ -81,11 +83,9 @@ interface
         real(kind=8) :: h12
         real(kind=8) :: kh
         real(kind=8) :: rho11
-        real(kind=8) :: phi0
-        real(kind=8) :: pvp0
         real(kind=8) :: sat
         integer :: retcom
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         real(kind=8) :: tbiot(6)
         integer :: vihrho
         integer :: vicphi

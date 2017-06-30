@@ -20,6 +20,8 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface 
     subroutine comthm(option, perman, vf, ifa, valfac,&
                       valcen, imate, typmod, compor, crit,&
@@ -29,7 +31,7 @@ interface
                       addep2, adcp21, adcp22, addete, adcote,&
                       defgem, defgep, congem, congep, vintm,&
                       vintp, dsde, pesa, retcom, kpi,&
-                      npg, p10, p20, angmas)
+                      npg, angmas)
         integer, parameter :: maxfa=6
         integer :: nbvari
         integer :: dimcon
@@ -72,8 +74,6 @@ interface
         integer :: retcom
         integer :: kpi
         integer :: npg
-        real(kind=8) :: p10
-        real(kind=8) :: p20
         real(kind=8) :: angmas(3)
     end subroutine comthm
 end interface 
