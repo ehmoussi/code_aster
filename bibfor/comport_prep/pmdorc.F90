@@ -177,7 +177,7 @@ implicit none
     carcri(7)  = ds_compor_para%v_para(i_comp)%vale_pert_rela
     carcri(8)  = ds_compor_para%v_para(i_comp)%resi_deborst_max
     carcri(9)  = ds_compor_para%v_para(i_comp)%iter_deborst_max
-    carcri(10) = ds_compor_para%v_para(i_comp)%seuil
+    carcri(10) = ds_compor_para%v_para(i_comp)%resi_radi_rela
     carcri(13) = ds_compor_para%v_para(i_comp)%post_iter
     carcri(14) = ds_compor_para%v_para(i_comp)%c_pointer%nbvarext
     carcri(15) = ds_compor_para%v_para(i_comp)%c_pointer%namevarext

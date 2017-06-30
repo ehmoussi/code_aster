@@ -71,7 +71,7 @@ aster_logical, intent(in), optional :: l_implex_
     integer :: cptr_matprop=0, cptr_nbprop=0, nbval = 0
     character(len=16) :: algo_inte=' ', type_matr_tang=' ', method=' ', post_iter=' ', post_incr=' '
     real(kind=8) :: parm_theta=0.d0, vale_pert_rela=0.d0
-    real(kind=8) :: resi_deborst_max=0.d0, seuil=0.d0
+    real(kind=8) :: resi_deborst_max=0.d0
     real(kind=8) :: parm_alpha=0.d0, resi_radi_rela=0.d0
     integer :: type_matr_t=0, iter_inte_pas=0, iter_deborst_max=0
     integer :: ipostiter=0, ipostincr=0
@@ -83,7 +83,7 @@ aster_logical, intent(in), optional :: l_implex_
     character(len=16) :: thmc_comp=' ', hydr_comp=' ', ther_comp=' ', meca_comp=' '
     aster_logical :: l_kit_thm=.false._1, l_mfront_proto=.false._1, l_kit_ddi = .false._1
     aster_logical :: l_mfront_offi=.false._1, l_umat=.false._1, l_kit = .false._1, l_matr_unsymm
-    aster_logical :: l_implex
+    aster_logical :: l_implex, l_comp_external
     character(len=16) :: texte(3)=(/ ' ',' ',' '/), model_mfront=' '
     character(len=255) :: libr_name=' ', subr_name=' '
     integer, pointer :: v_model_elem(:) => null()
@@ -257,10 +257,8 @@ aster_logical, intent(in), optional :: l_implex_
         if (type_matr_t .eq. 0) then
             call getvr8(keywordfact, 'RESI_RADI_RELA', iocc = i_comp, scal = resi_radi_rela,&
                         nbret = iret)
-            if (iret .ne. 0) then
-                seuil = resi_radi_rela
-            else
-                seuil = -10.d0
+            if (iret .eq. 0) then
+                resi_radi_rela = -10.d0
             endif
         endif
 !
@@ -306,6 +304,7 @@ aster_logical, intent(in), optional :: l_implex_
                                   keywordfact, i_comp      , rela_comp,&
                                   model_dim  , model_mfront)
         endif
+        l_comp_external = l_mfront_proto .or. l_mfront_offi .or. l_umat
 !
 ! ----- Get function pointers for external programs (MFRONT/UMAT)
 !
@@ -351,6 +350,7 @@ aster_logical, intent(in), optional :: l_implex_
 !
 ! ----- Save options in list
 !
+        ds_compor_para%v_para(i_comp)%l_comp_external          = l_comp_external
         ds_compor_para%v_para(i_comp)%type_matr_t              = type_matr_t
         ds_compor_para%v_para(i_comp)%parm_alpha               = parm_alpha
         ds_compor_para%v_para(i_comp)%parm_theta               = parm_theta
@@ -358,7 +358,7 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%v_para(i_comp)%vale_pert_rela           = vale_pert_rela
         ds_compor_para%v_para(i_comp)%resi_deborst_max         = resi_deborst_max
         ds_compor_para%v_para(i_comp)%iter_deborst_max         = iter_deborst_max
-        ds_compor_para%v_para(i_comp)%seuil                    = seuil
+        ds_compor_para%v_para(i_comp)%resi_radi_rela           = resi_radi_rela
         ds_compor_para%v_para(i_comp)%post_iter                = ipostiter
         ds_compor_para%v_para(i_comp)%post_incr                = ipostincr
         ds_compor_para%v_para(i_comp)%c_pointer%nbvarext       = cptr_nbvarext
@@ -369,11 +369,14 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%v_para(i_comp)%rela_comp                = rela_comp
         ds_compor_para%v_para(i_comp)%algo_inte                = algo_inte
         ds_compor_para%v_para(i_comp)%l_matr_unsymm            = l_matr_unsymm
-        ds_compor_para%v_para(i_comp)%comp_exte%nb_vari_umat   = 0
         ds_compor_para%v_para(i_comp)%comp_exte%libr_name      = libr_name 
         ds_compor_para%v_para(i_comp)%comp_exte%subr_name      = subr_name
         ds_compor_para%v_para(i_comp)%comp_exte%model_mfront   = model_mfront
-        ds_compor_para%v_para(i_comp)%comp_exte%model_dim      = model_dim
+        ds_compor_para%v_para(i_comp)%comp_exte%model_dim      = 0
+        ds_compor_para%v_para(i_comp)%comp_exte%nb_vari_umat   = 0
+        ds_compor_para%v_para(i_comp)%comp_exte%l_umat         = l_umat
+        ds_compor_para%v_para(i_comp)%comp_exte%l_mfront_proto = l_mfront_proto
+        ds_compor_para%v_para(i_comp)%comp_exte%l_mfront_offi  = l_mfront_offi
     end do
 !
 end subroutine

@@ -65,7 +65,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=24) :: list_elem_affe
-    aster_logical :: l_affe_all, l_matr_unsymm
+    aster_logical :: l_affe_all, l_matr_unsymm, l_comp_external
     integer :: nb_elem_affe, model_dim
     integer, pointer :: v_elem_affe(:) => null()
     character(len=16) :: keywordfact
@@ -74,10 +74,10 @@ implicit none
     character(len=16) :: algo_inte, rela_comp, model_mfront
     character(len=255) :: libr_name, subr_name
     real(kind=8) :: iter_inte_maxi, resi_inte_rela, parm_theta, vale_pert_rela, algo_inte_r
-    real(kind=8) :: resi_deborst_max, seuil, parm_alpha
+    real(kind=8) :: resi_deborst_max, resi_radi_rela, parm_alpha
     real(kind=8) :: post_iter, post_incr
     integer :: type_matr_t, iter_inte_pas, iter_deborst_max
-    aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi, l_kit_thm, l_kit
+    aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi, l_kit_thm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -101,7 +101,7 @@ implicit none
         vale_pert_rela   = ds_compor_para%v_para(i_comp)%vale_pert_rela
         resi_deborst_max = ds_compor_para%v_para(i_comp)%resi_deborst_max
         iter_deborst_max = ds_compor_para%v_para(i_comp)%iter_deborst_max
-        seuil            = ds_compor_para%v_para(i_comp)%seuil
+        resi_radi_rela   = ds_compor_para%v_para(i_comp)%resi_radi_rela
         post_iter        = ds_compor_para%v_para(i_comp)%post_iter
         parm_alpha       = ds_compor_para%v_para(i_comp)%parm_alpha
         post_incr        = ds_compor_para%v_para(i_comp)%post_incr
@@ -111,19 +111,17 @@ implicit none
         libr_name        = ds_compor_para%v_para(i_comp)%comp_exte%libr_name
         subr_name        = ds_compor_para%v_para(i_comp)%comp_exte%subr_name
         model_mfront     = ds_compor_para%v_para(i_comp)%comp_exte%model_mfront
-        model_dim        = ds_compor_para%v_para(i_comp)%comp_exte%model_dim
-
+        l_comp_external  = ds_compor_para%v_para(i_comp)%l_comp_external
 !
 ! ----- Detection of specific cases
 !
-        call comp_meca_l(rela_comp, 'KIT'         , l_kit)
         call comp_meca_l(rela_comp, 'KIT_THM'     , l_kit_thm)
         call comp_meca_l(rela_comp, 'MFRONT_PROTO', l_mfront_proto)
         call comp_meca_l(rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
 !
 ! ----- Get list of elements where comportment is defined
 !
-        call comp_read_mesh(mesh          , keywordfact, i_comp        ,&
+        call comp_read_mesh(mesh          , keywordfact, i_comp      ,&
                             list_elem_affe, l_affe_all , nb_elem_affe)
 !
 ! ----- Get ALGO_INTE - Plane stress
@@ -165,7 +163,7 @@ implicit none
         p_carc_valv(7)  = vale_pert_rela
         p_carc_valv(8)  = resi_deborst_max
         p_carc_valv(9)  = iter_deborst_max
-        p_carc_valv(10) = seuil
+        p_carc_valv(10) = resi_radi_rela
         p_carc_valv(13) = post_iter
         p_carc_valv(21) = post_incr
 !       exte_comp UMAT / MFRONT
