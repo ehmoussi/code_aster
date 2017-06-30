@@ -20,6 +20,8 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface 
     subroutine hmladg(yachai, option, meca, ther, hydr,&
                       imate, ndim, dimdef, dimcon, nbvari,&
@@ -30,7 +32,7 @@ interface
                       vintm, vintp, dsde, epsv, depsv,&
                       p1, p2, dp1, dp2, t,&
                       dt, phi, padp, h11, h12,&
-                      kh, rho11, phi0, sat, retcom,&
+                      kh, rho11, sat, retcom,&
                       thmc, tbiot, rinstp, angmas, deps,&
                       aniso, phenom)
         integer :: nbvari
@@ -80,7 +82,6 @@ interface
         real(kind=8) :: h12
         real(kind=8) :: kh
         real(kind=8) :: rho11
-        real(kind=8) :: phi0
         real(kind=8) :: sat
         integer :: retcom
         character(len=16) :: thmc

@@ -15,29 +15,34 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+! aslint: disable=W1504
+!
 subroutine xfract(nvec, nnop, nnops, nddls, nddlm,&
                   ndim, pla, deplp, deplm,&
                   ffp, ffc, dffc, saut, gradpf,&
                   q1, q2, dpf, q1m, q2m, sautm,&
                   gradpfm, pf, ffp2, psup, pinf,&
-                  job, jmate, meca, hydr, thmc,&
+                  job, jmate, &
                   t, dimuel, lamb, jheavn, ncompn,&
                   ifiss, nfiss, nfh, ifa, jheafa,&
                   ncomph, contac, depl0, depl1, lambm, pfm)
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
 !
 #include "asterfort/assert.h"
 #include "jeveux.h"
-#include "asterfort/hmdeca.h"
-#include "asterfort/thmrcp.h"    
+#include "asterfort/hmdeca.h"   
 #include "asterfort/vecini.h"
 #include "asterfort/xcalc_saut.h"
 #include "asterfort/xcalc_code.h"
 #include "asterfort/xcalc_heav.h"
+#include "asterfort/thmGetParaInit.h"
 !
 ! ======================================================================
-! person_in_charge: daniele.colombo at ifpen.fr
 !
 ! ROUTINE MODELE HM-XFEM (CAS DE LA FRACTURE)
 !
@@ -53,51 +58,21 @@ subroutine xfract(nvec, nnop, nnops, nddls, nddlm,&
     real(kind=8), intent(in) :: ffp(27), ffc(16)
     real(kind=8), intent(in) :: dffc(16,3), ffp2(27)
     character(len=8), intent(in) :: job
-    character(len=16), intent(in) :: thmc, meca, hydr
     real(kind=8), intent(out) :: q1m, q2m, gradpfm(3), sautm(3)
     real(kind=8), intent(out) :: saut(3), gradpf(3), lamb(3)
     real(kind=8), intent(out) :: q1, q2, dpf, pf, t, pinf, psup
     real(kind=8), optional, intent(in) :: depl0(dimuel), depl1(dimuel)
     real(kind=8), optional, intent(out) :: lambm(3), pfm
     integer :: i, j, in, pli, hea_fa(2), ifiss, nfh, ifa, jheafa
-    real(kind=8) :: t0, ffi, dffi(3)
-    integer :: rbid54, ibid, heavn(nnop,5), ifh, dec
-    real(kind=8) :: rbid1, rbid2, rbid3, rbid4, rbid5, rbid6
-    real(kind=8) :: rbid8, rbid9, rbid10, rbid11, rbid12(6), rbid13, rbid14
-    real(kind=8) :: rbid15(3), rbid16(3, 3), rbid17, rbid18, rbid19, rbid20
-    real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
-    real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid32
-    real(kind=8) :: rbid33, rbid34, rbid35, rbid36, rbid37(3, 3)
-    real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid44
-    real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid50
-    real(kind=8) :: rbid52, rbid53, rbid38(3, 3), rbid51(3, 3)
-    real(kind=8) :: r7bid(3), rbid
-    character(len=16) :: zkbid
+    real(kind=8) :: ffi, dffi(3)
+    integer :: heavn(nnop,5), ifh, dec
     real(kind=8) :: coefi
     aster_logical :: lmultc
 !
     ASSERT(nvec.gt.0.and.nvec.le.3)
-!
-! ======================================================================
-! --- INITIALISATION DE VARIABLES --------------------------------------
-! ======================================================================
-!
-    call thmrcp('INITIALI', jmate, thmc, meca, hydr,&
-                zkbid, t0, rbid, rbid, rbid,&
-                rbid, rbid1, rbid2, rbid3, rbid4,&
-                rbid5, rbid6, rbid8, rbid9, rbid10,&
-                rbid11, rbid12, rbid13, rbid53, rbid14,&
-                rbid15, rbid16, rbid17, rbid18, rbid19,&
-                rbid20, rbid21, rbid22, rbid23, rbid24,&
-                rbid25, rbid26, rbid27, rbid28, rbid29,&
-                rbid30, rbid31, rbid32, rbid33, rbid34,&
-                rbid35, rbid36, rbid37, rbid38, rbid39,&
-                rbid40, rbid41, rbid42, rbid43, rbid44,&
-                rbid45, rbid46, rbid47, rbid48, rbid49,&
-                rbid50, rbid51, rbid52, ibid,&
-                r7bid, rbid54, ibid)
-                
-    t=t0
+
+    call thmGetParaInit(jmate)    
+    t=ds_thm%ds_parainit%temp_init
 !
 !   ========================================================================    
 !   CALCUL DES GRANDEURS (DEPMOINS + INCREMENT)

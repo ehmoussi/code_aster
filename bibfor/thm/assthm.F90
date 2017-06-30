@@ -28,10 +28,11 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
                   nbvari, nddls, nddlm, nmec, np1,&
                   np2, ndim, compor, typmod, axi,&
                   perman, modint, codret, angmas, work1, work2)
-! ======================================================================
-! person_in_charge: sylvie.granet at edf.fr
-    implicit none
 !
+use THM_type
+use THM_module
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
@@ -43,6 +44,11 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 #include "asterfort/pmathm.h"
 #include "asterfort/rcvala.h"
 #include "asterfort/utmess.h"
+#include "asterfort/thmGetBehaviour.h"
+!
+! aslint: disable=W1504
+! person_in_charge: sylvie.granet at edf.fr
+!
     integer :: dimmat, npg, ipoid2, ivf2, idfde2, dimuel, nnom
     parameter    (dimmat=120)
     integer :: nno, nnos, npi, ipoids, ivf, idfde, imate, dimdef, dimcon
@@ -70,15 +76,15 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
     integer :: codmes(1)
     character(len=3) :: modint
     character(len=8) :: typmod(2)
-    character(len=16) :: option, compor(*), thmc, loi
+    character(len=16) :: option, compor(*), loi
     character(len=24) :: valk(2)
 !
 ! =====================================================================
-!.......................................................................
+!
 !
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
 !           EN MECANIQUE DES MILIEUX POREUX AVEC COUPLAGE THM
-!.......................................................................
+!
 ! =====================================================================
 ! IN AXI       AXISYMETRIQUE?
 ! IN TYPMOD    MODELISATION (D_PLAN, AXI, 3D ?)
@@ -184,6 +190,11 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
     if (dimuel .gt. dimmat) then
         call utmess('F', 'ALGORITH_33')
     endif
+!
+! - Get parameters for coupling
+!
+    call thmGetBehaviour(compor)
+!
 ! =====================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU -------------
 ! =====================================================================
@@ -226,31 +237,31 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 ! =====================================================================
     if (modint .eq. 'RED') then
         if (yamec .eq. 1) then
-            do 203 i = 1, ndim
+            do i = 1, ndim
                 cs(addeme-1+i) = 0.d0
-203         continue
-            do 213 i = 1, 6
+            end do
+            do i = 1, 6
                 cs(addeme-1+ndim+i) = 0.d0
-213         continue
+            end do
         endif
         if (yap1 .eq. 1) then
             c(addep1) = 0.d0
-            do 204 i = 1, ndim
+            do i = 1, ndim
                 cs(addep1-1+1+i) = 0.d0
-204         continue
+            end do
         endif
         if (yap2 .eq. 1) then
             c(addep2) = 0.d0
-            do 206 i = 1, ndim
+            do i = 1, ndim
                 cs(addep2-1+1+i) = 0.d0
-206         continue
+            end do
         endif
         if (yate .eq. 1) then
             a(2) = 0.d0
             as(1) = 0.d0
-            do 207 i = 1, ndim
+            do i = 1, ndim
                 cs(addete-1+1+i) = 0.d0
-207         continue
+            end do
         endif
     endif
 ! ======================================================================
@@ -259,20 +270,18 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 ! --- INITIALISATION DE VECTU, MATUU A 0 SUIVANT OPTION ----------------
 ! ======================================================================
     if (option(1:9) .ne. 'RIGI_MECA') then
-        do 1 i = 1, dimuel
+        do i = 1, dimuel
             vectu(i)=0.d0
-  1     continue
+        end do
     endif
 ! ======================================================================
 ! --- INITIALISATION DF(MATUU) ET MATRI --------------------------------
 ! ======================================================================
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        do 3 i = 1, dimuel*dimuel
+        do i = 1, dimuel*dimuel
             matuu(i)=0.d0
-  3     continue
-!
+        end do
         call matini(dimmat, dimmat, 0.d0, matri)
-!
     endif
 ! ======================================================================
 ! --- CALCUL POUR CHAQUE POINT D'INTEGRATION: BOUCLE SUR KPI -----------
@@ -281,7 +290,6 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
     call rcvala(imate, ' ', 'THM_INIT', 0, ' ',&
                 [0.d0], 1, 'COMP_THM', rthmc(1), codmes,&
                 1)
-    thmc = compor(8)
     if ((rthmc(1)-1.0d0) .lt. r8prem()) then
         loi = 'LIQU_SATU'
     else if ((rthmc(1)-2.0d0).lt.r8prem()) then
@@ -299,9 +307,9 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
     else if ((rthmc(1)-10.0d0).lt.r8prem()) then
         loi = 'LIQU_AD_GAZ'
     endif
-    if (thmc .ne. loi) then
+    if (ds_thm%ds_behaviour%rela_thmc .ne. loi) then
         valk(1) = loi
-        valk(2) = thmc
+        valk(2) = ds_thm%ds_behaviour%rela_thmc
         call utmess('F', 'ALGORITH_34', nk=2, valk=valk)
     endif
 ! =====================================================================
@@ -322,14 +330,14 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 ! =====================================================================
 ! --- CALCUL DES DEFORMATIONS GENERALISEES E=BU -----------------------
 ! =====================================================================
-        do 108 i = 1, dimdef
+        do i = 1, dimdef
             defgem(i)=0.d0
             defgep(i)=0.d0
-            do 109 n = 1, dimuel
+            do n = 1, dimuel
                 defgem(i)=defgem(i)+b(i,n)*deplm(n)
                 defgep(i)=defgep(i)+b(i,n)*deplp(n)
-109         continue
-108     continue
+            end do
+        end do
 !
 ! ======================================================================
 ! --- APPEL A LA ROUTINE EQUTHP OU EQUTHM ------------------------------
@@ -369,19 +377,19 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 ! ======================================================================
             if (mecani(1) .eq. 1) then
                 if (kpi .gt. npg) then
-                    do 110 i = 1, 6
+                    do i = 1, 6
                         contp((kpi-1)*dimcon+i) = contp((kpi-npg-1)* dimcon+i)
-110                 continue
+                    end do
                     nbcomp = 9 + 7
                     read (compor(nbcomp+4),'(I16)') nvim
-                    do 112 i = 1, nvim
+                    do i = 1, nvim
                         varip((kpi-1)*nbvari+i) = varip((kpi-npg-1)* nbvari+i)
-112                 continue
+                    end do
                 endif
             endif
         endif
         if (codret .ne. 0) then
-            goto 9000
+            goto 999
         endif
 ! ======================================================================
 ! --- CONTRIBUTION DU POINT D'INTEGRATION KPI A LA MATRICE TANGENTE ET -
@@ -406,16 +414,16 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 ! --- DE MANIERE A L'ADAPTER AU PI -------------------------------------
 ! ======================================================================
         if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-            do 199 i = 1, dimdef
-                do 198 j = 1, dimcon
+            do i = 1, dimdef
+                do j = 1, dimcon
                     drdsr(i,j)=drds(i,j)
-198             continue
-199         continue
+                end do
+            end do
 !
             if (yate .eq. 1) then
-                do 200 i = 1, dimcon
+                do i = 1, dimcon
                     drdsr(addete,i) = ak(1)*drds(addete,i) + ak(2)* drds(dimdef+1,i)
-200             continue
+                end do
             endif
 ! ======================================================================
 ! --- ON ASSEMBLE: DF=BT.CK.DRDSR.DK.DSDE.FK.B.POIDS -------------------
@@ -430,9 +438,9 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 ! --- ON SELECTIONNE LES COMPOSANTES UTILES DE R POUR CE PI ------------
 ! ======================================================================
         if ((option(1:9).eq.'FULL_MECA' .or. option(1:9) .eq.'RAPH_MECA')) then
-            do 20 i = 1, dimdef
+            do i = 1, dimdef
                 sigbar(i) = ck(i)*r(i)
- 20         continue
+            end do
 ! ======================================================================
 ! --- ON SELECTIONNE LA BONNE COMPOSANTE 7 POUR CE PI ------------------
 ! ======================================================================
@@ -442,28 +450,26 @@ subroutine assthm(nno, nnos, nnom, npg, npi,&
 ! ======================================================================
 ! --- ON ASSEMBLE R=BT.SIGBAR.POIDS ------------------------------------
 ! ======================================================================
-            do 117 i = 1, dimuel
-                do 118 k = 1, dimdef
+            do i = 1, dimuel
+                do k = 1, dimdef
                     vectu(i)=vectu(i)+b(k,i)*sigbar(k)*poids
-118             continue
-117         continue
+                end do
+            end do
         endif
     end do
 ! ======================================================================
 ! --- SORTIE DE BOUCLE SUR LES POINTS D'INTEGRATION --------------------
 ! ======================================================================
-! 888           CONTINUE
-!
     if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
         kji=1
-        do 115 ii = 1, dimuel
-            do 116 jj = 1, dimuel
+        do ii = 1, dimuel
+            do jj = 1, dimuel
                 matuu(kji) = matri(ii,jj)
                 kji= kji + 1
-116         continue
-115     continue
+            end do
+        end do
     endif
 ! ======================================================================
-9000 continue
+999 continue
 ! ======================================================================
 end subroutine

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
                        lact, elrefp, elrefc, elc, contac,&
                        dimuel, nface, npgf, nbspg, nptf,&
@@ -133,7 +134,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
                              ffp, ffc, dffc, saut, gradpf,&
                              q1, q2, dpf, q1m, q2m, sautm,&
                              gradpfm, pf, ffp2, psup, pinf,&
-                             job, zi(jmate), meca, hydr, thmc,&
+                             job, zi(jmate),&
                              t, dimuel, lamb, jheavn, ncompn,&
                              ifiss, nfiss, nfh, ifa, jheafa,&
                              ncomph, contac)

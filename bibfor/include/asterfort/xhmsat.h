@@ -20,6 +20,8 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface 
     subroutine xhmsat(yachai, option, meca, thmc, ther,&
                       hydr, imate, ndim, dimenr,&
@@ -27,7 +29,7 @@ interface
                       adcome, advihy, advico, vihrho, vicphi,&
                       addep1, adcp11, congem, congep, vintm,&
                       vintp, dsde, epsv, depsv, p1,&
-                      dp1, t, phi, rho11, phi0,&
+                      dp1, t, phi, rho11,&
                       sat, retcom, tbiot, rinstp,&
                       angmas, aniso, phenom, yaenrh, adenhy, nfh)
         integer :: nbvari
@@ -62,7 +64,6 @@ interface
         real(kind=8) :: t
         real(kind=8) :: phi
         real(kind=8) :: rho11
-        real(kind=8) :: phi0
         real(kind=8) :: sat
         integer :: retcom
         real(kind=8) :: tbiot(6)

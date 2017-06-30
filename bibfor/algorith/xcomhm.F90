@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+! aslint: disable=W1504
+!
 subroutine xcomhm(option, imate, compor,instap,&
                   ndim, dimdef, dimcon,nbvari,&
                   yamec, yap1, yap2, yate,&
@@ -23,10 +25,9 @@ subroutine xcomhm(option, imate, compor,instap,&
                   addep2, addete, defgem,&
                   defgep, congem, congep, vintm,&
                   vintp, dsde, pesa, retcom, kpi,&
-                  npg, p10, p20, dimenr,&
+                  npg, dimenr,&
                   idecpg, angmas, yaenrh, adenhy, nfh)
 ! ======================================================================
-! person_in_charge: daniele.colombo at ifpen.fr
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE AU POINT
 ! DE GAUSS SUIVANT LES OPTIONS DEFINIES
 ! ======================================================================
@@ -99,7 +100,7 @@ subroutine xcomhm(option, imate, compor,instap,&
     integer :: vihrho, vicphi, vicpvp, vicsat, nvih, nvic, nvit
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, rho11, epsv, deps(6), depsv
-    real(kind=8) :: t0, p10, p20, phi0, pvp0, sat, mamovg
+    real(kind=8) :: sat, mamovg
     real(kind=8) :: rgaz, tbiot(6), satur, dsatur, pesa(3)
     real(kind=8) :: tperm(ndim, ndim), permli, dperml, permgz, dperms, dpermp
     real(kind=8) :: dfickt, dfickg, lambp, dlambp, unsurk, fick
@@ -122,17 +123,18 @@ subroutine xcomhm(option, imate, compor,instap,&
                 nvim, nvit, nvih, nvic, advime,&
                 advith, advihy, advico, vihrho, vicphi,&
                 vicpvp, vicsat, vicpr1, vicpr2)
-! ======================================================================
-! --- RECUPERATION DES DONNEES INITIALES -------------------------------
-! ======================================================================
-    call kitdec(kpi, yachai, yamec, yate, yap1,&
-                yap2, meca, thmc, ther, hydr,&
-                imate, defgem, defgep, addeme, addep1,&
-                addep2, addete, ndim, t0, p10,&
-                p20, phi0, pvp0, depsv, epsv,&
-                deps, t, p1, p2, dt,&
-                dp1, dp2, grat, grap1, grap2,&
-                retcom, instap)
+!
+! - Update unknowns
+!
+    call kitdec(kpi   , imate  , ndim  , &
+                yachai, yamec  , yate  , yap1  , yap2,&
+                defgem, defgep ,&
+                addeme, addep1 , addep2, addete,&
+                depsv , epsv   , deps  ,&
+                t     , dt     , grat  ,&
+                p1    , dp1    , grap1 ,&
+                p2    , dp2    , grap2 ,&
+                retcom)
     if (retcom .ne. 0) then
         goto 900
     endif
@@ -145,7 +147,7 @@ subroutine xcomhm(option, imate, compor,instap,&
                 adcome, advihy, advico, vihrho, vicphi,&
                 addep1, adcp11, congem, congep, vintm,&
                 vintp, dsde, epsv, depsv, p1,&
-                dp1, t, phi, rho11, phi0,&
+                dp1, t, phi, rho11,&
                 sat, retcom, tbiot, instap,&
                 angmas, aniso, phenom, yaenrh, adenhy, nfh)
     if (retcom .ne. 0) then

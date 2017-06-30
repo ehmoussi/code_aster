@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface 
     subroutine xcomhm(option, imate, compor, instap,&
@@ -26,7 +25,7 @@ interface
                       addep2, addete, defgem,&
                       defgep, congem, congep, vintm,&
                       vintp, dsde, pesa, retcom, kpi,&
-                      npg, p10, p20, dimenr,&
+                      npg, dimenr,&
                       idecpg, angmas, yaenrh, adenhy, nfh)
         integer :: dimenr
         integer :: nbvari
@@ -58,8 +57,6 @@ interface
         integer :: retcom
         integer :: kpi
         integer :: npg
-        real(kind=8) :: p10
-        real(kind=8) :: p20
         integer :: idecpg
         real(kind=8) :: angmas(3)
         integer :: yaenrh

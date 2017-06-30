@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: sylvie.granet at edf.fr
+! aslint: disable=W1504
+!
 subroutine calcco(option, yachai, perman, meca, thmc,&
                   ther, hydr, imate, ndim, dimdef,&
                   dimcon, nbvari, yamec, yate, addeme,&
@@ -25,13 +27,23 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                   dsde, deps, epsv, depsv, p1,&
                   p2, dp1, dp2, t, dt,&
                   phi, pvp, pad, h11, h12,&
-                  kh, rho11, phi0, pvp0, sat,&
-                  retcom, crit, tbiot, vihrho, vicphi,&
+                  kh, rho11, sat,&
+                  retcom, carcri, tbiot, vihrho, vicphi,&
                   vicpvp, vicsat, rinstp, angmas, aniso,&
                   phenom)
-! ======================================================================
-! ======================================================================
-! person_in_charge: sylvie.granet at edf.fr
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/hmgazp.h"
+#include "asterfort/hmladg.h"
+#include "asterfort/hmlgat.h"
+#include "asterfort/hmliga.h"
+#include "asterfort/hmlisa.h"
+#include "asterfort/hmliva.h"
+#include "asterfort/hmlvag.h"
+#include "asterfort/hmlvga.h"
+!
 ! ROUTINE CALCCO : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
 !   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
 !   NE SONT PAS DES GRANDEURS DE MECANIQUE PURE OU DES FLUX PURS
@@ -44,17 +56,7 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
 !                       = 1 ECHEC DANS L'INTEGRATION : PAS DE RESULTAT
 !                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
 ! ======================================================================
-! aslint: disable=W1504
-    implicit none
-#include "asterf_types.h"
-#include "asterfort/hmgazp.h"
-#include "asterfort/hmladg.h"
-#include "asterfort/hmlgat.h"
-#include "asterfort/hmliga.h"
-#include "asterfort/hmlisa.h"
-#include "asterfort/hmliva.h"
-#include "asterfort/hmlvag.h"
-#include "asterfort/hmlvga.h"
+!
     integer :: ndim, dimdef, dimcon, nbvari, imate
     integer :: yamec, yate, aniso
     integer :: adcome, adcp11, bdcp11, adcp12, adcp21, adcp22, adcote
@@ -63,15 +65,15 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
     real(kind=8) :: congem(dimcon), congep(dimcon)
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
     real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, p2, dp2, t, dt
-    real(kind=8) :: phi, pvp, pad, h11, h12, kh, rho11, phi0
-    real(kind=8) :: pvp0, sat, rinstp
+    real(kind=8) :: phi, pvp, pad, h11, h12, kh, rho11
+    real(kind=8) :: sat, rinstp
     real(kind=8) :: angmas(3)
     character(len=16) :: option, meca, thmc, ther, hydr, phenom
     aster_logical :: perman, yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES POUR BARCELONE-------------------------------
 ! ======================================================================
-    real(kind=8) :: deps(6), tbiot(6), crit(*)
+    real(kind=8) :: deps(6), tbiot(6), carcri(*)
 !
 ! INITIALISATION ADRESSE SELON QUE LA PARTIE THH EST TRANSITOIRE OU NON
     if (perman) then
@@ -90,7 +92,7 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                     addep1, bdcp11, addete, adcote, congem,&
                     congep, vintm, vintp, dsde, epsv,&
                     depsv, p1, dp1, t, dt,&
-                    phi, rho11, phi0, sat, retcom,&
+                    phi, rho11, sat, retcom,&
                     tbiot, rinstp, angmas, deps, aniso,&
                     phenom)
 ! ======================================================================
@@ -103,7 +105,7 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                     advico, vicphi, addep1, bdcp11, addete,&
                     adcote, congem, congep, vintm, vintp,&
                     dsde, epsv, depsv, p1, dp1,&
-                    t, dt, phi, rho11, phi0,&
+                    t, dt, phi, rho11, &
                     sat, retcom, tbiot, rinstp, angmas,&
                     deps, aniso, phenom)
 ! ======================================================================
@@ -112,13 +114,13 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
     else if (thmc.eq.'LIQU_VAPE') then
         call hmliva(yachai, option, meca, ther, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
-                    yamec, yate, addeme, adcome, advihy,&
+                    yamec, yate, advihy,&
                     advico, vihrho, vicphi, vicpvp, vicsat,&
                     addep1, bdcp11, adcp12, addete, adcote,&
                     congem, congep, vintm, vintp, dsde,&
                     epsv, depsv, p1, dp1, t,&
                     dt, phi, pvp, h11, h12,&
-                    rho11, phi0, pvp0, sat, retcom,&
+                    rho11, sat, retcom,&
                     thmc, tbiot, rinstp, angmas, deps,&
                     aniso, phenom)
 ! ======================================================================
@@ -134,8 +136,8 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                     vintp, dsde, deps, epsv, depsv,&
                     p1, p2, dp1, dp2, t,&
                     dt, phi, pvp, h11, h12,&
-                    rho11, phi0, pvp0, sat, retcom,&
-                    thmc, crit, tbiot, rinstp, angmas,&
+                    rho11, sat, retcom,&
+                    thmc, carcri, tbiot, rinstp, angmas,&
                     aniso, phenom)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ -----------------------
@@ -149,8 +151,8 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                     congem, congep, vintm, vintp, dsde,&
                     deps, epsv, depsv, p1, p2,&
                     dp1, dp2, t, dt, phi,&
-                    rho11, phi0, sat, retcom, thmc,&
-                    crit, tbiot, rinstp, angmas, aniso,&
+                    rho11, sat, retcom, thmc,&
+                    carcri, tbiot, rinstp, angmas, aniso,&
                     phenom)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM -------------------
@@ -163,7 +165,7 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                     bdcp11, addete, adcote, congem, congep,&
                     vintm, vintp, dsde, epsv, depsv,&
                     p1, dp1, t, dt, phi,&
-                    rho11, phi0, sat, retcom, thmc,&
+                    rho11, sat, retcom, thmc,&
                     tbiot, rinstp, angmas, deps, aniso,&
                     phenom)
 ! ======================================================================
@@ -179,7 +181,7 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                     vintm, vintp, dsde, epsv, depsv,&
                     p1, p2, dp1, dp2, t,&
                     dt, phi, pad, pvp, h11,&
-                    h12, kh, rho11, phi0, pvp0,&
+                    h12, kh, rho11, &
                     sat, retcom, thmc, tbiot, rinstp,&
                     angmas, deps, aniso, phenom)
 ! ======================================================================
@@ -195,7 +197,7 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                     vintm, vintp, dsde, epsv, depsv,&
                     p1, p2, dp1, dp2, t,&
                     dt, phi, pad, h11, h12,&
-                    kh, rho11, phi0, sat, retcom,&
+                    kh, rho11,sat, retcom,&
                     thmc, tbiot, rinstp, angmas, deps,&
                     aniso, phenom)
 ! ======================================================================

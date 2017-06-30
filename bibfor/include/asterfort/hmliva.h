@@ -20,16 +20,18 @@
 !
 #include "asterf_types.h"
 !
+! aslint: disable=W1504
+!
 interface 
     subroutine hmliva(yachai, option, meca, ther, hydr,&
                       imate, ndim, dimdef, dimcon, nbvari,&
-                      yamec, yate, addeme, adcome, advihy,&
+                      yamec, yate, advihy,&
                       advico, vihrho, vicphi, vicpvp, vicsat,&
                       addep1, adcp11, adcp12, addete, adcote,&
                       congem, congep, vintm, vintp, dsde,&
                       epsv, depsv, p1, dp1, t,&
                       dt, phi, pvp, h11, h12,&
-                      rho11, phi0, pvp0, sat, retcom,&
+                      rho11, sat, retcom,&
                       thmc, tbiot, rinstp, angmas, deps,&
                       aniso, phenom)
         integer :: nbvari
@@ -44,8 +46,6 @@ interface
         integer :: imate
         integer :: yamec
         integer :: yate
-        integer :: addeme
-        integer :: adcome
         integer :: advihy
         integer :: advico
         integer :: vihrho
@@ -73,8 +73,6 @@ interface
         real(kind=8) :: h11
         real(kind=8) :: h12
         real(kind=8) :: rho11
-        real(kind=8) :: phi0
-        real(kind=8) :: pvp0
         real(kind=8) :: sat
         integer :: retcom
         character(len=16) :: thmc

@@ -15,34 +15,28 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine hmlgat(yachai, option, meca, ther, hydr,&
-                  imate, ndim, dimdef, dimcon, nbvari,&
-                  yamec, yate, addeme, adcome, advihy,&
-                  advico, vihrho, vicphi, vicsat, addep1,&
-                  adcp11, addete, adcote, congem, congep,&
-                  vintm, vintp, dsde, epsv, depsv,&
-                  p1, dp1, t, dt, phi,&
-                  rho11, phi0, sat, retcom, thmc,&
-                  tbiot, rinstp, angmas, deps, aniso,&
-                  phenom)
-! ======================================================================
-! ======================================================================
+! aslint: disable=W1306, W1504
 ! person_in_charge: sylvie.granet at edf.fr
-! ROUTINE HMLGAT : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEE
-!   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
-!   NE SONT PAS DES GRANDEURS DE MECANIQUE PURE OU DES FLUX PURS
-!   DANS LE CAS OU THMC = 'LIQU_GAZ_ATM'
-! ======================================================================
-! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
-! COMMENTAIRE DE NMCONV :
-!                       = 0 OK
-!                       = 1 ECHEC DANS L'INTEGRATION : PAS DE RESULTATS
-!                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
-! ======================================================================
-    implicit none
-! aslint: disable=W1306
+!
+subroutine hmliva(yachai, option, meca, ther, hydr,&
+                  imate, ndim, dimdef, dimcon, nbvari,&
+                  yamec, yate, advihy,&
+                  advico, vihrho, vicphi, vicpvp, vicsat,&
+                  addep1, adcp11, adcp12, addete, adcote,&
+                  congem, congep, vintm, vintp, dsde,&
+                  epsv, depsv, p1, dp1, t,&
+                  dt, phi, pvp, h11, h12,&
+                  rho11, sat, retcom,&
+                  thmc, tbiot, rinstp, angmas, deps,&
+                  aniso, phenom)
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterf_types.h"
+#include "asterc/r8maem.h"
 #include "asterfort/appmas.h"
 #include "asterfort/calor.h"
 #include "asterfort/capaca.h"
@@ -50,58 +44,80 @@ subroutine hmlgat(yachai, option, meca, ther, hydr,&
 #include "asterfort/dhwdp1.h"
 #include "asterfort/dilata.h"
 #include "asterfort/dileau.h"
+#include "asterfort/dilgaz.h"
 #include "asterfort/dmdepv.h"
-#include "asterfort/dmwdp1.h"
-#include "asterfort/dmwdt.h"
-#include "asterfort/dqdeps.h"
-#include "asterfort/dqdp.h"
-#include "asterfort/dqdt.h"
-#include "asterfort/dspdp1.h"
+#include "asterfort/dmvpd2.h"
+#include "asterfort/dmvpp1.h"
+#include "asterfort/dmwdt2.h"
+#include "asterfort/dmwp1v.h"
+#include "asterfort/dqvpdp.h"
+#include "asterfort/dqvpdt.h"
 #include "asterfort/enteau.h"
+#include "asterfort/entgaz.h"
 #include "asterfort/inithm.h"
+#include "asterfort/masvol.h"
 #include "asterfort/netbis.h"
 #include "asterfort/sigmap.h"
 #include "asterfort/thmrcp.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viemma.h"
 #include "asterfort/viporo.h"
+#include "asterfort/vipvp1.h"
 #include "asterfort/virhol.h"
 #include "asterfort/visatu.h"
-    integer :: ndim, dimdef, dimcon, nbvari, imate, retcom, yamec
-    integer :: yate, adcome, adcp11, adcote, addeme, addep1, addete
-    integer :: advihy, advico, vihrho, vicphi, vicsat
-    real(kind=8) :: congem(dimcon), congep(dimcon), vintm(nbvari)
-    real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
-    real(kind=8) :: p1, dp1, t, dt, phi, rho11, phi0, rinstp
-    real(kind=8) :: angmas(3)
+!
+! ======================================================================
+! ROUTINE HMLIVA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
+!   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
+!   NE SONT PAS DES GRANDEURS DE MECANIQUE PURE OU DES FLUX PURS
+!   DANS LE CAS OU THMC = 'LIQU_VAPE'
+! ======================================================================
+! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
+! COMMENTAIRE DE NMCONV :
+!                       = 0 OK
+!                       = 1 ECHEC DANS L'INTEGRATION : PAS DE RESULTATS
+!                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
+! ======================================================================
+!
+
+    integer :: ndim, dimdef, dimcon, nbvari, imate, yamec, yate, retcom
+    integer :: adcp11, adcp12, adcote, addep1, addete
+    integer :: advihy, advico, vihrho, vicphi, vicpvp, vicsat
+    real(kind=8) :: congem(dimcon), congep(dimcon)
+    real(kind=8) :: vintm(nbvari), vintp(nbvari)
+    real(kind=8) :: dsde(dimcon, dimdef)
+    real(kind=8) :: epsv, depsv, p1, dp1, t, dt
+    real(kind=8) :: phi, pvp, h11, h12, rho11
+    real(kind=8) :: phi0, pvp0
+    real(kind=8) :: ums, phids, rinstp, angmas(3)
     character(len=16) :: option, meca, ther, hydr, thmc, phenom
     aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: i, aniso
-    real(kind=8) :: satm, epsvm, phim, rho11m, rho110, tbiot(6), cs
-    real(kind=8) :: alpliq, cliq, cp11, sat, dsatp1, rho0, csigm
-    real(kind=8) :: alp11, rho12, rho21
-    real(kind=8) :: em, mdal(6), dalal, alphfi, cbiot, unsks, alpha0
-    real(kind=8) :: eps, deps(6)
+    integer ::  aniso
+    real(kind=8) :: satm, epsvm, phim, rho11m, rho12m, pvpm, rho110, dpvp
+    real(kind=8) :: dpvpt, dpvpl, tbiot(6), cs, alpliq, cliq
+    real(kind=8) :: cp11, cp12, sat, dsatp1, mamolv, em
+    real(kind=8) :: r, rho0, csigm, alp11, alp12, rho12, alpha0
+    real(kind=8) :: eps, deps(6), mdal(6), dalal, alphfi, cbiot, unsks
     parameter  ( eps = 1.d-21 )
     aster_logical :: emmag
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
-    real(kind=8) :: rbid1, rbid2, rbid3, rbid4, rbid5, rbid6, rbid7
-    real(kind=8) :: rbid8, rbid10, rbid11, rbid14(3)
+    real(kind=8) :: rbid6, rbid7
+    real(kind=8) :: rbid8, rbid10, rbid14(3), rbid9
     real(kind=8) :: rbid15(ndim, ndim), rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
-    real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31
-    real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid36, rbid37
-    real(kind=8) :: rbid39, rbid45, rbid46, rbid47, rbid48, rbid49, rbid38
-    real(kind=8) :: rbid50(ndim, ndim), rbid20, rbid32(ndim, ndim)
-    real(kind=8) :: dp2, signe, dpad, coeps, cp21, m11m, rho22, alp12, cp12
-    real(kind=8) :: dqeps(6)
-    real(kind=8) :: dsdp1(6), sigmp(6)
-    real(kind=8) :: dmdeps(6), cp22, rac2
+    real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid32(ndim, ndim)
+    real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38, rbid20
+    real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid37(6)
+    real(kind=8) :: rbid51, rbid52, rbid53, rbid54
+    real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid56
+    real(kind=8) :: rbid57(ndim, ndim), rbid55
+    real(kind=8) :: m11m, m12m, coeps, pinf, dp2, cp21, cp22, rho21
+    real(kind=8) :: rho22, dpad, signe, rac2
 !
     aster_logical :: net, bishop
 !
@@ -109,87 +125,123 @@ subroutine hmlgat(yachai, option, meca, ther, hydr,&
 !
 ! =====================================================================
 ! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
+! --- UN PREMIER APPEL A THMRCP POUR RECUPERE SATM --------------------
 ! =====================================================================
     call netbis(meca, net, bishop)
+    phi0 = ds_thm%ds_parainit%poro_init
+    pvp0 = ds_thm%ds_parainit%prev_init
+    pvp = vintm(advico+vicpvp) + pvp0
+    pvpm = vintm(advico+vicpvp) + pvp0
     call thmrcp('INTERMED', imate, thmc, meca, hydr,&
-                ther, rbid1, rbid2, rbid3, rbid4,&
-                rbid5, t, p1, p1-dp1, rbid6,&
-                rbid7, rbid8, rbid10, rbid11, rho0,&
-                csigm, tbiot, satm, sat, dsatp1,&
+                ther, t, rbid40, pvpm-p1+dp1, rbid6,&
+                rbid7, rbid8, rbid10, r, rho0,&
+                csigm, tbiot, satm, rbid42, rbid43,&
                 rbid14, rbid15, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
                 cp11, rbid26, rbid27, rbid28, rbid29,&
                 rbid30, rbid31, rbid32, rbid33, rbid34,&
-                rbid35, rbid36, rbid37, rbid38, rbid39,&
+                rbid35, mamolv, cp12, rbid38, rbid39,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
-                em, rbid50, rinstp, retcom,&
+                em, rbid57,  rinstp, retcom,&
                 angmas, aniso, ndim)
-!
 ! ======================================================================
 ! --- POUR EVITER DES PB AVEC OPTIMISEUR ON MET UNE VALEUR DANS CES ----
 ! --- VARIABES POUR QU ELLES AIENT UNE VALEUR MEME DANS LES CAS OU -----
 ! --- ELLES NE SONT THEOTIQUEMENT PAS UTILISEES ------------------------
 ! ======================================================================
     emmag = .false.
-    cp12 = 0.0d0
-    cp21 = 0.0d0
-    cp22 = 0.0d0
-    alp11 = 0.0d0
-    alp12 = 0.0d0
-    rho12 = 0.0d0
-    rho21 = 0.0d0
-    rho22 = 0.0d0
-    signe = 1.0d0
+    dpvp = 0.0d0
+    dpvpl = 0.0d0
+    dpvpt = 0.0d0
+    signe = -1.0d0
     dp2 = 0.0d0
     dpad = 0.0d0
+    rho21 = 0.0d0
+    rho22 = 0.0d0
+    cp21 = 0.0d0
+    cp22 = 0.0d0
     retcom = 0
-    m11m = congem(adcp11)
     rho11 = vintm(advihy+vihrho) + rho110
     rho11m = vintm(advihy+vihrho) + rho110
     phi = vintm(advico+vicphi) + phi0
     phim = vintm(advico+vicphi) + phi0
+    h11 = congem(adcp11+ndim+1)
+    h12 = congem(adcp12+ndim+1)
+    m11m = congem(adcp11)
+    m12m = congem(adcp12)
 ! =====================================================================
 ! --- RECUPERATION DES COEFFICIENTS MECANIQUES ------------------------
 ! =====================================================================
     if ((em.gt.eps) .and. (yamec.eq.0)) then
         emmag = .true.
     endif
-!
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, t, epsv, depsv,&
                 epsvm, angmas, aniso, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0, ndim,&
                 phenom)
-!
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
 ! *********************************************************************
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA') .or.&
-        (option.eq.'FORC_NODA')) then
+    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
 ! =====================================================================
-! --- CALCUL DE LA VARIABLE INTERNE DE POROSITE SELON FORMULE DOCR ----
-! =====================================================================
-        if (yamec .eq. 1) then
-            call viporo(nbvari, vintm, vintp, advico, vicphi,&
-                        phi0, deps, depsv, alphfi, dt,&
-                        dp1, dp2, signe, sat, cs,&
-                        tbiot, phi, phim, retcom, cbiot,&
-                        unsks, alpha0, aniso, phenom)
-        endif
-        if (emmag) then
-            call viemma(nbvari, vintm, vintp, advico, vicphi,&
-                        phi0, dp1, dp2, signe, sat,&
-                        em, phi, phim, retcom)
-        endif
-! =====================================================================
-! --- CALCUL DE LA VARIABLE INTERNE DE MASSE VOLUMIQUE DU FLUIDE ------
-! --- SELON FORMULE DOCR ----------------------------------------------
+! --- EN LIQU_VAPE CALCUL DE RHO11, DES ENTHALPIES DE PVP ET RHOVP ----
 ! =====================================================================
         call virhol(nbvari, vintm, vintp, advihy, vihrho,&
                     rho110, dp1, dp2, dpad, cliq,&
                     dt, alpliq, signe, rho11, rho11m,&
                     retcom)
+! =====================================================================
+! --- EN LIQU_VAPE CALCUL DE RHO11, DES ENTHALPIES DE PVP ET RHOVP ----
+! =====================================================================
+        pinf = r8maem()
+        call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
+                    dimcon, pinf, congem, adcp11, adcp12,&
+                    ndim, pvp0, dp1, dp2, t,&
+                    dt, mamolv, r, rho11, signe,&
+                    cp11, cp12, yate, pvp, pvpm,&
+                    retcom)
+! =====================================================================
+! --- PROBLEME DANS LE CALCUL DES VARIABLES INTERNES ? ----------------
+! =====================================================================
+        if (retcom .ne. 0) then
+            goto 30
+        endif
+    endif
+    dpvp = pvp - pvpm
+! =====================================================================
+! --- ON PEUT MAINTENANT CALCULER SAT DANS LE CAS LIQU_VAPE -----------
+! =====================================================================
+    call thmrcp('SATURATI', imate, thmc, meca, hydr,&
+                ther, rbid9, pvp-p1, rbid41, rbid6,&
+                rbid7, rbid8, rbid10, rbid51, rbid52,&
+                rbid53, rbid37, rbid41, sat, dsatp1,&
+                rbid14, rbid15, rbid16, rbid17, rbid18,&
+                rbid19, rbid20, rbid21, rbid22, rbid23,&
+                rbid24, rbid25, rho110, rbid53, rbid52,&
+                rbid51, rbid26, rbid27, rbid28, rbid29,&
+                rbid30, rbid31, rbid32, rbid33, rbid34,&
+                rbid35, rbid54, rbid55, rbid38, rbid39,&
+                rbid45, rbid46, rbid47, rbid48, rbid49,&
+                rbid56, rbid57,  rinstp, retcom,&
+                angmas, aniso, ndim)
+    if ((option.eq.'RAPH_MECA') .or. (option.eq.'FORC_NODA') .or.&
+        (option(1:9).eq.'FULL_MECA')) then
+! =====================================================================
+! --- CALCUL DE LA VARIABLE INTERNE DE POROSITE SELON FORMULE DOCR ----
+! =====================================================================
+!        if ((yamec.eq.1)) then
+! =====================================================================
+! --- ON POSE ICI P2 = PVP ET P1 = - (PVP - PW) (ON CHANGE LE SIGNE ---
+! --- CAR ON MULTIPLIE DANS VIPORO PAR -1) ----------------------------
+! =====================================================================
+!        endif
+        if (emmag) then
+            call viemma(nbvari, vintm, vintp, advico, vicphi,&
+                        phi0, dp1-dpvp, dpvp, signe, sat,&
+                        em, phi, phim, retcom)
+        endif
 ! =====================================================================
 ! --- RECUPERATION DE LA VARIABLE INTERNE DE SATURATION ---------------
 ! =====================================================================
@@ -202,17 +254,20 @@ subroutine hmlgat(yachai, option, meca, ther, hydr,&
         endif
     endif
 ! =====================================================================
-! --- ACTUALISATION DE CS ET ALPHFI -----------------------------------
+! --- QUELQUES INITIALISATIONS ----------------------------------------
 ! =====================================================================
-    if (yamec .eq. 1) then
-        call dilata(imate, phi, alphfi, t, aniso,&
-                    angmas, tbiot, phenom)
-        call unsmfi(imate, phi, cs, t, tbiot,&
-                    aniso, ndim, phenom)
-    endif
+    ums = 1.d0 - sat
+    phids = phi*dsatp1
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************
 ! **********************************************************************
+! ======================================================================
+! --- CALCUL DES MASSES VOLUMIQUES DE PRESSION DE VAPEUR ---------------
+! ----------------------------------- AIR SEC --------------------------
+! ----------------------------------- AIR DISSOUS ----------------------
+! ======================================================================
+    rho12 = masvol(mamolv,pvp ,r,t )
+    rho12m = masvol(mamolv,pvpm,r,t-dt)
 ! =====================================================================
 ! --- CALCULS UNIQUEMENT SI PRESENCE DE THERMIQUE ---------------------
 ! =====================================================================
@@ -221,6 +276,7 @@ subroutine hmlgat(yachai, option, meca, ther, hydr,&
 ! --- CALCUL DES COEFFICIENTS DE DILATATIONS ALPHA SELON FORMULE DOCR -
 ! =====================================================================
         alp11 = dileau(sat,phi,alphfi,alpliq)
+        alp12 = dilgaz(sat,phi,alphfi,t)
 ! ======================================================================
 ! --- CALCUL DE LA CAPACITE CALORIFIQUE SELON FORMULE DOCR -------------
 ! ======================================================================
@@ -240,11 +296,32 @@ subroutine hmlgat(yachai, option, meca, ther, hydr,&
         if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
             congep(adcp11+ndim+1) = congep(adcp11+ndim+1) + enteau(dt, alpliq,t,rho11,dp2,dp1,dpa&
                                     &d,signe,cp11)
+            congep(adcp12+ndim+1) = congep(adcp12+ndim+1) + entgaz(dt, cp12)
+            h11 = congep(adcp11+ndim+1)
+            h12 = congep(adcp12+ndim+1)
 ! ======================================================================
 ! --- CALCUL DE LA CHALEUR REDUITE Q' SELON FORMULE DOCR ---------------
+! =====================================================================
+! --- ON POSE ICI P2 = PVP ET P1 = - (PVP - PW) (ON CHANGE LE SIGNE ---
+! --- CAR ON MULTIPLIE DANS VIPORO PAR -1) ----------------------------
 ! ======================================================================
-            congep(adcote) = congep(adcote) + calor(mdal,t,dt,deps, dp1,dp2,signe,alp11,alp12,coe&
-                             &ps,ndim)
+            congep(adcote) = congep(adcote) + calor(mdal,t,dt,deps, dp1-dpvp,dpvp,signe,alp11,alp&
+                             &12,coeps, ndim)
+        endif
+    endif
+! =====================================================================
+! --- DPVPL DERIVEE PRESSION DE VAPEUR / PRESSION DE LIQUIDE ----------
+! --- DPVPT DERIVEE PRESSION DE VAPEUR / TEMP -------------------------
+! =====================================================================
+    if (option(1:9) .eq. 'RIGI_MECA') then
+        dpvpl = rho12m/rho11m
+        if (yate .eq. 1) then
+            dpvpt = rho12m * (congem(adcp12+ndim+1) - congem(adcp11+ ndim+1)) / t
+        endif
+    else
+        dpvpl = rho12/rho11
+        if (yate .eq. 1) then
+            dpvpt = rho12 * (congep(adcp12+ndim+1) - congep(adcp11+ ndim+1)) / t
         endif
     endif
 ! ======================================================================
@@ -252,23 +329,14 @@ subroutine hmlgat(yachai, option, meca, ther, hydr,&
 ! ======================================================================
     if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
 ! ======================================================================
-! --- CALCUL DES CONTRAINTES DE PRESSIONS ------------------------------
+! --- CALCUL DES CONTRAINTES DE PRESSIONS : PAS D ACTUALITE TANT QUE
+!      PAS COUPLE
 ! ======================================================================
-        if (yamec .eq. 1) then
-            call sigmap(net, bishop, sat, signe, tbiot,&
-                        dp2, dp1, sigmp)
-            do 10 i = 1, 3
-                congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
- 10         continue
-            do 14 i = 4, 6
-                congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)*&
-                rac2
- 14         continue
-        endif
 ! ======================================================================
 ! --- CALCUL DES APPORTS MASSIQUES SELON FORMULE DOCR ------------------
 ! ======================================================================
         congep(adcp11) = appmas(m11m,phi,phim,sat,satm,rho11, rho11m, epsv,epsvm)
+        congep(adcp12) = appmas(m12m,phi,phim,1.0d0-sat, 1.0d0-satm, rho12,rho12m,epsv,epsvm)
     endif
 !
 ! **********************************************************************
@@ -279,31 +347,8 @@ subroutine hmlgat(yachai, option, meca, ther, hydr,&
 ! --- UNIQUEMENT POUR LES OPTIONS RIGI_MECA ET FULL_MECA ---------------
 ! ======================================================================
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        if (yamec .eq. 1) then
-! ======================================================================
-! --- CALCUL UNIQUEMENT EN PRESENCE DE MECANIQUE -----------------------
-! ======================================================================
-! --- CALCUL DES DERIVEES DE SIGMAP ------------------------------------
-! ======================================================================
-            call dspdp1(net, bishop, signe, tbiot, sat,&
-                        dsdp1)
-            do 111 i = 1, 3
-                dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1)&
-                + dsdp1(i)
-111         continue
-            do 112 i = 4, 6
-                dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1)&
-                + dsdp1(i)*rac2
-112         continue
-! ======================================================================
-! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
-! --- UNIQUEMENT POUR LA PARTIE MECANIQUE ------------------------------
-! ======================================================================
-            call dmdepv(rho11, sat, tbiot, dmdeps)
-            do 12 i = 1, 6
-                dsde(adcp11,addeme+ndim-1+i) = dsde(adcp11,addeme+ ndim-1+i) + dmdeps(i)
- 12         continue
-        endif
+!        if (yamec .eq. 1) then
+!        endif
         if (yate .eq. 1) then
 ! ======================================================================
 ! --- CALCUL UNIQUEMENT EN PRESENCE DE THERMIQUE -----------------------
@@ -314,37 +359,39 @@ subroutine hmlgat(yachai, option, meca, ther, hydr,&
             + dhwdp1(signe,alpliq,t,rho11)
             dsde(adcp11+ndim+1,addete)=dsde(adcp11+ndim+1,addete)&
             + dhdt(cp11)
+            dsde(adcp12+ndim+1,addete)=dsde(adcp12+ndim+1,addete)&
+            + dhdt(cp12)
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- UNIQUEMENT POUR LA PARTIR THERMIQUE ------------------------------
 ! ======================================================================
-            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt(rho11, phi,sat,cliq,0.0d0,alp11)
+            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt2(rho11, alp11,phids,sat,cs,dpvpt)
+            dsde(adcp12,addete) = dsde(adcp12,addete) + dmvpd2(rho12, alp12,dpvpt,phi,ums,pvp,phi&
+                                  &ds,cs)
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
 ! ======================================================================
-            dsde(adcote,addete)=dsde(adcote,addete)+dqdt(coeps)
-            dsde(adcote,addep1)=dsde(adcote,addep1)+dqdp(signe,alp11,&
-            t)
+            dsde(adcote,addete)=dsde(adcote,addete) + dqvpdt(coeps,&
+            alp12,t,dpvpt)
+            dsde(adcote,addep1)=dsde(adcote,addep1) + dqvpdp(alp11,&
+            alp12,t,dpvpl)
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
-! --- UNIQUEMENT POUR LA PARTIE MECANIQUE ------------------------------
+! --- UNIQUEMENT POUR LA PARTIE MECANIQUE : AUJOURD'HUI NON PREVUE 
 ! ======================================================================
-            if (yamec .eq. 1) then
-                call dqdeps(mdal, t, dqeps)
-                do 20 i = 1, 6
-                    dsde(adcote,addeme+ndim-1+i) = dsde(adcote,addeme+ ndim-1+i) + dqeps(i)
- 20             continue
-            endif
+!            if (yamec .eq. 1) then
+!    a completer le cas echeant
+!            endif
         endif
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
-        dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmwdp1(rho11, signe,sat,dsatp1,phi,cs,cliq,1.&
-                              &0d0, emmag,em)
+        dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmwp1v(rho11, phids,sat,cs,dpvpl,phi,cliq)
+        dsde(adcp12,addep1) = dsde(adcp12,addep1) + dmvpp1(rho11, rho12,phids,ums,cs,dpvpl,sat,ph&
+                              &i,pvp)
     endif
 ! =====================================================================
  30 continue
 ! =====================================================================
-!
 end subroutine

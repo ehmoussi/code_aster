@@ -17,7 +17,12 @@
 ! --------------------------------------------------------------------
 
 subroutine te0600(option, nomte)
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/ismaem.h"
@@ -39,6 +44,8 @@ subroutine te0600(option, nomte)
 #include "asterfort/tecach.h"
 #include "asterfort/thmevc.h"
 #include "asterfort/vecini.h"
+#include "asterfort/thmGetElemInfo.h"
+
     character(len=16) :: option, nomte
 ! =====================================================================
 ! person_in_charge: sylvie.granet at edf.fr
@@ -134,6 +141,15 @@ subroutine te0600(option, nomte)
 ! =====================================================================
     aster_logical :: fnoevo, vf
     real(kind=8) :: dt
+!
+! - Init THM module
+!
+    call thmModuleInit()
+!
+! - Get parameters for finite element
+!
+    call thmGetElemInfo()
+
 ! =====================================================================
 ! --- 1. INITIALISATIONS ----------------------------------------------
 ! --- SUIVANT ELEMENT, DEFINITION DES CARACTERISTIQUES : --------------
@@ -142,6 +158,7 @@ subroutine te0600(option, nomte)
 ! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
 ! =====================================================================
     ibid = 0
+
     call caethm(axi, perman, vf, typvf,&
                 typmod, modint, mecani, press1, press2,&
                 tempe, dimdep, dimdef, dimcon, nmec,&

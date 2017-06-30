@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                        lact, elrefp, elrefc, elc, contac,&
                        dimuel, nface, npgf, nbspg, nptf,&
@@ -49,7 +51,6 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/xsautl.h"
 #include "asterfort/xvinhm.h"
 !
-! person_in_charge: daniele.colombo at ifpen.fr
 ! ======================================================================
 !
 ! ROUTINE MODELE HM-XFEM (CAS DE LA FRACTURE)
@@ -157,7 +158,7 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                               ffp, ffc, dffc, saut, gradpf,&
                               q1, q2, dpf, q1m, q2m, sautm,&
                               gradpfm, pf, ffp2, psup, pinf,&
-                              job, zi(jmate), meca, hydr, thmc,&
+                              job, zi(jmate),&
                               t, dimuel, lamb, jheavn, ncompn,&
                               ifiss, nfiss, nfh, ifa, jheafa,&
                               ncomph, contac)
@@ -198,7 +199,7 @@ subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
                             ffp, ffc, dffc, saut, gradpf,&
                             q1, q2, dpf, q1m, q2m, sautm,&
                             gradpfm, pf, ffp2, psup, pinf,&
-                            job, zi(jmate), meca, hydr, thmc,&
+                            job, zi(jmate),&
                             t, dimuel, lamb, jheavn, ncompn,&
                             ifiss, nfiss, nfh, ifa, jheafa,&
                             ncomph, contac)

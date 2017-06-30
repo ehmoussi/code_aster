@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+!
 subroutine aseihm(option, axi, ndim, nno1, nno2,&
                   npi, npg, dimuel, dimdef, dimcon,&
                   nbvari, imate, iu, ip, ipf,&
@@ -26,8 +27,12 @@ subroutine aseihm(option, axi, ndim, nno1, nno2,&
                   compor, perman, crit, vectu, matuu,&
                   retcom)
 !
-! aslint: disable=W1306,W1504
-    implicit none
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/coeihm.h"
+#include "asterfort/matthm.h"
+#include "asterfort/thmGetBehaviour.h"
 !......................................................................
 !
 !     BUT:  CALCUL DU VECTEUR FORCES INTERNES ELEMENTAIRE, DES
@@ -86,12 +91,6 @@ subroutine aseihm(option, axi, ndim, nno1, nno2,&
 !
 !......................................................................
 !
-!
-!
-! - VARIABLES ENTREE
-#include "asterf_types.h"
-#include "asterfort/coeihm.h"
-#include "asterfort/matthm.h"
     integer :: ndim, nno1, nno2, npi, npg, dimuel, dimdef, dimcon, nbvari
     integer :: mecani(8), press1(9), press2(9), tempe(5)
     integer :: imate
@@ -118,6 +117,10 @@ subroutine aseihm(option, axi, ndim, nno1, nno2,&
     real(kind=8) :: defgem(dimdef), defgep(dimdef), matri
     aster_logical :: resi, rigi
 !
+!
+! - Get parameters for coupling
+!
+    call thmGetBehaviour(compor)
 !
 ! =====================================================================
 ! --- DETERMINATION DES VARIABLES CARACTERISANT LE MILIEU ET OPTION ---
