@@ -25,22 +25,6 @@ use THM_module
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
-#include "asterc/ismaem.h"
-#include "asterc/r8dgrd.h"
-#include "asterfort/assthm.h"
-#include "asterfort/caethm.h"
-#include "asterfort/dfdm2d.h"
-#include "asterfort/dfdm3d.h"
-#include "asterfort/eulnau.h"
-#include "asterfort/fnothm.h"
-#include "asterfort/jevech.h"
-#include "asterfort/naueul.h"
-#include "asterfort/rcangm.h"
-#include "asterfort/rccoma.h"
-#include "asterfort/rcvalb.h"
-#include "asterfort/tecach.h"
-#include "asterfort/vecini.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/thmCompEpsiElga.h"
 #include "asterfort/thmCompSiefElno.h"
@@ -49,6 +33,7 @@ implicit none
 #include "asterfort/thmCompForcNoda.h"
 #include "asterfort/thmCompLoad.h"
 #include "asterfort/thmCompGravity.h"
+#include "asterfort/thmCompNonLin.h"
 #include "asterfort/Behaviour_type.h"
 
     character(len=16) :: option, nomte
@@ -59,30 +44,10 @@ implicit none
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! =====================================================================
-    integer :: jgano, nno, imatuu, ndim, imate, iinstm, jcret
-    integer :: ipoid2, ivf2
-    integer :: idfde2, npi, npg
-!
-    integer :: retloi
-    integer :: ipoids, ivf, idfde, igeom
-    integer :: iinstp, ideplm, ideplp, icompo, icarcr
-    integer :: icontm, ivarip, ivarim, ivectu, icontp
-! =====================================================================
-! =====================================================================
-    integer :: mecani(5), press1(7), press2(7), tempe(5), dimuel
-    integer :: dimdep, dimdef, dimcon, nbvari, nddls, nddlm
-    integer :: nmec, np1, np2, i, nnos
-    integer :: nnom
-    real(kind=8) :: defgep(21), defgem(21)
-    real(kind=8) :: dfdi(20, 3), dfdi2(20, 3), b(21, 120)
-    real(kind=8) :: drds(22, 31+5), drdsr(21, 31+5), dsde(31+5, 21)
-    real(kind=8) :: r(22), sigbar(21), c(21), ck(21), cs(21)
-    real(kind=8) :: angmas(7), coor(3), angnau(3), angleu(3)
-    real(kind=8) :: work1(31+5, 120), work2(21, 120)
+    integer :: ndim
+    integer :: mecani(5), press1(7), press2(7), tempe(5)
     character(len=3) :: modint
-    character(len=8) :: typmod(2)
-! =====================================================================
-    integer :: li, ibid, typvf, idim
+    integer :: typvf
     aster_logical :: axi, perman, vf
 ! =====================================================================
 !  CETTE ROUTINE FAIT UN CALCUL EN THHM , HM , HHM , THH
@@ -150,134 +115,11 @@ implicit none
     call thmGetElemModel()
 
 ! =====================================================================
-! --- 1. INITIALISATIONS ----------------------------------------------
-! --- SUIVANT ELEMENT, DEFINITION DES CARACTERISTIQUES : --------------
-! --- CHOIX DU TYPE D'INTEGRATION -------------------------------------
-! --- RECUPERATION DE LA GEOMETRIE ET POIDS DES POINTS D'INTEGRATION --
-! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
-! =====================================================================
-    ibid = 0
-
-    call caethm(axi, perman, vf, typvf,&
-                typmod, modint, mecani, press1, press2,&
-                tempe, dimdep, dimdef, dimcon, nmec,&
-                np1, np2, ndim, nno, nnos,&
-                nnom, ibid, npi, npg, nddls,&
-                nddlm, ibid, ibid, dimuel, ipoids,&
-                ivf, idfde, ipoid2, ivf2, idfde2,&
-                ibid, jgano)
-!
-! =====================================================================
-! --- DEBUT DES DIFFERENTES OPTIONS -----------------------------------
-! =====================================================================
 ! --- 2. OPTIONS : RIGI_MECA_TANG , FULL_MECA , RAPH_MECA -------------
 ! =====================================================================
     if ((option(1:9).eq.'RIGI_MECA' ) .or. (option(1:9).eq.'RAPH_MECA' ) .or.&
         (option(1:9).eq.'FULL_MECA' )) then
-! =====================================================================
-! --- PARAMETRES EN ENTREE --------------------------------------------
-! =====================================================================
-        call jevech('PGEOMER', 'L', igeom)
-        call jevech('PMATERC', 'L', imate)
-        call jevech('PINSTMR', 'L', iinstm)
-        call jevech('PINSTPR', 'L', iinstp)
-        call jevech('PDEPLMR', 'L', ideplm)
-        call jevech('PDEPLPR', 'L', ideplp)
-        call jevech('PCOMPOR', 'L', icompo)
-        call jevech('PCARCRI', 'L', icarcr)
-        call jevech('PVARIMR', 'L', ivarim)
-        call jevech('PCONTMR', 'L', icontm)
-        read (zk16(icompo-1+2),'(I16)') nbvari
-! =====================================================================
-! ----RECUPERATION DES ANGLES NAUTIQUES/EULER DEFINIS PAR AFFE_CARA_ELEM
-! --- ORIENTATION DU MASSIF
-! --- COORDONNEES DU BARYCENTRE ( POUR LE REPRE CYLINDRIQUE )
-! --- CONVERSION DES ANGLES NAUTIQUES EN ANGLES D'EULER
-! =====================================================================
-        call vecini(7, 0.d0, angmas)
-        call vecini(3, 0.d0, coor)
-        call vecini(3, 0.d0, angleu)
-        call vecini(3, 0.d0, angnau)
-!
-        do 150 i = 1, nno
-            do 140 idim = 1, ndim
-                coor(idim) = coor(idim)+zr(igeom+idim+ndim*(i-1)-1)/ nno
-140         continue
-150     continue
-        call rcangm(ndim, coor, angmas)
-!# ANGMAS : donne par affe_cara_elem en degre et ici en fourni en radian
-!# CAS OU AFFE_CARA_ELEM EST EN ANGLE D EULER => On CONVERTIT EN NAUTIQUE
-        if (abs(angmas(4)-2.d0) .lt. 1.d-3) then
-            if (ndim .eq. 3) then
-                angleu(1) = angmas(5)
-                angleu(2) = angmas(6)
-                angleu(3) = angmas(7)
-            else
-                angleu(1) = angmas(5)
-            endif
-            call eulnau(angleu/r8dgrd(), angnau/r8dgrd())
-!
-!# CAS OU AFFE_CARA_ELEM EST EN ANGLE NAUTIQUE (OK PAS DE CONVERSION)
-        else
-            if (ndim .eq. 3) then
-                angnau(1) = angmas(1)
-                angnau(2) = angmas(2)
-                angnau(3) = angmas(3)
-            else
-                angnau(1) = angmas(1)
-            endif
-        endif
-! =====================================================================
-! --- PARAMETRES EN SORTIE ISMAEM? ------------------------------------
-! =====================================================================
-        if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-            call jevech('PMATUNS', 'E', imatuu)
-        else
-            imatuu = ismaem()
-        endif
-        if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-            call jevech('PVECTUR', 'E', ivectu)
-            call jevech('PCONTPR', 'E', icontp)
-            call jevech('PVARIPR', 'E', ivarip)
-            call jevech('PCODRET', 'E', jcret)
-            zi(jcret) = 0
-        else
-            ivectu = ismaem()
-            icontp = ismaem()
-            ivarip = ismaem()
-        endif
-        retloi = 0
-        if (option(1:9) .eq. 'RIGI_MECA') then
-            call assthm(nno, nnos, nnom, npg, npi,&
-                        ipoids, ipoid2, ivf, ivf2, idfde,&
-                        idfde2, zr(igeom), zr(icarcr), zr(ideplm), zr(ideplm),&
-                        zr(icontm), zr(icontm), zr(ivarim), zr(ivarim), defgem,&
-                        defgep, drds, drdsr, dsde, b,&
-                        dfdi, dfdi2, r, sigbar, c,&
-                        ck, cs, zr(imatuu), zr(ivectu), zr(iinstm),&
-                        zr(iinstp), option, zi( imate), mecani, press1,&
-                        press2, tempe, dimdef, dimcon, dimuel,&
-                        nbvari, nddls, nddlm, nmec, np1,&
-                        np2, ndim, zk16(icompo), typmod, axi,&
-                        perman, modint, retloi, angnau, work1, work2)
-        else
-            do 30 li = 1, dimuel
-                zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
- 30         continue
-            call assthm(nno, nnos, nnom, npg, npi,&
-                        ipoids, ipoid2, ivf, ivf2, idfde,&
-                        idfde2, zr(igeom), zr(icarcr), zr(ideplm), zr(ideplp),&
-                        zr(icontm), zr(icontp), zr(ivarim), zr(ivarip), defgem,&
-                        defgep, drds, drdsr, dsde, b,&
-                        dfdi, dfdi2, r, sigbar, c,&
-                        ck, cs, zr(imatuu), zr(ivectu), zr(iinstm),&
-                        zr(iinstp), option, zi( imate), mecani, press1,&
-                        press2, tempe, dimdef, dimcon, dimuel,&
-                        nbvari, nddls, nddlm, nmec, np1,&
-                        np2, ndim, zk16(icompo), typmod, axi,&
-                        perman, modint, retloi, angnau, work1, work2)
-            zi(jcret) = retloi
-        endif
+        call thmCompNonLin(option)
     endif
 ! =====================================================================
 ! --- 3. OPTION : CHAR_MECA_PESA_R ------------------------------------
@@ -328,5 +170,5 @@ implicit none
         call thmCompEpsiElga(vf, axi, modint, ndim,&
                              mecani, press1, press2, tempe)
     endif
-! ======================================================================
+!
 end subroutine
