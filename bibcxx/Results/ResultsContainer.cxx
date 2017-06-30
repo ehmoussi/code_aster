@@ -195,6 +195,6 @@ bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
     {
         throw;
     }
-    
+
     return true;
 };

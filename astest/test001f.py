@@ -94,7 +94,6 @@ monSolver = code_aster.LinearSolver.create( code_aster.LinearSolverName.Mumps,
 
 numeDDL = code_aster.DOFNumbering.create()
 numeDDL.setElementaryMatrix( matr_elem )
-numeDDL.setLinearSolver( monSolver )
 numeDDL.computeNumerotation()
 numeDDL.debugPrint(6)
 test.assertEqual( numeDDL.getType(), "NUME_DDL" )
@@ -126,6 +125,6 @@ resu2 = resu.exportToSimpleFieldOnNodes()
 resu2.updateValuePointers()
 test.assertAlmostEqual(resu2.getValue(5, 3), 0.000757555469653289)
 
-resu.printMEDFile( "test.med" )
+resu.printMedFile( "fort.med" )
 
 test.printSummary()
