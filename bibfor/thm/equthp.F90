@@ -15,14 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine equthp(imate, option, ndim, compor, typmod,&
                   kpi, npg, dimdef, dimcon, nbvari,&
                   defgem, congem, vintm, defgep, congep,&
                   vintp, mecani, press1, press2, tempe,&
                   crit, rinstm, rinstp, r, drds,&
-                  dsde, retcom, angmas)
-! aslint: disable=W1504
+                  dsde, retcom, angmas,&
+                  meca, thmc, ther, hydr, nvim,&
+                  advihy, advico, vihrho, vicphi, vicpvp, vicsat)
+
     implicit none
 ! ======================================================================
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
@@ -139,6 +142,20 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
 !
 #include "asterf_types.h"
 #include "asterfort/comthm.h"
+
+
+    character(len=16), intent(in) :: meca
+    character(len=16), intent(in) :: thmc
+    character(len=16), intent(in) :: ther
+    character(len=16), intent(in) :: hydr
+    integer, intent(in) :: nvim
+    integer, intent(in) :: advihy
+    integer, intent(in) :: advico
+    integer, intent(in) :: vihrho
+    integer, intent(in) :: vicphi
+    integer, intent(in) :: vicpvp
+    integer, intent(in) :: vicsat
+
     integer :: imate, ndim, nbvari, kpi, npg, dimdef, dimcon, retcom, ibid
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: yamec, addeme, adcome, yate, addete, adcote, i, j
@@ -229,7 +246,9 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
                 addep2, adcp21, adcp22, addete, adcote,&
                 defgem, defgep, congem, congep, vintm,&
                 vintp, dsde, pesa, retcom, kpi,&
-                npg, angmas)
+                npg, angmas,&
+                meca, thmc, ther, hydr, nvim,&
+                advihy, advico, vihrho, vicphi, vicpvp, vicsat)
     if (retcom .ne. 0) then
         goto 999
     endif

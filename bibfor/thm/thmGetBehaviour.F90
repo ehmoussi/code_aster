@@ -24,6 +24,7 @@ use THM_module
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/thmGetParaBehaviour.h"
 !
 !
     character(len=16), intent(in) :: compor(*)
@@ -40,15 +41,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: rela_thmc
+    character(len=16) :: rela_meca , rela_thmc, rela_ther, rela_hydr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    rela_thmc = compor(8)
-    ds_thm%ds_behaviour%rela_thmc = compor(8)
-    ds_thm%ds_behaviour%rela_ther = compor(9)
-    ds_thm%ds_behaviour%rela_hydr = compor(10)
-    ds_thm%ds_behaviour%rela_meca = compor(11)
+    call thmGetParaBehaviour(compor,&
+                             rela_meca , rela_thmc, rela_ther, rela_hydr)
+    ds_thm%ds_behaviour%rela_thmc = rela_thmc
+    ds_thm%ds_behaviour%rela_ther = rela_ther
+    ds_thm%ds_behaviour%rela_hydr = rela_hydr
+    ds_thm%ds_behaviour%rela_meca = rela_meca
 !
 ! - For coupling law
 !

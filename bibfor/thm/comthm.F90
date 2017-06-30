@@ -26,7 +26,10 @@ subroutine comthm(option, perman, vf, ifa, valfac,&
                   addep2, adcp21, adcp22, addete, adcote,&
                   defgem, defgep, congem, congep, vintm,&
                   vintp, dsde, pesa, retcom, kpi,&
-                  npg, angl_naut)
+                  npg, angl_naut,&
+                  meca, thmc, ther, hydr, nvim,&
+                  advihy, advico, vihrho, vicphi, vicpvp, vicsat)
+
 !
 use THM_type
 use THM_module
@@ -47,6 +50,18 @@ implicit none
 #include "asterfort/thmMatrHooke.h"
 #include "asterfort/tebiot.h"
 !
+    character(len=16), intent(in) :: meca
+    character(len=16), intent(in) :: thmc
+    character(len=16), intent(in) :: ther
+    character(len=16), intent(in) :: hydr
+    integer, intent(in) :: nvim
+    integer, intent(in) :: advihy
+    integer, intent(in) :: advico
+    integer, intent(in) :: vihrho
+    integer, intent(in) :: vicphi
+    integer, intent(in) :: vicpvp
+    integer, intent(in) :: vicsat
+
 ! **********************************************************************
 !
 ! VERSION DU 07/06/99  ECRITE PAR PASCAL CHARLES
@@ -111,10 +126,7 @@ implicit none
 ! OUT DSDE   : MATRICE TANGENTE CONTRAINTES DEFORMATIONS
 !
 ! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
-! ======================================================================
-! VARIABLES IN / OUT
-! ======================================================================
-
+!
     aster_logical :: yachai
     real(kind=8) :: valcen(14, 6)
     integer :: maxfa
@@ -138,12 +150,10 @@ implicit none
     character(len=16) :: compor(*), option
     aster_logical :: perman, vf
     integer :: ifa
-    integer :: vicpr1, vicpr2
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: nvim, advime, advith, advihy, advico, aniso
-    integer :: vihrho, vicphi, vicpvp, vicsat, nvih, nvic, nvit
+    integer :: aniso
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, h11, h12, rho11, epsv, deps(6), depsv
     real(kind=8) :: sat, mamovg
@@ -156,20 +166,10 @@ implicit none
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: deltat
     real(kind=8) :: angl_naut(3)
-    character(len=16) :: meca, thmc, ther, hydr
 ! ======================================================================
 ! --- INITIALISATION ---------------------------------------------------
 ! ======================================================================
     retcom = 0
-! ======================================================================
-! --- MISE AU POINT POUR LES VARIABLES INTERNES ------------------------
-! --- DEFINITION DES POINTEURS POUR LES DIFFERENTES RELATIONS DE -------
-! --- COMPORTEMENTS ET POUR LES DIFFERENTES COMPOSANTES ----------------
-! ======================================================================
-    call nvithm(compor, meca, thmc, ther, hydr,&
-                nvim, nvit, nvih, nvic, advime,&
-                advith, advihy, advico, vihrho, vicphi,&
-                vicpvp, vicsat, vicpr1, vicpr2)
 !
 ! - Update unknowns
 !

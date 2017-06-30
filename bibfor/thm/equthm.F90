@@ -22,7 +22,9 @@ subroutine equthm(imate, option, ta, ta1, ndim,&
                   defgep, congep, vintp, mecani, press1,&
                   press2, tempe, crit, rinstm, rinstp,&
                   dt, r, drds, dsde, retcom,&
-                  angmas)
+                  angmas,&
+                  meca, thmc, ther, hydr, nvim,&
+                  advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 ! ======================================================================
 !
 ! ======================================================================
@@ -138,6 +140,21 @@ subroutine equthm(imate, option, ta, ta1, ndim,&
 #include "asterf_types.h"
 #include "asterfort/comthm.h"
 #include "asterfort/vecini.h"
+
+
+    character(len=16), intent(in) :: meca
+    character(len=16), intent(in) :: thmc
+    character(len=16), intent(in) :: ther
+    character(len=16), intent(in) :: hydr
+    integer, intent(in) :: nvim
+    integer, intent(in) :: advihy
+    integer, intent(in) :: advico
+    integer, intent(in) :: vihrho
+    integer, intent(in) :: vicphi
+    integer, intent(in) :: vicpvp
+    integer, intent(in) :: vicsat
+
+
     integer :: imate, ndim, nbvari, kpi, npg, dimdef, dimcon, retcom, ibid
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: yamec, addeme, adcome, yate, addete, adcote, i, j
@@ -232,7 +249,9 @@ subroutine equthm(imate, option, ta, ta1, ndim,&
                 addep2, adcp21, adcp22, addete, adcote,&
                 defgem, defgep, congem, congep, vintm,&
                 vintp, dsde, pesa, retcom, kpi,&
-                npg, angmas)
+                npg, angmas,&
+                meca, thmc, ther, hydr, nvim,&
+                advihy, advico, vihrho, vicphi, vicpvp, vicsat)
     if (retcom .ne. 0) then
         goto 999
     endif

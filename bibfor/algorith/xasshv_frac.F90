@@ -51,6 +51,7 @@ implicit none
 #include "asterfort/xsautl.h"
 #include "asterfort/xvinhm.h"
 #include "asterfort/thmGetParaBiot.h"
+#include "asterfort/thmGetParaBehaviour.h"
 !
 ! ======================================================================
 !
@@ -95,9 +96,9 @@ implicit none
     ta1 = 1.d0-ta 
     
 !   RECUPERATION DES DIFFERENTES RELATIONS DE COMPORTEMENT
-    thmc = compor( 8)
-    hydr = compor(10)
-    meca = compor(11)    
+    call thmGetParaBehaviour(compor,&
+                             meca_ = meca, thmc_ = thmc, hydr_ = hydr)
+
 !
 ! - Get Biot parameters (for porosity evolution)
 !

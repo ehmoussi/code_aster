@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/lcidbg.h"
 #include "asterfort/thmTherElas.h"
+#include "asterfort/thmGetParaBehaviour.h"
 !
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
@@ -315,8 +316,7 @@ implicit none
         complg(1) = meca
         write (complg(2),'(I16)') nvimec
         complg(3) = compor(3)
-        complg(6) = compor(15)
-        read (complg(6),'(I16)') numlc
+        call thmGetParaBehaviour(compor, nume_meca_ = numlc)
         if (numlc .ge. 100) then
             call utmess('F', 'THM1_1', sk = meca)
         endif

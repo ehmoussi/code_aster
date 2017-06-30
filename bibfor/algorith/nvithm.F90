@@ -20,50 +20,64 @@ subroutine nvithm(compor, meca, thmc, ther, hydr,&
                   nvim, nvit, nvih, nvic, advime,&
                   advith, advihy, advico, vihrho, vicphi,&
                   vicpvp, vicsat, vicpr1, vicpr2)
+!
+implicit none
+!
+#include "asterfort/thmGetParaBehaviour.h"
+!
+!
+    character(len=16), intent(in) :: compor(*)
+    character(len=16), intent(out) :: meca
+    character(len=16), intent(out) :: thmc
+    character(len=16), intent(out) :: ther
+    character(len=16), intent(out) :: hydr
+    integer, intent(out) :: nvim
+    integer, intent(out) :: nvit
+    integer, intent(out) :: nvih
+    integer, intent(out) :: nvic
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Get behaviours parameters from COMPOR field
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  compor          : behaviour
+! Out meca            : behaviour name for mechanic
+! Out thmc            : behaviour name for coupling law
+! Out ther            : behaviour name for thermic
+! Out hydr            : behaviour name for hydraulic
+! Out nvim            : number of internal variables for mechanic
+! Out nvic            : number of internal variables for coupling law
+! Out nvit            : number of internal variables for thermic
+! Out nvih            : number of internal variables for hydraulic
+!
+! --------------------------------------------------------------------------------------------------
+!
+
+! ======================================================================
 ! --- DEFINITION DES ADRESSES DE STOCKAGES DES VARIABLES INTERNES ------
 ! --- POUR LA THM, RECUPERATION DES RELATIONS DE COMPORTEMENTS ET DU ---
 ! --- NOMBRE DE VARIABLES INTERNES ASSOCIEES A CHAQUE RELATION ---------
 ! --- ON FAIT LE CHOIX DE STOCKES LES VARIABLES INTERNES DANS L'ORDRE --
 ! --- SUIVANT : MECANIQUE - THERMIQUE - HYDRAULIQUE - COUPLAGE ---------
 ! ======================================================================
-    implicit none
-    integer :: nvim, nvit, nvih, nvic
+
     integer :: advime, advith, advihy, advico
     integer :: vihrho, vicphi, vicpvp, vicsat, vicpr1, vicpr2
-    character(len=16) :: compor(*), meca, thmc, ther, hydr
-! ======================================================================
-    integer :: nbcomp
-! ======================================================================
-! --- NBCOMP EST LE NOMBRE DE VARIABLES DANS LA CARTE COMPOR DE --------
-! --- GRANDEUR_SIMPLE AVANT LA DEFINITION DU NOMBRE DE VARIABLES -------
-! --- INTERNES ASSOCIEES AUX RELATIONS DE COMPORTEMENT POUR LA THM -----
-! ======================================================================
-    parameter ( nbcomp = 7 + 9 )
-! ======================================================================
-! --- RECUPERATION DES DIFFERENTES RELATIONS DE COMPORTEMENT -----------
-! ======================================================================
-! --- THMC EST LA LOI DE COMPORTEMENT DE COUPLAGE ----------------------
-! --- THER EST LA LOI DE COMPORTEMENT THERMIQUE ------------------------
-! --- HYDR EST LA LOI DE COMPORTEMENT HYDRAULIQUE ----------------------
-! --- MECA EST LA LOI DE COMPORTEMENT MECANIQUE ------------------------
-! ======================================================================
-    thmc = compor( 8)
-    ther = compor( 9)
-    hydr = compor(10)
-    meca = compor(11)
-! ======================================================================
-! --- RECUPERATION DU NOMBRE DE VARIABLES INTERNES ASSOCIEES A CHAQUE --
-! --- RELATIONS DE COMPORTEMENT ----------------------------------------
-! ======================================================================
-! --- NVIC EST LE NOMBRE DE VARIABLES INTERNES POUR LA LOI DE COUPLAGE -
-! --- NVIT EST LE NOMBRE DE VARIABLES INTERNES POUR LA LOI THERMIQUE ---
-! --- NVIH EST LE NOMBRE DE VARIABLES INTERNES POUR LA LOI HYDRAULIQUE -
-! --- NVIM EST LE NOMBRE DE VARIABLES INTERNES POUR LA LOI MECANIQUE ---
-! ======================================================================
-    read (compor(nbcomp+1),'(I16)') nvic
-    read (compor(nbcomp+2),'(I16)') nvit
-    read (compor(nbcomp+3),'(I16)') nvih
-    read (compor(nbcomp+4),'(I16)') nvim
+!
+! --------------------------------------------------------------------------------------------------
+!
+
+!
+! - Get behaviours parameters from COMPOR field
+!
+    call thmGetParaBehaviour(compor,&
+                             meca  , thmc, ther, hydr,&
+                             nvim  , nvic, nvit, nvih)
+
 ! ======================================================================
 ! --- AFFECTATION D'UNE ADRESSE DE STOCKAGE POUR LES VARIABLES ---------
 ! --- INTERNES SUIVANT LA RELATION DE COMPORTEMENT ---------------------
