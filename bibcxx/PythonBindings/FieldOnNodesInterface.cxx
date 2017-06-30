@@ -58,6 +58,7 @@ void exportFieldOnNodesToPython()
         {
             return v.operator[](i);
         })
+        .def( "printMedFile", &FieldOnNodesDoubleInstance::printMedFile )
         .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers )
     ;
 

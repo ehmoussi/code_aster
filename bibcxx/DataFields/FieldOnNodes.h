@@ -218,6 +218,8 @@ public:
         return toReturn;
     };
 
+    bool printMedFile( const std::string fileName ) const throw ( std::runtime_error );
+
     /**
      * @brief Mise a jour des pointeurs Jeveux
      * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
@@ -229,6 +231,39 @@ public:
         retour = ( retour && _valuesList->updateValuePointer() );
         return retour;
     };
+};
+
+template< class ValueType >
+bool FieldOnNodesInstance< ValueType >::printMedFile( const std::string fileName ) const
+    throw ( std::runtime_error )
+{
+    LogicalUnitFileCython a( fileName, Binary, New );
+    int retour = a.getLogicalUnit();
+    CommandSyntaxCython cmdSt( "IMPR_RESU" );
+
+    SyntaxMapContainer dict;
+    dict.container[ "FORMAT" ] = "MED";
+    dict.container[ "UNITE" ] = retour;
+
+    ListSyntaxMapContainer listeResu;
+    SyntaxMapContainer dict2;
+    dict2.container[ "CHAM_GD" ] = getName();
+    listeResu.push_back( dict2 );
+    dict.container[ "RESU" ] = listeResu;
+
+    cmdSt.define( dict );
+
+    try
+    {
+        ASTERINTEGER op = 39;
+        CALL_EXECOP( &op );
+    }
+    catch( ... )
+    {
+        throw;
+    }
+
+    return true;
 };
 
 

@@ -238,7 +238,7 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
 
     std::string blanc( " " );
     std::string cumul( "ZERO" );
-    if( _listOfLoads->isEmpty() )
+    if( _listOfLoads->isEmpty() && _listOfLoads->size() != 0 )
         _listOfLoads->build();
     long nbMatrElem = 1;
     CALL_ASMATR( &nbMatrElem, _elemMatrix->getName().c_str(), blanc.c_str(),
