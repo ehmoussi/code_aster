@@ -378,17 +378,26 @@ implicit none
         type(NL_DS_Table)     :: table
     end type NL_DS_Energy
 !
-! - Type: for exterior comportement
+! - Type: for external comportement
 ! 
     type NL_DS_ComporExte
+! ----- Flag for UMAT law
         aster_logical      :: l_umat
+! ----- Flag for non-official MFront law
         aster_logical      :: l_mfront_proto
+! ----- Flag for official MFront law
         aster_logical      :: l_mfront_offi
+! ----- Name of subroutine for external law
         character(len=255) :: subr_name
+! ----- Name of library for external law
         character(len=255) :: libr_name
+! ----- Model for MFront law
         character(len=16)  :: model_mfront
+! ----- Number of dimension for MFront law
         integer            :: model_dim
+! ----- Number of internal variables for UMAT
         integer            :: nb_vari_umat
+
     end type NL_DS_ComporExte
 !
 ! - Type: for comportement
@@ -433,6 +442,7 @@ implicit none
 ! - Type: for parameters for constitutive laws
 ! 
     type NL_DS_ComporPara
+        aster_logical :: l_comp_external
         integer       :: type_matr_t
         real(kind=8)  :: parm_alpha
         real(kind=8)  :: parm_theta
@@ -440,7 +450,7 @@ implicit none
         real(kind=8)  :: vale_pert_rela
         real(kind=8)  :: resi_deborst_max
         integer       :: iter_deborst_max
-        real(kind=8)  :: seuil
+        real(kind=8)  :: resi_radi_rela
         integer       :: post_iter
         integer       :: post_incr
         aster_logical :: l_matr_unsymm
