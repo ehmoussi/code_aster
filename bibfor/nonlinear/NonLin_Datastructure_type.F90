@@ -456,7 +456,7 @@ implicit none
         integer       :: iveriborne
         aster_logical :: l_matr_unsymm
         character(len=16)         :: rela_comp
-        character(len=16)         :: algo_inte
+        character(len=16)         :: meca_comp
         type(NL_DS_ComporPointer) :: c_pointer
         type(NL_DS_ComporExte)    :: comp_exte
     end type NL_DS_ComporPara

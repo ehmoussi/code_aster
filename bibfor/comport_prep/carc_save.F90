@@ -36,8 +36,8 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmdocv.h"
 #include "asterfort/nocart.h"
+#include "asterfort/getBehaviourAlgo.h"
 #include "asterfort/comp_read_mesh.h"
-#include "asterfort/utlcal.h"
 #include "asterc/mfront_set_double_parameter.h"
 #include "asterc/mfront_set_integer_parameter.h"
 #include "asterc/mfront_set_outofbounds_policy.h"
@@ -71,7 +71,7 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp, iveriborne
     real(kind=8), pointer :: p_carc_valv(:) => null()
-    character(len=16) :: algo_inte, rela_comp, model_mfront
+    character(len=16) :: algo_inte, rela_comp, meca_comp, model_mfront
     character(len=255) :: libr_name, subr_name
     real(kind=8) :: iter_inte_maxi, resi_inte_rela, parm_theta, vale_pert_rela, algo_inte_r
     real(kind=8) :: resi_deborst_max, resi_radi_rela, parm_alpha
@@ -107,7 +107,7 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         post_incr        = ds_compor_para%v_para(i_comp)%ipostincr
         iveriborne       = ds_compor_para%v_para(i_comp)%iveriborne
         rela_comp        = ds_compor_para%v_para(i_comp)%rela_comp
-        algo_inte        = ds_compor_para%v_para(i_comp)%algo_inte
+        meca_comp        = ds_compor_para%v_para(i_comp)%meca_comp
         l_matr_unsymm    = ds_compor_para%v_para(i_comp)%l_matr_unsymm
         libr_name        = ds_compor_para%v_para(i_comp)%comp_exte%libr_name
         subr_name        = ds_compor_para%v_para(i_comp)%comp_exte%subr_name
@@ -124,17 +124,13 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
 !
         call comp_read_mesh(mesh          , keywordfact, i_comp      ,&
                             list_elem_affe, l_affe_all , nb_elem_affe)
-!
-! ----- Get ALGO_INTE - Plane stress
-!
         plane_stress = exicp(model, l_affe_all, list_elem_affe, nb_elem_affe)
-        if (plane_stress) then
-            if (rela_comp .eq. 'VMIS_ECMI_LINE' .or. rela_comp .eq. 'VMIS_ECMI_TRAC' .or.&
-                rela_comp .eq. 'VMIS_ISOT_LINE' .or. rela_comp .eq. 'VMIS_ISOT_TRAC') then
-                algo_inte = 'SECANTE'
-            endif
-        endif
-        call utlcal('NOM_VALE', algo_inte, algo_inte_r)
+!
+! ----- Get ALGO_INTE
+!
+        call getBehaviourAlgo(plane_stress, rela_comp  , meca_comp,&
+                              keywordfact , i_comp     ,&
+                              algo_inte   , algo_inte_r)
 !
 ! ----- Get RESI_INTE_RELA/ITER_INTE_MAXI
 !
