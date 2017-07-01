@@ -451,8 +451,9 @@ implicit none
         real(kind=8)  :: resi_deborst_max
         integer       :: iter_deborst_max
         real(kind=8)  :: resi_radi_rela
-        integer       :: post_iter
-        integer       :: post_incr
+        integer       :: ipostiter
+        integer       :: ipostincr
+        integer       :: iveriborne
         aster_logical :: l_matr_unsymm
         character(len=16)         :: rela_comp
         character(len=16)         :: algo_inte

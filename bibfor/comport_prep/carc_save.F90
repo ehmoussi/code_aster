@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine carc_save(model, mesh, carcri, nb_cmp, ds_compor_para)
 !
 use NonLin_Datastructure_type
@@ -39,14 +40,13 @@ implicit none
 #include "asterfort/utlcal.h"
 #include "asterc/mfront_set_double_parameter.h"
 #include "asterc/mfront_set_integer_parameter.h"
+#include "asterc/mfront_set_outofbounds_policy.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: model
-    character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: carcri
-    integer, intent(in) :: nb_cmp
-    type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
+character(len=8), intent(in) :: model
+character(len=8), intent(in) :: mesh
+character(len=19), intent(in) :: carcri
+integer, intent(in) :: nb_cmp
+type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,10 +66,10 @@ implicit none
 !
     character(len=24) :: list_elem_affe
     aster_logical :: l_affe_all, l_matr_unsymm, l_comp_external
-    integer :: nb_elem_affe, model_dim
+    integer :: nb_elem_affe
     integer, pointer :: v_elem_affe(:) => null()
     character(len=16) :: keywordfact
-    integer :: i_comp, nb_comp
+    integer :: i_comp, nb_comp, iveriborne
     real(kind=8), pointer :: p_carc_valv(:) => null()
     character(len=16) :: algo_inte, rela_comp, model_mfront
     character(len=255) :: libr_name, subr_name
@@ -102,9 +102,10 @@ implicit none
         resi_deborst_max = ds_compor_para%v_para(i_comp)%resi_deborst_max
         iter_deborst_max = ds_compor_para%v_para(i_comp)%iter_deborst_max
         resi_radi_rela   = ds_compor_para%v_para(i_comp)%resi_radi_rela
-        post_iter        = ds_compor_para%v_para(i_comp)%post_iter
+        post_iter        = ds_compor_para%v_para(i_comp)%ipostiter
         parm_alpha       = ds_compor_para%v_para(i_comp)%parm_alpha
-        post_incr        = ds_compor_para%v_para(i_comp)%post_incr
+        post_incr        = ds_compor_para%v_para(i_comp)%ipostincr
+        iveriborne       = ds_compor_para%v_para(i_comp)%iveriborne
         rela_comp        = ds_compor_para%v_para(i_comp)%rela_comp
         algo_inte        = ds_compor_para%v_para(i_comp)%algo_inte
         l_matr_unsymm    = ds_compor_para%v_para(i_comp)%l_matr_unsymm
@@ -148,6 +149,8 @@ implicit none
                                              "epsilon", resi_inte_rela)
             call mfront_set_integer_parameter(libr_name, subr_name, model_mfront,&
                                               "iterMax", int(iter_inte_maxi))
+            call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront,&
+                                               iveriborne)
         else
             call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_RELA', resi_inte_rela) 
         endif

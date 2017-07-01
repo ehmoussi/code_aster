@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1003
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine pmdorc(compor, carcri, nb_vari, incela, mult_comp)
 !
 use NonLin_Datastructure_type
@@ -42,14 +44,11 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/setBehaviourValue.h"
 !
-! aslint: disable=W1003
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(out) :: compor(20)
-    real(kind=8), intent(out) :: carcri(21)
-    integer, intent(out) :: nb_vari
-    integer, intent(out) :: incela
-    character(len=16), intent(out) :: mult_comp
+character(len=16), intent(out) :: compor(20)
+real(kind=8), intent(out) :: carcri(21)
+integer, intent(out) :: nb_vari
+integer, intent(out) :: incela
+character(len=16), intent(out) :: mult_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -178,7 +177,7 @@ implicit none
     carcri(8)  = ds_compor_para%v_para(i_comp)%resi_deborst_max
     carcri(9)  = ds_compor_para%v_para(i_comp)%iter_deborst_max
     carcri(10) = ds_compor_para%v_para(i_comp)%resi_radi_rela
-    carcri(13) = ds_compor_para%v_para(i_comp)%post_iter
+    carcri(13) = ds_compor_para%v_para(i_comp)%ipostiter
     carcri(14) = ds_compor_para%v_para(i_comp)%c_pointer%nbvarext
     carcri(15) = ds_compor_para%v_para(i_comp)%c_pointer%namevarext
     carcri(16) = ds_compor_para%v_para(i_comp)%c_pointer%fct_ldc
@@ -190,7 +189,7 @@ implicit none
     carcri(18) = 0
     carcri(19) = ds_compor_para%v_para(i_comp)%c_pointer%matprop
     carcri(20) = ds_compor_para%v_para(i_comp)%c_pointer%nbprop
-    carcri(21) = ds_compor_para%v_para(i_comp)%post_incr
+    carcri(21) = ds_compor_para%v_para(i_comp)%ipostincr
 !
 ! - Cleaning
 !
