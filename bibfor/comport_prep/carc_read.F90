@@ -38,7 +38,6 @@ implicit none
 #include "asterc/lcdiscard.h"
 #include "asterc/umat_get_function.h"
 #include "asterc/mfront_get_pointers.h"
-#include "asterc/mfront_set_outofbounds_policy.h"
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_meca_rkit.h"
 #include "asterfort/comp_meca_code.h"
@@ -67,16 +66,16 @@ aster_logical, intent(in), optional :: l_implex_
     character(len=16) :: keywordfact=' ', answer
     integer :: i_comp=0, iret=0, nb_comp=0
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
-    integer :: cptr_matprop=0, cptr_nbprop=0, nbval = 0
+    integer :: cptr_matprop=0, cptr_nbprop=0
     character(len=16) :: algo_inte=' ', type_matr_tang=' ', method=' ', post_iter=' ', post_incr=' '
     real(kind=8) :: parm_theta=0.d0, vale_pert_rela=0.d0
     real(kind=8) :: resi_deborst_max=0.d0
     real(kind=8) :: parm_alpha=0.d0, resi_radi_rela=0.d0
     integer :: type_matr_t=0, iter_inte_pas=0, iter_deborst_max=0
-    integer :: ipostiter=0, ipostincr=0
+    integer :: ipostiter=0, ipostincr=0, iveriborne=0
     character(len=8) :: mesh = ' '
     character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
-    character(len=16) :: veri_b=' '
+    character(len=16) :: veri_borne=' '
     character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
     character(len=16) :: defo_comp=' ',  rela_comp=' '
     character(len=16) :: thmc_comp=' ', hydr_comp=' ', ther_comp=' ', meca_comp=' '
@@ -289,6 +288,24 @@ aster_logical, intent(in), optional :: l_implex_
             endif
         endif
 !
+! ----- Get VERI_BORNE
+!
+        iveriborne = 0
+        if (getexm(keywordfact,'VERI_BORNE') .eq. 1) then
+            call getvtx(keywordfact, 'VERI_BORNE', iocc = i_comp, scal = veri_borne, nbret = iret )
+            if (iret .eq. 0) then
+                iveriborne = 2
+            else
+                if ( veri_borne .eq. 'ARRET' ) then
+                    iveriborne = 2
+                elseif ( veri_borne .eq. 'MESSAGE' ) then
+                    iveriborne = 1
+                else
+                    iveriborne = 0
+                endif
+            endif
+        endif
+!
 ! ----- Get parameters for external programs (MFRONT/UMAT)
 !
         call getExternalBehaviourPara(mesh           , v_model_elem, rela_comp, kit_comp,&
@@ -311,19 +328,6 @@ aster_logical, intent(in), optional :: l_implex_
                                      cptr_nbvarext, cptr_namevarext,&
                                      cptr_fct_ldc,&
                                      cptr_matprop, cptr_nbprop)
-            call getvtx(keywordfact, 'VERI_BORNE', iocc = i_comp,&
-                        scal = veri_b, nbret = nbval )
-            if ( nbval.eq.0 ) then
-                call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront, 2)
-            else
-                if ( veri_b.eq.'ARRET' ) then
-                    call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront, 2)
-                elseif ( veri_b.eq.'MESSAGE' ) then
-                    call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront, 1)
-                else
-                    call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront, 0)
-                endif
-            endif
         elseif ( l_umat ) then
             call umat_get_function(libr_name, subr_name, cptr_fct_ldc)
         endif
@@ -354,8 +358,9 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%v_para(i_comp)%resi_deborst_max         = resi_deborst_max
         ds_compor_para%v_para(i_comp)%iter_deborst_max         = iter_deborst_max
         ds_compor_para%v_para(i_comp)%resi_radi_rela           = resi_radi_rela
-        ds_compor_para%v_para(i_comp)%post_iter                = ipostiter
-        ds_compor_para%v_para(i_comp)%post_incr                = ipostincr
+        ds_compor_para%v_para(i_comp)%ipostiter                = ipostiter
+        ds_compor_para%v_para(i_comp)%ipostincr                = ipostincr
+        ds_compor_para%v_para(i_comp)%iveriborne               = iveriborne
         ds_compor_para%v_para(i_comp)%c_pointer%nbvarext       = cptr_nbvarext
         ds_compor_para%v_para(i_comp)%c_pointer%namevarext     = cptr_namevarext
         ds_compor_para%v_para(i_comp)%c_pointer%fct_ldc        = cptr_fct_ldc
