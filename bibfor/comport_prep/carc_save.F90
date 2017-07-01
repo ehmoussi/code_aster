@@ -24,22 +24,17 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterc/getexm.h"
-#include "asterfort/getvtx.h"
-#include "asterfort/comp_meca_l.h"
-#include "asterfort/comp_read_typmod.h"
 #include "asterfort/assert.h"
-#include "asterfort/dismoi.h"
+#include "asterfort/comp_meca_l.h"
+#include "asterfort/comp_read_mesh.h"
 #include "asterfort/jedetr.h"
-#include "asterfort/jenonu.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/nmdocv.h"
 #include "asterfort/nocart.h"
 #include "asterfort/exicp.h"
 #include "asterfort/utmess.h"
 #include "asterfort/getBehaviourAlgo.h"
+#include "asterfort/getBehaviourPara.h"
 #include "asterfort/getExternalBehaviourPntr.h"
-#include "asterfort/comp_read_mesh.h"
 #include "asterc/mfront_set_double_parameter.h"
 #include "asterc/mfront_set_integer_parameter.h"
 #include "asterc/mfront_set_outofbounds_policy.h"
@@ -152,14 +147,13 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
 !
 ! ----- Get RESI_INTE_RELA/ITER_INTE_MAXI
 !
-        call nmdocv(keywordfact, i_comp, algo_inte, 'ITER_INTE_MAXI', iter_inte_maxi)
+        call getBehaviourPara(l_mfront_offi , l_mfront_proto, l_kit_thm,&
+                              keywordfact   , i_comp        , algo_inte,&
+                              iter_inte_maxi, resi_inte_rela)
+!
+! ----- Set values for MFRONT
+!
         if ( l_mfront_offi .or. l_mfront_proto) then
-            if (l_mfront_offi .or. l_kit_thm) then
-                call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_RELA', resi_inte_rela)
-            else
-                call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_MAXI', resi_inte_rela)
-            endif
-
             libr_name    = ds_compor_para%v_para(i_comp)%comp_exte%libr_name
             subr_name    = ds_compor_para%v_para(i_comp)%comp_exte%subr_name
             model_mfront = ds_compor_para%v_para(i_comp)%comp_exte%model_mfront
@@ -169,8 +163,6 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
                                               "iterMax", int(iter_inte_maxi))
             call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront,&
                                                iveriborne)
-        else
-            call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_RELA', resi_inte_rela) 
         endif
 !
 ! ----- Set in <CARTE>
