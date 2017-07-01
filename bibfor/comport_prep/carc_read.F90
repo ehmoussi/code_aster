@@ -67,14 +67,14 @@ aster_logical, intent(in), optional :: l_implex_
     integer :: i_comp=0, iret=0, nb_comp=0
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
     integer :: cptr_matprop=0, cptr_nbprop=0
-    character(len=16) :: algo_inte=' ', type_matr_tang=' ', method=' ', post_iter=' ', post_incr=' '
+    character(len=16) :: type_matr_tang=' ', method=' ', post_iter=' ', post_incr=' '
     real(kind=8) :: parm_theta=0.d0, vale_pert_rela=0.d0
     real(kind=8) :: resi_deborst_max=0.d0
     real(kind=8) :: parm_alpha=0.d0, resi_radi_rela=0.d0
     integer :: type_matr_t=0, iter_inte_pas=0, iter_deborst_max=0
     integer :: ipostiter=0, ipostincr=0, iveriborne=0
     character(len=8) :: mesh = ' '
-    character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
+    character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' '
     character(len=16) :: veri_borne=' '
     character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
     character(len=16) :: defo_comp=' ',  rela_comp=' '
@@ -141,27 +141,10 @@ aster_logical, intent(in), optional :: l_implex_
 !
         call comp_meca_code(rela_comp_    = rela_comp   ,&
                             defo_comp_    = defo_comp   ,&
-                            kit_comp_     = kit_comp    ,&
                             meca_comp_    = meca_comp   ,&
-                            comp_code_py_ = comp_code_py,&
                             rela_code_py_ = rela_code_py,&
                             defo_code_py_ = defo_code_py,&
                             meca_code_py_ = meca_code_py)
-!
-! ----- Get ALGO_INTE
-!
-        call getvtx(keywordfact, 'ALGO_INTE', iocc = i_comp, scal = algo_inte, nbret = iret)
-        if (iret .eq. 0) then
-            call lcalgo(rela_code_py, algo_inte)
-        else  
-            call lctest(meca_code_py, 'ALGO_INTE', algo_inte, iret)
-            if (iret .eq. 0) then
-                texte(1) = algo_inte
-                texte(2) = 'ALGO_INTE'
-                texte(3) = rela_comp
-                call utmess('F', 'COMPOR1_45', nk = 3, valk = texte)
-            endif
-        endif
 !
 ! ----- Symmetric or not ?
 !
@@ -345,7 +328,6 @@ aster_logical, intent(in), optional :: l_implex_
         call lcdiscard(meca_code_py)
         call lcdiscard(rela_code_py)
         call lcdiscard(defo_code_py)
-        call lcdiscard(comp_code_py)
 !
 ! ----- Save options in list
 !
@@ -367,7 +349,7 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%v_para(i_comp)%c_pointer%matprop        = cptr_matprop
         ds_compor_para%v_para(i_comp)%c_pointer%nbprop         = cptr_nbprop
         ds_compor_para%v_para(i_comp)%rela_comp                = rela_comp
-        ds_compor_para%v_para(i_comp)%algo_inte                = algo_inte
+        ds_compor_para%v_para(i_comp)%meca_comp                = meca_comp
         ds_compor_para%v_para(i_comp)%l_matr_unsymm            = l_matr_unsymm
     end do
 !

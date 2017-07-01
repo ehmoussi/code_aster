@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/comp_meca_info.h"
 #include "asterfort/comp_meca_pvar.h"
 #include "asterfort/comp_meca_read.h"
+#include "asterfort/getBehaviourAlgo.h"
 #include "asterfort/imvari.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -69,9 +70,9 @@ character(len=16), intent(out) :: mult_comp
     integer :: i_comp, nume_comp(4), nb_vari_comp(4)
     integer :: nbocc1, nbocc2, nbocc3
     character(len=16) :: keywordfact
-    character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp
+    character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp, meca_comp
     character(len=16) :: kit_comp(4), type_cpla, post_iter
-    aster_logical :: l_kit_thm, l_etat_init, l_implex
+    aster_logical :: l_kit_thm, l_etat_init, l_implex, plane_stress
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
     type(NL_DS_ComporPrep) :: ds_compor_prep
     type(NL_DS_ComporParaPrep) :: ds_compor_para
@@ -154,18 +155,29 @@ character(len=16), intent(out) :: mult_comp
 ! - Read informations from command file
 !
     call carc_read(ds_compor_para, l_implex_ = l_implex)
-!  
-! - Save in list
+!
+! - Get ALGO_INTE
 !
     i_comp = 1
-    algo_inte = ds_compor_para%v_para(i_comp)%algo_inte
+    plane_stress = .false.
+    rela_comp    = ds_compor_para%v_para(i_comp)%rela_comp
+    meca_comp    = ds_compor_para%v_para(i_comp)%meca_comp
+
+    call getBehaviourAlgo(plane_stress, rela_comp  , meca_comp,&
+                          keywordfact , i_comp     ,&
+                          algo_inte   , algo_inte_r)
+!
+! - Get main parameters
+!
+    i_comp = 1
     if (rela_comp.eq.'MFRONT') then
         call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_MAXI', resi_inte_rela)
     else
         call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_RELA', resi_inte_rela)
     endif
     call nmdocv(keywordfact, i_comp, algo_inte, 'ITER_INTE_MAXI', iter_inte_maxi)
-    call utlcal('NOM_VALE', algo_inte, algo_inte_r)
+!  
+! - Save in list
 !
     carcri(1)  = iter_inte_maxi
     carcri(2)  = ds_compor_para%v_para(i_comp)%type_matr_t
