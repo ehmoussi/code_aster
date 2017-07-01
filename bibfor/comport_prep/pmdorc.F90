@@ -35,14 +35,11 @@ implicit none
 #include "asterfort/comp_meca_pvar.h"
 #include "asterfort/comp_meca_read.h"
 #include "asterfort/getBehaviourAlgo.h"
+#include "asterfort/getBehaviourPara.h"
 #include "asterfort/getExternalBehaviourPntr.h"
 #include "asterfort/imvari.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/nmdocv.h"
-#include "asterfort/utlcal.h"
 #include "asterfort/utmess.h"
 #include "asterfort/setBehaviourValue.h"
 !
@@ -73,7 +70,8 @@ character(len=16), intent(out) :: mult_comp
     character(len=16) :: keywordfact
     character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp, meca_comp
     character(len=16) :: kit_comp(4), type_cpla, post_iter
-    aster_logical :: l_kit_thm, l_etat_init, l_implex, plane_stress, l_comp_external
+    aster_logical :: l_etat_init, l_implex, plane_stress, l_comp_external
+    aster_logical :: l_kit_thm, l_mfront_proto, l_mfront_offi
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
     type(NL_DS_ComporPrep) :: ds_compor_prep
     type(NL_DS_ComporParaPrep) :: ds_compor_para
@@ -124,8 +122,12 @@ character(len=16), intent(out) :: mult_comp
     kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
     mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
     post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
-
-    call comp_meca_l(rela_comp, 'KIT_THM'  , l_kit_thm)
+!
+! - Detection of specific cases
+!
+    call comp_meca_l(rela_comp, 'KIT_THM'     , l_kit_thm)
+    call comp_meca_l(rela_comp, 'MFRONT_PROTO', l_mfront_proto)
+    call comp_meca_l(rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
     if (l_kit_thm) then
         call utmess('F', 'COMPOR2_7')
     endif
@@ -170,15 +172,12 @@ character(len=16), intent(out) :: mult_comp
                           keywordfact , i_comp     ,&
                           algo_inte   , algo_inte_r)
 !
-! - Get main parameters
+! - Get RESI_INTE_RELA/ITER_INTE_MAXI
 !
     i_comp = 1
-    if (rela_comp.eq.'MFRONT') then
-        call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_MAXI', resi_inte_rela)
-    else
-        call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_RELA', resi_inte_rela)
-    endif
-    call nmdocv(keywordfact, i_comp, algo_inte, 'ITER_INTE_MAXI', iter_inte_maxi)
+    call getBehaviourPara(l_mfront_offi , l_mfront_proto, l_kit_thm,&
+                          keywordfact   , i_comp        , algo_inte,&
+                          iter_inte_maxi, resi_inte_rela)
 !
 ! - Get function pointers for external programs (MFRONT/UMAT)
 !
