@@ -35,9 +35,7 @@ implicit none
 #include "asterfort/getBehaviourAlgo.h"
 #include "asterfort/getBehaviourPara.h"
 #include "asterfort/getExternalBehaviourPntr.h"
-#include "asterc/mfront_set_double_parameter.h"
-#include "asterc/mfront_set_integer_parameter.h"
-#include "asterc/mfront_set_outofbounds_policy.h"
+#include "asterfort/setMFrontPara.h"
 !
 character(len=8), intent(in) :: model
 character(len=8), intent(in) :: mesh
@@ -68,8 +66,7 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp, iveriborne
     real(kind=8), pointer :: p_carc_valv(:) => null()
-    character(len=16) :: algo_inte, rela_comp, meca_comp, model_mfront
-    character(len=255) :: libr_name, subr_name
+    character(len=16) :: algo_inte, rela_comp, meca_comp
     real(kind=8) :: iter_inte_maxi, resi_inte_rela, parm_theta, vale_pert_rela, algo_inte_r
     real(kind=8) :: resi_deborst_max, resi_radi_rela, parm_alpha
     real(kind=8) :: post_iter, post_incr
@@ -153,17 +150,8 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
 !
 ! ----- Set values for MFRONT
 !
-        if ( l_mfront_offi .or. l_mfront_proto) then
-            libr_name    = ds_compor_para%v_para(i_comp)%comp_exte%libr_name
-            subr_name    = ds_compor_para%v_para(i_comp)%comp_exte%subr_name
-            model_mfront = ds_compor_para%v_para(i_comp)%comp_exte%model_mfront
-            call mfront_set_double_parameter(libr_name, subr_name, model_mfront,&
-                                             "epsilon", resi_inte_rela)
-            call mfront_set_integer_parameter(libr_name, subr_name, model_mfront,&
-                                              "iterMax", int(iter_inte_maxi))
-            call mfront_set_outofbounds_policy(libr_name, subr_name, model_mfront,&
-                                               iveriborne)
-        endif
+        call setMFrontPara(ds_compor_para%v_para(i_comp)%comp_exte,&
+                           iter_inte_maxi, resi_inte_rela, iveriborne)
 !
 ! ----- Set in <CARTE>
 !

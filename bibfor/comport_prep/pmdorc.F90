@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/utmess.h"
 #include "asterfort/setBehaviourValue.h"
+#include "asterfort/setMFrontPara.h"
 !
 character(len=16), intent(out) :: compor(20)
 real(kind=8), intent(out) :: carcri(21)
@@ -73,6 +74,7 @@ character(len=16), intent(out) :: mult_comp
     aster_logical :: l_etat_init, l_implex, plane_stress, l_comp_external
     aster_logical :: l_kit_thm, l_mfront_proto, l_mfront_offi
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
+    integer :: iveriborne
     type(NL_DS_ComporPrep) :: ds_compor_prep
     type(NL_DS_ComporParaPrep) :: ds_compor_para
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
@@ -189,6 +191,13 @@ character(len=16), intent(out) :: mult_comp
                                       cptr_nbvarext, cptr_namevarext,&
                                       cptr_nbprop  , cptr_nameprop)
     endif
+!
+! - Set values for MFRONT
+!
+    i_comp = 1
+    iveriborne = ds_compor_para%v_para(i_comp)%iveriborne
+    call setMFrontPara(ds_compor_para%v_para(i_comp)%comp_exte,&
+                       iter_inte_maxi, resi_inte_rela, iveriborne)
 !  
 ! - Save in list
 !
