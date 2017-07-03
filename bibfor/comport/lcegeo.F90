@@ -82,7 +82,7 @@ real(kind=8), intent(out) :: elgeom(10, npg)
     if (tabcod(COORGA) .eq. 1) then
         call calcExternalStateVariable2(nno    , npg   , ndim  ,&
                                         jv_func, &
-                                        geom   , typmod, elgeom)
+                                        geom   , typmod)
     endif
 !
 ! - Gradient of velocity

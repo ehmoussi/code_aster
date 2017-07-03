@@ -16,8 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine calcExternalStateVariable2(nno , npg   , ndim  , jv_func, &
-                                      geom, typmod, elgeom)
+subroutine calcExternalStateVariable2(nno    , npg   , ndim  ,&
+                                      jv_func, &
+                                      geom   , typmod)
+!
+use calcul_module, only : ca_vext_coorga_
 !
 implicit none
 !
@@ -29,7 +32,6 @@ integer, intent(in) :: nno, npg, ndim
 integer, intent(in) :: jv_func
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: geom(3, nno)
-real(kind=8), intent(out) :: elgeom(10, npg)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,21 +59,15 @@ real(kind=8), intent(out) :: elgeom(10, npg)
 ! --------------------------------------------------------------------------------------------------
 !
     laxi = typmod(1) .eq. 'AXIS'
+    ca_vext_coorga_(:,:) = 0.d0
+    ASSERT(npg .le. 27)
 !
-    if (laxi) then
+    if (.not. laxi) then
         do kpg = 1, npg
-            elgeom(1,kpg) = 0.d0
-            elgeom(2,kpg) = 0.d0
-            elgeom(3,kpg) = 0.d0
-        end do
-    else
-        do kpg = 1, npg
-            elgeom(1,kpg) = 0.d0
-            elgeom(2,kpg) = 0.d0
-            elgeom(3,kpg) = 0.d0
             do i = 1, ndim
                 do k = 1, nno
-                    elgeom(i,kpg) = elgeom(i,kpg) + geom(i,k)*zr(jv_func-1+nno*(kpg-1)+k)
+                    ca_vext_coorga_(kpg, i) = ca_vext_coorga_(kpg, i) +&
+                                              geom(i,k)*zr(jv_func-1+nno*(kpg-1)+k)
                 end do
             end do
         end do

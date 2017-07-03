@@ -17,9 +17,11 @@
 ! --------------------------------------------------------------------
 
 subroutine lcedga(fami, kpg, ksp, ndim, imat,&
-                  crit, typmod, instam, instap, coord,&
+                  crit, typmod, instam, instap,&
                   deps2, sigm2, vim, option, sigp,&
                   vip, dsidep, iret)
+!
+use calcul_module, only : ca_vext_coorga_
 !
 implicit none
 !
@@ -38,24 +40,23 @@ implicit none
 #include "asterfort/get_meta_phasis.h"
 !
 !
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: ndim
-    integer, intent(in) :: imat
-    real(kind=8), intent(in) :: crit(*)
-    character(len=8), intent(in) :: typmod(2)
-    real(kind=8), intent(in) :: instam
-    real(kind=8), intent(in) :: instap
-    real(kind=8), intent(in) :: coord(3)
-    real(kind=8), intent(in) :: deps2(*)
-    real(kind=8), intent(in) :: sigm2(*)
-    real(kind=8), intent(in) :: vim(2)
-    character(len=16), intent(in) :: option
-    real(kind=8), intent(out) :: sigp(*)
-    real(kind=8), intent(out) :: vip(2)
-    real(kind=8), intent(out) :: dsidep(6, 6)
-    integer, intent(out) :: iret
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+integer, intent(in) :: ndim
+integer, intent(in) :: imat
+real(kind=8), intent(in) :: crit(*)
+character(len=8), intent(in) :: typmod(2)
+real(kind=8), intent(in) :: instam
+real(kind=8), intent(in) :: instap
+real(kind=8), intent(in) :: deps2(*)
+real(kind=8), intent(in) :: sigm2(*)
+real(kind=8), intent(in) :: vim(2)
+character(len=16), intent(in) :: option
+real(kind=8), intent(out) :: sigp(*)
+real(kind=8), intent(out) :: vip(2)
+real(kind=8), intent(out) :: dsidep(6, 6)
+integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,7 +72,6 @@ implicit none
 ! IN  CRIT    : CRITERES DE CONVERGENCE LOCAUX
 ! IN  INSTAM  : INSTANT DU CALCUL PRECEDENT
 ! IN  INSTAP  : INSTANT DU CALCUL
-! IN  COORD   : COORDONNEES DU POINT DE GAUSS
 ! IN  TM      : TEMPERATURE A L'INSTANT PRECEDENT
 ! IN  TP      : TEMPERATURE A L'INSTANT DU CALCUL
 ! IN  EPSM2   : DEFORMATIONS A L'INSTANT DU CALCUL PRECEDENT*SQRT(2)
@@ -107,7 +107,7 @@ implicit none
     real(kind=8) :: dvdeps(2*ndim), dvepel(2*ndim)
     real(kind=8) :: dvsigm(2*ndim), dvsitr(2*ndim), dvsigp(2*ndim)
     real(kind=8) :: eqsitr, eqeptr
-    real(kind=8) :: pm, dp
+    real(kind=8) :: pm, dp, coord(3)
     real(kind=8) :: y(2*ndim+1), g(2*ndim+1), maxg, dgdy(2*ndim+1, 2*ndim+1)
     real(kind=8) :: vect(2*ndim), mat(2*ndim+1, 2*ndim+1)
     real(kind=8) :: r1(2*ndim+1, 2*ndim), h1(2*ndim, 2*ndim)
@@ -188,6 +188,9 @@ implicit none
 ! SEULEMENT SI ON EST EN COORDONNEES CYLINDRIQUES
 !
     if (zcylin) then
+        coord(1) = ca_vext_coorga_(kpg,1)
+        coord(2) = ca_vext_coorga_(kpg,2)
+        coord(3) = ca_vext_coorga_(kpg,3)
         call edgrep(typmod, coord, anic, ani)
     else
         do i = 1,6
