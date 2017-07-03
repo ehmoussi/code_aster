@@ -176,6 +176,13 @@ Contactez le support technique.
  deux mailles POI1 interdit
 """),
 
+    47: _(u"""
+Opérateur DEFI_CABLE_BP:
+  Vous avez indiqué TYPE_RELAX='SANS' et donné RELAX_1000 = %(r1)f.
+  Aucun calcul de relaxation des câbles ne sera fait par DEFI_CABLE_BP.
+  La valeur ne sera donc pas prise en compte.
+"""),
+
     48: _(u"""
  récupération des caractéristiques élémentaires du câble no %(k1)s  : détection d un élément différent du type <MECA_barre>
 """),
@@ -290,7 +297,7 @@ Les abscisses curvilignes de la table fournie ne correspondent pas à celles du 
 
 76: _(u"""
  Incohérence détectée entre le nombre de modes de la base "mouillée", calculée par CALC_FLUI_STRU, et ceux de la
- base modale de la structure "en air", utilisée pour la projection du spectre de turbulence (PROJ_SPEC_BASE). 
+ base modale de la structure "en air", utilisée pour la projection du spectre de turbulence (PROJ_SPEC_BASE).
 
  - Nombre de modes de la base mouillée : %(i1)d
  - Nombre de modes de la base en air   : %(i2)d
@@ -298,7 +305,7 @@ Les abscisses curvilignes de la table fournie ne correspondent pas à celles du 
  Conseil : si vous avez filtré des modes lors du calcul des coefficients de couplage (CALC_FLUI_STRU), il faut
  obligatoirement les omettre de la base de projection du spectre (PROJ_SPEC_BASE).
 
- En pratique, si un filtrage de modes est nécessaire pour l'étape de calcul IFS, un simple appel à EXTR_MODE sur 
+ En pratique, si un filtrage de modes est nécessaire pour l'étape de calcul IFS, un simple appel à EXTR_MODE sur
  la base initiale permet d'extraire ces modes. Cette étape réalisée en amont des calculs couplés Fluide-Structure
  permet d'assurer la cohérence de l'enchaînement.
 """),
