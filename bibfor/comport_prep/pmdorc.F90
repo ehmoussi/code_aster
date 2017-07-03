@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/comp_meca_pvar.h"
 #include "asterfort/comp_meca_read.h"
 #include "asterfort/getBehaviourAlgo.h"
+#include "asterfort/getExternalBehaviourPntr.h"
 #include "asterfort/imvari.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -72,10 +73,12 @@ character(len=16), intent(out) :: mult_comp
     character(len=16) :: keywordfact
     character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp, meca_comp
     character(len=16) :: kit_comp(4), type_cpla, post_iter
-    aster_logical :: l_kit_thm, l_etat_init, l_implex, plane_stress
+    aster_logical :: l_kit_thm, l_etat_init, l_implex, plane_stress, l_comp_external
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
     type(NL_DS_ComporPrep) :: ds_compor_prep
     type(NL_DS_ComporParaPrep) :: ds_compor_para
+    integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
+    integer :: cptr_nameprop=0, cptr_nbprop=0
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -121,6 +124,7 @@ character(len=16), intent(out) :: mult_comp
     kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
     mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
     post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
+
     call comp_meca_l(rela_comp, 'KIT_THM'  , l_kit_thm)
     if (l_kit_thm) then
         call utmess('F', 'COMPOR2_7')
@@ -162,7 +166,6 @@ character(len=16), intent(out) :: mult_comp
     plane_stress = .false.
     rela_comp    = ds_compor_para%v_para(i_comp)%rela_comp
     meca_comp    = ds_compor_para%v_para(i_comp)%meca_comp
-
     call getBehaviourAlgo(plane_stress, rela_comp  , meca_comp,&
                           keywordfact , i_comp     ,&
                           algo_inte   , algo_inte_r)
@@ -176,6 +179,17 @@ character(len=16), intent(out) :: mult_comp
         call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_RELA', resi_inte_rela)
     endif
     call nmdocv(keywordfact, i_comp, algo_inte, 'ITER_INTE_MAXI', iter_inte_maxi)
+!
+! - Get function pointers for external programs (MFRONT/UMAT)
+!
+    i_comp = 1
+    l_comp_external = ds_compor_para%v_para(i_comp)%l_comp_external
+    if (l_comp_external) then
+        call getExternalBehaviourPntr(ds_compor_para%v_para(i_comp)%comp_exte,&
+                                      cptr_fct_ldc ,&
+                                      cptr_nbvarext, cptr_namevarext,&
+                                      cptr_nbprop  , cptr_nameprop)
+    endif
 !  
 ! - Save in list
 !
@@ -190,17 +204,17 @@ character(len=16), intent(out) :: mult_comp
     carcri(9)  = ds_compor_para%v_para(i_comp)%iter_deborst_max
     carcri(10) = ds_compor_para%v_para(i_comp)%resi_radi_rela
     carcri(13) = ds_compor_para%v_para(i_comp)%ipostiter
-    carcri(14) = ds_compor_para%v_para(i_comp)%c_pointer%nbvarext
-    carcri(15) = ds_compor_para%v_para(i_comp)%c_pointer%namevarext
-    carcri(16) = ds_compor_para%v_para(i_comp)%c_pointer%fct_ldc
+    carcri(14) = cptr_nbvarext
+    carcri(15) = cptr_namevarext
+    carcri(16) = cptr_fct_ldc
+    carcri(19) = cptr_nameprop
+    carcri(20) = cptr_nbprop
     if (ds_compor_para%v_para(i_comp)%l_matr_unsymm) then
         carcri(17) = 1
     else
         carcri(17) = 0
     endif
     carcri(18) = 0
-    carcri(19) = ds_compor_para%v_para(i_comp)%c_pointer%matprop
-    carcri(20) = ds_compor_para%v_para(i_comp)%c_pointer%nbprop
     carcri(21) = ds_compor_para%v_para(i_comp)%ipostincr
 !
 ! - Cleaning
