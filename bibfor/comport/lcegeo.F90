@@ -74,7 +74,7 @@ real(kind=8), intent(out) :: elgeom(10, npg)
     if (tabcod(ELTSIZE1) .eq. 1) then
         call calcExternalStateVariable1(nno     , npg    , &
                                         jv_poids, jv_func, jv_dfunc,&
-                                        geom    , typmod , elgeom)
+                                        geom    , typmod )
     endif
 !
 ! - Coordinates of Gauss points

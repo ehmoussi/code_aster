@@ -781,7 +781,7 @@ implicit none
         call lc0120(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
     case (137)
 !     MONOCRISTAL, POLYCRISTAL

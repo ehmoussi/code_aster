@@ -20,7 +20,7 @@
 !
 interface
     subroutine lcplbe(toler, itmax, nmat, materf, nvi,&
-                      vind, sigf, vinf, elgeom, nseuil,&
+                      vind, sigf, vinf, nseuil,&
                       irteti)
         integer :: nmat
         real(kind=8) :: toler
@@ -30,7 +30,6 @@ interface
         real(kind=8) :: vind(*)
         real(kind=8) :: sigf(6)
         real(kind=8) :: vinf(*)
-        real(kind=8) :: elgeom(*)
         integer :: nseuil
         integer :: irteti
     end subroutine lcplbe

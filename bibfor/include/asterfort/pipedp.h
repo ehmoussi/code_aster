@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine pipedp(kpg, ksp, ndim, typmod, mate,&
                       epsm, sigm, vim, epsp, epsd,&
-                      elgeom, a0, a1)
+                      a0, a1)
         integer :: kpg
         integer :: ksp
         integer :: ndim
@@ -32,7 +30,6 @@ interface
         real(kind=8) :: vim(2)
         real(kind=8) :: epsp(6)
         real(kind=8) :: epsd(6)
-        real(kind=8) :: elgeom(*)
         real(kind=8) :: a0
         real(kind=8) :: a1
     end subroutine pipedp

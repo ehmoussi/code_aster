@@ -15,16 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 ! aslint: disable=W1504
 !
 interface
     subroutine lc0120(fami, kpg, ksp, ndim, imate,&
                       compor, crit, instam, instap, epsm,&
                       deps, sigm, vim, option, angmas,&
-                      sigp, vip, tampon, typmod, icomp,&
+                      sigp, vip, typmod, icomp,&
                       nvi, dsidep, codret)
         character(len=*) :: fami
         integer :: kpg
@@ -43,7 +40,6 @@ interface
         real(kind=8) :: angmas(*)
         real(kind=8) :: sigp(6)
         real(kind=8) :: vip(*)
-        real(kind=8) :: tampon(*)
         character(len=8) :: typmod(*)
         integer :: icomp
         integer :: nvi
