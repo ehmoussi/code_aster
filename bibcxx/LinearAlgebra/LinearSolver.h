@@ -377,7 +377,7 @@ class LinearSolverInstance: public DataStructure
          * @brief Factorisation d'une matrice
          * @param currentMatrix Matrice assemblee
          */
-        bool matrixFactorization( const AssemblyMatrixDoublePtr currentMatrix ) const;
+        bool matrixFactorization( AssemblyMatrixDoublePtr currentMatrix ) throw( std::runtime_error );
 
         /**
          * @brief Inversion du systeme lineaire

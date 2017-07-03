@@ -74,8 +74,11 @@ bool LinearSolverInstance::build()
     return true;
 };
 
-bool LinearSolverInstance::matrixFactorization( const AssemblyMatrixDoublePtr currentMatrix ) const
+bool LinearSolverInstance::matrixFactorization( AssemblyMatrixDoublePtr currentMatrix )
+     throw( std::runtime_error )
 {
+    if( _isEmpty ) build();
+
     const std::string solverName( getName() + "           " );
     std::string base( "V" );
     if ( currentMatrix->getMemoryType() == Permanent )
@@ -90,6 +93,7 @@ bool LinearSolverInstance::matrixFactorization( const AssemblyMatrixDoublePtr cu
 
     CALL_MATRIX_FACTOR( solverName.c_str(), base.c_str(), &cret, matpre.c_str(),
                         matass.c_str(), &npvneg, &istop );
+    currentMatrix->_isFactorized = true;
 
     return true;
 };
@@ -98,6 +102,8 @@ FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystemMatrixRHS(
             const AssemblyMatrixDoublePtr& currentMatrix,
             const FieldOnNodesDoublePtr& currentRHS ) const
 {
+    if( ! currentMatrix->_isFactorized )
+        throw std::runtime_error( "Matrix not factorized" );
     std::string newName( getNewResultObjectName() );
     newName.resize( 19, ' ' );
     FieldOnNodesDoublePtr returnField( new FieldOnNodesDoubleInstance( newName ) );

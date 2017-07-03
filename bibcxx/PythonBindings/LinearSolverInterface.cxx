@@ -98,6 +98,7 @@ void exportLinearSolverToPython()
         .staticmethod( "create" )
         .def( "solveDoubleLinearSystem", &LinearSolverInstance::solveDoubleLinearSystemMatrixRHS )
         .def( "disablePreprocessing", &LinearSolverInstance::disablePreprocessing )
+        .def( "matrixFactorization", &LinearSolverInstance::matrixFactorization )
         .def( "setAlgorithm", &LinearSolverInstance::setAlgorithm )
         .def( "setDistributedMatrix", &LinearSolverInstance::setDistributedMatrix )
         .def( "setErrorOnMatrixSingularity",

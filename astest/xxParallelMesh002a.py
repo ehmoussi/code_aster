@@ -36,7 +36,7 @@ MODT=AFFE_MODELE(MAILLAGE=MAIL,
 charCine = code_aster.KinematicsLoad.create()
 charCine.setSupportModel(MODT)
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "EncastN")
-charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "EncastN")
+charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 0., "EncastN")
 charCine.build()
 
 CHT1 = AFFE_CHAR_MECA(MODELE=MODT,
@@ -69,7 +69,7 @@ matrAsse.build()
 
 retour = vect_elem.assembleVector( numeDDL )
 
-
+monSolver.matrixFactorization( matrAsse )
 resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
 #resu.debugPrint(6)
 

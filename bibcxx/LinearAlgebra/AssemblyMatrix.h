@@ -47,6 +47,8 @@
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
 
+class LinearSolverInstance;
+
 /**
  * @class AssemblyMatrixInstance
  * @brief Classe template definissant une sd_matr_asse.
@@ -75,8 +77,12 @@ class AssemblyMatrixInstance: public DataStructure
         BaseDOFNumberingPtr           _dofNum;
         /** @brief La matrice est elle vide ? */
         bool                          _isEmpty;
+        /** @brief La matrice est elle vide ? */
+        bool                          _isFactorized;
         /** @brief Liste de charges cinematiques */
         ListOfLoadsPtr                _listOfLoads;
+
+        friend class LinearSolverInstance;
 
     public:
         /**
@@ -146,9 +152,18 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Methode permettant de savoir si la matrice est vide
          * @return true si vide
          */
-        bool isEmpty()
+        bool isEmpty() const
         {
             return _isEmpty;
+        };
+
+        /**
+         * @brief Methode permettant de savoir si la matrice est vide
+         * @return true si vide
+         */
+        bool isFactorized() const
+        {
+            return _isFactorized;
         };
 
         /**
@@ -206,6 +221,7 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const JeveuxMemory 
                 _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
                 _isEmpty( true ),
+                _isFactorized( false ),
                 _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance( memType ) ) )
 {};
 
@@ -216,6 +232,7 @@ AssemblyMatrixInstance< ValueType >::AssemblyMatrixInstance( const std::string& 
                 _matrixValues( JeveuxCollection< ValueType >( getName() + "           .VALM" ) ),
                 _scaleFactorLagrangian( JeveuxVectorDouble( getName() + "           .CONL" ) ),
                 _isEmpty( true ),
+                _isFactorized( false ),
                 _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )
 {};
 
