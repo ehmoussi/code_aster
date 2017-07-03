@@ -115,7 +115,7 @@ implicit none
 !
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
                 geomi, typmod, ivariexte, 2,&
-                deplm, deplp, elgeom)
+                deplm, deplp)
 !
 !     INITIALISATION CODES RETOURS
 !

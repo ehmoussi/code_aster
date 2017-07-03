@@ -161,7 +161,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 ! - LES ARGUMENTS DFDIB, DEPLB1, DEPLB2 NE SERVENT PAS DANS CE CAS
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
                 zr(igeom), typmod, ivariexte, ndim,&
-                deplb1, deplb2, elgeom)
+                deplb1, deplb2)
 !
     do n = 1, nnop
         call indent(n, ddls, ddlm, nnops, dec(n))

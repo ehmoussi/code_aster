@@ -19,7 +19,7 @@
 subroutine lcdpec(vind, nbcomm, nmat, ndt, cpmono,&
                   materf, iter, nvi, itmax, toler,&
                   pgl, nfs, nsg, toutms, hsr,&
-                  dt, dy, yd, vinf, tampon,&
+                  dt, dy, yd, vinf, &
                   sigf, df, nr, mod,&
                   codret)
 ! aslint: disable=W1306,W1504
@@ -43,7 +43,6 @@ subroutine lcdpec(vind, nbcomm, nmat, ndt, cpmono,&
 !     DT     :  INCREMENT DE TEMPS
 !     DY     :  INCREMENT DES VARIABLES Y
 !     YD     :  VARIABLES A T   = ( SIGD  VARD  )
-!     TAMPON :  DONNES GEOM SUIVANT LE TE APPELANT
 !     COMP   :  COMPOR - LOI ET TYPE DE DEFORMATION
 !     SIGF   :  CONRIANTES DE CAUCHY (HPP) OU KIRCHHOFF (GDEF)
 !     DF     :  GRADIENT DF
@@ -77,7 +76,7 @@ subroutine lcdpec(vind, nbcomm, nmat, ndt, cpmono,&
     real(kind=8) :: devi(6), toutms(nfs, nsg, 6), toler, hsr(nsg, nsg)
     real(kind=8) :: taus, fkooh(6, 6), msns(3, 3), yd(*), iden(3, 3)
     real(kind=8) :: crit, sgns, dt, omp(3), qm(3, 3), fp(3, 3)
-    real(kind=8) :: sicl, lg(3), tampon(*), rp, tau(60)
+    real(kind=8) :: sicl, lg(3), rp, tau(60)
     real(kind=8) :: pk2(6), df(3, 3), id6(6), expbp(nsg)
     real(kind=8) :: fetfe6(6), gamsns(3, 3), fe(3, 3), sigf(6), rhoirr(12), xi
     real(kind=8) :: rhosat, phisat, dz, roloop(12), fivoid(12), sdp, dps(30)
@@ -271,7 +270,7 @@ subroutine lcdpec(vind, nbcomm, nmat, ndt, cpmono,&
 !
 !     ROTATION RESEAU DEBUT
     if (ir .eq. 1) then
-        call lcmmro(tampon, omp, nvi, vind, vinf)
+        call lcmmro(omp, nvi, vind, vinf)
     endif
 ! ROTATION RESEAU FIN
 !

@@ -114,7 +114,7 @@ implicit none
 !
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
                 geom, typmod, ivariexte, 2,&
-                zr(ideplm), zr(ideplp), elgeom)
+                zr(ideplm), zr(ideplp))
 !
 ! - INITIALISATION CODES RETOURS
     do kpg = 1, npg

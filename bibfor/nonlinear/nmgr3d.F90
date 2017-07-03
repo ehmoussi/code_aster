@@ -133,7 +133,7 @@ implicit none
 !
     call lcegeo(nno  , npg   , ipoids   , ivf, idfde,&
                 geomi, typmod, ivariexte, 3  , &
-                deplm, deplp , elgeom)
+                deplm, deplp )
 !
 ! - Only isotropic material !
 !

@@ -129,7 +129,7 @@ implicit none
 !
     call lcegeo(nno  , npg   , ipoids   , ivf, idfde,&
                 geom , typmod, ivariexte, 3  , &
-                deplm, deplp , elgeom)
+                deplm, deplp )
 !
 ! - Loop on Gauss points
 !

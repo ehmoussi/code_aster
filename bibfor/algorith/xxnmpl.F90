@@ -148,7 +148,7 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
                 zr(igeom), typmod, ivariexte, ndim,&
-                deplb1, deplb2, elgeom)
+                deplb1, deplb2)
 !
     do n = 1, nnop
         call indent(n, ddls, ddlm, nnops, dec(n))
