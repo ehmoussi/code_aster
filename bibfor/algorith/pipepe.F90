@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
                   ivf, idfde, geom, typmod, mate,&
                   compor, lgpg, deplm, sigm, vim,&
                   ddepl, depl0, depl1, copilo,&
-                  elgeom, iborne, ictau)
+                  iborne, ictau)
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-! aslint: disable=W1504
-    implicit none
+
+implicit none
 !
 #include "jeveux.h"
 #include "asterc/matfpe.h"
@@ -36,15 +36,16 @@ subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
 #include "asterfort/pipdef.h"
 #include "asterfort/r8inir.h"
 #include "blas/dcopy.h"
-    integer :: ndim, nno, npg
-    integer :: mate, ipoids, ivf, idfde
-    integer :: lgpg, iborne, ictau
-    character(len=8) :: typmod(*)
-    character(len=16) :: pilo, compor(*)
-    real(kind=8) :: geom(ndim, *), deplm(*), ddepl(*)
-    real(kind=8) :: sigm(2*ndim, npg), vim(lgpg, npg)
-    real(kind=8) :: depl0(*), depl1(*)
-    real(kind=8) :: copilo(5, npg), elgeom(10, *)
+!
+integer :: ndim, nno, npg
+integer :: mate, ipoids, ivf, idfde
+integer :: lgpg, iborne, ictau
+character(len=8) :: typmod(*)
+character(len=16) :: pilo, compor(*)
+real(kind=8) :: geom(ndim, *), deplm(*), ddepl(*)
+real(kind=8) :: sigm(2*ndim, npg), vim(lgpg, npg)
+real(kind=8) :: depl0(*), depl1(*)
+real(kind=8) :: copilo(5, npg)
 !
 ! ----------------------------------------------------------------------
 !
@@ -74,9 +75,6 @@ subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
 ! IN  VIM    : VARIABLES INTERNES EN T-
 ! IN  DEPL0  : CORRECTION DE DEPLACEMENT POUR FORCES FIXES
 ! IN  DEPL1  : CORRECTION DE DEPLACEMENT POUR FORCES PILOTEES
-! IN  ELGEOM : TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES AUX LOIS
-!              DE COMPORTEMENT (DIMENSION MAXIMALE FIXEE EN DUR, EN
-!              FONCTION DU NOMBRE MAXIMAL DE POINT DE GAUSS)
 ! IN  IBORNE : ADRESSE JEVEUX POUR BORNES PILOTAGE
 ! IN  ICTAU  : ADRESSE JEVEUX POUR PARAMETRE PILOTAGE
 ! OUT COPILO : COEFFICIENTS A0 ET A1 POUR CHAQUE POINT DE GAUSS
@@ -135,7 +133,7 @@ subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
 70          continue
 !
             call pielas(ndim, npg, kpg, compor, typmod,&
-                        mate, elgeom, lgpg, vim, epsm,&
+                        mate, lgpg, vim, epsm,&
                         epsp, epsd, sigma, etamin, etamax,&
                         tau, copilo)
         else

@@ -19,12 +19,11 @@
 !
 !
 interface
-    subroutine betfpp(materf, nmat, elgeom, pc, pt,&
+    subroutine betfpp(materf, nmat, pc, pt,&
                       nseuil, fc, ft, dfcdlc, dftdlt,&
                       kuc, kut, ke)
         integer :: nmat
         real(kind=8) :: materf(nmat, 2)
-        real(kind=8) :: elgeom(*)
         real(kind=8) :: pc
         real(kind=8) :: pt
         integer :: nseuil

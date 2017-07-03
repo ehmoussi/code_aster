@@ -16,8 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine calcExternalStateVariable1(nno , npg   , jv_poids, jv_func, jv_dfunc,&
-                                      geom, typmod, elgeom)
+subroutine calcExternalStateVariable1(nno     , npg    ,&
+                                      jv_poids, jv_func, jv_dfunc,&
+                                      geom    , typmod)
+!
+use calcul_module, only : ca_vext_eltsize1_
 !
 implicit none
 !
@@ -32,7 +35,6 @@ integer, intent(in) :: nno, npg
 integer, intent(in) :: jv_poids, jv_func, jv_dfunc
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: geom(3, nno)
-real(kind=8), intent(out) :: elgeom(10, npg)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,7 +51,6 @@ real(kind=8), intent(out) :: elgeom(10, npg)
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
 ! In  typmod           : type of modelization (TYPMOD2)
 ! In  geom             : initial coordinates of nodes
-! Out elgeom           : size of element
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -104,8 +105,6 @@ real(kind=8), intent(out) :: elgeom(10, npg)
         ASSERT(.false.)
     endif
 !
-    do kpg = 1, npg
-        elgeom(1,kpg) = lc
-    end do
+    ca_vext_eltsize1_ = lc
 !
 end subroutine

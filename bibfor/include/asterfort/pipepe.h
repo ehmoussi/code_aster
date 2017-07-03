@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
                       ivf, idfde, geom, typmod, mate,&
                       compor, lgpg, deplm, sigm, vim,&
                       ddepl, depl0, depl1, copilo,&
-                      elgeom, iborne, ictau)
+                      iborne, ictau)
         integer :: lgpg
         integer :: npg
         integer :: ndim
@@ -43,7 +41,6 @@ interface
         real(kind=8) :: depl0(*)
         real(kind=8) :: depl1(*)
         real(kind=8) :: copilo(5, npg)
-        real(kind=8) :: elgeom(10, *)
         integer :: iborne
         integer :: ictau
     end subroutine pipepe

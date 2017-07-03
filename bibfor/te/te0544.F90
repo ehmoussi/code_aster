@@ -118,6 +118,6 @@ subroutine te0544(option, nomte)
                 ivf, idfde, zr(igeom), typmod, zi(imate),&
                 zk16(icompo), lgpg, zr(ideplm), zr(icontm), zr(ivarim),&
                 zr(iddepl), zr(idepl0), zr(idepl1), zr(icopil),&
-                elgeom, iborne, ictau)
+                iborne, ictau)
 !
 end subroutine

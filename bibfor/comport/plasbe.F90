@@ -15,13 +15,34 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine plasbe(fami, kpg, ksp, typmod, imat,&
                   crit, epsdt, depst, sigd, vind,&
-                  opt, elgeom, sigf, vinf, dsde,&
+                  opt, sigf, vinf, dsde,&
                   icomp, nvi, irteti)
-    implicit none
 !
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterc/r8nnem.h"
+#include "asterfort/assert.h"
+#include "asterfort/betcvx.h"
+#include "asterfort/betimp.h"
+#include "asterfort/betjpl.h"
+#include "asterfort/betmat.h"
+#include "asterfort/codent.h"
+#include "asterfort/lcdedi.h"
+#include "asterfort/lcdehy.h"
+#include "asterfort/lcelin.h"
+#include "asterfort/lceqvn.h"
+#include "asterfort/lcopli.h"
+#include "asterfort/lcplbe.h"
+#include "asterfort/rcvarc.h"
+#include "asterfort/tecael.h"
+#include "asterfort/utmess.h"
+!
+
 !       ================================================================
 !       INTEGRATION DE LOIS DE COMPORTEMENT ELASTO PLASTIQUE ET VISCO
 !       PLASTIQUE
@@ -105,9 +126,6 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
 !                                 (RESI_INTE_PAS == ITEDEC )
 !                                 0 = PAS DE REDECOUPAGE
 !                                 N = NOMBRE DE PALIERS
-!               ELGEOM  TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES
-!                       AUX LOIS DE COMPORTEMENT (DIMENSION MAXIMALE
-!                       FIXEE EN DUR)
 !               EPSDT   DEFORMATION TOTALE A T
 !               DEPST   INCREMENT DE DEFORMATION TOTALE
 !               SIGD    CONTRAINTE A T
@@ -148,24 +166,6 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
 !       PRODUITS TENSORIELS ET CONSERVATION DE LA SYMETRIE
 !
 !       ----------------------------------------------------------------
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterc/r8nnem.h"
-#include "asterfort/assert.h"
-#include "asterfort/betcvx.h"
-#include "asterfort/betimp.h"
-#include "asterfort/betjpl.h"
-#include "asterfort/betmat.h"
-#include "asterfort/codent.h"
-#include "asterfort/lcdedi.h"
-#include "asterfort/lcdehy.h"
-#include "asterfort/lcelin.h"
-#include "asterfort/lceqvn.h"
-#include "asterfort/lcopli.h"
-#include "asterfort/lcplbe.h"
-#include "asterfort/rcvarc.h"
-#include "asterfort/tecael.h"
-#include "asterfort/utmess.h"
     integer :: imat, ndt, ndi, nr, nvi
     integer :: itmax, icomp
     integer :: nmat, irtet, irteti, nseui4
@@ -185,7 +185,6 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
     real(kind=8) :: crit(*)
     real(kind=8) :: vind(*), vinf(*)
     real(kind=8) :: tempd, tempf
-    real(kind=8) :: elgeom(*)
     real(kind=8) :: epsd(6), deps(6)
     real(kind=8) :: epsdt(6), depst(6)
     real(kind=8) :: sigd(6), sigf(6), sige(6)
@@ -293,21 +292,17 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
 !  -->  REDECOUPAGE IMPOSE
     if (icomp .eq. -1 .and. opt .ne. 'RIGI_MECA_TANG') then
         irteti = 0
-        goto 9999
+        goto 999
     endif
 !
 !       ----------------------------------------------------------------
 !       OPTIONS 'FULL_MECA' ET 'RAPH_MECA' = CALCUL DE SIG(T+DT)
 !       ----------------------------------------------------------------
 !
-!        IF ( OPT .EQ. 'RAPH_MECA' .OR. OPT .EQ. 'FULL_MECA' ) THEN
     if (resi) then
 !
 ! --    INTEGRATION ELASTIQUE SUR DT
 !
-!       CALL LCELAS ( LOI  ,MOD ,  IMAT,  NMAT, MATERD, MATERF, MATCST,
-!    1                NVI,  TEMPD, TEMPF, TIMED,TIMEF,  DEPS,   EPSD,
-!    2                SIGD ,VIND,  SIGE,  VINF )
         call lcelin(mod, nmat, materd, materf, deps,&
                     sigd, sige)
         call lceqvn(nvi-1, vind, vinf)
@@ -325,7 +320,7 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
 ! --    PREDICTION ETAT ELASTIQUE A T+DT : F(SIG(T+DT),VIN(T)) = 0 ?
 !
         call betcvx(nmat, materf, sigf, vind, vinf,&
-                    elgeom, nvi, nseuil)
+                    nvi, nseuil)
 !
         if (nseuil .ge. 0) then
 !
@@ -335,12 +330,12 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
 !
             nseui1 = nseuil
             call lcplbe(toler, itmax, nmat, materf, nvi,&
-                        vind, sigf, vinf, elgeom, nseuil,&
+                        vind, sigf, vinf, nseuil,&
                         irtet)
 !           GOTO (1), IRTET
 !
             call betcvx(nmat, materf, sigf, vind, vinf,&
-                        elgeom, nvi, nseuil)
+                        nvi, nseuil)
             nseui2 = nseuil
 !
             if (nseui2 .gt. 0) then
@@ -363,12 +358,12 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
                 endif
                 call lceqvn(ndt, sige, sigf)
                 call lcplbe(toler, itmax, nmat, materf, nvi,&
-                            vind, sigf, vinf, elgeom, nseuil,&
+                            vind, sigf, vinf, nseuil,&
                             irtet)
 !              GOTO (1), IRTET
 !
                 call betcvx(nmat, materf, sigf, vind, vinf,&
-                            elgeom, nvi, nseuil)
+                            nvi, nseuil)
                 nseui3 = nseuil
             endif
 !
@@ -388,12 +383,12 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
                 endif
                 call lceqvn(ndt, sige, sigf)
                 call lcplbe(toler, itmax, nmat, materf, nvi,&
-                            vind, sigf, vinf, elgeom, nseuil,&
+                            vind, sigf, vinf, nseuil,&
                             irtet)
 !              GOTO (1), IRTET
 !
                 call betcvx(nmat, materf, sigf, vind, vinf,&
-                            elgeom, nvi, nseuil)
+                            nvi, nseuil)
                 nseui4 = nseuil
             endif
 !
@@ -411,12 +406,12 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
                 nseui4 = nseuil
                 call lceqvn(ndt, sige, sigf)
                 call lcplbe(toler, itmax, nmat, materf, nvi,&
-                            vind, sigf, vinf, elgeom, nseuil,&
+                            vind, sigf, vinf, nseuil,&
                             irtet)
 !             GOTO (1), IRTET
 !
                 call betcvx(nmat, materf, sigf, vind, vinf,&
-                            elgeom, nvi, nseuil)
+                            nvi, nseuil)
             endif
 !
             if (nseuil .ge. 0) then
@@ -442,13 +437,9 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
 !       ET CALCUL ELASTIQUE    ET   A (T)    POUR 'RIGI_MECA_TANG'
 !       ----------------------------------------------------------------
 !
-!        IF ( OPT .EQ. 'RIGI_MECA_TANG' .OR. OPT .EQ. 'FULL_MECA' ) THEN
     if (rigi) then
         if (opt(1:9) .eq. 'RIGI_MECA') then
             if (( etatd.eq.'ELASTIC' ) .or. ( opt(10:14).eq.'_ELAS' )) then
-!
-!           CALL LCJELA ( LOI  , MOD ,  IMAT,  NMAT, MATERD, NVI,
-!    1                    TEMPD, TIMED, DEPS,  EPSD, SIGD ,  VIND, DSDE)
                 call lcopli('ISOTROPE', mod, materd(1, 1), dsde)
             else if (etatd .eq. 'PLASTIC') then
 !   ------> ELASTOPLASTICITE ==> TYPMA = 'VITESSE '
@@ -457,14 +448,12 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
 ! PAS UTILISE ICI  CALL LCJELA ( LOI  , MOD ,  NMAT, MATERD,VIND, DSDE)
                 else if (typma .eq. 'VITESSE ') then
                     call betjpl(mod, nmat, materd, sigd, vind,&
-                                elgeom, dsde)
+                                dsde)
                 endif
             endif
 !
         else if (opt (1:9) .eq. 'FULL_MECA') then
             if (( etatf .eq. 'ELASTIC' ) .or. ( opt(10:14) .eq. '_ELAS' )) then
-!           CALL LCJELA ( LOI  , MOD ,  IMAT,  NMAT, MATERF, NVI,
-!    1                    TEMPF, TIMEF, DEPS,  EPSD, SIGF ,  VINF, DSDE)
                 call lcopli('ISOTROPE', mod, materf(1, 1), dsde)
             else if (etatf .eq. 'PLASTIC') then
 !   ------> ELASTOPLASTICITE ==>  TYPMA = 'VITESSE '
@@ -473,7 +462,7 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
 ! PAS UTILISE ICI  CALL LCJPLC ( LOI  , MOD ,  NMAT, MATERD, DSDE)
                 else if (typma .eq. 'VITESSE ') then
                     call betjpl(mod, nmat, materd, sigf, vinf,&
-                                elgeom, dsde)
+                                dsde)
                 endif
             endif
         endif
@@ -482,19 +471,17 @@ subroutine plasbe(fami, kpg, ksp, typmod, imat,&
 !       ----------------------------------------------------------------
 !
     irteti = 0
-    goto 9999
+    goto 999
   1 continue
     irteti = 1
     call betimp(nmat, materf, sigf, vind, vinf,&
-                elgeom, nseui1, nseui2, nseui3, nseui4,&
+                nseui1, nseui2, nseui3, nseui4,&
                 sige, sigd)
 !
     call tecael(iadzi, iazk24)
     nomail = zk24(iazk24-1+3)(1:8)
     call utmess('A', 'ALGORITH9_95', sk=nomail)
 !
-    goto 9999
-!
-9999 continue
+999 continue
 !
 end subroutine
