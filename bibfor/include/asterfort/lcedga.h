@@ -20,7 +20,7 @@
 !
 interface
     subroutine lcedga(fami, kpg, ksp, ndim, imat,&
-                      crit, typmod, instam, instap, coord,&
+                      crit, typmod, instam, instap,&
                       deps2, sigm2, vim, option, sigp,&
                       vip, dsidep, iret)
         character(len=*), intent(in) :: fami
@@ -32,7 +32,6 @@ interface
         character(len=8), intent(in) :: typmod(2)
         real(kind=8), intent(in) :: instam
         real(kind=8), intent(in) :: instap
-        real(kind=8), intent(in) :: coord(3)
         real(kind=8), intent(in) :: deps2(*)
         real(kind=8), intent(in) :: sigm2(*)
         real(kind=8), intent(in) :: vim(2)
