@@ -133,7 +133,7 @@ implicit none
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES AU COMPORTEMENT
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
                 geom, typmod, ivariexte, 2,&
-                deplm, deplp, elgeom)
+                deplm, deplp)
 !
 ! - INITIALISATION CODES RETOURS
     do kpg = 1, npg

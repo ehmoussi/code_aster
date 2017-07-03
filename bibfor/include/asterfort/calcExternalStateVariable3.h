@@ -19,12 +19,10 @@
 interface
     subroutine calcExternalStateVariable3(nno     , npg    , ndim    ,&
                                           jv_poids, jv_func, jv_dfunc,&
-                                          geom    , deplm  , ddepl   ,&
-                                          elgeom)
+                                          geom    , deplm  , ddepl   )
         integer, intent(in) :: nno, npg, ndim
         integer, intent(in) :: jv_poids, jv_func, jv_dfunc
         real(kind=8), intent(in) :: geom(3, nno)
         real(kind=8), intent(in) :: deplm(3, nno), ddepl(3, nno)
-        real(kind=8), intent(out) :: elgeom(10, npg)
     end subroutine calcExternalStateVariable3
 end interface

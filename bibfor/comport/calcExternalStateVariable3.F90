@@ -18,8 +18,9 @@
 !
 subroutine calcExternalStateVariable3(nno     , npg    , ndim    ,&
                                       jv_poids, jv_func, jv_dfunc,&
-                                      geom    , deplm  , ddepl   ,&
-                                      elgeom)
+                                      geom    , deplm  , ddepl   )
+!
+use calcul_module, only : ca_vext_gradvelo_
 !
 implicit none
 !
@@ -36,7 +37,6 @@ integer, intent(in) :: nno, npg, ndim
 integer, intent(in) :: jv_poids, jv_func, jv_dfunc
 real(kind=8), intent(in) :: geom(3, nno)
 real(kind=8), intent(in) :: deplm(3, nno), ddepl(3, nno)
-real(kind=8), intent(out) :: elgeom(10, npg)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +55,6 @@ real(kind=8), intent(out) :: elgeom(10, npg)
 ! In  geom             : initial coordinates of nodes
 ! In  deplm            : displacements of nodes at beginning of time step
 ! In  ddepl            : displacements of nodes since beginning of time step
-! Out elgeom           : size of element
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,6 +68,7 @@ real(kind=8), intent(out) :: elgeom(10, npg)
 ! --------------------------------------------------------------------------------------------------
 !
     nddl = ndim*nno
+    ca_vext_gradvelo_(:) = 0.d0
 !
     call dcopy(nddl, geom, 1, geomm, 1)
     call daxpy(nddl, 1.d0, deplm, 1, geomm, 1)
@@ -88,7 +88,7 @@ real(kind=8), intent(out) :: elgeom(10, npg)
         call pmat(3, df, fmm, l)
         do i = 1, 3
             do j = 1, 3
-                elgeom(3*(i-1)+j,kpg)=l(i,j)
+                ca_vext_gradvelo_(3*(i-1)+j)=l(i,j)
             end do
         end do
     end do

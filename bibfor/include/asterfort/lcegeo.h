@@ -19,13 +19,12 @@
 interface
     subroutine lcegeo(nno, npg, jv_poids, jv_func, jv_dfunc,&
                       geom, typmod, ivariexte, ndim,&
-                      deplm, ddepl, elgeom)
+                      deplm, ddepl)
         integer, intent(in) :: nno, npg, ndim
         integer, intent(in) :: jv_poids, jv_func, jv_dfunc
         character(len=8), intent(in) :: typmod(2)
         real(kind=8), intent(in) :: geom(3, nno)
         real(kind=8), intent(in) :: deplm(3, nno), ddepl(3, nno)
         integer, intent(in) :: ivariexte
-        real(kind=8), intent(out) :: elgeom(10, npg)
     end subroutine lcegeo
 end interface

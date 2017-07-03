@@ -47,9 +47,6 @@ subroutine te0544(option, nomte)
     integer :: ipoids, ivf, idfde, igeom, imate
     integer :: icontm, ivarim, icopil, iborne, ictau, iret
     integer :: ideplm, iddepl, idepl0, idepl1, icompo, itype, ivariexte, icarcr
-    real(kind=8) :: elgeom(10, 27)
-!
-!
 !
 ! - TYPE DE MODELISATION
     typmod(2) = 'GRADEPSI'
@@ -106,7 +103,7 @@ subroutine te0544(option, nomte)
         ivariexte = nint(zr(icarcr-1+IVARIEXTE))
         call lcegeo(nno, npg, ipoids, ivf, idfde,&
                     zr(igeom), typmod, ivariexte, ndim,&
-                    zr(ideplm), zr(iddepl), elgeom)
+                    zr(ideplm), zr(iddepl))
     endif
 !
 ! PARAMETRES EN SORTIE

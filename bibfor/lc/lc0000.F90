@@ -789,7 +789,7 @@ implicit none
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, &
-                    wkin, typmod, icomp, nvi,&
+                    typmod, icomp, nvi,&
                     dsidep, codret)
     case (152)
 !     CABLE_GAINE
@@ -863,7 +863,7 @@ implicit none
                     compor, mult_comp, carcri, instam, instap, neps,&
                     epsm, deps, sigm, vim, option,&
                     angmas, sigp, vip, &
-                    wkin, typmod, icomp, nvi,&
+                    typmod, icomp, nvi,&
                     dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------

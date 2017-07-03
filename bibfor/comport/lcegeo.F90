@@ -18,7 +18,7 @@
 !
 subroutine lcegeo(nno, npg, jv_poids, jv_func, jv_dfunc,&
                   geom, typmod, ivariexte, ndim,&
-                  deplm, ddepl, elgeom)
+                  deplm, ddepl)
 !
 implicit none
 !
@@ -37,7 +37,6 @@ character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: geom(3, nno)
 real(kind=8), intent(in) :: deplm(3, nno), ddepl(3, nno)
 integer, intent(in) :: ivariexte
-real(kind=8), intent(out) :: elgeom(10, npg)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -90,8 +89,7 @@ real(kind=8), intent(out) :: elgeom(10, npg)
     if (tabcod(GRADVELO) .eq. 1) then
         call calcExternalStateVariable3(nno     , npg    , ndim    ,&
                                         jv_poids, jv_func, jv_dfunc,&
-                                        geom    , deplm  , ddepl   ,&
-                                        elgeom)
+                                        geom    , deplm  , ddepl   )
     endif
 !
 ! - Element size 2
