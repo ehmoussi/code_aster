@@ -36,8 +36,6 @@ implicit none
 #include "asterc/lcsymm.h"
 #include "asterfort/jeveuo.h"
 #include "asterc/lcdiscard.h"
-#include "asterc/umat_get_function.h"
-#include "asterc/mfront_get_pointers.h"
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_meca_rkit.h"
 #include "asterfort/comp_meca_code.h"
@@ -65,8 +63,6 @@ aster_logical, intent(in), optional :: l_implex_
 !
     character(len=16) :: keywordfact=' ', answer
     integer :: i_comp=0, iret=0, nb_comp=0
-    integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
-    integer :: cptr_matprop=0, cptr_nbprop=0
     character(len=16) :: type_matr_tang=' ', method=' ', post_iter=' ', post_incr=' '
     real(kind=8) :: parm_theta=0.d0, vale_pert_rela=0.d0
     real(kind=8) :: resi_deborst_max=0.d0
@@ -79,11 +75,10 @@ aster_logical, intent(in), optional :: l_implex_
     character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
     character(len=16) :: defo_comp=' ',  rela_comp=' '
     character(len=16) :: thmc_comp=' ', hydr_comp=' ', ther_comp=' ', meca_comp=' '
-    aster_logical :: l_kit_thm=.false._1, l_mfront_proto=.false._1, l_kit_ddi = .false._1
-    aster_logical :: l_mfront_offi=.false._1, l_umat=.false._1, l_kit = .false._1, l_matr_unsymm
+    aster_logical :: l_kit_thm=.false._1, l_kit_ddi = .false._1
+    aster_logical :: l_kit = .false._1, l_matr_unsymm
     aster_logical :: l_implex, l_comp_external
-    character(len=16) :: texte(3)=(/ ' ',' ',' '/), model_mfront=' '
-    character(len=255) :: libr_name=' ', subr_name=' '
+    character(len=16) :: texte(3)=(/ ' ',' ',' '/)
     integer, pointer :: v_model_elem(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -295,34 +290,6 @@ aster_logical, intent(in), optional :: l_implex_
                                       l_comp_external, ds_compor_para%v_para(i_comp)%comp_exte,&
                                       keywordfact    , i_comp)
 !
-! ----- Get function pointers for external programs (MFRONT/UMAT)
-!
-        l_mfront_offi   = ds_compor_para%v_para(i_comp)%comp_exte%l_mfront_offi
-        l_mfront_proto  = ds_compor_para%v_para(i_comp)%comp_exte%l_mfront_proto
-        l_umat          = ds_compor_para%v_para(i_comp)%comp_exte%l_umat
-        libr_name       = ds_compor_para%v_para(i_comp)%comp_exte%libr_name 
-        subr_name       = ds_compor_para%v_para(i_comp)%comp_exte%subr_name
-        model_mfront    = ds_compor_para%v_para(i_comp)%comp_exte%model_mfront
-        cptr_nbvarext   = 0
-        cptr_namevarext = 0
-        cptr_fct_ldc    = 0
-        if ( l_mfront_offi .or. l_mfront_proto) then
-            call mfront_get_pointers(libr_name, subr_name, model_mfront,&
-                                     cptr_nbvarext, cptr_namevarext,&
-                                     cptr_fct_ldc,&
-                                     cptr_matprop, cptr_nbprop)
-        elseif ( l_umat ) then
-            call umat_get_function(libr_name, subr_name, cptr_fct_ldc)
-        endif
-!
-! ----- Ban if RELATION = MFRONT and ITER_INTE_PAS negative
-!
-        if (iter_inte_pas .lt. 0.d0) then
-            if ( l_mfront_offi .or. l_mfront_proto) then
-                call utmess('F', 'COMPOR1_95')
-            end if
-        end if
-!
 ! ----- Discard
 !
         call lcdiscard(meca_code_py)
@@ -343,11 +310,6 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%v_para(i_comp)%ipostiter                = ipostiter
         ds_compor_para%v_para(i_comp)%ipostincr                = ipostincr
         ds_compor_para%v_para(i_comp)%iveriborne               = iveriborne
-        ds_compor_para%v_para(i_comp)%c_pointer%nbvarext       = cptr_nbvarext
-        ds_compor_para%v_para(i_comp)%c_pointer%namevarext     = cptr_namevarext
-        ds_compor_para%v_para(i_comp)%c_pointer%fct_ldc        = cptr_fct_ldc
-        ds_compor_para%v_para(i_comp)%c_pointer%matprop        = cptr_matprop
-        ds_compor_para%v_para(i_comp)%c_pointer%nbprop         = cptr_nbprop
         ds_compor_para%v_para(i_comp)%rela_comp                = rela_comp
         ds_compor_para%v_para(i_comp)%meca_comp                = meca_comp
         ds_compor_para%v_para(i_comp)%l_matr_unsymm            = l_matr_unsymm

@@ -429,16 +429,6 @@ implicit none
         aster_logical                   :: l_implex
     end type NL_DS_ComporPrep
 !
-! - Type: pointer to external constitutive laws
-! 
-    type NL_DS_ComporPointer
-        integer      ::  nbvarext
-        integer      ::  namevarext
-        integer      ::  fct_ldc
-        integer      ::  matprop
-        integer      ::  nbprop
-    end type NL_DS_ComporPointer
-!
 ! - Type: for parameters for constitutive laws
 ! 
     type NL_DS_ComporPara
@@ -457,7 +447,6 @@ implicit none
         aster_logical :: l_matr_unsymm
         character(len=16)         :: rela_comp
         character(len=16)         :: meca_comp
-        type(NL_DS_ComporPointer) :: c_pointer
         type(NL_DS_ComporExte)    :: comp_exte
     end type NL_DS_ComporPara
 !

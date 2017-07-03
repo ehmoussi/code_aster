@@ -30,13 +30,15 @@ implicit none
 #include "asterfort/comp_read_typmod.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/exicp.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jenonu.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmdocv.h"
 #include "asterfort/nocart.h"
+#include "asterfort/exicp.h"
+#include "asterfort/utmess.h"
 #include "asterfort/getBehaviourAlgo.h"
+#include "asterfort/getExternalBehaviourPntr.h"
 #include "asterfort/comp_read_mesh.h"
 #include "asterc/mfront_set_double_parameter.h"
 #include "asterc/mfront_set_integer_parameter.h"
@@ -78,6 +80,8 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
     real(kind=8) :: post_iter, post_incr
     integer :: type_matr_t, iter_inte_pas, iter_deborst_max
     aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi, l_kit_thm
+    integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
+    integer :: cptr_nameprop=0, cptr_nbprop=0
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -109,9 +113,6 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         rela_comp        = ds_compor_para%v_para(i_comp)%rela_comp
         meca_comp        = ds_compor_para%v_para(i_comp)%meca_comp
         l_matr_unsymm    = ds_compor_para%v_para(i_comp)%l_matr_unsymm
-        libr_name        = ds_compor_para%v_para(i_comp)%comp_exte%libr_name
-        subr_name        = ds_compor_para%v_para(i_comp)%comp_exte%subr_name
-        model_mfront     = ds_compor_para%v_para(i_comp)%comp_exte%model_mfront
         l_comp_external  = ds_compor_para%v_para(i_comp)%l_comp_external
 !
 ! ----- Detection of specific cases
@@ -119,6 +120,14 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         call comp_meca_l(rela_comp, 'KIT_THM'     , l_kit_thm)
         call comp_meca_l(rela_comp, 'MFRONT_PROTO', l_mfront_proto)
         call comp_meca_l(rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
+!
+! ----- Ban if RELATION = MFRONT and ITER_INTE_PAS negative
+!
+        if (iter_inte_pas .lt. 0.d0) then
+            if (l_mfront_offi .or. l_mfront_proto) then
+                call utmess('F', 'COMPOR1_95')
+            end if
+        end if
 !
 ! ----- Get list of elements where comportment is defined
 !
@@ -132,6 +141,15 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
                               keywordfact , i_comp     ,&
                               algo_inte   , algo_inte_r)
 !
+! ----- Get function pointers for external programs (MFRONT/UMAT)
+!
+        if (l_comp_external) then
+            call getExternalBehaviourPntr(ds_compor_para%v_para(i_comp)%comp_exte,&
+                                          cptr_fct_ldc ,&
+                                          cptr_nbvarext, cptr_namevarext,&
+                                          cptr_nbprop  , cptr_nameprop)
+        endif
+!
 ! ----- Get RESI_INTE_RELA/ITER_INTE_MAXI
 !
         call nmdocv(keywordfact, i_comp, algo_inte, 'ITER_INTE_MAXI', iter_inte_maxi)
@@ -141,6 +159,10 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
             else
                 call nmdocv(keywordfact, i_comp, algo_inte, 'RESI_INTE_MAXI', resi_inte_rela)
             endif
+
+            libr_name    = ds_compor_para%v_para(i_comp)%comp_exte%libr_name
+            subr_name    = ds_compor_para%v_para(i_comp)%comp_exte%subr_name
+            model_mfront = ds_compor_para%v_para(i_comp)%comp_exte%model_mfront
             call mfront_set_double_parameter(libr_name, subr_name, model_mfront,&
                                              "epsilon", resi_inte_rela)
             call mfront_set_integer_parameter(libr_name, subr_name, model_mfront,&
@@ -166,9 +188,11 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         p_carc_valv(13) = post_iter
         p_carc_valv(21) = post_incr
 !       exte_comp UMAT / MFRONT
-        p_carc_valv(14) = ds_compor_para%v_para(i_comp)%c_pointer%nbvarext
-        p_carc_valv(15) = ds_compor_para%v_para(i_comp)%c_pointer%namevarext
-        p_carc_valv(16) = ds_compor_para%v_para(i_comp)%c_pointer%fct_ldc
+        p_carc_valv(14) = cptr_nbvarext
+        p_carc_valv(15) = cptr_namevarext
+        p_carc_valv(16) = cptr_fct_ldc
+        p_carc_valv(19) = cptr_nameprop
+        p_carc_valv(20) = cptr_nbprop
 !       cf. CALC_POINT_MAT / PMDORC
         if (l_matr_unsymm) then
             p_carc_valv(17) = 1
@@ -177,9 +201,6 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         endif
 !       For THM
         p_carc_valv(18) = parm_alpha
-!       exte_comp UMAT / MFRONT
-        p_carc_valv(19) = ds_compor_para%v_para(i_comp)%c_pointer%matprop
-        p_carc_valv(20) = ds_compor_para%v_para(i_comp)%c_pointer%nbprop
 !
 ! ----- Affect in <CARTE>
 !
