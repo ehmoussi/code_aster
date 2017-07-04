@@ -7,11 +7,14 @@ __all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_CHAR_MECA
            'DEFI_GEOM_FIBRE','DEFI_GRILLE',    'DEFI_GROUP',     'DEFI_INTE_SPEC', 'DEFI_LIST_REEL',
            'DEFI_MATERIAU',  'DEFI_MODELE_GENE','DEFI_NAPPE',    'DEFI_SQUELETTE', 'DEFI_SPEC_TURB',
            'LIRE_MAILLAGE',  'MACR_ELEM_DYNA', 'MACR_ELEM_STAT', 'MECA_STATIQUE',  'MODE_STATIQUE',
-           'MODI_MAILLAGE',  'NUME_DDL',       'NUME_DDL_GENE',  'PROJ_CHAMP',
+           'MODI_MAILLAGE',  'NUME_DDL',       'NUME_DDL_GENE',  'PROJ_CHAMP',     'DEBUT',
+           'FIN'
           ]
 
 from code_aster.Cata.Language.Syntax import _F
 
+from code_aster.Commands.debut import DEBUT
+from code_aster.Commands.fin import FIN
 from code_aster.Commands.affe_cara_elem import AFFE_CARA_ELEM
 from code_aster.Commands.affe_char_cine import AFFE_CHAR_CINE
 from code_aster.Commands.affe_char_meca import AFFE_CHAR_MECA
