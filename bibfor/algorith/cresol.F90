@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cresol(solveu)
+subroutine cresol(solveu, basz)
     use superv_module, only: asthread_blasset
     implicit none
 #include "jeveux.h"
@@ -39,6 +39,7 @@ subroutine cresol(solveu)
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
     character(len=19) :: solveu
+    character(len=1), optional :: basz
 ! person_in_charge: jacques.pellet at edf.fr
 ! ----------------------------------------------------------------------
 !
@@ -131,9 +132,9 @@ subroutine cresol(solveu)
     zslvk = sdsolv('ZSLVK')
     zslvr = sdsolv('ZSLVR')
     zslvi = sdsolv('ZSLVI')
-    call wkvect(solveu//'.SLVK', 'V V K24', zslvk, islvk)
-    call wkvect(solveu//'.SLVR', 'V V R', zslvr, islvr)
-    call wkvect(solveu//'.SLVI', 'V V I', zslvi, islvi)
+    call wkvect(solveu//'.SLVK', 'V '//basz//' K24', zslvk, islvk)
+    call wkvect(solveu//'.SLVR', 'V '//basz//' R', zslvr, islvr)
+    call wkvect(solveu//'.SLVI', 'V '//basz//' I', zslvi, islvi)
 !
 ! ------------------------------------------------------
 ! --- LECTURE MOT-CLE ET REMPLISSAGE DE LA SD_SOLVEUR PROPRE A CHAQUE

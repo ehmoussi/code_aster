@@ -64,7 +64,7 @@ bool LinearSolverInstance::build()
 
     SyntaxMapContainer dict;
     ListSyntaxMapContainer listeSolver = this->buildListSyntax(); 
-   
+
     dict.container[ "SOLVEUR" ] = listeSolver;
     cmdSt.define( dict );
 
