@@ -77,11 +77,11 @@ Le redécoupage local du pas de temps n'est pas compatible avec <%(k1)s>
 La rotation de réseau n'est pas compatible avec RUNGE_KUTTA. Utiliser l'intégration IMPLICITE.
 """),
 
-#    12 : _(u"""
-#   On ne peut pas utiliser les variables de commandes intrinsèques dans SIMU_POINT_MAT en mode POINT.
-#   Elles seront ignorées dans le calcul. 
-#   Si votre loi de comportement en utilise (par exemple ENDO_PORO_BETON, BETON_DOUBLE_DP, MONOCRISTAL ou META_LEMA_ANI), vous aurez des résultats faux ou le calcul n'aboutira pas.
-#"""),
+    12 : _(u"""
+   On ne peut pas utiliser les variables de commandes intrinsèques dans SIMU_POINT_MAT en mode POINT.
+   Elles seront ignorées dans le calcul. 
+   Si votre loi de comportement en utilise (par exemple ENDO_PORO_BETON, BETON_DOUBLE_DP, MONOCRISTAL ou META_LEMA_ANI), vous aurez des résultats faux ou le calcul n'aboutira pas.
+"""),
 
     13 : _(u"""
   LA MODELISATION GRAD_SIGM N'EST COMPATIBLE QU'AVEC LA LOI ENDO_HETEROGENE.

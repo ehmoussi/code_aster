@@ -20,7 +20,7 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
                   he, nfh, ddlc, ddlm, nfe,&
                   instam, instap, ideplp, sigm, vip,&
                   basloc, nnop, npg, typmod, option,&
-                  imate, compor, lgpg, crit, idepl,&
+                  imate, compor, lgpg, carcri, idepl,&
                   lsn, lst, idecpg, sig, vi,&
                   matuu, ivectu, codret, nfiss, heavn, jstno)
 !
@@ -46,14 +46,15 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
 #include "asterfort/iimatu.h"
 #include "asterfort/xnbddl.h"
 #include "asterfort/iselli.h"
+#include "asterfort/Behaviour_type.h"
     integer :: ndim, igeom, imate, lgpg, codret, nnop, npg
-    integer :: nfh, ddlc, ddlm, nfe, idepl, ivectu, ideplp
+    integer :: nfh, ddlc, ddlm, nfe, idepl, ivectu, ideplp, ivariexte
     integer :: nfiss, heavn(nnop, 5), idecpg
     integer :: jstno
     character(len=8) :: elrefp, typmod(*)
     character(len=8) :: elrese
     character(len=16) :: option, compor(4)
-    real(kind=8) :: basloc(3*ndim*nnop), crit(3), he(nfiss)
+    real(kind=8) :: basloc(3*ndim*nnop), carcri(*), he(nfiss)
     real(kind=8) :: lsn(nnop), lst(nnop), coorse(*)
     real(kind=8) :: vi(lgpg, npg), vip(lgpg, npg), sig(2*ndim, npg), matuu(*)
     real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
@@ -105,7 +106,7 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
     real(kind=8) :: rbid33(3, 3), rbid1(1)
     real(kind=8) :: dfdi(nnop, ndim), pff(6, nnop, nnop)
     real(kind=8) :: def(6, nnop, ndim*(1+nfh+nfe*ndim)), r
-    real(kind=8) :: elgeom(10, 27), dfdib(27, 3), deplb1(3, 27), deplb2(3, 27)
+    real(kind=8) :: elgeom(10, 27), deplb1(3, 27), deplb2(3, 27)
     real(kind=8) :: fk(27,3,3), dkdgl(27,3,3,3), ka, mu
     aster_logical :: grdepl, axi, cplan
 !
@@ -140,9 +141,13 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
 !
     ASSERT(npg.eq.npgbis.and.ndim.eq.ndimb)
 !
+! - Get coded integer for external state variable
+!
+    ivariexte = nint(carcri(IVARIEXTE))
+!
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                zr(igeom), typmod, compor, ndim, dfdib,&
+                zr(igeom), typmod, ivariexte, ndim,&
                 deplb1, deplb2, elgeom)
 !
     do n = 1, nnop
@@ -336,7 +341,7 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
 !
         call r8inir(6, 0.0d0, sigma, 1)
         call nmcomp('XFEM', idecpg+kpg, 1, ndim, typmod,&
-                    imate, compor, crit, instam, instap,&
+                    imate, compor, carcri, instam, instap,&
                     6, eps, deps, 6, sign,&
                     vi(1, kpg), option, angmas, 10, elgeom(1, kpg),&
                     sigma, vip(1, kpg), 36, dsidep, 1,&

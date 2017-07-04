@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1306,W1504
 !
@@ -82,7 +83,7 @@ implicit none
 
     aster_logical :: grand, axi, resi, rigi, matsym, cplan, lintbo
     parameter (grand = .true._1)
-    integer :: g, i, nddl, cod(27), ivf
+    integer :: g, i, nddl, cod(27), ivf, ivariexte
     integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff
     character(len=8) :: typmod(*)
     character(len=*) :: fami
@@ -118,10 +119,14 @@ implicit none
     resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
     rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
 !
+! - Get coded integer for external state variable
+!
+    ivariexte = nint(carcri(IVARIEXTE))
+!
 !     CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES AU COMPORTEMENT
 !     ATTENTION DFF NON CALCULE. PB SI MONOCRISTAL
     call lcegeo(nno, npg, iw, ivf, idff,&
-                geomi, typmod, compor, ndim, dff,&
+                geomi, typmod, ivariexte, ndim,&
                 deplm, depld, elgeom)
 !
 !--------------------------INITIALISATION------------------------

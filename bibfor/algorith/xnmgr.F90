@@ -19,7 +19,7 @@
 subroutine xnmgr(nnop, nfh, nfe, ddlc, ddlm,&
                  igeom, instam, instap, ideplp, sigm,&
                  vip, typmod, option, imate, compor,&
-                 lgpg, crit, jpintt, cnset, heavt,&
+                 lgpg, carcri, jpintt, cnset, heavt,&
                  lonch, basloc, idepl, lsn, lst,&
                  nfiss, jheavn, sig, vi, matuu,&
                  ivectu, codret, jpmilt, jstno)
@@ -52,7 +52,7 @@ subroutine xnmgr(nnop, nfh, nfe, ddlc, ddlm,&
     integer :: jstno
     character(len=8) :: typmod(*)
     character(len=16) :: option, compor(*)
-    real(kind=8) :: crit(3), vi(*)
+    real(kind=8) :: carcri(*), vi(*)
     real(kind=8) :: lsn(nnop)
     real(kind=8) :: lst(nnop), matuu(*), sig(*), basloc(*)
     real(kind=8) :: instam, instap, sigm(*), vip(*)
@@ -182,7 +182,7 @@ subroutine xnmgr(nnop, nfh, nfe, ddlc, ddlm,&
                     he, nfh, ddlc, ddlm, nfe,&
                     instam, instap, ideplp, sigm(idebs+1), vip( idebv+1),&
                     basloc, nnop, npg, typmod, option,&
-                    imate, compor, lgpg, idecpg, crit,&
+                    imate, compor, lgpg, idecpg, carcri,&
                     idepl, lsn, lst, nfiss, heavn,&
                     sig(idebs+1), vi(idebv+ 1), matuu, ivectu, codret, jstno)
 !

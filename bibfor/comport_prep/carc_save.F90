@@ -25,6 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/lcdiscard.h"
+#include "asterfort/Behaviour_type.h"
 #include "asterfort/assert.h"
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_read_mesh.h"
@@ -77,6 +78,7 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
     aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi, l_kit_thm
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
     integer :: cptr_nameprop=0, cptr_nbprop=0
+    integer :: ivariexte = 0
     character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
     character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
 !
@@ -176,7 +178,8 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
 !
         call getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                       l_mfront_offi, l_mfront_proto ,&
-                                      cptr_nbvarext, cptr_namevarext)
+                                      cptr_nbvarext, cptr_namevarext,&
+                                      ivariexte)
 !
 ! ----- Set in <CARTE>
 !
@@ -190,6 +193,7 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         p_carc_valv(8)  = resi_deborst_max
         p_carc_valv(9)  = iter_deborst_max
         p_carc_valv(10) = resi_radi_rela
+        p_carc_valv(IVARIEXTE) = ivariexte
         p_carc_valv(13) = post_iter
         p_carc_valv(21) = post_incr
 !       exte_comp UMAT / MFRONT

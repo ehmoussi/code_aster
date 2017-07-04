@@ -29,6 +29,7 @@ subroutine te0544(option, nomte)
 #include "asterfort/pipepe.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
     character(len=16) :: option, nomte
 ! ......................................................................
@@ -45,8 +46,8 @@ subroutine te0544(option, nomte)
     integer :: jgano, ndim, nno, nnos, npg, lgpg, jtab(7), ntrou
     integer :: ipoids, ivf, idfde, igeom, imate
     integer :: icontm, ivarim, icopil, iborne, ictau, iret
-    integer :: ideplm, iddepl, idepl0, idepl1, icompo, itype
-    real(kind=8) :: dfdi(2187), elgeom(10, 27)
+    integer :: ideplm, iddepl, idepl0, idepl1, icompo, itype, ivariexte, icarcr
+    real(kind=8) :: elgeom(10, 27)
 !
 !
 !
@@ -85,6 +86,7 @@ subroutine te0544(option, nomte)
     call jevech('PDEPL0R', 'L', idepl0)
     call jevech('PDEPL1R', 'L', idepl1)
     call jevech('PTYPEPI', 'L', itype)
+    call jevech('PCARCRI', 'L', icarcr)
 !
     pilo = zk16(itype)
     compor = zk16(icompo)
@@ -101,8 +103,9 @@ subroutine te0544(option, nomte)
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
 !
     if (compor .eq. 'BETON_DOUBLE_DP') then
+        ivariexte = nint(zr(icarcr-1+IVARIEXTE))
         call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                    zr(igeom), typmod, compor, ndim, dfdi,&
+                    zr(igeom), typmod, ivariexte, ndim,&
                     zr(ideplm), zr(iddepl), elgeom)
     endif
 !
@@ -114,7 +117,7 @@ subroutine te0544(option, nomte)
     call pipepe(pilo, ndim, nno, npg, ipoids,&
                 ivf, idfde, zr(igeom), typmod, zi(imate),&
                 zk16(icompo), lgpg, zr(ideplm), zr(icontm), zr(ivarim),&
-                zr(iddepl), zr(idepl0), zr(idepl1), zr(icopil), dfdi,&
+                zr(iddepl), zr(idepl0), zr(idepl1), zr(icopil),&
                 elgeom, iborne, ictau)
 !
 end subroutine
