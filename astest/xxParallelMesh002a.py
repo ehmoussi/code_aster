@@ -80,6 +80,7 @@ except ImportError:
 else:
     A = code_aster.LinearAlgebra.AssemblyMatrixToPetsc4Py(matrAsse)
     v = petsc4py.PETSc.Viewer().createASCII("xxParallelMesh002a.out")
+    v.pushFormat(petsc4py.PETSc.Viewer.Format.ASCII_DENSE)
     A.view(v)
 
     rank=A.getComm().getRank()
