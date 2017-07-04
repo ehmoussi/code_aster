@@ -26,16 +26,20 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/getfac.h"
+#include "asterc/lcdiscard.h"
 #include "asterfort/assert.h"
 #include "asterfort/carc_info.h"
 #include "asterfort/carc_read.h"
+#include "asterfort/comp_meca_code.h"
 #include "asterfort/comp_meca_cvar.h"
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_meca_info.h"
 #include "asterfort/comp_meca_pvar.h"
 #include "asterfort/comp_meca_read.h"
+#include "asterfort/Behaviour_type.h"
 #include "asterfort/getBehaviourAlgo.h"
 #include "asterfort/getBehaviourPara.h"
+#include "asterfort/getExternalStateVariable.h"
 #include "asterfort/getExternalBehaviourPntr.h"
 #include "asterfort/imvari.h"
 #include "asterfort/jedema.h"
@@ -74,11 +78,12 @@ character(len=16), intent(out) :: mult_comp
     aster_logical :: l_etat_init, l_implex, plane_stress, l_comp_external
     aster_logical :: l_kit_thm, l_mfront_proto, l_mfront_offi
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
-    integer :: iveriborne
+    integer :: iveriborne, ivariexte
     type(NL_DS_ComporPrep) :: ds_compor_prep
     type(NL_DS_ComporParaPrep) :: ds_compor_para
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
     integer :: cptr_nameprop=0, cptr_nbprop=0
+    character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -164,14 +169,26 @@ character(len=16), intent(out) :: mult_comp
 !
     call carc_read(ds_compor_para, l_implex_ = l_implex)
 !
+! - Coding comportment (Python)
+!    
+    i_comp = 1
+    meca_comp = ds_compor_para%v_para(i_comp)%meca_comp
+    call comp_meca_code(rela_comp_    = rela_comp   ,&
+                        defo_comp_    = defo_comp   ,&
+                        kit_comp_     = kit_comp    ,&
+                        meca_comp_    = meca_comp   ,&
+                        comp_code_py_ = comp_code_py,&
+                        rela_code_py_ = rela_code_py,&
+                        defo_code_py_ = defo_code_py,&
+                        meca_code_py_ = meca_code_py)
+!
 ! - Get ALGO_INTE
 !
     i_comp = 1
     plane_stress = .false.
-    rela_comp    = ds_compor_para%v_para(i_comp)%rela_comp
-    meca_comp    = ds_compor_para%v_para(i_comp)%meca_comp
-    call getBehaviourAlgo(plane_stress, rela_comp  , meca_comp,&
-                          keywordfact , i_comp     ,&
+    call getBehaviourAlgo(plane_stress, rela_comp   ,&
+                          rela_code_py, meca_code_py,&
+                          keywordfact , i_comp      ,&
                           algo_inte   , algo_inte_r)
 !
 ! - Get RESI_INTE_RELA/ITER_INTE_MAXI
@@ -198,6 +215,17 @@ character(len=16), intent(out) :: mult_comp
     iveriborne = ds_compor_para%v_para(i_comp)%iveriborne
     call setMFrontPara(ds_compor_para%v_para(i_comp)%comp_exte,&
                        iter_inte_maxi, resi_inte_rela, iveriborne)
+!
+! - Get external state variables
+!
+    call getExternalStateVariable(rela_comp    , comp_code_py   ,&
+                                  l_mfront_offi, l_mfront_proto ,&
+                                  cptr_nbvarext, cptr_namevarext)
+                                  !ivariexte)
+!    if (ivariexte .ne. 0) then
+!        call utmess('A', 'COMPOR2_12')
+!        ivariexte = 0
+!    endif
 !  
 ! - Save in list
 !
@@ -211,6 +239,7 @@ character(len=16), intent(out) :: mult_comp
     carcri(8)  = ds_compor_para%v_para(i_comp)%resi_deborst_max
     carcri(9)  = ds_compor_para%v_para(i_comp)%iter_deborst_max
     carcri(10) = ds_compor_para%v_para(i_comp)%resi_radi_rela
+!    carcri(IVARIEXTE) = ivariexte
     carcri(13) = ds_compor_para%v_para(i_comp)%ipostiter
     carcri(14) = cptr_nbvarext
     carcri(15) = cptr_namevarext
@@ -224,6 +253,13 @@ character(len=16), intent(out) :: mult_comp
     endif
     carcri(18) = 0
     carcri(21) = ds_compor_para%v_para(i_comp)%ipostincr
+!
+! - Discard
+!
+    call lcdiscard(comp_code_py)
+    call lcdiscard(meca_code_py)
+    call lcdiscard(rela_code_py)
+    call lcdiscard(defo_code_py)
 !
 ! - Cleaning
 !

@@ -312,6 +312,8 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%v_para(i_comp)%iveriborne               = iveriborne
         ds_compor_para%v_para(i_comp)%rela_comp                = rela_comp
         ds_compor_para%v_para(i_comp)%meca_comp                = meca_comp
+        ds_compor_para%v_para(i_comp)%defo_comp                = defo_comp
+        ds_compor_para%v_para(i_comp)%kit_comp(1:4)            = kit_comp(1:4)
         ds_compor_para%v_para(i_comp)%l_matr_unsymm            = l_matr_unsymm
     end do
 !

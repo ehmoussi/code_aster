@@ -24,9 +24,11 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterc/lcdiscard.h"
 #include "asterfort/assert.h"
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_read_mesh.h"
+#include "asterfort/comp_meca_code.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nocart.h"
@@ -36,6 +38,7 @@ implicit none
 #include "asterfort/getBehaviourPara.h"
 #include "asterfort/getExternalBehaviourPntr.h"
 #include "asterfort/setMFrontPara.h"
+#include "asterfort/getExternalStateVariable.h"
 !
 character(len=8), intent(in) :: model
 character(len=8), intent(in) :: mesh
@@ -66,7 +69,7 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp, iveriborne
     real(kind=8), pointer :: p_carc_valv(:) => null()
-    character(len=16) :: algo_inte, rela_comp, meca_comp
+    character(len=16) :: algo_inte, rela_comp, meca_comp, defo_comp
     real(kind=8) :: iter_inte_maxi, resi_inte_rela, parm_theta, vale_pert_rela, algo_inte_r
     real(kind=8) :: resi_deborst_max, resi_radi_rela, parm_alpha
     real(kind=8) :: post_iter, post_incr
@@ -74,6 +77,8 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
     aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi, l_kit_thm
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
     integer :: cptr_nameprop=0, cptr_nbprop=0
+    character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
+    character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -104,6 +109,8 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         iveriborne       = ds_compor_para%v_para(i_comp)%iveriborne
         rela_comp        = ds_compor_para%v_para(i_comp)%rela_comp
         meca_comp        = ds_compor_para%v_para(i_comp)%meca_comp
+        defo_comp        = ds_compor_para%v_para(i_comp)%defo_comp
+        kit_comp         = ds_compor_para%v_para(i_comp)%kit_comp
         l_matr_unsymm    = ds_compor_para%v_para(i_comp)%l_matr_unsymm
         l_comp_external  = ds_compor_para%v_para(i_comp)%l_comp_external
 !
@@ -112,6 +119,17 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         call comp_meca_l(rela_comp, 'KIT_THM'     , l_kit_thm)
         call comp_meca_l(rela_comp, 'MFRONT_PROTO', l_mfront_proto)
         call comp_meca_l(rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
+!
+! ----- Coding comportment (Python)
+!
+        call comp_meca_code(rela_comp_    = rela_comp   ,&
+                            defo_comp_    = defo_comp   ,&
+                            kit_comp_     = kit_comp    ,&
+                            meca_comp_    = meca_comp   ,&
+                            comp_code_py_ = comp_code_py,&
+                            rela_code_py_ = rela_code_py,&
+                            defo_code_py_ = defo_code_py,&
+                            meca_code_py_ = meca_code_py)
 !
 ! ----- Ban if RELATION = MFRONT and ITER_INTE_PAS negative
 !
@@ -129,8 +147,9 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
 !
 ! ----- Get ALGO_INTE
 !
-        call getBehaviourAlgo(plane_stress, rela_comp  , meca_comp,&
-                              keywordfact , i_comp     ,&
+        call getBehaviourAlgo(plane_stress, rela_comp   ,&
+                              rela_code_py, meca_code_py,&
+                              keywordfact , i_comp      ,&
                               algo_inte   , algo_inte_r)
 !
 ! ----- Get function pointers for external programs (MFRONT/UMAT)
@@ -152,6 +171,12 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
 !
         call setMFrontPara(ds_compor_para%v_para(i_comp)%comp_exte,&
                            iter_inte_maxi, resi_inte_rela, iveriborne)
+!
+! ----- Get external state variables
+!
+        call getExternalStateVariable(rela_comp    , comp_code_py   ,&
+                                      l_mfront_offi, l_mfront_proto ,&
+                                      cptr_nbvarext, cptr_namevarext)
 !
 ! ----- Set in <CARTE>
 !
@@ -192,6 +217,13 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
                         limanu = v_elem_affe)
             call jedetr(list_elem_affe)
         endif
+!
+! ----- Discard
+!
+        call lcdiscard(comp_code_py)
+        call lcdiscard(meca_code_py)
+        call lcdiscard(rela_code_py)
+        call lcdiscard(defo_code_py)
     enddo
 !
     call jedetr(carcri//'.NCMP')
