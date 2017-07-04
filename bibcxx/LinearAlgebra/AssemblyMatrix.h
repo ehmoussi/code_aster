@@ -320,6 +320,7 @@ bool AssemblyMatrixInstance< ValueType >::factorization() throw ( std::runtime_e
         throw;
     }
     _isEmpty = false;
+    _isFactorized = true;
 
     return true;
 };
