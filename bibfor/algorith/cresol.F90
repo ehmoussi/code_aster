@@ -132,9 +132,9 @@ subroutine cresol(solveu, basz)
     zslvk = sdsolv('ZSLVK')
     zslvr = sdsolv('ZSLVR')
     zslvi = sdsolv('ZSLVI')
-    call wkvect(solveu//'.SLVK', 'V '//basz//' K24', zslvk, islvk)
-    call wkvect(solveu//'.SLVR', 'V '//basz//' R', zslvr, islvr)
-    call wkvect(solveu//'.SLVI', 'V '//basz//' I', zslvi, islvi)
+    call wkvect(solveu//'.SLVK', basz//' V K24', zslvk, islvk)
+    call wkvect(solveu//'.SLVR', basz//' V R', zslvr, islvr)
+    call wkvect(solveu//'.SLVI', basz//' V I', zslvi, islvi)
 !
 ! ------------------------------------------------------
 ! --- LECTURE MOT-CLE ET REMPLISSAGE DE LA SD_SOLVEUR PROPRE A CHAQUE

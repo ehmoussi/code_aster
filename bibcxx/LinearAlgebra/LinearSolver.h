@@ -48,6 +48,7 @@
 struct WrapMultFront
 {
     static const std::set< Renumbering > setOfAllowedRenumbering;
+    static const bool isHPCCompliant = false;
 };
 
 /**
@@ -57,6 +58,7 @@ struct WrapMultFront
 struct WrapLdlt
 {
     static const std::set< Renumbering > setOfAllowedRenumbering;
+    static const bool isHPCCompliant = false;
 };
 
 /**
@@ -66,6 +68,7 @@ struct WrapLdlt
 struct WrapMumps
 {
     static const std::set< Renumbering > setOfAllowedRenumbering;
+    static const bool isHPCCompliant = false;
 };
 
 /**
@@ -75,6 +78,7 @@ struct WrapMumps
 struct WrapPetsc
 {
     static const std::set< Renumbering > setOfAllowedRenumbering;
+    static const bool isHPCCompliant = true;
 };
 
 /**
@@ -84,6 +88,7 @@ struct WrapPetsc
 struct WrapGcpc
 {
     static const std::set< Renumbering > setOfAllowedRenumbering;
+    static const bool isHPCCompliant = false;
 };
 
 /**
@@ -100,6 +105,11 @@ struct RenumberingChecker
         if ( Wrapping::setOfAllowedRenumbering.find( test ) == Wrapping::setOfAllowedRenumbering.end() )
             return false;
         return true;
+    }
+
+    static bool isHPCCompliant()
+    {
+        return Wrapping::isHPCCompliant;
     }
 };
 
@@ -141,6 +151,31 @@ struct SolverChecker
                 return PetscRenumberingChecker::isAllowedRenumbering( renumber );
             case Gcpc:
                 return GcpcRenumberingChecker::isAllowedRenumbering( renumber );
+            default:
+                throw std::runtime_error( "Not a valid linear solver" );
+        }
+    };
+
+    /**
+     * @brief Fonction statique qui verifie qu'un 
+     * @param solver Type de solveur
+     * @param renumber Type de renumeroteur
+     * @return vrai si le couple est valide
+     */
+    static bool isHPCCompliant( LinearSolverEnum solver ) throw ( std::runtime_error )
+    {
+        switch ( solver )
+        {
+            case MultFront:
+                return MultFrontRenumberingChecker::isHPCCompliant();
+            case Ldlt:
+                return LdltRenumberingChecker::isHPCCompliant();
+            case Mumps:
+                return MumpsRenumberingChecker::isHPCCompliant();
+            case Petsc:
+                return PetscRenumberingChecker::isHPCCompliant();
+            case Gcpc:
+                return GcpcRenumberingChecker::isHPCCompliant();
             default:
                 throw std::runtime_error( "Not a valid linear solver" );
         }
@@ -371,6 +406,15 @@ class LinearSolverInstance: public DataStructure
         bool isEmpty()
         {
             return _isEmpty;
+        };
+
+        /**
+         * @brief Methode permettant de savoir si le HPC est autorise
+         * @return true si le découpage de domain est autorisé
+         */
+        bool isHPCCompliant()
+        {
+            return SolverChecker::isHPCCompliant( _linearSolver );
         };
 
         /**
