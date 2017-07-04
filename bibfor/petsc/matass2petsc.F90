@@ -76,7 +76,6 @@ use elim_lagr_comp_module
     character(len=24), pointer :: refa(:) => null()
     character(len=19) :: solvbd, matas, vcine, kbid
     character(len=14) :: nu
-    character(len=4) :: etamat
     character(len=1) :: rouc
 !
 !----------------------------------------------------------------
@@ -89,13 +88,6 @@ use elim_lagr_comp_module
 !
     matas = matasz
     
-!   -- Verification que la matrice n'a pas deja ete factorisee
-    call jeveuo(matas//'.REFA', 'E', vk24=refa)
-    etamat = refa(8)
-    if (etamat .eq. 'DECT') then
-        call utmess('F', 'PETSC_4')
-    endif
-
 !   -- Creation d'un solveur bidon
     solvbd='&&MAT2PET'
     call crsmsp(solvbd, matas, 50,'IN_CORE')
@@ -115,8 +107,6 @@ use elim_lagr_comp_module
                 0, ibid, ierror)
 !   Destruction du solveur bidon
     call detrsd('SOLVEUR', solvbd)
-!   Reinitialisation de l'attribut de la matrice 
-    refa(8)=' '
     
 999 continue
     call jedema()
