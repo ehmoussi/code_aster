@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine getBehaviourAlgo(plane_stress, rela_comp  , meca_comp,&
-                            keywf       , i_comp     ,&
+subroutine getBehaviourAlgo(plane_stress, rela_comp   ,&
+                            rela_code_py, meca_code_py,&
+                            keywf       , i_comp      ,&
                             algo_inte   , algo_inte_r)
 !
 use NonLin_Datastructure_type
@@ -28,16 +29,15 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/lcalgo.h"
 #include "asterc/lctest.h"
-#include "asterc/lcdiscard.h"
 #include "asterfort/assert.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/utlcal.h"
 #include "asterfort/utmess.h"
-#include "asterfort/comp_meca_code.h"
 !
 aster_logical, intent(in) :: plane_stress
 character(len=16), intent(in) :: rela_comp
-character(len=16), intent(in) :: meca_comp
+character(len=16), intent(in) :: rela_code_py
+character(len=16), intent(in) :: meca_code_py
 character(len=16), intent(in) :: keywf
 integer, intent(in) :: i_comp
 character(len=16), intent(out) :: algo_inte
@@ -54,7 +54,8 @@ real(kind=8), intent(out) :: algo_inte_r
 ! In  mesh             : name of mesh
 ! In  model            : name of model
 ! In  rela_comp        : RELATION comportment
-! In  meca_comp        : relation for mechanical part
+! In  rela_code_py     : coded comportment for RELATION (coding in Python)
+! In  meca_code_py     : coded comportment for mechanical part (coding in Python)
 ! In  keywf            : factor keyword to read (COMPORTEMENT)
 ! In  i_comp           : factor keyword index
 ! Out algo_inte        : algorithm for integration of behaviour
@@ -63,20 +64,12 @@ real(kind=8), intent(out) :: algo_inte_r
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: iret
-    character(len=16) :: rela_code_py=' ', meca_code_py=' '
     character(len=16) :: texte(3)=(/ ' ',' ',' '/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     algo_inte   = ' '
     algo_inte_r = 0.d0
-!
-! - Coding comportment (Python)
-!
-    call comp_meca_code(rela_comp_    = rela_comp   ,&
-                        meca_comp_    = meca_comp   ,&
-                        rela_code_py_ = rela_code_py,&
-                        meca_code_py_ = meca_code_py)
 !
 ! - Get ALGO_INTE
 !
@@ -105,10 +98,5 @@ real(kind=8), intent(out) :: algo_inte_r
 ! - Convert name of algorithm to identifier
 !
     call utlcal('NOM_VALE', algo_inte, algo_inte_r)
-!
-! - Discard
-!
-    call lcdiscard(meca_code_py)
-    call lcdiscard(rela_code_py)
 !
 end subroutine

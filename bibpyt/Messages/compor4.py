@@ -64,6 +64,12 @@ Comportement - Occurrence  %(i1)d"""),
 
     20: _(u"""         V%(i1)d : %(k1)s"""),
 
+    21: _(u"""
+Le comportement %(k1)s contient %(i1)d variables d'états externes (variables de commande):
+"""),
+
+    22: _(u"""         Variable externe %(i1)d : %(k1)s"""),
+
     53: _(u"""
 Comportement POLYCRISTAL
       Nombre de grains  %(i1)d : localisation %(k1)s

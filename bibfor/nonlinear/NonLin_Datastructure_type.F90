@@ -447,6 +447,8 @@ implicit none
         aster_logical :: l_matr_unsymm
         character(len=16)         :: rela_comp
         character(len=16)         :: meca_comp
+        character(len=16)         :: defo_comp
+        character(len=16)         :: kit_comp(4)
         type(NL_DS_ComporExte)    :: comp_exte
     end type NL_DS_ComporPara
 !

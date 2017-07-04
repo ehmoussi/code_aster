@@ -19,17 +19,14 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine getBehaviourAlgo(plane_stress, rela_comp   ,&
-                                rela_code_py, meca_code_py,&
-                                keywf       , i_comp      ,&
-                                algo_inte   , algo_inte_r)
-        aster_logical, intent(in) :: plane_stress
+    subroutine getExternalStateVariable(rela_comp    , comp_code_py   ,&
+                                        l_mfront_offi, l_mfront_proto ,&
+                                        cptr_nbvarext, cptr_namevarext)
+        aster_logical, intent(in) :: l_mfront_offi
+        aster_logical, intent(in) :: l_mfront_proto
         character(len=16), intent(in) :: rela_comp
-        character(len=16), intent(in) :: rela_code_py
-        character(len=16), intent(in) :: meca_code_py
-        character(len=16), intent(in) :: keywf
-        integer, intent(in) :: i_comp
-        character(len=16), intent(out) :: algo_inte
-        real(kind=8), intent(out) :: algo_inte_r
-    end subroutine getBehaviourAlgo
+        character(len=16), intent(in) :: comp_code_py
+        integer, intent(in) :: cptr_nbvarext
+        integer, intent(in) :: cptr_namevarext
+    end subroutine getExternalStateVariable
 end interface
