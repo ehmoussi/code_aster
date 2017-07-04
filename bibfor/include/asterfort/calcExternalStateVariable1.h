@@ -16,19 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine getExternalStateVariable(rela_comp    , comp_code_py   ,&
-                                        l_mfront_offi, l_mfront_proto ,&
-                                        cptr_nbvarext, cptr_namevarext,&
-                                        ivariexte)
-        aster_logical, intent(in) :: l_mfront_offi
-        aster_logical, intent(in) :: l_mfront_proto
-        character(len=16), intent(in) :: rela_comp
-        character(len=16), intent(in) :: comp_code_py
-        integer, intent(in) :: cptr_nbvarext
-        integer, intent(in) :: cptr_namevarext
-        integer, intent(out) :: ivariexte
-    end subroutine getExternalStateVariable
+    subroutine calcExternalStateVariable1(nno , npg   , jv_poids, jv_func, jv_dfunc,&
+                                          geom, typmod, elgeom)
+        integer, intent(in) :: nno, npg
+        integer, intent(in) :: jv_poids, jv_func, jv_dfunc
+        character(len=8), intent(in) :: typmod(2)
+        real(kind=8), intent(in) :: geom(3, nno)
+        real(kind=8), intent(out) :: elgeom(10, npg)
+    end subroutine calcExternalStateVariable1
 end interface

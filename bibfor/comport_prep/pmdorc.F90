@@ -220,12 +220,12 @@ character(len=16), intent(out) :: mult_comp
 !
     call getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                   l_mfront_offi, l_mfront_proto ,&
-                                  cptr_nbvarext, cptr_namevarext)
-                                  !ivariexte)
-!    if (ivariexte .ne. 0) then
-!        call utmess('A', 'COMPOR2_12')
-!        ivariexte = 0
-!    endif
+                                  cptr_nbvarext, cptr_namevarext,&
+                                  ivariexte)
+    if (ivariexte .ne. 0) then
+        call utmess('A', 'COMPOR2_12')
+        ivariexte = 0
+    endif
 !  
 ! - Save in list
 !
@@ -239,7 +239,7 @@ character(len=16), intent(out) :: mult_comp
     carcri(8)  = ds_compor_para%v_para(i_comp)%resi_deborst_max
     carcri(9)  = ds_compor_para%v_para(i_comp)%iter_deborst_max
     carcri(10) = ds_compor_para%v_para(i_comp)%resi_radi_rela
-!    carcri(IVARIEXTE) = ivariexte
+    carcri(IVARIEXTE) = ivariexte
     carcri(13) = ds_compor_para%v_para(i_comp)%ipostiter
     carcri(14) = cptr_nbvarext
     carcri(15) = cptr_namevarext

@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/pk2sig.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1504
 !
@@ -93,7 +94,7 @@ implicit none
 !
     aster_logical :: grand, axi, cplan
 !
-    integer :: kpg, j
+    integer :: kpg, j, ivariexte
 !
     real(kind=8) :: dsidep(6, 6), f(3, 3), fm(3, 3), epsm(6), epsp(6), deps(6)
     real(kind=8) :: r, sigma(6), sigmn(6), detf, poids, maxeps
@@ -106,10 +107,14 @@ implicit none
     axi = typmod(1) .eq. 'AXIS'
     cplan = typmod(1) .eq. 'C_PLAN'
 !
+! - Get coded integer for external state variable
+!
+    ivariexte = nint(carcri(IVARIEXTE))
+!
 !     CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES AU COMPORTEMENT
 !
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                geomi, typmod, compor, 2, dfdi,&
+                geomi, typmod, ivariexte, 2,&
                 deplm, deplp, elgeom)
 !
 !     INITIALISATION CODES RETOURS

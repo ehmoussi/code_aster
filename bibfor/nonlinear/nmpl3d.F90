@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/lcegeo.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmgeom.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1504
 !
@@ -106,7 +107,7 @@ implicit none
 !
     aster_logical :: grand
     integer :: kpg, kk, i_node, i_dim, m, j, j1, kl, kkd, i_tens
-    integer :: cod(27), ndim
+    integer :: cod(27), ndim, ivariexte
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sigm_norm(6)
     real(kind=8) :: rbid(1), sig(6)
     real(kind=8) :: poids, tmp, rac2
@@ -120,10 +121,14 @@ implicit none
         cod(kpg) = 0
     end do
 !
+! - Get coded integer for external state variable
+!
+    ivariexte = nint(carcri(IVARIEXTE))
+!
 ! - Specific geometric parameters for some behaviours
 !
-    call lcegeo(nno  , npg   , ipoids, ivf, idfde,&
-                geom , typmod, compor, 3  , dfdi,&
+    call lcegeo(nno  , npg   , ipoids   , ivf, idfde,&
+                geom , typmod, ivariexte, 3  , &
                 deplm, deplp , elgeom)
 !
 ! - Loop on Gauss points

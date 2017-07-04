@@ -19,7 +19,8 @@
 !
 subroutine getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                     l_mfront_offi, l_mfront_proto ,&
-                                    cptr_nbvarext, cptr_namevarext)
+                                    cptr_nbvarext, cptr_namevarext,&
+                                    ivariexte)
 !
 use NonLin_Datastructure_type
 !
@@ -28,6 +29,8 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
+#include "asterfort/iscode.h"
+#include "asterfort/Behaviour_type.h"
 #include "asterc/mfront_get_external_state_variable.h"
 #include "asterc/lcinfo.h"
 #include "asterc/lcextevari.h"
@@ -38,6 +41,7 @@ character(len=16), intent(in) :: rela_comp
 character(len=16), intent(in) :: comp_code_py
 integer, intent(in) :: cptr_nbvarext
 integer, intent(in) :: cptr_namevarext
+integer, intent(out) :: ivariexte
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,14 +56,20 @@ integer, intent(in) :: cptr_namevarext
 ! In  rela_comp        : RELATION comportment
 ! In  cptr_nbvarext    : pointer to number of external state variable
 ! In  cptr_namevarext  : pointer to name of external state variable
+! Out ivariexte        : coded integer for external state variable
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: npred = 8
     integer :: nb_exte, i_exte, idummy1, idummy2
     character(len=8) :: name_exte(8)
+    integer :: variextecode(1)
+    integer :: tabcod(30)
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    ivariexte = 0
+!
+! - Get external state variable
 !
     if (l_mfront_proto .or. l_mfront_offi) then
         call mfront_get_external_state_variable(cptr_nbvarext, cptr_namevarext,&
@@ -68,11 +78,32 @@ integer, intent(in) :: cptr_namevarext
         call lcinfo(comp_code_py, idummy1, idummy2, nb_exte)
         call lcextevari(comp_code_py, nb_exte, name_exte)
     endif
+! 
+! - Print
+!
     if (nb_exte .gt. 0) then
         call utmess('I', 'COMPOR4_21', si = nb_exte, sk = rela_comp)
         do i_exte = 1, nb_exte
             call utmess('I', 'COMPOR4_22', si = i_exte, sk = name_exte(i_exte))
         end do 
     endif
+!
+! - Coding
+!
+    tabcod(1:30) = 0
+    
+    do i_exte = 1, nb_exte
+        if (name_exte(i_exte) .eq. 'ELTSIZE1') then
+            tabcod(ELTSIZE1) = 1
+        elseif (name_exte(i_exte) .eq. 'ELTSIZE2') then
+            tabcod(ELTSIZE2) = 1
+        elseif (name_exte(i_exte) .eq. 'COORGA') then
+            tabcod(COORGA) = 1
+        elseif (name_exte(i_exte) .eq. 'GRADVELO') then
+            tabcod(GRADVELO) = 1
+        endif
+    end do 
+    call iscode(tabcod, variextecode(1), 30)
+    ivariexte = variextecode(1)
 !
 end subroutine

@@ -76,3 +76,16 @@
 !
 #define CABLE_NAME   9
 #define SHEATH_NAME  10
+!
+! - Access in <CARCRI>
+!
+#define IVARIEXTE 11
+!
+! - Access in <CARCRI_VARI_EXT>
+!
+#define ELTSIZE1  1
+#define ELTSIZE2  2
+#define COORGA    3
+#define GRADVELO  4
+
+

@@ -15,25 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lcegeo(nno, npg, ipoids, ivf, idfde,&
-                      geom, typmod, compor, ndim, dfdi,&
+    subroutine lcegeo(nno, npg, jv_poids, jv_func, jv_dfunc,&
+                      geom, typmod, ivariexte, ndim,&
                       deplm, ddepl, elgeom)
-        integer :: npg
-        integer :: nno
-        integer :: ipoids
-        integer :: ivf
-        integer :: idfde
-        real(kind=8) :: geom(3, nno)
-        character(len=8) :: typmod(2)
-        character(len=16) :: compor(*)
-        integer :: ndim
-        real(kind=8) :: dfdi(nno, 3)
-        real(kind=8) :: deplm(3, nno)
-        real(kind=8) :: ddepl(3, nno)
-        real(kind=8) :: elgeom(10, npg)
+        integer, intent(in) :: nno, npg, ndim
+        integer, intent(in) :: jv_poids, jv_func, jv_dfunc
+        character(len=8), intent(in) :: typmod(2)
+        real(kind=8), intent(in) :: geom(3, nno)
+        real(kind=8), intent(in) :: deplm(3, nno), ddepl(3, nno)
+        integer, intent(in) :: ivariexte
+        real(kind=8), intent(out) :: elgeom(10, npg)
     end subroutine lcegeo
 end interface

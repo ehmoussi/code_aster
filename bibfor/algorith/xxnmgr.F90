@@ -15,17 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+!
 subroutine xxnmgr(elrefp, elrese, ndim, coorse, igeom,&
                   he, nfh, ddlc, ddlm, nfe,&
                   instam, instap, ideplp, sigm, vip,&
                   basloc, nnop, npg, typmod, option,&
-                  imate, compor, lgpg, idecpg, crit,&
+                  imate, compor, lgpg, idecpg, carcri,&
                   idepl, lsn, lst, nfiss, heavn,&
                   sigp, vi, matuu, ivectu, codret, jstno)
 !
-! aslint: disable=W1306,W1504
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -48,19 +49,19 @@ subroutine xxnmgr(elrefp, elrese, ndim, coorse, igeom,&
 #include "asterfort/iimatu.h"
 #include "asterfort/iipff.h"
 #include "asterfort/xnbddl.h"
-    integer :: ndim, igeom, imate, lgpg, codret, nnop, npg
-    integer :: nfiss, heavn(nnop, 5), idecpg
-    integer :: nfh, ddlc, ddlm, nfe
-    integer :: jstno
-    character(len=8) :: elrefp, typmod(*), elrese
-    character(len=16) :: option, compor(4)
-    real(kind=8) :: basloc(3*ndim*nnop), crit(3), he(nfiss)
-    integer :: idepl, ideplp, ivectu
-    real(kind=8) :: lsn(nnop), lst(nnop), coorse(*)
-    real(kind=8) :: vi(lgpg, npg), vip(lgpg, npg), sigp(2*ndim, npg), matuu(*)
-    real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
+#include "asterfort/Behaviour_type.h"
 !
-! person_in_charge: patrick.massin at edf.fr
+integer :: ndim, igeom, imate, lgpg, codret, nnop, npg
+integer :: nfiss, heavn(nnop, 5), idecpg
+integer :: nfh, ddlc, ddlm, nfe
+integer :: jstno
+character(len=8) :: elrefp, typmod(*), elrese
+character(len=16) :: option, compor(4)
+real(kind=8) :: basloc(3*ndim*nnop), carcri(*), he(nfiss)
+integer :: idepl, ideplp, ivectu
+real(kind=8) :: lsn(nnop), lst(nnop), coorse(*)
+real(kind=8) :: vi(lgpg, npg), vip(lgpg, npg), sigp(2*ndim, npg), matuu(*)
+real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
 !.......................................................................
 !
@@ -101,7 +102,7 @@ subroutine xxnmgr(elrefp, elrese, ndim, coorse, igeom,&
 !
     integer :: i, ig, j, j1, k, kk, kkd, kpg, l, m, mn, n, nn
     integer :: ddls, ddld, ddldn, cpt, dec(nnop), hea_se
-    integer :: idfde, ipoids, ivf, jcoopg, jdfd2, jgano
+    integer :: idfde, ipoids, ivf, jcoopg, jdfd2, jgano, ivariexte
     integer :: ndimb, nno, nnops, nnos, npgbis
     integer :: singu, alp, ii, jj
     real(kind=8) :: f(3, 3), fm(3, 3), fr(3, 3), epsm(6), epsp(6), deps(6)
@@ -111,7 +112,7 @@ subroutine xxnmgr(elrefp, elrese, ndim, coorse, igeom,&
     real(kind=8) :: rbid33(3, 3), rbid1(1)
     real(kind=8) :: dfdi(nnop, ndim), pff(1+nfh+nfe*ndim**2, nnop, ndim)
     real(kind=8) :: def(6, nnop, ndim*(1+nfh+nfe*ndim))
-    real(kind=8) :: elgeom(10, 27), dfdib(27, 3)
+    real(kind=8) :: elgeom(10, 27)
     real(kind=8) :: fmm(3, 3), deplb1(3, 27), deplb2(3, 27)
     real(kind=8) :: fk(27,3,3), dkdgl(27,3,3,3), ka, mu
     aster_logical :: grdepl, axi, cplan, resi, rigi
@@ -152,10 +153,14 @@ subroutine xxnmgr(elrefp, elrese, ndim, coorse, igeom,&
 !
     ASSERT(npg.eq.npgbis.and.ndim.eq.ndimb)
 !
+! - Get coded integer for external state variable
+!
+    ivariexte = nint(carcri(IVARIEXTE))
+!
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
 ! - LES ARGUMENTS DFDIB, DEPLB1, DEPLB2 NE SERVENT PAS DANS CE CAS
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                zr(igeom), typmod, compor, ndim, dfdib,&
+                zr(igeom), typmod, ivariexte, ndim,&
                 deplb1, deplb2, elgeom)
 !
     do n = 1, nnop
@@ -339,7 +344,7 @@ subroutine xxnmgr(elrefp, elrese, ndim, coorse, igeom,&
 !
         call r8inir(6, 0.0d0, sigma, 1)
         call nmcomp('XFEM', idecpg+kpg, 1, ndim, typmod,&
-                    imate, compor, crit, instam, instap,&
+                    imate, compor, carcri, instam, instap,&
                     6, epsm, deps, 6, sign,&
                     vi(1, kpg), option, angmas, 10, elgeom(1, kpg),&
                     sigma, vip(1, kpg), 36, dsidep, 1,&

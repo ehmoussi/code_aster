@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! aslint: disable=W1504
 !
@@ -98,7 +99,7 @@ implicit none
 !
     aster_logical :: grand, calbn, axi
     integer :: kpg, i, ii, ino, ia, j, k, kl, proj, cod(9), nbpg2
-    integer :: ndim, nnos, jgano, kp, iaa
+    integer :: ndim, nnos, jgano, kp, iaa, ivariexte
     real(kind=8) :: d(6, 6), f(3, 3), eps(6), deps(6), r, s, sigma(6), sign(6)
     real(kind=8) :: poids, poipg2(8), rbid(1)
     real(kind=8) :: elgeom(10, 9)
@@ -134,9 +135,13 @@ implicit none
     grand = .false.
     calbn = .false.
 !
+! - Get coded integer for external state variable
+!
+    ivariexte = nint(carcri(IVARIEXTE))
+!
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES AU COMPORTEMENT
     call lcegeo(nno, nbpg1, ipoids, ivf, idfde,&
-                geom, typmod, compor, 3, dfdi,&
+                geom, typmod, ivariexte, 3,&
                 deplm, deplp, elgeom)
 !
 ! - INITIALISATION CODES RETOURS

@@ -19,7 +19,7 @@
 subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
                   ivf, idfde, geom, typmod, mate,&
                   compor, lgpg, deplm, sigm, vim,&
-                  ddepl, depl0, depl1, copilo, dfdi,&
+                  ddepl, depl0, depl1, copilo,&
                   elgeom, iborne, ictau)
 !
 ! person_in_charge: mickael.abbas at edf.fr
@@ -44,7 +44,7 @@ subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
     real(kind=8) :: geom(ndim, *), deplm(*), ddepl(*)
     real(kind=8) :: sigm(2*ndim, npg), vim(lgpg, npg)
     real(kind=8) :: depl0(*), depl1(*)
-    real(kind=8) :: copilo(5, npg), dfdi(*), elgeom(10, *)
+    real(kind=8) :: copilo(5, npg), elgeom(10, *)
 !
 ! ----------------------------------------------------------------------
 !
@@ -74,7 +74,6 @@ subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
 ! IN  VIM    : VARIABLES INTERNES EN T-
 ! IN  DEPL0  : CORRECTION DE DEPLACEMENT POUR FORCES FIXES
 ! IN  DEPL1  : CORRECTION DE DEPLACEMENT POUR FORCES PILOTEES
-! IN  DFDI   : DERIVEE DES FONCTIONS DE FORME
 ! IN  ELGEOM : TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES AUX LOIS
 !              DE COMPORTEMENT (DIMENSION MAXIMALE FIXEE EN DUR, EN
 !              FONCTION DU NOMBRE MAXIMAL DE POINT DE GAUSS)
@@ -90,6 +89,7 @@ subroutine pipepe(pilo, ndim, nno, npg, ipoids,&
     real(kind=8) :: fm(3, 3), epsm(6), epsp(6), epsd(6)
     real(kind=8) :: rac2
     real(kind=8) :: etamin, etamax, tau, sigma(6)
+    real(kind=8) :: dfdi(27,3)
 !
 ! ----------------------------------------------------------------------
 !

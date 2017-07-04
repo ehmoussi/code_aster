@@ -29,6 +29,7 @@ subroutine te0543(option, nomte)
 #include "asterfort/pipepe.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
     character(len=16) :: option, nomte
 ! ......................................................................
@@ -45,10 +46,10 @@ subroutine te0543(option, nomte)
     character(len=16) :: compor, pilo
 !
     integer :: jgano, ndim, nno, nnos, npg, lgpg, jtab(7), itype
-    integer :: ipoids, ivf, idfde, igeom, imate
+    integer :: ipoids, ivf, idfde, igeom, imate, ivariexte, icarcr
     integer :: icontm, ivarim, icopil, iborne, ictau
     integer :: ideplm, iddepl, idepl0, idepl1, icompo, iret
-    real(kind=8) :: dfdi(2187), elgeom(10, 27)
+    real(kind=8) :: elgeom(10, 27)
 !
 !
 !
@@ -91,6 +92,7 @@ subroutine te0543(option, nomte)
     call jevech('PDEPL0R', 'L', idepl0)
     call jevech('PDEPL1R', 'L', idepl1)
     call jevech('PTYPEPI', 'L', itype)
+    call jevech('PCARCRI', 'L', icarcr)
 !
     pilo = zk16(itype)
     compor = zk16(icompo)
@@ -109,8 +111,9 @@ subroutine te0543(option, nomte)
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
 !
     if (compor .eq. 'BETON_DOUBLE_DP') then
+        ivariexte = nint(zr(icarcr-1+IVARIEXTE))
         call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                    zr(igeom), typmod, compor, ndim, dfdi,&
+                    zr(igeom), typmod, ivariexte, ndim,&
                     zr(ideplm), zr(iddepl), elgeom)
     endif
 !
@@ -121,13 +124,13 @@ subroutine te0543(option, nomte)
     if (typmod(2) .eq. 'ELEMDISC') then
         call pipeed(nno, npg, ipoids, ivf, idfde,&
                     zr(igeom), typmod, zi(imate), lgpg, zr(ideplm),&
-                    zr(ivarim), zr(iddepl), zr(idepl0), zr(idepl1), dfdi,&
+                    zr(ivarim), zr(iddepl), zr(idepl0), zr(idepl1),&
                     zr(ictau), zr(icopil))
     else
         call pipepe(pilo, ndim, nno, npg, ipoids,&
                     ivf, idfde, zr( igeom), typmod, zi(imate),&
                     zk16(icompo), lgpg, zr(ideplm), zr( icontm), zr(ivarim),&
-                    zr(iddepl), zr(idepl0), zr(idepl1), zr( icopil), dfdi,&
+                    zr(iddepl), zr(idepl0), zr(idepl1), zr( icopil),&
                     elgeom, iborne, ictau)
     endif
 !
