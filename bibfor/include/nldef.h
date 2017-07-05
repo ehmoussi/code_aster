@@ -19,7 +19,7 @@
 ! sd_nl data structure : Parameters <-> integer definitions
 ! -------------------------------------------------------------------------
 !
-#define _NL_NBPAR 73
+#define _NL_NBPAR 74
 
 #define _ANG_INIT 1
 #define _ANG_ROTA 2
@@ -94,6 +94,7 @@
 #define _SS1_NAME 71
 #define _SS2_NAME 72
 #define _STIF_NORMAL 73
+#define _FEXT_MPI 74
 
 #define _YACS_NOEUD 89
 #define _YACS_CHAM 90
