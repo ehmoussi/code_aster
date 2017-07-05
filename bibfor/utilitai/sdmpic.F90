@@ -45,6 +45,7 @@ subroutine sdmpic(typesd, nomsd)
 ! ----------------------------------------------------------------------
     character(len=24) :: noms2, types2
     character(len=19) :: k19
+    character(len=24) :: k24
     character(len=8) :: kmpic, kbid
     integer :: ifm, niv, iexi, nbrel, i
     character(len=24), pointer :: noli(:) => null()
@@ -62,6 +63,7 @@ subroutine sdmpic(typesd, nomsd)
 !
 !
     k19=noms2(1:19)
+    k24=noms2(1:24)
     if (types2 .eq. 'CHAM_ELEM') then
 !     ----------------------------------
         call dismoi('MPI_COMPLET', k19, 'CHAM_ELEM', repk=kmpic)
@@ -148,6 +150,14 @@ subroutine sdmpic(typesd, nomsd)
         call jeveuo(k19//'.MPIE', 'E', vk16=valk)
         if (valk(1) .eq. 'MPI_COMPLET') goto 999
         call asmpi_comm_jev('MPI_SUM', k19//'.AUX ')  
+        valk(1)='MPI_COMPLET'       
+        
+        
+    else if (types2 .eq. '&&OP29NL') then
+!     ----------------------------------
+        call jeveuo(k24(1:20)//'.MPI', 'E', vk16=valk)
+        if (valk(1) .eq. 'MPI_COMPLET') goto 999
+        call asmpi_comm_jev('MPI_SUM', k24)  
         valk(1)='MPI_COMPLET'       
 !
 !
