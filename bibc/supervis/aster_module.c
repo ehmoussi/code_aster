@@ -35,6 +35,8 @@
 
 #include "DataStructures/DataStructure.h"
 
+#include "petsc.h"
+
 /*
  * Only an extract of #include "code_aster/Supervis/libCommandSyntax.h"
  * because it uses C++ std::string.
@@ -48,6 +50,22 @@ __PYX_EXTERN_C DL_IMPORT(char) **getCommandKeywordValueString(char *, int, char 
 __PYX_EXTERN_C DL_IMPORT(double) *getCommandKeywordValueDouble(char *, int, char *, int *);
 __PYX_EXTERN_C DL_IMPORT(double) *getCommandKeywordValueComplex(char *, int, char *, int *);
 __PYX_EXTERN_C DL_IMPORT(long) *getCommandKeywordValueInt(char *, int, char *, int *);
+
+#define CALL_PETSC_INITIALIZE() CALL0(PETSC_INITIALIZE,petsc_initialize)
+
+void DEF0(PETSC_INITIALIZE,petsc_initialize)
+{
+    int a = 0;
+    PetscInitialize(&a, NULL, NULL, NULL);
+    PetscInitializeFortran();
+};
+
+#define CALL_PETSC_FINALIZE() CALL0(PETSC_FINALIZE,petsc_finalize)
+
+void DEF0(PETSC_FINALIZE,petsc_finalize)
+{
+    PetscFinalize();
+};
 
 /*
  *   PRIVATE FUNCTIONS

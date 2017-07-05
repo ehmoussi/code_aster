@@ -32,6 +32,8 @@ use elim_lagr_comp_module
 !
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
+#include "asterc/petsc_initialize.h"
+#include "asterc/petsc_finalize.h"
 #include "asterfort/apmain.h"
 #include "asterfort/apldlt.h"
 #include "asterfort/asmpi_info.h"
@@ -129,7 +131,7 @@ use elim_lagr_comp_module
     if (action .eq. 'FIN') then
 !       petsc a-t-il ete initialise ?
         if (iprem .eq. 1) then
-            call PetscFinalize(ierr)
+            call petsc_finalize()
 !           on ne verifie pas le code retour car on peut
 !           se retrouver dans fin suite a une erreur dans l'initialisation
             iprem = 0
@@ -147,9 +149,8 @@ use elim_lagr_comp_module
         ASSERT(kind(vbid).eq.kind(np))
         ASSERT(kind(offbid).eq.kind(np))
 !
-        call PetscInitialize(PETSC_NULL_CHARACTER, ierr)
-        if (ierr .ne. 0) call utmess('F', 'PETSC_1')
-        call PetscInitializeFortran(ierr)
+        ierr = 0
+        call petsc_initialize()
         ASSERT(ierr .eq. 0)
         do k = 1, nmxins
             ap(k) = 0
