@@ -30,20 +30,20 @@ implicit none
 #include "asterfort/reajre.h"
 #include "asterfort/inical.h"
 !
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: time
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: temp_prev
-    character(len=24), intent(in) :: temp_iter
-    character(len=24), intent(in) :: hydr_prev   
-    character(len=24), intent(in) :: hydr_curr
-    character(len=24), intent(in) :: dry_prev   
-    character(len=24), intent(in) :: dry_curr
-    character(len=24), intent(in) :: compor
-    character(len=19), intent(in) :: varc_curr
-    character(len=19), intent(in) :: resu_elem
-    character(len=24), intent(in) :: vect_elem
-    character(len=1), intent(in) :: base
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: time
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: temp_prev
+character(len=24), intent(in) :: temp_iter
+character(len=24), intent(in) :: hydr_prev   
+character(len=24), intent(in) :: hydr_curr
+character(len=24), intent(in) :: dry_prev   
+character(len=24), intent(in) :: dry_curr
+character(len=24), intent(in) :: compor
+character(len=19), intent(in) :: varc_curr
+character(len=19), intent(in) :: resu_elem
+character(len=24), intent(in) :: vect_elem
+character(len=1), intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !

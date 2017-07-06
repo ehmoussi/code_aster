@@ -115,8 +115,9 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 ! - Neumann loads elementary vectors (residuals)
 !
     call verstp(model    , lload_name, lload_info, mate     , time_curr,&
-                time     , compor    , temp_prev , temp_iter, hydr_prev,&
-                hydr_curr, dry_prev  , dry_curr  , varc_curr, veresi)
+                time     , compor    , temp_prev , temp_iter, varc_curr,&
+                veresi   , 'V'       ,&
+                hydr_prev, hydr_curr , dry_prev  , dry_curr )
 !
 ! - Neumann loads vector (residuals)
 !
