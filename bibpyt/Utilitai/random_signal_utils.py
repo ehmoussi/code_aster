@@ -509,7 +509,7 @@ def DSP2SRO(f_in, xig, TSM, liste_freq, ideb=2):
 # iteration par formule de Rice pour mieux fitter le spectre cible
 
 
-def iter_SRO(f_dsp, f_sro, amort, TS):
+def iter_SRO(f_dsp, f_sro, amort, TS, Niter = 10):
     # ---------------------------------------------
     # IN  : f_in: DSP [rad/s], sro : spectre cible [Hz],
     #       amort: amortissement sro, TS: duree phase forte, meme disretisation
@@ -521,7 +521,7 @@ def iter_SRO(f_dsp, f_sro, amort, TS):
     freq_sro = f_sro.vale_x
     vale_sro_ref = f_sro.vale_y
     nbvale = len(freq_dsp)
-    Niter = 10
+    #Niter = 10
     ii = 0
     while ii < Niter:
         ii = ii + 1
@@ -725,7 +725,7 @@ def erre_spectre(Freq, valesro, vale_sro_ref):
 
 # conversion SRO en DSP equivalente par formule de Vanmarcke
 # ---------------------------------------------
-def SRO2DSP(FREQ_COUP, DUREE_PHASE_FORTE, FONC_SPEC, AMORT, FMIN, NORME, PAS=None, LIST_FREQ=None, **args):
+def SRO2DSP(FREQ_COUP, DUREE_PHASE_FORTE, FONC_SPEC, AMORT, FMIN, NORME, PAS=None, LIST_FREQ=None, NITER = 10, **args):
     # ---------------------------------------------
     #  f_in : SRO cible, frequency given in (Hz)
     #  f_out: DSP compatible avec SRO, frequency list lw in (rad/s)
@@ -782,7 +782,7 @@ def SRO2DSP(FREQ_COUP, DUREE_PHASE_FORTE, FONC_SPEC, AMORT, FMIN, NORME, PAS=Non
     # iteration sans simulation: formule de rice
     f_iter_sro_ref = t_fonction(lf, lsro, para=f_in.para)
     # PSA for frequency list lw (rad/s), physical units (not g)!!
-    f_dsp = iter_SRO(f_out, f_iter_sro_ref, AMORT, DUREE_PHASE_FORTE)
+    f_dsp = iter_SRO(f_out, f_iter_sro_ref, AMORT, DUREE_PHASE_FORTE, NITER)
     return f_dsp, f_iter_sro_ref
 
 

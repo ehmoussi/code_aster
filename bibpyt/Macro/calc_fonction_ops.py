@@ -662,10 +662,11 @@ class CalcFonction_DSP(CalcFonctionOper):
                           para=f_in.para)
         deuxpi = 2. * math.pi
         freq_coup = kw['FREQ_COUP']
+        nbiter = kw['NB_ITER']
         SRO_args = {
             'DUREE_PHASE_FORTE' : kw['DUREE'], 'FREQ_COUP' : freq_coup,
             'NORME' : kw['NORME'], 'AMORT' : kw['AMOR_REDUIT'],
-            'FMIN' : f_min, 'FONC_SPEC':  f_in}
+            'FMIN' : f_min, 'FONC_SPEC':  f_in, 'NITER' : kw['NB_ITER']}
         if kw['FREQ_PAS'] != None:
             SRO_args['PAS'] = kw['FREQ_PAS']
         elif kw['LIST_FREQ'] != None:
