@@ -45,7 +45,7 @@ charMeca2.setSupportModel( monModel )
 charMeca2.setValue( imposedPres1, "Haut" )
 charMeca2.build()
 
-monSolver = code_aster.LinearSolver( code_aster.Mumps, code_aster.Metis )
+monSolver = code_aster.MumpsSolver( code_aster.Metis )
 # Define the nonlinear method that will be used
 lineSearch = code_aster.LineSearchMethod( code_aster.Corde )
 

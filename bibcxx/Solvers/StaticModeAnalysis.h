@@ -46,7 +46,7 @@ class StaticModeAnalysisInstance: public GenericSolver
         /** @brief Stiffness Matrix */
         AssemblyMatrixDoublePtr    _StiffMatrix; 
         /** @brief Solveur lineaire */
-        LinearSolverPtr   _linearSolver;
+        BaseLinearSolverPtr   _linearSolver;
         /** @brief factor keyword composant description */
         GenParam _cmp;
         GenParam _loc;
@@ -130,7 +130,7 @@ class StaticModeAnalysisInstance: public GenericSolver
          * @brief Methode permettant de definir le solveur lineaire
          * @param currentSolver Solveur lineaire
          */
-        void setLinearSolver( const LinearSolverPtr& currentSolver )
+        void setLinearSolver( const BaseLinearSolverPtr& currentSolver )
         {
             _linearSolver = currentSolver;
         };

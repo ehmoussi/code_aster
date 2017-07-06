@@ -61,7 +61,7 @@ class StaticNonLinearAlgorithm: public GenericUnitaryAlgorithm< Stepper >
         /**
          * @brief Constructeur
          * @param DiscreteProblemPtr Problème discret a résoudre par l'algo
-         * @param LinearSolverPtr Solveur linéaire qui sera utilisé
+         * @param BaseLinearSolverPtr Solveur linéaire qui sera utilisé
          * @param ResultContainerPtr Résultat pour le stockage des déplacements
          */
         StaticNonLinearAlgorithm( const DiscreteProblemPtr& curPb,
@@ -88,7 +88,7 @@ class StaticNonLinearAlgorithm: public GenericUnitaryAlgorithm< Stepper >
          */
         void prepareStep( AlgorithmStepperIter& curStep ) throw( AlgoException& );
         
-        void doPrediction( DiscreteProblemPtr dProblem, LinearSolverPtr linSolv, FieldOnNodesDoublePtr uField ); 
+        void doPrediction( DiscreteProblemPtr dProblem, BaseLinearSolverPtr linSolv, FieldOnNodesDoublePtr uField ); 
         
         void doCorrection( DiscreteProblemPtr _discreteProblem, FieldOnNodesDoublePtr duField, int nIter );
 };
@@ -109,7 +109,7 @@ void StaticNonLinearAlgorithm< Stepper >::oneStep() throw( AlgoException& )
     // Reinit log 
     //_nonLinearMethod -> cleanLog(); 
     // Linear Solver
-   // LinearSolverPtr linSolv(_nonLinearMethod->getLinearSolver());
+   // BaseLinearSolverPtr linSolv(_nonLinearMethod->getBaseLinearSolver());
     // C'est dans le résultat qu'on trouve le 
     // champ aux noeuds contenant les déplacements 
     FieldOnNodesDoublePtr uField = _results->getEmptyFieldOnNodesDouble( "DEPL", _loadStep );
@@ -158,7 +158,7 @@ void StaticNonLinearAlgorithm< Stepper >::oneStep() throw( AlgoException& )
 }
 
 template< class Stepper >
-void StaticNonLinearAlgorithm< Stepper >::doPrediction( DiscreteProblemPtr dProblem, LinearSolverPtr linSolv, FieldOnNodesDoublePtr uField )
+void StaticNonLinearAlgorithm< Stepper >::doPrediction( DiscreteProblemPtr dProblem, BaseLinearSolverPtr linSolv, FieldOnNodesDoublePtr uField )
 {
     // A déplacer
     DOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();

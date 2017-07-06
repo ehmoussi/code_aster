@@ -69,7 +69,7 @@ public:
 
 protected:
     CapyConvertibleContainer _container;
-    LinearSolverPtr          _solver;
+    BaseLinearSolverPtr          _solver;
     bool                     _isEmpty;
 
     struct UnitaryModalBasis
@@ -195,7 +195,7 @@ protected:
 public:
     bool build() throw( std::runtime_error );
 
-    void setLinearSolver( const LinearSolverPtr& solver )
+    void setLinearSolver( const BaseLinearSolverPtr& solver )
     {
         _solver = solver;
     };

@@ -19,6 +19,6 @@
 !
 !
 interface
-    subroutine petsc_finalize()
-    end subroutine petsc_finalize
+    subroutine aster_petsc_finalize()
+    end subroutine aster_petsc_finalize
 end interface

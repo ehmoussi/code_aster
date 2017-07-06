@@ -69,8 +69,7 @@ matr_elemM.addMechanicalLoad(CharMeca2)
 matr_elemM.computeMechanicalMass()
 
 
-monSolver = code_aster.LinearSolver(
-    code_aster.LinearAlgebra.Mumps, code_aster.LinearAlgebra.Metis)
+monSolver = code_aster.MumpsSolver( code_aster.LinearAlgebra.Metis )
 
 
 numeDDLK = code_aster.DOFNumbering()

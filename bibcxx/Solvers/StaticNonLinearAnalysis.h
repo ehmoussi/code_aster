@@ -83,7 +83,7 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
          *         convergence criterion, tolerances ... */ 
         NonLinearControlPtr _control; 
         /** @brief Linear solver */
-        LinearSolverPtr    _linearSolver;
+        BaseLinearSolverPtr    _linearSolver;
         /** @brief Definition of the line search method */
         LineSearchMethodPtr _lineSearch;
         /** @brief Definition of the driving method */
@@ -192,7 +192,7 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
          * @brief definition of the linear solver
          * @param 
          */
-        void setLinearSolver( const LinearSolverPtr& currentSolver )
+        void setLinearSolver( const BaseLinearSolverPtr& currentSolver )
         {
             _linearSolver = currentSolver;
         };
@@ -206,7 +206,7 @@ class StaticNonLinearAnalysisInstance: public GenericSolver
         /**
          * @brief get the linear solver 
          */
-        LinearSolverPtr&  getLinearSolver()
+        BaseLinearSolverPtr&  getBaseLinearSolver()
         {
              return _linearSolver;
         };

@@ -52,7 +52,7 @@ dProblem = code_aster.DiscreteProblem.create(study)
 vect_elem = dProblem.buildElementaryMechanicalLoadsVector()
 matr_elem = dProblem.computeMechanicalRigidityMatrix()
 
-monSolver = code_aster.LinearSolver.create( code_aster.LinearSolverName.Petsc, code_aster.Renumbering.Sans)
+monSolver = code_aster.PetscSolver.create( code_aster.Renumbering.Sans )
 monSolver.setPreconditioning(code_aster.Preconditioning.Without)
 
 numeDDL = code_aster.ParallelDOFNumbering.create()

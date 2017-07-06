@@ -53,7 +53,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
         /** @brief Champ de materiau a utiliser */
         MaterialOnMeshPtr  _materialOnMesh;
         /** @brief Solveur lineaire */
-        LinearSolverPtr    _linearSolver;
+        BaseLinearSolverPtr    _linearSolver;
         /** @brief Liste des chargements */
         ListOfLoadsPtr     _listOfLoads;
         /** @brief Liste de pas de temps */
@@ -92,7 +92,7 @@ class StaticMechanicalSolverInstance: public GenericSolver
          * @brief Methode permettant de definir le solveur lineaire
          * @param currentSolver Solveur lineaire
          */
-        void setLinearSolver( const LinearSolverPtr& currentSolver )
+        void setLinearSolver( const BaseLinearSolverPtr& currentSolver )
         {
             _linearSolver = currentSolver;
         };

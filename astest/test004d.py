@@ -42,7 +42,7 @@ kine2.setSupportModel(monModel)
 kine2.addImposedMechanicalDOFOnElements(code_aster.Dz, 0.1, "Haut")
 kine2.build()
 
-monSolver = code_aster.LinearSolver( code_aster.Mumps, code_aster.Metis )
+monSolver = code_aster.MumpsSolver( code_aster.Metis )
 
 # Define a first nonlinear Analysis
 statNonLine1 = code_aster.StaticNonLinearAnalysis()

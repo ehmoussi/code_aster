@@ -45,7 +45,7 @@ const std::set< Renumbering > WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering
 
 
 
-ListSyntaxMapContainer LinearSolverInstance::buildListSyntax()
+ListSyntaxMapContainer BaseLinearSolverInstance::buildListSyntax()
 {
     ListSyntaxMapContainer listeSolver;
     SyntaxMapContainer dict1 = buildSyntaxMapFromParamList( _listOfParameters );
@@ -53,7 +53,7 @@ ListSyntaxMapContainer LinearSolverInstance::buildListSyntax()
     return listeSolver; 
 };
 
-bool LinearSolverInstance::build()
+bool BaseLinearSolverInstance::build()
 {
     std::string newName( getName() );
     newName.resize( 19, ' ' );
@@ -74,7 +74,7 @@ bool LinearSolverInstance::build()
     return true;
 };
 
-bool LinearSolverInstance::matrixFactorization( AssemblyMatrixDoublePtr currentMatrix )
+bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDoublePtr currentMatrix )
      throw( std::runtime_error )
 {
     if( _isEmpty ) build();
@@ -98,7 +98,7 @@ bool LinearSolverInstance::matrixFactorization( AssemblyMatrixDoublePtr currentM
     return true;
 };
 
-FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystemMatrixRHS(
+FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemMatrixRHS(
             const AssemblyMatrixDoublePtr& currentMatrix,
             const FieldOnNodesDoublePtr& currentRHS ) const
 {
@@ -135,7 +135,7 @@ FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystemMatrixRHS(
     return returnField;
 };
 
-FieldOnNodesDoublePtr LinearSolverInstance::solveDoubleLinearSystem(
+FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
             const AssemblyMatrixDoublePtr& currentMatrix,
             const FieldOnNodesDoublePtr& kinematicsField,
             const FieldOnNodesDoublePtr& currentRHS,

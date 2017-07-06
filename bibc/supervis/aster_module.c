@@ -53,7 +53,7 @@ __PYX_EXTERN_C DL_IMPORT(long) *getCommandKeywordValueInt(char *, int, char *, i
 #include "petsc.h"
 #define CALL_PETSC_INITIALIZE() CALL0(PETSC_INITIALIZE,petsc_initialize)
 
-void DEF0(PETSC_INITIALIZE,petsc_initialize)
+void DEF0(ASTER_PETSC_INITIALIZE,aster_petsc_initialize)
 {
     int a = 0;
     PetscInitialize(&a, NULL, NULL, NULL);
@@ -62,7 +62,7 @@ void DEF0(PETSC_INITIALIZE,petsc_initialize)
 
 #define CALL_PETSC_FINALIZE() CALL0(PETSC_FINALIZE,petsc_finalize)
 
-void DEF0(PETSC_FINALIZE,petsc_finalize)
+void DEF0(ASTER_PETSC_FINALIZE,aster_petsc_finalize)
 {
     PetscFinalize();
 };

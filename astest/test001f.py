@@ -89,8 +89,7 @@ matr_elem = dProblem.computeMechanicalRigidityMatrix()
 
 test.assertEqual( matr_elem.getType(), "MATR_ELEM_DEPL_R" )
 
-monSolver = code_aster.LinearSolver.create( code_aster.LinearSolverName.Mumps,
-                                            code_aster.Renumbering.Metis )
+monSolver = code_aster.MumpsSolver.create( code_aster.Renumbering.Metis )
 
 numeDDL = code_aster.DOFNumbering.create()
 numeDDL.setElementaryMatrix( matr_elem )

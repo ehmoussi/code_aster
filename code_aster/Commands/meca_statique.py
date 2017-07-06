@@ -19,7 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from code_aster import LinearSolver, StaticMechanicalSolver, KinematicsLoad, GenericMechanicalLoad
+from code_aster import MultFrontSolver, LdltSolver, MumpsSolver, PetscSolver, GcpcSolver
+from code_aster import StaticMechanicalSolver, KinematicsLoad, GenericMechanicalLoad
 from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 from code_aster import getGlossary
@@ -76,7 +77,12 @@ def MECA_STATIQUE( **kwargs ):
     glossary = getGlossary()
     solverInt = glossary.getSolver( methode )
     renumInt = glossary.getRenumbering( renum )
-    currentSolver = LinearSolver.create( solverInt, renumInt )
+    currentSolver = None
+    if methode == "MULT_FRONT": currentSolver = MultFrontSolver.create( renumInt )
+    elif methode == "LDLT": currentSolver = LdltSolver.create( renumInt )
+    elif methode == "MUMPS": currentSolver = MumpsSolver.create( renumInt )
+    elif methode == "PETSC": currentSolver = PetscSolver.create( renumInt )
+    elif methode == "GCPC": currentSolver = GcpcSolver.create( renumInt )
 
     mechaSolv.setLinearSolver( currentSolver )
 

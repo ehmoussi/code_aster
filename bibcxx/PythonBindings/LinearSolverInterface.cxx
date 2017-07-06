@@ -30,7 +30,7 @@ void exportLinearSolverToPython()
 {
     using namespace boost::python;
 
-    enum_< LinearSolverEnum >( "LinearSolverName" )
+    enum_< LinearSolverEnum >( "BaseLinearSolverName" )
         .value( "MultFront", MultFront )
         .value( "Ldlt", Ldlt )
         .value( "Mumps", Mumps )
@@ -92,32 +92,61 @@ void exportLinearSolverToPython()
         .value( "Undefined", Undefined )
         ;
 
-    class_< LinearSolverInstance, LinearSolverInstance::LinearSolverPtr,
-            bases< DataStructure > > ( "LinearSolver", no_init )
-        .def( "create", &LinearSolverInstance::create )
-        .staticmethod( "create" )
-        .def( "solveDoubleLinearSystem", &LinearSolverInstance::solveDoubleLinearSystemMatrixRHS )
-        .def( "disablePreprocessing", &LinearSolverInstance::disablePreprocessing )
-        .def( "matrixFactorization", &LinearSolverInstance::matrixFactorization )
-        .def( "setAlgorithm", &LinearSolverInstance::setAlgorithm )
-        .def( "setDistributedMatrix", &LinearSolverInstance::setDistributedMatrix )
+    class_< BaseLinearSolverInstance, BaseLinearSolverInstance::BaseLinearSolverPtr,
+            bases< DataStructure > > ( "BaseLinearSolver", no_init )
+        .def( "solveDoubleLinearSystem",
+              &BaseLinearSolverInstance::solveDoubleLinearSystemMatrixRHS )
+        .def( "disablePreprocessing", &BaseLinearSolverInstance::disablePreprocessing )
+        .def( "matrixFactorization", &BaseLinearSolverInstance::matrixFactorization )
+        .def( "setAlgorithm", &BaseLinearSolverInstance::setAlgorithm )
+        .def( "setDistributedMatrix", &BaseLinearSolverInstance::setDistributedMatrix )
         .def( "setErrorOnMatrixSingularity",
-              &LinearSolverInstance::setErrorOnMatrixSingularity )
-        .def( "setFillingLevel", &LinearSolverInstance::setFillingLevel )
-        .def( "setLagrangeElimination", &LinearSolverInstance::setLagrangeElimination )
-        .def( "setLowRankSize", &LinearSolverInstance::setLowRankSize )
-        .def( "setLowRankThreshold", &LinearSolverInstance::setLowRankThreshold )
-        .def( "setMatrixFilter", &LinearSolverInstance::setMatrixFilter )
-        .def( "setMatrixType", &LinearSolverInstance::setMatrixType )
+              &BaseLinearSolverInstance::setErrorOnMatrixSingularity )
+        .def( "setFillingLevel", &BaseLinearSolverInstance::setFillingLevel )
+        .def( "setLagrangeElimination", &BaseLinearSolverInstance::setLagrangeElimination )
+        .def( "setLowRankSize", &BaseLinearSolverInstance::setLowRankSize )
+        .def( "setLowRankThreshold", &BaseLinearSolverInstance::setLowRankThreshold )
+        .def( "setMatrixFilter", &BaseLinearSolverInstance::setMatrixFilter )
+        .def( "setMatrixType", &BaseLinearSolverInstance::setMatrixType )
         .def( "setMaximumNumberOfIteration",
-              &LinearSolverInstance::setMaximumNumberOfIteration )
-        .def( "setMemoryManagement", &LinearSolverInstance::setMemoryManagement )
-        .def( "setPrecisionMix", &LinearSolverInstance::setPrecisionMix )
-        .def( "setPreconditioning", &LinearSolverInstance::setPreconditioning )
+              &BaseLinearSolverInstance::setMaximumNumberOfIteration )
+        .def( "setMemoryManagement", &BaseLinearSolverInstance::setMemoryManagement )
+        .def( "setPrecisionMix", &BaseLinearSolverInstance::setPrecisionMix )
+        .def( "setPreconditioning", &BaseLinearSolverInstance::setPreconditioning )
         .def( "setPreconditioningResidual",
-              &LinearSolverInstance::setPreconditioningResidual )
-        .def( "setSolverResidual", &LinearSolverInstance::setSolverResidual )
+              &BaseLinearSolverInstance::setPreconditioningResidual )
+        .def( "setSolverResidual", &BaseLinearSolverInstance::setSolverResidual )
         .def( "setUpdatePreconditioningParameter",
-              &LinearSolverInstance::setUpdatePreconditioningParameter )
+              &BaseLinearSolverInstance::setUpdatePreconditioningParameter )
+    ;
+
+    class_< MultFrontSolverInstance, MultFrontSolverPtr,
+            bases< BaseLinearSolverInstance > > ( "MultFrontSolver", no_init )
+        .def( "create", &MultFrontSolverInstance::create )
+        .staticmethod( "create" )
+    ;
+
+    class_< LdltSolverInstance, LdltSolverPtr,
+            bases< BaseLinearSolverInstance > > ( "LdltSolver", no_init )
+        .def( "create", &LdltSolverInstance::create )
+        .staticmethod( "create" )
+    ;
+
+    class_< MumpsSolverInstance, MumpsSolverPtr,
+            bases< BaseLinearSolverInstance > > ( "MumpsSolver", no_init )
+        .def( "create", &MumpsSolverInstance::create )
+        .staticmethod( "create" )
+    ;
+
+    class_< PetscSolverInstance, PetscSolverPtr,
+            bases< BaseLinearSolverInstance > > ( "PetscSolver", no_init )
+        .def( "create", &PetscSolverInstance::create )
+        .staticmethod( "create" )
+    ;
+
+    class_< GcpcSolverInstance, GcpcSolverPtr,
+            bases< BaseLinearSolverInstance > > ( "GcpcSolver", no_init )
+        .def( "create", &GcpcSolverInstance::create )
+        .staticmethod( "create" )
     ;
 };

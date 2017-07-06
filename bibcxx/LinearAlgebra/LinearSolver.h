@@ -47,6 +47,7 @@
  */
 struct WrapMultFront
 {
+    static const LinearSolverEnum solverType = MultFront;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
 };
@@ -57,6 +58,7 @@ struct WrapMultFront
  */
 struct WrapLdlt
 {
+    static const LinearSolverEnum solverType = Ldlt;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
 };
@@ -67,6 +69,7 @@ struct WrapLdlt
  */
 struct WrapMumps
 {
+    static const LinearSolverEnum solverType = Mumps;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
 };
@@ -77,6 +80,7 @@ struct WrapMumps
  */
 struct WrapPetsc
 {
+    static const LinearSolverEnum solverType = Petsc;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = true;
 };
@@ -87,6 +91,7 @@ struct WrapPetsc
  */
 struct WrapGcpc
 {
+    static const LinearSolverEnum solverType = Gcpc;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
 };
@@ -125,72 +130,14 @@ typedef RenumberingChecker< WrapPetsc > PetscRenumberingChecker;
 typedef RenumberingChecker< WrapGcpc > GcpcRenumberingChecker;
 
 /**
- * @struct SolverChecker
- * @brief permet de verifier si un couple solveur, renumeroteur est autorise
- * @author Nicolas Sellenet
- */
-struct SolverChecker
-{
-    /**
-     * @brief Fonction statique qui verifie un couple solveur, renumeroteur
-     * @param solver Type de solveur
-     * @param renumber Type de renumeroteur
-     * @return vrai si le couple est valide
-     */
-    static bool isAllowedRenumberingForSolver( LinearSolverEnum solver, Renumbering renumber ) throw ( std::runtime_error )
-    {
-        switch ( solver )
-        {
-            case MultFront:
-                return MultFrontRenumberingChecker::isAllowedRenumbering( renumber );
-            case Ldlt:
-                return LdltRenumberingChecker::isAllowedRenumbering( renumber );
-            case Mumps:
-                return MumpsRenumberingChecker::isAllowedRenumbering( renumber );
-            case Petsc:
-                return PetscRenumberingChecker::isAllowedRenumbering( renumber );
-            case Gcpc:
-                return GcpcRenumberingChecker::isAllowedRenumbering( renumber );
-            default:
-                throw std::runtime_error( "Not a valid linear solver" );
-        }
-    };
-
-    /**
-     * @brief Fonction statique qui verifie qu'un 
-     * @param solver Type de solveur
-     * @param renumber Type de renumeroteur
-     * @return vrai si le couple est valide
-     */
-    static bool isHPCCompliant( LinearSolverEnum solver ) throw ( std::runtime_error )
-    {
-        switch ( solver )
-        {
-            case MultFront:
-                return MultFrontRenumberingChecker::isHPCCompliant();
-            case Ldlt:
-                return LdltRenumberingChecker::isHPCCompliant();
-            case Mumps:
-                return MumpsRenumberingChecker::isHPCCompliant();
-            case Petsc:
-                return PetscRenumberingChecker::isHPCCompliant();
-            case Gcpc:
-                return GcpcRenumberingChecker::isHPCCompliant();
-            default:
-                throw std::runtime_error( "Not a valid linear solver" );
-        }
-    };
-};
-
-/**
- * @class LinearSolverInstance
+ * @class BaseLinearSolverInstance
  * @brief Cette classe permet de definir un solveur lineaire
  * @author Nicolas Sellenet
  * @todo verifier que tous les mots-clés sont modifiables par des set
  */
-class LinearSolverInstance: public DataStructure
+class BaseLinearSolverInstance: public DataStructure
 {
-    private:
+    protected:
         /** @brief Type du solveur lineaire */
         LinearSolverEnum    _linearSolver;
         /** @brief Type du renumeroteur */
@@ -231,31 +178,21 @@ class LinearSolverInstance: public DataStructure
 
     public:
         /**
-         * @typedef LinearSolverPtr
-         * @brief Pointeur intelligent vers un LinearSolver
+         * @typedef BaseLinearSolverPtr
+         * @brief Pointeur intelligent vers un BaseLinearSolverInstance
          */
-        typedef boost::shared_ptr< LinearSolverInstance > LinearSolverPtr;
+        typedef boost::shared_ptr< BaseLinearSolverInstance > BaseLinearSolverPtr;
 
         /**
          * @brief Constructeur
-         */
-        static LinearSolverPtr create( const LinearSolverEnum currentLinearSolver,
-                                       const Renumbering currentRenumber )
-        {
-            return LinearSolverPtr( new LinearSolverInstance( currentLinearSolver,
-                                                              currentRenumber ) );
-        };
-
-        /**
-         * @brief Constructeur
-         * @param currentLinearSolver Type de solveur
+         * @param currentBaseLinearSolver Type de solveur
          * @param currentRenumber Type de renumeroteur
          * @todo recuperer le code retour de isAllowedRenumberingForSolver
          */
-        LinearSolverInstance( const LinearSolverEnum currentLinearSolver = MultFront,
-                              const Renumbering currentRenumber = Metis ):
+        BaseLinearSolverInstance( const LinearSolverEnum currentBaseLinearSolver = MultFront,
+                                  const Renumbering currentRenumber = Metis ):
                     DataStructure( getNewResultObjectName(), "SOLVEUR" ),
-                    _linearSolver( currentLinearSolver ),
+                    _linearSolver( currentBaseLinearSolver ),
                     _renumber( currentRenumber ),
                     _isEmpty( true ),
                     _charValues( JeveuxVectorChar24( getName() + "           .SLVK" ) ),
@@ -286,13 +223,12 @@ class LinearSolverInstance: public DataStructure
                     _resolutionType( "TYPE_RESOL", false ),
                     _acceleration( "ACCELERATION", false )
         {
-            SolverChecker::isAllowedRenumberingForSolver( currentLinearSolver, currentRenumber );
             _renum = RenumberingNames[ (int)_renumber ];
 
             _method = std::string( LinearSolverNames[ (int)_linearSolver ] );
             _lagr = "NON";
             _preconditioning = Without;
-            if ( currentLinearSolver == Petsc )
+            if ( currentBaseLinearSolver == Petsc )
             {
                 _algo = "FGMRES";
                 _distMatrix = "NON";
@@ -302,7 +238,7 @@ class LinearSolverInstance: public DataStructure
                 _residual = 1.e-6;
                 _precondResidual = -1.0;
             }
-            if ( currentLinearSolver == Mumps )
+            if ( currentBaseLinearSolver == Mumps )
             {
                 _lagr = "LAGR2";
                 _memory = "AUTO";
@@ -319,17 +255,17 @@ class LinearSolverInstance: public DataStructure
                 _resolutionType = "AUTO";
                 _acceleration = "AUTO";
             }
-            if ( currentLinearSolver == MultFront )
+            if ( currentBaseLinearSolver == MultFront )
             {
                 _nPrec = 8;
                 _stopSingular = "OUI";
             }
-            if ( currentLinearSolver == Ldlt )
+            if ( currentBaseLinearSolver == Ldlt )
             {
                 _nPrec = 8;
                 _stopSingular = "OUI";
             }
-            if ( currentLinearSolver == Gcpc )
+            if ( currentBaseLinearSolver == Gcpc )
             {
                 _iterNumber = 0;
                 _preconditioning = IncompleteLdlt;
@@ -412,16 +348,17 @@ class LinearSolverInstance: public DataStructure
          * @brief Methode permettant de savoir si le HPC est autorise
          * @return true si le découpage de domain est autorisé
          */
-        bool isHPCCompliant()
+        virtual bool isHPCCompliant()
         {
-            return SolverChecker::isHPCCompliant( _linearSolver );
+            return false;
         };
 
         /**
          * @brief Factorisation d'une matrice
          * @param currentMatrix Matrice assemblee
          */
-        bool matrixFactorization( AssemblyMatrixDoublePtr currentMatrix ) throw( std::runtime_error );
+        bool matrixFactorization( AssemblyMatrixDoublePtr currentMatrix )
+            throw( std::runtime_error );
 
         /**
          * @brief Inversion du systeme lineaire
@@ -576,9 +513,67 @@ class LinearSolverInstance: public DataStructure
 };
 
 /**
- * @typedef LinearSolverPtr
- * @brief Enveloppe d'un pointeur intelligent vers un LinearSolverInstance
+ * @typedef BaseLinearSolverPtr
+ * @brief Pointeur intelligent vers un BaseLinearSolverInstance
  */
-typedef boost::shared_ptr< LinearSolverInstance > LinearSolverPtr;
+typedef boost::shared_ptr< BaseLinearSolverInstance > BaseLinearSolverPtr;
+
+/**
+ * @class LinearSolverInstance
+ * @brief Cette classe permet de definir un solveur lineaire
+ * @author Nicolas Sellenet
+ * @todo verifier que tous les mots-clés sont modifiables par des set
+ */
+template< typename linSolvWrap >
+class LinearSolverInstance: public BaseLinearSolverInstance
+{
+public:
+    /**
+     * @typedef LinearSolverPtr
+     * @brief Pointeur intelligent vers un LinearSolver
+     */
+    typedef boost::shared_ptr< LinearSolverInstance< linSolvWrap > > LinearSolverPtr;
+
+    /**
+     * @brief Constructeur
+     */
+    static LinearSolverPtr create( const Renumbering currentRenumber )
+    {
+        return LinearSolverPtr( new LinearSolverInstance< linSolvWrap >( currentRenumber ) );
+    };
+
+    LinearSolverInstance( const Renumbering currentRenumber = Metis ):
+        BaseLinearSolverInstance( linSolvWrap::solverType, currentRenumber )
+    {
+        RenumberingChecker< linSolvWrap >::isAllowedRenumbering( currentRenumber );
+    };
+
+    bool isHPCCompliant()
+    {
+        return RenumberingChecker< linSolvWrap >::isHPCCompliant();
+    };
+};
+
+typedef LinearSolverInstance< WrapMultFront > MultFrontSolverInstance;
+typedef LinearSolverInstance< WrapLdlt > LdltSolverInstance;
+typedef LinearSolverInstance< WrapMumps > MumpsSolverInstance;
+typedef LinearSolverInstance< WrapPetsc > PetscSolverInstance;
+typedef LinearSolverInstance< WrapGcpc > GcpcSolverInstance;
+
+
+/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< MultFront > */
+typedef boost::shared_ptr< MultFrontSolverInstance > MultFrontSolverPtr;
+
+/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< Ldlt > */
+typedef boost::shared_ptr< LdltSolverInstance > LdltSolverPtr;
+
+/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< Mumps > */
+typedef boost::shared_ptr< MumpsSolverInstance > MumpsSolverPtr;
+
+/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< Petsc > */
+typedef boost::shared_ptr< PetscSolverInstance > PetscSolverPtr;
+
+/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< Gcpc > */
+typedef boost::shared_ptr< GcpcSolverInstance > GcpcSolverPtr;
 
 #endif /* LINEARSOLVER_H_ */

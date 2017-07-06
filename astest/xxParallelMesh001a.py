@@ -56,8 +56,7 @@ study = code_aster.StudyDescription.create(model, affectMat)
 dProblem = code_aster.DiscreteProblem.create(study)
 matr_elem = dProblem.computeMechanicalRigidityMatrix()
 
-monSolver = code_aster.LinearSolver.create(code_aster.LinearSolverName.Mumps,
-                                           code_aster.Renumbering.Metis)
+monSolver = code_aster.MumpsSolver.create(code_aster.Renumbering.Metis)
 
 numeDDL = code_aster.ParallelDOFNumbering.create()
 numeDDL.setElementaryMatrix(matr_elem)
