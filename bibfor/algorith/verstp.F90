@@ -16,10 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine verstp(model    , lload_name, lload_info, mate      , time_curr,&
-                  time     , compor    , temp_prev , temp_iter , hydr_prev,&
-                  hydr_curr, dry_prev  , dry_curr  , varc_curr , vect_elem,&
-                  base_)
+subroutine verstp(model     , lload_name , lload_info, mate     , time_curr,&
+                  time      , compor_ther, temp_prev , temp_iter, varc_curr,&
+                  vect_elem , base       , &
+                  hydr_prev_, hydr_curr_ , dry_prev_ , dry_curr_)
 !
 implicit none
 !
@@ -38,24 +38,25 @@ implicit none
 #include "asterfort/resi_ther.h"
 #include "asterfort/inical.h"
 #include "asterfort/load_list_info.h"
+#include "asterfort/detrsd.h"
+#include "asterfort/memare.h"
 !
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: lload_name
-    character(len=24), intent(in) :: lload_info
-    real(kind=8), intent(in) :: time_curr
-    character(len=24), intent(in) :: time
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: temp_prev
-    character(len=24), intent(in) :: temp_iter
-    character(len=24), intent(in) :: hydr_prev   
-    character(len=24), intent(in) :: hydr_curr
-    character(len=24), intent(in) :: dry_prev   
-    character(len=24), intent(in) :: dry_curr
-    character(len=24), intent(in) :: compor
-    character(len=19), intent(in) :: varc_curr    
-    character(len=24), intent(in) :: vect_elem
-    character(len=1), optional, intent(in) :: base_
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: lload_name
+character(len=24), intent(in) :: lload_info
+character(len=24), intent(in) :: mate
+real(kind=8), intent(in) :: time_curr
+character(len=24), intent(in) :: time
+character(len=24), intent(in) :: compor_ther
+character(len=24), intent(in) :: temp_prev
+character(len=24), intent(in) :: temp_iter
+character(len=19), intent(in) :: varc_curr
+character(len=24), intent(in) :: vect_elem
+character(len=1), intent(in) :: base
+character(len=24), optional, intent(in) :: hydr_prev_
+character(len=24), optional, intent(in) :: hydr_curr_
+character(len=24), optional, intent(in) :: dry_prev_  
+character(len=24), optional, intent(in) :: dry_curr_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,30 +67,29 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model            : name of the model
-! In  mate             : name of material characteristics (field)
 ! In  lload_name       : name of object for list of loads name
 ! In  lload_info       : name of object for list of loads info
+! In  mate             : name of material characteristics (field)
 ! In  time_curr        : current time
 ! In  time             : time (<CARTE>)
+! In  compor_ther      : name of comportment definition (field)
 ! In  temp_prev        : previous temperature
 ! In  temp_iter        : temperature field at current Newton iteration
+! In  varc_curr        : command variable for current time
+! In  vect_elem        : name of vect_elem result
+! In  base             : JEVEUX base for object
 ! In  hydr_prev        : previous hydratation
 ! In  hydr_curr        : current hydratation
 ! In  dry_prev         : previous drying
 ! In  dry_curr         : current drying
-! In  compor           : name of comportment definition (field)
-! In  varc_curr        : command variable for current time
-! In  vect_elem        : name of vect_elem result
-! In  base             : JEVEUX base for object
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_in_maxi, nbout
-    parameter (nb_in_maxi = 5, nbout = 2)
+    integer , parameter :: nb_in_maxi = 5 
+    integer , parameter :: nbout = 2
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
-!
-    character(len=1) :: base, stop_calc
+    character(len=1) :: stop_calc
     character(len=8) :: load_name, newnom
     character(len=19) :: resu_elem
     integer :: load_nume
@@ -97,26 +97,47 @@ implicit none
     integer :: i_load, nb_load, nb_in_prep
     character(len=24), pointer :: v_load_name(:) => null()
     integer, pointer :: v_load_info(:) => null()
+    character(len=24) :: hydr_prev, hydr_curr, dry_prev, dry_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resu_elem   = vect_elem(1:8)//'.0000000'
-    stop_calc   = 'S'
-    if (present(base_)) then
-        base = base_
-    else
-        base = 'V'
+    resu_elem = vect_elem(1:8)//'.0000000'
+    stop_calc = 'S'
+!
+! - Get fields
+!
+    hydr_prev = ' '
+    if (present(hydr_prev_)) then
+        hydr_prev = hydr_prev_
+    endif
+    hydr_curr = '&&VEHYDR'
+    if (present(hydr_curr_)) then
+        hydr_curr = hydr_curr_
+    endif
+    dry_prev = ' '
+    if (present(dry_prev_)) then
+        dry_prev = dry_prev_
+    endif
+    dry_curr = ' '
+    if (present(dry_curr_)) then
+        dry_curr = dry_curr_
     endif
 !
 ! - Init fields
 !
-    call inical(nb_in_maxi, lpain, lchin, nbout, lpaout,&
-                lchout)    
+    call inical(nb_in_maxi, lpain, lchin, nbout, lpaout, lchout)    
 !
 ! - Loads
 !
     call load_list_info(load_empty, nb_load   , v_load_name, v_load_info,&
                         lload_name, lload_info)
+!
+! - Allocate result
+!
+    call detrsd('VECT_ELEM', vect_elem)
+    call memare(base, vect_elem, model, ' ', ' ',&
+                'CHAR_THER')
+    call reajre(vect_elem, ' ', base)
 !
 ! - Generate new RESU_ELEM name
 !
@@ -126,8 +147,8 @@ implicit none
 !
 ! - Residuals from non-linear laws 
 !
-    call resi_ther(model    , mate     , time     , compor    , temp_prev,&
-                   temp_iter, hydr_prev, hydr_curr, dry_prev  , dry_curr ,&
+    call resi_ther(model    , mate     , time     , compor_ther, temp_prev,&
+                   temp_iter, hydr_prev, hydr_curr, dry_prev   , dry_curr ,&
                    varc_curr, resu_elem, vect_elem, base)
 !
 ! - Preparing input fields

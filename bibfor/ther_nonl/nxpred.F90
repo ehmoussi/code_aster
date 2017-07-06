@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nxpred(model     , mate     , cara_elem, list_load, nume_dof ,&
                   solver    , lostat   , tpsthe   , time     , matass   ,&
                   lonch     , maprec   , varc_curr, temp_prev, temp_iter,&
@@ -43,26 +45,23 @@ implicit none
 #include "asterfort/vethbt.h"
 #include "asterfort/vethbu.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: nume_dof
-    character(len=19), intent(in) :: solver
-    real(kind=8) :: tpsthe(6)
-    character(len=24), intent(in) :: time
-    character(len=19), intent(in) :: varc_curr
-    integer :: lonch
-    character(len=19) :: maprec
-    character(len=24) :: matass, cndirp, cnchci, cnresi
-    character(len=24) :: temp_iter, temp_prev, vec2nd, vec2ni
-    character(len=24) :: hydr_prev, hydr_curr, compor, dry_prev, dry_curr
-    aster_logical :: lostat
-    character(len=24), intent(in) :: cn2mbr
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: solver
+real(kind=8) :: tpsthe(6)
+character(len=24), intent(in) :: time
+character(len=19), intent(in) :: varc_curr
+integer :: lonch
+character(len=19) :: maprec
+character(len=24) :: matass, cndirp, cnchci, cnresi
+character(len=24) :: temp_iter, temp_prev, vec2nd, vec2ni
+character(len=24) :: hydr_prev, hydr_curr, compor, dry_prev, dry_curr
+aster_logical :: lostat
+character(len=24), intent(in) :: cn2mbr
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -127,8 +126,9 @@ implicit none
 ! ----- Neumann loads elementary vectors (residuals)
 !
         call verstp(model    , lload_name, lload_info, mate     , time_curr,&
-                    time     , compor    , temp_prev , temp_iter, hydr_prev,&
-                    hydr_curr, dry_prev  , dry_curr  , varc_curr, veresi)
+                    time     , compor    , temp_prev , temp_iter, varc_curr,&
+                    veresi   , 'V'       ,&
+                    hydr_prev, hydr_curr , dry_prev  , dry_curr )
 !
 ! ----- Neumann loads vector (residuals)
 !
@@ -137,7 +137,7 @@ implicit none
                     typres, cnresi)
         call jeveuo(cnresi(1:19)//'.VALE', 'L', vr=v_cnresi)
 !
-! --- BT LAMBDA - CALCUL ET ASSEMBLAGE
+! ----- BT LAMBDA - CALCUL ET ASSEMBLAGE
 !
         call vethbt(model, lload_name, lload_info, cara_elem, mate,&
                     temp_prev, vebtla)
@@ -146,7 +146,7 @@ implicit none
                     typres, cnvabt)
         call jeveuo(cnvabt(1:19)//'.VALE', 'L', vr=v_cnvabt)
 !
-! --- B . TEMPERATURE - CALCUL ET ASSEMBLAGE
+! ----- B . TEMPERATURE - CALCUL ET ASSEMBLAGE
 !
         call vethbu(model, matass, lload_name, lload_info, cara_elem,&
                     mate, temp_prev, vebuem)

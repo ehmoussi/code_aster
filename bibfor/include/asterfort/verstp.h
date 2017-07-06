@@ -17,25 +17,25 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine verstp(model    , lload_name, lload_info, mate      , time_curr,&
-                      time     , compor    , temp_prev , temp_iter , hydr_prev,&
-                      hydr_curr, dry_prev  , dry_curr  , varc_curr , vect_elem,&
-                      base_)
+    subroutine verstp(model     , lload_name , lload_info, mate     , time_curr,&
+                      time      , compor_ther, temp_prev , temp_iter, varc_curr,&
+                      vect_elem , base       , &
+                      hydr_prev_, hydr_curr_ , dry_prev_ , dry_curr_)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: lload_name
         character(len=24), intent(in) :: lload_info
+        character(len=24), intent(in) :: mate
         real(kind=8), intent(in) :: time_curr
         character(len=24), intent(in) :: time
-        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: compor_ther
         character(len=24), intent(in) :: temp_prev
         character(len=24), intent(in) :: temp_iter
-        character(len=24), intent(in) :: hydr_prev   
-        character(len=24), intent(in) :: hydr_curr
-        character(len=24), intent(in) :: dry_prev   
-        character(len=24), intent(in) :: dry_curr
-        character(len=24), intent(in) :: compor
-        character(len=19), intent(in) :: varc_curr    
+        character(len=19), intent(in) :: varc_curr
         character(len=24), intent(in) :: vect_elem
-        character(len=1), optional, intent(in) :: base_
+        character(len=1), intent(in) :: base
+        character(len=24), optional, intent(in) :: hydr_prev_
+        character(len=24), optional, intent(in) :: hydr_curr_
+        character(len=24), optional, intent(in) :: dry_prev_  
+        character(len=24), optional, intent(in) :: dry_curr_
     end subroutine verstp
 end interface

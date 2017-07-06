@@ -117,9 +117,10 @@ implicit none
 !
 ! ----- Neumann loads elementary vectors (residuals)
 !
-        call verstp(model    , lload_name, lload_info, mate     , time_curr,&
-                    time     , compor    , temp_prev , vtempr   , hydr_prev,&
-                    hydr_curr, dry_prev  , dry_curr  , varc_curr, veresi)
+        call verstp(model    , lload_name, lload_info, mate    , time_curr,&
+                    time     , compor    , temp_prev , vtempr  , varc_curr,&
+                    veresi   , 'V'       ,&
+                    hydr_prev, hydr_curr , dry_prev  , dry_curr)
 !
 ! ----- Neumann loads vector (residuals)
 !
