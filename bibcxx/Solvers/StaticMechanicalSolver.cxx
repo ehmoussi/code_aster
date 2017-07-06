@@ -36,7 +36,7 @@
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance():
     _supportModel( ModelPtr() ),
     _materialOnMesh( MaterialOnMeshPtr() ),
-    _linearSolver( LinearSolverPtr() ),
+    _linearSolver( BaseLinearSolverPtr() ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
     _timeStep( TimeStepperPtr( new TimeStepperInstance( Permanent ) ) )
 {};

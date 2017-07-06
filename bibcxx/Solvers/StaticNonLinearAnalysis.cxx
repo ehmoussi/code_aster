@@ -36,7 +36,7 @@ StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance():
     _loadStepManager( TimeStepManagerPtr( ) ), 
     _nonLinearMethod( NonLinearMethodPtr( new NonLinearMethodInstance() ) ),
     _control( NonLinearControlPtr ( new NonLinearControlInstance() ) ),  
-    _linearSolver( LinearSolverPtr ( new LinearSolverInstance() ) ),
+    _linearSolver( BaseLinearSolverPtr ( new BaseLinearSolverInstance() ) ),
     _lineSearch ( LineSearchMethodPtr() ) 
 {};
 

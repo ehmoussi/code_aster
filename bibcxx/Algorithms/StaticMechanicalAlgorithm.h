@@ -44,7 +44,7 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
         /** @brief Problème discret */
         DiscreteProblemPtr  _discreteProblem;
         /** @brief Solveur linéaire */
-        LinearSolverPtr     _linearSolver;
+        BaseLinearSolverPtr     _linearSolver;
         /** @brief Sd de stockage des résultats */
         ResultsContainerPtr _results;
         /** @brief Chargements */
@@ -56,11 +56,11 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
         /**
          * @brief Constructeur
          * @param DiscreteProblemPtr Problème discret a résoudre par l'algo
-         * @param LinearSolverPtr Sovleur linéaire qui sera utilisé
+         * @param BaseLinearSolverPtr Sovleur linéaire qui sera utilisé
          * @param ResultContainerPtr Résultat pour le stockage des déplacements
          */
         StaticMechanicalAlgorithm( const DiscreteProblemPtr& curPb,
-                                   const LinearSolverPtr linSolv,
+                                   const BaseLinearSolverPtr linSolv,
                                    const ResultsContainerPtr container ):
             _discreteProblem( curPb ),
             _linearSolver( linSolv ),

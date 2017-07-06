@@ -19,6 +19,6 @@
 !
 !
 interface
-    subroutine petsc_initialize()
-    end subroutine petsc_initialize
+    subroutine aster_petsc_initialize()
+    end subroutine aster_petsc_initialize
 end interface

@@ -47,7 +47,7 @@
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
 
-class LinearSolverInstance;
+class BaseLinearSolverInstance;
 
 /**
  * @class AssemblyMatrixInstance
@@ -82,7 +82,7 @@ class AssemblyMatrixInstance: public DataStructure
         /** @brief Liste de charges cinematiques */
         ListOfLoadsPtr                _listOfLoads;
 
-        friend class LinearSolverInstance;
+        friend class BaseLinearSolverInstance;
 
     public:
         /**

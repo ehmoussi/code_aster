@@ -19,7 +19,8 @@
 
 # person_in_charge: guillaume.drouet@edf.fr
 
-from code_aster import StaticModeInterf, StaticModePseudo, StaticModeForc, StaticModeDepl, LinearSolver
+from code_aster import StaticModeInterf, StaticModePseudo, StaticModeForc, StaticModeDepl
+from code_aster import MultFrontSolver, LdltSolver, MumpsSolver, PetscSolver, GcpcSolver
 from code_aster.Cata import Commands
 from code_aster.Cata.SyntaxChecker import checkCommandSyntax
 from code_aster import getGlossary
@@ -59,7 +60,7 @@ def MODE_STATIQUE( **kwargs ):
             mode_stat.Wantedcmp(kwcmpad)  
         elif kwcmple != None:
             mode_stat.Unwantedcmp(kwcmple)
-        solver=LinearSolver.create();       
+        solver=LinearSolver.create();
         fkw_solver = kwargs.get( "SOLVEUR" )
         if fkw_solver != None:
             print(NotImplementedError("Not yet implemented: '{0}' is ignored".format("SOLVEUR")))

@@ -45,7 +45,7 @@ CharMeca2.setSupportModel( monModel )
 CharMeca2.setValue( imposedPres1, "Haut" )
 CharMeca2.build()
 
-monSolver = code_aster.LinearSolver( code_aster.Mumps, code_aster.Metis )
+monSolver = code_aster.MumpsSolver( code_aster.Metis )
 
 mecaStatique = code_aster.StaticMechanicalSolver()
 mecaStatique.addMechanicalLoad( CharMeca1 )
