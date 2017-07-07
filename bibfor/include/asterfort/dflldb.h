@@ -15,12 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dflldb(sdlist, ifm)
+    subroutine dflldb(sdlist)
         character(len=8), intent(in) :: sdlist
-        integer, intent(in) :: ifm
     end subroutine dflldb
 end interface

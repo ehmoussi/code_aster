@@ -16,20 +16,21 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine dflldb(sdlist, ifm)
+subroutine dflldb(sdlist)
 !
 implicit none
 !
+#include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/assert.h"
 #include "asterfort/dflld2.h"
-#include "asterfort/dfllvd.h"
+#include "asterfort/dflld3.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/utmess.h"
 !
-!
-    character(len=8), intent(in) :: sdlist
-    integer, intent(in) :: ifm
+character(len=8), intent(in) :: sdlist
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -40,152 +41,128 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  sdlist           : name of DEFI_LIST_INST datastructure
-! In  ifm              : unit for message
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_fail, nb_fail, nb_inst, nb_adap
-    integer :: nbpamx
-    real(kind=8) :: dtmin, pasmin, pasmax
-    integer :: leevr, leevk, lesur
-    character(len=24) :: sdlist_evenr
-    real(kind=8), pointer :: v_sdlist_evenr(:) => null()
-    character(len=24) :: sdlist_evenk
-    character(len=16), pointer :: v_sdlist_evenk(:) => null()
-    character(len=24) :: sdlist_subdr
-    real(kind=8), pointer :: v_sdlist_subdr(:) => null()
-    character(len=24) :: sdlist_infor
-    real(kind=8), pointer :: v_sdlist_infor(:) => null()
+    integer :: i_fail, nb_fail, nb_inst, i_adap, nb_adap
+    integer :: nb_pas_maxi
+    real(kind=8) :: dtmin, step_mini, step_maxi
+    character(len=24) :: sdlist_eevenr
+    real(kind=8), pointer :: v_sdlist_eevenr(:) => null()
+    character(len=24) :: sdlist_eevenk
+    character(len=16), pointer :: v_sdlist_eevenk(:) => null()
+    character(len=24) :: sdlist_esubdr
+    real(kind=8), pointer :: v_sdlist_esubdr(:) => null()
+    character(len=24) :: sdlist_linfor
+    real(kind=8), pointer :: v_sdlist_linfor(:) => null()
+    character(len=24) :: sdlist_aevenr
+    real(kind=8), pointer :: v_sdlist_aevenr(:) => null()
+    real(kind=8) :: vale_ref, pene_maxi, resi_glob_maxi, pcent_iter_plus, coef_maxi
+    character(len=16):: nom_cham, nom_cmp, crit_cmp
+    integer :: nb_incr_seuil, nb_iter_newt, crit_compi 
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-! - Get sizes of objects
-!
-    leevr = dfllvd('LEEVR')
-    leevk = dfllvd('LEEVK')
-    lesur = dfllvd('LESUR')
-!
 ! - Access to datastructures
 !
-    sdlist_infor = sdlist(1:8)//'.LIST.INFOR'
-    call jeveuo(sdlist_infor, 'L', vr = v_sdlist_infor)
-    sdlist_evenr = sdlist(1:8)//'.ECHE.EVENR'
-    sdlist_evenk = sdlist(1:8)//'.ECHE.EVENK'
-    sdlist_subdr = sdlist(1:8)//'.ECHE.SUBDR'
-    call jeveuo(sdlist_evenr, 'L', vr   = v_sdlist_evenr)
-    call jeveuo(sdlist_evenk, 'L', vk16 = v_sdlist_evenk)
-    call jeveuo(sdlist_subdr, 'L', vr   = v_sdlist_subdr)
-    sdlist_infor = sdlist(1:8)//'.LIST.INFOR'
+    sdlist_linfor = sdlist(1:8)//'.LIST.INFOR'
+    call jeveuo(sdlist_linfor, 'L', vr = v_sdlist_linfor)
+    sdlist_eevenr = sdlist(1:8)//'.ECHE.EVENR'
+    sdlist_eevenk = sdlist(1:8)//'.ECHE.EVENK'
+    sdlist_esubdr = sdlist(1:8)//'.ECHE.SUBDR'
+    call jeveuo(sdlist_eevenr, 'L', vr   = v_sdlist_eevenr)
+    call jeveuo(sdlist_eevenk, 'L', vk16 = v_sdlist_eevenk)
+    call jeveuo(sdlist_esubdr, 'L', vr   = v_sdlist_esubdr)
 !
-! - Numbers
+! - Get main parameters
 !
-    nb_fail = nint(v_sdlist_infor(9))
-    nb_inst = nint(v_sdlist_infor(8))
-    nb_adap = nint(v_sdlist_infor(10))
+    step_mini   = v_sdlist_linfor(2)
+    step_maxi   = v_sdlist_linfor(3)
+    nb_pas_maxi = nint(v_sdlist_linfor(4))
+    dtmin       = v_sdlist_linfor(5)
+    nb_fail     = nint(v_sdlist_linfor(9))
+    nb_inst     = nint(v_sdlist_linfor(8))
+    nb_adap     = nint(v_sdlist_linfor(10))
 !
 ! - Time list management
 !
-    if (nint(v_sdlist_infor(1)) .eq. 1) then
-        write(ifm,*) '<DEFILISTINST> GESTION MANUELLE DE LA LISTE D''INSTANTS'
-    else if (nint(v_sdlist_infor(1)) .eq. 2) then
-        write(ifm,*) '<DEFILISTINST> GESTION AUTOMATIQUE DE LA LISTE D''INSTANTS'
+    if (nint(v_sdlist_linfor(1)) .eq. 1) then
+        call utmess('I', 'DISCRETISATION3_1')
+    else if (nint(v_sdlist_linfor(1)) .eq. 2) then
+        call utmess('I', 'DISCRETISATION3_2')
+        call utmess('I', 'DISCRETISATION3_3',&
+            nr = 2, valr = [step_mini,step_maxi],&
+            si = nb_pas_maxi)
     else
         ASSERT(.false.)
     endif
-    dtmin = v_sdlist_infor(5)
-    write(ifm,*) '<DEFILISTINST> ... LA LISTE CONTIENT ',nb_inst,&
-                 ' INSTANTS ET LE PAS MINIMUM VAUT ',dtmin
-!
-! - Time list management: automatic
-!
-    if (nint(v_sdlist_infor(1)) .eq. 2) then
-        pasmin = v_sdlist_infor(2)
-        pasmax = v_sdlist_infor(3)
-        nbpamx = nint(v_sdlist_infor(4))
-        write(ifm,*) '<DEFILISTINST> PARAMETRES DE LA GESTION AUTOMATIQUE DE LA LISTE D''INSTANTS'
-        write(ifm,*) '<DEFILISTINST> ... PAS MINI   : ',pasmin
-        write(ifm,*) '<DEFILISTINST> ... PAS MAXI   : ',pasmax
-        write(ifm,*) '<DEFILISTINST> ... NB_PAS_MAXI: ',nbpamx
-    endif
+    call utmess('I', 'DISCRETISATION3_4', si = nb_inst, sr = dtmin)
 !
 ! - Failures
 !
     if (nb_fail .gt. 0) then
-        write(ifm,*) '<DEFILISTINST> GESTION DES EVENEMENTS (',nb_fail,' EVENEMENTS)'
+        call utmess('I', 'DISCRETISATION3_5', si = nb_fail)
         do i_fail = 1, nb_fail
-            write(ifm,*) '<DEFILISTINST> ... EVENEMENT : ', i_fail
-            if (nint(v_sdlist_evenr(leevr*(i_fail-1)+1)) .eq. 0) then
-                write(ifm,*) '<DEFILISTINST> ...... ERRE'
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+1)) .eq. 1) then
-                write(ifm,*) '<DEFILISTINST> ...... DELTA_GRANDEUR'
-                write(ifm,*) '<DEFILISTINST> ......... CHAMP      :',&
-                v_sdlist_evenk(leevk*(i_fail-1)+1)
-                write(ifm,*) '<DEFILISTINST> ......... COMPOSANTE :',&
-                v_sdlist_evenk(leevk*(i_fail-1)+2)
-                write(ifm,*) '<DEFILISTINST> ......... COMPARATEUR:',&
-                v_sdlist_evenk(leevk*(i_fail-1)+3)
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+1)) .eq. 2) then
-                write(ifm,*) '<DEFILISTINST> ...... COLLISION'
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+1)) .eq. 3) then
-                write(ifm,*) '<DEFILISTINST> ...... INTERPENETRATION'
-                write(ifm,*) '<DEFILISTINST> ......... PENE_MAXI  :',&
-                v_sdlist_evenr(leevr*(i_fail-1)+6)
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+1)) .eq. 4) then
-                write(ifm,*) '<DEFILISTINST> ...... DIVE_RESI'
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+1)) .eq. 5) then
-                write(ifm,*) '<DEFILISTINST> ...... INSTABILITE'
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+1)) .eq. 6) then
-                write(ifm,*) '<DEFILISTINST> ...... RESI_MAXI'
-                write(ifm,*) '<DEFILISTINST> ......... VALE_RESI  :',&
-                v_sdlist_evenr(leevr*(i_fail-1)+7)
+            vale_ref       = v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+5)
+            pene_maxi      = v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+6)
+            resi_glob_maxi = v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+7)
+            nom_cham       = v_sdlist_eevenk(SIZE_LEEVK*(i_fail-1)+1)
+            nom_cmp        = v_sdlist_eevenk(SIZE_LEEVK*(i_fail-1)+2)
+            crit_cmp       = v_sdlist_eevenk(SIZE_LEEVK*(i_fail-1)+3)
+            if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+1)) .eq. 0) then
+                call utmess('I', 'DISCRETISATION3_10', si = i_fail)
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+1)) .eq. 1) then
+                call utmess('I', 'DISCRETISATION3_11', si = i_fail)
+                call utmess('I', 'DISCRETISATION3_21', &
+                            nk = 3, valk = [nom_cham, nom_cmp, crit_cmp],&
+                            sr = vale_ref)
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+1)) .eq. 2) then
+                call utmess('I', 'DISCRETISATION3_12', si = i_fail)
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+1)) .eq. 3) then
+                call utmess('I', 'DISCRETISATION3_13', si = i_fail)
+                call utmess('I', 'DISCRETISATION3_22', sr = pene_maxi)
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+1)) .eq. 4) then
+                call utmess('I', 'DISCRETISATION3_14', si = i_fail)
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+1)) .eq. 5) then
+                call utmess('I', 'DISCRETISATION3_15', si = i_fail)
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+1)) .eq. 6) then
+                call utmess('I', 'DISCRETISATION3_16', si = i_fail)
+                call utmess('I', 'DISCRETISATION3_23', sr = resi_glob_maxi)
             else
                 ASSERT(.false.)
             endif
 !
 ! --------- Action
 !
-            if (nint(v_sdlist_evenr(leevr*(i_fail-1)+2)) .eq. 0) then
-                write(ifm,*) '<DEFILISTINST> ...... ARRET DU CALCUL'
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+2)) .eq. 1) then
-                write(ifm,*) '<DEFILISTINST> ...... DECOUPE DU PAS DE TEMPS'
-                call dflld2(sdlist, ifm, i_fail)
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+2)) .eq. 2) then
-                write(ifm,*) '<DEFILISTINST> ...... AUGMENTATION DU NOMBRE D''ITERATIONS DE NEWTON'
-                write(ifm,*) '<DEFILISTINST> ......... EN PERMETTANT',&
-                               nint(v_sdlist_subdr(lesur*(i_fail-1)+7)),&
-                               ' % D''ITERATIONS EN PLUS'
-                if (nint(v_sdlist_subdr(lesur*(i_fail-1)+1)) .eq. 0) then
-                    write(ifm,*) '<DEFILISTINST> ....... SANS '//&
-                    'PERMETTRE UN DECOUPAGE EN CAS D''ECHEC'
-                else if (nint(v_sdlist_subdr(lesur*(i_fail-1)+1)) .eq. 1) then
-                    write(ifm,*) '<DEFILISTINST> ....... EN '//&
-                    'PERMETTANT UN DECOUPAGE EN CAS D''ECHEC'
-                    call dflld2(sdlist, ifm, i_fail)
-                else if (nint(v_sdlist_subdr(lesur*(i_fail-1)+1)) .eq. 2) then
-                    write(ifm,*) '<DEFILISTINST> ....... EN '//&
-                    'PERMETTANT UN DECOUPAGE EN CAS D''ECHEC'
-                    call dflld2(sdlist, ifm, i_fail)
-                else
-                    ASSERT(.false.)
+            pcent_iter_plus = v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+7)
+            coef_maxi       = v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+8)
+            if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 0) then
+                call utmess('I', 'DISCRETISATION3_30')
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 2) then
+                call utmess('I', 'DISCRETISATION3_31')
+                call dflld2(sdlist, i_fail)
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 3) then
+                call utmess('I', 'DISCRETISATION3_32')
+                if (nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+1)) .eq. 0) then
+                    call utmess('I', 'DISCRETISATION3_41', sr = pcent_iter_plus)
+                else 
+                    call utmess('I', 'DISCRETISATION3_42', sr = pcent_iter_plus)
+                    call dflld2(sdlist, i_fail)
                 endif
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+2)) .eq. 3) then
-                write(ifm,*) '<DEFILISTINST> ...... CHANGEMENT DE LA SOLUTION DE PILOTAGE'
-                if (nint(v_sdlist_subdr(lesur*(i_fail-1)+1)) .eq. 0) then
-                    write(ifm,*) '<DEFILISTINST> ....... SANS '//&
-                    'PERMETTRE UN DECOUPAGE EN CAS D''ECHEC'
-                else if (nint(v_sdlist_subdr(lesur*(i_fail-1)+1)) .eq. 1) then
-                    write(ifm,*) '<DEFILISTINST> ....... EN '//&
-                    ' PERMETTANT UN DECOUPAGE EN CAS D''ECHEC'
-                    call dflld2(sdlist, ifm, i_fail)
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 4) then
+                if (nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+1)) .eq. 0) then
+                    call utmess('I', 'DISCRETISATION3_33')
+                else if (nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+1)) .eq. 1) then
+                    call utmess('I', 'DISCRETISATION3_34')
+                    call dflld2(sdlist, i_fail)
                 endif
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+2)) .eq. 4) then
-                write(ifm,*) '<DEFILISTINST> ...... ADAPTATION DU COEFFICIENT DE PENALISATION'
-                write(ifm,*) '<DEFILISTINST> ......... EN PERMETTANT UN COEF. MAXI DE: ',&
-                             v_sdlist_subdr(lesur*(i_fail-1)+8)
-            else if (nint(v_sdlist_evenr(leevr*(i_fail-1)+2)) .eq. 5) then
-                write(ifm,*) '<DEFILISTINST> ...... ON CONTINUE LE CALCUL'
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 5) then
+                call utmess('I', 'DISCRETISATION3_35')
+                call utmess('I', 'DISCRETISATION3_45', sr = coef_maxi)
+            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 6) then
+                call utmess('I', 'DISCRETISATION3_36')
             else
                 ASSERT(.false.)
             endif
@@ -195,8 +172,36 @@ implicit none
 ! - Adaptation
 !
     if (nb_adap .gt. 0) then
-        write(ifm,*) '<DEFILISTINST> SCHEMAS D''ADAPTATION DU PAS DE TEMPS (',&
-                      nb_adap,' ADAPTATIONS)'
+        sdlist_aevenr = sdlist(1:8)//'.ADAP.EVENR'
+        call jeveuo(sdlist_aevenr, 'L', vr   = v_sdlist_aevenr)
+        call utmess('I', 'DISCRETISATION3_6', si = nb_adap)
+        do i_adap = 1, nb_adap
+            nb_incr_seuil = nint(v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+2))
+            nb_iter_newt  = nint(v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+5))
+            crit_compi    = nint(v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+4))
+            if (nint(v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+1)) .eq. 0) then
+                call utmess('I', 'DISCRETISATION3_50', si = i_adap)
+            else if (nint(v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+1)) .eq. 1) then
+                call utmess('I', 'DISCRETISATION3_51', si = i_adap)  
+                call dflld3(sdlist, i_adap)
+            else if (nint(v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+1)) .eq. 2) then
+                call utmess('I', 'DISCRETISATION3_52', si = i_adap)
+                if (crit_compi .eq. 1) then
+                    call utmess('I', 'DISCRETISATION3_64', ni = 2,&
+                                vali = [nb_incr_seuil, nb_iter_newt])
+                elseif (crit_compi .eq. 2) then
+                    call utmess('I', 'DISCRETISATION3_66', ni = 2,&
+                                vali = [nb_incr_seuil, nb_iter_newt])
+                elseif (crit_compi .eq. 3) then
+                    call utmess('I', 'DISCRETISATION3_63', ni = 2,&
+                                vali = [nb_incr_seuil, nb_iter_newt])
+                elseif (crit_compi .eq. 4) then
+                    call utmess('I', 'DISCRETISATION3_65', ni = 2,&
+                                vali = [nb_incr_seuil, nb_iter_newt])
+                endif
+                call dflld3(sdlist, i_adap)
+            endif
+        end do
     endif
 !
     call jedema()

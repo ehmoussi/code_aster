@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dflld2(sdlist, i_fail)
+    subroutine dflld3(sdlist, i_adap)
         character(len=8), intent(in) :: sdlist
-        integer, intent(in) :: i_fail
-    end subroutine dflld2
+        integer, intent(in) :: i_adap
+    end subroutine dflld3
 end interface
