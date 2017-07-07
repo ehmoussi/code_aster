@@ -67,7 +67,7 @@ implicit none
 ! - Print debug
 !
     if (niv .ge. 2) then
-        call dflldb(sdlist, ifm)
+        call dflldb(sdlist)
     endif
 
 end subroutine
