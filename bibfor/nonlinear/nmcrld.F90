@@ -15,22 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmcrld(sddisc)
 !
 implicit none
 !
-#include "jeveux.h"
+#include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/dfllsv.h"
-#include "asterfort/dfllvd.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/utdidt.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19) :: sddisc
+character(len=19) :: sddisc
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,7 +44,6 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i_fail_save, nb_fail
-    integer :: leevr, leevk, lesur
     character(len=24) :: sddisc_evenr
     real(kind=8), pointer :: v_sddisc_evenr(:) => null()
     character(len=24) :: sddisc_evenk
@@ -75,21 +73,15 @@ implicit none
     call utdidt('E', sddisc, 'LIST', 'NECHEC', vali_ = nb_fail)
     call utdidt('L', sddisc, 'LIST', 'DTMIN' , valr_ = dtmin)
 !
-! - Get sizes of objects
-!
-    leevr = dfllvd('LEEVR')
-    leevk = dfllvd('LEEVK')
-    lesur = dfllvd('LESUR')
-!
 ! - Create datastructure
 !
     sddisc_infor = sddisc(1:19)//'.LINF'
     sddisc_evenr = sddisc(1:19)//'.EEVR'
     sddisc_evenk = sddisc(1:19)//'.EEVK'
     sddisc_subdr = sddisc(1:19)//'.ESUR'
-    call wkvect(sddisc_evenr, 'V V R'  , nb_fail*leevr, vr   = v_sddisc_evenr)
-    call wkvect(sddisc_evenk, 'V V K16', nb_fail*leevk, vk16 = v_sddisc_evenk)
-    call wkvect(sddisc_subdr, 'V V R'  , nb_fail*lesur, vr   = v_sddisc_subdr)
+    call wkvect(sddisc_evenr, 'V V R'  , nb_fail*SIZE_LEEVR, vr   = v_sddisc_evenr)
+    call wkvect(sddisc_evenk, 'V V K16', nb_fail*SIZE_LEEVK, vk16 = v_sddisc_evenk)
+    call wkvect(sddisc_subdr, 'V V R'  , nb_fail*SIZE_LESUR, vr   = v_sddisc_subdr)
 !
 ! - Create reference error
 !
