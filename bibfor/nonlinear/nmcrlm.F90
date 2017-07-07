@@ -15,14 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmcrlm(listr8_sdaster, sddisc, list_inst_work)
 !
 implicit none
 !
+#include "asterf_types.h"
+#include "event_def.h"
 #include "asterc/r8maem.h"
 #include "asterc/r8prem.h"
-#include "asterfort/dfllvd.h"
 #include "asterfort/jedup1.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
@@ -30,11 +32,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: list_inst_work
-    character(len=19), intent(in) :: sddisc
-    character(len=19), intent(in) :: listr8_sdaster
+character(len=19), intent(in) :: list_inst_work
+character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: listr8_sdaster
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,7 +50,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: llinr, nb_inst, i_inst
+    integer :: nb_inst, i_inst
     real(kind=8) :: dtmin, deltat
     character(len=8) :: list_method
     character(len=24) :: sddisc_linf
@@ -59,7 +59,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    llinr       = dfllvd('LLINR')
     sddisc_linf = sddisc(1:19)//'.LINF'
     dtmin       = r8maem()
 !
@@ -93,7 +92,7 @@ implicit none
 !
 ! - Create information vector
 !
-    call wkvect(sddisc_linf, 'V V R', llinr, vr = v_sddisc_linf)
+    call wkvect(sddisc_linf, 'V V R', SIZE_LLINR, vr = v_sddisc_linf)
 !
 ! - Update information vector
 !
