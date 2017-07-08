@@ -68,7 +68,11 @@ character(len=19) :: sddisc
     call wkvect(sddisc_eevenr, 'V V R'  , nb_fail*SIZE_LEEVR, vr   = v_sddisc_eevenr)
     call wkvect(sddisc_eevenk, 'V V K16', nb_fail*SIZE_LEEVK, vk16 = v_sddisc_eevenk)
     call wkvect(sddisc_esubdr, 'V V R'  , nb_fail*SIZE_LESUR, vr   = v_sddisc_esubdr)
+!
+! - Create default action: if ERROR => STOP
+!
     v_sddisc_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = FAIL_EVT_ERROR
+    v_sddisc_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = FAIL_ACT_STOP
 !
     call jedema()
 !

@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmecev(sderro, acces, event_type, action)
+    subroutine nmecev(sderro, acces, event_type, action_type)
         character(len=24) :: sderro
         character(len=1) :: acces
         integer, intent(inout) :: event_type
-        character(len=16) :: action
+        integer, intent(inout) :: action_type
     end subroutine nmecev
 end interface

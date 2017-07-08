@@ -22,7 +22,7 @@ interface
                       i_fail_save    ,&
                       event_typek    , vale_ref       , nom_cham        , nom_cmp       ,&
                       crit_cmp       , pene_maxi      , resi_glob_maxi  ,&
-                      action_type    , subd_methode   , subd_auto       , subd_pas_mini ,&
+                      action_typek   , subd_methode   , subd_auto       , subd_pas_mini ,&
                       subd_pas       , subd_niveau    , pcent_iter_plus , coef_maxi     ,&
                       subd_inst      , subd_duree)
         real(kind=8), intent(in), pointer :: v_sdlist_linfor(:)
@@ -37,7 +37,7 @@ interface
         character(len=16), intent(in) :: crit_cmp
         real(kind=8), intent(in) :: pene_maxi
         real(kind=8), intent(in) :: resi_glob_maxi
-        character(len=16), intent(in) :: action_type
+        character(len=16), intent(in) :: action_typek
         character(len=16), intent(in) :: subd_methode
         real(kind=8), intent(in) :: subd_pas_mini
         integer, intent(in) :: subd_niveau

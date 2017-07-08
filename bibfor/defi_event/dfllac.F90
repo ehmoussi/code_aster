@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 subroutine dfllac(keywf          , i_fail       , dtmin     , event_typek,&
-                  action_type    ,&
+                  action_typek   ,&
                   subd_methode   , subd_pas_mini,&
                   subd_niveau    , subd_pas     ,&
                   subd_auto      , subd_inst    , subd_duree,&
@@ -25,6 +25,8 @@ subroutine dfllac(keywf          , i_fail       , dtmin     , event_typek,&
 !
 implicit none
 !
+#include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/assert.h"
 #include "asterfort/dfllae.h"
 #include "asterfort/dflldc.h"
@@ -35,7 +37,7 @@ character(len=16), intent(in) :: keywf
 integer, intent(in) :: i_fail
 real(kind=8), intent(in) :: dtmin
 character(len=16), intent(in) :: event_typek
-character(len=16), intent(out) :: action_type
+character(len=16), intent(out) :: action_typek
 character(len=16), intent(out) :: subd_methode
 real(kind=8), intent(out) :: subd_pas_mini
 integer, intent(out) :: subd_niveau
@@ -58,7 +60,7 @@ real(kind=8), intent(out) :: coef_maxi
 ! In  i_fail           : index of current factor keyword to read failure
 ! In  dtmin            : minimum time increment in list of times
 ! In  event_typek      : type of event
-! Out action_type      : type of action
+! Out action_typek     : type of action
 ! Out subd_methode     : value of SUBD_METHODE for ACTION=DECOUPE
 ! Out subd_pas_mini    : value of SUBD_PAS_MINI for ACTION=DECOUPE
 ! Out subd_niveau      : value of SUBD_NIVEAU for ACTION=DECOUPE
@@ -75,33 +77,33 @@ real(kind=8), intent(out) :: coef_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    action_type = ' '
+    action_typek = ' '
 !
 ! - Read
 !
-    call getvtx(keywf, 'ACTION', iocc=i_fail, scal=action_type, nbret=nocc)
+    call getvtx(keywf, 'ACTION', iocc=i_fail, scal=action_typek, nbret=nocc)
     ASSERT(nocc .gt. 0)
-    if (action_type .eq. 'ARRET') then
+    if (action_typek .eq. failActionKeyword(FAIL_ACT_STOP)) then
 !
-    else if (action_type.eq.'DECOUPE') then
+    else if (action_typek .eq. failActionKeyword(FAIL_ACT_CUT)) then
         call dflldc(keywf       , i_fail       , dtmin     , event_typek,&
                     subd_methode, subd_pas_mini,&
                     subd_niveau , subd_pas     ,&
                     subd_auto   , subd_inst    , subd_duree)
-    else if (action_type.eq.'ITER_SUPPL') then
+    else if (action_typek .eq. failActionKeyword(FAIL_ACT_ITER)) then
         call dfllae(keywf, i_fail, pcent_iter_plus)
         call dflldc(keywf       , i_fail       , dtmin     , event_typek,&
                     subd_methode, subd_pas_mini,&
                     subd_niveau , subd_pas     ,&
                     subd_auto   , subd_inst    , subd_duree)
-    else if (action_type.eq.'ADAPT_COEF_PENA') then
+    else if (action_typek .eq. failActionKeyword(FAIL_ACT_ADAPT_COEF)) then
         call dfllin(keywf, i_fail, coef_maxi)
-    else if (action_type.eq.'AUTRE_PILOTAGE') then
+    else if (action_typek .eq. failActionKeyword(FAIL_ACT_PILOTAGE)) then
         call dflldc(keywf       , i_fail       , dtmin     , event_typek,&
                     subd_methode, subd_pas_mini,&
                     subd_niveau , subd_pas     ,&
                     subd_auto   , subd_inst    , subd_duree)
-    else if (action_type.eq.'CONTINUE') then
+    else if (action_typek .eq. failActionKeyword(FAIL_ACT_CONTINUE)) then
 !
     else
         ASSERT(.false.)

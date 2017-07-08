@@ -53,3 +53,19 @@ character(len=16), parameter :: failEventKeyword(FAIL_EVT_NB) = (/'ERREUR       
                                                                   'INSTABILITE     ',&
                                                                   'RESI_MAXI       '/)
 
+! Defines for ECHEC/ACTION
+#define FAIL_ACT_NB               6
+#define FAIL_ACT_STOP             1
+#define FAIL_ACT_CUT              2
+#define FAIL_ACT_ITER             3
+#define FAIL_ACT_PILOTAGE         4
+#define FAIL_ACT_ADAPT_COEF       5
+#define FAIL_ACT_CONTINUE         6
+
+character(len=16), parameter :: failActionKeyword(FAIL_ACT_NB) = (/'ARRET           ',&
+                                                                   'DECOUPE         ',&
+                                                                   'ITER_SUPPL      ',&
+                                                                   'AUTRE_PILOTAGE  ',&
+                                                                   'ADAPT_COEF_PENA ',&
+                                                                   'CONTINUE        '/)
+

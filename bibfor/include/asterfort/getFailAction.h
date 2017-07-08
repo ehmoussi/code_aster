@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine isacti(sddisc, action_type_in, i_action)
+    subroutine getFailAction(sddisc, i_fail, action_type)
         character(len=19), intent(in) :: sddisc
-        integer, intent(in) :: action_type_in
-        integer, intent(out) :: i_action
-    end subroutine isacti
+        integer, intent(in) :: i_fail
+        integer, intent(out) :: action_type
+    end subroutine getFailAction
 end interface

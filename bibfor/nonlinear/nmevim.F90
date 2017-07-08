@@ -61,7 +61,6 @@ character(len=4), intent(in) :: loop_name
 !
     aster_logical :: lacti, cvbouc, lerrei, l_sep_line, lldcbo
     integer :: i_fail_acti
-    character(len=16) :: action
     integer :: ieven, zeven
     character(len=24) :: sderro_info
     character(len=24) :: sderro_eact
@@ -156,8 +155,6 @@ character(len=4), intent(in) :: loop_name
     if (lacti) then
 ! ----- Get event type
         call getFailEvent(sddisc, i_fail_acti, event_type)
-        call utdidt('L', sddisc, 'ECHE', 'ACTION', index_ = i_fail_acti,&
-                    valk_ = action)
         if (event_type .eq. FAIL_EVT_COLLISION) then
             if (l_sep_line) then
                 call nmimpx(ds_print)

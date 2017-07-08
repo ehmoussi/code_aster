@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dfdevn(action_type, subd_method, subd_pas_mini, subd_pas, subd_niveau)
-        character(len=16), intent(out) :: action_type
+    subroutine dfdevn(action_typek, subd_method, subd_pas_mini, subd_pas, subd_niveau)
+        character(len=16), intent(out) :: action_typek
         character(len=16), intent(out) :: subd_method
         real(kind=8), intent(out) :: subd_pas_mini
         integer, intent(out) :: subd_pas, subd_niveau

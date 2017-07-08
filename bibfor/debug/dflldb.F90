@@ -59,7 +59,8 @@ character(len=8), intent(in) :: sdlist
     real(kind=8), pointer :: v_sdlist_aevenr(:) => null()
     real(kind=8) :: vale_ref, pene_maxi, resi_glob_maxi, pcent_iter_plus, coef_maxi
     character(len=16):: nom_cham, nom_cmp, crit_cmp
-    integer :: nb_incr_seuil, nb_iter_newt, crit_compi, event_type
+    integer :: nb_incr_seuil, nb_iter_newt, crit_compi
+    integer :: event_type, action_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -139,12 +140,13 @@ character(len=8), intent(in) :: sdlist
 !
             pcent_iter_plus = v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+7)
             coef_maxi       = v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+8)
-            if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 0) then
+            action_type     = nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2))
+            if (action_type .eq. FAIL_ACT_STOP) then
                 call utmess('I', 'DISCRETISATION3_30')
-            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 2) then
+            else if (action_type .eq. FAIL_ACT_CUT) then
                 call utmess('I', 'DISCRETISATION3_31')
                 call dflld2(sdlist, i_fail)
-            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 3) then
+            else if (action_type .eq. FAIL_ACT_ITER) then
                 call utmess('I', 'DISCRETISATION3_32')
                 if (nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+1)) .eq. 0) then
                     call utmess('I', 'DISCRETISATION3_41', sr = pcent_iter_plus)
@@ -152,17 +154,17 @@ character(len=8), intent(in) :: sdlist
                     call utmess('I', 'DISCRETISATION3_42', sr = pcent_iter_plus)
                     call dflld2(sdlist, i_fail)
                 endif
-            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 4) then
+            else if (action_type .eq. FAIL_ACT_PILOTAGE) then
                 if (nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+1)) .eq. 0) then
                     call utmess('I', 'DISCRETISATION3_33')
                 else if (nint(v_sdlist_esubdr(SIZE_LESUR*(i_fail-1)+1)) .eq. 1) then
                     call utmess('I', 'DISCRETISATION3_34')
                     call dflld2(sdlist, i_fail)
                 endif
-            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 5) then
+            else if (action_type .eq. FAIL_ACT_ADAPT_COEF) then
                 call utmess('I', 'DISCRETISATION3_35')
                 call utmess('I', 'DISCRETISATION3_45', sr = coef_maxi)
-            else if (nint(v_sdlist_eevenr(SIZE_LEEVR*(i_fail-1)+2)) .eq. 6) then
+            else if (action_type .eq. FAIL_ACT_CONTINUE) then
                 call utmess('I', 'DISCRETISATION3_36')
             else
                 ASSERT(.false.)
