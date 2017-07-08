@@ -15,61 +15,43 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmcrld(sddisc)
+subroutine getFailEvent(sddisc, i_fail, event_type)
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "event_def.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/utdidt.h"
-#include "asterfort/wkvect.h"
+#include "asterfort/jeveuo.h"
 !
-character(len=19) :: sddisc
-!
-! --------------------------------------------------------------------------------------------------
-!
-! ROUTINE *_NON_LINE (STRUCTURES DE DONNES - DISCRETISATION)
-!
-! CREATION EVENEMENTS ERREURS: ARRET
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: i_fail
+integer, intent(out) :: event_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  sddisc           : datastructure for time discretization
+! Event management
+!
+! Get event type for failure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_fail, i_fail_save
-    character(len=24) :: sddisc_eevenr
-    real(kind=8), pointer :: v_sddisc_eevenr(:) => null()
-    character(len=24) :: sddisc_eevenk
-    character(len=16), pointer :: v_sddisc_eevenk(:) => null()
-    character(len=24) :: sddisc_esubdr
-    real(kind=8), pointer :: v_sddisc_esubdr(:) => null()
+! In  sddisc           : name of datastructure for time discretization
+! In  i_fail           : current index for ECHEC keyword
+! Out event_type       : type of event
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
+    character(len=24) :: sddisc_eevr
+    real(kind=8), pointer :: v_sddisc_eevr(:) => null()
 !
-! - Initializations
+! --------------------------------------------------------------------------------------------------
 !
-    nb_fail     = 1
-    i_fail_save = 1
-    call utdidt('E', sddisc, 'LIST', 'NECHEC', vali_ = nb_fail)
+    sddisc_eevr = sddisc(1:19)//'.EEVR'
+    call jeveuo(sddisc_eevr, 'L', vr = v_sddisc_eevr)
 !
-! - Create datastructure
+! - Type of event
 !
-    sddisc_eevenr = sddisc(1:19)//'.EEVR'
-    sddisc_eevenk = sddisc(1:19)//'.EEVK'
-    sddisc_esubdr = sddisc(1:19)//'.ESUR'
-    call wkvect(sddisc_eevenr, 'V V R'  , nb_fail*SIZE_LEEVR, vr   = v_sddisc_eevenr)
-    call wkvect(sddisc_eevenk, 'V V K16', nb_fail*SIZE_LEEVK, vk16 = v_sddisc_eevenk)
-    call wkvect(sddisc_esubdr, 'V V R'  , nb_fail*SIZE_LESUR, vr   = v_sddisc_esubdr)
-    v_sddisc_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = FAIL_EVT_ERROR
-!
-    call jedema()
+    event_type = nint(v_sddisc_eevr(SIZE_LEEVR*(i_fail-1)+1))
 !
 end subroutine

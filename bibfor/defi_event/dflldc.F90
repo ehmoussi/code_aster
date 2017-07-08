@@ -16,13 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine dflldc(keywf       , i_fail       , dtmin     , event_type,&
+subroutine dflldc(keywf       , i_fail       , dtmin     , event_typek,&
                   subd_methode, subd_pas_mini,&
                   subd_niveau , subd_pas     ,&
                   subd_auto   , subd_inst    , subd_duree)
 !
 implicit none
 !
+#include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/assert.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
@@ -32,7 +34,7 @@ implicit none
 character(len=16), intent(in) :: keywf
 integer, intent(in) :: i_fail
 real(kind=8), intent(in) :: dtmin
-character(len=16), intent(in) :: event_type
+character(len=16), intent(in) :: event_typek
 character(len=16), intent(out) :: subd_methode
 real(kind=8), intent(out) :: subd_pas_mini
 integer, intent(out) :: subd_niveau
@@ -52,7 +54,7 @@ real(kind=8), intent(out) :: subd_duree
 ! In  keywf            : factor keyword to read failures
 ! In  i_fail           : index of current factor keyword to read failure
 ! In  dtmin            : minimum time increment in list of times
-! In  event_type       : type of event
+! In  event_typek      : type of event
 ! Out subd_methode     : value of SUBD_METHODE for ACTION=DECOUPE
 ! Out subd_pas_mini    : value of SUBD_PAS_MINI for ACTION=DECOUPE
 ! Out subd_niveau      : value of SUBD_NIVEAU for ACTION=DECOUPE
@@ -91,7 +93,7 @@ real(kind=8), intent(out) :: subd_duree
         call getvis(keywf, 'SUBD_PAS', iocc=i_fail, scal=subd_pas)
         ASSERT(subd_pas .ge. 2)
     else if (subd_methode .eq. 'AUTO') then
-        if (event_type .eq. 'COLLISION') then
+        if (event_typek .eq. failEventKeyword(FAIL_EVT_COLLISION)) then
             call getvr8(keywf, 'SUBD_INST', iocc=i_fail, scal=subd_inst)
             call getvr8(keywf, 'SUBD_DUREE', iocc=i_fail, scal=subd_duree)
             subd_auto = 'COLLISION'

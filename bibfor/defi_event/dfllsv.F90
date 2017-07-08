@@ -19,7 +19,7 @@
 !
 subroutine dfllsv(v_sdlist_linfor, v_sdlist_eevenr, v_sdlist_eevenk, v_sdlist_esubdr,&
                   i_fail_save    ,&
-                  event_type     , vale_ref       , nom_cham        , nom_cmp       ,&
+                  event_typek    , vale_ref       , nom_cham        , nom_cmp       ,&
                   crit_cmp       , pene_maxi      , resi_glob_maxi  ,&
                   action_type    , subd_methode   , subd_auto       , subd_pas_mini ,&
                   subd_pas       , subd_niveau    , pcent_iter_plus , coef_maxi     ,&
@@ -39,7 +39,7 @@ real(kind=8), intent(in), pointer :: v_sdlist_eevenr(:)
 character(len=16), intent(in), pointer :: v_sdlist_eevenk(:)
 real(kind=8), intent(in), pointer :: v_sdlist_esubdr(:)
 integer, intent(in) :: i_fail_save
-character(len=16), intent(in) :: event_type
+character(len=16), intent(in) :: event_typek
 real(kind=8), intent(in) :: vale_ref
 character(len=16), intent(in) :: nom_cham
 character(len=16), intent(in) :: nom_cmp
@@ -70,7 +70,7 @@ real(kind=8), intent(in) :: coef_maxi
 ! In  v_sdlist_eevenk  : pointer to ECHEC.EVENK object
 ! In  v_sdlist_esubdr  : pointer to ECHEC.SUBDR object
 ! In  i_fail_save      : current index for ECHEC keyword
-! In  event_type       : type of event
+! In  event_typek      : type of event
 ! In  vale_ref         : value of VALE_REF for EVENEMENT=DELTA_GRANDEUR
 ! In  nom_cham         : value of NOM_CHAM for EVENEMENT=DELTA_GRANDEUR
 ! In  nom_cmp          : value of NOM_CMP for EVENEMENT=DELTA_GRANDEUR
@@ -94,7 +94,7 @@ real(kind=8), intent(in) :: coef_maxi
 !
 ! - Alarm for no-step cut
 !
-    if (event_type .eq. 'ERREUR') then
+    if (event_typek .eq. failEventKeyword(FAIL_EVT_ERROR)) then
         if (action_type .eq. 'ARRET') then
             call utmess('I', 'DISCRETISATION_9')
         endif
@@ -108,20 +108,20 @@ real(kind=8), intent(in) :: coef_maxi
 !
 ! - Type of event
 !
-    if (event_type .eq. 'ERREUR') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = 0.d0
-    else if (event_type.eq.'DELTA_GRANDEUR') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = 1.d0
-    else if (event_type.eq.'COLLISION') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = 2.d0
-    else if (event_type.eq.'INTERPENETRATION') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = 3.d0
-    else if (event_type.eq.'DIVE_RESI') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = 4.d0
-    else if (event_type.eq.'INSTABILITE') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = 5.d0
-    else if (event_type.eq.'RESI_MAXI') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = 6.d0
+    if (event_typek .eq. failEventKeyword(FAIL_EVT_ERROR)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = FAIL_EVT_ERROR
+    else if (event_typek .eq. failEventKeyword(FAIL_EVT_INCR_QUANT)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = FAIL_EVT_INCR_QUANT
+    else if (event_typek .eq. failEventKeyword(FAIL_EVT_COLLISION)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = FAIL_EVT_COLLISION
+    else if (event_typek .eq. failEventKeyword(FAIL_EVT_INTERPENE)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = FAIL_EVT_INTERPENE
+    else if (event_typek .eq. failEventKeyword(FAIL_EVT_DIVE_RESI)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = FAIL_EVT_DIVE_RESI
+    else if (event_typek .eq. failEventKeyword(FAIL_EVT_INSTABILITY)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = FAIL_EVT_INSTABILITY
+    else if (event_typek .eq. failEventKeyword(FAIL_EVT_RESI_MAXI)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+1) = FAIL_EVT_RESI_MAXI
     else
         ASSERT(.false.)
     endif
@@ -146,7 +146,7 @@ real(kind=8), intent(in) :: coef_maxi
 !
 ! - Parameters for EVENEMENT = 'DELTA_GRANDEUR'
 !
-    if (event_type .eq. 'DELTA_GRANDEUR') then
+    if (event_typek .eq. failEventKeyword(FAIL_EVT_INCR_QUANT)) then
         v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+5) = vale_ref
         v_sdlist_eevenk(SIZE_LEEVK*(i_fail_save-1)+1) = nom_cham
         v_sdlist_eevenk(SIZE_LEEVK*(i_fail_save-1)+2) = nom_cmp
@@ -155,13 +155,13 @@ real(kind=8), intent(in) :: coef_maxi
 !
 ! - Parameters for EVENEMENT = 'INTERPENETRATION'
 !
-    if (event_type .eq. 'INTERPENETRATION') then
+    if (event_typek .eq. failEventKeyword(FAIL_EVT_INTERPENE)) then
         v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+6) = pene_maxi
     endif
 !
 ! - Parameters for EVENEMENT = 'RESI_MAXI'
 !
-    if (event_type .eq. 'RESI_MAXI') then
+    if (event_typek .eq. failEventKeyword(FAIL_EVT_RESI_MAXI)) then
         v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+7) = resi_glob_maxi
     endif
 !

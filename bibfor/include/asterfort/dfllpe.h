@@ -15,16 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dfllpe(keywf    , i_fail        , event_type,&
-                      vale_ref , nom_cham      , nom_cmp   , crit_cmp,&
+    subroutine dfllpe(keywf    , i_fail        , event_typek,&
+                      vale_ref , nom_cham      , nom_cmp    , crit_cmp,&
                       pene_maxi, resi_glob_maxi)
         character(len=16), intent(in) :: keywf
         integer, intent(in) :: i_fail
-        character(len=16), intent(in) :: event_type
+        character(len=16), intent(in) :: event_typek
         real(kind=8), intent(out) :: vale_ref
         character(len=16), intent(out) :: nom_cham
         character(len=16), intent(out) :: nom_cmp

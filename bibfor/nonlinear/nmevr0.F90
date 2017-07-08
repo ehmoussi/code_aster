@@ -43,7 +43,7 @@ subroutine nmevr0(sddisc)
 !
     integer :: itesup, i_echec, nb_echec
     real(kind=8) :: r8bid
-    character(len=16) :: action, event_name
+    character(len=16) :: action
     aster_logical :: lacti
 !
 ! ----------------------------------------------------------------------
@@ -54,8 +54,6 @@ subroutine nmevr0(sddisc)
 ! --- DESACTIVATION DES EVENEMENTS
 !
     do i_echec = 1, nb_echec
-        call utdidt('L', sddisc, 'ECHE', 'NOM_EVEN', index_ = i_echec,&
-                    valk_ = event_name)
         lacti = .false.
         call dieven(sddisc, i_echec, lacti)
         call utdidt('L', sddisc, 'ECHE', 'ACTION', index_ = i_echec,&

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine mmmres(mesh       , time_incr, ds_contact, disp_cumu_inst, sddisc, &
                   hval_veasse, cnsinr   , cnsper)
 !
@@ -24,6 +25,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "event_def.h"
 #include "jeveux.h"
 #include "asterfort/apinfi.h"
 #include "asterfort/assert.h"
@@ -49,16 +51,14 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/mmfield_prep.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    real(kind=8), intent(in) :: time_incr
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: disp_cumu_inst
-    character(len=19), intent(in) :: sddisc
-    character(len=19), intent(in) :: hval_veasse(*)
-    character(len=19), intent(in) :: cnsinr
-    character(len=19), intent(in) :: cnsper
+character(len=8), intent(in) :: mesh
+real(kind=8), intent(in) :: time_incr
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: disp_cumu_inst
+character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: hval_veasse(*)
+character(len=19), intent(in) :: cnsinr
+character(len=19), intent(in) :: cnsper
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -135,7 +135,7 @@ implicit none
 !
     laffle = .false.
     valras = 1.d-3
-    call iseven(sddisc, 'COLLISION', lcolli)
+    call iseven(sddisc, FAIL_EVT_COLLISION, lcolli)
 !
 ! - Acces to contact objects
 !

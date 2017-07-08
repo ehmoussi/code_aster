@@ -20,7 +20,7 @@
 interface
     subroutine dfllsv(v_sdlist_linfor, v_sdlist_eevenr, v_sdlist_eevenk, v_sdlist_esubdr,&
                       i_fail_save    ,&
-                      event_type     , vale_ref       , nom_cham        , nom_cmp       ,&
+                      event_typek    , vale_ref       , nom_cham        , nom_cmp       ,&
                       crit_cmp       , pene_maxi      , resi_glob_maxi  ,&
                       action_type    , subd_methode   , subd_auto       , subd_pas_mini ,&
                       subd_pas       , subd_niveau    , pcent_iter_plus , coef_maxi     ,&
@@ -30,7 +30,7 @@ interface
         character(len=16), intent(in), pointer :: v_sdlist_eevenk(:)
         real(kind=8), intent(in), pointer :: v_sdlist_esubdr(:)
         integer, intent(in) :: i_fail_save
-        character(len=16), intent(in) :: event_type
+        character(len=16), intent(in) :: event_typek
         real(kind=8), intent(in) :: vale_ref
         character(len=16), intent(in) :: nom_cham
         character(len=16), intent(in) :: nom_cmp

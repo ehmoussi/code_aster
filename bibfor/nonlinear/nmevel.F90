@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmevel(sddisc, nume_inst  , vale  , loop_name, lsvimx,&
                   ldvres, lresmx     , linsta, lerrcv   , lerror,&
                   conver, ds_contact_)
@@ -25,27 +26,27 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/assert.h"
 #include "asterfort/eneven.h"
 #include "asterfort/nmevcx.h"
 #include "asterfort/nmevdg.h"
 #include "asterfort/nmevin.h"
 #include "asterfort/utdidt.h"
+#include "asterfort/getFailEvent.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: vale(*)
-    character(len=19), intent(in) :: sddisc
-    character(len=4), intent(in) :: loop_name
-    integer, intent(in) :: nume_inst
-    aster_logical, intent(in) :: lsvimx
-    aster_logical, intent(in) :: ldvres
-    aster_logical, intent(in) :: lresmx
-    aster_logical, intent(in) :: linsta
-    aster_logical, intent(in) :: lerrcv
-    aster_logical, intent(in) :: lerror
-    aster_logical, intent(in) :: conver
-    type(NL_DS_Contact), optional, intent(in) :: ds_contact_
+character(len=19), intent(in) :: vale(*)
+character(len=19), intent(in) :: sddisc
+character(len=4), intent(in) :: loop_name
+integer, intent(in) :: nume_inst
+aster_logical, intent(in) :: lsvimx
+aster_logical, intent(in) :: ldvres
+aster_logical, intent(in) :: lresmx
+aster_logical, intent(in) :: linsta
+aster_logical, intent(in) :: lerrcv
+aster_logical, intent(in) :: lerror
+aster_logical, intent(in) :: conver
+type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 !
 ! ----------------------------------------------------------------------
 !
@@ -79,82 +80,77 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: nb_echec, i_echec, i_echec_acti
-    character(len=16) :: event_name
+    integer :: nb_fail, i_fail, i_fail_acti
+    integer :: event_type
 !
 ! ----------------------------------------------------------------------
 !
-    i_echec_acti = 0
+    i_fail_acti = 0
 !
 ! --- NOMBRE D'EVENT-DRIVEN : NECHEC
 !
-    call utdidt('L', sddisc, 'LIST',  'NECHEC',&
-                vali_ = nb_echec)
+    call utdidt('L', sddisc, 'LIST',  'NECHEC', vali_ = nb_fail)
 !
 ! --- DETECTION DU _PREMIER_ EVENEMENT DECLENCHE
 ! --- DES QU'UN EVENT-DRIVEN EST SATISFAIT, ON SORT
 ! --- ON NE CHERCHE PAS A VERIFIER LES AUTRES EVENT
 !
-    do i_echec = 1, nb_echec
-!
-! ----- RECUPERATION DU NOM DE L'EVENT-DRIVEN
-!
-        call utdidt('L', sddisc, 'ECHE', 'NOM_EVEN', index_ = i_echec, &
-                    valk_ = event_name)
+    do i_fail = 1, nb_fail
+! ----- Get event type
+        call getFailEvent(sddisc, i_fail, event_type)
 !
 ! ----- PAR DEFAUT: EVENEMENT NON ACTIVE
 !
-        call eneven(sddisc, i_echec, .false._1)
+        call eneven(sddisc, i_fail, .false._1)
 !
-        if (event_name .eq. 'ERREUR') then
+        if (event_type .eq. FAIL_EVT_ERROR) then
             if (lsvimx .or. lerrcv .or. lerror) then
-                i_echec_acti = i_echec
+                i_fail_acti = i_fail
                 goto 99
             endif
-        else if (event_name.eq.'DIVE_RESI') then
+        else if (event_type .eq. FAIL_EVT_DIVE_RESI) then
             if (ldvres) then
-                i_echec_acti = i_echec
-                if (i_echec_acti .ne. 0) then
+                i_fail_acti = i_fail
+                if (i_fail_acti .ne. 0) then
                     goto 99
                 endif
             endif
-        else if (event_name.eq.'RESI_MAXI') then
+        else if (event_type .eq. FAIL_EVT_RESI_MAXI) then
             if (lresmx) then
-                i_echec_acti = i_echec
-                if (i_echec_acti .ne. 0) then
+                i_fail_acti = i_fail
+                if (i_fail_acti .ne. 0) then
                     goto 99
                 endif
             endif
-        else if (event_name.eq.'DELTA_GRANDEUR') then
+        else if (event_type .eq. FAIL_EVT_INCR_QUANT) then
             if (conver) then
-                call nmevdg(sddisc, vale, i_echec, i_echec_acti)
-                if (i_echec_acti .ne. 0) then
+                call nmevdg(sddisc, vale, i_fail, i_fail_acti)
+                if (i_fail_acti .ne. 0) then
                     goto 99
                 endif
             endif
-        else if (event_name.eq.'COLLISION') then
+        else if (event_type .eq. FAIL_EVT_COLLISION) then
             if (loop_name .eq. 'INST') then
-                call nmevcx(sddisc, nume_inst, ds_contact_, i_echec, i_echec_acti)
-                if (i_echec_acti .ne. 0) then
+                call nmevcx(sddisc, nume_inst, ds_contact_, i_fail, i_fail_acti)
+                if (i_fail_acti .ne. 0) then
                     goto 99
                 endif
             endif
-        else if (event_name.eq.'INTERPENETRATION') then
+        else if (event_type .eq. FAIL_EVT_INTERPENE) then
             if (loop_name .eq. 'INST') then
-                call nmevin(sddisc, ds_contact_, i_echec, i_echec_acti)
-                if (i_echec_acti .ne. 0) then
+                call nmevin(sddisc, ds_contact_, i_fail, i_fail_acti)
+                if (i_fail_acti .ne. 0) then
                     goto 99
                 endif
             endif
-        else if (event_name.eq.'INSTABILITE') then
+        else if (event_type .eq. FAIL_EVT_INSTABILITY) then
             if (linsta) then
-                i_echec_acti = i_echec
+                i_fail_acti = i_fail
             endif
-            if (i_echec_acti .ne. 0) then
+            if (i_fail_acti .ne. 0) then
                 goto 99
             endif
         else
-            write(6,*) 'NOMEVD: ',event_name
             ASSERT(.false.)
         endif
     end do
@@ -163,8 +159,8 @@ implicit none
 !
 ! --- DECLENCHEMENT DE L'EVENEMENT
 !
-    if (i_echec_acti .ne. 0) then
-        call eneven(sddisc, i_echec_acti, .true._1)
+    if (i_fail_acti .ne. 0) then
+        call eneven(sddisc, i_fail_acti, .true._1)
     endif
 !
 end subroutine

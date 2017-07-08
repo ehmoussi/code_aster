@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine dfllac(keywf          , i_fail       , dtmin     , event_type,&
+subroutine dfllac(keywf          , i_fail       , dtmin     , event_typek,&
                   action_type    ,&
                   subd_methode   , subd_pas_mini,&
                   subd_niveau    , subd_pas     ,&
@@ -34,7 +34,7 @@ implicit none
 character(len=16), intent(in) :: keywf
 integer, intent(in) :: i_fail
 real(kind=8), intent(in) :: dtmin
-character(len=16), intent(in) :: event_type
+character(len=16), intent(in) :: event_typek
 character(len=16), intent(out) :: action_type
 character(len=16), intent(out) :: subd_methode
 real(kind=8), intent(out) :: subd_pas_mini
@@ -57,7 +57,7 @@ real(kind=8), intent(out) :: coef_maxi
 ! In  keywf            : factor keyword to read failures
 ! In  i_fail           : index of current factor keyword to read failure
 ! In  dtmin            : minimum time increment in list of times
-! In  event_type       : type of event
+! In  event_typek      : type of event
 ! Out action_type      : type of action
 ! Out subd_methode     : value of SUBD_METHODE for ACTION=DECOUPE
 ! Out subd_pas_mini    : value of SUBD_PAS_MINI for ACTION=DECOUPE
@@ -84,20 +84,20 @@ real(kind=8), intent(out) :: coef_maxi
     if (action_type .eq. 'ARRET') then
 !
     else if (action_type.eq.'DECOUPE') then
-        call dflldc(keywf       , i_fail       , dtmin     , event_type,&
+        call dflldc(keywf       , i_fail       , dtmin     , event_typek,&
                     subd_methode, subd_pas_mini,&
                     subd_niveau , subd_pas     ,&
                     subd_auto   , subd_inst    , subd_duree)
     else if (action_type.eq.'ITER_SUPPL') then
         call dfllae(keywf, i_fail, pcent_iter_plus)
-        call dflldc(keywf       , i_fail       , dtmin     , event_type,&
+        call dflldc(keywf       , i_fail       , dtmin     , event_typek,&
                     subd_methode, subd_pas_mini,&
                     subd_niveau , subd_pas     ,&
                     subd_auto   , subd_inst    , subd_duree)
     else if (action_type.eq.'ADAPT_COEF_PENA') then
         call dfllin(keywf, i_fail, coef_maxi)
     else if (action_type.eq.'AUTRE_PILOTAGE') then
-        call dflldc(keywf       , i_fail       , dtmin     , event_type,&
+        call dflldc(keywf       , i_fail       , dtmin     , event_typek,&
                     subd_methode, subd_pas_mini,&
                     subd_niveau , subd_pas     ,&
                     subd_auto   , subd_inst    , subd_duree)

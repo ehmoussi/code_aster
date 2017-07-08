@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmevim(ds_print, sddisc, sderro, loop_name)
 !
 use NonLin_Datastructure_type
@@ -23,6 +24,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmacto.h"
@@ -32,13 +34,12 @@ implicit none
 #include "asterfort/nmltev.h"
 #include "asterfort/utdidt.h"
 #include "asterfort/utmess.h"
+#include "asterfort/getFailEvent.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Print), intent(in) :: ds_print
-    character(len=24), intent(in) :: sderro
-    character(len=19), intent(in) :: sddisc
-    character(len=4), intent(in) :: loop_name
+type(NL_DS_Print), intent(in) :: ds_print
+character(len=24), intent(in) :: sderro
+character(len=19), intent(in) :: sddisc
+character(len=4), intent(in) :: loop_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,8 +60,8 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: lacti, cvbouc, lerrei, l_sep_line, lldcbo
-    integer :: i_echec_acti
-    character(len=16) :: event_name, action
+    integer :: i_fail_acti
+    character(len=16) :: action
     integer :: ieven, zeven
     character(len=24) :: sderro_info
     character(len=24) :: sderro_eact
@@ -70,7 +71,7 @@ implicit none
     integer, pointer :: v_sderro_eact(:) => null()
     character(len=16), pointer :: v_sderro_eniv(:) => null()
     character(len=24), pointer :: v_sderro_emsg(:) => null()
-    integer :: icode
+    integer :: icode, event_type
     character(len=9) :: teven
     character(len=24) :: meven
 !
@@ -150,34 +151,34 @@ implicit none
 !
 ! - Print event messages - User
 !
-    call nmacto(sddisc, i_echec_acti)
-    lacti = i_echec_acti.gt.0
+    call nmacto(sddisc, i_fail_acti)
+    lacti = i_fail_acti.gt.0
     if (lacti) then
-        call utdidt('L', sddisc, 'ECHE', 'NOM_EVEN', index_ = i_echec_acti,&
-                    valk_ = event_name)
-        call utdidt('L', sddisc, 'ECHE', 'ACTION', index_ = i_echec_acti,&
+! ----- Get event type
+        call getFailEvent(sddisc, i_fail_acti, event_type)
+        call utdidt('L', sddisc, 'ECHE', 'ACTION', index_ = i_fail_acti,&
                     valk_ = action)
-        if (event_name .eq. 'COLLISION') then
+        if (event_type .eq. FAIL_EVT_COLLISION) then
             if (l_sep_line) then
                 call nmimpx(ds_print)
             endif
             call utmess('I', 'MECANONLINE10_21')
-        else if (event_name.eq.'INTERPENETRATION') then
+        else if (event_type .eq. FAIL_EVT_INTERPENE) then
             if (l_sep_line) then
                 call nmimpx(ds_print)
             endif
             call utmess('I', 'MECANONLINE10_22')
-        else if (event_name.eq.'DIVE_RESI') then
+        else if (event_type .eq. FAIL_EVT_DIVE_RESI) then
             if (l_sep_line) then
                 call nmimpx(ds_print)
             endif
             call utmess('I', 'MECANONLINE10_23')
-        else if (event_name.eq.'RESI_MAXI') then
+        else if (event_type .eq. FAIL_EVT_RESI_MAXI) then
             if (l_sep_line) then
                 call nmimpx(ds_print)
             endif
             call utmess('I', 'MECANONLINE10_26')
-        else if (event_name.eq.'DELTA_GRANDEUR') then
+        else if (event_type .eq. FAIL_EVT_INCR_QUANT) then
             if (l_sep_line) then
                 call nmimpx(ds_print)
             endif

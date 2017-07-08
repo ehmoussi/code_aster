@@ -16,22 +16,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmresx(sddisc, sderro, iter_newt)
 !
 implicit none
 !
 #include "asterc/r8prem.h"
 #include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/nmcrel.h"
 #include "asterfort/nmlere.h"
 #include "asterfort/utdidt.h"
+#include "asterfort/getFailEvent.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: sddisc
-    character(len=24), intent(in) :: sderro
-    integer, intent(in) :: iter_newt
+character(len=19), intent(in) :: sddisc
+character(len=24), intent(in) :: sderro
+integer, intent(in) :: iter_newt
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,7 +51,7 @@ implicit none
     real(kind=8) :: r(1), vale_resi
     aster_logical :: l_resi_maxi
     integer :: nb_fail, i_fail, i_fail_acti
-    character(len=16) :: event_type
+    integer :: event_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,8 +62,8 @@ implicit none
     call utdidt('L', sddisc, 'LIST',  'NECHEC', vali_ = nb_fail)
     i_fail_acti = 0
     do i_fail = 1, nb_fail
-        call utdidt('L', sddisc, 'ECHE', 'NOM_EVEN', index_ = i_fail, valk_ = event_type)
-        if (event_type .eq. 'RESI_MAXI') then
+        call getFailEvent(sddisc, i_fail, event_type)
+        if (event_type .eq. FAIL_EVT_RESI_MAXI) then
             i_fail_acti = i_fail
         endif
     end do
