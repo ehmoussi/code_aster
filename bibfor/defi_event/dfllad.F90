@@ -53,7 +53,7 @@ character(len=8), intent(in) :: sdlist
     integer :: nb_adapt, nbret
     integer :: ibid, nb_iter_newton_ref, nb_incr_seuil
     integer :: i_adap
-    character(len=16) :: event_type, nom_para, crit_comp, mode_calcul_tplus, nom_cham
+    character(len=16) :: event_typek, nom_para, crit_comp, mode_calcul_tplus, nom_cham
     character(len=8) :: nomgd, nom_cmp
     real(kind=8) :: pcent_augm, vale_ref, valer
     integer :: valei, nucmp(1)
@@ -108,21 +108,21 @@ character(len=8), intent(in) :: sdlist
 !
 ! ----- Get event
 !
-        call getvtx(keywf, 'EVENEMENT', iocc=i_adap, scal=event_type, nbret=nbret)
-        if (event_type .eq. 'AUCUN') then
-            v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+1) = 0.d0
+        call getvtx(keywf, 'EVENEMENT', iocc=i_adap, scal=event_typek, nbret=nbret)
+        if (event_typek .eq. adapEventKeyword(ADAP_EVT_NONE)) then
+            v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+1) = ADAP_EVT_NONE
             call utmess('A', 'DISCRETISATION_5')
-        else if (event_type.eq.'TOUT_INST') then
-            v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+1) = 1.d0
-        else if (event_type.eq.'SEUIL') then
-            v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+1) = 2.d0
+        else if (event_typek .eq. adapEventKeyword(ADAP_EVT_ALLSTEPS)) then
+            v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+1) = ADAP_EVT_ALLSTEPS
+        else if (event_typek .eq. adapEventKeyword(ADAP_EVT_TRIGGER)) then
+            v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+1) = ADAP_EVT_TRIGGER
         else
             ASSERT(.false.)
         endif
 !
 ! ----- Options for 'SEUIL'
 !
-        if (event_type .eq. 'SEUIL') then
+        if (event_typek .eq. adapEventKeyword(ADAP_EVT_TRIGGER)) then
             call getvis(keywf, 'NB_INCR_SEUIL', iocc=i_adap, scal=nb_incr_seuil, nbret=nbret)
             v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+2) = nb_incr_seuil
             call getvtx(keywf, 'NOM_PARA', iocc=i_adap, scal=nom_para, nbret=nbret)
@@ -160,7 +160,7 @@ character(len=8), intent(in) :: sdlist
             v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1) = 3.d0
         else if (mode_calcul_tplus.eq.'IMPLEX') then
             v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1) = 5.d0
-            if (event_type .ne. 'TOUT_INST') then
+            if (event_typek .ne. adapEventKeyword(ADAP_EVT_ALLSTEPS)) then
                 call utmess('F', 'DISCRETISATION_14')
             endif
         else

@@ -176,19 +176,19 @@ character(len=8), intent(in) :: sdlist
 !
     if (nb_adap .gt. 0) then
         sdlist_aevenr = sdlist(1:8)//'.ADAP.EVENR'
-        call jeveuo(sdlist_aevenr, 'L', vr   = v_sdlist_aevenr)
+        call jeveuo(sdlist_aevenr, 'L', vr = v_sdlist_aevenr)
         call utmess('I', 'DISCRETISATION3_6', si = nb_adap)
         do i_adap = 1, nb_adap
             nb_incr_seuil = nint(v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+2))
             nb_iter_newt  = nint(v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+5))
             crit_compi    = nint(v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+4))
             event_type    = nint(v_sdlist_aevenr(SIZE_LAEVR*(i_adap-1)+1))
-            if (event_type .eq. 0) then
+            if (event_type .eq. ADAP_EVT_NONE) then
                 call utmess('I', 'DISCRETISATION3_50', si = i_adap)
-            else if (event_type .eq. 1) then
+            else if (event_type .eq. ADAP_EVT_ALLSTEPS) then
                 call utmess('I', 'DISCRETISATION3_51', si = i_adap)  
                 call dflld3(sdlist, i_adap)
-            else if (event_type .eq. 2) then
+            else if (event_type .eq. ADAP_EVT_TRIGGER) then
                 call utmess('I', 'DISCRETISATION3_52', si = i_adap)
                 if (crit_compi .eq. 1) then
                     call utmess('I', 'DISCRETISATION3_64', ni = 2,&

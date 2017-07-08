@@ -16,12 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface
-    function diadap(sddisc, i_adap)
+    subroutine getAdapEvent(sddisc, i_adap, event_type)
         character(len=19), intent(in) :: sddisc
         integer, intent(in) :: i_adap
-        aster_logical :: diadap
-    end function diadap
+        integer, intent(out) :: event_type
+    end subroutine getAdapEvent
 end interface
