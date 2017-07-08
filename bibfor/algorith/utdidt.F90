@@ -55,7 +55,7 @@ character(len=*), intent(inout), optional :: valk_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iechec, iadapt
+    integer :: iechec, i_adap
     character(len=16) :: valk
     real(kind=8) :: valr
     integer :: vali
@@ -382,84 +382,64 @@ character(len=*), intent(inout), optional :: valk_
         call jeveuo(sddisc_aevr, getset, vr   = v_sddisc_aevr)
         call jeveuo(sddisc_atpr, getset, vr   = v_sddisc_atpr)
         call jeveuo(sddisc_atpk, getset, vk16 = v_sddisc_atpk)
-        iadapt = index_
-        if (question .eq. 'NOM_EVEN') then
+        i_adap = index_
+        if (question.eq.'NB_INCR_SEUIL') then
             if (getset .eq. 'L') then
-                vali = nint(v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+1))
-                if (vali .eq. 0) valk = 'AUCUN'
-                if (vali .eq. 1) valk = 'TOUT_INST'
-                if (vali .eq. 2) valk = 'SEUIL_SANS_FORMU'
-                if (vali .eq. 3) valk = 'SEUIL_AVEC_FORMU'
+                vali = nint(v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+2))
             else if (getset.eq.'E') then
-                if (valk .eq. 'AUCUN') then
-                    v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+1) = 0
-                else if (valk.eq.'TOUT_INST') then
-                    v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+1) = 1
-                else if (valk.eq.'SEUIL_SANS_FORMU') then
-                    v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+1) = 2
-                else if (valk.eq.'SEUIL_AVEC_FORMU') then
-                    v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+1) = 3
-                else
-                    ASSERT(.false.)
-                endif
-            endif
-        else if (question.eq.'NB_INCR_SEUIL') then
-            if (getset .eq. 'L') then
-                vali = nint(v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+2))
-            else if (getset.eq.'E') then
-                v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+2) = 1
+                v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+2) = 1
             endif
         else if (question.eq.'NOM_PARA') then
             if (getset .eq. 'L') then
-                vali = nint(v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+3))
+                vali = nint(v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+3))
                 if (vali .eq. 1) valk = 'NB_ITER_NEWT'
                 if (vali .eq. 2) valk = 'DP'
             else if (getset.eq.'E') then
                 if (valk .eq. 'NB_ITER_NEWT') then
-                    v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+3) = 1
+                    v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+3) = 1
                 else if (valk.eq.'SEUIL_AVEC_FORMU') then
-                    v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+3) = 2
+                    v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+3) = 2
                 else
                     ASSERT(.false.)
                 endif
             endif
         else if (question.eq.'CRIT_COMP') then
             if (getset .eq. 'L') then
-                vali = nint(v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+4))
+                vali = nint(v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+4))
                 if (vali .eq. 1) valk = 'LT'
                 if (vali .eq. 2) valk = 'GT'
                 if (vali .eq. 3) valk = 'LE'
                 if (vali .eq. 4) valk = 'GE'
             else if (getset.eq.'E') then
                 if (valk .eq. 'LT') then
-                    v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+4) = 1
+                    v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+4) = 1
                 else if (valk.eq.'GT') then
-                    v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+4) = 2
+                    v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+4) = 2
                 else if (valk.eq.'LE') then
-                    v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+4) = 3
+                    v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+4) = 3
                 else if (valk.eq.'GE') then
-                    v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+4) = 4
+                    v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+4) = 4
                 else
                     ASSERT(.false.)
                 endif
             endif
         else if (question.eq.'VALE') then
             if (getset .eq. 'L') then
-                valr = v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+5)
-                vali = nint(v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+5))
+                valr = v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+5)
+                vali = nint(v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+5))
             else if (getset.eq.'E') then
-                v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+5) = valr
+                v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+5) = valr
             endif
         else if (question.eq.'NB_EVEN_OK') then
             if (getset .eq. 'L') then
-                valr = v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+6)
+                valr = v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+6)
                 vali = nint(valr)
             else if (getset.eq.'E') then
-                v_sddisc_aevr(SIZE_LAEVR*(iadapt-1)+6) = vali
+                v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+6) = vali
             endif
         else if (question.eq.'METHODE') then
             if (getset .eq. 'L') then
-                vali = nint(v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+1))
+                vali = nint(v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1))
                 if (vali .eq. 1) valk = 'FIXE'
                 if (vali .eq. 2) valk = 'DELTA_GRANDEUR'
                 if (vali .eq. 3) valk = 'ITER_NEWTON'
@@ -467,56 +447,56 @@ character(len=*), intent(inout), optional :: valk_
                 if (vali .eq. 5) valk = 'IMPLEX'
             else if (getset.eq.'E') then
                 if (valk .eq. 'FIXE') then
-                    v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+1) = 1
+                    v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1) = 1
                 else if (valk.eq.'DELTA_GRANDEUR') then
-                    v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+1) = 2
+                    v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1) = 2
                 else if (valk.eq.'ITER_NEWTON') then
-                    v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+1) = 3
+                    v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1) = 3
                 else if (valk.eq.'FORMULE') then
-                    v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+1) = 4
+                    v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1) = 4
                 else if (valk.eq.'IMPLEX') then
-                    v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+1) = 5
+                    v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1) = 5
                 else
                     ASSERT(.false.)
                 endif
             endif
         else if (question.eq.'PCENT_AUGM') then
             if (getset .eq. 'L') then
-                valr = v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+2)
+                valr = v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+2)
             else if (getset.eq.'E') then
-                v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+2) = valr
+                v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+2) = valr
             endif
         else if (question.eq.'VALE_REF') then
             if (getset .eq. 'L') then
-                valr = v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+3)
+                valr = v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+3)
             else if (getset.eq.'E') then
-                v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+3) = valr
+                v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+3) = valr
             endif
         else if (question.eq.'NU_CMP') then
             if (getset .eq. 'L') then
-                valr = v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+4)
+                valr = v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+4)
                 vali = nint(valr)
             else if (getset.eq.'E') then
-                v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+4) = vali
+                v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+4) = vali
             endif
         else if (question.eq.'NB_ITER_NEWTON_REF') then
             if (getset .eq. 'L') then
-                valr = v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+5)
+                valr = v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+5)
                 vali = nint(valr)
             else if (getset.eq.'E') then
-                v_sddisc_atpr(SIZE_LATPR*(iadapt-1)+5) = vali
+                v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+5) = vali
             endif
         else if (question.eq.'NOM_CHAM') then
             if (getset .eq. 'L') then
-                valk = v_sddisc_atpk(SIZE_LATPK*(iadapt-1)+2)
+                valk = v_sddisc_atpk(SIZE_LATPK*(i_adap-1)+2)
             else if (getset.eq.'E') then
-                v_sddisc_atpk(SIZE_LATPK*(iadapt-1)+2) = valk
+                v_sddisc_atpk(SIZE_LATPK*(i_adap-1)+2) = valk
             endif
         else if (question.eq.'NOM_CMP') then
             if (getset .eq. 'L') then
-                valk = v_sddisc_atpk(SIZE_LATPK*(iadapt-1)+3)
+                valk = v_sddisc_atpk(SIZE_LATPK*(i_adap-1)+3)
             else if (getset.eq.'E') then
-                v_sddisc_atpk(SIZE_LATPK*(iadapt-1)+3) = valk
+                v_sddisc_atpk(SIZE_LATPK*(i_adap-1)+3) = valk
             endif
         else
             ASSERT(.false.)

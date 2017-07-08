@@ -68,4 +68,12 @@ character(len=16), parameter :: failActionKeyword(FAIL_ACT_NB) = (/'ARRET       
                                                                    'AUTRE_PILOTAGE  ',&
                                                                    'ADAPT_COEF_PENA ',&
                                                                    'CONTINUE        '/)
+! Defines for ADAPTATION/EVENEMENT
+#define ADAP_EVT_NB               3
+#define ADAP_EVT_NONE             1
+#define ADAP_EVT_ALLSTEPS         2
+#define ADAP_EVT_TRIGGER          3
 
+character(len=16), parameter :: adapEventKeyword(ADAP_EVT_NB) = (/'AUCUN           ',&
+                                                                  'TOUT_INST       ',&
+                                                                  'SEUIL           '/)
