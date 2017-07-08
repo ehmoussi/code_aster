@@ -15,17 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmevr0(sddisc)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmevr0(sddisc)
+!
+implicit none
+!
 #include "asterf_types.h"
+#include "event_def.h"
 #include "asterfort/dieven.h"
 #include "asterfort/nmlerr.h"
 #include "asterfort/utdidt.h"
-    character(len=19) :: sddisc
+#include "asterfort/getFailAction.h"
+!
+character(len=19) :: sddisc
 !
 ! ----------------------------------------------------------------------
 !
@@ -41,24 +44,21 @@ subroutine nmevr0(sddisc)
 !
 !
 !
-    integer :: itesup, i_echec, nb_echec
+    integer :: itesup, i_fail, nb_fail, action_type
     real(kind=8) :: r8bid
-    character(len=16) :: action
     aster_logical :: lacti
 !
 ! ----------------------------------------------------------------------
 !
-    call utdidt('L', sddisc, 'LIST', 'NECHEC',&
-                vali_ = nb_echec)
+    call utdidt('L', sddisc, 'LIST', 'NECHEC', vali_ = nb_fail)
 !
 ! --- DESACTIVATION DES EVENEMENTS
 !
-    do i_echec = 1, nb_echec
+    do i_fail = 1, nb_fail
         lacti = .false.
-        call dieven(sddisc, i_echec, lacti)
-        call utdidt('L', sddisc, 'ECHE', 'ACTION', index_ = i_echec,&
-                    valk_ = action)
-        if (action .eq. 'ITER_SUPPL') then
+        call dieven(sddisc, i_fail, lacti)
+        call getFailAction(sddisc, i_fail, action_type)
+        if (action_type .eq. FAIL_ACT_ITER) then
             itesup = 0
             call nmlerr(sddisc, 'E', 'ITERSUP', r8bid, itesup)
         endif

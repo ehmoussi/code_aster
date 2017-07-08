@@ -15,39 +15,43 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dfdevn(action_typek, subd_method, subd_pas_mini, subd_pas, subd_niveau)
+subroutine getFailAction(sddisc, i_fail, action_type)
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "event_def.h"
+#include "asterfort/jeveuo.h"
 !
-character(len=16), intent(out) :: action_typek
-character(len=16), intent(out) :: subd_method
-real(kind=8), intent(out) :: subd_pas_mini
-integer, intent(out) :: subd_pas, subd_niveau
-!
-! --------------------------------------------------------------------------------------------------
-!
-! DEFI_LIST_INST - Read parameters
-!
-! Default values for cuttin time step
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: i_fail
+integer, intent(out) :: action_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Out action_typek     : type of action
-! Out subd_method      : value of SUBD_METHODE for ACTION=DECOUPE
-! Out subd_pas_mini    : value of SUBD_PAS_MINI for ACTION=DECOUPE
-! Out subd_niveau      : value of SUBD_NIVEAU for ACTION=DECOUPE
-! Out subd_pas         : value of SUBD_PAS for ACTION=DECOUPE
+! Event management
+!
+! Get action type for failure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    action_typek  = failActionKeyword(FAIL_ACT_CUT)
-    subd_method   = 'MANUEL'
-    subd_niveau   = 3
-    subd_pas      = 4
-    subd_pas_mini = 1.d-12
+! In  sddisc           : name of datastructure for time discretization
+! In  i_fail           : current index for ECHEC keyword
+! Out action_type      : type of action
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=24) :: sddisc_eevr
+    real(kind=8), pointer :: v_sddisc_eevr(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
+!
+    sddisc_eevr = sddisc(1:19)//'.EEVR'
+    call jeveuo(sddisc_eevr, 'L', vr = v_sddisc_eevr)
+!
+! - Type of action
+!
+    action_type = nint(v_sddisc_eevr(SIZE_LEEVR*(i_fail-1)+2))
 !
 end subroutine

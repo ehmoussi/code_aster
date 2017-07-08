@@ -17,20 +17,17 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmecev(sderro, acces, event_type, action)
+subroutine nmecev(sderro, acces, event_type, action_type)
 !
 implicit none
 !
-#include "jeveux.h"
 #include "asterfort/assert.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 !
 character(len=24) :: sderro
 character(len=1) :: acces
 integer, intent(inout) :: event_type
-character(len=16) :: action
+integer, intent(inout) :: action_type
 !
 ! ----------------------------------------------------------------------
 !
@@ -49,31 +46,21 @@ character(len=16) :: action
 !
 !
 !
-    character(len=24) :: errevt
-    integer :: jeeevt
-    character(len=24) :: errevk
-    integer :: jeeevk
+    character(len=24) :: sderro_eevt
+    integer, pointer :: v_sderro_eevt(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
-!
-! --- ACCES SD
-!
-    errevt = sderro(1:19)//'.EEVT'
-    call jeveuo(errevt, 'E', jeeevt)
-    errevk = sderro(1:19)//'.EEVK'
-    call jeveuo(errevk, 'E', jeeevk)
+    sderro_eevt = sderro(1:19)//'.EEVT'
+    call jeveuo(sderro_eevt, 'E', vi = v_sderro_eevt)
 !
     if (acces .eq. 'E') then
-        zi(jeeevk-1+1) = event_type
-        zk16(jeeevt-1+2) = action
+        v_sderro_eevt(1) = event_type
+        v_sderro_eevt(2) = action_type
     else if (acces.eq.'L') then
-        event_type = zi(jeeevk-1+1)
-        action = zk16(jeeevt-1+2)
+        event_type  = v_sderro_eevt(1)
+        action_type = v_sderro_eevt(2)
     else
         ASSERT(.false.)
     endif
-!
-    call jedema()
 end subroutine

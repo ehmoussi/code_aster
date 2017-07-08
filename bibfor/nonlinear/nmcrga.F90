@@ -146,8 +146,8 @@ character(len=24) :: sderro
     integer :: ieven
     character(len=24) :: errecn, errecv, erreni, erreno, erraac, errfct, errmsg
     integer :: jeecon, jeecov, jeeniv, jeenom, jeeact, jeefct, jeemsg
-    character(len=24) :: errinf, errcvg, errevt, errevk
-    integer :: jeinfo, jeconv, jeeevt, jeeevk
+    character(len=24) :: errinf, errcvg, errevt
+    integer :: jeinfo, jeconv, jeeevt
 !
 ! ----------------------------------------------------------------------
 !
@@ -177,7 +177,6 @@ character(len=24) :: sderro
     errcvg = sderro(1:19)//'.CONV'
     errevt = sderro(1:19)//'.EEVT'
     errmsg = sderro(1:19)//'.EMSG'
-    errevk = sderro(1:19)//'.EEVK'
     call wkvect(erreno, 'V V K16', zeven, jeenom)
     call wkvect(errecv, 'V V I', zeven, jeecov)
     call wkvect(errecn, 'V V K8', zeven, jeecon)
@@ -185,8 +184,7 @@ character(len=24) :: sderro
     call wkvect(errfct, 'V V K24', zeven, jeefct)
     call wkvect(erraac, 'V V I', zeven, jeeact)
     call wkvect(errcvg, 'V V I', 5, jeconv)
-    call wkvect(errevt, 'V V K16', 2, jeeevt)
-    call wkvect(errevk, 'V V I', 2, jeeevk)
+    call wkvect(errevt, 'V V I', 2, jeeevt)
     call wkvect(errmsg, 'V V K24', zeven, jeemsg)
 !
     do ieven = 1, zeven

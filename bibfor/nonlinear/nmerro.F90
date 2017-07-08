@@ -56,8 +56,8 @@ integer, intent(in) :: nume_inst
     aster_logical :: echpfg, echpff, echpfc
     aster_logical :: errres
     real(kind=8) :: remain_time, iter_mean_time, step_mean_time
-    character(len=16) :: action, valk(2)
-    integer :: event_type
+    character(len=16) :: valk(2)
+    integer :: event_type, action_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -122,10 +122,10 @@ integer, intent(in) :: nume_inst
     else if (errres) then
         call utmess('Z', 'MECANONLINE9_12', num_except=35)
     else
-        call nmecev(sderro, 'L', event_type, action)
-        valk(1) = action
+        call nmecev(sderro, 'L', event_type, action_type)
+        valk(1) = failActionKeyword(action_type)
         valk(2) = failEventKeyword(event_type)
-        if (action .eq. 'ARRET') then
+        if (action_type .eq. FAIL_ACT_STOP) then
             call utmess('Z', 'MECANONLINE9_51', sk=failEventKeyword(event_type), num_except=33)
         else
             call utmess('Z', 'MECANONLINE9_50', nk=2, valk=valk, num_except=34)

@@ -21,7 +21,7 @@ subroutine dfllsv(v_sdlist_linfor, v_sdlist_eevenr, v_sdlist_eevenk, v_sdlist_es
                   i_fail_save    ,&
                   event_typek    , vale_ref       , nom_cham        , nom_cmp       ,&
                   crit_cmp       , pene_maxi      , resi_glob_maxi  ,&
-                  action_type    , subd_methode   , subd_auto       , subd_pas_mini ,&
+                  action_typek   , subd_methode   , subd_auto       , subd_pas_mini ,&
                   subd_pas       , subd_niveau    , pcent_iter_plus , coef_maxi     ,&
                   subd_inst      , subd_duree)
 !
@@ -46,7 +46,7 @@ character(len=16), intent(in) :: nom_cmp
 character(len=16), intent(in) :: crit_cmp
 real(kind=8), intent(in) :: pene_maxi
 real(kind=8), intent(in) :: resi_glob_maxi
-character(len=16), intent(in) :: action_type
+character(len=16), intent(in) :: action_typek
 character(len=16), intent(in) :: subd_methode
 real(kind=8), intent(in) :: subd_pas_mini
 integer, intent(in) :: subd_niveau
@@ -77,7 +77,7 @@ real(kind=8), intent(in) :: coef_maxi
 ! In  crit_cmp         : value of CRIT_CMP for EVENEMENT=DELTA_GRANDEUR
 ! In  pene_maxi        : value of PENE_MAXI for EVENEMENT=INTERPENETRATION
 ! In  resi_glob_maxi   : value of RESI_GLOB_MAXI for EVENEMENT=RESI_MAXI
-! In  action_type      : type of action
+! In  action_typek     : type of action
 ! In  subd_methode     : value of SUBD_METHODE for ACTION=DECOUPE
 ! In  subd_pas_mini    : value of SUBD_PAS_MINI for ACTION=DECOUPE
 ! In  subd_niveau      : value of SUBD_NIVEAU for ACTION=DECOUPE
@@ -94,15 +94,15 @@ real(kind=8), intent(in) :: coef_maxi
 !
 ! - Alarm for no-step cut
 !
-    if (event_typek .eq. failEventKeyword(FAIL_EVT_ERROR)) then
-        if (action_type .eq. 'ARRET') then
+    if (event_typek .eq. failActionKeyword(FAIL_EVT_ERROR)) then
+        if (action_typek .eq. failEventKeyword(FAIL_ACT_STOP)) then
             call utmess('I', 'DISCRETISATION_9')
         endif
     endif
 !
 ! - At least one ACTION=DECOUPE
 !
-    if (action_type .eq. 'DECOUPE') then
+    if (action_typek .eq. failActionKeyword(FAIL_ACT_CUT)) then
         v_sdlist_linfor(7) = 1.d0
     endif
 !
@@ -128,18 +128,18 @@ real(kind=8), intent(in) :: coef_maxi
 !
 ! - Type of action
 !
-    if (action_type .eq. 'ARRET') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = 0.d0
-    else if (action_type.eq.'DECOUPE') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = 2.d0
-    else if (action_type.eq.'ITER_SUPPL') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = 3.d0
-    else if (action_type.eq.'AUTRE_PILOTAGE') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = 4.d0
-    else if (action_type.eq.'ADAPT_COEF_PENA') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = 5.d0
-    else if (action_type.eq.'CONTINUE') then
-        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = 6.d0
+    if (action_typek .eq. failActionKeyword(FAIL_ACT_STOP)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = FAIL_ACT_STOP
+    else if (action_typek .eq. failActionKeyword(FAIL_ACT_CUT)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = FAIL_ACT_CUT
+    else if (action_typek .eq. failActionKeyword(FAIL_ACT_ITER)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = FAIL_ACT_ITER
+    else if (action_typek .eq. failActionKeyword(FAIL_ACT_PILOTAGE)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = FAIL_ACT_PILOTAGE
+    else if (action_typek .eq. failActionKeyword(FAIL_ACT_ADAPT_COEF)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = FAIL_ACT_ADAPT_COEF
+    else if (action_typek .eq. failActionKeyword(FAIL_ACT_CONTINUE)) then
+        v_sdlist_eevenr(SIZE_LEEVR*(i_fail_save-1)+2) = FAIL_ACT_CONTINUE
     else
         ASSERT(.false.)
     endif
@@ -188,13 +188,13 @@ real(kind=8), intent(in) :: coef_maxi
 !
 ! - Parameters for ACTION = 'ITER_SUPPL'
 !
-    if (action_type .eq. 'ITER_SUPPL') then
+    if (action_typek .eq. failActionKeyword(FAIL_ACT_ITER)) then
         v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+7) = pcent_iter_plus
     endif
 !
 ! - Parameters for ACTION = 'ADAPT_COEF_PENA'
 !
-    if (action_type .eq. 'ADAPT_COEF_PENA') then
+    if (action_typek .eq. failActionKeyword(FAIL_ACT_ADAPT_COEF)) then
         v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+8) = coef_maxi
     endif
 !

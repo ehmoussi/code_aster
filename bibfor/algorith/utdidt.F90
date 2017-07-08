@@ -199,33 +199,7 @@ character(len=*), intent(inout), optional :: valk_
         if (present(index_)) then
             iechec = index_
         endif
-        if (question.eq.'ACTION') then
-            if (getset .eq. 'L') then
-                vali = nint(v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+2))
-                if (vali .eq. 0) valk = 'ARRET'
-                if (vali .eq. 2) valk = 'DECOUPE'
-                if (vali .eq. 3) valk = 'ITER_SUPPL'
-                if (vali .eq. 4) valk = 'AUTRE_PILOTAGE'
-                if (vali .eq. 5) valk = 'ADAPT_COEF_PENA'
-                if (vali .eq. 6) valk = 'CONTINUE'
-            else if (getset.eq.'E') then
-                if (valk .eq. 'ARRET') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+2) = 0.d0
-                else if (valk.eq.'DECOUPE') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+2) = 2.d0
-                else if (valk.eq.'ITER_SUPPL') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+2) = 3.d0
-                else if (valk.eq.'AUTRE_PILOTAGE') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+2) = 4.d0
-                else if (valk.eq.'ADAPT_COEF_PENA') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+2) = 5.d0
-                else if (valk.eq.'CONTINUE') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+2) = 6.d0
-                else
-                    ASSERT(.false.)
-                endif
-            endif
-        else if (question.eq.'VERIF_EVEN') then
+        if (question.eq.'VERIF_EVEN') then
             if (getset .eq. 'L') then
                 vali = nint(v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+3))
                 if (vali .eq. 0) valk = 'OUI'

@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine dfllac(keywf          , i_fail       , dtmin     , event_typek,&
-                      action_type    ,&
+                      action_typek   ,&
                       subd_methode   , subd_pas_mini,&
                       subd_niveau    , subd_pas     ,&
                       subd_auto      , subd_inst    , subd_duree,&
@@ -29,7 +27,7 @@ interface
         integer, intent(in) :: i_fail
         real(kind=8), intent(in) :: dtmin
         character(len=16), intent(in) :: event_typek
-        character(len=16), intent(out) :: action_type
+        character(len=16), intent(out) :: action_typek
         character(len=16), intent(out) :: subd_methode
         real(kind=8), intent(out) :: subd_pas_mini
         integer, intent(out) :: subd_niveau

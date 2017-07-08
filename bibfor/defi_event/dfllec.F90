@@ -58,7 +58,7 @@ real(kind=8), intent(in) :: dtmin
     real(kind=8) :: vale_ref, subd_pas_mini
     integer :: nb_fail_read, nb_fail
     integer :: i_fail, i_event, i_fail_save
-    character(len=16) :: event_typek, action_type, event_curr
+    character(len=16) :: event_typek, action_typek, event_curr
     character(len=16) :: subd_method, subd_auto
     integer :: subd_pas, subd_niveau
     real(kind=8) :: subd_niveau_r, subd_niveau_maxi
@@ -176,7 +176,7 @@ real(kind=8), intent(in) :: dtmin
         if (i_fail .eq. 0) then
             if (event_curr .eq. failEventKeyword(FAIL_EVT_ERROR)) then
 ! ------------- Default value for this event
-                call dfdevn(action_type, subd_method, subd_pas_mini, subd_pas, subd_niveau)
+                call dfdevn(action_typek, subd_method, subd_pas_mini, subd_pas, subd_niveau)
                 l_save = .true.
             endif
         else
@@ -186,7 +186,7 @@ real(kind=8), intent(in) :: dtmin
                         pene_maxi, resi_glob_maxi)
 ! --------- Get parameters of ACTION for current failure keyword
             call dfllac(keywf          , i_fail       , dtmin     , event_typek,&
-                        action_type    ,&
+                        action_typek   ,&
                         subd_method    , subd_pas_mini,&
                         subd_niveau    , subd_pas     ,&
                         subd_auto      , subd_inst    , subd_duree,&
@@ -201,7 +201,7 @@ real(kind=8), intent(in) :: dtmin
                         i_fail_save    ,&
                         event_typek    , vale_ref       , nom_cham       , nom_cmp        ,&
                         crit_cmp       , pene_maxi      , resi_glob_maxi ,&
-                        action_type    , subd_method    , subd_auto      , subd_pas_mini  ,&
+                        action_typek   , subd_method    , subd_auto      , subd_pas_mini  ,&
                         subd_pas       , subd_niveau    , pcent_iter_plus, coef_maxi      ,&
                         subd_inst      , subd_duree)
         endif
