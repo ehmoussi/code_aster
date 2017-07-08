@@ -66,7 +66,7 @@ implicit none
 !
 ! - Print debug
 !
-    if (niv .ge. 2) then
+    if (niv .ge. 1) then
         call dflldb(sdlist)
     endif
 

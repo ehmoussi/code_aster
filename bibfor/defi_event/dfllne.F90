@@ -46,8 +46,8 @@ aster_logical, intent(out) :: l_fail_error
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i_fail_read, i_event, i_event_acti
-    character(len=16) :: event_type
-    integer :: nb_evt_count(EVT_NB)
+    character(len=16) :: event_typek
+    integer :: nb_evt_count(FAIL_EVT_NB)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,10 +62,10 @@ aster_logical, intent(out) :: l_fail_error
 ! - Count number of events
 !
     do i_fail_read = 1, nb_fail
-        call getvtx(keywf, 'EVENEMENT', iocc=i_fail_read, scal=event_type)
+        call getvtx(keywf, 'EVENEMENT', iocc=i_fail_read, scal=event_typek)
         i_event_acti = 0
-        do i_event = 1, EVT_NB
-            if (event_type .eq. eventKeyword(i_event)) then
+        do i_event = 1, FAIL_EVT_NB
+            if (event_typek .eq. failEventKeyword(i_event)) then
                 i_event_acti = i_event
             endif
         end do
@@ -75,15 +75,15 @@ aster_logical, intent(out) :: l_fail_error
 !
 ! - Check number of events
 !
-    do i_event = 1, EVT_NB
-        event_type = eventKeyword(i_event)
-        if (nb_evt_count(i_event) .gt. eventNbMaxi(i_event)) then
-            call utmess('F', 'DISCRETISATION_10', sk = event_type)
+    do i_event = 1, FAIL_EVT_NB
+        event_typek = failEventKeyword(i_event)
+        if (nb_evt_count(i_event) .gt. failEventMaxi(i_event)) then
+            call utmess('F', 'DISCRETISATION_10', sk = event_typek)
         endif
     end do
 !
 ! - Special for ERROR failure
 !
-    l_fail_error = nb_evt_count(EVT_ERROR) .eq. 1
+    l_fail_error = nb_evt_count(FAIL_EVT_ERROR) .eq. 1
 !
 end subroutine

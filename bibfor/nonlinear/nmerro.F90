@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmerro(sderro, ds_measure, nume_inst)
 !
 use NonLin_Datastructure_type
@@ -23,17 +24,16 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "event_def.h"
 #include "asterc/etausr.h"
 #include "asterfort/nmecev.h"
 #include "asterfort/nmerge.h"
 #include "asterfort/sigusr.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: sderro
-    type(NL_DS_Measure), intent(in) :: ds_measure
-    integer, intent(in) :: nume_inst
+character(len=24), intent(in) :: sderro
+type(NL_DS_Measure), intent(in) :: ds_measure
+integer, intent(in) :: nume_inst
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,7 +56,8 @@ implicit none
     aster_logical :: echpfg, echpff, echpfc
     aster_logical :: errres
     real(kind=8) :: remain_time, iter_mean_time, step_mean_time
-    character(len=16) :: nomevd, action, valk(2)
+    character(len=16) :: action, valk(2)
+    integer :: event_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -121,11 +122,11 @@ implicit none
     else if (errres) then
         call utmess('Z', 'MECANONLINE9_12', num_except=35)
     else
-        call nmecev(sderro, 'L', nomevd, action)
+        call nmecev(sderro, 'L', event_type, action)
         valk(1) = action
-        valk(2) = nomevd
+        valk(2) = failEventKeyword(event_type)
         if (action .eq. 'ARRET') then
-            call utmess('Z', 'MECANONLINE9_51', sk=nomevd, num_except=33)
+            call utmess('Z', 'MECANONLINE9_51', sk=failEventKeyword(event_type), num_except=33)
         else
             call utmess('Z', 'MECANONLINE9_50', nk=2, valk=valk, num_except=34)
         endif

@@ -199,34 +199,7 @@ character(len=*), intent(inout), optional :: valk_
         if (present(index_)) then
             iechec = index_
         endif
-        if (question .eq. 'NOM_EVEN') then
-            if (getset .eq. 'L') then
-                vali = nint(v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+1))
-                if (vali .eq. 0) valk = 'ERREUR'
-                if (vali .eq. 1) valk = 'DELTA_GRANDEUR'
-                if (vali .eq. 2) valk = 'COLLISION'
-                if (vali .eq. 3) valk = 'INTERPENETRATION'
-                if (vali .eq. 4) valk = 'DIVE_RESI'
-                if (vali .eq. 5) valk = 'INSTABILITE'
-                if (vali .eq. 6) valk = 'RESI_MAXI'
-            else if (getset.eq.'E') then
-                if (valk .eq. 'ERREUR') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+1) = 0.d0
-                else if (valk.eq.'DELTA_GRANDEUR') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+1) = 1.d0
-                else if (valk.eq.'COLLISION') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+1) = 2.d0
-                else if (valk.eq.'INTERPENETRATION') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+1) = 3.d0
-                else if (valk.eq.'DIVE_RESI') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+1) = 4.d0
-                else if (valk.eq.'INSTABILITE') then
-                    v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+1) = 5.d0
-                else
-                    ASSERT(.false.)
-                endif
-            endif
-        else if (question.eq.'ACTION') then
+        if (question.eq.'ACTION') then
             if (getset .eq. 'L') then
                 vali = nint(v_sddisc_eevr(SIZE_LEEVR*(iechec-1)+2))
                 if (vali .eq. 0) valk = 'ARRET'

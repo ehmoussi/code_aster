@@ -19,7 +19,7 @@
 !
 !
 interface
-    subroutine dfllac(keywf          , i_fail       , dtmin     , event_type,&
+    subroutine dfllac(keywf          , i_fail       , dtmin     , event_typek,&
                       action_type    ,&
                       subd_methode   , subd_pas_mini,&
                       subd_niveau    , subd_pas     ,&
@@ -28,7 +28,7 @@ interface
         character(len=16), intent(in) :: keywf
         integer, intent(in) :: i_fail
         real(kind=8), intent(in) :: dtmin
-        character(len=16), intent(in) :: event_type
+        character(len=16), intent(in) :: event_typek
         character(len=16), intent(out) :: action_type
         character(len=16), intent(out) :: subd_methode
         real(kind=8), intent(out) :: subd_pas_mini

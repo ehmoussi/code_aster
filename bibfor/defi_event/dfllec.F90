@@ -52,13 +52,13 @@ real(kind=8), intent(in) :: dtmin
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: event_list(EVT_NB)
+    integer :: event_list(FAIL_EVT_NB)
     character(len=16) :: keywf
     character(len=16) :: nom_cham, nom_cmp, crit_cmp
     real(kind=8) :: vale_ref, subd_pas_mini
     integer :: nb_fail_read, nb_fail
     integer :: i_fail, i_event, i_fail_save
-    character(len=16) :: event_type, action_type, event_curr
+    character(len=16) :: event_typek, action_type, event_curr
     character(len=16) :: subd_method, subd_auto
     integer :: subd_pas, subd_niveau
     real(kind=8) :: subd_niveau_r, subd_niveau_maxi
@@ -117,13 +117,13 @@ real(kind=8), intent(in) :: dtmin
 !
     AS_ALLOCATE(vi=v_work, size=nb_fail)
     i_last = 1
-    do i_event = 1, EVT_NB
-        event_curr = eventKeyword(i_event)
+    do i_event = 1, FAIL_EVT_NB
+        event_curr = failEventKeyword(i_event)
         do i_fail = 1, nb_fail_read
-            call getvtx(keywf, 'EVENEMENT', iocc=i_fail, scal=event_type)
-            if (event_type .eq. event_curr) then
+            call getvtx(keywf, 'EVENEMENT', iocc=i_fail, scal=event_typek)
+            if (event_typek .eq. event_curr) then
                 event_list(i_event) = i_fail
-                if (event_type .eq. eventKeyword(EVT_INCR_QUANT)) then
+                if (event_typek .eq. failEventKeyword(FAIL_EVT_INCR_QUANT)) then
                     v_work(i_last) = i_fail
                     i_last = i_last + 1
                 endif
@@ -136,26 +136,26 @@ real(kind=8), intent(in) :: dtmin
     i_fail_save = 0
     iplus       = 0
     i_last      = 1
-    do i_event = 1, EVT_NB
+    do i_event = 1, FAIL_EVT_NB
 !
 ! ----- Current event
 !
         i_fail     = event_list(i_event)
-        event_curr = eventKeyword(i_event)
+        event_curr = failEventKeyword(i_event)
 !
 ! ----- Event to create
 !
 157     continue
         if (i_fail .eq. 0) then
 ! --------- This event doesn't exist but it's required
-            if (event_curr .eq. 'ERREUR') then
-                event_type  = event_curr
+            if (event_curr .eq. failEventKeyword(FAIL_EVT_ERROR)) then
+                event_typek = event_curr
                 iplus       = 0
                 i_fail_save = i_fail_save + 1
             endif
         else
-            event_type = event_curr
-            if (event_type .eq. eventKeyword(EVT_INCR_QUANT)) then
+            event_typek = event_curr
+            if (event_typek .eq. failEventKeyword(FAIL_EVT_INCR_QUANT)) then
 ! ------------- This event must be at end of list
                 iplus  = v_work(i_last)
                 i_fail = iplus
@@ -174,18 +174,18 @@ real(kind=8), intent(in) :: dtmin
 !
         l_save = .false.
         if (i_fail .eq. 0) then
-            if (event_curr .eq. 'ERREUR') then
+            if (event_curr .eq. failEventKeyword(FAIL_EVT_ERROR)) then
 ! ------------- Default value for this event
                 call dfdevn(action_type, subd_method, subd_pas_mini, subd_pas, subd_niveau)
                 l_save = .true.
             endif
         else
 ! --------- Get parameters of EVENEMENT for current failure keyword
-            call dfllpe(keywf    , i_fail        , event_type,&
+            call dfllpe(keywf    , i_fail        , event_typek,&
                         vale_ref , nom_cham      , nom_cmp   , crit_cmp,&
                         pene_maxi, resi_glob_maxi)
 ! --------- Get parameters of ACTION for current failure keyword
-            call dfllac(keywf          , i_fail       , dtmin     , event_type,&
+            call dfllac(keywf          , i_fail       , dtmin     , event_typek,&
                         action_type    ,&
                         subd_method    , subd_pas_mini,&
                         subd_niveau    , subd_pas     ,&
@@ -199,7 +199,7 @@ real(kind=8), intent(in) :: dtmin
         if (l_save) then
             call dfllsv(v_sdlist_linfor, v_sdlist_eevenr, v_sdlist_eevenk, v_sdlist_esubdr,&
                         i_fail_save    ,&
-                        event_type     , vale_ref       , nom_cham       , nom_cmp        ,&
+                        event_typek    , vale_ref       , nom_cham       , nom_cmp        ,&
                         crit_cmp       , pene_maxi      , resi_glob_maxi ,&
                         action_type    , subd_method    , subd_auto      , subd_pas_mini  ,&
                         subd_pas       , subd_niveau    , pcent_iter_plus, coef_maxi      ,&

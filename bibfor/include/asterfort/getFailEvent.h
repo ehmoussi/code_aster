@@ -16,12 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine iseven(sddisc, event_type_in, lacti)
+    subroutine getFailEvent(sddisc, i_fail, event_type)
         character(len=19), intent(in) :: sddisc
-        integer, intent(in) :: event_type_in
-        aster_logical :: lacti
-    end subroutine iseven
+        integer, intent(in) :: i_fail
+        integer, intent(out) :: event_type
+    end subroutine getFailEvent
 end interface

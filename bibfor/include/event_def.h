@@ -22,15 +22,6 @@
 ! -------------------------------------------------------------------------
 !
 #include "asterf_types.h"
-!
-#define EVT_NB               7
-#define EVT_ERROR            1
-#define EVT_INCR_QUANT       2
-#define EVT_COLLISION        3
-#define EVT_INTERPENE        4
-#define EVT_DIVE_RESI        5
-#define EVT_INSTABILITY      6
-#define EVT_RESI_MAXI        7
 ! Size of vectors
 #define SIZE_LLINR           11
 #define SIZE_LEEVR           7
@@ -40,15 +31,25 @@
 #define SIZE_LAEVK           1
 #define SIZE_LATPR           6
 #define SIZE_LATPK           4
+! Defines for ECHEC/EVENEMENT
+#define FAIL_EVT_NB               7
+#define FAIL_EVT_ERROR            1
+#define FAIL_EVT_INCR_QUANT       2
+#define FAIL_EVT_COLLISION        3
+#define FAIL_EVT_INTERPENE        4
+#define FAIL_EVT_DIVE_RESI        5
+#define FAIL_EVT_INSTABILITY      6
+#define FAIL_EVT_RESI_MAXI        7
 
-integer, parameter :: eventNbMaxi(EVT_NB)            = (/1, 99, 1,&
+integer, parameter :: failEventMaxi(FAIL_EVT_NB)     = (/1, 99, 1,&
                                                          1, 99, 1,&
                                                          1/)
 
-character(len=16), parameter :: eventKeyword(EVT_NB) = (/'ERREUR          ',&
-                                                         'DELTA_GRANDEUR  ',&
-                                                         'COLLISION       ',&
-                                                         'INTERPENETRATION',&
-                                                         'DIVE_RESI       ',&
-                                                         'INSTABILITE     ',&
-                                                         'RESI_MAXI       '/)
+character(len=16), parameter :: failEventKeyword(FAIL_EVT_NB) = (/'ERREUR          ',&
+                                                                  'DELTA_GRANDEUR  ',&
+                                                                  'COLLISION       ',&
+                                                                  'INTERPENETRATION',&
+                                                                  'DIVE_RESI       ',&
+                                                                  'INSTABILITE     ',&
+                                                                  'RESI_MAXI       '/)
+
