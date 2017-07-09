@@ -15,14 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine ddr_crid(ds_para, nb_node_rid, v_list_rid)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "jeveux.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
@@ -46,11 +46,9 @@ implicit none
 #include "asterfort/addGroupElem.h"
 #include "asterfort/addGroupNode.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDDR), intent(in) :: ds_para
-    integer, intent(in)           :: nb_node_rid
-    integer, intent(in)           :: v_list_rid(nb_node_rid)
+type(ROM_DS_ParaDDR), intent(in) :: ds_para
+integer, intent(in)           :: nb_node_rid
+integer, intent(in)           :: v_list_rid(nb_node_rid)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,7 +68,7 @@ implicit none
     integer :: nb_elem, nb_node, node_nbelem, elem_nbnode
     integer :: nunolo
     integer :: i_layer
-    integer :: i_elem, i_node, i_elem_node, i_node_elem
+    integer :: i_elem, i_node, i_elem_node, i_node_elem, i_rid_maxi
     integer :: nb_rid_elem, nb_int_node, nb_group_add, nb_sub_node
     integer :: indx, node_nume, elem_nume
     integer :: nb_layer_ma
@@ -185,6 +183,35 @@ implicit none
             v_list_ma(i_elem) = .true._1
         endif
     end do
+!
+! - In case of existing limit domain
+!
+    if (ds_para%l_rid_maxi) then
+        do i_elem = 1, nb_elem
+            if (v_list_ma(i_elem)) then
+                do i_rid_maxi = 1, ds_para%nb_rid_maxi
+                    if (i_elem .eq. ds_para%v_rid_maxi(i_rid_maxi)) then
+                        v_list_ma(i_elem) = .true._1
+                        exit
+                    else
+                        v_list_ma(i_elem) = .false._1
+                    endif
+                enddo
+            endif
+        enddo
+! ----- Recreate the list of nodes in RID in case of existing limit domain
+        AS_DEALLOCATE(vl = v_list_no)
+        AS_ALLOCATE(vl = v_list_no, size = nb_node)
+        do i_elem = 1, nb_elem
+            if (v_list_ma(i_elem)) then
+                elem_nbnode = v_connex_longcum(i_elem+1)-v_connex_longcum(i_elem)
+                do i_elem_node = 1, elem_nbnode
+                    nunolo = v_connex(v_connex_longcum(i_elem)+i_elem_node-1)
+                    v_list_no(nunolo) = .true._1
+                enddo
+            endif
+        enddo
+    endif
 !
 ! - Number of elements in RID
 !
