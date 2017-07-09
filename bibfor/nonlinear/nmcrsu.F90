@@ -77,9 +77,9 @@ implicit none
     character(len=19) :: event_name
     character(len=16) :: typeco, nopara, decoup
     character(len=24) :: lisevr, lisevk, lisesu
-    character(len=24) :: lisavr, lisavk, listpr, listpk
+    character(len=24) :: lisavr, listpr, listpk
     character(len=24) :: tpsevr, tpsevk, tpsesu
-    character(len=24) :: tpsavr, tpsavk, tpstpr, tpstpk
+    character(len=24) :: tpsavr, tpstpr, tpstpk
     character(len=24) :: tpsext
     integer :: jtpsex
 !
@@ -113,7 +113,6 @@ implicit none
     lisevk = lisins(1:8)//'.ECHE.EVENK'
     lisesu = lisins(1:8)//'.ECHE.SUBDR'
     lisavr = lisins(1:8)//'.ADAP.EVENR'
-    lisavk = lisins(1:8)//'.ADAP.EVENK'
     listpr = lisins(1:8)//'.ADAP.TPLUR'
     listpk = lisins(1:8)//'.ADAP.TPLUK'
 !
@@ -123,7 +122,6 @@ implicit none
     tpsevk = sddisc(1:19)//'.EEVK'
     tpsesu = sddisc(1:19)//'.ESUR'
     tpsavr = sddisc(1:19)//'.AEVR'
-    tpsavk = sddisc(1:19)//'.AEVK'
     tpstpr = sddisc(1:19)//'.ATPR'
     tpstpk = sddisc(1:19)//'.ATPK'
 !
@@ -145,7 +143,6 @@ implicit none
         call jedup1(lisesu, 'V', tpsesu)
         if (nb_adapt .ne. 0) then
             call jedup1(lisavr, 'V', tpsavr)
-            call jedup1(lisavk, 'V', tpsavk)
             call jedup1(listpr, 'V', tpstpr)
             call jedup1(listpk, 'V', tpstpk)
         endif

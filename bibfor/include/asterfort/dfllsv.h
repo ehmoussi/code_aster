@@ -15,23 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 ! aslint: disable=W1504
 !
 interface
-    subroutine dfllsv(v_sdlist_infor, v_sdlist_evenr, v_sdlist_evenk, v_sdlist_subdr,&
-                      i_fail_save   ,&
-                      event_type    , vale_ref    , nom_cham        , nom_cmp       ,&
-                      crit_cmp      , pene_maxi   , resi_glob_maxi  ,&
-                      action_type   , subd_methode, subd_auto       , subd_pas_mini ,&
-                      subd_pas      , subd_niveau , pcent_iter_plus , coef_maxi     ,&
-                      subd_inst     , subd_duree)
-        real(kind=8), intent(in), pointer :: v_sdlist_infor(:)
-        real(kind=8), intent(in), pointer :: v_sdlist_evenr(:)
-        character(len=16), intent(in), pointer :: v_sdlist_evenk(:)
-        real(kind=8), intent(in), pointer :: v_sdlist_subdr(:)
+    subroutine dfllsv(v_sdlist_linfor, v_sdlist_eevenr, v_sdlist_eevenk, v_sdlist_esubdr,&
+                      i_fail_save    ,&
+                      event_type     , vale_ref       , nom_cham        , nom_cmp       ,&
+                      crit_cmp       , pene_maxi      , resi_glob_maxi  ,&
+                      action_type    , subd_methode   , subd_auto       , subd_pas_mini ,&
+                      subd_pas       , subd_niveau    , pcent_iter_plus , coef_maxi     ,&
+                      subd_inst      , subd_duree)
+        real(kind=8), intent(in), pointer :: v_sdlist_linfor(:)
+        real(kind=8), intent(in), pointer :: v_sdlist_eevenr(:)
+        character(len=16), intent(in), pointer :: v_sdlist_eevenk(:)
+        real(kind=8), intent(in), pointer :: v_sdlist_esubdr(:)
         integer, intent(in) :: i_fail_save
         character(len=16), intent(in) :: event_type
         real(kind=8), intent(in) :: vale_ref

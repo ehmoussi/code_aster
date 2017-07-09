@@ -93,7 +93,7 @@ implicit none
 !
 ! - Create reference error
 !
-    event_type      = 'ERRE'
+    event_type      = 'ERREUR'
     action_type     = 'ARRET'
     subd_methode    = ' '
     subd_auto       = ' '

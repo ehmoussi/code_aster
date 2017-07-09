@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine dfllac(keywf          , i_fail       , dtmin     , event_type,&
                   action_type    ,&
                   subd_methode   , subd_pas_mini,&
@@ -31,25 +31,24 @@ implicit none
 #include "asterfort/dfllin.h"
 #include "asterfort/getvtx.h"
 !
-!
-    character(len=16), intent(in) :: keywf
-    integer, intent(in) :: i_fail
-    real(kind=8), intent(in) :: dtmin
-    character(len=16), intent(in) :: event_type
-    character(len=16), intent(out) :: action_type
-    character(len=16), intent(out) :: subd_methode
-    real(kind=8), intent(out) :: subd_pas_mini
-    integer, intent(out) :: subd_niveau
-    integer, intent(out) :: subd_pas
-    character(len=16), intent(out) :: subd_auto
-    real(kind=8), intent(out) :: subd_inst
-    real(kind=8), intent(out) :: subd_duree
-    real(kind=8), intent(out) :: pcent_iter_plus
-    real(kind=8), intent(out) :: coef_maxi
+character(len=16), intent(in) :: keywf
+integer, intent(in) :: i_fail
+real(kind=8), intent(in) :: dtmin
+character(len=16), intent(in) :: event_type
+character(len=16), intent(out) :: action_type
+character(len=16), intent(out) :: subd_methode
+real(kind=8), intent(out) :: subd_pas_mini
+integer, intent(out) :: subd_niveau
+integer, intent(out) :: subd_pas
+character(len=16), intent(out) :: subd_auto
+real(kind=8), intent(out) :: subd_inst
+real(kind=8), intent(out) :: subd_duree
+real(kind=8), intent(out) :: pcent_iter_plus
+real(kind=8), intent(out) :: coef_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_LIST_INST
+! DEFI_LIST_INST - Read parameters
 !
 ! Get parameters of ACTION for current failure keyword
 !

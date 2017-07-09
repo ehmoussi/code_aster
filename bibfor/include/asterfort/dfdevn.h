@@ -15,15 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dfdevn(action, submet, pasmin, nbrpas, niveau)
-        character(len=16) :: action
-        character(len=16) :: submet
-        real(kind=8) :: pasmin
-        integer :: nbrpas
-        integer :: niveau
+    subroutine dfdevn(action_type, subd_method, subd_pas_mini, subd_pas, subd_niveau)
+        character(len=16), intent(out) :: action_type
+        character(len=16), intent(out) :: subd_method
+        real(kind=8), intent(out) :: subd_pas_mini
+        integer, intent(out) :: subd_pas, subd_niveau
     end subroutine dfdevn
 end interface

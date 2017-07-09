@@ -106,7 +106,7 @@ implicit none
 !
         call eneven(sddisc, i_echec, .false._1)
 !
-        if (event_name .eq. 'ERRE') then
+        if (event_name .eq. 'ERREUR') then
             if (lsvimx .or. lerrcv .or. lerror) then
                 i_echec_acti = i_echec
                 goto 99
