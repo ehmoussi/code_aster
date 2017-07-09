@@ -83,5 +83,6 @@ implicit none
     ds_algorom%v_equa_int    => null()
     ds_algorom%v_equa_sub    => null()
     ds_algorom%field_iden    = ' '
+    ds_algorom%vale_pena     = 0.d0
 !
 end subroutine

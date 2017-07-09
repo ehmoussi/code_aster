@@ -314,6 +314,8 @@ implicit none
         character(len=24) :: gamma
 ! ----- Identificator for field
         character(len=24) :: field_iden
+! ----- Penalisation parameter for EF correction
+        real(kind=8)      :: vale_pena
     end type ROM_DS_AlgoPara
 !     
 end module
