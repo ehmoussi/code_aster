@@ -15,13 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmadat(sddisc, numins, nbiter, valinc)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmadat(sddisc, numins, nbiter, valinc)
+!
+implicit none
+!
 #include "asterf_types.h"
+#include "event_def.h"
 #include "jeveux.h"
 #include "asterc/r8maem.h"
 #include "asterc/r8vide.h"
@@ -40,9 +41,11 @@ subroutine nmadat(sddisc, numins, nbiter, valinc)
 #include "asterfort/utdidt.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    character(len=19) :: valinc(*)
-    character(len=19) :: sddisc
-    integer :: numins, nbiter
+#include "asterfort/getAdapAction.h"
+!
+character(len=19) :: valinc(*)
+character(len=19) :: sddisc
+integer :: numins, nbiter
 !
 ! ----------------------------------------------------------------------
 !
@@ -63,8 +66,8 @@ subroutine nmadat(sddisc, numins, nbiter, valinc)
 !
 !
     integer :: ifm, niv
-    integer :: nb_adapt, i_adapt, jdt
-    character(len=19) :: metlis, modetp, dtplus
+    integer :: nb_adap, i_adap, jdt
+    character(len=19) :: metlis, dtplus
     real(kind=8) :: r8bid, dt, min, pasmin, pasmax, dtm, jalon
     real(kind=8) :: newins, newdt, deltac
     real(kind=8) :: inst, prec, valr(2)
@@ -74,7 +77,7 @@ subroutine nmadat(sddisc, numins, nbiter, valinc)
     integer :: jiter
     integer :: nb_inst, nmax, inspas
     character(len=24) :: tpsext
-    integer :: jtpsex
+    integer :: jtpsex, action_type
 !
 ! ----------------------------------------------------------------------
 !
@@ -124,12 +127,11 @@ subroutine nmadat(sddisc, numins, nbiter, valinc)
 !
 ! --- NOMBRE DE SCHEMAS D'ADAPTATION : NADAPT
 !
-    call utdidt('L', sddisc, 'LIST', 'NADAPT',&
-                vali_ = nb_adapt)
+    call utdidt('L', sddisc, 'LIST', 'NADAPT', vali_ = nb_adap)
 !
 ! --- LISTE DES NADAPT PAS DE TEMPS POSSIBLES
 !
-    call wkvect(dtplus, 'V V R', nb_adapt, jdt)
+    call wkvect(dtplus, 'V V R', nb_adap, jdt)
 !
 ! --- PAS DE TEMPS PAR DEFAUT (LE DERNIER, SAUF SI JALON) : DTM
 !
@@ -148,27 +150,26 @@ subroutine nmadat(sddisc, numins, nbiter, valinc)
 !
     call utmess('I', 'ADAPTATION_1')
 !
-    do i_adapt = 1, nb_adapt
+    do i_adap = 1, nb_adap
 !
-        call utdidt('L', sddisc, 'ADAP', 'METHODE', index_ = i_adapt,&
-                    valk_ = modetp)
+        call getAdapAction(sddisc, i_adap, action_type)
 !
-        zr(jdt-1+i_adapt) = r8vide()
+        zr(jdt-1+i_adap) = r8vide()
 !
 ! ----- DOIT-ON ADAPTER ?
 !
-        ladap = diadap(sddisc,i_adapt)
+        ladap = diadap(sddisc, i_adap)
         if (ladap) then
-            call nmcadt(sddisc, i_adapt, numins, valinc, zr(jdt-1+i_adapt))
+            call nmcadt(sddisc, i_adap, numins, valinc, zr(jdt-1+i_adap))
         endif
-        newdt = zr(jdt-1+i_adapt)
+        newdt = zr(jdt-1+i_adap)
 !
 ! ----- AFFICHAGE
 !
         if (newdt .ne. r8vide()) then
-            call utmess('I', 'ADAPTATION_2', sk=modetp, sr=newdt)
+            call utmess('I', 'ADAPTATION_2', sk=adapActionKeyword(action_type), sr=newdt)
         else
-            call utmess('I', 'ADAPTATION_3', sk=modetp)
+            call utmess('I', 'ADAPTATION_3', sk=adapActionKeyword(action_type))
         endif
     end do
 !
@@ -178,8 +179,8 @@ subroutine nmadat(sddisc, numins, nbiter, valinc)
 !
     dt = r8maem()
     uncrok = .false.
-    do i_adapt = 1, nb_adapt
-        newdt = zr(jdt-1+i_adapt)
+    do i_adap = 1, nb_adap
+        newdt = zr(jdt-1+i_adap)
         if (newdt .ne. r8vide()) then
             dt = min(dt,newdt)
             uncrok = .true.
@@ -197,7 +198,7 @@ subroutine nmadat(sddisc, numins, nbiter, valinc)
 !
     if (dt .gt. pasmax) then
 !       EMISSION DU MESSAGE D'INFO (SAUF POUR IMPLEX)
-        if (modetp(1:6) .ne. 'IMPLEX') then
+        if (action_type .ne. ADAP_ACT_IMPLEX) then
             valr(1) = dt
             valr(2) = pasmax
             call utmess('I', 'ADAPTATION_12', nr=2, valr=valr)
@@ -208,7 +209,7 @@ subroutine nmadat(sddisc, numins, nbiter, valinc)
 ! --- PROJECTION SUR LA BORNE INF POUR IMPLEX
 ! --- (ATTENTION : A FAIRE AVANT L'AJUSTEMENT / JALON)
 !
-    if ((modetp.eq.'IMPLEX') .or. (modetp.eq.'IMPLEX2')) then
+    if (action_type .eq. ADAP_ACT_IMPLEX) then
         if (dt .lt. pasmin) dt = pasmin
     endif
 !
@@ -251,7 +252,7 @@ subroutine nmadat(sddisc, numins, nbiter, valinc)
 !
 ! --- ON VERIFIE LES GARDE FOUS
 !
-    if (modetp(1:6) .ne. 'IMPLEX') then
+    if (action_type .ne. ADAP_ACT_IMPLEX) then
         if (dt .lt. pasmin) then
             call utmess('F', 'ADAPTATION_11', sr=dt)
         endif

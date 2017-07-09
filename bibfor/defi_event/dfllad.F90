@@ -53,7 +53,7 @@ character(len=8), intent(in) :: sdlist
     integer :: nb_adapt, nbret
     integer :: ibid, nb_iter_newton_ref, nb_incr_seuil
     integer :: i_adap
-    character(len=16) :: event_typek, nom_para, crit_comp, mode_calcul_tplus, nom_cham
+    character(len=16) :: event_typek, nom_para, crit_comp, action_typek, nom_cham
     character(len=8) :: nomgd, nom_cmp
     real(kind=8) :: pcent_augm, vale_ref, valer
     integer :: valei, nucmp(1)
@@ -86,9 +86,9 @@ character(len=8), intent(in) :: sdlist
 !
 ! - For IMPLEX: only one MODE_CALCUL_TPLUS
 !
-    call getvtx('ADAPTATION', 'MODE_CALCUL_TPLUS', iocc=nb_adapt, scal=mode_calcul_tplus,&
+    call getvtx('ADAPTATION', 'MODE_CALCUL_TPLUS', iocc=nb_adapt, scal=action_typek,&
                                                    nbret=nbret)
-    if (nb_adapt .ne. 1 .and. mode_calcul_tplus .eq. 'IMPLEX') then
+    if (nb_adapt .ne. 1 .and. action_typek .eq. adapActionKeyword(ADAP_ACT_IMPLEX)) then
         call utmess('F', 'DISCRETISATION_15')
     endif
 !
@@ -151,15 +151,15 @@ character(len=8), intent(in) :: sdlist
 !
 ! ----- Options for 'MODE_CALCUL_TPLUS'
 !
-        call getvtx(keywf, 'MODE_CALCUL_TPLUS', iocc=i_adap, scal=mode_calcul_tplus, nbret=nbret)
-        if (mode_calcul_tplus .eq. 'FIXE') then
-            v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1) = 1.d0
-        else if (mode_calcul_tplus.eq.'DELTA_GRANDEUR') then
-            v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1) = 2.d0
-        else if (mode_calcul_tplus.eq.'ITER_NEWTON') then
-            v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1) = 3.d0
-        else if (mode_calcul_tplus.eq.'IMPLEX') then
-            v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1) = 5.d0
+        call getvtx(keywf, 'MODE_CALCUL_TPLUS', iocc=i_adap, scal=action_typek, nbret=nbret)
+        if (action_typek .eq. adapActionKeyword(ADAP_ACT_FIXE)) then
+            v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1) = ADAP_ACT_FIXE
+        else if (action_typek .eq. adapActionKeyword(ADAP_ACT_INCR_QUANT)) then
+            v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1) = ADAP_ACT_INCR_QUANT
+        else if (action_typek .eq. adapActionKeyword(ADAP_ACT_ITER)) then
+            v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1) = ADAP_ACT_ITER
+        else if (action_typek .eq. adapActionKeyword(ADAP_ACT_IMPLEX)) then
+            v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1) = ADAP_ACT_IMPLEX
             if (event_typek .ne. adapEventKeyword(ADAP_EVT_ALLSTEPS)) then
                 call utmess('F', 'DISCRETISATION_14')
             endif
@@ -169,14 +169,14 @@ character(len=8), intent(in) :: sdlist
 !
 ! ----- Options for MODE_CALCUL_TPLUS/FIXE
 !
-        if (mode_calcul_tplus .eq. 'FIXE') then
+        if (action_typek .eq. adapActionKeyword(ADAP_ACT_FIXE)) then
             call getvr8(keywf, 'PCENT_AUGM', iocc=i_adap, scal=pcent_augm, nbret=nbret)
             v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+2) = pcent_augm
         endif
 !
 ! ----- Options for MODE_CALCUL_TPLUS/DELTA_GRANDEUR
 !
-        if (mode_calcul_tplus .eq. 'DELTA_GRANDEUR') then
+        if (action_typek .eq. adapActionKeyword(ADAP_ACT_INCR_QUANT)) then
             call getvr8(keywf, 'VALE_REF', iocc=i_adap, scal=vale_ref, nbret=nbret)
             v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+3) = vale_ref
             call getvtx(keywf, 'NOM_PARA', iocc=i_adap, scal=nom_para, nbret=nbret)
@@ -193,7 +193,7 @@ character(len=8), intent(in) :: sdlist
 !
 ! ----- Options for MODE_CALCUL_TPLUS/ITER_NEWTON
 !
-        if (mode_calcul_tplus .eq. 'ITER_NEWTON') then
+        if (action_typek .eq. adapActionKeyword(ADAP_ACT_ITER)) then
             call getvis(keywf, 'NB_ITER_NEWTON_REF', iocc=i_adap, scal=nb_iter_newton_ref,&
                         nbret=nbret)
             v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+5) = nb_iter_newton_ref

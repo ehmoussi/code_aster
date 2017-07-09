@@ -77,3 +77,15 @@ character(len=16), parameter :: failActionKeyword(FAIL_ACT_NB) = (/'ARRET       
 character(len=16), parameter :: adapEventKeyword(ADAP_EVT_NB) = (/'AUCUN           ',&
                                                                   'TOUT_INST       ',&
                                                                   'SEUIL           '/)
+
+! Defines for ADAPTATION/MODE_CALCUL_TPLUS
+#define ADAP_ACT_NB               4
+#define ADAP_ACT_FIXE             1
+#define ADAP_ACT_INCR_QUANT       2
+#define ADAP_ACT_ITER             3
+#define ADAP_ACT_IMPLEX           4
+
+character(len=16), parameter :: adapActionKeyword(ADAP_ACT_NB) = (/'FIXE            ',&
+                                                                   'DELTA_GRANDEUR  ',&
+                                                                   'ITER_NEWTON     ',&
+                                                                   'IMPLEX          '/)

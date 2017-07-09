@@ -50,7 +50,7 @@ integer, intent(in) :: i_adap
     real(kind=8), pointer :: v_sdlist_atplur(:) => null()
     character(len=24) :: sdlist_atpluk
     character(len=16), pointer :: v_sdlist_atpluk(:) => null()
-    integer :: mode_calcul_tplusi, nb_iter_newton_ref
+    integer :: action_type, nb_iter_newton_ref
     real(kind=8) :: pcent_augm, vale_ref
     character(len=16):: nom_cham, nom_cmp, crit_cmp
 !
@@ -69,25 +69,25 @@ integer, intent(in) :: i_adap
 !
 ! - Print
 !
-    mode_calcul_tplusi = nint(v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1))
-    pcent_augm         = v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+2)
-    vale_ref           = v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+3)
-    nom_cham           = v_sdlist_atpluk(SIZE_LATPK*(i_adap-1)+2)
-    nom_cmp            = v_sdlist_atpluk(SIZE_LATPK*(i_adap-1)+3)
-    crit_cmp           = 'GE'
+    action_type = nint(v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+1))
+    pcent_augm  = v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+2)
+    vale_ref    = v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+3)
+    nom_cham    = v_sdlist_atpluk(SIZE_LATPK*(i_adap-1)+2)
+    nom_cmp     = v_sdlist_atpluk(SIZE_LATPK*(i_adap-1)+3)
+    crit_cmp    = 'GE'
     nb_iter_newton_ref = nint(v_sdlist_atplur(SIZE_LATPR*(i_adap-1)+5))
-    if (mode_calcul_tplusi .eq. 1) then
+    if (action_type .eq. ADAP_ACT_FIXE) then
         call utmess('I', 'DISCRETISATION3_80')
         call utmess('I', 'DISCRETISATION3_84', sr = pcent_augm)
-    elseif (mode_calcul_tplusi .eq. 2) then
+    elseif (action_type .eq. ADAP_ACT_INCR_QUANT) then
         call utmess('I', 'DISCRETISATION3_81')
         call utmess('I', 'DISCRETISATION3_21', &
                     nk = 3, valk = [nom_cham, nom_cmp, crit_cmp],&
                     sr = vale_ref)
-    elseif (mode_calcul_tplusi .eq. 3) then
+    elseif (action_type .eq. ADAP_ACT_ITER) then
         call utmess('I', 'DISCRETISATION3_82')
         call utmess('I', 'DISCRETISATION3_85', si = nb_iter_newton_ref)
-    elseif (mode_calcul_tplusi .eq. 5) then
+    elseif (action_type .eq. ADAP_ACT_IMPLEX) then
         call utmess('I', 'DISCRETISATION3_83')
     endif
 !
