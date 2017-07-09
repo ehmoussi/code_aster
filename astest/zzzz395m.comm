@@ -142,6 +142,8 @@ mesh2=DEFI_DOMAINE_REDUIT(reuse=mesh2,INFO=2,
             NOM_DOMAINE='RID',
             CORR_COMPLET = 'OUI',
             NOM_ENCASTRE = 'SUB',
+            NB_COUCHE_ENCASTRE = 1,
+            NB_COUCHE_SUPPL    = 1,
             NOM_INTERFACE='INF',);
 
 TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
@@ -165,8 +167,8 @@ TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
                         NOM_GROUP_MA= 'RID',
                         REFERENCE   = 'ANALYTIQUE',
                         CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 14,
-                        VALE_CALC_I = 14,)
+                        VALE_REFE_I = 49,
+                        VALE_CALC_I = 49,)
           )
 
 TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
@@ -174,8 +176,8 @@ TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
                         NOM_GROUP_NO= 'INF',
                         REFERENCE   = 'ANALYTIQUE',
                         CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 14,
-                        VALE_CALC_I = 14,)
+                        VALE_REFE_I = 26,
+                        VALE_CALC_I = 26,)
           )
 
 TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
@@ -183,8 +185,8 @@ TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
                         NOM_GROUP_NO= 'SUB',
                         REFERENCE   = 'ANALYTIQUE',
                         CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 40,
-                        VALE_CALC_I = 40,)
+                        VALE_REFE_I = 42,
+                        VALE_CALC_I = 42,)
           )
 
 IMPR_RESU(FORMAT='MED', UNITE = 80, RESU=_F(MAILLAGE = mesh2))
