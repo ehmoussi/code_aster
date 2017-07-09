@@ -55,7 +55,7 @@ implicit none
     integer :: ifm, niv
     integer :: i_col, i_dof_monitor, nb_dof_monitor, line_width, i, nb_cols_active
     type(NL_DS_Table) :: table_cvg
-    aster_logical :: l_line_search, l_pilo, l_cont_disc, l_cont_cont
+    aster_logical :: l_line_search, l_pilo, l_cont_disc, l_cont_cont, l_hrom
     aster_logical :: l_deborst, l_refe_rela, l_comp_rela
     aster_logical :: l_loop_cont, l_loop_frot, l_loop_geom, l_cont_all_verif
     aster_logical :: l_newt_frot, l_newt_cont, l_newt_geom
@@ -100,6 +100,7 @@ implicit none
     l_newt_geom      = isfonc(list_func_acti,'GEOM_NEWTON')
     l_comp_rela      = isfonc(list_func_acti,'RESI_COMP')
     l_cont_all_verif = isfonc(list_func_acti,'CONT_ALL_VERIF')
+    l_hrom           = isfonc(list_func_acti,'HROM')
 !
 ! - No cols activated
 !
@@ -217,6 +218,12 @@ implicit none
 ! - Matrix option
 !
     call SetTableColumn(table_cvg, name_ = 'MATR_ASSE', flag_acti_ = .true._1)
+!
+! - Hyper-reduction
+!
+    if (l_hrom) then
+        call SetTableColumn(table_cvg, name_ = 'BOUC_HROM', flag_acti_ = .true._1)
+    endif
 !
 ! - For DOF monitoring
 !

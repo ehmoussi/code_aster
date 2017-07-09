@@ -26,6 +26,7 @@ use ROM_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
@@ -35,6 +36,7 @@ implicit none
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/romAlgoNLSystemSolve.h"
+#include "asterfort/romAlgoNLCorrEFSystemSolve.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -107,16 +109,20 @@ implicit none
 !
     if (lprmo) then
         call nmresg(numedd, sddyna, instan, cndonn, depso1)
-    else
-        if (l_rom) then
+    elseif (l_rom) then
+        if (ds_algorom_%phase .eq. 'HROM') then
             rescvg = 0
             mata24 = matass
             vect24 = cndonn
             call romAlgoNLSystemSolve(mata24, vect24, ds_algorom_, depso1)
+        elseif (ds_algorom_%phase .eq. 'CORR_EF') then
+            call romAlgoNLCorrEFSystemSolve()  
         else
-            call nmreso(fonact, cndonn, cnpilo, cncine, solveu,&
-                        maprec, matass, depso1, depso2, rescvg)
+            ASSERT(.false.)
         endif
+    else
+        call nmreso(fonact, cndonn, cnpilo, cncine, solveu,&
+                    maprec, matass, depso1, depso2, rescvg)
     endif
 !
     call nmtime(ds_measure, 'Stop', 'Solve')

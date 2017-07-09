@@ -31,6 +31,7 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/nmactf.h"
 #include "asterfort/nmactn.h"
@@ -142,7 +143,7 @@ implicit none
 !
     integer :: niveau, iterat
     aster_logical :: lerrit
-    aster_logical :: l_loop_cont, l_cont_disc
+    aster_logical :: l_loop_exte, l_cont_disc, l_cont, l_hrom_corref
     character(len=4) :: etnewt, etfixe
     real(kind=8) :: time
 !
@@ -155,8 +156,10 @@ implicit none
 !
 ! - Active functionnalities
 !
-    l_loop_cont = isfonc(fonact,'BOUCLE_EXTERNE')
-    l_cont_disc = isfonc(fonact,'CONT_DISCRET')
+    l_loop_exte   = isfonc(fonact, 'BOUCLE_EXTERNE')
+    l_cont_disc   = isfonc(fonact, 'CONT_DISCRET')
+    l_cont        = isfonc(fonact, 'CONTACT')
+    l_hrom_corref = isfonc(fonact, 'HROM_CORR_EF')
 !
 ! - Reset events
 !
@@ -167,10 +170,16 @@ implicit none
 !
     call nmimr0(ds_print, 'NEWT')
 !
-! - Loops for contact
+! - Supplementary loops
 !
-    if (l_loop_cont) then
-        niveau = 3
+    if (l_loop_exte) then
+        if (l_cont) then
+            niveau = 3
+        elseif (l_hrom_corref) then
+            niveau = 10
+        else
+            ASSERT(.false.)
+        endif
     endif
 !
 ! --- INITIALISATIONS POUR LE NOUVEAU PAS DE TEMPS
@@ -200,7 +209,7 @@ implicit none
 ! --- GESTION DEBUT DE BOUCLE POINTS FIXES
 !
     call nmible(niveau, model     , mesh    , ds_contact,&
-                fonact, ds_measure, ds_print)
+                fonact, ds_measure, ds_print, ds_algorom)
 !
 ! --- CREATION OBJETS POUR CONTACT CONTINU
 !
@@ -375,9 +384,9 @@ implicit none
 ! --- GESTION FIN DE BOUCLE POINTS FIXES
 !
     call nmtble(niveau, model, mesh    , mate  , ds_contact, &
-                fonact, ds_print, ds_measure, &
+                fonact, ds_print, ds_measure,&
                 sderro, ds_conv , sddisc, numins, valinc,&
-                solalg,  ds_constitutive)
+                solalg,  ds_constitutive, ds_algorom)
 !
 ! --- ETAT DE LA CONVERGENCE POINT FIXE
 !
@@ -396,7 +405,7 @@ implicit none
             call nmeceb(sderro, 'NEWT', 'CTCD')
             call nmtime(ds_measure, 'Launch', 'Newt_Iter')
             goto 320
-        else if (l_loop_cont) then
+        else if (l_loop_exte) then
             goto 100
         else
             call nmeceb(sderro, 'FIXE', 'CONV')

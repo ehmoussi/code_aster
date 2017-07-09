@@ -36,6 +36,8 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/nxreso.h"
 #include "asterfort/romAlgoNLSystemSolve.h"
+#include "asterfort/romAlgoNLCorrEFMatrixModify.h"
+#include "asterfort/romAlgoNLCorrEFResiduModify.h"
 #include "asterfort/resoud.h"
 #include "asterfort/verstp.h"
 #include "asterfort/vethbt.h"
@@ -159,8 +161,14 @@ implicit none
 !
 ! ----- Solve linear system
 !
-        if (ds_algorom%l_rom) then
+        if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'HROM') then
+            call copisd('CHAMP_GD', 'V', temp_prev, chsol)
             call romAlgoNLSystemSolve(matass, cn2mbr, ds_algorom, chsol)
+        else if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
+            call romAlgoNLCorrEFMatrixModify()
+            call romAlgoNLCorrEFResiduModify()
+            call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
+                        chsol)
         else
             call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
                         chsol)
@@ -182,9 +190,14 @@ implicit none
 !
 ! ----- Solve linear system
 !
-        if (ds_algorom%l_rom) then
+        if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'HROM') then
             call copisd('CHAMP_GD', 'V', temp_prev, chsol)
             call romAlgoNLSystemSolve(matass, cn2mbr, ds_algorom, chsol)
+        else if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
+            call romAlgoNLCorrEFMatrixModify()
+            call romAlgoNLCorrEFResiduModify()
+            call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
+                        chsol)
         else
             call nxreso(matass, maprec, solver, cnchci, cn2mbr,&
                         chsol)

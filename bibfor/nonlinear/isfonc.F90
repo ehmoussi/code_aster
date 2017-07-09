@@ -108,6 +108,7 @@ implicit none
 !       ETAT_INIT          :  initial state
 !       ROM                :  reduced order model
 !       HROM               :  hyper-reduced order model
+!       HROM_CORR_EF       :  hyper-reduced order model with EF correction
 !
 ! DERNIER NUMERO UTILISE: 65
 !
@@ -231,6 +232,8 @@ implicit none
         isfonc = list_func_acti(61).eq.1
     else if (func_name.eq.'HROM') then
         isfonc = list_func_acti(62).eq.1
+    else if (func_name.eq.'HROM_CORR_EF') then
+        isfonc = list_func_acti(65).eq.1
     else if (func_name.eq.'ENERGIE') then
         isfonc = list_func_acti(50).eq.1
     else if (func_name.eq.'PROJ_MODAL') then

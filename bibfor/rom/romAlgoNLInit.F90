@@ -60,7 +60,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_hrom
+    aster_logical :: l_hrom, l_hrom_corref
     integer :: nb_mode
     character(len=8) :: base_rid
     character(len=24) :: gamma = ' '
@@ -75,8 +75,9 @@ implicit none
 !
 ! - Get parameters
 !
-    l_hrom  = ds_algorom%l_hrom
-    nb_mode = ds_algorom%ds_empi%nb_mode
+    l_hrom        = ds_algorom%l_hrom
+    l_hrom_corref = ds_algorom%l_hrom_corref
+    nb_mode       = ds_algorom%ds_empi%nb_mode
 !
 ! - Check ROM algorithm datastructure
 !
@@ -89,6 +90,13 @@ implicit none
                                    ds_algorom%v_equa_int)
     endif
 !
+! - Prepare the list of equation of internal interface
+!
+    if (l_hrom_corref) then
+        call romEquationListCreate(ds_algorom%ds_empi   , nume_dof, ds_algorom%grnode_sub,&
+                                   ds_algorom%v_equa_sub)
+    endif
+!
 ! - Truncation of empirical modes on RID
 !
     if (l_hrom) then
@@ -96,6 +104,10 @@ implicit none
         call romBaseCopy(ds_algorom%ds_empi, base_rid, ds_algorom%ds_empi_rid)
         call romBaseTruncation(ds_algorom%ds_empi, nume_dof, 'V', ds_algorom%ds_empi_rid)
     endif
+!
+! - Initializations for EF correction
+!
+    ds_algorom%phase = 'HROM'
 !
 ! - Create object for reduced coordinates
 !

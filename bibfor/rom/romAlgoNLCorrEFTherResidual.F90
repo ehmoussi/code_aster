@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine romAlgoNLClean(ds_algorom)
+subroutine romAlgoNLCorrEFTherResidual()
 !
 use Rom_Datastructure_type
 !
@@ -24,38 +24,27 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/as_deallocate.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Model reduction - Solving non-linear problem
+! Model reduction - Solving non-linear problem THERMICS
 !
-! Clean ROM algorithm datastructure
-!
-! --------------------------------------------------------------------------------------------------
-!
-! IO  ds_algorom       : datastructure for ROM parameters
+! Evaluate residuals in applying HYPER-REDUCTION in CORR_EF phase
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
+
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_42')
-    endif
+
 !
-    AS_DEALLOCATE(vi = ds_algorom%v_equa_int)
-    if (ds_algorom%l_hrom_corref) then
-        AS_DEALLOCATE(vi = ds_algorom%v_equa_sub)
-    endif
+! --------------------------------------------------------------------------------------------------
+!
+
 !
 end subroutine

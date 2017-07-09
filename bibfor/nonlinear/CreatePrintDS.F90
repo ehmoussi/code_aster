@@ -44,7 +44,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_cols_defi = 28
+    integer, parameter :: nb_cols_defi = 29
     integer, parameter :: nb_cols_dof_defi = 9
     integer :: ifm, niv
     integer :: i_col, i_cols_dof
@@ -53,7 +53,7 @@ implicit none
     type(NL_DS_Column) :: column
 !
     character(len=24), parameter :: cols_name(nb_cols_defi) = (/&
-                  'INCR_INST','BOUC_GEOM','BOUC_FROT',&
+                  'INCR_INST','BOUC_HROM','BOUC_GEOM','BOUC_FROT',&
                   'BOUC_CONT','ITER_NUME','RESI_RELA',&
                   'RELA_NOEU','RESI_MAXI','MAXI_NOEU',&
                   'RESI_REFE','REFE_NOEU','RESI_COMP',&
@@ -65,7 +65,7 @@ implicit none
                   'ITER_TIME'/)
 !
     character(len=16), parameter :: cols_title_1(nb_cols_defi) = (/&
-              '   INCREMENT    ','     CONTACT    ','     CONTACT    ',&
+              '   INCREMENT    ','     CALCUL     ','     CONTACT    ','     CONTACT    ',&
               '     CONTACT    ','     NEWTON     ','     RESIDU     ',&
               '     RESIDU     ','     RESIDU     ','     RESIDU     ',&
               '     RESIDU     ','     RESIDU     ',' RESI_COMP_RELA ',&
@@ -76,7 +76,7 @@ implicit none
               '     CONTACT    ','     CONTACT    ','     CONTACT    ',&
               '     NEWTON     '/)
     character(len=16), parameter :: cols_title_2(nb_cols_defi) = (/&
-              '    INSTANT     ','    BCL. GEOM.  ','    BCL. FROT.  ',&
+              '    INSTANT     ','      HYPER     ','    BCL. GEOM.  ','    BCL. FROT.  ',&
               '    BCL. CONT.  ','    ITERATION   ','     RELATIF    ',&
               '     MAXIMUM    ','     ABSOLU     ','     MAXIMUM    ',&
               '  PAR REFERENCE ','     MAXIMUM    ',' PAR COMPOSANTE ',&
@@ -87,7 +87,7 @@ implicit none
               '     CRITERE    ','   NEWTON GENE  ','   NEWTON GENE  ',&
               '  TEMPS CALCUL  '/)
     character(len=16), parameter :: cols_title_3(nb_cols_defi) = (/&
-              '                ','    ITERATION   ','    ITERATION   ',&
+              '                ','      REDUIT    ','    ITERATION   ','    ITERATION   ',&
               '    ITERATION   ','                ',' RESI_GLOB_RELA ',&
               '    AU POINT    ',' RESI_GLOB_MAXI ','    AU POINT    ',&
               ' RESI_REFE_RELA ','    AU POINT    ',' RESI_COMP_RELA ',&
@@ -99,7 +99,7 @@ implicit none
               '    VALEUR      '/)
 !
     character(len=1), parameter :: cols_type(nb_cols_defi) = (/&
-                  'R','I','I',&
+                  'R','K','I','I',&
                   'I','I','R',&
                   'K','R','K',&
                   'R','K','R',&
@@ -121,7 +121,7 @@ implicit none
 !
     do i_col = 1, nb_cols_defi
         call CreateVoidColumn(column)
-        column%name          = cols_name(i_col)
+        column%name          = cols_name(i_col)(1:16)
         if (cols_type(i_col).eq.'R') then
             column%l_vale_real   = .true._1
         elseif (cols_type(i_col).eq.'I') then
