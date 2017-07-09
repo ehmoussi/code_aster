@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'SIMO_MIEHE',
-    doc            =   """Algo pour résolution en grandes déformations."""      ,
+    doc            =   """Algo pour résolution en grandes déformations."""          ,
     num_lc         = 1000,
     nb_vari        = 6,
     nom_vari       = ('SM1','SM2','SM3','SM4','SM5',
@@ -35,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('No',),
+    exte_vari      = None,
 )

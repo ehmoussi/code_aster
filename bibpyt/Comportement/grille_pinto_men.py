@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'GRILLE_PINTO_MEN',
-    doc            =   """Relation de comportement des grilles d'armatures de béton armé, à comportement cyclique phénoménologique de Pinto et Menegotto"""      ,
+    doc            =   """Relation de comportement des grilles d'armatures de béton armé, à comportement cyclique phénoménologique de Pinto et Menegotto"""          ,
     num_lc         = 0,
     nb_vari        = 16,
     nom_vari       = ('EPSRN-1','EPSRN','SIGRN','EPSM+V5','DEPS-TH',
@@ -35,4 +36,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

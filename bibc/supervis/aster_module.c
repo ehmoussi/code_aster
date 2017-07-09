@@ -2377,15 +2377,17 @@ void DEFSS(LCALGO, lcalgo, _IN char *compor, STRING_SIZE lcompor,
    Py_XDECREF(catalc);
 }
 
-void DEFSPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
-                            _OUT ASTERINTEGER *numlc,
-                            _OUT ASTERINTEGER *nbvari)
+void DEFSPPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
+                             _OUT ASTERINTEGER *numlc,
+                             _OUT ASTERINTEGER *nbvari,
+                             _OUT ASTERINTEGER *nbvari_exte
+                             )
 {
 /*
    Retourne le numéro de routine et le nbre de variables internes
 
-      CALL LCINFO(COMPOR, NUMLC, NBVARI)
-      ==> num_lc, nb_vari = catalc.get_info(COMPOR)
+      CALL LCINFO(COMPOR, NUMLC, NBVARI, NBVARI_EXTE)
+      ==> num_lc, nb_vari, nb_vari_exte = catalc.get_info(COMPOR)
 */
    PyObject *catalc, *res;
 
@@ -2396,8 +2398,9 @@ void DEFSPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
               "comportement (lcinfo/get_info) !");
    }
 
-   *numlc  = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 0));
-   *nbvari = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 1));
+   *numlc       = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 0));
+   *nbvari      = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 1));
+   *nbvari_exte = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 2));
 
    Py_XDECREF(res);
    Py_XDECREF(catalc);
@@ -2420,6 +2423,31 @@ void DEFSPS(LCVARI, lcvari, _IN char *compor, STRING_SIZE lcompor,
    if (res == NULL) {
       MYABORT("Echec lors de la recuperation des noms des variables internes du "\
               "comportement (lcvari/get_vari) !");
+   }
+
+   convertxt((int)*nbvari, res, nomvar, lnomvar);
+
+   Py_XDECREF(res);
+   Py_XDECREF(catalc);
+}
+
+void DEFSPS(LCEXTEVARI, lcextevari, _IN char *compor, STRING_SIZE lcompor,
+                                    _IN ASTERINTEGER *nbvari,
+                                    _OUT char *nomvar, STRING_SIZE lnomvar)
+{
+/*
+   Retourne la liste des variables externes
+
+      CALL LCEXTEVARI(COMPOR, NBVARI, LVARI)
+      ==> nom_vari = catalc.get_variextevari(COMPOR)
+*/
+   PyObject *catalc, *res;
+
+   catalc = GetJdcAttr("catalc");
+   res = PyObject_CallMethod(catalc, "get_variexte", "s#", compor, lcompor);
+   if (res == NULL) {
+      MYABORT("Echec lors de la recuperation des noms des variables externes du "\
+              "comportement (lcvariexet/get_variexte) !");
    }
 
    convertxt((int)*nbvari, res, nomvar, lnomvar);
@@ -2533,7 +2561,7 @@ void DEFSS(LCSYMM, lcsymm, _IN char *compor, STRING_SIZE lcompor,
    Retourne le nom de la fonction dans la bibliothèque MFront
 
       CALL LCSYMM(COMPOR, SYMMETRY)
-      ==> name = catalc.get_symbol(COMPOR)
+      ==> name = catalc.get_symmetry(COMPOR)
 */
    PyObject *catalc, *res;
 

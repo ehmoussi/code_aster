@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'LKR',
-    doc            =   """To complete ..."""    ,
+    doc            =   """To complete ..."""        ,
     num_lc         = 59,
     nb_vari        = 12,
     nom_vari       = ('XIP','GAMMAP','XIVP','GAMMAVP','INDICDIL',
@@ -34,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('No',),
+    exte_vari      = None,
 )

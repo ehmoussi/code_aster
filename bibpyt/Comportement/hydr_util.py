@@ -31,7 +31,7 @@ loi = LoiComportement(
    - la perméabilité relative au liquide en fonction de la saturation,
    - sa dérivée.
    - la perméabilité relative au gaz en fonction de la saturation,
-   - sa dérivée."""      ,
+   - sa dérivée."""          ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('HYDRUTI1',),
@@ -43,4 +43,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

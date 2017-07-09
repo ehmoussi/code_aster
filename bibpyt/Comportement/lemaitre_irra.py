@@ -29,7 +29,7 @@ loi = LoiComportement(
    direction du grandissement par l'opérande ANGL_REP du mot clé MASSIF de l'opérateur AFFE_CARA_ELEM.
    Pour les poutres, le fluage et le grandissement n'ont lieu que dans le sens axial de la poutre :
    dans les autres directions, le comportement est élastique. Le schéma d'intégration est DEKKER ou semi-DEKKER,
-   mais on conseille d'utiliser une intégration semi-DEKKER c'est-à-dire PARM_THETA= 0.5,RESO_INTE=DEKKER."""      ,
+   mais on conseille d'utiliser une intégration semi-DEKKER c'est-à-dire PARM_THETA= 0.5,RESO_INTE=DEKKER."""          ,
     num_lc         = 28,
     nb_vari        = 3,
     nom_vari       = ('EPSPEQ','IRVECU','EPSGRD',),
@@ -40,4 +40,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

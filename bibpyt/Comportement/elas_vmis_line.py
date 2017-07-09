@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ELAS_VMIS_LINE',
-    doc            =   """Elasticité non linéaire de Von Mises - Hencky à écrouissage isotrope linéaire"""      ,
+    doc            =   """Elasticité non linéaire de Von Mises - Hencky à écrouissage isotrope linéaire"""          ,
     num_lc         = 0,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','INDIPLAS',),
@@ -32,4 +33,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = ('COMP_ELAS',),
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

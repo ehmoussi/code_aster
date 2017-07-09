@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'CJS',
-    doc            =   """Comportement élastoplastique multicritère des sols  cf. R7.01.13"""      ,
+    doc            =   """Comportement élastoplastique multicritère des sols  cf. R7.01.13"""          ,
     num_lc         = 23,
     nb_vari        = 16,
     nom_vari       = ('SEUILISO','ANGLEDEV','XCINXX','XCINYY','XCINZZ',
@@ -37,4 +37,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('No',),
+    exte_vari      = None,
 )

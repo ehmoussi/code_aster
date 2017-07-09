@@ -23,15 +23,16 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'GDVARINO',
-    doc            =   """Modélisation GDVARINO pour ENDO_CARRE"""      ,
+    doc            =   """Modélisation GDVARINO pour ENDO_CARRE"""          ,
     num_lc         = 3000,
     nb_vari        = 0,
     nom_vari       = None,
     mc_mater       = None,
-    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN'),
+    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN',),
     deformation    = ('PETIT','PETIT_REAC',),
     algo_inte      = None,
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

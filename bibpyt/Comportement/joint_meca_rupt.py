@@ -26,7 +26,7 @@ loi = LoiComportement(
     doc            =   """Relation de comportement de contact, elastique avec resistance a la traction et rupture
              pour modéliser les joints dans les barrages. Cette loi permet également de modéliser le clavage de plots.
              Enfin elle permet de modéliser, avec les éléments de joint HM, un couplage entre
-             la mécanique et l'écoulement de fluide dans la fissure"""      ,
+             la mécanique et l'écoulement de fluide dans la fissure"""          ,
     num_lc         = 45,
     nb_vari        = 20,
     nom_vari       = ('SEUILDEP','INDIDISS','INDIENDN','PCENERDI','INDIENDT',
@@ -42,4 +42,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

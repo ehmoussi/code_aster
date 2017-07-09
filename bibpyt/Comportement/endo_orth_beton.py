@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'ENDO_ORTH_BETON',
     doc            =   """Relation de comportement anisotrope du béton avec endommagement [R7.01.09].
-   Il s'agit d'une modélisation locale d'endommagement prenant en compte la refermeture des fissures."""      ,
+   Il s'agit d'une modélisation locale d'endommagement prenant en compte la refermeture des fissures."""          ,
     num_lc         = 7,
     nb_vari        = 7,
     nom_vari       = ('ENDOXX','ENDOYY','ENDOZZ','ENDOXY','ENDOXZ',
@@ -36,4 +36,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('No',),
+    exte_vari      = None,
 )

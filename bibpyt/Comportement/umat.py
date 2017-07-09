@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'UMAT',
-    doc            =   """loi de comportement dont la routine d'intégration est fournie par l'utilisateur."""      ,
+    doc            =   """loi de comportement dont la routine d'intégration est fournie par l'utilisateur."""          ,
     num_lc         = 50,
     nb_vari        = 0,
     nom_vari       = None,
@@ -34,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

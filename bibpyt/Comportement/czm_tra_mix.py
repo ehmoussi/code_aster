@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'CZM_TRA_MIX',
     doc            =   """Relation de comportement cohésive (Cohesive Zone Model TRApèze MIXte) pour la rupture ductile (Cf. [R7.02.11]) modélisant l'ouverture et la
-   propagation d'une fissure. Cette loi est utilisable avec l'élément fini d'interface basé sur une formulation mixte lagrangien augmenté (Cf. [R3.06.13]) """      ,
+   propagation d'une fissure. Cette loi est utilisable avec l'élément fini d'interface basé sur une formulation mixte lagrangien augmenté (Cf. [R3.06.13]) """          ,
     num_lc         = 49,
     nb_vari        = 9,
     nom_vari       = ('SEUILDEP','INDIDISS','INDIENDO','PCENERDI','DISSIP',
@@ -36,4 +36,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

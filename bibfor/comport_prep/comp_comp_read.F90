@@ -96,7 +96,7 @@ implicit none
         mult_comp = sdcomp//'.CPRK'
         nb_vari   = v_sdcomp_cpri(2)
         call lccree(1, rela_comp, comp_code)
-        call lcinfo(comp_code, nume_comp, idummy)
+        call lcinfo(comp_code, nume_comp, idummy, idummy)
         call lcdiscard(comp_code)
 !
 ! ----- Save options in list

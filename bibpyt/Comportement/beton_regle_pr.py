@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
@@ -27,7 +28,7 @@ loi = LoiComportement(
 -c'est une loi 2D et plus exactement 2 fois 1D : dans le repère propre de déformation, on écrit une loi 1D contrainte-déformation ;
 -la loi 1D sur chaque direction de déformation propre est la suivante :
 * en traction, linéaire jusqu'à un pic, adoucissement linéaire jusqu'à 0 ;
-* en compression, une loi puissance jusqu'à un plateau (d'ou PR : parabole-rectangle)."""      ,
+* en compression, une loi puissance jusqu'à un plateau (d'ou PR : parabole-rectangle)."""          ,
     num_lc         = 9,
     nb_vari        = 1,
     nom_vari       = ('EPSPEQ',),
@@ -38,4 +39,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

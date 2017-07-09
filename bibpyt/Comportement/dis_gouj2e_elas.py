@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'DIS_GOUJ2E_ELAS',
-    doc            =   """Relation de comportement élastique des filets des goujons pour des elements discrets"""      ,
+    doc            =   """Relation de comportement élastique des filets des goujons pour des elements discrets"""          ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('DIS1',),
@@ -34,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

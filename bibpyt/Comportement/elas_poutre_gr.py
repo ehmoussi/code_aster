@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'ELAS_POUTRE_GR',
     doc            =   """ERelation de comportement élastique pour les poutres en grands déplacements et grandes rotations
-   (DEFORMATION: 'GREEN_GR' est obligatoire). (Cf. [R5.03.40] pour plus de détail)."""      ,
+   (DEFORMATION: 'GREEN_GR' est obligatoire). (Cf. [R5.03.40] pour plus de détail)."""          ,
     num_lc         = 0,
     nb_vari        = 3,
     nom_vari       = ('GR1','GR2','GR3',),
@@ -35,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = ('COMP_ELAS',),
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

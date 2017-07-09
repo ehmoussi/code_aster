@@ -26,7 +26,7 @@ loi = LoiComportement(
     doc            =   """Loi de comportement hydraulique, si le comportement mécanique est endommageant
    (donc si on utilise 'MAZARS' ou 'ENDO_ISOT_BETON') sous RELATION_KIT. Ce mot clé permet de renseigner la
    courbe de saturation et sa dérivée en fonction de la pression capillaire
-   ainsi que la perméabilité relative et sa dérivée en fonction de la saturation."""      ,
+   ainsi que la perméabilité relative et sa dérivée en fonction de la saturation."""          ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('HYDREND1',),
@@ -38,4 +38,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

@@ -84,8 +84,8 @@ implicit none
                             rela_code_py_ = rela_code_py,&
                             meta_code_py_ = meta_code_py)
         if (l_kit_meta) then
-            call lcinfo(meta_code_py, idummy, nb_vari_meta)
-            call lcinfo(rela_code_py, idummy, nb_vari_rela)
+            call lcinfo(meta_code_py, idummy, nb_vari_meta, idummy)
+            call lcinfo(rela_code_py, idummy, nb_vari_rela, idummy)
             ASSERT(nb_vari_meta .le. 10)
             ASSERT(nb_vari_rela .le. 30)
             call lcvari(meta_code_py, nb_vari_meta, phas_name)

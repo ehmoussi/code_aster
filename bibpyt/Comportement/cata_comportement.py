@@ -42,9 +42,9 @@ Interfaces Fortran/Python :
          CALL LCCREE(NBKIT, LKIT, COMPOR)
          ==> comport = catalc.create(*list_kit)
 
-      2. récupération du numéro de routine et le nbre de variables internes
-         CALL LCINFO(COMPOR, NUMLC, NBVARI)
-         ==> num_lc, nb_vari = catalc.get_info(COMPOR)
+      2. récupération du numéro de routine, le nbre de variables internes et externes
+         CALL LCINFO(COMPOR, NUMLC, NBVARI, NBVARIEXTE)
+         ==> num_lc, nb_vari, nb_vari_exte = catalc.get_info(COMPOR)
 
       3. récupère la liste des variables internes
          CALL LCVARI(COMPOR, NBVARI, LVARI)
@@ -140,7 +140,7 @@ class Base(object):
 
     __properties__ = ('deformation', 'mc_mater', 'modelisation', 'nb_vari',
                       'nom_vari', 'proprietes', 'algo_inte',
-                      'type_matr_tang', 'syme_matr_tang')
+                      'type_matr_tang', 'syme_matr_tang', 'exte_vari')
 
     def copy(self):
         """Copie d'un objet LoiComportement"""
@@ -186,16 +186,17 @@ class Base(object):
     def long_repr(self):
         template = """Loi de comportement : %(nom)s
 '''%(doc)s'''
-   routine                    : %(num_lc)r
-   nb de variables internes   : %(nb_vari)r
-   nom des variables internes : %(nom_vari)r
-   modélisations disponibles  : %(modelisation)r
-   types de déformations      : %(deformation)r
-   mots-clés du matériau      : %(mc_mater)r
-   schémas d'intégration      : %(algo_inte)r
-   type de matrice tangente   : %(type_matr_tang)r
-   propriétés supplémentaires : %(proprietes)r
-   symétrie                   : %(syme_matr_tang)r
+   routine                           : %(num_lc)r
+   nb de variables internes          : %(nb_vari)r
+   nom des variables internes        : %(nom_vari)r
+   modélisations disponibles         : %(modelisation)r
+   types de déformations             : %(deformation)r
+   mots-clés du matériau             : %(mc_mater)r
+   schémas d'intégration             : %(algo_inte)r
+   type de matrice tangente          : %(type_matr_tang)r
+   propriétés supplémentaires        : %(proprietes)r
+   symétrie                          : %(syme_matr_tang)r
+   nom des variables d'état externes : %(exte_vari)r
 """
         return template % self.dict_info()
 
@@ -365,6 +366,7 @@ class KIT(Base):
     proprietes = property(Base.gen_getfunc(intersection, 'proprietes'))
     syme_matr_tang = property(Base.gen_getfunc(intersection, 'syme_matr_tang'))
     symbol_mfront = property(Base.gen_getfunc(first,        'symbol_mfront'))
+    exte_vari = property(Base.gen_getfunc(intersection, 'exte_vari'))
 
     @property
     def ldctype(self):
@@ -501,12 +503,12 @@ class CataLoiComportement(Singleton):
     def get_info(self, loi):
         """Retourne le numéro de routine et le nbre de variables internes
 
-        CALL LCINFO(COMPOR, NUMLC, NBVARI)
-        ==> num_lc, nb_vari = catalc.get_info(COMPOR)"""
+        CALL LCINFO(COMPOR, NUMLC, NBVARI, NBVARI_EXTE)
+        ==> num_lc, nb_vari, nb_vari_exte = catalc.get_info(COMPOR)"""
         if self.debug:
             print 'catalc.get_info - args =', loi
         comport = self.get(loi)
-        return comport.num_lc, comport.nb_vari
+        return comport.num_lc, comport.nb_vari, len(comport.exte_vari)
 
     def get_vari(self, loi):
         """Retourne la liste des variables internes
@@ -517,6 +519,16 @@ class CataLoiComportement(Singleton):
             print 'catalc.get_vari - args =', loi
         comport = self.get(loi)
         return comport.nom_vari
+
+    def get_variexte(self, loi):
+        """Retourne la liste des variables externes
+
+        CALL LCVARIEXTE(COMPOR, NBVARI, LVARI)
+        ==> exte_vari = catalc.get_variexte(COMPOR)"""
+        if self.debug:
+            print 'catalc.get_variexte - args =', loi
+        comport = self.get(loi)
+        return comport.exte_vari
 
     def query(self, loi, attr, valeur):
         """Est-ce que VALEUR est un valeur autorisée de PROPRIETE ?
@@ -564,10 +576,10 @@ class CataLoiComportement(Singleton):
     def get_symmetry(self, loi):
         """Retourne le type de symétrie de la matrice
 
-        CALL LCSYMM(COMPOR, NAME)
-        ==> syme_matr_tang = catalc.get_symbol(COMPOR)"""
+        CALL LCSYMM(COMPOR, SYMMETRY)
+        ==> syme_matr_tang = catalc.get_symmetry(COMPOR)"""
         if self.debug:
-            print 'catalc.get_symbol - args =', loi
+            print 'catalc.get_symmetry - args =', loi
         comport = self.get(loi)
         return comport.syme_matr_tang
 

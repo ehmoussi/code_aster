@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
@@ -27,7 +28,7 @@ loi = LoiComportement(
    Les phénomènes pris en compte sont l'élasto-plasticité couplée entre les effets de membrane et de flexion
    (contre une élasto-plasticité en flexion seulement dans GLRC) et l'endommagement en flexion.
    L'endommagement couplé membrane/flexion est traité par GLRC_DM, lequel, par contre, néglige complètement l'élasto-plasticité.
-   Pour les précisions sur la formulation du modèle voir [R7.01.31]."""      ,
+   Pour les précisions sur la formulation du modèle voir [R7.01.31]."""          ,
     num_lc         = 0,
     nb_vari        = 19,
     nom_vari       = ('EPSP1','EPSP2','EPSP3','KHIP1','KHIP2',
@@ -41,4 +42,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

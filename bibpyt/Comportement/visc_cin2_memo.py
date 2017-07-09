@@ -17,12 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VISC_CIN2_MEMO',
     doc            =   """Loi élasto-visco-plastique de Chaboche à 2 variables cinématiques et
-   effet de memoire"""      ,
+   effet de memoire"""          ,
     num_lc         = 4,
     nb_vari        = 28,
     nom_vari       = ('EPSPEQ','INDIPLAS','ALPHAXX','ALPHAYY','ALPHAZZ',
@@ -38,4 +39,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

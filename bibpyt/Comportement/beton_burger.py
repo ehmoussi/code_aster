@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'BETON_BURGER',
-    doc            =   """Comportement de fluage propre du beton selon modele de burger avec non linearite sur le fluide de Maxwell (R7.01.35)"""      ,
+    doc            =   """Comportement de fluage propre du beton selon modele de burger avec non linearite sur le fluide de Maxwell (R7.01.35)"""          ,
     num_lc         = 30,
     nb_vari        = 21,
     nom_vari       = ('ERSP','EISP','ERD11','EID11','ERD22',
@@ -36,4 +37,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'VISC_ENDO_LEMA',
     doc            =   """Modèle viscoplastique couplé à l'endommagement isotrope de Lemaitre-Chaboche [R5.03.15].
-   Ce modèle s'emploie avec les mots clés DEFORMATION = PETIT ou PETIT_REAC."""      ,
+   Ce modèle s'emploie avec les mots clés DEFORMATION = PETIT ou PETIT_REAC."""          ,
     num_lc         = 31,
     nb_vari        = 10,
     nom_vari       = ('EPSPXX','EPSPYY','EPSPZZ','EPSPXY','EPSPXZ',
@@ -37,4 +37,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

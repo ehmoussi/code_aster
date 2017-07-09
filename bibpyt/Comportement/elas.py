@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ELAS',
-    doc            =   """élasticité linéaire isotrope"""      ,
+    doc            =   """élasticité linéaire isotrope"""          ,
     num_lc         = 1,
     nb_vari        = 1,
     nom_vari       = ('VIDE',),
@@ -33,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION','IMPLEX',),
     proprietes     = ('COMP_ELAS',),
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

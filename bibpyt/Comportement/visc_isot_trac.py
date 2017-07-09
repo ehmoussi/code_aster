@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VISC_ISOT_TRAC',
-    doc            =   """Loi viscoplastique avec critère de Von Mises, écrouissage isotrope et viscosité en sinh"""      ,
+    doc            =   """Loi viscoplastique avec critère de Von Mises, écrouissage isotrope et viscosité en sinh"""          ,
     num_lc         = 2,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','INDIPLAS',),
@@ -34,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

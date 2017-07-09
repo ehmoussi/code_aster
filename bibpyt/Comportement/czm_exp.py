@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'CZM_EXP',
-    doc            =   """Loi cohésive exponentielle  de type Barenblatt - R7.02.11"""      ,
+    doc            =   """Loi cohésive exponentielle  de type Barenblatt - R7.02.11"""          ,
     num_lc         = 0,
     nb_vari        = 7,
     nom_vari       = ('SAUT_N','SAUT_T1','SEUILDEP','INDIENDO','PCENERDI',
@@ -35,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

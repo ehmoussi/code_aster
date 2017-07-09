@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'MULTIFIBRE',
-    doc            =   """Poutres multifibres"""      ,
+    doc            =   """Poutres multifibres"""          ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,
@@ -34,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

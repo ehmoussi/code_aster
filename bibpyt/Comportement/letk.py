@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'LETK',
     doc            =   """Relation de comportement pour la modélisation élasto visco plastique des roches suivant le modèle de Laigle et Kleine, cf. [R7.01.24].
-   L'opérateur relatif à la prédiction élastique est celui de l'élasticité non linéaire spécifique à la loi."""      ,
+   L'opérateur relatif à la prédiction élastique est celui de l'élasticité non linéaire spécifique à la loi."""          ,
     num_lc         = 35,
     nb_vari        = 9,
     nom_vari       = ('XIP','GAMMAP','XIVP','GAMMAVP','INDICDIL',
@@ -36,4 +36,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('No',),
+    exte_vari      = None,
 )

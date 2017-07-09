@@ -26,7 +26,7 @@ loi = LoiComportement(
     doc            =   """Comportement élastoplastique des sols normalement consolidés (argiles par exemple). cf. R7.01.14
    La partie élastique est non-linéaire. La partie plastique peut être durcissante ou adoucissante.
    Si le modèle CAM_CLAY est utilisé avec la modélisation THM, le mot clé PORO renseigné sous CAM_CLAY et
-   sous THM_INIT doit être le même."""      ,
+   sous THM_INIT doit être le même."""          ,
     num_lc         = 22,
     nb_vari        = 7,
     nom_vari       = ('PCR','INDIPLAS','SIGP','SIEQ','EPSPVOL',
@@ -38,4 +38,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

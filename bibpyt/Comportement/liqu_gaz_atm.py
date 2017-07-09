@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'LIQU_GAZ_ATM',
-    doc            =   """Loi de comportement pour un milieu poreux non saturé avec un liquide et du gaz à pression atmosphérique (Cf. [R7.01.11] pour plus de détails)."""      ,
+    doc            =   """Loi de comportement pour un milieu poreux non saturé avec un liquide et du gaz à pression atmosphérique (Cf. [R7.01.11] pour plus de détails)."""          ,
     num_lc         = 0,
     nb_vari        = 2,
     nom_vari       = ('LIQGATM1','LIQGATM2',),
@@ -35,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

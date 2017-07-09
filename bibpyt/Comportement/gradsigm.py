@@ -23,15 +23,16 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'GRADSIGM',
-    doc            =   """Modélisation GRADSIGM pour ENDO_HETEROGENE"""      ,
+    doc            =   """Modélisation GRADSIGM pour ENDO_HETEROGENE"""          ,
     num_lc         = 4000,
     nb_vari        = 0,
     nom_vari       = None,
     mc_mater       = None,
-    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN'),
+    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN',),
     deformation    = ('PETIT','PETIT_REAC',),
     algo_inte      = None,
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

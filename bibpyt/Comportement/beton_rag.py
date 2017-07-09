@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'BETON_RAG',
-    doc            =   """Loi RAG pour le beton"""      ,
+    doc            =   """Loi RAG pour le beton"""          ,
     num_lc         = 44,
     nb_vari        = 65,
     nom_vari       = ('ERS','EIS','EID11','ERD11','EID22',
@@ -45,4 +46,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )
