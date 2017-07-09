@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine calcCalcMeca(nb_option   , list_option    , &
                         list_load   , model          , mate       , cara_elem,& 
                         l_elem_nonl , ds_constitutive, varc_refe  ,&
@@ -43,31 +45,28 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/nmvcd2.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer, intent(in) :: nb_option
-    character(len=16), intent(in) :: list_option(:)
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    aster_logical, intent(in) :: l_elem_nonl
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24), intent(in) :: varc_refe
-    character(len=19), intent(in) :: hval_incr(:)
-    character(len=19), intent(in) :: hval_algo(:)
-    character(len=19), intent(in) :: merigi
-    character(len=19), intent(in) :: vediri
-    character(len=19), intent(in) :: vefint
-    character(len=19), intent(in) :: veforc
-    character(len=19), intent(in) :: vevarc_prev
-    character(len=19), intent(in) :: vevarc_curr
-    integer, intent(in) :: nume_harm
-    integer, intent(in) :: nb_obje_maxi
-    character(len=16), intent(inout) :: obje_name(nb_obje_maxi)
-    character(len=24), intent(inout) :: obje_sdname(nb_obje_maxi)
-    integer, intent(out) ::  nb_obje
+integer, intent(in) :: nb_option
+character(len=16), intent(in) :: list_option(:)
+character(len=19), intent(in) :: list_load
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: cara_elem
+aster_logical, intent(in) :: l_elem_nonl
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=24), intent(in) :: varc_refe
+character(len=19), intent(in) :: hval_incr(:)
+character(len=19), intent(in) :: hval_algo(:)
+character(len=19), intent(in) :: merigi
+character(len=19), intent(in) :: vediri
+character(len=19), intent(in) :: vefint
+character(len=19), intent(in) :: veforc
+character(len=19), intent(in) :: vevarc_prev
+character(len=19), intent(in) :: vevarc_curr
+integer, intent(in) :: nume_harm
+integer, intent(in) :: nb_obje_maxi
+character(len=16), intent(inout) :: obje_name(nb_obje_maxi)
+character(len=24), intent(inout) :: obje_sdname(nb_obje_maxi)
+integer, intent(out) ::  nb_obje
 !
 ! --------------------------------------------------------------------------------------------------
 !
