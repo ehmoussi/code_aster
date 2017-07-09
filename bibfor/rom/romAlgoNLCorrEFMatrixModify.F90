@@ -51,6 +51,7 @@ implicit none
     integer :: nb_equa_init, nb_equa
     character(len=8) :: kmatd
     integer :: jv_sxdi
+    real(kind=8) :: vale_pena
     integer, pointer :: v_int(:) => null()
     real(kind=8), pointer :: v_valm(:) => null()
 !
@@ -61,6 +62,7 @@ implicit none
 !
     call dismoi('MATR_DISTR', matr_asse, 'MATR_ASSE', repk=kmatd)
     call dismoi('NB_EQUA'   , nume_dof , 'NUME_DDL' , repi=nb_equa_init)
+    vale_pena = ds_algorom%vale_pena
 !
 ! - Get diagonal
 !
@@ -81,9 +83,9 @@ implicit none
     do i_equa = 1, nb_equa
         if (ds_algorom%v_equa_sub(i_equa) .eq. 1) then
             if (ds_algorom%v_equa_int(i_equa) .eq. 1) then
-                v_valm(zi(jv_sxdi-1+i_equa)) = 1.d6*v_valm(zi(jv_sxdi-1+i_equa))
+                v_valm(zi(jv_sxdi-1+i_equa)) = vale_pena*v_valm(zi(jv_sxdi-1+i_equa))
             else
-                v_valm(zi(jv_sxdi-1+i_equa)) = 1.d3*v_valm(zi(jv_sxdi-1+i_equa))
+                v_valm(zi(jv_sxdi-1+i_equa)) = sqrt(vale_pena)*v_valm(zi(jv_sxdi-1+i_equa))
             endif
         endif
     enddo

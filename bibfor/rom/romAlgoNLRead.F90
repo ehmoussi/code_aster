@@ -26,6 +26,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/getvid.h"
+#include "asterfort/getvr8.h"
 #include "asterfort/romBaseRead.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
@@ -47,6 +48,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    real(kind=8) :: coef_pena
     character(len=8) :: ds_empi_name
     character(len=16) :: keywf, answer
     character(len=24) :: grnode_int, grnode_sub
@@ -67,6 +69,7 @@ implicit none
     l_hrom_corref = .false._1
     grnode_int    = ' '
     grnode_sub    = ' '
+    coef_pena     = 0.d0
 !
 ! - Read
 !
@@ -80,6 +83,7 @@ implicit none
             l_hrom_corref = answer .eq. 'OUI'
             if (l_hrom_corref) then
                 call getvtx(keywf,'GROUP_NO_ENCASTRE', iocc=1, scal = grnode_sub)
+                call getvr8(keywf,'VALE_PENA'        , iocc=1, scal = coef_pena)
             endif
         endif
     endif
@@ -90,5 +94,6 @@ implicit none
     ds_algorom%grnode_int    = grnode_int
     ds_algorom%l_hrom_corref = l_hrom_corref
     ds_algorom%grnode_sub    = grnode_sub
+    ds_algorom%vale_pena     = coef_pena
 !
 end subroutine
