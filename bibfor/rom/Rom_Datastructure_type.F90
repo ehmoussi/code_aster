@@ -113,6 +113,8 @@ implicit none
 ! ----- Table for reduced coordinates
         character(len=24) :: tabl_name
         character(len=24) :: coor_redu
+! ----- Flag for dual prevision
+        aster_logical     :: l_prev_dual
     end type ROM_DS_ParaRRC
 !
 ! - Parameters for definition of multiparametric reduced problem - Evaluation

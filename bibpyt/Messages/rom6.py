@@ -45,6 +45,8 @@ cata_msg = {
 
    13 : _(u"""Les deux modèles sont identiques, on ne peut rien tronquer !"""), 
 
+   14 : _(u"""On évalue le champ dual."""), 
+
    20 : _(u"""Reconstruction des champs sur tout le domaine."""),
  
    21 : _(u"""Reconstruction du champ primal."""),

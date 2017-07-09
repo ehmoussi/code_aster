@@ -15,21 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_ini0(ds_para)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/infniv.h"
 #include "asterfort/romBaseDSInit.h"
 #include "asterfort/romLineicBaseDSInit.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(out) :: ds_para
+type(ROM_DS_ParaRRC), intent(out) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,5 +75,6 @@ implicit none
     ds_para%result_dom    = ' '
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
+    ds_para%l_prev_dual   = .false._1
 !
 end subroutine

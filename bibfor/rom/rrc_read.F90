@@ -15,23 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_read(ds_para)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
 #include "asterfort/getvid.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 #include "asterfort/romBaseRead.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(inout) :: ds_para
+type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,7 +50,8 @@ implicit none
     type(ROM_DS_Empi) :: empi_prim, empi_dual
     character(len=8)  :: base_prim = ' ', base_dual = ' '
     character(len=8)  :: result_dom = ' ', result_rom = ' ', model_dom = ' '
-    character(len=16) :: k16bid = ' '
+    character(len=16) :: k16bid = ' ', answer
+    aster_logical :: l_prev_dual
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,6 +64,11 @@ implicit none
 !
     call getres(result_dom, k16bid, k16bid)
 !
+! - Compute dual quantities ?
+!
+    call getvtx(' ', 'REST_DUAL', scal = answer)
+    l_prev_dual = answer .eq. 'OUI'
+!
 ! - Get informations about bases - Primal
 !
     call getvid(' ', 'BASE_PRIMAL', scal = base_prim)
@@ -69,8 +76,10 @@ implicit none
 !
 ! - Get informations about bases - Dual
 !
-    call getvid(' ', 'BASE_DUAL', scal = base_dual)
-    call romBaseRead(base_dual, empi_dual)
+    if (l_prev_dual) then
+        call getvid(' ', 'BASE_DUAL', scal = base_dual)
+        call romBaseRead(base_dual, empi_dual)
+    endif
 !
 ! - Get input results datastructures
 !
@@ -87,5 +96,6 @@ implicit none
     ds_para%model_dom     = model_dom
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
+    ds_para%l_prev_dual   = l_prev_dual
 !
 end subroutine
