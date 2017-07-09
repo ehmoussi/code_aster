@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/copisd.h"
 #include "asterfort/romBaseCreateMatrix.h"
 #include "asterfort/romResultSetZero.h"
+#include "asterfort/romEvalGappyPOD.h"
 !
 type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
@@ -57,18 +58,13 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     integer :: ifm, niv
     integer :: nb_mode, nb_equa, nb_equa_rom, nb_cmp, nb_store
     integer :: iret, i_mode, i_equa, i_store, nume_store
-    integer(kind=4) :: info
     character(len=8) :: result_rom, result_dom
     character(len=24) :: sigm_rom
     integer, pointer :: v_noeu_rid(:) => null()
     real(kind=8), pointer :: v_dual(:) => null()
     real(kind=8), pointer :: v_dual_rom(:) => null()
-    real(kind=8), pointer :: v_sigm_rom(:) => null()
     real(kind=8), pointer :: v_sigm_dom(:) => null()
     real(kind=8), pointer :: v_cohr(:) => null()
-    real(kind=8), pointer :: v_matr(:) => null()
-    real(kind=8), pointer :: v_vect(:) => null()
-    integer(kind=4), pointer :: IPIV(:) => null()
     character(len=24) :: field_save
     real(kind=8), pointer :: v_field_save(:) => null()
 !
@@ -114,25 +110,8 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Gappy POD 
 !
-    AS_ALLOCATE(vr  = v_cohr, size = nb_mode*(nb_store-1))
-    AS_ALLOCATE(vr  = v_matr, size = nb_mode*nb_mode)
-    AS_ALLOCATE(vr  = v_vect, size = nb_mode)
-    AS_ALLOCATE(vi4 = IPIV  , size = nb_mode)
-    do i_store = 1, nb_store-1
-        nume_store = i_store
-        call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
-                    nume_store, sigm_rom, iret)
-        ASSERT(iret .eq. 0)
-        call jeveuo(sigm_rom(1:19)//'.VALE', 'L', vr = v_sigm_rom)
-        call dgemm('T', 'N', nb_mode, 1, nb_equa_rom, 1.d0, v_dual_rom,&
-                    nb_equa_rom, v_sigm_rom, nb_equa_rom, 0.d0, v_vect, nb_mode)
-        call dgemm('T', 'N', nb_mode, nb_mode, nb_equa_rom, 1.d0, v_dual_rom,&
-                    nb_equa_rom, v_dual_rom, nb_equa_rom, 0.d0, v_matr, nb_mode)
-        call dgesv(nb_mode, 1, v_matr, nb_mode, IPIV, v_vect, nb_mode, info)
-        do i_mode = 1, nb_mode
-            v_cohr(i_mode+nb_mode*(i_store-1)) = v_vect(i_mode)
-        end do
-    end do
+    call romEvalGappyPOD(ds_para%ds_empi_dual, result_rom, nb_store, v_dual_rom,&
+                         v_cohr)
 !
 ! - Initial state
 !
@@ -164,9 +143,6 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     AS_DEALLOCATE(vr  = v_dual)
     AS_DEALLOCATE(vr  = v_dual_rom)
     AS_DEALLOCATE(vr  = v_cohr)
-    AS_DEALLOCATE(vr  = v_matr)
-    AS_DEALLOCATE(vr  = v_vect)
-    AS_DEALLOCATE(vi4 = IPIV)
     AS_DEALLOCATE(vr  = v_sigm_dom)
 !
 end subroutine

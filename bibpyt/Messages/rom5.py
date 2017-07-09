@@ -47,7 +47,7 @@ cata_msg = {
 
    14 : _(u"""Initialisation des structures de données pour les paramètres du calcul."""),
 
-   15 : _(u"""Le nombre de couches du RID est inférieur au nombre de couches de l'interface, on aura peut-être un problème de convergence"""),
+   15 : _(u"""Le nombre de couches du domaine est inférieur au nombre de couches de l'interface, on aura peut-être un problème de convergence"""),
 
    16 : _(u"""Méthode de construction de la base empirique: %(k1)s """),
 

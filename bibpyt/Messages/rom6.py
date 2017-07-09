@@ -53,6 +53,10 @@ cata_msg = {
 
    30 : _(u"""Construction de la matrice des modes. Dimensions: [%(i1)d,%(i2)d]."""),
 
+   31 : _(u"""Calcul des coordonnées réduites."""),
+
+   32 : _(u"""Échec lors du calcul des coordonnées réduites."""),
+
    33 : _(u"""Le mode empirique de numéro d'ordre %(i1)d dans la base %(k1)s est mis à zéro."""),
 
 }
