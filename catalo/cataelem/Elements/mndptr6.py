@@ -323,7 +323,7 @@ class MNDPTR6(Element):
 
         OP.PILO_PRED_DEFO(te=518,
             para_in=((OP.PILO_PRED_DEFO.PCOMPOR, LC.CCOMPOR), (OP.PILO_PRED_DEFO.PCONTMR, ECONTPG),
-                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA),
+                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA), (SP.PCARCRI, CCARCRI),
                      (SP.PDEPL1R, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTYPEPI, LC.CTYPEPI), (OP.PILO_PRED_DEFO.PVARIMR, ZVARIPG),
@@ -334,7 +334,7 @@ class MNDPTR6(Element):
         OP.PILO_PRED_ELAS(te=518,
             para_in=((SP.PBORNPI, LC.CBORNPI), (SP.PCDTAU, LC.CCDTAU),
                      (OP.PILO_PRED_ELAS.PCOMPOR, LC.CCOMPOR), (OP.PILO_PRED_ELAS.PCONTMR, ECONTPG),
-                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA),
+                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA), (SP.PCARCRI, CCARCRI),
                      (SP.PDEPL1R, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTYPEPI, LC.CTYPEPI), (OP.PILO_PRED_ELAS.PVARIMR, ZVARIPG),
