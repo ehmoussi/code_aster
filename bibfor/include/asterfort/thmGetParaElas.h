@@ -19,9 +19,10 @@
 !
 !
 interface 
-    subroutine thmGetParaElas(j_mater, kpi, temp)
+    subroutine thmGetParaElas(j_mater, kpi, temp, ndim)
         integer, intent(in) :: j_mater
         integer, intent(in) :: kpi
         real(kind=8), intent(in) :: temp
+        integer, intent(in) :: ndim
     end subroutine thmGetParaElas
 end interface 

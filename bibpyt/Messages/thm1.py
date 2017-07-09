@@ -26,9 +26,18 @@ La loi mécanique <%(k1)s> n'est pas compatible avec la modélisation choisie.
 """),
 
     2 : _(u"""
-La loi de diffusion n'est pas compatible avec la définition de l'elasticité <%(k1)s>.
+La loi de diffusion n'est pas compatible avec la définition de l'élasticité <%(k1)s>.
 Les deux doivent être du même type: élasticité isotrope avec diffusion isotrope, élasticité anisotrope avec diffusion anisotrope,
 """),
+
+    3 : _(u"""
+On ne peut pas utiliser ELAS_ORTH en 2D, il faut utiliser ELAS_ISTR.
+"""),
+
+    4 : _(u"""
+On ne peut pas utiliser ELAS_ISTR en 3D, il faut utiliser ELAS_ORTH.
+"""),
+
 
     35 : _(u"""
 La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie <%(k2)s>.

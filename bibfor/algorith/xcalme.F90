@@ -86,7 +86,7 @@ subroutine xcalme(option, meca, imate, ndim, dimenr,&
 !    CALCUL DE LA MATRICE DE HOOK DANS LE REPERE GLOBAL
 !
         call calela(imate, ang2, mdal, dalal, t,&
-                    aniso, d, ndim)
+                    aniso, d)
 !
         if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
             do i = 1, 3
