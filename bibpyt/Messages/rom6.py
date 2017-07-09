@@ -45,7 +45,9 @@ cata_msg = {
 
    13 : _(u"""Les deux modèles sont identiques, on ne peut rien tronquer !"""), 
 
-   14 : _(u"""On évalue le champ dual."""), 
+   14 : _(u"""On évalue le champ dual."""),
+
+   15 : _(u"""Correction par le calcul éléments finis."""),
 
    20 : _(u"""Reconstruction des champs sur tout le domaine."""),
  

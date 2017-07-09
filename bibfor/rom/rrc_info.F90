@@ -45,7 +45,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     character(len=16) :: type_resu
     character(len=8) :: result_rom, result_dom, model_dom, model_rom
     integer :: nb_store
-    aster_logical :: l_prev_dual
+    aster_logical :: l_prev_dual, l_corr_ef
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,6 +56,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     result_dom   = ds_para%result_dom
     model_dom    = ds_para%model_dom
     l_prev_dual  = ds_para%l_prev_dual
+    l_corr_ef    = ds_para%l_corr_ef
 !
 ! - Print
 !
@@ -69,6 +70,9 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     call utmess('I', 'ROM6_11', si = nb_store)
     if (l_prev_dual) then
         call utmess('I', 'ROM6_14')
+    endif
+    if (l_corr_ef) then
+        call utmess('I', 'ROM6_15')
     endif
 !
 end subroutine

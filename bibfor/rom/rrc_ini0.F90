@@ -44,7 +44,7 @@ type(ROM_DS_ParaRRC), intent(out) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(ROM_DS_Empi) :: empi_prim, empi_dual
+    type(ROM_DS_Empi) :: empi_prim, empi_dual, empi_rid
     type(ROM_DS_LineicNumb) :: ds_lineicnumb
 !
 ! --------------------------------------------------------------------------------------------------
@@ -62,6 +62,7 @@ type(ROM_DS_ParaRRC), intent(out) :: ds_para
 !
     call romBaseDSInit(ds_lineicnumb, empi_prim)
     call romBaseDSInit(ds_lineicnumb, empi_dual)
+    call romBaseDSInit(ds_lineicnumb, empi_rid)
 !
 ! - Create parameters datastructure
 !
@@ -80,5 +81,7 @@ type(ROM_DS_ParaRRC), intent(out) :: ds_para
     ds_para%v_equa_ridd   => null()
     ds_para%nb_equa_ridp  = 0
     ds_para%v_equa_ridp   => null()
+    ds_para%l_corr_ef     = .false._1
+    ds_para%ds_empi_rid  = empi_rid
 !
 end subroutine
