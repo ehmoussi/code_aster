@@ -27,7 +27,7 @@ loi = LoiComportement(
    Elle permet de rendre compte de la croissance des cavités et de décrire la rupture ductile, cf. [R5.03.06]).
    On peut également prendre en compte la nucléation des cavités.
    Il faut alors renseigner le paramètre AN (mot clé non activé pour le modèle ROUSSELIER et ROUSS_VISC) sous ROUSSELIER(_FO).
-   Pour faciliter l'intégration de ce modèle, il est conseillé d'utiliser le redécoupage automatique local du pas de temps (mot clé ITER_INTE_PAS)"""      ,
+   Pour faciliter l'intégration de ce modèle, il est conseillé d'utiliser le redécoupage automatique local du pas de temps (mot clé ITER_INTE_PAS)"""          ,
     num_lc         = 30,
     nb_vari        = 5,
     nom_vari       = ('EPSPEQ','POROSITE','DISSIP','EBLOC','INDIPLAS',
@@ -39,4 +39,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

@@ -51,10 +51,10 @@ implicit none
     nb_vari_cg(1) = 0
     nb_vari_cg(2) = 0
     call lccree(1, rela_comp_cg(1), rela_py)
-    call lcinfo(rela_py, ibid, nb_vari_cg(1))
+    call lcinfo(rela_py, ibid, nb_vari_cg(1), ibid)
     call lcdiscard(rela_py)
     call lccree(1, rela_comp_cg(2), rela_py)
-    call lcinfo(rela_py, ibid, nb_vari_cg(2))
+    call lcinfo(rela_py, ibid, nb_vari_cg(2), ibid)
     call lcdiscard(rela_py)
 !
 end subroutine

@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'THM',
-    doc            =   """Modélisations THM"""      ,
+    doc            =   """Modélisations THM"""          ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,
@@ -34,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

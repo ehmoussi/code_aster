@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'CABLE_GAINE_FROT',
-    doc            =   """Relation de comportement cohésive d'adherence Cable/Gaine"""      ,
+    doc            =   """Relation de comportement cohésive d'adherence Cable/Gaine"""          ,
     num_lc         = 152,
     nb_vari        = 2,
     nom_vari       = ('GLIS','INDIC',),
@@ -32,4 +33,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

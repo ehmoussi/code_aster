@@ -17,12 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_ECMI_LINE',
     doc            =   """Relation de comportement d'élasto-plasticité de VON MISES à écrouissage combiné,
-   cinématique linéaire et isotrope linéaire (Cf. [R5.03.16] pour plus de détails)."""      ,
+   cinématique linéaire et isotrope linéaire (Cf. [R5.03.16] pour plus de détails)."""          ,
     num_lc         = 3,
     nb_vari        = 8,
     nom_vari       = ('EPSPEQ','INDIPLAS','XCINXX','XCINYY','XCINZZ',
@@ -34,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

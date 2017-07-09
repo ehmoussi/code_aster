@@ -17,12 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'BETON_UMLV',
     doc            =   """Comportement de fluage propre du béton
-   avec distinction fluage volumique et fluage déviatorique (R7.01.16)"""      ,
+   avec distinction fluage volumique et fluage déviatorique (R7.01.16)"""          ,
     num_lc         = 21,
     nb_vari        = 21,
     nom_vari       = ('ERSP','EISP','ERD11','EID11','ERD22',
@@ -37,4 +38,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('No',),
+    exte_vari      = None,
 )

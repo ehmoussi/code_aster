@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
@@ -38,15 +39,18 @@ loi = LoiComportement(
    un composant (en pratique de l'eau), mais que ce composant peut être sous forme liquide ou vapeur.
    Il n'y a alors qu'une équation de conservation de ce composant, donc un seul degré de liberté pression,
    mais il y a un flux liquide et un flux vapeur.
-   """      ,
+   """          ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,
     mc_mater       = None,
-    modelisation   = ('D_PLAN_HMD_PLAN_HMSD_PLAN_HMDAXIS_HMAXIS_HMSAXIS_HMD3D_HM3D_HMS3D_HMDPLAN_JHMSAXIS_JHMS',),
+    modelisation   = ('D_PLAN_HM','D_PLAN_HMS','D_PLAN_HMD','AXIS_HM','AXIS_HMS',
+        'AXIS_HMD','3D_HM','3D_HMS','3D_HMD','PLAN_JHMS',
+        'AXIS_JHMS',),
     deformation    = ('PETIT',),
     algo_inte      = ('SANS_OBJET',),
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

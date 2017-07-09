@@ -77,33 +77,33 @@ implicit none
     nume_comp_flua = 0
     if (rela_flua .ne. ' ') then
         call lccree(1, rela_flua, rela_py)
-        call lcinfo(rela_py, nume_comp_flua, nb_vari_flua)
+        call lcinfo(rela_py, nume_comp_flua, nb_vari_flua, ibid)
         call lcdiscard(rela_py)
         if (type_model2 .eq. 'GRADEPSI') then
             comp_elem(1) = rela_flua
             comp_elem(2) = type_model2 
             call lccree(2, comp_elem, rela_py)
-            call lcinfo(rela_py, nume_comp_flua, nb_vari_flua)
+            call lcinfo(rela_py, nume_comp_flua, nb_vari_flua, ibid)
             call lcdiscard(rela_py)
         else
             call lccree(1, rela_flua, rela_py)
-            call lcinfo(rela_py, nume_comp_flua, nb_vari_flua)
+            call lcinfo(rela_py, nume_comp_flua, nb_vari_flua, ibid)
             call lcdiscard(rela_py)
         endif
     endif
     if (rela_plas .ne. ' ') then
         call lccree(1, rela_plas, rela_py)
-        call lcinfo(rela_py, nume_comp_plas, nb_vari_plas)
+        call lcinfo(rela_py, nume_comp_plas, nb_vari_plas, ibid)
         call lcdiscard(rela_py)
     endif
     if (rela_cpla .ne. ' ') then
         call lccree(1, rela_cpla, rela_py)
-        call lcinfo(rela_py, ibid, nb_vari_cpla)
+        call lcinfo(rela_py, ibid, nb_vari_cpla, ibid)
         call lcdiscard(rela_py)
     endif
     if (rela_coup .ne. ' ') then
         call lccree(1, rela_coup, rela_py)
-        call lcinfo(rela_py, ibid, nb_vari_coup)
+        call lcinfo(rela_py, ibid, nb_vari_coup, ibid)
         call lcdiscard(rela_py)
     endif
 !

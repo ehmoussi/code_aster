@@ -28,7 +28,7 @@ loi = LoiComportement(
    Ce dernier est visible grâce à la variable interne V3 (V3=2 correspond à un élément totalement cassé).
    Cette loi est utilisable avec l'élément fini de type joint (Cf. [R3.06.09]) et permet d'introduire une force de cohésion entre les
    lèvres de la fissure.
-   Par ailleurs l'utilisation de ce modèle requiert souvent la présence du pilotage par PRED_ELAS (cf. [U4.51.03])."""      ,
+   Par ailleurs l'utilisation de ce modèle requiert souvent la présence du pilotage par PRED_ELAS (cf. [U4.51.03])."""          ,
     num_lc         = 11,
     nb_vari        = 9,
     nom_vari       = ('SEUILDEP','INDIDISS','INDIENDO','PCENERDI','DISSIP',
@@ -41,4 +41,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

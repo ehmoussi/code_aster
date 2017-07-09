@@ -68,16 +68,16 @@ implicit none
     nb_vari_meca   = 0
     nume_comp_meca = 0
     call lccree(1, rela_thmc, rela_thmc_py)
-    call lcinfo(rela_thmc_py, ibid, nb_vari_thmc)
+    call lcinfo(rela_thmc_py, ibid, nb_vari_thmc, ibid)
     call lcdiscard(rela_thmc_py)
     call lccree(1, rela_ther, rela_ther_py)
-    call lcinfo(rela_ther_py, ibid, nb_vari_ther)
+    call lcinfo(rela_ther_py, ibid, nb_vari_ther, ibid)
     call lcdiscard(rela_ther_py)
     call lccree(1, rela_hydr, rela_hydr_py)
-    call lcinfo(rela_hydr_py, ibid, nb_vari_hydr)
+    call lcinfo(rela_hydr_py, ibid, nb_vari_hydr, ibid)
     call lcdiscard(rela_hydr_py)
     call lccree(1, rela_meca, rela_meca_py)
-    call lcinfo(rela_meca_py, nume_comp_meca, nb_vari_meca)
+    call lcinfo(rela_meca_py, nume_comp_meca, nb_vari_meca, ibid)
     call lcdiscard(rela_meca_py)
 !
 end subroutine

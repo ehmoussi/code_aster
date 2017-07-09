@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'DDI_PLAS_ENDO',
-    doc            =   """Couplage plasticité/endommagement pour GLRC"""      ,
+    doc            =   """Couplage plasticité/endommagement pour GLRC"""          ,
     num_lc         = 0,
     nb_vari        = 6,
     nom_vari       = ('EPSEDXX','EPSEDXY','EPSEDXZ','EPSEDYY','EPSEDYZ',
@@ -33,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

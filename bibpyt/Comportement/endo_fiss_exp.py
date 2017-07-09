@@ -17,12 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ENDO_FISS_EXP',
     doc            =   """Comportement élastique-fragile, à endommagement scalaire, seuil exponentiel et
-   non local à gradient d'endommagement - R5.03.25"""      ,
+   non local à gradient d'endommagement - R5.03.25"""          ,
     num_lc         = 57,
     nb_vari        = 9,
     nom_vari       = ('ENDO','INDIENDO','ENDORIGI','EPSEXX','EPSEYY',
@@ -34,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

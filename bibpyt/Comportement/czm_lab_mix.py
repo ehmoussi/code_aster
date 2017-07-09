@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'CZM_LAB_MIX',
-    doc            =   """Relation de comportement pour une liaison acier-béton, basée sur une formulation mixte (Cf. [R7.02.11])"""      ,
+    doc            =   """Relation de comportement pour une liaison acier-béton, basée sur une formulation mixte (Cf. [R7.02.11])"""          ,
     num_lc         = 51,
     nb_vari        = 5,
     nom_vari       = ('SEUILDEP','INDIDISS','SAUT_N','SAUT_T1','SAUT_T2',
@@ -33,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

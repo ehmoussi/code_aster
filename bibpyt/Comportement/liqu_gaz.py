@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'LIQU_GAZ',
     doc            =   """Loi de comportement pour un milieu poreux non saturé liquide/gaz sans changement de phase
-   (Cf. [R7.01.11] pour plus de détails)."""      ,
+   (Cf. [R7.01.11] pour plus de détails)."""          ,
     num_lc         = 0,
     nb_vari        = 2,
     nom_vari       = ('LIQGAZ1','LIQGAZ2',),
@@ -36,4 +36,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

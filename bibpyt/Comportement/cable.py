@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'CABLE',
     doc            =   """Relation de comportement élastique adaptée aux câbles (DEFORMATION: 'GREEN' obligatoire) :
-   le module d'YOUNG du câble peut être différent en compression et en traction (en particulier il peut être nul en compression)."""      ,
+   le module d'YOUNG du câble peut être différent en compression et en traction (en particulier il peut être nul en compression)."""          ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('VIDE',),
@@ -35,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = ('COMP_ELAS',),
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

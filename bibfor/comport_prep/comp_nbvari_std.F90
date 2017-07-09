@@ -115,8 +115,8 @@ implicit none
 !
 ! - Get number of variables
 !
-    call lcinfo(rela_comp_py, idummy, nb_vari_rela)
-    call lcinfo(comp_elem_py, nume_comp(1), nb_vari)
+    call lcinfo(rela_comp_py, idummy, nb_vari_rela, idummy)
+    call lcinfo(comp_elem_py, nume_comp(1), nb_vari, idummy)
 !
 ! - Special for CRISTAL
 !

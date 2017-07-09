@@ -17,12 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ENDO_CARRE',
     doc            =   """Comportement élastique-fragile-JJM, à endommagement scalaire et
-   écrouissage isotrope hyperbolique négatif - R"""      ,
+   écrouissage isotrope hyperbolique négatif - R"""          ,
     num_lc         = 53,
     nb_vari        = 2,
     nom_vari       = ('ENDO','INDIENDO',),
@@ -34,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

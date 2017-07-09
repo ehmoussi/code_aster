@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'PETIT_REAC',
-    doc            =   """Algo pour résolution en grandes déformations."""      ,
+    doc            =   """Algo pour résolution en grandes déformations."""          ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,
@@ -35,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'JOINT_BANDIS',
-    doc            =   """Bandis"""      ,
+    doc            =   """Bandis"""          ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('PERM_LONG',),
@@ -32,4 +33,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

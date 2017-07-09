@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VMIS_CINE_LINE',
-    doc            =   """Loi de Von Mises - Prager avec ecrouissage cinematique lineaire [R5.03.02]"""      ,
+    doc            =   """Loi de Von Mises - Prager avec ecrouissage cinematique lineaire [R5.03.02]"""          ,
     num_lc         = 3,
     nb_vari        = 7,
     nom_vari       = ('XCINXX','XCINYY','XCINZZ','XCINXY','XCINXZ',
@@ -33,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ANALYTIQUE',
-    doc            =   """Algo analytique pour résolution en contraintes planes."""      ,
+    doc            =   """Algo analytique pour résolution en contraintes planes."""          ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,
@@ -34,4 +34,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

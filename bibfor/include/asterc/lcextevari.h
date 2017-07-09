@@ -17,10 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lcinfo(compor, numlc, nbvari, nbvari_exte)
+    subroutine lcextevari(compor, nb_vari, vari)
         character(len=*), intent(in) :: compor
-        integer, intent(out) :: numlc
-        integer, intent(out) :: nbvari
-        integer, intent(out) :: nbvari_exte
-    end subroutine lcinfo
+        integer, intent(out) :: nb_vari
+        character(len=*), intent(out) :: vari(*)
+    end subroutine lcextevari
 end interface

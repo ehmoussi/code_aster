@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
@@ -30,7 +31,7 @@ loi = LoiComportement(
    En contrainte plane :
       Pas de couplage possible avec d'autres phénomènes tels que le fluage.
       Cette version permet de rendre mieux compte du cisaillement.
-   """      ,
+   """          ,
     num_lc         = 8,
     nb_vari        = 8,
     nom_vari       = ('CRITSIG','CRITEPS','ENDO','EPSEQT','EPSEQC',
@@ -42,4 +43,5 @@ loi = LoiComportement(
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('No',),
+    exte_vari      = None,
 )

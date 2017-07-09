@@ -27,7 +27,7 @@ loi = LoiComportement(
    Un cas particulier de cette relation (en annulant le paramètre UN_SUR_M) donne une relation de NORTON.
    La correspondance des variables internes permet le chaînage avec un calcul utilisant un comportement
    élasto-plastique avec écrouissage isotrope (VMIS_ISOT_LINE, VMIS_ISOT_TRAC, VMIS_ISOT_PUIS).
-   L'ntégration de ce modèle est réalisée par une méthode semi-DEKKER (PARM_THETA=0.5) ou DEKKER (PARM_THETA=1)"""      ,
+   L'ntégration de ce modèle est réalisée par une méthode semi-DEKKER (PARM_THETA=0.5) ou DEKKER (PARM_THETA=1)"""          ,
     num_lc         = 29,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','VIDE',),
@@ -38,4 +38,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )

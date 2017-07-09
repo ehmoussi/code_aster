@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'META_LEMA_ANI',
     doc            =   """Loi de comportement viscoplastique anisotrope prenant en compte la métallurgie,
-            pour le Zirconium uniquement"""      ,
+            pour le Zirconium uniquement"""          ,
     num_lc         = 115,
     nb_vari        = 2,
     nom_vari       = ('EPSPEQ','INDIPLAS',),
@@ -35,4 +35,5 @@ loi = LoiComportement(
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = ('COORGA',),
 )

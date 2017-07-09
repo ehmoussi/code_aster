@@ -23,15 +23,16 @@ from cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'INTERFAC',
-    doc            =   """Pour modélisation de type INTERFAC"""      ,
+    doc            =   """Pour modélisation de type INTERFAC"""          ,
     num_lc         = 7000,
     nb_vari        = 0,
     nom_vari       = None,
     mc_mater       = None,
-    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN'),
+    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN',),
     deformation    = ('PETIT','PETIT_REAC','GDEF_LOG',),
     algo_inte      = None,
     type_matr_tang = None,
     proprietes     = None,
     syme_matr_tang = ('Yes',),
+    exte_vari      = None,
 )
