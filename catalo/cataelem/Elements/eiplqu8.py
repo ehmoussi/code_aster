@@ -186,7 +186,7 @@ class EIPLQU8(Element):
         ),
 
         OP.PILO_PRED_ELAS(te=359,
-            para_in=((SP.PBORNPI, LC.CBORNPI), (SP.PCAMASS, CCAMASS),
+            para_in=((SP.PBORNPI, LC.CBORNPI), (SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
                      (SP.PCDTAU, LC.CCDTAU), (OP.PILO_PRED_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.PILO_PRED_ELAS.PCONTMR, ECONTPG), (SP.PDDEPLR, DDL_MECA),
                      (SP.PDEPL0R, DDL_MECA), (SP.PDEPL1R, DDL_MECA),
