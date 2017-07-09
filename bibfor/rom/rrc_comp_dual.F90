@@ -81,14 +81,6 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     result_dom   = ds_para%result_dom
     nb_equa_ridd = ds_para%nb_equa_ridd
 !
-! - List of equations in RID
-!
-!    AS_ALLOCATE(vi = v_noeu_rid, size = nb_equa)
-!    call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
-!                1, sigm_rom, iret)
-!    call jelira(sigm_rom(1:19)//'.VALE', 'LONMAX', nb_equa_rom)
-!    call select_dof_3(sigm_rom, nb_cmp, v_noeu_rid)
-!
 ! - Create [PHI] matrix for dual base
 !
     call romBaseCreateMatrix(ds_para%ds_empi_dual, v_dual)

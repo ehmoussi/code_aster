@@ -47,11 +47,11 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(ROM_DS_Empi) :: empi_prim, empi_dual
-    character(len=8)  :: base_prim = ' ', base_dual = ' '
+    type(ROM_DS_Empi) :: empi_prim, empi_dual, empi_rid
+    character(len=8)  :: base_prim = ' ', base_dual = ' ', base_rid = ' '
     character(len=8)  :: result_dom = ' ', result_rom = ' ', model_dom = ' '
     character(len=16) :: k16bid = ' ', answer
-    aster_logical :: l_prev_dual
+    aster_logical :: l_prev_dual, l_corr_ef
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -81,6 +81,18 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
         call romBaseRead(base_dual, empi_dual)
     endif
 !
+! - Correction by finite element
+!
+    call getvtx(' ', 'CORR_COMPLET', scal = answer)
+    l_corr_ef = answer .eq. 'OUI'
+!
+! - Get informations about bases - Dual
+!
+    if (l_corr_ef) then
+        call getvid(' ', 'BASE_DOMAINE', scal = base_rid)
+        call romBaseRead(base_rid, empi_rid)
+    endif
+!
 ! - Get input results datastructures
 !
     call getvid(' ', 'RESULTAT_REDUIT', scal = result_rom)
@@ -97,5 +109,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
     ds_para%l_prev_dual   = l_prev_dual
+    ds_para%l_corr_ef     = l_corr_ef
+    ds_para%ds_empi_rid   = empi_rid 
 !
 end subroutine
