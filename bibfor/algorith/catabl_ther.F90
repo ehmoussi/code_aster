@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine catabl(table_new, table_old  , time, nume_store, nb_obje,&
-                  obje_name, obje_sdname)
+subroutine catabl_ther(table_new, table_old  , time, nume_store, nb_obje,&
+                       obje_name, obje_sdname)
 !
 implicit none
 !
@@ -72,15 +72,13 @@ character(len=24), intent(in) :: obje_sdname(nb_obje)
         'K16', 'K16', 'K24', 'I  ', 'R8 '/)
     integer :: prepar(nbpara)
 !
-    integer, parameter :: l_nb_obje = 9
-    character(len=16), parameter :: l_obje_name(l_nb_obje) = (/&
-        'MATR_TANG_ELEM  ', 'SIEF_ELGA       ', 'VARI_ELGA       ',&
-        'FORC_INTE_ELEM  ', 'FORC_DIRI_ELEM  ', 'FORC_NODA_ELEM  ',&
-        'CODE_RETOUR_INTE', 'FORC_VARC_ELEM_M', 'FORC_VARC_ELEM_P'/)
-    character(len=16), parameter :: l_obje_type(l_nb_obje) = (/&
-        'MATR_ELEM_DEPL_R', 'CHAM_ELEM       ', 'CHAM_ELEM       ',&
-        'VECT_ELEM_DEPL_R', 'VECT_ELEM_DEPL_R', 'VECT_ELEM_DEPL_R',&
-        'CHAM_ELEM       ', 'VECT_ELEM_DEPL_R', 'VECT_ELEM_DEPL_R'/)
+    integer, parameter :: l_nb_obj = 6
+    character(len=16), parameter :: l_obje_name(l_nb_obj) = (/&
+        'CHAR_THER_ELEM  ', 'MATR_TANG_ELEM  ', 'CHAR_EVOL_ELEM  ',&
+        'RESI_THER_ELEM  ', 'FORC_DIRI_ELEM  ', 'CHAR_EVNL_ELEM  '/)
+    character(len=16), parameter :: l_obje_type(l_nb_obj) = (/&
+        'VECT_ELEM_TEMP_R', 'MATR_ELEM_TEMP_R', 'VECT_ELEM_TEMP_R',&
+        'VECT_ELEM_TEMP_R', 'VECT_ELEM_TEMP_R', 'VECT_ELEM_TEMP_R'/)
 !
     character(len=19) :: nomtab
     aster_logical :: l_new_table, l_repl_object
@@ -105,7 +103,7 @@ character(len=24), intent(in) :: obje_sdname(nb_obje)
     nboldp           = 0
     nblign           = 0
     l_new_table      = .false.
-    prepar(1:nbpara) = 0
+    prepar(1:nbpara) = 0   
 !
 ! - New table or not ?
 !
@@ -163,7 +161,7 @@ character(len=24), intent(in) :: obje_sdname(nb_obje)
 ! ----- Find the type of object
 !
         obje_type = ' '
-        do i_l_obj = 1, l_nb_obje
+        do i_l_obj = 1, l_nb_obj
             if (l_obje_name(i_l_obj) .eq. obje_name(i_obj)) then
                 obje_type = l_obje_type(i_l_obj)
             endif
