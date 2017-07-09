@@ -180,7 +180,7 @@ implicit none
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, t, epsv, depsv,&
                 epsvm, angmas, aniso, mdal, dalal,&
-                alphfi, cbiot, unsks, alpha0, ndim)
+                alphfi, cbiot, unsks, alpha0)
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
 ! *********************************************************************

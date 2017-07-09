@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine thmGetParaElas(j_mater, kpi, temp)
+subroutine thmGetParaElas(j_mater, kpi, temp, ndim)
 !
 use THM_type
 use THM_module
@@ -34,6 +34,7 @@ implicit none
     integer, intent(in) :: j_mater
     integer, intent(in) :: kpi
     real(kind=8), intent(in) :: temp
+    integer, intent(in) :: ndim
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,7 +45,9 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  j_mater      : coded material address
+! In  kpi          : current Gauss point
 ! In  temp         : current temperature
+! In  ndim         : dimension of element (2 ou 3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -117,6 +120,18 @@ implicit none
     else
         ASSERT(.false.)
     endif
-
+!
+! - Some checks: anisotropy
+!
+    if (ds_thm%ds_material%elas_id .eq. 3) then
+        if (ndim .ne. 3) then
+            call utmess('F', 'THM1_4')
+        endif
+    endif
+    if (ds_thm%ds_material%elas_id .eq. 2) then
+        if (ndim .ne. 2) then
+            call utmess('F', 'THM1_3')
+        endif
+    endif
 !
 end subroutine

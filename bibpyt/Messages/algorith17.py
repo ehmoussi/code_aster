@@ -131,9 +131,6 @@ cata_msg = {
   Erreur dans l'allocation de la structure de données dynamique. La liste des champs à allouer n'est pas valide.
 """),
 
-
-
-
     31 : _(u"""
   Il faut donner autant de coefficients pour le paramètre %(k1)s
   qu'il y a de modes propres dans la base sur laquelle est fabriquée
@@ -147,20 +144,6 @@ cata_msg = {
   compte dans les calculs postérieurs.
 """),
 
-    35 : _(u"""
-  Attention, en THM le comportement ELAS_ISTR n'est valable qu'en 3D, pour 2D passer en ELAS_ORTH
-"""),
-    36 : _(u"""
-  Attention, en THM le comportement ELAS_ORTH n'est valable qu'en 2D, pour 3D passer en ELAS_ISTR
-"""),
-    37 : _(u"""
-  Attention, si les composantes L,T sont dans THM_DIFFU on est en orthotropie 2D D_PLAN ou AXIS.
-   INCOMPATIBLE 3D
-"""),
-    38 : _(u"""
-  Attention, si les composantes L,N sont dans THM_DIFFU on est en isotropie transverse 3D.
-   INCOMPATIBLE 2D
-"""),
     39 : _(u"""
   Attention on sort momentanément du domaine admissible car porosité négative sur la maille %(k1)s
 """),

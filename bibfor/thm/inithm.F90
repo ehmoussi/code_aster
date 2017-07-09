@@ -19,7 +19,7 @@
 subroutine inithm(imate, yachai, yamec, phi0, em,&
                   cs0, tbiot, t, epsv, depsv,&
                   epsvm, angmas, aniso, mdal, dalal,&
-                  alphfi, cbiot, unsks, alpha0, ndim)
+                  alphfi, cbiot, unsks, alpha0)
 !
 use THM_type
 use THM_module
@@ -36,7 +36,7 @@ implicit none
 #include "asterfort/utmess.h"
 !
 !
-    integer :: nelas, ndim
+    integer :: nelas
     parameter    ( nelas=4 )
     real(kind=8) :: elas(nelas)
     character(len=16) :: ncra1(nelas)
@@ -85,7 +85,7 @@ implicit none
         call dilata(imate, phi0, alphfi, t, aniso,&
                     angmas, tbiot)
         call calela(imate, angmas, mdal, dalal, t,&
-                    aniso, rbid, ndim)             
+                    aniso, rbid)             
 !
 ! =====================================================================
 ! --- SI ABSENCE DE MECANIQUE -----------------------------------------
@@ -115,9 +115,6 @@ implicit none
 ! =====================================================================
 ! --- CALCUL CAS ISOTROPE TRANSVERSE-----------------------------------
 ! =====================================================================
-            if (ndim .ne. 3) then
-                call utmess('F', 'ALGORITH17_38')
-            endif
             alphfi = 0.0d0
             cs0 = em
             dalal = 0.d0
@@ -135,9 +132,6 @@ implicit none
 ! =====================================================================
 ! --- CALCUL CAS ORTHO 2D-----------------------------------
 ! =====================================================================
-            if (ndim .ne. 2) then
-                call utmess('F', 'ALGORITH17_37')
-            endif
             alphfi = 0.0d0
             cs0 = em
             dalal = 0.d0

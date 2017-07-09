@@ -162,7 +162,7 @@ implicit none
 !
 ! - Get elastic parameters
 !
-    call thmGetParaElas(imate, kpi, t)
+    call thmGetParaElas(imate, kpi, t, ndim)
 
 ! ======================================================================
 ! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------

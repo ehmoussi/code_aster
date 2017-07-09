@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine calela(imate, angmas, mdal, dalal, t,&
-                  aniso, d, ndim)
+                  aniso, d)
 !
 use THM_type
 use THM_module
@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/utbtab.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vecini.h"
-    integer :: i, j, ndim, irep
+    integer :: i, j, irep
     integer :: aniso
     integer :: dim2, dim1, dim3, imate
     parameter   ( dim1   =  4 )
@@ -152,9 +152,6 @@ implicit none
             al(3)  =elas1(3)
 !
         else if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ISTR') then
-            if (ndim .ne. 3) then
-                call utmess('F', 'ALGORITH17_35')
-            endif
             call rcvala(imate, ' ', 'ELAS_ISTR', 1, 'TEMP',&
                         [t], 7, ncra2(1), elas2(1), icodr2,&
                         0)
@@ -208,9 +205,6 @@ implicit none
             al(2)  =elas1(3)
             al(3)  =elas1(3)
         else if (ds_thm%ds_material%elas_keyword.eq.'ELAS_ORTH') then
-            if (ndim .ne. 2) then
-                call utmess('F', 'ALGORITH17_36')
-            endif
             call rcvala(imate, ' ', 'ELAS_ORTH', 1, 'TEMP',&
                         [t], 10, ncra3(1), elas3(1), icodr3,&
                         0)
