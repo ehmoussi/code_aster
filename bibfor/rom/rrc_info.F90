@@ -15,19 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_info(ds_para)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,6 +45,7 @@ implicit none
     character(len=16) :: type_resu
     character(len=8) :: result_rom, result_dom, model_dom, model_rom
     integer :: nb_store
+    aster_logical :: l_prev_dual
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,6 +55,7 @@ implicit none
     nb_store     = ds_para%nb_store
     result_dom   = ds_para%result_dom
     model_dom    = ds_para%model_dom
+    l_prev_dual  = ds_para%l_prev_dual
 !
 ! - Print
 !
@@ -65,5 +67,8 @@ implicit none
     valk(2) = model_rom
     call utmess('I', 'ROM6_10', nk = 2, valk = valk)
     call utmess('I', 'ROM6_11', si = nb_store)
+    if (l_prev_dual) then
+        call utmess('I', 'ROM6_14')
+    endif
 !
 end subroutine

@@ -52,7 +52,7 @@ implicit none
     integer :: ifm, niv
     integer :: iret
     character(len=24) :: typval, field_name
-    integer :: nbval, nb_store, nb_mode
+    integer :: nbval, nb_store
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,7 +74,6 @@ implicit none
         call tbexve(ds_para%tabl_name, 'COOR_REDUIT', ds_para%coor_redu, 'V', nbval, typval)
         ASSERT(typval .eq. 'R')
     endif
-    nb_mode              = ds_para%ds_empi_prim%nb_mode
 !
 ! - Type of result
 !

@@ -452,11 +452,12 @@ TEST_RESU(CHAM_NO=(
 ####################################################################################################
 
 
-# Gappy-POD (reconstruction tout domine)
+# Gappy-POD (reconstruction tout le domaine)
 reduR = REST_REDUIT_COMPLET(
     MODELE           = model,
     RESULTAT_REDUIT  = redu, 
     BASE_PRIMAL      = base_p,
+    REST_DUAL        = 'OUI',
     BASE_DUAL        = base_d,
     INFO             = 2,
 )

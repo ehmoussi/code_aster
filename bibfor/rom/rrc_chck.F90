@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_chck(ds_para)
 !
 use Rom_Datastructure_type
@@ -27,9 +28,7 @@ implicit none
 #include "asterfort/romBaseChck.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,6 +44,7 @@ implicit none
 !
     character(len=8) :: mesh_prim, mesh_dual, model_prim, model_dual
     character(len=8) :: model_rom, model_dom
+    aster_logical :: l_prev_dual
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,39 +52,53 @@ implicit none
         call utmess('F', 'ROM6_4')
     endif
 !
+! - Get parameters
+!
+    l_prev_dual = ds_para%l_prev_dual
+    mesh_prim   = ds_para%ds_empi_prim%mesh
+    mesh_dual   = ds_para%ds_empi_dual%mesh
+    model_prim  = ds_para%ds_empi_prim%model
+    model_dual  = ds_para%ds_empi_dual%model
+    model_rom   = ds_para%model_rom
+    model_dom   = ds_para%model_dom
+!
 ! - Check mesh
 !
-    mesh_prim = ds_para%ds_empi_prim%mesh
-    mesh_dual = ds_para%ds_empi_dual%mesh
-    if (mesh_prim .ne. mesh_dual) then
-        call utmess('F','ROM4_9')
+    if (l_prev_dual) then
+        if (mesh_prim .ne. mesh_dual) then
+            call utmess('F','ROM4_9')
+        endif
     endif
 !
 ! - Check model
 !
-    model_prim = ds_para%ds_empi_prim%model
-    model_dual = ds_para%ds_empi_dual%model
-    if (model_prim .eq. '#PLUSIEURS' .or. model_dual .eq. '#PLUSIEURS') then
+    if (model_prim .eq. '#PLUSIEURS') then
         call utmess('F','ROM4_11')
     endif
-    if (model_prim .ne. model_dual) then
-        call utmess('F', 'ROM6_2')
-    endif
-    model_rom    = ds_para%model_rom
-    model_dom    = ds_para%model_dom
     if (model_rom .eq. model_dom) then
         call utmess('A', 'ROM6_8')
     endif
     if (model_prim .ne. model_dom) then
         call utmess('F', 'ROM6_9', sk = ds_para%ds_empi_prim%base)
     endif
-    if (model_dual .ne. model_dom) then
-        call utmess('F', 'ROM6_9', sk = ds_para%ds_empi_dual%base)
+!
+    if (l_prev_dual) then
+        if (model_dual .eq. '#PLUSIEURS') then
+            call utmess('F','ROM4_11')
+        endif
+        if (model_prim .ne. model_dual) then
+            call utmess('F', 'ROM6_2')
+        endif
+        if (model_dual .ne. model_dom) then
+            call utmess('F', 'ROM6_9', sk = ds_para%ds_empi_dual%base)
+        endif
     endif
 !
 ! - Check empiric modes base
 !
     call romBaseChck(ds_para%ds_empi_prim)
-    call romBaseChck(ds_para%ds_empi_dual)
+    if (l_prev_dual) then
+        call romBaseChck(ds_para%ds_empi_dual)
+    endif
 !
 end subroutine
