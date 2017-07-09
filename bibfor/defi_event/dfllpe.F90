@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine dfllpe(keywf    , i_fail        , event_type,&
                   vale_ref , nom_cham      , nom_cmp   , crit_cmp,&
                   pene_maxi, resi_glob_maxi)
@@ -26,20 +26,19 @@ implicit none
 #include "asterfort/getvtx.h"
 #include "asterfort/assert.h"
 !
-!
-    character(len=16), intent(in) :: keywf
-    integer, intent(in) :: i_fail
-    character(len=16), intent(in) :: event_type
-    real(kind=8), intent(out) :: vale_ref
-    character(len=16), intent(out) :: nom_cham
-    character(len=16), intent(out) :: nom_cmp
-    character(len=16), intent(out) :: crit_cmp
-    real(kind=8), intent(out) :: pene_maxi
-    real(kind=8), intent(out) :: resi_glob_maxi
+character(len=16), intent(in) :: keywf
+integer, intent(in) :: i_fail
+character(len=16), intent(in) :: event_type
+real(kind=8), intent(out) :: vale_ref
+character(len=16), intent(out) :: nom_cham
+character(len=16), intent(out) :: nom_cmp
+character(len=16), intent(out) :: crit_cmp
+real(kind=8), intent(out) :: pene_maxi
+real(kind=8), intent(out) :: resi_glob_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_LIST_INST
+! DEFI_LIST_INST - Read parameters
 !
 ! Get parameters of EVENEMENT for current failure keyword
 !

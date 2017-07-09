@@ -212,7 +212,7 @@ implicit none
         if (question .eq. 'NOM_EVEN') then
             if (getset .eq. 'L') then
                 vali = nint(v_sddisc_eevr(leevr*(iechec-1)+1))
-                if (vali .eq. 0) valk = 'ERRE'
+                if (vali .eq. 0) valk = 'ERREUR'
                 if (vali .eq. 1) valk = 'DELTA_GRANDEUR'
                 if (vali .eq. 2) valk = 'COLLISION'
                 if (vali .eq. 3) valk = 'INTERPENETRATION'
@@ -220,7 +220,7 @@ implicit none
                 if (vali .eq. 5) valk = 'INSTABILITE'
                 if (vali .eq. 6) valk = 'RESI_MAXI'
             else if (getset.eq.'E') then
-                if (valk .eq. 'ERRE') then
+                if (valk .eq. 'ERREUR') then
                     v_sddisc_eevr(leevr*(iechec-1)+1) = 0.d0
                 else if (valk.eq.'DELTA_GRANDEUR') then
                     v_sddisc_eevr(leevr*(iechec-1)+1) = 1.d0

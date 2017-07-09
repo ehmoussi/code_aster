@@ -17,57 +17,35 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine op0028()
-!
+subroutine dfdevn(action_type, subd_method, subd_pas_mini, subd_pas, subd_niveau)
+
 implicit none
 !
-#include "asterc/getres.h"
-#include "asterfort/dfllad.h"
-#include "asterfort/dflldb.h"
-#include "asterfort/dfllec.h"
-#include "asterfort/dfllty.h"
-#include "asterfort/infmaj.h"
-#include "asterfort/infniv.h"
+character(len=16), intent(out) :: action_type
+character(len=16), intent(out) :: subd_method
+real(kind=8), intent(out) :: subd_pas_mini
+integer, intent(out) :: subd_pas, subd_niveau
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! DEFI_LIST_INST
+! DEFI_LIST_INST - Read parameters
+!
+! Default values for cuttin time step
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: sdlist
-    character(len=16) :: k16bid
-    character(len=16) :: list_method
-    real(kind=8) :: dtmin
-    integer :: ifm, niv
+! Out action_type      : type of action
+! Out subd_method      : value of SUBD_METHODE for ACTION=DECOUPE
+! Out subd_pas_mini    : value of SUBD_PAS_MINI for ACTION=DECOUPE
+! Out subd_niveau      : value of SUBD_NIVEAU for ACTION=DECOUPE
+! Out subd_pas         : value of SUBD_PAS for ACTION=DECOUPE
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infmaj()
-    call infniv(ifm, niv)
+    action_type   = 'DECOUPE'
+    subd_method   = 'MANUEL'
+    subd_niveau   = 3
+    subd_pas      = 4
+    subd_pas_mini = 1.d-12
 !
-! - Get result datastructure
-!
-    call getres(sdlist, k16bid, k16bid)
-!
-! - Read parameters for keyword DEFI_LIST 
-!
-    call dfllty(sdlist, list_method, dtmin)
-!
-! - Read parameters for keyword ECHEC
-!
-    call dfllec(sdlist, dtmin)
-!
-! - Read parameters for keyword ADAPTATION
-!
-    if (list_method .eq. 'AUTO') then
-        call dfllad(sdlist)
-    endif
-!
-! - Print debug
-!
-    if (niv .ge. 2) then
-        call dflldb(sdlist, ifm)
-    endif
-
 end subroutine
