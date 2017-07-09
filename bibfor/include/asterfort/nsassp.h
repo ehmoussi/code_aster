@@ -21,8 +21,10 @@
 interface
     subroutine nsassp(modele    , numedd, lischa, fonact    , sddyna,&
                       ds_measure, valinc, veelem, veasse    , cnpilo,&
-                      cndonn    , mate  , carele, ds_contact, matass)
+                      cndonn    , mate  , carele, ds_contact, matass,&
+                      ds_algorom)
         use NonLin_Datastructure_type
+        use Rom_Datastructure_type
         character(len=24) :: modele
         character(len=24) :: numedd
         character(len=19) :: lischa
@@ -38,5 +40,6 @@ interface
         character(len=24) :: carele
         type(NL_DS_Contact), intent(in) :: ds_contact
         character(len=19) :: matass
+        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     end subroutine nsassp
 end interface

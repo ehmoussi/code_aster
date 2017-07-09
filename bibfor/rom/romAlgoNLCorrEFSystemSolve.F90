@@ -16,72 +16,39 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine romAlgoNLDSCreate(ds_algorom)
+subroutine romAlgoNLCorrEFSystemSolve()
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/infniv.h"
-#include "asterfort/romBaseDSInit.h"
-#include "asterfort/romLineicBaseDSInit.h"
-#include "asterfort/utmess.h"
+#include "asterfort/assert.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
+
+
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction - Solving non-linear problem
 !
-! Create ROM parameters datastructure
+! Solve non-linear system for EF correction
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Out ds_algorom       : datastructure for ROM parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    type(ROM_DS_LineicNumb) :: ds_lineicnumb
-    type(ROM_DS_Empi) :: ds_empi
-    type(ROM_DS_Empi) :: ds_empi_rid
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_36')
-    endif
-!
-! - Initialization of datastructure for lineic base numbering
-!
-    call romLineicBaseDSInit(ds_lineicnumb)
-!
-! - Initialization of DSdatastructure for empiric modes
-!
-    call romBaseDSInit(ds_lineicnumb, ds_empi)
-!
-! - Initialization of datastructure for truncated empiric modes
-!
-    call romBaseDSInit(ds_lineicnumb, ds_empi_rid)    
-!
-! - General parameters
-!
-    ds_algorom%l_rom         = .false._1
-    ds_algorom%ds_empi       = ds_empi
-    ds_algorom%ds_empi_rid   = ds_empi_rid
-    ds_algorom%l_hrom        = .false._1
-    ds_algorom%l_hrom_corref = .false._1
-    ds_algorom%grnode_int    = ' '
-    ds_algorom%grnode_sub    = ' '
-    ds_algorom%tabl_name     = ' '
-    ds_algorom%gamma         = ' '
-    ds_algorom%phase         = ' '
-    ds_algorom%v_equa_int    => null()
-    ds_algorom%v_equa_sub    => null()
-    ds_algorom%field_iden    = ' '
+
 !
 end subroutine

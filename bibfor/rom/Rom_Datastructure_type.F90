@@ -294,12 +294,20 @@ implicit none
         type(ROM_DS_Empi) :: ds_empi_rid
 ! ----- Pointer to list of equations for interface nodes
         integer, pointer  :: v_equa_int(:)
+! ----- Pointer to list of equation for internal interface nodes
+        integer, pointer  :: v_equa_sub(:)
 ! ----- Flag for reduced model
         aster_logical     :: l_rom
 ! ----- Flag for hyper-reduced model
         aster_logical     :: l_hrom
-! ----- Name of GROUP_NO
+! ----- Flag for hyper-reduced model with EF correction
+        aster_logical     :: l_hrom_corref
+! ----- Phase of computation when EF correction
+        character(len=24) :: phase
+! ----- Name of GROUP_NO of interface
         character(len=24) :: grnode_int
+! ----- Name of GROUP_NO of internal interface
+        character(len=24) :: grnode_sub
 ! ----- Table for reduced coordinates
         character(len=24) :: tabl_name
 ! ----- Object to save reduced coordinates

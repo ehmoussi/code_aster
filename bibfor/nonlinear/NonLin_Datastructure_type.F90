@@ -63,11 +63,11 @@ implicit none
 ! ----- Number of active columns
         integer                :: nb_cols
 ! ----- Maximum number of columns in table
-        integer                :: nb_cols_maxi = 37
+        integer                :: nb_cols_maxi = 38
 ! ----- List of columns in table
-        type(NL_DS_Column)     :: cols(37)
+        type(NL_DS_Column)     :: cols(38)
 ! ----- List of _active_ columns in table
-        aster_logical          :: l_cols_acti(37)
+        aster_logical          :: l_cols_acti(38)
 ! ----- Total width of table
         integer                :: width
 ! ----- eNumber of lines for title
@@ -84,10 +84,10 @@ implicit none
         integer                :: nb_para_real
         integer                :: nb_para_cplx
         integer                :: nb_para_strg
-        character(len=24)      :: list_para(37)
-        character(len=3)       :: type_para(37)
+        character(len=24)      :: list_para(38)
+        character(len=3)       :: type_para(38)
 ! ----- Index to values
-        integer                :: indx_vale(37)
+        integer                :: indx_vale(38)
     end type NL_DS_Table
 !
 ! - Type: print

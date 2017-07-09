@@ -266,7 +266,9 @@ implicit none
         if (l_loop_geom) list_func_acti(31) = 1
         if (l_loop_frot) list_func_acti(32) = 1
         if (l_loop_cont) list_func_acti(33) = 1
-        if (l_loop_geom .or. l_loop_frot .or. l_loop_cont) list_func_acti(34) = 1
+        if (l_loop_geom .or. l_loop_frot .or. l_loop_cont) then
+            list_func_acti(34) = 1
+        endif
     endif
 !
 ! - Generalized Newton
@@ -374,6 +376,10 @@ implicit none
         list_func_acti(61) = 1
         if (ds_algorom%l_hrom) then
             list_func_acti(62) = 1
+            if (ds_algorom%l_hrom_corref) then
+                list_func_acti(65) = 1
+                list_func_acti(34) = 1
+            endif
         endif
     endif
 !
@@ -462,6 +468,9 @@ implicit none
         endif
         if (isfonc(list_func_acti,'HROM')) then
             write (ifm,*) '<MECANONLINE> ...... METHODE HROM'
+        endif
+        if (isfonc(list_func_acti,'HROM_CORR_EF')) then
+            write (ifm,*) '<MECANONLINE> ...... METHODE HROM AVEC CORRECTION EF'
         endif
         if (isfonc(list_func_acti,'RECH_LINE')) then
             write (ifm,*) '<MECANONLINE> ...... RECHERCHE LINEAIRE'

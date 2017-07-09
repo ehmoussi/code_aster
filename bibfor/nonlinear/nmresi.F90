@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
 subroutine nmresi(noma  , mate   , numedd  , sdnume  , fonact,&
                   sddyna, ds_conv, ds_print, ds_contact,&
                   matass, numins , eta     , comref  , valinc,&
@@ -50,27 +52,26 @@ implicit none
 #include "asterfort/nmvcmx.h"
 #include "asterfort/rescmp.h"
 #include "asterfort/romAlgoNLMecaResidual.h"
+#include "asterfort/romAlgoNLCorrEFMecaResidual.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8) :: noma
-    character(len=24) :: numedd
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Conv), intent(inout) :: ds_conv
-    type(NL_DS_Print), intent(inout) :: ds_print
-    character(len=24) :: mate
-    integer :: numins
-    character(len=19) :: sddyna, sdnume
-    character(len=19) :: measse(*), veasse(*)
-    character(len=19) :: valinc(*), solalg(*)
-    character(len=19) :: matass
-    character(len=24) :: comref
-    integer :: fonact(*)
-    real(kind=8) :: eta
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    real(kind=8), intent(out) :: vchar
-    real(kind=8), intent(out) :: vresi
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=8) :: noma
+character(len=24) :: numedd
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Conv), intent(inout) :: ds_conv
+type(NL_DS_Print), intent(inout) :: ds_print
+character(len=24) :: mate
+integer :: numins
+character(len=19) :: sddyna, sdnume
+character(len=19) :: measse(*), veasse(*)
+character(len=19) :: valinc(*), solalg(*)
+character(len=19) :: matass
+character(len=24) :: comref
+integer :: fonact(*)
+real(kind=8) :: eta
+type(NL_DS_InOut), intent(in) :: ds_inout
+real(kind=8), intent(out) :: vchar
+real(kind=8), intent(out) :: vresi
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -325,8 +326,11 @@ implicit none
 !
 ! - Evaluate residuals in applying HYPER-REDUCTION
 !
-    if (l_rom) then
+    if (l_rom .and. ds_algorom%phase .eq. 'HROM') then
         call romAlgoNLMecaResidual(fint, fext, ds_algorom, vresi)
+    endif
+    if (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
+        call romAlgoNLCorrEFMecaResidual()
     endif
 !
 ! --- SYNTHESE DES RESULTATS
@@ -350,6 +354,7 @@ implicit none
         call mmconv(noma , ds_contact, valinc, solalg, vfrot,&
                     nfrot, vgeom     , ngeom)
     endif
+
 !
 ! - Save informations about residuals into convergence datastructure
 !

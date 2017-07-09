@@ -18,18 +18,9 @@
 
 !
 !
-interface
-    subroutine nmible(loop_exte     , model   , mesh      , ds_contact,&
-                      list_func_acti, ds_measure, ds_print, ds_algorom)
-        use NonLin_Datastructure_type
-        use Rom_Datastructure_type     
-        integer, intent(inout) :: loop_exte
-        character(len=24), intent(in) :: model
-        character(len=8), intent(in) :: mesh
-        type(NL_DS_Contact), intent(inout) :: ds_contact
-        integer, intent(in):: list_func_acti(*)
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-        type(NL_DS_Print), intent(inout) :: ds_print
-        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-    end subroutine nmible
-end interface
+interface 
+    subroutine romAlgoNLCorrEFMatrixModify()
+        use Rom_Datastructure_type
+
+    end subroutine romAlgoNLCorrEFMatrixModify
+end interface 

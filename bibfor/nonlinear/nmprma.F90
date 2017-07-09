@@ -18,12 +18,13 @@
 
 subroutine nmprma(modelz     , mate    , carele, ds_constitutive,&
                   ds_algopara, lischa  , numedd, numfix, solveu,&
-                  comref     , ds_print, ds_measure, sddisc,&
+                  comref     , ds_print, ds_measure, ds_algorom, sddisc,&
                   sddyna     , numins  , fonact, ds_contact,&
                   valinc     , solalg  , veelem, meelem, measse,&
                   maprec     , matass  , faccvg, ldccvg)
 !
 use NonLin_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -45,6 +46,7 @@ implicit none
 #include "asterfort/nmxmat.h"
 #include "asterfort/preres.h"
 #include "asterfort/mtdscr.h"
+#include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
@@ -56,6 +58,7 @@ implicit none
     type(NL_DS_Constitutive), intent(in) :: ds_constitutive
     type(NL_DS_Measure), intent(inout) :: ds_measure
     type(NL_DS_Print), intent(inout) :: ds_print
+    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     character(len=24) :: numedd, numfix
     character(len=19) :: sddisc, sddyna, lischa, solveu
     character(len=24) :: comref
@@ -87,6 +90,7 @@ implicit none
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_algopara      : datastructure for algorithm parameters
+! In  ds_algorom       : datastructure for ROM parameters
 ! IN  SOLVEU : SOLVEUR
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
@@ -257,8 +261,13 @@ implicit none
     if (reasma) then
         call nmtime(ds_measure, 'Init', 'Factor')
         call nmtime(ds_measure, 'Launch', 'Factor')
-        if (l_rom) then
+        if (l_rom .and. ds_algorom%phase .eq. 'HROM') then
             call mtdscr(matass)
+        elseif (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
+            call mtdscr(matass)
+            call romAlgoNLCorrEFMatrixModify()
+            call preres(solveu, 'V', faccvg, maprec, matass,&
+                        ibid, -9999)
         else
             call preres(solveu, 'V', faccvg, maprec, matass,&
                         ibid, -9999)

@@ -19,9 +19,11 @@
 subroutine nmassp(modele         , numedd, mate  , carele    , comref    ,&
                   ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
                   sddyna         , valinc, solalg, veelem    , veasse    ,&
-                  ldccvg         , cnpilo, cndonn, sdnume    , matass)
+                  ldccvg         , cnpilo, cndonn, sdnume    , matass    ,&
+                  ds_algorom)
 !
 use NonLin_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -47,6 +49,7 @@ implicit none
     character(len=19) :: solalg(*), valinc(*)
     character(len=19) :: veasse(*), veelem(*)
     character(len=19) :: cnpilo, cndonn
+    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -113,7 +116,7 @@ implicit none
     else if (lstat) then
         call nsassp(modele, numedd, lischa, fonact, sddyna,&
                     ds_measure, valinc, veelem, veasse, cnpilo,&
-                    cndonn, mate, carele, ds_contact, matass)
+                    cndonn, mate, carele, ds_contact, matass, ds_algorom)
     else
         ASSERT(.false.)
     endif

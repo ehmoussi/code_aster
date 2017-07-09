@@ -18,12 +18,13 @@
 
 subroutine nmprde(modele, numedd         , numfix    , mate       , carele    ,&
                   comref, ds_constitutive, lischa    , ds_algopara, solveu    ,&
-                  fonact, ds_print       , ds_measure, sddisc     , numins    ,&
+                  fonact, ds_print       , ds_measure, ds_algorom, sddisc     , numins    ,&
                   valinc, solalg         , matass    , maprec     , ds_contact,&
                   sddyna, meelem         , measse    , veelem     , veasse    ,&
                   ldccvg, faccvg         , rescvg)
 !
 use NonLin_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -46,6 +47,7 @@ implicit none
     character(len=19) :: maprec, matass
     type(NL_DS_Measure), intent(inout) :: ds_measure
     type(NL_DS_Print), intent(inout) :: ds_print
+    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     character(len=19) :: lischa, solveu, sddisc, sddyna
     character(len=24) :: numedd, numfix
     character(len=24) :: modele, mate, carele, comref
@@ -80,6 +82,7 @@ implicit none
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IO  ds_contact       : datastructure for contact management
+! In  ds_algorom       : datastructure for ROM parameters
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -158,7 +161,7 @@ implicit none
     if (lproj) then
         call nmprca(modele, numedd         , numfix     , mate       , carele    ,&
                     comref, ds_constitutive, lischa     , ds_algopara, solveu    ,&
-                    fonact, ds_print       , ds_measure , sddisc     , numins    ,&
+                    fonact, ds_print       , ds_measure , ds_algorom, sddisc     , numins    ,&
                     valinc, solalg         , matass     , maprec     , ds_contact,&
                     sddyna, meelem         , measse     , veelem     , veasse    ,&
                     depest, ldccvg         , faccvg     , rescvg)

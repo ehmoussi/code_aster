@@ -18,12 +18,13 @@
 
 subroutine nmcoma(modelz, mate  , carele    , ds_constitutive, ds_algopara,&
                   lischa, numedd, numfix    , solveu         , comref     ,&
-                  sddisc, sddyna, ds_print  , ds_measure     , numins     ,&
+                  sddisc, sddyna, ds_print  , ds_measure     , ds_algorom, numins     ,&
                   iterat, fonact, ds_contact, valinc         , solalg     ,&
                   veelem, meelem, measse    , veasse         , maprec     ,&
                   matass, faccvg, ldccvg    , sdnume)
 !
 use NonLin_Datastructure_type
+use Rom_Datastructure_type
 !
 implicit none
 !
@@ -48,6 +49,7 @@ implicit none
 #include "asterfort/nmxmat.h"
 #include "asterfort/preres.h"
 #include "asterfort/mtdscr.h"
+#include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
@@ -59,6 +61,7 @@ implicit none
     type(NL_DS_Measure), intent(inout) :: ds_measure
     character(len=24) :: numedd, numfix
     type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
     character(len=19) :: sddisc, sddyna, lischa, solveu, sdnume
     character(len=24) :: comref
     type(NL_DS_Print), intent(inout) :: ds_print
@@ -93,6 +96,7 @@ implicit none
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IO  ds_print         : datastructure for printing parameters
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_algorom       : datastructure for ROM parameters
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  ITERAT : NUMERO D'ITERATION
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -288,8 +292,13 @@ implicit none
     if (reasma) then
         call nmtime(ds_measure, 'Init', 'Factor')
         call nmtime(ds_measure, 'Launch', 'Factor')
-        if (l_rom) then
+        if (l_rom .and. ds_algorom%phase .eq. 'HROM') then
             call mtdscr(matass)
+        elseif (l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
+            call mtdscr(matass)
+            call romAlgoNLCorrEFMatrixModify()
+            call preres(solveu, 'V', faccvg, maprec, matass,&
+                        ibid, -9999)
         else
             call preres(solveu, 'V', faccvg, maprec, matass,&
                         ibid, -9999)

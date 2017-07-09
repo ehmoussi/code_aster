@@ -15,18 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcrga(sderro)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit     none
+subroutine nmcrga(sderro)
+!
+implicit none
 #include "jeveux.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/wkvect.h"
-    character(len=24) :: sderro
+!
+character(len=24) :: sderro
 !
 ! ----------------------------------------------------------------------
 !
@@ -42,68 +42,49 @@ subroutine nmcrga(sderro)
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: zeven
-    parameter   (zeven = 33)
-    character(len=16) :: neven(zeven)
-    character(len=8) :: ncret(zeven)
-    integer :: vcret(zeven)
-    character(len=16) :: teven(zeven)
-    character(len=24) :: feven(zeven), meven(zeven)
-!
-    integer :: ifm, niv
-    integer :: ieven
-    character(len=24) :: errecn, errecv, erreni, erreno, erraac, errfct, errmsg
-    integer :: jeecon, jeecov, jeeniv, jeenom, jeeact, jeefct, jeemsg
-    character(len=24) :: errinf, errcvg, errevt
-    integer :: jeinfo, jeconv, jeeevt
-!
-! --- NOM DES EVENEMENTS
-!
-    data neven   /'ERRE_INTE','INTE_NPHY','DIVE_DEBO',&
-     &              'INTE_BORN',&
-     &              'ERRE_PILO','CONV_PILO','ERRE_FACS',&
-     &              'ERRE_FACT','ERRE_CTD1','ERRE_CTD2',&
-     &              'ERRE_TIMN','ERRE_TIMP','ERRE_EXCP',&
-     &              'ITER_MAXI',&
-     &              'DIVE_RESI','RESI_MAXR','RESI_MAXN',&
-     &              'CRIT_STAB','DIVE_FIXG','RESI_MAXI', &
-     &              'DIVE_FIXF','DIVE_FIXC','ERRE_CTCG',&
-     &              'ERRE_CTCF','ERRE_CTCC','DIVE_FROT',&
-     &              'DIVE_GEOM','DIVE_RELA','DIVE_MAXI',&
-     &              'DIVE_REFE','DIVE_COMP','DIVE_CTCC',&
-     &              'SOLV_ITMX'/
-!
-! --- NOM DU CODE RETOUR ATTACHE A L'EVENEMENT
-!
-    data ncret   /'LDC','LDC','LDC',&
-     &              'LDC',&
-     &              'PIL','PIL','FAC',&
-     &              'FAC','CTC','CTC',&
-     &              'XXX','XXX','XXX',&
-     &              'XXX',&
-     &              'XXX','XXX','XXX',&
-     &              'XXX','XXX','XXX',&
-     &              'XXX','XXX','XXX',&
-     &              'XXX','XXX','XXX',&
-     &              'XXX','XXX','XXX',&
-     &              'XXX','XXX','XXX',&
-     &              'RES'/
-!
-! --- VALEUR DU CODE RETOUR CORRESPONDANT A CHAQUE EVENEMENT
-!
-    data vcret   / 1 , 2, 3,&
-     &               4 ,&
-     &               1 , 2, 1,&
-     &               2 , 1, 2,&
-     &               99,99,99,&
-     &               99,&
-     &               99,99,99,&
-     &               99,99,99,&
-     &               99,99,99,&
-     &               99,99,99,&
-     &               99,99,99,&
-     &               99,99,99,&
-     &               1 /
+    integer, parameter :: zeven = 34
+! - Name of events
+    character(len=16), parameter :: neven(zeven) = (/'ERRE_INTE','INTE_NPHY','DIVE_DEBO',&
+                                                     'INTE_BORN',&
+                                                     'ERRE_PILO','CONV_PILO','ERRE_FACS',&
+                                                     'ERRE_FACT','ERRE_CTD1','ERRE_CTD2',&
+                                                     'ERRE_TIMN','ERRE_TIMP','ERRE_EXCP',&
+                                                     'ITER_MAXI',&
+                                                     'DIVE_RESI','RESI_MAXR','RESI_MAXN',&
+                                                     'CRIT_STAB','DIVE_FIXG','RESI_MAXI', &
+                                                     'DIVE_FIXF','DIVE_FIXC','ERRE_CTCG',&
+                                                     'ERRE_CTCF','ERRE_CTCC','DIVE_FROT',&
+                                                     'DIVE_GEOM','DIVE_RELA','DIVE_MAXI',&
+                                                     'DIVE_REFE','DIVE_COMP','DIVE_CTCC',&
+                                                     'SOLV_ITMX','DIVE_HROM'/)
+! - Return code (name)
+    character(len=8), parameter :: ncret(zeven) = (/'LDC','LDC','LDC',&
+                                                    'LDC',&
+                                                    'PIL','PIL','FAC',&
+                                                    'FAC','CTC','CTC',&
+                                                    'XXX','XXX','XXX',&
+                                                    'XXX',&
+                                                    'XXX','XXX','XXX',&
+                                                    'XXX','XXX','XXX',&
+                                                    'XXX','XXX','XXX',&
+                                                    'XXX','XXX','XXX',&
+                                                    'XXX','XXX','XXX',&
+                                                    'XXX','XXX','XXX',&
+                                                    'RES','XXX'/)
+! - Return code (value)
+    integer, parameter :: vcret(zeven) = (/ 1 , 2, 3,&
+                                            4 ,&
+                                            1 , 2, 1,&
+                                            2 , 1, 2,&
+                                            99,99,99,&
+                                            99,&
+                                            99,99,99,&
+                                            99,99,99,&
+                                            99,99,99,&
+                                            99,99,99,&
+                                            99,99,99,&
+                                            99,99,99,&
+                                            1 ,99/)
 !
 ! --- TYPE ET NIVEAU DE DECLENCHEMENT POSSIBLES DE L'EVENEMENT
 ! TROIS TYPES
@@ -114,52 +95,59 @@ subroutine nmcrga(sderro)
 ! ERRC_ : EVENEMENT A TRAITER A CONVERGENCE
 ! CONV_ : EVENEMENT A TRAITER POUR DETERMINER LA CONVERGENCE
 !
-    data teven   /'ERRI_NEWT','ERRC_NEWT','CONV_NEWT',&
-     &              'EVEN'     ,&
-     &              'ERRI_NEWT','CONV_CALC','ERRI_NEWT',&
-     &              'ERRI_NEWT','ERRI_NEWT','ERRI_NEWT',&
-     &              'ERRI_CALC','ERRI_CALC','ERRI_CALC',&
-     &              'ERRI_NEWT',&
-     &              'EVEN'     ,'EVEN'     ,'EVEN'     ,&
-     &              'EVEN'     ,'CONV_FIXE','EVEN'     ,&
-     &              'CONV_FIXE','CONV_FIXE','ERRI_FIXE',&
-     &              'ERRI_FIXE','ERRI_FIXE','CONV_RESI',&
-     &              'CONV_NEWT','CONV_RESI','CONV_RESI',&
-     &              'CONV_RESI','CONV_RESI','CONV_NEWT',&
-     &              'ERRI_NEWT'/
+    character(len=16), parameter :: teven(zeven) = (/'ERRI_NEWT','ERRC_NEWT','CONV_NEWT',&
+                                                     'EVEN     ',&
+                                                     'ERRI_NEWT','CONV_CALC','ERRI_NEWT',&
+                                                     'ERRI_NEWT','ERRI_NEWT','ERRI_NEWT',&
+                                                     'ERRI_CALC','ERRI_CALC','ERRI_CALC',&
+                                                     'ERRI_NEWT',&
+                                                     'EVEN     ','EVEN     ','EVEN     ',&
+                                                     'EVEN     ','CONV_FIXE','EVEN     ',&
+                                                     'CONV_FIXE','CONV_FIXE','ERRI_FIXE',&
+                                                     'ERRI_FIXE','ERRI_FIXE','CONV_RESI',&
+                                                     'CONV_NEWT','CONV_RESI','CONV_RESI',&
+                                                     'CONV_RESI','CONV_RESI','CONV_NEWT',&
+                                                     'ERRI_NEWT','CONV_FIXE'/)
 !
 ! --- FONCTIONNALITE ACTIVE SI NECESSAIRE POUR CONVERGENCE
 !
-    data feven   /' ',' '       ,' ',&
-     &              ' ',&
-     &              ' ','PILOTAGE',' ',&
-     &              ' ',' '       ,' ',&
-     &              ' ',' '       ,' ',&
-     &              ' ',&
-     &              ' ',' '       ,' ',&
-     &              ' '       ,' ',' ',&
-     &              ' ',' '       ,' ',&
-     &              ' ',' '       ,' ',&
-     &              ' ',' '       ,' ',&
-     &              ' ',' '       ,' ',&
-     &              'LDLT_SP'/
+    character(len=24), parameter :: feven(zeven) = (/'         ', '         ','         ',&
+                                                     '         ',&
+                                                     '         ', 'PILOTAGE ','         ',&
+                                                     '         ', '         ','         ',&
+                                                     '         ', '         ','         ',&
+                                                     '         ',&
+                                                     '         ', '         ','         ',&
+                                                     '         ', '         ','         ',&
+                                                     '         ', '         ','         ',&
+                                                     '         ', '         ','         ',&
+                                                     '         ', '         ','         ',&
+                                                     '         ', '         ','         ',&
+                                                     'LDLT_SP  ', '         '/)
 !
 ! --- CODE DU MESSAGE A AFFICHER
 !
-    data meven /&
-     &        'MECANONLINE10_1' ,'MECANONLINE10_24',' ',&
-     &        'MECANONLINE10_25',&
-     &        'MECANONLINE10_2' ,' '               ,'MECANONLINE10_6' ,&
-     &        'MECANONLINE10_6' ,'MECANONLINE10_4' ,'MECANONLINE10_4' ,&
-     &        'MECANONLINE10_7' ,'MECANONLINE10_5' ,'MECANONLINE10_8' ,&
-     &        'MECANONLINE10_3' ,&
-     &        ' '               ,' '               ,' '               ,&
-     &        'MECANONLINE10_20',' '               ,'MECANONLINE10_26',&
-     &        ' '               ,' '               ,'MECANONLINE10_9' ,&
-     &        'MECANONLINE10_10','MECANONLINE10_11',' '               ,&
-     &        ' '               ,' '               ,' '               ,&
-     &        ' '               ,' '               ,' '               ,&
-     &        'MECANONLINE10_12'/
+    character(len=24), parameter :: meven(zeven) = (/&
+            'MECANONLINE10_1 ','MECANONLINE10_24','                ',&
+            'MECANONLINE10_25',&
+            'MECANONLINE10_2 ','                ','MECANONLINE10_6 ',&
+            'MECANONLINE10_6 ','MECANONLINE10_4 ','MECANONLINE10_4 ',&
+            'MECANONLINE10_7 ','MECANONLINE10_5 ','MECANONLINE10_8 ',&
+            'MECANONLINE10_3 ',&
+            '                ','                ','                ',&
+            'MECANONLINE10_20','                ','MECANONLINE10_26',&
+            '                ','                ','MECANONLINE10_9 ',&
+            'MECANONLINE10_10','MECANONLINE10_11','                ',&
+            '                ','                ','                ',&
+            '                ','                ','                ',&
+            'MECANONLINE10_12','                '/)
+!
+    integer :: ifm, niv
+    integer :: ieven
+    character(len=24) :: errecn, errecv, erreni, erreno, erraac, errfct, errmsg
+    integer :: jeecon, jeecov, jeeniv, jeenom, jeeact, jeefct, jeemsg
+    character(len=24) :: errinf, errcvg, errevt
+    integer :: jeinfo, jeconv, jeeevt
 !
 ! ----------------------------------------------------------------------
 !
