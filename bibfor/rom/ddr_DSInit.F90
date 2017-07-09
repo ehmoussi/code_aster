@@ -68,7 +68,7 @@ type(ROM_DS_ParaDDR), intent(out) :: ds_para
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
     ds_para%grelem_rid    = ' '
-    ds_para%nb_layer_ma   = 0
+    ds_para%nb_layer_rid  = 0
     ds_para%grnode_int    = ' '
     ds_para%l_corr_ef     = .false._1
     ds_para%grnode_sub    = ' '
@@ -77,5 +77,6 @@ type(ROM_DS_ParaDDR), intent(out) :: ds_para
     ds_para%l_rid_maxi    = .false._1
     ds_para%v_rid_maxi    => null()
     ds_para%nb_rid_maxi   = 0
+    ds_para%nb_layer_sub  = 0
 !
 end subroutine

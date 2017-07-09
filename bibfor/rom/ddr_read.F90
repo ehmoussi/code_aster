@@ -52,7 +52,7 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_layer_ma = 0, nocc
+    integer :: nb_layer_rid = 0, nb_layer_sub = 0, nocc
     integer :: nb_node = 0, nb_mail = 0
     aster_logical :: l_corr_ef = .false._1
     type(ROM_DS_Empi) :: empi_prim, empi_dual
@@ -75,12 +75,16 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
 ! - Get parameters
 !
     call getvtx(' ', 'NOM_DOMAINE'    , scal = grelem_rid)
-    call getvis(' ', 'NB_COUCHE_SUPPL', scal = nb_layer_ma)
+    call getvis(' ', 'NB_COUCHE_SUPPL', scal = nb_layer_rid)
     call getvtx(' ', 'NOM_INTERFACE'  , scal = grnode_int)
     call getvtx(' ', 'CORR_COMPLET'   , scal = answer)
     l_corr_ef = answer .eq. 'OUI'
     if (l_corr_ef) then
         call getvtx(' ', 'NOM_ENCASTRE', scal = grnode_sub)
+        call getvis(' ', 'NB_COUCHE_ENCASTRE' , scal = nb_layer_sub, nbret = nocc)
+        if (nb_layer_sub .gt. nb_layer_rid) then
+            call utmess('A', 'ROM5_15')
+        endif
     endif
 !
 ! - Minimum RID
@@ -123,10 +127,11 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
 !
     ds_para%mesh          = mesh
     ds_para%grelem_rid    = grelem_rid
-    ds_para%nb_layer_ma   = nb_layer_ma
+    ds_para%nb_layer_rid  = nb_layer_rid
     ds_para%grnode_int    = grnode_int
     ds_para%l_corr_ef     = l_corr_ef
     ds_para%grnode_sub    = grnode_sub
+    ds_para%nb_layer_sub  = nb_layer_sub
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
 !

@@ -272,7 +272,7 @@ implicit none
 ! ----- Name of group of elements for RID
         character(len=24) :: grelem_rid
 ! ----- Number of layers in the construction of RID
-        integer           :: nb_layer_ma
+        integer           :: nb_layer_rid
 ! ----- The RID in a restricted domain?
         aster_logical     :: l_rid_maxi
 ! ----- List of elements restricted
@@ -285,7 +285,8 @@ implicit none
         aster_logical     :: l_corr_ef
 ! ----- Name of group of nodes for outside area of EF corrector
         character(len=24) :: grnode_sub
-! ----- Number of nodes for minimal rid
+! ----- Number of layer in the construction of outside area
+        integer           :: nb_layer_sub
         integer           :: nb_rid_mini
 ! ----- List of nodes for minimal rid
         integer, pointer  :: v_rid_mini(:) 

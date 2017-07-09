@@ -69,9 +69,9 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
     integer :: nunolo
     integer :: i_layer
     integer :: i_elem, i_node, i_elem_node, i_node_elem, i_rid_maxi
-    integer :: nb_rid_elem, nb_int_node, nb_group_add, nb_sub_node
+    integer :: nb_rid_elem, nb_int_node, nb_group_add, nb_sub_node, nb_layer_sub, i_couche
     integer :: indx, node_nume, elem_nume
-    integer :: nb_layer_ma
+    integer :: nb_layer_rid
     character(len=8) :: mesh
     character(len=24):: grelem_rid, grnode_int, grnode_sub
     integer, pointer :: v_coninv(:) => null()
@@ -96,12 +96,13 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
 !
 ! - Get parameters
 !
-    mesh         = ds_para%mesh
-    nb_layer_ma  = ds_para%nb_layer_ma
-    grelem_rid   = ds_para%grelem_rid
-    grnode_int   = ds_para%grnode_int
-    l_corr_ef    = ds_para%l_corr_ef
-    grnode_sub   = ds_para%grnode_sub
+    mesh          = ds_para%mesh
+    nb_layer_rid  = ds_para%nb_layer_rid
+    grelem_rid    = ds_para%grelem_rid
+    grnode_int    = ds_para%grnode_int
+    l_corr_ef     = ds_para%l_corr_ef
+    grnode_sub    = ds_para%grnode_sub
+    nb_layer_sub  = ds_para%nb_layer_sub
 !
 ! - Initializations
 !
@@ -123,8 +124,8 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
 !
     AS_ALLOCATE(vl = v_list_ma, size = nb_elem)
     AS_ALLOCATE(vl = v_list_no, size = nb_node)
-    AS_ALLOCATE(vl = v_list_in, size = nb_node)
     AS_ALLOCATE(vl = v_loca_no, size = nb_node)
+    AS_ALLOCATE(vl = v_list_in, size = nb_node)
     AS_ALLOCATE(vl = v_list_sb, size = nb_node)
     AS_ALLOCATE(vl = v_loca_sb, size = nb_node)
 !
@@ -148,8 +149,8 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
         ASSERT(node_nume .gt. 0)
         v_list_no(node_nume) = .true._1
         v_loca_no(node_nume) = .true._1
-    end do
-    do i_layer = 1, nb_layer_ma+1
+    enddo
+    do i_layer = 1, nb_layer_rid+1
         do i_node = 1, nb_node
             if (v_list_no(i_node)) then
                 node_nbelem = v_coninv_longcum(i_node+1)-v_coninv_longcum(i_node)
@@ -159,14 +160,14 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
                     do i_elem_node = 1, elem_nbnode
                         nunolo = v_connex(v_connex_longcum(elem_nume)+i_elem_node-1)
                         v_loca_no(nunolo) = .true._1
-                    end do
-                end do
+                    enddo
+                enddo
             endif
-        end do
+        enddo
         do i_node = 1, nb_node
             v_list_no(i_node) = v_loca_no(i_node)
-        end do
-    end do
+        enddo
+    enddo
     do i_elem = 1, nb_elem
         elem_nbnode = v_connex_longcum(i_elem+1)-v_connex_longcum(i_elem)
         test = .false._1
@@ -178,11 +179,12 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
                 test=.false._1
                 exit
             endif
-        end do
+        enddo
         if (test) then
             v_list_ma(i_elem) = .true._1
         endif
-    end do
+    enddo
+
 !
 ! - In case of existing limit domain
 !
@@ -200,7 +202,7 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
             endif
         enddo
 ! ----- Recreate the list of nodes in RID in case of existing limit domain
-        AS_DEALLOCATE(vl = v_list_no)
+        AS_DEALLOCATE(vl=v_list_no)
         AS_ALLOCATE(vl = v_list_no, size = nb_node)
         do i_elem = 1, nb_elem
             if (v_list_ma(i_elem)) then
@@ -212,6 +214,7 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
             endif
         enddo
     endif
+
 !
 ! - Number of elements in RID
 !
@@ -239,20 +242,38 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
         endif
     enddo
 !
-! - Create list of nodes of interface
+! - Create list of nodes of interface (in case of existing limit domain or not?)
 !
-    do i_elem = 1, nb_elem
-        if (.not.v_list_ma(i_elem)) then     
-            elem_nbnode = v_connex_longcum(i_elem+1)-v_connex_longcum(i_elem)
-            do i_elem_node = 1, elem_nbnode
-                nunolo = v_connex(v_connex_longcum(i_elem)+i_elem_node-1)
-                if (v_list_no(nunolo)) then
-                    v_list_in(nunolo) = .true._1
-                    v_list_sb(nunolo) = .true._1
-                endif
-            enddo    
-        endif
-    enddo
+    if (ds_para%l_rid_maxi) then
+        do i_rid_maxi = 1, ds_para%nb_rid_maxi
+            i_elem = ds_para%v_rid_maxi(i_rid_maxi)
+            if (.not.v_list_ma(i_elem)) then
+                elem_nbnode = v_connex_longcum(i_elem+1)-v_connex_longcum(i_elem)
+                do i_elem_node = 1, elem_nbnode
+                    nunolo = v_connex(v_connex_longcum(i_elem)+i_elem_node-1)
+                    if (v_list_no(nunolo)) then
+                        v_list_in(nunolo) = .true._1
+                        v_list_sb(nunolo) = .true._1
+                        v_loca_sb(nunolo) = .true._1
+                    endif
+                enddo
+            endif
+        enddo
+    else
+        do i_elem = 1, nb_elem
+            if (.not.v_list_ma(i_elem)) then
+                elem_nbnode = v_connex_longcum(i_elem+1)-v_connex_longcum(i_elem)
+                do i_elem_node = 1, elem_nbnode
+                    nunolo = v_connex(v_connex_longcum(i_elem)+i_elem_node-1)
+                    if (v_list_no(nunolo)) then
+                        v_list_in(nunolo) = .true._1
+                        v_list_sb(nunolo) = .true._1
+                        v_loca_sb(nunolo) = .true._1
+                    endif
+                enddo
+            endif
+        enddo
+    endif
 !
 ! - Number of nodes of interface
 !
@@ -285,24 +306,28 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
 !
 ! - Create list of nodes for EF correctors
 !
-    do i_node = 1, nb_node
-        if (v_list_sb(i_node)) then
-            node_nbelem = v_coninv_longcum(i_node+1)-v_coninv_longcum(i_node)
-            do i_node_elem = 1, node_nbelem
-                elem_nume = v_coninv(v_coninv_longcum(i_node)+i_node_elem-1)
-                if (.not.v_list_ma(elem_nume)) then
-                    elem_nbnode = v_connex_longcum(elem_nume+1)-v_connex_longcum(elem_nume)
-                    do i_elem_node = 1, elem_nbnode
-                        nunolo = v_connex(v_connex_longcum(elem_nume)+i_elem_node-1)
-                        v_loca_sb(nunolo) = .true._1
+    if (l_corr_ef) then
+        do i_couche = 1, nb_layer_sub+1
+            do i_node = 1, nb_node
+                if (v_list_sb(i_node)) then
+                    node_nbelem = v_coninv_longcum(i_node+1)-v_coninv_longcum(i_node)
+                    do i_node_elem = 1, node_nbelem
+                        elem_nume = v_coninv(v_coninv_longcum(i_node)+i_node_elem-1)
+                        if (v_list_ma(elem_nume)) then
+                            elem_nbnode = v_connex_longcum(elem_nume+1)-v_connex_longcum(elem_nume)
+                            do i_elem_node = 1, elem_nbnode
+                                nunolo = v_connex(v_connex_longcum(elem_nume)+i_elem_node-1)
+                                v_loca_sb(nunolo) = .true._1
+                            enddo
+                        endif
                     enddo
                 endif
             enddo
-        endif
-    enddo
-    do i_node = 1, nb_node
-        v_list_sb(i_node) = v_loca_sb(i_node)
-    enddo
+            do i_node = 1, nb_node
+                v_list_sb(i_node) = v_loca_sb(i_node)
+            enddo
+        enddo
+    endif
 !
 ! - Number of nodes for EF correcteurs
 !
@@ -339,9 +364,9 @@ integer, intent(in)           :: v_list_rid(nb_node_rid)
 !
     AS_DEALLOCATE(vl=v_list_ma)
     AS_DEALLOCATE(vl=v_list_no)
+    AS_DEALLOCATE(vl=v_loca_no)
     AS_DEALLOCATE(vl=v_list_in)
     AS_DEALLOCATE(vl=v_list_sb)
     AS_DEALLOCATE(vl=v_loca_sb)
-    AS_DEALLOCATE(vl=v_loca_no)
 !
 end subroutine
