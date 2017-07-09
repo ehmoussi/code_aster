@@ -216,13 +216,13 @@ base_d3=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                                  NOM_CHAM     = 'SIEF_NOEU',),
                  NUME_ORDRE = 1,);
 
-# Avec DOMAINE_INCLUS
+# Avec DOMAINE_MINI
 mesh3=DEFI_DOMAINE_REDUIT(reuse=mesh3,INFO=2,
             BASE_PRIMAL=base_p3,
             BASE_DUAL=base_d3,
             NOM_DOMAINE='RID',
             NOM_INTERFACE='INF',
-            DOMAINE_INCLUS=_F(GROUP_MA='S_inf'),
+            DOMAINE_MINI=_F(GROUP_MA='S_inf'),
             );
 
 TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh3,

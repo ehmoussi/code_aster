@@ -273,6 +273,12 @@ implicit none
         character(len=24) :: grelem_rid
 ! ----- Number of layers in the construction of RID
         integer           :: nb_layer_ma
+! ----- The RID in a restricted domain?
+        aster_logical     :: l_rid_maxi
+! ----- List of elements restricted
+        integer, pointer  :: v_rid_maxi(:)
+! ----- Number of elements restricted
+        integer           :: nb_rid_maxi
 ! ----- Name of group of nodes for interface
         character(len=24) :: grnode_int
 ! ----- Flag for EF corrector?
