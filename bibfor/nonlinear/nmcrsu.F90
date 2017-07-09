@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/GetResi.h"
 #include "asterfort/getAdapEvent.h"
+#include "asterfort/getAdapAction.h"
 !
 character(len=19) :: sddisc, lisins, solveu
 type(NL_DS_Conv), intent(in) :: ds_conv
@@ -67,7 +68,7 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: metlis, modetp
+    character(len=16) :: metlis
     integer :: iret
     real(kind=8) :: pas_mini_elas, valr
     integer :: nb_adap, i_adap
@@ -81,7 +82,7 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact_
     character(len=24) :: tpsevr, tpsevk, tpsesu
     character(len=24) :: tpsavr, tpstpr, tpstpk
     character(len=24) :: tpsext
-    integer :: jtpsex, event_type
+    integer :: jtpsex, event_type, action_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -148,8 +149,7 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 !
 ! --- DECOUPAGE ACTIVE
 !
-    call utdidt('L', sddisc, 'LIST', 'EXIS_DECOUPE',&
-                valk_ = decoup)
+    call utdidt('L', sddisc, 'LIST', 'EXIS_DECOUPE', valk_ = decoup)
     ldeco = decoup.eq.'OUI'
 !
 ! - SI NEWTON/PREDICTION ='DEPL_CALCULE', ALORS ON INTERDIT LA SUBDIVISION
@@ -199,9 +199,8 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 !
     if (metlis .eq. 'AUTO') then
         do i_adap = 1, nb_adap
-            call utdidt('L', sddisc, 'ADAP', 'METHODE', index_ = i_adap,&
-                        valk_ = modetp)
-            if (modetp .eq. 'IMPLEX') then
+            call getAdapAction(sddisc, i_adap, action_type)
+            if (action_type .eq. ADAP_ACT_IMPLEX) then
                 if (.not.l_implex) then
                     call utmess('F', 'MECANONLINE6_4')
                 endif

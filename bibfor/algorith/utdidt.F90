@@ -437,29 +437,6 @@ character(len=*), intent(inout), optional :: valk_
             else if (getset.eq.'E') then
                 v_sddisc_aevr(SIZE_LAEVR*(i_adap-1)+6) = vali
             endif
-        else if (question.eq.'METHODE') then
-            if (getset .eq. 'L') then
-                vali = nint(v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1))
-                if (vali .eq. 1) valk = 'FIXE'
-                if (vali .eq. 2) valk = 'DELTA_GRANDEUR'
-                if (vali .eq. 3) valk = 'ITER_NEWTON'
-                if (vali .eq. 4) valk = 'FORMULE'
-                if (vali .eq. 5) valk = 'IMPLEX'
-            else if (getset.eq.'E') then
-                if (valk .eq. 'FIXE') then
-                    v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1) = 1
-                else if (valk.eq.'DELTA_GRANDEUR') then
-                    v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1) = 2
-                else if (valk.eq.'ITER_NEWTON') then
-                    v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1) = 3
-                else if (valk.eq.'FORMULE') then
-                    v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1) = 4
-                else if (valk.eq.'IMPLEX') then
-                    v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+1) = 5
-                else
-                    ASSERT(.false.)
-                endif
-            endif
         else if (question.eq.'PCENT_AUGM') then
             if (getset .eq. 'L') then
                 valr = v_sddisc_atpr(SIZE_LATPR*(i_adap-1)+2)
