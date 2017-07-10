@@ -113,6 +113,8 @@ integer, intent(out) :: ivariexte
             else
                 tabcod(GRADVELO) = 1
             endif
+        elseif (name_exte(i_exte) .eq. 'HYGR') then
+            tabcod(HYGR) = 1
         endif
     end do 
     call iscode(tabcod, variextecode(1), 30)

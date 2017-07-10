@@ -87,5 +87,6 @@
 #define ELTSIZE2  2
 #define COORGA    3
 #define GRADVELO  4
+#define HYGR      5
 
 

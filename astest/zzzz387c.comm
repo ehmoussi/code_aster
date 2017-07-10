@@ -20,7 +20,7 @@
 # MODELISATION 3D : FLUAGE PROPRE avec effet de l'age et de la température BETON_BURGER
 # -----------------------------------------------------
 
-# Attention !  Ce test vérifie l'usage des varaibles de commandes externes (#23755)
+# Attention !  Ce test vérifie l'usage des variables de commandes externes (#23755 et #24129)
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
@@ -226,7 +226,6 @@ UREF28=STAT_NON_LINE( MODELE=MO,
                  ),
                    COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterburgerageing_mod',
-                                #LIBRAIRIE='BurgerAgeing_mod.so',
                                 UNITE_LIBRAIRIE=39,
                                 RESI_INTE_MAXI=1e-11,
                                 VERI_BORNE='MESSAGE',
@@ -250,7 +249,6 @@ UREF29=STAT_NON_LINE( MODELE=MO,
                  ),
                    COMPORTEMENT=_F(RELATION='MFRONT',
                                 NOM_ROUTINE='asterburgerageing_mod',
-                                #LIBRAIRIE='BurgerAgeing_mod.so',
                                 UNITE_LIBRAIRIE=39,
                                 RESI_INTE_MAXI=1e-11,
                                 VERI_BORNE='SANS',

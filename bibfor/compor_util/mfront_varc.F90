@@ -23,7 +23,7 @@ subroutine mfront_varc(fami   , kpg      , ksp, imate, &
                        predef , dpred    , &
                        neps   , epsth    , depsth)
 !
-use calcul_module, only : ca_vext_eltsize1_, ca_vext_coorga_, ca_vext_eltsize2_, ca_vext_gradvelo_
+use calcul_module, only : ca_vext_eltsize1_, ca_vext_hygrm_, ca_vext_hygrp_
 !
 implicit none
 !
@@ -208,6 +208,12 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
         else
             if (list_varc(i_varc) .eq. 'ELTSIZE1') then
                 predef(i_varc) = ca_vext_eltsize1_
+            endif
+            if (list_varc(i_varc) .eq. 'HYGR') then
+                vrcm = ca_vext_hygrm_
+                vrcp = ca_vext_hygrp_
+                predef(i_varc) = vrcm
+                dpred(i_varc)  = vrcp-vrcm
             endif
         endif
     end do
