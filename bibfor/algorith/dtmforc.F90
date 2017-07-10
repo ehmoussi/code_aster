@@ -201,7 +201,7 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
     one_proc = .false.
     call asmpi_comm('GET', mpicou)
     call asmpi_info(mpicou,rank=i_proc , size=nb_proc)    
-    if(nb_proc .eq. 1) one_proc = .true.
+    if(nb_proc .eq. 1 .or. nbnli .le. nb_proc) one_proc = .true.
 !
 ! ----- MPI initialisation
 ! ----- Temporary non linear force 
