@@ -77,7 +77,7 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 !
 !   -0.2- Local variables
     aster_logical    :: instrum
-    integer          :: nbmode, ntotex, nbnli, itime, ind
+    integer          :: nbmode, ntotex, nbnli, itime
     integer          :: iret, i, nlcase, nlacc, nl_type, inl
     real(kind=8)     :: temps, dt, r8b, tps(7)
     character(len=7) :: casek7
