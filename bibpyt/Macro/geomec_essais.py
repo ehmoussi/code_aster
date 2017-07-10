@@ -701,7 +701,7 @@ def essai_TND_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, 
 
     # recuperation du nombre de VI associe a la LdC
     nom_lc = COMPORTEMENT.List_F()[0]['RELATION']
-    num_lc, nb_vari = catalc.get_info(nom_lc)
+    num_lc, nb_vari, nb_vari_exte = catalc.get_info(nom_lc)
     assert type(nb_vari) is int and nb_vari > 0
 
     # critere de liquefaction (ru = abs(DeltaPeau/Sig'vertical) >= ru_max)
@@ -1290,7 +1290,7 @@ def essai_TD_A(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, I
 
     # recuperation du nombre de VI associe a la LdC
     nom_lc = COMPORTEMENT.List_F()[0]['RELATION']
-    num_lc, nb_vari = catalc.get_info(nom_lc)
+    num_lc, nb_vari, nb_vari_exte = catalc.get_info(nom_lc)
     assert type(nb_vari) is int and nb_vari > 0
 
     # dict permettant la gestion des graphiques
@@ -1550,7 +1550,7 @@ def essai_TD_NA(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE, 
 
     # recuperation du nombre de VI associe a la LdC
     nom_lc = COMPORTEMENT.List_F()[0]['RELATION']
-    num_lc, nb_vari = catalc.get_info(nom_lc)
+    num_lc, nb_vari, nb_vari_exte = catalc.get_info(nom_lc)
     assert type(nb_vari) is int and nb_vari > 0
 
     # dict permettant la gestion des graphiques
@@ -1795,7 +1795,7 @@ def essai_OEDO_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE,
 
     # recuperation du nombre de VI associe a la LdC
     nom_lc = COMPORTEMENT.List_F()[0]['RELATION']
-    num_lc, nb_vari = catalc.get_info(nom_lc)
+    num_lc, nb_vari, nb_vari_exte = catalc.get_info(nom_lc)
     assert type(nb_vari) is int and nb_vari > 0
 
     # dict permettant la gestion des graphiques
@@ -2045,7 +2045,7 @@ def essai_ISOT_C(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERGENCE,
 
     # recuperation du nombre de VI associe a la LdC
     nom_lc = COMPORTEMENT.List_F()[0]['RELATION']
-    num_lc, nb_vari = catalc.get_info(nom_lc)
+    num_lc, nb_vari, nb_vari_exte = catalc.get_info(nom_lc)
     assert type(nb_vari) is int and nb_vari > 0
 
     # dict permettant la gestion des graphiques
