@@ -43,6 +43,8 @@ implicit none
 #include "asterfort/thmlec.h"
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaElas.h"
+#include "asterfort/thmGetParaTher.h"
+#include "asterfort/thmMatrHooke.h"
 #include "asterfort/tebiot.h"
 !
 ! **********************************************************************
@@ -200,7 +202,12 @@ implicit none
 !
     if (ds_thm%ds_elem%l_dof_meca .or. ds_thm%ds_elem%l_weak_coupling) then
         call thmGetParaElas(imate, kpi, t, ndim)
+        call thmMatrHooke(angl_naut)
     endif
+!
+! - Get thermic parameters
+!
+    call thmGetParaTher(imate, kpi, t)
 !
 ! - Compute coupling law
 !
@@ -249,9 +256,9 @@ implicit none
                     ndim, dimdef, dimcon, nvim, yate,&
                     addeme, adcome, addete, defgem, congem,&
                     congep, vintm, vintp, addep1, addep2,&
-                    dsde, deps, p1, p2, t,&
+                    dsde, deps, p1, p2, &
                     dt, retcom, dp1, dp2, sat,&
-                    tbiot, angl_naut, aniso)
+                    tbiot, angl_naut)
         if (retcom .ne. 0) then
             goto 999
         endif

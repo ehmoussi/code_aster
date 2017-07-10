@@ -21,26 +21,29 @@ subroutine calcme(option, compor, thmc, meca, imate,&
                   ndim, dimdef, dimcon, nvimec, yate,&
                   addeme, adcome, addete, defgem, congem,&
                   congep, vintm, vintp, addep1, addep2,&
-                  dsde, deps, p1, p2, t,&
+                  dsde, deps, p1, p2, &
                   dt, retcom, dp1, dp2, sat,&
-                  tbiot, ang2, aniso)
+                  tbiot, angl_naut)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/calela.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/dsipdp.h"
 #include "asterfort/elagon.h"
 #include "asterfort/lchbr2.h"
 #include "asterfort/nmbarc.h"
-#include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
 #include "asterfort/lcidbg.h"
+#include "asterfort/thmTherElas.h"
 !
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
-
+!
+    real(kind=8), intent(in) :: angl_naut(3)
 
 
 ! **********************************************************************
@@ -75,17 +78,13 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: i, j, nelas, nresma, aniso, numlc
-    real(kind=8) :: deps(6), t, dt, p1, p2
+    integer :: i, j, numlc
+    real(kind=8) :: deps(6), dt, p1, p2
     real(kind=8) :: young, nu, alpha0, carcri(*), instam, instap
-    parameter     (nelas = 4  )
-    parameter     (nresma = 18)
-    real(kind=8) :: elas(nelas)
-    character(len=8) :: ncra1(nelas), fami, poum
-    integer :: icodre(nresma)
+    character(len=8) :: fami, poum
     real(kind=8) :: dsdeme(6, 6)
-    real(kind=8) :: angma1(3), ang2(3), depstr(6)
-    real(kind=8) :: d(6, 6), mdal(6), dalal
+    real(kind=8) :: angma1(3), depstr(6)
+    real(kind=8) :: mdal(6), dalal
     character(len=16) :: complg(20)
     aster_logical :: yapre2
 ! ======================================================================
@@ -101,31 +100,16 @@ implicit none
     integer :: ndt, ndi, kpg, ksp
     common /tdim/   ndt  , ndi
 !
-    data ncra1 / 'E','NU','ALPHA','RHO' /
-! ======================================================================
-! --- RECUPERATION DES DONNEES MATERIAU DANS DEFI_MATERIAU -------------
-! ======================================================================
-    fami='FPG1'
-    kpg=1
-    ksp=1
-    poum='+'
+! - Initializations
+!
+    fami      = 'FPG1'
+    kpg       = 1
+    ksp       = 1
+    poum      = '+'
     mult_comp = ' '
-!
-    rac2 = sqrt(2.0d0)
-!
-    if ((meca.eq.'CJS') .or. (meca.eq.'CAM_CLAY') .or. (meca.eq.'BARCELONE') .or.&
-        (meca.eq.'LAIGLE') .or. (meca.eq.'HOEK_BROWN_EFF') .or. (meca.eq.'HOEK_BROWN_TOT')&
-        .or. (meca.eq.'MAZARS') .or. (meca.eq.'ENDO_ISOT_BETON')) then
-        if (option(10:14) .eq. '_ELAS') then
-            call utmess('F', 'ALGORITH_67')
-        endif
-    endif
-    call rcvalb(fami, kpg, ksp, poum, imate,&
-                ' ', 'ELAS', 1, 'TEMP', [t],&
-                3, ncra1(1), elas(1), icodre, 0)
-    young = elas(1)
-    nu = elas(2)
-    alpha0 = elas(3)
+    retcom    = 0
+    mectru    = .false.
+    rac2      = sqrt(2.0d0)
 ! ======================================================================
 ! --- RECUPERATION OU NON DE LA PRESSION DE GAZ
 ! ======================================================================
@@ -134,16 +118,7 @@ implicit none
         (thmc.eq.'LIQU_GAZ') .or. (thmc.eq.'LIQU_AD_GAZ_VAPE')) then
         yapre2 = .true.
     endif
-! ======================================================================
-! --- INITIALISATION INDICATEUR RETCOM
-! ======================================================================
-    retcom = 0
-    mectru = .false.
-! ======================================================================
-! --- CALCUL DES CONTRAINTES -------------------------------------------
-! ======================================================================
-! --- LOI ELASTIQUE ----------------------------------------------------
-! ======================================================================
+
     if ((meca.eq.'ELAS')) then
 !
 !   DANS LE CAS ELASTIQUE ON REPASSE AUX CONTRAINTES RELLES POUR APPLIQU
@@ -156,30 +131,30 @@ implicit none
             congep(adcome+i-1)= congep(adcome+i-1)/rac2
         end do
 !
-!    CALCUL DE LA MATRICE DE HOOK DANS LE REPERE GLOBAL
+! ----- Compute thermic quantities
 !
-        call calela(ang2, mdal, dalal, aniso, d)
+        call thmTherElas(angl_naut, mdal, dalal)
 !
         if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
             do i = 1, 3
                 do j = 1, 3
                     dsde(adcome-1+i,addeme+ndim-1+j)= dsde(adcome-1+i,&
-                    addeme+ndim-1+j)+d(i,j)
+                    addeme+ndim-1+j)+ds_thm%ds_material%d(i,j)
                 end do
                 do j = 4, 6
                     dsde(adcome-1+i,addeme+ndim-1+j)= dsde(adcome-1+i,&
-                    addeme+ndim-1+j)+d(i,j)/(0.5*rac2)
+                    addeme+ndim-1+j)+ds_thm%ds_material%d(i,j)/(0.5*rac2)
                 end do
             end do
 !
             do i = 4, 6
                 do j = 1, 3
                     dsde(adcome-1+i,addeme+ndim-1+j)= dsde(adcome-1+i,&
-                    addeme+ndim-1+j)+d(i,j)*rac2
+                    addeme+ndim-1+j)+ds_thm%ds_material%d(i,j)*rac2
                 end do
                 do j = 4, 6
                     dsde(adcome-1+i,addeme+ndim-1+j)= dsde(adcome-1+i,&
-                    addeme+ndim-1+j)+d(i,j)*2.d0
+                    addeme+ndim-1+j)+ds_thm%ds_material%d(i,j)*2.d0
                 end do
             end do
         endif
@@ -188,7 +163,7 @@ implicit none
         if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
             do i = 1, 6
                 do j = 1, 6
-                    congep(adcome+i-1)=congep(adcome+i-1)+d(i,j)*&
+                    congep(adcome+i-1)=congep(adcome+i-1)+ds_thm%ds_material%d(i,j)*&
                     depstr(j)
                 end do
             end do
@@ -255,6 +230,9 @@ implicit none
         complg(3) = compor(3)
         sipm=congem(adcome+6)
         sipp=congep(adcome+6)
+        young  = ds_thm%ds_material%e
+        nu     = ds_thm%ds_material%nu
+        alpha0 = ds_thm%ds_material%alpha
 !
         call elagon(ndim, imate, tbiot(1),&
                     alpha0, deps, young, &
@@ -378,15 +356,15 @@ implicit none
         endif
     endif
 
-!! ======================================================================
-!! --- AFFICHAGE DES DONNEES NECESSAIRES POUR REJOUER CALCUL SI ---------
-!! --- ECHEC DU MODELE DE COMPORTEMENT - RETCOM.EQ.1 --------------------
-!! ======================================================================
+! ======================================================================
+! --- AFFICHAGE DES DONNEES NECESSAIRES POUR REJOUER CALCUL SI ---------
+! --- ECHEC DU MODELE DE COMPORTEMENT - RETCOM.EQ.1 --------------------
+! ======================================================================
     if(retcom .eq. 1) then
         call lcidbg(fami, kpg, ksp, typmod, complg, &
                     carcri, instam, instap, 6, & 
                     defgem(addeme+ndim),deps, 6,&
                     congem(adcome), vintm, option) 
     endif
-! ======================================================================
+!
 end subroutine

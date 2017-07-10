@@ -18,12 +18,10 @@
 
 !
 !
-interface 
-    subroutine calela(angmas, mdal, dalal, aniso, d)
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: mdal(6)
-        real(kind=8) :: dalal
-        integer :: aniso
-        real(kind=8) :: d(6, 6)
-    end subroutine calela
-end interface 
+interface
+    subroutine thmTherElas(angl_naut, mdal, dalal)
+        real(kind=8), intent(in) :: angl_naut(3)
+        real(kind=8), intent(out) :: mdal(6)
+        real(kind=8), intent(out) :: dalal
+    end subroutine thmTherElas
+end interface

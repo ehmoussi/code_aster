@@ -27,7 +27,7 @@ use THM_module
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/calela.h"
+#include "asterfort/thmTherElas.h"
 #include "asterfort/dilata.h"
 #include "asterfort/tebiot.h"
 #include "asterfort/unsmfi.h"
@@ -39,7 +39,7 @@ implicit none
     real(kind=8), intent(out) :: cs0
     real(kind=8) :: phi0, em, tbiot(6), epsvm, epsv, depsv
     real(kind=8) :: angmas(3), t, dalal, mdal(6), young, nu
-    real(kind=8) :: alphfi, rbid(6, 6), cbiot, unsks, alpha0, k0
+    real(kind=8) :: alphfi, cbiot, unsks, alpha0, k0
     real(kind=8), parameter :: eps = 1.d-21
 !
 ! =====================================================================
@@ -63,7 +63,10 @@ implicit none
 ! =====================================================================
         call unsmfi(imate, phi0, t, tbiot, aniso, cs0)
         call dilata(angmas, phi0, tbiot, alphfi)
-        call calela(angmas, mdal, dalal, aniso, rbid)
+!
+! ----- Compute thermic quantities
+!
+        call thmTherElas(angmas, mdal, dalal)
 !
 ! =====================================================================
 ! --- SI ABSENCE DE MECANIQUE -----------------------------------------

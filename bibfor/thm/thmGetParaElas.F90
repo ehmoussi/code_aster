@@ -85,6 +85,9 @@ implicit none
                        g  = g)
     if (ds_thm%ds_material%elas_id .eq. 3) then
         ds_thm%ds_material%g_ln = g
+        ds_thm%ds_material%g    = g
+    else
+        ds_thm%ds_material%g    = g
     endif
 !
 ! - Read parameters (dilatation)
