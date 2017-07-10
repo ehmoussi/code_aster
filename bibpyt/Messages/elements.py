@@ -195,8 +195,8 @@ Conseil :
     38 : _(u"""
  Élément de poutre %(k1)s :
  Vous faites des calculs avec l'option GROT_GDEP. Lors de la réactualisation de la géométrie,
- un angle d'orientation de la poutre %(k1)s varie de plus de PI/8.
- Angle concerné %(k2)s avec un saut de %(r1)f degrés.
+ une rotation pour la poutre %(k1)s varie de plus de PI/8.
+ Variation d'angle %(k2)s de %(r1)f degrés.
 
  * Cela peut arriver lorsque l'axe de la poutre correspond à l'axe global Z. Dans ce cas le
  calcul des angles définissant l'orientation de la poutre peut présenter une indétermination.

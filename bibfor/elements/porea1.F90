@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine porea1(nno, nc, deplm, deplp, geom,&
-                  gamma, vecteu, pgl, xl, angp)
+                  gamma, vecteu, pgl, xl1, angp)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -26,23 +26,26 @@ subroutine porea1(nno, nc, deplm, deplp, geom,&
 #include "asterfort/assert.h"
 #include "asterfort/gareac.h"
 #include "asterfort/matrot.h"
+#include "asterfort/normev.h"
 #include "asterfort/tecael.h"
+#include "asterfort/trigom.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vdiff.h"
 #include "blas/ddot.h"
     integer :: nno, nc
     real(kind=8) :: deplm(nno*nc), deplp(nno*nc), geom(3, nno), gamma
 !
-    real(kind=8) :: pgl(3, 3), xl, angp(3)
+    real(kind=8) :: pgl(3, 3), xl1, angp(3)
     aster_logical :: vecteu
 !
+! --------------------------------------------------------------------------------------------------
 !
 !     CALCUL DE LA MATRICE DE PASSAGE GLOBALE/LOCALE EN TENANT COMPTE
 !     DE LA GEOMETRIE REACTUALISEE POUR LES POUTRES AINSI QUE LA
 !     LONGUEUR DE LA POUTRE
 !     POUR LES OPTIONS FULL_MECA RAPH_MECA ET RIGI_MECA_TANG
 !
-! --- ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  NNO    : NOMBRE DE NOEUDS
 ! IN  NC     : NOMBRE DE COMPOSANTE DU CHAMP DE DEPLACEMENTS
@@ -56,70 +59,55 @@ subroutine porea1(nno, nc, deplm, deplp, geom,&
 ! OUT ANGP   : ANGLES NAUTIQUES ACTUALISEE
 !              ATTENTION ANGP(3) EST DIFFERENT DE GAMMA1 QUI A SERVIT
 !              POUR CALCUL PGL
-! --- ------------------------------------------------------------------
 !
-!     VARIABLES LOCALES
+! --------------------------------------------------------------------------------------------------
+!
     integer :: i
-    real(kind=8) :: utg(14), xug(6), xd(3), xl2, alfa1, beta1, alfa0, beta0
-    real(kind=8) :: xugm(6), dgamma, tet1, tet2, gamma1, xdm(3)
+    real(kind=8) :: utg(14), xug(6), xd0(3), xd1(3), alfa1, beta1, xdn0(3), xdn1(3), cosangle
+    real(kind=8) :: dgamma, tet1, tet2, gamma1, xl0
     real(kind=8) :: ang1(3)
 !
     integer :: iadzi, iazk24
     character(len=24) :: valkm(2)
     real(kind=8) :: valrm
 !
+! --------------------------------------------------------------------------------------------------
     ASSERT(nno.eq.2)
-!
-!     CALCUL DU VECTEUR XLOCAL AU TEMPS T-
-    do 20 i = 1, 3
-        xug(i) = deplm(i) + geom(i,1)
-        xug(i+3) = deplm(i+nc) + geom(i,2)
- 20 end do
-    call vdiff(3, xug(4), xug(1), xd)
-!     CALCUL DES DEUX PREMIERS ANGLES NAUTIQUES AU TEMPS T-
-    call angvx(xd, alfa0, beta0)
-!
-!     DEPLACEMENT TOTAL A T+
-    do 110 i = 1, nno*nc
+!   Calcul du vecteur xlocal au temps t-
+    do i = 1, 3
+        xug(i)   = geom(i,1) + deplm(i)
+        xug(i+3) = geom(i,2) + deplm(i+nc)
+    enddo
+    call vdiff(3, xug(4), xug(1), xd0)
+!   Déplacement total a t+
+    do i = 1, nno*nc
         utg(i) = deplm(i) + deplp(i)
-110 continue
-!     CALCUL DU VECTEUR XLOCAL AU TEMPS T+
-    do 120 i = 1, 3
-        xug(i) = utg(i) + geom(i,1)
-        xug(i+3) = utg(i+nc) + geom(i,2)
-120 end do
-    call vdiff(3, xug(4), xug(1), xd)
-!     CALCUL DES DEUX PREMIERS ANGLES NAUTIQUES AU TEMPS T+
-    call angvx(xd, alfa1, beta1)
-!     SI DIFF(ANGLE) > PI/8
-    if (abs(alfa0 - alfa1) .gt. 0.3927d+00) then
+    enddo
+!   Calcul du vecteur xlocal au temps t+
+    do i = 1, 3
+        xug(i)   = geom(i,1) + utg(i)
+        xug(i+3) = geom(i,2) + utg(i+nc)
+    enddo
+    call vdiff(3, xug(4), xug(1), xd1)
+!   Angle entre xd0 et xd1
+    xdn0(:) = xd0(:)
+    xdn1(:) = xd1(:)
+    call normev(xdn0, xl0)
+    call normev(xdn1, xl1)
+!   si angle > pi/8 : cos(angle) < 0.9238
+    cosangle = ddot(3,xdn0,1,xdn1,1)
+    if (cosangle .lt. 0.9238) then
         call tecael(iadzi, iazk24)
         valkm(1) = zk24(iazk24+3-1)
-        valkm(2) = 'ALPHA'
-        valrm = (alfa0 - alfa1)*r8rddg()
-        call utmess('A', 'ELEMENTS_38', nk=2, valk=valkm, sr=valrm)
-    endif
-    if (abs(beta0 - beta1) .gt. 0.3927d+00) then
-        call tecael(iadzi, iazk24)
-        valkm(1) = zk24(iazk24+3-1)
-        valkm(2) = 'BETA'
-        valrm = (beta0 - beta1)*r8rddg()
-        call utmess('A', 'ELEMENTS_38', nk=2, valk=valkm, sr=valrm)
+        valkm(2) = ' '
+        valrm = trigom('ACOS',cosangle)
+        call utmess('A', 'ELEMENTS_38', nk=2, valk=valkm, sr=cosangle)
     endif
 !
-!     LONGUEUR DE L'ELEMENT AU TEMPS T+
-    xl2=ddot(3,xd,1,xd,1)
-    xl = sqrt(xl2)
     if (vecteu) then
-!        CALCUL DU VECTEUR XLOCAL AU TEMPS T-
-        do 130 i = 1, 3
-            xugm(i ) = geom(i,1) + deplm(i)
-            xugm(i+3) = geom(i,2) + deplm(nc+i)
-130     continue
-        call vdiff(3, xugm(4), xugm(1), xdm)
-!        MISE A JOUR DU 3EME ANGLE NAUTIQUE AU TEMPS T+
-        call gareac(xdm, xd, dgamma)
-!        SI DGAMMA > PI/8
+!       mise a jour du 3eme angle nautique au temps t+
+        call gareac(xd0, xd1, dgamma)
+!       si dgamma > pi/8
         if (abs(dgamma) .gt. 0.3927d+00) then
             call tecael(iadzi, iazk24)
             valkm(1) = zk24(iazk24+3-1)
@@ -131,16 +119,19 @@ subroutine porea1(nno, nc, deplm, deplp, geom,&
         dgamma = 0.d0
     endif
 !
-    tet1 = ddot(3,utg(4),1,xd,1)
-    tet2 = ddot(3,utg(nc+4),1,xd,1)
-    tet1 = tet1/xl
-    tet2 = tet2/xl
+!   calcul des deux premiers angles nautiques au temps t+, pour mémorisation
+    call angvx(xd1, alfa1, beta1)
+!
+    tet1 = ddot(3,utg(4),1,xd1,1)
+    tet2 = ddot(3,utg(nc+4),1,xd1,1)
+    tet1 = tet1/xl1
+    tet2 = tet2/xl1
     gamma1 = gamma + dgamma + (tet1+tet2)/2.d0
-!     SAUVEGARDE DES ANGLES NAUTIQUES
+!   Sauvegarde des angles nautiques
     angp(1) = alfa1
     angp(2) = beta1
     angp(3) = gamma + dgamma
-!     MATRICE DE PASSAGE GLOBAL -> LOCAL
+!   Matrice de passage global -> local
     ang1(1) = alfa1
     ang1(2) = beta1
     ang1(3) = gamma1
