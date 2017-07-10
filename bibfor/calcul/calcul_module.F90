@@ -270,10 +270,12 @@ implicit none
     real(kind=8) :: ca_vext_eltsize2_(9)
     real(kind=8) :: ca_vext_coorga_(27,3)
     real(kind=8) :: ca_vext_gradvelo_(9)
+    real(kind=8) :: ca_vext_hygrm_, ca_vext_hygrp_
 !     ca_vext_eltsize1_ : size of element
 !     ca_vext_eltsize2_ : size of element (for ENDO_PORO_BETON)
 !     ca_vext_coorga_   : coordinates of Gauss points
 !     ca_vext_gradvelo_ : gradient of velocity
+!     ca_vext_hygrm_  and ca_vext_hygrp_: hygrometry 
 !======================================================================
     integer :: ca_nfpgmx_
     parameter (ca_nfpgmx_=10)

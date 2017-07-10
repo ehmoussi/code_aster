@@ -30,6 +30,7 @@ use calcul_module, only : calcul_status
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/Behaviour_type.h"
 #include "asterfort/lc0001.h"
 #include "asterfort/lc0002.h"
 #include "asterfort/lc0003.h"
@@ -159,6 +160,8 @@ implicit none
 #include "asterfort/lc9999.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcpto.h"
+#include "asterfort/isdeco.h"
+#include "asterfort/calcExternalStateVariable5.h"
 !
 ! aslint: disable=W1501,W1504
 !
@@ -269,7 +272,7 @@ implicit none
 !             RETURN1 EN CAS DE NON CONVERGENCE LOCALE
 !     ----------------------------------------------------------------
 !
-
+    integer :: tabcod(30), variextecode(1)
 !     ----------------------------------------------------------------
 !     ------------------------------------------------------------------
 !
@@ -282,6 +285,19 @@ implicit none
                         ksp, imate)
         endif
     endif
+!
+! - Prepare some external state variables
+!
+    tabcod(:) = 0
+    variextecode(1) = nint(carcri(IVARIEXTE))
+    call isdeco(variextecode(1), tabcod, 30)
+    if (tabcod(HYGR) .eq. 1) then
+        call calcExternalStateVariable5(fami, kpg, ksp, imate)
+    endif
+!
+! --------------------------------------------------------------------------------------------------
+!
+
 !
     select case (numlc)
 !

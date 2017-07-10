@@ -440,4 +440,8 @@ FIN()
    Si vous voulez simuler des grandes déformations, utilisez plutôt GDEF_LOG.
 """),
 
+    94 : _(u"""
+Il faut déclarer FONC_DESORP sous ELAS_FO pour calculer l'hygrométrie.
+"""),
+
 }
