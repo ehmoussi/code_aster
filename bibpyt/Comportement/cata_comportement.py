@@ -508,7 +508,11 @@ class CataLoiComportement(Singleton):
         if self.debug:
             print 'catalc.get_info - args =', loi
         comport = self.get(loi)
-        return comport.num_lc, comport.nb_vari, len(comport.exte_vari)
+        if (comport.exte_vari is None):
+            nb = 0
+        else:
+            nb = len(comport.exte_vari)
+        return comport.num_lc, comport.nb_vari, nb
 
     def get_vari(self, loi):
         """Retourne la liste des variables internes
