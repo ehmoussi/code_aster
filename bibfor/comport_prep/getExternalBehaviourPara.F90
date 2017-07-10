@@ -130,7 +130,6 @@ character(len=16), optional, intent(out) :: type_cpla_out_
 !
     if (l_mfront_proto .or. l_mfront_offi) then
         if (associated(v_model_elem) ) then
-            ASSERT(elem_type .ne. 0)
 ! --------- For *_NON_LINE cases
             call comp_read_typmod(mesh     , v_model_elem, elem_type    ,&
                                   keywf    , i_comp      , rela_comp    , type_cpla_in,&

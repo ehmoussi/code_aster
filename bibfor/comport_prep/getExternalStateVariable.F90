@@ -96,11 +96,23 @@ integer, intent(out) :: ivariexte
         if (name_exte(i_exte) .eq. 'ELTSIZE1') then
             tabcod(ELTSIZE1) = 1
         elseif (name_exte(i_exte) .eq. 'ELTSIZE2') then
-            tabcod(ELTSIZE2) = 1
+            if (l_mfront_proto .or. l_mfront_offi) then
+                call utmess('I', 'COMPOR2_25', sk = name_exte(i_exte))
+            else
+                tabcod(ELTSIZE2) = 1
+            endif
         elseif (name_exte(i_exte) .eq. 'COORGA') then
-            tabcod(COORGA) = 1
+            if (l_mfront_proto .or. l_mfront_offi) then
+                call utmess('I', 'COMPOR2_25', sk = name_exte(i_exte))
+            else
+                tabcod(COORGA) = 1
+            endif
         elseif (name_exte(i_exte) .eq. 'GRADVELO') then
-            tabcod(GRADVELO) = 1
+            if (l_mfront_proto .or. l_mfront_offi) then
+                call utmess('I', 'COMPOR2_25', sk = name_exte(i_exte))
+            else
+                tabcod(GRADVELO) = 1
+            endif
         endif
     end do 
     call iscode(tabcod, variextecode(1), 30)
