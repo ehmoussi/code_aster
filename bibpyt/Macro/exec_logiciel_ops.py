@@ -86,6 +86,8 @@ class ExecProgram( object ):
     def __init__( self, step ):
         """Initialisation"""
         self.step = step
+        # Other attributes are initialized by configure.
+        # Ensure that `cleanUp()` has the necessary attrs
 
     def configure( self, kwargs ):
         """Pre-execution function, read the keywords"""
@@ -159,13 +161,18 @@ class ExecMesher( ExecProgram ):
     :uniteAster: UniteAster object
     """
 
+    def __init__(self, *args):
+        """Initialization"""
+        super(ExecMesher, self).__init__(*args)
+        self.fileIn = None
+        self.fileOut = None
+        self.format = None
+
     def configure( self, kwargs ):
         """Pre-execution function, read the keywords"""
         super(ExecMesher, self).configure( kwargs )
         self.uniteAster = UniteAster()
         self.fileIn = self.uniteAster.Nom( kwargs['MAILLAGE']['UNITE_GEOM'] )
-        self.fileOut = None
-        self.format = None
 
     def cleanUp( self ):
         """Cleanup function"""
@@ -191,6 +198,11 @@ class ExecSalome( ExecMesher ):
     :pid: port id of the SALOME session
     """
 
+    def __init__(self, *args):
+        """Initialization"""
+        super(ExecSalome, self).__init__(*args)
+        self.pid = None
+
     def configure( self, kwargs ):
         """Pre-execution function, read the keywords"""
         super(ExecSalome, self).configure( kwargs )
@@ -211,6 +223,8 @@ class ExecSalome( ExecMesher ):
 
     def cleanUp( self ):
         """Close the SALOME session"""
+        if not self.pid:
+            return
         self.args = ['shell', '-p', self.pid,
                      'killSalomeWithPort.py', 'args:{}'.format(self.pid)]
         self.executeCommand(silent=True)
@@ -231,7 +245,11 @@ class ExecGmsh( ExecMesher ):
 
 
 class ExecGibi( ExecMesher ):
-    """Execute Gibi from Code_Aster"""
+    """Execute Gibi from Code_Aster
+
+    Additional attributes:
+    :fileTmp: intermediate file.
+    """
 
     def configure( self, kwargs ):
         """Pre-execution function, read the keywords"""
@@ -252,14 +270,12 @@ class ExecGibi( ExecMesher ):
 
 
 class ExecSalomeScript( ExecProgram ):
-    """Execute a SALOME script using the `salome` launcher
+    """Execute a SALOME script using the `salome` launcher"""
 
-    Additional attributes:
-    :fileOut: the file that Code_Aster will read
-    :format: format of the mesh that will be read by Code_Aster (not the
-             format of fileOut)
-    :uniteAster: UniteAster object
-    """
+    def __init__(self, *args):
+        """Initialization"""
+        super(ExecSalomeScript, self).__init__(*args)
+        self.pid = None
 
     def configure( self, kwargs ):
         """Pre-execution function, read the keywords"""
