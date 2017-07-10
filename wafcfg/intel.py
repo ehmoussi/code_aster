@@ -30,3 +30,6 @@ def configure(self):
     self.environ['FC'] = mpi + 'ifort'
     self.environ['CC'] = mpi + 'icc'
     self.environ['CXX'] = mpi + 'icpc'
+
+    # choose a consistent boost toolset
+    opts.boost_toolset = 'intel'
