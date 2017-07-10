@@ -187,22 +187,22 @@ integer, intent(out) :: codret
         end do
     end do
 !
-    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-!        if (ca_iactif_ .ne. 2) then
-!            call tecael(iadzi, iazk24, noms=0)
-!            nume_elem = zi(iadzi)
-!        endif
-        write(6,*)' '
-        write(6,*)'AVANT APPEL MFRONT, INSTANT=',time(2)+dtime
-        write(6,*)'DEFORMATIONS INSTANT PRECEDENT STRAN='
-        write(6,'(6(1X,E11.4))') (stran(i),i=1,ntens)
-        write(6,*)'ACCROISSEMENT DE DEFORMATIONS DSTRAN='
-        write(6,'(6(1X,E11.4))') (dstran(i),i=1,ntens)
-        write(6,*)'CONTRAINTES INSTANT PRECEDENT STRESS='
-        write(6,'(6(1X,E11.4))') (sigm(i),i=1,ntens)
-        write(6,*)'NVI=',nstatv,' VARIABLES INTERNES STATEV='
-        write(6,'(10(1X,E11.4))') (vim(i),i=1,nstatv)
-    endif
+!    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+!!        if (ca_iactif_ .ne. 2) then
+!!            call tecael(iadzi, iazk24, noms=0)
+!!            nume_elem = zi(iadzi)
+!!        endif
+!        write(6,*)' '
+!        write(6,*)'AVANT APPEL MFRONT, INSTANT=',time(2)+dtime
+!        write(6,*)'DEFORMATIONS INSTANT PRECEDENT STRAN='
+!        write(6,'(6(1X,E11.4))') (stran(i),i=1,ntens)
+!        write(6,*)'ACCROISSEMENT DE DEFORMATIONS DSTRAN='
+!        write(6,'(6(1X,E11.4))') (dstran(i),i=1,ntens)
+!        write(6,*)'CONTRAINTES INSTANT PRECEDENT STRESS='
+!        write(6,'(6(1X,E11.4))') (sigm(i),i=1,ntens)
+!        write(6,*)'NVI=',nstatv,' VARIABLES INTERNES STATEV='
+!        write(6,'(10(1X,E11.4))') (vim(i),i=1,nstatv)
+!    endif
 !
 ! - Type of matrix for MFront
 !
@@ -237,13 +237,13 @@ integer, intent(out) :: codret
                               drot, pnewdt, nummod)
     endif
 !
-    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-        write(6,*)' '
-        write(6,*)'APRES APPEL MFRONT, STRESS='
-        write(6,'(6(1X,E11.4))') (sigp(i),i=1,ntens)
-        write(6,*)'APRES APPEL MFRONT, STATEV='
-        write(6,'(10(1X,E11.4))')(vip(i),i=1,nstatv)
-    endif
+!    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+!        write(6,*)' '
+!        write(6,*)'APRES APPEL MFRONT, STRESS='
+!        write(6,'(6(1X,E11.4))') (sigp(i),i=1,ntens)
+!        write(6,*)'APRES APPEL MFRONT, STATEV='
+!        write(6,'(10(1X,E11.4))')(vip(i),i=1,nstatv)
+!    endif
 !
 ! - Convert stresses
 !

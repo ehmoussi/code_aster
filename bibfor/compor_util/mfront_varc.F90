@@ -23,6 +23,8 @@ subroutine mfront_varc(fami   , kpg      , ksp, imate, &
                        predef , dpred    , &
                        neps   , epsth    , depsth)
 !
+use calcul_module, only : ca_vext_eltsize1_, ca_vext_coorga_, ca_vext_eltsize2_, ca_vext_gradvelo_
+!
 implicit none
 !
 #include "asterc/r8nnem.h"
@@ -203,6 +205,10 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
             predef(i_varc) = vrcm
             call rcvarc('F', list_varc(i_varc), '+', fami, kpg, ksp, vrcp, iret2)
             dpred(i_varc)  = vrcp-vrcm
+        else
+            if (list_varc(i_varc) .eq. 'ELTSIZE1') then
+                predef(i_varc) = ca_vext_eltsize1_
+            endif
         endif
     end do
 !

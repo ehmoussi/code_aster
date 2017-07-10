@@ -139,6 +139,11 @@ Erreur lors de la vérification de la cohérence entre les champs de variables i
 Le maillage sur lequel s'appuie le modèle et le maillage du champ des variables internes ne sont pas les mêmes.
 """),
 
+    25 : _(u"""
+   On ne peut pas utiliser la variable de commande intrinsèque <%(k1)s> dans MFront car ce n'est pas un scalaire.
+"""),
+
+
     27: _(u"""
 Erreur lors de la vérification de la cohérence entre les champs de variables internes.
 
