@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine ther_mtan(model    , mate    , time    , varc_curr, compor   ,&
-                     temp_iter, dry_prev, dry_curr, resu_elem, matr_elem)
+                     temp_iter, dry_prev, dry_curr, resu_elem, matr_elem,&
+                     base)
 !
 implicit none
 !
@@ -32,7 +33,6 @@ implicit none
 #include "asterfort/xajcin.h"
 #include "asterfort/inical.h"
 !
-!
     character(len=24), intent(in) :: model
     character(len=24), intent(in) :: time
     character(len=24), intent(in) :: mate
@@ -43,6 +43,7 @@ implicit none
     character(len=19), intent(in) :: varc_curr
     character(len=19), intent(in) :: resu_elem   
     character(len=24), intent(in) :: matr_elem
+    character(len=1), intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,8 +61,9 @@ implicit none
 ! In  dry_prev         : previous drying
 ! In  dry_curr         : current drying
 ! In  varc_curr        : command variable for current time
-! In  matr_elem        : name of matr_elem result
 ! In  resu_elem        : name of resu_elem
+! In  matr_elem        : name of matr_elem result
+! In  base             : JEVEUX base for object
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,7 +72,7 @@ implicit none
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
 !
-    character(len=1) :: base, stop_calc
+    character(len=1) :: stop_calc
     character(len=16) :: option
     character(len=24) :: ligrel_model
     character(len=24) :: chgeom
@@ -78,11 +80,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
-! - Initializations
-!
     stop_calc    = 'S'
-    base         = 'V'
     option       = 'MTAN_RIGI_MASS'
     ligrel_model = model(1:8)//'.MODELE'
 !

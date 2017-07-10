@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine resi_ther(model    , mate     , time     , compor    , temp_prev,&
                      temp_iter, hydr_prev, hydr_curr, dry_prev  , dry_curr ,&
-                     varc_curr, vect_elem)
+                     varc_curr, resu_elem, vect_elem, base)
 !
 implicit none
 !
@@ -30,7 +30,6 @@ implicit none
 #include "asterfort/reajre.h"
 #include "asterfort/inical.h"
 !
-!
     character(len=24), intent(in) :: model
     character(len=24), intent(in) :: time
     character(len=24), intent(in) :: mate
@@ -41,8 +40,10 @@ implicit none
     character(len=24), intent(in) :: dry_prev   
     character(len=24), intent(in) :: dry_curr
     character(len=24), intent(in) :: compor
-    character(len=19), intent(in) :: varc_curr    
-    character(len=24), intent(inout) :: vect_elem
+    character(len=19), intent(in) :: varc_curr
+    character(len=19), intent(in) :: resu_elem
+    character(len=24), intent(in) :: vect_elem
+    character(len=1), intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,28 +64,26 @@ implicit none
 ! In  dry_curr         : current drying
 ! In  compor           : name of comportment definition (field)
 ! In  varc_curr        : command variable for current time
-! IO  vect_elem        : name of vect_elem result
+! In  resu_elem        : name of resu_elem
+! In  vect_elem        : name of vect_elem result
+! In  base             : JEVEUX base for object
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbin, nbout
-    parameter (nbin = 10, nbout = 2)
+    integer, parameter :: nbin  = 10
+    integer, parameter :: nbout = 2
     character(len=8) :: lpain(nbin), lpaout(nbout)
     character(len=19) :: lchin(nbin), lchout(nbout)
 !
-    character(len=1) :: base, stop_calc
-    character(len=8) :: newnom
+    character(len=1) :: stop_calc
     character(len=16) :: option
-    character(len=19) :: resu_elem
     character(len=24) :: ligrel_model
     character(len=24) :: chgeom
     integer :: ibid
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resu_elem    = '&&HYDRES.0000000'
     stop_calc    = 'S'
-    base         = 'V'
     option       = 'RESI_RIGI_MASS'
     ligrel_model = model(1:8)//'.MODELE'
 !
@@ -123,15 +122,10 @@ implicit none
 ! - Output fields
 !
     lpaout(1) = 'PRESIDU'
-    lchout(1) = '&&HYDRES.???????'
+    lchout(1) = resu_elem(1:19)
     lpaout(2) = 'PHYDRPP'
     lchout(2) = hydr_curr(1:19)
 !
-! - Generate new RESU_ELEM name
-!
-    newnom = resu_elem(10:16)
-    call gcnco2(newnom)
-    lchout(1) (10:16) = newnom(2:8)
     call corich('E', lchout(1), -1, ibid)
 !
 ! - Number of fields

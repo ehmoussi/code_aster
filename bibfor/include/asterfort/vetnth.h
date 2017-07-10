@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
                       chtnz, compoz, tpchiz, tpchfz, chhyz,&
-                      vecelz, veceiz, varc_curr)
+                      vecelz, veceiz, varc_curr, base_)
         character(len=*) :: optioz
         character(len=*) :: modelz
         character(len=*) :: carelz
@@ -35,5 +33,6 @@ interface
         character(len=*) :: vecelz
         character(len=*) :: veceiz
         character(len=19), intent(in) :: varc_curr
+        character(len=1), optional, intent(in) :: base_
     end subroutine vetnth
 end interface

@@ -196,8 +196,8 @@ implicit none
 !
 ! - Compute Neumann loads (second member) - Nonlinear part
 !
-    call vechnl(model    , lload_name, lload_info, cara_elem, time,&
-                temp_iter, vechtn)
+    call vechnl(model    , lload_name, lload_info, time,&
+                temp_iter, vechtn    , 'V')
     call asasve(vechtn, nume_dof, 'R', vachtn)
     call ascova('D', vachtn, ' ', 'INST', tpsthe(1),&
                 'R', cnchnl)
