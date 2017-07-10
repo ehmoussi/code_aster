@@ -19,19 +19,9 @@
 !
 !
 interface 
-    subroutine xcalme(option, meca, ndim, dimenr,&
-                      dimcon, addeme, adcome, congep,&
-                      dsde, deps, angl_naut)
-        integer :: dimcon
-        integer :: dimenr
-        character(len=16) :: option
-        character(len=16) :: meca
-        integer :: ndim
-        integer :: addeme
-        integer :: adcome
-        real(kind=8) :: congep(dimcon)
-        real(kind=8) :: dsde(dimcon, dimenr)
-        real(kind=8) :: deps(6)
-        real(kind=8), intent(in) :: angl_naut(3)
-    end subroutine xcalme
+    subroutine thmGetParaTher(j_mater, kpi, temp)
+        integer, intent(in) :: j_mater
+        integer, intent(in) :: kpi
+        real(kind=8), intent(in) :: temp
+    end subroutine thmGetParaTher
 end interface 

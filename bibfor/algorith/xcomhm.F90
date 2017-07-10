@@ -43,6 +43,8 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaElas.h"
+#include "asterfort/thmGetParaTher.h"
+#include "asterfort/thmMatrHooke.h"
 #include "asterfort/tebiot.h"
 !
 ! ======================================================================
@@ -163,6 +165,11 @@ implicit none
 ! - Get elastic parameters
 !
     call thmGetParaElas(imate, kpi, t, ndim)
+    call thmMatrHooke(angl_naut)
+!
+! - Get thermic parameters
+!
+    call thmGetParaTher(imate, kpi, t)
 
 ! ======================================================================
 ! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
@@ -185,10 +192,9 @@ implicit none
 !  C'EST A DIRE SI KPI<NPG
 ! ======================================================================
     if (yamec .eq. 1 .and. kpi .le. npg) then
-        call xcalme(option, meca, imate, ndim, dimenr,&
+        call xcalme(option, meca, ndim, dimenr,&
                     dimcon, addeme, adcome, congep,&
-                    dsde, deps, t,&
-                    angl_naut, aniso)
+                    dsde, deps, angl_naut)
         if (retcom .ne. 0) then
             goto 900
         endif

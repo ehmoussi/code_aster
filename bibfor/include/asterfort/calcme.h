@@ -27,8 +27,8 @@ interface
                       addeme, adcome, addete, defgem, congem,&
                       congep, vintm, vintp, addep1, addep2,&
                       dsde, deps, p1, p2,&
-                      t, dt, retcom, dp1, dp2,&
-                      sat, tbiot, ang2, aniso)
+                      dt, retcom, dp1, dp2,&
+                      sat, tbiot, angl_naut)
         integer :: nvimec
         integer :: dimcon
         integer :: dimdef
@@ -57,14 +57,12 @@ interface
         real(kind=8) :: deps(6)
         real(kind=8) :: p1
         real(kind=8) :: p2
-        real(kind=8) :: t
         real(kind=8) :: dt
         integer :: retcom
         real(kind=8) :: dp1
         real(kind=8) :: dp2
         real(kind=8) :: sat
         real(kind=8) :: tbiot(6)
-        real(kind=8) :: ang2(3)
-        integer :: aniso
+        real(kind=8), intent(in) :: angl_naut(3)
     end subroutine calcme
 end interface 

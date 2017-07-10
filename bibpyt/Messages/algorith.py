@@ -139,10 +139,6 @@ Contactez le support technique.
  possibilité d'instabilité de flottement
 """),
 
-    67 : _(u"""
- option SECANTE non valide
-"""),
-
     68 : _(u"""
  trop de familles de systèmes de glissement.
  augmenter la limite actuelle (5)

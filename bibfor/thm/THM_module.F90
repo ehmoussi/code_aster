@@ -84,6 +84,7 @@ subroutine thmModuleInit()
     ds_thm%ds_material%elas_keyword = ' '
     ds_thm%ds_material%e            = r8nnem()
     ds_thm%ds_material%nu           = r8nnem()
+    ds_thm%ds_material%g            = r8nnem()
     ds_thm%ds_material%e_l          = r8nnem()
     ds_thm%ds_material%e_t          = r8nnem()
     ds_thm%ds_material%e_n          = r8nnem()
@@ -97,6 +98,7 @@ subroutine thmModuleInit()
     ds_thm%ds_material%alpha_l      = r8nnem()
     ds_thm%ds_material%alpha_t      = r8nnem()
     ds_thm%ds_material%alpha_n      = r8nnem()
+    ds_thm%ds_material%d(:,:)       = r8nnem()
 !
 end subroutine
 !
