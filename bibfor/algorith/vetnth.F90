@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
                   chtnz, compoz, tpchiz, tpchfz, chhyz,&
-                  vecelz, veceiz, varc_curr)
+                  vecelz, veceiz, varc_curr, base_)
 ! CALCUL DES VECTEURS ELEMENTAIRES DUS AU CHAMP A L'INSTANT PRECEDENT
 !
 ! IN  OPTIOZ  : OPTION CALCULEE: CHAR_THER_EVOL
@@ -69,6 +69,7 @@ subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
     character(len=*) :: optioz, modelz, carelz, matcdz, instz, chtnz, vecelz
     character(len=*) :: veceiz, compoz, tpchiz, tpchfz, chhyz
     character(len=19), intent(in) :: varc_curr
+    character(len=1), optional, intent(in) :: base_
 !
 ! 0.2. ==> COMMUNS
 !
@@ -82,6 +83,7 @@ subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
     integer :: iret, ibid, nchin, nchout, i, ifm, niv
     character(len=8) :: lpain(nchinx), lpaout(nchoux), newnom
     character(len=16) :: option
+    character(len=1) :: base
     character(len=19) :: stano, pintto, cnseto, heavto, loncha, basloc
     character(len=19) :: lsn, lst, hea_no
     character(len=24) :: modele, carele, matcod, inst, chtn, vecel, vecei
@@ -100,6 +102,11 @@ subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
         lchin(i) = '                        '
     end do
     call jemarq()
+    if (present(base_)) then
+        base = base_
+    else
+        base = 'V'
+    endif
     newnom = '.0000000'
     option = optioz
     modele = modelz
@@ -164,7 +171,7 @@ subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
 ! CREATION DE L'OBJET '.REFE_RESU' DE VECEL ASSOCIE AU MODELE, A
 ! MATERIAU MATCODE, AU CARAELEM CARELE ET A LA SUR_OPTION 'MASS_THER'
         vecel = '&&'//nompro//'           .RELR'
-        call memare('V', vecel, modele(1:8), matcod, carele,&
+        call memare(base, vecel, modele(1:8), matcod, carele,&
                     'MASS_THER')
     else
 ! L'OBJET EXISTE
@@ -180,7 +187,7 @@ subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
         call jeexin(vecei, iret)
         if (iret .eq. 0) then
             vecei = '&&VETNTI           .RELR'
-            call memare('V', vecei(1:8), modele(1:8), matcod, carele,&
+            call memare(base, vecei(1:8), modele(1:8), matcod, carele,&
                         'MASS_THER')
         else
             call jedetr(vecei)
@@ -302,15 +309,15 @@ subroutine vetnth(optioz, modelz, carelz, matcdz, instz,&
 !
 !C    PRINT * ,'DANS ',NOMPRO,' OPTION = ',OPTION,' ET STYPSE = ',STYPSE
     call calcul('S', option, ligrmo, nchin, lchin,&
-                lpain, nchout, lchout, lpaout, 'V',&
+                lpain, nchout, lchout, lpaout, base,&
                 'OUI')
 !
 ! SI ON GENERE DE MANIERE EFFECTIVE UN RESULTAT LCHOUT(1) (VOIR (2))
 ! INCREMENTATION DE LONUTI ET STOCKAGE DU RESULTAT
 !
-    call reajre(vecel, lchout(1), 'V')
+    call reajre(vecel, lchout(1), base)
     if (lnlin) then
-        call reajre(vecei, lchout(2), 'V')
+        call reajre(vecei, lchout(2), base)
     endif
 !
     vecelz = vecel

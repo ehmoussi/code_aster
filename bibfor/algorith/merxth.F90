@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine merxth(model    , lload_name, lload_info, cara_elem, mate     ,&
                   time_curr, time      , temp_iter , compor   , varc_curr,&
-                  dry_prev , dry_curr  , matr_elem)
+                  dry_prev , dry_curr  , matr_elem , base_)
 !
 implicit none
 !
@@ -34,7 +34,6 @@ implicit none
 #include "asterfort/load_neut_comp.h"
 #include "asterfort/load_neut_prep.h"
 !
-!
     character(len=24), intent(in) :: model
     character(len=24), intent(in) :: lload_name
     character(len=24), intent(in) :: lload_info
@@ -47,7 +46,8 @@ implicit none
     character(len=24), intent(in) :: dry_curr
     character(len=24), intent(in) :: compor
     character(len=19), intent(in) :: varc_curr
-    character(len=24), intent(inout) :: matr_elem
+    character(len=24), intent(in) :: matr_elem
+    character(len=1), optional, intent(in) :: base_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,7 +69,8 @@ implicit none
 ! In  dry_prev         : previous drying
 ! In  dry_curr         : current drying
 ! In  varc_curr        : command variable for current time
-! IO  matr_elem        : name of matr_elem result
+! In  matr_elem        : name of matr_elem result
+! In  base             : JEVEUX base for object
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -90,18 +91,19 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
-! - Initializations
-!
-    resu_elem   = '&&MERXTH.0000000'
-    stop_calc   = 'S'
-    base        = 'V'
+    resu_elem = matr_elem(1:8)//'.0000000'
+    stop_calc = 'S'
+    if (present(base_)) then
+        base = base_
+    else
+        base = 'V'
+    endif
 !
 ! - Prepare MATR_ELEM
 !
     call jeexin(matr_elem(1:19)//'.RELR', iret)
     if (iret .eq. 0) then
-        call memare('V', matr_elem, model, mate, cara_elem,&
+        call memare(base, matr_elem, model, mate, cara_elem,&
                     'MTAN_THER')
     else
         call jedetr(matr_elem(1:19)//'.RELR')
@@ -116,7 +118,8 @@ implicit none
 ! - Tangent matrix - Volumic terms
 !
     call ther_mtan(model    , mate    , time    , varc_curr, compor   ,&
-                   temp_iter, dry_prev, dry_curr, resu_elem, matr_elem)
+                   temp_iter, dry_prev, dry_curr, resu_elem, matr_elem,&
+                   base)
 !
 ! - Init fields
 !

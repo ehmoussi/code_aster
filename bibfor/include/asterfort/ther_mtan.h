@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine ther_mtan(model    , mate    , time    , varc_curr, compor   ,&
-                         temp_iter, dry_prev, dry_curr, resu_elem, matr_elem)
+                         temp_iter, dry_prev, dry_curr, resu_elem, matr_elem,&
+                         base)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: time
         character(len=24), intent(in) :: mate
@@ -31,5 +30,6 @@ interface
         character(len=19), intent(in) :: varc_curr
         character(len=19), intent(in) :: resu_elem   
         character(len=24), intent(in) :: matr_elem
+        character(len=1), intent(in) :: base
     end subroutine ther_mtan
 end interface

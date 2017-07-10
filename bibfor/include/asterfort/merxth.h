@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine merxth(model    , lload_name, lload_info, cara_elem, mate     ,&
                       time_curr, time      , temp_iter , compor   , varc_curr,&
-                      dry_prev , dry_curr  , matr_elem)
+                      dry_prev , dry_curr  , matr_elem , base_)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: lload_name
         character(len=24), intent(in) :: lload_info
@@ -34,6 +32,7 @@ interface
         character(len=24), intent(in) :: dry_curr
         character(len=24), intent(in) :: compor
         character(len=19), intent(in) :: varc_curr
-        character(len=24), intent(inout) :: matr_elem
+        character(len=24), intent(in) :: matr_elem
+        character(len=1), optional, intent(in) :: base_
     end subroutine merxth
 end interface

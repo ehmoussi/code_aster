@@ -18,7 +18,8 @@
 
 subroutine verstp(model    , lload_name, lload_info, mate      , time_curr,&
                   time     , compor    , temp_prev , temp_iter , hydr_prev,&
-                  hydr_curr, dry_prev  , dry_curr  , varc_curr , vect_elem)
+                  hydr_curr, dry_prev  , dry_curr  , varc_curr , vect_elem,&
+                  base_)
 !
 implicit none
 !
@@ -53,7 +54,8 @@ implicit none
     character(len=24), intent(in) :: dry_curr
     character(len=24), intent(in) :: compor
     character(len=19), intent(in) :: varc_curr    
-    character(len=24), intent(inout) :: vect_elem
+    character(len=24), intent(in) :: vect_elem
+    character(len=1), optional, intent(in) :: base_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,7 +79,8 @@ implicit none
 ! In  dry_curr         : current drying
 ! In  compor           : name of comportment definition (field)
 ! In  varc_curr        : command variable for current time
-! IO  vect_elem        : name of vect_elem result
+! In  vect_elem        : name of vect_elem result
+! In  base             : JEVEUX base for object
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,7 +90,7 @@ implicit none
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
 !
     character(len=1) :: base, stop_calc
-    character(len=8) :: load_name
+    character(len=8) :: load_name, newnom
     character(len=19) :: resu_elem
     integer :: load_nume
     aster_logical :: load_empty
@@ -97,9 +100,13 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    resu_elem   = '&&VERSTP.0000000'
+    resu_elem   = vect_elem(1:8)//'.0000000'
     stop_calc   = 'S'
-    base        = 'V'
+    if (present(base_)) then
+        base = base_
+    else
+        base = 'V'
+    endif
 !
 ! - Init fields
 !
@@ -111,11 +118,17 @@ implicit none
     call load_list_info(load_empty, nb_load   , v_load_name, v_load_info,&
                         lload_name, lload_info)
 !
+! - Generate new RESU_ELEM name
+!
+    newnom = resu_elem(10:16)
+    call gcnco2(newnom)
+    lchout(1) (10:16) = newnom(2:8)
+!
 ! - Residuals from non-linear laws 
 !
     call resi_ther(model    , mate     , time     , compor    , temp_prev,&
                    temp_iter, hydr_prev, hydr_curr, dry_prev  , dry_curr ,&
-                   varc_curr, vect_elem)
+                   varc_curr, resu_elem, vect_elem, base)
 !
 ! - Preparing input fields
 !
