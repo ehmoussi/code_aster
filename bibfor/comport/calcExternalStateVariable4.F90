@@ -16,8 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine calcExternalStateVariable4(nno , npg   , jv_dfunc,&
-                                      geom, typmod, elgeom)
+subroutine calcExternalStateVariable4(nno     , npg   ,&
+                                      jv_dfunc,&
+                                      geom    , typmod)
+!
+use calcul_module, only : ca_vext_eltsize2_
 !
 implicit none
 !
@@ -32,7 +35,6 @@ integer, intent(in) :: nno, npg
 integer, intent(in) :: jv_dfunc
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: geom(3, nno)
-real(kind=8), intent(out) :: elgeom(10, npg)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,7 +49,6 @@ real(kind=8), intent(out) :: elgeom(10, npg)
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
 ! In  typmod2          : type of modelization (TYPMOD2)
 ! In  geom             : initial coordinates of nodes
-! Out elgeom           : size of element
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,7 +57,6 @@ real(kind=8), intent(out) :: elgeom(10, npg)
     real(kind=8) :: inv(3, 3), det, de, dn, dk
 !
 ! --------------------------------------------------------------------------------------------------
-!
 !
     if (typmod(1)(1:2) .eq. '3D') then
         do kpg = 1, npg
@@ -89,7 +89,7 @@ real(kind=8), intent(out) :: elgeom(10, npg)
 !
             do i = 1, 3
                 do j = 1, 3
-                    elgeom(3*(i-1)+j,kpg)=inv(i,j)
+                    ca_vext_eltsize2_(3*(i-1)+j)=inv(i,j)
                 end do
             end do
         end do

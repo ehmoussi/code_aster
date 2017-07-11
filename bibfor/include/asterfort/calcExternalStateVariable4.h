@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine calcExternalStateVariable4(nno , npg   , jv_dfunc,&
-                                          geom, typmod, elgeom)
+    subroutine calcExternalStateVariable4(nno     , npg   ,&
+                                          jv_dfunc,&
+                                          geom    , typmod)
         integer, intent(in) :: nno, npg
         integer, intent(in) :: jv_dfunc
         character(len=8), intent(in) :: typmod(2)
         real(kind=8), intent(in) :: geom(3, nno)
-        real(kind=8), intent(out) :: elgeom(10, npg)
     end subroutine calcExternalStateVariable4
 end interface

@@ -79,8 +79,7 @@ implicit none
     call kitPrepBehaviour(compor, compor_creep, compor_plas)
 !
     if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-        wkinp(1:9) = wkin(1:9)
-        wkinp(10)  = 1.d0
+        wkinp(1)  = 1.d0
         call nmcomp(fami, kpg, ksp, ndim, typmod,&
                     imate, compor_creep, carcri, instam, instap  ,&
                     neps, epsm, deps, nsig, sigm,&
@@ -94,8 +93,7 @@ implicit none
                     sigp, vip, ndsde, dsidep, nwkout,&
                     wkout, codret)
     else if (option(1:9).eq.'RIGI_MECA') then
-        wkinp(1:9) = wkin(1:9)
-        wkinp(10)  = 1.d0
+        wkinp(1)  = 1.d0
         call nmcomp(fami, kpg, ksp, ndim, typmod,&
                     imate, compor_creep, carcri, instam, instap  ,&
                     neps, epsm, deps, nsig, sigm,&
