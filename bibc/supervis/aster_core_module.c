@@ -299,12 +299,7 @@ void DEFSPP(GTOPTI,gtopti, _IN char *option, STRING_SIZE lopt,
      *  iret = 0 : tout est ok
      *  iret = 4 : option inexistante, type incorrect.
      */
-    if ( fileOut == NULL )
-    {
-        fileOut = fopen("fichierOut.txt", "w");
-    }
     char *opt = MakeCStrFromFStr(option, lopt);
-    fprintf(fileOut, "GTOPTI %s\n", opt);
     *vali = getParameterLong(opt);
     FreeStr(opt);
     *iret = 0;
@@ -322,7 +317,6 @@ void DEFSPP(GTOPTR,gtoptr, _IN char *option, STRING_SIZE lopt,
      */
     char *opt = MakeCStrFromFStr(option, lopt);
     *valr = getParameterDouble(opt);
-    fprintf(fileOut, "GTOPTR %s returns %f\n", opt, *valr);
     FreeStr(opt);
     *iret = 0;
 }

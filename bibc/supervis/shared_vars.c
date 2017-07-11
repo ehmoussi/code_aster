@@ -25,7 +25,7 @@
  * So when a global variable is set from Python to C it is stored in the symbols
  * of the `module`. And when this same variable is accessed from Fortran it is
  * taken in the symbols of libaster.so.
- * 
+ *
  * Before a wider refactoring here are defined these exchanged variables with
  * their access methods.
  */
@@ -66,12 +66,6 @@ static PyObject *gPileEtapes = (PyObject*)0;
 
 
 /* register functions */
-/*! Register the JDC object as a global variable */
-void register_sh_jdc(PyObject *obj) {
-    gJDC = obj;
-    return;
-}
-
 /*! Register the CoreOptions object as a global variable */
 void register_sh_coreopts(PyObject *obj) {
     gCoreOpts = obj;
@@ -103,11 +97,6 @@ void register_sh_jeveux_status(int obj) {
 }
 
 /* get functions */
-/*! Return the global JDC object */
-PyObject * get_sh_jdc() {
-    return gJDC;
-}
-
 /*! Return the global CoreOptions object */
 PyObject * get_sh_coreopts() {
     return gCoreOpts;

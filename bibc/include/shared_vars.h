@@ -31,8 +31,6 @@ extern "C" {
  *   PUBLIC FUNCTIONS
  *
  */
-/*! Register the JDC object as a global variable */
-extern void register_sh_jdc(PyObject *);
 
 /*! Register the CoreOptions object as a global variable */
 extern void register_sh_coreopts(PyObject *);
@@ -48,9 +46,6 @@ extern void register_sh_etape(PyObject *);
 
 /*! Register the status of jeveux */
 extern void register_sh_jeveux_status(int);
-
-/*! Return the global JDC object */
-extern PyObject * get_sh_jdc();
 
 /*! Return the global CoreOptions object */
 extern PyObject * get_sh_coreopts();
