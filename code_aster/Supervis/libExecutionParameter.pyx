@@ -45,17 +45,25 @@ class ExecutionParameter:
         """Initialization of attributes"""
         self._args = {}
         self._args['debug'] = 0
+        self._args['abort'] = 0
+        self._args['buildelem'] = 0
+        self._args['autostart'] = 0
+
         self._args['dbgjeveux'] = 0
+        self._args['jxveri'] = 0
+        self._args['sdveri'] = 0
+        self._args['impr_macro'] = 0
+        self._args['icode'] = 0
+        self._args['jeveux_sysaddr'] = 0
 
         self._args['memory'] = 0.
-        self._args['maxbase'] = 0
         self._args['tpmax'] = 0.
+        self._args['maxbase'] = 0.
         self._args['numthreads'] = 0
 
         self._args['repmat'] = '.'
         self._args['repdex'] = '.'
         self._computed()
-        self._on_command_line()
 
     def _computed(self):
         """Fill some "computed" values"""
@@ -82,12 +90,6 @@ class ExecutionParameter:
         self._args['versionD0'] = '%d.%02d.%02d' % version
         self._args['versLabel'] = aster_pkginfo.get_version_desc()
 
-    def _on_command_line(self):
-        """Initialize parameters that can be changed by the command line"""
-        self._args['abort'] = 0
-        self._args['buildelem'] = 0
-        self._args['autostart'] = 1
-
     def set_option(self, option, value):
         """Set the value of an execution parameter"""
         # Options must at least declared by __init__
@@ -113,10 +115,10 @@ class ExecutionParameter:
         # command arguments parser
         parser = ArgumentParser(description='execute a Code_Aster study',
                                 prog="Code_Aster{called by Python}")
-        parser.add_argument('-g', '--debug', action='store_true',
+        parser.add_argument('-g', '--debug', action='store_true', default=False,
             help="add debug informations")
 
-        parser.add_argument('--abort', action='store_true',
+        parser.add_argument('--abort', action='store_true', default=False,
             help="abort execution in case of error (testcase mode, by default "
                  "raise an exception)")
         parser.add_argument('--build-elem', dest='buildelem', action='store_true',
@@ -129,6 +131,18 @@ class ExecutionParameter:
             action='store_false',
             help="turn off the automatic start of the memory manager")
 
+        parser.add_argument('--dbgjeveux', action='store_true', default=False,
+            help="turn on some additional checkings in the memory management")
+
+        parser.add_argument('--jxveri', action='store_true', default=False,
+            help="")
+        parser.add_argument('--sdveri', action='store_true', default=False,
+            help="")
+        parser.add_argument('--impr_macro', action='store_true', default=False,
+            help="")
+        parser.add_argument('--icode', action='store_true', default=False,
+            help="turn on running mode for testcase")
+
         parser.add_argument('--memory', action='store', default=1000,
             help="memory limit in MB used for code_aster objects "
                  "(default: 1000 MB)")
@@ -139,9 +153,6 @@ class ExecutionParameter:
               "default: 48 GB)")
         parser.add_argument('--numthreads', action='store', default=1,
             help="maximum number of threads")
-
-        parser.add_argument('--dbgjeveux', action='store_true', default=False,
-            help="turn on some additional checkings in the memory management")
 
         parser.add_argument('--rep_mat', dest='repmat', action='store',
             metavar='DIR', default='.',
