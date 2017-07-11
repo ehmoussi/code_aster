@@ -13,8 +13,7 @@ __all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_CHAR_MECA
 
 from code_aster.Cata.Language.Syntax import _F
 
-from code_aster.Commands.debut import DEBUT
-from code_aster.Commands.fin import FIN
+# please keep alphabetical order
 from code_aster.Commands.affe_cara_elem import AFFE_CARA_ELEM
 from code_aster.Commands.affe_char_cine import AFFE_CHAR_CINE
 from code_aster.Commands.affe_char_meca import AFFE_CHAR_MECA
@@ -44,6 +43,7 @@ from code_aster.Commands.defi_modele_gene import DEFI_MODELE_GENE
 from code_aster.Commands.defi_nappe import DEFI_NAPPE
 from code_aster.Commands.defi_squelette import DEFI_SQUELETTE
 from code_aster.Commands.defi_spec_turb import DEFI_SPEC_TURB
+from code_aster.Commands.fin import FIN
 from code_aster.Commands.lire_maillage import LIRE_MAILLAGE
 from code_aster.Commands.macr_elem_dyna import MACR_ELEM_DYNA
 from code_aster.Commands.macr_elem_stat import MACR_ELEM_STAT
