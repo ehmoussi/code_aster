@@ -22,6 +22,7 @@
 from code_aster.ExecMacro import ExecuteMacro
 
 
+# please keep alphabetical order
 ASSEMBLAGE = ExecuteMacro("ASSEMBLAGE")
 DEBUT = ExecuteMacro("DEBUT")
 IMPR_FONCTION = ExecuteMacro("IMPR_FONCTION")
