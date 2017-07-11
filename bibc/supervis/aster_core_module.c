@@ -79,14 +79,10 @@ ASTERINTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
     /*
      * Permet de récupérer la valeur entière d'un attribut du jdc.
      */
-    fprintf(fileOut, "JDCGET\n");
-    return 1;
-    /* TODO */
-
     PyObject *val;
     ASTERINTEGER value;
 
-    val = PyObject_CallMethod(get_sh_coreopts(), "get_jdc_attr", "s#", attr, l_attr);
+    val = PyObject_CallMethod(get_sh_coreopts(), "get_option", "s#", attr, l_attr);
     if (val == NULL){
         fprintf(fileOut, "attribut inexistant dans le jdc : '%s'\n\n", attr);
         MYABORT("erreur dans JDCGET");
@@ -105,13 +101,9 @@ void DEFSP(JDCSET,jdcset,char *attr, STRING_SIZE l_attr, ASTERINTEGER *value)
     /*
      * Permet de positionner la valeur entière d'un attribut du jdc à `value`.
      */
-    fprintf(fileOut, "JDCSET\n");
-    return;
-    /* TODO */
-
     PyObject *res;
 
-    res = PyObject_CallMethod(get_sh_coreopts(), "set_jdc_attr", "s#l", attr, l_attr, (long)*value);
+    res = PyObject_CallMethod(get_sh_coreopts(), "set_option", "s#l", attr, l_attr, (long)*value);
     if (res == NULL)
         MYABORT("erreur dans JDCSET");
     Py_XDECREF(res);
@@ -930,6 +922,8 @@ static PyMethodDef methods[] = {
 PyMODINIT_FUNC init_aster_core(void)
 {
     aster_core = Py_InitModule("_aster_core", methods);
+    // until all fileOut are removed
+    fileOut = stderr;
 
     // Add macro constant for dependance
 #ifdef _USE_MPI

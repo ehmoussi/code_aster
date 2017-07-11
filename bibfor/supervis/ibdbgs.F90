@@ -91,7 +91,7 @@ subroutine ibdbgs()
         call utmess('I', 'SUPERVIS_12')
         idebug = 1
     endif
-    call jdcset('jeveux', idebug)
+    call jdcset('dbgjeveux', idebug)
 !
 !     -- DEBUG / ENVIMA :
 !     -----------------------------------------------------

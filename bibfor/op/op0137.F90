@@ -50,11 +50,11 @@ subroutine op0137()
     if (repons .eq. 'OUI') then
         idebug = 1
         call utmess('I', 'SUPERVIS_44', sk='JEVEUX')
-        call jdcset('jeveux', 1)
+        call jdcset('dbgjeveux', 1)
     else if (repons .eq. 'NON') then
         idebug = 0
         call utmess('I', 'SUPERVIS_43', sk='JEVEUX')
-        call jdcset('jeveux', 0)
+        call jdcset('dbgjeveux', 0)
     endif
 !
 !
