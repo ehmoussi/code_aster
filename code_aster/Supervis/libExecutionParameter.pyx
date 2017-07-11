@@ -44,12 +44,15 @@ class ExecutionParameter:
     def __init__(self):
         """Initialization of attributes"""
         self._args = {}
+        self._args['debug'] = 0
         self._args['dbgjeveux'] = 0
 
-        self._args['memory'] = 1000.
-        self._args['maxbase'] = 1000.
-        self._args['tpmax'] = 86400
+        self._args['memory'] = 0.
+        self._args['maxbase'] = 0
+        self._args['tpmax'] = 0.
+        self._args['numthreads'] = 0
 
+        self._args['repmat'] = '.'
         self._args['repdex'] = '.'
         self._computed()
         self._on_command_line()
@@ -126,15 +129,37 @@ class ExecutionParameter:
             action='store_false',
             help="turn off the automatic start of the memory manager")
 
+        parser.add_argument('--memory', action='store', default=1000,
+            help="memory limit in MB used for code_aster objects "
+                 "(default: 1000 MB)")
+        parser.add_argument('--tpmax', action='store', default=86400,
+            help="time limit of the execution in seconds (default: 1 day)")
+        parser.add_argument('--maxbase', action='store', default=48000,
+            help="size limit in MB for code_aster out-of-core files (glob.*, "
+              "default: 48 GB)")
+        parser.add_argument('--numthreads', action='store', default=1,
+            help="maximum number of threads")
+
+        parser.add_argument('--dbgjeveux', action='store_true', default=False,
+            help="turn on some additional checkings in the memory management")
+
+        parser.add_argument('--rep_mat', dest='repmat', action='store',
+            metavar='DIR', default='.',
+            help="directory of materials properties")
+        parser.add_argument('--rep_dex', dest='repdex', action='store',
+            metavar='DIR', default='.',
+            help="directory of external datas (geometrical datas or properties...)")
+
         args, ignored = parser.parse_known_args(argv or sys.argv)
         if args.debug:
             setlevel()
         logger.debug("Ignored arguments: %r", ignored)
+        logger.debug("Read options: %r", vars(args))
 
         # assign parameter values
-        self.set_option('abort', int(args.abort))
-        self.set_option('buildelem', int(args.buildelem))
-        self.set_option('autostart', int(args.autostart))
+        for opt, value in vars(args).items():
+            self.set_option(opt, value)
+
         # replace "suivi_batch" option that was always enabled
         unbuffered_stdout()
 
