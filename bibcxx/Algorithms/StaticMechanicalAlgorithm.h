@@ -87,7 +87,7 @@ class StaticMechanicalAlgorithm: public GenericUnitaryAlgorithm< Stepper >
 template< class Stepper >
 void StaticMechanicalAlgorithm< Stepper >::oneStep() throw( AlgoException& )
 {
-    DOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
+    BaseDOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
 
     ElementaryMatrixPtr matrElem = _discreteProblem->buildElementaryRigidityMatrix( _time );
 

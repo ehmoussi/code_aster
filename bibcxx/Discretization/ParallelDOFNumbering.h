@@ -31,7 +31,6 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
 #include "Discretization/DOFNumbering.h"
 
 /**
@@ -66,6 +65,14 @@ public:
     {};
 
     /**
+     * @brief Constructeur
+     * @param name nom souhaité de la sd (utile pour le BaseDOFNumberingInstance d'une sd_resu)
+     */
+    ParallelDOFNumberingInstance( const std::string name, const JeveuxMemory memType = Permanent ):
+        BaseDOFNumberingInstance( name, "NUME_DDL_P", memType )
+    {};
+
+    /**
      * @brief Destructeur
      */
     ~ParallelDOFNumberingInstance() throw ( std::runtime_error )
@@ -73,6 +80,15 @@ public:
 #ifdef __DEBUG_GC__
         std::cout << "ParallelDOFNumbering.destr: " << this->getName() << std::endl;
 #endif
+    };
+
+    /**
+     * @brief Methode permettant de savoir si l'objet est parallel
+     * @return true
+     */
+    bool isParallel()
+    {
+        return true;
     };
 
     /**

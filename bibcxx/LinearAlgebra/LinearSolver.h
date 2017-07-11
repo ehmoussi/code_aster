@@ -195,6 +195,7 @@ class BaseLinearSolverInstance: public DataStructure
                     _linearSolver( currentBaseLinearSolver ),
                     _renumber( currentRenumber ),
                     _isEmpty( true ),
+                    _preconditioning( Without ),
                     _charValues( JeveuxVectorChar24( getName() + "           .SLVK" ) ),
                     _doubleValues( JeveuxVectorDouble( getName() + "           .SLVR" ) ),
                     _integerValues( JeveuxVectorLong( getName() + "           .SLVI" ) ),
@@ -227,7 +228,6 @@ class BaseLinearSolverInstance: public DataStructure
 
             _method = std::string( LinearSolverNames[ (int)_linearSolver ] );
             _lagr = "NON";
-            _preconditioning = Without;
             if ( currentBaseLinearSolver == Petsc )
             {
                 _algo = "FGMRES";
@@ -237,6 +237,9 @@ class BaseLinearSolverInstance: public DataStructure
                 _precond = PreconditioningNames[ (int)_preconditioning ];
                 _residual = 1.e-6;
                 _precondResidual = -1.0;
+                _reac = 30;
+                _pivotPourcent = 20;
+                _memory = "AUTO";
             }
             if ( currentBaseLinearSolver == Mumps )
             {
@@ -315,6 +318,15 @@ class BaseLinearSolverInstance: public DataStructure
         const ListGenParam& getListOfParameters() const
         {
             return _listOfParameters;
+        };
+
+        /**
+         * @brief Recuperer le précond
+         * @return le type de preconditionneur
+         */
+        Preconditioning getPreconditioning() const
+        {
+            return _preconditioning;
         };
 
         /**

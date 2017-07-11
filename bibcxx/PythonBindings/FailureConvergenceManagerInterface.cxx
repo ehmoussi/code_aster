@@ -103,6 +103,7 @@ void exportFailureConvergenceManagerToPython()
     class_< GenericConvergenceErrorInstance,
             GenericConvergenceErrorPtr, boost::noncopyable >
         ( "GenericConvergenceError", no_init )
+        .def( "setAction", &GenericConvergenceErrorInstance::setAction )
     ;
 
     class_< ConvergenceErrorInstance, ConvergenceErrorPtr,

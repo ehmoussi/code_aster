@@ -71,9 +71,20 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
 
     // Build the linear solver (sd_solver)
+    if( ! _linearSolver->isHPCCompliant() && _supportModel->getSupportMesh()->isParallel() )
+        throw std::runtime_error( "ParallelMesh not allowed with this linear solver" );
+    if( _supportModel->getSupportMesh()->isParallel() &&
+        _linearSolver->getPreconditioning() == SimplePrecisionLdlt )
+        throw std::runtime_error( "ParallelMesh not allowed with this preconditioning" );
     _linearSolver->build();
 
-    DOFNumberingPtr dofNum1 = resultC->getEmptyDOFNumbering();
+    BaseDOFNumberingPtr dofNum1;
+#ifdef _USE_MPI
+    if( _supportModel->getSupportMesh()->isParallel() )
+        dofNum1 = resultC->getEmptyParallelDOFNumbering();
+    else
+#endif /* _USE_MPI */
+        dofNum1 = resultC->getEmptyDOFNumbering();
     dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
     FieldOnNodesDoublePtr vecass( new FieldOnNodesDoubleInstance( Temporary ) );
     vecass->allocateFromDOFNumering( dofNum1 );

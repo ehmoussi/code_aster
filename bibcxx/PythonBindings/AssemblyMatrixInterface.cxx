@@ -29,14 +29,6 @@
 void exportAssemblyMatrixToPython()
 {
     using namespace boost::python;
-
-    void (AssemblyMatrixDoubleInstance::*c1)(const DOFNumberingPtr&) =
-            &AssemblyMatrixDoubleInstance::setDOFNumbering;
-#ifdef _USE_MPI
-    void (AssemblyMatrixDoubleInstance::*c2)(const ParallelDOFNumberingPtr&) =
-            &AssemblyMatrixDoubleInstance::setDOFNumbering;
-#endif /* _USE_MPI */
-
     class_< AssemblyMatrixDoubleInstance, AssemblyMatrixDoublePtr,
             bases< DataStructure > >
         ( "AssemblyMatrixDouble", no_init )
@@ -45,19 +37,10 @@ void exportAssemblyMatrixToPython()
         .def( "addKinematicsLoad", &AssemblyMatrixDoubleInstance::addKinematicsLoad )
         .def( "build", &AssemblyMatrixDoubleInstance::build )
         .def( "factorization", &AssemblyMatrixDoubleInstance::factorization )
-        .def( "setDOFNumbering", c1 )
-#ifdef _USE_MPI
-        .def( "setDOFNumbering", c2 )
-#endif /* _USE_MPI */
+        .def( "getDOFNumbering", &AssemblyMatrixDoubleInstance::getDOFNumbering )
+        .def( "setDOFNumbering", &AssemblyMatrixDoubleInstance::setDOFNumbering )
         .def( "setElementaryMatrix", &AssemblyMatrixDoubleInstance::setElementaryMatrix )
     ;
-
-    void (AssemblyMatrixComplexInstance::*c3)(const DOFNumberingPtr&) =
-            &AssemblyMatrixComplexInstance::setDOFNumbering;
-#ifdef _USE_MPI
-    void (AssemblyMatrixComplexInstance::*c4)(const ParallelDOFNumberingPtr&) =
-            &AssemblyMatrixComplexInstance::setDOFNumbering;
-#endif /* _USE_MPI */
 
     class_< AssemblyMatrixComplexInstance, AssemblyMatrixComplexPtr,
             bases< DataStructure > >
@@ -67,10 +50,8 @@ void exportAssemblyMatrixToPython()
         .def( "addKinematicsLoad", &AssemblyMatrixComplexInstance::addKinematicsLoad )
         .def( "build", &AssemblyMatrixComplexInstance::build )
         .def( "factorization", &AssemblyMatrixComplexInstance::factorization )
-        .def( "setDOFNumbering", c3 )
-#ifdef _USE_MPI
-        .def( "setDOFNumbering", c4 )
-#endif /* _USE_MPI */
+        .def( "getDOFNumbering", &AssemblyMatrixComplexInstance::getDOFNumbering )
+        .def( "setDOFNumbering", &AssemblyMatrixComplexInstance::setDOFNumbering )
         .def( "setElementaryMatrix", &AssemblyMatrixComplexInstance::setElementaryMatrix )
     ;
 };

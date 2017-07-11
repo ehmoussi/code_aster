@@ -80,7 +80,7 @@ subroutine op0039()
       nbrank = 0 
     endif   
 !
-    if ( nbrank .eq. 0 ) then 
+    !if ( nbrank .eq. 0 ) then 
 !     --- RECUPERATION DU NOMBRE DE MISES EN FACTEUR DU MOT-CLE RESU ---
        call getfac('RESU', nocc)
 !
@@ -191,6 +191,6 @@ subroutine op0039()
 !
 !
 999   continue
-    endif
+    !endif
     call jedema()
 end subroutine

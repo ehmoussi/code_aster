@@ -138,6 +138,15 @@ class AssemblyMatrixInstance: public DataStructure
         */
         bool factorization() throw ( std::runtime_error );
 
+        /**
+         * @brief Get the internal DOFNumbering
+         * @return Internal DOFNumbering
+         */
+        BaseDOFNumberingPtr getDOFNumbering() const
+        {
+            return _dofNum;
+        };
+
 #ifdef _HAVE_PETSC4PY
 #if _HAVE_PETSC4PY == 1
         /**
@@ -170,7 +179,7 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Methode permettant de definir la numerotation
          * @param currentNum objet DOFNumbering
          */
-        void setDOFNumbering( const DOFNumberingPtr& currentNum )
+        void setDOFNumbering( const BaseDOFNumberingPtr& currentNum )
         {
             _dofNum = currentNum;
         };
@@ -180,10 +189,10 @@ class AssemblyMatrixInstance: public DataStructure
          * @param currentNum objet ParallelDOFNumbering
          */
 #ifdef _USE_MPI
-        void setDOFNumbering( const ParallelDOFNumberingPtr& currentNum )
-        {
-            _dofNum = currentNum;
-        };
+//         void setDOFNumbering( const ParallelDOFNumberingPtr& currentNum )
+//         {
+//             _dofNum = currentNum;
+//         };
 #endif /* _USE_MPI */
 
         /**
@@ -251,7 +260,7 @@ bool AssemblyMatrixInstance< ValueType >::build() throw ( std::runtime_error )
         throw std::runtime_error( "Not yet implemented" );
 
     if ( _dofNum->isEmpty() )
-        throw std::runtime_error( "Numerotation is empty" );
+        throw std::runtime_error( "Numbering is empty" );
 
     std::string blanc( " " );
     std::string cumul( "ZERO" );

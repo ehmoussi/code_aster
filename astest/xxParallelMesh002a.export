@@ -3,7 +3,7 @@ P memory_limit 128
 P ncpus 1
 P mpi_nbcpu 2
 P mpi_nbnoeud 1
-P testlist asterxx verification sequential
+P testlist asterxx verification parallel
 
 F comm xxParallelMesh002a.py D 1
 F repe xxParallelMesh002a D 0

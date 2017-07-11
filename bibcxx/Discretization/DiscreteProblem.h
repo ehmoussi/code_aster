@@ -135,7 +135,7 @@ public:
      * @brief Construction d'un vecteur de chargement cinématique
      * @return Booleen indiquant que tout s'est bien passe
      */
-    FieldOnNodesDoublePtr buildKinematicsLoad( const DOFNumberingPtr& curDOFNum,
+    FieldOnNodesDoublePtr buildKinematicsLoad( const BaseDOFNumberingPtr& curDOFNum,
                                                const double& time,
                                                const JeveuxMemory& memType = Permanent )
         const throw ( std::runtime_error );
@@ -144,7 +144,7 @@ public:
      * @brief Détermination de la numérotation de ddl
      * @return Numérotation du problème discret
      */
-    DOFNumberingPtr computeDOFNumbering( DOFNumberingPtr dofNum = DOFNumberingPtr( new DOFNumberingInstance("") ) );
+    BaseDOFNumberingPtr computeDOFNumbering( BaseDOFNumberingPtr dofNum = BaseDOFNumberingPtr( nullptr ) );
 
     /**
      * @brief Calcul des matrices elementaires pour l'option AMOR_MECA

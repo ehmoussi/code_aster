@@ -70,4 +70,7 @@ matrAsse.addKinematicsLoad(charCine)
 matrAsse.build()
 matrAsse.debugPrint(rank+30)
 
+retour = matrAsse.getDOFNumbering()
+test.assertEqual(retour.isParallel(), True)
+
 test.printSummary()

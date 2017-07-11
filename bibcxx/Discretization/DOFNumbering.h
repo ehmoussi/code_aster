@@ -189,6 +189,15 @@ public:
     };
 
     /**
+     * @brief Methode permettant de savoir si l'objet est parallel
+     * @return false
+     */
+    virtual bool isParallel()
+    {
+        return false;
+    };
+
+    /**
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */

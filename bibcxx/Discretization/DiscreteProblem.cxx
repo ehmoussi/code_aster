@@ -30,6 +30,7 @@
 #include "Loads/KinematicsLoad.h"
 #include "Loads/MechanicalLoad.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Discretization/ParallelDOFNumbering.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -178,7 +179,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryJacobianMatrix( doub
     return this-> buildElementaryRigidityMatrix( time );
 };
 
-FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad( const DOFNumberingPtr& curDOFNum,
+FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad( const BaseDOFNumberingPtr& curDOFNum,
                                                                     const double& time,
                                                                     const JeveuxMemory& memType )
     const throw ( std::runtime_error )
@@ -208,10 +209,17 @@ FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad( const DOFNum
 };
 
 
-DOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( DOFNumberingPtr dofNum )
+BaseDOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( BaseDOFNumberingPtr dofNum )
 {
-    if ( dofNum->getName() == "" )
-        dofNum = DOFNumberingPtr( new DOFNumberingInstance() );
+    if( !dofNum )
+    {
+#ifdef _USE_MPI
+        if( _study->getSupportModel()->getSupportMesh()->isParallel() )
+            dofNum = ParallelDOFNumberingPtr( new ParallelDOFNumberingInstance() );
+        else
+#endif /* _USE_MPI */
+            dofNum = DOFNumberingPtr( new DOFNumberingInstance() );
+    }
 
     dofNum->setSupportModel( _study->getSupportModel() );
     dofNum->setListOfLoads( _study->getListOfLoads() );
