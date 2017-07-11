@@ -97,8 +97,9 @@ real(kind=8), intent(out) :: elgeom(10, npg)
 ! - Element size 2
 !
     if (tabcod(ELTSIZE2) .eq. 1) then
-        call calcExternalStateVariable4(nno , npg   , jv_dfunc,&
-                                       geom, typmod, elgeom)
+        call calcExternalStateVariable4(nno     , npg   ,&
+                                        jv_dfunc,&
+                                        geom    , typmod)
     endif
 !
 end subroutine

@@ -267,7 +267,9 @@ implicit none
 !     ca_ctempp_ : for end temperature when coupled variable (non external state variable)
 !======================================================================
     real(kind=8) :: ca_vext_eltsize1_
+    real(kind=8) :: ca_vext_eltsize2_(9)
 !     ca_vext_eltsize1_ : size of element
+!     ca_vext_eltsize2_ : size of element (for ENDO_PORO_BETON)
 !======================================================================
     integer :: ca_nfpgmx_
     parameter (ca_nfpgmx_=10)
