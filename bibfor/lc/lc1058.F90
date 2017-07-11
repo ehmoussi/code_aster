@@ -15,140 +15,128 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lc1058(fami, kpg, ksp, ndim, typmod,&
-                  imate, compor, crit, instam, instap,&
-                  neps, epsm, deps, nsig, sigm,&
-                  nvi, vim, option, angmas,&
-                  icomp, stress, statev, dsidep,&
-                  codret)
-use calcul_module, only : ca_iactif_
+! aslint: disable=W1504,W0104
+!
+subroutine lc1058(fami , kpg   , ksp   , ndim  , typmod,&
+                  imate, compor, carcri, instam, instap,&
+                  neps , epsm  , deps  , nsig  , sigm  ,&
+                  nvi  , vim   , option, angmas, icomp ,&
+                  sigp , vip   , dsidep, codret)
 !
 implicit none
 !
-#include "jeveux.h"
 #include "asterc/mfront_behaviour.h"
-#include "asterc/mfront_get_external_state_variable.h"
-#include "asterc/r8nnem.h"
+#include "asterfort/mfrontExternalStateVariable.h"
+#include "asterfort/mfront_get_mater_value.h"
+#include "asterfort/mfrontPrepareStrain.h"
 #include "asterfort/assert.h"
-#include "asterfort/get_elas_para.h"
-#include "asterfort/get_elas_id.h"
-#include "asterfort/infniv.h"
 #include "asterfort/lceqvn.h"
 #include "asterfort/lcicma.h"
-#include "asterfort/lcsmelas.h"
 #include "asterfort/matrot.h"
-#include "asterfort/pmat.h"
-#include "asterfort/tecael.h"
-#include "asterfort/mfront_get_mater_value.h"
-#include "asterfort/mfront_varc.h"
-#include "asterfort/lcdetf.h"
+#include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
-#include "blas/daxpy.h"
+#include "asterfort/Behaviour_type.h"
+#include "asterfort/get_elas_id.h"
+#include "asterfort/get_elas_para.h"
+#include "asterfort/lcsmelas.h"
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
 !
-! aslint: disable=W1504
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg, ksp, ndim
+character(len=8), intent(in) :: typmod(*)
+integer, intent(in) :: imate
+character(len=16), intent(in) :: compor(*)
+real(kind=8), intent(in) :: carcri(*)
+real(kind=8), intent(in) :: instam, instap
+integer, intent(in) :: neps
+real(kind=8), intent(in) :: epsm(6), deps(6)
+integer, intent(in) :: nsig
+real(kind=8), intent(in) :: sigm(6)
+integer, intent(in) :: nvi
+real(kind=8), intent(in) :: vim(*)
+character(len=16), intent(in) :: option
+real(kind=8), intent(in) :: angmas(*)
+integer, intent(in) :: icomp
+real(kind=8), intent(out) :: sigp(6)
+real(kind=8), intent(out) :: vip(nvi)
+real(kind=8), intent(out) :: dsidep(6, 6)
+integer, intent(out) :: codret
 !
-
-! ======================================================================
-!     BUT: INTERFACE POUR ROUTINE D'INTEGRATION LOI DE COMPORTEMENT MFRONT
-!       IN   FAMI    FAMILLE DE POINT DE GAUSS (RIGI,MASS,...)
-!            KPG,KSP NUMERO DU (SOUS)POINT DE GAUSS
-!            NDIM    DIMENSION DE L ESPACE (3D=3,2D=2,1D=1)
-!            IMATE    ADRESSE DU MATERIAU CODE
-!            COMPOR    COMPORTEMENT DE L ELEMENT
-!                COMPOR(1) = RELATION DE COMPORTEMENT (MFRONT)
-!                COMPOR(2) = NB DE VARIABLES INTERNES
-!                COMPOR(3) = TYPE DE DEFORMATION(PETIT,GDEF_LOG)
-!            CRIT    CRITERES  LOCAUX, INUTILISES PAR MFRONT
-!            INSTAM   INSTANT T
-!            INSTAP   INSTANT T+DT
-!            EPSM   DEFORMATION TOTALE A T EVENTUELLEMENT TOURNEE
-!                   DANS LE REPERE COROTATIONNEL SI GDEF_LOG
-!            DEPS   INCREMENT DE DEFORMATION EVENTUELLEMENT TOURNEE
-!                   DANS LE REPERE COROTATIONNEL SI GDEF_LOG
-!            SIGM   CONTRAINTE A T EVENTUELLEMENT TOURNEE...
-!            VIM    VARIABLES INTERNES A T + INDICATEUR ETAT T
-! ATTENTION : SI MODELE CINEMATIQUE ET GDEF, MODIFIER AUSSI VICIN0.F
-!            OPTION     OPTION DE CALCUL A FAIRE
-!                          'RIGI_MECA_TANG'> DSIDEP(T)
-!                          'FULL_MECA'     > DSIDEP(T+DT) , SIG(T+DT)
-!                          'RAPH_MECA'     > SIG(T+DT)
-!            ANGMAS  ANGLES DE ROTATION DU REPERE LOCAL, CF. MASSIF
-!       OUT  STRESS    CONTRAINTE A T+DT
-! !!!!        ATTENTION : ZONE MEMOIRE NON DEFINIE SI RIGI_MECA_TANG
-!       OUT  STATEV  VARIABLES INTERNES A T+DT
-! !!!!        ATTENTION : ZONE MEMOIRE NON DEFINIE SI RIGI_MECA_TANG
-!            TYPMOD  TYPE DE MODELISATION (3D, AXIS, D_PLAN)
-!            ICOMP   NUMERO DU SOUS-PAS DE TEMPS (CF. REDECE.F)
-!            NVI     NOMBRE TOTAL DE VARIABLES INTERNES (+9 SI GDEF_HYP)
-!       OUT  DSIDEP  MATRICE DE COMPORTEMENT TANGENT A T+DT OU T
-!       OUT  CODRET  CODE-RETOUR = 0 SI OK, =1 SINON
-! ======================================================================
-
-
+! --------------------------------------------------------------------------------------------------
 !
-    integer ::      imate, ndim, kpg, ksp, codret, icomp, nvi, nprops, czm, nbvarc
-    integer ::      ntens, ndi, nshr, i, nstatv, npt, nume_elem, layer, elas_id
-    integer ::      kspt, kstep, kinc, j, ifm, niv
-    integer ::      pfcmfr
-    integer ::      nummod
-    integer :: idbg = 1
+! Behaviour
+!
+! MFRONT for SIMO_MIEHE
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  fami             : Gauss family for integration point rule
+! In  kpg              : current point gauss
+! In  ksp              : current "sous-point" gauss
+! In  ndim             : dimension of problem (2 or 3)
+! In  typmod           : type of modelization (TYPMOD2)
+! In  imate            : coded material address
+! In  compor           : name of comportment definition (field)
+! In  carcri           : parameters for comportment
+! In  instam           : time at beginning of time step
+! In  instap           : time at end of time step
+! In  neps             : number of components of strains
+! In  epsm             : strains at beginning of current step time
+! In  deps             : increment of strains during current step time
+! In  nsig             : number of components of stresses
+! In  sigm             : stresses at beginning of current step time
+! In  nvi              : number of components of internal state variables
+! In  vim              : internal state variables at beginning of current step time
+! In  option           : name of option to compute
+! In  angmas           : nautical angles
+! In  icomp            : indicator of local sub-step
+! Out sigm             : stresses at end of current step time
+! Out vip              : internal state variables at end of current step time
+! Out dsidep           : tangent matrix
+! Out codret           : code for error
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer, parameter :: npropmax = 197
     integer, parameter :: npred = 8
-    integer ::      neps, nsig, iadzi, iazk24
-    real(kind=8) :: angmas(*), crit(*)
-    real(kind=8) :: instam, instap, drot(3, 3), dstran(9), props(npropmax)
-    real(kind=8) :: epsm(6), deps(6), young, nu
-    real(kind=8) :: sigm(6), stress(6), sse, spd, scd, time(2)
-    real(kind=8) :: vim(*), statev(nvi)
-    real(kind=8) :: predef(npred), dpred(npred)
-    real(kind=8) :: ddsdde(54), dfgrd0(3, 3), dfgrd1(3, 3)
-    real(kind=8) :: ddsddt(6), drplde(6), stran(9), dsidep(6, 6)
-    real(kind=8) :: dtime, temp, dtemp, coords(3), rpl, pnewdt, drpldt
-    real(kind=8) :: depsth(6), epsth(6), rac2, usrac2, drott(3, 3),detf
-    character(len=16) :: compor(*), option, elas_keyword
-    character(len=8) :: typmod(*), lvarc(npred)
-    character(len=*) :: fami
+    integer :: nprops, nstatv, j, i, pfcmfr, nummod, elas_id
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+    real(kind=8), parameter :: usrac2 = sqrt(2.d0)*0.5d0
+    real(kind=8) :: drot(3, 3), dstran(9), props(npropmax)
+    real(kind=8) :: time(2), young, nu
+    real(kind=8) :: predef(npred), dpred(npred), detf
+    real(kind=8) :: ddsdde(54)
+    real(kind=8) :: stran(9)
+    real(kind=8) :: dtime, temp, dtemp, pnewdt
+    real(kind=8) :: depsth(6), epsth(6), drott(3, 3)
+    character(len=16) :: rela_comp, defo_comp, elas_keyword
+    aster_logical :: l_pred, l_large_strain, l_czm
+    integer :: ntens, ndi
     common/tdim/  ntens  , ndi
 !
-!     NTENS  :  NB TOTAL DE COMPOSANTES TENSEURS
-!     NDI    :  NB DE COMPOSANTES DIRECTES  TENSEURS
-! ======================================================================
-
+! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-
-!
-! - Initializations
-!
-    ntens       = 2*ndim
-    ndi         = 3
-    nshr        = ntens-ndi
-    codret      = 0
-    rac2        = sqrt(2.d0)
-    usrac2      = rac2*0.5d0
-    nprops      = npropmax
-    czm         = 0
-    stran(:)    = 0.d0
-    dstran(:)   = 0.d0
-    dfgrd0(:,:) = 0.d0
-    dfgrd1(:,:) = 0.d0
-    coords(:)   = r8nnem()
-!
-! - Get current index of cell
-!
-    nume_elem = 0
-    if (ca_iactif_ .ne. 2) then
-        call tecael(iadzi, iazk24, noms=0)
-        nume_elem=zi(iadzi)
+    ntens          = 2*ndim
+    ndi            = 3
+    codret         = 0
+    nprops         = npropmax
+    rela_comp      = compor(NAME)
+    defo_comp      = compor(DEFO)
+    pfcmfr         = nint(carcri(16))
+    l_pred         = option(1:9).eq. 'RIGI_MECA'
+    l_large_strain = .true.
+    l_czm          = typmod(2).eq.'ELEMJOIN'
+    if (l_czm) then
+        ntens = 6
     endif
+    ASSERT(defo_comp .eq. 'SIMO_MIEHE')
 !
 ! - Get material properties
 !
-    call mfront_get_mater_value(fami, kpg, ksp, imate, ifm, &
-                                niv, idbg, compor(1), nprops, props)
+    call mfront_get_mater_value(rela_comp,&
+                                fami     , kpg  , ksp, imate,&
+                                nprops   , props)
 !
 ! - Get type of modelization
 !
@@ -166,26 +154,23 @@ implicit none
 !
 ! - Prepare external state variables
 !
-    call mfront_get_external_state_variable(int(crit(14)), int(crit(15)), lvarc, nbvarc)
-    ASSERT(nbvarc.le.npred)
-    call mfront_varc(fami, kpg, ksp, imate, ifm, niv, idbg, lvarc, nbvarc, &
-                     temp, dtemp, predef, dpred, neps, epsth, depsth )
+    call mfrontExternalStateVariable(carcri,&
+                                     fami   , kpg      , ksp, imate, &
+                                     temp   , dtemp    , &
+                                     predef , dpred    , &
+                                     neps   , epsth    , depsth)
 !
 ! - Prepare strains
 !
-    ASSERT(neps .eq. 9)
-    call dcopy(neps, epsm, 1, dfgrd0, 1)
-    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-        call pmat(3, deps, dfgrd0, dfgrd1)
-    else
-        call dcopy(neps, dfgrd0, 1, dfgrd1, 1)
-    endif
-    call dcopy(neps, dfgrd0, 1, stran, 1)
-    call dcopy(neps, dfgrd1, 1, dstran, 1)
+    call mfrontPrepareStrain(l_large_strain, l_pred, l_czm,&
+                             neps          , epsm  , deps ,&
+                             epsth         , depsth,&
+                             stran         , dstran,&
+                             detf)
 !
-! - Real number of internal variable: SIMO_MIEHE
+! - Modify number of internal state variables: SIMO_MIEHE
 !
-    nstatv=nvi-6
+    nstatv = nvi-6
 !
 ! - Time parameters
 !
@@ -193,7 +178,7 @@ implicit none
     time(2) = instam
     dtime   = instap-instam
 !
-! - Anistropic case
+! - Anisotropic case
 !
     call matrot(angmas, drott)
     do i = 1,3
@@ -202,80 +187,45 @@ implicit none
         end do
     end do
 !
-    npt=kpg
-    layer=1
-    kspt=ksp
-    kstep=icomp
-    kinc=1
+!    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+!        write(ifm,*)' '
+!        write(ifm,*)'AVANT APPEL MFRONT, INSTANT=',time(2)+dtime
+!        write(ifm,*)'DEFORMATIONS INSTANT PRECEDENT STRAN='
+!        write(ifm,'(6(1X,E11.4))') (stran(i),i=1,ntens)
+!        write(ifm,*)'ACCROISSEMENT DE DEFORMATIONS DSTRAN='
+!        write(ifm,'(6(1X,E11.4))') (dstran(i),i=1,ntens)
+!        write(ifm,*)'CONTRAINTES INSTANT PRECEDENT STRESS='
+!        write(ifm,'(6(1X,E11.4))') (sigm(i),i=1,ntens)
+!        write(ifm,*)'NVI=',nstatv,' VARIABLES INTERNES STATEV='
+!        write(ifm,'(10(1X,E11.4))') (vim(i),i=1,nstatv)
+!    endif
 !
-! - Unused arguments for MFront
+! - Type of matrix for MFront
 !
-    sse       = 0.d0
-    spd       = 0.d0
-    scd       = 0.d0
-    rpl       = 0.d0
-    ddsddt(:) = 0.d0
-    drplde(:) = 0.d0
-    drpldt    = 0.d0
-!
-    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-        if ((niv.ge.2) .and. (idbg.eq.1)) then
-            write(ifm,*)' '
-            write(ifm,*)'AVANT APPEL MFRONT, INSTANT=',time(2)+dtime
-            write(ifm,*)'NUMERO ELEMENT=',nume_elem
-            write(ifm,*)'DEFORMATIONS INSTANT PRECEDENT STRAN='
-            write(ifm,'(6(1X,E11.4))') (stran(i),i=1,ntens)
-            write(ifm,*)'ACCROISSEMENT DE DEFORMATIONS DSTRAN='
-            write(ifm,'(6(1X,E11.4))') (dstran(i),i=1,ntens)
-            write(ifm,*)'CONTRAINTES INSTANT PRECEDENT STRESS='
-            write(ifm,'(6(1X,E11.4))') (sigm(i),i=1,ntens)
-            write(ifm,*)'NVI=',nstatv,' VARIABLES INTERNES STATEV='
-            write(ifm,'(10(1X,E11.4))') (vim(i),i=1,nstatv)
-        endif
-    endif
-!
-    pnewdt=1.d0
-!
-!   pour MFRONT ddsdde(1)= type de matrice tangente
-!   ddsdde(1) <0 : matrice de prédiction
-!   -1, matrice elastique initiale (sans endommagement)
-!   -2, matrice secante (avec endommagement)
-!   -3, matrice tangente.
-!   ddsdde(1) >0 : matrice tangente (FULL_MECA, FULL_MECA_ELAS)
-!    1 matrice elastique initiale (sans endommagement)
-!    2 matrice secante (avec endommagement)
-!    3 matrice tangente
-!    4 matrice tangente cohérente
-!
-    ddsdde=1.d0
+    ddsdde = 1.d0
     if (option .eq. 'RIGI_MECA_TANG') then
-!        ddsdde(1)=-3.d0 disponible a partir de la version 2.584 de mfront
-        ddsdde(1)=4.d0
+        ddsdde(1) = 4.d0
     else if (option .eq. 'RIGI_MECA_ELAS') then
-!        ddsdde(1)=-2.d0
-        ddsdde(1)=1.d0
+        ddsdde(1) = 1.d0
     else if (option .eq. 'FULL_MECA_ELAS') then
-        ddsdde(1)= 2.d0
+        ddsdde(1) = 2.d0
     else if (option .eq. 'FULL_MECA') then
-        ddsdde(1)= 4.d0
+        ddsdde(1) = 4.d0
     else if (option .eq. 'RAPH_MECA') then
-        ddsdde(1)= 0.d0
+        ddsdde(1) = 0.d0
     endif
 !
-!   Adresse de la fonction mfront a appeler
-    pfcmfr = int(crit(16))
+! - Call MFront
+!
+    pnewdt = 1.d0
     if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-!
-        call dcopy(nsig, sigm, 1, stress, 1)
-        call dscal(3, usrac2, stress(4), 1)
-!
-        call lceqvn(nstatv, vim, statev)
-!
-        call mfront_behaviour(pfcmfr, stress, statev, ddsdde,&
+        call dcopy(nsig, sigm, 1, sigp, 1)
+        call dscal(3, usrac2, sigp(4), 1)
+        call lceqvn(nstatv, vim, vip)
+        call mfront_behaviour(pfcmfr, sigp, vip, ddsdde,&
                               stran, dstran, dtime, temp, dtemp,&
                               predef, dpred, ntens, nstatv, props,&
                               nprops, drot, pnewdt, nummod)
-!
     else if (option(1:9).eq. 'RIGI_MECA') then
         call get_elas_id(imate, elas_id, elas_keyword)
         call get_elas_para(fami     , imate, '-', kpg, ksp, &
@@ -285,26 +235,29 @@ implicit none
                       nmat = 0, young_ = young, nu_ = nu)
     endif
 !
-    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-        if ((niv.ge.2) .and. (idbg.eq.1)) then
-            write(ifm,*)' '
-            write(ifm,*)'APRES APPEL MFRONT, STRESS='
-            write(ifm,'(6(1X,E11.4))') (stress(i),i=1,ntens)
-            write(ifm,*)'APRES APPEL MFRONT, STATEV='
-            write(ifm,'(10(1X,E11.4))')(statev(i),i=1,nstatv)
-        endif
-    endif
+!    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+!        if ((niv.ge.2) .and. (idbg.eq.1)) then
+!            write(ifm,*)' '
+!            write(ifm,*)'APRES APPEL MFRONT, STRESS='
+!            write(ifm,'(6(1X,E11.4))') (sigp(i),i=1,ntens)
+!            write(ifm,*)'APRES APPEL MFRONT, STATEV='
+!            write(ifm,'(10(1X,E11.4))')(vip(i),i=1,nstatv)
+!        endif
+!    endif
+!
+!
+! - Convert stresses
 !
     if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-        call dscal(3, rac2, stress(4), 1)
-! transformation cauchy kirchhoff
-        call lcdetf(3, dfgrd1, detf)
-        call dscal(3, detf, stress, 1)
+        call dscal(3, rac2, sigp(4), 1)
+        call dscal(3, detf, sigp, 1)
     endif
 !
     if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
         call dcopy(54, ddsdde, 1, dsidep, 1)  
     endif
+!
+! - Return code from MFront
 !
     if (pnewdt .lt. 0.0d0) then
         if (pnewdt .lt. -0.99d0 .and. pnewdt .gt. -1.01d0) then
@@ -319,6 +272,5 @@ implicit none
             call utmess('F', 'MFRONT_3')
         endif
     endif
-    idbg=0
 !
 end subroutine

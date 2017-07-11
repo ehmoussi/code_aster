@@ -15,27 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine mfront_get_mater_value(fami, kpg, ksp, imate, ifm, &
-                                  niv, idbg, rela_comp, nprops, props)
-    implicit none
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: imate
-    integer, intent(in) :: ifm
-    integer, intent(in) :: niv
-    integer, intent(in) :: idbg
-    character(len=16), intent(in) :: rela_comp
-    integer, intent(out) :: nprops
-    real(kind=8), intent(out) :: props(*)
 !
-! Retourne les valeurs des coefficients materiau pour l'interface MFront
-!       in   fami    famille de point de gauss (rigi,mass,...)
-!            kpg,ksp numero du (sous)point de gauss
-!            imate   adresse du materiau code
-!       out  nprops  nb coef
-!            props   coef materiau
+subroutine mfront_get_mater_value(rela_comp,&
+                                  fami     , kpg      , ksp, imate, &
+                                  nprops   , props)
+!
+implicit none
 !
 #include "asterc/r8nnem.h"
 #include "asterc/mfront_get_mater_prop.h"
@@ -44,37 +29,57 @@ subroutine mfront_get_mater_value(fami, kpg, ksp, imate, ifm, &
 #include "asterfort/mat_proto.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
-#include "asterfort/rcvarc.h"
+#include "asterfort/get_meta_phasis.h"
 !
-    integer, parameter :: npropmax=197
+character(len=16), intent(in) :: rela_comp
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+integer, intent(in) :: imate
+integer, intent(inout) :: nprops
+real(kind=8), intent(out) :: props(*)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Behaviour (MFront)
+!
+! Get material properties
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  rela_comp        : RELATION comportment
+! In  fami             : Gauss family for integration point rule
+! In  imate            : coded material address
+! In  kpg              : current point gauss
+! In  ksp              : current "sous-point" gauss
+! IO  nprops           : number of material properties
+! Out props            : values of material properties
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer, parameter :: npropmax = 197
     integer :: codrel(npropmax), nbcoef, i
     character(len=16) :: nomres(npropmax)
     real(kind=8) :: propl(npropmax)
+    real(kind=8) :: zalpha
+    integer      :: nb_phasis, meta_type
 !
-    real(kind=8) :: phase(5), zalpha
-    character(len=8) :: acier(4)
-    integer     :: ire2,k,nz
-!
-    data acier /'PFERRITE','PPERLITE','PBAINITE','PMARTENS'/
+! --------------------------------------------------------------------------------------------------
 !
     if (rela_comp .eq. 'MFRONT') then
-!       Usermaterial: parameters are defined using UMAT in DEFI_MATERIAU
         call mat_proto(fami, kpg, ksp, '+', imate, rela_comp, nprops, props)
     else
-!       Get the number and the names of the material properties
+! ----- Get the number and the names of the material properties
         call mfront_get_mater_prop(rela_comp, nbcoef, nomres)
         ASSERT(nbcoef <= npropmax)
-!       Get the properties values (enter under 'rela_comp' in DEFI_MATERIAU)
+! ----- Get the properties values (enter under 'rela_comp' in DEFI_MATERIAU)
         call r8inir(nbcoef, r8nnem(), props, 1)
         if (rela_comp(1:4) .eq. 'Meta') then
-!           Compute zalpha 
-            nz = 5
-            do k = 1, nz-1
-                call rcvarc(' ', acier(k), '+', fami, kpg,ksp, phase(k), ire2)
-                if (ire2 .eq. 1) phase(k)=0.d0
-            end do
-            zalpha=phase(1)+phase(2)+phase(3)+phase(4)
-!
+            meta_type = 1
+            nb_phasis = 5
+            call get_meta_phasis(fami     , '+', kpg, ksp,&
+                                 meta_type,&
+                                 nb_phasis, zcold_   = zalpha)
             do i = 1, nbcoef
                 if (nomres(i)(1:4) .eq. 'meta') then
                     call rcvalb(fami, 1, 1, '+', imate,&
@@ -83,29 +88,20 @@ subroutine mfront_get_mater_value(fami, kpg, ksp, imate, ifm, &
                 else
                     call rcvalb(fami, kpg, ksp, '+', imate, &
                                 ' ', rela_comp, 0, ' ', [0.d0], &
-                    &           1, nomres(i), propl(i), codrel(i), 1)
+                                1, nomres(i), propl(i), codrel(i), 1)
                 endif
             enddo
         else
             call rcvalb(fami, kpg, ksp, '+', imate, &
                         ' ', rela_comp, 0, ' ', [0.d0], &
-            &           nbcoef, nomres, propl, codrel, 1)
+                        nbcoef, nomres, propl, codrel, 1)
         endif
-!
-!       Count the number of properties (but there are all compulsory)
-!       codrel(I)=0 if the parameter exists, else 1
-        if ((niv.ge.2) .and. (idbg.eq.1)) then
-            write(ifm,*)' '
-            write(ifm,*)'COEFFICIENTS MATERIAU'
-        endif
+! ----- Count the number of properties (but there are all compulsory)
         nprops = 0
         do i = 1, nbcoef
             if (codrel(i) .eq. 0) then
                 nprops = nprops+1
                 props(nprops) = propl(i)
-                if ((niv.ge.2) .and. (idbg.eq.1)) then
-                    write(ifm,*) nomres(i), props(nprops)
-                endif
             endif
         end do
     endif

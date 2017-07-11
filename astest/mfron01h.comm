@@ -269,7 +269,7 @@ VAIN11= CREA_CHAMP(OPERATION = 'AFFE', TYPE_CHAM = 'ELGA_VARI_R', MODELE = MO,
                         ),
                    );
 
-SMF=STAT_NON_LINE( MODELE=MO,
+SMF=STAT_NON_LINE( MODELE=MO,INFO=2,
                     ETAT_INIT = _F(VARI=VAIN11,),
                   CHAM_MATER=CHP_MATT,
                   EXCIT=(_F(CHARGE = CHR_LIAI),
