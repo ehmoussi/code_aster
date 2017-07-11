@@ -35,8 +35,8 @@ executionParameter.parse_args()
 from code_aster.Supervis import libFile
 
 # automatic startup
-if executionParameter.get( 'autostart' ):
-    Initializer.init( executionParameter.get( 'buildelem' ) )
+if executionParameter.get_option('autostart'):
+    Initializer.init( executionParameter.get_option('buildelem'))
 
 # import general purpose functions
 from .RunManager.saving import saveObjects

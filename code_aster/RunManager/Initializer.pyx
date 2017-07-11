@@ -43,11 +43,16 @@ def init( int mode ):
     # TODO: what future for aster modules?
     # At least: aster_mpi_init, exceptions, med module...
     libaster.initAsterModules()
+
+    # _aster_core must be initialized
+    import aster_core
+    aster_core.register(None, executionParameter)
+
     # Is there any glob.* to reload ?
     pickler = Pickler()
     # common keywords
     keywords = {}
-    if executionParameter.get('abort'):
+    if executionParameter.get_option('abort'):
         keywords['ERREUR'] = _F(ERREUR_F='ABORT')
     if mode or not pickler.canRestart():
         # Emulate the syntax of DEBUT (default values should be added)
