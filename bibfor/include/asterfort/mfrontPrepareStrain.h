@@ -16,16 +16,19 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine mfront_get_mater_value(rela_comp,&
-                                      fami     , kpg      , ksp, imate, &
-                                      nprops   , props)
-        character(len=16), intent(in) :: rela_comp
-        character(len=*), intent(in) :: fami
-        integer, intent(in) :: kpg
-        integer, intent(in) :: ksp
-        integer, intent(in) :: imate
-        integer, intent(inout) :: nprops
-        real(kind=8), intent(out) :: props(*)
-    end subroutine mfront_get_mater_value
+    subroutine mfrontPrepareStrain(l_large_strain, l_pred, l_czm,&
+                                   neps          , epsm  , deps ,&
+                                   epsth         , depsth,&
+                                   stran         , dstran,&
+                                   detf_)
+        aster_logical, intent(in) :: l_large_strain, l_pred, l_czm
+        integer, intent(in) :: neps
+        real(kind=8), intent(in) :: epsm(6), deps(6)
+        real(kind=8), intent(in) :: epsth(neps), depsth(neps)
+        real(kind=8), intent(out) :: stran(9), dstran(9)
+        real(kind=8), optional, intent(out) :: detf_
+    end subroutine mfrontPrepareStrain
 end interface

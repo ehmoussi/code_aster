@@ -15,17 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
+
 interface
-    subroutine mfront_get_mater_value(rela_comp,&
-                                      fami     , kpg      , ksp, imate, &
-                                      nprops   , props)
-        character(len=16), intent(in) :: rela_comp
+    subroutine  mfrontExternalStateVariable(carcri,&
+                                            fami   , kpg      , ksp, imate, &
+                                            temp   , dtemp    , &
+                                            predef , dpred    , &
+                                            neps   , epsth    , depsth)
+        real(kind=8), intent(in) :: carcri(*)
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg
         integer, intent(in) :: ksp
         integer, intent(in) :: imate
-        integer, intent(inout) :: nprops
-        real(kind=8), intent(out) :: props(*)
-    end subroutine mfront_get_mater_value
+        real(kind=8), intent(out) :: temp, dtemp
+        real(kind=8), intent(out) :: predef(*), dpred(*)
+        integer, intent(in) :: neps
+        real(kind=8), intent(out) :: epsth(neps), depsth(neps)
+    end subroutine mfrontExternalStateVariable
 end interface

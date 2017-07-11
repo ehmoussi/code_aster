@@ -15,168 +15,200 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine mfront_varc(fami, kpg, ksp, imate, ifm, niv, idbg, &
-                           lvarc, nbvarc, temp, dtemp, predef, dpred, &
-                           neps, epsth, depsth)
-!     but: variables de commande et deformation thermique pour interface MFront
-!       in   fami    famille de point de gauss (rigi,mass,...)
-!            kpg,ksp numero du (sous)point de gauss
-!            imate   adresse du materiau code
-!       out  epsth1  deformation thermique a t 
-!            depst1   increment de deformation eventuellement tournee
-! ======================================================================
-! person_in_charge: nicolas.sellenet at edf.fr
-    implicit none
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine mfront_varc(fami   , kpg      , ksp, imate, &
+                       nb_varc, list_varc, &
+                       temp   , dtemp    , &
+                       predef , dpred    , &
+                       neps   , epsth    , depsth)
+!
+implicit none
+!
 #include "asterc/r8nnem.h"
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
-#include "asterfort/rccoma.h"
 #include "asterfort/verift.h"
+#include "asterfort/get_elas_id.h"
+!    
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+integer, intent(in) :: imate
+integer, intent(in) :: nb_varc
+character(len=8), intent(in) :: list_varc(*)
+real(kind=8), intent(out) :: temp, dtemp
+real(kind=8), intent(out) :: predef(*), dpred(*)
+integer, intent(in) :: neps
+real(kind=8), intent(out) :: epsth(neps), depsth(neps)
 !
-    integer           :: imate, kpg, ksp, i, iret, iret2,  codret(3), npred
-    integer           :: ifm, niv, idbg, ndimloc, neps, nbvarc, j
-    parameter          ( npred = 8)
-    real(kind=8)      :: predef(npred),dpred(npred),vrcm,vrcp,valres(3),valrem(3)
-    real(kind=8)      :: hydrm,hydrp,sechm,sechp,sref,epsbp,epsbm,bendom,kdessm,bendop,kdessp
-    real(kind=8)      :: tm,tp,tref,epsth(neps),depsth(neps),temp,dtemp
-    character(len=8)  :: lvarc(npred), materi
-    character(len=*)  :: fami
+! --------------------------------------------------------------------------------------------------
+!
+! Behaviour (MFront)
+!
+! Compute inelastic strains from external state variables
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  fami             : Gauss family for integration point rule
+! In  imate            : coded material address
+! In  kpg              : current point gauss
+! In  ksp              : current "sous-point" gauss
+! In  nb_varc          : total number of external state variables
+! In  list_varc        : list of external state variables
+! Out temp             : temperature at beginning of current step time
+! Out dtemp            : increment of temperature during current step time
+! Out predef           : external state variables at beginning of current step time
+! Out dpred            : increment of external state variables during current step time
+! In  neps             : number of components of strains
+! Out epsth            : thermic strains at beginning of current step time
+! Out depsth           : increment of thermic strains during current step time
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer           :: iret, iret2, codret(3), i_dim, i_varc
+    integer, parameter :: nb_varc_maxi = 8
+    real(kind=8)      :: vrcm, vrcp, valres(3)
+    real(kind=8)      :: hydrm, hydrp, sechm, sechp, sref
+    real(kind=8)      :: epsbp, epsbm, bendom, kdessm, bendop, kdessp
+    real(kind=8)      :: tm,tp,tref
     character(len=16) :: nomres(3)
-    character(len=32) :: mcmate
-    real(kind=8)      :: epsthp, epsthm
+    integer           :: elas_id
+    character(len=16) :: elas_keyword
+    real(kind=8) :: epsthm, epsth_anism(3), epsth_metam
+    real(kind=8) :: epsthp, epsth_anisp(3), epsth_metap
 !
-    materi = ' '
-
-
+! --------------------------------------------------------------------------------------------------
+!
     call r8inir(neps, 0.d0, depsth, 1)
     call r8inir(neps, 0.d0, epsth, 1)
-    call r8inir(npred, r8nnem(), predef, 1)
-    call r8inir(npred, r8nnem(), dpred, 1)
-
-
-    call rcvarc(' ', 'TEMP', '-', fami, kpg, ksp, tm, iret)
-    if (iret .ne. 0) tm=0.d0
-    call rcvarc(' ', 'TEMP', 'REF', fami, kpg, ksp, tref, iret)
-    if (iret .ne. 0) tref=0.d0
-    call rcvarc(' ', 'TEMP', '+', fami, kpg,  ksp, tp, iret)
-    if (iret .ne. 0) tp=0.d0
+    call r8inir(nb_varc_maxi, r8nnem(), predef, 1)
+    call r8inir(nb_varc_maxi, r8nnem(), dpred, 1)
 !
-    call rccoma(imate, 'ELAS', 1, mcmate, iret2)
-    ASSERT(iret2.eq.0)
+! - Get type of elasticity (Isotropic/Orthotropic/Transverse isotropic)
 !
-    if (mcmate .eq. 'ELAS') then
-        nomres(1) = 'ALPHA'
-        nomres(2) = 'ALPHA'
-        nomres(3) = 'ALPHA'
-        ndimloc=3
-    else if (mcmate.eq.'ELAS_ORTH'.or.mcmate.eq.'ELAS_ISTR') then
-        nomres(1) = 'ALPHA_L'
-        nomres(2) = 'ALPHA_T'
-        nomres(3) = 'ALPHA_N'
-        ndimloc=3
+    call get_elas_id(imate, elas_id, elas_keyword)
+!
+! - Compute thermic dilatation
+!
+    call verift(fami, kpg, ksp, '-', imate,&
+                epsth_      = epsthm,&
+                epsth_anis_ = epsth_anism,&
+                epsth_meta_ = epsth_metam,&
+                temp_prev_  = tm  ,&
+                temp_refe_  = tref,&
+                iret_       = iret)
+    if (iret .ne. 0) then
+        tm = 0.d0
     endif
-
-    if (mcmate.eq.'ELAS_META') then
-        ndimloc=3
-        call verift(fami, kpg, ksp, '-', imate,epsth_meta_= epsthm)
-        call verift(fami, kpg, ksp, '+', imate,epsth_meta_= epsthp)
-        do i = 1, ndimloc
-            depsth(i) = epsthp - epsthm
-            epsth(i)  = epsthm
+    call verift(fami, kpg, ksp, '+', imate,&
+                epsth_      = epsthp,&
+                epsth_anis_ = epsth_anisp,&
+                epsth_meta_ = epsth_metap,&
+                temp_curr_  = tp,&
+                iret_       = iret)
+    if (iret .ne. 0) then
+        tp = 0.d0
+    endif
+!
+! - Compute thermic strains
+!
+    if (elas_keyword .eq. 'ELAS_META') then
+        do i_dim = 1, 3
+            depsth(i_dim) = epsth_metap - epsth_metam
+            epsth(i_dim)  = epsth_metam
         enddo
     else
-        call rcvalb(fami, kpg, ksp, '-', imate,materi, mcmate, 0, ' ', [0.d0],&
-                    ndimloc, nomres, valrem, codret, 0)
-        call rcvalb(fami, kpg, ksp, '+', imate,materi, mcmate, 0, ' ', [0.d0],&
-                    ndimloc, nomres, valres, codret, 0)
-
-        do i = 1, ndimloc
-            if ( codret(i).eq.0 ) then
-                depsth(i) = valres(i)*(tp-tref)-valrem(i)*(tm- tref)
-                epsth(i)  = valrem(i)*(tm-tref)
-            else
-                depsth(i) = 0
-                epsth(i) = 0
-            endif
-        enddo
+        if (elas_id .eq. 1) then
+            do i_dim = 1, 3
+                depsth(i_dim) = epsthp - epsthm
+                epsth(i_dim)  = epsthm
+            enddo
+        else
+            do i_dim = 1, 3
+                depsth(i_dim) = epsth_anisp(i_dim) - epsth_anism(i_dim)
+                epsth(i_dim)  = epsth_anism(i_dim)
+            enddo
+        endif
     endif
 !
-    do 30 i = 1, nbvarc
-        if ( lvarc(i).eq.'SECH' ) then
-!           APPEL DE RCVARC POUR EXTRAIRE TOUTES LES VARIABLES DE COMMANDE
-!           SECHAGE
-            call rcvarc(' ', lvarc(i), '-', fami, kpg, ksp, vrcm, iret)
+    do i_varc = 1, nb_varc
+        if (list_varc(i_varc) .eq. 'SECH' ) then
+            call rcvarc(' ', 'SECH', '-', fami, kpg, ksp, vrcm, iret)
             if (iret .eq. 0) then
-                predef(i)=vrcm
-                call rcvarc('F', lvarc(i), '+', fami, kpg, ksp, vrcp, iret2)
-                dpred(i)=vrcp-vrcm
+                predef(i_varc) = vrcm
+                call rcvarc('F', 'SECH', '+', fami, kpg, ksp, vrcp, iret2)
+                dpred(i_varc)  = vrcp-vrcm
 !               RETRAIT DESSICATION
-                nomres(1)='K_DESSIC'
-                call rcvalb(fami, kpg, ksp, '-', imate, ' ', 'ELAS', 0, ' ',&
-                          & [0.d0], 1, nomres, valres, codret, 1)
+                nomres(1) = 'K_DESSIC'
+                call rcvalb(fami  , kpg   , ksp   ,&
+                            '-'   , imate , ' '   , 'ELAS',&
+                            0     , ' '   , [0.d0],&
+                            1     , nomres, valres,&
+                            codret, 1)
                 kdessm = valres(1)
-                call rcvalb(fami, kpg, ksp, '+', imate, ' ', 'ELAS', 0, ' ',&
-                          & [0.d0], 1, nomres, valres, codret, 1)
+                call rcvalb(fami  , kpg   , ksp   ,&
+                            '+'   , imate , ' '   , 'ELAS',&
+                            0     , ' '   , [0.d0],&
+                            1     , nomres, valres,&
+                            codret, 1)
                 kdessp = valres(1)
                 call rcvarc(' ', 'SECH', 'REF', fami, kpg,   ksp, sref, iret2)
                 if (iret2 .ne. 0) sref=0.d0
-                sechm=predef(i)
-                sechp=predef(i)+dpred(i)
-                epsbm=-kdessm*(sref-sechm)
-                epsbp=-kdessp*(sref-sechp)
-                do j = 1, ndimloc
-                   epsth(j)=epsth(j)+epsbm
-                   depsth(j)=depsth(j)+epsbp-epsbm
+                sechm = predef(i_varc)
+                sechp = predef(i_varc)+dpred(i_varc)
+                epsbm = -kdessm*(sref-sechm)
+                epsbp = -kdessp*(sref-sechp)
+                do i_dim = 1, 3
+                   epsth(i_dim)  = epsth(i_dim)+epsbm
+                   depsth(i_dim) = depsth(i_dim)+epsbp-epsbm
                 enddo
             endif
         endif
-        if ( lvarc(i).eq.'HYDR' ) then
-!           HYDRATATION
-            call rcvarc(' ', lvarc(i), '-', fami, kpg, ksp, vrcm, iret)
+        if (list_varc(i_varc) .eq. 'HYDR' ) then
+            call rcvarc(' ', 'HYDR', '-', fami, kpg, ksp, vrcm, iret)
             if (iret .eq. 0) then
-                predef(i)=vrcm
-                call rcvarc('F', lvarc(i), '+', fami, kpg, ksp, vrcp, iret2)
-                dpred(i)=vrcp-vrcm
+                predef(i_varc) = vrcm
+                call rcvarc('F', 'HYDR', '+', fami, kpg, ksp, vrcp, iret2)
+                dpred(i_varc)  = vrcp-vrcm
 !               RETRAIT ENDOGENE
                 nomres(1)='B_ENDOGE'
-                call rcvalb(fami, kpg, ksp, '-', imate, ' ', 'ELAS', 0, ' ', [0.d0], &
-                           & 1, nomres, valres, codret, 1)
+                call rcvalb(fami  , kpg   , ksp   ,&
+                            '-'   , imate , ' '   , 'ELAS',&
+                            0     , ' '   , [0.d0],&
+                            1     , nomres, valres,&
+                            codret, 1)
                 bendom = valres(1)
-                call rcvalb(fami, kpg, ksp, '+', imate, ' ', 'ELAS', 0, ' ', [0.d0], &
-                           & 1, nomres, valres, codret, 1)
+                call rcvalb(fami  , kpg   , ksp   ,&
+                            '+'  , imate , ' '   , 'ELAS',&
+                            0     , ' '   , [0.d0],&
+                            1     , nomres, valres,&
+                            codret, 1)
                 bendop = valres(1)
-                hydrm=predef(i)
-                hydrp=predef(i)+dpred(i)
-                epsbm=-bendom*hydrm
-                epsbp=-bendop*hydrp
-                do j = 1, ndimloc
-                   epsth(j)=epsth(j)+epsbm
-                   depsth(j)=depsth(j)+epsbp-epsbm
+                hydrm  = predef(i_varc)
+                hydrp  = predef(i_varc)+dpred(i_varc)
+                epsbm  = -bendom*hydrm
+                epsbp  = -bendop*hydrp
+                do i_dim = 1, 3
+                   epsth(i_dim)  = epsth(i_dim)+epsbm
+                   depsth(i_dim) = depsth(i_dim)+epsbp-epsbm
                 enddo
             endif
         endif
-        call rcvarc(' ', lvarc(i), '-', fami, kpg, ksp, vrcm, iret)
+        call rcvarc(' ', list_varc(i_varc), '-', fami, kpg, ksp, vrcm, iret)
         if (iret .eq. 0) then
-            predef(i)=vrcm
-            call rcvarc('F', lvarc(i), '+', fami, kpg, ksp, vrcp, iret2)
-            dpred(i)=vrcp-vrcm
+            predef(i_varc) = vrcm
+            call rcvarc('F', list_varc(i_varc), '+', fami, kpg, ksp, vrcp, iret2)
+            dpred(i_varc)  = vrcp-vrcm
         endif
- 30 continue
+    end do
 !
-    temp=tm
-    dtemp=tp-tm
-
-    if ((niv.ge.2) .and. (idbg.eq.1)) then
-        write(ifm,*)'TEMPERATURE ET INCREMENT'
-        write(ifm,'(2(1X,E11.4))') temp,dtemp
-        write(ifm,*) 'AUTRES VARIABLES DE COMMANDE ET INCREMENTS'
-        do i = 1, nbvarc
-            write(ifm,'(A8,2(1X,E11.4))') lvarc(i),predef(i),dpred(i)
-        enddo
-   endif
-
-    end
+! - Get temperature
+!
+    temp  = tm
+    dtemp = tp-tm
+!
+end subroutine
