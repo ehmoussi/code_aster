@@ -55,10 +55,9 @@ static PyObject* register_jdc(PyObject *self, PyObject *args)
      * Register the Python instances for usage from fortran/libaster
      */
     PyObject *val;
-    PyObject *jdc, *coreopts, *msglog, *pymod;
-    if ( !PyArg_ParseTuple(args, "OOOO:register_jdc", &jdc, &coreopts, &msglog, &pymod) )
+    PyObject *coreopts, *msglog, *pymod;
+    if ( !PyArg_ParseTuple(args, "OOO:register_jdc", &coreopts, &msglog, &pymod) )
         return NULL;
-    register_sh_jdc(jdc);
     register_sh_coreopts(coreopts);
     register_sh_msglog(msglog);
     register_sh_pymod(pymod);
@@ -87,7 +86,7 @@ ASTERINTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
     PyObject *val;
     ASTERINTEGER value;
 
-    val = PyObject_CallMethod(get_sh_jdc(), "get_jdc_attr", "s#", attr, l_attr);
+    val = PyObject_CallMethod(get_sh_coreopts(), "get_jdc_attr", "s#", attr, l_attr);
     if (val == NULL){
         fprintf(fileOut, "attribut inexistant dans le jdc : '%s'\n\n", attr);
         MYABORT("erreur dans JDCGET");
@@ -112,7 +111,7 @@ void DEFSP(JDCSET,jdcset,char *attr, STRING_SIZE l_attr, ASTERINTEGER *value)
 
     PyObject *res;
 
-    res = PyObject_CallMethod(get_sh_jdc(), "set_jdc_attr", "s#l", attr, l_attr, (long)*value);
+    res = PyObject_CallMethod(get_sh_coreopts(), "set_jdc_attr", "s#l", attr, l_attr, (long)*value);
     if (res == NULL)
         MYABORT("erreur dans JDCSET");
     Py_XDECREF(res);
@@ -124,7 +123,7 @@ PyObject* GetJdcAttr(_IN char *attribut)
      * Retourne un attribut du 'jdc' en tant que PyObject.
      */
     PyObject *objattr;
-    objattr = PyObject_GetAttrString(get_sh_jdc(), attribut);
+    objattr = PyObject_GetAttrString(get_sh_coreopts(), attribut);
     /* traiter l'erreur "objattr == NULL" dans l'appelant */
     return objattr;
 }

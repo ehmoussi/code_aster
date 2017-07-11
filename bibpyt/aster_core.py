@@ -89,8 +89,8 @@ def set_option(option, value):
     _aster_core.set_option(option, value)
 
 
-def register(catalog, settings, logger=None):
-    '''Register the catalog and the settings in order to share them with
+def register(settings, logger=None):
+    """Register the settings in order to share them with
     every aster component.
 
     This function must be called in order to initialize aster.
@@ -98,11 +98,11 @@ def register(catalog, settings, logger=None):
     :catalog: a JDC instance
     :settings: aster settings object (as given by aster_settings.CoreOptions)
     :logger: the message logger (default: Utilitai.Utmess.MessageLog)
-    '''
+    """
     if logger is None:
         from Utilitai.Utmess import MessageLog  # prevent cycling import
         logger = MessageLog
-    _aster_core.register(catalog, settings, logger, sys.modules[__name__])
+    _aster_core.register(settings, logger, sys.modules[__name__])
 
 
 def _print_alarm():

@@ -18,23 +18,11 @@
 
 subroutine ibmain()
     implicit none
-#include "asterf_types.h"
-#include "asterc/faster.h"
-#include "asterc/gtopti.h"
 #include "asterc/inisig.h"
 #include "asterfort/ib0mai.h"
 #include "asterfort/lxinit.h"
+
 !     ENSEMBLE DES INITIALISATIONS POUR L'EXECUTION D'UN JOB
-!
-!     ------- COMMUN DEBUG SUPERVISEUR ---------------------------------
-!
-    integer :: issuiv, iret
-!
-!     --- BUFFERISATION EN CAS DE SUIVI INTERACTIF
-    call gtopti('suivi_batch', issuiv, iret)
-    if (issuiv .gt. 0 .and. iret .eq. 0) then
-        call faster()
-    endif
 !
 !     --- INITIALISATION DE L'ANALYSEUR LEXICAL ET DE L'UNITE DE LECTURE
     call lxinit()

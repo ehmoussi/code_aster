@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
+from libc.stdio cimport stdout, setvbuf, _IOLBF
+
 import json
 import os
 import os.path as osp
@@ -42,7 +44,6 @@ class ExecutionParameter:
     def __init__(self):
         """Initialization of attributes"""
         self._args = {}
-        self._args['suivi_batch'] = 0
         self._args['dbgjeveux'] = 0
 
         self._args['memory'] = 1000.
@@ -111,8 +112,10 @@ class ExecutionParameter:
                                 prog="Code_Aster{called by Python}")
         parser.add_argument('-g', '--debug', action='store_true',
             help="add debug informations")
+
         parser.add_argument('--abort', action='store_true',
-            help="abort execution in case of error (testcase mode, by default raise exception)")
+            help="abort execution in case of error (testcase mode, by default "
+                 "raise an exception)")
         parser.add_argument('--build-elem', dest='buildelem', action='store_true',
             default=False,
             help="enable specific starting mode to build the elements database")
@@ -127,10 +130,18 @@ class ExecutionParameter:
         if args.debug:
             setlevel()
         logger.debug("Ignored arguments: %r", ignored)
+
         # assign parameter values
         self.set_option('abort', int(args.abort))
         self.set_option('buildelem', int(args.buildelem))
         self.set_option('autostart', int(args.autostart))
+        # replace "suivi_batch" option that was always enabled
+        unbuffered_stdout()
+
+
+def unbuffered_stdout():
+    """Force stdout to be line buffered."""
+    setvbuf(stdout, NULL, _IOLBF, 0)
 
 
 # extract from aster_settings (that can not be imported here because of

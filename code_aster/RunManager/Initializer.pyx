@@ -46,7 +46,7 @@ def init( int mode ):
 
     # _aster_core must be initialized
     import aster_core
-    aster_core.register(None, executionParameter)
+    aster_core.register(executionParameter)
 
     # Is there any glob.* to reload ?
     pickler = Pickler()
