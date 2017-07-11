@@ -67,8 +67,6 @@ class ExecutionParameter:
         self._args['osrelease'] = platform.release()
         self._args['osname'] = ' '.join(platform.linux_distribution())
         version = aster_pkginfo.version_info.version
-        self._args['versionSTA'] = None
-        self._args['versLabel'] = None
         keys = ('parentid', 'branch', 'date',
                 'from_branch', 'changes', 'uncommitted')
         self._args.update(zip(keys, aster_pkginfo.version_info[1:]))

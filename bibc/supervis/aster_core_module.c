@@ -607,11 +607,6 @@ void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,
       Exemple d'appel :
          call cheksd('MA', 'sd_maillage', iret)
    */
-    fprintf(fileOut, "CHEKSD\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
    PyObject *res;
 
    res = PyObject_CallMethod(get_sh_pymod(), "checksd", "s#s#", nomsd, lnom, typsd, ltyp);
@@ -638,11 +633,6 @@ void DEFSSPPPPPPPPPPPP(TESTRESU_PRINT,testresu_print,
         def testresu_print(type_ref, legend, label, skip, relative,
                            tole, ref, val, compare=1.):
     */
-    fprintf(fileOut, "TESTRESU_PRINT\n");
-    ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );
-    /* TODO */
-
     PyObject *res, *func, *args, *kwargs, *ref, *val, *comp=NULL;
     int ityp;
 
