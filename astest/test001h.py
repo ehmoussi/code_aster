@@ -11,7 +11,7 @@ from code_aster import executionParameter
 test.assertEqual( executionParameter.get('memory'), 1000. )
 
 print ">>> code_aster imported but not started, change a parameter"
-executionParameter.set('memory', 2000.)
+executionParameter.set_option('memory', 2000.)
 
 print ">>> manual start"
 from code_aster.RunManager import Initializer

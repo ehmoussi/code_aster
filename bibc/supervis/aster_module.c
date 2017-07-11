@@ -119,6 +119,7 @@ void DEFP(XFINI,xfini, _IN ASTERINTEGER *code)
 void TraiteMessageErreur( _IN char * message )
 {
     ASTERINTEGER ier=SIGABRT;
+    if (fileOut == NULL) fileOut = stderr;
     fprintf(fileOut, "%s\n",message);
     if ( PyErr_Occurred() ) PyErr_Print();
     CALL_ASABRT( &ier );

@@ -590,15 +590,10 @@ void DEFP(PRHEAD,prhead, _IN ASTERINTEGER *part)
      * en début d'exécution
      * Voir help(aster_core.print_header)
      */
-    fprintf(fileOut, "PRHEAD a ajouter ?\n");
-    /*ASTERINTEGER ier=SIGABRT;
-    CALL_ASABRT( &ier );*/
-    /* TODO */
-
-    // PyObject *res;
-    // res = PyObject_CallMethod(get_sh_pymod(), "print_header", "i", (int)(*part));
-    // if (!res) MYABORT("erreur lors de l'appel a la fonction E_Global.print_header");
-    // Py_DECREF(res);
+    PyObject *res;
+    res = PyObject_CallMethod(get_sh_pymod(), "print_header", "i", (int)(*part));
+    if (!res) MYABORT("erreur lors de l'appel a la fonction E_Global.print_header");
+    Py_DECREF(res);
 }
 
 void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,

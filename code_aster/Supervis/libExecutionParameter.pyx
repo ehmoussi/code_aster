@@ -17,10 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import re
+import json
+import os
+import os.path as osp
 import platform
+import re
+import sys
 
+from Execution.strfunc import convert
 import aster_pkginfo
 
 from code_aster.Supervis.logger import logger, setlevel
@@ -29,13 +33,13 @@ from code_aster.Supervis.libBaseUtils cimport copyToFStr
 
 
 class ExecutionParameter:
-
     """This class stores and provides the execution parameters.
-    The execution parameters are read from the command line or using
-    the method `set()`.
+
+    The execution parameters are defined by reading the command line or using
+    the method `set_option()`.
     """
 
-    def __init__( self ):
+    def __init__(self):
         """Initialization of attributes"""
         self._args = {}
         self._args['suivi_batch'] = 0
@@ -49,7 +53,7 @@ class ExecutionParameter:
         self._computed()
         self._on_command_line()
 
-    def _computed( self ):
+    def _computed(self):
         """Fill some "computed" values"""
         # hostname
         self._args['hostname'] = platform.node()
@@ -82,18 +86,26 @@ class ExecutionParameter:
         self._args['buildelem'] = 0
         self._args['autostart'] = 1
 
-    def set( self, argName, argValue ):
+    def set_option(self, option, value):
         """Set the value of an execution parameter"""
-        self._args[argName] = argValue
+        # Options must at least declared by __init__
+        assert option in self._args, "unknown option: {0}".format(option)
+        self._args[option] = value
 
-    def get( self, argName ):
-        """Return the value of an execution parameter
-        @param argName Argument de la ligne de commande demande
-        @return Entier relu
+    def get_option(self, option, default=None):
+        """Return the value of an execution parameter.
+        @param option Name of the parameter
+        @return value of the parameter
         """
-        return self._args.get( argName, None )
+        if option.startswith("prog:"):
+            value = get_program_path(re.sub('^prog:', '', option))
+        else:
+            value = self._args.get(option, default)
+        if type(value) in (str, unicode):
+            value = convert(value)
+        return value
 
-    def parse_args( self, argv=None ):
+    def parse_args(self, argv=None):
         """Parse the command line arguments to set the execution parameters"""
         from argparse import ArgumentParser
         # command arguments parser
@@ -113,47 +125,66 @@ class ExecutionParameter:
             action='store_false',
             help="turn off the automatic start of the memory manager")
 
-        args, ignored = parser.parse_known_args( argv or sys.argv )
+        args, ignored = parser.parse_known_args(argv or sys.argv)
         if args.debug:
             setlevel()
-        logger.debug( "Ignored arguments: %r", ignored )
+        logger.debug("Ignored arguments: %r", ignored)
         # assign parameter values
-        self.set( 'abort', int(args.abort) )
-        self.set( 'buildelem', int(args.buildelem) )
-        self.set( 'autostart', int(args.autostart) )
+        self.set_option('abort', int(args.abort))
+        self.set_option('buildelem', int(args.buildelem))
+        self.set_option('autostart', int(args.autostart))
+
+
+# extract from aster_settings (that can not be imported here because of
+# imports of aster, aster_core...)
+def get_program_path(program):
+    """Return the path to *program* as stored by 'waf configure'.
+
+    Returns:
+        str: Path stored during configuration or *program* itself otherwise.
+    """
+    if getattr(get_program_path, "_cache", None) is None:
+        prog_cfg = {}
+        fname = osp.join(os.environ["ASTER_DATADIR"], "external_programs.js")
+        if osp.isfile(fname):
+            prog_cfg = json.load(open(fname, "rb"))
+        get_program_path._cache = prog_cfg
+
+    programs = get_program_path._cache
+    return programs.get(program, program)
 
 
 # global instance
 executionParameter = ExecutionParameter()
 
-def setExecutionParameter( argName, argValue ):
+def setExecutionParameter(option, value):
     """Static function to set parameters from the user command file"""
     global executionParameter
-    executionParameter.set( argName, argValue)
+    executionParameter.set_option(option, value)
 
-cdef public long getParameterLong( char* argName ):
+cdef public long getParameterLong(char* option):
     """Request the value of an execution parameter of type 'int'"""
     global executionParameter
-    value = executionParameter.get( argName ) or 0
-    logger.debug( 'gtopti( %r ): %r', argName, value )
+    value = executionParameter.get_option(option) or 0
+    logger.debug('gtopti(%r): %r', option, value)
     return value
 
-cdef public double getParameterDouble( char* argName ):
+cdef public double getParameterDouble(char* option):
     """Request the value of an execution parameter of type 'double'"""
     global executionParameter
-    value = executionParameter.get( argName ) or 0.
-    logger.debug( 'gtoptr( %r ): %r', argName, value )
+    value = executionParameter.get_option(option) or 0.
+    logger.debug('gtoptr(%r): %r', option, value)
     return value
 
-cdef public void gtoptk_( char* argName, char* valk, long* iret,
-                          unsigned int larg, unsigned int lvalk ):
+cdef public void gtoptk_(char* option, char* valk, long* iret,
+                          unsigned int larg, unsigned int lvalk):
     """Request the value of an execution parameter of type 'string'"""
     global executionParameter
-    arg = to_cstr( argName, larg )
-    value = executionParameter.get( arg )
+    arg = to_cstr(option, larg)
+    value = executionParameter.get_option(arg)
     if value is None:
         iret[0] = 4
     else:
-        copyToFStr( valk, value, lvalk )
+        copyToFStr(valk, value, lvalk)
         iret[0] = 0
-    logger.debug( 'gtoptk( %r ): %r, iret %r', arg, value, iret[0] )
+    logger.debug('gtoptk(%r): %r, iret %r', arg, value, iret[0])
