@@ -35,6 +35,7 @@ void exportDOFNumberingToPython()
         .def( "addKinematicsLoad", &BaseDOFNumberingInstance::addKinematicsLoad )
         .def( "addMechanicalLoad", &BaseDOFNumberingInstance::addMechanicalLoad )
         .def( "computeNumerotation", &BaseDOFNumberingInstance::computeNumerotation )
+        .def( "isParallel", &BaseDOFNumberingInstance::isParallel )
         .def( "setElementaryMatrix", &BaseDOFNumberingInstance::setElementaryMatrix )
     ;
 

@@ -35,6 +35,7 @@
 #include "DataFields/FieldOnNodes.h"
 #include "DataFields/FieldOnElements.h"
 #include "Discretization/DOFNumbering.h"
+#include "Discretization/ParallelDOFNumbering.h"
 
 /**
  * @class ResultsContainerInstance
@@ -79,7 +80,7 @@ private:
     /** @brief Liste des champs aux éléments */
     mapStrVOFE                           _dictOfVectorOfFieldsElements;
     /** @brief Liste des NUME_DDL */
-    std::vector< DOFNumberingPtr >       _listOfDOFNum;
+    std::vector< BaseDOFNumberingPtr >   _listOfDOFNum;
 
 public:
     /**
@@ -119,7 +120,15 @@ public:
      * @brief Obtenir un DOFNumbering à remplir
      * @return DOFNumbering à remplir
      */
-    DOFNumberingPtr getEmptyDOFNumbering();
+    BaseDOFNumberingPtr getEmptyDOFNumbering();
+
+    /**
+     * @brief Obtenir un DOFNumbering à remplir
+     * @return DOFNumbering à remplir
+     */
+#ifdef _USE_MPI
+    BaseDOFNumberingPtr getEmptyParallelDOFNumbering();
+#endif /* _USE_MPI */
 
     /**
      * @brief Obtenir un champ aux noeuds réel vide à partir de son nom et de son numéro d'ordre
@@ -134,7 +143,7 @@ public:
      * @brief Obtenir le dernier DOFNumbering
      * @return Dernier DOFNumbering
      */
-    DOFNumberingPtr getLastDOFNumbering() const
+    BaseDOFNumberingPtr getLastDOFNumbering() const
     {
         return _listOfDOFNum[ _listOfDOFNum.size() - 1 ];
     };

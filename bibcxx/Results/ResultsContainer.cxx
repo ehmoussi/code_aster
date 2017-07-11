@@ -101,7 +101,7 @@ bool ResultsContainerInstance::buildFromExisting() throw ( std::runtime_error )
     return true;
 };
 
-DOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering()
+BaseDOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering()
 {
     std::string resuName( getName() );
     std::string name( "12345678.00000          " );
@@ -111,6 +111,19 @@ DOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering()
     _listOfDOFNum.push_back( retour );
     return retour;
 };
+
+#ifdef _USE_MPI
+BaseDOFNumberingPtr ResultsContainerInstance::getEmptyParallelDOFNumbering()
+{
+    std::string resuName( getName() );
+    std::string name( "12345678.00000          " );
+    long a = 10, b = 14;
+    CALL_GNOMSD( resuName.c_str(), name.c_str(), &a, &b );
+    ParallelDOFNumberingPtr retour( new ParallelDOFNumberingInstance( name.substr(0, 14) ) );
+    _listOfDOFNum.push_back( retour );
+    return retour;
+};
+#endif /* _USE_MPI */
 
 FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
                                                                             const int rank )

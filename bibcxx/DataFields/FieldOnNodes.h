@@ -76,7 +76,7 @@ private:
     /** @brief Vecteur Jeveux '.VALE' */
     JeveuxVector<ValueType> _valuesList;
     /** @brief Numérotation attachée au FieldOnNodes */
-    DOFNumberingPtr         _dofNum;
+    BaseDOFNumberingPtr     _dofNum;
 
 public:
     /**
@@ -192,7 +192,8 @@ public:
      * @brief Allouer un champ au noeud à partir d'un DOFNumbering
      * @return renvoit true
      */
-    bool allocateFromDOFNumering( const DOFNumberingPtr& dofNum )
+    bool allocateFromDOFNumering( const BaseDOFNumberingPtr& dofNum )
+        throw( std::runtime_error )
     {
         _dofNum = dofNum;
         if ( _dofNum->isEmpty() ) throw std::runtime_error( "DOFNumering is empty" );
