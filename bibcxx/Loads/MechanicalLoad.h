@@ -301,8 +301,10 @@ class GenericMechanicalLoadInstance: public DataStructure
          * @brief Define the support model
          * @param currentMesh objet Model sur lequel la charge reposera
          */
-        bool setSupportModel( ModelPtr& currentModel )
+        bool setSupportModel( ModelPtr& currentModel ) throw ( std::runtime_error )
         {
+            if( currentModel->getSupportMesh()->isParallel() )
+                throw std::runtime_error( "Mechanical loads not allowed in ParallelMesh mode" );
             _supportModel = currentModel;
             return true;
         };
