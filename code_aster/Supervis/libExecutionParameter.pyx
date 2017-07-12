@@ -101,12 +101,15 @@ class ExecutionParameter:
         @param option Name of the parameter
         @return value of the parameter
         """
+        logger.debug("get_option {0!r} (default: {1})".format(option, default))
         if option.startswith("prog:"):
             value = get_program_path(re.sub('^prog:', '', option))
         else:
             value = self._args.get(option, default)
         if type(value) in (str, unicode):
             value = convert(value)
+        logger.debug("return for {0!r}: {1} {2}"
+                     .format(option, value, type(value)))
         return value
 
     def parse_args(self, argv=None):
@@ -115,50 +118,61 @@ class ExecutionParameter:
         # command arguments parser
         parser = ArgumentParser(description='execute a Code_Aster study',
                                 prog="Code_Aster{called by Python}")
-        parser.add_argument('-g', '--debug', action='store_true', default=False,
+        parser.add_argument('-g', '--debug', action='store_const',
+            const=1, default=0,
             help="add debug informations")
 
-        parser.add_argument('--abort', action='store_true', default=False,
+        parser.add_argument('--abort',
+            action='store_const', const=1, default=0,
             help="abort execution in case of error (testcase mode, by default "
                  "raise an exception)")
-        parser.add_argument('--build-elem', dest='buildelem', action='store_true',
-            default=False,
+        parser.add_argument('--build-elem', dest='buildelem',
+            action='store_const', const=1, default=0,
             help="enable specific starting mode to build the elements database")
         parser.add_argument('--start', dest='autostart',
-            action='store_true', default=True,
+            action='store_const', const=1, default=1,
             help="automatically start the memory manager")
         parser.add_argument('--no-start', dest='autostart',
-            action='store_false',
+            action='store_const', const=0,
             help="turn off the automatic start of the memory manager")
 
-        parser.add_argument('--dbgjeveux', action='store_true', default=False,
+        parser.add_argument('--dbgjeveux',
+            action='store_const', const=1, default=0,
             help="turn on some additional checkings in the memory management")
 
-        parser.add_argument('--jxveri', action='store_true', default=False,
+        parser.add_argument('--jxveri',
+            action='store_const', const=1, default=0,
             help="")
-        parser.add_argument('--sdveri', action='store_true', default=False,
+        parser.add_argument('--sdveri',
+            action='store_const', const=1, default=0,
             help="")
-        parser.add_argument('--impr_macro', action='store_true', default=False,
+        parser.add_argument('--impr_macro',
+            action='store_const', const=1, default=0,
             help="")
-        parser.add_argument('--icode', action='store_true', default=False,
+        parser.add_argument('--icode',
+            action='store_const', const=1, default=0,
             help="turn on running mode for testcase")
 
-        parser.add_argument('--memory', action='store', default=1000,
+        parser.add_argument('--memory',
+            action='store', type=float, default=1000,
             help="memory limit in MB used for code_aster objects "
                  "(default: 1000 MB)")
-        parser.add_argument('--tpmax', action='store', default=86400,
+        parser.add_argument('--tpmax',
+            action='store', type=float, default=86400,
             help="time limit of the execution in seconds (default: 1 day)")
-        parser.add_argument('--maxbase', action='store', default=48000,
+        parser.add_argument('--maxbase',
+            action='store', type=float, default=48000,
             help="size limit in MB for code_aster out-of-core files (glob.*, "
               "default: 48 GB)")
-        parser.add_argument('--numthreads', action='store', default=1,
+        parser.add_argument('--numthreads',
+            action='store', type=int, default=1,
             help="maximum number of threads")
 
-        parser.add_argument('--rep_mat', dest='repmat', action='store',
-            metavar='DIR', default='.',
+        parser.add_argument('--rep_mat', dest='repmat',
+            action='store', metavar='DIR', default='.',
             help="directory of materials properties")
-        parser.add_argument('--rep_dex', dest='repdex', action='store',
-            metavar='DIR', default='.',
+        parser.add_argument('--rep_dex', dest='repdex',
+            action='store', metavar='DIR', default='.',
             help="directory of external datas (geometrical datas or properties...)")
 
         args, ignored = parser.parse_known_args(argv or sys.argv)
@@ -211,14 +225,12 @@ cdef public long getParameterLong(char* option):
     """Request the value of an execution parameter of type 'int'"""
     global executionParameter
     value = executionParameter.get_option(option) or 0
-    logger.debug('gtopti(%r): %r', option, value)
     return value
 
 cdef public double getParameterDouble(char* option):
     """Request the value of an execution parameter of type 'double'"""
     global executionParameter
     value = executionParameter.get_option(option) or 0.
-    logger.debug('gtoptr(%r): %r', option, value)
     return value
 
 cdef public void gtoptk_(char* option, char* valk, long* iret,
@@ -232,4 +244,3 @@ cdef public void gtoptk_(char* option, char* valk, long* iret,
     else:
         copyToFStr(valk, value, lvalk)
         iret[0] = 0
-    logger.debug('gtoptk(%r): %r, iret %r', arg, value, iret[0])
