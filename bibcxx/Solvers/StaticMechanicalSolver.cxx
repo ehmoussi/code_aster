@@ -56,6 +56,7 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
 
     // Add Loads to the study
     const ListMecaLoad& mecaList = _listOfLoads->getListOfMechanicalLoads();
+    bool mecaLoads = ( mecaList.size() == 0 ? false : true );
     for ( ListMecaLoadCIter curIter = mecaList.begin();
           curIter != mecaList.end();
           ++curIter )
@@ -70,12 +71,14 @@ ResultsContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runti
     // Define the discrete problem
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( study ) );
 
+    if( _supportModel->getSupportMesh()->isParallel() )
+    {
+        if( ! _linearSolver->isHPCCompliant() )
+            throw std::runtime_error( "ParallelMesh not allowed with this linear solver" );
+        if( _linearSolver->getPreconditioning() == SimplePrecisionLdlt )
+            throw std::runtime_error( "ParallelMesh not allowed with this preconditioning" );
+    }
     // Build the linear solver (sd_solver)
-    if( ! _linearSolver->isHPCCompliant() && _supportModel->getSupportMesh()->isParallel() )
-        throw std::runtime_error( "ParallelMesh not allowed with this linear solver" );
-    if( _supportModel->getSupportMesh()->isParallel() &&
-        _linearSolver->getPreconditioning() == SimplePrecisionLdlt )
-        throw std::runtime_error( "ParallelMesh not allowed with this preconditioning" );
     _linearSolver->build();
 
     BaseDOFNumberingPtr dofNum1;
