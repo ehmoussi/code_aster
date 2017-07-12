@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_init(ds_para)
+    subroutine rrc_clean(ds_para)
         use Rom_Datastructure_type
         type(ROM_DS_ParaRRC), intent(inout) :: ds_para
-    end subroutine rrc_init
+    end subroutine rrc_clean
 end interface

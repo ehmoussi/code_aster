@@ -76,5 +76,9 @@ type(ROM_DS_ParaRRC), intent(out) :: ds_para
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
     ds_para%l_prev_dual   = .false._1
+    ds_para%nb_equa_ridd  = 0
+    ds_para%v_equa_ridd   => null()
+    ds_para%nb_equa_ridp  = 0
+    ds_para%v_equa_ridp   => null()
 !
 end subroutine

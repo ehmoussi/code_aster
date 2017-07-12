@@ -15,59 +15,33 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine op0054()
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
+!
+subroutine rrc_clean(ds_para)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/as_deallocate.h"
-#include "asterfort/infmaj.h"
-#include "asterfort/titre.h"
-#include "asterfort/rrc_ini0.h"
-#include "asterfort/rrc_read.h"
-#include "asterfort/rrc_init.h"
-#include "asterfort/rrc_chck.h"
-#include "asterfort/rrc_comp.h"
-#include "asterfort/rrc_clean.h"
+!
+type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!   REST_REDUIT_COMPLET
+! REST_REDUIT_COMPLET - Compute
+!
+! Clean datastructures
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type(ROM_DS_ParaRRC) :: ds_para
+! IO  ds_para          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call titre()
-    call infmaj()
-!
-! - Initialization of datastructures
-!
-    call rrc_ini0(ds_para)
-!
-! - Read parameters
-!
-    call rrc_read(ds_para)
-!
-! - Initializations
-!
-    call rrc_init(ds_para)
-!
-! - Check parameters
-!
-    call rrc_chck(ds_para)
-!
-! - Compute 
-!
-    call rrc_comp(ds_para)
-!
-! - Clean
-!
-    call rrc_clean(ds_para)
+    AS_DEALLOCATE(vi = ds_para%v_equa_ridp)
+    AS_DEALLOCATE(vi = ds_para%v_equa_ridd)
 !
 end subroutine
