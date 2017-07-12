@@ -30,9 +30,7 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/rsexch.h"
-#include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/select_dof_3.h"
 #include "blas/dgemm.h"
 #include "blas/dgesv.h"
 #include "asterfort/rsnoch.h"
@@ -56,11 +54,9 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode, nb_equa, nb_equa_rom, nb_cmp, nb_store
+    integer :: nb_mode, nb_equa, nb_equa_ridd, nb_cmp, nb_store
     integer :: iret, i_mode, i_equa, i_store, nume_store
     character(len=8) :: result_rom, result_dom
-    character(len=24) :: sigm_rom
-    integer, pointer :: v_noeu_rid(:) => null()
     real(kind=8), pointer :: v_dual(:) => null()
     real(kind=8), pointer :: v_dual_rom(:) => null()
     real(kind=8), pointer :: v_sigm_dom(:) => null()
@@ -83,26 +79,27 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     nb_cmp       = ds_para%ds_empi_dual%nb_cmp
     result_rom   = ds_para%result_rom
     result_dom   = ds_para%result_dom
+    nb_equa_ridd = ds_para%nb_equa_ridd
 !
 ! - List of equations in RID
 !
-    AS_ALLOCATE(vi = v_noeu_rid, size = nb_equa)
-    call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
-                1, sigm_rom, iret)
-    call jelira(sigm_rom(1:19)//'.VALE', 'LONMAX', nb_equa_rom)
-    call select_dof_3(sigm_rom, nb_cmp, v_noeu_rid)
+!    AS_ALLOCATE(vi = v_noeu_rid, size = nb_equa)
+!    call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
+!                1, sigm_rom, iret)
+!    call jelira(sigm_rom(1:19)//'.VALE', 'LONMAX', nb_equa_rom)
+!    call select_dof_3(sigm_rom, nb_cmp, v_noeu_rid)
 !
 ! - Create [PHI] matrix for dual base
 !
     call romBaseCreateMatrix(ds_para%ds_empi_dual, v_dual)
 !
-! - Reduce on RID
+! - Reduce [PHI] matrix on RID
 !
-    AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_rom*nb_mode)
+    AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_ridd*nb_mode)
     do i_mode = 1, nb_mode
         do i_equa = 1, nb_equa
-            if (v_noeu_rid(i_equa) .ne. 0) then
-                v_dual_rom(v_noeu_rid(i_equa)+nb_equa_rom*(i_mode-1)) = &
+            if (ds_para%v_equa_ridd(i_equa) .ne. 0) then
+                v_dual_rom(ds_para%v_equa_ridd(i_equa)+nb_equa_ridd*(i_mode-1)) = &
                   v_dual(i_equa+nb_equa*(i_mode-1))
             endif 
         end do
@@ -139,7 +136,6 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Clean
 !
-    AS_DEALLOCATE(vi  = v_noeu_rid)
     AS_DEALLOCATE(vr  = v_dual)
     AS_DEALLOCATE(vr  = v_dual_rom)
     AS_DEALLOCATE(vr  = v_cohr)

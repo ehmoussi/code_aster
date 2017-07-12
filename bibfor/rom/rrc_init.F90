@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rrc_init(ds_para)
 !
 use Rom_Datastructure_type
@@ -32,10 +33,12 @@ implicit none
 #include "asterfort/rscrsd.h"
 #include "asterfort/rrc_info.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/rsexch.h"
+#include "asterfort/jelira.h"
+#include "asterfort/select_dof_3.h"
+#include "asterfort/as_allocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaRRC), intent(inout) :: ds_para
+type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,6 +56,11 @@ implicit none
     integer :: iret
     character(len=24) :: typval, field_name
     integer :: nbval, nb_store
+    integer :: nb_equa_dual, nb_cmp_dual, nb_equa_ridd
+    integer :: nb_equa_prim, nb_cmp_prim, nb_equa_ridp
+    aster_logical :: l_prev_dual
+    character(len=8) :: result_rom
+    character(len=24) :: field
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,6 +68,15 @@ implicit none
     if (niv .ge. 2) then
         call utmess('I', 'ROM6_3')
     endif
+!
+! - Get parameters
+!
+    l_prev_dual  = ds_para%l_prev_dual
+    result_rom   = ds_para%result_rom
+    nb_equa_dual = ds_para%ds_empi_dual%nb_equa
+    nb_cmp_dual  = ds_para%ds_empi_dual%nb_cmp
+    nb_equa_prim = ds_para%ds_empi_prim%nb_equa
+    nb_cmp_prim  = ds_para%ds_empi_prim%nb_cmp
 !
 ! - Get table for reduced coordinates
 !
@@ -95,6 +112,26 @@ implicit none
 ! - Set models
 !
     call dismoi('MODELE', ds_para%result_rom, 'RESULTAT', repk=ds_para%model_rom)
+!
+! - List of equations in RID (for primal)
+!
+    AS_ALLOCATE(vi = ds_para%v_equa_ridp, size = nb_equa_prim)
+    call rsexch(' ', result_rom, ds_para%ds_empi_prim%field_name,&
+                1, field, iret)
+    call jelira(field(1:19)//'.VALE', 'LONMAX', nb_equa_ridp)
+    call select_dof_3(field, nb_cmp_prim, ds_para%v_equa_ridp)
+    ds_para%nb_equa_ridp = nb_equa_ridp
+!
+! - List of equations in RID (for dual)
+!
+    if (l_prev_dual) then
+        AS_ALLOCATE(vi = ds_para%v_equa_ridd, size = nb_equa_dual)
+        call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
+                    1, field, iret)
+        call jelira(field(1:19)//'.VALE', 'LONMAX', nb_equa_ridd)
+        call select_dof_3(field, nb_cmp_dual, ds_para%v_equa_ridd)
+        ds_para%nb_equa_ridd = nb_equa_ridd
+    endif
 !
 ! - Print parameters
 !

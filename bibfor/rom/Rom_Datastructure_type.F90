@@ -115,6 +115,12 @@ implicit none
         character(len=24) :: coor_redu
 ! ----- Flag for dual prevision
         aster_logical     :: l_prev_dual
+! ----- Access to equation in RID (dual)
+        integer           :: nb_equa_ridd
+        integer, pointer  :: v_equa_ridd(:)
+! ----- Access to equation in RID (primal)
+        integer           :: nb_equa_ridp
+        integer, pointer  :: v_equa_ridp(:)
     end type ROM_DS_ParaRRC
 !
 ! - Parameters for definition of multiparametric reduced problem - Evaluation
