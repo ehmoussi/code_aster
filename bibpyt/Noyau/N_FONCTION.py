@@ -28,6 +28,7 @@ from math import pi, exp, log, log10, sqrt
 
 from N_ASSD import ASSD
 from N_info import message, SUPERV
+from N_Exception import AsException
 
 
 class FONCTION(ASSD):
@@ -132,8 +133,7 @@ class formule(ASSD):
                 'PROL_GAUCHE': TypeProl['E'],
             }
         else:
-            raise Accas.AsException(
-                "Erreur dans fonction.Parametres en PAR_LOT='OUI'")
+            raise AsException("Erreur dans fonction.Parametres en PAR_LOT='OUI'")
         return dico
 
 
