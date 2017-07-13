@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist asterxx verification parallel
 
 F comm xxParallelMesh001a.py D 1
-F repe xxParallelMesh001a D 0
+R nom  xxParallelMesh001a D 0
