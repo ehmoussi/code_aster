@@ -30,6 +30,7 @@
 
 #include "DataStructures/DataStructure.h"
 #include "LinearAlgebra/ModalBasisDefinition.h"
+#include "LinearAlgebra/StructureInterface.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Meshes/Mesh.h"
 
@@ -60,8 +61,8 @@ private:
     JeveuxVectorComplex     _cFreq;
     /** @brief Support Mesh  */
     MeshPtr                 _supportMesh;
-    /** @brief Dynamic Interface Set */
-    
+    /** @brief Structure Interface */
+    StructureInterfacePtr   _structInterf;
     /** @brief Modal Basis */
     StandardModalBasisPtr   _modalBasis;
 
@@ -87,6 +88,7 @@ public:
         _cMode( JeveuxVectorComplex( getName() + ".CYCL_MODE" ) ),
         /** Pointers to objects listed in _refe */
         _supportMesh( MeshPtr() ),
+        _structInterf( StructureInterfacePtr() ),
         _modalBasis( StandardModalBasisPtr())
          
     {};
@@ -99,7 +101,11 @@ public:
            _supportMesh = currentMesh;
         return true;
     };
-    
+    bool setStructureInterface( StructureInterfacePtr& currentStructInterf ) throw ( std::runtime_error )
+    {
+        _structInterf = currentStructInterf;
+        return true;
+    };
     bool setModalBasis( StandardModalBasisPtr& currentModalBasis ) throw ( std::runtime_error )
     {
         _modalBasis = currentModalBasis;

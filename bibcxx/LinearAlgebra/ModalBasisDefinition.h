@@ -339,6 +339,14 @@ public:
         _container.add( new CapyConvertibleValue< StructureInterfacePtr >
                                 ( false, "INTERF_DYNA", _interf, true ) );
     };
+    /**
+    * @brief Get the internal StructureInterface
+    * @return Internal StructureInterface
+    */
+    StructureInterfacePtr  getStructureInterface() const
+    {
+       return _interf;
+    };
 
     void setReferenceDOFNumbering( const DOFNumberingPtr& dofNum )
     {

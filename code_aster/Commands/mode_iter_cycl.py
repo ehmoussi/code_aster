@@ -37,7 +37,9 @@ def MODE_ITER_CYCL(**curDict):
     numOp = 80
     python_execop(numOp)
     syntax.free()
-#   TODO  returnCyclicMode.setSupportMesh(curDict["MAILLAGE"])
-    returnCyclicMode.setModalBasis(curDict["BASE_MODALE"])
+#   /* TODO returnCyclicMode.setSupportMesh(curDict["MAILLAGE"])
+    modalBasis= curDict["BASE_MODALE"];
+    returnCyclicMode.setModalBasis(modalBasis)
+    returnCyclicMode.setStructureInterface(modalBasis.getStructureInterface())
 
     return returnCyclicMode
