@@ -23,10 +23,18 @@
 
 #include "PythonBindings/StructureInterfaceInterface.h"
 #include <boost/python.hpp>
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(StructureInterfaceInstance_overloads, addInterface, 3, 4)
 
 void exportStructureInterfaceToPython()
 {
     using namespace boost::python;
+
+    enum_< InterfaceTypeEnum >( "InterfaceType" )
+        .value( "MacNeal", MacNeal )
+        .value( "CraigBampton", CraigBampton )
+        .value( "HarmonicCraigBampton", HarmonicCraigBampton )
+        .value( "None", NoInterfaceType )
+        ;
 
     StructureInterfaceInstance::StructureInterfacePtr
         (*c1)(const DOFNumberingPtr& curDof) =
@@ -34,10 +42,13 @@ void exportStructureInterfaceToPython()
     StructureInterfaceInstance::StructureInterfacePtr
         (*c2)() = &StructureInterfaceInstance::create;
 
+   
+
     class_< StructureInterfaceInstance, StructureInterfaceInstance::StructureInterfacePtr,
             bases< DataStructure > > ( "StructureInterface", no_init )
         .def( "create", c1 )
         .def( "create", c2 )
         .staticmethod( "create" )
+	.def( "addInterface", &StructureInterfaceInstance::addInterface, StructureInterfaceInstance_overloads() )
     ;
 };

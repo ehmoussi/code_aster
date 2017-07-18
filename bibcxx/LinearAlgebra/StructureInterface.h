@@ -35,10 +35,10 @@
 
 /**
  * @enum InterfaceTypeEnum
- * @brief Tous les types de bases modales disponibles
+ * @brief Tous les types d'interface disponibles
  * @author Nicolas Sellenet
  */
-enum InterfaceTypeEnum { MacNeal, CraigBampton, HarmonicalCraigBampton, NoInterfaceType };
+enum InterfaceTypeEnum { MacNeal, CraigBampton, HarmonicCraigBampton, NoInterfaceType };
 extern const std::vector< InterfaceTypeEnum > allInterfaceType;
 extern const std::vector< std::string > allInterfaceTypeNames;
 

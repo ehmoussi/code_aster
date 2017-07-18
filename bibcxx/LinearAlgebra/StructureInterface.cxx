@@ -26,7 +26,7 @@
 #include "LinearAlgebra/StructureInterface.h"
 
 const std::vector< InterfaceTypeEnum > allInterfaceType = { MacNeal, CraigBampton,
-                                                            HarmonicalCraigBampton,
+                                                            HarmonicCraigBampton,
                                                             NoInterfaceType };
 const std::vector< std::string > allInterfaceTypeNames = { "MNEAL", "CRAIGB",
                                                            "CB_HARMO", "AUCUN" };
