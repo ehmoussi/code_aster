@@ -26,8 +26,8 @@ from code_aster import BehaviourDefinition
 
 def DEFI_COMPOR(**curDict):
     returnBD = BehaviourDefinition.create()
-    name = returnBD.getInstance().getName()
-    type = returnBD.getInstance().getType()
+    name = returnBD.getName()
+    type = returnBD.getType()
     syntax = CommandSyntax("DEFI_COMPOR")
 
     syntax.setResult(name, type)

@@ -26,8 +26,8 @@ from code_aster import TurbulentSpectrum
 
 def DEFI_SPEC_TURB(**curDict):
     returnMatrix = TurbulentSpectrum.create()
-    name = returnMatrix.getInstance().getName()
-    type = returnMatrix.getInstance().getType()
+    name = returnMatrix.getName()
+    type = returnMatrix.getType()
     syntax = CommandSyntax("DEFI_SPEC_TURB")
 
     syntax.setResult(name, type)

@@ -26,8 +26,8 @@ from code_aster import GeneralizedModel
 
 def DEFI_MODELE_GENE(**curDict):
     returnModel = GeneralizedModel.create()
-    name = returnModel.getInstance().getName()
-    type = returnModel.getInstance().getType()
+    name = returnModel.getName()
+    type = returnModel.getType()
     syntax = CommandSyntax("DEFI_MODELE_GENE")
 
     syntax.setResult(name, type)

@@ -26,8 +26,8 @@ from code_aster import ElementaryMatrix
 
 def CALC_MATR_ELEM(**curDict):
     returnMatrix = ElementaryMatrix.create()
-    name = returnMatrix.getInstance().getName()
-    type = returnMatrix.getInstance().getType()
+    name = returnMatrix.getName()
+    type = returnMatrix.getType()
     syntax = CommandSyntax("CALC_MATR_ELEM")
 
     syntax.setResult(name, type)

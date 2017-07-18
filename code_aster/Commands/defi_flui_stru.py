@@ -26,8 +26,8 @@ from code_aster import FluidStructureInteraction
 
 def DEFI_FLUI_STRU(**curDict):
     returnFSD = FluidStructureInteraction.create()
-    name = returnFSD.getInstance().getName()
-    type = returnFSD.getInstance().getType()
+    name = returnFSD.getName()
+    type = returnFSD.getType()
     syntax = CommandSyntax("DEFI_FLUI_STRU")
 
     syntax.setResult(name, type)

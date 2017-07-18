@@ -26,8 +26,8 @@ from code_aster import Function
 
 def DEFI_FONC_FLUI(**curDict):
     returnFunction = Function.create()
-    name = returnFunction.getInstance().getName()
-    type = returnFunction.getInstance().getType()
+    name = returnFunction.getName()
+    type = returnFunction.getType()
     syntax = CommandSyntax("DEFI_FONC_FLUI")
 
     syntax.setResult(name, type)

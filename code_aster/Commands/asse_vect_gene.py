@@ -26,8 +26,8 @@ from code_aster import GeneralizedAssemblyVectorDouble
 
 def ASSE_VECT_GENE(**curDict):
     returnMatrix = GeneralizedAssemblyVectorDouble.create()
-    name = returnMatrix.getInstance().getName()
-    type = returnMatrix.getInstance().getType()
+    name = returnMatrix.getName()
+    type = returnMatrix.getType()
     syntax = CommandSyntax("ASSE_VECT_GENE")
 
     syntax.setResult(name, type)

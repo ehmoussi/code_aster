@@ -26,8 +26,8 @@ from code_aster import Surface
 
 def DEFI_NAPPE(**curDict):
     returnSurface = Surface.create()
-    name = returnSurface.getInstance().getName()
-    type = returnSurface.getInstance().getType()
+    name = returnSurface.getName()
+    type = returnSurface.getType()
     syntax = CommandSyntax("DEFI_NAPPE")
 
     syntax.setResult(name, type)

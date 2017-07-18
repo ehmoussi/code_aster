@@ -26,8 +26,8 @@ from code_aster import FiberGeometry
 
 def DEFI_GRILLE(**curDict):
     returnGrid = FiberGeometry.create()
-    name = returnGrid.getInstance().getName()
-    type = returnGrid.getInstance().getType()
+    name = returnGrid.getName()
+    type = returnGrid.getType()
     syntax = CommandSyntax("DEFI_GRILLE")
 
     syntax.setResult(name, type)
