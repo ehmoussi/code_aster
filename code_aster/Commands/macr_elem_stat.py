@@ -26,8 +26,8 @@ from code_aster import StaticMacroElement
 
 def MACR_ELEM_STAT(**curDict):
     returnMacroElement = StaticMacroElement.create()
-    name = returnMacroElement.getInstance().getName()
-    type = returnMacroElement.getInstance().getType()
+    name = returnMacroElement.getName()
+    type = returnMacroElement.getType()
     syntax = CommandSyntax("MACR_ELEM_STAT")
 
     syntax.setResult(name, type)

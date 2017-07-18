@@ -26,10 +26,10 @@ from code_aster import FourierCombination
 
 def COMB_FOURIER(**curDict):
     returnComb = FourierCombination.create()
-    name = returnComb.getInstance().getName()
+    name = returnComb.getName()
     syntax = CommandSyntax("COMB_FOURIER")
 
-    # self.getInstance().getType()
+    # self.getType()
     syntax.setResult(name, "COMB_FOURIER")
 
     syntax.define(curDict)

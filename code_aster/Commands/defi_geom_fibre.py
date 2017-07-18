@@ -26,10 +26,10 @@ from code_aster import FiberGeometry
 
 def DEFI_GEOM_FIBRE(**curDict):
     returnFiberGeom = FiberGeometry.create()
-    name = returnFiberGeom.getInstance().getName()
+    name = returnFiberGeom.getName()
     syntax = CommandSyntax("DEFI_GEOM_FIBRE")
 
-    # self.getInstance().getType()
+    # self.getType()
     syntax.setResult(name, "MAILLAGE")
 
     syntax.define(curDict)

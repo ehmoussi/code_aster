@@ -26,8 +26,8 @@ from code_aster import CrackTip
 
 def DEFI_FOND_FISS(**curDict):
     returnCrackDef = CrackTip.create()
-    name = returnCrackDef.getInstance().getName()
-    type = returnCrackDef.getInstance().getType()
+    name = returnCrackDef.getName()
+    type = returnCrackDef.getType()
     syntax = CommandSyntax("DEFI_FOND_FISS")
 
     syntax.setResult(name, type)

@@ -26,8 +26,8 @@ from code_aster import AssemblyMatrixDouble
 
 def ASSE_MATRICE(**curDict):
     returnMatrix = AssemblyMatrixDouble.create()
-    name = returnMatrix.getInstance().getName()
-    type = returnMatrix.getInstance().getType()
+    name = returnMatrix.getName()
+    type = returnMatrix.getType()
     syntax = CommandSyntax("ASSE_MATRICE")
 
     syntax.setResult(name, type)

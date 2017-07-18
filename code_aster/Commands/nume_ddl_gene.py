@@ -26,8 +26,8 @@ from code_aster import GeneralizedDOFNumbering
 
 def NUME_DDL_GENE(**curDict):
     returnDOFNum = GeneralizedDOFNumbering.create()
-    name = returnDOFNum.getInstance().getName()
-    type = returnDOFNum.getInstance().getType()
+    name = returnDOFNum.getName()
+    type = returnDOFNum.getType()
     syntax = CommandSyntax("NUME_DDL_GENE")
 
     syntax.setResult(name, type)

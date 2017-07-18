@@ -33,8 +33,8 @@ def ASSE_MATR_GENE(**curDict):
         returnMatrix = GeneralizedAssemblyMatrixComplex.create()
     else:
         returnMatrix = GeneralizedAssemblyMatrixDouble.create()
-    name = returnMatrix.getInstance().getName()
-    type = returnMatrix.getInstance().getType()
+    name = returnMatrix.getName()
+    type = returnMatrix.getType()
     syntax = CommandSyntax("ASSE_MATR_GENE")
 
     syntax.setResult(name, type)

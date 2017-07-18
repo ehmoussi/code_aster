@@ -26,8 +26,8 @@ from code_aster import DOFNumbering
 
 def NUME_DDL(**curDict):
     returnDofNum = DOFNumbering.create()
-    name = returnDofNum.getInstance().getName()
-    type = returnDofNum.getInstance().getType()
+    name = returnDofNum.getName()
+    type = returnDofNum.getType()
     syntax = CommandSyntax("NUME_DDL")
 
     syntax.setResult(name, type)

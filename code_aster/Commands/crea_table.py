@@ -25,10 +25,10 @@ from code_aster import Table
 
 def CREA_TABLE(**curDict):
     returnTable = Table.create()
-    name = returnTable.getInstance().getName()
+    name = returnTable.getName()
     syntax = CommandSyntax("CREA_TABLE")
 
-    # self.getInstance().getType()
+    # self.getType()
     syntax.setResult(name, "TABLE")
 
     syntax.define(curDict)
