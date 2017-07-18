@@ -100,6 +100,7 @@
 #include "PythonBindings/ParallelMeshInterface.h"
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
 #include "PythonBindings/MPIInfosInterface.h"
+#include "PythonBindings/CyclicSymmetryModeInterface.h"
 
 #include "PythonBindings/PartialMeshInterface.h"
 
@@ -179,6 +180,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportStudyDescriptionToPython();
     exportTimeStepManagerToPython();
     exportCppToFortranGlossaryToPython();
+    exportCyclicSymmetryModeToPython();
 
 #ifdef _USE_MPI
     exportParallelMeshToPython();
