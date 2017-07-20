@@ -22,8 +22,8 @@
 #
 #
 # PYTHON RESOLUTION OF THE UNIDIRECTIONNAL TENSILE TEST WITH TEMPERATURE
-# ON A SINGLE ELEMENT, USING AN ELASTOPLASTIC BEHAVIOUR LAW
-# WITH ISOTROPIC LINEAR HARDENING
+# ON A SINGLE ELEMENT, USING AN DAMAGE BEHAVIOUR LAW
+# WITH POSITIVE HARDENING
 #
 # -> TO BE USED FOR COMPARISON PURPOSES WITH THE ZZZZ409 TEST RESULTS
 #    INVOLVING THE SAME BEHAVIOUR LAW IN UMAT
@@ -118,12 +118,12 @@ def LDC(eps,temp,mat,k):
     
     sig = mat.young*A(Endo(epsmec,mat,k,a10,a20)[0])*epsmec
 
-    #Partie commune aux deux branches élastique & plastique
+    #Partie commune aux deux régimes élastique & endommageant
     dsidep=A(Endo(epsmec,mat,k,a10,a20)[0])*mat.young*ID6
     
-    #Partie supplémentaire en branche plastique
+    #Partie supplémentaire en régime endommageant
     som=np.dot(epsmec,epsmec)
-    if Endo(epsmec,mat,k,a10,a20)[1] == 1 and (som >= 2*mat.k/mat.young*(1+2*Endo(epsmec,mat,k,a10,a20)[0])**2) :
+    if Endo(epsmec,mat,k,a10,a20)[1] == 1 :
         dsidep=dsidep-mat.young*0.5/(1+2*Endo(epsmec,mat,k,a10,a20)[0])**2*np.sqrt(mat.young/(2*mat.k))*np.outer(epsmec,epsmec)/np.sqrt(som)
         
     return (sig,dsidep)
