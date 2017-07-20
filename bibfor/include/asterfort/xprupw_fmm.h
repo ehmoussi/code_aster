@@ -19,13 +19,12 @@
 !
 !
 interface
-   subroutine xprupw_fmm(cmnd, noma, fispre, vcn, grlr, &
+   subroutine xprupw_fmm(cmnd, noma, vcn, grlr, &
                      noesom, lcmin, cnsln, grln, cnslt, &
                      grlt, isozro, nodtor,eletor, liggrd, &
                      vpoint , cnsbl ,deltat ,cnsbet ,listp, nbrinit)
        character(len=8)  :: cmnd
        character(len=8)  :: noma
-       character(len=8)  :: fispre
        character(len=24) :: vcn
        character(len=24) :: grlr
        character(len=19) :: noesom

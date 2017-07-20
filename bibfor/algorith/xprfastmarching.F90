@@ -16,10 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine xprfastmarching(cmnd, noma, fispre, cnxinv, noesom,&
+subroutine xprfastmarching(cmnd, noma, cnxinv, noesom,&
                            lcmin, cnsln, grln, cnslt, grlt,&
                            isozro, nodtor,eletor, liggrd,&
-                           vpoint, cnsbl ,deltat ,cnsbet ,listp)
+                           vpoint, cnsbl ,cnsbet ,listp)
 
    implicit none
 !
@@ -51,12 +51,11 @@ subroutine xprfastmarching(cmnd, noma, fispre, cnxinv, noesom,&
 #include "asterfort/xcalculgeo.h"
 #include "asterfort/xprfastcalcul.h"
 
-    character(len=8)  :: cmnd, noma, fispre
+    character(len=8)  :: cmnd, noma
     character(len=19) :: cnsln, grln, cnslt, grlt, noesom, isozro
     character(len=19) :: nodtor, eletor, liggrd, cnxinv  
     character(len=19) :: cnsbl ,cnsbet ,listp , vpoint
     real(kind=8)      :: lcmin
-    real(kind=8)      :: deltat
 !
 ! person_in_charge: patrick.massin at edf.fr
 !
@@ -118,7 +117,6 @@ subroutine xprfastmarching(cmnd, noma, fispre, cnxinv, noesom,&
     integer      :: ifm, niv, jnodto, ibid
     integer      :: inar, jconx1, jconx2
     integer      :: jzero, jcopiels, jvtemp, jcalculs
-    real(kind=8) :: newlsn, newlst
     
 !     EVALUATION OF THE GRADIENT OF THE LEVEL SET
     character(len=8)  :: lpain(4), lpaout(2)
@@ -184,7 +182,7 @@ subroutine xprfastmarching(cmnd, noma, fispre, cnxinv, noesom,&
     
     call wkvect(isozro, 'V V L', nbnoma, jzero)
 
-    call xprls0(fispre, noma, noesom, lcmin, cnsln,&
+    call xprls0(noma, noesom, lcmin, cnsln,&
                 cnslt, isozro, levset, nodtor, eletor)
 
 !----------------------------------------------------------------------
@@ -220,18 +218,9 @@ subroutine xprfastmarching(cmnd, noma, fispre, cnxinv, noesom,&
     do inar = 1 ,nbno
         node = zi(jnodto-1+inar)
         if ( zr(jcopiels-1+node) .ge. 0 ) then
-            if (.not. zl(jzero-1+node)) then
-                zl(jvtemp-1+node) = .true.         
-            else
-                if (levset .eq. 'LN' ) then
-                    zl(jvtemp-1+node) = .true.
-                    zr(jcalculs-1+node) = zr(jcopiels-1+node)
-                else
-                    call xcalculgeo(ndim, vale, jvp, jbl, deltat, jbeta, &
-                                    jlistp, node, newlst, newlsn)                                 
-                    zl(jvtemp-1+node) = .true.                    
-                    zr(jcalculs-1+node) = -newlst
-                endif
+            zl(jvtemp-1+node) = .true.
+            if (zl(jzero-1+node)) then            
+                zr(jcalculs-1+node) = zr(jcopiels-1+node)
             endif
         endif
     end do
@@ -260,18 +249,9 @@ subroutine xprfastmarching(cmnd, noma, fispre, cnxinv, noesom,&
     do inar = 1 ,nbno
         node = zi(jnodto-1+inar)
         if ( zr(jcopiels-1+node) .ge. 0 ) then
-            if (.not. zl(jzero-1+node)) then            
-                zl(jvtemp-1+node) = .true.
-            else
-                if (levset .eq. 'LN' ) then
-                    zl(jvtemp-1+node) = .true.
-                    zr(jcalculs-1+node) = zr(jcopiels-1+node)
-                else
-                    call xcalculgeo(ndim, vale, jvp, jbl, deltat, jbeta, &
-                                    jlistp, node, newlst, newlsn)
-                    zl(jvtemp-1+node) = .true.                    
-                    zr(jcalculs-1+node) = newlst
-                endif
+            zl(jvtemp-1+node) = .true.
+            if (zl(jzero-1+node)) then            
+                zr(jcalculs-1+node) = zr(jcopiels-1+node)
             endif
         endif
     end do
