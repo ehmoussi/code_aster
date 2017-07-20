@@ -203,14 +203,14 @@ TAB= POST_RELEVE_T(ACTION=_F(INTITULE='test',
                                             OPERATION='EXTRACTION',),);
 
 TEST_TABLE(
-           VALE_CALC=2.59815103079,
+           VALE_CALC=2.59814937361,
            NOM_PARA='COOR_Y',
            TYPE_TEST='MAX',
            TABLE=TAB,
            )
 
 TEST_TABLE(
-           VALE_CALC=2.5776160603,
+           VALE_CALC=2.57761606036,
            NOM_PARA='COOR_Y',
            TYPE_TEST='MIN',
            TABLE=TAB,

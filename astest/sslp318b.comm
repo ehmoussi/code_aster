@@ -219,7 +219,7 @@ IMPR_TABLE(TABLE=SIF_1,
 TEST_TABLE(TABLE=SIF_1,
            NOM_PARA='K2',
            CRITERE='RELATIF',
-           VALE_CALC=7477.34472696,
+           VALE_CALC=7477.34472596,
            TYPE_TEST='MAX',)
 
 #==================================
@@ -258,7 +258,7 @@ IMPR_TABLE(TABLE=SIF_2,
 TEST_TABLE(TABLE=SIF_2,
            NOM_PARA='K2',
            CRITERE='RELATIF',
-           VALE_CALC=14476.6038007,
+           VALE_CALC=14476.6037996,
            TYPE_TEST='MAX',)
 
 #==================================
@@ -273,7 +273,7 @@ TOL_K2=0.01*KI_broek
 TEST_TABLE(TABLE=SIF_3,
            NOM_PARA='K1',
            REFERENCE='ANALYTIQUE',
-           VALE_CALC=28796125.8387,
+           VALE_CALC=28796125.8001,
            TYPE_TEST='MAX',
            VALE_REFE=KI_broek,
            PRECISION=0.05,
@@ -297,7 +297,7 @@ IMPR_TABLE(TABLE=SIF_3,
 TEST_TABLE(TABLE=SIF_3,
            NOM_PARA='K2',
            CRITERE='RELATIF',
-           VALE_CALC=23335.4267969,
+           VALE_CALC=23339.2644503,
            TYPE_TEST='MAX',)
 #----------------------------------------------
 #         EDITION DE FICHIERS MED
