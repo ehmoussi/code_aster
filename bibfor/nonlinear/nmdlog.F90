@@ -109,6 +109,7 @@ implicit none
     if (compor(5)(1:7) .eq. 'DEBORST') then
         ASSERT(.false.)
     endif
+    elgeom(:,:) = 0.d0
 !
 ! -----------------------------DECLARATION-----------------------------
     nddl = ndim*nno

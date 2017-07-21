@@ -124,6 +124,7 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
 !     TELLE SORTE QU'ILS NE PRENNENT PAS EN COMPTE LES DDL SUR LES
 !     NOEUDS MILIEU
 !
+    elgeom(:,:) = 0.d0
 !     NOMBRE DE DDL DE DEPLACEMENT À CHAQUE NOEUD
     call xnbddl(ndim, nfh, nfe, ddlc, ddld, ddls, singu)
 !     RECUPERATION DU NOMBRE DE NOEUDS SOMMETS DE L'ELEMENT PARENT

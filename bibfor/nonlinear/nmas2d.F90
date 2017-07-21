@@ -115,6 +115,7 @@ implicit none
 !           0 AUCUNE
 !           1 OPTIMAL BENDING
 !           2 INCOMPRESSIBLE
+    elgeom(:,:) = 0.d0
     proj = 2
     rac2 = sqrt(2.d0)
     grand = .false.

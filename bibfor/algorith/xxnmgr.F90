@@ -128,6 +128,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     data    rind1 / 0.5d0 , 0.5d0 , 0.5d0 , 1.d0, 1.d0, 1.d0 /
 !--------------------------------------------------------------------
 !
+    elgeom(:,:) = 0.d0
 !
 !     NOMBRE DE DDL DE DEPLACEMENT À CHAQUE NOEUD
     call xnbddl(ndim, nfh, nfe, ddlc, ddld, ddls, singu)
@@ -169,6 +170,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
 ! CALCUL DE L IDENTIFIANT DU SS ELEMENT
     hea_se=xcalc_code(nfiss, he_real=[he])
+    
 !-----------------------------------------------------------------------
 ! - CALCUL POUR CHAQUE POINT DE GAUSS DU SOUS-ELEMENT
     do kpg = 1, npg
