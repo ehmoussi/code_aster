@@ -49,7 +49,6 @@ real(kind=8), intent(in) :: geom(3, nno)
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
 ! In  typmod           : type of modelization (TYPMOD2)
 ! In  geom             : initial coordinates of nodes
-! Out elgeom           : size of element
 !
 ! --------------------------------------------------------------------------------------------------
 !

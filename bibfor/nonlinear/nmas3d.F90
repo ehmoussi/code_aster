@@ -131,6 +131,7 @@ implicit none
     else
         proj= 1
     endif
+    elgeom(:,:) = 0.d0
     rac2 = sqrt(2.d0)
     grand = .false.
     calbn = .false.

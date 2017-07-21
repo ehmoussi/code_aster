@@ -102,6 +102,7 @@ implicit none
 !
 !     INITIALISATION
 !
+    elgeom(:,:) = 0.d0
     rac2 = sqrt(2.d0)
     grand = .true.
     axi = typmod(1) .eq. 'AXIS'
