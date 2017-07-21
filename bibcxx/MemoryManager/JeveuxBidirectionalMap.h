@@ -28,22 +28,30 @@
 
 #include "astercxx.h"
 #include "MemoryManager/JeveuxObject.h"
+#include "MemoryManager/JeveuxAllowedTypes.h"
+#include "aster_fort.h"
+#include "aster_utils.h"
 
 /**
  * @class JeveuxBidirectionalMapInstance
  * @brief Equivalent du pointeur de nom dans Jeveux
  * @author Nicolas Sellenet
  */
-class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance
+template< typename ValueType >
+class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
+                                      private AllowedJeveuxType< ValueType >
 {
     private:
+        int _size;
 
     public:
         /**
          * @brief Constructeur
          * @param name Nom Jeveux de l'objet
          */
-        JeveuxBidirectionalMapInstance( std::string name ): JeveuxObjectInstance( name )
+        JeveuxBidirectionalMapInstance( std::string name, JeveuxMemory mem = Permanent ):
+            JeveuxObjectInstance( name, mem ),
+            _size( 0 )
         {};
 
         /**
@@ -53,18 +61,92 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance
         {};
 
         /**
+         * @brief Ajout d'un élément
+         * @param mem Mémoire d'allocation
+         * @param size Taille
+         * @return vrai en cas d'allocation
+         */
+        bool add( const int& position, const ValueType& toAdd )
+        {
+            if ( position <= _size )
+            {
+                char* charJeveuxObjName = MakeBlankFStr(32);
+                CALL_JEXNOM( charJeveuxObjName, _name.c_str(), toAdd.c_str() );
+                CALL_JECROC( charJeveuxObjName );
+                return true;
+            }
+            return false;
+        };
+
+        /**
+         * @brief Allocation
+         * @param mem Mémoire d'allocation
+         * @param size Taille
+         * @return vrai en cas d'allocation
+         */
+        bool allocate( JeveuxMemory mem, int size )
+        {
+            _mem = mem;
+            if ( _name != "" && size > 0 )
+            {
+                std::string strJeveuxBase( "V" );
+                if ( mem == Permanent ) strJeveuxBase = "G";
+                long taille = size;
+                const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
+                std::string carac = strJeveuxBase + " N " + JeveuxTypesNames[intType];
+                CALL_JECREO( _name.c_str(), carac.c_str() );
+                std::string param( "NOMMAX" );
+                CALL_JEECRA_WRAP( _name.c_str(), param.c_str(), &taille );
+                _size = size;
+                return true;
+            }
+            return false;
+        };
+
+        /**
          * @brief Recuperation de la chaine correspondante a l'entier
          * @param elementNumber Numero de l'element demande
          * @return Chaine de caractere correspondante
          */
-        std::string findStringOfElement( long elementNumber );
+        std::string findStringOfElement( long elementNumber ) const
+        {
+            char* charJeveuxObjName = MakeBlankFStr(32);
+            char* charName = MakeBlankFStr(32);
+            CALL_JEXNUM(charJeveuxObjName, _name.c_str(),
+                        &elementNumber);
+            CALL_JENUNO(charJeveuxObjName, charName);
+            return std::string(charName);
+        };
+
 
         /**
          * @brief Recuperation de l'entier correspondant a une chaine
          * @param elementName Chaine recherchee
          * @return Entier correspondant
          */
-        long findIntegerOfElement( std::string elementName );
+        long findIntegerOfElement( const std::string& elementName ) const
+        {
+            char* charJeveuxObjName = MakeBlankFStr(32);
+            CALL_JEXNOM(charJeveuxObjName, _name.c_str(), elementName.c_str() );
+            long resu = -1;
+            CALL_JENONU(charJeveuxObjName, &resu);
+            return resu;
+        };
+
+        /**
+         * @brief Get the size
+         * @return size of object
+         */
+        long size() const
+        {
+            if( ! exists() ) return 0;
+
+            long vectSize;
+            JeveuxChar8 param( "NOMMAX" );
+            char dummy[32] = " ";
+            CALL_JELIRA( _name.c_str(), param.c_str(), &vectSize, dummy );
+            return vectSize;
+        };
 };
 
 /**
@@ -72,23 +154,24 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance
  *   Enveloppe d'un pointeur intelligent vers un JeveuxBidirectionalMapInstance
  * @author Nicolas Sellenet
  */
+template< class ValueType >
 class JeveuxBidirectionalMap
 {
     public:
-        typedef boost::shared_ptr< JeveuxBidirectionalMapInstance > JeveuxBidirectionalMapPtr;
+        typedef boost::shared_ptr< JeveuxBidirectionalMapInstance< ValueType > > JeveuxBidirectionalMapPtr;
 
     private:
         JeveuxBidirectionalMapPtr _jeveuxBidirectionalMapPtr;
 
     public:
         JeveuxBidirectionalMap( std::string nom ):
-            _jeveuxBidirectionalMapPtr( new JeveuxBidirectionalMapInstance (nom) )
+            _jeveuxBidirectionalMapPtr( new JeveuxBidirectionalMapInstance< ValueType >(nom) )
         {};
 
         ~JeveuxBidirectionalMap()
         {};
 
-        JeveuxBidirectionalMap& operator=(const JeveuxBidirectionalMap& tmp)
+        JeveuxBidirectionalMap& operator=(const JeveuxBidirectionalMap< ValueType >& tmp)
         {
             _jeveuxBidirectionalMapPtr = tmp._jeveuxBidirectionalMapPtr;
             return *this;
@@ -105,5 +188,26 @@ class JeveuxBidirectionalMap
             return false;
         };
 };
+
+/** @typedef Definition d'un pointeur de nom Jeveux long */
+typedef JeveuxBidirectionalMap< long > JeveuxBidirectionalMapLong;
+/** @typedef Definition d'un pointeur de nom Jeveux short int */
+typedef JeveuxBidirectionalMap< short int > JeveuxBidirectionalMapShort;
+/** @typedef Definition d'un pointeur de nom Jeveux double */
+typedef JeveuxBidirectionalMap< double > JeveuxBidirectionalMapDouble;
+/** @typedef Definition d'un pointeur de nom Jeveux double complex */
+typedef JeveuxBidirectionalMap< DoubleComplex > JeveuxBidirectionalMapComplex;
+/** @typedef Definition d'un vecteur de JeveuxChar8 */
+typedef JeveuxBidirectionalMap< JeveuxChar8 > JeveuxBidirectionalMapChar8;
+/** @typedef Definition d'un pointeur de nom JeveuxChar16 */
+typedef JeveuxBidirectionalMap< JeveuxChar16 > JeveuxBidirectionalMapChar16;
+/** @typedef Definition d'un pointeur de nom JeveuxChar24 */
+typedef JeveuxBidirectionalMap< JeveuxChar24 > JeveuxBidirectionalMapChar24;
+/** @typedef Definition d'un pointeur de nom JeveuxChar32 */
+typedef JeveuxBidirectionalMap< JeveuxChar32 > JeveuxBidirectionalMapChar32;
+/** @typedef Definition d'un pointeur de nom JeveuxChar80 */
+typedef JeveuxBidirectionalMap< JeveuxChar80 > JeveuxBidirectionalMapChar80;
+/** @typedef Definition d'un pointeur de nom JeveuxLogical */
+typedef JeveuxBidirectionalMap< bool > JeveuxBidirectionalMapLogical;
 
 #endif /* JEVEUXBIDIRECTIONALMAP_H_ */

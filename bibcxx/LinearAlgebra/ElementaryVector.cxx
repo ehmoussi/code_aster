@@ -33,7 +33,7 @@ ElementaryVectorInstance::ElementaryVectorInstance( const JeveuxMemory memType )
                 _listOfElementaryResults( JeveuxVectorChar24( getName() + "           .RELR" ) ),
                 _isEmpty( true ),
                 _listOfLoads( new ListOfLoadsInstance( memType ) ),
-                _corichRept( JeveuxBidirectionalMap( "&&CORICH." + getName() + ".REPT" ) )
+                _corichRept( JeveuxBidirectionalMapChar24( "&&CORICH." + getName() + ".REPT" ) )
 {};
 
 FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const BaseDOFNumberingPtr& currentNumerotation,

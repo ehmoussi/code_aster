@@ -98,6 +98,15 @@ class JeveuxString
         };
 
         /**
+         * @brief Constructeur a partir d'un char*
+         * @param chaine Chaine a recopier en style fortran
+         */
+        inline JeveuxString( const std::string str )
+        {
+            safeCopyFromChar( str.c_str(), str.length() );
+        };
+
+        /**
          * @brief Surcharge de l'operateur = pour une affectation rapide
          * @param chaine Recopie a partir d'un JeveuxString
          * @return Reference vers la chaine recopiee

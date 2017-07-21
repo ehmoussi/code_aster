@@ -63,17 +63,17 @@ private:
     typedef mapStrVOFE::value_type mapStrVOFEValue;
 
     /** @brief Pointeur de nom Jeveux '.DESC' */
-    JeveuxBidirectionalMap _symbolicNamesOfFields;
+    JeveuxBidirectionalMapChar16 _symbolicNamesOfFields;
     /** @brief Collection '.TACH' */
-    JeveuxCollectionChar24 _namesOfFields;
+    JeveuxCollectionChar24       _namesOfFields;
     /** @brief Pointeur de nom Jeveux '.NOVA' */
-    JeveuxBidirectionalMap _accessVariables;
+    JeveuxBidirectionalMapChar16 _accessVariables;
     /** @brief Collection '.TAVA' */
-    JeveuxCollectionChar8  _calculationParameter;
+    JeveuxCollectionChar8        _calculationParameter;
     /** @brief Vecteur Jeveux '.ORDR' */
-    JeveuxVectorLong       _serialNumber;
+    JeveuxVectorLong             _serialNumber;
     /** @brief Nombre de numéros d'ordre */
-    int                    _nbRanks;
+    int                          _nbRanks;
 
     /** @brief Liste des champs aux noeuds */
     mapStrVOFN                           _dictOfVectorOfFieldsNodes;
@@ -94,9 +94,9 @@ public:
      */
     ResultsContainerInstance( const std::string resuTyp = "???" ):
             DataStructure( getNewResultObjectName(), resuTyp ),
-            _symbolicNamesOfFields( JeveuxBidirectionalMap( getName() + "           .DESC" ) ),
+            _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + "           .DESC" ) ),
             _namesOfFields( JeveuxCollectionChar24( getName() + "           .TACH" ) ),
-            _accessVariables( JeveuxBidirectionalMap( getName() + "           .NOVA" ) ),
+            _accessVariables( JeveuxBidirectionalMapChar16( getName() + "           .NOVA" ) ),
             _calculationParameter( JeveuxCollectionChar8( getName() + "           .TAVA" ) ),
             _serialNumber( JeveuxVectorLong( getName() + "           .ORDR" ) ),
             _nbRanks( 0 )

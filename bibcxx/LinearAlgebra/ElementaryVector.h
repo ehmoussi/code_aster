@@ -49,16 +49,16 @@ private:
     typedef ListMechanicalLoad::iterator ListMechanicalLoadIter;
 
     /** @brief Objet Jeveux '.RERR' */
-    JeveuxVectorChar24 _description;
+    JeveuxVectorChar24           _description;
     /** @brief Objet Jeveux '.RELR' */
-    JeveuxVectorChar24 _listOfElementaryResults;
+    JeveuxVectorChar24           _listOfElementaryResults;
     /** @brief Booleen indiquant si la sd est vide */
-    bool               _isEmpty;
+    bool                         _isEmpty;
 
     /** @brief Liste de charges */
-    ListOfLoadsPtr     _listOfLoads;
+    ListOfLoadsPtr               _listOfLoads;
 
-    JeveuxBidirectionalMap _corichRept;
+    JeveuxBidirectionalMapChar24 _corichRept;
 
 public:
     /**

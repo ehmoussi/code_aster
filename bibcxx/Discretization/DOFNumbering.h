@@ -48,19 +48,19 @@ private:
     class GlobalEquationNumberingInstance
     {
         /** @brief Objet Jeveux '.NEQU' */
-        JeveuxVectorLong       _numberOfEquations;
+        JeveuxVectorLong             _numberOfEquations;
         /** @brief Objet Jeveux '.REFN' */
-        JeveuxVectorLong       _informations;
+        JeveuxVectorLong             _informations;
         /** @brief Objet Jeveux '.DELG' */
-        JeveuxVectorLong       _lagrangianInformations;
+        JeveuxVectorLong             _lagrangianInformations;
         /** @brief Objet Jeveux '.PRNO' */
-        JeveuxCollectionLong   _componentsOnNodes;
+        JeveuxCollectionLong         _componentsOnNodes;
         /** @brief Objet Jeveux '.LILI' */
-        JeveuxBidirectionalMap _namesOfGroupOfElements;
+        JeveuxBidirectionalMapChar24 _namesOfGroupOfElements;
         /** @brief Objet Jeveux '.NUEQ' */
-        JeveuxVectorLong       _indexationVector;
+        JeveuxVectorLong             _indexationVector;
         /** @brief Objet Jeveux '.DEEQ' */
-        JeveuxVectorLong       _nodeAndComponentsNumberFromDOF;
+        JeveuxVectorLong             _nodeAndComponentsNumberFromDOF;
 
         GlobalEquationNumberingInstance( const std::string& DOFNumName ):
             _numberOfEquations( DOFNumName + ".NEQU" ),

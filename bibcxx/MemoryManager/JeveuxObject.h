@@ -32,6 +32,17 @@
 #include <string>
 
 /**
+ * @enum JeveuxMemory
+ * @brief Fournit les types de memoire Jeveux
+ */
+enum JeveuxMemory { Permanent, Temporary };
+/**
+ * @def JeveuxTypesNames
+ * @brief Fournit la lettre correspondant aux différentes base Jeveux
+ */
+static const char* JeveuxMemoryTypesNames[2] = { "G", "V" };
+
+/**
  * @class JeveuxObjectInstance
  * @brief Cette classe permet de definir un objet Jeveux
  * @author Nicolas Sellenet
@@ -40,14 +51,18 @@ class JeveuxObjectInstance
 {
 protected:
     /** @brief Nom de l'objet Jeveux */
-    std::string _name;
+    std::string  _name;
+    /** @brief Mémoire d'allocation */
+    JeveuxMemory _mem;
 
 public:
     /**
      * @brief Constructeur
      * @param name Nom jeveux du vecteur
      */
-    JeveuxObjectInstance( std::string nom ): _name( nom )
+    JeveuxObjectInstance( const std::string& nom, JeveuxMemory mem = Permanent ):
+        _name( nom ),
+        _mem( mem )
     {};
 
     /**
@@ -71,6 +86,14 @@ public:
         if ( boolRetour == 0 )
             return false;
         return true;
+    };
+
+    /**
+     * @brief Return the name
+     */
+    std::string getName() const
+    {
+        return _name;
     };
 };
 

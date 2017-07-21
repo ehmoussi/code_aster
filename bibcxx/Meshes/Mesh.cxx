@@ -35,13 +35,17 @@
 BaseMeshInstance::BaseMeshInstance( const std::string& type ):
                         DataStructure( getNewResultObjectName(), type ),
                         _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
-                        _nameOfNodes( JeveuxBidirectionalMap( getName() + ".NOMNOE    " ) ),
+                        _nameOfNodes( JeveuxBidirectionalMapChar8( getName() + ".NOMNOE    " ) ),
                         _coordinates( new MeshCoordinatesFieldInstance( getName() + ".COORDO    " ) ),
-                        _groupsOfNodes( JeveuxCollectionLong( getName() + ".GROUPENO  " ) ),
+                        _nameOfGrpNodes( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMNOE " ) ),
+                        _groupsOfNodes( JeveuxCollectionLongNamePtr( getName() + ".GROUPENO  ",
+                                                                     _nameOfGrpNodes ) ),
                         _connectivity( JeveuxCollectionLong( getName() + ".CONNEX    " ) ),
-                        _nameOfElements( JeveuxBidirectionalMap( getName() + ".NOMMAI    " ) ),
+                        _nameOfElements( JeveuxBidirectionalMapChar8( getName() + ".NOMMAI    " ) ),
                         _elementsType( JeveuxVectorLong( getName() + ".TYPMAIL   " ) ),
-                        _groupsOfElements( JeveuxCollectionLong( getName() + ".GROUPEMA  " ) ),
+                        _nameOfGrpElements( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMMAI " ) ),
+                        _groupsOfElements( JeveuxCollectionLongNamePtr( getName() + ".GROUPEMA  ",
+                                                                        _nameOfGrpElements ) ),
                         _isEmpty( true )
 {
     assert(getName().size() == 8);

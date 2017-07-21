@@ -54,8 +54,9 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
          *   Attention, le pointeur est mis a zero. Avant d'utiliser ce vecteur,
          *   il faut donc faire appel a JeveuxVectorInstance::updateValuePointer
          */
-        JeveuxVectorInstance( std::string nom ): JeveuxObjectInstance( nom ),
-                                                 _valuePtr( NULL )
+        JeveuxVectorInstance( const std::string& nom ):
+            JeveuxObjectInstance( nom ),
+            _valuePtr( NULL )
         {};
 
         /**
@@ -67,6 +68,20 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
             std::cout << "JeveuxVector.destr: " << _name << std::endl;
 #endif
             _valuePtr = NULL;
+        };
+
+        /**
+         * @brief Surcharge de l'operateur =
+         */
+        JeveuxVectorInstance& operator=( JeveuxVectorInstance& toCopy )
+        {
+            if( this->size() != 0 )
+                this->deallocate();
+            this->allocate( _mem, toCopy.size() );
+            toCopy.updateValuePointer();
+            for( int i = 0; i < toCopy.size(); ++i )
+                this->operator[](i) = toCopy[i];
+            return *this;
         };
 
         /**
@@ -99,6 +114,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         {
             if ( _name != "" && length > 0 )
             {
+                _mem = jeveuxBase;
                 std::string strJeveuxBase( "V" );
                 if ( jeveuxBase == Permanent ) strJeveuxBase = "G";
                 long taille = length;
@@ -109,6 +125,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
                 if ( _valuePtr == NULL ) return false;
             }
             else return false;
+            updateValuePointer();
             return true;
         };
 

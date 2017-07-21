@@ -65,13 +65,37 @@ public:
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    MeshCoordinatesFieldInstance( const std::string name ):
+    MeshCoordinatesFieldInstance( const std::string& name ):
                     DataStructure( name, "CHAM_NO" ),
                     _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
                     _valuesList( JeveuxVectorDouble( getName() + ".VALE" ) )
     {
         assert( name.size() == 19 );
+    };
+
+    /**
+     * @brief Get _descriptor
+     */
+    const JeveuxVectorLong getFieldDescriptor() const
+    {
+        return _descriptor;
+    };
+
+    /**
+     * @brief Get _reference
+     */
+    const JeveuxVectorChar24 getFieldReference() const
+    {
+        return _reference;
+    };
+
+    /**
+     * @brief Get _valuesList
+     */
+    const JeveuxVectorDouble getFieldValues() const
+    {
+        return _valuesList;
     };
 
     /**

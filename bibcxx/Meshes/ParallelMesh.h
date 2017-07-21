@@ -49,13 +49,25 @@ private:
     typedef SetOfString::const_iterator SetOfStringCIter;
 
     /** @brief All groups of nodes (parallel mesh) */
-    JeveuxVectorChar32 _allGroupOfNodes;
+    JeveuxVectorChar32  _allGroupOfNodes;
     /** @brief Set of all groups of nodes (parallel mesh) */
-    SetOfString        _setOfAllGON;
+    SetOfString         _setOfAllGON;
     /** @brief All groups of elements (parallel mesh) */
-    JeveuxVectorChar32 _allGroupOfEements;
+    JeveuxVectorChar32  _allGroupOfEements;
     /** @brief Set of all groups of elements (parallel mesh) */
-    SetOfString        _setOfAllGOE;
+    SetOfString         _setOfAllGOE;
+    /** @brief Identify outer nodes */
+    JeveuxVectorLong    _outerNodes;
+    /** @brief Global numbering */
+    JeveuxVectorLong    _globalNumbering;
+    /** @brief List of joins (send) */
+    JeveuxVectorChar24  _listOfSendingJoins;
+    /** @brief List of joins (receive) */
+    JeveuxVectorChar24  _listOfReceivingJoins;
+    /** @brief List of opposite domain */
+    JeveuxVectorChar24  _listOfOppositeDomain;
+    /** @brief Vector of JeveuxVectorLong which contains matching nodes */
+    std::vector< JeveuxVectorLong > _vectorOfMatchingNodes;
 
 public:
     /**
@@ -88,6 +100,24 @@ public:
     };
 
     /**
+     * @brief Get the JeveuxVector for global nodes numbering
+     * @return _globalNumbering
+     */
+    const JeveuxVectorLong getGlobalNodesNumbering() const
+    {
+        return _globalNumbering;
+    };
+
+    /**
+     * @brief Get the JeveuxVector for outer subdomain nodes
+     * @return _outerNodes
+     */
+    const JeveuxVectorLong getOuterNodesVector() const
+    {
+        return _outerNodes;
+    };
+
+    /**
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */
@@ -109,6 +139,24 @@ public:
         if( curIter != _setOfAllGON.end() )
             return true;
         return false;
+    };
+
+    /**
+     * @brief Teste l'existence d'un groupe de mailles dans le maillage
+     * @return true si le groupe existe
+     */
+    bool hasLocalGroupOfElements( const std::string& name ) const
+    {
+        return _groupsOfElements->existsObject(name);
+    };
+
+    /**
+     * @brief Teste l'existence d'un groupe de noeuds dans le maillage
+     * @return true si le groupe existe
+     */
+    bool hasLocalGroupOfNodes( const std::string& name ) const
+    {
+        return _groupsOfNodes->existsObject(name);
     };
 
     /**
