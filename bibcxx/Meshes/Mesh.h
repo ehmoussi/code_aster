@@ -42,27 +42,30 @@
  */
 class BaseMeshInstance: public DataStructure
 {
-public:
-
 protected:
+    typedef JeveuxCollection< long, JeveuxBidirectionalMapChar24 > JeveuxCollectionLongNamePtr;
     /** @brief Objet Jeveux '.DIME' */
-    JeveuxVectorLong        _dimensionInformations;
+    JeveuxVectorLong             _dimensionInformations;
     /** @brief Pointeur de nom Jeveux '.NOMNOE' */
-    JeveuxBidirectionalMap  _nameOfNodes;
+    JeveuxBidirectionalMapChar8  _nameOfNodes;
     /** @brief Champ aux noeuds '.COORDO' */
-    MeshCoordinatesFieldPtr _coordinates;
+    MeshCoordinatesFieldPtr      _coordinates;
+    /** @brief Pointeur de nom Jeveux '.PTRNOMNOE' */
+    JeveuxBidirectionalMapChar24 _nameOfGrpNodes;
     /** @brief Collection Jeveux '.GROUPENO' */
-    JeveuxCollectionLong    _groupsOfNodes;
+    JeveuxCollectionLongNamePtr  _groupsOfNodes;
     /** @brief Collection Jeveux '.CONNEX' */
-    JeveuxCollectionLong    _connectivity;
+    JeveuxCollectionLong         _connectivity;
     /** @brief Pointeur de nom Jeveux '.NOMMAIL' */
-    JeveuxBidirectionalMap  _nameOfElements;
+    JeveuxBidirectionalMapChar8  _nameOfElements;
     /** @brief Objet Jeveux '.TYPMAIL' */
-    JeveuxVectorLong        _elementsType;
+    JeveuxVectorLong             _elementsType;
+    /** @brief Pointeur de nom Jeveux '.PTRNOMMAI' */
+    JeveuxBidirectionalMapChar24 _nameOfGrpElements;
     /** @brief Objet Jeveux '.GROUPEMA' */
-    JeveuxCollectionLong    _groupsOfElements;
+    JeveuxCollectionLongNamePtr  _groupsOfElements;
     /** @brief Booleen indiquant si le maillage est vide */
-    bool                    _isEmpty;
+    bool                         _isEmpty;
 
     /**
      * @brief Read a Aster Mesh file
@@ -101,6 +104,30 @@ public:
     MeshCoordinatesFieldPtr getCoordinates() const
     {
         return _coordinates;
+    };
+
+    /**
+     * @brief Recuperation d'un groupe de noeuds
+     * @return Objet de collection contenant la liste des noeuds
+     */
+    const JeveuxCollectionObject< long >& getGroupOfNodes( const std::string& name ) const
+        throw( std::runtime_error )
+    {
+        if( _groupsOfNodes->size() == -1 )
+            _groupsOfNodes->buildFromJeveux();
+        return _groupsOfNodes->getObjectFromName( name );
+    };
+
+    /**
+     * @brief Recuperation du nombre de noeuds
+     */
+    int getNumberOfNodes() const
+    {
+        if( _isEmpty )
+            return 0;
+        if( ! _dimensionInformations->updateValuePointer() )
+            return 0;
+        return (*_dimensionInformations)[0];
     };
 
     /**

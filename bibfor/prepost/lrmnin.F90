@@ -29,6 +29,7 @@ subroutine lrmnin(nommai, nbmail, nbnoeu, connex, grpnoe,&
 #include "asterfort/jedema.h"
 #include "asterfort/jelira.h"
 #include "asterfort/codent.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexatr.h"
@@ -41,7 +42,7 @@ subroutine lrmnin(nommai, nbmail, nbnoeu, connex, grpnoe,&
     character(len=24) :: nommai, connex, grpnoe, kbid
     character(len=64) :: nofimd
 !
-    integer :: jmaext, nmgr, kno, ino, jnoext, rang, nbproc
+    integer :: jmaext, nmgr, kno, ino, jnoext, rang, nbproc, iret, irang
     mpi_int :: mrank, msize
 !
     character(len=4) :: chnbjo
@@ -56,18 +57,22 @@ subroutine lrmnin(nommai, nbmail, nbnoeu, connex, grpnoe,&
     nbproc = to_aster_int(msize)
     if ( nbproc.gt.1 ) then
 !
-        call codent(rang, 'G', chnbjo)
-        nom_grp_mailles = 'EXT_'//chnbjo
+        call wkvect(nommai(1:8)//'.NOEX', 'G V I', nbnoeu, jnoext)
+        do irang = 0, nbproc - 1
+            call codent(irang, 'G', chnbjo)
+            nom_grp_mailles = 'EXT_'//chnbjo
 !
-        call wkvect(nommai(1:8)//'.NOEX', 'G V L', nbnoeu, jnoext)
-        call jelira(jexnom(grpnoe, nom_grp_mailles), 'LONMAX', nmgr, kbid)
-        kno = 0
-        call jeveuo(jexnom(grpnoe, nom_grp_mailles), 'L', kno)
-        ASSERT(kno.ne.0)
+            call jeexin(jexnom(grpnoe, nom_grp_mailles), iret)
+            if( iret.eq.0 ) cycle
+            kno = 0
+            call jeveuo(jexnom(grpnoe, nom_grp_mailles), 'L', kno)
+            ASSERT(kno.ne.0)
+            call jelira(jexnom(grpnoe, nom_grp_mailles), 'LONMAX', nmgr, kbid)
 !
-        do ino = 1, nmgr
-            zl(jnoext + zi(kno + ino - 1) - 1) = .true.
-        end do
+            do ino = 1, nmgr
+                zi(jnoext + zi(kno + ino - 1) - 1) = irang
+            end do
+        enddo
     endif
 !
     call jedema()

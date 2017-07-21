@@ -29,7 +29,7 @@
 
 FiberGeometryInstance::FiberGeometryInstance():
     DataStructure( getNewResultObjectName(), "GFIBRE" ),
-    _nomsGroupes( JeveuxBidirectionalMap( getName() + ".NOMS_GROUPES" ) ),
+    _nomsGroupes( JeveuxBidirectionalMapChar24( getName() + ".NOMS_GROUPES" ) ),
     _nbFibreGroupe( JeveuxVectorLong( getName() + ".NB_FIBRE_GROUPE" ) ),
     _pointeur( JeveuxVectorLong( getName() + ".POINTEUR" ) ),
     _typeGroupe( JeveuxVectorLong( getName() + ".TYPE_GROUPE" ) ),

@@ -1,9 +1,9 @@
 /**
- * @file JeveuxBidirectionalMap.cxx
- * @brief Implementation de JeveuxBidirectionalMap
+ * @file PartialMeshInterface.cxx
+ * @brief Interface python de PartialMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -21,4 +21,22 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MemoryManager/JeveuxBidirectionalMap.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include "PythonBindings/PartialMeshInterface.h"
+#include "PythonBindings/SharedPtrUtilities.h"
+#include <boost/python.hpp>
+
+void exportPartialMeshToPython()
+{
+    using namespace boost::python;
+
+#ifdef _USE_MPI
+    class_< PartialMeshInstance, PartialMeshInstance::PartialMeshPtr,
+            bases< DataStructure > >( "PartialMesh", no_init )
+        .def( "create", &createSharedPtr< PartialMeshInstance,
+                                          ParallelMeshPtr&, const VectorString& > )
+        .staticmethod( "create" )
+    ;
+#endif /* _USE_MPI */
+};

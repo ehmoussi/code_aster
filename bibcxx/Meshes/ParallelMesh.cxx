@@ -32,7 +32,12 @@
 
 ParallelMeshInstance::ParallelMeshInstance(): BaseMeshInstance( "MAILLAGE_P" ),
                                               _allGroupOfNodes( getName() + ".PAR_GRPNOE" ),
-                                              _allGroupOfEements( getName() + ".PAR_GRPMAI" )
+                                              _allGroupOfEements( getName() + ".PAR_GRPMAI" ),
+                                              _outerNodes( getName() + ".NOEX" ),
+                                              _globalNumbering( getName() + ".NULOGL" ),
+                                              _listOfSendingJoins( getName() + ".NO_JO_ENV" ),
+                                              _listOfReceivingJoins( getName() + ".NO_JO_REC" ),
+                                              _listOfOppositeDomain( getName() + ".DOMJOINTS" )
 {};
 
 bool ParallelMeshInstance::readMedFile( const std::string& fileName )

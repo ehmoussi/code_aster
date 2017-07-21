@@ -1,9 +1,12 @@
+#ifndef PARTIALMESHINTERFACE_H_
+#define PARTIALMESHINTERFACE_H_
+
 /**
- * @file JeveuxBidirectionalMap.cxx
- * @brief Implementation de JeveuxBidirectionalMap
+ * @file PartialMeshInterface.h
+ * @brief Fichier entete de 
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -21,4 +24,11 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MemoryManager/JeveuxBidirectionalMap.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include "astercxx.h"
+#include "Meshes/PartialMesh.h"
+
+void exportPartialMeshToPython();
+
+#endif /* PARTIALMESHINTERFACE_H_ */

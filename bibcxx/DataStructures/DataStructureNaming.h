@@ -29,7 +29,7 @@
 #include <string>
 #include <sstream>
 
-#include "MemoryManager/JeveuxAllowedTypes.h"
+#include "MemoryManager/JeveuxObject.h"
 #include "DataStructures/TemporaryDataStructureName.h"
 
 /**

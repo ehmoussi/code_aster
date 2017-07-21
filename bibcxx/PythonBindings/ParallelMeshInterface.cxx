@@ -24,6 +24,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "PythonBindings/ParallelMeshInterface.h"
+#include "PythonBindings/SharedPtrUtilities.h"
 
 #ifdef _USE_MPI
 

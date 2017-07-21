@@ -101,6 +101,8 @@
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
 #include "PythonBindings/MPIInfosInterface.h"
 
+#include "PythonBindings/PartialMeshInterface.h"
+
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(libaster)
@@ -183,4 +185,6 @@ BOOST_PYTHON_MODULE(libaster)
     exportParallelDOFNumberingToPython();
     exportMPIInfosToPython();
 #endif /* _USE_MPI */
+
+    exportPartialMeshToPython();
 };

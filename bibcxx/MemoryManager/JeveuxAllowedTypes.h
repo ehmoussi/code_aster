@@ -32,17 +32,6 @@
 #include <complex>
 
 /**
- * @enum JeveuxMemory
- * @brief Fournit les types de memoire Jeveux
- */
-enum JeveuxMemory { Permanent, Temporary };
-/**
- * @def JeveuxTypesNames
- * @brief Fournit la lettre correspondant aux différentes base Jeveux
- */
-static const char* JeveuxMemoryTypesNames[2] = { "G", "V" };
-
-/**
  * @enum JeveuxTypes
  * @brief Fournit tous les types autorises dans le gestionnaire memoire Jeveux
  */
@@ -64,46 +53,55 @@ struct AllowedJeveuxType; // undefined for bad types!
 template<> struct AllowedJeveuxType< long >
 {
     static const unsigned short numTypeJeveux = Integer;
+    typedef long type;
 };
 
 template<> struct AllowedJeveuxType< short int >
 {
     static const unsigned short numTypeJeveux = Integer4;
+    typedef short type;
 };
 
 template<> struct AllowedJeveuxType< double >
 {
     static const unsigned short numTypeJeveux = Double;
+    typedef double type;
 };
 
 template<> struct AllowedJeveuxType< DoubleComplex >
 {
     static const unsigned short numTypeJeveux = Complex;
+    typedef DoubleComplex type;
 };
 
 template<> struct AllowedJeveuxType< JeveuxChar8 >
 {
     static const unsigned short numTypeJeveux = Char8;
+    typedef JeveuxChar8 type;
 };
 
 template<> struct AllowedJeveuxType< JeveuxChar16 >
 {
     static const unsigned short numTypeJeveux = Char16;
+    typedef JeveuxChar16 type;
 };
 
 template<> struct AllowedJeveuxType< JeveuxChar24 >
 {
     static const unsigned short numTypeJeveux = Char24;
+    typedef JeveuxChar24 type;
 };
 
 template<> struct AllowedJeveuxType< JeveuxChar32 >
 {
     static const unsigned short numTypeJeveux = Char32;
+    typedef JeveuxChar32 type;
 };
 
 template<> struct AllowedJeveuxType< JeveuxChar80 >
 {
     static const unsigned short numTypeJeveux = Char80;
+    typedef JeveuxChar80 type;
 };
 
 #if ASTER_LOGICAL_SIZE != 1
@@ -113,6 +111,7 @@ template<> struct AllowedJeveuxType< JeveuxChar80 >
 template<> struct AllowedJeveuxType< bool >
 {
     static const unsigned short numTypeJeveux = Logical;
+    typedef bool type;
 };
 
 #endif /* JEVEUXALLOWEDTYPES_H_ */

@@ -41,22 +41,22 @@ class FiberGeometryInstance: public DataStructure
 {
 private:
     /** @brief Objet Jeveux '.NOMS_GROUPES' */
-    JeveuxBidirectionalMap _nomsGroupes;
+    JeveuxBidirectionalMapChar24 _nomsGroupes;
     /** @brief Objet Jeveux '.NB_FIBRE_GROUPE' */
-    JeveuxVectorLong       _nbFibreGroupe;
+    JeveuxVectorLong             _nbFibreGroupe;
     /** @brief Objet Jeveux '.POINTEUR' */
-    JeveuxVectorLong       _pointeur;
+    JeveuxVectorLong             _pointeur;
     /** @brief Objet Jeveux '.TYPE_GROUPE' */
-    JeveuxVectorLong       _typeGroupe;
+    JeveuxVectorLong             _typeGroupe;
     /** @brief Objet Jeveux '.CARFI' */
-    JeveuxVectorDouble     _carfi;
+    JeveuxVectorDouble           _carfi;
     /** @brief Objet Jeveux '.GFMA' */
-    JeveuxVectorChar8      _gfma;
+    JeveuxVectorChar8            _gfma;
     /** @brief Objet Jeveux '.CARACSD' */
-    JeveuxVectorLong       _caracsd;
+    JeveuxVectorLong             _caracsd;
 
     /** @brief Booleen indiquant si le maillage est vide */
-    bool                   _isEmpty;
+    bool                         _isEmpty;
 
 public:
     /**

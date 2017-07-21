@@ -203,7 +203,7 @@ subroutine crnulg(numddl)
     do iaux = 0, nbddll - 1
         numero_noeud = zi(jdeeq + iaux*2)
         numero_ddl = zi(jdeeq + iaux*2 + 1)
-        if ( zl(jnoext + numero_noeud - 1) ) then
+        if ( zi(jnoext + numero_noeud - 1).eq.rang ) then
             zi(jnugll + iaux) = numglo
             zi(jposdd + iaux) = rang
             !dx = 10.*zr(jcoord + (numero_noeud - 1)*3)

@@ -143,6 +143,24 @@ extern void DEFSS(JENUNO,jenuno, char*, STRING_SIZE, char*, STRING_SIZE );
 #define CALL_JENONU(a, b) CALLSP(JENONU, jenonu, a, b)
 extern void DEFSP(JENONU,jenonu, char*, STRING_SIZE, ASTERINTEGER* );
 
+#define CALL_JECREO(a, b) CALLSS(JECREO, jecreo, a, b)
+void DEFSS(JECREO, jecreo, const char *, STRING_SIZE, const char *, STRING_SIZE);
+
+#define CALL_JECREC(a, b, c, d, e, f) CALLSSSSSP(JECREC, jecrec, a, b, c, d, e, f)
+void DEFSSSSSP(JECREC, jecrec, const char *, STRING_SIZE, const char *, STRING_SIZE,
+                               const char *, STRING_SIZE, const char *, STRING_SIZE,
+                               const char *, STRING_SIZE, ASTERINTEGER*);
+
+#define CALL_JUCROC_WRAP(a, b, c, d, e) CALLSSPPP(JUCROC_WRAP, jucroc_wrap, a, b, c, d, e)
+void DEFSSPPP(JUCROC_WRAP, jucroc_wrap, const char *, STRING_SIZE, const char *, STRING_SIZE,
+                              ASTERINTEGER*, ASTERINTEGER*, void* );
+
+#define CALL_JEECRA_WRAP(a, b, c) CALLSSP(JEECRA_WRAP, jeecra_wrap, a, b, c)
+void DEFSSP(JEECRA_WRAP, jeecra_wrap, const char *, STRING_SIZE, const char *, STRING_SIZE, ASTERINTEGER*);
+
+#define CALL_JECROC(a) CALLS(JECROC, jecroc, a)
+void DEFS(JECROC, jecroc, const char *, STRING_SIZE);
+
 #define CALL_JEVEUOC(a, b, c) CALLSSP(JEVEUOC, jeveuoc, a, b, c)
 void DEFSSP(JEVEUOC, jeveuoc, const char *, STRING_SIZE, const char *, STRING_SIZE, void*);
 
@@ -294,6 +312,14 @@ void DEFSSS(CELCES,celces, const char*, STRING_SIZE, const char*, STRING_SIZE,
 
 #define CALL_LRMJOI_WRAP(a, b) CALLSS(LRMJOI_WRAP, lrmjoi_wrap, a, b)
 void DEFSS(LRMJOI_WRAP,lrmjoi_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE);
+
+#define CALL_RELIEM(a, b, c, d, e, f, g, h, i, j) \
+    CALLSSSSPPSSSP(RELIEM, reliem, a, b, c, d, e, f, g, h, i, j)
+void DEFSSSSPPSSSP(RELIEM,reliem, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                  const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                  ASTERINTEGER*, ASTERINTEGER*, const char*, STRING_SIZE,
+                                  const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                  ASTERINTEGER*);
 
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
