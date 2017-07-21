@@ -29,6 +29,7 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
 #include "asterfort/detrsd.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/dtmarch.h"
 #include "asterfort/dtmbuff.h"
 #include "asterfort/dtmconc.h"
@@ -36,6 +37,7 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
 #include "asterfort/dtmget.h"
 #include "asterfort/dtmintg.h"
 #include "asterfort/dtmupmat.h"
+#include "asterfort/getvid.h"
 #include "asterfort/intbackup.h"
 #include "asterfort/infniv.h"
 #include "asterfort/intbuff.h"
@@ -43,6 +45,7 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
 #include "asterfort/intsav.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
 #include "asterfort/mdidisvisc.h"
 #include "asterfort/mdidisisot.h"
 #include "asterfort/mdsize.h"
@@ -60,7 +63,7 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
 !   -0.2- Local variables
     aster_logical     :: upmat, checkcpu
     integer           :: nbrede, nbrevi, nbpas, nbnli, nbmode
-    integer           :: n100, i, append, exgyro, lev
+    integer           :: n100, i, append, exgyro, lev, iret, jrefa
     integer           :: adapt, pasarch, iarch, force_arch, reinteg
     integer           :: nltreat, nr, nbsauv, iarch_sd, i_nbar
     integer           :: perc, last_prperc, freqpr, ifm, niv
@@ -69,6 +72,9 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
     real(kind=8)      :: time, lastarch, tfin, epsi, newdt
     real(kind=8)      :: dt0
     character(len=8)  :: sd_dtm, sd_int, calcres, nomres, sd_nl
+    character(len=24) :: nume24
+    character(len=8)  :: riggen, metres
+    character(len=19) :: matmass, matrigi, matamor
 !
     integer         , pointer :: isto(:)    => null()
     integer         , pointer :: allocs(:)  => null()
@@ -313,6 +319,25 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
     if (nltreat.eq.1) then
         call detrsd(' ','&&DTMMOD')
         call detrsd(' ','&&DTMNUG')
+!   --- Once the object DTMNUG have been destroyed, 
+!       update numerotation for future use in MUMPS
+
+        call getvid(' ', 'MATR_RIGI', scal=riggen, nbret=iret)
+        call jeveuo(riggen//'           .REFA', 'L', jrefa)
+        nume24(1:14) = zk24(jrefa-1+2)
+
+        matmass = '&&DTMMAG'
+        matrigi = '&&DTMRIG'
+        matamor = '&&DTMAMO'
+        call dismoi('METH_RESO', matmass, 'MATR_ASSE', repk=metres)
+        if (metres .eq. 'MUMPS') then
+            call jeveuo(matmass//'.REFA', 'E', jrefa)
+            zk24(jrefa-1+2) = nume24(1:14)
+            call jeveuo(matrigi//'.REFA', 'E', jrefa)
+            zk24(jrefa-1+2) = nume24(1:14)
+            call jeveuo(matamor//'.REFA', 'E', jrefa)
+            zk24(jrefa-1+2) = nume24(1:14)   
+        endif  
     endif
 
     call dtmget(sd_dtm, _NB_NONLI, iscal=nbnli)
