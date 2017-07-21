@@ -471,6 +471,7 @@ TRANGENE=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                     BASE_ELAS_FLUI=MELFLUI,
                     NUME_VITE_FLUI=1,
                     SCHEMA_TEMPS=_F(SCHEMA='ITMI'),
+                    SOLVEUR=_F(METHODE='MUMPS'),
                   AMOR_MODAL=_F(AMOR_REDUIT=(
                                 1.000000E-02, 1.000000E-02,
                                 1.000000E-02, 1.000000E-02, ),),
@@ -509,6 +510,7 @@ TRANGENE=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
 )
 
 #
+
 LINST=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(JUSQU_A=0.5,
                                    NOMBRE =1000,
