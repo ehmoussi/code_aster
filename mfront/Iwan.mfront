@@ -23,10 +23,9 @@
 Iwan model for cyclic behaviour of soils;
 }
 
-@Algorithm NewtonRaphson_NumericalJacobian;
-
+@Algorithm NewtonRaphson;
 @Theta 1. ;
-@Epsilon 1.e-10 ;
+@Epsilon 1.e-12 ;
 @IterMax 50 ;
 @Includes{
 #include"TFEL/Material/Lame.hxx"
@@ -53,12 +52,8 @@ nu.setGlossaryName("PoissonRatio");
 // Auxiliary state variable
 // Kinematic tensor hardening
 @AuxiliaryStateVariable Stensor X[Ns];
-// Plastic strain tensor
-@AuxiliaryStateVariable Stensor  Eplast;
 // 
 @AuxiliaryStateVariable real    fn[Ns];
-// Actual time step
-@AuxiliaryStateVariable real     t0;
 
 // Local variables
 // Lame coefficients
@@ -146,18 +141,16 @@ nu.setGlossaryName("PoissonRatio");
     real eps=1.e-12;
     p=trace(sig)/3.;
     S=sig-p*Stensor::Id();
-    real dev=trace(deel)/3.;
-    Stensor ded=deel-dev*Stensor::Id();
     for (unsigned short i=0;i<Ns;i++){
         qn[i]=sigmaeq(S-X[i]);
-        if (qn[i]<1.e-6){
+        if (qn[i]<eps){
             PSI[i]=Stensor(0.);
         }
         else{
             PSI[i]=1.5*(S-X[i])/qn[i];
         }
         fn[i]=qn[i]-Y[i];
-        if (fn[i]<0.){
+        if (fn[i]<eps){
             fpp[i]=dpp[i];
         }       
         else{
@@ -175,12 +168,55 @@ nu.setGlossaryName("PoissonRatio");
         aux = dpp[i]*PSI[i]+aux;
     }
     feel=deel-deto+aux;
+
+
+// calcul de la jacobienne analytique
+    real crit = 1e-6;
+    Stensor4 aux4=Stensor4(0.);
+    Stensor4 dphideel=Stensor4(0.);
+    Stensor4 dppdeel=Stensor4(0.);
+    Stensor4 dsigdeel=lambda*(Stensor::Id()^Stensor::Id())+2.*mu*Stensor4::Id();
+    Stensor4 dSdeel=dsigdeel-(1./3.)*(9.*lambda+6.*mu)*Stensor4::Id();
+    for (unsigned short i=0;i<Ns;i++){
+        if (qn[i]<eps){
+            dphideel=Stensor4(0.);
+            dppdeel=Stensor4(0.);
+        }
+        else{
+            dphideel=-(2./3./qn[i])*(dSdeel);
+            dppdeel=dpp[i]*(1./(qn[i]*qn[i]*qn[i]))*(((S-X[i])|dSdeel)^(S-X[i]));
+        }
+        aux4=dpp[i]*dphideel+dppdeel+aux4;
+    }
+    dfeel_ddeel = aux4+Stensor4::Id();
+    for (unsigned short i=0;i<Ns;i++){
+        dfeel_ddpp(i) = PSI[i];
+        dfpp_ddpp(i,i) = 1.;
+        real fa=abs(fn[i]);
+        if (fn[i]<eps){
+            if (fa>crit){
+                dfpp_ddeel(i)=0.*Stensor::Id();}
+        }
+        if (fn[i]>eps){
+            if(C[i+1]<eps*qn[i]){
+                dfpp_ddeel(i) = -(2.*mu/(C[i]*qn[i]))*((S-X[i])|(Stensor4::Id()));
+            }
+            else{
+                dfpp_ddeel(i) = -(2.*mu/(C[i+1]*qn[i]))*((S-X[i])|(Stensor4::Id()));
+            }
+        }
+        if ((fa<crit)&&(fn[i]>-crit)){
+            if(C[i+1]<eps*qn[i]){
+                dfpp_ddeel(i) = -0.5*(2.*mu/(C[i]*qn[i]))*((S-X[i])|(Stensor4::Id()));
+            }
+            else{
+                dfpp_ddeel(i) = -0.5*(2.*mu/(C[i+1]*qn[i]))*((S-X[i])|(Stensor4::Id()));
+            }
+        }
+    }
 }
 
 @UpdateAuxiliaryStateVars{
-    t0 = t0+dt;
-    Stensor etoT=eto+deto;
-    Eplast=etoT-eel;
     for (unsigned short i=0;i<Ns;i++){
         if (dpp[i]>0.){
            X[i] = X[i]+C[i+1]*dpp[i]*PSI[i];
