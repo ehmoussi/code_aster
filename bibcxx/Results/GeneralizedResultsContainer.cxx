@@ -1,10 +1,7 @@
-#ifndef RESULTSCONTAINERINTERFACE_H_
-#define RESULTSCONTAINERINTERFACE_H_
-
 /**
- * @file ResultsContainerInterface.h
- * @brief Fichier entete de la classe ResultsContainerInterface
- * @author Natacha Béreux
+ * @file GeneralizedResultsContainer.cxx
+ * @brief Implementation de la classe GeneralizedResultsContainer
+ * @author Natacha Béreux 
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
  *
@@ -24,9 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "astercxx.h"
-#include "Results/ResultsContainer.h"
+/* person_in_charge: natacha.bereux at edf.fr */
 
-void exportResultsContainerToPython();
-
-#endif /* RESULTSCONTAINERINTERFACE_H_ */
+#include "Results/GeneralizedResultsContainer.h"

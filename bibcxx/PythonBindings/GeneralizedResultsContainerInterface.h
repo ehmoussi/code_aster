@@ -1,9 +1,9 @@
-#ifndef RESULTSCONTAINERINTERFACE_H_
-#define RESULTSCONTAINERINTERFACE_H_
+#ifndef GENERALIZEDRESULTSCONTAINERINTERFACE_H_
+#define GENERALIZEDRESULTSCONTAINERINTERFACE_H_
 
 /**
- * @file ResultsContainerInterface.h
- * @brief Fichier entete de la classe ResultsContainerInterface
+ * @file GeneralizedResultsContainerInterface.h
+ * @brief Fichier entete de la classe GeneralizedResultsContainerInterface
  * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
@@ -25,8 +25,8 @@
  */
 
 #include "astercxx.h"
-#include "Results/ResultsContainer.h"
+#include "Results/GeneralizedResultsContainer.h"
 
-void exportResultsContainerToPython();
+void exportGeneralizedResultsContainerToPython();
 
-#endif /* RESULTSCONTAINERINTERFACE_H_ */
+#endif /* GENERALIZEDRESULTSCONTAINERINTERFACE_H_ */
