@@ -30,7 +30,7 @@
 
 #include "Results/DynamicResultsContainer.h"
 #include "MemoryManager/JeveuxVector.h"
-
+#include "Modal/StaticMacroElement.h"
 /**
  * @class GeneralizedResultsContainerInstance
  * @brief Cette classe correspond a la sd_dyna_gene de Code_Aster.
@@ -55,6 +55,9 @@ private:
     JeveuxVector<ValueType>           _velocity;
     /** @brief Vecteur Jeveux '.ACCE' */
     JeveuxVector<ValueType>           _acceleration;
+    /** @brief si résulte d'un proj_mesu_modal */
+    ProjMesuPtr               _projM;
+
 public:
      GeneralizedResultsContainerInstance():
         DynamicResultsContainerInstance( "SD_DYNA_GENE" ),
@@ -63,7 +66,8 @@ public:
             _indicesOfSamples( JeveuxVectorLong ( getName() +".ORDR"  ) ),
             _displacement( JeveuxVector<ValueType>( getName() +".DEPL"  ) ),
             _velocity( JeveuxVector<ValueType>( getName() +".VITE"  ) ),
-            _acceleration( JeveuxVector<ValueType>( getName() +".ACCE"  ) )
+            _acceleration( JeveuxVector<ValueType>( getName() +".ACCE"  ) ),
+            _projM( new ProjMesuInstance( getName() + ".PROJM" ))
     {};
 
 };
