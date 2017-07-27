@@ -167,6 +167,12 @@ CTEMPSR = LocatedComponents(phys=PHY.INST_R, type='ELEM',
 ENBSP_I = LocatedComponents(phys=PHY.NBSP_I, type='ELEM',
                             components=('COQ_NCOU',))
 
+ENEU1_R  = LocatedComponents(phys=PHY.NEUT_R, type='ELEM',
+                             components=('X1',))
+
+ELNEUT_F = LocatedComponents(phys=PHY.NEUT_F, type='ELEM',
+                             components=('X[30]',))
+
 
 EGNEUT_F = LocatedComponents(phys=PHY.NEUT_F, type='ELGA', location='RIGI',
                              components=('X[30]',))
@@ -327,7 +333,7 @@ class MEDKQU4(Element):
                             ),
                             para_out=((SP.PVECTUR, MVECTUR), ),
                             ),
-        
+
         OP.CHAR_MECA_EPSI_F(te=35,
                             para_in=(
                                 (SP.PCACOQU, CCACOQU), (SP.PEPSINF, CEPSINF),
@@ -953,17 +959,20 @@ class MEDKQU4(Element):
 
         OP.TOU_INI_ELEM(te=99,
                         para_out=(
-                        (OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), (
-                        OP.TOU_INI_ELEM.PNBSP_I, ENBSP_I),
-                        (OP.TOU_INI_ELEM.PPRES_R, CPRES_R), ),
+                        (OP.TOU_INI_ELEM.PNEUT_F, ELNEUT_F),
+                        (SP.PNEU1_R, ENEU1_R),
+                        (OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D),
+                        (OP.TOU_INI_ELEM.PNBSP_I, ENBSP_I),
+                        (OP.TOU_INI_ELEM.PPRES_R, CPRES_R),
+                        ),
                         ),
 
         OP.TOU_INI_ELGA(te=99,
                         para_out=(
-                        (OP.TOU_INI_ELGA.PNEUT_F, EGNEUT_F), (
-                        OP.TOU_INI_ELGA.PNEUT_R, EGNEUT_R),
-                        (OP.TOU_INI_ELGA.PSIEF_R, ECONTPG), (
-                        OP.TOU_INI_ELGA.PVARI_R, ZVARIPG),
+                        (OP.TOU_INI_ELGA.PNEUT_F, EGNEUT_F),
+                        (OP.TOU_INI_ELGA.PNEUT_R, EGNEUT_R),
+                        (OP.TOU_INI_ELGA.PSIEF_R, ECONTPG),
+                        (OP.TOU_INI_ELGA.PVARI_R, ZVARIPG),
                         ),
                         ),
 
