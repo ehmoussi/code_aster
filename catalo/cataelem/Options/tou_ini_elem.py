@@ -49,6 +49,10 @@ PCOEH_R  = OutputParameter(phys=PHY.COEH_R, type='ELEM')
 
 PFLUN_R  = OutputParameter(phys=PHY.FLUN_R, type='ELEM')
 
+
+PNEUT_F  = OutputParameter(phys=PHY.NEUT_F, type='ELEM')
+
+
 TOU_INI_ELEM = Option(
     para_in=(
     ),
@@ -63,6 +67,7 @@ TOU_INI_ELEM = Option(
            PSOUR_R,
            PCOEH_R,
            PFLUN_R,
+           PNEUT_F,
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),)),
