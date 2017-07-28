@@ -334,5 +334,6 @@ TEST_RESU(RESU=(
                    PRECISION=1.E-6,),
            ),)
 
+IMPR_RESU(FORMAT='MED', RESU=_F(RESULTAT=VL),)
 FIN()
 #

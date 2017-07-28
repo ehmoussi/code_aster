@@ -51,10 +51,10 @@ real(kind=8), intent(in) :: instam
 real(kind=8), intent(in) :: instap
 real(kind=8), intent(in) :: deps2(*)
 real(kind=8), intent(in) :: sigm2(*)
-real(kind=8), intent(in) :: vim(2)
+real(kind=8), intent(in) :: vim(5)
 character(len=16), intent(in) :: option
 real(kind=8), intent(out) :: sigp(*)
-real(kind=8), intent(out) :: vip(2)
+real(kind=8), intent(out) :: vip(5)
 real(kind=8), intent(out) :: dsidep(6, 6)
 integer, intent(out) :: iret
 !
@@ -97,7 +97,7 @@ integer, intent(out) :: iret
     integer :: ire2
     integer :: iter, itemax
     real(kind=8) :: tm, tp, tref, temp, dt
-    real(kind=8) :: phase(5), phasm(5), zalpha
+    real(kind=8) :: phase(3), phasm(3), zalpha
     real(kind=8) :: zero, prec, rbid, tole_bound
     real(kind=8) :: mum, mu, troiskm, troisk, anic(6, 6)
     real(kind=8) :: ani(6, 6)
@@ -171,6 +171,12 @@ integer, intent(out) :: iret
         call get_meta_phasis(fami     , '-'  , kpg   , ksp , meta_id,&
                              nb_phasis, phase, zcold_ = zalpha, tole_bound_ = tole_bound)
     endif
+!
+! - Save phases in internal variables
+!
+    vip(3) = phase(1)
+    vip(4) = phase(2)
+    vip(5) = phase(3)
 !
 ! **************************************
 ! 2 - RECUPERATION DES CARACTERISTIQUES
