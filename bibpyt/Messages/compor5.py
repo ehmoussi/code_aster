@@ -93,7 +93,7 @@ La déformation est supposée nulle.
 
     22: _(u"""
  Sur certaines mailles, la modélisation est incompatible avec le comportement.
- Une erreur fatale pourrait suivre se message.
+ Une erreur fatale pourrait suivre ce message.
 """),
 
     23: _(u"""
