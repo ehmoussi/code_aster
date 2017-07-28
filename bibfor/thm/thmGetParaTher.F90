@@ -51,11 +51,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (ds_thm%ds_elem%l_weak_coupling) then
-        fami = 'RIGI'
-    else
-        fami = ' '
-    endif
+    fami = 'RIGI'
 !
 ! - Read parameters (dilatation)
 !
