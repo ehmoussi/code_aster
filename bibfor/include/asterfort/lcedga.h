@@ -34,10 +34,10 @@ interface
         real(kind=8), intent(in) :: instap
         real(kind=8), intent(in) :: deps2(*)
         real(kind=8), intent(in) :: sigm2(*)
-        real(kind=8), intent(in) :: vim(2)
+        real(kind=8), intent(in) :: vim(5)
         character(len=16), intent(in) :: option
         real(kind=8), intent(out) :: sigp(*)
-        real(kind=8), intent(out) :: vip(2)
+        real(kind=8), intent(out) :: vip(5)
         real(kind=8), intent(out) :: dsidep(6, 6)
         integer, intent(out) :: iret
     end subroutine lcedga
