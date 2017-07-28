@@ -40,32 +40,32 @@ implicit none
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
 !
-    integer, intent(in) :: kpi
-    integer, intent(in) :: ndim
-    aster_logical, intent(out) :: yachai
-    integer, intent(in) :: yamec
-    integer, intent(in) :: yate
-    integer, intent(in) :: yap1
-    integer, intent(in) :: yap2
-    real(kind=8), intent(in) :: defgem(*)
-    real(kind=8), intent(in) :: defgep(*)
-    integer, intent(in) :: addeme
-    integer, intent(in) :: addep1
-    integer, intent(in) :: addep2
-    integer, intent(in) :: addete
-    real(kind=8), intent(out) :: depsv
-    real(kind=8), intent(out) :: epsv
-    real(kind=8), intent(out) :: deps(6)
-    real(kind=8), intent(out) :: t
-    real(kind=8), intent(out) :: dt
-    real(kind=8), intent(out) :: grat(ndim)
-    real(kind=8), intent(out) :: p1
-    real(kind=8), intent(out) :: dp1
-    real(kind=8), intent(out) :: grap1(ndim)
-    real(kind=8), intent(out) :: p2
-    real(kind=8), intent(out) :: dp2
-    real(kind=8), intent(out) :: grap2(ndim)
-    integer, intent(out) :: retcom
+integer, intent(in) :: kpi
+integer, intent(in) :: ndim
+aster_logical, intent(out) :: yachai
+integer, intent(in) :: yamec
+integer, intent(in) :: yate
+integer, intent(in) :: yap1
+integer, intent(in) :: yap2
+real(kind=8), intent(in) :: defgem(*)
+real(kind=8), intent(in) :: defgep(*)
+integer, intent(in) :: addeme
+integer, intent(in) :: addep1
+integer, intent(in) :: addep2
+integer, intent(in) :: addete
+real(kind=8), intent(out) :: depsv
+real(kind=8), intent(out) :: epsv
+real(kind=8), intent(out) :: deps(6)
+real(kind=8), intent(out) :: t
+real(kind=8), intent(out) :: dt
+real(kind=8), intent(out) :: grat(ndim)
+real(kind=8), intent(out) :: p1
+real(kind=8), intent(out) :: dp1
+real(kind=8), intent(out) :: grap1(ndim)
+real(kind=8), intent(out) :: p2
+real(kind=8), intent(out) :: dp2
+real(kind=8), intent(out) :: grap2(ndim)
+integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -115,8 +115,9 @@ implicit none
 !
 ! - Mechanic - Full coupled
 !
-    depsv = 0.d0
-    epsv  = 0.d0
+    deps(:) = 0.d0
+    depsv   = 0.d0
+    epsv    = 0.d0
     if (yamec .eq. 1) then
         do i = 1, 6
             deps(i)=defgep(addeme+ndim-1+i)-defgem(addeme+ndim-1+i)
