@@ -85,7 +85,7 @@ implicit none
     real(kind=8) :: young, nu, alpha0, carcri(*), instam, instap
     character(len=8) :: fami, poum
     real(kind=8) :: dsdeme(6, 6)
-    real(kind=8) :: angma1(3), depstr(6)
+    real(kind=8) :: depstr(6)
     real(kind=8) :: mdal(6), dalal
     character(len=16) :: complg(20)
     aster_logical :: yapre2
@@ -330,7 +330,7 @@ implicit none
             call nmcomp(fami, kpg, ksp, ndim, typmod,&
                       imate, complg, carcri, instam, instap,&
                       6, defgem(addeme+ndim), deps, 6, congem(adcome),&
-                      vintm, option, angma1, 1, [0.d0],&
+                      vintm, option, angl_naut, 1, [0.d0],&
                       congep(adcome), vintp, 36, dsdeme, 1,&
                       [0.d0], retcom)
         endif
