@@ -48,7 +48,7 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
 #include "asterfort/iselli.h"
 #include "asterfort/Behaviour_type.h"
     integer :: ndim, igeom, imate, lgpg, codret, nnop, npg
-    integer :: nfh, ddlc, ddlm, nfe, idepl, ivectu, ideplp, ivariexte
+    integer :: nfh, ddlc, ddlm, nfe, idepl, ivectu, ideplp, jvariexte
     integer :: nfiss, heavn(nnop, 5), idecpg
     integer :: jstno
     character(len=8) :: elrefp, typmod(*)
@@ -144,11 +144,11 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
 !
 ! - Get coded integer for external state variable
 !
-    ivariexte = nint(carcri(IVARIEXTE))
+    jvariexte = nint(carcri(IVARIEXTE))
 !
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                zr(igeom), typmod, ivariexte, ndim,&
+                zr(igeom), typmod, jvariexte, ndim,&
                 deplb1, deplb2)
 !
     do n = 1, nnop

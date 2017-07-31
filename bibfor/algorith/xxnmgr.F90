@@ -102,7 +102,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
     integer :: i, ig, j, j1, k, kk, kkd, kpg, l, m, mn, n, nn
     integer :: ddls, ddld, ddldn, cpt, dec(nnop), hea_se
-    integer :: idfde, ipoids, ivf, jcoopg, jdfd2, jgano, ivariexte
+    integer :: idfde, ipoids, ivf, jcoopg, jdfd2, jgano, jvariexte
     integer :: ndimb, nno, nnops, nnos, npgbis
     integer :: singu, alp, ii, jj
     real(kind=8) :: f(3, 3), fm(3, 3), fr(3, 3), epsm(6), epsp(6), deps(6)
@@ -156,12 +156,12 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
 ! - Get coded integer for external state variable
 !
-    ivariexte = nint(carcri(IVARIEXTE))
+    jvariexte = nint(carcri(IVARIEXTE))
 !
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
 ! - LES ARGUMENTS DFDIB, DEPLB1, DEPLB2 NE SERVENT PAS DANS CE CAS
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                zr(igeom), typmod, ivariexte, ndim,&
+                zr(igeom), typmod, jvariexte, ndim,&
                 deplb1, deplb2)
 !
     do n = 1, nnop

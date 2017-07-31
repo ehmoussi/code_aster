@@ -46,7 +46,7 @@ subroutine te0543(option, nomte)
     character(len=16) :: compor, pilo
 !
     integer :: jgano, ndim, nno, nnos, npg, lgpg, jtab(7), itype
-    integer :: ipoids, ivf, idfde, igeom, imate, ivariexte, icarcr
+    integer :: ipoids, ivf, idfde, igeom, imate, jvariexte, icarcr
     integer :: icontm, ivarim, icopil, iborne, ictau
     integer :: ideplm, iddepl, idepl0, idepl1, icompo, iret
 !
@@ -106,9 +106,9 @@ subroutine te0543(option, nomte)
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
 !
     if (compor .eq. 'BETON_DOUBLE_DP') then
-        ivariexte = nint(zr(icarcr-1+IVARIEXTE))
+        jvariexte = nint(zr(icarcr-1+IVARIEXTE))
         call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                    zr(igeom), typmod, ivariexte, ndim,&
+                    zr(igeom), typmod, jvariexte, ndim,&
                     zr(ideplm), zr(iddepl))
     endif
 !

@@ -111,7 +111,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: grand, axi
-    integer :: kpg, j, cod(27), ivariexte
+    integer :: kpg, j, cod(27), jvariexte
     real(kind=8) :: dsidep(6, 6), f(3, 3), fm(3, 3), epsm(6), epsp(6), deps(6)
     real(kind=8) :: r, sigma(6), sigm_norm(6), detf, poids, vff(1)
     real(kind=8) :: elgeom(10, 27), rac2, maxeps, detfm
@@ -128,12 +128,12 @@ implicit none
 !
 ! - Get coded integer for external state variable
 !
-    ivariexte = nint(carcri(IVARIEXTE))
+    jvariexte = nint(carcri(IVARIEXTE))
 !
 ! - Specific geometric parameters for some behaviours
 !
     call lcegeo(nno  , npg   , ipoids   , ivf, idfde,&
-                geomi, typmod, ivariexte, 3  , &
+                geomi, typmod, jvariexte, 3  , &
                 deplm, deplp )
 !
 ! - Only isotropic material !

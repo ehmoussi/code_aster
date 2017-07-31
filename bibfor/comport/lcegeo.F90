@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 subroutine lcegeo(nno, npg, jv_poids, jv_func, jv_dfunc,&
-                  geom, typmod, ivariexte, ndim,&
+                  geom, typmod, jvariexte, ndim,&
                   deplm, ddepl)
 !
 implicit none
@@ -36,7 +36,7 @@ integer, intent(in) :: jv_poids, jv_func, jv_dfunc
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: geom(3, nno)
 real(kind=8), intent(in) :: deplm(3, nno), ddepl(3, nno)
-integer, intent(in) :: ivariexte
+integer, intent(in) :: jvariexte
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,7 +53,7 @@ integer, intent(in) :: ivariexte
 ! IN  IDFDE  : DERIVEE DES FONCTIONS DE FORME ELEMENT DE REFERENCE
 ! IN  GEOM   : COORDONEES DES NOEUDS
 ! IN  TYPMOD : TYPE DE MODELISATION
-! In  ivariexte        : coded integer for external state variable
+! In  jvariexte        : coded integer for external state variable
 ! OUT ELGEOM  : TABLEAUX DES ELEMENTS GEOMETRIQUES SPECIFIQUES AUX LOIS
 !               DE COMPORTEMENT (DIMENSION MAXIMALE FIXEE EN DUR, EN
 !               FONCTION DU NOMBRE MAXIMAL DE POINT DE GAUSS)
@@ -65,7 +65,7 @@ integer, intent(in) :: ivariexte
 ! --------------------------------------------------------------------------------------------------
 !
     tabcod(:) = 0
-    variextecode(1) = ivariexte
+    variextecode(1) = jvariexte
     call isdeco(variextecode(1), tabcod, 30)
 !
 ! - Element size 1

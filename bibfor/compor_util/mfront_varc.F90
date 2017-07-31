@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/rcvarc.h"
+#include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 #include "asterfort/get_elas_id.h"
 !    
@@ -168,6 +169,8 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
                    epsth(i_dim)  = epsth(i_dim)+epsbm
                    depsth(i_dim) = depsth(i_dim)+epsbp-epsbm
                 enddo
+            else
+                call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
             endif
         endif
         if (list_varc(i_varc) .eq. 'HYDR' ) then
@@ -198,6 +201,8 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
                    epsth(i_dim)  = epsth(i_dim)+epsbm
                    depsth(i_dim) = depsth(i_dim)+epsbp-epsbm
                 enddo
+            else
+                call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
             endif
         endif
         call rcvarc(' ', list_varc(i_varc), '-', fami, kpg, ksp, vrcm, iret)
@@ -214,6 +219,9 @@ real(kind=8), intent(out) :: epsth(neps), depsth(neps)
                 vrcp = ca_vext_hygrp_
                 predef(i_varc) = vrcm
                 dpred(i_varc)  = vrcp-vrcm
+            endif
+            if ((list_varc(i_varc) .ne. 'HYGR') .and. (list_varc(i_varc) .ne. 'ELTSIZE1')) then
+                call utmess('F', 'COMPOR4_23', sk = list_varc(i_varc))
             endif
         endif
     end do

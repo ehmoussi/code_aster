@@ -83,7 +83,7 @@ implicit none
 
     aster_logical :: grand, axi, resi, rigi, matsym, cplan, lintbo
     parameter (grand = .true._1)
-    integer :: g, nddl, cod(27), ivf, ivariexte
+    integer :: g, nddl, cod(27), ivf, jvariexte
     integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff
     character(len=8) :: typmod(*)
     character(len=*) :: fami
@@ -122,12 +122,12 @@ implicit none
 !
 ! - Get coded integer for external state variable
 !
-    ivariexte = nint(carcri(IVARIEXTE))
+    jvariexte = nint(carcri(IVARIEXTE))
 !
 !     CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES AU COMPORTEMENT
 !     ATTENTION DFF NON CALCULE. PB SI MONOCRISTAL
     call lcegeo(nno, npg, iw, ivf, idff,&
-                geomi, typmod, ivariexte, ndim,&
+                geomi, typmod, jvariexte, ndim,&
                 deplm, depld)
 !
 !--------------------------INITIALISATION------------------------

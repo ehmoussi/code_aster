@@ -88,5 +88,28 @@
 #define COORGA    3
 #define GRADVELO  4
 #define HYGR      5
-
-
+#define NEUT1     6
+#define NEUT2     7
+#define TEMP      8
+#define DTX       9
+#define DTY       10
+#define DTZ       11
+#define X         12
+#define Y         13
+#define Z         14
+#define SECH      15
+#define HYDR      16
+#define CORR      17
+#define IRRA      18
+#define EPSAXX    19
+#define EPSAYY    20
+#define EPSAZZ    21
+#define EPSAXY    22
+#define EPSAXZ    23
+#define EPSAYZ    24
+#define PFERRITE  25
+#define PPERLITE  26
+#define PBAINITE  27
+#define PMARTENS  28
+#define ALPHPUR   29
+#define ALPHBET   30

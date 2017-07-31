@@ -22,13 +22,13 @@ interface
     subroutine getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                         l_mfront_offi, l_mfront_proto ,&
                                         cptr_nbvarext, cptr_namevarext,&
-                                        ivariexte)
+                                        jvariexte)
         aster_logical, intent(in) :: l_mfront_offi
         aster_logical, intent(in) :: l_mfront_proto
         character(len=16), intent(in) :: rela_comp
         character(len=16), intent(in) :: comp_code_py
         integer, intent(in) :: cptr_nbvarext
         integer, intent(in) :: cptr_namevarext
-        integer, intent(out) :: ivariexte
+        integer, intent(out) :: jvariexte
     end subroutine getExternalStateVariable
 end interface
