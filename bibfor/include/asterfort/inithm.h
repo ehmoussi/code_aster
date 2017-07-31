@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface 
     subroutine inithm(imate, yachai, yamec, phi0, em,&
                       cs0, tbiot, t, epsv, depsv,&
-                      epsvm, angmas, aniso, mdal, dalal,&
+                      epsvm, angmas, mdal, dalal,&
                       alphfi, cbiot, unsks, alpha0)
         integer :: imate
         aster_logical :: yachai
@@ -37,7 +35,6 @@ interface
         real(kind=8) :: depsv
         real(kind=8) :: epsvm
         real(kind=8) :: angmas(3)
-        integer :: aniso
         real(kind=8) :: mdal(6)
         real(kind=8) :: dalal
         real(kind=8) :: alphfi

@@ -154,7 +154,6 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: aniso
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, h11, h12, rho11, epsv, deps(6), depsv
     real(kind=8) :: sat, mamovg
@@ -195,10 +194,6 @@ implicit none
 !
     call tebiot(angl_naut, tbiot)
 !
-! - Temporaire: aniso n'est pas toujours lu dans le module pour l'instant
-!
-    aniso = ds_thm%ds_material%biot_type
-!
 ! - Get elastic parameters
 !
     if (ds_thm%ds_elem%l_dof_meca .or. ds_thm%ds_elem%l_weak_coupling) then
@@ -227,7 +222,7 @@ implicit none
                 phi, pvp, pad, h11, h12,&
                 kh, rho11, sat,&
                 retcom, crit, tbiot, vihrho, vicphi,&
-                vicpvp, vicsat, instap, angl_naut, aniso)              
+                vicpvp, vicsat, instap, angl_naut)              
 !
     if (retcom .ne. 0) then
         goto 999
@@ -333,7 +328,7 @@ implicit none
                     rgaz, tbiot, satur, dsatur, lambp,&
                     dlambp, lambs, dlambs, tlambt, tdlamt,&
                     mamovg, tlamct, rho11, h11, h12,&
-                    angl_naut, aniso)
+                    angl_naut)
         if (retcom .ne. 0) then
             goto 999
         endif

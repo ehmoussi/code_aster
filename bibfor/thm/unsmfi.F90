@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine unsmfi(j_mater, phi, temp, tbiot, aniso, cs)
+subroutine unsmfi(j_mater, phi, temp, tbiot, cs)
 !
 use THM_type
 use THM_module
@@ -32,22 +32,21 @@ integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: phi
 real(kind=8), intent(in) :: temp
 real(kind=8), intent(in) :: tbiot(6)
-integer, intent(in) :: aniso
-real(kind=8), intent(out):: cs
+real(kind=8), intent(out) :: cs
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! THM
 !
-! Compute Biot module
+! Compute Biot modulus
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  j_mater      : coded material address
-! In  phi          : current porosity
-! In  tbiot        : tensor of Biot
-! In  temp         : current temperature
-! Out cs           : Biot module
+! In  j_mater          : coded material address
+! In  phi              : current porosity
+! In  tbiot            : tensor of Biot
+! In  temp             : current temperature
+! Out cs               : Biot modulus of solid matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,13 +70,13 @@ real(kind=8), intent(out):: cs
     skron(:) = 0.d0
     cs       = 0.d0
 !
-    if (aniso .eq. BIOT_TYPE_ISOT) then
+    if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISOT) then
         youngs = ds_thm%ds_material%e
         nus    = ds_thm%ds_material%nu
         k0     = youngs / 3.d0 / (1.d0-2.d0*nus)
         cs     = (tbiot(1)-phi)*(1.0d0-tbiot(1)) / k0
     else 
-        if (aniso .eq. BIOT_TYPE_ISTR) then
+        if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISTR) then
             young1 = ds_thm%ds_material%e_l
             young3 = ds_thm%ds_material%e_n
             nu12   = ds_thm%ds_material%nu_lt
@@ -106,7 +105,7 @@ real(kind=8), intent(out):: cs
                 cs = 0.d0
                 goto 999
             endif
-        else if (aniso .eq. BIOT_TYPE_ORTH) then
+        else if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ORTH) then
             young1 = ds_thm%ds_material%e_l
             young3 = ds_thm%ds_material%e_n
             young2 = ds_thm%ds_material%e_t

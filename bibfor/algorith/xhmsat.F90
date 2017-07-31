@@ -26,7 +26,7 @@ subroutine xhmsat(yachai, option, meca, thmc, ther,&
                   vintp, dsde, epsv, depsv, p1,&
                   dp1, t, phi, rho11,&
                   sat, retcom, tbiot, rinstp, angl_naut,&
-                  aniso, yaenrh, adenhy, nfh)
+                  yaenrh, adenhy, nfh)
 !
 use THM_type
 use THM_module
@@ -79,7 +79,7 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: i, aniso, yaenrh, adenhy, ifh
+    integer :: i, yaenrh, adenhy, ifh
     real(kind=8) :: epsvm, phim, rho11m, rho110, rho0, csigm
     real(kind=8) :: tbiot(6), cs, alpha0, alpliq, cliq, cp11, sat
     real(kind=8) :: bid, dpad
@@ -149,7 +149,7 @@ implicit none
 !
     call inithm(imate, yachai, yamec, phi0, bid,&
                 cs, tbiot, t, epsv, depsv,&
-                epsvm, angl_naut, aniso, mdal, dalal,&
+                epsvm, angl_naut, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0)
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************
@@ -163,8 +163,8 @@ implicit none
             call viporo(nbvari, vintm, vintp, advico, vicphi,&
                         phi0, deps, depsv, alphfi, dt,&
                         dp1, dp2, signe, sat, cs,&
-                        tbiot, phi, phim, retcom, cbiot,&
-                        unsks, alpha0, aniso)
+                        tbiot, cbiot, unsks, alpha0, &
+                        phi, phim, retcom )
         endif
 ! =====================================================================
 ! --- CALCUL DE LA VARIABLE INTERNE DE MASSE VOLUMIQUE DU FLUIDE ------
@@ -186,7 +186,7 @@ implicit none
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(angl_naut, phi, tbiot, alphfi)
-        call unsmfi(imate, phi, t, tbiot, aniso, cs)
+        call unsmfi(imate, phi, t, tbiot, cs)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************

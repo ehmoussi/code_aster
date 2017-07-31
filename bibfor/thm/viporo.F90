@@ -18,67 +18,117 @@
 
 subroutine viporo(nbvari, vintm, vintp, advico, vicphi,&
                   phi0, deps, depsv, alphfi, dt,&
-                  dp1, dp2, signe, sat, cs,&
-                  tbiot, phi, phim, retcom, cbiot,&
-                  unsks, alpha0, aniso)
+                  dp1, dp2, signe, sat, cs0,&
+                  tbiot, cbiot, unsks, alpha0,&
+                  phi, phim, retcom)
 !
 use THM_type
 use THM_module
 !
 implicit none
 !
+#include "asterfort/assert.h"
+#include "asterfort/THM_type.h"
 !
+integer, intent(in) :: nbvari
+real(kind=8), intent(in) :: vintm(nbvari)
+real(kind=8), intent(inout) :: vintp(nbvari)
+integer, intent(in) :: advico
+integer, intent(in) :: vicphi
+real(kind=8), intent(in) :: phi0
+real(kind=8), intent(in) :: deps(6)
+real(kind=8), intent(in) :: depsv
+real(kind=8), intent(in) :: alphfi
+real(kind=8), intent(in) :: dt
+real(kind=8), intent(in) :: dp1
+real(kind=8), intent(in) :: dp2
+real(kind=8), intent(in) :: signe
+real(kind=8), intent(in) :: sat
+real(kind=8), intent(in) :: cs0
+real(kind=8), intent(in) :: tbiot(6)
+real(kind=8), intent(in) :: cbiot
+real(kind=8), intent(in) :: unsks
+real(kind=8), intent(in) :: alpha0
+real(kind=8), intent(out) :: phi
+real(kind=8), intent(out) :: phim
+integer, intent(out) :: retcom
 !
-    integer :: nbvari, advico, vicphi, retcom, i, aniso
-    real(kind=8) :: vintm(nbvari), vintp(nbvari), phi0
-    real(kind=8) :: depsv, alphfi, dt, dp1, dp2, signe, sat, cs, tbiot(6)
-    real(kind=8) :: phi, phim, rac2, deps(6), cbiot, unsks, alpha0
-! ======================================================================
-! --- CALCUL ET STOCKAGE DE LA VARIABLE INTERNE DE POROSITE ------------
-! ======================================================================
-    real(kind=8) :: varbio, epxmax
-    parameter    (epxmax = 5.d0)
-! ======================================================================
-! ======================================================================
-! --- CALCUL DES ARGUMENTS EN EXPONENTIELS -----------------------------
-! --- ET VERIFICATION DE SA COHERENCE ----------------------------------
-! ======================================================================
-999 if (aniso.eq.0) then
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Compute porosity (EQ. 4.1.1-1 ; 4.1.1-2 - R7.01.11)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  nbvari           : total number of internal state variables
+! In  vintm            : internal state variables at beginning of time step
+! IO  vintp            : internal state variables at end of time step
+! In  advico           : index of first internal state variable for coupling law 
+! In  vicphi           : index of internal state variable for porosity
+! In  phi0             : initial porosity (THM_INIT)
+! In  deps             : increment of mechanical strains vector
+! In  depsv            : increment of mechanical volumic strain
+! In  alphfi           : differential thermal expansion ratio
+! In  dt               : increment of temperature
+! In  dp1              : increment of first pressure
+! In  dp2              : increment of second pressure
+! In  signe            : sign for saturation
+! In  sat              : value of saturation
+! In  cs0              : initial Biot modulus of solid matrix
+! In  tbiot            : tensor of Biot
+! In  cbiot            : Biot coefficient (isotropic case)
+! In  unsks            : inverse of bulk modulus (solid matrix)
+! In  alpha0           : thermal expansion
+! Out phi              : porosity at end of current time step
+! Out phim             : porosity at beginning of current time step
+! Out retcom           : error code 
+!                         0 - everything is OK
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8) :: varbio
+    real(kind=8), parameter :: epxmax = 5.d0
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+    integer :: i
+!
+! --------------------------------------------------------------------------------------------------
+!
+    varbio = 0.d0
+    phi    = 0.d0
+    phim   = 0.d0
+    retcom = 0
+!
+    if (ds_thm%ds_material%biot_type .eq.  BIOT_TYPE_ISOT) then
         varbio = - depsv + 3.d0*alpha0*dt - (dp2-sat*signe*dp1)*unsks
         if (varbio .gt. epxmax) then
             retcom = 2
-            goto 30
+            goto 99
         endif
-        vintp(advico+vicphi) = cbiot - phi0 - (cbiot-vintm(advico+ vicphi)-phi0)*exp(varbio)
-!
-        phi = vintp(advico+vicphi) + phi0
+        vintp(advico+vicphi) = cbiot - phi0 - (cbiot-vintm(advico+vicphi)-phi0)*exp(varbio)
+        phi  = vintp(advico+vicphi) + phi0
         phim = vintm(advico+vicphi) + phi0
-    else if ((aniso.eq.1).or.(aniso.eq.2)) then
-        if (ds_thm%ds_material%elas_keyword .eq. 'ELAS') then
-            aniso=0
-            goto 999
-        else if ((ds_thm%ds_material%elas_keyword.eq.'ELAS_ISTR').or.&
-                 (ds_thm%ds_material%elas_keyword.eq.'ELAS_ORTH')) then
-            rac2 = sqrt(2.d0)
-            varbio=0
-            do i = 1, 3
-                varbio = varbio + tbiot(i)*deps(i)
-            end do
-            do i = 4, 6
-                varbio = varbio + tbiot(i)*deps(i)/rac2
-            end do
-            varbio = varbio-(&
-                     vintm(advico+vicphi)-phi0)*depsv - 3.d0*alphfi*dt + cs*(dp2-sat*signe*dp1)
-            if (varbio .gt. epxmax) then
-                retcom = 2
-                goto 30
-            endif
-            vintp(advico+vicphi) = varbio + vintm(advico+vicphi)
-            phi = vintp(advico+vicphi) + phi0
-            phim = vintm(advico+vicphi) + phi0
+    else if ((ds_thm%ds_material%biot_type .eq.  BIOT_TYPE_ISTR).or.&
+             (ds_thm%ds_material%biot_type .eq.  BIOT_TYPE_ORTH)) then
+        do i = 1, 3
+            varbio = varbio + tbiot(i)*deps(i)
+        end do
+        do i = 4, 6
+            varbio = varbio + tbiot(i)*deps(i)/rac2
+        end do
+        varbio = varbio-(&
+                 vintm(advico+vicphi)-phi0)*depsv - 3.d0*alphfi*dt + cs0*(dp2-sat*signe*dp1)
+        if (varbio .gt. epxmax) then
+            retcom = 2
+            goto 99
         endif
+        vintp(advico+vicphi) = varbio + vintm(advico+vicphi)
+        phi  = vintp(advico+vicphi) + phi0
+        phim = vintm(advico+vicphi) + phi0
+    else
+        ASSERT(.false.)
     endif
 !
-30  continue
+99  continue
 !
 end subroutine

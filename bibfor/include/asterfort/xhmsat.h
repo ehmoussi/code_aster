@@ -15,12 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
-!
-! aslint: disable=W1504
 !
 interface 
     subroutine xhmsat(yachai, option, meca, thmc, ther,&
@@ -31,7 +28,7 @@ interface
                       vintp, dsde, epsv, depsv, p1,&
                       dp1, t, phi, rho11,&
                       sat, retcom, tbiot, rinstp,&
-                      angl_naut, aniso, yaenrh, adenhy, nfh)
+                      angl_naut, yaenrh, adenhy, nfh)
         integer :: nbvari
         integer :: dimcon
         integer :: dimenr
@@ -69,7 +66,6 @@ interface
         real(kind=8) :: tbiot(6)
         real(kind=8) :: rinstp
         real(kind=8) :: angl_naut(3)
-        integer :: aniso
         integer :: yaenrh
         integer :: adenhy
         integer :: nfh

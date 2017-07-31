@@ -36,7 +36,7 @@ implicit none
 !
 ! THM
 !
-! Compute thermal expansion
+! Compute differential thermal expansion ratio
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,7 +46,7 @@ implicit none
 !                        (1) Gamma - clockwise around X
 ! In  phi              : current porosity
 ! In  tbiot            : Biot tensor
-! Out alphfi           : thermal expansion
+! Out alphfi           : differential thermal expansion ratio
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,7 +88,7 @@ implicit none
     call matrot(angl_naut, passag)
     call utbtab('ZERO', 3, 3, talpha, passag, work, talphal)
 !
-! - Compute thermal expansion
+! - Compute differential thermal expansion ratio
 !
     alpha(1) = talphal(1,1)
     alpha(2) = talphal(2,2)

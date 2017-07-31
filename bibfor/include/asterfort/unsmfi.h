@@ -15,16 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine unsmfi(j_mater, phi, temp, tbiot, aniso, cs)
+    subroutine unsmfi(j_mater, phi, temp, tbiot, cs)
         integer, intent(in) :: j_mater
         real(kind=8), intent(in) :: phi
         real(kind=8), intent(in) :: temp
         real(kind=8), intent(in) :: tbiot(6)
-        integer, intent(in) :: aniso
-        real(kind=8), intent(out):: cs
+        real(kind=8), intent(out) :: cs
     end subroutine unsmfi
 end interface 

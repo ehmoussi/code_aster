@@ -18,7 +18,7 @@
 
 subroutine inithm(imate, yachai, yamec, phi0, em,&
                   cs0, tbiot, t, epsv, depsv,&
-                  epsvm, angmas, aniso, mdal, dalal,&
+                  epsvm, angmas, mdal, dalal,&
                   alphfi, cbiot, unsks, alpha0)
 !
 use THM_type
@@ -28,6 +28,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/thmTherElas.h"
+#include "asterfort/assert.h"
 #include "asterfort/dilata.h"
 #include "asterfort/tebiot.h"
 #include "asterfort/unsmfi.h"
@@ -35,7 +36,7 @@ implicit none
 #include "asterfort/THM_type.h"
 !
 aster_logical :: yachai
-integer :: imate, yamec, i, aniso
+integer :: imate, yamec, i
 real(kind=8), intent(out) :: cs0
 real(kind=8) :: phi0, em, tbiot(6), epsvm, epsv, depsv
 real(kind=8) :: angmas(3), t, dalal, mdal(6), young, nu
@@ -45,23 +46,19 @@ real(kind=8), parameter :: eps = 1.d-21
 ! =====================================================================
 ! --- SI PRESENCE DE MECANIQUE OU DE CHAINAGE -------------------------
 ! =====================================================================
-    if ((yamec.eq.1) .or. yachai) then
-        if (aniso .eq. BIOT_TYPE_ISOT) then
+    if ((yamec .eq. 1) .or. yachai) then
+        if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISOT) then
             young  = ds_thm%ds_material%e
             nu     = ds_thm%ds_material%nu
             alpha0 = ds_thm%ds_material%alpha
             cbiot  = tbiot(1)
             k0     = young / 3.d0 / (1.d0-2.d0*nu)
             unsks  = (1.d0-cbiot) / k0
-        else if (aniso .eq. BIOT_TYPE_ISTR) then
-
-        else if (aniso .eq. BIOT_TYPE_ORTH) then
-
         endif
 ! =====================================================================
 ! --- CALCUL DES GRANDEURS MECANIQUES DANS LE CAS GENERAL -------------
 ! =====================================================================
-        call unsmfi(imate, phi0, t, tbiot, aniso, cs0)
+        call unsmfi(imate, phi0, t, tbiot, cs0)
         call dilata(angmas, phi0, tbiot, alphfi)
 !
 ! ----- Compute thermic quantities
@@ -72,7 +69,7 @@ real(kind=8), parameter :: eps = 1.d-21
 ! --- SI ABSENCE DE MECANIQUE -----------------------------------------
 ! =====================================================================
     else
-        if (aniso .eq. BIOT_TYPE_ISOT) then
+        if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISOT) then
 ! =====================================================================
 ! --- CALCUL CAS ISOTROPE ---------------------------------------------
 ! =====================================================================
@@ -92,7 +89,7 @@ real(kind=8), parameter :: eps = 1.d-21
                 ds_thm%ds_material%biot_t    = phi0
                 call tebiot(angmas, tbiot)
             endif
-        else if (aniso.eq. BIOT_TYPE_ISTR) then
+        else if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISTR) then
 ! =====================================================================
 ! --- CALCUL CAS ISOTROPE TRANSVERSE-----------------------------------
 ! =====================================================================
@@ -109,7 +106,7 @@ real(kind=8), parameter :: eps = 1.d-21
                 ds_thm%ds_material%biot_t    = phi0
                 call tebiot(angmas, tbiot)
             endif
-        else if (aniso .eq. BIOT_TYPE_ORTH) then
+        else if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ORTH) then
 ! =====================================================================
 ! --- CALCUL CAS ORTHO 2D-----------------------------------
 ! =====================================================================
@@ -126,6 +123,8 @@ real(kind=8), parameter :: eps = 1.d-21
                 ds_thm%ds_material%biot_t    = phi0
                 call tebiot(angmas, tbiot)
             endif
+        else
+            ASSERT(.false.)
         endif
     endif
 ! =====================================================================
