@@ -70,6 +70,16 @@ Le comportement %(k1)s contient %(i1)d variables d'états externes (variables de
 
     22: _(u"""         Variable externe %(i1)d : %(k1)s"""),
 
+    23: _(u"""
+Le comportement utilise la variable d'état externe %(k1)s (variables de commande).
+Or elle n'a pas été définie dans AFFE_MATERIAU.
+"""),
+
+    24: _(u"""
+Le comportement MFront utilise les phases du Zircaloy.
+Ce n'est actuellement pas possible.
+"""),
+
     53: _(u"""
 Comportement POLYCRISTAL
       Nombre de grains  %(i1)d : localisation %(k1)s

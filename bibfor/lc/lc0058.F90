@@ -97,7 +97,7 @@ integer, intent(out) :: codret
 !
     integer, parameter :: npropmax = 197
     integer, parameter :: npred = 8
-    integer :: nprops, nstatv, j, i, pfcmfr, nummod
+    integer :: nprops, nstatv, j, i, pfcmfr, nummod, jvariexte
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     real(kind=8), parameter :: usrac2 = sqrt(2.d0)*0.5d0
     real(kind=8) :: drot(3, 3), dstran(9), props(npropmax)
@@ -121,6 +121,7 @@ integer, intent(out) :: codret
     rela_comp      = compor(NAME)
     defo_comp      = compor(DEFO)
     pfcmfr         = nint(carcri(16))
+    jvariexte      = nint(carcri(IVARIEXTE))
     l_pred         = option(1:9).eq. 'RIGI_MECA'
     l_large_strain = .false.
     l_czm          = typmod(2).eq.'ELEMJOIN'
@@ -131,8 +132,8 @@ integer, intent(out) :: codret
 !
 ! - Get material properties
 !
-    call mfront_get_mater_value(rela_comp,&
-                                fami     , kpg  , ksp, imate,&
+    call mfront_get_mater_value(rela_comp, jvariexte, &
+                                fami     , kpg      , ksp, imate,&
                                 nprops   , props)
 !
 ! - Get type of modelization

@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine mfront_get_mater_value(rela_comp,&
+subroutine mfront_get_mater_value(rela_comp, jvariexte,&
                                   fami     , kpg      , ksp, imate, &
                                   nprops   , props)
 !
@@ -30,8 +30,12 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/get_meta_phasis.h"
+#include "asterfort/isdeco.h"
+#include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 character(len=16), intent(in) :: rela_comp
+integer, intent(in) :: jvariexte
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg
 integer, intent(in) :: ksp
@@ -47,6 +51,7 @@ real(kind=8), intent(out) :: props(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  jvariexte        : coded integer for external state variable
 ! In  rela_comp        : RELATION comportment
 ! In  fami             : Gauss family for integration point rule
 ! In  imate            : coded material address
@@ -63,9 +68,15 @@ real(kind=8), intent(out) :: props(*)
     real(kind=8) :: propl(npropmax)
     real(kind=8) :: zalpha
     integer      :: nb_phasis, meta_type
+    integer      :: tabcod(30), variextecode(1)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    tabcod(:) = 0
+    variextecode(1) = jvariexte
+    call isdeco(variextecode(1), tabcod, 30)
+
+
     if (rela_comp .eq. 'MFRONT') then
         call mat_proto(fami, kpg, ksp, '+', imate, rela_comp, nprops, props)
     else
@@ -74,7 +85,7 @@ real(kind=8), intent(out) :: props(*)
         ASSERT(nbcoef <= npropmax)
 ! ----- Get the properties values (enter under 'rela_comp' in DEFI_MATERIAU)
         call r8inir(nbcoef, r8nnem(), props, 1)
-        if (rela_comp(1:4) .eq. 'Meta') then
+        if (tabcod(PFERRITE) .eq. 1) then
             meta_type = 1
             nb_phasis = 5
             call get_meta_phasis(fami     , '+', kpg, ksp,&
@@ -91,6 +102,10 @@ real(kind=8), intent(out) :: props(*)
                                 1, nomres(i), propl(i), codrel(i), 1)
                 endif
             enddo
+        elseif (tabcod(ALPHPUR) .eq. 1) then
+            meta_type = 2
+            nb_phasis = 3
+            call utmess('F', 'COMPOR4_24')
         else
             call rcvalb(fami, kpg, ksp, '+', imate, &
                         ' ', rela_comp, 0, ' ', [0.d0], &

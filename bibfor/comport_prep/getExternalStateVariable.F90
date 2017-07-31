@@ -20,7 +20,7 @@
 subroutine getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                     l_mfront_offi, l_mfront_proto ,&
                                     cptr_nbvarext, cptr_namevarext,&
-                                    ivariexte)
+                                    jvariexte)
 !
 use NonLin_Datastructure_type
 !
@@ -41,7 +41,7 @@ character(len=16), intent(in) :: rela_comp
 character(len=16), intent(in) :: comp_code_py
 integer, intent(in) :: cptr_nbvarext
 integer, intent(in) :: cptr_namevarext
-integer, intent(out) :: ivariexte
+integer, intent(out) :: jvariexte
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,18 +56,41 @@ integer, intent(out) :: ivariexte
 ! In  rela_comp        : RELATION comportment
 ! In  cptr_nbvarext    : pointer to number of external state variable
 ! In  cptr_namevarext  : pointer to name of external state variable
-! Out ivariexte        : coded integer for external state variable
+! Out jvariexte        : coded integer for external state variable
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_exte, i_exte, idummy1, idummy2
+    integer :: nb_exte, i_exte, idummy1, idummy2, i_exte_list
+    integer, parameter :: nb_exte_list = 30
     character(len=8) :: name_exte(8)
     integer :: variextecode(1)
     integer :: tabcod(30)
+    character(len=16), parameter :: name_varc(nb_exte_list)  = (/'ELTSIZE1','ELTSIZE2','COORGA  ',&
+                                                                 'GRADVELO','HYGR    ','NEUT1   ',&
+                                                                 'NEUT2   ','TEMP    ','DTX     ',&
+                                                                 'DTY     ','DTZ     ','X       ',&
+                                                                 'Y       ','Z       ','SECH    ',&
+                                                                 'HYDR    ','CORR    ','IRRA    ',&
+                                                                 'EPSAXX  ','EPSAYY  ','EPSAZZ  ',&
+                                                                 'EPSAXY  ','EPSAXZ  ','EPSAYZ  ',&
+                                                                 'PFERRITE','PPERLITE','PBAINITE',&
+                                                                 'PMARTENS','ALPHPUR ','ALPHBET '/)
+    aster_logical, parameter :: l_allow_mfront(nb_exte_list) = (/.true.    ,.false.   ,.false.   ,&
+                                                                 .false.   ,.true.    ,.true.    ,&
+                                                                 .true.    ,.true.    ,.true.    ,&
+                                                                 .true.    ,.true.    ,.true.    ,&
+                                                                 .true.    ,.true.    ,.true.    ,&
+                                                                 .true.    ,.true.    ,.true.    ,&
+                                                                 .true.    ,.true.    ,.true.    ,&
+                                                                 .true.    ,.true.    ,.true.    ,&
+                                                                 .true.    ,.true.    ,.true.    ,&
+                                                                 .true.    ,.true.    ,.true.    /)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ivariexte = 0
+    jvariexte    = 0
+    nb_exte      = 0
+    name_exte(:) = ' '
 !
 ! - Get external state variable
 !
@@ -91,33 +114,19 @@ integer, intent(out) :: ivariexte
 ! - Coding
 !
     tabcod(1:30) = 0
-    
     do i_exte = 1, nb_exte
-        if (name_exte(i_exte) .eq. 'ELTSIZE1') then
-            tabcod(ELTSIZE1) = 1
-        elseif (name_exte(i_exte) .eq. 'ELTSIZE2') then
-            if (l_mfront_proto .or. l_mfront_offi) then
-                call utmess('I', 'COMPOR2_25', sk = name_exte(i_exte))
-            else
-                tabcod(ELTSIZE2) = 1
+        do i_exte_list = 1, nb_exte_list
+            if (name_exte(i_exte) .eq. name_varc(i_exte_list)) then
+                tabcod(i_exte_list) = 1
+                if (.not. l_allow_mfront(i_exte_list) .and.&
+                    (l_mfront_proto .or. l_mfront_offi)) then
+                    call utmess('I', 'COMPOR2_25', sk = name_exte(i_exte))
+                    tabcod(i_exte_list) = 0
+                endif
             endif
-        elseif (name_exte(i_exte) .eq. 'COORGA') then
-            if (l_mfront_proto .or. l_mfront_offi) then
-                call utmess('I', 'COMPOR2_25', sk = name_exte(i_exte))
-            else
-                tabcod(COORGA) = 1
-            endif
-        elseif (name_exte(i_exte) .eq. 'GRADVELO') then
-            if (l_mfront_proto .or. l_mfront_offi) then
-                call utmess('I', 'COMPOR2_25', sk = name_exte(i_exte))
-            else
-                tabcod(GRADVELO) = 1
-            endif
-        elseif (name_exte(i_exte) .eq. 'HYGR') then
-            tabcod(HYGR) = 1
-        endif
+        end do
     end do 
     call iscode(tabcod, variextecode(1), 30)
-    ivariexte = variextecode(1)
+    jvariexte = variextecode(1)
 !
 end subroutine

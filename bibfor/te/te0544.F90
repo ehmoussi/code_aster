@@ -46,7 +46,7 @@ subroutine te0544(option, nomte)
     integer :: jgano, ndim, nno, nnos, npg, lgpg, jtab(7), ntrou
     integer :: ipoids, ivf, idfde, igeom, imate
     integer :: icontm, ivarim, icopil, iborne, ictau, iret
-    integer :: ideplm, iddepl, idepl0, idepl1, icompo, itype, ivariexte, icarcr
+    integer :: ideplm, iddepl, idepl0, idepl1, icompo, itype, jvariexte, icarcr
 !
 ! - TYPE DE MODELISATION
     typmod(2) = 'GRADEPSI'
@@ -100,9 +100,9 @@ subroutine te0544(option, nomte)
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
 !
     if (compor .eq. 'BETON_DOUBLE_DP') then
-        ivariexte = nint(zr(icarcr-1+IVARIEXTE))
+        jvariexte = nint(zr(icarcr-1+IVARIEXTE))
         call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                    zr(igeom), typmod, ivariexte, ndim,&
+                    zr(igeom), typmod, jvariexte, ndim,&
                     zr(ideplm), zr(iddepl))
     endif
 !

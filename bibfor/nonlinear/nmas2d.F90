@@ -92,7 +92,7 @@ implicit none
 !
 !
     aster_logical :: grand, axi
-    integer :: kpg, kk, kkd, n, i, m, j, j1, kl, kpgs, proj, ivariexte
+    integer :: kpg, kk, kkd, n, i, m, j, j1, kl, kpgs, proj, jvariexte
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
     real(kind=8) :: poids, tmp, sig(6), rbid(1)
     real(kind=8) :: elgeom(10, 9)
@@ -129,11 +129,11 @@ implicit none
 !
 ! - Get coded integer for external state variable
 !
-    ivariexte = nint(carcri(IVARIEXTE))
+    jvariexte = nint(carcri(IVARIEXTE))
 !
 ! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES AU COMPORTEMENT
     call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                geom, typmod, ivariexte, 2,&
+                geom, typmod, jvariexte, 2,&
                 deplm, deplp)
 !
 ! - INITIALISATION CODES RETOURS

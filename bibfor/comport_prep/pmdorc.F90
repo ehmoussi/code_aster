@@ -78,7 +78,7 @@ character(len=16), intent(out) :: mult_comp
     aster_logical :: l_etat_init, l_implex, plane_stress, l_comp_external
     aster_logical :: l_kit_thm, l_mfront_proto, l_mfront_offi
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
-    integer :: iveriborne, ivariexte
+    integer :: iveriborne, jvariexte
     type(NL_DS_ComporPrep) :: ds_compor_prep
     type(NL_DS_ComporParaPrep) :: ds_compor_para
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
@@ -221,10 +221,10 @@ character(len=16), intent(out) :: mult_comp
     call getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                   l_mfront_offi, l_mfront_proto ,&
                                   cptr_nbvarext, cptr_namevarext,&
-                                  ivariexte)
-    if (ivariexte .ne. 0) then
+                                  jvariexte)
+    if (jvariexte .ne. 0) then
         call utmess('A', 'COMPOR2_12')
-        ivariexte = 0
+        jvariexte = 0
     endif
 !  
 ! - Save in list
@@ -239,7 +239,7 @@ character(len=16), intent(out) :: mult_comp
     carcri(8)  = ds_compor_para%v_para(i_comp)%resi_deborst_max
     carcri(9)  = ds_compor_para%v_para(i_comp)%iter_deborst_max
     carcri(10) = ds_compor_para%v_para(i_comp)%resi_radi_rela
-    carcri(IVARIEXTE) = ivariexte
+    carcri(IVARIEXTE) = jvariexte
     carcri(13) = ds_compor_para%v_para(i_comp)%ipostiter
     carcri(14) = cptr_nbvarext
     carcri(15) = cptr_namevarext
