@@ -15,12 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
-!
-! aslint: disable=W1504
 !
 interface 
     subroutine calcco(option, yachai, perman, meca, thmc,&
@@ -34,7 +31,7 @@ interface
                       phi, pvp, pad, h11, h12,&
                       kh, rho11, sat,&
                       retcom, carcri, tbiot, vihrho, vicphi,&
-                      vicpvp, vicsat, rinstp, angmas, aniso)
+                      vicpvp, vicsat, rinstp, angmas)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -92,6 +89,5 @@ interface
         integer :: vicsat
         real(kind=8) :: rinstp
         real(kind=8) :: angmas(3)
-        integer :: aniso
     end subroutine calcco
 end interface 

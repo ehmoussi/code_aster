@@ -15,12 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
-!
-! aslint: disable=W1504
 !
 interface 
     subroutine hmlgat(yachai, option, meca, ther, hydr,&
@@ -31,7 +28,7 @@ interface
                       vintm, vintp, dsde, epsv, depsv,&
                       p1, dp1, t, dt, phi,&
                       rho11, sat, retcom, thmc,&
-                      tbiot, rinstp, angmas, deps, aniso)
+                      tbiot, rinstp, angmas, deps)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -75,6 +72,5 @@ interface
         real(kind=8) :: rinstp
         real(kind=8) :: angmas(3)
         real(kind=8) :: deps(6)
-        integer :: aniso
     end subroutine hmlgat
 end interface 

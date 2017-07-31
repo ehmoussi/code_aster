@@ -15,37 +15,34 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
     subroutine viporo(nbvari, vintm, vintp, advico, vicphi,&
                       phi0, deps, depsv, alphfi, dt,&
-                      dp1, dp2, signe, sat, cs,&
-                      tbiot, phi, phim, retcom, cbiot,&
-                      unsks, alpha0, aniso)
-        integer :: nbvari
-        real(kind=8) :: vintm(nbvari)
-        real(kind=8) :: vintp(nbvari)
-        integer :: advico
-        integer :: vicphi
-        real(kind=8) :: phi0
-        real(kind=8) :: deps(6)
-        real(kind=8) :: depsv
-        real(kind=8) :: alphfi
-        real(kind=8) :: dt
-        real(kind=8) :: dp1
-        real(kind=8) :: dp2
-        real(kind=8) :: signe
-        real(kind=8) :: sat
-        real(kind=8) :: cs
-        real(kind=8) :: tbiot(6)
-        real(kind=8) :: phi
-        real(kind=8) :: phim
-        integer :: retcom
-        real(kind=8) :: cbiot
-        real(kind=8) :: unsks
-        real(kind=8) :: alpha0
-        integer :: aniso
+                      dp1, dp2, signe, sat, cs0,&
+                      tbiot, cbiot, unsks, alpha0,&
+                      phi, phim, retcom)
+        integer, intent(in) :: nbvari
+        real(kind=8), intent(in) :: vintm(nbvari)
+        real(kind=8), intent(inout) :: vintp(nbvari)
+        integer, intent(in) :: advico
+        integer, intent(in) :: vicphi
+        real(kind=8), intent(in) :: phi0
+        real(kind=8), intent(in) :: deps(6)
+        real(kind=8), intent(in) :: depsv
+        real(kind=8), intent(in) :: alphfi
+        real(kind=8), intent(in) :: dt
+        real(kind=8), intent(in) :: dp1
+        real(kind=8), intent(in) :: dp2
+        real(kind=8), intent(in) :: signe
+        real(kind=8), intent(in) :: sat
+        real(kind=8), intent(in) :: cs0
+        real(kind=8), intent(in) :: tbiot(6)
+        real(kind=8), intent(in) :: cbiot
+        real(kind=8), intent(in) :: unsks
+        real(kind=8), intent(in) :: alpha0
+        real(kind=8), intent(out) :: phi
+        real(kind=8), intent(out) :: phim
+        integer, intent(out) :: retcom
     end subroutine viporo
 end interface 

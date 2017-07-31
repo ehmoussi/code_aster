@@ -26,7 +26,7 @@ subroutine hmgazp(yachai, option, meca, thmc, ther,&
                   dsde, epsv, depsv, p1, dp1,&
                   t, dt, phi, rho11, &
                   sat, retcom, tbiot, rinstp, angmas,&
-                  deps, aniso)
+                  deps)
 !
 use THM_type
 use THM_module
@@ -68,7 +68,7 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: i, aniso
+    integer :: i
     real(kind=8) :: epsvm, phim
     real(kind=8) :: tbiot(6), cs, cp12, sat, mamolg
     real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
@@ -155,7 +155,7 @@ implicit none
 !
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, t, epsv, depsv,&
-                epsvm, angmas, aniso, mdal, dalal,&
+                epsvm, angmas, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0)
 !
 ! *********************************************************************
@@ -169,8 +169,8 @@ implicit none
             call viporo(nbvari, vintm, vintp, advico, vicphi,&
                         phi0, deps, depsv, alphfi, dt,&
                         dp1, dp2, signe, sat, cs,&
-                        tbiot, phi, phim, retcom, cbiot,&
-                        unsks, alpha0, aniso)
+                        tbiot, cbiot, unsks, alpha0, &
+                        phi, phim, retcom )
         else if (yamec .eq. 2) then
             phi = vintp(advico+vicphi)
         endif
@@ -186,7 +186,7 @@ implicit none
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(angmas, phi, tbiot, alphfi)
-        call unsmfi(imate, phi, t, tbiot, aniso, cs)
+        call unsmfi(imate, phi, t, tbiot, cs)
     endif
 ! =====================================================================
 ! --- CALCUL DE LA MASSE VOLUMIQUE DU GAZ AUX INSTANT PLUS ET MOINS ---

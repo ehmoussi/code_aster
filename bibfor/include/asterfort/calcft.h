@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface 
     subroutine calcft(option, thmc, imate, ndim, dimdef,&
@@ -26,7 +25,7 @@ interface
                       rgaz, tbiot, sat, dsatp1, lambp,&
                       dlambp, lambs, dlambs, tlambt, tdlamt,&
                       mamolv, tlamct, rho11, h11, h12,&
-                      angmas, anisof)
+                      angmas)
         integer :: dimcon
         integer :: dimdef
         integer :: ndim
@@ -63,6 +62,5 @@ interface
         real(kind=8) :: h11
         real(kind=8) :: h12
         real(kind=8) :: angmas(3)
-        integer, intent(in) :: anisof
     end subroutine calcft
 end interface 

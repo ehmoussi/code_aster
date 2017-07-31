@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
+
 interface 
     subroutine hmgazp(yachai, option, meca, thmc, ther,&
                       hydr, imate, ndim, dimdef, dimcon,&
@@ -31,7 +29,7 @@ interface
                       dsde, epsv, depsv, p1, dp1,&
                       t, dt, phi, rho11, &
                       sat, retcom, tbiot, rinstp, angmas,&
-                      deps, aniso)
+                      deps)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -72,6 +70,5 @@ interface
         real(kind=8) :: rinstp
         real(kind=8) :: angmas(3)
         real(kind=8) :: deps(6)
-        integer :: aniso
     end subroutine hmgazp
 end interface 

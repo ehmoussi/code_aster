@@ -15,12 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
-!
-! aslint: disable=W1504
 !
 interface 
     subroutine hmladg(yachai, option, meca, ther, hydr,&
@@ -33,8 +30,7 @@ interface
                       p1, p2, dp1, dp2, t,&
                       dt, phi, padp, h11, h12,&
                       kh, rho11, sat, retcom,&
-                      thmc, tbiot, rinstp, angmas, deps,&
-                      aniso)
+                      thmc, tbiot, rinstp, angmas, deps)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -89,6 +85,5 @@ interface
         real(kind=8) :: rinstp
         real(kind=8) :: angmas(3)
         real(kind=8) :: deps(6)
-        integer :: aniso
     end subroutine hmladg
 end interface 

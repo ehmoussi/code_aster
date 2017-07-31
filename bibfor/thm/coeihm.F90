@@ -63,7 +63,7 @@ implicit none
 !
 ! - VARIABLES LOCALES
     integer :: nvim, nvit, nvih, nvic, advime, advith, advihy, advico
-    integer :: i, j, f, aniso
+    integer :: i, j, f
     integer :: vihrho, vicphi, vicpvp, vicsat
     integer :: ifa, vicpr1, vicpr2
     real(kind=8) :: depsv, epsv, deps(6)
@@ -198,10 +198,6 @@ implicit none
     angl_naut(:) = 0.d0
     call tebiot(angl_naut, tbiot)
 !
-! - Temporaire: aniso n'est pas toujours lu dans le module pour l'instant
-!
-    aniso = ds_thm%ds_material%biot_type
-!
 ! - Get hydraulic parameters
 !
     call thmGetParaHydr(hydr, imate)
@@ -260,7 +256,7 @@ implicit none
                 phi, pvp, pad, h11, h12,&
                 kh, rho11, sat,&
                 retcom, crit, tbiot, vihrho, vicphi,&
-                vicpvp, vicsat, instap, angl_naut, aniso)
+                vicpvp, vicsat, instap, angl_naut)
 !
     if (retcom .ne. 0) then
         goto 999

@@ -27,8 +27,7 @@ subroutine hmliva(yachai, option, meca, ther, hydr,&
                   epsv, depsv, p1, dp1, t,&
                   dt, phi, pvp, h11, h12,&
                   rho11, sat, retcom,&
-                  thmc, tbiot, rinstp, angmas, deps,&
-                  aniso)
+                  thmc, tbiot, rinstp, angmas, deps)
 !
 use THM_type
 use THM_module
@@ -95,7 +94,6 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer ::  aniso
     real(kind=8) :: satm, epsvm, phim, rho11m, rho12m, pvpm, rho110, dpvp
     real(kind=8) :: dpvpt, dpvpl, tbiot(6), cs, alpliq, cliq
     real(kind=8) :: cp11, cp12, sat, dsatp1, mamolv, em
@@ -179,7 +177,7 @@ implicit none
     endif
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, t, epsv, depsv,&
-                epsvm, angmas, aniso, mdal, dalal,&
+                epsvm, angmas, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0)
 ! *********************************************************************
 ! *** LES VARIABLES INTERNES ******************************************

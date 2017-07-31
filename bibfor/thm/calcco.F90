@@ -29,7 +29,7 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                   phi, pvp, pad, h11, h12,&
                   kh, rho11, sat,&
                   retcom, carcri, tbiot, vihrho, vicphi,&
-                  vicpvp, vicsat, rinstp, angmas, aniso)
+                  vicpvp, vicsat, rinstp, angmas)
 !
 implicit none
 !
@@ -57,7 +57,7 @@ implicit none
 ! ======================================================================
 !
     integer :: ndim, dimdef, dimcon, nbvari, imate
-    integer :: yamec, yate, aniso
+    integer :: yamec, yate
     integer :: adcome, adcp11, bdcp11, adcp12, adcp21, adcp22, adcote
     integer :: addeme, addep1, addep2, addete, retcom
     integer :: advihy, advico, vihrho, vicphi, vicpvp, vicsat
@@ -92,7 +92,7 @@ implicit none
                     congep, vintm, vintp, dsde, epsv,&
                     depsv, p1, dp1, t, dt,&
                     phi, rho11, sat, retcom,&
-                    tbiot, rinstp, angmas, deps, aniso)
+                    tbiot, rinstp, angmas, deps)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE GAZ ----------------------------
 ! ======================================================================
@@ -105,7 +105,7 @@ implicit none
                     dsde, epsv, depsv, p1, dp1,&
                     t, dt, phi, rho11, &
                     sat, retcom, tbiot, rinstp, angmas,&
-                    deps, aniso)
+                    deps)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE ----------------------
 ! ======================================================================
@@ -119,8 +119,7 @@ implicit none
                     epsv, depsv, p1, dp1, t,&
                     dt, phi, pvp, h11, h12,&
                     rho11, sat, retcom,&
-                    thmc, tbiot, rinstp, angmas, deps,&
-                    aniso)
+                    thmc, tbiot, rinstp, angmas, deps)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE_GAZ ------------------
 ! ======================================================================
@@ -135,8 +134,7 @@ implicit none
                     p1, p2, dp1, dp2, t,&
                     dt, phi, pvp, h11, h12,&
                     rho11, sat, retcom,&
-                    thmc, carcri, tbiot, rinstp, angmas,&
-                    aniso)
+                    thmc, carcri, tbiot, rinstp, angmas)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ -----------------------
 ! ======================================================================
@@ -150,7 +148,7 @@ implicit none
                     deps, epsv, depsv, p1, p2,&
                     dp1, dp2, t, dt, phi,&
                     rho11, sat, retcom, thmc,&
-                    carcri, tbiot, rinstp, angmas, aniso)
+                    carcri, tbiot, rinstp, angmas)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM -------------------
 ! ======================================================================
@@ -163,7 +161,7 @@ implicit none
                     vintm, vintp, dsde, epsv, depsv,&
                     p1, dp1, t, dt, phi,&
                     rho11, sat, retcom, thmc,&
-                    tbiot, rinstp, angmas, deps, aniso)
+                    tbiot, rinstp, angmas, deps)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
@@ -179,7 +177,7 @@ implicit none
                     dt, phi, pad, pvp, h11,&
                     h12, kh, rho11, &
                     sat, retcom, thmc, tbiot, rinstp,&
-                    angmas, deps, aniso)
+                    angmas, deps)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
@@ -194,8 +192,7 @@ implicit none
                     p1, p2, dp1, dp2, t,&
                     dt, phi, pad, h11, h12,&
                     kh, rho11,sat, retcom,&
-                    thmc, tbiot, rinstp, angmas, deps,&
-                    aniso)
+                    thmc, tbiot, rinstp, angmas, deps)
 ! ======================================================================
     endif
 ! ======================================================================

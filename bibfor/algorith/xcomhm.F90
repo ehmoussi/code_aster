@@ -108,7 +108,7 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: nvim, advime, advith, advihy, advico, aniso
+    integer :: nvim, advime, advith, advihy, advico
     integer :: vihrho, vicphi, vicpvp, vicsat, nvih, nvic, nvit
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, pvp, pad, rho11, epsv, deps(6), depsv
@@ -159,10 +159,6 @@ implicit none
 !
     call tebiot(angl_naut, tbiot)
 !
-! - Temporaire: aniso n'est pas toujours lu dans le module pour l'instant
-!
-    aniso = ds_thm%ds_material%biot_type
-!
 ! - Get elastic parameters
 !
     call thmGetParaElas(imate, kpi, t, ndim)
@@ -187,7 +183,7 @@ implicit none
                 vintp, dsde, epsv, depsv, p1,&
                 dp1, t, phi, rho11,&
                 sat, retcom, tbiot, instap,&
-                angl_naut, aniso, yaenrh, adenhy, nfh)
+                angl_naut, yaenrh, adenhy, nfh)
     if (retcom .ne. 0) then
         goto 900
     endif

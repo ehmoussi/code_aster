@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504,W1306
+! person_in_charge: sylvie.granet at edf.fr
+!
 subroutine calcft(option, thmc, imate, ndim, dimdef,&
                   dimcon, yamec, yap1, yap2, addete,&
                   addeme, addep1, addep2, adcote, congep,&
@@ -23,20 +25,18 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
                   rgaz, tbiot, sat, dsatp1, lambp,&
                   dlambp, lambs, dlambs, tlambt, tdlamt,&
                   mamolv, tlamct, rho11, h11, h12,&
-                  angmas, anisof)
+                  angmas)
 ! ======================================================================
 ! ======================================================================
-! person_in_charge: sylvie.granet at edf.fr
+
 ! ROUTINE CALC_FLUX_THERM ----------------------------------------------
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE DES FLUX -
 ! ======================================================================
-! aslint: disable=W1504
+
     implicit none
-! aslint: disable=W1306
 #include "asterfort/dilata.h"
 #include "asterfort/matini.h"
 #include "asterfort/unsmfi.h"
-    integer, intent(in) :: anisof
     integer :: ndim, dimdef, dimcon, imate
     integer :: yamec, yap1, yap2
     integer :: addete, addeme, addep1, addep2, adcote
@@ -91,7 +91,7 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(angmas, phi, tbiot, alphfi)
-        call unsmfi(imate, phi, t, tbiot, anisof, cs)
+        call unsmfi(imate, phi, t, tbiot, cs)
     else
 ! =====================================================================
 ! --- EN ABSENCE DE MECA ALPHA0 = 0 et 1/KS = 0 -----------------------

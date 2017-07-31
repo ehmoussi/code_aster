@@ -29,8 +29,7 @@ subroutine hmladg(yachai, option, meca, ther, hydr,&
                   p1, p2, dp1, dp2, t,&
                   dt, phi, padp, h11, h12,&
                   kh, rho11, sat, retcom,&
-                  thmc, tbiot, rinstp, angmas, deps,&
-                  aniso)
+                  thmc, tbiot, rinstp, angmas, deps)
 !
 use THM_type
 use THM_module
@@ -107,7 +106,7 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: i, aniso
+    integer :: i
     real(kind=8) :: satm, epsvm, phim, rho11m, rho21m, rho22m
     real(kind=8) :: tbiot(6), cs, alpliq, cliq, rho110
     real(kind=8) :: cp11, cp12, cp21, sat, dsatp1, mamolg
@@ -189,7 +188,7 @@ implicit none
 !
     call inithm(imate, yachai, yamec, phi0, em,&
                 cs, tbiot, t, epsv, depsv,&
-                epsvm, angmas, aniso, mdal, dalal,&
+                epsvm, angmas, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0)
 !
 ! *********************************************************************
@@ -204,8 +203,8 @@ implicit none
             call viporo(nbvari, vintm, vintp, advico, vicphi,&
                         phi0, deps, depsv, alphfi, dt,&
                         dp1, dp2, signe, sat, cs,&
-                        tbiot, phi, phim, retcom, cbiot,&
-                        unsks, alpha0, aniso)
+                        tbiot, cbiot, unsks, alpha0, &
+                        phi, phim, retcom )
         endif
         if (emmag) then
             call viemma(nbvari, vintm, vintp, advico, vicphi,&
@@ -249,7 +248,7 @@ implicit none
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(angmas, phi, tbiot, alphfi)
-        call unsmfi(imate, phi, t, tbiot, aniso, cs)
+        call unsmfi(imate, phi, t, tbiot, cs)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************
