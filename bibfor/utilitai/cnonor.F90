@@ -15,10 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine cnonor(nomo, gran, base, cno)
-    implicit none
+!
+implicit none
+!
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/afchno.h"
 #include "asterfort/affeno.h"
 #include "asterfort/canort.h"
@@ -38,8 +41,8 @@ subroutine cnonor(nomo, gran, base, cno)
 #include "asterfort/vericp.h"
 #include "asterfort/wkvect.h"
 !
-    character(len=1) :: base
-    character(len=8) :: nomo, gran, cno
+character(len=1) :: base
+character(len=8) :: nomo, gran, cno
 ! BUT :     COMMANDE : CREA_CHAMP/OPERATION:'NORMALE'
 ! ----------------------------------------------------------------------
     integer :: nec, iacmp, iav, i, iret, ii, ino, jj, ncmpmx, numgd
@@ -47,12 +50,14 @@ subroutine cnonor(nomo, gran, base, cno)
     integer :: ic, iec, iand, jlma,   jnno, jval, jnbca, jdesc
     real(kind=8) :: valr(3)
     character(len=2) :: typval
-    character(len=8) :: k8b, resu, noma, typmcl(4), nocmp(3), listyp(10)
+    character(len=8) :: k8b, resu, noma, typmcl(4), nocmp(3), listyp(11)
     character(len=16) :: motclf, motcle(2)
     character(len=24) :: nomnoe, mesmai
     character(len=24) :: valk(2)
     real(kind=8), pointer :: normale(:) => null()
     integer, pointer :: ln(:) => null()
+    aster_logical :: l_error
+    character(len=8) :: elem_error
 ! ----------------------------------------------------------------------
     call jemarq()
 !
@@ -89,7 +94,7 @@ subroutine cnonor(nomo, gran, base, cno)
         nocmp(1) = 'X'
         nocmp(2) = 'Y'
         nocmp(3) = 'Z'
-        nbtyp = 10
+        nbtyp = 11
         listyp(1) = 'TRIA3'
         listyp(2) = 'TRIA6'
         listyp(3) = 'TRIA9'
@@ -100,6 +105,7 @@ subroutine cnonor(nomo, gran, base, cno)
         listyp(8) = 'SEG2'
         listyp(9) = 'SEG3'
         listyp(10) = 'SEG4'
+        listyp(11) = 'TRIA7'
     endif
 !
 ! --- VERIFICATION QUE LES COMPOSANTES APPARTIENNENT A LA GRANDEUR
@@ -126,8 +132,11 @@ subroutine cnonor(nomo, gran, base, cno)
                 2, motcle, typmcl, mesmai, nbma)
     call jeveuo(mesmai, 'L', jlma)
 !
-    call nbnlma(noma, nbma, zi(jlma), nbtyp, listyp,&
-                nbno)
+    call nbnlma(noma, nbma   , zi(jlma), nbtyp, listyp,&
+                nbno, l_error, elem_error)
+    if (l_error) then
+        call utmess('F', 'CREACHAMP1_15', sk = elem_error)
+    endif
     call jeveuo('&&NBNLMA.LN', 'L', vi=ln)
 !
 ! --- DETERMINATION DES NORMALES
