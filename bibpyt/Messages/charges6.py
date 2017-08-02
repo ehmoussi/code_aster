@@ -34,4 +34,17 @@ cata_msg = {
     3 : _(u"""
  Les chargements thermiques de type EVOL_CHAR ne sont pas pris en compte dans cet opérateur.
 """),
+
+    4 : _(u"""
+ Erreur lors de l'opération LIAISON_MAIL.
+ L'élément %(k1)s n'est pas du bon type. 
+ Si cette maille correspond à un élément affecté d'une modélisation de type coque, il faut utiliser l'option TYPE_RACCORD='MASSIF_COQUE' ou TYPE_RACCORD='COQUE_MASSIF'.
+"""),
+
+    5 : _(u"""
+Erreur lors de l'opération LIAISON_CYCLE.
+L'élément %(k1)s n'est pas du bon type. 
+Si vous êtes en deux dimensions, les éléments doivent être des segments.
+Si vous êtes en trois dimensions, les éléments doivent être des triangles ou des quadrangles.
+"""),
 }
