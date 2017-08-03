@@ -6,12 +6,12 @@ from code_aster.Commands import *
 
 test = code_aster.TestCase()
 
-#parallel=False
-parallel=True
+parallel=False
+#parallel=True
 
 if (parallel):
     monMaillage = code_aster.ParallelMesh.create()
-    monMaillage.readMedFile( "xxParallelMesh001a" )
+    monMaillage.readMedFile( "xxParallelNonlinearMechanics001a" )
 else:
     monMaillage = code_aster.Mesh.create()
     monMaillage.readMedFile("xxParallelNonlinearMechanics001a.med")
@@ -39,15 +39,15 @@ affectMat.build()
 
 charMeca1 = code_aster.KinematicsLoad.create()
 charMeca1.setSupportModel(monModel)
-charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "COTE_B")
-charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 0., "COTE_B")
-charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 0., "COTE_B")
+charMeca1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dx, 0., "COTE_B")
+charMeca1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dy, 0., "COTE_B")
+charMeca1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dz, 0., "COTE_B")
 charMeca1.build()
 
 charMeca2 = code_aster.KinematicsLoad.create()
 charMeca2.setSupportModel(monModel)
-charMeca2.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 10., "COTE_H")
-charMeca2.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 10., "COTE_H")
+charMeca2.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dy, 0.1, "COTE_H")
+charMeca2.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dz, 0.1, "COTE_H")
 charMeca2.build()
 
 # Define the nonlinear method that will be used
@@ -81,3 +81,9 @@ resu = statNonLine.execute()
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+if (parallel):
+    rank = code_aster.getMPIRank()
+    resu.printMedFile('/tmp/par_%d.resu.med'%rank)
+else:
+    resu.printMedFile('/tmp/seq.resu.med')
