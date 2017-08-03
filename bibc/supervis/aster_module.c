@@ -167,7 +167,7 @@ void DEFSSPPPPP(GETLTX,getltx,_IN char *motfac,_IN STRING_SIZE lfac,
         /*
         Procedure : getltx_ (appelee par le fortran sous le nom GETLTX)
         */
-    fprintf(fileOut, "GETLTX\n");
+    //fprintf(fileOut, "GETLTX\n");
     ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -219,7 +219,7 @@ void DEFSS(GETTC2,gettc2,_IN char *nomobj, _IN STRING_SIZE lnom,
     tmp[lnom] = '\0';
     char* nomCmdCp = getSDType(tmp);
     CopyCStrToFStr(typobj, nomCmdCp, ltyp);
-    fprintf(fileOut, "GETTC2 %s\n", typobj);
+    //fprintf(fileOut, "GETTC2 %s\n", typobj);
     FreeStr(tmp);
 }
 
@@ -234,7 +234,7 @@ void DEFPS(GETMAT,getmat,_INOUT ASTERINTEGER *nbarg,_OUT char *motcle,_IN STRING
             le nombre de mots cles facteur sous la commande, y compris en eliminant les blocs
             la liste de leur noms
         */
-    fprintf(fileOut, "GETMAT\n");
+    //fprintf(fileOut, "GETMAT\n");
     ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -313,7 +313,7 @@ ASTERINTEGER DEFSS( GETEXM, getexm, _IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    fprintf(fileOut, "GETEXM %s %s\n", tmp, tmp2);
+    //fprintf(fileOut, "GETEXM %s %s\n", tmp, tmp2);
     const int retour = existsCommandFactorAndSimpleKeyword(tmp, 0, tmp2);
     FreeStr(tmp);
     FreeStr(tmp2);
@@ -329,7 +329,7 @@ void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
     /* Interface GETTYP
      * voir B_ETAPE.gettyp
      */
-    fprintf(fileOut, "GETTYP\n");
+    //fprintf(fileOut, "GETTYP\n");
     ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -383,7 +383,7 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    fprintf(fileOut, "GETVC8_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
+    //fprintf(fileOut, "GETVC8_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
     if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
     {
         *nbval = 0;
@@ -438,7 +438,7 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    fprintf(fileOut, "GETVR8_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
+    //fprintf(fileOut, "GETVR8_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
     if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
     {
         *nbval = 0;
@@ -478,7 +478,7 @@ void DEFSPSPPSP(FIINTF,fiintf,_IN char *nomfon,_IN STRING_SIZE lfon,
                               _IN char *coderr, _INOUT STRING_SIZE lcod,
                              _OUT ASTERDOUBLE *resu)
 {
-    fprintf(fileOut, "FIINTF\n");
+    //fprintf(fileOut, "FIINTF\n");
     ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -532,7 +532,7 @@ void DEFSPSPPSP(FIINTFC,fiintfc,_IN char *nomfon,_IN STRING_SIZE lfon,
                                 _IN char *coderr, _INOUT STRING_SIZE lcod,
                                _OUT ASTERDOUBLE *resuc)
 {
-    fprintf(fileOut, "FIINTFC\n");
+    //fprintf(fileOut, "FIINTFC\n");
     return DEFSPSPPSP(FIINTF,fiintf, nomfon, lfon, nbpu, param, lpara, val, iret,
                                      coderr, lcod, resuc);
 }
@@ -564,7 +564,7 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    fprintf(fileOut, "GETVIS_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
+    //fprintf(fileOut, "GETVIS_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
     if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
         {
         *nbval = 0;
@@ -621,7 +621,7 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    fprintf(fileOut, "GETVTX_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
+    //fprintf(fileOut, "GETVTX_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
     if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
         {
         *nbval = 0;
@@ -675,7 +675,7 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         */
     char* tmp = MakeCStrFromFStr(motfac, lfac);
     char* tmp2 = MakeCStrFromFStr(motcle, lcle);
-    fprintf(fileOut, "GETVID_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
+    //fprintf(fileOut, "GETVID_WRAP '%s' '%s' %d %d\n", tmp, tmp2, (int)*iocc - 1, (int)*mxval);
     if ( existsCommandFactorAndSimpleKeyword(tmp, (int)*iocc - 1, tmp2) == 0 )
         {
         *nbval = 0;
@@ -717,7 +717,7 @@ void DEFP(PUTVIR,putvir, _IN ASTERINTEGER *ival)
          cet attribut est ensuite évalué par la méthode traite_value
          de B_ETAPE.py
    */
-    fprintf(fileOut, "PUTVIR\n");
+    //fprintf(fileOut, "PUTVIR\n");
     ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -742,7 +742,7 @@ void DEFP(PUTVRR,putvrr, _IN ASTERDOUBLE *rval)
          cet attribut est ensuite évalué par la méthode traite_value
          de B_ETAPE.py
    */
-    fprintf(fileOut, "PUTVRR\n");
+    //fprintf(fileOut, "PUTVRR\n");
     ASTERINTEGER ier=SIGABRT;
     CALL_ASABRT( &ier );
     /* TODO */
@@ -773,7 +773,7 @@ void DEFSSP(GCUCON,gcucon, _IN char *resul, STRING_SIZE lresul,
                Verification de l existence du couple (resul,concep) dans les
                resultats produits par les etapes precedentes
    */
-    fprintf(fileOut, "GCUCON\n");
+    //fprintf(fileOut, "GCUCON\n");
     ASTERINTEGER ier2=SIGABRT;
     CALL_ASABRT( &ier2 );
     /* TODO */

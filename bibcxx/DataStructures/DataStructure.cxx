@@ -102,6 +102,7 @@ char* getSDType( char* nom )
     std::string nameWithoutBlanks = trim( nom );
     mapStrSDIterator curIter = mapNameDataStructure.find( nameWithoutBlanks );
     if ( curIter == mapNameDataStructure.end() )
-        throw std::runtime_error( "SD not registered: " + nameWithoutBlanks + " T" );
+        //~ throw std::runtime_error( "SD not registered: " + nameWithoutBlanks + " T" );
+        return const_cast< char* >(" ");
     return const_cast< char* >( curIter->second->getType().c_str() );
 };

@@ -162,7 +162,6 @@ use petsc_data_module
     high=num_ddl_max+1
 !    call MatGetOwnershipRange(a, low, high, ierr)
 !    ASSERT(ierr.eq.0)
-    write(6,*)'ndprop, neqg, num_ddl_min', ndprop, neqg, num_ddl_min, num_ddl_max
 !
     call wkvect(idxd, 'V V S', ndprop, jidxd)
     call wkvect(idxo, 'V V S', ndprop, jidxo)

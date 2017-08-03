@@ -50,6 +50,7 @@ implicit none
 #include "asterfort/nmvcmx.h"
 #include "asterfort/rescmp.h"
 #include "asterfort/romAlgoNLMecaResidual.h"
+#include "asterfort/asmpi_comm_vect.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -101,13 +102,13 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jccid=0, jdiri=0, jvcfo=0, jiner=0
+    integer :: jccid=0, jdiri=0, jvcfo=0, jiner=0, ibid=0
     integer :: ifm=0, niv=0
     integer :: neq=0
     character(len=8) :: noddlm=' '
     aster_logical :: ldyna, lstat, lcine, l_cont_cont, l_cont_lac, l_rom
     character(len=19) :: profch=' ', foiner=' '
-    character(len=19) :: commoi=' ', depmoi=' '
+    character(len=19) :: commoi=' ', depmoi=' ', CNFINP=' ',CNFEXP=' '
     character(len=19) :: cndiri=' ', cnbudi=' ', cnvcfo=' ', cnfext=' '
     character(len=19) :: cnvcf1=' ', cnrefe=' ', cnfint=' '
     character(len=19) :: cnfnod=' ', cndipi=' ', cndfdo=' '
@@ -122,6 +123,8 @@ implicit none
     character(len=16) :: nfrot=' ', ngeom=' '
     character(len=24) :: sdnuco=' '
     integer :: jnuco=0
+    complex(kind=8) :: cbid
+
     real(kind=8) :: vrela, vmaxi, vrefe, vinit, vcomp, vfrot, vgeom
     real(kind=8), pointer :: budi(:) => null()
     real(kind=8), pointer :: dfdo(:) => null()
@@ -185,6 +188,8 @@ implicit none
     call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)
     call nmchex(veasse, 'VEASSE', 'CNDIPI', cndipi)
     cndfdo = '&&CNCHAR.DFDO'
+    cnfexp = '&&NMRESI.CNFEXP'
+    cnfinp = '&&NMRESI.CNFINP'
 !
 ! --- CALCUL DE LA FORCE DE REFERENCE POUR LA DYNAMIQUE
 !
@@ -201,13 +206,18 @@ implicit none
 !
     call nmequi(eta, fonact, sddyna, veasse,&
                 cnfext, cnfint)
+
+! --- COMPLETION DES CHAMPS PRODUITS PAR ASSEMBLAGE :
+    call cnoadd(cnfext,cnfexp)
+    call cnoadd(cnfint,cnfinp)
 !
 ! --- POINTEUR SUR LES DDLS ELIMINES PAR AFFE_CHAR_CINE
 !
-    if (lcine) then
-        call nmpcin(matass)
+     if (lcine) then
+         call nmpcin(matass)
         call jeveuo(matass(1:19)//'.CCID', 'L', jccid)
-    endif
+     endif
+
 !
 ! --- REPERAGE DDL LAGRANGE DE CONTACT
 !
@@ -230,9 +240,9 @@ implicit none
 !
 ! --- ACCES AUX CHAM_NO
 !
-    call jeveuo(cnfint(1:19)//'.VALE', 'L', vr=fint)
+    call jeveuo(cnfinp(1:19)//'.VALE', 'L', vr=fint)
     call jeveuo(cndiri(1:19)//'.VALE', 'L', jdiri)
-    call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=fext)
+    call jeveuo(cnfexp(1:19)//'.VALE', 'L', vr=fext)
     call jeveuo(cnvcfo(1:19)//'.VALE', 'L', jvcfo)
     call jeveuo(cnbudi(1:19)//'.VALE', 'L', vr=budi)
     call jeveuo(cndfdo(1:19)//'.VALE', 'L', vr=dfdo)
@@ -255,7 +265,7 @@ implicit none
 ! --- CALCUL DES FORCES POUR MISE A L'ECHELLE (DENOMINATEUR)
 !
     call nmrede(sdnume, fonact, sddyna, matass,&
-                veasse, neq, foiner, cnfext, cnfint,&
+                veasse, neq, foiner, cnfexp, cnfinp,&
                 vchar, ichar)
 !
 ! --- CALCUL DES RESIDUS
@@ -331,6 +341,9 @@ implicit none
 !
 ! --- SYNTHESE DES RESULTATS
 !
+    call asmpi_comm_vect('MPI_MAX', 'R', scr=vresi)
+    call asmpi_comm_vect('MPI_MAX', 'R', scr=vchar)
+    call asmpi_comm_vect('MPI_MAX', 'R', scr=vinit)
     vmaxi = vresi
     imaxi = iresi
     if (vchar .gt. 0.d0) then
