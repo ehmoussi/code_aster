@@ -16,12 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-function ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2)
+function ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2, load_name)
 !
 implicit none
 !
+#include "jeveux.h"
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/jeveuo.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -31,6 +33,7 @@ implicit none
     integer, intent(in) :: nb_load
     character(len=4), intent(in) :: load_type_1
     character(len=4), intent(in) :: load_type_2
+    character(len=24), optional, intent(in) :: load_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,9 +66,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: load_nume_diri, load_nume_neum
+    integer :: load_nume_diri, load_nume_neum, jalich, jafci
     aster_logical :: ldiri, lelim, ldual, ldidi, lneum
     aster_logical :: londe, llapl, lsigm, lelem, lsuiv
+    character(len=19) :: char19
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -83,15 +87,17 @@ implicit none
 !
     load_nume_diri = v_load_info(i_load+1)
     load_nume_neum = v_load_info(i_load+nb_load+1)
-    if (load_nume_diri .eq. -1) then
-        ldiri = .true.
-        lelim = .true.
-    else if (load_nume_diri.eq.-2) then
-        ldiri = .true.
-        lelim = .true.
-    else if (load_nume_diri.eq.-3) then
-        ldiri = .true.
-        lelim = .true.
+    if ((load_nume_diri .eq. -1).or.(load_nume_diri .eq. -2).or.(load_nume_diri .eq. -3)) then
+        if (present(load_name)) then
+            char19=load_name
+            call jeveuo(char19//'.AFCI','L',jafci)
+            if (zi(jafci-1+1).gt.0) then
+                ldiri  = .true.
+                lelim  = .true.
+            endif
+        else
+            ASSERT(.false.)
+        endif
     else if (load_nume_diri.eq.1) then
         ldiri = .true.
         ldual = .true.

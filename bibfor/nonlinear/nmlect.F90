@@ -73,7 +73,7 @@ implicit none
 !
     if (present(solver_)) then
         solver_   = '&&OP00XX.SOLVER'
-        call cresol(solver_)
+        call cresol(solver_, 'V')
     endif
 !
 end subroutine
