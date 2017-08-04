@@ -929,12 +929,6 @@ implicit none
             alpha = val17(3)
             cpl = val17(4)
         endif
-    else if (etape.eq.'SATURATI') then
-        call thmEvalSatuMiddle(hydr , imate , p1    ,&
-                               satur, dsatur, retcom)
-        if (retcom .eq. 2) then
-            goto 500
-        endif
     else if (etape.eq.'FINALE') then
 ! =====================================================================
 ! --- CAS FINAL -------------------------------------------------------
