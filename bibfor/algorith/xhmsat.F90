@@ -89,7 +89,7 @@ implicit none
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
-    real(kind=8) :: rbid6, rbid7
+    real(kind=8) :: rbid6, rbid7, rbid3, rbid4, rbid5
     real(kind=8) :: rbid10, rbid11, rbid14(3)
     real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
@@ -113,7 +113,7 @@ implicit none
     call thmrcp('INTERMED', imate, thmc, hydr,&
                 ther, t, p1, rbid40, rbid6,&
                 rbid7, rbid10, rbid11, rho0,&
-                csigm, saturm, satur, dsatur_dp1,&
+                csigm, rbid3, rbid4, rbid5,&
                 rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
@@ -123,7 +123,12 @@ implicit none
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 bid, rbid50, rinstp, retcom,&
                 angl_naut, ndim)
-
+!
+! - Evaluation of initial saturation
+!
+    satur      = 1.d0
+    saturm     = 1.d0
+    dsatur_dp1 = 0.d0
 ! ======================================================================
 ! --- INITIALISATIONS --------------------------------------------------
 ! ======================================================================
@@ -132,9 +137,7 @@ implicit none
     dt = 0.0d0
     dpad = 0.0d0
     signe = -1.0d0
-    satur = 1.0d0
-    saturm = 1.0d0
-    dsatur_dp1 = 0.0d0
+
     alpha0 = 0.d0
     alphfi = 0.d0
     m11m = congem(adcp11)

@@ -64,6 +64,7 @@ implicit none
 #include "asterfort/vipvp1.h"
 #include "asterfort/virhol.h"
 #include "asterfort/visatu.h"
+#include "asterfort/thmEvalSatuInit.h"
 !
 ! ======================================================================
 ! ROUTINE HMLIVA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
@@ -96,7 +97,7 @@ implicit none
 ! ======================================================================
     real(kind=8) :: saturm, epsvm, phim, rho11m, rho12m, pvpm, rho110, dpvp
     real(kind=8) :: dpvpt, dpvpl, tbiot(6), cs, alpliq, cliq
-    real(kind=8) :: cp11, cp12, satur, dsatur_pc, mamolv, em
+    real(kind=8) :: cp11, cp12, satur, dsatur_dp1, mamolv, em
     real(kind=8) :: r, rho0, csigm, alp11, alp12, rho12, alpha0
     real(kind=8) :: eps, deps(6), mdal(6), dalal, alphfi, cbiot, unsks
     parameter  ( eps = 1.d-21 )
@@ -110,16 +111,17 @@ implicit none
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid32(ndim, ndim)
     real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38, rbid20
-    real(kind=8) :: rbid39, rbid40, dsaturm_dp1, rbid43
+    real(kind=8) :: rbid39, rbid40
     real(kind=8) :: rbid51, rbid52, rbid53, rbid54
     real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid56
     real(kind=8) :: rbid57(ndim, ndim), rbid55
     real(kind=8) :: m11m, m12m, coeps, pinf, dp2, cp21, cp22, rho21
-    real(kind=8) :: rho22, dpad, signe, rac2
+    real(kind=8) :: rho22, dpad, signe, rac2, p1m
 !
     aster_logical :: net, bishop
 !
     rac2 = sqrt(2.d0)
+
 !
 ! =====================================================================
 ! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
@@ -130,10 +132,11 @@ implicit none
     pvp0 = ds_thm%ds_parainit%prev_init
     pvp = vintm(advico+vicpvp) + pvp0
     pvpm = vintm(advico+vicpvp) + pvp0
+    p1m  = pvpm-p1+dp1
     call thmrcp('INTERMED', imate, thmc, hydr,&
                 ther, t, rbid40, pvpm-p1+dp1, rbid6,&
                 rbid7, rbid10, r, rho0,&
-                csigm, saturm, dsaturm_dp1, rbid43,&
+                csigm, saturm, satur, dsatur_dp1,&
                 rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
@@ -143,6 +146,12 @@ implicit none
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 em, rbid57,  rinstp, retcom,&
                 angmas, ndim)
+!
+! - Evaluation of initial saturation
+!
+    call thmEvalSatuInit(hydr  , imate, p1m       , p1,&
+                         saturm, satur, dsatur_dp1, em,&
+                         retcom)
 
 ! ======================================================================
 ! --- POUR EVITER DES PB AVEC OPTIMISEUR ON MET UNE VALEUR DANS CES ----
@@ -214,7 +223,7 @@ implicit none
     call thmrcp('SATURATI', imate, thmc, hydr,&
                 ther, rbid9, pvp-p1, rbid41, rbid6,&
                 rbid7, rbid10, rbid51, rbid52,&
-                rbid53, saturm, satur, dsatur_pc,&
+                rbid53, saturm, satur, dsatur_dp1,&
                 rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, rbid53, rbid52,&
@@ -256,7 +265,7 @@ implicit none
 ! --- QUELQUES INITIALISATIONS ----------------------------------------
 ! =====================================================================
     ums = 1.d0 - satur
-    phids = phi*dsatur_pc
+    phids = phi*dsatur_dp1
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************
 ! **********************************************************************

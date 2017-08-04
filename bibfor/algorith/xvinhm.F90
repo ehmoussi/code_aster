@@ -57,7 +57,7 @@ implicit none
     real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid44
     real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid50
     real(kind=8) :: rbid52, rbid38(3, 3), rbid51(3, 3)
-    real(kind=8) :: r7bid(3), saturm, satur, dsatur_dp1
+    real(kind=8) :: r7bid(3), rbid12, rbid13, rbid14
     character(len=8)  :: job
     character(len=16) :: thmc, hydr, zkbid, option
 !
@@ -74,7 +74,7 @@ implicit none
     call thmrcp('INTERMED', jmate, thmc, hydr,&
                 zkbid, t, rbid2, rbid3, rbid4,&
                 rbid5, rbid8, rbid9, rbid10,&
-                rbid11, saturm, satur, dsatur_dp1,&
+                rbid11, rbid12, rbid13, rbid14,&
                 rbid15, rbid17, rbid18, rbid19,&
                 rbid20, rbid21, rbid22, rbid23, rbid24,&
                 rbid25, rbid26, rho110, cliq, rbid29,&

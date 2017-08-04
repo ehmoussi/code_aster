@@ -77,6 +77,7 @@ implicit none
 #include "asterfort/viporo.h"
 #include "asterfort/virhol.h"
 #include "asterfort/visatu.h"
+#include "asterfort/thmEvalSatuInit.h"
 !
 ! **********************************************************************
 ! ROUTINE HMLADG : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISE
@@ -160,6 +161,12 @@ implicit none
                 rbid45, rbid46, cp22, kh, rbid49,&
                 em, rbid50, rinstp, retcom,&
                 angmas, ndim)
+!
+! - Evaluation of initial saturation
+!
+    call thmEvalSatuInit(hydr  , imate, p1m       , p1,&
+                         saturm, satur, dsatur_dp1, em,&
+                         retcom)
 
 ! ======================================================================
 ! --- INITIALISATIONS --------------------------------------------------
