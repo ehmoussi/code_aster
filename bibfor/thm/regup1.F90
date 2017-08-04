@@ -15,33 +15,28 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine kfomvg(pr, sr, m, n, usm,&
-                  usn, s1, krl, krg, dklds,&
-                  dkgds)
 !
-! KFOMVG : CALCUL DES PERMEABILITES RELATIVES
-!         PAR FONCTION MUALEM-VAN-GENUCHTEN
+subroutine regup1(x0, y0, y0p,&
+                  a , b)
 !
-    implicit      none
+implicit none
 !
-! IN
-    real(kind=8) :: pr, sr, m, n, usm, usn, s1
-! OUT
-    real(kind=8) :: krl, krg, dklds, dkgds
-! LOCAL
-    real(kind=8) :: umsr, usumsr, a
+real(kind=8), intent(in) :: x0, y0, y0p
+real(kind=8), intent(out) :: a, b
 !
-    umsr=(1.d0-sr)
-    usumsr=1.d0/umsr
-    krl=(s1**0.5d0)*((1.d0-(1.d0-s1**usm)**m)**2.d0)
-    krg=((1.d0-s1)**0.5d0)*((1.d0-s1**usm)**(2.d0*m))
-    a=1.d0-s1**usm
-    dklds=usumsr*(krl/(2.d0*s1)+2.d0*((s1)**0.5d0)*(1.d0-a**m)&
-     &       *(a**(m-1.d0))*(s1**(usm-1.d0)))
-    a=1.d0-s1
-    dkgds=usumsr*(-krg/(2.d0*a)-2.d0*(a**0.5d0)*&
-     &         ((1.d0-s1**usm)**(2.d0*m-1.d0))*(s1**(usm-1.d0)))
+! --------------------------------------------------------------------------------------------------
 !
+! THM - Permeability
+!
+! Regularization with linear polynom - Get coefficients of polynom
+!
+! --------------------------------------------------------------------------------------------------
+!
+! For polynom p=ax+b with p(x0) = y0 and dp_dx(x0) = y0p
+!
+! --------------------------------------------------------------------------------------------------
+!
+    a = y0p
+    b = y0-y0p*x0
 !
 end subroutine
