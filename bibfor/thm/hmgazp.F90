@@ -25,7 +25,7 @@ subroutine hmgazp(yachai, option, meca, thmc, ther,&
                   adcote, congem, congep, vintm, vintp,&
                   dsde, epsv, depsv, p1, dp1,&
                   t, dt, phi, rho11, &
-                  satur, retcom, tbiot, rinstp, angmas,&
+                  satur, retcom, tbiot, angmas,&
                   deps)
 !
 use THM_type
@@ -75,14 +75,14 @@ implicit none
     real(kind=8) :: tbiot(6), cs, cp12, satur, mamolg
     real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
     real(kind=8) :: r, rho0, csigm, alp11, em, p1m, dsatur
-    real(kind=8) :: eps, rinstp, deps(6)
+    real(kind=8) :: eps, deps(6)
     parameter  ( eps = 1.d-21 )
     aster_logical :: emmag
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, saturm, dsatur_dp1, rbid14(3)
+    real(kind=8) :: rbid10, saturm, dsatur_dp1
     real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid32(ndim, ndim)
@@ -113,14 +113,14 @@ implicit none
                 ther, t, p1, rbid6, rbid44,&
                 rbid7, rbid10, r, rho0,&
                 csigm, saturm, satur, dsatur_dp1,&
-                rbid14, rbid16, rbid17, rbid18,&
+                rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rbid43, rbid40, rbid41,&
                 rbid42, rbid26, rbid27, rbid28, rbid29,&
                 mamolg, cp21, rbid32, rbid33, rbid34,&
                 rbid35, rbid36, rbid37, rbid38, rbid39,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
-                em, rbid50,  rinstp, retcom,&
+                em, rbid50, retcom,&
                 angmas, ndim)
 !
 ! - Evaluation of initial saturation

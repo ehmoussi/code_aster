@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: daniele.colombo at ifpen.fr
-! aslint: disable=W1504
+! aslint: disable=W1504,W1306
 !
 subroutine xcomhm(option, imate, compor,instap,&
                   ndim, dimdef, dimcon,nbvari,&
@@ -182,7 +182,7 @@ implicit none
                 addep1, adcp11, congem, congep, vintm,&
                 vintp, dsde, epsv, depsv, p1,&
                 dp1, t, phi, rho11,&
-                sat, retcom, tbiot, instap,&
+                sat, retcom, tbiot,&
                 angl_naut, yaenrh, adenhy, nfh)
     if (retcom .ne. 0) then
         goto 900

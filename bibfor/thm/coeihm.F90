@@ -256,7 +256,7 @@ implicit none
                 phi, pvp, pad, h11, h12,&
                 kh, rho11, sat,&
                 retcom, crit, tbiot, vihrho, vicphi,&
-                vicpvp, vicsat, instap, angl_naut)
+                vicpvp, vicsat, angl_naut)
 !
     if (retcom .ne. 0) then
         goto 999

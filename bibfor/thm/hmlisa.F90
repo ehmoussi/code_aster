@@ -26,7 +26,7 @@ subroutine hmlisa(perman, yachai, option, meca, thmc,&
                   congep, vintm, vintp, dsde, epsv,&
                   depsv, p1, dp1, t, dt,&
                   phi, rho11, satur, retcom,&
-                  tbiot, rinstp, angmas, deps)
+                  tbiot, angmas, deps)
 !
 use THM_type
 use THM_module
@@ -81,7 +81,7 @@ implicit none
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
     real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, t, dt
     real(kind=8) :: phi, rho11, phi0, rac2
-    real(kind=8) :: rinstp, angmas(3)
+    real(kind=8) :: angmas(3)
     character(len=16) :: option, meca, ther, thmc, hydr
     aster_logical :: perman, yachai
 ! ======================================================================
@@ -100,7 +100,7 @@ implicit none
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid11, saturm, dsatur_dp1, rbid14(3)
+    real(kind=8) :: rbid10, rbid11, saturm, dsatur_dp1
     real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid38
@@ -124,14 +124,14 @@ implicit none
                 ther, t, p1, rbid40, rbid6,&
                 rbid7, rbid10, rbid11, rho0,&
                 csigm, saturm, satur, dsatur_dp1,&
-                rbid14, rbid16, rbid17, rbid18,&
+                rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
                 cp11, rbid26, rbid27, rbid28, rbid29,&
                 rbid30, rbid31, rbid32, rbid33, rbid34,&
                 rbid35, rbid36, rbid37, rbid38, rbid39,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
-                em, rbid50, rinstp, retcom,&
+                em, rbid50, retcom,&
                 angmas, ndim)
 !
 ! - Evaluation of initial saturation
@@ -255,14 +255,14 @@ implicit none
 ! --- CALCUL DES ENTHALPIES SELON FORMULE DOCR -------------------------
 ! ======================================================================
         if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-            congep(adcp11+ndim+1) = congep(adcp11+ndim+1) + enteau(dt, alpliq,t,rho11,dp2,dp1,dpa&
-                                    &d,signe,cp11)
+            congep(adcp11+ndim+1) = congep(adcp11+ndim+1) +&
+                                    enteau(dt, alpliq,t,rho11,dp2,dp1,dpad,signe,cp11)
 ! ======================================================================
 ! --- CALCUL DE LA CHALEUR REDUITE Q' SELON FORMULE DOCR ---------------
 ! --- DP2 ET ALP12 SONT  NULLES ----------------------------------------
 ! ======================================================================
-            congep(adcote) = congep(adcote) + calor(mdal,t,dt,deps, dp1,dp2,signe,alp11,alp12,coe&
-                             &ps,ndim)
+            congep(adcote) = congep(adcote) +&
+                             calor(mdal,t,dt,deps, dp1,dp2,signe,alp11,alp12,coeps,ndim)
         endif
     endif
 ! ======================================================================
@@ -279,8 +279,7 @@ implicit none
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
  10         continue
             do 14 i = 4, 6
-                congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)*&
-                rac2
+                congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)*rac2
  14         continue
         endif
 ! ======================================================================
@@ -366,8 +365,8 @@ implicit none
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
         if (.not.perman) then
-            dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmwdp1(rho11, signe,satur,dsatp1,phi,cs,cli&
-                                  &q,1.0d0, emmag,em)
+            dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
+                                  dmwdp1(rho11, signe,satur,dsatp1,phi,cs,cliq,1.0d0, emmag,em)
         endif
     endif
 ! ======================================================================

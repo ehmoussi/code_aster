@@ -142,70 +142,70 @@ real(kind=8), intent(out) :: gravity(3)
                     ther, t, rbid6, rbid41, rbid7,&
                     phi, rbid11, rbid12, rbid13,&
                     rbid14, rbid16, rbid17, rbid18,&
-                    gravity, rbid19, rbid20, rbid21,&
+                    rbid19, rbid20, rbid21,&
                     rbid22, rbid23, rbid24, rbid25, rbid26,&
                     lambp, dlambp, rbid27, unsurk, alpha,&
                     rbid28, lambs, dlambs, viscl, dviscl,&
                     rbid31, rbid32, tlambt, tdlamt, rbid35,&
                     rbid36, rbid37, rbid38, rbid39, rbid40,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct, instap, retcom,&
+                    rbid50, tlamct,  retcom,&
                     angl_naut, ndim)
     else if (thmc.eq.'GAZ') then
         call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, rbid6, rbid44, rbid7,&
                     phi, rbid11, rgaz, rbid13,&
                     rbid14, rbid16, rbid17, rbid18,&
-                    gravity, rbid19, rbid20, rbid21,&
+                    rbid19, rbid20, rbid21,&
                     rbid22, rbid23, rbid24, rbid25, rbid26,&
                     lambp, dlambp, rbid27, rbid42, rbid43,&
                     rbid29, lambs, dlambs, rbid41, rbid31,&
                     mamolg, rbid28, tlambt, tdlamt, viscg,&
                     dviscg, rbid37, rbid38, rbid39, rbid40,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct,  instap, retcom,&
+                    rbid50, tlamct,  retcom,&
                     angl_naut, ndim)
     else if (thmc.eq.'LIQU_VAPE') then
         call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, pvp, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    gravity, permli, dperml, permgz,&
+                    permli, dperml, permgz,&
                     dperms, dpermp, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
                     rbid19, rbid20, tlambt, tdlamt, rbid23,&
                     rbid24, mamolv, rbid25, viscg, dviscg,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct, instap, retcom,&
+                    rbid50, tlamct, retcom,&
                     angl_naut, ndim)
     else if (thmc.eq.'LIQU_VAPE_GAZ') then
         call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, pvp, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    gravity, permli, dperml, permgz,&
+                    permli, dperml, permgz,&
                     dperms, dpermp, fick, dfickt, dfickg,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
                     mamolg, rbid19, tlambt, tdlamt, viscg,&
                     dviscg, mamolv, rbid25, rbid26, rbid27,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct,  instap, retcom,&
+                    rbid50, tlamct,  retcom,&
                     angl_naut, ndim)
     else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
         call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, rbid28, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    gravity, permli, dperml, permgz,&
+                    permli, dperml, permgz,&
                     dperms, dpermp, fick, dfickt, dfickg,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
                     mamolg, rbid19, tlambt, tdlamt, viscg,&
                     dviscg, mamolv, rbid25, rbid26, rbid27,&
                     fickad, dfadt, rbid47, rbid48, pad,&
-                    rbid50, tlamct,  instap, retcom,&
+                    rbid50, tlamct,  retcom,&
                     angl_naut, ndim)
 !
     else if (thmc.eq.'LIQU_AD_GAZ') then
@@ -213,42 +213,42 @@ real(kind=8), intent(out) :: gravity(3)
                     ther, t, p1, rbid6, p2,&
                     phi, rbid28, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    gravity, permli, dperml, permgz,&
+                    permli, dperml, permgz,&
                     dperms, dpermp, rbid50, rbid50, rbid50,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
                     mamolg, rbid19, tlambt, tdlamt, viscg,&
                     dviscg, rbid50, rbid25, rbid26, rbid27,&
                     fickad, dfadt, rbid47, rbid48, pad,&
-                    rbid50, tlamct,  instap, retcom,&
+                    rbid50, tlamct,   retcom,&
                     angl_naut, ndim)
     else if (thmc.eq.'LIQU_GAZ') then
         call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, rbid28, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    gravity, permli, dperml, permgz,&
+                    permli, dperml, permgz,&
                     dperms, dpermp, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
                     mamolg, rbid19, tlambt, tdlamt, viscg,&
                     dviscg, mamolv, rbid25, rbid26, rbid27,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct,  instap, retcom,&
+                    rbid50, tlamct,  retcom,&
                     angl_naut, ndim)
     else if (thmc.eq.'LIQU_GAZ_ATM') then
         call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
                     phi, rbid28, rbid29, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    gravity, permli, dperml, rbid30,&
+                    permli, dperml, rbid30,&
                     rbid31, rbid32, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
                     rbid20, rbid19, tlambt, tdlamt, rbid23,&
                     rbid24, mamolv, rbid25, rbid26, rbid27,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct, instap, retcom,&
+                    rbid50, tlamct, retcom,&
                     angl_naut, ndim)
     endif
 

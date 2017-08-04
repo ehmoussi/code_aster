@@ -31,7 +31,7 @@ interface
                       phi, pvp, pad, h11, h12,&
                       kh, rho11, sat,&
                       retcom, carcri, tbiot, vihrho, vicphi,&
-                      vicpvp, vicsat, rinstp, angmas)
+                      vicpvp, vicsat, angmas)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -87,7 +87,6 @@ interface
         integer :: vicphi
         integer :: vicpvp
         integer :: vicsat
-        real(kind=8) :: rinstp
         real(kind=8) :: angmas(3)
     end subroutine calcco
 end interface 

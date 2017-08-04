@@ -29,7 +29,7 @@ interface
                       epsv, depsv, p1, dp1, t,&
                       dt, phi, pvp, h11, h12,&
                       rho11, satur, retcom,&
-                      thmc, tbiot, rinstp, angmas, deps)
+                      thmc, tbiot, angmas, deps)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -73,7 +73,6 @@ interface
         integer :: retcom
         character(len=16) :: thmc
         real(kind=8) :: tbiot(6)
-        real(kind=8) :: rinstp
         real(kind=8) :: angmas(3)
         real(kind=8) :: deps(6)
     end subroutine hmliva

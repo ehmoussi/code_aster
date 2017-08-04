@@ -22,14 +22,14 @@ subroutine thmrcp(etape, imate, thmc, hydr,&
                   ther, t, p1, p1m, p2,&
                   phi, pvp, rgaz, rhod,&
                   cpd, satm, satur, dsatur,&
-                  pesa, permli, dperml, permgz,&
+                  permli, dperml, permgz,&
                   dperms, dpermp, fick, dfickt, dfickg,&
                   lambp, dlambp, rhol, unsurk, alpha,&
                   cpl, lambs, dlambs, viscl, dviscl,&
                   mamolg, cpg, tlambt, tdlamt, viscg,&
                   dviscg, mamolv, cpvg, viscvg, dvisvg,&
                   fickad, dfadt, cpad, kh, pad,&
-                  em, tlamct, instap, retcom,&
+                  em, tlamct, retcom,&
                   angmas, ndim)
 !
 use THM_type
@@ -50,13 +50,13 @@ implicit none
     integer :: imate, retcom, ndim
     integer :: aniso2, aniso3, aniso4
     real(kind=8) :: t, p1, p2, phi, pvp
-    real(kind=8) :: rgaz, rhod, cpd, satm, satur, dsatur, pesa(3)
+    real(kind=8) :: rgaz, rhod, cpd, satm, satur, dsatur
     real(kind=8) :: permli, dperml, permgz, dperms, dpermp
     real(kind=8) :: fick, dfickt, dfickg, lambp, dlambp, rhol
     real(kind=8) :: alpha, cpl, lambs, dlambs, viscl, dviscl, cpg, pad
     real(kind=8) :: viscg, dviscg, mamolg, cpvg, viscvg
     real(kind=8) :: dvisvg, fickad, dfadt, mamolv, p1m, cpad, kh, em
-    real(kind=8) :: unsurk, instap
+    real(kind=8) :: unsurk
     real(kind=8) :: angmas(3)
     real(kind=8) :: lambct(4), tlamct(ndim, ndim)
     real(kind=8) :: lambt(4), tlambt(ndim, ndim)
@@ -227,9 +227,9 @@ implicit none
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_SATU ------------
 ! =====================================================================
-    data ncra18 / 'PESA_X'   ,&
-     &              'PESA_Y'   ,&
-     &              'PESA_Z'   ,&
+    data ncra18 / 'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
@@ -257,9 +257,9 @@ implicit none
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS GAZ ------------------
 ! =====================================================================
     data ncra20 / 'R_GAZ'    ,&
-     &              'PESA_X'   ,&
-     &              'PESA_Y'   ,&
-     &              'PESA_Z'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
@@ -286,9 +286,9 @@ implicit none
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_VAPE ------------
 ! =====================================================================
     data ncra22 / 'R_GAZ'    ,&
-     &              'PESA_X'   ,&
-     &              'PESA_Y'   ,&
-     &              'PESA_Z'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
@@ -324,8 +324,8 @@ implicit none
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_VAPE_GAZ --------
 ! =====================================================================
-    data ncra25 / 'R_GAZ'    ,'PESA_X'   ,&
-     &              'PESA_Y'   ,'PESA_Z'   ,&
+    data ncra25 / 'R_GAZ'    ,'TOTO'   ,&
+     &              'TOTO'   ,'TOTO'   ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
@@ -364,9 +364,9 @@ implicit none
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_GAZ -------------
 ! =====================================================================
     data ncra29 / 'R_GAZ'    ,&
-     &              'PESA_X'   ,&
-     &              'PESA_Y'   ,&
-     &              'PESA_Z'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
@@ -400,9 +400,9 @@ implicit none
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_GAZ_ATM ---------
 ! =====================================================================
-    data ncra32 / 'PESA_X'   ,&
-     &              'PESA_Y'   ,&
-     &              'PESA_Z'   ,&
+    data ncra32 / 'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
@@ -448,8 +448,8 @@ implicit none
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_AD_GAZ_VAPE -----
 ! =====================================================================
-    data ncra40 / 'R_GAZ'    ,'PESA_X'   ,&
-     &               'PESA_Y'    , 'PESA_Z'  ,&
+    data ncra40 / 'R_GAZ'    ,'TOTO'   ,&
+     &               'TOTO'    , 'TOTO'  ,&
      &               'TOTO'   ,&
      &               'TOTO'  ,&
      &               'TOTO'  ,&
@@ -504,8 +504,8 @@ implicit none
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_AD_GAZ -----
 ! =====================================================================
 !     DANS CRAD40 ON NE LIT PAS DE 21 A 26 INCLUS ET 38
-    data crad40 / 'R_GAZ'    ,'PESA_X'   ,&
-     &                'PESA_Y'    , 'PESA_Z'  ,&
+    data crad40 / 'R_GAZ'    ,'TOTO'   ,&
+     &                'TOTO'    , 'TOTO'  ,&
      &                'TOTO'   ,&
      &                'TOTO'  ,&
      &                'TOTO'  ,&
@@ -1030,21 +1030,6 @@ implicit none
                             1)
             endif
 !
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'INST',&
-                        [instap], 1, 'PESA_MULT', fpesa, icodre,&
-                        0,nan='NON')
-! COMME IL N'EST PAS POSSIBLE D'AFFECTER UNE VALEUR PAR DEFAUT
-! A LA FONCTION PESA_MULT DANS LE FICHIER DE COMMANDE
-! DEFI_MATERIAU.CAPY, ON UTILISE LE CODE RETOUR POUR LA METTRE
-! A SA VALEUR PAR DEFAUT (EGALE A 1) SI ELLE N A PAS ETE
-! DEFINIE DANS LE FICHIER DE COMMANDE
-            if (icodre(1) .eq. 1) then
-                fpesa(1)=1.d0
-            endif
-!
-            pesa(1) = fpesa(1)*val18(1)
-            pesa(2) = fpesa(1)*val18(2)
-            pesa(3) = fpesa(1)*val18(3)
             lambt(1) = val18(8)
             lambt(2) = val18(9)
             lambt(3) = val18(10)
@@ -1176,22 +1161,8 @@ implicit none
                     aniso4=0
                 endif
             endif
-!
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'INST',&
-                        [instap], 1, 'PESA_MULT', fpesa, icodre,&
-                        0,nan='NON')
-! COMME IL N'EST PAS POSSIBLE D'AFFECTER UNE VALEUR PAR DEFAUT
-! A LA FONCTION PESA_MULT DANS LE FICHIER DE COMMANDE
-! DEFI_MATERIAU.CAPY, ON UTILISE LE CODE RETOUR POUR LA METTRE
-! A SA VALEUR PAR DEFAUT (EGALE A 1) SI ELLE N A PAS ETE
-! DEFINIE DANS LE FICHIER DE COMMANDE
-            if (icodre(1) .eq. 1) then
-                fpesa(1)=1.d0
-            endif
+
             rgaz = val20( 1)
-            pesa(1) = val20( 2)*fpesa(1)
-            pesa(2) = val20( 3)*fpesa(1)
-            pesa(3) = val20( 4)*fpesa(1)
             lambt(1) = val20(9)
             lambt(2) = val20(10)
             lambt(3) = val20(11)
@@ -1349,21 +1320,7 @@ implicit none
                             0,nan='NON')
             endif
 !
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'INST',&
-                        [instap], 1, 'PESA_MULT', fpesa, icodre,&
-                        0,nan='NON')
-! COMME IL N'EST PAS POSSIBLE D'AFFECTER UNE VALEUR PAR DEFAUT
-! A LA FONCTION PESA_MULT DANS LE FICHIER DE COMMANDE
-! DEFI_MATERIAU.CAPY, ON UTILISE LE CODE RETOUR POUR LA METTRE
-! A SA VALEUR PAR DEFAUT (EGALE A 1) SI ELLE N A PAS ETE
-! DEFINIE DANS LE FICHIER DE COMMANDE
-            if (icodre(1) .eq. 1) then
-                fpesa(1)=1.d0
-            endif
             rgaz = val22( 1)
-            pesa(1) = val22( 2)*fpesa(1)
-            pesa(2) = val22( 3)*fpesa(1)
-            pesa(3) = val22( 4)*fpesa(1)
             lambt(1) = val22(9)
             lambt(2) = val22(10)
             lambt(3) = val22(11)
@@ -1559,23 +1516,8 @@ implicit none
             call rcvala(imate, ' ', 'THM_DIFFU', 2, nompar,&
                         valpar, 2, ncra25(33), val25(33), icodre,&
                         0,nan='NON')
-!
-!
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'INST',&
-                        [instap], 1, 'PESA_MULT', fpesa, icodre,&
-                        0,nan='NON')
-! COMME IL N'EST PAS POSSIBLE D'AFFECTER UNE VALEUR PAR DEFAUT
-! A LA FONCTION PESA_MULT DANS LE FICHIER DE COMMANDE
-! DEFI_MATERIAU.CAPY, ON UTILISE LE CODE RETOUR POUR LA METTRE
-! A SA VALEUR PAR DEFAUT (EGALE A 1) SI ELLE N A PAS ETE
-! DEFINIE DANS LE FICHIER DE COMMANDE
-            if (icodre(1) .eq. 1) then
-                fpesa(1)=1.d0
-            endif
+
             rgaz = val25( 1)
-            pesa(1) = val25( 2)*fpesa(1)
-            pesa(2) = val25( 3)*fpesa(1)
-            pesa(3) = val25( 4)*fpesa(1)
 
             lambt(1) = val25(9)
             lambt(2) = val25(10)
@@ -1808,21 +1750,7 @@ implicit none
                         [t], 1, ncra40(39), val40(39), icodre,&
                         0,nan='NON')
 !
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'INST',&
-                        [instap], 1, 'PESA_MULT', fpesa, icodre,&
-                        0,nan='NON')
-! COMME IL N'EST PAS POSSIBLE D'AFFECTER UNE VALEUR PAR DEFAUT
-! A LA FONCTION PESA_MULT DANS LE FICHIER DE COMMANDE
-! DEFI_MATERIAU.CAPY, ON UTILISE LE CODE RETOUR POUR LA METTRE
-! A SA VALEUR PAR DEFAUT (EGALE A 1) SI ELLE N A PAS ETE
-! DEFINIE DANS LE FICHIER DE COMMANDE
-            if (icodre(1) .eq. 1) then
-                fpesa(1)=1.d0
-            endif
             rgaz = val40( 1)
-            pesa(1) = val40(2)*fpesa(1)
-            pesa(2) = val40(3)*fpesa(1)
-            pesa(3) = val40(4)*fpesa(1)
             lambt(1) = val40(9)
             lambt(2) = val40(10)
             lambt(3) = val40(11)
@@ -2026,21 +1954,7 @@ implicit none
                         [t], 1, crad40(39), val40(39), icodre,&
                         0,nan='NON')
 !
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'INST',&
-                        [instap], 1, 'PESA_MULT', fpesa, icodre,&
-                        0,nan='NON')
-! COMME IL N'EST PAS POSSIBLE D'AFFECTER UNE VALEUR PAR DEFAUT
-! A LA FONCTION PESA_MULT DANS LE FICHIER DE COMMANDE
-! DEFI_MATERIAU.CAPY, ON UTILISE LE CODE RETOUR POUR LA METTRE
-! A SA VALEUR PAR DEFAUT (EGALE A 1) SI ELLE N A PAS ETE
-! DEFINIE DANS LE FICHIER DE COMMANDE
-            if (icodre(1) .eq. 1) then
-                fpesa(1)=1.d0
-            endif
             rgaz = val40( 1)
-            pesa(1) = val40( 2)*fpesa(1)
-            pesa(2) = val40( 3)*fpesa(1)
-            pesa(3) = val40( 4)*fpesa(1)
             lambt(1) = val40(9)
             lambt(2) = val40(10)
             lambt(3) = val40(11)
@@ -2206,21 +2120,7 @@ implicit none
                             valpar(1), 2, ncra29(17), val29(17), icodre,&
                             0,nan='NON')
             endif
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'INST',&
-                        [instap], 1, 'PESA_MULT', fpesa, icodre,&
-                        0,nan='NON')
-! COMME IL N'EST PAS POSSIBLE D'AFFECTER UNE VALEUR PAR DEFAUT
-! A LA FONCTION PESA_MULT DANS LE FICHIER DE COMMANDE
-! DEFI_MATERIAU.CAPY, ON UTILISE LE CODE RETOUR POUR LA METTRE
-! A SA VALEUR PAR DEFAUT (EGALE A 1) SI ELLE N A PAS ETE
-! DEFINIE DANS LE FICHIER DE COMMANDE
-            if (icodre(1) .eq. 1) then
-                fpesa(1)=1.d0
-            endif
             rgaz = val29( 1)
-            pesa(1) = val29( 2)*fpesa(1)
-            pesa(2) = val29( 3)*fpesa(1)
-            pesa(3) = val29( 4)*fpesa(1)
             lambt(1) = val29(9)
             lambt(2) = val29(10)
             lambt(3) = val29(11)
@@ -2373,20 +2273,6 @@ implicit none
                             valpar(1), 2, ncra32(16), val32(16), icodre,&
                             0,nan='NON')
             endif
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'INST',&
-                        [instap], 1, 'PESA_MULT', fpesa, icodre,&
-                        0,nan='NON')
-! COMME IL N'EST PAS POSSIBLE D'AFFECTER UNE VALEUR PAR DEFAUT
-! A LA FONCTION PESA_MULT DANS LE FICHIER DE COMMANDE
-! DEFI_MATERIAU.CAPY, ON UTILISE LE CODE RETOUR POUR LA METTRE
-! A SA VALEUR PAR DEFAUT (EGALE A 1) SI ELLE N A PAS ETE
-! DEFINIE DANS LE FICHIER DE COMMANDE
-            if (icodre(1) .eq. 1) then
-                fpesa(1)=1.d0
-            endif
-            pesa(1) = val32( 1)*fpesa(1)
-            pesa(2) = val32( 2)*fpesa(1)
-            pesa(3) = val32( 3)*fpesa(1)
             lambt(1) = val32(8)
             lambt(2) = val32(9)
             lambt(3) = val32(10)
