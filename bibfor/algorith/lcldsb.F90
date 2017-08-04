@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine lcldsb(fami, kpg, ksp, ndim,&
-                  imate, compor, epsm, deps, vim,&
+                  imate, epsm, deps, vim,&
                   option, sig,&
                   vip, dsidep)
     implicit none
@@ -30,7 +30,7 @@ subroutine lcldsb(fami, kpg, ksp, ndim,&
 #include "asterfort/rcvarc.h"
 #include "asterfort/get_varc.h"
 #include "blas/ddot.h"
-    character(len=16) :: compor(*), option
+    character(len=16) :: option
     character(len=*) :: fami
     integer :: ndim, imate, ksp, kpg
     real(kind=8) :: epsm(6), deps(6), vim(*)
@@ -56,7 +56,7 @@ subroutine lcldsb(fami, kpg, ksp, ndim,&
 ! ----------------------------------------------------------------------
 ! LOC EDFRC1  COMMON CARACTERISTIQUES DU MATERIAU (AFFECTE DANS EDFRMA)
     aster_logical :: rigi, resi, elas, coup
-    integer :: ndimsi, k, l, i, j, m, n, t(3, 3), iret, iterat
+    integer :: ndimsi, k, l, i, j, m, n, t(3, 3), iret
     real(kind=8) :: eps(6), treps, sigel(6), kron(6)
     real(kind=8) :: rac2, coef
     real(kind=8) :: rigmin, fd, d, ener
@@ -103,7 +103,7 @@ subroutine lcldsb(fami, kpg, ksp, ndim,&
 !
 ! -- INITIALISATION
 !
-    call lceib1(fami, kpg, ksp, imate, compor,&
+    call lceib1(fami, kpg, ksp, imate,&
                 ndim, epsm, sref, sechm, hydrm,&
                 t, lambda, deuxmu, epsthe, kdess,&
                 bendo, gamma, seuil)

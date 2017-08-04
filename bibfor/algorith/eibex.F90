@@ -17,12 +17,10 @@
 ! --------------------------------------------------------------------
 
 subroutine eibex(fami, kpg, ksp, ndim, imate,&
-                 compor, instam, instap, epsm, deps,&
+                 instam, instap, epsm, deps,&
                  vim, option, sig, vip, dsidep,&
                  codret)
 !
-!
-! aslint: disable=
     implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
@@ -31,7 +29,7 @@ subroutine eibex(fami, kpg, ksp, ndim, imate,&
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvarc.h"
 #include "blas/ddot.h"
-    character(len=16) :: compor(*), option
+    character(len=16) :: option
     character(len=*) :: fami
     integer :: ndim, imate, ksp, kpg
     real(kind=8) :: epsm(6), deps(6), vim(2), instap, instam
@@ -119,7 +117,7 @@ subroutine eibex(fami, kpg, ksp, ndim, imate,&
     ndimsi = 2*ndim
     rac2=sqrt(2.d0)
 !
-    call lceib1(fami, kpg, ksp, imate, compor,&
+    call lceib1(fami, kpg, ksp, imate,&
                 ndim, epsm, sref, sechm, hydrm,&
                 t, lambda, deuxmu, epsthe, kdess,&
                 bendo, gamma, seuil)
@@ -129,25 +127,24 @@ subroutine eibex(fami, kpg, ksp, ndim, imate,&
 ! -- MAJ DES DEFORMATIONS ET PASSAGE AUX DEFORMATIONS REELLES 3D
 !
     if (tang) then
-        do 40 k = 1, ndimsi
+        do k = 1, ndimsi
             eps(k) = epsm(k) - ( epsthe(1) - kdess * (sref-sechm) - bendo * hydrm ) * kron(k)
- 40     continue
+        end do
     else if (raph) then
-!
-        do 10 k = 1, ndimsi
+        do  k = 1, ndimsi
             eps(k) = epsm(k) + deps(k) - kron(k) * ( epsthe(2) - kdess * (sref-sechp) - bendo * h&
                      &ydrp )
- 10     continue
+        end do
     endif
 !
-    do 45 k = 4, ndimsi
+    do k = 4, ndimsi
         eps(k) = eps(k)/rac2
- 45 end do
+    end do
 !
     if (ndimsi .lt. 6) then
-        do 46 k = ndimsi+1, 6
+        do k = ndimsi+1, 6
             eps(k)=0.d0
- 46     continue
+        end do
     endif
 !
 ! -- DIAGONALISATION DES DEFORMATIONS
@@ -163,20 +160,20 @@ subroutine eibex(fami, kpg, ksp, ndim, imate,&
 !
     treps = eps(1)+eps(2)+eps(3)
     if (treps .gt. 0.d0) then
-        do 60 k = 1, 3
+        do k = 1, 3
             sigel(k) = lambda*treps
- 60     continue
+        end do
     else
-        do 61 k = 1, 3
+        do k = 1, 3
             sigel(k) = 0.d0
- 61     continue
+        end do
     endif
 !
-    do 15 k = 1, 3
+    do k = 1, 3
         if (epsp(k) .gt. 0.d0) then
             sigel(k) = sigel(k) + deuxmu*epsp(k)
         endif
- 15 end do
+    end do
     ener = 0.5d0 * ddot(3,epsp,1,sigel,1)
 !
 ! ======================================================================
@@ -217,47 +214,44 @@ subroutine eibex(fami, kpg, ksp, ndim, imate,&
         call r8inir(36, 0.d0, dspdep, 1)
         call r8inir(36, 0.d0, dsidep, 1)
 !
-        do 100 k = 1, 3
-            do 110 l = 1, 3
+        do k = 1, 3
+            do l = 1, 3
                 dspdep(k,l) = lambdd
-110         continue
-100     continue
+            end do
+        end do
 !
-        do 120 k = 1, 3
+        do k = 1, 3
             dspdep(k,k) = dspdep(k,k) + deumud(k)
-120     continue
+        end do
 !
         if (epsp(1)*epsp(2) .ge. 0.d0) then
             dspdep(4,4)=deumud(1)
         else
-            dspdep(4,4)=(deumud(1)*epsp(1)-deumud(2)*epsp(2)) /(epsp(&
-            1)-epsp(2))
+            dspdep(4,4)=(deumud(1)*epsp(1)-deumud(2)*epsp(2)) /(epsp(1)-epsp(2))
         endif
 !
         if (epsp(1)*epsp(3) .ge. 0.d0) then
             dspdep(5,5)=deumud(1)
         else
-            dspdep(5,5)=(deumud(1)*epsp(1)-deumud(3)*epsp(3)) /(epsp(&
-            1)-epsp(3))
+            dspdep(5,5)=(deumud(1)*epsp(1)-deumud(3)*epsp(3)) /(epsp(1)-epsp(3))
         endif
 !
         if (epsp(3)*epsp(2) .ge. 0.d0) then
             dspdep(6,6)=deumud(3)
         else
-            dspdep(6,6)=(deumud(3)*epsp(3)-deumud(2)*epsp(2)) /(epsp(&
-            3)-epsp(2))
+            dspdep(6,6)=(deumud(3)*epsp(3)-deumud(2)*epsp(2)) /(epsp(3)-epsp(2))
         endif
 !
-        do 20 i = 1, 3
-            do 21 j = i, 3
+        do i = 1, 3
+            do j = i, 3
                 if (i .eq. j) then
                     rtemp3=1.d0
                 else
                     rtemp3=rac2
                 endif
 !
-                do 22 k = 1, 3
-                    do 23 l = 1, 3
+                do k = 1, 3
+                    do l = 1, 3
                         if (t(i,j) .ge. t(k,l)) then
                             if (k .eq. l) then
                                 rtemp4=rtemp3
@@ -267,37 +261,31 @@ subroutine eibex(fami, kpg, ksp, ndim, imate,&
 !
                             rtemp2=0.d0
 !
-                            do 24 m = 1, 3
-                                do 25 n = 1, 3
+                            do m = 1, 3
+                                do n = 1, 3
                                     rtemp2=rtemp2+vecp(k,m)* vecp(i,n)&
                                     *vecp(j,n)*vecp(l,m)*dspdep(n,m)
- 25                             continue
- 24                         continue
+                                end do
+                            end do
 !
-                            rtemp2=rtemp2+vecp(i,1)*vecp(j,2)*vecp(k,&
-                            1)*vecp(l,2) *dspdep(4,4)
-                            rtemp2=rtemp2+vecp(i,2)*vecp(j,1)*vecp(k,&
-                            2)*vecp(l,1) *dspdep(4,4)
-                            rtemp2=rtemp2+vecp(i,1)*vecp(j,3)*vecp(k,&
-                            1)*vecp(l,3) *dspdep(5,5)
-                            rtemp2=rtemp2+vecp(i,3)*vecp(j,1)*vecp(k,&
-                            3)*vecp(l,1) *dspdep(5,5)
-                            rtemp2=rtemp2+vecp(i,2)*vecp(j,3)*vecp(k,&
-                            2)*vecp(l,3) *dspdep(6,6)
-                            rtemp2=rtemp2+vecp(i,3)*vecp(j,2)*vecp(k,&
-                            3)*vecp(l,2) *dspdep(6,6)
+                            rtemp2=rtemp2+vecp(i,1)*vecp(j,2)*vecp(k,1)*vecp(l,2) *dspdep(4,4)
+                            rtemp2=rtemp2+vecp(i,2)*vecp(j,1)*vecp(k,2)*vecp(l,1) *dspdep(4,4)
+                            rtemp2=rtemp2+vecp(i,1)*vecp(j,3)*vecp(k,1)*vecp(l,3) *dspdep(5,5)
+                            rtemp2=rtemp2+vecp(i,3)*vecp(j,1)*vecp(k,3)*vecp(l,1) *dspdep(5,5)
+                            rtemp2=rtemp2+vecp(i,2)*vecp(j,3)*vecp(k,2)*vecp(l,3) *dspdep(6,6)
+                            rtemp2=rtemp2+vecp(i,3)*vecp(j,2)*vecp(k,3)*vecp(l,2) *dspdep(6,6)
                             dsidep(t(i,j),t(k,l)) = dsidep(t(i,j),t(k, l) ) + rtemp2*rtemp4
                         endif
- 23                 continue
- 22             continue
- 21         continue
- 20     continue
+                    end do
+                end do
+            end do
+        end do
 !
-        do 26 i = 1, 6
-            do 27 j = i+1, 6
+        do i = 1, 6
+            do j = i+1, 6
                 dsidep(i,j)=dsidep(j,i)
- 27         continue
- 26     continue
+            end do
+        end do
 !
 ! -- CALCUL DES CONTRAINTES
         treps=epsp(1)+epsp(2)+epsp(3)
@@ -307,7 +295,7 @@ subroutine eibex(fami, kpg, ksp, ndim, imate,&
 !
         call r8inir(6, 0.d0, sig, 1)
 !
-        do 180 i = 1, 3
+        do i = 1, 3
             rtemp=sigp(i)
             sig(1)=sig(1)+vecp(1,i)*vecp(1,i)*rtemp
             sig(2)=sig(2)+vecp(2,i)*vecp(2,i)*rtemp
@@ -315,11 +303,11 @@ subroutine eibex(fami, kpg, ksp, ndim, imate,&
             sig(4)=sig(4)+vecp(1,i)*vecp(2,i)*rtemp
             sig(5)=sig(5)+vecp(1,i)*vecp(3,i)*rtemp
             sig(6)=sig(6)+vecp(2,i)*vecp(3,i)*rtemp
-180     continue
+        end do
 !
-        do 190 k = 4, ndimsi
+        do k = 4, ndimsi
             sig(k)=rac2*sig(k)
-190     continue
+        end do
 !
 ! ======================================================================
 !     CAS RAPH_MECA : CALCUL VARIABLES INTERNES ET CONTRAINTE
@@ -372,7 +360,7 @@ subroutine eibex(fami, kpg, ksp, ndim, imate,&
 !
         call r8inir(6, 0.d0, sig, 1)
 !
-        do 1010 i = 1, 3
+        do i = 1, 3
             rtemp=sigp(i)
             sig(1)=sig(1)+vecp(1,i)*vecp(1,i)*rtemp
             sig(2)=sig(2)+vecp(2,i)*vecp(2,i)*rtemp
@@ -380,11 +368,11 @@ subroutine eibex(fami, kpg, ksp, ndim, imate,&
             sig(4)=sig(4)+vecp(1,i)*vecp(2,i)*rtemp
             sig(5)=sig(5)+vecp(1,i)*vecp(3,i)*rtemp
             sig(6)=sig(6)+vecp(2,i)*vecp(3,i)*rtemp
-1010     continue
+        end do
 !
-        do 18 k = 4, ndimsi
+        do k = 4, ndimsi
             sig(k)=rac2*sig(k)
- 18     continue
+        end do
     else
         ASSERT(.false.)
     endif
