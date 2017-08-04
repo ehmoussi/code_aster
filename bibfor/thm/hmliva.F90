@@ -65,6 +65,7 @@ implicit none
 #include "asterfort/virhol.h"
 #include "asterfort/visatu.h"
 #include "asterfort/thmEvalSatuInit.h"
+#include "asterfort/thmEvalSatuMiddle.h"
 !
 ! ======================================================================
 ! ROUTINE HMLIVA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
@@ -106,15 +107,14 @@ implicit none
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid14(3), rbid9, rbid41
+    real(kind=8) :: rbid10, rbid14(3)
     real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid32(ndim, ndim)
     real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38, rbid20
     real(kind=8) :: rbid39, rbid40
-    real(kind=8) :: rbid51, rbid52, rbid53, rbid54
-    real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid56
-    real(kind=8) :: rbid57(ndim, ndim), rbid55
+    real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49
+    real(kind=8) :: rbid57(ndim, ndim)
     real(kind=8) :: m11m, m12m, coeps, pinf, dp2, cp21, cp22, rho21
     real(kind=8) :: rho22, dpad, signe, rac2, p1m
 !
@@ -217,22 +217,11 @@ implicit none
         endif
     endif
     dpvp = pvp - pvpm
-! =====================================================================
-! --- ON PEUT MAINTENANT CALCULER SAT DANS LE CAS LIQU_VAPE -----------
-! =====================================================================
-    call thmrcp('SATURATI', imate, thmc, hydr,&
-                ther, rbid9, pvp-p1, rbid41, rbid6,&
-                rbid7, rbid10, rbid51, rbid52,&
-                rbid53, saturm, satur, dsatur_dp1,&
-                rbid14, rbid16, rbid17, rbid18,&
-                rbid19, rbid20, rbid21, rbid22, rbid23,&
-                rbid24, rbid25, rho110, rbid53, rbid52,&
-                rbid51, rbid26, rbid27, rbid28, rbid29,&
-                rbid30, rbid31, rbid32, rbid33, rbid34,&
-                rbid35, rbid54, rbid55, rbid38, rbid39,&
-                rbid45, rbid46, rbid47, rbid48, rbid49,&
-                rbid56, rbid57,  rinstp, retcom,&
-                angmas, ndim)
+!
+! - Evaluation of "middle" saturation (only LIQU_VAPE)
+!
+    call thmEvalSatuMiddle(hydr , imate     , pvp-p1,&
+                           satur, dsatur_dp1, retcom)
 
     if ((option.eq.'RAPH_MECA') .or. (option.eq.'FORC_NODA') .or.&
         (option(1:9).eq.'FULL_MECA')) then
