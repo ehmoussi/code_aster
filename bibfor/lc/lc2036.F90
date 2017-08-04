@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504,W0104
+!
 subroutine lc2036(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, neps,&
                   epsm, deps, nsig, sigm, vim,&
@@ -27,33 +28,31 @@ implicit none
 !
 #include "asterfort/eibex.h"
 !
-! aslint: disable=W1504,W0104
-!
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: ndim
-    integer, intent(in) :: imate
-    character(len=16), intent(in) :: compor(*)
-    real(kind=8), intent(in) :: carcri(*)
-    real(kind=8), intent(in) :: instam
-    real(kind=8), intent(in) :: instap
-    real(kind=8), intent(in) :: epsm(*)
-    real(kind=8), intent(in) :: deps(*)
-    real(kind=8), intent(in) :: sigm(*)
-    real(kind=8), intent(in) :: vim(*)
-    character(len=16), intent(in) :: option
-    real(kind=8), intent(in) :: angmas(*)
-    real(kind=8), intent(out) :: sigp(*)
-    real(kind=8), intent(out) :: vip(*)
-    character(len=8), intent(in) :: typmod(*)
-    integer, intent(in) :: icomp
-    integer, intent(in) :: nvi
-    real(kind=8), intent(out) :: dsidep(*)
-    integer, intent(out) :: codret
-    integer, intent(in) :: neps
-    integer, intent(in) :: nsig
-    integer, intent(in) :: ndsde
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+integer, intent(in) :: ndim
+integer, intent(in) :: imate
+character(len=16), intent(in) :: compor(*)
+real(kind=8), intent(in) :: carcri(*)
+real(kind=8), intent(in) :: instam
+real(kind=8), intent(in) :: instap
+real(kind=8), intent(in) :: epsm(*)
+real(kind=8), intent(in) :: deps(*)
+real(kind=8), intent(in) :: sigm(*)
+real(kind=8), intent(in) :: vim(*)
+character(len=16), intent(in) :: option
+real(kind=8), intent(in) :: angmas(*)
+real(kind=8), intent(out) :: sigp(*)
+real(kind=8), intent(out) :: vip(*)
+character(len=8), intent(in) :: typmod(*)
+integer, intent(in) :: icomp
+integer, intent(in) :: nvi
+real(kind=8), intent(out) :: dsidep(*)
+integer, intent(out) :: codret
+integer, intent(in) :: neps
+integer, intent(in) :: nsig
+integer, intent(in) :: ndsde
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,7 +63,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call eibex(fami, kpg, ksp, ndim, imate,&
-               compor, instam, instap, epsm, deps,&
+               instam, instap, epsm, deps,&
                vim, option, sigp, vip, dsidep,&
                codret)
 !

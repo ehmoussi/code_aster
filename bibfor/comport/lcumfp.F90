@@ -209,7 +209,7 @@ implicit none
 !     VIX(25)    = VALEUR DE EPSEQ (UTILE POUR POSTTRAITER)
 !_______________________________________________________________________
 !
-    character(len=16) :: compoz(1), option2
+    character(len=16) :: option2
     real(kind=8) :: det
     integer :: iret
     character(len=16) :: nomres(16)
@@ -531,10 +531,9 @@ implicit none
 ! ________________________________________________________________
 !
         if (rela_plas .eq. 'ENDO_ISOT_BETON') then
-            compoz(1)='ENDO_ISOT_BETON'
 !    MATRICE ELASTO-ENDOMMAGEE ET MISE A JOUR DE L ENDOMMAGEMENT
             call lcldsb(fami, kpg, ksp, ndim,&
-                        imate, compoz, epsm, deps, vim(22),&
+                        imate, epsm, deps, vim(22),&
                         'RAPH_COUP       ', tbid,&
                         vip(22), dep)
         else
@@ -628,9 +627,8 @@ implicit none
             option2='RIGI_COUP'
             if (option(1:9) .eq. 'RIGI_MECA') then
                 if (rela_plas .eq. 'ENDO_ISOT_BETON') then
-                    compoz(1)='ENDO_ISOT_BETON'
                     call lcldsb(fami, kpg, ksp, ndim,&
-                                imate, compoz, epsm, tbid, vim(22),&
+                                imate, epsm, tbid, vim(22),&
                                 option2, tbid,&
                                 tbid, dep)
                 else
