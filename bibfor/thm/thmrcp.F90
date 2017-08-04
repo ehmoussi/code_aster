@@ -141,7 +141,7 @@ implicit none
     real(kind=8) :: val35(dim35+1), val36(dim36), val37(dim37), val38(dim38)
     real(kind=8) :: val40(dim40), val41(dim41), val42(dim42), val43(dim43)
     real(kind=8) :: val39(dim39), valpar(dimpar)
-    real(kind=8) :: fpesa(1), un, zero, vg(5)
+    real(kind=8) :: fpesa(1), un, zero
 !
 !
     integer :: icodre(nresma)
@@ -1396,16 +1396,11 @@ implicit none
             call thmEvalSatuFinal(hydr , imate , pvp-p1,&
                                   satur, dsatur, retcom)
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                vg(1) = ds_thm%ds_material%n
-                vg(2) = ds_thm%ds_material%pr
-                vg(3) = ds_thm%ds_material%sr
-                vg(4) = ds_thm%ds_material%smax
-                vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(vg, satur, val22(24), val22(25), val22(26),&
+                    call permvg(satur, val22(24), val22(25), val22(26),&
                                 val22(27))
                 else
-                    call permvc(vg, satur, val22(24), val22(25), val22(26),&
+                    call permvc(satur, val22(24), val22(25), val22(26),&
                                 val22(27))
                 endif
                 val22(28) = 0.d0
@@ -1600,16 +1595,11 @@ implicit none
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                vg(1) = ds_thm%ds_material%n
-                vg(2) = ds_thm%ds_material%pr
-                vg(3) = ds_thm%ds_material%sr
-                vg(4) = ds_thm%ds_material%smax
-                vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(vg, satur, val25(24), val25(25), val25(26),&
+                    call permvg(satur, val25(24), val25(25), val25(26),&
                                 val25(27))
                 else
-                    call permvc(vg, satur, val25(24), val25(25), val25(26),&
+                    call permvc(satur, val25(24), val25(25), val25(26),&
                                 val25(27))
                 endif
                 val25(28) = 0.d0
@@ -1846,16 +1836,11 @@ implicit none
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                vg(1) = ds_thm%ds_material%n
-                vg(2) = ds_thm%ds_material%pr
-                vg(3) = ds_thm%ds_material%sr
-                vg(4) = ds_thm%ds_material%smax
-                vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(vg, satur, val40(24), val40(25), val40(26),&
+                    call permvg(satur, val40(24), val40(25), val40(26),&
                                 val40(27))
                 else
-                    call permvc(vg, satur, val40(24), val40(25), val40(26),&
+                    call permvc(satur, val40(24), val40(25), val40(26),&
                                 val40(27))
                 endif
                 val40(28) = 0.d0
@@ -2115,16 +2100,11 @@ implicit none
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                vg(1) = ds_thm%ds_material%n
-                vg(2) = ds_thm%ds_material%pr
-                vg(3) = ds_thm%ds_material%sr
-                vg(4) = ds_thm%ds_material%smax
-                vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(vg, satur, val40(24), val40(25), val40(26),&
+                    call permvg(satur, val40(24), val40(25), val40(26),&
                                 val40(27))
                 else
-                    call permvc(vg, satur, val40(24), val40(25), val40(26),&
+                    call permvc(satur, val40(24), val40(25), val40(26),&
                                 val40(27))
                 endif
                 val40(28) = 0.d0
@@ -2356,16 +2336,11 @@ implicit none
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
             if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                vg(1) = ds_thm%ds_material%n
-                vg(2) = ds_thm%ds_material%pr
-                vg(3) = ds_thm%ds_material%sr
-                vg(4) = ds_thm%ds_material%smax
-                vg(5) = ds_thm%ds_material%satuma
                 if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(vg, satur, val29(24), val29(25), val29(26),&
+                    call permvg(satur, val29(24), val29(25), val29(26),&
                                 val29(27))
                 else
-                    call permvc(vg, satur, val29(24), val29(25), val29(26),&
+                    call permvc(satur, val29(24), val29(25), val29(26),&
                                 val29(27))
                 endif
                 val29(28) = 0.d0

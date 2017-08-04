@@ -16,33 +16,28 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine kfomvc(pr, sr, m, n, usm,&
-                  usn, s, s1, krl, krg,&
-                  dklds, dkgds)
+subroutine regup2(x0, y0, y0p, y1,&
+                  a , b , c)
 !
-! KFOMVC : CALCUL DES PERMEABILITES RELATIVES
-!         PAR FONCTION MUALEM-VAN-GENUCHTEN POUR L EAU
-!         ET CUBIQUE POUR LE GAZ
+implicit none
 !
-    implicit      none
+real(kind=8), intent(in) :: x0, y0, y0p, y1
+real(kind=8), intent(out) :: a, b, c
 !
-! IN
-    real(kind=8) :: pr, sr, m, n, usm, usn, s, s1
-! OUT
-    real(kind=8) :: krl, krg, dklds, dkgds
-! LOCAL
-    real(kind=8) :: umsr, usumsr, a
+! --------------------------------------------------------------------------------------------------
 !
-    s1=(s-sr)/(1.d0-sr)
-    umsr=(1.d0-sr)
-    usumsr=1.d0/umsr
-    krl=(s1**0.5d0)*((1.d0-(1.d0-s1**usm)**m)**2.d0)
-    krg=(1.d0-s)**3.d0
-    a=1.d0-s1**usm
-    dklds=usumsr*(krl/(2.d0*s1)+2.d0*((s1)**0.5d0)*(1.d0-a**m)&
-     &       *(a**(m-1.d0))*(s1**(usm-1.d0)))
-    a=1.d0-s1
-    dkgds=-3.d0*(1-s)**2.d0
+! THM - Permeability
 !
+! Regularization with quadratic polynom - Get coefficients of polynom
+!
+! --------------------------------------------------------------------------------------------------
+!
+! For polynom p=ax²+bx+c with p(x0) = y0, dp_dx(x0) = y0p and p(1) = y1
+!
+! --------------------------------------------------------------------------------------------------
+!
+    a = (y1-y0+y0p*(x0-1.d0))/((1.d0-x0)**2)
+    b = -2.d0*a*x0 + y0p
+    c = y1 - a - b
 !
 end subroutine

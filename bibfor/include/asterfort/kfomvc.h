@@ -15,24 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine kfomvc(pr, sr, m, n, usm,&
-                      usn, s, s1, krl, krg,&
-                      dklds, dkgds)
-        real(kind=8) :: pr
-        real(kind=8) :: sr
-        real(kind=8) :: m
-        real(kind=8) :: n
-        real(kind=8) :: usm
-        real(kind=8) :: usn
-        real(kind=8) :: s
-        real(kind=8) :: s1
-        real(kind=8) :: krl
-        real(kind=8) :: krg
-        real(kind=8) :: dklds
-        real(kind=8) :: dkgds
+    subroutine kfomvc(sr , m  , usm        , satur      ,&
+                      krl, krg, dkrl_dsatur, dkrg_dsatur)
+        real(kind=8), intent(in) :: sr, m, usm, satur
+        real(kind=8), intent(out) :: krl, krg, dkrl_dsatur, dkrg_dsatur
     end subroutine kfomvc
 end interface
