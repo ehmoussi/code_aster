@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+! person_in_charge: sylvie.granet at edf.fr
+!
 subroutine calcme(option, compor, thmc, meca, imate,&
                   typmod, carcri, instam, instap, &
                   ndim, dimdef, dimcon, nvimec, yate,&
@@ -41,9 +43,7 @@ implicit none
 #include "asterfort/thmTherElas.h"
 #include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/Behaviour_type.h"
-!
-! aslint: disable=W1504
-! person_in_charge: sylvie.granet at edf.fr
+#include "asterfort/thmCheckPorosity.h"
 !
     real(kind=8), intent(in) :: angl_naut(3)
 
@@ -112,6 +112,10 @@ implicit none
     retcom    = 0
     mectru    = .false.
     rac2      = sqrt(2.0d0)
+!
+! - Check porosity
+!
+    call thmCheckPorosity(imate, meca)
 ! ======================================================================
 ! --- RECUPERATION OU NON DE LA PRESSION DE GAZ
 ! ======================================================================

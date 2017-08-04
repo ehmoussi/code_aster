@@ -16,24 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-interface
-    subroutine nmccam(fami, kpg, ksp, ndim, typmod, imate, carcri,&
-                      deps, sigm, pcrm, option, sigp,&
-                      pcrp, dsidep, retcom)
-        character(len=*), intent(in) :: fami
-        integer, intent(in) :: kpg
-        integer, intent(in) :: ksp
-        integer :: ndim
-        character(len=8) :: typmod(*)
-        integer :: imate
-        real(kind=8) :: carcri(3)
-        real(kind=8) :: deps(6)
-        real(kind=8) :: sigm(6)
-        real(kind=8) :: pcrm(7)
-        character(len=16) :: option
-        real(kind=8) :: sigp(6)
-        real(kind=8) :: pcrp(7)
-        real(kind=8) :: dsidep(6, 6)
-        integer :: retcom
-    end subroutine nmccam
-end interface
+interface 
+    subroutine thmCheckPorosity(j_mater, meca)
+        integer, intent(in) :: j_mater
+        character(len=16), intent(in) :: meca
+    end subroutine thmCheckPorosity
+end interface 

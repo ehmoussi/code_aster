@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501
+!
 subroutine nmbarc(ndim, imate, carcri, sat, biot,&
                   deps, sbism, vim,&
                   option, sbisp, vip, dsidep, p1,&
@@ -35,15 +36,13 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/get_varc.h"
 !
-! aslint: disable=W1501
-!
-    integer :: ndim, imate, retcom
-    character(len=16) :: option
-    real(kind=8) :: carcri(*)
-    real(kind=8) :: deps(6), deuxmu, biot, sat, p1, p2, dp1, dp2
-    real(kind=8) :: sbism(6), vim(5), sbisp(6), vip(5), dsidep(6, 6)
-    real(kind=8) :: dsidp1(6)
-    real(kind=8) :: sipm, sipp
+integer :: ndim, imate, retcom
+character(len=16) :: option
+real(kind=8) :: carcri(*)
+real(kind=8) :: deps(6), deuxmu, biot, sat, p1, p2, dp1, dp2
+real(kind=8) :: sbism(6), vim(5), sbisp(6), vip(5), dsidep(6, 6)
+real(kind=8) :: dsidp1(6)
+real(kind=8) :: sipm, sipp
 ! ----------------------------------------------------------------------
 !     REALISE LA LOI DE BARCELONE DES MILIEUX NON-SATURES
 !     EN ELASTOPLASTICITE MECANIQUE ET HYDRIQUE UTILISABLE
@@ -76,14 +75,14 @@ implicit none
     real(kind=8) :: mu
     real(kind=8) :: sieleq, simoel, h, a(6), aa(6), ap(6), aap(6), sieqm
     real(kind=8) :: kron(6), depsdv(6), sigmdv(6), sigpdv(6), tplus(6)
-    real(kind=8) :: sigpmo, f1, f2, f3, f4, f5, f6, f, fp, coef, poro1, poro2
+    real(kind=8) :: sigpmo, f1, f2, f3, f4, f5, f6, f, fp, coef
     real(kind=8) :: deppmo, deltap, deltas(6), spards, hp, xc, xd, xhhc
     real(kind=8) :: xlam, xa, xu, xg, xh, xm, xe, xf, xv, xi, rap
     real(kind=8) :: cc(6, 6), fv(6)
     real(kind=8) :: c(6, 6), ct, xb, v0, seuil
     real(kind=8) :: sigel(6), xinf, xsup, det, tol, ffi(6, 6), ee(6, 6)
     real(kind=8) :: v(6, 6), s(6, 6), t(6, 6), vv(6, 6)
-    real(kind=8) :: diff, diff1
+    real(kind=8) :: diff1
     real(kind=8) :: sbarm(6), sbarp(6), pc0m(2), pc0p(2), pcrm(2), pcrp(2)
     real(kind=8) :: p1m, p2m, pcrmp1, par, pcrpp
     real(kind=8) :: psp
@@ -163,7 +162,6 @@ implicit none
 !
     mu = valres(2)
     poro = valres(3)
-    poro1 = poro
     kapa = valres(4)
     lambda = valres(5)
     m = valres(6)
@@ -183,17 +181,6 @@ implicit none
         alphab = valres(15)
     else
         alphab = valres(15)
-    endif
-    call rcvala(imate, ' ', 'THM_INIT', 1, nompar,&
-                valpam, 1, nomres(3), valres(3), icodre(3),&
-                2)
-    poro = valres(3)
-    poro2 = poro
-    diff = poro1-poro2
-    if (abs(diff) .gt. tol) then
-        call utmess('F', 'ALGORITH6_60')
-    else
-        poro=poro1
     endif
     deuxmu = deux*mu
     e0=poro/(1.d0-poro)

@@ -45,4 +45,9 @@ La définition de la température initiale est obligatoire.
 La température devient négative à la maille %(k1)s.
 """),
 
+
+    60 : _(u"""
+La porosité donnée dans les paramètres matériaux de %(k1)s doit être la même que dans THM_INIT.
+"""),
+
 }
