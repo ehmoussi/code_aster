@@ -5,10 +5,10 @@ __all__ = ['_F',             'AFFE_CARA_ELEM', 'AFFE_CHAR_CINE', 'AFFE_CHAR_MECA
            'COMB_FOURIER',   'CREA_CHAMP',     'CREA_RESU',      'CREA_TABLE',     'DEFI_COMPOR',
            'DEFI_FISS_XFEM', 'DEFI_FLUI_STRU', 'DEFI_FONC_FLUI', 'DEFI_FONCTION',  'DEFI_FOND_FISS',
            'DEFI_GEOM_FIBRE','DEFI_GRILLE',    'DEFI_GROUP',     'DEFI_INTE_SPEC', 'DEFI_INTERF_DYNA',
-           'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'DEFI_MODELE_GENE','DEFI_NAPPE',    'DEFI_SQUELETTE', 
-           'DEFI_SPEC_TURB', 'LIRE_MAILLAGE',  'MACR_ELEM_DYNA', 'MACR_ELEM_STAT', 'MECA_STATIQUE',  
-           'MODE_STATIQUE',  'MODI_MAILLAGE',  'NUME_DDL',       'NUME_DDL_GENE',  'PROJ_CHAMP',     
-           'DEBUT', 'FIN'
+           'DEFI_LIST_REEL', 'DEFI_MATERIAU',  'DEFI_MODELE_GENE','DEFI_NAPPE',    'DEFI_SQUELETTE',
+           'DEFI_SPEC_TURB', 'LIRE_MAILLAGE',  'MACR_ELEM_DYNA', 'MACR_ELEM_STAT', 'MECA_STATIQUE',
+           'MODE_STATIQUE',  'MODI_MAILLAGE',  'NUME_DDL',       'NUME_DDL_GENE',  'PROJ_CHAMP',
+           'DEBUT', 'FIN', 'STAT_NON_LINE'
           ]
 
 from code_aster.Cata.Language.Syntax import _F
@@ -55,3 +55,4 @@ from code_aster.Commands.nume_ddl_gene import NUME_DDL_GENE
 from code_aster.Commands.proj_champ import PROJ_CHAMP
 from code_aster.Commands.mode_iter_cycl import MODE_ITER_CYCL
 from code_aster.Commands.defi_interf_dyna import DEFI_INTERF_DYNA
+from code_aster.Commands.stat_non_line import STAT_NON_LINE
