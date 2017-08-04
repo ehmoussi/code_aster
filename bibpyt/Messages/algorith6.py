@@ -184,11 +184,6 @@ Relation 1d sans loi de fluence appropriée
  erreur direction grandissement
 """),
 
-    60 : _(u"""
- CAM_CLAY :
- la porosité donnée dans CAM_CLAY doit être la même que dans THM_INIT
-"""),
-
     61 : _(u"""
  BARCELONE :
  il faut que la contrainte hydrostatique soit supérieure

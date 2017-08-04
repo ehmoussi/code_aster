@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501
+!
 subroutine nmccam(fami, kpg, ksp, ndim,&
-                  typmod, imate, compor, carcri,&
+                  typmod, imate, carcri,&
                   deps, sigm, pcrm, option, sigp,&
                   pcrp, dsidep, retcom)
 !
@@ -36,17 +37,15 @@ implicit none
 #include "asterfort/get_varc.h"
 #include "asterfort/Behaviour_type.h"
 !
-! aslint: disable=W1501
-!
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer :: ndim, imate, retcom
-    character(len=8) :: typmod(*)
-    character(len=16) :: compor(*), option
-    real(kind=8) :: carcri(3)
-    real(kind=8) :: deps(6), deuxmu
-    real(kind=8) :: sigm(6), pcrm(7), sigp(6), pcrp(7), dsidep(6, 6)
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+integer :: ndim, imate, retcom
+character(len=8) :: typmod(*)
+character(len=16) :: option
+real(kind=8) :: carcri(3)
+real(kind=8) :: deps(6), deuxmu
+real(kind=8) :: sigm(6), pcrm(7), sigp(6), pcrp(7), dsidep(6, 6)
 ! ----------------------------------------------------------------------
 !     REALISE LA LOI DE CAM CLAY ELASTOPLASTIQUE POUR LES
 !     ELEMENTS ISOPARAMETRIQUES EN PETITES DEFORMATIONS
@@ -54,8 +53,7 @@ implicit none
 ! IN  NDIM    : DIMENSION DE L'ESPACE
 ! IN  TYPMOD  : TYPE DE MODELISATION
 ! IN  IMATE   : ADRESSE DU MATERIAU CODE
-! IN  COMPOR  : COMPORTEMENT : RELCOM ET DEFORM
-! IN  carcri    : carcriERES DE CONVERGENCE LOCAUX
+! IN  carcri    : CRITERES DE CONVERGENCE LOCAUX
 ! IN  INSTAM  : INSTANT DU CALCUL PRECEDENT
 ! IN  INSTAP  : INSTANT DU CALCUL
 ! IN  TM      : TEMPERATURE A L'INSTANT PRECEDENT
@@ -77,12 +75,11 @@ implicit none
 !
     aster_logical :: cplan
     integer :: iadzi, iazk24, iret
-    real(kind=8) :: epxmax
-    parameter   (epxmax = 5.d0)
+    real(kind=8), parameter :: epxmax = 5.d0
     character(len=8) :: nomail
     real(kind=8) :: valres(10), valpam(3)
     real(kind=8) :: mu, lambda, kapa, poro, prescr, m, kcam, ptrac
-    real(kind=8) :: coef, poro1, poro2, young, nu, e0, xk0, xk, fonc
+    real(kind=8) :: coef, young, nu, e0, xk0, xk, fonc
     real(kind=8) :: depsmo, deppmo, depseq
     real(kind=8) :: sigmmo, sigpmo, deltap, sieqm, sieqp, sieleq, simoel, spards
     real(kind=8) :: kron(6), depsdv(6), depsth(6), sigmdv(6), sigpdv(6)
@@ -99,7 +96,7 @@ implicit none
     real(kind=8) :: h, hp, xc, xd, xlam, xa, xu, xg, xh, xe, xf, xv, xi, rap
     real(kind=8) :: ct, v0, seuil
     real(kind=8) :: xinf, xsup, rbid
-    real(kind=8) :: diff, diff2
+    real(kind=8) :: diff2
     real(kind=8) :: zero, un, deux, trois, six, unsde, tol, ptit
     real(kind=8) :: valm, valp, tm, tp, tref
     integer :: ndimsi, signf, signfi
@@ -151,71 +148,38 @@ implicit none
     nompar(1) = 'TEMP'
     valpam(1) = tm
 !
+! - Get elastic properties
 !
-    if (compor(1)(1:9) .eq. 'CAM_CLAY ') then
+    call rcvala(imate, ' ', 'ELAS', 1, nompar,&
+                valpam, 1, nomres(1), valres(1), icodre(1),&
+                0)
 !
-        call rcvala(imate, ' ', 'ELAS', 1, nompar,&
-                    valpam, 1, nomres(1), valres(1), icodre(1),&
-                    0)
+! - Compute thermic dilation
 !
-        if ((.not.isnan(tp)) .and. (isnan(tm))) then
-            if ((isnan(tref)) .or. (icodre(1).ne.0)) then
-                call utmess('F', 'COMPOR5_42')
-            else
-                coef = valres(1)*(tp-tref) - valres(1)*(tm-tref)
-            endif
+    if ((.not.isnan(tp)) .and. (isnan(tm))) then
+        if ((isnan(tref)) .or. (icodre(1).ne.0)) then
+            call utmess('F', 'COMPOR5_42')
         else
-            valres(1) = 0.d0
-            coef = 0.d0
+            coef = valres(1)*(tp-tref) - valres(1)*(tm-tref)
         endif
-        call rcvala(imate, ' ', 'CAM_CLAY ', 1, nompar,&
-                    valpam, 8, nomres(2), valres(2), icodre(2),&
-                    2)
-        mu = valres(2)
-        poro = valres(3)
-        kapa = valres(4)
-        lambda = valres(5)
-        m = valres(6)
-        prescr = valres(7)
-        kcam = valres(8)
-        ptrac = valres(9)
-!
+    else
+        valres(1) = 0.d0
+        coef = 0.d0
     endif
-    if (((compor(1)(1:6) .eq. 'KIT_HM') .or. (compor(1)(1:7) .eq. 'KIT_HHM') .or.&
-        (compor(1)(1:7) .eq. 'KIT_THM') .or. (compor(1)(1:8) .eq. 'KIT_THHM')).and.&
-        (compor(MECA_NAME)(1:9) .eq. 'CAM_CLAY ')) then
 !
-        call rcvala(imate, ' ', 'ELAS', 1, nompar,&
-                    valpam, 1, nomres(1), valres(1), icodre(1),&
-                    0)
-        if (icodre(1) .ne. 0) valres(1) = 0.d0
-        coef = valres(1)*(tp-tref) - valres(1)*(tm-tref)
+! - Get material properties
 !
-        call rcvala(imate, ' ', 'CAM_CLAY ', 1, nompar,&
-                    valpam, 8, nomres(2), valres(2), icodre(2),&
-                    2)
-        mu = valres(2)
-        poro = valres(3)
-        poro1 = poro
-        kapa = valres(4)
-        lambda = valres(5)
-        m = valres(6)
-        prescr = valres(7)
-        kcam = valres(8)
-        ptrac = valres(9)
-!
-        call rcvala(imate, ' ', 'THM_INIT', 1, nompar,&
-                    valpam, 1, nomres(3), valres(3), icodre(3),&
-                    2)
-        poro = valres(3)
-        poro2 = poro
-        diff = poro1-poro2
-        if (abs(diff) .gt. tol) then
-            call utmess('F', 'ALGORITH6_60')
-        else
-            poro=poro1
-        endif
-    endif
+    call rcvala(imate, ' ', 'CAM_CLAY ', 1, nompar,&
+                valpam, 8, nomres(2), valres(2), icodre(2),&
+                2)
+    mu = valres(2)
+    poro = valres(3)
+    kapa = valres(4)
+    lambda = valres(5)
+    m = valres(6)
+    prescr = valres(7)
+    kcam = valres(8)
+    ptrac = valres(9)
     deuxmu = deux*mu
     e0 = poro/(1.d0-poro)
     xk0 = (1.d0+e0)/kapa
