@@ -21,7 +21,7 @@
 subroutine thmlec(j_mater, thmc, hydr, ther,&
                   t, p1, p2, phi, endo,&
                   pvp, pad, rgaz, tbiot, satur,&
-                  dsatur, pesa, tperm, permli, dperml,&
+                  dsatur, gravity, tperm, permli, dperml,&
                   permgz, dperms, dpermp, fick, dfickt,&
                   dfickg, lambp, dlambp, unsurk, alpha,&
                   lambs, dlambs, viscl, dviscl, mamolg,&
@@ -34,12 +34,14 @@ implicit none
 #include "asterfort/thmrcp.h"
 #include "asterfort/tebiot.h"
 #include "asterfort/thmGetPermeabilityTensor.h"
+#include "asterfort/thmEvalGravity.h"
 !
 integer, intent(in) :: ndim
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: phi, endo
 real(kind=8), intent(out) :: tperm(ndim, ndim)
+real(kind=8), intent(out) :: gravity(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,12 +60,13 @@ real(kind=8), intent(out) :: tperm(ndim, ndim)
 ! In  phi              : porosity
 ! In  endo             : damage
 ! Out tperm            : permeability tensor
+! Out gravity          : gravity
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: retcom
     real(kind=8) :: t, p1, p2, pvp
-    real(kind=8) :: rgaz, tbiot(6), satur, dsatur, pesa(3)
+    real(kind=8) :: rgaz, tbiot(6), satur, dsatur
     real(kind=8) :: permli, dperml, permgz, dperms, dpermp
     real(kind=8) :: fick, dfickt, dfickg, lambp, dlambp
     real(kind=8) :: alpha, lambs, dlambs, viscl, dviscl
@@ -139,7 +142,7 @@ real(kind=8), intent(out) :: tperm(ndim, ndim)
                     ther, t, rbid6, rbid41, rbid7,&
                     phi, rbid11, rbid12, rbid13,&
                     rbid14, rbid16, rbid17, rbid18,&
-                    pesa, rbid19, rbid20, rbid21,&
+                    gravity, rbid19, rbid20, rbid21,&
                     rbid22, rbid23, rbid24, rbid25, rbid26,&
                     lambp, dlambp, rbid27, unsurk, alpha,&
                     rbid28, lambs, dlambs, viscl, dviscl,&
@@ -153,7 +156,7 @@ real(kind=8), intent(out) :: tperm(ndim, ndim)
                     ther, t, rbid6, rbid44, rbid7,&
                     phi, rbid11, rgaz, rbid13,&
                     rbid14, rbid16, rbid17, rbid18,&
-                    pesa, rbid19, rbid20, rbid21,&
+                    gravity, rbid19, rbid20, rbid21,&
                     rbid22, rbid23, rbid24, rbid25, rbid26,&
                     lambp, dlambp, rbid27, rbid42, rbid43,&
                     rbid29, lambs, dlambs, rbid41, rbid31,&
@@ -167,7 +170,7 @@ real(kind=8), intent(out) :: tperm(ndim, ndim)
                     ther, t, p1, rbid6, p2,&
                     phi, pvp, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, permli, dperml, permgz,&
+                    gravity, permli, dperml, permgz,&
                     dperms, dpermp, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -181,7 +184,7 @@ real(kind=8), intent(out) :: tperm(ndim, ndim)
                     ther, t, p1, rbid6, p2,&
                     phi, pvp, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, permli, dperml, permgz,&
+                    gravity, permli, dperml, permgz,&
                     dperms, dpermp, fick, dfickt, dfickg,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -195,7 +198,7 @@ real(kind=8), intent(out) :: tperm(ndim, ndim)
                     ther, t, p1, rbid6, p2,&
                     phi, rbid28, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, permli, dperml, permgz,&
+                    gravity, permli, dperml, permgz,&
                     dperms, dpermp, fick, dfickt, dfickg,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -210,7 +213,7 @@ real(kind=8), intent(out) :: tperm(ndim, ndim)
                     ther, t, p1, rbid6, p2,&
                     phi, rbid28, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, permli, dperml, permgz,&
+                    gravity, permli, dperml, permgz,&
                     dperms, dpermp, rbid50, rbid50, rbid50,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -224,7 +227,7 @@ real(kind=8), intent(out) :: tperm(ndim, ndim)
                     ther, t, p1, rbid6, p2,&
                     phi, rbid28, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, permli, dperml, permgz,&
+                    gravity, permli, dperml, permgz,&
                     dperms, dpermp, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -238,7 +241,7 @@ real(kind=8), intent(out) :: tperm(ndim, ndim)
                     ther, t, p1, rbid6, p2,&
                     phi, rbid28, rbid29, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, permli, dperml, rbid30,&
+                    gravity, permli, dperml, rbid30,&
                     rbid31, rbid32, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -254,6 +257,10 @@ real(kind=8), intent(out) :: tperm(ndim, ndim)
 !
     call thmGetPermeabilityTensor(ndim , angl_naut, j_mater, phi, endo,&
                                   tperm)
+!
+! - Compute gravity
+!
+    call thmEvalGravity(j_mater, instap, gravity)
 !
 ! - (re)-compute Biot tensor
 !

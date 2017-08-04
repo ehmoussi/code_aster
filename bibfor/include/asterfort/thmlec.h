@@ -21,7 +21,7 @@ interface
     subroutine thmlec(j_mater, thmc, hydr, ther,&
                       t, p1, p2, phi, endo,&
                       pvp, pad, rgaz, tbiot, satur,&
-                      dsatur, pesa, tperm, permli, dperml,&
+                      dsatur, gravity, tperm, permli, dperml,&
                       permgz, dperms, dpermp, fick, dfickt,&
                       dfickg, lambp, dlambp, unsurk, alpha,&
                       lambs, dlambs, viscl, dviscl, mamolg,&
@@ -45,7 +45,7 @@ interface
         real(kind=8) :: tbiot(6)
         real(kind=8) :: satur
         real(kind=8) :: dsatur
-        real(kind=8) :: pesa(3)
+        real(kind=8), intent(out) :: gravity(3)
         real(kind=8) :: permli
         real(kind=8) :: dperml
         real(kind=8) :: permgz
