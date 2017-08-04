@@ -25,7 +25,7 @@ subroutine hmgazp(yachai, option, meca, thmc, ther,&
                   adcote, congem, congep, vintm, vintp,&
                   dsde, epsv, depsv, p1, dp1,&
                   t, dt, phi, rho11, &
-                  sat, retcom, tbiot, rinstp, angmas,&
+                  satur, retcom, tbiot, rinstp, angmas,&
                   deps)
 !
 use THM_type
@@ -70,7 +70,7 @@ implicit none
 ! ======================================================================
     integer :: i
     real(kind=8) :: epsvm, phim
-    real(kind=8) :: tbiot(6), cs, cp12, sat, mamolg
+    real(kind=8) :: tbiot(6), cs, cp12, satur, mamolg
     real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
     real(kind=8) :: r, rho0, csigm, alp11, em
     real(kind=8) :: eps, rinstp, deps(6)
@@ -80,7 +80,7 @@ implicit none
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid12, rbid13, rbid14(3)
+    real(kind=8) :: rbid10, saturm, dsatur_dp1, rbid14(3)
     real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid32(ndim, ndim)
@@ -110,7 +110,7 @@ implicit none
     call thmrcp('INTERMED', imate, thmc, hydr,&
                 ther, t, p1, rbid6, rbid44,&
                 rbid7, rbid10, r, rho0,&
-                csigm, rbid12, sat, rbid13,&
+                csigm, saturm, satur, dsatur_dp1,&
                 rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rbid43, rbid40, rbid41,&
@@ -133,7 +133,7 @@ implicit none
     p2 = p1
     dp2 = dp1
     dp1 = 0.0d0
-    sat = 0.0d0
+    satur = 0.0d0
     satm = 0.0d0
     alp11 = 0.0d0
     rho11 = 0.0d0
@@ -168,7 +168,7 @@ implicit none
         if ((yamec.eq.1) .or. emmag) then
             call viporo(nbvari, vintm, vintp, advico, vicphi,&
                         phi0, deps, depsv, alphfi, dt,&
-                        dp1, dp2, signe, sat, cs,&
+                        dp1, dp2, signe, satur, cs,&
                         tbiot, cbiot, unsks, alpha0, &
                         phi, phim, retcom )
         else if (yamec .eq. 2) then
@@ -201,12 +201,12 @@ implicit none
 ! =====================================================================
 ! --- CALCUL DES COEFFICIENTS DE DILATATIONS ALPHA SELON FORMULE DOCR -
 ! =====================================================================
-        alp21 = dilgaz(sat,phi,alphfi,t)
+        alp21 = dilgaz(satur,phi,alphfi,t)
 ! ======================================================================
 ! --- CALCUL DE LA CAPACITE CALORIFIQUE SELON FORMULE DOCR -------------
 ! ======================================================================
         call capaca(rho0, rho11, rho12, rho21, rho22,&
-                    sat, phi, csigm, cp11, cp12,&
+                    satur, phi, csigm, cp11, cp12,&
                     cp21, cp22, dalal, t, coeps,&
                     retcom)
 ! =====================================================================
@@ -236,7 +236,7 @@ implicit none
 ! --- CALCUL DES CONTRAINTES DE PRESSIONS ------------------------------
 ! ======================================================================
         if (yamec .eq. 1) then
-            call sigmap(net, bishop, sat, signe, tbiot,&
+            call sigmap(net, bishop, satur, signe, tbiot,&
                         dp2, dp1, sigmp)
             do 10 i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
@@ -249,7 +249,7 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES APPORTS MASSIQUES SELON FORMULE DOCR ------------------
 ! ======================================================================
-        congep(adcp11) = appmas(m11m,phi,phim,1.0d0-sat, 1.0d0-satm, rho21,rho21m,epsv,epsvm)
+        congep(adcp11) = appmas(m11m,phi,phim,1.0d0-satur, 1.0d0-satm, rho21,rho21m,epsv,epsvm)
     endif
 !
 ! **********************************************************************
@@ -275,7 +275,7 @@ implicit none
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- UNIQUEMENT POUR LA PARTIE MECANIQUE ------------------------------
 ! ======================================================================
-            call dmdepv(rho21, 1.0d0-sat, tbiot, dmdeps)
+            call dmdepv(rho21, 1.0d0-satur, tbiot, dmdeps)
             do 12 i = 1, 6
                 dsde(adcp11,addeme+ndim-1+i) = dsde(adcp11,addeme+ ndim-1+i) + dmdeps(i)
  12         continue
@@ -292,7 +292,7 @@ implicit none
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- UNIQUEMENT POUR LA PARTIR THERMIQUE ------------------------------
 ! ======================================================================
-            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt(rho21, phi,sat,cliq,0.0d0,alp21)
+            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt(rho21, phi,satur,cliq,0.0d0,alp21)
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
 ! ======================================================================
@@ -314,7 +314,7 @@ implicit none
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
-        dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmasp2(1.0d0,0.0d0,rho21,sat,phi,cs,p2,emmag &
+        dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmasp2(1.0d0,0.0d0,rho21,satur,phi,cs,p2,emmag &
                               &,em)
     endif
 ! =====================================================================

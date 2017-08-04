@@ -28,7 +28,7 @@ subroutine hmladg(yachai, option, meca, ther, hydr,&
                   vintm, vintp, dsde, epsv, depsv,&
                   p1, p2, dp1, dp2, t,&
                   dt, phi, padp, h11, h12,&
-                  kh, rho11, sat, retcom,&
+                  kh, rho11, satur, retcom,&
                   thmc, tbiot, rinstp, angmas, deps)
 !
 use THM_type
@@ -107,9 +107,9 @@ implicit none
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
     integer :: i
-    real(kind=8) :: satm, epsvm, phim, rho11m, rho21m, rho22m
+    real(kind=8) :: saturm, epsvm, phim, rho11m, rho21m, rho22m
     real(kind=8) :: tbiot(6), cs, alpliq, cliq, rho110
-    real(kind=8) :: cp11, cp12, cp21, sat, dsatp1, mamolg
+    real(kind=8) :: cp11, cp12, cp21, satur, dsatur_dp1, mamolg
     real(kind=8) :: r, rho0, coeps, csigm, alp11, alp12, alp21
     real(kind=8) :: dp11t, dp11p1, dp11p2
     real(kind=8) :: dp21t, dp21p1, dp21p2
@@ -150,7 +150,7 @@ implicit none
     call thmrcp('INTERMED', imate, thmc, hydr,&
                 ther, t, p1, p1m, rbid6,&
                 rbid7, rbid10, r, rho0,&
-                csigm, satm, sat, dsatp1,&
+                csigm, saturm, satur, dsatur_dp1,&
                 rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
@@ -202,13 +202,13 @@ implicit none
         if ((yamec.eq.1)) then
             call viporo(nbvari, vintm, vintp, advico, vicphi,&
                         phi0, deps, depsv, alphfi, dt,&
-                        dp1, dp2, signe, sat, cs,&
+                        dp1, dp2, signe, satur, cs,&
                         tbiot, cbiot, unsks, alpha0, &
                         phi, phim, retcom )
         endif
         if (emmag) then
             call viemma(nbvari, vintm, vintp, advico, vicphi,&
-                        phi0, dp1, dp2, signe, sat,&
+                        phi0, dp1, dp2, signe, satur,&
                         em, phi, phim, retcom)
         endif
 ! =====================================================================
@@ -228,7 +228,7 @@ implicit none
 ! =====================================================================
 ! --- RECUPERATION DE LA VARIABLE INTERNE DE SATURATION ---------------
 ! =====================================================================
-        call visatu(nbvari, vintp, advico, vicsat, sat)
+        call visatu(nbvari, vintp, advico, vicsat, satur)
     else
 ! =====================================================================
 ! --- MISE A JOUR DE LA PRESSION D AIR DISSOUS SELON FORMULE DOCR -----
@@ -271,16 +271,16 @@ implicit none
 ! =====================================================================
 ! --- CALCUL DES COEFFICIENTS DE DILATATIONS ALPHA SELON FORMULE DOCR -
 ! =====================================================================
-        alp11 = dileau(sat,phi,alphfi,alpliq)
+        alp11 = dileau(satur,phi,alphfi,alpliq)
         alp12 = zero
-        alp21 = dilgaz(sat,phi,alphfi,t )
+        alp21 = dilgaz(satur,phi,alphfi,t )
         h11 = congem(adcp11+ndim+1)
         h12 = congem(adcp12+ndim+1)
 ! ======================================================================
 ! --- CALCUL DE LA CAPACITE CALORIFIQUE SELON FORMULE DOCR -------------
 ! ======================================================================
         call capaca(rho0, rho11, rho12, rho21, rho22,&
-                    sat, phi, csigm, cp11, cp12,&
+                    satur, phi, csigm, cp11, cp12,&
                     cp21, cp22, dalal, t, coeps,&
                     retcom)
 ! =====================================================================
@@ -315,7 +315,7 @@ implicit none
 ! --- CALCUL DES CONTRAINTES DE PRESSIONS ------------------------------
 ! ======================================================================
         if (yamec .eq. 1) then
-            call sigmap(net, bishop, sat, signe, tbiot,&
+            call sigmap(net, bishop, satur, signe, tbiot,&
                         dp2, dp1, sigmp)
             do 10 i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
@@ -328,10 +328,10 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES APPORTS MASSIQUES SELON FORMULE DOCR ------------------
 ! ======================================================================
-        congep(adcp11) = appmas(m11m,phi,phim,sat,satm,rho11, rho11m, epsv,epsvm)
+        congep(adcp11) = appmas(m11m,phi,phim,satur,saturm,rho11, rho11m, epsv,epsvm)
         congep(adcp12) = zero
-        congep(adcp21) = appmas(m21m,phi,phim,1.0d0-sat, 1.0d0-satm, rho21,rho21m,epsv,epsvm)
-        congep(adcp22) = appmas(m22m,phi,phim,sat,satm,rho22, rho22m, epsv,epsvm)
+        congep(adcp21) = appmas(m21m,phi,phim,1.0d0-satur, 1.0d0-saturm, rho21,rho21m,epsv,epsvm)
+        congep(adcp22) = appmas(m22m,phi,phim,satur,saturm,rho22, rho22m, epsv,epsvm)
     endif
 !
 ! **********************************************************************
@@ -352,7 +352,7 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DE SIGMAP ------------------------------------
 ! ======================================================================
-            call dspdp1(net, bishop, signe, tbiot, sat,&
+            call dspdp1(net, bishop, signe, tbiot, satur,&
                         dsdp1)
             call dspdp2(net, bishop, tbiot, dsdp2)
             do 111 i = 1, 3
@@ -372,16 +372,16 @@ implicit none
 ! --- UNIQUEMENT POUR LA PARTIE MECANIQUE ------------------------------
 ! ======================================================================
             do 12 i = 1, 6
-                call dmdepv(rho11, sat, tbiot, dmdeps)
+                call dmdepv(rho11, satur, tbiot, dmdeps)
                 dsde(adcp11,addeme+ndim-1+i) = dsde(adcp11,addeme+ ndim-1+i) + dmdeps(i)
  12         continue
             do 13 i = 1, 6
-                call dmdepv(rho21, 1.d0-sat, tbiot, dmdeps)
+                call dmdepv(rho21, 1.d0-satur, tbiot, dmdeps)
                 dsde(adcp12,addeme+ndim-1+i) =zero
                 dsde(adcp21,addeme+ndim-1+i) = dsde(adcp21,addeme+ ndim-1+i) + dmdeps(i)
  13         continue
             do 14 i = 1, 6
-                call dmdepv(rho22, sat, tbiot, dmdeps)
+                call dmdepv(rho22, satur, tbiot, dmdeps)
                 dsde(adcp22,addeme+ndim-1+i) = dsde(adcp22,addeme+ ndim-1+i) + dmdeps(i)
  14         continue
         endif
@@ -406,11 +406,11 @@ implicit none
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- UNIQUEMENT POUR LA PARTIR THERMIQUE ------------------------------
 ! ======================================================================
-            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt(rho11, phi,sat,cliq,dp11t,alp11)
-            dsde(adcp22,addete) = dsde(adcp22,addete) + dmadt(rho22, sat,phi,mamolg,dp21t,kh,alph&
+            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt(rho11, phi,satur,cliq,dp11t,alp11)
+            dsde(adcp22,addete) = dsde(adcp22,addete) + dmadt(rho22, satur,phi,mamolg,dp21t,kh,alph&
                                   &fi)
             dsde(adcp12,addete) = zero
-            dsde(adcp21,addete) = dsde(adcp21,addete) + dmasdt(rho12, rho21,sat,phi,pas,h11,h12,t&
+            dsde(adcp21,addete) = dsde(adcp21,addete) + dmasdt(rho12, rho21,satur,phi,pas,h11,h12,t&
                                   &,alp21)
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
@@ -435,20 +435,20 @@ implicit none
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
-        dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmwdp1(rho11, signe,sat,dsatp1,phi,cs,cliq,-d&
-                              &p11p1, emmag,em)
-        dsde(adcp11,addep2) = dsde(adcp11,addep2) + dmwdp2(rho11,sat, phi,cs,cliq,dp11p2, emmag,e&
-                              &m)
-        dsde(adcp22,addep1) = dsde(adcp22,addep1) + dmadp1(rho22,sat, dsatp1,phi,cs,mamolg,kh,dp2&
-                              &1p1, emmag,em)
-        dsde(adcp22,addep2) = dsde(adcp22,addep2) + dmadp2(rho22,sat, phi,cs,mamolg,kh,dp21p2, em&
-                              &mag,em)
+        dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
+                              dmwdp1(rho11, signe,satur,dsatur_dp1,phi,cs,cliq,-dp11p1, emmag,em)
+        dsde(adcp11,addep2) = dsde(adcp11,addep2) +&
+                              dmwdp2(rho11,satur, phi,cs,cliq,dp11p2, emmag,em)
+        dsde(adcp22,addep1) = dsde(adcp22,addep1) +&
+                              dmadp1(rho22,satur, dsatur_dp1,phi,cs,mamolg,kh,dp21p1, emmag,em)
+        dsde(adcp22,addep2) = dsde(adcp22,addep2) +&
+                              dmadp2(rho22,satur, phi,cs,mamolg,kh,dp21p2, emmag,em)
         dsde(adcp12,addep1) = zero
         dsde(adcp12,addep2) = zero
-        dsde(adcp21,addep1) = dsde(adcp21,addep1) + dmasp1(rho11, rho12,rho21,sat,dsatp1,phi,cs,p&
-                              &2, emmag,em)
-        dsde(adcp21,addep2) = dsde(adcp21,addep2) + dmasp2(rho11, rho12,rho21,sat,phi,cs,pas, emm&
-                              &ag,em)
+        dsde(adcp21,addep1) = dsde(adcp21,addep1) +&
+                              dmasp1(rho11, rho12,rho21,satur,dsatur_dp1,phi,cs,p2, emmag,em)
+        dsde(adcp21,addep2) = dsde(adcp21,addep2) +&
+                              dmasp2(rho11, rho12,rho21,satur,phi,cs,pas, emmag,em)
     endif
 ! ======================================================================
  30 continue

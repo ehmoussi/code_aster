@@ -29,7 +29,7 @@ interface
                       vintm, vintp, dsde, epsv, depsv,&
                       p1, p2, dp1, dp2, t,&
                       dt, phi, padp, h11, h12,&
-                      kh, rho11, sat, retcom,&
+                      kh, rho11, satur, retcom,&
                       thmc, tbiot, rinstp, angmas, deps)
         integer :: nbvari
         integer :: dimcon
@@ -78,7 +78,7 @@ interface
         real(kind=8) :: h12
         real(kind=8) :: kh
         real(kind=8) :: rho11
-        real(kind=8) :: sat
+        real(kind=8) :: satur
         integer :: retcom
         character(len=16) :: thmc
         real(kind=8) :: tbiot(6)

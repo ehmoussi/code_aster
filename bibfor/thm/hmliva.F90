@@ -26,7 +26,7 @@ subroutine hmliva(yachai, option, meca, ther, hydr,&
                   congem, congep, vintm, vintp, dsde,&
                   epsv, depsv, p1, dp1, t,&
                   dt, phi, pvp, h11, h12,&
-                  rho11, sat, retcom,&
+                  rho11, satur, retcom,&
                   thmc, tbiot, rinstp, angmas, deps)
 !
 use THM_type
@@ -94,9 +94,9 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    real(kind=8) :: satm, epsvm, phim, rho11m, rho12m, pvpm, rho110, dpvp
+    real(kind=8) :: saturm, epsvm, phim, rho11m, rho12m, pvpm, rho110, dpvp
     real(kind=8) :: dpvpt, dpvpl, tbiot(6), cs, alpliq, cliq
-    real(kind=8) :: cp11, cp12, sat, dsatp1, mamolv, em
+    real(kind=8) :: cp11, cp12, satur, dsatur_pc, mamolv, em
     real(kind=8) :: r, rho0, csigm, alp11, alp12, rho12, alpha0
     real(kind=8) :: eps, deps(6), mdal(6), dalal, alphfi, cbiot, unsks
     parameter  ( eps = 1.d-21 )
@@ -105,12 +105,12 @@ implicit none
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid14(3), rbid9
+    real(kind=8) :: rbid10, rbid14(3), rbid9, rbid41
     real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid32(ndim, ndim)
     real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38, rbid20
-    real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43
+    real(kind=8) :: rbid39, rbid40, dsaturm_dp1, rbid43
     real(kind=8) :: rbid51, rbid52, rbid53, rbid54
     real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid56
     real(kind=8) :: rbid57(ndim, ndim), rbid55
@@ -133,7 +133,7 @@ implicit none
     call thmrcp('INTERMED', imate, thmc, hydr,&
                 ther, t, rbid40, pvpm-p1+dp1, rbid6,&
                 rbid7, rbid10, r, rho0,&
-                csigm, satm, rbid42, rbid43,&
+                csigm, saturm, dsaturm_dp1, rbid43,&
                 rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
@@ -214,7 +214,7 @@ implicit none
     call thmrcp('SATURATI', imate, thmc, hydr,&
                 ther, rbid9, pvp-p1, rbid41, rbid6,&
                 rbid7, rbid10, rbid51, rbid52,&
-                rbid53, rbid41, sat, dsatp1,&
+                rbid53, saturm, satur, dsatur_pc,&
                 rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, rbid53, rbid52,&
@@ -238,13 +238,13 @@ implicit none
 !        endif
         if (emmag) then
             call viemma(nbvari, vintm, vintp, advico, vicphi,&
-                        phi0, dp1-dpvp, dpvp, signe, sat,&
+                        phi0, dp1-dpvp, dpvp, signe, satur,&
                         em, phi, phim, retcom)
         endif
 ! =====================================================================
 ! --- RECUPERATION DE LA VARIABLE INTERNE DE SATURATION ---------------
 ! =====================================================================
-        call visatu(nbvari, vintp, advico, vicsat, sat)
+        call visatu(nbvari, vintp, advico, vicsat, satur)
 ! =====================================================================
 ! --- PROBLEME DANS LE CALCUL DES VARIABLES INTERNES ? ----------------
 ! =====================================================================
@@ -255,8 +255,8 @@ implicit none
 ! =====================================================================
 ! --- QUELQUES INITIALISATIONS ----------------------------------------
 ! =====================================================================
-    ums = 1.d0 - sat
-    phids = phi*dsatp1
+    ums = 1.d0 - satur
+    phids = phi*dsatur_pc
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************
 ! **********************************************************************
@@ -274,13 +274,13 @@ implicit none
 ! =====================================================================
 ! --- CALCUL DES COEFFICIENTS DE DILATATIONS ALPHA SELON FORMULE DOCR -
 ! =====================================================================
-        alp11 = dileau(sat,phi,alphfi,alpliq)
-        alp12 = dilgaz(sat,phi,alphfi,t)
+        alp11 = dileau(satur,phi,alphfi,alpliq)
+        alp12 = dilgaz(satur,phi,alphfi,t)
 ! ======================================================================
 ! --- CALCUL DE LA CAPACITE CALORIFIQUE SELON FORMULE DOCR -------------
 ! ======================================================================
         call capaca(rho0, rho11, rho12, rho21, rho22,&
-                    sat, phi, csigm, cp11, cp12,&
+                    satur, phi, csigm, cp11, cp12,&
                     cp21, cp22, dalal, t, coeps,&
                     retcom)
 ! =====================================================================
@@ -334,8 +334,8 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES APPORTS MASSIQUES SELON FORMULE DOCR ------------------
 ! ======================================================================
-        congep(adcp11) = appmas(m11m,phi,phim,sat,satm,rho11, rho11m, epsv,epsvm)
-        congep(adcp12) = appmas(m12m,phi,phim,1.0d0-sat, 1.0d0-satm, rho12,rho12m,epsv,epsvm)
+        congep(adcp11) = appmas(m11m,phi,phim,satur,saturm,rho11, rho11m, epsv,epsvm)
+        congep(adcp12) = appmas(m12m,phi,phim,1.0d0-satur, 1.0d0-saturm, rho12,rho12m,epsv,epsvm)
     endif
 !
 ! **********************************************************************
@@ -364,7 +364,7 @@ implicit none
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- UNIQUEMENT POUR LA PARTIR THERMIQUE ------------------------------
 ! ======================================================================
-            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt2(rho11, alp11,phids,sat,cs,dpvpt)
+            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt2(rho11, alp11,phids,satur,cs,dpvpt)
             dsde(adcp12,addete) = dsde(adcp12,addete) + dmvpd2(rho12, alp12,dpvpt,phi,ums,pvp,phi&
                                   &ds,cs)
 ! ======================================================================
@@ -386,8 +386,8 @@ implicit none
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
-        dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmwp1v(rho11, phids,sat,cs,dpvpl,phi,cliq)
-        dsde(adcp12,addep1) = dsde(adcp12,addep1) + dmvpp1(rho11, rho12,phids,ums,cs,dpvpl,sat,ph&
+        dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmwp1v(rho11, phids,satur,cs,dpvpl,phi,cliq)
+        dsde(adcp12,addep1) = dsde(adcp12,addep1) + dmvpp1(rho11, rho12,phids,ums,cs,dpvpl,satur,ph&
                               &i,pvp)
     endif
 ! =====================================================================

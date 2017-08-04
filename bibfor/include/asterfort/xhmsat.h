@@ -27,7 +27,7 @@ interface
                       addep1, adcp11, congem, congep, vintm,&
                       vintp, dsde, epsv, depsv, p1,&
                       dp1, t, phi, rho11,&
-                      sat, retcom, tbiot, rinstp,&
+                      satur, retcom, tbiot, rinstp,&
                       angl_naut, yaenrh, adenhy, nfh)
         integer :: nbvari
         integer :: dimcon
@@ -61,7 +61,7 @@ interface
         real(kind=8) :: t
         real(kind=8) :: phi
         real(kind=8) :: rho11
-        real(kind=8) :: sat
+        real(kind=8) :: satur
         integer :: retcom
         real(kind=8) :: tbiot(6)
         real(kind=8) :: rinstp
