@@ -25,7 +25,7 @@ subroutine xhmsat(yachai, option, meca, thmc, ther,&
                   addep1, adcp11, congem, congep, vintm,&
                   vintp, dsde, epsv, depsv, p1,&
                   dp1, t, phi, rho11,&
-                  satur, retcom, tbiot, rinstp, angl_naut,&
+                  satur, retcom, tbiot, angl_naut,&
                   yaenrh, adenhy, nfh)
 !
 use THM_type
@@ -69,7 +69,7 @@ implicit none
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
     real(kind=8) :: epsv, depsv, p1, dp1, t, dt
     real(kind=8) :: phi, rho11, rac2
-    real(kind=8) :: rinstp, angl_naut(3)
+    real(kind=8) :: angl_naut(3)
     character(len=16) :: option, meca, ther, thmc, hydr
     aster_logical :: yachai
 !
@@ -90,7 +90,7 @@ implicit none
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7, rbid3, rbid4, rbid5
-    real(kind=8) :: rbid10, rbid11, rbid14(3)
+    real(kind=8) :: rbid10, rbid11
     real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid38
@@ -114,14 +114,14 @@ implicit none
                 ther, t, p1, rbid40, rbid6,&
                 rbid7, rbid10, rbid11, rho0,&
                 csigm, rbid3, rbid4, rbid5,&
-                rbid14, rbid16, rbid17, rbid18,&
+                rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
                 cp11, rbid26, rbid27, rbid28, rbid29,&
                 rbid30, rbid31, rbid32, rbid33, rbid34,&
                 rbid35, rbid36, rbid37, rbid38, rbid39,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
-                bid, rbid50, rinstp, retcom,&
+                bid, rbid50, retcom,&
                 angl_naut, ndim)
 !
 ! - Evaluation of initial saturation

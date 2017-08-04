@@ -28,7 +28,7 @@ subroutine hmlvga(yachai, option, meca, ther, hydr,&
                   p1, p2, dp1, dp2, t,&
                   dt, phi, padp, pvp, h11,&
                   h12, kh, rho11, &
-                  satur, retcom, thmc, tbiot, rinstp,&
+                  satur, retcom, thmc, tbiot,&
                   angmas, deps)
 !
 use THM_type
@@ -107,7 +107,7 @@ implicit none
     real(kind=8) :: congem(dimcon), congep(dimcon), vintm(nbvari)
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
     real(kind=8) :: p1, dp1, p2, dp2, t, dt, phi, padp, pvp, h11, h12
-    real(kind=8) :: rho11, phi0, pvp0, kh, rinstp, angmas(3)
+    real(kind=8) :: rho11, phi0, pvp0, kh, angmas(3)
     character(len=16) :: option, meca, ther, hydr, thmc
     aster_logical :: yachai
 ! ======================================================================
@@ -129,8 +129,7 @@ implicit none
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid14(3)
-    real(kind=8) :: rbid16, rbid17, rbid18, rbid19
+    real(kind=8) :: rbid10, rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26, rbid20
     real(kind=8) :: rbid27, rbid28, rbid29, rbid32(ndim, ndim)
     real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38
@@ -156,14 +155,14 @@ implicit none
                 ther, t, p1, p1m, rbid6,&
                 rbid7, rbid10, r, rho0,&
                 csigm, saturm, satur, dsatur_dp1,&
-                rbid14, rbid16, rbid17, rbid18,&
+                rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
                 cp11, rbid26, rbid27, rbid28, rbid29,&
                 mamolg, cp21, rbid32, rbid33, rbid34,&
                 rbid35, mamolv, cp12, rbid38, rbid39,&
                 rbid45, rbid46, cp22, kh, rbid49,&
-                em, rbid50, rinstp, retcom,&
+                em, rbid50, retcom,&
                 angmas, ndim)
 !
 ! - Evaluation of initial saturation

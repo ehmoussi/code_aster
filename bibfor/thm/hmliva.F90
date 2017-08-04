@@ -27,7 +27,7 @@ subroutine hmliva(yachai, option, meca, ther, hydr,&
                   epsv, depsv, p1, dp1, t,&
                   dt, phi, pvp, h11, h12,&
                   rho11, satur, retcom,&
-                  thmc, tbiot, rinstp, angmas, deps)
+                  thmc, tbiot, angmas, deps)
 !
 use THM_type
 use THM_module
@@ -90,7 +90,7 @@ implicit none
     real(kind=8) :: epsv, depsv, p1, dp1, t, dt
     real(kind=8) :: phi, pvp, h11, h12, rho11
     real(kind=8) :: phi0, pvp0
-    real(kind=8) :: ums, phids, rinstp, angmas(3)
+    real(kind=8) :: ums, phids, angmas(3)
     character(len=16) :: option, meca, ther, hydr, thmc
     aster_logical :: yachai
 ! ======================================================================
@@ -107,8 +107,7 @@ implicit none
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid14(3)
-    real(kind=8) :: rbid16, rbid17, rbid18, rbid19
+    real(kind=8) :: rbid10, rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid32(ndim, ndim)
     real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38, rbid20
@@ -137,14 +136,14 @@ implicit none
                 ther, t, rbid40, pvpm-p1+dp1, rbid6,&
                 rbid7, rbid10, r, rho0,&
                 csigm, saturm, satur, dsatur_dp1,&
-                rbid14, rbid16, rbid17, rbid18,&
+                rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
                 cp11, rbid26, rbid27, rbid28, rbid29,&
                 rbid30, rbid31, rbid32, rbid33, rbid34,&
                 rbid35, mamolv, cp12, rbid38, rbid39,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
-                em, rbid57,  rinstp, retcom,&
+                em, rbid57,  retcom,&
                 angmas, ndim)
 !
 ! - Evaluation of initial saturation

@@ -50,13 +50,13 @@ implicit none
     real(kind=8) :: sautm(3), alpha(5), nd(3), t, rho110, r, pf, am(3)
     real(kind=8) :: rbid2, rbid3, rbid4, rbid5
     real(kind=8) :: rbid8, rbid9, rbid10, rbid11
-    real(kind=8) :: rbid15(3), rbid17, rbid18, rbid19, rbid20
+    real(kind=8) :: rbid17, rbid18, rbid19, rbid20
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid29, rbid30, rbid31, rbid32
     real(kind=8) :: rbid33, rbid34, rbid35, rbid36, rbid37(3, 3)
     real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid44
     real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid50
-    real(kind=8) :: rbid52, rbid38(3, 3), rbid51(3, 3)
+    real(kind=8) :: rbid38(3, 3), rbid51(3, 3)
     real(kind=8) :: r7bid(3), rbid12, rbid13, rbid14
     character(len=8)  :: job
     character(len=16) :: thmc, hydr, zkbid, option
@@ -75,14 +75,14 @@ implicit none
                 zkbid, t, rbid2, rbid3, rbid4,&
                 rbid5, rbid8, rbid9, rbid10,&
                 rbid11, rbid12, rbid13, rbid14,&
-                rbid15, rbid17, rbid18, rbid19,&
+                rbid17, rbid18, rbid19,&
                 rbid20, rbid21, rbid22, rbid23, rbid24,&
                 rbid25, rbid26, rho110, cliq, rbid29,&
                 rbid30, rbid31, rbid32, rbid33, rbid34,&
                 rbid35, rbid36, rbid37, rbid38, rbid39,&
                 rbid40, rbid41, rbid42, rbid43, rbid44,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
-                rbid50, rbid51, rbid52, ibid,&
+                rbid50, rbid51, ibid,&
                 r7bid, ndim)
 !
 !   INITIALISATION DE LA VARIABLE INTERNE

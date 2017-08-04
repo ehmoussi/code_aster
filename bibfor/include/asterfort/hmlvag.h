@@ -30,7 +30,7 @@ interface
                       p1, p2, dp1, dp2, t,&
                       dt, phi, pvp, h11, h12,&
                       rho11, satur, retcom,&
-                      thmc, crit, tbiot, rinstp, angmas)
+                      thmc, crit, tbiot, angmas)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -82,7 +82,6 @@ interface
         character(len=16) :: thmc
         real(kind=8) :: crit(*)
         real(kind=8) :: tbiot(6)
-        real(kind=8) :: rinstp
         real(kind=8) :: angmas(3)
     end subroutine hmlvag
 end interface 

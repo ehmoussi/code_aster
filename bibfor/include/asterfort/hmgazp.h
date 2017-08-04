@@ -28,7 +28,7 @@ interface
                       adcote, congem, congep, vintm, vintp,&
                       dsde, epsv, depsv, p1, dp1,&
                       t, dt, phi, rho11, &
-                      satur, retcom, tbiot, rinstp, angmas,&
+                      satur, retcom, tbiot, angmas,&
                       deps)
         integer :: nbvari
         integer :: dimcon
@@ -67,7 +67,6 @@ interface
         real(kind=8) :: satur
         integer :: retcom
         real(kind=8) :: tbiot(6)
-        real(kind=8) :: rinstp
         real(kind=8) :: angmas(3)
         real(kind=8) :: deps(6)
     end subroutine hmgazp

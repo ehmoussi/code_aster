@@ -22,14 +22,14 @@ interface
                       ther, t, p1, p1m, p2,&
                       phi, pvp, rgaz, rhod,&
                       cpd, satm, satur, dsatur,&
-                      pesa, permli, dperml, permgz,&
+                      permli, dperml, permgz,&
                       dperms, dpermp, fick, dfickt, dfickg,&
                       lambp, dlambp, rhol, unsurk, alpha,&
                       cpl, lambs, dlambs, viscl, dviscl,&
                       mamolg, cpg, tlambt, tdlamt, viscg,&
                       dviscg, mamolv, cpvg, viscvg, dvisvg,&
                       fickad, dfadt, cpad, kh, pad,&
-                      em, tlamct, instap, retcom,&
+                      em, tlamct, retcom,&
                       angmas, ndim)
         integer :: ndim
         character(len=8) :: etape
@@ -54,7 +54,6 @@ interface
         real(kind=8) :: satm
         real(kind=8) :: satur
         real(kind=8) :: dsatur
-        real(kind=8) :: pesa(3)
         real(kind=8) :: permli
         real(kind=8) :: dperml
         real(kind=8) :: permgz
@@ -90,7 +89,6 @@ interface
         real(kind=8) :: pad
         real(kind=8) :: em
         real(kind=8) :: tlamct(ndim, ndim)
-        real(kind=8) :: instap
         integer :: retcom
         real(kind=8) :: angmas(3)
     end subroutine thmrcp

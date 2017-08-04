@@ -27,7 +27,7 @@ subroutine hmliga(yachai, option, meca, ther, hydr,&
                   deps, epsv, depsv, p1, p2,&
                   dp1, dp2, t, dt, phi,&
                   rho11, satur, retcom, thmc,&
-                  crit, tbiot, rinstp, angmas)
+                  crit, tbiot, angmas)
 !
 use THM_type
 use THM_module
@@ -87,7 +87,7 @@ implicit none
     integer :: addete, advihy, advico, vihrho, vicphi, vicsat
     real(kind=8) :: congem(dimcon), congep(dimcon), vintm(nbvari)
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
-    real(kind=8) :: p1, dp1, p2, dp2, t, dt, phi, rho11, phi0, rinstp
+    real(kind=8) :: p1, dp1, p2, dp2, t, dt, phi, rho11, phi0
     real(kind=8) :: angmas(3)
     character(len=16) :: option, meca, ther, hydr, thmc
     aster_logical :: yachai
@@ -115,7 +115,7 @@ implicit none
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid14(3)
+    real(kind=8) :: rbid10
     real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid32(ndim, ndim)
@@ -141,14 +141,14 @@ implicit none
                 ther, t, p1, p1m, rbid6,&
                 rbid7, rbid10, r, rho0,&
                 csigm, saturm, satur, dsatur_dp1,&
-                rbid14, rbid16, rbid17, rbid18,&
+                rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
                 cp11, rbid26, rbid27, rbid28, rbid29,&
                 mamolg, cp21, rbid32, rbid33, rbid34,&
                 rbid35, rbid36, rbid37, rbid38, rbid39,&
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
-                em, rbid50, rinstp, retcom,&
+                em, rbid50, retcom,&
                 angmas, ndim)
 !
 ! - Evaluation of initial saturation
