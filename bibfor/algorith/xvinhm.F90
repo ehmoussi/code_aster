@@ -49,15 +49,15 @@ implicit none
     real(kind=8) :: w11, w11m, varbio, dpf, psp, psm, saut(3), lamb(3)
     real(kind=8) :: sautm(3), alpha(5), nd(3), t, rho110, r, pf, am(3)
     real(kind=8) :: rbid2, rbid3, rbid4, rbid5
-    real(kind=8) :: rbid8, rbid9, rbid10, rbid11, rbid13, rbid14
+    real(kind=8) :: rbid8, rbid9, rbid10, rbid11
     real(kind=8) :: rbid15(3), rbid17, rbid18, rbid19, rbid20
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid29, rbid30, rbid31, rbid32
     real(kind=8) :: rbid33, rbid34, rbid35, rbid36, rbid37(3, 3)
     real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid44
     real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid50
-    real(kind=8) :: rbid52, rbid53, rbid38(3, 3), rbid51(3, 3)
-    real(kind=8) :: r7bid(3)
+    real(kind=8) :: rbid52, rbid38(3, 3), rbid51(3, 3)
+    real(kind=8) :: r7bid(3), saturm, satur, dsatur_dp1
     character(len=8)  :: job
     character(len=16) :: thmc, hydr, zkbid, option
 !
@@ -74,7 +74,7 @@ implicit none
     call thmrcp('INTERMED', jmate, thmc, hydr,&
                 zkbid, t, rbid2, rbid3, rbid4,&
                 rbid5, rbid8, rbid9, rbid10,&
-                rbid11, rbid13, rbid53, rbid14,&
+                rbid11, saturm, satur, dsatur_dp1,&
                 rbid15, rbid17, rbid18, rbid19,&
                 rbid20, rbid21, rbid22, rbid23, rbid24,&
                 rbid25, rbid26, rho110, cliq, rbid29,&

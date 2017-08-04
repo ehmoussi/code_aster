@@ -28,7 +28,7 @@ interface
                       congem, congep, vintm, vintp, dsde,&
                       deps, epsv, depsv, p1, p2,&
                       dp1, dp2, t, dt, phi,&
-                      rho11, sat, retcom, thmc,&
+                      rho11, satur, retcom, thmc,&
                       crit, tbiot, rinstp, angmas)
         integer :: nbvari
         integer :: dimcon
@@ -71,7 +71,7 @@ interface
         real(kind=8) :: dt
         real(kind=8) :: phi
         real(kind=8) :: rho11
-        real(kind=8) :: sat
+        real(kind=8) :: satur
         integer :: retcom
         character(len=16) :: thmc
         real(kind=8) :: crit(*)

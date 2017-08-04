@@ -25,7 +25,7 @@ subroutine xhmsat(yachai, option, meca, thmc, ther,&
                   addep1, adcp11, congem, congep, vintm,&
                   vintp, dsde, epsv, depsv, p1,&
                   dp1, t, phi, rho11,&
-                  sat, retcom, tbiot, rinstp, angl_naut,&
+                  satur, retcom, tbiot, rinstp, angl_naut,&
                   yaenrh, adenhy, nfh)
 !
 use THM_type
@@ -81,16 +81,16 @@ implicit none
 ! ======================================================================
     integer :: i, yaenrh, adenhy, ifh
     real(kind=8) :: epsvm, phim, rho11m, rho110, rho0, csigm
-    real(kind=8) :: tbiot(6), cs, alpha0, alpliq, cliq, cp11, sat
+    real(kind=8) :: tbiot(6), cs, alpha0, alpliq, cliq, cp11, satur
     real(kind=8) :: bid, dpad
-    real(kind=8) :: dsatp1
-    real(kind=8) :: m11m, satm, mdal(6), dalal, alphfi, cbiot, unsks
+    real(kind=8) :: dsatur_dp1
+    real(kind=8) :: m11m, saturm, mdal(6), dalal, alphfi, cbiot, unsks
     real(kind=8) :: deps(6)
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid11, rbid12, rbid13, rbid14(3)
+    real(kind=8) :: rbid10, rbid11, rbid14(3)
     real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid38
@@ -113,7 +113,7 @@ implicit none
     call thmrcp('INTERMED', imate, thmc, hydr,&
                 ther, t, p1, rbid40, rbid6,&
                 rbid7, rbid10, rbid11, rho0,&
-                csigm, rbid12, sat, rbid13,&
+                csigm, saturm, satur, dsatur_dp1,&
                 rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
@@ -132,9 +132,9 @@ implicit none
     dt = 0.0d0
     dpad = 0.0d0
     signe = -1.0d0
-    sat = 1.0d0
-    satm = 1.0d0
-    dsatp1 = 0.0d0
+    satur = 1.0d0
+    saturm = 1.0d0
+    dsatur_dp1 = 0.0d0
     alpha0 = 0.d0
     alphfi = 0.d0
     m11m = congem(adcp11)
@@ -162,7 +162,7 @@ implicit none
         if ((yamec.eq.1) .or. yachai) then
             call viporo(nbvari, vintm, vintp, advico, vicphi,&
                         phi0, deps, depsv, alphfi, dt,&
-                        dp1, dp2, signe, sat, cs,&
+                        dp1, dp2, signe, satur, cs,&
                         tbiot, cbiot, unsks, alpha0, &
                         phi, phim, retcom )
         endif
@@ -199,7 +199,7 @@ implicit none
 ! --- CALCUL DES CONTRAINTES DE PRESSIONS ------------------------------
 ! ======================================================================
         if (yamec .eq. 1) then
-            call sigmap(net, bishop, sat, signe, tbiot,&
+            call sigmap(net, bishop, satur, signe, tbiot,&
                         dp2, dp1, sigmp)
             do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
@@ -211,7 +211,7 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES APPORTS MASSIQUES SELON FORMULE DOCR ------------------
 ! ======================================================================
-        congep(adcp11) = appmas(m11m,phi,phim,sat,satm,rho11, rho11m, epsv,epsvm)
+        congep(adcp11) = appmas(m11m,phi,phim,satur,saturm,rho11, rho11m, epsv,epsvm)
     endif
 ! **********************************************************************
 ! *** CALCUL DES DERIVEES **********************************************
@@ -225,7 +225,7 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DE SIGMAP ------------------------------------
 ! ======================================================================
-            call dspdp1(net, bishop, signe, tbiot, sat,&
+            call dspdp1(net, bishop, signe, tbiot, satur,&
                         dsdp1)
             do i = 1, 3
                 dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1) + dsdp1(i)
@@ -237,7 +237,7 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! ======================================================================
-            call dmdepv(rho11, sat, tbiot, dmdeps)
+            call dmdepv(rho11, satur, tbiot, dmdeps)
             do i = 1, 6
                 dsde(adcp11,addeme+ndim-1+i) = dsde(adcp11,addeme+ ndim-1+i) + dmdeps(i)
             end do
@@ -262,14 +262,14 @@ implicit none
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! ======================================================================
         dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
-                              dmwdp1(rho11, signe,sat,dsatp1,phi,cs,cliq,1.d0, emmag,bid)
+                              dmwdp1(rho11, signe,satur,dsatur_dp1,phi,cs,cliq,1.d0, emmag,bid)
         if (yaenrh.eq.1) then
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES AVEC XFEM --------------
 ! ======================================================================
           do ifh = 1, nfh
             dsde(adcp11,adenhy+(ifh-1)*(ndim+1)) = dsde(adcp11,adenhy+(ifh-1)*(ndim+1))+&
-                dmwdp1(rho11, signe,sat,dsatp1,phi,cs,cliq,1.d0, emmag,bid)
+                dmwdp1(rho11, signe,satur,dsatur_dp1,phi,cs,cliq,1.d0, emmag,bid)
           end do
         endif
     endif
