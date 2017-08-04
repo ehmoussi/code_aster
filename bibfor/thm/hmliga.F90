@@ -68,6 +68,7 @@ implicit none
 #include "asterfort/viporo.h"
 #include "asterfort/virhol.h"
 #include "asterfort/visatu.h"
+#include "asterfort/thmEvalSatuInit.h"
 ! ======================================================================
 ! ROUTINE HMLIGA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
 !   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
@@ -123,12 +124,13 @@ implicit none
     real(kind=8) :: rbid50(ndim, ndim), rbid20, rbid38
     real(kind=8) :: signe, m11m, m21m, coeps, rho12, rho22, dpad, cp12, cp22
     real(kind=8) :: dsdp1(6), dsdp2(6)
-    real(kind=8) :: dmdeps(6)
+    real(kind=8) :: dmdeps(6), p1m
     real(kind=8) :: sigmp(6), dqeps(6), rac2
 !
     aster_logical :: net, bishop
 !
     rac2 = sqrt(2.d0)
+    p1m = p1-dp1
 !
 ! =====================================================================
 ! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
@@ -136,7 +138,7 @@ implicit none
     call netbis(meca, net, bishop)
     phi0 = ds_thm%ds_parainit%poro_init
     call thmrcp('INTERMED', imate, thmc, hydr,&
-                ther, t, p1, p1-dp1, rbid6,&
+                ther, t, p1, p1m, rbid6,&
                 rbid7, rbid10, r, rho0,&
                 csigm, saturm, satur, dsatur_dp1,&
                 rbid14, rbid16, rbid17, rbid18,&
@@ -148,6 +150,12 @@ implicit none
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 em, rbid50, rinstp, retcom,&
                 angmas, ndim)
+!
+! - Evaluation of initial saturation
+!
+    call thmEvalSatuInit(hydr  , imate, p1m       , p1,&
+                         saturm, satur, dsatur_dp1, em,&
+                         retcom)
 
 ! ======================================================================
 ! --- POUR EVITER DES PB AVEC OPTIMISEUR ON MET UNE VALEUR DANS CES ----

@@ -32,8 +32,6 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/THM_type.h"
 !
-! --------------------------------------------------------------------------------------------------
-!
 character(len=16), intent(in) :: hydr
 integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: p1m, p1
@@ -68,6 +66,10 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    satm         = 0.d0
+    satur        = 0.d0
+    dsatur       = 0.d0
+    emmag        = 0.d0
     retcom       = 0
     para_vale(:) = 0.d0
     if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then

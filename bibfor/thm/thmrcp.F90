@@ -47,7 +47,6 @@ implicit none
 #include "asterfort/telamb.h"
 #include "asterfort/tlambc.h"
 #include "asterfort/utmess.h"
-#include "asterfort/thmEvalSatuInit.h"
 #include "asterfort/thmEvalSatuMiddle.h"
 #include "asterfort/thmEvalSatuFinal.h"
     integer :: imate, retcom, ndim
@@ -592,9 +591,6 @@ implicit none
                             [t], 2, ncra3(3), val3(3), icodre,&
                             1)
             endif
-            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
-                                 satm  , satur, dsatur, em,&
-                                 retcom)
             rhod = val2(1)
             cpd = val2(2)
             rhol = val3(1)
@@ -627,9 +623,6 @@ implicit none
                             [t], 1, ncra5(2), val5(2), icodre,&
                             1)
             endif
-            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
-                                 satm  , satur, dsatur, em,&
-                                 retcom)
             rgaz = val4(1)
             rhod = val4(2)
             cpd = val4(2)
@@ -667,9 +660,6 @@ implicit none
                             [t], 2, ncra7(3), val7(3), icodre,&
                             1)
             endif
-            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
-                                 satm  , satur, dsatur, em,&
-                                 retcom)
             rgaz = val6(1)
             rhod = val6(2)
             cpd = val6(3)
@@ -679,9 +669,6 @@ implicit none
             cpl = val7(4)
             mamolv = val8(1)
             cpvg = val8(2)
-            if (retcom .eq. 2) then
-                goto 500
-            endif
 !
         else if (thmc.eq.'LIQU_VAPE_GAZ') then
 ! =====================================================================
@@ -724,9 +711,6 @@ implicit none
                             [t], 1, ncra11(2), val11(2), icodre,&
                             1)
             endif
-            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
-                                 satm  , satur, dsatur, em,&
-                                 retcom)
             rgaz = val9(1)
             rhod = val9(2)
             cpd = val9(3)
@@ -738,9 +722,6 @@ implicit none
             cpg = val11(2)
             mamolv = val12(1)
             cpvg = val12(2)
-            if (retcom .eq. 2) then
-                goto 500
-            endif
 !
         else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
 ! =====================================================================
@@ -790,9 +771,6 @@ implicit none
                             [t], 1, ncra37(2), val37(2), icodre,&
                             1)
             endif
-            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
-                                 satm  , satur, dsatur, em,&
-                                 retcom)
             call rcvala(imate, ' ', 'THM_AIR_DISS', 0, ' ',&
                         [0.d0], 1, ncra39(1), val39(1), icodre,&
                         1)
@@ -812,9 +790,6 @@ implicit none
             cpvg = val38(2)
             cpad = val39(1)
             kh = val39(2)
-            if (retcom .eq. 2) then
-                goto 500
-            endif
 !
         else if (thmc.eq.'LIQU_AD_GAZ') then
 ! =====================================================================
@@ -857,9 +832,6 @@ implicit none
                             [t], 1, crad37(2), val37(2), icodre,&
                             1)
             endif
-            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
-                                 satm  , satur, dsatur, em,&
-                                 retcom)
             call rcvala(imate, ' ', 'THM_AIR_DISS', 0, ' ',&
                         [0.d0], 1, crad39(1), val39(1), icodre,&
                         1)
@@ -877,10 +849,6 @@ implicit none
             cpg = val37(2)
             cpad = val39(1)
             kh = val39(2)
-!
-            if (retcom .eq. 2) then
-                goto 500
-            endif
 !
         else if (thmc.eq.'LIQU_GAZ') then
 ! =====================================================================
@@ -917,9 +885,6 @@ implicit none
                             [t], 1, ncra15(2), val15(2), icodre,&
                             1)
             endif
-            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
-                                 satm  , satur, dsatur, em,&
-                                 retcom)
             rgaz = val13(1)
             rhod = val13(2)
             cpd = val13(3)
@@ -929,9 +894,6 @@ implicit none
             cpl = val14(4)
             mamolg = val15(1)
             cpg = val15(2)
-            if (retcom .eq. 2) then
-                goto 500
-            endif
 !
         else if (thmc.eq.'LIQU_GAZ_ATM') then
 ! =====================================================================
@@ -960,19 +922,12 @@ implicit none
                             [t], 2, ncra17(3), val17(3), icodre,&
                             1)
             endif
-            call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
-                                 satm  , satur, dsatur, em,&
-                                 retcom)
             rhod = val16(1)
             cpd = val16(2)
             rhol = val17(1)
             unsurk = val17(2)
             alpha = val17(3)
             cpl = val17(4)
-            if (retcom .eq. 2) then
-                goto 500
-            endif
-!
         endif
     else if (etape.eq.'SATURATI') then
         call thmEvalSatuMiddle(hydr , imate , p1    ,&

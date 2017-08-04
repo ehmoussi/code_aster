@@ -75,6 +75,7 @@ implicit none
 #include "asterfort/vipvp1.h"
 #include "asterfort/virhol.h"
 #include "asterfort/visatu.h"
+#include "asterfort/thmEvalSatuInit.h"
 !
 ! ======================================================================
 ! ROUTINE HMLVAG : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISE
@@ -132,7 +133,7 @@ implicit none
     real(kind=8) :: rbid50(ndim, ndim)
     real(kind=8) :: signe, dpad, coeps, cp22, pas, rho22, m11m, m12m, m21m
     real(kind=8) :: dmdeps(6), sigmp(6)
-    real(kind=8) :: dqeps(6), dsdp1(6), dsdp2(6), rac2
+    real(kind=8) :: dqeps(6), dsdp1(6), dsdp2(6), rac2, p1m
 !
     aster_logical :: net, bishop
 !
@@ -144,8 +145,9 @@ implicit none
     call netbis(meca, net, bishop)
     phi0 = ds_thm%ds_parainit%poro_init
     pvp0 = ds_thm%ds_parainit%prev_init
+    p1m  = p1-dp1
     call thmrcp('INTERMED', imate, thmc, hydr,&
-                ther, t, p1, p1-dp1, rbid6,&
+                ther, t, p1, p1m, rbid6,&
                 rbid7, rbid10, r, rho0,&
                 csigm, saturm, satur, dsatur_dp1,&
                 rbid14, rbid16, rbid17, rbid18,&
@@ -157,6 +159,12 @@ implicit none
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 em, rbid50, rinstp, retcom,&
                 angmas, ndim)
+!
+! - Evaluation of initial saturation
+!
+    call thmEvalSatuInit(hydr  , imate, p1m       , p1,&
+                         saturm, satur, dsatur_dp1, em,&
+                         retcom)
 
 ! ======================================================================
 ! --- POUR EVITER DES PB AVEC OPTIMISEUR ON MET UNE VALEUR DANS CES ----

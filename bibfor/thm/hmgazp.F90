@@ -55,6 +55,8 @@ implicit none
 #include "asterfort/thmrcp.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viporo.h"
+#include "asterfort/thmEvalSatuInit.h"
+!
     integer :: ndim, dimdef, dimcon, nbvari, imate, yamec, yate
     integer :: adcome, adcp11, adcote
     integer :: addeme, addep1, addete, advico, vicphi, retcom
@@ -72,7 +74,7 @@ implicit none
     real(kind=8) :: epsvm, phim
     real(kind=8) :: tbiot(6), cs, cp12, satur, mamolg
     real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
-    real(kind=8) :: r, rho0, csigm, alp11, em
+    real(kind=8) :: r, rho0, csigm, alp11, em, p1m, dsatur
     real(kind=8) :: eps, rinstp, deps(6)
     parameter  ( eps = 1.d-21 )
     aster_logical :: emmag
@@ -120,6 +122,13 @@ implicit none
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 em, rbid50,  rinstp, retcom,&
                 angmas, ndim)
+!
+! - Evaluation of initial saturation
+!
+    p1m = 0.d0
+    call thmEvalSatuInit(hydr  , imate, p1m   , p1,&
+                         saturm, satur, dsatur, em,&
+                         retcom)
 
 ! ======================================================================
 ! --- POUR EVITER DES PB AVEC OPTIMISEUR ON MET UNE VALEUR DANS CES ----
@@ -224,8 +233,8 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DE LA CHALEUR REDUITE Q' SELON FORMULE DOCR ---------------
 ! ======================================================================
-            congep(adcote) = congep(adcote) + calor(mdal,t,dt,deps, dp1,dp2,signe,alp11,alp21, co&
-                             &eps,ndim)
+            congep(adcote) = congep(adcote) +&
+                             calor(mdal,t,dt,deps, dp1,dp2,signe,alp11,alp21, coeps,ndim)
         endif
     endif
 ! ======================================================================
@@ -314,8 +323,8 @@ implicit none
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
-        dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmasp2(1.0d0,0.0d0,rho21,satur,phi,cs,p2,emmag &
-                              &,em)
+        dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
+                              dmasp2(1.0d0,0.0d0,rho21,satur,phi,cs,p2,emmag,em)
     endif
 ! =====================================================================
 ! --- MISE A JOUR DES VARIABLES P1 ET DP1 POUR CONFOMITE AUX FORMULES -

@@ -58,8 +58,7 @@ implicit none
 #include "asterfort/viemma.h"
 #include "asterfort/viporo.h"
 #include "asterfort/virhol.h"
-
-
+#include "asterfort/thmEvalSatuInit.h"
 
 ! ======================================================================
 ! ROUTINE HMLISA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
@@ -108,7 +107,7 @@ implicit none
     real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid36, rbid37
     real(kind=8) :: rbid39, rbid40, rbid45, rbid46, rbid47, rbid48, rbid49
     real(kind=8) :: rbid50(ndim, ndim),rbid20, rbid32(ndim, ndim)
-    real(kind=8) :: dp2, signe
+    real(kind=8) :: dp2, signe, p1m
     real(kind=8) :: dmdeps(6), dsdp1(6), sigmp(6)
     real(kind=8) :: dqeps(6)
 !
@@ -134,6 +133,13 @@ implicit none
                 rbid45, rbid46, rbid47, rbid48, rbid49,&
                 em, rbid50, rinstp, retcom,&
                 angmas, ndim)
+!
+! - Evaluation of initial saturation
+!
+    p1m = 0.d0
+    call thmEvalSatuInit(hydr  , imate, p1m       , p1,&
+                         saturm, satur, dsatur_dp1, em,&
+                         retcom)
 
 ! ======================================================================
 ! --- INITIALISATIONS --------------------------------------------------

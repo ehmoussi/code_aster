@@ -76,7 +76,7 @@ character(len=8) :: job
     real(kind=8) ::  dsid2d(6, 6), dam(3)
     real(kind=8) :: sigma(6), cliq, varbio
     real(kind=8) :: rbid2, rbid3, rbid4, rbid5
-    real(kind=8) :: rbid11, rbid13, rbid14
+    real(kind=8) :: rbid11, rbid13, rbid14, rbid6, rbid7, rbid8
     real(kind=8) :: rbid15(3), rbid17, rbid18, rbid19, rbid20
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid29, rbid30, rbid31, rbid32
@@ -84,7 +84,7 @@ character(len=8) :: job
     real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid44
     real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid50
     real(kind=8) :: rbid52, rbid53, rbid38(3, 3), rbid51(3, 3)
-    real(kind=8) :: r7bid(3), saturm, satur, dsatur_dp1
+    real(kind=8) :: r7bid(3)
     real(kind=8) :: rho110, t
     character(len=16) :: option, zkbid, thmc, hydr
 !
@@ -105,7 +105,7 @@ character(len=8) :: job
     zkbid = 'VIDE'
     call thmrcp('INTERMED', imate, thmc, hydr,&
                 zkbid, t, rbid2, rbid3, rbid4,&
-                rbid5, saturm, satur, dsatur_dp1,&
+                rbid5, rbid6, rbid7, rbid8,&
                 rbid11, rbid13, rbid53, rbid14,&
                 rbid15, rbid17, rbid18, rbid19,&
                 rbid20, rbid21, rbid22, rbid23, rbid24,&
