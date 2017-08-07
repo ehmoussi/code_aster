@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine thmGetBehaviour(compor)
-        character(len=16), intent(in) :: compor(*)
-    end subroutine thmGetBehaviour
+    subroutine thmGetParaCoupling(j_mater, temp)
+        integer, intent(in) :: j_mater
+        real(kind=8), intent(in) :: temp
+    end subroutine thmGetParaCoupling
 end interface 

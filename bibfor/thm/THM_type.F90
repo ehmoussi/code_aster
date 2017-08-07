@@ -103,33 +103,60 @@ implicit none
         real(kind=8) :: emmag
     end type THM_Hydr
 
+! - Gaz parameters
+    type THM_Gaz
+        real(kind=8) :: mass_mol
+        real(kind=8) :: visc
+        real(kind=8) :: dvisc_dtemp
+        real(kind=8) :: cp
+    end type THM_Gaz
+
+! - Liquid parameters
+    type THM_Liquid
+        real(kind=8) :: rho
+        real(kind=8) :: unsurk
+        real(kind=8) :: visc
+        real(kind=8) :: dvisc_dtemp
+        real(kind=8) :: cp
+        real(kind=8) :: alpha
+    end type THM_Liquid
+
+! - Dissolved air
+    type THM_Ad
+        real(kind=8) :: cp
+        real(kind=8) :: coef_henry
+    end type THM_Ad
+
+! Solid (homogeneous)
+    type THM_Solid
+        real(kind=8) :: rho
+        real(kind=8) :: r_gaz
+        real(kind=8) :: cp
+    end type THM_Solid
+
 ! - Material parameters
     type THM_Material
 ! ----- For Biot coefficient (evolution of porosity)
-        type(THM_Biot) :: biot
+        type(THM_Biot)    :: biot
 ! ----- For elasticity
-        type(THM_Elas) :: elas
+        type(THM_Elas)    :: elas
 ! ----- For hydraulic
-        type(THM_Hydr) :: hydr
-!! ----- For gaz
-!        real(kind=8) :: mass_mol
-!        real(kind=8) :: visc
-!        real(kind=8) :: dvisc_dtemp
-!        real(kind=8) :: cp
-!! ----- For solid
-!        real(kind=8) :: rho
-!        real(kind=8) :: r_gaz
-!        real(kind=8) :: cp
-!! ----- For liquid
-!        real(kind=8) :: rho
-!        real(kind=8) :: unsurk
-!        real(kind=8) :: visc
-!        real(kind=8) :: dvisc_dtemp
-!        real(kind=8) :: cp
-!        real(kind=8) :: alpha
-!! ----- For dissolved air
-!        real(kind=8) :: cp
-!        real(kind=8) :: coef_henry
+        type(THM_Hydr)    :: hydr
+! ----- For hydraulic
+        aster_logical     :: l_gaz
+        type(THM_Gaz)     :: gaz
+! ----- For hydraulic
+        aster_logical     :: l_steam
+        type(THM_Gaz)     :: steam
+! ----- For liquid
+        aster_logical     :: l_liquid
+        type(THM_Liquid)  :: liquid
+! ----- For dissolved air
+        aster_logical     :: l_ad
+        type(THM_Ad)      :: ad
+! ----- For solid
+        aster_logical     :: l_r_gaz
+        type(THM_Solid)   :: solid
     end type THM_Material
 !
 end module
