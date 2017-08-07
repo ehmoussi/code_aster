@@ -99,7 +99,7 @@ integer, intent(out) :: retcom
     phim   = 0.d0
     retcom = 0
 !
-    if (ds_thm%ds_material%biot_type .eq.  BIOT_TYPE_ISOT) then
+    if (ds_thm%ds_material%biot%type .eq.  BIOT_TYPE_ISOT) then
         varbio = - depsv + 3.d0*alpha0*dt - (dp2-sat*signe*dp1)*unsks
         if (varbio .gt. epxmax) then
             retcom = 2
@@ -108,8 +108,8 @@ integer, intent(out) :: retcom
         vintp(advico+vicphi) = cbiot - phi0 - (cbiot-vintm(advico+vicphi)-phi0)*exp(varbio)
         phi  = vintp(advico+vicphi) + phi0
         phim = vintm(advico+vicphi) + phi0
-    else if ((ds_thm%ds_material%biot_type .eq.  BIOT_TYPE_ISTR).or.&
-             (ds_thm%ds_material%biot_type .eq.  BIOT_TYPE_ORTH)) then
+    else if ((ds_thm%ds_material%biot%type .eq.  BIOT_TYPE_ISTR).or.&
+             (ds_thm%ds_material%biot%type .eq.  BIOT_TYPE_ORTH)) then
         do i = 1, 3
             varbio = varbio + tbiot(i)*deps(i)
         end do

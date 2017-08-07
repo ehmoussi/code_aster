@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine inithm(imate, yachai, yamec, phi0, em,&
                   cs0, tbiot, t, epsv, depsv,&
                   epsvm, angmas, mdal, dalal,&
@@ -47,10 +47,10 @@ real(kind=8), parameter :: eps = 1.d-21
 ! --- SI PRESENCE DE MECANIQUE OU DE CHAINAGE -------------------------
 ! =====================================================================
     if ((yamec .eq. 1) .or. yachai) then
-        if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISOT) then
-            young  = ds_thm%ds_material%e
-            nu     = ds_thm%ds_material%nu
-            alpha0 = ds_thm%ds_material%alpha
+        if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
+            young  = ds_thm%ds_material%elas%e
+            nu     = ds_thm%ds_material%elas%nu
+            alpha0 = ds_thm%ds_material%elas%alpha
             cbiot  = tbiot(1)
             k0     = young / 3.d0 / (1.d0-2.d0*nu)
             unsks  = (1.d0-cbiot) / k0
@@ -69,7 +69,7 @@ real(kind=8), parameter :: eps = 1.d-21
 ! --- SI ABSENCE DE MECANIQUE -----------------------------------------
 ! =====================================================================
     else
-        if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISOT) then
+        if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
 ! =====================================================================
 ! --- CALCUL CAS ISOTROPE ---------------------------------------------
 ! =====================================================================
@@ -83,13 +83,13 @@ real(kind=8), parameter :: eps = 1.d-21
             end do
             if (em .lt. eps) then
                 cbiot = phi0
-                ds_thm%ds_material%biot_coef = phi0
-                ds_thm%ds_material%biot_l    = phi0
-                ds_thm%ds_material%biot_t    = phi0
-                ds_thm%ds_material%biot_t    = phi0
+                ds_thm%ds_material%biot%coef = phi0
+                ds_thm%ds_material%biot%l    = phi0
+                ds_thm%ds_material%biot%t    = phi0
+                ds_thm%ds_material%biot%t    = phi0
                 call tebiot(angmas, tbiot)
             endif
-        else if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISTR) then
+        else if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISTR) then
 ! =====================================================================
 ! --- CALCUL CAS ISOTROPE TRANSVERSE-----------------------------------
 ! =====================================================================
@@ -100,13 +100,13 @@ real(kind=8), parameter :: eps = 1.d-21
                 mdal(i) = 0.d0
             end do
             if (em .lt. eps) then
-                ds_thm%ds_material%biot_coef = phi0
-                ds_thm%ds_material%biot_l    = phi0
-                ds_thm%ds_material%biot_t    = phi0
-                ds_thm%ds_material%biot_t    = phi0
+                ds_thm%ds_material%biot%coef = phi0
+                ds_thm%ds_material%biot%l    = phi0
+                ds_thm%ds_material%biot%t    = phi0
+                ds_thm%ds_material%biot%t    = phi0
                 call tebiot(angmas, tbiot)
             endif
-        else if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ORTH) then
+        else if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ORTH) then
 ! =====================================================================
 ! --- CALCUL CAS ORTHO 2D-----------------------------------
 ! =====================================================================
@@ -117,10 +117,10 @@ real(kind=8), parameter :: eps = 1.d-21
                 mdal(i) = 0.d0
             end do
             if (em .lt. eps) then
-                ds_thm%ds_material%biot_coef = phi0
-                ds_thm%ds_material%biot_l    = phi0
-                ds_thm%ds_material%biot_t    = phi0
-                ds_thm%ds_material%biot_t    = phi0
+                ds_thm%ds_material%biot%coef = phi0
+                ds_thm%ds_material%biot%l    = phi0
+                ds_thm%ds_material%biot%t    = phi0
+                ds_thm%ds_material%biot%t    = phi0
                 call tebiot(angmas, tbiot)
             endif
         else

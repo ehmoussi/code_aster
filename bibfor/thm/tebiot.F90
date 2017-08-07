@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine tebiot(angl_naut, tbiot)
 !
 use THM_type
@@ -62,18 +62,18 @@ real(kind=8), intent(out) :: tbiot(6)
 !
 ! - Local tensor
 !
-    if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISOT) then
-        bt(1,1) = ds_thm%ds_material%biot_coef
-        bt(2,2) = ds_thm%ds_material%biot_coef
-        bt(3,3) = ds_thm%ds_material%biot_coef
-    else if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISTR) then
-        bt(1,1) = ds_thm%ds_material%biot_l
-        bt(2,2) = ds_thm%ds_material%biot_l
-        bt(3,3) = ds_thm%ds_material%biot_n
-    else if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ORTH) then
-        bt(1,1) = ds_thm%ds_material%biot_l
-        bt(2,2) = ds_thm%ds_material%biot_t
-        bt(3,3) = ds_thm%ds_material%biot_n
+    if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
+        bt(1,1) = ds_thm%ds_material%biot%coef
+        bt(2,2) = ds_thm%ds_material%biot%coef
+        bt(3,3) = ds_thm%ds_material%biot%coef
+    else if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISTR) then
+        bt(1,1) = ds_thm%ds_material%biot%l
+        bt(2,2) = ds_thm%ds_material%biot%l
+        bt(3,3) = ds_thm%ds_material%biot%n
+    else if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ORTH) then
+        bt(1,1) = ds_thm%ds_material%biot%l
+        bt(2,2) = ds_thm%ds_material%biot%t
+        bt(3,3) = ds_thm%ds_material%biot%n
     else
         ASSERT(.false.)
     endif

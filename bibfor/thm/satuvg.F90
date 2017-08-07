@@ -54,11 +54,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    n      = ds_thm%ds_material%n
-    pr     = ds_thm%ds_material%pr
-    sr     = ds_thm%ds_material%sr
-    smax   = ds_thm%ds_material%smax
-    satuma = ds_thm%ds_material%satuma
+    n      = ds_thm%ds_material%hydr%n
+    pr     = ds_thm%ds_material%hydr%pr
+    sr     = ds_thm%ds_material%hydr%sr
+    smax   = ds_thm%ds_material%hydr%smax
+    satuma = ds_thm%ds_material%hydr%satuma
     m      = 1.d0-1.d0/n
     usn    = 1.d0/n
     usm    = 1.d0/m

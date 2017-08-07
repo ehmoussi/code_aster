@@ -62,9 +62,9 @@ real(kind=8), intent(out) :: krg, dkrg_dsatur
 !
 ! - Get parameters
 !
-    n          = ds_thm%ds_material%n
-    sr         = ds_thm%ds_material%sr
-    satur_max  = ds_thm%ds_material%smax
+    n          = ds_thm%ds_material%hydr%n
+    sr         = ds_thm%ds_material%hydr%sr
+    satur_max  = ds_thm%ds_material%hydr%smax
     m          = 1.d0-1.d0/n
     usm        = 1.d0/m
     s1         = (satur-sr)/(1.d0-sr)

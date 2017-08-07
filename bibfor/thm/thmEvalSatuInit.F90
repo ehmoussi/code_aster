@@ -119,6 +119,6 @@ integer, intent(out) :: retcom
         satur = 1.d0
         ASSERT(ds_thm%ds_behaviour%satur_type .eq. SATURATED)
     endif
-    emmag = ds_thm%ds_material%emmag
+    emmag = ds_thm%ds_material%hydr%emmag
 !
 end subroutine

@@ -67,11 +67,11 @@ implicit none
                     0          , ' '          , [0.d0]       ,&
                     nb_para_vgm, para_name_vgm, para_vale_vgm, icodre_vgm,&
                     1)
-        ds_thm%ds_material%n            = para_vale_vgm(1)
-        ds_thm%ds_material%pr           = para_vale_vgm(2)
-        ds_thm%ds_material%sr           = para_vale_vgm(3)
-        ds_thm%ds_material%smax         = para_vale_vgm(4)
-        ds_thm%ds_material%satuma       = para_vale_vgm(5)
+        ds_thm%ds_material%hydr%n      = para_vale_vgm(1)
+        ds_thm%ds_material%hydr%pr     = para_vale_vgm(2)
+        ds_thm%ds_material%hydr%sr     = para_vale_vgm(3)
+        ds_thm%ds_material%hydr%smax   = para_vale_vgm(4)
+        ds_thm%ds_material%hydr%satuma = para_vale_vgm(5)
         if (icodre_vgm(1) .eq. 1) then
             call utmess('F', 'THM1_94')
         endif
@@ -80,6 +80,6 @@ implicit none
                 0      , ' '      , [0.d0]     ,&
                 nb_para, para_name, para_vale  , icodre,&
                 0      , nan='NON')
-    ds_thm%ds_material%emmag = para_vale(1)
+    ds_thm%ds_material%hydr%emmag = para_vale(1)
 !
 end subroutine

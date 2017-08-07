@@ -57,18 +57,18 @@ implicit none
 !
     if (ds_thm%ds_elem%l_dof_ther .and. ds_thm%ds_elem%l_dof_meca) then
         call get_elasth_para(fami, j_mater     , '+'   , kpi, 1, &
-                             ds_thm%ds_material%elas_id , ds_thm%ds_material%elas_keyword,&
+                             ds_thm%ds_material%elas%id , ds_thm%ds_material%elas%keyword,&
                              temp_vale_ = temp,&
                              alpha   = alpha,&
-                             alpha_l = ds_thm%ds_material%alpha_l,&
-                             alpha_t = ds_thm%ds_material%alpha_t,&
-                             alpha_n = ds_thm%ds_material%alpha_n)
-        ds_thm%ds_material%alpha = alpha(1)
+                             alpha_l = ds_thm%ds_material%elas%alpha_l,&
+                             alpha_t = ds_thm%ds_material%elas%alpha_t,&
+                             alpha_n = ds_thm%ds_material%elas%alpha_n)
+        ds_thm%ds_material%elas%alpha = alpha(1)
     else
-        ds_thm%ds_material%alpha   = 0.d0
-        ds_thm%ds_material%alpha_l = 0.d0
-        ds_thm%ds_material%alpha_t = 0.d0
-        ds_thm%ds_material%alpha_n = 0.d0
+        ds_thm%ds_material%elas%alpha   = 0.d0
+        ds_thm%ds_material%elas%alpha_l = 0.d0
+        ds_thm%ds_material%elas%alpha_t = 0.d0
+        ds_thm%ds_material%elas%alpha_n = 0.d0
     endif
 !
 end subroutine

@@ -67,18 +67,18 @@ implicit none
 !
 ! - Get parameters
 !
-    if (ds_thm%ds_material%elas_id .eq. 1) then
-        talpha(1,1) = ds_thm%ds_material%alpha
-        talpha(2,2) = ds_thm%ds_material%alpha
-        talpha(3,3) = ds_thm%ds_material%alpha
-    elseif (ds_thm%ds_material%elas_id .eq. 3) then
-        talpha(1,1) = ds_thm%ds_material%alpha_l
-        talpha(2,2) = ds_thm%ds_material%alpha_l
-        talpha(3,3) = ds_thm%ds_material%alpha_n
-    else if (ds_thm%ds_material%elas_id .eq. 2) then
-        talpha(1,1) = ds_thm%ds_material%alpha_l
-        talpha(2,2) = ds_thm%ds_material%alpha_t
-        talpha(3,3) = ds_thm%ds_material%alpha_n
+    if (ds_thm%ds_material%elas%id .eq. 1) then
+        talpha(1,1) = ds_thm%ds_material%elas%alpha
+        talpha(2,2) = ds_thm%ds_material%elas%alpha
+        talpha(3,3) = ds_thm%ds_material%elas%alpha
+    elseif (ds_thm%ds_material%elas%id .eq. 3) then
+        talpha(1,1) = ds_thm%ds_material%elas%alpha_l
+        talpha(2,2) = ds_thm%ds_material%elas%alpha_l
+        talpha(3,3) = ds_thm%ds_material%elas%alpha_n
+    else if (ds_thm%ds_material%elas%id .eq. 2) then
+        talpha(1,1) = ds_thm%ds_material%elas%alpha_l
+        talpha(2,2) = ds_thm%ds_material%elas%alpha_t
+        talpha(3,3) = ds_thm%ds_material%elas%alpha_n
     else
         ASSERT(.false.)
     endif
