@@ -105,6 +105,35 @@ subroutine thmModuleInit()
     ds_thm%ds_material%hydr%smax         = r8nnem()
     ds_thm%ds_material%hydr%satuma       = r8nnem()
     ds_thm%ds_material%hydr%emmag        = r8nnem()
+!   Material parameters (gaz)
+    ds_thm%ds_material%l_gaz             = .false.
+    ds_thm%ds_material%gaz%mass_mol      = r8nnem()
+    ds_thm%ds_material%gaz%visc          = r8nnem()
+    ds_thm%ds_material%gaz%dvisc_dtemp   = r8nnem()
+    ds_thm%ds_material%gaz%cp            = r8nnem()
+!   Material parameters (steam)
+    ds_thm%ds_material%l_steam           = .false.
+    ds_thm%ds_material%steam%mass_mol    = r8nnem()
+    ds_thm%ds_material%steam%visc        = r8nnem()
+    ds_thm%ds_material%steam%dvisc_dtemp = r8nnem()
+    ds_thm%ds_material%steam%cp          = r8nnem()
+!   Material parameters (liquid)
+    ds_thm%ds_material%l_liquid           = .false.
+    ds_thm%ds_material%liquid%rho         = r8nnem()
+    ds_thm%ds_material%liquid%unsurk      = r8nnem()
+    ds_thm%ds_material%liquid%visc        = r8nnem()
+    ds_thm%ds_material%liquid%dvisc_dtemp = r8nnem()
+    ds_thm%ds_material%liquid%cp          = r8nnem()
+    ds_thm%ds_material%liquid%alpha       = r8nnem()
+!   Material parameters (dissolved air)
+    ds_thm%ds_material%l_ad               = .false.
+    ds_thm%ds_material%ad%cp              = r8nnem()
+    ds_thm%ds_material%ad%coef_henry      = r8nnem()
+!   Material parameters (solid)
+    ds_thm%ds_material%l_r_gaz            = .false.
+    ds_thm%ds_material%solid%rho          = r8nnem()
+    ds_thm%ds_material%solid%r_gaz        = r8nnem()
+    ds_thm%ds_material%solid%cp           = r8nnem()
 !
 end subroutine
 !

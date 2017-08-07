@@ -42,6 +42,7 @@ implicit none
 #include "asterfort/hmliva.h"
 #include "asterfort/hmlvag.h"
 #include "asterfort/hmlvga.h"
+#include "asterfort/thmGetParaCoupling.h"
 !
 ! ROUTINE CALCCO : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
 !   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
@@ -79,6 +80,10 @@ implicit none
     else
         bdcp11 = adcp11
     endif
+!
+! - Get paremeters for coupling
+!
+    call thmGetParaCoupling(imate, t)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_SATU ----------------------
 ! ======================================================================

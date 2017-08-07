@@ -101,11 +101,37 @@ character(len=16), intent(in) :: compor(*)
         ASSERT(.false.)
     endif
 !
+    if (rela_thmc(1:4) .eq. 'LIQU') then
+        ds_thm%ds_material%l_liquid = .true.
+    endif
+    if (rela_thmc .eq. 'LIQU_GAZ' .or. &
+        rela_thmc .eq. 'GAZ' .or. &
+        rela_thmc .eq. 'LIQU_VAPE_GAZ' .or. &
+        rela_thmc .eq. 'LIQU_GAZ_ATM' .or. & 
+        rela_thmc .eq. 'LIQU_AD_GAZ_VAPE' .or. &
+        rela_thmc .eq. 'LIQU_AD_GAZ') then
+        ds_thm%ds_material%l_gaz = .true.
+    endif
+    if (rela_thmc .eq. 'LIQU_VAPE' .or. &
+        rela_thmc .eq. 'LIQU_VAPE_GAZ' .or. &
+        rela_thmc .eq. 'LIQU_AD_GAZ_VAPE') then
+        ds_thm%ds_material%l_steam = .true.
+    endif
+    if (rela_thmc .eq. 'LIQU_AD_GAZ_VAPE' .or. &
+        rela_thmc .eq. 'LIQU_AD_GAZ') then
+        ds_thm%ds_material%l_ad = .true.
+    endif
+    ds_thm%ds_material%l_r_gaz = .true.
+    if (rela_thmc .eq. 'LIQU_SATU' .or. &
+        rela_thmc .eq. 'LIQU_GAZ_ATM') then
+        ds_thm%ds_material%l_r_gaz = .false.
+    endif
+!
 ! - For temperature
 !
     ds_thm%ds_behaviour%l_temp = .true._1
-    if (rela_thmc .eq. 'LIQU_SATU' .or. &
-        rela_thmc .eq. 'LIQU_GAZ_ATM') then
+    if (rela_ther .eq. ' ' .or. &
+        rela_ther .eq. 'VIDE') then
         ds_thm%ds_behaviour%l_temp = .false._1
     endif
 !

@@ -163,67 +163,67 @@ implicit none
 ! =====================================================================
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_SATU -----
 ! =====================================================================
-    data ncra2  / 'RHO'      ,&
-     &              'CP'   /
-    data ncra3  / 'RHO'      ,&
-     &              'UN_SUR_K' ,&
-     &              'ALPHA'    ,&
-     &              'CP'       /
+    data ncra2  / 'TOTO'      ,&
+     &            'TOTO'   /
+    data ncra3  / 'TOTO'     ,&
+     &            'TOTO' ,&
+     &            'TOTO'   ,&
+     &            'TOTO'     /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS GAZ -----------
 ! =====================================================================
-    data ncra4  / 'R_GAZ'    ,&
-     &              'RHO'      ,&
-     &              'CP' /
-    data ncra5  / 'MASS_MOL' ,&
-     &              'CP'       /
+    data ncra4  / 'TOTO' ,&
+     &            'TOTO'  ,&
+     &             'TOTO' /
+    data ncra5  / 'TOTO',&
+     &            'TOTO'   /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_VAPE -----
 ! =====================================================================
-    data ncra6  / 'R_GAZ'    ,&
-     &              'RHO'      ,&
-     &              'CP'       /
-    data ncra7  / 'RHO'      ,&
-     &              'UN_SUR_K' ,&
-     &              'ALPHA'    ,&
-     &              'CP'       /
-    data ncra8  / 'MASS_MOL' ,&
-     &              'CP'       /
+    data ncra6  / 'TOTO' ,&
+     &             'TOTO' ,&
+     &             'TOTO'  /
+    data ncra7  / 'TOTO',&
+     &            'TOTO'  ,&
+     &            'TOTO' ,&
+     &             'TOTO'   /
+    data ncra8  /'TOTO' ,&
+     &           'TOTO'  /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_VAPE_GAZ -
 ! =====================================================================
-    data ncra9  / 'R_GAZ'    ,&
-     &              'RHO'      ,&        
-     &              'CP'       /
-    data ncra10 / 'RHO'      ,&
-     &              'UN_SUR_K' ,&
-     &              'ALPHA'    ,&
-     &              'CP'       /
-    data ncra11 / 'MASS_MOL' ,&
-     &              'CP'       /
-    data ncra12 / 'MASS_MOL' ,&
-     &              'CP'       /
+    data ncra9  /'TOTO'  ,&
+     &           'TOTO'   ,&        
+     &           'TOTO'   /
+    data ncra10 / 'TOTO'  ,&
+     &           'TOTO'  ,&
+     &           'TOTO'  ,&
+     &          'TOTO'   /
+    data ncra11 / 'TOTO' ,&
+     &           'TOTO'  /
+    data ncra12 /'TOTO' ,&
+     &           'TOTO'  /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_GAZ ------
 ! =====================================================================
-    data ncra13 / 'R_GAZ'    ,&
-     &              'RHO'      ,&
-     &              'CP'       /
-    data ncra14 / 'RHO'      ,&
-     &              'UN_SUR_K' ,&
-     &              'ALPHA'    ,&
-     &              'CP'       /
-    data ncra15 / 'MASS_MOL' ,&
-     &              'CP'       /
+    data ncra13 / 'TOTO'   ,&
+     &           'TOTO'      ,&
+     &           'TOTO'    /
+    data ncra14 / 'TOTO'   ,&
+     &            'TOTO' ,&
+     &            'TOTO'  ,&
+     &            'TOTO'   /
+    data ncra15 / 'TOTO'  ,&
+     &            'TOTO'  /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_GAZ_ATM --
 ! =====================================================================
-    data ncra16 / 'RHO'      ,&
-     &              'CP'       /
-    data ncra17 / 'RHO'      ,&
-     &              'UN_SUR_K' ,&
-     &              'ALPHA'    ,&
-     &              'CP'       /
+    data ncra16 / 'TOTO'    ,&
+     &           'TOTO'     /
+    data ncra17 / 'TOTO'   ,&
+     &            'TOTO' ,&
+     &            'TOTO'   ,&
+     &            'TOTO'   /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_SATU ------------
 ! =====================================================================
