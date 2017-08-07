@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface 
-    subroutine thmlec(imate, thmc, meca, hydr, ther,&
-                      t, p1, p2, phi, end,&
+    subroutine thmlec(j_mater, thmc, hydr, ther,&
+                      t, p1, p2, phi, endo,&
                       pvp, pad, rgaz, tbiot, satur,&
                       dsatur, pesa, tperm, permli, dperml,&
                       permgz, dperms, dpermp, fick, dfickt,&
@@ -28,18 +27,18 @@ interface
                       lambs, dlambs, viscl, dviscl, mamolg,&
                       tlambt, tdlamt, viscg, dviscg, mamolv,&
                       fickad, dfadt, tlamct, instap,&
-                      angmas, ndim)
-        integer :: ndim
-        integer :: imate
+                      angl_naut, ndim)
+        integer, intent(in) :: ndim
+        real(kind=8), intent(in) :: angl_naut(3)
+        integer, intent(in) :: j_mater
+        real(kind=8), intent(in) :: phi, endo
+        real(kind=8), intent(out) :: tperm(ndim, ndim)
         character(len=16) :: thmc
-        character(len=16) :: meca
         character(len=16) :: hydr
         character(len=16) :: ther
         real(kind=8) :: t
         real(kind=8) :: p1
         real(kind=8) :: p2
-        real(kind=8) :: phi
-        real(kind=8) :: end
         real(kind=8) :: pvp
         real(kind=8) :: pad
         real(kind=8) :: rgaz
@@ -47,7 +46,6 @@ interface
         real(kind=8) :: satur
         real(kind=8) :: dsatur
         real(kind=8) :: pesa(3)
-        real(kind=8) :: tperm(ndim, ndim)
         real(kind=8) :: permli
         real(kind=8) :: dperml
         real(kind=8) :: permgz
@@ -74,6 +72,5 @@ interface
         real(kind=8) :: dfadt
         real(kind=8) :: tlamct(ndim, ndim)
         real(kind=8) :: instap
-        real(kind=8) :: angmas(3)
     end subroutine thmlec
 end interface 

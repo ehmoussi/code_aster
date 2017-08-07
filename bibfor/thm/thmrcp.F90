@@ -18,11 +18,11 @@
 ! aslint: disable=W1501,W1504,W1502
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine thmrcp(etape, imate, thmc, meca, hydr,&
+subroutine thmrcp(etape, imate, thmc, hydr,&
                   ther, t, p1, p1m, p2,&
-                  phi, endo, pvp, rgaz, rhod,&
+                  phi, pvp, rgaz, rhod,&
                   cpd, satm, satur, dsatur,&
-                  pesa, tperm, permli, dperml, permgz,&
+                  pesa, permli, dperml, permgz,&
                   dperms, dpermp, fick, dfickt, dfickg,&
                   lambp, dlambp, rhol, unsurk, alpha,&
                   cpl, lambs, dlambs, viscl, dviscl,&
@@ -46,7 +46,6 @@ implicit none
 #include "asterfort/tdlamb.h"
 #include "asterfort/telamb.h"
 #include "asterfort/tlambc.h"
-#include "asterfort/tpermh.h"
 #include "asterfort/utmess.h"
 #include "asterfort/thmEvalSatuInit.h"
 #include "asterfort/thmEvalSatuMiddle.h"
@@ -59,15 +58,14 @@ implicit none
     real(kind=8) :: fick, dfickt, dfickg, lambp, dlambp, rhol
     real(kind=8) :: alpha, cpl, lambs, dlambs, viscl, dviscl, cpg, pad
     real(kind=8) :: viscg, dviscg, mamolg, cpvg, viscvg
-    real(kind=8) :: dvisvg, fickad, dfadt, endo, mamolv, p1m, cpad, kh, em
+    real(kind=8) :: dvisvg, fickad, dfadt, mamolv, p1m, cpad, kh, em
     real(kind=8) :: unsurk, instap
     real(kind=8) :: angmas(3)
-    real(kind=8) :: permfh(4), tperm(ndim, ndim)
     real(kind=8) :: lambct(4), tlamct(ndim, ndim)
     real(kind=8) :: lambt(4), tlambt(ndim, ndim)
     real(kind=8) :: dlambt(4), tdlamt(ndim, ndim)
     character(len=8) :: etape
-    character(len=16) :: meca, thmc, ther, hydr
+    character(len=16) :: thmc, ther, hydr
 ! =====================================================================
 ! --- VARIABLES LOCALES -----------------------------------------------
 ! =====================================================================
@@ -235,10 +233,10 @@ implicit none
     data ncra18 / 'PESA_X'   ,&
      &              'PESA_Y'   ,&
      &              'PESA_Z'   ,&
-     &              'PERM_IN'  ,&
-     &              'PERMIN_L'  ,&
-     &              'PERMIN_N'  ,&
-     &              'PERM_END' ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO' ,&
      &              'LAMB_T'   ,&
      &              'LAMB_TL'   ,&
      &              'LAMB_TN'   ,&
@@ -250,7 +248,7 @@ implicit none
      &              'LAMB_CT',&
      &              'LAMB_C_L',&
      &              'LAMB_C_N',&
-     &              'PERMIN_T',&
+     &              'TOTO',&
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
@@ -265,10 +263,10 @@ implicit none
      &              'PESA_X'   ,&
      &              'PESA_Y'   ,&
      &              'PESA_Z'   ,&
-     &              'PERM_IN'  ,&
-     &              'PERMIN_L'  ,&
-     &              'PERMIN_N'  ,&
-     &              'PERM_END' ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO' ,&
      &              'LAMB_T'   ,&
      &              'LAMB_TL'   ,&
      &              'LAMB_TN'   ,&
@@ -280,7 +278,7 @@ implicit none
      &              'LAMB_CT',&
      &              'LAMB_C_L',&
      &              'LAMB_C_N',&
-     &              'PERMIN_T',&
+     &              'TOTO',&
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
@@ -294,10 +292,10 @@ implicit none
      &              'PESA_X'   ,&
      &              'PESA_Y'   ,&
      &              'PESA_Z'   ,&
-     &              'PERM_IN'  ,&
-     &              'PERMIN_L'  ,&
-     &              'PERMIN_N'  ,&
-     &              'PERM_END' ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO' ,&
      &              'LAMB_T'   ,&
      &              'LAMB_TL'   ,&
      &              'LAMB_TN'   ,&
@@ -315,7 +313,7 @@ implicit none
      &              'PERM_LIQU' , 'D_PERM_LIQU_SATU' ,&
      &              'PERM_GAZ' , 'D_PERM_SATU_GAZ' ,&
      &              'D_PERM_PRES_GAZ',&
-     &              'PERMIN_T',&
+     &              'TOTO',&
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
@@ -331,10 +329,10 @@ implicit none
 ! =====================================================================
     data ncra25 / 'R_GAZ'    ,'PESA_X'   ,&
      &              'PESA_Y'   ,'PESA_Z'   ,&
-     &              'PERM_IN'  ,&
-     &              'PERMIN_L'  ,&
-     &              'PERMIN_N'  ,&
-     &              'PERM_END' ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO' ,&
      &              'LAMB_T'   ,&
      &              'LAMB_TL'   ,&
      &              'LAMB_TN'   ,&
@@ -353,7 +351,7 @@ implicit none
      &              'FICKV_PV' ,'FICKV_PG' ,&
      &              'FICKV_S'  ,'D_FV_T'   ,&
      &              'D_FV_PG',&
-     &              'PERMIN_T',&
+     &              'TOTO',&
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
@@ -372,10 +370,10 @@ implicit none
      &              'PESA_X'   ,&
      &              'PESA_Y'   ,&
      &              'PESA_Z'   ,&
-     &              'PERM_IN'  ,&
-     &              'PERMIN_L'  ,&
-     &              'PERMIN_N'  ,&
-     &              'PERM_END' ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO' ,&
      &              'LAMB_T'   ,&
      &              'LAMB_TL'   ,&
      &              'LAMB_TN'   ,&
@@ -391,7 +389,7 @@ implicit none
      &              'TOTO' ,'PERM_LIQU' ,&
      &              'D_PERM_LIQU_SATU' ,'PERM_GAZ' ,&
      &              'D_PERM_SATU_GAZ' ,'D_PERM_PRES_GAZ',&
-     &              'PERMIN_T',&
+     &              'TOTO',&
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
@@ -408,10 +406,10 @@ implicit none
     data ncra32 / 'PESA_X'   ,&
      &              'PESA_Y'   ,&
      &              'PESA_Z'   ,&
-     &              'PERM_IN'  ,&
-     &              'PERMIN_L'  ,&
-     &              'PERMIN_N'  ,&
-     &              'PERM_END' ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO'  ,&
+     &              'TOTO' ,&
      &              'LAMB_T'   ,&
      &              'LAMB_TL'   ,&
      &              'LAMB_TN'   ,&
@@ -427,7 +425,7 @@ implicit none
      &              'LAMB_C_N',&
      &              'TOTO','TOTO' ,&
      &              'PERM_LIQU','D_PERM_LIQU_SATU',&
-     &              'PERMIN_T',&
+     &              'TOTO',&
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
@@ -455,10 +453,10 @@ implicit none
 ! =====================================================================
     data ncra40 / 'R_GAZ'    ,'PESA_X'   ,&
      &               'PESA_Y'    , 'PESA_Z'  ,&
-     &               'PERM_IN'   ,&
-     &               'PERMIN_L'  ,&
-     &               'PERMIN_N'  ,&
-     &               'PERM_END' ,&
+     &               'TOTO'   ,&
+     &               'TOTO'  ,&
+     &               'TOTO'  ,&
+     &               'TOTO' ,&
      &               'LAMB_T'    ,&
      &               'LAMB_TL'   ,&
      &               'LAMB_TN'   ,&
@@ -479,7 +477,7 @@ implicit none
      &               'D_FV_PG','FICKA_T'  ,&
      &               'FICKA_PA' , 'FICKA_PL' ,&
      &               'FICKA_S'  ,'D_FA_T' ,&
-     &               'PERMIN_T',&
+     &               'TOTO',&
      &               'LAMB_TT',&
      &               'D_LB_TT',&
      &               'LAMB_C_T'/
@@ -511,10 +509,10 @@ implicit none
 !     DANS CRAD40 ON NE LIT PAS DE 21 A 26 INCLUS ET 38
     data crad40 / 'R_GAZ'    ,'PESA_X'   ,&
      &                'PESA_Y'    , 'PESA_Z'  ,&
-     &                'PERM_IN'   ,&
-     &                'PERMIN_L'  ,&
-     &                'PERMIN_N'  ,&
-     &                'PERM_END' ,&
+     &                'TOTO'   ,&
+     &                'TOTO'  ,&
+     &                'TOTO'  ,&
+     &                'TOTO' ,&
      &                'LAMB_T'    ,&
      &                'LAMB_TL'   ,&
      &                'LAMB_TN'   ,&
@@ -535,7 +533,7 @@ implicit none
      &                'D_FV_PG','FICKA_T'  ,&
      &                'FICKA_PA' , 'FICKA_PL' ,&
      &                'FICKA_S'  ,'D_FA_T' ,&
-     &                'PERMIN_T',&
+     &                'TOTO',&
      &                'LAMB_TT',&
      &                'D_LB_TT',&
      &                'LAMB_C_T'/
@@ -561,7 +559,6 @@ implicit none
     aniso4 = 0
 ! INITIALISATION DES VECTEURS POUR LE CHOIX ISOTROPIE/ANISOTROPIE
     do ii = 1, 4
-        permfh(ii)=0.d0
         lambct(ii)=0.d0
         dlambt(ii)=0.d0
     end do
@@ -1004,56 +1001,9 @@ implicit none
 !
 !       INITIALISATION POUR L'ANISOTROPIE
 !
-            val18( 4) = 1.0d0
-!
             call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
                         [0.0d0], 3, ncra18(1), val18(1), icodre,&
                         0,nan='NON')
-            if ((hydr.eq.'HYDR_UTIL') .or. (hydr.eq.'HYDR_VGM') .or. ( hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                            [phi], 1, ncra18(4), val18(4), icodre,&
-                            0,nan='NON')
-                if (icodre(1) .eq. 1) then
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                [phi], 1, ncra18(6), val18(6), icodre,&
-                                0,nan='NON')
-                    if (icodre(1) .eq. 0) then
-! ELAS_ISTR 3D
-                        aniso1=1
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 2, ncra18(5), val18(5), icodre,&
-                                    0,nan='NON')
-                    else
-! ELAS_ORTH 2D
-                        aniso1=2
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra18(5), val18(5), icodre,&
-                                    0,nan='NON')
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra18(19), val18(19), icodre,&
-                                    0,nan='NON')
-                    endif
-                else if (icodre(1).eq.0) then
-                    aniso1=0
-                endif
-!
-            else if (hydr.eq.'HYDR_ENDO') then
-                if ((meca.eq.'MAZARS') .or. ( meca.eq.'ENDO_ISOT_BETON')) then
-! =====================================================================
-! --- ATTENTION DECALAGE VOLONTAIRE SUR LE TABLEAU VAL18 POUR ENDO ----
-! =====================================================================
-                    aniso1=0
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra18(7), val18(4), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra18(7), val18(5), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra18(7), val18(6), icodre,&
-                                1)
-                endif
-            endif
             call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
                         [t], dim19-1, ncra19, val19, icodre,&
                         0,nan='NON')
@@ -1153,10 +1103,6 @@ implicit none
             pesa(1) = fpesa(1)*val18(1)
             pesa(2) = fpesa(1)*val18(2)
             pesa(3) = fpesa(1)*val18(3)
-            permfh(1) = val18(4)
-            permfh(2) = val18(5)
-            permfh(3) = val18(6)
-            permfh(4) = val18(19)
             lambt(1) = val18(8)
             lambt(2) = val18(9)
             lambt(3) = val18(10)
@@ -1179,9 +1125,6 @@ implicit none
             alpha = val19(4)
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
-!
-! CALCUL DU TENSEUR DE PERMEABILITE
-            call tpermh(angmas, permfh, tperm, aniso1, ndim)
 !
 ! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
             call telamb(angmas, lambt, tlambt, aniso2, ndim)
@@ -1207,57 +1150,10 @@ implicit none
 !       INITIALISATION POUR LA CONDUCTIVITE THERMIQUE
 !
             val20(15) = 1.0d0
-!
-!       INITIALISATION POUR L'ANISOTROPIE
-!
-            val20(5) = 1.0d0
+
             call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
                         [0.d0], 4, ncra20(1), val20(1), icodre,&
                         0,nan='NON')
-            if ((hydr.eq.'HYDR_UTIL') .or. (hydr.eq.'HYDR_VGM') .or. ( hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                            [phi], 1, ncra20(5), val20(5), icodre,&
-                            0,nan='NON')
-                if (icodre(1) .eq. 1) then
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                [phi], 1, ncra20(7), val20(7), icodre,&
-                                0,nan='NON')
-                    if (icodre(1) .eq. 0) then
-! ELAS_ISTR 3D
-                        aniso1=1
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 2, ncra20(6), val20(6), icodre,&
-                                    0,nan='NON')
-                    else
-! ELAS_ORTH 2D
-                        aniso1=2
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra20(6), val20(6), icodre,&
-                                    0,nan='NON')
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra20(20), val20(20), icodre,&
-                                    0,nan='NON')
-                    endif
-                else if (icodre(1).eq.0) then
-                    aniso1=0
-                endif
-            else if (hydr.eq.'HYDR_ENDO') then
-                if ((meca.eq.'MAZARS') .or. ( meca.eq.'ENDO_ISOT_BETON')) then
-! =====================================================================
-! --- ATTENTION DECALAGE VOLONTAIRE SUR LE TABLEAU VAL21 POUR ENDO ----
-! =====================================================================
-                    aniso1=0
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra20(8), val20(5), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra20(8), val20(6), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra20(8), val20(7), icodre,&
-                                1)
-                endif
-            endif
             call rcvala(imate, ' ', 'THM_GAZ', 1, 'TEMP',&
                         [t], dim21, ncra21, val21, icodre,&
                         0,nan='NON')
@@ -1354,10 +1250,6 @@ implicit none
             pesa(1) = val20( 2)*fpesa(1)
             pesa(2) = val20( 3)*fpesa(1)
             pesa(3) = val20( 4)*fpesa(1)
-            permfh(1) = val20(5)
-            permfh(2) = val20(6)
-            permfh(3) = val20(7)
-            permfh(4) = val20(20)
             lambt(1) = val20(9)
             lambt(2) = val20(10)
             lambt(3) = val20(11)
@@ -1381,9 +1273,6 @@ implicit none
             dviscg = val21( 3)
             lambs = 0.0d0
             dlambs = 0.0d0
-!
-! CALCUL DU TENSEUR DE PERMEABILITE
-            call tpermh(angmas, permfh, tperm, aniso1, ndim)
 !
 ! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
             call telamb(angmas, lambt, tlambt, aniso2, ndim)
@@ -1414,56 +1303,9 @@ implicit none
             val22(15) = 1.0d0
             val22(17) = 1.0d0
 !
-!       INITIALISATION POUR L'ANISOTROPIE
-            val22(5) = 1.0d0
-!
             call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
                         [0.d0], 4, ncra22, val22, icodre,&
                         0,nan='NON')
-            if ((hydr.eq.'HYDR_UTIL') .or. (hydr.eq.'HYDR_VGM') .or. ( hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                            [phi], 1, ncra22(5), val22(5), icodre,&
-                            0,nan='NON')
-                if (icodre(1) .eq. 1) then
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                [phi], 1, ncra22(7), val22(7), icodre,&
-                                0,nan='NON')
-                    if (icodre(1) .eq. 0) then
-! ELAS_ISTR 3D
-                        aniso1=1
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 2, ncra22(6), val22(6), icodre,&
-                                    0,nan='NON')
-                    else
-! ELAS_ORTH 2D
-                        aniso1=2
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra22(6), val22(6), icodre,&
-                                    0,nan='NON')
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra22(29), val22(29), icodre,&
-                                    0,nan='NON')
-                    endif
-                else if (icodre(1).eq.0) then
-                    aniso1=0
-                endif
-            else if (hydr.eq.'HYDR_ENDO') then
-                if ((meca.eq.'MAZARS') .or. ( meca.eq.'ENDO_ISOT_BETON')) then
-! =====================================================================
-! --- ATTENTION DECALAGE VOLONTAIRE SUR LE TABLEAU VAL22 POUR ENDO ----
-! =====================================================================
-                    aniso1=0
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra22(8), val22(5), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra22(8), val22(6), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra22(8), val22(7), icodre,&
-                                1)
-                endif
-            endif
             call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
                         [t], 3, ncra23, val23, icodre,&
                         0,nan='NON')
@@ -1598,10 +1440,6 @@ implicit none
             pesa(1) = val22( 2)*fpesa(1)
             pesa(2) = val22( 3)*fpesa(1)
             pesa(3) = val22( 4)*fpesa(1)
-            permfh(1) = val22(5)
-            permfh(2) = val22(6)
-            permfh(3) = val22(7)
-            permfh(4) = val22(29)
             lambt(1) = val22(9)
             lambt(2) = val22(10)
             lambt(3) = val22(11)
@@ -1636,9 +1474,6 @@ implicit none
                 goto 500
             endif
 !
-! CALCUL DU TENSEUR DE PERMEABILITE
-            call tpermh(angmas, permfh, tperm, aniso1, ndim)
-!
 ! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
             call telamb(angmas, lambt, tlambt, aniso2, ndim)
 !
@@ -1670,59 +1505,9 @@ implicit none
 !
             val25(15) = 1.0d0
             val25(17) = 1.0d0
-!
-!       INITIALISATION POUR L'ANISOTROPIE
-!
-            val25(5) = 1.0d0
-!
-!
             call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
                         [0.d0], 4, ncra25, val25, icodre,&
                         0,nan='NON')
-            if ((hydr.eq.'HYDR_UTIL') .or. (hydr.eq.'HYDR_VGM') .or. ( hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                            [phi], 1, ncra25(5), val25(5), icodre,&
-                            0,nan='NON')
-                if (icodre(1) .eq. 1) then
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                [phi], 1, ncra25(7), val25(7), icodre,&
-                                0,nan='NON')
-                    if (icodre(1) .eq. 0) then
-! ELAS_ISTR 3D
-                        aniso1=1
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 2, ncra25(6), val25(6), icodre,&
-                                    0,nan='NON')
-                    else
-! ELAS_ORTH 2D
-                        aniso1=2
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra25(6), val25(6), icodre,&
-                                    0,nan='NON')
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra25(35), val25(35), icodre,&
-                                    0,nan='NON')
-                    endif
-                else if (icodre(1).eq.0) then
-                    aniso1=0
-                endif
-            else if (hydr.eq.'HYDR_ENDO') then
-                if ((meca.eq.'MAZARS') .or. ( meca.eq.'ENDO_ISOT_BETON')) then
-! =====================================================================
-! --- ATTENTION DECALAGE VOLONTAIRE SUR LE TABLEAU VAL22 POUR ENDO ----
-! =====================================================================
-                    aniso1=0
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra25(8), val25(5), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra25(8), val25(6), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra25(8), val25(7), icodre,&
-                                1)
-                endif
-            endif
             call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
                         [t], 3, ncra26, val26, icodre,&
                         0,nan='NON')
@@ -1893,10 +1678,6 @@ implicit none
             pesa(1) = val25( 2)*fpesa(1)
             pesa(2) = val25( 3)*fpesa(1)
             pesa(3) = val25( 4)*fpesa(1)
-            permfh(1) = val25(5)
-            permfh(2) = val25(6)
-            permfh(3) = val25(7)
-            permfh(4) = val25(35)
 
             lambt(1) = val25(9)
             lambt(2) = val25(10)
@@ -1937,9 +1718,6 @@ implicit none
                 goto 500
             endif
 !
-! CALCUL DU TENSEUR DE PERMEABILITE
-            call tpermh(angmas, permfh, tperm, aniso1, ndim)
-!
 ! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
             call telamb(angmas, lambt, tlambt, aniso2, ndim)
 !
@@ -1972,58 +1750,10 @@ implicit none
             val40(15) = 1.0d0
             val40(17) = 1.0d0
 !
-!       INITIALISATION POUR L'ANISOTROPIE
-!
-            val40(5) = 1.0d0
-!
 !
             call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
                         [0.d0], 4, ncra40, val40, icodre,&
                         0,nan='NON')
-            if (hydr .eq. 'HYDR_UTIL' .or. hydr .eq. 'HYDR_VGM' .or. hydr .eq. 'HYDR_VGC') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                            [phi], 1, ncra40(5), val40(5), icodre,&
-                            0,nan='NON')
-                if (icodre(1) .eq. 1) then
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                [phi], 1, ncra40(7), val40(7), icodre,&
-                                0,nan='NON')
-                    if (icodre(1) .eq. 0) then
-! ELAS_ISTR 3D
-                        aniso1=1
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 2, ncra40(6), val40(6), icodre,&
-                                    0,nan='NON')
-                    else
-! ELAS_ORTH 2D
-                        aniso1=2
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra40(6), val40(6), icodre,&
-                                    0,nan='NON')
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra40(40), val40(40), icodre,&
-                                    0,nan='NON')
-                    endif
-                else if (icodre(1).eq.0) then
-                    aniso1=0
-                endif
-            else if (hydr.eq.'HYDR_ENDO') then
-                if ((meca.eq.'MAZARS') .or. ( meca.eq.'ENDO_ISOT_BETON')) then
-! =====================================================================
-! --- ATTENTION DECALAGE VOLONTAIRE SUR LE TABLEAU VAL22 POUR ENDO ----
-! =====================================================================
-                    aniso1=0
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra40(8), val40(5), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra40(8), val40(6), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra40(8), val40(7), icodre,&
-                                1)
-                endif
-            endif
             call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
                         [t], 3, ncra41, val41, icodre,&
                         0,nan='NON')
@@ -2221,10 +1951,6 @@ implicit none
             pesa(1) = val40(2)*fpesa(1)
             pesa(2) = val40(3)*fpesa(1)
             pesa(3) = val40(4)*fpesa(1)
-            permfh(1) = val40(5)
-            permfh(2) = val40(6)
-            permfh(3) = val40(7)
-            permfh(4) = val40(40)
             lambt(1) = val40(9)
             lambt(2) = val40(10)
             lambt(3) = val40(11)
@@ -2267,9 +1993,6 @@ implicit none
                 goto 500
             endif
 !
-! CALCUL DU TENSEUR DE PERMEABILITE
-            call tpermh(angmas, permfh, tperm, aniso1, ndim)
-!
 ! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
             call telamb(angmas, lambt, tlambt, aniso2, ndim)
 !
@@ -2298,59 +2021,11 @@ implicit none
 !
             val40(15) = 1.0d0
             val40(17) = 1.0d0
-!
-!       INITIALISATION POUR L'ANISOTROPIE
-!
-            val40(5) = 1.0d0
-!
-!
+
             call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
                         [0.d0], 4, crad40, val40, icodre,&
                         0,nan='NON')
-            if ((hydr.eq.'HYDR_UTIL') .or. (hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                            [phi], 1, crad40(5), val40(5), icodre,&
-                            0,nan='NON')
-                if (icodre(1) .eq. 1) then
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                [phi], 1, crad40(7), val40(7), icodre,&
-                                0,nan='NON')
-                    if (icodre(1) .eq. 0) then
-! ELAS_ISTR 3D
-                        aniso1=1
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 2, crad40(6), val40(6), icodre,&
-                                    0,nan='NON')
-                    else
-! ELAS_ORTH 2D
-                        aniso1=2
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, crad40(6), val40(6), icodre,&
-                                    0,nan='NON')
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, crad40(40), val40(40), icodre,&
-                                    0,nan='NON')
-                    endif
-                else if (icodre(1).eq.0) then
-                    aniso1=0
-                endif
-            else if (hydr.eq.'HYDR_ENDO') then
-                if ((meca.eq.'MAZARS') .or. ( meca.eq.'ENDO_ISOT_BETON')) then
-! =====================================================================
-! --- ATTENTION DECALAGE VOLONTAIRE SUR LE TABLEAU VAL22 POUR ENDO ----
-! =====================================================================
-                    aniso1=0
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, crad40(8), val40(5), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, crad40(8), val40(6), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, crad40(8), val40(7), icodre,&
-                                1)
-                endif
-            endif
+
             call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
                         [t], 3, crad41, val41, icodre,&
                         0,nan='NON')
@@ -2520,10 +2195,6 @@ implicit none
             pesa(1) = val40( 2)*fpesa(1)
             pesa(2) = val40( 3)*fpesa(1)
             pesa(3) = val40( 4)*fpesa(1)
-            permfh(1) = val40(5)
-            permfh(2) = val40(6)
-            permfh(3) = val40(7)
-            permfh(4) = val40(40)
             lambt(1) = val40(9)
             lambt(2) = val40(10)
             lambt(3) = val40(11)
@@ -2565,9 +2236,6 @@ implicit none
                 goto 500
             endif
 !
-! CALCUL DU TENSEUR DE PERMEABILITE
-            call tpermh(angmas, permfh, tperm, aniso1, ndim)
-!
 ! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
             call telamb(angmas, lambt, tlambt, aniso2, ndim)
 !
@@ -2596,59 +2264,9 @@ implicit none
 !
             val29(15) = 1.0d0
             val29(17) = 1.0d0
-!
-!       INITIALISATION POUR L'ANISOTROPIE
-!
-            val29(5) = 1.0d0
-!
-!
             call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
                         [0.d0], 4, ncra29, val29, icodre,&
                         0,nan='NON')
-            if ((hydr.eq.'HYDR_UTIL') .or. (hydr.eq.'HYDR_VGM') .or. ( hydr.eq.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                            [phi], 1, ncra29(5), val29(5), icodre,&
-                            0,nan='NON')
-                if (icodre(1) .eq. 1) then
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                [phi], 1, ncra29(7), val29(7), icodre,&
-                                0,nan='NON')
-                    if (icodre(1) .eq. 0) then
-! ELAS_ISTR 3D
-                        aniso1=1
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 2, ncra29(6), val29(6), icodre,&
-                                    0,nan='NON')
-                    else
-! ELAS_ORTH 2D
-                        aniso1=2
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra29(6), val29(6), icodre,&
-                                    0,nan='NON')
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra29(29), val29(29), icodre,&
-                                    0,nan='NON')
-                    endif
-                else if (icodre(1).eq.0) then
-                    aniso1=0
-                endif
-            else if (hydr.eq.'HYDR_ENDO') then
-                if ((meca.eq.'MAZARS') .or. ( meca.eq.'ENDO_ISOT_BETON')) then
-! =====================================================================
-! --- ATTENTION DECALAGE VOLONTAIRE SUR LE TABLEAU VAL29 POUR ENDO ----
-! =====================================================================
-                    aniso1=0
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra29(8), val29(5), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra29(8), val29(6), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra29(8), val29(7), icodre,&
-                                1)
-                endif
-            endif
             call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
                         [t], 3, ncra30, val30, icodre,&
                         0,nan='NON')
@@ -2781,10 +2399,6 @@ implicit none
             pesa(1) = val29( 2)*fpesa(1)
             pesa(2) = val29( 3)*fpesa(1)
             pesa(3) = val29( 4)*fpesa(1)
-            permfh(1) = val29(5)
-            permfh(2) = val29(6)
-            permfh(3) = val29(7)
-            permfh(4) = val29(29)
             lambt(1) = val29(9)
             lambt(2) = val29(10)
             lambt(3) = val29(11)
@@ -2819,9 +2433,6 @@ implicit none
                 goto 500
             endif
 !
-! CALCUL DU TENSEUR DE PERMEABILITE
-            call tpermh(angmas, permfh, tperm, aniso1, ndim)
-!
 ! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
             call telamb(angmas, lambt, tlambt, aniso2, ndim)
 !
@@ -2847,61 +2458,10 @@ implicit none
 !
             val32(14) = 1.0d0
             val32(16) = 1.0d0
-!
-!       INITIALISATION POUR L'ANISOTROPIE
-!
-            val32(4) = 1.0d0
-!
+
             call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
                         [0.d0], 3, ncra32, val32, icodre,&
                         0,nan='NON')
-            if (hydr .eq. 'HYDR_UTIL') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                            [phi], 1, ncra32(4), val32(4), icodre,&
-                            0,nan='NON')
-                if (icodre(1) .eq. 1) then
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                [phi], 1, ncra32(6), val32(6), icodre,&
-                                0,nan='NON')
-                    if (icodre(1) .eq. 0) then
-! ELAS_ISTR 3D
-                        aniso1=1
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 2, ncra32(5), val32(5), icodre,&
-                                    0,nan='NON')
-                    else
-! ELAS_ORTH 2D
-                        aniso1=2
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra32(5), val32(5), icodre,&
-                                    0,nan='NON')
-                        call rcvala(imate, ' ', 'THM_DIFFU', 1, 'PORO',&
-                                    [phi], 1, ncra32(25), val32(25), icodre,&
-                                    0,nan='NON')
-                    endif
-                else if (icodre(1).eq.0) then
-                    aniso1=0
-                endif
-            else if (hydr.eq.'HYDR_ENDO') then
-                if ((meca.eq.'MAZARS') .or. ( meca.eq.'ENDO_ISOT_BETON')) then
-! =====================================================================
-! --- ATTENTION DECALAGE VOLONTAIRE SUR LE TABLEAU VAL32 POUR ENDO ----
-! =====================================================================
-                    aniso1=0
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra32(7), val32(4), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra32(7), val32(5), icodre,&
-                                1)
-                    call rcvala(imate, ' ', 'THM_DIFFU', 1, 'ENDO',&
-                                [endo], 1, ncra32(7), val32(6), icodre,&
-                                1)
-                endif
-                else if ((hydr.eq.'HYDR_VGM').or.(hydr.eq.'HYDR_VGC'))&
-            then
-                ASSERT(.false.)
-            endif
             call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
                         [t], 3, ncra33, val33, icodre,&
                         0,nan='NON')
@@ -3014,10 +2574,6 @@ implicit none
             pesa(1) = val32( 1)*fpesa(1)
             pesa(2) = val32( 2)*fpesa(1)
             pesa(3) = val32( 3)*fpesa(1)
-            permfh(1) = val32(4)
-            permfh(2) = val32(5)
-            permfh(3) = val32(6)
-            permfh(4) = val32(25)
             lambt(1) = val32(8)
             lambt(2) = val32(9)
             lambt(3) = val32(10)
@@ -3045,9 +2601,6 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-!
-! CALCUL DU TENSEUR DE PERMEABILITE
-            call tpermh(angmas, permfh, tperm, aniso1, ndim)
 !
 ! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
             call telamb(angmas, lambt, tlambt, aniso2, ndim)

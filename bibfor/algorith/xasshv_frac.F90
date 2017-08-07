@@ -52,6 +52,7 @@ implicit none
 #include "asterfort/xvinhm.h"
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/thmGetBehaviour.h"
 !
 ! ======================================================================
 !
@@ -88,17 +89,21 @@ implicit none
     real(kind=8) :: rbid30, rbid31, rbid32, rbid33, rbid34, rbid35(3,3)
     real(kind=8) :: rbid37, rbid38(3), rbid8(6)
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
-    character(len=16):: compor(*), thmc, hydr, meca, zkbid
+    character(len=16):: compor(*), thmc, hydr, zkbid
 
 !   DETERMINATION DES CONSTANTES TEMPORELLES (INSTANT+THETA SCHEMA)
     dt = rinstp-rinstm
     ta = crit(4)
     ta1 = 1.d0-ta 
-    
-!   RECUPERATION DES DIFFERENTES RELATIONS DE COMPORTEMENT
+!   
+! - Get behaviours parameters from COMPOR field
+!
     call thmGetParaBehaviour(compor,&
-                             meca_ = meca, thmc_ = thmc, hydr_ = hydr)
-
+                             thmc_ = thmc, hydr_ = hydr)  
+!
+! - Get parameters for coupling
+!
+    call thmGetBehaviour(compor)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
@@ -181,7 +186,7 @@ implicit none
 !                CIRCULANT DANS LA FRACTURE)
 !
                  job='VECTEUR'                    
-                 call xvinhm(zi(jmate), thmc, meca, hydr, ndim,&
+                 call xvinhm(zi(jmate), thmc, hydr, ndim,&
                             cohes, dpf, saut, sautm, nd, lamb,&
                             w11m, rho11m, alpha, job, t, pf,&
                             rho11, w11, ipgf, rela, dsidep,&
@@ -193,7 +198,7 @@ implicit none
                              saut, sautm, nd, ffc, w11, w11m, jac,&
                              q1, dt, ta, q1m, ta1, q2, q2m, dffc,&
                              rho11, gradpf, rho11m, gradpfm, ffp2,&
-                             zi(jmate), thmc, meca, hydr, t, vect,&
+                             zi(jmate), thmc, hydr, t, vect,&
                              ffp, nnop, delta, lamb, am, r, p,&
                              psup, pinf, pf, ncompn, jheavn, ifiss,&
                              nfiss, nfh, ifa, jheafa, ncomph)
@@ -244,7 +249,7 @@ implicit none
                    call xhmsa6(ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
                                tau1, tau2, cohes, job, rela,&
                                alpha, dsidep, sigma, p, am, raug,&
-                               thmc, meca, hydr, wsautm, dpf, rho110)
+                               thmc, hydr, wsautm, dpf, rho110)
                    call xhvco4(ino, ndim, sigma, lamb, pla,&
                                jac, ffc, p, raug, vect)
                    vihydr(2*nnops*(pos(ino)-1)+2*(ino-1)+1) = alpha(4)
@@ -268,7 +273,7 @@ implicit none
 !
                 zkbid = 'VIDE'                                          
 !                                                                   
-                call thmlec(zi(jmate), thmc, meca, hydr, zkbid,&            
+                call thmlec(zi(jmate), thmc, hydr, zkbid,&            
                             t, rbid1, rbid2, rbid3, rbid4,&             
                             rbid5, rbid6, rbid7, rbid8, rbid9,&         
                             rbid10, rbid11, rbid12, rbid13, rbid14,&    

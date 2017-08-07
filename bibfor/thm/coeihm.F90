@@ -264,7 +264,7 @@ implicit none
 ! ======================================================================
 ! --- RECUPERATION DES DONNEES MATERIAU FINALES ------------------------
 ! ======================================================================
-    call thmlec(imate, thmc, meca, hydr, ther,&
+    call thmlec(imate, thmc, hydr, ther,&
                 t, p1, p2, phi, varip(1),&
                 pvp, pad, rgaz, tbiot, satur,&
                 dsatur, pesa, tperm, permli, dperml,&

@@ -15,12 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
                   tau1, tau2, cohes, job, rela,&
                   alpha, dsidep, sigma, p, am, raug,&
-                  thmc, meca, hydr, wsautm, dpf, rho110)
-    implicit none
+                  thmc, hydr, wsautm, dpf, rho110)
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/lcejex.h"
@@ -28,14 +32,14 @@ subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
 #include "asterfort/matini.h"
 #include "asterfort/thmrcp.h"
 #include "asterfort/vecini.h"
-    integer :: ndim, ipgf, imate
-    real(kind=8) :: wsaut(3), lamb(3), am(3), dsidep(6, 6)
-    real(kind=8) :: tau1(3), tau2(3), nd(3), wsautm(3)
-    real(kind=8) :: alpha(5), p(3, 3), rho11, rho11m
-    real(kind=8) :: cohes(5), rela, raug, dpf, w11, w11m
-    character(len=8) :: job
+integer :: ndim, ipgf, imate
+real(kind=8) :: wsaut(3), lamb(3), am(3), dsidep(6, 6)
+real(kind=8) :: tau1(3), tau2(3), nd(3), wsautm(3)
+real(kind=8) :: alpha(5), p(3, 3), rho11, rho11m
+real(kind=8) :: cohes(5), rela, raug, dpf, w11, w11m
+character(len=8) :: job
 ! ======================================================================
-! person_in_charge: daniele.colombo at ifpen.fr
+
 !
 ! ROUTINE CONTACT (METHODE XFEM HPP - CALCUL ELEM.)
 !
@@ -71,9 +75,9 @@ subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
     real(kind=8) :: vim(9), vip(9)
     real(kind=8) ::  dsid2d(6, 6), dam(3)
     real(kind=8) :: sigma(6), cliq, varbio
-    real(kind=8) :: rbid2, rbid3, rbid4, rbid5, rbid6
+    real(kind=8) :: rbid2, rbid3, rbid4, rbid5
     real(kind=8) :: rbid8, rbid9, rbid10, rbid11, rbid13, rbid14
-    real(kind=8) :: rbid15(3), rbid16(3, 3), rbid17, rbid18, rbid19, rbid20
+    real(kind=8) :: rbid15(3), rbid17, rbid18, rbid19, rbid20
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid29, rbid30, rbid31, rbid32
     real(kind=8) :: rbid33, rbid34, rbid35, rbid36, rbid37(3, 3)
@@ -82,7 +86,7 @@ subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
     real(kind=8) :: rbid52, rbid53, rbid38(3, 3), rbid51(3, 3)
     real(kind=8) :: r7bid(3)
     real(kind=8) :: rho110, t
-    character(len=16) :: option, zkbid, thmc, meca, hydr
+    character(len=16) :: option, zkbid, thmc, hydr
 !
 ! ----------------------------------------------------------------------
 !
@@ -99,11 +103,11 @@ subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
 !   RECUPERATION DES DONNEES HM
 !
     zkbid = 'VIDE'
-    call thmrcp('INTERMED', imate, thmc, meca, hydr,&
+    call thmrcp('INTERMED', imate, thmc, hydr,&
                 zkbid, t, rbid2, rbid3, rbid4,&
-                rbid5, rbid6, rbid8, rbid9, rbid10,&
+                rbid5, rbid8, rbid9, rbid10,&
                 rbid11, rbid13, rbid53, rbid14,&
-                rbid15, rbid16, rbid17, rbid18, rbid19,&
+                rbid15, rbid17, rbid18, rbid19,&
                 rbid20, rbid21, rbid22, rbid23, rbid24,&
                 rbid25, rbid26, rho110, cliq, rbid29,&
                 rbid30, rbid31, rbid32, rbid33, rbid34,&

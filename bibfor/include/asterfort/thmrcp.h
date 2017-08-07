@@ -15,15 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface 
-    subroutine thmrcp(etape, imate, thmc, meca, hydr,&
+    subroutine thmrcp(etape, imate, thmc, hydr,&
                       ther, t, p1, p1m, p2,&
-                      phi, endo, pvp, rgaz, rhod,&
+                      phi, pvp, rgaz, rhod,&
                       cpd, satm, satur, dsatur,&
-                      pesa, tperm, permli, dperml, permgz,&
+                      pesa, permli, dperml, permgz,&
                       dperms, dpermp, fick, dfickt, dfickg,&
                       lambp, dlambp, rhol, unsurk, alpha,&
                       cpl, lambs, dlambs, viscl, dviscl,&
@@ -36,7 +35,6 @@ interface
         character(len=8) :: etape
         integer :: imate
         character(len=16) :: thmc
-        character(len=16) :: meca
         character(len=16) :: hydr
         character(len=16) :: ther
         real(kind=8) :: t0
@@ -49,7 +47,6 @@ interface
         real(kind=8) :: p1m
         real(kind=8) :: p2
         real(kind=8) :: phi
-        real(kind=8) :: endo
         real(kind=8) :: pvp
         real(kind=8) :: rgaz
         real(kind=8) :: rhod
@@ -58,7 +55,6 @@ interface
         real(kind=8) :: satur
         real(kind=8) :: dsatur
         real(kind=8) :: pesa(3)
-        real(kind=8) :: tperm(ndim, ndim)
         real(kind=8) :: permli
         real(kind=8) :: dperml
         real(kind=8) :: permgz

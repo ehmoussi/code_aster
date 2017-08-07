@@ -17,11 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface 
-    subroutine tpermh(ndim, angl_naut, aniso, perm_coef, tperm)
+    subroutine thmGetPermeabilityTensor(ndim , angl_naut, j_mater, phi, endo,&
+                                        tperm)
         integer, intent(in) :: ndim
         real(kind=8), intent(in) :: angl_naut(3)
-        integer, intent(in) :: aniso
-        real(kind=8), intent(in) :: perm_coef(4)
+        integer, intent(in) :: j_mater
+        real(kind=8), intent(in) :: phi, endo
         real(kind=8), intent(out) :: tperm(ndim, ndim)
-    end subroutine tpermh
+    end subroutine thmGetPermeabilityTensor
 end interface 

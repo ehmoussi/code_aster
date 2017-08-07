@@ -15,12 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine xvechm(nnops, ddls, ddlm, ndim, pla,&
                   saut, sautm, nd, ffc, w11, w11m, jac,&
                   q1, dt, ta, q1m, ta1, q2, q2m, dffc,&
                   rho11, gradpf, rho11m, gradpfm, ffp2,&
-                  jmate, thmc, meca, hydr, t, vect, ffp,&
+                  jmate, thmc, hydr, t, vect, ffp,&
                   nnop, delta, lamb, am, r, p, psup,&
                   pinf, pf, ncompn, jheavn, ifiss, nfiss,&
                   nfh, ifa, jheafa, ncomph)
@@ -61,11 +62,11 @@ subroutine xvechm(nnops, ddls, ddlm, ndim, pla,&
     real(kind=8) :: rbid25, rbid26, rbid27, rbid28(3,3), rbid29(3,3) 
     real(kind=8) :: rbid30, rbid31, rbid32, rbid33, rbid34, rbid35(3,3)
     real(kind=8) :: rbid37, rbid38(3), t, rbid39, rbid8(6)
-    character(len=16) :: thmc, meca, hydr, zkbid
+    character(len=16) :: thmc, hydr, zkbid
 !
     zkbid='VIDE'
 !
-    call thmlec(jmate, thmc, meca, hydr, zkbid,&
+    call thmlec(jmate, thmc, hydr, zkbid,&
                 t, rbid1, rbid2, rbid3, rbid4,&
                 rbid5, rbid6, rbid7, rbid8, rbid9,&
                 rbid10, rbid11, rbid12, rbid13, rbid14,&

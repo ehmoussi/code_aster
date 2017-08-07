@@ -128,8 +128,8 @@ implicit none
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid8, rbid10, rbid14(3)
-    real(kind=8) :: rbid15(ndim, ndim), rbid16, rbid17, rbid18, rbid19
+    real(kind=8) :: rbid10, rbid14(3)
+    real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26, rbid20
     real(kind=8) :: rbid27, rbid28, rbid29, rbid32(ndim, ndim)
     real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38
@@ -150,11 +150,11 @@ implicit none
     call netbis(meca, net, bishop)
     phi0 = ds_thm%ds_parainit%poro_init
     pvp0 = ds_thm%ds_parainit%prev_init
-    call thmrcp('INTERMED', imate, thmc, meca, hydr,&
+    call thmrcp('INTERMED', imate, thmc, hydr,&
                 ther, t, p1, p1-dp1, rbid6,&
-                rbid7, rbid8, rbid10, r, rho0,&
+                rbid7, rbid10, r, rho0,&
                 csigm, satm, sat, dsatp1,&
-                rbid14, rbid15, rbid16, rbid17, rbid18,&
+                rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
                 cp11, rbid26, rbid27, rbid28, rbid29,&

@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine thmlec(imate, thmc, meca, hydr, ther,&
-                  t, p1, p2, phi, end,&
+! aslint: disable=W1504
+! person_in_charge: sylvie.granet at edf.fr
+!
+subroutine thmlec(j_mater, thmc, hydr, ther,&
+                  t, p1, p2, phi, endo,&
                   pvp, pad, rgaz, tbiot, satur,&
                   dsatur, pesa, tperm, permli, dperml,&
                   permgz, dperms, dpermp, fick, dfickt,&
@@ -25,29 +27,53 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                   lambs, dlambs, viscl, dviscl, mamolg,&
                   tlambt, tdlamt, viscg, dviscg, mamolv,&
                   fickad, dfadt, tlamct, instap,&
-                  angmas, ndim)
-! person_in_charge: sylvie.granet at edf.fr
-! =====================================================================
-! =====================================================================
-! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
-! =====================================================================
-    implicit none
+                  angl_naut, ndim)
+!
+implicit none
+!
 #include "asterfort/thmrcp.h"
 #include "asterfort/tebiot.h"
-    integer :: imate, retcom, ndim
-    real(kind=8) :: t, p1, p2, phi, pvp
+#include "asterfort/thmGetPermeabilityTensor.h"
+!
+integer, intent(in) :: ndim
+real(kind=8), intent(in) :: angl_naut(3)
+integer, intent(in) :: j_mater
+real(kind=8), intent(in) :: phi, endo
+real(kind=8), intent(out) :: tperm(ndim, ndim)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Get final parameters
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  ndim             : dimension of space (2 or 3)
+! In  angl_naut        : nautical angles
+!                        (1) Alpha - clockwise around Z0
+!                        (2) Beta  - counterclockwise around Y1
+!                        (3) Gamma - clockwise around X
+! In  j_mater          : coded material address
+! In  phi              : porosity
+! In  endo             : damage
+! Out tperm            : permeability tensor
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: retcom
+    real(kind=8) :: t, p1, p2, pvp
     real(kind=8) :: rgaz, tbiot(6), satur, dsatur, pesa(3)
-    real(kind=8) :: tperm(ndim, ndim), permli, dperml, permgz, dperms, dpermp
+    real(kind=8) :: permli, dperml, permgz, dperms, dpermp
     real(kind=8) :: fick, dfickt, dfickg, lambp, dlambp
-    real(kind=8) :: alpha, lambs, dlambs, viscl, dviscl, end
+    real(kind=8) :: alpha, lambs, dlambs, viscl, dviscl
     real(kind=8) :: tlambt(ndim, ndim), tdlamt(ndim, ndim), viscg
     real(kind=8) :: dviscg, mamolg, instap
     real(kind=8) :: mamolv, fickad, dfadt, pad, tlamct(ndim, ndim), unsurk
-    real(kind=8) :: angmas(3)
-    character(len=16) :: meca, thmc, ther, hydr
-! =====================================================================
-! --- VARIABLES LOCALES -----------------------------------------------
-! =====================================================================
+    character(len=16) :: thmc, ther, hydr
+!
+! --------------------------------------------------------------------------------------------------
+!
     real(kind=8) :: rbid1, rbid2, rbid3, rbid4, rbid5, rbid6
     real(kind=8) :: rbid7, rbid8, rbid9
     real(kind=8) :: rbid11, rbid12, rbid13, rbid14, rbid15, rbid16
@@ -57,7 +83,9 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
     real(kind=8) :: rbid35, rbid36, rbid37, rbid38, rbid39, rbid40
     real(kind=8) :: rbid41, rbid42, rbid43, rbid44, rbid45, rbid46
     real(kind=8) :: rbid47, rbid48, rbid49, rbid50
-! =====================================================================
+!
+! --------------------------------------------------------------------------------------------------
+!
     rbid1=0.d0
     rbid2=0.d0
     rbid3=0.d0
@@ -107,11 +135,11 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
     rbid50=0.d0
     retcom=0
     if (thmc .eq. 'LIQU_SATU') then
-        call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
+        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, rbid6, rbid41, rbid7,&
-                    phi, end, rbid11, rbid12, rbid13,&
+                    phi, rbid11, rbid12, rbid13,&
                     rbid14, rbid16, rbid17, rbid18,&
-                    pesa, tperm, rbid19, rbid20, rbid21,&
+                    pesa, rbid19, rbid20, rbid21,&
                     rbid22, rbid23, rbid24, rbid25, rbid26,&
                     lambp, dlambp, rbid27, unsurk, alpha,&
                     rbid28, lambs, dlambs, viscl, dviscl,&
@@ -119,13 +147,13 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     rbid36, rbid37, rbid38, rbid39, rbid40,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct, instap, retcom,&
-                    angmas, ndim)
+                    angl_naut, ndim)
     else if (thmc.eq.'GAZ') then
-        call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
+        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, rbid6, rbid44, rbid7,&
-                    phi, end, rbid11, rgaz, rbid13,&
+                    phi, rbid11, rgaz, rbid13,&
                     rbid14, rbid16, rbid17, rbid18,&
-                    pesa, tperm, rbid19, rbid20, rbid21,&
+                    pesa, rbid19, rbid20, rbid21,&
                     rbid22, rbid23, rbid24, rbid25, rbid26,&
                     lambp, dlambp, rbid27, rbid42, rbid43,&
                     rbid29, lambs, dlambs, rbid41, rbid31,&
@@ -133,13 +161,13 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     dviscg, rbid37, rbid38, rbid39, rbid40,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct,  instap, retcom,&
-                    angmas, ndim)
+                    angl_naut, ndim)
     else if (thmc.eq.'LIQU_VAPE') then
-        call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
+        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
-                    phi, end, pvp, rgaz, rbid8,&
+                    phi, pvp, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, tperm, permli, dperml, permgz,&
+                    pesa, permli, dperml, permgz,&
                     dperms, dpermp, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -147,13 +175,13 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     rbid24, mamolv, rbid25, viscg, dviscg,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct, instap, retcom,&
-                    angmas, ndim)
+                    angl_naut, ndim)
     else if (thmc.eq.'LIQU_VAPE_GAZ') then
-        call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
+        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
-                    phi, end, pvp, rgaz, rbid8,&
+                    phi, pvp, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, tperm, permli, dperml, permgz,&
+                    pesa, permli, dperml, permgz,&
                     dperms, dpermp, fick, dfickt, dfickg,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -161,13 +189,13 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     dviscg, mamolv, rbid25, rbid26, rbid27,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct,  instap, retcom,&
-                    angmas, ndim)
+                    angl_naut, ndim)
     else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
-        call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
+        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
-                    phi, end, rbid28, rgaz, rbid8,&
+                    phi, rbid28, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, tperm, permli, dperml, permgz,&
+                    pesa, permli, dperml, permgz,&
                     dperms, dpermp, fick, dfickt, dfickg,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -175,14 +203,14 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     dviscg, mamolv, rbid25, rbid26, rbid27,&
                     fickad, dfadt, rbid47, rbid48, pad,&
                     rbid50, tlamct,  instap, retcom,&
-                    angmas, ndim)
+                    angl_naut, ndim)
 !
     else if (thmc.eq.'LIQU_AD_GAZ') then
-        call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
+        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
-                    phi, end, rbid28, rgaz, rbid8,&
+                    phi, rbid28, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, tperm, permli, dperml, permgz,&
+                    pesa, permli, dperml, permgz,&
                     dperms, dpermp, rbid50, rbid50, rbid50,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -190,13 +218,13 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     dviscg, rbid50, rbid25, rbid26, rbid27,&
                     fickad, dfadt, rbid47, rbid48, pad,&
                     rbid50, tlamct,  instap, retcom,&
-                    angmas, ndim)
+                    angl_naut, ndim)
     else if (thmc.eq.'LIQU_GAZ') then
-        call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
+        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
-                    phi, end, rbid28, rgaz, rbid8,&
+                    phi, rbid28, rgaz, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, tperm, permli, dperml, permgz,&
+                    pesa, permli, dperml, permgz,&
                     dperms, dpermp, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -204,13 +232,13 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     dviscg, mamolv, rbid25, rbid26, rbid27,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct,  instap, retcom,&
-                    angmas, ndim)
+                    angl_naut, ndim)
     else if (thmc.eq.'LIQU_GAZ_ATM') then
-        call thmrcp('FINALE  ', imate, thmc, meca, hydr,&
+        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
-                    phi, end, rbid28, rbid29, rbid8,&
+                    phi, rbid28, rbid29, rbid8,&
                     rbid9, rbid11, satur, dsatur,&
-                    pesa, tperm, permli, dperml, rbid30,&
+                    pesa, permli, dperml, rbid30,&
                     rbid31, rbid32, rbid14, rbid15, rbid16,&
                     lambp, dlambp, rbid17, unsurk, alpha,&
                     rbid18, lambs, dlambs, viscl, dviscl,&
@@ -218,12 +246,18 @@ subroutine thmlec(imate, thmc, meca, hydr, ther,&
                     rbid24, mamolv, rbid25, rbid26, rbid27,&
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct, instap, retcom,&
-                    angmas, ndim)
+                    angl_naut, ndim)
     endif
+
+!
+! - Get permeability tensor
+!
+    call thmGetPermeabilityTensor(ndim , angl_naut, j_mater, phi, endo,&
+                                  tperm)
 !
 ! - (re)-compute Biot tensor
 !
-    call tebiot(angmas, tbiot)
+    call tebiot(angl_naut, tbiot)
 
 ! =====================================================================
 end subroutine
