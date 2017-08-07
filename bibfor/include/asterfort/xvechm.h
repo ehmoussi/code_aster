@@ -15,15 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
     subroutine xvechm(nnops, ddls, ddlm, ndim, pla,&
                       saut, sautm, nd, ffc, w11, w11m, jac,&
                       q1, dt, ta, q1m, ta1, q2, q2m, dffc,&
                       rho11, gradpf, rho11m, gradpfm, ffp2,&
-                      jmate, thmc, meca, hydr, t, vect, ffp,&
+                      jmate, thmc, hydr, t, vect, ffp,&
                       nnop, delta, lamb, am, r, p, psup,&
                       pinf, pf, ncompn, jheavn, ifiss, nfiss,&
                       nfh, ifa, jheafa, ncomph)
@@ -56,7 +55,6 @@ interface
         real(kind=8) :: ffp2(27)
         integer :: jmate
         character(len=16) :: thmc
-        character(len=16) :: meca
         character(len=16) :: hydr
         real(kind=8) :: t
         real(kind=8) :: vect(560)

@@ -105,8 +105,8 @@ implicit none
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid8, rbid10, rbid14(3), rbid9
-    real(kind=8) :: rbid15(ndim, ndim), rbid16, rbid17, rbid18, rbid19
+    real(kind=8) :: rbid10, rbid14(3), rbid9
+    real(kind=8) :: rbid16, rbid17, rbid18, rbid19
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid32(ndim, ndim)
     real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38, rbid20
@@ -130,11 +130,11 @@ implicit none
     pvp0 = ds_thm%ds_parainit%prev_init
     pvp = vintm(advico+vicpvp) + pvp0
     pvpm = vintm(advico+vicpvp) + pvp0
-    call thmrcp('INTERMED', imate, thmc, meca, hydr,&
+    call thmrcp('INTERMED', imate, thmc, hydr,&
                 ther, t, rbid40, pvpm-p1+dp1, rbid6,&
-                rbid7, rbid8, rbid10, r, rho0,&
+                rbid7, rbid10, r, rho0,&
                 csigm, satm, rbid42, rbid43,&
-                rbid14, rbid15, rbid16, rbid17, rbid18,&
+                rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, cliq, alpliq,&
                 cp11, rbid26, rbid27, rbid28, rbid29,&
@@ -211,11 +211,11 @@ implicit none
 ! =====================================================================
 ! --- ON PEUT MAINTENANT CALCULER SAT DANS LE CAS LIQU_VAPE -----------
 ! =====================================================================
-    call thmrcp('SATURATI', imate, thmc, meca, hydr,&
+    call thmrcp('SATURATI', imate, thmc, hydr,&
                 ther, rbid9, pvp-p1, rbid41, rbid6,&
-                rbid7, rbid8, rbid10, rbid51, rbid52,&
+                rbid7, rbid10, rbid51, rbid52,&
                 rbid53, rbid41, sat, dsatp1,&
-                rbid14, rbid15, rbid16, rbid17, rbid18,&
+                rbid14, rbid16, rbid17, rbid18,&
                 rbid19, rbid20, rbid21, rbid22, rbid23,&
                 rbid24, rbid25, rho110, rbid53, rbid52,&
                 rbid51, rbid26, rbid27, rbid28, rbid29,&

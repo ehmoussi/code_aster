@@ -52,6 +52,7 @@ implicit none
 #include "asterfort/xequhm.h"
 #include "asterfort/xlinhm.h"
 #include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/thmGetBehaviour.h"
     integer :: dimmat, npg, dimuel
 !     DIMENSION DE LA MATRICE DE RIGIDITE DIMMAT=NDDLS*NNOP
 !    parameter    (dimmat=8*5)
@@ -232,7 +233,15 @@ implicit none
     call rcvala(imate, ' ', 'THM_INIT', 0, ' ',&
                 [0.d0], 1, 'COMP_THM', rthmc(1), codmes,&
                 1)
+! 
+! - Get behaviours parameters from COMPOR field
+!
     call thmGetParaBehaviour(compor, thmc_ = thmc)
+!
+! - Get parameters for coupling
+!
+    call thmGetBehaviour(compor)
+!
     if ((rthmc(1)-1.0d0) .lt. r8prem()) then
         loi = 'LIQU_SATU'
     endif

@@ -15,15 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine xvinhm(jmate, thmc, meca, hydr, ndim,&
+! aslint: disable=W1504
+! person_in_charge: daniele.colombo at ifpen.fr
+!
+subroutine xvinhm(jmate, thmc, hydr, ndim,&
                   cohes, dpf, saut, sautm, nd, lamb,&
                   w11m, rho11m, alpha, job, t, pf,&
                   rho11, w11, ipgf, rela, dsidep,&
                   delta, r, am)
-
-    implicit none
-    
+!
+implicit none
+!    
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterc/r8prem.h" 
@@ -31,9 +33,8 @@ subroutine xvinhm(jmate, thmc, meca, hydr, ndim,&
 #include "asterfort/lceiou.h"
 #include "asterfort/thmrcp.h"
 #include "asterfort/matini.h" 
-#include "asterfort/vecini.h"
-   
-! person_in_charge: daniele.colombo at ifpen.fr
+#include "asterfort/vecini.h"   
+!
 ! ======================================================================
 !
 ! ROUTINE MODELE HM-XFEM (CAS DE LA FRACTURE)
@@ -47,9 +48,9 @@ subroutine xvinhm(jmate, thmc, meca, hydr, ndim,&
     real(kind=8) :: dsidep(6, 6), delta(6), eps, vim2(9), vip2(9), rela
     real(kind=8) :: w11, w11m, varbio, dpf, psp, psm, saut(3), lamb(3)
     real(kind=8) :: sautm(3), alpha(5), nd(3), t, rho110, r, pf, am(3)
-    real(kind=8) :: rbid2, rbid3, rbid4, rbid5, rbid6
+    real(kind=8) :: rbid2, rbid3, rbid4, rbid5
     real(kind=8) :: rbid8, rbid9, rbid10, rbid11, rbid13, rbid14
-    real(kind=8) :: rbid15(3), rbid16(3, 3), rbid17, rbid18, rbid19, rbid20
+    real(kind=8) :: rbid15(3), rbid17, rbid18, rbid19, rbid20
     real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
     real(kind=8) :: rbid29, rbid30, rbid31, rbid32
     real(kind=8) :: rbid33, rbid34, rbid35, rbid36, rbid37(3, 3)
@@ -58,7 +59,7 @@ subroutine xvinhm(jmate, thmc, meca, hydr, ndim,&
     real(kind=8) :: rbid52, rbid53, rbid38(3, 3), rbid51(3, 3)
     real(kind=8) :: r7bid(3)
     character(len=8)  :: job
-    character(len=16) :: thmc, meca, hydr, zkbid, option
+    character(len=16) :: thmc, hydr, zkbid, option
 !
     call vecini(2, 0.d0, vim)
     call vecini(2, 0.d0, vip)
@@ -70,11 +71,11 @@ subroutine xvinhm(jmate, thmc, meca, hydr, ndim,&
 !   RECUPERATION DES DONNEES HM
 !
     zkbid = 'VIDE'
-    call thmrcp('INTERMED', jmate, thmc, meca, hydr,&
+    call thmrcp('INTERMED', jmate, thmc, hydr,&
                 zkbid, t, rbid2, rbid3, rbid4,&
-                rbid5, rbid6, rbid8, rbid9, rbid10,&
+                rbid5, rbid8, rbid9, rbid10,&
                 rbid11, rbid13, rbid53, rbid14,&
-                rbid15, rbid16, rbid17, rbid18, rbid19,&
+                rbid15, rbid17, rbid18, rbid19,&
                 rbid20, rbid21, rbid22, rbid23, rbid24,&
                 rbid25, rbid26, rho110, cliq, rbid29,&
                 rbid30, rbid31, rbid32, rbid33, rbid34,&

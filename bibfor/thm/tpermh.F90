@@ -15,67 +15,77 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine tpermh(angmas, permin, tperm, aniso, ndim)
 !
-    implicit none
-! --- DEFINITION DU TENSEUR DE PERMEABILTE DANS LE REPERE GLOBAL -------
-! --- CAS ISOTROPE OU ISOTROPE TRANSVERSE ------------------------------
-! ======================================================================
-#include "asterc/r8dgrd.h"
-#include "asterc/r8pi.h"
-#include "asterfort/matini.h"
+subroutine tpermh(ndim , angl_naut, aniso, perm_coef,&
+                  tperm)
+!
+implicit none
+!
+#include "asterfort/assert.h"
 #include "asterfort/matrot.h"
 #include "asterfort/utbtab.h"
-    integer :: aniso, ndim
-    real(kind=8) :: angmas(3), permin(4)
-    real(kind=8) :: tperm(ndim, ndim), perml(3, 3)
-    real(kind=8) :: passag(3, 3), work(3, 3), tk2(3, 3)
-! ======================================================================
-! --- INITIALISATION DU TENSEUR DE PERMEABILITE ------------------------
-! ======================================================================
 !
-    call matini(3, 3, 0.d0, work)
-    call matini(3, 3, 0.d0, tk2)
-    call matini(3, 3, 0.d0, perml)
-    call matini(ndim, ndim, 0.d0, tperm)
+integer, intent(in) :: ndim
+real(kind=8), intent(in) :: angl_naut(3)
+integer, intent(in) :: aniso
+real(kind=8), intent(in) :: perm_coef(4)
+real(kind=8), intent(out) :: tperm(ndim, ndim)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Compute permeability tensor
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  ndim             : dimension of space (2 or 3)
+! In  angl_naut        : nautical angles
+!                        (1) Alpha - clockwise around Z0
+!                        (2) Beta  - counterclockwise around Y1
+!                        (3) Gamma - clockwise around X
+! In  aniso            : type of anisotropy for permeability
+!                         0 - Isotropic
+!                         1 - Transverse isotropic
+!                         2 - Orthotropic
+! In  perm_coef        : permeability coefficient
+! Out tperm            : permeability tensor
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8) :: perml(3, 3)
+    real(kind=8) :: passag(3, 3), work(3, 3), tk2(3, 3)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    work(:,:)  = 0.d0
+    tk2(:,:)   = 0.d0
+    perml(:,:) = 0.d0
+    tperm(1:ndim,1:ndim) = 0.d0
 !
     if (aniso .eq. 0) then
-! ======================================================================
-! --- CAS ISOTROPE -----------------------------------------------------
-! --- CALCUL DU TENSEUR DE PERMEABILITE DANS LE REPERE GLOBAL ----------
-! ======================================================================
-        tperm(1,1)=permin(1)
-        tperm(2,2)=permin(1)
+        tperm(1,1) = perm_coef(1)
+        tperm(2,2) = perm_coef(1)
         if (ndim .eq. 3) then
-            tperm(3,3)=permin(1)
+            tperm(3,3) = perm_coef(1)
         endif
-    else if (aniso.eq.1) then
-! ======================================================================
-! --- CAS ISOTROPE TRANSVERSE 3D------------------------------------------
-! --- CALCUL DU TENSEUR DE PERMEABILITE DANS LE REPERE GLOBAL ----------
-! ======================================================================
-        perml(1,1)=permin(2)
-        perml(2,2)=permin(2)
-        perml(3,3)=permin(3)
-! Recupération de la matrice de passage du local au global
-        call matrot(angmas, passag)
-        call utbtab('ZERO', 3, 3, perml, passag,&
-                    work, tperm)
-    else if (aniso.eq.2) then
-! ======================================================================
-! --- CAS ORTHOTROPE 2D ------------------------------------------
-! --- CALCUL DU TENSEUR DE PERMEABILITE DANS LE REPERE GLOBAL ----------
-! ======================================================================
-        perml(1,1)=permin(2)
-        perml(2,2)=permin(4)
-        call matrot(angmas, passag)
-        call utbtab('ZERO', 3, 3, perml, passag,&
-                    work, tk2)
-        tperm(1,1)= tk2(1,1)
-        tperm(2,2)= tk2(2,2)
-        tperm(1,2)= tk2(1,2)
-        tperm(2,1)= tk2(2,1)
+    else if (aniso .eq. 1) then
+        perml(1,1) = perm_coef(2)
+        perml(2,2) = perm_coef(2)
+        perml(3,3) = perm_coef(3)
+        call matrot(angl_naut, passag)
+        call utbtab('ZERO', 3, 3, perml, passag, work, tperm)
+    else if (aniso .eq. 2) then
+        perml(1,1) = perm_coef(2)
+        perml(2,2) = perm_coef(4)
+        call matrot(angl_naut, passag)
+        call utbtab('ZERO', 3, 3, perml, passag, work, tk2)
+        tperm(1,1) = tk2(1,1)
+        tperm(2,2) = tk2(2,2)
+        tperm(1,2) = tk2(1,2)
+        tperm(2,1) = tk2(2,1)
+    else
+        ASSERT(.false.)
     endif
 !
 end subroutine
