@@ -16,17 +16,20 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine dpladg(yate, rho11, rho12, r, t,&
+subroutine dpladg(yate, rho11, rho12, r, temp,&
                   kh, congem, dimcon, adcp11, ndim,&
                   padp, dp11p1, dp11p2, dp21p1, dp21p2,&
                   dp11t, dp21t)
-    implicit none
+!
+implicit none
+!
+real(kind=8), intent(in) :: temp
+!
     integer :: yate, adcp11, ndim, dimcon
-    real(kind=8) :: rho11, rho12, r, t, kh, congem(dimcon), padp
+    real(kind=8) :: rho11, rho12, r, kh, congem(dimcon), padp
     real(kind=8) :: dp11p1, dp11p2, dp21p1, dp21p2
     real(kind=8) :: dp11t, dp21t
-    real(kind=8) :: zero
-    parameter (zero=0.d0)
+    real(kind=8), parameter :: zero = 0.d0
 !
 !      BUT :
 !           CALCUL DES DERIVEES PARTIELLES DES PRESSIONS
@@ -38,14 +41,14 @@ subroutine dpladg(yate, rho11, rho12, r, t,&
 !
 ! ----------------------------------------------------------------------
 !
-    dp11p1 = 1.d0/((rho12*r*t/rho11/kh)-1.d0)
-    dp11p2 = (r*t/kh - 1.d0)/((rho12*r*t/rho11/kh)-1.d0)
+    dp11p1 = 1.d0/((rho12*r*temp/rho11/kh)-1.d0)
+    dp11p2 = (r*temp/kh - 1.d0)/((rho12*r*temp/rho11/kh)-1.d0)
     dp21p1 = zero
     dp21p2 = 1.d0
 !
     if (yate .eq. 1.d0) then
         l = -congem(adcp11+ndim+1)
-        dp11t = (-l*r*rho12/kh+padp/t)/((rho12*r*t/rho11/kh)-1.d0)
+        dp11t = (-l*r*rho12/kh+padp/temp)/((rho12*r*temp/rho11/kh)-1.d0)
         dp21t = zero
     endif
 !

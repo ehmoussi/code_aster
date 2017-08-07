@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
     subroutine capaca(rho0, rho11, rho12, rho21, rho22,&
                       sat, phi, csigm, cp11, cp12,&
-                      cp21, cp22, dalal, t, coeps,&
+                      cp21, cp22, dalal, temp, coeps,&
                       retcom)
         real(kind=8) :: rho0
         real(kind=8) :: rho11
@@ -36,8 +34,8 @@ interface
         real(kind=8) :: cp21
         real(kind=8) :: cp22
         real(kind=8) :: dalal
-        real(kind=8) :: t
-        real(kind=8) :: coeps
-        integer :: retcom
+        real(kind=8), intent(in) :: temp
+        real(kind=8), intent(out) :: coeps
+        integer, intent(out) :: retcom
     end subroutine capaca
 end interface 

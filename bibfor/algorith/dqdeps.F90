@@ -15,24 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dqdeps(mdal, t, dqeps)
-    implicit none
 !
-    integer :: i
-    real(kind=8) :: mdal(6), t, dqeps(6)
-    real(kind=8) :: rac2
+subroutine dqdeps(mdal, temp, dqeps)
+!
+implicit none
+!
+real(kind=8), intent(in) :: temp
+real(kind=8) :: mdal(6), dqeps(6)
 ! ======================================================================
 !
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR PAR RAPPORT A LA DEFORMATION --
 ! --- VOLUMIQUE --------------------------------------------------------
 ! ======================================================================
-    rac2= sqrt(2.d0)
-    do 10 i = 1, 3
-        dqeps(i) = mdal(i)*t
-10  end do
-    do 20 i = 4, 6
-        dqeps(i) = mdal(i)*t*rac2
-20  end do
-! ======================================================================
+    integer :: i
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+    do i = 1, 3
+        dqeps(i) = mdal(i)*temp
+    end do
+    do i = 4, 6
+        dqeps(i) = mdal(i)*temp*rac2
+    end do
+!
 end subroutine

@@ -15,12 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function masvol(mamol, p, r, t)
-    implicit      none
-    real(kind=8) :: mamol, p, r, t, masvol
+!
+function masvol(mamol, p, r, temp)
+!
+implicit none
+!
+real(kind=8), intent(in) :: temp
+!
+    real(kind=8) :: mamol, p, r, masvol
 ! --- CALCUL DES MASSES VOLUMIQUES DE PRESSION -------------------------
 ! ======================================================================
-    masvol = mamol * p / r / t
+    masvol = mamol * p / r / temp
 ! ======================================================================
 end function

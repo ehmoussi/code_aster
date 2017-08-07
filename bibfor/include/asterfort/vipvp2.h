@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine vipvp2(nbvari, vintm, vintp, advico, vicpvp,&
-                      pvp0, pvp1, p2, dp2, t,&
+                      pvp0, pvp1, p2, dp2, temp,&
                       dt, kh, mamolv, r, rho11m,&
-                      yate, pvp, pvpm, retcom)
+                      pvp, pvpm, retcom)
         integer :: nbvari
         real(kind=8) :: vintm(nbvari)
         real(kind=8) :: vintp(nbvari)
@@ -32,13 +30,12 @@ interface
         real(kind=8) :: pvp1
         real(kind=8) :: p2
         real(kind=8) :: dp2
-        real(kind=8) :: t
+        real(kind=8), intent(in) :: temp
         real(kind=8) :: dt
         real(kind=8) :: kh
         real(kind=8) :: mamolv
         real(kind=8) :: r
         real(kind=8) :: rho11m
-        integer :: yate
         real(kind=8) :: pvp
         real(kind=8) :: pvpm
         integer :: retcom

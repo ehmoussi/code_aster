@@ -26,7 +26,7 @@ subroutine hmladg(yachai, option, meca, ther, hydr,&
                   addep1, adcp11, adcp12, addep2, adcp21,&
                   adcp22, addete, adcote, congem, congep,&
                   vintm, vintp, dsde, epsv, depsv,&
-                  p1, p2, dp1, dp2, t,&
+                  p1, p2, dp1, dp2, temp,&
                   dt, phi, padp, h11, h12,&
                   kh, rho11, satur, retcom,&
                   thmc, tbiot, angmas, deps)
@@ -79,6 +79,8 @@ implicit none
 #include "asterfort/visatu.h"
 #include "asterfort/thmEvalSatuInit.h"
 !
+real(kind=8), intent(in) :: temp
+!
 ! **********************************************************************
 ! ROUTINE HMLADG : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISE
 !   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
@@ -99,7 +101,7 @@ implicit none
     integer :: adcp21, adcp22, adcote, addeme, addep1, addep2, addete
     real(kind=8) :: congem(dimcon), congep(dimcon), vintm(nbvari)
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
-    real(kind=8) :: p1, dp1, p2, dp2, t, dt, phi, padp, h11, h12
+    real(kind=8) :: p1, dp1, p2, dp2, dt, phi, padp, h11, h12
     real(kind=8) :: rho11, phi0, kh
     real(kind=8) :: angmas(3)
     character(len=16) :: option, meca, ther, hydr, thmc
@@ -148,7 +150,7 @@ implicit none
     call netbis(meca, net, bishop)
     phi0 = ds_thm%ds_parainit%poro_init
     call thmrcp('INTERMED', imate, thmc, hydr,&
-                ther, t, p1, p1m, rbid6,&
+                ther, temp, p1, p1m, rbid6,&
                 rbid7, rbid10, r, rho0,&
                 csigm, saturm, satur, dsatur_dp1,&
                 rbid16, rbid17, rbid18,&
@@ -193,7 +195,7 @@ implicit none
     endif
 !
     call inithm(imate, yachai, yamec, phi0, em,&
-                cs, tbiot, t, epsv, depsv,&
+                cs, tbiot, temp, epsv, depsv,&
                 epsvm, angmas, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0)
 !
@@ -220,7 +222,7 @@ implicit none
 ! =====================================================================
 ! --- MISE A JOUR DE LA PRESSION D AIR DISSOUS SELON FORMULE DOCR -----
 ! =====================================================================
-        call majpad(p2, zero, r, t, kh,&
+        call majpad(p2, zero, r, temp, kh,&
                     dp2, zero, dt, padp, padm,&
                     dpad)
 ! =====================================================================
@@ -239,7 +241,7 @@ implicit none
 ! =====================================================================
 ! --- MISE A JOUR DE LA PRESSION D AIR DISSOUS SELON FORMULE DOCR -----
 ! =====================================================================
-        call majpad(p2, zero, r, t, kh,&
+        call majpad(p2, zero, r, temp, kh,&
                     dp2, zero, dt, padp, padm,&
                     dpad)
     endif
@@ -254,7 +256,7 @@ implicit none
 ! =====================================================================
     if (yamec .eq. 1) then
         call dilata(angmas, phi, tbiot, alphfi)
-        call unsmfi(imate, phi, t, tbiot, cs)
+        call unsmfi(imate, phi, temp, tbiot, cs)
     endif
 ! **********************************************************************
 ! *** LES CONTRAINTES GENERALISEES *************************************
@@ -265,10 +267,10 @@ implicit none
 ! ----------------------------------- AIR DISSOUS ----------------------
 ! ======================================================================
     rho12 = zero
-    rho21 = masvol(mamolg,p2 ,r,t )
-    rho21m = masvol(mamolg,p2-dp2,r,t-dt)
-    rho22 = masvol(mamolg,padp ,r,t )
-    rho22m = masvol(mamolg,padm ,r,t-dt)
+    rho21 = masvol(mamolg,p2 ,r,temp)
+    rho21m = masvol(mamolg,p2-dp2,r,temp-dt)
+    rho22 = masvol(mamolg,padp ,r,temp)
+    rho22m = masvol(mamolg,padm ,r,temp-dt)
     pas = majpas(p2,zero)
 ! =====================================================================
 ! --- CALCULS UNIQUEMENT SI PRESENCE DE THERMIQUE ---------------------
@@ -279,7 +281,7 @@ implicit none
 ! =====================================================================
         alp11 = dileau(satur,phi,alphfi,alpliq)
         alp12 = zero
-        alp21 = dilgaz(satur,phi,alphfi,t )
+        alp21 = dilgaz(satur,phi,alphfi,temp)
         h11 = congem(adcp11+ndim+1)
         h12 = congem(adcp12+ndim+1)
 ! ======================================================================
@@ -287,7 +289,7 @@ implicit none
 ! ======================================================================
         call capaca(rho0, rho11, rho12, rho21, rho22,&
                     satur, phi, csigm, cp11, cp12,&
-                    cp21, cp22, dalal, t, coeps,&
+                    cp21, cp22, dalal, temp, coeps,&
                     retcom)
 ! =====================================================================
 ! --- PROBLEME LORS DU CALCUL DE COEPS --------------------------------
@@ -299,8 +301,8 @@ implicit none
 ! --- CALCUL DES ENTHALPIES SELON FORMULE DOCR -------------------------
 ! ======================================================================
         if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-            congep(adcp11+ndim+1) = congep(adcp11+ndim+1) + enteau(dt, alpliq,t,rho11,dp2,dp1,dpa&
-                                    &d,signe,cp11)
+            congep(adcp11+ndim+1) = congep(adcp11+ndim+1) +&
+                                    enteau(dt, alpliq,temp,rho11,dp2,dp1,dpad,signe,cp11)
             congep(adcp12+ndim+1) = zero
             congep(adcp21+ndim+1) = congep(adcp21+ndim+1) + entgaz(dt, cp21)
             congep(adcp22+ndim+1) = congep(adcp22+ndim+1) + entgaz(dt, cp22)
@@ -309,8 +311,8 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DE LA CHALEUR REDUITE Q' SELON FORMULE DOCR ---------------
 ! ======================================================================
-            congep(adcote) = congep(adcote) + calor(mdal,t,dt,deps, dp1,dp2,signe,alp11,alp12,coe&
-                             &ps,ndim)
+            congep(adcote) = congep(adcote) + &
+                             calor(mdal,temp,dt,deps, dp1,dp2,signe,alp11,alp12,coeps,ndim)
         endif
     endif
 ! ======================================================================
@@ -323,20 +325,19 @@ implicit none
         if (yamec .eq. 1) then
             call sigmap(net, bishop, satur, signe, tbiot,&
                         dp2, dp1, sigmp)
-            do 10 i = 1, 3
+            do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
- 10         continue
-            do 11 i = 4, 6
-                congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)*&
-                rac2
- 11         continue
+            end do
+            do i = 4, 6
+                congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)*rac2
+            end do
         endif
 ! ======================================================================
 ! --- CALCUL DES APPORTS MASSIQUES SELON FORMULE DOCR ------------------
 ! ======================================================================
         congep(adcp11) = appmas(m11m,phi,phim,satur,saturm,rho11, rho11m, epsv,epsvm)
         congep(adcp12) = zero
-        congep(adcp21) = appmas(m21m,phi,phim,1.0d0-satur, 1.0d0-saturm, rho21,rho21m,epsv,epsvm)
+        congep(adcp21) = appmas(m21m,phi,phim,1.d0-satur, 1.d0-saturm, rho21,rho21m,epsv,epsvm)
         congep(adcp22) = appmas(m22m,phi,phim,satur,saturm,rho22, rho22m, epsv,epsvm)
     endif
 !
@@ -348,7 +349,7 @@ implicit none
 ! --- UNIQUEMENT POUR LES OPTIONS RIGI_MECA ET FULL_MECA ---------------
 ! ======================================================================
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-        call dpladg(yate, rho11, rho12, r, t,&
+        call dpladg(yate, rho11, rho12, r, temp,&
                     kh, congem, dimcon, adcp11, ndim,&
                     padp, dp11p1, dp11p2, dp21p1, dp21p2,&
                     dp11t, dp21t)
@@ -361,35 +362,31 @@ implicit none
             call dspdp1(net, bishop, signe, tbiot, satur,&
                         dsdp1)
             call dspdp2(net, bishop, tbiot, dsdp2)
-            do 111 i = 1, 3
-                dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1)&
-                + dsdp1(i)
-                dsde(adcome+6+i-1,addep2)=dsde(adcome+6+i-1,addep2)&
-                + dsdp2(i)
-111         continue
-            do 112 i = 4, 6
-                dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1)&
-                + dsdp1(i)*rac2
-                dsde(adcome+6+i-1,addep2)=dsde(adcome+6+i-1,addep2)&
-                + dsdp2(i)*rac2
-112         continue
+            do i = 1, 3
+                dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1) + dsdp1(i)
+                dsde(adcome+6+i-1,addep2)=dsde(adcome+6+i-1,addep2) + dsdp2(i)
+            end do
+            do i = 4, 6
+                dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1) + dsdp1(i)*rac2
+                dsde(adcome+6+i-1,addep2)=dsde(adcome+6+i-1,addep2) + dsdp2(i)*rac2
+            end do
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- UNIQUEMENT POUR LA PARTIE MECANIQUE ------------------------------
 ! ======================================================================
-            do 12 i = 1, 6
+            do i = 1, 6
                 call dmdepv(rho11, satur, tbiot, dmdeps)
                 dsde(adcp11,addeme+ndim-1+i) = dsde(adcp11,addeme+ ndim-1+i) + dmdeps(i)
- 12         continue
-            do 13 i = 1, 6
+            end do
+            do i = 1, 6
                 call dmdepv(rho21, 1.d0-satur, tbiot, dmdeps)
                 dsde(adcp12,addeme+ndim-1+i) =zero
                 dsde(adcp21,addeme+ndim-1+i) = dsde(adcp21,addeme+ ndim-1+i) + dmdeps(i)
- 13         continue
-            do 14 i = 1, 6
+            end do
+            do i = 1, 6
                 call dmdepv(rho22, satur, tbiot, dmdeps)
                 dsde(adcp22,addeme+ndim-1+i) = dsde(adcp22,addeme+ ndim-1+i) + dmdeps(i)
- 14         continue
+            end do
         endif
         if (yate .eq. 1) then
 ! ======================================================================
@@ -397,44 +394,43 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES ENTHALPIES -------------------------------
 ! ======================================================================
-            dsde(adcp11+ndim+1,addep2) = dsde(adcp11+ndim+1,addep2) + dhw2p2(dp11p2,alpliq,t,rho1&
-                                         &1)
-            dsde(adcp11+ndim+1,addep1)=dsde(adcp11+ndim+1,addep1)&
-            + dhw2p1(signe,dp11p1,alpliq,t,rho11)
-            dsde(adcp11+ndim+1,addete)=dsde(adcp11+ndim+1,addete)&
-            + dhw2dt(dp11t,alpliq,t,rho11,cp11)
-            dsde(adcp12+ndim+1,addete)=zero
-            dsde(adcp21+ndim+1,addete)=dsde(adcp21+ndim+1,addete)&
-            + dhdt(cp21)
-            dsde(adcp22+ndim+1,addete)=dsde(adcp22+ndim+1,addete)&
-            + dhdt(cp22)
+            dsde(adcp11+ndim+1,addep2) = dsde(adcp11+ndim+1,addep2) +&
+                                         dhw2p2(dp11p2,alpliq,temp,rho11)
+            dsde(adcp11+ndim+1,addep1) = dsde(adcp11+ndim+1,addep1) + &
+                                         dhw2p1(signe,dp11p1,alpliq,temp,rho11)
+            dsde(adcp11+ndim+1,addete) = dsde(adcp11+ndim+1,addete) + &
+                                         dhw2dt(dp11t,alpliq,temp,rho11,cp11)
+            dsde(adcp12+ndim+1,addete) = zero
+            dsde(adcp21+ndim+1,addete) = dsde(adcp21+ndim+1,addete) + &
+                                         dhdt(cp21)
+            dsde(adcp22+ndim+1,addete) = dsde(adcp22+ndim+1,addete) + &
+                                         dhdt(cp22)
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- UNIQUEMENT POUR LA PARTIR THERMIQUE ------------------------------
 ! ======================================================================
-            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt(rho11, phi,satur,cliq,dp11t,alp11)
-            dsde(adcp22,addete) = dsde(adcp22,addete) + dmadt(rho22, satur,phi,mamolg,dp21t,kh,alph&
-                                  &fi)
+            dsde(adcp11,addete) = dsde(adcp11,addete) + &
+                                  dmwdt(rho11, phi,satur,cliq,dp11t,alp11)
+            dsde(adcp22,addete) = dsde(adcp22,addete) + &
+                                  dmadt(rho22, satur,phi,mamolg,dp21t,kh,alphfi)
             dsde(adcp12,addete) = zero
-            dsde(adcp21,addete) = dsde(adcp21,addete) + dmasdt(rho12, rho21,satur,phi,pas,h11,h12,t&
-                                  &,alp21)
+            dsde(adcp21,addete) = dsde(adcp21,addete) + &
+                                  dmasdt(rho12, rho21,satur,phi,pas,h11,h12,temp,alp21)
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
 ! ======================================================================
-            dsde(adcote,addete)=dsde(adcote,addete)+dqdt(coeps)
-            dsde(adcote,addep1)=dsde(adcote,addep1)+dqdp(signe,alp11,&
-            t)
-            dsde(adcote,addep2)=dsde(adcote,addep2) - dqdp(signe,&
-            alp11+alp12,t)
+            dsde(adcote,addete) = dsde(adcote,addete) + dqdt(coeps)
+            dsde(adcote,addep1) = dsde(adcote,addep1) + dqdp(signe,alp11,temp)
+            dsde(adcote,addep2) = dsde(adcote,addep2) - dqdp(signe,alp11+alp12,temp)
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
 ! --- UNIQUEMENT POUR LA PARTIE MECANIQUE ------------------------------
 ! ======================================================================
             if (yamec .eq. 1) then
-                call dqdeps(mdal, t, dqeps)
-                do 20 i = 1, 6
+                call dqdeps(mdal, temp, dqeps)
+                do i = 1, 6
                     dsde(adcote,addeme+ndim-1+i) = dsde(adcote,addeme+ ndim-1+i) + dqeps(i)
- 20             continue
+                end do
             endif
         endif
 ! ======================================================================

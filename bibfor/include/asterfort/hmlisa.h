@@ -26,7 +26,7 @@ interface
                       adcome, advihy, advico, vihrho, vicphi,&
                       addep1, adcp11, addete, adcote, congem,&
                       congep, vintm, vintp, dsde, epsv,&
-                      depsv, p1, dp1, t, dt,&
+                      depsv, p1, dp1, temp, dt,&
                       phi, rho11, satur, retcom,&
                       tbiot, angmas, deps)
         integer :: nbvari
@@ -62,7 +62,7 @@ interface
         real(kind=8) :: depsv
         real(kind=8) :: p1
         real(kind=8) :: dp1
-        real(kind=8) :: t
+        real(kind=8), intent(in) :: temp
         real(kind=8) :: dt
         real(kind=8) :: phi
         real(kind=8) :: rho11

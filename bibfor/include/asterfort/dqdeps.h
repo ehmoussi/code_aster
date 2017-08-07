@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface 
-    subroutine dqdeps(mdal, t, dqeps)
+    subroutine dqdeps(mdal, temp, dqeps)
         real(kind=8) :: mdal(6)
-        real(kind=8) :: t
+        real(kind=8), intent(in) :: temp
         real(kind=8) :: dqeps(6)
     end subroutine dqdeps
 end interface 

@@ -16,15 +16,20 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine majpad(p2, pvp, r, t, kh,&
+subroutine majpad(p2, pvp, r, temp, kh,&
                   dp2, pvpm, dt, padp, padm,&
                   dpad)
-    implicit none
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/infniv.h"
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
-    real(kind=8) :: p2, pvp, r, t, kh, dp2, pvpm, dt, padp, padm, dpad
+!
+real(kind=8), intent(in) :: temp
+!
+    real(kind=8) :: p2, pvp, r, kh, dp2, pvpm, dt, padp, padm, dpad
 ! --- MISE A JOUR DE PRESSION D AIR DISSOUS ----------------------------
 ! ======================================================================
     integer :: iadzi, iazk24, niv, ifm
@@ -34,8 +39,8 @@ subroutine majpad(p2, pvp, r, t, kh,&
 ! --- CALCUL DES ARGUMENTS EN EXPONENTIELS -----------------------------
 ! --- ET VERIFICATION DE COHERENCES ------------------------------------
 ! ======================================================================
-    padp = (p2 - pvp)*r*t/kh
-    padm = ((p2-dp2) - pvpm)*r*(t-dt)/kh
+    padp = (p2 - pvp)*r*temp/kh
+    padm = ((p2-dp2) - pvpm)*r*(temp-dt)/kh
     dpad = padp - padm
     if (padp .lt. 0.d0) then
         call infniv(ifm, niv)

@@ -15,17 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine majpad(p2, pvp, r, t, kh,&
+    subroutine majpad(p2, pvp, r, temp, kh,&
                       dp2, pvpm, dt, padp, padm,&
                       dpad)
         real(kind=8) :: p2
         real(kind=8) :: pvp
         real(kind=8) :: r
-        real(kind=8) :: t
+        real(kind=8), intent(in) :: temp
         real(kind=8) :: kh
         real(kind=8) :: dp2
         real(kind=8) :: pvpm

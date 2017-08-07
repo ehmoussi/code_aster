@@ -16,12 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-function enteau(dt, alpliq, t, rho11, dp2,&
+function enteau(dt, alpliq, temp, rho11, dp2,&
                 dp1, dpad, signe, cp)
-    implicit      none
-    real(kind=8) :: dt, alpliq, t, rho11, dp2, dp1, dpad, cp, signe, enteau
+!
+implicit none
+!
+real(kind=8), intent(in) :: temp
+!
+real(kind=8) :: dt, alpliq, rho11, dp2, dp1, dpad, cp, signe, enteau
 ! --- CALCUL DE L ENTHALPIE DE L EAU SELON DOCR ------------------------
 ! ======================================================================
-    enteau=cp*dt+(1.d0-3.d0*alpliq*t)/rho11*(dp2-signe*dp1-dpad)
+    enteau=cp*dt+(1.d0-3.d0*alpliq*temp)/rho11*(dp2-signe*dp1-dpad)
 ! ======================================================================
 end function

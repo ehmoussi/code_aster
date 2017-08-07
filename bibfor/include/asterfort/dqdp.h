@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    function dqdp(signe, alpha, t)
+    function dqdp(signe, alpha, temp)
         real(kind=8) :: signe
         real(kind=8) :: alpha
-        real(kind=8) :: t
+        real(kind=8), intent(in) :: temp
         real(kind=8) :: dqdp
     end function dqdp
 end interface

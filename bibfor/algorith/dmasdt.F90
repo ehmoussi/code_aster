@@ -17,12 +17,16 @@
 ! --------------------------------------------------------------------
 
 function dmasdt(rho12, rho21, sat, phi, pas,&
-                h11, h12, t, alp21)
-    implicit      none
-    real(kind=8) :: rho12, rho21, sat, phi, pas, h11, h12, t, alp21, dmasdt
+                h11, h12, temp, alp21)
+!
+implicit none
+!
+real(kind=8), intent(in) :: temp
+! 
+real(kind=8) :: rho12, rho21, sat, phi, pas, h11, h12, alp21, dmasdt
 ! --- CALCUL DE LA DERIVEE DE L APPORT MASSIQUE DE L AIR SEC PAR -------
 ! --- RAPPORT A LA TEMPERATURE -----------------------------------------
 ! ======================================================================
-    dmasdt = -rho21*(rho12*phi*(1.d0-sat)*(h12-h11)/pas/t+3.d0*alp21)
+    dmasdt = -rho21*(rho12*phi*(1.d0-sat)*(h12-h11)/pas/temp+3.d0*alp21)
 ! ======================================================================
 end function

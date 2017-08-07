@@ -17,12 +17,15 @@
 ! --------------------------------------------------------------------
 
 function dmvpdt(rho12, sat, phi, h11, h12,&
-                pvp, t, alp12)
-    implicit      none
-    real(kind=8) :: rho12, sat, phi, pvp, h11, h12, alp12, t, dmvpdt
+                pvp, temp, alp12)
+!
+implicit none
+!
+real(kind=8), intent(in) :: temp
+    real(kind=8) :: rho12, sat, phi, pvp, h11, h12, alp12, dmvpdt
 ! --- CALCUL DE LA DERIVEE DE L APPORT MASSIQUE DE VAPEUR PAR RAPPORT --
 ! --- A LA TEMPERATURE -------------------------------------------------
 ! ======================================================================
-    dmvpdt = rho12*(rho12*phi*(1.d0-sat)*(h12-h11)/pvp/t - 3.d0*alp12)
+    dmvpdt = rho12*(rho12*phi*(1.d0-sat)*(h12-h11)/pvp/temp - 3.d0*alp12)
 ! ======================================================================
 end function

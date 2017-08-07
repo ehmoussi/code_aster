@@ -27,10 +27,10 @@ implicit none
 #include "asterfort/matrot.h"
 #include "asterfort/utbtab.h"
 !
-    real(kind=8), intent(in) :: angl_naut(3)
-    real(kind=8), intent(in) :: phi
-    real(kind=8), intent(in) :: tbiot(6)
-    real(kind=8), intent(out) :: alphfi
+real(kind=8), intent(in) :: angl_naut(3)
+real(kind=8), intent(in) :: phi
+real(kind=8), intent(in) :: tbiot(6)
+real(kind=8), intent(out) :: alphfi
 !
 ! --------------------------------------------------------------------------------------------------
 !

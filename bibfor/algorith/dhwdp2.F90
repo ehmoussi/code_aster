@@ -16,11 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-function dhwdp2(alpliq, t, rho11)
-    implicit      none
-    real(kind=8) :: alpliq, t, rho11, dhwdp2
+function dhwdp2(alpliq, temp, rho11)
+!
+implicit none
+!
+real(kind=8), intent(in) :: temp
+    real(kind=8) :: alpliq, rho11, dhwdp2
 ! --- CALCUL DE LA DERIVEE HW PAR RAPPORT A P2 -------------------------
 ! ======================================================================
-    dhwdp2 = (1.d0-3.d0*alpliq*t)/rho11
+    dhwdp2 = (1.d0-3.d0*alpliq*temp)/rho11
 ! ======================================================================
 end function
