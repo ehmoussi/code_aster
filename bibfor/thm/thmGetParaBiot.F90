@@ -60,29 +60,29 @@ integer, intent(in) :: j_mater
 !
 ! - Set parameters
 !
-    ds_thm%ds_material%biot_coef = para_vale(1)
-    ds_thm%ds_material%biot_l    = para_vale(2)
-    ds_thm%ds_material%biot_n    = para_vale(3)
-    ds_thm%ds_material%biot_t    = para_vale(4)
+    ds_thm%ds_material%biot%coef = para_vale(1)
+    ds_thm%ds_material%biot%l    = para_vale(2)
+    ds_thm%ds_material%biot%n    = para_vale(3)
+    ds_thm%ds_material%biot%t    = para_vale(4)
 !
 ! - Type
 !
     if (icodre(1) .eq. 0) then
-        ds_thm%ds_material%biot_type = BIOT_TYPE_ISOT
+        ds_thm%ds_material%biot%type = BIOT_TYPE_ISOT
     else
         if (icodre(4) .eq. 0) then
-            ds_thm%ds_material%biot_type = BIOT_TYPE_ORTH
+            ds_thm%ds_material%biot%type = BIOT_TYPE_ORTH
         else
-            ds_thm%ds_material%biot_type = BIOT_TYPE_ISTR
+            ds_thm%ds_material%biot%type = BIOT_TYPE_ISTR
         endif
     endif
 !
 ! - Debug
 !
-    !WRITE(6,*) 'BIOT: ',ds_thm%ds_material%biot_type,&
-    !ds_thm%ds_material%biot_coef,&
-    !ds_thm%ds_material%biot_l   ,&
-    !ds_thm%ds_material%biot_n   ,&
-    !ds_thm%ds_material%biot_t   
+    !WRITE(6,*) 'BIOT: ',ds_thm%ds_material%biot%type,&
+    !ds_thm%ds_material%biot%coef,&
+    !ds_thm%ds_material%biot%l   ,&
+    !ds_thm%ds_material%biot%n   ,&
+    !ds_thm%ds_material%biot%t   
 !
 end subroutine

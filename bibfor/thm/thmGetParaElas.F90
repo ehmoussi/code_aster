@@ -60,60 +60,60 @@ integer, intent(in) :: ndim
 !
 ! - Get type of elasticity
 !
-    call get_elas_id(j_mater, ds_thm%ds_material%elas_id, ds_thm%ds_material%elas_keyword)
+    call get_elas_id(j_mater, ds_thm%ds_material%elas%id, ds_thm%ds_material%elas%keyword)
 !
 ! - Read parameters
 !
     call get_elas_para(fami, j_mater, '+', kpi, 1, &
-                       ds_thm%ds_material%elas_id , ds_thm%ds_material%elas_keyword,&
+                       ds_thm%ds_material%elas%id , ds_thm%ds_material%elas%keyword,&
                        temp = temp,&
-                       e = ds_thm%ds_material%e,&
-                       nu = ds_thm%ds_material%nu,&
-                       e1 = ds_thm%ds_material%e_l,&
-                       e2 = ds_thm%ds_material%e_t,&
-                       e3 = ds_thm%ds_material%e_n,&
-                       nu12 = ds_thm%ds_material%nu_lt,&
-                       nu13 = ds_thm%ds_material%nu_ln,&
-                       nu23 = ds_thm%ds_material%nu_tn,&
-                       g1 = ds_thm%ds_material%g_lt,&
-                       g2 = ds_thm%ds_material%g_ln,&
-                       g3 = ds_thm%ds_material%g_tn,&
+                       e = ds_thm%ds_material%elas%e,&
+                       nu = ds_thm%ds_material%elas%nu,&
+                       e1 = ds_thm%ds_material%elas%e_l,&
+                       e2 = ds_thm%ds_material%elas%e_t,&
+                       e3 = ds_thm%ds_material%elas%e_n,&
+                       nu12 = ds_thm%ds_material%elas%nu_lt,&
+                       nu13 = ds_thm%ds_material%elas%nu_ln,&
+                       nu23 = ds_thm%ds_material%elas%nu_tn,&
+                       g1 = ds_thm%ds_material%elas%g_lt,&
+                       g2 = ds_thm%ds_material%elas%g_ln,&
+                       g3 = ds_thm%ds_material%elas%g_tn,&
                        g  = g)
-    if (ds_thm%ds_material%elas_id .eq. 3) then
-        ds_thm%ds_material%g_ln = g
-        ds_thm%ds_material%g    = g
+    if (ds_thm%ds_material%elas%id .eq. 3) then
+        ds_thm%ds_material%elas%g_ln = g
+        ds_thm%ds_material%elas%g    = g
     else
-        ds_thm%ds_material%g    = g
+        ds_thm%ds_material%elas%g    = g
     endif
 !
 ! - Read parameters (dilatation)
 !
     if (ds_thm%ds_elem%l_dof_ther) then
         call get_elasth_para(fami, j_mater     , '+'   , kpi, 1, &
-                             ds_thm%ds_material%elas_id , ds_thm%ds_material%elas_keyword,&
+                             ds_thm%ds_material%elas%id , ds_thm%ds_material%elas%keyword,&
                              temp_vale_ = temp,&
                              alpha   = alpha,&
-                             alpha_l = ds_thm%ds_material%alpha_l,&
-                             alpha_t = ds_thm%ds_material%alpha_t,&
-                             alpha_n = ds_thm%ds_material%alpha_n)
-        ds_thm%ds_material%alpha = alpha(1)
+                             alpha_l = ds_thm%ds_material%elas%alpha_l,&
+                             alpha_t = ds_thm%ds_material%elas%alpha_t,&
+                             alpha_n = ds_thm%ds_material%elas%alpha_n)
+        ds_thm%ds_material%elas%alpha = alpha(1)
     else
-        ds_thm%ds_material%alpha = 0.d0
+        ds_thm%ds_material%elas%alpha = 0.d0
     endif
 !
 ! - Some checks: compatibility of elasticity with diffusion
 !
-    if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISOT) then
-        if (ds_thm%ds_material%elas_id .ne. 1 ) then
-            call utmess('F', 'THM1_2', sk = ds_thm%ds_material%elas_keyword)
+    if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
+        if (ds_thm%ds_material%elas%id .ne. 1 ) then
+            call utmess('F', 'THM1_2', sk = ds_thm%ds_material%elas%keyword)
         endif
-    elseif (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISTR) then
-        if (ds_thm%ds_material%elas_id .ne. 3 ) then
-            call utmess('F', 'THM1_2', sk = ds_thm%ds_material%elas_keyword)
+    elseif (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISTR) then
+        if (ds_thm%ds_material%elas%id .ne. 3 ) then
+            call utmess('F', 'THM1_2', sk = ds_thm%ds_material%elas%keyword)
         endif
-    elseif (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ORTH) then
-        if (ds_thm%ds_material%elas_id .ne. 2 ) then
-            call utmess('F', 'THM1_2', sk = ds_thm%ds_material%elas_keyword)
+    elseif (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ORTH) then
+        if (ds_thm%ds_material%elas%id .ne. 2 ) then
+            call utmess('F', 'THM1_2', sk = ds_thm%ds_material%elas%keyword)
         endif
     else
         ASSERT(.false.)
@@ -121,12 +121,12 @@ integer, intent(in) :: ndim
 !
 ! - Some checks: anisotropy
 !
-    if (ds_thm%ds_material%elas_id .eq. 3) then
+    if (ds_thm%ds_material%elas%id .eq. 3) then
         if (ndim .ne. 3) then
             call utmess('F', 'THM1_4')
         endif
     endif
-    if (ds_thm%ds_material%elas_id .eq. 2) then
+    if (ds_thm%ds_material%elas%id .eq. 2) then
         if (ndim .ne. 2) then
             call utmess('F', 'THM1_3')
         endif

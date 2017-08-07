@@ -70,18 +70,18 @@ real(kind=8), intent(out) :: cs
     skron(:) = 0.d0
     cs       = 0.d0
 !
-    if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISOT) then
-        youngs = ds_thm%ds_material%e
-        nus    = ds_thm%ds_material%nu
+    if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
+        youngs = ds_thm%ds_material%elas%e
+        nus    = ds_thm%ds_material%elas%nu
         k0     = youngs / 3.d0 / (1.d0-2.d0*nus)
         cs     = (tbiot(1)-phi)*(1.0d0-tbiot(1)) / k0
     else 
-        if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ISTR) then
-            young1 = ds_thm%ds_material%e_l
-            young3 = ds_thm%ds_material%e_n
-            nu12   = ds_thm%ds_material%nu_lt
-            nu13   = ds_thm%ds_material%nu_ln
-            g13    = ds_thm%ds_material%g_ln
+        if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISTR) then
+            young1 = ds_thm%ds_material%elas%e_l
+            young3 = ds_thm%ds_material%elas%e_n
+            nu12   = ds_thm%ds_material%elas%nu_lt
+            nu13   = ds_thm%ds_material%elas%nu_ln
+            g13    = ds_thm%ds_material%elas%g_ln
             nu31   = nu13*young3/young1
             call rcvala(j_mater, ' ', 'THM_DIFFU', 0, ' ',&
                         [temp], 2, ncra3(1), val1(1), icodr3,&
@@ -105,14 +105,14 @@ real(kind=8), intent(out) :: cs
                 cs = 0.d0
                 goto 999
             endif
-        else if (ds_thm%ds_material%biot_type .eq. BIOT_TYPE_ORTH) then
-            young1 = ds_thm%ds_material%e_l
-            young3 = ds_thm%ds_material%e_n
-            young2 = ds_thm%ds_material%e_t
-            nu12   = ds_thm%ds_material%nu_lt
-            nu13   = ds_thm%ds_material%nu_ln
-            nu23   = ds_thm%ds_material%nu_tn
-            g12    = ds_thm%ds_material%g_lt
+        else if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ORTH) then
+            young1 = ds_thm%ds_material%elas%e_l
+            young3 = ds_thm%ds_material%elas%e_n
+            young2 = ds_thm%ds_material%elas%e_t
+            nu12   = ds_thm%ds_material%elas%nu_lt
+            nu13   = ds_thm%ds_material%elas%nu_ln
+            nu23   = ds_thm%ds_material%elas%nu_tn
+            g12    = ds_thm%ds_material%elas%g_lt
 
             call rcvala(j_mater, ' ', 'THM_DIFFU', 0, ' ',&
                         [temp], 3, ncra3(1), val1(1), icodr3,&

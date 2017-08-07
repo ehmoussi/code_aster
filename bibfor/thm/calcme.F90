@@ -144,49 +144,44 @@ implicit none
         if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
             do i = 1, 3
                 do j = 1, 3
-                    dsde(adcome-1+i,addeme+ndim-1+j)= dsde(adcome-1+i,&
-                    addeme+ndim-1+j)+ds_thm%ds_material%d(i,j)
+                    dsde(adcome-1+i,addeme+ndim-1+j) = dsde(adcome-1+i,addeme+ndim-1+j)+&
+                                                       ds_thm%ds_material%elas%d(i,j)
                 end do
                 do j = 4, 6
-                    dsde(adcome-1+i,addeme+ndim-1+j)= dsde(adcome-1+i,&
-                    addeme+ndim-1+j)+ds_thm%ds_material%d(i,j)/(0.5*rac2)
+                    dsde(adcome-1+i,addeme+ndim-1+j) = dsde(adcome-1+i,addeme+ndim-1+j)+&
+                                                       ds_thm%ds_material%elas%d(i,j)/(0.5*rac2)
                 end do
             end do
 !
             do i = 4, 6
                 do j = 1, 3
-                    dsde(adcome-1+i,addeme+ndim-1+j)= dsde(adcome-1+i,&
-                    addeme+ndim-1+j)+ds_thm%ds_material%d(i,j)*rac2
+                    dsde(adcome-1+i,addeme+ndim-1+j) = dsde(adcome-1+i,addeme+ndim-1+j)+&
+                                                       ds_thm%ds_material%elas%d(i,j)*rac2
                 end do
                 do j = 4, 6
-                    dsde(adcome-1+i,addeme+ndim-1+j)= dsde(adcome-1+i,&
-                    addeme+ndim-1+j)+ds_thm%ds_material%d(i,j)*2.d0
+                    dsde(adcome-1+i,addeme+ndim-1+j) = dsde(adcome-1+i,addeme+ndim-1+j)+&
+                                                       ds_thm%ds_material%elas%d(i,j)*2.d0
                 end do
             end do
         endif
-!
 !
         if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
             do i = 1, 6
                 do j = 1, 6
-                    congep(adcome+i-1)=congep(adcome+i-1)+ds_thm%ds_material%d(i,j)*&
-                    depstr(j)
+                    congep(adcome+i-1) = congep(adcome+i-1) + &
+                                         ds_thm%ds_material%elas%d(i,j)*depstr(j)
                 end do
             end do
         endif
-!
-!   ON REVIENT AUX CONTRAINTES * RAC2
 !
         do i = 4, 6
             congep(adcome+i-1)= congep(adcome+i-1)*rac2
         end do
 !
-!
         if (yate .eq. 1) then
             if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
                 do i = 1, 6
-                    dsde(adcome-1+i,addete)=dsde(adcome-1+i,addete)&
-                    -mdal(i)
+                    dsde(adcome-1+i,addete)=dsde(adcome-1+i,addete)-mdal(i)
                 end do
             endif
             if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
@@ -236,9 +231,9 @@ implicit none
         complg(3) = compor(3)
         sipm=congem(adcome+6)
         sipp=congep(adcome+6)
-        young  = ds_thm%ds_material%e
-        nu     = ds_thm%ds_material%nu
-        alpha0 = ds_thm%ds_material%alpha
+        young  = ds_thm%ds_material%elas%e
+        nu     = ds_thm%ds_material%elas%nu
+        alpha0 = ds_thm%ds_material%elas%alpha
 !
         call elagon(ndim, imate, tbiot(1),&
                     alpha0, deps, young, &

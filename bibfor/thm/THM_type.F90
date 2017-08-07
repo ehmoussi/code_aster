@@ -71,17 +71,19 @@ implicit none
         real(kind=8) :: prev_init
     end type THM_ParaInit
 
-! - Material parameters
-    type THM_Material
-! ----- For Biot coefficient (evolution of porosity)
-        integer :: biot_type
-        real(kind=8) :: biot_coef
-        real(kind=8) :: biot_l
-        real(kind=8) :: biot_n
-        real(kind=8) :: biot_t
-! ----- For elasticity
-        integer :: elas_id
-        character(len=16) :: elas_keyword
+! - Biot parameters
+    type THM_Biot
+        integer :: type
+        real(kind=8) :: coef
+        real(kind=8) :: l
+        real(kind=8) :: n
+        real(kind=8) :: t
+    end type THM_Biot
+
+! - Elasticity parameters
+    type THM_Elas
+        integer :: id
+        character(len=16) :: keyword
         real(kind=8) :: e, nu, g
         real(kind=8) :: e_l, e_t, e_n
         real(kind=8) :: nu_lt, nu_ln, nu_tn
@@ -89,13 +91,45 @@ implicit none
         real(kind=8) :: alpha
         real(kind=8) :: alpha_l, alpha_t, alpha_n
         real(kind=8) :: d(6,6)
-! ----- For hydraulic
+    end type THM_Elas
+
+! - Hydraulic parameters
+    type THM_Hydr
         real(kind=8) :: n
         real(kind=8) :: pr
         real(kind=8) :: sr
         real(kind=8) :: smax
         real(kind=8) :: satuma
         real(kind=8) :: emmag
+    end type THM_Hydr
+
+! - Material parameters
+    type THM_Material
+! ----- For Biot coefficient (evolution of porosity)
+        type(THM_Biot) :: biot
+! ----- For elasticity
+        type(THM_Elas) :: elas
+! ----- For hydraulic
+        type(THM_Hydr) :: hydr
+!! ----- For gaz
+!        real(kind=8) :: mass_mol
+!        real(kind=8) :: visc
+!        real(kind=8) :: dvisc_dtemp
+!        real(kind=8) :: cp
+!! ----- For solid
+!        real(kind=8) :: rho
+!        real(kind=8) :: r_gaz
+!        real(kind=8) :: cp
+!! ----- For liquid
+!        real(kind=8) :: rho
+!        real(kind=8) :: unsurk
+!        real(kind=8) :: visc
+!        real(kind=8) :: dvisc_dtemp
+!        real(kind=8) :: cp
+!        real(kind=8) :: alpha
+!! ----- For dissolved air
+!        real(kind=8) :: cp
+!        real(kind=8) :: coef_henry
     end type THM_Material
 !
 end module

@@ -65,15 +65,15 @@ implicit none
 !
 ! - Get dilatation coefficient
 !
-    if (ds_thm%ds_material%elas_id .eq. 1) then
-        al(1)  = ds_thm%ds_material%alpha
-        al(2)  = ds_thm%ds_material%alpha
-        al(3)  = ds_thm%ds_material%alpha
-    else if (ds_thm%ds_material%elas_id .eq. 3) then
+    if (ds_thm%ds_material%elas%id .eq. 1) then
+        al(1)  = ds_thm%ds_material%elas%alpha
+        al(2)  = ds_thm%ds_material%elas%alpha
+        al(3)  = ds_thm%ds_material%elas%alpha
+    else if (ds_thm%ds_material%elas%id .eq. 3) then
         call matrot(angl_naut, pass)
-        tal(1,1) = ds_thm%ds_material%alpha_l
-        tal(2,2) = ds_thm%ds_material%alpha_l
-        tal(3,3) = ds_thm%ds_material%alpha_n
+        tal(1,1) = ds_thm%ds_material%elas%alpha_l
+        tal(2,2) = ds_thm%ds_material%elas%alpha_l
+        tal(3,3) = ds_thm%ds_material%elas%alpha_n
         ! bug 26493
         !call utbtab('ZERO', 3, 3, tal, pass, work, talg)
         al(1) = talg(1,1)
@@ -82,11 +82,11 @@ implicit none
         al(4) = talg(1,2)
         al(5) = talg(1,3)
         al(6) = talg(2,3)
-    else if (ds_thm%ds_material%elas_id .eq. 2) then
+    else if (ds_thm%ds_material%elas%id .eq. 2) then
         call matrot(angl_naut, pass)
-        tal(1,1) = ds_thm%ds_material%alpha_l
-        tal(2,2) = ds_thm%ds_material%alpha_t
-        tal(3,3) = ds_thm%ds_material%alpha_n
+        tal(1,1) = ds_thm%ds_material%elas%alpha_l
+        tal(2,2) = ds_thm%ds_material%elas%alpha_t
+        tal(3,3) = ds_thm%ds_material%elas%alpha_n
         call utbtab('ZERO', 3, 3, tal, pass, work, talg)
         al(1) = talg(1,1)
         al(2) = talg(2,2)
@@ -102,7 +102,7 @@ implicit none
 !
     do i = 1, 6
         do j = 1, 6
-            mdal(i) = mdal(i) + ds_thm%ds_material%d(i,j)*al(j)
+            mdal(i) = mdal(i) + ds_thm%ds_material%elas%d(i,j)*al(j)
         end do
     end do
     do i = 1, 6

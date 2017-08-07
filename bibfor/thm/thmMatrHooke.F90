@@ -58,19 +58,19 @@ implicit none
 !
 ! - Compute matrix
 !
-    call matrHooke3d(ds_thm%ds_material%elas_id, repere,&
-                     ds_thm%ds_material%e ,&
-                     ds_thm%ds_material%nu,&
-                     ds_thm%ds_material%g,&
-                     e1 = ds_thm%ds_material%e_l,&
-                     e2 = ds_thm%ds_material%e_t,&
-                     e3 = ds_thm%ds_material%e_n,&
-                     nu12 = ds_thm%ds_material%nu_lt,&
-                     nu13 = ds_thm%ds_material%nu_ln,&
-                     nu23 = ds_thm%ds_material%nu_tn,&
-                     g1 = ds_thm%ds_material%g_lt,&
-                     g2 = ds_thm%ds_material%g_ln,&
-                     g3 = ds_thm%ds_material%g_tn,&
-                     matr_elas = ds_thm%ds_material%d)
+    call matrHooke3d(ds_thm%ds_material%elas%id, repere,&
+                     ds_thm%ds_material%elas%e ,&
+                     ds_thm%ds_material%elas%nu,&
+                     ds_thm%ds_material%elas%g,&
+                     e1 = ds_thm%ds_material%elas%e_l,&
+                     e2 = ds_thm%ds_material%elas%e_t,&
+                     e3 = ds_thm%ds_material%elas%e_n,&
+                     nu12 = ds_thm%ds_material%elas%nu_lt,&
+                     nu13 = ds_thm%ds_material%elas%nu_ln,&
+                     nu23 = ds_thm%ds_material%elas%nu_tn,&
+                     g1 = ds_thm%ds_material%elas%g_lt,&
+                     g2 = ds_thm%ds_material%elas%g_ln,&
+                     g3 = ds_thm%ds_material%elas%g_tn,&
+                     matr_elas = ds_thm%ds_material%elas%d)
 !
 end subroutine
