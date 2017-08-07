@@ -779,10 +779,13 @@ def SRO2DSP(FREQ_COUP, DUREE_PHASE_FORTE, FONC_SPEC, AMORT, FMIN, NORME, PAS=Non
         lf.append(freqi / 2. / pi)
 
     f_out = t_fonction(lw, DSP, para=f_in.para)
-    # iteration sans simulation: formule de rice
     f_iter_sro_ref = t_fonction(lf, lsro, para=f_in.para)
+    if NITER > 0:
+    # iteration sans simulation: formule de rice
     # PSA for frequency list lw (rad/s), physical units (not g)!!
-    f_dsp = iter_SRO(f_out, f_iter_sro_ref, AMORT, DUREE_PHASE_FORTE, NITER)
+        f_dsp = iter_SRO(f_out, f_iter_sro_ref, AMORT, DUREE_PHASE_FORTE, NITER)
+    else :
+        f_dsp = f_out
     return f_dsp, f_iter_sro_ref
 
 
