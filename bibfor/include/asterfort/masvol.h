@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    function masvol(mamol, p, r, t)
+    function masvol(mamol, p, r, temp)
         real(kind=8) :: mamol
         real(kind=8) :: p
         real(kind=8) :: r
-        real(kind=8) :: t
+        real(kind=8), intent(in) :: temp
         real(kind=8) :: masvol
     end function masvol
 end interface

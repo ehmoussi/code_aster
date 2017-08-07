@@ -16,12 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-function dqdp(signe, alpha, t)
-    implicit      none
-    real(kind=8) :: signe, alpha, t, dqdp
+function dqdp(signe, alpha, temp)
+!
+implicit none
+!
+real(kind=8), intent(in) :: temp
+real(kind=8) :: signe, alpha, dqdp
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR PAR RAPPORT AUX PRESSIONS -----
 ! --- SI LA MODELISATION N EST PAS LIQU_VAPE ---------------------------
 ! ======================================================================
-    dqdp = 3.d0*signe*alpha*t
+    dqdp = 3.d0*signe*alpha*temp
 ! ======================================================================
 end function

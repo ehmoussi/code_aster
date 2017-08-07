@@ -24,7 +24,7 @@ subroutine hmliva(yachai, option, meca, ther, hydr,&
                   advico, vihrho, vicphi, vicpvp, vicsat,&
                   addep1, adcp11, adcp12, addete, adcote,&
                   congem, congep, vintm, vintp, dsde,&
-                  epsv, depsv, p1, dp1, t,&
+                  epsv, depsv, p1, dp1, temp,&
                   dt, phi, pvp, h11, h12,&
                   rho11, satur, retcom,&
                   thmc, tbiot, angmas, deps)
@@ -67,6 +67,8 @@ implicit none
 #include "asterfort/thmEvalSatuInit.h"
 #include "asterfort/thmEvalSatuMiddle.h"
 !
+real(kind=8), intent(in) :: temp
+!
 ! ======================================================================
 ! ROUTINE HMLIVA : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
 !   ET LA MATRICE TANGENTE DES GRANDEURS COUPLEES, A SAVOIR CELLES QUI
@@ -87,7 +89,7 @@ implicit none
     real(kind=8) :: congem(dimcon), congep(dimcon)
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
     real(kind=8) :: dsde(dimcon, dimdef)
-    real(kind=8) :: epsv, depsv, p1, dp1, t, dt
+    real(kind=8) :: epsv, depsv, p1, dp1, dt
     real(kind=8) :: phi, pvp, h11, h12, rho11
     real(kind=8) :: phi0, pvp0
     real(kind=8) :: ums, phids, angmas(3)
@@ -133,7 +135,7 @@ implicit none
     pvpm = vintm(advico+vicpvp) + pvp0
     p1m  = pvpm-p1+dp1
     call thmrcp('INTERMED', imate, thmc, hydr,&
-                ther, t, rbid40, pvpm-p1+dp1, rbid6,&
+                ther, temp, rbid40, pvpm-p1+dp1, rbid6,&
                 rbid7, rbid10, r, rho0,&
                 csigm, saturm, satur, dsatur_dp1,&
                 rbid16, rbid17, rbid18,&
@@ -184,7 +186,7 @@ implicit none
         emmag = .true.
     endif
     call inithm(imate, yachai, yamec, phi0, em,&
-                cs, tbiot, t, epsv, depsv,&
+                cs, tbiot, temp, epsv, depsv,&
                 epsvm, angmas, mdal, dalal,&
                 alphfi, cbiot, unsks, alpha0)
 ! *********************************************************************
@@ -204,7 +206,7 @@ implicit none
         pinf = r8maem()
         call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
                     dimcon, pinf, congem, adcp11, adcp12,&
-                    ndim, pvp0, dp1, dp2, t,&
+                    ndim, pvp0, dp1, dp2, temp,&
                     dt, mamolv, r, rho11, signe,&
                     cp11, cp12, yate, pvp, pvpm,&
                     retcom)
@@ -262,8 +264,8 @@ implicit none
 ! ----------------------------------- AIR SEC --------------------------
 ! ----------------------------------- AIR DISSOUS ----------------------
 ! ======================================================================
-    rho12 = masvol(mamolv,pvp ,r,t )
-    rho12m = masvol(mamolv,pvpm,r,t-dt)
+    rho12 = masvol(mamolv,pvp ,r,temp )
+    rho12m = masvol(mamolv,pvpm,r,temp-dt)
 ! =====================================================================
 ! --- CALCULS UNIQUEMENT SI PRESENCE DE THERMIQUE ---------------------
 ! =====================================================================
@@ -272,13 +274,13 @@ implicit none
 ! --- CALCUL DES COEFFICIENTS DE DILATATIONS ALPHA SELON FORMULE DOCR -
 ! =====================================================================
         alp11 = dileau(satur,phi,alphfi,alpliq)
-        alp12 = dilgaz(satur,phi,alphfi,t)
+        alp12 = dilgaz(satur,phi,alphfi,temp)
 ! ======================================================================
 ! --- CALCUL DE LA CAPACITE CALORIFIQUE SELON FORMULE DOCR -------------
 ! ======================================================================
         call capaca(rho0, rho11, rho12, rho21, rho22,&
                     satur, phi, csigm, cp11, cp12,&
-                    cp21, cp22, dalal, t, coeps,&
+                    cp21, cp22, dalal, temp, coeps,&
                     retcom)
 ! =====================================================================
 ! --- PROBLEME LORS DU CALCUL DE COEPS --------------------------------
@@ -290,9 +292,10 @@ implicit none
 ! --- CALCUL DES ENTHALPIES SELON FORMULE DOCR -------------------------
 ! ======================================================================
         if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
-            congep(adcp11+ndim+1) = congep(adcp11+ndim+1) + enteau(dt, alpliq,t,rho11,dp2,dp1,dpa&
-                                    &d,signe,cp11)
-            congep(adcp12+ndim+1) = congep(adcp12+ndim+1) + entgaz(dt, cp12)
+            congep(adcp11+ndim+1) = congep(adcp11+ndim+1) +&
+                                    enteau(dt, alpliq,temp,rho11,dp2,dp1,dpad,signe,cp11)
+            congep(adcp12+ndim+1) = congep(adcp12+ndim+1) +&
+                                    entgaz(dt, cp12)
             h11 = congep(adcp11+ndim+1)
             h12 = congep(adcp12+ndim+1)
 ! ======================================================================
@@ -301,8 +304,8 @@ implicit none
 ! --- ON POSE ICI P2 = PVP ET P1 = - (PVP - PW) (ON CHANGE LE SIGNE ---
 ! --- CAR ON MULTIPLIE DANS VIPORO PAR -1) ----------------------------
 ! ======================================================================
-            congep(adcote) = congep(adcote) + calor(mdal,t,dt,deps, dp1-dpvp,dpvp,signe,alp11,alp&
-                             &12,coeps, ndim)
+            congep(adcote) = congep(adcote) +&
+                             calor(mdal,temp,dt,deps, dp1-dpvp,dpvp,signe,alp11,alp12,coeps, ndim)
         endif
     endif
 ! =====================================================================
@@ -312,12 +315,12 @@ implicit none
     if (option(1:9) .eq. 'RIGI_MECA') then
         dpvpl = rho12m/rho11m
         if (yate .eq. 1) then
-            dpvpt = rho12m * (congem(adcp12+ndim+1) - congem(adcp11+ ndim+1)) / t
+            dpvpt = rho12m * (congem(adcp12+ndim+1) - congem(adcp11+ ndim+1)) / temp
         endif
     else
         dpvpl = rho12/rho11
         if (yate .eq. 1) then
-            dpvpt = rho12 * (congep(adcp12+ndim+1) - congep(adcp11+ ndim+1)) / t
+            dpvpt = rho12 * (congep(adcp12+ndim+1) - congep(adcp11+ ndim+1)) / temp
         endif
     endif
 ! ======================================================================
@@ -351,26 +354,23 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES ENTHALPIES -------------------------------
 ! ======================================================================
-            dsde(adcp11+ndim+1,addep1)=dsde(adcp11+ndim+1,addep1)&
-            + dhwdp1(signe,alpliq,t,rho11)
-            dsde(adcp11+ndim+1,addete)=dsde(adcp11+ndim+1,addete)&
-            + dhdt(cp11)
-            dsde(adcp12+ndim+1,addete)=dsde(adcp12+ndim+1,addete)&
-            + dhdt(cp12)
+            dsde(adcp11+ndim+1,addep1) = dsde(adcp11+ndim+1,addep1) + &
+                                         dhwdp1(signe,alpliq,temp,rho11)
+            dsde(adcp11+ndim+1,addete) = dsde(adcp11+ndim+1,addete) + dhdt(cp11)
+            dsde(adcp12+ndim+1,addete) = dsde(adcp12+ndim+1,addete) + dhdt(cp12)
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- UNIQUEMENT POUR LA PARTIR THERMIQUE ------------------------------
 ! ======================================================================
-            dsde(adcp11,addete) = dsde(adcp11,addete) + dmwdt2(rho11, alp11,phids,satur,cs,dpvpt)
-            dsde(adcp12,addete) = dsde(adcp12,addete) + dmvpd2(rho12, alp12,dpvpt,phi,ums,pvp,phi&
-                                  &ds,cs)
+            dsde(adcp11,addete) = dsde(adcp11,addete) +&
+                                  dmwdt2(rho11, alp11,phids,satur,cs,dpvpt)
+            dsde(adcp12,addete) = dsde(adcp12,addete) +&
+                                  dmvpd2(rho12, alp12,dpvpt,phi,ums,pvp,phids,cs)
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
 ! ======================================================================
-            dsde(adcote,addete)=dsde(adcote,addete) + dqvpdt(coeps,&
-            alp12,t,dpvpt)
-            dsde(adcote,addep1)=dsde(adcote,addep1) + dqvpdp(alp11,&
-            alp12,t,dpvpl)
+            dsde(adcote,addete) = dsde(adcote,addete) + dqvpdt(coeps,alp12,temp,dpvpt)
+            dsde(adcote,addep1) = dsde(adcote,addep1) + dqvpdp(alp11,alp12,temp,dpvpl)
 ! ======================================================================
 ! --- CALCUL DE LA DERIVEE DE LA CHALEUR REDUITE Q' --------------------
 ! --- UNIQUEMENT POUR LA PARTIE MECANIQUE : AUJOURD'HUI NON PREVUE 
@@ -383,9 +383,10 @@ implicit none
 ! --- CALCUL DES DERIVEES DES APPORTS MASSIQUES ------------------------
 ! --- POUR LES AUTRES CAS ----------------------------------------------
 ! ======================================================================
-        dsde(adcp11,addep1) = dsde(adcp11,addep1) + dmwp1v(rho11, phids,satur,cs,dpvpl,phi,cliq)
-        dsde(adcp12,addep1) = dsde(adcp12,addep1) + dmvpp1(rho11, rho12,phids,ums,cs,dpvpl,satur,ph&
-                              &i,pvp)
+        dsde(adcp11,addep1) = dsde(adcp11,addep1) +&
+                              dmwp1v(rho11, phids,satur,cs,dpvpl,phi,cliq)
+        dsde(adcp12,addep1) = dsde(adcp12,addep1) +&
+                              dmvpp1(rho11, rho12,phids,ums,cs,dpvpl,satur,phi,pvp)
     endif
 ! =====================================================================
  30 continue

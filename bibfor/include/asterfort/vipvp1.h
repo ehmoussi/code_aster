@@ -15,13 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
     subroutine vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
                       dimcon, p2, congem, adcp11, adcp12,&
-                      ndim, pvp0, dp1, dp2, t,&
+                      ndim, pvp0, dp1, dp2, temp,&
                       dt, mamolv, r, rho11, signe,&
                       cp11, cp12, yate, pvp, pvpm,&
                       retcom)
@@ -39,7 +38,7 @@ interface
         real(kind=8) :: pvp0
         real(kind=8) :: dp1
         real(kind=8) :: dp2
-        real(kind=8) :: t
+        real(kind=8), intent(in) :: temp
         real(kind=8) :: dt
         real(kind=8) :: mamolv
         real(kind=8) :: r

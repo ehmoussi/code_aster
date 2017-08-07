@@ -16,26 +16,30 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-function calor(mdal, t, dt, deps, dp1,&
+function calor(mdal, temp, dt, deps, dp1,&
                dp2, signe, alp11, alp12, coeps,&
                ndim)
-    implicit none
+implicit none
 !
-    integer :: i, ndim
-    real(kind=8) :: t, dt, deps(6), dp1, dp2, alp11, alp12, signe, coeps
-    real(kind=8) :: calor, mdal(6), calome, rac2
+integer :: i, ndim
+real(kind=8), intent(in) :: temp
+real(kind=8) :: dt, deps(6), dp1, dp2, alp11, alp12, signe, coeps
+real(kind=8) :: calor, mdal(6), calome
 ! --- CALCUL DE LA CHALEUR REDUITE Q' SELON FORMULE DOCR ---------------
 ! ======================================================================
-    rac2 = sqrt(2.d0)
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+!
     calome = 0.d0
 !
-    do 10 i = 1, ndim
-        calome=calome+mdal(i)*deps(i)*(t-dt/2.0d0)
-10  end do
-    do 20 i = ndim+1, 2*ndim
-        calome=calome+mdal(i)*deps(i)*(t-dt/2.0d0)*rac2
-20  end do
-    calor = calome + 3.0d0*alp11*(t-dt/2.0d0)*signe*dp1 - 3.0d0*(alp11+alp12)*(t-dt/2.d0)*dp2 + c&
-            &oeps*dt
+    do i = 1, ndim
+        calome=calome+mdal(i)*deps(i)*(temp-dt/2.d0)
+    end do
+    do i = ndim+1, 2*ndim
+        calome=calome+mdal(i)*deps(i)*(temp-dt/2.d0)*rac2
+    end do
+    calor = calome +&
+            3.d0*alp11*(temp-dt/2.d0)*signe*dp1 -&
+            3.d0*(alp11+alp12)*(temp-dt/2.d0)*dp2 +&
+            coeps*dt
 ! ======================================================================
 end function

@@ -18,15 +18,21 @@
 
 subroutine capaca(rho0, rho11, rho12, rho21, rho22,&
                   sat, phi, csigm, cp11, cp12,&
-                  cp21, cp22, dalal, t, coeps,&
+                  cp21, cp22, dalal, temp, coeps,&
                   retcom)
-    implicit none
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
-    integer :: retcom
-    real(kind=8) :: rho0, rho11, rho12, rho21, rho22, sat, phi, csigm, dalal, t
-    real(kind=8) :: cp11, cp12, cp21, cp22, coeps
+!
+real(kind=8), intent(in) :: temp
+real(kind=8), intent(out) :: coeps
+integer, intent(out) :: retcom
+!
+real(kind=8) :: rho0, rho11, rho12, rho21, rho22, sat, phi, csigm, dalal
+real(kind=8) :: cp11, cp12, cp21, cp22
 ! --- CALCUL DE LA CAPACITE CALORIFIQUE --------------------------------
 ! ======================================================================
     integer :: iadzi, iazk24
@@ -45,12 +51,13 @@ subroutine capaca(rho0, rho11, rho12, rho21, rho22,&
         retcom = 1
         goto 30
     endif
-    coeps = umprhs*csigm + phi*sat*(rho11*cp11+rho22*cp22) + phi* (1.d0-sat)* (rho12*cp12+rho21*c&
-            &p21)
+    coeps = umprhs*csigm + &
+            phi*sat*(rho11*cp11+rho22*cp22) + &
+            phi* (1.d0-sat)* (rho12*cp12+rho21*cp21)
 ! ======================================================================
 ! --- CALCUL DE COEPS SI MECANIQUE SINON ALPHA0=0 ----------------------
 ! ======================================================================
-    coeps = coeps - t*dalal
+    coeps = coeps - temp*dalal
     if (coeps .le. 0.d0) then
         call tecael(iadzi, iazk24)
         nomail = zk24(iazk24-1+3) (1:8)

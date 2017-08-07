@@ -16,12 +16,17 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-function dhw2dt(dp11t, alpliq, t, rho11, cp11)
-    implicit      none
+function dhw2dt(dp11t, alpliq, temp, rho11, cp11)
+!
+implicit none
+!
 #include "asterfort/dhdt.h"
-    real(kind=8) :: dp11t, alpliq, t, rho11, cp11, dhw2dt
+!
+real(kind=8), intent(in) :: temp
+!
+    real(kind=8) :: dp11t, alpliq, rho11, cp11, dhw2dt
 ! --- CALCUL DE LA DERIVEE HW PAR RAPPORT A LA TEMPERATURE -------------
 ! ======================================================================
-    dhw2dt = dp11t * (1.d0-3.d0*alpliq*t)/rho11 + dhdt(cp11)
+    dhw2dt = dp11t * (1.d0-3.d0*alpliq*temp)/rho11 + dhdt(cp11)
 ! ======================================================================
 end function

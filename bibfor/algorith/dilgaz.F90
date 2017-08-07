@@ -16,14 +16,17 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-function dilgaz(sat, phi, alphfi, t)
-    implicit none
-    real(kind=8) :: sat, phi, alphfi, t, dilgaz
+function dilgaz(sat, phi, alphfi, temp)
+implicit none
+!
+real(kind=8), intent(in) :: temp
+!
+    real(kind=8) :: sat, phi, alphfi, dilgaz
 ! ======================================================================
 !
 ! --- CALCUL DES COEFFICIENTS DE DILATATIONS DE GAZ, AIR SEC OU VAPEUR -
 ! --- SELON FORMULE DOCR -----------------------------------------------
 ! ======================================================================
-    dilgaz = (1.d0-sat)*alphfi+phi*(1.d0-sat)/3.d0/t
+    dilgaz = (1.d0-sat)*alphfi+phi*(1.d0-sat)/3.d0/temp
 ! ======================================================================
 end function

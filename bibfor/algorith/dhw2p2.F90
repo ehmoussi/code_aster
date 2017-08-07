@@ -16,13 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-function dhw2p2(dp11p2, alpliq, t, rho11)
-    implicit      none
+function dhw2p2(dp11p2, alpliq, temp, rho11)
+!
+implicit none
+!
+real(kind=8), intent(in) :: temp
 #include "asterfort/dhwdp2.h"
-    real(kind=8) :: dp11p2, alpliq, t, rho11, dhw2p2
+    real(kind=8) :: dp11p2, alpliq, rho11, dhw2p2
 ! --- CALCUL DE LA DERIVEE HW PAR RAPPORT A P2 DANS LE CAS -------------
 ! --- LIQU_AD_GAZ_VAPE -------------------------------------------------
 ! ======================================================================
-    dhw2p2 = dp11p2 * dhwdp2(alpliq,t,rho11)
+    dhw2p2 = dp11p2 * dhwdp2(alpliq,temp,rho11)
 ! ======================================================================
 end function

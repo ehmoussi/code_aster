@@ -17,17 +17,20 @@
 ! --------------------------------------------------------------------
 
 subroutine vipvp2(nbvari, vintm, vintp, advico, vicpvp,&
-                  pvp0, pvp1, p2, dp2, t,&
+                  pvp0, pvp1, p2, dp2, temp,&
                   dt, kh, mamolv, r, rho11m,&
-                  yate, pvp, pvpm, retcom)
-    implicit      none
-#include "jeveux.h"
+                  pvp, pvpm, retcom)
 !
+implicit none
+!
+#include "jeveux.h"
 #include "asterc/r8prem.h"
 #include "asterfort/iunifi.h"
 #include "asterfort/tecael.h"
-    integer :: nbvari, advico, vicpvp, yate, retcom
-    real(kind=8) :: vintm(nbvari), vintp(nbvari), pvp0, pvp1, p2, dp2, t, dt
+!
+real(kind=8), intent(in) :: temp
+    integer :: nbvari, advico, vicpvp, retcom
+    real(kind=8) :: vintm(nbvari), vintp(nbvari), pvp0, pvp1, p2, dp2, dt
     real(kind=8) :: mamolv, r, rho11m, pvp, pvpm, kh
 ! --- CALCUL ET STOCKAGE DE LA PRESSION DE VAPEUR DANS LE CAS ----------
 ! --- AVEC AIR DISSOUS -------------------------------------------------
@@ -37,7 +40,7 @@ subroutine vipvp2(nbvari, vintm, vintp, advico, vicpvp,&
     character(len=8) :: nomail
 ! ======================================================================
 ! ======================================================================
-    varbio = (rho11m*kh/pvp1)-mamolv*(1+r*log(t/(t-dt)))
+    varbio = (rho11m*kh/pvp1)-mamolv*(1+r*log(temp/(temp-dt)))
 ! ======================================================================
 ! --- VERIFICATION DES COHERENCES --------------------------------------
 ! ======================================================================
@@ -45,18 +48,18 @@ subroutine vipvp2(nbvari, vintm, vintp, advico, vicpvp,&
         umess = iunifi('MESSAGE')
         call tecael(iadzi, iazk24)
         nomail = zk24(iazk24-1+3) (1:8)
-        write (umess,9001) 'VIPVP2','DIVISION PAR ZERO A LA MAILLE',&
+        write (umess,10) 'VIPVP2','DIVISION PAR ZERO A LA MAILLE',&
         nomail
         retcom = 1
         goto 30
     endif
     pvpm = vintm(advico+vicpvp) + pvp0
-    pvp = (rho11m*kh-mamolv*(pvpm+(p2-dp2)*r*log(t/(t-dt))))/varbio
+    pvp = (rho11m*kh-mamolv*(pvpm+(p2-dp2)*r*log(temp/(temp-dt))))/varbio
     if ((p2-pvp) .lt. 0.d0) then
         umess = iunifi('MESSAGE')
         call tecael(iadzi, iazk24)
         nomail = zk24(iazk24-1+3) (1:8)
-        write (umess,9001) 'VIPVP2','PGAZ-PVAP <=0 A LA MAILLE: ',&
+        write (umess,10) 'VIPVP2','PGAZ-PVAP <=0 A LA MAILLE: ',&
         nomail
         retcom = 1
         goto 30
@@ -65,6 +68,6 @@ subroutine vipvp2(nbvari, vintm, vintp, advico, vicpvp,&
 ! ======================================================================
 30  continue
 ! =====================================================================
-    9001 format (a8,2x,a30,2x,a8)
+10  format (a8,2x,a30,2x,a8)
 ! ======================================================================
 end subroutine

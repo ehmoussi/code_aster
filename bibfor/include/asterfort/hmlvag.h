@@ -27,7 +27,7 @@ interface
                       addep1, adcp11, adcp12, addep2, adcp21,&
                       addete, adcote, congem, congep, vintm,&
                       vintp, dsde, deps, epsv, depsv,&
-                      p1, p2, dp1, dp2, t,&
+                      p1, p2, dp1, dp2, temp,&
                       dt, phi, pvp, h11, h12,&
                       rho11, satur, retcom,&
                       thmc, crit, tbiot, angmas)
@@ -70,7 +70,7 @@ interface
         real(kind=8) :: p2
         real(kind=8) :: dp1
         real(kind=8) :: dp2
-        real(kind=8) :: t
+        real(kind=8), intent(in) :: temp
         real(kind=8) :: dt
         real(kind=8) :: phi
         real(kind=8) :: pvp

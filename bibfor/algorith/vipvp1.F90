@@ -15,23 +15,28 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
                   dimcon, p2, congem, adcp11, adcp12,&
-                  ndim, pvp0, dp1, dp2, t,&
+                  ndim, pvp0, dp1, dp2, temp,&
                   dt, mamolv, r, rho11, signe,&
                   cp11, cp12, yate, pvp, pvpm,&
                   retcom)
-! aslint: disable=W1504
-    implicit      none
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/r8prem.h"
 #include "asterfort/iunifi.h"
 #include "asterfort/tecael.h"
+!
+real(kind=8), intent(in) :: temp
+!
     integer :: nbvari, advico, vicpvp, adcp11, adcp12, ndim, dimcon
     integer :: yate, retcom
     real(kind=8) :: vintm(nbvari), vintp(nbvari), congem(dimcon), pvp0, dp1
-    real(kind=8) :: dp2, t, dt, mamolv, r, rho11, cp11, cp12, pvp, pvpm, p2
+    real(kind=8) :: dp2, dt, mamolv, r, rho11, cp11, cp12, pvp, pvpm, p2
     real(kind=8) :: signe
 ! --- BUT : CALCUL ET STOCKAGE DES PRESSIONS DE VAPEUR -----------------
 ! -------   DANS LES CAS SANS AIR DISSOUS ------------------------------
@@ -45,17 +50,17 @@ subroutine vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
 ! --- CALCUL DES ARGUMENTS EN EXPONENTIELS -----------------------------
 ! --- ET VERIFICATION DES COHERENCES -----------------------------------
 ! ======================================================================
-    varbio = mamolv/r/t*(dp2-signe*dp1)/rho11
+    varbio = mamolv/r/temp*(dp2-signe*dp1)/rho11
     if (yate .eq. 1) then
-        varbio = varbio+(congem(adcp12+ndim+1)-congem(adcp11+ndim+1))* (1.0d0/(t-dt)-1.0d0/t&
-                 )*mamolv/r
-        varbio = varbio+(cp12-cp11)*(log(t/(t-dt))-(dt/t))*mamolv/r
+        varbio = varbio+(congem(adcp12+ndim+1) - congem(adcp11+ndim+1))*&
+                 (1.0d0/(temp-dt)-1.0d0/temp)*mamolv/r
+        varbio = varbio+(cp12-cp11)*(log(temp/(temp-dt))-(dt/temp))*mamolv/r
     endif
     if (varbio .gt. epxmax) then
         umess = iunifi('MESSAGE')
         call tecael(iadzi, iazk24)
         nomail = zk24(iazk24-1+3) (1:8)
-        write (umess,9001) 'VIPVP1','VARBIO > EXPMAX A LA MAILLE: ',&
+        write (umess,10) 'VIPVP1','VARBIO > EXPMAX A LA MAILLE: ',&
         nomail
         retcom = 1
         goto 30
@@ -67,7 +72,7 @@ subroutine vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
         umess = iunifi('MESSAGE')
         call tecael(iadzi, iazk24)
         nomail = zk24(iazk24-1+3) (1:8)
-        write (umess,9001) 'VIPVP1','PGAZ-PVAP <=0 A LA MAILLE: ',&
+        write (umess,10) 'VIPVP1','PGAZ-PVAP <=0 A LA MAILLE: ',&
         nomail
         retcom = 1
         goto 30
@@ -76,13 +81,13 @@ subroutine vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
         umess = iunifi('MESSAGE')
         call tecael(iadzi, iazk24)
         nomail = zk24(iazk24-1+3) (1:8)
-        write (umess,9001) 'VIPVP1','PVAP =0 A LA MAILLE: ',nomail
+        write (umess,10) 'VIPVP1','PVAP =0 A LA MAILLE: ',nomail
         retcom = 1
         goto 30
     endif
 ! ======================================================================
 30  continue
 ! ======================================================================
-    9001 format (a8,2x,a30,2x,a8)
+10 format (a8,2x,a30,2x,a8)
 ! ======================================================================
 end subroutine

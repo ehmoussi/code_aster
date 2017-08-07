@@ -15,14 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-function dhw2p1(signe, dp11p1, alpliq, t, rho11)
-    implicit      none
+!
+function dhw2p1(signe, dp11p1, alpliq, temp, rho11)
+!
+implicit none
+!
 #include "asterfort/dhwdp1.h"
-    real(kind=8) :: signe, dp11p1, alpliq, t, rho11, dhw2p1
+!
+real(kind=8), intent(in) :: temp
+!
+real(kind=8) :: signe, dp11p1, alpliq, rho11, dhw2p1
 ! --- CALCUL DE LA DERIVEE HW PAR RAPPORT A P1 DANS LE CAS -------------
 ! --- LIQU_AD_GAZ_VAPE -------------------------------------------------
 ! ======================================================================
-    dhw2p1 = dp11p1 * dhwdp1(signe,alpliq,t,rho11)
+    dhw2p1 = dp11p1 * dhwdp1(signe,alpliq,temp,rho11)
 ! ======================================================================
 end function
