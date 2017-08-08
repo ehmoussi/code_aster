@@ -160,14 +160,14 @@ real(kind=8), intent(in) :: temp
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM -------------------
 ! ======================================================================
     else if (thmc.eq.'LIQU_GAZ_ATM') then
-        call hmlgat(yachai, option, meca, ther, hydr,&
+        call hmlgat(yachai, option, meca, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
                     advico, vihrho, vicphi, vicsat, addep1,&
                     bdcp11, addete, adcote, congem, congep,&
                     vintm, vintp, dsde, epsv, depsv,&
                     p1, dp1, temp, dt, phi,&
-                    rho11, sat, retcom, thmc,&
+                    rho11, sat, retcom,&
                     tbiot, angmas, deps)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------

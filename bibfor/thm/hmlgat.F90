@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1306, W1504
+! aslint: disable= W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine hmlgat(yachai, option, meca, ther, hydr,&
+subroutine hmlgat(yachai, option, meca, hydr,&
                   imate, ndim, dimdef, dimcon, nbvari,&
                   yamec, yate, addeme, adcome, advihy,&
                   advico, vihrho, vicphi, vicsat, addep1,&
                   adcp11, addete, adcote, congem, congep,&
                   vintm, vintp, dsde, epsv, depsv,&
                   p1, dp1, temp, dt, phi,&
-                  rho11, satur, retcom, thmc,&
+                  rho11, satur, retcom,&
                   tbiot, angmas, deps)
 !
 use THM_type
@@ -52,7 +52,6 @@ implicit none
 #include "asterfort/inithm.h"
 #include "asterfort/netbis.h"
 #include "asterfort/sigmap.h"
-#include "asterfort/thmrcp.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viemma.h"
 #include "asterfort/viporo.h"
@@ -82,7 +81,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
     real(kind=8) :: p1, dp1, dt, phi, rho11, phi0
     real(kind=8) :: angmas(3)
-    character(len=16) :: option, meca, ther, hydr, thmc
+    character(len=16) :: option, meca, hydr
     aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -92,48 +91,41 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: alpliq, cliq, cp11, satur, dsatur_dp1, rho0, csigm
     real(kind=8) :: alp11, rho12, rho21
     real(kind=8) :: em, mdal(6), dalal, alphfi, cbiot, unsks, alpha0
-    real(kind=8) :: eps, deps(6)
-    parameter  ( eps = 1.d-21 )
+    real(kind=8) :: deps(6)
     aster_logical :: emmag
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
-    real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid11
-    real(kind=8) :: rbid16, rbid17, rbid18, rbid19
-    real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
-    real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31
-    real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid36, rbid37
-    real(kind=8) :: rbid39, rbid45, rbid46, rbid47, rbid48, rbid49, rbid38
-    real(kind=8) :: rbid50(ndim, ndim), rbid20, rbid32(ndim, ndim)
     real(kind=8) :: dp2, signe, dpad, coeps, cp21, m11m, rho22, alp12, cp12
     real(kind=8) :: dqeps(6), p1m
     real(kind=8) :: dsdp1(6), sigmp(6)
-    real(kind=8) :: dmdeps(6), cp22, rac2
+    real(kind=8) :: dmdeps(6), cp22
+    real(kind=8), parameter :: eps = 1.d-21
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
     aster_logical :: net, bishop
-!
-    rac2 = sqrt(2.d0)
-    p1m = p1-dp1
 !
 ! =====================================================================
 ! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
 ! =====================================================================
     call netbis(meca, net, bishop)
+!
+! - Get initial parameters
+!
     phi0 = ds_thm%ds_parainit%poro_init
-    call thmrcp('INTERMED', imate, thmc, hydr,&
-                ther, temp, p1, p1m, rbid6,&
-                rbid7, rbid10, rbid11, rho0,&
-                csigm, saturm, satur, dsatur_dp1,&
-                rbid16, rbid17, rbid18,&
-                rbid19, rbid20, rbid21, rbid22, rbid23,&
-                rbid24, rbid25, rho110, cliq, alpliq,&
-                cp11, rbid26, rbid27, rbid28, rbid29,&
-                rbid30, rbid31, rbid32, rbid33, rbid34,&
-                rbid35, rbid36, rbid37, rbid38, rbid39,&
-                rbid45, rbid46, rbid47, rbid48, rbid49,&
-                em, rbid50, retcom,&
-                angmas, ndim)
+!
+! - Compute pressures
+!
+    p1m    = p1-dp1
+!
+! - Get material parameters
+!
+    rho0   = ds_thm%ds_material%solid%rho
+    csigm  = ds_thm%ds_material%solid%cp
+    rho110 = ds_thm%ds_material%liquid%rho
+    cliq   = ds_thm%ds_material%liquid%unsurk
+    alpliq = ds_thm%ds_material%liquid%alpha
+    cp11   = ds_thm%ds_material%liquid%cp
 !
 ! - Evaluation of initial saturation
 !
@@ -200,10 +192,17 @@ real(kind=8), intent(in) :: temp
 ! --- CALCUL DE LA VARIABLE INTERNE DE MASSE VOLUMIQUE DU FLUIDE ------
 ! --- SELON FORMULE DOCR ----------------------------------------------
 ! =====================================================================
-        call virhol(nbvari, vintm, vintp, advihy, vihrho,&
-                    rho110, dp1, dp2, dpad, cliq,&
-                    dt, alpliq, signe, rho11, rho11m,&
-                    retcom)
+        if (yate .eq. 1) then
+            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
+                        rho110, dp1, dp2, dpad, cliq,&
+                        dt, alpliq, signe, rho11, rho11m,&
+                        retcom)
+        else
+            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
+                        rho110, dp1, dp2, dpad, cliq,&
+                        dt, 0.d0, signe, rho11, rho11m,&
+                        retcom)
+        endif
 ! =====================================================================
 ! --- RECUPERATION DE LA VARIABLE INTERNE DE SATURATION ---------------
 ! =====================================================================
