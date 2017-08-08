@@ -379,15 +379,15 @@ class Coeur(object):
                                PESANTEUR=_F(GRAVITE=9.81, DIRECTION=(-1., 0., 0.),),)
         return _PESA
 
-    def definition_maintien_type(self, model, typ, force=None):
+    def definition_maintien_type(self, model, typ, force=None,compression_init=False):
         """Retourne le chargement dû au couvercle de la cuve selon le type"""
         assert typ in ('FORCE', 'DEPL_PSC')
         if typ != 'FORCE':
-            return self.definition_effor_maintien(model)
+            return self.definition_effor_maintien(model,compression_init)
         else:
-            return self.definition_effor_maintien_force(model, force)
+            return self.definition_effor_maintien_force(model, force,compression_init)
 
-    def definition_effor_maintien(self, MODELE):
+    def definition_effor_maintien(self, MODELE,compression_init):
         """Retourne les déplacements imposés aux noeuds modélisant la PSC
         et traduisant la fermeture de la cuve"""
         assert self.temps_simu[
@@ -396,9 +396,41 @@ class Coeur(object):
         DEFI_FONCTION = self.macro.get_cmd('DEFI_FONCTION')
         AFFE_CHAR_MECA_F = self.macro.get_cmd('AFFE_CHAR_MECA_F')
 
-        _DXpsc = DEFI_FONCTION(NOM_PARA='INST',
+        if compression_init :
+            _DXpsc = DEFI_FONCTION(NOM_PARA='INST',
                                VALE=(-2.0,   0.,
                                      -1.0,   0.,
+                                     -0.75,  -1. * self.flechResMaint,
+                                     -0.25,  -1. * self.flechResMaint,
+                                     self.temps_simu['T0'],   0.,
+                                     self.temps_simu['T0b'],   0.,
+                                     self.temps_simu[
+                                     'T1'],   -1. * self.flechResMaint,
+                                     self.temps_simu[
+                                     'T2'],   -1. * self.flechResMaint,
+                                     self.temps_simu[
+                                     'T3'],   -1. * self.flechResMaint,
+                                     self.temps_simu[
+                                     'T4'],   -1. * self.flechResMaint,
+                                     self.temps_simu[
+                                     'T5'],   -1. * self.flechResMaint,
+                                     self.temps_simu[
+                                     'T6'],   -1. * self.flechResMaint,
+                                     self.temps_simu[
+                                     'T7'],   -1. * self.flechResMaint,
+                                     self.temps_simu[
+                                     'T8'],   -1. * self.flechResMaint,
+                                     self.temps_simu[
+                                     'T8b'],  -1. * self.flechResMaint / 3.,
+                                     self.temps_simu['T9'],   0.,),
+                               PROL_DROITE='CONSTANT',
+                               PROL_GAUCHE='CONSTANT',)
+        else:
+            _DXpsc = DEFI_FONCTION(NOM_PARA='INST',
+                               VALE=(-2.0,   0.,
+                                     -1.0,   0.,
+                                     #-0.75,  -1. * self.flechResMaint,
+                                     #-0.25,  -1. * self.flechResMaint,
                                      self.temps_simu['T0'],   0.,
                                      self.temps_simu['T0b'],   0.,
                                      self.temps_simu[
@@ -427,17 +459,49 @@ class Coeur(object):
                                    DDL_IMPO=_F(GROUP_NO='PMNT_S',           DX=_DXpsc,),)
         return _F_EMBO
 
-    def definition_effor_maintien_force(self, MODELE, ForceMaintien):
+    def definition_effor_maintien_force(self, MODELE, ForceMaintien,compression_init):
         """Retourne le chargement d'effort de maintien considéré constant"""
         assert self.temps_simu[
             'T0'] is not None, '`definition_time` must be called first!'
         from code_aster.Cata.Syntax import _F
         DEFI_FONCTION = self.macro.get_cmd('DEFI_FONCTION')
         AFFE_CHAR_MECA_F = self.macro.get_cmd('AFFE_CHAR_MECA_F')
-
-        _FXpsc = DEFI_FONCTION(NOM_PARA='INST',
+        
+        if compression_init :
+            _FXpsc = DEFI_FONCTION(NOM_PARA='INST',
                                VALE=(-2.0,   0.,
                                      -1.0,   0.,
+                                     -0.75, -1. * ForceMaintien,
+                                     -0.25, -1. * ForceMaintien,
+                                     self.temps_simu['T0'],   0.,
+                                     self.temps_simu['T0b'],   0.,
+                                     self.temps_simu[
+                                         'T1'],   -1. * ForceMaintien,
+                                     self.temps_simu[
+                                         'T2'],   -1. * ForceMaintien,
+                                     self.temps_simu[
+                                         'T3'],   -1. * ForceMaintien,
+                                     self.temps_simu[
+                                         'T4'],   -1. * ForceMaintien,
+                                     self.temps_simu[
+                                         'T5'],   -1. * ForceMaintien,
+                                     self.temps_simu[
+                                         'T6'],   -1. * ForceMaintien,
+                                     self.temps_simu[
+                                         'T7'],   -1. * ForceMaintien,
+                                     self.temps_simu[
+                                         'T8'],   -1. * ForceMaintien,
+                                     self.temps_simu[
+                                     'T8b'],  -1. * ForceMaintien / 30.,
+                                     self.temps_simu['T9'],   0.,),
+                               PROL_DROITE='CONSTANT',
+                               PROL_GAUCHE='CONSTANT',)
+        else :
+            _FXpsc = DEFI_FONCTION(NOM_PARA='INST',
+                               VALE=(-2.0,   0.,
+                                     -1.0,   0.,
+                                     #-0.75, -1. * ForceMaintien,
+                                     #-0.25, -1. * ForceMaintien,
                                      self.temps_simu['T0'],   0.,
                                      self.temps_simu['T0b'],   0.,
                                      self.temps_simu[
