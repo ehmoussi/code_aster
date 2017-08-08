@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine calcco(option, yachai, perman, meca, thmc,&
-                  ther, hydr, imate, ndim, dimdef,&
+                  hydr, imate, ndim, dimdef,&
                   dimcon, nbvari, yamec, yate, addeme,&
                   adcome, advihy, advico, addep1, adcp11,&
                   adcp12, addep2, adcp21, adcp22, addete,&
@@ -70,7 +70,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, p2, dp2, dt
     real(kind=8) :: phi, pvp, pad, h11, h12, kh, rho11
     real(kind=8) :: sat, angmas(3)
-    character(len=16) :: option, meca, thmc, ther, hydr
+    character(len=16) :: option, meca, thmc, hydr
     aster_logical :: perman, yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES POUR BARCELONE-------------------------------
@@ -189,7 +189,7 @@ real(kind=8), intent(in) :: temp
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
     else if (thmc.eq.'LIQU_AD_GAZ') then
-        call hmladg(yachai, option, meca, ther, hydr,&
+        call hmladg(yachai, option, meca, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
                     advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -199,7 +199,7 @@ real(kind=8), intent(in) :: temp
                     p1, p2, dp1, dp2, temp,&
                     dt, phi, pad, h11, h12,&
                     kh, rho11,sat, retcom,&
-                    thmc, tbiot, angmas, deps)
+                    tbiot, angmas, deps)
 ! ======================================================================
     endif
 ! ======================================================================

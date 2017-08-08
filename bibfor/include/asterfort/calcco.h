@@ -21,7 +21,7 @@
 !
 interface 
     subroutine calcco(option, yachai, perman, meca, thmc,&
-                      ther, hydr, imate, ndim, dimdef,&
+                      hydr, imate, ndim, dimdef,&
                       dimcon, nbvari, yamec, yate, addeme,&
                       adcome, advihy, advico, addep1, adcp11,&
                       adcp12, addep2, adcp21, adcp22, addete,&
@@ -40,7 +40,6 @@ interface
         aster_logical :: perman
         character(len=16) :: meca
         character(len=16) :: thmc
-        character(len=16) :: ther
         character(len=16) :: hydr
         integer :: imate
         integer :: ndim

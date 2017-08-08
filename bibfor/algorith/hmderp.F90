@@ -87,8 +87,13 @@ subroutine hmderp(yate, yavp, t, r, kh,&
 ! CALCUL DES DERIVEES SECONDES DES  PRESSIONS
         a1 = r*t/kh - rho11/rho12
         a2 = rho11/rho12*(r*t/kh - 1)
-        a3 = dp12t/pvp-1/t-cliq*dp22t-3*alpliq
-        a4 = -dp12t/pvp+1/t+cliq*dp22t-3*alpliq
+        if (yate.eq.1) then
+            a3 = dp12t/pvp-1/t-cliq*dp22t-3*alpliq
+            a4 = -dp12t/pvp+1/t+cliq*dp22t-3*alpliq
+        else
+            a3 = dp12t/pvp-1/t-cliq*dp22t
+            a4 = -dp12t/pvp+1/t+cliq*dp22t
+        endif
 !
 ! *********************************************************************
 !
@@ -108,7 +113,7 @@ subroutine hmderp(yate, yavp, t, r, kh,&
         dp1pp1(2) = r*t/kh*rho11/rho12/a1/a1*(dp12p1/pvp-cliq*dp11p1)
         dp2pp1(2) = r*t/kh*rho11/rho12/a1/a1*(dp12p2/pvp-cliq*dp11p2)
 !
-        if ((yate.eq.1)) then
+        if (yate.eq.1) then
             dtpp2(1) = r/a1/kh - (r*t/kh-1)/a1/a1*(r/kh-a4*rho11/ rho12)
             dtpp1(1) = -1.d0/a1/a1*(r/kh-rho11/rho12*a4)
             dtpp2(2) = r/a1/kh*rho11/rho12 + (rho11/rho12)*(rho11/ rho12)* a2*r/kh/a1/a1*(1.d0+a3&

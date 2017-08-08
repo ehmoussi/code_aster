@@ -212,7 +212,7 @@ implicit none
 ! - Compute coupling law
 !
     call calcco(option, yachai, perman, meca, thmc,&
-                ther, hydr, imate, ndim, dimdef,&
+                hydr, imate, ndim, dimdef,&
                 dimcon, nbvari, yamec, yate, addeme,&
                 adcome, advihy, advico, addep1, adcp11,&
                 adcp12, addep2, adcp21, adcp22, addete,&
