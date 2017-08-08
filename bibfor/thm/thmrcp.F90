@@ -39,18 +39,16 @@ implicit none
 !
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
-#include "asterfort/permvc.h"
-#include "asterfort/permvg.h"
 #include "asterfort/rcvala.h"
-#include "asterfort/satuvg.h"
 #include "asterfort/tdlamb.h"
 #include "asterfort/telamb.h"
 #include "asterfort/tlambc.h"
 #include "asterfort/utmess.h"
 #include "asterfort/thmEvalSatuMiddle.h"
 #include "asterfort/thmEvalSatuFinal.h"
+#include "asterfort/thmEvalPermLiquGaz.h"
     integer :: imate, retcom, ndim
-    integer :: aniso1, aniso2, aniso3, aniso4
+    integer :: aniso2, aniso3, aniso4
     real(kind=8) :: t, p1, p2, phi, pvp
     real(kind=8) :: rgaz, rhod, cpd, satm, satur, dsatur, pesa(3)
     real(kind=8) :: permli, dperml, permgz, dperms, dpermp
@@ -309,9 +307,9 @@ implicit none
      &              'LAMB_C_L',&
      &              'LAMB_C_N',&
      &              'TOTO' ,'TOTO'  ,&
-     &              'PERM_LIQU' , 'D_PERM_LIQU_SATU' ,&
-     &              'PERM_GAZ' , 'D_PERM_SATU_GAZ' ,&
-     &              'D_PERM_PRES_GAZ',&
+     &              'TOTO' , 'TOTO' ,&
+     &              'TOTO' , 'TOTO' ,&
+     &              'TOTO',&
      &              'TOTO',&
      &              'LAMB_TT',&
      &              'D_LB_TT',&
@@ -344,9 +342,9 @@ implicit none
      &              'LAMB_C_L',&
      &              'LAMB_C_N',&
      &              'TOTO' ,'TOTO' ,&
-     &              'PERM_LIQU' ,'D_PERM_LIQU_SATU' ,&
-     &              'PERM_GAZ' ,'D_PERM_SATU_GAZ' ,&
-     &              'D_PERM_PRES_GAZ' ,'FICKV_T'  ,&
+     &              'TOTO' ,'TOTO' ,&
+     &              'TOTO' ,'TOTO' ,&
+     &              'TOTO' ,'FICKV_T'  ,&
      &              'FICKV_PV' ,'FICKV_PG' ,&
      &              'FICKV_S'  ,'D_FV_T'   ,&
      &              'D_FV_PG',&
@@ -385,9 +383,9 @@ implicit none
      &              'LAMB_C_L',&
      &              'LAMB_C_N',&
      &              'TOTO' ,&
-     &              'TOTO' ,'PERM_LIQU' ,&
-     &              'D_PERM_LIQU_SATU' ,'PERM_GAZ' ,&
-     &              'D_PERM_SATU_GAZ' ,'D_PERM_PRES_GAZ',&
+     &              'TOTO' ,'TOTO' ,&
+     &              'TOTO' ,'TOTO' ,&
+     &              'TOTO' ,'TOTO',&
      &              'TOTO',&
      &              'LAMB_TT',&
      &              'D_LB_TT',&
@@ -423,7 +421,7 @@ implicit none
      &              'LAMB_C_L',&
      &              'LAMB_C_N',&
      &              'TOTO','TOTO' ,&
-     &              'PERM_LIQU','D_PERM_LIQU_SATU',&
+     &              'TOTO','TOTO',&
      &              'TOTO',&
      &              'LAMB_TT',&
      &              'D_LB_TT',&
@@ -468,9 +466,9 @@ implicit none
      &               'LAMB_C_L',&
      &               'LAMB_C_N',&
      &               'TOTO' ,'TOTO' ,&
-     &               'PERM_LIQU' ,'D_PERM_LIQU_SATU' ,&
-     &               'PERM_GAZ' ,'D_PERM_SATU_GAZ' ,&
-     &               'D_PERM_PRES_GAZ' ,'FICKV_T'  ,&
+     &               'TOTO' ,'TOTO' ,&
+     &               'TOTO' ,'TOTO' ,&
+     &               'TOTO' ,'FICKV_T'  ,&
      &               'FICKV_PV' ,'FICKV_PG' ,&
      &               'FICKV_S'  ,'D_FV_T',&
      &               'D_FV_PG','FICKA_T'  ,&
@@ -524,9 +522,9 @@ implicit none
      &                'LAMB_C_L',&
      &                'LAMB_C_N',&
      &                'TOTO' ,'TOTO' ,&
-     &                'PERM_LIQU' ,'D_PERM_LIQU_SATU' ,&
-     &                'PERM_GAZ' ,'D_PERM_SATU_GAZ' ,&
-     &                'D_PERM_PRES_GAZ' ,'FICKV_T'  ,&
+     &                'TOTO' ,'TOTO' ,&
+     &                'TOTO' ,'TOTO' ,&
+     &                'TOTO' ,'FICKV_T'  ,&
      &                'FICKV_PV' ,'FICKV_PG' ,&
      &                'FICKV_S'  ,'D_FV_T',&
      &                'D_FV_PG','FICKA_T'  ,&
@@ -551,16 +549,11 @@ implicit none
     retcom = 0
     un = 1.d0
     zero=0.d0
-!
-    aniso1 = 0
     aniso2 = 0
     aniso3 = 0
     aniso4 = 0
-! INITIALISATION DES VECTEURS POUR LE CHOIX ISOTROPIE/ANISOTROPIE
-    do ii = 1, 4
-        lambct(ii)=0.d0
-        dlambt(ii)=0.d0
-    end do
+    lambct(:)=0.d0
+    dlambt(:)=0.d0
 !
     if (etape.eq.'INTERMED') then
 ! =====================================================================
@@ -1344,28 +1337,15 @@ implicit none
 
             call thmEvalSatuFinal(hydr , imate , pvp-p1,&
                                   satur, dsatur, retcom)
-            if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(satur, val22(24), val22(25), val22(26),&
-                                val22(27))
-                else
-                    call permvc(satur, val22(24), val22(25), val22(26),&
-                                val22(27))
-                endif
-                val22(28) = 0.d0
-            endif
-            nompar(1) = 'SAT'
-            nompar(2) = 'PGAZ'
-            valpar(1) = satur
-            valpar(2) = p2
-            if ((hydr.ne.'HYDR_VGM') .and. (hydr.ne.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 2, nompar,&
-                            valpar, 5, ncra22(24), val22(24), icodre,&
-                            1)
-            endif
+! --------- Evaluate permeability for liquid and gaz
+            call thmEvalPermLiquGaz(hydr  , imate , satur, p2, t,&
+                                    permli, dperml,&
+                                    permgz, dperms, dpermp)
+
             if (ther .ne. 'VIDE') then
+                valpar(1) = satur
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'SAT',&
-                            valpar( 1), 2, ncra22(17), val22(17), icodre,&
+                            valpar(1), 2, ncra22(17), val22(17), icodre,&
                             0,nan='NON')
             endif
 !
@@ -1400,11 +1380,6 @@ implicit none
             lambct(2) = val22(20)
             lambct(3) = val22(21)
             lambct(4) = val22(32)
-            permli = val22(24)
-            dperml = val22(25)
-            permgz = val22(26)
-            dperms = val22(27)
-            dpermp = val22(28)
             unsurk = val23( 1)
             viscl = val23( 2)
             dviscl = val23( 3)
@@ -1543,30 +1518,14 @@ implicit none
             endif
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
-            if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(satur, val25(24), val25(25), val25(26),&
-                                val25(27))
-                else
-                    call permvc(satur, val25(24), val25(25), val25(26),&
-                                val25(27))
-                endif
-                val25(28) = 0.d0
-            endif
-            nompar(1) = 'SAT'
-            nompar(2) = 'PGAZ'
-            nompar(3) = 'TEMP'
-            valpar(1) = satur
-            valpar(2) = p2
-            valpar(3) = t
-            if ((hydr.ne.'HYDR_VGM') .and. (hydr.ne.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 3, nompar,&
-                            valpar, 5, ncra25(24), val25(24), icodre,&
-                            1)
-            endif
+! --------- Evaluate permeability for liquid and gaz
+            call thmEvalPermLiquGaz(hydr  , imate , satur, p2, t,&
+                                    permli, dperml,&
+                                    permgz, dperms, dpermp)
             if (ther .ne. 'VIDE') then
+                valpar(1) = satur
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'SAT',&
-                            valpar( 1), 2, ncra25(17), val25(17), icodre,&
+                            valpar(1), 2, ncra25(17), val25(17), icodre,&
                             0,nan='NON')
             endif
 !
@@ -1634,11 +1593,6 @@ implicit none
             lambct(2) = val25(20)
             lambct(3) = val25(21)
             lambct(4) = val25(38)
-            permli = val25(24)
-            dperml = val25(25)
-            permgz = val25(26)
-            dperms = val25(27)
-            dpermp = val25(28)
 !
             fick = val25(29)*val25(30)*val25(31)*val25(32)
             dfickt = val25(33)*val25(30)*val25(31)*val25(32)
@@ -1784,30 +1738,14 @@ implicit none
             endif
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
-            if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(satur, val40(24), val40(25), val40(26),&
-                                val40(27))
-                else
-                    call permvc(satur, val40(24), val40(25), val40(26),&
-                                val40(27))
-                endif
-                val40(28) = 0.d0
-            endif
-            nompar(1) = 'SAT'
-            nompar(2) = 'PGAZ'
-            nompar(3) = 'TEMP'
-            valpar(1) = satur
-            valpar(2) = p2
-            valpar(3) = t
-            if ((hydr.ne.'HYDR_VGM') .and. (hydr.ne.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 3, nompar,&
-                            valpar, 5, ncra40(24), val40(24), icodre,&
-                            1)
-            endif
+! --------- Evaluate permeability for liquid and gaz
+            call thmEvalPermLiquGaz(hydr  , imate , satur, p2, t,&
+                                    permli, dperml,&
+                                    permgz, dperms, dpermp)
             if (ther .ne. 'VIDE') then
+                valpar(1) = satur
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'SAT',&
-                            valpar( 1), 2, ncra40(17), val40(17), icodre,&
+                            valpar(1), 2, ncra40(17), val40(17), icodre,&
                             0,nan='NON')
             endif
 !
@@ -1901,11 +1839,6 @@ implicit none
             lambct(2) = val40(20)
             lambct(3) = val40(21)
             lambct(4) = val40(43)
-            permli = val40(24)
-            dperml = val40(25)
-            permgz = val40(26)
-            dperms = val40(27)
-            dpermp = val40(28)
 !
             fick = val40(29)*val40(30)*val40(31)*val40(32)
             dfickt = val40(33)*val40(30)*val40(31)*val40(32)
@@ -2048,30 +1981,14 @@ implicit none
             endif
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
-            if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(satur, val40(24), val40(25), val40(26),&
-                                val40(27))
-                else
-                    call permvc(satur, val40(24), val40(25), val40(26),&
-                                val40(27))
-                endif
-                val40(28) = 0.d0
-            endif
-            nompar(1) = 'SAT'
-            nompar(2) = 'PGAZ'
-            nompar(3) = 'TEMP'
-            valpar(1) = satur
-            valpar(2) = p2
-            valpar(3) = t
-            if ((hydr.ne.'HYDR_VGM') .and. (hydr.ne.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 3, nompar,&
-                            valpar, 5, crad40(24), val40(24), icodre,&
-                            1)
-            endif
+! --------- Evaluate permeability for liquid and gaz
+            call thmEvalPermLiquGaz(hydr  , imate , satur, p2, t,&
+                                    permli, dperml,&
+                                    permgz, dperms, dpermp)
             if (ther .ne. 'VIDE') then
+                valpar(1) = satur
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'SAT',&
-                            valpar( 1), 2, crad40(17), val40(17), icodre,&
+                            valpar(1), 2, crad40(17), val40(17), icodre,&
                             0,nan='NON')
             endif
 !
@@ -2140,11 +2057,6 @@ implicit none
             lambct(2) = val40(20)
             lambct(3) = val40(21)
             lambct(4) = val40(43)
-            permli = val40(24)
-            dperml = val40(25)
-            permgz = val40(26)
-            dperms = val40(27)
-            dpermp = val40(28)
 !
             fick = val40(29)*val40(30)*val40(31)*val40(32)
             dfickt = val40(33)*val40(30)*val40(31)*val40(32)
@@ -2284,28 +2196,14 @@ implicit none
             endif
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
-            if ((hydr.eq.'HYDR_VGM') .or. (hydr.eq.'HYDR_VGC')) then
-                if (hydr .eq. 'HYDR_VGM') then
-                    call permvg(satur, val29(24), val29(25), val29(26),&
-                                val29(27))
-                else
-                    call permvc(satur, val29(24), val29(25), val29(26),&
-                                val29(27))
-                endif
-                val29(28) = 0.d0
-            endif
-            nompar(1) = 'SAT'
-            nompar(2) = 'PGAZ'
-            valpar(1) = satur
-            valpar(2) = p2
-            if ((hydr.ne.'HYDR_VGM') .and. (hydr.ne.'HYDR_VGC')) then
-                call rcvala(imate, ' ', 'THM_DIFFU', 2, nompar,&
-                            valpar, 5, ncra29(24), val29(24), icodre,&
-                            1)
-            endif
+! --------- Evaluate permeability for liquid and gaz
+            call thmEvalPermLiquGaz(hydr  , imate , satur, p2, t,&
+                                    permli, dperml,&
+                                    permgz, dperms, dpermp)
             if (ther .ne. 'VIDE') then
+                valpar(1) = satur
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'SAT',&
-                            valpar( 1), 2, ncra29(17), val29(17), icodre,&
+                            valpar(1), 2, ncra29(17), val29(17), icodre,&
                             0,nan='NON')
             endif
             call rcvala(imate, ' ', 'THM_DIFFU', 1, 'INST',&
@@ -2339,11 +2237,6 @@ implicit none
             lambct(2) = val29(20)
             lambct(3) = val29(21)
             lambct(4) = val29(32)
-            permli = val29(24)
-            dperml = val29(25)
-            permgz = val29(26)
-            dperms = val29(27)
-            dpermp = val29(28)
             unsurk = val30( 1)
             viscl = val30( 2)
             dviscl = val30( 3)
@@ -2471,17 +2364,13 @@ implicit none
             endif
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
-            ASSERT(hydr .eq. 'HYDR_UTIL' .or. hydr .eq. 'HYDR_ENDO') 
-            nompar(1) = 'SAT'
-            nompar(2) = 'PGAZ'
-            valpar(1) = satur
-            valpar(2) = p2
-            call rcvala(imate, ' ', 'THM_DIFFU', 2, nompar,&
-                        valpar, 2, ncra32(23), val32(23), icodre,&
-                        1)
+! --------- Evaluate permeability for liquid
+            call thmEvalPermLiquGaz(hydr  , imate , satur, p2, t,&
+                                    permli, dperml)
             if (ther .ne. 'VIDE') then
+                valpar(1) = satur
                 call rcvala(imate, ' ', 'THM_DIFFU', 1, 'SAT',&
-                            valpar( 1), 2, ncra32(16), val32(16), icodre,&
+                            valpar(1), 2, ncra32(16), val32(16), icodre,&
                             0,nan='NON')
             endif
             call rcvala(imate, ' ', 'THM_DIFFU', 1, 'INST',&
@@ -2514,8 +2403,6 @@ implicit none
             lambct(2) = val32(19)
             lambct(3) = val32(20)
             lambct(4) = val32(28)
-            permli = val32(23)
-            dperml = val32(24)
             unsurk = val33( 1)
             viscl = val33( 2)
             dviscl = val33( 3)

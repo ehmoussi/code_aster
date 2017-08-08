@@ -72,7 +72,22 @@ character(len=16), intent(in) :: option
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    codret = 0
+    codret     = 0
+    defgep(:)  = 0.d0
+    defgem(:)  = 0.d0
+    dfdi(:,:)  = 0.d0
+    dfdi2(:,:) = 0.d0
+    b(:,:)     = 0.d0
+    drds(:,:)  = 0.d0
+    drdsr(:,:) = 0.d0
+    dsde(:,:)  = 0.d0
+    r(:)       = 0.d0
+    sigbar(:)  = 0.d0
+    c(:)       = 0.d0
+    ck(:)      = 0.d0
+    cs(:)      = 0.d0
+    work1(:,:) = 0.d0
+    work2(:,:) = 0.d0
 !
 ! - Get parameters
 !
