@@ -247,7 +247,7 @@ implicit none
 ! ======================================================================
 !
     call calcco(option, yachai, perman, meca, thmc,&
-                ther, hydr, imate, ndim-1, dimdef,&
+                hydr, imate, ndim-1, dimdef,&
                 dimcon, nbvari, 2, yate, addeme,&
                 adcome, advihy, advico, addep1, adcp11,&
                 adcp12, addep2, adcp21, adcp22, addete,&
