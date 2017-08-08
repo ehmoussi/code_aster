@@ -146,7 +146,7 @@ real(kind=8), intent(in) :: temp
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ -----------------------
 ! ======================================================================
     else if (thmc.eq.'LIQU_GAZ') then
-        call hmliga(yachai, option, meca, ther, hydr,&
+        call hmliga(yachai, option, meca, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
                     advico, vihrho, vicphi, vicsat, addep1,&
@@ -154,7 +154,7 @@ real(kind=8), intent(in) :: temp
                     congem, congep, vintm, vintp, dsde,&
                     deps, epsv, depsv, p1, p2,&
                     dp1, dp2, temp, dt, phi,&
-                    rho11, sat, retcom, thmc,&
+                    rho11, sat, retcom,&
                     carcri, tbiot, angmas)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM -------------------
