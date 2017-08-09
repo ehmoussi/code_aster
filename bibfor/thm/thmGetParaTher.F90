@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine thmGetParaTher(j_mater, kpi, temp)
 !
 use THM_type
@@ -27,10 +27,9 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/get_elasth_para.h"
 !
-!
-    integer, intent(in) :: j_mater
-    integer, intent(in) :: kpi
-    real(kind=8), intent(in) :: temp
+integer, intent(in) :: j_mater
+integer, intent(in) :: kpi
+real(kind=8), intent(in) :: temp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,15 +59,15 @@ implicit none
                              ds_thm%ds_material%elas%id , ds_thm%ds_material%elas%keyword,&
                              temp_vale_ = temp,&
                              alpha   = alpha,&
-                             alpha_l = ds_thm%ds_material%elas%alpha_l,&
-                             alpha_t = ds_thm%ds_material%elas%alpha_t,&
-                             alpha_n = ds_thm%ds_material%elas%alpha_n)
-        ds_thm%ds_material%elas%alpha = alpha(1)
+                             alpha_l = ds_thm%ds_material%ther%alpha_l,&
+                             alpha_t = ds_thm%ds_material%ther%alpha_t,&
+                             alpha_n = ds_thm%ds_material%ther%alpha_n)
+        ds_thm%ds_material%ther%alpha = alpha(1)
     else
-        ds_thm%ds_material%elas%alpha   = 0.d0
-        ds_thm%ds_material%elas%alpha_l = 0.d0
-        ds_thm%ds_material%elas%alpha_t = 0.d0
-        ds_thm%ds_material%elas%alpha_n = 0.d0
+        ds_thm%ds_material%ther%alpha   = 0.d0
+        ds_thm%ds_material%ther%alpha_l = 0.d0
+        ds_thm%ds_material%ther%alpha_t = 0.d0
+        ds_thm%ds_material%ther%alpha_n = 0.d0
     endif
 !
 end subroutine
