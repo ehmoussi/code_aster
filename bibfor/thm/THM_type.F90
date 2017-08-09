@@ -88,10 +88,14 @@ implicit none
         real(kind=8) :: e_l, e_t, e_n
         real(kind=8) :: nu_lt, nu_ln, nu_tn
         real(kind=8) :: g_lt, g_ln, g_tn
-        real(kind=8) :: alpha
-        real(kind=8) :: alpha_l, alpha_t, alpha_n
         real(kind=8) :: d(6,6)
     end type THM_Elas
+
+! - Thermic parameters
+    type THM_Ther
+        real(kind=8) :: alpha
+        real(kind=8) :: alpha_l, alpha_t, alpha_n
+    end type THM_Ther
 
 ! - Hydraulic parameters
     type THM_Hydr
@@ -140,6 +144,8 @@ implicit none
         type(THM_Biot)    :: biot
 ! ----- For elasticity
         type(THM_Elas)    :: elas
+! ----- For thermic
+        type(THM_Ther)    :: ther
 ! ----- For hydraulic
         type(THM_Hydr)    :: hydr
 ! ----- For hydraulic

@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine thmTherElas(angl_naut, mdal, dalal)
 !
 use THM_type
@@ -28,10 +28,9 @@ implicit none
 #include "asterfort/utbtab.h"
 #include "asterfort/matrot.h"
 !
-!
-    real(kind=8), intent(in) :: angl_naut(3)
-    real(kind=8), intent(out) :: mdal(6)
-    real(kind=8), intent(out) :: dalal
+real(kind=8), intent(in) :: angl_naut(3)
+real(kind=8), intent(out) :: mdal(6)
+real(kind=8), intent(out) :: dalal
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,16 +65,14 @@ implicit none
 ! - Get dilatation coefficient
 !
     if (ds_thm%ds_material%elas%id .eq. 1) then
-        al(1)  = ds_thm%ds_material%elas%alpha
-        al(2)  = ds_thm%ds_material%elas%alpha
-        al(3)  = ds_thm%ds_material%elas%alpha
+        al(1)  = ds_thm%ds_material%ther%alpha
+        al(2)  = ds_thm%ds_material%ther%alpha
+        al(3)  = ds_thm%ds_material%ther%alpha
     else if (ds_thm%ds_material%elas%id .eq. 3) then
         call matrot(angl_naut, pass)
-        tal(1,1) = ds_thm%ds_material%elas%alpha_l
-        tal(2,2) = ds_thm%ds_material%elas%alpha_l
-        tal(3,3) = ds_thm%ds_material%elas%alpha_n
-        ! bug 26493
-        !call utbtab('ZERO', 3, 3, tal, pass, work, talg)
+        tal(1,1) = ds_thm%ds_material%ther%alpha_l
+        tal(2,2) = ds_thm%ds_material%ther%alpha_l
+        tal(3,3) = ds_thm%ds_material%ther%alpha_n
         al(1) = talg(1,1)
         al(2) = talg(2,2)
         al(3) = talg(3,3)
@@ -84,9 +81,9 @@ implicit none
         al(6) = talg(2,3)
     else if (ds_thm%ds_material%elas%id .eq. 2) then
         call matrot(angl_naut, pass)
-        tal(1,1) = ds_thm%ds_material%elas%alpha_l
-        tal(2,2) = ds_thm%ds_material%elas%alpha_t
-        tal(3,3) = ds_thm%ds_material%elas%alpha_n
+        tal(1,1) = ds_thm%ds_material%ther%alpha_l
+        tal(2,2) = ds_thm%ds_material%ther%alpha_t
+        tal(3,3) = ds_thm%ds_material%ther%alpha_n
         call utbtab('ZERO', 3, 3, tal, pass, work, talg)
         al(1) = talg(1,1)
         al(2) = talg(2,2)

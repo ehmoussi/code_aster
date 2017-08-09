@@ -52,7 +52,7 @@ real(kind=8), parameter :: eps = 1.d-21
         if (ds_thm%ds_material%biot%type .eq. BIOT_TYPE_ISOT) then
             young  = ds_thm%ds_material%elas%e
             nu     = ds_thm%ds_material%elas%nu
-            alpha0 = ds_thm%ds_material%elas%alpha
+            alpha0 = ds_thm%ds_material%ther%alpha
             cbiot  = tbiot(1)
             k0     = young / 3.d0 / (1.d0-2.d0*nu)
             unsks  = (1.d0-cbiot) / k0

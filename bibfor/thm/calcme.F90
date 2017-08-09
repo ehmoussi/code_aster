@@ -233,7 +233,7 @@ implicit none
         sipp=congep(adcome+6)
         young  = ds_thm%ds_material%elas%e
         nu     = ds_thm%ds_material%elas%nu
-        alpha0 = ds_thm%ds_material%elas%alpha
+        alpha0 = ds_thm%ds_material%ther%alpha
 !
         call elagon(ndim, imate, tbiot(1),&
                     alpha0, deps, young, &
