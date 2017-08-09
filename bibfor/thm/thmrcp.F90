@@ -47,6 +47,7 @@ implicit none
 #include "asterfort/thmEvalSatuMiddle.h"
 #include "asterfort/thmEvalSatuFinal.h"
 #include "asterfort/thmEvalPermLiquGaz.h"
+#include "asterfort/thmEvalFickSteam.h"
     integer :: imate, retcom, ndim
     integer :: aniso2, aniso3, aniso4
     real(kind=8) :: t, p1, p2, phi, pvp
@@ -241,10 +242,10 @@ implicit none
      &              'TOTO' ,'TOTO' ,&
      &              'TOTO' ,'TOTO' ,&
      &              'TOTO' ,'TOTO' ,&
-     &              'TOTO' ,'FICKV_T'  ,&
-     &              'FICKV_PV' ,'FICKV_PG' ,&
-     &              'FICKV_S'  ,'D_FV_T'   ,&
-     &              'D_FV_PG',&
+     &              'TOTO' ,'TOTO'  ,&
+     &              'TOTO' ,'TOTO' ,&
+     &              'TOTO'  ,'TOTO'   ,&
+     &              'TOTO',&
      &              'TOTO',&
      &              'LAMB_TT',&
      &              'D_LB_TT',&
@@ -350,10 +351,10 @@ implicit none
      &               'TOTO' ,'TOTO' ,&
      &               'TOTO' ,'TOTO' ,&
      &               'TOTO' ,'TOTO' ,&
-     &               'TOTO' ,'FICKV_T'  ,&
-     &               'FICKV_PV' ,'FICKV_PG' ,&
-     &               'FICKV_S'  ,'D_FV_T',&
-     &               'D_FV_PG','FICKA_T'  ,&
+     &               'TOTO' ,'TOTO'  ,&
+     &               'TOTO' ,'TOTO' ,&
+     &               'TOTO'  ,'TOTO',&
+     &               'TOTO','FICKA_T'  ,&
      &               'FICKA_PA' , 'FICKA_PL' ,&
      &               'FICKA_S'  ,'D_FA_T' ,&
      &               'TOTO',&
@@ -392,10 +393,10 @@ implicit none
      &                'TOTO' ,'TOTO' ,&
      &                'TOTO' ,'TOTO' ,&
      &                'TOTO' ,'TOTO' ,&
-     &                'TOTO' ,'FICKV_T'  ,&
-     &                'FICKV_PV' ,'FICKV_PG' ,&
-     &                'FICKV_S'  ,'D_FV_T',&
-     &                'D_FV_PG','FICKA_T'  ,&
+     &                'TOTO' ,'TOTO'  ,&
+     &                'TOTO' ,'TOTO' ,&
+     &                'TOTO'  ,'TOTO',&
+     &                'TOTO','FICKA_T'  ,&
      &                'FICKA_PA' , 'FICKA_PL' ,&
      &                'FICKA_S'  ,'D_FA_T' ,&
      &                'TOTO',&
@@ -985,37 +986,6 @@ implicit none
                             valpar(1), 2, ncra25(17), val25(17), icodre,&
                             0,nan='NON')
             endif
-!
-!    RÉCUPÉRATION DES FONCTIONS FICKS ET LEUR DÉRIVÉES AU DESSUS PB
-!
-            nompar(1) = 'TEMP'
-            valpar(1) = t
-!
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, nompar,&
-                        valpar, 1, ncra25(29), val25(29), icodre,&
-                        1)
-            nompar(1) = 'PVAP'
-            nompar(2) = 'PGAZ'
-            nompar(3) = 'SAT'
-            valpar(1) = pvp
-            valpar(2) = p2
-            valpar(3) = satur
-!
-! INITIALISATION DES AUTRES COMPOSANTES FICKIENNES
-!
-            val25(30) = 1.0d0
-            val25(31) = 1.0d0
-            val25(32) = 1.0d0
-            call rcvala(imate, ' ', 'THM_DIFFU', 3, nompar,&
-                        valpar, 3, ncra25(30), val25(30), icodre,&
-                        0,nan='NON')
-            nompar(1) = 'TEMP'
-            nompar(2) = 'PGAZ'
-            valpar(1) = t
-            valpar(2) = p2
-            call rcvala(imate, ' ', 'THM_DIFFU', 2, nompar,&
-                        valpar, 2, ncra25(33), val25(33), icodre,&
-                        0,nan='NON')
 
             rgaz = val25( 1)
 
@@ -1035,14 +1005,11 @@ implicit none
             lambct(2) = val25(20)
             lambct(3) = val25(21)
             lambct(4) = val25(38)
-!
-            fick = val25(29)*val25(30)*val25(31)*val25(32)
-            dfickt = val25(33)*val25(30)*val25(31)*val25(32)
-            dfickg = val25(34)*val25(29)*val25(30)*val25(32)
-!            unsurk = val26( 1)
-!            viscl = val26( 2)
-!            dviscl = val26( 3)
-!            alpha = val26( 4)
+
+! --------- Evaluate Fick coefficients for steam in gaz
+            call thmEvalFickSteam(imate,&
+                                  satur, p2    , pvp   , t,&
+                                  fick , dfickt, dfickg)
             mamolg = val27( 1)
             viscg = val27( 2)
             dviscg = val27( 3)
@@ -1191,42 +1158,6 @@ implicit none
                             0,nan='NON')
             endif
 !
-!    RECUPERATION DES FONCTIONS FICK VAPEUR ET LEURS DERIVEES
-!
-            nompar(1) = 'TEMP'
-            valpar(1) = t
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, nompar,&
-                        valpar, 1, ncra40(29), val40(29), icodre,&
-                        1)
-!
-! INITIALISATION DES AUTRES COMPOSANTES FICKIENNES
-!
-            val40(30) = 1.0d0
-            val40(31) = 1.0d0
-            val40(32) = 1.0d0
-!
-            nompar(1) = 'PVAP'
-            nompar(2) = 'PGAZ'
-            nompar(3) = 'SAT'
-            valpar(1) = pvp
-            valpar(2) = p2
-            valpar(3) = satur
-!
-!
-!           DERIVEE PAR RAPPORT A S MISE 0 0 PAR DEFAUT
-!
-            call rcvala(imate, ' ', 'THM_DIFFU', 3, nompar,&
-                        valpar, 3, ncra40(30), val40(30), icodre,&
-                        0,nan='NON')
-            nompar(1) = 'TEMP'
-            nompar(2) = 'PGAZ'
-            valpar(1) = t
-            valpar(2) = p2
-            call rcvala(imate, ' ', 'THM_DIFFU', 2, nompar,&
-                        valpar, 2, ncra40(33), val40(33), icodre,&
-                        0,nan='NON')
-!
-!
 !    RECUPERATION DES FONCTIONS FICK AIR DISSOUS ET LEURS DERIVEES
 !
             nompar(1) = 'TEMP'
@@ -1267,10 +1198,10 @@ implicit none
             lambct(2) = val40(20)
             lambct(3) = val40(21)
             lambct(4) = val40(43)
-!
-            fick = val40(29)*val40(30)*val40(31)*val40(32)
-            dfickt = val40(33)*val40(30)*val40(31)*val40(32)
-            dfickg = val40(34)*val40(29)*val40(30)*val40(32)
+! --------- Evaluate Fick coefficients for steam in gaz
+            call thmEvalFickSteam(imate,&
+                                  satur, p2    , pvp   , t,&
+                                  fick , dfickt, dfickg)
             fickad = val40(35)*val40(36)*val40(37)*val40(38)
             dfadt = val40(39)*val40(36)*val40(37)*val40(38)
 !
@@ -1420,17 +1351,6 @@ implicit none
                             0,nan='NON')
             endif
 !
-            nompar(1) = 'PVAP'
-            nompar(2) = 'PGAZ'
-            nompar(3) = 'SAT'
-            valpar(1) = pvp
-            valpar(2) = p2
-            valpar(3) = satur
-!
-!
-!
-
-!
 !    RECUPERATION DES FONCTIONS FICK AIR DISSOUS ET LEURS DERIVEES
 !
             nompar(1) = 'TEMP'
@@ -1471,10 +1391,10 @@ implicit none
             lambct(2) = val40(20)
             lambct(3) = val40(21)
             lambct(4) = val40(43)
-!
-            fick = val40(29)*val40(30)*val40(31)*val40(32)
-            dfickt = val40(33)*val40(30)*val40(31)*val40(32)
-            dfickg = val40(34)*val40(29)*val40(30)*val40(32)
+! --------- Evaluate Fick coefficients for steam in gaz
+            call thmEvalFickSteam(imate,&
+                                  satur, p2    , pvp   , t,&
+                                  fick , dfickt, dfickg)
             fickad = val40(35)*val40(36)*val40(37)*val40(38)
             dfadt = val40(39)*val40(36)*val40(37)*val40(38)
 !
