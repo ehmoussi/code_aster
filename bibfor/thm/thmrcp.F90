@@ -1301,9 +1301,9 @@ implicit none
                 else if (icodre(1).eq.0) then
                     aniso4=0
                 endif
-                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
-                            [t], dim23-3, ncra23(4), val23(4), icodre,&
-                            1)
+!                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
+!                            [t], dim23-3, ncra23(4), val23(4), icodre,&
+!                            1)
             endif
 
             call thmEvalSatuFinal(hydr , imate , pvp-p1,&

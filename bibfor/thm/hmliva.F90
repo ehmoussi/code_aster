@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1306, W1504
+! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine hmliva(yachai, option, meca, ther, hydr,&
+subroutine hmliva(yachai, option, meca, hydr,&
                   imate, ndim, dimdef, dimcon, nbvari,&
                   yamec, yate, advihy,&
                   advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -27,7 +27,7 @@ subroutine hmliva(yachai, option, meca, ther, hydr,&
                   epsv, depsv, p1, dp1, temp,&
                   dt, phi, pvp, h11, h12,&
                   rho11, satur, retcom,&
-                  thmc, tbiot, angmas, deps)
+                  tbiot, angmas, deps)
 !
 use THM_type
 use THM_module
@@ -57,7 +57,6 @@ implicit none
 #include "asterfort/masvol.h"
 #include "asterfort/netbis.h"
 #include "asterfort/sigmap.h"
-#include "asterfort/thmrcp.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viemma.h"
 #include "asterfort/viporo.h"
@@ -82,7 +81,6 @@ real(kind=8), intent(in) :: temp
 !                       = 3 SIZZ NON NUL (DEBORST) ON CONTINUE A ITERER
 ! ======================================================================
 !
-
     integer :: ndim, dimdef, dimcon, nbvari, imate, yamec, yate, retcom
     integer :: adcp11, adcp12, adcote, addep1, addete
     integer :: advihy, advico, vihrho, vicphi, vicpvp, vicsat
@@ -93,7 +91,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: phi, pvp, h11, h12, rho11
     real(kind=8) :: phi0, pvp0
     real(kind=8) :: ums, phids, angmas(3)
-    character(len=16) :: option, meca, ther, hydr, thmc
+    character(len=16) :: option, meca, hydr
     aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -102,51 +100,41 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: dpvpt, dpvpl, tbiot(6), cs, alpliq, cliq
     real(kind=8) :: cp11, cp12, satur, dsatur_dp1, mamolv, em
     real(kind=8) :: r, rho0, csigm, alp11, alp12, rho12, alpha0
-    real(kind=8) :: eps, deps(6), mdal(6), dalal, alphfi, cbiot, unsks
-    parameter  ( eps = 1.d-21 )
+    real(kind=8) :: deps(6), mdal(6), dalal, alphfi, cbiot, unsks
     aster_logical :: emmag
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
-    real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid16, rbid17, rbid18, rbid19
-    real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
-    real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid32(ndim, ndim)
-    real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38, rbid20
-    real(kind=8) :: rbid39, rbid40
-    real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49
-    real(kind=8) :: rbid57(ndim, ndim)
     real(kind=8) :: m11m, m12m, coeps, pinf, dp2, cp21, cp22, rho21
-    real(kind=8) :: rho22, dpad, signe, rac2, p1m
+    real(kind=8) :: rho22, dpad, signe, p1m
+    real(kind=8), parameter :: eps = 1.d-21
 !
     aster_logical :: net, bishop
 !
-    rac2 = sqrt(2.d0)
-
-!
-! =====================================================================
-! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
-! --- UN PREMIER APPEL A THMRCP POUR RECUPERE SATM --------------------
-! =====================================================================
     call netbis(meca, net, bishop)
-    phi0 = ds_thm%ds_parainit%poro_init
-    pvp0 = ds_thm%ds_parainit%prev_init
-    pvp = vintm(advico+vicpvp) + pvp0
-    pvpm = vintm(advico+vicpvp) + pvp0
-    p1m  = pvpm-p1+dp1
-    call thmrcp('INTERMED', imate, thmc, hydr,&
-                ther, temp, rbid40, pvpm-p1+dp1, rbid6,&
-                rbid7, rbid10, r, rho0,&
-                csigm, saturm, satur, dsatur_dp1,&
-                rbid16, rbid17, rbid18,&
-                rbid19, rbid20, rbid21, rbid22, rbid23,&
-                rbid24, rbid25, rho110, cliq, alpliq,&
-                cp11, rbid26, rbid27, rbid28, rbid29,&
-                rbid30, rbid31, rbid32, rbid33, rbid34,&
-                rbid35, mamolv, cp12, rbid38, rbid39,&
-                rbid45, rbid46, rbid47, rbid48, rbid49,&
-                em, rbid57,  retcom,&
-                angmas, ndim)
+!
+! - Get initial parameters
+!
+    phi0   = ds_thm%ds_parainit%poro_init
+    pvp0   = ds_thm%ds_parainit%prev_init
+!
+! - Compute pressures
+!
+    pvp    = vintm(advico+vicpvp) + pvp0
+    pvpm   = vintm(advico+vicpvp) + pvp0
+    p1m    = pvpm-p1+dp1
+!
+! - Get material parameters
+!
+    r      = ds_thm%ds_material%solid%r_gaz
+    rho0   = ds_thm%ds_material%solid%rho
+    csigm  = ds_thm%ds_material%solid%cp
+    rho110 = ds_thm%ds_material%liquid%rho
+    cliq   = ds_thm%ds_material%liquid%unsurk
+    alpliq = ds_thm%ds_material%liquid%alpha
+    cp11   = ds_thm%ds_material%liquid%cp
+    mamolv = ds_thm%ds_material%steam%mass_mol
+    cp12   = ds_thm%ds_material%steam%cp
 !
 ! - Evaluation of initial saturation
 !
@@ -196,20 +184,36 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
 ! --- EN LIQU_VAPE CALCUL DE RHO11, DES ENTHALPIES DE PVP ET RHOVP ----
 ! =====================================================================
-        call virhol(nbvari, vintm, vintp, advihy, vihrho,&
-                    rho110, dp1, dp2, dpad, cliq,&
-                    dt, alpliq, signe, rho11, rho11m,&
-                    retcom)
+        if (yate .eq. 1) then
+            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
+                        rho110, dp1, dp2, dpad, cliq,&
+                        dt, alpliq, signe, rho11, rho11m,&
+                        retcom)
+        else
+            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
+                        rho110, dp1, dp2, dpad, cliq,&
+                        dt, 0.d0, signe, rho11, rho11m,&
+                        retcom)
+        endif
 ! =====================================================================
 ! --- EN LIQU_VAPE CALCUL DE RHO11, DES ENTHALPIES DE PVP ET RHOVP ----
 ! =====================================================================
         pinf = r8maem()
-        call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
-                    dimcon, pinf, congem, adcp11, adcp12,&
-                    ndim, pvp0, dp1, dp2, temp,&
-                    dt, mamolv, r, rho11, signe,&
-                    cp11, cp12, yate, pvp, pvpm,&
-                    retcom)
+        if (yate .eq. 1) then
+            call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
+                        dimcon, pinf, congem, adcp11, adcp12,&
+                        ndim, pvp0, dp1, dp2, temp,&
+                        dt, mamolv, r, rho11, signe,&
+                        cp11, cp12, yate, pvp, pvpm,&
+                        retcom)
+        else
+            call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
+                        dimcon, pinf, congem, adcp11, adcp12,&
+                        ndim, pvp0, dp1, dp2, temp,&
+                        dt, mamolv, r, rho11, signe,&
+                        0.d0, cp12, yate, pvp, pvpm,&
+                        retcom)
+        endif
 ! =====================================================================
 ! --- PROBLEME DANS LE CALCUL DES VARIABLES INTERNES ? ----------------
 ! =====================================================================
