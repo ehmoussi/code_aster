@@ -34,10 +34,14 @@ use THM_module
 !
 implicit none
 !
-#include "asterfort/thmrcp.h"
 #include "asterfort/tebiot.h"
 #include "asterfort/thmGetPermeabilityTensor.h"
 #include "asterfort/thmEvalGravity.h"
+#include "asterfort/thmEvalConductivity.h"
+#include "asterfort/thmEvalSatuFinal.h"
+#include "asterfort/thmEvalPermLiquGaz.h"
+#include "asterfort/thmEvalFickSteam.h"
+#include "asterfort/thmEvalFickAir.h"
 !
 integer, intent(in) :: ndim
 real(kind=8), intent(in) :: angl_naut(3)
@@ -80,116 +84,23 @@ real(kind=8), intent(out) :: gravity(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: rbid1, rbid2, rbid3, rbid4, rbid5, rbid6
-    real(kind=8) :: rbid7, rbid8, rbid9
-    real(kind=8) :: rbid11, rbid12, rbid13, rbid14, rbid15, rbid16
-    real(kind=8) :: rbid17, rbid18, rbid19, rbid20, rbid21, rbid22
-    real(kind=8) :: rbid23, rbid24, rbid25, rbid26, rbid27, rbid28
-    real(kind=8) :: rbid29, rbid30, rbid31, rbid32
-    real(kind=8) :: rbid35, rbid36, rbid37, rbid38, rbid39, rbid40
-    real(kind=8) :: rbid41, rbid42, rbid43, rbid44, rbid45, rbid46
-    real(kind=8) :: rbid47, rbid48, rbid49, rbid50
-!
-! --------------------------------------------------------------------------------------------------
-!
-    rbid1=0.d0
-    rbid2=0.d0
-    rbid3=0.d0
-    rbid4=0.d0
-    rbid5=0.d0
-    rbid6=0.d0
-    rbid7=0.d0
-    rbid8=0.d0
-    rbid9=0.d0
-    rbid11=0.d0
-    rbid12=0.d0
-    rbid13=0.d0
-    rbid14=0.d0
-    rbid15=0.d0
-    rbid16=0.d0
-    rbid17=0.d0
-    rbid18=0.d0
-    rbid19=0.d0
-    rbid20=0.d0
-    rbid21=0.d0
-    rbid22=0.d0
-    rbid23=0.d0
-    rbid24=0.d0
-    rbid25=0.d0
-    rbid26=0.d0
-    rbid27=0.d0
-    rbid28=0.d0
-    rbid29=0.d0
-    rbid30=0.d0
-    rbid31=0.d0
-    rbid32=0.d0
-    rbid35=0.d0
-    rbid36=0.d0
-    rbid37=0.d0
-    rbid38=0.d0
-    rbid39=0.d0
-    rbid40=0.d0
-    rbid41=0.d0
-    rbid42=0.d0
-    rbid43=0.d0
-    rbid44=0.d0
-    rbid45=0.d0
-    rbid46=0.d0
-    rbid47=0.d0
-    rbid48=0.d0
-    rbid49=0.d0
-    rbid50=0.d0
     retcom=0
+    call thmEvalSatuFinal(hydr , j_mater , p1    ,&
+                          satur, dsatur, retcom)
     if (thmc .eq. 'LIQU_SATU') then
-        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
-                    ther, t, rbid6, rbid41, rbid7,&
-                    phi, rbid11, rbid12, rbid13,&
-                    rbid14, rbid16, rbid17, rbid18,&
-                    rbid19, rbid20, rbid21,&
-                    rbid22, rbid23, rbid24, rbid25, rbid26,&
-                    lambp, dlambp, rbid27, unsurk, alpha,&
-                    rbid28, lambs, dlambs, viscl, dviscl,&
-                    rbid31, rbid32, tlambt, tdlamt, rbid35,&
-                    rbid36, rbid37, rbid38, rbid39, rbid40,&
-                    rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct,  retcom,&
-                    angl_naut, ndim)
         unsurk = ds_thm%ds_material%liquid%unsurk
         alpha  = ds_thm%ds_material%liquid%alpha
         viscl  = ds_thm%ds_material%liquid%visc
         dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
     else if (thmc.eq.'GAZ') then
-        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
-                    ther, t, rbid6, rbid44, rbid7,&
-                    phi, rbid11, rgaz, rbid13,&
-                    rbid14, rbid16, rbid17, rbid18,&
-                    rbid19, rbid20, rbid21,&
-                    rbid22, rbid23, rbid24, rbid25, rbid26,&
-                    lambp, dlambp, rbid27, rbid42, rbid43,&
-                    rbid29, lambs, dlambs, rbid41, rbid31,&
-                    mamolg, rbid28, tlambt, tdlamt, viscg,&
-                    dviscg, rbid37, rbid38, rbid39, rbid40,&
-                    rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct,  retcom,&
-                    angl_naut, ndim)
         rgaz   = ds_thm%ds_material%solid%r_gaz
         viscg  = ds_thm%ds_material%gaz%visc
         dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
         mamolg = ds_thm%ds_material%gaz%mass_mol
     else if (thmc.eq.'LIQU_VAPE') then
-        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
-                    ther, t, p1, rbid6, p2,&
-                    phi, pvp, rgaz, rbid8,&
-                    rbid9, rbid11, satur, dsatur,&
-                    permli, dperml, permgz,&
-                    dperms, dpermp, rbid14, rbid15, rbid16,&
-                    lambp, dlambp, rbid17, unsurk, alpha,&
-                    rbid18, lambs, dlambs, viscl, dviscl,&
-                    rbid19, rbid20, tlambt, tdlamt, rbid23,&
-                    rbid24, mamolv, rbid25, viscg, dviscg,&
-                    rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct, retcom,&
-                    angl_naut, ndim)
+        call thmEvalPermLiquGaz(hydr  , j_mater , satur, p2, t,&
+                                permli, dperml,&
+                                permgz, dperms, dpermp)
         rgaz   = ds_thm%ds_material%solid%r_gaz
         unsurk = ds_thm%ds_material%liquid%unsurk
         alpha  = ds_thm%ds_material%liquid%alpha
@@ -199,19 +110,12 @@ real(kind=8), intent(out) :: gravity(3)
         viscg  = ds_thm%ds_material%steam%visc
         dviscg = ds_thm%ds_material%steam%dvisc_dtemp
     else if (thmc.eq.'LIQU_VAPE_GAZ') then
-        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
-                    ther, t, p1, rbid6, p2,&
-                    phi, pvp, rgaz, rbid8,&
-                    rbid9, rbid11, satur, dsatur,&
-                    permli, dperml, permgz,&
-                    dperms, dpermp, fick, dfickt, dfickg,&
-                    lambp, dlambp, rbid17, unsurk, alpha,&
-                    rbid18, lambs, dlambs, viscl, dviscl,&
-                    mamolg, rbid19, tlambt, tdlamt, viscg,&
-                    dviscg, mamolv, rbid25, rbid26, rbid27,&
-                    rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct,  retcom,&
-                    angl_naut, ndim)
+        call thmEvalPermLiquGaz(hydr  , j_mater , satur, p2, t,&
+                                permli, dperml,&
+                                permgz, dperms, dpermp)
+        call thmEvalFickSteam(j_mater,&
+                              satur, p2    , pvp   , t,&
+                              fick , dfickt, dfickg)
         rgaz   = ds_thm%ds_material%solid%r_gaz
         unsurk = ds_thm%ds_material%liquid%unsurk
         alpha  = ds_thm%ds_material%liquid%alpha
@@ -222,19 +126,15 @@ real(kind=8), intent(out) :: gravity(3)
         dviscg = ds_thm%ds_material%steam%dvisc_dtemp
         mamolg = ds_thm%ds_material%gaz%mass_mol
     else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
-        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
-                    ther, t, p1, rbid6, p2,&
-                    phi, rbid28, rgaz, rbid8,&
-                    rbid9, rbid11, satur, dsatur,&
-                    permli, dperml, permgz,&
-                    dperms, dpermp, fick, dfickt, dfickg,&
-                    lambp, dlambp, rbid17, unsurk, alpha,&
-                    rbid18, lambs, dlambs, viscl, dviscl,&
-                    mamolg, rbid19, tlambt, tdlamt, viscg,&
-                    dviscg, mamolv, rbid25, rbid26, rbid27,&
-                    fickad, dfadt, rbid47, rbid48, pad,&
-                    rbid50, tlamct,  retcom,&
-                    angl_naut, ndim)
+        call thmEvalPermLiquGaz(hydr  , j_mater , satur, p2, t,&
+                                permli, dperml,&
+                                permgz, dperms, dpermp)
+        call thmEvalFickSteam(j_mater,&
+                              satur, p2    , pvp   , t,&
+                              fick , dfickt, dfickg)
+        call thmEvalFickAir(j_mater,&
+                            satur  , pad  , p2-p1, t,&
+                            fickad , dfadt)
         rgaz   = ds_thm%ds_material%solid%r_gaz
         unsurk = ds_thm%ds_material%liquid%unsurk
         alpha  = ds_thm%ds_material%liquid%alpha
@@ -245,19 +145,15 @@ real(kind=8), intent(out) :: gravity(3)
         dviscg = ds_thm%ds_material%steam%dvisc_dtemp
         mamolg = ds_thm%ds_material%gaz%mass_mol
     else if (thmc.eq.'LIQU_AD_GAZ') then
-        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
-                    ther, t, p1, rbid6, p2,&
-                    phi, rbid28, rgaz, rbid8,&
-                    rbid9, rbid11, satur, dsatur,&
-                    permli, dperml, permgz,&
-                    dperms, dpermp, rbid50, rbid50, rbid50,&
-                    lambp, dlambp, rbid17, unsurk, alpha,&
-                    rbid18, lambs, dlambs, viscl, dviscl,&
-                    mamolg, rbid19, tlambt, tdlamt, viscg,&
-                    dviscg, rbid50, rbid25, rbid26, rbid27,&
-                    fickad, dfadt, rbid47, rbid48, pad,&
-                    rbid50, tlamct,   retcom,&
-                    angl_naut, ndim)
+        call thmEvalPermLiquGaz(hydr  , j_mater , satur, p2, t,&
+                                permli, dperml,&
+                                permgz, dperms, dpermp)
+        call thmEvalFickSteam(j_mater,&
+                              satur, p2    , pvp   , t,&
+                              fick , dfickt, dfickg)
+        call thmEvalFickAir(j_mater,&
+                            satur  , pad  , p2-p1, t,&
+                            fickad , dfadt)
         rgaz   = ds_thm%ds_material%solid%r_gaz
         unsurk = ds_thm%ds_material%liquid%unsurk
         alpha  = ds_thm%ds_material%liquid%alpha
@@ -267,19 +163,9 @@ real(kind=8), intent(out) :: gravity(3)
         dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
         mamolg = ds_thm%ds_material%gaz%mass_mol
     else if (thmc.eq.'LIQU_GAZ') then
-        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
-                    ther, t, p1, rbid6, p2,&
-                    phi, rbid28, rgaz, rbid8,&
-                    rbid9, rbid11, satur, dsatur,&
-                    permli, dperml, permgz,&
-                    dperms, dpermp, rbid14, rbid15, rbid16,&
-                    lambp, dlambp, rbid17, unsurk, alpha,&
-                    rbid18, lambs, dlambs, viscl, dviscl,&
-                    mamolg, rbid19, tlambt, tdlamt, viscg,&
-                    dviscg, mamolv, rbid25, rbid26, rbid27,&
-                    rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct,  retcom,&
-                    angl_naut, ndim)
+        call thmEvalPermLiquGaz(hydr  , j_mater , satur, p2, t,&
+                                permli, dperml,&
+                                permgz, dperms, dpermp)
         rgaz   = ds_thm%ds_material%solid%r_gaz
         unsurk = ds_thm%ds_material%liquid%unsurk
         alpha  = ds_thm%ds_material%liquid%alpha
@@ -289,24 +175,20 @@ real(kind=8), intent(out) :: gravity(3)
         dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
         mamolg = ds_thm%ds_material%gaz%mass_mol
     else if (thmc.eq.'LIQU_GAZ_ATM') then
-        call thmrcp('FINALE  ', j_mater, thmc, hydr,&
-                    ther, t, p1, rbid6, p2,&
-                    phi, rbid28, rbid29, rbid8,&
-                    rbid9, rbid11, satur, dsatur,&
-                    permli, dperml, rbid30,&
-                    rbid31, rbid32, rbid14, rbid15, rbid16,&
-                    lambp, dlambp, rbid17, unsurk, alpha,&
-                    rbid18, lambs, dlambs, viscl, dviscl,&
-                    rbid20, rbid19, tlambt, tdlamt, rbid23,&
-                    rbid24, mamolv, rbid25, rbid26, rbid27,&
-                    rbid45, rbid46, rbid47, rbid48, rbid49,&
-                    rbid50, tlamct, retcom,&
-                    angl_naut, ndim)
+        call thmEvalPermLiquGaz(hydr  , j_mater , satur, p2, t,&
+                                permli, dperml)
         unsurk = ds_thm%ds_material%liquid%unsurk
         alpha  = ds_thm%ds_material%liquid%alpha
         viscl  = ds_thm%ds_material%liquid%visc
         dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
     endif
+!
+! - Evaluate thermal conductivity
+!
+    call thmEvalConductivity(angl_naut, ndim  , j_mater, &
+                             satur    , phi   , &
+                             lambs    , dlambs, lambp , dlambp,&
+                             tlambt   , tlamct, tdlamt)
 
 !
 ! - Get permeability tensor
@@ -321,6 +203,5 @@ real(kind=8), intent(out) :: gravity(3)
 ! - (re)-compute Biot tensor
 !
     call tebiot(angl_naut, tbiot)
-
-! =====================================================================
+!
 end subroutine
