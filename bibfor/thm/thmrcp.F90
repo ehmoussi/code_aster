@@ -67,29 +67,11 @@ implicit none
 ! --- VARIABLES LOCALES -----------------------------------------------
 ! =====================================================================
     integer :: ii
-    integer :: dim2, dim3, dim4, dim5, dim6, dim7, dim8
-    integer :: dim9, dim10, dim11, dim12, dim13, dim14, dim15
-    integer :: dim16, dim17, dim18, dim19, dim20, dim21, dim22
+    integer :: dim18, dim19, dim20, dim21, dim22
     integer :: dim23, dim24, dim25, dim26, dim27, dim28, dim29
-    integer :: dim30, dim31, dim32, dim33, dim35
+    integer :: dim30, dim31, dim32, dim33
     integer :: dimpar
-    integer :: dim36, dim37, dim38, dim40, dim41, dim42, dim43, dim39
-    parameter   ( dim2   =  2 )
-    parameter   ( dim3   =  4 )
-    parameter   ( dim4   =  3 )
-    parameter   ( dim5   =  2 )
-    parameter   ( dim6   =  3 )
-    parameter   ( dim7   =  4 )
-    parameter   ( dim8   =  2 )
-    parameter   ( dim9   =  3 )
-    parameter   ( dim10  =  4 )
-    parameter   ( dim11  =  2 )
-    parameter   ( dim12  =  2 )
-    parameter   ( dim13  =  3 )
-    parameter   ( dim14  =  4 )
-    parameter   ( dim15  =  2 )
-    parameter   ( dim16  =  2 )
-    parameter   ( dim17  =  4 )
+    integer :: dim40, dim41, dim42, dim43
     parameter   ( dim18  = 22 )
     parameter   ( dim19  =  4 )
     parameter   ( dim20  = 23 )
@@ -106,12 +88,6 @@ implicit none
     parameter   ( dim31  =  3 )
     parameter   ( dim32  = 28 )
     parameter   ( dim33  =  4 )
-!
-    parameter   ( dim35  =  3 )
-    parameter   ( dim36  =  4 )
-    parameter   ( dim37  =  2 )
-    parameter   ( dim38  =  2 )
-    parameter   ( dim39  =  2 )
     parameter   ( dim40  = 43 )
     parameter   ( dim41  =  4 )
     parameter   ( dim42  =  3 )
@@ -120,110 +96,31 @@ implicit none
     parameter   ( dimpar  =  4 )
 !
 !   NRESMA EST LE MAX DE DIMPAR, DIMSAT ET DE DIMI, AVEC I DE 1 A 43
-    integer :: nresma
-!      PARAMETER ( NRESMA = 34 )
-    parameter ( nresma = 40 )
+    integer, parameter :: nresma = 40
 !
-    real(kind=8) :: val2(dim2), val3(dim3), val4(dim4)
-    real(kind=8) :: val5(dim5), val6(dim6), val7(dim7), val8(dim8)
-    real(kind=8) :: val9(dim9+1), val10(dim10), val11(dim11)
-    real(kind=8) :: val12(dim12), val13(dim13+1), val14(dim14)
-    real(kind=8) :: val15(dim15), val16(dim16+1), val17(dim17)
     real(kind=8) :: val18(dim18), val19(dim19), val20(dim20)
     real(kind=8) :: val21(dim21), val22(dim22), val23(dim23)
     real(kind=8) :: val24(dim24), val25(dim25), val26(dim26)
     real(kind=8) :: val27(dim27), val28(dim28), val29(dim29)
     real(kind=8) :: val30(dim30), val31(dim31), val32(dim32)
     real(kind=8) :: val33(dim33)
-    real(kind=8) :: val35(dim35+1), val36(dim36), val37(dim37), val38(dim38)
     real(kind=8) :: val40(dim40), val41(dim41), val42(dim42), val43(dim43)
-    real(kind=8) :: val39(dim39), valpar(dimpar)
-    real(kind=8) :: fpesa(1), un, zero
+    real(kind=8) :: valpar(dimpar)
+    real(kind=8) :: un, zero
 !
 !
     integer :: icodre(nresma)
     character(len=4) :: nompar(dimpar)
-    character(len=16) :: ncra2(dim2), ncra3(dim3), ncra4(dim4)
-    character(len=16) :: ncra5(dim5), ncra6(dim6), ncra7(dim7), ncra8(dim8)
-    character(len=16) :: ncra9(dim9), ncra10(dim10), ncra11(dim11)
-    character(len=16) :: ncra12(dim12), ncra13(dim13), ncra14(dim14)
-    character(len=16) :: ncra15(dim15), ncra16(dim16), ncra17(dim17)
     character(len=16) :: ncra18(dim18), ncra19(dim19), ncra20(dim20)
     character(len=16) :: ncra21(dim21), ncra22(dim22), ncra23(dim23)
     character(len=16) :: ncra24(dim24), ncra25(dim25), ncra26(dim26)
     character(len=16) :: ncra27(dim27), ncra28(dim28), ncra29(dim29)
     character(len=16) :: ncra30(dim30), ncra31(dim31), ncra32(dim32)
     character(len=16) :: ncra33(dim33)
-    character(len=16) :: ncra35(dim35), ncra36(dim36), ncra37(dim37)
-    character(len=16) :: ncra38(dim38), ncra39(dim39), ncra40(dim40)
+    character(len=16) :: ncra40(dim40)
     character(len=16) :: ncra41(dim41), ncra42(dim42), ncra43(dim43)
-    character(len=16) :: crad35(dim35), crad36(dim36), crad37(dim37)
-    character(len=16) :: crad39(dim39), crad40(dim40)
+    character(len=16) :: crad40(dim40)
     character(len=16) :: crad41(dim41), crad42(dim42)
-! =====================================================================
-! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_SATU -----
-! =====================================================================
-    data ncra2  / 'TOTO'      ,&
-     &            'TOTO'   /
-    data ncra3  / 'TOTO'     ,&
-     &            'TOTO' ,&
-     &            'TOTO'   ,&
-     &            'TOTO'     /
-! =====================================================================
-! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS GAZ -----------
-! =====================================================================
-    data ncra4  / 'TOTO' ,&
-     &            'TOTO'  ,&
-     &             'TOTO' /
-    data ncra5  / 'TOTO',&
-     &            'TOTO'   /
-! =====================================================================
-! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_VAPE -----
-! =====================================================================
-    data ncra6  / 'TOTO' ,&
-     &             'TOTO' ,&
-     &             'TOTO'  /
-    data ncra7  / 'TOTO',&
-     &            'TOTO'  ,&
-     &            'TOTO' ,&
-     &             'TOTO'   /
-    data ncra8  /'TOTO' ,&
-     &           'TOTO'  /
-! =====================================================================
-! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_VAPE_GAZ -
-! =====================================================================
-    data ncra9  /'TOTO'  ,&
-     &           'TOTO'   ,&        
-     &           'TOTO'   /
-    data ncra10 / 'TOTO'  ,&
-     &           'TOTO'  ,&
-     &           'TOTO'  ,&
-     &          'TOTO'   /
-    data ncra11 / 'TOTO' ,&
-     &           'TOTO'  /
-    data ncra12 /'TOTO' ,&
-     &           'TOTO'  /
-! =====================================================================
-! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_GAZ ------
-! =====================================================================
-    data ncra13 / 'TOTO'   ,&
-     &           'TOTO'      ,&
-     &           'TOTO'    /
-    data ncra14 / 'TOTO'   ,&
-     &            'TOTO' ,&
-     &            'TOTO'  ,&
-     &            'TOTO'   /
-    data ncra15 / 'TOTO'  ,&
-     &            'TOTO'  /
-! =====================================================================
-! --- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_GAZ_ATM --
-! =====================================================================
-    data ncra16 / 'TOTO'    ,&
-     &           'TOTO'     /
-    data ncra17 / 'TOTO'   ,&
-     &            'TOTO' ,&
-     &            'TOTO'   ,&
-     &            'TOTO'   /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_SATU ------------
 ! =====================================================================
@@ -431,21 +328,6 @@ implicit none
      &              'TOTO' ,&
      &              'TOTO'   /
 ! =====================================================================
-! -- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_AD_GAZ_VAPE
-! =====================================================================
-    data ncra35  / 'TOTO'    ,&
-     &              'TOTO'      ,&
-     &              'TOTO'       /
-    data ncra36 / 'TOTO'      ,&
-     &              'TOTO' ,&
-     &              'TOTO'    ,&
-     &              'TOTO'       /
-    data ncra37 / 'TOTO' ,&
-     &              'TOTO'       /
-    data ncra38 / 'TOTO' ,&
-     &              'TOTO'       /
-    data ncra39 / 'TOTO'        , 'TOTO' /
-! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_AD_GAZ_VAPE -----
 ! =====================================================================
     data ncra40 / 'TOTO'    ,'TOTO'   ,&
@@ -486,20 +368,6 @@ implicit none
      &               'TOTO'     ,&
      &               'TOTO' /
     data ncra43 / 'TOTO' /
-! =====================================================================
-! -- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_AD_GAZ
-! =====================================================================
-    data crad35  / 'TOTO'    ,&
-     &               'TOTO'      ,&     
-     &               'TOTO'       /
-    data crad36 / 'TOTO'      ,&
-     &               'TOTO' ,&
-     &               'TOTOA'    ,&
-     &               'TOTO'       /
-    data crad37 / 'TOTO' ,&
-     &               'TOTO'       /
-    data crad39 / 'TOTO'        ,&
-     &               'TOTO' /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_AD_GAZ -----
 ! =====================================================================
@@ -544,8 +412,7 @@ implicit none
 ! =====================================================================
 ! --- CAS DE L'INITIALISATION -----------------------------------------
 ! =====================================================================
-!
-    fpesa(1)=0
+
     retcom = 0
     un = 1.d0
     zero=0.d0
@@ -555,374 +422,7 @@ implicit none
     lambct(:)=0.d0
     dlambt(:)=0.d0
 !
-    if (etape.eq.'INTERMED') then
-! =====================================================================
-! --- CAS INTERMEDIAIRE -----------------------------------------------
-! =====================================================================
-        if (thmc .eq. 'LIQU_SATU') then
-! =====================================================================
-! --- LOI DE COUPLAGE DE TYPE LIQU_SATU -------------------------------
-! =====================================================================
-            do ii = 1, dim2
-                val2(ii) = 0.0d0
-            end do
-            do ii = 1, dim3
-                val3(ii) = 0.0d0
-            end do
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 1, ncra2, val2, icodre,&
-                        0,nan='NON')
-            
-            call rcvala(imate, ' ', 'THM_LIQU', 0, ' ',&
-                        [0.d0], 2, ncra3, val3, icodre,&
-                        0,nan='NON')
-            if (ther .ne. 'VIDE') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'TEMP',&
-                            [t], 1, ncra2(2), val2(2), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
-                            [t], 2, ncra3(3), val3(3), icodre,&
-                            1)
-            endif
-            rhod = val2(1)
-            cpd = val2(2)
-            rhol = val3(1)
-            unsurk = val3(2)
-            alpha = val3(3)
-            cpl = val3(4)
-!
-        else if (thmc.eq.'GAZ') then
-! =====================================================================
-! --- LOI DE COUPLAGE DE TYPE GAZ -------------------------------------
-! =====================================================================
-            do ii = 1, dim4
-                val4(ii) = 0.0d0
-            end do
-            do ii = 1, dim5
-                val5(ii) = 0.0d0
-            end do
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 2, ncra4, val4, icodre,&
-                        0,nan='NON')
-            
-            call rcvala(imate, ' ', 'THM_GAZ', 0, ' ',&
-                        [0.d0], 1, ncra5, val5, icodre,&
-                        0,nan='NON')
-            if (ther .ne. 'VIDE') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'TEMP',&
-                            [t], 1, ncra4(2), val4(2), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_GAZ', 1, 'TEMP',&
-                            [t], 1, ncra5(2), val5(2), icodre,&
-                            1)
-            endif
-            rgaz = val4(1)
-            rhod = val4(2)
-            cpd = val4(2)
-            mamolg = val5(1)
-            cpg = val5(2)
-!
-        else if (thmc.eq.'LIQU_VAPE') then
-! =====================================================================
-! --- LOI DE COUPLAGE DE TYPE LIQU_VAPE -------------------------------
-! =====================================================================
-            do ii = 1, dim6
-                val6(ii) = 0.0d0
-            end do
-            do ii = 1, dim7
-                val7(ii) = 0.0d0
-            end do
-            do ii = 1, dim8
-                val8(ii) = 0.0d0
-            end do
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, 'TEMP',&
-                        [0.d0], 2, ncra6, val6, icodre,&
-                        0,nan='NON')
-            
-            call rcvala(imate, ' ', 'THM_LIQU', 0, ' ',&
-                        [0.d0], 2, ncra7, val7, icodre,&
-                        0,nan='NON')
-            call rcvala(imate, ' ', 'THM_VAPE_GAZ', 0, ' ',&
-                        [0.d0], 2, ncra8, val8, icodre,&
-                        0,nan='NON')
-            if (ther .ne. 'VIDE') then
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'TEMP',&
-                            [t], 1, ncra6(3), val6(3), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
-                            [t], 2, ncra7(3), val7(3), icodre,&
-                            1)
-            endif
-            rgaz = val6(1)
-            rhod = val6(2)
-            cpd = val6(3)
-            rhol = val7(1)
-            unsurk = val7(2)
-            alpha = val7(3)
-            cpl = val7(4)
-            mamolv = val8(1)
-            cpvg = val8(2)
-!
-        else if (thmc.eq.'LIQU_VAPE_GAZ') then
-! =====================================================================
-! --- LOI DE COUPLAGE DE TYPE LIQU_VAPE_GAZ ---------------------------
-! =====================================================================
-            do ii = 1, dim9+1
-                val9(ii) = 0.0d0
-            end do
-            do ii = 1, dim10
-                val10(ii) = 0.0d0
-            end do
-            do ii = 1, dim11
-                val11(ii) = 0.0d0
-            end do
-            do ii = 1, dim12
-                val12(ii) = 0.0d0
-            end do
-! R_GAZ/RHO
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 2, ncra9, val9, icodre,&
-                        0,nan='NON')
-            call rcvala(imate, ' ', 'THM_LIQU', 0, ' ',&
-                        [0.d0], 2, ncra10, val10, icodre,&
-                        0,nan='NON')
-            call rcvala(imate, ' ', 'THM_GAZ', 0, ' ',&
-                        [0.d0], 1, ncra11, val11, icodre,&
-                        0,nan='NON')
-            call rcvala(imate, ' ', 'THM_VAPE_GAZ', 0, ' ',&
-                        [0.d0], 2, ncra12, val12, icodre,&
-                        0,nan='NON')
-            if (ther .ne. 'VIDE') then
-! CP
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'TEMP',&
-                            [t], 1, ncra9(3), val9(3), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
-                            [t], 2, ncra10(3), val10(3), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_GAZ', 1, 'TEMP',&
-                            [t], 1, ncra11(2), val11(2), icodre,&
-                            1)
-            endif
-            rgaz = val9(1)
-            rhod = val9(2)
-            cpd = val9(3)
-            rhol = val10(1)
-            unsurk = val10(2)
-            alpha = val10(3)
-            cpl = val10(4)
-            mamolg = val11(1)
-            cpg = val11(2)
-            mamolv = val12(1)
-            cpvg = val12(2)
-!
-        else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
-! =====================================================================
-! --- LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE   -----------
-! =====================================================================
-            do ii = 1, dim35+1
-                val35(ii) = 0.0d0
-            end do
-            do ii = 1, dim36
-                val36(ii) = 0.0d0
-            end do
-            do ii = 1, dim37
-                val37(ii) = 0.0d0
-            end do
-            do ii = 1, dim38
-                val38(ii) = 0.0d0
-            end do
-            do ii = 1, dim39
-                val39(ii) = 0.0d0
-            end do
-! R_GAZ/RHO
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 2, ncra35, val35, icodre,&
-                        0,nan='NON')
-            
-            call rcvala(imate, ' ', 'THM_LIQU', 0, ' ',&
-                        [0.d0], 2, ncra36, val36, icodre,&
-                        0,nan='NON')
-!
-            call rcvala(imate, ' ', 'THM_GAZ', 0, ' ',&
-                        [0.d0], 1, ncra37, val37, icodre,&
-                        0,nan='NON')
-!
-            call rcvala(imate, ' ', 'THM_VAPE_GAZ', 0, ' ',&
-                        [0.d0], 2, ncra38, val38, icodre,&
-                        0,nan='NON')
-!
-            if (ther .ne. 'VIDE') then
-! CP
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'TEMP',&
-                            [t], 1, ncra35(3), val35(3), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
-                            [t], 2, ncra36(3), val36(3), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_GAZ', 1, 'TEMP',&
-                            [t], 1, ncra37(2), val37(2), icodre,&
-                            1)
-            endif
-            call rcvala(imate, ' ', 'THM_AIR_DISS', 0, ' ',&
-                        [0.d0], 1, ncra39(1), val39(1), icodre,&
-                        1)
-            call rcvala(imate, ' ', 'THM_AIR_DISS', 1, 'TEMP',&
-                        [t], 1, ncra39(2), val39(2), icodre,&
-                        1)
-            rgaz = val35(1)
-            rhod = val35(2)
-            cpd = val35(3)
-            rhol = val36(1)
-            unsurk = val36(2)
-            alpha = val36(3)
-            cpl = val36(4)
-            mamolg = val37(1)
-            cpg = val37(2)
-            mamolv = val38(1)
-            cpvg = val38(2)
-            cpad = val39(1)
-            kh = val39(2)
-!
-        else if (thmc.eq.'LIQU_AD_GAZ') then
-! =====================================================================
-! --- LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_    -----------
-! =====================================================================
-            do ii = 1, dim35+1
-                val35(ii) = 0.0d0
-            end do
-            do ii = 1, dim36
-                val36(ii) = 0.0d0
-            end do
-            do ii = 1, dim37
-                val37(ii) = 0.0d0
-            end do
-            do ii = 1, dim39
-                val39(ii) = 0.0d0
-            end do
-! R_GAZ/RHO
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 2, crad35, val35, icodre,&
-                        0,nan='NON')
-            
-            call rcvala(imate, ' ', 'THM_LIQU', 0, ' ',&
-                        [0.d0], 2, crad36, val36, icodre,&
-                        0,nan='NON')
-!
-            call rcvala(imate, ' ', 'THM_GAZ', 0, ' ',&
-                        [0.d0], 1, crad37, val37, icodre,&
-                        0,nan='NON')
-!
-            if (ther .ne. 'VIDE') then
-! - CP
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'TEMP',&
-                            [t], 1, crad35(3), val35(3), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
-                            [t], 2, crad36(3), val36(3), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_GAZ', 1, 'TEMP',&
-                            [t], 1, crad37(2), val37(2), icodre,&
-                            1)
-            endif
-            call rcvala(imate, ' ', 'THM_AIR_DISS', 0, ' ',&
-                        [0.d0], 1, crad39(1), val39(1), icodre,&
-                        1)
-            call rcvala(imate, ' ', 'THM_AIR_DISS', 1, 'TEMP',&
-                        [t], 1, crad39(2), val39(2), icodre,&
-                        1)
-            rgaz = val35(1)
-            rhod = val35(2)
-            cpd = val35(3)
-            rhol = val36(1)
-            unsurk = val36(2)
-            alpha = val36(3)
-            cpl = val36(4)
-            mamolg = val37(1)
-            cpg = val37(2)
-            cpad = val39(1)
-            kh = val39(2)
-!
-        else if (thmc.eq.'LIQU_GAZ') then
-! =====================================================================
-! --- LOI DE COUPLAGE DE TYPE LIQU_GAZ --------------------------------
-! =====================================================================
-            do ii = 1, dim13+1
-                val13(ii) = 0.0d0
-            end do
-            do ii = 1, dim14
-                val14(ii) = 0.0d0
-            end do
-            do ii = 1, dim15
-                val15(ii) = 0.0d0
-            end do
-! - R_GAZ/RHO
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 2, ncra13, val13, icodre,&
-                        0,nan='NON')
-            call rcvala(imate, ' ', 'THM_LIQU', 0, ' ',&
-                        [0.d0], 2, ncra14, val14, icodre,&
-                        0,nan='NON')
-            call rcvala(imate, ' ', 'THM_GAZ', 0, ' ',&
-                        [0.d0], 1, ncra15, val15, icodre,&
-                        0,nan='NON')
-            if (ther .ne. 'VIDE') then
-! - CP
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'TEMP',&
-                            [t], 1, ncra13(3), val13(3), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
-                            [t], 2, ncra14(3), val14(3), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_GAZ', 1, 'TEMP',&
-                            [t], 1, ncra15(2), val15(2), icodre,&
-                            1)
-            endif
-            rgaz = val13(1)
-            rhod = val13(2)
-            cpd = val13(3)
-            rhol = val14(1)
-            unsurk = val14(2)
-            alpha = val14(3)
-            cpl = val14(4)
-            mamolg = val15(1)
-            cpg = val15(2)
-!
-        else if (thmc.eq.'LIQU_GAZ_ATM') then
-! =====================================================================
-! --- LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM ----------------------------
-! =====================================================================
-            do ii = 1, dim16+1
-                val16(ii) = 0.0d0
-            end do
-            do ii = 1, dim17
-                val17(ii) = 0.0d0
-            end do
-! - RHO
-            call rcvala(imate, ' ', 'THM_DIFFU', 0, ' ',&
-                        [0.d0], 1, ncra16, val16, icodre,&
-                        0,nan='NON')
-            
-            call rcvala(imate, ' ', 'THM_LIQU', 0, ' ',&
-                        [0.d0], 2, ncra17, val17, icodre,&
-                        0,nan='NON')
-            if (ther .ne. 'VIDE') then
-! - CP
-                call rcvala(imate, ' ', 'THM_DIFFU', 1, 'TEMP',&
-                            [t], 1, ncra16(2), val16(2), icodre,&
-                            1)
-                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
-                            [t], 2, ncra17(3), val17(3), icodre,&
-                            1)
-            endif
-            rhod = val16(1)
-            cpd = val16(2)
-            rhol = val17(1)
-            unsurk = val17(2)
-            alpha = val17(3)
-            cpl = val17(4)
-        endif
-    else if (etape.eq.'FINALE') then
+    if (etape.eq.'FINALE') then
 ! =====================================================================
 ! --- CAS FINAL -------------------------------------------------------
 ! =====================================================================
