@@ -532,20 +532,20 @@ implicit none
                             1)
             endif
 !
-            lambt(1) = val18(8)
-            lambt(2) = val18(9)
-            lambt(3) = val18(10)
-            lambt(4) = val18(20)
-            dlambt(1) = val18(11)
-            dlambt(2) = val18(12)
-            dlambt(3) = val18(13)
-            dlambt(4) = val18(21)
+            lambt(1)  = ds_thm%ds_material%ther%lambda
+            lambt(2)  = ds_thm%ds_material%ther%lambda_tl
+            lambt(3)  = ds_thm%ds_material%ther%lambda_tn
+            lambt(4)  = ds_thm%ds_material%ther%lambda_tt
+            dlambt(1) = ds_thm%ds_material%ther%dlambda
+            dlambt(2) = ds_thm%ds_material%ther%dlambda_tl
+            dlambt(3) = ds_thm%ds_material%ther%dlambda_tn
+            dlambt(4) = ds_thm%ds_material%ther%dlambda_tt
+            lambct(1) = ds_thm%ds_material%ther%lambda_ct
+            lambct(2) = ds_thm%ds_material%ther%lambda_ct_l
+            lambct(3) = ds_thm%ds_material%ther%lambda_ct_n
+            lambct(4) = ds_thm%ds_material%ther%lambda_ct_t
             lambp = val18(14)
             dlambp = val18(15)
-            lambct(1) = val18(16)
-            lambct(2) = val18(17)
-            lambct(3) = val18(18)
-            lambct(4) = val18(22)
             lambs = 1.0d0
             dlambs = 0.0d0
             unsurk = val19(1)
@@ -665,20 +665,20 @@ implicit none
             endif
 
             rgaz = val20( 1)
-            lambt(1) = val20(9)
-            lambt(2) = val20(10)
-            lambt(3) = val20(11)
-            lambt(4) = val20(21)
-            dlambt(1) = val20(12)
-            dlambt(2) = val20(13)
-            dlambt(3) = val20(14)
-            dlambt(4) = val20(22)
+            lambt(1)  = ds_thm%ds_material%ther%lambda
+            lambt(2)  = ds_thm%ds_material%ther%lambda_tl
+            lambt(3)  = ds_thm%ds_material%ther%lambda_tn
+            lambt(4)  = ds_thm%ds_material%ther%lambda_tt
+            dlambt(1) = ds_thm%ds_material%ther%dlambda
+            dlambt(2) = ds_thm%ds_material%ther%dlambda_tl
+            dlambt(3) = ds_thm%ds_material%ther%dlambda_tn
+            dlambt(4) = ds_thm%ds_material%ther%dlambda_tt
+            lambct(1) = ds_thm%ds_material%ther%lambda_ct
+            lambct(2) = ds_thm%ds_material%ther%lambda_ct_l
+            lambct(3) = ds_thm%ds_material%ther%lambda_ct_n
+            lambct(4) = ds_thm%ds_material%ther%lambda_ct_t
             lambp = val20(15)
             dlambp = val20(16)
-            lambct(1) = val20(17)
-            lambct(2) = val20(18)
-            lambct(3) = val20(19)
-            lambct(4) = val20(23)
             lambs = 1.0d0
             dlambs = 0.0d0
             call thmEvalSatuFinal(hydr , imate , p1    ,&
@@ -823,22 +823,22 @@ implicit none
             endif
 !
             rgaz = val22( 1)
-            lambt(1) = val22(9)
-            lambt(2) = val22(10)
-            lambt(3) = val22(11)
-            lambt(4) = val22(30)
-            dlambt(1) = val22(12)
-            dlambt(2) = val22(13)
-            dlambt(3) = val22(14)
-            dlambt(4) = val22(31)
+            lambt(1)  = ds_thm%ds_material%ther%lambda
+            lambt(2)  = ds_thm%ds_material%ther%lambda_tl
+            lambt(3)  = ds_thm%ds_material%ther%lambda_tn
+            lambt(4)  = ds_thm%ds_material%ther%lambda_tt
+            dlambt(1) = ds_thm%ds_material%ther%dlambda
+            dlambt(2) = ds_thm%ds_material%ther%dlambda_tl
+            dlambt(3) = ds_thm%ds_material%ther%dlambda_tn
+            dlambt(4) = ds_thm%ds_material%ther%dlambda_tt
+            lambct(1) = ds_thm%ds_material%ther%lambda_ct
+            lambct(2) = ds_thm%ds_material%ther%lambda_ct_l
+            lambct(3) = ds_thm%ds_material%ther%lambda_ct_n
+            lambct(4) = ds_thm%ds_material%ther%lambda_ct_t
             lambp = val22(15)
             dlambp = val22(16)
             lambs = val22(17)
             dlambs = val22(18)
-            lambct(1) = val22(19)
-            lambct(2) = val22(20)
-            lambct(3) = val22(21)
-            lambct(4) = val22(32)
             unsurk = val23( 1)
             viscl = val23( 2)
             dviscl = val23( 3)
@@ -990,22 +990,22 @@ implicit none
 
             rgaz = val25( 1)
 
-            lambt(1) = val25(9)
-            lambt(2) = val25(10)
-            lambt(3) = val25(11)
-            lambt(4) = val25(36)
-            dlambt(1) = val25(12)
-            dlambt(2) = val25(13)
-            dlambt(3) = val25(14)
-            dlambt(4) = val25(37)
+            lambt(1)  = ds_thm%ds_material%ther%lambda
+            lambt(2)  = ds_thm%ds_material%ther%lambda_tl
+            lambt(3)  = ds_thm%ds_material%ther%lambda_tn
+            lambt(4)  = ds_thm%ds_material%ther%lambda_tt
+            dlambt(1) = ds_thm%ds_material%ther%dlambda
+            dlambt(2) = ds_thm%ds_material%ther%dlambda_tl
+            dlambt(3) = ds_thm%ds_material%ther%dlambda_tn
+            dlambt(4) = ds_thm%ds_material%ther%dlambda_tt
+            lambct(1) = ds_thm%ds_material%ther%lambda_ct
+            lambct(2) = ds_thm%ds_material%ther%lambda_ct_l
+            lambct(3) = ds_thm%ds_material%ther%lambda_ct_n
+            lambct(4) = ds_thm%ds_material%ther%lambda_ct_t
             lambp = val25(15)
             dlambp = val25(16)
             lambs = val25(17)
             dlambs = val25(18)
-            lambct(1) = val25(19)
-            lambct(2) = val25(20)
-            lambct(3) = val25(21)
-            lambct(4) = val25(38)
 
 ! --------- Evaluate Fick coefficients for steam in gaz
             call thmEvalFickSteam(imate,&
@@ -1160,22 +1160,22 @@ implicit none
             endif
 !
             rgaz = val40( 1)
-            lambt(1) = val40(9)
-            lambt(2) = val40(10)
-            lambt(3) = val40(11)
-            lambt(4) = val40(41)
-            dlambt(1) = val40(12)
-            dlambt(2) = val40(13)
-            dlambt(3) = val40(14)
-            dlambt(4) = val40(42)
+            lambt(1)  = ds_thm%ds_material%ther%lambda
+            lambt(2)  = ds_thm%ds_material%ther%lambda_tl
+            lambt(3)  = ds_thm%ds_material%ther%lambda_tn
+            lambt(4)  = ds_thm%ds_material%ther%lambda_tt
+            dlambt(1) = ds_thm%ds_material%ther%dlambda
+            dlambt(2) = ds_thm%ds_material%ther%dlambda_tl
+            dlambt(3) = ds_thm%ds_material%ther%dlambda_tn
+            dlambt(4) = ds_thm%ds_material%ther%dlambda_tt
+            lambct(1) = ds_thm%ds_material%ther%lambda_ct
+            lambct(2) = ds_thm%ds_material%ther%lambda_ct_l
+            lambct(3) = ds_thm%ds_material%ther%lambda_ct_n
+            lambct(4) = ds_thm%ds_material%ther%lambda_ct_t
             lambp = val40(15)
             dlambp = val40(16)
             lambs = val40(17)
             dlambs = val40(18)
-            lambct(1) = val40(19)
-            lambct(2) = val40(20)
-            lambct(3) = val40(21)
-            lambct(4) = val40(43)
 ! --------- Evaluate Fick coefficients for steam in gaz
             call thmEvalFickSteam(imate,&
                                   satur, p2    , pvp   , t,&
@@ -1331,22 +1331,22 @@ implicit none
             endif
 !
             rgaz = val40( 1)
-            lambt(1) = val40(9)
-            lambt(2) = val40(10)
-            lambt(3) = val40(11)
-            lambt(4) = val40(41)
-            dlambt(1) = val40(12)
-            dlambt(2) = val40(13)
-            dlambt(3) = val40(14)
-            dlambt(4) = val40(42)
+            lambt(1)  = ds_thm%ds_material%ther%lambda
+            lambt(2)  = ds_thm%ds_material%ther%lambda_tl
+            lambt(3)  = ds_thm%ds_material%ther%lambda_tn
+            lambt(4)  = ds_thm%ds_material%ther%lambda_tt
+            dlambt(1) = ds_thm%ds_material%ther%dlambda
+            dlambt(2) = ds_thm%ds_material%ther%dlambda_tl
+            dlambt(3) = ds_thm%ds_material%ther%dlambda_tn
+            dlambt(4) = ds_thm%ds_material%ther%dlambda_tt
+            lambct(1) = ds_thm%ds_material%ther%lambda_ct
+            lambct(2) = ds_thm%ds_material%ther%lambda_ct_l
+            lambct(3) = ds_thm%ds_material%ther%lambda_ct_n
+            lambct(4) = ds_thm%ds_material%ther%lambda_ct_t
             lambp = val40(15)
             dlambp = val40(16)
             lambs = val40(17)
             dlambs = val40(18)
-            lambct(1) = val40(19)
-            lambct(2) = val40(20)
-            lambct(3) = val40(21)
-            lambct(4) = val40(43)
 ! --------- Evaluate Fick coefficients for steam in gaz
             call thmEvalFickSteam(imate,&
                                   satur, p2    , pvp   , t,&
@@ -1499,22 +1499,22 @@ implicit none
                             0,nan='NON')
             endif
             rgaz = val29( 1)
-            lambt(1) = val29(9)
-            lambt(2) = val29(10)
-            lambt(3) = val29(11)
-            lambt(4) = val29(30)
-            dlambt(1) = val29(12)
-            dlambt(2) = val29(13)
-            dlambt(3) = val29(14)
-            dlambt(4) = val29(31)
+            lambt(1)  = ds_thm%ds_material%ther%lambda
+            lambt(2)  = ds_thm%ds_material%ther%lambda_tl
+            lambt(3)  = ds_thm%ds_material%ther%lambda_tn
+            lambt(4)  = ds_thm%ds_material%ther%lambda_tt
+            dlambt(1) = ds_thm%ds_material%ther%dlambda
+            dlambt(2) = ds_thm%ds_material%ther%dlambda_tl
+            dlambt(3) = ds_thm%ds_material%ther%dlambda_tn
+            dlambt(4) = ds_thm%ds_material%ther%dlambda_tt
+            lambct(1) = ds_thm%ds_material%ther%lambda_ct
+            lambct(2) = ds_thm%ds_material%ther%lambda_ct_l
+            lambct(3) = ds_thm%ds_material%ther%lambda_ct_n
+            lambct(4) = ds_thm%ds_material%ther%lambda_ct_t
             lambp = val29(15)
             dlambp = val29(16)
             lambs = val29(17)
             dlambs = val29(18)
-            lambct(1) = val29(19)
-            lambct(2) = val29(20)
-            lambct(3) = val29(21)
-            lambct(4) = val29(32)
             unsurk = val30( 1)
             viscl = val30( 2)
             dviscl = val30( 3)
@@ -1651,26 +1651,26 @@ implicit none
                             valpar(1), 2, ncra32(16), val32(16), icodre,&
                             0,nan='NON')
             endif
-            lambt(1) = val32(8)
-            lambt(2) = val32(9)
-            lambt(3) = val32(10)
-            lambt(4) = val32(26)
-            dlambt(1) = val32(11)
-            dlambt(2) = val32(12)
-            dlambt(3) = val32(13)
-            dlambt(4) = val32(27)
+            lambt(1)  = ds_thm%ds_material%ther%lambda
+            lambt(2)  = ds_thm%ds_material%ther%lambda_tl
+            lambt(3)  = ds_thm%ds_material%ther%lambda_tn
+            lambt(4)  = ds_thm%ds_material%ther%lambda_tt
+            dlambt(1) = ds_thm%ds_material%ther%dlambda
+            dlambt(2) = ds_thm%ds_material%ther%dlambda_tl
+            dlambt(3) = ds_thm%ds_material%ther%dlambda_tn
+            dlambt(4) = ds_thm%ds_material%ther%dlambda_tt
+            lambct(1) = ds_thm%ds_material%ther%lambda_ct
+            lambct(2) = ds_thm%ds_material%ther%lambda_ct_l
+            lambct(3) = ds_thm%ds_material%ther%lambda_ct_n
+            lambct(4) = ds_thm%ds_material%ther%lambda_ct_t
             lambp = val32(14)
             dlambp = val32(15)
             lambs = val32(16)
             dlambs = val32(17)
-            lambct(1) = val32(18)
-            lambct(2) = val32(19)
-            lambct(3) = val32(20)
-            lambct(4) = val32(28)
-            unsurk = val33( 1)
-            viscl = val33( 2)
-            dviscl = val33( 3)
-            alpha = val33( 4)
+            unsurk = val33(1)
+            viscl = val33(2)
+            dviscl = val33(3)
+            alpha = val33(4)
 !
             if (satur .gt. un .or. satur .lt. zero) then
                 retcom = 2

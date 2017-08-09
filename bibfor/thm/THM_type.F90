@@ -95,6 +95,13 @@ implicit none
     type THM_Ther
         real(kind=8) :: alpha
         real(kind=8) :: alpha_l, alpha_t, alpha_n
+        integer :: cond_type
+        real(kind=8) :: lambda
+        real(kind=8) :: lambda_tl, lambda_tn, lambda_tt
+        real(kind=8) :: dlambda
+        real(kind=8) :: dlambda_tl, dlambda_tn, dlambda_tt
+        real(kind=8) :: lambda_ct
+        real(kind=8) :: lambda_ct_l, lambda_ct_n, lambda_ct_t
     end type THM_Ther
 
 ! - Hydraulic parameters
