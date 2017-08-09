@@ -20,7 +20,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine hmlvga(yachai, option, meca, ther, hydr,&
+    subroutine hmlvga(yachai, option, meca, hydr,&
                       imate, ndim, dimdef, dimcon, nbvari,&
                       yamec, yate, addeme, adcome, advihy,&
                       advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -30,7 +30,7 @@ interface
                       p1, p2, dp1, dp2, temp,&
                       dt, phi, padp, pvp, h11,&
                       h12, kh, rho11, &
-                      satur, retcom, thmc, tbiot,&
+                      satur, retcom, tbiot,&
                       angmas, deps)
         integer :: nbvari
         integer :: dimcon
@@ -39,7 +39,6 @@ interface
         aster_logical :: yachai
         character(len=16) :: option
         character(len=16) :: meca
-        character(len=16) :: ther
         character(len=16) :: hydr
         integer :: imate
         integer :: yamec
@@ -82,7 +81,6 @@ interface
         real(kind=8) :: rho11
         real(kind=8) :: satur
         integer :: retcom
-        character(len=16) :: thmc
         real(kind=8) :: tbiot(6)
         real(kind=8) :: angmas(3)
         real(kind=8) :: deps(6)

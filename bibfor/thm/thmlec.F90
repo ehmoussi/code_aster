@@ -221,7 +221,6 @@ real(kind=8), intent(out) :: gravity(3)
         viscg  = ds_thm%ds_material%steam%visc
         dviscg = ds_thm%ds_material%steam%dvisc_dtemp
         mamolg = ds_thm%ds_material%gaz%mass_mol
-
     else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
         call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
@@ -236,7 +235,15 @@ real(kind=8), intent(out) :: gravity(3)
                     fickad, dfadt, rbid47, rbid48, pad,&
                     rbid50, tlamct,  retcom,&
                     angl_naut, ndim)
-!
+        rgaz   = ds_thm%ds_material%solid%r_gaz
+        unsurk = ds_thm%ds_material%liquid%unsurk
+        alpha  = ds_thm%ds_material%liquid%alpha
+        viscl  = ds_thm%ds_material%liquid%visc
+        dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
+        mamolv = ds_thm%ds_material%steam%mass_mol
+        viscg  = ds_thm%ds_material%steam%visc
+        dviscg = ds_thm%ds_material%steam%dvisc_dtemp
+        mamolg = ds_thm%ds_material%gaz%mass_mol
     else if (thmc.eq.'LIQU_AD_GAZ') then
         call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&
