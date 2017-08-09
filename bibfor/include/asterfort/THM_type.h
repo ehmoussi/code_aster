@@ -30,4 +30,7 @@
 #define SATURATED        0
 #define UNSATURATED      1
 #define SATURATED_SPEC   2
-
+! - Type of thermal conductivity
+#define THER_COND_ISOT   0
+#define THER_COND_ISTR   1
+#define THER_COND_ORTH   2
