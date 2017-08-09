@@ -48,6 +48,7 @@ implicit none
 #include "asterfort/thmEvalSatuFinal.h"
 #include "asterfort/thmEvalPermLiquGaz.h"
 #include "asterfort/thmEvalFickSteam.h"
+#include "asterfort/thmEvalFickAir.h"
     integer :: imate, retcom, ndim
     integer :: aniso2, aniso3, aniso4
     real(kind=8) :: t, p1, p2, phi, pvp
@@ -354,9 +355,9 @@ implicit none
      &               'TOTO' ,'TOTO'  ,&
      &               'TOTO' ,'TOTO' ,&
      &               'TOTO'  ,'TOTO',&
-     &               'TOTO','FICKA_T'  ,&
-     &               'FICKA_PA' , 'FICKA_PL' ,&
-     &               'FICKA_S'  ,'D_FA_T' ,&
+     &               'TOTO','TOTO'  ,&
+     &               'TOTO' , 'TOTO' ,&
+     &               'TOTO'  ,'TOTO' ,&
      &               'TOTO',&
      &               'LAMB_TT',&
      &               'D_LB_TT',&
@@ -396,9 +397,9 @@ implicit none
      &                'TOTO' ,'TOTO'  ,&
      &                'TOTO' ,'TOTO' ,&
      &                'TOTO'  ,'TOTO',&
-     &                'TOTO','FICKA_T'  ,&
-     &                'FICKA_PA' , 'FICKA_PL' ,&
-     &                'FICKA_S'  ,'D_FA_T' ,&
+     &                'TOTO','TOTO'  ,&
+     &                'TOTO', 'TOTO' ,&
+     &                'TOTO' ,'TOTO' ,&
      &                'TOTO',&
      &                'LAMB_TT',&
      &                'D_LB_TT',&
@@ -1158,29 +1159,6 @@ implicit none
                             0,nan='NON')
             endif
 !
-!    RECUPERATION DES FONCTIONS FICK AIR DISSOUS ET LEURS DERIVEES
-!
-            nompar(1) = 'TEMP'
-            nompar(2) = 'PAD'
-            nompar(3) = 'PLIQ'
-            nompar(4) = 'SAT'
-            valpar(1) = t
-            valpar(2) = pad
-            valpar(3) = p2-p1
-            valpar(4) = satur
-!
-! INITIALISATION DES AUTRES COMPOSANTES FICKIENNES
-!
-            val40(36) = 1.0d0
-            val40(37) = 1.0d0
-            val40(38) = 1.0d0
-            call rcvala(imate, ' ', 'THM_DIFFU', 4, nompar,&
-                        valpar, 4, ncra40(35), val40(35), icodre,&
-                        0,nan='NON')
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'TEMP',&
-                        [t], 1, ncra40(39), val40(39), icodre,&
-                        0,nan='NON')
-!
             rgaz = val40( 1)
             lambt(1) = val40(9)
             lambt(2) = val40(10)
@@ -1202,9 +1180,10 @@ implicit none
             call thmEvalFickSteam(imate,&
                                   satur, p2    , pvp   , t,&
                                   fick , dfickt, dfickg)
-            fickad = val40(35)*val40(36)*val40(37)*val40(38)
-            dfadt = val40(39)*val40(36)*val40(37)*val40(38)
-!
+! --------- Evaluate Fick coefficients for air in liquid
+            call thmEvalFickAir(imate,&
+                                satur  , pad  , p2-p1, t,&
+                                fickad , dfadt)
             unsurk = val41( 1)
             viscl = val41( 2)
             dviscl = val41( 3)
@@ -1351,29 +1330,6 @@ implicit none
                             0,nan='NON')
             endif
 !
-!    RECUPERATION DES FONCTIONS FICK AIR DISSOUS ET LEURS DERIVEES
-!
-            nompar(1) = 'TEMP'
-            nompar(2) = 'PAD'
-            nompar(3) = 'PLIQ'
-            nompar(4) = 'SAT'
-            valpar(1) = t
-            valpar(2) = pad
-            valpar(3) = p2-p1
-            valpar(4) = satur
-!
-! INITIALISATION DES AUTRES COMPOSANTES FICKIENNES
-!
-            val40(36) = 1.0d0
-            val40(37) = 1.0d0
-            val40(38) = 1.0d0
-            call rcvala(imate, ' ', 'THM_DIFFU', 4, nompar,&
-                        valpar, 4, crad40(35), val40(35), icodre,&
-                        0,nan='NON')
-            call rcvala(imate, ' ', 'THM_DIFFU', 1, 'TEMP',&
-                        [t], 1, crad40(39), val40(39), icodre,&
-                        0,nan='NON')
-!
             rgaz = val40( 1)
             lambt(1) = val40(9)
             lambt(2) = val40(10)
@@ -1395,8 +1351,10 @@ implicit none
             call thmEvalFickSteam(imate,&
                                   satur, p2    , pvp   , t,&
                                   fick , dfickt, dfickg)
-            fickad = val40(35)*val40(36)*val40(37)*val40(38)
-            dfadt = val40(39)*val40(36)*val40(37)*val40(38)
+! --------- Evaluate Fick coefficients for air in liquid
+            call thmEvalFickAir(imate ,&
+                                satur , pad  , p2-p1, t,&
+                                fickad, dfadt)
 !
             unsurk = val41( 1)
             viscl = val41( 2)
