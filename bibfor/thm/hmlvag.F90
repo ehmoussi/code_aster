@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1306, W1504
+! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine hmlvag(yachai, option, meca, ther, hydr,&
+subroutine hmlvag(yachai, option, meca, hydr,&
                   imate, ndim, dimdef, dimcon, nbvari,&
                   yamec, yate, addeme, adcome, advihy,&
                   advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -28,7 +28,7 @@ subroutine hmlvag(yachai, option, meca, ther, hydr,&
                   p1, p2, dp1, dp2, temp,&
                   dt, phi, pvp, h11, h12,&
                   rho11, satur, retcom,&
-                  thmc, crit, tbiot, angmas)
+                  crit, tbiot, angmas)
 !
 use THM_type
 use THM_module
@@ -68,7 +68,6 @@ implicit none
 #include "asterfort/netbis.h"
 #include "asterfort/nmbarc.h"
 #include "asterfort/sigmap.h"
-#include "asterfort/thmrcp.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viemma.h"
 #include "asterfort/viporo.h"
@@ -100,7 +99,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
     real(kind=8) :: p1, dp1, p2, dp2, dt, phi, pvp, h11, h12, rho11, phi0
     real(kind=8) :: angmas(3)
-    character(len=16) :: option, meca, ther, hydr, thmc
+    character(len=16) :: option, meca, hydr
     aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -109,9 +108,10 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: saturm, epsvm, phim, rho11m, rho12m, rho21m, pvpm
     real(kind=8) :: rho110, tbiot(6), cs, alpliq, cliq, rho12
     real(kind=8) :: rho21, cp11, cp12, cp21, satur, dsatur_dp1, mamolv, mamolg
-    real(kind=8) :: r, rho0, csigm, alp11, alp12, alp21, em, eps
+    real(kind=8) :: r, rho0, csigm, alp11, alp12, alp21, em
     real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
-    parameter  ( eps = 1.d-21 )
+    real(kind=8), parameter :: eps = 1.d-21
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
     aster_logical :: emmag
 ! ======================================================================
 ! --- VARIABLES LOCALES POUR BARCELONE----------------------------------
@@ -125,41 +125,39 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
-    real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, rbid16, rbid17, rbid18, rbid19
-    real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
-    real(kind=8) :: rbid27, rbid28, rbid29, rbid32(ndim, ndim), rbid20
-    real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid38
-    real(kind=8) :: rbid39, rbid45, rbid46, rbid47, rbid48, rbid49
-    real(kind=8) :: rbid50(ndim, ndim)
     real(kind=8) :: signe, dpad, coeps, cp22, pas, rho22, m11m, m12m, m21m
     real(kind=8) :: dmdeps(6), sigmp(6)
-    real(kind=8) :: dqeps(6), dsdp1(6), dsdp2(6), rac2, p1m
+    real(kind=8) :: dqeps(6), dsdp1(6), dsdp2(6), p1m
 !
     aster_logical :: net, bishop
-!
-    rac2 = sqrt(2.d0)
 !
 ! =====================================================================
 ! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
 ! =====================================================================
     call netbis(meca, net, bishop)
-    phi0 = ds_thm%ds_parainit%poro_init
-    pvp0 = ds_thm%ds_parainit%prev_init
-    p1m  = p1-dp1
-    call thmrcp('INTERMED', imate, thmc, hydr,&
-                ther, temp, p1, p1m, rbid6,&
-                rbid7, rbid10, r, rho0,&
-                csigm, saturm, satur, dsatur_dp1,&
-                rbid16, rbid17, rbid18,&
-                rbid19, rbid20, rbid21, rbid22, rbid23,&
-                rbid24, rbid25, rho110, cliq, alpliq,&
-                cp11, rbid26, rbid27, rbid28, rbid29,&
-                mamolg, cp21, rbid32, rbid33, rbid34,&
-                rbid35, mamolv, cp12, rbid38, rbid39,&
-                rbid45, rbid46, rbid47, rbid48, rbid49,&
-                em, rbid50,  retcom,&
-                angmas, ndim)
+!
+! - Get initial parameters
+!
+    phi0   = ds_thm%ds_parainit%poro_init
+    pvp0   = ds_thm%ds_parainit%prev_init
+!
+! - Compute pressures
+!
+    p1m    = p1-dp1
+!
+! - Get material parameters
+!
+    r      = ds_thm%ds_material%solid%r_gaz
+    rho0   = ds_thm%ds_material%solid%rho
+    csigm  = ds_thm%ds_material%solid%cp
+    rho110 = ds_thm%ds_material%liquid%rho
+    cliq   = ds_thm%ds_material%liquid%unsurk
+    alpliq = ds_thm%ds_material%liquid%alpha
+    cp11   = ds_thm%ds_material%liquid%cp
+    mamolv = ds_thm%ds_material%steam%mass_mol
+    cp12   = ds_thm%ds_material%steam%cp
+    mamolg = ds_thm%ds_material%gaz%mass_mol
+    cp21   = ds_thm%ds_material%gaz%cp
 !
 ! - Evaluation of initial saturation
 !
@@ -221,20 +219,36 @@ real(kind=8), intent(in) :: temp
 ! --- CALCUL DE LA VARIABLE INTERNE DE MASSE VOLUMIQUE DU FLUIDE ------
 ! --- SELON FORMULE DOCR ----------------------------------------------
 ! =====================================================================
-        call virhol(nbvari, vintm, vintp, advihy, vihrho,&
-                    rho110, dp1, dp2, dpad, cliq,&
-                    dt, alpliq, signe, rho11, rho11m,&
-                    retcom)
+        if (yate .eq. 1) then
+            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
+                        rho110, dp1, dp2, dpad, cliq,&
+                        dt, alpliq, signe, rho11, rho11m,&
+                        retcom)
+        else
+            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
+                        rho110, dp1, dp2, dpad, cliq,&
+                        dt, 0.d0, signe, rho11, rho11m,&
+                        retcom)
+        endif
 ! =====================================================================
 ! --- CALCUL DE LA VARIABLE INTERNE DE PRESSION DE VAPEUR -------------
 ! --- SELON FORMULE DOCR ----------------------------------------------
 ! =====================================================================
-        call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
-                    dimcon, p2, congem, adcp11, adcp12,&
-                    ndim, pvp0, dp1, dp2, temp,&
-                    dt, mamolv, r, rho11, signe,&
-                    cp11, cp12, yate, pvp, pvpm,&
-                    retcom)
+        if (yate .eq. 1) then
+            call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
+                        dimcon, p2, congem, adcp11, adcp12,&
+                        ndim, pvp0, dp1, dp2, temp,&
+                        dt, mamolv, r, rho11, signe,&
+                        cp11, cp12, yate, pvp, pvpm,&
+                        retcom)
+        else
+            call vipvp1(nbvari, vintm, vintp, advico, vicpvp,&
+                        dimcon, p2, congem, adcp11, adcp12,&
+                        ndim, pvp0, dp1, dp2, temp,&
+                        dt, mamolv, r, rho11, signe,&
+                        0.d0, cp12, yate, pvp, pvpm,&
+                        retcom)
+        endif
 ! =====================================================================
 ! --- RECUPERATION DE LA VARIABLE INTERNE DE SATURATION ---------------
 ! =====================================================================

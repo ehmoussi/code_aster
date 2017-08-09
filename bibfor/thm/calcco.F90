@@ -131,7 +131,7 @@ real(kind=8), intent(in) :: temp
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE_GAZ ------------------
 ! ======================================================================
     else if (thmc.eq.'LIQU_VAPE_GAZ') then
-        call hmlvag(yachai, option, meca, ther, hydr,&
+        call hmlvag(yachai, option, meca, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
                     advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -141,7 +141,7 @@ real(kind=8), intent(in) :: temp
                     p1, p2, dp1, dp2, temp,&
                     dt, phi, pvp, h11, h12,&
                     rho11, sat, retcom,&
-                    thmc, carcri, tbiot, angmas)
+                    carcri, tbiot, angmas)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ -----------------------
 ! ======================================================================

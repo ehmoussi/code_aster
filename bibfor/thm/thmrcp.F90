@@ -1469,9 +1469,9 @@ implicit none
                 else if (icodre(1).eq.0) then
                     aniso4=0
                 endif
-                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
-                            [t], 1, ncra26(4), val26(4), icodre,&
-                            1)
+!                call rcvala(imate, ' ', 'THM_LIQU', 1, 'TEMP',&
+!                            [t], 1, ncra26(4), val26(4), icodre,&
+!                            1)
             endif
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
@@ -1539,10 +1539,10 @@ implicit none
             fick = val25(29)*val25(30)*val25(31)*val25(32)
             dfickt = val25(33)*val25(30)*val25(31)*val25(32)
             dfickg = val25(34)*val25(29)*val25(30)*val25(32)
-            unsurk = val26( 1)
-            viscl = val26( 2)
-            dviscl = val26( 3)
-            alpha = val26( 4)
+!            unsurk = val26( 1)
+!            viscl = val26( 2)
+!            dviscl = val26( 3)
+!            alpha = val26( 4)
             mamolg = val27( 1)
             viscg = val27( 2)
             dviscg = val27( 3)
