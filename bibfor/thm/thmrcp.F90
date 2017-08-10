@@ -49,6 +49,7 @@ implicit none
 #include "asterfort/thmEvalPermLiquGaz.h"
 #include "asterfort/thmEvalFickSteam.h"
 #include "asterfort/thmEvalFickAir.h"
+#include "asterfort/thmEvalConductivity.h"
     integer :: imate, retcom, ndim
     integer :: aniso2, aniso3, aniso4
     real(kind=8) :: t, p1, p2, phi, pvp
@@ -133,25 +134,25 @@ implicit none
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO' ,&
-     &              'LAMB_T'   ,&
-     &              'LAMB_TL'   ,&
-     &              'LAMB_TN'   ,&
-     &              'D_LB_T',&
-     &              'D_LB_TL',&
-     &              'D_LB_TN',&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO',&
      &              'LAMB_PHI'   ,&
      &              'D_LB_PHI',&
-     &              'LAMB_CT',&
-     &              'LAMB_C_L',&
-     &              'LAMB_C_N',&
      &              'TOTO',&
-     &              'LAMB_TT',&
-     &              'D_LB_TT',&
-     &              'LAMB_C_T'/
-    data ncra19 / 'UN_SUR_K' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP' ,&
-     &              'ALPHA' /
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO'/
+    data ncra19 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTO' ,&
+     &              'TOTO' /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS GAZ ------------------
 ! =====================================================================
@@ -163,21 +164,21 @@ implicit none
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO' ,&
-     &              'LAMB_T'   ,&
-     &              'LAMB_TL'   ,&
-     &              'LAMB_TN'   ,&
-     &              'D_LB_T',&
-     &              'D_LB_TL',&
-     &              'D_LB_TN',&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO',&
      &              'LAMB_PHI'   ,&
      &              'D_LB_PHI',&
-     &              'LAMB_CT',&
-     &              'LAMB_C_L',&
-     &              'LAMB_C_N',&
      &              'TOTO',&
-     &              'LAMB_TT',&
-     &              'D_LB_TT',&
-     &              'LAMB_C_T'/
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO'/
     data ncra21 / 'TOTO' ,&
      &              'TOTO'     ,&
      &              'TOTO' /
@@ -192,27 +193,27 @@ implicit none
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO' ,&
-     &              'LAMB_T'   ,&
-     &              'LAMB_TL'   ,&
-     &              'LAMB_TN'   ,&
-     &              'D_LB_T' ,&
-     &              'D_LB_TL',&
-     &              'D_LB_TN',&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO' ,&
+     &              'TOTO',&
+     &              'TOTO',&
      &              'LAMB_PHI' ,&
      &              'D_LB_PHI' ,&
      &              'LAMB_S'   ,&
      &              'D_LB_S' ,&
-     &              'LAMB_CT'  ,&
-     &              'LAMB_C_L',&
-     &              'LAMB_C_N',&
+     &              'TOTO'  ,&
+     &              'TOTO',&
+     &              'TOTO',&
      &              'TOTO' ,'TOTO'  ,&
      &              'TOTO' , 'TOTO' ,&
      &              'TOTO' , 'TOTO' ,&
      &              'TOTO',&
      &              'TOTO',&
-     &              'LAMB_TT',&
-     &              'D_LB_TT',&
-     &              'LAMB_C_T'/
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO'/
     data ncra23 / 'TOTO' ,&
      &              'TOTO'     ,&
      &              'TOTO' ,&
@@ -229,17 +230,17 @@ implicit none
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO' ,&
-     &              'LAMB_T'   ,&
-     &              'LAMB_TL'   ,&
-     &              'LAMB_TN'   ,&
-     &              'D_LB_T' ,&
-     &              'D_LB_TL',&
-     &              'D_LB_TN',&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO' ,&
+     &              'TOTO',&
+     &              'TOTO',&
      &              'LAMB_PHI'   ,'D_LB_PHI' ,&
      &              'LAMB_S'   ,'D_LB_S' ,&
-     &              'LAMB_CT'   ,&
-     &              'LAMB_C_L',&
-     &              'LAMB_C_N',&
+     &              'TOTO'   ,&
+     &              'TOTO',&
+     &              'TOTO',&
      &              'TOTO' ,'TOTO' ,&
      &              'TOTO' ,'TOTO' ,&
      &              'TOTO' ,'TOTO' ,&
@@ -248,9 +249,9 @@ implicit none
      &              'TOTO'  ,'TOTO'   ,&
      &              'TOTO',&
      &              'TOTO',&
-     &              'LAMB_TT',&
-     &              'D_LB_TT',&
-     &              'LAMB_C_T'/
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO'/
     data ncra26 / 'TOTO' ,&
      &              'TOTO'     ,&
      &              'TOTO' ,&
@@ -270,25 +271,25 @@ implicit none
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO' ,&
-     &              'LAMB_T'   ,&
-     &              'LAMB_TL'   ,&
-     &              'LAMB_TN'   ,&
-     &              'D_LB_T' ,&
-     &              'D_LB_TL',&
-     &              'D_LB_TN',&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO' ,&
+     &              'TOTO',&
+     &              'TOTO',&
      &              'LAMB_PHI'   ,'D_LB_PHI' ,&
      &              'LAMB_S'   ,'D_LB_S' ,&
-     &              'LAMB_CT'  ,&
-     &              'LAMB_C_L',&
-     &              'LAMB_C_N',&
+     &              'TOTO'  ,&
+     &              'TOTO',&
+     &              'TOTO',&
      &              'TOTO' ,&
      &              'TOTO' ,'TOTO' ,&
      &              'TOTO' ,'TOTO' ,&
      &              'TOTO' ,'TOTO',&
      &              'TOTO',&
-     &              'LAMB_TT',&
-     &              'D_LB_TT',&
-     &              'LAMB_C_T'/
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO'/
     data ncra30 / 'TOTO' ,&
      &              'TOTO'     ,&
      &              'TOTOP' ,&
@@ -306,25 +307,25 @@ implicit none
      &              'TOTO'  ,&
      &              'TOTO'  ,&
      &              'TOTO' ,&
-     &              'LAMB_T'   ,&
-     &              'LAMB_TL'   ,&
-     &              'LAMB_TN'   ,&
-     &              'D_LB_T',&
-     &              'D_LB_TL',&
-     &              'D_LB_TN',&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO'   ,&
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO',&
      &              'LAMB_PHI',&
      &              'D_LB_PHI' ,&
      &              'LAMB_S'   ,&
      &              'D_LB_S' ,&
-     &              'LAMB_CT'   ,&
-     &              'LAMB_C_L',&
-     &              'LAMB_C_N',&
+     &              'TOTO'   ,&
+     &              'TOTO',&
+     &              'TOTO',&
      &              'TOTO','TOTO' ,&
      &              'TOTO','TOTO',&
      &              'TOTO',&
-     &              'LAMB_TT',&
-     &              'D_LB_TT',&
-     &              'LAMB_C_T'/
+     &              'TOTO',&
+     &              'TOTO',&
+     &              'TOTO'/
     data ncra33 / 'TOTO' ,&
      &              'TOTO'     ,&
      &              'TOTO' ,&
@@ -338,17 +339,17 @@ implicit none
      &               'TOTO'  ,&
      &               'TOTO'  ,&
      &               'TOTO' ,&
-     &               'LAMB_T'    ,&
-     &               'LAMB_TL'   ,&
-     &               'LAMB_TN'   ,&
-     &               'D_LB_T' ,&
-     &               'D_LB_TL',&
-     &               'D_LB_TN',&
+     &               'TOTO'    ,&
+     &               'TOTO'   ,&
+     &               'TOTO'   ,&
+     &               'TOTO' ,&
+     &               'TOTO',&
+     &               'TOTO',&
      &               'LAMB_PHI'    ,'D_LB_PHI' ,&
      &               'LAMB_S'    ,'D_LB_S' ,&
-     &               'LAMB_CT'    ,&
-     &               'LAMB_C_L',&
-     &               'LAMB_C_N',&
+     &               'TOTO'    ,&
+     &               'TOTO',&
+     &               'TOTO',&
      &               'TOTO' ,'TOTO' ,&
      &               'TOTO' ,'TOTO' ,&
      &               'TOTO' ,'TOTO' ,&
@@ -359,9 +360,9 @@ implicit none
      &               'TOTO' , 'TOTO' ,&
      &               'TOTO'  ,'TOTO' ,&
      &               'TOTO',&
-     &               'LAMB_TT',&
-     &               'D_LB_TT',&
-     &               'LAMB_C_T'/
+     &               'TOTO',&
+     &               'TOTO',&
+     &               'TOTO'/
     data ncra41 / 'TOTO' ,&
      &               'TOTO'     ,&
      &               'TOTO' ,&
@@ -380,17 +381,17 @@ implicit none
      &                'TOTO'  ,&
      &                'TOTO'  ,&
      &                'TOTO' ,&
-     &                'LAMB_T'    ,&
-     &                'LAMB_TL'   ,&
-     &                'LAMB_TN'   ,&
-     &                'D_LB_T' ,&
-     &                'D_LB_TL',&
-     &                'D_LB_TN',&
+     &                'TOTO'    ,&
+     &                'TOTO'   ,&
+     &                'TOTO'   ,&
+     &                'TOTO' ,&
+     &                'TOTO',&
+     &                'TOTO',&
      &                'LAMB_PHI'    ,'D_LB_PHI' ,&
      &                'LAMB_S'    ,'D_LB_S' ,&
-     &                'LAMB_CT'    ,&
-     &                'LAMB_C_L',&
-     &                'LAMB_C_N',&
+     &                'TOTO'    ,&
+     &                'TOTO',&
+     &                'TOTO',&
      &                'TOTO' ,'TOTO' ,&
      &                'TOTO' ,'TOTO' ,&
      &                'TOTO' ,'TOTO' ,&
@@ -401,9 +402,9 @@ implicit none
      &                'TOTO', 'TOTO' ,&
      &                'TOTO' ,'TOTO' ,&
      &                'TOTO',&
-     &                'LAMB_TT',&
-     &                'D_LB_TT',&
-     &                'LAMB_C_T'/
+     &                'TOTO',&
+     &                'TOTO',&
+     &                'TOTO'/
     data crad41 / 'TOTO' ,&
      &              'TOTO'     ,&
      &              'TOTO' ,&
@@ -554,12 +555,11 @@ implicit none
             alpha = val19(4)
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
-! --------- Compute tensor of thermal conductivity
-            call telamb(angmas, ndim, tlambt)
-! --------- Compute tensor of thermal conductivity (constant part)
-            call tlambc(angmas, ndim, tlamct)
-! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
-            call tdlamb(angmas, ndim, tdlamt)
+! --------- Evaluate thermal conductivity
+            call thmEvalConductivity(angmas, ndim  , imate,&
+                                     satur , phi   , &
+                                     lambs , dlambs, lambp , dlambp,&
+                                     tlambt, tlamct, tdlamt)
 !
         else if (thmc.eq.'GAZ') then
 ! =====================================================================
@@ -677,6 +677,7 @@ implicit none
             dlambp = val20(16)
             lambs = 1.0d0
             dlambs = 0.0d0
+
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
             mamolg = val21( 1)
@@ -684,12 +685,11 @@ implicit none
             dviscg = val21( 3)
             lambs = 0.0d0
             dlambs = 0.0d0
-! --------- Compute tensor of thermal conductivity
-            call telamb(angmas, ndim, tlambt)
-! --------- Compute tensor of thermal conductivity (constant part)
-            call tlambc(angmas, ndim, tlamct)
-! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
-            call tdlamb(angmas, ndim, tdlamt)
+! --------- Evaluate thermal conductivity
+            call thmEvalConductivity(angmas, ndim  , imate,&
+                                     satur , phi   , &
+                                     lambs , dlambs, lambp , dlambp,&
+                                     tlambt, tlamct, tdlamt)
 !
         else if (thmc.eq.'LIQU_VAPE') then
 ! =====================================================================
@@ -843,12 +843,11 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-! --------- Compute tensor of thermal conductivity
-            call telamb(angmas, ndim, tlambt)
-! --------- Compute tensor of thermal conductivity (constant part)
-            call tlambc(angmas, ndim, tlamct)
-! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
-            call tdlamb(angmas, ndim, tdlamt)
+! --------- Evaluate thermal conductivity
+            call thmEvalConductivity(angmas, ndim  , imate,&
+                                     satur , phi   , &
+                                     lambs , dlambs, lambp , dlambp,&
+                                     tlambt, tlamct, tdlamt)
 !
         else if (thmc.eq.'LIQU_VAPE_GAZ') then
 ! =====================================================================
@@ -1008,12 +1007,11 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-! --------- Compute tensor of thermal conductivity
-            call telamb(angmas, ndim, tlambt)
-! --------- Compute tensor of thermal conductivity (constant part)
-            call tlambc(angmas, ndim, tlamct)
-! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
-            call tdlamb(angmas, ndim, tdlamt)
+! --------- Evaluate thermal conductivity
+            call thmEvalConductivity(angmas, ndim  , imate,&
+                                     satur , phi   , &
+                                     lambs , dlambs, lambp , dlambp,&
+                                     tlambt, tlamct, tdlamt)
 !
         else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
 ! =====================================================================
@@ -1181,12 +1179,11 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-! --------- Compute tensor of thermal conductivity
-            call telamb(angmas, ndim, tlambt)
-! --------- Compute tensor of thermal conductivity (constant part)
-            call tlambc(angmas, ndim, tlamct)
-! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
-            call tdlamb(angmas, ndim, tdlamt)
+! --------- Evaluate thermal conductivity
+            call thmEvalConductivity(angmas, ndim  , imate,&
+                                     satur , phi   , &
+                                     lambs , dlambs, lambp , dlambp,&
+                                     tlambt, tlamct, tdlamt)
 !
         else if (thmc.eq.'LIQU_AD_GAZ') then
 ! =====================================================================
@@ -1348,12 +1345,11 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-! --------- Compute tensor of thermal conductivity
-            call telamb(angmas, ndim, tlambt)
-! --------- Compute tensor of thermal conductivity (constant part)
-            call tlambc(angmas, ndim, tlamct)
-! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
-            call tdlamb(angmas, ndim, tdlamt)
+! --------- Evaluate thermal conductivity
+            call thmEvalConductivity(angmas, ndim  , imate,&
+                                     satur , phi   , &
+                                     lambs , dlambs, lambp , dlambp,&
+                                     tlambt, tlamct, tdlamt)
 !
         else if (thmc.eq.'LIQU_GAZ') then
 ! =====================================================================
@@ -1503,12 +1499,11 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-! --------- Compute tensor of thermal conductivity
-            call telamb(angmas, ndim, tlambt)
-! --------- Compute tensor of thermal conductivity (constant part)
-            call tlambc(angmas, ndim, tlamct)
-! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
-            call tdlamb(angmas, ndim, tdlamt)
+! --------- Evaluate thermal conductivity
+            call thmEvalConductivity(angmas, ndim  , imate,&
+                                     satur , phi   , &
+                                     lambs , dlambs, lambp , dlambp,&
+                                     tlambt, tlamct, tdlamt)
 !
         else if (thmc.eq.'LIQU_GAZ_ATM') then
 ! =====================================================================
@@ -1648,12 +1643,11 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-! --------- Compute tensor of thermal conductivity
-            call telamb(angmas, ndim, tlambt)
-! --------- Compute tensor of thermal conductivity (constant part)
-            call tlambc(angmas, ndim, tlamct)
-! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
-            call tdlamb(angmas, ndim, tdlamt)
+! --------- Evaluate thermal conductivity
+            call thmEvalConductivity(angmas, ndim  , imate,&
+                                     satur , phi   , &
+                                     lambs , dlambs, lambp , dlambp,&
+                                     tlambt, tlamct, tdlamt)
 !
         endif
     endif
