@@ -15,13 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
     subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
                       tau1, tau2, cohes, job, rela,&
                       alpha, dsidep, sigma, p, am, raug,&
-                      thmc, hydr, wsautm, dpf, rho110)
+                      wsautm, dpf, rho110)
         integer :: ndim
         integer :: ipgf
         integer :: imate
@@ -39,8 +38,6 @@ interface
         real(kind=8) :: p(3, 3)
         real(kind=8) :: am(3)
         real(kind=8) :: raug
-        character(len=16) :: thmc
-        character(len=16) :: hydr
         real(kind=8) :: wsautm(3)
         real(kind=8) :: dpf
         real(kind=8) :: rho110

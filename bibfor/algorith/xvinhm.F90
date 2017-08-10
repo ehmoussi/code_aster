@@ -18,11 +18,14 @@
 ! aslint: disable=W1504
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xvinhm(jmate, thmc, hydr, ndim,&
+subroutine xvinhm(jmate, ndim,&
                   cohes, dpf, saut, sautm, nd, lamb,&
-                  w11m, rho11m, alpha, job, t, pf,&
+                  w11m, rho11m, alpha, job, pf,&
                   rho11, w11, ipgf, rela, dsidep,&
                   delta, r, am)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !    
@@ -31,7 +34,6 @@ implicit none
 #include "asterc/r8prem.h" 
 #include "asterfort/lceitc.h"
 #include "asterfort/lceiou.h"
-#include "asterfort/thmrcp.h"
 #include "asterfort/matini.h" 
 #include "asterfort/vecini.h"   
 !
@@ -43,23 +45,13 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: jmate, ndim, i, ibid, ipgf
+    integer :: jmate, ndim, i, ipgf
     real(kind=8) :: cliq, vim(2), vip(2), cohes(5), rho11, rho11m
     real(kind=8) :: dsidep(6, 6), delta(6), eps, vim2(9), vip2(9), rela
     real(kind=8) :: w11, w11m, varbio, dpf, psp, psm, saut(3), lamb(3)
-    real(kind=8) :: sautm(3), alpha(5), nd(3), t, rho110, r, pf, am(3)
-    real(kind=8) :: rbid2, rbid3, rbid4, rbid5
-    real(kind=8) :: rbid8, rbid9, rbid10, rbid11
-    real(kind=8) :: rbid17, rbid18, rbid19, rbid20
-    real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
-    real(kind=8) :: rbid29, rbid30, rbid31, rbid32
-    real(kind=8) :: rbid33, rbid34, rbid35, rbid36, rbid37(3, 3)
-    real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid44
-    real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid50
-    real(kind=8) :: rbid38(3, 3), rbid51(3, 3)
-    real(kind=8) :: r7bid(3), rbid12, rbid13, rbid14
+    real(kind=8) :: sautm(3), alpha(5), nd(3), rho110, r, pf, am(3)
     character(len=8)  :: job
-    character(len=16) :: thmc, hydr, zkbid, option
+    character(len=16) :: option
 !
     call vecini(2, 0.d0, vim)
     call vecini(2, 0.d0, vip)
@@ -67,23 +59,11 @@ implicit none
     call vecini(9, 0.d0, vip2)
     call matini(6, 6, 0.d0, dsidep)
     call vecini(6, 0.d0, delta)
-! 
-!   RECUPERATION DES DONNEES HM
 !
-    zkbid = 'VIDE'
-    call thmrcp('INTERMED', jmate, thmc, hydr,&
-                zkbid, t, rbid2, rbid3, rbid4,&
-                rbid5, rbid8, rbid9, rbid10,&
-                rbid11, rbid12, rbid13, rbid14,&
-                rbid17, rbid18, rbid19,&
-                rbid20, rbid21, rbid22, rbid23, rbid24,&
-                rbid25, rbid26, rho110, cliq, rbid29,&
-                rbid30, rbid31, rbid32, rbid33, rbid34,&
-                rbid35, rbid36, rbid37, rbid38, rbid39,&
-                rbid40, rbid41, rbid42, rbid43, rbid44,&
-                rbid45, rbid46, rbid47, rbid48, rbid49,&
-                rbid50, rbid51, ibid,&
-                r7bid, ndim)
+! - Get material parameters
+!
+    rho110 = ds_thm%ds_material%liquid%rho
+    cliq   = ds_thm%ds_material%liquid%unsurk
 !
 !   INITIALISATION DE LA VARIABLE INTERNE
 !
@@ -100,9 +80,9 @@ implicit none
 !
 !   PREDICTION: COHES(3)=1 ; CORRECTION: COHES(3)=2
 !
-    if (cohes(3) .eq. 1.d0) then
+    if (nint(cohes(3)) .eq. 1) then
        option='RIGI_MECA_TANG'
-    else if (cohes(3) .eq. 2.d0) then
+    else if (nint(cohes(3)) .eq. 2) then
        option='FULL_MECA'
     else
        option='FULL_MECA'
@@ -113,11 +93,11 @@ implicit none
     endif
 !
 !   UTILISATION DE LA LOI COHESIVE MIXTE TALON-CURNIER
-    if (rela.eq.3.d0) then
+    if (nint(rela) .eq. 3) then
        call lceitc('RIGI', ipgf, 1, jmate, option,&
                     lamb, am, delta, dsidep, vim2,&
                     vip2, r, pfluide=pf)
-    else if (rela.eq.4.d0) then
+    else if (nint(rela) .eq. 4) then
        call lceiou('RIGI', ipgf, 1, jmate, option,&
                    lamb, am, delta, dsidep, vim2,&
                    vip2, r, pfluide=pf)
