@@ -256,7 +256,7 @@ implicit none
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS GAZ ------------------
 ! =====================================================================
-    data ncra20 / 'R_GAZ'    ,&
+    data ncra20 / 'TOTO'    ,&
      &              'TOTO'   ,&
      &              'TOTO'   ,&
      &              'TOTO'   ,&
@@ -279,13 +279,13 @@ implicit none
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
-    data ncra21 / 'MASS_MOL' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP' /
+    data ncra21 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTO' /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_VAPE ------------
 ! =====================================================================
-    data ncra22 / 'R_GAZ'    ,&
+    data ncra22 / 'TOTO'    ,&
      &              'TOTO'   ,&
      &              'TOTO'   ,&
      &              'TOTO'   ,&
@@ -314,17 +314,17 @@ implicit none
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
-    data ncra23 / 'UN_SUR_K' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP' ,&
-     &              'ALPHA'    /
-    data ncra24 / 'MASS_MOL' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP' /
+    data ncra23 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTO' ,&
+     &              'TOTO'    /
+    data ncra24 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTO' /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_VAPE_GAZ --------
 ! =====================================================================
-    data ncra25 / 'R_GAZ'    ,'TOTO'   ,&
+    data ncra25 / 'TOTO'    ,'TOTO'   ,&
      &              'TOTO'   ,'TOTO'   ,&
      &              'TOTO'  ,&
      &              'TOTO'  ,&
@@ -352,18 +352,18 @@ implicit none
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
-    data ncra26 / 'UN_SUR_K' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP' ,&
-     &              'ALPHA'  /
-    data ncra27 / 'MASS_MOL' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP' /
-    data ncra28 / 'MASS_MOL' /
+    data ncra26 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTO' ,&
+     &              'TOTO'  /
+    data ncra27 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTO' /
+    data ncra28 / 'TOTO' /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_GAZ -------------
 ! =====================================================================
-    data ncra29 / 'R_GAZ'    ,&
+    data ncra29 / 'TOTO'    ,&
      &              'TOTO'   ,&
      &              'TOTO'   ,&
      &              'TOTO'   ,&
@@ -390,13 +390,13 @@ implicit none
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
-    data ncra30 / 'UN_SUR_K' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP' ,&
-     &              'ALPHA'  /
-    data ncra31 / 'MASS_MOL' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP'/
+    data ncra30 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTOP' ,&
+     &              'TOTO'  /
+    data ncra31 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTO'/
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_GAZ_ATM ---------
 ! =====================================================================
@@ -426,29 +426,29 @@ implicit none
      &              'LAMB_TT',&
      &              'D_LB_TT',&
      &              'LAMB_C_T'/
-    data ncra33 / 'UN_SUR_K' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP' ,&
-     &              'ALPHA'   /
+    data ncra33 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTO' ,&
+     &              'TOTO'   /
 ! =====================================================================
 ! -- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_AD_GAZ_VAPE
 ! =====================================================================
-    data ncra35  / 'R_GAZ'    ,&
-     &              'RHO'      ,&
-     &              'CP'       /
-    data ncra36 / 'RHO'      ,&
-     &              'UN_SUR_K' ,&
-     &              'ALPHA'    ,&
-     &              'CP'       /
-    data ncra37 / 'MASS_MOL' ,&
-     &              'CP'       /
-    data ncra38 / 'MASS_MOL' ,&
-     &              'CP'       /
-    data ncra39 / 'CP'        , 'COEF_HENRY' /
+    data ncra35  / 'TOTO'    ,&
+     &              'TOTO'      ,&
+     &              'TOTO'       /
+    data ncra36 / 'TOTO'      ,&
+     &              'TOTO' ,&
+     &              'TOTO'    ,&
+     &              'TOTO'       /
+    data ncra37 / 'TOTO' ,&
+     &              'TOTO'       /
+    data ncra38 / 'TOTO' ,&
+     &              'TOTO'       /
+    data ncra39 / 'TOTO'        , 'TOTO' /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_AD_GAZ_VAPE -----
 ! =====================================================================
-    data ncra40 / 'R_GAZ'    ,'TOTO'   ,&
+    data ncra40 / 'TOTO'    ,'TOTO'   ,&
      &               'TOTO'    , 'TOTO'  ,&
      &               'TOTO'   ,&
      &               'TOTO'  ,&
@@ -478,33 +478,33 @@ implicit none
      &               'LAMB_TT',&
      &               'D_LB_TT',&
      &               'LAMB_C_T'/
-    data ncra41 / 'UN_SUR_K' ,&
-     &               'VISC'     ,&
-     &               'D_VISC_TEMP' ,&
-     &               'ALPHA'  /
-    data ncra42 / 'MASS_MOL' ,&
-     &               'VISC'     ,&
-     &               'D_VISC_TEMP' /
-    data ncra43 / 'MASS_MOL' /
+    data ncra41 / 'TOTO' ,&
+     &               'TOTO'     ,&
+     &               'TOTO' ,&
+     &               'TOTO'  /
+    data ncra42 / 'TOTO' ,&
+     &               'TOTO'     ,&
+     &               'TOTO' /
+    data ncra43 / 'TOTO' /
 ! =====================================================================
 ! -- DEFINITION DES DONNEES INTERMEDIAIRES DANS LE CAS LIQU_AD_GAZ
 ! =====================================================================
-    data crad35  / 'R_GAZ'    ,&
-     &               'RHO'      ,&     
-     &               'CP'       /
-    data crad36 / 'RHO'      ,&
-     &               'UN_SUR_K' ,&
-     &               'ALPHA'    ,&
-     &               'CP'       /
-    data crad37 / 'MASS_MOL' ,&
-     &               'CP'       /
-    data crad39 / 'CP'        ,&
-     &               'COEF_HENRY' /
+    data crad35  / 'TOTO'    ,&
+     &               'TOTO'      ,&     
+     &               'TOTO'       /
+    data crad36 / 'TOTO'      ,&
+     &               'TOTO' ,&
+     &               'TOTOA'    ,&
+     &               'TOTO'       /
+    data crad37 / 'TOTO' ,&
+     &               'TOTO'       /
+    data crad39 / 'TOTO'        ,&
+     &               'TOTO' /
 ! =====================================================================
 ! --- DEFINITION DES DONNEES FINALES DANS LE CAS LIQU_AD_GAZ -----
 ! =====================================================================
 !     DANS CRAD40 ON NE LIT PAS DE 21 A 26 INCLUS ET 38
-    data crad40 / 'R_GAZ'    ,'TOTO'   ,&
+    data crad40 / 'TOTO'    ,'TOTO'   ,&
      &                'TOTO'    , 'TOTO'  ,&
      &                'TOTO'   ,&
      &                'TOTO'  ,&
@@ -534,13 +534,13 @@ implicit none
      &                'LAMB_TT',&
      &                'D_LB_TT',&
      &                'LAMB_C_T'/
-    data crad41 / 'UN_SUR_K' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP' ,&
-     &              'ALPHA'  /
-    data crad42 / 'MASS_MOL' ,&
-     &              'VISC'     ,&
-     &              'D_VISC_TEMP' /
+    data crad41 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTO' ,&
+     &              'TOTO'  /
+    data crad42 / 'TOTO' ,&
+     &              'TOTO'     ,&
+     &              'TOTO' /
 ! =====================================================================
 ! --- CAS DE L'INITIALISATION -----------------------------------------
 ! =====================================================================

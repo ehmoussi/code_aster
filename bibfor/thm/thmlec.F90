@@ -29,6 +29,9 @@ subroutine thmlec(j_mater, thmc, hydr, ther,&
                   fickad, dfadt, tlamct, instap,&
                   angl_naut, ndim)
 !
+use THM_type
+use THM_module
+!
 implicit none
 !
 #include "asterfort/thmrcp.h"
@@ -165,6 +168,10 @@ real(kind=8), intent(out) :: gravity(3)
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct,  retcom,&
                     angl_naut, ndim)
+        rgaz   = ds_thm%ds_material%solid%r_gaz
+        viscg  = ds_thm%ds_material%gaz%visc
+        dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
+        mamolg = ds_thm%ds_material%gaz%mass_mol
     else if (thmc.eq.'LIQU_VAPE') then
         call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, p1, rbid6, p2,&

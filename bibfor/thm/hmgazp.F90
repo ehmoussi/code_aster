@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1306, W1504
+! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine hmgazp(yachai, option, meca, thmc, ther,&
+subroutine hmgazp(yachai, option, meca, &
                   hydr, imate, ndim, dimdef, dimcon,&
                   nbvari, yamec, yate, addeme, adcome,&
                   advico, vicphi, addep1, adcp11, addete,&
@@ -52,7 +52,6 @@ implicit none
 #include "asterfort/masvol.h"
 #include "asterfort/netbis.h"
 #include "asterfort/sigmap.h"
-#include "asterfort/thmrcp.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viporo.h"
 #include "asterfort/thmEvalSatuInit.h"
@@ -64,9 +63,9 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: congem(dimcon), congep(dimcon)
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
     real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, dt
-    real(kind=8) :: phi, rho11, rac2
+    real(kind=8) :: phi, rho11
     real(kind=8) :: angmas(3)
-    character(len=16) :: option, meca, ther, hydr, thmc
+    character(len=16) :: option, meca, hydr
     aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -76,29 +75,20 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: tbiot(6), cs, cp12, satur, mamolg
     real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
     real(kind=8) :: r, rho0, csigm, alp11, em, p1m, dsatur
-    real(kind=8) :: eps, deps(6)
-    parameter  ( eps = 1.d-21 )
+    real(kind=8) :: deps(6)
+    real(kind=8), parameter :: eps = 1.d-21
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
     aster_logical :: emmag
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
-    real(kind=8) :: rbid6, rbid7
-    real(kind=8) :: rbid10, saturm, dsatur_dp1
-    real(kind=8) :: rbid16, rbid17, rbid18, rbid19
-    real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
-    real(kind=8) :: rbid27, rbid28, rbid29, rbid32(ndim, ndim)
-    real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid36, rbid37
-    real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid44
-    real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid50(ndim, ndim)
-    real(kind=8) :: rbid20, rbid38, dsdp2(6)
+    real(kind=8) :: saturm
+    real(kind=8) :: dsdp2(6)
     real(kind=8) :: signe, dp2, cliq, coeps, rho12, alp21, rho21, rho21m
     real(kind=8) :: cp21, p2, satm, rho22, cp11, cp22, m11m, dmdeps(6)
     real(kind=8) :: dqeps(6)
     real(kind=8) :: sigmp(6), phi0
-!
     aster_logical :: net, bishop
-!
-    rac2 = sqrt(2.d0)
 !
 ! =====================================================================
 ! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
@@ -109,20 +99,15 @@ real(kind=8), intent(in) :: temp
 ! =====================================================================
     emmag = .false.
     call netbis(meca, net, bishop)
-    phi0 = ds_thm%ds_parainit%poro_init
-    call thmrcp('INTERMED', imate, thmc, hydr,&
-                ther, temp, p1, rbid6, rbid44,&
-                rbid7, rbid10, r, rho0,&
-                csigm, saturm, satur, dsatur_dp1,&
-                rbid16, rbid17, rbid18,&
-                rbid19, rbid20, rbid21, rbid22, rbid23,&
-                rbid24, rbid25, rbid43, rbid40, rbid41,&
-                rbid42, rbid26, rbid27, rbid28, rbid29,&
-                mamolg, cp21, rbid32, rbid33, rbid34,&
-                rbid35, rbid36, rbid37, rbid38, rbid39,&
-                rbid45, rbid46, rbid47, rbid48, rbid49,&
-                em, rbid50, retcom,&
-                angmas, ndim)
+!
+! - Get material parameters
+!
+    phi0   = ds_thm%ds_parainit%poro_init
+    r      = ds_thm%ds_material%solid%r_gaz
+    rho0   = ds_thm%ds_material%solid%rho
+    csigm  = ds_thm%ds_material%solid%cp
+    mamolg = ds_thm%ds_material%gaz%mass_mol
+    cp21   = ds_thm%ds_material%gaz%cp
 !
 ! - Evaluation of initial saturation
 !

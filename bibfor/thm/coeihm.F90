@@ -237,8 +237,9 @@ implicit none
 !
     epsv = 0.d0
     depsv = 0.d0
-    
-! Bug to modify (#26489)
+!
+! - For JHMS element => initial porosity is non-sense
+!
     ds_thm%ds_parainit%poro_init = 0.d0
 
 ! ======================================================================
