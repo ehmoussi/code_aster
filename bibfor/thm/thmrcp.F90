@@ -556,10 +556,8 @@ implicit none
                                   satur, dsatur, retcom)
 ! --------- Compute tensor of thermal conductivity
             call telamb(angmas, ndim, tlambt)
-!
-! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
-! DE LA CONDUCTIVITE THERMIQUE
-            call tlambc(angmas, lambct, tlamct, aniso4, ndim)
+! --------- Compute tensor of thermal conductivity (constant part)
+            call tlambc(angmas, ndim, tlamct)
 !
 ! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
             call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
@@ -689,10 +687,8 @@ implicit none
             dlambs = 0.0d0
 ! --------- Compute tensor of thermal conductivity
             call telamb(angmas, ndim, tlambt)
-!
-! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
-! DE LA CONDUCTIVITE THERMIQUE
-            call tlambc(angmas, lambct, tlamct, aniso4, ndim)
+! --------- Compute tensor of thermal conductivity (constant part)
+            call tlambc(angmas, ndim, tlamct)
 !
 ! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
             call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
@@ -851,10 +847,8 @@ implicit none
             endif
 ! --------- Compute tensor of thermal conductivity
             call telamb(angmas, ndim, tlambt)
-!
-! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
-! DE LA CONDUCTIVITE THERMIQUE
-            call tlambc(angmas, lambct, tlamct, aniso4, ndim)
+! --------- Compute tensor of thermal conductivity (constant part)
+            call tlambc(angmas, ndim, tlamct)
 !
 ! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
             call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
@@ -1019,10 +1013,8 @@ implicit none
             endif
 ! --------- Compute tensor of thermal conductivity
             call telamb(angmas, ndim, tlambt)
-!
-! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
-! DE LA CONDUCTIVITE THERMIQUE
-            call tlambc(angmas, lambct, tlamct, aniso4, ndim)
+! --------- Compute tensor of thermal conductivity (constant part)
+            call tlambc(angmas, ndim, tlamct)
 !
 ! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
             call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
@@ -1195,10 +1187,8 @@ implicit none
             endif
 ! --------- Compute tensor of thermal conductivity
             call telamb(angmas, ndim, tlambt)
-!
-! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
-! DE LA CONDUCTIVITE THERMIQUE
-            call tlambc(angmas, lambct, tlamct, aniso4, ndim)
+! --------- Compute tensor of thermal conductivity (constant part)
+            call tlambc(angmas, ndim, tlamct)
 !
 ! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
             call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
@@ -1365,10 +1355,8 @@ implicit none
             endif
 ! --------- Compute tensor of thermal conductivity
             call telamb(angmas, ndim, tlambt)
-!
-! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
-! DE LA CONDUCTIVITE THERMIQUE
-            call tlambc(angmas, lambct, tlamct, aniso4, ndim)
+! --------- Compute tensor of thermal conductivity (constant part)
+            call tlambc(angmas, ndim, tlamct)
 !
 ! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
             call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
@@ -1523,10 +1511,8 @@ implicit none
             endif
 ! --------- Compute tensor of thermal conductivity
             call telamb(angmas, ndim, tlambt)
-!
-! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
-! DE LA CONDUCTIVITE THERMIQUE
-            call tlambc(angmas, lambct, tlamct, aniso4, ndim)
+! --------- Compute tensor of thermal conductivity (constant part)
+            call tlambc(angmas, ndim, tlamct)
 !
 ! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
             call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
@@ -1671,10 +1657,8 @@ implicit none
             endif
 ! --------- Compute tensor of thermal conductivity
             call telamb(angmas, ndim, tlambt)
-!
-! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
-! DE LA CONDUCTIVITE THERMIQUE
-            call tlambc(angmas, lambct, tlamct, aniso4, ndim)
+! --------- Compute tensor of thermal conductivity (constant part)
+            call tlambc(angmas, ndim, tlamct)
 !
 ! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
             call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
