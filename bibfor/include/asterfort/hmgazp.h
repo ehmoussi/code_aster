@@ -19,9 +19,8 @@
 !
 #include "asterf_types.h"
 !
-
 interface 
-    subroutine hmgazp(yachai, option, meca, thmc, ther,&
+    subroutine hmgazp(yachai, option, meca,&
                       hydr, imate, ndim, dimdef, dimcon,&
                       nbvari, yamec, yate, addeme, adcome,&
                       advico, vicphi, addep1, adcp11, addete,&
@@ -37,8 +36,6 @@ interface
         aster_logical :: yachai
         character(len=16) :: option
         character(len=16) :: meca
-        character(len=16) :: thmc
-        character(len=16) :: ther
         character(len=16) :: hydr
         integer :: imate
         integer :: yamec
