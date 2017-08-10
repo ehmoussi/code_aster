@@ -109,6 +109,7 @@ IMPR_RESU( FORMAT='MED', UNITE=81,
            RESU=_F( MAILLAGE=mail08,
                     RESULTAT=rther08,
                     NOM_CHAM='TEMP', TOUT_ORDRE='OUI',),
+           PROC0='NON',
 )
 DEFI_FICHIER (ACTION='LIBERER',UNITE=81)
 
