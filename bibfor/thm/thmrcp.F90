@@ -554,9 +554,8 @@ implicit none
             alpha = val19(4)
             call thmEvalSatuFinal(hydr , imate , p1    ,&
                                   satur, dsatur, retcom)
-!
-! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
-            call telamb(angmas, lambt, tlambt, aniso2, ndim)
+! --------- Compute tensor of thermal conductivity
+            call telamb(angmas, ndim, tlambt)
 !
 ! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
 ! DE LA CONDUCTIVITE THERMIQUE
@@ -688,9 +687,8 @@ implicit none
             dviscg = val21( 3)
             lambs = 0.0d0
             dlambs = 0.0d0
-!
-! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
-            call telamb(angmas, lambt, tlambt, aniso2, ndim)
+! --------- Compute tensor of thermal conductivity
+            call telamb(angmas, ndim, tlambt)
 !
 ! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
 ! DE LA CONDUCTIVITE THERMIQUE
@@ -851,9 +849,8 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-!
-! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
-            call telamb(angmas, lambt, tlambt, aniso2, ndim)
+! --------- Compute tensor of thermal conductivity
+            call telamb(angmas, ndim, tlambt)
 !
 ! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
 ! DE LA CONDUCTIVITE THERMIQUE
@@ -1020,9 +1017,8 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-!
-! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
-            call telamb(angmas, lambt, tlambt, aniso2, ndim)
+! --------- Compute tensor of thermal conductivity
+            call telamb(angmas, ndim, tlambt)
 !
 ! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
 ! DE LA CONDUCTIVITE THERMIQUE
@@ -1197,9 +1193,8 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-!
-! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
-            call telamb(angmas, lambt, tlambt, aniso2, ndim)
+! --------- Compute tensor of thermal conductivity
+            call telamb(angmas, ndim, tlambt)
 !
 ! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
 ! DE LA CONDUCTIVITE THERMIQUE
@@ -1368,9 +1363,8 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-!
-! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
-            call telamb(angmas, lambt, tlambt, aniso2, ndim)
+! --------- Compute tensor of thermal conductivity
+            call telamb(angmas, ndim, tlambt)
 !
 ! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
 ! DE LA CONDUCTIVITE THERMIQUE
@@ -1527,9 +1521,8 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-!
-! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
-            call telamb(angmas, lambt, tlambt, aniso2, ndim)
+! --------- Compute tensor of thermal conductivity
+            call telamb(angmas, ndim, tlambt)
 !
 ! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
 ! DE LA CONDUCTIVITE THERMIQUE
@@ -1676,9 +1669,8 @@ implicit none
                 retcom = 2
                 goto 500
             endif
-!
-! CALCUL DU TENSEUR DE CONDUCTIVITE THERMIQUE
-            call telamb(angmas, lambt, tlambt, aniso2, ndim)
+! --------- Compute tensor of thermal conductivity
+            call telamb(angmas, ndim, tlambt)
 !
 ! CALCUL DU TENSEUR CONSTANTE INTERVENANT DANS LA DEFINITION
 ! DE LA CONDUCTIVITE THERMIQUE
