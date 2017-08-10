@@ -18,14 +18,12 @@
 ! aslint: disable=W1504
 !
 interface
-    subroutine xvinhm(jmate, thmc, hydr, ndim,&
+    subroutine xvinhm(jmate, ndim,&
                       cohes, dpf, saut, sautm, nd, lamb,&
-                      w11m, rho11m, alpha, job, t, pf,&
+                      w11m, rho11m, alpha, job, pf,&
                       rho11, w11, ipgf, rela, dsidep,&
                       delta, r, am)              
         integer :: jmate
-        character(len=16) :: thmc
-        character(len=16) :: hydr
         integer :: ndim
         real(kind=8) :: cohes(5)
         real(kind=8) :: dpf
@@ -37,7 +35,6 @@ interface
         real(kind=8) :: rho11m
         real(kind=8) :: alpha(5)
         character(len=8) :: job
-        real(kind=8) :: t
         real(kind=8) :: pf
         real(kind=8) :: rho11
         real(kind=8) :: w11

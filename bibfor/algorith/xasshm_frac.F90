@@ -54,6 +54,7 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/thmGetBehaviour.h"
+#include "asterfort/thmGetParaCoupling.h"
 !
 ! ======================================================================
 !
@@ -88,6 +89,7 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
     real(kind=8) :: rbid25, rbid26, rbid27, rbid28(3,3), rbid29(3,3)
     real(kind=8) :: rbid30, rbid31, rbid32, rbid33, rbid34, rbid35(3,3)
     real(kind=8) :: rbid37, rbid38(3), rbid8(6)
+    real(kind=8) :: temp
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
     character(len=16):: compor(*), thmc, hydr, zkbid
 
@@ -101,9 +103,14 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
     call thmGetParaBehaviour(compor,&
                              thmc_ = thmc, hydr_ = hydr)  
 !
-! - Get parameters for coupling
+!-  Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
+!
+! - Get parameters for coupling
+!
+    temp = 0.d0
+    call thmGetParaCoupling(zi(jmate), temp)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
@@ -170,9 +177,9 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
 !          CIRCULANT DANS LA FRACTURE)
 !
            job='MATRICE'                    
-           call xvinhm(zi(jmate), thmc, hydr, ndim,&
+           call xvinhm(zi(jmate), ndim,&
                        cohes, dpf, saut, sautm, nd, lamb,&
-                       w11m, rho11m, alpha, job, t, pf,&
+                       w11m, rho11m, alpha, job, pf,&
                        rho11, w11, ipgf, rela, dsidep,&
                        delta, r, am)
 !
@@ -233,7 +240,7 @@ subroutine xasshm_frac(nddls, nddlm, nnop, nnops,&
                 call xhmsa6(ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
                             tau1, tau2, cohes, job, rela,&
                             alpha, dsidep, sigma, p, am, raug,&
-                            thmc, hydr, wsautm, dpf, rho110)
+                            wsautm, dpf, rho110)
                 call xhmco3(ino, ndim, dsidep, pla, p,&
                             ffc, jac, raug, matri)
 !

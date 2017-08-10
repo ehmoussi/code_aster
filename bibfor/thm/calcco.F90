@@ -91,8 +91,8 @@ real(kind=8), intent(in) :: temp
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_SATU ----------------------
 ! ======================================================================
     if (thmc .eq. 'LIQU_SATU') then
-        call hmlisa(perman, yachai, option, meca, thmc,&
-                    ther, hydr, imate, ndim, dimdef,&
+        call hmlisa(perman, yachai, option, meca,&
+                    hydr, imate, ndim, dimdef,&
                     dimcon, nbvari, yamec, yate, addeme,&
                     adcome, advihy, advico, vihrho, vicphi,&
                     addep1, bdcp11, addete, adcote, congem,&

@@ -15,13 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
 subroutine xhmsa6(ndim, ipgf, imate, lamb, wsaut, nd,&
                   tau1, tau2, cohes, job, rela,&
                   alpha, dsidep, sigma, p, am, raug,&
-                  thmc, hydr, wsautm, dpf, rho110)
+                  wsautm, dpf, rho110)
+!
+use THM_type
+use THM_module
 !
 implicit none
 !
@@ -30,8 +32,8 @@ implicit none
 #include "asterfort/lcejex.h"
 #include "asterfort/lcecli.h"
 #include "asterfort/matini.h"
-#include "asterfort/thmrcp.h"
 #include "asterfort/vecini.h"
+#include "asterfort/thmEvalSatuInit.h"
 integer :: ndim, ipgf, imate
 real(kind=8) :: wsaut(3), lamb(3), am(3), dsidep(6, 6)
 real(kind=8) :: tau1(3), tau2(3), nd(3), wsautm(3)
@@ -71,22 +73,12 @@ character(len=8) :: job
 !
 !
 !
-    integer :: i, ibid
+    integer :: i
     real(kind=8) :: vim(9), vip(9)
     real(kind=8) ::  dsid2d(6, 6), dam(3)
     real(kind=8) :: sigma(6), cliq, varbio
-    real(kind=8) :: rbid2, rbid3, rbid4, rbid5
-    real(kind=8) :: rbid11, rbid13, rbid14, rbid6, rbid7, rbid8
-    real(kind=8) :: rbid17, rbid18, rbid19, rbid20
-    real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
-    real(kind=8) :: rbid29, rbid30, rbid31, rbid32
-    real(kind=8) :: rbid33, rbid34, rbid35, rbid36, rbid37(3, 3)
-    real(kind=8) :: rbid39, rbid40, rbid41, rbid42, rbid43, rbid44
-    real(kind=8) :: rbid45, rbid46, rbid47, rbid48, rbid49, rbid50
-    real(kind=8) :: rbid53, rbid38(3, 3), rbid51(3, 3)
-    real(kind=8) :: r7bid(3)
-    real(kind=8) :: rho110, t
-    character(len=16) :: option, zkbid, thmc, hydr
+    real(kind=8) :: rho110
+    character(len=16) :: option
 !
 ! ----------------------------------------------------------------------
 !
@@ -98,24 +90,11 @@ character(len=8) :: job
     call vecini(6, 0.d0, sigma)
     call vecini(9, 0.d0, vim)
     call vecini(9, 0.d0, vip)
-    call vecini(3, 0.d0, r7bid)
 !
-!   RECUPERATION DES DONNEES HM
+! - Get material parameters
 !
-    zkbid = 'VIDE'
-    call thmrcp('INTERMED', imate, thmc, hydr,&
-                zkbid, t, rbid2, rbid3, rbid4,&
-                rbid5, rbid6, rbid7, rbid8,&
-                rbid11, rbid13, rbid53, rbid14,&
-                rbid17, rbid18, rbid19,&
-                rbid20, rbid21, rbid22, rbid23, rbid24,&
-                rbid25, rbid26, rho110, cliq, rbid29,&
-                rbid30, rbid31, rbid32, rbid33, rbid34,&
-                rbid35, rbid36, rbid37, rbid38, rbid39,&
-                rbid40, rbid41, rbid42, rbid43, rbid44,&
-                rbid45, rbid46, rbid47, rbid48, rbid49,&
-                rbid50, rbid51, ibid,&
-                r7bid, ndim)
+    rho110 = ds_thm%ds_material%liquid%rho
+    cliq   = ds_thm%ds_material%liquid%unsurk
 !
     rho11 = cohes(4) + rho110
     rho11m = cohes(4) + rho110
@@ -151,7 +130,7 @@ character(len=8) :: job
 ! --- CALCUL VECTEUR ET MATRICE TANGENTE EN BASE LOCALE
 !
     vim(1)=cohes(1)
-    if(rela.eq.1.d0) then
+    if(nint(rela) .eq. 1) then
         vim(2) = cohes(2)
     else
         if (cohes(2) .le. 0.d0) then
@@ -164,9 +143,9 @@ character(len=8) :: job
 !
 ! PREDICTION: COHES(3)=1 ; CORRECTION: COHES(3)=2
 !
-    if (cohes(3) .eq. 1.d0) then
+    if (nint(cohes(3)) .eq. 1) then
         option='RIGI_MECA_TANG'
-    else if (cohes(3).eq.2.d0) then
+    else if (nint(cohes(3)) .eq. 2) then
         option='FULL_MECA'
     else
         option='FULL_MECA'
@@ -180,12 +159,12 @@ character(len=8) :: job
                 vim, vip, raug)
 !
     alpha(1) = vip(1)
-    if(rela.eq.1.d0) then
+    if(nint(rela) .eq. 1) then
         alpha(2) = vip(2)
     else
         if (vip(2) .eq. 0.d0) then
             alpha(2) = -vip(3)-1.d0
-        else if (vip(2).eq.1.d0) then
+        else if (vip(2) .eq. 1.d0) then
             alpha(2) = vip(3) + 1.d0
         else
             ASSERT(.false.)

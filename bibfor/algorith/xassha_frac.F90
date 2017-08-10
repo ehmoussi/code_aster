@@ -45,6 +45,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
 #include "asterfort/xvinhm.h"
 #include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/thmGetBehaviour.h"
+#include "asterfort/thmGetParaCoupling.h"
 !
 ! ======================================================================
 !
@@ -68,7 +69,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
     real(kind=8) :: dffc(16,3), saut(3), gradpf(3)
     real(kind=8) :: q1, q2, dpf, q1m, q2m, w11m, rho11m
     real(kind=8) :: gradpfm(3), sautm(3), alpha(5)
-    real(kind=8) :: pf, psup, pinf, ffp2(27), t, eps, rela
+    real(kind=8) :: pf, psup, pinf, ffp2(27), t, eps, rela, temp
     real(kind=8) :: rho11, w11, rho110, raug
     real(kind=8) :: dsidep(6,6), delta(6), p(3,3), r
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
@@ -79,9 +80,14 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
     call thmGetParaBehaviour(compor,&
                              meca_ = meca, thmc_ = thmc, hydr_ = hydr)    
 !
-! - Get parameters for coupling
+!-  Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
+!
+! - Get parameters for coupling
+!
+    temp = 0.d0
+    call thmGetParaCoupling(zi(jmate), temp)
 !
     call matini(nnops, 3, 0.d0, dfdic)
     call matini(16, 3, 0.d0, dffc)
@@ -156,9 +162,9 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
 !                CALCUL DE LA VARIABLE INTERNE (MASSE VOLUMIQUE DU LIQUIDE 
 !                CIRCULANT DANS LA FRACTURE)
                  job='ACTU_VI'                    
-                 call xvinhm(zi(jmate), thmc, hydr, ndim,&
+                 call xvinhm(zi(jmate), ndim,&
                              cohes, dpf, saut, sautm, nd, lamb,&
-                             w11m, rho11m, alpha, job, t, pf,&
+                             w11m, rho11m, alpha, job, pf,&
                              rho11, w11, ipgf, rela, dsidep,&
                              delta, r, am)
 !
@@ -190,7 +196,7 @@ subroutine xassha_frac(nddls, nddlm, nnop, nnops,&
                    call xhmsa6(ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
                                tau1, tau2, cohes, job, rela,&
                                alpha, dsidep, sigma, p, am, raug,&
-                               thmc, hydr, wsautm, dpf, rho110)
+                               wsautm, dpf, rho110)
 !
                    do i = 1, ncompv
                        zr(jcoheo+ncompv*nnops*(pos(ino)-1)+ncompv*(ino-1)-1+i) = alpha(i)

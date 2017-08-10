@@ -175,12 +175,12 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
 ! ======================================================================
-    call xhmsat(yachai, option, meca, thmc, ther,&
-                hydr, imate, ndim, dimenr,&
+    call xhmsat(yachai, option, meca, ther,&
+                imate, ndim, dimenr,&
                 dimcon, nbvari, yamec, addeme,&
                 adcome, advihy, advico, vihrho, vicphi,&
                 addep1, adcp11, congem, congep, vintm,&
-                vintp, dsde, epsv, depsv, p1,&
+                vintp, dsde, epsv, depsv,&
                 dp1, t, phi, rho11,&
                 sat, retcom, tbiot,&
                 angl_naut, yaenrh, adenhy, nfh)

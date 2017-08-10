@@ -53,6 +53,7 @@ implicit none
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/thmGetBehaviour.h"
+#include "asterfort/thmGetParaCoupling.h"
 !
 ! ======================================================================
 !
@@ -78,7 +79,7 @@ implicit none
     real(kind=8) :: saut(3), gradpf(3), q1, q2, dpf
     real(kind=8) :: q1m, q2m, gradpfm(3), sautm(3)
     real(kind=8) :: w11m, rho11m, alpha(5), w11
-    real(kind=8) :: pf, psup, pinf, ffp2(27), t, vihydr(64)
+    real(kind=8) :: pf, psup, pinf, ffp2(27), t, vihydr(64), temp
     real(kind=8) :: rho11, wsaut(3), mu(3), wsautm(3)
     real(kind=8) :: dsidep(6,6), delta(6), rela, p(3,3)
     real(kind=8) :: rbid1, rbid2, rbid3, rbid4, rbid5, rbid6, rbid7
@@ -101,9 +102,14 @@ implicit none
     call thmGetParaBehaviour(compor,&
                              thmc_ = thmc, hydr_ = hydr)  
 !
-! - Get parameters for coupling
+! - Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
+!
+! - Get parameters for coupling
+!
+    temp = 0.d0
+    call thmGetParaCoupling(zi(jmate), temp)
 !
 ! - Get Biot parameters (for porosity evolution)
 !
@@ -186,9 +192,9 @@ implicit none
 !                CIRCULANT DANS LA FRACTURE)
 !
                  job='VECTEUR'                    
-                 call xvinhm(zi(jmate), thmc, hydr, ndim,&
+                 call xvinhm(zi(jmate), ndim,&
                             cohes, dpf, saut, sautm, nd, lamb,&
-                            w11m, rho11m, alpha, job, t, pf,&
+                            w11m, rho11m, alpha, job, pf,&
                             rho11, w11, ipgf, rela, dsidep,&
                             delta, r, am)
 !
@@ -249,7 +255,7 @@ implicit none
                    call xhmsa6(ndim, ipgf, zi(jmate), lamb, wsaut, nd,&
                                tau1, tau2, cohes, job, rela,&
                                alpha, dsidep, sigma, p, am, raug,&
-                               thmc, hydr, wsautm, dpf, rho110)
+                               wsautm, dpf, rho110)
                    call xhvco4(ino, ndim, sigma, lamb, pla,&
                                jac, ffc, p, raug, vect)
                    vihydr(2*nnops*(pos(ino)-1)+2*(ino-1)+1) = alpha(4)
@@ -282,7 +288,9 @@ implicit none
                             rbid24, rbid25, viscl, rbid26, rbid27,&     
                             rbid28, rbid29, rbid30, rbid31, rbid32,&    
                             rbid33, rbid34, rbid35, rbid37,&            
-                            rbid38, ndim)                         
+                            rbid38, ndim)
+            WRITE(6,*) 'XASSHV_FRAC - viscl: ',viscl
+            WRITE(6,*) 'XASSHV_FRAC - unsurk: ',unsurk                     
 !
                 call xvecha(ndim, pla, nnops, saut,&
                             sautm, nd, ffc, w11, w11m, jac,&

@@ -154,6 +154,10 @@ real(kind=8), intent(out) :: gravity(3)
                     rbid45, rbid46, rbid47, rbid48, rbid49,&
                     rbid50, tlamct,  retcom,&
                     angl_naut, ndim)
+        unsurk = ds_thm%ds_material%liquid%unsurk
+        alpha  = ds_thm%ds_material%liquid%alpha
+        viscl  = ds_thm%ds_material%liquid%visc
+        dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
     else if (thmc.eq.'GAZ') then
         call thmrcp('FINALE  ', j_mater, thmc, hydr,&
                     ther, t, rbid6, rbid44, rbid7,&

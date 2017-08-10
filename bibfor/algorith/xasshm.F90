@@ -53,6 +53,7 @@ implicit none
 #include "asterfort/xlinhm.h"
 #include "asterfort/thmGetParaBehaviour.h"
 #include "asterfort/thmGetBehaviour.h"
+#include "asterfort/thmGetParaCoupling.h"
     integer :: dimmat, npg, dimuel
 !     DIMENSION DE LA MATRICE DE RIGIDITE DIMMAT=NDDLS*NNOP
 !    parameter    (dimmat=8*5)
@@ -94,7 +95,7 @@ implicit none
     real(kind=8) :: r(dimenr), sigbar(dimenr), c(dimenr)
     real(kind=8) :: ck(dimenr), cs(dimenr)
     real(kind=8) :: contm(*), contp(*), vintm(nbvari) , vintp(nbvari)
-    real(kind=8) :: varim(*), varip(*)
+    real(kind=8) :: varim(*), varip(*), temp
     real(kind=8) :: work1(dimcon, dimuel), work2(dimenr, dimuel)
     character(len=8) :: elrefp, elref2
 !
@@ -238,9 +239,14 @@ implicit none
 !
     call thmGetParaBehaviour(compor, thmc_ = thmc)
 !
-! - Get parameters for coupling
+! - Get parameters for behaviour
 !
     call thmGetBehaviour(compor)
+!
+! - Get parameters for coupling
+!
+    temp = 0.d0
+    call thmGetParaCoupling(imate, temp)
 !
     if ((rthmc(1)-1.0d0) .lt. r8prem()) then
         loi = 'LIQU_SATU'

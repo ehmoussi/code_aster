@@ -20,8 +20,8 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine hmlisa(perman, yachai, option, meca, thmc,&
-                      ther, hydr, imate, ndim, dimdef,&
+    subroutine hmlisa(perman, yachai, option, meca, &
+                      hydr, imate, ndim, dimdef,&
                       dimcon, nbvari, yamec, yate, addeme,&
                       adcome, advihy, advico, vihrho, vicphi,&
                       addep1, adcp11, addete, adcote, congem,&
@@ -37,8 +37,6 @@ interface
         aster_logical :: yachai
         character(len=16) :: option
         character(len=16) :: meca
-        character(len=16) :: thmc
-        character(len=16) :: ther
         character(len=16) :: hydr
         integer :: imate
         integer :: yamec

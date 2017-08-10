@@ -15,15 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1306,W1504
+! aslint: disable=W1504
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xhmsat(yachai, option, meca, thmc, ther,&
-                  hydr, imate, ndim, dimenr,&
+subroutine xhmsat(yachai, option, meca, ther,&
+                  imate, ndim, dimenr,&
                   dimcon, nbvari, yamec, addeme,&
                   adcome, advihy, advico, vihrho, vicphi,&
                   addep1, adcp11, congem, congep, vintm,&
-                  vintp, dsde, epsv, depsv, p1,&
+                  vintp, dsde, epsv, depsv, &
                   dp1, t, phi, rho11,&
                   satur, retcom, tbiot, angl_naut,&
                   yaenrh, adenhy, nfh)
@@ -42,7 +42,6 @@ implicit none
 #include "asterfort/netbis.h"
 #include "asterfort/sigmap.h"
 #include "asterfort/dilata.h"
-#include "asterfort/thmrcp.h"
 #include "asterfort/utmess.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viporo.h"
@@ -67,10 +66,10 @@ implicit none
     integer :: addeme, addep1, advihy, advico, retcom
     real(kind=8) :: congem(dimcon), congep(dimcon)
     real(kind=8) :: vintm(nbvari), vintp(nbvari)
-    real(kind=8) :: epsv, depsv, p1, dp1, t, dt
+    real(kind=8) :: epsv, depsv, dp1, t, dt
     real(kind=8) :: phi, rho11, rac2
     real(kind=8) :: angl_naut(3)
-    character(len=16) :: option, meca, ther, thmc, hydr
+    character(len=16) :: option, meca, ther
     aster_logical :: yachai
 !
 ! DECLARATION POUR XFEM
@@ -79,9 +78,9 @@ implicit none
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: i, yaenrh, adenhy, ifh
-    real(kind=8) :: epsvm, phim, rho11m, rho110, rho0, csigm
-    real(kind=8) :: tbiot(6), cs, alpha0, alpliq, cliq, cp11, satur
+    integer :: i, yaenrh, adenhy, ifh, yate
+    real(kind=8) :: epsvm, phim, rho11m, rho110
+    real(kind=8) :: tbiot(6), cs, alpha0, alpliq, cliq, satur
     real(kind=8) :: bid, dpad
     real(kind=8) :: dsatur_dp1
     real(kind=8) :: m11m, saturm, mdal(6), dalal, alphfi, cbiot, unsks
@@ -89,14 +88,6 @@ implicit none
 ! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
-    real(kind=8) :: rbid6, rbid7, rbid3, rbid4, rbid5
-    real(kind=8) :: rbid10, rbid11
-    real(kind=8) :: rbid16, rbid17, rbid18, rbid19
-    real(kind=8) :: rbid21, rbid22, rbid23, rbid24, rbid25, rbid26
-    real(kind=8) :: rbid27, rbid28, rbid29, rbid30, rbid31, rbid38
-    real(kind=8) :: rbid33(ndim, ndim), rbid34, rbid35, rbid36, rbid37
-    real(kind=8) :: rbid39, rbid40, rbid45, rbid46, rbid47, rbid48, rbid49
-    real(kind=8) :: rbid50(ndim, ndim), rbid20, rbid32(ndim, ndim)
     real(kind=8) :: dp2, signe, phi0
     real(kind=8) :: dmdeps(6), dsdp1(6), sigmp(6)
 !
@@ -107,22 +98,19 @@ implicit none
 ! =====================================================================
 !
     rac2 = sqrt(2.d0)
+    yate = 0
+    if (ther .ne. 'VIDE') then
+        yate = 1
+    endif
 !
     call netbis(meca, net, bishop)
-    phi0 = ds_thm%ds_parainit%poro_init
-    call thmrcp('INTERMED', imate, thmc, hydr,&
-                ther, t, p1, rbid40, rbid6,&
-                rbid7, rbid10, rbid11, rho0,&
-                csigm, rbid3, rbid4, rbid5,&
-                rbid16, rbid17, rbid18,&
-                rbid19, rbid20, rbid21, rbid22, rbid23,&
-                rbid24, rbid25, rho110, cliq, alpliq,&
-                cp11, rbid26, rbid27, rbid28, rbid29,&
-                rbid30, rbid31, rbid32, rbid33, rbid34,&
-                rbid35, rbid36, rbid37, rbid38, rbid39,&
-                rbid45, rbid46, rbid47, rbid48, rbid49,&
-                bid, rbid50, retcom,&
-                angl_naut, ndim)
+!
+! - Get material parameters
+!
+    phi0   = ds_thm%ds_parainit%poro_init
+    rho110 = ds_thm%ds_material%liquid%rho
+    cliq   = ds_thm%ds_material%liquid%unsurk
+    alpliq = ds_thm%ds_material%liquid%alpha
 !
 ! - Evaluation of initial saturation
 !
@@ -173,10 +161,17 @@ implicit none
 ! --- CALCUL DE LA VARIABLE INTERNE DE MASSE VOLUMIQUE DU FLUIDE ------
 ! --- SELON FORMULE DOCR ----------------------------------------------
 ! =====================================================================
-        call virhol(nbvari, vintm, vintp, advihy, vihrho,&
-                    rho110, dp1, dp2, dpad, cliq,&
-                    dt, alpliq, signe, rho11, rho11m,&
-                    retcom)
+        if (yate .eq. 1) then
+            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
+                        rho110, dp1, dp2, dpad, cliq,&
+                        dt, alpliq, signe, rho11, rho11m,&
+                        retcom)
+        else
+            call virhol(nbvari, vintm, vintp, advihy, vihrho,&
+                        rho110, dp1, dp2, dpad, cliq,&
+                        dt, 0.d0, signe, rho11, rho11m,&
+                        retcom)
+        endif
     endif
 ! =====================================================================
 ! --- PROBLEME DANS LE CALCUL DES VARIABLES INTERNES ? ----------------
