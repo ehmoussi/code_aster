@@ -15,65 +15,76 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine tdlamb(angmas, dlambt, tdlamt, aniso, ndim)
-    implicit none
-! --- DEFINITION DU TENSEUR DLAMBT DANS LE REPERE GLOBAL ---------------
-! --- CAS ISOTROPE OU ISOTROPE TRANSVERSE ------------------------------
-! ======================================================================
-#include "asterc/r8pi.h"
-#include "asterfort/matini.h"
+!
+subroutine tdlamb(angl_naut, ndim, tdlamt)
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
+#include "asterfort/assert.h"
 #include "asterfort/matrot.h"
 #include "asterfort/utbtab.h"
-    integer :: aniso, ndim
-    real(kind=8) :: angmas(3), dlambt(4)
-    real(kind=8) :: tdlamt(ndim, ndim), tdlamti(3, 3)
-    real(kind=8) :: passag(3, 3), work(3, 3), tk2(3, 3)
-! ======================================================================
-! --- INITIALISATION DU TENSEUR ----------------------------------------
-! ======================================================================
-    call matini(3, 3, 0.d0, work)
-    call matini(3, 3, 0.d0, tk2)
-    call matini(ndim, ndim, 0.d0, tdlamt)
-    call matini(3, 3, 0.d0, tdlamti)
-    if (aniso .eq. 0) then
-! ======================================================================
-! --- CAS ISOTROPE -----------------------------------------------------
-! --- CALCUL DU TENSEUR DLAMBT DANS LE REPERE GLOBAL -------------------
-! ======================================================================
-        tdlamt(1,1)=dlambt(1)
-        tdlamt(2,2)=dlambt(1)
+#include "asterfort/THM_type.h"
+!
+real(kind=8), intent(in) :: angl_naut(3)
+integer, intent(in) :: ndim
+real(kind=8), intent(out) :: tdlamt(ndim, ndim)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Compute tensor of derivatives (by temperature) for thermal conductivity
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  angl_naut        : nautical angles
+!                        (1) Alpha - clockwise around Z0
+!                        (2) Beta  - counterclockwise around Y1
+!                        (1) Gamma - clockwise around X
+! In  ndim             : dimension of space
+! Out tdlamt           : tensor of derivatives for thermal conductivity
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8) :: tdlamti(3, 3), passag(3, 3), work(3, 3), tk2(3, 3)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    work(:,:)    = 0.d0
+    passag(:,:)  = 0.d0
+    tdlamti(:,:) = 0.d0
+    tk2(:,:)     = 0.d0
+    tdlamt(:,:)  = 0.d0
+!
+    if (ds_thm%ds_material%ther%cond_type .eq. THER_COND_ISOT) then
+        tdlamt(1,1) = ds_thm%ds_material%ther%dlambda
+        tdlamt(2,2) = ds_thm%ds_material%ther%dlambda
         if (ndim .eq. 3) then
-            tdlamt(3,3)=dlambt(1)
+            tdlamt(3,3) = ds_thm%ds_material%ther%dlambda
         endif
-    else if (aniso.eq.1) then
-! ======================================================================
-! --- CAS ISOTROPE TRANSVERSE 3D------------------------------------------
-! --- CALCUL DU TENSEUR DE CONDUCTIVITE DANS LE REPERE GLOBAL ----------
-! ======================================================================
+    else if (ds_thm%ds_material%ther%cond_type .eq. THER_COND_ISTR) then
         if (ndim .eq. 3) then
-            tdlamti(1,1)=dlambt(2)
-            tdlamti(2,2)=dlambt(2)
-            tdlamti(3,3)=dlambt(3)
-! Recupération de la matrice de passage du local au global
-            call matrot(angmas, passag)
-            call utbtab('ZERO', 3, 3, tdlamti, passag,&
-                        work, tk2)
-            tdlamt= tk2
+            tdlamti(1,1) = ds_thm%ds_material%ther%dlambda_tl
+            tdlamti(2,2) = ds_thm%ds_material%ther%dlambda_tl
+            tdlamti(3,3) = ds_thm%ds_material%ther%dlambda_tn
+            call matrot(angl_naut, passag)
+            call utbtab('ZERO', 3, 3, tdlamti, passag, work, tk2)
+            tdlamt = tk2
         endif
-    else if (aniso.eq.2) then
-! ======================================================================
-! --- CAS ORTHOTROPE 2D ------------------------------------------
-! --- CALCUL DU TENSEUR DE CONDUCTIVITE DANS LE REPERE GLOBAL ----------
-! ======================================================================
-        tdlamti(1,1)=dlambt(2)
-        tdlamti(2,2)=dlambt(4)
-        call matrot(angmas, passag)
-        call utbtab('ZERO', 3, 3, tdlamti, passag,&
-                    work, tk2)
-        tdlamt(1,1)= tk2(1,1)
-        tdlamt(2,2)= tk2(2,2)
-        tdlamt(1,2)= tk2(1,2)
-        tdlamt(2,1)= tk2(2,1)
+    else if (ds_thm%ds_material%ther%cond_type .eq. THER_COND_ORTH) then
+        tdlamti(1,1) = ds_thm%ds_material%ther%dlambda_tl
+        tdlamti(2,2) = ds_thm%ds_material%ther%dlambda_tt
+        call matrot(angl_naut, passag)
+        call utbtab('ZERO', 3, 3, tdlamti, passag, work, tk2)
+        tdlamt(1,1) = tk2(1,1)
+        tdlamt(2,2) = tk2(2,2)
+        tdlamt(1,2) = tk2(1,2)
+        tdlamt(2,1) = tk2(2,1)
+    else
+! ----- No thermic
     endif
+!
 end subroutine
