@@ -558,9 +558,8 @@ implicit none
             call telamb(angmas, ndim, tlambt)
 ! --------- Compute tensor of thermal conductivity (constant part)
             call tlambc(angmas, ndim, tlamct)
-!
-! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
-            call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
+! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
+            call tdlamb(angmas, ndim, tdlamt)
 !
         else if (thmc.eq.'GAZ') then
 ! =====================================================================
@@ -689,9 +688,8 @@ implicit none
             call telamb(angmas, ndim, tlambt)
 ! --------- Compute tensor of thermal conductivity (constant part)
             call tlambc(angmas, ndim, tlamct)
-!
-! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
-            call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
+! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
+            call tdlamb(angmas, ndim, tdlamt)
 !
         else if (thmc.eq.'LIQU_VAPE') then
 ! =====================================================================
@@ -849,9 +847,8 @@ implicit none
             call telamb(angmas, ndim, tlambt)
 ! --------- Compute tensor of thermal conductivity (constant part)
             call tlambc(angmas, ndim, tlamct)
-!
-! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
-            call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
+! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
+            call tdlamb(angmas, ndim, tdlamt)
 !
         else if (thmc.eq.'LIQU_VAPE_GAZ') then
 ! =====================================================================
@@ -1015,9 +1012,8 @@ implicit none
             call telamb(angmas, ndim, tlambt)
 ! --------- Compute tensor of thermal conductivity (constant part)
             call tlambc(angmas, ndim, tlamct)
-!
-! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
-            call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
+! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
+            call tdlamb(angmas, ndim, tdlamt)
 !
         else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
 ! =====================================================================
@@ -1189,9 +1185,8 @@ implicit none
             call telamb(angmas, ndim, tlambt)
 ! --------- Compute tensor of thermal conductivity (constant part)
             call tlambc(angmas, ndim, tlamct)
-!
-! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
-            call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
+! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
+            call tdlamb(angmas, ndim, tdlamt)
 !
         else if (thmc.eq.'LIQU_AD_GAZ') then
 ! =====================================================================
@@ -1357,9 +1352,8 @@ implicit none
             call telamb(angmas, ndim, tlambt)
 ! --------- Compute tensor of thermal conductivity (constant part)
             call tlambc(angmas, ndim, tlamct)
-!
-! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
-            call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
+! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
+            call tdlamb(angmas, ndim, tdlamt)
 !
         else if (thmc.eq.'LIQU_GAZ') then
 ! =====================================================================
@@ -1513,9 +1507,8 @@ implicit none
             call telamb(angmas, ndim, tlambt)
 ! --------- Compute tensor of thermal conductivity (constant part)
             call tlambc(angmas, ndim, tlamct)
-!
-! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
-            call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
+! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
+            call tdlamb(angmas, ndim, tdlamt)
 !
         else if (thmc.eq.'LIQU_GAZ_ATM') then
 ! =====================================================================
@@ -1659,9 +1652,8 @@ implicit none
             call telamb(angmas, ndim, tlambt)
 ! --------- Compute tensor of thermal conductivity (constant part)
             call tlambc(angmas, ndim, tlamct)
-!
-! CALCUL DU TENSEUR DERIVEE DE LA CONDUCTIVITE THERMIQUE(T)
-            call tdlamb(angmas, dlambt, tdlamt, aniso3, ndim)
+! --------- Compute tensor of derivatives (by temperature) for thermal conductivity
+            call tdlamb(angmas, ndim, tdlamt)
 !
         endif
     endif
