@@ -40,7 +40,7 @@ implicit none
 #include "asterfort/calcco.h"
 #include "asterfort/calcfh.h"
 #include "asterfort/calcft.h"
-#include "asterfort/calcme.h"
+#include "asterfort/thmSelectMeca.h"
 #include "asterfort/kitdec.h"
 #include "asterfort/nvithm.h"
 #include "asterfort/thmlec.h"
@@ -51,17 +51,17 @@ implicit none
 #include "asterfort/thmMatrHooke.h"
 #include "asterfort/tebiot.h"
 !
-    character(len=16), intent(in) :: meca
-    character(len=16), intent(in) :: thmc
-    character(len=16), intent(in) :: ther
-    character(len=16), intent(in) :: hydr
-    integer, intent(in) :: nvim
-    integer, intent(in) :: advihy
-    integer, intent(in) :: advico
-    integer, intent(in) :: vihrho
-    integer, intent(in) :: vicphi
-    integer, intent(in) :: vicpvp
-    integer, intent(in) :: vicsat
+character(len=16), intent(in) :: meca
+character(len=16), intent(in) :: thmc
+character(len=16), intent(in) :: ther
+character(len=16), intent(in) :: hydr
+integer, intent(in) :: nvim
+integer, intent(in) :: advihy
+integer, intent(in) :: advico
+integer, intent(in) :: vihrho
+integer, intent(in) :: vicphi
+integer, intent(in) :: vicpvp
+integer, intent(in) :: vicsat
 
 ! **********************************************************************
 !
@@ -251,14 +251,24 @@ implicit none
 !  C'EST A DIRE SI KPI<NPG
 ! ======================================================================
     if (yamec .eq. 1 .and. kpi .le. npg) then
-        call calcme(option, compor, thmc, meca, imate,&
-                    typmod, crit, instam, instap,&
-                    ndim, dimdef, dimcon, nvim, yate,&
-                    addeme, adcome, addete, defgem, congem,&
-                    congep, vintm, vintp, addep1, addep2,&
-                    dsde, deps, p1, p2, &
-                    dt, retcom, dp1, dp2, sat,&
-                    tbiot, angl_naut)
+        call thmSelectMeca(yate  , yap1   , yap2  ,&
+                           option, imate  , ndim  , typmod, angl_naut,&
+                           compor, crit   , instam, instap,&
+                           addeme, addete , adcome, dimdef, dimcon,&
+                           defgem, deps   ,&
+                           congem, vintm  ,&
+                           congep, vintp  ,&
+                           dsde  , retcom)
+
+
+!        call calcme(option, compor, thmc, meca, imate,&
+!                    typmod, crit, instam, instap,&
+!                    ndim, dimdef, dimcon, nvim, yate,&
+!                    addeme, adcome, addete, defgem, congem,&
+!                    congep, vintm, vintp, addep1, addep2,&
+!                    dsde, deps, p1, p2, &
+!                    dt, retcom, dp1, dp2, sat,&
+!                    tbiot, angl_naut)
         if (retcom .ne. 0) then
             goto 999
         endif
