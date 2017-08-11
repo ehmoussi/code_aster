@@ -27,7 +27,7 @@ subroutine hmliga(yachai, option, meca, hydr,&
                   deps, epsv, depsv, p1, p2,&
                   dp1, dp2, temp, dt, phi,&
                   rho11, satur, retcom,&
-                  crit, tbiot, angmas)
+                  tbiot, angmas)
 !
 use THM_type
 use THM_module
@@ -60,7 +60,6 @@ implicit none
 #include "asterfort/inithm.h"
 #include "asterfort/masvol.h"
 #include "asterfort/netbis.h"
-#include "asterfort/nmbarc.h"
 #include "asterfort/sigmap.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viemma.h"
@@ -103,19 +102,10 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: mdal(6), dalal, alphfi, cbiot, unsks, alpha0
     aster_logical :: emmag
 ! ======================================================================
-! --- VARIABLES LOCALES POUR BARCELONE-------------------------------
-! ======================================================================
-    real(kind=8) :: crit(*)
-    real(kind=8) :: dsidp1(6), deps(6)
-    real(kind=8) :: dsdeme(6, 6)
-!CCC    SIP NECESSAIRE POUR CALCULER LES CONTRAINTES TOTALES
-!CCC    ET ENSUITE CONTRAINTES NETTES POUR BARCELONE
-    real(kind=8) :: sipm, sipp
-! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: signe, m11m, m21m, coeps, rho12, rho22, dpad, cp12, cp22
-    real(kind=8) :: dsdp1(6), dsdp2(6)
+    real(kind=8) :: dsdp1(6), dsdp2(6), deps(6)
     real(kind=8) :: dmdeps(6), p1m
     real(kind=8) :: sigmp(6), dqeps(6)
     real(kind=8), parameter :: eps = 1.d-21
@@ -399,26 +389,6 @@ real(kind=8), intent(in) :: temp
                               dmasp1(rho11, 0.d0,rho21,satur,dsatur_dp1,phi,cs,1.d0, emmag,em)
         dsde(adcp21,addep2) = dsde(adcp21,addep2) +&
                               dmasp2(rho11, 0.d0,rho21,satur,phi,cs,p2, emmag,em)
-    endif
-! =====================================================================
-! --- TERMES SPECIAL BARCELONE --------------------------------------
-! =====================================================================
-    if ((yamec.eq.1) .and. (meca.eq.'BARCELONE')) then
-        sipm=congem(adcome+6)
-        sipp=congep(adcome+6)
-        call nmbarc(ndim, imate, crit, satur, tbiot(1),&
-                    deps, congem(adcome), vintm,&
-                    option, congep(adcome), vintp, dsdeme, p1,&
-                    p2, dp1, dp2, dsidp1, sipm,&
-                    sipp, retcom)
-        if (retcom .eq. 1) goto 30
-!
-        if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-! --- DSIGM/DEPP1
-            do i = 1, 2*ndim
-                dsde(adcome+i-1,addep1) = dsde(adcome+i-1,addep1) + dsidp1(i)
-            end do
-        endif
     endif
 ! =====================================================================
  30 continue

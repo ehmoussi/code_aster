@@ -18,7 +18,7 @@
 ! aslint: disable=W1306,W1504
 !
 subroutine coeihm(option, perman, resi, rigi, imate,&
-                  compor, crit, instam, instap, nomail,&
+                  compor, instam, instap, nomail,&
                   ndim, dimdef, dimcon, nbvari, yamec,&
                   yap1, yap2, yate, addeme, adcome,&
                   addep1, adcp11, adcp12, addlh1, adcop1,&
@@ -50,7 +50,7 @@ implicit none
     integer :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
 !
     real(kind=8) :: defgem(1:dimdef), defgep(1:dimdef)
-    real(kind=8) :: varim(nbvari), instam, instap, crit(*)
+    real(kind=8) :: varim(nbvari), instam, instap
     real(kind=8) :: sigm(dimcon)
     character(len=8) :: nomail
     character(len=16) :: option, compor(*)
@@ -256,7 +256,7 @@ implicit none
                 p2, dp1, dp2, t, dt,&
                 phi, pvp, pad, h11, h12,&
                 kh, rho11, sat,&
-                retcom, crit, tbiot, vihrho, vicphi,&
+                retcom, tbiot, vihrho, vicphi,&
                 vicpvp, vicsat, angl_naut)
 !
     if (retcom .ne. 0) then

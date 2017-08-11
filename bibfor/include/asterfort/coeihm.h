@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface 
     subroutine coeihm(option, perman, resi, rigi, imate,&
-                      compor, crit, instam, instap, nomail,&
+                      compor, instam, instap, nomail,&
                       ndim, dimdef, dimcon, nbvari, yamec,&
                       yap1, yap2, yate, &
                       addeme, adcome, addep1, adcp11, adcp12,&
@@ -40,7 +39,6 @@ interface
         aster_logical :: rigi
         integer :: imate
         character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
         real(kind=8) :: instam
         real(kind=8) :: instap
         character(len=8) :: nomail

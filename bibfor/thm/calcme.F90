@@ -206,6 +206,7 @@ implicit none
                     sipp, retcom)
         if ((option(1:16).eq.'RIGI_MECA_TANG') .or. (option(1:9) .eq.'FULL_MECA')) then
             do i = 1, 2*ndim
+                dsde(adcome+i-1,addep1) = dsde(adcome+i-1,addep1) +dsidp1(i)
                 do j = 1, 2*ndim
                     dsde(adcome+i-1,addeme+ndim+j-1)=dsdeme(i,j)
                 end do

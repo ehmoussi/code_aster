@@ -53,7 +53,7 @@ implicit none
     integer :: idf2, npi, npg
     integer :: retloi, iretp, iretm
     integer :: ipoids, ivf1, idf1, igeom
-    integer :: iinstp, ideplm, ideplp, icompo, icarcr, icamas
+    integer :: iinstp, ideplm, ideplp, icompo, icamas
     integer :: icontm, ivarip, ivarim, ivectu, icontp
 !
 ! =====================================================================
@@ -159,12 +159,8 @@ implicit none
         call jevech('PDEPLMR', 'L', ideplm)
         call jevech('PDEPLPR', 'L', ideplp)
         call jevech('PCOMPOR', 'L', icompo)
-        call jevech('PCARCRI', 'L', icarcr)
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PCONTMR', 'L', icontm)
-!
-!
-!
 !
         read (zk16(icompo-1+NVAR),'(I16)') nbvari
 ! =====================================================================
@@ -192,7 +188,6 @@ implicit none
 !
 !
         if (option(1:9) .eq. 'RIGI_MECA') then
-!
             call aseihm(option, axi, ndim, nno1, nno2,&
                         npi, npg, dimuel, dimdef, dimcon,&
                         nbvari, zi(imate), iu, ip, ipf,&
@@ -200,13 +195,12 @@ implicit none
                         zr(ivf1), zr(ivf2), zr(idf2), zr(iinstm), zr(iinstp),&
                         zr(ideplm), zr(ideplm), zr(icontm), zr(icontm), zr(ivarim),&
                         zr(ivarim), nomail, zr(ipoids), zr(igeom), ang,&
-                        zk16(icompo), perman, zr(icarcr), zr(ivectu), zr(imatuu),&
+                        zk16(icompo), perman, zr(ivectu), zr(imatuu),&
                         retloi)
         else
-            do 30 li = 1, dimuel
+            do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
- 30         continue
-!
+            end do
             call aseihm(option, axi, ndim, nno1, nno2,&
                         npi, npg, dimuel, dimdef, dimcon,&
                         nbvari, zi(imate), iu, ip, ipf,&
@@ -214,7 +208,7 @@ implicit none
                         zr(ivf1), zr(ivf2), zr(idf2), zr(iinstm), zr(iinstp),&
                         zr(ideplm), zr(ideplp), zr(icontm), zr(icontp), zr(ivarim),&
                         zr(ivarip), nomail, zr(ipoids), zr(igeom), ang,&
-                        zk16(icompo), perman, zr(icarcr), zr(ivectu), zr(imatuu),&
+                        zk16(icompo), perman, zr(ivectu), zr(imatuu),&
                         retloi)
 !
             zi(jcret) = retloi

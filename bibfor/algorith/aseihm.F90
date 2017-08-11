@@ -24,7 +24,7 @@ subroutine aseihm(option, axi, ndim, nno1, nno2,&
                   vff1, vff2, dffr2, instam, instap,&
                   deplm, deplp, sigm, sigp, varim,&
                   varip, nomail, wref, geom, ang,&
-                  compor, perman, crit, vectu, matuu,&
+                  compor, perman, vectu, matuu,&
                   retcom)
 !
 implicit none
@@ -74,7 +74,6 @@ implicit none
 ! IN ANG     : ANGLES D'EULER NODAUX (FAMILLE 1)
 ! IN COMPOR  : COMPORTEMENT
 ! IN PERMAN  : REGIME PERMANENT ?
-! IN CRIT    : CRITERES DE CONVERGENCE LOCAUX
 ! =====================================================================
 ! OUT RETCOM : CODE RETOUR LOI DE COMPORTEMENT
 ! OUT VECTU  : VECTEUR FORCE INTERNE ELEMENTAIRE
@@ -96,7 +95,7 @@ implicit none
     integer :: imate
     integer :: iu(3, 18), ip(2, 9), ipf(2, 2, 9), iq(2, 2, 9)
     real(kind=8) :: vff1(nno1, npi), vff2(nno2, npi), dffr2(ndim-1, nno2, npi)
-    real(kind=8) :: wref(npi), ang(24), crit(*)
+    real(kind=8) :: wref(npi), ang(24)
     real(kind=8) :: instam, instap, deplm(dimuel), deplp(dimuel)
     real(kind=8) :: geom(ndim, nno2)
     real(kind=8) :: sigm(dimcon, npi), varim(nbvari, npi)
@@ -152,23 +151,18 @@ implicit none
 ! --- INITIALISATION DE VECTU, MATUU A 0 SUIVANT OPTION ----------------
 ! ======================================================================
     if (resi) then
-        do 1 i = 1, dimuel
-            vectu(i)=0.d0
-  1     continue
+        vectu(:)=0.d0
     endif
 !
     if (rigi) then
-        do 3 i = 1, dimuel*dimuel
-            matuu(i)=0.d0
-  3     continue
-!
+        matuu(:)=0.d0
     endif
 !
 ! =====================================================================
 ! --- BOUCLE SUR LES POINTS D'INTEGRATION -----------------------------
 ! =====================================================================
 !
-    do 10 kpi = 1, npi
+    do kpi = 1, npi
 !
 ! =====================================================================
 ! --- CALCUL DE LA MATRICE DE PASSAGE DDL -> DEFORMATIONS GENERALISEES
@@ -183,14 +177,14 @@ implicit none
 ! =====================================================================
 ! --- CALCUL DES DEFORMATIONS GENERALISEES E=QU -----------------------
 ! =====================================================================
-        do 108 i = 1, dimdef
+        do i = 1, dimdef
             defgem(i)=0.d0
             defgep(i)=0.d0
-            do 109 j = 1, dimuel
+            do j = 1, dimuel
                 defgem(i)=defgem(i)+q(i,j)*deplm(j)
                 defgep(i)=defgep(i)+q(i,j)*deplp(j)
-109         continue
-108     continue
+            end do
+        end do
 !
 !
 ! =====================================================================
@@ -198,7 +192,7 @@ implicit none
 ! =====================================================================
 !
         call coeihm(option, perman, resi, rigi, imate,&
-                    compor, crit, instam, instap, nomail,&
+                    compor, instam, instap, nomail,&
                     ndim, dimdef, dimcon, nbvari, yamec,&
                     yap1, yap2, yate, addeme, adcome,&
                     addep1, adcp11, adcp12, addlh1, adcop1,&
@@ -212,29 +206,29 @@ implicit none
 ! =====================================================================
 !
         if (resi) then
-            do 699 k = 1, dimuel
-                do 700 i = 1, dimdef
+            do k = 1, dimuel
+                do i = 1, dimdef
                     vectu(k)=vectu(k)+wi*q(i,k)*res(i)
-700             continue
-699         continue
+                end do
+            end do
         endif
 !
         if (rigi) then
             km = 1
-            do 702 k = 1, dimuel
-                do 703 m = 1, dimuel
+            do k = 1, dimuel
+                do m = 1, dimuel
                     matri=0.d0
-                    do 704 i = 1, dimdef
-                        do 705 j = 1, dimdef
+                    do i = 1, dimdef
+                        do j = 1, dimdef
                             matri = matri + wi*q(i,k)*drde(i,j)*q(j,m)
-705                     continue
-704                 continue
+                        end do
+                    end do
                     matuu(km) = matuu(km) + matri
                     km = km + 1
-703             continue
-702         continue
+                end do
+            end do
         endif
 !
- 10 end do
+    end do
 !
 end subroutine

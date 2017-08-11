@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
@@ -28,7 +27,7 @@ interface
                       vff1, vff2, dffr2, instam, instap,&
                       deplm, deplp, sigm, sigp, varim,&
                       varip, nomail, wref, geom, ang,&
-                      compor, perman, crit, vectu, matuu,&
+                      compor, perman, vectu, matuu,&
                       retcom)
         integer :: nbvari
         integer :: dimcon
@@ -67,7 +66,6 @@ interface
         real(kind=8) :: ang(24)
         character(len=16) :: compor(*)
         aster_logical :: perman
-        real(kind=8) :: crit(*)
         real(kind=8) :: vectu(dimuel)
         real(kind=8) :: matuu(dimuel*dimuel)
         integer :: retcom
