@@ -28,7 +28,7 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
                   p2, dp1, dp2, temp, dt,&
                   phi, pvp, pad, h11, h12,&
                   kh, rho11, sat,&
-                  retcom, carcri, tbiot, vihrho, vicphi,&
+                  retcom, tbiot, vihrho, vicphi,&
                   vicpvp, vicsat, angmas)
 !
 implicit none
@@ -75,7 +75,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- VARIABLES LOCALES POUR BARCELONE-------------------------------
 ! ======================================================================
-    real(kind=8) :: deps(6), tbiot(6), carcri(*)
+    real(kind=8) :: deps(6), tbiot(6)
 !
 ! INITIALISATION ADRESSE SELON QUE LA PARTIE THH EST TRANSITOIRE OU NON
     if (perman) then
@@ -141,7 +141,7 @@ real(kind=8), intent(in) :: temp
                     p1, p2, dp1, dp2, temp,&
                     dt, phi, pvp, h11, h12,&
                     rho11, sat, retcom,&
-                    carcri, tbiot, angmas)
+                    tbiot, angmas)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ -----------------------
 ! ======================================================================
@@ -155,7 +155,7 @@ real(kind=8), intent(in) :: temp
                     deps, epsv, depsv, p1, p2,&
                     dp1, dp2, temp, dt, phi,&
                     rho11, sat, retcom,&
-                    carcri, tbiot, angmas)
+                    tbiot, angmas)
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM -------------------
 ! ======================================================================

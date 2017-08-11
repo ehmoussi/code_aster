@@ -28,7 +28,7 @@ subroutine hmlvag(yachai, option, meca, hydr,&
                   p1, p2, dp1, dp2, temp,&
                   dt, phi, pvp, h11, h12,&
                   rho11, satur, retcom,&
-                  crit, tbiot, angmas)
+                  tbiot, angmas)
 !
 use THM_type
 use THM_module
@@ -66,7 +66,6 @@ implicit none
 #include "asterfort/majpas.h"
 #include "asterfort/masvol.h"
 #include "asterfort/netbis.h"
-#include "asterfort/nmbarc.h"
 #include "asterfort/sigmap.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viemma.h"
@@ -114,19 +113,10 @@ real(kind=8), intent(in) :: temp
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     aster_logical :: emmag
 ! ======================================================================
-! --- VARIABLES LOCALES POUR BARCELONE----------------------------------
-! ======================================================================
-    real(kind=8) :: crit(*)
-    real(kind=8) :: dsidp1(6), deps(6)
-    real(kind=8) :: dsdeme(6, 6)
-!CCC    SIP NECESSAIRE POUR CALCULER LES CONTRAINTES TOTALES
-!CCC    ET ENSUITE CONTRAINTES NETTES POUR BARCELONE
-    real(kind=8) :: sipm, sipp
-! ======================================================================
 ! --- DECLARATIONS PERMETTANT DE RECUPERER LES CONSTANTES MECANIQUES ---
 ! ======================================================================
     real(kind=8) :: signe, dpad, coeps, cp22, pas, rho22, m11m, m12m, m21m
-    real(kind=8) :: dmdeps(6), sigmp(6)
+    real(kind=8) :: dmdeps(6), sigmp(6), deps(6)
     real(kind=8) :: dqeps(6), dsdp1(6), dsdp2(6), p1m
 !
     aster_logical :: net, bishop
@@ -440,27 +430,6 @@ real(kind=8), intent(in) :: temp
                               dmasp2(rho11, rho12,rho21,satur,phi,cs,pas, emmag,em)
     endif
 !
-! =====================================================================
-! --- TERMES SPECIAL BARCELONE --------------------------------------
-! =====================================================================
-    if ((yamec.eq.1) .and. (meca.eq.'BARCELONE')) then
-        sipm=congem(adcome+6)
-        sipp=congep(adcome+6)
-        call nmbarc(ndim, imate, crit, satur, tbiot(1),&
-                    deps, congem(adcome), vintm,&
-                    option, congep(adcome), vintp, dsdeme, p1,&
-                    p2, dp1, dp2, dsidp1, sipm,&
-                    sipp, retcom)
-        if (retcom .eq. 1) goto 30
-!
-        if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-! --- DSIGM/DEPP1
-            do i = 1, 2*ndim
-                dsde(adcome+i-1,addep1) = dsde(adcome+i-1,addep1) + dsidp1(i)
-            end do
-        endif
-    endif
-! =====================================================================
  30 continue
 ! =====================================================================
 end subroutine

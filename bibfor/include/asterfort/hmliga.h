@@ -29,7 +29,7 @@ interface
                       deps, epsv, depsv, p1, p2,&
                       dp1, dp2, temp, dt, phi,&
                       rho11, satur, retcom,&
-                      crit, tbiot, angmas)
+                      tbiot, angmas)
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
@@ -72,7 +72,6 @@ interface
         real(kind=8) :: rho11
         real(kind=8) :: satur
         integer :: retcom
-        real(kind=8) :: crit(*)
         real(kind=8) :: tbiot(6)
         real(kind=8) :: angmas(3)
     end subroutine hmliga

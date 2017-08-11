@@ -221,7 +221,7 @@ implicit none
                 p2, dp1, dp2, t, dt,&
                 phi, pvp, pad, h11, h12,&
                 kh, rho11, sat,&
-                retcom, crit, tbiot, vihrho, vicphi,&
+                retcom, tbiot, vihrho, vicphi,&
                 vicpvp, vicsat, angl_naut)              
 !
     if (retcom .ne. 0) then

@@ -30,7 +30,7 @@ interface
                       p2, dp1, dp2, temp, dt,&
                       phi, pvp, pad, h11, h12,&
                       kh, rho11, sat,&
-                      retcom, carcri, tbiot, vihrho, vicphi,&
+                      retcom, tbiot, vihrho, vicphi,&
                       vicpvp, vicsat, angmas)
         integer :: nbvari
         integer :: dimcon
@@ -80,7 +80,6 @@ interface
         real(kind=8) :: rho11
         real(kind=8) :: sat
         integer :: retcom
-        real(kind=8) :: carcri(*)
         real(kind=8) :: tbiot(6)
         integer :: vihrho
         integer :: vicphi
