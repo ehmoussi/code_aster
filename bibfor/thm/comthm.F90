@@ -253,8 +253,8 @@ integer, intent(in) :: vicsat
     if (yamec .eq. 1 .and. kpi .le. npg) then
         call thmSelectMeca(yate  , yap1   , yap2  ,&
                            option, imate  , ndim  , typmod, angl_naut,&
-                           compor, crit   , instam, instap,&
-                           addeme, addete , adcome, dimdef, dimcon,&
+                           compor, crit   , instam, instap, dt       ,&
+                           addeme, addete , adcome, dimdef, dimcon   ,&
                            defgem, deps   ,&
                            congem, vintm  ,&
                            congep, vintp  ,&
