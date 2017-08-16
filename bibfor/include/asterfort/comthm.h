@@ -15,16 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
 interface 
     subroutine comthm(option, perman, vf, ifa, valfac,&
-                      valcen, imate, typmod, compor, crit,&
+                      valcen, imate, typmod, compor, carcri,&
                       instam, instap, ndim, dimdef, dimcon,&
                       nbvari, yamec, yap1, yap2, yate,&
                       addeme, adcome, addep1, adcp11, adcp12,&
@@ -32,7 +29,7 @@ interface
                       defgem, defgep, congem, congep, vintm,&
                       vintp, dsde, pesa, retcom, kpi,&
                       npg, angl_naut,&
-                      meca, thmc, ther, hydr, nvim,&
+                      meca, thmc, ther, hydr,&
                       advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         integer, parameter :: maxfa=6
         integer :: nbvari
@@ -48,7 +45,7 @@ interface
         integer :: imate
         character(len=8) :: typmod(2)
         character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         real(kind=8) :: instam
         real(kind=8) :: instap
         integer :: yamec
@@ -81,7 +78,6 @@ interface
         character(len=16), intent(in) :: thmc
         character(len=16), intent(in) :: ther
         character(len=16), intent(in) :: hydr
-        integer, intent(in) :: nvim
         integer, intent(in) :: advihy
         integer, intent(in) :: advico
         integer, intent(in) :: vihrho

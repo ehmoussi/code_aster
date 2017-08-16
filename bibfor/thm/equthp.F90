@@ -23,7 +23,7 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
                   vintp, mecani, press1, press2, tempe,&
                   crit, rinstm, rinstp, r, drds,&
                   dsde, retcom, angmas,&
-                  meca, thmc, ther, hydr, nvim,&
+                  meca, thmc, ther, hydr, &
                   advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 
     implicit none
@@ -148,7 +148,6 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
     character(len=16), intent(in) :: thmc
     character(len=16), intent(in) :: ther
     character(len=16), intent(in) :: hydr
-    integer, intent(in) :: nvim
     integer, intent(in) :: advihy
     integer, intent(in) :: advico
     integer, intent(in) :: vihrho
@@ -247,7 +246,7 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
                 defgem, defgep, congem, congep, vintm,&
                 vintp, dsde, pesa, retcom, kpi,&
                 npg, angmas,&
-                meca, thmc, ther, hydr, nvim,&
+                meca, thmc, ther, hydr,&
                 advihy, advico, vihrho, vicphi, vicpvp, vicsat)
     if (retcom .ne. 0) then
         goto 999
