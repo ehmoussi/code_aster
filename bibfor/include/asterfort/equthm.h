@@ -25,7 +25,7 @@ interface
                       press2, tempe, crit, rinstm, rinstp,&
                       dt, r, drds, dsde, retcom,&
                       angmas,&
-                meca, thmc, ther, hydr, nvim,&
+                meca, thmc, ther, hydr,&
                 advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         integer :: nbvari
         integer :: dimcon
@@ -62,7 +62,6 @@ interface
         character(len=16), intent(in) :: thmc
         character(len=16), intent(in) :: ther
         character(len=16), intent(in) :: hydr
-        integer, intent(in) :: nvim
         integer, intent(in) :: advihy
         integer, intent(in) :: advico
         integer, intent(in) :: vihrho

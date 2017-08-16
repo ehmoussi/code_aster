@@ -18,9 +18,11 @@
 ! aslint: disable=W1504
 !
 subroutine thmSelectMeca(yate  , yap1   , yap2  ,&
+                         p1    , dp1      , p2    , dp2   , satur    , tbiot,&
                          option, j_mater, ndim  , typmod, angl_naut,&
                          compor, carcri , instam, instap, dtemp    ,&
-                         addeme, addete , adcome, dimdef, dimcon,&
+                         addeme, addete   , adcome, addep1, addep2,&
+                         dimdef, dimcon,&
                          defgem, deps   ,&
                          congem, vintm  ,&
                          congep, vintp  ,&
@@ -39,14 +41,17 @@ implicit none
 #include "asterfort/thmMecaElas.h"
 #include "asterfort/thmCheckPorosity.h"
 #include "asterfort/thmGetParaBehaviour.h"
+#include "asterfort/thmMecaSpecial.h"
 !
 integer, intent(in) :: yate, yap1, yap2
 integer, intent(in) :: j_mater
 character(len=16), intent(in) :: option, compor(*)
+real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: instam, instap, dtemp
-integer, intent(in) :: ndim, dimdef, dimcon, addete, addeme, adcome
+integer, intent(in) :: ndim, dimdef, dimcon
+integer, intent(in) :: addeme, addete, adcome, addep1, addep2
 real(kind=8), intent(in) :: vintm(*)
 real(kind=8), intent(in) :: angl_naut(3)
 real(kind=8), intent(in) :: defgem(dimdef), deps(6), congem(dimcon)
@@ -66,6 +71,12 @@ integer, intent(out) :: retcom
 ! In  yate             : 1 if thermic dof
 ! In  yap1             : 1 if first pressure dof
 ! In  yap2             : 1 if second pressure dof
+! In  p1               : first pressure - At end of current step
+! In  dp1              : increment of first pressure
+! In  p2               : first pressure - At end of current step
+! In  dp2              : increment of first pressure
+! In  satur            : saturation
+! In  tbiot            : tensor of Biot
 ! In  option           : option to compute
 ! In  j_mater          : coded material address
 ! In  ndim             : dimension of space (2 or 3)
@@ -82,6 +93,8 @@ integer, intent(out) :: retcom
 ! In  addeme           : adress of mechanic dof in vector and matrix (generalized quantities)
 ! In  addete           : adress of thermic dof in vector and matrix (generalized quantities)
 ! In  adcome           : adress of mechanic stress in generalized stresses vector
+! In  addep1           : adress of p1 dof in vector and matrix (generalized quantities)
+! In  addep2           : adress of p2 dof in vector and matrix (generalized quantities)
 ! In  dimdef           : dimension of generalized strains vector
 ! In  dimcon           : dimension of generalized stresses vector
 ! In  defgem           : generalized strains - At begin of current step
@@ -95,7 +108,7 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: meca, compor_meca(NB_COMP_MAXI)
+    character(len=16) :: meca, thmc, compor_meca(NB_COMP_MAXI)
     integer :: nvimec, numlc, i, j
     real(kind=8) :: dsdeme(6, 6), alpha0, ther_meca(6)
     aster_logical :: l_matrix
@@ -104,19 +117,9 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ndt = 2*ndim
-    ndi = ndim
-!
-! - Initializations
-!
-!    fami      = 'FPG1'
-!    kpg       = 1
-!    ksp       = 1
-!    poum      = '+'
-!    mult_comp = ' '
-!    retcom    = 0
-!    mectru    = .false.
-!    rac2      = sqrt(2.0d0)
+    ndt            = 2*ndim
+    ndi            = ndim
+    dsdeme(:, :)   = 0.d0
     ther_meca(:)   = 0.d0
     alpha0         = ds_thm%ds_material%ther%alpha
     compor_meca(:) = ' '
@@ -126,7 +129,7 @@ integer, intent(out) :: retcom
 ! - Get mechanical behaviour
 !
     call thmGetParaBehaviour(compor,&
-                             meca_      = meca,&
+                             meca_      = meca, thmc_ = thmc,&
                              nvim_      = nvimec,&
                              nume_meca_ = numlc)
 !
@@ -138,6 +141,16 @@ integer, intent(out) :: retcom
 !
     if (numlc .eq. 0) then
 ! ----- Special behaviours
+        call thmMecaSpecial(option , meca     , thmc  ,&
+                            yate   , yap1     , yap2  ,&
+                            p1     , dp1      , p2    , dp2   , satur, tbiot,&
+                            j_mater, ndim     , typmod, carcri, &
+                            addeme , adcome   , addep1, addep2,&
+                            dimdef , dimcon   ,&
+                            defgem , deps     ,&
+                            congem , vintm    ,&
+                            congep , vintp    ,&
+                            dsde   , ther_meca, retcom)
 
     elseif (numlc .eq. 1) then
 ! ----- Elasticity
@@ -196,184 +209,5 @@ integer, intent(out) :: retcom
             end do
         endif
     endif
-
-!    elseif (meca .eq. 'BARCELONE') then
-!! ======================================================================
-!! --- LOI BARCELONE ----------------------------------------------------
-!! ======================================================================
-!        complg(1) = 'BARCELONE'
-!        write (complg(2),'(I16)') nvimec
-!        complg(3) = compor(3)
-!        sipm=congem(adcome+6)
-!        sipp=congep(adcome+6)
-!        call nmbarc(ndim, j_mater, carcri, sat, tbiot(1),&
-!                    deps, congem(adcome), vintm,&
-!                    option, congep(adcome), vintp, dsdeme, p1,&
-!                    p2, dp1, dp2, dsidp1, sipm,&
-!                    sipp, retcom)
-!        if ((option(1:16).eq.'RIGI_MECA_TANG') .or. (option(1:9) .eq.'FULL_MECA')) then
-!            do i = 1, 2*ndim
-!                dsde(adcome+i-1,addep1) = dsde(adcome+i-1,addep1) +dsidp1(i)
-!                do j = 1, 2*ndim
-!                    dsde(adcome+i-1,addeme+ndim+j-1)=dsdeme(i,j)
-!                end do
-!            end do
-!! ======================================================================
-!! --- LA DEPENDANCE DES CONTRAINTES / T = -ALPHA0 * DEPENDANCE ---------
-!! --- PAR RAPPORT A TRACE DE DEPS ( APPROXIMATION) ---------------------
-!! ======================================================================
-!            if (yate .eq. 1) then
-!                do i = 1, 3
-!                    dsde(adcome-1+i,addete)=-alpha0* (dsde(adcome-1+i,&
-!                    addeme+ndim-1+1)+ dsde(adcome-1+i,addeme+ndim-1+2)&
-!                    + dsde(adcome-1+i,addeme+ndim-1+3))/3.d0
-!                end do
-!            endif
-!        endif
-!    elseif (meca .eq. 'GONF_ELAS') then
-!! ======================================================================
-!! --- LOI GONF_ELAS ----------------------------------------------------
-!! ======================================================================
-!        complg(1) = 'GONF_ELAS'
-!        write (complg(2),'(I16)') nvimec
-!        complg(3) = compor(3)
-!        sipm=congem(adcome+6)
-!        sipp=congep(adcome+6)
-!        young  = ds_thm%ds_material%elas%e
-!        nu     = ds_thm%ds_material%elas%nu
-!        alpha0 = ds_thm%ds_material%ther%alpha
-!!
-!        call elagon(ndim, j_mater, tbiot(1),&
-!                    alpha0, deps, young, &
-!                    nu, congem(adcome), option, congep(adcome), dsdeme,&
-!                    p1, dp1, dsidp1, dsidp2)
-!!
-!        if ((option(1:16).eq.'RIGI_MECA_TANG') .or. (option(1:9) .eq.'FULL_MECA')) then
-!!
-!            do i = 1, 2*ndim
-!                dsde(adcome+i-1,addep1) = dsde(adcome+i-1,addep1) +dsidp1(i)
-!                do j = 1, 2*ndim
-!                    dsde(adcome+i-1,addeme+ndim+j-1)=dsdeme(i,j)
-!                end do
-!            end do
-!!
-!            if (yapre2) then
-!                do i = 1, 2*ndim
-!                    dsde(adcome+i-1,addep2) = dsde(adcome+i-1,addep2) +dsidp2(i)
-!                end do
-!            endif
-!!
-!! ======================================================================
-!! --- LA DEPENDANCE DES CONTRAINTES / T = -ALPHA0 * DEPENDANCE ---------
-!! --- PAR RAPPORT A TRACE DE DEPS ( APPROXIMATION) ---------------------
-!! ======================================================================
-!            if (yate .eq. 1) then
-!                do i = 1, 3
-!                    dsde(adcome-1+i,addete)=-alpha0* (dsde(adcome-1+i,&
-!                    addeme+ndim-1+1)+ dsde(adcome-1+i,addeme+ndim-1+2)&
-!                    + dsde(adcome-1+i,addeme+ndim-1+3))/3.d0
-!                end do
-!            endif
-!        endif
-!    elseif (meca .eq. 'HOEK_BROWN_TOT') then
-!! ======================================================================
-!! --- LOI HOEK_BROWN_TOT -----------------------------------------------
-!! ======================================================================
-!        complg(1) = 'HOEK_BROWN_TOT'
-!        write (complg(2),'(I16)') nvimec
-!        complg(3) = compor(3)
-!        sipm=congem(adcome+6)
-!        sipp=congep(adcome+6)
-!        dspdp1 = 0.0d0
-!        dspdp2 = 0.0d0
-!        call dsipdp(thmc, adcome, addep1, addep2, dimcon,&
-!                    dimdef, dsde, dspdp1, dspdp2, pre2tr)
-!!
-!        call lchbr2(typmod, option, j_mater, carcri, congem(adcome),&
-!                    defgem( addeme+ndim), deps,&
-!                    vintm, vintp, dspdp1, dspdp2, sipp,&
-!                    congep(adcome), dsdeme, dsidp1, dsidp2, retcom)
-!        if ((option(1:16).eq.'RIGI_MECA_TANG') .or. (option(1:9) .eq.'FULL_MECA')) then
-!            do i = 1, 2*ndim
-!                if (addep1 .ge. 1) then
-!                    dsde(adcome+i-1,addep1) = dsidp1(i)
-!                endif
-!!
-!                if (pre2tr) then
-!                    dsde(adcome+i-1,addep2) = dsidp2(i)
-!                endif
-!                do j = 1, 2*ndim
-!                    dsde(adcome+i-1,addeme+ndim+j-1)=dsdeme(i,j)
-!                end do
-!            end do
-!! ======================================================================
-!! --- LA DEPENDANCE DES CONTRAINTES / T = -ALPHA0 * DEPENDANCE ---------
-!! --- PAR RAPPORT A TRACE DE DEPS ( APPROXIMATION) ---------------------
-!! ======================================================================
-!            if (yate .eq. 1) then
-!                do i = 1, 3
-!                    dsde(adcome-1+i,addete)=-alpha0* (dsde(adcome-1+i,&
-!                    addeme+ndim-1+1)+ dsde(adcome-1+i,addeme+ndim-1+2)&
-!                    + dsde(adcome-1+i,addeme+ndim-1+3))/3.d0
-!                end do
-!            endif
-!        endif
-!        mectru = .false.
-!    else
-!        mectru    = .false.
-!        complg(NAME) = meca
-!        write (complg(NVAR),'(I16)') nvimec
-!        complg(DEFO) = compor(DEFO)
-!        call thmGetParaBehaviour(compor, nume_meca_ = numlc)
-!        write (complg(NUME),'(I16)') numlc
-!        if (numlc .ge. 100) then
-!            call utmess('F', 'THM1_1', sk = meca)
-!        endif
-!        if (numlc .ne. 0) then
-!            mectru    = .true.
-!            fami      = 'RIGI'
-!            kpg       = 1
-!            ksp       = 1
-!            call nmcomp(fami, kpg, ksp, ndim, typmod,&
-!                      j_mater, complg, carcri, instam, instap,&
-!                      6, defgem(addeme+ndim), deps, 6, congem(adcome),&
-!                      vintm, option, angl_naut, 1, [0.d0],&
-!                      congep(adcome), vintp, 36, dsdeme, 1,&
-!                      [0.d0], retcom)
-!        endif
-!    endif
-
-
-!    if (mectru) then
-!        if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-!            do i = 1, ndt
-!                do j = 1, ndt
-!                    dsde(adcome+i-1,addeme+ndim+j-1)=dsdeme(i,j)
-!                end do
-!            end do
-!! ======================================================================
-!! --- LA DEPENDANCE DES CONTRAINTES / T = -ALPHA0 * DEPENDANCE ---------
-!! --- PAR RAPPORT A TRACE DE DEPS ( APPROXIMATION) ---------------------
-!! ======================================================================
-!            if (yate .eq. 1) then
-!                do i = 1, 3
-!                    dsde(adcome-1+i,addete)=-alpha0* (dsde(adcome-1+i,&
-!                    addeme+ndim-1+1)+ dsde(adcome-1+i,addeme+ndim-1+2)&
-!                    + dsde(adcome-1+i,addeme+ndim-1+3))/3.d0
-!                end do
-!            endif
-!        endif
-!    endif
-
-!! ======================================================================
-!! --- AFFICHAGE DES DONNEES NECESSAIRES POUR REJOUER CALCUL SI ---------
-!! --- ECHEC DU MODELE DE COMPORTEMENT - RETCOM.EQ.1 --------------------
-!! ======================================================================
-!    if(retcom .eq. 1) then
-!        call lcidbg(fami, kpg, ksp, typmod, complg, &
-!                    carcri, instam, instap, 6, & 
-!                    defgem(addeme+ndim),deps, 6,&
-!                    congem(adcome), vintm, option) 
-!    endif
 !
 end subroutine

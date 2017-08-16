@@ -17,32 +17,30 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-interface 
-    subroutine thmSelectMeca(yate  , yap1     , yap2  ,&
-                             p1    , dp1      , p2    , dp2   , satur    , tbiot,&
-                             option, j_mater  , ndim  , typmod, angl_naut,&
-                             compor, carcri   , instam, instap, dtemp    ,&
-                             addeme, addete   , adcome, addep1, addep2,&
-                             dimdef, dimcon,&
-                             defgem, deps     ,&
-                             congem, vintm    ,&
-                             congep, vintp    ,&
-                             dsde  , retcom)
+interface
+    subroutine thmMecaSpecial(option , meca     , thmc  ,&
+                              yate   , yap1     , yap2  ,&
+                              p1     , dp1      , p2    , dp2   , satur, tbiot,&
+                              j_mater, ndim     , typmod, carcri, &
+                              addeme , adcome   , addep1, addep2,&
+                              dimdef , dimcon   ,&
+                              defgem , deps     ,&
+                              congem , vintm    ,&
+                              congep , vintp    ,&
+                              dsde   , ther_meca, retcom)
+        character(len=16), intent(in) :: option, meca, thmc
         integer, intent(in) :: yate, yap1, yap2
         integer, intent(in) :: j_mater
-        character(len=16), intent(in) :: option, compor(*)
         real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
         character(len=8), intent(in) :: typmod(2)
         real(kind=8), intent(in) :: carcri(*)
-        real(kind=8), intent(in) :: instam, instap, dtemp
-        integer, intent(in) :: ndim, dimdef, dimcon
-        integer, intent(in) :: addeme, addete, adcome, addep1, addep2
+        integer, intent(in) :: ndim, dimdef, dimcon, addeme, adcome, addep1, addep2
         real(kind=8), intent(in) :: vintm(*)
-        real(kind=8), intent(in) :: angl_naut(3)
         real(kind=8), intent(in) :: defgem(dimdef), deps(6), congem(dimcon)
         real(kind=8), intent(inout) :: congep(dimcon)
         real(kind=8), intent(inout) :: vintp(*)
         real(kind=8), intent(inout) :: dsde(dimcon, dimdef)
+        real(kind=8), intent(out) :: ther_meca(6)
         integer, intent(out) :: retcom
-    end subroutine thmSelectMeca
-end interface 
+    end subroutine thmMecaSpecial
+end interface

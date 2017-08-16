@@ -367,7 +367,7 @@ implicit none
                         contp((kpi-1)*dimcon+1), varip((kpi-1)*nbvari+1), mecani, press1, press2,&
                         tempe, crit, rinstm, rinstp, r,&
                         drds, dsde, codret, angmas,&
-                        meca, thmc, ther, hydr, nvim,&
+                        meca, thmc, ther, hydr,&
                         advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         else
             call equthm(imate, option, ta, ta1, ndim,&
@@ -377,7 +377,7 @@ implicit none
                         varip((kpi-1)*nbvari+1), mecani, press1, press2, tempe,&
                         crit, rinstm, rinstp, dt, r,&
                         drds, dsde, codret, angmas,&
-                        meca, thmc, ther, hydr, nvim,&
+                        meca, thmc, ther, hydr,&
                         advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 ! ======================================================================
 ! --- ATTENTION CI-DESSOUS IL N'Y A PAS D'IMPACT DE CALCUL -------------

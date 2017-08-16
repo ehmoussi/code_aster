@@ -15,23 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine dsipdp(thmc, adcome, addep1, addep2, dimcon,&
-                      dimdef, dsde, dspdp1, dspdp2, pre2tr)
-        integer :: dimdef
-        integer :: dimcon
-        character(len=16) :: thmc
-        integer :: adcome
-        integer :: addep1
-        integer :: addep2
-        real(kind=8) :: dsde(dimcon, dimdef)
-        real(kind=8) :: dspdp1
-        real(kind=8) :: dspdp2
-        aster_logical :: pre2tr
+    subroutine dsipdp(thmc,&
+                      adcome, addep1, addep2  ,&
+                      dimcon, dimdef, dsde    ,&
+                      dspdp1, dspdp2, l_dspdp2)
+        character(len=16), intent(in) :: thmc
+        integer, intent(in) :: adcome, addep1, addep2
+        integer, intent(in) :: dimdef, dimcon
+        real(kind=8), intent(in) :: dsde(dimcon, dimdef)
+        real(kind=8), intent(out) :: dspdp1, dspdp2
+        aster_logical, intent(out) :: l_dspdp2
     end subroutine dsipdp
 end interface

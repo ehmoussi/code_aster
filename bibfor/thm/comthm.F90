@@ -19,7 +19,7 @@
 ! aslint: disable=W1504, W1306
 !
 subroutine comthm(option, perman, vf, ifa, valfac,&
-                  valcen, imate, typmod, compor, crit,&
+                  valcen, imate, typmod, compor, carcri,&
                   instam, instap, ndim, dimdef, dimcon,&
                   nbvari, yamec, yap1, yap2, yate,&
                   addeme, adcome, addep1, adcp11, adcp12,&
@@ -27,7 +27,7 @@ subroutine comthm(option, perman, vf, ifa, valfac,&
                   defgem, defgep, congem, congep, vintm,&
                   vintp, dsde, pesa, retcom, kpi,&
                   npg, angl_naut,&
-                  meca, thmc, ther, hydr, nvim,&
+                  meca, thmc, ther, hydr,&
                   advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 
 !
@@ -55,7 +55,6 @@ character(len=16), intent(in) :: meca
 character(len=16), intent(in) :: thmc
 character(len=16), intent(in) :: ther
 character(len=16), intent(in) :: hydr
-integer, intent(in) :: nvim
 integer, intent(in) :: advihy
 integer, intent(in) :: advico
 integer, intent(in) :: vihrho
@@ -146,7 +145,7 @@ integer, intent(in) :: vicsat
     integer :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
     real(kind=8) :: defgem(1:dimdef), defgep(1:dimdef), congep(1:dimcon)
     real(kind=8) :: congem(1:dimcon), vintm(1:nbvari), vintp(1:nbvari)
-    real(kind=8) :: dsde(1:dimcon, 1:dimdef), crit(*), instam, instap
+    real(kind=8) :: dsde(1:dimcon, 1:dimdef), carcri(*), instam, instap
     character(len=8) :: typmod(2)
     character(len=16) :: compor(*), option
     aster_logical :: perman, vf
@@ -251,18 +250,27 @@ integer, intent(in) :: vicsat
 !  C'EST A DIRE SI KPI<NPG
 ! ======================================================================
     if (yamec .eq. 1 .and. kpi .le. npg) then
+!        call thmSelectMeca(yate  , yap1   , yap2  ,&
+!                           option, imate  , ndim  , typmod, angl_naut,&
+!                           compor, carcri   , instam, instap, dt       ,&
+!                           addeme, addete , adcome, dimdef, dimcon   ,&
+!                           defgem, deps   ,&
+!                           congem, vintm  ,&
+!                           congep, vintp  ,&
+!                           dsde  , retcom)
         call thmSelectMeca(yate  , yap1   , yap2  ,&
+                           p1    , dp1    , p2    , dp2   , sat      , tbiot,&
                            option, imate  , ndim  , typmod, angl_naut,&
-                           compor, crit   , instam, instap, dt       ,&
-                           addeme, addete , adcome, dimdef, dimcon   ,&
+                           compor, carcri , instam, instap, dt       ,&
+                           addeme, addete , adcome, addep1, addep2   ,&
+                           dimdef, dimcon ,&
                            defgem, deps   ,&
                            congem, vintm  ,&
                            congep, vintp  ,&
                            dsde  , retcom)
 
-
 !        call calcme(option, compor, thmc, meca, imate,&
-!                    typmod, crit, instam, instap,&
+!                    typmod, carcri, instam, instap,&
 !                    ndim, dimdef, dimcon, nvim, yate,&
 !                    addeme, adcome, addete, defgem, congem,&
 !                    congep, vintm, vintp, addep1, addep2,&
