@@ -95,7 +95,7 @@ integer, intent(out) :: retcom
 !
     character(len=16) :: meca, compor_meca(NB_COMP_MAXI)
     integer :: nvimec, numlc, i, j
-    real(kind=8) :: dsdeme(6, 6), alpha0
+    real(kind=8) :: dsdeme(6, 6), alpha0, ther_meca(6)
     aster_logical :: l_matrix
     integer :: ndt, ndi
     common /tdim/   ndt  , ndi
@@ -114,6 +114,7 @@ integer, intent(out) :: retcom
 !    retcom    = 0
 !    mectru    = .false.
 !    rac2      = sqrt(2.0d0)
+    ther_meca(:)   = 0.d0
     alpha0         = ds_thm%ds_material%ther%alpha
     compor_meca(:) = ' '
     retcom         = 0
@@ -133,11 +134,17 @@ integer, intent(out) :: retcom
 ! - Select
 !
     if (numlc .eq. 0) then
+! ----- Special behaviours
 
+!    elseif (numlc .eq. 1) then
+!! ----- Elasticity
 
     elseif (numlc .ge. 100) then
+! ----- Forbidden behaviours
         call utmess('F', 'THM1_1', sk = meca)
+
     else
+! ----- Standard behaviours
         compor_meca(NAME) = meca
         write (compor_meca(NVAR),'(I16)') nvimec
         compor_meca(DEFO) = compor(DEFO)
@@ -149,6 +156,15 @@ integer, intent(out) :: retcom
                     congem     , vintm  ,&
                     congep     , vintp  ,&
                     dsdeme     , retcom )
+! ----- Compute thermic dilatation
+        if (yate .eq. 1) then
+            do i = 1, 3
+                ther_meca(i) = -alpha0*(&
+                                dsde(adcome-1+i,addeme+ndim-1+1)+&
+                                dsde(adcome-1+i,addeme+ndim-1+2)+&
+                                dsde(adcome-1+i,addeme+ndim-1+3))/3.d0
+            end do
+        endif     
     endif
 !
 ! - Add mechanical matrix
@@ -165,11 +181,9 @@ integer, intent(out) :: retcom
 !
     if (l_matrix) then
         if (yate .eq. 1) then
-            do i = 1, 3
-                dsde(adcome-1+i,addete) = -alpha0*(&
-                    dsde(adcome-1+i,addeme+ndim-1+1)+&
-                    dsde(adcome-1+i,addeme+ndim-1+2)+&
-                    dsde(adcome-1+i,addeme+ndim-1+3))/3.d0
+            do i = 1, 6
+                dsde(adcome-1+i,addete) = dsde(adcome-1+i,addete) -&
+                                          ther_meca(i)
             end do
         endif
     endif
