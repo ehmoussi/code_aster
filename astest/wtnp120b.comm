@@ -349,7 +349,7 @@ U0=STAT_NON_LINE(MODELE=MODELE,
                               FONC_MULT = FLUXG ) ,
                            ),
 
-                 COMPORTEMENT=_F(RELATION='KIT_HH',
+                 COMPORTEMENT=_F(RELATION='KIT_HH2',
                               PARM_THETA=1.,
                               PARM_ALPHA=PARM_ALPHA,
                               ITER_INTE_MAXI=5,

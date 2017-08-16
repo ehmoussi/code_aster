@@ -332,7 +332,7 @@ U2=STAT_NON_LINE(
                                         _F( CHARGE = DEP_VAR,FONC_MULT = MSTEP ),
                 ),
                         COMPORTEMENT=_F(
-                         RELATION='KIT_HHM',
+                         RELATION='KIT_HH2M',
                            RELATION_KIT=(
                                 'GONF_ELAS','LIQU_AD_GAZ_VAPE','HYDR_VGM'),
                          ),
