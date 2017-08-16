@@ -67,7 +67,7 @@ MAIL=DEFI_GROUP(reuse =MAIL,
 MODELE=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='D_PLAN_THHMS',),);
+                           MODELISATION='D_PLAN_THHS',),);
 
 UN=DEFI_CONSTANTE(VALE=1.0,);
 UNDEMI=DEFI_CONSTANTE(VALE=0.5,);
@@ -232,8 +232,8 @@ CHAMNO=CREA_CHAMP(MAILLAGE=MAIL,
                     OPERATION='AFFE',
                     TYPE_CHAM='NOEU_DEPL_R',
                     AFFE=(_F(TOUT='OUI',
-                             NOM_CMP=('DX','DY','PRE1','PRE2','TEMP'),
-                             VALE=(0.0,0.0,0.0,0.0,0.0,),),
+                             NOM_CMP=('PRE1','PRE2','TEMP'),
+                             VALE=(0.0,0.0,0.0,),),
                           _F(GROUP_NO='ROCHES',
                              NOM_CMP='TEMP',
                              VALE=0.0,),
@@ -249,12 +249,6 @@ FLUTH=AFFE_CHAR_MECA(MODELE=MODELE,
                                        ),
                                       );
 
-CL_MECA=AFFE_CHAR_MECA(MODELE=MODELE,
-                       DDL_IMPO=_F(GROUP_NO='BO',
-                                       DX = 0.,
-                                       DY = 0. ,
-                                       ),
-                                      );
 
 SIGINIT=CREA_CHAMP(MAILLAGE=MAIL,
                    OPERATION='AFFE',
@@ -286,7 +280,6 @@ U0=STAT_NON_LINE(MODELE=MODELE,
                  CHAM_MATER=CHMAT0,
                  EXCIT=(
                  _F(CHARGE=FLUTH,),
-                 _F(CHARGE=CL_MECA,),
                                           ),
                  COMPORTEMENT=_F(RELATION='KIT_THH',PARM_THETA=0.57,
                               RELATION_KIT=('LIQU_VAPE_GAZ','HYDR_UTIL'),
@@ -420,15 +413,8 @@ TEST_RESU(RESU=(_F(INST=1.E4,
 MODELE2=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=_F(GROUP_MA=('BO1','HAUT'),
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='D_PLAN_THHMS',),);
+                           MODELISATION='D_PLAN_THHS',),);
 
-
-CL_MECA2=AFFE_CHAR_MECA(MODELE=MODELE2,
-                       DDL_IMPO=_F(GROUP_NO='BO',
-                                       DX = 0.,
-                                       DY = 0. ,
-                                       ),
-                                      );
 
 INST2=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(
@@ -453,7 +439,6 @@ U2=STAT_NON_LINE(MODELE=MODELE2,
                  CHAM_MATER=CHMAT0,
                  EXCIT=(
                  _F(CHARGE=FLUTH2,),
-                 _F(CHARGE=CL_MECA2,),
                                           ),
                  COMPORTEMENT=_F(RELATION='KIT_THH',PARM_THETA=0.57,
                               RELATION_KIT=('LIQU_VAPE_GAZ','HYDR_UTIL'),
@@ -473,7 +458,6 @@ U2=STAT_NON_LINE(reuse=U2,
                  CHAM_MATER=CHMAT0,
                  EXCIT=(
                  _F(CHARGE=FLUTH,),
-                 _F(CHARGE=CL_MECA,),
                                           ),
                  COMPORTEMENT=_F(RELATION='KIT_THH',PARM_THETA=0.57,
                               RELATION_KIT=('LIQU_VAPE_GAZ','HYDR_UTIL'),
