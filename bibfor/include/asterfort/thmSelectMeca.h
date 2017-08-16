@@ -20,8 +20,8 @@
 interface 
     subroutine thmSelectMeca(yate  , yap1, yap2,&
                              option, j_mater, ndim  , typmod, angl_naut,&
-                             compor, carcri , instam, instap,&
-                             addeme, addete , adcome, dimdef, dimcon,&
+                             compor, carcri , instam, instap, dtemp    ,&
+                             addeme, addete , adcome, dimdef, dimcon   ,&
                              defgem, deps   ,&
                              congem, vintm  ,&
                              congep, vintp  ,&
@@ -31,7 +31,7 @@ interface
         character(len=16), intent(in) :: option, compor(*)
         character(len=8), intent(in) :: typmod(2)
         real(kind=8), intent(in) :: carcri(*)
-        real(kind=8), intent(in) :: instam, instap
+        real(kind=8), intent(in) :: instam, instap, dtemp
         integer, intent(in) :: ndim, dimdef, dimcon, addete, addeme, adcome
         real(kind=8), intent(in) :: vintm(*)
         real(kind=8), intent(in) :: angl_naut(3)

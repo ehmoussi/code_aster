@@ -19,7 +19,7 @@
 !
 subroutine thmSelectMeca(yate  , yap1   , yap2  ,&
                          option, j_mater, ndim  , typmod, angl_naut,&
-                         compor, carcri , instam, instap,&
+                         compor, carcri , instam, instap, dtemp    ,&
                          addeme, addete , adcome, dimdef, dimcon,&
                          defgem, deps   ,&
                          congem, vintm  ,&
@@ -36,6 +36,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/calcme.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/thmMecaElas.h"
 #include "asterfort/thmCheckPorosity.h"
 #include "asterfort/thmGetParaBehaviour.h"
 !
@@ -44,7 +45,7 @@ integer, intent(in) :: j_mater
 character(len=16), intent(in) :: option, compor(*)
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in) :: carcri(*)
-real(kind=8), intent(in) :: instam, instap
+real(kind=8), intent(in) :: instam, instap, dtemp
 integer, intent(in) :: ndim, dimdef, dimcon, addete, addeme, adcome
 real(kind=8), intent(in) :: vintm(*)
 real(kind=8), intent(in) :: angl_naut(3)
@@ -77,6 +78,7 @@ integer, intent(out) :: retcom
 ! In  carcri           : parameters for comportment
 ! In  instam           : time at beginning of time step
 ! In  instap           : time at end of time step
+! In  dtemp            : increment of temperature
 ! In  addeme           : adress of mechanic dof in vector and matrix (generalized quantities)
 ! In  addete           : adress of thermic dof in vector and matrix (generalized quantities)
 ! In  adcome           : adress of mechanic stress in generalized stresses vector
@@ -102,7 +104,8 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    ndt = 2*ndim
+    ndi = ndim
 !
 ! - Initializations
 !
@@ -136,8 +139,13 @@ integer, intent(out) :: retcom
     if (numlc .eq. 0) then
 ! ----- Special behaviours
 
-!    elseif (numlc .eq. 1) then
-!! ----- Elasticity
+    elseif (numlc .eq. 1) then
+! ----- Elasticity
+        ASSERT(meca .eq. 'ELAS')
+        call thmMecaElas(yate  , option, angl_naut, dtemp,&
+                         adcome, dimcon,&
+                         deps  , congep, dsdeme, ther_meca)
+
 
     elseif (numlc .ge. 100) then
 ! ----- Forbidden behaviours
@@ -172,7 +180,8 @@ integer, intent(out) :: retcom
     if (l_matrix) then
         do i = 1, ndt
             do j = 1, ndt
-                dsde(adcome+i-1,addeme+ndim+j-1) = dsdeme(i,j)
+                dsde(adcome+i-1,addeme+ndim+j-1) = dsde(adcome+i-1,addeme+ndim+j-1) +&
+                                                   dsdeme(i,j)
             end do
         end do
     endif
@@ -188,71 +197,6 @@ integer, intent(out) :: retcom
         endif
     endif
 
-!    if ((meca.eq.'ELAS')) then
-!!
-!!   DANS LE CAS ELASTIQUE ON REPASSE AUX CONTRAINTES RELLES POUR APPLIQU
-!!  LA MATRICE DE ROTATION DANS LE CAS ANISOTROPE
-!!
-!        depstr = deps
-!!
-!        do i = 4, 6
-!            depstr(i) = deps(i)*rac2
-!            congep(adcome+i-1)= congep(adcome+i-1)/rac2
-!        end do
-!!
-!! ----- Compute thermic quantities
-!!
-!        call thmTherElas(angl_naut, mdal, dalal)
-!!
-!        if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-!            do i = 1, 3
-!                do j = 1, 3
-!                    dsde(adcome-1+i,addeme+ndim-1+j) = dsde(adcome-1+i,addeme+ndim-1+j)+&
-!                                                       ds_thm%ds_material%elas%d(i,j)
-!                end do
-!                do j = 4, 6
-!                    dsde(adcome-1+i,addeme+ndim-1+j) = dsde(adcome-1+i,addeme+ndim-1+j)+&
-!                                                       ds_thm%ds_material%elas%d(i,j)/(0.5*rac2)
-!                end do
-!            end do
-!!
-!            do i = 4, 6
-!                do j = 1, 3
-!                    dsde(adcome-1+i,addeme+ndim-1+j) = dsde(adcome-1+i,addeme+ndim-1+j)+&
-!                                                       ds_thm%ds_material%elas%d(i,j)*rac2
-!                end do
-!                do j = 4, 6
-!                    dsde(adcome-1+i,addeme+ndim-1+j) = dsde(adcome-1+i,addeme+ndim-1+j)+&
-!                                                       ds_thm%ds_material%elas%d(i,j)*2.d0
-!                end do
-!            end do
-!        endif
-!!
-!        if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-!            do i = 1, 6
-!                do j = 1, 6
-!                    congep(adcome+i-1) = congep(adcome+i-1) + &
-!                                         ds_thm%ds_material%elas%d(i,j)*depstr(j)
-!                end do
-!            end do
-!        endif
-!!
-!        do i = 4, 6
-!            congep(adcome+i-1)= congep(adcome+i-1)*rac2
-!        end do
-!!
-!        if (yate .eq. 1) then
-!            if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-!                do i = 1, 6
-!                    dsde(adcome-1+i,addete)=dsde(adcome-1+i,addete)-mdal(i)
-!                end do
-!            endif
-!            if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
-!                do i = 1, 6
-!                    congep(adcome+i-1)=congep(adcome+i-1)-mdal(i)*dt
-!                end do
-!            endif
-!        endif
 !    elseif (meca .eq. 'BARCELONE') then
 !! ======================================================================
 !! --- LOI BARCELONE ----------------------------------------------------
