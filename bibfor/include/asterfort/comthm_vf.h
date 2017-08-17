@@ -20,8 +20,8 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine comthm(option, perman,&
-                      imate, typmod, compor, carcri,&
+    subroutine comthm_vf(option, perman, ifa, valfac,&
+                      valcen, imate, typmod, compor, carcri,&
                       instam, instap, ndim, dimdef, dimcon,&
                       nbvari, yamec, yap1, yap2, yate,&
                       addeme, adcome, addep1, adcp11, adcp12,&
@@ -38,7 +38,6 @@ interface
         integer :: ndim
         character(len=16) :: option
         aster_logical :: perman
-        aster_logical :: vf
         integer :: ifa
         real(kind=8) :: valfac(maxfa, 14, 6)
         real(kind=8) :: valcen(14, 6)
@@ -84,5 +83,5 @@ interface
         integer, intent(in) :: vicphi
         integer, intent(in) :: vicpvp
         integer, intent(in) :: vicsat
-    end subroutine comthm
+    end subroutine comthm_vf
 end interface 

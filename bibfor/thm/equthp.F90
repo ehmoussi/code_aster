@@ -163,8 +163,7 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
     real(kind=8) :: defgem(1:dimdef), defgep(1:dimdef), congem(1:dimcon)
     real(kind=8) :: congep(1:dimcon), vintm(1:nbvari), vintp(1:nbvari)
     real(kind=8) :: r(1:dimdef+1), drds(1:dimdef+1, 1:dimcon), pesa(3)
-    real(kind=8) :: dsde(1:dimcon, 1:dimdef), crit(*), rinstp, rinstm, rbid
-    real(kind=8) :: rbid1(6, 14, 6), rbid2(14, 6)
+    real(kind=8) :: dsde(1:dimcon, 1:dimdef), crit(*), rinstp, rinstm
     real(kind=8) :: deux, rac2
     real(kind=8) :: angmas(3)
     parameter   (deux = 2.d0)
@@ -193,8 +192,6 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
     addete = tempe(2)
     adcote = tempe(3)
 !
-    ibid = 0
-    rbid = 0.d0
 ! ============================================================
 ! --- COMME CONGEM CONTIENT LES VRAIES CONTRAINTES ET --------
 ! --- COMME PAR LA SUITE ON TRAVAILLE AVEC SQRT(2)*SXY -------
@@ -237,8 +234,8 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
     end do
 !
 !
-    call comthm(option, perman, .false._1, ibid, rbid1,&
-                rbid2, imate, typmod, compor, crit,&
+    call comthm(option, perman,&
+                imate, typmod, compor, crit,&
                 rinstm, rinstp, ndim, dimdef, dimcon,&
                 nbvari, yamec, yap1, yap2, yate,&
                 addeme, adcome, addep1, adcp11, adcp12,&

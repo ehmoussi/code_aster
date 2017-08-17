@@ -18,8 +18,8 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504, W1306
 !
-subroutine comthm(option, perman, &
-                  imate, typmod, compor, carcri,&
+subroutine comthm_vf(option, perman, ifa, valfac,&
+                  valcen, imate, typmod, compor, carcri,&
                   instam, instap, ndim, dimdef, dimcon,&
                   nbvari, yamec, yap1, yap2, yate,&
                   addeme, adcome, addep1, adcp11, adcp12,&
@@ -38,7 +38,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/calcco.h"
-#include "asterfort/calcfh.h"
+#include "asterfort/calcfh_vf.h"
 #include "asterfort/calcft.h"
 #include "asterfort/thmSelectMeca.h"
 #include "asterfort/kitdec.h"
@@ -87,6 +87,12 @@ integer, intent(in) :: vicsat
 ! ======================================================================
 ! IN OPTION : OPTION DE CALCUL
 ! IN PERMAN : TRUE SI PERMANENT
+! IN VF : TRUE SI VOLUMES FINIS
+! IN IFA : UTILISE EN VF ET POUR LES VALEURS AUX ARETES
+!      -> NUMERO DE LA FACE. LES INFORMATIONS SONT STOCKES
+!       DS VALFAC(1:6,1:4,1:NBFACE)
+! VALFAC : SOCKAGE DES VALEURS CALSULEES AUX ARETES EN VF IFA!=0
+! DES VALEURS AU CENTRE
 ! IN COMPOR : COMPORTEMENT
 ! IN IMATE  : MATERIAU CODE
 ! IN NDIM   : DIMENSION DE L'ESPACE
@@ -122,6 +128,17 @@ integer, intent(in) :: vicsat
 ! OUT RETCOM : RETOUR LOI DE COMPORTEMENT
 !
     aster_logical :: yachai
+    real(kind=8) :: valcen(14, 6)
+    integer :: maxfa
+    parameter     (maxfa=6)
+    real(kind=8) :: valfac(maxfa, 14, 6)
+    integer :: masse, dmasp1, dmasp2
+    integer :: eau, air
+    integer :: vkint, kxx, kyy, kzz, kxy, kyz, kzx
+    parameter     (masse=10,dmasp1=11,dmasp2=12)
+    parameter     (vkint=13)
+    parameter     (kxx=1,kyy=2,kzz=3,kxy=4,kyz=5,kzx=6)
+    parameter     (eau=1,air=2)
     integer :: retcom, kpi, npg
     integer :: ndim, dimdef, dimcon, nbvari, imate, yamec, yap1
     integer :: yap2, yate, addeme, addep1, addep2, addete
@@ -132,6 +149,7 @@ integer, intent(in) :: vicsat
     character(len=8) :: typmod(2)
     character(len=16) :: compor(*), option
     aster_logical :: perman
+    integer :: ifa
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
@@ -145,6 +163,7 @@ integer, intent(in) :: vicsat
     real(kind=8) :: viscg, dviscg, mamolg
     real(kind=8) :: fickad, dfadt, kh, alpha
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
+    real(kind=8) :: deltat
     real(kind=8) :: angl_naut(3)
 ! ======================================================================
 ! --- INITIALISATION ---------------------------------------------------
@@ -208,6 +227,20 @@ integer, intent(in) :: vicsat
         goto 999
     endif
 !
+    if (ifa.eq.0) then
+        deltat=instap-instam
+        if ((option(1:9).eq.'FULL_MECA') .or. (option(1:9) .eq.'RAPH_MECA')) then
+            valcen(masse,eau)=( congep(adcp11)+congep(adcp12)-congem(adcp11)-congem(adcp12))/deltat
+            valcen(masse,air)=( congep(adcp21)+congep(adcp22)-congem(adcp21)-congem(adcp22))/deltat
+        endif
+        if ((option(1:9) .eq. 'RIGI_MECA') .or. (option(1:9) .eq. 'FULL_MECA')) then
+            valcen(dmasp1, eau)= (dsde(adcp11, addep1)+ dsde(adcp12, addep1))/deltat
+            valcen(dmasp2, eau)= (dsde(adcp11, addep2)+ dsde(adcp12, addep2))/deltat
+            valcen(dmasp1, air)= (dsde(adcp22, addep1)+ dsde(adcp21, addep1))/deltat
+            valcen(dmasp2, air)= (dsde(adcp22, addep2)+ dsde(adcp21, addep2))/deltat
+        endif
+    endif
+!
 ! ======================================================================
 ! --- CALCUL DES GRANDEURS MECANIQUES PURES UNIQUEMENT SI YAMEC = 1 -
 ! ET SI ON EST SUR UN POINT DE GAUSS (POUR L'INTEGRATION REDUITE)
@@ -241,23 +274,43 @@ integer, intent(in) :: vicsat
                 tlambt, tdlamt, viscg, dviscg, mamovg,&
                 fickad, dfadt, tlamct, instap,&
                 angl_naut, ndim)
-
+!
+! CONDUCTIVITES EN VF
+!
+    if (ifa.eq.0) then
+        if (ndim .eq. 3) then
+            valcen(vkint ,kxx)=tperm(1,1)
+            valcen(vkint ,kyy)=tperm(2,2)
+            valcen(vkint ,kzz)=tperm(3,3)
+            valcen(vkint ,kxy)=tperm(1,2)
+            valcen(vkint ,kyz)=tperm(1,3)
+            valcen(vkint ,kzx)=tperm(2,3)
+        else
+            valcen(vkint ,kxx)=tperm(1,1)
+            valcen(vkint ,kyy)=tperm(1,1)
+            valcen(vkint ,kzz)=tperm(2,2)
+            valcen(vkint ,kxy)=tperm(1,2)
+            valcen(vkint ,kyz)=0.d0
+            valcen(vkint ,kzx)=0.d0
+        endif
+    endif
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
 ! ======================================================================
     if (yap1 .eq. 1) then
 !
-        call calcfh(option, perman, thmc, ndim, dimdef,&
-                    dimcon, yamec, yate, addep1, addep2,&
-                    adcp11, adcp12, adcp21, adcp22, addeme,&
-                    addete, congep, dsde, p1, p2,&
-                    grap1, grap2, t, grat, pvp,&
+        call calcfh_vf(option, perman, thmc, ndim, dimdef,&
+                    dimcon, yate, addep1, addep2,&
+                    adcp11, adcp12,&
+                    addete, dsde, p1, p2,&
+                    grap1, t, grat, pvp,&
                     pad, rho11, h11, h12, rgaz,&
-                    dsatur, pesa, tperm, permli, dperml,&
+                    dsatur, permli, dperml,&
                     permgz, dperms, dpermp, fick, dfickt,&
                     dfickg, fickad, dfadt, kh, unsurk,&
                     alpha, viscl, dviscl, mamolg, viscg,&
-                    dviscg, mamovg)
+                    dviscg, mamovg, ifa,&
+                    valfac, valcen)
         if (retcom .ne. 0) then
             goto 999
         endif

@@ -65,7 +65,7 @@ implicit none
     integer :: nvim, nvit, nvih, nvic, advime, advith, advihy, advico
     integer :: i, j, f
     integer :: vihrho, vicphi, vicpvp, vicsat
-    integer :: ifa, vicpr1, vicpr2
+    integer :: vicpr1, vicpr2
     real(kind=8) :: depsv, epsv, deps(6)
     real(kind=8) :: t, p1, p2, dt, dp1, dp2, grat(3), grap1(3), grap2(3)
     real(kind=8) :: pvp, pad, h11, h12, kh, rho11, phi
@@ -77,12 +77,9 @@ implicit none
     real(kind=8) :: klint(ndim-1, ndim-1), fick, viscg
     real(kind=8) :: dsde(dimcon, dimdef)
     real(kind=8) :: tlint, ouvh, deltat, unsurn
-    real(kind=8) :: valcen(14, 6), angl_naut(3)
-    integer :: maxfa
-    parameter (maxfa=6)
-    real(kind=8) :: valfac(maxfa, 14, 6)
+    real(kind=8) :: angl_naut(3)
     character(len=16) :: meca, thmc, ther, hydr
-    aster_logical :: vf, yachai
+    aster_logical :: yachai
 !
 ! =====================================================================
 !.......................................................................
@@ -155,7 +152,6 @@ implicit none
 ! ======================================================================
     retcom = 0
     deltat = instap-instam
-    vf = .false.
 !
     if (resi) then
         do i = 1, nbvari
@@ -309,8 +305,7 @@ implicit none
                     permgz, dperms, dpermp, fick, dfickt,&
                     dfickg, fickad, dfadt, kh, unsurk,&
                     alpha, viscl, dviscl, mamolg, viscg,&
-                    dviscg, mamovg, vf, ifa,&
-                    valfac, valcen)
+                    dviscg, mamovg)
 !
         if (retcom .ne. 0) then
             goto 999
