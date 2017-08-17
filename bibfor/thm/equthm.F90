@@ -154,7 +154,7 @@ subroutine equthm(imate, option, ta, ta1, ndim,&
     integer, intent(in) :: vicsat
 
 
-    integer :: imate, ndim, nbvari, kpi, npg, dimdef, dimcon, retcom, ibid
+    integer :: imate, ndim, nbvari, kpi, npg, dimdef, dimcon, retcom
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: yamec, addeme, adcome, yate, addete, adcote, i, j
     integer :: yap1, nbpha1, addep1, adcp11, adcp12
@@ -164,7 +164,6 @@ subroutine equthm(imate, option, ta, ta1, ndim,&
     real(kind=8) :: r(1:dimdef+1), drds(1:dimdef+1, 1:dimcon), pesa(3)
     real(kind=8) :: dsde(1:dimcon, 1:dimdef), dt, crit(*), rinstp, rinstm
     real(kind=8) :: deux, rac2, ta, ta1
-    real(kind=8) :: rbid1(6, 14, 6), rbid2(14, 6)
     real(kind=8) :: angmas(3)
     parameter    (deux = 2.d0)
     aster_logical :: perman
@@ -192,7 +191,6 @@ subroutine equthm(imate, option, ta, ta1, ndim,&
     addete = tempe(2)
     adcote = tempe(3)
 !
-    ibid = 0
     call vecini(3, 0.d0, pesa)
 !
 ! ============================================================
@@ -240,8 +238,8 @@ subroutine equthm(imate, option, ta, ta1, ndim,&
 !
     retcom = 0
 !
-    call comthm(option, perman, .false._1, ibid, rbid1,&
-                rbid2, imate, typmod, compor, crit,&
+    call comthm(option, perman,&
+                imate, typmod, compor, crit,&
                 rinstm, rinstp, ndim, dimdef, dimcon,&
                 nbvari, yamec, yap1, yap2, yate,&
                 addeme, adcome, addep1, adcp11, adcp12,&

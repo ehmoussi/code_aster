@@ -20,17 +20,18 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcfh(option, perman, thmc, ndim, dimdef,&
-                      dimcon, yamec, yate, addep1, addep2,&
-                      adcp11, adcp12, adcp21, adcp22, addeme,&
-                      addete, congep, dsde, p1, p2,&
-                      grap1, grap2, t, grat, pvp,&
+    subroutine calcfh_vf(option, perman, thmc, ndim, dimdef,&
+                      dimcon, yate, addep1, addep2,&
+                      adcp11, adcp12,&
+                      addete, dsde, p1, p2,&
+                      grap1, t, grat, pvp,&
                       pad, rho11, h11, h12, r,&
-                      dsatp1, pesa, tperm, permli, dperml,&
+                      dsatp1, permli, dperml,&
                       krel2, dkr2s, dkr2p, fick, dfickt,&
                       dfickg, fickad, dfadt, kh, cliq,&
                       alpliq, viscl, dviscl, mamolg, viscg,&
-                      dviscg, mamolv)
+                      dviscg, mamolv, ifa,&
+                      valfac, valcen)
         integer, parameter :: maxfa=6
         integer :: dimcon
         integer :: dimdef
@@ -38,22 +39,16 @@ interface
         character(len=16) :: option
         aster_logical :: perman
         character(len=16) :: thmc
-        integer :: yamec
         integer :: yate
         integer :: addep1
         integer :: addep2
         integer :: adcp11
         integer :: adcp12
-        integer :: adcp21
-        integer :: adcp22
-        integer :: addeme
         integer :: addete
-        real(kind=8) :: congep(1:dimcon)
         real(kind=8) :: dsde(1:dimcon, 1:dimdef)
         real(kind=8) :: p1
         real(kind=8) :: p2
         real(kind=8) :: grap1(3)
-        real(kind=8) :: grap2(3)
         real(kind=8) :: t
         real(kind=8) :: grat(3)
         real(kind=8) :: pvp
@@ -63,8 +58,6 @@ interface
         real(kind=8) :: h12
         real(kind=8) :: r
         real(kind=8) :: dsatp1
-        real(kind=8) :: pesa(3)
-        real(kind=8) :: tperm(ndim, ndim)
         real(kind=8) :: permli
         real(kind=8) :: dperml
         real(kind=8) :: krel2
@@ -84,5 +77,8 @@ interface
         real(kind=8) :: viscg
         real(kind=8) :: dviscg
         real(kind=8) :: mamolv
-    end subroutine calcfh
+        integer :: ifa
+        real(kind=8) :: valfac(maxfa, 14, 6)
+        real(kind=8) :: valcen(14, 6)
+    end subroutine calcfh_vf
 end interface 

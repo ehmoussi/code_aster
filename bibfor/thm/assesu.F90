@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/cacdsu.h"
 #include "asterfort/cafmes.h"
 #include "asterfort/cafves.h"
-#include "asterfort/comthm.h"
+#include "asterfort/comthm_vf.h"
 #include "asterfort/inices.h"
 #include "asterfort/nvithm.h"
 #include "asterfort/rcvalb.h"
@@ -219,7 +219,6 @@ implicit none
 ! =====================================================================
 ! VARIABLES COMMUNES
 ! =====================================================================
-    aster_logical :: vf
     real(kind=8) :: mface(maxfa), dface(maxfa), xface(maxdim, maxfa), normfa(maxdim, maxfa), vol
     integer :: ifa, jfa, idim
     real(kind=8) :: pcp, pwp, pgp, dpgp1, dpgp2, dpwp1, dpwp2
@@ -298,7 +297,6 @@ implicit none
     ASSERT(bool)
 !
 !
-    vf = .true.
     perman = .false.
 !
 ! ====================================================================
@@ -478,7 +476,7 @@ implicit none
             dsde(i,j)=0.d0
         end do
     end do
-    call comthm(option, perman, vf, 0, valfac,&
+    call comthm_vf(option, perman, 0, valfac,&
                 valcen, imate, typmod, compor, crit,&
                 rinstm, rinstp, ndim, dimdef, dimcon,&
                 nbvari, yamec, yap1, yap2, yate,&
@@ -519,7 +517,7 @@ implicit none
                 dsde(i,j)=0.d0
             end do
         end do
-        call comthm(option, perman, vf, fa, valfac,&
+        call comthm_vf(option, perman, fa, valfac,&
                     valcen, imate, typmod, compor, crit,&
                     rinstm, rinstp, ndim, dimdef, dimcon,&
                     nbvari, yamec, yap1, yap2, yate,&
