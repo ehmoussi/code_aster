@@ -19,7 +19,7 @@
 subroutine thmGetParaBehaviour(compor,&
                                meca_ , thmc_, ther_, hydr_,&
                                nvim_ , nvic_, nvit_, nvih_,&
-                               nume_meca_)
+                               nume_meca_, nume_thmc_)
 !
 implicit none
 !
@@ -27,17 +27,17 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/Behaviour_type.h"
 !
-!
-    character(len=16), intent(in) :: compor(*)
-    character(len=16), optional, intent(out) :: meca_
-    character(len=16), optional, intent(out) :: thmc_
-    character(len=16), optional, intent(out) :: ther_
-    character(len=16), optional, intent(out) :: hydr_
-    integer, optional, intent(out) :: nvim_
-    integer, optional, intent(out) :: nvit_
-    integer, optional, intent(out) :: nvih_
-    integer, optional, intent(out) :: nvic_
-    integer, optional, intent(out) :: nume_meca_
+character(len=16), intent(in) :: compor(*)
+character(len=16), optional, intent(out) :: meca_
+character(len=16), optional, intent(out) :: thmc_
+character(len=16), optional, intent(out) :: ther_
+character(len=16), optional, intent(out) :: hydr_
+integer, optional, intent(out) :: nvim_
+integer, optional, intent(out) :: nvit_
+integer, optional, intent(out) :: nvih_
+integer, optional, intent(out) :: nvic_
+integer, optional, intent(out) :: nume_meca_
+integer, optional, intent(out) :: nume_thmc_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,6 +57,7 @@ implicit none
 ! Out nvit            : number of internal variables for thermic
 ! Out nvih            : number of internal variables for hydraulic
 ! Out nume_meca       : index for mechanic behaviour
+! Out nume_thmc       : index for coupling behaviour
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,5 +70,6 @@ implicit none
     if (present(nvih_)) read (compor(HYDR_NVAR),'(I16)') nvih_
     if (present(nvim_)) read (compor(MECA_NVAR),'(I16)') nvim_
     if (present(nume_meca_)) read (compor(MECA_NUME),'(I16)') nume_meca_
+    if (present(nume_thmc_)) read (compor(THMC_NUME),'(I16)') nume_thmc_
 !
 end subroutine

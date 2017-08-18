@@ -51,11 +51,14 @@
 #define THER_NAME    10
 #define HYDR_NAME    11
 #define MECA_NAME    12
-#define MECA_NUME    13
-#define THMC_NVAR    15
-#define THER_NVAR    16
-#define HYDR_NVAR    17
-#define MECA_NVAR    18
+#define THMC_NUME    13
+#define THER_NUME    14
+#define HYDR_NUME    15
+#define MECA_NUME    16
+#define THMC_NVAR    17
+#define THER_NVAR    18
+#define HYDR_NVAR    19
+#define MECA_NVAR    20
 !
 ! - Access in <COMPOR> - Behaviour field - KIT_DDI
 !

@@ -31,18 +31,18 @@ implicit none
 #include "asterfort/thm_kit_nvar.h"
 #include "asterfort/meta_kit_nvar.h"
 !
-    character(len=16), intent(in) :: kit_comp(4)
-    character(len=16), intent(in) :: defo_comp
-    character(len=16), intent(in) :: type_model2
-    integer, intent(in) :: nb_vari_rela
-    aster_logical, intent(in) :: l_kit_meta
-    aster_logical, intent(in) :: l_kit_thm
-    aster_logical, intent(in) :: l_kit_ddi
-    aster_logical, intent(in) :: l_kit_cg
-    integer, intent(inout) :: nb_vari
-    integer, intent(inout) :: nume_comp(4)
-    integer, intent(out) :: nb_vari_comp(4)
-    aster_logical, intent(out) :: l_meca_mfront
+character(len=16), intent(in) :: kit_comp(4)
+character(len=16), intent(in) :: defo_comp
+character(len=16), intent(in) :: type_model2
+integer, intent(in) :: nb_vari_rela
+aster_logical, intent(in) :: l_kit_meta
+aster_logical, intent(in) :: l_kit_thm
+aster_logical, intent(in) :: l_kit_ddi
+aster_logical, intent(in) :: l_kit_cg
+integer, intent(inout) :: nb_vari
+integer, intent(inout) :: nume_comp(4)
+integer, intent(out) :: nb_vari_comp(4)
+aster_logical, intent(out) :: l_meca_mfront
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,7 +73,8 @@ implicit none
     integer :: nb_vari_flua, nb_vari_plas, nb_vari_cpla, nb_vari_coup
     character(len=16) :: rela_comp_cg(2)
     integer :: nb_vari_cg(2)
-    integer :: nume_comp_plas, nume_comp_meca, nume_comp_flua
+    integer :: nume_comp_plas, nume_comp_flua
+    integer :: nume_comp_thmc, nume_comp_hydr, nume_comp_meca, nume_comp_ther
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,8 +89,9 @@ implicit none
         rela_ther = kit_comp(2)
         rela_hydr = kit_comp(3)
         rela_meca = kit_comp(4)
-        call thm_kit_nvar(rela_thmc   , rela_hydr   , rela_meca   , rela_ther, nb_vari_thmc,&
-                          nb_vari_hydr, nb_vari_meca, nb_vari_ther, nume_comp_meca)
+        call thm_kit_nvar(rela_thmc     , rela_hydr     , rela_meca     , rela_ther     ,&
+                          nb_vari_thmc  , nb_vari_hydr  , nb_vari_meca  , nb_vari_ther  ,&
+                          nume_comp_thmc, nume_comp_hydr, nume_comp_meca, nume_comp_ther)
         nb_vari_comp(1) = nb_vari_thmc
         nb_vari_comp(2) = nb_vari_ther
         nb_vari_comp(3) = nb_vari_hydr
@@ -99,7 +101,10 @@ implicit none
         else
             nb_vari_comp(4) = nb_vari_meca
         endif
-        nume_comp(2)    = nume_comp_meca
+        nume_comp(1) = nume_comp_thmc
+        nume_comp(2) = nume_comp_ther
+        nume_comp(3) = nume_comp_hydr
+        nume_comp(4) = nume_comp_meca
     endif
 !
 ! - Number of internal variables for KIT META

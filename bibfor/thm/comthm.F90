@@ -50,6 +50,7 @@ implicit none
 #include "asterfort/thmGetParaHydr.h"
 #include "asterfort/thmMatrHooke.h"
 #include "asterfort/tebiot.h"
+#include "asterfort/thmGetParaBehaviour.h"
 !
 character(len=16), intent(in) :: meca
 character(len=16), intent(in) :: thmc
@@ -146,6 +147,7 @@ integer, intent(in) :: vicsat
     real(kind=8) :: fickad, dfadt, kh, alpha
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: angl_naut(3)
+    integer :: nume_thmc
 ! ======================================================================
 ! --- INITIALISATION ---------------------------------------------------
 ! ======================================================================
@@ -191,7 +193,9 @@ integer, intent(in) :: vicsat
 !
 ! - Compute coupling law
 !
-    call calcco(option, yachai, perman, meca, thmc,&
+    call thmGetParaBehaviour(compor,&
+                             nume_thmc_ = nume_thmc)
+    call calcco(option, yachai, perman, meca, nume_thmc,&
                 hydr, imate, ndim, dimdef,&
                 dimcon, nbvari, yamec, yate, addeme,&
                 adcome, advihy, advico, addep1, adcp11,&

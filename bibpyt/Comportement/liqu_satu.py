@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'LIQU_SATU',
     doc            =   """Loi de comportement pour un milieux poreux saturé par un seul liquide (Cf. [R7.01.11] pour plus de détails)."""          ,
-    num_lc         = 0,
+    num_lc         = 1,
     nb_vari        = 1,
     nom_vari       = ('LIQSAT1',),
     mc_mater       = ('THM_LIQ',),

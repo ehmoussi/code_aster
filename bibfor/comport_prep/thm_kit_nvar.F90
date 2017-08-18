@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine thm_kit_nvar(rela_thmc   , rela_hydr   , rela_meca   , rela_ther     , nb_vari_thmc,&
-                        nb_vari_hydr, nb_vari_meca, nb_vari_ther, nume_comp_meca)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine thm_kit_nvar(rela_thmc     , rela_hydr     , rela_meca     , rela_ther     ,&
+                        nb_vari_thmc  , nb_vari_hydr  , nb_vari_meca  , nb_vari_ther  ,&
+                        nume_comp_thmc, nume_comp_hydr, nume_comp_meca, nume_comp_ther)
 !
 implicit none
 !
@@ -25,17 +27,18 @@ implicit none
 #include "asterc/lcinfo.h"
 #include "asterc/lcdiscard.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: rela_thmc
-    character(len=16), intent(in) :: rela_hydr
-    character(len=16), intent(in) :: rela_meca
-    character(len=16), intent(in) :: rela_ther
-    integer, intent(out) :: nb_vari_thmc
-    integer, intent(out) :: nb_vari_hydr
-    integer, intent(out) :: nb_vari_meca
-    integer, intent(out) :: nb_vari_ther
-    integer, intent(out) :: nume_comp_meca
+character(len=16), intent(in) :: rela_thmc
+character(len=16), intent(in) :: rela_hydr
+character(len=16), intent(in) :: rela_meca
+character(len=16), intent(in) :: rela_ther
+integer, intent(out) :: nb_vari_thmc
+integer, intent(out) :: nb_vari_hydr
+integer, intent(out) :: nb_vari_meca
+integer, intent(out) :: nb_vari_ther
+integer, intent(out) :: nume_comp_thmc
+integer, intent(out) :: nume_comp_hydr
+integer, intent(out) :: nume_comp_meca
+integer, intent(out) :: nume_comp_ther
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,7 +56,10 @@ implicit none
 ! Out nb_vari_hydr     : number of internal variables for hydraulic
 ! Out nb_vari_meca     : number of internal variables for mechanic
 ! Out nb_vari_ther     : number of internal variables for thermic
-! Out nume_comp_meca   : number LCxxxx subroutine for mechanics
+! Out nume_comp_thmc   : number LCxxxx subroutine for coupling
+! Out nume_comp_hydr   : number LCxxxx subroutine for hydraulic
+! Out nume_comp_meca   : number LCxxxx subroutine for mechanic
+! Out nume_comp_ther   : number LCxxxx subroutine for thermic
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,15 +72,18 @@ implicit none
     nb_vari_ther   = 0
     nb_vari_hydr   = 0
     nb_vari_meca   = 0
+    nume_comp_thmc = 0
+    nume_comp_ther = 0
+    nume_comp_hydr = 0
     nume_comp_meca = 0
     call lccree(1, rela_thmc, rela_thmc_py)
-    call lcinfo(rela_thmc_py, ibid, nb_vari_thmc, ibid)
+    call lcinfo(rela_thmc_py, nume_comp_thmc, nb_vari_thmc, ibid)
     call lcdiscard(rela_thmc_py)
     call lccree(1, rela_ther, rela_ther_py)
-    call lcinfo(rela_ther_py, ibid, nb_vari_ther, ibid)
+    call lcinfo(rela_ther_py, nume_comp_ther, nb_vari_ther, ibid)
     call lcdiscard(rela_ther_py)
     call lccree(1, rela_hydr, rela_hydr_py)
-    call lcinfo(rela_hydr_py, ibid, nb_vari_hydr, ibid)
+    call lcinfo(rela_hydr_py, nume_comp_hydr, nb_vari_hydr, ibid)
     call lcdiscard(rela_hydr_py)
     call lccree(1, rela_meca, rela_meca_py)
     call lcinfo(rela_meca_py, nume_comp_meca, nb_vari_meca, ibid)

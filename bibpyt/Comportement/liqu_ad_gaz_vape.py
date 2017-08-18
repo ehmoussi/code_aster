@@ -25,7 +25,7 @@ loi = LoiComportement(
     nom            = 'LIQU_AD_GAZ_VAPE',
     doc            =   """Loi de comportement pour un milieu poreux non saturé eau/vapeur/air sec/air dissous
    avec changement de phase (Cf. [R7.01.11] pour plus de détails)."""          ,
-    num_lc         = 0,
+    num_lc         = 9,
     nb_vari        = 3,
     nom_vari       = ('LIQADGV1','LIQADGV2','LIQADGV3',),
     mc_mater       = ('THM_LIQ','THM_VAPE','THM_GAZ','THM_AIR_DISS',),
