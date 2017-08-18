@@ -102,6 +102,8 @@ subroutine nmerim(sderro)
                 call utmess('I', 'MECANONLINE10_11')
             else if (meven.eq.'MECANONLINE10_12') then
                 call utmess('I', 'MECANONLINE10_12')
+            else if (meven.eq.'MECANONLINE10_13') then
+                call utmess('I', 'MECANONLINE10_13')
             else if (meven.eq.'MECANONLINE10_20') then
                 call utmess('I', 'MECANONLINE10_20')
             else if (meven.eq.'MECANONLINE10_24') then
