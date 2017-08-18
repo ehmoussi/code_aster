@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcco(option, yachai, perman, meca, thmc,&
+subroutine calcco(option, yachai, perman, meca, nume_thmc,&
                   hydr, imate, ndim, dimdef,&
                   dimcon, nbvari, yamec, yate, addeme,&
                   adcome, advihy, advico, addep1, adcp11,&
@@ -34,6 +34,7 @@ subroutine calcco(option, yachai, perman, meca, thmc,&
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/hmgazp.h"
 #include "asterfort/hmladg.h"
 #include "asterfort/hmlgat.h"
@@ -45,6 +46,7 @@ implicit none
 #include "asterfort/thmGetParaCoupling.h"
 !
 real(kind=8), intent(in) :: temp
+integer, intent(in) :: nume_thmc
 !
 !
 ! ROUTINE CALCCO : CETTE ROUTINE CALCULE LES CONTRAINTES GENERALISEES
@@ -70,7 +72,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, p2, dp2, dt
     real(kind=8) :: phi, pvp, pad, h11, h12, kh, rho11
     real(kind=8) :: sat, angmas(3)
-    character(len=16) :: option, meca, thmc, hydr
+    character(len=16) :: option, meca, hydr
     aster_logical :: perman, yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES POUR BARCELONE-------------------------------
@@ -87,10 +89,15 @@ real(kind=8), intent(in) :: temp
 ! - Get paremeters for coupling
 !
     call thmGetParaCoupling(imate, temp)
+!
+! - Compute
+!
+    select case (nume_thmc)
+
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_SATU ----------------------
 ! ======================================================================
-    if (thmc .eq. 'LIQU_SATU') then
+    case (1)
         call hmlisa(perman, yachai, option, meca,&
                     hydr, imate, ndim, dimdef,&
                     dimcon, nbvari, yamec, yate, addeme,&
@@ -103,7 +110,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE GAZ ----------------------------
 ! ======================================================================
-    else if (thmc.eq.'GAZ') then
+    case (2)
         call hmgazp(yachai, option, meca,&
                     hydr, imate, ndim, dimdef, dimcon,&
                     nbvari, yamec, yate, addeme, adcome,&
@@ -116,7 +123,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE ----------------------
 ! ======================================================================
-    else if (thmc.eq.'LIQU_VAPE') then
+    case (3)
         call hmliva(yachai, option, meca, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, advihy,&
@@ -130,7 +137,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE_GAZ ------------------
 ! ======================================================================
-    else if (thmc.eq.'LIQU_VAPE_GAZ') then
+    case (4)
         call hmlvag(yachai, option, meca, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
@@ -145,7 +152,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ -----------------------
 ! ======================================================================
-    else if (thmc.eq.'LIQU_GAZ') then
+    case (5)
         call hmliga(yachai, option, meca, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
@@ -159,7 +166,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM -------------------
 ! ======================================================================
-    else if (thmc.eq.'LIQU_GAZ_ATM') then
+    case (6)
         call hmlgat(yachai, option, meca, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
@@ -172,7 +179,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
-    else if (thmc.eq.'LIQU_AD_GAZ_VAPE') then
+    case (9)
         call hmlvga(yachai, option, meca, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
@@ -188,7 +195,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
-    else if (thmc.eq.'LIQU_AD_GAZ') then
+    case (10)
         call hmladg(yachai, option, meca, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
@@ -200,7 +207,7 @@ real(kind=8), intent(in) :: temp
                     dt, phi, pad, h11, h12,&
                     kh, rho11,sat, retcom,&
                     tbiot, angmas, deps)
-! ======================================================================
-    endif
-! ======================================================================
+    case default
+        ASSERT(ASTER_FALSE)
+    end select
 end subroutine

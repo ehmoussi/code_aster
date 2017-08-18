@@ -43,6 +43,7 @@ implicit none
 #include "asterfort/thmGetParaBiot.h"
 #include "asterfort/thmGetParaHydr.h"
 #include "asterfort/tebiot.h"
+#include "asterfort/thmGetParaBehaviour.h"
 !
     integer :: dimdef, dimcon, npg, kpi, npi, ndim
     integer :: nbvari, yamec, yate, yap1, yap2, imate
@@ -80,6 +81,7 @@ implicit none
     real(kind=8) :: angl_naut(3)
     character(len=16) :: meca, thmc, ther, hydr
     aster_logical :: yachai
+    integer :: nume_thmc
 !
 ! =====================================================================
 !.......................................................................
@@ -242,7 +244,9 @@ implicit none
 ! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
 ! ======================================================================
 !
-    call calcco(option, yachai, perman, meca, thmc,&
+    call thmGetParaBehaviour(compor,&
+                             nume_thmc_ = nume_thmc)
+    call calcco(option, yachai, perman, meca, nume_thmc,&
                 hydr, imate, ndim-1, dimdef,&
                 dimcon, nbvari, 2, yate, addeme,&
                 adcome, advihy, advico, addep1, adcp11,&

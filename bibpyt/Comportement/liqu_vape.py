@@ -25,7 +25,7 @@ loi = LoiComportement(
     nom            = 'LIQU_VAPE',
     doc            =   """Loi de comportement pour un milieux poreux saturé par un composant présent sous forme liquide ou vapeur
    avec changement de phase (Cf. [R7.01.11] pour plus de détails)."""          ,
-    num_lc         = 0,
+    num_lc         = 3,
     nb_vari        = 3,
     nom_vari       = ('LIQVAP1','LIQVAP2','LIQVAP3',),
     mc_mater       = ('THM_LIQ','THM_VAPE',),

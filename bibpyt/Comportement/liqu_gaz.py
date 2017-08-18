@@ -25,7 +25,7 @@ loi = LoiComportement(
     nom            = 'LIQU_GAZ',
     doc            =   """Loi de comportement pour un milieu poreux non saturé liquide/gaz sans changement de phase
    (Cf. [R7.01.11] pour plus de détails)."""          ,
-    num_lc         = 0,
+    num_lc         = 5,
     nb_vari        = 2,
     nom_vari       = ('LIQGAZ1','LIQGAZ2',),
     mc_mater       = ('THM_LIQ','THM_GAZ',),

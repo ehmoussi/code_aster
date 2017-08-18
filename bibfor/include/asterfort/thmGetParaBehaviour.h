@@ -15,27 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
-!
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
-!
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
 !
 interface
     subroutine thmGetParaBehaviour(compor,&
                                    meca_ , thmc_, ther_, hydr_,&
                                    nvim_ , nvic_, nvit_, nvih_,&
-                                   nume_meca_)
+                                   nume_meca_, nume_thmc_)
         character(len=16), intent(in) :: compor(*)
         character(len=16), optional, intent(out) :: meca_
         character(len=16), optional, intent(out) :: thmc_
@@ -46,5 +31,6 @@ interface
         integer, optional, intent(out) :: nvih_
         integer, optional, intent(out) :: nvic_
         integer, optional, intent(out) :: nume_meca_
+        integer, optional, intent(out) :: nume_thmc_
     end subroutine thmGetParaBehaviour
 end interface

@@ -20,7 +20,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcco(option, yachai, perman, meca, thmc,&
+    subroutine calcco(option, yachai, perman, meca, nume_thmc,&
                       hydr, imate, ndim, dimdef,&
                       dimcon, nbvari, yamec, yate, addeme,&
                       adcome, advihy, advico, addep1, adcp11,&
@@ -39,7 +39,7 @@ interface
         aster_logical :: yachai
         aster_logical :: perman
         character(len=16) :: meca
-        character(len=16) :: thmc
+        integer, intent(in) :: nume_thmc
         character(len=16) :: hydr
         integer :: imate
         integer :: ndim
