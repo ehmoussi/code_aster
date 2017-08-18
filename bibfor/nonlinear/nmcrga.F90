@@ -42,10 +42,10 @@ character(len=24) :: sderro
 !
 ! ----------------------------------------------------------------------
 !
-    integer, parameter :: zeven = 34
+    integer, parameter :: zeven = 35
 ! - Name of events
     character(len=16), parameter :: neven(zeven) = (/'ERRE_INTE','INTE_NPHY','DIVE_DEBO',&
-                                                     'INTE_BORN',&
+                                                     'INTE_BORN','ERRE_NPHY',&
                                                      'ERRE_PILO','CONV_PILO','ERRE_FACS',&
                                                      'ERRE_FACT','ERRE_CTD1','ERRE_CTD2',&
                                                      'ERRE_TIMN','ERRE_TIMP','ERRE_EXCP',&
@@ -59,7 +59,7 @@ character(len=24) :: sderro
                                                      'SOLV_ITMX','DIVE_HROM'/)
 ! - Return code (name)
     character(len=8), parameter :: ncret(zeven) = (/'LDC','LDC','LDC',&
-                                                    'LDC',&
+                                                    'LDC','XXX',&
                                                     'PIL','PIL','FAC',&
                                                     'FAC','CTC','CTC',&
                                                     'XXX','XXX','XXX',&
@@ -73,7 +73,7 @@ character(len=24) :: sderro
                                                     'RES','XXX'/)
 ! - Return code (value)
     integer, parameter :: vcret(zeven) = (/ 1 , 2, 3,&
-                                            4 ,&
+                                            4 ,99,&
                                             1 , 2, 1,&
                                             2 , 1, 2,&
                                             99,99,99,&
@@ -96,7 +96,7 @@ character(len=24) :: sderro
 ! CONV_ : EVENEMENT A TRAITER POUR DETERMINER LA CONVERGENCE
 !
     character(len=16), parameter :: teven(zeven) = (/'ERRI_NEWT','ERRC_NEWT','CONV_NEWT',&
-                                                     'EVEN     ',&
+                                                     'EVEN     ','ERRI_NEWT',&
                                                      'ERRI_NEWT','CONV_CALC','ERRI_NEWT',&
                                                      'ERRI_NEWT','ERRI_NEWT','ERRI_NEWT',&
                                                      'ERRI_CALC','ERRI_CALC','ERRI_CALC',&
@@ -112,7 +112,7 @@ character(len=24) :: sderro
 ! --- FONCTIONNALITE ACTIVE SI NECESSAIRE POUR CONVERGENCE
 !
     character(len=24), parameter :: feven(zeven) = (/'         ', '         ','         ',&
-                                                     '         ',&
+                                                     '         ', '         ',&
                                                      '         ', 'PILOTAGE ','         ',&
                                                      '         ', '         ','         ',&
                                                      '         ', '         ','         ',&
@@ -128,8 +128,8 @@ character(len=24) :: sderro
 ! --- CODE DU MESSAGE A AFFICHER
 !
     character(len=24), parameter :: meven(zeven) = (/&
-            'MECANONLINE10_1 ','MECANONLINE10_24','                ',&
-            'MECANONLINE10_25',&
+            'MECANONLINE10_1 ','MECANONLINE10_13','                ',&
+            'MECANONLINE10_25','MECANONLINE10_13',&
             'MECANONLINE10_2 ','                ','MECANONLINE10_6 ',&
             'MECANONLINE10_6 ','MECANONLINE10_4 ','MECANONLINE10_4 ',&
             'MECANONLINE10_7 ','MECANONLINE10_5 ','MECANONLINE10_8 ',&

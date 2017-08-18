@@ -102,7 +102,7 @@ character(len=4), intent(in) :: loop_name
         icode = v_sderro_eact(ieven)
         teven = v_sderro_eniv(ieven)(1:9)
         meven = v_sderro_emsg(ieven)
-        if ((teven(1:4).eq.'EVEN') .and. (icode.eq.1)) then
+        if (teven(1:4).eq.'EVEN' .and. (icode.eq.1)) then
             if (meven .ne. ' ') then
                 if (l_sep_line) then
                     call nmimpx(ds_print)
