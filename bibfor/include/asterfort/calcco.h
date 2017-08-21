@@ -20,7 +20,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine calcco(option, yachai, perman, meca, nume_thmc,&
+    subroutine calcco(option, yachai, perman, nume_thmc,&
                       hydr, imate, ndim, dimdef,&
                       dimcon, nbvari, yamec, yate, addeme,&
                       adcome, advihy, advico, addep1, adcp11,&

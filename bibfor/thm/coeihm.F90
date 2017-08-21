@@ -246,7 +246,7 @@ implicit none
 !
     call thmGetParaBehaviour(compor,&
                              nume_thmc_ = nume_thmc)
-    call calcco(option, yachai, perman, meca, nume_thmc,&
+    call calcco(option, yachai, perman, nume_thmc,&
                 hydr, imate, ndim-1, dimdef,&
                 dimcon, nbvari, 2, yate, addeme,&
                 adcome, advihy, advico, addep1, adcp11,&

@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine hmliva(yachai, option, meca, hydr,&
+subroutine hmliva(yachai, option, hydr,&
                   imate, ndim, dimdef, dimcon, nbvari,&
                   yamec, yate, advihy,&
                   advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -55,7 +55,6 @@ implicit none
 #include "asterfort/entgaz.h"
 #include "asterfort/inithm.h"
 #include "asterfort/masvol.h"
-#include "asterfort/netbis.h"
 #include "asterfort/sigmap.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viemma.h"
@@ -91,7 +90,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: phi, pvp, h11, h12, rho11
     real(kind=8) :: phi0, pvp0
     real(kind=8) :: ums, phids, angmas(3)
-    character(len=16) :: option, meca, hydr
+    character(len=16) :: option, hydr
     aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -108,10 +107,6 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: m11m, m12m, coeps, pinf, dp2, cp21, cp22, rho21
     real(kind=8) :: rho22, dpad, signe, p1m
     real(kind=8), parameter :: eps = 1.d-21
-!
-    aster_logical :: net, bishop
-!
-    call netbis(meca, net, bishop)
 !
 ! - Get initial parameters
 !

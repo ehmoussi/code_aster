@@ -27,7 +27,7 @@ subroutine comthm(option, perman, &
                   defgem, defgep, congem, congep, vintm,&
                   vintp, dsde, pesa, retcom, kpi,&
                   npg, angl_naut,&
-                  meca, thmc, ther, hydr,&
+                  thmc, ther, hydr,&
                   advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 
 !
@@ -52,7 +52,6 @@ implicit none
 #include "asterfort/tebiot.h"
 #include "asterfort/thmGetParaBehaviour.h"
 !
-character(len=16), intent(in) :: meca
 character(len=16), intent(in) :: thmc
 character(len=16), intent(in) :: ther
 character(len=16), intent(in) :: hydr
@@ -195,7 +194,7 @@ integer, intent(in) :: vicsat
 !
     call thmGetParaBehaviour(compor,&
                              nume_thmc_ = nume_thmc)
-    call calcco(option, yachai, perman, meca, nume_thmc,&
+    call calcco(option, yachai, perman, nume_thmc,&
                 hydr, imate, ndim, dimdef,&
                 dimcon, nbvari, yamec, yate, addeme,&
                 adcome, advihy, advico, addep1, adcp11,&

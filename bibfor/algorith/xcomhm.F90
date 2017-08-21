@@ -121,7 +121,7 @@ implicit none
     real(kind=8) :: fickad, dfadt, alpha
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: angl_naut(3)
-    character(len=16) :: meca, thmc, ther, hydr
+    character(len=16) :: thmc, ther, hydr, meca
 ! ======================================================================
 ! --- INITIALISATION ---------------------------------------------------
 ! ======================================================================
@@ -175,7 +175,7 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES RESIDUS ET DES MATRICES TANGENTES ---------------------
 ! ======================================================================
-    call xhmsat(yachai, option, meca, ther,&
+    call xhmsat(yachai, option, ther,&
                 imate, ndim, dimenr,&
                 dimcon, nbvari, yamec, addeme,&
                 adcome, advihy, advico, vihrho, vicphi,&

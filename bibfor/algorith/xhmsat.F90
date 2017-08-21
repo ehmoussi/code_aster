@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
-subroutine xhmsat(yachai, option, meca, ther,&
+subroutine xhmsat(yachai, option, ther,&
                   imate, ndim, dimenr,&
                   dimcon, nbvari, yamec, addeme,&
                   adcome, advihy, advico, vihrho, vicphi,&
@@ -39,7 +39,6 @@ implicit none
 #include "asterfort/dmwdp1.h"
 #include "asterfort/dspdp1.h"
 #include "asterfort/inithm.h"
-#include "asterfort/netbis.h"
 #include "asterfort/sigmap.h"
 #include "asterfort/dilata.h"
 #include "asterfort/utmess.h"
@@ -69,7 +68,7 @@ implicit none
     real(kind=8) :: epsv, depsv, dp1, t, dt
     real(kind=8) :: phi, rho11, rac2
     real(kind=8) :: angl_naut(3)
-    character(len=16) :: option, meca, ther
+    character(len=16) :: option, ther
     aster_logical :: yachai
 !
 ! DECLARATION POUR XFEM
@@ -91,7 +90,7 @@ implicit none
     real(kind=8) :: dp2, signe, phi0
     real(kind=8) :: dmdeps(6), dsdp1(6), sigmp(6)
 !
-    aster_logical :: net, bishop, emmag
+    aster_logical :: emmag
 !
 ! =====================================================================
 ! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
@@ -102,8 +101,6 @@ implicit none
     if (ther .ne. 'VIDE') then
         yate = 1
     endif
-!
-    call netbis(meca, net, bishop)
 !
 ! - Get material parameters
 !
@@ -197,8 +194,7 @@ implicit none
 ! --- CALCUL DES CONTRAINTES DE PRESSIONS ------------------------------
 ! ======================================================================
         if (yamec .eq. 1) then
-            call sigmap(net, bishop, satur, signe, tbiot,&
-                        dp2, dp1, sigmp)
+            call sigmap(satur, signe, tbiot, dp2, dp1, sigmp)
             do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
             end do
@@ -223,8 +219,7 @@ implicit none
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DE SIGMAP ------------------------------------
 ! ======================================================================
-            call dspdp1(net, bishop, signe, tbiot, satur,&
-                        dsdp1)
+            call dspdp1(signe, tbiot, satur, dsdp1)
             do i = 1, 3
                 dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1) + dsdp1(i)
             end do

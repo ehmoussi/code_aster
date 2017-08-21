@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine hmlisa(perman, yachai, option, meca, &
+subroutine hmlisa(perman, yachai, option,&
                   hydr, imate, ndim, dimdef,&
                   dimcon, nbvari, yamec, yate, addeme,&
                   adcome, advihy, advico, vihrho, vicphi,&
@@ -50,7 +50,6 @@ implicit none
 #include "asterfort/dspdp1.h"
 #include "asterfort/enteau.h"
 #include "asterfort/inithm.h"
-#include "asterfort/netbis.h"
 #include "asterfort/sigmap.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/utmess.h"
@@ -83,7 +82,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, dt
     real(kind=8) :: phi, rho11, phi0
     real(kind=8) :: angmas(3)
-    character(len=16) :: option, meca, hydr
+    character(len=16) :: option, hydr
     aster_logical :: perman, yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -105,13 +104,6 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: dp2, signe, p1m
     real(kind=8) :: dmdeps(6), dsdp1(6), sigmp(6)
     real(kind=8) :: dqeps(6)
-!
-    aster_logical :: net, bishop
-!
-! =====================================================================
-! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
-! =====================================================================
-    call netbis(meca, net, bishop)
 !
 ! - Get material parameters
 !
@@ -269,8 +261,7 @@ real(kind=8), intent(in) :: temp
 ! --- CALCUL DES CONTRAINTES DE PRESSIONS ------------------------------
 ! ======================================================================
         if (yamec .eq. 1) then
-            call sigmap(net, bishop, satur, signe, tbiot,&
-                        dp2, dp1, sigmp)
+            call sigmap(satur, signe, tbiot, dp2, dp1, sigmp)
             do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
             end do
@@ -300,8 +291,7 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DE SIGMAP ------------------------------------
 ! ======================================================================
-            call dspdp1(net, bishop, signe, tbiot, satur,&
-                        dsdp1)
+            call dspdp1(signe, tbiot, satur, dsdp1)
             do i = 1, 3
                 dsde(adcome+6+i-1,addep1) = dsde(adcome+6+i-1,addep1) + dsdp1(i)
             end do
