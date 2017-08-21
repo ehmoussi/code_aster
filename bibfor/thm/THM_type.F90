@@ -52,14 +52,24 @@ implicit none
 
 ! - Behaviour
     type THM_Behaviour
+! ----- Part of behaviour for coupling
         character(len=16) :: rela_thmc
+! ----- Part of behaviour for mechanic
         character(len=16) :: rela_meca
+! ----- Part of behaviour for thermic
         character(len=16) :: rela_ther
+! ----- Part of behaviour for hydraulic
         character(len=16) :: rela_hydr
+! ----- Flag for thermic
         aster_logical :: l_temp
+! ----- Total number of pressures (0, 1 or 2)
         integer :: nb_pres
+! ----- Number of phases by pressure
         integer :: nb_phase(2)
+! ----- Type of saturation
         integer :: satur_type
+! ----- Flag for Bishop stresses
+        aster_logical :: l_stress_bishop
     end type THM_Behaviour
 
 ! - Initial condition (THM_INIT)

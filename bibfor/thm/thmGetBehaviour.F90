@@ -102,7 +102,7 @@ character(len=16), intent(in) :: compor(*)
     endif
 !
     if (rela_thmc(1:4) .eq. 'LIQU') then
-        ds_thm%ds_material%l_liquid = .true.
+        ds_thm%ds_material%l_liquid = ASTER_TRUE
     endif
     if (rela_thmc .eq. 'LIQU_GAZ' .or. &
         rela_thmc .eq. 'GAZ' .or. &
@@ -110,29 +110,35 @@ character(len=16), intent(in) :: compor(*)
         rela_thmc .eq. 'LIQU_GAZ_ATM' .or. & 
         rela_thmc .eq. 'LIQU_AD_GAZ_VAPE' .or. &
         rela_thmc .eq. 'LIQU_AD_GAZ') then
-        ds_thm%ds_material%l_gaz = .true.
+        ds_thm%ds_material%l_gaz = ASTER_TRUE
     endif
     if (rela_thmc .eq. 'LIQU_VAPE' .or. &
         rela_thmc .eq. 'LIQU_VAPE_GAZ' .or. &
         rela_thmc .eq. 'LIQU_AD_GAZ_VAPE') then
-        ds_thm%ds_material%l_steam = .true.
+        ds_thm%ds_material%l_steam = ASTER_TRUE
     endif
     if (rela_thmc .eq. 'LIQU_AD_GAZ_VAPE' .or. &
         rela_thmc .eq. 'LIQU_AD_GAZ') then
-        ds_thm%ds_material%l_ad = .true.
+        ds_thm%ds_material%l_ad = ASTER_TRUE
     endif
-    ds_thm%ds_material%l_r_gaz = .true.
+    ds_thm%ds_material%l_r_gaz = ASTER_TRUE
     if (rela_thmc .eq. 'LIQU_SATU' .or. &
         rela_thmc .eq. 'LIQU_GAZ_ATM') then
-        ds_thm%ds_material%l_r_gaz = .false.
+        ds_thm%ds_material%l_r_gaz = ASTER_FALSE
     endif
 !
 ! - For temperature
 !
-    ds_thm%ds_behaviour%l_temp = .true._1
+    ds_thm%ds_behaviour%l_temp = ASTER_TRUE
     if (rela_ther .eq. ' ' .or. &
         rela_ther .eq. 'VIDE') then
-        ds_thm%ds_behaviour%l_temp = .false._1
+        ds_thm%ds_behaviour%l_temp = ASTER_FALSE
+    endif
+!
+! - For stress measures
+!
+    if (rela_meca .eq. 'GONF_ELAS') then
+        ds_thm%ds_behaviour%l_stress_bishop = ASTER_FALSE
     endif
 !
 end subroutine
