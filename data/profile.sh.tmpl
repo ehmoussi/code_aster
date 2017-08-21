@@ -13,8 +13,11 @@ PYTHONPATH=\
 $PYTHONPATH
 export PYTHONPATH
 
-PYTHONHOME=@PYTHONHOME@
-export PYTHONHOME
+# do not change PYTHONHOME under the SALOME environment
+if [ -z "${ABSOLUTE_APPLI_PATH}" ]; then
+    PYTHONHOME=@PYTHONHOME@
+    export PYTHONHOME
+fi
 
 # as PYTHONHOME is changed, path to 'python' must preceed all others if a
 # subprocess calls it
