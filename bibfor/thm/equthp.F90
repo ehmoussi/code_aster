@@ -23,7 +23,7 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
                   vintp, mecani, press1, press2, tempe,&
                   crit, rinstm, rinstp, r, drds,&
                   dsde, retcom, angmas,&
-                  meca, thmc, ther, hydr, &
+                  thmc, ther, hydr, &
                   advihy, advico, vihrho, vicphi, vicpvp, vicsat)
 
     implicit none
@@ -144,7 +144,6 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
 #include "asterfort/comthm.h"
 
 
-    character(len=16), intent(in) :: meca
     character(len=16), intent(in) :: thmc
     character(len=16), intent(in) :: ther
     character(len=16), intent(in) :: hydr
@@ -155,7 +154,7 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
     integer, intent(in) :: vicpvp
     integer, intent(in) :: vicsat
 
-    integer :: imate, ndim, nbvari, kpi, npg, dimdef, dimcon, retcom, ibid
+    integer :: imate, ndim, nbvari, kpi, npg, dimdef, dimcon, retcom
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: yamec, addeme, adcome, yate, addete, adcote, i, j
     integer :: yap1, nbpha1, addep1, adcp11, adcp12
@@ -243,7 +242,7 @@ subroutine equthp(imate, option, ndim, compor, typmod,&
                 defgem, defgep, congem, congep, vintm,&
                 vintp, dsde, pesa, retcom, kpi,&
                 npg, angmas,&
-                meca, thmc, ther, hydr,&
+                thmc, ther, hydr,&
                 advihy, advico, vihrho, vicphi, vicpvp, vicsat)
     if (retcom .ne. 0) then
         goto 999

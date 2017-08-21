@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine hmlvag(yachai, option, meca, hydr,&
+subroutine hmlvag(yachai, option, hydr,&
                   imate, ndim, dimdef, dimcon, nbvari,&
                   yamec, yate, addeme, adcome, advihy,&
                   advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -65,7 +65,6 @@ implicit none
 #include "asterfort/inithm.h"
 #include "asterfort/majpas.h"
 #include "asterfort/masvol.h"
-#include "asterfort/netbis.h"
 #include "asterfort/sigmap.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/viemma.h"
@@ -98,7 +97,7 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: vintp(nbvari), dsde(dimcon, dimdef), epsv, depsv
     real(kind=8) :: p1, dp1, p2, dp2, dt, phi, pvp, h11, h12, rho11, phi0
     real(kind=8) :: angmas(3)
-    character(len=16) :: option, meca, hydr
+    character(len=16) :: option, hydr
     aster_logical :: yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
@@ -118,13 +117,6 @@ real(kind=8), intent(in) :: temp
     real(kind=8) :: signe, dpad, coeps, cp22, pas, rho22, m11m, m12m, m21m
     real(kind=8) :: dmdeps(6), sigmp(6), deps(6)
     real(kind=8) :: dqeps(6), dsdp1(6), dsdp2(6), p1m
-!
-    aster_logical :: net, bishop
-!
-! =====================================================================
-! --- BUT : RECUPERER LES DONNEES MATERIAUX THM -----------------------
-! =====================================================================
-    call netbis(meca, net, bishop)
 !
 ! - Get initial parameters
 !
@@ -313,8 +305,7 @@ real(kind=8), intent(in) :: temp
 ! --- CALCUL DES CONTRAINTES DE PRESSIONS ------------------------------
 ! ======================================================================
         if (yamec .eq. 1) then
-            call sigmap(net, bishop, satur, signe, tbiot,&
-                        dp2, dp1, sigmp)
+            call sigmap(satur, signe, tbiot, dp2, dp1, sigmp)
             do i = 1, 3
                 congep(adcome+6+i-1)=congep(adcome+6+i-1)+sigmp(i)
             end do
@@ -344,9 +335,8 @@ real(kind=8), intent(in) :: temp
 ! ======================================================================
 ! --- CALCUL DES DERIVEES DE SIGMAP ------------------------------------
 ! ======================================================================
-            call dspdp1(net, bishop, signe, tbiot, satur,&
-                        dsdp1)
-            call dspdp2(net, bishop, tbiot, dsdp2)
+            call dspdp1(signe, tbiot, satur, dsdp1)
+            call dspdp2(tbiot, dsdp2)
             do i = 1, 3
                 dsde(adcome+6+i-1,addep1)=dsde(adcome+6+i-1,addep1) + dsdp1(i)
                 dsde(adcome+6+i-1,addep2)=dsde(adcome+6+i-1,addep2) + dsdp2(i)

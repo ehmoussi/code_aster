@@ -15,29 +15,42 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dspdp1(net, bishop, signe, tbiot, sat,&
-                  dsdp1)
-    implicit none
+!
+subroutine dspdp2(tbiot, dsdp2)
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "asterfort/utmess.h"
+!
+real(kind=8), intent(in) :: tbiot(6)
+real(kind=8), intent(out) :: dsdp2(6)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! THM
+!
+! Derivative of pressure part of stress by gaz pressure
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  tbiot            : tensor of Biot
+! Out dsdp2            : derivative of pressure part of stress by gaz pressure
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: i
-    real(kind=8) :: signe, tbiot(6), sat, dsdp1(6)
-    aster_logical :: net, bishop
-! ======================================================================
 !
-! --- CALCUL DE LA DERIVEE DE LA CONTRAINTE DE PRESSION PAR RAPPORT ----
-! --- A LA PRESSION CAPILLAIRE -----------------------------------------
-! ======================================================================
-    do 10 i = 1, 6
-        if (bishop) then
-            dsdp1(i) = signe*tbiot(i)*sat
-        else if (net) then
-            dsdp1(i) = 0.d0
+! --------------------------------------------------------------------------------------------------
+!
+    do i = 1, 6
+        if (ds_thm%ds_behaviour%l_stress_bishop) then
+            dsdp2(i) = - tbiot(i)
         else
-            call utmess('F', 'ALGORITH17_4')
+            dsdp2(i) = - tbiot(i)
         endif
- 10 end do
-! ======================================================================
+    end do
+!
 end subroutine

@@ -29,7 +29,7 @@ interface
                       defgem, defgep, congem, congep, vintm,&
                       vintp, dsde, pesa, retcom, kpi,&
                       npg, angl_naut,&
-                      meca, thmc, ther, hydr,&
+                      thmc, ther, hydr,&
                       advihy, advico, vihrho, vicphi, vicpvp, vicsat)
         integer, parameter :: maxfa=6
         integer :: nbvari
@@ -73,7 +73,6 @@ interface
         integer :: kpi
         integer :: npg
         real(kind=8) :: angl_naut(3)
-        character(len=16), intent(in) :: meca
         character(len=16), intent(in) :: thmc
         character(len=16), intent(in) :: ther
         character(len=16), intent(in) :: hydr

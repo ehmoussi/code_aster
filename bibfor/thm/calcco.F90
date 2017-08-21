@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine calcco(option, yachai, perman, meca, nume_thmc,&
+subroutine calcco(option, yachai, perman, nume_thmc,&
                   hydr, imate, ndim, dimdef,&
                   dimcon, nbvari, yamec, yate, addeme,&
                   adcome, advihy, advico, addep1, adcp11,&
@@ -72,7 +72,7 @@ integer, intent(in) :: nume_thmc
     real(kind=8) :: dsde(dimcon, dimdef), epsv, depsv, p1, dp1, p2, dp2, dt
     real(kind=8) :: phi, pvp, pad, h11, h12, kh, rho11
     real(kind=8) :: sat, angmas(3)
-    character(len=16) :: option, meca, hydr
+    character(len=16) :: option, hydr
     aster_logical :: perman, yachai
 ! ======================================================================
 ! --- VARIABLES LOCALES POUR BARCELONE-------------------------------
@@ -98,7 +98,7 @@ integer, intent(in) :: nume_thmc
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_SATU ----------------------
 ! ======================================================================
     case (1)
-        call hmlisa(perman, yachai, option, meca,&
+        call hmlisa(perman, yachai, option,&
                     hydr, imate, ndim, dimdef,&
                     dimcon, nbvari, yamec, yate, addeme,&
                     adcome, advihy, advico, vihrho, vicphi,&
@@ -111,7 +111,7 @@ integer, intent(in) :: nume_thmc
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE GAZ ----------------------------
 ! ======================================================================
     case (2)
-        call hmgazp(yachai, option, meca,&
+        call hmgazp(yachai, option,&
                     hydr, imate, ndim, dimdef, dimcon,&
                     nbvari, yamec, yate, addeme, adcome,&
                     advico, vicphi, addep1, bdcp11, addete,&
@@ -124,7 +124,7 @@ integer, intent(in) :: nume_thmc
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE ----------------------
 ! ======================================================================
     case (3)
-        call hmliva(yachai, option, meca, hydr,&
+        call hmliva(yachai, option, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, advihy,&
                     advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -138,7 +138,7 @@ integer, intent(in) :: nume_thmc
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_VAPE_GAZ ------------------
 ! ======================================================================
     case (4)
-        call hmlvag(yachai, option, meca, hydr,&
+        call hmlvag(yachai, option, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
                     advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -153,7 +153,7 @@ integer, intent(in) :: nume_thmc
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ -----------------------
 ! ======================================================================
     case (5)
-        call hmliga(yachai, option, meca, hydr,&
+        call hmliga(yachai, option, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
                     advico, vihrho, vicphi, vicsat, addep1,&
@@ -167,7 +167,7 @@ integer, intent(in) :: nume_thmc
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_GAZ_ATM -------------------
 ! ======================================================================
     case (6)
-        call hmlgat(yachai, option, meca, hydr,&
+        call hmlgat(yachai, option, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
                     advico, vihrho, vicphi, vicsat, addep1,&
@@ -180,7 +180,7 @@ integer, intent(in) :: nume_thmc
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
     case (9)
-        call hmlvga(yachai, option, meca, hydr,&
+        call hmlvga(yachai, option, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
                     advico, vihrho, vicphi, vicpvp, vicsat,&
@@ -196,7 +196,7 @@ integer, intent(in) :: nume_thmc
 ! --- CAS D'UNE LOI DE COUPLAGE DE TYPE LIQU_AD_GAZ_VAPE ---------------
 ! ======================================================================
     case (10)
-        call hmladg(yachai, option, meca, hydr,&
+        call hmladg(yachai, option, hydr,&
                     imate, ndim, dimdef, dimcon, nbvari,&
                     yamec, yate, addeme, adcome, advihy,&
                     advico, vihrho, vicphi, vicpvp, vicsat,&
