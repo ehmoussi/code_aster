@@ -47,4 +47,9 @@ L'élément %(k1)s n'est pas du bon type.
 Si vous êtes en deux dimensions, les éléments doivent être des segments.
 Si vous êtes en trois dimensions, les éléments doivent être des triangles ou des quadrangles.
 """),
+
+    6 : _(u"""
+ Erreur lors de l'opération LIAISON_MAIL.
+ Le TYPE_RACCORD='MASSIF_COQUE' n'est pas utilisable avec des COQUE_3D.
+"""),
 }
