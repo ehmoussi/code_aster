@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
     subroutine xvecha(ndim, pla, nnops, saut,&
                       sautm, nd, ffc, w11, w11m, jac,&
                       q1, q1m, q2, q2m, dt, ta, ta1,&
-                      dffc, rho11, mu, gradpf, rho11m,&
+                      dffc, rho11, gradpf, rho11m,&
                       gradpfm, vect)
                            
         integer :: ndim
@@ -44,7 +43,6 @@ interface
         real(kind=8) :: ta1
         real(kind=8) :: dffc(16,3)
         real(kind=8) :: rho11
-        real(kind=8) :: mu
         real(kind=8) :: gradpf(3)
         real(kind=8) :: rho11m
         real(kind=8) :: gradpfm(3)

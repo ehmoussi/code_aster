@@ -88,10 +88,10 @@ real(kind=8), intent(out) :: gravity(3)
     call thmEvalSatuFinal(hydr , j_mater , p1    ,&
                           satur, dsatur, retcom)
     if (thmc .eq. 'LIQU_SATU') then
-        unsurk = ds_thm%ds_material%liquid%unsurk
-        alpha  = ds_thm%ds_material%liquid%alpha
-        viscl  = ds_thm%ds_material%liquid%visc
-        dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
+!        unsurk = ds_thm%ds_material%liquid%unsurk
+!        alpha  = ds_thm%ds_material%liquid%alpha
+!        viscl  = ds_thm%ds_material%liquid%visc
+!        dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
     else if (thmc.eq.'GAZ') then
         rgaz   = ds_thm%ds_material%solid%r_gaz
         viscg  = ds_thm%ds_material%gaz%visc

@@ -275,6 +275,10 @@ implicit none
                 tlambt, tdlamt, viscg, dviscg, mamovg,&
                 fickad, dfadt, tlamct, instap,&
                 angl_naut, ndim-1)
+    unsurk = ds_thm%ds_material%liquid%unsurk
+    alpha  = ds_thm%ds_material%liquid%alpha
+    viscl  = ds_thm%ds_material%liquid%visc
+    dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES -------------------------------------
 ! ======================================================================

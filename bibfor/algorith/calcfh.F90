@@ -33,8 +33,10 @@ subroutine calcfh(option, perman, thmc, ndim, dimdef,&
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/hmderp.h"
 #include "asterfort/utmess.h"
+#include "asterfort/calcfh_lisa.h"
 !
 ! ======================================================================
 ! ROUTINE CALC_FLUX_HYDRO
@@ -129,6 +131,18 @@ implicit none
 ! DERIVEES SECONDES DE PVP (1) OU PAD (2)
     real(kind=8) :: dp1pp1(2), dp2pp1(2), dtpp1(2), dp1pp2(2), dp2pp2(2)
     real(kind=8) :: dtpp2(2), dp1pt(2), dp2pt(2), dtpt(2)
+!
+! - Prepare select
+!
+    if (thmc .eq. 'LIQU_SATU') then
+        call calcfh_lisa(option, perman, ndim,&
+                         dimdef, dimcon,&
+                         yamec , yate  ,&
+                         addep1, adcp11, addeme, addete,&
+                         grap1 , rho11 , pesa  , tperm ,&
+                         congep, dsde  )
+        goto 999
+    endif
 
     dgpvp1(:)=0.d0
     dgpvp2(:)=0.d0
@@ -206,10 +220,7 @@ implicit none
 ! RECUPERATION DES COEFFICIENTS
 ! ======================================================================
     if (thmc .eq. 'LIQU_SATU') then
-        krel1 = 1.d0
-        dkrel1 = 0.d0
-        visco = viscl
-        dvisco = dviscl
+        ASSERT(ASTER_FALSE)
     endif
 !
     if (thmc .eq. 'GAZ') then
@@ -459,10 +470,7 @@ implicit none
 !
     if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
         if (thmc .eq. 'LIQU_SATU') then
-            dr11p1=rho11*cliq
-            if (yate .eq. 1) then
-                dr11t=-3.d0*alpliq*rho11
-            endif
+            ASSERT(ASTER_FALSE)
         endif
         if (thmc .eq. 'LIQU_GAZ_ATM') then
             dr11p1=-rho11*cliq
@@ -1390,4 +1398,6 @@ implicit none
             end do
         endif
     endif
+!
+999 continue
 end subroutine

@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
+! aslint: disable=W1504,W1306
 ! person_in_charge: daniele.colombo at ifpen.fr
 !
 subroutine xasshv_frac(nddls, nddlm, nnop, nnops,&
@@ -75,22 +75,15 @@ implicit none
     real(kind=8) :: ffp(27), ffpc(27), ffc(16), dfdic(nnops,3)
     real(kind=8) :: dfbid(27,3), am(3), ad(3)
     real(kind=8) :: nd(3), tau1(3), tau2(3), raug, sigma(6), rho110
-    real(kind=8) :: vect(560), dffc(16,3), viscl, unsurk
+    real(kind=8) :: vect(560), dffc(16,3)
     real(kind=8) :: saut(3), gradpf(3), q1, q2, dpf
     real(kind=8) :: q1m, q2m, gradpfm(3), sautm(3)
     real(kind=8) :: w11m, rho11m, alpha(5), w11
     real(kind=8) :: pf, psup, pinf, ffp2(27), t, vihydr(64), temp
     real(kind=8) :: rho11, wsaut(3), mu(3), wsautm(3)
     real(kind=8) :: dsidep(6,6), delta(6), rela, p(3,3)
-    real(kind=8) :: rbid1, rbid2, rbid3, rbid4, rbid5, rbid6, rbid7
-    real(kind=8) :: rbid9, rbid10, rbid11(3), rbid12(3,3)
-    real(kind=8) :: rbid13, rbid14, rbid15, rbid16, rbid17, rbid18
-    real(kind=8) :: rbid19, rbid20, rbid21, rbid22, rbid23, rbid24
-    real(kind=8) :: rbid25, rbid26, rbid27, rbid28(3,3), rbid29(3,3)
-    real(kind=8) :: rbid30, rbid31, rbid32, rbid33, rbid34, rbid35(3,3)
-    real(kind=8) :: rbid37, rbid38(3), rbid8(6)
     character(len=8) :: elrefp, elrefc, elc, fpg, job, champ
-    character(len=16):: compor(*), thmc, hydr, zkbid
+    character(len=16):: compor(*), thmc, hydr
 
 !   DETERMINATION DES CONSTANTES TEMPORELLES (INSTANT+THETA SCHEMA)
     dt = rinstp-rinstm
@@ -122,7 +115,6 @@ implicit none
     call vecini(16, 0.d0, ffc)
     call vecini(27, 0.d0, ffp2)
     call vecini(64, 0.d0, vihydr)
-    call vecini(3, 0.d0, rbid38)
 !    
 !   BOUCLE SUR LES FACETTES DE CONTACT 
     do ifa = 1 ,nface
@@ -166,7 +158,7 @@ implicit none
           call xmodfc(lact, nlact, nnops, dfdic, dffc, ndim)          
 !
           if (algocr.eq.3) then
-             if ((rela.eq.3.d0).or.(rela.eq.4.d0)) then 
+             if ((nint(rela) .eq. 3).or.(nint(rela) .eq. 4)) then 
 !
                   nvec=2
                   job='VECTEUR'
@@ -204,11 +196,11 @@ implicit none
                              saut, sautm, nd, ffc, w11, w11m, jac,&
                              q1, dt, ta, q1m, ta1, q2, q2m, dffc,&
                              rho11, gradpf, rho11m, gradpfm, ffp2,&
-                             zi(jmate), thmc, hydr, t, vect,&
+                             vect,&
                              ffp, nnop, delta, lamb, am, r, p,&
                              psup, pinf, pf, ncompn, jheavn, ifiss,&
                              nfiss, nfh, ifa, jheafa, ncomph)
-             else if (rela.eq.5.d0) then
+             else if (nint(rela) .eq. 5) then
                 nvec=2
                 job='VECTEUR'
                 call xfract(nvec, nnop, nnops, nddls, nddlm,&
@@ -276,26 +268,12 @@ implicit none
                 end do
 !
 ! --- CALCUL DES MATRICES HYDROS
-!
-                zkbid = 'VIDE'                                          
-!                                                                   
-                call thmlec(zi(jmate), thmc, hydr, zkbid,&            
-                            t, rbid1, rbid2, rbid3, rbid4,&             
-                            rbid5, rbid6, rbid7, rbid8, rbid9,&         
-                            rbid10, rbid11, rbid12, rbid13, rbid14,&    
-                            rbid15, rbid16, rbid17, rbid18, rbid19,&    
-                            rbid20, rbid21, rbid22, unsurk, rbid23,&    
-                            rbid24, rbid25, viscl, rbid26, rbid27,&     
-                            rbid28, rbid29, rbid30, rbid31, rbid32,&    
-                            rbid33, rbid34, rbid35, rbid37,&            
-                            rbid38, ndim)
-            WRITE(6,*) 'XASSHV_FRAC - viscl: ',viscl
-            WRITE(6,*) 'XASSHV_FRAC - unsurk: ',unsurk                     
+!              
 !
                 call xvecha(ndim, pla, nnops, saut,&
                             sautm, nd, ffc, w11, w11m, jac,&
                             q1, q1m, q2, q2m, dt, ta, ta1,&
-                            dffc, rho11, viscl, gradpf, rho11m,&
+                            dffc, rho11, gradpf, rho11m,&
                             gradpfm, vect)
 !
                 call xvechb(nnops, nddls, nddlm, ndim,&

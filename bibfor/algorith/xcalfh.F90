@@ -15,19 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine xcalfh(option, thmc, ndim, dimcon, yamec,&
                   addep1, adcp11, addeme, congep, dsde,&
-                  grap1, rho11, pesa, tperm, cliq,&
-                  viscl, dviscl, dimenr,&
+                  grap1, rho11, pesa, tperm, &
+                  dimenr,&
                   adenhy, nfh)
-! person_in_charge: daniele.colombo at ifpen.fr
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
+
 ! ======================================================================
 ! ROUTINE CALC_FLUX_HYDRO
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE DES FLUX
 ! HYDRAULIQUES AU POINT DE GAUSS CONSIDERE
 ! ======================================================================
-    implicit none
 !
     integer :: ndim, dimcon, yamec, nfh
     integer :: addeme, addep1, adcp11, adenhy
@@ -49,6 +55,9 @@ subroutine xcalfh(option, thmc, ndim, dimcon, yamec,&
 ! --- QUELQUES INITIALISATIONS -----------------------------------------
 ! ======================================================================
 !
+    cliq = ds_thm%ds_material%liquid%unsurk
+    viscl  = ds_thm%ds_material%liquid%visc
+    dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
     dr11p1 = 0.d0
     bdcp11 = adcp11
 !

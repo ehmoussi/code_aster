@@ -15,20 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine xvecha(ndim, pla, nnops, saut,&
                   sautm, nd, ffc, w11, w11m, jac,&
                   q1, q1m, q2, q2m, dt, ta, ta1,&
-                  dffc, rho11, mu, gradpf, rho11m,&
+                  dffc, rho11, gradpf, rho11m,&
                   gradpfm, vect)
 !
-    implicit none
+use THM_type
+use THM_module
+!
+implicit none
 !
 #include "jeveux.h"
 #include "asterfort/vecini.h"
 !
 ! ======================================================================
-! person_in_charge: daniele.colombo at ifpen.fr
+
 !
 !
 ! ROUTINE MODELE HM-XFEM
@@ -47,6 +52,7 @@ subroutine xvecha(ndim, pla, nnops, saut,&
 !
     call vecini(3, 0.d0, dffi)
 !
+    mu     = ds_thm%ds_material%liquid%visc
     ps = 0.d0
     psm = 0.d0
     do k = 1, ndim 
