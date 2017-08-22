@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_meca_uvar(compor_info, vari_link_base, vari_redu, nb_vari_redu, codret)
 !
 implicit none
@@ -27,15 +28,12 @@ implicit none
 #include "asterfort/codent.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: compor_info
-    character(len=8), intent(in) :: vari_link_base
-    character(len=19), intent(in) :: vari_redu
-    integer, intent(out) :: nb_vari_redu
-    integer, intent(out) :: codret
+character(len=19), intent(in) :: compor_info
+character(len=8), intent(in) :: vari_link_base
+character(len=19), intent(in) :: vari_redu
+integer, intent(out) :: nb_vari_redu
+integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,6 +47,9 @@ implicit none
 ! In  vari_link_base   : basename of object to link zone (CARTE) with available internal variables
 ! In  vari_redu        : list of available internal variables
 ! Out nb_vari_redu     : number of available internal variables
+! Out codret           : error code
+!                        0   - Everything is OK
+!                        200 - External behaviour (MFRONT/UMAT) or multifibers
 !
 ! VARI_REDU is the list of available internal variables on ALL mesh
 ! VARI_LINK is a object, by zone in COMPOR CARTE, to make link between internal variable in zone 
@@ -103,13 +104,6 @@ implicit none
                     goto 50
                 endif
                 if (vari_name(1:2) .eq. '&&') then
-                   if (vari_name.eq.'&&MULT_COMP') then
-                        call utmess('I', 'COMPOR4_15')
-                    else if (vari_name.eq.'&&PROT_COMP') then
-                        call utmess('I', 'COMPOR4_16')
-                    else
-                        ASSERT(.false.)
-                    endif
                     codret      = 200
                     i_vari_redu = 0
                     goto 50

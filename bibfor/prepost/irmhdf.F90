@@ -154,13 +154,9 @@ subroutine irmhdf(ifi, ndim, nbnoeu, coordo, nbmail,&
         write (ifm,*) '<',nompro,'> NOM DU FICHIER MED : ',nofimd
     endif
 !
-! 1.3. ==> NOM DU MAILLAGE
+! - Generate name of mesh for MED
 !
     call mdnoma(nomamd, lnomam, nomast, codret)
-    if (codret .ne. 0) then
-        saux08='MDNOMA  '
-        call utmess('F', 'DVP_97', sk=saux08, si=codret)
-    endif
 !
 !
 ! 1.4. ==> LE MAILLAGE EST-IL DEJA PRESENT DANS LE FICHIER ?
