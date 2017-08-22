@@ -281,6 +281,8 @@ integer, intent(in) :: vicsat
     alpha  = ds_thm%ds_material%liquid%alpha
     viscl  = ds_thm%ds_material%liquid%visc
     dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
+    viscg  = ds_thm%ds_material%gaz%visc
+    dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
 !
 ! CONDUCTIVITES EN VF
 !
@@ -330,7 +332,7 @@ integer, intent(in) :: vicsat
                     dimcon, yamec, yap1, yap2, addete,&
                     addeme, addep1, addep2, adcote, congep,&
                     dsde, t, grat, phi, pvp,&
-                    rgaz, tbiot, satur, dsatur, lambp,&
+                    tbiot, satur, dsatur, lambp,&
                     dlambp, lambs, dlambs, tlambt, tdlamt,&
                     mamovg, tlamct, rho11, h11, h12,&
                     angl_naut)

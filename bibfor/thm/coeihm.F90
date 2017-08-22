@@ -279,6 +279,10 @@ implicit none
     alpha  = ds_thm%ds_material%liquid%alpha
     viscl  = ds_thm%ds_material%liquid%visc
     dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
+    rgaz   = ds_thm%ds_material%solid%r_gaz
+    viscg  = ds_thm%ds_material%gaz%visc
+    dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
+    mamolg = ds_thm%ds_material%gaz%mass_mol
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES -------------------------------------
 ! ======================================================================

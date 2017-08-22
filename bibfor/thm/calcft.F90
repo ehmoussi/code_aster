@@ -22,7 +22,7 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
                   dimcon, yamec, yap1, yap2, addete,&
                   addeme, addep1, addep2, adcote, congep,&
                   dsde, t, grat, phi, pvp,&
-                  rgaz, tbiot, sat, dsatp1, lambp,&
+                  tbiot, sat, dsatp1, lambp,&
                   dlambp, lambs, dlambs, tlambt, tdlamt,&
                   mamolv, tlamct, rho11, h11, h12,&
                   angmas)
@@ -33,7 +33,12 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
 ! CALCULE LES CONTRAINTES GENERALISEES ET LA MATRICE TANGENTE DES FLUX -
 ! ======================================================================
 
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterfort/dilata.h"
 #include "asterfort/matini.h"
 #include "asterfort/unsmfi.h"
@@ -67,6 +72,8 @@ subroutine calcft(option, thmc, imate, ndim, dimdef,&
     do i = 1, ndim
         kron(i,i) = 1.d0
     end do
+!
+    rgaz   = ds_thm%ds_material%solid%r_gaz
 !
     call matini(ndim, ndim, 0.d0, lamdt1)
     call matini(ndim, ndim, 0.d0, lamdt2)

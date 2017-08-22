@@ -93,10 +93,10 @@ real(kind=8), intent(out) :: gravity(3)
 !        viscl  = ds_thm%ds_material%liquid%visc
 !        dviscl = ds_thm%ds_material%liquid%dvisc_dtemp
     else if (thmc.eq.'GAZ') then
-        rgaz   = ds_thm%ds_material%solid%r_gaz
-        viscg  = ds_thm%ds_material%gaz%visc
-        dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
-        mamolg = ds_thm%ds_material%gaz%mass_mol
+!        rgaz   = ds_thm%ds_material%solid%r_gaz
+!        viscg  = ds_thm%ds_material%gaz%visc
+!        dviscg = ds_thm%ds_material%gaz%dvisc_dtemp
+!        mamolg = ds_thm%ds_material%gaz%mass_mol
     else if (thmc.eq.'LIQU_VAPE') then
         call thmEvalPermLiquGaz(hydr  , j_mater , satur, p2, t,&
                                 permli, dperml,&

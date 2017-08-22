@@ -22,7 +22,7 @@ interface
                       dimcon, yamec, yap1, yap2, addete,&
                       addeme, addep1, addep2, adcote, congep,&
                       dsde, t, grat, phi, pvp,&
-                      rgaz, tbiot, sat, dsatp1, lambp,&
+                      tbiot, sat, dsatp1, lambp,&
                       dlambp, lambs, dlambs, tlambt, tdlamt,&
                       mamolv, tlamct, rho11, h11, h12,&
                       angmas)
@@ -46,7 +46,6 @@ interface
         real(kind=8) :: grat(3)
         real(kind=8) :: phi
         real(kind=8) :: pvp
-        real(kind=8) :: rgaz
         real(kind=8) :: tbiot(6)
         real(kind=8) :: sat
         real(kind=8) :: dsatp1
