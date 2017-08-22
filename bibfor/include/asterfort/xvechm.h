@@ -22,7 +22,7 @@ interface
                       saut, sautm, nd, ffc, w11, w11m, jac,&
                       q1, dt, ta, q1m, ta1, q2, q2m, dffc,&
                       rho11, gradpf, rho11m, gradpfm, ffp2,&
-                      jmate, thmc, hydr, t, vect, ffp,&
+                      vect, ffp,&
                       nnop, delta, lamb, am, r, p, psup,&
                       pinf, pf, ncompn, jheavn, ifiss, nfiss,&
                       nfh, ifa, jheafa, ncomph)
@@ -53,10 +53,6 @@ interface
         real(kind=8) :: rho11m
         real(kind=8) :: gradpfm(3)
         real(kind=8) :: ffp2(27)
-        integer :: jmate
-        character(len=16) :: thmc
-        character(len=16) :: hydr
-        real(kind=8) :: t
         real(kind=8) :: vect(560)
         real(kind=8) :: ffp(27)
         real(kind=8) :: delta(6)

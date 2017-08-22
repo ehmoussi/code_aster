@@ -249,7 +249,6 @@ integer, intent(in) :: vicsat
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
 ! ======================================================================
     if (yap1 .eq. 1) then
-!
         call calcfh(option, perman, thmc, ndim, dimdef,&
                     dimcon, yamec, yate, addep1, addep2,&
                     adcp11, adcp12, adcp21, adcp22, addeme,&

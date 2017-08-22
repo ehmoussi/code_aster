@@ -36,7 +36,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/kitdec.h"
 #include "asterfort/nvithm.h"
-#include "asterfort/thmlec.h"
 #include "asterfort/xcalfh.h"
 #include "asterfort/xcalme.h"
 #include "asterfort/xhmsat.h"
@@ -46,6 +45,8 @@ implicit none
 #include "asterfort/thmGetParaTher.h"
 #include "asterfort/thmGetParaHydr.h"
 #include "asterfort/thmMatrHooke.h"
+#include "asterfort/thmGetPermeabilityTensor.h"
+#include "asterfort/thmEvalGravity.h"
 #include "asterfort/tebiot.h"
 !
 ! ======================================================================
@@ -111,15 +112,10 @@ implicit none
     integer :: nvim, advime, advith, advihy, advico
     integer :: vihrho, vicphi, vicpvp, vicsat, nvih, nvic, nvit
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
-    real(kind=8) :: phi, pvp, pad, rho11, epsv, deps(6), depsv
-    real(kind=8) :: sat, mamovg
-    real(kind=8) :: rgaz, tbiot(6), satur, dsatur, pesa(3)
-    real(kind=8) :: tperm(ndim, ndim), permli, dperml, permgz, dperms, dpermp
-    real(kind=8) :: dfickt, dfickg, lambp, dlambp, unsurk, fick
-    real(kind=8) :: lambs, dlambs, viscl, dviscl
-    real(kind=8) :: viscg, dviscg, mamolg
-    real(kind=8) :: fickad, dfadt, alpha
-    real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
+    real(kind=8) :: phi, rho11, epsv, deps(6), depsv
+    real(kind=8) :: sat
+    real(kind=8) :: tbiot(6), pesa(3)
+    real(kind=8) :: tperm(ndim, ndim)
     real(kind=8) :: angl_naut(3)
     character(len=16) :: thmc, ther, hydr, meca
 ! ======================================================================
@@ -200,27 +196,23 @@ implicit none
             goto 900
         endif
     endif
-! ======================================================================
-! --- RECUPERATION DES DONNEES MATERIAU FINALES ------------------------
-! ======================================================================
-    call thmlec(imate, thmc, hydr, ther,&
-                t, p1, p2, phi, vintp(1),&
-                pvp, pad, rgaz, tbiot, satur,&
-                dsatur, pesa, tperm, permli, dperml,&
-                permgz, dperms, dpermp, fick, dfickt,&
-                dfickg, lambp, dlambp, unsurk, alpha,&
-                lambs, dlambs, viscl, dviscl, mamolg,&
-                tlambt, tdlamt, viscg, dviscg, mamovg,&
-                fickad, dfadt, tlamct, instap,&
-                angl_naut, ndim)
+!
+! - Get permeability tensor
+!
+    call thmGetPermeabilityTensor(ndim , angl_naut, imate, phi, vintp(1),&
+                                  tperm)
+!
+! - Compute gravity
+!
+    call thmEvalGravity(imate, instap, pesa)
 ! ======================================================================
 ! --- CALCUL DES FLUX HYDRAULIQUES UNIQUEMENT SI YAP1 = 1 --------------
 ! ======================================================================
     if ((yap1.eq.1).and.(yaenrh.eq.1)) then
         call xcalfh(option, thmc, ndim, dimcon, yamec,&
                     addep1, adcp11, addeme, congep, dsde,&
-                    grap1, rho11, pesa, tperm, unsurk,&
-                    viscl, dviscl, dimenr,&
+                    grap1, rho11, pesa, tperm, &
+                    dimenr,&
                     adenhy, nfh)
         if (retcom .ne. 0) then
             goto 900

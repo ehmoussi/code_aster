@@ -15,15 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+! aslint: disable=W1504
+!
 subroutine xmmata(ndim, nnops, nnop, ddls, ddlm, saut,&
-                  nd, pla, ffc, dffc, mmat, rho11, mu,&
+                  nd, pla, ffc, dffc, mmat, rho11,&
                   gradpf, ffp, dt, ta, jac,&
-                  cliq, jheavn, ncompn, ifiss,&
+                  jheavn, ncompn, ifiss,&
                   nfiss, nfh, ifa, jheafa, ncomph)
-
-    implicit none
-
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/vecini.h"
@@ -31,7 +36,7 @@ subroutine xmmata(ndim, nnops, nnop, ddls, ddlm, saut,&
 #include "asterfort/hmdeca.h"
 #include "asterfort/xcalc_saut.h"
 #include "asterfort/xcalc_code.h"
-! person_in_charge: daniele.colombo at ifpen.fr
+
 ! ======================================================================
 !
 ! ROUTINE MODELE HM-XFEM (CAS DE LA FRACTURE)
@@ -49,6 +54,8 @@ subroutine xmmata(ndim, nnops, nnop, ddls, ddlm, saut,&
     real(kind=8) :: dt, ta, jac, ffp(27), ffj
     aster_logical :: lmultc
 !
+    cliq   = ds_thm%ds_material%liquid%unsurk
+    mu     = ds_thm%ds_material%liquid%visc
     lmultc = nfiss.gt.1
     call vecini(3, 0.d0, dffi)
     call vecini(3, 0.d0, dffj)

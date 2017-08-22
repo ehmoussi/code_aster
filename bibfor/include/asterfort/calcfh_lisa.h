@@ -16,28 +16,22 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
+#include "asterf_types.h"
+!
 interface 
-    subroutine xcalfh(option, thmc, ndim, dimcon, yamec,&
-                      addep1, adcp11, addeme, congep, dsde,&
-                      grap1, rho11, pesa, tperm, &
-                       dimenr,&
-                      adenhy, nfh)
-        integer :: dimenr
-        integer :: dimcon
-        character(len=16) :: option
-        character(len=16) :: thmc
-        integer :: ndim
-        integer :: yamec
-        integer :: addep1
-        integer :: adcp11
-        integer :: addeme
-        real(kind=8) :: congep(1:dimcon)
-        real(kind=8) :: dsde(1:dimcon, 1:dimenr)
-        real(kind=8) :: grap1(3)
-        real(kind=8) :: rho11
-        real(kind=8) :: pesa(3)
-        real(kind=8) :: tperm(ndim,ndim)
-        integer :: adenhy
-        integer :: nfh
-    end subroutine xcalfh
+    subroutine calcfh_lisa(option, perman, ndim,&
+                           dimdef, dimcon,&
+                           yamec , yate  ,&
+                           addep1, adcp11, addeme , addete,&
+                           grap1 , rho11 , gravity, tperm ,&
+                           congep, dsde  )
+        character(len=16), intent(in) :: option
+        aster_logical, intent(in) :: perman
+        integer, intent(in) :: ndim, dimdef, dimcon, yamec, yate
+        integer, intent(in) :: addeme, addep1, addete, adcp11
+        real(kind=8), intent(in) :: rho11, grap1(3)
+        real(kind=8), intent(in) :: gravity(3), tperm(ndim, ndim)
+        real(kind=8), intent(inout) :: congep(1:dimcon)
+        real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
+    end subroutine calcfh_lisa
 end interface 
