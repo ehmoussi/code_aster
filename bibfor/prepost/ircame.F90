@@ -190,13 +190,9 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
     nomaas = zk8(adsk-1+1)
     call dismoi('DIM_GEOM_B', nomaas, 'MAILLAGE', repi=ndim)
 !
-! 2.2. ==> CREATION DU NOM DU MAILLAGE POUR MED
+! - Generate name of mesh for MED
 !
     call mdnoma(nomamd, lnomam, nomaas, codret)
-    if (codret .ne. 0) then
-        saux08='MDNOMA  '
-        call utmess('F', 'DVP_97', sk=saux08, si=codret)
-    endif
 !
 ! 2.3. ==> CE MAILLAGE EST-IL DEJA PRESENT DANS LE FICHIER ?
 !

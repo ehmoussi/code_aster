@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine irvari(ifi        , field_med    , vari_elga, field_loca, model    ,&
                   nb_cmp_sele, cmp_name_sele, partie   , numpt     , instan   ,&
                   nume_store , nbmaec       , limaec   , result    , cara_elem,&
@@ -45,24 +46,22 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/jexatr.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: ifi
-    character(len=64), intent(in) :: field_med
-    character(len=19), intent(in) :: vari_elga
-    character(len=8), intent(in) :: field_loca
-    character(len=8), intent(in) :: model
-    integer, intent(in) :: nb_cmp_sele
-    character(len=*), intent(in) :: cmp_name_sele(*)
-    character(len=*), intent(in) :: partie
-    integer, intent(in) :: numpt
-    real(kind=8), intent(in) :: instan
-    integer, intent(in) :: nume_store
-    integer, intent(in) :: nbmaec
-    integer, intent(in) :: limaec(*)
-    character(len=8), intent(in) :: result
-    character(len=8), intent(in) :: cara_elem
-    integer, intent(out) :: codret
+integer, intent(in) :: ifi
+character(len=64), intent(in) :: field_med
+character(len=19), intent(in) :: vari_elga
+character(len=8), intent(in) :: field_loca
+character(len=8), intent(in) :: model
+integer, intent(in) :: nb_cmp_sele
+character(len=*), intent(in) :: cmp_name_sele(*)
+character(len=*), intent(in) :: partie
+integer, intent(in) :: numpt
+real(kind=8), intent(in) :: instan
+integer, intent(in) :: nume_store
+integer, intent(in) :: nbmaec
+integer, intent(in) :: limaec(*)
+character(len=8), intent(in) :: result
+character(len=8), intent(in) :: cara_elem
+integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,7 +76,11 @@ implicit none
 ! In  field_loca       : localization of field
 !                        /'ELNO'/'ELGA'/'ELEM'
 ! In  result           : name of results datastructure
-! In  model            : name of model                    
+! In  model            : name of model         
+! Out codret           : error code
+!                        0   - Everything is OK
+!                        200 - External behaviour (MFRONT/UMAT) or multifibers
+!                        300 - No external state variables (everything is elastic)           
 !       IFI    : UNITE LOGIQUE D'IMPRESSION DU CHAMP
 !       PARTIE : IMPRESSION DE LA PARTIE IMAGINAIRE OU REELLE POUR
 !                UN CHAMP COMPLEXE
@@ -88,14 +91,13 @@ implicit none
 !       NUMORD : NUMERO D'ORDRE DU CHAMP
 !       NBMAEC : NOMBRE DE MAILLES A ECRIRE (0, SI TOUTES LES MAILLES)
 !       LIMAEC : LISTE DES MAILLES A ECRIRE SI EXTRAIT
-!       CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i_zone, i_elem, i_pt, i_vari, i_vari_redu, i_spt
     integer :: nb_vari, nb_pt, nb_spt, nb_vari_zone
     integer :: nb_vari_redu, nb_zone, nb_elem, nb_vari_maxi, nb_elem_mesh, nb_elem_zone
-    integer :: nt_vari
+    integer :: nt_vari, codret_dummy
     integer :: posit, iret, affe_type, affe_indx, nume_elem
     integer :: jv_elga_cesd, jv_elga_cesl, jv_elgr_cesd, jv_elgr_cesl, jv_elga, jv_elgr
     character(len=7) :: saux07
@@ -149,7 +151,7 @@ implicit none
     nt_vari      = v_info(4)
 !
     if ( nt_vari .eq. 0 ) then
-        codret = 200
+        codret = 300
         goto 999
     endif
     call jeveuo(compor_info(1:19)//'.ZONE', 'L', vi = v_zone)
@@ -158,10 +160,16 @@ implicit none
 !
     call comp_meca_uvar(compor_info, base_name, vari_redu, nb_vari_redu, codret)
     call jeveuo(vari_redu, 'L', vk16 = v_vari_redu)
-    if ( nb_vari_redu .eq. 0 .or. codret .eq. 200) then
-        codret = 200
+! - Behaviours that cannot give name of internal state variables
+    if (codret .eq. 200) then
         goto 999
     endif
+! - Only elastic behaviours
+    if (nb_vari_redu .eq. 0) then
+        codret = 300
+        goto 999
+    endif
+
 !
 ! - Access to <CARTE> COMPOR
 !
@@ -262,7 +270,7 @@ implicit none
 !
     nomres = field_med(1:8)//'VARI_ELGA_NOMME'
     call cescel(vari_elgr_s, ligrel, ' ', ' ', 'OUI',&
-                nume_elem, 'V', vari_elgr, 'F', codret)
+                nume_elem, 'V', vari_elgr, 'F', codret_dummy)
 !
 ! - Write in MED file
 !
@@ -288,7 +296,7 @@ implicit none
     call jedetr(label_med)
     do i_zone = 1,nb_zone
         call codent(i_zone, 'G', saux08)
-         vari_link = base_name//saux08
+        vari_link = base_name//saux08
         call jedetr(vari_link)
     end do
 !
